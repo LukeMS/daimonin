@@ -183,11 +183,11 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"sapphire ",    50,92,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 133 */
     {"ruby ",        30,93,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 134 */
     {"diamond ",     10,95,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 135 */
-    {"jasper ",		 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 136 */
-    {"jade ",		 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 137 */
+    {"jasper ",         75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 136 */
+    {"jade ",         75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 137 */
     {"aquamarine ",  80,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 138 */
-    {"opal ",		 20,90,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 139 */
-    {"amethyst ",		 25,88,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 140 */
+    {"opal ",         20,90,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 139 */
+    {"amethyst ",         25,88,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 140 */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -1510,10 +1510,10 @@ void set_owner(object *op, object *owner)
     set_owner_simple(op, owner);
 
     if (owner->type == PLAYER && owner->chosen_skill)
-	{
-		op->chosen_skill = owner->chosen_skill;
-		op->exp_obj = owner->chosen_skill->exp_obj;
-	}
+    {
+        op->chosen_skill = owner->chosen_skill;
+        op->exp_obj = owner->chosen_skill->exp_obj;
+    }
 }
 
 /* Set the owner to clone's current owner and set the skill and experience
@@ -1542,10 +1542,10 @@ void copy_owner(object *op, object *clone)
     set_owner_simple(op, owner);
 
     if (clone->chosen_skill)
-	{
-		op->chosen_skill = clone->chosen_skill;
-		op->exp_obj = clone->exp_obj;
-	}
+    {
+        op->chosen_skill = clone->chosen_skill;
+        op->exp_obj = clone->exp_obj;
+    }
 }
 
 /*
@@ -1723,12 +1723,12 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
         active_objects = op->active_next;
     else if (op == inserted_active_objects)
         inserted_active_objects = op->active_next;
-    else if (map && op == map->active_objects) 
+    else if (map && op == map->active_objects)
     {
         map->active_objects = op->active_next;
         // TODO: if map is now empty of entries, remove it from
         // list of maps with active objects
-    } 
+    }
     else if (!op->active_prev)
     {
         /* Try to catch nasty bugs early */
@@ -1737,12 +1737,12 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
                 STRING_OBJ_NAME(op), op->count, STRING_MAP_PATH(map), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(op->env));
         return;
     }
-    
+
     /* If this happens to be the object we will process next,
      * update the next_active_object pointer */
     if(op == next_active_object)
         next_active_object = op->active_next;
-    
+
 
     if (op->active_prev)
         op->active_prev->active_next = op->active_next;
@@ -2237,7 +2237,7 @@ void destroy_object(object *ob)
         remove_button_link(ob);
 
     activelist_remove_inline(ob, ob->map);
-    
+
     if (ob->type == CONTAINER && ob->attacked_by)
         container_unlink(NULL, ob);
 
@@ -2256,17 +2256,17 @@ void destroy_object(object *ob)
     /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
 
     /* Free attached attrsets */
-    if (ob->custom_attrset) 
+    if (ob->custom_attrset)
     {
         /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n",
                       STRING_OBJ_NAME(ob), ob->type);*/
 
-#ifndef PRODUCTION_SYSTEM /* Avoid this check on performance-critical servers */        
+#ifndef PRODUCTION_SYSTEM /* Avoid this check on performance-critical servers */
         if(ob->head) /* TODO: this shouldn't be compiled into a production server */
             LOG(llevDebug, "BUG: destroy_object() custom attrset found in object %s subpart (type %d)\n",
                     STRING_OBJ_NAME(ob), ob->type);
-#endif        
-        
+#endif
+
         switch (ob->type)
         {
             case PLAYER:
@@ -2293,7 +2293,7 @@ void destroy_object(object *ob)
     FREE_AND_CLEAR_HASH2(ob->msg);
 
     ob->map = NULL;
-    
+
     ob->count = 0; /* mark object as "do not use" and invalidate all references to it */
 }
 
@@ -2845,7 +2845,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
         {
             // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
             activelist_remove_inline(op, old_map);
-        } 
+        }
 
         activelist_insert_inline(op);
     }
@@ -3200,8 +3200,8 @@ object * insert_ob_in_ob(object *op, object *where)
      */
     if (op->type == TYPE_EVENT_OBJECT && op->sub_type1)
         where->event_flags |= (1U << (op->sub_type1 - 1));
-	else if(op->type == TYPE_QUEST_TRIGGER && op->sub_type1 == ST1_QUEST_TRIGGER_CONT && where->type == CONTAINER)
-		where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
+    else if(op->type == TYPE_QUEST_TRIGGER && op->sub_type1 == ST1_QUEST_TRIGGER_CONT && where->type == CONTAINER)
+        where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
 
     /* if player, adjust one drop items and fix player if not
      * marked as no fix.
@@ -3215,10 +3215,10 @@ object * insert_ob_in_ob(object *op, object *where)
         if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_player(otmp);
     }
-    
+
     /* Make sure the object is on an activelist if needed */
     update_ob_speed(op);
-    
+
     return op;
 }
 
@@ -3330,7 +3330,7 @@ int check_walk_off(object *op, object *originator, int flags)
         return CHECK_WALK_OK;
 
     tag = op->count;
-	fly = (QUERY_FLAG(op, FLAG_FLYING)|QUERY_FLAG(op, FLAG_LEVITATE));
+    fly = (QUERY_FLAG(op, FLAG_FLYING)|QUERY_FLAG(op, FLAG_LEVITATE));
     if (fly)
         flags |= MOVE_APPLY_FLY_OFF;
     else

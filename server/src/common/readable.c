@@ -127,10 +127,10 @@ static linked_char *first_msg                   = NULL;
 
 static uint32       spellpathdef[NRSPELLPATHS]  =
 {
-	PATH_LIFE, PATH_DEATH, PATH_ELEMENTAL, PATH_ENERGY,
-	PATH_SPIRIT, PATH_PROTECTION, PATH_LIGHT, PATH_NETHER,
-	PATH_NATURE, PATH_SHADOW,PATH_CHAOS, PATH_EARTH,
-	PATH_CONJURATION, PATH_ABJURATION, PATH_TRANSMUTATION, PATH_ARCANE
+    PATH_LIFE, PATH_DEATH, PATH_ELEMENTAL, PATH_ENERGY,
+    PATH_SPIRIT, PATH_PROTECTION, PATH_LIGHT, PATH_NETHER,
+    PATH_NATURE, PATH_SHADOW,PATH_CHAOS, PATH_EARTH,
+    PATH_CONJURATION, PATH_ABJURATION, PATH_TRANSMUTATION, PATH_ARCANE
 };
 
 static char        *path_book_name[]            =
@@ -157,7 +157,7 @@ static arttypename  art_name_array[]            =
     {"Helmets", HELMET}, {"Amulets", AMULET}, {"Shields", SHIELD}, {"Bracers", BRACERS}, {"Boots", BOOTS},
     {"Cloaks", CLOAK}, {"Gloves", GLOVES}, {"Girdles", GIRDLE}, {"Missile Weapons", BOW},
     {"Missiles", ARROW}, {"Weapons", WEAPON}, {"Containers", CONTAINER}, {"Lights", TYPE_LIGHT_APPLY},
-	{"Rings", RING}, {"Potions", POTION}, {"Body Armours", ARMOUR}
+    {"Rings", RING}, {"Potions", POTION}, {"Body Armours", ARMOUR}
 };
 
 static char        *art_book_name[]             =
@@ -295,22 +295,22 @@ static int          max_titles[6]               =
  */
 static char *written_language[]=
 {
-	"common",
-	"dwarvish",
-	"ancient dwarvish",
-	"elvish",
-	"high elvish",
-	"drow",
-	"gnomish",
-	"old council",
-	"elder pictograms",
-	"chaotic",
-	"evil runic",
-	"runic",
-	"dragonish",
-	"jotun",
-	"high planar",
-	"orc runes"
+    "common",
+    "dwarvish",
+    "ancient dwarvish",
+    "elvish",
+    "high elvish",
+    "drow",
+    "gnomish",
+    "old council",
+    "elder pictograms",
+    "chaotic",
+    "evil runic",
+    "runic",
+    "dragonish",
+    "jotun",
+    "high planar",
+    "orc runes"
 };
 
 /******************************************************************************
@@ -1029,20 +1029,20 @@ object * get_random_mon(int level)
     if (!nrofmon || !mon)
         return (object *) NULL;
 
-	/* lets get a random monster from the mon_info linked list */
+    /* lets get a random monster from the mon_info linked list */
     monnr = RANDOM() % nrofmon;
 
-	for (mon = first_mon_info, i = 0; mon; mon = mon->next)
-		if (i++ == monnr)
-			break;
+    for (mon = first_mon_info, i = 0; mon; mon = mon->next)
+        if (i++ == monnr)
+            break;
 
-	if (!mon)
+    if (!mon)
     {
-		LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
+        LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
         return NULL;
     }
 
-	return mon->objlink.ob;
+    return mon->objlink.ob;
 }
 
 /*
@@ -1092,7 +1092,7 @@ char * mon_info_msg(int level, int booksize)
     static char retbuf[BOOK_BUF];
     char        tmpbuf[HUGE_BUF];
     object     *tmp;
-	int count=0, desc_num= (RANDOM()%5)+3;
+    int count=0, desc_num= (RANDOM()%5)+3;
 
     /*preamble */
     sprintf(retbuf, "<t t=\"Beastiary\">\nHerein are detailed %d creatures\nfound in the world around.\n\n\n\n", desc_num);
@@ -1100,10 +1100,10 @@ char * mon_info_msg(int level, int booksize)
     tmp = get_random_mon(1);
     do
     {
-		if(count&1)
-			strcat(retbuf,"<p>");
-		else
-			strcat(retbuf,"\n\n");
+        if(count&1)
+            strcat(retbuf,"<p>");
+        else
+            strcat(retbuf,"\n\n");
 
         /* monster description */
         strcpy(tmpbuf, mon_desc(tmp));
@@ -1113,8 +1113,8 @@ char * mon_info_msg(int level, int booksize)
         else
             break;
 
-		if(++count>=desc_num)
-			break;
+        if(++count>=desc_num)
+            break;
 
         tmp = get_next_mon(tmp);
     }
@@ -1142,7 +1142,7 @@ char * artifact_msg(int level, int booksize)
     artifactlist   *al              = NULL;
     artifact       *art;
     int             count=0,chance, i, type, index;
-	sint64			val;
+    sint64            val;
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
     char           *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
     static char     retbuf[BOOK_BUF];
@@ -1152,7 +1152,7 @@ char * artifact_msg(int level, int booksize)
     if (book_entries > 5)
         book_entries = 5;
 
-		/* lets determine what kind of artifact type randomly.
+        /* lets determine what kind of artifact type randomly.
      * Right now legal artifacts only come from those listed
      * in art_name_array. Also, we check to be sure an artifactlist
      * for that type exists!
@@ -1185,40 +1185,40 @@ char * artifact_msg(int level, int booksize)
 
     /* Ok, lets print out the contents */
     sprintf(retbuf, " <t t=\"Magical %s\">Herein %s detailed %s...\n\n\n", art_name_array[index].name,
-					  book_entries > 1 ? "are" : "is", book_entries > 1 ? "some artifacts" : "an artifact");
+                      book_entries > 1 ? "are" : "is", book_entries > 1 ? "some artifacts" : "an artifact");
 
     /* artifact msg attributes loop. Lets keep adding entries to the 'book'
      * as long as we have space up to the allowed max # (book_entires)
      */
-	if (art == NULL)
-		art = al->items;
+    if (art == NULL)
+        art = al->items;
     while (book_entries > 0)
     {
         if (art == NULL)
-			break;
+            break;
 
-		if(count++&1)
-			strcat(retbuf,"\n<p>");
-		else
-		strcat(retbuf,"\n\n");
-		if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
-		{
-			tmp = arch_to_object(&art->def_at);
-			val = art->def_at.base_clone->value;
-		}
-		else
-		{
-			tmp = arch_to_object(find_archetype(art->def_at_name));
-			val = tmp->value;
-			give_artifact_abilities(tmp, art);
-		}
+        if(count++&1)
+            strcat(retbuf,"\n<p>");
+        else
+        strcat(retbuf,"\n\n");
+        if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
+        {
+            tmp = arch_to_object(&art->def_at);
+            val = art->def_at.base_clone->value;
+        }
+        else
+        {
+            tmp = arch_to_object(find_archetype(art->def_at_name));
+            val = tmp->value;
+            give_artifact_abilities(tmp, art);
+        }
 
-		SET_FLAG(tmp, FLAG_IDENTIFIED);
+        SET_FLAG(tmp, FLAG_IDENTIFIED);
         SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         SET_FLAG(tmp, FLAG_KNOWN_CURSED);
 
-		sprintf(buf,"<t t=\"%s %s\">\n", tmp->name, tmp->title?tmp->title:"");
-		strcat(retbuf,buf);
+        sprintf(buf,"<t t=\"%s %s\">\n", tmp->name, tmp->title?tmp->title:"");
+        strcat(retbuf,buf);
         /* chance of finding */
         chance = (int) (100.0f * ((float) art->chance / (float) al->total_chance));
         if (chance >= 20)
@@ -1231,23 +1231,23 @@ char * artifact_msg(int level, int booksize)
             sprintf(sbuf, "a very rare");
 
         /* value of artifact */
-		if(val) /* avoid devide by zero */
-		{
-			sprintf(buf, "%s item with a value that is %lld times normal.\n", sbuf, tmp->value/val);
-		}
-		else
-			sprintf(buf, "%s item with a value of %lld\n", sbuf, tmp->value);
+        if(val) /* avoid devide by zero */
+        {
+            sprintf(buf, "%s item with a value that is %lld times normal.\n", sbuf, tmp->value/val);
+        }
+        else
+            sprintf(buf, "%s item with a value of %lld\n", sbuf, tmp->value);
 
-		strcat(retbuf, buf);
-		if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
-		{
-			sprintf(buf, "Properties of this artifact include: \n %s \n", ch);
+        strcat(retbuf, buf);
+        if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
+        {
+            sprintf(buf, "Properties of this artifact include: \n %s \n", ch);
 
-			if (!book_overflow(retbuf, buf, booksize))
-			    strcat(retbuf, buf);
-			else
-			    break;
-		}
+            if (!book_overflow(retbuf, buf, booksize))
+                strcat(retbuf, buf);
+            else
+                break;
+        }
 
         art = art->next;
         book_entries--;
@@ -1747,15 +1747,15 @@ goto_2ndtry:
     {
         case 1:
           /* monster attrib */
-	        strcpy(msgbuf, mon_info_msg(level, book_buf_size));
-			break;
+            strcpy(msgbuf, mon_info_msg(level, book_buf_size));
+            break;
         case 2:
           /* artifact attrib */
-			strcpy(msgbuf, artifact_msg(level, book_buf_size));
-			break;
+            strcpy(msgbuf, artifact_msg(level, book_buf_size));
+            break;
         case 3:
           /* grouping incantations/prayers by path */
-		    strcpy(msgbuf, spellpath_msg(level, book_buf_size));
+            strcpy(msgbuf, spellpath_msg(level, book_buf_size));
           break;
         case 4:
           /* describe an alchemy formula */
@@ -1764,20 +1764,20 @@ goto_2ndtry:
           /* make_formula_book already gives title */
           return;
 #else
-		  strcpy(msgbuf, artifact_msg(level, book_buf_size));
+          strcpy(msgbuf, artifact_msg(level, book_buf_size));
           msg_type = 2;
 #endif
           break;
         case 5:
           /* bits of information about a god */
-		  if(!count++)
-			  goto goto_2ndtry;
+          if(!count++)
+              goto goto_2ndtry;
           strcpy(msgbuf, god_info_msg(level, book_buf_size));
           break;
         case 0:
           /* use info list in lib/ */
         default:
-			strcpy(msgbuf, msgfile_msg(level, book_buf_size));
+            strcpy(msgbuf, msgfile_msg(level, book_buf_size));
           break;
     }
 
@@ -1892,16 +1892,16 @@ void write_book_archive(void)
  */
 const char *get_language(uint32 lang)
 {
-	int i, l=lang;
+    int i, l=lang;
 
-	if(!l)
-		return written_language[0];
+    if(!l)
+        return written_language[0];
 
-	for(i=1;i<=32;i++,l>>=1)
-	{
-		if(l&0x01)
-			return written_language[i];
-	}
+    for(i=1;i<=32;i++,l>>=1)
+    {
+        if(l&0x01)
+            return written_language[i];
+    }
 
-	return written_language[0];
+    return written_language[0];
 }

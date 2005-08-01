@@ -614,8 +614,8 @@ int skill_ident(object *pl)
           break;
         case SK_JEWELER:
           success += do_skill_ident(pl, GEM)
-			  + do_skill_ident(pl, TYPE_PEARL)
-			  + do_skill_ident(pl, TYPE_JEWEL)
+              + do_skill_ident(pl, TYPE_PEARL)
+              + do_skill_ident(pl, TYPE_JEWEL)
                    + do_skill_ident(pl, TYPE_NUGGET)
                    + do_skill_ident(pl,
                                     RING);
@@ -1167,7 +1167,7 @@ int write_note(object *pl, object *item, char *msg)
     if(trigger_object_plugin_event(EVENT_TRIGGER, item, pl, NULL,
                 msg, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
         return 0;
-    
+
     if (!book_overflow(item->msg, msg, BOOK_BUF))
     {
         /* add msg string to book */
@@ -2015,7 +2015,7 @@ void do_throw(object *op, object *toss_item, int dir)
         throw_ob->stats.wc = 30;
 
     /* Gecko: Had to make sure the thrown object inherited event objects */
-    if(trigger_object_plugin_event(EVENT_THROW, throw_ob->inv, op, NULL, 
+    if(trigger_object_plugin_event(EVENT_THROW, throw_ob->inv, op, NULL,
             NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return; /* TODO: needs testing */
 

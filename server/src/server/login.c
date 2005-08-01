@@ -91,12 +91,12 @@ int check_name(player *me, char *name)
 
 int check_password(char *typed, char *crypted)
 {
-	/* login hack to have uncrypted passwords.
-	 * Its senseless to store crypted passwords as long we transfer
-	 * them uncrypted!
-	 */
+    /* login hack to have uncrypted passwords.
+     * Its senseless to store crypted passwords as long we transfer
+     * them uncrypted!
+     */
     if(!strcmp(typed, crypted) || !strcmp(crypt_string(typed, crypted), crypted))
-		return 1;
+        return 1;
     return 0;
 }
 
@@ -186,18 +186,18 @@ int save_player(object *op, int flag)
 
     fprintf(fp, "password %s\n", pl->password);
 
-	if(pl->gmaster_mode != GMASTER_MODE_NO)
-	{
-		if(pl->gmaster_mode == GMASTER_MODE_VOL)
-			fprintf(fp, "dm_VOL\n");
-		else if(pl->gmaster_mode == GMASTER_MODE_GM)
-			fprintf(fp, "dm_GM\n");
-		else
-			fprintf(fp, "dm_DM\n");
-	}
+    if(pl->gmaster_mode != GMASTER_MODE_NO)
+    {
+        if(pl->gmaster_mode == GMASTER_MODE_VOL)
+            fprintf(fp, "dm_VOL\n");
+        else if(pl->gmaster_mode == GMASTER_MODE_GM)
+            fprintf(fp, "dm_GM\n");
+        else
+            fprintf(fp, "dm_DM\n");
+    }
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
-	fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
+    fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
     fprintf(fp, "silent_login %d\n", pl->silent_login);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
     fprintf(fp, "gen_sp %d\n", pl->gen_sp);
@@ -570,8 +570,8 @@ void check_login(object *op)
     LOG(llevInfo, "loading player file!\n");
 
     pl->group_id = GROUP_NO;
-	pl->gmaster_mode = GMASTER_MODE_NO;
-	pl->gmaster_node = NULL;
+    pl->gmaster_mode = GMASTER_MODE_NO;
+    pl->gmaster_node = NULL;
 
     pl->mute_freq_shout=0;
     pl->mute_freq_say=0;
@@ -605,11 +605,11 @@ void check_login(object *op)
         if (!strcmp(buf, "endplst"))
             break;
         else if (!strcmp(buf, "dm_VOL"))
-			pl->gmaster_mode = GMASTER_MODE_VOL;
+            pl->gmaster_mode = GMASTER_MODE_VOL;
         else if (!strcmp(buf, "dm_GM"))
-			pl->gmaster_mode = GMASTER_MODE_GM;
+            pl->gmaster_mode = GMASTER_MODE_GM;
         else if (!strcmp(buf, "dm_DM"))
-			pl->gmaster_mode = GMASTER_MODE_DM;
+            pl->gmaster_mode = GMASTER_MODE_DM;
         else if (!strcmp(buf, "mute"))
             pl->mute_counter = pticks+(unsigned long)value;
         else if (!strcmp(buf, "dm_stealth"))
@@ -972,19 +972,19 @@ void check_login(object *op)
             for (ol = gmaster_list_VOL; ol; ol = ol->next)
                 new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
         }
-		if(gmaster_list_DM || gmaster_list_GM)
-		{
-			objectlink *ol;
-			char buf_dm[64];
+        if(gmaster_list_DM || gmaster_list_GM)
+        {
+            objectlink *ol;
+            char buf_dm[64];
 
-			sprintf(buf_dm, "DM: %d players now playing.", player_active);
+            sprintf(buf_dm, "DM: %d players now playing.", player_active);
 
-			for(ol = gmaster_list_DM;ol;ol=ol->next)
-				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+            for(ol = gmaster_list_DM;ol;ol=ol->next)
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 
-			for(ol = gmaster_list_GM;ol;ol=ol->next)
-				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-		}
+            for(ol = gmaster_list_GM;ol;ol=ol->next)
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+        }
     }
 #ifdef PLUGINS
     /* GROS : Here we handle the LOGIN global event */
@@ -1017,18 +1017,18 @@ void check_login(object *op)
             return;
     }
 
-	/* lets check we had saved last time in a gmaster mode.
-	 * if so, check the setting is still allowed and if so,
-	 * set the player to it.
-	 */
-	if(pl->gmaster_mode != GMASTER_MODE_NO)
-	{
-		int mode = pl->gmaster_mode;
+    /* lets check we had saved last time in a gmaster mode.
+     * if so, check the setting is still allowed and if so,
+     * set the player to it.
+     */
+    if(pl->gmaster_mode != GMASTER_MODE_NO)
+    {
+        int mode = pl->gmaster_mode;
 
-		pl->gmaster_mode = GMASTER_MODE_NO;
-		if(check_gmaster_list(pl, mode))
-			set_gmaster_mode(pl, mode);
-	}
+        pl->gmaster_mode = GMASTER_MODE_NO;
+        if(check_gmaster_list(pl, mode))
+            set_gmaster_mode(pl, mode);
+    }
 
     /* Do this after checking for death - no reason sucking up bandwidth if
      * the data isn't needed.
@@ -1060,8 +1060,8 @@ void check_login(object *op)
     enter_exit(op, NULL); /* kick player on map - load map if needed */
 
     pl->socket.update_tile = 0;
-	pl->socket.look_position = 0;
-	pl->socket.look_position_container = 0;
+    pl->socket.look_position = 0;
+    pl->socket.look_position_container = 0;
     pl->socket.ext_title_flag = 1;
 
     pl->ob->direction = 4;

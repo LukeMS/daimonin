@@ -238,9 +238,9 @@ static int Map_PlaySound(lua_State *L)
 
 static int Map_Message(lua_State *L)
 {
-    int			 color = NDI_BLUE |NDI_UNIQUE, x, y, d;
-    char		*message;
-    lua_object	*map;
+    int             color = NDI_BLUE |NDI_UNIQUE, x, y, d;
+    char        *message;
+    lua_object    *map;
 
     get_lua_args(L, "Miiis|i", &map, &x, &y, &d, &message, &color);
 

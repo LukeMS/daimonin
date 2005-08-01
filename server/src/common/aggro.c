@@ -4,7 +4,7 @@
 
     Copyright (C) 2001-2005 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,12 +42,12 @@
 static uint32 exp_calc_tag=1; /* used to tag the player/group */
 
 /*
- *	TODO: Quick access of this structures by a pointer initialized for players in fix_player and placed
+ *    TODO: Quick access of this structures by a pointer initialized for players in fix_player and placed
  *  in the player struct.
  */
 
 /*
- *	TODO: The code don't handle pet damage itself - its redirected to players.
+ *    TODO: The code don't handle pet damage itself - its redirected to players.
  *  i played around a bit but i think its better to use a special "pet damage"
  *  history and adding it at the same time to the owner. Using 2 values:
  *  one is the "real" damage we use for exp, one is the "counted" exp we use for aggro.
@@ -60,35 +60,35 @@ static uint32 exp_calc_tag=1; /* used to tag the player/group */
  */
 struct obj *aggro_get_damage(struct obj *target, struct obj *hitter)
 {
-	struct obj *tmp, *tmp2;
-	/* damage objects are in a 2nd aggro_history object inside the base aggro history. */
-	for(tmp=target->inv;tmp;tmp=tmp->below) /* get 1st container object */
-	{
-		if(tmp->type == TYPE_AGGRO_HISTORY )
-		{
-			for(tmp=tmp->inv;tmp;tmp=tmp->below)/* the special damage container - also AGGRO_HIST */
-			{
-				if(tmp->type == TYPE_AGGRO_HISTORY)
-				{
-					for(tmp=tmp->inv;tmp;tmp=tmp2) /* here are the damage infos */
-					{
-						tmp2=tmp->below;
-						if(tmp->type == TYPE_DAMAGE_INFO)
-						{
-							if(tmp->weight_limit == hitter->weight_limit)
-								return tmp;
-							/* because we have this sucker accessed...lets do some gc on the fly */
-							if (tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
-								remove_ob(tmp);
-						}
-					}
-					break;
-				}
-			}
-			break;
-		}
-	}
-	return tmp;
+    struct obj *tmp, *tmp2;
+    /* damage objects are in a 2nd aggro_history object inside the base aggro history. */
+    for(tmp=target->inv;tmp;tmp=tmp->below) /* get 1st container object */
+    {
+        if(tmp->type == TYPE_AGGRO_HISTORY )
+        {
+            for(tmp=tmp->inv;tmp;tmp=tmp->below)/* the special damage container - also AGGRO_HIST */
+            {
+                if(tmp->type == TYPE_AGGRO_HISTORY)
+                {
+                    for(tmp=tmp->inv;tmp;tmp=tmp2) /* here are the damage infos */
+                    {
+                        tmp2=tmp->below;
+                        if(tmp->type == TYPE_DAMAGE_INFO)
+                        {
+                            if(tmp->weight_limit == hitter->weight_limit)
+                                return tmp;
+                            /* because we have this sucker accessed...lets do some gc on the fly */
+                            if (tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
+                                remove_ob(tmp);
+                        }
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    return tmp;
 }
 
 /*
@@ -96,34 +96,34 @@ struct obj *aggro_get_damage(struct obj *target, struct obj *hitter)
  */
 struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
 {
-	struct obj *tmp_t, *tmp;
+    struct obj *tmp_t, *tmp;
 
-	/* find or insert base container */
-	for(tmp_t=target->inv;tmp_t;tmp_t=tmp_t->below)
-	{
-		if(tmp_t->type == TYPE_AGGRO_HISTORY )
-			break;
-	}
-	if(!tmp_t)
-		tmp_t = insert_ob_in_ob(arch_to_object(global_aggro_history_arch), target);
+    /* find or insert base container */
+    for(tmp_t=target->inv;tmp_t;tmp_t=tmp_t->below)
+    {
+        if(tmp_t->type == TYPE_AGGRO_HISTORY )
+            break;
+    }
+    if(!tmp_t)
+        tmp_t = insert_ob_in_ob(arch_to_object(global_aggro_history_arch), target);
 
-	/* find or insert 2nd damage info container */
-	for(tmp=tmp_t->inv;tmp;tmp=tmp->below)
-	{
-		if(tmp->type == TYPE_AGGRO_HISTORY)
-			break;
-	}
-	if(!tmp)
-		tmp = insert_ob_in_ob(arch_to_object(global_aggro_history_arch),  tmp_t);
+    /* find or insert 2nd damage info container */
+    for(tmp=tmp_t->inv;tmp;tmp=tmp->below)
+    {
+        if(tmp->type == TYPE_AGGRO_HISTORY)
+            break;
+    }
+    if(!tmp)
+        tmp = insert_ob_in_ob(arch_to_object(global_aggro_history_arch),  tmp_t);
 
-	tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), tmp);
+    tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), tmp);
 
-	/* damage source is hitter and tick global_round_tag */
-	tmp->weight_limit = hitter->weight_limit;
+    /* damage source is hitter and tick global_round_tag */
+    tmp->weight_limit = hitter->weight_limit;
     /*LOG(-1,"add dmg: %x\n", hitter->weight_limit); */
-	tmp->damage_round_tag = ROUND_TAG;
+    tmp->damage_round_tag = ROUND_TAG;
 
-	return tmp;
+    return tmp;
 }
 
 
@@ -133,16 +133,16 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
  * is done from the hitter to the
  */
 struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
-							  struct obj *hitter, struct obj *hitter_owner, int dmg, int flags)
+                              struct obj *hitter, struct obj *hitter_owner, int dmg, int flags)
 {
-	struct obj *history, *aggro, *tmp;
+    struct obj *history, *aggro, *tmp;
     int skill_nr = 0;
 
-	/* no legal hitter, no need for aggro.
-	 * TODO: perhaps we will add a kind of "neutral" damage
-	 * but atm a player will get full exp when killing a damaged target.
-	 * lets give the players some gifts.
-	 */
+    /* no legal hitter, no need for aggro.
+     * TODO: perhaps we will add a kind of "neutral" damage
+     * but atm a player will get full exp when killing a damaged target.
+     * lets give the players some gifts.
+     */
 
     if(hitter && hitter->chosen_skill)
         skill_nr = hitter->chosen_skill->stats.sp;
@@ -158,114 +158,114 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
         skills[hitter_owner->chosen_skill->stats.sp].name,hitter_owner->chosen_skill->stats.sp);
     */
 
-	if(hitter_owner && (hitter_owner==hitter || !IS_LIVE(hitter_owner)))
-		hitter_owner = NULL;
-	if(hitter && !IS_LIVE(hitter))
-		hitter = NULL;
-	if(!hitter && !hitter_owner)
-		return NULL;
+    if(hitter_owner && (hitter_owner==hitter || !IS_LIVE(hitter_owner)))
+        hitter_owner = NULL;
+    if(hitter && !IS_LIVE(hitter))
+        hitter = NULL;
+    if(!hitter && !hitter_owner)
+        return NULL;
 
-	/* This is the interface to the AI system. At least for now =) */
+    /* This is the interface to the AI system. At least for now =) */
     if(target->type == MONSTER)
-	{
-    	/* Update hittee's friendship level towards hitter */
+    {
+        /* Update hittee's friendship level towards hitter */
         object                 *root_hitter = hitter_owner ? hitter_owner : hitter;
         struct mob_known_obj   *enemy       = register_npc_known_obj(target, root_hitter, -dmg);
 
-		/* Attacking someone neutral always makes you an enemy (for now) */
+        /* Attacking someone neutral always makes you an enemy (for now) */
         if (enemy && enemy->friendship > FRIENDSHIP_ATTACK && dmg > 0)
             enemy->friendship += FRIENDSHIP_ATTACK;
     }
 
-	/* we only use aggro history for
-	 * a.) target is a player or IS_LIVE() (target_owner too)
-	 * b.) hitter and/or hitter_object is player/IS_LIVE
-	 */
-	if(IS_LIVE(target))
-	{
+    /* we only use aggro history for
+     * a.) target is a player or IS_LIVE() (target_owner too)
+     * b.) hitter and/or hitter_object is player/IS_LIVE
+     */
+    if(IS_LIVE(target))
+    {
 
-		/* get or create a aggro history container */
-		for(history=target->inv;history;history=history->below)
-		{
-			if(history->type == TYPE_AGGRO_HISTORY)
-				break;
-		}
-		if(!history)
-			history = insert_ob_in_ob(arch_to_object(global_aggro_history_arch), target);
+        /* get or create a aggro history container */
+        for(history=target->inv;history;history=history->below)
+        {
+            if(history->type == TYPE_AGGRO_HISTORY)
+                break;
+        }
+        if(!history)
+            history = insert_ob_in_ob(arch_to_object(global_aggro_history_arch), target);
 
-		/*
-		 *	TODO: hitter != NULL & hitter_owner != NULL
-		 *  thats means pet/golem and its owner.
-		 *  ATM we should have one ptr NULL.
-		 *  In any case, we use the owner.
-		 */
-		if(hitter && hitter_owner)
-			LOG(llevDebug,"Bug/Warning: hitter %s and owner %s passed aggro_update_check\n", query_name(hitter), query_name(hitter_owner));
-		if(hitter_owner)
-			hitter=hitter_owner; /* TODO: change when we do pet/owner handling */
+        /*
+         *    TODO: hitter != NULL & hitter_owner != NULL
+         *  thats means pet/golem and its owner.
+         *  ATM we should have one ptr NULL.
+         *  In any case, we use the owner.
+         */
+        if(hitter && hitter_owner)
+            LOG(llevDebug,"Bug/Warning: hitter %s and owner %s passed aggro_update_check\n", query_name(hitter), query_name(hitter_owner));
+        if(hitter_owner)
+            hitter=hitter_owner; /* TODO: change when we do pet/owner handling */
 
-		if(hitter)
-		{
-			/* check for aggro history of this object */
-			for(aggro=history->inv;aggro;aggro=tmp)
-			{
-				tmp=aggro->below;
-				if(aggro->type == TYPE_DAMAGE_INFO)
-				{
-					if(aggro->enemy_count == hitter->count)
-						break;
-					if(aggro->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
-						remove_ob(aggro);
-				}
-			}
+        if(hitter)
+        {
+            /* check for aggro history of this object */
+            for(aggro=history->inv;aggro;aggro=tmp)
+            {
+                tmp=aggro->below;
+                if(aggro->type == TYPE_DAMAGE_INFO)
+                {
+                    if(aggro->enemy_count == hitter->count)
+                        break;
+                    if(aggro->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
+                        remove_ob(aggro);
+                }
+            }
 
-			if(aggro)
-			{
-				aggro->stats.hp += dmg;
-				/* TODO: set flags for some specials */
-			}
-			else
-			{
-				aggro = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), history);
-				aggro->enemy_count = hitter->count;	/* tag so we can identify the hitter */
-				aggro->enemy = hitter;	/* so we can find later this damage dealer */
-				aggro->stats.hp = dmg;
+            if(aggro)
+            {
+                aggro->stats.hp += dmg;
+                /* TODO: set flags for some specials */
+            }
+            else
+            {
+                aggro = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), history);
+                aggro->enemy_count = hitter->count;    /* tag so we can identify the hitter */
+                aggro->enemy = hitter;    /* so we can find later this damage dealer */
+                aggro->stats.hp = dmg;
                 aggro->update_tag = ROUND_TAG; /* using this we can determinate who does first damage */
-				if(hitter->type == PLAYER)
-					aggro->last_sp = PLAYER;
-			}
-			aggro->damage_round_tag = ROUND_TAG; /* last time this hitter does some = right now */
+                if(hitter->type == PLAYER)
+                    aggro->last_sp = PLAYER;
+            }
+            aggro->damage_round_tag = ROUND_TAG; /* last time this hitter does some = right now */
 
-			/* for players, we want to store the used skills */
-			if(hitter->type == PLAYER)
-			{
-				for(tmp=aggro->inv;tmp;tmp=tmp->below)
-				{
-					if(tmp->type == TYPE_DAMAGE_INFO && tmp->last_heal == skill_nr)
-						break;
-				}
-				if(!tmp)
-				{
-					tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), aggro);
-					tmp->last_heal = skill_nr;
-					tmp->stats.hp = dmg;
+            /* for players, we want to store the used skills */
+            if(hitter->type == PLAYER)
+            {
+                for(tmp=aggro->inv;tmp;tmp=tmp->below)
+                {
+                    if(tmp->type == TYPE_DAMAGE_INFO && tmp->last_heal == skill_nr)
+                        break;
+                }
+                if(!tmp)
+                {
+                    tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), aggro);
+                    tmp->last_heal = skill_nr;
+                    tmp->stats.hp = dmg;
                     tmp->last_sp = PLAYER;
                 }
-				else
-					tmp->stats.hp += dmg;
-			}
-		}
+                else
+                    tmp->stats.hp += dmg;
+            }
+        }
 
-	}
+    }
 
-	/* TODO - handle target_owner. Lets say we attack a pet - thats target.
-	 * Then we need to tell target_owner whats going on and mark hitter/hitter_object as
-	 * bad guy here.
-	 */
+    /* TODO - handle target_owner. Lets say we attack a pet - thats target.
+     * Then we need to tell target_owner whats going on and mark hitter/hitter_object as
+     * bad guy here.
+     */
 
-	/* TODO: init history container object with master aggro holder */
+    /* TODO: init history container object with master aggro holder */
 
-	return aggro;
+    return aggro;
 }
 
 
@@ -342,11 +342,11 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     /* calc active dmg */
     calc_active_skill_dmg(aggro, &s1, &s2, &s3);
 
-	/* check kill quests */
-	if(pl->quests_type_kill && pl->quests_type_kill->inv)
-		check_kill_quest_event(hitter, victim);
+    /* check kill quests */
+    if(pl->quests_type_kill && pl->quests_type_kill->inv)
+        check_kill_quest_event(hitter, victim);
 
-		/* thats important. EXP gain is related to the level of our highest used skill.
+        /* thats important. EXP gain is related to the level of our highest used skill.
      * that exp is parted to the used skills. That *can* right used give alot more
      * exp as in the old style. Because the exp is counted BEFORE we calc the exp
      * max. cap. Killing higher mobs will give alot more total exp.
@@ -517,9 +517,9 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* first thing: we get the highest member */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-		/* check kill quests */
-		if(CONTR(tmp)->quests_type_kill && CONTR(tmp)->quests_type_kill->inv)
-			check_kill_quest_event(tmp, victim);
+        /* check kill quests */
+        if(CONTR(tmp)->quests_type_kill && CONTR(tmp)->quests_type_kill->inv)
+            check_kill_quest_event(tmp, victim);
 
         if(high->level < tmp->level)
             high = tmp;
@@ -605,60 +605,60 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 
 /*
  *  Analyze all aggro info in this object and give player exp basing on this info.
- *	Well, if we ever merge libcross.a with the server we should merge all in one exp.c module
+ *    Well, if we ever merge libcross.a with the server we should merge all in one exp.c module
  *  If slayer is != NULL we use it to determinate we have kill steal or a NPC kill.
  *  We decide here what we will do in that cases.
  *  Return: The corpse owner (NULL: There is no owner, target was to low, NPC kill...)
  */
 object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg)
 {
-	object *tmp, *tmp2, *tmp3, *history, *highest_hitter=NULL;
-	int ret, total_dmg=0,total_dmg_all=0, highest_dmg;
+    object *tmp, *tmp2, *tmp3, *history, *highest_hitter=NULL;
+    int ret, total_dmg=0,total_dmg_all=0, highest_dmg;
 
-	/* slayer is not a player (if the kill hitter was a pet, slayer was set to owner) */
-//	if(slayer && slayer->type != PLAYER)
-//		return;
+    /* slayer is not a player (if the kill hitter was a pet, slayer was set to owner) */
+//    if(slayer && slayer->type != PLAYER)
+//        return;
 
-	/* TODO: don't give exp for player pets - lets add a "iam a pet" flag here later */
+    /* TODO: don't give exp for player pets - lets add a "iam a pet" flag here later */
 
-	for(history=victim->inv;history;history=history->below)
-	{
-		if(history->type == TYPE_AGGRO_HISTORY )
-			break;
-	}
-	if(!history)
-		return NULL;
+    for(history=victim->inv;history;history=history->below)
+    {
+        if(history->type == TYPE_AGGRO_HISTORY )
+            break;
+    }
+    if(!history)
+        return NULL;
 
-	/* count damage, ignore non player damage.
-	 * we are fair - if helped us a NPC, we ignored
-	 * their damage here.
-	*/
+    /* count damage, ignore non player damage.
+     * we are fair - if helped us a NPC, we ignored
+     * their damage here.
+    */
     exp_calc_tag++; /* increase tag counter */
 
-	/* TODO: lets look we have a kill steal here. */
-	if(slayer)
-	{
-	}
+    /* TODO: lets look we have a kill steal here. */
+    if(slayer)
+    {
+    }
 
-	/* lets sort out every illegal damage which would count */
-	for(tmp=history->inv;tmp;tmp=tmp2)
-	{
-		tmp2 = tmp->below;
-		total_dmg_all += tmp->stats.hp;
-		/* remove illegal enemy pointer and/or non player dmg */
-		if(tmp->type != TYPE_DAMAGE_INFO || tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG ||
-						  !tmp->enemy || tmp->enemy->count!=tmp->enemy_count /*|| tmp->enemy->type!=PLAYER*/)
-			remove_ob(tmp);
-		else
-			total_dmg += tmp->stats.hp;
-	}
+    /* lets sort out every illegal damage which would count */
+    for(tmp=history->inv;tmp;tmp=tmp2)
+    {
+        tmp2 = tmp->below;
+        total_dmg_all += tmp->stats.hp;
+        /* remove illegal enemy pointer and/or non player dmg */
+        if(tmp->type != TYPE_DAMAGE_INFO || tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG ||
+                          !tmp->enemy || tmp->enemy->count!=tmp->enemy_count /*|| tmp->enemy->type!=PLAYER*/)
+            remove_ob(tmp);
+        else
+            total_dmg += tmp->stats.hp;
+    }
 #ifdef DEBUG_AGGRO
-	LOG(-1,"%s KILLED (%d). All dmg: %d  - player dmg: %d \n", query_name(victim), history->stats.hp, total_dmg_all, total_dmg);
+    LOG(-1,"%s KILLED (%d). All dmg: %d  - player dmg: %d \n", query_name(victim), history->stats.hp, total_dmg_all, total_dmg);
 #endif
     highest_dmg = -1;
     /* now run through the dmg left and give all their share of the exp */
-	while(history->inv)
-	{
+    while(history->inv)
+    {
         tmp = history->inv;
 #ifdef DEBUG_AGGRO
         LOG(-1,"--> %s [%s] (%x)--> dmg done: %d\n", query_name(tmp->enemy),tmp->last_sp == PLAYER?"player":"non player",tmp->enemy->count, tmp->stats.hp );
@@ -715,7 +715,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
             }
             remove_ob(tmp);
         }
-	}
+    }
     if(!highest_hitter) /* funny situation: A shot arrow to C, B killed A, arrow killed C - slayer A is dead = no highest_hitter */
         return NULL;
 
@@ -740,9 +740,9 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
     LOG(-1,"end.\n");
 #endif
 
-	/* be sure not to drop items */
+    /* be sure not to drop items */
     if(ret == FALSE)
-		SET_FLAG(victim, FLAG_STARTEQUIP);
+        SET_FLAG(victim, FLAG_STARTEQUIP);
 
     return highest_hitter->enemy; /* used to create the corpse bounty */
 }

@@ -40,8 +40,8 @@ typedef struct oblnk
         struct oblnk               *link;
         object                     *ob;
         struct treasureliststruct  *tl;
-		struct _gmaster_struct	   *gm;
-		struct ban_struct		   *ban;
+        struct _gmaster_struct       *gm;
+        struct ban_struct           *ban;
     } objlink;
 
     struct oblnk               *prev;
@@ -51,10 +51,10 @@ typedef struct oblnk
     int                         value;
     uint32                      flags;
     uint32                      ref_count;
-	union
-	{											/* a local link paramter */
-		struct _tlist_tweak		*tl_tweak;
-	} parmlink;
+    union
+    {                                            /* a local link paramter */
+        struct _tlist_tweak        *tl_tweak;
+    } parmlink;
 } objectlink;
 
 /* oblink union is used as */

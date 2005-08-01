@@ -10,11 +10,11 @@
 #include "lstate.h"
 
 
-#define pcRel(pc, p)	(cast(int, (pc) - (p)->code) - 1)
+#define pcRel(pc, p)    (cast(int, (pc) - (p)->code) - 1)
 
-#define getline(f,pc)	(((f)->lineinfo) ? (f)->lineinfo[pc] : 0)
+#define getline(f,pc)    (((f)->lineinfo) ? (f)->lineinfo[pc] : 0)
 
-#define resethookcount(L)	(L->hookcount = L->basehookcount)
+#define resethookcount(L)    (L->hookcount = L->basehookcount)
 
 
 void luaG_inithooks (lua_State *L);

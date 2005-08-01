@@ -9,9 +9,9 @@
 #include "lobject.h"
 
 
-#define gnode(t,i)	(&(t)->node[i])
-#define gkey(n)		(&(n)->i_key)
-#define gval(n)		(&(n)->i_val)
+#define gnode(t,i)    (&(t)->node[i])
+#define gkey(n)        (&(n)->i_key)
+#define gval(n)        (&(n)->i_val)
 
 
 const TObject *luaH_getnum (Table *t, int key);

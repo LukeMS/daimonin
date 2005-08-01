@@ -40,7 +40,7 @@
 sint64 query_cost(object *tmp, object *who, int flag)
 {
     sint64  val;
-	double  diff;
+    double  diff;
     int     number; /* used to better calculate value */
     int     charisma    = 11; /* thas a neutral base value */
 
@@ -168,7 +168,7 @@ char * cost_string_from_value(sint64 cost)
     archetype  *coin, *next_coin;
     char       *endbuf;
     uint32      num;
-	int         cointype = 0;
+    int         cointype = 0;
 
     coin = find_next_coin(cost, &cointype);
     if (coin == NULL)
@@ -176,7 +176,7 @@ char * cost_string_from_value(sint64 cost)
 
     num = (uint32) (cost / coin->clone.value);
     cost -= num * coin->clone.value;
-	/* careful - never set a coin arch to material_real = -1 ! */
+    /* careful - never set a coin arch to material_real = -1 ! */
     if (num == 1)
         sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
     else
@@ -295,7 +295,7 @@ int pay_for_item(object *op, object *pl)
  * containers that can hold money, until the op is paid for.        */
 sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
 {
-	sint64		remain;
+    sint64        remain;
     int         count, i;
     object     *tmp, *coin_objs[NUM_COINS], *next;
     archetype  *at;
@@ -342,8 +342,8 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             if (i == NUM_COINS)
                 LOG(llevBug, "BUG: in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
         }
-		else if (tmp->type == CONTAINER)
-			remain = pay_from_container(op, tmp, remain);
+        else if (tmp->type == CONTAINER)
+            remain = pay_from_container(op, tmp, remain);
     }
 
     /* Fill in any gaps in the coin_objs array - needed to make change. */
@@ -374,14 +374,14 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             num_coins = coin_objs[i]->nrof;
         }
 
-		if(num_coins>(2^32))
-		{
-			LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %di,\n", __LINE__ , i);
-			num_coins = (2^32);
-		}
+        if(num_coins>(2^32))
+        {
+            LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %di,\n", __LINE__ , i);
+            num_coins = (2^32);
+        }
 
-		remain -= num_coins * coin_objs[i]->value;
-		coin_objs[i]->nrof -= (uint32) num_coins;
+        remain -= num_coins * coin_objs[i]->value;
+        coin_objs[i]->nrof -= (uint32) num_coins;
         /* Now start making change.  Start at the coin value
          * below the one we just did, and work down to
          * the lowest value.
@@ -486,11 +486,11 @@ int get_payment(object *pl)
  * not as general as pay_for_item in finding money types - each     *
  * new money type needs to be explicity code in here.           */
 /* Modified to fill available race: gold containers before dumping  *
- * remaining coins in character's inventory. -- DAMN 			*/
+ * remaining coins in character's inventory. -- DAMN             */
 void sell_item(object *op, object *pl, sint64 value)
 {
     sint64      i;
-	int			count;
+    int            count;
     object     *tmp;
     object     *pouch;
     archetype  *at;
@@ -761,8 +761,8 @@ int query_money_type(object *op, int value)
         else if (tmp->type == CONTAINER && !tmp->slaying && ((!tmp->race || strstr(tmp->race, "gold"))))
             total += query_money_type(tmp, value);
 
-		if(total >= (sint64) value)
-			break;
+        if(total >= (sint64) value)
+            break;
     }
     return (int) total;
 }
@@ -816,15 +816,15 @@ sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
 /* add number of money coins to a player */
 void add_money_to_player(object *pl, int c, int s, int g, int m)
 {
-	/* we don't handle decrease/remove of coins (<0) atm */
-	if(m>0)
-		insert_money_in_player(pl, &coins_arch[0]->clone, m);
-	if(g>0)
-		insert_money_in_player(pl, &coins_arch[1]->clone, g);
-	if(s>0)
-		insert_money_in_player(pl, &coins_arch[2]->clone, s);
-	if(c>0)
-		insert_money_in_player(pl, &coins_arch[3]->clone, c);
+    /* we don't handle decrease/remove of coins (<0) atm */
+    if(m>0)
+        insert_money_in_player(pl, &coins_arch[0]->clone, m);
+    if(g>0)
+        insert_money_in_player(pl, &coins_arch[1]->clone, g);
+    if(s>0)
+        insert_money_in_player(pl, &coins_arch[2]->clone, s);
+    if(c>0)
+        insert_money_in_player(pl, &coins_arch[3]->clone, c);
 }
 
 void insert_money_in_player(object *pl, object *money, uint32 nrof)

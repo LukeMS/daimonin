@@ -16,13 +16,13 @@
 ** macro to control inclusion of some hard tests on stack reallocation
 */
 #ifndef HARDSTACKTESTS
-#define condhardstacktests(x)	{ /* empty */ }
+#define condhardstacktests(x)    { /* empty */ }
 #else
-#define condhardstacktests(x)	x
+#define condhardstacktests(x)    x
 #endif
 
 
-#define luaD_checkstack(L,n)	\
+#define luaD_checkstack(L,n)    \
   if ((char *)L->stack_last - (char *)L->top <= (n)*(int)sizeof(TObject)) \
     luaD_growstack(L, n); \
   else condhardstacktests(luaD_reallocstack(L, L->stacksize));
@@ -30,11 +30,11 @@
 
 #define incr_top(L) {luaD_checkstack(L,1); L->top++;}
 
-#define savestack(L,p)		((char *)(p) - (char *)L->stack)
-#define restorestack(L,n)	((TObject *)((char *)L->stack + (n)))
+#define savestack(L,p)        ((char *)(p) - (char *)L->stack)
+#define restorestack(L,n)    ((TObject *)((char *)L->stack + (n)))
 
-#define saveci(L,p)		((char *)(p) - (char *)L->base_ci)
-#define restoreci(L,n)		((CallInfo *)((char *)L->base_ci + (n)))
+#define saveci(L,p)        ((char *)(p) - (char *)L->base_ci)
+#define restoreci(L,n)        ((CallInfo *)((char *)L->base_ci + (n)))
 
 
 /* type of protected functions, to be ran by `runprotected' */

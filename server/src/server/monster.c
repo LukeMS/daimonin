@@ -47,7 +47,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     segment_rv.direction = 1234542;
 
     pf = MOB_PATHDATA(op);
-    
+
     if (op->map == NULL)
     {
         LOG(llevBug, "BUG: calc_direction_towards(): '%s' not on a map\n", STRING_OBJ_NAME(op));
@@ -62,7 +62,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
 
     /* Get general direction and distance to target */
     if(! get_rangevector_full(
-            op, op->map, op->x, op->y, 
+            op, op->map, op->x, op->y,
             NULL, map, x, y, &target_rv,
             RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
@@ -82,10 +82,10 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     }
 
 #ifdef DEBUG_PATHFINDING
-    LOG(llevDebug, "calc_direction_towards() '%s'->'%s' (distance = %d)\n", 
+    LOG(llevDebug, "calc_direction_towards() '%s'->'%s' (distance = %d)\n",
             STRING_OBJ_NAME(op), STRING_OBJ_NAME(target), target_rv.distance);
 #endif
-    
+
     /* Clean up old path */
     if (pf->path)
     {
@@ -131,15 +131,15 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     path_map = ready_map_name(pf->path->map, MAP_NAME_SHARED);
     /* Walk towards next precomputed coordinate */
     if(! get_rangevector_full(
-            op, op->map, op->x, op->y, 
-            NULL, path_map, pf->path->x, pf->path->y, 
+            op, op->map, op->x, op->y,
+            NULL, path_map, pf->path->x, pf->path->y,
             &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
-        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s:%d:%d)\n", 
-                STRING_OBJ_NAME(op), 
+        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s:%d:%d)\n",
+                STRING_OBJ_NAME(op),
                 STRING_MAP_NAME(op->map), op->x, op->y,
                 STRING_MAP_NAME(path_map), pf->path->x, pf->path->y);
- 
+
         /* Discard invalid path. This will force a new path request later */
         free_path(pf->path);
         pf->path = NULL;
@@ -202,13 +202,13 @@ static int calc_direction_towards_object(object *op, object *target)
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
         return 0;
     }
-    
+
     if(target->map == NULL) {
         LOG(llevBug, "BUG: calc_direction_towards_object(): target->map == NULL (%s <->%s)\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
         return 0;
     }
-    
+
     /* Request new path if target has moved too much */
     if (MOB_PATHDATA(op)->path
      && MOB_PATHDATA(op)->goal_map
@@ -231,8 +231,8 @@ static int calc_direction_towards_object(object *op, object *target)
          * without seeing, and other objects that we have to search or track */
         /* TODO make sure maps are loaded (here and everywhere else) */
         if (get_rangevector_full(
-                    target, target->map, target->x, target->y, 
-                    NULL, goal_map, MOB_PATHDATA(op)->goal_x, MOB_PATHDATA(op)->goal_y, 
+                    target, target->map, target->x, target->y,
+                    NULL, goal_map, MOB_PATHDATA(op)->goal_x, MOB_PATHDATA(op)->goal_y,
                     &rv_goal, RV_DIAGONAL_DISTANCE)
                 && get_rangevector_full(
                     op, op->map, op->x, op->y,
@@ -356,7 +356,7 @@ static inline void cleanup_mob_knowns(object *op, struct mob_known_obj **first)
 {
     struct mob_known_obj   *tmp;
     for (tmp = *first; tmp; tmp = tmp->next)
-    {            
+    {
         if (!OBJECT_VALID(tmp->obj, tmp->obj_count))
             remove_mob_known(tmp, first);
         else if(ROUND_TAG - tmp->last_seen > MAX_KNOWN_OBJ_AGE)
@@ -476,7 +476,7 @@ int move_monster(object *op)
             ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
     }
 
-    /* Only do movement if we are actually on a map 
+    /* Only do movement if we are actually on a map
      * (jumping out from a container should be an action) */
     if(op->map && op->env == NULL)
     {
@@ -511,7 +511,7 @@ int move_monster(object *op)
             }
 
             /* Try to avoid standing still if we aren't allowed to */
-            if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) 
+            if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)))
             {
                 success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
             }
@@ -546,7 +546,7 @@ int move_monster(object *op)
         MOB_DATA(op)->idle_time = 0;
     else
         MOB_DATA(op)->idle_time++;
-    
+
     return 0;
 }
 
@@ -601,7 +601,7 @@ void object_accept_path(object *op)
         if (target->type == TYPE_BASE_INFO)
         {
             goal_map = normalize_and_ready_map(op->map, &target->slaying);
-/*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n", 
+/*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n",
                     STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), op->map,
                     STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_map), goal_map);*/
         }
@@ -615,12 +615,12 @@ void object_accept_path(object *op)
     }
 
     /* Make sure we aren't already close enough */
-    get_rangevector_full(op, op->map, op->x, op->y, 
-            NULL, goal_map, goal_x, goal_y, 
+    get_rangevector_full(op, op->map, op->x, op->y,
+            NULL, goal_map, goal_x, goal_y,
             &v, RV_DIAGONAL_DISTANCE);
     if(v.distance <= 1)
         return;
-    
+
     /* 2) Do the actual pathfinding: find a path and compress it */
     path = compress_path(find_path(op, op->map, op->x, op->y, goal_map, goal_x, goal_y));
 

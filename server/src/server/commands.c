@@ -64,7 +64,7 @@ CommArray_s Commands[]                  =
     {"/gsay",         command_gsay,           1.0f},
     {"/shout",        command_shout,          1.0f},
     {"/tell",         command_tell,           1.0f},
-    {"/talk",		  command_t_tell,         1.0f},
+    {"/talk",          command_t_tell,         1.0f},
     {"/who",          command_who,            5.0f},
     {"/mapinfo",      command_mapinfo,        5.0f},
     {"/motd",         command_motd,           5.0f},
@@ -78,29 +78,29 @@ CommArray_s Commands[]                  =
     {"/ready_skill",  command_rskill,         0.1f},
     {"/silent_login", command_silent_login,   0.0f},
 
-	/* group commands */
-    {"/invite",		command_party_invite,	4.0f},
-    {"/join",			command_party_join,		0.1f},
-    {"/deny",			command_party_deny,		0.1f},
-    {"/leave",		command_party_leave,	4.0f},
-    {"/remove",		command_party_remove,	4.0f},
+    /* group commands */
+    {"/invite",        command_party_invite,    4.0f},
+    {"/join",            command_party_join,        0.1f},
+    {"/deny",            command_party_deny,        0.1f},
+    {"/leave",        command_party_leave,    4.0f},
+    {"/remove",        command_party_remove,    4.0f},
 
     {"/dm",           command_dm,             1.0f},
     {"/gm",           command_gm,             1.0f},
     {"/vol",          command_vol,            1.0f},
-	/* VOL/GM/DM */
-    {"/dm_list",		command_dm_list,1.0f},
-	{"/malloc",			command_malloc,   0.0},		/* check the server stats */
-	{"/kick",			command_kickcmd, 0.0},			/* kick with a 1m temp login ban */
+    /* VOL/GM/DM */
+    {"/dm_list",        command_dm_list,1.0f},
+    {"/malloc",            command_malloc,   0.0},        /* check the server stats */
+    {"/kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
 
-	{"/mute",			command_mute,1.0f},			/* max 5 min for VOL */
+    {"/mute",            command_mute,1.0f},            /* max 5 min for VOL */
 
-	/* GM/DM */
-	{"/summon",			command_summon,1.0},
-    {"/teleport",		command_teleport,1.0f},
-	{"/ban",			command_ban,0.0},
+    /* GM/DM */
+    {"/summon",            command_summon,1.0},
+    {"/teleport",        command_teleport,1.0f},
+    {"/ban",            command_ban,0.0},
 
-	{"/silence",		command_silence,0.0},
+    {"/silence",        command_silence,0.0},
 
 
     /*{"/mark",           command_mark,           1.0f},*/
@@ -152,35 +152,35 @@ const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof
  */
 CommArray_s WizCommands[]           =
 {
-	{"/dm_set",		  command_dm_set,         0.0f},
+    {"/dm_set",          command_dm_set,         0.0f},
     {"/plugin",command_loadplugin,0.0},
-	{"/pluglist",command_listplugins,0.0},
+    {"/pluglist",command_listplugins,0.0},
 
-	{"/inventory",		command_inventory,1.0f},	/* inv check of player x for exampel to check quest items */
+    {"/inventory",        command_inventory,1.0f},    /* inv check of player x for exampel to check quest items */
     /* DM/WIZ commands */
-	{"/goto", command_goto,0.0},
-	{"/shutdown", command_start_shutdown,0.0},
+    {"/goto", command_goto,0.0},
+    {"/shutdown", command_start_shutdown,0.0},
     {"/shutdown_now", command_shutdown, 0.0},
-	{"/resetmap", command_reset,0.0},
-	{"/plugout",command_unloadplugin,0.0},
+    {"/resetmap", command_reset,0.0},
+    {"/plugout",command_unloadplugin,0.0},
     {"/create", command_create,0.0},
-	{"/addexp", command_addexp,0.0},
+    {"/addexp", command_addexp,0.0},
     {"/maps", command_maps,   0.0},
-	{"/dump", command_dump,0.0}, /* dump info of object nr. x */
+    {"/dump", command_dump,0.0}, /* dump info of object nr. x */
 
     {"/dm_stealth", command_dm_stealth,0.0},
-	{"/dm_light", command_dm_light,0.0},
+    {"/dm_light", command_dm_light,0.0},
     {"/d_active", command_dumpactivelist,0.0},
-	{"/d_arches", command_dumpallarchetypes,0.0},
+    {"/d_arches", command_dumpallarchetypes,0.0},
     {"/d_maps", command_dumpallmaps,0.0},
-	{"/d_map", command_dumpmap,0.0},
-	{"/d_objects", command_dumpallobjects,0.0},
+    {"/d_map", command_dumpmap,0.0},
+    {"/d_objects", command_dumpallobjects,0.0},
     {"/d_belowfull", command_dumpbelowfull,0.0},
-	{"/d_below", command_dumpbelow,0.0},
-	{"/d_hash", command_sstable,  0.0},
+    {"/d_below", command_dumpbelow,0.0},
+    {"/d_hash", command_sstable,  0.0},
     {"/set_map_light", command_setmaplight,0.0},
-	{"/stats", command_stats,0.0},
-	{"/check_fd", command_check_fd,0.0},
+    {"/stats", command_stats,0.0},
+    {"/check_fd", command_check_fd,0.0},
     {"/dm_speed", command_speed,0.0},
 
 
@@ -230,6 +230,6 @@ void init_commands()
  */
 void send_clear_interface(player *pl)
 {
-	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
-	Send_With_Handling(&pl->socket, &global_sl);
+    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
+    Send_With_Handling(&pl->socket, &global_sl);
 }

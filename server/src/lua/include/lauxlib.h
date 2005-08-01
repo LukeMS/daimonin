@@ -15,7 +15,7 @@
 
 
 #ifndef LUALIB_API
-#define LUALIB_API	LUA_API
+#define LUALIB_API    LUA_API
 #endif
 
 
@@ -71,12 +71,12 @@ LUALIB_API int luaL_loadbuffer (lua_State *L, const char *buff, size_t sz,
 
 #define luaL_argcheck(L, cond,numarg,extramsg) if (!(cond)) \
                                                luaL_argerror(L, numarg,extramsg)
-#define luaL_checkstring(L,n)	(luaL_checklstring(L, (n), NULL))
-#define luaL_optstring(L,n,d)	(luaL_optlstring(L, (n), (d), NULL))
-#define luaL_checkint(L,n)	((int)luaL_checknumber(L, n))
-#define luaL_checklong(L,n)	((long)luaL_checknumber(L, n))
-#define luaL_optint(L,n,d)	((int)luaL_optnumber(L, n,(lua_Number)(d)))
-#define luaL_optlong(L,n,d)	((long)luaL_optnumber(L, n,(lua_Number)(d)))
+#define luaL_checkstring(L,n)    (luaL_checklstring(L, (n), NULL))
+#define luaL_optstring(L,n,d)    (luaL_optlstring(L, (n), (d), NULL))
+#define luaL_checkint(L,n)    ((int)luaL_checknumber(L, n))
+#define luaL_checklong(L,n)    ((long)luaL_checknumber(L, n))
+#define luaL_optint(L,n,d)    ((int)luaL_optnumber(L, n,(lua_Number)(d)))
+#define luaL_optlong(L,n,d)    ((long)luaL_optnumber(L, n,(lua_Number)(d)))
 
 
 /*
@@ -87,12 +87,12 @@ LUALIB_API int luaL_loadbuffer (lua_State *L, const char *buff, size_t sz,
 
 
 #ifndef LUAL_BUFFERSIZE
-#define LUAL_BUFFERSIZE	  BUFSIZ
+#define LUAL_BUFFERSIZE      BUFSIZ
 #endif
 
 
 typedef struct luaL_Buffer {
-  char *p;			/* current position in buffer */
+  char *p;            /* current position in buffer */
   int lvl;  /* number of strings in the stack (level) */
   lua_State *L;
   char buffer[LUAL_BUFFERSIZE];
@@ -102,7 +102,7 @@ typedef struct luaL_Buffer {
   ((void)((B)->p < ((B)->buffer+LUAL_BUFFERSIZE) || luaL_prepbuffer(B)), \
    (*(B)->p++ = (char)(c)))
 
-#define luaL_addsize(B,n)	((B)->p += (n))
+#define luaL_addsize(B,n)    ((B)->p += (n))
 
 LUALIB_API void luaL_buffinit (lua_State *L, luaL_Buffer *B);
 LUALIB_API char *luaL_prepbuffer (luaL_Buffer *B);
@@ -126,17 +126,17 @@ LUALIB_API int   lua_dobuffer (lua_State *L, const char *buff, size_t sz,
                                const char *n);
 
 
-#define luaL_check_lstr 	luaL_checklstring
-#define luaL_opt_lstr 	luaL_optlstring
-#define luaL_check_number 	luaL_checknumber
-#define luaL_opt_number	luaL_optnumber
-#define luaL_arg_check	luaL_argcheck
-#define luaL_check_string	luaL_checkstring
-#define luaL_opt_string	luaL_optstring
-#define luaL_check_int	luaL_checkint
-#define luaL_check_long	luaL_checklong
-#define luaL_opt_int	luaL_optint
-#define luaL_opt_long	luaL_optlong
+#define luaL_check_lstr     luaL_checklstring
+#define luaL_opt_lstr     luaL_optlstring
+#define luaL_check_number     luaL_checknumber
+#define luaL_opt_number    luaL_optnumber
+#define luaL_arg_check    luaL_argcheck
+#define luaL_check_string    luaL_checkstring
+#define luaL_opt_string    luaL_optstring
+#define luaL_check_int    luaL_checkint
+#define luaL_check_long    luaL_checklong
+#define luaL_opt_int    luaL_optint
+#define luaL_opt_long    luaL_optlong
 
 
 #endif

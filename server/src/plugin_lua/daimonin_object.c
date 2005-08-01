@@ -44,7 +44,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
     {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
     {"CastSpell", (lua_CFunction) GameObject_CastSpell},
-	{"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
+    {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
     {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
     {"FindSkill", (lua_CFunction) GameObject_FindSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
@@ -76,8 +76,8 @@ static struct method_decl   GameObject_methods[]            =
     {"Save", (lua_CFunction) GameObject_Save}, {"GetIP", (lua_CFunction) GameObject_GetIP},
     {"GetArchName", (lua_CFunction) GameObject_GetArchName}, {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
     {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
-	{"AddMoney",  (lua_CFunction) GameObject_AddMoney},
-	{"GetMoney",  (lua_CFunction) GameObject_GetMoney},
+    {"AddMoney",  (lua_CFunction) GameObject_AddMoney},
+    {"GetMoney",  (lua_CFunction) GameObject_GetMoney},
     {"PayForItem", (lua_CFunction) GameObject_PayForItem}, {"PayAmount", (lua_CFunction) GameObject_PayAmount},
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
     {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, {"Clone", (lua_CFunction) GameObject_Clone},
@@ -104,7 +104,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY},
     {"name", FIELDTYPE_SHSTR, offsetof(object, name), 0},
     {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0},
-	{"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
+    {"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
     {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0},
     /* TODO: need special handling (check for endmsg, limit to 4096 chars?) ?*/
     {"message", FIELDTYPE_SHSTR, offsetof(object, msg), 0},
@@ -246,7 +246,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "?f_spawn_mob_flag", "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
     "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",
     "f_can_reflect_missile", "f_can_reflect_spell", "f_is_assassin", NULL /* internal flag: HAS_MOVED */, "?f_no_save",
-	"f_pass_ethereal",
+    "f_pass_ethereal",
     FLAGLIST_END_MARKER /* Marks the end of the list */
 };
 
@@ -270,7 +270,7 @@ static int GameObject_Sound(lua_State *L)
 
     get_lua_args(L, "Oiiii", &self, &x, &y, &soundnumber, &soundtype);
 
-	hooks->play_sound_player_only(CONTR(WHO),soundnumber,soundtype, x, y);
+    hooks->play_sound_player_only(CONTR(WHO),soundnumber,soundtype, x, y);
 
     return 0;
 }
@@ -682,81 +682,81 @@ static int GameObject_Deposit(lua_State *L)
 {
     lua_object *obptr;
     char       *text;
-	object     *bank;
+    object     *bank;
     int         val=1, pos=0;
     lua_object *self;
-	_money_block money;
+    _money_block money;
 
     get_lua_args(L, "OOs", &self, &obptr, &text);
 
     bank = obptr->data.object;
 
-	hooks->get_word_from_string(text, &pos);
-	hooks->get_money_from_string(text + pos, &money);
+    hooks->get_word_from_string(text, &pos);
+    hooks->get_money_from_string(text + pos, &money);
 
-	if (!money.mode)
-	{
-		val = -1;
-		hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
-	}
-	else if (money.mode == MONEYSTRING_ALL)
-	{
-		bank->value += hooks->remove_money_type(WHO, WHO, -1, 0);
-		hooks->fix_player(WHO);
-	}
-	else
-	{
-		if (money.mithril)
-		{
-			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[0]->clone.value) < money.mithril)
-			{
-				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much mithril.");
-				val = 0;
-			}
-		}
-		if (money.gold)
-		{
-			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[1]->clone.value) < money.gold)
-			{
-				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much gold.");
-				val = 0;
-			}
-		}
-		if (money.silver)
-		{
-			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[2]->clone.value) < money.silver)
-			{
-				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much silver.");
-				val = 0;
-			}
-		}
-		if (money.copper)
-		{
-			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[3]->clone.value) < money.copper)
-			{
-				val = 0;
-				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much copper.");
-			}
-		}
+    if (!money.mode)
+    {
+        val = -1;
+        hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
+    }
+    else if (money.mode == MONEYSTRING_ALL)
+    {
+        bank->value += hooks->remove_money_type(WHO, WHO, -1, 0);
+        hooks->fix_player(WHO);
+    }
+    else
+    {
+        if (money.mithril)
+        {
+            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[0]->clone.value) < money.mithril)
+            {
+                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much mithril.");
+                val = 0;
+            }
+        }
+        if (money.gold)
+        {
+            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[1]->clone.value) < money.gold)
+            {
+                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much gold.");
+                val = 0;
+            }
+        }
+        if (money.silver)
+        {
+            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[2]->clone.value) < money.silver)
+            {
+                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much silver.");
+                val = 0;
+            }
+        }
+        if (money.copper)
+        {
+            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[3]->clone.value) < money.copper)
+            {
+                val = 0;
+                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much copper.");
+            }
+        }
 
-		/* all ok - now remove the money from the player and add it to the bank object! */
-		if(val)
-		{
-			if (money.mithril)
-				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[0]->clone.value, money.mithril);
-			if (money.gold)
-				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[1]->clone.value, money.gold);
-			if (money.silver)
-				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[2]->clone.value, money.silver);
-			if (money.copper)
-				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[3]->clone.value, money.copper);
-			bank->value += money.mithril * hooks->coins_arch[0]->clone.value
-					+ money.gold * hooks->coins_arch[1]->clone.value
-					+ money.silver * hooks->coins_arch[2]->clone.value
-					+ money.copper * hooks->coins_arch[3]->clone.value;
-			hooks->fix_player(WHO);
-		}
-	}
+        /* all ok - now remove the money from the player and add it to the bank object! */
+        if(val)
+        {
+            if (money.mithril)
+                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[0]->clone.value, money.mithril);
+            if (money.gold)
+                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[1]->clone.value, money.gold);
+            if (money.silver)
+                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[2]->clone.value, money.silver);
+            if (money.copper)
+                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[3]->clone.value, money.copper);
+            bank->value += money.mithril * hooks->coins_arch[0]->clone.value
+                    + money.gold * hooks->coins_arch[1]->clone.value
+                    + money.silver * hooks->coins_arch[2]->clone.value
+                    + money.copper * hooks->coins_arch[3]->clone.value;
+            hooks->fix_player(WHO);
+        }
+    }
 
     lua_pushnumber(L, val);
     return 1;
@@ -774,71 +774,71 @@ static int GameObject_Deposit(lua_State *L)
 static int GameObject_Withdraw(lua_State *L)
 {
     lua_object *obptr, *self;
-	object     *bank;
+    object     *bank;
     char       *text;
     int         val=1;
-	_money_block money;
-	int          pos     = 0;
-	sint64       big_value;
+    _money_block money;
+    int          pos     = 0;
+    sint64       big_value;
 
     get_lua_args(L, "OOs", &self, &obptr, &text);
     bank = obptr->data.object;
 
 /*
-	static CFParm                       CFP;
-	static int                          val;
-	int                                 pos     = 0;
-	sint64                              big_value;
-	char                               *text    = (char *) (PParm->Value[2]);
-	object*who = (object*) (PParm->Value[0]), *bank = (object *) (PParm->Value[1]);
+    static CFParm                       CFP;
+    static int                          val;
+    int                                 pos     = 0;
+    sint64                              big_value;
+    char                               *text    = (char *) (PParm->Value[2]);
+    object*who = (object*) (PParm->Value[0]), *bank = (object *) (PParm->Value[1]);
 */
 
-	hooks->get_word_from_string(text, &pos);
-	hooks->get_money_from_string(text + pos, &money);
+    hooks->get_word_from_string(text, &pos);
+    hooks->get_money_from_string(text + pos, &money);
 
-	if (!money.mode)
-	{
-		val = -1;
-		hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
-	}
-	else if (money.mode == MONEYSTRING_ALL)
-	{
-		hooks->sell_item(NULL, WHO, bank->value);
-		bank->value = 0;
-		hooks->fix_player(WHO);
-	}
-	else
-	{
-		/* just to set a border.... */
-		if (money.mithril > 100000 || money.gold > 100000 || money.silver > 1000000 || money.copper > 1000000)
-			hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw values to high.");
-		else
-		{
-			big_value = money.mithril * hooks->coins_arch[0]->clone.value
-					    + money.gold * hooks->coins_arch[1]->clone.value
-					    + money.silver * hooks->coins_arch[2]->clone.value
-					    + money.copper * hooks->coins_arch[3]->clone.value;
+    if (!money.mode)
+    {
+        val = -1;
+        hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
+    }
+    else if (money.mode == MONEYSTRING_ALL)
+    {
+        hooks->sell_item(NULL, WHO, bank->value);
+        bank->value = 0;
+        hooks->fix_player(WHO);
+    }
+    else
+    {
+        /* just to set a border.... */
+        if (money.mithril > 100000 || money.gold > 100000 || money.silver > 1000000 || money.copper > 1000000)
+            hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw values to high.");
+        else
+        {
+            big_value = money.mithril * hooks->coins_arch[0]->clone.value
+                        + money.gold * hooks->coins_arch[1]->clone.value
+                        + money.silver * hooks->coins_arch[2]->clone.value
+                        + money.copper * hooks->coins_arch[3]->clone.value;
 
-			if (big_value > bank->value)
-				val = 0;
-			else
-			{
-				if (money.mithril)
-					hooks->insert_money_in_player(WHO, &hooks->coins_arch[0]->clone, money.mithril);
-				if (money.gold)
-					hooks->insert_money_in_player(WHO, &hooks->coins_arch[1]->clone, money.gold);
-				if (money.silver)
-					hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, money.silver);
-				if (money.copper)
-					hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, money.copper);
+            if (big_value > bank->value)
+                val = 0;
+            else
+            {
+                if (money.mithril)
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[0]->clone, money.mithril);
+                if (money.gold)
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[1]->clone, money.gold);
+                if (money.silver)
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, money.silver);
+                if (money.copper)
+                    hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, money.copper);
 
-				bank->value -= big_value;
-				hooks->fix_player(WHO);
-			}
-		}
-	}
+                bank->value -= big_value;
+                hooks->fix_player(WHO);
+            }
+        }
+    }
 
-	lua_pushnumber(L, val);
+    lua_pushnumber(L, val);
     return 1;
 }
 
@@ -937,7 +937,7 @@ static int GameObject_Write(lua_State *L)
 
     get_lua_args(L, "Os|i", &self, &message, &color);
 
-	hooks->new_draw_info(color, 0, WHO, message);
+    hooks->new_draw_info(color, 0, WHO, message);
 
     return 0;
 }
@@ -1258,7 +1258,7 @@ static int GameObject_CastSpell(lua_State *L)
 
     val = hooks->cast_spell(target->data.object, WHO, dir, spell, parm, parm2, op);
 
-	lua_pushboolean(L, val);
+    lua_pushboolean(L, val);
     return 1;
 }
 
@@ -1324,7 +1324,7 @@ static int GameObject_FindSkill(lua_State *L)
 
     get_lua_args(L, "Oi", &self, &skill);
 
-	myob = hooks->find_skill(WHO, skill);
+    myob = hooks->find_skill(WHO, skill);
 
     if (!myob)
         return 0;
@@ -1461,42 +1461,42 @@ static int GameObject_CheckQuest(lua_State *L)
     get_lua_args(L, "Os", &self, &name);
 
 
-	if(CONTR(WHO)->quests_type_normal)
+    if(CONTR(WHO)->quests_type_normal)
 
-	{
-		for (walk = CONTR(WHO)->quests_type_normal->inv; walk != NULL; walk = walk->below)
-		{
-			if (walk->name && !strcmp(walk->name, name))
-				return push_object(L, &GameObject, walk);
-		}
-	}
+    {
+        for (walk = CONTR(WHO)->quests_type_normal->inv; walk != NULL; walk = walk->below)
+        {
+            if (walk->name && !strcmp(walk->name, name))
+                return push_object(L, &GameObject, walk);
+        }
+    }
 
-	if(CONTR(WHO)->quests_type_kill)
-	{
-		for (walk = CONTR(WHO)->quests_type_kill->inv; walk != NULL; walk = walk->below)
-		{
-			if (walk->name && !strcmp(walk->name, name))
-				return push_object(L, &GameObject, walk);
-		}
-	}
+    if(CONTR(WHO)->quests_type_kill)
+    {
+        for (walk = CONTR(WHO)->quests_type_kill->inv; walk != NULL; walk = walk->below)
+        {
+            if (walk->name && !strcmp(walk->name, name))
+                return push_object(L, &GameObject, walk);
+        }
+    }
 
-	if(CONTR(WHO)->quests_type_cont)
-	{
-		for (walk = CONTR(WHO)->quests_type_cont->inv; walk != NULL; walk = walk->below)
-		{
-			if (walk->name && !strcmp(walk->name, name))
-				return push_object(L, &GameObject, walk);
-		}
-	}
+    if(CONTR(WHO)->quests_type_cont)
+    {
+        for (walk = CONTR(WHO)->quests_type_cont->inv; walk != NULL; walk = walk->below)
+        {
+            if (walk->name && !strcmp(walk->name, name))
+                return push_object(L, &GameObject, walk);
+        }
+    }
 
-	if(CONTR(WHO)->quests_done)
-	{
-		for (walk = CONTR(WHO)->quests_done->inv; walk != NULL; walk = walk->below)
-		{
-			if (walk->name && !strcmp(walk->name, name))
-				return push_object(L, &GameObject, walk);
-		}
-	}
+    if(CONTR(WHO)->quests_done)
+    {
+        for (walk = CONTR(WHO)->quests_done->inv; walk != NULL; walk = walk->below)
+        {
+            if (walk->name && !strcmp(walk->name, name))
+                return push_object(L, &GameObject, walk);
+        }
+    }
 
     return 0;
 }
@@ -1510,17 +1510,17 @@ static int GameObject_CheckQuest(lua_State *L)
 static int GameObject_AddQuest(lua_State *L)
 {
     char       *name, *msg;
-	int			mode, nr;
+    int            mode, nr;
     object     *myob;
     lua_object *self;
 
     get_lua_args(L, "Osii|s", &self, &name, &mode, &nr, &msg);
 
 
-	if (WHO->type != PLAYER)
-		return 0;
+    if (WHO->type != PLAYER)
+        return 0;
 
-	myob = hooks->get_archetype("quest_trigger");
+    myob = hooks->get_archetype("quest_trigger");
 
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
@@ -1530,12 +1530,12 @@ static int GameObject_AddQuest(lua_State *L)
 
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
-	if(msg)
-		FREE_AND_COPY_HASH(myob->msg, msg);
-	myob->sub_type1 = (uint8)mode;
-	myob->last_heal = (sint16)nr;
+    if(msg)
+        FREE_AND_COPY_HASH(myob->msg, msg);
+    myob->sub_type1 = (uint8)mode;
+    myob->last_heal = (sint16)nr;
 
-	hooks->add_quest_trigger(WHO, myob);
+    hooks->add_quest_trigger(WHO, myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1549,35 +1549,35 @@ static int GameObject_AddQuest(lua_State *L)
 static int GameObject_SetQuest(lua_State *L)
 {
     char       *msg = NULL, *kill_arch, *kill_name, *kill_title;
-	int			kill_nr;
+    int            kill_nr;
     object     *myob;
     lua_object *self;
 
     get_lua_args(L, "Oisss|s", &self, &kill_nr, &kill_arch, &kill_name, &kill_title, &msg);
 
-	myob = self->data.object;
+    myob = self->data.object;
 
-	if(kill_nr != -1)
-	{
-		myob->last_sp = kill_nr;
-		myob->level = 0; /* reset counter. if you want hold him, back it up in the script */
+    if(kill_nr != -1)
+    {
+        myob->last_sp = kill_nr;
+        myob->level = 0; /* reset counter. if you want hold him, back it up in the script */
 
-		myob->other_arch = hooks->find_archetype(kill_arch);
-		if(*kill_name!='\0')
-			FREE_AND_COPY_HASH(myob->slaying, kill_name);
-		if(*kill_title!='\0')
-			FREE_AND_COPY_HASH(myob->title, kill_title);
-	}
+        myob->other_arch = hooks->find_archetype(kill_arch);
+        if(*kill_name!='\0')
+            FREE_AND_COPY_HASH(myob->slaying, kill_name);
+        if(*kill_title!='\0')
+            FREE_AND_COPY_HASH(myob->title, kill_title);
+    }
 
-	if(msg)
-	{
-		if(*msg!='\0')
-		{
-			FREE_AND_CLEAR_HASH(myob->msg);
-		}
-		else
-			FREE_AND_COPY_HASH(myob->msg, msg);
-	}
+    if(msg)
+    {
+        if(*msg!='\0')
+        {
+            FREE_AND_CLEAR_HASH(myob->msg);
+        }
+        else
+            FREE_AND_COPY_HASH(myob->msg, msg);
+    }
 
     return 0; /* there was non */
 }
@@ -1590,18 +1590,18 @@ static int GameObject_SetQuest(lua_State *L)
 /*****************************************************************************/
 static int GameObject_SetQuestStatus(lua_State *L)
 {
-	int			q_status, q_type = -1;
+    int            q_status, q_type = -1;
     object     *myob;
     lua_object *self;
 
     get_lua_args(L, "Oi|i", &self, &q_status, &q_type);
 
-	myob = self->data.object;
+    myob = self->data.object;
 
-	if(q_type == -1)
-		q_type = myob->sub_type1;
+    if(q_type == -1)
+        q_type = myob->sub_type1;
 
-	hooks->set_quest_status(myob, q_status, q_type);
+    hooks->set_quest_status(myob, q_status, q_type);
 
     return 0; /* there was non */
 }
@@ -1621,13 +1621,13 @@ static int GameObject_CheckQuestItem(lua_State *L)
 
     get_lua_args(L, "Oss", &self, &arch_name, &name);
 
-	if (WHO->type == PLAYER && CONTR(WHO)->quest_one_drop )
-	{
+    if (WHO->type == PLAYER && CONTR(WHO)->quest_one_drop )
+    {
 
-		for (walk = CONTR(WHO)->quest_one_drop->inv; walk != NULL; walk = walk->below)
-		{
-			if (walk->race && !strcmp(walk->race, arch_name) && walk->name && !strcmp(walk->name, name))
-				return push_object(L, &GameObject, walk);
+        for (walk = CONTR(WHO)->quest_one_drop->inv; walk != NULL; walk = walk->below)
+        {
+            if (walk->race && !strcmp(walk->race, arch_name) && walk->name && !strcmp(walk->name, name))
+                return push_object(L, &GameObject, walk);
         }
     }
 
@@ -1649,7 +1649,7 @@ static int GameObject_AddQuestItem(lua_State *L)
 
     get_lua_args(L, "Oss|s", &self, &arch_name, &name, &title);
 
-	myob = hooks->get_archetype("player_info");
+    myob = hooks->get_archetype("player_info");
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
         LOG(llevDebug, "Lua WARNING:: AddQuestObject: Cant't find archtype 'player_info'\n");
@@ -1659,11 +1659,11 @@ static int GameObject_AddQuestItem(lua_State *L)
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
     FREE_AND_COPY_HASH(myob->race, arch_name);
-	if(title)
-	    FREE_AND_COPY_HASH(myob->title, title);
+    if(title)
+        FREE_AND_COPY_HASH(myob->title, title);
 
-	hooks->add_quest_containers(WHO);
-	hooks->insert_ob_in_ob(myob, CONTR(WHO)->quest_one_drop);
+    hooks->add_quest_containers(WHO);
+    hooks->insert_ob_in_ob(myob, CONTR(WHO)->quest_one_drop);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1890,7 +1890,7 @@ static int GameObject_CheckInventory(lua_State *L)
 {
     lua_object     *self;
     int             type = -1, mode = 0;
-    char		   *name = NULL, *title = NULL, *arch_name = NULL;
+    char           *name = NULL, *title = NULL, *arch_name = NULL;
     object         *tmp, *tmp2;
 
     get_lua_args(L, "Oi?s|?s?si", &self, &mode, &arch_name, &name, &title, &type);
@@ -1957,11 +1957,11 @@ static int GameObject_DecreaseNrOf(lua_State *L)
 
     get_lua_args(L, "O|i", &self, &nrof);
 
-	/* -1 means "delete all" */
-	if(nrof==-1)
-		nrof = MIN(self->data.object->nrof, 1);
+    /* -1 means "delete all" */
+    if(nrof==-1)
+        nrof = MIN(self->data.object->nrof, 1);
 
-	hooks->decrease_ob_nr(self->data.object, nrof);
+    hooks->decrease_ob_nr(self->data.object, nrof);
 
     return 0;
 }
@@ -2032,10 +2032,10 @@ static int GameObject_Destruct(lua_State *L)
 
     get_lua_args(L, "O", &self);
 
-	if(WHO->inv)
-		hooks->drop_ob_inv(WHO);
+    if(WHO->inv)
+        hooks->drop_ob_inv(WHO);
 
-	hooks->decrease_ob_nr(WHO, MIN(WHO->nrof, 1));
+    hooks->decrease_ob_nr(WHO, MIN(WHO->nrof, 1));
 
     return 0;
 
@@ -2274,7 +2274,7 @@ static int GameObject_ShowCost(lua_State *L)
 
     get_lua_args(L, "OI", &self, &value);
 
-	cost_string = hooks->cost_string_from_value(value);
+    cost_string = hooks->cost_string_from_value(value);
 
     lua_pushstring(L, cost_string);
     return 1;
@@ -2296,9 +2296,9 @@ static int GameObject_GetItemCost(lua_State *L)
 
     get_lua_args(L, "OOi", &self, &whatptr, &flag);
 
-	cost = hooks->query_cost(WHAT, WHO, flag);
+    cost = hooks->query_cost(WHAT, WHO, flag);
 
-	/* possible data loss from 64bit integer to double! */
+    /* possible data loss from 64bit integer to double! */
     lua_pushnumber(L, (double) cost);
     return 1;
 }
@@ -2314,11 +2314,11 @@ static int GameObject_GetItemCost(lua_State *L)
 static int GameObject_AddMoney(lua_State *L)
 {
     lua_object *self;
-	int			c, s, g, m;
+    int            c, s, g, m;
 
     get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
 
-	hooks->add_money_to_player(WHO, c, s, g, m);
+    hooks->add_money_to_player(WHO, c, s, g, m);
 
     return 0;
 }
@@ -2337,9 +2337,9 @@ static int GameObject_GetMoney(lua_State *L)
 
     get_lua_args(L, "O", &self);
 
-	amount = hooks->query_money(WHO);
+    amount = hooks->query_money(WHO);
 
-	/* possible data loss from 64bit integer to double! */
+    /* possible data loss from 64bit integer to double! */
     lua_pushnumber(L, (double)amount);
     return 1;
 }
@@ -2358,7 +2358,7 @@ static int GameObject_PayForItem(lua_State *L)
 
     get_lua_args(L, "OO", &self, &whatptr);
 
-	val = hooks->pay_for_item(WHAT, WHO);
+    val = hooks->pay_for_item(WHAT, WHO);
 
     lua_pushnumber(L, val);
     return 1;
@@ -2379,7 +2379,7 @@ static int GameObject_PayAmount(lua_State *L)
 
     get_lua_args(L, "OI", &self, &to_pay);
 
-	val = hooks->pay_for_amount(to_pay, WHO);
+    val = hooks->pay_for_amount(to_pay, WHO);
 
     lua_pushnumber(L, val);
     return 1;

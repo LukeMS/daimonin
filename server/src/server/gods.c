@@ -435,7 +435,7 @@ void update_priest_flag(object *god, object *exp_ob, uint32 flag)
 const char * determine_god(object *op)
 {
     int godnr   = -1;
-    
+
     /* spells */
     if ((op->type == FBULLET || op->type == CONE || op->type == FBALL || op->type == SWARM_SPELL) && op->title)
     {

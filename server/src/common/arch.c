@@ -222,7 +222,7 @@ void init_archetypes()
     load_archetypes();
     arch_init = 0;
 
-	if(!(empty_archetype = find_archetype("empty_archetype")))
+    if(!(empty_archetype = find_archetype("empty_archetype")))
         LOG(llevError, "FATAL: no empty_archetype arch. Check the arch set!\n");
 
     if(!(base_info_archetype = find_archetype("base_info")))
@@ -234,7 +234,7 @@ void init_archetypes()
     if (!(level_up_arch = find_archetype("level_up")))
         LOG(llevError, "FATAL: no level_up arch. Check the arch set!\n");
 
-	if (!(global_aggro_history_arch = find_archetype("aggro_history")))
+    if (!(global_aggro_history_arch = find_archetype("aggro_history")))
         LOG(llevError, "FATAL: no aggro_history arch. Check the arch set!\n");
 
     if (!(global_dmg_info_arch = find_archetype("dmg_info")))
@@ -307,11 +307,11 @@ void dump_all_archetypes()
         art = al->items;
         do
         {
-			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
-			{
-	            dump_arch(&art->def_at);
-		        LOG(llevInfo, "%s\n", STRING_SAFE(errmsg));
-			}
+            if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
+            {
+                dump_arch(&art->def_at);
+                LOG(llevInfo, "%s\n", STRING_SAFE(errmsg));
+            }
             art = art->next;
         }
         while (art != NULL);
@@ -511,16 +511,16 @@ void second_arch_pass(FILE *fp_start)
          */
         if (!strcmp("artifact", variable)) /* be sure "artifact" command is before def_arch cm! */
         {
-			at = find_archetype(argument);
+            at = find_archetype(argument);
         }
         else if (at && !strcmp("def_arch", variable))
         {
             if ((other = find_archetype(argument)) == NULL)
-			{
+            {
                 LOG(llevBug, "BUG: second artifacts pass: failed to find def_arch %s from artifact %s\n",
                     STRING_SAFE(argument), STRING_ARCH_NAME(at));
-				continue;
-			}
+                continue;
+            }
             /* now copy from real arch the stuff from above to our "fake" arches */
             at->clone.other_arch = other->clone.other_arch;
             if (at->clone.randomitems)
@@ -629,7 +629,7 @@ object * arch_to_object(archetype *at)
         return NULL;
     }
     op = get_object();
-    /* this was copy_object() before but for example for 
+    /* this was copy_object() before but for example for
      * temporary objects, we don't want move them to active list.
      * copy_object_data() is right, but should be watched for side effects. MT-07.2005
      */
@@ -649,15 +649,15 @@ object * create_singularity(const char *name)
 {
     object *op;
 
-	LOG(llevDebug, "created Singularity: %s\n", name);
-	op = arch_to_object(empty_archetype);
-	FREE_AND_COPY_HASH(op->name, name);
-	FREE_AND_COPY_HASH(op->title, " (removed object)");
-	SET_FLAG(op, FLAG_IDENTIFIED);
-	SET_FLAG(op, FLAG_SYS_OBJECT);
-	SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */
- 	op->layer = 0;
-	/*op->face = &new_faces[FindFace("dummy.111", 0)];*/
+    LOG(llevDebug, "created Singularity: %s\n", name);
+    op = arch_to_object(empty_archetype);
+    FREE_AND_COPY_HASH(op->name, name);
+    FREE_AND_COPY_HASH(op->title, " (removed object)");
+    SET_FLAG(op, FLAG_IDENTIFIED);
+    SET_FLAG(op, FLAG_SYS_OBJECT);
+    SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */
+     op->layer = 0;
+    /*op->face = &new_faces[FindFace("dummy.111", 0)];*/
     return op;
 }
 

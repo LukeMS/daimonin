@@ -354,7 +354,7 @@ void init_artifacts()
     int             lcount, value, none_flag = 0, editor_flag;
     artifactlist   *al;
     char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
-	object			*dummy_obj=get_object(), *parse_obj;
+    object            *dummy_obj=get_object(), *parse_obj;
 
     if (has_been_inited)
         return;
@@ -385,8 +385,8 @@ void init_artifacts()
         if (!strncmp(cp, "Allowed", 7))
         {
             art = get_empty_artifact();
-			editor_flag = FALSE;
-			nrofartifacts++;
+            editor_flag = FALSE;
+            nrofartifacts++;
             none_flag = FALSE;
             cp = strchr(cp, ' ') + 1;
             if (!strcmp(cp, "all"))
@@ -421,49 +421,49 @@ void init_artifacts()
         }
         else if (!strncmp(cp, "def_arch", 8)) /* chain a default arch to this treasure */
         {
-			FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the def archetype name (real base arch) */
+            FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the def archetype name (real base arch) */
         }
         else if (!strncmp(cp, "Object", 6)) /* all text after Object is now like a arch file until a end comes */
         {
-			if(editor_flag == FALSE)
-				LOG(llevError, "ERROR: Init_Artifacts: Artifact %s (%s) has no 'editor x:...' line!\n", STRING_SAFE(art->name),STRING_SAFE(art->def_at_name));
+            if(editor_flag == FALSE)
+                LOG(llevError, "ERROR: Init_Artifacts: Artifact %s (%s) has no 'editor x:...' line!\n", STRING_SAFE(art->name),STRING_SAFE(art->def_at_name));
 
-			if (!art->name)
-				LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no arch id name\n", STRING_SAFE(art->def_at_name));
+            if (!art->name)
+                LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no arch id name\n", STRING_SAFE(art->def_at_name));
 
-			old_pos = ftell(fp);
-			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH) /* we have & use a default arch */
-			{
-				if (!art->def_at_name)
-					LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no def arch\n", art->name);
+            old_pos = ftell(fp);
+            if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH) /* we have & use a default arch */
+            {
+                if (!art->def_at_name)
+                    LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no def arch\n", art->name);
 
-				/* we patch this .clone object after Object read with the artifact data.
-				* in find_artifact, this archetype object will be returned. For the server,
-				* it will be the same as it comes from the arch list, defined in the arches.
-				* This will allow us the generate for every artifact a "default one" and we
-				* will have always a non-magical base for every artifact
-				*/
-				if ((atemp = find_archetype(art->def_at_name)) == NULL)
-					LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", art->def_at_name);
-				memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
-				art->def_at.base_clone = &atemp->clone;
-				ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
-				ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
-				ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
-				ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
-				ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
-				art->def_at.clone.arch = &art->def_at;
-				parse_obj = &art->def_at.clone;
-			}
-			else
-			{
-				parse_obj = dummy_obj;
-				parse_obj->type = 0; /* we need the dummy obj to get the type info of the artifact! */
-			}
+                /* we patch this .clone object after Object read with the artifact data.
+                * in find_artifact, this archetype object will be returned. For the server,
+                * it will be the same as it comes from the arch list, defined in the arches.
+                * This will allow us the generate for every artifact a "default one" and we
+                * will have always a non-magical base for every artifact
+                */
+                if ((atemp = find_archetype(art->def_at_name)) == NULL)
+                    LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", art->def_at_name);
+                memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
+                art->def_at.base_clone = &atemp->clone;
+                ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
+                ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
+                ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
+                ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
+                ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
+                art->def_at.clone.arch = &art->def_at;
+                parse_obj = &art->def_at.clone;
+            }
+            else
+            {
+                parse_obj = dummy_obj;
+                parse_obj->type = 0; /* we need the dummy obj to get the type info of the artifact! */
+            }
 
-			/* parse the new fake arch clone with the artifact values */
-			if (!load_object(fp, parse_obj, NULL, LO_LINEMODE, MAP_STYLE))
-				LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
+            /* parse the new fake arch clone with the artifact values */
+            if (!load_object(fp, parse_obj, NULL, LO_LINEMODE, MAP_STYLE))
+                LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
 
             /* ok, now lets catch & copy the commands to our artifacts buffer.
              * lets do some file magic here - thats the easiest way.
@@ -492,10 +492,10 @@ void init_artifacts()
             if ((art->parse_text = malloc(lcount)) == NULL)
                 LOG(llevError, "ERROR: Init_Artifacts: out of memory in ->parse_text (size %d)\n", lcount);
 
-			memcpy(art->parse_text, buf_text, lcount);
+            memcpy(art->parse_text, buf_text, lcount);
 
-			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
-				FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
+            if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
+                FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
                                                                     * our fake arch to the fake arch name.
                                                                     * without it, treasures will get the
                                                                     * original arch, not this (hm, this
@@ -517,19 +517,19 @@ void init_artifacts()
                  al->items = art;
         }
         else if (!strncmp(cp, "editor", 6))
-		{
+        {
             /* QUICKHACK: we don't won't delete the pre-beta 4 fake arch items on the players */
             art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH; /* remove this quickhack for 1.0 */
 
             editor_flag = TRUE;
-			if(!strncmp(cp+7,"2:",2)) /* mask only */
-				continue;
-			else if(!strcmp(cp+7,"0") || !strncmp(cp+7,"1:",2) || !strncmp(cp+7,"3:",2)) /* use def arch def_at */
-				art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH;
-			else
-				LOG(llevError, "\nERROR: Invalid editor line in artifact file: %s\n", cp);
-		}
-		else
+            if(!strncmp(cp+7,"2:",2)) /* mask only */
+                continue;
+            else if(!strcmp(cp+7,"0") || !strncmp(cp+7,"1:",2) || !strncmp(cp+7,"3:",2)) /* use def arch def_at */
+                art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH;
+            else
+                LOG(llevError, "\nERROR: Invalid editor line in artifact file: %s\n", cp);
+        }
+        else
             LOG(llevBug, "\nBUG: Unknown line in artifact file: %s\n", buf);
     }
     fclose(fp);
@@ -617,7 +617,7 @@ static treasure * get_empty_treasure(void)
     if (t == NULL)
         LOG(llevError, "ERROR: get_empty_treasure(): OOM.\n");
 
-	set_change_arch(&t->change_arch);
+    set_change_arch(&t->change_arch);
     t->chance_fix = CHANCE_FIX;
     t->tlist = NULL;
     t->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
@@ -681,69 +681,69 @@ static inline treasurelist * find_treasurelist_intern(const char *name)
 /* parse treasure list paramter in randomitems cmd */
 static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
 {
-	char *tmp;
+    char *tmp;
 
-	do
-	{
-		/* the paramater list is like "parm1,parm2, parm3..." */
-		if ((tmp = strchr(parm, ',')))
-			*tmp = 0;
+    do
+    {
+        /* the paramater list is like "parm1,parm2, parm3..." */
+        if ((tmp = strchr(parm, ',')))
+            *tmp = 0;
 
-		/* every paramter is like <ID><tail> where <ID> is a single char */
-		switch(*parm)
-		{
-			case 'm': /* (m)agic */
-				tweak->magic = atoi(parm+1);
-				break;
-			case 'M': /* (M)agic chance */
-				tweak->magic_chance = atoi(parm+1);
-				break;
-			case 'x': /* difficulty */
-				tweak->difficulty = atoi(parm+1);
-				break;
-			case 'a': /* (a)rtifact  chance*/
-				tweak->artifact_chance = atoi(parm+1);
-				break;
-			case 'd': /* (d)rop  chance 1/d */
-				tweak->drop_chance = atoi(parm+1);
-				break;
-			case 'D': /* (D)rop  chance %  */
-				tweak->drop100 = atoi(parm+1);
-				break;
-			case 's': /* treasure (s)tyle */
-				tweak->style = atoi(parm+1);
-				break;
-			case 'r': /* item (r)ace */
-				tweak->c_arch.item_race = atoi(parm+1);
-			break;
-			case 'i': /* (i)tem material */
-				tweak->c_arch.material = atoi(parm+1);
-				break;
-			case 'I': /* (i)dentified */
-				tweak->identified = TRUE;
-				break;
-			case 'c': /* (c)reated: material quality*/
-				tweak->c_arch.material_quality = atoi(parm+1);
-				break;
-			case 'C': /* (C)reated: material range */
-				tweak->c_arch.material_range = atoi(parm+1);
-				break;
-			case 'q': /* (q)uality */
-				tweak->c_arch.quality = atoi(parm+1);
-				break;
-			case 'Q': /* (q)uality range */
-				tweak->c_arch.quality_range = atoi(parm+1);
-				break;
-			default:
-				LOG(llevBug,"\nBUG ::TLIST PARSE: invalid tlist paramter: %s\n", STRING_SAFE(parm));
-				return;
-			break;
-		}
+        /* every paramter is like <ID><tail> where <ID> is a single char */
+        switch(*parm)
+        {
+            case 'm': /* (m)agic */
+                tweak->magic = atoi(parm+1);
+                break;
+            case 'M': /* (M)agic chance */
+                tweak->magic_chance = atoi(parm+1);
+                break;
+            case 'x': /* difficulty */
+                tweak->difficulty = atoi(parm+1);
+                break;
+            case 'a': /* (a)rtifact  chance*/
+                tweak->artifact_chance = atoi(parm+1);
+                break;
+            case 'd': /* (d)rop  chance 1/d */
+                tweak->drop_chance = atoi(parm+1);
+                break;
+            case 'D': /* (D)rop  chance %  */
+                tweak->drop100 = atoi(parm+1);
+                break;
+            case 's': /* treasure (s)tyle */
+                tweak->style = atoi(parm+1);
+                break;
+            case 'r': /* item (r)ace */
+                tweak->c_arch.item_race = atoi(parm+1);
+            break;
+            case 'i': /* (i)tem material */
+                tweak->c_arch.material = atoi(parm+1);
+                break;
+            case 'I': /* (i)dentified */
+                tweak->identified = TRUE;
+                break;
+            case 'c': /* (c)reated: material quality*/
+                tweak->c_arch.material_quality = atoi(parm+1);
+                break;
+            case 'C': /* (C)reated: material range */
+                tweak->c_arch.material_range = atoi(parm+1);
+                break;
+            case 'q': /* (q)uality */
+                tweak->c_arch.quality = atoi(parm+1);
+                break;
+            case 'Q': /* (q)uality range */
+                tweak->c_arch.quality_range = atoi(parm+1);
+                break;
+            default:
+                LOG(llevBug,"\nBUG ::TLIST PARSE: invalid tlist paramter: %s\n", STRING_SAFE(parm));
+                return;
+            break;
+        }
 
         if (tmp)
             parm = tmp + 1;
 
-	} while(tmp);
+    } while(tmp);
 }
 
 /* link_treasurelists will generate a linked lists of treasure list
@@ -768,9 +768,9 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
             *tmp = 0;
 
 
-		/* find parameter marker. */
+        /* find parameter marker. */
         if ((parm = strchr(liststring, '&')))
-			*parm = 0;
+            *parm = 0;
 
         if (!(name = find_string(liststring)))
         {
@@ -811,26 +811,26 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
 
                     list->objlink.tl = tl;
 
-					if(parm) /* we have a parameter list ('&' tail) for this list? parse it */
-					{
-						tlist_tweak  *tweak = (tlist_tweak *) get_poolchunk(pool_tlist_tweak);
+                    if(parm) /* we have a parameter list ('&' tail) for this list? parse it */
+                    {
+                        tlist_tweak  *tweak = (tlist_tweak *) get_poolchunk(pool_tlist_tweak);
 
-						/* save the tname with paramter. don't patch, save the whole name */
-						*parm = '&';
-						tweak->name = add_string(liststring);
-						*parm = '0';
-						tweak->artifact_chance = ART_CHANCE_UNSET;
-						tweak->style = T_STYLE_UNSET;
-						tweak->difficulty = 0;
-						tweak->identified = FALSE;
-						tweak->magic = T_MAGIC_UNSET;
-						tweak->magic_chance = T_MAGIC_CHANCE_UNSET;
-						tweak->drop_chance = 0;
-						tweak->drop100 = 0;
-						set_change_arch(&tweak->c_arch);
-						parse_tlist_parm(tweak, parm+1);
-						list->parmlink.tl_tweak = tweak;
-					}
+                        /* save the tname with paramter. don't patch, save the whole name */
+                        *parm = '&';
+                        tweak->name = add_string(liststring);
+                        *parm = '0';
+                        tweak->artifact_chance = ART_CHANCE_UNSET;
+                        tweak->style = T_STYLE_UNSET;
+                        tweak->difficulty = 0;
+                        tweak->identified = FALSE;
+                        tweak->magic = T_MAGIC_UNSET;
+                        tweak->magic_chance = T_MAGIC_CHANCE_UNSET;
+                        tweak->drop_chance = 0;
+                        tweak->drop100 = 0;
+                        set_change_arch(&tweak->c_arch);
+                        parse_tlist_parm(tweak, parm+1);
+                        list->parmlink.tl_tweak = tweak;
+                    }
                 }
             }
         }
@@ -863,11 +863,11 @@ void unlink_treasurelists(objectlink *list, int flag)
     do
     {
         /*LOG(-1,"freed listpat: %s\n",list->objlink.tl->listname); */
-		if(list->parmlink.tl_tweak)
-		{
-			FREE_ONLY_HASH(list->parmlink.tl_tweak->name);
-			return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
-		}
+        if(list->parmlink.tl_tweak)
+        {
+            FREE_ONLY_HASH(list->parmlink.tl_tweak->name);
+            return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
+        }
         free_objectlink_simple(list);
         /* hm, this should work... return_poolchunk() should not effect the objectlink itself */
         list = list->next;
@@ -884,50 +884,50 @@ void unlink_treasurelists(objectlink *list, int flag)
  */
 object * generate_treasure(struct oblnk *t, int difficulty)
 {
-	struct _change_arch *captr;
-	int t_style, a_chance, flag, magic, magic_chance;
+    struct _change_arch *captr;
+    int t_style, a_chance, flag, magic, magic_chance;
     object*ob =     get_object(), *tmp = NULL;
 
     while (t)
     {
-		flag = 0;
-		captr = NULL;
-		t_style = t->objlink.tl->t_style;
-		a_chance = t->objlink.tl->artifact_chance;
-		magic = T_MAGIC_UNSET;
-		magic_chance = T_MAGIC_CHANCE_UNSET;
+        flag = 0;
+        captr = NULL;
+        t_style = t->objlink.tl->t_style;
+        a_chance = t->objlink.tl->artifact_chance;
+        magic = T_MAGIC_UNSET;
+        magic_chance = T_MAGIC_CHANCE_UNSET;
 
-		if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
-		{
-			/* random chance tests for 1/x, drop100 for % chance (1-100%) */
-			if((t->parmlink.tl_tweak->drop_chance && (RANDOM() % t->parmlink.tl_tweak->drop_chance))
-				 || (t->parmlink.tl_tweak->drop100 && ((RANDOM()%100) >= t->parmlink.tl_tweak->drop100)))
-			{
-				t = t->next;
-				continue;
-			}
+        if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
+        {
+            /* random chance tests for 1/x, drop100 for % chance (1-100%) */
+            if((t->parmlink.tl_tweak->drop_chance && (RANDOM() % t->parmlink.tl_tweak->drop_chance))
+                 || (t->parmlink.tl_tweak->drop100 && ((RANDOM()%100) >= t->parmlink.tl_tweak->drop100)))
+            {
+                t = t->next;
+                continue;
+            }
 
-			/* setup the '&' parameter values insertation to the treasure list */
-			captr = &t->parmlink.tl_tweak->c_arch;
-			magic = t->parmlink.tl_tweak->magic;
-			magic_chance = t->parmlink.tl_tweak->magic_chance;
-			if(t->parmlink.tl_tweak->style != T_STYLE_UNSET)
-				t_style = t->parmlink.tl_tweak->style;
-			if(t->parmlink.tl_tweak->difficulty)
-				difficulty = t->parmlink.tl_tweak->difficulty;
-			if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
-				a_chance = t->parmlink.tl_tweak->artifact_chance;
-			if(t->parmlink.tl_tweak->identified)
-				flag |= GT_IDENTIFIED;
-		}
+            /* setup the '&' parameter values insertation to the treasure list */
+            captr = &t->parmlink.tl_tweak->c_arch;
+            magic = t->parmlink.tl_tweak->magic;
+            magic_chance = t->parmlink.tl_tweak->magic_chance;
+            if(t->parmlink.tl_tweak->style != T_STYLE_UNSET)
+                t_style = t->parmlink.tl_tweak->style;
+            if(t->parmlink.tl_tweak->difficulty)
+                difficulty = t->parmlink.tl_tweak->difficulty;
+            if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
+                a_chance = t->parmlink.tl_tweak->artifact_chance;
+            if(t->parmlink.tl_tweak->identified)
+                flag |= GT_IDENTIFIED;
+        }
 
         create_treasure(t->objlink.tl, ob, flag, difficulty, t_style, a_chance, magic, magic_chance, 0, captr);
 
         if (!ob->inv) /* no treasure, try next tlist */
-		{
-			t = t->next;
-			continue;
-		}
+        {
+            t = t->next;
+            continue;
+        }
 
         /* Don't want to free the object we are about to return */
         tmp = ob->inv;
@@ -960,61 +960,61 @@ object * generate_treasure(struct oblnk *t, int difficulty)
 
 void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int art_chance, int tries)
 {
-	struct _change_arch *captr;
-	int t_style, a_chance, magic, magic_chance;
+    struct _change_arch *captr;
+    int t_style, a_chance, magic, magic_chance;
 
     while (t)
     {
-		if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
-		{
-			/* random chance tests for 1/x, drop100 for % chance (1-100%) */
-			if((t->parmlink.tl_tweak->drop_chance && (RANDOM() % t->parmlink.tl_tweak->drop_chance))
-				|| (t->parmlink.tl_tweak->drop100 && ((RANDOM()%100) >= t->parmlink.tl_tweak->drop100)))
-			{
-				t = t->next;
-				continue;
-			}
+        if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
+        {
+            /* random chance tests for 1/x, drop100 for % chance (1-100%) */
+            if((t->parmlink.tl_tweak->drop_chance && (RANDOM() % t->parmlink.tl_tweak->drop_chance))
+                || (t->parmlink.tl_tweak->drop100 && ((RANDOM()%100) >= t->parmlink.tl_tweak->drop100)))
+            {
+                t = t->next;
+                continue;
+            }
 
-			a_chance = art_chance;
-			/* setup the '&' parameter values to the treasure list */
-			captr = &t->parmlink.tl_tweak->c_arch;
+            a_chance = art_chance;
+            /* setup the '&' parameter values to the treasure list */
+            captr = &t->parmlink.tl_tweak->c_arch;
 
-			magic = t->parmlink.tl_tweak->magic;
-			magic_chance = t->parmlink.tl_tweak->magic_chance;
+            magic = t->parmlink.tl_tweak->magic;
+            magic_chance = t->parmlink.tl_tweak->magic_chance;
 
-			if(t->parmlink.tl_tweak->style != T_STYLE_UNSET)
-				t_style = t->parmlink.tl_tweak->style;
-			else
-				t_style = t->objlink.tl->t_style;
+            if(t->parmlink.tl_tweak->style != T_STYLE_UNSET)
+                t_style = t->parmlink.tl_tweak->style;
+            else
+                t_style = t->objlink.tl->t_style;
 
-			if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
-				a_chance = t->parmlink.tl_tweak->artifact_chance;
-			else if(t->objlink.tl->artifact_chance != ART_CHANCE_UNSET)
-				a_chance = t->objlink.tl->artifact_chance;
+            if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
+                a_chance = t->parmlink.tl_tweak->artifact_chance;
+            else if(t->objlink.tl->artifact_chance != ART_CHANCE_UNSET)
+                a_chance = t->objlink.tl->artifact_chance;
 
-			if(t->parmlink.tl_tweak->difficulty)
-				difficulty = t->parmlink.tl_tweak->difficulty;
-			if(t->parmlink.tl_tweak->identified)
-				flag |= GT_IDENTIFIED;
-		}
-		else
-		{
-			a_chance = art_chance;
-			if(t->objlink.tl->artifact_chance != ART_CHANCE_UNSET)
-				a_chance = t->objlink.tl->artifact_chance;
-			captr = NULL;
-			t_style = T_STYLE_UNSET;
-			magic = T_MAGIC_UNSET;
-			magic_chance = T_MAGIC_CHANCE_UNSET;
+            if(t->parmlink.tl_tweak->difficulty)
+                difficulty = t->parmlink.tl_tweak->difficulty;
+            if(t->parmlink.tl_tweak->identified)
+                flag |= GT_IDENTIFIED;
+        }
+        else
+        {
+            a_chance = art_chance;
+            if(t->objlink.tl->artifact_chance != ART_CHANCE_UNSET)
+                a_chance = t->objlink.tl->artifact_chance;
+            captr = NULL;
+            t_style = T_STYLE_UNSET;
+            magic = T_MAGIC_UNSET;
+            magic_chance = T_MAGIC_CHANCE_UNSET;
 
-		}
+        }
         create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, captr);
         t = t->next;
     }
 }
 
 void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,
-					 int magic, int magic_chance, int tries, struct _change_arch *arch_change)
+                     int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
     if (tries++ > 100)
     {
@@ -1047,7 +1047,7 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
  */
 
 void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance,
-						  int magic, int magic_chance, int tries, struct _change_arch *change_arch)
+                          int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
     object *tmp;
 
@@ -1067,9 +1067,9 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         {
             /*  LOG(-1,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
             create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
-				t->magic!=T_MAGIC_UNSET?magic:t->magic,
-				t->magic_chance!=T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
-				tries, change_arch ? change_arch : &t->change_arch);
+                t->magic!=T_MAGIC_UNSET?magic:t->magic,
+                t->magic_chance!=T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
+                tries, change_arch ? change_arch : &t->change_arch);
         }
         else if (t->item && t->item->name != global_string_none && difficulty >= t->difficulty)
         {
@@ -1083,10 +1083,10 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                         tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
                     /* ret 1 = artifact is generated - don't overwrite anything here */
                     set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
-					change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
+                    change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
                     fix_generated_item(&tmp, op, difficulty, a_chance, t_style,
-						(t->magic==T_MAGIC_UNSET)?magic:t->magic,
-						(t->magic_chance==T_MAGIC_CHANCE_UNSET)?magic_chance:t->magic_chance, flag);
+                        (t->magic==T_MAGIC_UNSET)?magic:t->magic,
+                        (t->magic_chance==T_MAGIC_CHANCE_UNSET)?magic_chance:t->magic_chance, flag);
                     put_treasure(tmp, op, flag);
                     /* if treasure is "identified", created items are too */
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1100,9 +1100,9 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                 {
                     /* if t->magic is != 0, thats our value - if not use default setting */
                     int i;
-					sint64 value = t->magic==T_MAGIC_UNSET?magic==T_MAGIC_UNSET?t->item->clone.value:magic:t->magic;
+                    sint64 value = t->magic==T_MAGIC_UNSET?magic==T_MAGIC_UNSET?t->item->clone.value:magic:t->magic;
 
-					value *= (difficulty / 2) + 1;
+                    value *= (difficulty / 2) + 1;
                     /* so we have 80% to 120% of the fixed value */
                     value = (sint64) ((float) value * 0.8f + (float) value * ((float) (RANDOM() % 40) / 100.0f));
                     for (i = 0; i < NUM_COINS; i++)
@@ -1123,26 +1123,26 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         if (t->next_yes != NULL)
             create_all_treasures(t->next_yes, op, flag, difficulty,
                                  (t->next_yes->t_style == T_STYLE_UNSET) ? t_style : t->next_yes->t_style, a_chance,
-								 (t->magic!=T_MAGIC_UNSET)?t->next_yes->magic:magic,
-								 (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_yes->magic_chance:magic,
-								 tries, change_arch);
+                                 (t->magic!=T_MAGIC_UNSET)?t->next_yes->magic:magic,
+                                 (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_yes->magic_chance:magic,
+                                 tries, change_arch);
     }
     else if (t->next_no != NULL)
         create_all_treasures(t->next_no, op, flag, difficulty,
                              (t->next_no->t_style == T_STYLE_UNSET) ? t_style : t->next_no->t_style, a_chance,
-							 (t->magic!=T_MAGIC_UNSET)?t->next_no->magic:magic,
-							 (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_no->magic_chance:magic,
+                             (t->magic!=T_MAGIC_UNSET)?t->next_no->magic:magic,
+                             (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_no->magic_chance:magic,
                              tries, change_arch);
     if (t->next != NULL)
         create_all_treasures(t->next, op, flag, difficulty,
                              (t->next->t_style == T_STYLE_UNSET) ? t_style : t->next->t_style, a_chance,
-							 (t->magic!=T_MAGIC_UNSET)?t->next->magic:magic,
-							 (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next->magic_chance:magic,
+                             (t->magic!=T_MAGIC_UNSET)?t->next->magic:magic,
+                             (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next->magic_chance:magic,
                              tries, change_arch);
 }
 
 void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance,
-						 int magic, int magic_chance,int tries,struct _change_arch *change_arch)
+                         int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
     int         value, diff_tries = 0;
     treasure   *t;
@@ -1215,14 +1215,14 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
     {
         if (difficulty >= t->difficulty)
             create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
-							t->magic==T_MAGIC_UNSET?magic:t->magic,
-							t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
-							tries, change_arch);
+                            t->magic==T_MAGIC_UNSET?magic:t->magic,
+                            t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
+                            tries, change_arch);
         else if (t->nrof)
             create_one_treasure(tl, op, flag, difficulty, t_style, a_chance,
-								t->magic==T_MAGIC_UNSET?magic:t->magic,
-								t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
-								tries, change_arch);
+                                t->magic==T_MAGIC_UNSET?magic:t->magic,
+                                t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
+                                tries, change_arch);
         return;
     }
 
@@ -1235,10 +1235,10 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
             if (t->nrof && tmp->nrof <= 1)
                 tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
             set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
-			change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
+            change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
             fix_generated_item(&tmp, op, difficulty, a_chance,
                                     (t->t_style == T_STYLE_UNSET) ? t_style : t->t_style,(t->magic!=T_MAGIC_UNSET)?t->magic:magic,
-									(t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->magic_chance:magic_chance, flag);
+                                    (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->magic_chance:magic_chance, flag);
             put_treasure(tmp, op, flag);
             /* if trasure is "identified", created items are too */
             if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1252,7 +1252,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
         {
             /* if t->magic is != 0, thats our value - if not use default setting */
             int i;
-			sint64 value = t->magic==T_MAGIC_UNSET?magic==T_MAGIC_UNSET?t->item->clone.value:magic:t->magic;
+            sint64 value = t->magic==T_MAGIC_UNSET?magic==T_MAGIC_UNSET?t->item->clone.value:magic:t->magic;
 
             value *= difficulty;
             /* so we have 80% to 120% of the fixed value */
@@ -1284,8 +1284,8 @@ static void put_treasure(object *op, object *creator, int flags)
         /* this must be handled carefully... we don't want drop items on a button
              * which is then not triggered. MT-2004
              */
-		/*insert_ob_in_map(op, creator->map, op, INS_NO_MERGE | INS_NO_WALK_ON);*/
-		insert_ob_in_map(op, creator->map, op, INS_NO_WALK_ON);
+        /*insert_ob_in_map(op, creator->map, op, INS_NO_MERGE | INS_NO_WALK_ON);*/
+        insert_ob_in_map(op, creator->map, op, INS_NO_WALK_ON);
     }
     else
     {
@@ -1855,30 +1855,30 @@ static int get_random_spell(int level, int flags)
  *     value.
  */
 int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_chance, int t_style, int max_magic,
-					   int chance_magic, int flags)
+                       int chance_magic, int flags)
 {
     object *op  = *op_ptr; /* just to make things easy */
     int     temp, retval = 0, was_magic = op->magic;
     int     too_many_tries = 0, is_special = 0;
-	int     fix_magic = 0;
+    int     fix_magic = 0;
 
-	if (difficulty < 1)
-		difficulty = 1;
+    if (difficulty < 1)
+        difficulty = 1;
 
-	if(chance_magic==T_MAGIC_CHANCE_UNSET)
-		chance_magic = 6;
-	else if(chance_magic==100 && max_magic > 0)
-		fix_magic = ABS(max_magic);
+    if(chance_magic==T_MAGIC_CHANCE_UNSET)
+        chance_magic = 6;
+    else if(chance_magic==100 && max_magic > 0)
+        fix_magic = ABS(max_magic);
 
-	if(max_magic == T_MAGIC_UNSET) /* default setting: adjust the magic boni to diff level */
-	{
-		if(difficulty > 79)
-			max_magic = 3;
-		else if(difficulty > 37)
-			max_magic = 2;
-		else
-			max_magic = 1;
-	}
+    if(max_magic == T_MAGIC_UNSET) /* default setting: adjust the magic boni to diff level */
+    {
+        if(difficulty > 79)
+            max_magic = 3;
+        else if(difficulty > 37)
+            max_magic = 2;
+        else
+            max_magic = 1;
+    }
 
     if (!creator || creator->type == op->type)
         creator = op; /*safety & to prevent polymorphed objects giving attributes */
@@ -1890,9 +1890,9 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
         if (a_chance != 0)
         {
             if ((!was_magic && !(RANDOM() % CHANCE_FOR_ARTIFACT))
-				 || op->type == HORN
-				 || difficulty >= 999
-				 || ((RANDOM() % 100) + 1) <= (a_chance==ART_CHANCE_UNSET?4:a_chance) )
+                 || op->type == HORN
+                 || difficulty >= 999
+                 || ((RANDOM() % 100) + 1) <= (a_chance==ART_CHANCE_UNSET?4:a_chance) )
                 retval = generate_artifact(op, difficulty, t_style, a_chance);
         }
     }
@@ -2162,11 +2162,11 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
     }
 
     if (flags & GT_IDENTIFIED)
-	{
-		SET_FLAG(op, FLAG_IDENTIFIED);
-		SET_FLAG(op, FLAG_KNOWN_MAGICAL);
-		SET_FLAG(op, FLAG_KNOWN_CURSED);
-	}
+    {
+        SET_FLAG(op, FLAG_IDENTIFIED);
+        SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+        SET_FLAG(op, FLAG_KNOWN_CURSED);
+    }
     if (!(flags & GT_ENVIRONMENT))
         fix_flesh_item(op, creator);
 
@@ -2191,7 +2191,7 @@ static artifactlist * get_empty_artifactlist(void)
 
     if (tl == NULL)
         LOG(llevError, "ERROR: get_empty_artifactlist(): OOM!\n");
-	memset(tl, 0, sizeof(artifactlist));
+    memset(tl, 0, sizeof(artifactlist));
 
     return tl;
 }
@@ -2206,7 +2206,7 @@ static artifact * get_empty_artifact(void)
 
     if (t == NULL)
         LOG(llevError, "ERROR: get_empty_artifact(): OOM!\n");
-	memset(t, 0, sizeof(artifact));
+    memset(t, 0, sizeof(artifact));
 
     return t;
 }
@@ -2430,7 +2430,7 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
 
     al = find_artifactlist(op->type);
 
-	style_abs = ABS(t_style);
+    style_abs = ABS(t_style);
 
     if (al == NULL)
     {
@@ -2459,10 +2459,10 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
 
         /* Map difficulty not high enough OR the t_style is set and don't match */
         if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
-			(  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
+            (  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
             || (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
-			|| (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
-			)))
+            || (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
+            )))
             continue;
 
         if (!legal_artifact_combination(op, art))
@@ -2488,11 +2488,11 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
         {
             if (art->chance <= chance_tmp)
                 continue;
-			if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
-				(  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
-				|| (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
-				|| (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
-				)))
+            if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
+                (  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
+                || (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
+                || (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
+                )))
                 continue;
             if (!legal_artifact_combination(op, art))
                 continue;
@@ -2583,14 +2583,14 @@ void free_artifact(artifact *at)
         free_charlinks(at->allowed);
     if (at->parse_text)
         free(at->parse_text);
-	if(at->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
-	{
-		FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
-		FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
-		FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
-		FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
-		FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
-	}
+    if(at->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
+    {
+        FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
+        FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
+        FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
+        FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
+        FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
+    }
     free(at);
 }
 

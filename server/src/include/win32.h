@@ -128,7 +128,7 @@
 #define int64 __int64
 #endif
 #ifndef atoll
-#define atoll	_atoi64
+#define atoll    _atoi64
 #endif
 
 /* struct dirent - same as Unix */

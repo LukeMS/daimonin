@@ -198,7 +198,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     object*target = NULL, *cast_op;
     int             success = 0, duration, points_used = 0;
     rv_vector       rv;
- 
+
     if (s == NULL)
     {
         LOG(llevBug, "BUG: unknown spell: %d from: %s (%s)\n", type, query_name(op), query_name(caster));
@@ -330,7 +330,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                                  target ? target->name : "yourself");
         return 0;
     }
-    
+
 //    LOG(llevInfo,"TARGET: op: %s target: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
 
     /* if valid target is not in range for selected spell, skip here casting */
@@ -343,7 +343,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                 new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
 /*            else
                 LOG(llevInfo,"cast_spell: %s out of range for %s from %s", STRING_OBJ_NAME(target), spells[type].name, STRING_OBJ_NAME(op));
-  */          
+  */
             return 0;
         }
     }
@@ -1653,9 +1653,9 @@ void move_bolt(object *op)
             else
             {
                 int left = wall(op->map,op->x+freearr_x[absdir(op->direction-1)],
-								op->y+  freearr_y[absdir(op->direction - 1)]),
-					right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
-								op->y + freearr_y[absdir(op->direction + 1)]);
+                                op->y+  freearr_y[absdir(op->direction - 1)]),
+                    right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
+                                op->y + freearr_y[absdir(op->direction + 1)]);
 
                 if (left == right)
                     op->direction = absdir(op->direction + 4);
@@ -2090,7 +2090,7 @@ void move_fired_arch(object *op)
     int         new_x, new_y;
 
     /* peterm:  added to make comet leave a trail of burnouts
-    it's an unadulterated hack, but the effect is cool.	*/
+    it's an unadulterated hack, but the effect is cool.    */
     if (op->stats.sp == SP_METEOR)
     {
         replace_insert_ob_in_map("fire_trail", op);
@@ -2344,7 +2344,7 @@ void move_ball_lightning(object *op)
     owner = get_owner(op);
 
     /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
-	/*
+    /*
     if (owner && (!(owner->path_attuned & PATH_ELEC)) && (op->attacktype & AT_GODPOWER))
     {
         remove_ob(op);
@@ -2353,7 +2353,7 @@ void move_ball_lightning(object *op)
                              "The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
         return;
     }
-	*/
+    */
     /*  the following logic makes sure that the ball
         doesn't move into a wall, and makes
         sure that it will move along a wall to try and
@@ -2614,7 +2614,7 @@ There wouldn't be a meaningful result anyway.
  * the casters level (op->level) with the skill level (SK_level(op))
  * instead for when we have compiled with ALLOW_SKILLS - b.t.
  */
-/* now based on caster's level instead of on op's level and caster's	*
+/* now based on caster's level instead of on op's level and caster's    *
  * path modifiers.  --DAMN                      */
 
 int SP_level_dam_adjust(object *op, object *caster, int spell_type)
@@ -2631,7 +2631,7 @@ int SP_level_dam_adjust(object *op, object *caster, int spell_type)
 }
 
 /* July 1995 - changed slightly (SK_level) for ALLOW_SKILLS - b.t. */
-/* now based on caster's level instead of on op's level and caster's	*
+/* now based on caster's level instead of on op's level and caster's    *
  * path modifiers.  --DAMN                      */
 int SP_level_strength_adjust(object *op, object *caster, int spell_type)
 {

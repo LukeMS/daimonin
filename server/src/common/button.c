@@ -36,7 +36,7 @@ void signal_connection(object *op, oblinkpt *olp)
     objectlink *ol;
 
     if(! ignore_trigger_events)
-        trigger_object_plugin_event(EVENT_TRIGGER, 
+        trigger_object_plugin_event(EVENT_TRIGGER,
                 op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
@@ -61,9 +61,9 @@ void signal_connection(object *op, oblinkpt *olp)
             return;
         }
         tmp = ol->objlink.ob;
-        
+
         if(! ignore_trigger_events)
-            trigger_object_plugin_event(EVENT_TRIGGER, 
+            trigger_object_plugin_event(EVENT_TRIGGER,
                     tmp, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
         switch (tmp->type)
@@ -176,7 +176,7 @@ void update_button(object *op)
 {
     object     *ab, *tmp, *head;
     int         move, fly, tot, any_down = 0;
-	uint32		old_value = op->weight_limit;
+    uint32        old_value = op->weight_limit;
     objectlink *ol;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
@@ -289,7 +289,7 @@ void update_buttons(mapstruct *m)
             }
         }
     }
-    
+
     ignore_trigger_events = 0;
 }
 

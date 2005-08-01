@@ -180,9 +180,9 @@ int command_gsay(object *op, char *params)
     if (!params)
         return 0;
 
-	/* message: client sided */
-	if(!(CONTR(op)->group_status & GROUP_STATUS_GROUP))
-		return 0;
+    /* message: client sided */
+    if(!(CONTR(op)->group_status & GROUP_STATUS_GROUP))
+        return 0;
 
     params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
@@ -308,29 +308,29 @@ int command_tell(object *op, char *params)
             strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
             buf[MAX_BUF - 1] = 0;
 
-			/* lets listen the GMs and DMs to the tells if they want
-			 * Only way to find out/control abuse of this commands
-			 * or we have to give many people access to the server logs (not a option)
-			 */
-			if(gmaster_list_DM || gmaster_list_GM)
-			{
-				objectlink *ol;
+            /* lets listen the GMs and DMs to the tells if they want
+             * Only way to find out/control abuse of this commands
+             * or we have to give many people access to the server logs (not a option)
+             */
+            if(gmaster_list_DM || gmaster_list_GM)
+            {
+                objectlink *ol;
 
                 sprintf(buf2, "%s tells %s: ", op->name, pl->ob->name);
                 strncat(buf2, msg, MAX_BUF - strlen(buf) - 1);
 
-				for(ol = gmaster_list_DM;ol;ol=ol->next)
-				{
-					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-						new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-				}
+                for(ol = gmaster_list_DM;ol;ol=ol->next)
+                {
+                    if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+                }
 
-				for(ol = gmaster_list_GM;ol;ol=ol->next)
-				{
-					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-						new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-				}
-			}
+                for(ol = gmaster_list_GM;ol;ol=ol->next)
+                {
+                    if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+                        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+                }
+            }
 
             if (pl->dm_stealth)
             {
@@ -364,9 +364,9 @@ int command_t_tell(object *op, char *params)
     int         i, xt, yt;
     mapstruct  *m;
 
-	/* we don't allow npc top npc talk here */
+    /* we don't allow npc top npc talk here */
     if (op->type != PLAYER)
-		return 0;
+        return 0;
 
     if (!params)
     {
@@ -377,10 +377,10 @@ int command_t_tell(object *op, char *params)
     params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
     if (!params || *params == '\0')
-	{
-		send_clear_interface(CONTR(op));
+    {
+        send_clear_interface(CONTR(op));
         return 0;
-	}
+    }
 
     /* Players can chat with a marked object in their inventory */
     if(op->type == PLAYER && (t_obj = find_marked_object(op)) && (t_obj->event_flags & EVENT_FLAG_TALK))
@@ -390,47 +390,47 @@ int command_t_tell(object *op, char *params)
         return 0;
     }
 
-	t_obj = CONTR(op)->target_object;
+    t_obj = CONTR(op)->target_object;
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
-		/* why i do this and not direct distance calculation?
+        /* why i do this and not direct distance calculation?
          * because the player perhaps has leaved the mapset with the
          * target which will invoke some nasty searchings.
          */
         /*
-         * TODO: the above comment makes little sense, since 
+         * TODO: the above comment makes little sense, since
          * "nasty searches" are only done if requested (RV_RECURSIVE_SEARCH)
-         * and are also only useful for long distances (which talk shouldn't be). 
+         * and are also only useful for long distances (which talk shouldn't be).
          */
         for (i = 0; i <= SIZEOFFREE2; i++)
         {
-			xt = op->x + freearr_x[i];
+            xt = op->x + freearr_x[i];
             yt = op->y + freearr_y[i];
             if (!(m = out_of_map(op->map, &xt, &yt)))
-				continue;
+                continue;
 
-			if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
-			{
-				/*char        buf[256 * 2];*/
-				/* we do this client sided now
-				sprintf(buf, "you talk to %s: ", query_name(t_obj));
+            if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
+            {
+                /*char        buf[256 * 2];*/
+                /* we do this client sided now
+                sprintf(buf, "you talk to %s: ", query_name(t_obj));
                 strncat(buf, params, MAX_BUF - strlen(buf) - 1);
                 buf[MAX_BUF - 1] = 0;
                 new_draw_info(NDI_WHITE, 0, op, buf);
-				*/
+                */
 
                 if (t_obj->event_flags & EVENT_FLAG_TALK)
                     trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
                             params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-				else
-					send_clear_interface(CONTR(op));
+                else
+                    send_clear_interface(CONTR(op));
 
                 return 1;
             }
         }
-	}
+    }
 
-	send_clear_interface(CONTR(op));
+    send_clear_interface(CONTR(op));
     return 1;
 }
 
@@ -466,14 +466,14 @@ int command_reply(object *op, char *params)
 
     if (pl == NULL || pl->dm_stealth)
     {
-		if(pl->dm_stealth)
-		{
-			sprintf(buf, "%s replies you: ", op->name);
-			strncat(buf, params, MAX_BUF - strlen(buf) - 1);
-			buf[MAX_BUF - 1] = 0;
-			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
-			LOG(llevInfo, buf);
-		}
+        if(pl->dm_stealth)
+        {
+            sprintf(buf, "%s replies you: ", op->name);
+            strncat(buf, params, MAX_BUF - strlen(buf) - 1);
+            buf[MAX_BUF - 1] = 0;
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+            LOG(llevInfo, buf);
+        }
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
         return 1;
     }
@@ -482,22 +482,22 @@ int command_reply(object *op, char *params)
     strncat(buf2, params, MAX_BUF - strlen(buf) - 1);
     LOG(llevInfo, buf2);
 
-	if(gmaster_list_DM || gmaster_list_GM)
-	{
-		objectlink *ol;
+    if(gmaster_list_DM || gmaster_list_GM)
+    {
+        objectlink *ol;
 
-		for(ol = gmaster_list_DM;ol;ol=ol->next)
-		{
-			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-		}
+        for(ol = gmaster_list_DM;ol;ol=ol->next)
+        {
+            if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+        }
 
-		for(ol = gmaster_list_GM;ol;ol=ol->next)
-		{
-			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-		}
-	}
+        for(ol = gmaster_list_GM;ol;ol=ol->next)
+        {
+            if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+        }
+    }
 
     sprintf(buf, "%s replies you: ", op->name);
     strncat(buf, params, MAX_BUF - strlen(buf) - 1);

@@ -81,7 +81,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     if (get_attack_mode(&op, &hitter, &simple_attack))
         goto error;
 
-    if(trigger_object_plugin_event(EVENT_ATTACK, 
+    if(trigger_object_plugin_event(EVENT_ATTACK,
             op, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         goto error;
 
@@ -103,12 +103,12 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         rv_vector   dir;
         if(get_rangevector(hitter, op, &dir, RV_NO_DISTANCE))
         {
-            if (hitter->head) 
+            if (hitter->head)
             {
                 hitter->head->anim_enemy_dir = dir.direction;
                 hitter->head->facing = dir.direction;
-            } 
-            else 
+            }
+            else
             {
                 hitter->anim_enemy_dir = dir.direction;
                 hitter->facing = dir.direction;
@@ -362,33 +362,33 @@ int hit_player(object *op, int dam, object *hitter, int type)
 
     /* A last safery check - this happened in the past sometimes */
     if (op->stats.hp < 0)
-	{
+    {
         LOG(llevDebug, "BUG/FIXME: victim (arch %s, name %s (%x - %d)) already dead in hit_player()\n", op->arch->name, query_name(op), op, op->count);
-		return 0;
+        return 0;
     }
 
-	/* Now - we really hit. Perhaps we do no damage - but our weapons/spell or
-	 * whatever hits the target. And our target will find that perhaps not so
-	 * funny... Lets check the aggro/damage marker.
-	 */
+    /* Now - we really hit. Perhaps we do no damage - but our weapons/spell or
+     * whatever hits the target. And our target will find that perhaps not so
+     * funny... Lets check the aggro/damage marker.
+     */
 
-	/* first, we check we have a dmg object.
-	 * Only a few kind of damage dealing objects need it.
-	 * AoE spells are one of it.
-	 */
-	if(QUERY_FLAG(hitter, FLAG_USE_DMG_INFO) )
-	{
-		dmg_obj = aggro_get_damage(op, hitter);
-		/* be sure we do damage only all hitter->last_heal ticks */
-		if(dmg_obj)
-		{
-			if(dmg_obj->damage_round_tag+hitter->last_heal >= ROUND_TAG)
-				return 0;
-			dmg_obj->damage_round_tag = ROUND_TAG;
-		}
-		else
-			dmg_obj = aggro_insert_damage(op, hitter);
-	}
+    /* first, we check we have a dmg object.
+     * Only a few kind of damage dealing objects need it.
+     * AoE spells are one of it.
+     */
+    if(QUERY_FLAG(hitter, FLAG_USE_DMG_INFO) )
+    {
+        dmg_obj = aggro_get_damage(op, hitter);
+        /* be sure we do damage only all hitter->last_heal ticks */
+        if(dmg_obj)
+        {
+            if(dmg_obj->damage_round_tag+hitter->last_heal >= ROUND_TAG)
+                return 0;
+            dmg_obj->damage_round_tag = ROUND_TAG;
+        }
+        else
+            dmg_obj = aggro_insert_damage(op, hitter);
+    }
 
 
     /* slaying door ... when i think about it, its broken,,,
@@ -443,7 +443,7 @@ int hit_player(object *op, int dam, object *hitter, int type)
     }
 
     /* we insert the aggro data in the mob, and report to the AI system */
-	aggro_obj = aggro_update_info(op, target_obj, hitter, hit_obj, maxdam<op->stats.hp?maxdam:op->stats.hp, 0);
+    aggro_obj = aggro_update_info(op, target_obj, hitter, hit_obj, maxdam<op->stats.hp?maxdam:op->stats.hp, 0);
 
     /* this is needed to send the hit number animations to the clients */
     if (op->damage_round_tag != ROUND_TAG)
@@ -1025,16 +1025,16 @@ int kill_object(object *op, int dam, object *hitter, int type)
     int         maxdam              = 0;
     int         battleg             = 0;    /* true if op standing on battleground */
     mapstruct  *map;
-	char		*buf_ptr, buf2[MAX_BUF];
+    char        *buf_ptr, buf2[MAX_BUF];
 
     /* Object has been killed.  Lets clean it up */
     if (op->stats.hp <= 0)
     {
-        if(trigger_object_plugin_event(EVENT_DEATH, 
+        if(trigger_object_plugin_event(EVENT_DEATH,
                     op, hitter, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
             return 0; /* Cheat death */
-        
-#if 0        
+
+#if 0
         CFParm      CFP;
         /* GROS: Handle for the global kill event */
         evtid = EVENT_GKILL;
@@ -1115,7 +1115,7 @@ int kill_object(object *op, int dam, object *hitter, int type)
                 owner->exp_obj = hitter->exp_obj;
                 hitter = hitter->owner;
             }*/
-			buf_ptr = buf2;
+            buf_ptr = buf2;
             if (owner != hitter)
             {
                 sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
@@ -1287,8 +1287,8 @@ object * hit_with_arrow(object *op, object *victim)
     victim_y = victim->y;
     victim_tag = victim->count;
     hitter_tag = hitter->count;
-    
-    if(!trigger_object_plugin_event(EVENT_ATTACK, 
+
+    if(!trigger_object_plugin_event(EVENT_ATTACK,
                 hitter, hitter, victim, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
     {
         /*LOG(-1, "hit: %s (%d %d)\n", hitter->name, op->stats.dam, op->stats.wc);*/
@@ -1314,9 +1314,9 @@ object * hit_with_arrow(object *op, object *victim)
     /* Missile hit victim */
     if (hit_something)
     {
-        trigger_object_plugin_event(EVENT_STOP, 
+        trigger_object_plugin_event(EVENT_STOP,
                 hitter, victim, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
-            
+
         /* Stop arrow */
         if (container == NULL)
         {
@@ -1829,8 +1829,8 @@ int adj_attackroll(object *hitter, object *target)
     /* if we attack at a different 'altitude' its harder */
     if (QUERY_FLAG(attacker, FLAG_FLYING) != QUERY_FLAG(target, FLAG_FLYING))
         adjust -= 2;
-	else if (QUERY_FLAG(attacker, FLAG_LEVITATE) != QUERY_FLAG(target, FLAG_LEVITATE))
-			adjust -= 2;
+    else if (QUERY_FLAG(attacker, FLAG_LEVITATE) != QUERY_FLAG(target, FLAG_LEVITATE))
+            adjust -= 2;
 
 #if 0
   /* slower attacks are less likely to succeed. We should use a

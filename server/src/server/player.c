@@ -170,8 +170,8 @@ static player * get_player(player *p)
     p->bed_x = map_archeytpe->clone.stats.hp;
     p->bed_y = map_archeytpe->clone.stats.sp;
 
-	p->gmaster_mode = GMASTER_MODE_NO;
-	p->gmaster_node = NULL;
+    p->gmaster_mode = GMASTER_MODE_NO;
+    p->gmaster_node = NULL;
     p->mute_freq_shout=0;
     p->mute_freq_say=0;
     p->mute_counter=0;
@@ -1708,10 +1708,10 @@ void kill_player(object *op)
         return;
     }
 
-    if(trigger_object_plugin_event(EVENT_DEATH, 
+    if(trigger_object_plugin_event(EVENT_DEATH,
                 op, NULL, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         return; /* Cheat death */
-    
+
 #if 0 /* Disabled global events */
     CFParm      CFP;
     int         evtid;

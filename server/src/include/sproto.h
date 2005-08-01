@@ -67,11 +67,11 @@ int                         is_melee_range(object *hitter, object *enemy);
 int                         did_make_save_item(object *op, int type, object *originator);
 void                        save_throw_object(object *op, int type, object *originator);
 /* ban.c */
-void						load_ban_file(void);
-void						save_ban_file(void);
-struct objectlink			*add_ban_entry(char *banned, int ticks, int ticks_left, int mode);
-void						remove_ban_entry(struct oblnk *entry);
-int							check_banned(char *name, uint32 ip);
+void                        load_ban_file(void);
+void                        save_ban_file(void);
+struct objectlink            *add_ban_entry(char *banned, int ticks, int ticks_left, int mode);
+void                        remove_ban_entry(struct oblnk *entry);
+int                            check_banned(char *name, uint32 ip);
 /* c_chat.c */
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
@@ -286,7 +286,7 @@ int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
-void						send_clear_interface(player *pl);
+void                        send_clear_interface(player *pl);
 /* daemon.c */
 FILE                       *BecomeDaemon(char *filename);
 /* disease.c */
@@ -306,16 +306,16 @@ int                         reduce_symptoms(object *sufferer, int reduction);
 object                     *create_artifact(object *op, char *artifactname);
 int                         apply_power_crystal(object *op, object *crystal);
 /* gmaster.c */
-void						remove_gmaster_list(player *pl);
-int							check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode);
-int							load_gmaster_file(void);
-void						add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id);
-void						remove_gmaster_file_entry(objectlink *ol);
-int							check_gmaster_list(player *pl, int mode);
-void						set_gmaster_mode(player *pl, int mode);
-void						remove_gmaster_mode(player *pl);
-void						write_gmaster_file(void);
-void						update_gmaster_file(void);
+void                        remove_gmaster_list(player *pl);
+int                            check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode);
+int                            load_gmaster_file(void);
+void                        add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id);
+void                        remove_gmaster_file_entry(objectlink *ol);
+int                            check_gmaster_list(player *pl, int mode);
+void                        set_gmaster_mode(player *pl, int mode);
+void                        remove_gmaster_mode(player *pl);
+void                        write_gmaster_file(void);
+void                        update_gmaster_file(void);
 /* hiscore.c */
 char                       *spool(char *bp, char *error);
 void                        check_score(object *op);
@@ -538,7 +538,7 @@ void                        shop_listing(object *op);
 int                         get_money_from_string(char *text, struct _money_block *money);
 int                         query_money_type(object *op, int value);
 sint64                      remove_money_type(object *who, object *op, sint64 value, sint64 amount);
-void						add_money_to_player(object *pl, int c, int s, int g, int m);
+void                        add_money_to_player(object *pl, int c, int s, int g, int m);
 void                        insert_money_in_player(object *pl, object *money, uint32 nrof);
 /* skills.c */
 int                         attempt_steal(object *op, object *who);

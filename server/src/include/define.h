@@ -305,18 +305,18 @@ error - Your ANSI C compiler should be defining __STDC__;
                                                  * a fitting amount of money basing on the base setting).
                                                  */
 #define TYPE_AI                 126     /* MOB AI definition object */
-#define TYPE_AGGRO_HISTORY		127		/* aggro history - core base object for aggro handling. */
-#define TYPE_DAMAGE_INFO		128		/* info object for aggro, group damage, exp sharing and DOT handling */
+#define TYPE_AGGRO_HISTORY        127        /* aggro history - core base object for aggro handling. */
+#define TYPE_DAMAGE_INFO        128        /* info object for aggro, group damage, exp sharing and DOT handling */
 
-#define TYPE_QUEST_TRIGGER		129		/* a quest trigger describes & interact with quests & other quest things */
-#define SKILLSCROLL             130		/* can add a skill to player's inventory -bt.*/
-#define TYPE_QUEST_OBJECT		131		/* a quest object - it will be set to what we need. Its better & cleaner to
+#define TYPE_QUEST_TRIGGER        129        /* a quest trigger describes & interact with quests & other quest things */
+#define SKILLSCROLL             130        /* can add a skill to player's inventory -bt.*/
+#define TYPE_QUEST_OBJECT        131        /* a quest object - it will be set to what we need. Its better & cleaner to
                                          * use a own type for it instead of marking "real" object with fancy flags
                                          */
 #define TYPE_TIMER              132     /* Trigger a connection after a time period */
 #define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
 #define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
-#define TYPE_PEARL				135		/* gem/jewel type pearl */
+#define TYPE_PEARL                135        /* gem/jewel type pearl */
 /* Some free type values here! */
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
@@ -451,16 +451,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_DOOR_CURTAIN 1 /* make different sound */
 
 /* subtypes for TYPE_QUEST_CONTAINER objects */
-#define ST1_QUEST_ONE_DROP		0
-#define ST1_QUESTS_TYPE_DONE	1
-#define ST1_QUESTS_TYPE_NORMAL	2
-#define ST1_QUESTS_TYPE_KILL	3
-#define ST1_QUESTS_TYPE_CONT	4
+#define ST1_QUEST_ONE_DROP        0
+#define ST1_QUESTS_TYPE_DONE    1
+#define ST1_QUESTS_TYPE_NORMAL    2
+#define ST1_QUESTS_TYPE_KILL    3
+#define ST1_QUESTS_TYPE_CONT    4
 
 /* subtypes for QUEST_TRIGGER */
-#define ST1_QUEST_TRIGGER_NORMAL	0
-#define ST1_QUEST_TRIGGER_KILL		1
-#define ST1_QUEST_TRIGGER_CONT		2
+#define ST1_QUEST_TRIGGER_NORMAL    0
+#define ST1_QUEST_TRIGGER_KILL        1
+#define ST1_QUEST_TRIGGER_CONT        2
 
 /* subtypes for TYPE_CONN_SENSOR */
 #define ST1_CONN_SENSOR_NAND        0 /* NAND / NOT */
@@ -520,23 +520,23 @@ error - Your ANSI C compiler should be defining __STDC__;
  */
 #define PATH_NULL   0x00000000      /* 0 */
 
-#define PATH_LIFE		0x00000001      /* 1 */
-#define PATH_DEATH		0x00000002      /* 2 */
-#define PATH_ELEMENTAL	0x00000004		/* 4 */
-#define PATH_ENERGY		0x00000008      /* 8 */
-#define PATH_SPIRIT		0x00000010		/* 16 */
-#define PATH_PROTECTION	0x00000020      /* 32 */
-#define PATH_LIGHT		0x00000040		/* 64 */
-#define PATH_NETHER		0x00000080		/* 128 */
+#define PATH_LIFE        0x00000001      /* 1 */
+#define PATH_DEATH        0x00000002      /* 2 */
+#define PATH_ELEMENTAL    0x00000004        /* 4 */
+#define PATH_ENERGY        0x00000008      /* 8 */
+#define PATH_SPIRIT        0x00000010        /* 16 */
+#define PATH_PROTECTION    0x00000020      /* 32 */
+#define PATH_LIGHT        0x00000040        /* 64 */
+#define PATH_NETHER        0x00000080        /* 128 */
 
-#define PATH_NATURE			0x00000100  /* 256 */
-#define PATH_SHADOW			0x00000200  /* 512 */
-#define PATH_CHAOS			0x00000400    /* 1024 */
-#define PATH_EARTH			0x00000800   /* 2048 */
-#define PATH_CONJURATION	0x00001000     /* 4096 */
-#define PATH_ABJURATION		0x00002000     /* 8192 */
-#define PATH_TRANSMUTATION	0x00004000   /* 16384 */
-#define PATH_ARCANE			0x00008000  /*  32768 */
+#define PATH_NATURE            0x00000100  /* 256 */
+#define PATH_SHADOW            0x00000200  /* 512 */
+#define PATH_CHAOS            0x00000400    /* 1024 */
+#define PATH_EARTH            0x00000800   /* 2048 */
+#define PATH_CONJURATION    0x00001000     /* 4096 */
+#define PATH_ABJURATION        0x00002000     /* 8192 */
+#define PATH_TRANSMUTATION    0x00004000   /* 16384 */
+#define PATH_ARCANE            0x00008000  /*  32768 */
 
 #define NRSPELLPATHS    16
 
@@ -593,7 +593,7 @@ error - Your ANSI C compiler should be defining __STDC__;
     ((xyz)->flags[p/32] & (1U << (p % 32)))
 
 #define SET_OR_CLEAR_FLAG(op, flag, val) \
-	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
+    { if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
 
 /* this is rarely used but needed for some flags, which are
  * used for intern handling like INVISIBLE or WALK_OFF. Because
@@ -752,10 +752,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */
 
 #define FLAG_IS_HILLY       88 /* Item is hilly/mountain terrain */
-#define FLAG_LEVITATE		89	/* levitating... similiar to flying */
+#define FLAG_LEVITATE        89    /* levitating... similiar to flying */
 #define FLAG_READY_WEAPON   90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT 91 /* If set, item cannot be identified w/ a skill */
-#define FLAG_USE_DMG_INFO	92 /* used for asynchron dmg of AoE spells */
+#define FLAG_USE_DMG_INFO    92 /* used for asynchron dmg of AoE spells */
 #define FLAG_SEE_IN_DARK    93 /* if set ob not effected by darkness */
 #define FLAG_IS_CAULDRON    94 /* container can make alchemical stuff */
 #define FLAG_DUST           95 /* item is a 'powder', effects throwing */
@@ -1068,11 +1068,11 @@ enum apply_flag
         if ((dy) < 0) { (dy2) = -(dy2);  (stepy) = -1; } else { (stepy) = 1; } \
         if ((dx) < 0) { (dx2) = -(dx2);  (stepx) = -1; } else { (stepx) = 1; } \
         if((dx2) > (dy2)) (fraction) = (dy2) - (dx)*(stepx); else (fraction) = (dx2) - (dy)*(stepy); \
-    } 
- 
+    }
+
 /* Bresenham line stepping macro */
 /* x,y are input-output and will be always be changed
- * fraction is also input-output, but should be initialized with 
+ * fraction is also input-output, but should be initialized with
  * BRESENHAM_INIT.
  * stepx, stepy, dx2 and dy2 are input only and should also
  * be initialized by BRESENHAM_INIT

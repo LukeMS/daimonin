@@ -195,7 +195,7 @@ BehaviourClass(ACTIONS,
      * always implicit, but casting on others will only be done if
      * their friendship is above the specified values AND a value is
      * specified. */
-    Behaviour(HEAL_FRIEND, ai_heal_friend, 
+    Behaviour(HEAL_FRIEND, ai_heal_friend,
         /** Friendship threshold for healing */
         Parameter(HEAL_FRIEND, HEALING_MIN_FRIENDSHIP, INTEGER, OPTIONAL, 0)
         /** Friendship threshold for cure poison */

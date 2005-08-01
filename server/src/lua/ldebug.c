@@ -29,7 +29,7 @@
 static const char *getfuncname (CallInfo *ci, const char **name);
 
 
-#define isLua(ci)	(!((ci)->state & CI_C))
+#define isLua(ci)    (!((ci)->state & CI_C))
 
 
 static int currentpc (CallInfo *ci) {
@@ -263,11 +263,11 @@ LUA_API int lua_getinfo (lua_State *L, const char *what, lua_Debug *ar) {
 ** =======================================================
 */
 
-#define check(x)		if (!(x)) return 0;
+#define check(x)        if (!(x)) return 0;
 
-#define checkjump(pt,pc)	check(0 <= pc && pc < pt->sizecode)
+#define checkjump(pt,pc)    check(0 <= pc && pc < pt->sizecode)
 
-#define checkreg(pt,reg)	check((reg) < (pt)->maxstacksize)
+#define checkreg(pt,reg)    check((reg) < (pt)->maxstacksize)
 
 
 
@@ -381,7 +381,7 @@ static Instruction luaG_symbexec (const Proto *pt, int lastpc, int reg) {
         /* go through */
       case OP_JMP: {
         int dest = pc+1+b;
-	check(0 <= dest && dest < pt->sizecode);
+    check(0 <= dest && dest < pt->sizecode);
         /* not full check and jump is forward and do not skip `lastpc'? */
         if (reg != NO_REG && pc < dest && dest <= lastpc)
           pc += b;  /* do the jump */

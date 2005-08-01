@@ -867,9 +867,9 @@ int convert_item(object *item, object *converter)
         if (nr * CONV_NEED(converter) % item->value)
             cost++;
 
-	    /* this is outdated code too... we have here a overflow problem */
-		if(cost >(2^31))
-			cost = (2^31);
+        /* this is outdated code too... we have here a overflow problem */
+        if(cost >(2^31))
+            cost = (2^31);
         decrease_ob_nr(item, (int)cost);
     }
     else
@@ -939,12 +939,12 @@ int container_link(player *pl, object *sack)
         container_unlink(pl, sack);
     }
 
-	/* ok, at this point we are SURE a player opens this container.
-	 * here we kick in the check for quest item given for container access-
-	 * = container (apply) event.
-	 */
-	if(sack->event_flags & EVENT_FLAG_SPECIAL_QUEST)
-		check_cont_quest_event(pl->ob, sack);
+    /* ok, at this point we are SURE a player opens this container.
+     * here we kick in the check for quest item given for container access-
+     * = container (apply) event.
+     */
+    if(sack->event_flags & EVENT_FLAG_SPECIAL_QUEST)
+        check_cont_quest_event(pl->ob, sack);
 
     pl->container = sack;
     pl->container_count = sack->count;
@@ -1448,26 +1448,26 @@ static void apply_sign(object *op, object *sign)
      * for magic mouths that have been made visible.
      */
     if(!QUERY_FLAG(op, FLAG_WIZ) && !QUERY_FLAG(sign, FLAG_WALK_ON) && !QUERY_FLAG(sign,FLAG_FLY_ON))
-	{
-		if (QUERY_FLAG(op, FLAG_BLIND))
-		{
-			new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
-			return;
-		}
+    {
+        if (QUERY_FLAG(op, FLAG_BLIND))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
+            return;
+        }
 
-		/* you has the right skill & language knowledge to read it? */
-		else if (!change_skill(op, SK_LITERACY))
-		{
-			new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
-			return;
-		}
-		else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
-		{
-			new_draw_info_format(	NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
-									query_name(sign), get_language(sign->weight_limit));
-			return;
-		}
-	}
+        /* you has the right skill & language knowledge to read it? */
+        else if (!change_skill(op, SK_LITERACY))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
+            return;
+        }
+        else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
+        {
+            new_draw_info_format(    NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
+                                    query_name(sign), get_language(sign->weight_limit));
+            return;
+        }
+    }
 
     if(trigger_object_plugin_event(
                 EVENT_APPLY, sign, op, NULL,
@@ -1481,7 +1481,7 @@ static void apply_sign(object *op, object *sign)
     }
 
     new_draw_info_format(NDI_UNIQUE, 0, op, "You start reading the %s.", sign->name);
-	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
 }
 
 
@@ -1522,13 +1522,13 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
     recursion_depth++;
     if (trap->head)
         trap = trap->head;
-    
+
     /* TODO: handle return value */
     /* TODO: move to better position */
-    trigger_object_plugin_event(EVENT_TRIGGER, 
+    trigger_object_plugin_event(EVENT_TRIGGER,
             trap, victim, originator,
             NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
-    
+
     switch (trap->type)
     {
           /* these objects can trigger other objects connected to them.
@@ -1761,19 +1761,19 @@ static void apply_book(object *op, object *tmp)
 
     /* you has the right skill & language knowledge to read it? */
     if (!QUERY_FLAG(op, FLAG_WIZ))
-	{
-		if (!change_skill(op, SK_LITERACY))
-		{
-			new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
-			return;
-		}
-		else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
-		{
-			new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
-								 query_name(tmp), get_language(tmp->weight_limit));
-			return;
-		}
-	}
+    {
+        if (!change_skill(op, SK_LITERACY))
+        {
+            new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
+            return;
+        }
+        else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
+                                 query_name(tmp), get_language(tmp->weight_limit));
+            return;
+        }
+    }
 
     new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
 
@@ -1799,7 +1799,7 @@ static void apply_book(object *op, object *tmp)
 
     /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
 
-	/* identify the book - successful reading will do it always */
+    /* identify the book - successful reading will do it always */
     if (!QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT))
     {
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -2919,11 +2919,11 @@ int manual_apply(object *op, object *tmp, int aflag)
           return 1;
 
         case SIGN:
-			if (op->type == PLAYER)
-			{
-				apply_sign(op, tmp);
-				return 1;
-			}
+            if (op->type == PLAYER)
+            {
+                apply_sign(op, tmp);
+                return 1;
+            }
             return 0;
 
         case BOOK:
@@ -3297,7 +3297,7 @@ int apply_special(object *who, object *op, int aflags)
               }
               else
               {
-				  CLEAR_FLAG(who, FLAG_READY_BOW); break;
+                  CLEAR_FLAG(who, FLAG_READY_BOW); break;
               }
               break;
             default:
@@ -3305,15 +3305,15 @@ int apply_special(object *who, object *op, int aflags)
               break;
         }
         if (buf[0] != '\0')
-		{
+        {
             if (who->type == PLAYER)
-			{
-				new_draw_info(NDI_UNIQUE, 0, who, buf);
-				fix_player(who);
-			}
-			else
-				fix_monster(who);
-		}
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                fix_player(who);
+            }
+            else
+                fix_monster(who);
+        }
 
         if (!(aflags & AP_NO_MERGE))
         {
@@ -3913,7 +3913,7 @@ void apply_lighter(object *who, object *lighter)
         if (lighter->last_eat && lighter->stats.food)
         {
             /* lighter gets used up */
-            /* Split multiple lighters if they're being used up.  Otherwise	*
+            /* Split multiple lighters if they're being used up.  Otherwise    *
             * one charge from each would be used up.  --DAMN        */
             if (lighter->nrof > 1)
             {

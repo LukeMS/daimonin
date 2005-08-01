@@ -757,19 +757,19 @@ void command_new_char(char *params, int len, player *pl)
     {
         new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op, "%s entered the game.", op->name);
 
-		if(gmaster_list_DM || gmaster_list_GM)
-		{
-			objectlink *ol;
-			char buf_dm[64];
+        if(gmaster_list_DM || gmaster_list_GM)
+        {
+            objectlink *ol;
+            char buf_dm[64];
 
-			sprintf(buf_dm,"DM: new player! %d now playing.", player_active);
+            sprintf(buf_dm,"DM: new player! %d now playing.", player_active);
 
-			for(ol = gmaster_list_DM;ol;ol=ol->next)
-				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+            for(ol = gmaster_list_DM;ol;ol=ol->next)
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 
-			for(ol = gmaster_list_GM;ol;ol=ol->next)
-				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-		}
+            for(ol = gmaster_list_GM;ol;ol=ol->next)
+                new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+        }
     }
     CLEAR_FLAG(op, FLAG_WIZ);
     give_initial_items(op, op->randomitems);
@@ -788,8 +788,8 @@ void command_new_char(char *params, int len, player *pl)
     SET_FLAG(op, FLAG_FRIENDLY);
 
     CONTR(op)->socket.update_tile = 0;
-	CONTR(op)->socket.look_position = 0;
-	CONTR(op)->socket.look_position_container = 0;
+    CONTR(op)->socket.look_position = 0;
+    CONTR(op)->socket.look_position_container = 0;
     CONTR(op)->socket.ext_title_flag = 1;
     esrv_new_player(CONTR(op), op->weight + op->carrying);
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
@@ -1024,8 +1024,8 @@ void generate_ext_title(player *pl)
     else
         gender = "neuter";
 
-	/* get a possible special tag for DM/GM/VOL */
-	tmp = (pl->gmaster_mode==GMASTER_MODE_NO?"":(pl->gmaster_mode==GMASTER_MODE_DM ? " [DM]" : (pl->gmaster_mode==GMASTER_MODE_GM ?" [GM]" : " [VOL]")));
+    /* get a possible special tag for DM/GM/VOL */
+    tmp = (pl->gmaster_mode==GMASTER_MODE_NO?"":(pl->gmaster_mode==GMASTER_MODE_DM ? " [DM]" : (pl->gmaster_mode==GMASTER_MODE_GM ?" [GM]" : " [VOL]")));
 
     strcpy(pl->quick_name, rank);
     strcat(pl->quick_name, pl->ob->name);
@@ -1033,5 +1033,5 @@ void generate_ext_title(player *pl)
 
     /*strcat(pl->quick_name, title);*/
     sprintf( pl->ext_title, "%s\n%s%s %s\n%s\n%s\n%s\n%s\n%c\n", rank, pl->ob->name,tmp,
-			 title, pl->ob->race, prof, align, determine_god(pl->ob), *gender);
+             title, pl->ob->race, prof, align, determine_god(pl->ob), *gender);
 }

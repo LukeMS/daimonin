@@ -539,8 +539,8 @@ char *query_base_name(object *op, object *caller)
     if (op->name == NULL)
         return "(null)";
 
-	if(op->sub_type1 == ARROW && op->type == MISC_OBJECT) /* special neutralized arrow! */
-		strcat(buf, "broken ");
+    if(op->sub_type1 == ARROW && op->type == MISC_OBJECT) /* special neutralized arrow! */
+        strcat(buf, "broken ");
 
     /* add the item race name */
     if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
@@ -669,29 +669,29 @@ char *query_base_name(object *op, object *caller)
               }
           }
           break;
-			case MISC_OBJECT:
-			if(op->sub_type1 == ARROW) /* special neutralized arrow! */
-			{
-				if(QUERY_FLAG(op, FLAG_IDENTIFIED))
-				{
-					if (op->magic)
-					{
-						sprintf(buf2, " %+d", op->magic);
-						safe_strcat(buf, buf2, &len, sizeof(buf));
-					}
-					if (op->title)
-					{
-						safe_strcat(buf, " ", &len, sizeof(buf));
-						safe_strcat(buf, op->title, &len, sizeof(buf));
-					}
-					if (op->slaying)
-					{
-						safe_strcat(buf, " ", &len, sizeof(buf));
-						safe_strcat(buf, op->slaying, &len, sizeof(buf));
-					}
-				}
-				return buf;
-			}
+            case MISC_OBJECT:
+            if(op->sub_type1 == ARROW) /* special neutralized arrow! */
+            {
+                if(QUERY_FLAG(op, FLAG_IDENTIFIED))
+                {
+                    if (op->magic)
+                    {
+                        sprintf(buf2, " %+d", op->magic);
+                        safe_strcat(buf, buf2, &len, sizeof(buf));
+                    }
+                    if (op->title)
+                    {
+                        safe_strcat(buf, " ", &len, sizeof(buf));
+                        safe_strcat(buf, op->title, &len, sizeof(buf));
+                    }
+                    if (op->slaying)
+                    {
+                        safe_strcat(buf, " ", &len, sizeof(buf));
+                        safe_strcat(buf, op->slaying, &len, sizeof(buf));
+                    }
+                }
+                return buf;
+            }
 
         default:
           if (op->magic && (!need_identify(op) || QUERY_FLAG(op, FLAG_BEEN_APPLIED) || QUERY_FLAG(op, FLAG_IDENTIFIED)))
@@ -814,9 +814,9 @@ char * describe_item(object *op)
             strcat(retbuf, "(wear ring)");
         if (QUERY_FLAG(op, FLAG_FRIENDLY))
             strcat(retbuf, "(NPC)");
-		if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
+        if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
             strcat(retbuf, "(unaggressive)");
-		else
+        else
             strcat(retbuf, "(aggressive)");
         if (QUERY_FLAG(op, FLAG_HITBACK))
             strcat(retbuf, "(hitback)");
@@ -1108,10 +1108,10 @@ char * describe_item(object *op)
             strcat(retbuf, "(reflect missiles)");
         if (QUERY_FLAG(op, FLAG_STEALTH))
             strcat(retbuf, "(stealth)");
-		if (QUERY_FLAG(op, FLAG_FLYING))
-			strcat(retbuf, "(flying)");
-		if (QUERY_FLAG(op, FLAG_LEVITATE))
-			strcat(retbuf, "(levitate)");
+        if (QUERY_FLAG(op, FLAG_FLYING))
+            strcat(retbuf, "(flying)");
+        if (QUERY_FLAG(op, FLAG_LEVITATE))
+            strcat(retbuf, "(levitate)");
     }
     if (id_true)
     {

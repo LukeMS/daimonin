@@ -590,22 +590,22 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * a valid terrain flag, this is forbidden to enter.
      */
     if (msp->move_flags & ~terrain)
-	{
-		/* last chance ... flying & levitation allows us to stay over more terrains */
-		if(op)
-		{
-			if(QUERY_FLAG(op,FLAG_FLYING))
-				terrain |= (TERRAIN_WATERWALK|TERRAIN_CLOUDWALK);
-			else if(QUERY_FLAG(op,FLAG_LEVITATE))
-				terrain |= TERRAIN_WATERWALK;
+    {
+        /* last chance ... flying & levitation allows us to stay over more terrains */
+        if(op)
+        {
+            if(QUERY_FLAG(op,FLAG_FLYING))
+                terrain |= (TERRAIN_WATERWALK|TERRAIN_CLOUDWALK);
+            else if(QUERY_FLAG(op,FLAG_LEVITATE))
+                terrain |= TERRAIN_WATERWALK;
 
-			if (msp->move_flags & ~terrain)
-				return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
-		}
-		else
-			return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
-	}
-	
+            if (msp->move_flags & ~terrain)
+                return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
+        }
+        else
+            return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
+    }
+
     /* the terrain is ok... whats first?
      * A.) P_IS_ALIVE - we leave without question
      * (NOTE: player objects has NO is_alive set!)
@@ -622,10 +622,10 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
              * - no PASS_THRU... or
              * - PASS_THRU set but op==NULL (no PASS_THRU check possible)
              * - PASS_THRU set and object has no CAN_PASS_THRU
-			 * - the same for PASS_ETHEREAL and IS_ETHEREAL
+             * - the same for PASS_ETHEREAL and IS_ETHEREAL
              */
         if (!op || ( (!(flags & P_PASS_THRU) || !QUERY_FLAG(op, FLAG_CAN_PASS_THRU)) &&
-				     (!(flags & P_PASS_ETHEREAL) || !QUERY_FLAG(op, FLAG_IS_ETHEREAL)) ))
+                     (!(flags & P_PASS_ETHEREAL) || !QUERY_FLAG(op, FLAG_IS_ETHEREAL)) ))
             return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
 
         /* ok, NO_PASS is overruled... we go on... */
@@ -911,7 +911,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
 
     op = get_object();
     op->map = m; /* To handle buttons correctly */
-    
+
     mybuffer = create_loader_buffer(fp);
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, mapflags)))
     {
@@ -922,7 +922,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
                 query_short_name(op, NULL));
             goto next;
         }
-		/* should not happen because we catch invalid arches now as singularities */
+        /* should not happen because we catch invalid arches now as singularities */
         if (op->arch == NULL)
         {
             LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- invalid archetype. (pos:%d,%d)\n",
@@ -943,12 +943,12 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
         }
 
         if (QUERY_FLAG(op, FLAG_UNIQUE))
-			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first
-											 * and set the map data direct in the original map
-											 */
-        
+            unique = TRUE;                    /* we CAN avoid this check by check the map in the editor first
+                                             * and set the map data direct in the original map
+                                             */
+
         /* important pre set for the animation/face of a object */
-        if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))        
+        if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
         {
             /* If a bad animation is set, we will get div by zero */
             if(NUM_FACINGS(op) == 0)
@@ -959,7 +959,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
             }
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         }
-		
+
 
 
         /* expand a multi arch - we have only the head saved in a map!
@@ -1005,7 +1005,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
              * and because there are some "arch depending and not object depending"
              * flags, we init the tails with some of the head settings.
              */
-			if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT)
             else
                 CLEAR_MULTI_FLAG(tmp->more, FLAG_SYS_OBJECT);
@@ -1029,12 +1029,12 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
                 SET_MULTI_FLAG(op->more, FLAG_FLYING)
             else
                 CLEAR_MULTI_FLAG(tmp->more, FLAG_FLYING);
-			if (QUERY_FLAG(op, FLAG_LEVITATE))
-				SET_MULTI_FLAG(op->more, FLAG_LEVITATE)
-			else
-			CLEAR_MULTI_FLAG(tmp->more, FLAG_LEVITATE);
+            if (QUERY_FLAG(op, FLAG_LEVITATE))
+                SET_MULTI_FLAG(op->more, FLAG_LEVITATE)
+            else
+            CLEAR_MULTI_FLAG(tmp->more, FLAG_LEVITATE);
 
-			if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
+            if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
                 SET_MULTI_FLAG(op->more, FLAG_BLOCKSVIEW)
             else
                 CLEAR_MULTI_FLAG(tmp->more, FLAG_BLOCKSVIEW);
@@ -1046,19 +1046,19 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
         if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
             auto_apply(op); /* auto_apply() will remove the flag_auto_apply after first use */
         else if ((mapflags & MAP_ORIGINAL) && op->randomitems) /* for fresh maps, create treasures */
-		{
-			if (op->type == MONSTER)
-				create_treasure_list( op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
-	                                  op->level ? op->level : m->difficulty, ART_CHANCE_UNSET, 0);
-			else
-				create_treasure_list( op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
-									  op->level ? op->level : m->difficulty, ART_CHANCE_UNSET, 0);
-		}
+        {
+            if (op->type == MONSTER)
+                create_treasure_list( op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
+                                      op->level ? op->level : m->difficulty, ART_CHANCE_UNSET, 0);
+            else
+                create_treasure_list( op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
+                                      op->level ? op->level : m->difficulty, ART_CHANCE_UNSET, 0);
+        }
 
         if (op->type == MONSTER)
             fix_monster(op);
 
-			/* iam not sure this is senseful.
+            /* iam not sure this is senseful.
              * it was part of fix_auto_apply() but it should
              * redundant
             else if(op->type==TIMED_GATE)
@@ -1087,7 +1087,7 @@ next:
      */
     check_light_source_list(m);
 
-	return unique;
+    return unique;
 }
 
 /* This saves all the objects on the map in a (most times) non destructive fashion.
@@ -1102,7 +1102,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 {
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
-	char   *bptr=NULL;
+    char   *bptr=NULL;
 
     /* first, we have to remove all dynamic objects from this map.
      * from spell effects with owners (because the owner can't
@@ -1181,9 +1181,9 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     /* sanity check for the mob structures & ptr */
                     if(!MOB_DATA(head) || !MOB_DATA(head)->spawn_info)
                     {
-                        LOG( llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO (%s) or MOB_DATA(%x).\n", 
+                        LOG( llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO (%s) or MOB_DATA(%x).\n",
                              STRING_SAFE(head->arch->name), query_name(head),
-                             MOB_DATA(head)?query_name(MOB_DATA(head)->spawn_info):"NULL", 
+                             MOB_DATA(head)?query_name(MOB_DATA(head)->spawn_info):"NULL",
                              MOB_DATA(head)?MOB_DATA(head):0x00);
                     }
                     else
@@ -1349,25 +1349,25 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     tmp->y = op->y - op->arch->clone.y;
 
                     if (QUERY_FLAG(tmp, FLAG_UNIQUE))
-					{
-						if(!fp2)
-						{
-							if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
-								/* we give an error here... thats really a awful bug */
-								LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
+                    {
+                        if(!fp2)
+                        {
+                            if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
+                                /* we give an error here... thats really a awful bug */
+                                LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
 
-							LOG(llevDebug, "Saving unique items map to %s\n", bptr);
-						}
+                            LOG(llevDebug, "Saving unique items map to %s\n", bptr);
+                        }
                         save_object(fp2, tmp, 3);
-					}
+                    }
                     else
                         save_object(fp, tmp, 3);
 
                     tmp->x = xt;
                     tmp->y = yt;
                     remove_ob(tmp); /* this is only a "trick" remove - no walk off check.
-					                 * Remember: don't put important triggers near tiled map borders!
-					                 */
+                                     * Remember: don't put important triggers near tiled map borders!
+                                     */
 
                     activelist_remove(tmp, m);
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
@@ -1387,17 +1387,17 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                 }
 
                 if (QUERY_FLAG(op, FLAG_UNIQUE))
-				{
-					if(!fp2)
-					{
-						if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
-							/* we give an error here... thats really a awful bug */
-							LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
+                {
+                    if(!fp2)
+                    {
+                        if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
+                            /* we give an error here... thats really a awful bug */
+                            LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
 
-						LOG(llevDebug, "Saving unique items map to %s\n", bptr);
-					}
+                        LOG(llevDebug, "Saving unique items map to %s\n", bptr);
+                    }
                     save_object(fp2, op, 3);
-				}
+                }
                 else
                     save_object(fp, op, 3);
 
@@ -1420,12 +1420,12 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
         } /* for this j */
     }
 
-	if(fp2 && fp2 != fp) /* if so, we have created fp2 here! */
-	{
-		fclose(fp2);
-		if(bptr)
-			chmod(bptr, SAVE_MODE);
-	}
+    if(fp2 && fp2 != fp) /* if so, we have created fp2 here! */
+    {
+        fclose(fp2);
+        if(bptr)
+            chmod(bptr, SAVE_MODE);
+    }
 }
 
 /*
@@ -1441,7 +1441,7 @@ mapstruct * get_linked_map()
     if (map == NULL)
         LOG(llevError, "ERROR: get_linked_map(): OOM.\n");
 
-    /* why we do this? Is it really needed to put a new map on the end 
+    /* why we do this? Is it really needed to put a new map on the end
     * of the list? even when - add a last_map. So, we are smart and do
     * a FILO list here.
     */
@@ -1458,7 +1458,7 @@ mapstruct * get_linked_map()
     first_map = map;
 
     map->in_memory = MAP_SWAPPED;
-	map->has_unique = FALSE;
+    map->has_unique = FALSE;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
      */
@@ -1654,7 +1654,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
         }
         else if (!strcmp(key, "has_unique"))
         {
-			m->has_unique = atoi(value);
+            m->has_unique = atoi(value);
         }
         else if (!strcmp(key, "darkness"))
         {
@@ -1839,7 +1839,7 @@ mapstruct * load_original_map(const char *filename, int flags)
 {
     FILE       *fp;
     mapstruct  *m;
-	int         uni;
+    int         uni;
     char        pathname[MAX_BUF];
     char        tmp_fname[MAX_BUF];
 
@@ -1897,9 +1897,9 @@ mapstruct * load_original_map(const char *filename, int flags)
     LOG(llevDebug, "load objs:");
     uni = load_objects(m, fp, (flags & (MAP_BLOCK | MAP_STYLE)) | MAP_ORIGINAL);
     if (!(flags & MAP_PLAYER_UNIQUE))
-		m->has_unique = uni;
+        m->has_unique = uni;
 
-	LOG(llevDebug, "close. ");
+    LOG(llevDebug, "close. ");
     fclose(fp);
     LOG(llevDebug, "post set. ");
     if (!MAP_DIFFICULTY(m))
@@ -2012,19 +2012,19 @@ static void delete_unique_items(mapstruct *m)
 static void load_unique_objects(mapstruct *m)
 {
     FILE   *fp;
-	char   *fptr;
+    char   *fptr;
 
     if ((fp = fopen((fptr=create_items_path(m->path)), "r")))
     {
-		LOG(llevDebug, "open unique items file for %s\n", fptr);
+        LOG(llevDebug, "open unique items file for %s\n", fptr);
 
-		m->in_memory = MAP_LOADING;
-		if (m->tmpname == NULL)    /* if we have loaded unique items from */
-	        delete_unique_items(m); /* original map before, don't duplicate them */
-	    load_objects(m, fp, 0);
-	    fclose(fp);
-		unlink(fptr);
-	}
+        m->in_memory = MAP_LOADING;
+        if (m->tmpname == NULL)    /* if we have loaded unique items from */
+            delete_unique_items(m); /* original map before, don't duplicate them */
+        load_objects(m, fp, 0);
+        fclose(fp);
+        unlink(fptr);
+    }
 }
 
 
@@ -2152,28 +2152,28 @@ int new_save_map(mapstruct *m, int flag)
      * player)
      */
     if ((flag == 0 || flag == 2) && !MAP_UNIQUE(m))
-	{
-		if(m->has_unique) /* this original map has default unique items stored.
-						   * to ensure we always have them right set, we must force
-						   * a even clear unique file to make it consistent over server
-						   * resets.
-						   */
-		{
-			FILE *fp2;
-			char *bptr;
-			if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
-				/* we give an error here... thats really a awful bug */
-				LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
+    {
+        if(m->has_unique) /* this original map has default unique items stored.
+                           * to ensure we always have them right set, we must force
+                           * a even clear unique file to make it consistent over server
+                           * resets.
+                           */
+        {
+            FILE *fp2;
+            char *bptr;
+            if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
+                /* we give an error here... thats really a awful bug */
+                LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
 
-			LOG(llevDebug, "Saving unique items map to %s\n", bptr);
+            LOG(llevDebug, "Saving unique items map to %s\n", bptr);
 
-			save_objects(m, fp, fp2, 0);
-			/* flcose() is called in save_objects */
-			chmod(bptr, SAVE_MODE);
-		}
-		else
-			save_objects(m, fp, NULL, 0);
-	}
+            save_objects(m, fp, fp2, 0);
+            /* flcose() is called in save_objects */
+            chmod(bptr, SAVE_MODE);
+        }
+        else
+            save_objects(m, fp, NULL, 0);
+    }
     else /* save same file when not playing, like in editor */
         save_objects(m, fp, fp, 0);
 
@@ -2263,9 +2263,9 @@ void free_map(mapstruct *m, int flag)
      * This map struct CAN be freed now - an object still on the list
      * will have a map ptr on this - the GC or some else server function
      * will try to access the freed map struct when it comes to handle the
-     * still as "iam active on a map" marked object and crash! 
+     * still as "iam active on a map" marked object and crash!
      */
-    /* Actually, this is a bug _only_ if FLAG_REMOVED is false for the 
+    /* Actually, this is a bug _only_ if FLAG_REMOVED is false for the
      * object. There are many parts in the code that just call remove_ob()
      * on objects and expect the gc to handle removal from activelists etc.
      * - Gecko 20050731
@@ -2960,15 +2960,15 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
 
 /* Distance between two objects. See get_rangevector_full() for info */
 /* TODO: this should probably be replaced with a macro or an inline function */
-/* 
+/*
  * Note: this function was changed from always calculating euclidian distance to
  * defaulting to calculating manhattan distance. Gecko 20050714
  */
 int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 {
     return get_rangevector_full(
-            op1, op1->map, op1->x, op1->y, 
-            op2, op2->map, op2->x, op2->y, 
+            op1, op1->map, op1->x, op1->y,
+            op2, op2->map, op2->x, op2->y,
             retval, flags);
 }
 
@@ -2976,8 +2976,8 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 /* Never adjusts for multipart objects (since objects are unknown) */
 /* TODO: this should probably be replaced with a macro or an inline function */
 int get_rangevector_from_mapcoords(
-        mapstruct *map1, int x1, int y1, 
-        mapstruct *map2, int x2, int y2, 
+        mapstruct *map1, int x1, int y1,
+        mapstruct *map2, int x2, int y2,
         rv_vector *retval, int flags)
 {
     return get_rangevector_full(NULL, map1, x1, y1, NULL, map2, x2, y2, retval, flags);
@@ -2988,15 +2988,15 @@ int get_rangevector_from_mapcoords(
  * rangevector between any two points on any maps, with or without adjusting
  * for multipart objects.
  *
- * op1 and op2 are optional, but are required (separately or together) for multipart 
+ * op1 and op2 are optional, but are required (separately or together) for multipart
  * object handling. (Currently op2 is ignored but might be used in the future)
  *
- * If the function fails (because of the maps being separate), it will return FALSE 
+ * If the function fails (because of the maps being separate), it will return FALSE
  * and the vector is not otherwise touched. Otherwise it will return TRUE.
  *
- * Returns (through retval):  
- *  distance_x/y are distance away, which can be negative. 
- *  direction is the crossfire direction scheme from p1 to p2.  
+ * Returns (through retval):
+ *  distance_x/y are distance away, which can be negative.
+ *  direction is the crossfire direction scheme from p1 to p2.
  *  part is the part of op1 that is closest to p2. (can be NULL)
  *  distance is an absolute distance value according to the selected algorithm.
  *
@@ -3014,11 +3014,11 @@ int get_rangevector_from_mapcoords(
  *
  *  TODO: Add a RV_FAST_EUCLIDIAN_DISTANCE that skips the isqrt() call. Still very
  *  useful for distances (e.g. if(rv.distance <= d*d))
- *  TODO: support multipart->multipart handling 
+ *  TODO: support multipart->multipart handling
  */
 int get_rangevector_full(
-        object *op1, mapstruct *map1, int x1, int y1, 
-        object *op2, mapstruct *map2, int x2, int y2, 
+        object *op1, mapstruct *map1, int x1, int y1,
+        object *op2, mapstruct *map2, int x2, int y2,
         rv_vector *retval, int flags)
 {
     if (map1 == map2)
@@ -3085,7 +3085,7 @@ int get_rangevector_full(
         /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");*/
         return FALSE;
     }
-    
+
     retval->part = op1;
     /* If this is multipart, find the closest part now */
     if (!(flags & RV_IGNORE_MULTIPART) && op1 && op1->more)
@@ -3102,7 +3102,7 @@ int get_rangevector_full(
          */
         for (tmp = op1->more; tmp; tmp = tmp->more)
         {
-            tmpi = 
+            tmpi =
                 (retval->distance_x - tmp->arch->clone.x) * (retval->distance_x - tmp->arch->clone.x) +
                 (retval->distance_y - tmp->arch->clone.y) * (retval->distance_y - tmp->arch->clone.y);
             if (tmpi < best_distance)
@@ -3122,7 +3122,7 @@ int get_rangevector_full(
 
     /* Calculate approximate direction */
     retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
-    
+
     /* Calculate distance */
     switch (flags & (0x04 | 0x08 | 0x10))
     {

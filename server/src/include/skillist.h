@@ -99,13 +99,13 @@ skill   skills[NROFSKILLS]  =
     { "levitation",         NULL, SKILLGROUP_MISC, 0, 0, 0.0f, NO_STAT_VAL, NO_STAT_VAL, NO_STAT_VAL },
     { "disarm traps",       NULL, SKILLGROUP_MISC, 0, 1, 0.5f,      DEX,      INTELLIGENCE,     INTELLIGENCE },
     { "crossbow archery",   NULL, SKILLGROUP_MISC, 0, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
-	/* 35 */
+    /* 35 */
     { "sling archery",      NULL, SKILLGROUP_MISC, 0, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
     { "identify items",     NULL, SKILLGROUP_MISC, 10, 1, 1.0f,      INTELLIGENCE,      DEX,     WIS },
     { "slash weapons",      NULL, SKILLGROUP_MISC, 0, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     { "cleave weapons",     NULL, SKILLGROUP_MISC, 0, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     { "pierce weapons",     NULL, SKILLGROUP_MISC, 0, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
-	/* 40 */
+    /* 40 */
     { "two-hand mastery",   NULL, SKILLGROUP_MISC, 0, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },
     { "polearm mastery",    NULL, SKILLGROUP_MISC, 0, 0, 0.0f,      STR,      DEX, NO_STAT_VAL }
 };

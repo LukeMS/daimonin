@@ -723,8 +723,8 @@ PATH_TURNING,"holy_orb",},
 
 char   *spellpathnames[NRSPELLPATHS]    =
 {
-	"Life", "Death", "Elemental", "Energy",
-	"Spirit", "Protection", "Light", "Nether",
-	"Nature", "Shadow", "Chaos", "Earth",
-	"Conjuration", "Abjuration", "Transmutation", "Arcane"
+    "Life", "Death", "Elemental", "Energy",
+    "Spirit", "Protection", "Light", "Nether",
+    "Nature", "Shadow", "Chaos", "Earth",
+    "Conjuration", "Abjuration", "Transmutation", "Arcane"
 };

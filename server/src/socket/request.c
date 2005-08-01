@@ -472,7 +472,7 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 /* This is a reply to a previous query. */
 void ReplyCmd(char *buf, int len, player *pl)
 {
-	char                write_buf[MAX_BUF];
+    char                write_buf[MAX_BUF];
 
     /* This is to synthesize how the data would be stored if it
      * was normally entered.  A bit of a hack, and should be cleaned up
@@ -868,7 +868,7 @@ void esrv_update_skills(player *pl)
 void esrv_update_stats(player *pl)
 {
     static char sock_buf[MAX_BUF]; /* hm, in theory... can this all be more as 256 bytes?? *I* never tested it.*/
-	int         i, group_update = 0; /* set to true when a group update stat has changed */
+    int         i, group_update = 0; /* set to true when a group update stat has changed */
     SockList    sl;
     uint16      flags;
 
@@ -969,17 +969,17 @@ void esrv_update_stats(player *pl)
     if (sl.len > 1)
         Send_With_Handling(&pl->socket, &sl);
 
-	if(group_update && pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
-		party_client_group_update(pl->ob, group_update);
+    if(group_update && pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
+        party_client_group_update(pl->ob, group_update);
     pl->update_ticker = ROUND_TAG;
 }
 
 
 void esrv_new_player(player *pl, uint32 weight)
 {
-	int len;
+    int len;
 
-	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_PLAYER);
+    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_PLAYER);
     SockList_AddInt(&global_sl, pl->ob->count);
     SockList_AddInt(&global_sl, weight);
     SockList_AddInt(&global_sl, pl->ob->face->number);

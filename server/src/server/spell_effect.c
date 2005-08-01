@@ -298,16 +298,16 @@ int probe(object *op)
         {
             if (op->owner && op->owner->type == PLAYER)
             {
-#ifdef DEBUG_PROBE_IS_CHARM                
+#ifdef DEBUG_PROBE_IS_CHARM
                 /* Temporarily made probe into charm to test pet code */
                 if(add_pet(op->owner, tmp) == 0)
                     new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your probe charms %s.", tmp->name);
-#else                
+#else
                 new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your probe analyse %s.", tmp->name);
                 if (tmp->head != NULL)
                     tmp = tmp->head;
                 examine(op->owner, tmp, TRUE);
-#endif                
+#endif
                 return 1;
             }
         }
@@ -1578,7 +1578,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           SET_FLAG(force, FLAG_SEE_IN_DARK);
           break;
           /* attacktype-protection spells: */
-		  /*
+          /*
         case SP_PROT_COLD:
           if (!i)
               atnr = ATNR_COLD, path = PATH_FROST, i = 1;

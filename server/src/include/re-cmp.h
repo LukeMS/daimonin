@@ -68,16 +68,16 @@ typedef enum
     sel_any,
     /* corresponds to e.g. .        */
     sel_end,
-    /*         "           $		*/
+    /*         "           $        */
     sel_single,
-    /*         "           q		*/
+    /*         "           q        */
     sel_range,
-    /*         "           [A-F]		*/
+    /*         "           [A-F]        */
     sel_array,
-    /*         "           [AF-RqO-T]	*/
+    /*         "           [AF-RqO-T]    */
     sel_not_single,
-    /*         "           [^f]		*/
-    sel_not_range   /*     "           [^A-F]		*/
+    /*         "           [^f]        */
+    sel_not_range   /*     "           [^A-F]        */
 }    selection_type;
 
 typedef enum
@@ -85,10 +85,10 @@ typedef enum
     rep_once,
     /* corresponds to no meta-char  */
     rep_once_or_more,
-    /*        "       +		*/
+    /*        "       +        */
     rep_null_or_once,
-    /*        "       ?		*/
-    rep_null_or_more    /*        "       *		*/
+    /*        "       ?        */
+    rep_null_or_more    /*        "       *        */
 }    repetetion_type;
 
 typedef struct

@@ -110,7 +110,7 @@
 #define EVENT_FLAG_TALK     EVENT_FLAG(EVENT_TALK)
 
 /* special flag for quest_triggers - internal use */
-#define EVENT_FLAG_SPECIAL_QUEST	EVENT_FLAG(NR_LOCAL_EVENTS)
+#define EVENT_FLAG_SPECIAL_QUEST    EVENT_FLAG(NR_LOCAL_EVENTS)
 
 /*****************************************************************************/
 /* Global events. Those are never linked to a specific object.               */
@@ -292,37 +292,37 @@ struct plugin_hooklist
     int (*get_rangevector_from_mapcoords)(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
     object * (*get_archetype)(const char *name);
     void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
-	void (*add_money_to_player)(object *pl, int c, int s, int g, int m);
-	void (*drop_ob_inv)(object *ob);
-	object * (*decrease_ob_nr)(object *op, int i);
-	void (*add_quest_containers)(object *op);
-	void (*add_quest_trigger)(object *who, object *trigger);
-	void (*set_quest_status)(struct obj *trigger, int q_status, int q_type);
-	void (*spring_trap)(object *trap, object *victim);
-	int  (*cast_spell)(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item, char *stringarg);
-	void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
-	object * (*find_skill)(object *op, int skillnr);
+    void (*add_money_to_player)(object *pl, int c, int s, int g, int m);
+    void (*drop_ob_inv)(object *ob);
+    object * (*decrease_ob_nr)(object *op, int i);
+    void (*add_quest_containers)(object *op);
+    void (*add_quest_trigger)(object *who, object *trigger);
+    void (*set_quest_status)(struct obj *trigger, int q_status, int q_type);
+    void (*spring_trap)(object *trap, object *victim);
+    int  (*cast_spell)(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item, char *stringarg);
+    void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
+    object * (*find_skill)(object *op, int skillnr);
     int  (*find_animation)(char *name);
     int  (*find_face)(const char *name, int error);
     void (*get_tod)(struct _timeofday *tod);
-	sint64 (*query_money)(object *op);
-	sint64 (*query_cost)(object *tmp, object *who, int flag);
-	char* (*cost_string_from_value)(sint64 cost);
-	int (*pay_for_item)(object *op, object *pl);
-	int (*pay_for_amount)(sint64 to_pay, object *pl);
-	char* (*get_word_from_string)(char *str, int *pos);
-	int (*get_money_from_string)(char *text, struct _money_block *money);
-	void (*sell_item)(object *op, object *pl, sint64 value);
-	int (*query_money_type)(object *op, int value);
-	sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
-	void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
+    sint64 (*query_money)(object *op);
+    sint64 (*query_cost)(object *tmp, object *who, int flag);
+    char* (*cost_string_from_value)(sint64 cost);
+    int (*pay_for_item)(object *op, object *pl);
+    int (*pay_for_amount)(sint64 to_pay, object *pl);
+    char* (*get_word_from_string)(char *str, int *pos);
+    int (*get_money_from_string)(char *text, struct _money_block *money);
+    void (*sell_item)(object *op, object *pl, sint64 value);
+    int (*query_money_type)(object *op, int value);
+    sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
+    void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
 
-	/* Global variables */
+    /* Global variables */
     Animations **animations;
     New_Face **new_faces;
     int *global_darkness_table;
-	archetype **coins_arch;
-	struct shstr_constants *shstr;
+    archetype **coins_arch;
+    struct shstr_constants *shstr;
 };
 
 /*****************************************************************************/
@@ -341,7 +341,7 @@ extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
 
 
 /* Table of all loaded plugins */
-#define	PLUGINS_MAX_NROF 32
+#define    PLUGINS_MAX_NROF 32
 
 extern CFPlugin             PlugList[PLUGINS_MAX_NROF];
 extern int                  PlugNR;

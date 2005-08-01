@@ -4,7 +4,7 @@
 
     Copyright (C) 2001-2005 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,21 +41,21 @@
  */
 static objectlink *get_gmaster_node(void)
 {
-	objectlink		*ol   = get_objectlink(OBJLNK_FLAG_GM);
-	struct _gmaster_struct  *gptr = (struct _gmaster_struct *) get_poolchunk(pool_gmasters);
+    objectlink        *ol   = get_objectlink(OBJLNK_FLAG_GM);
+    struct _gmaster_struct  *gptr = (struct _gmaster_struct *) get_poolchunk(pool_gmasters);
 
-	memset(gptr, 0, sizeof(gmaster_struct));
-	ol->objlink.gm = gptr;
+    memset(gptr, 0, sizeof(gmaster_struct));
+    ol->objlink.gm = gptr;
 
-	return ol;
+    return ol;
 }
 
 /* free the gmaster node and the used objectlink
  */
 static void free_gmaster_node(objectlink *ol)
 {
-	return_poolchunk(ol->objlink.gm, pool_gmasters);
-	return_poolchunk(ol, pool_objectlink);
+    return_poolchunk(ol->objlink.gm, pool_gmasters);
+    return_poolchunk(ol, pool_objectlink);
 }
 
 
@@ -63,37 +63,37 @@ static void free_gmaster_node(objectlink *ol)
  */
 static struct oblnk *add_gmaster_list(player *pl)
 {
-	objectlink *ol;
+    objectlink *ol;
 
-	if(pl->gmaster_mode == GMASTER_MODE_NO)
-		return NULL;
+    if(pl->gmaster_mode == GMASTER_MODE_NO)
+        return NULL;
 
-	ol = get_objectlink(OBJLNK_FLAG_OB);
-	ol->objlink.ob = pl->ob;
+    ol = get_objectlink(OBJLNK_FLAG_OB);
+    ol->objlink.ob = pl->ob;
 
-	if(pl->gmaster_mode == GMASTER_MODE_VOL)
-		objectlink_link(&gmaster_list_VOL, NULL, NULL, gmaster_list_VOL, ol);
-	else if(pl->gmaster_mode == GMASTER_MODE_GM)
-		objectlink_link(&gmaster_list_GM, NULL, NULL, gmaster_list_GM, ol);
-	else /* DM list mode */
-		objectlink_link(&gmaster_list_DM, NULL, NULL, gmaster_list_DM, ol);
+    if(pl->gmaster_mode == GMASTER_MODE_VOL)
+        objectlink_link(&gmaster_list_VOL, NULL, NULL, gmaster_list_VOL, ol);
+    else if(pl->gmaster_mode == GMASTER_MODE_GM)
+        objectlink_link(&gmaster_list_GM, NULL, NULL, gmaster_list_GM, ol);
+    else /* DM list mode */
+        objectlink_link(&gmaster_list_DM, NULL, NULL, gmaster_list_DM, ol);
 
-	return ol;
+    return ol;
 }
 
 /* remove a player from global gmaster lists
  */
 void remove_gmaster_list(player *pl)
 {
-	if(pl->gmaster_mode == GMASTER_MODE_NO)
-		return;
+    if(pl->gmaster_mode == GMASTER_MODE_NO)
+        return;
 
-	if(pl->gmaster_mode == GMASTER_MODE_VOL)
-		objectlink_unlink(&gmaster_list_VOL, NULL, pl->gmaster_node);
-	else if(pl->gmaster_mode == GMASTER_MODE_GM)
-		objectlink_unlink(&gmaster_list_GM, NULL, pl->gmaster_node);
-	else /* DM list mode */
-		objectlink_unlink(&gmaster_list_DM, NULL, pl->gmaster_node);
+    if(pl->gmaster_mode == GMASTER_MODE_VOL)
+        objectlink_unlink(&gmaster_list_VOL, NULL, pl->gmaster_node);
+    else if(pl->gmaster_mode == GMASTER_MODE_GM)
+        objectlink_unlink(&gmaster_list_GM, NULL, pl->gmaster_node);
+    else /* DM list mode */
+        objectlink_unlink(&gmaster_list_DM, NULL, pl->gmaster_node);
 }
 
 /* check a file entry.
@@ -101,35 +101,35 @@ void remove_gmaster_list(player *pl)
  */
 int check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode)
 {
-	int mode_id = GMASTER_MODE_NO;
+    int mode_id = GMASTER_MODE_NO;
 
-	if(strlen(name) >= MAX_PLAYER_NAME)
-	{
-		LOG(llevBug, "BUG: load_gmaster_file): name %s to long: %d\n", name, strlen(name));
-		return mode_id;
-	}
-	if(strlen(host) >= 120)
-	{
-		LOG(llevBug, "BUG: load_gmaster_file): host %s to long: %d\n", host, strlen(host));
-		return mode_id;
-	}
-	if(strlen(passwd) >= MAX_PLAYER_PASSWORD)
-	{
-		LOG(llevBug, "BUG: load_gmaster_file): passwd %s to long: %d\n", passwd, strlen(passwd));
-		return mode_id;
-	}
+    if(strlen(name) >= MAX_PLAYER_NAME)
+    {
+        LOG(llevBug, "BUG: load_gmaster_file): name %s to long: %d\n", name, strlen(name));
+        return mode_id;
+    }
+    if(strlen(host) >= 120)
+    {
+        LOG(llevBug, "BUG: load_gmaster_file): host %s to long: %d\n", host, strlen(host));
+        return mode_id;
+    }
+    if(strlen(passwd) >= MAX_PLAYER_PASSWORD)
+    {
+        LOG(llevBug, "BUG: load_gmaster_file): passwd %s to long: %d\n", passwd, strlen(passwd));
+        return mode_id;
+    }
 
-	if(!strcasecmp(mode,"VOL"))
-		mode_id = GMASTER_MODE_VOL;
-	else if(!strcasecmp(mode,"GM"))
-		mode_id = GMASTER_MODE_GM;
-	else if(!strcasecmp(mode,"DM"))
-		mode_id = GMASTER_MODE_DM;
+    if(!strcasecmp(mode,"VOL"))
+        mode_id = GMASTER_MODE_VOL;
+    else if(!strcasecmp(mode,"GM"))
+        mode_id = GMASTER_MODE_GM;
+    else if(!strcasecmp(mode,"DM"))
+        mode_id = GMASTER_MODE_DM;
 
-	if(mode_id == GMASTER_MODE_NO)
-		LOG(llevBug, "BUG: load_gmaster_file): invalid mode tag: %s\n", mode_id);
+    if(mode_id == GMASTER_MODE_NO)
+        LOG(llevBug, "BUG: load_gmaster_file): invalid mode tag: %s\n", mode_id);
 
-	return mode_id;
+    return mode_id;
 }
 
 /* load & parse the gmaster_file.
@@ -141,8 +141,8 @@ int load_gmaster_file(void)
     char    buf[HUGE_BUF];
     char    line_buf[MAX_BUF], name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
-	LOG(llevInfo,"loading gmaster_file....\n");
-	sprintf(buf, "%s/%s", settings.localdir, GMASTER_FILE);
+    LOG(llevInfo,"loading gmaster_file....\n");
+    sprintf(buf, "%s/%s", settings.localdir, GMASTER_FILE);
     if ((dmfile = fopen(buf, "r")) == NULL)
     {
         LOG(llevDebug, "Could not find gmaster_file file.\n");
@@ -154,17 +154,17 @@ int load_gmaster_file(void)
             continue;
         if (sscanf(line_buf, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
             LOG(llevBug, "BUG: malformed gmaster_file entry: %s\n", line_buf);
-		else
-		{
+        else
+        {
 
-			int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
+            int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
 
-			if(mode_id == GMASTER_MODE_NO)
-				continue;
+            if(mode_id == GMASTER_MODE_NO)
+                continue;
 
-			/* all ok, setup the gmaster node and add it to our list */
-			add_gmaster_file_entry(name, passwd, host, mode_id);
-		}
+            /* all ok, setup the gmaster node and add it to our list */
+            add_gmaster_file_entry(name, passwd, host, mode_id);
+        }
 
     }
     fclose(dmfile);
@@ -175,24 +175,24 @@ int load_gmaster_file(void)
  */
 void add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id)
 {
-	objectlink *ol;
+    objectlink *ol;
 
-	ol = get_gmaster_node();
+    ol = get_gmaster_node();
 
-	sprintf( ol->objlink.gm->entry, "%s:%s:%s:%s", name, passwd, host,
-			 mode_id==GMASTER_MODE_DM?"DM":(mode_id==GMASTER_MODE_GM?"GM":"VOL"));
-	strcpy(ol->objlink.gm->name,name);
-	strcpy(ol->objlink.gm->password,passwd);
-	strcpy(ol->objlink.gm->host,host);
-	ol->objlink.gm->mode = mode_id;
+    sprintf( ol->objlink.gm->entry, "%s:%s:%s:%s", name, passwd, host,
+             mode_id==GMASTER_MODE_DM?"DM":(mode_id==GMASTER_MODE_GM?"GM":"VOL"));
+    strcpy(ol->objlink.gm->name,name);
+    strcpy(ol->objlink.gm->password,passwd);
+    strcpy(ol->objlink.gm->host,host);
+    ol->objlink.gm->mode = mode_id;
 
-	/* lifo list */
-	objectlink_link(&gmaster_list, NULL, NULL, gmaster_list, ol);
+    /* lifo list */
+    objectlink_link(&gmaster_list, NULL, NULL, gmaster_list, ol);
 }
 
 void remove_gmaster_file_entry(objectlink *ol)
 {
-	objectlink_unlink(&gmaster_list, NULL, ol);
+    objectlink_unlink(&gmaster_list, NULL, ol);
 }
 
 /* a player has given a /dm,/gm,/vol commands or its triggered by login.
@@ -201,47 +201,47 @@ void remove_gmaster_file_entry(objectlink *ol)
  */
 int check_gmaster_list(player *pl, int mode)
 {
-	objectlink *ol;
+    objectlink *ol;
 
-	for(ol = gmaster_list;ol;ol=ol->next)
-	{
-		/*LOG(-1,"CHECK: %s - %s - %s -%d\n",ol->objlink.gm->name,
-				ol->objlink.gm->password,ol->objlink.gm->host,ol->objlink.gm->mode );*/
-		if ( ol->objlink.gm->mode >= mode /* allow a GM to activate VOL mode for example */
-			 && (!strcmp(ol->objlink.gm->name, "*") || !strcasecmp(pl->ob->name, ol->objlink.gm->name))
-			 && (!strcmp(ol->objlink.gm->password, "*") || !strcmp(pl->password, ol->objlink.gm->password))
-			 && (!strcmp(ol->objlink.gm->host, "*") || !strcasecmp(pl->socket.host, ol->objlink.gm->host)))
-			return TRUE;
-	}
+    for(ol = gmaster_list;ol;ol=ol->next)
+    {
+        /*LOG(-1,"CHECK: %s - %s - %s -%d\n",ol->objlink.gm->name,
+                ol->objlink.gm->password,ol->objlink.gm->host,ol->objlink.gm->mode );*/
+        if ( ol->objlink.gm->mode >= mode /* allow a GM to activate VOL mode for example */
+             && (!strcmp(ol->objlink.gm->name, "*") || !strcasecmp(pl->ob->name, ol->objlink.gm->name))
+             && (!strcmp(ol->objlink.gm->password, "*") || !strcmp(pl->password, ol->objlink.gm->password))
+             && (!strcmp(ol->objlink.gm->host, "*") || !strcasecmp(pl->socket.host, ol->objlink.gm->host)))
+            return TRUE;
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 /* set a gmaster mode to a player: DM, GM or VOL
  */
 void set_gmaster_mode(player *pl, int mode)
 {
-	/* remove first the old mode if there is one */
-	if(pl->gmaster_mode != GMASTER_MODE_NO)
-		remove_gmaster_mode(pl);
+    /* remove first the old mode if there is one */
+    if(pl->gmaster_mode != GMASTER_MODE_NO)
+        remove_gmaster_mode(pl);
 
-	pl->gmaster_mode = mode;
-	pl->gmaster_node = add_gmaster_list(pl); /* link player to list of gmasters */
+    pl->gmaster_mode = mode;
+    pl->gmaster_node = add_gmaster_list(pl); /* link player to list of gmasters */
 
-	if(mode == GMASTER_MODE_DM)
-	{
-		SET_FLAG(pl->ob, FLAG_WIZ);
-		SET_FLAG(pl->ob, FLAG_WIZPASS);
-		SET_MULTI_FLAG(pl->ob, FLAG_FLYING);
-		esrv_send_inventory(pl->ob, pl->ob);
-		clear_los(pl->ob);
-		pl->socket.update_tile = 0; /* force a draw_look() */
-		pl->update_los = 1;
-	}
+    if(mode == GMASTER_MODE_DM)
+    {
+        SET_FLAG(pl->ob, FLAG_WIZ);
+        SET_FLAG(pl->ob, FLAG_WIZPASS);
+        SET_MULTI_FLAG(pl->ob, FLAG_FLYING);
+        esrv_send_inventory(pl->ob, pl->ob);
+        clear_los(pl->ob);
+        pl->socket.update_tile = 0; /* force a draw_look() */
+        pl->update_los = 1;
+    }
 
-	pl->socket.ext_title_flag =1;
-	new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "%s mode activated for %s!",
-						  mode==GMASTER_MODE_DM ? "DM" : (mode==GMASTER_MODE_GM ?"GM" : "VOL") ,pl->ob->name);
+    pl->socket.ext_title_flag =1;
+    new_draw_info_format( NDI_UNIQUE, 0, pl->ob, "%s mode activated for %s!",
+                          mode==GMASTER_MODE_DM ? "DM" : (mode==GMASTER_MODE_GM ?"GM" : "VOL") ,pl->ob->name);
 }
 
 
@@ -249,25 +249,25 @@ void set_gmaster_mode(player *pl, int mode)
  */
 void remove_gmaster_mode(player *pl)
 {
-	new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode deactivated.",
-		pl->gmaster_mode==GMASTER_MODE_DM ? "DM" : (pl->gmaster_mode==GMASTER_MODE_GM ?"GM" : "VOL"));
+    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "%s mode deactivated.",
+        pl->gmaster_mode==GMASTER_MODE_DM ? "DM" : (pl->gmaster_mode==GMASTER_MODE_GM ?"GM" : "VOL"));
 
-	remove_gmaster_list(pl);
+    remove_gmaster_list(pl);
 
-	if(pl->gmaster_mode == GMASTER_MODE_DM)
-	{
-		/* remove the DM power settings */
-		CLEAR_FLAG(pl->ob, FLAG_WIZ);
-		CLEAR_FLAG(pl->ob, FLAG_WIZPASS);
-		CLEAR_MULTI_FLAG(pl->ob, FLAG_FLYING);
-		fix_player(pl->ob);
-		pl->socket.update_tile = 0;
-		esrv_send_inventory(pl->ob, pl->ob);
-		pl->update_los = 1;
-	}
+    if(pl->gmaster_mode == GMASTER_MODE_DM)
+    {
+        /* remove the DM power settings */
+        CLEAR_FLAG(pl->ob, FLAG_WIZ);
+        CLEAR_FLAG(pl->ob, FLAG_WIZPASS);
+        CLEAR_MULTI_FLAG(pl->ob, FLAG_FLYING);
+        fix_player(pl->ob);
+        pl->socket.update_tile = 0;
+        esrv_send_inventory(pl->ob, pl->ob);
+        pl->update_los = 1;
+    }
 
-	pl->socket.ext_title_flag =1;
-	pl->gmaster_mode = GMASTER_MODE_NO;
+    pl->socket.ext_title_flag =1;
+    pl->gmaster_mode = GMASTER_MODE_NO;
 }
 
 /* write back the gmaster file.
@@ -276,7 +276,7 @@ void remove_gmaster_mode(player *pl)
 void write_gmaster_file(void)
 {
     char    filename[MAX_BUF];
-	objectlink *ol;
+    objectlink *ol;
     FILE   *fp;
 
     sprintf(filename, "%s/%s", settings.localdir,GMASTER_FILE);
@@ -288,8 +288,8 @@ void write_gmaster_file(void)
     fprintf(fp, "# GMASTER_FILE (file is changed from server at runtime)\n");
     fprintf(fp, "# entry <name>:*:*:GM will allow player <name> to be GM or VOL\n");
 
-	for(ol = gmaster_list;ol;ol=ol->next)
-		fprintf(fp, "%s\n", ol->objlink.gm->entry);
+    for(ol = gmaster_list;ol;ol=ol->next)
+        fprintf(fp, "%s\n", ol->objlink.gm->entry);
 
     fclose(fp);
 }
@@ -299,26 +299,26 @@ void write_gmaster_file(void)
  */
 void update_gmaster_file(void)
 {
-	objectlink *ol, *ol_tmp;
+    objectlink *ol, *ol_tmp;
 
-	for(ol = gmaster_list_VOL;ol;ol=ol_tmp)
-	{
-		ol_tmp = ol->next;
-		if(!check_gmaster_list(CONTR(ol->objlink.ob), GMASTER_MODE_VOL))
-			remove_gmaster_mode(CONTR(ol->objlink.ob));
-	}
+    for(ol = gmaster_list_VOL;ol;ol=ol_tmp)
+    {
+        ol_tmp = ol->next;
+        if(!check_gmaster_list(CONTR(ol->objlink.ob), GMASTER_MODE_VOL))
+            remove_gmaster_mode(CONTR(ol->objlink.ob));
+    }
 
-	for(ol = gmaster_list_GM;ol;ol=ol_tmp)
-	{
-		ol_tmp = ol->next;
-		if(!check_gmaster_list(CONTR(ol->objlink.ob), GMASTER_MODE_GM))
-			remove_gmaster_mode(CONTR(ol->objlink.ob));
-	}
+    for(ol = gmaster_list_GM;ol;ol=ol_tmp)
+    {
+        ol_tmp = ol->next;
+        if(!check_gmaster_list(CONTR(ol->objlink.ob), GMASTER_MODE_GM))
+            remove_gmaster_mode(CONTR(ol->objlink.ob));
+    }
 
-	for(ol = gmaster_list_DM;ol;ol=ol_tmp)
-	{
-		ol_tmp = ol->next;
-		if(!check_gmaster_list(CONTR(ol->objlink.ob), GMASTER_MODE_DM))
-			remove_gmaster_mode(CONTR(ol->objlink.ob));
-	}
+    for(ol = gmaster_list_DM;ol;ol=ol_tmp)
+    {
+        ol_tmp = ol->next;
+        if(!check_gmaster_list(CONTR(ol->objlink.ob), GMASTER_MODE_DM))
+            remove_gmaster_mode(CONTR(ol->objlink.ob));
+    }
 }
