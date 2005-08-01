@@ -53,17 +53,17 @@ class ServerFile
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     int          getStatus   (int file_enum) { return srv_file[file_enum].status;     }
     int          getLength   (int file_enum) { return srv_file[file_enum].length;     }
     int          getSrvLength(int file_enum) { return srv_file[file_enum].server_len; }
     unsigned int getSrvCRC   (int file_enum) { return srv_file[file_enum].server_crc; }
     unsigned int getCRC      (int file_enum) { return srv_file[file_enum].crc;        }
-	const char*  getFilename (int file_enum) { return srv_file[file_enum].filename;   }
+    const char*  getFilename (int file_enum) { return srv_file[file_enum].filename;   }
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     ServerFile()
     {
@@ -77,42 +77,42 @@ class ServerFile
         srv_file[SERVER_FILE_ANIMS   ].strID    = "amf";
         srv_file[SERVER_FILE_BMAPS   ].filename = FILE_CLIENT_BMAPS;
         srv_file[SERVER_FILE_BMAPS   ].strID    = "bpf";
-	}
+    }
 
     ~ServerFile() { }
     static ServerFile &getSingleton();
 
     bool Init();
-	void checkFiles();
-	void  setStatus   (int file_enum, int value)          { srv_file[file_enum].status     = value; }
+    void checkFiles();
+    void  setStatus   (int file_enum, int value)          { srv_file[file_enum].status     = value; }
     void  setLength   (int file_enum, int value)          { srv_file[file_enum].length     = value; }
     void  setSrvLength(int file_enum, int value)          { srv_file[file_enum].server_len = value; }
     void  setSrvCRC   (int file_enum, unsigned int value) { srv_file[file_enum].server_crc = value; }
     void  setCRC      (int file_enum, unsigned int value) { srv_file[file_enum].crc        = value; }
-	bool checkID(int file_enum, const char* id) { return (srv_file[file_enum].strID == id); }
+    bool checkID(int file_enum, const char* id) { return (srv_file[file_enum].strID == id); }
 
 
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     struct _srv_file
-	{
+    {
         int          status;
         int          length;
         unsigned int crc;
         int          server_len;
         unsigned int server_crc;
-		const char  *filename;
-		std::string strID;
-	} srv_file[SERVER_FILE_SUM];
+        const char  *filename;
+        std::string strID;
+    } srv_file[SERVER_FILE_SUM];
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     ServerFile(const ServerFile&); // disable copy-constructor.
 
     void getFileAttibutes(int file_enum);
-}; 
+};
 
 #endif

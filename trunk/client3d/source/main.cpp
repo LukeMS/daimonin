@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 #endif
 {
     // Create application object
-	DaimoninClient client;
+    DaimoninClient client;
     try {
         client.go();
     } catch( Exception& e ) {

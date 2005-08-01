@@ -44,38 +44,38 @@ class ObjectManager
 {
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     SceneManager *mSceneMgr;
     SceneNode *mParentNode, *mNode;
     std::string mDescFile;
     std::vector<Entity*>mvObject_static;
     std::vector<NPC*   >mvObject_npc;
-   
-    
+
+
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     ObjectManager(const ObjectManager&); // disable copy-constructor.
-	    
+
   public:
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
      ObjectManager() {;}
-	~ObjectManager();
+    ~ObjectManager();
     static ObjectManager &getSingleton() { static ObjectManager Singleton; return Singleton; }
-	bool init(SceneManager *SceneMgr, SceneNode  *Node);
+    bool init(SceneManager *SceneMgr, SceneNode  *Node);
     bool addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
-    void castSpell(int npc, int spell) { mvObject_npc[npc]->castSpell(spell); }  
-    void toggleAnimGroup(int npc) { mvObject_npc[npc]->toggleAnimGroup(); }      
-    void toggleMesh(int npc, int pos, int WeaponNr) { mvObject_npc[npc]->toggleMesh(pos, WeaponNr); }      
+    void castSpell(int npc, int spell) { mvObject_npc[npc]->castSpell(spell); }
+    void toggleAnimGroup(int npc) { mvObject_npc[npc]->toggleAnimGroup(); }
+    void toggleMesh(int npc, int pos, int WeaponNr) { mvObject_npc[npc]->toggleMesh(pos, WeaponNr); }
     const Vector3& getPos(int npc) { return mvObject_npc[npc]->getPos(); }
-    const Vector3& getWorldPos()   { return mvObject_npc[0]->getWorldPos(); } 
-    const SceneNode *getNpcNode(int npc) { return mvObject_npc[npc]->getNode(); } 
+    const Vector3& getWorldPos()   { return mvObject_npc[0]->getWorldPos(); }
+    const SceneNode *getNpcNode(int npc) { return mvObject_npc[npc]->getNode(); }
 };
 
 #endif

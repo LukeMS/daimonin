@@ -29,9 +29,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 ////////////////////////////////////////////////////////////
 enum SampleName
 {
-	SAMPLE_BUTTON_CLICK,
-	SAMPLE_PLAYER_IDLE,
-	SAMPLE_SUM
+    SAMPLE_BUTTON_CLICK,
+    SAMPLE_PLAYER_IDLE,
+    SAMPLE_SUM
 };
 
 ////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ class Sound
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
      Sound() {;}
     ~Sound() {;}
@@ -49,32 +49,32 @@ class Sound
 
     bool Init();
     void freeRecources();
-	// Streams.
-	void playStream(const char *filename);
-	void stopStream();
-	// Songs.
-	void playSong(const char *filename);
-	void stopSong();
-	// Samples.
-	void setSamplePos3D(unsigned int channel,  float &posX, float &posY, float &posZ);
-    int  loadSample(const char *filename);	
-	int  playSample(unsigned int id, float posX = 1.0, float posY = 1.0 , float posZ = 1.0);
-	void stopSample(unsigned int channel);
+    // Streams.
+    void playStream(const char *filename);
+    void stopStream();
+    // Songs.
+    void playSong(const char *filename);
+    void stopSong();
+    // Samples.
+    void setSamplePos3D(unsigned int channel,  float &posX, float &posY, float &posZ);
+    int  loadSample(const char *filename);
+    int  playSample(unsigned int id, float posX = 1.0, float posY = 1.0 , float posZ = 1.0);
+    void stopSample(unsigned int channel);
     void createSampleDummy();
-	void setVolume(unsigned int channel, int volume);
+    void setVolume(unsigned int channel, int volume);
 
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
-	float mWeight;
-	bool  mSound3D;
+    float mWeight;
+    bool  mSound3D;
     bool  mSuccess;
-	int   mMusicVolume, mSampleVolume;
-	int   mChannel;
+    int   mMusicVolume, mSampleVolume;
+    int   mChannel;
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     Sound(const Sound&); // disable copy-constructor.
 };

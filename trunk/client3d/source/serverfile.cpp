@@ -38,22 +38,22 @@ using namespace std;
 void ServerFile::getFileAttibutes(int file_enum)
 {
     setStatus(file_enum, SERVER_FILE_STATUS_OK);
-	setLength(file_enum, SERVER_FILE_STATUS_OK);
-	setCRC   (file_enum, SERVER_FILE_STATUS_OK);
+    setLength(file_enum, SERVER_FILE_STATUS_OK);
+    setCRC   (file_enum, SERVER_FILE_STATUS_OK);
 
     LogFile::getSingleton().Info("- Reading Attributes from %s...", srv_file[file_enum].filename);
     ifstream in(srv_file[file_enum].filename, ios::in|ios::binary);
     if (!in)
-	{ 
+    {
         LogFile::getSingleton().Info("File not found.\n");
-		return;
-	} 
-	ostringstream out(ios::binary);
-	in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
+        return;
+    }
+    ostringstream out(ios::binary);
+    in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
     copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
     setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(),  out.str().size()));
     setLength(file_enum, out.str().size());
-    LogFile::getSingleton().Info("(Size: %d)l\n", out.str().size(), srv_file[file_enum].length);    
+    LogFile::getSingleton().Info("(Size: %d)l\n", out.str().size(), srv_file[file_enum].length);
 }
 
 //=================================================================================================
@@ -63,9 +63,9 @@ void ServerFile::checkFiles()
 {
     LogFile::getSingleton().Info("Checking all files coming from server:\n");
     for (int i=0; i< SERVER_FILE_SUM; i++)
-	{ 
-		getFileAttibutes(i);
-	}
+    {
+        getFileAttibutes(i);
+    }
     LogFile::getSingleton().Info("\n");
 }
 

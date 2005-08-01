@@ -41,44 +41,44 @@ class NPC
 {
   protected:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
-	static unsigned int mInstanceNr; // mInstanceNr = Player's Hero
-	unsigned int thisNPC;
-	Real mWalking, mTurning;
-	Radian mFacing;
+    static unsigned int mInstanceNr; // mInstanceNr = Player's Hero
+    unsigned int thisNPC;
+    Real mWalking, mTurning;
+    Radian mFacing;
     SceneNode  *mNode;
     Entity *mEntityNPC, *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
-    Vector3 mTranslateVector;    
+    Vector3 mTranslateVector;
     Animate *mAnim;
     std::string mDescFile;
     SceneManager *mSceneMgr;
     Real animOffset; // every npc gets a random animation offset. preventing of  synchronous "dancing"
-    
+
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     NPC(const NPC&); // disable copy-constructor.
 
   public:
-  
+
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
-	 NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename, Radian Facing);
-	~NPC() {;}
-	void walking(Real walk) { mWalking = walk; }
-	void turning(Real turn) { mTurning = turn; }
-	const Vector3 &getPos() { return mNode->getPosition(); }
-    const Vector3 &getWorldPos() { return mTranslateVector; }	
-    const SceneNode *getNode()   { return mNode; }     
+     NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename, Radian Facing);
+    ~NPC() {;}
+    void walking(Real walk) { mWalking = walk; }
+    void turning(Real turn) { mTurning = turn; }
+    const Vector3 &getPos() { return mNode->getPosition(); }
+    const Vector3 &getWorldPos() { return mTranslateVector; }
+    const SceneNode *getNode()   { return mNode; }
     void update(const FrameEvent& event);
     void castSpell(int spell);
     void toggleTexture(int pos, int textureNr);
     void toggleMesh   (int pos, int WeaponNr);
     void toggleAnimGroup() { mAnim->toggleAnimGroup(); }
-	void toggleAnimation(int animationNr) {mAnim->toggleAnimation(animationNr); }
-	Real getFacing() { return mFacing.valueRadians(); }
+    void toggleAnimation(int animationNr) {mAnim->toggleAnimation(animationNr); }
+    Real getFacing() { return mFacing.valueRadians(); }
 };
 
 #endif

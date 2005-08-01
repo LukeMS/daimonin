@@ -77,7 +77,7 @@ void Network::VersionCmd(char *data, int len)
         else
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -85,7 +85,7 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid version string: %s", data);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);
         return;
     }
     mCs_version = atoi(cp);
@@ -93,7 +93,7 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, mCs_version);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -101,7 +101,7 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid server name: %s", cp);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);
         return;
     }
 
@@ -117,17 +117,17 @@ void Network::SetupCmd(char *buf, int len)
     const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
     int     s, f;
     char   *cmd, *param;
-    LogFile::getSingleton().Info("Get SetupCmd: %s\n", mInbuf.buf + OFFSET); 
+    LogFile::getSingleton().Info("Get SetupCmd: %s\n", mInbuf.buf + OFFSET);
     for (s = 0; ;)
     {
-		// command.
+        // command.
         while (buf[s] == ' ') { ++s; }
         if (s >= len)         { break; }
         cmd = &buf[s];
         for (; buf[s] && buf[s] != ' '; ++s) { ; }
         buf[s++] = 0;
 
-		// parameter.
+        // parameter.
         while (buf[s] == ' ') { ++s; }
         if (s >= len)         { break; }
         param = &buf[s];
@@ -139,7 +139,7 @@ void Network::SetupCmd(char *buf, int len)
 
         // parse the command.
         if      (!strcmp(cmd, "sound"))
-		{
+        {
         }
         else if (!strcmp(cmd, "mapsize"))
         {
@@ -154,7 +154,7 @@ void Network::SetupCmd(char *buf, int len)
         {
         }
         for (f=0; f< SERVER_FILE_SUM; f++)
-		{
+        {
             if (!ServerFile::getSingleton().checkID(f, cmd)) { continue; }
             if (!strcmp(param, "FALSE"))
             {
@@ -167,7 +167,7 @@ void Network::SetupCmd(char *buf, int len)
                 {
                     if (*cp == '|')
                     {
-                        *cp = 0;    
+                        *cp = 0;
                         ServerFile::getSingleton().setLength(f, atoi(param));
                         ServerFile::getSingleton().setCRC   (f, strtoul(cp + 1, NULL, 16));
                         break;
@@ -175,7 +175,7 @@ void Network::SetupCmd(char *buf, int len)
                 }
             }
         }
-		if (f == SERVER_FILE_SUM-1)
+        if (f == SERVER_FILE_SUM-1)
         {
             LogFile::getSingleton().Error("Got setup for a command we don't understand: %s %s\n", cmd, param);
         }
@@ -184,34 +184,34 @@ void Network::SetupCmd(char *buf, int len)
 }
 
 // ========================================================================
-// Server has send us a file: uncompress and save it. 
+// Server has send us a file: uncompress and save it.
 // ========================================================================
 void Network::DataCmd(char *data, int len)
 {
-    ///////////////////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////////////////////
     // check for valid command:
     // 0 = NC, 1 = SERVER_FILE_SKILLS, 2 = SERVER_FILE_SPELLS, (...)
-    ///////////////////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////////////////////
     unsigned char data_type = data[0];
-	unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1; 
+    unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
     if (data_cmd > SERVER_FILE_SUM)
-	{
+    {
         LogFile::getSingleton().Error("data cmd: unknown type %d (len:%d)\n", data_type, len);
-		return;
-	}
+        return;
+    }
     --len;
     ++data;
-    
-    ///////////////////////////////////////////////////////////////////////// 
+
+    /////////////////////////////////////////////////////////////////////////
     // Uncompress if needed.
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     char *dest =0;
     if (data_type & DATA_PACKED_CMD)
-	{
-        // warning! if the uncompressed size of a incoming compressed(!) file 
-		// is larger as this dest_len default setting, the file is cutted and
+    {
+        // warning! if the uncompressed size of a incoming compressed(!) file
+        // is larger as this dest_len default setting, the file is cutted and
         // the rest skiped. Look at the zlib docu for more info.
-        unsigned long dest_len = 512 * 1024; 
+        unsigned long dest_len = 512 * 1024;
         dest = new char[dest_len];
         uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
         data = dest;
@@ -219,31 +219,31 @@ void Network::DataCmd(char *data, int len)
     }
     ++mRequest_file_chain;
 
-    ///////////////////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////////////////////
     // Save the file.
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
     if (!out)
-	{
-        LogFile::getSingleton().Error("save data cmd file : write() of %s failed. (len:%d)\n", 
-		    ServerFile::getSingleton().getFilename(data_cmd));
-	}					 
+    {
+        LogFile::getSingleton().Error("save data cmd file : write() of %s failed. (len:%d)\n",
+            ServerFile::getSingleton().getFilename(data_cmd));
+    }
     else
-	{
-	    out.write(data, len);
-	}
+    {
+        out.write(data, len);
+    }
     if (dest) { delete[] dest; }
 
-    ///////////////////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////////////////////
     // Reload the new file.
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 //    if (data_command-1 == SERVER_FILE_SKILLS) { read_skills(); }
 //    if (data_command-1 == SERVER_FILE_SPELLS) { read_spells(); }
 }
 
 
 // ========================================================================
-// 
+//
 // ========================================================================
 void Network::PreParseInfoStat(char *cmd)
 {
@@ -258,35 +258,35 @@ void Network::PreParseInfoStat(char *cmd)
         {
             dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
             PasswordAlreadyAsked = 0;
-        } 
+        }
         else if (PasswordAlreadyAsked == 2)
         {
             dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
             PasswordAlreadyAsked = 0;
         }
 */
-		TextInput::getSingleton().stop();
+        TextInput::getSingleton().stop();
         Option::getSingleton().GameStatus = GAME_STATUS_NAME;
-		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
+        TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
     }
     if (strstr(cmd, "What is your password?"))
     {
-		TextInput::getSingleton().stop();
+        TextInput::getSingleton().stop();
         Option::getSingleton().GameStatus = GAME_STATUS_PSWD;
-		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
-		mPasswordAlreadyAsked = 1;
+        TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+        mPasswordAlreadyAsked = 1;
     }
     if (strstr(cmd, "Please type your password again."))
     {
-		TextInput::getSingleton().stop();
+        TextInput::getSingleton().stop();
         Option::getSingleton().GameStatus = GAME_STATUS_VERIFYPSWD;
-		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+        TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
         mPasswordAlreadyAsked = 2;
     }
 }
 
 // ========================================================================
-// 
+//
 // ========================================================================
 void Network::HandleQuery(char *data, int len)
 {
@@ -307,7 +307,7 @@ void Network::HandleQuery(char *data, int len)
 }
 
 // ========================================================================
-// 
+//
 // ========================================================================
 void Network::PlayerCmd(char *data, int len)
 {
@@ -338,7 +338,7 @@ void Network::PlayerCmd(char *data, int len)
     new_player(tag, name, weight, (short) face);
     map_draw_map_clear();
     map_transfer_flag = 1;
-    map_udate_flag = 2;        
+    map_udate_flag = 2;
     load_quickslots_entrys();
 */
 }
@@ -346,7 +346,7 @@ void Network::PlayerCmd(char *data, int len)
 static int scrolldx, scrolldy;
 
 // ========================================================================
-// 
+//
 // ========================================================================
 void Network::Map2Cmd(char *data, int len)
 {
@@ -372,13 +372,13 @@ void Network::Map2Cmd(char *data, int len)
 
     TileMap::getSingleton().MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
     TileMap::getSingleton().MapData.posy = ypos;
-   
-	while (pos < len)
+
+    while (pos < len)
     {
         ext_flag = 0;
         ext1 = ext2 = ext3 = 0;
-        // first, we get the mask flag - it decribes what we now get 
-        mask = GetShort_String(data + pos); 
+        // first, we get the mask flag - it decribes what we now get
+        mask = GetShort_String(data + pos);
         pos += 2;
         x = (mask >> 11) & 0x1f;
         y = (mask >>  6) & 0x1f;
@@ -391,27 +391,27 @@ void Network::Map2Cmd(char *data, int len)
         // the other flags are assigned to map layer.
         if ((mask & 0x3f) == 0) { TileMap::getSingleton().display_map_clearcell(x, y); }
         ext3 = ext2 = ext1 = -1;
-        pname1[0] = 0; 
+        pname1[0] = 0;
         pname2[0] = 0;
         pname3[0] = 0;
         pname4[0] = 0;
         // the ext flag defines special layer object assigned infos.
         // Like the Zzz for sleep, paralyze msg, etc.
-        if (mask & 0x20) // catch the ext. flag... 
+        if (mask & 0x20) // catch the ext. flag...
         {
             ext_flag = (unsigned int) (data[pos++]);
-            if (ext_flag & 0x80) // we have player names.... 
+            if (ext_flag & 0x80) // we have player names....
             {
                 char c;
                 int  i, pname_flag = (unsigned int) (data[pos++]);
 
-                if (pname_flag & 0x08) // floor .... 
+                if (pname_flag & 0x08) // floor ....
                 {
                     i = 0;
                     while ((c = (char) (data[pos++]))) { pname1[i++] = c; }
                     pname1[i] = 0;
                 }
-                if (pname_flag & 0x04) // fm.... 
+                if (pname_flag & 0x04) // fm....
                 {
                     i = 0;
                     while ((c = (char) (data[pos++]))) { pname2[i++] = c; }
@@ -423,14 +423,14 @@ void Network::Map2Cmd(char *data, int len)
                     while ((c = (char) (data[pos++]))) { pname3[i++] = c; }
                     pname3[i] = 0;
                 }
-                if (pname_flag & 0x01) // l2 .... 
+                if (pname_flag & 0x01) // l2 ....
                 {
                     i = 0;
                     while ((c = (char) (data[pos++]))) { pname4[i++] = c; }
                     pname4[i] = 0;
                 }
             }
-            if (ext_flag & 0x40) // damage add on the map 
+            if (ext_flag & 0x40) // damage add on the map
             {
                 ff0 = ff1 = ff2 = ff3 = -1;
                 ff_flag = (unsigned int) (data[pos++]);
@@ -454,7 +454,7 @@ void Network::Map2Cmd(char *data, int len)
                     ff3 = GetShort_String(data + pos); pos += 2;
 //                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
-            } 
+            }
             if (ext_flag & 0x08)
             {
                 probe = 0;
@@ -482,8 +482,8 @@ void Network::Map2Cmd(char *data, int len)
 //            TileMap::getSingleton().set_map_darkness(x, y, (unsigned int) (data[pos]));
             pos++;
         }
-        // at last, we get the layer faces. A set ext_flag here marks this entry as face from 
-        // a multi tile arch. We got another byte then which all information we need to display 
+        // at last, we get the layer faces. A set ext_flag here marks this entry as face from
+        // a multi tile arch. We got another byte then which all information we need to display
         // this face in the right way (position and shift offsets)
         if (mask & 0x8)
         {
@@ -491,14 +491,14 @@ void Network::Map2Cmd(char *data, int len)
 //            request_face(face, 0);
             xdata = 0;
             TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
-LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d faxe: %d\n", x, y, face);            
+LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d faxe: %d\n", x, y, face);
         }
         if (mask & 0x4)
         {
             face = GetShort_String(data + pos); pos += 2;
 //            request_face(face, 0);
             xdata = 0;
-            if (ext_flag & 0x04) // we have here a multi arch, fetch head offset 
+            if (ext_flag & 0x04) // we have here a multi arch, fetch head offset
             {
                 xdata = (unsigned int) (data[pos]);
                 pos++;
@@ -510,7 +510,7 @@ LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d faxe: %d\n", x, y, face);
             face = GetShort_String(data + pos); pos += 2;
 //            request_face(face, 0);
             xdata = 0;
-            if (ext_flag & 0x02) // we have here a multi arch, fetch head offset 
+            if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
             {
                 xdata = (unsigned int) (data[pos]);
                 pos++;
@@ -532,12 +532,12 @@ LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d faxe: %d\n", x, y, face);
         }
     } // more tiles
     TileMap::getSingleton().map_udate_flag = 2;
-} 
+}
 
 // ========================================================================
 // we got a face - test we have it loaded. If not, say server "send us face cmd "
 // Return: 0 - face not there, requested.  1: face requested or loaded
-// This command collect all new faces and then flush it at once. 
+// This command collect all new faces and then flush it at once.
 // I insert the flush command after the socket call.
 // ========================================================================
 int Network::request_face(int pnum, int mode)
@@ -580,7 +580,7 @@ int Network::request_face(int pnum, int mode)
     sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
     if ((stream = fopen(buf, "rb")) != NULL)
     {
-        // yes we have a picture with this name in /gfx_user! 
+        // yes we have a picture with this name in /gfx_user!
         // lets try to load.
         fstat(fileno(stream), &statbuf);
         len = (int) statbuf.st_size;
@@ -619,7 +619,7 @@ int Network::request_face(int pnum, int mode)
     {
         TileGfx::getSingleton().FaceList[num].flags |= FACE_REQUESTED;
 //        finish_face_cmd(num, TileGfx::getSingleton().bmaptype_table[num].crc, TileGfx::getSingleton().bmaptype_table[num].name);
-    } 
+    }
 
     /*
     *((uint16 *)(fr_buf+4+count*sizeof(uint16)))=num;
@@ -637,7 +637,7 @@ int Network::request_face(int pnum, int mode)
 }
 
 // ========================================================================
-// 
+//
 // ========================================================================
 void Network::CreatePlayerAccount()
 {

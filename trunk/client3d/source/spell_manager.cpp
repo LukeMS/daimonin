@@ -37,13 +37,13 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 bool SpellManager::init(SceneManager *SceneMgr, SceneNode *Node)
 {
-	mSceneMgr = SceneMgr;
-	mNode = Node;
-	return true; 
+    mSceneMgr = SceneMgr;
+    mNode = Node;
+    return true;
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 bool SpellManager::addObject(unsigned int npc, unsigned int spell)
 {
@@ -55,7 +55,7 @@ bool SpellManager::addObject(unsigned int npc, unsigned int spell)
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 void SpellManager::update(int spell_type, const FrameEvent& evt)
 {
@@ -69,19 +69,19 @@ void SpellManager::keyEvent(int spell_type, int action, int val1, int val2)
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 void SpellManager::delObject(int number)
 {
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 SpellManager::~SpellManager()
 {
     for (unsigned int i = 0; i < mvObject_range.size(); ++i)
-    { 
+    {
         delete mvObject_range[i];
     }
 }

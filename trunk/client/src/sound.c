@@ -60,7 +60,7 @@ static char        *sound_files[SOUND_MAX]              =
     "teleport.wav", "scroll.wav", "step1.wav" /* here starts client side sounds */, "step2.wav", "pray.wav",
     "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
     "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
-	"book.wav", "page.wav"
+    "book.wav", "page.wav"
 
 };
 
@@ -305,18 +305,18 @@ void sound_play_music(char *fname, int vol, int fade, int loop, int flags, int m
     else if (mode & MUSIC_MODE_FORCED)
         vol2 = 100;
 
-	/* same sound? */
-	if(!strcmp(fname,music.name))
-	{
-		music.fade = fade;
-		music.loop = loop;
-		if(vol != music.vol)
-		{
-			music.vol = vol;
-			Mix_VolumeMusic(vol);
-		}
-		return;
-	}
+    /* same sound? */
+    if(!strcmp(fname,music.name))
+    {
+        music.fade = fade;
+        music.loop = loop;
+        if(vol != music.vol)
+        {
+            music.vol = vol;
+            Mix_VolumeMusic(vol);
+        }
+        return;
+    }
 
     if (music.flag && !(mode & MUSIC_MODE_DIRECT)) /* only when set, we still play something */
     {

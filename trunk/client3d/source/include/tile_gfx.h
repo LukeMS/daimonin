@@ -20,7 +20,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
- 
+
 #ifndef TILEGFX_H
 #define TILEGFX_H
 
@@ -33,19 +33,19 @@ using namespace Ogre;
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-const int MAXHASHSTRING		=   20; // for hash table (bmap, ...)
+const int MAXHASHSTRING        =   20; // for hash table (bmap, ...)
 const unsigned int BMAPTABLE= 5003; // prime nubmer for hash table
 const int MAX_BMAPTYPE_TABLE= 5000;
-const int MAX_FACE_TILES	=10000; 
+const int MAX_FACE_TILES    =10000;
 
 // struct for out bmap data
 typedef struct _bmaptype
 {
-	char			*name;
-    int				num;
-    int				len;
-    int				pos;
-    unsigned int	crc;
+    char            *name;
+    int                num;
+    int                len;
+    int                pos;
+    unsigned int    crc;
 }_bmaptype;
 
 typedef struct  _bmaptype_table
@@ -58,13 +58,13 @@ typedef struct  _bmaptype_table
 
 typedef struct _face_struct
 {
-//    struct _Sprite *sprite;		// our face data. if != null, face is loaded.
-	Image			sprite;
-    char           *name;		// our face name. if != null, face is requested.
-    unsigned int    checksum;	// checksum of face.
+//    struct _Sprite *sprite;        // our face data. if != null, face is loaded.
+    Image            sprite;
+    char           *name;        // our face name. if != null, face is requested.
+    unsigned int    checksum;    // checksum of face.
     int             flags;
 }_face_struct;
- 
+
 
 ////////////////////////////////////////////////////////////
 // Defines.
@@ -78,44 +78,44 @@ class TileGfx
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     static TileGfx &getSingleton() { static TileGfx Singleton; return Singleton; }
-	unsigned long hashbmap(char *str, int tablesize);
-	_bmaptype *bmap_table[BMAPTABLE];
-	_bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
-	_face_struct FaceList[MAX_FACE_TILES];   // face data
+    unsigned long hashbmap(char *str, int tablesize);
+    _bmaptype *bmap_table[BMAPTABLE];
+    _bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
+    _face_struct FaceList[MAX_FACE_TILES];   // face data
 
     ////////////////////////////////////////////////////////////
-	// Functions.
-	////////////////////////////////////////////////////////////
+    // Functions.
+    ////////////////////////////////////////////////////////////
      TileGfx() {;}
     ~TileGfx() {;}
 
     bool Init();
-	bool load_bmaps_p0(void);
-	bool read_bmaps_p0(void);
-	bool read_bmap_tmp(void);
-	bool load_bmap_tmp(void);
-	void add_bmap(_bmaptype *at);
-	void delete_bmap_tmp(void);
-	void face_flag_extension(int pnum, char *buf);
-	_bmaptype *find_bmap(char *name);
-	int load_picture_from_pack(int num);
-	Image &getSprite(int num) { return FaceList[num].sprite; }
+    bool load_bmaps_p0(void);
+    bool read_bmaps_p0(void);
+    bool read_bmap_tmp(void);
+    bool load_bmap_tmp(void);
+    void add_bmap(_bmaptype *at);
+    void delete_bmap_tmp(void);
+    void face_flag_extension(int pnum, char *buf);
+    _bmaptype *find_bmap(char *name);
+    int load_picture_from_pack(int num);
+    Image &getSprite(int num) { return FaceList[num].sprite; }
 
-	int bmaptype_table_size;	
+    int bmaptype_table_size;
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
 
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     TileGfx(const TileGfx&); // disable copy-constructor.
 
-}; 
+};
 
 #endif

@@ -29,23 +29,23 @@ const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 // ========================================================================
 // All pathes MUST be placed here!
 // ========================================================================
-const char FILE_CLIENT_SPELLS[]			= "./srv_files/client_spells";
-const char FILE_CLIENT_SKILLS[]			= "./srv_files/client_skills";
-const char FILE_CLIENT_SETTINGS[]		= "./srv_files/client_settings";
-const char FILE_CLIENT_BMAPS[]			= "./srv_files/client_bmap";
-const char FILE_CLIENT_ANIMS[]			= "./srv_files/client_anims";
+const char FILE_CLIENT_SPELLS[]            = "./srv_files/client_spells";
+const char FILE_CLIENT_SKILLS[]            = "./srv_files/client_skills";
+const char FILE_CLIENT_SETTINGS[]        = "./srv_files/client_settings";
+const char FILE_CLIENT_BMAPS[]            = "./srv_files/client_bmap";
+const char FILE_CLIENT_ANIMS[]            = "./srv_files/client_anims";
 
-const char FILE_BMAPS_TMP[]				= "./srv_files/bmaps.tmp";
-const char FILE_ANIMS_TMP[]				= "./srv_files/anims.tmp";
-const char FILE_DAIMONIN_P0[]			= "./daimonin.p0";
-const char FILE_BMAPS_P0[]				= "./bmaps.p0";
-const char FILE_ARCHDEF[]				= "./archdef.dat";
+const char FILE_BMAPS_TMP[]                = "./srv_files/bmaps.tmp";
+const char FILE_ANIMS_TMP[]                = "./srv_files/anims.tmp";
+const char FILE_DAIMONIN_P0[]            = "./daimonin.p0";
+const char FILE_BMAPS_P0[]                = "./bmaps.p0";
+const char FILE_ARCHDEF[]                = "./archdef.dat";
 
-const char FILE_LOGGING[]				= "./client_log.html";
-const char FILE_OPTIONS[]				= "./options.dat";
+const char FILE_LOGGING[]                = "./client_log.html";
+const char FILE_OPTIONS[]                = "./options.dat";
 
-const char DIR_MODEL_DESCRIPTION[]   	= "./media/models/";
-const char FILE_PLAYER_DESC[]			= "./media/models/player.desc";
+const char DIR_MODEL_DESCRIPTION[]       = "./media/models/";
+const char FILE_PLAYER_DESC[]            = "./media/models/player.desc";
 const char FILE_WORLD_DESC[]            = "./media/models/world.desc";
 
 const char DIR_SAMPLES[]                = "./media/sound/";
@@ -55,7 +55,7 @@ const char FILE_SAMPLE_MOUSE_CLICK[]    = "./media/sound/console.wav";
 const char FILE_SAMPLE_PLAYER_IDLE[]    = "./media/sound/player_Idle.ogg";
 
 // ========================================================================
-// 
+//
 // ========================================================================
 const int HUGE_BUF = 1024;
 

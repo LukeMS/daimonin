@@ -38,10 +38,10 @@ static std::vector<sParticleObj*>mvObject_Node;
 //=================================================================================================
 bool ParticleManager::init(SceneManager *SceneMgr, SceneNode *Node)
 {
-	mSceneMgr = SceneMgr;
-	mNode = Node;
-	mNodeCounter = mBoneCounter = 0;
-	return true; 
+    mSceneMgr = SceneMgr;
+    mNode = Node;
+    mNodeCounter = mBoneCounter = 0;
+    return true;
 }
 
 //=================================================================================================
@@ -75,7 +75,7 @@ void ParticleManager::synchToWorldPos(const Vector3 &pos)
     int sum;
     Particle* p;
     for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
-    { 
+    {
         for (sum = mvObject_Node[i]->particleSys->getNumParticles()-1; sum >=0; --sum)
         {
             p = mvObject_Node[i]->particleSys->getParticle(sum);
@@ -91,7 +91,7 @@ void ParticleManager::moveNodeObject(const FrameEvent& event)
 {
     int sum;
     for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
-    { 
+    {
         if (!mvObject_Node[i]->speed) continue;
         mvObject_Node[i]->node->translate(mvObject_Node[i]->direction * mvObject_Node[i]->speed * event.timeSinceLastFrame);
     }

@@ -36,28 +36,28 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 bool ObjectManager::init(SceneManager *SceneMgr, SceneNode *Node)
 {
-	mSceneMgr = SceneMgr; 
-	mParentNode = Node;
-	return true; 
+    mSceneMgr = SceneMgr;
+    mParentNode = Node;
+    return true;
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing)
 {
     static int id= -1;
     mDescFile = DIR_MODEL_DESCRIPTION;
     mDescFile += desc_filename;
-	LogFile::getSingleton().Info("Adding object from file %s...", mDescFile.c_str());
-	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-		return false;
-	}
-	LogFile::getSingleton().Success(true);
-	string strTemp;
+    LogFile::getSingleton().Info("Adding object from file %s...", mDescFile.c_str());
+    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+    {
+        LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+        return false;
+    }
+    LogFile::getSingleton().Success(true);
+    string strTemp;
 
     switch (type)
     {
@@ -74,9 +74,9 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vect
         }
         case OBJECT_NPC:
         {
-            mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));        
+            mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
             NPC *npc = new NPC(mSceneMgr, mNode, desc_filename, facing);
-            mvObject_npc.push_back(npc);        
+            mvObject_npc.push_back(npc);
             break;
         }
         default:
@@ -86,7 +86,7 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vect
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
@@ -96,10 +96,10 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
             break;
         case OBJECT_PLAYER:
         case OBJECT_NPC:
-			{
-			for (unsigned int i = 0; i < mvObject_npc.size(); ++i) { mvObject_npc[i]->update(evt); }
+            {
+            for (unsigned int i = 0; i < mvObject_npc.size(); ++i) { mvObject_npc[i]->update(evt); }
             break;
-			}
+            }
         default:
             break;
     }
@@ -114,12 +114,12 @@ void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
     {
         case OBJECT_STATIC:
         break;
-        case OBJECT_PLAYER: 
+        case OBJECT_PLAYER:
             {
                 if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
                 if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
                 if (action == OBJ_TEXTURE  ) mvObject_npc[0]->toggleTexture(val1, val2);
-                if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1);                                                
+                if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1);
             }
             break;
         case OBJECT_NPC:
@@ -129,9 +129,9 @@ void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
                 if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
                 if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
                 if (action == OBJ_TEXTURE  ) mvObject_npc[i]->toggleTexture(val1, val2);
-                if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1);                                                
+                if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1);
             }
-		}
+        }
         break;
         default:
         break;
@@ -139,19 +139,19 @@ void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 void ObjectManager::delObject(int number)
 {
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 ObjectManager::~ObjectManager()
 {
     for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
-    { 
+    {
         delete mvObject_npc[i];
     }
 }

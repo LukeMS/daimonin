@@ -31,7 +31,7 @@ enum
     SEL_CHECKBOX,
     SEL_RANGE,
     SEL_TEXT
-}; /* selection types */ 
+}; /* selection types */
 
 _options options;
 
@@ -44,24 +44,24 @@ struct _option opt[] =
     /* End of Page */
 
     {0} /* End of Options */
-}; 
+};
 
 //=================================================================================================
 // Open a description file.
 //=================================================================================================
 bool Option::openDescFile(const char *filename)
 {
-	closeDescFile();
-	mDescFile = new ifstream(filename, ios::in);
+    closeDescFile();
+    mDescFile = new ifstream(filename, ios::in);
     if (!mDescFile) { return false; }
     mFilename = filename;
-	mDescBuffer ="";
-	string buf;
-	while (getline(*mDescFile, buf)) 
-	{   // delete comments.
-		if (buf.find("#")> 5) { mDescBuffer+= buf; }
-	}
-	return true;
+    mDescBuffer ="";
+    string buf;
+    while (getline(*mDescFile, buf))
+    {   // delete comments.
+        if (buf.find("#")> 5) { mDescBuffer+= buf; }
+    }
+    return true;
 }
 
 //=================================================================================================
@@ -69,10 +69,10 @@ bool Option::openDescFile(const char *filename)
 //=================================================================================================
 void Option::closeDescFile()
 {
-	if (!mDescFile) { return; }
-	mDescFile->close();
-	delete mDescFile;
-	mDescFile = 0;
+    if (!mDescFile) { return; }
+    mDescFile->close();
+    delete mDescFile;
+    mDescFile = 0;
 }
 
 //=================================================================================================
@@ -81,21 +81,21 @@ void Option::closeDescFile()
 //=================================================================================================
 bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int posNr)
 {
-	unsigned int pos=0, startPos=0, stopPos, entryTest;
+    unsigned int pos=0, startPos=0, stopPos, entryTest;
   checkForKeyword:
-	startPos = mDescBuffer.find(strKeyword, startPos);
-	if (startPos == string::npos) { return false; }
-	entryTest= mDescBuffer.find(":",  startPos)+1;
-	startPos = mDescBuffer.find("\"", startPos)+1;
-	// keyword and value can have the same name. If ':' comes before '"' in the description-text
-	// we have a keyword, else we have the value and search again.
-	if (entryTest > startPos) { goto checkForKeyword; }
-	stopPos   = mDescBuffer.find("\"", startPos)-startPos;
+    startPos = mDescBuffer.find(strKeyword, startPos);
+    if (startPos == string::npos) { return false; }
+    entryTest= mDescBuffer.find(":",  startPos)+1;
+    startPos = mDescBuffer.find("\"", startPos)+1;
+    // keyword and value can have the same name. If ':' comes before '"' in the description-text
+    // we have a keyword, else we have the value and search again.
+    if (entryTest > startPos) { goto checkForKeyword; }
+    stopPos   = mDescBuffer.find("\"", startPos)-startPos;
     strBuffer = mDescBuffer.substr(startPos, stopPos);
-	if (++pos < posNr)  { goto checkForKeyword; }
+    if (++pos < posNr)  { goto checkForKeyword; }
 //if (posNr) LogFile::getSingleton().Error("string: %s\n", strBuffer.c_str());
-	if (strBuffer.size() == 0) { return false; }
-	return true;
+    if (strBuffer.size() == 0) { return false; }
+    return true;
 }
 
 //=================================================================================================
@@ -103,43 +103,43 @@ bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int 
 //=================================================================================================
 bool Option::Init()
 {
-	// filename: FILE_OPTIONS
-	LogFile::getSingleton().Headline("Init Options");
+    // filename: FILE_OPTIONS
+    LogFile::getSingleton().Headline("Init Options");
 
-	mDescFile = 0;
-	mMetaServer ="damn.informatik.uni-bremen.de";
-	mMetaServerPort = 13326;
-	mSelectedMetaServer =0;
-	mStartNetwork = false;
+    mDescFile = 0;
+    mMetaServer ="damn.informatik.uni-bremen.de";
+    mMetaServerPort = 13326;
+    mSelectedMetaServer =0;
+    mStartNetwork = false;
 
 /*
     _options  *ptions = &options;
 
-	for (int i=0; opt[i].name; ++i)
+    for (int i=0; opt[i].name; ++i)
     {
-		if (opt[i].name[0] == '#') { continue; }
+        if (opt[i].name[0] == '#') { continue; }
         opt[i].clean_memory = false;
 
 
         // *((int*) opt[i].int_value) = i;
 
-		int val = opt[i].int_value;
-		opt[i].int_value = i;
+        int val = opt[i].int_value;
+        opt[i].int_value = i;
 
-		// *((bool *) opt[i].value)
+        // *((bool *) opt[i].value)
         if (opt[i].name[0])
-		{   // int value. 
+        {   // int value.
             opt[i].val_actual = opt[i].val_default;
-		}
-		else
-		{  // string value.
-			opt[i].val_actual = 0; // offset to defualt string.
-            //opt[i].str_value  = 
-		}
-	}
-*/	
+        }
+        else
+        {  // string value.
+            opt[i].val_actual = 0; // offset to defualt string.
+            //opt[i].str_value  =
+        }
+    }
+*/
 
-  
+
     return true;
  }
 
@@ -148,9 +148,9 @@ bool Option::Init()
 //=================================================================================================
 Option::Option()
 {
-	GameStatus =  GAME_STATUS_INIT;
-	mLogin = false;
-	mDescFile =0;
+    GameStatus =  GAME_STATUS_INIT;
+    mLogin = false;
+    mDescFile =0;
 }
 
 //=================================================================================================
@@ -158,12 +158,12 @@ Option::Option()
 //=================================================================================================
 Option::~Option()
 {
-	closeDescFile();
+    closeDescFile();
 /*
     for (int i=0; opt[i].name; ++i)
-    { 
-		if (opt[i].name[0] == '#') { continue; }
+    {
+        if (opt[i].name[0] == '#') { continue; }
         if (opt[i].clean_memory == true)  { delete[] opt[i].val_text; }
-	}	
+    }
 */
 }

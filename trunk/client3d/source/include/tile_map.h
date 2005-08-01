@@ -20,7 +20,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
- 
+
 #ifndef TILE_MAP_H
 #define TILE_MAP_H
 
@@ -33,20 +33,20 @@ using namespace Ogre;
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-const int MAP_START_XOFF	= 376;
-const int MAP_START_YOFF	= 143;
-const int MAP_TILE_POS_YOFF	=  23;
+const int MAP_START_XOFF    = 376;
+const int MAP_START_YOFF    = 143;
+const int MAP_TILE_POS_YOFF    =  23;
 const int MAP_TILE_POS_YOFF2=  12;
 const int MAP_TILE_POS_XOFF =  48;
 const int MAP_TILE_POS_XOFF2=  24;
-const int MAP_TILE_XOFF		=  12;
-const int MAP_TILE_YOFF		=  24;
-const int MAP_MAX_SIZE		=  17;
-const int MAXFACES			=   4;
+const int MAP_TILE_XOFF        =  12;
+const int MAP_TILE_YOFF        =  24;
+const int MAP_MAX_SIZE        =  17;
+const int MAXFACES            =   4;
 
 // defines for the ext map command
-const int FFLAG_SLEEP    = 0x01; // object sleeps 
-const int FFLAG_CONFUSED = 0x02; // object is confused 
+const int FFLAG_SLEEP    = 0x01; // object sleeps
+const int FFLAG_CONFUSED = 0x02; // object is confused
 const int FFLAG_PARALYZED= 0x04; // object is paralyzed
 const int FFLAG_SCARED   = 0x08; // object is scared
 const int FFLAG_BLINDED  = 0x10; // object is blinded
@@ -60,14 +60,14 @@ const int FACE_FLAG_UP     =  2;  // this is a upper part of something
 const int FACE_FLAG_D1     =  4;  // this is a x1x object (animation or direction)
 const int FACE_FLAG_D3     =  8;  // this is a x3x object (animation or direction)
 const int FACE_REQUESTED   = 16;  // face requested from server - do it only one time
- 
 
 
-// Table of pre definded multi arch objects. 
-// mpart_id and mpart_nr in the arches are commited from server 
+
+// Table of pre definded multi arch objects.
+// mpart_id and mpart_nr in the arches are commited from server
 // to analyze the exaclty tile position inside a mpart object.
 //
-// The way of determinate the starting and shift points is explained in the 
+// The way of determinate the starting and shift points is explained in the
 // dev/multi_arch folder of the arches, where the multi arch templates & masks are.
 typedef struct _multi_part_tile
 {
@@ -77,8 +77,8 @@ typedef struct _multi_part_tile
 
 typedef struct _multi_part_obj
 {
-    int                 xlen;		// natural xlen of the whole multi arch
-    int                 ylen;		// same for ylen
+    int                 xlen;        // natural xlen of the whole multi arch
+    int                 ylen;        // same for ylen
     _multi_part_tile    part[16];
 }_multi_part_obj;
 
@@ -94,18 +94,18 @@ typedef struct _mapdata
 
 typedef struct MapCell
 {
-    short			faces[MAXFACES];
-    short			pos[MAXFACES];
-    bool			fog_of_war;
+    short            faces[MAXFACES];
+    short            pos[MAXFACES];
+    bool            fog_of_war;
     unsigned char   ext[MAXFACES];
-    char			pname[MAXFACES][32];
+    char            pname[MAXFACES][32];
     unsigned char   probe[MAXFACES];
     unsigned char   darkness;
 }MapCell;
 
 typedef struct
 {
-    int	x;
+    int    x;
     int y;
 } MapPos;
 
@@ -116,57 +116,57 @@ class TileMap
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
-	_mapdata         MapData;
-	_multi_part_obj  MultiArchs[16];
-	MapCell cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
+    _mapdata         MapData;
+    _multi_part_obj  MultiArchs[16];
+    MapCell cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
     int MapStatusX;
     int MapStatusY;
-    int map_udate_flag, map_transfer_flag;     
+    int map_udate_flag, map_transfer_flag;
 
     ////////////////////////////////////////////////////////////
-	// Functions.
-	////////////////////////////////////////////////////////////
+    // Functions.
+    ////////////////////////////////////////////////////////////
      TileMap() {;}
     ~TileMap();
     static TileMap &getSingleton() { static TileMap Singleton; return Singleton; }
 
-	void clear_map(void);
-	void display_map_clearcell(long x, long y);
-	void set_map_darkness(int x, int y, unsigned char darkness);
-	void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
-	void clear(void);
-	void draw(void);
-	void display_mapscroll(int dx, int dy);
-	void InitMapData(char *name, int xl, int yl, int px, int py);
-	void set_map_ext(int x, int y, int layer, int ext, int probe);
-	void load_mapdef_dat(void);
-	void adjust_map_cache(int x, int y);
-	int  get_tile_position(int mx, int my, int *tx, int *ty);
-	void Init(SceneManager *SceneMgr, SceneNode  *Node);
+    void clear_map(void);
+    void display_map_clearcell(long x, long y);
+    void set_map_darkness(int x, int y, unsigned char darkness);
+    void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
+    void clear(void);
+    void draw(void);
+    void display_mapscroll(int dx, int dy);
+    void InitMapData(char *name, int xl, int yl, int px, int py);
+    void set_map_ext(int x, int y, int layer, int ext, int probe);
+    void load_mapdef_dat(void);
+    void adjust_map_cache(int x, int y);
+    int  get_tile_position(int mx, int my, int *tx, int *ty);
+    void Init(SceneManager *SceneMgr, SceneNode  *Node);
     void updatePlayerPos(const Vector3 &playerOffset) { mTileOffset += playerOffset; }
     void scrollTileMap(int x, int y);
-	void freeRecources()
-	{
+    void freeRecources()
+    {
         mpIndexBuf.setNull();
-		mpVertexBuf.setNull(); // Cannot be done by destuctor!
+        mpVertexBuf.setNull(); // Cannot be done by destuctor!
         mpMeshTiles.setNull();
     }
 
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     SceneNode  *mNode;
-	MapCell *TheMapCache;
-	MeshPtr mpMeshTiles;
-	HardwareVertexBufferSharedPtr mpVertexBuf;
+    MapCell *TheMapCache;
+    MeshPtr mpMeshTiles;
+    HardwareVertexBufferSharedPtr mpVertexBuf;
     HardwareIndexBufferSharedPtr mpIndexBuf;
     Vector3 mTileOffset;
     bool blending;
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     TileMap(const TileMap&); // disable copy-constructor.
 };

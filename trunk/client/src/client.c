@@ -89,8 +89,8 @@ enum
     BINARY_CMD_GROUP,
     BINARY_CMD_INVITE,
     BINARY_CMD_GROUP_UPDATE,
-	BINARY_CMD_INTERFACE,
-	BINARY_CMD_BOOK,
+    BINARY_CMD_INTERFACE,
+    BINARY_CMD_BOOK,
     BINAR_CMD /* last entry */
 };
 
@@ -109,9 +109,9 @@ struct CmdMapping   commands[]  =
     { "version", (CmdProc) VersionCmd }, { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},
     { "query", (CmdProc) handle_query}, { "data", (CmdProc) DataCmd}, { "new_char", (CmdProc) NewCharCmd},
     { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd },
-	{ "group_update", GroupUpdateCmd },
-	{ "interface", InterfaceCmd },
-	{ "book", BookCmd },
+    { "group_update", GroupUpdateCmd },
+    { "interface", InterfaceCmd },
+    { "book", BookCmd },
 
     /* unused! */
     { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory },

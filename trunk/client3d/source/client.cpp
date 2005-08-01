@@ -45,23 +45,23 @@ const int SUM_MIPMAPS = 0;
 // ========================================================================
 void DaimoninClient::go(void)
 {
-	mRoot = 0;
+    mRoot = 0;
     if (!(LogFile::getSingleton().Init())) { return; }
     if (!setup()) { return; }
-	if (!(Option ::getSingleton().Init())) { return; }
-	if (!(Sound  ::getSingleton().Init())) { return; }
-	if (!(Network::getSingleton().Init())) { return; }
+    if (!(Option ::getSingleton().Init())) { return; }
+    if (!(Sound  ::getSingleton().Init())) { return; }
+    if (!(Network::getSingleton().Init())) { return; }
 //    if (!(TileGfx::getSingleton().Init())) { return; }
- 	Sound::getSingleton().playSong(FILE_MUSIC_001);
+     Sound::getSingleton().playSong(FILE_MUSIC_001);
     createScene();
     mRoot->startRendering();
 
     /////////////////////////////////////////////////////////////////////////
     // Clean up.
     /////////////////////////////////////////////////////////////////////////
-	TileMap::getSingleton().freeRecources();
-	if (Event)  { delete Event;  }
-	if (mRoot)  { delete mRoot;  }
+    TileMap::getSingleton().freeRecources();
+    if (Event)  { delete Event;  }
+    if (mRoot)  { delete mRoot;  }
 //    Network::getSingleton().freeRecources();
     Sound  ::getSingleton().freeRecources();
 //    Option ::getSingleton().freeRecources();
@@ -74,32 +74,32 @@ void DaimoninClient::go(void)
 // ========================================================================
 bool DaimoninClient::setup(void)
 {
-	mRoot = new Root();
-	setupResources();
-		
-	/////////////////////////////////////////////////////////////////////////
-	// Show the configuration dialog and initialise the system
-	// You can skip this and use root.restoreConfig() to load configuration
-	// settings if you were sure there are valid ones saved in ogre.cfg
-	/////////////////////////////////////////////////////////////////////////
-	if(mRoot->showConfigDialog()) { mWindow = mRoot->initialise(true); }
-	else return false;
+    mRoot = new Root();
+    setupResources();
+
+    /////////////////////////////////////////////////////////////////////////
+    // Show the configuration dialog and initialise the system
+    // You can skip this and use root.restoreConfig() to load configuration
+    // settings if you were sure there are valid ones saved in ogre.cfg
+    /////////////////////////////////////////////////////////////////////////
+    if(mRoot->showConfigDialog()) { mWindow = mRoot->initialise(true); }
+    else return false;
     /////////////////////////////////////////////////////////////////////////
     // Get the SceneManager, in this case a generic one
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     mSceneMgr = mRoot->getSceneManager(ST_GENERIC);
     /////////////////////////////////////////////////////////////////////////
     // Create a camera
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
+    mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
     mCamera->setNearClipDistance(CAMERA_ZOOM);
-	mCamera->lookAt(Vector3(0,0,0));
+    mCamera->lookAt(Vector3(0,0,0));
 
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     mVP = mWindow->addViewport(mCamera);
     mVP->setBackgroundColour(ColourValue(0,0,0));
     // Alter the camera aspect ratio to match the viewport
@@ -119,7 +119,7 @@ bool DaimoninClient::setup(void)
     Event= new CEvent(mWindow, mCamera, mMouseMotionListener, mMouseListener);
     mRoot->addFrameListener(Event);
     Event->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
-	return true;
+    return true;
 }
 
 // ========================================================================
@@ -136,17 +136,17 @@ void DaimoninClient::setupResources(void)
 
     String secName, typeName, archName;
     while (seci.hasMoreElements())
-	{
+    {
         secName = seci.peekNextKey();
         ConfigFile::SettingsMultiMap *settings = seci.getNext();
         ConfigFile::SettingsMultiMap::iterator i;
         for (i = settings->begin(); i != settings->end(); ++i)
-		{
+        {
             typeName = i->first;
              archName = i->second;
              ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-		}
-	}
+        }
+    }
 }
 
 // ========================================================================
@@ -154,9 +154,9 @@ void DaimoninClient::setupResources(void)
 // ========================================================================
 void DaimoninClient::createScene(void)
 {
-	// Create the world.
-	Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
-//	Event->World->setPosition(0,0,0);
+    // Create the world.
+    Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+//    Event->World->setPosition(0,0,0);
     mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
     mSceneMgr->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
 
@@ -165,46 +165,46 @@ void DaimoninClient::createScene(void)
     light->setType(Light::LT_POINT );
     light->setPosition(-100, 200, 800);
 //    light->setDiffuseColour(1.0, 1.0, 1.0);
-	light->setSpecularColour(1.0, 1.0, 1.0);
+    light->setSpecularColour(1.0, 1.0, 1.0);
     Event->World->attachObject(light);
-	Event->setLightMember(light, 0);
+    Event->setLightMember(light, 0);
 
     light = mSceneMgr->createLight("Light_Spot");
     light->setType(Light::LT_SPOTLIGHT);
-	light->setDirection(0, -1, -1);
+    light->setDirection(0, -1, -1);
     light->setPosition (-125, 200, 100);
     light->setDiffuseColour(1.0, 1.0, 1.0);
-//	light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
-//	light->setAttenuation(1000,1,0.005,0);
+//    light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
+//    light->setAttenuation(1000,1,0.005,0);
 
     // Setup animation default
     Animation::setDefaultInterpolationMode(Animation::IM_LINEAR);
     Animation::setDefaultRotationInterpolationMode(Animation::RIM_LINEAR);
 
-	Event->World->attachObject(light);
-	Event->setLightMember(light, 1);
-	light->setVisible(false);
+    Event->World->attachObject(light);
+    Event->setLightMember(light, 1);
+    light->setVisible(false);
 
-	SpellManager::getSingleton().init(mSceneMgr, Event->World);
-	ObjectManager::getSingleton().init(mSceneMgr, Event->World);
-	ParticleManager::getSingleton().init(mSceneMgr, Event->World);
-	
+    SpellManager::getSingleton().init(mSceneMgr, Event->World);
+    ObjectManager::getSingleton().init(mSceneMgr, Event->World);
+    ParticleManager::getSingleton().init(mSceneMgr, Event->World);
+
     string descFile = FILE_WORLD_DESC;
-	LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
-	if (!(Option::getSingleton().openDescFile(descFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-		return;
-	}
-	LogFile::getSingleton().Success(true);
+    LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
+    if (!(Option::getSingleton().openDescFile(descFile.c_str())))
+    {
+        LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+        return;
+    }
+    LogFile::getSingleton().Success(true);
 
     string strType, strTemp, strMesh;
     int i=0;
 
     while(1)
-    { 
-        if (!(Option::getSingleton().openDescFile(descFile.c_str()))) { return; }   
+    {
+        if (!(Option::getSingleton().openDescFile(descFile.c_str()))) { return; }
         if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) {break; }
         Option::getSingleton().getDescStr("MeshName", strMesh,i);
         Option::getSingleton().getDescStr("StartX", strTemp,i);
@@ -218,12 +218,12 @@ void DaimoninClient::createScene(void)
 
         if (strType == "npc")
         {
-            ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);   
+            ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
         }
         else
         {
-            ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);        
+            ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
         }
     }
-	TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());
+    TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());
 }

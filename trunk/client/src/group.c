@@ -52,10 +52,10 @@ void show_group(int x, int y)
     */
 
     if(global_group_status < GROUP_INVITE)
-	{
-		StringBlt(ScreenSurface, &Font6x3Out, "type '/help group' for info", 40, 585, COLOR_WHITE, NULL, NULL);
-		return;
-	}
+    {
+        StringBlt(ScreenSurface, &Font6x3Out, "type '/help group' for info", 40, 585, COLOR_WHITE, NULL, NULL);
+        return;
+    }
 
 
     mb = SDL_GetMouseState(&mx, &my);
@@ -80,8 +80,8 @@ void show_group(int x, int y)
                 send_command("/deny", -1, SC_NORMAL);
             }
 
-			if (!mb)
-				active_button = -1;
+            if (!mb)
+                active_button = -1;
         }
     }
     else /* status: GROUP_MEMBER */
@@ -95,8 +95,8 @@ void show_group(int x, int y)
             }
         }
 
-		if (!mb)
-			active_button = -1;
+        if (!mb)
+            active_button = -1;
 
         for (s = 0; s < GROUP_MAX_MEMBER; s++)
         {

@@ -34,46 +34,46 @@ const unsigned int DIALOG_INFO_LINES = 4;
 
 enum _dialog_stage
 {
-	DIALOG_STAGE_LOGIN_GET_NAME,
-	DIALOG_STAGE_LOGIN_GET_PASSWD,
-	DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN,
-	DIALOG_STAGE_GET_META_SERVER,
-	DIALOG_STAGE_SUM
+    DIALOG_STAGE_LOGIN_GET_NAME,
+    DIALOG_STAGE_LOGIN_GET_PASSWD,
+    DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN,
+    DIALOG_STAGE_GET_META_SERVER,
+    DIALOG_STAGE_SUM
 };
 
 enum _dialog_warning
 {
-	DIALOG_WARNING_NONE,
-	DIALOG_WARNING_LOGIN_WRONG_NAME,
-	DIALOG_WARNING_SUM
+    DIALOG_WARNING_NONE,
+    DIALOG_WARNING_LOGIN_WRONG_NAME,
+    DIALOG_WARNING_SUM
 };
 
 class Dialog
 {
 public:
-	 Dialog(){;}
-	~Dialog(){;}
-	static Dialog &getSingleton() { static Dialog Singleton; return Singleton; }
+     Dialog(){;}
+    ~Dialog(){;}
+    static Dialog &getSingleton() { static Dialog Singleton; return Singleton; }
 
-	bool Init();
-	void setVisible(bool vis);
-	bool isVisible() { return mVisible; }
-	void UpdateLogin(unsigned int stage);
-	bool UpdateNewChar();
-	void setWarning(int warning);
-	void setSelText (unsigned int pos, const char *text, ColourValue = TXT_WHITE);
-	void setInfoText(unsigned int pos, const char *text, ColourValue = TXT_WHITE);
-	void clearInfoText();
+    bool Init();
+    void setVisible(bool vis);
+    bool isVisible() { return mVisible; }
+    void UpdateLogin(unsigned int stage);
+    bool UpdateNewChar();
+    void setWarning(int warning);
+    void setSelText (unsigned int pos, const char *text, ColourValue = TXT_WHITE);
+    void setInfoText(unsigned int pos, const char *text, ColourValue = TXT_WHITE);
+    void clearInfoText();
 
 private:
-	Dialog(const Dialog&); // disable copy-constructor.
-	Overlay *mLoginOverlay;
-	OverlayContainer *mDialogSelPanel, *mDialogInfoPanel;
-	OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
-	OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
-	OverlayElement *mElementLine[DIALOG_TXT_LINES], *mElementSelectionBar;
-	OverlayElement *mElementInfo[DIALOG_INFO_LINES];
-	bool mVisible;
+    Dialog(const Dialog&); // disable copy-constructor.
+    Overlay *mLoginOverlay;
+    OverlayContainer *mDialogSelPanel, *mDialogInfoPanel;
+    OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
+    OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
+    OverlayElement *mElementLine[DIALOG_TXT_LINES], *mElementSelectionBar;
+    OverlayElement *mElementInfo[DIALOG_INFO_LINES];
+    bool mVisible;
 };
 
 #endif

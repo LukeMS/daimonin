@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 #include <vector>
-#include <fstream> 
+#include <fstream>
 #include "fmod.h"
 #include "fmod_errors.h"  //optional.
 #include "define.h"
@@ -42,43 +42,43 @@ bool Sound::Init()
     LogFile::getSingleton().Headline("Init Sound-System");
     LogFile::getSingleton().Info("Starting fmod...");
 
-    ///////////////////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////////////////////
     // Check Version.
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     if (FSOUND_GetVersion() < FMOD_VERSION)
     {
-		LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Success(false);
         LogFile::getSingleton().Error("You are using the wrong DLL version! "
-			"You should be using FMOD %.02f\n", FMOD_VERSION);
+            "You should be using FMOD %.02f\n", FMOD_VERSION);
         return false;
     }
 
-    ///////////////////////////////////////////////////////////////////////// 
+    /////////////////////////////////////////////////////////////////////////
     // Init Fmod.
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     if (!FSOUND_Init(44100, 32, 0))
     {
-		LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Success(false);
         LogFile::getSingleton().Error("FSound init: %s\n", FMOD_ErrorString(FSOUND_GetError()));
         return false;
     }
-	LogFile::getSingleton().Success(true);
+    LogFile::getSingleton().Success(true);
 
     /////////////////////////////////////////////////////////////////////////
     // Load all samples.
-	/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     createSampleDummy();
     LogFile::getSingleton().Info("Loading samples...");
     mSuccess = true;
     // if you change something here - you must change it in enum SampleName, too.
     loadSample(FILE_SAMPLE_MOUSE_CLICK);
     loadSample(FILE_SAMPLE_PLAYER_IDLE);
-	if (mSuccess) { LogFile::getSingleton().Success(true); }
-    else          { LogFile::getSingleton().Success(false); }        
-	mWeight = 1.0;
-	mMusicVolume  = 50;
-	mSampleVolume =255;
-	return true;
+    if (mSuccess) { LogFile::getSingleton().Success(true); }
+    else          { LogFile::getSingleton().Success(false); }
+    mWeight = 1.0;
+    mMusicVolume  = 50;
+    mSampleVolume =255;
+    return true;
 }
 
 // ========================================================================
@@ -94,10 +94,10 @@ void Sound::createSampleDummy()
     };
     ofstream out(FILE_SAMPLE_DUMMY, ios::binary);
     if (!out)
-    { 
+    {
         LogFile::getSingleton().Error("Critical: Cound not create the dummy wavefile\n");
         return;
-    } 
+    }
     out.write(dummy, sizeof(dummy));
 }
 
@@ -108,14 +108,14 @@ int Sound::loadSample(const char *filename)
 {
     FSOUND_SAMPLE *handle = FSOUND_Sample_Load(vecHandle.size() , filename, 0,0,0);
     if (!handle)
-    { 
-        LogFile::getSingleton().Error("* Error on Sample '%s': %s \n-> using dummy.wav instead\n", 
+    {
+        LogFile::getSingleton().Error("* Error on Sample '%s': %s \n-> using dummy.wav instead\n",
             filename, FMOD_ErrorString(FSOUND_GetError()));
         mSuccess = false;
         handle = FSOUND_Sample_Load(vecHandle.size() , FILE_SAMPLE_DUMMY, 0,0,0);
         if (!handle)
-        { 
-            LogFile::getSingleton().Error("Critical: Cound not load the dummy wavefile\n");       
+        {
+            LogFile::getSingleton().Error("Critical: Cound not load the dummy wavefile\n");
             return -1;
         }
     }
@@ -128,12 +128,12 @@ int Sound::loadSample(const char *filename)
 // ========================================================================
 void Sound::setSamplePos3D(unsigned int channel, float &posX, float &posY, float &posZ)
 {
-	//if (channel > ) { return; }
-	float pos[3];
-	pos[0] =  posX * mWeight;
-	pos[1] =  posY * mWeight;
-	pos[2] = -posZ * mWeight;
-	FSOUND_3D_SetAttributes(channel, &pos[0], 0);
+    //if (channel > ) { return; }
+    float pos[3];
+    pos[0] =  posX * mWeight;
+    pos[1] =  posY * mWeight;
+    pos[2] = -posZ * mWeight;
+    FSOUND_3D_SetAttributes(channel, &pos[0], 0);
 }
 
 // ========================================================================
@@ -141,11 +141,11 @@ void Sound::setSamplePos3D(unsigned int channel, float &posX, float &posY, float
 // ========================================================================
 int Sound::playSample(unsigned int id, float posX, float posY, float posZ)
 {
-	if (id > vecHandle.size()) { return -1; }
-	mChannel = FSOUND_PlaySound(FSOUND_FREE, vecHandle[id]);
-	setSamplePos3D(mChannel, posX, posY, posZ);
-	setVolume(mChannel, mSampleVolume);
-	return mChannel;
+    if (id > vecHandle.size()) { return -1; }
+    mChannel = FSOUND_PlaySound(FSOUND_FREE, vecHandle[id]);
+    setSamplePos3D(mChannel, posX, posY, posZ);
+    setVolume(mChannel, mSampleVolume);
+    return mChannel;
 }
 
 // ========================================================================
@@ -153,7 +153,7 @@ int Sound::playSample(unsigned int id, float posX, float posY, float posZ)
 // ========================================================================
 void Sound::stopSample(unsigned int channel)
 {
-	if (channel <= vecHandle.size())  { FSOUND_StopSound(channel); }
+    if (channel <= vecHandle.size())  { FSOUND_StopSound(channel); }
 }
 
 
@@ -162,7 +162,7 @@ void Sound::stopSample(unsigned int channel)
 // ========================================================================
 void Sound::setVolume(unsigned int channel, int volume)
 {
-	FSOUND_SetVolume(channel, volume);
+    FSOUND_SetVolume(channel, volume);
 }
 
 // ========================================================================
@@ -170,15 +170,15 @@ void Sound::setVolume(unsigned int channel, int volume)
 // ========================================================================
 void Sound::playSong(const char *filename)
 {
-	stopSong();
-	mpSong = FMUSIC_LoadSong(filename);
+    stopSong();
+    mpSong = FMUSIC_LoadSong(filename);
     if (!mpSong)
     {
         LogFile::getSingleton().Error("Song load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
         return;
     }
-	FMUSIC_SetMasterVolume(mpSong, mMusicVolume);
-	FMUSIC_PlaySong(mpSong);
+    FMUSIC_SetMasterVolume(mpSong, mMusicVolume);
+    FMUSIC_PlaySong(mpSong);
 }
 
 // ========================================================================
@@ -186,8 +186,8 @@ void Sound::playSong(const char *filename)
 // ========================================================================
 void Sound::stopSong()
 {
-	if (!mpSong) { return; }
-	FMUSIC_StopSong(mpSong);
+    if (!mpSong) { return; }
+    FMUSIC_StopSong(mpSong);
 }
 
 // ========================================================================
@@ -195,21 +195,21 @@ void Sound::stopSong()
 // ========================================================================
 void Sound::playStream(const char *filename)
 {
-	stopStream();
-	mpStream = FSOUND_Stream_Open(filename, FSOUND_LOOP_NORMAL, 0, 0);
+    stopStream();
+    mpStream = FSOUND_Stream_Open(filename, FSOUND_LOOP_NORMAL, 0, 0);
     if (!mpStream)
     {
-		LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Success(false);
         LogFile::getSingleton().Error("Music load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
         return;
     }
-	mChannel = FSOUND_Stream_Play(FSOUND_FREE, mpStream);
+    mChannel = FSOUND_Stream_Play(FSOUND_FREE, mpStream);
     if (mChannel < 0)
     {
         LogFile::getSingleton().Error("FSOUND_Stream_Play returned %d\n", mChannel);
         return;
-	}
-	setVolume(mChannel, mMusicVolume);
+    }
+    setVolume(mChannel, mMusicVolume);
 }
 
 // ========================================================================
@@ -217,9 +217,9 @@ void Sound::playStream(const char *filename)
 // ========================================================================
 void Sound::stopStream()
 {
-	if (!mpStream) { return; }
-	FSOUND_Stream_Stop(mpStream);
-	mpStream = 0;
+    if (!mpStream) { return; }
+    FSOUND_Stream_Stop(mpStream);
+    mpStream = 0;
 }
 
 // ========================================================================
@@ -227,7 +227,7 @@ void Sound::stopStream()
 // ========================================================================
 void Sound::freeRecources()
 {
-	stopStream();
+    stopStream();
     FMUSIC_FreeSong(mpSong);
     for (unsigned int i = 0; i< vecHandle.size(); ++i) { FSOUND_Sample_Free(vecHandle[i]); }
     FSOUND_Close();
