@@ -41,7 +41,7 @@ const Real TEXTURE_SIZE = 64.0 / TEX_FILE_SIZE;  // 64 pixel per tile.
 const int  TILES_SUM_X  = 1024   / TILES_WIDTH;
 const int  TILES_SUM_Y  =  768   / TILES_HEIGHT*2;
 const int  SUM_TILES    = TILES_SUM_X * TILES_SUM_Y;
-const Real TILES_DEEP   = 20; // z-pos
+const Real TILES_DEEP   = 20; // z-pos 
 const int SKIP_FRAMES = 5000;
 
 
@@ -122,10 +122,10 @@ void TileMap::adjust_map_cache(int xpos, int ypos)
 
             for (i = 0; i < MAXFACES; i++) // lets update the whole cell for secure
             {
-                map->faces[i]    = cells[x][y].faces[i];
-                map->ext[i]        = cells[x][y].ext[i];
-                map->pos[i]        = cells[x][y].pos[i];
-                map->probe[i]    = cells[x][y].probe[i];
+                map->faces[i]	= cells[x][y].faces[i];
+                map->ext[i]		= cells[x][y].ext[i];
+                map->pos[i]		= cells[x][y].pos[i];
+                map->probe[i]	= cells[x][y].probe[i];
             }
         }
     }
@@ -181,7 +181,7 @@ void TileMap::clear_map(void)
 void TileMap::display_mapscroll(int dx, int dy)
 {
     int x, y;
-    struct MapCell tmp_cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
+	struct MapCell tmp_cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
 
     for (x = 0; x < MapStatusX; x++)
     {
@@ -225,7 +225,7 @@ void TileMap::clear(void)
 void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
 {
     char   *tmp;
-    if ((tmp = strchr(name, '§')))
+	if ((tmp = strchr(name, '§')))
     {
 /*
         strcpy(MapData.music, tmp);
@@ -247,11 +247,11 @@ void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
      //   sound_fadeout_music(0);
     }
 
-    if (name)        { strcpy(MapData.name, name); }
-    if (xl != -1)    { MapData.xlen = xl; }
-    if (yl != -1)    { MapData.ylen = yl; }
-    if (px != -1)    { MapData.posx = px; }
-    if (py != -1)    { MapData.posy = py; }
+	if (name)		{ strcpy(MapData.name, name); }
+    if (xl != -1)	{ MapData.xlen = xl; }
+    if (yl != -1)	{ MapData.ylen = yl; }
+    if (px != -1)	{ MapData.posx = px; }
+    if (py != -1)	{ MapData.posy = py; }
     if (xl > 0)
     {
         clear_map();
@@ -305,14 +305,14 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-    map->fog_of_war    = false;
+    map->fog_of_war	= false;
     map->darkness = cells[x][y].darkness;
 
     for (i = 0; i < MAXFACES; i++) // lets update the whole cell for secure
     {
         map->faces[i]= cells[x][y].faces[i];
         map->ext[i]  = cells[x][y].ext[i];
-        map->pos[i]     = cells[x][y].pos[i];
+        map->pos[i]	 = cells[x][y].pos[i];
         map->probe[i]= cells[x][y].probe[i];
         strcpy(map->pname[i], cells[x][y].pname[i]);
     }
@@ -323,17 +323,17 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
 //=================================================================================================
 void TileMap::display_map_clearcell(long x, long y)
 {
-    register MapCell *map;
+	register MapCell *map;
     int xreal, yreal, i;
 
     cells[x][y].darkness = 0;
     for (i = 0; i < MAXFACES; i++)
     {
-        cells[x][y].pname[i][0]    = 0;
-        cells[x][y].faces[i]    = 0;
-        cells[x][y].ext[i]        = 0;
-        cells[x][y].pos[i]        = 0;
-        cells[x][y].probe[i]    = 0;
+        cells[x][y].pname[i][0]	= 0;
+        cells[x][y].faces[i]	= 0;
+        cells[x][y].ext[i]		= 0;
+        cells[x][y].pos[i]		= 0;
+        cells[x][y].probe[i]	= 0;
     }
 
     xreal = MapData.posx + (x - (MAP_MAX_SIZE - 1) / 2) + MapData.xlen;
@@ -387,26 +387,26 @@ void TileMap::draw(void)
 {
 //    if (!TheMapCache) { return; }
     static unsigned int offsetX =0;
-    static unsigned int offsetY =0;
+	static unsigned int offsetY =0;
 
     mTileOffset = Event->getWorldPos();
     Real xPos = mTileOffset.x;
     Real yPos = mTileOffset.y;
 
-    offsetX = (unsigned int)(xPos/ TILES_WIDTH);
+    offsetX = (unsigned int)(xPos/ TILES_WIDTH); 
     offsetY = (unsigned int)(yPos/ TILES_HEIGHT)*2;
 
-    xPos-= ((int)(xPos/ TILES_WIDTH )) * TILES_WIDTH;
+    xPos-= ((int)(xPos/ TILES_WIDTH )) * TILES_WIDTH;  
     yPos-= ((int)(yPos/ TILES_HEIGHT)) * TILES_HEIGHT;
     mNode->setPosition(xPos, yPos, 0);
 
     int texPosX;
-    Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
-    for (int y = 0; y < TILES_SUM_Y; ++y)
-    {
-        for (int x = 0; x < TILES_SUM_X; ++x)
-        {
-            texPosX  = Layer0[(y+offsetY)&7][(x+offsetX)&7];
+	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
+	for (int y = 0; y < TILES_SUM_Y; ++y)
+	{
+		for (int x = 0; x < TILES_SUM_X; ++x)
+		{
+            texPosX  = Layer0[(y+offsetY)&7][(x+offsetX)&7];		
             // Layer 0
             pVertex[ 6] = texPosX * TEXTURE_SIZE;
             pVertex[ 7] = TEXTURE_SIZE;
@@ -427,7 +427,7 @@ void TileMap::draw(void)
             pVertex[38] = 0.0;
             pVertex[39] = 0.0;
 */
-/*
+/*            
             // Mask
             pVertex[ 8] = 0.0;
             pVertex[ 9] = 0.0;
@@ -440,9 +440,9 @@ void TileMap::draw(void)
 */
 
             pVertex+=VERTEX_PER_QUAD;
-        }
-    }
-    mpVertexBuf->unlock();
+		}
+	}
+	mpVertexBuf->unlock();
 
 /*
     register MapCell *map;
@@ -538,7 +538,7 @@ void TileMap::draw(void)
 
                             // blt the face in the darkness level, the tile pos has
                             temp = map->darkness;
-                            if        (temp == 210)  { bltfx.dark_level = 0; }
+                            if		(temp == 210)  { bltfx.dark_level = 0; }
                             else if (temp == 180)  { bltfx.dark_level = 1; }
                             else if (temp == 150)  { bltfx.dark_level = 2; }
                             else if (temp == 120)  { bltfx.dark_level = 3; }
@@ -558,11 +558,11 @@ void TileMap::draw(void)
                                 }
                             }
 
-                            if (map->fog_of_war == TRUE)            { bltfx.flags |= BLTFX_FLAG_FOW;  }
-                            else if (cpl.stats.flags & SF_XRAYS)    { bltfx.flags |= BLTFX_FLAG_GREY; }
+                            if (map->fog_of_war == TRUE)			{ bltfx.flags |= BLTFX_FLAG_FOW;  }
+                            else if (cpl.stats.flags & SF_XRAYS)	{ bltfx.flags |= BLTFX_FLAG_GREY; }
                             else if (cpl.stats.flags & SF_INFRAVISION && index_tmp & 0x8000 && map->darkness < 150)
-                                                                    { bltfx.flags |= BLTFX_FLAG_RED; }
-                            else                                    { bltfx.flags |= BLTFX_FLAG_DARK; }
+																	{ bltfx.flags |= BLTFX_FLAG_RED; }
+                            else									{ bltfx.flags |= BLTFX_FLAG_DARK; }
 
                             if (map->ext[k] & FFLAG_INVISIBLE && !(bltfx.flags & BLTFX_FLAG_FOW))
                             {
@@ -708,7 +708,7 @@ void TileMap::draw(void)
 //=================================================================================================
 TileMap::~TileMap()
 {
-    if (TheMapCache) { delete[] TheMapCache; }
+	if (TheMapCache) { delete[] TheMapCache; }
 }
 
 
@@ -722,75 +722,75 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
     /////////////////////////////////////////////////////////////////////////
     int blending   = 0;
     std::string descFile = FILE_WORLD_DESC;
-    LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
-    if (!(Option::getSingleton().openDescFile(descFile.c_str())))
-    {
-        LogFile::getSingleton().Success(false);
-        LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-        return;
-    }
-    LogFile::getSingleton().Success(true);
+	LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
+	if (!(Option::getSingleton().openDescFile(descFile.c_str())))
+	{
+		LogFile::getSingleton().Success(false);
+		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+		return;
+	}
+	LogFile::getSingleton().Success(true);
     std::string strTemp;
     Option::getSingleton().openDescFile(descFile.c_str());
     Option::getSingleton().getDescStr("TileBlending", strTemp);
-    blending = atoi(strTemp.c_str());
+	blending = atoi(strTemp.c_str());
 
     /////////////////////////////////////////////////////////////////////////
     // Create a mesh containing 1 submesh.
-    /////////////////////////////////////////////////////////////////////////
-    // Here we have an example for the mingw/devcpp crew - try this (doesn't work here):
-    // Change "General" to ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
+	/////////////////////////////////////////////////////////////////////////
+	// Here we have an example for the mingw/devcpp crew - try this (doesn't work here):
+	// Change "General" to ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
 
-    mpMeshTiles = MeshManager::getSingleton().createManual("TilesMesh", "General",0);
-    SubMesh *pMeshTilesVertex = mpMeshTiles->createSubMesh();
+	mpMeshTiles = MeshManager::getSingleton().createManual("TilesMesh", "General",0);
+	SubMesh *pMeshTilesVertex = mpMeshTiles->createSubMesh();
 
-    mpMeshTiles->sharedVertexData = new VertexData();
-    VertexData *vertexData    = mpMeshTiles->sharedVertexData;
+	mpMeshTiles->sharedVertexData = new VertexData();
+	VertexData *vertexData    = mpMeshTiles->sharedVertexData;
 
-    /////////////////////////////////////////////////////////////////////////
-    // Define the vertex format.
-    /////////////////////////////////////////////////////////////////////////
-    size_t currOffset = 0;
-    VertexDeclaration *vertexDecl = vertexData->vertexDeclaration;
+	/////////////////////////////////////////////////////////////////////////
+	// Define the vertex format.
+	/////////////////////////////////////////////////////////////////////////
+	size_t currOffset = 0;
+	VertexDeclaration *vertexDecl = vertexData->vertexDeclaration;
     // Position.
-    vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_POSITION);
-    currOffset += VertexElement::getTypeSize(VET_FLOAT3);
-    // Normals.
-    vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_NORMAL);
-    currOffset += VertexElement::getTypeSize(VET_FLOAT3);
-    // Texture Layer 0.
-    vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    currOffset += VertexElement::getTypeSize(VET_FLOAT2);
-    // Texture Layer 1.
-    vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1);
-    currOffset += VertexElement::getTypeSize(VET_FLOAT2);
+	vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_POSITION);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT3);
+	// Normals.
+	vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_NORMAL);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT3);
+	// Texture Layer 0.
+	vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT2);
+	// Texture Layer 1.
+	vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT2);
 
-    /////////////////////////////////////////////////////////////////////////
-    // Create vertex-buffer.
-    /////////////////////////////////////////////////////////////////////////
-    vertexData->vertexCount = SUM_VERTEX;
-    mpVertexBuf = HardwareBufferManager::getSingleton().createVertexBuffer(vertexDecl->getVertexSize(0), vertexData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
-    VertexBufferBinding *binding = vertexData->vertexBufferBinding;
-    binding->setBinding(0, mpVertexBuf);
-    Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
-
+	/////////////////////////////////////////////////////////////////////////
+	// Create vertex-buffer.
+	/////////////////////////////////////////////////////////////////////////
+	vertexData->vertexCount = SUM_VERTEX;
+	mpVertexBuf = HardwareBufferManager::getSingleton().createVertexBuffer(vertexDecl->getVertexSize(0), vertexData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+	VertexBufferBinding *binding = vertexData->vertexBufferBinding;
+	binding->setBinding(0, mpVertexBuf);
+	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
+	
     const  Real startX =  350;//TILES_WIDTH*4;
-    static Real posX   =  startX;
-    static Real posY   =  20;//240 + TILES_HEIGHT;
-    static Real posZ   = -400;
+	static Real posX   =  startX;
+	static Real posY   =  20;//240 + TILES_HEIGHT;
+	static Real posZ   = -400;
 
     // Tiles rotated 45°
-    for (int y = 0; y < TILES_SUM_Y; ++y)
-    {
-        for (int x = 0; x < TILES_SUM_X; ++x)
-        {
+	for (int y = 0; y < TILES_SUM_Y; ++y)
+	{
+		for (int x = 0; x < TILES_SUM_X; ++x)
+		{
             // Position bottom.
             *pVertex++ = posX-TILES_WIDTH/2;
             *pVertex++ = posY-TILES_HEIGHT*2;
             *pVertex++ = posZ;
             // Normals.
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
-            // Textures Layer 0...n.
+            // Textures Layer 0...n. 
             *pVertex++ = 0.0; *pVertex++ = 0.0;
             *pVertex++ = 0.0; *pVertex++ = 1.0;
 
@@ -800,8 +800,8 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = posZ+TILES_DEEP;
             // Normals.
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
-            // Textures Layer 0...n.
-            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            // Textures Layer 0...n. 
+            *pVertex++ = 0.0; *pVertex++ = 0.0; 
             *pVertex++ = 1.0; *pVertex++ = 1.0;
 
             // Position top.
@@ -810,8 +810,8 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = posZ+TILES_DEEP*2;
             // Normals.
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
-            // Textures Layer 0...n.
-            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            // Textures Layer 0...n. 
+            *pVertex++ = 0.0; *pVertex++ = 0.0; 
             *pVertex++ = 1.0; *pVertex++ = 0.0;
 
             // Position left.
@@ -820,49 +820,49 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = posZ+TILES_DEEP;
             // Normals.
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
-            // Textures Layer 0...n.
+            // Textures Layer 0...n. 
             *pVertex++ = 0.0; *pVertex++ = 0.0;
             *pVertex++ = 0.0; *pVertex++ = 0.0;
 
             posX -= TILES_WIDTH-blending;
             //posX -= TILES_WIDTH;
-        }
+		}
         posY-= TILES_HEIGHT-TILES_DEEP-blending/2;
-        posX = startX;
-        //if (!(y&1)) posX+= TILES_WIDTH/2-blending;
-        if (!(y&1)) { posX+= (TILES_WIDTH-blending)/2; }//posY+=-blending/2; }
-    }
-    mpVertexBuf->unlock();
+		posX = startX;
+		//if (!(y&1)) posX+= TILES_WIDTH/2-blending;
+		if (!(y&1)) { posX+= (TILES_WIDTH-blending)/2; }//posY+=-blending/2; }
+	}
+	mpVertexBuf->unlock();
 
     /////////////////////////////////////////////////////////////////////////
     // Create index-buffer.
-    /////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////
     unsigned short faces[SUM_FACES] = { 0,1,2  ,  0,2,3 }; // first, second triangle.
-    pMeshTilesVertex->indexData->indexCount = SUM_VINDEX;
-    pMeshTilesVertex->indexData->indexBuffer = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, pMeshTilesVertex->indexData->indexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
-    pMeshTilesVertex->useSharedVertices = true;
+	pMeshTilesVertex->indexData->indexCount = SUM_VINDEX;
+	pMeshTilesVertex->indexData->indexBuffer = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, pMeshTilesVertex->indexData->indexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+	pMeshTilesVertex->useSharedVertices = true;
     mpIndexBuf = pMeshTilesVertex->indexData->indexBuffer;
-    unsigned short* pIndices = static_cast<unsigned short*>(mpIndexBuf->lock(HardwareBuffer::HBL_DISCARD));
-    for (int i=0; i < SUM_TILES; ++i)
-    {
-        for (int u= 0; u < SUM_FACES; ++u)  { *pIndices++ = i*4 + faces[u]; }
-    }
-    mpIndexBuf->unlock();
+	unsigned short* pIndices = static_cast<unsigned short*>(mpIndexBuf->lock(HardwareBuffer::HBL_DISCARD));
+	for (int i=0; i < SUM_TILES; ++i)
+	{
+		for (int u= 0; u < SUM_FACES; ++u)  { *pIndices++ = i*4 + faces[u]; }
+	}
+	mpIndexBuf->unlock();
 
     /////////////////////////////////////////////////////////////////////////
-    // Set bounding information (for culling)
+	// Set bounding information (for culling)
     /////////////////////////////////////////////////////////////////////////
-    int t = 5;
-    mpMeshTiles->_setBounds(AxisAlignedBox(-t,-t, 0, t, t, 0));
-    mpMeshTiles->_setBoundingSphereRadius(Math::Sqrt(t*t+t*t));
+	int t = 5;
+	mpMeshTiles->_setBounds(AxisAlignedBox(-t,-t, 0, t, t, 0));
+	mpMeshTiles->_setBoundingSphereRadius(Math::Sqrt(t*t+t*t));
 
     /////////////////////////////////////////////////////////////////////////
     // Create the entity.
-    /////////////////////////////////////////////////////////////////////////
-    mpMeshTiles->load();
-    Entity* mEntity = SceneMgr->createEntity("mTiles", "TilesMesh");
-    mNode = Node->createChildSceneNode();
-    mEntity->setMaterialName("Tiles/Layers");
-    mNode->attachObject(mEntity);
-    mTileOffset = Vector3(0,0,0);
+	/////////////////////////////////////////////////////////////////////////
+	mpMeshTiles->load();
+	Entity* mEntity = SceneMgr->createEntity("mTiles", "TilesMesh");
+	mNode = Node->createChildSceneNode();
+	mEntity->setMaterialName("Tiles/Layers");
+	mNode->attachObject(mEntity);
+	mTileOffset = Vector3(0,0,0);
 }

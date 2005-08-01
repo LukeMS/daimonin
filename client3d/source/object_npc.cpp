@@ -1,27 +1,24 @@
-/*
------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
-
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
 
 This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free Software
+the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along with
+You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/lesser.txt.
------------------------------------------------------------------------------
-*/
-#include "OgreParticleSystem.h"
+http://www.gnu.org/licenses/licenses.html
+-----------------------------------------------------------------------------*/
 
+#include "OgreParticleSystem.h"
 #include "object_npc.h"
 #include "particle.h"
 #include "sound.h"
@@ -30,6 +27,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "textwindow.h"
 #include "spell_manager.h"
 #include "event.h"
+#include "tileManager.h"
+
+extern Camera *mCamera;
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -43,40 +43,67 @@ static ParticleFX *tempPFX =0;
 //=================================================================================================
 NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Radian Facing)
 {
-    if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
+	if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
 
-    mNode = Node;
-    mFacing = Facing;
-    thisNPC = mInstanceNr;
-    mDescFile = DIR_MODEL_DESCRIPTION;
-    mDescFile += desc_filename;
-    if (!mInstanceNr) { LogFile::getSingleton().Headline("Init Actor Models"); }
-    LogFile::getSingleton().Info("Parse description file %s...", mDescFile.c_str());
-    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-    {
-        LogFile::getSingleton().Success(false);
-        LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-        return;
-    }
-    LogFile::getSingleton().Success(true);
-    mSceneMgr = SceneMgr;
-    string strTemp;
-    Option::getSingleton().getDescStr("MeshName", strTemp);
-    mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
-    mNode->yaw(mFacing);
-    mNode->attachObject(mEntityNPC);
+	mNode = Node;
+	mFacing = Facing;
+	thisNPC = mInstanceNr;
+	mDescFile = DIR_MODEL_DESCRIPTION;
+	mDescFile += desc_filename;
+	if (!mInstanceNr) { LogFile::getSingleton().Headline("Init Actor Models"); }
+	LogFile::getSingleton().Info("Parse description file %s...", mDescFile.c_str());
+	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+	{
+		LogFile::getSingleton().Success(false);
+		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+		return;
+	}
+	LogFile::getSingleton().Success(true);
+	mSceneMgr = SceneMgr;
+	string strTemp;
+	Option::getSingleton().getDescStr("MeshName", strTemp);
+	mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
+//	mNode->roll(Radian(45));
 
-    // Create Animations and Animation sounds.
-    mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
+	mNode->scale(Vector3(.6,.6,.6));
+	mNode->pitch(Radian(90));
+	mNode->yaw(Radian(90));
+	mNode->attachObject(mEntityNPC);
+	if (!thisNPC)
+	{
+//	mNode->pitch(Radian(90));
+//	mNode->yaw(Radian(90));
+const int CAMERA_X = 15;
+const int CAMERA_Y = 15;
 
-    mTurning =0;
-    mWalking =0;
-    mEntityWeapon =0;
-    mEntityShield =0;
-    mEntityArmor  =0;
-    mEntityHelmet =0;
-    ++mInstanceNr;
-    return;
+	mNode->setPosition(Vector3(CAMERA_X,CAMERA_Y+100,40));
+	Event->getCamera()->setPosition(Vector3(CAMERA_X,CAMERA_Y,350));
+	Event->getCamera()->lookAt(Vector3(CAMERA_X,CAMERA_Y,0));
+//	mCamera->pitch(Radian(1.2));
+	Event->getCamera()->setNearClipDistance(1);
+	Event->getCamera()->setFarClipDistance(5000);
+	Event->getCamera()->pitch(Radian(0.2));
+	Vector3 pos = Vector3(0,0,0);
+
+//		mNode->setPosition(Vector3(0,0,100));
+//		mNode->lookAt(Vector3(0,0,0));
+//		mNode->pitch(Radian(1.2));
+
+		 //mNode->attachObject(mCamera);
+	}
+
+//	mNode->roll(Radian(45));
+	// Create Animations and Animation sounds.
+	mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
+
+	mTurning =0;
+	mWalking =0;
+	mEntityWeapon =0;
+	mEntityShield =0;
+	mEntityArmor  =0;
+	mEntityHelmet =0;
+	++mInstanceNr;
+	return;
 }
 
 //=================================================================================================
@@ -84,40 +111,40 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 //=================================================================================================
 void NPC::toggleTexture(int pos, int texture)
 {
-    string strValue , strKeyword;
-    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-    {
-        LogFile::getSingleton().Success(false);
-        LogFile::getSingleton().Error("NPC::toggleTexture(...) -> description file was not found!\n");
-        return;
-    }
-    // Get material.
-    strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
-    if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
-    MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
-    // Get texture.
-    if (texture >=0) // select a texture by value.
-    {
-        strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(texture, 2, '0');
-        if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
-    }
-    else // toggle textures
-    { // only for testing...
-        static int actTexture[100];
-        strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-        if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-        {
-            actTexture[pos] =0;
-            strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-            if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
-        }
-        ++actTexture[pos];
-    }
-    // set new texture.
-    mpMaterial->unload();
-    mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
-    mpMaterial->reload();
-    mpMaterial.setNull();
+	string strValue , strKeyword;
+	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+	{
+		LogFile::getSingleton().Success(false);
+		LogFile::getSingleton().Error("NPC::toggleTexture(...) -> description file was not found!\n");
+		return;
+	}
+	// Get material.
+	strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
+	if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
+	MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
+	// Get texture.
+	if (texture >=0) // select a texture by value.
+	{
+		strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(texture, 2, '0');
+		if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
+	}
+	else // toggle textures
+	{ // only for testing...
+		static int actTexture[100];
+		strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
+		if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) 
+		{ 
+			actTexture[pos] =0;
+			strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
+			if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
+		}
+		++actTexture[pos];
+	}
+	// set new texture.
+	mpMaterial->unload();
+	mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
+	mpMaterial->reload();
+	mpMaterial.setNull();
 }
 
 //=================================================================================================
@@ -125,16 +152,16 @@ void NPC::toggleTexture(int pos, int texture)
 //=================================================================================================
 void  NPC::toggleMesh(int Bone, int WeaponNr)
 {
-    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-    {
-        LogFile::getSingleton().Error("CRITICAL: description file: '%s' was not found!\n", mDescFile.c_str());
-        return;
-    }
-    static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
-    string mStrTemp;
-
-    switch (Bone)
-    {
+	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+	{
+		LogFile::getSingleton().Error("CRITICAL: description file: '%s' was not found!\n", mDescFile.c_str());
+		return;
+	}
+	static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
+	string mStrTemp;
+    
+	switch (Bone)
+	{
         case BONE_WEAPON_HAND:
             WeaponNr = ++mWeapon; // testing -> delete me!
             if (mEntityWeapon)
@@ -166,7 +193,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             else mWeapon =0;  // testing -> delete me!
             break;
 
-        case BONE_SHIELD_HAND:
+        case BONE_SHIELD_HAND:        
             WeaponNr = ++mShield; // testing -> delete me!
             if (mEntityShield)
             {
@@ -189,7 +216,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             else mShield =0;  // testing -> delete me!
             break;
 
-        case BONE_HEAD:
+        case BONE_HEAD:        
             WeaponNr = ++mHelmet; // testing -> delete me!
             if (mEntityHelmet)
             {
@@ -212,7 +239,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             else mHelmet =0;  // testing -> delete me!
             break;
 
-        case BONE_BODY:
+        case BONE_BODY:        
             WeaponNr = ++mArmor; // testing -> delete me!
             if (mEntityArmor)
             {
@@ -234,7 +261,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             }
             else mArmor =0;  // testing -> delete me!
             break;
-    }
+	}
 }
 
 typedef std::list<Particle*> ActiveParticleList;
@@ -245,39 +272,56 @@ typedef std::list<Particle*> ActiveParticleList;
 //=================================================================================================
 void NPC::update(const FrameEvent& event)
 {
-    mAnim->update(event);
-    mTranslateVector = Vector3(0,0,0);
-    if (mAnim->isMovement())
-    {
-        if (mTurning)
-        {
-            mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
-            mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
-        }
-        if (mWalking)
-        {
-            // just a test...
-            mAnim->toggleAnimation(STATE_WALK1);
-            mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-            mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-//            mTranslateVector = mNode->getOrientation().zAxis();
-            mNode->translate(mTranslateVector);
-            if(thisNPC) // All NPC's.
-            {
-                mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking);
-                mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking));
-                mNode->translate(mTranslateVector);
-            }
-            else  // Hero has moved.
-            {
-                Event->setWorldPos(mTranslateVector);
-            }
-        }
-        else
-        {
-            mAnim->toggleAnimation(STATE_IDLE1);
-        }
-    }
+	mAnim->update(event);
+	mTranslateVector = Vector3(0,0,0);
+	if (mAnim->isMovement())
+	{
+		if (mTurning)
+		{
+			mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
+			mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
+		}
+		if (mWalking)
+		{
+			// just a test...
+			mAnim->toggleAnimation(STATE_WALK1);
+			mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+			mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+
+//			mTranslateVector = mNode->getOrientation().zAxis();
+			mNode->translate(mTranslateVector);
+			if(thisNPC) // All NPC's.
+			{
+				mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking);
+				mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking));
+				mNode->translate(mTranslateVector);
+			}
+			else // Hero has moved.
+			{
+				static Vector3 pos = mNode->getPosition();
+				pos+= mTranslateVector;
+				Event->setWorldPos(mTranslateVector);
+				
+				//mNode->setPosition(mNode->getPosition()+mTranslateVector);
+				//mNode->setPosition(600,800+mTranslateVector.z, mTranslateVector.z+40);
+				//LogFile::getSingleton().Info("x, y, z: %f %f %f\n",mTranslateVector.x, mTranslateVector.y, mTranslateVector.z);
+//				Vector3 pos = mNode->getPosition();
+				//pos.z = Event->pgraphics->Get_Map((short)pos.x/TILE_SIZE, (short)pos.y/TILE_SIZE)*2;
+
+
+//				pos.z = Event->pgTileManager->Get_Map((short)(pos.x )/ TILE_SIZE -7, (short)(pos.y) / TILE_SIZE-5);
+				pos.z = Event->pgTileManager->Get_Map(  (short)((pos.x+4.5*TILE_SIZE) /TILE_SIZE), (short)((pos.y+6.5*TILE_SIZE) /TILE_SIZE));
+
+//LogFile::getSingleton().Info("x: %d y %d \n", (int)(pos.x /TILE_SIZE), (int)(pos.y /TILE_SIZE));
+//LogFile::getSingleton().Info("z: %f\n", pos.z);
+				mNode->setPosition(pos.x, pos.y-pos.z, pos.z*2+40);
+			}
+		}
+		else 
+		{
+			mAnim->toggleAnimation(STATE_IDLE1);
+		}
+	}
 }
 
 //=================================================================================================

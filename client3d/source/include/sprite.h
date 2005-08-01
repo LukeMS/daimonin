@@ -1,25 +1,23 @@
-/*
------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
-
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
 
 This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free Software
+the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along with
+You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/lesser.txt.
------------------------------------------------------------------------------
-*/
+http://www.gnu.org/licenses/licenses.html
+-----------------------------------------------------------------------------*/
+
 #ifndef SPRITE_H
 #define SPRITE_H
 
@@ -42,11 +40,11 @@ typedef enum _sprite_type
 
 // use special values from BLTFX structures
 const int BLTFX_FLAG_NORMAL   = 0;
-const int BLTFX_FLAG_DARK     = 1;
-const int BLTFX_FLAG_SRCALPHA = 2;
-const int BLTFX_FLAG_FOW      = 4;
-const int BLTFX_FLAG_RED      = 8;
-const int BLTFX_FLAG_GREY     =16;
+const int BLTFX_FLAG_DARK     = 1;   
+const int BLTFX_FLAG_SRCALPHA = 2;   
+const int BLTFX_FLAG_FOW      = 4;   
+const int BLTFX_FLAG_RED      = 8;   
+const int BLTFX_FLAG_GREY     =16;   
 
 // here we can change default blt options or set special options
 typedef struct _BLTFX
@@ -60,7 +58,7 @@ typedef struct _BLTFX
 // the structure
 typedef struct _Sprite
 {
-    _sprite_status  status;
+    _sprite_status  status; 
     _sprite_type    type;
     int             border_up;   // rows of blank pixels before first color information
     int             border_down; // a blank sprite has borders = 0
@@ -75,7 +73,7 @@ typedef struct _Sprite
 //    SDL_Surface    *red;                    // red (infravision)
 //    SDL_Surface    *grey;                   // grey (xray)
 //    SDL_Surface    *fog_of_war;             // thats the fog of war palette
-//    SDL_Surface    *dark_level[DARK_LEVELS];// dark levels.
+//    SDL_Surface    *dark_level[DARK_LEVELS];// dark levels. 
                                           // Note: 0= default sprite - its only mapped
 } _Sprite;
 /*
@@ -87,15 +85,15 @@ typedef struct _anim
     struct _anim           *next;         // pointer to next anim in que
     struct _anim           *before;       // pointer to anim before
     int                     type;
-    unsigned int            start_tick;          // The time we started this anim
+    unsigned int			start_tick;          // The time we started this anim 
     unsigned int            last_tick;           // This is the end-tick
-    int                     value;                  // this is the number to display
-    int                     x;                      // where we are X
+    int                     value;                  // this is the number to display 
+    int                     x;                      // where we are X 
     int                     y;                      // where we are Y
-    int                     xoff;                   // movement in X per tick
-    float                   yoff;                   // movement in y per tick
-    int                     mapx;                   // map position X
-    int                     mapy;                   // map position Y
+    int                     xoff;                   // movement in X per tick 
+    float                   yoff;                   // movement in y per tick 
+    int                     mapx;                   // map position X 
+    int                     mapy;                   // map position Y 
 }_anim;
 
 #define ASCII_UP 28

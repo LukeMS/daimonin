@@ -43,27 +43,27 @@ class LightManager
 {
   private:
     ////////////////////////////////////////////////////////////
-    // Variables.
+	// Variables.
     ////////////////////////////////////////////////////////////
     SceneManager *mSceneMgr;
     SceneNode  *mNode;
     std::string mDescFile;
     std::vector<Light*>mvLightObject;
-
-
+   
+    
     ////////////////////////////////////////////////////////////
-    // Functions.
+	// Functions.
     ////////////////////////////////////////////////////////////
     LightManager(const LightManager&); // disable copy-constructor.
-
+	    
   public:
     ////////////////////////////////////////////////////////////
-    // Functions.
+	// Functions.
     ////////////////////////////////////////////////////////////
      LightManager() {;}
-    ~LightManager();
+	~LightManager();
     static LightManager &getSingleton() { static LightManager Singleton; return Singleton; }
-    bool init(SceneManager *SceneMgr, SceneNode  *Node);
+	bool init(SceneManager *SceneMgr, SceneNode  *Node);
     bool addObject(unsigned int type, const char *desc_filename, Vector3 pos);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
