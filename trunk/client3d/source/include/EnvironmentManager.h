@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Daimonin (http://daimonin.sourceforge.net)
-Copyright (c) 2005 The Daimonin Team
+This source file is part of Code-Black (http://www.code-black.org)
+Copyright (c) 2005 by the Code-Black Team
 Also see acknowledgements in Readme.html
 
 This program is free software; you can redistribute it and/or modify it under
@@ -18,8 +18,35 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "define.h"
-#include "object_static.h"
-#include "option.h"
-#include "logfile.h"
+#ifndef ENVIRONMENT_MANAGER_H
+#define ENVIRONMENT_MANAGER_H
 
+// This class organizes environmental objects like trees and little rocks
+class CChunk;
+class Cworldmap;
+class CGraphics;
+
+class CEnvironmentManager
+{
+private:
+	CChunk* m_ChunkPtr;
+	Cworldmap* m_WorldmapPtr;
+	CTileManager* m_TileManagerPtr;
+
+	MeshPtr m_Environment_Mesh;
+	SubMesh* m_Environment_SubMesh;
+	Entity* m_Environment_Entity;
+	SceneNode* m_Environment_SceneNode;
+	HardwareVertexBufferSharedPtr m_vbuf0;
+	HardwareIndexBufferSharedPtr m_ibuf;
+	
+
+public:
+
+	CEnvironmentManager(CTileManager* TileManagerPtr, CChunk* ChunkPointer);
+	~CEnvironmentManager();
+
+	void UpdateEnvironment();
+};
+
+#endif

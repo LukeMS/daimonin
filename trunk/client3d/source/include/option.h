@@ -1,25 +1,22 @@
-/*
------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
-
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
 
 This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free Software
+the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along with
+You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/lesser.txt.
------------------------------------------------------------------------------
-*/
+http://www.gnu.org/licenses/licenses.html
+-----------------------------------------------------------------------------*/
 
 #ifndef OPTION_H
 #define OPTION_H
@@ -35,21 +32,21 @@ using namespace std;
 ////////////////////////////////////////////////////////////
 typedef struct _options
 {
-    // Sound
-    int  sound_volume;
-    int  music_volume;
-    // Server
-    char  metaserver[256];
-    int   metaserver_port;
-}_options;
-extern _options options;
+	// Sound
+	int  sound_volume;
+	int  music_volume;
+	// Server
+	char  metaserver[256];
+	int   metaserver_port;
+}_options; 
+extern _options options; 
 
 typedef struct _option
 {
     char *name;
-    char *info1;  // info text row 1
-    char *info2;  // info text row 2
-    char *val_text; // text-replacement for number values
+    char *info1;  // info text row 1 
+    char *info2;  // info text row 2 
+    char *val_text; // text-replacement for number values 
     int  sel_type;
     int  minRange, maxRange, deltaRange;
     int  default_val;
@@ -66,7 +63,7 @@ extern enum
     VAL_CHAR,
     VAL_INT,
     VAL_U32
-} value_type;
+} value_type; 
 
 typedef enum _game_status
 {
@@ -86,14 +83,14 @@ typedef enum _game_status
     GAME_STATUS_NAME,          // all this here is tricky
     GAME_STATUS_PSWD,          // server will trigger this when asking for
     GAME_STATUS_VERIFYPSWD,    // client will then show input panel or so
-    GAME_STATUS_NEW_CHAR,      // show new char creation screen and send /nc command when finished
+    GAME_STATUS_NEW_CHAR,      // show new char creation screen and send /nc command when finished 
     GAME_STATUS_WAITFORPLAY,   // we simply wait for game start means, this is not a serial stepping here
     GAME_STATUS_QUIT,          // we are in quit menu
     GAME_STATUS_PLAY,          // we play now!!
-} _game_status;
+} _game_status; 
 
 
-
+ 
 ////////////////////////////////////////////////////////////
 // Singleton class.
 ////////////////////////////////////////////////////////////
@@ -101,40 +98,40 @@ class Option
 {
   public:
     ////////////////////////////////////////////////////////////
-    // Variables.
+	// Variables.
     ////////////////////////////////////////////////////////////
-    _options  *my_options;
+    _options  *my_options; 
     int GameStatus;
-    std::string mMetaServer;
-    unsigned int  mMetaServerPort;
-    unsigned int  mSelectedMetaServer;
+	std::string mMetaServer;
+	unsigned int  mMetaServerPort;
+	unsigned int  mSelectedMetaServer;
     bool mStartNetwork;
 
     ////////////////////////////////////////////////////////////
-    // Functions.
+	// Functions.
     ////////////////////////////////////////////////////////////
      Option();
     ~Option();
     static Option &getSingleton() { static Option Singleton; return Singleton; }
 
-    bool openDescFile(const char *filename);
+	bool openDescFile(const char *filename);
     void closeDescFile();
-    bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
+	bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
     bool Init();
 
   private:
     ////////////////////////////////////////////////////////////
-    // Variables.
+	// Variables.
     ////////////////////////////////////////////////////////////
     bool mLogin;
-    ifstream *mDescFile;
-    string mDescBuffer;
-    string mFilename;
+	ifstream *mDescFile;
+	string mDescBuffer;
+	string mFilename;
 
     ////////////////////////////////////////////////////////////
-    // Functions.
+	// Functions.
     ////////////////////////////////////////////////////////////
     Option(const Option&); // disable copy-constructor.
-};
+}; 
 
 #endif
