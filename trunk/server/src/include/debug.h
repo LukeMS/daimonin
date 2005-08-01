@@ -27,7 +27,7 @@
  * Central debug control point to turn on/off special debug setting.
  * debugflags get enabled/disabled by commenting then out or not.
  */
- 
+
 #ifndef DEBUG_H
 #define DEBUG_H
 

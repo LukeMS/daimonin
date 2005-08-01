@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 extern struct obj *aggro_get_damage(struct obj *target, struct obj *hitter);
 extern struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter);
 extern struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
-									 struct obj *hitter, struct obj *hitter_object, int dmg, int flags);
+                                     struct obj *hitter, struct obj *hitter_object, int dmg, int flags);
 extern struct obj *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg);
 
 #endif

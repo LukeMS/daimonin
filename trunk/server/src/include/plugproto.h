@@ -29,17 +29,17 @@ f_plugin    HookList[NR_OF_HOOKS]   =
 {
     NULL,
     CFWSendCustomCommand,
-	CFMapDelete,CFWCreateObject, CFWOutOfMap,
-	CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
+    CFMapDelete,CFWCreateObject, CFWOutOfMap,
+    CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
     CFWGetMapObject, CFWCommunicate,
 
-	CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWFindMarkedObject,
+    CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWFindMarkedObject,
     CFWTransferObject, CFWKillObject, CFWDoLearnSpell,
-	CFWIdentifyObject, CFWCheckSpellKnown,
-	CFWDestructObject, CFWObjectCreateClone,
-	CFInterface, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation,
-	CFWTeleportObject, CFWDoLearnSkill,
-	CFWReadyMapName, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
+    CFWIdentifyObject, CFWCheckSpellKnown,
+    CFWDestructObject, CFWObjectCreateClone,
+    CFInterface, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation,
+    CFWTeleportObject, CFWDoLearnSkill,
+    CFWReadyMapName, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
     UnregisterGlobalEvent, CFWDumpObject, CFWLoadObject, CFWRemoveObject,CFTransferMapItems, CFMapSave
 };
 

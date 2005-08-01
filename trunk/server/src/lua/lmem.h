@@ -12,7 +12,7 @@
 #include "llimits.h"
 #include "lua.h"
 
-#define MEMERRMSG	"not enough memory"
+#define MEMERRMSG    "not enough memory"
 
 
 void *luaM_realloc (lua_State *L, void *oldblock, lu_mem oldsize, lu_mem size);
@@ -20,12 +20,12 @@ void *luaM_realloc (lua_State *L, void *oldblock, lu_mem oldsize, lu_mem size);
 void *luaM_growaux (lua_State *L, void *block, int *size, int size_elem,
                     int limit, const char *errormsg);
 
-#define luaM_free(L, b, s)	luaM_realloc(L, (b), (s), 0)
-#define luaM_freelem(L, b)	luaM_realloc(L, (b), sizeof(*(b)), 0)
-#define luaM_freearray(L, b, n, t)	luaM_realloc(L, (b), \
+#define luaM_free(L, b, s)    luaM_realloc(L, (b), (s), 0)
+#define luaM_freelem(L, b)    luaM_realloc(L, (b), sizeof(*(b)), 0)
+#define luaM_freearray(L, b, n, t)    luaM_realloc(L, (b), \
                                       cast(lu_mem, n)*cast(lu_mem, sizeof(t)), 0)
 
-#define luaM_malloc(L, t)	luaM_realloc(L, NULL, 0, (t))
+#define luaM_malloc(L, t)    luaM_realloc(L, NULL, 0, (t))
 #define luaM_new(L, t)          cast(t *, luaM_malloc(L, sizeof(t)))
 #define luaM_newvector(L, n,t)  cast(t *, luaM_malloc(L, \
                                          cast(lu_mem, n)*cast(lu_mem, sizeof(t))))

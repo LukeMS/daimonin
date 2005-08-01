@@ -851,7 +851,7 @@ object * fix_stopped_arrow(object *op)
     return NULL;
        }*/
 
-    trigger_object_plugin_event(EVENT_STOP, 
+    trigger_object_plugin_event(EVENT_STOP,
             op, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 
     /* used as temp. vars to control reflection/move speed */
@@ -869,7 +869,7 @@ object * fix_stopped_arrow(object *op)
         SET_FLAG(op, FLAG_IS_USED_UP);
         SET_FLAG(op, FLAG_NO_PICK);
         op->type = MISC_OBJECT; /* important to neutralize the arrow! */
-		op->sub_type1 = ARROW;  /* so we still can identify the arrow! */
+        op->sub_type1 = ARROW;  /* so we still can identify the arrow! */
         op->speed = 0.1f;
         op->speed_left = 0.0f;
     }
@@ -909,9 +909,9 @@ void stop_arrow(object *op)
         remove_ob(payload);
         check_walk_off(payload, NULL, MOVE_APPLY_VANISHED);
 
-        trigger_object_plugin_event(EVENT_STOP, 
+        trigger_object_plugin_event(EVENT_STOP,
                 payload, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
-            
+
         /* we have a thrown potion here.
          * This potion has NOT hit a target.
          * it has hitten a wall or just dropped to the ground.
@@ -1287,7 +1287,7 @@ void move_teleporter(object *op)
         /* teleport to different map */
         if (EXIT_PATH(op))
         {
-            if(trigger_object_plugin_event(EVENT_TRIGGER, 
+            if(trigger_object_plugin_event(EVENT_TRIGGER,
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
 
@@ -1304,8 +1304,8 @@ void move_teleporter(object *op)
                 check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
                 return;
             }
-            
-            if(trigger_object_plugin_event(EVENT_TRIGGER, 
+
+            if(trigger_object_plugin_event(EVENT_TRIGGER,
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
             transfer_ob(tmp, EXIT_X(op), EXIT_Y(op), 0, op, NULL);
@@ -1313,7 +1313,7 @@ void move_teleporter(object *op)
         else
         {
             /* Random teleporter */
-            if(trigger_object_plugin_event(EVENT_TRIGGER, 
+            if(trigger_object_plugin_event(EVENT_TRIGGER,
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
             teleport(op, TELEPORTER, tmp);
@@ -1554,7 +1554,7 @@ void move_environment_sensor(object *op)
 //        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
 
         op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
-            
+
         push_button(op);
     }
 }
@@ -1788,7 +1788,7 @@ int process_object(object *op)
     /* I don't like this script object here ..  this is *the* core loop.  */
     /* The redundant flag test avoids a function call in the common case */
     if (op->event_flags & EVENT_FLAG_TIME)
-        if(trigger_object_plugin_event(EVENT_TIME, op, NULL, NULL, 
+        if(trigger_object_plugin_event(EVENT_TIME, op, NULL, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
             return 0;
 

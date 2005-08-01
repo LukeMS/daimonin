@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,10 +75,10 @@ char *tempnam_local(char *dir, char *pfx)
     pid_t pid=getpid();
 
     if (!(name = (char *) malloc(MAXPATHLEN)))
-	return(NULL);
+    return(NULL);
 
     if (!pfx)
-	pfx = "cftmp.";
+    pfx = "cftmp.";
 
     /* This is a pretty simple method - put the pid as a hex digit and
      * just keep incrementing the last digit.  Check to see if the file
@@ -86,15 +86,15 @@ char *tempnam_local(char *dir, char *pfx)
      * find one that is free.
      */
     if ((f = (char *)dir)!=NULL) {
-	do {
+    do {
 #ifdef HAVE_SNPRINTF
-	    (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", f, pfx, pid, curtmp);
+        (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", f, pfx, pid, curtmp);
 #else
-	    (void)sprintf(name,"%s/%s%hx%d", f, pfx, pid, curtmp);
+        (void)sprintf(name,"%s/%s%hx%d", f, pfx, pid, curtmp);
 #endif
-	    curtmp++;
-	} while (access(name, F_OK)!=-1);
-	return(name);
+        curtmp++;
+    } while (access(name, F_OK)!=-1);
+    return(name);
     }
   return(NULL);
 }
@@ -110,32 +110,32 @@ void remove_directory(const char *path)
     int status;
 
     if ((dirp=opendir(path))!=NULL) {
-	struct dirent *de;
+    struct dirent *de;
 
-	for (de=readdir(dirp); de; de = readdir(dirp)) {
-	    status=stat(de->d_name, &statbuf);
-	    /* Linus actually has a type field in the dirent structure,
-	     * but that is not portable - stat should be portable
-	     */
-	    if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
-		sprintf(buf,"%s/%s", path, de->d_name);
-		remove_directory(buf);
-		continue;
-	    }
-	    /* Don't remove '.' or '..'  In  theory we should do a better
-	     * check for .., but the directories we are removing are fairly
-	     * limited and should not have dot files in them.
-	     */
-	    if (de->d_name[0] == '.') continue;
-	    sprintf(buf,"%s/%s", path, de->d_name);
-	    if (unlink(buf)) {
-		LOG(llevBug,"BUG: Unable to remove directory %s\n", path);
-	    }
-	}
-	closedir(dirp);
+    for (de=readdir(dirp); de; de = readdir(dirp)) {
+        status=stat(de->d_name, &statbuf);
+        /* Linus actually has a type field in the dirent structure,
+         * but that is not portable - stat should be portable
+         */
+        if ((status!=-1) && (S_ISDIR(statbuf.st_mode))) {
+        sprintf(buf,"%s/%s", path, de->d_name);
+        remove_directory(buf);
+        continue;
+        }
+        /* Don't remove '.' or '..'  In  theory we should do a better
+         * check for .., but the directories we are removing are fairly
+         * limited and should not have dot files in them.
+         */
+        if (de->d_name[0] == '.') continue;
+        sprintf(buf,"%s/%s", path, de->d_name);
+        if (unlink(buf)) {
+        LOG(llevBug,"BUG: Unable to remove directory %s\n", path);
+        }
+    }
+    closedir(dirp);
     }
     if (unlink(path)) {
-	LOG(llevBug,"BUG: Unable to remove directory %s\n", path);
+    LOG(llevBug,"BUG: Unable to remove directory %s\n", path);
     }
 }
 
@@ -149,53 +149,53 @@ void remove_directory(const char *path)
 
 FILE *popen_local(const char *command, const char *type)
 {
-	int		fd[2];
-	int		pd;
-	FILE	*ret;
-	if (!strcmp(type,"r"))
-	{
-		pd=STDOUT_FILENO;
-	}
-	else if (!strcmp(type,"w"))
-	{
-		pd=STDIN_FILENO;
-	}
-	else
-	{
-		return NULL;
-	}
-	if (pipe(fd)!=-1)
-	{
-		switch (fork())
-		{
-		case -1:
-			close(fd[0]);
-			close(fd[1]);
-			break;
-		case 0:
-			close(fd[0]);
-			if ((fd[1]==pd)||(dup2(fd[1],pd)==pd))
-			{
-				if (fd[1]!=pd)
-				{
-					close(fd[1]);
-				}
-				execl("/bin/sh","sh","-c",command,NULL);
-				close(pd);
-			}
-			exit(1);
-			break;
-		default:
-			close(fd[1]);
-			if (ret=fdopen(fd[0],type))
-			{
-				return ret;
-			}
-			close(fd[0]);
-			break;
-		}
-	}
-	return NULL;
+    int        fd[2];
+    int        pd;
+    FILE    *ret;
+    if (!strcmp(type,"r"))
+    {
+        pd=STDOUT_FILENO;
+    }
+    else if (!strcmp(type,"w"))
+    {
+        pd=STDIN_FILENO;
+    }
+    else
+    {
+        return NULL;
+    }
+    if (pipe(fd)!=-1)
+    {
+        switch (fork())
+        {
+        case -1:
+            close(fd[0]);
+            close(fd[1]);
+            break;
+        case 0:
+            close(fd[0]);
+            if ((fd[1]==pd)||(dup2(fd[1],pd)==pd))
+            {
+                if (fd[1]!=pd)
+                {
+                    close(fd[1]);
+                }
+                execl("/bin/sh","sh","-c",command,NULL);
+                close(pd);
+            }
+            exit(1);
+            break;
+        default:
+            close(fd[1]);
+            if (ret=fdopen(fd[0],type))
+            {
+                return ret;
+            }
+            close(fd[0]);
+            break;
+        }
+    }
+    return NULL;
 }
 
 #endif /* defined(sgi) */
@@ -318,7 +318,7 @@ int strcasecmp(char *s1, char*s2)
     s2++;
   }
   if (*s1=='\0' && *s2=='\0')
-	return 0;
+    return 0;
   return (int) (*s1 - *s2);
 }
 #endif
@@ -338,11 +338,11 @@ char *strerror_local(int errnum)
 
 /*
  * Based on (n+1)^2 = n^2 + 2n + 1
- * given that	1^2 = 1, then
- *		2^2 = 1 + (2 + 1) = 1 + 3 = 4
- * 		3^2 = 4 + (4 + 1) = 4 + 5 = 1 + 3 + 5 = 9
- * 		4^2 = 9 + (6 + 1) = 9 + 7 = 1 + 3 + 5 + 7 = 16
- *		...
+ * given that    1^2 = 1, then
+ *        2^2 = 1 + (2 + 1) = 1 + 3 = 4
+ *         3^2 = 4 + (4 + 1) = 4 + 5 = 1 + 3 + 5 = 9
+ *         4^2 = 9 + (6 + 1) = 9 + 7 = 1 + 3 + 5 + 7 = 16
+ *        ...
  * In other words, a square number can be express as the sum of the
  * series n^2 = 1 + 3 + ... + (2n-1)
  */
@@ -350,15 +350,15 @@ int
 isqrt(n)
 int n;
 {
-	int result, sum, prev;
-	result = 0;
-	prev = sum = 1;
-	while (sum <= n) {
-		prev += 2;
-		sum += prev;
-		++result;
-	}
-	return result;
+    int result, sum, prev;
+    result = 0;
+    prev = sum = 1;
+    while (sum <= n) {
+        prev += 2;
+        sum += prev;
+        ++result;
+    }
+    return result;
 }
 
 
@@ -423,29 +423,29 @@ void make_path_to_file (char *filename)
     struct stat statbuf;
 
     if (!filename || !*filename)
-	return;
+    return;
     strcpy (buf, filename);
     LOG(llevDebug, "make_path_tofile %s...", filename);
     while ((cp = strchr (cp + 1, (int) '/'))) {
-	*cp = '\0';
+    *cp = '\0';
 #if 0
-	LOG(llevDebug, "\n Checking %s...", buf);
+    LOG(llevDebug, "\n Checking %s...", buf);
 #endif
-	if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
-	    LOG(llevDebug, "Was not dir...");
-	    if (mkdir (buf, 0777))
-		{
-		    LOG(llevBug,"Bug: Can't make path to file %s.\n",filename);
-			return;
-	    }
+    if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
+        LOG(llevDebug, "Was not dir...");
+        if (mkdir (buf, 0777))
+        {
+            LOG(llevBug,"Bug: Can't make path to file %s.\n",filename);
+            return;
+        }
 #if 0
-	    LOG(llevDebug, "Made dir.");
-	} else
-	    LOG(llevDebug, "Was dir");
+        LOG(llevDebug, "Made dir.");
+    } else
+        LOG(llevDebug, "Was dir");
 #else
-	}
+    }
 #endif
-	*cp = '/';
+    *cp = '/';
     }
     LOG(llevDebug,"\n");
 }

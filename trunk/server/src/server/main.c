@@ -906,8 +906,8 @@ static void process_map_events(mapstruct *map)
         first_obj= active_objects;
     else
         first_obj = map->active_objects;
-    
-    /* note: next_active_object is a global which 
+
+    /* note: next_active_object is a global which
        might get modified while traversing below */
     for (op = first_obj; op != NULL; op = next_active_object)
     {
@@ -960,8 +960,8 @@ static void process_map_events(mapstruct *map)
             update_ob_speed(op);
             continue;
         }
-        
-        /* This is not a bug. We just move the object to the 
+
+        /* This is not a bug. We just move the object to the
          * insertion list and sort it out later. Process as usual. */
         if (op->map != map)
         {
@@ -1025,7 +1025,7 @@ static void process_map_events(mapstruct *map)
             op->speed_left += FABS(op->speed);
     }
     next_active_object = NULL;
-    
+
     process_players2(map);
 }
 
@@ -1044,7 +1044,7 @@ static void process_events()
 
     gettimeofday(&start, NULL);
 #endif
-        
+
     /* Preprocess step: move all objects in inserted_active_objects
      * into their real activelists */
     /* TODO: to make AI more efficient, keep activelist sorted with
@@ -1070,16 +1070,16 @@ static void process_events()
              */
             if(obj->env && obj->map) /* object is in inventory! */
             {
-                LOG( llevDebug, "ACTIVEBUG: object with env and map - set map to NULL! obj %s in %s\n", 
+                LOG( llevDebug, "ACTIVEBUG: object with env and map - set map to NULL! obj %s in %s\n",
                      query_name(obj), query_name(obj->env) );
                 obj->map = NULL;
             }
-            if(obj->map) 
+            if(obj->map)
             {
                 obj->active_next = obj->map->active_objects;
                 obj->map->active_objects = obj;
-            } 
-            else 
+            }
+            else
             {
                 obj->active_next = active_objects;
                 active_objects = obj;
@@ -1088,20 +1088,20 @@ static void process_events()
             if(obj->active_next)
                 obj->active_next->active_prev = obj;
         }
-        inserted_active_objects = NULL;        
+        inserted_active_objects = NULL;
     }
-    
+
     /* Now, process all map-based activelists, and the activelist
      * for obejcts not on maps */
     process_map_events(NULL);
-    
+
     /* TODO: only go through maps in special list of maps with active objects */
     for (map = first_map; map; map = map->next)
     {
         if (map->active_objects && map->in_memory == MAP_IN_MEMORY)
             process_map_events(map);
     }
-   
+
 #if defined TIME_PROCESS_EVENTS
     gettimeofday(&end, NULL);
     start.tv_sec = -start.tv_sec;
@@ -1154,7 +1154,7 @@ void cleanup(int ret)
     clean_tmp_files();
     write_book_archive();
     write_todclock();   /* lets just write the clock here */
-	save_ban_file();
+    save_ban_file();
 
     FREE_AND_CLEAR_HASH2(global_string_none);
     free(global_sl.buf);
@@ -1378,7 +1378,7 @@ int main(int argc, char **argv)
 {
     struct timeval timeout;
 #ifdef AUTO_MSG
-	int auto_msg_count = 8*60*3; /* kick the first message 3 minutes after server start */
+    int auto_msg_count = 8*60*3; /* kick the first message 3 minutes after server start */
 #endif
 #ifdef PLUGINS
     int     evtid;
@@ -1408,15 +1408,15 @@ int main(int argc, char **argv)
         shutdown_agent(-1, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
 
 #ifdef AUTO_MSG
-		if(!(auto_msg_count--))			/* trigger the auto message system */
-		{
-			/* TODO: add here a real customizable auto message system.
-			 * ATM we only use it to spam hard coded messages 
-			 */
-			auto_msg_count = AUTO_MSG_COUNTER;
-			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-				"[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
-		}
+        if(!(auto_msg_count--))            /* trigger the auto message system */
+        {
+            /* TODO: add here a real customizable auto message system.
+             * ATM we only use it to spam hard coded messages
+             */
+            auto_msg_count = AUTO_MSG_COUNTER;
+            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
+                "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
+        }
 #endif
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
         check_use_object_list();

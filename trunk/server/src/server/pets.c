@@ -41,7 +41,7 @@ int add_pet(object *owner, object *pet)
     objectlink *ol, *next_ol;
     struct mob_known_obj *tmp;
     object *spawninfo;
-    
+
     if(owner == NULL || pet == NULL || owner->type != PLAYER || pet->type != MONSTER)
     {
         LOG(llevBug, "BUG: add_pet(): Illegal owner (%s) or pet (%s)\n", STRING_OBJ_NAME(owner), STRING_OBJ_NAME(pet));
@@ -51,18 +51,18 @@ int add_pet(object *owner, object *pet)
     /* Handle multipart objects */
     if(pet->head)
         pet = pet->head;
-    
+
     if(pet->owner)
     {
         new_draw_info_format(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));
         return -1;
     }
-    
+
     /* Count number of pets, remove invalid links */
-    for(ol = CONTR(owner)->pets; ol; ol = next_ol) 
+    for(ol = CONTR(owner)->pets; ol; ol = next_ol)
     {
         next_ol = ol->next;
-        if(PET_VALID(ol, owner)) 
+        if(PET_VALID(ol, owner))
             nrof_pets++;
         else
             objectlink_unlink(&CONTR(owner)->pets, NULL, ol);
@@ -86,7 +86,7 @@ int add_pet(object *owner, object *pet)
      * mobs forgets about it */
     /* TODO: efficient, but ugly solution. watch for side effects */
     pet->count = ++ob_count;
-    
+
     /* Set pet owner */
     pet->owner = owner;
     pet->owner_count = owner->count;
@@ -98,7 +98,7 @@ int add_pet(object *owner, object *pet)
 
     /* Follow owner combat mode */
     SET_OR_CLEAR_FLAG(pet, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
-    
+
     /* Insert link in owner's pet list */
     ol = get_objectlink(OBJLNK_FLAG_OB);
     ol->objlink.ob = pet;
@@ -120,15 +120,15 @@ int add_pet(object *owner, object *pet)
         MOB_DATA(pet)->spawn_info = NULL;
         CLEAR_MULTI_FLAG(pet, FLAG_SPAWN_MOB);
     }
-    
+
     return 0;
 }
 
 void update_pets_combat_mode(object *owner)
 {
     objectlink *ol;
-    
-    for(ol = CONTR(owner)->pets; ol; ol = ol->next) 
+
+    for(ol = CONTR(owner)->pets; ol; ol = ol->next)
     {
         if(PET_VALID(ol, owner))
             SET_OR_CLEAR_FLAG(ol->objlink.ob, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
@@ -137,13 +137,13 @@ void update_pets_combat_mode(object *owner)
 
 /* Warp a pet close to its owner. If that is impossible, temporarily store
  * the pet in the owner until there's somewhere to move out */
-/* TODO: the pathfinding system needs to be updated to handle 
+/* TODO: the pathfinding system needs to be updated to handle
  * warping/teleporting of mobs */
 void pet_follow_owner(object *pet)
 {
     object *tmp;
     int     dir;
-    
+
     if (!QUERY_FLAG(pet, FLAG_REMOVED))
     {
         remove_ob(pet);
@@ -153,12 +153,12 @@ void pet_follow_owner(object *pet)
             return;
         }
     }
-    
+
     /*
      * Unfortunately, sometimes, the owner of a pet is in the
      * process of entering a new map when this is called.
      * Thus the map isn't loaded yet, and we have to remove
-     * the pet. 
+     * the pet.
      * The player can also be removed from a map when called
      * (as in the case of /resetmap).
      * We should solve this by storing pet with player
@@ -186,7 +186,7 @@ void pet_follow_owner(object *pet)
         LOG(llevBug, "BUG: No space for pet to follow, freeing %s.\n", STRING_OBJ_NAME(pet));
         return; /* Will be freed since it's removed */
     }
-    
+
     for (tmp = pet; tmp != NULL; tmp = tmp->more)
     {
         tmp->x = pet->owner->x + freearr_x[dir] + tmp->arch->clone.x;
@@ -194,7 +194,7 @@ void pet_follow_owner(object *pet)
     }
     if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
         new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
-    else 
+    else
         new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s appears next to you", query_name(pet));
 }
 
@@ -203,7 +203,7 @@ void pet_follow_owner(object *pet)
 void pets_follow_owner(object *owner)
 {
     objectlink *ol;
-    
+
     for(ol = CONTR(owner)->pets; ol; ol = ol->next)
         if(PET_VALID(ol, owner) && !on_same_map(ol->objlink.ob, owner))
             pet_follow_owner(ol->objlink.ob);
@@ -214,11 +214,11 @@ void pets_follow_owner(object *owner)
 void remove_all_pets(mapstruct *map)
 {
     object *tmp, *next_tmp;
-    
+
     /* TODO: with a little better org of the active list (mobs first,
      * then other objects) we can make this a little faster */
 
-    /* TODO: it is possible that this has the same problems as the 
+    /* TODO: it is possible that this has the same problems as the
      * traversal of the active list. Be careful. */
     for(tmp = map->active_objects; tmp; tmp = next_tmp)
     {
@@ -233,15 +233,15 @@ void remove_all_pets(mapstruct *map)
     }
 }
 
-/* Called when a player is logged out. 
- * Should store all pets with the player. 
+/* Called when a player is logged out.
+ * Should store all pets with the player.
  * TODO: also handle /save, which should store all pets without terminating
  * them. */
 void terminate_all_pets(object *owner)
 {
     LOG(llevDebug, "terminate_all_pets(%s): stub\n", STRING_OBJ_NAME(owner));
 /* Disabled until pet code rework */
-#if 0    
+#if 0
     objectlink *obl, *next;
     for (obl = first_friendly_object; obl != NULL; obl = next)
     {
@@ -256,5 +256,5 @@ void terminate_all_pets(object *owner)
             }
         }
     }
-#endif    
+#endif
 }

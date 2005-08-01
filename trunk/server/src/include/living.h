@@ -80,7 +80,7 @@ typedef struct liv
      */
     sint16          wc, ac;     /* Weapon Class and Armour Class */
 
-	sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
+    sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
     sint8           luck;       /* Affects thaco and ac from time to time */
 } living;
 

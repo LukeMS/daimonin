@@ -99,24 +99,24 @@ int command_setgod(object *op, char *params)
  */
 int command_kickcmd(object *ob, char *params)
 {
-	int ticks;
+    int ticks;
 
-	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-		return 0;
+    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+        return 0;
 
-	if(!command_kick(ob, params))
-		return 0;
+    if(!command_kick(ob, params))
+        return 0;
 
-	/* we kicked player params succesfull.
-	 * Now we give him a 1min temp ban, so he can
-	 * think about it.
-	 * If its a "technical" kick, the 1min is a protection.
-	 * Perhaps we want reset a map or whatever.
-	 */
-	ticks = (int) (pticks_second*10.0f);
-	add_ban_entry(params, ticks, ticks, 'p');
+    /* we kicked player params succesfull.
+     * Now we give him a 1min temp ban, so he can
+     * think about it.
+     * If its a "technical" kick, the 1min is a protection.
+     * Perhaps we want reset a map or whatever.
+     */
+    ticks = (int) (pticks_second*10.0f);
+    add_ban_entry(params, ticks, ticks, 'p');
 
-	return 1;
+    return 1;
 }
 
 /* called command_kick(NULL,NULL) or command_kick(op,<player name>.
@@ -127,10 +127,10 @@ int command_kick(object *ob, char *params)
 {
     struct pl_player   *pl;
     const char         *name_hash;
-	int					ret=0;
+    int                    ret=0;
 
-	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
-		return 0;
+    if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+        return 0;
 
     if (ob && params == NULL)
     {
@@ -161,7 +161,7 @@ int command_kick(object *ob, char *params)
         {
             object *op;
             op = pl->ob;
-			ret=1;
+            ret=1;
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             op->direction = 0;
@@ -253,11 +253,11 @@ int command_summon(object *op, char *params)
     object *dummy;
     player *pl;
 
-	/* allowed for GM and DM only */
-	if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-		return 0;
+    /* allowed for GM and DM only */
+    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+        return 0;
 
-	if (!op)
+    if (!op)
         return 0;
 
     if (params == NULL)
@@ -307,9 +307,9 @@ int command_teleport(object *op, char *params)
     object *dummy;
     player *pl;
 
-	/* allowed for GM and DM only */
-	if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-		return 0;
+    /* allowed for GM and DM only */
+    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+        return 0;
 
     if (!op)
         return 0;
@@ -465,7 +465,7 @@ int command_create(object *op, char *params)
 
         while (*bp2)
         {
-			bp4 = NULL;
+            bp4 = NULL;
 
             /* find the first quote */
             for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
@@ -508,11 +508,11 @@ int command_create(object *op, char *params)
                 }
             }
 
-			if(bp4 == NULL)
-			{
+            if(bp4 == NULL)
+            {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
-				break;
-			}
+                break;
+            }
 
             /* now bp3 should be the argument, and bp2 the whole command */
             if (set_variable(tmp, bp2) == -1)
@@ -560,7 +560,7 @@ int command_create(object *op, char *params)
 
             while (*bp2)
             {
-				bp4=NULL;
+                bp4=NULL;
 
                 /* find the first quote */
                 for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
@@ -603,11 +603,11 @@ int command_create(object *op, char *params)
                     }
                 }
 
-				if(bp4 == NULL)
-				{
-               		new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
-					break;
-				}
+                if(bp4 == NULL)
+                {
+                       new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
+                    break;
+                }
 
                 /* now bp3 should be the argument, and bp2 the whole command */
                 if (set_variable(tmp, bp2) == -1)
@@ -649,9 +649,9 @@ int command_inventory(object *op, char *params)
     object *tmp;
     int     i;
 
-	/* allowed for GM and DM only */
-	if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
-		return 0;
+    /* allowed for GM and DM only */
+    if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+        return 0;
 
     if (!params)
     {
@@ -980,9 +980,9 @@ int command_reset(object *op, char *params)
             {
                 count++;
                 remove_ob(pl->ob); /* no walk off check */
-                
+
                 /* With the new activelist, any player on a reset map
-                 * was somehow forgotten. This seems to fix it. The 
+                 * was somehow forgotten. This seems to fix it. The
                  * problem isn't analyzed, though. Gecko 20050713 */
                 activelist_remove(pl->ob, m);
 
@@ -1127,7 +1127,7 @@ int command_mute(object *op, char *params)
         pl->mute_counter = pticks+seconds*(1000000/MAX_TIME);
     }
 
-	return 1;
+    return 1;
 }
 
 /* a silenced player can't shout or tell or say
@@ -1137,7 +1137,7 @@ int command_mute(object *op, char *params)
 int command_silence(object *op, char *params)
 {
 
-	return 1;
+    return 1;
 }
 
 /* a player can be banned forever or for a time.
@@ -1150,128 +1150,128 @@ int command_silence(object *op, char *params)
  */
 int command_ban(object *op, char *params)
 {
-	objectlink *ol;
-	char *str;
+    objectlink *ol;
+    char *str;
 
-	if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
-		return 0;
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
+        return 0;
 
-	if (!params)
-		goto ban_usage;
+    if (!params)
+        goto ban_usage;
 
-	/* list all entries of gmaster_file
-	 */
-	if(!strcmp(params,"list"))
-	{
+    /* list all entries of gmaster_file
+     */
+    if(!strcmp(params,"list"))
+    {
 
-		new_draw_info(NDI_UNIQUE, 0, op, "ban list");
-		new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-		for(ol = ban_list_player;ol;ol=ol->next)
-			new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
+        new_draw_info(NDI_UNIQUE, 0, op, "ban list");
+        new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
+        for(ol = ban_list_player;ol;ol=ol->next)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
 
-		for(ol = ban_list_ip;ol;ol=ol->next)
-			new_draw_info_format(NDI_UNIQUE, 0, op, "IP:%s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
+        for(ol = ban_list_ip;ol;ol=ol->next)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "IP:%s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
 
-		return 1;
-	}
+        return 1;
+    }
     if (!(str = strchr(params, ' ')))
-		goto ban_usage;
+        goto ban_usage;
 
     /* kill the space, and set string to the next param */
     *str++ = '\0';
-	if(!strcmp(params,"add"))
-	{
-		int ticks=-1;
-		char mode=0, name[MAX_BUF]="";
+    if(!strcmp(params,"add"))
+    {
+        int ticks=-1;
+        char mode=0, name[MAX_BUF]="";
 
         if (sscanf(str, "%s %c %d", name, &mode, &ticks) == 3)
-		{
-			if(name && name[0]!='\0' && (mode == 'i' || mode =='p'))
-			{
-				objectlink *ol, *ol_tmp;
-				int flag=FALSE;
+        {
+            if(name && name[0]!='\0' && (mode == 'i' || mode =='p'))
+            {
+                objectlink *ol, *ol_tmp;
+                int flag=FALSE;
 
-				for(ol = ban_list_player;ol;ol=ol_tmp)
-				{
-					ol_tmp = ol->next;
-					if(!strcasecmp(ol->objlink.ban->tag,name))
-					{
-						flag=TRUE;
-						remove_ban_entry(ol);
-					}
-					break;
-				}
-				if(!flag)
-				{
-					for(ol = ban_list_player;ol;ol=ol_tmp)
-					{
-						ol_tmp = ol->next;
-						if(!strcasecmp(ol->objlink.ban->tag,name))
-						{
-							flag=TRUE;
-							remove_ban_entry(ol);
-						}
-						break;
-					}
-				}
+                for(ol = ban_list_player;ol;ol=ol_tmp)
+                {
+                    ol_tmp = ol->next;
+                    if(!strcasecmp(ol->objlink.ban->tag,name))
+                    {
+                        flag=TRUE;
+                        remove_ban_entry(ol);
+                    }
+                    break;
+                }
+                if(!flag)
+                {
+                    for(ol = ban_list_player;ol;ol=ol_tmp)
+                    {
+                        ol_tmp = ol->next;
+                        if(!strcasecmp(ol->objlink.ban->tag,name))
+                        {
+                            flag=TRUE;
+                            remove_ban_entry(ol);
+                        }
+                        break;
+                    }
+                }
 
-				if(flag)
-				{
-					new_draw_info_format(NDI_UNIQUE, 0, op, "You updated the ban entry %s (%d ticks banned)", str, ticks);
-					LOG(llevSystem,"/ban: %s updated the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
-				}
-				else
-				{
-					new_draw_info_format(NDI_UNIQUE, 0, op, "You added the ban entry %s (%d ticks banned)", str, ticks);
-					LOG(llevSystem,"/ban: %s added the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
-				}
-				add_ban_entry(name, ticks, ticks, mode);
-				return 1;
-			}
-		}
-	}
-	else if(!strcmp(params,"remove"))
-	{
-		/* we assume that a host/ip entry has not the same name
-		 * as a player name... so we don't care and compare just all
-		 * against the same string.
-		 */
-		for(ol = ban_list_player;ol;ol=ol->next)
-		{
-			if(!strcmp(ol->objlink.ban->tag,str))
-			{
-				LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
-				new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
-				remove_ban_entry(ol);
-				return 1;
-			}
-		}
-		for(ol = ban_list_ip;ol;ol=ol->next)
-		{
-			if(!strcmp(ol->objlink.ban->tag,str))
-			{
-				LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
-				new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
-				remove_ban_entry(ol);
-				return 1;
-			}
-		}
+                if(flag)
+                {
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You updated the ban entry %s (%d ticks banned)", str, ticks);
+                    LOG(llevSystem,"/ban: %s updated the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
+                }
+                else
+                {
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You added the ban entry %s (%d ticks banned)", str, ticks);
+                    LOG(llevSystem,"/ban: %s added the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
+                }
+                add_ban_entry(name, ticks, ticks, mode);
+                return 1;
+            }
+        }
+    }
+    else if(!strcmp(params,"remove"))
+    {
+        /* we assume that a host/ip entry has not the same name
+         * as a player name... so we don't care and compare just all
+         * against the same string.
+         */
+        for(ol = ban_list_player;ol;ol=ol->next)
+        {
+            if(!strcmp(ol->objlink.ban->tag,str))
+            {
+                LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
+                remove_ban_entry(ol);
+                return 1;
+            }
+        }
+        for(ol = ban_list_ip;ol;ol=ol->next)
+        {
+            if(!strcmp(ol->objlink.ban->tag,str))
+            {
+                LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
+                remove_ban_entry(ol);
+                return 1;
+            }
+        }
 
-	}
+    }
 
 ban_usage:
     new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  list | add | remove <entry>");
-	return 1;
+    return 1;
 }
 
 /* become a VOL
  */
 int command_vol(object *op, char *params)
 {
-	if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL) /* turn off ? */
-		remove_gmaster_mode(CONTR(op));
-	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_VOL))
-		set_gmaster_mode(CONTR(op), GMASTER_MODE_VOL);
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL) /* turn off ? */
+        remove_gmaster_mode(CONTR(op));
+    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_VOL))
+        set_gmaster_mode(CONTR(op), GMASTER_MODE_VOL);
 
     return 1;
 }
@@ -1280,10 +1280,10 @@ int command_vol(object *op, char *params)
  */
 int command_gm(object *op, char *params)
 {
-	if(CONTR(op)->gmaster_mode == GMASTER_MODE_GM) /* turn off ? */
-		remove_gmaster_mode(CONTR(op));
-	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_GM))
-		set_gmaster_mode(CONTR(op), GMASTER_MODE_GM);
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_GM) /* turn off ? */
+        remove_gmaster_mode(CONTR(op));
+    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_GM))
+        set_gmaster_mode(CONTR(op), GMASTER_MODE_GM);
 
     return 1;
 }
@@ -1295,12 +1295,12 @@ int command_gm(object *op, char *params)
  */
 int command_dm(object *op, char *params)
 {
-	if(CONTR(op)->gmaster_mode == GMASTER_MODE_DM) /* turn off ? */
-		remove_gmaster_mode(CONTR(op));
-	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_DM))
-		set_gmaster_mode(CONTR(op), GMASTER_MODE_DM);
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_DM) /* turn off ? */
+        remove_gmaster_mode(CONTR(op));
+    else if(check_gmaster_list(CONTR(op), GMASTER_MODE_DM))
+        set_gmaster_mode(CONTR(op), GMASTER_MODE_DM);
 
-	return 1;
+    return 1;
 }
 
 /* list all active GM/VOL/DM
@@ -1308,25 +1308,25 @@ int command_dm(object *op, char *params)
  */
 int command_dm_list(object *op, char *params)
 {
-	objectlink *ol;
+    objectlink *ol;
 
-	if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
-		return 0;
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
+        return 0;
 
-	new_draw_info(NDI_UNIQUE, 0, op, "DM/GM/VOL online");
-	new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-	for(ol = gmaster_list_VOL;ol;ol=ol->next)
-		new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
+    new_draw_info(NDI_UNIQUE, 0, op, "DM/GM/VOL online");
+    new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
+    for(ol = gmaster_list_VOL;ol;ol=ol->next)
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
 
-	for(ol = gmaster_list_GM;ol;ol=ol->next)
-		new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
+    for(ol = gmaster_list_GM;ol;ol=ol->next)
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
 
-	for(ol = gmaster_list_DM;ol;ol=ol->next)
-	{
-		if(!CONTR(ol->objlink.ob)->dm_stealth)
-			new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
-	}
-	return 1;
+    for(ol = gmaster_list_DM;ol;ol=ol->next)
+    {
+        if(!CONTR(ol->objlink.ob)->dm_stealth)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
+    }
+    return 1;
 
 }
 
@@ -1334,91 +1334,91 @@ int command_dm_list(object *op, char *params)
  */
 int command_dm_set(object *op, char *params)
 {
-	char *str;
+    char *str;
 
 
-	if(CONTR(op)->gmaster_mode != GMASTER_MODE_DM)
-		return 0;
+    if(CONTR(op)->gmaster_mode != GMASTER_MODE_DM)
+        return 0;
 
-	if (!params)
-		goto d_set_usage;
+    if (!params)
+        goto d_set_usage;
 
-	/* list all entries of gmaster_file
-	 */
-	if(!strcmp(params,"list"))
-	{
-		objectlink *ol;
+    /* list all entries of gmaster_file
+     */
+    if(!strcmp(params,"list"))
+    {
+        objectlink *ol;
 
-		new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
-		new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-		for(ol = gmaster_list;ol;ol=ol->next)
-			new_draw_info_format(NDI_UNIQUE, 0, op, "%s", ol->objlink.gm->entry);
+        new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
+        new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
+        for(ol = gmaster_list;ol;ol=ol->next)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "%s", ol->objlink.gm->entry);
 
-		return 1;
-	}
+        return 1;
+    }
 
     if (!(str = strchr(params, ' ')))
-		goto d_set_usage;
+        goto d_set_usage;
 
 
     /* kill the space, and set string to the next param */
     *str++ = '\0';
 
-	if(!strcmp(params,"add"))
-	{
-		char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
+    if(!strcmp(params,"add"))
+    {
+        char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
 
         if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
-			new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
-		else
-		{
-			int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
+            new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
+        else
+        {
+            int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
 
-			if(mode_id == GMASTER_MODE_NO)
-			{
-				new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
-				return 1;
-			}
+            if(mode_id == GMASTER_MODE_NO)
+            {
+                new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
+                return 1;
+            }
 
-			/* all ok, setup the gmaster node and add it to our list */
-			LOG(llevSystem, "GMASTER:: /dm_set add %s invoked by %s\n", str, query_name(op));
-			new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: add entry %s", str);
-			add_gmaster_file_entry(name, passwd, host, mode_id);
-			new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-			write_gmaster_file(); /* create a new file */
-		}
-		return 1;
-	}
-	else if(!strcmp(params,"remove"))
-	{
-		objectlink *ol;
+            /* all ok, setup the gmaster node and add it to our list */
+            LOG(llevSystem, "GMASTER:: /dm_set add %s invoked by %s\n", str, query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: add entry %s", str);
+            add_gmaster_file_entry(name, passwd, host, mode_id);
+            new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
+            write_gmaster_file(); /* create a new file */
+        }
+        return 1;
+    }
+    else if(!strcmp(params,"remove"))
+    {
+        objectlink *ol;
 
-		for(ol = gmaster_list;ol;ol=ol->next)
-		{
-			if(!strcmp(str,ol->objlink.gm->entry)) /* found a entry */
-			{
-				/* delete the entry... */
-				LOG(llevSystem, "GMASTER:: /dm_set remove %s invoked by %s\n", str, query_name(op));
+        for(ol = gmaster_list;ol;ol=ol->next)
+        {
+            if(!strcmp(str,ol->objlink.gm->entry)) /* found a entry */
+            {
+                /* delete the entry... */
+                LOG(llevSystem, "GMASTER:: /dm_set remove %s invoked by %s\n", str, query_name(op));
 
-				new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: remove entry %s", str);
-				remove_gmaster_file_entry(ol);
-				new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
-				write_gmaster_file(); /* create a new file */
-				new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
-				update_gmaster_file(); /* control rights of all active VOL/GM/DM */
-				new_draw_info(NDI_UNIQUE, 0, op, "done.");
+                new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: remove entry %s", str);
+                remove_gmaster_file_entry(ol);
+                new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
+                write_gmaster_file(); /* create a new file */
+                new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
+                update_gmaster_file(); /* control rights of all active VOL/GM/DM */
+                new_draw_info(NDI_UNIQUE, 0, op, "done.");
 
-				return 1;
-			}
-		}
+                return 1;
+            }
+        }
 
-		return 1;
-	}
+        return 1;
+    }
 
 d_set_usage:
     new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_set  list | add | remove <entry>");
 
-	return 1;
+    return 1;
 }
 
 

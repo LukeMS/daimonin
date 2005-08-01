@@ -90,10 +90,10 @@ extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
 extern void             free_objectlink_recursive(objectlink *ol);
 extern void             free_objectlinkpt(oblinkpt *obp);
-objectlink			   *objectlink_link(objectlink **startptr, objectlink **endptr,
-										objectlink *afterptr, objectlink *beforeptr, objectlink *objptr);
+objectlink               *objectlink_link(objectlink **startptr, objectlink **endptr,
+                                        objectlink *afterptr, objectlink *beforeptr, objectlink *objptr);
 
-objectlink			   *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
+objectlink               *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
 /* living.c */
 extern void             set_attr_value(living *stats, int attr, signed char value);
 extern void             change_attr_value(living *stats, int attr, signed char value);
@@ -279,7 +279,7 @@ extern char            *god_info_msg(int level, int booksize);
 extern void             tailor_readable_ob(object *book, int msg_type);
 extern void             free_all_readable(void);
 extern void             write_book_archive(void);
-extern const char	   *get_language(uint32 lang);
+extern const char       *get_language(uint32 lang);
 /* recipe.c */
 extern recipelist      *get_formulalist(int i);
 extern void             init_formulae(void);

@@ -251,14 +251,14 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
           lua_pushnumber(L, *(uint32 *) field_ptr);
           return 1;
         case FIELDTYPE_SINT32:
-			lua_pushnumber(L, *(sint32 *) field_ptr);
-			return 1;
+            lua_pushnumber(L, *(sint32 *) field_ptr);
+            return 1;
         case FIELDTYPE_SINT64:
-			/* warning: we can have data loss by casting sint64 to double by high sint64!
-			 * This issue will become urgent when we want compile a real 64bit version
-			 * of the server.
-			 */
-			lua_pushnumber(L, (lua_Number) (*(sint64 *) field_ptr));
+            /* warning: we can have data loss by casting sint64 to double by high sint64!
+             * This issue will become urgent when we want compile a real 64bit version
+             * of the server.
+             */
+            lua_pushnumber(L, (lua_Number) (*(sint64 *) field_ptr));
           return 1;
         case FIELDTYPE_FLOAT:
           lua_pushnumber(L, *(float *) field_ptr);
@@ -348,7 +348,7 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
         case FIELDTYPE_UINT32:
           *(uint32 *) field_ptr = (uint32) lua_tonumber(L, -1); break;
         case FIELDTYPE_SINT32:
-		  *(sint32 *) field_ptr = (sint32) lua_tonumber(L, -1); break;
+          *(sint32 *) field_ptr = (sint32) lua_tonumber(L, -1); break;
         case FIELDTYPE_SINT64:
           *(sint64 *) field_ptr = (sint64) lua_tonumber(L, -1); break;
         case FIELDTYPE_FLOAT:
@@ -494,11 +494,11 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
               *va_arg(ap, int *) = (int) lua_tonumber(L, pos);
               break;
 
-			case 'I':
-				/* integer (int64) */
-				luaL_checknumber(L, pos);
-				*va_arg(ap, sint64 *) = (sint64) lua_tonumber(L, pos);
-				break;
+            case 'I':
+                /* integer (int64) */
+                luaL_checknumber(L, pos);
+                *va_arg(ap, sint64 *) = (sint64) lua_tonumber(L, pos);
+                break;
 
             case 'f':
               /* float */

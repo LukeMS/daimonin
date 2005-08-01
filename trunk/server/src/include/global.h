@@ -57,20 +57,20 @@ typedef signed short    sint16;
 typedef unsigned short  uint16;
 typedef signed int      sint32;
 typedef unsigned int    uint32;
-typedef uint32			tag_t;
+typedef uint32            tag_t;
 
 /* 64bit definition */
 #ifdef WIN32
-typedef int64					sint64;
-typedef unsigned int64			uint64;
+typedef int64                    sint64;
+typedef unsigned int64            uint64;
 
 #else /* LINUX and others */
 #if SIZEOF_LONG == 8
-typedef unsigned long			uint64;
-typedef signed long				sint64;
+typedef unsigned long            uint64;
+typedef signed long                sint64;
 #elif SIZEOF_LONG_LONG == 8
-typedef unsigned long long		uint64;
-typedef signed long long 		sint64;
+typedef unsigned long long        uint64;
+typedef signed long long         sint64;
 
 #else
 #error Your compiler miss int64 support
@@ -164,8 +164,8 @@ typedef signed long long 		sint64;
 #define GET_INV_ANIM_ID(ob) (ob->inv_animation_id)
 
 
-#define MAX_PLAYER_NAME		12
-#define MAX_PLAYER_PASSWORD	16
+#define MAX_PLAYER_NAME        12
+#define MAX_PLAYER_PASSWORD    16
 
 /* used for eric_server() */
 #define SOCKET_UPDATE_PLAYER 1
@@ -223,15 +223,15 @@ typedef signed long long 		sint64;
                                  * info to group members out of range.
                                  */
 
-#define GROUP_MAX_MEMBER	6   /* max # of members of a group */
+#define GROUP_MAX_MEMBER    6   /* max # of members of a group */
 
-#define GROUP_MODE_JOIN		0	/* allow /invite from all */
-#define GROUP_MODE_DENY		1	/* deny /invite from everyone */
-#define GROUP_MODE_INVITE	2	/* allow deny from selected player */
+#define GROUP_MODE_JOIN        0    /* allow /invite from all */
+#define GROUP_MODE_DENY        1    /* deny /invite from everyone */
+#define GROUP_MODE_INVITE    2    /* allow deny from selected player */
 
-#define GROUP_STATUS_FREE	0   /* no group, no pending invite */
-#define GROUP_STATUS_INVITE 1	/* pending invite */
-#define GROUP_STATUS_GROUP	2	/* player is in group group_id */
+#define GROUP_STATUS_FREE    0   /* no group, no pending invite */
+#define GROUP_STATUS_INVITE 1    /* pending invite */
+#define GROUP_STATUS_GROUP    2    /* player is in group group_id */
 #define GROUP_STATUS_NOEXP  4   /* member get no exp/no quest items/etc */
 
 #define GROUP_UPDATE_HP         1
@@ -374,12 +374,12 @@ typedef struct _money_block
 /* ban node - see ban.c */
 typedef struct ban_struct
 {
-	int mode;
-	int ticks_init; /* how long is the ban */
-	int ticks_left; /* how long left */
-	uint32 ticks;		/* (starting) pticks + ticks_left */
-	uint32 ip;
-	char tag[BAN_STRUCT_TAG];
+    int mode;
+    int ticks_init; /* how long is the ban */
+    int ticks_left; /* how long left */
+    uint32 ticks;        /* (starting) pticks + ticks_left */
+    uint32 ip;
+    char tag[BAN_STRUCT_TAG];
 } _ban_struct;
 
 typedef struct Settings
@@ -448,13 +448,13 @@ EXTERN CS_Stats                 cst_tot, cst_lst;
 #endif
 
 /* lists of the active ingame gmasters */
-EXTERN objectlink			   *gmaster_list;
-EXTERN objectlink			   *gmaster_list_VOL;
-EXTERN objectlink			   *gmaster_list_GM;
-EXTERN objectlink			   *gmaster_list_DM;
+EXTERN objectlink               *gmaster_list;
+EXTERN objectlink               *gmaster_list_VOL;
+EXTERN objectlink               *gmaster_list_GM;
+EXTERN objectlink               *gmaster_list_DM;
 
-EXTERN objectlink			   *ban_list_player; /* see ban.c */
-EXTERN objectlink			   *ban_list_ip;	/* see ban.c */
+EXTERN objectlink               *ban_list_player; /* see ban.c */
+EXTERN objectlink               *ban_list_ip;    /* see ban.c */
 
 
 EXTERN SockList                 global_sl;
@@ -475,7 +475,7 @@ EXTERN Socket_Info              socket_info;
 EXTERN uint32                   global_group_tag; /* every group gets a unique group tag identifier */
 EXTERN uint32                   global_map_tag; /* our global map_tag value for the server (map.c)*/
 EXTERN New_Face                *new_faces;
-EXTERN archetype			   *coins_arch[NUM_COINS];
+EXTERN archetype               *coins_arch[NUM_COINS];
 
 
 /* arch.c - sysinfo for lowlevel */
@@ -526,12 +526,12 @@ EXTERN int                      global_race_counter; /* global race counter */
 EXTERN struct timeval           last_time;        /* Used for main loop timing */
 
 /* constant shared string pointers */
-EXTERN struct shstr_constants 
+EXTERN struct shstr_constants
 {
-    const char *undead;  
-    const char *none;   
-    const char *NONE;   
-    const char *quarterstaff;   
+    const char *undead;
+    const char *none;
+    const char *NONE;
+    const char *quarterstaff;
     const char *battleground;
     const char *clawing;
     const char *dragon_skin_force;

@@ -209,7 +209,7 @@ struct mob_behaviour * init_behaviour(behaviourclass_t classid, int behaviourid)
     behaviour->next = NULL;
     if (behaviour->declaration->nrof_params > 0)
     {
-		unsigned int i;
+        unsigned int i;
         behaviour->parameters = get_poolarray(pool_mob_behaviourparam, behaviour->declaration->nrof_params);
         for (i = 0; i < behaviour->declaration->nrof_params; i++)
         {
@@ -287,7 +287,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
 
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         {
-            if (!QUERY_FLAG(op, FLAG_READY_WEAPON) && 
+            if (!QUERY_FLAG(op, FLAG_READY_WEAPON) &&
                 (QUERY_FLAG(op, FLAG_READY_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW)))
             {
                 /* Behaviours for archers/mages only */
@@ -459,7 +459,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
               break;
 
             case AI_STRINGINT_TYPE:
-              if(parse_stringint_parameter(param, valuebuf)) 
+              if(parse_stringint_parameter(param, valuebuf))
                   LOG(llevBug, "BUG: Bad STRINGINT format (\"%s\") for parameter %s\n", valuebuf, namebuf);
               else
               {

@@ -31,14 +31,14 @@ typedef enum BinOpr {
   OPR_NOBINOPR
 } BinOpr;
 
-#define binopistest(op)	((op) >= OPR_NE)
+#define binopistest(op)    ((op) >= OPR_NE)
 
 typedef enum UnOpr { OPR_MINUS, OPR_NOT, OPR_NOUNOPR } UnOpr;
 
 
-#define getcode(fs,e)	((fs)->f->code[(e)->info])
+#define getcode(fs,e)    ((fs)->f->code[(e)->info])
 
-#define luaK_codeAsBx(fs,o,A,sBx)	luaK_codeABx(fs,o,A,(sBx)+MAXARG_sBx)
+#define luaK_codeAsBx(fs,o,A,sBx)    luaK_codeABx(fs,o,A,(sBx)+MAXARG_sBx)
 
 int luaK_code (FuncState *fs, Instruction i, int line);
 int luaK_codeABx (FuncState *fs, OpCode o, int A, unsigned int Bx);

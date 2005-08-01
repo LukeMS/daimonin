@@ -54,17 +54,17 @@ int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
     int x = rv->part->x, y = rv->part->y;
 
     /*
-    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n", 
-            STRING_OBJ_NAME(op), op->x, op->y, 
+    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n",
+            STRING_OBJ_NAME(op), op->x, op->y,
             STRING_OBJ_NAME(obj), obj->x, obj->y);
     */
-            
+
     BRESENHAM_INIT(rv->distance_x, rv->distance_y, fraction, stepx, stepy, dx2, dy2);
 
-    while(1) 
+    while(1)
     {
 //        LOG(llevDebug, " (%d:%d)", x, y);
-        if(x == obj->x && y == obj->y && m == obj->map) 
+        if(x == obj->x && y == obj->y && m == obj->map)
         {
 //            LOG(llevDebug, "  can see!\n");
             return TRUE;
@@ -107,7 +107,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     /* Pets */
     if (op->owner == obj && op->owner_count == obj->count)
         return TRUE;
-    
+
     /* Try using cache */
     if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
                     cache_time == ROUND_TAG)
@@ -147,7 +147,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
         cached_result = FALSE;
     else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
         cached_result = FALSE;
-    else 
+    else
     {
         /* LOS test is _only_ done when we first register a new object,
          * otherwise it is too easy to escape monsters by hiding. */
@@ -165,19 +165,19 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
  * with configuration options in the ai_friendship / attitudes behaviour,
  * but they serve well as a base...
  *
- * Uses: 
- *  a) in time.c for letting arrows through friends 
+ * Uses:
+ *  a) in time.c for letting arrows through friends
  *     this should be replaced by looking up known_ob->friendship if shooter knows
  *     victim, or by calling calc_friendship_from_attitude otherwise.
- *     If shooter is a player, a reverse lookup should be made. For PvP maps, 
+ *     If shooter is a player, a reverse lookup should be made. For PvP maps,
  *     we could look at player factions or at least group.
  *
  *   - pets might use reverse lookup of a targets attitude towards the player
  *     when deciding on the friendship of a target? Or just consider any mob that
- *     targets its owner as an enemy as its enemy too. 
+ *     targets its owner as an enemy as its enemy too.
  *     ("my friend's enemies are also my enemies" - might work for other mobs too)
- *    
- *  b) base friendship value in ai_friendship 
+ *
+ *  b) base friendship value in ai_friendship
  *     this should be replaced with factions, groups, spawn links and/or default
  *     attitude patters (for example "race=$other$:-100" and "race=$same$:100")
  *
@@ -186,25 +186,25 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
  *     "charming" mobs as pets is a hack. Maybe we could use a flag or tick indicator
  *     in mobs that is reset when any relevant values have changed. Then, for any known
  *     mob we recalculate the attitude if the mob's change-time is newer than our attitude.
- *     (requires for each mob: 1+max_known_mobs storage for timer + max_known_mobs 
+ *     (requires for each mob: 1+max_known_mobs storage for timer + max_known_mobs
  *     storage for basic attitude.)
- *     Also requires some way to mark all mobs in for example a specific faction 
+ *     Also requires some way to mark all mobs in for example a specific faction
  *     when there are global intra-faction attitude changes.
  */
 int is_enemy_of(object *op, object *obj)
 {
     /* TODO: add a few other odd types here, such as god & golem */
-    if (!(obj->type == PLAYER || obj->type == MONSTER) || op == obj 
+    if (!(obj->type == PLAYER || obj->type == MONSTER) || op == obj
         || QUERY_FLAG(obj, FLAG_SURRENDERED) || QUERY_FLAG(op, FLAG_SURRENDERED))
         return FALSE;
 
     /* Unagressive mobs are never enemies to anything (?) Gecko
-     * 
+     *
      * Wrong. Unaggressive means: "i never attack first".
      * So, a monster can be your enemy, but atm it want talk to you
      * and don't attack (like a demon appears and talk to you). If you
      * attack, it attacks back. If you aggravate the demon, he lose his
-     * unaggressive flag and attacks you. A friendly unaggressive would 
+     * unaggressive flag and attacks you. A friendly unaggressive would
      * just go away but never attack you. MT-07.2005
      *
      * Disabled due to minor reorganisation and above comment. Gecko 2005-07-28
@@ -215,7 +215,7 @@ int is_enemy_of(object *op, object *obj)
     /* Pets aren't enemies of their owners */
     if (op->owner == obj && op->owner_count == obj->count)
         return FALSE;
-    
+
     /* TODO: this needs to be sorted out better */
     if (QUERY_FLAG(op, FLAG_FRIENDLY))
     {
@@ -240,7 +240,7 @@ int is_friend_of(object *op, object *obj)
     /* Pets are friends of their owners */
     if (op->owner == obj && op->owner_count == obj->count)
         return TRUE;
-    
+
     /* TODO: this needs to be sorted out better */
     if (QUERY_FLAG(op, FLAG_FRIENDLY) || op->type == PLAYER)
     {
@@ -272,7 +272,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
      * container of the mob, so that mobs can for example hide in containers until the enemy
      * is far enough away. Or reversly, hide in container and later jump out and attack enemy. *
      * Gecko 2005-05-08 */
-    if ( op == NULL || op->map == NULL || op->env || 
+    if ( op == NULL || op->map == NULL || op->env ||
             known_obj == NULL || known_obj->obj->map == NULL || known_obj->obj->env)
         return NULL;
 
@@ -341,19 +341,19 @@ int calc_friendship_from_attitude(object *op, object *other)
     int friendship = 0;
     struct mob_behaviour_param *attitudes;
     struct mob_behaviour_param *tmp;
-     
+
     if(op->head)
         op = op->head;
-    
+
     if(op->type != MONSTER)
     {
         /* TODO: implement reverse lookup and PvP */
         LOG(llevBug, "BUG: calc_friendship_from_attitude() object %s is not a monster (type=%d)\n",
                 STRING_OBJ_NAME(op), op->type);
     }
-    
+
     attitudes = MOB_DATA(op)->behaviours->attitudes;
-    
+
     if(attitudes == NULL)
         return friendship;
 
@@ -403,7 +403,7 @@ int calc_friendship_from_attitude(object *op, object *other)
                     tmp = tmp->next)
             {
                 struct mob_behaviour_param *group;
-            
+
                 for(group = &MOB_DATA(other)->behaviours->groups[AIPARAM_GROUPS_NAME];
                         group != NULL; group = group->next)
                 {
@@ -420,12 +420,12 @@ int calc_friendship_from_attitude(object *op, object *other)
         if(other->type == PLAYER)
             friendship += attitudes[AIPARAM_ATTITUDE_PLAYER].intvalue;
     }
-    
+
     /* Named god attitude */
     if(attitudes[AIPARAM_ATTITUDE_GOD].flags & AI_PARAM_PRESENT)
     {
-        /* For now the god test is only done on players. 
-         * calling determine_god() on a generic mob will give that mob a 
+        /* For now the god test is only done on players.
+         * calling determine_god() on a generic mob will give that mob a
          * random god, and we don't want that to happen.
          */
         if(other->type == PLAYER)
@@ -523,7 +523,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
      */
     if (QUERY_FLAG(npc, FLAG_SURRENDERED))
         return NULL;
-    
+
     /* TODO: get rid of flag_unaggressive and use only friendship */
     if (friendship < 0 && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
     {
@@ -556,12 +556,12 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     {
         LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
         return NULL;
-    }        
-    
+    }
+
     /* We check LOS here, only if we are registering a new object */
-    /* Also, we only check against players, and not if we have 
+    /* Also, we only check against players, and not if we have
      * been hit or helped by them. */
-    if(other->type == PLAYER && friendship == 0 && 
+    if(other->type == PLAYER && friendship == 0 &&
             !obj_in_line_of_sight(npc, other, &rv))
         return NULL;
 
@@ -733,12 +733,12 @@ void monster_check_apply(object *mon, object *item)
 
 void ai_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    if(op->owner) 
+    if(op->owner)
     {
         ai_move_towards_owner(op, NULL, response);
         return;
     }
-    
+
     response->type = MOVE_RESPONSE_DIR;
     response->data.direction = 0;
 }
@@ -762,12 +762,12 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
     int     i, r;
     object *base;
 
-    if(op->owner) 
+    if(op->owner)
     {
         ai_move_towards_owner(op, NULL, response);
         return;
     }
-    
+
     base = find_base_info_object(op);
     /* Give up to 8 chances for a monster to move randomly */
     for (i = 0; i < 8; i++)
@@ -797,14 +797,14 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
 void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     rv_vector *rv;
-    
+
     if(! OBJECT_VALID(op->owner, op->owner_count) || MOB_DATA(op)->owner == NULL)
     {
         if(op->owner)
             op->owner = NULL;
         return;
     }
-    
+
     rv = get_known_obj_rv(op, MOB_DATA(op)->owner, MAX_KNOWN_OBJ_RV_AGE);
     if(! rv)
         return;
@@ -817,7 +817,7 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
         response->data.direction = r;
         return;
     }
-        
+
     response->type = MOVE_RESPONSE_OBJECT;
     response->data.target.obj = op->owner;
     response->data.target.obj_count = op->owner_count;
@@ -826,13 +826,13 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
 void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     object *base;
-    
-    if(op->owner) 
+
+    if(op->owner)
     {
         ai_move_towards_owner(op, NULL, response);
         return;
     }
-    
+
     /* TODO: optimization: pointer to the base ob in mob_data */
     if ((base = insert_base_info_object(op)) && base->slaying)
     {
@@ -1022,7 +1022,7 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
 void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     rv_vector  *rv;
-    
+
     if (!OBJECT_VALID(op->enemy, op->enemy_count) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
         return;
 
@@ -1037,7 +1037,7 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
         /* Stay where we are */
         response->type = MOVE_RESPONSE_DIR;
         response->data.direction = 0;
-        return;        
+        return;
     }
 
     /* If we can't even find a way to the enemy, downgrade it */
@@ -1047,7 +1047,7 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
         LOG(llevDebug, "ai_move_towards_enemy(): %s can't get to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
         /* TODO: The current solution also totally disregards archers
          * and magic users that don't have to reach the target by walking */
-        /* TODO: this gives some crazy results together with attitudes, 
+        /* TODO: this gives some crazy results together with attitudes,
          * see the group test in the AI testmap for an example. */
         MOB_DATA(op)->enemy->friendship /= 2;
         MOB_DATA(op)->enemy->tmp_friendship = 0;
@@ -1055,12 +1055,12 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
         /* Go through the mob list yet again (should only be done once) */
         /* TODO: keep track of second_worst_enemy instead... */
         ai_choose_enemy(op, params);
-        
+
 //        LOG(llevDebug, "ai_move_towards_enemy(): %s chose new enemy: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
         if(op->enemy == NULL)
             return;
     }
-        
+
     response->type = MOVE_RESPONSE_OBJECT;
     response->data.target.obj = op->enemy;
     response->data.target.obj_count = op->enemy_count;
@@ -1115,8 +1115,8 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
         mapstruct              *map     = ready_map_name(enemy->last_map, MAP_NAME_SHARED);
 
-        if (get_rangevector_full(op, op->map, op->x, op->y, 
-                    enemy->obj, map, enemy->last_x, enemy->last_y, 
+        if (get_rangevector_full(op, op->map, op->x, op->y,
+                    enemy->obj, map, enemy->last_x, enemy->last_y,
                     &rv, RV_EUCLIDIAN_DISTANCE))
         {
             op->anim_enemy_dir = rv.direction;
@@ -1174,7 +1174,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
              * TODO: extend cache in recursive search with longer memory
              */
             if (!get_rangevector_full(
-                        op, op->map, op->x, op->y, 
+                        op, op->map, op->x, op->y,
                         NULL, destmap, WP_X(wp), WP_Y(wp), &rv,
                         RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
             {
@@ -1205,10 +1205,10 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                             STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
 
-                        trigger_object_plugin_event(EVENT_TRIGGER, 
+                        trigger_object_plugin_event(EVENT_TRIGGER,
                                 wp, op, NULL,
                                 NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
-    
+
                         MOB_PATHDATA(op)->goal_delay_counter = 0;
                         MOB_PATHDATA(op)->best_distance = -1;
                         MOB_PATHDATA(op)->tried_steps = 0;
@@ -1355,7 +1355,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     int sense_range;
     int check_maps[8] = {0,0,0,0,0,0,0,0}; /* nearby map tiles to scan */
 
-    /* Lets check the mob has a valid map. 
+    /* Lets check the mob has a valid map.
      * Monsters should be able to live in containers and sense what
      * is going on around them.
      * TODO: but for now we just do nothing, waiting for someone to
@@ -1363,14 +1363,14 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
      */
     if(!op->map)
     {
-        /* Removed the BUG info and object removal. This isn't a bug - Gecko 
-        LOG(llevDebug,"BUG:: ai_look_for_other_mobs(): Mob %s without map - deleting it (%d,%d)\n", 
+        /* Removed the BUG info and object removal. This isn't a bug - Gecko
+        LOG(llevDebug,"BUG:: ai_look_for_other_mobs(): Mob %s without map - deleting it (%d,%d)\n",
             query_name(op), op->env?op->env->x:-1, op->env?op->env->y:-1);
         remove_ob(op);
         */
         return;
     }
-    
+
     /* TODO possibility for optimization: if we already have enemies there
      * is no need to look for new ones every timestep... */
     /* TODO: optimization: maybe first look through nearest squares to see if something interesting is there,
@@ -1380,18 +1380,18 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
      * IS_ALIVE flag on map cell level to see if it is useful to scan that cell */
 
     /* Find out which other map tiles are within our sense range */
-    
-    /* The "real" sense range calculation is in mob_can_see_ob(), this is 
+
+    /* The "real" sense range calculation is in mob_can_see_ob(), this is
      * a simplified version */
     sense_range = op->stats.Wis;
     if (op->enemy)
         sense_range += 6;
     if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
         sense_range /= 2;
-    
-    if (op->y - sense_range < 0) 
+
+    if (op->y - sense_range < 0)
         check_maps[0] = 1; /* North */
-    if (op->y + sense_range >= MAP_HEIGHT(op->map)) 
+    if (op->y + sense_range >= MAP_HEIGHT(op->map))
         check_maps[2] = 1; /* South */
     if (op->x - sense_range < 0) {
         check_maps[3] = 1; /* West */
@@ -1407,7 +1407,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
         if (check_maps[2])
             check_maps[5] = 1; /* Southeast */
     }
-    
+
     /* Scan for mobs and players in each marked map */
     for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
     {
@@ -1420,7 +1420,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
             continue;
 
         /* TODO: swap in nearby maps? (that might cascade in turn if the loaded maps contain mobs!) */
-        /* Normally, we should never do swap in maps for mobs. Because the main feature of the 
+        /* Normally, we should never do swap in maps for mobs. Because the main feature of the
          * engine is, to have parts swaped out. But we need a "FLAG_SWAP_LOCK" flag for special
          * mobs (for example quest mobs) who run around. We don't want that the swap function swaped
          * them out before the quest is finished. These flaged mobs should handled as players in
@@ -1451,7 +1451,7 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
 
     if(OBJECT_VALID(op->owner, op->owner_count) && op->owner->enemy)
         owner_enemy = op->owner->enemy;
-    
+
     for (tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
     {
         tmp->tmp_friendship = tmp->friendship;
@@ -1460,7 +1460,7 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
         if(op->owner && op->owner == tmp->obj->owner && op->owner_count == tmp->obj->owner_count)
             tmp->tmp_friendship += FRIENDSHIP_HELP;
         else if(op->owner == tmp->obj && op->owner_count == tmp->obj->count)
-            tmp->tmp_friendship += FRIENDSHIP_PET;    
+            tmp->tmp_friendship += FRIENDSHIP_PET;
         /* Replace with flexible behaviour parameters */
         else if (is_enemy_of(op, tmp->obj))
             tmp->tmp_friendship += FRIENDSHIP_ATTACK;
@@ -1470,11 +1470,11 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
         /* Helps us focusing on a single enemy */
         if (tmp == MOB_DATA(op)->enemy)
             tmp->tmp_friendship += FRIENDSHIP_ENEMY_BONUS;
-        
+
         /* Let pets attack player's targets */
         if(!op->enemy && tmp->obj == owner_enemy && tmp->obj_count == op->owner->enemy_count)
             known_owner_enemy = tmp;
-        
+
         /* Now factor in distance  */
         if (get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE))
         {
@@ -1498,13 +1498,13 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     struct mob_known_obj   *tmp, *worst_enemy = NULL;
 
     /* We won't look for enemies if we are unagressive */
-    if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) 
+    if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
     {
         if(op->enemy)
             op->enemy = NULL;
         return;
     }
-    
+
     /* Go through list of known mobs and choose the most hated
      * that we can get to.
      */
@@ -1538,7 +1538,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         //        LOG(llevDebug,"ai_choose_enemy(): %s's worst enemy is '%s', friendship: %d\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(worst_enemy->ob), worst_enemy->tmp_friendship);
         op->enemy = worst_enemy->obj;
         MOB_DATA(op)->enemy = worst_enemy;
-        op->enemy_count = worst_enemy->obj_count;        
+        op->enemy_count = worst_enemy->obj_count;
     }
     else
     {
@@ -1569,10 +1569,10 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         }
         set_mobile_speed(op, 0);
     }
-    
-/* TODO: disabled until somone comes up with a test case where this 
+
+/* TODO: disabled until somone comes up with a test case where this
  * actually happens before pathfinding fails. */
-#if 0    
+#if 0
     else if(MOB_DATA(op)->enemy && MOB_DATA(op)->idle_time > MAX_IDLE_TIME && MOB_DATA(op)->enemy->tmp_friendship < 0)
     {
         LOG(llevDebug, "ai_choose_enemy(): %s too bored getting to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
@@ -1582,7 +1582,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         /* TODO: keep track of second_worst_enemy instead... */
         ai_choose_enemy(op, params);
     }
-#endif    
+#endif
 }
 
 /* AI <-> plugin interface for processes */
@@ -1676,24 +1676,24 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     /* Find the applied bow */
     for (bow = op->inv; bow != NULL; bow = bow->below)
-	{
-		if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
-		{
-			/* Select suitable arrows */
-		    if(bow->sub_type1 == 128) /* ability bow type */
-				arrow = bow->inv;
-			else
-				arrow = find_arrow(op, bow->race);
+    {
+        if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
+        {
+            /* Select suitable arrows */
+            if(bow->sub_type1 == 128) /* ability bow type */
+                arrow = bow->inv;
+            else
+                arrow = find_arrow(op, bow->race);
 
-			if(!arrow)
-			{
-				/* Out of arrows , unapply bow */
-			    manual_apply(op, bow, 0);
-				bow = NULL;
-			}
-		    break;
-		}
-	}
+            if(!arrow)
+            {
+                /* Out of arrows , unapply bow */
+                manual_apply(op, bow, 0);
+                bow = NULL;
+            }
+            break;
+        }
+    }
 
     if (bow == NULL)
     {
@@ -1809,7 +1809,7 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
     object *tmp_enemy = NULL;
     tag_t   tmp_enemy_tag;
     int     ability, sp_cost;
-    
+
     if ((sp = find_spell(sp_type)) == NULL)
     {
         LOG(llevDebug, "monster_cast_spell(): Can't find spell #%d for mob %s (%s) (%d,%d)\n", sp_type,
@@ -1824,19 +1824,19 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
     ability = (spell_item->type == ABILITY && QUERY_FLAG(spell_item, FLAG_IS_MAGICAL));
 
     /* add default cast time from spell force to monster.
-     * we want make spell casting (ability) action independent from 
+     * we want make spell casting (ability) action independent from
      * speed - which will be really movement/physically action orientated.
-     * With the casting delay counter, we are independent from speed & 
+     * With the casting delay counter, we are independent from speed &
      * weapon_speed - thats needed for heavy spells with, lets say, a 10 second delay
      * or even more. mob->magic is the default mob speed delay, spell->last_grace the
      * delay for this spell.
      * the last_grace counter is decreased in regenerate_stats().
-     * 
+     *
      */
     op->last_grace += (op->magic + spell_item->last_grace);
 
     /* If we cast a spell, only use up casting_time speed.
-     * outdated. we want use the casting delay counter above now! (MT-07.2005) 
+     * outdated. we want use the casting delay counter above now! (MT-07.2005)
      */
     //op->speed_left += (float) 1.0 - (float) sp->time / (float) 20.0 * (float) FABS(op->speed);
 
@@ -1844,20 +1844,20 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
 
     /* The casting code uses op->enemy for target, but we don't always
      * target our current enemy. */
-    if(target && target != op->enemy) 
+    if(target && target != op->enemy)
     {
         tmp_enemy = op->enemy;
         tmp_enemy_tag = op->enemy_count;
         op->enemy = target;
         op->enemy_count = target->count;
     }
-    
+
 //    LOG(-1,"CAST2 %s: spell_item=%s, dir=%d, target=%s\n",STRING_OBJ_NAME(op), STRING_OBJ_NAME(spell_item), dir, STRING_OBJ_NAME(target) );
-        
+
     /* TODO: what does the return value of cast_spell do ? */
     cast_spell(part, part, dir, sp_type, ability, spellNormal, NULL);
-    
-    if(target && target == tmp_enemy) 
+
+    if(target && target == tmp_enemy)
     {
         op->enemy = tmp_enemy;
         op->enemy_count = tmp_enemy_tag;
@@ -1885,7 +1885,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     /* TODO: choose another target if this or next test fails */
     if (!(rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
-        return FALSE;    
+        return FALSE;
     /* TODO: also check distance and LOS */
     /* TODO: should really check type of spell (area or missile) */
     if (!can_hit_missile(op, op->enemy, rv, 2) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
@@ -1937,12 +1937,12 @@ int ai_heal_friend(object *op, struct mob_behaviour_param *params)
      || op->last_grace > 0
      || op->map == NULL)
         return FALSE;
-    
-    /* TODO: shouldn't do this every tick. It think setting up a 
+
+    /* TODO: shouldn't do this every tick. It think setting up a
      * bitmap of known spells at mob creation should be enough
-     * (will still need to search to find the actual spell_item, 
+     * (will still need to search to find the actual spell_item,
      * but we can that delay that until we know we have a target) */
-    
+
     /* See what spells we actually know... */
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         if (tmp->type == ABILITY || tmp->type == SPELLBOOK)
@@ -1963,16 +1963,16 @@ int ai_heal_friend(object *op, struct mob_behaviour_param *params)
 
     if(heal == NULL &&  cure_poison == NULL && cure_disease == NULL)
         return FALSE;
-    
+
     /* TODO: actually support curing. For that I need an efficient method
      * to see if a mob is poisoned or diseased */
-    
+
     /* Do we need to heal ourself? */
     if(op->stats.hp < op->stats.maxhp / 2 && heal) {
         target = op;
         spell = heal;
-    } 
-    else 
+    }
+    else
     {
         struct mob_known_obj *tmp;
 

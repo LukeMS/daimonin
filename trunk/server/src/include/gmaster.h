@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,18 +25,18 @@
 #ifndef __GMASTER_H
 #define __GMASTER_H
 
-#define GMASTER_MODE_NO		0
-#define GMASTER_MODE_VOL	1
-#define GMASTER_MODE_GM		2
-#define GMASTER_MODE_DM		4
+#define GMASTER_MODE_NO        0
+#define GMASTER_MODE_VOL    1
+#define GMASTER_MODE_GM        2
+#define GMASTER_MODE_DM        4
 
 typedef struct _gmaster_struct
 {
-	char					entry[196]; /* unparsed gmaster_file entry for this node */
-	char					host[128];
-	char					name[16]; /* MAX_PLAYER_NAME + 1 - i want move this to 2^x border */
-	char					password[MAX_PLAYER_PASSWORD];
-	int						mode;	/* What is this entry? DM, VOL, GM? */
+    char                    entry[196]; /* unparsed gmaster_file entry for this node */
+    char                    host[128];
+    char                    name[16]; /* MAX_PLAYER_NAME + 1 - i want move this to 2^x border */
+    char                    password[MAX_PLAYER_PASSWORD];
+    int                        mode;    /* What is this entry? DM, VOL, GM? */
 } gmaster_struct;
 
 #endif

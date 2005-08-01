@@ -185,8 +185,8 @@ typedef struct pl_player
     int                 firemode_tag1;
     int                 firemode_tag2;
 
-	int					gmaster_mode;
-	struct oblnk	    *gmaster_node;
+    int                    gmaster_mode;
+    struct oblnk        *gmaster_node;
 
     /* mute and "communication" frequency control */
     uint32              mute_flags;
@@ -201,17 +201,17 @@ typedef struct pl_player
     uint32              action_casting;
     uint32              action_range;
 
-	object			   *quest_one_drop;
-	object			   *quests_done;
-	object			   *quests_type_normal;
-	object			   *quests_type_kill;
-	object			   *quests_type_cont;
+    object               *quest_one_drop;
+    object               *quests_done;
+    object               *quests_type_normal;
+    object               *quests_type_kill;
+    object               *quests_type_cont;
 
-	tag_t				quest_one_drop_count;
-	tag_t			    quests_done_count;
-	tag_t			    quests_type_normal_count;
-	tag_t			    quests_type_kill_count;
-	tag_t			    quests_type_cont_count;
+    tag_t                quest_one_drop_count;
+    tag_t                quests_done_count;
+    tag_t                quests_type_normal_count;
+    tag_t                quests_type_kill_count;
+    tag_t                quests_type_cont_count;
 
     uint32              exp_calc_tag;               /* used from aggro.c/exp.c */
     object             *exp_calc_obj;
@@ -224,17 +224,17 @@ typedef struct pl_player
                                                     */
     uint32              target_map_pos;         /* last target search position */
     uint32              mode;                   /* Mode of player for pickup. */
-    sint32              group_id;				/* unique group id number - this is a unique number like the object count */
-    sint32	            group_status;			/* status of invite or group */
+    sint32              group_id;                /* unique group id number - this is a unique number like the object count */
+    sint32                group_status;            /* status of invite or group */
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.
      * exception is group leader - its only used to confirm a invite
      */
-    object             *group_leader;			/* pointer to group leader or invite */
-    uint32              group_leader_count;		/* for invite... */
-    object             *group_prev;				/* previous member of group */
-    object             *group_next;				/* next member of group */
+    object             *group_leader;            /* pointer to group leader or invite */
+    uint32              group_leader_count;        /* for invite... */
+    object             *group_prev;                /* previous member of group */
+    object             *group_next;                /* next member of group */
 
     uint32              update_ticker;          /* global_round tick where player was updated */
     float               last_speed;
@@ -277,12 +277,12 @@ typedef struct pl_player
     uint16              last_gen_sp;
     uint16              last_gen_grace;
 
-    uint8	            group_mode;					/* group mode use GROUP_MODE_XX */
-    uint8               group_nrof;					/* number of players in group */
-    uint8               group_nr;					/* player is #group_nr in his group - used for fast update */
+    uint8                group_mode;                    /* group mode use GROUP_MODE_XX */
+    uint8               group_nrof;                    /* number of players in group */
+    uint8               group_nr;                    /* player is #group_nr in his group - used for fast update */
 
 
-    char	            group_invite_name[MAX_PLAYER_NAME+1]; /* GROUP_MODE_INVITE: This player name can invite you
+    char                group_invite_name[MAX_PLAYER_NAME+1]; /* GROUP_MODE_INVITE: This player name can invite you
                                                                * we need string name here to handle for example a logout
                                                                * of this player.
                                                                */

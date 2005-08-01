@@ -76,12 +76,12 @@ static void init_strings()
     shstr.NONE = add_string("NONE"); /* Used in alchemy code */
     shstr.quarterstaff = add_string("quarterstaff");
     shstr.battleground = add_string("battleground");
-    
+
     shstr.clawing = add_string("clawing");
     shstr.dragon_skin_force = add_string("dragon_skin_force");
     shstr.dragon_ability_force = add_string("dragon_ability_force");
     shstr.dragon = add_string("dragon");
-    
+
     shstr.town_portal_destination = add_string("Town portal destination");
     shstr.existing_town_portal = add_string("Existing town portal");
 
@@ -106,7 +106,7 @@ static void init_strings()
     shstr.heal_depletion = add_string("heal depletion");
     shstr.message = add_string("message");
     shstr.enchant_weapon = add_string("enchant weapon");
-    
+
     shstr.Eldath = add_string("Eldath"); /* old and incorrect god */
     shstr.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
 
@@ -146,13 +146,13 @@ static void init_globals()
 
     set_pticks_time(MAX_TIME);
 
-	gmaster_list=NULL;
-	gmaster_list_VOL=NULL;
-	gmaster_list_GM=NULL;
-	gmaster_list_DM=NULL;
+    gmaster_list=NULL;
+    gmaster_list_VOL=NULL;
+    gmaster_list_GM=NULL;
+    gmaster_list_DM=NULL;
 
-	ban_list_player=NULL;
-	ban_list_ip=NULL;
+    ban_list_player=NULL;
+    ban_list_ip=NULL;
 
     exiting = 0;
     player_active = 0;
@@ -602,7 +602,7 @@ static void help()
     LOG(llevInfo, " -maps       Sets the directory for maps.\n");
     LOG(llevInfo, " -arch       Sets the archetype file to use.\n");
     LOG(llevInfo, " -playerdir  Sets the directory for the player files.\n");
-    LOG(llevInfo, " -treasures	 Sets the treasures file to use.\n");
+    LOG(llevInfo, " -treasures     Sets the treasures file to use.\n");
     LOG(llevInfo, " -uniquedir  Sets the unique items/maps directory.\n");
     LOG(llevInfo, " -tmpdir     Sets the directory for temporary files (mostly maps.)\n");
 #endif
@@ -995,7 +995,7 @@ void fatal_signal(int make_core, int close_sockets)
         clean_tmp_files();
         write_book_archive();
         write_todclock();   /* lets just write the clock here */
-		save_ban_file();
+        save_ban_file();
     }
     if (make_core)
         abort();
@@ -1102,7 +1102,7 @@ static void parse_args(int argc, char *argv[], int pass)
 
 static void init_beforeplay()
 {
-	/* several SockList stuff is not dynamic nor must it threadsafe.
+    /* several SockList stuff is not dynamic nor must it threadsafe.
      * lets safe some malloc by using this global buffer.
      */
     global_sl.buf = malloc(MAXSOCKBUF);
@@ -1191,8 +1191,8 @@ void init(int argc, char **argv)
     init_ericserver();
     metaserver_init();
     init_arch_default_behaviours();
-	load_ban_file();
-	load_gmaster_file();
+    load_ban_file();
+    load_gmaster_file();
     init_done = 1;
 }
 

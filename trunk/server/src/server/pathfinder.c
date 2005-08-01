@@ -115,7 +115,7 @@ object * pathfinder_queue_dequeue(int *count)
 /* Request a new path */
 void request_new_path(object *op)
 {
-    if (op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL || 
+    if (op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL ||
             QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED))
         return;
 
@@ -124,7 +124,7 @@ void request_new_path(object *op)
         STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
 #endif
 
-    if (pathfinder_queue_enqueue(op)) 
+    if (pathfinder_queue_enqueue(op))
     {
         SET_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED);
         CLEAR_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
@@ -362,7 +362,7 @@ path_node * compress_path(path_node *path)
  *
  * op1 and op2 are optional, but recommended for precise handling
  * of multipart objects.
- * 
+ *
  * If this function overestimates, we are not guaranteed an optimal path.
  *
  * get_rangevector can fail here if there is no maptile path between start and goal.
@@ -375,7 +375,7 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal, 
 
     /* Diagonal distance (not manhattan distance or euclidian distance!) */
     if (!get_rangevector_full(
-                op1, current->map, current->x, current->y, 
+                op1, current->map, current->x, current->y,
                 op2, goal->map, goal->x, goal->y,
                 &v1, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
         return HEURISTIC_ERROR;
@@ -388,8 +388,8 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal, 
     /* Add straight-line preference by calculating cross product   */
     /* (gives better performance on open areas _and_ nicer-looking paths) */
     if (!get_rangevector_full(
-                op1, start->map, start->x, start->y, 
-                op2, goal->map, goal->x, goal->y, 
+                op1, start->map, start->x, start->y,
+                op2, goal->map, goal->x, goal->y,
                 &v2, RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
         return HEURISTIC_ERROR;
     v2.distance_x = -v2.distance_x;

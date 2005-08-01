@@ -113,7 +113,7 @@ static int count_active()
     int     i   = 0;
     object *tmp = active_objects;
     mapstruct *map;
-    
+
     for(tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
         i++;
     for (map = first_map; map; map = map->next)
@@ -337,8 +337,8 @@ int command_who(object *op, char *params)
 int command_malloc(object *op, char *params)
 {
 
-	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
-		return 0;
+    if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+        return 0;
 
 #ifdef MEMPOOL_TRACKING
     if (params)
@@ -1120,11 +1120,11 @@ void receive_player_name(object *op, char k, char *write_buf)
         return;
     }
 
-	/* we got a legal name... NOW check this named is banned */
+    /* we got a legal name... NOW check this named is banned */
     if (check_banned(write_buf+1, -1))
     {
         LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.host);
-		CONTR(op)->socket.status = Ns_Dead;
+        CONTR(op)->socket.status = Ns_Dead;
         return;
     }
 

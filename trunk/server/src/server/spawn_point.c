@@ -109,7 +109,7 @@ static inline int spawn_point_darkness(object *spoint, int darkness)
  */
 static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
 {
-	object *tmp2, *next, *next2, *item;
+    object *tmp2, *next, *next2, *item;
 
     for (; tmp; tmp = next)
     {
@@ -132,8 +132,8 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
                         item = get_object();
                         copy_object(tmp2, item);
                         insert_ob_in_ob(item, mob);      /* and put it in the mob */
-						if(tmp2->inv)
-							insert_spawn_mob_loot(op, item, tmp2->inv);
+                        if(tmp2->inv)
+                            insert_spawn_mob_loot(op, item, tmp2->inv);
                     }
                 }
             }
@@ -143,8 +143,8 @@ static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
             item = get_object();
             copy_object(tmp, item);
             insert_ob_in_ob(item, mob);      /* and put it in the mob */
-			if(tmp->inv)
-				insert_spawn_mob_loot(op, item, tmp->inv);
+            if(tmp->inv)
+                insert_spawn_mob_loot(op, item, tmp->inv);
         }
     }
 }
@@ -254,7 +254,7 @@ void spawn_point(object *op)
         mob->last_eat = 0;
     }
 
-	insert_spawn_mob_loot(op, mob, tmp);
+    insert_spawn_mob_loot(op, mob, tmp);
 
     op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
 
@@ -274,13 +274,13 @@ void spawn_point(object *op)
         return;
 }
 
-/* 
+/*
  * Linked Spawns (Mobs) Code.
  * We implement "linked mobs" with the spawn points - so its "linked spawns"
- * Linked spawns is nothing more as a 2 or more linked spawn points who are 
+ * Linked spawns is nothing more as a 2 or more linked spawn points who are
  * triggered by a signal at once.
  * An Example: 3 linked spawn points are around a campfire. On a hill is another
- * one linked to it - so its 4 linked spawns. If now the scout on the hill get 
+ * one linked to it - so its 4 linked spawns. If now the scout on the hill get
  * attacked & find a target, the signal goes to all linked mobs. So, the 3
  * mobs on the campfire joins in the fight.
  * Important: Linked spawns are a  pre AI mechanism and has nothing to do with "social mobs"
@@ -301,7 +301,7 @@ void spawn_point(object *op)
 
 static inline objectlink *get_linked_spawn(object *spawn)
 {
-    objectlink		*ol;
+    objectlink        *ol;
 
     for(ol = spawn->map->linked_spawn_list;ol;ol = ol->next)
     {
@@ -314,13 +314,13 @@ static inline objectlink *get_linked_spawn(object *spawn)
     return NULL;
 }
 
-/* LIFO queue for the base links - spawns point of every list 
- * are in a LIFO queue too 
+/* LIFO queue for the base links - spawns point of every list
+ * are in a LIFO queue too
  * called when a map with linked spawn is loaded
  */
 objectlink *add_linked_spawn(object *spawn)
 {
-    objectlink		*ol;
+    objectlink        *ol;
 
     ol = get_linked_spawn(spawn);
     if(!ol) /* new one? create base link */
@@ -334,7 +334,7 @@ objectlink *add_linked_spawn(object *spawn)
     ol->objlink.ob = spawn;
 
 #ifdef DEBUG_LINK_SPAWN
-    LOG( llevDebug, "LINK_SPAWN::add: map: %s (%d,%d) - %d\n", 
+    LOG( llevDebug, "LINK_SPAWN::add: map: %s (%d,%d) - %d\n",
          STRING_SAFE(spawn->map->path), spawn->x, spawn->y, ol->value);
 #endif
     return ol;
@@ -345,13 +345,13 @@ objectlink *add_linked_spawn(object *spawn)
  */
 void remove_linked_spawn_list(mapstruct *map)
 {
-    objectlink		*ol, *tmp;
+    objectlink        *ol, *tmp;
 
     for(ol = map->linked_spawn_list;ol;ol = tmp)
     {
         tmp = ol->next;
 #ifdef DEBUG_LINK_SPAWN
-        LOG( llevDebug, "LINK_SPAWN::remove: map %s (%d,%d)\n", 
+        LOG( llevDebug, "LINK_SPAWN::remove: map %s (%d,%d)\n",
              STRING_SAFE(ol->objlink.ob->map->path), ol->objlink.ob->x, ol->objlink.ob->y);
 #endif
         free_objectlink_simple(ol);
@@ -362,11 +362,11 @@ void remove_linked_spawn_list(mapstruct *map)
 */
 void send_link_spawn_signal(object *spawn, object *target, int signal)
 {
-    objectlink		*ol = get_linked_spawn(spawn);
+    objectlink        *ol = get_linked_spawn(spawn);
 
     if(!ol) /* sanity check */
     {
-        LOG( llevDebug, "BUG LINK_SPAWN::send_link_spawn_signal(): (map: %s (%d,%d))- LinkID: %s\n", 
+        LOG( llevDebug, "BUG LINK_SPAWN::send_link_spawn_signal(): (map: %s (%d,%d))- LinkID: %s\n",
             spawn->map?STRING_SAFE(spawn->map->path):"NULL", spawn->x, spawn->y, STRING_SAFE(spawn->slaying));
         return;
     }
@@ -399,13 +399,13 @@ void send_link_spawn_signal(object *spawn, object *target, int signal)
                     /* we need a "set_enemy" in the ai code beside "choose_enemy" */
                     obj->enemy->enemy = enemy->obj;
                     MOB_DATA(obj->enemy)->enemy = enemy;
-                    obj->enemy->enemy_count = enemy->obj_count;        
+                    obj->enemy->enemy_count = enemy->obj_count;
                     MOB_DATA(obj->enemy)->idle_time = 0;
                     set_mobile_speed(obj->enemy, 0);
 
 
 #ifdef DEBUG_LINK_SPAWN
-                    LOG( llevDebug, "LINK_SPAWN::target enemy: map %s (%d,%d)\n", 
+                    LOG( llevDebug, "LINK_SPAWN::target enemy: map %s (%d,%d)\n",
                          STRING_SAFE(obj->map->path), obj->x, obj->y);
 #endif
                 }

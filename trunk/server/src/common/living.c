@@ -423,11 +423,11 @@ int change_abil(object *op, object *tmp)
     /* reset attributes that fix_player doesn't reset since it doesn't search
      * everything to set */
     if (flag == -1)
-	{
+    {
         op->path_attuned &= ~tmp->path_attuned,
         op->path_repelled &= ~tmp->path_repelled,
         op->path_denied &= ~tmp->path_denied;
-	}
+    }
     /* call fix_player since op object could have whatever attribute due
      * to multiple items.  if fix_player always has to be called after
      * change_ability then might as well call it from here
@@ -478,37 +478,37 @@ int change_abil(object *op, object *tmp)
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Suddenly you feel less safe, somehow.");
         }
     }
-	if (QUERY_FLAG(tmp, FLAG_FLYING))
-	{
-		if (flag > 0)
-		{
-			success = 1;
-			/* if were already flying then now flying higher */
-			if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
-				new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little higher in the air.");
-			else
-			{
-				new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You start to fly in the air!.");
-				SET_MULTI_FLAG(op, FLAG_FLYING);
-				if (op->speed > 1)
-					op->speed = 1;
-			}
-		}
-		else
-		{
-			success = 1;
-			/* if were already flying then now flying lower */
-			if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
-				new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little lower in the air.");
-			else
-			{
-				new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You fly down to the ground.");
-				check_walk_on(op, op, 0);
-			}
-		}
-	}
+    if (QUERY_FLAG(tmp, FLAG_FLYING))
+    {
+        if (flag > 0)
+        {
+            success = 1;
+            /* if were already flying then now flying higher */
+            if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little higher in the air.");
+            else
+            {
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You start to fly in the air!.");
+                SET_MULTI_FLAG(op, FLAG_FLYING);
+                if (op->speed > 1)
+                    op->speed = 1;
+            }
+        }
+        else
+        {
+            success = 1;
+            /* if were already flying then now flying lower */
+            if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
+                new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little lower in the air.");
+            else
+            {
+                new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You fly down to the ground.");
+                check_walk_on(op, op, 0);
+            }
+        }
+    }
 
-	if (QUERY_FLAG(tmp, FLAG_LEVITATE))
+    if (QUERY_FLAG(tmp, FLAG_LEVITATE))
     {
         if (flag > 0)
         {
@@ -946,11 +946,11 @@ void fix_player(object *op)
     op->path_denied = op->arch->clone.path_denied;
     op->terrain_flag = op->arch->clone.terrain_flag;        /* reset terrain moving abilities */
 
-	pl->quest_one_drop = NULL;
-	pl->quests_done = NULL;
-	pl->quests_type_kill = NULL;
-	pl->quests_type_normal = NULL;
-	pl->quests_type_cont = NULL;
+    pl->quest_one_drop = NULL;
+    pl->quests_done = NULL;
+    pl->quests_type_kill = NULL;
+    pl->quests_type_normal = NULL;
+    pl->quests_type_cont = NULL;
 
     /* only adjust skills which has no own level/exp values */
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
@@ -982,10 +982,10 @@ void fix_player(object *op)
         CLEAR_FLAG(op, FLAG_STEALTH);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_BLIND))
         CLEAR_FLAG(op, FLAG_BLIND);
-	if (!QUERY_FLAG(&op->arch->clone, FLAG_FLYING))
-		CLEAR_MULTI_FLAG(op, FLAG_FLYING);
-	if (!QUERY_FLAG(&op->arch->clone, FLAG_LEVITATE))
-		CLEAR_MULTI_FLAG(op, FLAG_LEVITATE);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_FLYING))
+        CLEAR_MULTI_FLAG(op, FLAG_FLYING);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_LEVITATE))
+        CLEAR_MULTI_FLAG(op, FLAG_LEVITATE);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_CAN_REFL_SPELL))
         CLEAR_FLAG(op, FLAG_CAN_REFL_SPELL);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_CAN_REFL_MISSILE))
@@ -1027,58 +1027,58 @@ void fix_player(object *op)
      */
     for (tmp = op->inv; tmp != NULL; tmp = tmp_ptr)
     {
-		tmp_ptr = tmp->below;
+        tmp_ptr = tmp->below;
         /*
              * add here more types we can and must skip.
              */
         if (tmp->type == SCROLL
-			 || tmp->type == EXPERIENCE
-			 || tmp->type == POTION
-			 || tmp->type == CONTAINER
-			 || tmp->type == CLOSE_CON
-			 || tmp->type == TYPE_LIGHT_REFILL
-			 || tmp->type == WAND
-			 || tmp->type == ROD
-			 || tmp->type == HORN)
+             || tmp->type == EXPERIENCE
+             || tmp->type == POTION
+             || tmp->type == CONTAINER
+             || tmp->type == CLOSE_CON
+             || tmp->type == TYPE_LIGHT_REFILL
+             || tmp->type == WAND
+             || tmp->type == ROD
+             || tmp->type == HORN)
             continue;
 
-		if(tmp->type == TYPE_QUEST_CONTAINER)
-		{
-			/* one drop container */
-			if(tmp->sub_type1 == ST1_QUEST_ONE_DROP)
-			{
-				pl->quest_one_drop = tmp;
-				pl->quest_one_drop_count = tmp->count;
-			}
-			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_DONE)
-			{
-				pl->quests_done = tmp;
-				pl->quests_done_count = tmp->count;
-			}
-			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_NORMAL)
-			{
-				pl->quests_type_normal = tmp;
-				pl->quests_type_normal_count = tmp->count;
-			}
-			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_KILL)
-			{
-				pl->quests_type_kill = tmp;
-				pl->quests_type_kill_count = tmp->count;
-			}
-			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_CONT)
-			{
-				pl->quests_type_cont = tmp;
-				pl->quests_type_cont_count = tmp->count;
-			}
-			else /* this really should not happens... */
-			{
-				LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
-					tmp->sub_type1, query_name(op));
-				/* we *can* remove it - but lets keep it for further investigations for now */
-				/*remove_ob(tmp);*/
-			}
-			continue;
-		}
+        if(tmp->type == TYPE_QUEST_CONTAINER)
+        {
+            /* one drop container */
+            if(tmp->sub_type1 == ST1_QUEST_ONE_DROP)
+            {
+                pl->quest_one_drop = tmp;
+                pl->quest_one_drop_count = tmp->count;
+            }
+            else if(tmp->sub_type1 == ST1_QUESTS_TYPE_DONE)
+            {
+                pl->quests_done = tmp;
+                pl->quests_done_count = tmp->count;
+            }
+            else if(tmp->sub_type1 == ST1_QUESTS_TYPE_NORMAL)
+            {
+                pl->quests_type_normal = tmp;
+                pl->quests_type_normal_count = tmp->count;
+            }
+            else if(tmp->sub_type1 == ST1_QUESTS_TYPE_KILL)
+            {
+                pl->quests_type_kill = tmp;
+                pl->quests_type_kill_count = tmp->count;
+            }
+            else if(tmp->sub_type1 == ST1_QUESTS_TYPE_CONT)
+            {
+                pl->quests_type_cont = tmp;
+                pl->quests_type_cont_count = tmp->count;
+            }
+            else /* this really should not happens... */
+            {
+                LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
+                    tmp->sub_type1, query_name(op));
+                /* we *can* remove it - but lets keep it for further investigations for now */
+                /*remove_ob(tmp);*/
+            }
+            continue;
+        }
 
         /* this is needed, because our applied light can be overruled by a light giving
              * object like holy glowing aura force or something
@@ -1412,15 +1412,15 @@ void fix_player(object *op)
                 SET_FLAG(op, FLAG_SEE_IN_DARK);
 
             if (QUERY_FLAG(tmp, FLAG_SEE_INVISIBLE))
-                SET_FLAG(op, FLAG_SEE_INVISIBLE); 
+                SET_FLAG(op, FLAG_SEE_INVISIBLE);
             if (QUERY_FLAG(tmp, FLAG_MAKE_INVISIBLE))
                 SET_MULTI_FLAG(op, FLAG_IS_INVISIBLE);
             if (QUERY_FLAG(tmp, FLAG_CAN_PASS_THRU))
-                SET_MULTI_FLAG(op, FLAG_CAN_PASS_THRU); 
-			if (QUERY_FLAG(tmp, FLAG_MAKE_ETHEREAL))
-				SET_MULTI_FLAG(op, FLAG_IS_ETHEREAL);
-			if (QUERY_FLAG(tmp, FLAG_LEVITATE))
-				SET_MULTI_FLAG(op, FLAG_LEVITATE);
+                SET_MULTI_FLAG(op, FLAG_CAN_PASS_THRU);
+            if (QUERY_FLAG(tmp, FLAG_MAKE_ETHEREAL))
+                SET_MULTI_FLAG(op, FLAG_IS_ETHEREAL);
+            if (QUERY_FLAG(tmp, FLAG_LEVITATE))
+                SET_MULTI_FLAG(op, FLAG_LEVITATE);
 
             if (QUERY_FLAG(tmp, FLAG_FLYING))
             {
@@ -1604,14 +1604,14 @@ void fix_player(object *op)
         }
     }
 
-	/* lets have a smarter default speed. 
-	 * When we have added smooth scrolling, the whole
-	 * handling will change so or so. MT-06.2005
-	 */
-	if (op->speed < 0.15f)
-		op->speed = 0.15f; /* ouch */
-	else if (op->speed > 1.0f)
-		op->speed = 1.0f;
+    /* lets have a smarter default speed.
+     * When we have added smooth scrolling, the whole
+     * handling will change so or so. MT-06.2005
+     */
+    if (op->speed < 0.15f)
+        op->speed = 0.15f; /* ouch */
+    else if (op->speed > 1.0f)
+        op->speed = 1.0f;
     update_ob_speed(op);
 
     op->weapon_speed_add = op->weapon_speed;
@@ -1962,39 +1962,39 @@ void fix_monster(object *op)
 
     CLEAR_FLAG(op, FLAG_READY_BOW);
     CLEAR_FLAG(op, FLAG_READY_SPELL);
-	for (tmp = op->inv; tmp; tmp = tmp->below)
-	{
-		if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
-		{
-			bow = tmp;
-			SET_FLAG(op, FLAG_READY_BOW);
-			SET_FLAG(tmp, FLAG_APPLIED);
-		}
-		else if (tmp->type == ABILITY)
-			SET_FLAG(op, FLAG_READY_SPELL);
+    for (tmp = op->inv; tmp; tmp = tmp->below)
+    {
+        if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
+        {
+            bow = tmp;
+            SET_FLAG(op, FLAG_READY_BOW);
+            SET_FLAG(tmp, FLAG_APPLIED);
+        }
+        else if (tmp->type == ABILITY)
+            SET_FLAG(op, FLAG_READY_SPELL);
         else if(tmp->type == SPAWN_POINT_INFO)
             spawn_info = tmp;
     }
 
-	/* assign amun to our ability bow - and put them inside the inventory of it
-	 * one time a bit more work here but then fast access to amun for range firing
-	 * mobs.
-	 */
-	if(bow)
-	{
-		object *tmp2;
+    /* assign amun to our ability bow - and put them inside the inventory of it
+     * one time a bit more work here but then fast access to amun for range firing
+     * mobs.
+     */
+    if(bow)
+    {
+        object *tmp2;
 
-		for (tmp = op->inv; tmp; tmp = tmp2)
-		{
-			if(tmp->type == ARROW && tmp->race == bow->race)
-			{
-				remove_ob(tmp);
-				insert_ob_in_ob(tmp, bow);
-			}
-			tmp2=tmp->below;
-		}
+        for (tmp = op->inv; tmp; tmp = tmp2)
+        {
+            if(tmp->type == ARROW && tmp->race == bow->race)
+            {
+                remove_ob(tmp);
+                insert_ob_in_ob(tmp, bow);
+            }
+            tmp2=tmp->below;
+        }
 
-	}
+    }
 
     /* pre adjust */
     op->stats.maxhp = (base->stats.maxhp * (op->level + 3) + (op->level / 2) * base->stats.maxhp) / 10;

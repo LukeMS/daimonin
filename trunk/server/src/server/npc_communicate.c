@@ -368,7 +368,7 @@ int talk_to_npc(object *op, object *npc, char *txt)
     msglang    *msgs;
     int         i, j;
 
-    trigger_object_plugin_event(EVENT_SAY, 
+    trigger_object_plugin_event(EVENT_SAY,
             npc, op, NULL, txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
 
 /* Gecko 2005-05-15: I disabled this because it makes little sense. Talking to
@@ -381,7 +381,7 @@ int talk_to_npc(object *op, object *npc, char *txt)
     for (cobj = npc->inv; cobj != NULL; cobj = cobj->below)
     {
         if (cobj->event_flags & EVENT_FLAG_SAY)
-            trigger_object_plugin_event(EVENT_SAY, 
+            trigger_object_plugin_event(EVENT_SAY,
                     cobj, op, npc, txt, NULL, NULL, NULL, SCRIPT_FIX_ALL);
         cobj = cobj->below;
     }

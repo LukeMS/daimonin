@@ -35,7 +35,7 @@
 #ifdef LUA_DEBUG
 
 
-#define lua_pushintegral(L,i)	lua_pushnumber(L, cast(lua_Number, (i)))
+#define lua_pushintegral(L,i)    lua_pushnumber(L, cast(lua_Number, (i)))
 
 
 static lua_State *lua_state = NULL;
@@ -43,7 +43,7 @@ static lua_State *lua_state = NULL;
 int islocked = 0;
 
 
-#define func_at(L,k)	(L->ci->base+(k) - 1)
+#define func_at(L,k)    (L->ci->base+(k) - 1)
 
 
 static void setnameval (lua_State *L, const char *name, int val) {
@@ -59,24 +59,24 @@ static void setnameval (lua_State *L, const char *name, int val) {
 ** =======================================================================
 */
 
-#define MARK		0x55  /* 01010101 (a nice pattern) */
+#define MARK        0x55  /* 01010101 (a nice pattern) */
 
 #ifndef EXTERNMEMCHECK
 /* full memory check */
-#define HEADER	(sizeof(L_Umaxalign)) /* ensures maximum alignment for HEADER */
-#define MARKSIZE	16  /* size of marks after each block */
-#define blockhead(b)	(cast(char *, b) - HEADER)
-#define setsize(newblock, size)	(*cast(size_t *, newblock) = size)
+#define HEADER    (sizeof(L_Umaxalign)) /* ensures maximum alignment for HEADER */
+#define MARKSIZE    16  /* size of marks after each block */
+#define blockhead(b)    (cast(char *, b) - HEADER)
+#define setsize(newblock, size)    (*cast(size_t *, newblock) = size)
 #define checkblocksize(b, size) (size == (*cast(size_t *, blockhead(b))))
-#define fillmem(mem,size)	memset(mem, -MARK, size)
+#define fillmem(mem,size)    memset(mem, -MARK, size)
 #else
 /* external memory check: don't do it twice */
-#define HEADER		0
-#define MARKSIZE	0
-#define blockhead(b)	(b)
-#define setsize(newblock, size)	/* empty */
-#define checkblocksize(b,size)	(1)
-#define fillmem(mem,size)	/* empty */
+#define HEADER        0
+#define MARKSIZE    0
+#define blockhead(b)    (b)
+#define setsize(newblock, size)    /* empty */
+#define checkblocksize(b,size)    (1)
+#define fillmem(mem,size)    /* empty */
 #endif
 
 unsigned long memdebug_numblocks = 0;
@@ -574,10 +574,10 @@ static const char *getname_aux (char *buff, const char **pc) {
 }
 
 
-#define EQ(s1)	(strcmp(s1, inst) == 0)
+#define EQ(s1)    (strcmp(s1, inst) == 0)
 
-#define getnum	(getnum_aux(L, &pc))
-#define getname	(getname_aux(buff, &pc))
+#define getnum    (getnum_aux(L, &pc))
+#define getname    (getname_aux(buff, &pc))
 
 
 static int testC (lua_State *L) {
