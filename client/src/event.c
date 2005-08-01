@@ -316,7 +316,7 @@ int Event_PollInputDevice(void)
         x = event.motion.x;
         y = event.motion.y;
 
-		mb_clicked = 0;
+        mb_clicked = 0;
         switch (event.type)
         {
             case SDL_MOUSEBUTTONUP:
@@ -487,17 +487,17 @@ int Event_PollInputDevice(void)
               if (GameStatus < GAME_STATUS_PLAY)
                   break;
 
-			  if (cpl.menustatus == MENU_NPC)
-			  {
-				if (event.button.button ==4 || event.button.button ==5 || event.button.button == SDL_BUTTON_LEFT)
-				{
-					gui_interface_mouse(&event);
-						break;
-				}
+              if (cpl.menustatus == MENU_NPC)
+              {
+                if (event.button.button ==4 || event.button.button ==5 || event.button.button == SDL_BUTTON_LEFT)
+                {
+                    gui_interface_mouse(&event);
+                        break;
+                }
 
-			  }
+              }
 
-			  textwin_event(TW_CHECK_BUT_DOWN, &event);
+              textwin_event(TW_CHECK_BUT_DOWN, &event);
 
               /* close number input */
               if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
@@ -1992,8 +1992,8 @@ static void move_keys(int num)
     char    buf[256];
     char    msg[256];
 
-	if(cpl.menustatus != MENU_NO)
-		reset_menu_status();
+    if(cpl.menustatus != MENU_NO)
+        reset_menu_status();
 
     /* move will overruled from fire */
     /* because real toggle mode don't work, this works a bit different */
@@ -2274,137 +2274,137 @@ void check_menu_keys(int menu, int key)
 
     switch (menu)
     {
-		case MENU_BOOK:
-			if(!gui_interface_book || gui_interface_book->pages == 0)
-				return;
-			switch (key)
-			{
-				case SDLK_LEFT:
-					gui_interface_book->page_show-=2;
-					if(gui_interface_book->page_show<0)
-					{
-						gui_interface_book->page_show=0;
-						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-					}
-					else
-					{
-						sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
-					}
-				break;
-				case SDLK_RIGHT:
-					gui_interface_book->page_show+=2;
-					if(gui_interface_book->page_show>(gui_interface_book->pages-1))
-					{
-						gui_interface_book->page_show=(gui_interface_book->pages-1)&~1;
-						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-					}
-					else
-					{
-						sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
-					}
-					break;
-			}
-			break;
+        case MENU_BOOK:
+            if(!gui_interface_book || gui_interface_book->pages == 0)
+                return;
+            switch (key)
+            {
+                case SDLK_LEFT:
+                    gui_interface_book->page_show-=2;
+                    if(gui_interface_book->page_show<0)
+                    {
+                        gui_interface_book->page_show=0;
+                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    }
+                    else
+                    {
+                        sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
+                    }
+                break;
+                case SDLK_RIGHT:
+                    gui_interface_book->page_show+=2;
+                    if(gui_interface_book->page_show>(gui_interface_book->pages-1))
+                    {
+                        gui_interface_book->page_show=(gui_interface_book->pages-1)&~1;
+                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                    }
+                    else
+                    {
+                        sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
+                    }
+                    break;
+            }
+            break;
 
-		case MENU_NPC:
+        case MENU_NPC:
 
-			if(gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
-				return;
+            if(gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
+                return;
 
-			switch (key)
-			{
-			case SDLK_RETURN:
+            switch (key)
+            {
+            case SDLK_RETURN:
                 reset_keys();
                 open_input_mode(240);
                 textwin_putstring("");
                 cpl.input_mode = INPUT_MODE_NPCDIALOG;
-				gui_interface_npc->input_flag = TRUE;
+                gui_interface_npc->input_flag = TRUE;
                 sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
                 break;
 
-			case SDLK_d:
-				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-				if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.command[0]!='\0')
-					gui_interface_send_command(1, gui_interface_npc->decline.command);
-				else
-					reset_gui_interface();
-				break;
+            case SDLK_d:
+                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+                if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.command[0]!='\0')
+                    gui_interface_send_command(1, gui_interface_npc->decline.command);
+                else
+                    reset_gui_interface();
+                break;
 
-			case SDLK_n:
-				if(gui_interface_npc->accept.title[0]!='N')
-					return;
-				/*draw_info("You listen...", COLOR_WHITE);*/
-				gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
-				goto menu_npc_jump1;
-			case SDLK_a:
-				if(gui_interface_npc->accept.title[0]!='A')
-					return;
-				draw_info("You accept.", COLOR_WHITE);
-				gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
-				goto menu_npc_jump1;
-			case SDLK_o:
-				if(gui_interface_npc->accept.title[0]!=0 && gui_interface_npc->accept.title[0]!='O')
-					return;
-				draw_info("Ok and bye.", COLOR_WHITE);
-				menu_npc_jump1:
-				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-				if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.command[0]!='\0')
-				{
-					char cmd[1024];
+            case SDLK_n:
+                if(gui_interface_npc->accept.title[0]!='N')
+                    return;
+                /*draw_info("You listen...", COLOR_WHITE);*/
+                gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
+                goto menu_npc_jump1;
+            case SDLK_a:
+                if(gui_interface_npc->accept.title[0]!='A')
+                    return;
+                draw_info("You accept.", COLOR_WHITE);
+                gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
+                goto menu_npc_jump1;
+            case SDLK_o:
+                if(gui_interface_npc->accept.title[0]!=0 && gui_interface_npc->accept.title[0]!='O')
+                    return;
+                draw_info("Ok and bye.", COLOR_WHITE);
+                menu_npc_jump1:
+                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+                if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.command[0]!='\0')
+                {
+                    char cmd[1024];
 
-					if(gui_interface_npc->icon_select)
-						sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
-					else
-						strcpy(cmd, gui_interface_npc->accept.command);
-					gui_interface_send_command(1, cmd);
-				}
-				else
-					reset_gui_interface();
-			break;
-			case SDLK_PAGEUP:
-				gui_interface_npc->yoff +=12;
-				if(gui_interface_npc->yoff >0)
-				{
-					gui_interface_npc->yoff=0;
-					if(menuRepeatKey != SDLK_PAGEUP)
-						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-				}
+                    if(gui_interface_npc->icon_select)
+                        sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
+                    else
+                        strcpy(cmd, gui_interface_npc->accept.command);
+                    gui_interface_send_command(1, cmd);
+                }
+                else
+                    reset_gui_interface();
+            break;
+            case SDLK_PAGEUP:
+                gui_interface_npc->yoff +=12;
+                if(gui_interface_npc->yoff >0)
+                {
+                    gui_interface_npc->yoff=0;
+                    if(menuRepeatKey != SDLK_PAGEUP)
+                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                }
                 menuRepeatKey = SDLK_PAGEUP;
-				if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-				{
-					gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-				}
-				if(gui_interface_npc->yoff >0)
-				{
-					gui_interface_npc->yoff=0;
-				}
-				break;
-			case SDLK_PAGEDOWN:
-				gui_interface_npc->yoff -= 12;
+                if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+                {
+                    gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+                }
+                if(gui_interface_npc->yoff >0)
+                {
+                    gui_interface_npc->yoff=0;
+                }
+                break;
+            case SDLK_PAGEDOWN:
+                gui_interface_npc->yoff -= 12;
 
-				if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-				{
-					gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-					if(menuRepeatKey != SDLK_PAGEDOWN)
-						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
-				}
-				menuRepeatKey = SDLK_PAGEDOWN;
-				if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-				{
-					gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-				}
-				if(gui_interface_npc->yoff >0)
-				{
-					gui_interface_npc->yoff=0;
-				}
-				break;
-			}
+                if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+                {
+                    gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+                    if(menuRepeatKey != SDLK_PAGEDOWN)
+                        sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+                }
+                menuRepeatKey = SDLK_PAGEDOWN;
+                if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+                {
+                    gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+                }
+                if(gui_interface_npc->yoff >0)
+                {
+                    gui_interface_npc->yoff=0;
+                }
+                break;
+            }
 
-		break;
-		case MENU_OPTION:
+        break;
+        case MENU_OPTION:
           switch (key)
           {
-		  case SDLK_LEFT:
+          case SDLK_LEFT:
                 option_list_set.key_change = -1;
                 /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
                 menuRepeatKey = SDLK_LEFT;

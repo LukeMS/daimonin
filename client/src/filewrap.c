@@ -67,9 +67,9 @@ static char *file_path(const char *fname, const char *mode)
 
     sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
 
-    if(strchr(mode, 'w')) 
+    if(strchr(mode, 'w'))
     { // overwrite (always use file in home dir)
-        if(stmp=strrchr(tmp, '/')) 
+        if(stmp=strrchr(tmp, '/'))
         {
             ctmp = stmp[0];
             stmp[0] = 0;
@@ -77,15 +77,15 @@ static char *file_path(const char *fname, const char *mode)
             stmp[0] = ctmp;
         }
     }
-    else if(strchr(mode, '+') || strchr(mode, 'a')) 
+    else if(strchr(mode, '+') || strchr(mode, 'a'))
     { // modify (copy base file to home dir if not exists)
-        if(access(tmp, W_OK)) 
+        if(access(tmp, W_OK))
         {
             char otmp[256];
             char shtmp[517];
 
             sprintf(otmp, "%s%s", SYSPATH, fname);
-            if(stmp=strrchr(tmp, '/')) 
+            if(stmp=strrchr(tmp, '/'))
             {
                 ctmp = stmp[0];
                 stmp[0] = 0;
@@ -99,9 +99,9 @@ static char *file_path(const char *fname, const char *mode)
 
         }
     }
-    else 
+    else
     { // just read (check home dir first, then system dir)
-        if(access(tmp, R_OK)) 
+        if(access(tmp, R_OK))
             sprintf(tmp, "%s%s", SYSPATH, fname);
     }
 
@@ -111,7 +111,7 @@ static char *file_path(const char *fname, const char *mode)
 }
 #endif
 
-FILE *fopen_wrapper(const char *fname, const char *mode) 
+FILE *fopen_wrapper(const char *fname, const char *mode)
 {
     return fopen(file_path(fname, mode), mode);
 }

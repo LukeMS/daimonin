@@ -47,27 +47,27 @@ class ParticleManager
 {
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     SceneManager *mSceneMgr;
     SceneNode    *mNode;
     unsigned int mNodeCounter, mBoneCounter;
-    
+
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     ParticleManager(const ParticleManager&); // disable copy-constructor.
-	    
+
   public:
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
      ParticleManager() {;}
-	~ParticleManager() {;}
+    ~ParticleManager() {;}
     static ParticleManager &getSingleton() { static ParticleManager Singleton; return Singleton; }
-	bool init(SceneManager *SceneMgr, SceneNode *Node);
+    bool init(SceneManager *SceneMgr, SceneNode *Node);
     void addBoneObject(unsigned int npc, unsigned int spell);
-    void delBoneObject(int nr);    
+    void delBoneObject(int nr);
     void addNodeObject(const SceneNode *node, const char* particleFX);
     void delNodeObject(int nr);
     void delObject(int number);

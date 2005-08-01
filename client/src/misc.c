@@ -161,25 +161,25 @@ int read_substr_char(char *srcstr, char *desstr, int *sz, char ct)
  */
 char *get_parameter_string(char *data, int *pos)
 {
-	char *start_ptr, *end_ptr;
-	static char buf[4024];
+    char *start_ptr, *end_ptr;
+    static char buf[4024];
 
-	/* we assume a " after the =... don't be to shy, we search for a '"' */
-	start_ptr = strchr(data+*pos,'"');
-	if(!start_ptr)
-		return NULL; /* error */
+    /* we assume a " after the =... don't be to shy, we search for a '"' */
+    start_ptr = strchr(data+*pos,'"');
+    if(!start_ptr)
+        return NULL; /* error */
 
-	end_ptr = strchr(++start_ptr,'"');
-	if(!end_ptr)
-		return NULL; /* error */
+    end_ptr = strchr(++start_ptr,'"');
+    if(!end_ptr)
+        return NULL; /* error */
 
-	strncpy(buf, start_ptr, end_ptr-start_ptr);
-	buf[end_ptr-start_ptr]=0;
+    strncpy(buf, start_ptr, end_ptr-start_ptr);
+    buf[end_ptr-start_ptr]=0;
 
-	/* ahh... ptr arithmetic... eat that, high level language fans ;) */
-	*pos += ++end_ptr-(data+*pos);
+    /* ahh... ptr arithmetic... eat that, high level language fans ;) */
+    *pos += ++end_ptr-(data+*pos);
 
-	return buf;
+    return buf;
 }
 
 

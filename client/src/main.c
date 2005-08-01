@@ -41,7 +41,7 @@ int                 music_global_fade   = FALSE;
 int                 show_help_screen;
 int                 mb_clicked          = 0;
 
-int					interface_mode;
+int                    interface_mode;
 
 int                 debug_layer[MAXFACES];
 int                 bmaptype_table_size;
@@ -71,7 +71,7 @@ uint32              tmpGameTick;            /* used from several functions, just
 int                 esc_menu_flag;
 int                 esc_menu_index;
 
-struct gui_book_struct	*gui_interface_book;
+struct gui_book_struct    *gui_interface_book;
 struct gui_interface_struct *gui_interface_npc;
 
 _bmaptype          *bmap_table[BMAPTABLE];
@@ -179,13 +179,13 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
     {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
     {"group_hp.png", PIC_TYPE_DEFAULT},
-	{"npc_interface.png", PIC_TYPE_TRANS},
-	{"coin_copper.png", PIC_TYPE_TRANS},
-	{"coin_silver.png", PIC_TYPE_TRANS},
-	{"coin_gold.png", PIC_TYPE_TRANS},
-	{"coin_mithril.png", PIC_TYPE_TRANS},
-	{"npc_int_slider.png", PIC_TYPE_DEFAULT},
-	{"journal.png", PIC_TYPE_TRANS}
+    {"npc_interface.png", PIC_TYPE_TRANS},
+    {"coin_copper.png", PIC_TYPE_TRANS},
+    {"coin_silver.png", PIC_TYPE_TRANS},
+    {"coin_gold.png", PIC_TYPE_TRANS},
+    {"coin_mithril.png", PIC_TYPE_TRANS},
+    {"npc_int_slider.png", PIC_TYPE_DEFAULT},
+    {"journal.png", PIC_TYPE_TRANS}
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -284,7 +284,7 @@ void init_game_data(void)
     start_anim = NULL; /* anim queue of current active map */
 
     clear_group();
-	interface_mode = INTERFACE_MODE_NO;
+    interface_mode = INTERFACE_MODE_NO;
     map_transfer_flag = 0;
     start_server = NULL;
     ServerName[0] = 0;
@@ -303,8 +303,8 @@ void init_game_data(void)
     InputStringEscFlag = FALSE;
     csocket.fd = SOCKET_NO;
     RangeFireMode = 0;
-	gui_interface_npc = NULL;
-	gui_interface_book = NULL;
+    gui_interface_npc = NULL;
+    gui_interface_book = NULL;
 
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
@@ -313,7 +313,7 @@ void init_game_data(void)
     textwin_clearhistory();
     delete_player_lists();
     load_options_dat(); /* now load options, allowing the user to override the presetings */
-	server_level.exp[1]=2500; /* dummy value for startup */
+    server_level.exp[1]=2500; /* dummy value for startup */
 }
 
 /******************************************************************
@@ -456,7 +456,7 @@ Boolean game_status_chain(void)
     /* autoinit or reset prg data */
     if (GameStatus == GAME_STATUS_INIT)
     {
-		interface_mode = INTERFACE_MODE_NO;
+        interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         delete_player_lists();
@@ -471,7 +471,7 @@ Boolean game_status_chain(void)
     /* connect to meta and get server data */
     else if (GameStatus == GAME_STATUS_META)
     {
-		interface_mode = INTERFACE_MODE_NO;
+        interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         if (argServerName[0] != 0)
@@ -506,7 +506,7 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_START)
     {
-		interface_mode = INTERFACE_MODE_NO;
+        interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         if (csocket.fd != SOCKET_NO)
@@ -1009,7 +1009,7 @@ void list_vid_modes(void)
 
     vinfo = SDL_GetVideoInfo();
     if(!vinfo)
-    	return;
+        return;
     LOG(LOG_MSG, "VideoInfo: hardware surfaces? %s\n", vinfo->hw_available ? "yes" : "no");
     LOG(LOG_MSG, "VideoInfo: windows manager? %s\n", vinfo->wm_available ? "yes" : "no");
     LOG(LOG_MSG, "VideoInfo: hw to hw blit? %s\n", vinfo->blit_hw ? "yes" : "no");
@@ -1439,7 +1439,7 @@ int main(int argc, char *argv[])
                 else if (cpl.input_mode == INPUT_MODE_GETKEY)
                     do_keybind_input();
                 else if (cpl.input_mode == INPUT_MODE_NPCDIALOG)
-					do_npcdialog_input();
+                    do_npcdialog_input();
             }
             else
             {

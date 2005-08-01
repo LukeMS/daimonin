@@ -44,40 +44,40 @@ class CEvent: public FrameListener, public KeyListener, public MouseMotionListen
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     SceneNode *World;
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
-	// Constructor takes a RenderWindow because it uses that to determine input context
+    // Constructor takes a RenderWindow because it uses that to determine input context
      CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListener,
           MouseListener *mMListener, bool useBufferedInputKeys = false, bool useBufferedInputMouse = true);
     ~CEvent() ;
-    
+
     const Vector3 &getWorldPos()  {  return World->getPosition(); }
-	void setWorldPos(Vector3 &pos);
-	void setLightMember(Light *light, int nr) { mLight[nr] = light;}
-	void setResolutionMember(int SreenWidth, int SreenHeight)
-	{ 
-	    mSreenHeight = SreenHeight;
-		mSreenWidth  = SreenWidth;
-	}
+    void setWorldPos(Vector3 &pos);
+    void setLightMember(Light *light, int nr) { mLight[nr] = light;}
+    void setResolutionMember(int SreenWidth, int SreenHeight)
+    {
+        mSreenHeight = SreenHeight;
+        mSreenWidth  = SreenWidth;
+    }
 
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     bool mQuitGame;
-	int mSceneDetailIndex;
-	Real mIdleTime;
+    int mSceneDetailIndex;
+    Real mIdleTime;
     Overlay *mDebugOverlay;
-	Overlay *mMouseCursor; 
+    Overlay *mMouseCursor;
     EventProcessor* mEventProcessor;
     InputReader* mInputDevice;
     MouseMotionListener *mMouseMotionListener;
-	MouseListener *mMouseListener;
+    MouseListener *mMouseListener;
     Vector3 mTranslateVector;
     RenderWindow* mWindow;
     Camera* mCamera;
@@ -92,22 +92,22 @@ class CEvent: public FrameListener, public KeyListener, public MouseMotionListen
     Real mCameraZoom;
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     bool frameStarted(const FrameEvent& evt);
     bool frameEnded  (const FrameEvent& evt);
     void drawTile(int gfx_nr, int offX, int offY);
-	void keyClicked (KeyEvent *e);
-	void keyPressed (KeyEvent *e);
-	void keyReleased(KeyEvent *e);
-	void keyEventDialog(KeyEvent *e);
+    void keyClicked (KeyEvent *e);
+    void keyPressed (KeyEvent *e);
+    void keyReleased(KeyEvent *e);
+    void keyEventDialog(KeyEvent *e);
     void mouseMoved   (MouseEvent *e);
     void mouseDragged (MouseEvent *e);
     void mouseClicked (MouseEvent *e);
     void mouseEntered (MouseEvent *e);
     void mouseExited  (MouseEvent *e);
-	void mousePressed (MouseEvent *e);
-	void mouseReleased(MouseEvent *e);
+    void mousePressed (MouseEvent *e);
+    void mouseReleased(MouseEvent *e);
 };
 extern  CEvent *Event;
 

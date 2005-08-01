@@ -39,33 +39,33 @@ class DaimoninClient
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     SceneNode *MouseCursor;
     SceneNode *World;
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
-	 DaimoninClient() {;}
-	~DaimoninClient() {;}
+     DaimoninClient() {;}
+    ~DaimoninClient() {;}
     void go(void);
 
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
-	Viewport            *mVP;
+    Viewport            *mVP;
     Root                *mRoot;
     Camera              *mCamera;
     MouseMotionListener *mMouseMotionListener;
-	MouseListener       *mMouseListener;
+    MouseListener       *mMouseListener;
     SceneManager        *mSceneMgr;
-	InputReader         *mInputReader;
+    InputReader         *mInputReader;
     RenderWindow        *mWindow;
 
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     // These internal methods package up the stages in the startup process
     // Sets up the application - returns false if the user chooses to abandon configuration.
@@ -74,6 +74,6 @@ class DaimoninClient
     void setupResources(void);
     void createScene(void);
     void destroyScene(void);
-}; 
+};
 
 #endif

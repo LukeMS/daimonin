@@ -57,7 +57,7 @@ extern _server_char     new_character; /* if we login as new char, thats the val
 #define MAXHASHSTRING 20 /* for hash table (bmap, ...) */
 
 #define INTERFACE_MODE_NO 0
-#define INTERFACE_MODE_NPC	1
+#define INTERFACE_MODE_NPC    1
 
 #define BMAPTABLE 5003 /* prime nubmer for hash table */
 /* struct for out bmap data */
@@ -578,7 +578,7 @@ typedef enum _bitmap_index
     BITMAP_GROUP_MANA,
     BITMAP_GROUP_GRACE,
     BITMAP_GROUP_HP,
-	BITMAP_NPC_INTERFACE,
+    BITMAP_NPC_INTERFACE,
     BITMAP_COIN_COPPER,
     BITMAP_COIN_SILVER,
     BITMAP_COIN_GOLD,
@@ -603,11 +603,11 @@ extern int                  RangeFireMode;
 
 extern int                  ToggleScreenFlag;
 
-extern int					interface_mode;
+extern int                    interface_mode;
 
 extern struct _Sprite      *Bitmaps[];
 
-extern struct gui_book_struct	*gui_interface_book;
+extern struct gui_book_struct    *gui_interface_book;
 extern struct gui_interface_struct *gui_interface_npc;
 
 extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */

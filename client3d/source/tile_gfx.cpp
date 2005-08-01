@@ -54,7 +54,7 @@ unsigned long TileGfx::hashbmap(char *str, int tablesize)
 {
     unsigned long hash = 0;
     int     i = 0;
-	unsigned int rot = 0;
+    unsigned int rot = 0;
     char   *p;
 
     for (p = str; i < MAXHASHSTRING && *p; p++, i++)
@@ -84,7 +84,7 @@ _bmaptype * TileGfx::find_bmap(char *name)
         at = bmap_table[index];
         if (at == NULL) { return NULL; } // not in our bmap list
         if (!strcmp(at->name, name)) { return at; }
-        if (++index >= BMAPTABLE)	 { index = 0; }
+        if (++index >= BMAPTABLE)     { index = 0; }
     }
 }
 
@@ -133,7 +133,7 @@ bool TileGfx::load_bmaps_p0()
     {
         LogFile::getSingleton().Error("FATAL: Error loading bmaps.p0!");
         unlink(FILE_BMAPS_P0);
-		return -1;
+        return -1;
     }
     while (fgets(buf, HUGE_BUF - 1, fbmap) != NULL)
     {
@@ -150,7 +150,7 @@ bool TileGfx::load_bmaps_p0()
         // LogFile::getSingleton().Info("%d %d %d %x >%s<\n", num, pos, len, crc, name);
     }
     fclose(fbmap);
-	return 0;
+    return 0;
 }
 
 //=================================================================================================
@@ -169,7 +169,7 @@ bool TileGfx::read_bmaps_p0()
     {
         LogFile::getSingleton().Error("FATAL: Can't find daimonin.p0 file!");
         unlink(FILE_BMAPS_P0);
-		return false;
+        return false;
     }
     // get time stamp of the file daimonin.p0
     fstat(fileno(fpic), &pic_stat);
@@ -193,7 +193,7 @@ bool TileGfx::read_bmaps_p0()
         LogFile::getSingleton().Error("FATAL: Can't create bmaps.p0 file!");
         fclose(fbmap);
         unlink(FILE_BMAPS_P0);
-		return false;
+        return false;
     }
     temp_buf = new char[bufsize = 24 * 1024];
 
@@ -205,7 +205,7 @@ bool TileGfx::read_bmaps_p0()
             fclose(fbmap);
             fclose(fpic);
             unlink(FILE_BMAPS_P0);
-			return false;
+            return false;
         }
 
         num = atoi(buf + 6);
@@ -225,7 +225,7 @@ bool TileGfx::read_bmaps_p0()
                 fclose(fbmap);
                 fclose(fpic);
                 unlink(FILE_BMAPS_P0);
-				return false;
+                return false;
             }
             bufsize = len;
             temp_buf = new char[bufsize];
@@ -243,11 +243,11 @@ bool TileGfx::read_bmaps_p0()
     fclose(fbmap);
     fclose(fpic);
     return load_bmaps_p0();
-} 
+}
 
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 void TileGfx::delete_bmap_tmp(void)
 {
@@ -259,10 +259,10 @@ void TileGfx::delete_bmap_tmp(void)
         if (bmaptype_table[i].name) { delete[] bmaptype_table[i].name; }
         bmaptype_table[i].name = NULL;
     }
-} 
+}
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 bool TileGfx::load_bmap_tmp(void)
 {
@@ -277,7 +277,7 @@ bool TileGfx::load_bmap_tmp(void)
         LogFile::getSingleton().Error("bmaptype_table(): error open file <bmap.tmp>");
 //        SYSTEM_End();
 //        exit(0);
-		return false;
+        return false;
     }
     while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
     {
@@ -294,10 +294,10 @@ bool TileGfx::load_bmap_tmp(void)
     return true;
 }
 
- 
+
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 bool TileGfx::read_bmap_tmp(void)
 {
@@ -358,12 +358,12 @@ bool TileGfx::read_bmap_tmp(void)
                 at = find_bmap(name);
 
                 // now we can check, our local file package has the right png.
-				// if not, we mark this pictures as "in cache". 
-				// We don't check it here now - that will happens at runtime.
+                // if not, we mark this pictures as "in cache".
+                // We don't check it here now - that will happens at runtime.
                 // That can change when we include later a forbidden
                 // flag in the server (no face send) - then we need
                 // to break and upddate the picture and/or check the cache.
-				//
+                //
                 // position -1 mark "not i the daimonin.p0 file
                 if (!at || at->len != len || at->crc != crc) // is different or not there!
                     sprintf(buf, "-1 %d %x %s\n", len, crc, name);
@@ -376,28 +376,28 @@ bool TileGfx::read_bmap_tmp(void)
         fclose(stream);
     }
     return load_bmap_tmp(); // all fine
-} 
+}
 
 //=================================================================================================
 // we have stored this picture in daimonin.p0 - load it from there.
 //=================================================================================================
 int TileGfx::load_picture_from_pack(int num)
 {
-	std::ifstream fp;
+    std::ifstream fp;
     fp.open(FILE_DAIMONIN_P0, ios::in|ios::binary);
     if(!fp) { return false; }
-	// Wrap as a stream
-	DataStreamPtr stream(new FileStreamDataStream(FILE_DAIMONIN_P0, &fp, false));
-	stream->seek(bmaptype_table[num].pos);
-//	LogFile::getSingleton().Info("pos: %d\n", bmaptype_table[0].pos);
-//	stream->seek(24);
-	FaceList[num].sprite.load(stream,"png");
+    // Wrap as a stream
+    DataStreamPtr stream(new FileStreamDataStream(FILE_DAIMONIN_P0, &fp, false));
+    stream->seek(bmaptype_table[num].pos);
+//    LogFile::getSingleton().Info("pos: %d\n", bmaptype_table[0].pos);
+//    stream->seek(24);
+    FaceList[num].sprite.load(stream,"png");
     stream.setNull();
     return 0;
-} 
+}
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
 void TileGfx::face_flag_extension(int pnum, char *buf)
 {

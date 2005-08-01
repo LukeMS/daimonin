@@ -40,7 +40,7 @@ enum { SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM };
 struct _Spell
 {
     SceneNode *node;
-    ParticleSystem* particleSys;    
+    ParticleSystem* particleSys;
 };
 
 ////////////////////////////////////////////////////////////
@@ -50,27 +50,27 @@ class SpellManager
 {
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
     SceneManager *mSceneMgr;
     SceneNode  *mNode;
     std::string mDescFile;
     std::vector<SpellRange*>mvObject_range;
-   
-    
+
+
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
     SpellManager(const SpellManager&); // disable copy-constructor.
-	    
+
   public:
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
      SpellManager() {;}
-	~SpellManager();
+    ~SpellManager();
     static SpellManager &getSingleton() { static SpellManager Singleton; return Singleton; }
-	bool init(SceneManager *SceneMgr, SceneNode  *Node);
+    bool init(SceneManager *SceneMgr, SceneNode  *Node);
     bool addObject( unsigned int npc, unsigned int spell);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);

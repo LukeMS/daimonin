@@ -34,7 +34,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 ParticleFX::ParticleFX(SceneNode *parent, const std::string &name, const std::string &particleFX)
 {
     mName      = name;
-    mPfxName   = particleFX;  
+    mPfxName   = particleFX;
     mParent    = parent;
     mParticleFX= ParticleSystemManager::getSingleton().createSystem(mName, mPfxName);
 }

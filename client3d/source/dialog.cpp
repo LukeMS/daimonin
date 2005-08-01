@@ -32,37 +32,37 @@ http://www.gnu.org/copyleft/lesser.txt.
 bool Dialog::Init()
 {
     LogFile::getSingleton().Headline("Init Dialog-System");
-	mLoginOverlay       = OverlayManager::getSingleton().getByName("DialogOverlay");
-	mPanelPlayerName    = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
-	mPlayerName         = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");
-	mPanelPlayerPasswd  = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password");
-	mPlayerPasswd       = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text");
-	mPlayerRePasswd     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text");
-	mPanelPlayerRePasswd= OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword");
-	mElementSelectionBar= OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/select");
-	mDialogSelPanel= static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
-	mDialogInfoPanel=static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Info/Panel"));
-	// Selection textareas.
-	std::string name= "Dialog/Text/";
-	for (unsigned int i=0; i < DIALOG_TXT_LINES; i++)
-	{
-		mElementLine[i]= OverlayManager::getSingleton().
-			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(i));
-		mElementLine[i]->setTop(i*12+1);
-		mDialogSelPanel->addChild(mElementLine[i]);
-	}
-	// Info textareas.
-	name= "Dialog/Info/";
-	for (unsigned int j=0; j < DIALOG_INFO_LINES; j++)
-	{
-		mElementInfo[j]= OverlayManager::getSingleton().
-			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(j));
-		mElementInfo[j]->setTop(j*12+1);
-		mElementInfo[j]->setCaption(name+"Line_"+ StringConverter::toString(j));
-		mDialogInfoPanel->addChild(mElementInfo[j]);
-	}
-	setVisible(false);
-	return true;
+    mLoginOverlay       = OverlayManager::getSingleton().getByName("DialogOverlay");
+    mPanelPlayerName    = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
+    mPlayerName         = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");
+    mPanelPlayerPasswd  = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password");
+    mPlayerPasswd       = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text");
+    mPlayerRePasswd     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text");
+    mPanelPlayerRePasswd= OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword");
+    mElementSelectionBar= OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/select");
+    mDialogSelPanel= static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
+    mDialogInfoPanel=static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Info/Panel"));
+    // Selection textareas.
+    std::string name= "Dialog/Text/";
+    for (unsigned int i=0; i < DIALOG_TXT_LINES; i++)
+    {
+        mElementLine[i]= OverlayManager::getSingleton().
+            cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(i));
+        mElementLine[i]->setTop(i*12+1);
+        mDialogSelPanel->addChild(mElementLine[i]);
+    }
+    // Info textareas.
+    name= "Dialog/Info/";
+    for (unsigned int j=0; j < DIALOG_INFO_LINES; j++)
+    {
+        mElementInfo[j]= OverlayManager::getSingleton().
+            cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(j));
+        mElementInfo[j]->setTop(j*12+1);
+        mElementInfo[j]->setCaption(name+"Line_"+ StringConverter::toString(j));
+        mDialogInfoPanel->addChild(mElementInfo[j]);
+    }
+    setVisible(false);
+    return true;
 }
 
 //=================================================================================================
@@ -71,17 +71,17 @@ bool Dialog::Init()
 void Dialog::setVisible(bool vis)
 {
     if (vis == mVisible) { return; }
-	if (vis == true)
-	{
-		mPanelPlayerName	->hide();
-		mPanelPlayerPasswd	->hide();
-		mPanelPlayerRePasswd->hide();
-		mLoginOverlay->show();
-	}
+    if (vis == true)
+    {
+        mPanelPlayerName    ->hide();
+        mPanelPlayerPasswd    ->hide();
+        mPanelPlayerRePasswd->hide();
+        mLoginOverlay->show();
+    }
     else
-	{
-		mLoginOverlay->hide();
-	}
+    {
+        mLoginOverlay->hide();
+    }
     mVisible = vis;
 }
 
@@ -90,15 +90,15 @@ void Dialog::setVisible(bool vis)
 //=================================================================================================
 void Dialog::setWarning(int warning)
 {
-	switch(warning)
-	{
-		case DIALOG_WARNING_NONE:
-			break;
-		case DIALOG_WARNING_LOGIN_WRONG_NAME:
-			break;
-		default:
-			return;
-	}
+    switch(warning)
+    {
+        case DIALOG_WARNING_NONE:
+            break;
+        case DIALOG_WARNING_LOGIN_WRONG_NAME:
+            break;
+        default:
+            return;
+    }
 }
 
 //=================================================================================================
@@ -106,9 +106,9 @@ void Dialog::setWarning(int warning)
 //=================================================================================================
 void Dialog::setSelText(unsigned int pos, const char *text, ColourValue color)
 {
-	if (pos > DIALOG_TXT_LINES) { pos = DIALOG_TXT_LINES; }
-	mElementLine[pos]->setCaption(text);
-	mElementLine[pos]->setColour(color);
+    if (pos > DIALOG_TXT_LINES) { pos = DIALOG_TXT_LINES; }
+    mElementLine[pos]->setCaption(text);
+    mElementLine[pos]->setColour(color);
 }
 
 //=================================================================================================
@@ -116,9 +116,9 @@ void Dialog::setSelText(unsigned int pos, const char *text, ColourValue color)
 //=================================================================================================
 void Dialog::setInfoText(unsigned int pos, const char *text, ColourValue color)
 {
-	if (pos > DIALOG_INFO_LINES) { pos = DIALOG_INFO_LINES; }
-	mElementInfo[pos]->setCaption(text);
-	mElementInfo[pos]->setColour(color);
+    if (pos > DIALOG_INFO_LINES) { pos = DIALOG_INFO_LINES; }
+    mElementInfo[pos]->setCaption(text);
+    mElementInfo[pos]->setColour(color);
 }
 
 //=================================================================================================
@@ -131,7 +131,7 @@ void Dialog::setInfoText(unsigned int pos, const char *text, ColourValue color)
 //=================================================================================================
 void Dialog::clearInfoText()
 {
-	for (unsigned int i=0; i < DIALOG_INFO_LINES; ++i) { mElementInfo[i]->setCaption(""); }
+    for (unsigned int i=0; i < DIALOG_INFO_LINES; ++i) { mElementInfo[i]->setCaption(""); }
 }
 
 //=================================================================================================
@@ -139,39 +139,39 @@ void Dialog::clearInfoText()
 //=================================================================================================
 void Dialog::UpdateLogin(unsigned int stage)
 {
-	static std::string mStrPlayerName, mStrPassword, mStrRePasswd;
-	switch(stage)
-	{
-		case DIALOG_STAGE_LOGIN_GET_NAME:
-			mPanelPlayerName    ->show();
-			mPanelPlayerPasswd  ->hide();
-			mPanelPlayerRePasswd->hide();
-			mDialogSelPanel		->hide();
-			mStrPlayerName = TextInput::getSingleton().getString();
-			mPlayerName->setCaption(mStrPlayerName);
-			break;
-		case DIALOG_STAGE_LOGIN_GET_PASSWD:
-			mPanelPlayerPasswd->show();
-			{
-			   mStrPassword ="**********************************";
-			   mStrPassword.resize(TextInput::getSingleton().size());
-			}
-			mPlayerPasswd->setCaption(mStrPassword.c_str());
-			break;
-		case DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN:
-			mPanelPlayerRePasswd->show();
-			{
-			   mStrRePasswd ="**********************************";
-			   mStrRePasswd.resize(TextInput::getSingleton().size());
-			}
-			mPlayerRePasswd->setCaption(mStrRePasswd.c_str());
-			break;
-		case DIALOG_STAGE_GET_META_SERVER:
-			mDialogSelPanel->show();
-			mElementSelectionBar->setTop(12*TextInput::getSingleton().getSelCursorPos()+1);
-		default:
-			return;
-	}
+    static std::string mStrPlayerName, mStrPassword, mStrRePasswd;
+    switch(stage)
+    {
+        case DIALOG_STAGE_LOGIN_GET_NAME:
+            mPanelPlayerName    ->show();
+            mPanelPlayerPasswd  ->hide();
+            mPanelPlayerRePasswd->hide();
+            mDialogSelPanel        ->hide();
+            mStrPlayerName = TextInput::getSingleton().getString();
+            mPlayerName->setCaption(mStrPlayerName);
+            break;
+        case DIALOG_STAGE_LOGIN_GET_PASSWD:
+            mPanelPlayerPasswd->show();
+            {
+               mStrPassword ="**********************************";
+               mStrPassword.resize(TextInput::getSingleton().size());
+            }
+            mPlayerPasswd->setCaption(mStrPassword.c_str());
+            break;
+        case DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN:
+            mPanelPlayerRePasswd->show();
+            {
+               mStrRePasswd ="**********************************";
+               mStrRePasswd.resize(TextInput::getSingleton().size());
+            }
+            mPlayerRePasswd->setCaption(mStrRePasswd.c_str());
+            break;
+        case DIALOG_STAGE_GET_META_SERVER:
+            mDialogSelPanel->show();
+            mElementSelectionBar->setTop(12*TextInput::getSingleton().getSelCursorPos()+1);
+        default:
+            return;
+    }
 }
 
 //=================================================================================================

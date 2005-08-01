@@ -50,33 +50,33 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
     thisNPC = mInstanceNr;
     mDescFile = DIR_MODEL_DESCRIPTION;
     mDescFile += desc_filename;
-	if (!mInstanceNr) { LogFile::getSingleton().Headline("Init Actor Models"); }
-	LogFile::getSingleton().Info("Parse description file %s...", mDescFile.c_str());
-	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-		return;
-	}
-	LogFile::getSingleton().Success(true);
-	mSceneMgr = SceneMgr;     
-	string strTemp;
-	Option::getSingleton().getDescStr("MeshName", strTemp);
-	mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
+    if (!mInstanceNr) { LogFile::getSingleton().Headline("Init Actor Models"); }
+    LogFile::getSingleton().Info("Parse description file %s...", mDescFile.c_str());
+    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+    {
+        LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+        return;
+    }
+    LogFile::getSingleton().Success(true);
+    mSceneMgr = SceneMgr;
+    string strTemp;
+    Option::getSingleton().getDescStr("MeshName", strTemp);
+    mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
     mNode->yaw(mFacing);
     mNode->attachObject(mEntityNPC);
 
     // Create Animations and Animation sounds.
     mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
 
-	mTurning =0;
-	mWalking =0;
-	mEntityWeapon =0;
-	mEntityShield =0;
-    mEntityArmor  =0;	
-	mEntityHelmet =0;	
-	++mInstanceNr;
-	return;
+    mTurning =0;
+    mWalking =0;
+    mEntityWeapon =0;
+    mEntityShield =0;
+    mEntityArmor  =0;
+    mEntityHelmet =0;
+    ++mInstanceNr;
+    return;
 }
 
 //=================================================================================================
@@ -84,16 +84,16 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 //=================================================================================================
 void NPC::toggleTexture(int pos, int texture)
 {
-	string strValue , strKeyword;
-	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("NPC::toggleTexture(...) -> description file was not found!\n");
-		return;
-	}
-	// Get material.
-	strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
-	if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
+    string strValue , strKeyword;
+    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+    {
+        LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("NPC::toggleTexture(...) -> description file was not found!\n");
+        return;
+    }
+    // Get material.
+    strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
+    if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
     MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
     // Get texture.
     if (texture >=0) // select a texture by value.
@@ -105,8 +105,8 @@ void NPC::toggleTexture(int pos, int texture)
     { // only for testing...
         static int actTexture[100];
         strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-        if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) 
-        { 
+        if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
+        {
             actTexture[pos] =0;
             strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
             if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
@@ -114,9 +114,9 @@ void NPC::toggleTexture(int pos, int texture)
         ++actTexture[pos];
     }
     // set new texture.
-	mpMaterial->unload();
-	mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
-	mpMaterial->reload();
+    mpMaterial->unload();
+    mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
+    mpMaterial->reload();
     mpMaterial.setNull();
 }
 
@@ -125,16 +125,16 @@ void NPC::toggleTexture(int pos, int texture)
 //=================================================================================================
 void  NPC::toggleMesh(int Bone, int WeaponNr)
 {
-	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-	{
-		LogFile::getSingleton().Error("CRITICAL: description file: '%s' was not found!\n", mDescFile.c_str());
-		return;
-	}
-	static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
-	string mStrTemp;
-    
-	switch (Bone)
-	{
+    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+    {
+        LogFile::getSingleton().Error("CRITICAL: description file: '%s' was not found!\n", mDescFile.c_str());
+        return;
+    }
+    static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
+    string mStrTemp;
+
+    switch (Bone)
+    {
         case BONE_WEAPON_HAND:
             WeaponNr = ++mWeapon; // testing -> delete me!
             if (mEntityWeapon)
@@ -166,7 +166,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             else mWeapon =0;  // testing -> delete me!
             break;
 
-        case BONE_SHIELD_HAND:        
+        case BONE_SHIELD_HAND:
             WeaponNr = ++mShield; // testing -> delete me!
             if (mEntityShield)
             {
@@ -189,7 +189,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             else mShield =0;  // testing -> delete me!
             break;
 
-        case BONE_HEAD:        
+        case BONE_HEAD:
             WeaponNr = ++mHelmet; // testing -> delete me!
             if (mEntityHelmet)
             {
@@ -212,7 +212,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             else mHelmet =0;  // testing -> delete me!
             break;
 
-        case BONE_BODY:        
+        case BONE_BODY:
             WeaponNr = ++mArmor; // testing -> delete me!
             if (mEntityArmor)
             {
@@ -234,7 +234,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             }
             else mArmor =0;  // testing -> delete me!
             break;
-	}
+    }
 }
 
 typedef std::list<Particle*> ActiveParticleList;
@@ -246,20 +246,20 @@ typedef std::list<Particle*> ActiveParticleList;
 void NPC::update(const FrameEvent& event)
 {
     mAnim->update(event);
-	mTranslateVector = Vector3(0,0,0);
-	if (mAnim->isMovement())
-	{
-		if (mTurning)
-		{
-		    mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
-			mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
-		}
-		if (mWalking)
-		{
+    mTranslateVector = Vector3(0,0,0);
+    if (mAnim->isMovement())
+    {
+        if (mTurning)
+        {
+            mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
+            mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
+        }
+        if (mWalking)
+        {
             // just a test...
-			mAnim->toggleAnimation(STATE_WALK1);
-	        mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-		    mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+            mAnim->toggleAnimation(STATE_WALK1);
+            mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+            mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
 //            mTranslateVector = mNode->getOrientation().zAxis();
             mNode->translate(mTranslateVector);
             if(thisNPC) // All NPC's.
@@ -272,12 +272,12 @@ void NPC::update(const FrameEvent& event)
             {
                 Event->setWorldPos(mTranslateVector);
             }
-		}
-		else 
-		{
+        }
+        else
+        {
             mAnim->toggleAnimation(STATE_IDLE1);
         }
-	}
+    }
 }
 
 //=================================================================================================

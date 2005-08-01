@@ -35,17 +35,17 @@ using namespace Ogre;
 
 enum AnimState
 {
-    STATE_IDLE1,	STATE_IDLE2,	STATE_IDLE3,
-    STATE_WALK1,	STATE_WALK2,	STATE_WALK3,
-    STATE_RUN1,		STATE_RUN2,		STATE_RUN3,
-    STATE_ATTACK1,	STATE_ATTACK2,	STATE_ATTACK3,
-    STATE_BLOCK1,	STATE_BLOCK2,	STATE_BLOCK3,
-    STATE_SLUMP1,	STATE_SLUMP2,	STATE_SLUMP3,
-    STATE_DEATH1,	STATE_DEATH2,	STATE_DEATH3,
-    STATE_HIT1,		STATE_HIT2,		STATE_HIT3,
+    STATE_IDLE1,    STATE_IDLE2,    STATE_IDLE3,
+    STATE_WALK1,    STATE_WALK2,    STATE_WALK3,
+    STATE_RUN1,        STATE_RUN2,        STATE_RUN3,
+    STATE_ATTACK1,    STATE_ATTACK2,    STATE_ATTACK3,
+    STATE_BLOCK1,    STATE_BLOCK2,    STATE_BLOCK3,
+    STATE_SLUMP1,    STATE_SLUMP2,    STATE_SLUMP3,
+    STATE_DEATH1,    STATE_DEATH2,    STATE_DEATH3,
+    STATE_HIT1,        STATE_HIT2,        STATE_HIT3,
     // Castings MUST me the last entrys!
-    STATE_CAST1,	STATE_CAST2,	STATE_CAST3,    
-	STATE_SUM
+    STATE_CAST1,    STATE_CAST2,    STATE_CAST3,
+    STATE_SUM
 };
 
 const Real RAD = 3.14159265/180.0;
@@ -57,34 +57,34 @@ class Animate
 {
   private:
     ////////////////////////////////////////////////////////////
-	// Variables.
+    // Variables.
     ////////////////////////////////////////////////////////////
-	int mAnimType;
-	int mAnimGroup;
-	bool mSpellTrigger;
-	AnimationState *mAnimState;    
-	AnimationState *mAnimStates[STATE_SUM];
+    int mAnimType;
+    int mAnimGroup;
+    bool mSpellTrigger;
+    AnimationState *mAnimState;
+    AnimationState *mAnimStates[STATE_SUM];
     Real mAnimSpeed, mTurnSpeed;
-	std::string mStrTemp;
+    std::string mStrTemp;
     int sound_handle[STATE_SUM];
-    
+
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
 
   public:
     ////////////////////////////////////////////////////////////
-	// Functions.
+    // Functions.
     ////////////////////////////////////////////////////////////
-	 Animate(Entity *entity);
-	~Animate() {;}
+     Animate(Entity *entity);
+    ~Animate() {;}
 
     bool isMovement() { return (mAnimType < STATE_ATTACK1); }
     void update(const FrameEvent& event);
     void toggleAnimGroup();
-	void toggleAnimation(int animationNr, bool force = false);
-	Real getAnimSpeed() { return mAnimSpeed; }
-	Real getTurnSpeed() { return mTurnSpeed; }	
+    void toggleAnimation(int animationNr, bool force = false);
+    Real getAnimSpeed() { return mAnimSpeed; }
+    Real getTurnSpeed() { return mTurnSpeed; }
 };
 
 #endif
