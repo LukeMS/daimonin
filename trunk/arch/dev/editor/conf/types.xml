@@ -487,10 +487,10 @@
     further modified by various factors. Hence, testing values in-game is
     usually inevitable.
   </attribute>
-  <attribute arch="glow_radius" editor="glow radius" type="int">
-    If &lt;glow radius&gt; is set to a value greater zero, the object
-    appears lit up on dark maps. &lt;glow radius&gt; can be a value
-    between 0 and 9, the higher, the more light does the object emmit.
+  <attribute arch="material" editor="material class" type="bitmask_material">
+    This bitmask-value informs the player of which basic material(s)
+    the object consists. Material class does also affect how likely the
+    object can be destroyed by hazardous spell-effects.
   </attribute>
   <attribute arch="material_real" editor="material" type="list_material_real">
     The material defines the exact material of which the object
@@ -498,10 +498,10 @@
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
   </attribute>
-  <attribute arch="material" editor="material class" type="bitmask_material">
-    This bitmask-value informs the player of which basic material(s)
-    the object consists. Material class does also affect how likely the
-    object can be destroyed by hazardous spell-effects.
+  <attribute arch="glow_radius" editor="glow radius" type="int">
+    If &lt;glow radius&gt; is set to a value greater zero, the object
+    appears lit up on dark maps. &lt;glow radius&gt; can be a value
+    between 0 and 9, the higher, the more light does the object emmit.
   </attribute>
   <attribute arch="no_pick" editor="non-pickable" type="bool">
     If set, the object cannot be picked up (Neither by players nor monsters).
@@ -734,6 +734,8 @@
 <!--####################################################################-->
 <type number="74" name="Applyable Light">
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <attribute arch="speed_left" />
     <attribute arch="glow_radius" />
     <ignore_list name="default_setting" />
@@ -781,11 +783,66 @@
   <attribute arch="connected" editor="connection" type="int">
   If set, the light can be controlled via the specified connection.
   </attribute>
+
+<section name="material">
+  <attribute arch="material" editor="material class" type="bitmask_material">
+    This bitmask-value informs the player of which basic material(s)
+    the object consists. Material class does also affect how likely the
+    object can be destroyed by hazardous spell-effects.
+  </attribute>
+  <attribute arch="material_real" editor="material" type="list_material_real">
+    The material defines the exact material of which the object
+    consists. It is much more specific than &lt;material class&gt;,
+    however only one material can be selected, not multiple.
+    &lt;material&gt; is not required to be set, it can be left 'undefined'.
+  </attribute>
+  <attribute arch="item_quality" editor="max. quality %" type="int">
+    Every item has a natural material quality, ranging from 0 top 100.
+    This is a % factor, which affects the base stats of the item.
+    However, &lt;max. quality&gt; does not represent the actual state of the
+    item but the best &lt;actual quality&gt; value this item can ever have.
+
+    Basic quality is 80%. If the item is made of cheap material, the
+    value may be lower. If made of very fine material it may be 100%.
+  </attribute>
+  <attribute arch="item_condition" editor="condition %" type="int">
+    This is the REAL quality status of item - showing how much it is
+    used up. Every time the item is overused or damaged, the
+    &lt;actual quality&gt; is lowered. The value can range from 0 (destroyed) to 
+    the maximum of &lt;max. quality&gt; (It can never get higher than that).
+    The quality value represents a % value affecting the item's stats:
+    Lower quality than 100% means effects like protection/damage etc.
+    are reduced.
+  </attribute>
+  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+    Physical attacks is able to reduce the quality of the item and
+    eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
+    Elemental attacks (fire, cold, elec, poison and acid!) are able
+    to reduce the quality of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
+    All forms of magical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
+    All forms of spherical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_indestructible" editor="indestructible" type="bool">
+    This item can't be damaged in any way (this includes special magic
+    and also attacks.
+  </attribute>
+</section>
+
 </type>
 
 <!--####################################################################-->
 <type number="82" name="Light Refill Object">
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <attribute arch="speed_left" />
     <ignore_list name="default_setting" />
   </ignore>
@@ -802,6 +859,59 @@
   object is deleted. If we can't put all in the light, the
   value is decreased by the number we filled in.
   </attribute>
+
+<section name="material">
+  <attribute arch="material" editor="material class" type="bitmask_material">
+    This bitmask-value informs the player of which basic material(s)
+    the object consists. Material class does also affect how likely the
+    object can be destroyed by hazardous spell-effects.
+  </attribute>
+  <attribute arch="material_real" editor="material" type="list_material_real">
+    The material defines the exact material of which the object
+    consists. It is much more specific than &lt;material class&gt;,
+    however only one material can be selected, not multiple.
+    &lt;material&gt; is not required to be set, it can be left 'undefined'.
+  </attribute>
+  <attribute arch="item_quality" editor="max. quality %" type="int">
+    Every item has a natural material quality, ranging from 0 top 100.
+    This is a % factor, which affects the base stats of the item.
+    However, &lt;max. quality&gt; does not represent the actual state of the
+    item but the best &lt;actual quality&gt; value this item can ever have.
+
+    Basic quality is 80%. If the item is made of cheap material, the
+    value may be lower. If made of very fine material it may be 100%.
+  </attribute>
+  <attribute arch="item_condition" editor="condition %" type="int">
+    This is the REAL quality status of item - showing how much it is
+    used up. Every time the item is overused or damaged, the
+    &lt;actual quality&gt; is lowered. The value can range from 0 (destroyed) to 
+    the maximum of &lt;max. quality&gt; (It can never get higher than that).
+    The quality value represents a % value affecting the item's stats:
+    Lower quality than 100% means effects like protection/damage etc.
+    are reduced.
+  </attribute>
+  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+    Physical attacks is able to reduce the quality of the item and
+    eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
+    Elemental attacks (fire, cold, elec, poison and acid!) are able
+    to reduce the quality of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
+    All forms of magical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
+    All forms of spherical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_indestructible" editor="indestructible" type="bool">
+    This item can't be damaged in any way (this includes special magic
+    and also attacks.
+  </attribute>
+</section>
+
 </type>
 
 <!--####################################################################-->
@@ -1050,6 +1160,8 @@
 <!--####################################################################-->
 <type number="39" name="Amulet">
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -1168,7 +1280,70 @@
   <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
   </attribute>         	
 </section>
-
+<section name="resistance">
+  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
+    Resistances on flesh items make them more durable
+    against spellcraft of the appropriate kind.
+    This should only be set if placing a flesh item
+    in a monster's inventory.
+  </attribute>
+  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
+  </attribute>
+  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
+  </attribute>
+</section>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
     The player's strentgh will rise/fall by the given value
@@ -1197,47 +1372,6 @@
   <attribute arch="Cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
-  </attribute>
-</section>
-
-<section name="quality">
-  <attribute arch="item_quality" editor="max. quality %" type="int">
-    Every item has a natural material quality, ranging from 0 top 100.
-    This is a % factor, which affects the base stats of the item.
-    However, &lt;max. quality&gt; does not represent the actual state of the
-    item but the best &lt;actual quality&gt; value this item can ever have.
-
-    Basic quality is 80%. If the item is made of cheap material, the
-    value may be lower. If made of very fine material it may be 100%.
-  </attribute>
-  <attribute arch="item_condition" editor="actual quality" type="int">
-    This is the REAL quality status of item - showing how much it is
-    used up. Every time the item is overused or damaged, the
-    &lt;actual quality&gt; is lowered. The value can range from 0 (destroyed) to 
-    the maximum of &lt;max. quality&gt; (It can never get higher than that).
-    The quality value represents a % value affecting the item's stats:
-    Lower quality than 100% means effects like protection/damage etc.
-    are reduced.
-  </attribute>
-  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
-    Physical attacks is able to reduce the quality of the item and
-    eventually destroy it.
-  </attribute>
-  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
-    Elemental attacks (fire, cold, elec, poison and acid!) are able
-    to reduce the quality of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
-    All forms of magical attacks are able to reduce the quality
-    of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
-    All forms of spherical attacks are able to reduce the quality
-    of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_indestructible" editor="indestructible" type="bool">
-    This item can't be damaged in any way (this includes special magic
-    and also attacks.
   </attribute>
 </section>
 
@@ -1375,16 +1509,72 @@
     while wearing this item.
   </attribute>
 </section>
+
+<section name="material">
+  <attribute arch="material" editor="material class" type="bitmask_material">
+    This bitmask-value informs the player of which basic material(s)
+    the object consists. Material class does also affect how likely the
+    object can be destroyed by hazardous spell-effects.
+  </attribute>
+  <attribute arch="material_real" editor="material" type="list_material_real">
+    The material defines the exact material of which the object
+    consists. It is much more specific than &lt;material class&gt;,
+    however only one material can be selected, not multiple.
+    &lt;material&gt; is not required to be set, it can be left 'undefined'.
+  </attribute>
+  <attribute arch="item_quality" editor="max. quality %" type="int">
+    Every item has a natural material quality, ranging from 0 top 100.
+    This is a % factor, which affects the base stats of the item.
+    However, &lt;max. quality&gt; does not represent the actual state of the
+    item but the best &lt;actual quality&gt; value this item can ever have.
+
+    Basic quality is 80%. If the item is made of cheap material, the
+    value may be lower. If made of very fine material it may be 100%.
+  </attribute>
+  <attribute arch="item_condition" editor="condition %" type="int">
+    This is the REAL quality status of item - showing how much it is
+    used up. Every time the item is overused or damaged, the
+    &lt;actual quality&gt; is lowered. The value can range from 0 (destroyed) to 
+    the maximum of &lt;max. quality&gt; (It can never get higher than that).
+    The quality value represents a % value affecting the item's stats:
+    Lower quality than 100% means effects like protection/damage etc.
+    are reduced.
+  </attribute>
+  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+    Physical attacks is able to reduce the quality of the item and
+    eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
+    Elemental attacks (fire, cold, elec, poison and acid!) are able
+    to reduce the quality of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
+    All forms of magical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
+    All forms of spherical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_indestructible" editor="indestructible" type="bool">
+    This item can't be damaged in any way (this includes special magic
+    and also attacks.
+  </attribute>
+</section>
+
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text describes the item's "story". Every decent artifact
     should have such a description.
   </attribute>
+
 </type>
 
 <!--####################################################################-->
 <type number="104" name="Bracers">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -1401,12 +1591,15 @@
     "scrolls of Enchant Armour" or reduced by acid. It is less useful
     than direct armour-class bonus on the bracers.
   </attribute>
+
 </type>
 
 <!--####################################################################-->
 <type number="16" name="Brestplate Armour">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -1461,6 +1654,8 @@
 <type number="99" name="Boots">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -1575,6 +1770,8 @@
 <type number="87" name="Cloak">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -1597,21 +1794,10 @@
 </type>
 
 <!--####################################################################-->
-<type number="9" name="Clock">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
-  <description><![CDATA[
-    Applying a clock, the time is displayed to the player. ]]>
-  </description>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text may describe the item
-  </attribute>
-</type>
-
-<!--####################################################################-->
 <type number="122" name="Container">
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -1680,6 +1866,57 @@
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may contain a description of the container.
   </attribute>
+<section name="material">
+  <attribute arch="material" editor="material class" type="bitmask_material">
+    This bitmask-value informs the player of which basic material(s)
+    the object consists. Material class does also affect how likely the
+    object can be destroyed by hazardous spell-effects.
+  </attribute>
+  <attribute arch="material_real" editor="material" type="list_material_real">
+    The material defines the exact material of which the object
+    consists. It is much more specific than &lt;material class&gt;,
+    however only one material can be selected, not multiple.
+    &lt;material&gt; is not required to be set, it can be left 'undefined'.
+  </attribute>
+  <attribute arch="item_quality" editor="max. quality %" type="int">
+    Every item has a natural material quality, ranging from 0 top 100.
+    This is a % factor, which affects the base stats of the item.
+    However, &lt;max. quality&gt; does not represent the actual state of the
+    item but the best &lt;actual quality&gt; value this item can ever have.
+
+    Basic quality is 80%. If the item is made of cheap material, the
+    value may be lower. If made of very fine material it may be 100%.
+  </attribute>
+  <attribute arch="item_condition" editor="condition %" type="int">
+    This is the REAL quality status of item - showing how much it is
+    used up. Every time the item is overused or damaged, the
+    &lt;actual quality&gt; is lowered. The value can range from 0 (destroyed) to 
+    the maximum of &lt;max. quality&gt; (It can never get higher than that).
+    The quality value represents a % value affecting the item's stats:
+    Lower quality than 100% means effects like protection/damage etc.
+    are reduced.
+  </attribute>
+  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+    Physical attacks is able to reduce the quality of the item and
+    eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
+    Elemental attacks (fire, cold, elec, poison and acid!) are able
+    to reduce the quality of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
+    All forms of magical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
+    All forms of spherical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_indestructible" editor="indestructible" type="bool">
+    This item can't be damaged in any way (this includes special magic
+    and also attacks.
+  </attribute>
+</section>
 </type>
 
 <!--####################################################################-->
@@ -2716,7 +2953,9 @@
 <type number="113" name="Girdle">
   <import_type name="Amulet" />
   <ignore>
-    <ignore_list name="default_setting" />
+    <attribute arch="material" />
+    <attribute arch="material_real" />
+   <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing a girdle, the object's stats will directly be inherited to
@@ -2742,6 +2981,8 @@
 <type number="100" name="Gloves">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -2961,6 +3202,8 @@
 <type number="34" name="Helmet">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -5457,6 +5700,8 @@
 <!--####################################################################-->
 <type number="13" name="Projectile">
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <attribute arch="sub_type" />
     <ignore_list name="default_setting" />
   </ignore>
@@ -5616,6 +5861,57 @@
   <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
   </attribute>
 </section>
+<section name="material">
+  <attribute arch="material" editor="material class" type="bitmask_material">
+    This bitmask-value informs the player of which basic material(s)
+    the object consists. Material class does also affect how likely the
+    object can be destroyed by hazardous spell-effects.
+  </attribute>
+  <attribute arch="material_real" editor="material" type="list_material_real">
+    The material defines the exact material of which the object
+    consists. It is much more specific than &lt;material class&gt;,
+    however only one material can be selected, not multiple.
+    &lt;material&gt; is not required to be set, it can be left 'undefined'.
+  </attribute>
+  <attribute arch="item_quality" editor="max. quality %" type="int">
+    Every item has a natural material quality, ranging from 0 top 100.
+    This is a % factor, which affects the base stats of the item.
+    However, &lt;max. quality&gt; does not represent the actual state of the
+    item but the best &lt;actual quality&gt; value this item can ever have.
+
+    Basic quality is 80%. If the item is made of cheap material, the
+    value may be lower. If made of very fine material it may be 100%.
+  </attribute>
+  <attribute arch="item_condition" editor="condition %" type="int">
+    This is the REAL quality status of item - showing how much it is
+    used up. Every time the item is overused or damaged, the
+    &lt;actual quality&gt; is lowered. The value can range from 0 (destroyed) to 
+    the maximum of &lt;max. quality&gt; (It can never get higher than that).
+    The quality value represents a % value affecting the item's stats:
+    Lower quality than 100% means effects like protection/damage etc.
+    are reduced.
+  </attribute>
+  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+    Physical attacks is able to reduce the quality of the item and
+    eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
+    Elemental attacks (fire, cold, elec, poison and acid!) are able
+    to reduce the quality of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
+    All forms of magical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
+    All forms of spherical attacks are able to reduce the quality
+    of the item and eventually destroy it.
+  </attribute>
+  <attribute arch="is_indestructible" editor="indestructible" type="bool">
+    This item can't be damaged in any way (this includes special magic
+    and also attacks.
+  </attribute>
+</section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the projectile. This
     could be nice for very special ones.
@@ -5626,6 +5922,8 @@
 <type number="70" name="Ring">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -5897,7 +6195,10 @@
 
 <!--####################################################################-->
 <type number="14" name="Shooting Weapon">
+  <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <attribute arch="sub_type" />
     <ignore_list name="default_setting" />
   </ignore>
@@ -6081,6 +6382,8 @@
 <type number="33" name="Shield">
   <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
@@ -6582,7 +6885,10 @@
 
 <!--####################################################################-->
 <type number="15" name="Weapon">
+  <import_type name="Amulet" />
   <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
     <attribute arch="sub_type" />
     <ignore_list name="default_setting" />
   </ignore>
