@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "textwindow.h"
 #include "textinput.h"
 #include "network.h"
-#include "tileManager.h"
+#include "TileManager.h"
 
 //#define SHOW_FREE_MEM
 

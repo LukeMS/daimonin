@@ -40,6 +40,14 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/EnvironmentManager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/TileManager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/adler32.c">
 			<Option compilerVar="CC"/>
 			<Option target="default"/>
@@ -62,6 +70,18 @@
 		</Unit>
 		<Unit filename="../../../source/event.cpp">
 			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/EnvironmentManager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/TileManager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/include/animate.h">
@@ -124,7 +144,13 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/logfile.h">
+		<Unit filename="../../../source/include/logger.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/logger_html.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -220,12 +246,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/tile_map.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/include/zconf.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -260,7 +280,11 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/logfile.cpp">
+		<Unit filename="../../../source/logger.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/logger_html.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -324,11 +348,11 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/tile_gfx.cpp">
+		<Unit filename="../../../source/tile.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/tile_map.cpp">
+		<Unit filename="../../../source/tile_gfx.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
