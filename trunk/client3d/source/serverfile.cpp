@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <iterator>
 #include <iomanip>
 #include "serverfile.h"
-#include "logfile.h"
+#include "logger.h"
 #include "define.h"
 #include "zlib.h"
 
@@ -34,23 +34,25 @@ using namespace std;
 //=================================================================================================
 void ServerFile::getFileAttibutes(int file_enum)
 {
-    setStatus(file_enum, SERVER_FILE_STATUS_OK);
+    	setStatus(file_enum, SERVER_FILE_STATUS_OK);
 	setLength(file_enum, SERVER_FILE_STATUS_OK);
 	setCRC   (file_enum, SERVER_FILE_STATUS_OK);
 
-    LogFile::getSingleton().Info("- Reading Attributes from %s...", srv_file[file_enum].filename);
-    ifstream in(srv_file[file_enum].filename, ios::in|ios::binary);
-    if (!in)
+    	ifstream in(srv_file[file_enum].filename, ios::in | ios::binary);
+    	Logger::log().info() 	<< "- Reading Attributes from "     		
+				<< srv_file[file_enum].filename
+				<< "..." << Logger::success(in.is_open());
+    	if (!in.is_open())
 	{ 
-        LogFile::getSingleton().Info("File not found.\n");
+        	Logger::log().error() 	<< "Can't open file '"
+					<< srv_file[file_enum].filename << "'.";
 		return;
 	} 
 	ostringstream out(ios::binary);
 	in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
-    copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
-    setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(),  out.str().size()));
-    setLength(file_enum, out.str().size());
-    LogFile::getSingleton().Info("(Size: %d)l\n", out.str().size(), srv_file[file_enum].length);    
+    	copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out)); 
+	setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(),  out.str().size()));
+    	setLength(file_enum, out.str().size());
 }
 
 //=================================================================================================
@@ -58,12 +60,9 @@ void ServerFile::getFileAttibutes(int file_enum)
 //=================================================================================================
 void ServerFile::checkFiles()
 {
-    LogFile::getSingleton().Info("Checking all files coming from server:\n");
-    for (int i=0; i< SERVER_FILE_SUM; i++)
-	{ 
+	Logger::log().info() << "Checking all files coming from server:";
+	for (int i=0; i< SERVER_FILE_SUM; i++)	 
 		getFileAttibutes(i);
-	}
-    LogFile::getSingleton().Info("\n");
 }
 
 //=================================================================================================

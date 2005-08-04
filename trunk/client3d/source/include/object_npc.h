@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #define NPC_H
 
 #include "animate.h"
-#include "logfile.h"
+#include "logger.h"
 
 using namespace Ogre;
 

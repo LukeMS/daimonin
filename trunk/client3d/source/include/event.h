@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include <OgreEventListeners.h>
 #include "particle_manager.h"
-#include "tileManager.h"
+#include "TileManager.h"
 using namespace Ogre;
 
 ////////////////////////////////////////////////////////////

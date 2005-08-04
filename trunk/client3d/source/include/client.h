@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "event.h"
 #include "tile.h"
-#include "tileManager.h"
+#include "TileManager.h"
 
 using namespace Ogre;
 

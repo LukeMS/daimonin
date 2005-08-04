@@ -1,0 +1,222 @@
+material Tree_HighDetails
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture tree.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+		scene_blend alpha_blend
+		}
+	}
+}
+
+material Land_HighDetails
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture.png
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+
+		}
+	}
+}
+material Land_HighDetails_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture.png
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+			texture_unit 2
+			{
+				filtering none
+				texture grid_128.png
+				tex_coord_set 2
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+
+material Land_LowDetails
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material Land_LowDetails_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+			texture_unit 1
+			{
+				filtering none
+				texture grid_128.png
+				tex_coord_set 2
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+
+
+
+material Water_HighDetails
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture water_00_128.png
+				scroll_anim 0.022 0.022
+				tex_coord_set 0
+				//wave_xform scale_x sine 1.0 0.1 0.0 5.0
+				//wave_xform scale_x sine 1.0 0.2 0.1 0.05
+				//wave_xform scale_x triangle 1.0 0.2 0.1 0.1
+				wave_xform scroll_x sine 1.0 0.2 0.1 0.1
+				tex_address_mode wrap
+			}
+			texture_unit 1 
+			{
+				texture water_00_128.png
+				scroll_anim -0.05 -0.05 
+				tex_coord_set 0
+				//wave_xform scale_x sine 1.0 0.1 0.0 5.0
+				//wave_xform scale_x sine 1.0 0.2 0.1 0.05
+				//wave_xform scale_y square 1.0 0.2 0.1 0.1
+				tex_address_mode wrap
+			}
+
+
+		}
+
+	}
+}
+material Water_LowDetails
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture water_00_128.png
+				colour_op_ex modulate src_manual src_texture 0.36 0.36 0.5 0.0 
+				tex_coord_set 0
+				tex_address_mode wrap
+			}
+		}
+	}
+}
+
+material Water_HighDetails_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture water_00_128.png
+				scroll_anim 0.05 0.05 
+				tex_coord_set 0
+				//wave_xform scale_x sine 1.0 0.1 0.0 5.0
+				//wave_xform scale_x sine 1.0 0.2 0.1 0.05
+				wave_xform scale_x triangle 1.0 0.2 0.1 0.1
+				tex_address_mode wrap
+			}
+			texture_unit 1 
+			{
+				texture water_00_128.png
+				scroll_anim -0.05 -0.05 
+				tex_coord_set 0
+				//wave_xform scale_x sine 1.0 0.1 0.0 5.0
+				//wave_xform scale_x sine 1.0 0.2 0.1 0.05
+				//wave_xform scale_y triangle 1.0 0.2 0.1 0.1
+				tex_address_mode wrap
+			}
+
+			texture_unit 2
+			{
+				// filtering none
+				texture grid_128.png
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+material Water_LowDetails_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture water_00_128.png
+				colour_op_ex modulate src_manual src_texture 0.36 0.36 0.5 0.0 
+				tex_coord_set 0
+				tex_address_mode wrap
+			}
+			texture_unit 1
+			{
+				filtering none
+				texture grid_128.png
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+		}
+	}
+}

@@ -19,7 +19,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "textwindow.h"
-#include "logfile.h"
+#include "logger.h"
 #include "sound.h"
 
 CTextwindow *ChatWin=0, *TextWin=0;

@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "particle.h"
 #include "sound.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 #include "textwindow.h"
 #include "spell_manager.h"
 #include "event.h"
@@ -50,15 +50,12 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 	thisNPC = mInstanceNr;
 	mDescFile = DIR_MODEL_DESCRIPTION;
 	mDescFile += desc_filename;
-	if (!mInstanceNr) { LogFile::getSingleton().Headline("Init Actor Models"); }
-	LogFile::getSingleton().Info("Parse description file %s...", mDescFile.c_str());
-	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-		return;
-	}
-	LogFile::getSingleton().Success(true);
+	if (!mInstanceNr) { Logger::log().headline("Init Actor Models"); }
+	bool status = Option::getSingleton().openDescFile(mDescFile.c_str());
+	Logger::log().info() 	<< "Parse description file " << mDescFile 
+				<< "..." << Logger::success(status);
+	if(!status)
+	{ Logger::log().error() << "CRITICAL: description file was not found!";	return; }
 	mSceneMgr = SceneMgr;
 	string strTemp;
 	Option::getSingleton().getDescStr("MeshName", strTemp);
@@ -114,8 +111,7 @@ void NPC::toggleTexture(int pos, int texture)
 	string strValue , strKeyword;
 	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
 	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("NPC::toggleTexture(...) -> description file was not found!\n");
+		Logger::log().error() << "NPC::toggleTexture(...) -> description file was not found!"; 
 		return;
 	}
 	// Get material.
@@ -154,12 +150,12 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 {
 	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
 	{
-		LogFile::getSingleton().Error("CRITICAL: description file: '%s' was not found!\n", mDescFile.c_str());
+		Logger::log().error() 	<< "CRITICAL: description file: '" << mDescFile << "' was not found!\n";
 		return;
 	}
 	static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
 	string mStrTemp;
-    
+
 	switch (Bone)
 	{
         case BONE_WEAPON_HAND:

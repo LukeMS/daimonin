@@ -21,14 +21,14 @@ http://www.gnu.org/licenses/licenses.html
 #include "dialog.h"
 #include "textwindow.h"
 #include "textinput.h"
-#include "logfile.h"
+#include "logger.h"
 
 //=================================================================================================
 // Init all elements.
 //=================================================================================================
 bool Dialog::Init()
 {
-    LogFile::getSingleton().Headline("Init Dialog-System");
+    	Logger::log().headline("Init Dialog-System");
 	mLoginOverlay       = OverlayManager::getSingleton().getByName("DialogOverlay");
 	mPanelPlayerName    = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
 	mPlayerName         = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");

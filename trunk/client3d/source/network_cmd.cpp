@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <fstream>
 #include "network.h"
-#include "logfile.h"
+#include "logger.h"
 #include "stdio.h"
 #include "option.h"
 #include "zlib.h"
@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "textinput.h"
 #include "serverfile.h"
-#include "tileManager.h"
+#include "TileManager.h"
 #include "tile_gfx.h"
 
 using namespace std;
@@ -74,7 +74,7 @@ void Network::VersionCmd(char *data, int len)
         else
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        Logger::log().error() << buf;
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -82,15 +82,15 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid version string: %s", data);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
-        return;
+        Logger::log().error() << buf;
+	return;
     }
     mCs_version = atoi(cp);
     if (mCs_version != VERSION_SC)
     {
         sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, mCs_version);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        Logger::log().error() << buf;
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -98,12 +98,12 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid server name: %s", cp);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingleton().Error("%s\n", buf);            
+        Logger::log().error() << buf;
         return;
     }
 
-    LogFile::getSingleton().Info("Playing on server type %s\n", cp);
-    mGameStatusVersionOKFlag = true;
+	Logger::log().info() << "Playing on server type " << cp;
+	mGameStatusVersionOKFlag = true;
 }
 
 // ========================================================================
@@ -114,7 +114,7 @@ void Network::SetupCmd(char *buf, int len)
     const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
     int     s, f;
     char   *cmd, *param;
-    LogFile::getSingleton().Info("Get SetupCmd: %s\n", mInbuf.buf + OFFSET); 
+    Logger::log().info() << "Get SetupCmd: " << (mInbuf.buf + OFFSET); 
     for (s = 0; ;)
     {
 		// command.
@@ -153,10 +153,8 @@ void Network::SetupCmd(char *buf, int len)
         for (f=0; f< SERVER_FILE_SUM; f++)
 		{
             if (!ServerFile::getSingleton().checkID(f, cmd)) { continue; }
-            if (!strcmp(param, "FALSE"))
-            {
-                LogFile::getSingleton().Info("Get %s: %s\n", cmd, param);
-            }
+            if (!strcmp(param, "FALSE"))           
+                Logger::log().info() << "Get " << cmd << ": " << param;	  
             else if (strcmp(param, "OK"))
             {
                 ServerFile::getSingleton().setStatus(f, SERVER_FILE_STATUS_UPDATE);
@@ -172,10 +170,9 @@ void Network::SetupCmd(char *buf, int len)
                 }
             }
         }
-		if (f == SERVER_FILE_SUM-1)
-        {
-            LogFile::getSingleton().Error("Got setup for a command we don't understand: %s %s\n", cmd, param);
-        }
+	if (f == SERVER_FILE_SUM-1)
+        	Logger::log().error() 	<< "Got setup for a command we don't understand: "
+					<< cmd << " " << param;        
     }
     Option::getSingleton().GameStatus = GAME_STATUS_REQUEST_FILES;
 }
@@ -191,9 +188,10 @@ void Network::DataCmd(char *data, int len)
     ///////////////////////////////////////////////////////////////////////// 
     unsigned char data_type = data[0];
 	unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1; 
-    if (data_cmd > SERVER_FILE_SUM)
-	{
-        LogFile::getSingleton().Error("data cmd: unknown type %d (len:%d)\n", data_type, len);
+    	if (data_cmd > SERVER_FILE_SUM) 
+    	{
+        	Logger::log().error() 	<< "data cmd: unknown type "
+					<< data_type << " (len:" << len << ")";
 		return;
 	}
     --len;
@@ -220,11 +218,10 @@ void Network::DataCmd(char *data, int len)
     // Save the file.
 	/////////////////////////////////////////////////////////////////////////
     ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
-    if (!out)
-	{
-        LogFile::getSingleton().Error("save data cmd file : write() of %s failed. (len:%d)\n", 
-		    ServerFile::getSingleton().getFilename(data_cmd));
-	}					 
+	if (!out)
+        	Logger::log().error() 	<< "save data cmd file : write() of "
+		    			<< ServerFile::getSingleton().getFilename(data_cmd)
+					<< "failed.";
     else
 	{
 	    out.write(data, len);
@@ -296,7 +293,7 @@ void Network::HandleQuery(char *data, int len)
         while ((buf = strchr(buf, '\n')) != NULL)
         {
             *buf++ = '\0';
-            LogFile::getSingleton().Info("Received query string: %s\n", cp);
+            Logger::log().info() << "Received query string:" << cp;
             PreParseInfoStat(cp);
             cp = buf;
         }
@@ -488,7 +485,7 @@ void Network::Map2Cmd(char *data, int len)
 //            request_face(face, 0);
             xdata = 0;
 //            TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
-LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d faxe: %d\n", x, y, face);            
+		Logger::log().info() << "MAPPOS: x:" << x << " y:" << y << " face: " << face;
         }
         if (mask & 0x4)
         {
@@ -565,11 +562,13 @@ int Network::request_face(int pnum, int mode)
 //    if (TileGfx::getSingleton().FaceList[num].name || TileGfx::getSingleton().FaceList[num].flags & FACE_REQUESTED)
 //        return 1;
 
-    if (num >= TileGfx::getSingleton().bmaptype_table_size)
-    {
-        LogFile::getSingleton().Error("REQUEST_FILE(): server sent picture id to big (%d %d)\n", num, TileGfx::getSingleton().bmaptype_table_size);
-        return 0;
-    }
+    	if (num >= TileGfx::getSingleton().bmaptype_table_size)
+    	{
+		Logger::log().error() 	<< "REQUESTED_FILE(): server sent picture id too big (" 
+					<< num << " " 
+					<< TileGfx::getSingleton().bmaptype_table_size;
+        	return 0;
+    	}
 
     // now lets check BEFORE we do any other test for this name in /gfx_user.
     // Perhaps we have a customized picture here.

@@ -19,7 +19,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "spell_range.h"
-#include "logfile.h"
+#include "logger.h"
 
 //=================================================================================================
 // Init all static Elemnts.

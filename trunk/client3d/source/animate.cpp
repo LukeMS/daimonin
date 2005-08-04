@@ -21,7 +21,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "textwindow.h"
 #include "option.h"
 #include "animate.h"
-#include "logfile.h"
+#include "logger.h"
 #include "sound.h"
 #include "object_manager.h"
 
@@ -63,7 +63,10 @@ Animate::Animate(Entity *entity)
 		if (Option::getSingleton().getDescStr(animName.c_str(), mStrTemp))
 		{
 			mAnimStates[state] = entity->getAnimationState(mStrTemp.c_str());
-			if (!mAnimStates[state]) LogFile::getSingleton().Error("Critical: No Animatin named %s found!\n", mStrTemp.c_str());
+			if (!mAnimStates[state]) 
+				Logger::log().error() << "Critical: No Animatin named " 
+						      << mStrTemp 
+						      << " found!";
 		}
 		else // not found animation-name in description file -> use the standard one (IDLE1).
 		{

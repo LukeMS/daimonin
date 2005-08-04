@@ -79,6 +79,16 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
+		<Unit filename="..\..\..\source\EnvironmentManager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\TileManager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\source\adler32.c">
 			<Option compilerVar="CC"/>
 			<Option target="Debug"/>
@@ -106,6 +116,20 @@
 		</Unit>
 		<Unit filename="..\..\..\source\event.cpp">
 			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\EnvironmentManager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\TileManager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
@@ -172,7 +196,14 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\logfile.h">
+		<Unit filename="..\..\..\source\include\logger.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\logger_html.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -277,14 +308,14 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\tile_gfx.h">
+		<Unit filename="..\..\..\source\include\tile.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\tile_map.h">
+		<Unit filename="..\..\..\source\include\tile_gfx.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -327,7 +358,12 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\logfile.cpp">
+		<Unit filename="..\..\..\source\logger.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\logger_html.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
@@ -407,12 +443,12 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\tile_gfx.cpp">
+		<Unit filename="..\..\..\source\tile.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\tile_map.cpp">
+		<Unit filename="..\..\..\source\tile_gfx.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>

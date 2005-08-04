@@ -33,14 +33,14 @@ http://www.gnu.org/licenses/licenses.html
 #endif
 #include <string>
 #include "network.h"
-#include "logfile.h"
+#include "logger.h"
 #include "option.h"
 #include "define.h"
 #include "dialog.h"
 #include "serverfile.h"
 #include "textinput.h"
 #include "textwindow.h"
-#include "tileManager.h"
+#include "TileManager.h"
 #include "tile_gfx.h"
 
 #define DEBUG_ON
@@ -93,12 +93,9 @@ void Network::get_meta_server_data(int num, char *server, int *port)
 	*port = (*iter)->port;
 }
 
-// ========================================================================
-// Constructor.
-// ========================================================================
 Network::Network()
-{
-		LogFile::getSingleton().Headline("Init Network");
+{ 
+	Logger::log().headline("Init Network"); 
 }
 
 // ========================================================================
@@ -163,7 +160,7 @@ void Network::Update()
 		if (Option::getSingleton().GameStatus == GAME_STATUS_INIT)
 		{
 			clear_metaserver_data();
-			LogFile::getSingleton().Info("GAME_STATUS_INIT\n");
+			Logger::log().info() << "GAME_STATUS_INIT";
 			Option::getSingleton().GameStatus = GAME_STATUS_META;
 		}
         else if (Option::getSingleton().GameStatus == GAME_STATUS_NEW_CHAR)
@@ -179,7 +176,7 @@ void Network::Update()
 		///////////////////////////////////////////////////////////////////////// 
 		else if (Option::getSingleton().GameStatus == GAME_STATUS_META)
 		{
-			LogFile::getSingleton().Info("GAME_STATUS_META\n");
+			Logger::log().info() << "GAME_STATUS_META";
 /*
 			if (argServerName[0] != 0)
 				add_metaserver_data(argServerName, argServerPort, -1, "user server", "Server from -server '...' command line.", "", "", "");
@@ -191,8 +188,8 @@ void Network::Update()
         else
 */
 		{
-			LogFile::getSingleton().Info("Query MetaServer %s on port %d\n", 
-				Option::getSingleton().mMetaServer.c_str(), Option::getSingleton().mMetaServerPort);
+			Logger::log().info() 	<< "Query Metaserver " << Option::getSingleton().mMetaServer
+						<< " on port " << Option::getSingleton().mMetaServerPort;
 			TextWin->Print("query metaserver...");
 			sprintf(buf, "trying %s:%d", Option::getSingleton().mMetaServer.c_str(), Option::getSingleton().mMetaServerPort);
 			TextWin->Print(buf);
@@ -294,14 +291,14 @@ void Network::Update()
 	}
 	else if (Option::getSingleton().GameStatus == GAME_STATUS_VERSION)
 	{   // Send client version.
-		LogFile::getSingleton().Info("Send Version\n");
+		Logger::log().info() << "Send Version";
 		sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
 		cs_write_string(buf, strlen(buf)); 
 		Option::getSingleton().GameStatus = GAME_STATUS_WAITVERSION;
 	}
 	else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITVERSION)
 	{
-		LogFile::getSingleton().Info("GAME_STATUS_WAITVERSION\n");
+		Logger::log().info() << "GAME_STATUS_WAITVERSION";
 		// perhaps here should be a timer ???
 		// remember, the version exchange server<->client is asynchron so perhaps
 		// the server send his version faster as the client send it to server.
@@ -311,14 +308,14 @@ void Network::Update()
 			if (!mGameStatusVersionOKFlag)
 			{
 				Option::getSingleton().GameStatus = GAME_STATUS_START;
-				LogFile::getSingleton().Info("GAME_STATUS_START\n");
+				Logger::log().info() << "GAME_STATUS_START";
 			}
 			else
 			{
 				TextWin->Print("version confirmed.");
 				TextWin->Print("starting login procedure...");
 				Option::getSingleton().GameStatus = GAME_STATUS_SETUP;
-				LogFile::getSingleton().Info("GAME_STATUS_SETUP\n");
+				Logger::log().info() << "GAME_STATUS_SETUP";
 			}
 		}
 	}
@@ -342,25 +339,26 @@ void Network::Update()
 			ServerFile::getSingleton().getCRC   (SERVER_FILE_ANIMS));
 		cs_write_string(buf, strlen(buf));
 		buf[strlen(buf)] =0;
-		LogFile::getSingleton().Info("Send: setup %s\n", buf);
+		Logger::log().info() << "Send: setup " << buf;
 		mRequest_file_chain = 0;
 		mRequest_file_flags = 0;
 		Option::getSingleton().GameStatus = GAME_STATUS_WAITSETUP;
 	}
 	else if (Option::getSingleton().GameStatus == GAME_STATUS_REQUEST_FILES)
 	{
-		LogFile::getSingleton().Info("GAME_STATUS_REQUEST FILES (%d)\n", mRequest_file_chain);
-        if (mRequest_file_chain == 0) // check setting list
-        {
-            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SETTINGS) == SERVER_FILE_STATUS_UPDATE)
-            {
-                mRequest_file_chain = 1;
-                RequestFile(SERVER_FILE_SETTINGS);
-            }
-            else
-                mRequest_file_chain = 2;
-        }
-        else if (mRequest_file_chain == 2) // check spell list
+		Logger::log().info() 	<< "GAME_STATUS_REQUEST FILES (" 
+					<< mRequest_file_chain << ")";
+        	if (mRequest_file_chain == 0) // check setting list
+        	{
+            		if (ServerFile::getSingleton().getStatus(SERVER_FILE_SETTINGS)
+					== SERVER_FILE_STATUS_UPDATE)
+            		{
+	        	        mRequest_file_chain = 1;
+        	        	RequestFile(SERVER_FILE_SETTINGS);
+            		}
+            		else mRequest_file_chain = 2;
+        	}
+        	else if (mRequest_file_chain == 2) // check spell list
         {
             if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
             {
@@ -519,22 +517,17 @@ void Network::Update()
 // ========================================================================
 bool Network::Init()
 {
-	LogFile::getSingleton().Headline("Init Network");
-		mSocket = SOCKET_NO;
+	Logger::log().headline("Init Network");
+	mSocket = SOCKET_NO;
 	mInbuf.buf = new unsigned char[MAXSOCKBUF+1];
 	mInbuf.buf[0] =0;
 	mInbuf.buf[1] =0;
 	mGameStatusVersionFlag  = false; 
 	mGameStatusVersionOKFlag= true;
 
-
-	LogFile::getSingleton().Info("init socket...");
-	if (!InitSocket())
-	{
-		LogFile::getSingleton().Success(false);
-		return false;
-	}
-	LogFile::getSingleton().Success(true);
+	bool status = InitSocket();
+	Logger::log().info() << "init socket..." << Logger::success(status);
+	if (!status) return false;
 	return true;
 }
 
@@ -550,12 +543,12 @@ inline bool Network::InitSocket()
 	int error = WSAStartup(0x0101, &w);
 	if (error)
 	{
-		LogFile::getSingleton().Error("Init Winsock failed: %d\n", error);
+		Logger::log().error() << "Init Winsock failed: " << error;
 		return false;
 	}
 	if (w.wVersion != 0x0101)
 	{
-		LogFile::getSingleton().Error("Wrong WinSock version!\n");
+		Logger::log().error() << "Wrong WinSock version!";
 		return false;
 	}
 	#endif
@@ -580,9 +573,9 @@ inline bool Network::OpenSocket(const char *host, int port)
         struct hostent *mHostbn = gethostbyname(host);
         if (mHostbn == (struct hostent *) NULL)
         {
-            LogFile::getSingleton().Error("Unknown host: %s\n", host);
-            mSocket = SOCKET_NO;
-            return false;
+		Logger::log().error() << "Unknown host: " << host;
+            	mSocket = SOCKET_NO;
+            	return false;
         }
         memcpy(&mInsock.sin_addr, mHostbn->h_addr, mHostbn->h_length);
     }
@@ -594,20 +587,20 @@ inline bool Network::OpenSocket(const char *host, int port)
 	// The way to make the sockets work on XP Home - The 'unix' style socket seems to fail inder xp home.
 	unsigned long temp = 1; // non-block.
     mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (ioctlsocket(mSocket, FIONBIO, &temp) == -1)
-    {
-        LogFile::getSingleton().Error("Error in ioctlsocket(*socket_temp, FIONBIO , &temp)\n");
-        mSocket = SOCKET_NO;
-        return false;
-    }
+    	if (ioctlsocket(mSocket, FIONBIO, &temp) == -1)
+    	{
+        	Logger::log().error() << "Error in ioctlsocket(*socket_temp, FIONBIO , &temp)";
+        	mSocket = SOCKET_NO;
+        	return false;
+    	}
     int error = 0;
     int retries = 15;
     while (connect(mSocket, (struct sockaddr *) &mInsock, sizeof(mInsock)) == SOCKET_ERROR)
     {
         Sleep(3);
-        if (--retries == 0)
+       	if (--retries == 0)
         {
-            LogFile::getSingleton().Error("Connect Error:  %d\n", mSocketStatusErrorNr);
+            Logger::log().error() << "Connect Error: " << mSocketStatusErrorNr;
             mSocket = SOCKET_NO;
             return false;
         }
@@ -627,24 +620,24 @@ inline bool Network::OpenSocket(const char *host, int port)
 	protox = getprotobyname("tcp");
 	if (!protox)
 	{
-		LogFile::getSingleton().Error("Error an getting ProtoByName (tcp)\n");
+		Logger::log().error() << "Error an getting ProtoByName (tcp)";
 		return false;
 	}
 	mSocket = socket(PF_INET, SOCK_STREAM, protox->p_proto);
 	if (mSocket == -1)
 	{
-		LogFile::getSingleton().Error("Init connection: Error on socket command.\n");
+		Logger::log().error() << "Init connection: Error on socket command.";
 		mSocket = SOCKET_NO;
 		return false;
 	}
 	if (connect(mSocket,(struct sockaddr *)&mInsock,sizeof(mInsock)) ==  SOCKET_ERROR)
 	{
-		LogFile::getSingleton().Error("Can't connect to server");
+		Logger::log().error() << "Can't connect to server";
 		return false;
 	}
 	if (fcntl(mSocket, F_SETFL, O_NDELAY) == SOCKET_ERROR)
 	{
-		LogFile::getSingleton().Error("InitConnection:  Error on fcntl.\n");
+		Logger::log().error() << "InitConnection:  Error on fcntl.\n";
 	}
 	#endif
 
@@ -666,11 +659,12 @@ inline bool Network::OpenSocket(const char *host, int port)
 	{
 		if (setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
 		{
-			LogFile::getSingleton().Error("InitConnection: setsockopt unable to set output buf size to %d\n", newbufsize);
+			Logger::log().error() << "InitConnection: setsockopt unable to"\
+						" set output buf size to " << newbufsize;
 			setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
 		}
 	}
-	LogFile::getSingleton().Info("Connected to %s:%d\n", host, port);
+	Logger::log().info() << "Connected to " << host << ":" << port; 
 	return true;
 }
 
@@ -706,7 +700,8 @@ void Network::read_metaserver_data()
 		stat = recv (mSocket, buffer, MAX_METASTRING_BUFFER, 0);
 		if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
 		{
-			LogFile::getSingleton().Error("Error reading metaserver data!: %d\n", WSAGetLastError());
+			Logger::log().error() 	<< "Error reading metaserver data!: " 
+						<< WSAGetLastError();
 			break;
 		}
 		#else
@@ -720,7 +715,7 @@ void Network::read_metaserver_data()
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Parse the metadata.
 	/////////////////////////////////////////////////////////////////////////////////////////
-	LogFile::getSingleton().Info("GET: %s\n", strMetaData.c_str());
+	Logger::log().info() << "GET: " << strMetaData;
 	unsigned int startPos=0, endPos;
 	string strIP, str1, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
 	// Server IP.
@@ -803,13 +798,15 @@ int Network::write_socket(unsigned char *buf, int len)
 		amt = send(mSocket, (char*)pos, len, 0);
 		if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
 		{
-			LogFile::getSingleton().Error("New socket write failed (wsb) (%d).\n", WSAGetLastError());
+			Logger::log().error() 	<< "New socket write failed (wsb) ("
+						<< WSAGetLastError() << ").";
 			TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
 			return -1;
 		}
 		if (amt == 0)
 		{
-			LogFile::getSingleton().Error("Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
+			Logger::log().error() 	<< "Write_To_Socket: No data written out ("
+						<< WSAGetLastError() << ").";
 			TextWin->Print("SOCKET ERROR: No data written out", TXT_RED);
 			return -1;
 		}
@@ -818,7 +815,7 @@ int Network::write_socket(unsigned char *buf, int len)
 		if (amt < 0)
 		{
 			if (errno==EINTR) { continue; }
-			 LogFile::getSingleton().Error("New socket (fd=%d) write failed.\n", mSocket);
+			Logger::log().error() << "New socket (fd=" << mSocket << ") write failed.";
 			TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
 			return -1;
 		}
@@ -850,19 +847,16 @@ void Network::DoClient()
 
 	if ((pollret = select(mSocket+ 1, &tmp_read, &tmp_write, &tmp_exceptions, &timeout)) == -1)
 	{
-		LogFile::getSingleton().Error("Got on selectcall.\n");
+		Logger::log().error() << "Got on selectcall.";
 		return;
 	}
-	if (!FD_ISSET(mSocket, &tmp_read))
-	{
-		return;
-	}
+	if (!FD_ISSET(mSocket, &tmp_read)) return;
 	int i = read_socket();
 	if (i <= 0)
 	{   // Need to add some better logic here
 		if (i < 0)
 		{
-			LogFile::getSingleton().Error("Got error on read socket.");
+			Logger::log().error() << "Got error on read socket.";
 			CloseSocket();
 		}
 		return; // Still don't have a full packet
@@ -871,199 +865,199 @@ void Network::DoClient()
 	{
 		case  1: // BINARY_CMD_COMC
 			#ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_COMC (%d)\n", mInbuf.buf[2]); 
+			Logger::log().info() << "command: BINARY_CMD_COMC (" << mInbuf.buf[2] << ")";
 			#endif
 			// CompleteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  2: // BINARY_CMD_MAP2
 			#ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_MAP2 (%d)\n", mInbuf.buf[2]); 
+			Logger::log().info() << "command: BINARY_CMD_MAP2 (" << mInbuf.buf[2] << ")"; 
 			#endif
 			Map2Cmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  3: // BINARY_CMD_DRAWINFO
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_DRAWINFO (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             DrawInfoCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+            		#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_DRAWINFO (" << mInbuf.buf[2] << ")"; 
+            		#endif
+         		// DrawInfoCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  4: // BINARY_CMD_DRAWINFO2
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_DRAWINFO2 (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             DrawInfoCmd2(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+            		#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_DRAWINFO2 (" << mInbuf.buf[2] << ")"; 
+            		#endif
+         		// DrawInfoCmd2(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
-        case  5: // BINARY_CMD_MAP_SCROLL
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_MAP_SCROLL (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             map_scrollCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+		case  5: // BINARY_CMD_MAP_SCROLL
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_MAP_SCROLL (" << mInbuf.buf[2] << ")"; 
+            		#endif
+   			// map_scrollCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  6: // BINARY_CMD_ITEMX
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_ITEMX (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             ItemXCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_ITEMX (" << mInbuf.buf[2] << ")"; 
+            		#endif
+         		// ItemXCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  7: // BINARY_CMD_SOUND
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_SOUND (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             SoundCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_SOUND (" << mInbuf.buf[2] << ")"; 
+            		#endif
+         		// SoundCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
-		case  8: // BINARY_CMD_TARGET
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_TARGET (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             TargetObject(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+		case  8: // BINARY_CMD_TARGET            
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_TARGET (" << mInbuf.buf[2] << ")"; 
+            		#endif         
+			// TargetObject(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
-		case  9: // BINARY_CMD_UPITEM
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_UPITEM (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             UpdateItemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+		case  9: // BINARY_CMD_UPITEM            
+			#ifdef DEBUG_ON			
+			Logger::log().info() << "command: BINARY_CMD_UPITEM (" << mInbuf.buf[2] << ")";
+			#endif         
+			// UpdateItemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
-		case 10: // BINARY_CMD_DELITEM
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_DELITEM (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             DeleteItem(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+		case 10: // BINARY_CMD_DELITEM            
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_DELITEM (" << mInbuf.buf[2] << ")";
+			#endif
+			// DeleteItem(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 11: // BINARY_CMD_STATS
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_STATS (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             StatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_STATS (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// StatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 12: // BINARY_CMD_IMAGE
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_IMAGE (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             ImageCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_IMAGE (" << mInbuf.buf[2] << ")"; 	
+			#endif
+			// ImageCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 13: // BINARY_CMD_FACE1
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_FACE1 (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             Face1Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_FACE1 (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// Face1Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 14: // BINARY_CMD_ANIM
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_ANIM (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             AnimCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_ANIM (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// AnimCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 15: // BINARY_CMD_SKILLRDY
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_SKILLRDY (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //            SkillRdyCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_SKILLRDY (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// SkillRdyCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 16: // BINARY_CMD_PLAYER
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_PLAYER (%d)\n", mInbuf.buf[2]); 
-            #endif
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_PLAYER (" << mInbuf.buf[2] << ")";
+			#endif
 			Dialog::getSingleton().setVisible(false);
-            PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 17: // BINARY_CMD_MAPSTATS
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_MAPSTATS (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             MapstatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_MAPSTATS (" << mInbuf.buf[2] << ")";
+			#endif         
+			// MapstatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 18: // BINARY_CMD_SPELL_LIST
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_SPELL_LIST (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             SpelllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_SPELL_LIST (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// SpelllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		    case 19: // BINARY_CMD_SKILL_LIST
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_SKILL_LIST (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             SkilllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_SKILL_LIST (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// SkilllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 20: // BINARY_CMD_GOLEMCMD
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_GOLEMCMD (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             GolemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_GOLEMCMD (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// GolemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 21: // BINARY_CMD_ADDME_SUC
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_ADDME_SUC (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             AddMeSuccess(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_ADDME_SUC (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// AddMeSuccess(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 22: // BINARY_CMD_ADDME_FAIL
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_ADDME_FAIL (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             AddMeFail(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_ADDME_FAIL (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// AddMeFail(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 23: // BINARY_CMD_VERSION
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_VERSION (%d)\n", mInbuf.buf[2]); 
-            #endif
-            VersionCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_VERSION (" << mInbuf.buf[2] << ")"; 
+			#endif
+			VersionCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 24: // BINARY_CMD_BYE
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_BYE (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             GoodbyeCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_BYE (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// GoodbyeCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 25: // BINARY_CMD_SETUP
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_SETUP (%d)\n", mInbuf.buf[2]); 
-            #endif
-            SetupCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_SETUP (" << mInbuf.buf[2] << ")"; 
+			#endif
+			SetupCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 26: // BINARY_CMD_QUERY
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_QUERY (%d)\n", mInbuf.buf[2]); 
-            #endif
-            HandleQuery((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_QUERY (" << mInbuf.buf[2] << ")"; 
+			#endif
+			HandleQuery((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 27: // BINARY_CMD_DATA
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_DATA (%d)\n", mInbuf.buf[2]); 
-            #endif
-            DataCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_DATA (" << mInbuf.buf[2] << ")"; 
+			#endif
+			DataCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 28: // BINARY_CMD_NEW_CHAR
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_NEW_CHAR (%d)\n", mInbuf.buf[2]); 
-            #endif
-            NewCharCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_NEW_CHAR (" << mInbuf.buf[2] << ")"; 
+			#endif
+			NewCharCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 29: // BINARY_CMD_ITEMY
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_ITEMY (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             ItemYCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_ITEMY (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// ItemYCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 30: // BINARY_CMD_GROUP
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_GROUP (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             GroupCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_GROUP (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// GroupCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 31: // BINARY_CMD_INVITE
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_INVITE (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             GroupInviteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_INVITE (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// GroupInviteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 32: // BINARY_CMD_GROUP_UPDATE
-            #ifdef DEBUG_ON
-			LogFile::getSingleton().Info("command: BINARY_CMD_GROUP_UPDATE (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             GroupUpdateCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#ifdef DEBUG_ON
+			Logger::log().info() << "command: BINARY_CMD_GROUP_UPDATE (" << mInbuf.buf[2] << ")"; 
+			#endif
+			// GroupUpdateCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
-        default: // ERROR
-			LogFile::getSingleton().Info("command: <UNKNOWN> (%d)\n", mInbuf.buf[2]); 
+		default: // ERROR
+			Logger::log().info() << "command: <UNKNOWN> (" << mInbuf.buf[2] << ")"; 
 			break;
 	}
 	mInbuf.len =0;
@@ -1085,7 +1079,9 @@ int Network::read_socket()
 		{
 			if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
 			{
-				LogFile::getSingleton().Error("ReadPacket got error %d, returning -1\n",WSAGetLastError());
+				Logger::log().error() 	<< "ReadPacket got error "
+							<< WSAGetLastError()
+							<< ", returning -1\n";
 				TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
 				return -1;
 			}
@@ -1099,7 +1095,8 @@ int Network::read_socket()
 			// In non blocking mode, EAGAIN is set when there is no data available.
 			if (errno!=EAGAIN && errno!=EWOULDBLOCK)
 			{
-				LogFile::getSingleton().Error("ReadPacket got error %d, returning 0",errno);
+				Logger::log().error() 	<< "ReadPacket got error " << errno 
+							<< "%d, returning 0";
 				TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
 				return -1;
 			}
@@ -1121,7 +1118,8 @@ int Network::read_socket()
 	if ((toread + mInbuf.len) > MAXSOCKBUF)
 	{
 		TextWin->Print("WARNING: Server read package error.", TXT_RED);
-		LogFile::getSingleton().Error("SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
+		Logger::log().error() << "SockList_ReadPacket: Want to read more "\
+					"bytes than will fit in buffer.";
 		// return error so the socket is closed
 		return -1;
 	}
@@ -1141,7 +1139,8 @@ int Network::read_socket()
 			if (errno!=EAGAIN && errno!=EWOULDBLOCK)
 			{
 		#endif
-				LogFile::getSingleton().Error("ReadPacket got error %d, returning 0",errno);
+				Logger::log().error()  	<< "ReadPacket got error " << errno
+							<< ", returning 0";
 				TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
 				return -1;
 			}
@@ -1157,7 +1156,7 @@ int Network::read_socket()
 		if (toread == 0) { return 1; }
 		if (toread < 0)
 		{
-			LogFile::getSingleton().Error("SockList_ReadPacket: Read more bytes than desired.\n");
+			Logger::log().error() << "SockList_ReadPacket: Read more bytes than desired.";
 			TextWin->Print("WARNING: Server read package error.", TXT_RED);
 			return -1;
 		}
