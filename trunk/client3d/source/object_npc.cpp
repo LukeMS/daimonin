@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "textwindow.h"
 #include "spell_manager.h"
 #include "event.h"
-#include "tileManager.h"
+#include "TileManager.h"
 
 extern Camera *mCamera;
 
