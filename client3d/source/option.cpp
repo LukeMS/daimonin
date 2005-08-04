@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "define.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 
 enum
 {
@@ -49,9 +49,9 @@ struct _option opt[] =
 bool Option::openDescFile(const char *filename)
 {
 	closeDescFile();
-	mDescFile = new ifstream(filename, ios::in);
-    if (!mDescFile) { return false; }
-    mFilename = filename;
+	mDescFile = new ifstream(filename, ios::in);	
+	if (!mDescFile) { return false; }
+	mFilename = filename;
 	mDescBuffer ="";
 	string buf;
 	while (getline(*mDescFile, buf)) 
@@ -101,8 +101,8 @@ bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int 
 bool Option::Init()
 {
 	// filename: FILE_OPTIONS
-	LogFile::getSingleton().Headline("Init Options");
-
+	Logger::log().headline("Init Options");
+	
 	mDescFile = 0;
 	mMetaServer ="damn.informatik.uni-bremen.de";
 	mMetaServerPort = 13326;

@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "event.h"
 #include "client.h"
 #include "network.h"
-#include "logfile.h"
+#include "logger.h"
 #include "textwindow.h"
 #include "dialog.h"
 #include "option.h"
@@ -31,7 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "particle_manager.h"
 #include "spell_manager.h"
 #include "tile_gfx.h"
-#include "tileManager.h"
+#include "TileManager.h"
 
 using namespace Ogre;
 
@@ -62,8 +62,7 @@ void DaimoninClient::go(void)
 //	Option ::getSingleton().freeRecources();
 	Sound::getSingleton().freeRecources();
 	if (worldmap) { delete worldmap; }
-	if (TileManager) { delete TileManager; }
-
+//	if (TileManager) { delete TileManager; }
 }
 
 // ========================================================================
@@ -195,21 +194,18 @@ void DaimoninClient::createScene(void)
 	ObjectManager::getSingleton().init(mSceneMgr, Event->World);
 	ParticleManager::getSingleton().init(mSceneMgr, Event->World);
 	
-    string descFile = FILE_WORLD_DESC;
-	LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
-	if (!(Option::getSingleton().openDescFile(descFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-		return;
-	}
-	LogFile::getSingleton().Success(true);
+	bool status = Option::getSingleton().openDescFile(FILE_WORLD_DESC);
+    	Logger::log().info() << "Parse description file " 
+			     << FILE_WORLD_DESC
+			     << "..." << Logger::success(status);
+	if(!status) 
+	{ Logger::log().error() << "CRITICAL: description file was not found!"; return; }
 
 	string strType, strTemp, strMesh;
 	int i=0;
 	while(1)
 	{
-		if (!(Option::getSingleton().openDescFile(descFile.c_str()))) { return; }
+		if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC))) { return; }
 		if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) {break; }
 		Option::getSingleton().getDescStr("MeshName", strMesh,i);
 		Option::getSingleton().getDescStr("StartX", strTemp,i);

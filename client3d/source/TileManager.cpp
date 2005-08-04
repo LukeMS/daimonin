@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <time.h>
 #include "TileManager.h"
 #include "tile.h"
-#include "logfile.h"
+#include "logger.h"
 #include "EnvironmentManager.h"
 
 //#define LOW_QUALITY_RENDERING
@@ -1087,7 +1087,7 @@ void CTileManager::CreateChunks()
 		}
 	}
 	delete CChunk::m_bounds;
-	LogFile::getSingleton().Info("time: %d\n", clock()-time);
+	Logger::log().info() << "Time to create Chunks: " << clock()-time;
 }
 
 //=================================================================================================

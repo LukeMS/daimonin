@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "define.h"
 #include "light_manager.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 
 //=================================================================================================
 // Init all static Elemnts.

@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #endif
 #include "tile_gfx.h"
 #include "define.h"
-#include "logfile.h"
+#include "logger.h"
 #include "zlib.h"
 
 using namespace std;
@@ -96,7 +96,7 @@ void TileGfx::add_bmap(_bmaptype *at)
     {
         if (bmap_table[index] && !strcmp(bmap_table[index]->name, at->name))
         {
-            LogFile::getSingleton().Error("ERROR: add_bmap(): double use of bmap name %s\n", at->name);
+            Logger::log().error() << "ERROR: add_bmap(): double use of bmap name " << at->name;
         }
         if (bmap_table[index] == NULL)
         {
@@ -106,7 +106,7 @@ void TileGfx::add_bmap(_bmaptype *at)
         if (++index == BMAPTABLE)
             index = 0;
         if (index == org_index)
-            LogFile::getSingleton().Error("ERROR: add_bmap(): bmaptable to small\n");
+            Logger::log().error() << "ERROR: add_bmap(): bmaptable to small";
     }
 }
 
@@ -128,7 +128,7 @@ bool TileGfx::load_bmaps_p0()
     // try to open bmaps_p0 file
     if ((fbmap = fopen(FILE_BMAPS_P0, "rb")) == NULL)
     {
-        LogFile::getSingleton().Error("FATAL: Error loading bmaps.p0!");
+        Logger::log().error() << "FATAL: Error loading bmaps.p0!";
         unlink(FILE_BMAPS_P0);
 		return -1;
     }
@@ -164,7 +164,7 @@ bool TileGfx::read_bmaps_p0()
 
     if (!(fpic = fopen(FILE_DAIMONIN_P0, "rb")))
     {
-        LogFile::getSingleton().Error("FATAL: Can't find daimonin.p0 file!");
+        Logger::log().error() << "FATAL: Can't find daimonin.p0 file!";
         unlink(FILE_BMAPS_P0);
 		return false;
     }
@@ -187,7 +187,7 @@ bool TileGfx::read_bmaps_p0()
     create_bmaps: // if we are here, then we have to (re)create the bmaps.p0 file
     if ((fbmap = fopen(FILE_BMAPS_P0, "w")) == NULL)
     {
-        LogFile::getSingleton().Error("FATAL: Can't create bmaps.p0 file!");
+        Logger::log().error() << "FATAL: Can't create bmaps.p0 file!";
         fclose(fbmap);
         unlink(FILE_BMAPS_P0);
 		return false;
@@ -198,7 +198,8 @@ bool TileGfx::read_bmaps_p0()
     {
         if (strncmp(buf, "IMAGE ", 6) != 0)
         {
-            LogFile::getSingleton().Error("read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
+            Logger::log().error() 	<< "read_client_images:Bad image line - not IMAGE," << Logger::endl
+		    			<< "instead " << buf;
             fclose(fbmap);
             fclose(fpic);
             unlink(FILE_BMAPS_P0);
@@ -218,7 +219,8 @@ bool TileGfx::read_bmaps_p0()
             // we assume that this is nonsense
             if (len > 128 * 1024)
             {
-                LogFile::getSingleton().Error("read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)", len, pos);
+                Logger::log().error() 	<< "read_client_images: Size of picture out of bounds!(len:"
+					<< len << ")(pos:" << pos <<  ").";
                 fclose(fbmap);
                 fclose(fpic);
                 unlink(FILE_BMAPS_P0);
@@ -271,7 +273,7 @@ bool TileGfx::load_bmap_tmp(void)
     delete_bmap_tmp();
     if ((stream = fopen(FILE_BMAPS_TMP, "rt")) == NULL)
     {
-        LogFile::getSingleton().Error("bmaptype_table(): error open file <bmap.tmp>");
+        Logger::log().error() << "bmaptype_table(): error open file <bmap.tmp>";
 //        SYSTEM_End();
 //        exit(0);
 		return false;

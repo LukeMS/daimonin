@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "client.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 #include "define.h"
 
 

@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "sound.h"
 #include "event.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 
 //=================================================================================================
 // Init all static Elemnts.

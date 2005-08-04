@@ -21,5 +21,5 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "object_static.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 

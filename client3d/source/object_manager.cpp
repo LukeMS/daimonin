@@ -21,7 +21,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "object_manager.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -43,17 +43,15 @@ bool ObjectManager::init(SceneManager *SceneMgr, SceneNode *Node)
 //=================================================================================================
 bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing)
 {
-    static int id= -1;
-    mDescFile = DIR_MODEL_DESCRIPTION;
-    mDescFile += desc_filename;
-	LogFile::getSingleton().Info("Adding object from file %s...", mDescFile.c_str());
-	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-	{
-		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
-		return false;
-	}
-	LogFile::getSingleton().Success(true);
+    	static int id= -1;   
+	mDescFile = DIR_MODEL_DESCRIPTION;   
+	mDescFile += desc_filename;   
+
+	bool status = Option::getSingleton().openDescFile(mDescFile.c_str());
+	Logger::log().info() 	<< "Adding object from file " << mDescFile 
+				<< "..." << Logger::success(status);
+	if(!status)
+	{ Logger::log().error() << "CRITICAL: description file was not found!"; return false; }
 	string strTemp;
 
     switch (type)

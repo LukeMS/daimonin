@@ -24,7 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "sound.h"
 #include "object_manager.h"
 #include "option.h"
-#include "logfile.h"
+#include "logger.h"
 #include "textwindow.h"
 #include "textinput.h"
 #include "network.h"
@@ -44,6 +44,9 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 Real w_1, x_1, y_1, z_1;
+
+Real g_pitch = 0.2;
+
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
@@ -271,21 +274,23 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 		guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
 		guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
 	#endif
-    OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
-    guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
+	OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
+	guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
 
-    OverlayElement* guiDbg = OverlayManager::getSingleton().getOverlayElement("Core/DebugText");
-    guiDbg->setCaption(mWindow->getDebugText());
-    TextWin->Update();
+	OverlayElement* guiDbg = OverlayManager::getSingleton().getOverlayElement("Core/DebugText");
+	guiDbg->setCaption(mWindow->getDebugText());
+	TextWin->Update();
 	ChatWin->Update();
 
 	///////////////////////////////////////////////////////////////////////// 
 	// Print camera details
 	/////////////////////////////////////////////////////////////////////////
-	mWindow->setDebugText("Camera zoom: " + StringConverter::toString(mCameraZoom)+ " pos: " 
-	+ StringConverter::toString(mCamera->getDerivedPosition())
-	+ " orientation: " + StringConverter::toString(mCamera->getDerivedOrientation()));
+	Vector3 pos = mCamera->getPosition();
 
+	mWindow->setDebugText("Camera zoom: " + StringConverter::toString(pos.z)
+		+"pitch: " + StringConverter::toString(g_pitch)
+	);
+/*
 	Vector3 pPos = World->getPosition();
 	mWindow->setDebugText(	" x: "+ StringConverter::toString(pPos.x)+
 													" y: "+ StringConverter::toString(pPos.y)+
@@ -295,7 +300,7 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 													" x: "+ StringConverter::toString(x_1)+
 													" y: "+ StringConverter::toString(y_1)+
 													" z: "+ StringConverter::toString(z_1));
-
+*/
 
 	return true;
 }
@@ -513,22 +518,38 @@ void CEvent::keyPressed(KeyEvent *e)
 			break;
 
 		case KC_PGUP:
+		{
 			mCamera->pitch(Radian(-0.1));
+			g_pitch -= 0.1;
+			Vector3 pos = mCamera->getPosition();
+			pos.y += 30;
+			mCamera->setPosition(pos);
+		}
 			break;
 		case KC_PGDOWN:
+		{
 			mCamera->pitch(Radian(+0.1));
+			g_pitch += 0.1;
+			Vector3 pos = mCamera->getPosition();
+			pos.y -= 30;
+			mCamera->setPosition(pos);
+		}
 			break;
 
 		case KC_ADD:
-			mCameraZoom -= 10;
-			mCamera->setPosition(Vector3(0,mCameraZoom, mCameraZoom));
-		    mCamera->setNearClipDistance(mCameraZoom);
+		{
+			Vector3 pos = mCamera->getPosition();
+			pos.z += 10;
+			mCamera->setPosition(pos);
+		}
 			break;
-            
+
 		case KC_SUBTRACT:
-			mCameraZoom += 10;
-			mCamera->setPosition(Vector3(0,mCameraZoom, mCameraZoom));
-		mCamera->setNearClipDistance(mCameraZoom);
+		{
+			Vector3 pos = mCamera->getPosition();
+			pos.z -= 10;
+			mCamera->setPosition(pos);
+		}
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 
