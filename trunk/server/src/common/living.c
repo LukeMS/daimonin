@@ -1039,12 +1039,14 @@ void fix_player(object *op)
              || tmp->type == TYPE_LIGHT_REFILL
              || tmp->type == WAND
              || tmp->type == ROD
+             || tmp->type == MONSTER
              || tmp->type == HORN)
             continue;
 
         if(tmp->type == TYPE_QUEST_CONTAINER)
         {
             /* one drop container */
+            /* TODO: this should be replaced with a switch statement */
             if(tmp->sub_type1 == ST1_QUEST_ONE_DROP)
             {
                 pl->quest_one_drop = tmp;

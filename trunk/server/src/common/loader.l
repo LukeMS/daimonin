@@ -1286,6 +1286,10 @@ void save_object(FILE *fp,object *op, int flag) {
 		old=tmp;
     }
 
+    /* Save a player's pets */
+    if(op->type==PLAYER) 
+        save_all_pets(fp, op, flag);
+
     if (!(flag&2))
 		remove_ob(op);
 

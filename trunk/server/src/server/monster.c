@@ -438,14 +438,14 @@ int move_monster(object *op)
 
     if (op == NULL || op->type != MONSTER)
     {
-        LOG(llevDebug, "move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
+        LOG(llevBug, "move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
     /*
      * First, some general monster-management
      */
-
+    
     tmp_dir = op->anim_enemy_dir;
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
     op->anim_moving_dir = -1;     /* the same for movement */
@@ -455,6 +455,20 @@ int move_monster(object *op)
     {
         op->custom_attrset = get_poolchunk(pool_mob_data);
         MOB_DATA(op)->behaviours = setup_behaviours(op);
+    }
+
+    /* Pets temporarily stored inside a player gets a chance to escape */
+    if(op->env && op->env->type == PLAYER && QUERY_FLAG(op, FLAG_SYS_OBJECT))
+    {
+        if(op->owner == NULL)
+            if(add_pet(op->env, op))
+                return 0;
+        
+        pet_follow_owner(op);
+
+        /* We won't do anything with them unless they actually got out */
+        if(op->map == NULL)
+            return 0;
     }
 
     /* Purge invalid and old mobs from list of known mobs */
