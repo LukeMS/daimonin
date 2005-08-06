@@ -199,6 +199,7 @@
                                   * pointer where we attach as chained list this stuff - no search
                                   * or flags then needed.
                                   */
+#define P_IS_PLAYER_PET 0x80000   /* The alive thing here is someone's pet */
 
 #define P_OUT_OF_MAP    0x4000000 /* of course not set for map tiles but from blocked_xx()
                                      * function where the out_of_map() fails to grap a valid

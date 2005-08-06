@@ -1924,8 +1924,13 @@ void update_object(object *op, int action)
             else if (op->type == MAGIC_EAR)
                 newflags |= P_MAGIC_EAR;
 
-            if (QUERY_FLAG(op, FLAG_ALIVE))
+            if (QUERY_FLAG(op, FLAG_ALIVE)) 
+            {
                 newflags |= P_IS_ALIVE;
+                if(op->type==MONSTER && OBJECT_VALID(op->owner, op->owner_count)
+                        && op->owner->type == PLAYER)
+                    newflags |= P_IS_PLAYER_PET;
+            }
             if (QUERY_FLAG(op, FLAG_IS_PLAYER))
                 newflags |= P_IS_PLAYER;
             if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))

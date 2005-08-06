@@ -613,7 +613,12 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * and/or the passer has no CAN_PASS_THRU.
      */
     if (flags & P_IS_ALIVE)
-        return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
+    {
+        /* If this is a player pet, all players can pass it on non-pvp maps */
+        if(op==NULL || op->type != PLAYER || !(flags & P_IS_PLAYER_PET)
+                || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP)
+            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
+    }
 
     /* still one flag to check: perhaps P_PASS_THRU overrules NO_PASS? Or PASS_ETHEREAL? */
     if (flags & P_NO_PASS) /* i seperated it from below - perhaps we add here more tests */
@@ -638,24 +643,24 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
     if (flags & P_IS_PLAYER)
     {
         /* ok... we leave here when
-             * a.) op == NULL (because we can't check for op==PLAYER then)
-             * b.) P_IS_PVP or MAP_FLAG_PVP
-             */
+         * a.) op == NULL (because we can't check for op==PLAYER then)
+         * b.) P_IS_PVP or MAP_FLAG_PVP
+         */
         if (!op || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP)
             return ((flags & (P_DOOR_CLOSED | P_IS_PLAYER | P_CHECK_INV))|P_IS_PVP);
 
         /* when we are here: no player pvp stuff was triggered. But:
-             * a.) the tile IS blocked by a player (we still in IS_PLAYER area)
-             * b.) we are not in any pvp area
-             * c.) we have a op pointer to check.
-               *
-             * we can handle here more exclusive stuff now... Like we can pass spells
-             * through player by checking owner or something... Just insert it here.
-             */
+         * a.) the tile IS blocked by a player (we still in IS_PLAYER area)
+         * b.) we are not in any pvp area
+         * c.) we have a op pointer to check.
+         *
+         * we can handle here more exclusive stuff now... Like we can pass spells
+         * through player by checking owner or something... Just insert it here.
+         */
 
         /* for now, the easiest way - if op is no player (it is a monster or somewhat
-             * else "solid" object) - then no pass
-             */
+         * else "solid" object) - then no pass
+         */
         if (op->type != PLAYER)
             return (flags & (P_DOOR_CLOSED | P_IS_PLAYER | P_CHECK_INV));
     }
@@ -731,8 +736,8 @@ int blocked_link(object *op, int xoff, int yoff)
                 return -1;
             /* tricky: we use always head for tests - no need to copy any flags to the tail */
             /* we should kick in here the door test - but we need to diff we are
-                     * just testing here or we doing a real step!
-                     */
+             * just testing here or we doing a real step!
+             */
             if ((xtemp = blocked(op, m, xtemp, ytemp, op->terrain_flag)))
                 return xtemp;
         }
@@ -1170,12 +1175,12 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     continue;
                 }
                 /* here we handle the mobs of a spawn point - called spawn mobs.
-                         * We *never* save spawn mobs - not even if they are on the same map.
-                         * We remove them and tell the spawn point to generate them new in the next tick.
-                         * (In case of the saved map it is the reloading).
-                         * If reloaded, the spawn point will restore a new mob of same kind on
-                         * the default position.
-                         */
+                 * We *never* save spawn mobs - not even if they are on the same map.
+                 * We remove them and tell the spawn point to generate them new in the next tick.
+                 * (In case of the saved map it is the reloading).
+                 * If reloaded, the spawn point will restore a new mob of same kind on
+                 * the default position.
+                 */
                 else if (QUERY_FLAG(head, FLAG_SPAWN_MOB))
                 {
                     /* sanity check for the mob structures & ptr */
@@ -2544,7 +2549,12 @@ void update_position(mapstruct *m, int x, int y)
             if (QUERY_FLAG(tmp, FLAG_DOOR_CLOSED))
                 flags |= P_DOOR_CLOSED;
             if (QUERY_FLAG(tmp, FLAG_ALIVE))
+            {
                 flags |= P_IS_ALIVE;
+                if(tmp->type==MONSTER && OBJECT_VALID(tmp->owner, tmp->owner_count) && 
+                        tmp->owner->type == PLAYER)
+                    flags |= P_IS_PLAYER_PET;
+            }
             if (QUERY_FLAG(tmp, FLAG_NO_MAGIC))
                 flags |= P_NO_MAGIC;
             if (QUERY_FLAG(tmp, FLAG_NO_CLERIC))
@@ -2568,11 +2578,11 @@ void update_position(mapstruct *m, int x, int y)
             if (QUERY_FLAG(tmp, FLAG_NO_PASS))
             {
                 /* we also handle PASS_THRU here...
-                         * a.) if NO_PASS is set before, we test for PASS_THRU
-                         * - if we have no FLAG_PASS_THRU, we delete PASS_THRU
-                         * - if we have FLAG_PASS_THRU, we do nothing - other object blocks always
-                         * b.) if no NO_PASS is set, we set it AND set PASS_THRU if needed
-                         */
+                 * a.) if NO_PASS is set before, we test for PASS_THRU
+                 * - if we have no FLAG_PASS_THRU, we delete PASS_THRU
+                 * - if we have FLAG_PASS_THRU, we do nothing - other object blocks always
+                 * b.) if no NO_PASS is set, we set it AND set PASS_THRU if needed
+                 */
                 if (flags & P_NO_PASS)
                 {
                     if (!QUERY_FLAG(tmp, FLAG_PASS_THRU))
@@ -2668,8 +2678,8 @@ void update_position(mapstruct *m, int x, int y)
     }
 
     /* in layer[2] we have now normal layer 3 or normal layer 2
-         * now seek a possible inv. object to substitute normal
-         */
+     * now seek a possible inv. object to substitute normal
+     */
     for (ii--; ii > 8; ii--)
     {
         if (mp->layer[ii])
@@ -3012,8 +3022,6 @@ int get_rangevector_from_mapcoords(
  *  RV_DIAGONAL_DISTANCE  - diagonal (max(dx + dy)) distance (fast) (default)
  *  RV_NO_DISTANCE        - don't calculate distance (or direction) (fastest)
  *
- *  TODO: Add a RV_FAST_EUCLIDIAN_DISTANCE that skips the isqrt() call. Still very
- *  useful for distances (e.g. if(rv.distance <= d*d))
  *  TODO: support multipart->multipart handling
  */
 int get_rangevector_full(
