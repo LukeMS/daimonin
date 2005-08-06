@@ -200,7 +200,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
          *  In any case, we use the owner.
          */
         if(hitter && hitter_owner)
-            LOG(llevDebug,"Bug/Warning: hitter %s and owner %s passed aggro_update_check\n", query_name(hitter), query_name(hitter_owner));
+			LOG(llevDebug,"TODO: hitter %s and owner %s passed aggro_update_check. Pet aggro handling not finished...\n", query_name(hitter), query_name(hitter_owner));
         if(hitter_owner)
             hitter=hitter_owner; /* TODO: change when we do pet/owner handling */
 
@@ -283,9 +283,13 @@ static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, i
     op->level = 0;
     for(skilldmg=op->inv;skilldmg;skilldmg=skilldmg->below)
     {
+        if(! hitter->skill_ptr[skilldmg->last_heal])
+            continue;
+        
         /* we need that for base exp calc */
         if(op->level < hitter->skill_ptr[skilldmg->last_heal]->level)
             op->level = hitter->skill_ptr[skilldmg->last_heal]->level;
+                
 
         if(*skill1==-1 || d1 <= skilldmg->stats.hp)
         {

@@ -452,6 +452,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     struct mob_known_obj   *last    = NULL;
     int i;
     rv_vector rv;
+    int nomap = 0;
 
     if (npc == NULL)
     {
@@ -511,13 +512,6 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
         return NULL;
     }
 
-    /* Ignore mobs that are inside containers or not on maps */
-    if(other->map == NULL || other->env != NULL)
-    {
-        LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
-        return NULL;
-    }
-
     /* never register anything when surrendered.
      * A surrendered mob don't deal in friends or enemies.
      */
@@ -550,20 +544,28 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     /* TODO: keep count of enemies and push out less
      * important if new ones are added beyond a reasonable max number */
-
-    /* It was a new, previously unknown object */
-    if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
+    
+    /* Special handling of mobs inside containers or not on maps */
+    if(other->map == NULL || other->env != NULL || npc->map == NULL || npc->env != NULL)
     {
-        LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
-        return NULL;
-    }
+        LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' and at least one not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+        nomap = 1;
+//        return NULL;
+    } else {
+        /* It was a new, previously unknown object */
+        if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
+        {
+            LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+            return NULL;
+        }
 
-    /* We check LOS here, only if we are registering a new object */
-    /* Also, we only check against players, and not if we have
-     * been hit or helped by them. */
-    if(other->type == PLAYER && friendship == 0 &&
-            !obj_in_line_of_sight(npc, other, &rv))
-        return NULL;
+        /* We check LOS here, only if we are registering a new object */
+        /* Also, we only check against players, and not if we have 
+         * been hit or helped by them. */
+        if(other->type == PLAYER && friendship == 0 && 
+                !obj_in_line_of_sight(npc, other, &rv))
+            return NULL;
+    }
 
     tmp = get_poolchunk(pool_mob_knownobj);
     tmp->next = NULL;
@@ -576,9 +578,14 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     tmp->last_y = other->y;
 
     tmp->last_seen = ROUND_TAG; /* If we got here, we have seen it */
-//    tmp->rv_time = 0;           /* Makes cached rv invalid */
-    tmp->rv_time = ROUND_TAG;   /* Cache the rv we calculated above. */
-    tmp->rv = rv;
+    if(nomap) 
+        tmp->rv_time = 0;
+    else
+    {
+        //    tmp->rv_time = 0;           /* Makes cached rv invalid */
+        tmp->rv_time = ROUND_TAG;   /* Cache the rv we calculated above. */
+        tmp->rv = rv;
+    }
 
     /* Initial friendship and attitude */
     tmp->friendship = friendship + calc_friendship_from_attitude(npc, other);

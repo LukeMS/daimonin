@@ -135,6 +135,22 @@ void update_pets_combat_mode(object *owner)
     }
 }
 
+void save_pet(object *pet)
+{
+    if (!QUERY_FLAG(pet, FLAG_REMOVED))
+    {
+        remove_ob(pet);
+        if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+            return;
+        }
+    }
+    
+    SET_FLAG(pet, FLAG_SYS_OBJECT);
+    insert_ob_in_ob(pet, pet->owner);
+}
+
 /* Warp a pet close to its owner. If that is impossible, temporarily store
  * the pet in the owner until there's somewhere to move out */
 /* TODO: the pathfinding system needs to be updated to handle
@@ -166,24 +182,28 @@ void pet_follow_owner(object *pet)
      * the pets as much as possible.
      */
 
-    /* TODO: handle these cases by temporarily storing pet inside owner */
     if (pet->owner->map == NULL || QUERY_FLAG(pet->owner, FLAG_REMOVED))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no map).", query_name(pet));
-        LOG(llevBug, "BUG: Can't follow owner: no map.\n");
+//        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no map).", query_name(pet));
+//        LOG(llevBug, "BUG: Can't follow owner: no map.\n");
+        save_pet(pet);
         return;
     }
-    if (pet->owner->map->in_memory != MAP_IN_MEMORY)
+    
+    if (pet->owner->map->in_memory != MAP_IN_MEMORY)        
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (map not loaded).", query_name(pet));
-        LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");
+//        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (map not loaded).", query_name(pet));
+//        LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");
+        save_pet(pet);
         return;
     }
+    
     dir = find_free_spot(pet->arch, pet->owner->map, pet->owner->x, pet->owner->y, 1, SIZEOFFREE + 1);
     if (dir == -1)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no space).", query_name(pet));
-        LOG(llevBug, "BUG: No space for pet to follow, freeing %s.\n", STRING_OBJ_NAME(pet));
+//        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no space).", query_name(pet));
+//        LOG(llevBug, "BUG: No space for pet to follow, freeing %s.\n", STRING_OBJ_NAME(pet));
+        save_pet(pet);
         return; /* Will be freed since it's removed */
     }
 
@@ -192,6 +212,7 @@ void pet_follow_owner(object *pet)
         tmp->x = pet->owner->x + freearr_x[dir] + tmp->arch->clone.x;
         tmp->y = pet->owner->y + freearr_y[dir] + tmp->arch->clone.y;
     }
+
     if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
         new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
     else
@@ -233,28 +254,39 @@ void remove_all_pets(mapstruct *map)
     }
 }
 
-/* Called when a player is logged out.
- * Should store all pets with the player.
- * TODO: also handle /save, which should store all pets without terminating
- * them. */
+/* Make all pets disappear */
 void terminate_all_pets(object *owner)
 {
-    LOG(llevDebug, "terminate_all_pets(%s): stub\n", STRING_OBJ_NAME(owner));
-/* Disabled until pet code rework */
-#if 0
-    objectlink *obl, *next;
-    for (obl = first_friendly_object; obl != NULL; obl = next)
+    objectlink *ol;
+
+    for(ol = CONTR(owner)->pets; ol; ol = ol->next)
     {
-        object *ob  = obl->objlink.ob;
-        next = obl->next;
-        if (get_owner(ob) == owner)
+        if(PET_VALID(ol, owner))
         {
-            if (!QUERY_FLAG(ob, FLAG_REMOVED))
-            {
-                remove_ob(ob);
-                check_walk_off(ob, NULL, MOVE_APPLY_VANISHED);
-            }
+            remove_ob(ol->objlink.ob);
+            check_walk_off(ol->objlink.ob, NULL, MOVE_APPLY_VANISHED);
         }
     }
-#endif
+}
+
+/* called from save_object for players */
+void save_all_pets(FILE *fp, object *owner, int flag)
+{
+    objectlink *ol;
+ 
+    for(ol = CONTR(owner)->pets; ol; ol = ol->next)
+    {
+        if(PET_VALID(ol, owner)) 
+        {
+            object *pet = ol->objlink.ob;
+ 
+            /* Don't save twice */
+            if(pet->env == owner)
+                continue;
+
+            SET_FLAG(pet, FLAG_SYS_OBJECT);
+            save_object(fp, pet, 2);
+            CLEAR_FLAG(pet, FLAG_SYS_OBJECT);
+        }
+    }
 }

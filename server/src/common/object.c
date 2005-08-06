@@ -1173,6 +1173,9 @@ signed long sum_weight(object *op)
 
     for (sum = 0, inv = op->inv; inv != NULL; inv = inv->below)
     {
+        if (QUERY_FLAG(inv, FLAG_SYS_OBJECT))
+            continue;
+
         if (inv->inv)
             sum_weight(inv);
         sum += inv->carrying + (inv->nrof ? inv->weight * inv->nrof : inv->weight);
@@ -1199,6 +1202,9 @@ signed long sum_weight(object *op)
 
 void add_weight(object *op, sint32 weight)
 {
+    if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
+        return;
+    
     while (op != NULL)
     {
         /* only *one* time magic can effect the weight of objects */
@@ -1215,6 +1221,9 @@ void add_weight(object *op, sint32 weight)
  */
 void sub_weight(object *op, sint32 weight)
 {
+    if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
+        return;
+    
     while (op != NULL)
     {
         /* only *one* time magic can effect the weight of objects */
@@ -2367,19 +2376,22 @@ void remove_ob(object *op)
     if (op->env != NULL)
     {
         /* this is not enough... when we for example remove money from a pouch
-             * which is in a sack (which is itself in the player inv) then the weight
-             * of the sack is not calculated right. This is only a temporary effect but
-             * we need to fix it here a recursive ->env chain.
-             */
-        if (op->nrof)
-            sub_weight(op->env, op->weight * op->nrof);
-        else
-            sub_weight(op->env, op->weight + op->carrying);
+         * which is in a sack (which is itself in the player inv) then the weight
+         * of the sack is not calculated right. This is only a temporary effect but
+         * we need to fix it here a recursive ->env chain.
+         */
+        if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
+        {
+            if (op->nrof)
+                sub_weight(op->env, op->weight * op->nrof);
+            else
+                sub_weight(op->env, op->weight + op->carrying);
+        }
 
         /* NO_FIX_PLAYER is set when a great many changes are being
-            * made to players inventory.  If set, avoiding the call to save cpu time.
-            * the flag is set from outside... perhaps from a drop_all() function.
-            */
+         * made to players inventory.  If set, avoiding the call to save cpu time.
+         * the flag is set from outside... perhaps from a drop_all() function.
+         */
         if ((otmp = is_player_inv(op->env)) != NULL && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_player(otmp);
 
@@ -2987,7 +2999,7 @@ object * get_split_ob(object *orig_ob, int nr)
     }
     else if (!is_removed)
     {
-        if (orig_ob->env != NULL)
+        if (orig_ob->env != NULL && !QUERY_FLAG(orig_ob, FLAG_SYS_OBJECT))
             sub_weight(orig_ob->env, orig_ob->weight * nr);
         if (orig_ob->env == NULL && orig_ob->map->in_memory != MAP_IN_MEMORY)
         {
@@ -3040,7 +3052,8 @@ object * decrease_ob_nr(object *op, int i)
 
         if (i < (int) op->nrof) /* there are still some */
         {
-            sub_weight(op->env, op->weight * i);
+            if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
+                sub_weight(op->env, op->weight * i);
             op->nrof -= i;
             if (tmp)
             {
@@ -3111,6 +3124,7 @@ object * decrease_ob_nr(object *op, int i)
 object * insert_ob_in_ob(object *op, object *where)
 {
     object *tmp, *otmp;
+    mapstruct *old_map = op->map;
 
     if (!QUERY_FLAG(op, FLAG_REMOVED))
     {
@@ -3149,7 +3163,10 @@ object * insert_ob_in_ob(object *op, object *where)
                 /* Weight handling gets pretty funky.  Since we are adding to
                  * tmp->nrof, we need to increase the weight.
                  */
-                add_weight(where, op->weight * op->nrof);
+                if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
+                    add_weight(where, op->weight * op->nrof);
+                /* FIXME: is the weight added twice for these objects? 
+                 * Both here and below? - Gecko 20050806 */
 
                 /* Make sure we get rid of the old object */
                 SET_FLAG(op, FLAG_REMOVED);
@@ -3167,9 +3184,10 @@ object * insert_ob_in_ob(object *op, object *where)
          * the weight, so we need to add it in again, since we actually do
          * the linking below
          */
-        add_weight(where, op->weight * op->nrof);
+        if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            add_weight(where, op->weight * op->nrof);
     }
-    else
+    else if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
         add_weight(where, (op->weight + op->carrying));
 
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
@@ -3182,6 +3200,13 @@ object * insert_ob_in_ob(object *op, object *where)
 #ifdef POSITION_DEBUG
     op->ox = 0,op->oy = 0;
 #endif
+
+    /* See if op moved between maps/containers */
+    if(op->speed && op->map != old_map)
+    {
+        // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
+        activelist_remove_inline(op, old_map);
+    } 
 
     /* Client has no idea of ordering so lets not bother ordering it here.
      * It sure simplifies this function...

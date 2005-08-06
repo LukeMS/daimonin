@@ -448,7 +448,6 @@ void remove_ns_dead_player(player *pl)
         leave_map(pl->ob);
     }
 
-
     LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
     leave(pl, 1);
 
