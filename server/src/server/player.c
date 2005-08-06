@@ -256,6 +256,10 @@ void free_player(player *pl)
         last_player = pl->prev;
     player_active--;
 
+    /* Free pet links */
+    while(pl->pets)
+        objectlink_unlink(&pl->pets, NULL, pl->pets);
+    
     free_newsocket(&pl->socket);
     if (pl->ob)
         destroy_object(pl->ob);
