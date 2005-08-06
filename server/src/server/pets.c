@@ -213,6 +213,8 @@ void pet_follow_owner(object *pet)
         tmp->y = pet->owner->y + freearr_y[dir] + tmp->arch->clone.y;
     }
 
+    CLEAR_FLAG(pet, FLAG_SYS_OBJECT);
+    
     if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
         new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
     else
