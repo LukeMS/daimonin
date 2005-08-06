@@ -315,7 +315,7 @@ int try_fit(object *op, int x, int y)
 
     for (more = op; more ; more = more->more)
     {
-        tx = x + more->x - op->x;
+        tx = x + more->x - op->x; /* TODO: this is wrong. See blocked_link(). - gecko 20050806 */
         ty = y + more->y - op->y;
         if (!(m = out_of_map(op->map, &tx, &ty)))
             return 1;
