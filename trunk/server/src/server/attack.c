@@ -1118,8 +1118,17 @@ int kill_object(object *op, int dam, object *hitter, int type)
             buf_ptr = buf2;
             if (owner != hitter)
             {
-                sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
-                sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
+                if(hitter->type == MONSTER && OBJECT_VALID(hitter->owner, hitter->owner_count))
+                {
+                    sprintf(buf, "Your %s killed %s.", query_name(hitter), query_name(op));                
+                    sprintf(buf2, "%s's %s killed %s.", query_name(owner), query_name(hitter), query_name(op));
+                } 
+                else
+                {
+                    sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));                
+                    sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
+                }
+                
                 old_hitter = hitter;
                 owner->exp_obj = hitter->exp_obj;
             }
