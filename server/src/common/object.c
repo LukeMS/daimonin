@@ -2337,12 +2337,18 @@ int count_used() {
 }
 #endif
 
+/* Physically kill/destroy an object, creating corpse and/or
+ * dropping any inventory on the floor */
 void destruct_ob(object *op)
 {
     if (op->inv)
         drop_ob_inv(op);
     remove_ob(op);
     check_walk_off(op, NULL, MOVE_APPLY_DEFAULT);
+
+    /* Notify player that a pet has died */
+    if(op->type == MONSTER && OBJECT_VALID(op->owner, op->owner_count) && op->owner->type == PLAYER)
+        new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your %s was killed", query_name(op));
 }
 
 /* remove_ob(op):

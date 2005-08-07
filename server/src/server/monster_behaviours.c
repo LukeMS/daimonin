@@ -1564,9 +1564,14 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             // Thats part of the pre-AI code: "follow target without hitting it AND target out of range
             // until last_eat counter is zero" MT-07.2005
 //            op->last_eat = 0;   /* important: thats our "we lose aggro count" - reset to zero here */
+            
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
                 play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
 
+            /* Notify player about target */
+            if(op->type == MONSTER && OBJECT_VALID(op->owner, op->owner_count) && op->owner->type == PLAYER)
+                new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your %s is attacking %s", query_name(op), query_name(op->enemy));
+            
             /* The unaggressives look after themselves 8) */
             /* TODO: Make a separate behaviour... */
             //            if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE)) {
