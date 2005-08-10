@@ -57,12 +57,18 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 	if(!status)
 	{ Logger::log().error() << "CRITICAL: description file was not found!";	return; }
 	mSceneMgr = SceneMgr;
+
+
+//	mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
+//	mSceneMgr->setFog(FOG_LINEAR , ColourValue(.0,.0,.0), 0.005, 450, 800);
+//	mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
+
 	string strTemp;
 	Option::getSingleton().getDescStr("MeshName", strTemp);
 	mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
 //	mNode->roll(Radian(45));
 
-	mNode->scale(Vector3(.6,.6,.6));
+	mNode->scale(Vector3(.3,.3,.3));
 	mNode->pitch(Radian(90));
 	mNode->yaw(Radian(90));
 	mNode->attachObject(mEntityNPC);
@@ -70,25 +76,42 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 	{
 //	mNode->pitch(Radian(90));
 //	mNode->yaw(Radian(90));
-const int CAMERA_X = 15;
-const int CAMERA_Y = 15;
+const int CAMERA_X =  200;
+const int CAMERA_Y = 250;
+const int CAMERA_Z = 200;
 
-	mNode->setPosition(Vector3(CAMERA_X,CAMERA_Y+100,40));
-	Event->getCamera()->setPosition(Vector3(CAMERA_X,CAMERA_Y,350));
-	Event->getCamera()->lookAt(Vector3(CAMERA_X,CAMERA_Y,0));
+
+//Event->getCamera()->setPosition(CAMERA_X, CAMERA_Y, CAMERA_Z);
+//				mCamera->setPosition(1,450 , 1);
+
+	mNode->setPosition(Vector3(CAMERA_X, CAMERA_Y+ CAMERA_Z-40, CAMERA_Z));
+
+	Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
+	Event->getCamera()->setFOVy(Degree(100));
+//	Event->getCamera()->setPosition(Vector3(CAMERA_X, -CAMERA_Y, CAMERA_Z));
+	Event->getCamera()->setPosition(Vector3(500, 500, 500));
+	Event->getCamera()->setFixedYawAxis(false);
+	Event->getCamera()->yaw(Degree(45));
+	Event->getCamera()->pitch(Degree(-35.264));
+
+
+/*
+	Event->getCamera()->setPosition(Vector3(CAMERA_X,CAMERA_Y, CAMERA_Z));
+	Event->getCamera()->lookAt(Vector3(CAMERA_X,0,CAMERA_Y));
 //	mCamera->pitch(Radian(1.2));
 	Event->getCamera()->setNearClipDistance(1);
 	Event->getCamera()->setFarClipDistance(5000);
-	Event->getCamera()->pitch(Radian(0.2));
+	Event->getCamera()->pitch(Radian(7.9));
 	Vector3 pos = Vector3(0,0,0);
-
+*/
 //		mNode->setPosition(Vector3(0,0,100));
 //		mNode->lookAt(Vector3(0,0,0));
 //		mNode->pitch(Radian(1.2));
 
 		 //mNode->attachObject(mCamera);
-	}
 
+
+	}
 //	mNode->roll(Radian(45));
 	// Create Animations and Animation sounds.
 	mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
@@ -306,7 +329,7 @@ void NPC::update(const FrameEvent& event)
 
 
 //				pos.z = Event->pgTileManager->Get_Map((short)(pos.x )/ TILE_SIZE -7, (short)(pos.y) / TILE_SIZE-5);
-				pos.z = Event->pgTileManager->Get_Map(  (short)((pos.x+4.5*TILE_SIZE) /TILE_SIZE), (short)((pos.y+6.5*TILE_SIZE) /TILE_SIZE));
+				pos.z = Event->pgTileManager->Get_Map_Height(  (short)((pos.x+4.5*TILE_SIZE) /TILE_SIZE), (short)((pos.y+6.5*TILE_SIZE) /TILE_SIZE));
 
 //LogFile::getSingleton().Info("x: %d y %d \n", (int)(pos.x /TILE_SIZE), (int)(pos.y /TILE_SIZE));
 //LogFile::getSingleton().Info("z: %f\n", pos.z);

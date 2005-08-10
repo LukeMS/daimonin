@@ -19,14 +19,14 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "Ogre.h"
-#include "tile.h"
+#include "TileChunk.h"
 #include "TileManager.h"
 #include "EnvironmentManager.h"
 
 CEnvironmentManager::CEnvironmentManager(CTileManager* TileManagerPointer, CChunk* ChunkPointer)
 {
 	m_ChunkPtr = ChunkPointer;
-	m_WorldmapPtr = TileManagerPointer->Get_pworldmap();
+//	m_WorldmapPtr = TileManagerPointer->Get_pworldmap();
 	m_TileManagerPtr = TileManagerPointer;
 }
 
@@ -34,9 +34,6 @@ CEnvironmentManager::~CEnvironmentManager()
 {
 	// m_TilePointer = NULL;
 }
-
-
-
 
 void CEnvironmentManager::UpdateEnvironment()
 {

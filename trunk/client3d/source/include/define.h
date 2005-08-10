@@ -24,7 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
 const char FILE_HEIGHT_MAP[] = "Hoehenkarte.png";
-const char PATH_TILE_TEXTURES[] = "media/materials/textures/";
+const char PATH_TILE_TEXTURES[] = "media/materials/textures/tiles/";
 
 
 

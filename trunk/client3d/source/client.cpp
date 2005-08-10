@@ -61,7 +61,6 @@ void DaimoninClient::go(void)
 //	Network::getSingleton().freeRecources();
 //	Option ::getSingleton().freeRecources();
 	Sound::getSingleton().freeRecources();
-	if (worldmap) { delete worldmap; }
 //	if (TileManager) { delete TileManager; }
 }
 
@@ -216,7 +215,6 @@ void DaimoninClient::createScene(void)
 		Real posZ = atof(strTemp.c_str());
 		Option::getSingleton().getDescStr("Facing", strTemp);
 		Radian facing = Radian(atof(strTemp.c_str()));
-
 		if (strType == "npc")
 		{
 			ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
@@ -226,11 +224,8 @@ void DaimoninClient::createScene(void)
 			ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
 		}
 	}
-
-	worldmap = new Cworldmap();
-	worldmap->Load();
 	TileManager = new CTileManager();
-	//TileManager->Init(worldmap,Event->World);
-	TileManager->Init(worldmap, mSceneMgr);
+	//TileManager->Init(Event->World);
+	TileManager->Init(mSceneMgr);
 	Event->Set_pgraphics(TileManager);
 }

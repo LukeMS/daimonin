@@ -24,14 +24,14 @@ material Land_HighDetails
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture.png
+				texture terrain_128_texture.png
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_texture.png
+				texture terrain_128_texture.png
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
@@ -47,14 +47,14 @@ material Land_HighDetails_Grid
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture.png
+				texture terrain_128_texture.png
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_texture.png
+				texture terrain_128_texture.png
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
@@ -77,7 +77,7 @@ material Land_LowDetails
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture.png
+				texture terrain_128_texture.png
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
@@ -93,7 +93,7 @@ material Land_LowDetails_Grid
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture.png
+				texture terrain_128_texture.png
 				tex_coord_set 0
 				tex_address_mode clamp
 			}

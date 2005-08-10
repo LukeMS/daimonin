@@ -21,18 +21,17 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef ENVIRONMENT_MANAGER_H
 #define ENVIRONMENT_MANAGER_H
 
+#include "Ogre.h"
+using namespace Ogre;
 // This class organizes environmental objects like trees and little rocks
 class CChunk;
-class Cworldmap;
-class CGraphics;
+class CTileManager;
 
 class CEnvironmentManager
 {
 private:
 	CChunk* m_ChunkPtr;
-	Cworldmap* m_WorldmapPtr;
 	CTileManager* m_TileManagerPtr;
-
 	MeshPtr m_Environment_Mesh;
 	SubMesh* m_Environment_SubMesh;
 	Entity* m_Environment_Entity;
