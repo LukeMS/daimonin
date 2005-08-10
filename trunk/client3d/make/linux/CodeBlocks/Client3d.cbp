@@ -44,6 +44,10 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/TileChunk.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/TileManager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -73,6 +77,12 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/include/EnvironmentManager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/TileChunk.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -345,10 +355,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/textwindow.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/tile.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
