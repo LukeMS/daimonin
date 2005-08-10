@@ -48,7 +48,7 @@ if (INr > 1000) return;
 	Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
 	Node->attachObject(mEntityNPC);
 	Node->setScale(Vector3(.4, .4, .4));
-	Node->pitch(Radian(90));
+//	Node->pitch(Radian(90));
 
 	INr+= 50;
 

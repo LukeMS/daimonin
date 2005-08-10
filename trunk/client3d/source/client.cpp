@@ -214,7 +214,7 @@ void DaimoninClient::createScene(void)
 		Option::getSingleton().getDescStr("StartZ", strTemp,i);
 		Real posZ = atof(strTemp.c_str());
 		Option::getSingleton().getDescStr("Facing", strTemp);
-		Radian facing = Radian(atof(strTemp.c_str()));
+		Radian facing = Degree(atof(strTemp.c_str()));
 		if (strType == "npc")
 		{
 			ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
