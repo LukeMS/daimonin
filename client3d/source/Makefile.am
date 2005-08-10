@@ -16,15 +16,19 @@ AM_CXXFLAGS =\
 bin_PROGRAMS = client3d
 
 client3d_SOURCES = \
-	TileManager.cpp\
-	EnvironmentManager.cpp\
-	tile.cpp\
+	adler32.c \
 	animate.cpp \
 	client.cpp \
+	crc32.c \
 	dialog.cpp \
+	EnvironmentManager.cpp \
 	event.cpp \
+	inffast.c \
+	inflate.c \
+	inftrees.c \
 	light_manager.cpp \
 	logger.cpp \
+	logger_html.cpp \
 	main.cpp \
 	network_cmd.cpp \
 	network.cpp \
@@ -40,9 +44,14 @@ client3d_SOURCES = \
 	spell_manager.cpp \
 	spell_range.cpp \
 	textwindow.cpp \
+	tile.cpp \
 	tile_gfx.cpp \
-	tile_map.cpp 
-
+	TileManager.cpp \
+	TileChunk.cpp \
+	uncompr.c \
+	zutil.c
+	
+#	tile_map.cpp 
 
 client3d_LDFLAGS = \
 	-L../make/linux \

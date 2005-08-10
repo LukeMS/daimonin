@@ -69,8 +69,8 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 //	mNode->roll(Radian(45));
 
 	mNode->scale(Vector3(.3,.3,.3));
-	mNode->pitch(Radian(90));
-	mNode->yaw(Radian(90));
+//	mNode->pitch(Radian(90));
+//	mNode->yaw(Radian(90));
 	mNode->attachObject(mEntityNPC);
 	if (!thisNPC)
 	{
@@ -84,7 +84,7 @@ const int CAMERA_Z = 200;
 //Event->getCamera()->setPosition(CAMERA_X, CAMERA_Y, CAMERA_Z);
 //				mCamera->setPosition(1,450 , 1);
 
-	mNode->setPosition(Vector3(CAMERA_X, CAMERA_Y+ CAMERA_Z-40, CAMERA_Z));
+//	mNode->setPosition(Vector3(CAMERA_X, CAMERA_Y+ CAMERA_Z-40, CAMERA_Z));
 
 	Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
 	Event->getCamera()->setFOVy(Degree(100));
@@ -304,8 +304,8 @@ void NPC::update(const FrameEvent& event)
 		{
 			// just a test...
 			mAnim->toggleAnimation(STATE_WALK1);
-			mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-			mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+			mTranslateVector.x = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+			mTranslateVector.z = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
 
 //			mTranslateVector = mNode->getOrientation().zAxis();
 			mNode->translate(mTranslateVector);
@@ -329,11 +329,11 @@ void NPC::update(const FrameEvent& event)
 
 
 //				pos.z = Event->pgTileManager->Get_Map((short)(pos.x )/ TILE_SIZE -7, (short)(pos.y) / TILE_SIZE-5);
-				pos.z = Event->pgTileManager->Get_Map_Height(  (short)((pos.x+4.5*TILE_SIZE) /TILE_SIZE), (short)((pos.y+6.5*TILE_SIZE) /TILE_SIZE));
+				pos.y = Event->pgTileManager->Get_Map_Height(  (short)((pos.x+4.5*TILE_SIZE) /TILE_SIZE), (short)((pos.z+6.5*TILE_SIZE) /TILE_SIZE));
 
 //LogFile::getSingleton().Info("x: %d y %d \n", (int)(pos.x /TILE_SIZE), (int)(pos.y /TILE_SIZE));
 //LogFile::getSingleton().Info("z: %f\n", pos.z);
-				mNode->setPosition(pos.x, pos.y-pos.z, pos.z*2+40);
+				mNode->setPosition(pos.x, pos.y * 2 + 40, pos.z);
 			}
 		}
 		else 
