@@ -288,7 +288,7 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 	Vector3 pos = mCamera->getPosition();
 
 	mWindow->setDebugText("Camera zoom: " + StringConverter::toString(pos.z)
-		+"pitch: " + StringConverter::toString(g_pitch)
+		+"  pitch: " + StringConverter::toString(g_pitch)
 	);
 /*
 	Vector3 pPos = World->getPosition();
@@ -452,7 +452,10 @@ void CEvent::keyPressed(KeyEvent *e)
             ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
 			break;
 		case KC_G:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);
+        //    ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);
+        static bool grid = false;
+        grid = !grid;
+        pgTileManager->SwitchMaterial(grid, true);
 			break;
 		case KC_I:
             ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
@@ -539,7 +542,7 @@ void CEvent::keyPressed(KeyEvent *e)
 		case KC_ADD:
 		{
 			Vector3 pos = mCamera->getPosition();
-			pos.z += 10;
+			pos.y += 10;
 			mCamera->setPosition(pos);
 		}
 			break;
@@ -547,7 +550,7 @@ void CEvent::keyPressed(KeyEvent *e)
 		case KC_SUBTRACT:
 		{
 			Vector3 pos = mCamera->getPosition();
-			pos.z -= 10;
+			pos.y -= 10;
 			mCamera->setPosition(pos);
 		}
 			break;

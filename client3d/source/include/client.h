@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #define CLIENT_H
 
 #include "event.h"
-#include "tile.h"
+#include "TileChunk.h"
 #include "TileManager.h"
 
 using namespace Ogre;
@@ -63,7 +63,6 @@ private:
 	SceneManager        *mSceneMgr;
 	InputReader         *mInputReader;
 	RenderWindow        *mWindow;
-	Cworldmap *worldmap;
 	CTileManager *TileManager;
 
 	////////////////////////////////////////////////////////////
