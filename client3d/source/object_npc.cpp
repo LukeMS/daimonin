@@ -87,7 +87,7 @@ const int CAMERA_Z = 200;
 //	mNode->setPosition(Vector3(CAMERA_X, CAMERA_Y+ CAMERA_Z-40, CAMERA_Z));
 
 	Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-	Event->getCamera()->setFOVy(Degree(100));
+	Event->getCamera()->setFOVy(Degree(90));
 //	Event->getCamera()->setPosition(Vector3(CAMERA_X, -CAMERA_Y, CAMERA_Z));
 	Event->getCamera()->setPosition(Vector3(500, 500, 500));
 	Event->getCamera()->setFixedYawAxis(false);
