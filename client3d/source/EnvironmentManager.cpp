@@ -26,13 +26,11 @@ http://www.gnu.org/licenses/licenses.html
 CEnvironmentManager::CEnvironmentManager(CTileManager* TileManagerPointer, CChunk* ChunkPointer)
 {
 	m_ChunkPtr = ChunkPointer;
-//	m_WorldmapPtr = TileManagerPointer->Get_pworldmap();
 	m_TileManagerPtr = TileManagerPointer;
 }
 
 CEnvironmentManager::~CEnvironmentManager()
 {
-	// m_TilePointer = NULL;
 }
 
 void CEnvironmentManager::UpdateEnvironment()
@@ -44,12 +42,10 @@ void CEnvironmentManager::UpdateEnvironment()
 
 if (INr > 1000) return;
 
-	SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(850+INr, 850+INr, 80), Quaternion(1.0,0.0,0.0,0.0));
+	SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(850+INr, 80, 850+INr), Quaternion(1.0,0.0,0.0,0.0));
 	Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
 	Node->attachObject(mEntityNPC);
 	Node->setScale(Vector3(.4, .4, .4));
-//	Node->pitch(Radian(90));
-
 	INr+= 50;
 
 /*
