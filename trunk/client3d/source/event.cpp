@@ -133,7 +133,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	mFiltering = TFO_BILINEAR;
 	mIdleTime =0;
 	mDayTime = 15;
-	mCameraZoom = CAMERA_ZOOM;
+	mCameraZoom = ACT_CAMERA_ZOOM;
 }
 
 //=================================================================================================
@@ -151,30 +151,9 @@ CEvent::~CEvent()
 //=================================================================================================
 void CEvent::setWorldPos(Vector3 &pos)
 {
-//	static Vector3 pos = mCamera->getPosition();
-//	pos+=newPos;
 	pgTileManager->ControlChunks(pos);
 	mCamera->setPosition(mCamera->getPosition()+pos);
 
-//	pos.z = pgraphics->Get_Map((short)pos.x/TILE_SIZE, (short)pos.y/TILE_SIZE)*2;
-//LogFile::getSingleton().Info("z: %f\n", pos.z);
-/*
-	static Vector3 pos = mCamera->getPosition();
-	pos+=newPos;
-		mCamera->setPosition(mCamera->getPosition()+pos);
-	int z = pgraphics->Get_Map((short)pos.x/TILE_SIZE, (short)pos.y/TILE_SIZE);
-//	LogFile::getSingleton().Info("pos.x, pos.y, z: %d %f %f\n", z, pos.x, pos.y);
-	mCamera->setPosition(mCamera->getPosition()+newPos);
-*/
-
-
-/*
-	static Vector3 vec;
-	vec-=pos;
-	vec.z =  0;
-	mCamera->setPosition(vec);
-*/
-//	World->translate(-pos);
 //	ParticleManager::getSingleton().synchToWorldPos(pos);
 }
 
@@ -183,20 +162,6 @@ void CEvent::setWorldPos(Vector3 &pos)
 //=================================================================================================
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
-//	mCamera->setOrientation(Quaternion (w_1, x_1, y_1, z_1));
-//	mCamera->setOrientation(Quaternion (0.1, 0.1, 1.0, z_1));
-
-//	w_1 += x_1;
-//	mCamera->pitch(Radian(x_1));
-//	x_1=0;
-
-//	mCamera->pitch(Radian(y_1));
-//	mCamera->lookAt(Vector3(x_1,y_1,z_1));
-
-
-//	pgraphics->ControlChunks(mCamera->getPosition());
-
-
 	if (mWindow->isClosed()) { return false; }
 	ObjectManager::getSingleton().update(OBJECT_NPC, evt);
 	ParticleManager::getSingleton().moveNodeObject(evt);
@@ -206,8 +171,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 		Sound::getSingleton().playSample(SAMPLE_PLAYER_IDLE);
 		mIdleTime = 0;
 	}
-
-//	TileMap::getSingleton().draw();
 
 /*
 	if (!mUseBufferedInputKeys)
@@ -286,16 +249,22 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 	// Print camera details
 	/////////////////////////////////////////////////////////////////////////
 	Vector3 pos = mCamera->getPosition();
-
+/*
 	mWindow->setDebugText("Camera zoom: " + StringConverter::toString(pos.z)
 		+"  pitch: " + StringConverter::toString(g_pitch)
 	);
-/*
-	Vector3 pPos = World->getPosition();
+*/
+
+	Vector3 pPos = Event->getCamera()->getPosition();
+//	pPos.z = 22*30 -(pPos.z- 534);
+	pPos.z -= 534;
+	Real h = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*2;
+
 	mWindow->setDebugText(	" x: "+ StringConverter::toString(pPos.x)+
 													" y: "+ StringConverter::toString(pPos.y)+
-													" z: "+ StringConverter::toString(pPos.z));
-
+													" z: "+ StringConverter::toString(pPos.z)+
+													"  h: "+ StringConverter::toString(h));
+/*
 	mWindow->setDebugText(	" w: "+ StringConverter::toString(w_1)+
 													" x: "+ StringConverter::toString(x_1)+
 													" y: "+ StringConverter::toString(y_1)+
@@ -353,11 +322,11 @@ void CEvent::keyPressed(KeyEvent *e)
 		/////////////////////////////////////////////////////////////////////////
 		
 		case KC_UP:
-			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, -1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, 1);
 			//mCamera->  moveRelative (Vector3(0,100,0));
 			break;
 		case KC_DOWN:
-			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK,  1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, -1);
 			//mCamera->  moveRelative (Vector3(0,-100,0));
 			break;
 		case KC_RIGHT:
@@ -539,19 +508,18 @@ void CEvent::keyPressed(KeyEvent *e)
 		}
 			break;
 
-		case KC_ADD:
+		case KC_SUBTRACT:
 		{
-			Vector3 pos = mCamera->getPosition();
-			pos.y += 10;
-			mCamera->setPosition(pos);
+			//if (mCameraZoom < MAX_CAMERA_ZOOM)
+			 mCameraZoom += 10;
+			mCamera->setFOVy(Degree(mCameraZoom));
 		}
 			break;
 
-		case KC_SUBTRACT:
+		case KC_ADD:
 		{
-			Vector3 pos = mCamera->getPosition();
-			pos.y -= 10;
-			mCamera->setPosition(pos);
+			if (mCameraZoom > MIN_CAMERA_ZOOM) mCameraZoom -= 10;
+			mCamera->setFOVy(Degree(mCameraZoom));
 		}
 			break;
 

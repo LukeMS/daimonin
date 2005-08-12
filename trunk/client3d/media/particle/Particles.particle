@@ -93,8 +93,8 @@ Particle/FireBall
 {
 	quota	50
 	material	Particle/Flare
-	particle_width	50
-	particle_height	50
+	particle_width	25
+	particle_height	25
 	cull_each	false
 	billboard_type	point
 
@@ -105,7 +105,7 @@ Particle/FireBall
 		colour_range_start	1 0 0 1
 		colour_range_end	1.0 0.4 0.4 1
 		direction	0 1 0
-		emission_rate	30
+		emission_rate	15
 		position	0 0 0
 		velocity	1
 		velocity_min	1

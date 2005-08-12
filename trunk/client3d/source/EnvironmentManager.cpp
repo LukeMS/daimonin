@@ -43,11 +43,13 @@ void CEnvironmentManager::UpdateEnvironment()
 if (INr > 1000) return;
 
 	SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(850+INr, 80, 850+INr), Quaternion(1.0,0.0,0.0,0.0));
-	Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
+//	Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
+Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "building test with window.mesh" );
+
 	Node->attachObject(mEntityNPC);
 	Node->setScale(Vector3(.4, .4, .4));
-	INr+= 50;
-
+//	INr+= 50;
+	INr+= 100;
 /*
 	long x = m_ChunkPtr->m_posX;
 	long y = m_ChunkPtr->m_posY;

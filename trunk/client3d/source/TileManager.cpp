@@ -44,6 +44,7 @@ CTileManager::~CTileManager()
 {
 	for(int x = 0; x < TILES_SUM_X + 1; ++x) { delete[] m_Map[x]; }
 	delete[] m_Map;
+	m_Kartentextur.setNull();
 }
 
 //=================================================================================================
@@ -55,7 +56,7 @@ void CTileManager::Init(SceneManager* SceneMgr)
 	m_StretchZ = 2;
 	srand(1);
 	m_Map = new _Map*[TILES_SUM_X+1];
-	for (int x = 0; x < TILES_SUM_X + 1; ++x) { m_Map[x] = new _Map[TILES_SUM_Y + 1]; }
+	for (int x = 0; x < TILES_SUM_X + 1; ++x) { m_Map[x] = new _Map[TILES_SUM_Z + 1]; }
 	Create_Map();
 	CreateTextureGroup("terrain"); // only used to create a new texture group.
 	CreateChunks();
@@ -72,16 +73,16 @@ void CTileManager::Create_Map()
 	int dimx = image.getWidth(); 
 	int dimy = image.getHeight();
 	int posX = 0, posY;
-	short Map[TILES_SUM_X+1][TILES_SUM_Y+1];
+	short Map[TILES_SUM_X+1][TILES_SUM_Z+1];
 	///////////////////////////////////////////////////////////////////////// 
 	// Fill the heightdata buffer with the image-color.
 	///////////////////////////////////////////////////////////////////////// 
 	for(int x = 0; x < TILES_SUM_X+1; ++x)
 	{
 		posY =0;
-		for(int y = 0; y < TILES_SUM_Y+1; ++y)
+		for(int y = 0; y < TILES_SUM_Z+1; ++y)
 		{
-			if ( x && x != TILES_SUM_X && y && y != TILES_SUM_Y)
+			if ( x && x != TILES_SUM_X && y && y != TILES_SUM_Z)
 			{
 				Map[x][y] = heightdata_temp[posY * dimx + posX];
 			}
@@ -96,7 +97,7 @@ void CTileManager::Create_Map()
 
 	for (int x = 0; x < TILES_SUM_X; ++x)
 	{
-		for (int y = 0; y < TILES_SUM_Y; ++y)
+		for (int y = 0; y < TILES_SUM_Z; ++y)
 		{
 			m_Map[x][y].height = (Map[x][y] + Map[x][y+1] + Map[x+1][y] + Map[x+1][y+1]) / 4;
 		}
@@ -112,7 +113,7 @@ void CTileManager::Set_Map_Textures()
 	short height;
 	for (int x = 0; x < TILES_SUM_X; ++x)
 	{
-		for (int y = 0; y < TILES_SUM_Y; ++y)
+		for (int y = 0; y < TILES_SUM_Z; ++y)
 		{
 			height = m_Map[x][y].height;
 			///////////////////////////////////////////////////////////////////////// 
@@ -183,21 +184,41 @@ void CTileManager::Set_Map_Textures()
 //=================================================================================================
 void CTileManager::CreateChunks()
 {
-	CChunk::m_TileManagerPtr = this;
-	CChunk::m_bounds = new AxisAlignedBox(
-		 - TILE_SIZE * HALF_CHUNK_X, 0               , -TILE_SIZE * HALF_CHUNK_Y,
-			 TILE_SIZE * HALF_CHUNK_X, 100 * m_StretchZ,  TILE_SIZE * HALF_CHUNK_Y);
-
 	long time = clock();
+		CChunk::m_TileManagerPtr = this;
+	CChunk::m_bounds = new AxisAlignedBox(
+	 - TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
+		 TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
+
 	for (short x = 0; x < CHUNK_SUM_X; ++x)
 	{
-		for (short y = 0; y < CHUNK_SUM_Y; ++y)
+		for (short y = 0; y < CHUNK_SUM_Z; ++y)
 		{
 			m_mapchunk[x][y].Create(x, y);
 		}
 	}
 	delete CChunk::m_bounds;
-	Logger::log().info() << "Time to create Chunks: %d ms\n" << clock()-time;
+	Logger::log().info() << "Time to create Chunks: " << clock()-time << " ms";
+}
+
+//=================================================================================================
+// Change Tile and Environmet textures.
+//=================================================================================================
+void CTileManager::ChangeTexture()
+{
+	static bool once = false;
+	if (once) return;
+
+	long time = clock();
+	Image tMap;
+	tMap.load("terrain_128_texture_2.png", "General");
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("Land_HighDetails");
+	std::string texName = "testMat";
+	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "General", tMap, TEX_TYPE_2D, 3,1.0f);
+	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
+	mMaterial->load();
+	Logger::log().info() << "Time to change Texture: " << clock()-time << " ms";
+	once=true;
 }
 
 //=================================================================================================
@@ -205,21 +226,22 @@ void CTileManager::CreateChunks()
 //=================================================================================================
 void CTileManager::ChangeChunks()
 {
-	CChunk::m_TileManagerPtr = this;
-	CChunk::m_bounds = new AxisAlignedBox(
-		 - TILE_SIZE * HALF_CHUNK_X, 0               , -TILE_SIZE * HALF_CHUNK_Y,
-			 TILE_SIZE * HALF_CHUNK_X, 100 * m_StretchZ,  TILE_SIZE * HALF_CHUNK_Y);
-
 	long time = clock();
+		CChunk::m_TileManagerPtr = this;
+	CChunk::m_bounds = new AxisAlignedBox(
+	 - TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
+		 TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
+
 	for (short x = 0; x < CHUNK_SUM_X; ++x)
 	{
-		for (short y = 0; y < CHUNK_SUM_Y; ++y)
+		for (short y = 0; y < CHUNK_SUM_Z; ++y)
 		{
 			m_mapchunk[x][y].Change(x, y);
 		}
 	}
 	delete CChunk::m_bounds;
-	Logger::log().info() << "Time to change Chunks: %d ms\n\n\n" << clock()-time;
+	Set_Map_Textures();
+	Logger::log().info() << "Time to change Chunks: " << clock()-time << " ms";
 }
 
 
@@ -233,26 +255,24 @@ void CTileManager::ControlChunks(Vector3 vector)
 	/////////////////////////////////////////////////////////////////////////
 //	ChangeChunks();
 
-	int x = (int)vector.x / (TILE_SIZE * CHUNK_SUM_X)+1;
-	int y = (int)vector.z / (TILE_SIZE * CHUNK_SUM_Y)+1;
+	int x = (int)vector.x / (TILE_SIZE * CHUNK_SIZE_X)+1;
+	int y = (int)vector.z / (TILE_SIZE * CHUNK_SIZE_Z)+1;
+	if ( x > CHUNK_SUM_X || y > CHUNK_SUM_Z) { return; }
 
-	if ( x < CHUNK_SUM_X && y < CHUNK_SUM_Y)
+	for(int cx = 0; cx < CHUNK_SUM_X; ++cx)
 	{
-		for(int cx = 0; cx < CHUNK_SUM_X; ++cx)
+		for (int cy = 0; cy < CHUNK_SUM_Z; ++cy)
 		{
-				for (int cy = 0; cy < CHUNK_SUM_Y; ++cy)
+			#ifndef LOW_QUALITY_RENDERING
+			if (cx >= x - HIGH_QUALITY_RANGE && cx <= x + HIGH_QUALITY_RANGE
+			 && cy >= y - HIGH_QUALITY_RANGE && cy <= y + HIGH_QUALITY_RANGE)
 			{
-#ifndef LOW_QUALITY_RENDERING
-				if (cx >= x - HIGH_QUALITY_RANGE && cx <= x + HIGH_QUALITY_RANGE
-				 && cy >= y - HIGH_QUALITY_RANGE && cy <= y + HIGH_QUALITY_RANGE)
-				{
-					m_mapchunk[cx][cy].Attach(QUALITY_HIGH);
-				}
-				else
-#endif
-				{
-					m_mapchunk[cx][cy].Attach(QUALITY_LOW);
-				}
+				m_mapchunk[cx][cy].Attach(QUALITY_HIGH);
+			}
+			else
+			#endif
+			{
+				m_mapchunk[cx][cy].Attach(QUALITY_LOW);
 			}
 		}
 	}
@@ -663,7 +683,7 @@ void CTileManager::SwitchMaterial(bool grid, bool filter)
 		{
 			for (int x = 0; x < CHUNK_SUM_X; ++x)
 			{
-				for (int y = 0; y < CHUNK_SUM_Y; ++y)
+				for (int y = 0; y < CHUNK_SUM_Z; ++y)
 				{
 					entity = m_mapchunk[x][y].Get_Land_entity();
 					if (entity) { entity->setMaterialName("Land_HighDetails_Grid"); }
@@ -676,7 +696,7 @@ void CTileManager::SwitchMaterial(bool grid, bool filter)
 		{
 			for (int x = 0; x < CHUNK_SUM_X; ++x)
 			{
-				for (int y = 0; y < CHUNK_SUM_Y; ++y)
+				for (int y = 0; y < CHUNK_SUM_Z; ++y)
 				{
 					entity = m_mapchunk[x][y].Get_Land_entity();
 					if (entity) { entity->setMaterialName("Land_LowDetails_Grid"); }
@@ -695,7 +715,7 @@ void CTileManager::SwitchMaterial(bool grid, bool filter)
 		{
 			for (int x = 0; x < CHUNK_SUM_X; ++x)
 			{
-				for (int y = 0; y < CHUNK_SUM_Y; ++y)
+				for (int y = 0; y < CHUNK_SUM_Z; ++y)
 				{
 					entity = m_mapchunk[x][y].Get_Land_entity();
 					if (entity) { entity->setMaterialName("Land_HighDetails"); }
@@ -708,7 +728,7 @@ void CTileManager::SwitchMaterial(bool grid, bool filter)
 		{
 			for (int x = 0; x < CHUNK_SUM_X; ++x)
 			{
-				for (int y = 0; y < CHUNK_SUM_Y; ++y)
+				for (int y = 0; y < CHUNK_SUM_Z; ++y)
 				{
 					entity = m_mapchunk[x][y].Get_Land_entity();
 					if (entity) { entity->setMaterialName("Land_LowDetails"); }
