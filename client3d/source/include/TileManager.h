@@ -42,9 +42,10 @@ private:
 		unsigned char terrain_row;
 	}** m_Map; // PlayField
 
-	CChunk m_mapchunk[CHUNK_SUM_X][CHUNK_SUM_Y]; // MapChunks
+	CChunk m_mapchunk[CHUNK_SUM_X][CHUNK_SUM_Z]; // MapChunks
 	SceneManager* m_SceneManager;
 	AxisAlignedBox* bounds;
+	MaterialPtr m_Kartentextur;
 	float m_StretchZ;
 
 public:
@@ -67,6 +68,7 @@ public:
 	void ChangeChunks();
 	void ControlChunks(Vector3 vector);
 	void CreateTexture();
+	void ChangeTexture();
 	void CreateTextureGroup(const char *terrain_type); // create the Group-Texture.
 	void shrinkFilter(const Image& Filter, const int PIXEL);
 	void shrinkTexture(const Image& Texture, const int num, const int PIXEL, const char *terrain_type);

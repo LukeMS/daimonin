@@ -30,14 +30,12 @@ const float PIXEL_PER_TILE =  128.0; // Pixel per Tile in the Ground-texture.
 const float PIXEL_PER_ROW  = 1024.0; // Pixel per Row  in the Ground-texture.
 
 const int   TILE_SIZE = 30;
-const int   CHUNK_SUM_X  = 16; // Map has x chunks on x-axis.
-const int   CHUNK_SUM_Y  = 16; // Map has y chunks on y-axis.
-const int   CHUNK_SIZE_X = 16; // Chunk has x tiles on x-axis & y-axis. Must be even.
-const int   CHUNK_SIZE_Y = 16; // Chunk has x tiles on x-axis & y-axis. Must be even.
-const int   HALF_CHUNK_X = CHUNK_SIZE_X/2;
-const int   HALF_CHUNK_Y = CHUNK_SIZE_Y/2;
+const int   CHUNK_SUM_X  =  1; // Map has x chunks on x-axis.
+const int   CHUNK_SUM_Z  =  1; // Map has y chunks on y-axis.
+const int   CHUNK_SIZE_X = 22; // Chunk has x tiles on x-axis & y-axis. Must be even.
+const int   CHUNK_SIZE_Z = 22; // Chunk has x tiles on x-axis & y-axis. Must be even.
 const int   TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;
-const int   TILES_SUM_Y  = CHUNK_SUM_Y * CHUNK_SIZE_Y;
+const int   TILES_SUM_Z  = CHUNK_SUM_Z * CHUNK_SIZE_Z;
 
 const int   TEXTURES_PER_ROW = (int)PIXEL_PER_ROW / (int)PIXEL_PER_TILE;
 const int   HIGH_QUALITY_RANGE = 5; // Radius of the Area where the tiles are drawn in high quality.
@@ -89,7 +87,6 @@ private:
 	Entity* m_Land_entity_low;
 	SceneNode* m_Land;
 
-	MaterialPtr m_Kartentextur;
 	CEnvironmentManager* m_EnvironmentManagerPtr;
 
 public:
@@ -98,7 +95,7 @@ public:
 	static CTileManager* m_TileManagerPtr;
 	static AxisAlignedBox* m_bounds;
 
-	short m_posX, m_posY;
+	short m_posX, m_posZ;
 
 	CChunk();
 	~CChunk();
@@ -107,23 +104,26 @@ public:
 	Entity* Get_Water_entity(){return m_Water_entity_high;}
 	SubMesh* Get_Land_subMesh(){return m_Land_subMesh_high;}
 	Entity* Get_Land_entity(){return m_Land_entity_high;}
-	void Set_Tile(short &x, short &y) { m_posX = x; m_posY = y; }
-	void Create(short &x, short &y);
-	void Change(short &x, short &y);
+	void Set_Tile(short &x, short &z) { m_posX = x; m_posZ = z; }
+	void Create(short &x, short &z);
+	void Change(short &x, short &z);
 
 	void Create_Dummy(SubMesh* submesh); // No Land/Water on this chunk. Lets make a dummy.
 	void CreateLandHigh();
-	void CreateLandHigh_Buffers();
 	void ChangeLandHigh();
+	void CreateLandHigh_Buffers();
 
 	void CreateLandLow();
 	void ChangeLandLow();
+	void CreateLandLow_Buffers();
 
 	void CreateWaterHigh();
-	void CreateWaterHigh_Buffers();
 	void ChangeWaterHigh();
+	void CreateWaterHigh_Buffers();
+
 	void CreateWaterLow();
 	void ChangeWaterLow();
+	void CreateWaterLow_Buffers();
 
 	void CreateTexture();
 	void CreateSceneNode();

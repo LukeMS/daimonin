@@ -61,9 +61,9 @@ class Animate
 	bool mSpellTrigger;
 	AnimationState *mAnimState;    
 	AnimationState *mAnimStates[STATE_SUM];
-    Real mAnimSpeed, mTurnSpeed;
+	Real mAnimSpeed, mTurnSpeed;
 	std::string mStrTemp;
-    int sound_handle[STATE_SUM];
+	int sound_handle[STATE_SUM];
     
     ////////////////////////////////////////////////////////////
 	// Functions.

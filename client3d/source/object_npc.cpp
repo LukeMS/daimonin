@@ -46,7 +46,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 	if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
 
 	mNode = Node;
-	mFacing = Facing;
+//	mFacing = Facing;
 	thisNPC = mInstanceNr;
 	mDescFile = DIR_MODEL_DESCRIPTION;
 	mDescFile += desc_filename;
@@ -67,55 +67,40 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 	Option::getSingleton().getDescStr("MeshName", strTemp);
 	mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
 //	mNode->roll(Radian(45));
-
-	mNode->scale(Vector3(.3,.3,.3));
-	mNode->pitch(Radian(90));
-	mNode->yaw(Radian(90));
+//	mNode->pitch(Degree(45));
+//	mNode->yaw(Degree(180));
 	mNode->attachObject(mEntityNPC);
+
+
+
 	if (!thisNPC)
 	{
-//	mNode->pitch(Radian(90));
-//	mNode->yaw(Radian(90));
-const int CAMERA_X =  200;
-const int CAMERA_Y = 250;
-const int CAMERA_Z = 200;
-
-
-//Event->getCamera()->setPosition(CAMERA_X, CAMERA_Y, CAMERA_Z);
-//				mCamera->setPosition(1,450 , 1);
-
-	mNode->setPosition(Vector3(CAMERA_X, CAMERA_Y+ CAMERA_Z-40, CAMERA_Z));
-
-	Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-	Event->getCamera()->setFOVy(Degree(90));
-//	Event->getCamera()->setPosition(Vector3(CAMERA_X, -CAMERA_Y, CAMERA_Z));
-	Event->getCamera()->setPosition(Vector3(2000, 500, 2000));
-	Event->getCamera()->setFixedYawAxis(false);
-	Event->getCamera()->yaw(Degree(45));
-	Event->getCamera()->pitch(Degree(-35.264));
-
-
 /*
-	Event->getCamera()->setPosition(Vector3(CAMERA_X,CAMERA_Y, CAMERA_Z));
-	Event->getCamera()->lookAt(Vector3(CAMERA_X,0,CAMERA_Y));
-//	mCamera->pitch(Radian(1.2));
-	Event->getCamera()->setNearClipDistance(1);
-	Event->getCamera()->setFarClipDistance(5000);
-	Event->getCamera()->pitch(Radian(7.9));
-	Vector3 pos = Vector3(0,0,0);
-*/
-//		mNode->setPosition(Vector3(0,0,100));
-//		mNode->lookAt(Vector3(0,0,0));
-//		mNode->pitch(Radian(1.2));
+//====== geck0's settings =====
+		mNode->scale(Vector3(.3,.3,.3));
+		mNode->setPosition(Vector3(1050, 60, 1050));
+		Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
+		Event->getCamera()->setFOVy(Degree(90));
+		Event->getCamera()->setPosition(Vector3(1500, 500, 1500));
 
-		 //mNode->attachObject(mCamera);
+		Event->getCamera()->yaw(Degree(45));
+		Event->getCamera()->pitch(Degree(-35.264));
+*/
+
+
+		mNode->scale(Vector3(.3,.3,.3));
+		mNode->setPosition(Vector3(330, 20, 330+20));
+		Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
+		Event->getCamera()->setFOVy(Degree(90));
+		Event->getCamera()->setPosition(Vector3(330, 400, 884));
+		Event->getCamera()->pitch(Degree(-35.264));
+//		Event->getCamera()->setFixedYawAxis(false);
 
 
 	}
-//	mNode->roll(Radian(45));
+
 	// Create Animations and Animation sounds.
 	mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
-
 	mTurning =0;
 	mWalking =0;
 	mEntityWeapon =0;
@@ -304,8 +289,8 @@ void NPC::update(const FrameEvent& event)
 		{
 			// just a test...
 			mAnim->toggleAnimation(STATE_WALK1);
-			mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-			mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+			mTranslateVector.x = sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+			mTranslateVector.z = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
 
 //			mTranslateVector = mNode->getOrientation().zAxis();
 			mNode->translate(mTranslateVector);
@@ -320,16 +305,22 @@ void NPC::update(const FrameEvent& event)
 					static Vector3 pos = mNode->getPosition();
 				pos+= mTranslateVector;
 				Event->setWorldPos(mTranslateVector);
-				//mNode->setPosition(mNode->getPosition()+mTranslateVector);
-				//mNode->setPosition(600,800+mTranslateVector.z, mTranslateVector.z+40);
-				//LogFile::getSingleton().Info("x, y, z: %f %f %f\n",mTranslateVector.x, mTranslateVector.y, mTranslateVector.z);
-//				Vector3 pos = mNode->getPosition();
-				//pos.z = Event->pgraphics->Get_Map((short)pos.x/TILE_SIZE, (short)pos.y/TILE_SIZE)*2;
-//				pos.z = Event->pgTileManager->Get_Map((short)(pos.x )/ TILE_SIZE -7, (short)(pos.y) / TILE_SIZE-5);
-//				pos.z = Event->pgTileManager->Get_Map_Height(  (short)((pos.x+4.5*TILE_SIZE) /TILE_SIZE), (short)((pos.y+6.5*TILE_SIZE) /TILE_SIZE));
-//LogFile::getSingleton().Info("x: %d y %d \n", (int)(pos.x /TILE_SIZE), (int)(pos.y /TILE_SIZE));
-				mNode->setPosition(pos.x, pos.y-pos.z, pos.z*2+40);
-Logger::log().info() << "7";
+
+				// Add the terrain height to the y-pos of player.
+				Vector3 myPos = mNode->getPosition();
+
+
+/// Iportant no bounds check for get_map_height right now.
+
+	Vector3 pPos = Event->getCamera()->getPosition();
+	Real tt = pPos.z;
+//	pPos.z = 22*30 -(pPos.z- 524+10);
+	pPos.z -= 534;
+	Real height = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*3;
+
+	mNode->setPosition(pPos.x, pPos.y-370 + height, tt -524 +height);
+
+
 			}
 		}
 		else 
