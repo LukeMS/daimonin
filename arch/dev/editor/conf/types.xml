@@ -71,50 +71,67 @@
 ######################################################################
 -->
 <!DOCTYPE types [
-  <!ELEMENT types ((bitmask | list | ignore_list)*, default_type, ignore_list*, type+)>
+    <!ELEMENT types ((bitmask | list | ignore_list)*, default_type, ignore_list*, type+)>
 
-  <!ELEMENT bitmask (entry*)>
-  <!ATTLIST bitmask name CDATA #REQUIRED>
+    <!ELEMENT bitmask (entry*)>
+    <!ATTLIST bitmask
+        name CDATA #REQUIRED
+    >
 
-  <!ELEMENT list (entry*)>
-  <!ATTLIST list name CDATA #REQUIRED>
+    <!ELEMENT list (entry*)>
+    <!ATTLIST list
+        name CDATA #REQUIRED
+    >
 
-  <!ELEMENT entry EMPTY>
-  <!ATTLIST entry bit   CDATA #IMPLIED
-                  value CDATA #IMPLIED
-                  name  CDATA #REQUIRED>
+    <!ELEMENT entry EMPTY>
+    <!ATTLIST entry
+        bit   CDATA #IMPLIED
+        value CDATA #IMPLIED
+        name  CDATA #REQUIRED
+    >
+    
+    <!ELEMENT ignore_list (attribute* | EMPTY)>
+    <!ATTLIST ignore_list
+        name CDATA #REQUIRED
+    >
+    
+    <!ELEMENT default_type (attribute*)>
+    
+    <!ELEMENT type (import_type?,required?,ignore?,description?,use?,(section | attribute)*)>
+    <!ATTLIST type
+        name      CDATA #REQUIRED
+        number    CDATA #REQUIRED
+        available (yes|no) 'yes'
+    >
   
-  <!ELEMENT ignore_list (attribute* | EMPTY)>
-  <!ATTLIST ignore_list name CDATA #REQUIRED>
+    <!ELEMENT description (#PCDATA)>
+    <!ELEMENT use (#PCDATA)>
+    
+    <!ELEMENT import_type EMPTY>
+    <!ATTLIST import_type
+        name CDATA #REQUIRED
+    >
   
-  <!ELEMENT default_type (attribute*)>
-  
-  <!ELEMENT type (import_type?,required?,ignore?,description?,use?,(section | attribute)*)>
-  <!ATTLIST type name   CDATA #REQUIRED
-                 number CDATA #REQUIRED>
-  
-  <!ELEMENT description (#PCDATA)>
-  <!ELEMENT use (#PCDATA)>
-  
-  <!ELEMENT import_type EMPTY>
-  <!ATTLIST import_type name CDATA #REQUIRED>
-  
-  <!ELEMENT required (attribute+)>
-  <!ELEMENT ignore (attribute*,ignore_list*)>
-  
-  <!ELEMENT section (attribute+)>
-  <!ATTLIST section name CDATA #REQUIRED>
-  
-  <!ELEMENT attribute (#PCDATA)>
-  <!ATTLIST attribute type       CDATA #IMPLIED
-                      arch       CDATA #IMPLIED
-                      arch_begin CDATA #IMPLIED
-                      arch_end   CDATA #IMPLIED
-                      editor     CDATA #IMPLIED
-                      value      CDATA #IMPLIED
-                      length     CDATA #IMPLIED
-                      true       CDATA #IMPLIED
-                      false      CDATA #IMPLIED>
+    <!ELEMENT required (attribute+)>
+    <!ELEMENT ignore (attribute*,ignore_list*)>
+    
+    <!ELEMENT section (attribute+)>
+    <!ATTLIST section
+        name CDATA #REQUIRED
+    >
+    
+    <!ELEMENT attribute (#PCDATA)>
+    <!ATTLIST attribute
+        type       CDATA #IMPLIED
+        arch       CDATA #IMPLIED
+        arch_begin CDATA #IMPLIED
+        arch_end   CDATA #IMPLIED
+        editor     CDATA #IMPLIED
+        value      CDATA #IMPLIED
+        length     CDATA #IMPLIED
+        true       CDATA #IMPLIED
+        false      CDATA #IMPLIED
+    >
 ]>
 
 <types>
@@ -1790,6 +1807,19 @@
 
     Important: &lt;magic bonus&gt; on cloaks has no effect if there is no
     &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+  </attribute>
+</type>
+
+<!--####################################################################-->
+<type number="9" name="Clock">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+    Applying a clock, the time is displayed to the player. ]]>
+  </description>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
+    This text may describe the item
   </attribute>
 </type>
 
@@ -7571,4 +7601,66 @@ that food.]]>
     to this.
   </attribute>
 </type>
+
+<!-- The following types are moved here from typenumbers.xml.
+  - This allows typenumbers.xml to be removed.
+  -->
+<type available="no" number="1" name="PLAYER"/>
+<type available="no" number="2" name="BULLET"/>
+<type available="no" number="10" name="FBULLET"/>
+<type available="no" number="11" name="FBALL"/>
+<type available="no" number="12" name="LIGHTNING"/>
+<type available="no" number="19" name="CONFUSION"/>
+<type available="no" number="22" name="MAP"/>
+<type available="no" number="23" name="DOOR"/>
+<type available="no" number="24" name="KEY"/>
+<type available="no" number="25" name="MMISSILE"/>
+<type available="no" number="28" name="GRIMREAPER"/>
+<type available="no" number="37" name="CLASS"/>
+<type available="no" number="38" name="GRAVESTONE"/>
+<type available="no" number="43" name="SKILL"/>
+<type available="no" number="44" name="EXPERIENCE"/>
+<type available="no" number="45" name="EARTHWALL"/>
+<type available="no" number="46" name="GOLEM"/>
+<type available="no" number="47" name="BOMB"/>
+<type available="no" number="48" name="THROWN_OBJ"/>
+<type available="no" number="49" name="BLINDNESS"/>
+<type available="no" number="50" name="GOD"/>
+<type available="no" number="52" name="SPEEDBALL"/>
+<type available="no" number="53" name="DEAD_OBJECT"/>
+<type available="no" number="57" name="PLAYER_CHANGER"/>
+<type available="no" number="58" name="BATTLEGROUND"/>
+<type available="no" number="59" name="PEACEMAKER"/>
+<type available="no" number="61" name="FIRECHEST"/>
+<type available="no" number="63" name="ANVIL"/>
+<type available="no" number="67" name="TYPE_AGE_FORCE"/>
+<type available="no" number="75" name="LIGHTER"/>
+<type available="no" number="76" name="TRAP_PART"/>
+<type available="no" number="84" name="TYPE_SPAWN_INFO"/>
+<type available="no" number="89" name="AURA"/>
+<type available="no" number="96" name="WORD_OF_RECALL"/>
+<type available="no" number="97" name="PARAIMAGE"/>
+<type available="no" number="101" name="BASE_INFO (internal)"/>
+<type available="no" number="105" name="POISONING"/>
+<type available="no" number="107" name="POISONCLOUD"/>
+<type available="no" number="108" name="FIREHOLES"/>
+<type available="no" number="114" name="FORCE"/>
+<type available="no" number="115" name="POTION_EFFECT"/>
+<type available="no" number="120" name="TYPE_QUEST_CONTAINER"/>
+<type available="no" number="121" name="CLOSE_CON"/>
+<type available="no" number="123" name="ARMOUR_IMPROVER"/>
+<type available="no" number="124" name="WEAPON_IMPROVER"/>
+<type available="no" number="125" name="TYPE_WEALTH"/>
+<type available="no" number="127" name="TYPE_AGGRO_HISTORY"/>
+<type available="no" number="128" name="TYPE_DAMAGE_INFO"/>
+<type available="no" number="130" name="SKILLSCROLL"/>
+<type available="no" number="135" name="TYPE_PEARL"/>
+<type available="no" number="139" name="IDENTIFY_ALTAR"/>
+<type available="no" number="141" name="CANCELLATION"/>
+<type available="no" number="150" name="MENU"/>
+<type available="no" number="151" name="BALL_LIGHTNING"/>
+<type available="no" number="153" name="SWARM_SPELL"/>
+<type available="no" number="157" name="CORPSE"/>
+<type available="no" number="159" name="SYMPTOM"/>
+
 </types>
