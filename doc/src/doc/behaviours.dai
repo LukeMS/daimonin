@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
 <section>
   <title>AI behaviour documentation</title>
@@ -133,17 +133,20 @@
     </section>
     <section>
       <title>Behaviour LOOK_FOR_OTHER_MOBS</title>
-      <p>Simply look around for other mobs nearby</p>(No parameters)
+      <p>Simply look around for other mobs nearby</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour FRIENDSHIP</title>
       <p>Classify all detected mobs and assign friendship values to them.
-      Should always come after look_for_other_mobs</p>(No parameters)
+      Should always come after look_for_other_mobs</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour CHOOSE_ENEMY</title>
       <p>Choose the known mob with the lowest negative friendship as the current enemy
-      should always come after friendship</p>(No parameters)
+      should always come after friendship</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour PLUGIN_PROCESS</title>
@@ -208,13 +211,15 @@
     should be the last ones in a mobs moves list.</p>
     <section>
       <title>Behaviour STAND_STILL</title>
-      <p>Always stands still. Terminal</p>(No parameters)
+      <p>Always stands still. Terminal</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour SLEEP</title>
       <p>Stand still if the mob's sleep flag is set. Should normally be
       high up in the moves list (except maybe for sleepwalkers and mobs
-      that never sleep and never can be forced to sleep).</p>(No parameters)
+      that never sleep and never can be forced to sleep).</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour MOVE_RANDOMLY</title>
@@ -274,23 +279,28 @@
     </section>
     <section>
       <title>Behaviour MOVE_TOWARDS_HOME</title>
-      <p>Move towards the mob's starting point. Terminal.</p>(No parameters)
+      <p>Move towards the mob's starting point. Terminal.</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour MOVE_TOWARDS_ENEMY</title>
-      <p>Move towards the current enemy if any</p>(No parameters)
+      <p>Move towards the current enemy if any</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour MOVE_TOWARDS_ENEMY_LAST_KNOWN_POS</title>
-      <p>Move towards the current enemy's last known position if the current position is unknown.</p>(No parameters)
+      <p>Move towards the current enemy's last known position if the current position is unknown.</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour SEARCH_FOR_LOST_ENEMY</title>
-      <p>Search around for an enemy that can't be seen (until the memory of the enemy times out).</p>(No parameters)
+      <p>Search around for an enemy that can't be seen (until the memory of the enemy times out).</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour MOVE_TOWARDS_WAYPOINT</title>
-      <p>Move towards the current active waypoint if any</p>(No parameters)
+      <p>Move towards the current active waypoint if any</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour RUN_AWAY_FROM_ENEMY</title>
@@ -372,12 +382,14 @@
     <section>
       <title>Behaviour AVOID_LINE_OF_FIRE</title>
       <p>Try to stay out of the line of fire as much as possible
-      if we belive our enemy uses distance attacks</p>(No parameters)
+      if we belive our enemy uses distance attacks</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour OPTIMIZE_LINE_OF_FIRE</title>
       <p>Try to move to a position with free line of fire towards
-      enemy. A good archer's answer to AVOID_LINE_OF_FIRE</p>(No parameters)
+      enemy. A good archer's answer to AVOID_LINE_OF_FIRE</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour PLUGIN_MOVE</title>
@@ -441,17 +453,20 @@
     wants to be executed, ignoring the rest.</p>
     <section>
       <title>Behaviour MELEE_ATTACK_ENEMY</title>
-      <p>Attack the current enemy with melee weapons if within range</p>(No parameters)
+      <p>Attack the current enemy with melee weapons if within range</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour BOW_ATTACK_ENEMY</title>
       <p>Attack the current enemy with bow or throw weapons if within range
-      and line of fire</p>(No parameters)
+      and line of fire</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour SPELL_ATTACK_ENEMY</title>
       <p>Attack the current enemy with distance spells if within range
-      and line of fire</p>(No parameters)
+      and line of fire</p>
+      <p>(No parameters)</p>
     </section>
     <section>
       <title>Behaviour HEAL_FRIEND</title>
