@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
+<section>
+  <title>Class ACTIONS</title>
+  <p>Actions are misc actions that takes time, but aren't movement.
+  The handling of this class isn't 100% decided on yet, so be prepared
+  for changes in the future.
+  Currently we go though the list of actions and execute the first that
+  wants to be executed, ignoring the rest.</p>
+  <section>
+    <title>Behaviour MELEE_ATTACK_ENEMY</title>
+    <p>Attack the current enemy with melee weapons if within range</p>
+    <p>(No parameters)</p>
+  </section>
+  <section>
+    <title>Behaviour BOW_ATTACK_ENEMY</title>
+    <p>Attack the current enemy with bow or throw weapons if within range
+    and line of fire</p>
+    <p>(No parameters)</p>
+  </section>
+  <section>
+    <title>Behaviour SPELL_ATTACK_ENEMY</title>
+    <p>Attack the current enemy with distance spells if within range
+    and line of fire</p>
+    <p>(No parameters)</p>
+  </section>
+  <section>
+    <title>Behaviour HEAL_FRIEND</title>
+    <p>Cast healing/restoring spells on friends. Casting on self is
+    always implicit, but casting on others will only be done if
+    their friendship is above the specified values AND a value is
+    specified.</p>
+    <section>
+      <title>Parameter HEALING_MIN_FRIENDSHIP</title>
+      <dl>
+        <dt>Type:</dt>
+        <dd>INTEGER</dd>
+        <dt>Flags:</dt>
+        <dd>OPTIONAL</dd>
+        <dt>Default:</dt>
+        <dd>0</dd>
+      </dl>
+      <p>Friendship threshold for healing</p>
+    </section>
+    <section>
+      <title>Parameter CURE_POISON_MIN_FRIENDSHIP</title>
+      <dl>
+        <dt>Type:</dt>
+        <dd>INTEGER</dd>
+        <dt>Flags:</dt>
+        <dd>OPTIONAL</dd>
+        <dt>Default:</dt>
+        <dd>0</dd>
+      </dl>
+      <p>Friendship threshold for cure poison</p>
+    </section>
+    <section>
+      <title>Parameter CURE_DISEASE_MIN_FRIENDSHIP</title>
+      <dl>
+        <dt>Type:</dt>
+        <dd>INTEGER</dd>
+        <dt>Flags:</dt>
+        <dd>OPTIONAL</dd>
+        <dt>Default:</dt>
+        <dd>0</dd>
+      </dl>
+      <p>Friendship threshold for cure disease</p>
+    </section>
+  </section>
+  <section>
+    <title>Behaviour PLUGIN_ACTION</title>
+    <p>Plugin interface for actions</p>
+    <section>
+      <title>Parameter PLUGIN</title>
+      <dl>
+        <dt>Type:</dt>
+        <dd>STRING</dd>
+        <dt>Flags:</dt>
+        <dd>MANDATORY</dd>
+        <dt>Default:</dt>
+        <dd>NULL</dd>
+      </dl>
+      <p>Plugin name, e.g. "lua"</p>
+    </section>
+    <section>
+      <title>Parameter BEHAVIOUR</title>
+      <dl>
+        <dt>Type:</dt>
+        <dd>STRING</dd>
+        <dt>Flags:</dt>
+        <dd>MANDATORY</dd>
+        <dt>Default:</dt>
+        <dd>NULL</dd>
+      </dl>
+      <p>Behaviour name visible to plugin</p>
+    </section>
+    <section>
+      <title>Parameter OPTIONS</title>
+      <dl>
+        <dt>Type:</dt>
+        <dd>STRING</dd>
+        <dt>Flags:</dt>
+        <dd>OPTIONAL</dd>
+        <dt>Default:</dt>
+        <dd>""</dd>
+      </dl>
+      <p>Behaviour parameters visible to plugin</p>
+    </section>
+  </section>
+</section>
