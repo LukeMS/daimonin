@@ -36,6 +36,14 @@
 <!ELEMENT td (%Mixed;)*>
 <!ELEMENT th (%Mixed;)*>
 
+<!ATTLIST td
+    align (left|center|right) #IMPLIED
+>
+
+<!ATTLIST th
+    align (left|center|right) #IMPLIED
+>
+
 <!ELEMENT p (%Inline;)*>
 <!ELEMENT ul (li+)>
 <!ELEMENT ol (li+)>

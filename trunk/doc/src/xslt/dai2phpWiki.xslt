@@ -86,6 +86,37 @@
         <xsl:text>[</xsl:text><xsl:apply-templates/><xsl:text> | </xsl:text><xsl:value-of select="@href"/><xsl:text>]</xsl:text>
     </xsl:template>
 
+    <xsl:template match="table">
+        <xsl:apply-templates/>
+    </xsl:template>
+
+    <xsl:template match="tr">
+        <xsl:apply-templates/>
+        <xsl:text>&#xA;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="td">
+        <xsl:text>|</xsl:text>
+        <xsl:choose>
+            <xsl:when test="@align='center'"><xsl:text>^</xsl:text></xsl:when>
+            <xsl:when test="@align='right'"><xsl:text>&gt;</xsl:text></xsl:when>
+            <!-- td default is left, phpWiki default is left, too -->
+        </xsl:choose>
+        <xsl:apply-templates/>
+    </xsl:template>
+
+    <xsl:template match="th">
+        <xsl:choose>
+            <xsl:when test="@align='right'"><xsl:text>&gt;</xsl:text></xsl:when>
+            <xsl:when test="@align='left'"><xsl:text>&lt;</xsl:text></xsl:when>
+            <xsl:otherwise>^</xsl:otherwise>
+            <!-- th default is center but phpWiki default is left -->
+        </xsl:choose>
+        <xsl:text>__</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>__</xsl:text>
+    </xsl:template>
+
     <xsl:template match="*">
         <xsl:apply-templates/>
     </xsl:template>
