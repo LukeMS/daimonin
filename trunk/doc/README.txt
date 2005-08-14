@@ -55,8 +55,6 @@ Directory Structure
     make/ant/   contains documentation generation based on Apache Ant.
                 Get Ant from http://ant.apache.org/
 
-    make/make/  contains documentation generation based on Make (GNUMake etc.)
-
     src/        contains source files
 
     src/doc/    contains the documentation source files
@@ -78,3 +76,7 @@ the only XSLT processor knowing to support XSLT 2.0. So the standard Xalan that
 is included with the SDK or Ant is not sufficient.
     Run "ant -f make/ant/build.xml -projecthelp" to learn more about building
 the documentation with Ant.
+
+    Note: building the documentation with make is currently not supported. The
+reason for this is that I haven't found a free and small C XSLT 2.0 processor
+that would fit the usage with make.
