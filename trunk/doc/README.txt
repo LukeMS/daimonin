@@ -72,5 +72,5 @@ Building the documentation with Ant
 
     To build the documenation with Ant you need an XSLT 2.0 aware XSLT
 processor, like Saxon ( http://saxon.sourceforge.net/ ).
-    Run "ant -projecthelp" to learn more about building the documentation with
-Ant.
+    Run "ant -f make/ant/build.xml -projecthelp" to learn more about building
+the documentation with Ant.
