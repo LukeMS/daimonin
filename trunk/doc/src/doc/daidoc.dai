@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
+<section>
+    <title>Daimonin Documentation (DaiDoc) Documentation</title>
+    <p>
+        You are reading the Daimonin Documentation Documentation, a documentation about how to write documentation for daimonin.
+    </p>
+    <section>
+        <title>Example</title>
+        <blockcode><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "daidoc.dtd">
+<section>
+    <title>Documentation Example</title>
+    <p>
+        This is a simple documentation example.
+    </p>
+</section>
+]]></blockcode>
+        <p>
+            Daimonin uses XML as documentation format language base.
+            We have scripts that convert our Daimonin documentation to HTML, phpWiki and BBCode.
+            Using this documentation format we only need to maintain documentation once and can reuse it on the Wiki, in the fourm or in the editor.
+        </p>
+    </section>
+    <section>
+        <title>Formatting basics</title>
+        <p>
+            Formatting knows two kinds of formatting: Blocks and Inlines.
+            Blocks are structural containers for one or more paragraphs, while Inlines are are plain text formatting.
+        </p>
+        <p>
+            To keep the format easy to learn, elements that are similar to known html elements have inherited their name from HTML.
+            You can see DaiDoc as oversimplified version of XHTML 2.0.
+        </p>
+        <p>
+            Dai Doc supports the following elements:
+        </p>
+        <dl>
+            <dt>Block</dt>
+            <dd>
+                <dl>
+                    <dt><code>blockcode</code></dt>
+                    <dd>The <code>blockcode</code> element is used for multiline code snippets, such as commands or code sources.</dd>
+                    <dt><code>dl</code></dt>
+                    <dd>The <code>dl</code> element is used for definition lists.</dd>
+                    <dt><code>ol</code></dt>
+                    <dt><code>p</code></dt>
+                    <dt><code>section</code></dt>
+                    <dt><code>table</code></dt>
+                    <dt><code>ul</code></dt>
+                </dl>
+            </dd>
+            <dt>Inline</dt>
+        </dl>
+    </section>
+    <section>
+        <title>Available conversions</title>
+        <p>
+            The following conversions are available:
+        </p>
+        <ul>
+            <li>XHTML 1.1 (<code>xslt/dai2xhtml11.xslt</code>)</li>
+            <li>HTML 4.01 (<code>xslt/dai2html.xslt</code>)</li>
+            <li>phpWiki (<code>xslt/dai2phpWiki.xslt</code>)</li>
+            <li>bbcode (<code>xslt/dai2bbcode.xslt</code>)</li>
+        </ul>
+    </section>
+    <section>
+        <title>Limitations</title>
+        <p>
+            There are some limitations that you should be aware of when using daidoc.
+        </p>
+        <ul>
+            <li>phpWiki does not know nested tables or nested definition lists.</li>
+            <li>phpWiki is incomplete regarding blockcode.</li>
+            <li>bbcode does not know tables or definition lists.</li>
+        </ul>
+    </section>
+</section>
