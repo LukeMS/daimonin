@@ -24,6 +24,8 @@
 
     <xsl:template match="/section/section/section/title">!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
 
+    <xsl:template match="/section/section/section/section/title"><xsl:text>__</xsl:text><xsl:apply-templates/><xsl:text>__&#xA;</xsl:text></xsl:template>
+
     <xsl:template match="blockcode">
         <xsl:apply-templates/>
     </xsl:template>

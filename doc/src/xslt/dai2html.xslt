@@ -53,6 +53,13 @@
         </h3>
     </xsl:template>
 
+    <xsl:template match="/section/section/section/section/title">
+        <h4>
+            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
+            <xsl:apply-templates/>
+        </h4>
+    </xsl:template>
+
     <xsl:template match="blockcode">
         <pre>
             <xsl:apply-templates/>
