@@ -9,8 +9,8 @@
     exclude-result-prefixes="xsl"
 >
 
-    <xsl:strip-space elements="*" />
     <xsl:preserve-space elements="blockcode" />
+    <xsl:strip-space elements="*" />
 
     <xsl:output
         method="text"
@@ -39,7 +39,7 @@
     </xsl:template>
 
     <xsl:template match="code">
-        <xsl:text>[code]</xsl:text><xsl:apply-templates/><xsl:text>[/code]</xsl:text>
+        <xsl:text>[b]</xsl:text><xsl:apply-templates/><xsl:text>[/b]</xsl:text>
     </xsl:template>
 
     <xsl:template match="ul">
@@ -59,11 +59,17 @@
     </xsl:template>
 
     <xsl:template match="dl/dt">
-        <xsl:text>;</xsl:text><xsl:apply-templates/>
+        <xsl:text>[b]</xsl:text><xsl:apply-templates/><xsl:text>[/b]</xsl:text><xsl:text>&#xA;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="dl/dt/code|dl/dt/strong">
+        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="dl/dd">
-        <xsl:text>:</xsl:text><xsl:apply-templates/>
+        <xsl:text>    </xsl:text><xsl:apply-templates/>
+        <xsl:text>&#xA;</xsl:text>
+        <xsl:text>&#xA;</xsl:text>
     </xsl:template>
 
     <xsl:template match="p|section">
@@ -71,7 +77,7 @@
         <xsl:text>&#xA;</xsl:text>
     </xsl:template>
 
-    <xsl:template mathch="a">
+    <xsl:template match="a">
         <xsl:text>[url=</xsl:text><xsl:value-of select="@href"/><xsl:text>]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/url]</xsl:text>
@@ -86,7 +92,9 @@
     </xsl:template>
 
     <xsl:template match="text()">
+        <xsl:if test="matches(.,'^\s')"><xsl:text> </xsl:text></xsl:if>
         <xsl:value-of select="normalize-space(.)"/>
+        <xsl:if test="matches(.,'\s$')"><xsl:text> </xsl:text></xsl:if>
     </xsl:template>
 
 </xsl:transform>
