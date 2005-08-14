@@ -20,8 +20,8 @@
 
     <xsl:template match="/section">
         <xsl:apply-templates/>
-
-        <xsl:text>&#xA;&#xA;Warning: This wiki page is auto generated. If you change it, your changes are likely to be lost after the next update.</xsl:text>
+        <xsl:text>&#xA;&#xA;Warning: This wiki page is auto generated. If you change it, your changes are likely to be lost after the next update.&#xA;</xsl:text>
+        <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
     </xsl:template>
 
     <xsl:template match="/section/title">!!!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>

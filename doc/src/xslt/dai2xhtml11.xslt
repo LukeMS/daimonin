@@ -24,9 +24,23 @@
         <html>
             <head>
                 <title><xsl:apply-templates select="section/title/text()"/></title>
+                <!-- Reasons for inlining the stylesheet instead of referencing an external file:
+                  - The link to the external file would need to be relative, but what about html files in subdirectories?
+                  -->
+                <style type="text/css">
+                    h2 {
+                        border-top-style:solid;
+                        border-top-width:1px;
+                        border-top-color:#000;
+                        background-color:#eee;
+                    }
+                </style>
             </head>
             <body>
                 <xsl:apply-templates/>
+                <p>
+                    <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
+                </p>
             </body>
         </html>
     </xsl:template>
@@ -36,8 +50,8 @@
             <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h1>
-        <xsl:if test="/section[@autotoc='yes']">
-            <h2>Table of Contents</h2>
+        <xsl:if test="/section/@autotoc='yes'">
+            <h2 id="toc">Table of Contents</h2>
             <xsl:apply-templates select="/section" mode="toc"/>
         </xsl:if>
     </xsl:template>
@@ -82,11 +96,20 @@
         </pre>
     </xsl:template>
 
-    <xsl:template match="section">
+    <xsl:template match="/section">
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="section/section">
+    <xsl:template match="/section/section">
+        <div id="{generate-id()}">
+            <xsl:apply-templates/>
+        </div>
+        <xsl:if test="/section/@autotoc='yes'">
+            <p><a href="#toc">Table of Contents</a></p>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="section/section/section">
         <div id="{generate-id()}">
             <xsl:apply-templates/>
         </div>
@@ -103,8 +126,14 @@
         <xsl:copy/>
     </xsl:template>
 
+    <xsl:template match="blockcode/text()">
+        <xsl:copy/>
+    </xsl:template>
+
     <xsl:template match="text()">
+        <xsl:if test="matches(.,'^\s')"><xsl:text> </xsl:text></xsl:if>
         <xsl:value-of select="normalize-space(.)"/>
+        <xsl:if test="matches(.,'\s$')"><xsl:text> </xsl:text></xsl:if>
     </xsl:template>
 
 </xsl:transform>
