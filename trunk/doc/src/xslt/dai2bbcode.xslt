@@ -18,6 +18,12 @@
         indent="no"
     />
 
+    <xsl:template match="/section">
+        <xsl:text>&#xA;</xsl:text>
+        <xsl:text>Last modified: </xsl:text>
+        <xsl:value-of select="current-dateTime()"/>
+    </xsl:template>
+
     <xsl:template match="/section/title">[size=24]<xsl:apply-templates/><xsl:text>[/size]&#xA;</xsl:text></xsl:template>
 
     <xsl:template match="/section/section/title">[size=20]<xsl:apply-templates/><xsl:text>[/size]&#xA;</xsl:text></xsl:template>
