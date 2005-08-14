@@ -38,7 +38,7 @@ sub class
     if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
         else { $doc = ""; }
 
-    return $::xml->section($::xml->title($name), $doc, @{$behaviours});
+    return $::xml->section($::xml->title("Class $name"), $doc, @{$behaviours});
 }
 
 sub behaviour
@@ -48,7 +48,7 @@ sub behaviour
     if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
         else { $doc = ""; }
 
-    return $::xml->section($::xml->title($name), $doc, @{$parameters});
+    return $::xml->section($::xml->title("Behaviour $name"), $doc, @{$parameters});
 }
 
 sub parameter
@@ -60,7 +60,7 @@ sub parameter
 
     return 
         $::xml->section(
-            $::xml->title($name),
+            $::xml->title("Parameter $name"),
             $::xml->p($::xml->strong('Type:'), $xml->code("$type")),
             $::xml->p($::xml->strong('Flags:'), $xml->code(join(", ", @{$flags}))),
             $::xml->p($::xml->strong('Default:'), $xml->code("$default")),
