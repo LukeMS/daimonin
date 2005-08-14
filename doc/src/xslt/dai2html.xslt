@@ -5,7 +5,6 @@
 <xsl:transform
     version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns="http://www.w3.org/1999/xhtml"
     exclude-result-prefixes="xsl"
 >
 
@@ -79,6 +78,10 @@
 
     <xsl:template match="@*">
         <xsl:copy/>
+    </xsl:template>
+
+    <xsl:template match="text()">
+        <xsl:value-of select="normalize-space(.)"/>
     </xsl:template>
 
 </xsl:transform>
