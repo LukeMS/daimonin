@@ -44,7 +44,6 @@ client3d_SOURCES = \
 	spell_manager.cpp \
 	spell_range.cpp \
 	textwindow.cpp \
-	tile.cpp \
 	tile_gfx.cpp \
 	TileManager.cpp \
 	TileChunk.cpp \
