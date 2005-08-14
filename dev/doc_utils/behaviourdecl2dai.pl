@@ -38,36 +38,67 @@ sub class
     if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
         else { $doc = ""; }
 
-    return {'name' => $name, 'xml' => $::xml->section($::xml->title("Class $name"), $doc, @{$behaviours})};
+    return {'name' => $name, 'xml' => $::xml->section($::xml->title(ucfirst(lc($name))), $doc, @{$behaviours})};
 }
 
 sub behaviour
 {
     my ($name, $parameters, $doc) = @_;
 
-    if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
-        else { $doc = ""; }
-
-    return $::xml->section($::xml->title("Behaviour $name"), $doc, @{$parameters});
-}
-
-sub parameter
-{
-    my ($name, $type, $flags, $default, $doc) = @_;
+    $name = lc $name;
 
     if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
         else { $doc = ""; }
 
-    return 
-        $::xml->section(
-            $::xml->title("Parameter $name"),
-            $::xml->dl(
-                $::xml->dt('Type:'), $::xml->dd("$type"),
-                $::xml->dt('Flags:'), $::xml->dd(join(", ", @{$flags})),
-                $::xml->dt('Default:'), $::xml->dd($default)),
-            $doc
-            );
+    my $signature = $name;
+    my @params = ();        
+    if($parameters)
+    {
+        foreach my $param (@{$parameters}) {
+            my ($type) = lc $param->{'type'};          
+            $type = "string:integer" if $type eq 'stringint';
+            my $p = lc($param->{name})."=$type";
+            $p = "{$p}" if grep /MULTI/, @{$param->{'flags'}};
+            $p = "[$p]" if grep /OPTIONAL/, @{$param->{'flags'}};
+            $signature .= " $p";
+
+            push @params, 
+                $::xml->dt($::xml->code(lc $param->{'name'}), 
+                        " (",
+                        lc(join(", ", $param->{'type'}, @{$param->{'flags'}})), 
+                        ")"),
+                $::xml->dd(@{$param->{'doc'}});
+        }
+        @params = $::xml->dl(@params);
+    } else {
+        @params = $::xml->p("(No parameters)");
+    }
+
+    return $::xml->section(
+        $::xml->title(ucfirst($name)), 
+        $::xml->p("Usage: ", $::xml->code($signature)),
+        $doc,
+        $::xml->section($::xml->title("Parameters"), @params));
+#        $::xml->p($::xml->strong("Parameters:")), @params);
 }
+
+#sub parameter
+#{
+#    my ($name, $type, $flags, $default, $doc) = @_;
+#
+#    if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
+#        else { $doc = ""; }
+#
+ #   return 
+ #       $::xml->section(
+ #           $::xml->title("Parameter $name"),
+ #           $::xml->dl(
+ #               $::xml->dt('Type:'), $::xml->dd("$type"),
+ #               $::xml->dt('Flags:'), $::xml->dd(join(", ", @{$flags})),
+ #               $::xml->dt('Default:'), $::xml->dd($default)),
+ #           $doc
+#            );
+#}
 
 my $grammar = <<'_EOGRAMMAR_';
 
@@ -93,9 +124,10 @@ behaviourfunc: /[a-z_]+/
 
 parameterlist: parameter(s) 
     | 'NIL'
-    { $return = [$::xml->p("(No parameters)")]; }
+    { $return = 0; 1;}
+#    { $return = [$::xml->p("(No parameters)")]; }
 parameter: bdlcomment(?) 'Parameter(' behaviourname ',' parametername ',' parametertype ',' parameterflags ',' defaultvalue ')'
-    { $return = ::parameter($item[5], $item[7], $item[9], $item[11], $item[1]); }
+    { $return = {'name' => $item[5], 'type' => $item[7], 'flags' => $item[9], 'default' => $item[11], 'doc' => $item[1]}; }
 parametername: /[A-Z_]+/
 parametertype: 'INTEGER' | 'STRINGINT' | 'STRING' 
 parameterflags: parameterflag(s /\|/)

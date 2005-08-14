@@ -1,160 +1,122 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
 <section>
-  <title>Class PROCESSES</title>
+  <title>Processes</title>
   <p>Processes are the use of senses and internal thought processes.
   They don't take any game-time to run, so all of a mobs processes
   are always executed</p>
   <section>
-    <title>Behaviour ATTITUDE</title>
+    <title>Attitude</title>
+    <p>Usage: 
+      <code>attitude [{race=string:integer}] [{arch=string:integer}] [{name=string:integer}] [player=integer] [{group=string:integer}] [{god=string:integer}]</code>
+    </p>
     <p>Determines the personal attitude of the mob, not a real behaviour.
     (The values here determine initial friendship value at first sight)</p>
     <section>
-      <title>Parameter RACE</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>STRINGINT</dd>
-        <dt>Flags:</dt>
-        <dd>MULTI, OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>"X:0"</dd>
+        <dt>
+          <code>race</code> (stringint, multi, optional)
+        </dt>
+        <dd>Attitude against a race</dd>
+        <dt>
+          <code>arch</code> (stringint, multi, optional)
+        </dt>
+        <dd>Attitude against an archetype</dd>
+        <dt>
+          <code>name</code> (stringint, multi, optional)
+        </dt>
+        <dd>Attitude against a named object/mob/player</dd>
+        <dt>
+          <code>player</code> (integer, optional)
+        </dt>
+        <dd>Attitude against any player</dd>
+        <dt>
+          <code>group</code> (stringint, multi, optional)
+        </dt>
+        <dd>Attitude against a named AI group, see the "groups" behaviour</dd>
+        <dt>
+          <code>god</code> (stringint, multi, optional)
+        </dt>
+        <dd>Attitude against the followers of a named god</dd>
       </dl>
-      <p>Attitude against a race</p>
-    </section>
-    <section>
-      <title>Parameter ARCH</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRINGINT</dd>
-        <dt>Flags:</dt>
-        <dd>MULTI, OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>"X:0"</dd>
-      </dl>
-      <p>Attitude against an archetype</p>
-    </section>
-    <section>
-      <title>Parameter NAME</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRINGINT</dd>
-        <dt>Flags:</dt>
-        <dd>MULTI, OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>"X:0"</dd>
-      </dl>
-      <p>Attitude against a named object/mob/player</p>
-    </section>
-    <section>
-      <title>Parameter PLAYER</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>0</dd>
-      </dl>
-      <p>Attitude against any player</p>
-    </section>
-    <section>
-      <title>Parameter GROUP</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRINGINT</dd>
-        <dt>Flags:</dt>
-        <dd>MULTI, OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>"X:0"</dd>
-      </dl>
-      <p>Attitude against a named AI group, see the "groups" behaviour</p>
-    </section>
-    <section>
-      <title>Parameter GOD</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRINGINT</dd>
-        <dt>Flags:</dt>
-        <dd>MULTI, OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>"X:0"</dd>
-      </dl>
-      <p>Attitude against the followers of a named god</p>
     </section>
   </section>
   <section>
-    <title>Behaviour GROUPS</title>
+    <title>Groups</title>
+    <p>Usage: 
+      <code>groups {name=string}</code>
+    </p>
     <p>Configures the group membership of the mob, not a real behaviour.
     This can be used to set up one or more groups for the attitude
     behaviour's "group" parameter to match against.</p>
     <section>
-      <title>Parameter NAME</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MULTI, MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
+        <dt>
+          <code>name</code> (string, multi, mandatory)
+        </dt>
+        <dd>Membership in one or more named AI groups</dd>
       </dl>
-      <p>Membership in one or more named AI groups</p>
     </section>
   </section>
   <section>
-    <title>Behaviour LOOK_FOR_OTHER_MOBS</title>
+    <title>Look_for_other_mobs</title>
+    <p>Usage: 
+      <code>look_for_other_mobs</code>
+    </p>
     <p>Simply look around for other mobs nearby</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour FRIENDSHIP</title>
+    <title>Friendship</title>
+    <p>Usage: 
+      <code>friendship</code>
+    </p>
     <p>Classify all detected mobs and assign friendship values to them.
     Should always come after look_for_other_mobs</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour CHOOSE_ENEMY</title>
+    <title>Choose_enemy</title>
+    <p>Usage: 
+      <code>choose_enemy</code>
+    </p>
     <p>Choose the known mob with the lowest negative friendship as the current enemy
     should always come after friendship</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour PLUGIN_PROCESS</title>
+    <title>Plugin_process</title>
+    <p>Usage: 
+      <code>plugin_process plugin=string behaviour=string [options=string]</code>
+    </p>
     <p>Plugin interface for processes</p>
     <section>
-      <title>Parameter PLUGIN</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
+        <dt>
+          <code>plugin</code> (string, mandatory)
+        </dt>
+        <dd>Plugin name, e.g. "lua"</dd>
+        <dt>
+          <code>behaviour</code> (string, mandatory)
+        </dt>
+        <dd>Behaviour name visible to plugin</dd>
+        <dt>
+          <code>options</code> (string, optional)
+        </dt>
+        <dd>Behaviour parameters visible to plugin</dd>
       </dl>
-      <p>Plugin name, e.g. "lua"</p>
-    </section>
-    <section>
-      <title>Parameter BEHAVIOUR</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
-      </dl>
-      <p>Behaviour name visible to plugin</p>
-    </section>
-    <section>
-      <title>Parameter OPTIONS</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>""</dd>
-      </dl>
-      <p>Behaviour parameters visible to plugin</p>
     </section>
   </section>
 </section>

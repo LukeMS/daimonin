@@ -1,110 +1,96 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
 <section>
-  <title>Class ACTIONS</title>
+  <title>Actions</title>
   <p>Actions are misc actions that takes time, but aren't movement.
   The handling of this class isn't 100% decided on yet, so be prepared
   for changes in the future.
   Currently we go though the list of actions and execute the first that
   wants to be executed, ignoring the rest.</p>
   <section>
-    <title>Behaviour MELEE_ATTACK_ENEMY</title>
+    <title>Melee_attack_enemy</title>
+    <p>Usage: 
+      <code>melee_attack_enemy</code>
+    </p>
     <p>Attack the current enemy with melee weapons if within range</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour BOW_ATTACK_ENEMY</title>
+    <title>Bow_attack_enemy</title>
+    <p>Usage: 
+      <code>bow_attack_enemy</code>
+    </p>
     <p>Attack the current enemy with bow or throw weapons if within range
     and line of fire</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour SPELL_ATTACK_ENEMY</title>
+    <title>Spell_attack_enemy</title>
+    <p>Usage: 
+      <code>spell_attack_enemy</code>
+    </p>
     <p>Attack the current enemy with distance spells if within range
     and line of fire</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour HEAL_FRIEND</title>
+    <title>Heal_friend</title>
+    <p>Usage: 
+      <code>heal_friend [healing_min_friendship=integer] [cure_poison_min_friendship=integer] [cure_disease_min_friendship=integer]</code>
+    </p>
     <p>Cast healing/restoring spells on friends. Casting on self is
     always implicit, but casting on others will only be done if
     their friendship is above the specified values AND a value is
     specified.</p>
     <section>
-      <title>Parameter HEALING_MIN_FRIENDSHIP</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>0</dd>
+        <dt>
+          <code>healing_min_friendship</code> (integer, optional)
+        </dt>
+        <dd>Friendship threshold for healing</dd>
+        <dt>
+          <code>cure_poison_min_friendship</code> (integer, optional)
+        </dt>
+        <dd>Friendship threshold for cure poison</dd>
+        <dt>
+          <code>cure_disease_min_friendship</code> (integer, optional)
+        </dt>
+        <dd>Friendship threshold for cure disease</dd>
       </dl>
-      <p>Friendship threshold for healing</p>
-    </section>
-    <section>
-      <title>Parameter CURE_POISON_MIN_FRIENDSHIP</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>0</dd>
-      </dl>
-      <p>Friendship threshold for cure poison</p>
-    </section>
-    <section>
-      <title>Parameter CURE_DISEASE_MIN_FRIENDSHIP</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>0</dd>
-      </dl>
-      <p>Friendship threshold for cure disease</p>
     </section>
   </section>
   <section>
-    <title>Behaviour PLUGIN_ACTION</title>
+    <title>Plugin_action</title>
+    <p>Usage: 
+      <code>plugin_action plugin=string behaviour=string [options=string]</code>
+    </p>
     <p>Plugin interface for actions</p>
     <section>
-      <title>Parameter PLUGIN</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
+        <dt>
+          <code>plugin</code> (string, mandatory)
+        </dt>
+        <dd>Plugin name, e.g. "lua"</dd>
+        <dt>
+          <code>behaviour</code> (string, mandatory)
+        </dt>
+        <dd>Behaviour name visible to plugin</dd>
+        <dt>
+          <code>options</code> (string, optional)
+        </dt>
+        <dd>Behaviour parameters visible to plugin</dd>
       </dl>
-      <p>Plugin name, e.g. "lua"</p>
-    </section>
-    <section>
-      <title>Parameter BEHAVIOUR</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
-      </dl>
-      <p>Behaviour name visible to plugin</p>
-    </section>
-    <section>
-      <title>Parameter OPTIONS</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>""</dd>
-      </dl>
-      <p>Behaviour parameters visible to plugin</p>
     </section>
   </section>
 </section>
