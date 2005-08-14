@@ -106,6 +106,7 @@
     </xsl:template>
 
     <xsl:template match="th">
+        <xsl:text>|</xsl:text>
         <xsl:choose>
             <xsl:when test="@align='right'"><xsl:text>&gt;</xsl:text></xsl:when>
             <xsl:when test="@align='left'"><xsl:text>&lt;</xsl:text></xsl:when>
@@ -123,12 +124,12 @@
 
     <xsl:template match="blockcode/text()">
         <!-- Insert a single space at the beginning of lines. -->
-        <xsl:value-of select="replace(., '^', ' ', 'm')"/>
+        <xsl:value-of select="replace(replace(., '^', ' ', 'm'), '\[', '[[')"/>
     </xsl:template>
 
     <xsl:template match="text()">
         <!-- Strip whitespace at the beginning of lines. -->
-        <xsl:value-of select="replace(., '^ +', '', 'm')"/>
+        <xsl:value-of select="replace(replace(normalize-space(), '^ +', '', 'm'), '\[', '[[')"/>
     </xsl:template>
 
 </xsl:transform>
