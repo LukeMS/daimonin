@@ -56,10 +56,10 @@
         </xsl:if>
     </xsl:template>
     
-    <xsl:template match="/section" mode="toc">
+    <xsl:template match="section" mode="toc">
         <xsl:if test="section">
             <ul>
-                <xsl:for-each select="/section/section">
+                <xsl:for-each select="section/section">
                     <li>
                         <a href="#{if (@id) then @id else generate-id()}"><xsl:apply-templates select="title/node()"/></a>
                         <xsl:apply-templates select="section" mode="toc" />
