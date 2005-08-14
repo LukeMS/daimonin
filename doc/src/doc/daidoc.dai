@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
-<section>
+<section autotoc="yes">
     <title>Daimonin Documentation (DaiDoc) Documentation</title>
     <p>
         You are reading the Daimonin Documentation Documentation, a documentation about how to write documentation for daimonin.
