@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is the build file to build the Daimonin documentation using Ant.
+  - To use this file, get Ant from http://ant.apache.org/ and in this
+  - directory run "ant -projecthelp"
+  -->
+<project
+    name    = "Daimonin Documentation"
+    default = "all"
+    basedir = "../.."
+>
+
+    <target
+        name        = "all"
+        description = "Validates the documentation source files and then generates all available formats"
+        depends     = "bbCode, phpWiki, html4, xhtml11, ascii"
+    />
+
+    <target
+        name        = "validate"
+        description = "Validates the documentation source files"
+    >
+        <xmlvalidate
+            failonerror = "yes"
+            lenient     = "no"
+        >
+            <fileset dir="src/doc" includes="**/*.dai" />
+        </xmlvalidate>
+    </target>
+
+    <target
+        name        = "bbCode"
+        description = "Generates documentation in bbCode format"
+        depends     = "validate"
+    >
+        <mkdir dir="gen/bbCode" />
+        <xslt
+            basedir   = "src/doc"
+            destdir   = "gen/bbCode"
+            extension = ".bbc"
+            style     = "src/xslt/dai2bbcode.xslt"
+        />
+    </target>
+
+    <target
+        name        = "phpWiki"
+        description = "Generates documentation in phpWiki format"
+        depends     = "validate"
+    >
+        <mkdir dir="gen/phpWiki" />
+        <xslt
+            basedir   = "src/doc"
+            destdir   = "gen/phpWiki"
+            extension = ".bbc"
+            style     = "src/xslt/dai2phpWiki.xslt"
+        />
+    </target>
+
+    <target
+        name        = "html4"
+        description = "Generates documentation in HTML 4.01 format"
+        depends     = "validate"
+    >
+        <mkdir dir="gen/html4" />
+        <xslt
+            basedir   = "src/doc"
+            destdir   = "gen/html4"
+            extension = ".bbc"
+            style     = "src/xslt/dai2html.xslt"
+        />
+    </target>
+
+    <target
+        name        = "xhtml11"
+        description = "Generates documentation in XHTML 1.1 format"
+        depends     = "validate"
+    >
+        <mkdir dir="gen/xhtml11" />
+        <xslt
+            basedir   = "src/doc"
+            destdir   = "gen/xhtml11"
+            extension = ".bbc"
+            style     = "src/xslt/dai2xhtml11.xslt"
+        />
+    </target>
+
+    <target
+        name        = "ascii"
+        description = "Generates documentation in ASCII format"
+        depends     = "validate"
+    >
+        <mkdir dir="gen/ascii" />
+        <xslt
+            basedir   = "src/doc"
+            destdir   = "gen/ascii"
+            extension = ".bbc"
+            style     = "src/xslt/dai2ascii.xslt"
+        />
+    </target>
+
+</project>
