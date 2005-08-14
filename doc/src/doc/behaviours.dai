@@ -14,98 +14,74 @@
       (The values here determine initial friendship value at first sight)</p>
       <section>
         <title>Parameter RACE</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRINGINT</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MULTI, OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>"X:0"</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRINGINT</dd>
+          <dt>Flags:</dt>
+          <dd>MULTI, OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>"X:0"</dd>
+        </dl>
         <p>Attitude against a race</p>
       </section>
       <section>
         <title>Parameter ARCH</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRINGINT</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MULTI, OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>"X:0"</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRINGINT</dd>
+          <dt>Flags:</dt>
+          <dd>MULTI, OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>"X:0"</dd>
+        </dl>
         <p>Attitude against an archetype</p>
       </section>
       <section>
         <title>Parameter NAME</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRINGINT</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MULTI, OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>"X:0"</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRINGINT</dd>
+          <dt>Flags:</dt>
+          <dd>MULTI, OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>"X:0"</dd>
+        </dl>
         <p>Attitude against a named object/mob/player</p>
       </section>
       <section>
         <title>Parameter PLAYER</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>0</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>0</dd>
+        </dl>
         <p>Attitude against any player</p>
       </section>
       <section>
         <title>Parameter GROUP</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRINGINT</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MULTI, OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>"X:0"</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRINGINT</dd>
+          <dt>Flags:</dt>
+          <dd>MULTI, OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>"X:0"</dd>
+        </dl>
         <p>Attitude against a named AI group, see the "groups" behaviour</p>
       </section>
       <section>
         <title>Parameter GOD</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRINGINT</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MULTI, OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>"X:0"</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRINGINT</dd>
+          <dt>Flags:</dt>
+          <dd>MULTI, OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>"X:0"</dd>
+        </dl>
         <p>Attitude against the followers of a named god</p>
       </section>
     </section>
@@ -116,18 +92,14 @@
       behaviour's "group" parameter to match against.</p>
       <section>
         <title>Parameter NAME</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MULTI, MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MULTI, MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Membership in one or more named AI groups</p>
       </section>
     </section>
@@ -153,50 +125,38 @@
       <p>Plugin interface for processes</p>
       <section>
         <title>Parameter PLUGIN</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Plugin name, e.g. "lua"</p>
       </section>
       <section>
         <title>Parameter BEHAVIOUR</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Behaviour name visible to plugin</p>
       </section>
       <section>
         <title>Parameter OPTIONS</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>""</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>""</dd>
+        </dl>
         <p>Behaviour parameters visible to plugin</p>
       </section>
     </section>
@@ -226,34 +186,26 @@
       <p>Move around erratically by taking steps in random directions. Terminal.</p>
       <section>
         <title>Parameter XLIMIT</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>-1</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>-1</dd>
+        </dl>
         <p>Limits the x-distance from the starting point</p>
       </section>
       <section>
         <title>Parameter YLIMIT</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>-1</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>-1</dd>
+        </dl>
         <p>Limits the y-distance from the starting point</p>
       </section>
     </section>
@@ -262,18 +214,14 @@
       <p>Makes sure the mob never stands 100% still</p>
       <section>
         <title>Parameter MAX_IDLE_TIME</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>1</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>1</dd>
+        </dl>
         <p>Max allowed still time (number of moves)</p>
       </section>
     </section>
@@ -307,18 +255,14 @@
       <p>Runs away from the current enemy if scared.</p>
       <section>
         <title>Parameter HP_THRESHOLD</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>10</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>10</dd>
+        </dl>
         <p>Become scared if current_hp &lt; HP_THRESHOLD % of max_hp</p>
       </section>
     </section>
@@ -328,34 +272,26 @@
       good for mobs with distance attacks</p>
       <section>
         <title>Parameter MIN_DIST</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>4</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>4</dd>
+        </dl>
         <p />
       </section>
       <section>
         <title>Parameter MAX_DIST</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>6</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>6</dd>
+        </dl>
         <p />
       </section>
     </section>
@@ -364,18 +300,14 @@
       <p>To be removed, or renamed to "hit and run"</p>
       <section>
         <title>Parameter DIST</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>3</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>3</dd>
+        </dl>
         <p />
       </section>
     </section>
@@ -396,50 +328,38 @@
       <p>Plugin interface for moves</p>
       <section>
         <title>Parameter PLUGIN</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Plugin name, e.g. "lua"</p>
       </section>
       <section>
         <title>Parameter BEHAVIOUR</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Behaviour name visible to plugin</p>
       </section>
       <section>
         <title>Parameter OPTIONS</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>""</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>""</dd>
+        </dl>
         <p>Behaviour parameters visible to plugin</p>
       </section>
     </section>
@@ -476,50 +396,38 @@
       specified.</p>
       <section>
         <title>Parameter HEALING_MIN_FRIENDSHIP</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>0</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>0</dd>
+        </dl>
         <p>Friendship threshold for healing</p>
       </section>
       <section>
         <title>Parameter CURE_POISON_MIN_FRIENDSHIP</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>0</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>0</dd>
+        </dl>
         <p>Friendship threshold for cure poison</p>
       </section>
       <section>
         <title>Parameter CURE_DISEASE_MIN_FRIENDSHIP</title>
-        <p>
-          <strong>Type:</strong>
-          <code>INTEGER</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>0</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>INTEGER</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>0</dd>
+        </dl>
         <p>Friendship threshold for cure disease</p>
       </section>
     </section>
@@ -528,50 +436,38 @@
       <p>Plugin interface for actions</p>
       <section>
         <title>Parameter PLUGIN</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Plugin name, e.g. "lua"</p>
       </section>
       <section>
         <title>Parameter BEHAVIOUR</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>MANDATORY</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>NULL</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>MANDATORY</dd>
+          <dt>Default:</dt>
+          <dd>NULL</dd>
+        </dl>
         <p>Behaviour name visible to plugin</p>
       </section>
       <section>
         <title>Parameter OPTIONS</title>
-        <p>
-          <strong>Type:</strong>
-          <code>STRING</code>
-        </p>
-        <p>
-          <strong>Flags:</strong>
-          <code>OPTIONAL</code>
-        </p>
-        <p>
-          <strong>Default:</strong>
-          <code>""</code>
-        </p>
+        <dl>
+          <dt>Type:</dt>
+          <dd>STRING</dd>
+          <dt>Flags:</dt>
+          <dd>OPTIONAL</dd>
+          <dt>Default:</dt>
+          <dd>""</dd>
+        </dl>
         <p>Behaviour parameters visible to plugin</p>
       </section>
     </section>

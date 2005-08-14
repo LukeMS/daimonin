@@ -61,9 +61,10 @@ sub parameter
     return 
         $::xml->section(
             $::xml->title("Parameter $name"),
-            $::xml->p($::xml->strong('Type:'), $xml->code("$type")),
-            $::xml->p($::xml->strong('Flags:'), $xml->code(join(", ", @{$flags}))),
-            $::xml->p($::xml->strong('Default:'), $xml->code("$default")),
+            $::xml->dl(
+                $::xml->dt('Type:'), $xml->dd("$type"),
+                $::xml->dt('Flags:'), $xml->dd(join(", ", @{$flags})),
+                $::xml->dt('Default:'), $xml->dd($default)),
             $doc
             );
 }
