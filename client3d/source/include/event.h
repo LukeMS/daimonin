@@ -32,7 +32,8 @@ using namespace Ogre;
 
 enum { LIGHT_VOL, LIGHT_SPOT };
 
-const Real ACT_CAMERA_ZOOM = 80.0, MIN_CAMERA_ZOOM = 10.0, MAX_CAMERA_ZOOM = 150.0;
+const Real MIN_CAMERA_ZOOM =  20.0;
+const Real MAX_CAMERA_ZOOM = 115.0;
 
 ////////////////////////////////////////////////////////////
 // Class.

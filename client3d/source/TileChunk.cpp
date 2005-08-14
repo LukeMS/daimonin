@@ -126,7 +126,7 @@ void CChunk::Change(short &x, short &z)
 {
 	int x1 = x * CHUNK_SIZE_X;
 	int y1 = z * CHUNK_SIZE_Z;
-
+/*
 	unsigned char value;
 	for (int a = x1; a < x1 + CHUNK_SIZE_X; ++a)
 	{
@@ -137,7 +137,7 @@ void CChunk::Change(short &x, short &z)
 			m_TileManagerPtr->Set_Map_Height(a, b, value);
 		}
 	}
-
+*/
 	ChangeLandHigh();
 	ChangeWaterHigh();
 	ChangeLandLow();
@@ -156,39 +156,10 @@ void CChunk::CreateEnvironmentManager()
 }
 
 //=================================================================================================
-// Change high Quality Water.
-//=================================================================================================
-void CChunk::ChangeWaterLow()
-{
-	delete m_Water_subMesh_low->vertexData;
-	CreateWaterLow_Buffers();
-}
-
-//=================================================================================================
 // Create Water in low Quality
 //=================================================================================================
 void CChunk::CreateWaterLow()
-{
-	int x = m_posX * CHUNK_SIZE_X;
-	int z = m_posZ * CHUNK_SIZE_Z;
-
-	sprintf( MeshName, "Water[%d,%d] Low", x, z );
-	m_Water_Mesh_low = MeshManager::getSingleton().createManual( MeshName,ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
-	sprintf( TempName, "SubWater[%d,%d] Low", x, z );
-	m_Water_subMesh_low = m_Water_Mesh_low->createSubMesh(TempName);
-	CreateWaterLow_Buffers();
-	m_Water_Mesh_low->_setBounds( *m_bounds );
-	m_Water_Mesh_low->load();
-	m_Water_subMesh_low->setMaterialName("Water_LowDetails");
-	sprintf( TempName, "Water[%d,%d] Low Entity", m_posX, m_posZ );
-	m_Water_entity_low = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
-}
-
-//=================================================================================================
-// Create Water in low Quality
-//=================================================================================================
-void CChunk::CreateWaterLow_Buffers()
-{
+	{
 	int x = m_posX * CHUNK_SIZE_X;
 	int z = m_posZ * CHUNK_SIZE_Z;
 	float StretchZ = m_TileManagerPtr->Get_StretchZ();
@@ -206,11 +177,18 @@ void CChunk::CreateWaterLow_Buffers()
 			}
 		}
 	}
-	if (numVertices == 0)  { Create_Dummy(m_Water_subMesh_low); return; }
+	return;
 
 	hasWater:
 	VertexData* vdata = new VertexData();
-	IndexData* idata = m_Water_subMesh_low->indexData;
+	IndexData* idata;
+
+	sprintf( MeshName, "Water[%d,%d] Low", x, z );
+	m_Water_Mesh_low = MeshManager::getSingleton().createManual( MeshName,ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
+	sprintf( TempName, "SubWater[%d,%d] Low", x, z );
+	m_Water_subMesh_low = m_Water_Mesh_low->createSubMesh(TempName);
+	idata = m_Water_subMesh_low->indexData;
+
 	numVertices = 6;
 	vdata->vertexCount = numVertices; // Wichtig! Anzahl der Punkte muss angegeben werden, sonst Objekt nicht existent
 	VertexDeclaration* vdec = vdata->vertexDeclaration;
@@ -305,7 +283,16 @@ void CChunk::CreateWaterLow_Buffers()
 	m_Water_subMesh_low->useSharedVertices = false;
 	m_Water_subMesh_low->vertexData = vdata;
 
+	// Setzen des Sichtbarkeits-Quaders. Fällt dieser Quader außerhalb des Sichtbereits der
+	// Kamera, so wird das Kartenstück nicht gerendert.
+	m_Water_Mesh_low->_setBounds( *m_bounds );
+	m_Water_Mesh_low->load();
+	m_Water_subMesh_low->setMaterialName("Water_LowDetails");
+	sprintf( TempName, "Water[%d,%d] Low Entity", m_posX, m_posZ );
+	m_Water_entity_low = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
+
 	m_IsAttached = false;
+
 	// m_Water->attachObject( m_Water_entity );
 }
 
@@ -522,7 +509,9 @@ void CChunk::CreateLandLow()
 	m_Land_Mesh_low = MeshManager::getSingleton().createManual( MeshName,ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	sprintf( TempName, "SubLand[%d,%d] Low", x, z );
 	m_Land_subMesh_low = m_Land_Mesh_low->createSubMesh(TempName);
+
 	CreateLandLow_Buffers();
+
 	m_Land_Mesh_low->_setBounds( *m_bounds );
 	m_Land_subMesh_low->setMaterialName("Land_LowDetails");
 	sprintf( TempName, "Land[%d,%d] Low Entity", m_posX, m_posZ );

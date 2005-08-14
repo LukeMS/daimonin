@@ -29,11 +29,11 @@ using namespace Ogre;
 const float PIXEL_PER_TILE =  128.0; // Pixel per Tile in the Ground-texture.
 const float PIXEL_PER_ROW  = 1024.0; // Pixel per Row  in the Ground-texture.
 
-const int   TILE_SIZE = 30;
+const int   TILE_SIZE = 32;
 const int   CHUNK_SUM_X  =  1; // Map has x chunks on x-axis.
 const int   CHUNK_SUM_Z  =  1; // Map has y chunks on y-axis.
-const int   CHUNK_SIZE_X = 22; // Chunk has x tiles on x-axis & y-axis. Must be even.
-const int   CHUNK_SIZE_Z = 22; // Chunk has x tiles on x-axis & y-axis. Must be even.
+const int   CHUNK_SIZE_X = 14+2; // Chunk has x tiles on x-axis. Must be even.
+const int   CHUNK_SIZE_Z = 18+2; // Chunk has x tiles on z-axis. Must be even.
 const int   TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;
 const int   TILES_SUM_Z  = CHUNK_SUM_Z * CHUNK_SIZE_Z;
 
