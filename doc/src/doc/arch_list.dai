@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
+<section>
+    <title>Daimonin Arch Object Type List</title>
+    <p>(Object name and number is equal defined in define.h of the server source)</p>
+    <section>
+        <title>Note:</title>
+        <p>
+            Goal is to remove all type 0 (= MISC) objects. Every object class should have a unique
+            type. The sub_type1 value is used to identify or set different sub classes of same type.
+            All type 0 objects are classifed in future as "undefined".
+        </p>
+    </section>
+    <section>
+        <title>Global Changes:</title>
+        <p>
+            Every object which can be connected as a button (BUTTONS, HANDLE, ALTAR,...) has now
+            a "connected flag1". If set, this can invoke different action in the connected object.
+            ATM, magic walls are the only effect ones. If not set, the wall turn direction, if set
+            the wall is turned on/off.
+        </p>
+    </section>
+    <section>
+        <title>Object Name/Nr. :</title>
+        <dl>
+
+<dt>TREASURES</dt>
+<dd>
+If identified set for trasure objects, created items are identified too.
+</dd>
+
+<dt>FOOD (6)</dt>
+<dd>
+FOOD will give food to the applier (eater). It can buff stats or resist for some time.
+It can also have negative effects which will be increased when cursed or damned.
+FOOD can increase/decrease instant hitpoints (= damage or heal) or mana.
+The debuff force does no damage.
+<p />
+Change: Now, food don't poison anymore like POISON does. HP, SP is given
+instant, then a buff/debuff force is inserted.
+</dd>
+
+<dt>POISON (7)</dt>
+<dd>
+Poison is a food kind typ of object. When applied (eaten) the target is poisoned. This
+inserts a POISONED force in the target which does DOT damage to it, including temporary
+stats &amp; resists drains.
+<p />
+Changes: I changed food/drink/poison. Poison does now level depending damage. There are
+some more value to adjust the POISONED force, including tick numbers, tick speed, damage,
+level &amp; stats/resists. Cursed or damned poison will do increased bad effects.
+</dd>
+
+<dt>PEDESTAL (17)</dt>
+<dd>
+A PEDESTAL is a sensor type object, which gets triggered when the right living object moves over.
+This can be a player or a type of living creature, identified by the race. A PEDESTAL work like
+a ON/OFF or OPEN/CLOSE trigger.
+<p />
+Changes: I removed some code which tries to use as 3rd option a key as trigger object. Beside the
+code had seems not work, we have different connected objects like altars or inventory checkers who
+can handle this better. PEDESTAL and TRIGGER_PEDESTAL should only target living creatures. Also, the
+TRIGGER_PEDESTAL had not the key code in it.
+</dd>
+
+<dt>ALTAR (18)</dt>
+<dd>
+On a ALTAR a player can "sacrifice" objects (= object is deleted when dropped) and the altar cast
+a spell or works like a connected button (= sends connected signal). Special case: The connected
+signal can be triggered only ONE time until the map is reseted. More sacrifices will not have an
+effect nor the object will vanish. Spells can be triggered infinitive times.
+<p />
+Changes: 2 major changes for spells. First, default sp (= number of spell) value is changed from 0
+to -1. With 0 as "no spell value", the first spell in the spell list will be blocked. Second, there
+is now a "cast in direction" value - last_sp . If set, direction spells like fireball will be triggered
+in this directions.
+</dd>
+
+<dt>LOOKED_DOOR (20)</dt>
+<dd>
+This door only opens when a object moving on the same spot has a special key in the inventory which
+match in the compare string with the door compare string. There are LOS and no LOS versions of the
+LOOKED_DOOR.
+<p />
+Changes: There are 2 versions now of a locked door: closed and open. When a closed (default) door
+is opened by a key, the arch is changed to "open door" arch, defined in other_arch (if other_arch =
+NULL then this is skiped). A open door is like a hallway and don't block LOS or objects - it also
+can't reclosed at this point.
+</dd>
+
+<dt>TIMED_GATE (26)</dt>
+<dd>
+A timed gate is a gate which opens when it got a signal and which is closing after some time
+automatically.
+<p />
+Changes: fixed: non LOS blocking TIMED_GATE'S was set to blockview after one triggered sequence.
+I also included open timed gate which will close for x ticks. Both with or without LOS.
+Added LAST_HEAL value for open timed gates to have a reverse behavior for blockview and no_pass.
+</dd>
+
+<dt>TRIGGER (27)</dt>
+<dd>
+TRIGGER are levers/buttons which gives one signal to the connected object when APPLIED.
+After some time, the TRIGGER reset itself automatically. A TRIGGER can't be pulled again,
+until it has reseted. TRIGGER are not reverse connected like HANDLE.
+<p />
+Changes:
+</dd>
+
+<dt>MAGIC_EAR (29)</dt>
+<dd>
+A magic ear is a button triggered by spoken words. If the player speaks the keyword, the
+magic ear works like a handle.
+<p />
+Changes:
+</dd>
+
+<dt>TRIGGER_BUTTON (30)</dt>
+<dd>
+TRIGGER_BUTTON's are like TRIGGERS, except they count the weight of the objects above them instead
+of triggering when be applied.
+<p />
+Changes:
+</dd>
+
+<dt>TRIGGER_ALTAR (31)</dt>
+<dd>
+Takes a sacrifice, then pushes a trigger.
+NOTE: TRIGGER_ALTAR's are more TRIGGER as ALTAR - they can't be used for spells.
+If "last_sp 0" is set, the altar will trigger the connected value TWO
+times per sacrifice: Once by dropping the sacrifice, second by altar reset.
+If "last_sp 1" is set, the altar won't trigger the connected value
+by reset - Hence, only ONE time per sacrifice.
+<p />
+Change:
+</dd>
+
+<dt>TRIGGER_PEDESTAL (32)</dt>
+<dd>
+A TRIGGER_PEDESTAL is a sensor type object, which gets triggered when the right living object
+moves over (like a PEDESTAL (17)). Like all TRIGGER_ objects, it sends a signal and then it gets
+inactive until it autoreset.
+<p />
+Changes:
+</dd>
+
+<dt>TELEPORTER (41)</dt>
+<dd>
+TELEPORTER are like EXISTS, but they are not active until a connected object like a HANDLE or a BUTTON
+gives a signal.
+<p />
+Changes: TODO> I want change TELEPORTERS to use speed like normal objects. When now triggered, they do
+with the signal ONE teleport - then they are inactive again. With speed, i think about to create a
+TELEPORTER which can be turned on and off and/or be active for &lt;delay> time until it need be triggered
+again.
+</dd>
+
+<dt>DETECTOR (51)</dt>
+<dd>
+A DETECTOR is a sensor type object and is triggered by objects which moves over it or get droppped
+on the same space. It does NOT get triggered by objects inside a inventory or a container. A detector
+compares the key string with the name of the object WITHOUT the title part.
+<p />
+Changes:
+</dd>
+
+<dt>DRINK (54)</dt>
+<dd>
+DRINK works like food and can apply good or bad effects (buffs/debuffs).
+<p />
+Changes: see FOOD.
+</dd>
+
+<dt>CHECK_INV (64)</dt>
+<dd>
+    * WARNING: Not multi player safe by mutiple players on it *
+<p />
+A CHECK_INV is a sensor type object and is triggered by objects which moves over it. This objects can be
+dropped or they can be in a inventory of a player or inside a container. There are several options how
+this sensor can be used - it can block a space for moving objects which don't have the key object inside,
+it can compar names, slaying field, arch type and arch name. It can remove or not the key item. The
+editor help part of this object gives some more information.
+<p />
+Changes: Some changes to this object. First, it don't marks a spot a NO_PASS anymore when it should
+block the space. This was a very bad handling, because the map space is global marked as NO_PASS and
+but the CHECK_INV overrule it when needed - without changing the global status of the map space. So,
+the player is standing on a "illegal" spot following the rules of the game engine. This was easy to
+change (marking the spot as NO_PASS was redundant). Second, i added a flag (last_eat) which change
+the compare from slaying field to name field. Now, every CHECK_INV works on default like a DETECTOR
+except it examines the inventory too - it checks the name field of the objects. If last_eat 1 set,
+it checks the slaying field as before. Also, i do a real string compare now, to avoid future problems
+by changing the way ther engine use a hash table for the string fields.
+</dd>
+
+<dt>EXIT (66)</dt>
+<dd>
+Exits are the standard "teleporters" of Daimonin. When triggered, they move the object to another
+location. This can be the same or a different map. A EXIT can be set to auto trigger when a object
+move or fly over it - or it can be set that a object (player) must apply it.
+<p />
+Changes:
+</dd>
+
+<dt>FLOOR (71) *NEW*</dt>
+<dd>
+The floor tiles defines a map position. They define terrain type and movement issues.
+<p />
+Changes: new.
+</dd>
+
+<dt>FLESH (72)</dt>
+<dd>
+Flesh gets dropped by killed mob. Flesh is "raw" food - gives some food but don't give
+special effects until is changed to food or its eaten by example a dragon kin player.
+Then flesh has special effects.
+<p />
+Changes: no special effets on normal player anymore except food.
+</dd>
+
+<dt>TYPE_LIGHT_APPLY (74) *NEW*</dt>
+<dd>
+This is now the standard light source for players or mobs.
+These objects can be wear out, be refilled or set to be permanent.
+<p />
+Changes: new.
+</dd>
+
+<dt>WALL (77) *NEW*</dt>
+<dd>
+This type is for all walls types.
+<p />
+Changes: new.
+</dd>
+
+<dt>LIGHT SOURCE (78) *NEW*</dt>
+<dd>
+This was player light sources in the past - now its invisible light source
+/darkness source points set on the map.
+<p />
+Changes: new.
+</dd>
+
+<dt>MISC_OBJECT (79) *NEW*</dt>
+<dd>
+Misc. Objects are objects which no special functionality in the game engine. This includes
+for example statues, rocks or other objects which use the base settings for objects.
+<p />
+Changes: new.
+</dd>
+
+<dt>TYPE_LIGHT_REFILL (84) *NEW*</dt>
+<dd>
+Special object to refill TYPE_LIGHT_APPLY object.
+<p />
+Changes: new.
+</dd>
+
+<dt>ORGANIC (86) *NEW*</dt>
+<dd>
+Body parts like flesh but can't be eaten (dragon scales).
+<p />
+Changes: new.
+</dd>
+
+<dt>GATE (91)</dt>
+<dd>
+A gate has 2 condition - open and close. If it get a signal from a connected object, it changes
+the condition. This condition stay until the next signal.
+<p />
+Changes: see TIMED_GATE.
+</dd>
+
+<dt>BUTTON (92)</dt>
+<dd>
+A BUTTON will work like a handle except they are triggered by counting the weight of the objects
+above the BUTTON. They are also reverse connected (if the connected object is triggered by a 3rd
+source, the BUTTON will be autopressed too).
+<p />
+Changes:
+</dd>
+
+<dt>HANDLE (93)</dt>
+<dd>
+Handles are levers/buttons which can be connected with for example GATES. A HANDLE type object
+has 2 conditions (ON/OFF or OPEN/CLOSE). Connected to a gate the gate will open when the HANDLE
+is pulled or closed when it is pulled again. The Connection is reverse - is the GATE is closed/opened
+from a 3rd object, the HANDLE will be autopulled too. See also TRIGGER (27) for different button types.
+<p />
+Changes:
+</dd>
+
+<dt>PIT (94)</dt>
+<dd>
+PIT's are a mix between a teleporter and a door. They can be opened and closed and when someone
+(player, mob AND some moving spells) step over them the PIT teleports them to a different location.
+PIT's are "holes" in the floor, so they should be used like someone fall through the floor. In fact,
+this is the same as teleporting.
+<p />
+Changes: renamed PIT's - old name was HOLE which was confusing with the EXIT object "hole".
+         I added map changing - Old PIT's was NOT able to change maps. This comes
+         from old crossfire times where one map was holding different, seperated areas.
+	    TODO: enter_exit() is used for map changing - this function is still not mob
+          tested.
+</dd>
+
+<dt>TRAPDOOR (95)</dt>
+<dd>
+TRAPDOOR is like a pit, working as a trap. The TRAPDOOR is in closed state nearly invisible
+but when a object with a weight >= the trigger value steps on the TRAPDOOR, it opens and
+works then like a PIT.
+<p />
+Changes: Same as PITS - adding map changing with enter_exit() and map name in slaying field.
+</dd>
+
+<dt>SIGN (98)</dt>
+<dd>
+SIGN's are map object which will send the player their msg/endmsg text in the console when
+applied (= readable object).
+<p />
+Changes:
+</dd>
+
+<dt>RUNE (154)</dt>
+<dd>
+The RUNE is used for traps - normal (like needles or blades) or magical runes which fire
+a spell when you move over it or open a container where they are inside. Some runes are
+sys_objects, some are invisible. Hiden traps are normally sys_objects and need special
+skill to be detected - magical runes can be detected with "see_invisible" or some
+spells and skills.
+<p />
+Changes: Changed attack types, poision force handling and added sys_object/invisible
+         to the objects. Added runes in normal containers - they explode now when
+         the container is readied or opened.
+</dd>
+</dl>
+</section>
+</section>
