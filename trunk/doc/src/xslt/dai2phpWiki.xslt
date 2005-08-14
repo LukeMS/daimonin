@@ -3,7 +3,7 @@
   - Transformation for converting DaiDoc to plain XHTML 1.1.
   -->
 <xsl:transform
-    version="1.0"
+    version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns="http://www.w3.org/1999/xhtml"
     exclude-result-prefixes="xsl"
@@ -14,7 +14,7 @@
 
     <xsl:output
         method="text"
-        output-encoding="us-ascii"
+        encoding="us-ascii"
         indent="no"
     />
 
@@ -25,7 +25,6 @@
     <xsl:template match="/section/section/section/title">!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
 
     <xsl:template match="blockcode">
-        <!-- TODO: indent every line by 1 space -->
         <xsl:apply-templates/>
     </xsl:template>
 
@@ -79,11 +78,13 @@
     </xsl:template>
 
     <xsl:template match="blockcode/text()">
-        <xsl:value-of select="."/>
+        <!-- Insert a single space at the beginning of lines. -->
+        <xsl:value-of select="replace(., '^', ' ', 'm')"/>
     </xsl:template>
 
     <xsl:template match="text()">
-        <xsl:value-of select="normalize-space(.)"/>
+        <!-- Strip whitespace at the beginning of lines. -->
+        <xsl:value-of select="replace(., '^ +', '', 'm')"/>
     </xsl:template>
 
 </xsl:transform>

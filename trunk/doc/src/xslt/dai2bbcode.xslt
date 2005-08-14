@@ -3,7 +3,7 @@
   - Transformation for converting DaiDoc to plain XHTML 1.1.
   -->
 <xsl:transform
-    version="1.0"
+    version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns="http://www.w3.org/1999/xhtml"
     exclude-result-prefixes="xsl"
@@ -14,7 +14,7 @@
 
     <xsl:output
         method="text"
-        output-encoding="us-ascii"
+        encoding="us-ascii"
         indent="no"
     />
 
