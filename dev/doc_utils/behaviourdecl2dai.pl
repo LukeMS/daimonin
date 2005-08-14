@@ -84,7 +84,7 @@ classname: /[A-Z_]+/
 
 behaviourlist: behaviour(s) 
     | 'NIL'
-    { $return = ["(No behaviours)"]; }
+    { $return = [$::xml->p("(No behaviours)")]; }
 behaviour: bdlcomment(?) 'Behaviour(' behaviourname ',' behaviourfunc ',' parameterlist ')'
     { $return = ::behaviour($item[3], $item[-2], $item[1]) }
 behaviourname: /[A-Z_]+/
@@ -92,7 +92,7 @@ behaviourfunc: /[a-z_]+/
 
 parameterlist: parameter(s) 
     | 'NIL'
-    { $return = ["(No parameters)"]; }
+    { $return = [$::xml->p("(No parameters)")]; }
 parameter: bdlcomment(?) 'Parameter(' behaviourname ',' parametername ',' parametertype ',' parameterflags ',' defaultvalue ')'
     { $return = ::parameter($item[5], $item[7], $item[9], $item[11], $item[1]); }
 parametername: /[A-Z_]+/
@@ -108,7 +108,7 @@ $::xml = XML::Generator->new(':pretty');
 my $parser = Parse::RecDescent->new($grammar);
 my $file = do { local $/; <> };
 
-print '<?xml version="1.0" encoding="iso8859-1"?>', "\n";
+print '<?xml version="1.0" encoding="iso-8859-1"?>', "\n";
 print '<!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">', "\n";
 
 print $xml->section(
