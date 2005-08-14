@@ -128,8 +128,10 @@
     </xsl:template>
 
     <xsl:template match="text()">
+        <xsl:if test="matches(.,'^\s')"><xsl:text> </xsl:text></xsl:if>
         <!-- Strip whitespace at the beginning of lines. -->
         <xsl:value-of select="replace(replace(normalize-space(), '^ +', '', 'm'), '\[', '[[')"/>
+        <xsl:if test="matches(.,'\s$')"><xsl:text> </xsl:text></xsl:if>
     </xsl:template>
 
 </xsl:transform>
