@@ -36,6 +36,23 @@
             <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h1>
+        <xsl:if test="/section[@autotoc='yes']">
+            <h2>Table of Contents</h2>
+            <xsl:apply-templates select="/section" mode="toc"/>
+        </xsl:if>
+    </xsl:template>
+    
+    <xsl:template match="/section" mode="toc">
+        <xsl:if test="section">
+            <ul>
+                <xsl:for-each select="/section/section">
+                    <li>
+                        <a href="#{generate-id()}"><xsl:apply-templates select="title/node()"/></a>
+                        <xsl:apply-templates select="section" mode="toc" />
+                    </li>
+                </xsl:for-each>
+            </ul>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="/section/section/title">
@@ -67,6 +84,12 @@
 
     <xsl:template match="section">
         <xsl:apply-templates/>
+    </xsl:template>
+
+    <xsl:template match="section/section">
+        <div id="{generate-id()}">
+            <xsl:apply-templates/>
+        </div>
     </xsl:template>
 
     <xsl:template match="*">

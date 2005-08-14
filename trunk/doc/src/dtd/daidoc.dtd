@@ -15,6 +15,7 @@
 <!ELEMENT section (title, (%Block;)+)>
 <!ATTLIST section
     id ID #IMPLIED
+    autotoc (yes|no) #IMPLIED
 >
 
 <!ELEMENT em (%Inline;)*>
