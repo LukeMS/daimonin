@@ -18,6 +18,12 @@
         indent="no"
     />
 
+    <xsl:template match="/section">
+        <xsl:apply-templates/>
+
+        <xsl:text>&#xA;&#xA;Warning: This wiki page is auto generated. If you change it, your changes are likely to be lost after the next update.</xsl:text>
+    </xsl:template>
+
     <xsl:template match="/section/title">!!!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
 
     <xsl:template match="/section/section/title">!!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
@@ -68,6 +74,7 @@
 
     <xsl:template match="dl/dd">
         <xsl:text>:</xsl:text><xsl:apply-templates/>
+        <xsl:text>&#xA;</xsl:text>
     </xsl:template>
 
     <xsl:template match="p|section">
