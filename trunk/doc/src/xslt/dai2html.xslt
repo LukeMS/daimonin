@@ -61,7 +61,7 @@
             <ul>
                 <xsl:for-each select="/section/section">
                     <li>
-                        <a href="#{generate-id()}"><xsl:apply-templates select="title/node()"/></a>
+                        <a href="#{if (@id) then @id else generate-id()}"><xsl:apply-templates select="title/node()"/></a>
                         <xsl:apply-templates select="section" mode="toc" />
                     </li>
                 </xsl:for-each>
@@ -101,7 +101,7 @@
     </xsl:template>
 
     <xsl:template match="/section/section">
-        <div id="{generate-id()}">
+        <div id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
         <xsl:if test="/section/@autotoc='yes'">
@@ -110,7 +110,7 @@
     </xsl:template>
 
     <xsl:template match="section/section/section">
-        <div id="{generate-id()}">
+        <div id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
     </xsl:template>
