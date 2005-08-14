@@ -82,6 +82,10 @@
         <xsl:text>&#xA;</xsl:text>
     </xsl:template>
 
+    <xsl:template match="a">
+        <xsl:text>[</xsl:text><xsl:apply-templates/><xsl:text> | </xsl:text><xsl:value-of select="@href"/><xsl:text>]</xsl:text>
+    </xsl:template>
+
     <xsl:template match="*">
         <xsl:apply-templates/>
     </xsl:template>

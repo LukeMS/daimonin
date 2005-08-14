@@ -71,8 +71,13 @@
 
     <xsl:template match="*">
         <xsl:element name="{local-name()}">
+            <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
         </xsl:element>
+    </xsl:template>
+
+    <xsl:template match="@*">
+        <xsl:copy/>
     </xsl:template>
 
 </xsl:transform>
