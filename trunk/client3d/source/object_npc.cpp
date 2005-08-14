@@ -82,19 +82,31 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 		Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
 		Event->getCamera()->setFOVy(Degree(90));
 		Event->getCamera()->setPosition(Vector3(1500, 500, 1500));
-
 		Event->getCamera()->yaw(Degree(45));
 		Event->getCamera()->pitch(Degree(-35.264));
 */
+	const Real CAMERA_Y = 400;
+	Vector3 pos = Vector3(TILE_SIZE * CHUNK_SIZE_X /2 + TILE_SIZE/2,
+												0, 
+												TILE_SIZE * CHUNK_SIZE_Z /2 - TILE_SIZE/2);
 
+		Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
+		Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
+		Event->getCamera()->setPosition(Vector3(pos.x, pos.y + CAMERA_Y, pos.z + CAMERA_Y + 150));
+		Event->getCamera()->pitch(Degree(-35));
+//		Event->getCamera()->setFixedYawAxis(false);
 
 		mNode->scale(Vector3(.3,.3,.3));
-		mNode->setPosition(Vector3(330, 20, 330+20));
-		Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-		Event->getCamera()->setFOVy(Degree(90));
-		Event->getCamera()->setPosition(Vector3(330, 400, 884));
-		Event->getCamera()->pitch(Degree(-35.264));
-//		Event->getCamera()->setFixedYawAxis(false);
+		Real height = Event->pgTileManager->Get_Map_Height((short)(pos.x)/TILE_SIZE, (short)(pos.z)/TILE_SIZE)*3;
+		pos.y += height;
+		pos.z += height;
+		mNode->setPosition(pos);
+
+		pos = Vector3(0,0,0);
+		Event->setWorldPos(pos);
+
+
+
 
 
 	}
@@ -311,6 +323,7 @@ void NPC::update(const FrameEvent& event)
 
 
 /// Iportant no bounds check for get_map_height right now.
+/// It will crash if you leave the map!
 
 	Vector3 pPos = Event->getCamera()->getPosition();
 	Real tt = pPos.z;

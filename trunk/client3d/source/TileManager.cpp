@@ -44,7 +44,6 @@ CTileManager::~CTileManager()
 {
 	for(int x = 0; x < TILES_SUM_X + 1; ++x) { delete[] m_Map[x]; }
 	delete[] m_Map;
-	m_Kartentextur.setNull();
 }
 
 //=================================================================================================
@@ -73,14 +72,14 @@ void CTileManager::Create_Map()
 	int dimx = image.getWidth(); 
 	int dimy = image.getHeight();
 	int posX = 0, posY;
-	short Map[TILES_SUM_X+1][TILES_SUM_Z+1];
+	short Map[TILES_SUM_X+2][TILES_SUM_Z+2];
 	///////////////////////////////////////////////////////////////////////// 
 	// Fill the heightdata buffer with the image-color.
 	///////////////////////////////////////////////////////////////////////// 
-	for(int x = 0; x < TILES_SUM_X+1; ++x)
+	for(int x = 0; x < TILES_SUM_X+2; ++x)
 	{
 		posY =0;
-		for(int y = 0; y < TILES_SUM_Z+1; ++y)
+		for(int y = 0; y < TILES_SUM_Z+2; ++y)
 		{
 			if ( x && x != TILES_SUM_X && y && y != TILES_SUM_Z)
 			{
@@ -95,9 +94,9 @@ void CTileManager::Create_Map()
 		if (++posX > dimx) posX =0; // if necessary, repeat the image.
 	}
 
-	for (int x = 0; x < TILES_SUM_X; ++x)
+	for (int x = 0; x < TILES_SUM_X+1; ++x)
 	{
-		for (int y = 0; y < TILES_SUM_Z; ++y)
+		for (int y = 0; y < TILES_SUM_Z+1; ++y)
 		{
 			m_Map[x][y].height = (Map[x][y] + Map[x][y+1] + Map[x+1][y] + Map[x+1][y+1]) / 4;
 		}
@@ -202,26 +201,6 @@ void CTileManager::CreateChunks()
 }
 
 //=================================================================================================
-// Change Tile and Environmet textures.
-//=================================================================================================
-void CTileManager::ChangeTexture()
-{
-	static bool once = false;
-	if (once) return;
-
-	long time = clock();
-	Image tMap;
-	tMap.load("terrain_128_texture_2.png", "General");
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("Land_HighDetails");
-	std::string texName = "testMat";
-	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "General", tMap, TEX_TYPE_2D, 3,1.0f);
-	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
-	mMaterial->load();
-	Logger::log().info() << "Time to change Texture: " << clock()-time << " ms";
-	once=true;
-}
-
-//=================================================================================================
 //
 //=================================================================================================
 void CTileManager::ChangeChunks()
@@ -244,6 +223,25 @@ void CTileManager::ChangeChunks()
 	Logger::log().info() << "Time to change Chunks: " << clock()-time << " ms";
 }
 
+//=================================================================================================
+// Change Tile and Environmet textures.
+//=================================================================================================
+void CTileManager::ChangeTexture()
+{
+	static bool once = false;
+	if (once) return;
+
+	long time = clock();
+	Image tMap;
+	tMap.load("terrain_128_texture_2.png", "General");
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("Land_HighDetails");
+	std::string texName = "testMat";
+	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "General", tMap, TEX_TYPE_2D, 3,1.0f);
+	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
+	mMaterial->load();
+	Logger::log().info() << "Time to change Texture: " << clock()-time << " ms";
+	once=true;
+}
 
 //=================================================================================================
 // +/- 5 Chunks around the camera are drawn in high quality.
@@ -538,7 +536,7 @@ inline void CTileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Fil
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2];
+			TextureGroup_data[++index1] = 255 - Filter_data[index2];
 		}
 	}
 
@@ -558,7 +556,7 @@ inline void CTileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Fil
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2];
+			TextureGroup_data[++index1] = 255 - Filter_data[index2];
 		}
 	}
 
@@ -578,7 +576,7 @@ inline void CTileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Fil
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2];
+			TextureGroup_data[++index1] = 255 - Filter_data[index2];
 		}
 	}
 
@@ -598,74 +596,92 @@ inline void CTileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Fil
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2];
+			TextureGroup_data[++index1] = 255 - Filter_data[index2];
 		}
 	}
-	/*
 	/////////////////////////////////////////////////////////////////////////
 	// remaining 4 edges
 	/////////////////////////////////////////////////////////////////////////
-	for (int i = 0; i != pix / 16 + 1; ++i)
+	
+	// upper left
+
+	for (int i = 0; i != space; ++i)
 	{
-		for (int j = 0; j!= pix / 16 + 1; ++j)
+		for (int j = 0; j!= space; ++j)
 		{
-			index1 = (4* (pix + 2*(pix / 16 + 1)) * size + pix / 16)* (pix + 2*(pix / 16 + 1)) * y + 
-				(4* (pix + 2*(pix / 16 + 1)) * size + pix / 16) * i + 4* x * (pix + 2*(pix / 16 + 1)) 
+			index1 = 4*(pix * 8)* (pix + 2 * space) * y 
+				+ 4* (pix * 8) * i 
+				+ 4* x * (pix + 2* space) 
 				+ 4* j;
+
 			index2 = 0;
+
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2] / 2;
+			TextureGroup_data[++index1] = 255;
 		}
 	}
 
-	for (int i = 0; i != pix / 16 + 1; ++i)
+	// upper right
+
+	for (int i = pix + space; i != pix + 2*space; ++i)
 	{
-		for (int j = pix + pix/ 16 + 1; j!= pix + 2 * (pix / 16 + 1); ++j)
+		for (int j = 0; j!= space; ++j)
 		{
-			index1 = (4* (pix + 2*(pix / 16 + 1)) * size + pix / 16)* (pix + 2*(pix / 16 + 1)) * y + 
-				(4* (pix + 2*(pix / 16 + 1)) * size + pix / 16) * i + 4* x * (pix + 2*(pix / 16 + 1)) 
+			index1 = 4*(pix * 8)* (pix + 2 * space) * y 
+				+ 4* (pix * 8) * i 
+				+ 4* x * (pix + 2* space) 
 				+ 4* j;
+
 			index2 = 0;
+
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2] / 2;
+			TextureGroup_data[++index1] = 255;
 		}
 	}
+	
+	// lower left
 
-	for (int i = pix + pix / 16 + 1; i !=  pix + 2 * (pix / 16 + 1); ++i)
+	for (int i = 0; i != space; ++i)
 	{
-		for (int j = 0; j!= pix / 16 + 1; ++j)
+		for (int j = pix + space; j!= pix + 2* space; ++j)
 		{
-			index1 = (4* (pix + 2*(pix / 16 + 1)) * size + pix / 16)* (pix + 2*(pix / 16 + 1)) * y + 
-				(4* (pix + 2*(pix / 16 + 1)) * size + pix / 16) * i + 4* x * (pix + 2*(pix / 16 + 1)) 
+			index1 = 4*(pix * 8)* (pix + 2 * space) * y 
+				+ 4* (pix * 8) * i 
+				+ 4* x * (pix + 2* space) 
 				+ 4* j;
+
 			index2 = 0;
+
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2] / 2;
+			TextureGroup_data[++index1] = 255;
 		}
 	}
 
-	for (int i = pix + pix / 16 + 1; i !=  pix + 2*(pix / 16 + 1); ++i)
+	// lower right
+
+	for (int i = pix + space; i != pix + 2* space; ++i)
 	{
-		for (int j = pix + pix / 16 + 1; j!= pix + 2*(pix / 16 + 1); ++j)
+		for (int j = pix + space; j!= pix + 2* space; ++j)
 		{
-			index1 = (4* (pix + 2*(pix / 16 + 1)) * size + pix / 16)* (pix + 2*(pix / 16 + 1)) * y + 
-				(4* (pix + 2*(pix / 16 + 1)) * size + pix / 16) * i + 4* x * (pix + 2*(pix / 16 + 1)) 
+			index1 = 4*(pix * 8)* (pix + 2 * space) * y 
+				+ 4* (pix * 8) * i 
+				+ 4* x * (pix + 2* space) 
 				+ 4* j;
+
 			index2 = 0;
+
 			TextureGroup_data[  index1] = Texture_data[index2];
 			TextureGroup_data[++index1] = Texture_data[index2 + 1];
 			TextureGroup_data[++index1] = Texture_data[index2 + 2];
-			TextureGroup_data[++index1] = Filter_data[index2] / 2;
+			TextureGroup_data[++index1] = 255;
 		}
 	}
-
-	*/
 }
 
 //=================================================================================================

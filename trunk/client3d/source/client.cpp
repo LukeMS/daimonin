@@ -192,13 +192,20 @@ void DaimoninClient::createScene(void)
 	SpellManager::getSingleton().init(mSceneMgr, Event->World);
 	ObjectManager::getSingleton().init(mSceneMgr, Event->World);
 	ParticleManager::getSingleton().init(mSceneMgr, Event->World);
-	
+
+
 	bool status = Option::getSingleton().openDescFile(FILE_WORLD_DESC);
     	Logger::log().info() << "Parse description file " 
 			     << FILE_WORLD_DESC
 			     << "..." << Logger::success(status);
 	if(!status) 
 	{ Logger::log().error() << "CRITICAL: description file was not found!"; return; }
+
+
+	TileManager = new CTileManager();
+	TileManager->Init(mSceneMgr);
+	Event->Set_pgraphics(TileManager);
+
 
 	string strType, strTemp, strMesh;
 	int i=0;
@@ -224,8 +231,5 @@ void DaimoninClient::createScene(void)
 			ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
 		}
 	}
-	TileManager = new CTileManager();
-	//TileManager->Init(Event->World);
-	TileManager->Init(mSceneMgr);
-	Event->Set_pgraphics(TileManager);
+
 }

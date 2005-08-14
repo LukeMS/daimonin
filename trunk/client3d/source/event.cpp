@@ -133,7 +133,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	mFiltering = TFO_BILINEAR;
 	mIdleTime =0;
 	mDayTime = 15;
-	mCameraZoom = ACT_CAMERA_ZOOM;
+	mCameraZoom = MAX_CAMERA_ZOOM;
 }
 
 //=================================================================================================
@@ -151,9 +151,45 @@ CEvent::~CEvent()
 //=================================================================================================
 void CEvent::setWorldPos(Vector3 &pos)
 {
-	pgTileManager->ControlChunks(pos);
-	mCamera->setPosition(mCamera->getPosition()+pos);
+	static Vector3 dPos = pos;
+	
+	if (pos.x+dPos.x > TILE_SIZE || pos.x+dPos.x < -TILE_SIZE)
+	{
+		pos.x -= dPos.x;
+		
 
+
+
+		short tmp[ TILES_SUM_Z+1];
+		for (short y = 0; y < TILES_SUM_Z+1; ++y) tmp[y] = pgTileManager->Get_Map_Height(0, y);
+
+	for (int x = 1; x < TILES_SUM_X+1; ++x)
+	{
+		for (int y = 0; y < TILES_SUM_Z+1; ++y)
+		{
+			int value = pgTileManager->Get_Map_Height(x, y);
+			pgTileManager->Set_Map_Height(x-1, y, value);
+		}
+	}
+
+		for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(TILES_SUM_X, y, tmp[y] );
+pgTileManager->ChangeChunks();
+
+
+	}
+	if (pos.z+dPos.z > TILE_SIZE || pos.z+dPos.z < -TILE_SIZE)
+	{
+		pos.z -= dPos.z;
+	}
+
+	pgTileManager->ControlChunks(pos);
+	mCamera->move(pos);
+	dPos+=pos;
+
+
+
+
+//	mCamera->setPosition(mCamera->getPosition()+pos);
 //	ParticleManager::getSingleton().synchToWorldPos(pos);
 }
 
@@ -352,60 +388,34 @@ void CEvent::keyPressed(KeyEvent *e)
 			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_CAST1);
 			break;
 		case KC_S:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_SLUMP1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_SLUMP1);
 			break;
 		case KC_D:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_DEATH1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_DEATH1);
 			break;
 		case KC_H:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_HIT1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_HIT1);
 			break;
 		case KC_1:
-			//ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
-			w_1 += 0.05;
+			ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
 			break;
 		case KC_2:
-			//ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
-			w_1 -= 0.05;
+			ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
 			break;
-
 		case KC_3:
-			x_1 += 0.05;
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
 			break;
 		case KC_4:
-			x_1 -= 0.05;
-			break;
-
-		case KC_5:
-			y_1 += 0.05;
-			break;
-		case KC_6:
-			y_1 -= 0.05;
-			break;
-
-		case KC_7:
-			z_1 += 0.05;
-			break;
-		case KC_8:
-			z_1 -= 0.05;
-			break;
-
-/*
-
-		case KC_3:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
-			break;
-		case KC_4:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,1, -1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,1, -1);
 			break;
 		case KC_5:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,2, -1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,2, -1);
 			break;
 		case KC_6:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,3, -1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,3, -1);
 			break;
 		case KC_7:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,4, -1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,4, -1);
 			break;
 		case KC_8:
 			ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
@@ -413,27 +423,27 @@ void CEvent::keyPressed(KeyEvent *e)
 		case KC_9:
 			ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
 			break;
-*/
+
 		case KC_J:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
 			break;
 		case KC_K:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
 			break;
 		case KC_G:
         //    ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);
-        static bool grid = false;
-        grid = !grid;
-        pgTileManager->SwitchMaterial(grid, true);
-			break;
+		static bool grid = false;
+		grid = !grid;
+		pgTileManager->SwitchMaterial(grid, true);
+		break;
 		case KC_I:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
+			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
 			break;
 		case KC_P:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 0);	
+			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 0);	
 			break;
 		case KC_Q:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 
@@ -510,15 +520,14 @@ void CEvent::keyPressed(KeyEvent *e)
 
 		case KC_SUBTRACT:
 		{
-			//if (mCameraZoom < MAX_CAMERA_ZOOM)
-			 mCameraZoom += 10;
+			if (mCameraZoom < MAX_CAMERA_ZOOM) mCameraZoom += 5;
 			mCamera->setFOVy(Degree(mCameraZoom));
 		}
 			break;
 
 		case KC_ADD:
 		{
-			if (mCameraZoom > MIN_CAMERA_ZOOM) mCameraZoom -= 10;
+			if (mCameraZoom > MIN_CAMERA_ZOOM) mCameraZoom -= 5;
 			mCamera->setFOVy(Degree(mCameraZoom));
 		}
 			break;
