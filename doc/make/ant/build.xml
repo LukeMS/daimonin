@@ -50,7 +50,7 @@
         <xslt
             basedir   = "src/doc"
             destdir   = "gen/phpWiki"
-            extension = ".bbc"
+            extension = ".wiki"
             style     = "src/xslt/dai2phpWiki.xslt"
         />
     </target>
@@ -64,7 +64,7 @@
         <xslt
             basedir   = "src/doc"
             destdir   = "gen/html4"
-            extension = ".bbc"
+            extension = ".html"
             style     = "src/xslt/dai2html.xslt"
         />
     </target>
@@ -78,7 +78,7 @@
         <xslt
             basedir   = "src/doc"
             destdir   = "gen/xhtml11"
-            extension = ".bbc"
+            extension = ".xhtml"
             style     = "src/xslt/dai2xhtml11.xslt"
         />
     </target>
@@ -92,7 +92,7 @@
         <xslt
             basedir   = "src/doc"
             destdir   = "gen/ascii"
-            extension = ".bbc"
+            extension = ".txt"
             style     = "src/xslt/dai2ascii.xslt"
         />
     </target>
