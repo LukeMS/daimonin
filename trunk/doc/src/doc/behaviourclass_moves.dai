@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
 <section>
-  <title>Class MOVES</title>
+  <title>Moves</title>
   <p>Moves are the basic movement behaviours. Basically a move can
   decide to take a step in a direction, stand still or not decide anything.
   If a move decides something no other move will execute, otherwise the
@@ -9,197 +9,219 @@
   * Moves that never passes the decision on are called "terminal moves", and
   should be the last ones in a mobs moves list.</p>
   <section>
-    <title>Behaviour STAND_STILL</title>
+    <title>Stand_still</title>
+    <p>Usage: 
+      <code>stand_still</code>
+    </p>
     <p>Always stands still. Terminal</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour SLEEP</title>
+    <title>Sleep</title>
+    <p>Usage: 
+      <code>sleep</code>
+    </p>
     <p>Stand still if the mob's sleep flag is set. Should normally be
     high up in the moves list (except maybe for sleepwalkers and mobs
     that never sleep and never can be forced to sleep).</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour MOVE_RANDOMLY</title>
+    <title>Move_randomly</title>
+    <p>Usage: 
+      <code>move_randomly [xlimit=integer] [ylimit=integer]</code>
+    </p>
     <p>Move around erratically by taking steps in random directions. Terminal.</p>
     <section>
-      <title>Parameter XLIMIT</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>-1</dd>
+        <dt>
+          <code>xlimit</code> (integer, optional)
+        </dt>
+        <dd>Limits the x-distance from the starting point</dd>
+        <dt>
+          <code>ylimit</code> (integer, optional)
+        </dt>
+        <dd>Limits the y-distance from the starting point</dd>
       </dl>
-      <p>Limits the x-distance from the starting point</p>
-    </section>
-    <section>
-      <title>Parameter YLIMIT</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>-1</dd>
-      </dl>
-      <p>Limits the y-distance from the starting point</p>
     </section>
   </section>
   <section>
-    <title>Behaviour DONT_STAND_STILL</title>
+    <title>Dont_stand_still</title>
+    <p>Usage: 
+      <code>dont_stand_still [max_idle_time=integer]</code>
+    </p>
     <p>Makes sure the mob never stands 100% still</p>
     <section>
-      <title>Parameter MAX_IDLE_TIME</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>1</dd>
+        <dt>
+          <code>max_idle_time</code> (integer, optional)
+        </dt>
+        <dd>Max allowed still time (number of moves)</dd>
       </dl>
-      <p>Max allowed still time (number of moves)</p>
     </section>
   </section>
   <section>
-    <title>Behaviour MOVE_TOWARDS_HOME</title>
+    <title>Move_towards_home</title>
+    <p>Usage: 
+      <code>move_towards_home</code>
+    </p>
     <p>Move towards the mob's starting point. Terminal.</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour MOVE_TOWARDS_ENEMY</title>
+    <title>Move_towards_enemy</title>
+    <p>Usage: 
+      <code>move_towards_enemy</code>
+    </p>
     <p>Move towards the current enemy if any</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour MOVE_TOWARDS_ENEMY_LAST_KNOWN_POS</title>
+    <title>Move_towards_enemy_last_known_pos</title>
+    <p>Usage: 
+      <code>move_towards_enemy_last_known_pos</code>
+    </p>
     <p>Move towards the current enemy's last known position if the current position is unknown.</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour SEARCH_FOR_LOST_ENEMY</title>
+    <title>Search_for_lost_enemy</title>
+    <p>Usage: 
+      <code>search_for_lost_enemy</code>
+    </p>
     <p>Search around for an enemy that can't be seen (until the memory of the enemy times out).</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour MOVE_TOWARDS_WAYPOINT</title>
+    <title>Move_towards_waypoint</title>
+    <p>Usage: 
+      <code>move_towards_waypoint</code>
+    </p>
     <p>Move towards the current active waypoint if any</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour RUN_AWAY_FROM_ENEMY</title>
+    <title>Run_away_from_enemy</title>
+    <p>Usage: 
+      <code>run_away_from_enemy [hp_threshold=integer]</code>
+    </p>
     <p>Runs away from the current enemy if scared.</p>
     <section>
-      <title>Parameter HP_THRESHOLD</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>10</dd>
+        <dt>
+          <code>hp_threshold</code> (integer, optional)
+        </dt>
+        <dd>Become scared if current_hp &lt; HP_THRESHOLD % of max_hp</dd>
       </dl>
-      <p>Become scared if current_hp &lt; HP_THRESHOLD % of max_hp</p>
     </section>
   </section>
   <section>
-    <title>Behaviour KEEP_DISTANCE_TO_ENEMY</title>
+    <title>Keep_distance_to_enemy</title>
+    <p>Usage: 
+      <code>keep_distance_to_enemy [min_dist=integer] [max_dist=integer]</code>
+    </p>
     <p>Try to stay at a certain distance from the enemy,
     good for mobs with distance attacks</p>
     <section>
-      <title>Parameter MIN_DIST</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>4</dd>
+        <dt>
+          <code>min_dist</code> (integer, optional)
+        </dt>
+        <dd />
+        <dt>
+          <code>max_dist</code> (integer, optional)
+        </dt>
+        <dd />
       </dl>
-      <p />
-    </section>
-    <section>
-      <title>Parameter MAX_DIST</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>6</dd>
-      </dl>
-      <p />
     </section>
   </section>
   <section>
-    <title>Behaviour STEP_BACK_AFTER_SWING</title>
+    <title>Step_back_after_swing</title>
+    <p>Usage: 
+      <code>step_back_after_swing [dist=integer]</code>
+    </p>
     <p>To be removed, or renamed to "hit and run"</p>
     <section>
-      <title>Parameter DIST</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>INTEGER</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>3</dd>
+        <dt>
+          <code>dist</code> (integer, optional)
+        </dt>
+        <dd />
       </dl>
-      <p />
     </section>
   </section>
   <section>
-    <title>Behaviour AVOID_LINE_OF_FIRE</title>
+    <title>Avoid_line_of_fire</title>
+    <p>Usage: 
+      <code>avoid_line_of_fire</code>
+    </p>
     <p>Try to stay out of the line of fire as much as possible
     if we belive our enemy uses distance attacks</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour OPTIMIZE_LINE_OF_FIRE</title>
+    <title>Optimize_line_of_fire</title>
+    <p>Usage: 
+      <code>optimize_line_of_fire</code>
+    </p>
     <p>Try to move to a position with free line of fire towards
     enemy. A good archer's answer to AVOID_LINE_OF_FIRE</p>
-    <p>(No parameters)</p>
+    <section>
+      <title>Parameters</title>
+      <p>(No parameters)</p>
+    </section>
   </section>
   <section>
-    <title>Behaviour PLUGIN_MOVE</title>
+    <title>Plugin_move</title>
+    <p>Usage: 
+      <code>plugin_move plugin=string behaviour=string [options=string]</code>
+    </p>
     <p>Plugin interface for moves</p>
     <section>
-      <title>Parameter PLUGIN</title>
+      <title>Parameters</title>
       <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
+        <dt>
+          <code>plugin</code> (string, mandatory)
+        </dt>
+        <dd>Plugin name, e.g. "lua"</dd>
+        <dt>
+          <code>behaviour</code> (string, mandatory)
+        </dt>
+        <dd>Behaviour name visible to plugin</dd>
+        <dt>
+          <code>options</code> (string, optional)
+        </dt>
+        <dd>Behaviour parameters visible to plugin</dd>
       </dl>
-      <p>Plugin name, e.g. "lua"</p>
-    </section>
-    <section>
-      <title>Parameter BEHAVIOUR</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>MANDATORY</dd>
-        <dt>Default:</dt>
-        <dd>NULL</dd>
-      </dl>
-      <p>Behaviour name visible to plugin</p>
-    </section>
-    <section>
-      <title>Parameter OPTIONS</title>
-      <dl>
-        <dt>Type:</dt>
-        <dd>STRING</dd>
-        <dt>Flags:</dt>
-        <dd>OPTIONAL</dd>
-        <dt>Default:</dt>
-        <dd>""</dd>
-      </dl>
-      <p>Behaviour parameters visible to plugin</p>
     </section>
   </section>
 </section>
