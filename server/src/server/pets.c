@@ -30,12 +30,19 @@
 #define MAX_PETS 10      /* Maximum number of pets at any time */
 #define MAX_PERMAPETS 5  /* Maximum number of non-temporary pets */
 
-#define PET_VALID(pet_ol, owner) \
-    (OBJECT_VALID(pet_ol->objlink.ob, pet_ol->id) && \
-     pet_ol->objlink.ob->owner == owner && pet_ol->objlink.ob->owner_count == owner->count)
+#define PET_VALID(pet_ol, _owner_) \
+    (OBJECT_VALID((pet_ol)->objlink.ob, (pet_ol)->id) && \
+     (pet_ol)->objlink.ob->owner == (_owner_) && (pet_ol)->objlink.ob->owner_count == (_owner_)->count)
 
-/* Returns 0 on success, -1 on failure */
-int add_pet(object *owner, object *pet)
+/* force: 1 to force, 0 for normal usage
+   If force is 0, a normal pet addition is done, which may fail for 
+   several reasons. If force is 1, the pet is forced which may still 
+   fail but not as often.
+   Normally you should use 0, but in some cases where for example a
+   quest requires a specific pet you could try 1.
+   Returns 0 on success, -1 on failure.
+*/
+int add_pet(object *owner, object *pet, int force)
 {
     int nrof_pets = 0, nrof_permapets = 0;
     objectlink *ol, *next_ol;
@@ -52,7 +59,7 @@ int add_pet(object *owner, object *pet)
     if(pet->head)
         pet = pet->head;
 
-    if(pet->owner)
+    if(pet->owner == owner || (OBJECT_VALID(pet->owner, pet->owner_count) && !force))
     {
         new_draw_info_format(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));
         return -1;
@@ -72,7 +79,7 @@ int add_pet(object *owner, object *pet)
         */
     }
 
-    if(nrof_pets >= MAX_PETS || nrof_permapets >= MAX_PERMAPETS)
+    if((nrof_pets >= MAX_PETS || nrof_permapets >= MAX_PERMAPETS) && !force)
     {
         new_draw_info_format(NDI_UNIQUE, 0, owner, "You have too many pets to handle %s", query_name(pet));
         return -1;

@@ -414,7 +414,7 @@ int                         push_ob(object *who, int dir, object *pusher);
 int                         missile_reflection_adjust(object *op, int flag);
 /* pets.c */
 void                        update_pets_combat_mode(object *owner);
-int                         add_pet(object *owner, object *pet);
+int                         add_pet(object *owner, object *pet, int mode);
 void                        terminate_all_pets(object *owner);
 void                        save_all_pets(FILE *fp, object *owner, int flag);
 void                        save_pet(object *pet);

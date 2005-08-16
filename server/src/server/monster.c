@@ -461,7 +461,7 @@ int move_monster(object *op)
     if(op->env && op->env->type == PLAYER && QUERY_FLAG(op, FLAG_SYS_OBJECT))
     {
         if(op->owner == NULL)
-            if(add_pet(op->env, op))
+            if(add_pet(op->env, op, 0))
                 return 0;
         
         pet_follow_owner(op);

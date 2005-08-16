@@ -88,6 +88,8 @@ static struct method_decl   GameObject_methods[]            =
     {"GetAnimation", (lua_CFunction) GameObject_GetAnimation},
     {"SetFace", (lua_CFunction) GameObject_SetFace},
     {"SetAnimation", (lua_CFunction) GameObject_SetAnimation},
+    {"MakePet", (lua_CFunction) GameObject_MakePet},
+    {"GetPets", (lua_CFunction) GameObject_GetPets},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -2592,6 +2594,64 @@ static int GameObject_SetFace(lua_State *L)
         WHO->face = &(*hooks->new_faces)[id];
 
     return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_MakePet                                               */
+/* Lua    : object:MakePet(owner, mode)                                      */
+/* Info   : Makes @object into a pet owned by @owner. @object must be a      */
+/*          non-pet monster, and @owner must be a player.                    */
+/*          If mode is 0, a normal pet addition is done, which may fail for  */
+/*          several reasons. If mode is 1, the pet is forced which may still */
+/*          fail but not as often.                                           */
+/*          Normally you should use 0, but in some cases where for example a */
+/*          quest requires a specific pet you could try 1.                   */
+/*          Returns true if object is made into a pet, and false otherwise.  */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int GameObject_MakePet(lua_State *L)
+{
+    lua_object *self, *owner;
+    int mode = 0;
+
+    get_lua_args(L, "OO|i", &self, &owner, &mode);
+
+    int result = hooks->add_pet(owner->data.object, WHO, mode);
+    
+    lua_pushboolean(L, !result);
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetPets                                               */
+/* Lua    : object:GetPets()                                                 */
+/* Info   : Returns an array of all pets currently owned by @object          */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int GameObject_GetPets(lua_State *L)
+{
+    lua_object *self;
+    int i=1;
+
+    get_lua_args(L, "O", &self);
+
+#define PET_VALID(pet_ol, _owner_) \
+    (OBJECT_VALID((pet_ol)->objlink.ob, (pet_ol)->id) && \
+     (pet_ol)->objlink.ob->owner == (_owner_) && (pet_ol)->objlink.ob->owner_count == (_owner_)->count)
+
+    lua_newtable(L);
+    if(WHO->type == PLAYER)
+    {
+        objectlink *ol;        
+        for(ol = CONTR(WHO)->pets; ol; ol = ol->next)
+            if(PET_VALID(ol, WHO))
+            {
+                push_object(L, &GameObject, ol->objlink.ob);
+                lua_rawseti(L, -2, i++);
+            }
+    }
+
+    return 1;
 }
 
 
