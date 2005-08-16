@@ -103,6 +103,8 @@ static int  GameObject_GetAnimation(lua_State *L);
 static int  GameObject_GetFace(lua_State *L);
 static int  GameObject_SetAnimation(lua_State *L);
 static int  GameObject_SetFace(lua_State *L);
+static int  GameObject_MakePet(lua_State *L);
+static int  GameObject_GetPets(lua_State *L);
 
 #if 0
 /* Hmmm... Still requires constants... */

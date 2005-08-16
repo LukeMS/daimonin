@@ -58,6 +58,7 @@ struct plugin_hooklist  hooklist    =
     cost_string_from_value,pay_for_item,pay_for_amount,
     get_word_from_string,get_money_from_string,sell_item,
     query_money_type, remove_money_type,insert_money_in_player,
+    add_pet,
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
     &shstr

@@ -316,7 +316,8 @@ struct plugin_hooklist
     int (*query_money_type)(object *op, int value);
     sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
     void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
-
+    int (*add_pet)(object *owner, object *pet, int mode);
+    
     /* Global variables */
     Animations **animations;
     New_Face **new_faces;
