@@ -63,7 +63,7 @@ private:
 	SceneManager        *mSceneMgr;
 	InputReader         *mInputReader;
 	RenderWindow        *mWindow;
-	CTileManager *TileManager;
+	TileManager         *mTileManager;
 
 	////////////////////////////////////////////////////////////
 	// Functions.

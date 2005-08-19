@@ -23,7 +23,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "define.h"
 
-
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"

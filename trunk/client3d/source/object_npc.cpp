@@ -92,7 +92,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
 
 		Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
 		Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
-		Event->getCamera()->setPosition(Vector3(pos.x, pos.y + CAMERA_Y, pos.z + CAMERA_Y + 150));
+		Event->getCamera()->setPosition(Vector3(pos.x, pos.y + CAMERA_Y, pos.z + CAMERA_Y + 62));
 		Event->getCamera()->pitch(Degree(-35));
 //		Event->getCamera()->setFixedYawAxis(false);
 
@@ -330,7 +330,6 @@ void NPC::update(const FrameEvent& event)
 //	pPos.z = 22*30 -(pPos.z- 524+10);
 	pPos.z -= 534;
 	Real height = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*3;
-
 	mNode->setPosition(pPos.x, pPos.y-370 + height, tt -524 +height);
 
 

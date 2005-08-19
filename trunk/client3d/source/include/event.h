@@ -64,11 +64,11 @@ public:
 	}
 	Camera *getCamera() { return mCamera; }
 
-		void Set_pgraphics(CTileManager* TileManager)
+	void Set_pgraphics(TileManager* mTileManager)
 	{
-		pgTileManager = TileManager;
+		pgTileManager = mTileManager;
 	}
-	CTileManager *pgTileManager;
+	TileManager *pgTileManager;
 
 private:
 	////////////////////////////////////////////////////////////
