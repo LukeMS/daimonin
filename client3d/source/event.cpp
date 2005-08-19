@@ -152,40 +152,80 @@ CEvent::~CEvent()
 void CEvent::setWorldPos(Vector3 &pos)
 {
 	static Vector3 dPos = pos;
-	
-	if (pos.x+dPos.x > TILE_SIZE || pos.x+dPos.x < -TILE_SIZE)
+/// East
+	if (pos.x + dPos.x > TILE_SIZE)
 	{
 		pos.x -= dPos.x;
-		
-
-
-
 		short tmp[ TILES_SUM_Z+1];
 		for (short y = 0; y < TILES_SUM_Z+1; ++y) tmp[y] = pgTileManager->Get_Map_Height(0, y);
-
-	for (int x = 1; x < TILES_SUM_X+1; ++x)
-	{
-		for (int y = 0; y < TILES_SUM_Z+1; ++y)
+		for (int x = 1; x < TILES_SUM_X+1; ++x)
 		{
-			int value = pgTileManager->Get_Map_Height(x, y);
-			pgTileManager->Set_Map_Height(x-1, y, value);
+			for (int y = 0; y < TILES_SUM_Z+1; ++y)
+			{
+				unsigned short value = pgTileManager->Get_Map_Height(x, y);
+				pgTileManager->Set_Map_Height(x-1, y, value);
+			}
 		}
-	}
-
 		for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(TILES_SUM_X, y, tmp[y] );
-pgTileManager->ChangeChunks();
-
-
+		pgTileManager->ChangeChunks();
 	}
-	if (pos.z+dPos.z > TILE_SIZE || pos.z+dPos.z < -TILE_SIZE)
+
+/// West
+	else if (pos.x + dPos.x < -TILE_SIZE)
+	{
+		pos.x -= dPos.x;
+		short tmp[ TILES_SUM_Z+1];
+		for (short z = 0; z < TILES_SUM_Z+1; ++z) tmp[z] = pgTileManager->Get_Map_Height(TILES_SUM_X, z);
+		for (int x = TILES_SUM_X-1; x >= 0; --x)
+		{
+			for (int y = 0; y < TILES_SUM_Z+1; ++y)
+			{
+				unsigned short value = pgTileManager->Get_Map_Height(x, y);
+				pgTileManager->Set_Map_Height(x+1, y, value);
+			}
+		}
+		for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(0, y, tmp[y] );
+		pgTileManager->ChangeChunks();
+	}
+/// South
+	else if (pos.z + dPos.z > TILE_SIZE)
 	{
 		pos.z -= dPos.z;
+		short tmp[ TILES_SUM_X+1];
+		for (short x = 0; x < TILES_SUM_X+1; ++x) tmp[x] = pgTileManager->Get_Map_Height(x, 0);
+		for (int z = 1; z < TILES_SUM_Z+1; ++z)
+		{
+			for (int x = 0; x < TILES_SUM_X+1; ++x)
+			{
+				unsigned short value = pgTileManager->Get_Map_Height(x, z);
+				pgTileManager->Set_Map_Height(x, z-1, value);
+			}
+		}
+		for (short x = 0; x < TILES_SUM_X+1; ++x) pgTileManager->Set_Map_Height(x, TILES_SUM_Z, tmp[x] );
+		pgTileManager->ChangeChunks();
 	}
 
+/// North
+	else if (pos.z + dPos.z < -TILE_SIZE)
+	{
+		pos.z -= dPos.z;
+		short tmp[ TILES_SUM_X+1];
+		for (short x = 0; x < TILES_SUM_X+1; ++x) tmp[x] = pgTileManager->Get_Map_Height(x, TILES_SUM_Z);
+		for (int z = TILES_SUM_Z-1; z >= 0; --z)
+		{
+			for (int x = 0; x < TILES_SUM_X+1; ++x)
+			{
+				unsigned short value = pgTileManager->Get_Map_Height(x, z);
+				pgTileManager->Set_Map_Height(x, z+1, value);
+			}
+		}
+		for (short x = 0; x < TILES_SUM_X+1; ++x) pgTileManager->Set_Map_Height(x, 0, tmp[x] );
+		pgTileManager->ChangeChunks();
+	}
+
+	dPos+=pos;
 	pgTileManager->ControlChunks(pos);
 	mCamera->move(pos);
-	dPos+=pos;
-
 
 
 

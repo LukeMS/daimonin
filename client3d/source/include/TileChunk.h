@@ -22,29 +22,11 @@ http://www.gnu.org/licenses/licenses.html
 #define TILE_CHUNK_H
 
 #include "Ogre.h"
-#include "EnvironmentManager.h"
+#include "TileEnvironment.h"
 
 using namespace Ogre;
 
-const float PIXEL_PER_TILE =  128.0; // Pixel per Tile in the Ground-texture.
-const float PIXEL_PER_ROW  = 1024.0; // Pixel per Row  in the Ground-texture.
-
-const int   TILE_SIZE = 32;
-const int   CHUNK_SUM_X  =  1; // Map has x chunks on x-axis.
-const int   CHUNK_SUM_Z  =  1; // Map has y chunks on y-axis.
-const int   CHUNK_SIZE_X = 14+2; // Chunk has x tiles on x-axis. Must be even.
-const int   CHUNK_SIZE_Z = 18+2; // Chunk has x tiles on z-axis. Must be even.
-const int   TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;
-const int   TILES_SUM_Z  = CHUNK_SUM_Z * CHUNK_SIZE_Z;
-
-const int   TEXTURES_PER_ROW = (int)PIXEL_PER_ROW / (int)PIXEL_PER_TILE;
-const int   HIGH_QUALITY_RANGE = 5; // Radius of the Area where the tiles are drawn in high quality.
-const int   NAME_BUFFER_SIZE = 50;
-const int   MIN_TEXTURE_PIXEL = 16;
-
-enum {QUALITY_LOW, QUALITY_HIGH};
-
-// Height levels.
+/** Height levels for the tiles. **/
 enum {
 	// Mountains
 	LEVEL_MOUNTAIN_TOP = 70,
@@ -65,11 +47,15 @@ enum {
 //			 TERRAIN_BEACH,  TERRAIN_WATER};
 // Spezical Effects: Snopw, Rain, Lava, 
 
-class CChunk
+/**
+ * TileEngine class which manages the tiles in a chunk.
+ *****************************************************************************/
+class TileChunk
 {
 private:
+	/** Buffersize for meshnames. **/
+	static const int NAME_BUFFER_SIZE = 50;
 	bool m_IsAttached;
-
 	MeshPtr m_Water_Mesh_high;
 	MeshPtr m_Water_Mesh_low;
 	SubMesh* m_Water_subMesh_high;
@@ -87,18 +73,23 @@ private:
 	Entity* m_Land_entity_low;
 	SceneNode* m_Land;
 
-	CEnvironmentManager* m_EnvironmentManagerPtr;
+	TileEnvironment* m_TileEnvironmentPtr;
 
 public:
+	/** Buffer for building meshnames. **/
 	static char MeshName[NAME_BUFFER_SIZE];
+	/** Buffer for temporary actions. **/
 	static char TempName[NAME_BUFFER_SIZE];
-	static CTileManager* m_TileManagerPtr;
+	static TileManager* m_TileManagerPtr;
 	static AxisAlignedBox* m_bounds;
 
-	short m_posX, m_posZ;
+	/** X pos of the chunk. **/
+	short m_posX;
+	/** Z pos of the chunk. **/
+	short m_posZ;
 
-	CChunk();
-	~CChunk();
+	TileChunk();
+	~TileChunk();
 	SceneNode* Get_Land(){ return m_Land; }
 	SceneNode* Get_Water(){return m_Water;}
 	Entity* Get_Water_entity(){return m_Water_entity_high;}
@@ -106,28 +97,44 @@ public:
 	Entity* Get_Land_entity(){return m_Land_entity_high;}
 	void Set_Tile(short &x, short &z) { m_posX = x; m_posZ = z; }
 	void Create(short &x, short &z);
-	void Change(short &x, short &z);
+	void Change();
 
-	void Create_Dummy(SubMesh* submesh); // No Land/Water on this chunk. Lets make a dummy.
+	/** Every chunk must have a land- AND a waterSubmesh,
+	if there is one of them missing, we make a dummy submesh. **/
+	void Create_Dummy(SubMesh* submesh);
+	/** Create a (high poly) land chunk. **/
 	void CreateLandHigh();
+	/** Change a (high poly) land chunk. **/
 	void ChangeLandHigh();
+	/** Create HW buffers for (high poly) land chunk. **/
 	void CreateLandHigh_Buffers();
 
+	/** Create a (low poly) land chunk. **/
 	void CreateLandLow();
+	/** Change a (low poly) land chunk. **/
 	void ChangeLandLow();
+	/** Create HW buffers for (low poly) land chunk. **/
 	void CreateLandLow_Buffers();
 
+	/** Create a (high poly) water chunk. **/
 	void CreateWaterHigh();
+	/** Change a (high poly) water chunk. **/
 	void ChangeWaterHigh();
+	/** Create HW buffers for (high poly) water chunk. **/
 	void CreateWaterHigh_Buffers();
 
+	/** Create a (low poly) water chunk. **/
 	void CreateWaterLow();
+	/** Change a (low poly) water chunk. **/
 	void ChangeWaterLow();
+	/** Create HW buffers for (low poly) water chunk. **/
 	void CreateWaterLow_Buffers();
 
+	/** Create terrain-texture in multiple sizes. **/
 	void CreateTexture();
 	void CreateSceneNode();
-	void CreateEnvironmentManager();
+	void CreateEnvironment();
+	void ChangeEnvironment();
 	void Attach(short quality);
 	void Detach();
 };

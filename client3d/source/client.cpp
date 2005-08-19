@@ -202,9 +202,9 @@ void DaimoninClient::createScene(void)
 	{ Logger::log().error() << "CRITICAL: description file was not found!"; return; }
 
 
-	TileManager = new CTileManager();
-	TileManager->Init(mSceneMgr);
-	Event->Set_pgraphics(TileManager);
+	mTileManager = new TileManager();
+	mTileManager->Init(mSceneMgr);
+	Event->Set_pgraphics(mTileManager);
 
 
 	string strType, strTemp, strMesh;
