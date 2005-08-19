@@ -40,11 +40,11 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/EnvironmentManager.cpp">
+		<Unit filename="../../../source/TileChunk.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/TileChunk.cpp">
+		<Unit filename="../../../source/TileEnvironment.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -76,13 +76,13 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/EnvironmentManager.h">
+		<Unit filename="../../../source/include/TileChunk.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/TileChunk.h">
+		<Unit filename="../../../source/include/TileEnvironment.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
