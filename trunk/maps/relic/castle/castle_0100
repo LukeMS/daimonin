@@ -27,16 +27,33 @@ end
 arch grassd_2
 y 3
 end
-arch grassd_4
+arch wall_fstone_round.108
+y 3
+end
+arch floor_grey3
 y 4
 end
-arch grassd_1
+arch fwall_fstone2
+y 4
+end
+arch wmask_bflag_brown_1
+direction 7
+y 4
+end
+arch floor_grey3
 y 5
 end
-arch grassd_7
+arch floor_grey3
 y 6
 end
-arch grassd_1
+arch fwall_fstone2
+y 6
+end
+arch wmask_bflag_brown_1
+direction 7
+y 6
+end
+arch floor_grey3
 y 7
 end
 arch fwall_fstone2
@@ -123,27 +140,46 @@ arch grassd_6
 x 1
 y 2
 end
-arch grassd_1
+arch floor_grey3
 x 1
 y 3
 end
-arch grassd_3
+arch fwall_fstone2
+x 1
+y 3
+end
+arch floor_grey3
 x 1
 y 4
 end
-arch grassd_2
+arch spawn_point
+x 1
+y 4
+arch guard
+name Castle Guard
+type 83
+level 50
+can_open_door 0
+Wis 1
+end
+end
+arch floor_grey3
 x 1
 y 5
 end
-arch grassd_3
+arch floor_grey3
 x 1
 y 6
 end
-arch grassd_8
+arch box2.101
+x 1
+y 6
+end
+arch floor_fstone2a
 x 1
 y 7
 end
-arch fwall_fstone2
+arch fwall_fstone2d
 x 1
 y 7
 end
@@ -250,31 +286,46 @@ arch grassd_2
 x 2
 y 2
 end
-arch grassd_5
+arch floor_grey3
 x 2
 y 3
 end
-arch grassd_1
+arch fwall_fstone2
+x 2
+y 3
+end
+arch wmask_bflag_fire1_1
+x 2
+y 3
+end
+arch floor_grey3
 x 2
 y 4
 end
-arch grassd_4
+arch ladder_up
+slaying /relic/castle/castle2_0100
+hp 2
+sp 4
+x 2
+y 4
+end
+arch floor_grey3
 x 2
 y 5
 end
-arch grassd_6
+arch floor_grey3
 x 2
 y 6
 end
-arch plant17
+arch door1_locked
+msg
+The door is sealed from within.
+endmsg
+slaying 38162
 x 2
 y 6
 end
-arch grassd_1
-x 2
-y 7
-end
-arch fwall_fstone2
+arch floor_fstone2a
 x 2
 y 7
 end
@@ -381,27 +432,49 @@ arch grassd_5
 x 3
 y 2
 end
-arch grassd_3
+arch floor_grey3
 x 3
 y 3
 end
-arch grassd_7
+arch fwall_fstone2
+x 3
+y 3
+end
+arch floor_grey3
 x 3
 y 4
 end
-arch grassd_2
+arch switch_wall
+msg
+It seems to be an old switch to something. It is rather sticky, suggesting that not many have pulled it in the last few years.
+endmsg
+x 3
+y 4
+end
+arch floor_grey3
 x 3
 y 5
 end
-arch grassd_3
+arch floor_grey3
 x 3
 y 6
 end
-arch grassd_7
+arch spawn_point
+x 3
+y 6
+arch guard
+name Castle Guard
+type 83
+level 50
+can_open_door 0
+Wis 1
+end
+end
+arch floor_fstone2a
 x 3
 y 7
 end
-arch fwall_fstone2
+arch fwall_fstone2b
 x 3
 y 7
 end
@@ -504,23 +577,38 @@ arch grassd_4
 x 4
 y 2
 end
-arch grassd_1
+arch floor_grey3
 x 4
 y 3
 end
-arch grassd_3
+arch fwall_fstone2
+x 4
+y 3
+end
+arch wmask_bflag_fire1_1
+x 4
+y 3
+end
+arch floor_grey3
 x 4
 y 4
 end
-arch grassd_8
+arch ladder_down3
+slaying /relic/castle/castleb_0100
+hp 4
+sp 4
+x 4
+y 4
+end
+arch floor_grey3
 x 4
 y 5
 end
-arch grassd_5
+arch floor_grey3
 x 4
 y 6
 end
-arch grassd_7
+arch floor_grey3
 x 4
 y 7
 end
@@ -637,23 +725,46 @@ arch plant_flower7
 x 5
 y 2
 end
-arch grassd_8
+arch floor_grey3
 x 5
 y 3
 end
-arch grassd_4
+arch fwall_fstone2
+x 5
+y 3
+end
+arch wmask_wanted.151
+x 5
+y 3
+end
+arch floor_grey3
 x 5
 y 4
 end
-arch grassd_2
+arch spawn_point
+x 5
+y 4
+arch guard
+name Castle Guard
+type 83
+level 50
+can_open_door 0
+Wis 1
+end
+end
+arch floor_grey3
 x 5
 y 5
 end
-arch grassd_8
+arch floor_grey3
 x 5
 y 6
 end
-arch grassd_1
+arch basket2.101
+x 5
+y 6
+end
+arch floor_grey3
 x 5
 y 7
 end
@@ -760,23 +871,44 @@ arch grassd_5
 x 6
 y 2
 end
-arch grassd_7
+arch grassd_2
 x 6
 y 3
 end
-arch grassd_2
+arch wall_fstone_round.102
+x 6
+y 3
+end
+arch floor_grey3
 x 6
 y 4
 end
-arch grassd_7
+arch fwall_fstone2
+x 6
+y 4
+end
+arch floor_grey3
 x 6
 y 5
 end
-arch grassd_6
+arch door1_locked
+msg
+The door is sealed from within.
+endmsg
+slaying 38162
+direction 5
+x 6
+y 5
+end
+arch floor_grey3
 x 6
 y 6
 end
-arch grassd_7
+arch fwall_fstone2
+x 6
+y 6
+end
+arch floor_grey3
 x 6
 y 7
 end
@@ -904,11 +1036,19 @@ arch grassd_8
 x 7
 y 4
 end
+arch wall_fstone_round.102
+x 7
+y 4
+end
 arch grassd_3
 x 7
 y 5
 end
 arch grassd_8
+x 7
+y 6
+end
+arch fwall_fstone2
 x 7
 y 6
 end
@@ -1044,7 +1184,7 @@ arch grassd_5
 x 8
 y 6
 end
-arch plant_flower5
+arch wall_fstone_round.102
 x 8
 y 6
 end
@@ -1939,6 +2079,10 @@ arch grassd_6
 x 14
 y 6
 end
+arch wall_fstone_round.108
+x 14
+y 6
+end
 arch grassd_8
 x 14
 y 7
@@ -2074,15 +2218,28 @@ arch grassd_6
 x 15
 y 4
 end
+arch wall_fstone_round.108
+x 15
+y 4
+end
 arch grassd_4
 x 15
 y 5
 end
-arch plant17
+arch door1_locked
+msg
+The door is sealed from within.
+endmsg
+slaying 38162
+direction 3
 x 15
 y 5
 end
-arch grassd_4
+arch grassd_8
+x 15
+y 6
+end
+arch fwall_fstone2
 x 15
 y 6
 end
@@ -2206,23 +2363,41 @@ arch grassd_2
 x 16
 y 3
 end
-arch grassd_7
+arch wall_fstone_round.108
+x 16
+y 3
+end
+arch floor_grey3
 x 16
 y 4
 end
-arch plant_flower7
+arch fwall_fstone2
 x 16
 y 4
 end
-arch grassd_6
+arch wmask_bflag_brown_1
+direction 7
+x 16
+y 4
+end
+arch floor_grey3
 x 16
 y 5
 end
-arch grassd_6
+arch floor_grey3
 x 16
 y 6
 end
-arch grassd_8
+arch fwall_fstone2
+x 16
+y 6
+end
+arch wmask_bflag_brown_1
+direction 7
+x 16
+y 6
+end
+arch floor_grey3
 x 16
 y 7
 end
@@ -2333,23 +2508,46 @@ arch grassd_8
 x 17
 y 2
 end
-arch grassd_4
+arch floor_grey3
 x 17
 y 3
 end
-arch grassd_7
+arch fwall_fstone2
+x 17
+y 3
+end
+arch wmask_wanted.151
+x 17
+y 3
+end
+arch floor_grey3
 x 17
 y 4
 end
-arch grassd_3
+arch spawn_point
+x 17
+y 4
+arch guard
+name Castle Guard
+type 83
+level 50
+can_open_door 0
+Wis 1
+end
+end
+arch floor_grey3
 x 17
 y 5
 end
-arch grassd_2
+arch floor_grey3
 x 17
 y 6
 end
-arch grassd_2
+arch basket2.101
+x 17
+y 6
+end
+arch floor_grey3
 x 17
 y 7
 end
@@ -2460,23 +2658,38 @@ arch grassd_6
 x 18
 y 2
 end
-arch grassd_8
+arch floor_grey3
 x 18
 y 3
 end
-arch grassd_6
+arch fwall_fstone2
+x 18
+y 3
+end
+arch wmask_bflag_fire1_1
+x 18
+y 3
+end
+arch floor_grey3
 x 18
 y 4
 end
-arch grassd_8
+arch ladder_down3
+slaying /relic/castle/castleb_0100
+hp 18
+sp 4
+x 18
+y 4
+end
+arch floor_grey3
 x 18
 y 5
 end
-arch grassd_6
+arch floor_grey3
 x 18
 y 6
 end
-arch grassd_8
+arch floor_grey3
 x 18
 y 7
 end
@@ -2589,27 +2802,49 @@ arch grassd_7
 x 19
 y 2
 end
-arch grassd_6
+arch floor_grey3
 x 19
 y 3
 end
-arch grassd_1
+arch fwall_fstone2
+x 19
+y 3
+end
+arch floor_grey3
 x 19
 y 4
 end
-arch grassd_6
+arch switch_wall
+msg
+It seems to be an old switch to something. It is rather sticky, suggesting that not many have pulled it in the last few years.
+endmsg
+x 19
+y 4
+end
+arch floor_grey3
 x 19
 y 5
 end
-arch grassd_1
+arch floor_grey3
 x 19
 y 6
 end
-arch grassd_7
+arch spawn_point
+x 19
+y 6
+arch guard
+name Castle Guard
+type 83
+level 50
+can_open_door 0
+Wis 1
+end
+end
+arch floor_fstone2a
 x 19
 y 7
 end
-arch fwall_fstone2
+arch fwall_fstone2d
 x 19
 y 7
 end
@@ -2712,27 +2947,46 @@ arch grassd_2
 x 20
 y 2
 end
-arch grassd_3
+arch floor_grey3
 x 20
 y 3
 end
-arch grassd_8
+arch fwall_fstone2
+x 20
+y 3
+end
+arch wmask_bflag_fire1_1
+x 20
+y 3
+end
+arch floor_grey3
 x 20
 y 4
 end
-arch grassd_6
+arch ladder_up
+slaying /relic/castle/castle2_0100
+hp 20
+sp 4
+x 20
+y 4
+end
+arch floor_grey3
 x 20
 y 5
 end
-arch grassd_8
+arch floor_grey3
 x 20
 y 6
 end
-arch grassd_6
+arch door1_locked
+msg
+The door is sealed from within.
+endmsg
+slaying 38162
 x 20
-y 7
+y 6
 end
-arch fwall_fstone2
+arch floor_fstone2a
 x 20
 y 7
 end
@@ -2839,35 +3093,46 @@ arch grassd_8
 x 21
 y 2
 end
-arch grassd_7
+arch floor_grey3
 x 21
 y 3
 end
-arch grassd_6
+arch fwall_fstone2
+x 21
+y 3
+end
+arch floor_grey3
 x 21
 y 4
 end
-arch plant_flower5
+arch spawn_point
 x 21
 y 4
+arch guard
+name Castle Guard
+type 83
+level 50
+can_open_door 0
+Wis 1
 end
-arch grassd_1
+end
+arch floor_grey3
 x 21
 y 5
 end
-arch plant17
-x 21
-y 5
-end
-arch grassd_3
+arch floor_grey3
 x 21
 y 6
 end
-arch grassd_8
+arch box1.101
+x 21
+y 6
+end
+arch floor_fstone2a
 x 21
 y 7
 end
-arch fwall_fstone2
+arch fwall_fstone2b
 x 21
 y 7
 end
@@ -2974,19 +3239,40 @@ arch grassd_6
 x 22
 y 3
 end
-arch grassd_2
+arch wall_fstone_round.102
+x 22
+y 3
+end
+arch floor_grey3
 x 22
 y 4
 end
-arch grassd_6
+arch fwall_fstone2
+x 22
+y 4
+end
+arch floor_grey3
 x 22
 y 5
 end
-arch grassd_7
+arch door1_locked
+msg
+The door is sealed from within.
+endmsg
+slaying 38162
+direction 3
+x 22
+y 5
+end
+arch floor_grey3
 x 22
 y 6
 end
-arch grassd_4
+arch fwall_fstone2
+x 22
+y 6
+end
+arch floor_grey3
 x 22
 y 7
 end
@@ -3101,11 +3387,19 @@ arch grassd_6
 x 23
 y 4
 end
+arch wall_fstone_round.102
+x 23
+y 4
+end
 arch grassd_8
 x 23
 y 5
 end
-arch grassd_3
+arch grassd_8
+x 23
+y 6
+end
+arch fwall_fstone2
 x 23
 y 6
 end
