@@ -1,0 +1,73 @@
+digraph G {
+    compound=true;
+    subgraph cluster1 {
+        label="Source\ncodes";
+        "server\nsource\ncode" [fillcolor=lightgray style=filled shape=box];
+    }
+    subgraph cluster2 {
+        label="Documentation system";
+        subgraph cluster4 {
+            label="documentation source";
+            authSource [fillcolor=lightgray style=filled shape=box label="authored\ndocumentation\n(DAI xml)"];
+            genSource  [fillcolor=lightgray style=filled label="generated\ndocumentation\n(DAI xml)"];
+        }
+        subgraph cluster3 {
+            label="Wiki";
+            authWiki [fillcolor=lightgray style=filled label="authored\nWiki\nparts" shape=box];
+            genWiki  [fillcolor=lightgray style=filled label="generated\nWiki\nparts"];
+        }
+        subgraph cluster5 {
+            label="generated documentation";
+            "documentation\n(phpWiki)"    [fillcolor=lightgray style=filled shape=ellipse];
+            "documentation\n(HTML 4.01)"  [fillcolor=lightgray style=filled shape=ellipse];
+            "documentation\n(XHTML 1.1)"  [fillcolor=lightgray style=filled shape=ellipse];
+            "documentation\n(bbCode)"     [fillcolor=lightgray style=filled shape=ellipse];
+            "documentation\n(plain text)" [fillcolor=lightgray style=filled shape=ellipse];
+            editorDocumentation [fillcolor=lightgray style=filled shape=ellipse label="editor\nonline\nhelp\n(TODO)"];
+        }
+        subgraph cluster6 {
+            label="documentation generation support files";
+            subgraph cluster7 {
+                label="transformation specifications";
+                xslt2bbCode  [shape=box label="bbCode"];
+                xslt2xhtml11 [shape=box label="xhtml 1.1"];
+                xslt2html4   [shape=box label="html 4.01"];
+                xslt2phpWiki [shape=box label="phpWiki"];
+                xslt2editor  [shape=box label="editor\n(TODO)"];
+                xslt2ascii   [shape=box label="plain text\n(TODO)"];
+            }
+            daiDtd [shape=box label="DAI xml dtd"];
+        }
+
+        "validation"    [shape=diamond fontsize=12];
+        xslt            [shape=diamond fontsize=12 label="XSLT 2.0"];
+        editorBuild     [shape=diamond fontsize=12 label="Editor\nBuild"];
+        editor          [shape=ellipse label="Editor Jar\n(Includes Help)"];
+        "wiki\nupdater" [shape=diamond fontsize=12 label="Wiki\nupdater\n(TODO)"];
+        genTools   [shape=diamond fontsize=12 label="some\ntools"];
+
+
+        "server\nsource\ncode" -> genTools -> genSource;
+
+        "documentation\n(phpWiki)" -> "wiki\nupdater" -> genWiki;
+        authSource -> "validation" [ltail=cluster4];
+        daiDtd -> validation;
+        validation -> xslt;
+        xslt2editor -> xslt [ltail=cluster7];
+        xslt -> "documentation\n(phpWiki)";
+        xslt -> "documentation\n(HTML 4.01)";
+        xslt -> "documentation\n(XHTML 1.1)";
+        xslt -> "documentation\n(bbCode)";
+        xslt -> "documentation\n(plain text)";
+        xslt -> editorDocumentation;
+        authSource -> authWiki [style=dashed dir=back];
+        editorDocumentation -> editorBuild;
+        editorBuild -> editor;
+    }
+    //subgraph cluster0 {
+    //    label="Legend";
+    //    "authored\ndocuments" [shape=box];
+    //    "processing" [shape=circle fontsize=12];
+    //    "generated\ndocuments" [shape=ellipse];
+    //}
+}

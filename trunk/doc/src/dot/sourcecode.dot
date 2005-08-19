@@ -1,0 +1,26 @@
+digraph G {
+    compound=true;
+    subgraph cluster0 {
+        label="Source code documentation";
+        subgraph cluster1 {
+            label="Source codes (C, C++, Java)";
+            "clientS"   [fillcolor=lightgray style=filled shape=box label="client"  ];
+            "client3dS" [fillcolor=lightgray style=filled shape=box label="client3d"];
+            "editorS"   [fillcolor=lightgray style=filled shape=box label="editor"  ];
+            "serverS"   [fillcolor=lightgray style=filled shape=box label="server"  ];
+        }
+        subgraph cluster2 {
+            label="Source documentation (HTML)";
+            "clientD"   [fillcolor=lightgray style=filled shape=ellipse label="client"  ];
+            "client3dD" [fillcolor=lightgray style=filled shape=ellipse label="client3d"];
+            "editorD"   [fillcolor=lightgray style=filled shape=ellipse label="editor"  ];
+            "serverD"   [fillcolor=lightgray style=filled shape=ellipse label="server"  ];
+        }
+        "doxygen"                               [shape=diamond fontsize=12];
+        "javadoc\n(via ant)"                    [shape=diamond fontsize=12];
+        "serverS"   -> "doxygen"            -> "serverD";
+        "clientS"   -> "doxygen"            -> "clientD";
+        "client3dS" -> "doxygen"            -> "client3dD";
+        "editorS"   -> "javadoc\n(via ant)" -> "editorD";
+    }
+}
