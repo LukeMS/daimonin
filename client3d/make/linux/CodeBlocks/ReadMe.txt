@@ -1,5 +1,5 @@
 //===================================================
-// Tile-Engine as Code::Blocks project HOWTO
+// Daimonin Client3d as Code::Blocks project HOWTO
 //===================================================
 
 1) (as root) copy client3d/make/linux/libfmod*.so to /usr/lib
