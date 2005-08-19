@@ -1,0 +1,11 @@
+digraph G {
+    compound=true;
+    subgraph cluster1 {
+        label="Legend";
+        "Generated Files" [fillcolor=lightgray style=filled shape=ellipse];
+        "Generated File"  [shape=ellipse];
+        "Processing"      [shape=diamond fontsize=12];
+        "Authored Files"  [fillcolor=lightgray style=filled shape=box];
+        "Authored File"   [shape=box];
+    }
+}
