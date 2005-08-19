@@ -18,32 +18,35 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef ENVIRONMENT_MANAGER_H
-#define ENVIRONMENT_MANAGER_H
+#ifndef TILE_ENVIRONMENT_H
+#define TILE_ENVIRONMENT_H
 
 #include "Ogre.h"
-using namespace Ogre;
-// This class organizes environmental objects like trees and little rocks
-class CChunk;
-class CTileManager;
 
-class CEnvironmentManager
+using namespace Ogre;
+
+class TileChunk;
+class TileManager;
+
+/**
+ * TileEngine class which manages environmental objects like trees and rocks.
+ *****************************************************************************/
+class TileEnvironment
 {
 private:
-	CChunk* m_ChunkPtr;
-	CTileManager* m_TileManagerPtr;
+	TileChunk* m_ChunkPtr;
+	TileManager* m_TileManagerPtr;
 	MeshPtr m_Environment_Mesh;
 	SubMesh* m_Environment_SubMesh;
 	Entity* m_Environment_Entity;
 	SceneNode* m_Environment_SceneNode;
 	HardwareVertexBufferSharedPtr m_vbuf0;
 	HardwareIndexBufferSharedPtr m_ibuf;
-	
 
 public:
 
-	CEnvironmentManager(CTileManager* TileManagerPtr, CChunk* ChunkPointer);
-	~CEnvironmentManager();
+	TileEnvironment(TileManager* TileManagerPtr, TileChunk* ChunkPointer);
+	~TileEnvironment();
 
 	void UpdateEnvironment();
 };

@@ -21,53 +21,32 @@ http://www.gnu.org/licenses/licenses.html
 #include "Ogre.h"
 #include "TileChunk.h"
 #include "TileManager.h"
-#include "EnvironmentManager.h"
+#include "TileEnvironment.h"
 
-CEnvironmentManager::CEnvironmentManager(CTileManager* TileManagerPointer, CChunk* ChunkPointer)
+TileEnvironment::TileEnvironment(TileManager* TileManagerPointer, TileChunk* ChunkPointer)
 {
 	m_ChunkPtr = ChunkPointer;
 	m_TileManagerPtr = TileManagerPointer;
 }
 
-CEnvironmentManager::~CEnvironmentManager()
+TileEnvironment::~TileEnvironment()
 {
 }
 
-void CEnvironmentManager::UpdateEnvironment()
+void TileEnvironment::UpdateEnvironment()
 {
-	// Every Entity must have a uniqu name, thats why we give them a increasing number in there names.
-	// In this case we use "OBJ_01" ... "OBJ_XX"
-	int counter =0;
-
-//This is the max number of drawn objects. you can change this, if you need more objects.
-	const int sumObjects = 2;
-// Every object will have its own sceneNode.
-	SceneNode *Node[sumObjects];
-	Entity    *Entity[sumObjects];
-	char *meshName[counter];
 	m_Environment_SceneNode = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
 
-// the number of the following declaration of objects MUST be identical to sumObjects !!!!!!!
+// testing with meshes is more fun...
+	static int INr=0;
 
-// Lets create an object
-	meshName[counter] =  "tree1.mesh";
-	Node  [counter]   = m_Environment_SceneNode->createChildSceneNode(Vector3(250, 100, 250));
-	Entity[counter] = Node[counter]->getCreator()->createEntity("OBJ_"+StringConverter::toString(counter), meshName[counter] );
-	Node  [counter]->attachObject(Entity[counter]);
-	Node  [counter]->setScale(Vector3(.4, .4, .4)); // size
-	Node  [counter]->yaw(Degree(45));	// rotation
-	++counter;
+if (INr > 1000) return;
 
-// Lets create an object
-	meshName[counter] =  "tree1.mesh";
-	Node  [counter]   = m_Environment_SceneNode->createChildSceneNode(Vector3(250, 200, 250));
-	Entity[counter] = Node[counter]->getCreator()->createEntity("OBJ_"+StringConverter::toString(counter), meshName[counter] );
-	Node  [counter]->attachObject(Entity[counter]);
-	Node  [counter]->setScale(Vector3(.4, .4, .4));
-	Node  [counter]->yaw(Degree(45));
-	++counter;
-
-
+	SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(850+INr, 80, 850+INr), Quaternion(1.0,0.0,0.0,0.0));
+	Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
+	Node->attachObject(mEntityNPC);
+	Node->setScale(Vector3(.4, .4, .4));
+	INr+= 50;
 
 /*
 	long x = m_ChunkPtr->m_posX;
