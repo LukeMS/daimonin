@@ -16,7 +16,7 @@ material Tree_HighDetails
 	}
 }
 
-material Land_HighDetails
+material Land_HighDetails128
 {
 	technique
 	{
@@ -24,14 +24,68 @@ material Land_HighDetails
 		{
 			texture_unit 0 
 			{
-				texture terrain_128_texture.png
+				texture terrain_texture_128.png 2d 4
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering linear linear linear
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_128.png 2d 4
+				tex_coord_set 1
+				colour_op alpha_blend
+				filtering linear linear linear
+			}
+
+		}
+	}
+}
+material Land_HighDetails128_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_128.png
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_128_texture.png
+				texture terrain_texture_128.png
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+			texture_unit 2
+			{
+				texture grid_128.png
+				tex_coord_set 2
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+
+material Land_HighDetails064
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_064.png 2d 3
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_064.png 2d 3
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
@@ -39,7 +93,7 @@ material Land_HighDetails
 		}
 	}
 }
-material Land_HighDetails_Grid
+material Land_HighDetails064_Grid
 {
 	technique
 	{
@@ -47,24 +101,154 @@ material Land_HighDetails_Grid
 		{
 			texture_unit 0 
 			{
-				texture terrain_128_texture.png
+				texture terrain_texture_064.png
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_128_texture.png
+				texture terrain_texture_064.png
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
 			texture_unit 2
 			{
 				filtering none
-				texture grid_128.png
+				texture grid_064.png
 				tex_coord_set 2
 				colour_op alpha_blend
 			}
+		}
+	}
+}
+
+material Land_HighDetails032
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_032.png 2d 2
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_032.png 2d 2
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+
+		}
+	}
+}
+material Land_HighDetails032_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_032.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_032.png 
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+			texture_unit 2
+			{
+				filtering none
+				texture grid_032.png
+				tex_coord_set 2
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+
+material Land_HighDetails016
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_016.png 2d 1
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_016.png 2d 1
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+
+		}
+	}
+}
+material Land_HighDetails016_Grid
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_016.png
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_016.png
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+			texture_unit 2
+			{
+				filtering none
+				texture grid_016.png
+				tex_coord_set 2
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+
+material Land_HighDetails008
+{
+	technique
+	{
+		pass
+		{
+			texture_unit 0 
+			{
+				texture terrain_texture_008.png 2d 0
+				tex_coord_set 0
+				tex_address_mode clamp
+			}
+
+			texture_unit 1
+			{
+				texture terrain_texture_008.png 2d 0
+				tex_coord_set 1
+				colour_op alpha_blend
+			}
+
 		}
 	}
 }
@@ -77,10 +261,10 @@ material Land_LowDetails
 		{
 			texture_unit 0 
 			{
-				texture terrain_128_texture.png
-				tex_coord_set 0
-				tex_address_mode clamp
-			}
+				texture terrain_texture_016.png 2d 0
+ 				tex_coord_set 0
+ 				tex_address_mode clamp
+ 			}
 		}
 	}
 }
@@ -93,9 +277,10 @@ material Land_LowDetails_Grid
 		{
 			texture_unit 0 
 			{
-				texture terrain_128_texture.png
+				texture terrain_texture_016.png
 				tex_coord_set 0
 				tex_address_mode clamp
+				filtering none
 			}
 			texture_unit 1
 			{
