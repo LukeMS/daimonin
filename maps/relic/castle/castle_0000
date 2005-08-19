@@ -3105,6 +3105,10 @@ arch grassd_7
 x 22
 y 6
 end
+arch wall_fstone_round.108
+x 22
+y 6
+end
 arch grassd_4
 x 22
 y 7
@@ -3223,11 +3227,28 @@ arch grassd_6
 x 23
 y 4
 end
+arch wall_fstone_round.108
+x 23
+y 4
+end
 arch grassd_8
 x 23
 y 5
 end
-arch grassd_3
+arch door1_locked
+msg
+The door is sealed from within.
+endmsg
+slaying 38162
+direction 5
+x 23
+y 5
+end
+arch grassd_8
+x 23
+y 6
+end
+arch fwall_fstone2
 x 23
 y 6
 end
