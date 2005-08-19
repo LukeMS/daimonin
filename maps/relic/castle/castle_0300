@@ -1452,10 +1452,6 @@ arch grassd_5
 x 10
 y 15
 end
-arch grassd_4
-x 10
-y 16
-end
 arch water_still
 x 10
 y 16
@@ -2193,7 +2189,7 @@ arch water_still
 x 16
 y 7
 end
-arch grassd_m14
+arch grassd_m7
 x 16
 y 7
 end
@@ -2316,11 +2312,15 @@ arch water_still
 x 17
 y 7
 end
+arch grassd_m14
+x 17
+y 7
+end
 arch water_still
 x 17
 y 8
 end
-arch grassd_m14
+arch grassd_m9
 x 17
 y 8
 end

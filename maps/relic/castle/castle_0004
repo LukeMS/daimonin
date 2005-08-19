@@ -3780,12 +3780,12 @@ arch floor_fs_grey1a
 x 23
 y 21
 end
-arch wall_flagstone1b.131
+arch locker1.111
+direction 7
 x 23
 y 21
 end
-arch locker1.111
-direction 7
+arch wall_flagstone1b.131
 x 23
 y 21
 end
@@ -3793,12 +3793,12 @@ arch floor_fs_grey1a
 x 23
 y 22
 end
-arch wall_flagstone1b.131
+arch locker1.111
+direction 7
 x 23
 y 22
 end
-arch locker1.111
-direction 7
+arch wall_flagstone1b.131
 x 23
 y 22
 end
@@ -3806,12 +3806,12 @@ arch floor_fs_grey1a
 x 23
 y 23
 end
-arch wall_flagstone1b.131
+arch locker1.111
+direction 7
 x 23
 y 23
 end
-arch locker1.111
-direction 7
+arch wall_flagstone1b.131
 x 23
 y 23
 end
