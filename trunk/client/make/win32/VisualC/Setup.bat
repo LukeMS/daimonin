@@ -1,0 +1,25 @@
+rem ====================================
+rem (c) 2005 by the Daimonin team.
+rem     www.daimonin.net
+rem ====================================
+
+rem ====================================
+rem Unpack all files.
+rem ====================================
+..\..\_Tools_\gunzip sdl_lib.tgz 
+..\..\_Tools_\tar xvf sdl_lib.tar
+..\..\_Tools_\gunzip sdl_inc.tgz
+..\..\_Tools_\tar xvf sdl_inc.tar
+..\..\_Tools_\gunzip sdl_dll.tgz
+..\..\_Tools_\tar xvf sdl_dll.tar
+
+rem ====================================
+rem Copy the dll's to main folder.
+rem ====================================
+move sdl_dll\*.* ..\..\..\
+rmdir sdl_dll
+
+rem ====================================
+rem Clean up.
+rem ====================================
+del *.tar

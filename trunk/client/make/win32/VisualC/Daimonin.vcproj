@@ -21,7 +21,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../,../../../src/include,../../../sdl"
+				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
 				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -87,7 +87,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../,../../../src/include,../../../sdl"
+				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
 				ExceptionHandling="FALSE"
 				RuntimeLibrary="2"
@@ -323,16 +323,16 @@
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 		</Filter>
 		<File
-			RelativePath="..\..\..\sdl\SDL.lib">
+			RelativePath=".\sdl_lib\SDL.lib">
 		</File>
 		<File
-			RelativePath="..\..\..\sdl\SDL_image.lib">
+			RelativePath=".\sdl_lib\SDL_image.lib">
 		</File>
 		<File
-			RelativePath="..\..\..\sdl\SDL_mixer.lib">
+			RelativePath=".\sdl_lib\SDL_mixer.lib">
 		</File>
 		<File
-			RelativePath="..\..\..\sdl\SDLmain.lib">
+			RelativePath=".\sdl_lib\SDLmain.lib">
 		</File>
 	</Files>
 	<Globals>
