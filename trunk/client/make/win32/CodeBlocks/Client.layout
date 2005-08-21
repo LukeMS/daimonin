@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE Code::Blocks_layout_file>
+<Code::Blocks_layout_file>
+	<File name="ReadMe.txt" open="1" top="1">
+		<Cursor position="0" topLine="0"/>
+	</File>
+	<File name="..\..\..\src\include\include.h" open="0" top="0">
+		<Cursor position="1579" topLine="31"/>
+	</File>
+	<File name="..\..\..\src\include\win32.h" open="0" top="0">
+		<Cursor position="1373" topLine="25"/>
+	</File>
+</Code::Blocks_layout_file>

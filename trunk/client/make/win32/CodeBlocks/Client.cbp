@@ -10,7 +10,7 @@
 		<Option compiler="0"/>
 		<Build>
 			<Target title="Release">
-				<Option output="..\..\..\daimonin.exe"/>
+				<Option output="..\..\..\client.exe"/>
 				<Option working_dir="..\..\..\..\client"/>
 				<Option object_output=".objs"/>
 				<Option deps_output=".deps"/>
@@ -20,7 +20,7 @@
 				<Option projectResourceIncludeDirsRelation="0"/>
 			</Target>
 			<Target title="Debug">
-				<Option output="..\..\..\daimonin.exe"/>
+				<Option output="..\..\..\client.exe"/>
 				<Option working_dir="..\..\..\..\client"/>
 				<Option object_output=".objs"/>
 				<Option deps_output=".deps"/>
@@ -33,8 +33,8 @@
 		<Compiler>
 			<Add option="-I&quot;<INCLUDE>\SDL&quot; -Dmain=SDL_main -mms-bitfields -Wall"/>
 			<Add directory="..\..\..\src\include"/>
-			<Add directory="inc"/>
-			<Add directory="inc\SDL"/>
+			<Add directory="sdl_inc"/>
+			<Add directory="sdl_inc\SDL"/>
 		</Compiler>
 		<Linker>
 			<Add library="mingw32"/>
@@ -43,9 +43,9 @@
 			<Add library="SDL"/>
 			<Add library="SDL_image"/>
 			<Add library="wsock32"/>
-			<Add directory="lib"/>
+			<Add directory="sdl_lib"/>
 		</Linker>
-		<Unit filename="..\..\..\src\Makefile.in">
+		<Unit filename="ReadMe.txt">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -133,13 +133,6 @@
 			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\include\crc32.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\define.h.in">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
