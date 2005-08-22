@@ -1622,7 +1622,7 @@ void MapstatsCmd(unsigned char *data, int len)
 
 void SkilllistCmd(unsigned char *data, int len)
 {
-    char   *tmp, *tmp2, *tmp3, *tmp4;
+    unsigned char *tmp, *tmp2, *tmp3, *tmp4;
     int     l, e, i, ii, mode;
     char    name[256];
 
@@ -1642,8 +1642,8 @@ void SkilllistCmd(unsigned char *data, int len)
         tmp2 = strchr(data, '/');
         if (tmp2)
         {
-            strncpy(name, data, (uint32) tmp2 - (uint32) data);
-            name[(uint32) tmp2 - (uint32) data] = 0;
+            strncpy(name, data, tmp2 - data);
+            name[tmp2 - data] = 0;
             data = tmp2;
         }
         else
@@ -1687,7 +1687,7 @@ void SkilllistCmd(unsigned char *data, int len)
 void SpelllistCmd(unsigned char *data, int len)
 {
     int     i, ii, mode;
-    char   *tmp, *tmp2;
+    unsigned char   *tmp, *tmp2;
     char    name[256];
 
     /*LOG(LOG_DEBUG,"slist: <%s>\n", data);*/
@@ -1704,8 +1704,8 @@ void SpelllistCmd(unsigned char *data, int len)
         tmp2 = strchr(data, '/');
         if (tmp2)
         {
-            strncpy(name, data, (uint32) tmp2 - (uint32) data);
-            name[(uint32) tmp2 - (uint32) data] = 0;
+            strncpy(name, data, tmp2 - data);
+            name[tmp2 - data] = 0;
             data = tmp2;
         }
         else
