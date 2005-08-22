@@ -51,6 +51,22 @@ if test "x$win32" = "xyes" ; then
 else
 	AC_DEFINE(__LINUX, 1, [Linux])
 fi
+ 
+# Add an option to produce statically linked binaries.
+AC_ARG_ENABLE([static],
+               AC_HELP_STRING([--enable-static],
+                              [build static binary (default=no)]),
+               [static=$enableval],
+               [static=no])
+
+# Check whether user supplied the option to statically link binaries.
+if test "$static" = yes; then
+        # if we're using gcc, add `-static' to LDFLAGS
+        if test -n "$GCC" || test "$ac_cv_prog_gcc" = "yes"; then
+                STATIC_LD="-static"
+                LDFLAGS="$LDFLAGS -static"
+        fi
+fi
 
 # option to enable simple directory layout 
 simplelayout="yes"
@@ -271,6 +287,8 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 #fi
 
 AC_SUBST(CPPFLAGS)
+AC_SUBST(LDFLAGS)
+AC_SUBST(STATIC_LD)
 
 AC_CONFIG_HEADER(../../src/include/define.h)
 AC_OUTPUT(Makefile)
