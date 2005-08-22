@@ -126,6 +126,6 @@ typedef struct gui_interface_struct {
 
 extern void reset_gui_interface(void);
 extern _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos);
-extern gui_interface_send_command(int mode, char *cmd);
+extern void gui_interface_send_command(int mode, char *cmd);
 
 #endif

@@ -704,7 +704,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
  * if mode is 1, its a real command.
  * mode 0 means to add /talk first.
  */
-gui_interface_send_command(int mode, char *cmd)
+void gui_interface_send_command(int mode, char *cmd)
 {
     char msg[1024];
 

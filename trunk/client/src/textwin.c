@@ -141,7 +141,10 @@ void say_clickedKeyword(int actWin, int mouseX, int mouseY)
     {
         pos = 5;
         while (cmdBuf[pos] != '\0')
-            cmdBuf2[pos - 5] = cmdBuf[pos++];
+        {
+            cmdBuf2[pos - 5] = cmdBuf[pos];
+            pos++;
+        }
         send_command(cmdBuf2, -1, SC_NORMAL);
     }
     else

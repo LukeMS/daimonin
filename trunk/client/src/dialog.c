@@ -893,7 +893,7 @@ void show_spelllist(void)
             spell_list_set.class_nr = i;
     }
 
-    sprintf(buf, "use ~F1-F8~ for spell to quickbar", ASCII_RIGHT, ASCII_LEFT);
+    sprintf(buf, "use ~F1-F8~ for spell to quickbar");
     StringBlt(ScreenSurface, &SystemFont, buf, x + 340, y + 69, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "use ~%c%c~ to select spell group", ASCII_RIGHT, ASCII_LEFT);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 340, y + 80, COLOR_WHITE, NULL, NULL);
@@ -1803,7 +1803,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                     }
                     else
                     {
-                        xt += SystemFont.c[gui_interface_npc->message.lines[i][s]].w + SystemFont.char_offset;
+                        xt += SystemFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + SystemFont.char_offset;
 
                         if(flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
                         {
