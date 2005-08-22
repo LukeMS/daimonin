@@ -59,6 +59,9 @@ typedef signed char     sint8;
 #include <SDL_mixer.h>
 #endif
 
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <zlib.h>
 #include <item.h>

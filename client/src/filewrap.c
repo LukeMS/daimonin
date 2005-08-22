@@ -69,7 +69,7 @@ static char *file_path(const char *fname, const char *mode)
 
     if(strchr(mode, 'w'))
     { // overwrite (always use file in home dir)
-        if(stmp=strrchr(tmp, '/'))
+        if((stmp=strrchr(tmp, '/')))
         {
             ctmp = stmp[0];
             stmp[0] = 0;
@@ -85,7 +85,7 @@ static char *file_path(const char *fname, const char *mode)
             char shtmp[517];
 
             sprintf(otmp, "%s%s", SYSPATH, fname);
-            if(stmp=strrchr(tmp, '/'))
+            if((stmp=strrchr(tmp, '/')))
             {
                 ctmp = stmp[0];
                 stmp[0] = 0;
