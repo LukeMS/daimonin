@@ -4322,9 +4322,6 @@ SDL_LIBS=`$SDL_CONFIG $SDL_STATIC`
 OLD_LIBS=$LIBS
 LIBS="$LIBS $SDL_LIBS"
 
-echo $SDL_LIBS
-echo $SDL_STATIC
-
 # There's no need for this, $SDL_CONFIG comes with libsdl and
 # it doesn't find it in FreeBSD
 # AC_CHECK_LIB([SDL], [SDL_Init])
