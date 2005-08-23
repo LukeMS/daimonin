@@ -2081,7 +2081,7 @@ void load_quickslots_entrys()
 
     if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb")))
         return;
-    fread(&header, sizeof(long), 1, stream);
+    fread(&header, sizeof(header), 1, stream);
     if (header != QUICKSLOT_FILE_HEADER)
     {
         fclose(stream);
@@ -2181,7 +2181,7 @@ void save_quickslots_entrys()
             return;
     }
     header = QUICKSLOT_FILE_HEADER;
-    fwrite(&header, sizeof(long), 1, stream);
+    fwrite(&header, sizeof(header), 1, stream);
     for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
     {
         w += sizeof(Boolean);

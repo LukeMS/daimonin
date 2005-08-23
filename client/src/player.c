@@ -95,7 +95,7 @@ void clear_player(void)
     init_player_data();
 }
 
-void new_player(long tag, char *name, long weight, short face)
+void new_player(uint32 tag, char *name, uint32 weight, short face)
 {
     cpl.ob->tag = tag;
     cpl.ob->weight = (float) weight / 1000;

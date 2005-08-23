@@ -35,7 +35,7 @@ extern _server_level    server_level;
 
 extern void             CompleteCmd(unsigned char *data, int len);
 
-extern void             new_player(long tag, char *name, long weight, short face);
+extern void             new_player(uint32 tag, char *name, uint32 weight, short face);
 extern void             new_char(struct _server_char *nc);
 extern void             look_at(int x, int y);
 extern void             client_send_apply(int tag);
