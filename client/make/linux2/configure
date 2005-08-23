@@ -311,7 +311,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE d_bindir d_datadir CP RM RMDIR MKDIR SDL_CONFIG SDL_LIBS SDL_IMAGE_LIBS SDL_MIXER_LIBS CPP EGREP SDL_CFLAGS LIBOBJS STATIC_LD LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE d_bindir d_datadir CP RM RMDIR MKDIR SDL_CONFIG SDL_LIBS SDL_IMAGE_LIBS SDL_MIXER_LIBS CPP EGREP SDL_CFLAGS LIBOBJS EXTRA_LIBS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -4057,15 +4057,52 @@ else
   static=no
 fi;
 
-SDL_STATIC="--libs"
-
 # Check whether user supplied the option to statically link binaries.
+SDL_STATIC="--libs"
 if test "$static" = yes; then
         # if we're using gcc, add `-static' to LDFLAGS
         if test -n "$GCC" || test "$ac_cv_c_compiler_gnu" = "yes"; then
                 STATIC_LD="-static"
                 LDFLAGS="$LDFLAGS -static"
                 SDL_STATIC="--static-libs"
+
+                if test -z "$EXTRA_LIBS"; then
+                    { echo "$as_me:$LINENO: WARNING:
+
+*** Attempting static linking without EXTRA_LIBS variable.
+Due to the difficulties of statically linking SDL_image and SDL_mixer, you
+might need to manually supply their respective library dependencies in the
+EXTRA_LIBS environment variable.
+
+For example (this works for me on a Debian system):
+> EXTRA_LIBS=\"-lvorbisfile -lvorbis -logg -lsmpeg -lstdc++ -lasound -lX11 -lXext -ltiff -ljpeg -lpng -lslang -lz -lncurses -lgpm -lm\" ./configure --enable-static
+
+Running \"ldd\" on a dynamically linked daimonin binary might show you most of the needed libraries.
+
+Make sure you have static versions of all the needed libraries. If configure still fails in the SDL_image or SDL_mixer tests, some hints can be gathered from
+> grep -C2 \"undefined reference\" config.log
+
+Finally, the order of the libraries in EXTRA_LIBS is relevant. More \"basic\" libraries should be last (like -lm).
+" >&5
+echo "$as_me: WARNING:
+
+*** Attempting static linking without EXTRA_LIBS variable.
+Due to the difficulties of statically linking SDL_image and SDL_mixer, you
+might need to manually supply their respective library dependencies in the
+EXTRA_LIBS environment variable.
+
+For example (this works for me on a Debian system):
+> EXTRA_LIBS=\"-lvorbisfile -lvorbis -logg -lsmpeg -lstdc++ -lasound -lX11 -lXext -ltiff -ljpeg -lpng -lslang -lz -lncurses -lgpm -lm\" ./configure --enable-static
+
+Running \"ldd\" on a dynamically linked daimonin binary might show you most of the needed libraries.
+
+Make sure you have static versions of all the needed libraries. If configure still fails in the SDL_image or SDL_mixer tests, some hints can be gathered from
+> grep -C2 \"undefined reference\" config.log
+
+Finally, the order of the libraries in EXTRA_LIBS is relevant. More \"basic\" libraries should be last (like -lm).
+" >&2;}
+                    EXTRA_LIBS="-lvorbisfile -lvorbis -logg -lsmpeg -lstdc++ -lasound -lX11 -lXext -ltiff -ljpeg -lpng -lslang -lz -lncurses -lgpm -lm"
+                fi
         fi
 fi
 
@@ -4320,7 +4357,7 @@ fi
 
 SDL_LIBS=`$SDL_CONFIG $SDL_STATIC`
 OLD_LIBS=$LIBS
-LIBS="$LIBS $SDL_LIBS"
+LIBS="$LIBS $SDL_LIBS $EXTRA_LIBS"
 
 # There's no need for this, $SDL_CONFIG comes with libsdl and
 # it doesn't find it in FreeBSD
@@ -4391,7 +4428,7 @@ fi
 echo "$as_me:$LINENO: result: $ac_cv_lib_SDL_image_IMG_Load" >&5
 echo "${ECHO_T}$ac_cv_lib_SDL_image_IMG_Load" >&6
 if test $ac_cv_lib_SDL_image_IMG_Load = yes; then
-  SDL_IMAGE_LIBS=-lSDL_image
+  SDL_IMAGE_LIBS="-lSDL_image "
 else
   { { echo "$as_me:$LINENO: error: *** SDL_image lib not found! Get SDL_image from
 http://www.libsdl.org/projects/SDL_image/index.html" >&5
@@ -5443,7 +5480,7 @@ OLD_LIBS=$LIBS
 
 CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
-LIBS="$LIBS $SDL_LIBS $SDL_IMAGE_LIBS"
+LIBS="$LIBS $SDL_IMAGE_LIBS $SDL_LIBS $EXTRA_LIBS"
 
 if test "$cross_compiling" = yes; then
   echo "$as_me:$LINENO: result: " >&5
@@ -5516,7 +5553,7 @@ echo $ECHO_N "checking for OGG support in SDL_mixer... $ECHO_C" >&6
 
 	CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
-	LIBS="$LIBS $SDL_LIBS $SDL_MIXER_LIBS"
+	LIBS="$LIBS $SDL_MIXER_LIBS $SDL_LIBS $EXTRA_LIBS"
 
 	if test "$cross_compiling" = yes; then
   echo "$as_me:$LINENO: result: " >&5
@@ -8428,7 +8465,7 @@ s,@CPP@,$CPP,;t t
 s,@EGREP@,$EGREP,;t t
 s,@SDL_CFLAGS@,$SDL_CFLAGS,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
-s,@STATIC_LD@,$STATIC_LD,;t t
+s,@EXTRA_LIBS@,$EXTRA_LIBS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
 

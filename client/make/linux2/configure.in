@@ -59,15 +59,35 @@ AC_ARG_ENABLE([static],
                [static=$enableval],
                [static=no])
 
-SDL_STATIC="--libs"
-
 # Check whether user supplied the option to statically link binaries.
+SDL_STATIC="--libs"
 if test "$static" = yes; then
         # if we're using gcc, add `-static' to LDFLAGS
         if test -n "$GCC" || test "$ac_cv_prog_gcc" = "yes"; then
                 STATIC_LD="-static"
                 LDFLAGS="$LDFLAGS -static"
                 SDL_STATIC="--static-libs"
+
+                if test -z "$EXTRA_LIBS"; then
+                    AC_MSG_WARN([
+
+*** Attempting static linking without EXTRA_LIBS variable.
+Due to the difficulties of statically linking SDL_image and SDL_mixer, you
+might need to manually supply their respective library dependencies in the 
+EXTRA_LIBS environment variable. 
+
+For example (this works for me on a Debian system):
+> EXTRA_LIBS="-lvorbisfile -lvorbis -logg -lsmpeg -lstdc++ -lasound -lX11 -lXext -ltiff -ljpeg -lpng -lslang -lz -lncurses -lgpm -lm" ./configure --enable-static
+
+Running "ldd" on a dynamically linked daimonin binary might show you most of the needed libraries. 
+
+Make sure you have static versions of all the needed libraries. If configure still fails in the SDL_image or SDL_mixer tests, some hints can be gathered from 
+> grep -C2 "undefined reference" config.log
+
+Finally, the order of the libraries in EXTRA_LIBS is relevant. More "basic" libraries should be last (like -lm).
+])
+                    EXTRA_LIBS="-lvorbisfile -lvorbis -logg -lsmpeg -lstdc++ -lasound -lX11 -lXext -ltiff -ljpeg -lpng -lslang -lz -lncurses -lgpm -lm"
+                fi
         fi
 fi
 
@@ -119,15 +139,15 @@ fi
 
 SDL_LIBS=`$SDL_CONFIG $SDL_STATIC`
 OLD_LIBS=$LIBS
-LIBS="$LIBS $SDL_LIBS"
-
+LIBS="$LIBS $SDL_LIBS $EXTRA_LIBS"
+                
 # There's no need for this, $SDL_CONFIG comes with libsdl and
 # it doesn't find it in FreeBSD
 # AC_CHECK_LIB([SDL], [SDL_Init])
 
 AC_CHECK_LIB([SDL_image],
 	     [IMG_Load],
-	     [SDL_IMAGE_LIBS=-lSDL_image],
+	     [SDL_IMAGE_LIBS="-lSDL_image "],
 	     [AC_MSG_ERROR([*** SDL_image lib not found! Get SDL_image from
 http://www.libsdl.org/projects/SDL_image/index.html])])
 
@@ -188,7 +208,7 @@ OLD_LIBS=$LIBS
 
 CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
-LIBS="$LIBS $SDL_LIBS $SDL_IMAGE_LIBS"
+LIBS="$LIBS $SDL_IMAGE_LIBS $SDL_LIBS $EXTRA_LIBS"
 
 AC_RUN_IFELSE([AC_LANG_SOURCE([
 #include <SDL_image.h>
@@ -225,7 +245,7 @@ if test "x$sound" = "xyes" ; then
 
 	CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
-	LIBS="$LIBS $SDL_LIBS $SDL_MIXER_LIBS"
+	LIBS="$LIBS $SDL_MIXER_LIBS $SDL_LIBS $EXTRA_LIBS"
 
 	AC_RUN_IFELSE([AC_LANG_SOURCE([
 	#include <SDL_mixer.h>
@@ -291,7 +311,7 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
-AC_SUBST(STATIC_LD)
+AC_SUBST(EXTRA_LIBS)
 
 AC_CONFIG_HEADER(../../src/include/define.h)
 AC_OUTPUT(Makefile)
