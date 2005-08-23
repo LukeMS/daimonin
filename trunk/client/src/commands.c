@@ -853,6 +853,8 @@ void PlayerCmd(unsigned char *data, int len)
     map_draw_map_clear();
     map_transfer_flag = 1;
     map_udate_flag = 2;
+
+    LOG(LOG_MSG, "Loading quickslot settings for server\n");
     load_quickslots_entrys();
 }
 
