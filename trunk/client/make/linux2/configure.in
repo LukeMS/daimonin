@@ -59,12 +59,15 @@ AC_ARG_ENABLE([static],
                [static=$enableval],
                [static=no])
 
+SDL_STATIC="--libs"
+
 # Check whether user supplied the option to statically link binaries.
 if test "$static" = yes; then
         # if we're using gcc, add `-static' to LDFLAGS
         if test -n "$GCC" || test "$ac_cv_prog_gcc" = "yes"; then
                 STATIC_LD="-static"
                 LDFLAGS="$LDFLAGS -static"
+                SDL_STATIC="--static-libs"
         fi
 fi
 
@@ -114,7 +117,7 @@ fi
 
 # Check for SDL libs
 
-SDL_LIBS=`$SDL_CONFIG --libs`
+SDL_LIBS=`$SDL_CONFIG $SDL_STATIC`
 OLD_LIBS=$LIBS
 LIBS="$LIBS $SDL_LIBS"
 
