@@ -31,8 +31,9 @@ daimonin_SOURCES =  \
 
 AUTOMAKE_OPTIONS = subdir-objects
 daimonin_OBJDIR = objs
-daimonin_LDADD = @SDL_LIBS@ -lSDL_mixer -lSDL_image
+daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
 AM_CPPFLAGS = @SDL_CFLAGS@ 
+AM_LDFLAGS = @LDFLAGS@ 
 
 install-data-hook:
 #	@if [ x$$UID = 'x0' -o x$$USER = 'xroot' ]; then \
