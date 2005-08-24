@@ -46,6 +46,8 @@ using namespace Ogre;
 Real w_1, x_1, y_1, z_1;
 
 Real g_pitch = 0.2;
+//Real PickHeigth;
+	std::string PickHeigth;
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -67,7 +69,8 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	mDebugOverlay->show();
 //	mRowOverlay= OverlayManager::getSingleton().getByName("RowOverlay");
 //	mRowText = OverlayManager::getSingleton().getOverlayElement("RowOverlayText");
-	mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");    
+	mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");
+	mMouseCursor->setScroll(1.0, -1.0);
 	mMouseCursor->show();
 	mMouseX = mMouseY =0;
 	Dialog ::getSingleton().Init();
@@ -118,7 +121,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	mEventProcessor->startProcessingEvents();
 	mEventProcessor->addKeyListener(this);
 	mEventProcessor->addMouseMotionListener(this);
-	mEventProcessor->addMouseListener(this);			
+	mEventProcessor->addMouseListener(this);
 	mInputDevice =  mEventProcessor->getInputReader();
 	mMouseMotionListener = mMotionListener;
 	mMouseListener = mMListener;
@@ -127,7 +130,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	mCamera = cam;
 	mWindow = win;
 	mTimeUntilNextToggle = 0;
-	mSceneDetailIndex = 0;
+//	mDetailIndex = 0;
 	mTranslateVector = Vector3(0,0,0);
 	mAniso = 1;
 	mFiltering = TFO_BILINEAR;
@@ -346,6 +349,9 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 													" y: "+ StringConverter::toString(y_1)+
 													" z: "+ StringConverter::toString(z_1));
 */
+//	mWindow->setDebugText(" PickHeigth: "+ StringConverter::toString(PickHeigth));
+	mWindow->setDebugText(" PickHeigth: "+ PickHeigth);
+
 
 	return true;
 }
@@ -471,10 +477,7 @@ void CEvent::keyPressed(KeyEvent *e)
 			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
 			break;
 		case KC_G:
-        //    ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);
-		static bool grid = false;
-		grid = !grid;
-		pgTileManager->SwitchMaterial(grid, true);
+			pgTileManager->ToggleGrid();
 		break;
 		case KC_I:
 			ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
@@ -636,14 +639,30 @@ void CEvent::keyReleased(KeyEvent* e)
 //=================================================================================================
 void CEvent::mouseMoved (MouseEvent *e)
 {
-	mMouseX += e->getRelX();
-	mMouseY += e->getRelY();
-	if (mMouseX <0.000) mMouseX =0.0;
-	if (mMouseY <0.000) mMouseY =0.0;
-	if (mMouseX >0.995) mMouseX =0.995;
-	if (mMouseY >0.985) mMouseY =0.985;
-	mMouseCursor->setScroll(mMouseX*2 , -mMouseY*2);
-	e->consume();
+	mMouseX = e->getX();
+	mMouseY = e->getY();
+	if (mMouseX > 0.995) mMouseX = 0.995;
+	if (mMouseY > 0.990) mMouseY = 0.990;
+	mMouseCursor->setScroll(2*mMouseX, -2*mMouseY);
+
+//	PickHeigth = StringConverter::toString(e->getX())+ "  " + StringConverter::toString(e->getY());
+	// Setup the ray scene querry
+	Ray mouseRay = mCamera->getCameraToViewportRay(e->getX(), e->getY());
+	mRaySceneQuery =  mSceneManager->createRayQuery(mouseRay);
+	mRaySceneQuery->setRay(mouseRay);
+	mRaySceneQuery->setSortByDistance(true);
+	// Execute querry
+	RaySceneQueryResult &result = mRaySceneQuery->execute();
+	RaySceneQueryResult::iterator itr = result.begin();
+	//for (itr = result.begin(); itr!= result.end(); ++itr )
+	{
+		//if (itr->worldFragment) PickHeigth = itr->worldFragment->singleIntersection.y;
+	if (itr->movable ) PickHeigth = itr->movable->getName();
+//			Logger::log().info() << PickHeigth;
+	}
+//	mRaySceneQuery->clearResults();
+	mSceneManager->destroyQuery(mRaySceneQuery);
+//	Logger::log().info() << " ";
 }
 
 void CEvent::mouseDragged(MouseEvent *e)

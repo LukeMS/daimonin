@@ -57,7 +57,6 @@ private:
 	////////////////////////////////////////////////////////////
 	Viewport            *mVP;
 	Root                *mRoot;
-
 	MouseMotionListener *mMouseMotionListener;
 	MouseListener       *mMouseListener;
 	SceneManager        *mSceneMgr;
