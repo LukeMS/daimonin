@@ -55,6 +55,8 @@ const char FILE_MUSIC_001[]             = "./media/sound/invtro94.s3m";
 const char FILE_SAMPLE_DUMMY[]          = "./media/sound/dummy.wav";
 const char FILE_SAMPLE_MOUSE_CLICK[]    = "./media/sound/console.wav";
 const char FILE_SAMPLE_PLAYER_IDLE[]    = "./media/sound/player_Idle.ogg";
+const char FILE_SAMPLE_WRONG_INPUT[]    = "./media/sound/missspell.wav";
+
 
 // ========================================================================
 // 

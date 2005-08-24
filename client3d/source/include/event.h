@@ -54,6 +54,7 @@ public:
 			MouseListener *mMListener, bool useBufferedInputKeys = false, bool useBufferedInputMouse = true);
 	~CEvent() ;
 
+	void SetSceneManager(SceneManager *SManager) { mSceneManager = SManager; }
 	const Vector3 &getWorldPos()  {  return World->getPosition(); }
 	void setWorldPos(Vector3 &pos);
 	void setLightMember(Light *light, int nr) { mLight[nr] = light;}
@@ -76,6 +77,8 @@ private:
 	////////////////////////////////////////////////////////////
 	bool mQuitGame;
 	int mSceneDetailIndex;
+	SceneManager  *mSceneManager;
+	RaySceneQuery *mRaySceneQuery;
 	Real mIdleTime;
 	Overlay *mDebugOverlay;
 	Overlay *mMouseCursor; 

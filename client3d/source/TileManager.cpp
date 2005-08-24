@@ -50,10 +50,13 @@ TileManager::~TileManager()
 ///=================================================================================================
 void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStretchZ)
 {
-	Logger::log().headline("Starting TileEngine:");
+	Logger::log().headline("Init TileEngine:");
 	m_SceneManager = SceneMgr;
 	m_StretchZ = tileStretchZ;
 	m_TileTextureSize = tileTextureSize;
+	mHighDetails = true;
+	mGrid = false;
+
 	srand(1);
 	Logger::log().info() << "Creating map";
 	m_Map = new WorldMap*[TILES_SUM_X+1];
@@ -64,7 +67,8 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
 	/////////////////////////////////////////////////////////////////////////
 	std::string strTextureGroup = "terrain";
 	Logger::log().info() << "Creating texture group " << strTextureGroup;
-	CreateTextureGroup(strTextureGroup); // only used once, to create a new texture group.
+	CreateTextureGroup(strTextureGroup); // only used once, to create a new texture group (if a texture has changed)
+	CreateMipMaps(); // has to be called everytime
 	/////////////////////////////////////////////////////////////////////////
 	/// Create TileChunks.
 	/////////////////////////////////////////////////////////////////////////
@@ -141,21 +145,20 @@ void TileManager::Set_Map_Textures()
 			}
 			else if (height > LEVEL_MOUNTAIN_MID)
 			{
-//				if (rand() % 2)
+				if (rand() % 2)
 				{
 					m_Map[x][y].terrain_col =6;
 					m_Map[x][y].terrain_row =0;
 				}
-/*
 				else
 				{
 					m_Map[x][y].terrain_col = 0;
 					m_Map[x][y].terrain_row = 0;
 				}
-			*/}
+			}
 			else if (height > LEVEL_MOUNTAIN_DWN)
 			{
-				m_Map[x][y].terrain_col = 5;//rand() % 2 + 4;
+				m_Map[x][y].terrain_col = rand() % 2 + 4;
 				m_Map[x][y].terrain_row = 2;
 			}
 			/////////////////////////////////////////////////////////////////////////
@@ -163,7 +166,7 @@ void TileManager::Set_Map_Textures()
 			/////////////////////////////////////////////////////////////////////////
 			else if (height > LEVEL_PLAINS_TOP)
 			{ // Plain
-				m_Map[x][y].terrain_col = 2;//rand() % 2;
+				m_Map[x][y].terrain_col = rand() % 2;
 				m_Map[x][y].terrain_row = 2;
 			}
 			else if (height > LEVEL_PLAINS_MID)
@@ -231,8 +234,9 @@ void TileManager::ChangeChunks()
 	TileChunk::m_bounds = new AxisAlignedBox(
 		 -TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
 			TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
-/*
+
 	unsigned char value;
+/*
 	for (int a = 0 ; a < TILES_SUM_X; ++a)
 	{
 		for (int b = 0; b < TILES_SUM_Z; ++b)
@@ -245,9 +249,9 @@ void TileManager::ChangeChunks()
 */
 	for (short x = 0; x < CHUNK_SUM_X; ++x)
 	{
-		for (short z = 0; z < CHUNK_SUM_Z; ++z)
+		for (short y = 0; y < CHUNK_SUM_Z; ++y)
 		{
-			m_mapchunk[x][z].Change();
+			m_mapchunk[x][y].Change();
 		}
 	}
 	delete TileChunk::m_bounds;
@@ -425,69 +429,119 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
 		pix /= 2;
 	}
 
-	MaterialPtr mMaterial128 = MaterialManager::getSingleton().getByName("Land_HighDetails128");
-	MaterialPtr mMaterial64 = MaterialManager::getSingleton().getByName("Land_HighDetails064");
-	MaterialPtr mMaterial32 = MaterialManager::getSingleton().getByName("Land_HighDetails032");
-	MaterialPtr mMaterial16 = MaterialManager::getSingleton().getByName("Land_HighDetails016");
-	MaterialPtr mMaterial8 = MaterialManager::getSingleton().getByName("Land_HighDetails008");
-
-	mMaterial128->load();
-	mMaterial64->load();
-	mMaterial32->load();
-	mMaterial16->load();
-	mMaterial8->load();
-
-	String texname = mMaterial128->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-	TexturePtr mTexture128 = (TexturePtr) TextureManager::getSingleton().getByName(texname);
-
-	texname = mMaterial64->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-	TexturePtr mTexture64 = (TexturePtr) TextureManager::getSingleton().getByName(texname);
-
-	texname = mMaterial32->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-	TexturePtr mTexture32 = (TexturePtr) TextureManager::getSingleton().getByName(texname);
-
-	texname = mMaterial16->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-	TexturePtr mTexture16 = (TexturePtr) TextureManager::getSingleton().getByName(texname);
-
-	texname = mMaterial8->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-	TexturePtr mTexture8 = (TexturePtr) TextureManager::getSingleton().getByName(texname);
-
-	HardwarePixelBufferSharedPtr mBuffer64 = mTexture64->getBuffer(0,0);
-	HardwarePixelBufferSharedPtr mBuffer32 = mTexture32->getBuffer(0,0);
-	HardwarePixelBufferSharedPtr mBuffer16 = mTexture16->getBuffer(0,0);
-	HardwarePixelBufferSharedPtr mBuffer8 = mTexture8->getBuffer(0,0);
-
-	HardwarePixelBufferSharedPtr mBuffer128_64 = mTexture128->getBuffer(0,1);
-	HardwarePixelBufferSharedPtr mBuffer128_32 = mTexture128->getBuffer(0,2);
-	HardwarePixelBufferSharedPtr mBuffer128_16 = mTexture128->getBuffer(0,3);
-	HardwarePixelBufferSharedPtr mBuffer128_8 = mTexture128->getBuffer(0,4);
-
-	mBuffer128_64->blit(mBuffer64.getPointer());
-	mBuffer128_32->blit(mBuffer32.getPointer());
-	mBuffer128_16->blit(mBuffer16.getPointer());
-	mBuffer128_8->blit(mBuffer8.getPointer());
-
-	HardwarePixelBufferSharedPtr mBuffer64_32 = mTexture64->getBuffer(0,1);
-	HardwarePixelBufferSharedPtr mBuffer64_16 = mTexture64->getBuffer(0,2);
-	HardwarePixelBufferSharedPtr mBuffer64_8 = mTexture64->getBuffer(0,3);
-
-	mBuffer64_32->blit(mBuffer32.getPointer());
-	mBuffer64_16->blit(mBuffer16.getPointer());
-	mBuffer64_8->blit(mBuffer8.getPointer());
-
-	HardwarePixelBufferSharedPtr mBuffer32_16 = mTexture32->getBuffer(0,1);
-	HardwarePixelBufferSharedPtr mBuffer32_8 = mTexture32->getBuffer(0,2);
-
-	mBuffer32_16->blit(mBuffer16.getPointer());
-	mBuffer32_8->blit(mBuffer8.getPointer());
-
-	HardwarePixelBufferSharedPtr mBuffer16_8 = mTexture16->getBuffer(0,1);
-
-	mBuffer16_8->blit(mBuffer8.getPointer());
-
 	return true;
 }
 
+///=================================================================================================
+/// Create MipMaps for tile textures
+///=================================================================================================
+void TileManager::CreateMipMaps()
+{
+	// Load tile texture images in all resolutions
+	Image TileImage128, TileImage064, TileImage032, TileImage016, TileImage008;
+
+	TileImage128.load("terrain_texture_128.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	TileImage064.load("terrain_texture_064.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	TileImage032.load("terrain_texture_032.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	TileImage016.load("terrain_texture_016.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	TileImage008.load("terrain_texture_008.png", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+
+	uchar* TileImage128_data = TileImage128.getData();
+	uchar* TileImage064_data = TileImage064.getData();
+	uchar* TileImage032_data = TileImage032.getData();
+	uchar* TileImage016_data = TileImage016.getData();
+	uchar* TileImage008_data = TileImage008.getData();
+
+	// create manual textures in all resolutions
+	TexturePtr TileTexture128 = TextureManager::getSingleton().createManual("terrain_texture_128.png", 
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, 1024,1024, 4, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+	TexturePtr TileTexture064 = TextureManager::getSingleton().createManual("terrain_texture_064.png", 
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, 512, 512, 3, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+	TexturePtr TileTexture032 = TextureManager::getSingleton().createManual("terrain_texture_032.png", 
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, 256, 256, 2, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+	TexturePtr TileTexture016 = TextureManager::getSingleton().createManual("terrain_texture_016.png", 
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, 128, 128, 1, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+	TexturePtr TileTexture008 = TextureManager::getSingleton().createManual("terrain_texture_008.png", 
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, TEX_TYPE_2D, 64, 64, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+
+	// create mipmaps for 128x128 pixel textures
+
+	HardwarePixelBufferSharedPtr Buffer128 = TileTexture128->getBuffer(0,0);
+	HardwarePixelBufferSharedPtr Buffer128_64 = TileTexture128->getBuffer(0,1);
+	HardwarePixelBufferSharedPtr Buffer128_32 = TileTexture128->getBuffer(0,2);
+	HardwarePixelBufferSharedPtr Buffer128_16 = TileTexture128->getBuffer(0,3);
+	HardwarePixelBufferSharedPtr Buffer128_8 = TileTexture128->getBuffer(0,4);
+
+	copyImageToBuffer(Buffer128, TileImage128);
+	copyImageToBuffer(Buffer128_64, TileImage064);	
+	copyImageToBuffer(Buffer128_32, TileImage032);	
+	copyImageToBuffer(Buffer128_16, TileImage016);
+	copyImageToBuffer(Buffer128_8, TileImage008);	
+
+	// create mipmaps for 64x64 pixel textures
+
+	HardwarePixelBufferSharedPtr Buffer64 = TileTexture064->getBuffer(0,0);
+    HardwarePixelBufferSharedPtr Buffer64_32 = TileTexture064->getBuffer(0,1);
+	HardwarePixelBufferSharedPtr Buffer64_16 = TileTexture064->getBuffer(0,2);
+	HardwarePixelBufferSharedPtr Buffer64_8 = TileTexture064->getBuffer(0,3);
+
+	copyImageToBuffer(Buffer64, TileImage064);
+	copyImageToBuffer(Buffer64_32, TileImage032);	
+	copyImageToBuffer(Buffer64_16, TileImage016);	
+	copyImageToBuffer(Buffer64_8, TileImage008);
+
+	// create mipmaps for 32x32 pixel textures
+
+	HardwarePixelBufferSharedPtr Buffer32 = TileTexture032->getBuffer(0,0);
+    HardwarePixelBufferSharedPtr Buffer32_16 = TileTexture032->getBuffer(0,1);
+	HardwarePixelBufferSharedPtr Buffer32_8 = TileTexture032->getBuffer(0,2);
+
+	copyImageToBuffer(Buffer32, TileImage032);
+	copyImageToBuffer(Buffer32_16, TileImage016);	
+	copyImageToBuffer(Buffer32_8, TileImage008);	
+
+	// create mipmaps for 16x16 pixel textures
+
+	HardwarePixelBufferSharedPtr Buffer16 = TileTexture016->getBuffer(0,0);
+    HardwarePixelBufferSharedPtr Buffer16_8 = TileTexture016->getBuffer(0,1);
+
+	copyImageToBuffer(Buffer16, TileImage016);
+	copyImageToBuffer(Buffer16_8, TileImage008);	
+
+	// create mipmaps for 8x8 pixel textures
+
+	HardwarePixelBufferSharedPtr Buffer8 = TileTexture008->getBuffer(0,0);
+
+	copyImageToBuffer(Buffer8, TileImage008);
+}
+
+void TileManager::copyImageToBuffer(HardwarePixelBufferSharedPtr Buffer, Image& Image)
+{
+	uchar* Image_data = Image.getData();
+	// Lock the pixel buffer and get a pixel box
+	
+	Buffer->lock(HardwareBuffer::HBL_NORMAL); // for best performance use HBL_DISCARD!
+	const PixelBox& pixelBox = Buffer->getCurrentLock();
+
+	uint8* pDest = static_cast<uint8*>(pixelBox.data);
+
+	// Fill in some pixel data. This will give a semi-transparent blue,
+	// but this is of course dependent on the chosen pixel format.
+	int width = Image.getWidth();
+
+	for (size_t j = 0; j < pixelBox.getWidth(); j++)
+		for(size_t i = 0; i < pixelBox.getHeight(); i++)
+	    {
+			*pDest++ =   Image_data[4 * width * j + 4 * i + 2]; 
+			*pDest++ =   Image_data[4 * width * j + 4 * i + 1];
+			*pDest++ =   Image_data[4 * width * j + 4 * i];
+			*pDest++ =   Image_data[4 * width * j + 4 * i + 3];
+		}
+
+	// Unlock the pixel buffer
+	
+	Buffer->unlock();
+}
 ///=================================================================================================
 /// Shrink Texture.
 ///=================================================================================================
@@ -804,12 +858,13 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
 }
 
 ///=================================================================================================
-/// Switch Grid/Filter.
+/// Toggle Material.
 ///=================================================================================================
-void TileManager::SwitchMaterial(bool grid, bool filter)
+void TileManager::ToggleMaterial()
 {
 	std::string matWater, matLand;
-	if (filter == true)
+	mHighDetails = !mHighDetails;
+	if (mHighDetails)
 	{
 		matLand = "Land_HighDetails" + StringConverter::toString(m_TileTextureSize, 3, '0');
 		matWater= "Water_HighDetails";
@@ -819,7 +874,7 @@ void TileManager::SwitchMaterial(bool grid, bool filter)
 		matLand = "Land_LowDetails";
 		matWater= "Water_LowDetails";
 	}
-	if (grid)
+	if (mGrid)
 	{
 		matLand +="_Grid";
 		matWater+="_Grid";
@@ -833,6 +888,17 @@ void TileManager::SwitchMaterial(bool grid, bool filter)
 		}
 	}
 }
+
+///=================================================================================================
+/// Switch Grid.
+///=================================================================================================
+void TileManager::ToggleGrid()
+{
+	mGrid = !mGrid;
+	mHighDetails = !mHighDetails;
+	ToggleMaterial();
+}
+
 
 ///=================================================================================================
 /// Change resolution of terrain texture
@@ -851,4 +917,6 @@ void TileManager::SetTextureSize(int pixels)
 				}
 			}
 	}
+	mHighDetails = !mHighDetails;
+	ToggleMaterial();
 }

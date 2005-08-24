@@ -54,7 +54,6 @@ const int MIN_TEXTURE_PIXEL = 8;
 /** LOD for the chunks. */
 enum {QUALITY_LOW, QUALITY_HIGH};
 
-
 /**
  * TileEngine class which manages the chunks in the worldmap.
  * Because of speed reasons, the TileEngine divides the worldmap into chunks.
@@ -81,6 +80,8 @@ private:
 	/** The z-stretching of the tiles. **/
 	float m_StretchZ;
 	int m_TileTextureSize;
+	bool mHighDetails;
+	bool mGrid;
 
 public:
 	TileManager();
@@ -115,8 +116,11 @@ public:
 	void Load_Map(const std::string &png_filename);
 	/** Import a heightmap. **/
 	void Load_Map(char *mapData);
-	void SwitchMaterial(bool grid, bool highDetail);
+	void ToggleMaterial();
+	void ToggleGrid();
 	void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short size, short x, short y);
+	void CreateMipMaps();
+	void copyImageToBuffer(HardwarePixelBufferSharedPtr Buffer, Image& Image);
 };
 
 #endif
