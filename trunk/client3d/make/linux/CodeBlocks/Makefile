@@ -4,7 +4,7 @@
 
 # Project:          Client3d
 # Project filename: /home/andreas/daimonin/client3d/make/linux/CodeBlocks/Client3d.cbp
-# Date:             Mi 10 Aug 2005 19:22:26 GMT
+# Date:             Fr 26 Aug 2005 14:21:26 GMT
 # Compiler used:    GNU GCC Compiler
 
 ### Variables used in this Makefile
@@ -49,9 +49,9 @@ default_LIBS= $(PROJECT_LIBS) $(GLOBAL_LIBS)
 ###############################################################################
 
 ### Objects used in this Makefile
-default_OBJS=.objs/source/EnvironmentManager.o .objs/source/TileChunk.o .objs/source/TileManager.o .objs/source/adler32.o .objs/source/animate.o .objs/source/client.o .objs/source/crc32.o .objs/source/dialog.o .objs/source/event.o .objs/source/inffast.o .objs/source/inflate.o .objs/source/inftrees.o .objs/source/light_manager.o .objs/source/logger.o .objs/source/logger_html.o .objs/source/main.o .objs/source/network.o .objs/source/network_cmd.o .objs/source/object_manager.o .objs/source/object_npc.o .objs/source/object_static.o .objs/source/option.o .objs/source/option_init.o .objs/source/particle.o .objs/source/particle_manager.o .objs/source/serverfile.o .objs/source/sound.o .objs/source/spell_manager.o .objs/source/spell_range.o .objs/source/textwindow.o .objs/source/tile_gfx.o .objs/source/uncompr.o .objs/source/zutil.o 
+default_OBJS=.objs/source/TileChunk.o .objs/source/TileEnvironment.o .objs/source/TileManager.o .objs/source/adler32.o .objs/source/animate.o .objs/source/client.o .objs/source/crc32.o .objs/source/dialog.o .objs/source/event.o .objs/source/inffast.o .objs/source/inflate.o .objs/source/inftrees.o .objs/source/light_manager.o .objs/source/logger.o .objs/source/logger_html.o .objs/source/main.o .objs/source/network.o .objs/source/network_cmd.o .objs/source/object_manager.o .objs/source/object_npc.o .objs/source/object_static.o .objs/source/option.o .objs/source/option_init.o .objs/source/particle.o .objs/source/particle_manager.o .objs/source/serverfile.o .objs/source/sound.o .objs/source/spell_manager.o .objs/source/spell_range.o .objs/source/textwindow.o .objs/source/uncompr.o .objs/source/zutil.o 
 default_LINKOBJS=$(default_OBJS)
-default_DEPS=.deps/source/EnvironmentManager.d .deps/source/TileChunk.d .deps/source/TileManager.d .deps/source/adler32.d .deps/source/animate.d .deps/source/client.d .deps/source/crc32.d .deps/source/dialog.d .deps/source/event.d .deps/source/inffast.d .deps/source/inflate.d .deps/source/inftrees.d .deps/source/light_manager.d .deps/source/logger.d .deps/source/logger_html.d .deps/source/main.d .deps/source/network.d .deps/source/network_cmd.d .deps/source/object_manager.d .deps/source/object_npc.d .deps/source/object_static.d .deps/source/option.d .deps/source/option_init.d .deps/source/particle.d .deps/source/particle_manager.d .deps/source/serverfile.d .deps/source/sound.d .deps/source/spell_manager.d .deps/source/spell_range.d .deps/source/textwindow.d .deps/source/tile_gfx.d .deps/source/uncompr.d .deps/source/zutil.d 
+default_DEPS=.deps/source/TileChunk.d .deps/source/TileEnvironment.d .deps/source/TileManager.d .deps/source/adler32.d .deps/source/animate.d .deps/source/client.d .deps/source/crc32.d .deps/source/dialog.d .deps/source/event.d .deps/source/inffast.d .deps/source/inflate.d .deps/source/inftrees.d .deps/source/light_manager.d .deps/source/logger.d .deps/source/logger_html.d .deps/source/main.d .deps/source/network.d .deps/source/network_cmd.d .deps/source/object_manager.d .deps/source/object_npc.d .deps/source/object_static.d .deps/source/option.d .deps/source/option_init.d .deps/source/particle.d .deps/source/particle_manager.d .deps/source/serverfile.d .deps/source/sound.d .deps/source/spell_manager.d .deps/source/spell_range.d .deps/source/textwindow.d .deps/source/uncompr.d .deps/source/zutil.d 
 
 ### The targets of this project
 default_BIN=../../../Client3d
@@ -66,7 +66,7 @@ all-after:
 
 
 dist:
-	@$(ZIP) Client3d.cbp.$(ZIP_EXT) Client3d.cbp Makefile ReadMe.txt ../../../source/EnvironmentManager.cpp ../../../source/TileChunk.cpp ../../../source/TileManager.cpp ../../../source/adler32.c ../../../source/animate.cpp ../../../source/client.cpp ../../../source/crc32.c ../../../source/dialog.cpp ../../../source/event.cpp ../../../source/include/EnvironmentManager.h ../../../source/include/TileChunk.h ../../../source/include/TileManager.h ../../../source/include/animate.h ../../../source/include/client.h ../../../source/include/crc32.h ../../../source/include/define.h ../../../source/include/dialog.h ../../../source/include/event.h ../../../source/include/inffast.h ../../../source/include/inflate.h ../../../source/include/inftrees.h ../../../source/include/light_manager.h ../../../source/include/logger.h ../../../source/include/logger_html.h ../../../source/include/network.h ../../../source/include/object_manager.h ../../../source/include/object_npc.h ../../../source/include/object_static.h ../../../source/include/option.h ../../../source/include/particle.h ../../../source/include/particle_manager.h ../../../source/include/serverfile.h ../../../source/include/sound.h ../../../source/include/spell_manager.h ../../../source/include/spell_range.h ../../../source/include/sprite.h ../../../source/include/textinput.h ../../../source/include/textwindow.h ../../../source/include/tile_gfx.h ../../../source/include/zconf.h ../../../source/include/zlib.h ../../../source/include/zutil.h ../../../source/inffast.c ../../../source/inflate.c ../../../source/inftrees.c ../../../source/light_manager.cpp ../../../source/logger.cpp ../../../source/logger_html.cpp ../../../source/main.cpp ../../../source/network.cpp ../../../source/network_cmd.cpp ../../../source/object_manager.cpp ../../../source/object_npc.cpp ../../../source/object_static.cpp ../../../source/option.cpp ../../../source/option_init.cpp ../../../source/particle.cpp ../../../source/particle_manager.cpp ../../../source/serverfile.cpp ../../../source/sound.cpp ../../../source/spell_manager.cpp ../../../source/spell_range.cpp ../../../source/textwindow.cpp ../../../source/tile_gfx.cpp ../../../source/uncompr.c ../../../source/zutil.c 
+	@$(ZIP) Client3d.cbp.$(ZIP_EXT) Client3d.cbp Makefile ReadMe.txt ../../../source/TileChunk.cpp ../../../source/TileEnvironment.cpp ../../../source/TileManager.cpp ../../../source/adler32.c ../../../source/animate.cpp ../../../source/client.cpp ../../../source/crc32.c ../../../source/dialog.cpp ../../../source/event.cpp ../../../source/include/TileChunk.h ../../../source/include/TileEnvironment.h ../../../source/include/TileManager.h ../../../source/include/animate.h ../../../source/include/client.h ../../../source/include/crc32.h ../../../source/include/define.h ../../../source/include/dialog.h ../../../source/include/event.h ../../../source/include/inffast.h ../../../source/include/inflate.h ../../../source/include/inftrees.h ../../../source/include/light_manager.h ../../../source/include/logger.h ../../../source/include/logger_html.h ../../../source/include/network.h ../../../source/include/object_manager.h ../../../source/include/object_npc.h ../../../source/include/object_static.h ../../../source/include/option.h ../../../source/include/particle.h ../../../source/include/particle_manager.h ../../../source/include/serverfile.h ../../../source/include/sound.h ../../../source/include/spell_manager.h ../../../source/include/spell_range.h ../../../source/include/textinput.h ../../../source/include/textwindow.h ../../../source/include/zconf.h ../../../source/include/zlib.h ../../../source/include/zutil.h ../../../source/inffast.c ../../../source/inflate.c ../../../source/inftrees.c ../../../source/light_manager.cpp ../../../source/logger.cpp ../../../source/logger_html.cpp ../../../source/main.cpp ../../../source/network.cpp ../../../source/network_cmd.cpp ../../../source/object_manager.cpp ../../../source/object_npc.cpp ../../../source/object_static.cpp ../../../source/option.cpp ../../../source/option_init.cpp ../../../source/particle.cpp ../../../source/particle_manager.cpp ../../../source/serverfile.cpp ../../../source/sound.cpp ../../../source/spell_manager.cpp ../../../source/spell_range.cpp ../../../source/textwindow.cpp ../../../source/uncompr.c ../../../source/zutil.c 
 
 clean_default:
 	@echo Cleaning target "default"...
@@ -110,14 +110,6 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 	@$(LD) $(default_LIBDIRS) -o $(default_BIN) $(default_LINKOBJS) $(default_RESOURCE) $(default_LDFLAGS) $(default_LIBS) -mwindows
 
 
-.deps/source/EnvironmentManager.d: ../../../source/EnvironmentManager.cpp
-	@echo Calculating dependencies for "../../../source/EnvironmentManager.cpp"...
-	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/EnvironmentManager.d -MT .objs/source/EnvironmentManager.o $(default_INCS) ../../../source/EnvironmentManager.cpp
-
-.objs/source/EnvironmentManager.o: .deps/source/EnvironmentManager.d
-	@echo Compiling "../../../source/EnvironmentManager.cpp"...
-	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/EnvironmentManager.cpp -o .objs/source/EnvironmentManager.o
-
 .deps/source/TileChunk.d: ../../../source/TileChunk.cpp
 	@echo Calculating dependencies for "../../../source/TileChunk.cpp"...
 	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/TileChunk.d -MT .objs/source/TileChunk.o $(default_INCS) ../../../source/TileChunk.cpp
@@ -125,6 +117,14 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 .objs/source/TileChunk.o: .deps/source/TileChunk.d
 	@echo Compiling "../../../source/TileChunk.cpp"...
 	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/TileChunk.cpp -o .objs/source/TileChunk.o
+
+.deps/source/TileEnvironment.d: ../../../source/TileEnvironment.cpp
+	@echo Calculating dependencies for "../../../source/TileEnvironment.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/TileEnvironment.d -MT .objs/source/TileEnvironment.o $(default_INCS) ../../../source/TileEnvironment.cpp
+
+.objs/source/TileEnvironment.o: .deps/source/TileEnvironment.d
+	@echo Compiling "../../../source/TileEnvironment.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/TileEnvironment.cpp -o .objs/source/TileEnvironment.o
 
 .deps/source/TileManager.d: ../../../source/TileManager.cpp
 	@echo Calculating dependencies for "../../../source/TileManager.cpp"...
@@ -349,14 +349,6 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 .objs/source/textwindow.o: .deps/source/textwindow.d
 	@echo Compiling "../../../source/textwindow.cpp"...
 	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/textwindow.cpp -o .objs/source/textwindow.o
-
-.deps/source/tile_gfx.d: ../../../source/tile_gfx.cpp
-	@echo Calculating dependencies for "../../../source/tile_gfx.cpp"...
-	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/tile_gfx.d -MT .objs/source/tile_gfx.o $(default_INCS) ../../../source/tile_gfx.cpp
-
-.objs/source/tile_gfx.o: .deps/source/tile_gfx.d
-	@echo Compiling "../../../source/tile_gfx.cpp"...
-	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/tile_gfx.cpp -o .objs/source/tile_gfx.o
 
 .deps/source/uncompr.d: ../../../source/uncompr.c
 	@echo Calculating dependencies for "../../../source/uncompr.c"...

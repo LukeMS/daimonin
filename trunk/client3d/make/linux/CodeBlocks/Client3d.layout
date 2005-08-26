@@ -4,4 +4,7 @@
 	<File name="ReadMe.txt" open="1" top="1">
 		<Cursor position="0" topLine="0"/>
 	</File>
+	<Expand folder="/Headers/source/include"/>
+	<Expand folder="/Headers/source"/>
+	<Expand folder="/Headers"/>
 </Code::Blocks_layout_file>
