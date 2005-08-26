@@ -156,7 +156,7 @@ void Dialog::UpdateLogin(unsigned int stage)
       mPanelPlayerPasswd  ->hide();
       mPanelPlayerRePasswd->hide();
       mDialogSelPanel     ->hide();
-      mStrPlayerName = TextInput::getSingleton().getString();
+      mStrPlayerName = TextInput::getSingleton().getText(true);
       mPlayerName->setCaption(mStrPlayerName);
       break;
     case DIALOG_STAGE_LOGIN_GET_PASSWD:

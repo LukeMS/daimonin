@@ -60,77 +60,75 @@ typedef enum _game_status
 ////////////////////////////////////////////////////////////
 class Option
 {
-  public:
-    enum
-    {
-      VAL_BOOL, VAL_CHAR, VAL_INT, VAL_TEXT
+public:
+  enum
+  {
+    VAL_BOOL, VAL_CHAR, VAL_INT, VAL_TEXT
   };
-    enum
-    {
-      SEL_BUTTON, SEL_CHECKBOX, SEL_RANGE, SEL_TEXT
+  enum
+  {
+    SEL_BUTTON, SEL_CHECKBOX, SEL_RANGE, SEL_TEXT
+  }; // selection types
+  typedef struct optionStruct
+  {
+    char *name;
+    /** info text row 1 **/
+    char *info1;
+    /** info text row 2 **/
+    char *info2;
+    /*** text-replacement for number values. if value_type == VAL_TEXT then the first entry is the default text. **/
+    char *val_text;
+    int  sel_type;
+    int  minRange, maxRange, deltaRange;
+    int  default_val;
+    void *value;
+    int  value_type;
+  };
+
+  ////////////////////////////////////////////////////////////
+  /// Variables.
+  ////////////////////////////////////////////////////////////
+  static optionStruct optStruct[];
+  int GameStatus;
+  std::string mMetaServer;
+  unsigned int  mMetaServerPort;
+  unsigned int  mSelectedMetaServer;
+  bool mStartNetwork;
+
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  bool openDescFile(const char *filename);
+  void closeDescFile();
+  bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
+  bool Init();
+  static Option &getSingleton()
+  {
+    static Option Singleton; return Singleton;
   }
-    ; // selection types
-    typedef struct optionStruct
-    {
-      char *name;
-      /** info text row 1 **/
-      char *info1;
-      /** info text row 2 **/
-      char *info2;
-      /*** text-replacement for number values. if value_type == VAL_TEXT then the first entry is the default text. **/
-      char *val_text;
-      int  sel_type;
-      int  minRange, maxRange, deltaRange;
-      int  default_val;
-      void *value;
-      int  value_type;
-    };
 
-    ////////////////////////////////////////////////////////////
-    /// Variables.
-    ////////////////////////////////////////////////////////////
-    static optionStruct optStruct[];
-    int GameStatus;
-    std::string mMetaServer;
-    unsigned int  mMetaServerPort;
-    unsigned int  mSelectedMetaServer;
-    bool mStartNetwork;
+private:
+  ////////////////////////////////////////////////////////////
+  /// Variables.
+  ////////////////////////////////////////////////////////////
+  bool mLogin;
+  ifstream *mDescFile;
+  string mDescBuffer;
+  string mFilename;
 
-    ////////////////////////////////////////////////////////////
-    /// Functions.
-    ////////////////////////////////////////////////////////////
-    Option();
-    ~Option();
-    static Option &getSingleton()
-    {
-      static Option Singleton; return Singleton;
-    }
+  // Sound
+  static int  sound_volume;
+  static int  music_volume;
+  // Server
+  static string  metaserver;
+  static int   metaserver_port;
 
-    bool openDescFile(const char *filename);
-    void closeDescFile();
-    bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
-    bool Init();
-
-  private:
-    ////////////////////////////////////////////////////////////
-    /// Variables.
-    ////////////////////////////////////////////////////////////
-    bool mLogin;
-    ifstream *mDescFile;
-    string mDescBuffer;
-    string mFilename;
-
-    // Sound
-    static int  sound_volume;
-    static int  music_volume;
-    // Server
-    static string  metaserver;
-    static int   metaserver_port;
-
-    ////////////////////////////////////////////////////////////
-    /// Functions.
-    ////////////////////////////////////////////////////////////
-    Option(const Option&); // disable copy-constructor.
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  Option();
+  ~Option();
+  Option(const Option&); // disable copy-constructor.
 };
 
 #endif

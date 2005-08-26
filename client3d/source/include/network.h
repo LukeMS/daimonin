@@ -26,12 +26,12 @@ http://www.gnu.org/licenses/licenses.html
 using namespace std;
 
 ////////////////////////////////////////////////////////////
-// Defines.
+/// Defines.
 ////////////////////////////////////////////////////////////
 
-// Maximum size of any packet we expect.  Using this makes it so we don't need to
-// allocated and deallocated the same buffer over and over again and the price
-// of using a bit of extra memory. IT also makes the code simpler.
+/// Maximum size of any packet we expect.  Using this makes it so we don't need to
+/// allocated and deallocated the same buffer over and over again and the price
+/// of using a bit of extra memory. IT also makes the code simpler.
 const int  MAXSOCKBUF            =  64*1024;
 const int  MAX_METASTRING_BUFFER = 128*2013;
 const int  SOCKET_NO = -1;
@@ -69,81 +69,81 @@ typedef struct mStructServer
 mStructServer;
 
 ////////////////////////////////////////////////////////////
-// Singleton class.
+/// Singleton class.
 ////////////////////////////////////////////////////////////
 class Network
 {
-  public:
-    ////////////////////////////////////////////////////////////
-    // Variables.
-    ////////////////////////////////////////////////////////////
-    int  mRequest_file_chain;
-    int  mRequest_file_flags;
-    int  mPasswordAlreadyAsked;
-    bool mGameStatusVersionOKFlag;
-    bool mGameStatusVersionFlag;
+public:
+  ////////////////////////////////////////////////////////////
+  /// Variables.
+  ////////////////////////////////////////////////////////////
+  int  mRequest_file_chain;
+  int  mRequest_file_flags;
+  int  mPasswordAlreadyAsked;
+  bool mGameStatusVersionOKFlag;
+  bool mGameStatusVersionFlag;
 
-    ////////////////////////////////////////////////////////////
-    // Functions.
-    ////////////////////////////////////////////////////////////
-    Network();
-    ~Network();
-    static Network &getSingleton()
-    {
-      static Network Singleton; return Singleton;
-    }
-    bool Init();
-    void RequestShutdown();
-    void Shutdown();
-    bool GetServerData();
-    bool OpenSocket(const char *host, int port);
-    bool CloseSocket();
-    void Update();
-    int  request_face(int pnum, int mode);
-    void send_reply(char *text);
-    void read_metaserver_data();
-    int  cs_write_string(char *buf, int len);
-    int  send_socklist(SockList &msg);
-    int  read_socket();
-    int  write_socket(unsigned char *buf, int len);
-    void DoClient();
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  static Network &getSingleton()
+  {
+    static Network Singleton; return Singleton;
+  }
+  bool Init();
+  void RequestShutdown();
+  void Shutdown();
+  bool GetServerData();
+  bool OpenSocket(const char *host, int port);
+  bool CloseSocket();
+  void Update();
+  int  request_face(int pnum, int mode);
+  void send_reply(char *text);
+  void read_metaserver_data();
+  int  cs_write_string(char *buf, int len);
+  int  send_socklist(SockList &msg);
+  int  read_socket();
+  int  write_socket(unsigned char *buf, int len);
+  void DoClient();
 
-    // Server commands..
-    void VersionCmd      (char *data, int len);
-    void SetupCmd        (char *data, int len);
-    void DataCmd         (char *data, int len);
-    void PlayerCmd       (char *data, int len);
-    void Map2Cmd         (char *data, int len);
-    void NewCharCmd      (char *data, int len);
-    void HandleQuery     (char *data, int len);
-    void PreParseInfoStat(char *cmd);
-    void RequestFile(int index);
+  // Server commands..
+  void VersionCmd      (char *data, int len);
+  void SetupCmd        (char *data, int len);
+  void DataCmd         (char *data, int len);
+  void PlayerCmd       (char *data, int len);
+  void Map2Cmd         (char *data, int len);
+  void NewCharCmd      (char *data, int len);
+  void HandleQuery     (char *data, int len);
+  void PreParseInfoStat(char *cmd);
+  void RequestFile(int index);
 
-    void CreatePlayerAccount();
-  private:
-    ////////////////////////////////////////////////////////////
-    /// Variables.
-    ////////////////////////////////////////////////////////////
-    // Contains the base information we use to make up a packet we want to send.
-    int  mCs_version, mSc_version; // Server versions of these
-    // These are used for the newer 'windowing' method of commands -
-    // number of last command sent, number of received confirmation
-    int mCommand_sent, mCommand_received;
-    int mCommand_time; // Time (in ms) players commands currently take to execute
-    int mSocketStatusErrorNr;
-    SockList  mInbuf;
-    int mSocket;
-    list<mStructServer*> mServerList;
+  void CreatePlayerAccount();
+private:
+  ////////////////////////////////////////////////////////////
+  /// Variables.
+  ////////////////////////////////////////////////////////////
+  // Contains the base information we use to make up a packet we want to send.
+  int  mCs_version, mSc_version; // Server versions of these
+  // These are used for the newer 'windowing' method of commands -
+  // number of last command sent, number of received confirmation
+  int mCommand_sent, mCommand_received;
+  int mCommand_time; // Time (in ms) players commands currently take to execute
+  int mSocketStatusErrorNr;
+  SockList  mInbuf;
+  int mSocket;
+  list<mStructServer*> mServerList;
 
-    ////////////////////////////////////////////////////////////
-    /// Functions.
-    ////////////////////////////////////////////////////////////
-    Network(const Network&);  // disable copy-constructor.
-    bool InitSocket();
-    void clear_metaserver_data(void);
-    void get_meta_server_data(int num, char *server, int *port);
-    void add_metaserver_data(const char *server, int port, int player, const char *ver,
-                             const char *desc1, const char *desc2, const char *desc3, const char *desc4);
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  Network();
+  ~Network();
+  Network(const Network&);  // disable copy-constructor.
+  bool InitSocket();
+  void clear_metaserver_data(void);
+  void get_meta_server_data(int num, char *server, int *port);
+  void add_metaserver_data(const char *server, int port, int player, const char *ver,
+                           const char *desc1, const char *desc2, const char *desc3, const char *desc4);
 };
 
 #endif

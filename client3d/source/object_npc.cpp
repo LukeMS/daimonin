@@ -187,7 +187,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 
   switch (Bone)
   {
-      case BONE_WEAPON_HAND:
+    case BONE_WEAPON_HAND:
       WeaponNr = ++mWeapon; // testing -> delete me!
       if (mEntityWeapon)
       {
@@ -218,7 +218,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       else mWeapon =0;  // testing -> delete me!
       break;
 
-      case BONE_SHIELD_HAND:
+    case BONE_SHIELD_HAND:
       WeaponNr = ++mShield; // testing -> delete me!
       if (mEntityShield)
       {
@@ -241,7 +241,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       else mShield =0;  // testing -> delete me!
       break;
 
-      case BONE_HEAD:
+    case BONE_HEAD:
       WeaponNr = ++mHelmet; // testing -> delete me!
       if (mEntityHelmet)
       {
@@ -264,7 +264,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       else mHelmet =0;  // testing -> delete me!
       break;
 
-      case BONE_BODY:
+    case BONE_BODY:
       WeaponNr = ++mArmor; // testing -> delete me!
       if (mEntityArmor)
       {
