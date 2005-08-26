@@ -30,8 +30,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "particle_manager.h"
 #include "spell_manager.h"
-#include "tile_gfx.h"
-#include "TileManager.h"
+#include "TileChunk.h"
+
 
 using namespace Ogre;
 
@@ -47,19 +47,54 @@ void DaimoninClient::go(void)
   if (!(Option ::getSingleton().Init())) return;
   if (!(Sound  ::getSingleton().Init())) return;
   if (!(Network::getSingleton().Init())) return;
-  // if (!(TileGfx::getSingleton().Init())) { return; }
   Sound::getSingleton().playSong(FILE_MUSIC_001);
-  createScene();
+
+  // Create the world.
+  Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+  Event->SetSceneManager(mSceneMgr);
+  // Event->World->setPosition(0,0,0);
+  mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
+  mSceneMgr->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
+
+  Light *light;
+  light = mSceneMgr->createLight("Light_Vol");
+  light->setType(Light::LT_POINT );
+  light->setPosition(-100, 200, 800);
+  ///    light->setDiffuseColour(1.0, 1.0, 1.0);
+  light->setSpecularColour(1.0, 1.0, 1.0);
+  Event->World->attachObject(light);
+  Event->setLightMember(light, 0);
+
+  light = mSceneMgr->createLight("Light_Spot");
+  light->setType(Light::LT_SPOTLIGHT);
+  light->setDirection(0, -1, -1);
+  light->setPosition (-125, 200, 100);
+  light->setDiffuseColour(1.0, 1.0, 1.0);
+  /// light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
+  /// light->setAttenuation(1000,1,0.005,0);
+
+  Event->World->attachObject(light);
+  Event->setLightMember(light, 1);
+  light->setVisible(false);
+
+  mTileManager = new TileManager();
+  mTileManager->Init(mSceneMgr);
+  Event->Set_pgraphics(mTileManager);
+
+  SpellManager::getSingleton().init(mSceneMgr, Event->World);
+  ParticleManager::getSingleton().init(mSceneMgr, Event->World);
+  ObjectManager::getSingleton().init(mSceneMgr, Event->World);
+
   mRoot->startRendering();
   /////////////////////////////////////////////////////////////////////////
   /// Clean up.
   /////////////////////////////////////////////////////////////////////////
-  if (Event) delete Event;
-  if (mRoot) delete mRoot;
-  //Network::getSingleton().freeRecources();
+  if (mTileManager) delete mTileManager;
+  // Network::getSingleton().freeRecources();
   // Option ::getSingleton().freeRecources();
   Sound::getSingleton().freeRecources();
-  // if (TileManager) { delete TileManager; }
+  if (Event)        delete Event;
+  if (mRoot)        delete mRoot;
 }
 
 /// ========================================================================
@@ -75,11 +110,8 @@ bool DaimoninClient::setup(void)
   /// You can skip this and use root.restoreConfig() to load configuration
   /// settings if you were sure there are valid ones saved in ogre.cfg
   /////////////////////////////////////////////////////////////////////////
-  if(mRoot->showConfigDialog())
-  {
-    mWindow = mRoot->initialise(true);
-  }
-  else return false;
+  if(!mRoot->showConfigDialog()) return false;
+  mWindow = mRoot->initialise(true);
   /////////////////////////////////////////////////////////////////////////
   /// Get the SceneManager, in this case a generic one
   /////////////////////////////////////////////////////////////////////////
@@ -98,7 +130,7 @@ bool DaimoninClient::setup(void)
   /////////////////////////////////////////////////////////////////////////
   /// Set default mipmap level (NB some APIs ignore this)
   /////////////////////////////////////////////////////////////////////////
-  TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
+//  TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
   /////////////////////////////////////////////////////////////////////////
   /// Optional override method where you can perform resource group loading
   /// Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -132,92 +164,6 @@ void DaimoninClient::setupResources(void)
       typeName = i->first;
       archName = i->second;
       ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
-    }
-  }
-}
-
-/// ========================================================================
-/// Create all Elements of the Scene.
-/// ========================================================================
-void DaimoninClient::createScene(void)
-{
-  /// Create the world.
-  Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
-  /// Event->World->setPosition(0,0,0);
-  mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
-  mSceneMgr->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
-
-  Light *light;
-  light = mSceneMgr->createLight("Light_Vol");
-  light->setType(Light::LT_POINT );
-  light->setPosition(-100, 200, 800);
-  ///    light->setDiffuseColour(1.0, 1.0, 1.0);
-  light->setSpecularColour(1.0, 1.0, 1.0);
-  Event->World->attachObject(light);
-  Event->setLightMember(light, 0);
-
-  light = mSceneMgr->createLight("Light_Spot");
-  light->setType(Light::LT_SPOTLIGHT);
-  light->setDirection(0, -1, -1);
-  light->setPosition (-125, 200, 100);
-  light->setDiffuseColour(1.0, 1.0, 1.0);
-  /// light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
-  /// light->setAttenuation(1000,1,0.005,0);
-
-  /// Setup animation default
-  Animation::setDefaultInterpolationMode(Animation::IM_LINEAR);
-  Animation::setDefaultRotationInterpolationMode(Animation::RIM_LINEAR);
-
-  Event->World->attachObject(light);
-  Event->setLightMember(light, 1);
-  light->setVisible(false);
-
-  SpellManager::getSingleton().init(mSceneMgr, Event->World);
-  ObjectManager::getSingleton().init(mSceneMgr, Event->World);
-  ParticleManager::getSingleton().init(mSceneMgr, Event->World);
-
-  bool status = Option::getSingleton().openDescFile(FILE_WORLD_DESC);
-  Logger::log().info() << "Parse description file "
-  << FILE_WORLD_DESC
-  << "..." << Logger::success(status);
-  if(!status)
-  {
-    Logger::log().error() << "CRITICAL: description file was not found!"; return;
-  }
-
-  mTileManager = new TileManager();
-  mTileManager->Init(mSceneMgr);
-  Event->Set_pgraphics(mTileManager);
-  Event->SetSceneManager(mSceneMgr);
-
-  string strType, strTemp, strMesh;
-  int i=0;
-  while(1)
-  {
-    if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC)))
-    {
-      return;
-    }
-    if (!(Option::getSingleton().getDescStr("Type", strType, ++i)))
-    {
-      break;
-    }
-    Option::getSingleton().getDescStr("MeshName", strMesh,i);
-    Option::getSingleton().getDescStr("StartX", strTemp,i);
-    Real posX = atof(strTemp.c_str());
-    Option::getSingleton().getDescStr("StartY", strTemp,i);
-    Real posY = atof(strTemp.c_str());
-    Option::getSingleton().getDescStr("StartZ", strTemp,i);
-    Real posZ = atof(strTemp.c_str());
-    Option::getSingleton().getDescStr("Facing", strTemp);
-    Radian facing = Radian(atof(strTemp.c_str()));
-    if (strType == "npc")
-    {
-      ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
-    }
-    else
-    {
-      ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
     }
   }
 }

@@ -41,7 +41,6 @@ const int SOCKET_ERROR =-1;
 #include "textinput.h"
 #include "textwindow.h"
 #include "TileManager.h"
-#include "tile_gfx.h"
 
 #define DEBUG_ON
 
@@ -226,7 +225,7 @@ void Network::Update()
     else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITLOOP)
     {
       Dialog::getSingleton().setVisible(true);
-      if ((TextInput::getSingleton().startCursorSelection(0, mServerList.size())))
+      if (TextInput::getSingleton().startCursorSelection(mServerList.size()))
       {
         list<mStructServer*>::const_iterator iter = mServerList.begin();
         for (unsigned int i=0 ; iter != mServerList.end(); ++iter)
@@ -415,10 +414,9 @@ void Network::Update()
       else if (mRequest_file_chain == 11)
       {
         // ok... now we check for bmap & anims processing...
-        TileGfx::getSingleton().read_bmap_tmp();
-        //            TileGfx::getSingleton().read_anim_tmp();
-        //            load_settings();
-
+        // TileGfx::getSingleton().read_bmap_tmp();
+        // TileGfx::getSingleton().read_anim_tmp();
+        // load_settings();
         mRequest_file_chain++;
       }
       else if (mRequest_file_chain == 12)
@@ -462,7 +460,7 @@ void Network::Update()
       else if (TextInput::getSingleton().wasFinished())
       {
         //strcpy(cpl.name, InputString);
-        send_reply((char*)TextInput::getSingleton().getString());
+        send_reply((char*)TextInput::getSingleton().getText());
         Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
@@ -479,7 +477,7 @@ void Network::Update()
       else if (TextInput::getSingleton().wasFinished())
       {
         // strncpy(cpl.password, InputString, 39);
-        send_reply((char*)TextInput::getSingleton().getString());
+        send_reply((char*)TextInput::getSingleton().getText());
         Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
@@ -494,7 +492,7 @@ void Network::Update()
       }
       else if (TextInput::getSingleton().wasFinished())
       {
-        send_reply((char*)TextInput::getSingleton().getString());
+        send_reply((char*)TextInput::getSingleton().getText());
         Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }

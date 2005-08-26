@@ -22,40 +22,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 
-
-int Option::sound_volume    = 0;
-int Option::music_volume    = 0;
-int Option::metaserver_port = 0;
-std::string Option::metaserver = "";
-
-Option::optionStruct Option::optStruct[] =
-  {
-    /////////////////////////////////////////////////////////////////////////
-    /// Sound settings.
-    /////////////////////////////////////////////////////////////////////////
-    { "Sound volume:", "set sound volume for effects.","", "",
-     SEL_RANGE, 0,100,5,100, &sound_volume, VAL_INT
-    },
-    { "Music volume:", "set music volume for background.","Sub info","",
-     SEL_RANGE, 0,100,5,80, &music_volume, VAL_INT
-    },
-    { "#",0,0,0,0,0,0,0,0,0,0 // End of Page
-    },
-    /////////////////////////////////////////////////////////////////////////
-    /// xyz settings.
-    /////////////////////////////////////////////////////////////////////////
-    { "MetaServer:", "gdfhdfhdfh.","Sub info","Damn.Info",
-     SEL_RANGE, 0,100,5,80, &metaserver, VAL_TEXT
-    },
-    { "#",0,0,0,0,0,0,0,0,0,0 // End of Page
-    },
-    /////////////////////////////////////////////////////////////////////////
-    /// End of options.
-    /////////////////////////////////////////////////////////////////////////
-    {0,0,0,0,0,0,0,0,0,0,0
-    },
-  };
-
 ///=================================================================================================
 /// Open a description file.
 ///=================================================================================================
@@ -134,10 +100,10 @@ bool Option::Init()
   int i, sheets = 0;
   for (i=0; optStruct[i].name; ++i)
   {
-    if (optStruct[i].name[0] == '#') 
+    if (optStruct[i].name[0] == '#')
     {
-    	++sheets;
-    	continue;
+      ++sheets;
+      continue;
     }
     if (optStruct[i].value_type == VAL_TEXT)
     {

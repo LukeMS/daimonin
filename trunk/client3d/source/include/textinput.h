@@ -21,193 +21,262 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef TEXTINPUT_H
 #define TEXTINPUT_H
 
+#include <ctime>
 #include <string>
 #include "sound.h"
 
 using namespace std;
 
 ////////////////////////////////////////////////////////////
-// Defines.
+/// Defines.
 ////////////////////////////////////////////////////////////
 enum
 {
-  INPUT_MODE_TEXT, INPUT_MODE_CURSOR_SELECTION, INPUT_MODE_SUM
+  /** Input modus: text. **/
+  INPUT_MODE_TEXT,
+  /** Input modus: move cursor in a selection field. **/
+  INPUT_MODE_CURSOR_SELECTION,
+  /** Sum of input modes **/
+  INPUT_MODE_SUM
 };
 
-////////////////////////////////////////////////////////////
-// Singleton class.
-////////////////////////////////////////////////////////////
+/** The maximum number of selectable entries in the selection field. **/
+const unsigned int MAX_SELECTION_ENTRYS = 20;
+
+/**
+ ** TextInput class which manages the keyboard input for the Dialog class.
+ *****************************************************************************/
 class TextInput
 {
-  public:
-    ////////////////////////////////////////////////////////////
-    /// Functions.
-    ////////////////////////////////////////////////////////////
-    TextInput()
-    {
-      stop();
-    };
-    ~TextInput()
-    {}
-    ;
-    static TextInput &getSingleton()
-    {
-      static TextInput singleton; return singleton;
-    }
+public:
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  static TextInput &getSingleton()
+  {
+    static TextInput singleton; return singleton;
+  }
+  void addString(string &addString)
+  {
+    mStrTextInput+= addString;
+  }
+  void setString(string &newString)
+  {
+    mStrTextInput = newString;
+  }
+  /** Clears the the input text. **/
+  void clearText()
+  {
+    mStrTextInput = "";
+  }
+  /** Finish the text input **/
+  void finished()
+  {
+    mFinished = true;
+  };
+  /** Cancel the text input **/
+  void canceled()
+  {
+    mCanceled = true;
+  };
+  bool wasFinished()
+  {
+    return mFinished;
+  };
+  bool wasCanceled()
+  {
+    return mCanceled;
+  };
+  int size()
+  {
+    return mStrTextInput.size();
+  };
+  void stop()
+  {
+    mStrTextInput= "";
+    mCursorPos   = 0;
+    mInProgress  = false;
+    mChange      = false;
+  }
+  /**
+   ** Returns the input text.
+   ** @param showTextCursor Shows the (blinking) cursor within the text,
+   ** only makes sense for a font with same width for "-" and " ".
+   *****************************************************************************/
 
-    void addString(string &addString)
+  const char *getText(bool showTextCursor = false)
+  {
+    static long time = clock();
+    static bool cursorOn = true;
+    if (!showTextCursor || mFinished || mCanceled) return mStrTextInput.c_str();
+    mStrTextInputWithCursor = mStrTextInput;
+    if (clock()-time > 500)
     {
-      mStrTextInput+= addString;
+      time = clock();
+      // cursorOn = !cursorOn; // We need the same width of "_" and " " or it will look strange.
     }
-    void setString(string &newString)
-    {
-      mStrTextInput = newString;
-    }
-    void clearText()
-    {
-      mStrTextInput = "";
-    }
-    void finished()
-    {
-      mFinished = true;
-    };
-    void canceled()
-    {
-      mCanceled = true;
-    };
-    bool wasFinished()
-    {
-      return mFinished;
-    };
-    bool wasCanceled()
-    {
-      return mCanceled;
-    };
-    int  size()
-    {
-      return mSize;
-    };
+    if (cursorOn)
+      mStrTextInputWithCursor.insert(mCursorPos, "_");
+    else
+      mStrTextInputWithCursor.insert(mCursorPos, " ");
+    return mStrTextInputWithCursor.c_str();
+  }
+  /**
+   ** Inits a text input session.
+   ** @param maxChars Maximuum text input length.
+   ** @param useNumbers Input of numbers is allowed.
+   ** @param useWhitespaces Input of whhitespaces is allowed.
+   *****************************************************************************/
 
-    void stop()
+  void startTextInput(int maxChars, bool useNumbers = true, bool useWhitespaces = true)
+  {
+    // we start only over, if the last operation was ended.
+    if (mInProgress == true) return;
+    mInProgress  = true;
+    mInputMode   = INPUT_MODE_TEXT;
+    mFinished    = false;
+    mCanceled    = false;
+    mUseNumbers  = useNumbers;
+    mUseWhiteSpc = useWhitespaces;
+    mMaxChars    = maxChars;
+  }
+
+  /**
+   ** Inits a cursor selection session, cursor can be moved up and down
+   ** to select an entry in the selection field.
+   ** @param sizeSeletionField The number of selectable entries in the selection field.
+   ** @param actualSelectedPos The initial position of the selection cursor.
+   ** @return false if there is already a cursor selection running.
+   *****************************************************************************/
+  bool startCursorSelection(unsigned int sizeSeletionField, unsigned int actualSelectedPos=0)
+  {
+    if (mInProgress == true) return false;
+    mInProgress = true;
+    mInputMode  = INPUT_MODE_CURSOR_SELECTION;
+    mFinished   = false;
+    mCanceled   = false;
+    mChange     = true;
+    mMaxValue   = sizeSeletionField-1;
+    if (mMaxValue > MAX_SELECTION_ENTRYS) mMaxValue = MAX_SELECTION_ENTRYS;
+    mActValue   = actualSelectedPos;
+    if (mActValue > mMaxValue) mActValue = mMaxValue;
+    return true;
+  }
+
+  /**
+   ** Process a key event.
+   ** @param keyChar The ascii value of the pressed key.
+   ** @param key The The keycode of the key.
+   *****************************************************************************/
+  void keyEvent(const char keyChar, const unsigned char key)
+  {
+    if (key == KEY_RETURN || key == KEY_TAB)
     {
-      mStrTextInput= "";
-      mSize =0;
-      mInProgress  = false;
-      mChange = false;
+      TextInput::getSingleton().finished();
+      return;
     }
-
-    const char *getString()
+    if (key == KEY_ESCAPE)
     {
-      return mStrTextInput.c_str();
+      TextInput::getSingleton().canceled();
+      return;
     }
-
-
-    void startTextInput(int maxChars, bool useNumbers = true, bool useWhitespaces = true)
+    /////////////////////////////////////////////////////////////////////////
+    /// Input modus TEXT.
+    /////////////////////////////////////////////////////////////////////////
+    if (mInputMode == INPUT_MODE_TEXT)
     {
-      // we start only over, if the last operation was ended.
-      if (mInProgress == true)
+      if (key == KEY_BACKSPACE && mCursorPos > 0)
       {
+        mStrTextInput.erase(--mCursorPos, 1);
         return;
       }
-      mInProgress  = true;
-      mInputMode   = INPUT_MODE_TEXT;
-      mFinished    = false;
-      mCanceled    = false;
-      mUseNumbers  = useNumbers;
-      mUseWhiteSpc = useWhitespaces;
-      mMaxChars    = maxChars;
-    }
-
-
-    //=================================================================================================
-    // Init a cursor selection input.
-    // Returns true if it is the first call (will be used for init overlay elements only once).
-    //=================================================================================================
-    bool startCursorSelection(unsigned int minValue, unsigned int maxValue, unsigned int startValue=0)
-    {
-      if (mInProgress == true) return false;
-      mInProgress = true;
-      mInputMode  = INPUT_MODE_CURSOR_SELECTION;
-      mFinished   = false;
-      mCanceled   = false;
-      mChange     = true;
-      mActValue   = startValue;
-      mMaxValue   = maxValue-1;
-      mMinValue   = minValue;
-      return true;
-    }
-
-    void keyEvent(const unsigned char keyChar, const unsigned char key)
-    {
-      if (mInputMode == INPUT_MODE_TEXT)
+      if (key == KEY_DELETE)
       {
-        if ((!keyChar || mStrTextInput.size() >= mMaxChars)
-                || (!mUseNumbers  && (keyChar >= '0' && keyChar <= '9'))
-                || (!mUseWhiteSpc && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
-        {
-          Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
-          return;
-        }
-        mStrTextInput+= keyChar;
-        ++mSize;
+        mStrTextInput.erase(mCursorPos, 1);
+        return;
       }
-      else
+      if (key == KEY_LEFT && mCursorPos > 0)
       {
-        unsigned int change = mActValue;
-        if  (key == 0xC8) // cursor up.
-        {
-          if (mActValue > mMinValue) --mActValue;
-        } 
-        else if (key == 0xD0) // cursor down.
-        {
-          if (mActValue < mMaxValue) ++mActValue;
-        } 
-        if (change != mActValue) mChange =true;
+        --mCursorPos;
+        return;
       }
-    }
-
-    void backspace()
-    {
-      if (mInputMode == INPUT_MODE_TEXT && mStrTextInput.size())
+      if (key == KEY_RIGHT && mCursorPos < mStrTextInput.size())
       {
-        mStrTextInput.resize(mStrTextInput.size()-1);
-        --mSize;
+        ++mCursorPos;
+        return;
       }
+      if ((!keyChar || mStrTextInput.size() >= mMaxChars)
+              || (keyChar == '_' ) // used for TextCursor.
+              || (!mUseNumbers  && (keyChar >= '0' && keyChar <= '9'))
+              || (!mUseWhiteSpc && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
+      {
+        Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
+        return;
+      }
+      mStrTextInput.insert(mCursorPos,1,keyChar);
+      ++mCursorPos;
     }
-
-    int getInputMode()
+    /////////////////////////////////////////////////////////////////////////
+    /// Input modus CURSOR-SELECTION.
+    /////////////////////////////////////////////////////////////////////////
+    else
     {
-      return mInputMode;
+      unsigned int oldValue = mActValue;
+      if      (key == KEY_UP   && mActValue > 0)
+        --mActValue;
+      else if (key == KEY_DOWN && mActValue < mMaxValue)
+        ++mActValue;
+      if (oldValue != mActValue) mChange =true;
     }
-    unsigned int getSelCursorPos()
-    {
-      return mActValue;
-    }
-    bool hasChanged()
-    {
-      if (!mChange) return false;
-      mChange = false;
-      return true;
-    }
+  }
 
-  private:
-    ////////////////////////////////////////////////////////////
-    // Variables.
-    ////////////////////////////////////////////////////////////
-    bool mChange;
-    unsigned int mMinValue, mActValue, mMaxValue;
-    bool mFinished, mCanceled, mInProgress;
-    unsigned int  mMaxChars;
-    int mSize;
-    int mInputMode;
-    bool mUseNumbers;
-    bool mUseWhiteSpc;
-    string mStrTextInput;
+  int getInputMode()
+  {
+    return mInputMode;
+  }
+  unsigned int getSelCursorPos()
+  {
+    return mActValue;
+  }
 
-    ////////////////////////////////////////////////////////////
-    // Functions.
-    ////////////////////////////////////////////////////////////
-    TextInput(const TextInput&); // disable copy-constructor.
+  /**
+   ** Determine if the cursor has moved in the selection field.
+   ** @return false if there was no cursor movement.
+   *****************************************************************************/
+  bool hasChanged()
+  {
+    if (!mChange) return false;
+    mChange = false;
+    return true;
+  }
+
+private:
+  ////////////////////////////////////////////////////////////
+  /// Variables.
+  ////////////////////////////////////////////////////////////
+  enum
+  {
+    KEY_RETURN = 0x1C, KEY_TAB = 0x0F, KEY_DELETE= 0xD3, KEY_BACKSPACE = 0x0E,
+    KEY_ESCAPE = 0x01, KEY_LEFT= 0xCB, KEY_RIGHT = 0xCD, KEY_UP =0xC8,  KEY_DOWN =0xD0
+  };
+  unsigned int mActValue, mMaxValue;
+  unsigned int mMaxChars;
+  unsigned int mCursorPos;
+  int  mInputMode;
+  bool mChange;
+  bool mFinished, mCanceled, mInProgress;
+  bool mUseNumbers;
+  bool mUseWhiteSpc;
+  string mStrTextInput, mStrTextInputWithCursor;
+
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  TextInput()
+  {}
+  ~TextInput()
+  {}
+  TextInput(const TextInput&); // disable copy-constructor.
 };
 
 #endif
