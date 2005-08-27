@@ -48,6 +48,7 @@ Real w_1, x_1, y_1, z_1;
 Real g_pitch = 0.2;
 //Real PickHeigth;
 std::string PickHeigth;
+static int pixels = 128;
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -365,7 +366,7 @@ bool CEvent::frameEnded(const FrameEvent& evt)
                " z: "+ StringConverter::toString(z_1));
   */
   // mWindow->setDebugText(" PickHeigth: "+ StringConverter::toString(PickHeigth));
-  mWindow->setDebugText(" PickHeigth: "+ PickHeigth);
+  mWindow->setDebugText("Press 'x' for texture resolution (" + StringConverter::toString(pixels) + " pix)");
 
 
   return true;
@@ -490,6 +491,16 @@ void CEvent::keyPressed(KeyEvent *e)
          }
          break;
       */
+    case KC_X:
+      {
+        //change pixel size of terrain textures
+        pixels /= 2; // shrink pixel value
+        if (pixels < 8) pixels = 128; // if value is too low resize to maximum
+        pgTileManager->SetTextureSize(pixels);
+        mTimeUntilNextToggle = .5;
+      }
+      break;
+
     case KC_F:
       switch(mFiltering)
       {
@@ -631,8 +642,6 @@ void CEvent::mouseMoved (MouseEvent *e)
   if (mMouseY > 0.990) mMouseY = 0.990;
   mMouseCursor->setScroll(2*mMouseX, -2*mMouseY);
 /*
-
-CRASHED on linux.
   // PickHeigth = StringConverter::toString(e->getX())+ "  " + StringConverter::toString(e->getY());
   // Setup the ray scene querry
   Ray mouseRay = mCamera->getCameraToViewportRay(e->getX(), e->getY());
@@ -651,7 +660,7 @@ CRASHED on linux.
   // mRaySceneQuery->clearResults();
   mSceneManager->destroyQuery(mRaySceneQuery);
   // Logger::log().info() << " ";
-*/
+  */
 }
 
 void CEvent::mouseDragged(MouseEvent *e)
