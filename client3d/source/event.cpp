@@ -630,7 +630,9 @@ void CEvent::mouseMoved (MouseEvent *e)
   if (mMouseX > 0.995) mMouseX = 0.995;
   if (mMouseY > 0.990) mMouseY = 0.990;
   mMouseCursor->setScroll(2*mMouseX, -2*mMouseY);
+/*
 
+CRASHED on linux.
   // PickHeigth = StringConverter::toString(e->getX())+ "  " + StringConverter::toString(e->getY());
   // Setup the ray scene querry
   Ray mouseRay = mCamera->getCameraToViewportRay(e->getX(), e->getY());
@@ -649,6 +651,7 @@ void CEvent::mouseMoved (MouseEvent *e)
   // mRaySceneQuery->clearResults();
   mSceneManager->destroyQuery(mRaySceneQuery);
   // Logger::log().info() << " ";
+*/
 }
 
 void CEvent::mouseDragged(MouseEvent *e)
