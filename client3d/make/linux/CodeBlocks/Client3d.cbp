@@ -20,7 +20,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-DGCC_3_1"/>
 			<Add option="-DEXT_HASH"/>
 			<Add directory="/usr/include/OGRE"/>
 			<Add directory="../../../source/include"/>
