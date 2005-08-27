@@ -4,7 +4,7 @@
 
 # Project:          Client3d
 # Project filename: /home/andreas/daimonin/client3d/make/linux/CodeBlocks/Client3d.cbp
-# Date:             Fr 26 Aug 2005 14:21:26 GMT
+# Date:             Sa 27 Aug 2005 11:19:12 CEST
 # Compiler used:    GNU GCC Compiler
 
 ### Variables used in this Makefile
@@ -19,7 +19,7 @@ RESCOMP=
 
 ### Compiler/linker options
 GLOBAL_CFLAGS=
-PROJECT_CFLAGS= -DGCC_3_1 -DEXT_HASH
+PROJECT_CFLAGS= -DEXT_HASH
 GLOBAL_LDFLAGS=
 PROJECT_LDFLAGS=
 GLOBAL_INCS= -I/usr/include
