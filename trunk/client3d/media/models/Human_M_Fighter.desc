@@ -176,7 +176,7 @@ StartZ_Weapon: "11.0"
 M_Name_Weapon: "Mace_Small_01.mesh"
 StartX_Weapon: "4.0"
 StartY_Weapon: "0.0"
-StartZ_Weapon: "11.0"
+StartZ_Weapon: "5.0"
 
 #####################################################################################
 # Armor
@@ -187,21 +187,20 @@ StartZ_Weapon: "11.0"
 
 M_Name_Shield: "Shield_Round_01.mesh"
 StartX_Shield: "3.0"
-StartY_Shield: "5.0"
+StartY_Shield: "2.5"
 StartZ_Shield: "-1.0"
-
 
 M_Name_Shield: "Shield_Round_02.mesh"
 StartX_Shield: "3.0"
-StartY_Shield: "5.0"
+StartY_Shield: "3.0"
 StartZ_Shield: "-1.0"
 
 M_Name_Armor : "Armor_body.mesh"
-StartX_Armor : "-8.0"
-StartY_Armor : "-44.0"
+StartX_Armor : "-3.8"
+StartY_Armor : "-22.0"
 StartZ_Armor : "0.0"
 
 M_Name_Helmet : "Armor_helmet.mesh"
-StartX_Helmet : "3.0"
-StartY_Helmet : "-67.5"
+StartX_Helmet : "0.5"
+StartY_Helmet : "-34"
 StartZ_Helmet : "0.0"
