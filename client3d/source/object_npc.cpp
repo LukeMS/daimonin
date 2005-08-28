@@ -75,7 +75,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
     // mNode->roll(Radian(45));
     // mNode->pitch(Degree(45));
     // mNode->yaw(Degree(180));
-    mNode->scale(Vector3(.4,.4,.4));
+//    mNode->scale(Vector3(.5,.5,.5));
 
     /*
     //====== geck0's settings =====
@@ -88,6 +88,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
     Event->getCamera()->pitch(Degree(-35.264));
     */
     const Real CAMERA_Y = 500;
+    
     Vector3 pos = Vector3(TILE_SIZE * CHUNK_SIZE_X /2 + TILE_SIZE/2, 0,
                           TILE_SIZE * CHUNK_SIZE_Z /2 - TILE_SIZE/2);
     Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
@@ -339,7 +340,7 @@ void NPC::update(const FrameEvent& event)
         // pPos.z = 22*30 -(pPos.z- 524+10);
         pPos.z -= 534;
         Real height = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*3;
-        mNode->setPosition(pPos.x, pPos.y-370 + height, tt -524 +height);
+        mNode->setPosition(pPos.x, pPos.y-370 + height, tt -390 +height);
 
 
       }
