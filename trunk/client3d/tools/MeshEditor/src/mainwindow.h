@@ -52,9 +52,10 @@ public:
   Fl_Output *outAnimLen;
   Fl_Output *outAnimNewLen;
   Fl_Choice *selRenameAnim;
+  Fl_Button *butSaveAnim;
 private:
-  inline void cb_Save_i(Fl_Button*, void*);
-  static void cb_Save(Fl_Button*, void*);
+  inline void cb_butSaveAnim_i(Fl_Button*, void*);
+  static void cb_butSaveAnim(Fl_Button*, void*);
 public:
   Fl_Button *butRenameAnim;
 private:
@@ -69,6 +70,18 @@ public:
 private:
   inline void cb_butRenameMaterial_i(Fl_Button*, void*);
   static void cb_butRenameMaterial(Fl_Button*, void*);
+public:
+  Fl_Group *panelScaleModel;
+  Fl_Counter *countScaleModel;
+private:
+  inline void cb_countScaleModel_i(Fl_Counter*, void*);
+  static void cb_countScaleModel(Fl_Counter*, void*);
+public:
+  Fl_Output *txtScaleModelStatus;
+  Fl_Button *butScaleModel;
+private:
+  inline void cb_butScaleModel_i(Fl_Button*, void*);
+  static void cb_butScaleModel(Fl_Button*, void*);
 };
 extern MainWindow *gpMainWin;
 #endif

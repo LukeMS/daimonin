@@ -1,19 +1,19 @@
 /*
 -----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
-
+ 
 Copyright (c) 2004 The Daimonin Team
 Also see acknowledgements in Readme.html
-
+ 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
-
+ 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
-
+ 
 You should have received a copy of the GNU Lesser General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -32,7 +32,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 bool LogFile::Init()
 {
   m_stream   = fopen(FILE_LOGGING, "w");
-  if (!m_stream) { return false; }
+  if (!m_stream)
+  {
+    return false;
+  }
   time(&m_time);
   m_localtime = localtime(&m_time);
   fputs("<html>\n", m_stream);
@@ -53,10 +56,10 @@ bool LogFile::Init()
   fputs(PRG_NAME, m_stream);
   fputs(" - Logfile</h1>\n<h2>Started: ", m_stream);
   sprintf(m_buffer,"%.2d.%.2d.%4d - ",
-    m_localtime->tm_mday, m_localtime->tm_mon+1, m_localtime->tm_year+1900);
+          m_localtime->tm_mday, m_localtime->tm_mon+1, m_localtime->tm_year+1900);
   fputs(m_buffer, m_stream);
   sprintf(m_buffer,"%.2d:%.2d:%.2d",
-    m_localtime->tm_hour, m_localtime->tm_min, m_localtime->tm_sec);
+          m_localtime->tm_hour, m_localtime->tm_min, m_localtime->tm_sec);
   fputs(m_buffer, m_stream);
   fputs("</h2>\n<p>\n", m_stream);
   fclose(m_stream);
@@ -75,10 +78,10 @@ LogFile::~LogFile()
   m_localtime = localtime(&m_time);
   fputs("</p>\n<hr>\n<h2>Ended: ", m_stream);
   sprintf(m_buffer,"%.2d.%.2d.%4d - ",
-    m_localtime->tm_mday, m_localtime->tm_mon+1, m_localtime->tm_year+1900);
+          m_localtime->tm_mday, m_localtime->tm_mon+1, m_localtime->tm_year+1900);
   fputs(m_buffer, m_stream);
   sprintf(m_buffer,"%.2d:%.2d:%.2d",
-    m_localtime->tm_hour, m_localtime->tm_min, m_localtime->tm_sec);
+          m_localtime->tm_hour, m_localtime->tm_min, m_localtime->tm_sec);
   fputs(m_buffer, m_stream);
   fputs("</h2>\n", m_stream);
 
@@ -91,8 +94,8 @@ LogFile::~LogFile()
 //=================================================================================================
 LogFile &LogFile::getSingleton()
 {
-   static LogFile Singleton;
-   return Singleton;
+  static LogFile Singleton;
+  return Singleton;
 }
 
 //=================================================================================================
