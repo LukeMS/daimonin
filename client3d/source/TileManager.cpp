@@ -150,12 +150,14 @@ void TileManager::Set_Map_Textures()
       }
       else if (height > LEVEL_MOUNTAIN_MID)
       {
-        if (rand() % 2)
+/*
+	        if (rand() % 2)
         {
           m_Map[x][y].terrain_col =6;
           m_Map[x][y].terrain_row =0;
         }
         else
+*/
         {
           m_Map[x][y].terrain_col = 0;
           m_Map[x][y].terrain_row = 0;
@@ -163,7 +165,7 @@ void TileManager::Set_Map_Textures()
       }
       else if (height > LEVEL_MOUNTAIN_DWN)
       {
-        m_Map[x][y].terrain_col = rand() % 2 + 4;
+        m_Map[x][y].terrain_col = 3; //rand() % 2 + 4;
         m_Map[x][y].terrain_row = 2;
       }
       /////////////////////////////////////////////////////////////////////////
@@ -171,7 +173,7 @@ void TileManager::Set_Map_Textures()
       /////////////////////////////////////////////////////////////////////////
       else if (height > LEVEL_PLAINS_TOP)
       { // Plain
-        m_Map[x][y].terrain_col = rand() % 2;
+        m_Map[x][y].terrain_col = 2; //rand() % 2;
         m_Map[x][y].terrain_row = 2;
       }
       else if (height > LEVEL_PLAINS_MID)
@@ -252,6 +254,7 @@ void TileManager::ChangeChunks()
     }
    }
   */
+  Set_Map_Textures();
   for (short x = 0; x < CHUNK_SUM_X; ++x)
   {
     for (short y = 0; y < CHUNK_SUM_Z; ++y)
@@ -260,7 +263,7 @@ void TileManager::ChangeChunks()
     }
   }
   delete TileChunk::m_bounds;
-  Set_Map_Textures();
+
 #ifdef LOG_TIMING
   Logger::log().info() << "Time to change Chunks: " << clock()-time << " ms";
 #endif

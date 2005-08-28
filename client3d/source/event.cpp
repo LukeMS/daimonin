@@ -156,6 +156,7 @@ CEvent::~CEvent()
 void CEvent::setWorldPos(Vector3 &pos)
 {
   static Vector3 dPos = pos;
+  bool ui = false;
   /// East
   if (pos.x + dPos.x > TILE_SIZE)
   {
@@ -171,7 +172,7 @@ void CEvent::setWorldPos(Vector3 &pos)
       }
     }
     for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(TILES_SUM_X, y, tmp[y] );
-    pgTileManager->ChangeChunks();
+    ui = true;
   }
 
   /// West
@@ -189,8 +190,9 @@ void CEvent::setWorldPos(Vector3 &pos)
       }
     }
     for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(0, y, tmp[y] );
-    pgTileManager->ChangeChunks();
+        ui = true;
   }
+  
   /// South
   else if (pos.z + dPos.z > TILE_SIZE)
   {
@@ -206,7 +208,7 @@ void CEvent::setWorldPos(Vector3 &pos)
       }
     }
     for (short x = 0; x < TILES_SUM_X+1; ++x) pgTileManager->Set_Map_Height(x, TILES_SUM_Z, tmp[x] );
-    pgTileManager->ChangeChunks();
+        ui = true;
   }
 
   /// North
@@ -224,12 +226,15 @@ void CEvent::setWorldPos(Vector3 &pos)
       }
     }
     for (short x = 0; x < TILES_SUM_X+1; ++x) pgTileManager->Set_Map_Height(x, 0, tmp[x] );
-    pgTileManager->ChangeChunks();
+        ui = true;
   }
-
-  dPos+=pos;
-  pgTileManager->ControlChunks(pos);
-  mCamera->move(pos);
+    dPos+=pos;
+    pgTileManager->ControlChunks(pos);
+    if (ui == true)
+    {
+      pgTileManager->ChangeChunks();
+    }
+    mCamera->move(pos);
 
 
 
