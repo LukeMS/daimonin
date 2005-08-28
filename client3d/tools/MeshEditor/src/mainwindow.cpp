@@ -41,11 +41,11 @@ void MainWindow::cb_countAnimLength(Fl_Counter* o, void* v) {
   ((MainWindow*)(o->parent()->parent()->user_data()))->cb_countAnimLength_i(o,v);
 }
 
-inline void MainWindow::cb_Save_i(Fl_Button*, void*) {
+inline void MainWindow::cb_butSaveAnim_i(Fl_Button*, void*) {
   Skeleton::getSingleton().changeAnimLength();
 }
-void MainWindow::cb_Save(Fl_Button* o, void* v) {
-  ((MainWindow*)(o->parent()->parent()->user_data()))->cb_Save_i(o,v);
+void MainWindow::cb_butSaveAnim(Fl_Button* o, void* v) {
+  ((MainWindow*)(o->parent()->parent()->user_data()))->cb_butSaveAnim_i(o,v);
 }
 
 inline void MainWindow::cb_butRenameAnim_i(Fl_Button*, void*) {
@@ -62,12 +62,26 @@ void MainWindow::cb_butRenameMaterial(Fl_Button* o, void* v) {
   ((MainWindow*)(o->parent()->parent()->user_data()))->cb_butRenameMaterial_i(o,v);
 }
 
+inline void MainWindow::cb_countScaleModel_i(Fl_Counter*, void*) {
+  Editor::getSingleton().updateModelScale();
+}
+void MainWindow::cb_countScaleModel(Fl_Counter* o, void* v) {
+  ((MainWindow*)(o->parent()->parent()->user_data()))->cb_countScaleModel_i(o,v);
+}
+
+inline void MainWindow::cb_butScaleModel_i(Fl_Button*, void*) {
+  Editor::getSingleton().scaleModel();
+}
+void MainWindow::cb_butScaleModel(Fl_Button* o, void* v) {
+  ((MainWindow*)(o->parent()->parent()->user_data()))->cb_butScaleModel_i(o,v);
+}
+
 MainWindow::~MainWindow() {
 }
 
 MainWindow::MainWindow() {
   Fl_Double_Window* w;
-  { Fl_Double_Window* o = MWindow = new Fl_Double_Window(562, 631, "Daimonin (Ogre3d Mesh Editor) - Powered by FLTK");
+  { Fl_Double_Window* o = MWindow = new Fl_Double_Window(564, 743, "Daimonin (Ogre3d Mesh Editor) - Powered by FLTK");
     w = o;
     o->box(FL_THIN_UP_BOX);
     o->user_data((void*)(this));
@@ -114,16 +128,16 @@ MainWindow::MainWindow() {
       }
       o->end();
     }
-    { Fl_Group* o = panelNewAnimName = new Fl_Group(10, 255, 540, 175, "Animation");
+    { Fl_Group* o = panelNewAnimName = new Fl_Group(10, 520, 540, 175, "Animation");
       o->box(FL_SHADOW_BOX);
       o->labeltype(FL_EMBOSSED_LABEL);
       o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
-      { Fl_Choice* o = selAnimName = new Fl_Choice(70, 280, 465, 25, "Name:");
+      { Fl_Choice* o = selAnimName = new Fl_Choice(70, 545, 465, 25, "Name:");
         o->down_box(FL_BORDER_BOX);
         o->labeltype(FL_EMBOSSED_LABEL);
         o->callback((Fl_Callback*)cb_selAnimName);
       }
-      { Fl_Counter* o = countAnimLength = new Fl_Counter(125, 310, 135, 25);
+      { Fl_Counter* o = countAnimLength = new Fl_Counter(125, 575, 135, 25);
         o->labeltype(FL_EMBOSSED_LABEL);
         o->minimum(0.1);
         o->maximum(100);
@@ -132,66 +146,89 @@ MainWindow::MainWindow() {
         o->callback((Fl_Callback*)cb_countAnimLength);
         o->align(FL_ALIGN_LEFT);
       }
-      { Fl_Output* o = txtAnimNameStatus = new Fl_Output(70, 340, 465, 25, "Status:");
+      { Fl_Output* o = txtAnimNameStatus = new Fl_Output(70, 605, 465, 25, "Status:");
         o->color((Fl_Color)48);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Output* o = outAnimLen = new Fl_Output(70, 310, 50, 25, "Length:");
+      { Fl_Output* o = outAnimLen = new Fl_Output(70, 575, 50, 25, "Length:");
         o->color((Fl_Color)48);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Output* o = outAnimNewLen = new Fl_Output(265, 310, 50, 25);
+      { Fl_Output* o = outAnimNewLen = new Fl_Output(265, 575, 50, 25);
         o->color((Fl_Color)48);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Choice* o = selRenameAnim = new Fl_Choice(165, 395, 370, 25);
+      { Fl_Choice* o = selRenameAnim = new Fl_Choice(165, 660, 370, 25);
         o->down_box(FL_BORDER_BOX);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Button* o = new Fl_Button(320, 310, 215, 25, "Save New Length");
+      { Fl_Button* o = butSaveAnim = new Fl_Button(320, 575, 215, 25, "Save New Length");
         o->labeltype(FL_EMBOSSED_LABEL);
-        o->callback((Fl_Callback*)cb_Save);
+        o->callback((Fl_Callback*)cb_butSaveAnim);
       }
-      { Fl_Button* o = butRenameAnim = new Fl_Button(20, 395, 145, 25, "Rename Animation");
+      { Fl_Button* o = butRenameAnim = new Fl_Button(20, 660, 145, 25, "Rename Animation");
         o->labeltype(FL_EMBOSSED_LABEL);
         o->callback((Fl_Callback*)cb_butRenameAnim);
       }
-      { Fl_Box* o = new Fl_Box(20, 370, 515, 25, "Rename Animation Name");
+      { Fl_Box* o = new Fl_Box(20, 635, 515, 25, "Rename Animation Name");
         o->labeltype(FL_EMBOSSED_LABEL);
       }
       o->end();
     }
-    { Fl_Group* o = panelMaterial = new Fl_Group(10, 440, 540, 145, "Material");
+    { Fl_Group* o = panelMaterial = new Fl_Group(10, 360, 540, 150, "Material");
       o->box(FL_SHADOW_BOX);
       o->labeltype(FL_EMBOSSED_LABEL);
       o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
-      { Fl_Choice* o = selMaterialName = new Fl_Choice(70, 465, 465, 25, "Name:");
+      { Fl_Choice* o = selMaterialName = new Fl_Choice(70, 385, 465, 25, "Name:");
         o->down_box(FL_BORDER_BOX);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Output* o = txtMaterialNameStatus = new Fl_Output(70, 495, 465, 25, "Status:");
+      { Fl_Output* o = txtMaterialNameStatus = new Fl_Output(70, 415, 465, 25, "Status:");
         o->color((Fl_Color)48);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Choice* o = selRenameMaterial = new Fl_Choice(165, 550, 370, 25);
+      { Fl_Choice* o = selRenameMaterial = new Fl_Choice(165, 470, 370, 30);
         o->down_box(FL_BORDER_BOX);
         o->labeltype(FL_EMBOSSED_LABEL);
       }
-      { Fl_Button* o = butRenameMaterial = new Fl_Button(20, 550, 145, 25, "Rename Material");
+      { Fl_Button* o = butRenameMaterial = new Fl_Button(20, 470, 145, 30, "Rename Material");
         o->labeltype(FL_EMBOSSED_LABEL);
         o->callback((Fl_Callback*)cb_butRenameMaterial);
       }
-      { Fl_Box* o = new Fl_Box(20, 525, 515, 25, "Rename Material Name");
+      { Fl_Box* o = new Fl_Box(20, 445, 515, 25, "Rename Material Name");
         o->labeltype(FL_EMBOSSED_LABEL);
       }
       o->end();
     }
-    { Fl_Group* o = new Fl_Group(10, 595, 540, 30);
+    { Fl_Group* o = new Fl_Group(10, 705, 540, 25);
       o->box(FL_SHADOW_BOX);
       o->labeltype(FL_NO_LABEL);
       o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
-      { Fl_Box* o = new Fl_Box(15, 600, 530, 20, "(c) 2005 The Daimonin Team (http://daimonin.sourceforge.net)");
+      { Fl_Box* o = new Fl_Box(15, 705, 530, 25, "(c) 2005 The Daimonin Team (http://daimonin.sourceforge.net)");
         o->labeltype(FL_ENGRAVED_LABEL);
+      }
+      o->end();
+    }
+    { Fl_Group* o = panelScaleModel = new Fl_Group(10, 255, 540, 95, "Scale Model");
+      o->box(FL_SHADOW_BOX);
+      o->labeltype(FL_EMBOSSED_LABEL);
+      o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
+      { Fl_Counter* o = countScaleModel = new Fl_Counter(70, 280, 245, 25, "Scale:");
+        o->labeltype(FL_EMBOSSED_LABEL);
+        o->minimum(0.1);
+        o->maximum(100);
+        o->step(0.01);
+        o->value(1);
+        o->callback((Fl_Callback*)cb_countScaleModel);
+        o->align(FL_ALIGN_LEFT);
+      }
+      { Fl_Output* o = txtScaleModelStatus = new Fl_Output(70, 310, 465, 25, "Status:");
+        o->color((Fl_Color)48);
+        o->labeltype(FL_EMBOSSED_LABEL);
+      }
+      { Fl_Button* o = butScaleModel = new Fl_Button(320, 280, 215, 25, "Save New Size");
+        o->labeltype(FL_EMBOSSED_LABEL);
+        o->callback((Fl_Callback*)cb_butScaleModel);
       }
       o->end();
     }
