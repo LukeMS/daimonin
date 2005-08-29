@@ -75,8 +75,8 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
   mMouseCursor->show();
   mMouseX = mMouseY =0;
   Dialog ::getSingleton().Init();
-  TextWin = new CTextwindow("Message Window", -280, 300);
-  ChatWin = new CTextwindow("Chat Window"   , -280, 300);
+  TextWin = new CTextwindow("Message Window", -280, 300, win->getHeight());
+  ChatWin = new CTextwindow("Chat Window"   , -280, 300, win->getHeight());
   TextWin->setChild(ChatWin);
   ChatWin->Print("Welcome to Daimonin 3D.  ", TXT_YELLOW);
   ChatWin->Print("-----------------------------------------", TXT_YELLOW);
@@ -670,28 +670,16 @@ void CEvent::mouseMoved (MouseEvent *e)
 
 void CEvent::mouseDragged(MouseEvent *e)
 {
-  if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight))
-  {
-    return;
-  }
-  if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight))
-  {
-    return;
-  }
   mouseMoved(e);
+	  if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
+  if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
   e->consume();
 }
 
 void CEvent::mouseClicked (MouseEvent *e)
 {
-  if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY))
-  {
-    return;
-  }
-  if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY))
-  {
-    return;
-  }
+  if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
+  if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
   mouseMoved(e);
   e->consume();
 }

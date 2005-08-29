@@ -53,14 +53,15 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  CTextwindow(std::string name, Real Xpos, Real height, bool visible = true);
-  ~CTextwindow();
+  CTextwindow(std::string name, Real Xpos, Real height, int ScreenHeight, bool visible = true);
+  ~CTextwindow()
+  {}
   void Update();
   void Init();
   void setVisible(bool show);
   void OpenTextWin();
   void CloseTextWin();
-  bool MouseAction(int action, Real xpos, Real pos, Real yRelative = 0);
+  bool MouseAction(int action, Real xpos, Real pos);
   void Print(const char *newTextLine, ColourValue = TXT_GREEN);
   void setChild(CTextwindow *Child);
   void setDimension(Real x, Real y, Real w, Real h);
@@ -84,6 +85,8 @@ private:
   }
   row[SIZE_STRING_BUFFER];
   static int mInstanceNr;
+  static int  mDragWinNr;
+  static int  mScreenHeight;
   CTextwindow *mChild, *mParent;
   Overlay *mOverlay;
   OverlayContainer *mContainerFrame;
@@ -98,6 +101,7 @@ private:
   bool mIsClosing, mIsOpening; // User pressed open/close button.
   bool mVisible;
   bool mDragging;
+  int  mThisWindowNr;
   int  mRowsToScroll;
   int  mSumRows;
   int  mPrintPos;

@@ -32,11 +32,11 @@ http://www.gnu.org/licenses/licenses.html
 #include "spell_manager.h"
 #include "TileChunk.h"
 
-
 using namespace Ogre;
 
 const int SUM_MIPMAPS = 0;
 Camera *mCamera = 0;
+
 /// ========================================================================
 /// Start the example
 /// ========================================================================
@@ -130,7 +130,7 @@ bool DaimoninClient::setup(void)
   /////////////////////////////////////////////////////////////////////////
   /// Set default mipmap level (NB some APIs ignore this)
   /////////////////////////////////////////////////////////////////////////
-//  TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
+  // TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
   /////////////////////////////////////////////////////////////////////////
   /// Optional override method where you can perform resource group loading
   /// Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -139,7 +139,6 @@ bool DaimoninClient::setup(void)
   ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
   Event= new CEvent(mWindow, mCamera, mMouseMotionListener, mMouseListener);
   mRoot->addFrameListener(Event);
-  Event->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
   return true;
 }
 
@@ -148,10 +147,10 @@ bool DaimoninClient::setup(void)
 /// ========================================================================
 void DaimoninClient::setupResources(void)
 {
-  // Load resource paths from config file
+  /// Load resource paths from config file
   ConfigFile cf;
   cf.load("resources.cfg");
-  // Go through all sections & settings in the file
+  /// Go through all sections & settings in the file
   ConfigFile::SectionIterator seci = cf.getSectionIterator();
   String secName, typeName, archName;
   while (seci.hasMoreElements())
