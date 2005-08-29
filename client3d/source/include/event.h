@@ -70,16 +70,10 @@ public:
   {
     mLight[nr] = light;
   }
-  void setResolutionMember(int SreenWidth, int SreenHeight)
-  {
-    mSreenHeight = SreenHeight;
-    mSreenWidth  = SreenWidth;
-  }
   Camera *getCamera()
   {
     return mCamera;
   }
-
   void Set_pgraphics(TileManager* mTileManager)
   {
     pgTileManager = mTileManager;
@@ -105,7 +99,6 @@ private:
   RenderWindow* mWindow;
   Camera* mCamera;
   Light *mSpotLight, *mVolLight;
-  int mSreenHeight, mSreenWidth;
   Real mMouseX, mMouseY;
   Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
   TextureFilterOptions mFiltering;

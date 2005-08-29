@@ -341,8 +341,6 @@ void NPC::update(const FrameEvent& event)
         pPos.z -= 534;
         Real height = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*3;
         mNode->setPosition(pPos.x, pPos.y-370 + height, tt -390 +height);
-
-
       }
     }
     else

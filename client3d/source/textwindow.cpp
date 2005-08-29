@@ -27,16 +27,18 @@ CTextwindow *ChatWin=0, *TextWin=0;
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
-int CTextwindow::mInstanceNr = 0;
-
+int CTextwindow::mInstanceNr  = -1;
+int CTextwindow::mDragWinNr   = -1;
+int CTextwindow::mScreenHeight= -1;
 //=================================================================================================
 // Constructor.
 //=================================================================================================
-CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible)
+CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHeight, bool visible)
 {
   /////////////////////////////////////////////////////////////////////////
   // Clone all OverlayElemnts from templates.
   /////////////////////////////////////////////////////////////////////////
+  mThisWindowNr = ++mInstanceNr;
   std::string name= StringConverter::toString(mInstanceNr)+"_TextWindow/";
   mOverlay        = OverlayManager::getSingleton().create(name + "Overlay");
   mOverlay->setZOrder(510-mInstanceNr);
@@ -73,72 +75,38 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
   mElementTitleTxt1= OverlayManager::getSingleton(). cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
   mElementTitleTxt1->setCaption(title);
   static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt1);
-  ++mInstanceNr;
+
 
   /////////////////////////////////////////////////////////////////////////
-  // Init all variables.
+  /// Init all variables.
   /////////////////////////////////////////////////////////////////////////
   mChild        = 0;
   mParent       = 0;
-
   mMinHeight    = -mElementTitle->getHeight();
   mMaxHeight    = -FONT_SIZE * MAX_TEXT_LINES;
-
-  if (-height < mMaxHeight) height = mMaxHeight;
-
-  if (!mParent)
-  {
-    mContainerFrame->setTop(-height);
-  }
-
-  else
-  {
-    mContainerFrame->setTop(-height+mParent->mContainerFrame->getTop() );
-  }
-
+  if (-height < mMaxHeight)   height = mMaxHeight;
+  if (!mParent)   mContainerFrame->setTop(-height);
+  else  mContainerFrame->setTop(-height+mParent->mContainerFrame->getTop() );
   SizeChanged();
   mLastHeight   =  mContainerFrame->getHeight();
-
-  for (int j = 0; j < SIZE_STRING_BUFFER; ++j)
-  {
-    row[j].str = "";
-  }
-
-  mIsClosing  = false;
-  mIsOpening  = false;
-  mDragging  = false;
-  mBufferPos  = 0;
-  mPrintPos  = 0;
+  for (int j = 0; j < SIZE_STRING_BUFFER; ++j)  row[j].str = "";
+  mIsClosing    = false;
+  mIsOpening    = false;
+  mBufferPos    = 0;
+  mPrintPos     = 0;
   mRowsToScroll = 0;
-  mScroll   = 0.0f;
+  mScroll       = 0.0f;
+  mScreenHeight = ScreenHeight;
   setVisible(visible);
 }
-
-//=================================================================================================
-// Destructor.
-//=================================================================================================
-CTextwindow::~CTextwindow()
-{}
-
-//=================================================================================================
-
-//=================================================================================================
-void CTextwindow::Init()
-{}
 
 //=================================================================================================
 // Show/Hide the Overlay.
 //=================================================================================================
 void CTextwindow::setVisible(bool show)
 {
-  if (show)
-  {
-    mOverlay->show();
-  }
-  else
-  {
-    mOverlay->hide();
-  }
+  if (show) mOverlay->show();
+  else      mOverlay->hide();
 }
 
 //=================================================================================================
@@ -166,9 +134,8 @@ void CTextwindow::OpenTextWin()
 void CTextwindow::Update()
 {
   /////////////////////////////////////////////////////////////////////////
-  // User pressed the close-button.
+  /// User pressed the close-button.
   /////////////////////////////////////////////////////////////////////////
-
   if (mIsClosing)
   {
     Real top = mContainerFrame->getTop() + CLOSING_SPEED;
@@ -176,7 +143,8 @@ void CTextwindow::Update()
     {
       if (top >= mMinHeight)
       {
-        top = mMinHeight; mIsClosing = false;
+        top = mMinHeight;
+        mIsClosing = false;
       }
     }
     else
@@ -212,83 +180,84 @@ void CTextwindow::Update()
   }
 
   /////////////////////////////////////////////////////////////////////////
-  // Scroll the text.
+  /// Scroll the text.
   /////////////////////////////////////////////////////////////////////////
-  if (mRowsToScroll)
-  {
-    Scrolling();
-  }
+  if (mRowsToScroll)  Scrolling();
 }
 
 //=================================================================================================
 // Mouse action was reported.
 //=================================================================================================
-bool CTextwindow::MouseAction(int action, Real xpos, Real ypos, Real yRelative)
+bool CTextwindow::MouseAction(int action, Real xpos, Real ypos)
 {
   if (action == M_RELEASED)
   {
-    mDragging = false; return true;
-  }
-  // Was the mouse action this Overlay?
-  if (!mContainerFrame-> contains(xpos, ypos) && !mDragging)
-  {
+    mDragWinNr = -1;
     return true;
   }
-  // Check all buttons.
-  if (mElementButUp  ->contains(xpos, ypos))
+  /////////////////////////////////////////////////////////////////////////
+  /// Was the mouse action this Overlay?
+  /////////////////////////////////////////////////////////////////////////
+  if (!mContainerFrame-> contains(xpos, ypos) && mDragWinNr < 0) return true;
+  /////////////////////////////////////////////////////////////////////////
+  /// Check all buttons.
+  /////////////////////////////////////////////////////////////////////////
+  if (mElementButUp->contains(xpos, ypos))
   {
     Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
     OpenTextWin();
     return true;
   }
-
   if (mElementButDown->contains(xpos, ypos))
   {
     Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
     CloseTextWin();
     return true;
   }
-
-  // Check for resize.
-  if ((mElementTitle  ->contains(xpos, ypos) && action == M_DRAGGED) || mDragging)
+  /////////////////////////////////////////////////////////////////////////
+  /// Check for resize.
+  /////////////////////////////////////////////////////////////////////////
+  if (action != M_DRAGGED || (!mElementTitle ->contains(xpos, ypos) && mDragWinNr < 0)) return true;
+  //////////////////////////////////////////////////////////////////////
+  /// Are we resizing already another window?
+  //////////////////////////////////////////////////////////////////////
+  if (mDragWinNr < 0) mDragWinNr= mThisWindowNr;
+  if (mDragWinNr != mThisWindowNr) return true;
+  /////////////////////////////////////////////////////////////////////////
+  /// Do the resitze.
+  /////////////////////////////////////////////////////////////////////////
+  bool ret = true;
+  Real top = (ypos-1) * mScreenHeight;
+  Logger::log().info() << mScreenHeight;
+  if (mParent)
   {
-    Real top;
-    bool ret  = true;
-    mDragging = true;
-    top = mContainerFrame->getTop() +  yRelative;
-
-    if (mParent)
+    if (top - mParent->mContainerFrame->getTop() >= mMinHeight )
     {
-      if      (top - mParent->mContainerFrame->getTop() >= mMinHeight )
-      {
-        top = mParent->mContainerFrame->getTop()+mMinHeight;
-        ret = false;
-      }
-
-      else if (top - mParent->mContainerFrame->getTop() <= mMaxHeight )
-      {
-        top = mParent->mContainerFrame->getTop()+mMaxHeight;
-        ret = false;
-      }
-
+      top = mParent->mContainerFrame->getTop()+mMinHeight;
+      ret = false;
     }
-
-    else
+    else if (top - mParent->mContainerFrame->getTop() <= mMaxHeight )
     {
-      if      (top >= mMinHeight)
-      {
-        top = mMinHeight; ret = false;
-      }
-      else if (top <= mMaxHeight)
-      {
-        top = mMaxHeight; ret = false;
-      }
+      top = mParent->mContainerFrame->getTop()+mMaxHeight;
+      ret = false;
     }
-    mContainerFrame->setTop(top);
-    SizeChanged();
-    return ret;
   }
-  return true;
+  else
+  {
+    if (top >= mMinHeight)
+    {
+      top = mMinHeight;
+      ret = false;
+    }
+    else if (top <= mMaxHeight)
+    {
+      top = mMaxHeight;
+      ret = false;
+    }
+  }
+  mContainerFrame->setTop(top);
+  SizeChanged();
+  return ret;
 }
 
 //=================================================================================================
@@ -296,26 +265,19 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos, Real yRelative)
 //=================================================================================================
 void CTextwindow::SizeChanged()
 {
-  if (mParent)
-    mFirstYPos = -(mContainerFrame->getTop()- mParent->mContainerFrame->getTop());
-  else
-    mFirstYPos = -mContainerFrame->getTop();
+  if (!mParent) mFirstYPos = -mContainerFrame->getTop();
+  else mFirstYPos = -(mContainerFrame->getTop()- mParent->mContainerFrame->getTop());
+
   mContainerFrame->setHeight(mFirstYPos);
   mSumRows   = (int) ((mFirstYPos+6) / FONT_SIZE);
-  if (mSumRows > MAX_TEXT_LINES)
-  {
-    mSumRows = MAX_TEXT_LINES;
-  }
+  if (mSumRows > MAX_TEXT_LINES) mSumRows = MAX_TEXT_LINES;
   int i=0;
   for (; i < mSumRows; ++i)
   {
     mElementLine[i]->setTop(mFirstYPos -i*FONT_SIZE);
     mElementLine[i]->show();
   }
-  for (; i < MAX_TEXT_LINES; ++i)
-  {
-    mElementLine[i]->hide();
-  }
+  for (; i < MAX_TEXT_LINES; ++i) mElementLine[i]->hide();
   DockChild();
 }
 
@@ -324,7 +286,7 @@ void CTextwindow::SizeChanged()
 //=================================================================================================
 void CTextwindow::DockChild()
 {
-  if (!mChild)  return;
+  if (!mChild) return;
   mChild->mContainerFrame->setTop(mContainerFrame->getTop()-mChild->mContainerFrame->getHeight());
 }
 
