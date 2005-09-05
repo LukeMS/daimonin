@@ -1899,7 +1899,7 @@ void do_throw(object *op, object *toss_item, int dir)
 #endif
 
     /* the damage bonus from the force of the throw */
-    dam = (int) (str_factor * (float) dam_bonus[eff_str]);
+    dam = (int) (str_factor * (float) (dam_bonus[eff_str]/10));
 
     /*    LOG(llevDebug," item %s weight= %d (dam:%d str_factor:%f bonus: %d)\n",throw_ob->name,throw_ob->weight, dam, str_factor, dam_bonus[eff_str]);*/
     /* Now, lets adjust the properties of the thrown_ob. */
@@ -1915,7 +1915,7 @@ void do_throw(object *op, object *toss_item, int dir)
     throw_ob->speed = 0.2f;
     /* item damage. Eff_str and item weight influence damage done */
     weight_f = (throw_ob->weight / 2000) > MAX_STAT ? MAX_STAT : (throw_ob->weight / 2000);
-    throw_ob->stats.dam += (dam / 3) + dam_bonus[weight_f] + (throw_ob->weight / 15000) - 2;
+    throw_ob->stats.dam += (dam / 3) + (dam_bonus[weight_f]/10 )+ (throw_ob->weight / 15000) - 2;
 
     /* chance of breaking. Proportional to force used and weight of item */
     throw_ob->stats.food = (dam / 2) + (throw_ob->weight / 60000);
@@ -1953,15 +1953,15 @@ void do_throw(object *op, object *toss_item, int dir)
         {
             op->chosen_skill->stats.maxsp = throw_ob->last_grace;
             /* i don't want overpower the throwing - so dam_bonus/2 */
-            throw_ob->stats.dam = FABS((int)
-                                       ((float)
-                                        (throw_ob->stats.dam + dam_bonus[op->stats.Str] / 2) * lev_damage[SK_level(op)]));
+            throw_ob->stats.dam = 
+                FABS((int)(((float)(throw_ob->stats.dam + (dam_bonus[op->stats.Str]/2))* lev_damage[SK_level(op)])/10.0f));
+
             /* hm, i want not give to much boni for str */
             throw_ob->stats.wc += thaco_bonus[op->stats.Dex] + SK_level(op);
         }
         else /* we use level to add boni here-  as higher in level as more dangerous */
         {
-            throw_ob->stats.dam = FABS((int) ((float) (throw_ob->stats.dam) * lev_damage[op->level]));
+            throw_ob->stats.dam = FABS((int) (((float)(throw_ob->stats.dam) * lev_damage[op->level])/10.0f));
             throw_ob->stats.wc += 10 + op->level;
         }
 

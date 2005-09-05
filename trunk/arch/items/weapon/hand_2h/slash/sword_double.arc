@@ -10,7 +10,7 @@ item_skill 4
 face sword_double.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750

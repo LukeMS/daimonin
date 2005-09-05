@@ -874,4 +874,3 @@ void doeric_server_write(void)
         }
     } /* for() end */
 }
-

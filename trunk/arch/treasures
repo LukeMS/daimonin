@@ -2257,5 +2257,5 @@ treasureone loot_device
 end
 ################ test drop (for testmaps)
 treasureone random_test
-  list book_misc
+  arch ring_generic
 end

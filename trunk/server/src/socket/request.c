@@ -923,7 +923,7 @@ void esrv_update_stats(player *pl)
         AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
         AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
         AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
-        AddIfShort(pl->last_stats.dam, pl->client_dam, CS_STAT_DAM);
+        AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
         AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
     }
 

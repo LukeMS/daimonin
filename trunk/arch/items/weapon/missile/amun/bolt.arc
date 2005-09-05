@@ -4,7 +4,7 @@ layer 3
 race crossbow bolts
 attack_cleave 100
 last_grace 8
-dam 4
+dam 40
 wc 0
 last_sp 4
 type 13

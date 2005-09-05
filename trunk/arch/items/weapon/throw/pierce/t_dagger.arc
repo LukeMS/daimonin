@@ -5,7 +5,7 @@ layer 3
 face t_dagger.101
 weapon_speed 0.027
 attack_pierce 100
-dam 3
+dam 30
 last_grace 11
 last_sp 7
 nrof 1

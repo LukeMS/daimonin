@@ -10,7 +10,7 @@ sub_type 9
 face naginata.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500

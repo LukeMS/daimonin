@@ -10,7 +10,7 @@ sub_type 6
 face forc_military.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2250
 value 750

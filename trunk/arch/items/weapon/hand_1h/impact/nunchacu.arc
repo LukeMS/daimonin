@@ -4,7 +4,7 @@ face nunchacu.101
 layer 3
 weapon_speed 0.025
 attack_impact 100
-dam 4
+dam 40
 wc 5
 type 15
 sub_type 0

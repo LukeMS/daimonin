@@ -57,19 +57,18 @@ _races          item_race_table[RACE_NAME_INIT] =
 #define ENCUMBRANCE_LIMIT 65.0f
 
 
-/* STR - damage boni for melee weapons */
 int             dam_bonus[MAX_STAT + 1]         =
 {
-    -5, -4, -4, -3, -3, -3, -2, -2, -2, -1, -1,/* 0-10: dmg malus */
-    0, 0, 0, 0, 0, /* 11-15 = nothing */
-    1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 6, 7, 8, 10, 12 /* 16-30 = boni */
+    50, 45, 40, 36, 33, 30, 26, 23, 20, 15, 10,/* 0-10: dmg malus */
+        0, 1, 2, 3, 5, /* 11-15 = not much */
+        10, 15, 20, 25, 30, 33, 36, 40, 45, 50, 60, 70, 80, 100, 120 /* 16-30 = good boni */
 };
 
 /* DEX  - wc boni */
 int             thaco_bonus[MAX_STAT + 1]       =
 {
     -5, -4, -4, -3, -3, -3, -2, -2, -2, -1, -1,/* 0-10: dmg malus */
-    0, 0, 0, 0, 0, /* 11-15 = nothing */
+        0, 0, 0, 0, 0, /* 11-15 = nothing */
     1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 7, 8 /* 16-30 = boni */
 };
 
@@ -876,9 +875,11 @@ void fix_player(object *op)
     float               f, max = 9, added_speed = 0, bonus_speed = 0, speed_reduce_from_disease = 1, tmp_con, reg_sec;
 
 
+    LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", query_name(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
     {
-        LOG(llevDebug, "fix_player(): called for object %s with FLAG_NO_FIX_PLAYER set\n", query_name(op));
+        /* we are calling fix_player with this flag for example when manually applying an item */
+        /*LOG(llevDebug, "fix_player(): called for object %s with FLAG_NO_FIX_PLAYER set\n", query_name(op));*/
         return;
     }
     /* ok, in crossfire, fix_player is called for objects not for players
@@ -1724,11 +1725,13 @@ void fix_player(object *op)
     }
 
     /* now the last adds - stat boni to dam and wc! */
-    op->stats.dam += dam_bonus[op->stats.Str];
+    op->stats.dam = (int)((float)(op->stats.dam+dam_bonus[op->stats.Str])/10.0f);
     if (op->stats.dam < 0)
         op->stats.dam = 0;
 
-    CONTR(op)->client_dam = (sint16) ((float) op->stats.dam * f);
+//    LOG(-1,"ADJUST: real dmg: %d - cond: %f - new: %d\n", op->stats.dam, f, (sint16)((float) op->stats.dam * f));
+    op->stats.dam = (sint16)((float) op->stats.dam * f); /* and finally the item condition! */
+
     op->stats.wc += thaco_bonus[op->stats.Dex];
 
     /* thats for the client ... */

@@ -47,7 +47,7 @@ extern char    *spellpathnames[NRSPELLPATHS];
 extern float    cha_bonus[MAX_STAT + 1];
 extern int      thaco_bonus[MAX_STAT + 1];
 extern int      turn_bonus[MAX_STAT + 1];
-extern int      dam_bonus[MAX_STAT + 1];
+extern int      dam_bonus[MAX_STAT + 1]; /* real boni in *10 form */
 extern int      savethrow[111];
 extern int      turn_bonus[MAX_STAT + 1];
 extern int      learn_prayer_chance[MAX_STAT + 1];

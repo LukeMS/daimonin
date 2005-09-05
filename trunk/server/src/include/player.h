@@ -185,7 +185,7 @@ typedef struct pl_player
     int                 firemode_tag1;
     int                 firemode_tag2;
 
-    int                    gmaster_mode;
+    int                  gmaster_mode;
     struct oblnk        *gmaster_node;
 
     /* mute and "communication" frequency control */
@@ -225,7 +225,7 @@ typedef struct pl_player
     uint32              target_map_pos;         /* last target search position */
     uint32              mode;                   /* Mode of player for pickup. */
     sint32              group_id;                /* unique group id number - this is a unique number like the object count */
-    sint32                group_status;            /* status of invite or group */
+    sint32              group_status;            /* status of invite or group */
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.
@@ -239,7 +239,6 @@ typedef struct pl_player
     uint32              update_ticker;          /* global_round tick where player was updated */
     float               last_speed;
 
-    sint16              client_dam; /* condition adjusted damage send to client */
     sint16              age;        /* the age of our player */
     sint16              age_add;    /* unnatural changes to our age - can be removed by restoration */
     sint16              age_changes; /* permanent changes .... very bad (or good when younger) */
