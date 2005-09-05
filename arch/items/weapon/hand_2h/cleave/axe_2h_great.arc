@@ -4,7 +4,7 @@ layer 3
 face axe_2h_great.101
 attack_cleave 100
 weapon_speed 0.02
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7

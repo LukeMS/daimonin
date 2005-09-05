@@ -998,6 +998,7 @@ object * find_arrow(object *op, const char *type)
 static void fire_bow(object *op, int dir)
 {
     object *left_cont, *bow, *arrow = NULL, *left, *tmp_op;
+    float dmg_tmp;
     tag_t   left_tag;
 
     if (!dir)
@@ -1068,8 +1069,10 @@ static void fire_bow(object *op, int dir)
     arrow->stats.wc += (bow->magic + arrow->magic + SK_level(op) + thaco_bonus[op->stats.Dex] + bow->stats.wc);
 
     /* monster.c 970 holds the arrow code for monsters */
-    arrow->stats.dam += dam_bonus[op->stats.Str] / 2 + bow->stats.dam + bow->magic + arrow->magic;
-    arrow->stats.dam = FABS((int) ((float) (arrow->stats.dam * lev_damage[SK_level(op)])));
+    /* moving dmg code to dmg/10 */
+    dmg_tmp = ((float)arrow->stats.dam + (float)bow->stats.dam + ((float)dam_bonus[op->stats.Str]/2.0f)/10.0f)
+              + (float)bow->magic + (float)arrow->magic;
+    arrow->stats.dam = (int) FABS(arrow->stats.dam * lev_damage[SK_level(op)]);
 
     /* adjust with the lower of condition */
     if (bow->item_condition > arrow->item_condition)

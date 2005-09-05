@@ -66,7 +66,7 @@ static char * cleanup_chat_string(char *ustring)
 static int check_mute(object *op, int mode)
 {
     if(op->type != PLAYER || CONTR(op)==NULL)
-        return 1;
+        return TRUE;
 
     if(CONTR(op)->mute_counter)
     {

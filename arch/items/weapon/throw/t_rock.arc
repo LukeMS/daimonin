@@ -5,7 +5,7 @@ name rock
 face t_rock.101
 weapon_speed 0.035
 attack_impact 100
-dam 1
+dam 10
 last_grace 11
 last_sp 7
 type 13

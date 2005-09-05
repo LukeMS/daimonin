@@ -4,7 +4,7 @@ layer 3
 race arrows
 face arrow.101
 last_grace 7
-dam 3
+dam 30
 wc 0
 last_sp 5
 attack_pierce 100

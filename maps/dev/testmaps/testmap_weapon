@@ -1832,7 +1832,19 @@ arch floor_ostone1
 x 14
 y 14
 end
+arch shortsword
+identified 1
+dam 50
+x 14
+y 14
+end
 arch floor_ostone1
+x 14
+y 15
+end
+arch shortsword
+identified 1
+dam 48
 x 14
 y 15
 end
@@ -1840,7 +1852,19 @@ arch floor_ostone1
 x 14
 y 16
 end
+arch shortsword
+identified 1
+dam 46
+x 14
+y 16
+end
 arch floor_ostone1
+x 14
+y 17
+end
+arch shortsword
+identified 1
+dam 44
 x 14
 y 17
 end
@@ -1848,7 +1872,18 @@ arch floor_ostone1
 x 14
 y 18
 end
+arch shortsword
+identified 1
+dam 42
+x 14
+y 18
+end
 arch floor_ostone1
+x 14
+y 19
+end
+arch shortsword
+identified 1
 x 14
 y 19
 end
@@ -2036,7 +2071,20 @@ arch floor_ostone1
 x 16
 y 14
 end
+arch shortsword
+identified 1
+item_quality 100
+item_condition 50
+x 16
+y 14
+end
 arch floor_ostone1
+x 16
+y 15
+end
+arch shortsword
+identified 1
+item_quality 100
 x 16
 y 15
 end
@@ -2044,7 +2092,19 @@ arch floor_ostone1
 x 16
 y 16
 end
+arch shortsword
+identified 1
+item_quality 95
+x 16
+y 16
+end
 arch floor_ostone1
+x 16
+y 17
+end
+arch shortsword
+identified 1
+item_quality 90
 x 16
 y 17
 end
@@ -2052,7 +2112,19 @@ arch floor_ostone1
 x 16
 y 18
 end
+arch shortsword
+identified 1
+item_quality 85
+x 16
+y 18
+end
 arch floor_ostone1
+x 16
+y 19
+end
+arch shortsword
+identified 1
+item_quality 80
 x 16
 y 19
 end

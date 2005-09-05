@@ -2679,7 +2679,7 @@ Object grassd_8
 name grass
 type 71
 editor_folder floors/grass
-face grassd_7.101
+face grassd_8.101
 no_teleport 1
 layer 1
 terrain_type 1
@@ -14071,7 +14071,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 3
 material 18
@@ -14089,7 +14089,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 3
 material 18
@@ -14107,7 +14107,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 3
 material 18
@@ -14125,7 +14125,7 @@ attack_cleave 100
 weapon_speed 0.02
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 3
 material 18
@@ -14143,7 +14143,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 3
 material 18
@@ -14161,7 +14161,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 4
 sub_type 3
 material 18
@@ -14177,7 +14177,7 @@ layer 3
 face axe_small.101
 attack_cleave 100
 weapon_speed 0.025
-dam 4
+dam 40
 wc 4
 sub_type 3
 material 18
@@ -14195,7 +14195,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 3
 material 18
@@ -14213,7 +14213,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 3
 material 18
@@ -14231,7 +14231,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 3
 material 18
@@ -14247,7 +14247,7 @@ layer 3
 face pick_axe.101
 attack_cleave 100
 weapon_speed 0.02
-dam 4
+dam 40
 wc 4
 sub_type 3
 material 18
@@ -14263,7 +14263,7 @@ layer 3
 face whip.101
 attack_cleave 100
 weapon_speed 0.025
-dam 4
+dam 40
 wc 5
 sub_type 3
 material 8
@@ -14281,7 +14281,7 @@ attack_cleave 100
 weapon_speed 0.0225
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 3
 material 8
@@ -14299,7 +14299,7 @@ weapon_speed 0.02
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14315,7 +14315,7 @@ face club.101
 layer 3
 weapon_speed 0.02
 attack_impact 100
-dam 4
+dam 40
 wc 4
 sub_type 0
 material 16
@@ -14333,7 +14333,7 @@ weapon_speed 0.02
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 4
 sub_type 0
 material 16
@@ -14351,7 +14351,7 @@ weapon_speed 0.02
 attack_impact 100
 item_level 3
 item_skill 4
-dam 4
+dam 40
 wc 3
 sub_type 0
 material 16
@@ -14369,7 +14369,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 4
 sub_type 0
 material 16
@@ -14387,7 +14387,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14405,7 +14405,7 @@ weapon_speed 0.02
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 0
 material 18
@@ -14423,7 +14423,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14441,7 +14441,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 0
 material 18
@@ -14457,7 +14457,7 @@ face hammer_small.101
 layer 3
 weapon_speed 0.025
 attack_impact 100
-dam 4
+dam 40
 wc 4
 sub_type 0
 material 18
@@ -14475,7 +14475,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14493,7 +14493,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 0
 material 18
@@ -14511,7 +14511,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14529,7 +14529,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 0
 material 18
@@ -14547,7 +14547,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14565,7 +14565,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14583,7 +14583,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 0
 material 18
@@ -14601,7 +14601,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14617,7 +14617,7 @@ face mstar_small.101
 layer 3
 weapon_speed 0.025
 attack_impact 100
-dam 4
+dam 40
 wc 4
 sub_type 0
 material 18
@@ -14633,7 +14633,7 @@ face nunchacu.101
 layer 3
 weapon_speed 0.025
 attack_impact 100
-dam 4
+dam 40
 wc 5
 sub_type 0
 material 18
@@ -14651,7 +14651,7 @@ weapon_speed 0.025
 attack_impact 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 0
 material 18
@@ -14669,7 +14669,7 @@ weapon_speed 0.0225
 attack_impact 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 0
 material 18
@@ -14687,7 +14687,7 @@ weapon_speed 0.02
 attack_pierce 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 4
 sub_type 2
 material 2
@@ -14705,7 +14705,7 @@ weapon_speed 0.025
 attack_pierce 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 2
 material 2
@@ -14721,7 +14721,7 @@ layer 3
 face dagger.101
 weapon_speed 0.0225
 attack_pierce 100
-dam 4
+dam 40
 wc 4
 sub_type 2
 material 2
@@ -14737,7 +14737,7 @@ layer 3
 face dagger_large.101
 weapon_speed 0.025
 attack_pierce 100
-dam 4
+dam 40
 wc 5
 sub_type 2
 material 2
@@ -14753,7 +14753,7 @@ layer 3
 face dagger_small.101
 weapon_speed 0.02
 attack_pierce 100
-dam 4
+dam 40
 wc 4
 sub_type 2
 material 2
@@ -14771,7 +14771,7 @@ weapon_speed 0.025
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 2
 material 2
@@ -14789,7 +14789,7 @@ weapon_speed 0.02
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 2
 material 2
@@ -14807,7 +14807,7 @@ weapon_speed 0.0225
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 2
 material 2
@@ -14825,7 +14825,7 @@ weapon_speed 0.0225
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 2
 material 2
@@ -14843,7 +14843,7 @@ weapon_speed 0.025
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 2
 material 2
@@ -14861,7 +14861,7 @@ weapon_speed 0.0225
 attack_pierce 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 2
 material 2
@@ -14879,7 +14879,7 @@ weapon_speed 0.0225
 attack_pierce 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 2
 material 2
@@ -14895,7 +14895,7 @@ layer 3
 face baselard.101
 weapon_speed 0.0225
 attack_slash 100
-dam 4
+dam 40
 wc 5
 sub_type 1
 material 2
@@ -14913,7 +14913,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -14931,7 +14931,7 @@ weapon_speed 0.02
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -14949,7 +14949,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -14967,7 +14967,7 @@ weapon_speed 0.02
 attack_slash 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 1
 material 2
@@ -14985,7 +14985,7 @@ weapon_speed 0.025
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -15003,7 +15003,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -15021,7 +15021,7 @@ weapon_speed 0.025
 attack_slash 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 1
 material 2
@@ -15039,7 +15039,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -15057,7 +15057,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 18
@@ -15073,7 +15073,7 @@ layer 3
 face shortsword.101
 weapon_speed 0.025
 attack_slash 100
-dam 4
+dam 40
 wc 4
 sub_type 1
 material 2
@@ -15091,7 +15091,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 1
 material 2
@@ -15109,7 +15109,7 @@ weapon_speed 0.02
 attack_slash 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 4
 sub_type 1
 material 2
@@ -15127,7 +15127,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 7
 item_skill 4
-dam 6
+dam 60
 wc 5
 sub_type 1
 material 2
@@ -15143,7 +15143,7 @@ layer 3
 face tulwar.101
 weapon_speed 0.0225
 attack_slash 100
-dam 4
+dam 40
 wc 5
 sub_type 1
 material 2
@@ -15161,7 +15161,7 @@ weapon_speed 0.0225
 attack_slash 100
 item_level 3
 item_skill 4
-dam 5
+dam 50
 wc 5
 sub_type 1
 material 2
@@ -15179,7 +15179,7 @@ attack_cleave 100
 weapon_speed 0.02
 item_level 10
 item_skill 4
-dam 8
+dam 80
 wc 7
 sub_type 7
 material 18
@@ -15195,7 +15195,7 @@ layer 3
 face axe_2h_battle.101
 attack_cleave 100
 weapon_speed 0.02
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7
@@ -15213,7 +15213,7 @@ layer 3
 face axe_2h_great.101
 attack_cleave 100
 weapon_speed 0.02
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7
@@ -15233,7 +15233,7 @@ attack_cleave 100
 weapon_speed 0.02
 item_level 10
 item_skill 4
-dam 8
+dam 80
 wc 7
 sub_type 7
 material 18
@@ -15251,7 +15251,7 @@ attack_cleave 100
 weapon_speed 0.02
 item_level 10
 item_skill 4
-dam 8
+dam 80
 wc 7
 sub_type 7
 material 18
@@ -15267,7 +15267,7 @@ layer 3
 face bo.101
 weapon_speed 0.02
 attack_impact 100
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7
@@ -15285,7 +15285,7 @@ layer 3
 face club_giant.101
 weapon_speed 0.0175
 attack_impact 100
-dam 6
+dam 60
 item_level 10
 item_skill 4
 wc 7
@@ -15305,7 +15305,7 @@ weapon_speed 0.0175
 attack_impact 100
 item_level 10
 item_skill 4
-dam 8
+dam 80
 wc 6
 sub_type 4
 material 16
@@ -15323,7 +15323,7 @@ weapon_speed 0.02
 attack_impact 100
 item_level 10
 item_skill 4
-dam 8
+dam 80
 wc 7
 sub_type 4
 material 18
@@ -15341,7 +15341,7 @@ weapon_speed 0.02
 attack_impact 100
 item_level 10
 item_skill 4
-dam 8
+dam 80
 wc 7
 sub_type 4
 material 18
@@ -15357,7 +15357,7 @@ layer 3
 face hammer_war_giant.101
 weapon_speed 0.02
 attack_impact 100
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7
@@ -15375,7 +15375,7 @@ layer 3
 face mstar_2h.101
 weapon_speed 0.02
 attack_impact 100
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7
@@ -15393,7 +15393,7 @@ layer 3
 face quaterstaff.101
 weapon_speed 0.0175
 attack_impact 100
-dam 8
+dam 80
 item_level 10
 item_skill 4
 wc 7
@@ -15416,7 +15416,7 @@ sub_type 6
 face forc.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 6
 weight 2250
 value 750
@@ -15434,7 +15434,7 @@ sub_type 6
 face forc_military.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2250
 value 750
@@ -15452,7 +15452,7 @@ sub_type 6
 face spear.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2250
 value 750
@@ -15470,7 +15470,7 @@ sub_type 6
 face trident.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2250
 value 750
@@ -15488,7 +15488,7 @@ item_skill 4
 face claymore.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750
@@ -15506,7 +15506,7 @@ item_skill 4
 face no_dachi.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750
@@ -15524,7 +15524,7 @@ sub_type 5
 face panzerstecher.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750
@@ -15542,7 +15542,7 @@ sub_type 5
 face scythe_war.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750
@@ -15560,7 +15560,7 @@ sub_type 5
 face sword2h.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750
@@ -15578,7 +15578,7 @@ item_skill 4
 face sword_double.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 7
 weight 2150
 value 750
@@ -15596,7 +15596,7 @@ sub_type 5
 face sword_great.101
 material 2
 material_real 65
-dam 8
+dam 80
 wc 6
 weight 2150
 value 750
@@ -15611,7 +15611,7 @@ item_level 11
 item_skill 4
 attack_cleave 100
 weapon_speed 0.0175
-dam 8
+dam 80
 wc 5
 ac 2
 sub_type 11
@@ -15630,7 +15630,7 @@ attack_cleave 100
 weapon_speed 0.0175
 item_level 11
 item_skill 4
-dam 8
+dam 80
 wc 5
 ac 2
 sub_type 11
@@ -15647,7 +15647,7 @@ layer 3
 face spetum.101
 attack_cleave 100
 weapon_speed 0.0175
-dam 8
+dam 80
 item_level 11
 item_skill 4
 wc 5
@@ -15668,7 +15668,7 @@ attack_cleave 100
 item_level 11
 item_skill 4
 weapon_speed 0.0175
-dam 8
+dam 80
 wc 5
 ac 2
 sub_type 11
@@ -15687,7 +15687,7 @@ weapon_speed 0.0175
 attack_impact 100
 item_level 11
 item_skill 4
-dam 8
+dam 80
 wc 5
 ac 2
 sub_type 8
@@ -15704,7 +15704,7 @@ layer 3
 face lucern_hammer.101
 weapon_speed 0.0175
 attack_impact 100
-dam 8
+dam 80
 item_level 11
 item_skill 4
 wc 5
@@ -15728,7 +15728,7 @@ sub_type 10
 face bill_guisarme.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15747,7 +15747,7 @@ sub_type 10
 face guisarme.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15766,7 +15766,7 @@ sub_type 10
 face partisan.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15785,7 +15785,7 @@ sub_type 10
 face pike.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15804,7 +15804,7 @@ sub_type 10
 face ranseur.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15823,7 +15823,7 @@ sub_type 9
 face fauchard.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15842,7 +15842,7 @@ item_skill 4
 face glaive.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15861,7 +15861,7 @@ sub_type 9
 face naginata.101
 material 18
 material_real 65
-dam 8
+dam 80
 wc 5
 ac 2
 weight 4500
@@ -15875,7 +15875,7 @@ layer 3
 race arrows
 face arrow.101
 last_grace 7
-dam 3
+dam 30
 wc 0
 last_sp 5
 attack_pierce 100
@@ -15898,7 +15898,7 @@ layer 3
 race crossbow bolts
 attack_cleave 100
 last_grace 8
-dam 4
+dam 40
 wc 0
 last_sp 4
 sub_type 2
@@ -15921,7 +15921,7 @@ race sling stones
 layer 3
 face sstone.101
 last_grace 7
-dam 3
+dam 30
 wc 0
 last_sp 4
 attack_impact 100
@@ -16122,7 +16122,7 @@ face t_axe.101
 layer 3
 weapon_speed 0.027
 attack_cleave 100
-dam 3
+dam 30
 last_grace 11
 last_sp 7
 nrof 1
@@ -16148,7 +16148,7 @@ weapon_speed 0.035
 attack_impact 100
 last_grace 11
 last_sp 7
-dam 3
+dam 30
 nrof 1
 sub_type 128
 animation t_hammer
@@ -16170,7 +16170,7 @@ layer 3
 face t_dagger.101
 weapon_speed 0.027
 attack_pierce 100
-dam 3
+dam 30
 last_grace 11
 last_sp 7
 nrof 1
@@ -16194,7 +16194,7 @@ face t_star.101
 layer 3
 weapon_speed 0.027
 attack_slash 100
-dam 3
+dam 30
 last_grace 11
 last_sp 7
 nrof 1
@@ -16220,7 +16220,7 @@ weapon_speed 0.035
 attack_impact 100
 last_grace 13
 last_sp 7
-dam 3
+dam 30
 sub_type 132
 nrof 1
 weight 20000
@@ -16243,7 +16243,7 @@ weapon_speed 0.035
 attack_impact 100
 last_grace 15
 last_sp 7
-dam 5
+dam 50
 sub_type 132
 nrof 1
 weight 120000
@@ -16263,7 +16263,7 @@ layer 3
 face t_rock.101
 weapon_speed 0.035
 attack_impact 100
-dam 1
+dam 10
 last_grace 11
 last_sp 7
 sub_type 132

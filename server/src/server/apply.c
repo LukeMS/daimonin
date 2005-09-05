@@ -2803,6 +2803,7 @@ int is_legal_2ways_exit(object *op, object *exit)
  *   0: player or monster can't apply objects of that type
  *   2: objects of that type can't be applied if not in inventory
  *   1: has been applied, or there was an error applying the object
+ *   4: no fix_player() needed.
  *
  * op is the object that is causing object to be applied, tmp is the object
  * being applied.
@@ -2821,7 +2822,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         if (op->type == PLAYER)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You should pay for it first.");
-            return 1;
+            return 4;
         }
         else
         {
@@ -2846,7 +2847,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         if (tmp->item_level > tmp_lev)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "The item level is to high to apply.");
-            return 1;
+            return 4;
         }
     }
 
@@ -2867,20 +2868,20 @@ int manual_apply(object *op, object *tmp, int aflag)
           }
           else
               new_draw_info(NDI_UNIQUE, 0, op, "Nothing happens. It seems you miss the right skill.");
-          return 1;
+          return 4;
 
         case CF_HANDLE:
           if(trigger_object_plugin_event(
                       EVENT_APPLY, tmp, op, NULL,
                       NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-              return 1; /* 1 = do not write an error message to the player */
+              return 4; /* 1 = do not write an error message to the player */
           new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
           play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE, SOUND_NORMAL);
           tmp->weight_limit = tmp->weight_limit ? 0 : 1;
           SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
           update_object(tmp, UP_OBJ_FACE);
           push_button(tmp);
-          return 1;
+          return 4;
 
         case TRIGGER:
           if (check_trigger(tmp, op))
@@ -2896,7 +2897,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           {
               new_draw_info(NDI_UNIQUE, 0, op, "The handle doesn't move.");
           }
-          return 1;
+          return 4;
 
         case EXIT:
           if (op->type != PLAYER)
@@ -2910,19 +2911,19 @@ int manual_apply(object *op, object *tmp, int aflag)
               if(trigger_object_plugin_event(
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                  return 1; /* 1 = do not write an error message to the player */
+                  return 4; /* 1 = do not write an error message to the player */
               /* Don't display messages for random maps. */
               if (tmp->msg && strncmp(EXIT_PATH(tmp), "/!", 2) && strncmp(EXIT_PATH(tmp), "/random/", 8))
                   new_draw_info(NDI_NAVY, 0, op, tmp->msg);
               enter_exit(op, tmp);
           }
-          return 1;
+          return 4;
 
         case SIGN:
             if (op->type == PLAYER)
             {
                 apply_sign(op, tmp);
-                return 1;
+                return 4;
             }
             return 0;
 
@@ -2930,7 +2931,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           if (op->type == PLAYER)
           {
               apply_book(op, tmp);
-              return 1;
+              return 4;
           }
           return 0;
 
@@ -2980,7 +2981,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                   return 1; /* 1 = do not write an error message to the player */
               (void) esrv_apply_container(op, tmp->env);
           }
-          return 1;
+          return 4;
 
         case CONTAINER:
           if (op->type == PLAYER)
@@ -2991,7 +2992,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                   return 1; /* 1 = do not write an error message to the player */
               (void) esrv_apply_container(op, tmp);
           }
-          return 1;
+          return 4;
 
         case TREASURE:
           apply_treasure(op, tmp);
@@ -3057,14 +3058,14 @@ int manual_apply(object *op, object *tmp, int aflag)
               if(trigger_object_plugin_event(
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                  return 1; /* 1 = do not write an error message to the player */
+                  return 4; /* 1 = do not write an error message to the player */
 
               get_tod(&tod);
               sprintf(buf, "It is %d minute%s past %d o'clock %s", tod.minute + 1, ((tod.minute + 1 < 2) ? "" : "s"),
       ((tod.hour % (HOURS_PER_DAY / 2) == 0) ? (HOURS_PER_DAY / 2) : ((tod.hour) % (HOURS_PER_DAY / 2))),
       ((tod.hour >= (HOURS_PER_DAY / 2)) ? "pm" : "am"));
               new_draw_info(NDI_UNIQUE, 0, op, buf);
-              return 1;
+              return 4;
           }
           return 0;
 
@@ -3076,7 +3077,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               shop_listing(op);
-              return 1;
+              return 4;
           }
           return 0;
 
@@ -3123,8 +3124,14 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
             return 0;
         }
     }
-
+    
+    /* skip not needed fix_player() calls for trivial action */
+    SET_FLAG(pl, FLAG_NO_FIX_PLAYER);
     tmp = manual_apply(pl, op, aflag);
+    CLEAR_FLAG(pl, FLAG_NO_FIX_PLAYER);
+    if(tmp == 1)
+        fix_player(pl);
+
     if (!quiet)
     {
         if (tmp == 0)

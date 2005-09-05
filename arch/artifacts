@@ -2283,7 +2283,7 @@ def_arch gauntlets
 editor 2:items/armour/gauntlets
 Object
 title of minor damage
-dam 1
+dam 10
 item_level_art 7
 type 100
 is_magical 1
@@ -2917,7 +2917,7 @@ def_arch sword
 editor 2:items/weapon
 Object
 title of damage
-dam_add 1
+dam_add 10
 item_level_art 5
 type 15
 is_magical 1
@@ -3694,7 +3694,7 @@ value 225000
 wc 2
 is_magical 1
 Dex 2
-dam 2
+dam 20
 end
 #
 Allowed ring_generic
@@ -3716,7 +3716,7 @@ value 125000
 wc 1
 is_magical 1
 Dex 1
-dam 1
+dam 10
 end
 #
 #
@@ -3898,7 +3898,7 @@ type 13
 is_magical 1
 value 50
 wc_add 7
-dam_add 1
+dam_add 10
 end
 #
 #
@@ -3914,7 +3914,7 @@ value 450
 type 13
 is_magical 1
 slaying none
-dam_add 1
+dam_add 10
 end
 #
 #
@@ -3937,7 +3937,7 @@ type 13
 wc_add 4
 is_assassin 1
 is_magical 1
-dam_add 1
+dam_add 10
 end
 #
 #

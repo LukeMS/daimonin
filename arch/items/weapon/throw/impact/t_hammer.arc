@@ -7,7 +7,7 @@ weapon_speed 0.035
 attack_impact 100
 last_grace 11
 last_sp 7
-dam 3
+dam 30
 nrof 1
 type 13
 sub_type 128

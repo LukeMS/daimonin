@@ -2612,11 +2612,11 @@ static int GameObject_SetFace(lua_State *L)
 static int GameObject_MakePet(lua_State *L)
 {
     lua_object *self, *owner;
-    int mode = 0;
+    int result, mode = 0;
 
     get_lua_args(L, "OO|i", &self, &owner, &mode);
 
-    int result = hooks->add_pet(owner->data.object, WHO, mode);
+    result = hooks->add_pet(owner->data.object, WHO, mode);
     
     lua_pushboolean(L, !result);
     return 1;

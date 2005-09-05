@@ -4,7 +4,7 @@ layer 3
 face spetum.101
 attack_cleave 100
 weapon_speed 0.0175
-dam 8
+dam 80
 item_level 11
 item_skill 4
 wc 5

@@ -954,8 +954,13 @@ char * describe_item(object *op)
                       strcat(retbuf, buf);
                   }
                   if (op->stats.dam)
-                  {
-                      sprintf(buf, "(dam%+d)", op->stats.dam);
+                  {                      /* all what a player can apply has dam*10 value */
+                      if(op->type == WEAPON || op->type == ARROW || op->type == AMULET || op->type == RING ||
+                            op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
+                            op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES)
+                          sprintf(buf, "(dam%+.1f)", ((float)op->stats.dam)/10.0f);
+                      else
+                          sprintf(buf, "(dam%+d)", op->stats.dam);
                       strcat(retbuf, buf);
                   }
                   if (op->stats.ac)

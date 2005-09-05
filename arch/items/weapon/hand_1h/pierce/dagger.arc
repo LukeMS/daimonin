@@ -4,7 +4,7 @@ layer 3
 face dagger.101
 weapon_speed 0.0225
 attack_pierce 100
-dam 4
+dam 40
 wc 4
 type 15
 sub_type 2

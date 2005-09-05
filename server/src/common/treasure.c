@@ -1441,6 +1441,7 @@ int set_ring_bonus(object *op, int bonus, int level)
             r = 13 + RANDOM() % 7;
     }
 
+    r =7;
     switch (r % 25)
     {
           /* Redone by MSW 2000-11-26 to have much less code.  Also,
@@ -1517,19 +1518,25 @@ int set_ring_bonus(object *op, int bonus, int level)
         case 6:
           set_attr_value(&op->stats, r, (signed char) (bonus + get_attr_value(&op->stats, r)));
           break;
-
+        
         case 7:
-          op->stats.dam += bonus;
-          if (bonus > 0 && (RANDOM() % 20 > 16 ? 1 : 0))
+          tmp = 1 + (RANDOM()%(10*bonus));
+          if(bonus<0)
+              op->stats.dam-=tmp;
+          else
           {
-              op->value = (int) ((float) op->value * 1.3f);
-              op->stats.dam++;
+            op->stats.dam+=tmp;
+            if((RANDOM()%20) > 16)
+            {
+                op->value = (int) ((float) op->value * 1.3f);
+                op->stats.dam+=(RANDOM()%9);
+            }
           }
           break;
 
         case 8:
           op->stats.wc += bonus;
-          if (bonus > 0 && (RANDOM() % 20 > 16 ? 1 : 0))
+          if (bonus > 0 && (RANDOM() % 20) > 16)
           {
               op->value = (int) ((float) op->value * 1.3f);
               op->stats.wc++;
@@ -1538,7 +1545,7 @@ int set_ring_bonus(object *op, int bonus, int level)
 
         case 9:
           op->stats.food += bonus; /* hunger/sustenance */
-          if (bonus > 0 && (RANDOM() % 20 > 16 ? 1 : 0))
+          if (bonus > 0 && (RANDOM() % 20) > 16)
           {
               op->value = (int) ((float) op->value * 1.2f);
               op->stats.food++;
@@ -1547,7 +1554,7 @@ int set_ring_bonus(object *op, int bonus, int level)
 
         case 10:
           op->stats.ac += bonus;
-          if (bonus > 0 && (RANDOM() % 20 > 16 ? 1 : 0))
+          if (bonus > 0 && (RANDOM() % 20) > 16)
           {
               op->value = (int) ((float) op->value * 1.3f);
               op->stats.ac++;

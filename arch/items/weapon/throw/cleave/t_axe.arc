@@ -5,7 +5,7 @@ face t_axe.101
 layer 3
 weapon_speed 0.027
 attack_cleave 100
-dam 3
+dam 30
 last_grace 11
 last_sp 7
 nrof 1
