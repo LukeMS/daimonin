@@ -94,6 +94,11 @@
     <!ATTLIST ignore_list
         name CDATA #REQUIRED
     >
+
+    <!ELEMENT import_type EMPTY>
+    <!ATTLIST import_type
+        name CDATA #REQUIRED
+    >
     
     <!ELEMENT default_type (attribute*)>
     
@@ -106,15 +111,10 @@
   
     <!ELEMENT description (#PCDATA)>
     <!ELEMENT use (#PCDATA)>
-    
-    <!ELEMENT import_type EMPTY>
-    <!ATTLIST import_type
-        name CDATA #REQUIRED
-    >
-  
+      
     <!ELEMENT required (attribute+)>
-    <!ELEMENT ignore (attribute*,ignore_list*)>
-    
+    <!ELEMENT ignore (section*,attribute*,ignore_list*)>
+
     <!ELEMENT section (attribute+)>
     <!ATTLIST section
         name CDATA #REQUIRED
@@ -157,7 +157,7 @@
 <bitmask name="spellpath">
   <entry bit="0" name="Life" />
   <entry bit="1" name="Death" />
-  <entry bit="2" name="elemental" />
+  <entry bit="2" name="Elemental" />
   <entry bit="3" name="Energy" />
   <entry bit="4" name="Spirit" />
   <entry bit="5" name="Protection" />
@@ -685,6 +685,307 @@
 </ignore_list>
 
 <!--####################################################################-->
+<type number="999" name="combat_values">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+	This is not a type - its a template for the combat values we need for import.
+    ]]>
+  </description>
+<section name="attack">
+  <attribute arch="attack_impact" editor="impact (physical)" length="15" type="int">
+    "Impact" is damage from clubs, maces or a simple fist.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_slash" editor="slash (physical)" length="15" type="int">
+    "Slash" is sword type damage. Creatures with large claws can also do slash damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_cleave" editor="cleave (physical)" length="15" type="int">
+    "Cleave" is axe and halbard damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_pierce" editor="pierce (physical)" length="15" type="int">
+    "Pierce" attacks come from arrows or rapier weapons.
+    For example: arrows, bolts, daggers, spears.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_cold" editor="cold (elemental)" length="15" type="int">
+    Cold belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="attack_fire" editor="fire (elemental)" length="15" type="int">
+    Fire belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="attack_electricity" editor="electricity (elemental)" length="15" type="int">
+    Electricity belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="attack_acid" editor="acid (elemental)" length="15" type="int">
+    Acid belongs to the group of elemental attacks. Can do extra damage to target 
+    and equipment.
+  </attribute>
+  <attribute arch="attack_poison" editor="poison (elemental)" length="15" type="int">
+    Poison belongs to the group of elemental attacks. Can inflict poison effects.
+  </attribute>
+  <attribute arch="attack_sonic" editor="sonic (elemental)" length="15" type="int">
+    Sonic belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="attack_force" editor="force (magical)" length="15" type="int">
+    Force belongs to the group of magical attacks. Pure damage.
+  </attribute>
+  <attribute arch="attack_light" editor="light (magical)" length="15" type="int">
+    Light belongs to the group of magical attacks. Can inflict blinding effects.
+  </attribute>
+  <attribute arch="attack_shadow" editor="shadow (magical)" length="15" type="int">
+    Shadow belongs to the group of magical attacks. Mana or grace of the
+    target can be effected (reduced) too.
+  </attribute>
+  <attribute arch="attack_psionic" editor="psionic (magical)" length="15" type="int">
+    Psionic (also called mental) belongs to the group of magical attacks. Leech attack:
+    Mana or grace of the target can be effected, reduced and given to the attacker.
+  </attribute>
+  <attribute arch="attack_lifesteal" editor="lifesteal (magical)" length="15" type="int">
+    Lifesteal belongs to the group of magical attacks. Leech attack: Parts of the damage 
+    are given to the attacker and added to the hitpoints.
+  </attribute>
+  <attribute arch="attack_death" editor="death (spherical)" length="15" type="int">
+    Death belongs to the group of spherical attacks. Special attack: A death damage hit 
+    has the chance to HALF the targets HP - after the normal damage is done.
+  </attribute>
+  <attribute arch="attack_chaos" editor="chaos (spherical)" length="15" type="int">
+    Chaos belongs to the group of spherical attacks. Special attack: A chaos hit will
+    drain level and skills (like drain attack) and age the target.
+  </attribute>
+  <attribute arch="attack_nether" editor="nether (spherical)" length="15" type="int">
+    Nether belongs to the group of spherical attacks. Special attack: A nether hit will
+    deplete the target stats (like depletion attack) and age the target.
+  </attribute>
+  <attribute arch="attack_aether" editor="aether (spherical)" length="15" type="int">
+    Aether belongs to the group of spherical attacks. Special attack: A aether hit will
+    corrupt the target (reduce mana and grace) and age the target.
+  </attribute>
+  <attribute arch="attack_weaponmagic" editor="weaponmagic" length="15" type="int">
+    Weaponmagic is a special damage attack. Resistance and protection of weaponmagic 
+    are VERY uncommon. Only invulnerable items will not be effected by weaponmagic.
+  </attribute>
+  <attribute arch="attack_godpower" editor="godpower" length="15" type="int">
+    Godpower is a special damage attack. It inflicts random attack effects,
+    will heavily effects the conditions of equipment and age the target.
+  </attribute>
+  <attribute arch="attack_drain" editor="drain (effect)" length="15" type="int">
+    Drain is a effect attack (no damage). It will drain levels and skills of the target.
+  </attribute>
+  <attribute arch="attack_depletion" editor="depletion (effect)" length="15" type="int">
+    Depletion is a effect attack (no damage). It will drain stats and abilities of the target.
+  </attribute>
+  <attribute arch="attack_corruption" editor="corruption (effect)" length="15" type="int">
+    Corruption is a effect attack (no damage). It will drain mana and grace of the target.
+  </attribute>
+  <attribute arch="attack_confusion" editor="confusion (effect)" length="15" type="int">
+    Confuse is a effect attack (no damage). It will confuse the target so it will do strange,
+    uncontrolled actions.
+  </attribute>
+  <attribute arch="attack_fear" editor="fear (effect)" length="15" type="int">
+    Fear is a effect attack (no damage). It will reduce the attack and defence abilities.
+  </attribute>
+  <attribute arch="attack_slow" editor="slow (effect)" length="15" type="int">
+    Slow is a effect attack (no damage). A slowed target will move and fight slower.
+  </attribute>
+  <attribute arch="attack_paralyze" editor="paralyze (effect)" length="15" type="int">
+    Paralyze is a effect attack (no damage). A paralyzed target can't move or attack.
+  </attribute>
+  <attribute arch="attack_root" editor="root (effect)" length="15" type="int">
+    Root is a effect attack (no damage). A rooted target can't move but still attack.
+  </attribute>
+</section>
+<section name="resistance">
+  <attribute arch="resist_impact" editor="impact (physical)" length="15" type="int">
+    "Impact" is damage from clubs, maces or a simple fist.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="resist_slash" editor="slash (physical)" length="15" type="int">
+    "Slash" is sword type damage. Creatures with large claws can also do slash damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="resist_cleave" editor="cleave (physical)" length="15" type="int">
+    "Cleave" is axe and halbard damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="resist_pierce" editor="pierce (physical)" length="15" type="int">
+    "Pierce" attacks come from arrows or rapier weapons.
+    For example: arrows, bolts, daggers, spears.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="resist_cold" editor="cold (elemental)" length="15" type="int">
+    Cold belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="resist_fire" editor="fire (elemental)" length="15" type="int">
+    Fire belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="resist_electricity" editor="electricity (elemental)" length="15" type="int">
+    Electricity belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="resist_acid" editor="acid (elemental)" length="15" type="int">
+    Acid belongs to the group of elemental attacks. Can do extra damage to target 
+    and equipment.
+  </attribute>
+  <attribute arch="resist_poison" editor="poison (elemental)" length="15" type="int">
+    Poison belongs to the group of elemental attacks. Can inflict poison effects.
+  </attribute>
+  <attribute arch="resist_sonic" editor="sonic (elemental)" length="15" type="int">
+    Sonic belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="resist_force" editor="force (magical)" length="15" type="int">
+    Force belongs to the group of magical attacks. Pure damage.
+  </attribute>
+  <attribute arch="resist_light" editor="light (magical)" length="15" type="int">
+    Light belongs to the group of magical attacks. Can inflict blinding effects.
+  </attribute>
+  <attribute arch="resist_shadow" editor="shadow (magical)" length="15" type="int">
+    Shadow belongs to the group of magical attacks. Mana or grace of the
+    target can be effected (reduced) too.
+  </attribute>
+  <attribute arch="resist_psionic" editor="psionic (magical)" length="15" type="int">
+    Psionic (also called mental) belongs to the group of magical attacks. Leech attack:
+    Mana or grace of the target can be effected, reduced and given to the attacker.
+  </attribute>
+  <attribute arch="resist_lifesteal" editor="lifesteal (magical)" length="15" type="int">
+    Lifesteal belongs to the group of magical attacks. Leech attack: Parts of the damage 
+    are given to the attacker and added to the hitpoints.
+  </attribute>
+  <attribute arch="resist_death" editor="death (spherical)" length="15" type="int">
+    Death belongs to the group of spherical attacks. Special attack: A death damage hit 
+    has the chance to HALF the targets HP - after the normal damage is done.
+  </attribute>
+  <attribute arch="resist_chaos" editor="chaos (spherical)" length="15" type="int">
+    Chaos belongs to the group of spherical attacks. Special attack: A chaos hit will
+    drain level and skills (like drain attack) and age the target.
+  </attribute>
+  <attribute arch="resist_nether" editor="nether (spherical)" length="15" type="int">
+    Nether belongs to the group of spherical attacks. Special attack: A nether hit will
+    deplete the target stats (like depletion attack) and age the target.
+  </attribute>
+  <attribute arch="resist_aether" editor="aether (spherical)" length="15" type="int">
+    Aether belongs to the group of spherical attacks. Special attack: A aether hit will
+    corrupt the target (reduce mana and grace) and age the target.
+  </attribute>
+  <attribute arch="resist_weaponmagic" editor="weaponmagic" length="15" type="int">
+    Weaponmagic is a special damage attack. Resistance and protection of weaponmagic 
+    are VERY uncommon. Only invulnerable items will not be effected by weaponmagic.
+  </attribute>
+  <attribute arch="resist_godpower" editor="godpower" length="15" type="int">
+    Godpower is a special damage attack. It inflicts random attack effects,
+    will heavily effects the conditions of equipment and age the target.
+  </attribute>
+  <attribute arch="resist_drain" editor="drain (effect)" length="15" type="int">
+    Drain is a effect attack (no damage). It will drain levels and skills of the target.
+  </attribute>
+  <attribute arch="resist_depletion" editor="depletion (effect)" length="15" type="int">
+    Depletion is a effect attack (no damage). It will drain stats and abilities of the target.
+  </attribute>
+  <attribute arch="resist_corruption" editor="corruption (effect)" length="15" type="int">
+    Corruption is a effect attack (no damage). It will drain mana and grace of the target.
+  </attribute>
+  <attribute arch="resist_confusion" editor="confusion (effect)" length="15" type="int">
+    Confuse is a effect attack (no damage). It will confuse the target so it will do strange,
+    uncontrolled actions.
+  </attribute>
+  <attribute arch="resist_fear" editor="fear (effect)" length="15" type="int">
+    Fear is a effect attack (no damage). It will reduce the attack and defence abilities.
+  </attribute>
+  <attribute arch="resist_slow" editor="slow (effect)" length="15" type="int">
+    Slow is a effect attack (no damage). A slowed target will move and fight slower.
+  </attribute>
+  <attribute arch="resist_paralyze" editor="paralyze (effect)" length="15" type="int">
+    Paralyze is a effect attack (no damage). A paralyzed target can't move or attack.
+  </attribute>
+  <attribute arch="resist_root" editor="root (effect)" length="15" type="int">
+    Root is a effect attack (no damage). A rooted target can't move but still attack.
+  </attribute>
+</section>
+<section name="protection">
+  <attribute arch="protect_impact" editor="impact (physical)" length="15" type="int">
+    "Impact" is damage from clubs, maces or a simple fist.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="protect_slash" editor="slash (physical)" length="15" type="int">
+    "Slash" is sword type damage. Creatures with large claws can also do slash damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="protect_cleave" editor="cleave (physical)" length="15" type="int">
+    "Cleave" is axe and halbard damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="protect_pierce" editor="pierce (physical)" length="15" type="int">
+    "Pierce" attacks come from arrows or rapier weapons.
+    For example: arrows, bolts, daggers, spears.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="protect_cold" editor="cold (elemental)" length="15" type="int">
+    Cold belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="protect_fire" editor="fire (elemental)" length="15" type="int">
+    Fire belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="protect_electricity" editor="electricity (elemental)" length="15" type="int">
+    Electricity belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="protect_acid" editor="acid (elemental)" length="15" type="int">
+    Acid belongs to the group of elemental attacks. Can do extra damage to target 
+    and equipment.
+  </attribute>
+  <attribute arch="protect_poison" editor="poison (elemental)" length="15" type="int">
+    Poison belongs to the group of elemental attacks. Can inflict poison effects.
+  </attribute>
+  <attribute arch="protect_sonic" editor="sonic (elemental)" length="15" type="int">
+    Sonic belongs to the group of elemental attacks. Pure damage.
+  </attribute>
+  <attribute arch="protect_force" editor="force (magical)" length="15" type="int">
+    Force belongs to the group of magical attacks. Pure damage.
+  </attribute>
+  <attribute arch="protect_light" editor="light (magical)" length="15" type="int">
+    Light belongs to the group of magical attacks. Can inflict blinding effects.
+  </attribute>
+  <attribute arch="protect_shadow" editor="shadow (magical)" length="15" type="int">
+    Shadow belongs to the group of magical attacks. Mana or grace of the
+    target can be effected (reduced) too.
+  </attribute>
+  <attribute arch="protect_psionic" editor="psionic (magical)" length="15" type="int">
+    Psionic (also called mental) belongs to the group of magical attacks. Leech attack:
+    Mana or grace of the target can be effected, reduced and given to the attacker.
+  </attribute>
+  <attribute arch="protect_lifesteal" editor="lifesteal (magical)" length="15" type="int">
+    Lifesteal belongs to the group of magical attacks. Leech attack: Parts of the damage 
+    are given to the attacker and added to the hitpoints.
+  </attribute>
+  <attribute arch="protect_death" editor="death (spherical)" length="15" type="int">
+    Death belongs to the group of spherical attacks. Special attack: A death damage hit 
+    has the chance to HALF the targets HP - after the normal damage is done.
+  </attribute>
+  <attribute arch="protect_chaos" editor="chaos (spherical)" length="15" type="int">
+    Chaos belongs to the group of spherical attacks. Special attack: A chaos hit will
+    drain level and skills (like drain attack) and age the target.
+  </attribute>
+  <attribute arch="protect_nether" editor="nether (spherical)" length="15" type="int">
+    Nether belongs to the group of spherical attacks. Special attack: A nether hit will
+    deplete the target stats (like depletion attack) and age the target.
+  </attribute>
+  <attribute arch="protect_aether" editor="aether (spherical)" length="15" type="int">
+    Aether belongs to the group of spherical attacks. Special attack: A aether hit will
+    corrupt the target (reduce mana and grace) and age the target.
+  </attribute>
+  <attribute arch="protect_weaponmagic" editor="weaponmagic" length="15" type="int">
+    Weaponmagic is a special damage attack. Resistance and protection of weaponmagic 
+    are VERY uncommon. Only invulnerable items will not be effected by weaponmagic.
+  </attribute>
+  <attribute arch="protect_godpower" editor="godpower" length="15" type="int">
+    Godpower is a special damage attack. It inflicts random attack effects,
+    will heavily effects the conditions of equipment and age the target.
+  </attribute>
+</section>
+</type>
+
+<!--####################################################################-->
 <type number="126" name="AI Object">
   <ignore>
     <ignore_list name="default_setting" />
@@ -1176,7 +1477,9 @@
 
 <!--####################################################################-->
 <type number="39" name="Amulet">
+  <import_type name="combat_values" />
   <ignore>
+	<section name="resistance" />
     <attribute arch="material" />
     <attribute arch="material_real" />
     <ignore_list name="default_setting" />
@@ -1242,125 +1545,6 @@
     Enabling this flag doesn't make any sense if the item
     is NOT in a monster's inventory.
   </attribute>
-<section name="protect">
-  <attribute arch="protect_impact" editor="shield impact %" length="15" type="int">
-    This adds resistance against physical damage from clubs, maces
-    or a simple fist. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_slash" editor="shield slash %" length="15" type="int">
-    This adds resistance against physical damage from swords and claws.
-    The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_cleave" editor="shield cleave %" length="15" type="int">
-    This adds resistance against physical damage from axes and
-    halbards. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_pierce" editor="shield pierce %" length="15" type="int">
-    This adds resistance against physical damage from arrows and
-    rapier weapons. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_weapon_magic" editor="shield w.magic %" length="15" type="int">
-    This adds resistance against (physical) weapon magic damage.
-    Attention! Weaponmagic is a very powerful attacktype which
-    is derived from the power of artifact weapons.
-    This kind of resistance must not be easy to get.
-    The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_fire" editor="shield fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_cold" editor="shield cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_electricity" editor="shield electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_poison" editor="shield poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_acid" editor="shield acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_magic" editor="shield magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_mind" editor="shield mind %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_body" editor="shield body %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_psionic" editor="shield psionic %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_force" editor="shield force %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_nether" editor="shield nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_death" editor="shield death %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
-  </attribute>         	
-</section>
-<section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-    Resistances on flesh items make them more durable
-    against spellcraft of the appropriate kind.
-    This should only be set if placing a flesh item
-    in a monster's inventory.
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
-</section>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
     The player's strentgh will rise/fall by the given value
@@ -1391,7 +1575,6 @@
     while wearing this piece of equipment.
   </attribute>
 </section>
-
 <section name="misc">
   <attribute arch="luck" editor="luck bonus" type="int">
     With positive luck bonus, the player is more likely to
@@ -1578,7 +1761,6 @@
     and also attacks.
   </attribute>
 </section>
-
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text describes the item's "story". Every decent artifact
     should have such a description.
@@ -2124,6 +2306,7 @@
 
 <!--####################################################################-->
 <type number="158" name="Disease">
+  <import_type name="combat_values" />
   <ignore>
     <ignore_list name="system_object" />
     <ignore_list name="default_setting" />
@@ -2243,85 +2426,6 @@
     Negative values decrease it.
   </attribute>
 </section>
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
 <section name="disability">
   <attribute arch="Str" editor="strength" type="int">
     The player's strength will rise by the given value
@@ -2435,6 +2539,7 @@
 
 <!--####################################################################-->
 <type number="72" name="Flesh">
+  <import_type name="combat_values" />
   <ignore>
     <ignore_list name="default_setting" />
   </ignore>
@@ -2457,70 +2562,6 @@
     A godgiven item vanishes as soon as the player
     drops it to the ground.
   </attribute>
-<section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-    Resistances on flesh items make them more durable
-    against spellcraft of the appropriate kind.
-    This should only be set if placing a flesh item
-    in a monster's inventory.
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
-</section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the item.
   </attribute>
@@ -2618,6 +2659,7 @@
 
 <!--####################################################################-->
 <type number="6" name="Food">
+  <import_type name="combat_values" />
   <ignore>
     <attribute arch="cursed" />
     <attribute arch="damned" />
@@ -2693,68 +2735,11 @@
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
 </section>
 </type>
 <!--####################################################################-->
 <type number="54" name="Drink">
+  <import_type name="combat_values" />
   <ignore>
     <attribute arch="cursed" />
     <attribute arch="damned" />
@@ -2831,64 +2816,6 @@
   <attribute arch="Cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
-  </attribute>
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
   </attribute>
 </section>
 </type>
@@ -3083,6 +3010,7 @@
 
 <!--####################################################################-->
 <type number="88" name="Hazard Floor">
+  <import_type name="combat_values" />
   <required>
     <attribute arch="is_floor" value="1" />
   </required>
@@ -3123,85 +3051,6 @@
     But in fact, it does not seem to have an effect. Set any non-zero
     value to be on the safe side.
   </attribute>
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
 <section name="terrain">
   <attribute arch="slow_move" editor="slow movement" type="int">
     If &lt;slow movement&gt; is set to a value greater zero, all
@@ -3360,6 +3209,7 @@
 
 <!--####################################################################-->
 <type number="73" name="Inorganic">
+  <import_type name="combat_values" />
   <ignore>
     <ignore_list name="default_setting" />
   </ignore>
@@ -3370,66 +3220,6 @@
   </description>
   <attribute arch="is_dust" editor="is dust" type="bool">
   </attribute>
-  <section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
-</section>
 </type>
 
 <!--####################################################################-->
@@ -3664,6 +3454,7 @@
 
 <!--####################################################################-->
 <type number="62" name="Magic Wall">
+  <import_type name="combat_values" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -3740,66 +3531,6 @@
     A magic wall of high &lt;armour class&gt; is less likely to get hit from
     an opponent. &lt;armour class&gt; can be considered the "counterpiece"
     to &lt;weapon class&gt;.
-  </attribute>
-</section>
-<section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
   </attribute>
 </section>
 </type>
@@ -3891,6 +3622,7 @@
 
 <!--####################################################################-->
 <type number="80" name="Monster &amp; NPC">
+  <import_type name="combat_values" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -4093,86 +3825,6 @@
   </attribute>
 </section>
 
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
-
 <section name="spellcraft">
   <attribute arch="sp" editor="spellpoints" type="int">
     Like players, monsters need &lt;spellpoints&gt; to do magic. Monsters use
@@ -4318,122 +3970,6 @@
     health points drops below this percentage of max health.
   </attribute>
 </section>
-
-<section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
-</section>
-<section name="protect">
-  <attribute arch="protect_impact" editor="shield impact %" length="15" type="int">
-    This adds resistance against physical damage from clubs, maces
-    or a simple fist. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_slash" editor="shield slash %" length="15" type="int">
-    This adds resistance against physical damage from swords and claws.
-    The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_cleave" editor="shield cleave %" length="15" type="int">
-    This adds resistance against physical damage from axes and
-    halbards. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_pierce" editor="shield pierce %" length="15" type="int">
-    This adds resistance against physical damage from arrows and
-    rapier weapons. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_weapon_magic" editor="shield w.magic %" length="15" type="int">
-    This adds resistance against (physical) weapon magic damage.
-    Attention! Weaponmagic is a very powerful attacktype which
-    is derived from the power of artifact weapons.
-    This kind of resistance must not be easy to get.
-    The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_fire" editor="shield fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_cold" editor="shield cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_electricity" editor="shield electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_poison" editor="shield poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_acid" editor="shield acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_magic" editor="shield magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_mind" editor="shield mind %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_body" editor="shield body %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_psionic" editor="shield psionic %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_force" editor="shield force %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_nether" editor="shield nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_death" editor="shield death %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
-  </attribute>         	
-</section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
   </attribute>
 </type>
@@ -4497,6 +4033,7 @@
 </type>
 <!--####################################################################-->
 <type number="83" name="Spawn Point Mob">
+  <import_type name="combat_values" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -4694,87 +4231,6 @@
     to a player.
   </attribute>
 </section>
-
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
-
 <section name="spellcraft">
   <attribute arch="sp" editor="spellpoints" type="int">
     Like players, monsters need &lt;spellpoints&gt; to do magic. Monsters use
@@ -4917,122 +4373,6 @@
     The creature will attempt to run from the attacker when it's
     health points drops below this percentage of max health.
   </attribute>
-</section>
-
-<section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
-</section>
-<section name="protect">
-  <attribute arch="protect_impact" editor="shield impact %" length="15" type="int">
-    This adds resistance against physical damage from clubs, maces
-    or a simple fist. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_slash" editor="shield slash %" length="15" type="int">
-    This adds resistance against physical damage from swords and claws.
-    The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_cleave" editor="shield cleave %" length="15" type="int">
-    This adds resistance against physical damage from axes and
-    halbards. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_pierce" editor="shield pierce %" length="15" type="int">
-    This adds resistance against physical damage from arrows and
-    rapier weapons. The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_weapon_magic" editor="shield w.magic %" length="15" type="int">
-    This adds resistance against (physical) weapon magic damage.
-    Attention! Weaponmagic is a very powerful attacktype which
-    is derived from the power of artifact weapons.
-    This kind of resistance must not be easy to get.
-    The number is a percent-value in the range 0-100.
-  </attribute>
-  <attribute arch="protect_fire" editor="shield fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_cold" editor="shield cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_electricity" editor="shield electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_poison" editor="shield poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_acid" editor="shield acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_magic" editor="shield magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_mind" editor="shield mind %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_body" editor="shield body %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_psionic" editor="shield psionic %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_force" editor="shield force %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_nether" editor="shield nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_death" editor="shield death %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
-  </attribute>         	
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
   </attribute>
@@ -5353,6 +4693,7 @@
 
 <!--####################################################################-->
 <type number="7" name="Poison Food">
+  <import_type name="combat_values" />
   <ignore>
     <attribute arch="cursed" />
     <attribute arch="damned" />
@@ -5421,64 +4762,6 @@
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_weaponmagic" editor="resist w.magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_magic" editor="resist magic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_death" editor="resist death %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_ghosthit" editor="resist ghosthit %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_life_steal" editor="resist life leech %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_time" editor="resist time %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_chaos" editor="resist chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_godpower" editor="resist godpower %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_purity" editor="resist purity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_nether" editor="resist nether %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_sonic" editor="resist sonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_demonic" editor="resist demonic %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
-  </attribute>
 </section>
 </type>
 <!--####################################################################-->
@@ -5494,6 +4777,7 @@
 </type>
 <!--####################################################################-->
 <type number="5" name="Potion">
+  <import_type name="combat_values" />
   <ignore>
     <ignore_list name="default_setting" />
   </ignore>
@@ -5577,131 +4861,6 @@
     stats if positive.
   </attribute>
 </section>
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
-<section name="resistance">
-  <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
-    The player's resistance to bash hits will rise by this value in percent
-    (range -100 till +100). The effect is only temporare.
-    Cursed potions will make negative resistance.. very nasty in combat!
-  </attribute>
-  <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
-    The player's resistance to sword hits will rise by this value in percent
-    (range -100 till +100). The effect is only temporare.
-    Cursed potions will make negative resistance.. very nasty in combat!
-  </attribute>
-  <attribute arch="resist_pierce" editor="resist pierce %" length="15" type="int">
-    The player's resistance to pierce hits will rise by this value in percent
-    (range -100 till +100). The effect is only temporare.
-    Cursed potions will make negative resistance.. very nasty in combat!
-  </attribute>
-  <attribute arch="resist_cleave" editor="resist cleave %" length="15" type="int">
-    The player's resistance to axe hits will rise by this value in percent
-    (range -100 till +100). The effect is only temporare.
-    Cursed potions will make negative resistance.. very nasty in combat!
-  </attribute>
-  <attribute arch="resist_fire" editor="resist fire %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_cold" editor="resist cold %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_electricity" editor="resist electricity %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_acid" editor="resist acid %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_poison" editor="resist poison %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_confusion" editor="resist confusion %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_fear" editor="resist fear %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_drain" editor="resist drain %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_depletion" editor="resist deplete %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_slow" editor="resist slow %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_paralyze" editor="resist paralyze %" length="15" type="int">
-  </attribute>
-  <attribute arch="resist_blind" editor="resist blinding %" length="15" type="int">
-  </attribute>
-</section>
 </type>
 
 <!--####################################################################-->
@@ -5729,6 +4888,7 @@
 
 <!--####################################################################-->
 <type number="13" name="Projectile">
+  <import_type name="combat_values" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -5812,85 +4972,6 @@
     vanish instead. If this object is shot, it can still drop
     after hitting an obstacle.
   </attribute>
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
 <section name="material">
   <attribute arch="material" editor="material class" type="bitmask_material">
     This bitmask-value informs the player of which basic material(s)
@@ -6034,6 +5115,7 @@
 
 <!--####################################################################-->
 <type number="154" name="Rune &amp; Trap">
+  <import_type name="combat_values" />
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
@@ -6079,85 +5161,6 @@
     if it doesn't contain a spell. This should be set in reasonable
     relation to the rune's level. 
   </attribute>
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
 <section name="spellcraft">
   <attribute arch="sp" editor="spell" type="spell">
     The selected &lt;spell&gt; defines the spell in the rune, if any.
@@ -7012,85 +6015,6 @@
     A godgiven item vanishes as soon as the player
     drops it to the ground.
   </attribute>
-<section name="attack">
-  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
-    "Impact" is damage from clubs, maces or a simple fist.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
-    "Slash" is sword type damage. Creatures with large
-    claws can also do slash damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
-    "Cleave" is axe and halbard damage.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
-    "Pierce" attacks come from arrows or rapier weapons.
-    For example: arrows, bolts, daggers, spears.
-    It belongs to the group of physical attacks.
-  </attribute>
-  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
-    Weapon magic is a very special, hard to resist and powerful attack type.
-    It derives from the magical power of great artifact weapons like
-    the Excalibur. This damage type is mostly bound to a physical source,
-    so it is counted to the physical damage types.
-  </attribute>
-  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
-    Fire belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
-    Electricity belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
-    Cold belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
-    Acid belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
-    Poison belongs to the group of elemental attacks.
-  </attribute>
-  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
-  </attribute>
-  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
-  </attribute>
-</section>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
     The player's strentgh will rise/fall by the given value
