@@ -32,17 +32,17 @@ http://www.gnu.org/licenses/licenses.html
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
-bool SpellManager::init(SceneManager *SceneMgr, SceneNode *Node)
+bool SpellManager::init(SceneManager *SceneMgr)
 {
   mSceneMgr = SceneMgr;
-  mNode = Node;
+  mNode = mSceneMgr->getRootSceneNode();;
   return true;
 }
 
 //=================================================================================================
 //
 //=================================================================================================
-bool SpellManager::addObject(unsigned int npc, unsigned int spell)
+bool SpellManager::addObject(unsigned int , unsigned int )
 {
   // Player cast Fireball.
   const SceneNode *node = ObjectManager::getSingleton().getNpcNode(0);
@@ -54,19 +54,19 @@ bool SpellManager::addObject(unsigned int npc, unsigned int spell)
 //=================================================================================================
 //
 //=================================================================================================
-void SpellManager::update(int spell_type, const FrameEvent& evt)
+void SpellManager::update(int , const FrameEvent& )
 {}
 
 //=================================================================================================
 // JUST FOR TESTING.
 //=================================================================================================
-void SpellManager::keyEvent(int spell_type, int action, int val1, int val2)
+void SpellManager::keyEvent(int , int , int , int )
 {}
 
 //=================================================================================================
 //
 //=================================================================================================
-void SpellManager::delObject(int number)
+void SpellManager::delObject(int )
 {}
 
 //=================================================================================================

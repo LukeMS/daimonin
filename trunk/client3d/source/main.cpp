@@ -21,7 +21,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "client.h"
 
-int main(int argc, char **argv)
+int main(int /*argc*/, char /* **argv*/)
 {
   Logger::log().headline("Init Logfile");
   DaimoninClient client;

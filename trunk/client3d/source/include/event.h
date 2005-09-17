@@ -61,6 +61,11 @@ public:
   {
     mSceneManager = SManager;
   }
+  
+  SceneManager *GetSceneManager()
+  {
+    return mSceneManager;
+  }
   const Vector3 &getWorldPos()
   {
     return World->getPosition();
@@ -91,6 +96,7 @@ private:
   Real mIdleTime;
   Overlay *mDebugOverlay;
   Overlay *mMouseCursor;
+  Overlay *mGUI;
   EventProcessor* mEventProcessor;
   InputReader* mInputDevice;
   MouseMotionListener *mMouseMotionListener;

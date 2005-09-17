@@ -21,6 +21,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "textwindow.h"
 #include "logger.h"
 #include "sound.h"
+#include <OgreFontManager.h>
+#include <OgreHardwarePixelBuffer.h> 
 
 CTextwindow *ChatWin=0, *TextWin=0;
 
@@ -36,7 +38,7 @@ int CTextwindow::mScreenHeight= -1;
 CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHeight, bool visible)
 {
   /////////////////////////////////////////////////////////////////////////
-  // Clone all OverlayElemnts from templates.
+  /// Clone all OverlayElemnts from templates.
   /////////////////////////////////////////////////////////////////////////
   mThisWindowNr = ++mInstanceNr;
   std::string name= StringConverter::toString(mInstanceNr)+"_TextWindow/";
@@ -58,11 +60,12 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
     mElementLine[i]= static_cast<TextAreaOverlayElement*>
                      (OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/TextRow",name+"Line_"+ StringConverter::toString(i)));
     mElementLine[i]->setCaption("");
+    mElementLine[i]->setHeight(0.01);
     mContainerFrame->addChild(mElementLine[i]);
   }
 
   mContainerFrame->setLeft(Xpos);
-  mElementTitle ->setWidth(-Xpos-mElementButUp->getWidth()*2);
+  mElementTitle  ->setWidth(-Xpos-mElementButUp->getWidth()*2);
   mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
   mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());
   // WindowTitle.
@@ -98,6 +101,8 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   mScroll       = 0.0f;
   mScreenHeight = ScreenHeight;
   setVisible(visible);
+  
+  
 }
 
 //=================================================================================================
@@ -133,6 +138,55 @@ void CTextwindow::OpenTextWin()
 //=================================================================================================
 void CTextwindow::Update()
 {
+
+
+/*
+
+  MaterialPtr mMaterial = mContainerFrame->getMaterial();
+  String texname = mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
+  TexturePtr mTexture = (TexturePtr) TextureManager::getSingleton().getByName(texname);
+  HardwarePixelBufferSharedPtr buffer = mTexture->getBuffer();
+
+  static Image TileImage;
+  static int once=-1;
+  if (++once == 0)
+  {
+    TileImage.load("WindowsLook.tga", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    //mpFont->load();
+  }
+  Real u1, u2, v1, v2; 
+  FontPtr mpFont = FontManager::getSingleton().getByName( "TrebuchetMSBold" );
+  if (mpFont.isNull()) Logger::log().info() << "Font Error!";
+  MaterialPtr mpMaterialFont = mpFont->getMaterial();
+  String texnameFont = mpMaterialFont->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
+  TexturePtr mTextureFont = (TexturePtr) TextureManager::getSingleton().getByName(texnameFont);
+  HardwarePixelBufferSharedPtr bufferFont = mTextureFont->getBuffer();
+  mpFont->getGlyphTexCoords( 'A', u1, v1, u2, v2 );
+
+
+  //PixelBox src = TileImage.getPixelBox().getSubVolume(Box(u1, v1, u2, v2));
+ // buffer->blitFromMemory(src, Box( 0, 0, 128, 128));
+
+ buffer->blit(bufferFont.getPointer(), Box( 0, 0, 64, 64), Box( 0, 0, 128, 128));
+*/
+/*
+
+  MaterialPtr mMaterial = mContainerFrame->getMaterial();
+  String texname = mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
+  TexturePtr mTexture = (TexturePtr) TextureManager::getSingleton().getByName(texname);
+  HardwarePixelBufferSharedPtr buffer = mTexture->getBuffer();
+
+  static Image TileImage;
+  static int once=-1;
+  if (++once == 0) TileImage.load("WindowsLook.tga", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME); 
+  PixelBox src = TileImage.getPixelBox().getSubVolume(Box(2, 20, 15, 33));
+  buffer->blitFromMemory(src, Box( 22, 22, 35, 35));
+*/
+
+
+
+
+
   /////////////////////////////////////////////////////////////////////////
   /// User pressed the close-button.
   /////////////////////////////////////////////////////////////////////////
@@ -196,9 +250,9 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos)
     return true;
   }
   /////////////////////////////////////////////////////////////////////////
-  /// Was the mouse action this Overlay?
+  /// Was the mouse action in this Overlay?
   /////////////////////////////////////////////////////////////////////////
-  if (!mContainerFrame-> contains(xpos, ypos) && mDragWinNr < 0) return true;
+  if (!mContainerFrame->contains(xpos, ypos) && mDragWinNr < 0) return true;
   /////////////////////////////////////////////////////////////////////////
   /// Check all buttons.
   /////////////////////////////////////////////////////////////////////////
@@ -228,7 +282,6 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos)
   /////////////////////////////////////////////////////////////////////////
   bool ret = true;
   Real top = (ypos-1) * mScreenHeight;
-  Logger::log().info() << mScreenHeight;
   if (mParent)
   {
     if (top - mParent->mContainerFrame->getTop() >= mMinHeight )

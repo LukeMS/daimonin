@@ -23,7 +23,9 @@
 			<Add option="-DEXT_HASH"/>
 			<Add directory="/usr/include/OGRE"/>
 			<Add directory="../../../source/include"/>
-			<Add directory="../../../source/include/fmod"/>
+			<Add directory="../../../source/3rdParty/zlib"/>
+			<Add directory="../../../source/3rdParty/tinyxml"/>
+			<Add directory="../../../source/3rdParty/fmod"/>
 		</Compiler>
 		<Linker>
 			<Add library="OgreMain"/>
@@ -34,6 +36,104 @@
 			<Add after="cp plugins.cfg ../../../plugins.cfg"/>
 		</ExtraCommands>
 		<Unit filename="ReadMe.txt">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/tinyxml/tinystr.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/tinyxml/tinystr.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/tinyxml/tinyxml.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/tinyxml/tinyxml.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/tinyxml/tinyxmlerror.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/tinyxml/tinyxmlparser.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/adler32.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/crc32.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/crc32.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/inffast.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/inffast.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/inflate.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/inflate.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/inftrees.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/inftrees.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/uncompr.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/zconf.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/zlib.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/zutil.c">
+			<Option compilerVar="CC"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/3rdParty/zlib/zutil.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -51,10 +151,6 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/adler32.c">
-			<Option compilerVar="CC"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/animate.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -63,15 +159,23 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/crc32.c">
-			<Option compilerVar="CC"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/dialog.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/event.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/gui_cursor.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/gui_gadget.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/gui_window.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -105,12 +209,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/crc32.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/include/define.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -129,19 +227,19 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/inffast.h">
+		<Unit filename="../../../source/include/gui_cursor.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/inflate.h">
+		<Unit filename="../../../source/include/gui_gadget.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/inftrees.h">
+		<Unit filename="../../../source/include/gui_window.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -243,36 +341,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/zconf.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/include/zlib.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/include/zutil.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/inffast.c">
-			<Option compilerVar="CC"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/inflate.c">
-			<Option compilerVar="CC"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/inftrees.c">
-			<Option compilerVar="CC"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/light_manager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -343,14 +411,6 @@
 		</Unit>
 		<Unit filename="../../../source/textwindow.cpp">
 			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/uncompr.c">
-			<Option compilerVar="CC"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/zutil.c">
-			<Option compilerVar="CC"/>
 			<Option target="default"/>
 		</Unit>
 	</Project>

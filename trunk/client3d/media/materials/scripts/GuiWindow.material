@@ -1,15 +1,16 @@
-material Cursor/Normal
+material GUI/Window
 {
    technique
    {
       pass
       {
-         depth_check off
+         lighting off
          scene_blend alpha_blend
+         depth_check off
          texture_unit
          {
-            texture cursor.png
          }
       }
    }
 }
+

@@ -43,7 +43,7 @@ inline short GetShort_String(char *data)
 // ========================================================================
 // Compare server and client version number.
 // ========================================================================
-void Network::NewCharCmd(char *data, int len)
+void Network::NewCharCmd(char *, int )
 {
   Option::getSingleton().GameStatus = GAME_STATUS_NEW_CHAR;
   //    CloseSocket();
@@ -52,7 +52,7 @@ void Network::NewCharCmd(char *data, int len)
 // ========================================================================
 // Compare server and client version number.
 // ========================================================================
-void Network::VersionCmd(char *data, int len)
+void Network::VersionCmd(char *data, int )
 {
   char   *cp;
   char    buf[1024];
@@ -302,7 +302,7 @@ void Network::PreParseInfoStat(char *cmd)
 // ========================================================================
 //
 // ========================================================================
-void Network::HandleQuery(char *data, int len)
+void Network::HandleQuery(char *data, int)
 {
   char   *buf, *cp;
   buf = strchr(data, ' ');
@@ -326,7 +326,7 @@ void Network::HandleQuery(char *data, int len)
 // ========================================================================
 //
 // ========================================================================
-void Network::PlayerCmd(char *data, int len)
+void Network::PlayerCmd(char *, int)
 {
   Option::getSingleton().GameStatus = GAME_STATUS_PLAY;
 
@@ -569,7 +569,7 @@ void Network::Map2Cmd(char *data, int len)
 // This command collect all new faces and then flush it at once.
 // I insert the flush command after the socket call.
 // ========================================================================
-int Network::request_face(int pnum, int mode)
+int Network::request_face(int , int)
 {
   return 1;
 }

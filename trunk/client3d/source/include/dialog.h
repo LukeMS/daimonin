@@ -52,7 +52,7 @@ public:
   {
     static Dialog Singleton; return Singleton;
   }
-  bool Init();
+  bool Init(SceneManager *SceneMgr);
   void setVisible(bool vis);
   bool isVisible()
   {
@@ -73,7 +73,7 @@ private:
   Dialog(const Dialog&); // disable copy-constructor.
   Overlay *mLoginOverlay;
   OverlayContainer *mDialogSelPanel, *mDialogInfoPanel;
-  OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
+  TextAreaOverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
   OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
   OverlayElement *mElementLine[DIALOG_TXT_LINES], *mElementSelectionBar;
   OverlayElement *mElementInfo[DIALOG_INFO_LINES];

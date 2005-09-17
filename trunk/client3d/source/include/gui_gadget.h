@@ -18,73 +18,82 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef SPELL_MANAGER_H
-#define SPELL_MANAGER_H
+#ifndef GUI_GADGET_H
+#define GUI_GADGET_H
 
-#include <vector>
-#include "Ogre.h"
-#include "spell_range.h"
+#include <string>
 
-using namespace Ogre;
-
-////////////////////////////////////////////////////////////
-// Defines.
-////////////////////////////////////////////////////////////
-enum
-{
-  SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM
-};
-enum
-{
-  SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM
-};
-enum
-{
-  SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM
-};
-
-struct _Spell
-{
-  SceneNode *node;
-  ParticleSystem* particleSys;
-};
-
-////////////////////////////////////////////////////////////
-/// Class.
-////////////////////////////////////////////////////////////
-class SpellManager
+class GuiGadget
 {
 public:
+  enum
+  {
+    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
+  };
+  struct sPos
+  {
+    int x, y;
+  };
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  static SpellManager &getSingleton()
+  GuiGadget(const char *XMLdescFile, int pos);
+  ~GuiGadget()
+  {}
+  void getPos(int &x1, int &y1, int &x2, int &y2);
+  bool mouseOver(int x, int y)
   {
-    static SpellManager Singleton; return Singleton;
+    if (x >= mX1 && x <= mX2 && y >= mY1 && y <= mY2) return true;
+    return false;
   }
-  bool init(SceneManager *SceneMgr);
-  bool addObject( unsigned int npc, unsigned int spell);
-  void delObject(int number);
-  void update(int type, const FrameEvent& evt);
-  void keyEvent(int obj_type, int action, int val1=0, int val2=0);
-  void test(Vector3 pos);
+  bool isAttached()
+  {
+    return mAttached;
+  }
+  int getType()
+  {
+    return mType;
+  }
+  const std::string &getName()
+  {
+    return mName;
+  }
+  int getTilsetPos()
+  {
+    return mTilsetPos;
+  }
+  void setTilsetPos(int pos)
+  {
+    mTilsetPos =pos;
+  }
+  bool setState(int state)
+  {
+    if (mState == state) return false;
+    mState = state;
+    return true;
+  }
+  int getState()
+  {
+    return mState;
+  }
 
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  SceneManager *mSceneMgr;
-  SceneNode  *mNode;
-  std::string mDescFile;
-  std::vector<SpellRange*>mvObject_range;
+  int  mTilsetPos; // pos in the tileset vector.
+  int  mX1, mX2, mY1, mY2;
+  int  mType;
+  std::string mName;
+  int  mOldState;
+  int  mState;
+  bool mDrawOnlyOnce;
+  bool mAttached;
 
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  SpellManager()
-  {}
-  ~SpellManager();
-  SpellManager(const SpellManager&); // disable copy-constructor.
 };
 
 #endif
+

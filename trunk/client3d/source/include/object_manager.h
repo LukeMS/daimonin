@@ -53,7 +53,7 @@ public:
   {
     static ObjectManager Singleton; return Singleton;
   }
-  bool init(SceneManager *SceneMgr, SceneNode  *Node);
+  bool init(SceneManager *SceneMgr);
   bool addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing);
   void delObject(int number);
   void update(int type, const FrameEvent& evt);

@@ -31,12 +31,10 @@ http://www.gnu.org/licenses/licenses.html
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
-bool ObjectManager::init(SceneManager *SceneMgr, SceneNode *Node)
+bool ObjectManager::init(SceneManager *SceneMgr)
 {
   mSceneMgr = SceneMgr;
-  mParentNode = Node;
-
-
+  mParentNode = mSceneMgr->getRootSceneNode();
 
   string strType, strTemp, strMesh;
   int i=0;
@@ -177,7 +175,7 @@ void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
 //=================================================================================================
 //
 //=================================================================================================
-void ObjectManager::delObject(int number)
+void ObjectManager::delObject(int )
 {}
 
 //=================================================================================================

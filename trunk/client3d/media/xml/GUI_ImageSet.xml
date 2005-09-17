@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<ImageSet File="Imageset.png" Font ="TrebuchetMSBold">
+
+	<Image ID ="Background" Width="63" Height="63">
+		<State ID ="Standard" posX = "0" posY ="0" />
+	</Image>
+
+	<Image ID ="MouseCursor" Width="15" Height="25">
+		<State ID ="Standard" posX = "1" posY ="65" />
+	</Image>
+
+
+	<Image ID ="Button_Close" Width="55" Height="17">
+		<State ID ="Standard" posX = "64" posY ="0" />
+		<State ID ="Pushed"   posX = "64" posY ="34" />
+		<State ID ="M_Over"   posX = "64" posY ="17" />
+	</Image>
+
+	<Image ID ="Button_2" Width="12" Height="16">
+		<State ID ="Standard" posX = "68" posY ="20" />
+	</Image>
+
+	<Image ID ="Button_Cancel" Width="13" Height="13">
+		<State ID ="Standard" posX = "2" posY ="20" />
+		<State ID ="M_Over" posX = "2" posY ="20" />
+		<State ID ="Pushed" posX = "2" posY ="20" />
+	</Image>
+</ImageSet>

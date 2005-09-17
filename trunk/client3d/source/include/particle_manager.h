@@ -50,7 +50,7 @@ public:
   {
     static ParticleManager Singleton; return Singleton;
   }
-  bool init(SceneManager *SceneMgr, SceneNode *Node);
+  bool init(SceneManager *SceneMgr);
   void addBoneObject(unsigned int npc, unsigned int spell);
   void delBoneObject(int nr);
   void addNodeObject(const SceneNode *node, const char* particleFX);
