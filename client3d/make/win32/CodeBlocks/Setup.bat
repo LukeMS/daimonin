@@ -15,8 +15,6 @@ rem ====================================
 
 ..\..\_Tools_\gunzip fmod_lib.tgz 
 ..\..\_Tools_\tar xvf fmod_lib.tar
-..\..\_Tools_\gunzip fmod_inc.tgz
-..\..\_Tools_\tar xvf fmod_inc.tar
 ..\..\_Tools_\gunzip fmod_dll.tgz
 ..\..\_Tools_\tar xvf fmod_dll.tar
 

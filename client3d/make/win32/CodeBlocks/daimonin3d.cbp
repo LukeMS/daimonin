@@ -63,10 +63,10 @@
 		</Build>
 		<Compiler>
 			<Add directory="ogre_inc"/>
-			<Add directory="fmod_inc"/>
 			<Add directory="..\..\..\source\include"/>
 			<Add directory="..\..\..\source\3rdParty\tinyxml"/>
 			<Add directory="..\..\..\source\3rdParty\zlib"/>
+			<Add directory="..\..\..\source\3rdParty\fmod"/>
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--enable-runtime-pseudo-reloc"/>
@@ -245,11 +245,6 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\gui_manager.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
 		<Unit filename="..\..\..\source\gui_window.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
@@ -326,13 +321,6 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\gui_gadget.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
-		<Unit filename="..\..\..\source\include\gui_manager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
