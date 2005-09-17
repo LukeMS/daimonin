@@ -36,17 +36,25 @@ void TileEnvironment::UpdateEnvironment()
 {
   m_Environment_SceneNode = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
 
+
+return;
+
+
+
+for (int z = 0; z < 5; ++z)
+{
   // testing with meshes is more fun...
   static int INr=0;
-
   if (INr > 1000) return;
-
-  SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(850+INr, 80, 850+INr), Quaternion(1.0,0.0,0.0,0.0));
-  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
+  SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(INr, 100, 100+INr), Quaternion(1.0,0.0,0.0,0.0));
+//  SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(50+INr, 500, 550+INr), Quaternion(1.0,0.0,0.0,0.0));
+  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "stone1.mesh" );
+//  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
+//  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "blunt1.mesh" );
   Node->attachObject(mEntityNPC);
-  Node->setScale(Vector3(.4, .4, .4));
-  INr+= 50;
-
+//  Node->setScale(Vector3(4, 4, 4));
+  INr+= 100;
+}
   /*
    long x = m_ChunkPtr->m_posX;
    long y = m_ChunkPtr->m_posY;

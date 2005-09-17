@@ -32,16 +32,10 @@ using namespace std;
 ////////////////////////////////////////////////////////////
 enum
 {
-  /** Input modus: text. **/
-  INPUT_MODE_TEXT,
-  /** Input modus: move cursor in a selection field. **/
-  INPUT_MODE_CURSOR_SELECTION,
-  /** Sum of input modes **/
-  INPUT_MODE_SUM
+  INPUT_MODE_TEXT,             /**< Input modus: text. **/
+  INPUT_MODE_CURSOR_SELECTION, /**< Input modus: move cursor in a selection field. **/
+  INPUT_MODE_SUM               /**< Sum of input modes **/
 };
-
-/** The maximum number of selectable entries in the selection field. **/
-const unsigned int MAX_SELECTION_ENTRYS = 20;
 
 /**
  ** TextInput class which manages the keyboard input for the Dialog class.
@@ -100,8 +94,7 @@ public:
   }
   /**
    ** Returns the input text.
-   ** @param showTextCursor Shows the (blinking) cursor within the text,
-   ** only makes sense for a font with same width for "-" and " ".
+   ** @param showTextCursor Shows the cursor within the text.
    *****************************************************************************/
 
   const char *getText(bool showTextCursor = false)
@@ -110,24 +103,28 @@ public:
     static bool cursorOn = true;
     if (!showTextCursor || mFinished || mCanceled) return mStrTextInput.c_str();
     mStrTextInputWithCursor = mStrTextInput;
+    /////////////////////////////////////////////////////////////////////////
+    /// For Cursor blinking "|" and " " must have the same size.
+    /// Can be finetuned by the space_width setting in TextAreaOverlay.
+    /////////////////////////////////////////////////////////////////////////
     if (clock()-time > 500)
     {
       time = clock();
-      // cursorOn = !cursorOn; // We need the same width of "_" and " " or it will look strange.
+      cursorOn = !cursorOn;
     }
     if (cursorOn)
-      mStrTextInputWithCursor.insert(mCursorPos, "_");
+      mStrTextInputWithCursor.insert(mCursorPos, "|");
     else
       mStrTextInputWithCursor.insert(mCursorPos, " ");
     return mStrTextInputWithCursor.c_str();
   }
+
   /**
    ** Inits a text input session.
    ** @param maxChars Maximuum text input length.
    ** @param useNumbers Input of numbers is allowed.
    ** @param useWhitespaces Input of whhitespaces is allowed.
    *****************************************************************************/
-
   void startTextInput(int maxChars, bool useNumbers = true, bool useWhitespaces = true)
   {
     // we start only over, if the last operation was ended.
@@ -222,7 +219,7 @@ public:
     else
     {
       unsigned int oldValue = mActValue;
-      if      (key == KEY_UP   && mActValue > 0)
+      if (key == KEY_UP && mActValue > 0)
         --mActValue;
       else if (key == KEY_DOWN && mActValue < mMaxValue)
         ++mActValue;
@@ -254,6 +251,8 @@ private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
+  /** The maximum number of selectable entries for a selection field. **/
+  static const unsigned int MAX_SELECTION_ENTRYS = 20;
   enum
   {
     KEY_RETURN = 0x1C, KEY_TAB = 0x0F, KEY_DELETE= 0xD3, KEY_BACKSPACE = 0x0E,
@@ -276,7 +275,7 @@ private:
   {}
   ~TextInput()
   {}
-  TextInput(const TextInput&); // disable copy-constructor.
+  TextInput(const TextInput&);
 };
 
 #endif

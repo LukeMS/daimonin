@@ -334,8 +334,7 @@ void Network::Update()
       sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
               " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
               //   SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
-              16,16,
-
+              11, 16,16,
               ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
               ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
               ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),

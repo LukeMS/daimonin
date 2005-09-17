@@ -23,10 +23,10 @@ http://www.gnu.org/licenses/licenses.html
 #include "client.h"
 #include "network.h"
 #include "logger.h"
-#include "textwindow.h"
 #include "dialog.h"
 #include "option.h"
 #include "sound.h"
+#include "gui_window.h"
 #include "object_manager.h"
 #include "particle_manager.h"
 #include "spell_manager.h"
@@ -50,7 +50,7 @@ void DaimoninClient::go(void)
   Sound::getSingleton().playSong(FILE_MUSIC_001);
 
   // Create the world.
-  Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+  Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode();
   Event->SetSceneManager(mSceneMgr);
   // Event->World->setPosition(0,0,0);
   mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
@@ -78,13 +78,13 @@ void DaimoninClient::go(void)
   light->setVisible(false);
 
   mTileManager = new TileManager();
-  mTileManager->Init(mSceneMgr);
+  mTileManager->Init(mSceneMgr, 128,1);
   Event->Set_pgraphics(mTileManager);
 
-  SpellManager::getSingleton().init(mSceneMgr, Event->World);
-  ParticleManager::getSingleton().init(mSceneMgr, Event->World);
-  ObjectManager::getSingleton().init(mSceneMgr, Event->World);
-
+  SpellManager   ::getSingleton().init(mSceneMgr);
+  ParticleManager::getSingleton().init(mSceneMgr);
+  ObjectManager  ::getSingleton().init(mSceneMgr);
+  Dialog         ::getSingleton().Init(mSceneMgr);
   mRoot->startRendering();
   /////////////////////////////////////////////////////////////////////////
   /// Clean up.
@@ -130,7 +130,7 @@ bool DaimoninClient::setup(void)
   /////////////////////////////////////////////////////////////////////////
   /// Set default mipmap level (NB some APIs ignore this)
   /////////////////////////////////////////////////////////////////////////
-  // TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
+  //TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
   /////////////////////////////////////////////////////////////////////////
   /// Optional override method where you can perform resource group loading
   /// Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();

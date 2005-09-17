@@ -18,73 +18,55 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef SPELL_MANAGER_H
-#define SPELL_MANAGER_H
-
-#include <vector>
-#include "Ogre.h"
-#include "spell_range.h"
+#ifndef GUI_CURSOR_H
+#define GUI_CURSOR_H
+#include <Ogre.h>
 
 using namespace Ogre;
 
 ////////////////////////////////////////////////////////////
-// Defines.
+/// Defines.
 ////////////////////////////////////////////////////////////
-enum
-{
-  SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM
-};
-enum
-{
-  SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM
-};
-enum
-{
-  SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM
-};
-
-struct _Spell
-{
-  SceneNode *node;
-  ParticleSystem* particleSys;
-};
 
 ////////////////////////////////////////////////////////////
 /// Class.
 ////////////////////////////////////////////////////////////
-class SpellManager
+class GuiCursor
 {
 public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  static SpellManager &getSingleton()
-  {
-    static SpellManager Singleton; return Singleton;
-  }
-  bool init(SceneManager *SceneMgr);
-  bool addObject( unsigned int npc, unsigned int spell);
-  void delObject(int number);
-  void update(int type, const FrameEvent& evt);
-  void keyEvent(int obj_type, int action, int val1=0, int val2=0);
-  void test(Vector3 pos);
+  GuiCursor(unsigned int w, unsigned int h, const char* Name);
+  ~GuiCursor();
+  void setPos(Real x, Real y);
 
 private:
+  enum
+  {
+    STATE_STANDARD, STATE_DRAGGING, STATE_RESIZING, STATE_SUM
+  };
+
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  SceneManager *mSceneMgr;
-  SceneNode  *mNode;
-  std::string mDescFile;
-  std::vector<SpellRange*>mvObject_range;
-
+  unsigned int mScreenWidth, mScreenHeight;
+  struct spos
+  {
+    int x, y,  w, h;
+  }
+  mSrcPos[STATE_SUM];
+  int mWidth, mHeight;
+  int mState;
+  Image mTileImage;
+  TexturePtr mTexture;
+  PixelBox mSrcPixelBox;
+  OverlayElement *mElement;
+  MaterialPtr mMaterial;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  SpellManager()
-  {}
-  ~SpellManager();
-  SpellManager(const SpellManager&); // disable copy-constructor.
+  GuiCursor(const GuiCursor&); // disable copy-constructor.
 };
 
 #endif

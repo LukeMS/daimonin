@@ -22,23 +22,132 @@ http://www.gnu.org/licenses/licenses.html
 #include "textwindow.h"
 #include "textinput.h"
 #include "logger.h"
+#include "event.h"
+#include "tinyxml.h"
 
 //=================================================================================================
 // Init all elements.
 //=================================================================================================
-bool Dialog::Init()
+bool Dialog::Init(SceneManager *SceneMgr)
 {
+  static int INr =0;
+/*  
+  Entity *mEntityNPC = SceneMgr->createEntity("GUI_"+StringConverter::toString(++INr), "tree01.mesh" );
+  SceneNode *Node = SceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(200, 200, 200));
+  Node->attachObject(mEntityNPC);
+*/
+
+
+
+
+
+
+
+
+  TiXmlElement *rootElem, *typeElem, *sectElem;
+  int intValue;
+  double doubleValue;
+  bool boolValue;
+
+  TiXmlDocument doc("./media/xml/GUI_ItemDisplay.xml");
+  if (!doc.LoadFile())
+  {
+    return false;
+  }
+
+/*
+  rootElem = doc.RootElement();
+  if (!rootElem) return false;
+  screen = root->FirstChildElement();
+  if (!screen) return false;
+  Logger::log().info() << "XML " << "Value: "     << screen->Value();
+  screen = screen->NextSiblingElement();
+  Logger::log().info() << "XML " << "Value: "     << screen->Value();
+  screen = screen->NextSiblingElement();
+  Logger::log().info() << "XML " << "Value: "     << screen->Value();
+*/
+
+  rootElem = doc.RootElement();
+  if (!rootElem) return false;
+  typeElem = rootElem->FirstChildElement();
+  if (!typeElem) return false;
+  Logger::log().info() << "XML-Type " << "Value: "     << typeElem->Value();
+   sectElem = typeElem->FirstChildElement();
+    Logger::log().info() << "XML-Section " << "Value: "     << sectElem->Value();
+    sectElem = sectElem->NextSiblingElement();
+    Logger::log().info() << "child " << "Value: "     << sectElem->Value();
+    sectElem = sectElem->NextSiblingElement();
+    Logger::log().info() << "child " << "Value: "     << sectElem->Value();
+    sectElem = sectElem->NextSiblingElement();
+    Logger::log().info() << "child " << "Value: "     << sectElem->Value();
+
+
+
+/*
+  rootElem = doc.RootElement();
+  if (!rootElem) return false;
+  typeElem = rootElem->FirstChildElement("Screen");
+  if (!typeElem) return false;
+  Logger::log().info() << typeElem->Value() << " = "  << typeElem->Attribute("Item");
+  sectElem = typeElem->FirstChildElement("Dimension");
+  Logger::log().info() << "Value: " << sectElem ->Value() << " = "  << sectElem->Attribute("Relative");
+
+
+
+  sectElem = sectElem->NextSiblingElement();
+
+  Logger::log().info() << "XML-Section " << "Value: "     << sectElem->Value();
+  sectElem = sectElem->NextSiblingElement();
+*/
+
+
+/*
+  Logger::log().info() << "XML " << "Attribute: " << screen->Attribute("Test", &intValue);
+  Logger::log().info() << "XML " << "2 " << intValue;
+*/
+
+/*
+  child = screen->FirstChildElement("Test");
+  Logger::log().info() << "XML " << "Value: " << child->Value();
+  Logger::log().info() << "XML " << "Attribute: " << child->Attribute("Test", &intValue);
+//  Logger::log().info() << child->Attribute("RelativePosition", &boolValue);
+  Logger::log().info() << "XML " << "2 " << intValue;
+*/
+
+/*
+  Logger::log().info() << child->Attribute("RelativePosition", &boolValue);
+  Logger::log().info() << "XML " << "2 " << boolValue;
+  Logger::log().info() << "XML " << "3 " << true;
+*/
+//  Logger::log().info() << child->Attribute("Test", &intValue);
+//  Logger::log().info() << "XML " << "2 " << intValue;
+
+
+
+//  screen = child->FirstChildElement("RelativePosition");
+//  Logger::log().info() << "XML " << "Value: " << screen->Value();
+
+
+
+//        for (TiXmlElement* smElem = mSubmeshesNode->FirstChildElement();
+//            smElem != 0; smElem = smElem->NextSiblingElement())
+
+
+
+
+
   Logger::log().headline("Init Dialog-System");
   mLoginOverlay       = OverlayManager::getSingleton().getByName("DialogOverlay");
   mPanelPlayerName    = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
-  mPlayerName         = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");
   mPanelPlayerPasswd  = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password");
-  mPlayerPasswd       = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text");
-  mPlayerRePasswd     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text");
   mPanelPlayerRePasswd= OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword");
   mElementSelectionBar= OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/select");
-  mDialogSelPanel= static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
-  mDialogInfoPanel=static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Info/Panel"));
+  mPlayerName         = static_cast<TextAreaOverlayElement*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text"));
+  mPlayerPasswd       = static_cast<TextAreaOverlayElement*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text"));
+  mPlayerRePasswd     = static_cast<TextAreaOverlayElement*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text"));
+  mDialogSelPanel     = static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
+  mDialogInfoPanel    = static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Info/Panel"));
+
   // Selection textAreas.
   std::string name= "Dialog/Text/";
   for (unsigned int i=0; i < DIALOG_TXT_LINES; i++)
@@ -58,6 +167,24 @@ bool Dialog::Init()
     mElementInfo[j]->setCaption(name+"Line_"+ StringConverter::toString(j));
     mDialogInfoPanel->addChild(mElementInfo[j]);
   }
+
+
+
+
+
+  // mPlayerName->setSpaceWidth(11.5);
+  Logger::log().info() << "hier: " << mPlayerName->getSpaceWidth();
+  //  static_cast<TextAreaOverlayElement*>(mPanelPlayerName)->setSpaceWidth(0.0);
+  //  mPlayerName->CmdSpaceWidth::doSet(mPlayerName, "|");
+  //  static_cast<TextAreaOverlayElement*>(mPlayerName)->setSpaceWidth(0.0);
+
+
+
+
+
+
+
+
   setVisible(false);
   return true;
 }

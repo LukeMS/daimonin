@@ -34,13 +34,13 @@ extern Camera *mCamera;
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
-unsigned int NPC::mInstanceNr = 0; // mInstanceNr = Player's Hero
+unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 static ParticleFX *tempPFX =0;
 
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
-NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Radian Facing)
+NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Radian )
 {
   if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
   mNode = Node;
@@ -61,7 +61,6 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
   mSceneMgr = SceneMgr;
 
   // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
-  // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.0,.0,.0), 0.005, 450, 800);
   // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
 
   string strTemp;
@@ -96,9 +95,9 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
     Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
     Event->getCamera()->pitch(Degree(-45));
 
-    Real height = Event->pgTileManager->Get_Map_Height((short)(pos.x)/TILE_SIZE, (short)(pos.z)/TILE_SIZE)*3;
+    Real height = Event->pgTileManager->Get_Map_Height((short)(pos.x)/TILE_SIZE, (short)(pos.z)/TILE_SIZE)*2;
     pos.y += height;
-    pos.z += height;
+    //pos.z += height;
     mNode->setPosition(pos);
 
     /// Set the Init-pos of the TileEngine.
@@ -283,7 +282,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         Option::getSingleton().getDescStr("StartZ_Armor", mStrTemp, WeaponNr);
         Real posZ = atof(mStrTemp.c_str());
         Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
-        mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+        mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion::IDENTITY, Vector3(posX, posY, posZ));
       }
       else mArmor =0;  // testing -> delete me!
       break;
@@ -331,7 +330,6 @@ void NPC::update(const FrameEvent& event)
         // Add the terrain height to the y-pos of player.
         Vector3 myPos = mNode->getPosition();
 
-
         /// Iportant no bounds check for get_map_height right now.
         /// It will crash if you leave the map!
 
@@ -339,8 +337,8 @@ void NPC::update(const FrameEvent& event)
         Real tt = pPos.z;
         // pPos.z = 22*30 -(pPos.z- 524+10);
         pPos.z -= 534;
-        Real height = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*3;
-        mNode->setPosition(pPos.x, pPos.y-370 + height, tt -390 +height);
+        Real height = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE+1, (short)(pPos.z)/TILE_SIZE);
+        mNode->setPosition(pPos.x, pPos.y-390 + height, tt -390);
       }
     }
     else
