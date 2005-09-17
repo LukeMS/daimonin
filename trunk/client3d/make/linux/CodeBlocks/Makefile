@@ -4,7 +4,7 @@
 
 # Project:          Client3d
 # Project filename: /home/andreas/daimonin/client3d/make/linux/CodeBlocks/Client3d.cbp
-# Date:             Sa 27 Aug 2005 11:19:12 CEST
+# Date:             Sa 17 Sep 2005 18:14:43 CEST
 # Compiler used:    GNU GCC Compiler
 
 ### Variables used in this Makefile
@@ -23,7 +23,7 @@ PROJECT_CFLAGS= -DEXT_HASH
 GLOBAL_LDFLAGS=
 PROJECT_LDFLAGS=
 GLOBAL_INCS= -I/usr/include
-PROJECT_INCS= -I/usr/include/OGRE -I../../../source/include -I../../../source/include/fmod
+PROJECT_INCS= -I/usr/include/OGRE -I../../../source/include -I../../../source/3rdParty/zlib -I../../../source/3rdParty/tinyxml -I../../../source/3rdParty/fmod
 GLOBAL_LIBDIRS= -L/usr/lib
 PROJECT_LIBDIRS= -L../../linux
 GLOBAL_LIBS=
@@ -49,9 +49,9 @@ default_LIBS= $(PROJECT_LIBS) $(GLOBAL_LIBS)
 ###############################################################################
 
 ### Objects used in this Makefile
-default_OBJS=.objs/source/TileChunk.o .objs/source/TileEnvironment.o .objs/source/TileManager.o .objs/source/adler32.o .objs/source/animate.o .objs/source/client.o .objs/source/crc32.o .objs/source/dialog.o .objs/source/event.o .objs/source/inffast.o .objs/source/inflate.o .objs/source/inftrees.o .objs/source/light_manager.o .objs/source/logger.o .objs/source/logger_html.o .objs/source/main.o .objs/source/network.o .objs/source/network_cmd.o .objs/source/object_manager.o .objs/source/object_npc.o .objs/source/object_static.o .objs/source/option.o .objs/source/option_init.o .objs/source/particle.o .objs/source/particle_manager.o .objs/source/serverfile.o .objs/source/sound.o .objs/source/spell_manager.o .objs/source/spell_range.o .objs/source/textwindow.o .objs/source/uncompr.o .objs/source/zutil.o 
+default_OBJS=.objs/source/3rdParty/tinyxml/tinystr.o .objs/source/3rdParty/tinyxml/tinyxml.o .objs/source/3rdParty/tinyxml/tinyxmlerror.o .objs/source/3rdParty/tinyxml/tinyxmlparser.o .objs/source/3rdParty/zlib/adler32.o .objs/source/3rdParty/zlib/crc32.o .objs/source/3rdParty/zlib/inffast.o .objs/source/3rdParty/zlib/inflate.o .objs/source/3rdParty/zlib/inftrees.o .objs/source/3rdParty/zlib/uncompr.o .objs/source/3rdParty/zlib/zutil.o .objs/source/TileChunk.o .objs/source/TileEnvironment.o .objs/source/TileManager.o .objs/source/animate.o .objs/source/client.o .objs/source/dialog.o .objs/source/event.o .objs/source/gui_cursor.o .objs/source/gui_gadget.o .objs/source/gui_window.o .objs/source/light_manager.o .objs/source/logger.o .objs/source/logger_html.o .objs/source/main.o .objs/source/network.o .objs/source/network_cmd.o .objs/source/object_manager.o .objs/source/object_npc.o .objs/source/object_static.o .objs/source/option.o .objs/source/option_init.o .objs/source/particle.o .objs/source/particle_manager.o .objs/source/serverfile.o .objs/source/sound.o .objs/source/spell_manager.o .objs/source/spell_range.o .objs/source/textwindow.o 
 default_LINKOBJS=$(default_OBJS)
-default_DEPS=.deps/source/TileChunk.d .deps/source/TileEnvironment.d .deps/source/TileManager.d .deps/source/adler32.d .deps/source/animate.d .deps/source/client.d .deps/source/crc32.d .deps/source/dialog.d .deps/source/event.d .deps/source/inffast.d .deps/source/inflate.d .deps/source/inftrees.d .deps/source/light_manager.d .deps/source/logger.d .deps/source/logger_html.d .deps/source/main.d .deps/source/network.d .deps/source/network_cmd.d .deps/source/object_manager.d .deps/source/object_npc.d .deps/source/object_static.d .deps/source/option.d .deps/source/option_init.d .deps/source/particle.d .deps/source/particle_manager.d .deps/source/serverfile.d .deps/source/sound.d .deps/source/spell_manager.d .deps/source/spell_range.d .deps/source/textwindow.d .deps/source/uncompr.d .deps/source/zutil.d 
+default_DEPS=.deps/source/3rdParty/tinyxml/tinystr.d .deps/source/3rdParty/tinyxml/tinyxml.d .deps/source/3rdParty/tinyxml/tinyxmlerror.d .deps/source/3rdParty/tinyxml/tinyxmlparser.d .deps/source/3rdParty/zlib/adler32.d .deps/source/3rdParty/zlib/crc32.d .deps/source/3rdParty/zlib/inffast.d .deps/source/3rdParty/zlib/inflate.d .deps/source/3rdParty/zlib/inftrees.d .deps/source/3rdParty/zlib/uncompr.d .deps/source/3rdParty/zlib/zutil.d .deps/source/TileChunk.d .deps/source/TileEnvironment.d .deps/source/TileManager.d .deps/source/animate.d .deps/source/client.d .deps/source/dialog.d .deps/source/event.d .deps/source/gui_cursor.d .deps/source/gui_gadget.d .deps/source/gui_window.d .deps/source/light_manager.d .deps/source/logger.d .deps/source/logger_html.d .deps/source/main.d .deps/source/network.d .deps/source/network_cmd.d .deps/source/object_manager.d .deps/source/object_npc.d .deps/source/object_static.d .deps/source/option.d .deps/source/option_init.d .deps/source/particle.d .deps/source/particle_manager.d .deps/source/serverfile.d .deps/source/sound.d .deps/source/spell_manager.d .deps/source/spell_range.d .deps/source/textwindow.d 
 
 ### The targets of this project
 default_BIN=../../../Client3d
@@ -66,7 +66,7 @@ all-after:
 
 
 dist:
-	@$(ZIP) Client3d.cbp.$(ZIP_EXT) Client3d.cbp Makefile ReadMe.txt ../../../source/TileChunk.cpp ../../../source/TileEnvironment.cpp ../../../source/TileManager.cpp ../../../source/adler32.c ../../../source/animate.cpp ../../../source/client.cpp ../../../source/crc32.c ../../../source/dialog.cpp ../../../source/event.cpp ../../../source/include/TileChunk.h ../../../source/include/TileEnvironment.h ../../../source/include/TileManager.h ../../../source/include/animate.h ../../../source/include/client.h ../../../source/include/crc32.h ../../../source/include/define.h ../../../source/include/dialog.h ../../../source/include/event.h ../../../source/include/inffast.h ../../../source/include/inflate.h ../../../source/include/inftrees.h ../../../source/include/light_manager.h ../../../source/include/logger.h ../../../source/include/logger_html.h ../../../source/include/network.h ../../../source/include/object_manager.h ../../../source/include/object_npc.h ../../../source/include/object_static.h ../../../source/include/option.h ../../../source/include/particle.h ../../../source/include/particle_manager.h ../../../source/include/serverfile.h ../../../source/include/sound.h ../../../source/include/spell_manager.h ../../../source/include/spell_range.h ../../../source/include/textinput.h ../../../source/include/textwindow.h ../../../source/include/zconf.h ../../../source/include/zlib.h ../../../source/include/zutil.h ../../../source/inffast.c ../../../source/inflate.c ../../../source/inftrees.c ../../../source/light_manager.cpp ../../../source/logger.cpp ../../../source/logger_html.cpp ../../../source/main.cpp ../../../source/network.cpp ../../../source/network_cmd.cpp ../../../source/object_manager.cpp ../../../source/object_npc.cpp ../../../source/object_static.cpp ../../../source/option.cpp ../../../source/option_init.cpp ../../../source/particle.cpp ../../../source/particle_manager.cpp ../../../source/serverfile.cpp ../../../source/sound.cpp ../../../source/spell_manager.cpp ../../../source/spell_range.cpp ../../../source/textwindow.cpp ../../../source/uncompr.c ../../../source/zutil.c 
+	@$(ZIP) Client3d.cbp.$(ZIP_EXT) Client3d.cbp Makefile ReadMe.txt ../../../source/3rdParty/tinyxml/tinystr.cpp ../../../source/3rdParty/tinyxml/tinystr.h ../../../source/3rdParty/tinyxml/tinyxml.cpp ../../../source/3rdParty/tinyxml/tinyxml.h ../../../source/3rdParty/tinyxml/tinyxmlerror.cpp ../../../source/3rdParty/tinyxml/tinyxmlparser.cpp ../../../source/3rdParty/zlib/adler32.c ../../../source/3rdParty/zlib/crc32.c ../../../source/3rdParty/zlib/crc32.h ../../../source/3rdParty/zlib/inffast.c ../../../source/3rdParty/zlib/inffast.h ../../../source/3rdParty/zlib/inflate.c ../../../source/3rdParty/zlib/inflate.h ../../../source/3rdParty/zlib/inftrees.c ../../../source/3rdParty/zlib/inftrees.h ../../../source/3rdParty/zlib/uncompr.c ../../../source/3rdParty/zlib/zconf.h ../../../source/3rdParty/zlib/zlib.h ../../../source/3rdParty/zlib/zutil.c ../../../source/3rdParty/zlib/zutil.h ../../../source/TileChunk.cpp ../../../source/TileEnvironment.cpp ../../../source/TileManager.cpp ../../../source/animate.cpp ../../../source/client.cpp ../../../source/dialog.cpp ../../../source/event.cpp ../../../source/gui_cursor.cpp ../../../source/gui_gadget.cpp ../../../source/gui_window.cpp ../../../source/include/TileChunk.h ../../../source/include/TileEnvironment.h ../../../source/include/TileManager.h ../../../source/include/animate.h ../../../source/include/client.h ../../../source/include/define.h ../../../source/include/dialog.h ../../../source/include/event.h ../../../source/include/gui_cursor.h ../../../source/include/gui_gadget.h ../../../source/include/gui_window.h ../../../source/include/light_manager.h ../../../source/include/logger.h ../../../source/include/logger_html.h ../../../source/include/network.h ../../../source/include/object_manager.h ../../../source/include/object_npc.h ../../../source/include/object_static.h ../../../source/include/option.h ../../../source/include/particle.h ../../../source/include/particle_manager.h ../../../source/include/serverfile.h ../../../source/include/sound.h ../../../source/include/spell_manager.h ../../../source/include/spell_range.h ../../../source/include/textinput.h ../../../source/include/textwindow.h ../../../source/light_manager.cpp ../../../source/logger.cpp ../../../source/logger_html.cpp ../../../source/main.cpp ../../../source/network.cpp ../../../source/network_cmd.cpp ../../../source/object_manager.cpp ../../../source/object_npc.cpp ../../../source/object_static.cpp ../../../source/option.cpp ../../../source/option_init.cpp ../../../source/particle.cpp ../../../source/particle_manager.cpp ../../../source/serverfile.cpp ../../../source/sound.cpp ../../../source/spell_manager.cpp ../../../source/spell_range.cpp ../../../source/textwindow.cpp 
 
 clean_default:
 	@echo Cleaning target "default"...
@@ -86,6 +86,9 @@ depend_default_DIRS:
 	-@if ! test -d .deps/make/linux; then mkdir .deps/make/linux; fi
 	-@if ! test -d .deps/make/linux/CodeBlocks; then mkdir .deps/make/linux/CodeBlocks; fi
 	-@if ! test -d .deps/source; then mkdir .deps/source; fi
+	-@if ! test -d .deps/source/3rdParty; then mkdir .deps/source/3rdParty; fi
+	-@if ! test -d .deps/source/3rdParty/tinyxml; then mkdir .deps/source/3rdParty/tinyxml; fi
+	-@if ! test -d .deps/source/3rdParty/zlib; then mkdir .deps/source/3rdParty/zlib; fi
 	-@if ! test -d .deps/source/include; then mkdir .deps/source/include; fi
 
 depend_default: depend_default_DIRS $(default_DEPS)
@@ -98,6 +101,9 @@ default_DIRS:
 	-@if ! test -d .objs/make/linux; then mkdir .objs/make/linux; fi
 	-@if ! test -d .objs/make/linux/CodeBlocks; then mkdir .objs/make/linux/CodeBlocks; fi
 	-@if ! test -d .objs/source; then mkdir .objs/source; fi
+	-@if ! test -d .objs/source/3rdParty; then mkdir .objs/source/3rdParty; fi
+	-@if ! test -d .objs/source/3rdParty/tinyxml; then mkdir .objs/source/3rdParty/tinyxml; fi
+	-@if ! test -d .objs/source/3rdParty/zlib; then mkdir .objs/source/3rdParty/zlib; fi
 	-@if ! test -d .objs/source/include; then mkdir .objs/source/include; fi
 	-@if ! test -d ..; then mkdir ..; fi
 	-@if ! test -d ../..; then mkdir ../..; fi
@@ -109,6 +115,94 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 	@echo Linking executable "../../../Client3d"...
 	@$(LD) $(default_LIBDIRS) -o $(default_BIN) $(default_LINKOBJS) $(default_RESOURCE) $(default_LDFLAGS) $(default_LIBS) -mwindows
 
+
+.deps/source/3rdParty/tinyxml/tinystr.d: ../../../source/3rdParty/tinyxml/tinystr.cpp
+	@echo Calculating dependencies for "../../../source/3rdParty/tinyxml/tinystr.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/tinyxml/tinystr.d -MT .objs/source/3rdParty/tinyxml/tinystr.o $(default_INCS) ../../../source/3rdParty/tinyxml/tinystr.cpp
+
+.objs/source/3rdParty/tinyxml/tinystr.o: .deps/source/3rdParty/tinyxml/tinystr.d
+	@echo Compiling "../../../source/3rdParty/tinyxml/tinystr.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/tinyxml/tinystr.cpp -o .objs/source/3rdParty/tinyxml/tinystr.o
+
+.deps/source/3rdParty/tinyxml/tinyxml.d: ../../../source/3rdParty/tinyxml/tinyxml.cpp
+	@echo Calculating dependencies for "../../../source/3rdParty/tinyxml/tinyxml.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/tinyxml/tinyxml.d -MT .objs/source/3rdParty/tinyxml/tinyxml.o $(default_INCS) ../../../source/3rdParty/tinyxml/tinyxml.cpp
+
+.objs/source/3rdParty/tinyxml/tinyxml.o: .deps/source/3rdParty/tinyxml/tinyxml.d
+	@echo Compiling "../../../source/3rdParty/tinyxml/tinyxml.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/tinyxml/tinyxml.cpp -o .objs/source/3rdParty/tinyxml/tinyxml.o
+
+.deps/source/3rdParty/tinyxml/tinyxmlerror.d: ../../../source/3rdParty/tinyxml/tinyxmlerror.cpp
+	@echo Calculating dependencies for "../../../source/3rdParty/tinyxml/tinyxmlerror.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/tinyxml/tinyxmlerror.d -MT .objs/source/3rdParty/tinyxml/tinyxmlerror.o $(default_INCS) ../../../source/3rdParty/tinyxml/tinyxmlerror.cpp
+
+.objs/source/3rdParty/tinyxml/tinyxmlerror.o: .deps/source/3rdParty/tinyxml/tinyxmlerror.d
+	@echo Compiling "../../../source/3rdParty/tinyxml/tinyxmlerror.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/tinyxml/tinyxmlerror.cpp -o .objs/source/3rdParty/tinyxml/tinyxmlerror.o
+
+.deps/source/3rdParty/tinyxml/tinyxmlparser.d: ../../../source/3rdParty/tinyxml/tinyxmlparser.cpp
+	@echo Calculating dependencies for "../../../source/3rdParty/tinyxml/tinyxmlparser.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/tinyxml/tinyxmlparser.d -MT .objs/source/3rdParty/tinyxml/tinyxmlparser.o $(default_INCS) ../../../source/3rdParty/tinyxml/tinyxmlparser.cpp
+
+.objs/source/3rdParty/tinyxml/tinyxmlparser.o: .deps/source/3rdParty/tinyxml/tinyxmlparser.d
+	@echo Compiling "../../../source/3rdParty/tinyxml/tinyxmlparser.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/tinyxml/tinyxmlparser.cpp -o .objs/source/3rdParty/tinyxml/tinyxmlparser.o
+
+.deps/source/3rdParty/zlib/adler32.d: ../../../source/3rdParty/zlib/adler32.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/adler32.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/adler32.d -MT .objs/source/3rdParty/zlib/adler32.o $(default_INCS) ../../../source/3rdParty/zlib/adler32.c
+
+.objs/source/3rdParty/zlib/adler32.o: .deps/source/3rdParty/zlib/adler32.d
+	@echo Compiling "../../../source/3rdParty/zlib/adler32.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/adler32.c -o .objs/source/3rdParty/zlib/adler32.o
+
+.deps/source/3rdParty/zlib/crc32.d: ../../../source/3rdParty/zlib/crc32.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/crc32.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/crc32.d -MT .objs/source/3rdParty/zlib/crc32.o $(default_INCS) ../../../source/3rdParty/zlib/crc32.c
+
+.objs/source/3rdParty/zlib/crc32.o: .deps/source/3rdParty/zlib/crc32.d
+	@echo Compiling "../../../source/3rdParty/zlib/crc32.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/crc32.c -o .objs/source/3rdParty/zlib/crc32.o
+
+.deps/source/3rdParty/zlib/inffast.d: ../../../source/3rdParty/zlib/inffast.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/inffast.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/inffast.d -MT .objs/source/3rdParty/zlib/inffast.o $(default_INCS) ../../../source/3rdParty/zlib/inffast.c
+
+.objs/source/3rdParty/zlib/inffast.o: .deps/source/3rdParty/zlib/inffast.d
+	@echo Compiling "../../../source/3rdParty/zlib/inffast.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/inffast.c -o .objs/source/3rdParty/zlib/inffast.o
+
+.deps/source/3rdParty/zlib/inflate.d: ../../../source/3rdParty/zlib/inflate.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/inflate.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/inflate.d -MT .objs/source/3rdParty/zlib/inflate.o $(default_INCS) ../../../source/3rdParty/zlib/inflate.c
+
+.objs/source/3rdParty/zlib/inflate.o: .deps/source/3rdParty/zlib/inflate.d
+	@echo Compiling "../../../source/3rdParty/zlib/inflate.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/inflate.c -o .objs/source/3rdParty/zlib/inflate.o
+
+.deps/source/3rdParty/zlib/inftrees.d: ../../../source/3rdParty/zlib/inftrees.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/inftrees.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/inftrees.d -MT .objs/source/3rdParty/zlib/inftrees.o $(default_INCS) ../../../source/3rdParty/zlib/inftrees.c
+
+.objs/source/3rdParty/zlib/inftrees.o: .deps/source/3rdParty/zlib/inftrees.d
+	@echo Compiling "../../../source/3rdParty/zlib/inftrees.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/inftrees.c -o .objs/source/3rdParty/zlib/inftrees.o
+
+.deps/source/3rdParty/zlib/uncompr.d: ../../../source/3rdParty/zlib/uncompr.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/uncompr.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/uncompr.d -MT .objs/source/3rdParty/zlib/uncompr.o $(default_INCS) ../../../source/3rdParty/zlib/uncompr.c
+
+.objs/source/3rdParty/zlib/uncompr.o: .deps/source/3rdParty/zlib/uncompr.d
+	@echo Compiling "../../../source/3rdParty/zlib/uncompr.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/uncompr.c -o .objs/source/3rdParty/zlib/uncompr.o
+
+.deps/source/3rdParty/zlib/zutil.d: ../../../source/3rdParty/zlib/zutil.c
+	@echo Calculating dependencies for "../../../source/3rdParty/zlib/zutil.c"...
+	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/3rdParty/zlib/zutil.d -MT .objs/source/3rdParty/zlib/zutil.o $(default_INCS) ../../../source/3rdParty/zlib/zutil.c
+
+.objs/source/3rdParty/zlib/zutil.o: .deps/source/3rdParty/zlib/zutil.d
+	@echo Compiling "../../../source/3rdParty/zlib/zutil.c"...
+	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/3rdParty/zlib/zutil.c -o .objs/source/3rdParty/zlib/zutil.o
 
 .deps/source/TileChunk.d: ../../../source/TileChunk.cpp
 	@echo Calculating dependencies for "../../../source/TileChunk.cpp"...
@@ -134,14 +228,6 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 	@echo Compiling "../../../source/TileManager.cpp"...
 	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/TileManager.cpp -o .objs/source/TileManager.o
 
-.deps/source/adler32.d: ../../../source/adler32.c
-	@echo Calculating dependencies for "../../../source/adler32.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/adler32.d -MT .objs/source/adler32.o $(default_INCS) ../../../source/adler32.c
-
-.objs/source/adler32.o: .deps/source/adler32.d
-	@echo Compiling "../../../source/adler32.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/adler32.c -o .objs/source/adler32.o
-
 .deps/source/animate.d: ../../../source/animate.cpp
 	@echo Calculating dependencies for "../../../source/animate.cpp"...
 	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/animate.d -MT .objs/source/animate.o $(default_INCS) ../../../source/animate.cpp
@@ -157,14 +243,6 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 .objs/source/client.o: .deps/source/client.d
 	@echo Compiling "../../../source/client.cpp"...
 	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/client.cpp -o .objs/source/client.o
-
-.deps/source/crc32.d: ../../../source/crc32.c
-	@echo Calculating dependencies for "../../../source/crc32.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/crc32.d -MT .objs/source/crc32.o $(default_INCS) ../../../source/crc32.c
-
-.objs/source/crc32.o: .deps/source/crc32.d
-	@echo Compiling "../../../source/crc32.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/crc32.c -o .objs/source/crc32.o
 
 .deps/source/dialog.d: ../../../source/dialog.cpp
 	@echo Calculating dependencies for "../../../source/dialog.cpp"...
@@ -182,29 +260,29 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 	@echo Compiling "../../../source/event.cpp"...
 	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/event.cpp -o .objs/source/event.o
 
-.deps/source/inffast.d: ../../../source/inffast.c
-	@echo Calculating dependencies for "../../../source/inffast.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/inffast.d -MT .objs/source/inffast.o $(default_INCS) ../../../source/inffast.c
+.deps/source/gui_cursor.d: ../../../source/gui_cursor.cpp
+	@echo Calculating dependencies for "../../../source/gui_cursor.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/gui_cursor.d -MT .objs/source/gui_cursor.o $(default_INCS) ../../../source/gui_cursor.cpp
 
-.objs/source/inffast.o: .deps/source/inffast.d
-	@echo Compiling "../../../source/inffast.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/inffast.c -o .objs/source/inffast.o
+.objs/source/gui_cursor.o: .deps/source/gui_cursor.d
+	@echo Compiling "../../../source/gui_cursor.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/gui_cursor.cpp -o .objs/source/gui_cursor.o
 
-.deps/source/inflate.d: ../../../source/inflate.c
-	@echo Calculating dependencies for "../../../source/inflate.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/inflate.d -MT .objs/source/inflate.o $(default_INCS) ../../../source/inflate.c
+.deps/source/gui_gadget.d: ../../../source/gui_gadget.cpp
+	@echo Calculating dependencies for "../../../source/gui_gadget.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/gui_gadget.d -MT .objs/source/gui_gadget.o $(default_INCS) ../../../source/gui_gadget.cpp
 
-.objs/source/inflate.o: .deps/source/inflate.d
-	@echo Compiling "../../../source/inflate.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/inflate.c -o .objs/source/inflate.o
+.objs/source/gui_gadget.o: .deps/source/gui_gadget.d
+	@echo Compiling "../../../source/gui_gadget.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/gui_gadget.cpp -o .objs/source/gui_gadget.o
 
-.deps/source/inftrees.d: ../../../source/inftrees.c
-	@echo Calculating dependencies for "../../../source/inftrees.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/inftrees.d -MT .objs/source/inftrees.o $(default_INCS) ../../../source/inftrees.c
+.deps/source/gui_window.d: ../../../source/gui_window.cpp
+	@echo Calculating dependencies for "../../../source/gui_window.cpp"...
+	@$(CPP) -MM $(default_CFLAGS) -MF .deps/source/gui_window.d -MT .objs/source/gui_window.o $(default_INCS) ../../../source/gui_window.cpp
 
-.objs/source/inftrees.o: .deps/source/inftrees.d
-	@echo Compiling "../../../source/inftrees.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/inftrees.c -o .objs/source/inftrees.o
+.objs/source/gui_window.o: .deps/source/gui_window.d
+	@echo Compiling "../../../source/gui_window.cpp"...
+	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/gui_window.cpp -o .objs/source/gui_window.o
 
 .deps/source/light_manager.d: ../../../source/light_manager.cpp
 	@echo Calculating dependencies for "../../../source/light_manager.cpp"...
@@ -349,21 +427,5 @@ $(default_BIN): $(default_LINKOBJS) $(default_RESOURCE)
 .objs/source/textwindow.o: .deps/source/textwindow.d
 	@echo Compiling "../../../source/textwindow.cpp"...
 	@$(CPP) $(default_CFLAGS) $(default_INCS) -c ../../../source/textwindow.cpp -o .objs/source/textwindow.o
-
-.deps/source/uncompr.d: ../../../source/uncompr.c
-	@echo Calculating dependencies for "../../../source/uncompr.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/uncompr.d -MT .objs/source/uncompr.o $(default_INCS) ../../../source/uncompr.c
-
-.objs/source/uncompr.o: .deps/source/uncompr.d
-	@echo Compiling "../../../source/uncompr.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/uncompr.c -o .objs/source/uncompr.o
-
-.deps/source/zutil.d: ../../../source/zutil.c
-	@echo Calculating dependencies for "../../../source/zutil.c"...
-	@$(CC) -MM $(default_CFLAGS) -MF .deps/source/zutil.d -MT .objs/source/zutil.o $(default_INCS) ../../../source/zutil.c
-
-.objs/source/zutil.o: .deps/source/zutil.d
-	@echo Compiling "../../../source/zutil.c"...
-	@$(CC) $(default_CFLAGS) $(default_INCS) -c ../../../source/zutil.c -o .objs/source/zutil.o
 
 
