@@ -7,6 +7,7 @@ material GUI/Window
          lighting off
          scene_blend alpha_blend
          depth_check off
+	   //depth_write off
          texture_unit
          {
          }

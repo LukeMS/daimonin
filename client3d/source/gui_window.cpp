@@ -21,6 +21,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "gui_window.h"
 #include "gui_gadget.h"
+#include "gui_textout.h"
+#include "gui_manager.h"
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
@@ -38,14 +40,6 @@ const char XML_BACKGROUND[] = "Background";
 //=================================================================================================
 unsigned int GuiWindow::msInstanceNr =100;
 
-///=================================================================================================
-/// Add a gagdet to the window.
-///=================================================================================================
-void GuiWindow::addGadget()
-{
-  GuiGadget *gadget = new GuiGadget(mStrXMLFile.c_str(), mvGadget.size());
-  mvGadget.push_back(gadget);
-}
 
 ///=================================================================================================
 /// Delete a gadget.
@@ -78,131 +72,38 @@ GuiWindow::~GuiWindow()
 }
 
 ///=================================================================================================
-/// Read the gfx-data for the given gadget.
-///=================================================================================================
-bool GuiWindow::parseImagesetData()
-{
-  /////////////////////////////////////////////////////////////////////////
-  /// Check for a working description file.
-  /////////////////////////////////////////////////////////////////////////
-  TiXmlElement *xmlRoot, *xmlElem, *xmlGadget;
-  TiXmlDocument doc(mStrImageSet.c_str());
-  if (!doc.LoadFile(mStrImageSet.c_str()) || !(xmlRoot = doc.RootElement()) || !xmlRoot->Attribute("File"))
-  {
-    Logger::log().error() << "XML-File '" << mStrImageSet << "' is broken or missing.";
-    return false;
-  }
-  mStrImageSetGfxFile = xmlRoot->Attribute("File");
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the Font entries.
-  /////////////////////////////////////////////////////////////////////////
-  if (xmlRoot->Attribute("Font"))
-  {
-    mStrFont = xmlRoot->Attribute("Font");
-  }
-  else
-  {
-    Logger::log().error() << "No font entry found in '"<< mStrImageSetGfxFile<< "' Using default Font 'TrebuchetMSBold'.";
-    mStrFont = "TrebuchetMSBold";
-  }
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the gfx coordinates.
-  /////////////////////////////////////////////////////////////////////////
-  std::string strTmp;
-  for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
-  {
-    mSrcEntry *Entry = new mSrcEntry;
-    if (!xmlElem->Attribute("ID"))  continue;
-    Entry->name   = xmlElem->Attribute("ID");
-    Entry->width  = atoi(xmlElem->Attribute("Width"));
-    Entry->height = atoi(xmlElem->Attribute("Height"));
-    for (int i=0; i < STATE_SUM; ++i) Entry->pos[i].x = -1;
-    /////////////////////////////////////////////////////////////////////////
-    /// Parse the Position entries.
-    /////////////////////////////////////////////////////////////////////////
-    for (xmlGadget = xmlElem->FirstChildElement("State"); xmlGadget; xmlGadget = xmlGadget->NextSiblingElement("State"))
-    {
-      if (!(xmlGadget->Attribute("ID"))) continue;
-      Entry->drawAndForget = false; /// This Gadget needs event handling.
-      strTmp = xmlGadget->Attribute("ID");
-      int state = -1;
-      if      (strTmp == "Standard") state = STATE_STANDARD;
-      else if (strTmp == "Pushed"  ) state = STATE_PUSHED;
-      else if (strTmp == "M_Over"  ) state = STATE_M_OVER;
-      Entry->pos[state].x = atoi(xmlGadget->Attribute("posX"));
-      Entry->pos[state].y = atoi(xmlGadget->Attribute("posY"));
-      if (state < 0)
-      {
-        Logger::log().error() << "Gadget '" << Entry->name << "' has no 'Standard' State ID";
-      }
-    }
-    // If a state does not exist clone the standard state.
-    for (int i=1; i < STATE_SUM; ++i)
-    {
-      if (Entry->pos[i].x < 0)
-      {
-        Entry->pos[i].x = Entry->pos[STATE_STANDARD].x;
-        Entry->pos[i].y = Entry->pos[STATE_STANDARD].y;
-      }
-    }
-    mvSrcEntry.push_back(Entry);
-  }
-  return true;
-}
-
-///=================================================================================================
 /// Build a window out of a xml description file.
 ///=================================================================================================
-GuiWindow::GuiWindow(unsigned int w, unsigned int h, const char* windowFile)
+GuiWindow::GuiWindow(TiXmlElement *xmlElem, GuiManager *guiManager)
 {
-  mScreenWidth   = w;
-  mScreenHeight  = h;
+  mGuiManager= guiManager;
+  mGuiManager->getScreenDimension(mScreenWidth, mScreenHeight);
+  mSrcPixelBox = mGuiManager->getTilesetPixelBox();
   mMouseDragging = -1;
   mMousePressed  = -1;
   mMouseOver     = -1;
-  parseWindowData(windowFile);
+  parseWindowData(xmlElem);
   createWindow();
+  drawAll();
 }
 
 ///=================================================================================================
 /// .
 ///=================================================================================================
-void GuiWindow::parseWindowData(const char *windowFile)
+void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 {
-  TiXmlElement *xmlRoot, *xmlElem;
-  TiXmlDocument doc(windowFile);
-  std::string strValue;
-  mStrXMLFile = windowFile;
-  /////////////////////////////////////////////////////////////////////////
-  /// Check for a working window description.
-  /////////////////////////////////////////////////////////////////////////
-  if ( !doc.LoadFile(windowFile) || !(xmlRoot = doc.RootElement()) )
-  {
-    Logger::log().error() << "XML-File '" << windowFile << "' is missing or broken.";
-    return;
-  }
-  if (xmlRoot->Attribute("ID"))
-    Logger::log().info() << "Parsing '" << xmlRoot->Attribute("ID") << "' in file" << windowFile << ".";
+  TiXmlElement *xmlElem;
+  const char *valString;
+  std::string strTmp;
+  mStrName = xmlRoot->Attribute("ID");
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Coordinates type.
   /////////////////////////////////////////////////////////////////////////
   mSizeRelative = false;
-  if (xmlRoot->Attribute("RelativeCoords"))
+  if ((valString = xmlRoot->Attribute("RelativeCoords")))
   {
-    strValue = xmlRoot->Attribute("RelativeCoords");
-    if (strValue == "true" || strValue == "True" || strValue == "TRUE")  mSizeRelative = true;
+    if (!stricmp(valString, "true"))  mSizeRelative = true;
   }
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the ImageSet.
-  /////////////////////////////////////////////////////////////////////////
-  xmlElem = xmlRoot->FirstChildElement("ImageSet");
-  if (!xmlElem || !xmlElem->Attribute("File"))
-  {
-    Logger::log().error() << "Can't find an ImageSet in '" << windowFile << "'.";
-    return;
-  }
-  mStrImageSet = xmlElem->Attribute("File");
-  parseImagesetData();
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Dragging entries.
   /////////////////////////////////////////////////////////////////////////
@@ -210,62 +111,76 @@ void GuiWindow::parseWindowData(const char *windowFile)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Position entries.
   /////////////////////////////////////////////////////////////////////////
-  xmlElem = xmlRoot->FirstChildElement("Pos");
-  if (xmlElem)
+  if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
   {
-    /*
-         if (mPosRelative)
-        {
-          // TODO !!
-        }
-        else
-    */
-    {
-      mPosX = StringConverter::parseInt(xmlElem->Attribute("X"));
-      mPosY = StringConverter::parseInt(xmlElem->Attribute("Y"));
-      mPosZ = StringConverter::parseInt(xmlElem->Attribute("Z-Order"));
-    }
+    mPosX = atoi(xmlElem->Attribute("X"));
+    mPosY = atoi(xmlElem->Attribute("Y"));
+    mPosZ = atoi(xmlElem->Attribute("Z-Order"));
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Size entries.
   /////////////////////////////////////////////////////////////////////////
-  xmlElem = xmlRoot->FirstChildElement("Size");
-  if (xmlElem)
+  if ((xmlElem = xmlRoot->FirstChildElement("Size")))
   {
-    if (mSizeRelative)
-    {
-      // TODO !!
-    }
-    else
-    {
-      mWidth  = (int) StringConverter::parseInt(xmlElem->Attribute("Width"));
-      if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
-      mHeight = (int) StringConverter::parseInt(xmlElem->Attribute("Height"));
-      if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
-    }
+    mWidth  = atoi(xmlElem->Attribute("Width"));
+    if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
+    mHeight = atoi(xmlElem->Attribute("Height"));
+    if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Tooltip entries.
   /////////////////////////////////////////////////////////////////////////
-  if ((xmlElem = xmlRoot->FirstChildElement("Tooltip"))) mStrTooltip = xmlElem->Attribute("Text");
+  if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
+  {
+    mStrTooltip = xmlElem->Attribute("Text");
+  }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadgets.
   /////////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
   {
-    if (xmlElem->Attribute("ID")) addGadget();
-    /// Find the pos in the inmageSet for this gadget.
-    for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
+    /// Find the gfx data in the tileset.
+    GuiManager::mSrcEntry *srcEntry = mGuiManager->getStateGfxPositions(xmlElem->Attribute("ID"));
+    if (!srcEntry) continue;
+    GuiGadget *gadget = new GuiGadget(xmlElem);
+    gadget->setSize(srcEntry->width, srcEntry->height);
+    for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
     {
-      if (mvGadget[mvGadget.size()-1]->getName() != mvSrcEntry[j]->name) continue;
-      mvGadget[mvGadget.size()-1]->setTilsetPos(j);
-      break;
+      gadget->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
     }
+    mvGadget.push_back(gadget);
   }
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the graphics.
+  /////////////////////////////////////////////////////////////////////////
+  for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
+  {
+    /// Find the gfx data in the tileset.
+    GuiManager::mSrcEntry *srcEntry = mGuiManager->getStateGfxPositions(xmlElem->Attribute("ID"));
+    GuiGraphic *graphic = new GuiGraphic(xmlElem);
+    if (srcEntry)
+    { /// This is a GFX_FILL.
+      graphic->setSize(srcEntry->width, srcEntry->height);
+      for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
+      {
+        graphic->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+      }
+    }
+    mvGraphic.push_back(graphic);
+  }
+
   /////////////////////////////////////////////////////////////////////////
   /// Parse the TextOutput.
   /////////////////////////////////////////////////////////////////////////
-  // TODO
+  for (xmlElem = xmlRoot->FirstChildElement("TextLine"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextLine"))
+  {
+    _textLine* TextLine = new  _textLine;
+    TextLine->x = atoi(xmlElem->Attribute("X"));
+    TextLine->y = atoi(xmlElem->Attribute("Y"));
+    TextLine->size = atoi(xmlElem->Attribute("Size"));
+    TextLine->text = xmlElem->Attribute("Text");
+    mvTextline.push_back(TextLine);
+  }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the TextValue.
   /////////////////////////////////////////////////////////////////////////
@@ -282,116 +197,20 @@ void GuiWindow::createWindow()
 
   mTexture = TextureManager::getSingleton().createManual("GUI_Texture_" + strNum, "General",
              TEX_TYPE_2D, mWidth, mHeight, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  // Texture is always a power of 2. to if the overlay size is not a power of 2 we need to scale.
-  mRatioW = (Real)mTexture->getWidth() / (Real)mWidth;
-  mRatioH = (Real)mTexture->getHeight()/ (Real)mHeight;
-
-
-
   Overlay *overlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
   overlay->setZOrder(msInstanceNr);
   mElement = OverlayManager::getSingleton().createOverlayElement (OVERLAY_TYPE_NAME, "GUI_Frame_" + strNum);
   mElement->setMetricsMode(GMM_PIXELS);
-  mElement->setDimensions (mWidth, mHeight);
+  // Texture is always a power of 2. set this size also for the overlay.
+  mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
   mElement->setPosition(mPosX, mPosY);
-
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
   mMaterial = tmpMaterial->clone("GUI_Material_"+ strNum);
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Texture_" + strNum);
   mMaterial->load();
   mElement->setMaterialName("GUI_Material_"+ strNum);
-  Logger::log().info() << "Used ImageSet:" << mStrImageSetGfxFile;
-  mTileImage.load(mStrImageSetGfxFile, "General");
-  mSrcPixelBox = mTileImage.getPixelBox();
   overlay->add2D(static_cast<OverlayContainer*>(mElement));
   overlay->show();
-
-  unsigned int x1, x2, y1, y2, i;
-  /////////////////////////////////////////////////////////////////////////
-  /// Draw Background.
-  /////////////////////////////////////////////////////////////////////////
-  PixelBox src;
-  bool dirty = true;
-  for (unsigned int j = 0; j < mvGadget.size(); ++j)
-  {
-    if (mvGadget[j]->getName() == XML_BACKGROUND)
-    {
-      i = mvGadget[j]->getTilsetPos();
-      int sumX = (mWidth-1)  / mvSrcEntry[i]->width;
-      int sumY = (mHeight-1) / mvSrcEntry[i]->height;
-      y1 = 0; y2 = mvSrcEntry[i]->height;
-      for (int y = 0; y < sumY+1; ++y)
-      {
-        if (dirty)
-        {
-          src = mSrcPixelBox.getSubVolume(Box(
-                                            mvSrcEntry[i]->pos[0].x,
-                                            mvSrcEntry[i]->pos[0].y,
-                                            mvSrcEntry[i]->pos[0].x + mvSrcEntry[i]->width,
-                                            mvSrcEntry[i]->pos[0].y + mvSrcEntry[i]->height));
-          dirty = false;
-        }
-        if (y2 > mHeight)
-        {
-          y2 = mHeight;
-          if (y1 > mHeight) y1 = mHeight-1;
-          dirty = true;
-        }
-        x1 = 0; x2 = mvSrcEntry[i]->width;
-        for (int x = 0; x < sumX+1; ++x)
-        {
-          if (x2 > mWidth)
-          {
-            x2 = mWidth;
-            if (x1 > mWidth) x1 = mWidth-1;
-            dirty = true;
-          }
-          if (dirty)
-          {
-            src = mSrcPixelBox.getSubVolume(Box(
-                                              mvSrcEntry[i]->pos[0].x,
-                                              mvSrcEntry[i]->pos[0].y,
-                                              mvSrcEntry[i]->pos[0].x + x2-x1,
-                                              mvSrcEntry[i]->pos[0].y + y2-y1));
-          }
-          mTexture->getBuffer()->blitFromMemory(src, Box(
-                                                  (int)(x1*mRatioW),
-                                                  (int)(y1*mRatioH),
-                                                  (int)(x2*mRatioW),
-                                                  (int)(y2*mRatioH)));
-          x1 = x2;
-          x2+= mvSrcEntry[i]->width;
-        }
-        y1 = y2;
-        y2+= mvSrcEntry[i]->height;
-      }
-      delGadget(j);
-    }
-  }
-  drawAll();
-}
-
-
-///=================================================================================================
-/// .
-///=================================================================================================
-void GuiWindow::drawGadget(int gadgetNr)
-{
-  static int x1, x2, y1, y2, srcPos, state;
-  srcPos = mvGadget[gadgetNr]->getTilsetPos();
-  state  = mvGadget[gadgetNr]->getState();
-  x1 = mvSrcEntry[srcPos]->pos[state].x;
-  x2 = mvSrcEntry[srcPos]->pos[state].x + mvSrcEntry[srcPos]->width;
-  y1 = mvSrcEntry[srcPos]->pos[state].y;
-  y2 = mvSrcEntry[srcPos]->pos[state].y + mvSrcEntry[srcPos]->height;
-  PixelBox src = mSrcPixelBox.getSubVolume(Box(x1, y1, x2, y2));
-  mvGadget[gadgetNr]->getPos(x1, y1, x2, y2);
-  //Logger::log().info() << "dest: " << x1 << " "<< y1 << " "<< x2 << " "<< y2;
-  mTexture->getBuffer()->blitFromMemory(src, Box(
-                                          (int)(x1*mRatioW),
-                                          (int)(y1*mRatioH),
-                                          (int)(x2*mRatioW),
-                                          (int)(y2*mRatioH)));
 }
 
 ///=================================================================================================
@@ -401,7 +220,7 @@ int GuiWindow::getGadgetMouseIsOver(int x, int y)
 {
   for (unsigned int i = 0; i < mvGadget.size(); ++i)
   {
-    if (mvGadget[i]->mouseOver(x-mPosX, y-mPosY)) return i;
+    if (mvGadget[i]->mouseOver(x, y)) return i;
   }
   return -1;
 }
@@ -412,16 +231,28 @@ int GuiWindow::getGadgetMouseIsOver(int x, int y)
 ///=================================================================================================
 void GuiWindow::drawAll()
 {
-  for (unsigned int i = 0; i < mvGadget.size(); ++i) drawGadget(i);
+  // Draw the background.
+  for (unsigned int i = 0; i < mvGraphic.size(); ++i)
+    mvGraphic[i]->draw(mSrcPixelBox, mTexture.getPointer());
+  // Draw Text.
+  for (unsigned int i = 0; i < mvTextline.size() ; ++i)
+  {
+    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_BLACK);
+    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_WHITE);
+  }
+  //   DrawGadgets.
+  for (unsigned int i = 0; i < mvGadget.size() ; ++i)
+    mvGadget [i]->draw(mSrcPixelBox, mTexture.getPointer());
 }
 
 ///=================================================================================================
 /// .
 ///=================================================================================================
-const char *GuiWindow::mouseEvent(int MouseAction, Real x, Real y)
+const char *GuiWindow::mouseEvent(int MouseAction, Real rx, Real ry)
 {
-  x*= mScreenWidth;
-  y*= mScreenHeight;
+  int x = (int) (rx * mScreenWidth - mPosX);
+  int y = (int) (ry * mScreenHeight- mPosY);
+
   int gadget;
   const char *actGadgetName =0;
   switch (MouseAction)
@@ -431,7 +262,8 @@ const char *GuiWindow::mouseEvent(int MouseAction, Real x, Real y)
       {
         mMousePressed = mMouseOver;
         mvGadget[mMousePressed]->setState(STATE_PUSHED);
-        drawGadget(mMousePressed);
+        mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
+        return mvGadget[mMousePressed]->getName();
       }
       break;
 
@@ -448,13 +280,12 @@ const char *GuiWindow::mouseEvent(int MouseAction, Real x, Real y)
       ////////////////////////////////////////////////////////////
       else if (mMousePressed >= 0)
       {
-        gadget = getGadgetMouseIsOver((int)x, (int)y);
+        gadget = getGadgetMouseIsOver(x, y);
         if (gadget >=0 && gadget == mMousePressed)
         {
-          Logger::log().info() << "button released: "<< mvSrcEntry[mvGadget[gadget]->getTilsetPos()]->name;
-          actGadgetName = mvSrcEntry[mvGadget[gadget]->getTilsetPos()]->name.c_str();
+          //          actGadgetName = mvSrcEntry[mvGadget[gadget]->getTilsetPos()]->name.c_str();
           mvGadget[mMousePressed]->setState(STATE_STANDARD);
-          drawGadget(mMousePressed);
+          mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
         }
       }
       mMousePressed = -1;
@@ -469,30 +300,32 @@ const char *GuiWindow::mouseEvent(int MouseAction, Real x, Real y)
       ////////////////////////////////////////////////////////////
       /// Is the mouse still over this gadget?
       ////////////////////////////////////////////////////////////
-      if (mMouseOver >= 0 && !mvGadget[mMouseOver]->mouseOver((int)x, (int)y))
+      if (mMouseOver >= 0 && mvGadget[mMouseOver]->mouseOver(x, y) == false)
       {
-        mvGadget[mMouseOver]->setState(STATE_STANDARD);
-        drawGadget(mMouseOver);
-        mMouseOver = -1;
+        if (mvGadget[mMouseOver]->setState(STATE_STANDARD))
+        {
+          mvGadget[mMouseOver]->draw(mSrcPixelBox, mTexture.getPointer());
+          mMouseOver = -1;
+        }
       }
       ////////////////////////////////////////////////////////////
       /// Is mouse over a gadget?
       ////////////////////////////////////////////////////////////
       if (mMousePressed < 0)
       {
-        gadget = getGadgetMouseIsOver((int)x, (int)y);
+        gadget = getGadgetMouseIsOver(x, y);
         if (gadget >=0 && mvGadget[gadget]->setState(STATE_M_OVER))
-        { // (If not already done) change the gadget state to mouseover.
-          drawGadget(gadget);
+        {  // (If not already done) change the gadget state to mouseover.
+          mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
           mMouseOver = gadget;
         }
       }
       else
       {
-        gadget = getGadgetMouseIsOver((int)x, (int)y);
+        gadget = getGadgetMouseIsOver(x, y);
         if (gadget >=0 && mvGadget[gadget]->setState(STATE_PUSHED))
         { // (If not already done) change the gadget state to mouseover.
-          drawGadget(gadget);
+          mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
           mMouseOver = gadget;
         }
       }

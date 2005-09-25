@@ -24,6 +24,11 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 #include "gui_gadget.h"
+#include "gui_graphic.h"
+#include "gui_window.h"
+#include "gui_manager.h"
+
+class GuiManager;
 
 using namespace Ogre;
 
@@ -40,70 +45,58 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiWindow(unsigned int w, unsigned int h, const char* Name);
+  GuiWindow(TiXmlElement *xmlElem, GuiManager *guiManager);
   ~GuiWindow();
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+  const char *getName()
+  {
+    return mStrName.c_str();
+  }
   const char *mouseEvent(int MouseAction, Real x, Real y);
-  /*
-    OverlayElement *getGuiElement() const
-    {
-      return mElement;
-    }
-  */
 private:
   enum
   {
-    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_SUM
+    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
   };
-
-  struct spos
+  struct _textLine
   {
-    short x, y;
+    int x, y, size;
+    std::string text;
   };
-  struct mSrcEntry
-  {
-    std::string name;
-    bool drawAndForget; // Don't need event handling. Will be destroyed after first draw.
-    unsigned short width, height;
-    struct spos pos[STATE_SUM];
-  };
-
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
   static unsigned int msInstanceNr;
   unsigned int mThisWindowNr;
-  std::vector<mSrcEntry*>mvSrcEntry;
   int mMouseDragging, mMousePressed, mMouseOver;
-  unsigned int mScreenWidth, mScreenHeight;
+  int mScreenWidth, mScreenHeight;
   Image mTileImage;
-  int mPosZ;
   bool mPosRelative;
-  Real mRatioW, mRatioH;
-  int mPosX, mPosY, mWidth, mHeight;
+  //Real mRatioW, mRatioH;
+  int mPosX, mPosY, mPosZ, mWidth, mHeight;
   bool mSizeRelative;
   bool mMoveable;
   TexturePtr mTexture;
   PixelBox mSrcPixelBox;
   SceneManager *mSceneMgr;
   SceneNode *mParentNode, *mNode;
-  std::string mStrTooltip;
-  std::string mStrImageSet, mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
-  std::vector<GuiGadget*>mvGadget;
+  std::string mStrName, mStrTooltip;
+  std::string mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
+  std::vector<GuiGadget *>mvGadget;
+  std::vector<GuiGraphic*>mvGraphic;
+  std::vector<_textLine *>mvTextline;
   OverlayElement *mElement;
   MaterialPtr mMaterial;
+  GuiManager *mGuiManager;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
   GuiWindow(const GuiWindow&); // disable copy-constructor.
   int getGadgetMouseIsOver(int x, int y);
   void createWindow();
-  void addGadget();
   void delGadget(int number);
-  void drawGadget(int gadgetNr);
   void drawAll();
-  bool parseImagesetData();
-  void parseWindowData(const char *windowFile);
+  void parseWindowData(TiXmlElement *xmlElem);
 };
 
 #endif

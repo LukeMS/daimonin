@@ -18,79 +18,68 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_H
-#define GUI_GADGET_H
+#ifndef GUI_TEXTOUT_H
+#define GUI_TEXTOUT_H
 
-#include <string>
-#include <tinyxml.h>
 #include <Ogre.h>
+#include <string>
 
 using namespace Ogre;
 
-class GuiGadget
+const uint32 COLOR_BLACK = 0xff000000;
+const uint32 COLOR_BLUE  = 0xff0000ff;
+const uint32 COLOR_GREEN = 0xff00ff00;
+const uint32 COLOR_LBLUE = 0xff00ffff;
+const uint32 COLOR_RED   = 0xffff0000;
+const uint32 COLOR_PINK  = 0xffff00ff;
+const uint32 COLOR_YELLOW= 0xffffff00;
+const uint32 COLOR_WHITE = 0xffffffff;
+
+enum
+{
+  FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
+};
+const int CHARS_IN_FONT =96;
+
+class GuiTextout
 {
 public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElem);
-  ~GuiGadget()
-  {}
-  bool mouseOver(int x, int y)
+  static GuiTextout &getSingleton()
   {
-    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
-    return false;
+    static GuiTextout Singleton; return Singleton;
   }
-  void setSize(int w, int h)
-  {
-    mWidth = w;
-    mHeight= h;
-  }
-  bool setState(int state)
-  {
-    if (mState == state) return false;
-    mState = state;
-    return true;
-  }
-  const char *getName()
-  {
-    return mStrName.c_str();
-  }
-  int getState()
-  {
-    return mState;
-  }
-  void setStateImagePos(std::string state, int x, int y);
-  void draw(PixelBox &mSrcPixelBox, Texture *texture);
+  void Print(int x, int y, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
 
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  enum
-  {
-    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
-  };
-  enum
-  {
-    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
-  };
-  struct _pos
-  {
-    int x, y;
-  };
-  struct _pos gfxSrcPos[STATE_SUM];
 
-  int  mX, mY, mWidth, mHeight;
-  int  mType;
-  std::string mStrName, mStrLabel, mBehavior;
-  unsigned char mLabelColor[3];
-  int mLabelXPos, mLabelYPos;
-  int  mOldState, mState;
+  struct
+  {
+    Image image;
+    uint32 *data;
+    unsigned int textureWidth;
+    unsigned int width;
+    unsigned int height;
+    char charWidth[CHARS_IN_FONT];
+  }
+  mFont[FONT_SUM];
 
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
+
+  GuiTextout();
+  ~GuiTextout()
+  {}
+  GuiTextout(const GuiTextout&); // disable copy-constructor.
+  void loadFont(const char * filename);
 };
 
 #endif
+
+

@@ -20,7 +20,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <OgreKeyEvent.h>
 #include "event.h"
-#include "dialog.h"
 #include "sound.h"
 #include "object_manager.h"
 #include "option.h"
@@ -29,8 +28,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "textinput.h"
 #include "network.h"
 #include "TileManager.h"
-#include "gui_window.h"
-#include "gui_cursor.h"
+#include "gui_manager.h"
+
 
 using namespace Ogre;
 
@@ -41,12 +40,9 @@ Real g_pitch = 0.2;
 std::string PickHeigth;
 static int pixels = 128;
 
-  char Tbuffer[80];
+char Tbuffer[80];
 
 const char *mEventAction;
-
-GuiWindow *testWin;
-GuiCursor *mouseCursor;
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -59,13 +55,13 @@ CEvent *Event=0;
 CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListener,
                MouseListener *mMListener, bool useBufferedInputKeys, bool)
 {
-	useBufferedInputKeys = true; // avoid compiler warning.
+  useBufferedInputKeys = true; // avoid compiler warning.
   /////////////////////////////////////////////////////////////////////////////////////////
   /// Create all Overlays.
   /////////////////////////////////////////////////////////////////////////////////////////
+  mGuiManager = new GuiManager(FILE_GUI_IMAGESET, FILE_GUI_WINDOWS, win->getWidth(), win->getHeight());
 
-  testWin    = new GuiWindow(win->getWidth(), win->getHeight(), "./media/xml/GUI_PlayerInfo.xml");
-  mouseCursor= new GuiCursor(win->getWidth(), win->getHeight(), "./media/xml/GUI_ImageSet.xml");
+
 
 
   mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
@@ -305,12 +301,12 @@ bool CEvent::frameEnded(const FrameEvent& )
   static String tris     = "Triangle Count: ";
   OverlayElement* guiAvg   = OverlayManager::getSingleton().getOverlayElement("Core/AverageFps");
   OverlayElement* guiCurr  = OverlayManager::getSingleton().getOverlayElement("Core/CurrFps");
-//  OverlayElement* guiBest  = OverlayManager::getSingleton().getOverlayElement("Core/BestFps");
-//  OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("Core/WorstFps");
+  //  OverlayElement* guiBest  = OverlayManager::getSingleton().getOverlayElement("Core/BestFps");
+  //  OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("Core/WorstFps");
 
   const RenderTarget::FrameStats& stats = mWindow->getStatistics();
 
-//  guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
+  //  guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
   guiAvg->setCaption(Tbuffer);
 
 
@@ -361,12 +357,12 @@ bool CEvent::frameEnded(const FrameEvent& )
 void CEvent::keyPressed(KeyEvent *e)
 {
   mIdleTime =0;
-  if (Dialog::getSingleton().isVisible())
-  {
-    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
-    e->consume();
-    return;
-  }
+//  if (Dialog::getSingleton().isVisible())
+//  {
+//    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
+//    e->consume();
+//    return;
+//  }
 
   switch (e->getKey())
   {
@@ -442,7 +438,7 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
     case KC_J:
-     // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
+      // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
       mCamera->yaw(Degree(10));
       break;
     case KC_K:
@@ -585,8 +581,7 @@ void CEvent::keyPressed(KeyEvent *e)
 }
 
 void CEvent::keyClicked(KeyEvent* )
-{
-}
+{}
 
 void CEvent::keyReleased(KeyEvent* e)
 {
@@ -624,38 +619,11 @@ void CEvent::mouseMoved (MouseEvent *e)
 {
   mMouseX = e->getX();
   mMouseY = e->getY();
-  testWin->mouseEvent(M_MOVED, mMouseX, mMouseY);
   if (mMouseX > 0.995) mMouseX = 0.995;
   if (mMouseY > 0.990) mMouseY = 0.990;
-
+  mGuiManager->getMouseCursor()->setPos(mMouseX, mMouseY);
+  mGuiManager->mouseEvent(M_MOVED, mMouseX, mMouseY);
   sprintf(Tbuffer, "%d %d", (int)(mMouseX*1024), (int)(mMouseY*768));
-  
-
-  mouseCursor->setPos(mMouseX, mMouseY);
-
-
-
-
-  /*
-    // PickHeigth = StringConverter::toString(e->getX())+ "  " + StringConverter::toString(e->getY());
-    // Setup the ray scene querry
-    Ray mouseRay = mCamera->getCameraToViewportRay(e->getX(), e->getY());
-    mRaySceneQuery =  mSceneManager->createRayQuery(mouseRay);
-    mRaySceneQuery->setRay(mouseRay);
-    mRaySceneQuery->setSortByDistance(true);
-    // Execute querry
-    RaySceneQueryResult &result = mRaySceneQuery->execute();
-    RaySceneQueryResult::iterator itr = result.begin();
-    //for (itr = result.begin(); itr!= result.end(); ++itr )
-    {
-      //if (itr->worldFragment) PickHeigth = itr->worldFragment->singleIntersection.y;
-      if (itr->movable ) PickHeigth = itr->movable->getName();
-      //   Logger::log().info() << PickHeigth;
-    }
-    // mRaySceneQuery->clearResults();
-    mSceneManager->destroyQuery(mRaySceneQuery);
-    // Logger::log().info() << " ";
-    */
 }
 
 void CEvent::mouseDragged(MouseEvent *e)
@@ -694,7 +662,8 @@ void CEvent::mousePressed (MouseEvent *e)
 {
   TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
   ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
-  testWin->mouseEvent(M_PRESSED, mMouseX, mMouseY);
+  const char *result = mGuiManager->mouseEvent(M_PRESSED, mMouseX, mMouseY);
+  if (result) TextWin->Print(result);
   mouseMoved(e);
   e->consume();
 }
@@ -703,11 +672,11 @@ void CEvent::mouseReleased(MouseEvent *e)
 {
   TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
   ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
-  mEventAction = testWin->mouseEvent(M_RELEASED, mMouseX, mMouseY);
+  mEventAction = mGuiManager->mouseEvent(M_RELEASED, mMouseX, mMouseY);
   if (mEventAction)
   {
-  	  ChatWin->Print("Button was pressed in playerWin:");
-  	  ChatWin->Print(mEventAction);
+    ChatWin->Print("Button was pressed in playerWin:");
+    ChatWin->Print(mEventAction);
   }
   mouseMoved(e);
   e->consume();

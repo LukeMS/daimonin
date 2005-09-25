@@ -19,50 +19,99 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <tinyxml.h>
+#include <OgreHardwarePixelBuffer.h>
 #include "define.h"
 #include "gui_gadget.h"
+#include "gui_textout.h"
 #include "logger.h"
+
+///=================================================================================================
+/// Parse a gadget entry.
+///=================================================================================================
+GuiGadget::GuiGadget(TiXmlElement *xmlElem)
+{
+  TiXmlElement *xmlGadget;
+  std::string strValue;
+  mState = 0;
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the gadget.
+  /////////////////////////////////////////////////////////////////////////
+  mStrName = xmlElem->Attribute("ID");
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the Behavior.
+  /////////////////////////////////////////////////////////////////////////
+  if ((xmlGadget = xmlElem->FirstChildElement("Behavior")))
+  {
+    mBehavior = xmlGadget->Attribute("Type");
+  }
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the position.
+  /////////////////////////////////////////////////////////////////////////
+  if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
+  {
+    mX = atoi(xmlGadget->Attribute("X"));
+    mY = atoi(xmlGadget->Attribute("Y"));
+  }
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the label.
+  /////////////////////////////////////////////////////////////////////////
+  if ((xmlGadget = xmlElem->FirstChildElement("Label")))
+  {
+    mLabelXPos = atoi(xmlGadget->Attribute("XPos"));
+    mLabelYPos = atoi(xmlGadget->Attribute("YPos"));
+    mLabelColor[0]= (unsigned char) atoi(xmlGadget->Attribute("Red"));
+    mLabelColor[1]= (unsigned char) atoi(xmlGadget->Attribute("Green"));
+    mLabelColor[2]= (unsigned char) atoi(xmlGadget->Attribute("Blue"));
+    mStrLabel  = xmlGadget->Attribute("Text");
+  }
+}
 
 ///=================================================================================================
 /// .
 ///=================================================================================================
-void GuiGadget::getPos(int &x1, int &y1, int &x2, int &y2)
+void GuiGadget::setStateImagePos(std::string name, int x, int y)
 {
-  x1 = mX1;
-  y1 = mY1;
-  x2 = mX2;
-  y2 = mY2;
+  int state = -1;
+  if      (name == "Standard") state = STATE_STANDARD;
+  else if (name == "Pushed"  ) state = STATE_PUSHED;
+  else if (name == "M_Over"  ) state = STATE_M_OVER;
+  if (state < 0)
+  {
+    Logger::log().error() << "Gadget '" << mStrName << "' has no State '" << "' " << name;
+    return;
+  }
+  gfxSrcPos[state].x = x;
+  gfxSrcPos[state].y = y;
+  //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
 }
 
 ///=================================================================================================
-/// Parse the nth gadget entry.
+/// .
 ///=================================================================================================
-GuiGadget::GuiGadget(const char *descFile, int pos)
+void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
 {
-  TiXmlElement *xmlRoot, *xmlElem, *xmlGadget;
-  TiXmlDocument doc(descFile);
-  std::string strValue;
-  mState = 0;
   /////////////////////////////////////////////////////////////////////////
-  /// Check for a working window description.
+  /// Draw gaget.
   /////////////////////////////////////////////////////////////////////////
-  if ( !doc.LoadFile(descFile) || !(xmlRoot = doc.RootElement()) )
+  PixelBox src = mSrcPixelBox.getSubVolume(Box(
+                   gfxSrcPos[mState].x,
+                   gfxSrcPos[mState].y,
+                   gfxSrcPos[mState].x + mWidth,
+                   gfxSrcPos[mState].y + mHeight));
+  //  Logger::log().info() << "dest: " << gfxSrcPos[mState].x << " "<< gfxSrcPos[mState].y << " "<<mWidth << " "<< mHeight;
+  texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+  /////////////////////////////////////////////////////////////////////////
+  /// Draw label.
+  /////////////////////////////////////////////////////////////////////////
+  if (mState == STATE_PUSHED)
   {
-    Logger::log().error() << "GUIGadget: XML-File '" << descFile << "' is missing or broken.";
-    return;
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, texture, mStrLabel.c_str(), COLOR_BLACK);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, texture, mStrLabel.c_str(), COLOR_WHITE);
   }
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the Coordinates.
-  /////////////////////////////////////////////////////////////////////////
-  xmlElem = xmlRoot->FirstChildElement("Gadget");
-  while (--pos > -1) xmlElem = xmlElem->NextSiblingElement("Gadget");
-  mName = xmlElem->Attribute("ID");
-  xmlGadget = xmlElem->FirstChildElement("Dimension");
-  if (xmlGadget)
+  else
   {
-    mX1 = atoi(xmlGadget->Attribute("X"));
-    mY1 = atoi(xmlGadget->Attribute("Y"));
-    mX2 = atoi(xmlGadget->Attribute("Width" )) + mX1;
-    mY2 = atoi(xmlGadget->Attribute("Height")) + mY1;
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, texture, mStrLabel.c_str(), COLOR_BLACK);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , texture, mStrLabel.c_str(), COLOR_WHITE);
   }
 }
+

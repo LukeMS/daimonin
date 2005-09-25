@@ -36,7 +36,6 @@ const int SOCKET_ERROR =-1;
 #include "logger.h"
 #include "option.h"
 #include "define.h"
-#include "dialog.h"
 #include "serverfile.h"
 #include "textinput.h"
 #include "textwindow.h"
@@ -165,11 +164,13 @@ void Network::Update()
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_NEW_CHAR)
     {
-      if (Dialog::getSingleton().UpdateNewChar())
+/*
+	      if (Dialog::getSingleton().UpdateNewChar())
       {
         CreatePlayerAccount();
         Option::getSingleton().GameStatus = GAME_STATUS_WAITFORPLAY;
       }
+*/
     }
     /////////////////////////////////////////////////////////////////////////
     // connect to meta and get server data
@@ -224,7 +225,8 @@ void Network::Update()
     /////////////////////////////////////////////////////////////////////////
     else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITLOOP)
     {
-      Dialog::getSingleton().setVisible(true);
+/*
+	      Dialog::getSingleton().setVisible(true);
       if (TextInput::getSingleton().startCursorSelection(mServerList.size()))
       {
         list<mStructServer*>::const_iterator iter = mServerList.begin();
@@ -266,6 +268,7 @@ void Network::Update()
         Dialog::getSingleton().setInfoText(3, "");
         Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
       }
+*/
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -281,7 +284,7 @@ void Network::Update()
       /// This Server was selected in the dialog-window.
       /////////////////////////////////////////////////////////////////////////
       mGameStatusVersionFlag = false;
-      Dialog::getSingleton().clearInfoText();
+//      Dialog::getSingleton().clearInfoText();
       list<mStructServer*>::const_iterator iter = mServerList.begin();
       for (unsigned int i=0 ; i < Option::getSingleton().mSelectedMetaServer; ++i)
       {
@@ -444,14 +447,14 @@ void Network::Update()
       {
         TextWin->Print("Break Login.", TXT_RED);
         TextInput::getSingleton().stop();
-        Dialog::getSingleton().setVisible(false);
+  //      Dialog::getSingleton().setVisible(false);
         Option::getSingleton().GameStatus = GAME_STATUS_START;
       }
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_NAME)
     {
       // map_transfer_flag = 0;
-      Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
+      //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
       if (TextInput::getSingleton().wasCanceled())
       {
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
@@ -460,7 +463,7 @@ void Network::Update()
       {
         //strcpy(cpl.name, InputString);
         send_reply((char*)TextInput::getSingleton().getText());
-        Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
+        //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
     }
@@ -468,7 +471,7 @@ void Network::Update()
     {
       // map_transfer_flag = 0;
       // textwin_clearhistory();
-      Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
+      //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
       if (TextInput::getSingleton().wasCanceled())
       {
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
@@ -477,14 +480,14 @@ void Network::Update()
       {
         // strncpy(cpl.password, InputString, 39);
         send_reply((char*)TextInput::getSingleton().getText());
-        Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
+        //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_VERIFYPSWD)
     {
       // map_transfer_flag = 0;
-      Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN);
+      //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN);
       if (TextInput::getSingleton().wasCanceled())
       {
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
@@ -492,7 +495,7 @@ void Network::Update()
       else if (TextInput::getSingleton().wasFinished())
       {
         send_reply((char*)TextInput::getSingleton().getText());
-        Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
+        //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
     }
@@ -978,7 +981,7 @@ void Network::DoClient()
 #ifdef DEBUG_ON
       Logger::log().info() << "command: BINARY_CMD_PLAYER (" << mInbuf.buf[2] << ")";
 #endif
-      Dialog::getSingleton().setVisible(false);
+      //Dialog::getSingleton().setVisible(false);
       PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
       break;
     case 17: // BINARY_CMD_MAPSTATS

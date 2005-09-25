@@ -1,0 +1,46 @@
+material Wall2/Top
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture wal2.png 
+            }
+        }
+    }
+}
+
+material Wall2/Front_Back
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture wal2.png 
+            }
+        }
+    }
+}
+
+material Wall2/Sides
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture wal2.png 
+            }
+        }
+    }
+}
+
+

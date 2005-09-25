@@ -18,8 +18,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_H
-#define GUI_GADGET_H
+#ifndef GUI_GRAPHIC_H
+#define GUI_GRAPHIC_H
 
 #include <string>
 #include <tinyxml.h>
@@ -27,34 +27,30 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-class GuiGadget
+class GuiGraphic
 {
 public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElem);
-  ~GuiGadget()
+  GuiGraphic(TiXmlElement *xmlElem);
+  ~GuiGraphic()
   {}
   bool mouseOver(int x, int y)
   {
-    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
+    if (x >= mX && x <= mX + mDestWidth && y >= mY && y <= mY + mDestHeight) return true;
     return false;
   }
   void setSize(int w, int h)
   {
-    mWidth = w;
-    mHeight= h;
+    mSrcWidth = w;
+    mSrcHeight= h;
   }
   bool setState(int state)
   {
     if (mState == state) return false;
     mState = state;
     return true;
-  }
-  const char *getName()
-  {
-    return mStrName.c_str();
   }
   int getState()
   {
@@ -69,25 +65,20 @@ private:
   ////////////////////////////////////////////////////////////
   enum
   {
-    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
-  };
-  enum
-  {
-    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
+    FILL_GFX, FILL_COLOR, FILL_NONE, FILL_SUM
   };
   struct _pos
   {
     int x, y;
-  };
-  struct _pos gfxSrcPos[STATE_SUM];
+  }
+  gfxSrcPos;
 
-  int  mX, mY, mWidth, mHeight;
+  int  mX, mY, mSrcWidth, mSrcHeight, mDestWidth, mDestHeight;
   int  mType;
   std::string mStrName, mStrLabel, mBehavior;
-  unsigned char mLabelColor[3];
+  uint32 mFillColor;
   int mLabelXPos, mLabelYPos;
   int  mOldState, mState;
-
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
