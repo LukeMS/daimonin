@@ -30,6 +30,9 @@ const char PATH_TILE_TEXTURES[]         = "media/materials/textures/tiles/";
 ///========================================================================
 /// All pathes MUST be placed here!
 ///========================================================================
+const char FILE_GUI_IMAGESET[] = "./media/xml/GUI_ImageSet.xml";
+const char FILE_GUI_WINDOWS[]  = "./media/xml/GUI_Windows.xml";
+
 const char FILE_CLIENT_SPELLS[]         = "./srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]         = "./srv_files/client_skills";
 const char FILE_CLIENT_SETTINGS[]       = "./srv_files/client_settings";

@@ -37,22 +37,23 @@ void TileEnvironment::UpdateEnvironment()
   m_Environment_SceneNode = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
 
 
-return;
+//return;
 
 
 
-for (int z = 0; z < 5; ++z)
+for (int z = 0; z < 2; ++z)
 {
   // testing with meshes is more fun...
   static int INr=0;
   if (INr > 1000) return;
-  SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(INr, 100, 100+INr), Quaternion(1.0,0.0,0.0,0.0));
+  SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(100+INr, 210, 310+INr), Quaternion(1.0,0.0,0.0,0.0));
 //  SceneNode *Node = m_Environment_SceneNode->createChildSceneNode(Vector3(50+INr, 500, 550+INr), Quaternion(1.0,0.0,0.0,0.0));
-  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "stone1.mesh" );
-//  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "tree1.mesh" );
+//  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "stone1.mesh" );
+  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "wall2.mesh" );
 //  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "blunt1.mesh" );
   Node->attachObject(mEntityNPC);
-//  Node->setScale(Vector3(4, 4, 4));
+    Node->yaw(Degree(10));
+  Node->setScale(Vector3(1, 1, 1));
   INr+= 100;
 }
   /*

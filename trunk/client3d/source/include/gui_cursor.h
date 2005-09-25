@@ -37,9 +37,11 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiCursor(unsigned int w, unsigned int h, const char* Name);
+  GuiCursor(int w, int h, int screenHeight, int screenWidth, PixelBox &pb);
   ~GuiCursor();
   void setPos(Real x, Real y);
+  void setStateImagePos(std::string state, int x, int y);
+  void draw();
 
 private:
   enum
@@ -51,13 +53,12 @@ private:
   /// Variables.
   ////////////////////////////////////////////////////////////
   unsigned int mScreenWidth, mScreenHeight;
-  struct spos
+  struct _pos
   {
-    int x, y,  w, h;
-  }
-  mSrcPos[STATE_SUM];
-  int mWidth, mHeight;
+    int x, y;
+  } gfxSrcPos[STATE_SUM];
   int mState;
+  int mWidth, mHeight;
   Image mTileImage;
   TexturePtr mTexture;
   PixelBox mSrcPixelBox;

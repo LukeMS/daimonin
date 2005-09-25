@@ -18,79 +18,74 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_H
-#define GUI_GADGET_H
+#ifndef GUI_MANAGER_H
+#define GUI_MANAGER_H
 
 #include <string>
-#include <tinyxml.h>
+#include <vector>
 #include <Ogre.h>
+#include <tinyxml.h>
+#include "gui_cursor.h"
+#include "gui_window.h"
 
 using namespace Ogre;
 
-class GuiGadget
+class GuiWindow;
+
+class GuiManager
 {
 public:
+  struct _state
+  {
+    std::string name;
+    short x, y;
+  };
+  struct mSrcEntry
+  {
+    std::string name;
+    int width, height;
+    std::vector<_state*>state;
+  };
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElem);
-  ~GuiGadget()
+  GuiManager(const char *XML_imageset_file, const char *XML_windows_file, int w, int h);
+  ~GuiManager()
   {}
-  bool mouseOver(int x, int y)
+  GuiCursor *getMouseCursor()
   {
-    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
-    return false;
+    return mMousecursor;
   }
-  void setSize(int w, int h)
+  struct mSrcEntry *getStateGfxPositions(const char* guiImage);
+  PixelBox &getTilesetPixelBox()
   {
-    mWidth = w;
-    mHeight= h;
+    return mSrcPixelBox;
   }
-  bool setState(int state)
+  void getScreenDimension(int &ScreenWidth, int &ScreenHeight)
   {
-    if (mState == state) return false;
-    mState = state;
-    return true;
+    ScreenWidth  = mScreenWidth;
+    ScreenHeight = mScreenHeight;
   }
-  const char *getName()
-  {
-    return mStrName.c_str();
-  }
-  int getState()
-  {
-    return mState;
-  }
-  void setStateImagePos(std::string state, int x, int y);
-  void draw(PixelBox &mSrcPixelBox, Texture *texture);
-
+  const char *mouseEvent(int MouseAction, Real rx, Real ry);
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  enum
-  {
-    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
-  };
-  enum
-  {
-    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
-  };
-  struct _pos
-  {
-    int x, y;
-  };
-  struct _pos gfxSrcPos[STATE_SUM];
-
-  int  mX, mY, mWidth, mHeight;
-  int  mType;
-  std::string mStrName, mStrLabel, mBehavior;
-  unsigned char mLabelColor[3];
-  int mLabelXPos, mLabelYPos;
-  int  mOldState, mState;
-
+  std::string mStrTmp;
+  std::string mStrImageSetGfxFile;
+  std::vector<mSrcEntry*>mvSrcEntry;
+  std::vector<GuiWindow*>mvWindow;
+  int mMouseDragging, mMousePressed, mMouseOver;
+  unsigned int mScreenWidth, mScreenHeight;
+  PixelBox mSrcPixelBox;
+  Image mImageSetImg;
+  GuiCursor *mMousecursor;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
+  bool parseImagesetData(const char *file);
+  bool parseWindowsData (const char *file);
+
 };
 
 #endif

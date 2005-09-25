@@ -23,7 +23,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "client.h"
 #include "network.h"
 #include "logger.h"
-#include "dialog.h"
 #include "option.h"
 #include "sound.h"
 #include "gui_window.h"
@@ -84,7 +83,6 @@ void DaimoninClient::go(void)
   SpellManager   ::getSingleton().init(mSceneMgr);
   ParticleManager::getSingleton().init(mSceneMgr);
   ObjectManager  ::getSingleton().init(mSceneMgr);
-  Dialog         ::getSingleton().Init(mSceneMgr);
   mRoot->startRendering();
   /////////////////////////////////////////////////////////////////////////
   /// Clean up.

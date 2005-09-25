@@ -26,7 +26,7 @@ material textwin/button01_up
          depth_check off
          texture_unit
          {
-            texture dialog_range_u.png
+//            texture dialog_range_u.png
          }
       }
    }
@@ -43,7 +43,7 @@ material textwin/button02_up
          depth_check off
          texture_unit
          {
-            texture dialog_range_d.png
+//            texture dialog_range_d.png
          }
       }
    }

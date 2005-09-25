@@ -225,11 +225,6 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\dialog.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
 		<Unit filename="..\..\..\source\event.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
@@ -241,6 +236,21 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\gui_gadget.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\gui_graphic.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\gui_manager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\gui_textout.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
@@ -299,13 +309,6 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\dialog.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
 		<Unit filename="..\..\..\source\include\event.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -321,6 +324,27 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\gui_gadget.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_graphic.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_manager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_textout.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

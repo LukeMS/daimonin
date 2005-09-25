@@ -24,6 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreEventListeners.h>
 #include "particle_manager.h"
 #include "TileManager.h"
+#include "gui_manager.h"
 using namespace Ogre;
 
 ////////////////////////////////////////////////////////////
@@ -112,6 +113,7 @@ private:
   Light *mLight[2];
   int mDayTime;
   Real mCameraZoom;
+  GuiManager *mGuiManager;
 
   ////////////////////////////////////////////////////////////
   // Functions.
