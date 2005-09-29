@@ -5,40 +5,62 @@
 
   <Window ID="PlayerInfo" RelativeCoords="false">
     <Pos      X="50" Y="50" Z-Order ="50" />
-    <Size     Width="300" Height="300" />
-    <DragArea Movable="false" X1="150" Y1="50" X2="1" Y2="1" />
+    <Size     Width="200" Height="150" />
+    <DragArea X="0" Y="0" Width="200" Height="20" />
     <Tooltip  Text="This is the Player Info Window." />
 
+    <Graphic Type="COLOR_FILL"  ID ="TitleBar">
+      <Pos X="0" Y="0" />
+      <Color Red="110" Green="255" Blue="255" Alpha ="255" />
+      <Range Width="200" Height="17" />
+    </Graphic>
+
     <Gadget Type="BUTTON"  ID ="Button_Close">
-      <Pos X="50" Y="50" />
-      <Label XPos="5" YPos= "1" Red="32" Green="64" Blue="128" Text="Button"/>
+      <Pos X="183" Y="1" />
+    </Gadget>
+
+    <Gadget Type="BUTTON"  ID ="Button_1">
+      <Pos X="70" Y="120" />
+      <Label XPos="20" YPos= "1" Red="32" Green="64" Blue="128" Text="OK"/>
     </Gadget>
 
     <Graphic Type="GFX_FILL"  ID ="Background">
-      <Pos X="10" Y="10" />
-      <Range Width="200" Height="150" />
+      <Pos X="0" Y="17" />
+      <Range Width="200" Height="140" />
     </Graphic>
 
-    <TextLine X="60" Y="70" Size="40" Text="1234567890" />
-    <TextLine X="60" Y="80" Size="40" Text="ABCDEFGHUJ" />
+    <TextLine X="5" Y="30" Size="190" Text="-- Window #1 --" />
+    <TextLine X="5" Y="43" Size="190" Text="1. ColorFill for the TitleBar" />
+
   </Window>
 
 
   <Window ID="Quickslots" RelativeCoords="false">
-    <Pos      X="250" Y="250" Z-Order ="50" />
+    <Pos      X="400" Y="300" Z-Order ="50" />
     <Size     Width="100" Height="100" />
+    <DragArea X="0" Y="0" Width="100" Height="20" />
     <Tooltip  Text="Tjghjghjghjghjghjghj Window." />
 
+    <Graphic Type="COLOR_FILL"  ID ="TileBar">
+      <Pos X="0" Y="0" />
+      <Color Red="255" Green="0" Blue="255" Alpha ="128" />
+      <Range Width="100" Height="17" />
+    </Graphic>
+
+    <Graphic Type="COLOR_FILL"  ID ="demo">
+      <Pos X="0" Y="17" />
+      <Color Red="0" Green="0" Blue="255" Alpha ="128" />
+      <Range Width="100" Height="83" />
+    </Graphic>
+
     <Gadget Type="BUTTON"  ID ="Button_Close">
-      <Pos X="20" Y="20" />
-      <Label XPos="5" YPos= "1" Red="32" Green="64" Blue="128" Text="Press"/>
+      <Pos X="83" Y="1" />
     </Gadget>
 
-    <Graphic Type="COLOR_FILL"  ID ="This is a Color Fill demo">
-      <Pos X="0" Y="0" />
-      <Color Red="0" Green="0" Blue="255" Alpha ="255" />
-      <Range Width="100" Height="100" />
-    </Graphic>
+    <Gadget Type="BUTTON"  ID ="Button_1">
+      <Pos X="25" Y="75" />
+      <Label XPos="5" YPos= "1" Red="32" Green="64" Blue="128" Text="Press"/>
+    </Gadget>
 
   </Window>
 

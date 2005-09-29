@@ -33,18 +33,13 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElem);
+  GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY);
   ~GuiGadget()
   {}
   bool mouseOver(int x, int y)
   {
     if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
     return false;
-  }
-  void setSize(int w, int h)
-  {
-    mWidth = w;
-    mHeight= h;
   }
   bool setState(int state)
   {

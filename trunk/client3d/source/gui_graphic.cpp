@@ -24,12 +24,13 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "gui_graphic.h"
 #include "gui_manager.h"
+#include "gui_cursor.h"
 #include "logger.h"
 
 ///=================================================================================================
 /// Parse a gadget entry.
 ///=================================================================================================
-GuiGraphic::GuiGraphic(TiXmlElement *xmlElem)
+GuiGraphic::GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
 {
   TiXmlElement *xmlGadget;
   std::string strValue;
@@ -50,6 +51,10 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElem)
     mX = atoi(xmlGadget->Attribute("X"));
     mY = atoi(xmlGadget->Attribute("Y"));
   }
+  if (mX > maxX-2) mX = maxX-2;
+  if (mY > maxY-2) mY = maxY-2;
+  mSrcWidth = w;
+  mSrcHeight= h;
   /////////////////////////////////////////////////////////////////////////
   /// Parse the fill color.
   /////////////////////////////////////////////////////////////////////////
@@ -69,6 +74,8 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElem)
     mDestWidth = atoi(xmlGadget->Attribute("Width"));
     mDestHeight= atoi(xmlGadget->Attribute("Height"));
   }
+  if (mX + mDestWidth > maxX) mDestWidth = maxX-mX-1;
+  if (mY + mDestHeight >maxY) mDestHeight= maxY-mY-1;
 }
 
 ///=================================================================================================
@@ -107,15 +114,15 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
     long time = clock();
     PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mDestWidth, mY+mDestHeight), HardwareBuffer::HBL_READ_ONLY );
     uint32 *dest_data = (uint32*)pb.data;
-    for (int y =0; y < mDestHeight; ++y)
+    for (int y = 0; y < mDestHeight; ++y)
     {
-      for (int x=0; x < mDestWidth; ++x)
+      for (int x= 0; x < mDestWidth; ++x)
       {
         dest_data[x+y*texture->getWidth()] = mFillColor;
       }
     }
     texture->getBuffer()->unlock();
-//    Logger::log().info() << "Time to fill: " << clock()-time << " ms";
+    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
   }
   /////////////////////////////////////////////////////////////////////////
   /// Fill background rect with a gfx.
@@ -145,7 +152,7 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
         if (y1 > mDestHeight) y1 = mDestHeight-1;
         dirty = true;
       }
-      x1 = 0; x2 = mSrcWidth;
+      x1 = mX; x2 = mSrcWidth;
       for (int x = 0; x < sumX; ++x)
       {
         if (x2 > mDestWidth)
@@ -162,7 +169,7 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
                                             gfxSrcPos.x + x2-x1,
                                             gfxSrcPos.y + y2-y1));
         }
-        texture->getBuffer()->blitFromMemory(src, Box(x1, y1, x2, y2));
+        texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
         x1 = x2;
         x2+= mSrcWidth;
       }

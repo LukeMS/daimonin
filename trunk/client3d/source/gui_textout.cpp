@@ -55,12 +55,13 @@ void GuiTextout::loadFont(const char * filename)
   }
 }
 
-void GuiTextout::Print(int x, int y, Texture *texture, const char *text, uint32 color)
+void GuiTextout::Print(int x, int y, int gfxLen, Texture *texture, const char *text, uint32 color)
 {
   if (!text || text[0] == 0) return;
   int fontNr = 0;
   long time = clock();
   unsigned int x2 = x + strlen(text) * mFont[fontNr].width;
+  if (x2 > x+gfxLen) x2 = x+gfxLen;
   uint32 pix;
   int x1;
   PixelBox pb = texture->getBuffer()->lock(Box(x, y, x2, y+mFont[fontNr].height), HardwareBuffer::HBL_READ_ONLY );
