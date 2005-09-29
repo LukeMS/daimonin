@@ -113,7 +113,6 @@ private:
   Light *mLight[2];
   int mDayTime;
   Real mCameraZoom;
-  GuiManager *mGuiManager;
 
   ////////////////////////////////////////////////////////////
   // Functions.

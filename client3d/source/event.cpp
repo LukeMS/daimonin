@@ -30,7 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "TileManager.h"
 #include "gui_manager.h"
 
-
 using namespace Ogre;
 
 Real w_1, x_1, y_1, z_1;
@@ -59,10 +58,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
   /////////////////////////////////////////////////////////////////////////////////////////
   /// Create all Overlays.
   /////////////////////////////////////////////////////////////////////////////////////////
-  mGuiManager = new GuiManager(FILE_GUI_IMAGESET, FILE_GUI_WINDOWS, win->getWidth(), win->getHeight());
-
-
-
+  GuiManager::getSingleton().Init(FILE_GUI_IMAGESET, FILE_GUI_WINDOWS, win->getWidth(), win->getHeight());
 
   mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
   mDebugOverlay->show();
@@ -142,6 +138,7 @@ CEvent::~CEvent()
   if (TextWin)          delete TextWin;
   if (ChatWin)          delete ChatWin;
   if (mEventProcessor)  delete mEventProcessor;
+  GuiManager::getSingleton().freeRecources();
 }
 
 //=================================================================================================
@@ -347,7 +344,6 @@ bool CEvent::frameEnded(const FrameEvent& )
   // mWindow->setDebugText(" PickHeigth: "+ StringConverter::toString(PickHeigth));
   mWindow->setDebugText("Press 'x' for texture resolution (" + StringConverter::toString(pixels) + " pix)");
 
-
   return true;
 }
 
@@ -357,19 +353,17 @@ bool CEvent::frameEnded(const FrameEvent& )
 void CEvent::keyPressed(KeyEvent *e)
 {
   mIdleTime =0;
-//  if (Dialog::getSingleton().isVisible())
-//  {
-//    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
-//    e->consume();
-//    return;
-//  }
-
+  if (GuiManager::getSingleton().hasFocus())
+  {
+    GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
+    e->consume();
+    return;
+  }
   switch (e->getKey())
   {
       /////////////////////////////////////////////////////////////////////////
-      // Player Movemment.
+      /// Player Movemment.
       /////////////////////////////////////////////////////////////////////////
-
     case KC_UP:
       ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, 1);
       //mCamera->  moveRelative (Vector3(0,100,0));
@@ -588,7 +582,7 @@ void CEvent::keyReleased(KeyEvent* e)
   switch (e->getKey())
   {
       /////////////////////////////////////////////////////////////////////////
-      // Player Movemment.
+      /// Player Movemment.
       /////////////////////////////////////////////////////////////////////////
     case KC_UP:
     case KC_DOWN:
@@ -621,8 +615,7 @@ void CEvent::mouseMoved (MouseEvent *e)
   mMouseY = e->getY();
   if (mMouseX > 0.995) mMouseX = 0.995;
   if (mMouseY > 0.990) mMouseY = 0.990;
-  mGuiManager->getMouseCursor()->setPos(mMouseX, mMouseY);
-  mGuiManager->mouseEvent(M_MOVED, mMouseX, mMouseY);
+  GuiManager::getSingleton().mouseEvent(M_MOVED, mMouseX, mMouseY);
   sprintf(Tbuffer, "%d %d", (int)(mMouseX*1024), (int)(mMouseY*768));
 }
 
@@ -662,8 +655,8 @@ void CEvent::mousePressed (MouseEvent *e)
 {
   TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
   ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
-  const char *result = mGuiManager->mouseEvent(M_PRESSED, mMouseX, mMouseY);
-  if (result) TextWin->Print(result);
+  const char *result = GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY);
+//  if (result) TextWin->Print(result);
   mouseMoved(e);
   e->consume();
 }
@@ -672,12 +665,8 @@ void CEvent::mouseReleased(MouseEvent *e)
 {
   TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
   ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
-  mEventAction = mGuiManager->mouseEvent(M_RELEASED, mMouseX, mMouseY);
-  if (mEventAction)
-  {
-    ChatWin->Print("Button was pressed in playerWin:");
-    ChatWin->Print(mEventAction);
-  }
+  const char *result = GuiManager::getSingleton().mouseEvent(M_RELEASED, mMouseX, mMouseY);
+  if (result) TextWin->Print(result);
   mouseMoved(e);
   e->consume();
 }

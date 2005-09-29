@@ -23,6 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "gui_gadget.h"
 #include "gui_textout.h"
+#include "gui_cursor.h"
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
@@ -32,13 +33,14 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-GuiManager::GuiManager(const char *XML_imageset_file, const char *XML_windows_file, int w, int h)
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_file, int w, int h)
 {
+  Logger::log().headline("Init GUI");
   mScreenWidth   = w;
   mScreenHeight  = h;
-  mMouseDragging = -1;
-  mMousePressed  = -1;
-  mMouseOver     = -1;
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gfx datas from the imageset.
   /////////////////////////////////////////////////////////////////////////
@@ -49,6 +51,22 @@ GuiManager::GuiManager(const char *XML_imageset_file, const char *XML_windows_fi
   /// Parse the windows datas.
   /////////////////////////////////////////////////////////////////////////
   if (!parseWindowsData( XML_windows_file)) return;
+}
+
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiManager::freeRecources()
+{
+  GuiCursor::getSingleton().freeRecources();
+}
+
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiManager::keyEvent(const char keyChar, const unsigned char key)
+{
+  //    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
 }
 
 ///=================================================================================================
@@ -118,18 +136,22 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the mouse-cursor.
   /////////////////////////////////////////////////////////////////////////
-  if ((xmlElem = xmlRoot->FirstChildElement("Cursor")))
+  if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("ID"))))
   {
-    if ((valString = xmlElem->Attribute("ID")))
+    mSrcEntry *srcEntry = getStateGfxPositions(valString);
+    GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
+    for (unsigned int i=0; i < srcEntry->state.size(); ++i)
     {
-      mSrcEntry *srcEntry = getStateGfxPositions(valString);
-      mMousecursor = new GuiCursor(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight, mSrcPixelBox);
-      for (unsigned int i=0; i < srcEntry->state.size(); ++i)
-      {
-        mMousecursor->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
-      }
-      mMousecursor->draw();
+      GuiCursor::getSingleton().setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
     }
+    GuiCursor::getSingleton().draw(mSrcPixelBox);
+  }
+  else
+  { // Create a dummy mouse-cursor.
+    Logger::log().error() << "File '" << fileWindows << "' has no mouse-cursor defined.";
+    GuiCursor::getSingleton().Init(32, 32, mScreenWidth, mScreenHeight);
+    GuiCursor::getSingleton().setStateImagePos("Standard", 128, 128);
+    GuiCursor::getSingleton().draw(mSrcPixelBox);
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the windows.
@@ -160,10 +182,13 @@ struct GuiManager::mSrcEntry *GuiManager::getStateGfxPositions(const char* guiIm
 ///=================================================================================================
 const char *GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 {
+  GuiCursor::getSingleton().setPos(rx, ry);
+  rx *= mScreenWidth;
+  ry *= mScreenHeight;
   const char *actGadgetName;
   for (unsigned int i=0; i < mvWindow.size(); ++i)
   {
-    actGadgetName = mvWindow[i]->mouseEvent(mouseAction, rx, ry);
+    actGadgetName = mvWindow[i]->mouseEvent(mouseAction, (int)rx, (int)ry);
     if (actGadgetName)
     {
       static char buffer[100];

@@ -25,8 +25,8 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 #include <tinyxml.h>
-#include "gui_cursor.h"
 #include "gui_window.h"
+#include "gui_cursor.h"
 
 using namespace Ogre;
 
@@ -49,43 +49,43 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiManager(const char *XML_imageset_file, const char *XML_windows_file, int w, int h);
-  ~GuiManager()
-  {}
-  GuiCursor *getMouseCursor()
+  static GuiManager &getSingleton()
   {
-    return mMousecursor;
+    static GuiManager Singleton; return Singleton;
   }
+  void Init(const char *XML_imageset_file, const char *XML_windows_file, int w, int h);
+  void GuiManager::freeRecources();
   struct mSrcEntry *getStateGfxPositions(const char* guiImage);
   PixelBox &getTilesetPixelBox()
   {
     return mSrcPixelBox;
   }
-  void getScreenDimension(int &ScreenWidth, int &ScreenHeight)
+  bool hasFocus()
   {
-    ScreenWidth  = mScreenWidth;
-    ScreenHeight = mScreenHeight;
+    return mHasFocus;
   }
   const char *mouseEvent(int MouseAction, Real rx, Real ry);
+  void GuiManager::keyEvent(const char keyChar, const unsigned char key);
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  std::string mStrTmp;
   std::string mStrImageSetGfxFile;
   std::vector<mSrcEntry*>mvSrcEntry;
   std::vector<GuiWindow*>mvWindow;
-  int mMouseDragging, mMousePressed, mMouseOver;
   unsigned int mScreenWidth, mScreenHeight;
+  bool mHasFocus;
   PixelBox mSrcPixelBox;
   Image mImageSetImg;
-  GuiCursor *mMousecursor;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
+  GuiManager()
+  {}
+  ~GuiManager()
+  {}
   bool parseImagesetData(const char *file);
   bool parseWindowsData (const char *file);
-
 };
 
 #endif

@@ -49,11 +49,11 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
                     cloneOverlayElementFromTemplate("TextWindow/Frame", name + "Frame"));
   mOverlay->add2D(mContainerFrame);
   mElementTitle   = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/Headline",name + "Title");
-  mElementButUp   = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/ButtonUp",name + "ButtopUp");
-  mElementButDown = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/ButtonDown",name + "ButtopDown");
+//  mElementButUp   = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/ButtonUp",name + "ButtopUp");
+//  mElementButDown = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/ButtonDown",name + "ButtopDown");
   mContainerFrame->addChild(mElementTitle);
-  mContainerFrame->addChild(mElementButUp);
-  mContainerFrame->addChild(mElementButDown);
+//  mContainerFrame->addChild(mElementButUp);
+//  mContainerFrame->addChild(mElementButDown);
 
   for (int i=0; i < MAX_TEXT_LINES; ++i)
   {
@@ -65,9 +65,9 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   }
 
   mContainerFrame->setLeft(Xpos);
-  mElementTitle  ->setWidth(-Xpos-mElementButUp->getWidth()*2);
-  mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
-  mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());
+//  mElementTitle  ->setWidth(-Xpos-mElementButUp->getWidth()*2);
+//  mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
+ // mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());
   // WindowTitle.
   mElementTitleTxt0= OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title0");
   mElementTitleTxt0->setCaption(title);
@@ -256,6 +256,7 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos)
   /////////////////////////////////////////////////////////////////////////
   /// Check all buttons.
   /////////////////////////////////////////////////////////////////////////
+/*
   if (mElementButUp->contains(xpos, ypos))
   {
     Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
@@ -268,6 +269,7 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos)
     CloseTextWin();
     return true;
   }
+  */
   /////////////////////////////////////////////////////////////////////////
   /// Check for resize.
   /////////////////////////////////////////////////////////////////////////

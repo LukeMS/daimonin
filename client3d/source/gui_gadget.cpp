@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 ///=================================================================================================
 /// Parse a gadget entry.
 ///=================================================================================================
-GuiGadget::GuiGadget(TiXmlElement *xmlElem)
+GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
 {
   TiXmlElement *xmlGadget;
   std::string strValue;
@@ -52,6 +52,12 @@ GuiGadget::GuiGadget(TiXmlElement *xmlElem)
     mX = atoi(xmlGadget->Attribute("X"));
     mY = atoi(xmlGadget->Attribute("Y"));
   }
+  if (mX > maxX-2) mX = maxX-2;
+  if (mY > maxY-2) mY = maxY-2;
+  mWidth = w;
+  mHeight= h;
+  if (mX + mWidth > maxX) mWidth = maxX-mX-1;
+  if (mY + mHeight >maxY) mHeight= maxY-mY-1;
   /////////////////////////////////////////////////////////////////////////
   /// Parse the label.
   /////////////////////////////////////////////////////////////////////////
@@ -105,13 +111,13 @@ void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
   /////////////////////////////////////////////////////////////////////////
   if (mState == STATE_PUSHED)
   {
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, texture, mStrLabel.c_str(), COLOR_BLACK);
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, texture, mStrLabel.c_str(), COLOR_WHITE);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, mWidth, texture, mStrLabel.c_str(), COLOR_BLACK);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str(), COLOR_WHITE);
   }
   else
   {
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, texture, mStrLabel.c_str(), COLOR_BLACK);
-    GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , texture, mStrLabel.c_str(), COLOR_WHITE);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str(), COLOR_BLACK);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , mWidth, texture, mStrLabel.c_str(), COLOR_WHITE);
   }
 }
 

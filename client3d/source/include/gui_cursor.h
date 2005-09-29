@@ -34,21 +34,25 @@ using namespace Ogre;
 class GuiCursor
 {
 public:
-  ////////////////////////////////////////////////////////////
-  /// Functions.
-  ////////////////////////////////////////////////////////////
-  GuiCursor(int w, int h, int screenHeight, int screenWidth, PixelBox &pb);
-  ~GuiCursor();
-  void setPos(Real x, Real y);
-  void setStateImagePos(std::string state, int x, int y);
-  void draw();
-
-private:
   enum
   {
     STATE_STANDARD, STATE_DRAGGING, STATE_RESIZING, STATE_SUM
   };
+  ////////////////////////////////////////////////////////////
+  /// Functions.
+  ////////////////////////////////////////////////////////////
+  void setPos(Real x, Real y);
+  void setStateImagePos(std::string state, int x, int y);
+  void setState(int state);
+  void draw(PixelBox &SrcPixelBox);
+  void Init(int w, int h, int screenHeight, int screenWidth);
+  void freeRecources();
+  static GuiCursor &getSingleton()
+  {
+    static GuiCursor Singleton; return Singleton;
+  }
 
+private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
@@ -56,17 +60,20 @@ private:
   struct _pos
   {
     int x, y;
-  } gfxSrcPos[STATE_SUM];
-  int mState;
+  }
+  gfxSrcPos[STATE_SUM];
+  unsigned int mState;
   int mWidth, mHeight;
-  Image mTileImage;
-  TexturePtr mTexture;
-  PixelBox mSrcPixelBox;
   OverlayElement *mElement;
+  TexturePtr mTexture;
   MaterialPtr mMaterial;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
+  GuiCursor()
+  {}
+  ~GuiCursor()
+  {}
   GuiCursor(const GuiCursor&); // disable copy-constructor.
 };
 

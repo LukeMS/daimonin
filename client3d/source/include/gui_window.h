@@ -45,14 +45,15 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiWindow(TiXmlElement *xmlElem, GuiManager *guiManager);
   ~GuiWindow();
+  GuiWindow(TiXmlElement *xmlElem, GuiManager *guiManager);
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
   const char *getName()
   {
     return mStrName.c_str();
   }
-  const char *mouseEvent(int MouseAction, Real x, Real y);
+
+  const char *mouseEvent(int MouseAction, int x, int y);
 private:
   enum
   {
@@ -66,17 +67,14 @@ private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  static unsigned int msInstanceNr;
-  unsigned int mThisWindowNr;
-  int mMouseDragging, mMousePressed, mMouseOver;
-  int mScreenWidth, mScreenHeight;
+  static int msInstanceNr, mMouseDragging;
+  int mWindowNr;
+  int mMousePressed, mMouseOver;
   Image mTileImage;
-  bool mPosRelative;
   //Real mRatioW, mRatioH;
   int mPosX, mPosY, mPosZ, mWidth, mHeight;
+  int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
   bool mSizeRelative;
-  bool mMoveable;
-  TexturePtr mTexture;
   PixelBox mSrcPixelBox;
   SceneManager *mSceneMgr;
   SceneNode *mParentNode, *mNode;
@@ -85,9 +83,10 @@ private:
   std::vector<GuiGadget *>mvGadget;
   std::vector<GuiGraphic*>mvGraphic;
   std::vector<_textLine *>mvTextline;
+  Overlay *mOverlay;
   OverlayElement *mElement;
   MaterialPtr mMaterial;
-  GuiManager *mGuiManager;
+  TexturePtr mTexture;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
@@ -96,7 +95,7 @@ private:
   void createWindow();
   void delGadget(int number);
   void drawAll();
-  void parseWindowData(TiXmlElement *xmlElem);
+  void parseWindowData(TiXmlElement *xmlElem, GuiManager *guiManager);
 };
 
 #endif

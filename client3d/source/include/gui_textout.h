@@ -51,7 +51,7 @@ public:
   {
     static GuiTextout Singleton; return Singleton;
   }
-  void Print(int x, int y, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
+  void Print(int x, int y, int gfxLen, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
 
 private:
   ////////////////////////////////////////////////////////////

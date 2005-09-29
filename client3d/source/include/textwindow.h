@@ -91,7 +91,6 @@ private:
   Overlay *mOverlay;
   OverlayContainer *mContainerFrame;
   OverlayElement   *mElementTitle, *mElementTitleTxt0, *mElementTitleTxt1;
-  OverlayElement   *mElementButUp, *mElementButDown;
   TextAreaOverlayElement   *mElementLine[MAX_TEXT_LINES];
   Real mClose;                 // Only Headline visible.
   Real mLastHeight;            // The height before window was closed.

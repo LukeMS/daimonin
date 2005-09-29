@@ -33,18 +33,13 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiGraphic(TiXmlElement *xmlElem);
+  GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY);
   ~GuiGraphic()
   {}
   bool mouseOver(int x, int y)
   {
     if (x >= mX && x <= mX + mDestWidth && y >= mY && y <= mY + mDestHeight) return true;
     return false;
-  }
-  void setSize(int w, int h)
-  {
-    mSrcWidth = w;
-    mSrcHeight= h;
   }
   bool setState(int state)
   {
