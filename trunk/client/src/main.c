@@ -1537,13 +1537,12 @@ int main(int argc, char *argv[])
                 rec.y = 122;
                 rec.h = 14;
                 rec.w = 225;
-                SDL_FillRect(ScreenSurface, &rec, 0);
                 StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
 
         flip_screen();
-        if (!options.max_speed)
+        if (options.limit_speed)
             SDL_Delay(options.sleep);       /* force the thread to sleep */
     }
     /* we have leaved main loop and shut down the client */
