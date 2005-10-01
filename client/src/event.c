@@ -2314,6 +2314,7 @@ void check_menu_keys(int menu, int key)
             switch (key)
             {
             case SDLK_RETURN:
+            case SDLK_KP_ENTER:
                 reset_keys();
                 open_input_mode(240);
                 textwin_putstring("");
@@ -2346,7 +2347,7 @@ void check_menu_keys(int menu, int key)
                 if(gui_interface_npc->accept.title[0]!=0 && gui_interface_npc->accept.title[0]!='O')
                     return;
                 draw_info("Ok and bye.", COLOR_WHITE);
-                menu_npc_jump1:
+menu_npc_jump1:
                 sound_play_effect(SOUND_SCROLL, 0, 0, 100);
                 if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.command[0]!='\0')
                 {
