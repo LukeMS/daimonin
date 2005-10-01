@@ -3423,6 +3423,10 @@ arch grassd_4
 x 21
 y 18
 end
+arch tree30
+x 21
+y 18
+end
 arch grassd_3
 x 21
 y 19

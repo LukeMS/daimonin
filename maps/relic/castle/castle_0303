@@ -754,6 +754,10 @@ arch grassd_7
 x 5
 y 13
 end
+arch tree30
+x 5
+y 13
+end
 arch grassd_5
 x 5
 y 14

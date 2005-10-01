@@ -155,6 +155,10 @@ arch grassd_2
 x 1
 y 8
 end
+arch tree30
+x 1
+y 8
+end
 arch grassd_6
 x 1
 y 9
@@ -1242,6 +1246,10 @@ arch grassd_6
 x 9
 y 10
 end
+arch tree30
+x 9
+y 10
+end
 arch grassd_3
 x 9
 y 11
@@ -2085,6 +2093,10 @@ x 13
 y 3
 end
 arch grassd_6
+x 13
+y 4
+end
+arch tree30
 x 13
 y 4
 end
@@ -3034,6 +3046,10 @@ x 20
 y 9
 end
 arch grassd_6
+x 20
+y 10
+end
+arch tree30
 x 20
 y 10
 end

@@ -1513,17 +1513,10 @@ arch grassd_7
 x 10
 y 8
 end
-arch exit
-name Teleporter
-face sparkle_lup.101
-animation level_up
-anim_speed 1
-player_only 0
-no_teleport 0
+arch tele_stone
 slaying /relic/castle/castleb_0203
-hp 4
+hp 3
 sp 17
-last_eat 1
 x 10
 y 8
 end
