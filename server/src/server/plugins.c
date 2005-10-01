@@ -1217,12 +1217,18 @@ CFParm * CFWCreateObject(CFParm *PParm)
     if (!(arch = find_archetype((char *) (PParm->Value[0]))))
         return(&CFP);
 
+    if (arch->clone.type == PLAYER)
+        return(&CFP);
+
     if (!(newobj = arch_to_object(arch)))
         return(&CFP);
 
     newobj->x = *(int *) (PParm->Value[2]);
     newobj->y = *(int *) (PParm->Value[3]);
 
+    if(newobj->type == MONSTER)
+        fix_monster(newobj);
+    
     newobj = insert_ob_in_map(newobj, (mapstruct *) (PParm->Value[1]), NULL, 0);
 
     CFP.Value[0] = newobj;
