@@ -158,3 +158,51 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object small_fence1.111
+name fence
+face small_fence1.111
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.121
+name fence
+face small_fence1.121
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.131
+name fence
+face small_fence1.131
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.141
+name fence
+face small_fence1.141
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.161
+name fence
+face small_fence1.161
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.181
+name fence
+face small_fence1.181
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
