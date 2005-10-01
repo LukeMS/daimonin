@@ -2617,7 +2617,7 @@ static int GameObject_MakePet(lua_State *L)
     get_lua_args(L, "OO|i", &self, &owner, &mode);
 
     result = hooks->add_pet(owner->data.object, WHO, mode);
-    
+   
     lua_pushboolean(L, !result);
     return 1;
 }

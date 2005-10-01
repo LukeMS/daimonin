@@ -64,7 +64,7 @@ int add_pet(object *owner, object *pet, int force)
         new_draw_info_format(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));
         return -1;
     }
-
+        
     /* Count number of pets, remove invalid links */
     for(ol = CONTR(owner)->pets; ol; ol = next_ol)
     {
@@ -97,7 +97,11 @@ int add_pet(object *owner, object *pet, int force)
     /* Set pet owner */
     pet->owner = owner;
     pet->owner_count = owner->count;
-    MOB_DATA(pet)->owner = register_npc_known_obj(pet, owner, 0);
+    if(! (MOB_DATA(pet)->owner = register_npc_known_obj(pet, owner, 0)))
+    {
+        LOG(llevBug, "BUG: add_pet(): Couldn't register owner (%s) of pet (%s)\n", STRING_OBJ_NAME(owner), STRING_OBJ_NAME(pet));
+        return -1;
+    }
 
     SET_FLAG(pet, FLAG_FRIENDLY); /* Brainwash */
     pet->enemy = NULL;
@@ -105,7 +109,7 @@ int add_pet(object *owner, object *pet, int force)
 
     /* Follow owner combat mode */
     SET_OR_CLEAR_FLAG(pet, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
-
+    
     /* Insert link in owner's pet list */
     ol = get_objectlink(OBJLNK_FLAG_OB);
     ol->objlink.ob = pet;
@@ -127,7 +131,7 @@ int add_pet(object *owner, object *pet, int force)
         MOB_DATA(pet)->spawn_info = NULL;
         CLEAR_MULTI_FLAG(pet, FLAG_SPAWN_MOB);
     }
-
+    
     return 0;
 }
 

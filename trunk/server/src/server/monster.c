@@ -432,7 +432,7 @@ int move_monster(object *op)
 {
     move_response           response;
     int                     dir, tmp_dir;
-    int                     success;
+    int                     success = 0;
     struct mob_behaviour   *behaviour;
     int                     did_move = 0, did_action = 0;
 
@@ -522,7 +522,7 @@ int move_monster(object *op)
             {
                 success = do_move_monster(op, dir, response.forbidden);
                 /* TODO: handle success=0 and precomputed paths/giving up */
-            }
+            } 
 
             /* Try to avoid standing still if we aren't allowed to */
             if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)))

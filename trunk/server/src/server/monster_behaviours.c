@@ -561,10 +561,10 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
         /* We check LOS here, only if we are registering a new object */
         /* Also, we only check against players, and not if we have 
-         * been hit or helped by them. */
-        if(other->type == PLAYER && friendship == 0 && 
-                !obj_in_line_of_sight(npc, other, &rv))
-            return NULL;
+         * been hit or helped by them, or if they own us */        
+        if(other->type == PLAYER && friendship == 0 && npc->owner != other)
+            if(!obj_in_line_of_sight(npc, other, &rv))
+                return NULL;
     }
 
     tmp = get_poolchunk(pool_mob_knownobj);
@@ -1819,7 +1819,7 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
 {
     spell  *sp;
     object *tmp_enemy = NULL;
-    tag_t   tmp_enemy_tag;
+    tag_t   tmp_enemy_tag = 0;
     int     ability, sp_cost;
 
     if ((sp = find_spell(sp_type)) == NULL)
