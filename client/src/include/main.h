@@ -197,7 +197,7 @@ typedef struct _options
     Boolean                 show_frame;         /* true: show frame rate */
     Boolean                 use_gl;
     int                     sleep;
-    Boolean                 max_speed;
+    Boolean                 limit_speed;
     Boolean                 auto_bpp_flag;
     Boolean                 use_rect;
 

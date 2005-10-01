@@ -126,7 +126,7 @@ _option             opt[]                           =
     {"Textwindow Default Size:", "Size of text window.","","", SEL_RANGE, 10,38,1, 10, &txtwin[TW_MIX].size, VAL_INT},
     {"Textwindow Body Size:", "Size of body part of text window.","","",    SEL_RANGE,  2,38,1, 10, &txtwin[TW_MSG].size, VAL_INT},
     {"Textwindow Top Size:", "Size of upper part of text window.","","",     SEL_RANGE,  2,38,1, 10, &txtwin[TW_CHAT].size, VAL_INT},
-    {"Save CPU time with sleep():", "Client eats less cput time when set.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.max_speed, VAL_BOOL},
+    {"Save CPU time with sleep():", "Client eats less CPU time when set.","", "",SEL_CHECKBOX, 0,1,1, 0, &options.limit_speed, VAL_BOOL},
     {"Sleep time in ms:", "time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,25, 10, &options.sleep, VAL_INT},
     {"#"}, /* End of Page */
 
