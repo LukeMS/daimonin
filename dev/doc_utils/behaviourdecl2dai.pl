@@ -38,7 +38,7 @@ sub class
     if(defined $doc) { $doc = $::xml->p(@{$doc}) } 
         else { $doc = ""; }
 
-    return {'name' => $name, 'xml' => $::xml->section($::xml->title(ucfirst(lc($name))), $doc, @{$behaviours})};
+    return {'name' => $name, 'xml' => $::xml->section({'autotoc' => 'yes'}, $::xml->title(ucfirst(lc($name))), $doc, @{$behaviours})};
 }
 
 sub behaviour

@@ -46,7 +46,7 @@ newline_re_obj = re.compile('\n')
 object_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+GameObject_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 object_flags_block_re_obj = re.compile('\s*static\s+const\s+char\s*\*\s*GameObject_flags\[.*?\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 parameter_names_re_obj = re.compile('.*\((.*)\)')
-parameter_types_re_obj = re.compile('get_lua_args\(L,\s*"([GMAOdfis\|?]+)"')
+parameter_types_re_obj = re.compile('get_lua_args\(L,\s*"([GMAOdfiIs\|?]+)"')
 quot_re_obj = re.compile('"')
 return_boolean_re_obj = re.compile('.*lua_pushboolean\(.*?[\n\r]+\s*return\s*1;', re.S)
 return_number_re_obj = re.compile('.*lua_pushnumber\(.*?[\n\r]+\s*return\s*1;', re.S)
@@ -142,6 +142,8 @@ for filename in listCFiles(sys.argv[1]):
 								tp = 'string'
 							elif types[i] == 'i':
 								tp = 'integer'
+							elif types[i] == 'I':
+								tp = 'big integer (64 bit)'
 							elif types[i] == 'f':
 								tp = 'float'
 							elif types[i] == 'd':
