@@ -3285,6 +3285,10 @@ arch grassd_3
 x 20
 y 23
 end
+arch tree30
+x 20
+y 23
+end
 arch grassd_3
 x 21
 end

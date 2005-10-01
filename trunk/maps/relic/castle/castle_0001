@@ -63,19 +63,40 @@ end
 arch grassd_2
 y 13
 end
-arch grassd_8
+arch grassd_2
 y 14
 end
-arch grassd_7
+arch wall_stone10_8
+y 14
+end
+arch grassd_3
 y 15
 end
-arch grassd_7
+arch wall_stone10_3
+y 15
+end
+arch chains2.151
+direction 7
+y 15
+end
+arch grassd_3
+y 16
+end
+arch wall_stone10_3
+y 16
+end
+arch chains3.151
+direction 7
 y 16
 end
 arch grassd_3
 y 17
 end
 arch wall_fstone_round.102
+y 17
+end
+arch wall_stone10_3
+layer 4
 y 17
 end
 arch floor_fstone2a
@@ -167,7 +188,11 @@ arch grassd_6
 x 1
 y 9
 end
-arch grassd_5
+arch grassd_8
+x 1
+y 10
+end
+arch tree30
 x 1
 y 10
 end
@@ -187,27 +212,49 @@ arch plant_flower5
 x 1
 y 13
 end
-arch grassd_5
+arch grassd_8
 x 1
 y 14
 end
-arch grassd_5
+arch plant_flower5
+x 1
+y 14
+end
+arch wall_stone10_1
+x 1
+y 14
+end
+arch floor_wood2b
 x 1
 y 15
 end
-arch grassd_1
+arch candlelight1.101
+name stuffed bear
+msg
+Phew. Its not alive.
+endmsg
+face bear_grey.043
+x 1
+y 15
+end
+arch floor_wood2b
 x 1
 y 16
 end
-arch grassd_4
+arch floor_wood2b
 x 1
 y 17
 end
-arch grassd_5
+arch shelf1.111
+direction 7
+x 1
+y 17
+end
+arch fwall_fstone2a
 x 1
 y 18
 end
-arch wall_fstone_round.102
+arch floor_wood2b
 x 1
 y 18
 end
@@ -315,31 +362,52 @@ arch grassd_7
 x 2
 y 13
 end
-arch grassd_1
+arch grassd_7
 x 2
 y 14
 end
-arch grassd_3
+arch wall_stone10_w.111
+x 2
+y 14
+end
+arch floor_wood2b
 x 2
 y 15
 end
-arch grassd_8
+arch shelf2_wall.111
+x 2
+y 15
+end
+arch floor_wood2b
 x 2
 y 16
 end
-arch grassd_6
+arch floor_wood2b
 x 2
 y 17
 end
-arch grassd_4
+arch spawn_point
+x 2
+y 17
+arch ant_red
+name Ardworf
+type 83
+title The pet ant
+friendly 1
+random_move 1
+item_race 3
+item_level 3
+end
+end
+arch floor_wood2b
 x 2
 y 18
 end
-arch grassd_1
+arch fwall_fstone2a
 x 2
 y 19
 end
-arch wall_fstone_round.102
+arch floor_wood2b
 x 2
 y 19
 end
@@ -437,7 +505,11 @@ arch grassd_7
 x 3
 y 9
 end
-arch grassd_1
+arch grassd_8
+x 3
+y 10
+end
+arch tree30
 x 3
 y 10
 end
@@ -453,35 +525,55 @@ arch grassd_5
 x 3
 y 13
 end
-arch grassd_7
+arch grassd_5
 x 3
 y 14
 end
-arch grassd_8
+arch wall_stone10_1
+x 3
+y 14
+end
+arch picture4.151
+x 3
+y 14
+end
+arch floor_wood2b
 x 3
 y 15
 end
-arch grassd_5
+arch locker5
+x 3
+y 15
+end
+arch floor_wood2b
 x 3
 y 16
 end
-arch grassd_8
+arch floor_wood2b
 x 3
 y 17
 end
-arch grassd_3
+arch floor_wood2b
 x 3
 y 18
 end
-arch grassd_7
+arch floor_wood2b
 x 3
 y 19
 end
-arch grassd_6
+arch candlelight2.101
+x 3
+y 19
+end
+arch light8
+x 3
+y 19
+end
+arch fwall_fstone2a
 x 3
 y 20
 end
-arch wall_fstone_round.102
+arch floor_wood2b
 x 3
 y 20
 end
@@ -576,43 +668,51 @@ arch grassd_6
 x 4
 y 13
 end
-arch grassd_2
+arch grassd_6
 x 4
 y 14
 end
-arch grassd_6
+arch wall_stone10_1
+x 4
+y 14
+end
+arch picture6.151
+x 4
+y 14
+end
+arch floor_wood2b
 x 4
 y 15
 end
-arch grassd_8
+arch locker5
+x 4
+y 15
+end
+arch floor_wood2b
 x 4
 y 16
 end
-arch grassd_1
+arch floor_wood2b
 x 4
 y 17
 end
-arch grassd_7
+arch floor_wood2b
 x 4
 y 18
 end
-arch plant17
-x 4
-y 18
-end
-arch grassd_3
+arch floor_wood2b
 x 4
 y 19
 end
-arch grassd_4
+arch floor_wood2b
 x 4
 y 20
 end
-arch grassd_5
+arch fwall_fstone2a
 x 4
 y 21
 end
-arch wall_fstone_round.102
+arch floor_wood2b
 x 4
 y 21
 end
@@ -714,43 +814,85 @@ arch grassd_7
 x 5
 y 13
 end
-arch grassd_5
+arch grassd_7
 x 5
 y 14
 end
-arch grassd_7
+arch wall_stone10_w.111
+x 5
+y 14
+end
+arch floor_wood2b
 x 5
 y 15
 end
-arch grassd_3
+arch shelf6_wall.111
+x 5
+y 15
+end
+arch floor_wood2b
 x 5
 y 16
 end
-arch grassd_7
+arch floor_wood2b
 x 5
 y 17
 end
-arch grassd_4
+arch floor_wood2b
+no_pass 1
 x 5
 y 18
 end
-arch grassd_8
+arch desk1.111
+x 5
+y 18
+end
+arch floor_wood2b
 x 5
 y 19
 end
-arch grassd_7
+arch spawn_point
+x 5
+y 19
+arch peasant
+name Korae
+type 83
+title the pet shop owner
+direction 3
+arch key2
+slaying stonehaven_pet_shop
+end
+arch waypoint
+name waypoint_pets
+slaying /relic/castle/castle_0001
+hp 7
+sp 20
+wc 5
+end
+arch event_obj
+name Lua
+race /relic/castle/pet_shop.lua
+sub_type 13
+end
+end
+end
+arch floor_wood2b
 x 5
 y 20
 end
-arch grassd_1
+arch floor_wood2b
 x 5
 y 21
 end
-arch grassd_5
+arch barrel_water.101
+x 5
+y 21
+end
+arch floor_wood2b
 x 5
 y 22
 end
-arch wall_fstone_round.102
+arch fwall_fstone2a
 x 5
 y 22
 end
@@ -800,6 +942,11 @@ arch grassd_6
 x 6
 y 6
 end
+arch bench3.111
+no_pass 0
+x 6
+y 6
+end
 arch grassd_7
 x 6
 y 7
@@ -840,43 +987,56 @@ arch grassd_1
 x 6
 y 13
 end
-arch grassd_8
+arch grassd_1
 x 6
 y 14
 end
-arch grassd_4
+arch door_wood1
+x 6
+y 14
+end
+arch floor_wood2b
 x 6
 y 15
 end
-arch grassd_8
+arch floor_wood2b
 x 6
 y 16
 end
-arch grassd_5
+arch floor_wood2b
 x 6
 y 17
 end
-arch grassd_5
+arch floor_wood2b
+no_pass 1
 x 6
 y 18
 end
-arch grassd_2
+arch desk1.111
+x 6
+y 18
+end
+arch floor_wood2b
 x 6
 y 19
 end
-arch plant_flower7
-x 6
-y 19
-end
-arch grassd_4
+arch floor_wood2b
 x 6
 y 20
 end
-arch grassd_7
+arch floor_wood2b
 x 6
 y 21
 end
-arch grassd_8
+arch box1.101
+x 6
+y 21
+end
+arch floor_wood2b
+x 6
+y 22
+end
+arch wall_stone10_1
 x 6
 y 22
 end
@@ -970,43 +1130,86 @@ arch grassd_7
 x 7
 y 13
 end
-arch grassd_5
+arch grassd_1
 x 7
 y 14
 end
-arch grassd_2
+arch wall_stone10_w.111
+x 7
+y 14
+end
+arch floor_wood2b
 x 7
 y 15
 end
-arch grassd_7
+arch wall_stone10_w.131
+x 7
+y 15
+end
+arch floor_wood2b
 x 7
 y 16
 end
-arch grassd_3
+arch door_wood1
+direction 7
+x 7
+y 16
+end
+arch floor_wood2b
 x 7
 y 17
 end
-arch grassd_5
+arch wall_stone10_w.131
+x 7
+y 17
+end
+arch wall_stone10_3
 x 7
 y 18
 end
-arch grassd_7
+arch floor_wood2b
+x 7
+y 18
+end
+arch floor_wood2b
 x 7
 y 19
 end
-arch grassd_8
+arch wall_stone10_3
+x 7
+y 19
+end
+arch floor_wood2b
 x 7
 y 20
 end
-arch grassd_3
+arch door_wood2
+slaying stonehaven_pet_shop
+direction 3
+x 7
+y 20
+end
+arch floor_wood2b
 x 7
 y 21
 end
-arch grassd_4
+arch wall_stone10_w.131
+x 7
+y 21
+end
+arch floor_wood2b
+x 7
+y 22
+end
+arch wall_stone10_4
 x 7
 y 22
 end
 arch grassd_8
+x 7
+y 23
+end
+arch plant14
 x 7
 y 23
 end
@@ -1107,7 +1310,11 @@ arch grassd_6
 x 8
 y 14
 end
-arch grassd_8
+arch grassd_2
+x 8
+y 15
+end
+arch tree30
 x 8
 y 15
 end
@@ -1131,11 +1338,23 @@ arch grassd_2
 x 8
 y 19
 end
+arch fence_01.111
+x 8
+y 19
+end
+arch bowl1_full.101
+x 8
+y 19
+end
 arch grassd_4
 x 8
 y 20
 end
 arch grassd_5
+x 8
+y 21
+end
+arch plant13
 x 8
 y 21
 end
@@ -1259,9 +1478,22 @@ arch grassd_7
 x 9
 y 19
 end
+arch fence_01.111
+x 9
+y 19
+end
 arch grassd_5
 x 9
 y 20
+end
+arch spawn_point
+x 9
+y 20
+arch ant_red
+type 83
+friendly 1
+random_move 1
+end
 end
 arch grassd_8
 x 9
@@ -1270,6 +1502,16 @@ end
 arch grassd_6
 x 9
 y 22
+end
+arch spawn_point
+x 9
+y 22
+arch ant_soldier
+type 83
+unaggressive 1
+friendly 1
+random_move 1
+end
 end
 arch grassd_2
 x 9
@@ -1388,11 +1630,29 @@ arch grassd_2
 x 10
 y 17
 end
+arch sign
+name Pet Shop
+msg
+Stonehaven Pet Shop
+
+DO NOT FEED THE ANIMALS!
+endmsg
+x 10
+y 17
+end
 arch grassd_8
 x 10
 y 18
 end
 arch grassd_3
+x 10
+y 19
+end
+arch fence_01.111
+x 10
+y 19
+end
+arch plant8
 x 10
 y 19
 end
@@ -1532,13 +1792,35 @@ arch grassd_8
 x 11
 y 19
 end
+arch fence_01.111
+x 11
+y 19
+end
+arch plant8
+x 11
+y 19
+end
 arch grassd_1
 x 11
 y 20
 end
-arch grassd_8
+arch plant6
+x 11
+y 20
+end
+arch grassd_1
 x 11
 y 21
+end
+arch spawn_point
+x 11
+y 21
+arch ant_soldier
+type 83
+unaggressive 1
+friendly 1
+random_move 1
+end
 end
 arch grassd_4
 x 11
@@ -1669,7 +1951,23 @@ arch grassd_5
 x 12
 y 19
 end
+arch plant16
+x 12
+y 19
+end
+arch fence_01.121
+x 12
+y 19
+end
 arch grassd_7
+x 12
+y 20
+end
+arch plant7
+x 12
+y 20
+end
+arch fence_01.131
 x 12
 y 20
 end
@@ -1681,11 +1979,23 @@ arch plant17
 x 12
 y 21
 end
+arch fence_01.131
+x 12
+y 21
+end
 arch grassd_7
 x 12
 y 22
 end
+arch fence_01.131
+x 12
+y 22
+end
 arch grassd_8
+x 12
+y 23
+end
+arch fence_01.131
 x 12
 y 23
 end
@@ -1967,6 +2277,16 @@ x 14
 y 21
 end
 arch grassd_8
+x 14
+y 22
+end
+arch sign
+name Pet Shop
+msg
+Stonehaven Pet Shop
+
+DO NOT FEED THE ANIMALS!
+endmsg
 x 14
 y 22
 end
@@ -2431,7 +2751,11 @@ arch light4
 x 17
 y 22
 end
-arch grassd_8
+arch grassd_2
+x 17
+y 23
+end
+arch tree30
 x 17
 y 23
 end
@@ -2884,6 +3208,11 @@ arch grassd_5
 x 20
 y 18
 end
+arch bench3.111
+no_pass 0
+x 20
+y 18
+end
 arch grassd_8
 x 20
 y 19
@@ -3281,6 +3610,10 @@ x 23
 y 16
 end
 arch grassd_1
+x 23
+y 17
+end
+arch tree30
 x 23
 y 17
 end

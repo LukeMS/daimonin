@@ -2837,6 +2837,10 @@ arch grassd_6
 x 20
 y 5
 end
+arch tree30
+x 20
+y 5
+end
 arch grassd_8
 x 20
 y 6

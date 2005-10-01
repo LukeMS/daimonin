@@ -1184,6 +1184,9 @@ end
 arch grassd_7
 x 8
 end
+arch plant14
+x 8
+end
 arch grassd_8
 x 8
 y 1
@@ -1340,10 +1343,24 @@ end
 arch grassd_1
 x 9
 end
-arch plant17
+arch spawn_point
 x 9
+arch ant_red
+type 83
+friendly 1
+random_move 1
+end
+arch ant_red
+type 83
+friendly 1
+random_move 1
+end
 end
 arch grassd_6
+x 9
+y 1
+end
+arch plant6
 x 9
 y 1
 end
@@ -1501,11 +1518,25 @@ arch grassd_3
 x 10
 y 1
 end
+arch spawn_point
+x 10
+y 1
+arch ant_red
+type 83
+friendly 1
+random_move 1
+end
+arch ant_red
+type 83
+friendly 1
+random_move 1
+end
+end
 arch grassd_6
 x 10
 y 2
 end
-arch plant_flower7
+arch plant8
 x 10
 y 2
 end
@@ -1645,11 +1676,23 @@ arch grassd_8
 x 11
 y 1
 end
+arch plant6
+x 11
+y 1
+end
 arch grassd_7
 x 11
 y 2
 end
+arch plant7
+x 11
+y 2
+end
 arch grassd_7
+x 11
+y 3
+end
+arch plant8
 x 11
 y 3
 end
@@ -1788,11 +1831,30 @@ end
 arch grassd_8
 x 12
 end
+arch fence_01.131
+x 12
+end
 arch grassd_1
 x 12
 y 1
 end
+arch plant6
+x 12
+y 1
+end
+arch fence_01.131
+x 12
+y 1
+end
 arch grassd_7
+x 12
+y 2
+end
+arch plant8
+x 12
+y 2
+end
+arch fence_01.131
 x 12
 y 2
 end
@@ -2576,6 +2638,10 @@ x 18
 y 2
 end
 arch grassd_8
+x 18
+y 3
+end
+arch tree30
 x 18
 y 3
 end

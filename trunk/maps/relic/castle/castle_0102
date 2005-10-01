@@ -164,6 +164,10 @@ arch grassd_4
 x 1
 y 17
 end
+arch tree30
+x 1
+y 17
+end
 arch grassd_5
 x 1
 y 18
@@ -581,6 +585,12 @@ arch grassd_7
 x 5
 y 15
 end
+arch bench3.111
+no_pass 0
+direction 7
+x 5
+y 15
+end
 arch grassd_3
 x 5
 y 16
@@ -614,6 +624,10 @@ x 5
 y 23
 end
 arch grassd_7
+x 6
+end
+arch bench3.111
+no_pass 0
 x 6
 end
 arch grassd_1
@@ -751,6 +765,10 @@ arch grassd_8
 x 7
 y 8
 end
+arch tree30
+x 7
+y 8
+end
 arch grassd_1
 x 7
 y 9
@@ -828,6 +846,10 @@ x 7
 y 22
 end
 arch grassd_8
+x 7
+y 23
+end
+arch tree30
 x 7
 y 23
 end
@@ -1862,6 +1884,10 @@ arch grassd_2
 x 15
 y 13
 end
+arch tree30
+x 15
+y 13
+end
 arch grassd_7
 x 15
 y 14
@@ -1927,6 +1953,10 @@ x 15
 y 23
 end
 arch grassd_8
+x 16
+end
+arch bench3.111
+no_pass 0
 x 16
 end
 arch grassd_1
@@ -2176,6 +2206,10 @@ x 18
 y 3
 end
 arch grassd_6
+x 18
+y 4
+end
+arch tree30
 x 18
 y 4
 end
@@ -2546,6 +2580,10 @@ arch grassd_3
 x 21
 y 6
 end
+arch tree30
+x 21
+y 6
+end
 arch grassd_8
 x 21
 y 7
@@ -2706,6 +2744,10 @@ x 22
 y 15
 end
 arch grassd_5
+x 22
+y 16
+end
+arch tree30
 x 22
 y 16
 end
