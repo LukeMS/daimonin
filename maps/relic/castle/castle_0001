@@ -325,10 +325,6 @@ arch grassd_1
 x 2
 y 7
 end
-arch grassd_1
-x 2
-y 7
-end
 arch lantern_magic.131
 direction 5
 x 2
@@ -375,6 +371,10 @@ x 2
 y 15
 end
 arch shelf2_wall.111
+x 2
+y 15
+end
+arch light4
 x 2
 y 15
 end
@@ -830,6 +830,10 @@ arch shelf6_wall.111
 x 5
 y 15
 end
+arch light4
+x 5
+y 15
+end
 arch floor_wood2b
 x 5
 y 16
@@ -867,12 +871,12 @@ name waypoint_pets
 slaying /relic/castle/castle_0001
 hp 7
 sp 20
-wc 5
 end
 arch event_obj
-name Lua
-race /relic/castle/pet_shop.lua
 sub_type 13
+race /relic/castle/scripts/PetShop.lua
+end
+arch ai_generic
 end
 end
 end
@@ -1007,6 +1011,10 @@ arch floor_wood2b
 x 6
 y 17
 end
+arch light4
+x 6
+y 17
+end
 arch floor_wood2b
 no_pass 1
 x 6
@@ -1029,6 +1037,10 @@ x 6
 y 21
 end
 arch box1.101
+x 6
+y 21
+end
+arch light4
 x 6
 y 21
 end
@@ -1186,6 +1198,15 @@ end
 arch door_wood2
 slaying stonehaven_pet_shop
 direction 3
+x 7
+y 20
+end
+arch mover
+speed 0.05
+level 0
+walk_on 0
+fly_on 0
+direction 7
 x 7
 y 20
 end
@@ -1350,7 +1371,15 @@ arch grassd_4
 x 8
 y 20
 end
+arch mover
+level 0
+fly_on 0
+direction 7
+x 8
+y 20
+end
 arch grassd_5
+player_only 1
 x 8
 y 21
 end
@@ -1483,19 +1512,23 @@ x 9
 y 19
 end
 arch grassd_5
+player_only 1
 x 9
 y 20
 end
-arch spawn_point
+arch sign
+msg
+Note: there's some special tiles around here to
+make it work right. I'll try to get rid of them later...
+endmsg
+layer 0
+is_invisible 1
+sys_object 1
 x 9
 y 20
-arch ant_red
-type 83
-friendly 1
-random_move 1
-end
 end
 arch grassd_8
+player_only 1
 x 9
 y 21
 end
