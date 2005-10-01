@@ -1157,7 +1157,7 @@ int check_skill_action_time(object *op, object *skill)
         case SK_MISSILE_WEAPON:
           if (CONTR(op)->action_range > ROUND_TAG)
           {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot in %2.2f seconds again.",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot again in %2.2f seconds.",
                                    (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
@@ -1166,7 +1166,7 @@ int check_skill_action_time(object *op, object *skill)
         case SK_USE_MAGIC_ITEM:
           if (CONTR(op)->action_range > ROUND_TAG)
           {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can use a device in %2.2f seconds again.",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You can use a device again in %2.2f seconds.",
                                    (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
@@ -1174,7 +1174,7 @@ int check_skill_action_time(object *op, object *skill)
         case SK_THROWING:
           if (CONTR(op)->action_range > ROUND_TAG)
           {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can throw in %2.2f seconds again.",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You can throw again in %2.2f seconds.",
                                    (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
