@@ -44,13 +44,15 @@ void LOG(int logLevel, char *format, ...)
     }
     if (!logstream)     /* secure: we have no open stream*/
         flag = FALSE;
-    va_start(ap, format);
     if (flag)
     {
+        va_start(ap, format);
         vfprintf(stdout, format, ap);
+        va_end(ap);
+        va_start(ap, format);
         vfprintf(logstream, format, ap);
+        va_end(ap);
     }
-    va_end(ap);
     fflush(logstream);
 
 #endif
