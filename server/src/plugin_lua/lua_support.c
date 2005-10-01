@@ -400,7 +400,7 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
  * fmt codes:
  *  s - string
  *  i - integer (int)
- *  i - integer (int64)
+ *  I - integer (int64)
  *  f - float
  *  d - double
  *  O - GameObject
