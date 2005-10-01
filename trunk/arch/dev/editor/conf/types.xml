@@ -1547,7 +1547,7 @@
   </attribute>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value
+    The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
   <attribute arch="Dex" editor="dexterity" type="int">
@@ -2708,7 +2708,7 @@
   </attribute>
 <section name="Force Effects">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value
+    The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
   <attribute arch="Dex" editor="dexterity" type="int">
@@ -2790,7 +2790,7 @@
   </attribute>
 <section name="Force Effects">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value
+    The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
   <attribute arch="Dex" editor="dexterity" type="int">
@@ -4735,7 +4735,7 @@
   </attribute>
   <section name="Force Effects">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value
+    The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
   <attribute arch="Dex" editor="dexterity" type="int">
@@ -4819,7 +4819,7 @@
   </attribute>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value for permanent
+    The player's strength will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
@@ -5306,7 +5306,7 @@
     level 15 in the physical skill cathegory.
   </attribute>
   <attribute arch="no_strength" editor="ignore strength" type="bool">
-    Usually the player's strentgh takes effect on the damage
+    Usually the player's strength takes effect on the damage
     done by the shooting weapon. If &lt;ignore strength&gt; is set,
     the player's strength is ignored.
   </attribute>
@@ -5329,7 +5329,7 @@
   </attribute>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value
+    The player's strength will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
   <attribute arch="Dex" editor="dexterity" type="int">
@@ -6017,7 +6017,7 @@
   </attribute>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
-    The player's strentgh will rise/fall by the given value
+    The player's strength will rise/fall by the given value
     while wearing this weapon.
   </attribute>
   <attribute arch="Dex" editor="dexterity" type="int">

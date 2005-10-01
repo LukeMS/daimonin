@@ -4258,7 +4258,7 @@ difficulty 3
 def_arch potion_generic
 editor 3:items/spells/potions
 Object
-title of minor strentgh
+title of minor strength
 face potion_red.101
 inv_face potionstr.101
 level 1
