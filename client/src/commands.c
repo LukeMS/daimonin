@@ -864,7 +864,7 @@ void PlayerCmd(unsigned char *data, int len)
 /* this is a bit hacked now - perhaps we should consider
  * in the future a new designed item command.
  */
-void ItemXCmd(unsigned char *data, int len)
+void ItemXYCmd(unsigned char *data, int len, int bflag)
 {
     int     weight, loc, tag, face, flags, pos = 0, nlen, anim, nrof, dmode;
     uint8   itype, stype, item_qua, item_con, item_skill, item_level;
@@ -877,7 +877,7 @@ void ItemXCmd(unsigned char *data, int len)
     dmode = GetInt_String(data);
     pos += 4;
 
-    /*LOG(-1,"ITEMX:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
+    /*LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
 
     loc = GetInt_String(data + pos);
 
@@ -939,7 +939,7 @@ void ItemXCmd(unsigned char *data, int len)
             animspeed = data[pos++];
             nrof = GetInt_String(data + pos); pos += 4;
             update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, itype, stype, item_qua, item_con,
-                        item_skill, item_level, direction, FALSE);
+                        item_skill, item_level, direction, bflag);
         }
         if (pos > len)
             LOG(LOG_ERROR, "ItemCmd: ERROR: Overread buffer: %d > %d\n", pos, len);
@@ -947,91 +947,16 @@ void ItemXCmd(unsigned char *data, int len)
     map_udate_flag = 2;
 }
 
-/* no item command, including the delinv... */
-/* this is a bit hacked now - perhaps we should consider
- * in the future a new designed item command.
- */
+/* ItemXCmd is ItemCmd with sort order normal (add to end) */
+void ItemXCmd(unsigned char *data, int len)
+{
+    ItemXYCmd(data, len, FALSE);
+}
+
+/* ItemYCmd is ItemCmd with sort order reversed (add to front) */
 void ItemYCmd(unsigned char *data, int len)
 {
-    int     weight, loc, tag, face, flags, pos = 0, nlen, anim, nrof, dmode;
-    uint8   itype, stype, item_qua, item_con, item_skill, item_level;
-    uint8   animspeed, direction = 0;
-    char    name[MAX_BUF];
-
-    map_udate_flag = 2;
-    itype = stype = item_qua = item_con = item_skill = item_level = 0;
-
-    dmode = GetInt_String(data);
-    pos += 4;
-
-    /*LOG(-1,"ITEMX:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
-
-    loc = GetInt_String(data + pos);
-
-    if (dmode >= 0)
-        remove_item_inventory(locate_item(loc));
-
-    if (dmode == -4) /* send item flag */
-    {
-        if (loc == cpl.container_tag)
-            loc = -1; /* and redirect it to our invisible sack */
-    }
-    else if (dmode == -1)   /* container flag! */
-    {
-        cpl.container_tag = loc; /* we catch the REAL container tag */
-        remove_item_inventory(locate_item(-1));
-
-        if (loc == -1) /* if this happens, we want close the container */
-        {
-            cpl.container_tag = -998;
-            return;
-        }
-
-        loc = -1; /* and redirect it to our invisible sack */
-    }
-
-
-    pos += 4;
-
-    if (pos == len && loc != -1)
-    {
-        LOG(LOG_ERROR, "ItemCmd: Got location with no other data\n");
-    }
-    else
-    {
-        while (pos < len)
-        {
-            tag = GetInt_String(data + pos); pos += 4;
-            flags = GetInt_String(data + pos); pos += 4;
-            weight = GetInt_String(data + pos); pos += 4;
-            face = GetInt_String(data + pos); pos += 4;
-            request_face(face, 0);
-            direction = data[pos++];
-
-            if (loc)
-            {
-                itype = data[pos++];
-                stype = data[pos++];
-
-                item_qua = data[pos++];
-                item_con = data[pos++];
-                item_level = data[pos++];
-                item_skill = data[pos++];
-            }
-            nlen = data[pos++];
-            memcpy(name, (char *) data + pos, nlen);
-            pos += nlen;
-            name[nlen] = '\0';
-            anim = GetShort_String(data + pos); pos += 2;
-            animspeed = data[pos++];
-            nrof = GetInt_String(data + pos); pos += 4;
-            update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, itype, stype, item_qua, item_con,
-                        item_skill, item_level, direction, TRUE);
-        }
-        if (pos > len)
-            LOG(LOG_ERROR, "ItemCmd: ERROR: Overread buffer: %d > %d\n", pos, len);
-    }
-    map_udate_flag = 2;
+    ItemXYCmd(data, len, TRUE);
 }
 
 void GroupCmd(unsigned char *data, int len)
