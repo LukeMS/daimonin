@@ -78,6 +78,7 @@ extern void SkilllistCmd(unsigned char *data, int len);
 
 extern void SkillRdyCmd(char *data, int len);
 extern void GolemCmd(unsigned char *data, int len);
+extern void ItemXYCmd(unsigned char *data, int len, int bflag);
 extern void ItemXCmd(unsigned char *data, int len);
 extern void ItemYCmd(unsigned char *data, int len);
 extern void GroupCmd(unsigned char *data, int len);
