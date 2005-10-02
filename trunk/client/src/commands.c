@@ -1673,7 +1673,7 @@ void SpelllistCmd(unsigned char *data, int len)
     }
 }
 
-void GolemCmd(unsigned char *data, int len)
+void GolemCmd(char *data, int len)
 {
     int     mode, face;
     char   *tmp, buf[256];
@@ -1708,7 +1708,7 @@ void GolemCmd(unsigned char *data, int len)
 }
 
 
-static void save_data_cmd_file(char *path, char *data, int len)
+static void save_data_cmd_file(char *path, unsigned char *data, int len)
 {
     FILE   *stream;
 
@@ -1732,7 +1732,7 @@ void NewCharCmd(char *data, int len)
 /* server has send us a block of data...
  * lets check what we got
  */
-void DataCmd(char *data, int len)
+void DataCmd(unsigned char *data, int len)
 {
     uint8   data_type   = (uint8) (*data);
     uint8   data_comp ;
@@ -1740,8 +1740,8 @@ void DataCmd(char *data, int len)
      * as this dest_len default setting, the file is cutted and
      * the rest skiped. Look at the zlib docu for more info.
      */
-    uint32  dest_len    = 512 * 1024;
-    char   *dest;
+    unsigned long  dest_len    = 512 * 1024;
+    unsigned char *dest;
 
     dest = malloc(dest_len);
     data_comp = (data_type & DATA_PACKED_CMD);
@@ -1757,7 +1757,7 @@ void DataCmd(char *data, int len)
           if (data_comp)
           {
               LOG(LOG_DEBUG, "data cmd: compressed skill list(len:%d)\n", len);
-              uncompress(dest, (void *) &dest_len, data, len);
+              uncompress(dest, &dest_len, data, len);
               data = dest;
               len = dest_len;
           }
@@ -1769,7 +1769,7 @@ void DataCmd(char *data, int len)
           if (data_comp)
           {
               LOG(LOG_DEBUG, "data cmd: compressed spell list(len:%d)\n", len);
-              uncompress(dest, (void *) &dest_len, data, len);
+              uncompress(dest, &dest_len, data, len);
               data = dest;
               len = dest_len;
           }
@@ -1781,7 +1781,7 @@ void DataCmd(char *data, int len)
           if (data_comp)
           {
               LOG(LOG_DEBUG, "data cmd: compressed settings file(len:%d)\n", len);
-              uncompress(dest, (void *) &dest_len, data, len);
+              uncompress(dest, &dest_len, data, len);
               data = dest;
               len = dest_len;
           }
@@ -1794,7 +1794,7 @@ void DataCmd(char *data, int len)
           if (data_comp)
           {
               LOG(LOG_DEBUG, "data cmd: compressed bmaps file(len:%d)\n", len);
-              uncompress(dest, (void *) &dest_len, data, len);
+              uncompress(dest, &dest_len, data, len);
               data = dest;
               len = dest_len;
           }
@@ -1806,7 +1806,7 @@ void DataCmd(char *data, int len)
         case DATA_CMD_ANIM_LIST:
           if (data_comp)
           {
-              uncompress(dest, (void *) &dest_len, data, len);
+              uncompress(dest, &dest_len, data, len);
               LOG(LOG_DEBUG, "data cmd: compressed anims file(len:%d) -> %d\n", len, dest_len);
               data = dest;
               len = dest_len;
