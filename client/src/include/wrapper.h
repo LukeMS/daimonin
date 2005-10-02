@@ -33,10 +33,12 @@
 #endif
 
 #if !defined(HAVE_STRICMP)
+#include <strings.h>
 #define stricmp(_s1_,_s2_) strcasecmp(_s1_,_s2_)
 #endif
 
 #if !defined(HAVE_STRNICMP)
+#include <strings.h>
 #define strnicmp(_s1_,_s2_,_nrof_) strncasecmp(_s1_,_s2_,_nrof_)
 #endif
 

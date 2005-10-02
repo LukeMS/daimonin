@@ -1472,7 +1472,7 @@ int main(int argc, char *argv[])
         /* show the current dragged item */
         if ((drag = draggingInvItem(DRAG_GET_STATUS)))
         {
-            item   *Item;
+            item   *Item = NULL;
             if (drag == DRAG_IWIN_INV)
                 Item = locate_item(cpl.win_inv_tag);
             else if (drag == DRAG_IWIN_BELOW)
@@ -1482,12 +1482,15 @@ int main(int argc, char *argv[])
             else if (drag == DRAG_PDOLL)
                 Item = locate_item(cpl.win_pdoll_tag);
             /*  else Item = locate_item(cpl.win_quick_tag); */
-            SDL_GetMouseState(&x, &y);
-            if (drag == DRAG_QUICKSLOT_SPELL)
-                sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].spell.groupNr].entry[quick_slots[cpl.win_quick_tag].spell.classNr][quick_slots[cpl.win_quick_tag].spell.spellNr].icon,
-                           x, y, NULL, NULL);
-            else
-                blt_inv_item_centered(Item, x, y);
+            if(Item)
+            {
+                SDL_GetMouseState(&x, &y);
+                if (drag == DRAG_QUICKSLOT_SPELL)
+                    sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].spell.groupNr].entry[quick_slots[cpl.win_quick_tag].spell.classNr][quick_slots[cpl.win_quick_tag].spell.spellNr].icon,
+                            x, y, NULL, NULL);
+                else
+                    blt_inv_item_centered(Item, x, y);
+            }
         }
 
         /* we have a non-standard mouse-pointer (win-size changer, etc.) */

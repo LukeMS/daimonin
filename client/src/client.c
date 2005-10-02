@@ -488,7 +488,7 @@ void check_animation_status(int anum)
      * part of this anim!
      */
     animations[anum].loaded = 1; /* mark this anim as "we have loaded it" */
-    AnimCmd(anim_table[anum].anim_cmd, anim_table[anum].len); /* same as server sends it! */
+    AnimCmd((unsigned char *)anim_table[anum].anim_cmd, anim_table[anum].len); /* same as server sends it! */
 }
 
 /* removes whitespace from right side */
