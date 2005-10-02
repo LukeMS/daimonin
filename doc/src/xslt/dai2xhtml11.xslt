@@ -34,6 +34,12 @@
                         border-top-color:#000;
                         background-color:#eee;
                     }
+                    div.section {
+                        margin-left:1em;
+                    }
+                    div.section h2, div.section h3, div.section h4 {
+                        margin-left:-1em;
+                    }
                 </style>
             </head>
             <body>
@@ -101,7 +107,7 @@
     </xsl:template>
 
     <xsl:template match="/section/section">
-        <div id="{if (@id) then @id else generate-id()}">
+        <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
         <xsl:if test="/section/@autotoc='yes'">
@@ -110,7 +116,7 @@
     </xsl:template>
 
     <xsl:template match="section/section/section">
-        <div id="{if (@id) then @id else generate-id()}">
+        <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
     </xsl:template>
