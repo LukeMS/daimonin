@@ -1109,7 +1109,7 @@ int read_anim_tmp(void)
 void read_anims(void)
 {
     FILE       *stream;
-    char       *temp_buf;
+    unsigned char *temp_buf;
     struct stat statbuf;
     int         i;
 
@@ -1178,10 +1178,11 @@ static void load_bmaps_p0(void)
 void read_bmaps_p0(void)
 {
     FILE   *fbmap, *fpic;
-    char   *temp_buf, *cp;
+    unsigned char *temp_buf;
+    char *cp;
     int     bufsize, len, num, pos;
     unsigned int crc;
-    char        buf[HUGE_BUF];
+    char   buf[HUGE_BUF], line_buf[256];
     struct stat bmap_stat, pic_stat;
 
     if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
@@ -1262,8 +1263,8 @@ void read_bmaps_p0(void)
         crc = crc32(1L, temp_buf, len);
 
         /* now we got all we needed! */
-        sprintf(temp_buf, "%d %d %x %s", num, pos, crc, buf);
-        fputs(temp_buf, fbmap);
+        sprintf(line_buf, "%d %d %x %s", num, pos, crc, buf);
+        fputs(line_buf, fbmap);
         /*      LOG(LOG_DEBUG,"FOUND: %s", temp_buf);       */
     }
 
@@ -1404,8 +1405,8 @@ int read_bmap_tmp(void)
 
 void read_bmaps(void)
 {
-    FILE       *stream;
-    char       *temp_buf;
+    FILE          *stream;
+    unsigned char *temp_buf;
     struct stat statbuf;
     int         i;
 
@@ -1640,7 +1641,7 @@ void load_settings(void)
 void read_settings(void)
 {
     FILE       *stream;
-    char       *temp_buf;
+    unsigned char *temp_buf;
     struct stat statbuf;
     int         i;
 
@@ -1670,7 +1671,7 @@ void read_spells(void)
     char        type, nchar, *tmp, *tmp2;
     struct stat statbuf;
     FILE       *stream;
-    char       *temp_buf;
+    unsigned char *temp_buf;
     char        spath[255],line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
 
     for (i = 0; i < SPELL_LIST_MAX; i++)
@@ -1791,7 +1792,7 @@ void read_spells(void)
 void read_skills(void)
 {
     int         i, ii, panel;
-    char       *temp_buf;
+    unsigned char *temp_buf;
     char        nchar, *tmp, *tmp2;
     struct stat statbuf;
     FILE       *stream;
