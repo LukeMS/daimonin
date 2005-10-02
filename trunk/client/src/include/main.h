@@ -136,7 +136,7 @@ enum
 enum
 {
     SRV_CLIENT_STATUS_OK,
-    SRV_CLIENT_STATUS_UPDATE,
+    SRV_CLIENT_STATUS_UPDATE
 };
 
 #define SRV_CLIENT_FLAG_BMAP 1
@@ -383,7 +383,7 @@ typedef enum _game_status
     /* means, this is not a serial stepping here*/
     GAME_STATUS_QUIT,
     /* we are in quit menu*/
-    GAME_STATUS_PLAY,
+    GAME_STATUS_PLAY
     /* we play now!!*/
 }                    _game_status;
 

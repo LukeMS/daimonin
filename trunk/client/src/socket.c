@@ -30,7 +30,7 @@ int SOCKET_GetError()
 #elif __LINUX
     return errno;
 #endif
-};
+}
 
 #ifdef __WIN_32
 /* this readsfrom fd and puts the data in sl.  We return true if we think
@@ -352,7 +352,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
 port)
 {
     struct protoent    *protox;
-    int                 oldbufsize, newbufsize = 65535, buflen = sizeof(int), temp;
+    unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int), temp;
     struct sockaddr_in  insock;
 
     printf("Opening to %s %i\n", host, port);

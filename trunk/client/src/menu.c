@@ -1323,7 +1323,7 @@ int read_bmap_tmp(void)
     FILE       *stream, *fbmap0;
     char        buf[HUGE_BUF], name[HUGE_BUF];
     struct stat stat_bmap, stat_tmp, stat_bp0;
-    int         len;
+    unsigned int len;
     unsigned int crc;
     _bmaptype  *at;
 

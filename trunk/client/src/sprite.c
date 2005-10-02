@@ -808,4 +808,4 @@ int sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *
     SDL_FillRect(ScreenSurface, &myrect, 3243);
       */
     return(1);
-};
+}

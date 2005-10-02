@@ -1790,7 +1790,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
         {
             if(my >= yoff && my <=yoff+12)
             {
-                int st, xt, xs=x+40, s, flag=FALSE;
+                int st=0, xt, xs=x+40, s, flag=FALSE;
 
                 xt=xs;
                 for(s=0;s<(int)strlen(gui_interface_npc->message.lines[i]);s++)

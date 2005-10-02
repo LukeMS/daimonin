@@ -1043,7 +1043,7 @@ void InterfaceCmd(unsigned char *data, int len)
 
     map_udate_flag = 2;
     if((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
-         (cpl.menustatus == MENU_NPC && !len) || (len && cpl.menustatus != MENU_NPC))
+         ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
     {
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
     }
@@ -1056,19 +1056,19 @@ void InterfaceCmd(unsigned char *data, int len)
         mode = *data;
         pos ++;
 
-    gui_interface_npc = load_gui_interface(mode, data, len, pos);
-    if(!gui_interface_npc)
-        draw_info("INVALID GUI CMD", COLOR_RED);
-    else
-    {
-        gui_interface_npc->win_length = precalc_interface_npc();
-        interface_mode = mode;
-        cpl.menustatus = MENU_NPC;
-        gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
-        gui_interface_npc->starty = 50;
-        active_button = -1;
-        mb_clicked=0;
-    }
+        gui_interface_npc = load_gui_interface(mode, (char*)data, len, pos);
+        if(!gui_interface_npc)
+            draw_info("INVALID GUI CMD", COLOR_RED);
+        else
+        {
+            gui_interface_npc->win_length = precalc_interface_npc();
+            interface_mode = mode;
+            cpl.menustatus = MENU_NPC;
+            gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
+            gui_interface_npc->starty = 50;
+            active_button = -1;
+            mb_clicked=0;
+        }
     }
 }
 

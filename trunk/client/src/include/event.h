@@ -77,7 +77,7 @@ enum
     KEYFUNC_TARGET_FRIEND,
     KEYFUNC_TARGET_SELF,
     KEYFUNC_FIREREADY,
-    KEYFUNC_COMBAT,
+    KEYFUNC_COMBAT
 };
 
 typedef struct _keybind_key
