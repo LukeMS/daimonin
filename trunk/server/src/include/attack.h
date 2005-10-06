@@ -81,7 +81,7 @@ typedef enum _attacks
     /* and the real special one here */
     ATNR_INTERNAL,
     NROFATTACKS /* index (= 32 ATM) */
-};
+}_attacks;
 
 /* only the damage dealing attacks are covered by armour protections.
  * all attacks in the second part are effects and only covered from

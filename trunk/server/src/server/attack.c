@@ -43,8 +43,6 @@ static int  abort_attack(object *target, object *hitter, int simple_attack);
 static int  attack_ob_simple(object *op, object *hitter, int base_dam, int base_wc);
 static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, int damage);
 static int  adj_attackroll(object *hitter, object *target);
-static void fear_player(object *op, object *hitter, int dam);
-static void snare_player(object *op, object *hitter, int dam);
 static int  hit_player_attacktype(object *op, object *hitter, int *flags, int damage, uint32 attacknum, int magic);
 
 
@@ -1879,7 +1877,7 @@ void slow_player(object *op, object *hitter, int dam)
 
 }
 
-static void fear_player(object *op, object *hitter, int dam)
+void fear_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
     object     *tmp;
@@ -1919,7 +1917,7 @@ static void fear_player(object *op, object *hitter, int dam)
 
 }
 
-static void snare_player(object *op, object *hitter, int dam)
+void snare_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
     object     *tmp;
