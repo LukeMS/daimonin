@@ -334,8 +334,8 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     gflag = FALSE;
     for (i = 0; text[i] != '\0'; i++)
     {
-        dst.x=dst_tmp.x;
-        dst.y=dst_tmp.y;
+		dst.x=dst_tmp.x;
+		dst.y=dst_tmp.y;
         if (text[i] == '°' || text[i] == '~') /* change text color */
         {
             if (col == COLOR_BLACK)

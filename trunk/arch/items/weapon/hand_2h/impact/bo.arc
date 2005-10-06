@@ -2,7 +2,7 @@ Object bo
 layer 3
 name bo
 face bo.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10

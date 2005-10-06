@@ -29,7 +29,7 @@ maxhp 66
 ac 9
 wc 6
 dam 48
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_poison 100
 resist_confusion 100

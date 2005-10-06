@@ -60,7 +60,7 @@ static char        *sound_files[SOUND_MAX]              =
     "teleport.wav", "scroll.wav", "step1.wav" /* here starts client side sounds */, "step2.wav", "pray.wav",
     "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
     "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
-    "book.wav", "page.wav"
+	"book.wav", "page.wav"
 
 };
 
@@ -90,6 +90,8 @@ static void sound_start_music(char *fname, int vol, int fade, int loop);
 void sound_init(void)
 {
 #ifdef INSTALL_SOUND
+    int i;
+
     /* we want no sound*/
     if (SoundSystem == SOUND_SYSTEM_NONE)
         return;
@@ -102,6 +104,9 @@ void sound_init(void)
     music_buffer.data = NULL;
 
     SoundSystem = SOUND_SYSTEM_OFF;
+
+    for(i=0;i < SPECIAL_SOUND_INIT;i++)
+        special_sounds[i] = -1;
 
     /* Open the audio device */
     if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16, MIX_DEFAULT_CHANNELS, 1024) < 0)
@@ -262,7 +267,7 @@ void sound_play_one_repeat(int soundid, int special_id)
 {
 #ifdef INSTALL_SOUND
 
-    int tmp, s;
+    int tmp;
 
     if (SoundSystem != SOUND_SYSTEM_ON)
         return;
@@ -279,15 +284,8 @@ void sound_play_one_repeat(int soundid, int special_id)
         special_sounds[special_id] = -1;
         return;
     }
-    Mix_Volume(tmp, (int) (((double) options.sound_volume / (double) 100) * (double) MIX_MAX_VOLUME));
-
-    /* thats the wild part: when we got a channel, we must delete every same old entry */
-    for (s = 0; s < SPECIAL_SOUND_INIT; s++)
-    {
-        if (special_sounds[s] == tmp)
-            special_sounds[s] = -1;
-    }
     special_sounds[special_id] = tmp;
+    Mix_Volume(tmp, (int) (((double) options.sound_volume / (double) 100) * (double) MIX_MAX_VOLUME));
 
 #endif
 }
@@ -305,18 +303,18 @@ void sound_play_music(char *fname, int vol, int fade, int loop, int flags, int m
     else if (mode & MUSIC_MODE_FORCED)
         vol2 = 100;
 
-    /* same sound? */
-    if(!strcmp(fname,music.name))
-    {
-        music.fade = fade;
-        music.loop = loop;
-        if(vol != music.vol)
-        {
-            music.vol = vol;
-            Mix_VolumeMusic(vol);
-        }
-        return;
-    }
+	/* same sound? */
+	if(!strcmp(fname,music.name))
+	{
+		music.fade = fade;
+		music.loop = loop;
+		if(vol != music.vol)
+		{
+			music.vol = vol;
+			Mix_VolumeMusic(vol);
+		}
+		return;
+	}
 
     if (music.flag && !(mode & MUSIC_MODE_DIRECT)) /* only when set, we still play something */
     {

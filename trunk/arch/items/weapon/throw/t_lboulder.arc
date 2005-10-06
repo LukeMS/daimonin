@@ -3,7 +3,7 @@ race rock
 layer 3
 name large boulder
 face t_lboulder.101
-weapon_speed 0.035
+weapon_speed 3.0
 attack_impact 100
 last_grace 15
 last_sp 7

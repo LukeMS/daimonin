@@ -9,7 +9,7 @@ no_pick 1
 direction 4
 identified 1
 is_neutral 1
-weapon_speed 0.0125
+weapon_speed 3.5
 speed 0.95
 terrain_flag 1
 anim

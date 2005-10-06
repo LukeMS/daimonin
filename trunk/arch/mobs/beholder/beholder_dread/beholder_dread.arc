@@ -40,7 +40,7 @@ resist_impact 25
 resist_cleave 25
 resist_fear 100
 attack_pierce 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.06
 run_away 6
 level 1

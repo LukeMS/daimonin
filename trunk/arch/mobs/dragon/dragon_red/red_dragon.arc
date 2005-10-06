@@ -43,7 +43,7 @@ resist_fear 80
 resist_confusion 40
 resist_cold -30
 dam 82
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1

@@ -182,7 +182,6 @@ struct attribute_decl       GameObject_attributes[]         =
     {"speed_left",   FIELDTYPE_FLOAT, offsetof(object, speed_left), 0},
     {"weapon_speed", FIELDTYPE_FLOAT, offsetof(object, weapon_speed), 0},
     {"weapon_speed_left", FIELDTYPE_FLOAT, offsetof(object, weapon_speed_left), 0},
-    {"weapon_speed_add", FIELDTYPE_FLOAT, offsetof(object, weapon_speed_add), 0},
 
     /* Stats */
     {"experience",     FIELDTYPE_SINT32, offsetof(object, stats.exp), 0},
@@ -231,19 +230,19 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", NULL /* Unused flag */, "f_unaggressive",
     "f_reflect_missile", "f_reflect_spell",             /* 40 */
     "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
-    NULL /* unused */, "f_unique", "f_no_drop", /* 50 */
-    "f_is_indestructible", "f_has_ready_spell", "f_surrendered" /* unused */, NULL /* unused */, NULL,
+    "?f_feared", "f_unique", "f_no_drop", /* 50 */
+    NULL, "f_has_ready_spell", "f_surrendered", "?f_rooted", "?f_slowed",
     "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
     "f_xrays", "?f_no_apply", "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
     "f_only_attack", "?f_wiz", /* 70 */
     "f_stealth", "?f_wizpass", "?f_is_linked", "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
     "f_can_use_skill", "f_is_thrown",               /* 80 */
-    "f_is_vul_sphere", "f_is_proof_sphere", "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
+    NULL, NULL, "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
     "f_is_hilly", "f_levitate", "f_has_ready_weapon",        /* 90 */
     "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
     "f_one_hit", NULL /* debug flag CLIENT_SENT */, "f_berserk", "f_no_attack",   /* 100 */
-    "f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental", "f_is_proof_elemental", /* 105 */
-    "f_is_vul_magic", "f_is_proof_magic", "f_is_vul_physical", "f_is_proof_physical", "f_sys_object", /* 110 */
+    "f_invulnerable", "f_quest_item", "f_is_traped", "f_proof_phy", "f_proof_ele", /* 105 */
+    "f_proof_mag", "f_proof_sph", NULL, NULL, "f_sys_object", /* 110 */
     "f_use_fix_pos", "f_unpaid", "f_is_aged", "f_make_invisible", "f_make_ethereal", "f_is_player", "f_is_named",
     "?f_spawn_mob_flag", "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
     "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",

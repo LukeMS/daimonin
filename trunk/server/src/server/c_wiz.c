@@ -200,7 +200,8 @@ int command_shutdown(object *op, char *params)
 
 int command_goto(object *op, char *params)
 {
-    char   *name;
+    int x=0, y=0;
+    char   *name="";
     object *dummy;
 
     if (!op)
@@ -208,12 +209,15 @@ int command_goto(object *op, char *params)
 
     if (params == NULL)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Go to what level?");
+        new_draw_info(NDI_UNIQUE, 0, op, "Go to what level?\nUsage: /goto <map path> x y");
         return 1;
     }
-    name = params;
+
+    sscanf(params, "%s %d %d", name, &x, &y);
     dummy = get_object();
     dummy->map = op->map;
+    dummy->stats.hp = x;
+    dummy->stats.sp = y;
     FREE_AND_COPY_HASH(EXIT_PATH(dummy), name);
     FREE_AND_COPY_HASH(dummy->name, name);
 

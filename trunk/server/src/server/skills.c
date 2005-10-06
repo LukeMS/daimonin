@@ -1330,7 +1330,7 @@ int write_scroll(object *pl, object *scroll)
                 drain_specific_stat(pl, 4);
             else
             {
-                confuse_player(pl, pl, 99);
+                confuse_player(pl, pl, 160);
                 /*      return (-3*calc_skill_exp(pl,newScroll));*/
                 return (-30 * spells[chosen_spell].level);
             }
@@ -1338,7 +1338,7 @@ int write_scroll(object *pl, object *scroll)
         else if (random_roll(0, stat1 - 1, pl, PREFER_HIGH) < 15)
         {
             new_draw_info(NDI_UNIQUE, 0, pl, "Your attempt to write a new scroll rattles your mind!");
-            confuse_player(pl, pl, 99);
+            confuse_player(pl, pl, 160);
         }
         else
             new_draw_info(NDI_UNIQUE, 0, pl, "You fail to write a new scroll.");

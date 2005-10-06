@@ -34,7 +34,7 @@ maxhp 65
 ac 12
 wc 7
 dam 57
-weapon_speed 0.045
+weapon_speed 3.5
 resist_slash 20
 resist_fire 30
 resist_fear 25

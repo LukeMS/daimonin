@@ -35,7 +35,7 @@ maxhp 90
 ac 11
 wc 6
 dam 66
-weapon_speed 0.045
+weapon_speed 3.5
 resist_cold 75
 resist_pierce 25
 resist_slash 25

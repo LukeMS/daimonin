@@ -43,7 +43,7 @@ void spell_failure(object *op, int failure, int power)
     else if (failure <= -40 && failure > -60) /* confusion */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your magic recoils on you!");
-        confuse_player(op, op, 99);
+        confuse_player(op, op, 160);
     }
     else if (failure <= -60 && failure > -80) /* paralysis */
     {
@@ -57,7 +57,7 @@ void spell_failure(object *op, int failure, int power)
         if (blocks_magic(op->map, op->x, op->y))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
-            hit_player(tmp, 9998, op, AT_INTERNAL);
+            hit_player(tmp, 9998, op);
         }
         else
         {
@@ -98,7 +98,7 @@ void prayer_failure(object *op, int failure, int power)
     else if (failure <= -40 && failure > -60) /* confusion */
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your diety touches your mind!");
-        confuse_player(op, op, 99);
+        confuse_player(op, op, 160);
     }
     else if (failure <= -60 && failure > -150) /* paralysis */
     {
@@ -381,7 +381,7 @@ int cast_earth2dust(object *op, object *caster)
             {
                 next = tmp->above;
                 if (tmp && QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
-                    hit_player(tmp, 9998, op, AT_PHYSICAL);
+                    hit_player(tmp, 9998, op);
             }
         }
     return 1;
@@ -768,7 +768,7 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype)
                 tmp = tmp->above;
             if (tmp == NULL)
                 continue;
-            hit_player(tmp, dam, op, attacktype);
+            hit_player(tmp, dam, op);
         }
     return 1;
 }
@@ -812,7 +812,6 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
 
         case SP_FIRE_WALL:
           tmp = get_archetype("firebreath");
-          tmp->attacktype |= AT_MAGIC;
           tmp->stats.hp = spells[spell_type].bdur + 5 * SP_level_strength_adjust(op, caster, spell_type);
           tmp->stats.dam = spells[spell_type].bdam + SP_level_dam_adjust(op, caster, spell_type);
           tmp->stats.food = 1;          /* so it doesn't propagate */
@@ -823,7 +822,6 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
 
         case SP_FROST_WALL:
           tmp = get_archetype("icestorm");
-          tmp->attacktype |= AT_MAGIC;
           tmp->stats.hp = spells[spell_type].bdur + 5 * SP_level_strength_adjust(op, caster, spell_type);
           tmp->stats.dam = spells[spell_type].bdam + SP_level_dam_adjust(op, caster, spell_type);
 
@@ -843,7 +841,6 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
 
         case SP_CHAOS_POOL:
           tmp = get_archetype("color_spray");
-          tmp->attacktype |= AT_MAGIC;
           tmp->stats.hp = spells[spell_type].bdur + 5 * SP_level_strength_adjust(op, caster, spell_type);
           tmp->stats.dam = spells[spell_type].bdam + SP_level_dam_adjust(op, caster, spell_type);
 
@@ -860,7 +857,6 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
 
         case SP_COUNTERWALL:
           tmp = get_archetype("counterspell");
-          tmp->attacktype |= AT_MAGIC;
           tmp->stats.hp = spells[spell_type].bdur + 5 * SP_level_strength_adjust(op, caster, spell_type);
           tmp->stats.dam = spells[spell_type].bdam + SP_level_dam_adjust(op, caster, spell_type);
           tmp->stats.food = 1;
@@ -953,7 +949,7 @@ int cast_light(object *op, object *caster, int dir)
                 /* coky doky. got a target monster. Lets make a blinding attack */
                 if (target->head)
                     target = target->head;
-                (void) hit_player(target, dam, op, (AT_BLIND | AT_MAGIC));
+                hit_player(target, dam, op);
                 return 1; /* one success only! */
             }
     }
@@ -1467,7 +1463,6 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               break;
           }
         case SP_CONFUSION:
-          force->attacktype |= (AT_CONFUSION | AT_PHYSICAL);
           force->resist[ATNR_CONFUSION] = 50;   /*??? It was here before PR */
           break;
         case SP_HEROISM:
@@ -1484,7 +1479,6 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
 
               if (god)
               {
-                  force->attacktype |= god->attacktype | AT_PHYSICAL;
                   if (god->slaying)
                       FREE_AND_COPY_HASH(force->slaying, god->slaying);
 
@@ -1653,7 +1647,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           force->resist[ATNR_PHYSICAL] = 100;
           break;
         case SP_IMMUNE_MAGIC:
-          force->resist[ATNR_MAGIC] = 100;
+          force->resist[ATNR_FORCE] = 100;
           break;
 
         case SP_INVULNERABILITY:
@@ -1668,23 +1662,18 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           else
               i = 30;
           force->resist[ATNR_PHYSICAL] = i;
-          force->resist[ATNR_MAGIC] = i;
           force->resist[ATNR_FIRE] = i;
           force->resist[ATNR_ELECTRICITY] = i;
           force->resist[ATNR_COLD] = i;
           force->resist[ATNR_CONFUSION] = i;
           force->resist[ATNR_ACID] = i;
           force->resist[ATNR_DRAIN] = i;
-          force->resist[ATNR_GHOSTHIT] = i;
           force->resist[ATNR_POISON] = i;
           force->resist[ATNR_SLOW] = i;
           force->resist[ATNR_PARALYZE] = i;
-          force->resist[ATNR_TIME] = i;
           force->resist[ATNR_FEAR] = i;
-          force->resist[ATNR_DEPLETE] = i;
+          force->resist[ATNR_DEPLETION] = i;
           force->resist[ATNR_DEATH] = i;
-          force->resist[ATNR_HOLYWORD] = i;
-          force->resist[ATNR_BLIND] = i;
 
 
         case SP_HASTE:
@@ -1705,8 +1694,10 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
     }
     if (msg_flag)
     {
-        change_abil(tmp, force); /* Mostly to display any messages */
-        fix_player(tmp);        /* This takes care of some stuff that change_abil() */
+        if(tmp->type == PLAYER)
+            change_abil(tmp, force); /* Mostly to display any messages */
+        else
+            fix_player(tmp);        /* This takes care of some stuff that change_abil() */
     }
 
     return 1;
@@ -1945,8 +1936,6 @@ int fire_cancellation(object *op, int dir, archetype *at, int magic)
 
     tmp->x = op->x,tmp->y = op->y;
     tmp->direction = dir;
-    if (magic)
-        tmp->attacktype |= AT_MAGIC;
 
     if (op->type == PLAYER)
         set_owner(tmp, op);
@@ -1969,7 +1958,7 @@ void move_cancellation(object *op)
         return;
     }
     if ((op = insert_ob_in_map(op, op->map, op, 0)) != NULL)
-        hit_map(op, 0, op->attacktype);
+        hit_map(op, 0);
 }
 
 void cancellation(object *op)
@@ -1980,7 +1969,6 @@ void cancellation(object *op)
     {
         /* Recur through the inventory */
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-            if (!did_make_save_item(tmp, AT_CANCELLATION, op))
                 cancellation(tmp);
     }
     else/* Nullify this object. */ if (FABS(op->magic) <= (rndm(0, 5)))
@@ -2304,6 +2292,69 @@ int remove_depletion(object *op, object *target)
         new_draw_info(NDI_UNIQUE, 0, target, "There is no depletion.");
 
     insert_spell_effect(spells[SP_REMOVE_DEPLETION].archname, target->map, target->x, target->y);
+    return success;
+}
+
+int remove_deathsick(object *op, object *target)
+{
+    archetype  *at;
+    object     *depl;
+    int         i, success = 0;
+
+    if ((at = find_archetype("deathsick")) == NULL)
+    {
+        LOG(llevBug, "BUG: Could not find archetype deathsick");
+        return 0;
+    }
+
+    if (!op || !target)
+        return success;
+
+
+    if (target->type != PLAYER)
+    {
+        if (op->type == PLAYER) /* fake messages for non player... */
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove death sickness on %s.", query_base_name(target, op));
+            new_draw_info(NDI_UNIQUE, 0, op, "There is no death sickness.");
+        }
+        return success;
+    }
+    if (op != target)
+    {
+        if (op->type == PLAYER)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove death sickness on %s.", query_base_name(target, op));
+        else if (target->type == PLAYER)
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove death sickness on you.", query_base_name(op, target));
+    }
+
+
+    if ((depl = present_arch_in_ob(at, target)) != NULL)
+    {
+        for (i = 0; i < 7; i++)
+        {
+            if (get_attr_value(&depl->stats, i))
+            {
+                success++;
+                new_draw_info(NDI_UNIQUE, 0, target, restore_msg[i]);
+            }
+        }
+        remove_ob(depl);
+        fix_player(target);
+    }
+
+    if (op != target && op->type == PLAYER)
+    {
+        if (success)
+            new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some death sickness.");
+        else
+            new_draw_info(NDI_UNIQUE, 0, op, "There is no death sickness.");
+    }
+
+    if (op != target && target->type == PLAYER && !success) /* if success, target got infos before */
+        new_draw_info(NDI_UNIQUE, 0, target, "There is no death síckness.");
+
+    insert_spell_effect(spells[SP_REMOVE_DEATHSICK].archname, target->map, target->x, target->y);
     return success;
 }
 
@@ -2765,8 +2816,6 @@ int cast_pacify(object *op, object *weap, archetype *arch, int spellnum)
             member, we dont worship a god, or monster has no race */
             if (!tmp->race || !god || !god->race || !strstr(god->race, tmp->race))
             {
-                if (tmp->resist[ATNR_MAGIC] == 100 || tmp->resist[ATNR_GODPOWER] == 100)
-                    continue;
                 /* multiple square monsters only when caster is => level of creature */
                 if ((tmp->more || tmp->head) && (SK_level(op) < tmp->level))
                     continue;
@@ -2963,7 +3012,7 @@ int cast_transfer(object *op, int dir)
             new_draw_info(NDI_UNIQUE, 0, plyr, "Your head explodes!");
             fire_arch(op, plyr, 0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, 0);
             /* Explodes a large fireball centered at player */
-            /*            hit_player(plyr, 9998, op, AT_PHYSICAL);*/
+            /*            hit_player(plyr, 9998, op);*/
             plyr->stats.sp = 2 * maxsp;
         }
         else if (sp >= maxsp * 1.88)
@@ -2973,7 +3022,7 @@ int cast_transfer(object *op, int dir)
         else if (sp >= maxsp * 1.5)
         {
             new_draw_info(NDI_UNIQUE, 0, plyr, "CHaOs fills your world.");
-            confuse_player(op, op, 99);
+            confuse_player(op, op, 160);
         }
         else if (sp >= maxsp * 1.25)
             new_draw_info(NDI_UNIQUE, 0, plyr, "You start hearing voices.");
@@ -3060,12 +3109,12 @@ void counterspell(object *op, int dir)
         if (tmp->owner && tmp->owner == op->owner)
             continue;
 
-        if (tmp->material
-         == 0
-         && tmp->attacktype & AT_MAGIC
-         && !(tmp->attacktype & AT_COUNTERSPELL)
-         && !QUERY_FLAG(tmp,
-                        FLAG_MONSTER))
+        if (tmp->material == 0
+         /*
+         && tmp->attacktype & AT_FORCE
+         && !(tmp->attacktype & AT_COUNTERMAGIC)
+         */
+         && !QUERY_FLAG(tmp, FLAG_MONSTER))
             nflag = 1;
         else
             switch (tmp->type)
@@ -3164,8 +3213,6 @@ int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
             continue;
         if (tmp->type == PLAYER)
             continue;
-        if (tmp->resist[ATNR_MAGIC] == 100)
-            continue;
         if (QUERY_FLAG(tmp, FLAG_UNDEAD))
             continue;
         if (tmp->more || tmp->head)
@@ -3220,8 +3267,6 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
         if (!tmp)
             continue;
         if (tmp->type == PLAYER)
-            continue;
-        if (tmp->resist[ATNR_MAGIC] == 100)
             continue;
         if (!QUERY_FLAG(tmp, FLAG_UNDEAD))
             continue;
@@ -3545,7 +3590,6 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
             FREE_AND_COPY_HASH(tmp2->name, buf);
         }
     }
-    tmp->attacktype |= god->attacktype;
     memcpy(tmp->resist, god->resist, sizeof(tmp->resist));
     FREE_AND_CLEAR_HASH2(tmp->race);
     FREE_AND_CLEAR_HASH2(tmp->slaying);
@@ -3553,9 +3597,6 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
         FREE_AND_COPY_HASH(tmp->race, god->race);
     if (god->slaying)
         FREE_AND_COPY_HASH(tmp->slaying, god->slaying);
-    /* safety, we must allow a god's servants some reasonable attack */
-    if (!(tmp->attacktype & AT_PHYSICAL))
-        tmp->attacktype |= AT_PHYSICAL;
 
     /*  make experience increase in proportion to the strength of
      *  the summoned creature. */
@@ -3640,8 +3681,6 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
         head->last_grace = 0;
     if (head->last_sp)
         head->last_sp = 0;
-    if (head->attacktype & AT_GHOSTHIT)
-        head->attacktype = (AT_PHYSICAL | AT_DRAIN);
     if (head->other_arch)
         head->other_arch = NULL;
     if (QUERY_FLAG(head, FLAG_CHANGING))
@@ -3909,9 +3948,10 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
         tmp->stats.dam = 127;
     /*LOG(llevDebug,"animate_weapon: wc:%d  hp:%d  dam:%d.\n", tmp->stats.wc, tmp->stats.hp, tmp->stats.dam);*/
     /* attacktype */
+    /*
     if (!tmp->attacktype)
         tmp->attacktype = AT_PHYSICAL;
-
+    */
     for (i = 0; i < NROFMATERIALS; i++)
         for (j = 0; j < NROFATTACKS; j++)
             if (weapon->material & (1 << i))
@@ -3931,11 +3971,8 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
     tmp->resist[ATNR_POISON] = 100;
     tmp->resist[ATNR_SLOW] = 100;
     tmp->resist[ATNR_PARALYZE] = 100;
-    tmp->resist[ATNR_TIME] = 100;
     tmp->resist[ATNR_FEAR] = 100;
-    tmp->resist[ATNR_DEPLETE] = 100;
     tmp->resist[ATNR_DEATH] = 100;
-    tmp->resist[ATNR_BLIND] = 100;
 
     /* Improve weapon's armour value according to best save vs. physical of its material */
     for (a = 0,i = 0; i < NROFMATERIALS; i++)
@@ -4062,8 +4099,7 @@ int cast_faery_fire(object *op, object *caster)
                 && (!QUERY_FLAG(tmp, FLAG_ALIVE)
                  || tmp->type == PLAYER
                  || tmp->more
-                 || tmp->head
-                 || tmp->resist[ATNR_MAGIC] == 100))
+                 || tmp->head))
                 tmp = tmp->above;
             if (tmp == NULL)
                 continue;
@@ -4262,7 +4298,7 @@ void move_aura(object *aura)
         return;
     for (i = 1; i < 9; i++)
     {
-        hit_map(aura, i, aura->attacktype);
+        hit_map(aura, i);
         if (aura->other_arch)
         {
             nx = aura->x + freearr_x[i];

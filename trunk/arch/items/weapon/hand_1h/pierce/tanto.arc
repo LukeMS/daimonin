@@ -2,7 +2,7 @@ Object tanto
 name tanto
 layer 3
 face tanto.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 item_level 3
 item_skill 4

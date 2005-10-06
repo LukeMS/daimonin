@@ -2,7 +2,7 @@ Object broadsword
 name broadsword
 layer 3
 face broadsword.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4

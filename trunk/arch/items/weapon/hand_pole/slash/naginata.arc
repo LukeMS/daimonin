@@ -1,7 +1,7 @@
 Object naginata
 name naginata
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 item_level 11
 item_skill 4
 attack_slash 100

@@ -1,6 +1,6 @@
 Object skill_punching
 name punching
-weapon_speed 0.015
+weapon_speed 4.0
 face skill.101
 attack_impact 100
 dam 1

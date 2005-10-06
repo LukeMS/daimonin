@@ -147,7 +147,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ARMOUR                  16
 #define PEDESTAL                17
 #define ALTAR                   18
-#define CONFUSION               19
+/*removed: CONFUSION               19*/
 #define LOCKED_DOOR             20
 #define SPECIAL_KEY             21
 #define MAP                     22
@@ -156,7 +156,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MMISSILE                25
 #define TIMED_GATE              26
 #define TRIGGER                 27 /* Only triggered when applied, resets after interval */
-#define GRIMREAPER              28
+/* type 28 - was GRIMREAPER */
 #define MAGIC_EAR               29
 #define TRIGGER_BUTTON          30
 #define TRIGGER_ALTAR           31
@@ -468,6 +468,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_CONN_SENSOR_OR          2 /* OR */
 #define ST1_CONN_SENSOR_XOR         3 /* XOR */
 
+/* sub tpye defines for fast force identification */
+#define ST1_FORCE_NORMAL    0
+#define ST1_FORCE_DEPLETE   1
+#define ST1_FORCE_DRAIN     2
+#define ST1_FORCE_SLOWED    3
+#define ST1_FORCE_FEAR      4
+#define ST1_FORCE_SNARE     5
+#define ST1_FORCE_PARALYZE  6
+#define ST1_FORCE_CONFUSED  7
+#define ST1_FORCE_BLIND     8
+
 /* END SUB TYPE 1 DEFINE */
 
 /* definitions for detailed pickup descriptions.
@@ -539,8 +550,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PATH_ARCANE            0x00008000  /*  32768 */
 
 #define NRSPELLPATHS    16
-
-#define NROFREALSPELLS  17  /* Number of different spells */
 
 /* Terrain type flags
  * These values are used from terrain_typ and terrain_flag
@@ -636,7 +645,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_SLEEP          0 /* NPC is sleeping */
 #define FLAG_CONFUSED       1 /* confused... random dir when moving and problems to do actions */
 #define FLAG_PARALYZED      2 /* Object is paralyzed */
-#define FLAG_SCARED         3 /* Monster is scared (for players: this is feared) */
+#define FLAG_SCARED         3 /* Monster is scared. This is "run away" panic - don't confuse it with fear */
 #define FLAG_BLIND          4 /* If set, object cannot see (the map) with eyes */
 #define FLAG_IS_INVISIBLE   5 /* only THIS invisible can be seen with seen_invisible */
 #define FLAG_IS_ETHEREAL    6 /* object is etheral  - means transparent and special protected */
@@ -646,11 +655,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_WALK_ON        9 /* Applied when it's walked upon */
 #define FLAG_NO_PASS        10 /* Nothing can pass (wall() is true) */
 #define FLAG_ANIMATE        11 /* The object looks at archetype for faces */
-#define FLAG_SLOW_MOVE      12 /* Uses the stats.exp/1000 to slow down */
-/* I use this flag now in 2 ways: for objects like floors
-* it force objects to move slow. For monsters with speed,
-* it force monsters to move slow! (slow spell or snared!)
-*/
+#define FLAG_SLOW_MOVE      12 /* Uses the stats.exp/1000 to slow down. Only for terrain */
 #define FLAG_FLYING         13 /* Not affected by WALK_ON or SLOW_MOVE) */
 #define FLAG_MONSTER        14 /* A object with this flag is used like a object with
                                       * type == MONSTER. SO, we can use type GOLEMS objects
@@ -659,9 +664,9 @@ error - Your ANSI C compiler should be defining __STDC__;
                                 */
 #define FLAG_FRIENDLY       15 /* Will help players */
 /*
-                      *  REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
-                    * you move this flag!
-                    */
+ *  REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
+ * you move this flag!
+ */
 #define FLAG_REMOVED        16 /* Object is not in any map or invenory */
 #define FLAG_BEEN_APPLIED   17 /* The object has been applied */
 #define FLAG_AUTO_APPLY     18 /* Will be applied when created */
@@ -686,7 +691,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_STARTEQUIP     34 /* Object was given to player at start */
 #define FLAG_BLOCKSVIEW     35 /* Object blocks view */
 #define FLAG_UNDEAD         36 /* Monster is undead */
-#define FLAG_UNUSED         37 /* UNUSED */
+/* 37 -  UNUSED old FREED flag - seems be fine - can be used again after b4 is released & stable */
 #define FLAG_UNAGGRESSIVE   38 /* Monster doesn't attack players */
 #define FLAG_REFL_MISSILE   39 /* object will give missile reflection */
 
@@ -696,21 +701,22 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_EVIL        43 /* alignment flags */
 #define FLAG_TEAR_DOWN      44 /* at->faces[hp*animations/maxhp] at hit */
 #define FLAG_RUN_AWAY       45 /* Object runs away from nearest player
-                                * but can still attack at a distance
+                                * but can still attack at a distance.
+                                * don't confuse it with FLAG_SCARED
                                 */
 #define FLAG_PASS_THRU      46 /* Objects with can_pass_thru can pass
                                    * thru this object as if it wasn't there
                                 */
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
-/* FREE flag 48*/
-#define FLAG_UNIQUE         49 /* Item is really unique (UNIQUE_ITEMS) */
-#define FLAG_NO_DROP        50 /* Object can't be dropped */
-#define FLAG_INDESTRUCTIBLE 51/* every item with quality use up. if this is set, it don't use up by physical forces */
+#define FLAG_FEARED          48 /* player or monster is feared - attacks and acts alot more worse */
+#define FLAG_UNIQUE          49 /* Item is really unique (UNIQUE_ITEMS) */
+#define FLAG_NO_DROP         50 /* Object can't be dropped */
+/* FLAG 51 is free */
 #define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
 #define FLAG_SURRENDERED     53 /* (Monster) has surrendered and count not as "targetable enemy" */
-/* FREE flag 54 */
-/* FREE flag 55 */
+#define FLAG_ROOTED          54 /* monster or player is rooted/snared - can't move but fight */
+#define FLAG_SLOWED          55 /* monster/player is slowed */
 
 #define FLAG_USE_ARMOUR     56 /* (player/deity) INTERNAL flag to allow armour use (for example from the deity) */
 #define FLAG_USE_WEAPON     57 /* (player/deity) INTERNAL same as armour: can wield weapons */
@@ -743,8 +749,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CAN_OPEN_DOOR  79 /* object (mob, player,..) can open a door */
 
 #define FLAG_IS_THROWN      80 /* Object is designed to be thrown. */
-#define FLAG_VUL_SPHERE     81
-#define FLAG_PROOF_SPHERE   82
+/* flag 81 is free */
+/* flag 82 is free */
 #define FLAG_IS_MALE        83 /* gender flags. it effects only player & mobs */
 #define FLAG_IS_FEMALE      84 /* is not female nor male, it is a neuter */
 #define FLAG_APPLIED        85 /* Object is ready for use by living */
@@ -780,13 +786,12 @@ error - Your ANSI C compiler should be defining __STDC__;
                                          * a known trap inside. This info so useful for client
                                          * below and inventory look.
                                          */
-
-#define FLAG_VUL_ELEMENTAL      104 /* Thats the item damage flags. Every flag determinate */
-#define FLAG_PROOF_ELEMENTAL    105 /* that a worn or wielded item can be damaged from this */
-#define FLAG_VUL_MAGIC          106 /* effect. If the effect for a item is set, then he can */
-#define FLAG_PROOF_MAGIC        107 /* be "proofed" against it. It the proof flag is set, the */
-#define FLAG_VUL_PHYSICAL       108 /* item don't get damage from this effect anymore */
-#define FLAG_PROOF_PHYSICAL     109
+#define FLAG_PROOF_PHYSICAL     104
+#define FLAG_PROOF_ELEMENTAL    105 
+#define FLAG_PROOF_MAGICAL      106 
+#define FLAG_PROOF_SPHERICAL    107 
+/* flag 108 is free */
+/* flag 109 is free */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */
 #define FLAG_USE_FIX_POS        111 /* when putting a object on map - do it exactly on position */
 
@@ -839,7 +844,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
-/* FREE flag: 48, 53, 54, 59, 55 */
+/* FREE flag: 59 */
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
 
 #define NUM_FLAGS       135 /* Should always be equal to the last defined flag */

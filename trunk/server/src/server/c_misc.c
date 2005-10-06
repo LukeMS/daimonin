@@ -521,6 +521,16 @@ int command_dumpallarchetypes(object *op, char *params)
     return 0;
 }
 
+
+int command_dm_dev(object *op, char *params)
+{
+    if (op->type == PLAYER && CONTR(op))
+    {
+        command_goto(op, "/dev/testmaps/testmap_main 2 2");
+    }
+    return 0;
+}
+
 /* NOTE: dm_stealth works also when a dm logs in WITHOUT dm set or
  * when the player leave dm mode!
  */
@@ -821,7 +831,7 @@ int command_resistances(object *op, char *params)
         if (i == ATNR_INTERNAL)
             continue;
 
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d", attacktype_desc[i], op->resist[i]);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%-20s %+5d", attack_name[i], op->resist[i]);
     }
     return 0;
 }

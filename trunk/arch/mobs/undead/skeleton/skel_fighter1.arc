@@ -33,7 +33,7 @@ maxhp 62
 ac 9
 wc 3
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 attack_slash 100
 speed -0.048

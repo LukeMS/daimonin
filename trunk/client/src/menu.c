@@ -355,17 +355,17 @@ void do_npcdialog_input(void)
         sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
-        gui_interface_npc->input_flag = FALSE;
+		gui_interface_npc->input_flag = FALSE;
     }
     /* if set, we got a finished input!*/
     if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
     {
         if (InputString[0])
         {
-            gui_interface_send_command(0,InputString);
+			gui_interface_send_command(0,InputString);
         }
         reset_keys();
-        gui_interface_npc->input_flag = FALSE;
+		gui_interface_npc->input_flag = FALSE;
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
     }
@@ -745,9 +745,9 @@ void show_menu(void)
     if (cpl.menustatus == MENU_KEYBIND)
         show_keybind();
     else if (cpl.menustatus == MENU_BOOK)
-        show_book(400-Bitmaps[BITMAP_JOURNAL]->bitmap->w/2,300-Bitmaps[BITMAP_JOURNAL]->bitmap->h/2);
+		show_book(400-Bitmaps[BITMAP_JOURNAL]->bitmap->w/2,300-Bitmaps[BITMAP_JOURNAL]->bitmap->h/2);
     else if (cpl.menustatus == MENU_NPC)
-        show_interface_npc(esc_menu_index);
+		show_interface_npc(esc_menu_index);
     else if (cpl.menustatus == MENU_STATUS)
         show_status();
     else if (cpl.menustatus == MENU_SPELL)
@@ -1109,7 +1109,7 @@ int read_anim_tmp(void)
 void read_anims(void)
 {
     FILE       *stream;
-    unsigned char *temp_buf;
+    char       *temp_buf;
     struct stat statbuf;
     int         i;
 
@@ -1178,11 +1178,10 @@ static void load_bmaps_p0(void)
 void read_bmaps_p0(void)
 {
     FILE   *fbmap, *fpic;
-    unsigned char *temp_buf;
-    char *cp;
+    char   *temp_buf, *cp;
     int     bufsize, len, num, pos;
     unsigned int crc;
-    char   buf[HUGE_BUF], line_buf[256];
+    char        buf[HUGE_BUF];
     struct stat bmap_stat, pic_stat;
 
     if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
@@ -1263,8 +1262,8 @@ void read_bmaps_p0(void)
         crc = crc32(1L, temp_buf, len);
 
         /* now we got all we needed! */
-        sprintf(line_buf, "%d %d %x %s", num, pos, crc, buf);
-        fputs(line_buf, fbmap);
+        sprintf(temp_buf, "%d %d %x %s", num, pos, crc, buf);
+        fputs(temp_buf, fbmap);
         /*      LOG(LOG_DEBUG,"FOUND: %s", temp_buf);       */
     }
 
@@ -1324,7 +1323,7 @@ int read_bmap_tmp(void)
     FILE       *stream, *fbmap0;
     char        buf[HUGE_BUF], name[HUGE_BUF];
     struct stat stat_bmap, stat_tmp, stat_bp0;
-    unsigned int len;
+    int         len;
     unsigned int crc;
     _bmaptype  *at;
 
@@ -1405,8 +1404,8 @@ int read_bmap_tmp(void)
 
 void read_bmaps(void)
 {
-    FILE          *stream;
-    unsigned char *temp_buf;
+    FILE       *stream;
+    char       *temp_buf;
     struct stat statbuf;
     int         i;
 
@@ -1641,7 +1640,7 @@ void load_settings(void)
 void read_settings(void)
 {
     FILE       *stream;
-    unsigned char *temp_buf;
+    char       *temp_buf;
     struct stat statbuf;
     int         i;
 
@@ -1671,7 +1670,7 @@ void read_spells(void)
     char        type, nchar, *tmp, *tmp2;
     struct stat statbuf;
     FILE       *stream;
-    unsigned char *temp_buf;
+    char       *temp_buf;
     char        spath[255],line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
 
     for (i = 0; i < SPELL_LIST_MAX; i++)
@@ -1715,34 +1714,34 @@ void read_spells(void)
             if (fgets(line, 255, stream) == NULL)
                 break;
             sscanf(line, "%c %c %s %s", &type, &nchar, spath, icon);
-            /*LOG(-1,"STRING:(%s) >%s< >%s<\n",line,  spath, icon);*/
-            if(isdigit(spath[0]))
-            {
-                panel = atoi(spath)-1;
-                if(panel >=SPELL_LIST_MAX)
-                {
-                    LOG(LOG_DEBUG,"BUG: spell path out of range (%d) for line %s\n", panel, line);
-                    panel = 0;
-                }
-            }
-            else
-            {
-                int a;
+			/*LOG(-1,"STRING:(%s) >%s< >%s<\n",line,  spath, icon);*/
+			if(isdigit(spath[0]))
+			{
+				panel = atoi(spath)-1;
+				if(panel >=SPELL_LIST_MAX)
+				{
+					LOG(LOG_DEBUG,"BUG: spell path out of range (%d) for line %s\n", panel, line);
+					panel = 0;
+				}
+			}
+			else
+			{
+				int a;
 
-                panel = -1;
-                for(a=0;a<SPELL_LIST_MAX;a++)
-                {
-                    if(!strcmp(spell_tab[a], spath))
-                    {
-                        panel = a;
-                    }
-                }
-                if(panel == -1)
-                {
-                    LOG(LOG_DEBUG,"BUG: spell path out of range/wrong name (%s) for line %s\n", spath, line);
-                    panel = 0;
-                }
-            }
+				panel = -1;
+				for(a=0;a<SPELL_LIST_MAX;a++)
+				{
+					if(!strcmp(spell_tab[a], spath))
+					{
+						panel = a;
+					}
+				}
+				if(panel == -1)
+				{
+					LOG(LOG_DEBUG,"BUG: spell path out of range/wrong name (%s) for line %s\n", spath, line);
+					panel = 0;
+				}
+			}
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
@@ -1792,7 +1791,7 @@ void read_spells(void)
 void read_skills(void)
 {
     int         i, ii, panel;
-    unsigned char *temp_buf;
+    char       *temp_buf;
     char        nchar, *tmp, *tmp2;
     struct stat statbuf;
     FILE       *stream;
@@ -2082,7 +2081,7 @@ void load_quickslots_entrys()
 
     if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb")))
         return;
-    fread(&header, sizeof(header), 1, stream);
+    fread(&header, sizeof(long), 1, stream);
     if (header != QUICKSLOT_FILE_HEADER)
     {
         fclose(stream);
@@ -2182,7 +2181,7 @@ void save_quickslots_entrys()
             return;
     }
     header = QUICKSLOT_FILE_HEADER;
-    fwrite(&header, sizeof(header), 1, stream);
+    fwrite(&header, sizeof(long), 1, stream);
     for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
     {
         w += sizeof(Boolean);
@@ -2346,9 +2345,9 @@ void show_target(int x, int y)
 
 void reset_menu_status(void)
 {
-    if(cpl.menustatus != MENU_NO)
-    {
-        cpl.menustatus = MENU_NO;
-    }
+	if(cpl.menustatus != MENU_NO)
+	{
+		cpl.menustatus = MENU_NO;
+	}
 
 }

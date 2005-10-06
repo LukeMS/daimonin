@@ -25,12 +25,6 @@
 
 #include <global.h>
 
-static float    weapon_speed_table[19]  =
-{
-    20.0f, 18.0f, 10.0f, 8.0f, 5.5f, 4.25f, 3.50f, 3.05f, 2.70f, 2.35f, 2.15f, 1.95f, 1.80f, 1.60f, 1.52f, 1.44f, 1.32f,
-    1.25f, 1.20f
-};
-
 static char     numbers[21][20]         =
 {
     "no", "", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen",
@@ -81,10 +75,10 @@ char * describe_resistance(object *op, int newline)
             {
                 if (!flag)
                     strcat(buf, ", ");
-                sprintf(buf1, "%s %+d%%", resist_plus[tmpvar], op->resist[tmpvar]);
+                sprintf(buf1, "%s %+d%%", attack_name[tmpvar], op->resist[tmpvar]);
             }
             else
-                sprintf(buf1, "%s %d%%\n", resist_plus[tmpvar], op->resist[tmpvar]);
+                sprintf(buf1, "%s %d%%\n", attack_name[tmpvar], op->resist[tmpvar]);
             flag = 0;
             strcat(buf, buf1);
         }
@@ -121,10 +115,10 @@ char * describe_attack(object *op, int newline)
             {
                 if (!flag)
                     strcat(buf, ", ");
-                sprintf(buf1, "%s %+d%%", attacktype_desc[tmpvar], op->attack[tmpvar]);
+                sprintf(buf1, "%s %+d%%", attack_name[tmpvar], op->attack[tmpvar]);
             }
             else
-                sprintf(buf1, "%s %+d%%\n", attacktype_desc[tmpvar], op->attack[tmpvar]);
+                sprintf(buf1, "%s %+d%%\n", attack_name[tmpvar], op->attack[tmpvar]);
             flag = 0;
             strcat(buf, buf1);
         }
@@ -156,10 +150,10 @@ char * describe_protections(object *op, int newline)
             {
                 if (!flag)
                     strcat(buf, ", ");
-                sprintf(buf1, "%s %+d%%", protection_name[tmpvar], op->protection[tmpvar]);
+                sprintf(buf1, "%s %+d%%", attack_name[tmpvar], op->protection[tmpvar]);
             }
             else
-                sprintf(buf1, "%s %d%%\n", protection_name[tmpvar], op->protection[tmpvar]);
+                sprintf(buf1, "%s %d%%\n", attack_name[tmpvar], op->protection[tmpvar]);
             flag = 0;
 
             strcat(buf, buf1);
@@ -971,15 +965,7 @@ char * describe_item(object *op)
 
                   if (op->type == WEAPON)
                   {
-                      /* this is ugly to calculate because its a curve which increase heavily
-                                     * with lower weapon_speed... so, we use a table
-                                     */
-                      int   ws_temp = (int) (op->weapon_speed / 0.0025f);
-                      if (ws_temp < 0)
-                          ws_temp = 0;
-                      else if (ws_temp > 18)
-                          ws_temp = 18;
-                      sprintf(buf, "(%3.2f sec)", weapon_speed_table[ws_temp]);
+                      sprintf(buf, "(%1.2f sec)", op->weapon_speed);
                       strcat(retbuf, buf);
 
                       if (op->level > 0)
@@ -1000,7 +986,7 @@ char * describe_item(object *op)
                   strcat(retbuf, buf);
                   if (op->type == FLESH && op->last_eat > 0 && atnr_is_dragon_enabled(op->last_eat))
                   {
-                      sprintf(buf, "(%s metabolism)", change_resist_msg[op->last_eat]);
+                      sprintf(buf, "(%s metabolism)", attack_name[op->last_eat]);
                       strcat(retbuf, buf);
                   }
                   if (!QUERY_FLAG(op, FLAG_CURSED))

@@ -2,7 +2,7 @@ Object club_giant
 layer 3
 name giant club
 face club_giant.101
-weapon_speed 0.0175
+weapon_speed 4.25
 attack_impact 100
 dam 60
 item_level 10

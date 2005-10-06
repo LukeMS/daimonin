@@ -2,7 +2,7 @@ Object pallasch
 name pallasch
 layer 3
 face pallasch.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4

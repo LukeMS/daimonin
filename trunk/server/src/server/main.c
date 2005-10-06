@@ -660,7 +660,7 @@ void enter_exit(object *op, object *exit_ob)
                                 * random maps use this or not.
                                 */
                     if (exit_ob->stats.dam && op->type == PLAYER)
-                        hit_player(op, exit_ob->stats.dam, exit_ob, exit_ob->attacktype);
+                        hit_player(op, exit_ob->stats.dam, exit_ob);
                     return;
                 }
             }
@@ -717,7 +717,7 @@ void enter_exit(object *op, object *exit_ob)
         }
         /* For exits that cause damages (like pits) */
         if (exit_ob->stats.dam && op->type == PLAYER)
-            hit_player(op, exit_ob->stats.dam, exit_ob, exit_ob->attacktype);
+            hit_player(op, exit_ob->stats.dam, exit_ob);
     } /* exit_ob */
     else if (op->type == PLAYER) /* thats only for players */
     {
@@ -803,49 +803,6 @@ void process_players1(mapstruct *map)
         if (handle_newcs_player(pl) == -1) /* -1: player is invalid now */
             continue;
 
-        pl->ob->weapon_speed_left -= pl->ob->weapon_speed_add;
-        /* now use the new target system to hit our target... Don't hit non
-             * friendly objects, ourself or when we are not in combat mode.
-             */
-        if (pl->target_object
-         && pl->combat_mode
-         && OBJECT_ACTIVE(pl->target_object)
-         && pl->target_object_count
-         != pl->ob->count
-         && !QUERY_FLAG(pl->target_object,
-                        FLAG_FRIENDLY))
-        {
-            if (pl->ob->weapon_speed_left <= 0)
-            {
-                /* now we force target as enemy */
-                pl->ob->enemy = pl->target_object;
-                pl->ob->enemy_count = pl->target_object_count;
-
-                /* quick check our target is still valid: count ok? (freed...), not
-                         * removed, not a bet or object we self own (TODO: group pets!)
-                         * Note: i don't do a invisible check here... this will happen one
-                         * at end of this round... so, we have a "object turn invisible and
-                         * we do a last hit here"
-                         */
-                if (!OBJECT_VALID(pl->ob->enemy, pl->ob->enemy_count) || pl->ob->enemy->owner == pl->ob)
-                    pl->ob->enemy = NULL;
-                else if (is_melee_range(pl->ob, pl->ob->enemy))
-                {
-                    /* tell our enemy we swing at him now */
-                    register_npc_known_obj(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK);
-                    pl->praying = 0;
-                    skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
-                    /* we want only *one* swing - not several swings per tick */
-                    pl->ob->weapon_speed_left += FABS((int) pl->ob->weapon_speed_left) + 1;
-                }
-            }
-        }
-        else
-        {
-            if (pl->ob->weapon_speed_left <= 0)
-                pl->ob->weapon_speed_left = 0;
-        }
-
         do_some_living(pl->ob);
 
 #ifdef AUTOSAVE
@@ -883,18 +840,54 @@ void process_players2(mapstruct *map)
         /* look our target is still valid - if not, update client
              * we handle op->enemy for the player here too!
              */
-        if (pl->ob->map
+        if (pl->ob->map 
          && (!pl->target_object
           || (pl->target_object != pl->ob && pl->target_object_count != pl->target_object->count)
-          || QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT)
+          || !OBJECT_ACTIVE(pl->target_object)
+          || QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT) || pl->target_object->level != pl->target_level
           || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
             send_target_command(pl);
+
+        /* now use the new target system to hit our target... Don't hit non
+        * friendly objects, ourself or when we are not in combat mode.
+        */
+        if (pl->ob->weapon_speed_left <= 0 
+            && pl->ob->map
+            && pl->target_object
+            && pl->combat_mode
+            /*
+            && OBJECT_ACTIVE(pl->target_object)
+            && pl->target_object_count != pl->ob->count
+            */
+            && !QUERY_FLAG(pl->target_object, FLAG_FRIENDLY))
+        {
+                /* now we force target as enemy */
+                pl->ob->enemy = pl->target_object;
+                pl->ob->enemy_count = pl->target_object_count;
+
+                /* quick check our target is still valid: count ok? (freed...), not
+                * removed, not a bet or object we self own (TODO: group pets!)
+                * Note: i don't do a invisible check here... this will happen one
+                * at end of this round... so, we have a "object turn invisible and
+                * we do a last hit here"
+                */
+                if (!OBJECT_VALID(pl->ob->enemy, pl->ob->enemy_count) || pl->ob->enemy->owner == pl->ob)
+                    pl->ob->enemy = NULL;
+                else if (is_melee_range(pl->ob, pl->ob->enemy))
+                {
+                    /* tell our enemy we swing at him now */
+                    register_npc_known_obj(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK);
+                    pl->praying = 0;
+                    skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
+                    pl->ob->weapon_speed_left += FABS(pl->ob->weapon_speed);
+                }
+        }
 
         if (pl->ob->speed_left > pl->ob->speed)
             pl->ob->speed_left = pl->ob->speed;
     }
 }
-
+#define WEAPON_SWING_TIME (0.125f)
 static void process_map_events(mapstruct *map)
 {
     object *op, *first_obj;
@@ -971,15 +964,14 @@ static void process_map_events(mapstruct *map)
             activelist_insert(op);
         }
 
-        /* as we can see here, the swing speed not effected by
-         * object speed BUT the swing hit itself!
-         * This will invoke a kind of delay of the ready swing
-         * until the monster can move again. Note, that a higher
-         * move speed as swing speed will not invoke a faster swing
-         * speed!
-         */
-        if (op->weapon_speed_left > 0) /* as long we are >0, we are not ready to swing */
-            op->weapon_speed_left -= op->weapon_speed_add;
+        /* only players and monsters should have weapon_speed set and be active */
+        if (op->weapon_speed)
+        {
+            if (op->weapon_speed_left > 0)
+                op->weapon_speed_left -= WEAPON_SWING_TIME;
+
+            /* PLAYER swings - monster swing will be done implicit in process_object() */
+        }
 
         if (op->speed_left > 0)
         {
@@ -988,6 +980,16 @@ static void process_map_events(mapstruct *map)
             if (was_destroyed(op, tag))
                 continue;
         }
+        else
+        {
+            if (op->weapon_speed_left <= 0)
+            {
+                if (QUERY_FLAG(op, FLAG_MONSTER))
+                    move_monster(op, FALSE); /* false = only weapon action */
+            }
+        }
+
+
 
         /* Eneq(@csd.uu.se): Handle archetype-field anim_speed differently when
            it comes to the animation. If we have a value on this we don't animate it

@@ -428,7 +428,7 @@ inline int ai_obj_can_move(object *obj)
 
 
 /* Move-monster returns 1 if the object has been freed, otherwise 0.  */
-int move_monster(object *op)
+int move_monster(object *op, int mode)
 {
     move_response           response;
     int                     dir, tmp_dir;
@@ -442,10 +442,16 @@ int move_monster(object *op)
         return 0;
     }
 
+    if(QUERY_FLAG(op,FLAG_PARALYZED))
+        return 0;
+
+    /* we only have a valid weapon swing - no move */
+    if(mode == FALSE)
+        goto jump_move_monster_action;
+
     /*
      * First, some general monster-management
      */
-    
     tmp_dir = op->anim_enemy_dir;
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
     op->anim_moving_dir = -1;     /* the same for movement */
@@ -492,7 +498,7 @@ int move_monster(object *op)
 
     /* Only do movement if we are actually on a map
      * (jumping out from a container should be an action) */
-    if(op->map && op->env == NULL)
+    if(op->map && op->env == NULL && !QUERY_FLAG(op,FLAG_ROOTED))
     {
         /*
          * Normal-priority movement behaviours. The first to return
@@ -544,6 +550,7 @@ int move_monster(object *op)
      *       execution (which done on the highest-prioritized action after all decisions are finished)
      * TODO: in original rules DEX has influence over whether to try any of these or not
      */
+    jump_move_monster_action:
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_ACTIONS];
          behaviour != NULL;
          behaviour = behaviour->next)

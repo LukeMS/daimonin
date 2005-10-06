@@ -33,7 +33,7 @@ maxhp 74
 ac 10
 wc 6
 dam 64
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 resist_acid 25
 speed -0.054

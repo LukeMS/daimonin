@@ -33,7 +33,7 @@
 /* in future, we need a different system - with up to 2 open
  * interfaces... menus like keybind & stuff should be a layer above that. MT-2005
  */
-#define MENU_NPC     0x80
+#define MENU_NPC	 0x80
 #define MENU_BOOK    0x100
 #define MENU_QUEST   0x200
 
@@ -128,7 +128,7 @@ extern int      init_media_tag(char *tag);
 extern void     blt_inventory_face_from_tag(int tag, int x, int y);
 extern int      blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void     do_keybind_input(void);
-extern void        do_npcdialog_input(void);
+extern void		do_npcdialog_input(void);
 
 extern int      read_anim_tmp(void);
 extern int      read_bmap_tmp(void);

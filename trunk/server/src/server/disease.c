@@ -433,7 +433,6 @@ int do_symptoms(object *disease)
         new_symptom->stats.exp = 0;
         new_symptom->stats.hp = disease->stats.hp;
         FREE_AND_COPY_HASH(new_symptom->msg, disease->msg);
-        new_symptom->attacktype = disease->attacktype;
         new_symptom->other_arch = disease->other_arch;
 
         set_owner(new_symptom, disease->owner);
@@ -471,7 +470,6 @@ int do_symptoms(object *disease)
         symptom->stats.exp = 0;
         symptom->stats.hp = (int) (scale * disease->stats.hp);
         FREE_AND_COPY_HASH(symptom->msg, disease->msg);
-        symptom->attacktype = disease->attacktype;
         symptom->other_arch = disease->other_arch;
     }
     SET_FLAG(symptom, FLAG_APPLIED);
@@ -521,11 +519,10 @@ int move_symptom(object *symptom)
         return 0;
     }
     if (symptom->stats.dam > 0)
-        hit_player(victim, symptom->stats.dam, symptom, symptom->attacktype);
+        hit_player(victim, symptom->stats.dam, symptom);
     else
-        hit_player(victim,
-                   (int) MAX((float) 1, (float) - victim->stats.maxhp * (float) symptom->stats.dam / (float) 100.0),
-                   symptom, symptom->attacktype);
+        hit_player(victim, (int) MAX((float) 1, 
+                    (float) - victim->stats.maxhp * (float) symptom->stats.dam / (float) 100.0), symptom);
     if (symptom->stats.maxsp > 0)
         sp_reduce = symptom->stats.maxsp;
     else
@@ -559,9 +556,7 @@ int move_symptom(object *symptom)
 }
 
 
-/*  possibly infect due to direct physical contact
-  i.e., AT_PHYSICAL-- called from "hit_player_attacktype" */
-
+/*  possibly infect due to direct physical contact */
 int check_physically_infect(object *victim, object *hitter)
 {
     object *walk;

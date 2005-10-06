@@ -422,8 +422,9 @@
   <attribute arch="attack_paralyze" editor="paralyze (effect)" length="15" type="int">
     Paralyze is a effect attack (no damage). A paralyzed target can't move or attack.
   </attribute>
-  <attribute arch="attack_root" editor="root (effect)" length="15" type="int">
-    Root is a effect attack (no damage). A rooted target can't move but still attack.
+  <attribute arch="attack_snare" editor="snare (effect)" length="15" type="int">
+    Snare is a effect attack (no damage). A snared target moves slower but still attacks
+    normal. A total snared object is called rooted.
   </attribute>
 </section>
 <section name="resistance">
@@ -527,8 +528,9 @@
   <attribute arch="resist_paralyze" editor="paralyze (effect)" length="15" type="int">
     Paralyze is a effect attack (no damage). A paralyzed target can't move or attack.
   </attribute>
-  <attribute arch="resist_root" editor="root (effect)" length="15" type="int">
-    Root is a effect attack (no damage). A rooted target can't move but still attack.
+  <attribute arch="resist_snare" editor="snare (effect)" length="15" type="int">
+    Snare is a effect attack (no damage). A snared target moves slower but still attacks
+    normal. A total snared object is called rooted.
   </attribute>
 </section>
 <section name="protection">
@@ -760,25 +762,21 @@
     Lower quality than 100% means effects like protection/damage etc.
     are reduced.
   </attribute>
-  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+  <attribute arch="proof_phy" editor="condition proof: physical" type="bool">
     Physical attacks is able to reduce the quality of the item and
     eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
-    Elemental attacks (fire, cold, elec, poison and acid!) are able
-    to reduce the quality of the item and eventually destroy it.
+  <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
+    Elemental attacks are able to reduce the conditon of the item 
+    and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
-    All forms of magical attacks are able to reduce the quality
+  <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
+    All forms of magical attacks are able to reduce the condition
     of the item and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
-    All forms of spherical attacks are able to reduce the quality
+  <attribute arch="proof_sph" editor="condition proof: spherical" type="bool">
+    All forms of spherical attacks are able to reduce the condition
     of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_indestructible" editor="indestructible" type="bool">
-    This item can't be damaged in any way (this includes special magic
-    and also attacks.
   </attribute>
 </section>
 
@@ -836,25 +834,21 @@
     Lower quality than 100% means effects like protection/damage etc.
     are reduced.
   </attribute>
-  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+  <attribute arch="proof_phy" editor="condition proof: physical" type="bool">
     Physical attacks is able to reduce the quality of the item and
     eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
-    Elemental attacks (fire, cold, elec, poison and acid!) are able
-    to reduce the quality of the item and eventually destroy it.
+  <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
+    Elemental attacks are able to reduce the conditon of the item 
+    and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
-    All forms of magical attacks are able to reduce the quality
+  <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
+    All forms of magical attacks are able to reduce the condition
     of the item and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
-    All forms of spherical attacks are able to reduce the quality
+  <attribute arch="proof_sph" editor="condition proof: spherical" type="bool">
+    All forms of spherical attacks are able to reduce the condition
     of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_indestructible" editor="indestructible" type="bool">
-    This item can't be damaged in any way (this includes special magic
-    and also attacks.
   </attribute>
 </section>
 
@@ -957,9 +951,6 @@
   </attribute>
   <attribute arch="is_magical" editor="is magical" type="bool">
     This flag specifies wether the ability &lt;is magical&gt; in nature.
-    If enabled, all spells produced by this ability will have magic
-    attacktype added to the usual attacktypes.
-
     This should always be set for spell-like abilities. "Natural"
     abilities like a dragon's firebreath are an exception.
     Note that non-magical abilities are more dangerous because
@@ -1369,25 +1360,21 @@
     Lower quality than 100% means effects like protection/damage etc.
     are reduced.
   </attribute>
-  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+  <attribute arch="proof_phy" editor="condition proof: physical" type="bool">
     Physical attacks is able to reduce the quality of the item and
     eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
-    Elemental attacks (fire, cold, elec, poison and acid!) are able
-    to reduce the quality of the item and eventually destroy it.
+  <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
+    Elemental attacks are able to reduce the conditon of the item 
+    and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
-    All forms of magical attacks are able to reduce the quality
+  <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
+    All forms of magical attacks are able to reduce the condition
     of the item and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
-    All forms of spherical attacks are able to reduce the quality
+  <attribute arch="proof_sph" editor="condition proof: spherical" type="bool">
+    All forms of spherical attacks are able to reduce the condition
     of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_indestructible" editor="indestructible" type="bool">
-    This item can't be damaged in any way (this includes special magic
-    and also attacks.
   </attribute>
 </section>
 
@@ -1737,25 +1724,21 @@
     Lower quality than 100% means effects like protection/damage etc.
     are reduced.
   </attribute>
-  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+  <attribute arch="proof_phy" editor="condition proof: physical" type="bool">
     Physical attacks is able to reduce the quality of the item and
     eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
-    Elemental attacks (fire, cold, elec, poison and acid!) are able
-    to reduce the quality of the item and eventually destroy it.
+  <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
+    Elemental attacks are able to reduce the conditon of the item 
+    and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
-    All forms of magical attacks are able to reduce the quality
+  <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
+    All forms of magical attacks are able to reduce the condition
     of the item and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
-    All forms of spherical attacks are able to reduce the quality
+  <attribute arch="proof_sph" editor="condition proof: spherical" type="bool">
+    All forms of spherical attacks are able to reduce the condition
     of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_indestructible" editor="indestructible" type="bool">
-    This item can't be damaged in any way (this includes special magic
-    and also attacks.
   </attribute>
 </section>
 </type>
@@ -3413,6 +3396,10 @@
     Note that the monster's level further improves weapon class:
     "real weapon class" = &lt;weapon class&gt; - &lt;level&gt;
   </attribute>
+  <attribute arch="weapon_speed" editor="weapon speed" type="float">
+    The weapon speed determines how often a swing, means an attack,
+    is performed during a certain period of time. The lower the faster.
+  </attribute>
   <attribute arch="hp" editor="health points" type="int">
     The &lt;health points&gt; of a monster define how long it takes to
     kill it. With every successful hit from an opponent, health points
@@ -3821,6 +3808,10 @@
     Note that the monster's level further improves weapon class:
     "real weapon class" = &lt;weapon class&gt; - &lt;level&gt;
   </attribute>
+  <attribute arch="weapon_speed" editor="weapon speed" type="float">
+    The weapon speed determines how often a swing, means an attack,
+    is performed during a certain period of time. The lower the faster.
+  </attribute>
   <attribute arch="hp" editor="health points" type="int">
     The &lt;health points&gt; of a monster define how long it takes to
     kill it. With every successful hit from an opponent, health points
@@ -4102,12 +4093,6 @@
     while movers only do living creatures (depending on how it
     is set: monsters and players). ]]>
   </use>
-  <attribute arch="attacktype" editor="TODO - DON'T USE" type="bool">
-    If forced movement is enabled, the mover "freezes" anyone it
-    moves (so they are forced to move along a chain).
-    For players there is no way to escape this forced movement,
-    except being pushed by a second player.
-  </attribute>
   <attribute arch="maxsp" editor="freeze duration" type="int">
     The player will be "frozen" for that many moves.
     If &lt;freeze duration&gt; is zero, with &lt;forced movement&gt;
@@ -4638,25 +4623,21 @@
     Lower quality than 100% means effects like protection/damage etc.
     are reduced.
   </attribute>
-  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+  <attribute arch="proof_phy" editor="condition proof: physical" type="bool">
     Physical attacks is able to reduce the quality of the item and
     eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
-    Elemental attacks (fire, cold, elec, poison and acid!) are able
-    to reduce the quality of the item and eventually destroy it.
+  <attribute arch="proof_ele" editor="condition proof: elemental" type="bool">
+    Elemental attacks are able to reduce the conditon of the item 
+    and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_magic" editor="susceptible to magic" type="bool">
-    All forms of magical attacks are able to reduce the quality
+  <attribute arch="proof_mag" editor="condition proof: magical" type="bool">
+    All forms of magical attacks are able to reduce the condition
     of the item and eventually destroy it.
   </attribute>
-  <attribute arch="is_vul_sphere" editor="susceptible to sphere" type="bool">
-    All forms of spherical attacks are able to reduce the quality
+  <attribute arch="proof_sph" editor="condition proof: spherical" type="bool">
+    All forms of spherical attacks are able to reduce the condition
     of the item and eventually destroy it.
-  </attribute>
-  <attribute arch="is_indestructible" editor="indestructible" type="bool">
-    This item can't be damaged in any way (this includes special magic
-    and also attacks.
   </attribute>
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
@@ -5594,9 +5575,7 @@
   </attribute>
   <attribute arch="weapon_speed" editor="weapon speed" type="float">
     The weapon speed determines how often the wielder can swing the weapon
-    during a certain period of time. The lower the faster, &lt;weapon speed&gt; 1
-    is best (that is lightning- fast). A typical average value is 8.
-    Speed and damage should be kept in reasonable relation.
+    during a certain period of time. The lower the faster.
   </attribute>
   <attribute arch="wc" editor="weapon class" type="int">
     The weapon class value adds to the overall weapon class of the wielder's

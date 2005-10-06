@@ -1,6 +1,6 @@
 Object skill_karate
 name karate
-weapon_speed 0.02
+weapon_speed 3.0
 attack_impact 100
 face skill.101
 dam 3

@@ -1259,6 +1259,9 @@
 					RelativePath="..\..\..\src\common\map.c">
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\material.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\mempool.c">
 				</File>
 				<File

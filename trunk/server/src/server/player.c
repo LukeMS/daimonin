@@ -195,6 +195,7 @@ static player * get_player(player *p)
     p->shoottype = range_none;
     p->listening = 9;
     p->last_weapon_sp = -1;
+    p->last_speed = 0;
     p->update_los = 1;
 
     /* the default skill groups for non guild players */
@@ -1310,11 +1311,11 @@ void fire(object *op, int dir)
 
 int move_player(object *op, int dir)
 {
-    /*    int face = dir ? (dir - 1) / 2 : -1; */
 
     CONTR(op)->praying = 0;
 
-    if (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
+    if (op->map == NULL || op->map->in_memory != MAP_IN_MEMORY ||
+        QUERY_FLAG(op,FLAG_PARALYZED) || QUERY_FLAG(op,FLAG_ROOTED))
         return 0;
 
     if (dir)
@@ -1416,10 +1417,8 @@ int handle_newcs_player(player *pl)
         return -1;
 
     /* player is fine, check for speed */
-    if (op->speed_left < 0.0f)
+    if (op->speed_left < 0.0f || QUERY_FLAG(op,FLAG_PARALYZED) ||QUERY_FLAG(op,FLAG_ROOTED) )
         return 0;
-
-    CLEAR_FLAG(op, FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
 
     /* this movement action will dramatically change in the future.
      * basically we will go for a "steps per ticks"
@@ -1796,7 +1795,7 @@ void kill_player(object *op)
         else if (op->level > 3)
         {
             /* deplete a stat */
-            archetype  *deparch = find_archetype("depletion");
+            archetype  *deparch = find_archetype("deathsick");
             object     *dep;
 
             i = RANDOM() % 7;
@@ -2417,14 +2416,16 @@ void dragon_ability_gain(object *who, int atnr, int level)
             /* adding new attacktypes to the clawing skill */
             tmp = who->chosen_skill; /* clawing skill object */
 
-            if (tmp->type == SKILL && tmp->name == shstr.clawing && !(tmp->attacktype & item->attacktype))
+            if (tmp->type == SKILL && tmp->name == shstr.clawing /*&& !(tmp->attacktype & item->attacktype)*/)
             {
                 /* always add physical if there's none */
+                /*
                 if (tmp->attacktype == 0)
                     tmp->attacktype = AT_PHYSICAL;
+                */
 
                 /* we add the new attacktype to the clawing ability */
-                tmp->attacktype += item->attacktype;
+                /* tmp->attacktype += item->attacktype; */
 
                 if (item->msg != NULL)
                     new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, item->msg);
@@ -2538,7 +2539,7 @@ static object * find_arrow_ext(object *op, const char *type, int tag)
  */
 int atnr_is_dragon_enabled(int attacknr)
 {
-    if (attacknr == ATNR_MAGIC
+    if (attacknr == ATNR_FORCE
      || attacknr == ATNR_FIRE
      || attacknr == ATNR_ELECTRICITY
      || attacknr == ATNR_COLD

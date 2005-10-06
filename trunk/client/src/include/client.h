@@ -136,20 +136,21 @@ typedef enum rangetype
 
 typedef struct Stat_struct
 {
-    sint8   Str, Dex, Con, Wis, Cha, Int, Pow;
-    sint8   wc, ac;     /* Weapon Class and Armour Class */
-    sint8   level;
-    sint16  hp;         /* Hit Points. */
-    sint16  maxhp;
-    sint16  sp;         /* Spell points.  Used to cast spells. */
-    sint16  maxsp;      /* Max spell points. */
-    sint16  grace;      /* Spell points.  Used to cast spells. */
-    sint16  maxgrace;       /* Max spell points. */
-    sint32  exp;            /* Experience.  Killers gain 1/10. */
-    sint16  food;       /* How much food in stomach.  0 = starved. */
-    sint16  dam;            /* How much damage this object does when hitting */
-    sint32  speed;      /* Gets converted to a float for display*/
-    int     weapon_sp;      /* Gets converted to a float for display */
+    int   Str, Dex, Con, Wis, Cha, Int, Pow;
+    int   wc, ac;     /* Weapon Class and Armour Class */
+    int   level;
+    int  hp;         /* Hit Points. */
+    int  maxhp;
+    int  sp;         /* Spell points.  Used to cast spells. */
+    int  maxsp;      /* Max spell points. */
+    int  grace;      /* Spell points.  Used to cast spells. */
+    int  maxgrace;       /* Max spell points. */
+    int  exp_level;
+    int  exp;            /* Experience */
+    int  food;       /* How much food in stomach.  0 = starved. */
+    int  dam;            /* How much damage this object does when hitting */
+    int  speed;      /* Gets converted to a float for display*/
+    float     weapon_sp;      /* Gets converted to a float for display */
     uint16  flags;      /* contains fire on/run on flags */
     sint16  protection[20];     /* Resistant values */
     uint32  protection_change   : 1; /* Resistant value has changed */

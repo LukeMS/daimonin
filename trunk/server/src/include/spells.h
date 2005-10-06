@@ -24,7 +24,6 @@
 */
 
 extern int  turn_bonus[]; /* chance array for stat values */
-extern int  fear_bonus[];
 extern int  cleric_chance[];
 
 #define SPELL_USE_INTERN 0x00 /* special spells - don't list them as avaible spell */
@@ -128,6 +127,10 @@ enum spellnrs
     SP_GOLEM,
     SP_REMOVE_DEPLETION,
     SP_PROBE,
+    SP_REMOVE_DEATHSICK,
+
+    NROFREALSPELLS, /* LAST ENTRY */
+
     /* ALL DOWN HERE ARE ARTIFACTS FROM CROSSFIRE */
     SP_S_FIREBALL,
     SP_M_FIREBALL,

@@ -9,7 +9,7 @@ is_neutral 1
 identified 1
 direction 4
 terrain_flag 1
-weapon_speed 0.0125
+weapon_speed 3.5
 speed 0.95
 face human_f.isw.111
 anim

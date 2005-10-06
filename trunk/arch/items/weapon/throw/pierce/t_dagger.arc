@@ -3,7 +3,7 @@ name throwing dagger
 race rock
 layer 3
 face t_dagger.101
-weapon_speed 0.027
+weapon_speed 2.5
 attack_pierce 100
 dam 30
 last_grace 11

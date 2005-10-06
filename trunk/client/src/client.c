@@ -114,7 +114,7 @@ struct CmdMapping   commands[]  =
     { "book", BookCmd },
 
     /* unused! */
-    { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory },
+    { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory }
 };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))

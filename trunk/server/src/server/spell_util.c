@@ -467,6 +467,9 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         case SP_REMOVE_DEPLETION:
           success = remove_depletion(op, target);
           break;
+        case SP_REMOVE_DEATHSICK:
+            success = remove_deathsick(op, target);
+            break;
 
         case SP_REMOVE_CURSE:
         case SP_REMOVE_DAMNATION:
@@ -621,9 +624,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             case SP_MAGIC_MAPPING:
               break;
             case SP_FEAR:
-              if(op->type==PLAYER)
-                bonus=fear_bonus[op->stats.Cha];
-              else
+              if(op->type!=PLAYER)
                 bonus=caster->head==NULL?caster->level/3+1:caster->head->level/3+1;
               success = cast_cone(op,caster,dir,duration+bonus,SP_FEAR,spellarch[type],!ability);
               break;
@@ -1051,7 +1052,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
  * function doing so.
  */
 
-static inline int ok_to_put_more(mapstruct *m, int x, int y, object *op, int immune_stop)
+static inline int ok_to_put_more(mapstruct *m, int x, int y, object *op)
 {
     object *tmp;
 
@@ -1172,7 +1173,7 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
         set_owner(tmp, op);
     tmp->level = casting_level(caster, type);
 
-    /* needed for AT_HOLYWORD,AT_GODPOWER stuff */
+   /*
     if (tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER)
     {
         if (!tailor_god_spell(tmp, op))
@@ -1182,7 +1183,9 @@ int fire_arch_from_position(object *op, object *caster, sint16 x, sint16 y, int 
     {
         if (magic)
             tmp->attacktype |= AT_MAGIC;
+        
     }
+*/
     if (QUERY_FLAG(tmp, FLAG_IS_TURNABLE))
         SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * dir);
 
@@ -1379,7 +1382,7 @@ void move_cone(object *op)
     /* lava saves it's life, but not yours  :) */
     if (QUERY_FLAG(op, FLAG_LIFESAVE))
     {
-        hit_map(op, 0, op->attacktype);
+        hit_map(op, 0);
         return;
     }
 
@@ -1395,12 +1398,14 @@ void move_cone(object *op)
      * food to 1, which will stop the cone from progressing.
      */
     tag = op->count;
-    op->stats.food |= hit_map(op, 0, op->attacktype);
+    op->stats.food |= hit_map(op, 0);
     /* Check to see if we should push anything.
      * Cones with AT_PHYSICAL push whatever is in them to some
      * degree.  */
+    /*
     if (op->attacktype & AT_PHYSICAL)
         check_cone_push(op);
+    */
     if (was_destroyed(op, tag))
         return;
 
@@ -1430,7 +1435,7 @@ void move_cone(object *op)
     {
         int x = op->x + freearr_x[absdir(op->stats.sp + i)], y = op->y + freearr_y[absdir(op->stats.sp + i)];
 
-        if (ok_to_put_more(op->map, x, y, op, op->attacktype))
+        if (ok_to_put_more(op->map, x, y, op))
         {
             object *tmp = arch_to_object(op->arch);
 
@@ -1453,7 +1458,6 @@ void move_cone(object *op)
             tmp->stats.sp = op->stats.sp,tmp->stats.hp = op->stats.hp + 1;
             tmp->stats.maxhp = op->stats.maxhp;
             tmp->stats.dam = op->stats.dam;
-            tmp->attacktype = op->attacktype;
             if (!insert_ob_in_map(tmp, op->map, op, 0))
                 return;
             if (tmp->other_arch)
@@ -1511,7 +1515,7 @@ void explosion(object *op)
             return;
         CLEAR_FLAG(op, FLAG_NO_APPLY);
     }
-    hit_map(op, 0, op->attacktype);
+    hit_map(op, 0);
     if (op->stats.hp > 2 && !op->weight_limit)
     {
         op->weight_limit = 1;
@@ -1522,7 +1526,7 @@ void explosion(object *op)
                 continue;
             if (blocks_view(op->map, dx, dy))
                 continue;
-            if (ok_to_put_more(op->map, dx, dy, op, op->attacktype))
+            if (ok_to_put_more(op->map, dx, dy, op))
             {
                 tmp = get_object();
                 copy_object(op, tmp); /* This is probably overkill on slow computers.. */
@@ -1629,7 +1633,7 @@ void move_bolt(object *op)
         destruct_ob(op);
         return;
     }
-    hit_map(op, 0, op->attacktype);
+    hit_map(op, 0);
     if (!op->weight_limit && --(op->stats.exp) > 0)
     {
         op->weight_limit = 1;
@@ -1854,7 +1858,7 @@ void move_missile(object *op)
     if (blocked(op, mt, new_x, new_y, op->terrain_flag))
     {
         tag_t   tag = op->count;
-        hit_map(op, op->direction, AT_MAGIC);
+        hit_map(op, op->direction);
         if (!was_destroyed(op, tag))
         {
             remove_ob(op);
@@ -1923,12 +1927,14 @@ void explode_object(object *op)
             return;
     }
 
+    /*
     if (op->attacktype)
     {
-        hit_map(op, 0, op->attacktype);
+        hit_map(op, 0);
         if (was_destroyed(op, op_tag))
             return;
     }
+    */
 
     /*  peterm:  hack added to make fireballs and other explosions level
      *  dependent:
@@ -1960,14 +1966,15 @@ void explode_object(object *op)
               tmp->y = op->y;
 
               /* needed for AT_HOLYWORD stuff -b.t. */
-              if (tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER)
+              /*
+              if (tmp->attacktype & AT_GODPOWER)
                   if (!tailor_god_spell(tmp, op))
                   {
                       remove_ob(op);
                       check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
                       return;
                   }
-
+               */
               /* Prevent recursion */
               CLEAR_FLAG(op, FLAG_WALK_ON);
               CLEAR_FLAG(op, FLAG_FLY_ON);
@@ -1982,7 +1989,7 @@ void explode_object(object *op)
               if (!type)
                   type = op->stats.sp;
               copy_owner(tmp, op);
-              cast_cone(op, op, 0, spells[type].bdur, type, op->other_arch, op->attacktype & AT_MAGIC);
+              cast_cone(op, op, 0, spells[type].bdur, type, op->other_arch, 0);
               break;
           }
     }
@@ -2068,7 +2075,7 @@ void check_fired_arch(object *op)
         */
 
         tmp_tag = tmp->count;
-        dam = hit_player(tmp, op->stats.dam, op, op->attacktype);
+        dam = hit_player(tmp, op->stats.dam, op);
 
         if (was_destroyed(op, op_tag) || !was_destroyed(tmp, tmp_tag) || (op->stats.dam -= dam) < 0)
         {
@@ -2417,7 +2424,7 @@ void move_ball_lightning(object *op)
 
         /* Hm, i not sure this is always correct, but we will see */
         /* perhaps we must add more checks to avoid bad hits on the map */
-        hit_map(op, j, op->attacktype);
+        hit_map(op, j);
 
         if (op->other_arch) /* insert the other arch */
         {
@@ -2789,12 +2796,13 @@ void fire_swarm(object *op, object *caster, int dir, archetype *swarm_type, int 
     set_owner(tmp, op);       /* needed so that if swarm elements kill, caster gets xp.*/
     tmp->level = casting_level(caster, spell_type);   /*needed later, to get level dep. right.*/
     tmp->stats.sp = spell_type;  /* needed later, see move_swarm_spell */
-    tmp->attacktype = swarm_type->clone.attacktype;
-    if (tmp->attacktype & AT_HOLYWORD || tmp->attacktype & AT_GODPOWER)
+    /*
+    if (tmp->attacktype & AT_GODPOWER)
     {
         if (!tailor_god_spell(tmp, op))
             return;
     }
+    */
     tmp->magic = magic;
     tmp->stats.hp = n;      /* n in swarm*/
     tmp->other_arch = swarm_type;  /* the archetype of the things to be fired*/
@@ -2811,8 +2819,7 @@ int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type
     new_aura->stats.food = spells[spell_type].bdur + 10 * SP_level_strength_adjust(op, caster, spell_type);
     new_aura->stats.dam = spells[spell_type].bdam + SP_level_dam_adjust(op, caster, spell_type);
     set_owner(new_aura, op);
-    if (magic)
-        new_aura->attacktype |= AT_MAGIC;
+
     if (new_aura->owner)
     {
         new_aura->chosen_skill = op->chosen_skill;
@@ -2912,58 +2919,6 @@ void put_a_monster(object *op, const char *monstername)
     }
 }
 
-
-/*  Some local definitions for shuffle-attack */
-struct
-{
-    int attacktype;
-    int face;
-}   ATTACKS[22] =
-{
-    {AT_PHYSICAL,0}, {AT_PHYSICAL,0},  /*face = explosion*/
-    {AT_PHYSICAL,0}, {AT_MAGIC,1}, {AT_MAGIC,1},   /* face = last-burnout */
-    {AT_MAGIC,1}, {AT_FIRE,2}, {AT_FIRE,2},  /* face = fire....  */
-    {AT_FIRE,2}, {AT_ELECTRICITY,3}, {AT_ELECTRICITY,3},  /* ball_lightning */
-    {AT_ELECTRICITY,3}, {AT_COLD,4}, {AT_COLD,4},  /* face=icestorm*/
-    {AT_COLD,4}, {AT_CONFUSION,5}, {AT_POISON,7}, {AT_POISON,7}, /* face = acid sphere.  generator */
-    {AT_POISON,7},  /* poisoncloud face */
-    {AT_SLOW,8}, {AT_PARALYZE,9}, {AT_FEAR,10}
-};
-
-
-
-/*  shuffle_attack:  peterm */
-/*  This routine shuffles the attack of op to one of the
-   ones in the list.  It does this at random.  It also
-   chooses a face appropriate to the attack that is
-   being committed by that square at the moment.
-    right now it's being used by color spray and create pool of
-    chaos.  */
-/* hmhmhm... this will not fit in our ext anim system... But i let it unchanged until
- * i rework the spells using it. MT-2003.
- */
-
-void shuffle_attack(object *op, int change_face)
-{
-    int i;
-    i = rndm(0, 21);
-    op->attacktype |= ATTACKS[i].attacktype | AT_MAGIC;
-    if (change_face)
-    {
-        SET_ANIMATION(op, ATTACKS[i].face);
-    }
-}
-
-
-/*  the following function reads from the file 'spell_params' in
-the lib dir, and resets the array in memory to reflect the values
-in spell_parameters.  The format in there MUST be:
-(reworked for Daimonin, the crossfire part here was outdated)
-
-spell name (SP_P = SP_PARAMTERS)
-spells.level spells.sp  SP_P.bdam SP_P.bdur SP_P.ldam SP_P.ldur SP_P.spl
-*/
-
 /* get_pointed_target() - this is used by finger of death
  * and the 'smite' spells. Returns the pointer to the first
  * monster in the direction which is pointed to by op. b.t.
@@ -3021,7 +2976,8 @@ int cast_smite_spell(object *op, object *caster, int dir, int type)
 
     /* tailor the effect by priest level and worshipped God */
     effect->level = casting_level(caster, type);
-    if (effect->attacktype & AT_HOLYWORD || effect->attacktype & AT_GODPOWER)
+    /*
+    if (effect->attacktype & AT_GODPOWER)
     {
         if (tailor_god_spell(effect, op))
             new_draw_info_format(NDI_UNIQUE, 0, op, "%s answers your call!", determine_god(op));
@@ -3031,7 +2987,7 @@ int cast_smite_spell(object *op, object *caster, int dir, int type)
             return 0;
         }
     }
-
+    */
     /* size of the area of destruction */
     effect->stats.hp = spells[type].bdur + SP_level_strength_adjust(op, caster, type);
     /* how much woe to inflict :) */

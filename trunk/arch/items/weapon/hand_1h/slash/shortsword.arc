@@ -2,7 +2,7 @@ Object shortsword
 name shortsword
 layer 3
 face shortsword.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_slash 100
 dam 40
 wc 4

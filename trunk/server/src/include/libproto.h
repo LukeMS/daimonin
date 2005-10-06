@@ -100,8 +100,10 @@ extern void             change_attr_value(living *stats, int attr, signed char v
 extern signed char      get_attr_value(living *stats, int attr);
 extern void             check_stat_bounds(living *stats);
 extern int              change_abil(object *op, object *tmp);
+extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
+extern void             drain_level(object *op, int level, int mode, int ticks);
 extern void             change_luck(object *op, int value);
 extern void             fix_player(object *op);
 extern void             set_dragon_name(object *pl, object *abil, object *skin);
@@ -179,6 +181,8 @@ extern int              get_rangevector_from_mapcoords(mapstruct *map1, int x1, 
 extern int              get_rangevector_full(object *op1, mapstruct *map1, int x1, int y1, object *op2, mapstruct *map2, int x2, int y2,
                                 rv_vector *retval, int flags);
 extern int              on_same_map(object *op1, object *op2);
+/* material.c */
+extern void             material_attack_damage(object *op, int num, int chance, int base);
 /* mempool.c */
 extern uint32           nearest_pow_two_exp(uint32 n);
 extern void             init_mempools();
@@ -235,6 +239,7 @@ extern object          *present_arch(archetype *at, mapstruct *m, int x, int y);
 extern object          *present(unsigned char type, mapstruct *m, int x, int y);
 extern object          *present_in_ob(unsigned char type, object *op);
 extern object          *present_arch_in_ob(archetype *at, object *op);
+extern object          *present_arch_in_ob_temp(archetype *at, object *op);
 extern void             set_cheat(object *op);
 extern int              find_free_spot(archetype *at, mapstruct *m, int x, int y, int start, int stop);
 extern int              find_first_free_spot(archetype *at, mapstruct *m, int x, int y);

@@ -239,6 +239,7 @@ void send_target_command(player *pl)
         sprintf(buf, "(lvl %d)", pl->target_object->level);
         strcat(tmp + 4, buf);
     }
+    pl->target_level = pl->target_object->level;
     Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp + 4) + 4);
 }
 
@@ -326,6 +327,7 @@ int command_target(object *op, char *params)
                      || (QUERY_FLAG(head, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
                         continue;
                     CONTR(op)->target_object = head;
+                    CONTR(op)->target_level = head->level;
                     CONTR(op)->target_object_count = head->count;
                     CONTR(op)->target_map_pos = n;
                     goto found_target;
@@ -391,6 +393,7 @@ int command_target(object *op, char *params)
                      || (QUERY_FLAG(head, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
                         continue;
                     CONTR(op)->target_object = head;
+                    CONTR(op)->target_level = head->level;
                     CONTR(op)->target_object_count = head->count;
                     CONTR(op)->target_map_pos = n;
                     goto found_target;
@@ -411,6 +414,7 @@ int command_target(object *op, char *params)
                         FLAG_FRIENDLY))
         {
             CONTR(op)->target_object = op;
+            CONTR(op)->target_level = op->level;
             CONTR(op)->target_object_count = op->count;
             CONTR(op)->target_map_pos = 0;
         }
@@ -492,6 +496,7 @@ int command_target(object *op, char *params)
                          || (QUERY_FLAG(head, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
                             continue;
                         CONTR(op)->target_object = head;
+                        CONTR(op)->target_level = head->level;
                         CONTR(op)->target_object_count = head->count;
                         CONTR(op)->target_map_pos = n;
                         goto found_target;
@@ -516,6 +521,7 @@ int command_target(object *op, char *params)
     else if (params[0] == '2') /* self */
     {
         CONTR(op)->target_object = op;
+        CONTR(op)->target_level = op->level;
         CONTR(op)->target_object_count = op->count;
         CONTR(op)->target_map_pos = 0;
     }

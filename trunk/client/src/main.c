@@ -204,7 +204,7 @@ static int is_username_valid(const char *name)
 
     for(i=0; i< (int)strlen(name); i++)
     {
-        if (!(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
+        if (name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
             return 0;
     }
     return 1;
@@ -951,6 +951,14 @@ static void play_action_sounds(void)
     {
         sound_play_one_repeat(SOUND_WARN_FOOD, SPECIAL_SOUND_FOOD);
     }
+    if (cpl.warn_hp)
+    {
+        if (cpl.warn_hp == 2) /* more as 10% damage */
+            sound_play_effect(SOUND_WARN_HP2, 0, 0, 100);
+        else
+            sound_play_effect(SOUND_WARN_HP, 0, 0, 100);
+        cpl.warn_hp = 0;
+    }
     if (cpl.warn_statdown)
     {
         sound_play_one_repeat(SOUND_WARN_STATDOWN, SPECIAL_SOUND_STATDOWN);
@@ -965,14 +973,6 @@ static void play_action_sounds(void)
     {
         sound_play_one_repeat(SOUND_WARN_DRAIN, SPECIAL_SOUND_DRAIN);
         cpl.warn_drain = FALSE;
-    }
-    if (cpl.warn_hp)
-    {
-        if (cpl.warn_hp == 2) /* more as 10% damage */
-            sound_play_effect(SOUND_WARN_HP2, 0, 0, 100);
-        else
-            sound_play_effect(SOUND_WARN_HP, 0, 0, 100);
-        cpl.warn_hp = 0;
     }
 }
 

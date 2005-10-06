@@ -898,9 +898,9 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_gen_sp, pl->gen_client_sp, CS_STAT_REG_MANA);
     AddIfShort(pl->last_gen_grace, pl->gen_client_grace, CS_STAT_REG_GRACE);
     AddIfCharFlag(pl->last_level, pl->ob->level, group_update, GROUP_UPDATE_LEVEL, CS_STAT_LEVEL);
-    AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
-    AddIfChar(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
+    AddIfInt(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
+    AddIfFloat(pl->last_speed, pl->speed, CS_STAT_SPEED);
 
     if (pl->ob != NULL)
     {
@@ -952,8 +952,10 @@ void esrv_update_stats(player *pl)
         flags |= SF_INFRAVISION;
     AddIfShort(pl->last_flags, flags, CS_STAT_FLAGS);
 
+    /* old beta 3 code - NROFPROTECTIONS has changed and is moved to own 
     for (i = 0; i < NROFPROTECTIONS; i++)
         AddIfChar(pl->last_protection[i], pl->ob->protection[i], atnr_prot_stats[i]);
+    */
 
     if (pl->socket.ext_title_flag)
     {

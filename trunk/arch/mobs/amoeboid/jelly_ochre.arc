@@ -37,7 +37,7 @@ resist_poison 100
 dam 52
 attack_acid 60
 attack_poison 40
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 17250

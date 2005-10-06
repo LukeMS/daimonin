@@ -2,7 +2,7 @@ Object hammer_small
 name small hammer
 face hammer_small.101
 layer 3
-weapon_speed 0.025
+weapon_speed 3.25
 attack_impact 100
 dam 40
 wc 4

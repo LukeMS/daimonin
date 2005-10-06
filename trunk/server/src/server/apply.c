@@ -1604,7 +1604,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
           if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
           {
               tag_t     trap_tag    = trap->count;
-              hit_player(victim, trap->stats.dam, trap, AT_MAGIC);
+              hit_player(victim, trap->stats.dam, trap);
               if (!was_destroyed(trap, trap_tag))
                   remove_ob(trap);
               check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
@@ -1628,9 +1628,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
         case CANCELLATION:
         case BALL_LIGHTNING:
           if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
-              hit_player(victim, trap->stats.dam, trap, trap->attacktype);
-          else if (victim->material && !(flags & MOVE_APPLY_VANISHED))
-              save_throw_object(victim, trap->attacktype, trap);
+              hit_player(victim, trap->stats.dam, trap);
           goto leave;
 
         case CONE:
@@ -1638,7 +1636,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
            if(IS_LIVE(victim)&&trap->speed) {
              uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
              if (attacktype)
-               hit_player(victim,trap->stats.dam,trap,attacktype);
+               hit_player(victim,trap->stats.dam);
            }
           */
           goto leave;
@@ -2217,7 +2215,7 @@ void apply_poison(object *op, object *tmp)
     {
         LOG(llevDebug, "Trying to poison player/monster for %d hp\n", tmp->stats.hp);
         /* internal damage part will take care about our poison */
-        hit_player(op, tmp->stats.dam, tmp, AT_POISON);
+        hit_player(op, tmp->stats.dam, tmp);
     }
     op->stats.food -= op->stats.food / 4;
     decrease_ob(tmp);
@@ -2393,8 +2391,10 @@ void create_food_force(object *who, object *food, object *force)
 
     SET_FLAG(force, FLAG_APPLIED);
     force = insert_ob_in_ob(force, who);
-    change_abil(who, force); /* Mostly to display any messages */
-    fix_player(who);        /* This takes care of some stuff that change_abil() */
+    if(who->type == PLAYER)
+        change_abil(who, force); /* Mostly to display any messages */
+    else
+        fix_player(who);        /* This takes care of some stuff that change_abil() */
 }
 
 /* OUTDATED: eat_special_food() - some food may (temporarily) alter
@@ -2627,7 +2627,7 @@ int dragon_eat_flesh(object *op, object *meal)
         skin->resist[i]++;
         fix_player(op);
 
-        sprintf(buf, "Your skin is now more resistant to %s!", change_resist_msg[i]);
+        sprintf(buf, "Your skin is now more resistant to %s!", attack_name[i]);
         new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, buf);
     }
 
@@ -2639,14 +2639,14 @@ int dragon_eat_flesh(object *op, object *meal)
 
         if (meal->last_eat != abil->stats.exp)
         {
-            sprintf(buf, "Your metabolism prepares to focus on %s!", change_resist_msg[meal->last_eat]);
+            sprintf(buf, "Your metabolism prepares to focus on %s!", attack_name[meal->last_eat]);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
             sprintf(buf, "The change will happen at level %d", abil->level + 1);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
         }
         else
         {
-            sprintf(buf, "Your metabolism will continue to focus on %s.", change_resist_msg[meal->last_eat]);
+            sprintf(buf, "Your metabolism will continue to focus on %s.", attack_name[meal->last_eat]);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
             abil->last_eat = 0;
         }
@@ -3250,7 +3250,7 @@ int apply_special(object *who, object *op, int aflags)
         switch (op->type)
         {
             case WEAPON:
-              (void) change_abil(who, op);
+              change_abil(who, op);
               CLEAR_FLAG(who, FLAG_READY_WEAPON);
               sprintf(buf, "You unwield %s.", query_name(op));
               break;
@@ -3274,7 +3274,7 @@ int apply_special(object *who, object *op, int aflags)
                                            skills[op->stats.sp].name);
                   }
               }
-              (void) change_abil(who, op);
+              change_abil(who, op);
               who->chosen_skill = NULL;
               buf[0] = '\0';
               break;
@@ -3289,7 +3289,7 @@ int apply_special(object *who, object *op, int aflags)
             case GIRDLE:
             case BRACERS:
             case CLOAK:
-              (void) change_abil(who, op);
+              change_abil(who, op);
               sprintf(buf, "You unwear %s.", query_name(op));
               break;
             case BOW:
@@ -3456,7 +3456,7 @@ int apply_special(object *who, object *op, int aflags)
         case WEAPON:
             SET_FLAG(op, FLAG_APPLIED);
             SET_FLAG(who, FLAG_READY_WEAPON);
-            (void) change_abil(who, op);
+            change_abil(who, op);
             sprintf(buf, "You wield %s.", query_name(op));
             break;
 
@@ -3471,7 +3471,7 @@ int apply_special(object *who, object *op, int aflags)
         case RING:
         case AMULET:
           SET_FLAG(op, FLAG_APPLIED);
-          (void) change_abil(who, op);
+          change_abil(who, op);
           sprintf(buf, "You wear %s.", query_name(op));
           break;
 
@@ -3494,7 +3494,7 @@ int apply_special(object *who, object *op, int aflags)
                   send_ready_skill(who, skills[op->stats.sp].name);
           }
           SET_FLAG(op, FLAG_APPLIED);
-          (void) change_abil(who, op);
+          change_abil(who, op);
           who->chosen_skill = op;
           buf[0] = '\0';
           break;
@@ -3959,7 +3959,6 @@ void apply_lighter(object *who, object *lighter)
         if (who == is_player_inv(item))
             is_player_env = 1;
 
-        save_throw_object(item, AT_FIRE, who);
         /* Change to check count and not freed, since the object pointer
          * may have gotten recycled
          */
