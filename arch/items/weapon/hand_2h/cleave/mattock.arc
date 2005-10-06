@@ -3,7 +3,7 @@ name mattock
 layer 3
 face mattock.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 4.25
 item_level 10
 item_skill 4
 dam 80

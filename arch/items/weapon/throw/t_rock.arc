@@ -3,7 +3,7 @@ race rock
 layer 3
 name rock
 face t_rock.101
-weapon_speed 0.035
+weapon_speed 4.0
 attack_impact 100
 dam 10
 last_grace 11

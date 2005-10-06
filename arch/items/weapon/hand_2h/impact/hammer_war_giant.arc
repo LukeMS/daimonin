@@ -2,7 +2,7 @@ Object hammer_war_giant
 layer 3
 name war hammer
 face hammer_war_giant.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10

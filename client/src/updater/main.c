@@ -55,7 +55,7 @@
 #define PROCESS_XDELTA "xdelta.exe"
 #define PROCESS_CLIENT "client.exe"
 
-#define MAX_DIR_PATH 2048    /* maximal full path we support.      */
+#define MAX_DIR_PATH 2048	/* maximal full path we support.      */
 char version_path[MAX_DIR_PATH], process_path[MAX_DIR_PATH], output[4096],
      prg_path[MAX_DIR_PATH], file_path[MAX_DIR_PATH], parms[MAX_DIR_PATH];
 
@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
     FILE   *stream;
     int version_nr, version_def_nr, patched=FALSE;
     char version[256], buf[256], *string_pos;
-    char file_name[256], md5[64];
+    char file_name[256], md5[64]; 
 #ifndef WIN32
     struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };
 #endif
@@ -248,11 +248,11 @@ int main(int argc, char *argv[])
     if(strlen(argv[0]) + 256 >MAX_DIR_PATH)
         exit(0);
 
-    strcpy(prg_path, argv[0]);
+	strcpy(prg_path, argv[0]);
 
-    string_pos = strrchr( prg_path, '/');
-    if(    string_pos < strrchr(prg_path, '\\') )
-        string_pos = strrchr( prg_path, '\\');
+	string_pos = strrchr( prg_path, '/');
+	if(	string_pos < strrchr(prg_path, '\\') )
+		string_pos = strrchr( prg_path, '\\');
 
     if(string_pos)
         *(string_pos+1) = '\0';
@@ -463,9 +463,9 @@ int main(int argc, char *argv[])
 */
 void clear_directory(char* start_dir)
 {
-    DIR* dir;                    /* pointer to the scanned directory. */
-    struct dirent* entry;        /* pointer to one directory entry.   */
-    char cwd[MAX_DIR_PATH+1];    /* current working directory.        */
+    DIR* dir;			        /* pointer to the scanned directory. */
+    struct dirent* entry;	    /* pointer to one directory entry.   */
+    char cwd[MAX_DIR_PATH+1];	/* current working directory.        */
     struct stat dir_stat;       /* used by stat().                   */
 
     /* first, save path of current working directory */
@@ -597,12 +597,12 @@ void copy_patch(char *src, char *dest)
 void copy_patch_files(char* start_dir)
 {
     static int patch_dir_len;
-    static char base[MAX_DIR_PATH+1];    /* current working directory.        */
-    DIR* dir;                    /* pointer to the scanned directory. */
-    struct dirent* entry;        /* pointer to one directory entry.   */
-    char cwd[MAX_DIR_PATH+1];    /* current working directory.        */
+    static char base[MAX_DIR_PATH+1];	/* current working directory.        */
+    DIR* dir;			        /* pointer to the scanned directory. */
+    struct dirent* entry;	    /* pointer to one directory entry.   */
+    char cwd[MAX_DIR_PATH+1];	/* current working directory.        */
     struct stat dir_stat;       /* used by stat().                   */
-    char buf[MAX_DIR_PATH+1];    /* current working directory.        */
+    char buf[MAX_DIR_PATH+1];	/* current working directory.        */
 
     /* open the directory for reading */
     if(start_dir)

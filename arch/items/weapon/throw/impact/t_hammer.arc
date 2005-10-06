@@ -3,7 +3,7 @@ name throwing hammer
 race rock
 layer 3
 face hammer_2.101
-weapon_speed 0.035
+weapon_speed 2.5
 attack_impact 100
 last_grace 11
 last_sp 7

@@ -36,7 +36,7 @@ resist_fear 100
 dam 53
 attack_cleave 80
 attack_acid 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 16250

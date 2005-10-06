@@ -299,7 +299,7 @@ void become_follower(object *op, object *new_god)
         /* get rid of old god */
         new_draw_info_format(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", exp_obj->title);
         CLEAR_FLAG(exp_obj, FLAG_APPLIED);
-        (void) change_abil(op, exp_obj);
+        change_abil(op, exp_obj);
         FREE_AND_CLEAR_HASH2(exp_obj->title);
     }
 
@@ -357,7 +357,7 @@ void become_follower(object *op, object *new_god)
 #endif
 
     SET_FLAG(exp_obj, FLAG_APPLIED);
-    (void) change_abil(op, exp_obj);
+    change_abil(op, exp_obj);
 
     check_special_prayers(op, new_god);
 }
@@ -559,7 +559,7 @@ static int god_enchants_weapon(object *op, object *god, object *tr)
 {
     char    buf[MAX_BUF];
     object *weapon;
-    uint32  attacktype;
+    /*uint32  attacktype;*/
     int     tmp;
 
     for (weapon = op->inv; weapon; weapon = weapon->below)
@@ -587,13 +587,14 @@ static int god_enchants_weapon(object *op, object *god, object *tr)
     }
 
     /* Add the gods attacktype */
-    attacktype = (weapon->attacktype == 0) ? AT_PHYSICAL : weapon->attacktype;
+    /*attacktype = (weapon->attacktype == 0) ? AT_PHYSICAL : weapon->attacktype;*/
+    /*
     if ((attacktype & god->attacktype) != god->attacktype)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your weapon suddenly glows!");
         weapon->attacktype = attacktype | god->attacktype;
         return 1;
-    }
+    }*/
 
     /* Higher magic value */
     tmp = follower_level_to_enchantments(SK_level(op), tr->level);
@@ -997,7 +998,7 @@ int tailor_god_spell(object *spellop, object *caster)
     if (caster->type == FBULLET || caster->type == CONE || caster->type == FBALL || caster->type == SWARM_SPELL)
         caster_is_spell = 1;
 
-    if (!god || (spellop->attacktype & AT_HOLYWORD && !god->race))
+/*    if (!god || (spellop->attacktype & AT_HOLYWORD && !god->race))
     {
         if (!caster_is_spell)
             new_draw_info(NDI_UNIQUE, 0, caster, "This prayer is useless unless you worship an appropriate god");
@@ -1005,9 +1006,10 @@ int tailor_god_spell(object *spellop, object *caster)
             LOG(llevBug, "BUG: tailor_god_spell(): no god\n");
         return 0;
     }
-
+*/
     /* either holy word or godpower attacks will set the slaying field */
-    if (spellop->attacktype & AT_HOLYWORD || spellop->attacktype & AT_GODPOWER)
+    /*
+    if (spellop->attacktype & AT_GODPOWER)
     {
         FREE_AND_CLEAR_HASH2(spellop->slaying);
         if (!caster_is_spell)
@@ -1017,13 +1019,16 @@ int tailor_god_spell(object *spellop, object *caster)
         else if (caster->slaying)
             FREE_AND_COPY_HASH(spellop->slaying, caster->slaying);
     }
+    */
 
     /* only the godpower attacktype adds the god's attack onto the spell */
+    /*
     if (spellop->attacktype & AT_GODPOWER)
         spellop->attacktype = spellop->attacktype | god->attacktype;
-
+    */
     /* tack on the god's name to the spell */
-    if (spellop->attacktype & AT_HOLYWORD || spellop->attacktype & AT_GODPOWER)
+    /*
+    if (spellop->attacktype & AT_GODPOWER)
     {
         FREE_AND_COPY_HASH(spellop->title, god->name);
         if (spellop->title)
@@ -1033,6 +1038,7 @@ int tailor_god_spell(object *spellop, object *caster)
             FREE_AND_COPY_HASH(spellop->name, buf);
         }
     }
+    */
 
     return 1;
 }

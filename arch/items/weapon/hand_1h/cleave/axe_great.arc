@@ -3,7 +3,7 @@ name great axe
 layer 3
 face axe_great.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60

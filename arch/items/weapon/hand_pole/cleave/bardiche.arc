@@ -5,7 +5,7 @@ face bardiche.101
 item_level 11
 item_skill 4
 attack_cleave 100
-weapon_speed 0.0175
+weapon_speed 4.5
 dam 80
 wc 5
 ac 2

@@ -35,7 +35,7 @@ resist_confusion 100
 resist_fear 100
 dam 39
 attack_impact 100
-weapon_speed 0.0375
+weapon_speed 3.5
 speed -0.025
 level 1
 weight 11250

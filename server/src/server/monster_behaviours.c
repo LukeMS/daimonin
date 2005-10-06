@@ -1650,7 +1650,7 @@ int ai_melee_attack_enemy(object *op, struct mob_behaviour_param *params)
     if (QUERY_FLAG(op, FLAG_RUN_AWAY))
         rv->part->stats.wc -= 10;
     skill_attack(op->enemy, rv->part, 0, NULL);
-    op->weapon_speed_left += FABS((int) op->weapon_speed_left) + 1;
+    op->weapon_speed_left += FABS(op->weapon_speed);
     if (QUERY_FLAG(op, FLAG_RUN_AWAY))
         rv->part->stats.wc += 10;
 
@@ -1759,7 +1759,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
         move_arrow(arrow);
     }
 
-    op->weapon_speed_left += FABS((int) op->weapon_speed_left) + 1;
+    op->weapon_speed_left += FABS(op->weapon_speed);
 
     /* hack: without this, a monster with a bow is invinsible by a non range monster
      * with same speed. It simply runs away, can't be catched but will range kill
@@ -1770,7 +1770,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
      * to the enemy should be allowed. This is not a question of reality of not - this will
      * destroy not only game play but also every map design and is a critical misbehaviour.
      */
-    op->speed_left-=2;
+    op->speed_left-=2.0f;
     return 1;
 }
 

@@ -38,7 +38,7 @@ resist_cleave 10
 resist_pierce 10
 resist_slash 10
 dam 41
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1

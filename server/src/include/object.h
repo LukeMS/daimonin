@@ -212,31 +212,15 @@ typedef struct obj
     /* TODO: get rid of using attrsets? */
     sint8           resist[NROFATTACKS];    /* Intrinsic resist against damage - range from -125 to +125 */
 
-    uint8           attack[NROFATTACKS];    /* our attack values - range from 0%-125%. (negative values makes no sense).
-                                                * Note: we can in theory allow 300% damage for a attacktype.
-                                                * all we need is to increase sint8 to sint16. Thats true for
-                                                * resist & protection too. But it will be counter the damage
-                                                * calculation. Think about a way a player deals only 10 damage
-                                                * at base but can grap so many items that he does 3000% damage.
-                                                * thats not how this should work. More damage should come from
-                                                * the stats.dmg value - NOT from this source.
-                                             * The "125% max border" should work nice and the 25% over 100%
-                                             * should give a little boost. I think about to give player crafters
-                                             * the power to boost items to 100%+.
-                                                */
-
-    sint8           protection[NROFPROTECTIONS];    /* Resistance against attacks in % - range from 125-125*/
+    uint8           attack[NROFATTACKS];    /* our attack values (only positiv ones */
+    sint8           protection[NROFPROTECTIONS];    /* Resistance against attacks in % - range from -125 to 125%*/
 
     float           speed;              /* The overall speed of this object */
     float           speed_left;         /* How much speed is left to spend this round */
     float           weapon_speed;           /* new weapon speed system. swing of weapon */
     float           weapon_speed_left;
-    float           weapon_speed_add;
 
     living          stats;              /* object stats like hp, sp, grace ... */
-
-    uint32          attacktype;         /* REMOVE IS IN PROCESS */
-
 
 #ifdef POSITION_DEBUG
     sint16          ox, oy;             /* For debugging: Where it was last inserted */

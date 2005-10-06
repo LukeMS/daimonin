@@ -442,6 +442,44 @@ animation teleporter
 is_animated 1
 anim_speed 3
 end
+Object tele_rock
+name mysterious rock
+type 66
+editor_folder connect/exists
+face tele_rock.101
+player_only 1
+speed 0.1
+hp -1
+sp -1
+no_teleport 1
+layer 5
+sub_type 1
+no_pick 1
+animation tele_rock
+is_animated 1
+anim_speed 5
+walk_on 0
+fly_on 0
+end
+Object tele_stone
+name mysterious stone
+type 66
+editor_folder connect/exists
+face tele_stone.101
+player_only 1
+speed 0.1
+hp -1
+sp -1
+no_teleport 1
+layer 5
+sub_type 1
+no_pick 1
+animation tele_stone
+is_animated 1
+anim_speed 5
+walk_on 0
+fly_on 0
+end
 Object well_stone
 name stone well
 type 66
@@ -6269,26 +6307,38 @@ sp 40
 wc 7
 end
 Object blindness
-name blindness
-type 49
+type 114
 editor_folder forces/forces
+sys_object 1
 face force.101
 identified 1
-sys_object 1
+sub_type 8
 speed 0.05
-is_blind 1
 no_drop 1
+food 5
+is_used_up 1
 end
 Object confusion
-name confusion
-type 19
+type 114
 editor_folder forces/forces
-identified 1
-face force.101
 sys_object 1
+face force.101
+identified 1
+sub_type 7
 speed 0.05
 no_drop 1
-food 8
+food 5
+is_used_up 1
+end
+Object deathsick
+type 114
+editor_folder forces/forces
+face force.101
+identified 1
+layer 0
+sub_type 1
+sys_object 1
+no_drop 1
 end
 Object depletion
 type 114
@@ -6296,6 +6346,7 @@ editor_folder forces/forces
 face force.101
 identified 1
 layer 0
+sub_type 1
 sys_object 1
 no_drop 1
 end
@@ -6431,6 +6482,28 @@ exp 100
 race *
 level 5
 end
+Object drain
+type 114
+editor_folder forces/forces
+face force.101
+identified 1
+layer 0
+sub_type 2
+sys_object 1
+no_drop 1
+end
+Object fear
+type 114
+editor_folder forces/forces
+sys_object 1
+face force.101
+identified 1
+sub_type 4
+speed 0.05
+no_drop 1
+food 5
+is_used_up 1
+end
 Object force
 name force
 type 114
@@ -6450,6 +6523,18 @@ sys_object 1
 face force.101
 identified 1
 no_drop 1
+end
+Object paralyze
+type 114
+editor_folder forces/forces
+sys_object 1
+face force.101
+identified 1
+sub_type 6
+speed 0.05
+no_drop 1
+food 5
+is_used_up 1
 end
 Object poisoning
 name applied poison
@@ -6474,6 +6559,21 @@ sys_object 1
 face force.101
 exp -1
 identified 1
+last_heal 25
+sub_type 3
+speed 0.05
+no_drop 1
+food 5
+is_used_up 1
+end
+Object snare
+type 114
+editor_folder forces/forces
+sys_object 1
+face force.101
+identified 1
+last_heal 25
+sub_type 5
 speed 0.05
 no_drop 1
 food 5
@@ -6504,7 +6604,7 @@ Pow 30
 is_female 1
 is_neutral 1
 terrain_flag 39
-weapon_speed 0.050
+weapon_speed 3.3
 unaggressive 1
 random_move 1
 attack_slash 100
@@ -6581,12 +6681,12 @@ resist_impact 45
 resist_cleave 45
 resist_pierce 45
 resist_slash 45
-resist_magic 50
+resist_force 50
 resist_electricity 100
 dam 85
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 25
-attack_magic 25
+attack_force 25
 attack_weaponmagic 25
 attack_electricity 25
 speed -0.025
@@ -6848,6 +6948,34 @@ type 79
 editor_folder indoor/benchs
 face bench2.111
 animation bench2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+no_pass 1
+layer 4
+end
+Object bench3.111
+name outdoor bench
+type 79
+editor_folder indoor/benchs
+face bench3.111
+animation bench3.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+no_pass 1
+layer 4
+end
+Object kiddy_bench.111
+name kiddy bench
+type 79
+editor_folder indoor/benchs
+face kiddy_bench.111
+animation kiddy_bench.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7154,6 +7282,42 @@ face urn.101
 no_pick 1
 no_pass 1
 layer 4
+end
+Object flagwall_short_brick1.111
+name Pond Wall
+type 77
+editor_folder indoor/indoor
+face flagwall_short_brick1.111
+layer 5
+no_pick 1
+no_pass 0
+end
+Object flagwall_short_brick1.131
+name Pond Wall
+type 77
+editor_folder indoor/indoor
+face flagwall_short_brick1.131
+layer 5
+no_pick 1
+no_pass 0
+end
+Object flagwall_short_brick1.141
+name Pond Wall
+type 77
+editor_folder indoor/indoor
+face flagwall_short_brick1.141
+layer 5
+no_pick 1
+no_pass 0
+end
+Object flagwall_short_brick1.181
+name Pond Wall
+type 77
+editor_folder indoor/indoor
+face flagwall_short_brick1.181
+layer 5
+no_pick 1
+no_pass 0
 end
 Object glower.101
 name glower
@@ -8887,7 +9051,7 @@ is_neutral 1
 identified 1
 direction 4
 terrain_flag 1
-weapon_speed 0.0125
+weapon_speed 3.5
 speed 0.95
 face halfelf_f.isw.111
 animation half_elf_female
@@ -8921,7 +9085,7 @@ no_pick 1
 direction 4
 identified 1
 is_neutral 1
-weapon_speed 0.0125
+weapon_speed 3.5
 speed 0.95
 terrain_flag 1
 animation half_elf_male
@@ -8955,7 +9119,7 @@ is_neutral 1
 identified 1
 direction 4
 terrain_flag 1
-weapon_speed 0.0125
+weapon_speed 3.5
 speed 0.95
 face human_f.isw.111
 animation human_female
@@ -8989,7 +9153,7 @@ no_pick 1
 direction 4
 identified 1
 is_neutral 1
-weapon_speed 0.0125
+weapon_speed 3.5
 speed 0.95
 terrain_flag 1
 animation human_male
@@ -9333,7 +9497,6 @@ known_cursed 1
 dam 2
 last_sp 4
 magic 4
-attacktype 4
 no_drop 1
 sp 18
 last_eat 1
@@ -9442,7 +9605,7 @@ Object skill_karate
 name karate
 type 43
 editor_folder indoor/skills
-weapon_speed 0.02
+weapon_speed 3.0
 attack_impact 100
 face skill.101
 dam 3
@@ -9629,7 +9792,7 @@ Object skill_punching
 name punching
 type 43
 editor_folder indoor/skills
-weapon_speed 0.015
+weapon_speed 4.0
 face skill.101
 attack_impact 100
 dam 1
@@ -10097,10 +10260,6 @@ protect_pierce 8
 protect_impact 10
 protect_cleave 8
 protect_slash 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10118,10 +10277,6 @@ protect_pierce 8
 protect_impact 8
 protect_cleave 8
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 last_heal 4
 material_real 193
 material 8
@@ -10140,10 +10295,6 @@ protect_pierce 8
 protect_impact 8
 protect_cleave 10
 protect_slash 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 last_heal 4
 material_real 193
 material 8
@@ -10163,10 +10314,6 @@ protect_impact 8
 protect_slash 8
 protect_pierce 8
 protect_cleave 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10184,10 +10331,6 @@ protect_pierce 10
 protect_impact 8
 protect_cleave 8
 protect_slash 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 last_heal 4
 material_real 193
 material 8
@@ -10207,10 +10350,6 @@ protect_impact 8
 protect_slash 8
 protect_pierce 8
 protect_cleave 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 2
 material_real 65
 end
@@ -10229,10 +10368,6 @@ protect_impact 6
 protect_slash 8
 protect_pierce 8
 protect_cleave 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10251,10 +10386,6 @@ protect_impact 8
 protect_slash 10
 protect_pierce 8
 protect_cleave 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 2
 material_real 65
 end
@@ -10270,10 +10401,6 @@ protect_pierce 6
 protect_impact 6
 protect_cleave 6
 protect_slash 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 last_heal 1
 material_real 193
 material 8
@@ -10291,10 +10418,6 @@ protect_pierce 4
 protect_impact 4
 protect_cleave 4
 protect_slash 4
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10310,10 +10433,6 @@ protect_impact 6
 protect_slash 6
 protect_pierce 6
 protect_cleave 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 value 75
 material_real 65
 material 2
@@ -10331,10 +10450,6 @@ protect_impact 3
 protect_slash 3
 protect_pierce 3
 protect_cleave 3
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 449
 material 128
 end
@@ -10352,10 +10467,6 @@ protect_impact 8
 protect_slash 8
 protect_pierce 8
 protect_cleave 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10371,10 +10482,6 @@ protect_impact 3
 protect_slash 3
 protect_pierce 3
 protect_cleave 3
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 449
 material 128
 end
@@ -10391,10 +10498,6 @@ protect_impact 8
 protect_cleave 8
 protect_slash 8
 protect_pierce 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 value 75
@@ -10411,10 +10514,6 @@ protect_impact 6
 protect_cleave 6
 protect_slash 6
 protect_pierce 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 value 50
@@ -10433,10 +10532,6 @@ protect_impact 10
 protect_cleave 10
 protect_slash 10
 protect_pierce 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 value 90
@@ -10452,10 +10547,6 @@ protect_impact 4
 protect_cleave 4
 protect_slash 4
 protect_pierce 4
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 value 15
@@ -10475,10 +10566,6 @@ ac 1
 item_level 10
 weight 2000
 value 200
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10494,10 +10581,6 @@ protect_cleave 2
 protect_slash 2
 weight 200
 value 20
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10516,10 +10599,6 @@ protect_cleave 10
 protect_slash 8
 protect_pierce 10
 value 35
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10538,10 +10617,6 @@ protect_cleave 8
 protect_slash 10
 protect_pierce 8
 value 38
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10558,10 +10633,6 @@ protect_cleave 3
 protect_pierce 3
 weight 2100
 value 1700
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 1024
 material_real 643
 end
@@ -10577,10 +10648,6 @@ protect_cleave 1
 protect_slash 1
 protect_pierce 1
 value 25
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 128
 material_real 450
 end
@@ -10596,10 +10663,6 @@ protect_cleave 1
 protect_slash 1
 protect_pierce 1
 value 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 128
 material_real 450
 end
@@ -10618,10 +10681,6 @@ protect_slash 8
 protect_pierce 8
 weight 1000
 value 220
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10640,10 +10699,6 @@ protect_slash 6
 protect_pierce 6
 weight 1000
 value 220
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10662,10 +10717,6 @@ protect_slash 6
 protect_pierce 6
 weight 1200
 value 750
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10684,10 +10735,6 @@ protect_slash 6
 protect_pierce 6
 weight 1000
 value 220
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10705,10 +10752,6 @@ protect_slash 5
 protect_pierce 8
 weight 900
 value 25
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10726,10 +10769,6 @@ protect_cleave 5
 protect_slash 8
 protect_pierce 5
 value 30
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10747,10 +10786,6 @@ protect_cleave 4
 protect_slash 4
 protect_pierce 4
 value 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -10769,10 +10804,6 @@ protect_slash 10
 protect_pierce 6
 weight 1100
 value 400
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10791,10 +10822,6 @@ protect_slash 6
 protect_pierce 10
 weight 1140
 value 800
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 end
@@ -10815,10 +10842,6 @@ protect_impact 35
 protect_slash 17
 protect_cleave 17
 protect_pierce 17
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 20500
 value 2600
 end
@@ -10839,10 +10862,6 @@ protect_impact 12
 protect_cleave 30
 protect_slash 20
 protect_pierce 16
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 13000
 value 1800
 end
@@ -10863,10 +10882,6 @@ protect_impact 38
 protect_slash 18
 protect_cleave 18
 protect_pierce 18
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 29500
 value 2600
 end
@@ -10883,10 +10898,6 @@ last_sp 6
 material 2
 material_real 65
 ac 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 protect_impact 20
 protect_slash 20
 protect_cleave 20
@@ -10911,10 +10922,6 @@ protect_impact 15
 protect_cleave 15
 protect_slash 15
 protect_pierce 30
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 13500
 value 1420
 end
@@ -10935,10 +10942,6 @@ protect_impact 15
 protect_cleave 15
 protect_slash 30
 protect_pierce 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 11000
 value 1400
 end
@@ -10959,10 +10962,6 @@ protect_impact 17
 protect_slash 35
 protect_cleave 17
 protect_pierce 17
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 21500
 value 2650
 end
@@ -10983,10 +10982,6 @@ protect_cleave 20
 protect_pierce 20
 material 32
 material_real 323
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 18500
 value 2850
 end
@@ -11007,8 +11002,6 @@ protect_impact 45
 protect_slash 30
 protect_cleave 30
 protect_pierce 30
-is_vul_physical 1
-is_vul_sphere 1
 weight 34500
 value 252600
 end
@@ -11025,10 +11018,6 @@ protect_cleave 4
 protect_pierce 4
 weight 500
 value 20
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 128
 material_real 450
 end
@@ -11045,10 +11034,6 @@ protect_cleave 4
 protect_pierce 4
 weight 900
 value 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 128
 material_real 450
 end
@@ -11069,10 +11054,6 @@ protect_impact 30
 protect_slash 15
 protect_cleave 15
 protect_pierce 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 14000
 value 1400
 end
@@ -11090,10 +11071,6 @@ protect_slash 15
 protect_pierce 10
 weight 3450
 value 30
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 194
 material 8
 end
@@ -11114,10 +11091,6 @@ protect_slash 15
 protect_pierce 15
 weight 8450
 value 1400
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 194
 material 8
 end
@@ -11135,10 +11108,6 @@ protect_cleave 10
 protect_pierce 8
 weight 2200
 value 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 8
 material_real 193
 end
@@ -11157,10 +11126,6 @@ protect_slash 12
 protect_pierce 20
 weight 5550
 value 60
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 194
 material 8
 end
@@ -11181,10 +11146,6 @@ protect_slash 12
 protect_pierce 25
 weight 6450
 value 120
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 194
 material 8
 end
@@ -11205,10 +11166,6 @@ protect_impact 25
 protect_cleave 15
 protect_slash 25
 protect_pierce 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 12000
 value 125
 end
@@ -11223,12 +11180,12 @@ material_real 514
 is_magical 1
 ac 7
 item_level 30
+proof_phy 1
+proof_ele 1
 protect_impact 28
 protect_slash 40
 protect_cleave 28
 protect_pierce 28
-is_vul_magic 1
-is_vul_sphere 1
 weight 5100
 value 152500
 end
@@ -11243,12 +11200,12 @@ material_real 514
 is_magical 1
 ac 10
 item_level 50
+proof_phy 1
+proof_ele 1
 protect_impact 30
 protect_slash 45
 protect_cleave 30
 protect_pierce 30
-is_vul_magic 1
-is_vul_sphere 1
 weight 7500
 value 252500
 end
@@ -11263,12 +11220,12 @@ material_real 514
 is_magical 1
 ac 6
 item_level 15
+proof_phy 1
+proof_ele 1
 protect_impact 22
 protect_slash 30
 protect_cleave 22
 protect_pierce 22
-is_vul_magic 1
-is_vul_sphere 1
 weight 6100
 value 12500
 end
@@ -11285,10 +11242,6 @@ last_sp 6
 material 2
 material_real 65
 ac 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 protect_impact 20
 protect_slash 20
 protect_cleave 40
@@ -11309,10 +11262,6 @@ last_sp 6
 material 2
 material_real 65
 ac 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 protect_impact 20
 protect_slash 40
 protect_cleave 20
@@ -11333,10 +11282,6 @@ last_sp 6
 material 2
 material_real 65
 ac 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 protect_impact 40
 protect_slash 20
 protect_cleave 20
@@ -11361,10 +11306,6 @@ protect_impact 12
 protect_cleave 20
 protect_slash 30
 protect_pierce 16
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 13000
 value 1800
 end
@@ -11385,10 +11326,6 @@ protect_impact 17
 protect_slash 17
 protect_cleave 17
 protect_pierce 35
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 19500
 value 2550
 end
@@ -11409,10 +11346,6 @@ protect_impact 17
 protect_slash 17
 protect_cleave 35
 protect_pierce 17
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 weight 21500
 value 2650
 end
@@ -11431,10 +11364,6 @@ protect_impact 5
 protect_cleave 10
 protect_pierce 5
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
@@ -11454,10 +11383,6 @@ protect_impact 12
 protect_cleave 6
 protect_pierce 12
 protect_slash 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1350
@@ -11475,10 +11400,6 @@ protect_impact 5
 protect_cleave 5
 protect_pierce 5
 protect_slash 5
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 258
 material 16
 weight 1500
@@ -11498,10 +11419,6 @@ protect_impact 10
 protect_cleave 5
 protect_pierce 5
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
@@ -11521,10 +11438,6 @@ protect_impact 6
 protect_cleave 12
 protect_pierce 6
 protect_slash 12
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
@@ -11544,10 +11457,6 @@ protect_impact 10
 protect_cleave 4
 protect_pierce 10
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 2048
 material_real 705
 weight 1100
@@ -11567,10 +11476,6 @@ protect_impact 4
 protect_cleave 10
 protect_pierce 10
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 32
 material_real 323
 weight 1100
@@ -11590,10 +11495,6 @@ protect_impact 12
 protect_cleave 6
 protect_pierce 6
 protect_slash 12
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
@@ -11614,10 +11515,6 @@ protect_cleave 10
 protect_pierce 10
 protect_slash 5
 cha -1
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
@@ -11637,10 +11534,6 @@ protect_impact 5
 protect_cleave 5
 protect_pierce 10
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
@@ -11660,10 +11553,6 @@ protect_impact 5
 protect_cleave 10
 protect_pierce 10
 protect_slash 5
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1250
@@ -11683,10 +11572,6 @@ protect_impact 12
 protect_cleave 12
 protect_pierce 6
 protect_slash 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1300
@@ -11706,10 +11591,6 @@ protect_impact 10
 protect_cleave 5
 protect_pierce 10
 protect_slash 5
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1350
@@ -11729,10 +11610,6 @@ protect_impact 6
 protect_cleave 12
 protect_pierce 6
 protect_slash 12
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1600
@@ -11752,10 +11629,6 @@ protect_impact 5
 protect_cleave 5
 protect_pierce 10
 protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 258
 material 16
 weight 1600
@@ -11775,10 +11648,6 @@ protect_impact 10
 protect_cleave 10
 protect_pierce 4
 protect_slash 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material 32
 material_real 324
 weight 1300
@@ -11798,10 +11667,6 @@ protect_impact 5
 protect_cleave 10
 protect_pierce 10
 protect_slash 5
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 weight 1550
@@ -11814,10 +11679,6 @@ editor_folder items/armour
 face small_shie.101
 layer 3
 ac 2
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
 material_real 65
 material 2
 protect_impact 6
@@ -14068,7 +13929,7 @@ editor_folder items/weapon
 layer 3
 face axe.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 3
 item_skill 4
 dam 50
@@ -14086,7 +13947,7 @@ editor_folder items/weapon
 layer 3
 face axe_battle.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60
@@ -14104,7 +13965,7 @@ editor_folder items/weapon
 layer 3
 face axe_broad.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60
@@ -14122,7 +13983,7 @@ editor_folder items/weapon
 layer 3
 face axe_double.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60
@@ -14140,7 +14001,7 @@ editor_folder items/weapon
 layer 3
 face axe_great.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60
@@ -14158,7 +14019,7 @@ editor_folder items/weapon
 layer 3
 face axe_hand.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 3
 item_skill 4
 dam 50
@@ -14176,7 +14037,7 @@ editor_folder items/weapon
 layer 3
 face axe_small.101
 attack_cleave 100
-weapon_speed 0.025
+weapon_speed 3.25
 dam 40
 wc 4
 sub_type 3
@@ -14192,7 +14053,7 @@ editor_folder items/weapon
 layer 3
 face axe_war.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 3
 item_skill 4
 dam 50
@@ -14210,7 +14071,7 @@ editor_folder items/weapon
 layer 3
 face cleaver_battle.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60
@@ -14228,7 +14089,7 @@ editor_folder items/weapon
 layer 3
 face cleaver_war.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 3
 item_skill 4
 dam 50
@@ -14246,7 +14107,7 @@ editor_folder items/weapon
 layer 3
 face pick_axe.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 3.25
 dam 40
 wc 4
 sub_type 3
@@ -14262,7 +14123,7 @@ editor_folder items/weapon
 layer 3
 face whip.101
 attack_cleave 100
-weapon_speed 0.025
+weapon_speed 3.25
 dam 40
 wc 5
 sub_type 3
@@ -14278,7 +14139,7 @@ editor_folder items/weapon
 layer 3
 face whip_war.101
 attack_cleave 100
-weapon_speed 0.0225
+weapon_speed 3.25
 item_level 7
 item_skill 4
 dam 60
@@ -14295,7 +14156,7 @@ type 15
 editor_folder items/weapon
 face ancus.101
 layer 3
-weapon_speed 0.02
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14313,7 +14174,7 @@ type 15
 editor_folder items/weapon
 face club.101
 layer 3
-weapon_speed 0.02
+weapon_speed 3.25
 attack_impact 100
 dam 40
 wc 4
@@ -14329,7 +14190,7 @@ type 15
 editor_folder items/weapon
 face club_big.101
 layer 3
-weapon_speed 0.02
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14347,7 +14208,7 @@ type 15
 editor_folder items/weapon
 face club_rough.101
 layer 3
-weapon_speed 0.02
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14365,7 +14226,7 @@ type 15
 editor_folder items/weapon
 face club_spiked.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14383,7 +14244,7 @@ type 15
 editor_folder items/weapon
 face flail_war.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14401,7 +14262,7 @@ type 15
 editor_folder items/weapon
 face hammer.101
 layer 3
-weapon_speed 0.02
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14419,7 +14280,7 @@ type 15
 editor_folder items/weapon
 face hammer_battle.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14437,7 +14298,7 @@ type 15
 editor_folder items/weapon
 face hammer_military.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14455,7 +14316,7 @@ type 15
 editor_folder items/weapon
 face hammer_small.101
 layer 3
-weapon_speed 0.025
+weapon_speed 3.25
 attack_impact 100
 dam 40
 wc 4
@@ -14471,7 +14332,7 @@ type 15
 editor_folder items/weapon
 face hammer_war.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14489,7 +14350,7 @@ type 15
 editor_folder items/weapon
 face mace.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14507,7 +14368,7 @@ type 15
 editor_folder items/weapon
 face mace_battle.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14525,7 +14386,7 @@ type 15
 editor_folder items/weapon
 face mace_spiked.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14543,7 +14404,7 @@ type 15
 editor_folder items/weapon
 face mace_spiked_war.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14561,7 +14422,7 @@ type 15
 editor_folder items/weapon
 face mace_war.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14579,7 +14440,7 @@ type 15
 editor_folder items/weapon
 face mstar.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14597,7 +14458,7 @@ type 15
 editor_folder items/weapon
 face mstar_large.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14615,7 +14476,7 @@ type 15
 editor_folder items/weapon
 face mstar_small.101
 layer 3
-weapon_speed 0.025
+weapon_speed 3.25
 attack_impact 100
 dam 40
 wc 4
@@ -14631,7 +14492,7 @@ type 15
 editor_folder items/weapon
 face nunchacu.101
 layer 3
-weapon_speed 0.025
+weapon_speed 3.25
 attack_impact 100
 dam 40
 wc 5
@@ -14647,7 +14508,7 @@ type 15
 editor_folder items/weapon
 face nunchacu_war.101
 layer 3
-weapon_speed 0.025
+weapon_speed 3.25
 attack_impact 100
 item_level 3
 item_skill 4
@@ -14665,7 +14526,7 @@ type 15
 editor_folder items/weapon
 face shootingstar.101
 layer 3
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_impact 100
 item_level 7
 item_skill 4
@@ -14683,7 +14544,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face athame.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_pierce 100
 item_level 3
 item_skill 4
@@ -14701,7 +14562,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face cutlass.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_pierce 100
 item_level 3
 item_skill 4
@@ -14719,7 +14580,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face dagger.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 dam 40
 wc 4
@@ -14735,7 +14596,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face dagger_large.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_pierce 100
 dam 40
 wc 5
@@ -14751,7 +14612,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face dagger_small.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_pierce 100
 dam 40
 wc 4
@@ -14767,7 +14628,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face degen.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4
@@ -14785,7 +14646,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face flamberge.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4
@@ -14803,7 +14664,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face pallasch.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4
@@ -14821,7 +14682,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face rapier.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4
@@ -14839,7 +14700,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face saber.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4
@@ -14857,7 +14718,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face shiavona.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 item_level 7
 item_skill 4
@@ -14875,7 +14736,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face tanto.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_pierce 100
 item_level 3
 item_skill 4
@@ -14893,7 +14754,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face baselard.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 dam 40
 wc 5
@@ -14909,7 +14770,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face bastardsword.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -14927,7 +14788,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face broadsword.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -14945,7 +14806,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face falchion.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -14963,7 +14824,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face gladius.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_slash 100
 item_level 3
 item_skill 4
@@ -14981,7 +14842,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face katana.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -14999,7 +14860,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face longsword.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -15017,7 +14878,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face ninjato.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_slash 100
 item_level 3
 item_skill 4
@@ -15035,7 +14896,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face scimitar.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -15053,7 +14914,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face scythe_military.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -15071,7 +14932,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face shortsword.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_slash 100
 dam 40
 wc 4
@@ -15087,7 +14948,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face sword.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 3
 item_skill 4
@@ -15105,7 +14966,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face sword_curved.101
-weapon_speed 0.02
+weapon_speed 3.25
 attack_slash 100
 item_level 3
 item_skill 4
@@ -15123,7 +14984,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face tsurugi.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 7
 item_skill 4
@@ -15141,7 +15002,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face tulwar.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 dam 40
 wc 5
@@ -15157,7 +15018,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face wakizashi.101
-weapon_speed 0.0225
+weapon_speed 3.25
 attack_slash 100
 item_level 3
 item_skill 4
@@ -15176,7 +15037,7 @@ editor_folder items/weapon
 layer 3
 face axe_2h.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 4.25
 item_level 10
 item_skill 4
 dam 80
@@ -15194,7 +15055,7 @@ editor_folder items/weapon
 layer 3
 face axe_2h_battle.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 4.25
 dam 80
 item_level 10
 item_skill 4
@@ -15212,7 +15073,7 @@ editor_folder items/weapon
 layer 3
 face axe_2h_great.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 4.25
 dam 80
 item_level 10
 item_skill 4
@@ -15230,7 +15091,7 @@ editor_folder items/weapon
 layer 3
 face axe_2h_war.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 4.25
 item_level 10
 item_skill 4
 dam 80
@@ -15248,7 +15109,7 @@ editor_folder items/weapon
 layer 3
 face mattock.101
 attack_cleave 100
-weapon_speed 0.02
+weapon_speed 4.25
 item_level 10
 item_skill 4
 dam 80
@@ -15265,7 +15126,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face bo.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10
@@ -15283,7 +15144,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face club_giant.101
-weapon_speed 0.0175
+weapon_speed 4.25
 attack_impact 100
 dam 60
 item_level 10
@@ -15301,7 +15162,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face club_giant_spiked.101
-weapon_speed 0.0175
+weapon_speed 4.25
 attack_impact 100
 item_level 10
 item_skill 4
@@ -15319,7 +15180,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face hammer_giant.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 item_level 10
 item_skill 4
@@ -15337,7 +15198,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face hammer_swar_giant.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 item_level 10
 item_skill 4
@@ -15355,7 +15216,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face hammer_war_giant.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10
@@ -15373,7 +15234,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face mstar_2h.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10
@@ -15391,7 +15252,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face quaterstaff.101
-weapon_speed 0.0175
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10
@@ -15408,7 +15269,7 @@ name forc
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_pierce 100
 item_level 10
 item_skill 4
@@ -15426,7 +15287,7 @@ name military forc
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_pierce 100
 item_level 10
 item_skill 4
@@ -15444,7 +15305,7 @@ name spear
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_pierce 100
 item_level 10
 item_skill 4
@@ -15462,7 +15323,7 @@ name trident
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_pierce 100
 item_level 10
 item_skill 4
@@ -15480,7 +15341,7 @@ name claymore
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 sub_type 5
 item_level 10
@@ -15498,7 +15359,7 @@ name no-dachi
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 sub_type 5
 item_level 10
@@ -15516,7 +15377,7 @@ name Panzerstecher
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 item_level 10
 item_skill 4
@@ -15534,7 +15395,7 @@ name war scythe
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 item_level 10
 item_skill 4
@@ -15552,7 +15413,7 @@ name two-handed sword
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 item_level 10
 item_skill 4
@@ -15570,7 +15431,7 @@ name double sword
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 sub_type 5
 item_level 10
@@ -15588,7 +15449,7 @@ name great sword
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 item_level 10
 item_skill 4
@@ -15610,7 +15471,7 @@ face bardiche.101
 item_level 11
 item_skill 4
 attack_cleave 100
-weapon_speed 0.0175
+weapon_speed 4.5
 dam 80
 wc 5
 ac 2
@@ -15627,7 +15488,7 @@ editor_folder items/weapon
 layer 3
 face halberd.101
 attack_cleave 100
-weapon_speed 0.0175
+weapon_speed 4.5
 item_level 11
 item_skill 4
 dam 80
@@ -15646,7 +15507,7 @@ editor_folder items/weapon
 layer 3
 face spetum.101
 attack_cleave 100
-weapon_speed 0.0175
+weapon_speed 4.5
 dam 80
 item_level 11
 item_skill 4
@@ -15667,7 +15528,7 @@ face voulge.101
 attack_cleave 100
 item_level 11
 item_skill 4
-weapon_speed 0.0175
+weapon_speed 4.5
 dam 80
 wc 5
 ac 2
@@ -15683,7 +15544,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face bec_de_corbin.101
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_impact 100
 item_level 11
 item_skill 4
@@ -15702,7 +15563,7 @@ type 15
 editor_folder items/weapon
 layer 3
 face lucern_hammer.101
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_impact 100
 dam 80
 item_level 11
@@ -15720,7 +15581,7 @@ name bill-guisarme
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_pierce 100
 item_level 11
 item_skill 4
@@ -15739,7 +15600,7 @@ name guisarme
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_pierce 100
 item_level 11
 item_skill 4
@@ -15758,7 +15619,7 @@ name partisan
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_pierce 100
 item_level 11
 item_skill 4
@@ -15777,7 +15638,7 @@ name pike
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_pierce 100
 item_level 11
 item_skill 4
@@ -15796,7 +15657,7 @@ name ranseur
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 item_level 11
 item_skill 4
 attack_pierce 100
@@ -15815,7 +15676,7 @@ name fauchard
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_slash 100
 item_level 11
 item_skill 4
@@ -15834,7 +15695,7 @@ name glaive
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 attack_slash 100
 sub_type 9
 item_level 11
@@ -15853,7 +15714,7 @@ name naginata
 type 15
 editor_folder items/weapon
 layer 3
-weapon_speed 0.0175
+weapon_speed 4.5
 item_level 11
 item_skill 4
 attack_slash 100
@@ -16102,7 +15963,7 @@ material_real 193
 material 8
 value 3
 weight 150
-weapon_speed 0.035
+weapon_speed 2.5
 last_grace 13
 last_sp 7
 dam 0
@@ -16120,7 +15981,7 @@ editor_folder items/weapon
 race rock
 face t_axe.101
 layer 3
-weapon_speed 0.027
+weapon_speed 2.5
 attack_cleave 100
 dam 30
 last_grace 11
@@ -16144,7 +16005,7 @@ editor_folder items/weapon
 race rock
 layer 3
 face hammer_2.101
-weapon_speed 0.035
+weapon_speed 2.5
 attack_impact 100
 last_grace 11
 last_sp 7
@@ -16168,7 +16029,7 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_dagger.101
-weapon_speed 0.027
+weapon_speed 2.5
 attack_pierce 100
 dam 30
 last_grace 11
@@ -16192,7 +16053,7 @@ editor_folder items/weapon
 race rock
 face t_star.101
 layer 3
-weapon_speed 0.027
+weapon_speed 2.5
 attack_slash 100
 dam 30
 last_grace 11
@@ -16216,7 +16077,7 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_boulder.101
-weapon_speed 0.035
+weapon_speed 2.5
 attack_impact 100
 last_grace 13
 last_sp 7
@@ -16239,7 +16100,7 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_lboulder.101
-weapon_speed 0.035
+weapon_speed 3.0
 attack_impact 100
 last_grace 15
 last_sp 7
@@ -16261,7 +16122,7 @@ editor_folder items/weapon
 race rock
 layer 3
 face t_rock.101
-weapon_speed 0.035
+weapon_speed 4.0
 attack_impact 100
 dam 10
 last_grace 11
@@ -18192,6 +18053,30 @@ weight 1500000
 no_pass 1
 no_pick 1
 end
+Object rock_big12
+name rock
+type 79
+editor_folder landscape/rocks
+layer 5
+blocksview 1
+face rock_big12.101
+material 64
+weight 1500000
+no_pass 1
+no_pick 1
+end
+Object rock_big11
+name rock
+type 79
+editor_folder landscape/rocks
+layer 5
+face rock_big11.101
+material 64
+weight 1500000
+no_pass 1
+blocksview 1
+no_pick 1
+end
 Object rock_wall1
 name rocks
 type 79
@@ -18590,6 +18475,17 @@ layer 5
 face rock_bb2.101
 material 64
 no_pass 1
+no_pick 1
+end
+Object no_tele_rock
+name mysterious stone
+type 79
+editor_folder landscape/rocks
+face tele_rock.101
+layer 5
+is_animated 0
+material 64
+no_pass 0
 no_pick 1
 end
 Object bullet
@@ -19015,7 +18911,7 @@ resist_fear 100
 dam 40
 attack_acid 70
 attack_slash 30
-weapon_speed 0.0375
+weapon_speed 3.5
 speed -0.04
 level 1
 weight 13250
@@ -19063,7 +18959,7 @@ resist_fear 100
 dam 42
 attack_poison 70
 attack_slash 30
-weapon_speed 0.0375
+weapon_speed 3.5
 speed -0.04
 level 1
 weight 12750
@@ -19110,7 +19006,7 @@ resist_confusion 100
 resist_fear 100
 dam 44
 attack_slash 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.04
 level 1
 weight 15750
@@ -19157,7 +19053,7 @@ resist_confusion 100
 resist_fear 100
 dam 40
 attack_pierce 100
-weapon_speed 0.040
+weapon_speed 3.5
 speed -0.03
 level 1
 weight 8250
@@ -19204,7 +19100,7 @@ resist_confusion 100
 resist_fear 100
 dam 39
 attack_impact 100
-weapon_speed 0.0375
+weapon_speed 3.5
 speed -0.025
 level 1
 weight 11250
@@ -19253,7 +19149,7 @@ resist_poison 100
 dam 54
 attack_cold 80
 attack_pierce 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 12250
@@ -19301,7 +19197,7 @@ resist_fear 100
 dam 53
 attack_cleave 80
 attack_acid 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 16250
@@ -19350,7 +19246,7 @@ resist_poison 100
 dam 52
 attack_acid 60
 attack_poison 40
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 17250
@@ -19399,7 +19295,7 @@ resist_poison 100
 dam 54
 attack_fire 60
 attack_slash 40
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 14250
@@ -19448,7 +19344,7 @@ resist_poison 100
 dam 57
 attack_cold 60
 attack_poison 40
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.05
 level 1
 weight 16450
@@ -19497,7 +19393,7 @@ resist_poison 100
 dam 57
 attack_acid 80
 attack_pierce 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.03
 level 1
 weight 19250
@@ -19546,7 +19442,7 @@ resist_poison 100
 dam 53
 attack_cold 80
 attack_pierce 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.03
 level 1
 weight 14500
@@ -19595,7 +19491,7 @@ resist_poison 100
 dam 56
 resist_electricity 80
 attack_pierce 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.031
 level 1
 weight 16250
@@ -19644,7 +19540,7 @@ resist_poison 100
 dam 55
 resist_poison 80
 attack_pierce 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.031
 level 1
 weight 17250
@@ -19693,7 +19589,7 @@ resist_poison 100
 dam 56
 resist_fire 80
 attack_pierce 20
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.031
 level 1
 weight 17250
@@ -19741,7 +19637,7 @@ resist_fear 100
 resist_poison 100
 dam 41
 resist_impact 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.029
 level 1
 weight 17250
@@ -19784,7 +19680,7 @@ wc 4
 resist_impact 10
 dam 52
 attack_cleave 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.06
 run_away 10
 level 1
@@ -19837,7 +19733,7 @@ resist_impact 25
 resist_cleave 25
 resist_fear 100
 attack_pierce 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.06
 run_away 6
 level 1
@@ -20034,7 +19930,7 @@ maxhp 58
 ac 11
 wc 3
 dam 58
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
@@ -20081,7 +19977,7 @@ maxhp 52
 ac 10
 wc 1
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
@@ -20128,7 +20024,7 @@ maxhp 62
 ac 11
 wc 2
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
@@ -20175,7 +20071,7 @@ maxhp 51
 ac 9
 wc 0
 dam 47
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -20222,7 +20118,7 @@ maxhp 55
 ac 9
 wc 0
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
@@ -20269,7 +20165,7 @@ maxhp 54
 ac 9
 wc 1
 dam 52
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.060
 level 1
@@ -20316,7 +20212,7 @@ maxhp 55
 ac 10
 wc 1
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -20364,7 +20260,7 @@ maxhp 50
 ac 10
 wc 1
 dam 50
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -20410,7 +20306,7 @@ maxhp 85
 ac 10
 wc 3
 dam 66
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.060
 level 1
@@ -20456,7 +20352,7 @@ maxhp 85
 ac 10
 wc 3
 dam 66
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.060
 level 1
@@ -20512,7 +20408,7 @@ resist_fear 80
 resist_confusion 40
 resist_cold -30
 dam 82
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -20604,7 +20500,7 @@ resist_cleave 25
 resist_fear 100
 resist_cold -30
 dam 72
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -20685,7 +20581,7 @@ ac 13
 wc 4
 resist_fear 50
 dam 75
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.0225
 level 1
@@ -20732,7 +20628,7 @@ maxhp 65
 ac 12
 wc 7
 dam 57
-weapon_speed 0.045
+weapon_speed 3.5
 resist_slash 20
 resist_fire 30
 resist_fear 25
@@ -20778,7 +20674,7 @@ maxhp 66
 ac 10
 wc 1
 dam 52
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.061
 level 1
@@ -20826,7 +20722,7 @@ maxhp 75
 ac 10
 wc 3
 dam 61
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -20873,7 +20769,7 @@ maxhp 71
 ac 12
 wc 6
 dam 62
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.061
 level 1
@@ -20920,7 +20816,7 @@ maxhp 69
 ac 11
 wc 6
 dam 54
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.059
 level 1
@@ -20967,7 +20863,7 @@ maxhp 70
 ac 12
 wc 6
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.058
 level 1
@@ -21015,7 +20911,7 @@ maxhp 72
 ac 10
 wc 3
 dam 52
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.061
 level 1
@@ -21061,7 +20957,7 @@ maxhp 72
 ac 10
 wc 4
 dam 62
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 speed -0.058
 level 1
@@ -21107,7 +21003,7 @@ maxhp 72
 ac 9
 wc 4
 dam 61
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 resist_acid 25
 speed -0.055
@@ -21154,7 +21050,7 @@ maxhp 74
 ac 10
 wc 6
 dam 64
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 resist_acid 25
 speed -0.054
@@ -21201,7 +21097,7 @@ maxhp 52
 ac 9
 wc 5
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 protect_poison 25
 protect_acid 25
@@ -21254,11 +21150,11 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_magic 20
+resist_force 20
 dam 42
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 60
-attack_magic 30
+attack_force 30
 attack_weaponmagic 10
 speed -0.049
 level 1
@@ -21308,11 +21204,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 50
+resist_force 50
 dam 55
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 35
-attack_magic 35
+attack_force 35
 attack_weaponmagic 30
 speed -0.048
 level 1
@@ -21362,11 +21258,11 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_magic 30
+resist_force 30
 dam 45
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 50
-attack_magic 25
+attack_force 25
 attack_weaponmagic 25
 speed -0.048
 level 1
@@ -21416,11 +21312,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 50
+resist_force 50
 dam 65
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 35
-attack_magic 35
+attack_force 35
 attack_weaponmagic 30
 speed -0.0485
 level 1
@@ -21470,11 +21366,11 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_force 50
 dam 35
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 20
-attack_magic 50
+attack_force 50
 attack_weaponmagic 30
 speed -0.047
 level 1
@@ -21523,11 +21419,11 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_magic 50
+resist_force 50
 dam 48
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 60
-attack_magic 20
+attack_force 20
 attack_weaponmagic 20
 speed -0.049
 level 1
@@ -21578,7 +21474,7 @@ resist_cleave 10
 resist_pierce 10
 resist_slash 10
 dam 55
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -21629,7 +21525,7 @@ resist_cleave 10
 resist_pierce 10
 resist_slash 10
 dam 41
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -21680,7 +21576,7 @@ resist_cleave 10
 resist_pierce 10
 resist_slash 10
 dam 35
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.047
 level 1
@@ -21727,7 +21623,7 @@ maxhp 57
 ac 11
 wc 7
 dam 41
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -21778,11 +21674,11 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_force 50
 dam 40
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 60
-attack_magic 30
+attack_force 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -21833,11 +21729,11 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_magic 50
+resist_force 50
 dam 36
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 60
-attack_magic 30
+attack_force 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -21888,11 +21784,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_magic 25
+resist_force 25
 dam 40
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 40
-attack_magic 30
+attack_force 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -21942,9 +21838,9 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_magic 50
+resist_force 50
 dam 48
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 50
 attack_weaponmagic 50
 speed -0.048
@@ -21992,7 +21888,7 @@ maxhp 57
 ac 11
 wc 7
 dam 41
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -22039,7 +21935,7 @@ maxhp 52
 ac 11
 wc 7
 dam 35
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -22086,7 +21982,7 @@ maxhp 52
 ac 11
 wc 7
 dam 35
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -22133,7 +22029,7 @@ maxhp 52
 ac 11
 wc 7
 dam 35
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.047
 level 1
@@ -22177,7 +22073,7 @@ maxhp 70
 ac 12
 wc 4
 dam 50
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
@@ -22222,7 +22118,7 @@ maxhp 60
 ac 9
 wc 0
 dam 50
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
@@ -22265,7 +22161,7 @@ maxhp 65
 ac 10
 wc 1
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
@@ -22308,7 +22204,7 @@ maxhp 60
 ac 10
 wc 1
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
@@ -22351,7 +22247,7 @@ maxhp 61
 ac 10
 wc 1
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1
@@ -22397,7 +22293,7 @@ maxhp 80
 ac 11
 wc 5
 dam 80
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 resist_acid 25
 resist_confusion 25
@@ -22444,7 +22340,7 @@ maxhp 56
 ac 10
 wc 2
 dam 58
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 90
 attack_acid 10
 resist_acid 100
@@ -22493,7 +22389,7 @@ maxhp 66
 ac 11
 wc 7
 dam 56
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fire 100
 resist_pierce 25
 resist_slash 25
@@ -22584,7 +22480,7 @@ maxhp 63
 ac 10
 wc 3
 dam 56
-weapon_speed 0.055
+weapon_speed 3.5
 attack_impact 100
 speed -0.048
 level 1
@@ -22631,7 +22527,7 @@ maxhp 71
 ac 10
 wc 3
 dam 61
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.0485
 level 1
@@ -22678,7 +22574,7 @@ maxhp 69
 ac 10
 wc 3
 dam 58
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.048
 level 1
@@ -22725,7 +22621,7 @@ maxhp 66
 ac 10
 wc 3
 dam 56
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 speed -0.0486
 level 1
@@ -22773,7 +22669,7 @@ maxhp 61
 ac 10
 wc 2
 dam 54
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 speed -0.047
 level 1
@@ -22821,7 +22717,7 @@ maxhp 61
 ac 9
 wc 2
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 attack_pierce 100
 speed -0.047
 level 1
@@ -22867,7 +22763,7 @@ maxhp 71
 ac 11
 wc 4
 dam 62
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.049
 level 1
@@ -22913,7 +22809,7 @@ maxhp 67
 ac 10
 wc 4
 dam 62
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.048
 level 1
@@ -22955,7 +22851,7 @@ maxhp 66
 ac 10
 wc 3
 dam 52
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.048
 level 1
@@ -22998,7 +22894,7 @@ maxhp 71
 ac 10
 wc 5
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 speed -0.048
 level 1
@@ -23054,7 +22950,7 @@ maxhp 66
 ac 9
 wc 6
 dam 48
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_poison 100
 resist_confusion 100
@@ -23099,7 +22995,7 @@ maxhp 66
 ac 9
 wc 7
 dam 55
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fire -35
 resist_cold 100
 resist_fear 100
@@ -23146,7 +23042,7 @@ maxhp 66
 ac 10
 wc 6
 dam 55
-weapon_speed 0.045
+weapon_speed 3.5
 resist_cold -35
 resist_fire 100
 resist_fear 100
@@ -23157,6 +23053,96 @@ speed -0.045
 level 1
 weight 320000
 animation lavagolem
+is_animated 1
+anim_speed 4
+no_pick 1
+end
+Object black_golem_mage
+name black mage golem
+type 80
+editor_folder mobs/summoned
+face black_golem_mage.131
+race golem
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_neutral 1
+terrain_flag 1
+can_open_door 1
+can_use_weapon 1
+Int 10
+Wis 6
+Dex 3
+Con 15
+exp 95
+magic 1
+Pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 66
+ac 9
+wc 6
+dam 48
+weapon_speed 3.5
+resist_fear 100
+resist_poison 100
+resist_confusion 100
+attack_impact 100
+speed -0.046
+level 1
+weight 185000
+animation black_golem_mage
+is_animated 1
+anim_speed 4
+no_pick 1
+end
+Object golem_mage
+name mage golem
+type 80
+editor_folder mobs/summoned
+face golem_mage.131
+race golem
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_neutral 1
+terrain_flag 1
+can_open_door 1
+can_use_weapon 1
+Int 10
+Wis 6
+Dex 3
+Con 15
+exp 95
+magic 1
+Pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 66
+ac 9
+wc 6
+dam 48
+weapon_speed 3.5
+resist_fear 100
+resist_poison 100
+resist_confusion 100
+attack_impact 100
+speed -0.046
+level 1
+weight 185000
+animation golem_mage
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -23199,7 +23185,7 @@ maxhp 90
 ac 11
 wc 6
 dam 66
-weapon_speed 0.045
+weapon_speed 3.5
 resist_cold 75
 resist_pierce 25
 resist_slash 25
@@ -23292,7 +23278,7 @@ maxhp 77
 ac 11
 wc 7
 dam 66
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_paralyze 100
 resist_confusion 100
@@ -23342,7 +23328,7 @@ maxhp 65
 ac 10
 wc 3
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_paralyze 100
 attack_slash 70
@@ -23393,7 +23379,7 @@ maxhp 62
 ac 8
 wc 6
 dam 52
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_paralyze 50
 resist_confusion 50
@@ -23443,7 +23429,7 @@ maxhp 62
 ac 9
 wc 3
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 attack_slash 100
 speed -0.048
@@ -23490,7 +23476,7 @@ maxhp 65
 ac 10
 wc 2
 dam 50
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 attack_slash 100
 speed -0.048
@@ -23537,7 +23523,7 @@ maxhp 60
 ac 9
 wc 4
 dam 55
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 attack_slash 100
 speed -0.048
@@ -23587,7 +23573,7 @@ maxhp 63
 ac 10
 wc 7
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_paralyze 30
 resist_confusion 40
@@ -23638,7 +23624,7 @@ maxhp 63
 ac 11
 wc 7
 dam 53
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fear 100
 resist_paralyze 50
 resist_confusion 50
@@ -23687,7 +23673,7 @@ maxhp 66
 ac 11
 wc 7
 dam 56
-weapon_speed 0.045
+weapon_speed 3.5
 resist_fire 100
 resist_pierce 25
 resist_slash 25
@@ -23740,6 +23726,17 @@ alive 1
 no_pick 1
 x 1
 y 1
+end
+Object shovel_dirt
+name Shovel
+type 71
+editor_folder outdoor/floors
+face shovel_dirt.101
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
 end
 Object scarecrow.111
 name scarecrow
@@ -24128,32 +24125,27 @@ last_eat 1
 maxsp 1
 ac 3
 exp 50
-resist_magic 100
+resist_force 100
 resist_fire 100
 resist_electricity 100
 resist_cold 100
 resist_confusion 100
 resist_acid 100
 resist_drain 100
-resist_ghosthit 100
 resist_poison 100
 resist_slow 100
 resist_paralyze 100
-resist_time 100
 resist_fear 100
 resist_cancellation 100
 resist_depletion 100
 resist_death 100
 resist_chaos 100
-resist_counterspell 100
+resist_countermagic 100
 resist_godpower 100
-resist_purity 100
-resist_blind 100
 resist_internal 100
-resist_life_steal 100
+resist_lifesteal 100
 resist_nether 100
 resist_sonic 100
-resist_demonic 100
 resist_psionic 100
 blocksview 1
 end
@@ -26418,6 +26410,60 @@ name fence
 type 77
 editor_folder walls/fence
 face fence_01.182
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.111
+name fence
+type 77
+editor_folder walls/fence
+face small_fence1.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.121
+name fence
+type 77
+editor_folder walls/fence
+face small_fence1.121
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.131
+name fence
+type 77
+editor_folder walls/fence
+face small_fence1.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.141
+name fence
+type 77
+editor_folder walls/fence
+face small_fence1.141
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.161
+name fence
+type 77
+editor_folder walls/fence
+face small_fence1.161
+layer 5
+no_pick 1
+no_pass 1
+end
+Object small_fence1.181
+name fence
+type 77
+editor_folder walls/fence
+face small_fence1.181
 layer 5
 no_pick 1
 no_pass 1

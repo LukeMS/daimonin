@@ -57,7 +57,7 @@
 
 #include <sys/types.h>
 
-#include <sys/stat.h>
+#include <sys/stat.h> 
 
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */
 #if HAVE_DIRENT_H
@@ -76,7 +76,7 @@
 #  include <ndir.h>
 # endif
 #endif
-#endif
+#endif 
 
 #ifdef WIN32
 #include <win32.h>

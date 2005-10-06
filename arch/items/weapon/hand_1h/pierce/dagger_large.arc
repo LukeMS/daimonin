@@ -2,7 +2,7 @@ Object dagger_large
 name large dagger
 layer 3
 face dagger_large.101
-weapon_speed 0.025
+weapon_speed 3.25
 attack_pierce 100
 dam 40
 wc 5

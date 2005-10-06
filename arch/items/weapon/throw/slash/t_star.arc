@@ -3,7 +3,7 @@ name throwing star
 race rock
 face t_star.101
 layer 3
-weapon_speed 0.027
+weapon_speed 2.5
 attack_slash 100
 dam 30
 last_grace 11

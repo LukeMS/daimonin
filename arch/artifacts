@@ -1,4 +1,4 @@
-# Artifactitem_level_arts file for Daimonin
+# Artifact file for Daimonin
 #
 # The Artifacts file looks very similiar to CF
 # list file but its used in an advanced way.
@@ -3972,7 +3972,6 @@ title of poison
 type 6
 food 10
 hp -5
-resist_magic -10
 Str -1
 Con -1
 value 5
@@ -3989,7 +3988,6 @@ title of hideous poison
 type 6
 food 10
 hp -25
-resist_magic -25
 Str -1
 Con -1
 Dex -1

@@ -29,24 +29,24 @@
 
 typedef struct gui_book_line
 {
-    int mode;
-    int color;
-    char line[BOOK_LINES_CHAR+1];
+	int mode;
+	int color;
+	char line[BOOK_LINES_CHAR+1];
 } _gui_book_line;
 
 typedef struct gui_book_struct
 {
-    int mode;
-    int pages;
-    int page_show;
-    struct gui_book_page *start;
+	int mode;
+	int pages;
+	int page_show;
+	struct gui_book_page *start;
 } _gui_book_struct;
 
 
 typedef struct gui_book_page
 {
-    struct gui_book_page *next;
-    _gui_book_line *line[BOOK_PAGE_LINES];
+	struct gui_book_page *next;
+	_gui_book_line *line[BOOK_PAGE_LINES];
 } _gui_book_page;
 
 extern _gui_book_struct *load_book_interface(int mode, char *data, int len);

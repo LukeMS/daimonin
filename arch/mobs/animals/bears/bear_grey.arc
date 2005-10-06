@@ -31,7 +31,7 @@ wc 4
 resist_impact 10
 dam 52
 attack_cleave 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.06
 run_away 10
 level 1

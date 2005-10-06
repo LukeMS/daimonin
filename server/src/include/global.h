@@ -321,6 +321,7 @@ typedef struct linked_char
 #include "object.h"
 #include "links.h"
 #include "arch.h"
+#include "spells.h"
 #include "map.h"
 #include "tod.h"
 #include "pathfinder.h"
@@ -353,9 +354,6 @@ typedef struct linked_char
 
 /* Now for recipe/alchemy */
 #include "recipe.h"
-
-/* Now for spells */
-#include "spells.h"
 
 /* Monster AI and mobdata structs */
 #include "monster.h"

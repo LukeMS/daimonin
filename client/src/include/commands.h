@@ -76,8 +76,8 @@ extern void MapstatsCmd(unsigned char *data, int len);
 extern void SpelllistCmd(unsigned char *data, int len);
 extern void SkilllistCmd(unsigned char *data, int len);
 
-extern void SkillRdyCmd(char *data, int len);
-extern void GolemCmd(char *data, int len);
+extern void SkillRdyCmd(unsigned char *data, int len);
+extern void GolemCmd(unsigned char *data, int len);
 extern void ItemXYCmd(unsigned char *data, int len, int bflag);
 extern void ItemXCmd(unsigned char *data, int len);
 extern void ItemYCmd(unsigned char *data, int len);

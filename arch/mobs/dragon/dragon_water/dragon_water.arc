@@ -31,7 +31,7 @@ ac 13
 wc 4
 resist_fear 50
 dam 75
-weapon_speed 0.045
+weapon_speed 3.5
 attack_slash 100
 speed -0.0225
 level 1

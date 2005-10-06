@@ -334,43 +334,20 @@ void regenerate_rod(object *rod)
 
 void remove_force(object *op)
 {
-    if (op->env == NULL)
+    object *env;
+
+    if ((env=op->env) == NULL)
     {
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
         return;
     }
     CLEAR_FLAG(op, FLAG_APPLIED);
-    change_abil(op->env, op);
-    fix_player(op->env);
     remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-}
-
-void remove_blindness(object *op)
-{
-    if (--op->stats.food > 0)
-        return;
-    CLEAR_FLAG(op, FLAG_APPLIED);
-    if (op->env != NULL)
-    {
-        change_abil(op->env, op);
-        fix_player(op->env);
-    }
-    remove_ob(op);
-    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-}
-
-void remove_confusion(object *op)
-{
-    if (--op->stats.food > 0)
-        return;
-    if (op->env != NULL)
-    {
-        CLEAR_FLAG(op->env, FLAG_CONFUSED);
-        new_draw_info(NDI_UNIQUE, 0, op->env, "You regain your senses.\n");
-    }
-    remove_ob(op);
+    if(env->type == PLAYER)
+        change_abil(env, op);
+    else
+        fix_player(env);
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 }
 
@@ -418,7 +395,7 @@ void poison_more(object *op)
         op->env->stats.food--;
         new_draw_info(NDI_UNIQUE, 0, op->env, "You feel very sick...");
     }
-    (void) hit_player(op->env, op->stats.dam, op, AT_INTERNAL);
+    hit_player(op->env, op->stats.dam, op);
 }
 
 /* TODO: i have not included damage to mobs/player on reverse up going gates!
@@ -550,7 +527,7 @@ void move_gate(object *op)
             {
                 if (IS_LIVE(tmp))
                 {
-                    hit_player(tmp, 4, op, AT_PHYSICAL);
+                    hit_player(tmp, 4, op);
                     if (tmp->type == PLAYER)
                         new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
                 }
@@ -1410,11 +1387,14 @@ void move_player_mover(object *op)
             else
                 move_object(victim, dir);
 
+            /* flag to paralyze the player */
+            /* ATM disabled when i removed attacktype - when needed move to better attribute 
+               MT 09-2005
             if (!op->stats.maxsp && op->attacktype)
                 op->stats.maxsp = 2;
-
-            if (op->attacktype)  /* flag to paralyze the player */
+            if (op->attacktype)  
                 victim->speed_left = -FABS(op->stats.maxsp * victim->speed / op->speed);
+             */
         }
     }
 }
@@ -1712,7 +1692,7 @@ int process_object(object *op)
         return 1;
 
     if (QUERY_FLAG(op, FLAG_MONSTER))
-        if (move_monster(op))
+        if (move_monster(op, TRUE))
             return 1;
 
     if (QUERY_FLAG(op, FLAG_CHANGING) && !op->state)
@@ -1728,7 +1708,67 @@ int process_object(object *op)
     if (QUERY_FLAG(op, FLAG_IS_USED_UP) && --op->stats.food <= 0)
     {
         if (QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)
+        {
+            /* give out some useful message - very nice when a mob lose a effect */
+            if(IS_LIVE(op->env)&&op->env->map)
+            {
+                if(op->sub_type1 == ST1_FORCE_SNARE)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                        MAP_INFO_NORMAL, op->env, op->env, "%s suddenly walks faster.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly walk faster!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_BLIND)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                        MAP_INFO_NORMAL, op->env, op->env, "%s suddenly can see again.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly can see again!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_CONFUSED)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                        MAP_INFO_NORMAL, op->env, op->env, "%s suddenly regain his senses.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly regain your senses!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_PARALYZE)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                        MAP_INFO_NORMAL, op->env, op->env, "%s suddenly moves again.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly can move again!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_FEAR)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                        MAP_INFO_NORMAL, op->env, op->env, "%s suddenly looks braver.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly feel braver!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_SLOWED)
+                {
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    MAP_INFO_NORMAL, op->env, op->env, "%s suddenly moves faster.", query_name(op->env));
+                    if(op->env->type == PLAYER)
+                        new_draw_info(NDI_UNIQUE, 0, op->env, "The world suddenly moves slower!");
+                }
+                else if(op->sub_type1 == ST1_FORCE_DEPLETE) /* depletion */
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                                MAP_INFO_NORMAL, op->env, op->env, "%s recovers depleted stats.", query_name(op->env));
+                else if(op->sub_type1 == ST1_FORCE_DRAIN)
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                                MAP_INFO_NORMAL, op->env, op->env, "%s recovers drained levels.", query_name(op->env));
+                /*
+                else
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                                MAP_INFO_NORMAL, op->env, op->env, "%s lose some effects.", query_name(op->env));
+                */
+
+            }
             remove_force(op);
+        }
         else
         {
             /* we have a decying container on the floor (asuming its only possible here) ! */
@@ -1806,12 +1846,6 @@ int process_object(object *op)
         case SPAWN_POINT:
           spawn_point(op);
           return 0;
-        case BLINDNESS:
-          remove_blindness(op);
-          return 0;
-        case CONFUSION:
-          remove_confusion(op);
-          return 0;
         case POISONING:
           poison_more(op);
           return 0;
@@ -1821,9 +1855,11 @@ int process_object(object *op)
         case SYMPTOM:
           move_symptom(op);
           return 0;
+          /*
         case WORD_OF_RECALL:
           execute_wor(op);
           return 0;
+          */
         case BULLET:
           move_fired_arch(op);
           return 0;
@@ -1863,18 +1899,22 @@ int process_object(object *op)
         case GOLEM:
           move_golem(op);
           return 0;
+          /*
         case EARTHWALL:
-          hit_player(op, 2, op, AT_PHYSICAL);
+          hit_player(op, 2, op);
           return 0;
+          */
         case FIREWALL:
           move_firewall(op);
           return 0;
         case FIRECHEST:
           move_firechest(op);
           return 0;
+          /*
         case MOOD_FLOOR:
           do_mood_floor(op, op);
           return 0;
+          */
         case GATE:
           move_gate(op);
           return 0;
@@ -1893,9 +1933,11 @@ int process_object(object *op)
         case PIT:
           move_pit(op);
           return 0;
+          /*
         case DEEP_SWAMP:
           move_deep_swamp(op);
           return 0;
+          */
         case CANCELLATION:
           move_cancellation(op);
           return 0;
@@ -1914,12 +1956,14 @@ int process_object(object *op)
         case MARKER:
           move_marker(op);
           return 0;
+          /*
         case AURA:
           move_aura(op);
           return 0;
         case PEACEMAKER:
           move_peacemaker(op);
           return 0;
+          */
         case TYPE_TIMER:
           move_timer(op);
           return 0;

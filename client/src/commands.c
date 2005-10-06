@@ -391,7 +391,7 @@ void ImageCmd(unsigned char *data, int len)
 }
 
 
-void SkillRdyCmd(char *data, int len)
+void SkillRdyCmd(unsigned char *data, int len)
 {
     int i, ii;
 
@@ -474,7 +474,7 @@ void TargetObject(unsigned char *data, int len)
 
 void StatsCmd(unsigned char *data, int len)
 {
-    int     i   = 0;
+    int     i   = 0, x;
     int     c, temp;
     char   *tmp, *tmp2;
 
@@ -540,7 +540,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_STR:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Str)
+                  if (temp >= cpl.stats.Str)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -549,7 +549,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_INT:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Int)
+                  if (temp >= cpl.stats.Int)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -558,7 +558,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_POW:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Pow)
+                  if (temp >= cpl.stats.Pow)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -568,7 +568,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_WIS:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Wis)
+                  if (temp >= cpl.stats.Wis)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -578,7 +578,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_DEX:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Dex)
+                  if (temp >= cpl.stats.Dex)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -587,7 +587,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_CON:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Con)
+                  if (temp >= cpl.stats.Con)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -596,7 +596,7 @@ void StatsCmd(unsigned char *data, int len)
                   break;
                 case CS_STAT_CHA:
                   temp = (int) * (data + i++);
-                  if (temp > cpl.stats.Cha)
+                  if (temp >= cpl.stats.Cha)
                       cpl.warn_statup = TRUE;
                   else
                       cpl.warn_statdown = TRUE;
@@ -608,10 +608,23 @@ void StatsCmd(unsigned char *data, int len)
                   if (temp < cpl.stats.exp)
                       cpl.warn_drain = TRUE;
                   cpl.stats.exp = temp;
+                  /* get the real level depending on the exp */
+                  for(x=0;x<=110;x++)
+                  {
+                      if(server_level.exp[x]>(uint32)temp)
+                      {
+                          cpl.stats.exp_level = x-1;
+                          break;
+                      }
+                  }
                   i += 4;
                   break;
                 case CS_STAT_LEVEL:
                   cpl.stats.level = (char) * (data + i++);
+                  if (cpl.stats.level != cpl.stats.exp_level)
+                  {
+                      cpl.warn_drain = TRUE;
+                  }
                   break;
                 case CS_STAT_WC:
                   cpl.stats.wc = (char) GetShort_String(data + i);
@@ -634,7 +647,8 @@ void StatsCmd(unsigned char *data, int len)
                   i += 2;
                   break;
                 case CS_STAT_WEAP_SP:
-                  cpl.stats.weapon_sp = (int) * (data + i++);
+                    cpl.stats.weapon_sp = ((float)GetInt_String(data + i))/1000.0f;
+                    i += 4;
                   break;
                 case CS_STAT_FLAGS:
                   cpl.stats.flags = GetShort_String(data + i);
@@ -1673,7 +1687,7 @@ void SpelllistCmd(unsigned char *data, int len)
     }
 }
 
-void GolemCmd(char *data, int len)
+void GolemCmd(unsigned char *data, int len)
 {
     int     mode, face;
     char   *tmp, buf[256];

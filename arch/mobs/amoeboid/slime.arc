@@ -36,7 +36,7 @@ resist_fear 100
 resist_poison 100
 dam 41
 resist_impact 100
-weapon_speed 0.038
+weapon_speed 3.5
 speed -0.029
 level 1
 weight 17250

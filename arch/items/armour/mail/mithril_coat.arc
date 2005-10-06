@@ -8,12 +8,12 @@ material_real 514
 is_magical 1
 ac 10
 item_level 50
+proof_phy 1
+proof_ele 1
 protect_impact 30
 protect_slash 45
 protect_cleave 30
 protect_pierce 30
-is_vul_magic 1
-is_vul_sphere 1
 weight 7500
 value 252500
 end

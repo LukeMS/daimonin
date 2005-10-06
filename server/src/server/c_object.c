@@ -1104,7 +1104,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     }
     if (val != -1)
     {
-        sprintf(buf2,"Best armour protection seems to be for %s.\n", protection_name[val]);
+        sprintf(buf2,"Best armour protection seems to be for %s.\n", attack_name[val]);
         strcat(buf,buf2);
     }
 
@@ -1279,124 +1279,77 @@ char *examine(object *op, object *tmp, int flag)
                 strcat(buf_out, buf);
             }
         }
+
         if (tmp->item_quality)
         {
-            if (QUERY_FLAG(tmp, FLAG_INDESTRUCTIBLE))
-            {
-                sprintf(buf, "Qua: %d Con: Indestructible.\n", tmp->item_quality);
-                strcat(buf_out, buf);
-            }
-            else
-            {
-                sprintf(buf, "Qua: %d Con: %d.\n", tmp->item_quality, tmp->item_condition);
-                strcat(buf_out, buf);
+            int tmp_flag = 0;
 
-                if (QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL)
-                 || QUERY_FLAG(tmp, FLAG_PROOF_MAGIC)
-                 || QUERY_FLAG(tmp,
-                               FLAG_PROOF_SPHERE)
-                 || QUERY_FLAG(tmp,
-                               FLAG_PROOF_PHYSICAL))
+            sprintf(buf, "Qua: %d Con: %d.\n", tmp->item_quality, tmp->item_condition);
+            strcat(buf_out, buf); 
+
+            if (QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
+                tmp_flag +=1;
+            if (QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
+                tmp_flag +=2;
+            if (QUERY_FLAG(tmp, FLAG_PROOF_MAGICAL))
+                tmp_flag +=4;
+            if (QUERY_FLAG(tmp, FLAG_PROOF_SPHERICAL))
+                tmp_flag +=8;
+
+            if(tmp_flag)
+            {
+                strcpy(buf, "It is ");
+
+                if(tmp_flag == 15)
+                {
+                    strcat(buf, "indestructible");
+                }
+                else
                 {
                     int ft  = 0;
 
-                    strcpy(buf, "It is ");
                     if (QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
                     {
-                        strcpy(tmp_buf, "acid-proof");
+                        strcat(buf, "physical");
                         ft = 1;
                     }
                     if (QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
                     {
                         if (ft)
-                            strcat(buf, tmp_buf);
-                        strcpy(tmp_buf, "elemental-proof");
-                        ft += 1;
-                    }
-                    if (QUERY_FLAG(tmp, FLAG_PROOF_MAGIC))
-                    {
-                        if (ft)
-                        {
-                            if (ft > 1)
-                                strcat(buf, ", ");
-                            strcat(buf, tmp_buf);
-                        }
-                        strcpy(tmp_buf, "magic-proof");
-                        ft += 1;
-                    }
-                    if (QUERY_FLAG(tmp, FLAG_PROOF_SPHERE))
-                    {
-                        if (ft)
-                        {
-                            if (ft > 1)
-                                strcat(buf, ", ");
-                            strcat(buf, tmp_buf);
-                        }
-                        strcpy(tmp_buf, "sphere-proof");
-                        ft += 1;
-                    }
-                    if (ft)
-                    {
-                        if (ft > 1)
-                            strcat(buf, " and ");
-                        strcat(buf, tmp_buf);
-                        strcat(buf, ".\n");
-                    }
-                    strcat(buf_out, buf);
-                }
-                if ((QUERY_FLAG(tmp, FLAG_VUL_ELEMENTAL) && !QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
-                 || (QUERY_FLAG(tmp, FLAG_VUL_MAGIC) && !QUERY_FLAG(tmp, FLAG_PROOF_MAGIC))
-                 || (QUERY_FLAG(tmp, FLAG_VUL_SPHERE) && !QUERY_FLAG(tmp, FLAG_PROOF_SPHERE))
-                 || (QUERY_FLAG(tmp, FLAG_VUL_PHYSICAL) && !QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL)))
-                {
-                    int ft  = 0;
-
-                    strcpy(buf, "It is vulnerable from ");
-                    if (QUERY_FLAG(tmp, FLAG_VUL_PHYSICAL) && !QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
-                    {
-                        strcpy(tmp_buf, "physical");
+                            strcat(buf, ", ");
+                        strcat(buf, "elemental");
                         ft = 1;
                     }
-                    if (QUERY_FLAG(tmp, FLAG_VUL_ELEMENTAL) && !QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
+                    if (QUERY_FLAG(tmp, FLAG_PROOF_MAGICAL))
                     {
                         if (ft)
-                            strcat(buf, tmp_buf);
-                        strcpy(tmp_buf, "elemental");
-                        ft += 1;
+                            strcat(buf, ", ");
+                        strcat(tmp_buf, "magical");
+                        ft = 1;
                     }
-                    if (QUERY_FLAG(tmp, FLAG_VUL_MAGIC) && !QUERY_FLAG(tmp, FLAG_PROOF_MAGIC))
+                    if (QUERY_FLAG(tmp, FLAG_PROOF_SPHERICAL))
                     {
                         if (ft)
-                        {
-                            if (ft > 1)
-                                strcat(buf, ", ");
-                            strcat(buf, tmp_buf);
-                        }
-                        strcpy(tmp_buf, "magic");
-                        ft += 1;
+                            strcat(buf, ", ");
+                        strcat(tmp_buf, "spherical");
+                        ft = 1;
                     }
-                    if (QUERY_FLAG(tmp, FLAG_VUL_SPHERE) && !QUERY_FLAG(tmp, FLAG_PROOF_SPHERE))
-                    {
-                        if (ft)
-                        {
-                            if (ft > 1)
-                                strcat(buf, ", ");
-                            strcat(buf, tmp_buf);
-                        }
-                        strcpy(tmp_buf, "sphere");
-                        ft += 1;
-                    }
-                    if (ft)
-                    {
-                        if (ft > 1)
-                            strcat(buf, " and ");
-                        strcat(buf, tmp_buf);
-                        strcat(buf, ".");
-                    }
-                    strcat(buf,"\n");
-                    strcat(buf_out, buf);
+                    strcat(buf, " proof");
                 }
+                strcat(buf, ".\n");
+                strcat(buf_out, buf);
             }
+            buf[0] = '\0';
+        }
+    }
+    else /* not identified */
+    {
+        if (tmp->item_quality)
+        {
+            int tmp_flag = 0;
+
+            sprintf(buf, "Qua: ?? Con: %d.\n", tmp->item_condition);
+            strcat(buf_out, buf); 
         }
         buf[0] = '\0';
     }

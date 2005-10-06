@@ -33,7 +33,7 @@ maxhp 80
 ac 11
 wc 5
 dam 80
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 resist_acid 25
 resist_confusion 25

@@ -152,10 +152,6 @@ int             turn_bonus[MAX_STAT + 1]        =
 {
     -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 7, 8, 9, 10, 12, 15
 };
-int             fear_bonus[MAX_STAT + 1]        =
-{
-    3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
 
 
 float           lev_damage[MAXLEVEL + 1]            =
@@ -705,12 +701,12 @@ int change_abil(object *op, object *tmp)
             success = 1;
             if (op->resist[i] > refop.resist[i])
             {
-                sprintf(message, "Your resistance to %s rises to %d%%.", change_resist_msg[i], op->resist[i]);
+                sprintf(message, "Your resistance to %s rises to %d%%.", attack_name[i], op->resist[i]);
                 new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, message);
             }
             else
             {
-                sprintf(message, "Your resistance to %s drops to %d%%.", change_resist_msg[i], op->resist[i]);
+                sprintf(message, "Your resistance to %s drops to %d%%.", attack_name[i], op->resist[i]);
                 new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, message);
             }
         }
@@ -723,12 +719,12 @@ int change_abil(object *op, object *tmp)
             success = 1;
             if (op->protection[i] > refop.protection[i])
             {
-                sprintf(message, "Your protection to %s rises to %d%%.", protection_name[i], op->protection[i]);
+                sprintf(message, "Your protection to %s rises to %d%%.", attack_name[i], op->protection[i]);
                 new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, message);
             }
             else
             {
-                sprintf(message, "Your protection to %s drops to %d%%.", protection_name[i], op->protection[i]);
+                sprintf(message, "Your protection to %s drops to %d%%.", attack_name[i], op->protection[i]);
                 new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, message);
             }
         }
@@ -763,6 +759,27 @@ int change_abil(object *op, object *tmp)
     return success;
 }
 
+/* drain (corrupt) mana and/or grace
+ * for 10% + random(10%).
+ */
+void corrupt_stat(object *op)
+{
+    if(op->stats.sp > op->stats.grace) /* drain mana */
+    {
+        /* sp - 10% to 20% */
+        op->stats.sp = (int)((1.0f -(0.1f+( ((float)(RANDOM()%11))*0.01f)))*(float)op->stats.sp);
+        if(op->type == PLAYER)
+            new_draw_info(NDI_UNIQUE, 0, op, "You lose some mana!");
+    }
+    else if(op->stats.grace) /* drain grace */
+    {
+        /* grace - 10% to 20% */
+        op->stats.grace = (int)((1.0f -(0.1f+( ((float)(RANDOM()%11))*0.01f)))*(float)op->stats.grace);
+        if(op->type == PLAYER)
+            new_draw_info(NDI_UNIQUE, 0, op, "You lose some grace!");
+    }
+}
+
 /*
  * Stat draining by Vick 930307
  * (Feeling evil, I made it work as well now.  -Frank 8)
@@ -776,28 +793,85 @@ void drain_stat(object *op)
 void drain_specific_stat(object *op, int deplete_stats)
 {
     object     *tmp;
-    archetype  *at;
+    static archetype  *at = NULL;
 
-    at = find_archetype("depletion");
     if (!at)
     {
-        LOG(llevBug, "BUG: Couldn't find archetype depletion.\n");
-        return;
-    }
-    else
-    {
-        tmp = present_arch_in_ob(at, op);
-        if (!tmp)
+        at = find_archetype("depletion");
+        if (!at)
         {
-            tmp = arch_to_object(at);
-            tmp = insert_ob_in_ob(tmp, op);
-            SET_FLAG(tmp, FLAG_APPLIED);
+            LOG(llevBug, "BUG: Couldn't find archetype depletion.\n");
+            return;
         }
     }
 
-    new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
+    tmp = present_arch_in_ob(at, op);
+    if (!tmp)
+    {
+        tmp = arch_to_object(at);
+        tmp = insert_ob_in_ob(tmp, op);
+        SET_FLAG(tmp, FLAG_APPLIED);
+
+        if(op->type != PLAYER) /* create a temp., self destructing force for mobs */
+        {
+            tmp->stats.food = 122+(RANDOM()%70);
+            tmp->speed = 1.0;
+            update_ob_speed(tmp);
+            SET_FLAG(tmp, FLAG_IS_USED_UP);
+        }
+    }
+
     change_attr_value(&tmp->stats, deplete_stats, -1);
+    if(op->type == PLAYER)
+        new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
+
     fix_player(op);
+}
+
+/* Drain the "real" level of a player or mob.
+ * This can be permanent or temporary (if we use drain on a mob).
+ * It works more or less like the depletion force
+ * mode: 0 means permanent(until active removed), 1 means temporary,
+ * then the effect removes itself.
+ */
+void drain_level(object *op, int level, int mode, int ticks)
+{
+    object *force;
+    static archetype  *at = NULL;
+
+    if (!at)
+    {
+        at = find_archetype("drain");
+        if (!at)
+        {
+            LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+            return;
+        }
+    }
+
+    if(mode==0)
+        force = present_arch_in_ob(at, op);
+    else
+        force = present_arch_in_ob_temp(at, op);
+    if (!force)
+    {
+        force = arch_to_object(at);
+        force = insert_ob_in_ob(force, op);
+        SET_FLAG(force, FLAG_APPLIED);
+
+        if(mode) /* create a temp., self destructing force */
+        {
+            force->stats.food = ticks;
+            force->speed = 1.0;
+            update_ob_speed(force);
+            SET_FLAG(force, FLAG_IS_USED_UP);
+        }
+    }
+
+    force->level += level;
+    fix_player(op); /* will redirect to fix_monster() automatically */
+    if(op->type == PLAYER)
+        new_draw_info(NDI_UNIQUE, 0, op, "You lose a level!");
 }
 
 /*
@@ -864,7 +938,7 @@ void change_luck(object *op, int value)
  */
 void fix_player(object *op)
 {
-    int                 ring_count = 0, skill_level_max = 1;
+    int                 snare_penalty = 0,slow_penalty = 0, ring_count = 0, skill_level_drain=0, skill_level_max = 1;
     int                 tmp_item, old_glow, max_boni_hp = 0, max_boni_sp = 0, max_boni_grace = 0;
     int                 i, j, inv_flag, inv_see_flag, light, weapon_weight, best_wc, best_ac, wc, ac, base_reg;
     int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
@@ -983,6 +1057,17 @@ void fix_player(object *op)
         CLEAR_FLAG(op, FLAG_STEALTH);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_BLIND))
         CLEAR_FLAG(op, FLAG_BLIND);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_SLOWED))
+        CLEAR_FLAG(op, FLAG_SLOWED);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_FEARED))
+        CLEAR_FLAG(op, FLAG_FEARED);
+    /* rooted is set when a snare effect has reached 100% */
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_ROOTED))
+        CLEAR_FLAG(op, FLAG_ROOTED);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_CONFUSED))
+        CLEAR_FLAG(op, FLAG_CONFUSED);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_PARALYZED))
+        CLEAR_FLAG(op, FLAG_PARALYZED);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_FLYING))
         CLEAR_MULTI_FLAG(op, FLAG_FLYING);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_LEVITATE))
@@ -1312,25 +1397,50 @@ void fix_player(object *op)
                       CLEAR_FLAG(op, FLAG_IS_AGED);
 
                 case FORCE:
-                  if (ARMOUR_SPEED(tmp) && (float) ARMOUR_SPEED(tmp) / 10.0f < max)
-                      max = ARMOUR_SPEED(tmp) / 10.0f;
+                    if(tmp->sub_type1 == ST1_FORCE_SNARE)
+                    {
+                        if(tmp->last_heal >= 100)
+                            SET_FLAG(op, FLAG_ROOTED);
+                        snare_penalty += tmp->last_heal;
+                    }
+                    else if(tmp->sub_type1 == ST1_FORCE_PARALYZE)
+                        SET_FLAG(op, FLAG_PARALYZED);
+                    else if(tmp->sub_type1 == ST1_FORCE_CONFUSED)
+                        SET_FLAG(op, FLAG_CONFUSED);
+                    else if(tmp->sub_type1 == ST1_FORCE_BLIND)
+                        SET_FLAG(op, FLAG_BLIND);
+                    else if(tmp->sub_type1 == ST1_FORCE_FEAR)
+                        SET_FLAG(op, FLAG_FEARED);
+                    else if(tmp->sub_type1 == ST1_FORCE_SLOWED) /* slowness */
+                    {
+                        slow_penalty += tmp->last_heal; 
+                        SET_FLAG(op, FLAG_SLOWED);
+                    }
+                    else if(tmp->sub_type1 == ST1_FORCE_DRAIN) /* level drain */
+                    {
+                            skill_level_drain += tmp->level; 
+                    }
+                    else
+                    {
+                        if (ARMOUR_SPEED(tmp) && (float) ARMOUR_SPEED(tmp) / 10.0f < max)
+                            max = ARMOUR_SPEED(tmp) / 10.0f;
 
-                  for (i = 0; i < 7; i++)
-                      change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
-                  if (tmp->stats.wc)
-                      wc += (tmp->stats.wc + tmp->magic);
-                  if (tmp->stats.dam)
-                      op->stats.dam += (tmp->stats.dam + tmp->magic);
-                  if (tmp->stats.ac)
-                      ac += (tmp->stats.ac + tmp->magic);
-                  if (tmp->stats.maxhp && tmp->type != TYPE_AGE_FORCE)
-                      op->stats.maxhp += tmp->stats.maxhp;
-                  if (tmp->stats.maxsp && tmp->type != TYPE_AGE_FORCE)
-                      op->stats.maxsp += tmp->stats.maxsp;
-                  if (tmp->stats.maxgrace && tmp->type != TYPE_AGE_FORCE)
-                      op->stats.maxgrace += tmp->stats.maxgrace;
-
-                  goto fix_player_jump_resi;
+                        for (i = 0; i < 7; i++)
+                            change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
+                        if (tmp->stats.wc)
+                            wc += (tmp->stats.wc + tmp->magic);
+                        if (tmp->stats.dam)
+                            op->stats.dam += (tmp->stats.dam + tmp->magic);
+                        if (tmp->stats.ac)
+                            ac += (tmp->stats.ac + tmp->magic);
+                        if (tmp->stats.maxhp && tmp->type != TYPE_AGE_FORCE)
+                            op->stats.maxhp += tmp->stats.maxhp;
+                        if (tmp->stats.maxsp && tmp->type != TYPE_AGE_FORCE)
+                            op->stats.maxsp += tmp->stats.maxsp;
+                        if (tmp->stats.maxgrace && tmp->type != TYPE_AGE_FORCE)
+                            op->stats.maxgrace += tmp->stats.maxgrace;
+                    }
+                    goto fix_player_jump_resi;
 
                 case DISEASE:
                 case SYMPTOM:
@@ -1342,12 +1452,7 @@ void fix_player(object *op)
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
-                case CLASS:
-                  /* not used atm */
-                case BLINDNESS:
-                case CONFUSION:
-                  fix_player_jump_resi:
-
+                fix_player_jump_resi:
                   for (i = 0; i < NROFPROTECTIONS; i++)
                   {
                       if (tmp->protection[i] > 0)
@@ -1492,7 +1597,9 @@ void fix_player(object *op)
                 {
                     if (tmp->attack[i] > 0)
                     {
-                        tmp_item = (int) ((float) tmp->attack[i] * tmp_con);
+                        tmp_item = tmp->attack[i];
+                        if(i >= NROFPROTECTIONS)
+                            tmp_item = (int) ((float)tmp_item * tmp_con);
                         if ((op->attack[i] + tmp_item) <= 120)
                             op->attack[i] += tmp_item;
                         else
@@ -1513,7 +1620,6 @@ void fix_player(object *op)
     /* now we add in all our values... we add in our potions effects as well as
       * our attack boni and/or protections.
       */
-    op->attacktype = 0;
     for (j = 1,i = 0; i < NROFATTACKS; i++,j <<= 1)
     {
         if (potion_attack[i])
@@ -1523,11 +1629,6 @@ void fix_player(object *op)
             else
                 op->attack[i] += potion_attack[i];
         }
-        if (op->attack[i])
-            op->attacktype |= j; /* i find this somewhat senseful but we have
-                                      * remove attacktype and use a other value -
-                                      * attacktype context is to much distorted now
-                                      */
 
         /* add in the potion resists boni/mali */
         if (potion_resist_boni[i] > 0)
@@ -1607,7 +1708,7 @@ void fix_player(object *op)
         }
     }
 
-    /* lets have a smarter default speed.
+    /* lets have a fair min. speed.
      * When we have added smooth scrolling, the whole
      * handling will change so or so. MT-06.2005
      */
@@ -1616,9 +1717,6 @@ void fix_player(object *op)
     else if (op->speed > 1.0f)
         op->speed = 1.0f;
     update_ob_speed(op);
-
-    op->weapon_speed_add = op->weapon_speed;
-
 
     op->glow_radius = light;
 
@@ -1630,15 +1728,25 @@ void fix_player(object *op)
     /* for player, max hp depend on general level, sp on magic exp, grace on wisdom exp level
      * NOTE: all values are adjusted from clone at function start.
      */
-
+    skill_level_max = skill_level_max-skill_level_drain;
+    if(skill_level_max <1)
+        skill_level_max=1;
+    op->level = skill_level_max;
     op->stats.maxhp += op->arch->clone.stats.maxhp + op->arch->clone.stats.maxhp; /* *3 is base */
+
     for (i = 1; i <= op->level; i++)
         op->stats.maxhp += pl->levhp[i];
 
-    for (i = 1; i <= pl->exp_obj_ptr[SKILLGROUP_MAGIC]->level; i++)
+    skill_level_drain = pl->exp_obj_ptr[SKILLGROUP_MAGIC]->level;
+    if(skill_level_drain > skill_level_max)
+        skill_level_drain = skill_level_max;
+    for (i = 1; i <= skill_level_drain; i++)
         op->stats.maxsp += pl->levsp[i];
 
-    for (i = 1; i <= pl->exp_obj_ptr[SKILLGROUP_WISDOM]->level; i++)
+    skill_level_drain = pl->exp_obj_ptr[SKILLGROUP_WISDOM]->level;
+    if(skill_level_drain > skill_level_max)
+        skill_level_drain = skill_level_max;
+    for (i = 1; i <= skill_level_drain; i++)
         op->stats.maxgrace += pl->levgrace[i];
 
     /* now adjust with the % of the stats mali/boni.
@@ -1734,8 +1842,70 @@ void fix_player(object *op)
 
     op->stats.wc += thaco_bonus[op->stats.Dex];
 
+    /* adjust swing speed and move speed by slow penalty */
+    if(QUERY_FLAG(op,FLAG_FEARED))
+    {
+        int m;
+
+        m = op->stats.wc/8; /* 15% mali wc */
+        if(!m)
+            m=1;
+        op->stats.wc -= m;
+
+        m = op->stats.ac/8; /* 15% mali ac */
+        if(!m)
+            m=1;
+        op->stats.ac -= m;
+
+        slow_penalty +=15; /* add a 15% slowness factor to swing & movement */
+    }
+
+    /* first, we cap slow effects to 80% */
+    if(slow_penalty > 80)
+        slow_penalty = 80;
+
+    if(slow_penalty)
+    {
+        snare_penalty += slow_penalty;
+        op->weapon_speed *= ((float)(100+slow_penalty)/100.0f);
+    }
+
+    /* we don't cap snare effects - if >=100% we set root flag */
+    if(snare_penalty)
+    {
+        if(snare_penalty >= 100)
+        {
+            SET_FLAG(op,FLAG_ROOTED);
+            op->weapon_speed = 0.15f;
+        }
+        else
+        {
+            op->speed *= ((float)(100-snare_penalty)/100.0f);
+        }
+    }
+
+    /* this is right, root & paralyze flags will handle no movement
+     * for all other movement penalties, this is the cap
+     */
+    if(op->weapon_speed < 0.15f)
+        op->weapon_speed = 0.15f;
+
     /* thats for the client ... */
-    pl->weapon_sp = (char) (op->weapon_speed / 0.0025f);
+    if(QUERY_FLAG(op,FLAG_PARALYZED))
+    {
+        pl->weapon_sp = 0;
+        pl->speed = 0;
+    }
+    else
+    {
+        if(QUERY_FLAG(op,FLAG_ROOTED))
+            pl->speed = 0;
+        else
+        {
+            pl->weapon_sp = (int) (op->weapon_speed * 1000.0f);
+            pl->speed = op->speed;
+        }
+    }
 
     /* Regenerate HP */
     base_reg = 38; /* default value */
@@ -1937,7 +2107,7 @@ void dragon_level_gain(object *who)
         if (abil->last_eat > 0 && atnr_is_dragon_enabled(abil->last_eat))
         {
             /* apply new ability focus */
-            sprintf(buf, "Your metabolism now focuses on %s!", change_resist_msg[abil->last_eat]);
+            sprintf(buf, "Your metabolism now focuses on %s!", attack_name[abil->last_eat]);
             new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, buf);
 
             abil->stats.exp = abil->last_eat;
@@ -1957,6 +2127,7 @@ void dragon_level_gain(object *who)
  */
 void fix_monster(object *op)
 {
+    int wc_mali=0, ac_mali=0, snare_penalty=0, slow_penalty=0;
     object *base, *tmp, *spawn_info=NULL, *bow=NULL;
     float   tmp_add;
 
@@ -1964,12 +2135,64 @@ void fix_monster(object *op)
         return;
 
     base = insert_base_info_object(op); /* will insert or/and return base info */
+    op->level = base->level;
+
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_BLIND))
+        CLEAR_FLAG(op, FLAG_BLIND);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_SLOWED))
+        CLEAR_FLAG(op, FLAG_SLOWED);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_FEARED))
+        CLEAR_FLAG(op, FLAG_FEARED);
+    /* rooted is set when a snare effect has reached 100% */
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_ROOTED))
+        CLEAR_FLAG(op, FLAG_ROOTED);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_CONFUSED))
+        CLEAR_FLAG(op, FLAG_CONFUSED);
+    if (!QUERY_FLAG(&op->arch->clone, FLAG_PARALYZED))
+        CLEAR_FLAG(op, FLAG_PARALYZED);
 
     CLEAR_FLAG(op, FLAG_READY_BOW);
     CLEAR_FLAG(op, FLAG_READY_SPELL);
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
-        if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
+        /* handle forces */
+        if(tmp->type == FORCE)
+        {
+            if(tmp->sub_type1 == ST1_FORCE_FEAR)
+            {
+                SET_FLAG(op, FLAG_FEARED);
+            }
+            else if(tmp->sub_type1 == ST1_FORCE_SNARE)
+            {
+                snare_penalty += tmp->last_heal; 
+
+                if(snare_penalty >= 100)
+                    SET_FLAG(op, FLAG_ROOTED);
+            }
+            else if(tmp->sub_type1 == ST1_FORCE_SLOWED)
+            {
+                slow_penalty += tmp->last_heal; 
+                SET_FLAG(op, FLAG_SLOWED);
+            }
+            else if(tmp->sub_type1 == ST1_FORCE_PARALYZE)
+            {
+                SET_FLAG(op, FLAG_PARALYZED);
+            }
+            else if(tmp->sub_type1 == ST1_FORCE_DRAIN) /* level drain */
+            {
+                op->level -= tmp->level;
+                if(op->level < 1)
+                    op->level = 1;
+            }
+            else if(tmp->sub_type1 == ST1_FORCE_DEPLETE) /* depletion */
+            {
+                /* nothing special here - depletion is at first an anti player feature */
+                wc_mali = tmp->stats.Str+tmp->stats.Con+tmp->stats.Int;
+                ac_mali = tmp->stats.Dex+tmp->stats.Wis+tmp->stats.Pow;
+                LOG(-1,"MAIL: WC: %d AC:%d\n", wc_mali, ac_mali);
+            }
+        }
+        else if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
         {
             bow = tmp;
             SET_FLAG(op, FLAG_READY_BOW);
@@ -2027,20 +2250,62 @@ void fix_monster(object *op)
     if (op->stats.grace > op->stats.maxgrace)
         op->stats.grace = op->stats.maxgrace;
 
-    op->stats.ac = base->stats.ac + op->level + (op->level / 6);
+    op->stats.ac = base->stats.ac + op->level + (op->level / 6) - (ac_mali*2);
     /* + level/5 to catch up the equipment improvements of
      * the players in armour items.
      */
-    op->stats.wc = base->stats.wc + op->level + (op->level / 4);
+    op->stats.wc = base->stats.wc + op->level + (op->level / 4) - (wc_mali*2);
     op->stats.dam = base->stats.dam;
+
+    /* adjust swing speed and move speed by slow penalty */
+    if(QUERY_FLAG(op,FLAG_FEARED))
+    {
+        int m;
+
+        m = op->stats.wc/8; /* 15% mali wc */
+        if(!m)
+            m=1;
+        op->stats.wc -= m;
+
+        m = op->stats.ac/8; /* 15% mali ac */
+        if(!m)
+            m=1;
+        op->stats.ac -= m;
+
+        slow_penalty +=15; /* add a 15% slowness factor to swing & movement */
+    }
+
+    set_mobile_speed(op, 0);
+
+    /* first, we cap slow effects to 80% */
+    if(slow_penalty > 80)
+        slow_penalty = 80;
+
+    if(slow_penalty)
+    {
+        snare_penalty += slow_penalty;
+        op->weapon_speed *= ((float)(100+slow_penalty)/100.0f);
+    }
+
+    /* we don't cap snare effects - if >=100% we set root flag */
+    if(snare_penalty)
+    {
+        if(snare_penalty >= 100)
+        {
+            SET_FLAG(op,FLAG_ROOTED);
+            op->weapon_speed = 0.15f;
+        }
+        else
+        {
+            op->speed *= ((float)(100-snare_penalty)/100.0f);
+        }
+    }
 
     /* post adjust */
     if ((tmp_add = lev_damage[op->level / 3] - 0.75f) < 0)
         tmp_add = 0;
     op->stats.dam = (sint16) (((float) op->stats.dam * ((lev_damage[(op->level < 0) ? 0 : op->level] + tmp_add)
                      * (0.925f + 0.05 * (op->level / 10)))) / 10.0f);
-
-    set_mobile_speed(op, 0);
 
     /* Set up AI in op->custom_attrset */
     if(! MOB_DATA(op))
@@ -2157,11 +2422,10 @@ void set_mobile_speed(object *op, int index)
         op->speed = speed * index;
     else /* we will generate the speed by setting of the mobile */
     {
-        if (!QUERY_FLAG(op, FLAG_SLOW_MOVE)) /* if not slowed... */
-            speed += base->speed_left;
+        speed += base->speed_left;
         if (OBJECT_VALID(op->enemy, op->enemy_count)) /* valid enemy - mob is fighting! */
         {
-            speed += base->speed_left * 2;
+            speed += base->speed_left*2;
         }
         op->speed = speed;
     }

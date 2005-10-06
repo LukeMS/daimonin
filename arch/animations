@@ -871,6 +871,71 @@ bench2.171
 bench2.171
 bench2.111
 mina
+anim bench3.111
+facings 9
+dummy.111
+bench3.111
+bench3.111
+bench3.111
+bench3.171
+bench3.171
+bench3.171
+bench3.171
+bench3.111
+mina
+anim black_golem_mage
+facings 25
+trans.101
+trans.101
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.131
+black_golem_mage.132
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.151
+black_golem_mage.152
+black_golem_mage.131
+black_golem_mage.232
+black_golem_mage.131
+black_golem_mage.232
+black_golem_mage.131
+black_golem_mage.232
+black_golem_mage.131
+black_golem_mage.232
+black_golem_mage.151
+black_golem_mage.252
+black_golem_mage.151
+black_golem_mage.252
+black_golem_mage.151
+black_golem_mage.252
+black_golem_mage.151
+black_golem_mage.252
+mina
 anim blob_acid
 facings 25
 trans.101
@@ -3554,6 +3619,59 @@ golem.252
 golem.151
 golem.252
 mina
+anim golem_mage
+facings 25
+trans.101
+trans.101
+golem_mage.131
+golem_mage.132
+golem_mage.131
+golem_mage.132
+golem_mage.131
+golem_mage.132
+golem_mage.131
+golem_mage.132
+golem_mage.151
+golem_mage.152
+golem_mage.151
+golem_mage.152
+golem_mage.151
+golem_mage.152
+golem_mage.151
+golem_mage.152
+golem_mage.131
+golem_mage.132
+golem_mage.131
+golem_mage.132
+golem_mage.131
+golem_mage.132
+golem_mage.131
+golem_mage.132
+golem_mage.151
+golem_mage.152
+golem_mage.151
+golem_mage.152
+golem_mage.151
+golem_mage.152
+golem_mage.151
+golem_mage.152
+golem_mage.131
+golem_mage.232
+golem_mage.131
+golem_mage.232
+golem_mage.131
+golem_mage.232
+golem_mage.131
+golem_mage.232
+golem_mage.151
+golem_mage.252
+golem_mage.151
+golem_mage.252
+golem_mage.151
+golem_mage.252
+golem_mage.151
+golem_mage.252
+mina
 anim grateTrg1
 facings 9
 dummy.111
@@ -5143,6 +5261,18 @@ spotted_jelly.111
 spotted_jelly.112
 spotted_jelly.111
 spotted_jelly.112
+mina
+anim kiddy_bench.111
+facings 9
+dummy.111
+kiddy_bench.111
+kiddy_bench.111
+kiddy_bench.111
+kiddy_bench.171
+kiddy_bench.171
+kiddy_bench.171
+kiddy_bench.171
+kiddy_bench.111
 mina
 anim king
 facings 25
@@ -9461,6 +9591,14 @@ target.131
 target.131
 target.131
 target.111
+mina
+anim tele_rock
+tele_rock.101
+tele_rock.102
+mina
+anim tele_stone
+tele_stone.101
+tele_stone.102
 mina
 anim teleporter
 exit.101

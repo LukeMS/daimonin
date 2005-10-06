@@ -79,11 +79,6 @@ _player_doll_pos    player_doll[PDOLL_INIT] =
     {93,91}, {93,44}, {93,136}, {93,194}, {135,131}, {50,131}, {50,170}, {135,170}, {54,87}, {141,46}, {5,200}, {5,238},
     {5,144}, {180,144}, {43,46}, {4,46}
 };
-static float        weapon_speed_table[19]  =
-{
-    20.0f, 18.0f, 10.0f, 8.0f, 5.5f, 4.25f, 3.50f, 3.05f, 2.70f, 2.35f, 2.15f, 1.95f, 1.80f, 1.60f, 1.52f, 1.44f, 1.32f,
-    1.25f, 1.20f
-};
 
 void clear_player(void)
 {
@@ -633,15 +628,17 @@ void show_player_stats(int x, int y)
 
     StringBlt(ScreenSurface, &Font6x3Out, "Level / Exp", x + 177, y + 40, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%d", cpl.stats.level);
-    StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_WHITE, NULL,
-              NULL);
+    if(cpl.stats.exp_level != cpl.stats.level)
+        StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_RED, NULL, NULL);
+    else
+        StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_WHITE, NULL, NULL);
     sprintf(buf, "%d", cpl.stats.exp);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 178, y + 59, COLOR_WHITE, NULL, NULL);
 
     /* calc the exp bubbles */
-    level_exp = cpl.stats.exp - server_level.exp[cpl.stats.level];
+    level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
     multi = modf(((double) level_exp
-                / (double) (server_level.exp[cpl.stats.level + 1] - server_level.exp[cpl.stats.level]) * 10.0),
+                / (double) (server_level.exp[cpl.stats.exp_level + 1] - server_level.exp[cpl.stats.exp_level]) * 10.0),
                  &line);
 
     sprite_blt(Bitmaps[BITMAP_EXP_BORDER], x + 182, y + 88, NULL, NULL);
@@ -674,16 +671,6 @@ void show_player_doll(int x, int y)
     int     index, tooltip_index = -1, ring_flag = 0;
     int     mx, my;
 
-    /* this is ugly to calculate because its a curve which increase heavily
-     * with lower weapon_speed... so, we use a table
-     */
-    int     ws_temp         = cpl.stats.weapon_sp;
-
-    if (ws_temp < 0)
-        ws_temp = 0;
-    else if (ws_temp > 18)
-        ws_temp = 18;
-
     sprite_blt(Bitmaps[BITMAP_DOLL], 0, 0, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_PDOLL2], 0, 194, NULL, NULL);
     if (!cpl.ob)
@@ -702,7 +689,7 @@ void show_player_doll(int x, int y)
     sprintf(buf, "%02d", cpl.stats.dam);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 100, COLOR_WHITE, NULL, NULL);
 
-    sprintf(buf, "%3.2f sec", weapon_speed_table[ws_temp]);
+    sprintf(buf, "%1.2f sec", cpl.stats.weapon_sp);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 110, COLOR_WHITE, NULL, NULL);
 
     StringBlt(ScreenSurface, &SystemFont, "Speed ", x + 45, x + 232, COLOR_HGOLD, NULL, NULL);

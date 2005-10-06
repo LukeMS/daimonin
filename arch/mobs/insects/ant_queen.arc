@@ -31,7 +31,7 @@ maxhp 70
 ac 12
 wc 4
 dam 50
-weapon_speed 0.045
+weapon_speed 3.5
 attack_cleave 100
 speed -0.053
 level 1

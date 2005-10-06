@@ -1440,8 +1440,6 @@ int set_ring_bonus(object *op, int bonus, int level)
         else
             r = 13 + RANDOM() % 7;
     }
-
-    r =7;
     switch (r % 25)
     {
           /* Redone by MSW 2000-11-26 to have much less code.  Also,

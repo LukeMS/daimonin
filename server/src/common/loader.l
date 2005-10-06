@@ -306,10 +306,6 @@ op->oy= op->y;
 ^value{S}					op->value = atoll(yval());
 ^weight{S}					op->weight = atol(yval());
 ^carrying{S}				op->carrying = atol(yval());
-^attacktype{S}			{
-							op->attacktype = IVAL;
-							/* LOG(llevDebug, "Warning: Object %s has attacktype %d set\n", op->name, op->attacktype); */
-						}
 ^path_attuned{S}			op->path_attuned = IVAL;
 ^path_repelled{S}			op->path_repelled = IVAL;
 ^path_denied{S}				op->path_denied = IVAL;
@@ -436,7 +432,6 @@ op->oy= op->y;
 
     /* Start of various attacktypes */
 ^attack_impact{S}	SET_ATTACK(op, ATNR_PHYSICAL, IVAL);
-^attack_magic{S}	SET_ATTACK(op, ATNR_MAGIC, IVAL);
 ^attack_fire{S}		SET_ATTACK(op, ATNR_FIRE, IVAL);
 ^attack_electricity{S}	SET_ATTACK(op, ATNR_ELECTRICITY, IVAL);
 ^attack_cold{S}		SET_ATTACK(op, ATNR_COLD, IVAL);
@@ -444,33 +439,34 @@ op->oy= op->y;
 ^attack_acid{S}		SET_ATTACK(op, ATNR_ACID, IVAL);
 ^attack_drain{S}	SET_ATTACK(op, ATNR_DRAIN, IVAL);
 ^attack_weaponmagic{S}	SET_ATTACK(op, ATNR_WEAPONMAGIC, IVAL);
-^attack_ghosthit{S}	SET_ATTACK(op, ATNR_GHOSTHIT, IVAL);
 ^attack_poison{S}	SET_ATTACK(op, ATNR_POISON, IVAL);
 ^attack_slow{S}		SET_ATTACK(op, ATNR_SLOW, IVAL);
 ^attack_paralyze{S}	SET_ATTACK(op, ATNR_PARALYZE, IVAL);
-^attack_time{S}		SET_ATTACK(op, ATNR_TIME, IVAL);
 ^attack_fear{S}		SET_ATTACK(op, ATNR_FEAR, IVAL);
 ^attack_cancellation{S}	SET_ATTACK(op, ATNR_CANCELLATION, IVAL);
-^attack_depletion{S}	SET_ATTACK(op, ATNR_DEPLETE, IVAL);
+^attack_depletion{S}	SET_ATTACK(op, ATNR_DEPLETION, IVAL);
 ^attack_death{S}	SET_ATTACK(op, ATNR_DEATH, IVAL);
 ^attack_chaos{S}	SET_ATTACK(op, ATNR_CHAOS, IVAL);
-^attack_counterspell{S}	SET_ATTACK(op, ATNR_COUNTERSPELL, IVAL);
+^attack_countermagic{S}	SET_ATTACK(op, ATNR_COUNTERMAGIC, IVAL);
 ^attack_godpower{S}	SET_ATTACK(op, ATNR_GODPOWER, IVAL);
-^attack_purity{S}	SET_ATTACK(op, ATNR_HOLYWORD, IVAL);
-^attack_blind{S}	SET_ATTACK(op, ATNR_BLIND, IVAL);
 ^attack_internal{S}	SET_ATTACK(op, ATNR_INTERNAL, IVAL);
-^attack_life_steal{S}	SET_ATTACK(op, ATNR_LIFE_STEALING, IVAL);
+^attack_lifesteal{S}	SET_ATTACK(op, ATNR_LIFESTEAL, IVAL);
 ^attack_slash{S}	SET_ATTACK(op, ATNR_SLASH, IVAL);
 ^attack_cleave{S}	SET_ATTACK(op, ATNR_CLEAVE, IVAL);
 ^attack_pierce{S}	SET_ATTACK(op, ATNR_PIERCE, IVAL);
 ^attack_nether{S}	SET_ATTACK(op, ATNR_NETHER, IVAL);
 ^attack_sonic{S}	SET_ATTACK(op, ATNR_SONIC, IVAL);
-^attack_demonic{S}	SET_ATTACK(op, ATNR_DEMONIC, IVAL);
 ^attack_psionic{S}	SET_ATTACK(op, ATNR_PSIONIC, IVAL);
 
-    /* Start of various attacktypes */
+^attack_light{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
+^attack_force{S}	SET_ATTACK(op, ATNR_FORCE, IVAL);
+^attack_aether{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
+^attack_snare{S}		SET_ATTACK(op, ATNR_SNARE, IVAL);
+^attack_shadow{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
+^attack_corruption{S}	SET_ATTACK(op, ATNR_CORRUPTION, IVAL);
+
+	/* Start of various resisttypes */
 ^resist_impact{S}	SET_RESIST(op, ATNR_PHYSICAL, IVAL);
-^resist_magic{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
 ^resist_fire{S}		SET_RESIST(op, ATNR_FIRE, IVAL);
 ^resist_electricity{S}	SET_RESIST(op, ATNR_ELECTRICITY, IVAL);
 ^resist_cold{S}		SET_RESIST(op, ATNR_COLD, IVAL);
@@ -478,57 +474,95 @@ op->oy= op->y;
 ^resist_acid{S}		SET_RESIST(op, ATNR_ACID, IVAL);
 ^resist_drain{S}	SET_RESIST(op, ATNR_DRAIN, IVAL);
 ^resist_weaponmagic{S}	SET_RESIST(op, ATNR_WEAPONMAGIC, IVAL);
-^resist_ghosthit{S}	SET_RESIST(op, ATNR_GHOSTHIT, IVAL);
 ^resist_poison{S}	SET_RESIST(op, ATNR_POISON, IVAL);
 ^resist_slow{S}		SET_RESIST(op, ATNR_SLOW, IVAL);
 ^resist_paralyze{S}	SET_RESIST(op, ATNR_PARALYZE, IVAL);
-^resist_time{S}		SET_RESIST(op, ATNR_TIME, IVAL);
 ^resist_fear{S}		SET_RESIST(op, ATNR_FEAR, IVAL);
 ^resist_cancellation{S}	SET_RESIST(op, ATNR_CANCELLATION, IVAL);
-^resist_depletion{S}	SET_RESIST(op, ATNR_DEPLETE, IVAL);
+^resist_depletion{S}	SET_RESIST(op, ATNR_DEPLETION, IVAL);
 ^resist_death{S}	SET_RESIST(op, ATNR_DEATH, IVAL);
 ^resist_chaos{S}	SET_RESIST(op, ATNR_CHAOS, IVAL);
-^resist_counterspell{S}	SET_RESIST(op, ATNR_COUNTERSPELL, IVAL);
+^resist_countermagic{S}	SET_RESIST(op, ATNR_COUNTERMAGIC, IVAL);
 ^resist_godpower{S}	SET_RESIST(op, ATNR_GODPOWER, IVAL);
-^resist_purity{S}	SET_RESIST(op, ATNR_HOLYWORD, IVAL);
-^resist_blind{S}	SET_RESIST(op, ATNR_BLIND, IVAL);
 ^resist_internal{S}	SET_RESIST(op, ATNR_INTERNAL, IVAL);
-^resist_life_steal{S}	SET_RESIST(op, ATNR_LIFE_STEALING, IVAL);
+^resist_lifesteal{S}	SET_RESIST(op, ATNR_LIFESTEAL, IVAL);
 ^resist_slash{S}	SET_RESIST(op, ATNR_SLASH, IVAL);
 ^resist_cleave{S}	SET_RESIST(op, ATNR_CLEAVE, IVAL);
 ^resist_pierce{S}	SET_RESIST(op, ATNR_PIERCE, IVAL);
 ^resist_nether{S}	SET_RESIST(op, ATNR_NETHER, IVAL);
 ^resist_sonic{S}	SET_RESIST(op, ATNR_SONIC, IVAL);
-^resist_demonic{S}	SET_RESIST(op, ATNR_DEMONIC, IVAL);
 ^resist_psionic{S}	SET_RESIST(op, ATNR_PSIONIC, IVAL);
 
-^protect_impact{S}	SET_PROTECTION(op, PROTECT_PHYSICAL, IVAL);
-^protect_slash{S}	SET_PROTECTION(op, PROTECT_SLASH, IVAL);
-^protect_cleave{S}	SET_PROTECTION(op, PROTECT_CLEAVE, IVAL);
-^protect_pierce{S}	SET_PROTECTION(op, PROTECT_PIERCE, IVAL);
-^protect_weapon_magic{S}	SET_PROTECTION(op, PROTECT_WEAPON_MAGIC, IVAL);
+^resist_force{S}	SET_RESIST(op, ATNR_FORCE, IVAL);
+^resist_aether{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
+^resist_light{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
+^resist_shadow{S}	SET_RESIST(op, ATNR_SHADOW, IVAL);
+^resist_snare{S}		SET_RESIST(op, ATNR_SNARE, IVAL);
+^resist_corruption{S}	SET_RESIST(op, ATNR_CORRUPTION, IVAL);
 
-^protect_fire{S}		SET_PROTECTION(op, PROTECT_FIRE, IVAL);
-^protect_cold{S}		SET_PROTECTION(op, PROTECT_COLD, IVAL);
-^protect_electricity{S}		SET_PROTECTION(op, PROTECT_ELECTRICITY, IVAL);
-^protect_poison{S}		SET_PROTECTION(op, PROTECT_POISON, IVAL);
-^protect_acid{S}		SET_PROTECTION(op, PROTECT_ACID, IVAL);
+^protect_impact{S}	SET_PROTECTION(op, ATNR_PHYSICAL, IVAL);
+^protect_slash{S}	SET_PROTECTION(op, ATNR_SLASH, IVAL);
+^protect_cleave{S}	SET_PROTECTION(op, ATNR_CLEAVE, IVAL);
+^protect_pierce{S}	SET_PROTECTION(op, ATNR_PIERCE, IVAL);
 
-^protect_magic{S}		SET_PROTECTION(op, PROTECT_MAGIC, IVAL);
-^protect_mind{S}		SET_PROTECTION(op, PROTECT_MIND, IVAL);
-^protect_body{S}		SET_PROTECTION(op, PROTECT_BODY, IVAL);
-^protect_psionic{S}		SET_PROTECTION(op, PROTECT_PSIONIC, IVAL);
-^protect_force{S}		SET_PROTECTION(op, PROTECT_FORCE, IVAL);
+^protect_fire{S}		SET_PROTECTION(op, ATNR_FIRE, IVAL);
+^protect_cold{S}		SET_PROTECTION(op, ATNR_COLD, IVAL);
+^protect_electricity{S}		SET_PROTECTION(op, ATNR_ELECTRICITY, IVAL);
+^protect_poison{S}		SET_PROTECTION(op, ATNR_POISON, IVAL);
+^protect_acid{S}		SET_PROTECTION(op, ATNR_ACID, IVAL);
+^protect_sonic{S}		SET_PROTECTION(op, ATNR_SONIC, IVAL);
 
-^protect_nether{S}		SET_PROTECTION(op, PROTECT_NETHER, IVAL);
-^protect_chaos{S}		SET_PROTECTION(op, PROTECT_CHAOS, IVAL);
-^protect_death{S}		SET_PROTECTION(op, PROTECT_DEATH, IVAL);
-^protect_spiritual{S}		SET_PROTECTION(op, PROTECT_SPIRITUAL, IVAL);
-^protect_corruption{S}		SET_PROTECTION(op, PROTECT_CORRUPTION, IVAL);
+^protect_psionic{S}		SET_PROTECTION(op, ATNR_PSIONIC, IVAL);
+^protect_force{S}		SET_PROTECTION(op, ATNR_FORCE, IVAL);
+^protect_death{S}		SET_PROTECTION(op, ATNR_DEATH, IVAL);
+^protect_light{S}		SET_PROTECTION(op, ATNR_LIGHT, IVAL);
+^protect_shadow{S}		SET_PROTECTION(op, ATNR_SHADOW, IVAL);
+
+^protect_aether{S}		SET_PROTECTION(op, ATNR_AETHER, IVAL);
+^protect_nether{S}		SET_PROTECTION(op, ATNR_NETHER, IVAL);
+^protect_chaos{S}		SET_PROTECTION(op, ATNR_CHAOS, IVAL);
+^protect_lifesteal{S}	SET_PROTECTION(op, ATNR_LIFESTEAL, IVAL);
+^protect_weaponmagic{S}	SET_PROTECTION(op, ATNR_WEAPONMAGIC, IVAL);
+^protect_godpower{S}	SET_PROTECTION(op, ATNR_GODPOWER, IVAL);
+
+
+	/* outdate beta 3 attack/protection/resists  WE HOTMAP THEM TO NEW ONES HERE - remove this for 1.0 */
+^protect_magic{S}		SET_PROTECTION(op, ATNR_SONIC, IVAL); /* old: PROTECT_MAGIC */
+^protect_mind{S}		SET_PROTECTION(op, ATNR_LIGHT, IVAL); /* old: PROTECT_MIND */
+^protect_body{S}		SET_PROTECTION(op, ATNR_SHADOW, IVAL); /* old: PROTECT_BODY */
+^protect_spiritual{S}   SET_PROTECTION(op, ATNR_LIFESTEAL, IVAL); /* old: PROTECT_SPIRITUAL */
+^protect_corruption{S}  SET_PROTECTION(op, ATNR_AETHER, IVAL);/* old: PROTECT_CORRUPTION */
+^resist_magic{S}	SET_RESIST(op, ATNR_FORCE, IVAL);
+^resist_time{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
+^resist_demonic{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
+^resist_blind{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
+^resist_purity{S}	SET_RESIST(op, ATNR_CORRUPTION, IVAL);
+^resist_ghosthit{S}	SET_RESIST(op, ATNR_SNARE, IVAL);
+^attack_blind{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
+^attack_magic{S}	SET_ATTACK(op, ATNR_FORCE, IVAL);
+^attack_demonic{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
+^attack_purity{S}	SET_ATTACK(op, ATNR_CORRUPTION, IVAL);
+^attack_time{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
+^attack_ghosthit{S}	SET_ATTACK(op, ATNR_SNARE, IVAL);
+^resist_life_steal{S}	SET_RESIST(op, ATNR_LIFESTEAL, IVAL);
+^attack_life_steal{S}	SET_ATTACK(op, ATNR_LIFESTEAL, IVAL);
+^resist_counterspell{S}	SET_RESIST(op, ATNR_COUNTERMAGIC, IVAL);
+^attack_counterspell{S}	SET_ATTACK(op, ATNR_COUNTERMAGIC, IVAL);
+^protect_weapon_magic{S}	SET_PROTECTION(op, ATNR_WEAPONMAGIC, IVAL);
+^is_vul_elemental{S}	{};
+^is_vul_magic{S}	{};
+^is_vul_physical{S}	{};
+^is_vul_sphere{S}	{};
+^is_indestructible{S}	{};
+	/* end outdate */
 
 ^attack_movement{S} op->move_type = IVAL;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
+^paralyzed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PARALYZED, IVAL);
+^feared{S}			SET_OR_CLEAR_FLAG(op, FLAG_FEARED, IVAL);
+^rooted{S}			SET_OR_CLEAR_FLAG(op, FLAG_ROOTED, IVAL);
+^slowed{S}			SET_OR_CLEAR_FLAG(op, FLAG_SLOWED, IVAL);
 ^stealth{S}			SET_OR_CLEAR_FLAG(op, FLAG_STEALTH, IVAL);
 ^connected{S}	    add_button_links(op, op->map, yval());
 ^cursed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CURSED, IVAL);
@@ -556,15 +590,10 @@ op->oy= op->y;
 ^no_steal{S}		SET_OR_CLEAR_FLAG(op, FLAG_NO_STEAL, IVAL);
 ^one_hit{S}		SET_OR_CLEAR_FLAG(op, FLAG_ONE_HIT, IVAL);
 
-^is_vul_elemental{S}	SET_OR_CLEAR_FLAG(op, FLAG_VUL_ELEMENTAL, IVAL);
-^is_proof_elemental{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_ELEMENTAL, IVAL);
-^is_vul_magic{S}	SET_OR_CLEAR_FLAG(op, FLAG_VUL_MAGIC, IVAL);
-^is_proof_magic{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_MAGIC, IVAL);
-^is_vul_physical{S}	    	SET_OR_CLEAR_FLAG(op, FLAG_VUL_PHYSICAL, IVAL);
-^is_proof_physical{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_PHYSICAL, IVAL);
-^is_vul_sphere{S}	SET_OR_CLEAR_FLAG(op, FLAG_VUL_SPHERE, IVAL);
-^is_proof_sphere{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_SPHERE, IVAL);
-^is_indestructible{S}	SET_OR_CLEAR_FLAG(op, FLAG_INDESTRUCTIBLE, IVAL);
+^proof_phy{S}		SET_OR_CLEAR_FLAG(op, FLAG_PROOF_PHYSICAL, IVAL);
+^proof_ele{S}		SET_OR_CLEAR_FLAG(op, FLAG_PROOF_ELEMENTAL, IVAL);
+^proof_mag{S}		SET_OR_CLEAR_FLAG(op, FLAG_PROOF_MAGICAL, IVAL);
+^proof_sph{S}		SET_OR_CLEAR_FLAG(op, FLAG_PROOF_SPHERICAL, IVAL);
 
 
 ^editor_folder{S}	{ }
@@ -594,7 +623,6 @@ op->oy= op->y;
 ^weapon_speed{S}	{
 						op->weapon_speed = FVAL;
 						op->weapon_speed_left = 0;
-						op->weapon_speed_add = op->weapon_speed;
 					}
 
 
@@ -845,7 +873,7 @@ int set_variable(object *op,char *buf) {
  * If an entry is NULL, that is a flag not to loaded/saved.
  */
 static char *flag_names[NUM_FLAGS+1] = {
-"sleep", "confused", NULL, "scared", "is_blind","is_invisible" , "is_ethereal" ,
+"sleep", "confused", "paralyzed", "scared", "is_blind","is_invisible" , "is_ethereal" ,
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
 "is_animated", NULL, "flying", "monster", "friendly",
 NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 20 */
@@ -855,21 +883,21 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "blocksview", "undead", NULL, "unaggressive",
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", NULL, "unique", "no_drop",	/* 50 */
- "is_indestructible", "has_ready_spell", "surrendered", NULL,
- NULL, "can_use_armour", "can_use_weapon",
+"pass_thru", "can_pass_thru", "feared", "unique", "no_drop",	/* 50 */
+ NULL, "has_ready_spell", "surrendered", "rooted",
+ "slowed", "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL, "has_ready_bow",		/* 60 */
 "xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
  "stealth", NULL, NULL, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
-"is_vul_sphere", "is_proof_sphere", "is_male",
+NULL, NULL, "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
 "is_hilly", "levitate", "has_ready_weapon",		/* 90 */
 "no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
-"invulnerable", "quest_item", "is_traped", "is_vul_elemental",  "is_proof_elemental", /* 105 */
-"is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */
+"invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
+"proof_mag", "proof_sph", NULL, NULL, "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
@@ -1097,25 +1125,23 @@ char *get_ob_diff(object *op,object *op2) {
     save_long(buf, "direction", op->direction);
   if(op->type!=op2->type)
     save_long(buf, "type", op->type);
-  if(op->attacktype!=op2->attacktype)
-    save_long(buf, "attacktype", op->attacktype);
 
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->resist[tmp] != op2->resist[tmp]) {
-	sprintf(buf2,"resist_%s %d\n",resist_save[tmp], op->resist[tmp]);
+	sprintf(buf2,"resist_%s %d\n",attack_name[tmp], op->resist[tmp]);
 	strcat(buf,buf2);
     }
   }
   /* resist_save[] holds the attack form also for attack_xx */
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->attack[tmp] != op2->attack[tmp]) {
-	sprintf(buf2,"attack_%s %d\n",resist_save[tmp], op->attack[tmp]);
+	sprintf(buf2,"attack_%s %d\n",attack_name[tmp], op->attack[tmp]);
 	strcat(buf,buf2);
     }
   }
   for (tmp=0; tmp < NROFPROTECTIONS; tmp++) {
    if (op->protection[tmp] != op2->protection[tmp]) {
-	sprintf(buf2,"protect_%s %d\n",protection_save[tmp], op->protection[tmp]);
+	sprintf(buf2,"protect_%s %d\n",attack_name[tmp], op->protection[tmp]);
 	strcat(buf,buf2);
     }
   }

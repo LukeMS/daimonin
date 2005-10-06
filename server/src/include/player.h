@@ -226,6 +226,7 @@ typedef struct pl_player
     uint32              mode;                   /* Mode of player for pickup. */
     sint32              group_id;                /* unique group id number - this is a unique number like the object count */
     sint32              group_status;            /* status of invite or group */
+    int                 weapon_sp;               /* weapon speed - float *1000 for the client */
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.
@@ -238,7 +239,9 @@ typedef struct pl_player
 
     uint32              update_ticker;          /* global_round tick where player was updated */
     float               last_speed;
+    float               speed;                  /* shadow speed value, set in fix_player() to cover flag effects */
 
+    sint16              target_level;
     sint16              age;        /* the age of our player */
     sint16              age_add;    /* unnatural changes to our age - can be removed by restoration */
     sint16              age_changes; /* permanent changes .... very bad (or good when younger) */
@@ -251,7 +254,6 @@ typedef struct pl_player
     sint16              known_spells[NROFREALSPELLS]; /* Spells known by the player */
 
     char                target_hp_p;                /* for the client target HP real % value*/
-    char                weapon_sp;                  /* weapon speed index (mainly used for client) */
 
     signed char         digestion;          /* Any bonuses/penalties to digestion */
     signed char         gen_sp_armour;      /* Penalty to sp regen from armour */
@@ -286,7 +288,7 @@ typedef struct pl_player
                                                                * of this player.
                                                                */
 
-    char                last_weapon_sp;
+    int                last_weapon_sp;
 
     char                firemode_name[BIG_NAME*2];
     char                quick_name[BIG_NAME*3]; /* thats rank + name +" the xxxx" */

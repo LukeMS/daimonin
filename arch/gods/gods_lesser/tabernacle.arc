@@ -47,7 +47,7 @@ Pow 30
 is_female 1
 is_neutral 1
 terrain_flag 39
-weapon_speed 0.050
+weapon_speed 3.3
 unaggressive 1
 random_move 1
 attack_slash 100

@@ -33,7 +33,7 @@ maxhp 52
 ac 9
 wc 5
 dam 51
-weapon_speed 0.045
+weapon_speed 3.5
 attack_impact 100
 protect_poison 25
 protect_acid 25

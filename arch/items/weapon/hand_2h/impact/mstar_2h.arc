@@ -2,7 +2,7 @@ Object mstar_2h
 layer 3
 name 2h-morningstar 
 face mstar_2h.101
-weapon_speed 0.02
+weapon_speed 4.25
 attack_impact 100
 dam 80
 item_level 10

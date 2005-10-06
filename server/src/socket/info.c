@@ -138,7 +138,7 @@ static void new_info_map_all_except(int color, mapstruct *map, object *op1, obje
 }
 
 /*
- * write to everyone on the current map
+ * write to everyone on the current map in a defined area
  *
 */
 void new_info_map(int color, mapstruct *map, int x, int y, int dist, const char *str)
@@ -245,7 +245,7 @@ void new_info_map(int color, mapstruct *map, int x, int y, int dist, const char 
 }
 
 /*
- * write to everyone on the map *except* op.  This is useful for emotions.
+ * write to everyone on the map *except* op and op1.  This is useful for emotions.
  */
 void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str)
 {
@@ -348,4 +348,34 @@ void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, obje
                 new_draw_info(color, 0, tmp, str);
         }
     }
+}
+
+/* same as above but as formated string version */
+void new_info_map_format(int color, mapstruct *map, int x, int y, int dist, char *format, ...)
+{
+    char    buf[HUGE_BUF];
+    va_list ap;
+
+    va_start(ap, format);
+
+    vsprintf(buf, format, ap);
+
+    va_end(ap);
+
+    new_info_map(color,map, x, y, dist, buf);
+}
+
+/* same as above but as formated string version */
+void new_info_map_except_format(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, char *format, ...)
+{
+    char    buf[HUGE_BUF];
+    va_list ap;
+
+    va_start(ap, format);
+
+    vsprintf(buf, format, ap);
+
+    va_end(ap);
+
+    new_info_map_except(color, map, x, y, dist, op1, op, buf);
 }

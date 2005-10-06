@@ -1,7 +1,7 @@
 Object panzerstecher
 name Panzerstecher
 layer 3
-weapon_speed 0.02
+weapon_speed 4.25
 attack_slash 100
 type 15
 item_level 10
