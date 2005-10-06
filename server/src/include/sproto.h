@@ -54,6 +54,7 @@ int                         hit_map(object *op, int dir);
 int                         kill_object(object *op, int dam, object *hitter, int type);
 object                     *hit_with_arrow(object *op, object *victim);
 void                        tear_down_wall(object *op);
+void                        snare_player(object *op, object *hitter, int dam);
 void                        poison_player(object *op, object *hitter, float dam);
 void                        slow_player(object *op, object *hitter, int dam);
 void                        fear_player(object *op, object *hitter, int dam);
