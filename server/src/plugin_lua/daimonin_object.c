@@ -694,7 +694,7 @@ static int GameObject_Deposit(lua_State *L)
 
     hooks->get_word_from_string(text, &pos);
     hooks->get_money_from_string(text + pos, &money);
-
+    
     if (!money.mode)
     {
         val = -1;
@@ -707,55 +707,26 @@ static int GameObject_Deposit(lua_State *L)
     }
     else
     {
-        if (money.mithril)
+        /* Changed deposition code to use the standard
+         * payment calls. This means you can deposit
+         * 10 copper even if you don't have any copper.
+         * To make change, its still possible to withdraw
+         * lots of copper, for example 
+         * /Gecko 2005-10-08 */
+        sint64 amount = money.mithril * hooks->coins_arch[0]->clone.value
+            + money.gold    * hooks->coins_arch[1]->clone.value
+            + money.silver  * hooks->coins_arch[2]->clone.value
+            + money.copper  * hooks->coins_arch[3]->clone.value;
+           
+        if(hooks->pay_for_amount(amount, WHO)) 
         {
-            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[0]->clone.value) < money.mithril)
-            {
-                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much mithril.");
-                val = 0;
-            }
-        }
-        if (money.gold)
-        {
-            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[1]->clone.value) < money.gold)
-            {
-                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much gold.");
-                val = 0;
-            }
-        }
-        if (money.silver)
-        {
-            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[2]->clone.value) < money.silver)
-            {
-                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much silver.");
-                val = 0;
-            }
-        }
-        if (money.copper)
-        {
-            if (hooks->query_money_type(WHO, (int)hooks->coins_arch[3]->clone.value) < money.copper)
-            {
-                val = 0;
-                hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much copper.");
-            }
-        }
-
-        /* all ok - now remove the money from the player and add it to the bank object! */
-        if(val)
-        {
-            if (money.mithril)
-                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[0]->clone.value, money.mithril);
-            if (money.gold)
-                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[1]->clone.value, money.gold);
-            if (money.silver)
-                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[2]->clone.value, money.silver);
-            if (money.copper)
-                hooks->remove_money_type(WHO, WHO, hooks->coins_arch[3]->clone.value, money.copper);
-            bank->value += money.mithril * hooks->coins_arch[0]->clone.value
-                    + money.gold * hooks->coins_arch[1]->clone.value
-                    + money.silver * hooks->coins_arch[2]->clone.value
-                    + money.copper * hooks->coins_arch[3]->clone.value;
+            bank->value += amount;
             hooks->fix_player(WHO);
+        }
+        else
+        {
+            hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much money.");
+            val = 0;
         }
     }
 
