@@ -1562,17 +1562,26 @@ object * find_throw_tag(object *op, tag_t tag)
     /* look through the inventory */
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
-        /* can't toss invisible or inv-locked items */
-        if (IS_SYS_INVISIBLE(tmp) || QUERY_FLAG(tmp, FLAG_INV_LOCKED))
+        /* can't toss invisible items */
+        if (IS_SYS_INVISIBLE(tmp))
             continue;
+        
         if (tmp->count == tag)
+        {
+            /* Can't throw locked items */
+            if(QUERY_FLAG(tmp, FLAG_INV_LOCKED)) 
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s. It is locked.", query_base_name(tmp, op));
+                return NULL;
+            }
+
             break;
+        }
     }
 
     /* this should prevent us from throwing away
-        * cursed items, worn armour, etc. Only weapons
-        * can be thrown from 'hand'.  */
-
+     * cursed items, worn armour, etc. Only weapons
+     * can be thrown from 'hand'.  */
     if (!tmp)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "fixme: Can't find throw object tag.");
@@ -1582,7 +1591,7 @@ object * find_throw_tag(object *op, tag_t tag)
     if (QUERY_FLAG(tmp, FLAG_APPLIED))
     {
         /* we can't appy throwing stuff like darts, so this must be a weapon. skip if not OR when it
-             * can't be thrown OR when it is startequip which can't be dropped. */
+         * can't be thrown OR when it is startequip which can't be dropped. */
         if (tmp->type != WEAPON || !QUERY_FLAG(tmp, FLAG_IS_THROWN))
         {
             new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp, op));
