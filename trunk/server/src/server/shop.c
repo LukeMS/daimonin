@@ -320,7 +320,7 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
                 if (coins[NUM_COINS - 1 - i] == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
                 {
                     /* This should not happen, but if it does, just     *
-                         * merge the two.                       */
+                     * merge the two.                       */
                     if (coin_objs[i] != NULL)
                     {
                         LOG(llevBug, "BUG: %s has two money entries of (%s)\n", query_name(pouch),
@@ -349,6 +349,7 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
     /* Fill in any gaps in the coin_objs array - needed to make change. */
     /* Note that the coin_objs array goes from least value to greatest value */
     for (i = 0; i < NUM_COINS; i++)
+    {
         if (coin_objs[i] == NULL)
         {
             at = find_archetype(coins[NUM_COINS - 1 - i]);
@@ -358,12 +359,13 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             copy_object(&at->clone, coin_objs[i]);
             coin_objs[i]->nrof = 0;
         }
+    }
 
     for (i = 0; i < NUM_COINS; i++)
     {
         sint64 num_coins;
 
-        if (coin_objs[i]->nrof * coin_objs[i]->value > (uint32) remain)
+        if (coin_objs[i]->nrof * coin_objs[i]->value > remain)
         {
             num_coins = remain / coin_objs[i]->value;
             if (num_coins * coin_objs[i]->value < remain)
@@ -374,14 +376,15 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             num_coins = coin_objs[i]->nrof;
         }
 
-        if(num_coins>(2^32))
+        if(num_coins>(1ll << 31))
         {
-            LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %di,\n", __LINE__ , i);
-            num_coins = (2^32);
+            LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %d)\n", __LINE__ , i);
+            num_coins = (1ll << 31);
         }
 
         remain -= num_coins * coin_objs[i]->value;
         coin_objs[i]->nrof -= (uint32) num_coins;
+
         /* Now start making change.  Start at the coin value
          * below the one we just did, and work down to
          * the lowest value.
