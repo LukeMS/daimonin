@@ -817,12 +817,16 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
         return;
 
     /* TODO: parameterize */
-    if(rv->distance < 5)
+    if(rv->distance < 8)
     {
-        int r = RANDOM() % 8;
-        response->type = MOVE_RESPONSE_DIR;
-        response->data.direction = r;
-        return;
+        /* The further from owner, the lesser chance to
+         * stroll randomly */
+        if((RANDOM() % (8-rv->distance)) > 2)
+        {
+            response->type = MOVE_RESPONSE_DIR;
+            response->data.direction = RANDOM() % 8;
+            return;
+        }
     }
 
     response->type = MOVE_RESPONSE_OBJECT;
