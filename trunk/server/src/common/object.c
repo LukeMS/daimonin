@@ -1239,14 +1239,13 @@ void drop_ob_inv(object *ob)
             }
         }
         else if (!(QUERY_FLAG(ob, FLAG_STARTEQUIP)
-                || (tmp_op->type
-                 != RUNE
+                || (tmp_op->type != RUNE
                  && (QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT)
                   || QUERY_FLAG(tmp_op, FLAG_STARTEQUIP)
-                  || QUERY_FLAG(tmp_op,
-                                FLAG_NO_DROP)))))
+                  || QUERY_FLAG(tmp_op, FLAG_NO_DROP)))))
         {
             tmp_op->x = ob->x,tmp_op->y = ob->y;
+            CLEAR_FLAG(tmp_op, FLAG_APPLIED);
 
             /* if we have a corpse put the item in it */
             if (corpse)
