@@ -445,23 +445,23 @@ int move_monster(object *op, int mode)
     if(QUERY_FLAG(op,FLAG_PARALYZED))
         return 0;
 
-    /* we only have a valid weapon swing - no move */
-    if(mode == FALSE)
-        goto jump_move_monster_action;
-
-    /*
-     * First, some general monster-management
-     */
-    tmp_dir = op->anim_enemy_dir;
-    op->anim_enemy_dir = -1;      /* control the facings 25 animations */
-    op->anim_moving_dir = -1;     /* the same for movement */
-
     /* Set up mob data if missing */
     if (MOB_DATA(op) == NULL)
     {
         op->custom_attrset = get_poolchunk(pool_mob_data);
         MOB_DATA(op)->behaviours = setup_behaviours(op);
     }
+    
+    /* we only have a valid weapon swing - no move */
+    if(mode == FALSE)
+        goto jump_move_monster_action;
+    
+    /*
+     * First, some general monster-management
+     */
+    tmp_dir = op->anim_enemy_dir;
+    op->anim_enemy_dir = -1;      /* control the facings 25 animations */
+    op->anim_moving_dir = -1;     /* the same for movement */
 
     /* Pets temporarily stored inside a player gets a chance to escape */
     if(op->env && op->env->type == PLAYER && QUERY_FLAG(op, FLAG_SYS_OBJECT))
