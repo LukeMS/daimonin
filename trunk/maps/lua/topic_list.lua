@@ -65,7 +65,7 @@ function TopicList:CheckMessage(event_param)
 
 	-- if no match, execute the default actions (if any)
 	if self.default ~= nil then
-		self:_DoActions(event_param, self.default, {})
+		self:_DoActions(event_param, self.default, {msg})
 	end
 end
 

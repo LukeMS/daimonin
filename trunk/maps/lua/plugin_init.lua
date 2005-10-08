@@ -16,29 +16,28 @@ require("data_store")
 --
 
 function string.capitalize(s, b_keep)
-	local f = string.sub(s, 1, 1)
-	if string.len(s) > 1 then
-	s = string.sub(s, 2)
-	if not b_keep then
-		s = string.lower(s)
-	end
-	else
-		s = ""
-	end
-	return string.upper(f) .. s
+    local s1, s2 = string.sub(s,1,1), string.sub(s,2)
+    if s2 then
+        if not b_keep then
+            s2 = string.lower(s2)
+        end
+        return string.upper(s1) .. s2
+    else
+        return string.upper(s1)
+    end
 end
 
 -- string.split() function
 function string.split(s, sep)
-	if s == nil then return nil end
-	if sep == nil or sep == "" then
-		sep = "%s"
-	end
-	local t={}, n
-	for n in string.gfind(s, "[^" .. sep .. "]+") do
-		table.insert(t, n)
-	end
-	return t
+    if s == nil then return nil end
+    if sep == nil or sep == "" then
+        sep = "%s"
+    end
+    local t={}, n
+    for n in string.gfind(s, "[^" .. sep .. "]+") do
+        table.insert(t, n)
+    end
+    return t
 end
 
 --
@@ -85,7 +84,7 @@ end
 
 -- Shutdown hook called when server unloads the plugin
 function _shutdown()
-	_data_store.save(true)
+    _data_store.save(true)
 end
 
 -- Finished with the initialization
