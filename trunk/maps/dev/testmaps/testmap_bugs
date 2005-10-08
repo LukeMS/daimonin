@@ -244,6 +244,18 @@ arch floor_ostone1
 x 1
 y 13
 end
+arch jelly_red
+Con 1
+stand_still 1
+level 50
+maxhp 1
+ac 0
+x 1
+y 13
+arch full_helmet
+applied 1
+end
+end
 arch floor_ostone1
 x 1
 y 14
@@ -386,6 +398,16 @@ arch floor_ostone1
 x 2
 y 13
 end
+arch sign
+msg
+0000227: finding a equiped item
+
+This mob contains an applied helmet, which is still applied after loot generation.
+When picked up it might (but shouldn't) automatically be applied on the person.
+endmsg
+x 2
+y 13
+end
 arch floor_ostone1
 x 2
 y 14
@@ -431,9 +453,6 @@ x 2
 y 23
 end
 arch floor_ostone1
-x 3
-end
-arch wall_stone1_1
 x 3
 end
 arch wall_stone1_1
@@ -531,7 +550,15 @@ arch floor_ostone1
 x 3
 y 12
 end
+arch carpet2b
+x 3
+y 12
+end
 arch floor_ostone1
+x 3
+y 13
+end
+arch carpet2b
 x 3
 y 13
 end
