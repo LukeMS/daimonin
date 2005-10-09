@@ -127,7 +127,7 @@ int CAN_MERGE(object *ob1, object *ob2)
     if (ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
         return 1;
 
-    /* Gecko: Moved out special handling of event obejct nrof */
+    /* Gecko: Moved out special handling of event object nrof */
     /* important: don't merge objects with glow_radius set - or we come
      * in heavy side effect situations. Because we really not know what
      * our calling function will do after this merge (and the calling function
@@ -228,9 +228,13 @@ int CAN_MERGE(object *ob1, object *ob2)
      || ob1->inv_animation_id != ob2->inv_animation_id)
         return 0;
 
+    /* We should avoid merging empty containers too. Gecko 2005-10-09 */
+    if (ob1->type == CONTAINER)
+        return 0;
+    
     /* some stuff we should not need to test:
      * carrying: because container merge isa big nono - and we tested ->inv before. better no double use here.
-        * weight_limit: same reason like carrying - add when we double use for stacking items
+     * weight_limit: same reason like carrying - add when we double use for stacking items
      * last_heal;
      * last_sp;
      * last_grace;
@@ -238,9 +242,9 @@ int CAN_MERGE(object *ob1, object *ob2)
      * run_away;
      * stealth;
      * hide;
-        * move_type;
+     * move_type;
      * layer;               this *can* be different for real same item - watch it
-        * anim_speed;           this can be interesting...
+     * anim_speed;           this can be interesting...
      */
 
     return 1; /* can merge! */
@@ -1768,10 +1772,10 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
             {
                 op->nrof += tmp->nrof;
                 /* a bit tricky remove_ob() without check off.
-                         * technically, this happens: arrow x/y is falling on the stack
-                         * of perhaps 10 arrows. IF a teleporter is called, the whole 10
-                         * arrows are teleported.Thats a right effect.
-                         */
+                 * technically, this happens: arrow x/y is falling on the stack
+                 * of perhaps 10 arrows. IF a teleporter is called, the whole 10
+                 * arrows are teleported.Thats a right effect.
+                 */
                 remove_ob(tmp);
             }
         }

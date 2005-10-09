@@ -1043,9 +1043,6 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
         return NULL;
     }
 
-    if (pl->count == count)
-        return pl;
-
     for (op = pl->inv; op; op = op->below)
         if (op->count == count)
             return op;
