@@ -376,10 +376,10 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             num_coins = coin_objs[i]->nrof;
         }
 
-        if(num_coins>(1ll << 31))
+        if(num_coins> ((sint64)1 << 31))
         {
             LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %d)\n", __LINE__ , i);
-            num_coins = (1ll << 31);
+            num_coins = ((sint64)1 << 31);
         }
 
         remain -= num_coins * coin_objs[i]->value;
