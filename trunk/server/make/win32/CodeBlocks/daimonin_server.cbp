@@ -155,6 +155,10 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
+		<Unit filename="..\..\..\src\common\material.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\src\common\mempool.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
