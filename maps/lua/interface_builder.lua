@@ -2,13 +2,13 @@
 -- Simplified API for the NPC GUI interface
 -- 
 
--- TODO: documentation
--- TODO: make tostring work directly in the call to foo:Interface()
+-- TODO: make tostring work directly in a call to foo:Interface(1, ib)
 -- TODO: AddIcon() AddLink() AddReward()
 -- TODO: test generation of icons, links and rewards
 
 InterfaceBuilder = {}
 
+-- Set window header
 function InterfaceBuilder:SetHeader(face, title)
     if type(face) == 'userdata' then
         face = face:GetFace()
@@ -16,26 +16,32 @@ function InterfaceBuilder:SetHeader(face, title)
     self.header = { face = face, title = title }
 end
 
+-- Set message title
+function InterfaceBuilder:SetTitle(title)
+    self.message.title = title
+end
+
+-- Replace message body
 function InterfaceBuilder:SetMessage(body)
     self.message.body = body
 end
 
-function InterfaceBuilder:SetTitle(title, body)
-    self.message.title = title
-end
-
-function InterfaceBuilder:SetDecline(title, command)
-    self.decline = { title = title, command = command }
-end
-
-function InterfaceBuilder:SetAccept(title, command)
-    self.accept = { title = title, command = command }
-end
-
+-- Append text to message body
 function InterfaceBuilder:AddToMessage(text)
     self.message.body = self.message.body .. text
 end
 
+-- Set decline button
+function InterfaceBuilder:SetDecline(title, command)
+    self.decline = { title = title, command = command }
+end
+
+-- Set accept button
+function InterfaceBuilder:SetAccept(title, command)
+    self.accept = { title = title, command = command }
+end
+
+-- Generate the NPC GUI string from internal state
 function InterfaceBuilder:Build()
     local iface = ""
     local function default(v, default)
@@ -85,6 +91,7 @@ function InterfaceBuilder:Build()
     return iface
 end
 
+-- Constructor
 function InterfaceBuilder:New()
     local obj = { message = { title = "", body = "" } }
     setmetatable(obj, 
@@ -95,3 +102,6 @@ function InterfaceBuilder:New()
     )
     return obj
 end    
+
+-- Enable "InterfaceBuilder()" as an alias for "InterfaceBuilder:New()"
+setmetatable(InterfaceBuilder, { __call = InterfaceBuilder.New })
