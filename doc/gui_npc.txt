@@ -63,10 +63,10 @@ Thats done with activator:Interface(-1).
 
 For a normal inteface() commands the tags are these: 
 
-HEAD: <h f="face_name" t="Title (optional)"> 
+HEAD: <h f="face_name" b="Title (optional)"> 
 With the head command, the portrait is put in the upper left area. 
 The title string is the name of the npc you talk to. Is the title is NOT 
-given (optional means the t="" part don't must be given for a head 
+given (optional means the b="" part don't must be given for a head 
 command) the title name is the same name as the object name 
 you target! 
 

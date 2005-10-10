@@ -51,8 +51,11 @@ function InterfaceBuilder:Build()
     local badface = ''
     
     if self.header then
-        iface = iface .. '<h f="' .. default(self.header.face, badface) .. '">'
-        -- TODO: title cannot be used atm
+        iface = iface .. '<h f="' .. default(self.header.face, badface) 
+        if self.header.title then
+            iface = iface .. '" b="' .. default(self.header.title)
+        end
+        iface = iface .. '">'
     end
 
     if self.message then
