@@ -20,9 +20,10 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "define.h"
 #include "gui_window.h"
-#include "gui_gadget.h"
 #include "gui_textout.h"
 #include "gui_manager.h"
+#include "gui_gadget.h"
+#include "gui_listbox.h"
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
@@ -46,11 +47,11 @@ int GuiWindow::mMouseDragging = -1;
 ///=================================================================================================
 void GuiWindow::delGadget(int pos)
 {
+  // Delete the gadgets.
   for (vector<GuiGadget*>::iterator i = mvGadget.begin(); i < mvGadget.end(); ++i)
   {
     if (!pos--)
     {
-      // Logger::log().info() << "deleting: " << (*i)->getName();
       delete (*i);
       mvGadget.erase(i);
       return;
@@ -63,18 +64,42 @@ void GuiWindow::delGadget(int pos)
 ///=================================================================================================
 GuiWindow::~GuiWindow()
 {
-  for (unsigned int i = 0; i < mvGadget.size(); ++i)
+  // Delete the gadgets.
+  for (vector<GuiGadget*>::iterator i = mvGadget.begin(); i < mvGadget.end(); ++i)
   {
-    delete mvGadget[i];
+    delete (*i);
+    mvGadget.erase(i);
   }
   mvGadget.clear();
+  // Delete the listboxes.
+  for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
+  {
+    delete (*i);
+    mvListbox.erase(i);
+  }
+  mvListbox.clear();
+  // Delete the graphics.
+  for (vector<GuiGraphic*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
+  {
+    delete (*i);
+    mvGraphic.erase(i);
+  }
+  mvGraphic.clear();
+  // Delete the textlines.
+  for (vector<TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
+  {
+    delete (*i);
+    mvTextline.erase(i);
+  }
+  mvTextline.clear();
+
   mTexture.setNull();
 }
 
 ///=================================================================================================
 /// Build a window out of a xml description file.
 ///=================================================================================================
-GuiWindow::GuiWindow(TiXmlElement *xmlElem, GuiManager *guiManager)
+void GuiWindow::Init(TiXmlElement *xmlElem, GuiManager *guiManager)
 {
   mSrcPixelBox = guiManager->getTilesetPixelBox();
   mMousePressed  = -1;
@@ -92,12 +117,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   TiXmlElement *xmlElem;
   const char *valString;
   std::string strTmp;
-  mStrName = xmlRoot->Attribute("ID");
+  mStrName = xmlRoot->Attribute("name");
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Coordinates type.
   /////////////////////////////////////////////////////////////////////////
   mSizeRelative = false;
-  if ((valString = xmlRoot->Attribute("RelativeCoords")))
+  if ((valString = xmlRoot->Attribute("relativeCoords")))
   {
     if (!stricmp(valString, "true"))  mSizeRelative = true;
   }
@@ -107,9 +132,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   mPosX = mPosY = mPosZ = 100;
   if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
   {
-    mPosX = atoi(xmlElem->Attribute("X"));
-    mPosY = atoi(xmlElem->Attribute("Y"));
-    mPosZ = atoi(xmlElem->Attribute("Z-Order"));
+    mPosX = atoi(xmlElem->Attribute("x"));
+    mPosY = atoi(xmlElem->Attribute("y"));
+    mPosZ = atoi(xmlElem->Attribute("zOrder"));
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Dragging entries.
@@ -117,18 +142,18 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
   if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
   {
-    mDragPosX1 = atoi(xmlElem->Attribute("X"));
-    mDragPosY1 = atoi(xmlElem->Attribute("Y"));
-    mDragPosX2 = atoi(xmlElem->Attribute("Width")) + mDragPosX1;
-    mDragPosY2 = atoi(xmlElem->Attribute("Height"))+ mDragPosY1;
+    mDragPosX1 = atoi(xmlElem->Attribute("x"));
+    mDragPosY1 = atoi(xmlElem->Attribute("y"));
+    mDragPosX2 = atoi(xmlElem->Attribute("width")) + mDragPosX1;
+    mDragPosY2 = atoi(xmlElem->Attribute("height"))+ mDragPosY1;
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Size entries.
   /////////////////////////////////////////////////////////////////////////
   if ((xmlElem = xmlRoot->FirstChildElement("Size")))
   {
-    mWidth  = atoi(xmlElem->Attribute("Width"));
-    mHeight = atoi(xmlElem->Attribute("Height"));
+    mWidth  = atoi(xmlElem->Attribute("width"));
+    mHeight = atoi(xmlElem->Attribute("height"));
   }
   if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
   if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
@@ -137,7 +162,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   /////////////////////////////////////////////////////////////////////////
   if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
   {
-    mStrTooltip = xmlElem->Attribute("Text");
+    mStrTooltip = xmlElem->Attribute("text");
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadgets.
@@ -145,7 +170,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
   {
     /// Find the gfx data in the tileset.
-    GuiManager::mSrcEntry *srcEntry = guiManager->getStateGfxPositions(xmlElem->Attribute("ID"));
+    GuiManager::mSrcEntry *srcEntry = guiManager->getStateGfxPositions(xmlElem->Attribute("name"));
     if (!srcEntry) continue;
     GuiGadget *gadget = new GuiGadget(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
     for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
@@ -155,12 +180,20 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
     mvGadget.push_back(gadget);
   }
   /////////////////////////////////////////////////////////////////////////
+  /// Parse the listboxes.
+  /////////////////////////////////////////////////////////////////////////
+  for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
+  {
+    GuiListbox *listbox = new GuiListbox(xmlElem, mWidth, mHeight);
+    mvListbox.push_back(listbox);
+  }
+  /////////////////////////////////////////////////////////////////////////
   /// Parse the graphics.
   /////////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
   {
     /// Find the gfx data in the tileset.
-    GuiManager::mSrcEntry *srcEntry = guiManager->getStateGfxPositions(xmlElem->Attribute("ID"));
+    GuiManager::mSrcEntry *srcEntry = guiManager->getStateGfxPositions(xmlElem->Attribute("name"));
     if (srcEntry)
     { /// This is a GFX_FILL.
       GuiGraphic *graphic = new GuiGraphic(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
@@ -177,24 +210,51 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
     }
   }
   /////////////////////////////////////////////////////////////////////////
-  /// Parse the TextOutput.
+  /// Parse the static TextOutput.
   /////////////////////////////////////////////////////////////////////////
-  for (xmlElem = xmlRoot->FirstChildElement("TextLine"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextLine"))
+  for (xmlElem = xmlRoot->FirstChildElement("TextStatic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextStatic"))
   {
-    _textLine* TextLine = new  _textLine;
-    TextLine->x = atoi(xmlElem->Attribute("X"));
-    TextLine->y = atoi(xmlElem->Attribute("Y"));
-    if (TextLine->x > mWidth - 2) TextLine->x =  mWidth -2;
-    if (TextLine->y > mHeight- 2) TextLine->y  = mHeight-2;
-    TextLine->size = atoi(xmlElem->Attribute("Size"));
-    if (TextLine->x + TextLine->size > mWidth) TextLine->size = mWidth - TextLine->x -1;
-    TextLine->text = xmlElem->Attribute("Text");
-    mvTextline.push_back(TextLine);
+    TextLine *textline = new TextLine;
+    textline->BG_Backup =0;
+    textline->x = atoi(xmlElem->Attribute("x"));
+    textline->y = atoi(xmlElem->Attribute("y"));
+    if (textline->x > mWidth - 2)  textline->x =  mWidth -2;
+    if (textline->y > mHeight- 2)  textline->y  = mHeight-2;
+    textline->width = atoi(xmlElem->Attribute("width"));
+    if (textline->x + textline->width > mWidth) textline->width = mWidth - textline->x -1;
+    textline->text = xmlElem->Attribute("text");
+    mvTextline.push_back(textline);
   }
   /////////////////////////////////////////////////////////////////////////
-  /// Parse the TextValue.
+  /// Parse the dynamic TextOutput.
   /////////////////////////////////////////////////////////////////////////
-  // TODO
+  for (xmlElem = xmlRoot->FirstChildElement("TextDynamic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextDynamic"))
+  {
+    valString = xmlElem->Attribute("name");
+    if (!valString)
+    {
+      Logger::log().error() << "DynamicText needs a name value!";
+      return;
+    }
+    TextLine *textline = new TextLine;
+    for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+    {
+      if (GuiManager::GuiElementNames[i].name == valString)
+      {
+        textline->index = i;
+        break;
+      }
+    }
+    textline->BG_Backup = new uint32[GuiTextout::getSingleton().getMaxFontHeight() * mWidth];
+    textline->x = atoi(xmlElem->Attribute("x"));
+    textline->y = atoi(xmlElem->Attribute("y"));
+    if (textline->x > mWidth - 2)  textline->x =  mWidth -2;
+    if (textline->y > mHeight- 2)  textline->y  = mHeight-2;
+    textline->width = atoi(xmlElem->Attribute("width"));
+    if (textline->x + textline->width > mWidth) textline->width = mWidth - textline->x -1;
+    textline->text = xmlElem->Attribute("text");
+    mvTextline.push_back(textline);
+  }
 }
 
 ///=================================================================================================
@@ -223,9 +283,8 @@ void GuiWindow::createWindow()
   // If the window is smaller then the texture - we have to set the delta-size to transparent.
   PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
   uint32 *dest_data = (uint32*)pb.data;
-  for (int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0;
+  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0;
   mTexture->getBuffer()->unlock();
-
 }
 
 ///=================================================================================================
@@ -240,24 +299,46 @@ int GuiWindow::getGadgetMouseIsOver(int x, int y)
   return -1;
 }
 
-
 ///=================================================================================================
 /// .
 ///=================================================================================================
 void GuiWindow::drawAll()
 {
-  // Draw the background.
+  // Todo delete static stuff after drawing (like bg-gfx, static text, etc).
+
+  /////////////////////////////////////////////////////////////////////////
+  /// Draw the background.
+  /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvGraphic.size(); ++i)
     mvGraphic[i]->draw(mSrcPixelBox, mTexture.getPointer());
-  // Draw Text.
+  /////////////////////////////////////////////////////////////////////////
+  /// Draw text.
+  /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvTextline.size() ; ++i)
   {
-    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->size, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_BLACK);
-    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->size, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_WHITE);
+    // Fill the BG_Backup buffer with Window background, before printing.
+    if (mvTextline[i]->BG_Backup)
+    {
+      PixelBox pb(mvTextline[i]->width, GuiTextout::getSingleton().getMaxFontHeight(), 1, PF_A8R8G8B8 , mvTextline[i]->BG_Backup);
+      mTexture.getPointer()->getBuffer()->blitToMemory(Box(
+            mvTextline[i]->x,
+            mvTextline[i]->y,
+            mvTextline[i]->x + mvTextline[i]->width,
+            mvTextline[i]->y + GuiTextout::getSingleton().getMaxFontHeight()), pb);
+    }
+    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_BLACK);
+    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_WHITE);
   }
-  //   DrawGadgets.
+  /////////////////////////////////////////////////////////////////////////
+  /// Draw gadget.
+  /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvGadget.size() ; ++i)
     mvGadget [i]->draw(mSrcPixelBox, mTexture.getPointer());
+  /////////////////////////////////////////////////////////////////////////
+  /// Draw listbox.
+  /////////////////////////////////////////////////////////////////////////
+  for (unsigned int i = 0; i < mvListbox.size() ; ++i)
+    mvListbox [i]->draw(mSrcPixelBox, mTexture.getPointer());
 }
 
 ///=================================================================================================
@@ -365,7 +446,21 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 }
 
 ///=================================================================================================
-/// JUST FOR TESTING.
+/// Parse a message.
 ///=================================================================================================
-void GuiWindow::keyEvent(int , int , int , int )
-{}
+void GuiWindow::Message(int message, int element, const char *value)
+{
+  switch (message)
+  {
+    case GUI_MSG_TXT_CHANGED:
+      for (unsigned int i = 0; i < mvTextline.size() ; ++i)
+      {
+        if (mvTextline[i]->index != element) continue;
+        GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value, COLOR_WHITE);
+        break;
+      }
+      break;
+    default:
+      break;
+  }
+}

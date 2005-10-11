@@ -20,6 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "Ogre.h"
 #include "TileChunk.h"
+#include "option.h"
 #include "TileManager.h"
 #include "TileEnvironment.h"
 
@@ -37,7 +38,12 @@ void TileEnvironment::UpdateEnvironment()
   m_Environment_SceneNode = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
 
 
-//return;
+
+
+return;
+
+
+
 
 
 
@@ -52,10 +58,31 @@ for (int z = 0; z < 2; ++z)
   Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "wall2.mesh" );
 //  Entity *mEntityNPC = Node->getCreator()->createEntity("OBJ_"+StringConverter::toString(++INr), "blunt1.mesh" );
   Node->attachObject(mEntityNPC);
-    Node->yaw(Degree(10));
-  Node->setScale(Vector3(1, 1, 1));
+
+  std::string mDescFile = DIR_MODEL_DESCRIPTION;
+  mDescFile += "Wall.desc";
+  std::string strValue , strKeyword;
+  Option::getSingleton().openDescFile(mDescFile.c_str());
+
+  Option::getSingleton().getDescStr("yaw", strValue);
+  Node->yaw(Degree(atoi(strValue.c_str())));
+  Option::getSingleton().getDescStr("roll", strValue);
+  Node->roll(Radian(Degree(atoi(strValue.c_str()))));
+  Option::getSingleton().getDescStr("pich", strValue);
+  Node->pitch(Degree(Degree(atoi(strValue.c_str()))));
+  Real x, y, z;
+  Option::getSingleton().getDescStr("sizeX", strValue);
+  x = ((Real)atoi(strValue.c_str()) /100);
+  Option::getSingleton().getDescStr("sizeY", strValue);
+  y = ((Real)atoi(strValue.c_str()) /100);
+  Option::getSingleton().getDescStr("sizeZ", strValue);
+  z = ((Real)atoi(strValue.c_str()) /100);
+  Node->setScale(Vector3(x, y, z));
+
   INr+= 100;
 }
+
+
   /*
    long x = m_ChunkPtr->m_posX;
    long y = m_ChunkPtr->m_posY;

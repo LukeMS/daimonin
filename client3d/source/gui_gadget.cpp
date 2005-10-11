@@ -36,21 +36,21 @@ GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadget.
   /////////////////////////////////////////////////////////////////////////
-  mStrName = xmlElem->Attribute("ID");
+  mStrName = xmlElem->Attribute("name");
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Behavior.
   /////////////////////////////////////////////////////////////////////////
   if ((xmlGadget = xmlElem->FirstChildElement("Behavior")))
   {
-    mBehavior = xmlGadget->Attribute("Type");
+    mBehavior = xmlGadget->Attribute("type");
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the position.
   /////////////////////////////////////////////////////////////////////////
   if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
   {
-    mX = atoi(xmlGadget->Attribute("X"));
-    mY = atoi(xmlGadget->Attribute("Y"));
+    mX = atoi(xmlGadget->Attribute("x"));
+    mY = atoi(xmlGadget->Attribute("y"));
   }
   if (mX > maxX-2) mX = maxX-2;
   if (mY > maxY-2) mY = maxY-2;
@@ -59,16 +59,25 @@ GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   if (mX + mWidth > maxX) mWidth = maxX-mX-1;
   if (mY + mHeight >maxY) mHeight= maxY-mY-1;
   /////////////////////////////////////////////////////////////////////////
+  /// Parse the position.
+  /////////////////////////////////////////////////////////////////////////
+  mMirrorH = mMirrorV = false;
+  if ((xmlGadget = xmlElem->FirstChildElement("Mirror")))
+  {
+    if (!stricmp(xmlGadget->Attribute("horizontal"), "true")) mMirrorH = true;
+    if (!stricmp(xmlGadget->Attribute("vertical"  ), "true")) mMirrorV = true;
+  }
+  /////////////////////////////////////////////////////////////////////////
   /// Parse the label.
   /////////////////////////////////////////////////////////////////////////
   if ((xmlGadget = xmlElem->FirstChildElement("Label")))
   {
-    mLabelXPos = atoi(xmlGadget->Attribute("XPos"));
-    mLabelYPos = atoi(xmlGadget->Attribute("YPos"));
-    mLabelColor[0]= (unsigned char) atoi(xmlGadget->Attribute("Red"));
-    mLabelColor[1]= (unsigned char) atoi(xmlGadget->Attribute("Green"));
-    mLabelColor[2]= (unsigned char) atoi(xmlGadget->Attribute("Blue"));
-    mStrLabel  = xmlGadget->Attribute("Text");
+    mLabelXPos = atoi(xmlGadget->Attribute("xPos"));
+    mLabelYPos = atoi(xmlGadget->Attribute("yPos"));
+    mLabelColor[0]= (unsigned char) atoi(xmlGadget->Attribute("red"));
+    mLabelColor[1]= (unsigned char) atoi(xmlGadget->Attribute("green"));
+    mLabelColor[2]= (unsigned char) atoi(xmlGadget->Attribute("blue"));
+    mStrLabel  = xmlGadget->Attribute("text");
   }
 }
 
