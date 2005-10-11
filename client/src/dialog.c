@@ -1809,7 +1809,9 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
                     }
                     else
                     {
-                        xt += SystemFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + SystemFont.char_offset;
+                        if(gui_interface_npc->message.lines[i][s] != '~' && 
+                                gui_interface_npc->message.lines[i][s] != '°')
+                            xt += SystemFont.c[(unsigned char)gui_interface_npc->message.lines[i][s]].w + SystemFont.char_offset;
 
                         if(flag && mx>=xs && mx <=xt) /* only when we have a active keyword part */
                         {
