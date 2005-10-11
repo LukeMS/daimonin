@@ -51,6 +51,10 @@
         </html>
     </xsl:template>
 
+    <xsl:template match="/section">
+        <xsl:apply-templates/>
+    </xsl:template>
+
     <xsl:template match="/section/title">
         <h1>
             <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
@@ -102,10 +106,6 @@
         </pre>
     </xsl:template>
 
-    <xsl:template match="/section">
-        <xsl:apply-templates/>
-    </xsl:template>
-
     <xsl:template match="/section/section">
         <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
@@ -119,6 +119,13 @@
         <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
+    </xsl:template>
+
+    <xsl:template match="a">
+        <a href="{replace(@href, '.dai$', '.xhtml')}">
+            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates/>
+        </a>
     </xsl:template>
 
     <xsl:template match="*">
