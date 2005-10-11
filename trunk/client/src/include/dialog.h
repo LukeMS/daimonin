@@ -62,7 +62,7 @@ extern char        *spell_tab[];
 #define DIALOG_LOGIN_WARNING_WRONGPASS  2
 #define DIALOG_LOGIN_WARNING_VERIFY_FAILED  3
 
-int add_button(int x, int y, int xo, int yo, int id, int gfxNr, char *text, char *text_h);
+int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
 extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);

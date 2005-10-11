@@ -69,12 +69,12 @@ void show_group(int x, int y)
 
         if(global_group_status == GROUP_INVITE)
         {
-            if(add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 11, 2, 101, BITMAP_BUTTON_BLACK_UP, "   join", "   join"))
+            if(add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
             {
                 global_group_status = GROUP_WAIT;
                 send_command("/join", -1, SC_NORMAL);
             }
-            if(add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 11, 2, 102, BITMAP_BUTTON_BLACK_UP, "   deny", "   deny"))
+            if(add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
             {
                 global_group_status = GROUP_NO;
                 send_command("/deny", -1, SC_NORMAL);
@@ -86,7 +86,7 @@ void show_group(int x, int y)
     }
     else /* status: GROUP_MEMBER */
     {
-        if(add_button(x, y + 56,  6, 2, 103, BITMAP_SMALL_UP, "leave", "leave"))
+        if(add_button(x, y + 56, 103, BITMAP_SMALL_UP, "leave", "leave"))
         {
             if(global_group_status != GROUP_LEAVE)
             {
