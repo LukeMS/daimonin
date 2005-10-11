@@ -18,6 +18,10 @@
         indent="no"
     />
 
+    <xsl:template match="/">
+        <xsl:apply-templates/>
+    </xsl:template>
+
     <xsl:template match="/section">
         <xsl:apply-templates/>
         <xsl:text>&#xA;</xsl:text>
@@ -25,13 +29,29 @@
         <xsl:value-of select="current-dateTime()"/>
     </xsl:template>
 
-    <xsl:template match="/section/title">[size=24]<xsl:apply-templates/><xsl:text>[/size]&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/title">
+        <xsl:text>[size=24]</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>[/size]&#xA;</xsl:text>
+    </xsl:template>
 
-    <xsl:template match="/section/section/title">[size=20]<xsl:apply-templates/><xsl:text>[/size]&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/section/title">
+        <xsl:text>[size=20]</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>[/size]&#xA;</xsl:text>
+    </xsl:template>
 
-    <xsl:template match="/section/section/section/title">[size=16]<xsl:apply-templates/><xsl:text>[/size]&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/section/section/title">
+        <xsl:text>[size=16]</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>[/size]&#xA;</xsl:text>
+    </xsl:template>
 
-    <xsl:template match="/section/section/section/section/title">[size=14]<xsl:apply-templates/><xsl:text>[/size]&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/section/section/section/title">
+        <xsl:text>[size=14]</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>[/size]&#xA;</xsl:text>
+    </xsl:template>
 
     <xsl:template match="blockcode">
         <xsl:text>[code]</xsl:text>
@@ -88,7 +108,7 @@
 
     <xsl:template match="a">
         <xsl:text>[url=</xsl:text><xsl:value-of select="@href"/><xsl:text>]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/url]</xsl:text>
     </xsl:template>
 

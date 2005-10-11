@@ -18,19 +18,40 @@
         indent="no"
     />
 
+    <xsl:template match="/">
+        <xsl:apply-templates/>
+    </xsl:template>
+
     <xsl:template match="/section">
         <xsl:apply-templates/>
         <xsl:text>&#xA;----&#xA;Warning: This wiki page is auto generated. If you change it, your changes are likely to be lost after the next update.&#xA;</xsl:text>
-        <xsl:text>&#xA;Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
+        <xsl:text>&#xA;Last modified: </xsl:text>
+        <xsl:value-of select="current-dateTime()"/>
     </xsl:template>
 
-    <xsl:template match="/section/title">!!!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/title">
+        <xsl:text>!!!</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&#xA;</xsl:text>
+    </xsl:template>
 
-    <xsl:template match="/section/section/title">!!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/section/title">
+        <xsl:text>!!</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&#xA;</xsl:text>
+    </xsl:template>
 
-    <xsl:template match="/section/section/section/title">!<xsl:apply-templates/><xsl:text>&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/section/section/title">
+        <xsl:text>!</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>&#xA;</xsl:text>
+    </xsl:template>
 
-    <xsl:template match="/section/section/section/section/title"><xsl:text>__</xsl:text><xsl:apply-templates/><xsl:text>__&#xA;</xsl:text></xsl:template>
+    <xsl:template match="/section/section/section/section/title">
+        <xsl:text>__</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>__&#xA;</xsl:text>
+    </xsl:template>
 
     <xsl:template match="blockcode">
         <xsl:apply-templates/>
@@ -84,7 +105,9 @@
     </xsl:template>
 
     <xsl:template match="a">
-        <xsl:text>[</xsl:text><xsl:apply-templates/><xsl:text> | </xsl:text><xsl:value-of select="@href"/><xsl:text>]</xsl:text>
+        <xsl:text>[</xsl:text>
+            <xsl:apply-templates/>
+        <xsl:text> | </xsl:text><xsl:value-of select="@href"/><xsl:text>]</xsl:text>
     </xsl:template>
 
     <xsl:template match="table">
