@@ -59,12 +59,12 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   {
     mElementLine[i]= static_cast<TextAreaOverlayElement*>
                      (OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/TextRow",name+"Line_"+ StringConverter::toString(i)));
-    mElementLine[i]->setCaption("");
+    mElementLine[i]->setCaption("erzerzezerze");
     mElementLine[i]->setHeight(0.01);
     mContainerFrame->addChild(mElementLine[i]);
   }
 
-  mContainerFrame->setLeft(Xpos);
+  mContainerFrame->setLeft(0);
 //  mElementTitle  ->setWidth(-Xpos-mElementButUp->getWidth()*2);
 //  mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
  // mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());

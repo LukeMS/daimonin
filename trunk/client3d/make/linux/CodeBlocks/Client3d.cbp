@@ -175,6 +175,10 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/gui_listbox.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/gui_manager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -242,6 +246,12 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/include/gui_graphic.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/gui_listbox.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

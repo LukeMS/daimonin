@@ -38,7 +38,6 @@ const int SOCKET_ERROR =-1;
 #include "define.h"
 #include "serverfile.h"
 #include "textinput.h"
-#include "textwindow.h"
 #include "TileManager.h"
 
 #define DEBUG_ON
@@ -191,20 +190,20 @@ void Network::Update()
       {
         Logger::log().info()  << "Query Metaserver " << Option::getSingleton().mMetaServer
         << " on port " << Option::getSingleton().mMetaServerPort;
-        TextWin->Print("query metaserver...");
-        sprintf(buf, "trying %s:%d", Option::getSingleton().mMetaServer.c_str(), Option::getSingleton().mMetaServerPort);
-        TextWin->Print(buf);
+//        TextWin->Print("query metaserver...");
+//        sprintf(buf, "trying %s:%d", Option::getSingleton().mMetaServer.c_str(), Option::getSingleton().mMetaServerPort);
+//        TextWin->Print(buf);
         if (OpenSocket(Option::getSingleton().mMetaServer.c_str(),Option::getSingleton().mMetaServerPort))
         {
           read_metaserver_data();
           CloseSocket();
-          TextWin->Print("done.");
+//          TextWin->Print("done.");
         }
         else
-          TextWin->Print("metaserver failed! using default list.", TXT_RED);
+          ; //TextWin->Print("metaserver failed! using default list.", TXT_RED);
       }
       add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
-      TextWin->Print("select a server.");
+//      TextWin->Print("select a server.");
       Option::getSingleton().GameStatus = GAME_STATUS_START;
     }
 
@@ -292,13 +291,13 @@ void Network::Update()
       }
       if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))
       {
-        TextWin->Print("connection failed!", TXT_RED);
+//        TextWin->Print("connection failed!", TXT_RED);
         Option::getSingleton().GameStatus = GAME_STATUS_START;
       }
       else
       {
         Option::getSingleton().GameStatus = GAME_STATUS_VERSION;
-        TextWin->Print("Connected. exchange version.");
+//        TextWin->Print("Connected. exchange version.");
       }
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_VERSION)
@@ -324,8 +323,8 @@ void Network::Update()
         }
         else
         {
-          TextWin->Print("version confirmed.");
-          TextWin->Print("starting login procedure...");
+//          TextWin->Print("version confirmed.");
+//          TextWin->Print("starting login procedure...");
           Option::getSingleton().GameStatus = GAME_STATUS_SETUP;
           Logger::log().info() << "GAME_STATUS_SETUP";
         }
@@ -445,7 +444,7 @@ void Network::Update()
       TextInput::getSingleton().startTextInput(1); // every start() needs a stop()!
       if (TextInput::getSingleton().wasCanceled())
       {
-        TextWin->Print("Break Login.", TXT_RED);
+//        TextWin->Print("Break Login.", TXT_RED);
         TextInput::getSingleton().stop();
   //      Dialog::getSingleton().setVisible(false);
         Option::getSingleton().GameStatus = GAME_STATUS_START;
@@ -821,14 +820,14 @@ int Network::write_socket(unsigned char *buf, int len)
     {
       Logger::log().error()  << "New socket write failed (wsb) ("
       << WSAGetLastError() << ").";
-      TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
+//      TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
       return -1;
     }
     if (amt == 0)
     {
       Logger::log().error()  << "Write_To_Socket: No data written out ("
       << WSAGetLastError() << ").";
-      TextWin->Print("SOCKET ERROR: No data written out", TXT_RED);
+//      TextWin->Print("SOCKET ERROR: No data written out", TXT_RED);
       return -1;
     }
 #else
@@ -840,7 +839,7 @@ int Network::write_socket(unsigned char *buf, int len)
         continue;
       }
       Logger::log().error() << "New socket (fd=" << mSocket << ") write failed.";
-      TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
+//      TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
       return -1;
     }
 #endif
@@ -1106,7 +1105,7 @@ int Network::read_socket()
         Logger::log().error()  << "ReadPacket got error "
         << WSAGetLastError()
         << ", returning -1\n";
-        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
+//        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
         return -1;
       }
       return 0;
@@ -1124,7 +1123,7 @@ int Network::read_socket()
       {
         Logger::log().error()  << "ReadPacket got error " << errno
         << "%d, returning 0";
-        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
+//        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
         return -1;
       }
       return 0;
@@ -1132,7 +1131,7 @@ int Network::read_socket()
 #endif
     if (stat==0)
     {
-      TextWin->Print("WARNING: Server read package error.", TXT_RED);
+//      TextWin->Print("WARNING: Server read package error.", TXT_RED);
       return -1;
     }
     mInbuf.len += stat;
@@ -1147,7 +1146,7 @@ int Network::read_socket()
   toread = 2 + (mInbuf.buf[0] << 8) + mInbuf.buf[1] - mInbuf.len;
   if ((toread + mInbuf.len) > MAXSOCKBUF)
   {
-    TextWin->Print("WARNING: Server read package error.", TXT_RED);
+//    TextWin->Print("WARNING: Server read package error.", TXT_RED);
     Logger::log().error() << "SockList_ReadPacket: Want to read more "\
     "bytes than will fit in buffer.";
     // return error so the socket is closed
@@ -1174,14 +1173,14 @@ int Network::read_socket()
 #endif
         Logger::log().error()   << "ReadPacket got error " << errno
         << ", returning 0";
-        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
+//        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
         return -1;
       }
       return 0;
     }
     if (stat==0)
     {
-      TextWin->Print("WARNING: Server read package error.", TXT_RED);
+//      TextWin->Print("WARNING: Server read package error.", TXT_RED);
       return -1;
     }
     mInbuf.len += stat;
@@ -1193,7 +1192,7 @@ int Network::read_socket()
     if (toread < 0)
     {
       Logger::log().error() << "SockList_ReadPacket: Read more bytes than desired.";
-      TextWin->Print("WARNING: Server read package error.", TXT_RED);
+//      TextWin->Print("WARNING: Server read package error.", TXT_RED);
       return -1;
     }
   }

@@ -25,7 +25,7 @@ const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
 const char OVERLAY_TYPE_NAME[] = "Panel"; // defined in OverlayElementFactory.h
 const char FILE_HEIGHT_MAP[]            = "Hoehenkarte.png";
-const char PATH_TILE_TEXTURES[]         = "media/materials/textures/tiles/";
+const char PATH_TILE_TEXTURES[]         = "./media/textures/tiles/";
 
 ///========================================================================
 /// All pathes MUST be placed here!

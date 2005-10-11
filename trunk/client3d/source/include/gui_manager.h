@@ -30,22 +30,65 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-class GuiWindow;
+enum {
+  GUI_WIN_STATISTICS,
+  GUI_WIN_PLAYERINFO,
+  GUI_WIN_REQUESTER,
+  GUI_WIN_SUM };
+
+enum {
+  GUI_MSG_TXT_CHANGED,
+  GUI_MSG_BUT_PRESSED,
+  GUI_MSG_SUM };
+
+enum {
+  // Button.
+  GUI_BUTTON_CLOSE,
+  GUI_BUTTON_OK,
+  GUI_BUTTON_CANCEL,
+  GUI_BUTTON_MINIMIZE,
+  GUI_BUTTON_MAXIMIZE,
+  // Listboxes.
+  GUI_LIST_UP,
+  GUI_LIST_DOWN,
+  GUI_LIST_LEFT,
+  GUI_LIST_RIGHT,
+  // TextValues.
+  GUI_TEXTVALUE_STAT_CUR_FPS,
+  GUI_TEXTVALUE_STAT_BEST_FPS,
+  GUI_TEXTVALUE_STAT_WORST_FPS,
+  GUI_TEXTVALUE_STAT_SUM_TRIS,
+  // Sum of all entries.
+  GUI_ELEMENTS_SUM
+};
 
 class GuiManager
 {
 public:
+  enum
+  {
+    MSG_CHANGE_TEXT, MSG_BUTTON_PRESSED, MSG_SUM
+  };
+
   struct _state
   {
     std::string name;
     short x, y;
   };
+
   struct mSrcEntry
   {
     std::string name;
     int width, height;
     std::vector<_state*>state;
   };
+
+  struct _GuiElementNames
+  {
+    std::string name;
+    unsigned int index;
+  }
+  static GuiWindowNames[], GuiElementNames[];
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
@@ -65,14 +108,17 @@ public:
     return mHasFocus;
   }
   const char *mouseEvent(int MouseAction, Real rx, Real ry);
-  void GuiManager::keyEvent(const char keyChar, const unsigned char key);
+  void keyEvent(const char keyChar, const unsigned char key);
+  void sendMessage(int window, int message, int element, int value);
+  void sendMessage(int window, int message, int element, const char *value);
+
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
   std::string mStrImageSetGfxFile;
   std::vector<mSrcEntry*>mvSrcEntry;
-  std::vector<GuiWindow*>mvWindow;
+  class GuiWindow *guiWindow;
   unsigned int mScreenWidth, mScreenHeight;
   bool mHasFocus;
   PixelBox mSrcPixelBox;

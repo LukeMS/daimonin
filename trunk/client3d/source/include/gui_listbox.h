@@ -18,8 +18,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_H
-#define GUI_GADGET_H
+#ifndef GUI_LISTBOX_H
+#define GUI_LISTBOX_H
 
 #include <string>
 #include <tinyxml.h>
@@ -27,14 +27,14 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-class GuiGadget
+class GuiListbox
 {
 public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY);
-  ~GuiGadget()
+  GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY);
+  ~GuiListbox()
   {}
   bool mouseOver(int x, int y)
   {
@@ -57,8 +57,13 @@ public:
   }
   void setStateImagePos(std::string state, int x, int y);
   void draw(PixelBox &mSrcPixelBox, Texture *texture);
-
+  void print(const char *text);
 private:
+static const Real CLOSING_SPEED      =  10.0f;  // default: 10.0f
+static const Real SCROLL_SPEED       =   1.0f;  // default:  1.0f
+static const int  MAX_TEXT_LINES     =  20;
+static const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
+
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
@@ -76,14 +81,34 @@ private:
   };
   struct _pos gfxSrcPos[STATE_SUM];
 
-  bool mMirrorH, mMirrorV;
+  struct _row
+  {
+    std::string str;
+    //    ColourValue colorTop;
+    //    ColourValue colorBottom;
+  }
+  row[SIZE_STRING_BUFFER];
+
+
+  Real mClose;                 // Only Headline visible.
+  Real mLastHeight;            // The height before window was closed.
+  Real mMinHeight, mMaxHeight;
+  Real mFirstYPos;
+  Real mScroll;
+  bool mIsClosing, mIsOpening; // User pressed open/close button.
+  bool mVisible;
+  bool mDragging;
+  int  mThisWindowNr;
+  int  mRowsToScroll, mRowsToPrint;
+  int  mSumRows;
+  int  mPrintPos;
+  int  mBufferPos;
+
   int  mX, mY, mWidth, mHeight;
   int  mType;
   std::string mStrName, mStrLabel, mBehavior;
-  unsigned char mLabelColor[3];
-  int mLabelXPos, mLabelYPos;
+  uint32 mFillColor;
   int  mOldState, mState;
-
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////

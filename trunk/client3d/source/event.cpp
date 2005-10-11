@@ -24,7 +24,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "option.h"
 #include "logger.h"
-#include "textwindow.h"
 #include "textinput.h"
 #include "network.h"
 #include "TileManager.h"
@@ -55,55 +54,11 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
                MouseListener *mMListener, bool useBufferedInputKeys, bool)
 {
   useBufferedInputKeys = true; // avoid compiler warning.
+  mMouseX = mMouseY =0;
   /////////////////////////////////////////////////////////////////////////////////////////
   /// Create all Overlays.
   /////////////////////////////////////////////////////////////////////////////////////////
   GuiManager::getSingleton().Init(FILE_GUI_IMAGESET, FILE_GUI_WINDOWS, win->getWidth(), win->getHeight());
-
-  mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
-  mDebugOverlay->show();
-
-  mMouseX = mMouseY =0;
-  TextWin = new CTextwindow("Message Window", -280, 300, win->getHeight());
-  ChatWin = new CTextwindow("Chat Window"   , -280, 300, win->getHeight());
-  TextWin->setChild(ChatWin);
-
-  ChatWin->Print("Welcome to Daimonin 3D.  ", TXT_YELLOW);
-  ChatWin->Print("-----------------------------------------", TXT_YELLOW);
-  ChatWin->Print("  L            -> Lauch network");
-  // ChatWin->Print("  C            -> Camera detail");
-  // ChatWin->Print("  Page Up/Down  -> Camera view.");
-  ChatWin->Print("  Print         -> Screenshot.");
-  ChatWin->Print("Player commands (depends on model):", TXT_WHITE);
-  ChatWin->Print("  Cursor-> Movement");
-  ChatWin->Print("  1    -> Toggle Weapon");
-  ChatWin->Print("  2    -> Toggle Shield");
-  ChatWin->Print("  3-7  -> Toggle Material_XX_Texture");
-  ChatWin->Print("  8    -> Toggle Helmet");
-  ChatWin->Print("  9    -> Toggle Armor");
-  ChatWin->Print("  A    -> Attack");
-  ChatWin->Print("  C    -> Fireball");
-  ChatWin->Print("  B    -> Block");
-  ChatWin->Print("  S    -> Slump");
-  ChatWin->Print("  D    -> Death.");
-  ChatWin->Print("  H    -> Hit.");
-  ChatWin->Print("  F1   -> Toggle Anim Group.");
-  ChatWin->Print(" ");
-  ChatWin->Print("You have to wait for animation end,", TXT_WHITE);
-  ChatWin->Print("before you can select the next one.", TXT_WHITE);
-  TextWin->Print("Enemy commands:", TXT_WHITE);
-  TextWin->Print("  J    -> Turn left");
-  TextWin->Print("  K    -> Turn right");
-  TextWin->Print("  I    -> Attack");
-  TextWin->Print("  P    -> Wound");
-  TextWin->Print("  G    -> Move in circle");
-  TextWin->Print("  Q    -> Heal");
-  TextWin->Print("Extras:", TXT_WHITE);
-  TextWin->Print("  W    -> TimeWarp");
-  TextWin->Print("Press +/- on numpad for zoom.");
-  TextWin->Print(" ");
-  TextWin->Print(" ");
-
   /////////////////////////////////////////////////////////////////////////////////////////
   /// Create unbuffered key & mouse input.
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -135,8 +90,6 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 //=================================================================================================
 CEvent::~CEvent()
 {
-  if (TextWin)          delete TextWin;
-  if (ChatWin)          delete ChatWin;
   if (mEventProcessor)  delete mEventProcessor;
   GuiManager::getSingleton().freeRecources();
 }
@@ -291,31 +244,32 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 //=================================================================================================
 bool CEvent::frameEnded(const FrameEvent& )
 {
-  static String currFps  = "Current FPS: ";
-  static String avgFps   = "Average FPS: ";
-  static String bestFps  = "Best FPS: ";
-  static String worstFps = "Worst FPS: ";
-  static String tris     = "Triangle Count: ";
-  OverlayElement* guiAvg   = OverlayManager::getSingleton().getOverlayElement("Core/AverageFps");
-  OverlayElement* guiCurr  = OverlayManager::getSingleton().getOverlayElement("Core/CurrFps");
-  //  OverlayElement* guiBest  = OverlayManager::getSingleton().getOverlayElement("Core/BestFps");
-  //  OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("Core/WorstFps");
-
   const RenderTarget::FrameStats& stats = mWindow->getStatistics();
+  const int SKIP = 10;
 
-  //  guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
-  guiAvg->setCaption(Tbuffer);
+  static char buffer[16];
+  static int skip = SKIP;
+  if (!--skip)
+  {
+  long time = clock();
+  skip = SKIP;
+  sprintf(buffer, "%.1f", stats.lastFPS);
+
+//for (int i=0; i< 500; ++i)
+{
+  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , buffer);
+  sprintf(buffer, "%.1f", stats.bestFPS);
+  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , buffer);
+  sprintf(buffer, "%.1f", stats.worstFPS);
+  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, buffer);
+  sprintf(buffer, "%d", stats.triangleCount);
+  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , buffer);
+}
 
 
 
-  guiCurr->setCaption(currFps + StringConverter::toString(stats.lastFPS));
-  OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
-  guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
-  OverlayElement* guiDbg = OverlayManager::getSingleton().getOverlayElement("Core/DebugText");
-  guiDbg->setCaption(mWindow->getDebugText());
-  TextWin->Update();
-  ChatWin->Update();
-
+    Logger::log().info() << "Time to print stats: " << clock()-time << " ms";
+  }
   /////////////////////////////////////////////////////////////////////////
   // Print camera details
   /////////////////////////////////////////////////////////////////////////
@@ -410,7 +364,7 @@ void CEvent::keyPressed(KeyEvent *e)
       ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
       break;
     case KC_3:
-      ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
+      //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
       break;
     case KC_4:
       ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,1, -1);
@@ -622,39 +576,39 @@ void CEvent::mouseMoved (MouseEvent *e)
 void CEvent::mouseDragged(MouseEvent *e)
 {
   mouseMoved(e);
-  if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
-  if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
+//  if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
+//  if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
   e->consume();
 }
 
 void CEvent::mouseClicked (MouseEvent *e)
 {
-  if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
-  if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
+//  if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
+//  if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
   mouseMoved(e);
   e->consume();
 }
 
 void CEvent::mouseEntered (MouseEvent *e)
 {
-  TextWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
-  ChatWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
+//  TextWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
+//  ChatWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
   mouseMoved(e);
   e->consume();
 }
 
 void CEvent::mouseExited  (MouseEvent *e)
 {
-  TextWin->MouseAction(M_EXITED,mMouseX, mMouseY);
-  ChatWin->MouseAction(M_EXITED,mMouseX, mMouseY);
+//  TextWin->MouseAction(M_EXITED,mMouseX, mMouseY);
+//  ChatWin->MouseAction(M_EXITED,mMouseX, mMouseY);
   mouseMoved(e);
   e->consume();
 }
 
 void CEvent::mousePressed (MouseEvent *e)
 {
-  TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
-  ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
+//  TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
+//  ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
   const char *result = GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY);
 //  if (result) TextWin->Print(result);
   mouseMoved(e);
@@ -663,10 +617,10 @@ void CEvent::mousePressed (MouseEvent *e)
 
 void CEvent::mouseReleased(MouseEvent *e)
 {
-  TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
-  ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
+//  TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
+//  ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
   const char *result = GuiManager::getSingleton().mouseEvent(M_RELEASED, mMouseX, mMouseY);
-  if (result) TextWin->Print(result);
+//  if (result) TextWin->Print(result);
   mouseMoved(e);
   e->consume();
 }

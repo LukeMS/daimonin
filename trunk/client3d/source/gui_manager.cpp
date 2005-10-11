@@ -22,7 +22,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_manager.h"
 #include "gui_window.h"
 #include "gui_gadget.h"
-#include "gui_textout.h"
 #include "gui_cursor.h"
 #include "option.h"
 #include "logger.h"
@@ -32,6 +31,50 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 
 using namespace Ogre;
+
+GuiManager::_GuiElementNames GuiManager::GuiWindowNames[GUI_WIN_SUM]=
+  {
+    {"Statistics",    GUI_WIN_STATISTICS
+    },
+    {"PlayerInfo",    GUI_WIN_PLAYERINFO
+    },
+    { "Requester",    GUI_WIN_REQUESTER
+    }
+  };
+
+GuiManager::_GuiElementNames GuiManager::GuiElementNames[GUI_ELEMENTS_SUM]=
+  {
+    // Buttons.
+    { "ButtonClose",   GUI_BUTTON_CLOSE
+    },
+    { "ButtonOK",      GUI_BUTTON_OK
+    },
+    { "ButtonCancel",  GUI_BUTTON_CANCEL
+    },
+    { "ButtonMin",     GUI_BUTTON_MINIMIZE
+    },
+    { "ButtonMax",     GUI_BUTTON_MAXIMIZE
+    },
+    // Listboxes.
+    { "Requester",    GUI_LIST_UP
+    },
+    { "Requester",    GUI_LIST_DOWN
+    },
+    { "Requester",    GUI_LIST_LEFT
+    },
+    { "Requester",    GUI_LIST_RIGHT
+    },
+    // TextValues.
+    { "currentFPS",   GUI_TEXTVALUE_STAT_CUR_FPS
+    },
+    { "bestFPS",      GUI_TEXTVALUE_STAT_BEST_FPS
+    },
+    { "worstFPS",     GUI_TEXTVALUE_STAT_WORST_FPS
+    },
+    { "sumTris",      GUI_TEXTVALUE_STAT_SUM_TRIS
+    }
+  };
+
 
 ///=================================================================================================
 /// .
@@ -50,6 +93,7 @@ void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_fil
   /////////////////////////////////////////////////////////////////////////
   /// Parse the windows datas.
   /////////////////////////////////////////////////////////////////////////
+  guiWindow = new GuiWindow[GUI_WIN_SUM];
   if (!parseWindowsData( XML_windows_file)) return;
 }
 
@@ -79,31 +123,33 @@ bool GuiManager::parseImagesetData(const char*fileImageSet)
   /////////////////////////////////////////////////////////////////////////
   TiXmlElement *xmlRoot, *xmlElem, *xmlState;
   TiXmlDocument doc(fileImageSet);
-  if (!doc.LoadFile(fileImageSet) || !(xmlRoot = doc.RootElement()) || !xmlRoot->Attribute("File"))
+  if (!doc.LoadFile(fileImageSet) || !(xmlRoot = doc.RootElement()) || !xmlRoot->Attribute("file"))
   {
     Logger::log().error() << "XML-File '" << fileImageSet << "' is broken or missing.";
     return false;
   }
-  mStrImageSetGfxFile = xmlRoot->Attribute("File");
+  mStrImageSetGfxFile = xmlRoot->Attribute("file");
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gfx coordinates.
   /////////////////////////////////////////////////////////////////////////
-  std::string strTmp;
+  const char *strTemp;
   for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
   {
     mSrcEntry *Entry = new mSrcEntry;
-    if (!xmlElem->Attribute("ID"))  continue;
-    Entry->name   = xmlElem->Attribute("ID");
-    Entry->width  = atoi(xmlElem->Attribute("Width"));
-    Entry->height = atoi(xmlElem->Attribute("Height"));
+    strTemp = xmlElem->Attribute("name");
+    if (!strTemp)  continue;
+    Entry->name   = strTemp;
+    Entry->width  = atoi(xmlElem->Attribute("width"));
+    Entry->height = atoi(xmlElem->Attribute("height"));
     /////////////////////////////////////////////////////////////////////////
     /// Parse the Position entries.
     /////////////////////////////////////////////////////////////////////////
     for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
     {
-      if (!(xmlState->Attribute("ID"))) continue;
+      strTemp = xmlState->Attribute("name");
+      if (!strTemp)  continue;
       _state *s = new _state;
-      s->name = xmlState->Attribute("ID");
+      s->name = strTemp;
       s->x = atoi(xmlState->Attribute("posX"));
       s->y = atoi(xmlState->Attribute("posY"));
       Entry->state.push_back(s);
@@ -129,14 +175,14 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     Logger::log().error() << "XML-File '" << fileWindows << "' is missing or broken.";
     return false;
   }
-  if ((valString = xmlRoot->Attribute("ID")))
+  if ((valString = xmlRoot->Attribute("name")))
     Logger::log().info() << "Parsing '" << valString << "' in file" << fileWindows << ".";
   else
-    Logger::log().error() << "File '" << fileWindows << "' has no ID entry.";
+    Logger::log().error() << "File '" << fileWindows << "' has no name entry.";
   /////////////////////////////////////////////////////////////////////////
   /// Parse the mouse-cursor.
   /////////////////////////////////////////////////////////////////////////
-  if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("ID"))))
+  if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("name"))))
   {
     mSrcEntry *srcEntry = getStateGfxPositions(valString);
     GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
@@ -158,9 +204,15 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
   /////////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Window"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Window"))
   {
-    if (!xmlElem->Attribute("ID")) continue;
-    GuiWindow *window = new GuiWindow(xmlElem, this);
-    mvWindow.push_back(window);
+    if (!(valString = xmlElem->Attribute("name"))) continue;
+    for (int i = 0; i < GUI_WIN_SUM; ++i)
+    {
+      if (GuiWindowNames[i].name == valString)
+      {
+        guiWindow[i].Init(xmlElem, this);
+        break;
+      }
+    }
   }
   return true;
 }
@@ -170,9 +222,12 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
 ///=================================================================================================
 struct GuiManager::mSrcEntry *GuiManager::getStateGfxPositions(const char* guiImage)
 {
-  for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
+  if (guiImage)
   {
-    if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str())) return mvSrcEntry[j];
+    for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
+    {
+      if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str())) return mvSrcEntry[j];
+    }
   }
   return 0;
 }
@@ -186,15 +241,25 @@ const char *GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
   rx *= mScreenWidth;
   ry *= mScreenHeight;
   const char *actGadgetName;
-  for (unsigned int i=0; i < mvWindow.size(); ++i)
+
+  for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
-    actGadgetName = mvWindow[i]->mouseEvent(mouseAction, (int)rx, (int)ry);
+    actGadgetName = guiWindow[i].mouseEvent(mouseAction, (int)rx, (int)ry);
     if (actGadgetName)
     {
       static char buffer[100];
-      sprintf(buffer, "%s (%s)",  actGadgetName, mvWindow[i]->getName());
+      sprintf(buffer, "%s (%s)",  actGadgetName, guiWindow[i].getName());
       return buffer;
     }
   }
+
   return 0;
+}
+
+///=================================================================================================
+/// Send a message to a GuiWindow.
+///=================================================================================================
+void GuiManager::sendMessage(int window, int message, int element, const char *value)
+{
+  guiWindow[window].Message(message, element, value);
 }

@@ -35,6 +35,15 @@ const uint32 COLOR_PINK  = 0xffff00ff;
 const uint32 COLOR_YELLOW= 0xffffff00;
 const uint32 COLOR_WHITE = 0xffffffff;
 
+typedef struct TextLine
+{
+  int x, y, width;
+  int index;
+  std::string text;
+  uint32 *BG_Backup;
+}
+TextLine;
+
 enum
 {
   FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
@@ -52,12 +61,15 @@ public:
     static GuiTextout Singleton; return Singleton;
   }
   void Print(int x, int y, int gfxLen, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
-
+  void Print(TextLine *line, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
+  int getMaxFontHeight()
+  {
+    return maxFontHeight;
+  }
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-
   struct
   {
     Image image;
@@ -68,14 +80,14 @@ private:
     char charWidth[CHARS_IN_FONT];
   }
   mFont[FONT_SUM];
-
+  uint32 *TextGfxBuffer;
+  PixelBox *mPb;
+  unsigned int maxFontHeight, maxFontWidth;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-
   GuiTextout();
-  ~GuiTextout()
-  {}
+  ~GuiTextout();
   GuiTextout(const GuiTextout&); // disable copy-constructor.
   void loadFont(const char * filename);
 };

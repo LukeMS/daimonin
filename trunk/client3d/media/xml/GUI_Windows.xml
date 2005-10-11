@@ -1,68 +1,108 @@
-<?xml version="1.0" encoding="us-ascii"?>
-<XML ID="GUI"> 
+<?xml version= "1.0" encoding= "us-ascii"?>
+<XML name= "GUI"> 
   
-  <Cursor ID ="MouseCursor" />
+  <Cursor name= "MouseCursor" />
 
-  <Window ID="PlayerInfo" RelativeCoords="false">
-    <Pos      X="50" Y="50" Z-Order ="50" />
-    <Size     Width="200" Height="150" />
-    <DragArea X="0" Y="0" Width="200" Height="20" />
-    <Tooltip  Text="This is the Player Info Window." />
-
-    <Graphic Type="COLOR_FILL"  ID ="TitleBar">
-      <Pos X="0" Y="0" />
-      <Color Red="110" Green="255" Blue="255" Alpha ="255" />
-      <Range Width="200" Height="17" />
+  <Window name= "Statistics" relativeCoords= "false">
+    <Pos      x= "50" y= "50" zOrder = "50" />
+    <Size     width= "150" height= "88" />
+    <DragArea x= "0" y= "0" width= "150" height= "17" />
+    <Tooltip  text= "This is the Player Info Window." />
+ 
+    <!--              -->
+    <!-- Borderlines  -->
+    <!--              -->
+    <Graphic type= "COLOR_FILL" >
+      <Pos x= "0" y= "0" />
+      <Color red= "200" green= "200" blue= "200" alpha = "255" />
+      <Range width= "150" height= "88" />
     </Graphic>
 
-    <Gadget Type="BUTTON"  ID ="Button_Close">
-      <Pos X="183" Y="1" />
-    </Gadget>
-
-    <Gadget Type="BUTTON"  ID ="Button_1">
-      <Pos X="70" Y="120" />
-      <Label XPos="20" YPos= "1" Red="32" Green="64" Blue="128" Text="OK"/>
-    </Gadget>
-
-    <Graphic Type="GFX_FILL"  ID ="Background">
-      <Pos X="0" Y="17" />
-      <Range Width="200" Height="140" />
+    <!--               -->
+    <!-- Window Tiltle -->
+    <!--               -->
+    <Graphic type= "COLOR_FILL" >
+      <Pos x= "1" y= "1" />
+      <Color red= "80" green= "100" blue= "60" alpha = "255" />
+      <Range width= "148" height= "17" />
     </Graphic>
 
-    <TextLine X="5" Y="30" Size="190" Text="-- Window #1 --" />
-    <TextLine X="5" Y="43" Size="190" Text="1. ColorFill for the TitleBar" />
+    <TextStatic  x= "35" y= "04" width= "100" text= "Statistics" />
+
+    <Gadget type= "BUTTON"  name = "Button_Close">
+      <Pos x= "132" y= "1" />
+    </Gadget>
+
+    <!--               -->
+    <!-- Window Body   -->
+    <!--               -->
+    <Graphic type= "COLOR_FILL" >
+      <Pos x= "1" y= "19" />
+      <Color red= "70" green= "90" blue= "50" alpha = "150" />
+      <Range width= "148" height= "79" />
+    </Graphic>
+
+    <TextStatic  x= "05" y= "25" width= "190" text= "Current FPS:" />
+    <TextDynamic name= "currentFPS" x= "100" y= "25" width= "90" text= "00.0" />
+
+    <TextStatic  x= "05" y= "40" width= "190" text= "Best FPS:" />
+    <TextDynamic name= "bestFPS" x= "100" y= "40" width= "90" text= "00.0" />
+
+    <TextStatic  x= "05" y= "55" width= "190" text= "Worst FPS:" />
+    <TextDynamic name= "worstFPS" x= "100" y= "55" width= "90" text= "00.0" />
+
+    <TextStatic  x= "05" y= "70" width= "190" text= "Triangles:" />
+    <TextDynamic name= "sumTris" x= "100" y= "70" width= "90" text= "0000" />
 
   </Window>
 
 
-  <Window ID="Quickslots" RelativeCoords="false">
-    <Pos      X="400" Y="300" Z-Order ="50" />
-    <Size     Width="100" Height="100" />
-    <DragArea X="0" Y="0" Width="100" Height="20" />
-    <Tooltip  Text="Tjghjghjghjghjghjghj Window." />
+  <Window name= "PlayerInfo" relativeCoords= "false">
+    <Pos      x= "400" y= "300" zOrder = "50" />
+    <Size     width= "100" height= "100" />
+    <DragArea x= "0" y= "0" width= "100" height= "20" />
+    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
-    <Graphic Type="COLOR_FILL"  ID ="TileBar">
-      <Pos X="0" Y="0" />
-      <Color Red="255" Green="0" Blue="255" Alpha ="128" />
-      <Range Width="100" Height="17" />
+    <Graphic type= "COLOR_FILL">
+      <Pos x= "0" y= "0" />
+      <Color red= "255" green= "255" blue= "0" alpha = "128" />
+      <Range width= "100" height= "17" />
     </Graphic>
 
-    <Graphic Type="COLOR_FILL"  ID ="demo">
-      <Pos X="0" Y="17" />
-      <Color Red="0" Green="0" Blue="255" Alpha ="128" />
-      <Range Width="100" Height="83" />
+    <Graphic type= "COLOR_FILL">
+      <Pos x= "0" y= "17" />
+      <Color red= "0" green= "0" blue= "255" alpha = "128" />
+      <Range width= "100" height= "83" />
     </Graphic>
 
-    <Gadget Type="BUTTON"  ID ="Button_Close">
-      <Pos X="83" Y="1" />
+    <Gadget type= "BUTTON"  name = "Button_Close">
+      <Pos x= "84" y= "0" />
     </Gadget>
 
-    <Gadget Type="BUTTON"  ID ="Button_1">
-      <Pos X="25" Y="75" />
-      <Label XPos="5" YPos= "1" Red="32" Green="64" Blue="128" Text="Press"/>
+    <Gadget type= "BUTTON"  name = "Button_1">
+      <Pos x= "25" y= "75" />
+      <Label xPos= "5" yPos= "1" red= "32" green= "64" blue= "128" text= "Press"/>
     </Gadget>
 
   </Window>
 
+  <Window name= "Requester" relativeCoords= "false">
+    <Pos      x= "500" y= "100" zOrder = "400" />
+    <Size     width= "280" height= "250" />
+    <DragArea x= "0" y= "0" width= "100" height= "20" />
+    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
+
+    <Graphic type= "GFX_FILL"  name = "textWinHead">
+      <Pos x= "0" y= "0" />
+      <Range width= "280" height= "18" />
+    </Graphic>
+
+    <Listbox type= ""  name = "Chat_Window">
+      <Pos x= "1" y= "18" />
+      <Range width= "280" height= "250" />
+      <Color red= "128" green= "128" blue= "128" alpha = "128" />
+    </Listbox>
+	
+  </Window>
 
 </XML>

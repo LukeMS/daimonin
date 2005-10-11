@@ -34,22 +34,24 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
 {
   TiXmlElement *xmlGadget;
   std::string strValue;
+  const char *strTmp;
   mState = 0;
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadget.
   /////////////////////////////////////////////////////////////////////////
-  mStrName = xmlElem->Attribute("ID");
+  strTmp = xmlElem->Attribute("name");
+  if (strTmp) mStrName = strTmp;
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Behavior.
   /////////////////////////////////////////////////////////////////////////
-  mBehavior = xmlElem->Attribute("Type");
+  mBehavior = xmlElem->Attribute("type");
   /////////////////////////////////////////////////////////////////////////
   /// Parse the position.
   /////////////////////////////////////////////////////////////////////////
   if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
   {
-    mX = atoi(xmlGadget->Attribute("X"));
-    mY = atoi(xmlGadget->Attribute("Y"));
+    mX = atoi(xmlGadget->Attribute("x"));
+    mY = atoi(xmlGadget->Attribute("y"));
   }
   if (mX > maxX-2) mX = maxX-2;
   if (mY > maxY-2) mY = maxY-2;
@@ -61,18 +63,18 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   if ((xmlGadget = xmlElem->FirstChildElement("Color")))
   {
     // PixelFormat: ARGB.
-    mFillColor = atoi(xmlGadget->Attribute("Blue" ));
-    mFillColor+= atoi(xmlGadget->Attribute("Green")) << 8;
-    mFillColor+= atoi(xmlGadget->Attribute("Red"  )) << 16;
-    mFillColor+= atoi(xmlGadget->Attribute("Alpha")) << 24;
+    mFillColor = atoi(xmlGadget->Attribute("blue" ));
+    mFillColor+= atoi(xmlGadget->Attribute("green")) << 8;
+    mFillColor+= atoi(xmlGadget->Attribute("red"  )) << 16;
+    mFillColor+= atoi(xmlGadget->Attribute("alpha")) << 24;
   }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the dimension.
   /////////////////////////////////////////////////////////////////////////
   if ((xmlGadget = xmlElem->FirstChildElement("Range")))
   {
-    mDestWidth = atoi(xmlGadget->Attribute("Width"));
-    mDestHeight= atoi(xmlGadget->Attribute("Height"));
+    mDestWidth = atoi(xmlGadget->Attribute("width"));
+    mDestHeight= atoi(xmlGadget->Attribute("height"));
   }
   if (mX + mDestWidth > maxX) mDestWidth = maxX-mX-1;
   if (mY + mDestHeight >maxY) mDestHeight= maxY-mY-1;
@@ -122,7 +124,7 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
       }
     }
     texture->getBuffer()->unlock();
-    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
+//    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
   }
   /////////////////////////////////////////////////////////////////////////
   /// Fill background rect with a gfx.

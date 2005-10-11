@@ -105,9 +105,9 @@ void Animate::toggleAnimGroup()
     mAnimGroup =0;
   }
   toggleAnimation(mAnimType, true);
-  char buf[80];
-  sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
-  TextWin->Print(buf, TXT_WHITE);
+//  char buf[80];
+//  sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
+//  TextWin->Print(buf, TXT_WHITE);
 }
 
 //=================================================================================================
