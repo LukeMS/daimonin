@@ -19,6 +19,7 @@
     />
 
     <xsl:template match="/section">
+        <xsl:apply-templates/>
         <xsl:text>&#xA;</xsl:text>
         <xsl:text>Last modified: </xsl:text>
         <xsl:value-of select="current-dateTime()"/>
