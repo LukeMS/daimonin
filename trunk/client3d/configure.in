@@ -7,6 +7,7 @@ AM_INIT_AUTOMAKE([Daimonin_3D_Client], 0.0.1)
 #AC_CONFIG_AUX_DIR(make_utils)
 AC_PREFIX_DEFAULT(../../../client-3d-alpha1)
 
+AM_PROG_CC_C_O
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_MAKE_SET
