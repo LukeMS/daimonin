@@ -1,12 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-## Created by Anjuta - will be overwritten
-## If you don't want it to overwrite it,
-## 	Please disable it in the Anjuta project configuration
-
 INCLUDES =\
 	 -Iinclude \
-	 -Iinclude/fmod
+	 -I3rdParty/tinyxml \
+	 -I3rdParty/zlib \
+	 -I3rdParty/fmod
 
 AM_CXXFLAGS =\
 	${OGRE_CFLAGS}\
@@ -16,16 +14,16 @@ AM_CXXFLAGS =\
 bin_PROGRAMS = client3d
 
 client3d_SOURCES = \
-	adler32.c \
-	animate.cpp \
+    animate.cpp \
 	client.cpp \
-	crc32.c \
-	dialog.cpp \
-	EnvironmentManager.cpp \
 	event.cpp \
-	inffast.c \
-	inflate.c \
-	inftrees.c \
+	gui_cursor.cpp \
+	gui_gadget.cpp \
+	gui_graphic.cpp \
+	gui_listbox.cpp \
+	gui_manager.cpp \
+	gui_textout.cpp \
+	gui_window.cpp \
 	light_manager.cpp \
 	logger.cpp \
 	logger_html.cpp \
@@ -44,13 +42,20 @@ client3d_SOURCES = \
 	spell_manager.cpp \
 	spell_range.cpp \
 	textwindow.cpp \
-	tile_gfx.cpp \
-	TileManager.cpp \
 	TileChunk.cpp \
-	uncompr.c \
-	zutil.c
-	
-#	tile_map.cpp 
+	TileEnvironment.cpp \
+	TileManager.cpp \
+	3rdParty/tinyxml/tinystr.cpp \
+	3rdParty/tinyxml/tinyxml.cpp \
+	3rdParty/tinyxml/tinyxmlerror.cpp \
+	3rdParty/tinyxml/tinyxmlparser.cpp \
+	3rdParty/zlib/adler32.c \
+	3rdParty/zlib/crc32.c \
+	3rdParty/zlib/inffast.c \
+	3rdParty/zlib/inflate.c \
+	3rdParty/zlib/inftrees.c \
+	3rdParty/zlib/uncompr.c \
+	3rdParty/zlib/zutil.c
 
 client3d_LDFLAGS = \
 	-L../make/linux \
@@ -59,3 +64,4 @@ client3d_LDFLAGS = \
 client3d_LDADD = \
 	 -lfmod-3.74
 
+AUTOMAKE_OPTIONS = subdir-objects
