@@ -306,6 +306,29 @@ void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
     font->char_offset = c32len;
 }
 
+/* Calculate the displayed width of the text */
+int StringWidth(_Font *font, char *text)
+{
+    int w = 0, i;
+    
+    for (i = 0; text[i] != '\0'; i++)
+    {
+        switch (text[i])
+        {
+            case '°':
+            case '~':
+            case '^':
+                break;
+
+            default:
+                w += font->c[(int) (text[i])].w + font->char_offset;
+                break;
+        }
+    }
+
+    return w;
+}
+
 void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
 {
     register int i,tmp, line_clip = -1,line_count = 0;

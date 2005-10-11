@@ -325,13 +325,12 @@ void remove_item(item *op)
 
     /* Clear all these values, since this item will get re-used */
     op->prev = NULL;
+    op->inv = NULL;
     op->env = NULL;
     op->tag = 0;
     copy_name(op->d_name, "");
     copy_name(op->s_name, "");
     copy_name(op->p_name, "");
-    op->inv = NULL;
-    op->env = NULL;
     op->tag = 0;
     op->face = 0;
     op->weight = 0;

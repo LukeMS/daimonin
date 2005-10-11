@@ -264,11 +264,12 @@ void add_close_button(int x, int y, int menu)
     info for keyboard user. You can give them here a highlighted char
     to identify the key for this button. if not needed set it to NULL.
 ******************************************************************/
-int add_button(int x, int y, int xoff, int yoff, int id, int gfxNr, char *text, char *text_h)
+int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
 {
     char   *text_sel;
     int     ret = 0;
     int     mx, my, mb;
+    int     xoff, yoff;
 
     mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     if (text_h)
@@ -277,10 +278,15 @@ int add_button(int x, int y, int xoff, int yoff, int id, int gfxNr, char *text, 
         text_sel = text;
 
     sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
+    
+    // Label centering in button
+    yoff =  (Bitmaps[gfxNr]->bitmap->h - (SystemFont.c['W'].h+1)) / 2 + 2;
+    xoff =  (Bitmaps[gfxNr]->bitmap->w - (StringWidth(&SystemFont, text)+1)) / 2 + 1;
+    
     if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
     {
-        char buf[256], buf2[256];
-        sprintf(buf,"mb:%d mc:%d ab:%d ID:%d", mb, mb_clicked, active_button, id);
+//        char buf[256], buf2[256];
+//        sprintf(buf,"mb:%d mc:%d ab:%d ID:%d", mb, mb_clicked, active_button, id);
         //if (mb && mb_clicked && active_button < 0)
         if (mb_clicked && active_button < 0)
             active_button = id;
@@ -290,8 +296,8 @@ int add_button(int x, int y, int xoff, int yoff, int id, int gfxNr, char *text, 
             if (!mb)
                 ret = 1;
         }
-        sprintf(buf2, "%s ->AC:%d (%d)\n",buf, active_button, ret);
-        draw_info(buf2, COLOR_WHITE);
+//        sprintf(buf2, "%s ->AC:%d (%d)\n",buf, active_button, ret);
+//        draw_info(buf2, COLOR_WHITE);
         StringBlt(ScreenSurface, &SystemFont, text, x + xoff, y + yoff, COLOR_BLACK, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, text_sel, x + (xoff-1), y + (yoff-1), COLOR_HGOLD, NULL, NULL);
     }
@@ -1035,7 +1041,7 @@ void show_optwin()
               y + 10 + TXT_Y_START + option_list_set.entry_nr * 20, COLOR_HGOLD, NULL, NULL);
 
     /* save button */
-    if (add_button(x + 25, y + 454, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
+    if (add_button(x + 25, y + 454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
         check_menu_keys(MENU_OPTION, SDLK_d);
 
     if (!mb)
@@ -1105,7 +1111,7 @@ void show_keybind()
     StringBlt(ScreenSurface, &SystemFont, "~R~epeat", x + X_COL3, y + TXT_Y_START - 2, COLOR_WHITE, NULL, NULL);
 
     /* save button */
-    if (add_button(x + 25, y + 454, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
+    if (add_button(x + 25, y + 454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
         check_menu_keys(MENU_KEYBIND, SDLK_d);
 
 
@@ -1248,7 +1254,7 @@ void show_newplayer_server(void)
 
 
     /* create button */
-    if (add_button(x + 30, y + 397, 11, 2, id++, BITMAP_DIALOG_BUTTON_UP, "Create", "~C~reate"))
+    if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Create", "~C~reate"))
         check_menu_keys(MENU_CREATE, SDLK_c);
 
     if (dialog_new_char_warn == TRUE)
@@ -2220,7 +2226,7 @@ void show_interface_npc(int mark)
     if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT)
     {
 
-        if (add_button(x + 35, y + 443, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP,
+        if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP,
                             gui_interface_npc->accept.title, gui_interface_npc->accept.title2))
         {
             if(gui_interface_npc->icon_select && !gui_interface_npc->selected)
@@ -2245,7 +2251,7 @@ void show_interface_npc(int mark)
 
         if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE)
         {
-            if (add_button(x + 285, y + 443, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP,
+            if (add_button(x + 285, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP,
                             gui_interface_npc->decline.title, gui_interface_npc->decline.title2))
             {
                 check_menu_keys(MENU_NPC, SDLK_d);
@@ -2256,7 +2262,7 @@ void show_interface_npc(int mark)
     }
     else /* if not accept button defined, kick in the default OK button */
     {
-        if (add_button(x + 35, y + 443, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP, "     Ok", "     ~O~k"))
+        if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP, "Ok", "~O~k"))
         {
             check_menu_keys(MENU_NPC, SDLK_o);
             active_button = -1;
