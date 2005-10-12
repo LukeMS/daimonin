@@ -662,7 +662,7 @@ void textwin_addhistory(char *text)
 {
     register int i;
 
-    /* If new line is empty identical to last inserted one, skip it */
+    /* If new line is empty or identical to last inserted one, skip it */
     if (!text[0] || strcmp(InputHistory[0], text) == 0)
         return;
 

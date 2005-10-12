@@ -925,14 +925,50 @@ static void key_string_event(SDL_KeyboardEvent *key)
                && HistoryPos < MAX_HISTORY_LINES
                && InputHistory[HistoryPos + 1][0])
               {
-                  /* First history line is special, it records what we were writing before
-                             * scrolling back the history; so, by returning back to zero, we can continue
-                             * our editing where we left it
-                             */
+                  /* First history line is special, it records what we 
+                   * were writing before scrolling back the history; so,
+                   * by returning back to zero, we can continue our 
+                   * editing where we left it
+                   */
                   if (HistoryPos == 0)
                       strncpy(InputHistory[0], InputString, InputCount);
                   HistoryPos++;
                   textwin_putstring(InputHistory[HistoryPos]);
+              }
+              
+              /* If we are in INTERFACE mode, let player scroll back the 
+               * lines in history, but only those that start with "/talk"
+               */
+              if (cpl.input_mode == INPUT_MODE_NPCDIALOG
+                  && HistoryPos < MAX_HISTORY_LINES)
+              {
+                  int nextpos;
+                  SDL_Rect    box;
+                  if (HistoryPos == 0) 
+                  {
+                      strcpy(InputHistory[0], "/talk ");
+                      strncpy(InputHistory[0]+6, InputString, InputCount);
+                  }
+
+                  for(nextpos = HistoryPos + 1; nextpos < MAX_HISTORY_LINES; nextpos++)
+                  {
+                      if(strncmp(InputHistory[nextpos], "/talk ", 6) == 0)
+                      {
+                          HistoryPos = nextpos;
+                          break;
+                      }
+                  }
+                  
+                  strcpy(InputString, InputHistory[HistoryPos] + 6);
+                  CurrentCursorPos = strlen(InputString);
+                  
+                  box.x = gui_interface_npc->startx + 95;
+                  box.y = gui_interface_npc->starty + 449;
+                  box.h = 12;
+                  box.w = 180;
+                  
+                  SDL_FillRect(ScreenSurface, &box, 0);
+                  StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
               }
               break;
 
@@ -942,6 +978,32 @@ static void key_string_event(SDL_KeyboardEvent *key)
               {
                   HistoryPos--;
                   textwin_putstring(InputHistory[HistoryPos]);
+              }
+
+              /* If we are in INTERFACE mode, let player scroll forward the 
+               * lines in history, but only those that start with "/talk" 
+               */
+              if (cpl.input_mode == INPUT_MODE_NPCDIALOG
+                      && HistoryPos > 0)
+              {
+                  int nextpos;
+                  SDL_Rect    box;
+                  for(nextpos = HistoryPos-1; nextpos >= 0; nextpos--)
+                  {
+                      if(strncmp(InputHistory[nextpos], "/talk ", 6) == 0)
+                      {
+                          HistoryPos = nextpos;
+                          break;
+                      }
+                  }
+                  strcpy(InputString, InputHistory[HistoryPos] + 6);
+                  CurrentCursorPos = strlen(InputString);
+                  box.x = gui_interface_npc->startx + 95;
+                  box.y = gui_interface_npc->starty + 449;
+                  box.h = 12;
+                  box.w = 180;
+                  SDL_FillRect(ScreenSurface, &box, 0);
+                  StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
               }
               break;
 
@@ -978,8 +1040,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
 
             default:
               /* if we are in number console mode, use GET as quick enter
-                     * mode - this is a very handy shortcut
-                     */
+               * mode - this is a very handy shortcut
+               */
               if (cpl.input_mode == INPUT_MODE_NUMBER
                && (key->keysym.sym == get_action_keycode || key->keysym.sym == drop_action_keycode))
               {
@@ -988,8 +1050,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                   InputStringEndFlag = TRUE;/* mark that we got some here*/
               }
               /* now keyboard magic - transform a sym (kind of scancode)
-                     * to a layout code
-                     */
+               * to a layout code
+               */
               if (InputCount < InputMax)
               {
                   c = 0;
@@ -2251,7 +2313,7 @@ void check_menu_keys(int menu, int key)
 
     if (cpl.menustatus == MENU_NO)
         return;
-
+                
     /* close menue */
     if (key == SDLK_ESCAPE)
     {
@@ -2321,6 +2383,7 @@ void check_menu_keys(int menu, int key)
                 cpl.input_mode = INPUT_MODE_NPCDIALOG;
                 gui_interface_npc->input_flag = TRUE;
                 sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                HistoryPos = 0;
                 break;
 
             case SDLK_d:
@@ -2399,6 +2462,7 @@ menu_npc_jump1:
                     gui_interface_npc->yoff=0;
                 }
                 break;
+
             }
 
         break;

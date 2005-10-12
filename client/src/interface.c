@@ -702,15 +702,18 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 
 /* send a command from the gui to server.
  * if mode is 1, its a real command.
- * mode 0 means to add /talk first.
+ * mode 0 or 2 means to add /talk first.
+ * mode 2 means manual input / add to history
  */
 void gui_interface_send_command(int mode, char *cmd)
 {
     char msg[1024];
 
-    if(mode)
+    if(mode == 1)
     {
         send_command(cmd, -1, SC_NORMAL);
+/*        if(strncmp(cmd, "/talk ", 6) == 0)
+            textwin_addhistory(cmd); */
         /*
         sprintf(msg,"You talk to %s", cpl.target_name?cpl.target_name:"");
         draw_info(msg,COLOR_WHITE);*/
@@ -722,6 +725,8 @@ void gui_interface_send_command(int mode, char *cmd)
         send_command(buf, -1, SC_NORMAL);
         sprintf(msg,"Talking to %s: %s", cpl.target_name?cpl.target_name:"", cmd);
         draw_info(msg,COLOR_WHITE);
+        if(mode == 2)
+            textwin_addhistory(buf);
     }
 
     gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
