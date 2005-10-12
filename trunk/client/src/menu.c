@@ -357,12 +357,13 @@ void do_npcdialog_input(void)
         map_udate_flag = 2;
         gui_interface_npc->input_flag = FALSE;
     }
+
     /* if set, we got a finished input!*/
     if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
     {
         if (InputString[0])
         {
-            gui_interface_send_command(0,InputString);
+            gui_interface_send_command(2,InputString);            
         }
         reset_keys();
         gui_interface_npc->input_flag = FALSE;
