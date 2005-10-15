@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
-<section>
+<section autotoc="yes">
   <title>Actions</title>
   <p>Actions are misc actions that takes time, but aren't movement.
   The handling of this class isn't 100% decided on yet, so be prepared

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE section SYSTEM "../dtd/daidoc.dtd">
-<section>
+<section autotoc="yes">
   <title>Moves</title>
   <p>Moves are the basic movement behaviours. Basically a move can
   decide to take a step in a direction, stand still or not decide anything.
