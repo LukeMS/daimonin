@@ -22,21 +22,20 @@
 */
 #include <include.h>
 
-#define INTERFACE_CMD_NO    0
-#define INTERFACE_CMD_HEAD  1
-#define INTERFACE_CMD_MESSAGE 2
-#define INTERFACE_CMD_REWARD 4
-#define INTERFACE_CMD_ICON 8
-#define INTERFACE_CMD_ACCEPT 16
-#define INTERFACE_CMD_DECLINE 32
-#define INTERFACE_CMD_LINK 64
+#define INTERFACE_CMD_NO          0
+#define INTERFACE_CMD_HEAD        1
+#define INTERFACE_CMD_MESSAGE     2
+#define INTERFACE_CMD_REWARD      4
+#define INTERFACE_CMD_ICON        8
+#define INTERFACE_CMD_ACCEPT     16
+#define INTERFACE_CMD_DECLINE    32
+#define INTERFACE_CMD_LINK       64
+#define INTERFACE_CMD_TEXTFIELD 128
 
 
-static _gui_interface_head *interface_cmd_head(char *data, int *pos)
+static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
 {
     char *buf, c;
-    _gui_interface_head *head=malloc(sizeof(_gui_interface_head));
-
     memset(head, 0, sizeof(_gui_interface_head));
 
     (*pos)++;
@@ -48,7 +47,7 @@ static _gui_interface_head *interface_cmd_head(char *data, int *pos)
             if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
             {
                 (*pos)--;
-                return head;
+                return 0;
             }
         }
 
@@ -63,29 +62,26 @@ static _gui_interface_head *interface_cmd_head(char *data, int *pos)
         {
             case 'f': /* face for this head */
                  if(!(buf = get_parameter_string(data, pos)))
-                     return NULL;
+                     return -1;
                  strcpy(head->name, buf);
             break;
 
             case 'b': /* test body */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(head->body_text, buf);
                 break;
 
             default:
-                return NULL; /* error */
-            break;
+                return -1; /* error */
         }
     }
-    return NULL;
+    return -1;
 }
 
-static _gui_interface_link *interface_cmd_link(char *data, int *pos)
+static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
 {
     char *buf, c;
-    _gui_interface_link *head=malloc(sizeof(_gui_interface_link));
-
     memset(head, 0, sizeof(_gui_interface_link));
 
     (*pos)++;
@@ -97,7 +93,7 @@ static _gui_interface_link *interface_cmd_link(char *data, int *pos)
             if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
             {
                 (*pos)--;
-                return head;
+                return 0;
             }
         }
 
@@ -112,29 +108,26 @@ static _gui_interface_link *interface_cmd_link(char *data, int *pos)
         {
             case 't': /* link title/text */
                  if(!(buf = get_parameter_string(data, pos)))
-                     return NULL;
+                     return -1;
                  strcpy(head->link, buf);
             break;
 
             case 'c': /* link command */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(head->cmd, buf);
                 break;
 
             default:
-                return NULL; /* error */
-            break;
+                return -1; /* error */
         }
     }
-    return NULL;
+    return -1;
 }
 
-static _gui_interface_reward *interface_cmd_reward(char *data, int *pos)
+static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *pos)
 {
     char *buf, c;
-    _gui_interface_reward *head=malloc(sizeof(_gui_interface_reward));
-
     memset(head, 0, sizeof(_gui_interface_reward));
 
     (*pos)++;
@@ -146,7 +139,7 @@ static _gui_interface_reward *interface_cmd_reward(char *data, int *pos)
             if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
             {
                 (*pos)--;
-                return head;
+                return 0;
             }
         }
 
@@ -159,54 +152,51 @@ static _gui_interface_reward *interface_cmd_reward(char *data, int *pos)
 
         case 't': /* title of the reward */
             if(!(buf = get_parameter_string(data, pos)))
-                return NULL;
+                return -1;
             strcpy(head->title, buf);
             break;
 
         case 'b': /* reward body */
             if(!(buf = get_parameter_string(data, pos)))
-                return NULL;
+                return -1;
             strcpy(head->body_text, buf);
             break;
 
         case 'c': /* copper cash */
                  if(!(buf = get_parameter_string(data, pos)))
-                     return NULL;
+                     return -1;
                  head->copper =atoi(buf);
             break;
 
         case 's': /* silver cash */
             if(!(buf = get_parameter_string(data, pos)))
-                return NULL;
+                return -1;
             head->silver =atoi(buf);
             break;
 
         case 'g': /* gold cash */
             if(!(buf = get_parameter_string(data, pos)))
-                return NULL;
+                return -1;
             head->gold =atoi(buf);
             break;
 
         case 'm': /* mithril cash */
             if(!(buf = get_parameter_string(data, pos)))
-                return NULL;
+                return -1;
             head->mithril =atoi(buf);
             break;
 
             default:
-                return NULL; /* error */
-            break;
+                return -1; /* error */
         }
     }
-    return NULL;
+    return -1;
 }
 
 
-static _gui_interface_message *interface_cmd_message(char *data, int *pos)
+static int interface_cmd_message(_gui_interface_message *msg, char *data, int *pos)
 {
     char *buf, c;
-    _gui_interface_message *msg=malloc(sizeof(_gui_interface_message));
-
     memset(msg, 0, sizeof(_gui_interface_message));
 
     (*pos)++;
@@ -218,7 +208,7 @@ static _gui_interface_message *interface_cmd_message(char *data, int *pos)
             if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
             {
                 (*pos)--;
-                return msg;
+                return 0;
             }
         }
 
@@ -230,30 +220,27 @@ static _gui_interface_message *interface_cmd_message(char *data, int *pos)
         {
             case 't': /* title of the message */
                  if(!(buf = get_parameter_string(data, pos)))
-                     return NULL;
+                     return -1;
                  strcpy(msg->title, buf);
             break;
 
             case 'b': /* message body */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(msg->body_text, buf);
                 break;
 
             default:
-                return NULL; /* error */
-            break;
+                return -1; /* error */
         }
     }
-    return NULL;
+    return -1;
 }
 
 
-static _gui_interface_icon *interface_cmd_icon(char *data, int *pos)
+static int interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos)
 {
     char *buf, c;
-    _gui_interface_icon *head=malloc(sizeof(_gui_interface_icon));
-
     memset(head, 0, sizeof(_gui_interface_icon));
 
     (*pos)++;
@@ -265,7 +252,7 @@ static _gui_interface_icon *interface_cmd_icon(char *data, int *pos)
             if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
             {
                 (*pos)--;
-                return head;
+                return 0;
             }
         }
 
@@ -276,42 +263,38 @@ static _gui_interface_icon *interface_cmd_icon(char *data, int *pos)
         {
             case 'f': /* face for this icon */
                  if(!(buf = get_parameter_string(data, pos)))
-                     return NULL;
+                     return -1;
                  strcpy(head->name, buf);
             break;
 
             case 't': /* title of the icon */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(head->title, buf);
                 break;
 
             case 'm': /* mode for this icon */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 head->mode = buf[0];
                 break;
 
             case 'b': /* test body */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(head->body_text, buf);
                 break;
 
             default:
-                return NULL; /* error */
-            break;
+                return -1; /* error */
         }
     }
-    return NULL;
+    return -1;
 }
 
-
-static _gui_interface_button *interface_cmd_button(char *data, int *pos)
+static int interface_cmd_button(_gui_interface_button *head, char *data, int *pos)
 {
     char *buf, c;
-    _gui_interface_button *head=malloc(sizeof(_gui_interface_button));
-
     memset(head, 0, sizeof(_gui_interface_button));
 
     (*pos)++;
@@ -323,7 +306,7 @@ static _gui_interface_button *interface_cmd_button(char *data, int *pos)
             if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
             {
                 (*pos)--;
-                return head;
+                return 0;
             }
         }
 
@@ -338,24 +321,63 @@ static _gui_interface_button *interface_cmd_button(char *data, int *pos)
         {
             case 't': /* button title */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(head->title, buf);
                 break;
 
             case 'c': /* button command */
                 if(!(buf = get_parameter_string(data, pos)))
-                    return NULL;
+                    return -1;
                 strcpy(head->command, buf);
                 break;
 
             default:
-                return NULL; /* error */
-            break;
+                return -1; /* error */
         }
     }
-    return NULL;
+    return .1;
 }
 
+/* Parse a <t b=""> textfield command */
+static int interface_cmd_textfield(_gui_interface_textfield *textfield, char *data, int *pos)
+{
+    char *buf, c;
+    memset(textfield, 0, sizeof(_gui_interface_textfield));
+
+    (*pos)++;
+    while((c= *(data+*pos)) != '\0' && c  != 0)
+    {
+        /* c is legal string part - check it is '<' */
+        if(c == '>')
+        {
+            if(*(data+(*pos)+1) != '>') /* no double >>? then we return */
+            {
+                (*pos)--;
+                return 0;
+            }
+        }
+
+        (*pos)++;
+        if(c<=' ')
+            continue;
+
+        /* c is part of the head command inside the '<' - lets handle it
+         * It must be a command. If it is unknown, return NULL
+         */
+        switch(c)
+        {
+            case 'b': /* Textfield text */
+                 if(!(buf = get_parameter_string(data, pos)))
+                     return -1;
+                 strcpy(textfield->text, buf);
+            break;
+
+            default:
+                return -1; /* error */
+        }
+    }
+    return -1;
+}
 
 /* clear & reset the gui interface */
 void reset_gui_interface(void)
@@ -503,12 +525,13 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
     int flag_start=0, flag_end=0;
     char c;
     /*buf[256];*/
-    _gui_interface_head *head_tmp;
-    _gui_interface_message *message_tmp;
-    _gui_interface_reward *reward_tmp;
-    _gui_interface_link *link_tmp;
-    _gui_interface_icon *icon_tmp;
-    _gui_interface_button *button_tmp;
+    _gui_interface_head      head_tmp;
+    _gui_interface_message   message_tmp;
+    _gui_interface_reward    reward_tmp;
+    _gui_interface_link      link_tmp;
+    _gui_interface_icon      icon_tmp;
+    _gui_interface_button    button_tmp;
+    _gui_interface_textfield textfield_tmp;
     int cmd = INTERFACE_CMD_NO;      /* we have a open '<' and a command is active */
     int cmd_mode = INTERFACE_CMD_NO; /* when we collect outside a cmd tag strings,
                                       * the string is related to this cmd
@@ -585,85 +608,89 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
                 {
                     case 'h': /* head with picture & name this interface comes from */
                         cmd = INTERFACE_CMD_HEAD;
-                        head_tmp = interface_cmd_head(data, &pos);
-                        if(!head_tmp)
+                        if(interface_cmd_head(&head_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->head, head_tmp,sizeof(_gui_interface_head));
+                        memcpy(&gui_int->head, &head_tmp,sizeof(_gui_interface_head));
                         gui_int->used_flag |=GUI_INTERFACE_HEAD;
                         break;
 
                     case 'm': /* title & text - what he has to say */
                         cmd = INTERFACE_CMD_MESSAGE;
-                        message_tmp = interface_cmd_message(data, &pos);
-                        if(!message_tmp)
+                        if(interface_cmd_message(&message_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->message, message_tmp,sizeof(_gui_interface_message));
+                        memcpy(&gui_int->message, &message_tmp,sizeof(_gui_interface_message));
                         gui_int->used_flag |=GUI_INTERFACE_MESSAGE;
                         break;
 
-                    case 'r': /* title & text - what he has to say */
+                    case 'r': /* reward info */
                         cmd = INTERFACE_CMD_REWARD;
-                        reward_tmp = interface_cmd_reward(data, &pos);
-                        if(!reward_tmp)
+                        if(interface_cmd_reward(&reward_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->reward, reward_tmp,sizeof(_gui_interface_reward));
+                        memcpy(&gui_int->reward, &reward_tmp,sizeof(_gui_interface_reward));
                         gui_int->used_flag |=GUI_INTERFACE_REWARD;
                         break;
 
                     case 'l': /* define a "link" string line */
                         cmd = INTERFACE_CMD_LINK;
-                        link_tmp = interface_cmd_link(data, &pos);
-                        if(!link_tmp)
+                        if(interface_cmd_link(&link_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->link[gui_int->link_count++], link_tmp,sizeof(_gui_interface_link));
+                        memcpy(&gui_int->link[gui_int->link_count++], &link_tmp,sizeof(_gui_interface_link));
                         break;
 
 
                     case 'i': /* define a "icon" - graphical presentation of reward or message part */
                         cmd = INTERFACE_CMD_ICON;
-                        icon_tmp = interface_cmd_icon(data, &pos);
-                        if(!icon_tmp)
+                        if(interface_cmd_icon(&icon_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->icon[gui_int->icon_count++], icon_tmp,sizeof(_gui_interface_icon));
+                        memcpy(&gui_int->icon[gui_int->icon_count++], &icon_tmp,sizeof(_gui_interface_icon));
                         break;
 
                     case 'a': /* define accept button */
                         cmd = INTERFACE_CMD_ACCEPT;
-                        button_tmp = interface_cmd_button(data, &pos);
-                        if(!button_tmp)
+                        if(interface_cmd_button(&button_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->accept, button_tmp,sizeof(_gui_interface_button));
+                        memcpy(&gui_int->accept, &button_tmp,sizeof(_gui_interface_button));
                         gui_int->used_flag |=GUI_INTERFACE_ACCEPT;
                         break;
 
                     case 'd': /* define decline button */
                         cmd = INTERFACE_CMD_DECLINE;
-                        button_tmp = interface_cmd_button(data, &pos);
-                        if(!button_tmp)
+                        if(interface_cmd_button(&button_tmp, data, &pos))
                         {
                             free(gui_int);
                             return NULL;
                         }
-                        memcpy(&gui_int->decline, button_tmp,sizeof(_gui_interface_button));
+                        memcpy(&gui_int->decline, &button_tmp,sizeof(_gui_interface_button));
                         gui_int->used_flag |=GUI_INTERFACE_DECLINE;
+                        break;
+                    
+                    case 't': /* textfield contents */
+                        cmd = INTERFACE_CMD_TEXTFIELD;
+                        if(interface_cmd_textfield(&textfield_tmp, data, &pos))
+                        {
+                            free(gui_int);
+                            return NULL;
+                        }
+                        memcpy(&gui_int->textfield, &textfield_tmp,sizeof(_gui_interface_textfield));
+                        gui_int->used_flag |=GUI_INTERFACE_TEXTFIELD;
                         break;
 
                     default:
