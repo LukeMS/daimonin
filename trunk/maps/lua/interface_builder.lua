@@ -41,6 +41,11 @@ function InterfaceBuilder:SetAccept(title, command)
     self.accept = { title = title, command = command }
 end
 
+-- Set textfield contents
+function InterfaceBuilder:SetTextfield(contents)
+    self.textfield = { contents = contents }
+end
+
 -- Generate the NPC GUI string from internal state
 function InterfaceBuilder:Build()
     local iface = ""
@@ -86,6 +91,10 @@ function InterfaceBuilder:Build()
     
     if self.decline then
         iface = iface .. '<d t="' .. default(self.accept.title, "Decline") .. '" c="' .. default(self.accept.command, "/talk decline") .. '">'
+    end
+    
+    if self.textfield then
+        iface = iface .. '<t b="' .. default(self.textfield.contents) .. '">'
     end
 
     return iface
