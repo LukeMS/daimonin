@@ -54,6 +54,14 @@
 #include <SDL/SDL_main.h>
 #include <SDL/SDL_image.h>
 
+/* Use the SDL_mixer sound system. Remove when you have no sound card or slow
+computer */
+#define INSTALL_SOUND
+
+#ifdef INSTALL_SOUND
+#include <SDL/SDL_mixer.h>
+#endif
+
 #define _malloc(__d,__s) malloc(__d)
 
 #define inline __inline
@@ -78,10 +86,6 @@
 
 /* Installation prefix */
 #define PREFIX "../../../client-BETA3-0.966"
-
-/* Use the SDL_mixer sound system. Remove when you have no sound card or slow
-   computer */
-#define INSTALL_SOUND
 
 #ifndef Boolean
 #define Boolean int

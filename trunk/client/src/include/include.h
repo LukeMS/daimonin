@@ -55,9 +55,6 @@ typedef signed char     sint8;
 /* later this should be insert a makefile */
 
 #include <wrapper.h>
-#ifdef INSTALL_SOUND
-#include <SDL_mixer.h>
-#endif
 
 #include <string.h>
 #include <stdlib.h>

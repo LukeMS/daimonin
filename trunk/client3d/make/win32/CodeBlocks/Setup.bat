@@ -6,16 +6,16 @@ rem ====================================
 rem ====================================
 rem Unpack all files.
 rem ====================================
-..\..\_Tools_\gunzip ogre_lib.tgz 
+..\..\_Tools_\gunzip -c ogre_lib.tgz >ogre_lib.tar
 ..\..\_Tools_\tar xvf ogre_lib.tar
-..\..\_Tools_\gunzip ogre_inc.tgz
+..\..\_Tools_\gunzip -c ogre_inc.tgz >ogre_inc.tar
 ..\..\_Tools_\tar xvf ogre_inc.tar
-..\..\_Tools_\gunzip ogre_dll.tgz
+..\..\_Tools_\gunzip -c ogre_dll.tgz >ogre_dll.tar
 ..\..\_Tools_\tar xvf ogre_dll.tar
 
-..\..\_Tools_\gunzip fmod_lib.tgz 
+..\..\_Tools_\gunzip -c fmod_lib.tgz >fmod_lib.tar
 ..\..\_Tools_\tar xvf fmod_lib.tar
-..\..\_Tools_\gunzip fmod_dll.tgz
+..\..\_Tools_\gunzip -c fmod_dll.tgz >fmod_dll.tar
 ..\..\_Tools_\tar xvf fmod_dll.tar
 
 rem ====================================
