@@ -1082,6 +1082,18 @@ void InterfaceCmd(unsigned char *data, int len)
             gui_interface_npc->starty = 50;
             active_button = -1;
             mb_clicked=0;
+            
+            /* Prefilled (and focused) textfield */
+            if(gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
+            {
+                gui_interface_npc->input_flag = TRUE;
+
+                reset_keys();
+                open_input_mode(240);
+                textwin_putstring(gui_interface_npc->textfield.text);
+                cpl.input_mode = INPUT_MODE_NPCDIALOG;
+                HistoryPos = 0;
+            }
         }
     }
 }

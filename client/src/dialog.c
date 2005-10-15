@@ -2271,7 +2271,7 @@ void show_interface_npc(int mark)
             return;
         }
     }
-
+        
     box.x = x + 95;
     box.y = y+449;
     box.h = 12;

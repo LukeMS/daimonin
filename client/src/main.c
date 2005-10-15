@@ -933,6 +933,7 @@ void reset_input_mode(void)
     InputStringEscFlag = FALSE;
 }
 
+/** Enable text input mode */
 void open_input_mode(int maxchar)
 {
     reset_input_mode();
