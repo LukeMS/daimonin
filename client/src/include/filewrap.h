@@ -26,7 +26,8 @@
 
 FILE *fopen_wrapper(const char *fname, const char *mode);
 SDL_Surface *IMG_Load_wrapper (const char *file);
+#ifdef INSTALL_SOUND
 Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname);
 Mix_Music *Mix_LoadMUS_wrapper(const char *file);
-    
+#endif    
 #endif

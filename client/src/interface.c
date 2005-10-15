@@ -335,7 +335,7 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
                 return -1; /* error */
         }
     }
-    return .1;
+    return 1;
 }
 
 /* Parse a <t b=""> textfield command */

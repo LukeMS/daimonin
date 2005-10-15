@@ -6,11 +6,11 @@ rem ====================================
 rem ====================================
 rem Unpack all files.
 rem ====================================
-..\..\_Tools_\gunzip sdl_lib.tgz 
+..\..\_Tools_\gunzip -c sdl_lib.tgz >sdl_lib.tar 
 ..\..\_Tools_\tar xvf sdl_lib.tar
-..\..\_Tools_\gunzip sdl_inc.tgz
+..\..\_Tools_\gunzip -c sdl_inc.tgz >sdl_inc.tar
 ..\..\_Tools_\tar xvf sdl_inc.tar
-..\..\_Tools_\gunzip sdl_dll.tgz
+..\..\_Tools_\gunzip -c sdl_dll.tgz >sdl_dll.tar
 ..\..\_Tools_\tar xvf sdl_dll.tar
 
 rem ====================================
