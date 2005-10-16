@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../dtd/daidoc.dtd">
+<section>
+    <title>Test document</title>
+    <table>
+        <tr>
+            <td colspan="2" rowspan="2">
+                2x2
+            </td>
+            <td>1x1</td>
+        </tr>
+        <tr>
+            <td>1x1</td>
+        </tr>
+        <tr>
+            <td>1x1</td>
+            <td>1x1</td>
+            <td>1x1</td>
+        </tr>
+    </table>
+</section>
+
