@@ -107,7 +107,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
 
 int apply_potion(object *op, object *tmp)
 {
-    int i;
+    int i, bonus = 1;
 
     /* some sanity checks */
     if (!op || !tmp)
@@ -200,41 +200,17 @@ int apply_potion(object *op, object *tmp)
             }
 
             /* now copy stats values */
-            force->stats.Str = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Str > 0 ? -tmp->stats.Str : tmp->stats.Str)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Str > 0 ? (-tmp->stats.Str) * 2 : tmp->stats.Str * 2)
-                              : tmp->stats.Str);
-            force->stats.Con = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Con > 0 ? -tmp->stats.Con : tmp->stats.Con)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Con > 0 ? (-tmp->stats.Con) * 2 : tmp->stats.Con * 2)
-                              : tmp->stats.Con);
-            force->stats.Dex = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Dex > 0 ? -tmp->stats.Dex : tmp->stats.Dex)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Dex > 0 ? (-tmp->stats.Dex) * 2 : tmp->stats.Dex * 2)
-                              : tmp->stats.Dex);
-            force->stats.Int = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Int > 0 ? -tmp->stats.Int : tmp->stats.Int)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Int > 0 ? (-tmp->stats.Int) * 2 : tmp->stats.Int * 2)
-                              : tmp->stats.Int);
-            force->stats.Wis = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Wis > 0 ? -tmp->stats.Wis : tmp->stats.Wis)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Wis > 0 ? (-tmp->stats.Wis) * 2 : tmp->stats.Wis * 2)
-                              : tmp->stats.Wis);
-            force->stats.Pow = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Pow > 0 ? -tmp->stats.Pow : tmp->stats.Pow)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Pow > 0 ? (-tmp->stats.Pow) * 2 : tmp->stats.Pow * 2)
-                              : tmp->stats.Pow);
-            force->stats.Cha = QUERY_FLAG(tmp, FLAG_CURSED)
-                             ? (tmp->stats.Cha > 0 ? -tmp->stats.Cha : tmp->stats.Cha)
-                             : (QUERY_FLAG(tmp, FLAG_DAMNED)
-                              ? (tmp->stats.Cha > 0 ? (-tmp->stats.Cha) * 2 : tmp->stats.Cha * 2)
-                              : tmp->stats.Cha);
+            if(QUERY_FLAG(tmp, FLAG_DAMNED))
+                bonus = -2;
+            else if(QUERY_FLAG(tmp, FLAG_CURSED))
+                bonus = -1;
+            force->stats.Str = MIN(tmp->stats.Str, tmp->stats.Str * bonus);
+            force->stats.Con = MIN(tmp->stats.Con, tmp->stats.Con * bonus);
+            force->stats.Dex = MIN(tmp->stats.Dex, tmp->stats.Dex * bonus);
+            force->stats.Int = MIN(tmp->stats.Int, tmp->stats.Int * bonus);
+            force->stats.Wis = MIN(tmp->stats.Wis, tmp->stats.Wis * bonus);
+            force->stats.Pow = MIN(tmp->stats.Pow, tmp->stats.Pow * bonus);
+            force->stats.Cha = MIN(tmp->stats.Cha, tmp->stats.Cha * bonus);
 
             /* kick the force in, and apply it to player */
             force->speed_left = -1;
@@ -1112,6 +1088,10 @@ int esrv_apply_container(object *op, object *sack)
 {
     object *cont, *tmp;
 
+    /*
+     * TODO: add support for cursed containers that can't be unreadied?
+     */
+    
     if (op->type != PLAYER)
     {
         LOG(llevBug, "BUG: esrv_apply_container: called from non player: <%s>!\n", query_name(op));
@@ -1189,7 +1169,7 @@ int esrv_apply_container(object *op, object *sack)
     /* There are really two cases - the sack is either on the ground, or the sack is
      * part of the players inventory.  If on the ground, we assume that the player is
      * opening it, since if it was being closed, that would have been taken care of above.
-    * If it in the players inventory, we can READY the container.
+     * If it in the players inventory, we can READY the container.
      */
     if (sack->env != op) /* container is NOT in players inventory */
     {
@@ -1212,7 +1192,20 @@ int esrv_apply_container(object *op, object *sack)
         }
         else
         {
-            CLEAR_FLAG(sack, FLAG_APPLIED);
+            /* We don't allow multiple applied containers of the same type (race) */
+            /* No need for recursive search, since only top-level containers may be applied */
+            for(tmp = op->inv; tmp; tmp = tmp->below)
+            {
+                if(QUERY_FLAG(tmp, FLAG_APPLIED) && tmp->type == CONTAINER && 
+                        tmp->race == sack->race && tmp != sack)
+                {
+                    CLEAR_FLAG(tmp, FLAG_APPLIED);
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You unreadied %s.", query_name(tmp));
+                    update_object(tmp, UP_OBJ_FACE);
+                    esrv_update_item(UPD_FLAGS, op, tmp);
+                }
+            }
+            
             new_draw_info_format(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
             SET_FLAG(sack, FLAG_APPLIED);
             update_object(sack, UP_OBJ_FACE);
@@ -2242,8 +2235,8 @@ static void apply_food(object *op, object *tmp)
         else
         {
             /* i don't want power eating - this disallow stacking effects
-                    * for food or flesh.
-                    */
+             * for food or flesh.
+             */
 
             if (op->stats.food + tmp->stats.food > 999)
             {

@@ -172,7 +172,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
     char    buf[HUGE_BUF];
     object *env         = tmp->env;
     uint32  weight, effective_weight_limit;
-    int     tmp_nrof    = tmp->nrof ? tmp->nrof : 1;
+    int     tmp_nrof    = tmp->nrof ? tmp->nrof : 1;    
 
     if (pl->type == PLAYER)
         CONTR(pl)->praying = 0;
@@ -185,9 +185,9 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
     if ((QUERY_FLAG(pl, FLAG_FLYING) || QUERY_FLAG(pl, FLAG_LEVITATE))&& !QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl)
     {
         if(QUERY_FLAG(pl, FLAG_FLYING))
-            new_draw_info(NDI_UNIQUE, 0, pl, "You are flying, you can't reach the ground!");
+            new_draw_info(NDI_UNIQUE, 0, pl, "You are flying; you can't reach the ground!");
         else
-            new_draw_info(NDI_UNIQUE, 0, pl, "You are levitating, you can't reach the ground!");
+            new_draw_info(NDI_UNIQUE, 0, pl, "You are levitating; you can't reach the ground!");
         return;
     }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP))
@@ -217,7 +217,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
 
     if (tmp->type == CONTAINER)
         container_unlink(NULL, tmp);
-
+    
     if (QUERY_FLAG(tmp, FLAG_UNPAID))
     {
         if (QUERY_FLAG(tmp, FLAG_NO_PICK)) /* this is a clone shop - clone a item for inventory */
@@ -227,10 +227,10 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
             SET_FLAG(tmp, FLAG_STARTEQUIP);
             tmp->nrof = nrof;
             tmp_nrof = nrof;
-            sprintf(buf, "You pick up %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
+            sprintf(buf, "You pick up the %s for %s from the storage.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
         }
         else /* this is a unique shop item */
-            sprintf(buf, "%s will cost you %s.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
+            sprintf(buf, "The %s will cost you %s.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
     }
     else if (nrof < tmp_nrof)
         sprintf(buf,"You pick up %d out of the %s.", nrof, query_name(tmp));
@@ -273,6 +273,12 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
     new_draw_info(NDI_UNIQUE, 0, pl, buf);
     tmp = insert_ob_in_ob(tmp, op);
 
+    if(op->type != PLAYER)
+    {
+        sprintf(buf,"You put it into %s.", query_name(op));
+        new_draw_info(NDI_UNIQUE, 0, pl, buf);
+    }
+    
     /* All the stuff below deals with client/server code, and is only
      * usable by players
      */
@@ -357,7 +363,7 @@ void pick_up(object *op, object *alt)
              && QUERY_FLAG(alt, FLAG_APPLIED)
              && alt->race
              && alt->race == tmp->race
-             && sack_can_hold(NULL, alt, tmp, count))
+             && sack_can_hold(op, alt, tmp, count))
                 break;  /* perfect match */
 
         if (!alt)
@@ -474,6 +480,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
             return;
     }
 
+    /* FIXME: There's quite some code duplicated from pick_up_object here */
     /* we want to put some portion of the item into the container */
     if (nrof && tmp->nrof != (uint32) nrof)
     {
@@ -514,7 +521,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
 
-    sprintf(buf, "You put the %s in ", query_name(tmp));
+    sprintf(buf, "You put the %s into ", query_name(tmp));
     strcat(buf, query_name(sack));
     strcat(buf, ".");
     tmp_tag = tmp->count;
@@ -617,7 +624,7 @@ void drop_object(object *op, object *tmp, long nrof)
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it back to the storage.");
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "The one-drop item vanish to nowhere as you drop it!");
+                new_draw_info(NDI_UNIQUE, 0, op, "The one-drop item vanishes to nowhere as you drop it!");
             esrv_del_item(CONTR(op), tmp->count, tmp->env);
         }
         fix_player(op);
@@ -1055,13 +1062,13 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         if (mon->type == PLAYER)
         {
             sprintf(buf2,"%s is level %d and %d years old%s.\n", att, mon->level, CONTR(mon)->age,
-                             QUERY_FLAG(mon, FLAG_IS_AGED) ? " (magical aged)" : "");
+                             QUERY_FLAG(mon, FLAG_IS_AGED) ? " (magically aged)" : "");
             strcat(buf,buf2);
         }
         else
         {
             sprintf(buf2,"%s is level %d%s.\n", att, mon->level,
-                             QUERY_FLAG(mon, FLAG_IS_AGED) ? " and unatural aged" : "");
+                             QUERY_FLAG(mon, FLAG_IS_AGED) ? " and unnaturally aged" : "");
             strcat(buf,buf2);
         }
     }
@@ -1085,12 +1092,12 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
     }
     if (val != -1)
     {
-        sprintf(buf2,"%s can natural resist some attacks.\n", att);
+        sprintf(buf2,"%s can naturally resist some attacks.\n", att);
         strcat(buf,buf2);
     }
     if (val2 != -1)
     {
-        sprintf(buf2, "%s is natural vulnerable to some attacks.\n", att);
+        sprintf(buf2, "%s is naturally vulnerable to some attacks.\n", att);
         strcat(buf,buf2);
     }
 
@@ -1346,8 +1353,6 @@ char *examine(object *op, object *tmp, int flag)
     {
         if (tmp->item_quality)
         {
-            int tmp_flag = 0;
-
             sprintf(buf, "Qua: ?? Con: %d.\n", tmp->item_condition);
             strcat(buf_out, buf); 
         }
@@ -1369,7 +1374,7 @@ char *examine(object *op, object *tmp, int flag)
         case SIGN:
         case BOOK:
           if (tmp->msg != NULL)
-             sprintf(buf, "Its written in %s.\n",get_language(tmp->weight_limit));
+             sprintf(buf, "It's written in %s.\n",get_language(tmp->weight_limit));
           break;
 
         case CONTAINER:
@@ -1387,9 +1392,9 @@ char *examine(object *op, object *tmp, int flag)
                   {
                       strcat(buf_out, buf);
                       if (tmp->weapon_speed > 1.0f) /* bad */
-                          sprintf(buf, "It increase the weight of items inside by %.1f%%.\n", tmp->weapon_speed * 100.0f);
+                          sprintf(buf, "It increases the weight of items inside by %.1f%%.\n", tmp->weapon_speed * 100.0f);
                       else /* good */
-                          sprintf(buf, "It decrease the weight of items inside by %.1f%%.\n",
+                          sprintf(buf, "It decreases the weight of items inside by %.1f%%.\n",
                                   100.0f - (tmp->weapon_speed * 100.0f));
                   }
               }
@@ -1404,9 +1409,9 @@ char *examine(object *op, object *tmp, int flag)
                   {
                       strcat(buf_out, buf);
                       if (tmp->weapon_speed > 1.0f) /* bad */
-                          sprintf(buf, "It increase the weight of items inside by %.1f%%.\n", tmp->weapon_speed * 100.0f);
+                          sprintf(buf, "It increases the weight of items inside by %.1f%%.\n", tmp->weapon_speed * 100.0f);
                       else /* good */
-                          sprintf(buf, "It decrease the weight of items inside by %.1f%%.\n",
+                          sprintf(buf, "It decreases the weight of items inside by %.1f%%.\n",
                                   100.0f - (tmp->weapon_speed * 100.0f));
                   }
               }
@@ -1424,7 +1429,7 @@ char *examine(object *op, object *tmp, int flag)
 
     if (tmp->material && (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED)))
     {
-        strcpy(buf, "It is made of: ");
+        strcpy(buf, "It's made of: ");
         for (i = 0; i < NROFMATERIALS; i++)
         {
             if (tmp->material & (1 << i))
