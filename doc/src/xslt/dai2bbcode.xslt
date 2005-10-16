@@ -112,6 +112,10 @@
         <xsl:text>[/url]</xsl:text>
     </xsl:template>
 
+    <xsl:template match="br">
+        <xsl:text>&#xA;</xsl:text>
+    </xsl:template>
+
     <xsl:template match="*">
         <xsl:apply-templates/>
     </xsl:template>

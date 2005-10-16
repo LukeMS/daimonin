@@ -142,6 +142,10 @@
         <xsl:text>__</xsl:text>
     </xsl:template>
 
+    <xsl:template match="br">
+        <xsl:text>%%%</xsl:text>
+    </xsl:template>
+
     <xsl:template match="*">
         <xsl:apply-templates/>
     </xsl:template>
