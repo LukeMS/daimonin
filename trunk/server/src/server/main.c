@@ -526,7 +526,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
     if (EXIT_PATH(exit_ob)[0] == '/')
     {
-        sprintf(apartment, "%s/%s/%s/%s", settings.localdir, settings.playerdir, op->name,
+        sprintf(apartment, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name,
                 clean_path(EXIT_PATH(exit_ob)));
         newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
         if (!newmap)
@@ -547,7 +547,7 @@ static void enter_unique_map(object *op, object *exit_ob)
             if ((cp = strrchr(tmpc, '$')) != NULL)
                 *cp = 0;
 
-            sprintf(apartment, "%s/%s/%s/%s_%s", settings.localdir, settings.playerdir, op->name, tmpc,
+            sprintf(apartment, "%s/%s/%s/%s/%s_%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, tmpc,
                     clean_path(EXIT_PATH(exit_ob)));
 
             newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
@@ -560,7 +560,7 @@ static void enter_unique_map(object *op, object *exit_ob)
             /* The exit is unique, but the map we are coming from is not unique.  So
                * use the basic logic - don't need to demangle the path name
                */
-            sprintf(apartment, "%s/%s/%s/%s", settings.localdir, settings.playerdir, op->name,
+            sprintf(apartment, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name,
                     clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path)));
             newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
             if (!newmap)

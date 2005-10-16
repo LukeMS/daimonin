@@ -1254,3 +1254,25 @@ int command_silent_login(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "Silent login disabled.");
     return 1;
 }
+
+/* get_subdir creates the directory for the player file structure
+ * e.g. Zergus -> z/ze
+ * '_' is used for non-letters */
+char *get_subdir(const char *name)
+{
+    static char subdir[5];
+    const char rest_dir = '_';
+
+    if(isalpha(name[0]))
+        subdir[0] = tolower(name[0]);
+    else
+        subdir[0] = rest_dir;
+    subdir[1] = '/';
+    subdir[2] = subdir[0];
+    if(isalpha(name[1]))
+        subdir[3] = tolower(name[1]);
+    else
+        subdir[3] = rest_dir;
+    subdir[4] = '\0';
+    return subdir;
+}

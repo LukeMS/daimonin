@@ -751,7 +751,7 @@ void command_new_char(char *params, int len, player *pl)
     /* We create this now because some of the unique maps will need it
      * to save here.
      */
-    sprintf(buf, "%s/%s/%s", settings.localdir, settings.playerdir, op->name);
+    sprintf(buf, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name);
     make_path_to_file(buf);
 
 #ifdef AUTOSAVE

@@ -32,26 +32,15 @@ void emergency_save(int flag)
     LOG(llevSystem, "Emergency saves disabled, no save attempted\n");
 }
 
-/* Delete character with name.  if new is set, also delete the new
- * style directory, otherwise, just delete the old style playfile
- * (needed for transition)
+/* Delete character with name.
  */
-void delete_character(const char *name, int new)
+void delete_character(const char *name)
 {
     char    buf[MAX_BUF];
 
-    sprintf(buf, "%s/%s/%s.pl", settings.localdir, settings.playerdir, name);
-    if (unlink(buf) == -1)
-    {
-        LOG(llevBug, "BUG:: delete_character(): unlink(%s) failed! (dir not removed too)\n", buf);
-        return;
-    }
-    if (new)
-    {
-        sprintf(buf, "%s/%s/%s", settings.localdir, settings.playerdir, name);
-        /* this effectively does an rm -rf on the directory */
-        remove_directory(buf);
-    }
+    sprintf(buf, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(name), name);
+    /* this effectively does an rm -rf on the directory */
+    remove_directory(buf);
 }
 
 /* lets check the player name is used.
@@ -166,11 +155,7 @@ int save_player(object *op, int flag)
     /* perhaps we don't need it here?*/
     /*container_unlink(pl,NULL);*/
 
-    /* Delete old style file */
-    sprintf(filename, "%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name);
-    unlink(filename);
-
-    sprintf(filename, "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);
+    sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
     make_path_to_file(filename);
     tmpfilename = tempnam_local(settings.tmpdir, NULL);
     fp = fopen(tmpfilename, "w");
@@ -455,20 +440,7 @@ void check_login(object *op)
     LOG(llevInfo, "LOGIN: >%s< from ip %s (%d) - ", STRING_SAFE(op->name), STRING_SAFE(pl->socket.host), pl->socket.fd);
 
     kick_loop_jump:
-    /* First, lets check for newest form of save */
-    sprintf(filename, "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name, op->name);
-    if (access(filename, F_OK) == -1)
-    {
-        /* not there,  Try the old style */
-
-        sprintf(filename, "%s/%s/%s.pl", settings.localdir, settings.playerdir, op->name);
-        /* Ok - old style exists.  Lets make the new style directory */
-        if (access(filename, F_OK) == 0)
-        {
-            sprintf(buf, "%s/%s/%s", settings.localdir, settings.playerdir, op->name);
-            make_path_to_file(buf);
-        }
-    }
+    sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
 
     /* If no file, must be a new player, so lets get confirmation of
      * the password.  Return control to the higher level dispatch,
