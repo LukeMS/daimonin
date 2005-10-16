@@ -120,7 +120,12 @@
     </xsl:template>
 
     <xsl:template match="td">
-        <xsl:text>|</xsl:text>
+        <xsl:for-each select="for $i in 1 to @colspan return $i">
+            <xsl:text>|</xsl:text>
+        </xsl:for-each>
+        <xsl:for-each select="for $i in 2 to @rowspan return $i">
+            <xsl:text>v</xsl:text>
+        </xsl:for-each>
         <xsl:choose>
             <xsl:when test="@align='center'"><xsl:text>^</xsl:text></xsl:when>
             <xsl:when test="@align='right'"><xsl:text>&gt;</xsl:text></xsl:when>
@@ -130,7 +135,12 @@
     </xsl:template>
 
     <xsl:template match="th">
-        <xsl:text>|</xsl:text>
+        <xsl:for-each select="for $i in 1 to @colspan return $i">
+            <xsl:text>|</xsl:text>
+        </xsl:for-each>
+        <xsl:for-each select="for $i in 2 to @rowspan return $i">
+            <xsl:text>v</xsl:text>
+        </xsl:for-each>
         <xsl:choose>
             <xsl:when test="@align='right'"><xsl:text>&gt;</xsl:text></xsl:when>
             <xsl:when test="@align='left'"><xsl:text>&lt;</xsl:text></xsl:when>

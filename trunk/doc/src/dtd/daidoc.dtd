@@ -3,12 +3,23 @@
   - Document Type Definition for Daimonin Documentation
   -->
 
+<!-- Extension hooks. -->
 <!ENTITY % InlineExt "">
 <!ENTITY % BlockExt "">
-  
+
+
+<!-- Complex content types. -->
 <!ENTITY % Inline "#PCDATA|em|strong|code|a|img%InlineExt;">
 <!ENTITY % Block  "br|blockcode|p|ul|table|ol|dl|section%BlockExt;">
 <!ENTITY % Mixed  "%Inline;|%Block;">
+
+
+<!--
+  - Attribute types.
+  -->
+
+<!-- Number. See Context for range or decimal fractions. -->
+<!ENTITY % number "CDATA">
 
 <!ELEMENT title (%Inline;)*>
 
@@ -33,16 +44,23 @@
 >
 
 <!ELEMENT table (tr+)>
+<!ATTLIST table
+    border (yes|no) 'yes'
+>
 <!ELEMENT tr (th|td)+>
 <!ELEMENT td (%Mixed;)*>
 <!ELEMENT th (%Mixed;)*>
 
 <!ATTLIST td
     align (left|center|right) #IMPLIED
+    colspan %number; '1'
+    rowspan %number; '1'
 >
 
 <!ATTLIST th
     align (left|center|right) #IMPLIED
+    colspan %number; '1'
+    rowspan %number; '1'
 >
 
 <!ELEMENT p (%Inline;)*>

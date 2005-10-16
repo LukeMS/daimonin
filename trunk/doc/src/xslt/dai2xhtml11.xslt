@@ -135,6 +135,14 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="table/@border">
+        <xsl:if test=".='yes'">
+            <xsl:attribute name="border">border</xsl:attribute>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="@colspan[.='1']|@rowspan[.='1']"/>
+
     <xsl:template match="@*">
         <xsl:copy/>
     </xsl:template>
