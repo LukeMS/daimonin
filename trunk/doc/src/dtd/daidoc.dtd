@@ -7,7 +7,7 @@
 <!ENTITY % BlockExt "">
   
 <!ENTITY % Inline "#PCDATA|em|strong|code|a|img%InlineExt;">
-<!ENTITY % Block  "blockcode|p|ul|table|ol|dl|section%BlockExt;">
+<!ENTITY % Block  "br|blockcode|p|ul|table|ol|dl|section%BlockExt;">
 <!ENTITY % Mixed  "%Inline;|%Block;">
 
 <!ELEMENT title (%Inline;)*>
@@ -53,4 +53,4 @@
 <!ELEMENT dt (%Mixed;)*>
 <!ELEMENT dd (%Mixed;)*>
 <!ELEMENT blockcode (#PCDATA)>
-
+<!ELEMENT br EMPTY>

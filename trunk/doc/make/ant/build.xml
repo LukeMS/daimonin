@@ -81,6 +81,7 @@
                 <include name="**/*.jfif" />
                 <include name="**/*.jpeg" />
                 <include name="**/*.jpg" />
+                <include name="**/*.txt" />
             </fileset>
         </copy>
     </target>
@@ -109,6 +110,7 @@
                 <include name="**/*.jfif" />
                 <include name="**/*.jpeg" />
                 <include name="**/*.jpg" />
+                <include name="**/*.txt" />
             </fileset>
         </copy>
     </target>
