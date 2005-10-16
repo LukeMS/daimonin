@@ -986,3 +986,25 @@ void material_attack_damage(object *op, int num, int chance, int base)
     if(flag_fix)
         fix_player(op);
 }
+
+/* repair costs for item - owner is owner of that item */
+sint64 material_repair_cost(object *item, object *owner)
+{
+    double tmp;
+    sint64 costs=0;
+
+    if(item->value && item->item_quality && item->item_quality > item->item_condition)
+    {
+        /* this is a problem.. we assume, that costs (as 64 bit value) will be covered
+         * by tmp as double. This will work fine if costs is not insane high - what should
+         * not be. If we have here problems, then we need to split this calc in a 64 bit one
+         * with high values and small ones
+         */
+        tmp = (double) item->value / (double)item->item_quality; /* how much cost is 1 point of quality */
+        tmp *= (double)item->item_quality - (double)item->item_condition; /* number of condition we miss */
+        costs = (sint64) tmp;
+    }
+
+    return costs;
+
+}

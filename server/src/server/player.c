@@ -1955,7 +1955,7 @@ void kill_player(object *op)
     op->direction = 0;
     if (!QUERY_FLAG(op, FLAG_WIZ) && op->stats.exp)
     {
-        delete_character(op->name, 0);
+        delete_character(op->name);
 #ifndef NOT_PERMADEATH
 #ifdef RESURRECTION
         /* save playerfile sans equipment when player dies

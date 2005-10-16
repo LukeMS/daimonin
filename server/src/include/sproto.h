@@ -184,6 +184,7 @@ void                        receive_player_password(object *op, char k, char *st
 int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
 int                         command_silent_login(object *op, char *params);
+char                        *get_subdir(const char *name);
 /* c_move.c */
 int                         command_east(object *op, char *params);
 int                         command_north(object *op, char *params);
@@ -344,7 +345,7 @@ void                        fatal_signal(int make_core, int close_sockets);
 void                        init_library();
 /* login.c */
 void                        emergency_save(int flag);
-void                        delete_character(const char *name, int new);
+void                        delete_character(const char *name);
 int                         check_name(player *me, char *name);
 int                         check_password(char *typed, char *crypted);
 int                         create_savedir_if_needed(char *savedir);

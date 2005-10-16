@@ -45,7 +45,7 @@ void dead_player(object *op)
     char    path[MAX_BUF];
 
     /*  set up our paths/strings...  */
-    sprintf(path, "%s/%s/%s/%s", settings.localdir, settings.playerdir, op->name, op->name);
+    sprintf(path, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
 
     strcpy(filename, path);
     strcat(filename, ".pl");
@@ -198,7 +198,7 @@ int resurrect_player(object *op, char *playername, int rspell)
     int             Con;
 
     /*  set up our paths/strings...  */
-    sprintf(path, "%s/%s/%s/%s", settings.localdir, settings.playerdir, playername, playername);
+    sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), playername, playername);
 
     strcpy(newname, path);
     strcat(newname, ".pl");
@@ -285,7 +285,7 @@ void dead_character(char *name)
     char    buf[MAX_BUF];
     char    buf2[MAX_BUF];
 
-    sprintf(buf, "%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, name, name);
+    sprintf(buf, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     /*  peterm:  create a .dead filename....  ***.pl.dead  */
     strcpy(buf2, buf);
     strcat(buf, ".dead");
@@ -298,7 +298,7 @@ int dead_player_exists(char *name)
 {
     char    buf[MAX_BUF];
 
-    sprintf(buf, "%s/%s/%s/%s", settings.localdir, settings.playerdir, name, name);
+    sprintf(buf, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(name), name, name);
     strcat(buf, ".pl.dead");
     return !(access(buf, 0));
 }

@@ -891,7 +891,7 @@ CFParm * CFWReadyMapName(CFParm *PParm)
 
     if ((flag & 2) && op)
     {
-        sprintf(path, "%s/%s/%s/%s", settings.localdir, settings.playerdir, op->name, clean_path(string));
+        sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, clean_path(string));
         tmp = path;
     }
     else
