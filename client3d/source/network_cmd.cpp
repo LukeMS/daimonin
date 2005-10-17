@@ -26,7 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "zlib.h"
 #include "define.h"
 #include "option.h"
-#include "textinput.h"
+
 #include "serverfile.h"
 #include "TileManager.h"
 
@@ -264,21 +264,20 @@ void Network::PreParseInfoStat(char *cmd)
   // Find input name
   if (strstr(cmd, "What is your name?"))
   {
-    /*
-            LogFile::getSingleton().Info("Login: Enter name\n");
-            cpl.name[0] = 0;
-            cpl.password[0] = 0;
-            if (PasswordAlreadyAsked == 1)
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
-                PasswordAlreadyAsked = 0;
-            } 
-            else if (PasswordAlreadyAsked == 2)
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
-                PasswordAlreadyAsked = 0;
-            }
-    */
+/*
+    LogFile::getSingleton().Info("Login: Enter name\n");
+    cpl.name[0] = 0;
+    cpl.password[0] = 0;
+    if (PasswordAlreadyAsked == 1)
+    {
+      dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
+      PasswordAlreadyAsked = 0;
+    }
+    else if (PasswordAlreadyAsked == 2)
+    {
+      dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
+      PasswordAlreadyAsked = 0;
+    }
     TextInput::getSingleton().stop();
     Option::getSingleton().GameStatus = GAME_STATUS_NAME;
     TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
@@ -296,6 +295,7 @@ void Network::PreParseInfoStat(char *cmd)
     Option::getSingleton().GameStatus = GAME_STATUS_VERIFYPSWD;
     TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
     mPasswordAlreadyAsked = 2;
+  */
   }
 }
 

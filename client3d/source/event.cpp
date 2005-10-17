@@ -24,7 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "option.h"
 #include "logger.h"
-#include "textinput.h"
+#include "gui_text.h"
 #include "network.h"
 #include "TileManager.h"
 #include "gui_manager.h"
@@ -32,24 +32,17 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 Real w_1, x_1, y_1, z_1;
-
 Real g_pitch = 0.2;
-//Real PickHeigth;
-std::string PickHeigth;
-static int pixels = 128;
-
 char Tbuffer[80];
+int pixels =128;
 
-const char *mEventAction;
-
-//=================================================================================================
-// Init all static Elemnts.
-//=================================================================================================
+///=================================================================================================
+///=================================================================================================
 CEvent *Event=0;
 
-//=================================================================================================
-// Constructor.
-//=================================================================================================
+///=================================================================================================
+/// Constructor.
+///=================================================================================================
 CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListener,
                MouseListener *mMListener, bool useBufferedInputKeys, bool)
 {
@@ -59,6 +52,23 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
   /// Create all Overlays.
   /////////////////////////////////////////////////////////////////////////////////////////
   GuiManager::getSingleton().Init(FILE_GUI_IMAGESET, FILE_GUI_WINDOWS, win->getWidth(), win->getHeight());
+
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"Welcome to ~Daimonin 3D~.");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#001b1b88Text~ ~#00663310Text~ ~#0000ffffText~");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#00ff0000Text~ ~#0000ff00Text~ ~#000000ffText~");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"");
+
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a1 ");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a2 ");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a3 ");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a4 ");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a5 ");
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a6 ");
+
+//for (int i = 0; i < 80; ++i)
+  GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line b1 ");
+
+
   /////////////////////////////////////////////////////////////////////////////////////////
   /// Create unbuffered key & mouse input.
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +86,6 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
   mCamera = cam;
   mWindow = win;
   mTimeUntilNextToggle = 0;
-  // mDetailIndex = 0;
   mTranslateVector = Vector3(0,0,0);
   mAniso = 1;
   mFiltering = TFO_BILINEAR;
@@ -85,18 +94,18 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
   mCameraZoom = MAX_CAMERA_ZOOM;
 }
 
-//=================================================================================================
-// Destructor.
-//=================================================================================================
+///=================================================================================================
+/// Destructor.
+///=================================================================================================
 CEvent::~CEvent()
 {
   if (mEventProcessor)  delete mEventProcessor;
   GuiManager::getSingleton().freeRecources();
 }
 
-//=================================================================================================
-// Player has moved, update the world position.
-//=================================================================================================
+///=================================================================================================
+/// Player has moved, update the world position.
+///=================================================================================================
 void CEvent::setWorldPos(Vector3 &pos)
 {
   static Vector3 dPos = pos;
@@ -186,9 +195,9 @@ void CEvent::setWorldPos(Vector3 &pos)
   // ParticleManager::getSingleton().synchToWorldPos(pos);
 }
 
-//=================================================================================================
-// Frame Start event.
-//=================================================================================================
+///=================================================================================================
+/// Frame Start event.
+///=================================================================================================
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
   if (mWindow->isClosed())
@@ -228,82 +237,50 @@ bool CEvent::frameStarted(const FrameEvent& evt)
           if (processUnbufferedKeyInput(evt) == false) { return false; }
    }
   */
-  if (Option::getSingleton().mStartNetwork)
-  {
-    Network::getSingleton().Update();
-  }
-  if (mQuitGame)
-  {
-    return false;
-  }
+  
+  GuiManager::getSingleton().update();
+  if (Option::getSingleton().mStartNetwork)  Network::getSingleton().Update();
+  if (mQuitGame)  return false;
+
   return true;
 }
 
-//=================================================================================================
-// Frame End event.
-//=================================================================================================
+///=================================================================================================
+/// Frame End event.
+///=================================================================================================
 bool CEvent::frameEnded(const FrameEvent& )
 {
   const RenderTarget::FrameStats& stats = mWindow->getStatistics();
   const int SKIP = 10;
 
+
+
   static char buffer[16];
   static int skip = SKIP;
   if (!--skip)
   {
-  long time = clock();
-  skip = SKIP;
-  sprintf(buffer, "%.1f", stats.lastFPS);
-
-//for (int i=0; i< 500; ++i)
-{
-  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , buffer);
-  sprintf(buffer, "%.1f", stats.bestFPS);
-  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , buffer);
-  sprintf(buffer, "%.1f", stats.worstFPS);
-  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, buffer);
-  sprintf(buffer, "%d", stats.triangleCount);
-  GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , buffer);
-}
-
-
-
+    clock_t time = clock();
+    skip = SKIP;
+    sprintf(buffer, "%.1f", stats.lastFPS);
+    //for (int i=0; i< 500; ++i)
+    {
+      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)buffer);
+      sprintf(buffer, "%.1f", stats.bestFPS);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)buffer);
+      sprintf(buffer, "%.1f", stats.worstFPS);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
+      sprintf(buffer, "%d", stats.triangleCount);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
+    }
     Logger::log().info() << "Time to print stats: " << clock()-time << " ms";
   }
-  /////////////////////////////////////////////////////////////////////////
-  // Print camera details
-  /////////////////////////////////////////////////////////////////////////
-  Vector3 pos = mCamera->getPosition();
-  /*
-   mWindow->setDebugText("Camera zoom: " + StringConverter::toString(pos.z)
-    +"  pitch: " + StringConverter::toString(g_pitch)
-   );
-  */
-
-  Vector3 pPos = Event->getCamera()->getPosition();
-  // pPos.z = 22*30 -(pPos.z- 534);
-  pPos.z -= 534;
-  Real h = Event->pgTileManager->Get_Map_Height((short)(pPos.x)/TILE_SIZE, (short)(pPos.z)/TILE_SIZE)*2;
-
-  mWindow->setDebugText( " x: "+ StringConverter::toString(pPos.x)+
-                         " y: "+ StringConverter::toString(pPos.y)+
-                         " z: "+ StringConverter::toString(pPos.z)+
-                         "  h: "+ StringConverter::toString(h));
-  /*
-   mWindow->setDebugText( " w: "+ StringConverter::toString(w_1)+
-               " x: "+ StringConverter::toString(x_1)+
-               " y: "+ StringConverter::toString(y_1)+
-               " z: "+ StringConverter::toString(z_1));
-  */
-  // mWindow->setDebugText(" PickHeigth: "+ StringConverter::toString(PickHeigth));
-  mWindow->setDebugText("Press 'x' for texture resolution (" + StringConverter::toString(pixels) + " pix)");
 
   return true;
 }
 
-//=================================================================================================
-// Buffered Key Events.
-//=================================================================================================
+///=================================================================================================
+/// Buffered Key Events.
+///=================================================================================================
 void CEvent::keyPressed(KeyEvent *e)
 {
   mIdleTime =0;
@@ -407,7 +384,7 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       /////////////////////////////////////////////////////////////////////////
-      // Engine settings.
+      /// Engine settings.
       /////////////////////////////////////////////////////////////////////////
       /*
         case KC_C:
@@ -512,7 +489,6 @@ void CEvent::keyPressed(KeyEvent *e)
         sprintf(tmp, "screenshot_%d.png", ++mNumScreenShots);
         mWindow->writeContentsToFile(tmp);
         mTimeUntilNextToggle = 0.5;
-        mWindow->setDebugText(String("Wrote ") + tmp);
       }
       break;
 
@@ -560,9 +536,9 @@ void CEvent::keyReleased(KeyEvent* e)
   }
 }
 
-//=================================================================================================
-// Buffered Mouse Events.
-//=================================================================================================
+///=================================================================================================
+/// Buffered Mouse Events.
+///=================================================================================================
 void CEvent::mouseMoved (MouseEvent *e)
 {
   mMouseX = e->getX();
@@ -570,57 +546,47 @@ void CEvent::mouseMoved (MouseEvent *e)
   if (mMouseX > 0.995) mMouseX = 0.995;
   if (mMouseY > 0.990) mMouseY = 0.990;
   GuiManager::getSingleton().mouseEvent(M_MOVED, mMouseX, mMouseY);
-  sprintf(Tbuffer, "%d %d", (int)(mMouseX*1024), (int)(mMouseY*768));
+
+}
+
+void CEvent::mousePressed (MouseEvent *e)
+{
+  mMouseX = e->getX();
+  mMouseY = e->getY();
+  if (GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY))
+  { // Button was pressed in a gui_window.
+  }
+  e->consume();
 }
 
 void CEvent::mouseDragged(MouseEvent *e)
 {
   mouseMoved(e);
-//  if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
-//  if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY)) return;
   e->consume();
 }
 
 void CEvent::mouseClicked (MouseEvent *e)
 {
-//  if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
-//  if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) return;
   mouseMoved(e);
   e->consume();
 }
 
 void CEvent::mouseEntered (MouseEvent *e)
 {
-//  TextWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
-//  ChatWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
   mouseMoved(e);
   e->consume();
 }
 
 void CEvent::mouseExited  (MouseEvent *e)
 {
-//  TextWin->MouseAction(M_EXITED,mMouseX, mMouseY);
-//  ChatWin->MouseAction(M_EXITED,mMouseX, mMouseY);
-  mouseMoved(e);
-  e->consume();
-}
-
-void CEvent::mousePressed (MouseEvent *e)
-{
-//  TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
-//  ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
-  const char *result = GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY);
-//  if (result) TextWin->Print(result);
   mouseMoved(e);
   e->consume();
 }
 
 void CEvent::mouseReleased(MouseEvent *e)
 {
-//  TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
-//  ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
-  const char *result = GuiManager::getSingleton().mouseEvent(M_RELEASED, mMouseX, mMouseY);
-//  if (result) TextWin->Print(result);
-  mouseMoved(e);
+  GuiManager::getSingleton().mouseEvent(M_RELEASED, mMouseX, mMouseY);
+  //  mouseMoved(e);
   e->consume();
 }
+

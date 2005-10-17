@@ -37,7 +37,7 @@ const int SOCKET_ERROR =-1;
 #include "option.h"
 #include "define.h"
 #include "serverfile.h"
-#include "textinput.h"
+
 #include "TileManager.h"
 
 #define DEBUG_ON
@@ -440,19 +440,22 @@ void Network::Update()
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_LOGIN)
     {
-      // map_transfer_flag = 0;
+/*
+	      // map_transfer_flag = 0;
       TextInput::getSingleton().startTextInput(1); // every start() needs a stop()!
       if (TextInput::getSingleton().wasCanceled())
       {
-//        TextWin->Print("Break Login.", TXT_RED);
+        TextWin->Print("Break Login.", TXT_RED);
         TextInput::getSingleton().stop();
-  //      Dialog::getSingleton().setVisible(false);
+        Dialog::getSingleton().setVisible(false);
         Option::getSingleton().GameStatus = GAME_STATUS_START;
       }
+*/
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_NAME)
     {
-      // map_transfer_flag = 0;
+/*
+	      // map_transfer_flag = 0;
       //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
       if (TextInput::getSingleton().wasCanceled())
       {
@@ -465,10 +468,12 @@ void Network::Update()
         //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
+*/
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_PSWD)
     {
-      // map_transfer_flag = 0;
+/*
+	      // map_transfer_flag = 0;
       // textwin_clearhistory();
       //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
       if (TextInput::getSingleton().wasCanceled())
@@ -482,10 +487,12 @@ void Network::Update()
         //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
+*/
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_VERIFYPSWD)
     {
-      // map_transfer_flag = 0;
+/*
+	      // map_transfer_flag = 0;
       //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN);
       if (TextInput::getSingleton().wasCanceled())
       {
@@ -497,6 +504,7 @@ void Network::Update()
         //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
         Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
       }
+*/
     }
     else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITFORPLAY)
     {

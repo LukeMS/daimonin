@@ -18,7 +18,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "textwindow.h"
 #include "option.h"
 #include "animate.h"
 #include "logger.h"

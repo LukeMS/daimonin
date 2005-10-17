@@ -34,11 +34,10 @@ public:
   /// Functions.
   ////////////////////////////////////////////////////////////
   GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY);
-  ~GuiListbox()
-  {}
+  ~GuiListbox();
   bool mouseOver(int x, int y)
-  {
-    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
+  { 
+    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight) return true;
     return false;
   }
   bool setState(int state)
@@ -56,13 +55,21 @@ public:
     return mState;
   }
   void setStateImagePos(std::string state, int x, int y);
-  void draw(PixelBox &mSrcPixelBox, Texture *texture);
-  void print(const char *text);
+  void update(Texture *texture);
+  void addTextline(const char *text);
+
+  int getIndex()
+  {
+    return mIndex;
+  }
+  void setIndex(int index)
+  {
+    mIndex = index;
+  }
 private:
-static const Real CLOSING_SPEED      =  10.0f;  // default: 10.0f
-static const Real SCROLL_SPEED       =   1.0f;  // default:  1.0f
-static const int  MAX_TEXT_LINES     =  20;
-static const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
+  static const Real CLOSING_SPEED      =  10.0f;  // default: 10.0f
+  static const int  MAX_TEXT_LINES     =  20;
+  static const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
 
   ////////////////////////////////////////////////////////////
   /// Variables.
@@ -94,20 +101,22 @@ static const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
   Real mLastHeight;            // The height before window was closed.
   Real mMinHeight, mMaxHeight;
   Real mFirstYPos;
-  Real mScroll;
   bool mIsClosing, mIsOpening; // User pressed open/close button.
   bool mVisible;
   bool mDragging;
-  int  mThisWindowNr;
+  int  mScroll;
+
   int  mRowsToScroll, mRowsToPrint;
   int  mSumRows;
   int  mPrintPos;
   int  mBufferPos;
-
-  int  mX, mY, mWidth, mHeight;
+  int  mIndex;
+  int  mFontHeight;
+  int  mPosX, mPosY, mWidth, mHeight;
   int  mType;
   std::string mStrName, mStrLabel, mBehavior;
   uint32 mFillColor;
+  uint32 *mGfxBuffer;
   int  mOldState, mState;
   ////////////////////////////////////////////////////////////
   /// Functions.

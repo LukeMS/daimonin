@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "define.h"
 #include "gui_window.h"
-#include "gui_textout.h"
+#include "gui_text.h"
 #include "gui_manager.h"
 #include "gui_gadget.h"
 #include "gui_listbox.h"
@@ -184,7 +184,14 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   /////////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
   {
+    valString = xmlElem->Attribute("name");
     GuiListbox *listbox = new GuiListbox(xmlElem, mWidth, mHeight);
+    for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+    {
+      if (GuiManager::GuiElementNames[i].name != valString) continue;
+      listbox->setIndex(i);
+      break;
+    }
     mvListbox.push_back(listbox);
   }
   /////////////////////////////////////////////////////////////////////////
@@ -326,8 +333,8 @@ void GuiWindow::drawAll()
             mvTextline[i]->x + mvTextline[i]->width,
             mvTextline[i]->y + GuiTextout::getSingleton().getMaxFontHeight()), pb);
     }
-    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_BLACK);
-    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str(), COLOR_WHITE);
+    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str());
+    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str());
   }
   /////////////////////////////////////////////////////////////////////////
   /// Draw gadget.
@@ -337,8 +344,7 @@ void GuiWindow::drawAll()
   /////////////////////////////////////////////////////////////////////////
   /// Draw listbox.
   /////////////////////////////////////////////////////////////////////////
-  for (unsigned int i = 0; i < mvListbox.size() ; ++i)
-    mvListbox [i]->draw(mSrcPixelBox, mTexture.getPointer());
+  // not needed for text-listbox.
 }
 
 ///=================================================================================================
@@ -452,15 +458,52 @@ void GuiWindow::Message(int message, int element, const char *value)
 {
   switch (message)
   {
+    case GUI_MSG_ADD_TEXTLINE:
+      for (unsigned int i = 0; i < mvListbox.size() ; ++i)
+      {
+        if (mvListbox[i]->getIndex() != element) continue;
+        mvListbox[i]->addTextline(value);
+        break;
+      }
+      break;
+
     case GUI_MSG_TXT_CHANGED:
       for (unsigned int i = 0; i < mvTextline.size() ; ++i)
       {
         if (mvTextline[i]->index != element) continue;
-        GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value, COLOR_WHITE);
+        GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value);
         break;
       }
       break;
+
     default:
       break;
+  }
+}
+
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiWindow::updateDragAnimation()
+{
+  ;// "zurückflutschen" bei falschem drag.
+}
+
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiWindow::update2DAnimaton()
+{
+	;
+}
+
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiWindow::updateListbox()
+{
+  for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
+  {
+    (*i)->update( mTexture.getPointer());
   }
 }

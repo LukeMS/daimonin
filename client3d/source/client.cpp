@@ -25,7 +25,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "option.h"
 #include "sound.h"
-#include "gui_window.h"
 #include "object_manager.h"
 #include "particle_manager.h"
 #include "spell_manager.h"

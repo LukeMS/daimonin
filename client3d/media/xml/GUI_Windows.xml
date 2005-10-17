@@ -86,7 +86,7 @@
 
   </Window>
 
-  <Window name= "Requester" relativeCoords= "false">
+  <Window name= "TextWindow" relativeCoords= "false">
     <Pos      x= "500" y= "100" zOrder = "400" />
     <Size     width= "280" height= "250" />
     <DragArea x= "0" y= "0" width= "100" height= "20" />
@@ -97,9 +97,9 @@
       <Range width= "280" height= "18" />
     </Graphic>
 
-    <Listbox type= ""  name = "Chat_Window">
+    <Listbox type= ""  name = "TextList">
       <Pos x= "1" y= "18" />
-      <Range width= "280" height= "250" />
+      <Range width= "280" height= "200" />
       <Color red= "128" green= "128" blue= "128" alpha = "128" />
     </Listbox>
 	
