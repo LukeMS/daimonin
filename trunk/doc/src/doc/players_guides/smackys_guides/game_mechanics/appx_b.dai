@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
 <section autotoc="yes"><title>APPENDIX B: META COMMANDS</title>
     <section id="movement"><title>Movement</title>
         <table>
