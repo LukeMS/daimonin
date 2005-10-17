@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>APPENDIX A: GAME COMMANDS</title>
+    <section id="movement"><title>Movement</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/run
+                </td>
+                <td>Switch on run mode
+                </td>
+            </tr>
+            <tr>
+                <td>/run_stop
+                </td>
+                <td>Switch off run mode
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="skills"><title>Skills</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/ready_skill &lt;skill&gt;
+                </td>
+                <td>Ready &lt;skill&gt; for future use
+                </td>
+            </tr>
+            <tr>
+                <td>/use_skill &lt;skill&gt;
+                </td>
+                <td>Use &lt;skill&gt; immediately
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="items"><title>Items</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/apply &lt;item&gt;
+                </td>
+                <td>Apply &lt;item&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>/drop &lt;item&gt;
+                </td>
+                <td>Drop &lt;item&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>/get &lt;item&gt;
+                </td>
+                <td>Get &lt;item&gt;
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="combat"><title>Combat</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/combat
+                </td>
+                <td>Toggle attack/hold attack mode
+                </td>
+            </tr>
+            <tr>
+                <td>/target &lt;mob&gt;
+                </td>
+                <td>Target &lt;mob&gt;
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="magic"><title>Spells/Prayers</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/cast &lt;spell/prayer&gt;
+                </td>
+                <td>Cast &lt;spell&gt; or recite &lt;prayer&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>/pray
+                </td>
+                <td>Pray
+                </td>
+            </tr>
+            <tr>
+                <td>/ready_spell &lt;spell/prayer&gt;
+                </td>
+                <td>Ready &lt;spell/prayer&gt; for future casting/reciting
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="communication"><title>Communication</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/accuse, /beg, /bleed, /blush, /bounce, /bow,<br></br>/burp, /cackle, /chuckle, /clap, /cough, /cringe,<br></br>/cry, /dance, /flip, /frown, /gasp, /giggle,<br></br>/glare, /grin, /groan, /growl, /hiccup, /hug,<br></br>/kiss, /laugh, /lick, /nod, /poke, /pout,<br></br>/puke, /scream, /shake, /shiver, /shrug, /sigh,<br></br>/slap, /smile, /smirk, /snap, /sneeze, /snicker,<br></br>/sniff, /snore, /spit, /strut, /sulk, /thank,<br></br>/think, /twiddle, /wave, /whistle, /wink, /yawn
+                </td>
+                <td>These pre-defined emotes do what they say on the tin
+                </td>
+            </tr>
+            <tr>
+                <td>/me &lt;message&gt;
+                </td>
+                <td>Emote &lt;message&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>/reply &lt;message&gt;
+                </td>
+                <td>Send private &lt;message&gt; to last player to /tell you
+                </td>
+            </tr>
+            <tr>
+                <td>/say &lt;message&gt;
+                </td>
+                <td>Say &lt;message&gt; to all within hearing
+                </td>
+            </tr>
+            <tr>
+                <td>/shout &lt;message&gt;
+                </td>
+                <td>Broadcast public &lt;message&gt; to all players
+                </td>
+            </tr>
+            <tr>
+                <td>/tell &lt;player&gt; &lt;message&gt;
+                </td>
+                <td>Send private &lt;message&gt; to &lt;player&gt;
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="misc"><title>Miscellaneous</title>
+        <table>
+            <tr>
+                <th>Game Command
+                </th>
+                <th>Effect
+                </th>
+            </tr>
+            <tr>
+                <td>/help (&lt;topic&gt;)
+                </td>
+                <td>View in-game help
+                </td>
+            </tr>
+            <tr>
+                <td>/mapinfo
+                </td>
+                <td>View information about current map
+                </td>
+            </tr>
+            <tr>
+                <td>/save
+                </td>
+                <td>Save game
+                </td>
+            </tr>
+            <tr>
+                <td>/time
+                </td>
+                <td>View in-game time of day/year
+                </td>
+            </tr>
+        </table>
+    </section>
+</section>

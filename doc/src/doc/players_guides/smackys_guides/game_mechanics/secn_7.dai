@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>7: DEATH</title>
+    <p><img alt="Gravestone" src="./gravestone.png"></img>
+    </p>
+    <p>There's no easy way to say this. As in the real world, everyone dies eventually.
+    </p>
+    <section id="afterlife"><title>Is there an afterlife?</title>
+        <p>Happily, unlike the real world, death is not permanent. Also, there is no limit on how often or frequently you can die.
+        </p>
+    </section>
+    <section id="wherego"><title>Where do I go?</title>
+        <p>When you die you will be transported back to the church (or to bed if you own an apartment).
+        </p>
+    </section>
+    <section id="whathappens"><title>What happens to me?</title>
+        <p>You will also be cured of any disease you are currently suffering and relieved of any poison in your bloodstream.
+        </p>
+        <p>If your level is three or above you will also lose a chunk of experience from <em>every</em> skill (although you cannot lose a level in this way), and possibly one point from a random stat.
+        </p>
+    </section>
+    <section id="fondmemories"><title>Will I be remembered?</title>
+        <p>A temporary gravestone marks the spot where you met your demise.
+        </p>
+        <p>Also, a short message (your name and cause of death) is broadcast to all players for their amusement.
+        </p>
+    </section>
+    <section id="lifegoeson"><title>What happens next?</title>
+        <p>Now wipe away the tears and go and avenge your death!
+        </p>
+    </section>
+</section>

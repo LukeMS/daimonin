@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>SMACKY'S GUIDE TO GAME MECHANICS: CONTENTS</title>
+    <ul>
+        <li><a href="./secn_1.dai">Section 1: Logging In</a>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_2.dai">Section 2: Creating A New Character</a>
+            <ul>
+                <li><a href="./secn_2-1.dai">Section 2-1: The Tutorial</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_3.dai">Section 3: Know Thyself</a>
+            <ul>
+                <li><a href="./secn_3-1.dai">Section 3-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
+                </li>
+                <li><a href="./secn_3-2.dai">Section 3-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
+                </li>
+                <li><a href="./secn_3-3.dai">Section 3-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
+                </li>
+                <li><a href="./secn_3-4.dai">Section 3-4: Armour Protections</a>
+                </li>
+                <li><a href="./secn_3-5.dai">Section 3-5: Skills, Experience, Levelling, &amp; Training</a>
+                    <ul>
+                        <li><a href="./secn_3-5-1.dai">Section 3-5-1: Skill Groups</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_4.dai">Section 4: Lots to See &amp; Lots to Do</a>
+            <ul>
+                <li><a href="./secn_4-1.dai">Section 4-1: Things Nearby &amp; In Your Inventory</a>
+                </li>
+                <li><a href="./secn_4-2.dai">Section 4-2: Examining Things</a>
+                </li>
+                <li><a href="./secn_4-3.dai">Section 4-3: Getting &amp; Dropping Things</a>
+                </li>
+                <li><a href="./secn_4-4.dai">Section 4-4: Applying Things</a>
+                </li>
+                <li><a href="./secn_4-5.dai">Section 4-5: Containers</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_5.dai">Section 5: Combat</a>
+            <ul>
+                <li><a href="./secn_5-1.dai">Section 5-1: Switching Between Attack &amp; Hold Attack Mode</a>
+                </li>
+                <li><a href="./secn_5-2.dai">Section 5-2: The Targetting System</a>
+                </li>
+                <li><a href="./secn_5-3.dai">Section 5-3: Melee &amp; Punching</a>
+                </li>
+                <li><a href="./secn_5-4.dai">Section 5-4: Archery &amp; Throwing</a>
+                </li>
+                <li><a href="./secn_5-5.dai">Section 5-5: Magic</a>
+                </li>
+                <li><a href="./secn_5-6.dai">Section 5-6: Experience &amp; Bounties</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_6.dai">Section 6: Magic</a>
+            <ul>
+                <li><a href="./secn_6-1.dai">Section 6-1: Spells &amp; Prayers</a>
+                </li>
+                <li><a href="./secn_6-2.dai">Section 6-2: Potions &amp; Balms &amp; Scrolls &amp; Dust</a>
+                </li>
+                <li><a href="./secn_6-3.dai">Section 6-3: Wands</a>
+                </li>
+                <li><a href="./secn_6-4.dai">Section 6-4: Horns &amp; Rods</a>
+                </li>
+                <li><a href="./secn_6-5.dai">Section 6-5: Rings &amp; Amulets</a>
+                </li>
+                <li><a href="./secn_6-6.dai">Section 6-6: Other Magic Items</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_7.dai">Section 7: Death</a>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_8.dai">Section 8: Trade</a>
+            <ul>
+                <li><a href="./secn_8-1.dai">Section 8-1: Currency</a>
+                </li>
+                <li><a href="./secn_8-2.dai">Section 8-2: Transactions With NPCs</a>
+                </li>
+                <li><a href="./secn_8-3.dai">Section 8-3: Transactions With Players</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_9.dai">Section 9: Communication</a>
+            <ul>
+                <li><a href="./secn_9-1.dai">Section 9-1: Talking To NPCs</a>
+                </li>
+                <li><a href="./secn_9-2.dai">Section 9-2: Talking To Players</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./secn_10.dai">Section 10: Options</a>
+            <ul>
+                <li><a href="./secn_10-1.dai">Section 10-1: Key Settings</a>
+                </li>
+                <li><a href="./secn_10-2.dai">Section 10-2: Settings</a>
+                </li>
+                <li><a href="./secn_10-3.dai">Section 10-3: Logging Out (&amp; Saving)</a>
+                </li>
+            </ul>
+            <p>
+            </p>
+        </li>
+        <li><a href="./appx_a.dai">Appendix A: Game Commands</a>
+            <p>
+            </p>
+        </li>
+        <li><a href="./appx_b.dai">Appendix B: Meta Commands</a>
+            <p>
+            </p>
+        </li>
+        <li><a href="./appx_c.dai">Appendix C: Default Bindings</a>
+            <p>
+            </p>
+        </li>
+    </ul>
+</section>

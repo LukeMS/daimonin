@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>SECTION 1: MOBIQUETTE -- TO FIGHT IS YOUR RIGHT BUT BE POLITE</title>
+    <section id="problem"><title>The problem</title>
+        <p>Combat is the focus of the game -- it's the primary (and often only) way to gain experience, items, and money, and complete quests.
+        </p>
+        <p>So you have to kill mobs (if you don't they have no qualms about killing you).
+        </p>
+        <p>But Daimonin is a massively multiplayer game. At the time of writing this means that there may be 60 or more other players online also trying to kill mobs.
+        </p>
+    </section>
+    <section id="solution"><title>The solution</title>
+        <p>The potential for conflict is obvious. However, many problems can be avoided by observing the few simple guidelines detailed in this section.
+        </p>
+    </section>
+    <section id="tos"><title>In this section</title>
+        <ul>
+            <li><a href="./secn_1-1.dai">Section 1-1: Pardon Me, Friend, But Is That Mob Taken?</a>
+            </li>
+            <li><a href="./secn_1-2.dai">Section 1-2: Killstealing</a>
+            </li>
+            <li><a href="./secn_1-3.dai">Section 1-3: Luring</a>
+            </li>
+            <li><a href="./secn_1-4.dai">Section 1-4: Storming</a>
+            </li>
+        </ul>
+    </section>
+</section>

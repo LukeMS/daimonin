@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>3-3: STATS, HIT POINTS, MANA, GRACE, &amp; FOOD</title>
+    <p><img alt="[Stats, etc.]" src="./statsetc.png"></img>
+    </p>
+    <section id="stats"><title>Stats</title>
+        <p>Stats are a way of measuring your basic physical and mental characteristics. There are seven independent stats, each of which affects one or more abilities, such as movement speed, damage done with various attacks, and certain interactions with NPCs.
+        </p>
+        <ul>
+            <li><strong>Strength (Str)</strong>: Strength affects carry limit and melee damage.
+            </li>
+            <li><strong>Dexterity (Dex)</strong>: Dexterity affects armour class, weapon class and speed.
+            </li>
+            <li><strong>Constitution (Con)</strong>: Constitution affects maximum hit points.
+            </li>
+            <li><strong>Intelligence (Int)</strong>: Not currently implemented.
+            </li>
+            <li><strong>Wisdom (Wis)</strong>: Wisdom affects maximum grace and the chance of failure when reciting prayers.
+            </li>
+            <li><strong>Power (Pow)</strong>: Power affects maximum mana.
+            </li>
+            <li><strong>Charisma (Cha)</strong>: Charisma affects the prices you can buy/sell items for in the shop.
+            </li>
+        </ul>
+        <p>Each stat is represented by a numerical value, higher being better. Most stats have a range (usually between 11 and 15) which represents the average individual and has little to no effect on your abilities. A higher value will result in a bonus and a lower value will, of course, result in a penalty.
+        </p>
+    </section>
+    <section id="status"><title>Hit points, mana, grace, &amp; food</title>
+        <section id="hp"><title>Hit points (HP)</title>
+            <p>Hit points indicate your current physical health: the more hit points you have, the more punishment you can take. If hit points reach zero, you die (see <a href="./secn_7.dai">"7: Death"</a>).
+            </p>
+            <p>Maximum hit points are determined by your main level, constitution, magic currently in effect, and an element of chance.
+            </p>
+            <p>Hit points decrease as you take physical damage: for example, in combat or through acute blood poisoning.
+            </p>
+            <p>When your hit points drop below a certain level (20% of maximum by default) a warning symbol appears above your head (<img alt="[Low hit point warning]" src="./warn_hp.png"></img>).
+            </p>
+        </section>
+        <section id="mana"><title>Mana</title>
+            <p>Mana is needed to cast spells: the more mana you have, the more spells you can cast and the more powerful they are.
+            </p>
+            <p>Maximum mana is determined by your skill level in wizardry spells, power, magic currently in effect, and an element of chance.
+            </p>
+            <p>Mana decreases each time you cast a spell.
+            </p>
+        </section>
+        <section id="grace"><title>Grace</title>
+            <p>Grace is needed to recite prayers: the more grace you have, the more prayers you can recite and the more powerful they are.
+            </p>
+            <p>Maximum grace is determined by your skill level in divine prayers, wisdom, magic currently in effect, and an element of chance.
+            </p>
+            <p>Grace decreases each time you recite a prayer.
+            </p>
+        </section>
+        <section id="food"><title>Food</title>
+            <p>Food indicates your level of hunger: the hungrier you are, the 'emptier' the indicator.
+            </p>
+            <p>Food decreases over time. You will not be surprised to read that satiation is to be found by eating and drinking.
+            </p>
+            <p>When food drops to below a certain level and you are in danger of starving a warning symbol appears above your head (<img alt="[Low food warning]" src="./warn_food.png"></img>).
+            </p>
+            <p>If food runs out and you have something edible in your inventory you will eat it automatically, even if it's not identified.
+            </p>
+        </section>
+        <section id="regeneration"><title>Regeneration</title>
+            <p><img alt="[Regeneration]" src="./regeneration.png"></img>
+            </p>
+            <p>Hit points, mana, and grace fluctuate according to circumstances.
+            </p>
+            <p>Most obviously, during combat any and all are likely to decrease: hit points each time an enemy scores a hit; mana when you cast a spell; and grace when you recite a prayer.
+            </p>
+            <p>When mana or grace reach zero you won't be able to cast or recite any more.
+            </p>
+            <p>However, when hit points reach zero the situation is far more dire as your character will die (while <a href="./secn_7.dai">death</a> is a temporary inconvenience in Daimonin it is still best avoided).
+            </p>
+            <p>Fortunately, each can be regenerated: hit points and mana regenerate naturally over time; but grace requires a bit of extra effort, in the form of praying.
+            </p>
+            <p>There are ways to maximise your regeneration speeds: for example, hit points regenerate faster in hold attack mode than they do in attack mode; mana regeneration is hindered by wearing most types of armour; and grace can be regenerated quickly at an altar to your god. Magic currently in effect can also increase regeneration speeds.
+            </p>
+        </section>
+    </section>
+</section>

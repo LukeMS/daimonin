@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>3-5-1: SKILL GROUPS</title>
+    <p><img alt="[Skill groups]" src="./skillgroups.png"></img>
+    </p>
+    <p>Skills are distributed amongst eight skill groups (only the first seven are shown on the main screen).
+    </p>
+    <p>The level next to each skill group on the main screen is the highest level attained of any skill within that group: for example if you are level 20 in wizardry spells and level 30 in magic devices the main screen will show level 30 in magic (Ma).
+    </p>
+    <p>Press F10 to open a dialog with your experience and levels in each individual skill detailed. SHIFT + UP/DOWN cycles through the skill groups and UP/DOWN cycles through the skills themselves.
+    </p>
+    <p>The skill groups and individual skills are as follows.
+    </p>
+    <section><title>Agility (Ag)</title>
+        <p>Skills in this group require balance, coordination, or manual dexterity.
+        </p>
+        <section><title>Throwing</title>
+            <p>Your proficiency at throwing things: the higher your level, the further and more accurate you can do so.
+            </p>
+        </section>
+        <section><title>Remove traps</title>
+            <p>The likelihood that you will safely disarm a previously found trap: the higher your level, the greater your chance of success.
+            </p>
+        </section>
+        <section><title>Find traps</title>
+            <p>The likelihood that you will discover a trap: the higher your level, the greater your chance of success.
+            </p>
+        </section>
+        <section><title>Bow/Crossbow/Sling archery</title>
+            <p>To use the specified type of ranged weapon you must have the appropriate skill: the higher your level, the further and more accurately you can fire missiles from it, and the more damage they cause when they hit.
+            </p>
+        </section>
+    </section>
+    <section><title>Mental (Me)</title>
+        <p>Skills in this group require education and understanding.
+        </p>
+        <section><title>Common literacy</title>
+            <p>Your ability to read and write in the common tongue: there is no level, you either are literate or you are not.
+            </p>
+        </section>
+    </section>
+    <section><title>Magic (Ma)</title>
+        <p>Skills in this group require power of mind and arcane knowledge.
+        </p>
+        <section><title>Wizardry spells</title>
+            <p>Your ability to cast spells: the higher your level, the more maximum mana you have, the more effective your spells are, but also the more mana they cost to cast.
+            </p>
+        </section>
+        <section><title>Magic devices</title>
+            <p>Your ability to use magical items (for example, wands, horns, and rods): the higher your level, the more effective their use is.
+            </p>
+        </section>
+    </section>
+    <section><title>Personality (Pe)</title>
+        <p>This skill group is not currently implemented.
+        </p>
+    </section>
+    <section><title>Physique (Ph)</title>
+        <p>Skills in this group require fitness and physical prowess.
+        </p>
+        <section><title>Punching</title>
+            <p>How skilled you are in a fistfight: the higher your level, the more damage you do with a punch.
+            </p>
+        </section>
+        <section><title>Cleave/Impact/Pierce/Slash weapons</title>
+            <p>To use the specified type of melee weapon you must have the appropriate skill: the higher your level, the more damage done with each hit.
+            </p>
+        </section>
+        <section><title>Two-handed mastery</title>
+            <p>Your ability to use two-handed weapons (but only of the type in which you are skilled, as above): there is no level, you either can wield a two-handed weapon or you can not.
+            </p>
+        </section>
+        <section><title>Polearm mastery</title>
+            <p>Your ability to use polearms (but only of the type in which you are skilled, as above): there is no level, you either can wield a polearm or you can not.
+            </p>
+        </section>
+    </section>
+    <section><title>Wisdom (Wi)</title>
+        <p>Skills in this group require faith and piety.
+        </p>
+        <section><title>Divine prayers</title>
+            <p>Your ability to recite prayers: the higher your level, the more maximum grace you have, the more effective your prayers are, but also the more grace they cost to recite.
+            </p>
+        </section>
+    </section>
+    <section><title>Miscellaneous</title>
+        <p>This skill group is not currently implemented.
+        </p>
+    </section>
+</section>
