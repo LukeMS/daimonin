@@ -163,6 +163,14 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/gui_animation.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/gui_container.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/gui_cursor.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -183,7 +191,7 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/gui_textout.cpp">
+		<Unit filename="../../../source/gui_text.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -233,6 +241,18 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/include/gui_animation.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/gui_container.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/include/gui_cursor.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -263,7 +283,7 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/gui_textout.h">
+		<Unit filename="../../../source/include/gui_text.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -359,18 +379,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/textinput.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/include/textwindow.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/light_manager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -436,10 +444,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/spell_range.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/textwindow.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
