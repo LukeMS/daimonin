@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>3: KNOW THYSELF</title>
+    <p><img alt="[Window on the world]" src="./main.png"></img>
+    </p>
+    <p>The main part of the screen shows you (center) and a small area of the Daimonin world in all its isometric glory.
+    </p>
+    <p>Surrounding this are all manner of displays, statistics, and icons. For the most part these record information about you and your current circumstances.
+    </p>
+    <p>The tables and displays across the top of the screen contain information about your identity, abilities, and current state of health. This section details that information.
+    </p>
+    <section id="tos"><title>In this section</title>
+        <ul>
+            <li><a href="./secn_3-1.dai">Section 3-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
+            </li>
+            <li><a href="./secn_3-2.dai">Section 3-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
+            </li>
+            <li><a href="./secn_3-3.dai">Section 3-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
+            </li>
+            <li><a href="./secn_3-4.dai">Section 3-4: Armour Protections</a>
+            </li>
+            <li><a href="./secn_3-5.dai">Section 3-5: Skills, Experience, Levelling, &amp; Training</a>
+                <ul>
+                    <li><a href="./secn_3-5-1.dai">Section 3-5-1: Skill Groups</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</section>

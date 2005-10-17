@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>3-5: SKILLS, EXPERIENCE, LEVELLING, &amp; TRAINING</title>
+    <section id="skills"><title>Skills</title>
+        <p>If stats measure your basic characteristics, skills represent your ability to perform particular tasks: for example, wielding a type of weapon or disarming a trap.
+        </p>
+        <p>It is always the case that to perform a task at all you must possess the skill.
+        </p>
+        <p>Usually, how effectively you complete the task is dependent on your level in the skill. Your level in the skill is dependent on how much experience you have gained in that skill.
+        </p>
+    </section>
+    <section id="experience"><title>Experience &amp; levelling</title>
+        <p>Experience is gained in two ways: either by practicing the skill or by receiving instruction from a NPC.
+        </p>
+        <p>Please note how experience is represented graphically: the used and main skill displays (see below) show your level in the particular skill and experience numerically; they also contain ten dots and a bar underneath.
+        </p>
+        <p>As you gain experience the bar gradually fills with colour; when the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your level increments and dots and bar are all reset and off you go again.
+        </p>
+        <p>The maximum level for any skill is 110.
+        </p>
+    </section>
+    <section id="training"><title>Training</title>
+        <p>Gaining experience, and thus increasing your level in a skill (which means increasing your proficiency and effectiveness in performing the task), is known as training that skill.
+        </p>
+        <p>Some skills cannot be trained: you either have the skill, and can perform the task, or you do not, and can't.
+        </p>
+    </section>
+    <section id="usingskills"><title>Using skills</title>
+        <p>Practically speaking, most skills -- eg, melee weapons and divine prayers -- are used automatically. That is, you perform an action -- eg, attacking a mob or reciting a prayer -- and the appropriate skill is used.
+        </p>
+        <p>A few skills -- eg, find traps and remove traps -- must be used specifically. That is, you enter the game command "/use_skill &lt;skill&gt;".
+        </p>
+        <p>It is also possible to ready a skill for future use -- eg, via the game command "/ready_skill &lt;skill&gt;". This is not particularly useful.
+        </p>
+        <section id="usedskill"><title>Used skill</title>
+            <p><img alt="[Used skill]" src="./usedskill.png"></img>
+            </p>
+            <p>Used skill is simply the last skill you used/readied.
+            </p>
+         </section>
+         <section id="mainskill"><title>Main skill</title>
+            <p><img alt="[Main skill]" src="./mainskill.png"></img>
+            </p>
+            <p>Your main skill is your highest level skill. This is also the level of your character.
+            </p>
+            <p>Historically, players have increased their melee weapon skill highest but recently mages, who concentrate on wizardry spells, and priests, who prefer divine prayers, are becoming increasingly common.
+            </p>
+        </section>
+    </section>
+</section>

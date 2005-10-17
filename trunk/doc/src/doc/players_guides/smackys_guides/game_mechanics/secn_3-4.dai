@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>3-4: ARMOUR PROTECTIONS</title>
+    <p><img alt="[Armour protection table]" src="./armourprotections.png"></img>
+    </p>
+    <p>Armour protections are the proportion of damage you can absorb from any particular attack type. They are determined by the items you have equipped and any magic currently in effect.
+    </p>
+    <p>Armour protections are represented by percentage figures: if you have 0% electricity protection you will take maximum damage from an electrical attack; while if you have 50% cleave protection you will take only half damage from a blow from an axe.
+    </p>
+    <section id="physical"><title>Physical</title>
+        <p>These protections are from physical damage such as cuts, bruises, scrapes, and a bloody nose.
+        </p>
+        <section><title>Impact (I)</title>
+            <p>For example, bashing and crushing weapons.
+            </p>
+        </section>
+        <section><title>Slash (S)</title>
+            <p>For example, cutting and slicing weapons.
+            </p>
+        </section>
+        <section><title>Cleave (C)</title>
+            <p>For example, chopping and hewing weapons.
+            </p>
+        </section>
+        <section><title>Pierce (P)</title>
+            <p>For example, stabbing and thrusting weapons.
+            </p>
+        </section>
+        <section><title>Weapon magic (W)</title>
+            <p>???
+            </p>
+        </section>
+    </section>
+    <section><title>Elemental</title>
+        <p>These protections are from elemental damage such as immolation and electrocution.
+        </p>
+        <section><title>Fire (F)</title>
+            <p>For example, suffering burns or scorches.
+            </p>
+        </section>
+        <section><title>Cold (C)</title>
+            <p>For example, being chilled or frozen.
+            </p>
+        </section>
+        <section><title>Electricity (E)</title>
+            <p>For example, being shocked or zapped by a source of electricity.
+            </p>
+        </section>
+        <section><title>Poison (P)</title>
+            <p>For example, absorbing a venomous substance into your blood stream.
+            </p>
+        </section>
+        <section><title>Acid (A)</title>
+            <p>For example, coming into contact with a corrosive substance.
+            </p>
+        </section>
+    </section>
+    <section><title>Magical</title>
+        <p>These protections are currently not implemented.
+        </p>
+        <section><title>Magic (M)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Mind (Mi)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Body (B)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Psionic (P)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Force (F)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+    </section>
+    <section><title>Spherical</title>
+        <p>These protections are currently not implemented.
+        </p>
+        <section><title>Nether (N)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Chaos (Ch)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Death (D)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Spiritual (Sp)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+        <section><title>Corruption (Co)</title>
+            <p>Currently not implemented.
+            </p>
+        </section>
+    </section>
+</section>
