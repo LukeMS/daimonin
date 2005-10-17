@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../dtd/daidoc.dtd">
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
 <section autotoc="yes"><title>1: LOGGING IN</title>
     <section id="titlescreen"><title>Title screen</title>
         <p>When you run the game you are presented with the intro screen. Atmospheric, isn't it? Press any key.
