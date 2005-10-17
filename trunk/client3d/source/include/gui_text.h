@@ -60,8 +60,9 @@ public:
   {
     static GuiTextout Singleton; return Singleton;
   }
-  void Print(int x, int y, int gfxLen, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
-  void Print(TextLine *line, Texture *texture, const char *text, uint32 color = COLOR_WHITE);
+  void Print(int x, int y, int width, Texture *texture, const char *text);
+  void Print(TextLine *line, Texture *texture, const char *text);
+  void PrintToBuffer(int width, uint32 *dest_data, const char*text, uint32 color = COLOR_WHITE);
   int getMaxFontHeight()
   {
     return maxFontHeight;
@@ -90,6 +91,7 @@ private:
   ~GuiTextout();
   GuiTextout(const GuiTextout&); // disable copy-constructor.
   void loadFont(const char * filename);
+  void drawText(int width, uint32 *dest_data, const char*text);
 };
 
 #endif

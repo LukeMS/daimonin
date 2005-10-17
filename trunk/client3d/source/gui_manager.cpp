@@ -38,7 +38,7 @@ GuiManager::_GuiElementNames GuiManager::GuiWindowNames[GUI_WIN_SUM]=
     },
     {"PlayerInfo",    GUI_WIN_PLAYERINFO
     },
-    { "Requester",    GUI_WIN_REQUESTER
+    { "TextWindow",   GUI_WIN_TEXTWINDOW
     }
   };
 
@@ -56,22 +56,26 @@ GuiManager::_GuiElementNames GuiManager::GuiElementNames[GUI_ELEMENTS_SUM]=
     { "ButtonMax",     GUI_BUTTON_MAXIMIZE
     },
     // Listboxes.
-    { "Requester",    GUI_LIST_UP
+    { "TextList",      GUI_LIST_TEXTWIN
     },
-    { "Requester",    GUI_LIST_DOWN
+    { "ChatList",      GUI_LIST_CHATWIN
     },
-    { "Requester",    GUI_LIST_LEFT
+    { "Requester",     GUI_LIST_UP
     },
-    { "Requester",    GUI_LIST_RIGHT
+    { "Requester",     GUI_LIST_DOWN
+    },
+    { "Requester",     GUI_LIST_LEFT
+    },
+    { "Requester",     GUI_LIST_RIGHT
     },
     // TextValues.
-    { "currentFPS",   GUI_TEXTVALUE_STAT_CUR_FPS
+    { "currentFPS",    GUI_TEXTVALUE_STAT_CUR_FPS
     },
-    { "bestFPS",      GUI_TEXTVALUE_STAT_BEST_FPS
+    { "bestFPS",       GUI_TEXTVALUE_STAT_BEST_FPS
     },
-    { "worstFPS",     GUI_TEXTVALUE_STAT_WORST_FPS
+    { "worstFPS",      GUI_TEXTVALUE_STAT_WORST_FPS
     },
-    { "sumTris",      GUI_TEXTVALUE_STAT_SUM_TRIS
+    { "sumTris",       GUI_TEXTVALUE_STAT_SUM_TRIS
     }
   };
 
@@ -110,6 +114,7 @@ void GuiManager::freeRecources()
 ///=================================================================================================
 void GuiManager::keyEvent(const char keyChar, const unsigned char key)
 {
+  Logger::log().info() << "keyChar " << keyChar << " " << key;
   //    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
 }
 
@@ -235,31 +240,43 @@ struct GuiManager::mSrcEntry *GuiManager::getStateGfxPositions(const char* guiIm
 ///=================================================================================================
 /// .
 ///=================================================================================================
-const char *GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
+bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 {
   GuiCursor::getSingleton().setPos(rx, ry);
   rx *= mScreenWidth;
   ry *= mScreenHeight;
   const char *actGadgetName;
-
   for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
     actGadgetName = guiWindow[i].mouseEvent(mouseAction, (int)rx, (int)ry);
     if (actGadgetName)
     {
-      static char buffer[100];
-      sprintf(buffer, "%s (%s)",  actGadgetName, guiWindow[i].getName());
-      return buffer;
+      mFocusedWindow = i;
+      //mFocusedGadget = actGadgetName;
+      return true;
     }
   }
-
-  return 0;
+  return false;
 }
 
 ///=================================================================================================
 /// Send a message to a GuiWindow.
 ///=================================================================================================
-void GuiManager::sendMessage(int window, int message, int element, const char *value)
+void GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
 {
-  guiWindow[window].Message(message, element, value);
+  value2 = 0;
+  guiWindow[window].Message(message, element, (const char*)value1);
+}
+
+///=================================================================================================
+/// Update all windows.
+///=================================================================================================
+void GuiManager::update()
+{
+  for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
+  {
+    guiWindow[i].updateDragAnimation();  // "zurückflutschen" bei falschem drag.
+    guiWindow[i].update2DAnimaton();
+    guiWindow[i].updateListbox();
+  }
 }

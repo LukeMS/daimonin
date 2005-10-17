@@ -33,11 +33,12 @@ using namespace Ogre;
 enum {
   GUI_WIN_STATISTICS,
   GUI_WIN_PLAYERINFO,
-  GUI_WIN_REQUESTER,
+  GUI_WIN_TEXTWINDOW,
   GUI_WIN_SUM };
 
 enum {
   GUI_MSG_TXT_CHANGED,
+  GUI_MSG_ADD_TEXTLINE,
   GUI_MSG_BUT_PRESSED,
   GUI_MSG_SUM };
 
@@ -49,6 +50,8 @@ enum {
   GUI_BUTTON_MINIMIZE,
   GUI_BUTTON_MAXIMIZE,
   // Listboxes.
+  GUI_LIST_TEXTWIN,
+  GUI_LIST_CHATWIN,
   GUI_LIST_UP,
   GUI_LIST_DOWN,
   GUI_LIST_LEFT,
@@ -96,8 +99,6 @@ public:
   {
     static GuiManager Singleton; return Singleton;
   }
-  void Init(const char *XML_imageset_file, const char *XML_windows_file, int w, int h);
-  void GuiManager::freeRecources();
   struct mSrcEntry *getStateGfxPositions(const char* guiImage);
   PixelBox &getTilesetPixelBox()
   {
@@ -107,20 +108,31 @@ public:
   {
     return mHasFocus;
   }
-  const char *mouseEvent(int MouseAction, Real rx, Real ry);
+  void Init(const char *XML_imageset_file, const char *XML_windows_file, int w, int h);
+  void freeRecources();
+  void update();
+  bool mouseEvent(int MouseAction, Real rx, Real ry);
   void keyEvent(const char keyChar, const unsigned char key);
-  void sendMessage(int window, int message, int element, int value);
-  void sendMessage(int window, int message, int element, const char *value);
+  void sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
+  //void getMessage (int &window, int &message, int &element);
 
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
+  
+  
+  int mDragSrcWin, mDragDestWin;
+  int mDragSrcContainer, mDragDestContainer;
+  int mDragSrcItemPosx, mDragSrcItemPosy; // Wird bei drag start gesetzt, um Item bei falschem Drag zurückflutschen zu lassen.
+  bool isDragging;
+  
   std::string mStrImageSetGfxFile;
   std::vector<mSrcEntry*>mvSrcEntry;
   class GuiWindow *guiWindow;
   unsigned int mScreenWidth, mScreenHeight;
   bool mHasFocus;
+  int mFocusedWindow, mFocusedGadget;
   PixelBox mSrcPixelBox;
   Image mImageSetImg;
   ////////////////////////////////////////////////////////////

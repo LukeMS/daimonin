@@ -62,7 +62,7 @@ public:
   {
     mSceneManager = SManager;
   }
-  
+
   SceneManager *GetSceneManager()
   {
     return mSceneManager;
@@ -130,7 +130,14 @@ private:
   void mouseExited  (MouseEvent *e);
   void mousePressed (MouseEvent *e);
   void mouseReleased(MouseEvent *e);
-};
+  void mouseDragEntered(MouseEvent* )
+  {}
+  void mouseDragExited(MouseEvent* )
+  {}
+  void mouseDragDropped(MouseEvent* )
+  {}
+}
+;
 extern  CEvent *Event;
 
 #endif

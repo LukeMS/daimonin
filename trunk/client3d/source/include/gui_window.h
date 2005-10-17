@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <vector>
 #include <Ogre.h>
-#include "gui_textout.h"
+#include "gui_text.h"
 #include "gui_gadget.h"
 #include "gui_graphic.h"
 #include "gui_window.h"
@@ -51,6 +51,9 @@ public:
   GuiWindow(){}
   void Init(TiXmlElement *xmlElem, GuiManager *guiManager);
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+  void updateDragAnimation();
+  void update2DAnimaton();
+  void updateListbox();
   const char *getName()
   {
     return mStrName.c_str();

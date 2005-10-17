@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreHardwarePixelBuffer.h>
 #include "define.h"
 #include "gui_gadget.h"
-#include "gui_textout.h"
+#include "gui_text.h"
 #include "logger.h"
 
 ///=================================================================================================
@@ -120,13 +120,13 @@ void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
   /////////////////////////////////////////////////////////////////////////
   if (mState == STATE_PUSHED)
   {
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, mWidth, texture, mStrLabel.c_str(), COLOR_BLACK);
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str(), COLOR_WHITE);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, mWidth, texture, mStrLabel.c_str());
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str());
   }
   else
   {
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str(), COLOR_BLACK);
-    GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , mWidth, texture, mStrLabel.c_str(), COLOR_WHITE);
+    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str());
+    GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , mWidth, texture, mStrLabel.c_str());
   }
 }
 
