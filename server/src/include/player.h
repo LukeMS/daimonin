@@ -118,6 +118,8 @@ enum
 #define MUTE_AUTO_HARD      (8*30)
 #define MUTE_MSG_FREQ       (8*5)
 
+#define PLAYER_HPGEN_DELAY 10
+
 #ifdef WIN32
 #pragma pack(push,1)
 #endif
@@ -265,6 +267,7 @@ typedef struct pl_player
     int                 reg_hp_num;                 /* thats how much every reg tick we get */
     int                 reg_sp_num;
     int                 reg_grace_num;
+	int					damage_timer;				/* hp recovery timer for last hp */
 
     sint16              base_hp_reg;                /* our real tick counter for hp regenerations */
     sint16              base_sp_reg;                /* our real tick counter for sp regenerations */

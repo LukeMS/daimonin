@@ -248,6 +248,7 @@ int command_combat(object *op, char *params)
     if (!op || !op->map || op->type != PLAYER || !CONTR(op))
         return 1;
 
+	CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
     if (CONTR(op)->combat_mode)
         CONTR(op)->combat_mode = 0;
     else

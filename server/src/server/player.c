@@ -1496,30 +1496,30 @@ void do_some_living(object *op)
     if (CONTR(op)->state == ST_PLAYING)
     {
         /* hp reg */
-        if (CONTR(op)->gen_hp)
+		if(CONTR(op)->damage_timer)
+			CONTR(op)->damage_timer--;
+        else if (CONTR(op)->gen_hp)
         {
-            if (--op->last_heal < 0)
-            {
-                op->last_heal = CONTR(op)->base_hp_reg;
-                if (CONTR(op)->combat_mode)
-                    op->last_heal += op->last_heal; /* halfed reg speed */
+			if (--op->last_heal < 0)
+			{
+				op->last_heal = CONTR(op)->base_hp_reg;
 
-                if (op->stats.hp < op->stats.maxhp)
-                {
-                    int last_food   = op->stats.food;
+				if (op->stats.hp < op->stats.maxhp)
+				{
+					int last_food   = op->stats.food;
 
-                    op->stats.hp += CONTR(op)->reg_hp_num;
-                    if (op->stats.hp > op->stats.maxhp)
-                        op->stats.hp = op->stats.maxhp;
+					op->stats.hp += CONTR(op)->reg_hp_num;
+					if (op->stats.hp > op->stats.maxhp)
+					    op->stats.hp = op->stats.maxhp;
 
-                    /* faster hp reg - faster digestion... evil */
-                    op->stats.food--;
-                    if (CONTR(op)->digestion < 0)
-                        op->stats.food += CONTR(op)->digestion;
-                    else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion, op, PREFER_HIGH))
-                        op->stats.food = last_food;
-                }
-            }
+					/* faster hp reg - faster digestion... evil */
+					op->stats.food--;
+					if (CONTR(op)->digestion < 0)
+						op->stats.food += CONTR(op)->digestion;
+					else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion, op, PREFER_HIGH))
+					    op->stats.food = last_food;
+				}
+			}
         }
 
         /* sp reg */
