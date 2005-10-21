@@ -38,7 +38,7 @@ GuiListbox::~GuiListbox()
 }
 
 ///=================================================================================================
-/// Parse a gadget entry.
+/// Parse a Listbox entry.
 ///=================================================================================================
 GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
 {

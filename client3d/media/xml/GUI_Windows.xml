@@ -58,31 +58,49 @@
 
 
   <Window name= "PlayerInfo" relativeCoords= "false">
-    <Pos      x= "400" y= "300" zOrder = "50" />
-    <Size     width= "100" height= "100" />
+    <Pos      x= "200" y= "400" zOrder = "50" />
+    <Size     width= "200" height= "200" />
     <DragArea x= "0" y= "0" width= "100" height= "20" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <Graphic type= "COLOR_FILL">
       <Pos x= "0" y= "0" />
-      <Color red= "255" green= "255" blue= "0" alpha = "128" />
-      <Range width= "100" height= "17" />
+      <Color red= "128" green= "0" blue= "0" alpha = "255" />
+      <Range width= "200" height= "17" />
     </Graphic>
 
     <Graphic type= "COLOR_FILL">
       <Pos x= "0" y= "17" />
       <Color red= "0" green= "0" blue= "255" alpha = "128" />
-      <Range width= "100" height= "83" />
+      <Range width= "200" height= "200" />
     </Graphic>
 
     <Gadget type= "BUTTON"  name = "Button_Close">
-      <Pos x= "84" y= "0" />
+      <Pos x= "184" y= "0" />
     </Gadget>
 
     <Gadget type= "BUTTON"  name = "Button_1">
       <Pos x= "25" y= "75" />
       <Label xPos= "5" yPos= "1" red= "32" green= "64" blue= "128" text= "Press"/>
     </Gadget>
+
+    <Statusbar type="COLOR_FILL" direction="UP" name = "HealthBar">
+      <Pos  x= "50" y= "100" />
+      <Size width= "17" height= "80" />
+      <Color red= "128" green= "0" blue= "0" alpha = "255" />
+    </Statusbar>
+
+    <Statusbar type="COLOR_FILL" direction="UP" name = "GraceBar">
+      <Pos  x= "70" y= "100" />
+      <Size width= "17" height= "80" />
+      <Color red= "128" green= "128" blue= "0" alpha = "255" />
+    </Statusbar>
+
+    <Statusbar type="COLOR_FILL" direction="UP" name = "ManaBar">
+      <Pos  x= "90" y= "100" />
+      <Size width= "17" height= "80" />
+      <Color red= "0" green= "50" blue= "128" alpha = "255" />
+    </Statusbar>
 
   </Window>
 

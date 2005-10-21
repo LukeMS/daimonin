@@ -191,6 +191,10 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/gui_statusbar.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/gui_text.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -278,6 +282,12 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/include/gui_manager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/gui_statusbar.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

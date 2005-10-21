@@ -68,6 +68,13 @@ GuiManager::_GuiElementNames GuiManager::GuiElementNames[GUI_ELEMENTS_SUM]=
     },
     { "Requester",     GUI_LIST_RIGHT
     },
+    // Statusbar.
+    { "HealthBar",     GUI_STATUSBAR_PLAYER_HEALTH
+    },
+    { "ManaBar",       GUI_STATUSBAR_PLAYER_MANA
+    },
+    { "GraceBar",      GUI_STATUSBAR_PLAYER_GRACE
+    },
     // TextValues.
     { "currentFPS",    GUI_TEXTVALUE_STAT_CUR_FPS
     },
