@@ -24,6 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_manager.h"
 #include "gui_gadget.h"
 #include "gui_listbox.h"
+#include "gui_statusbar.h"
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
@@ -137,6 +138,16 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
     mPosZ = atoi(xmlElem->Attribute("zOrder"));
   }
   /////////////////////////////////////////////////////////////////////////
+  /// Parse the Size entries.
+  /////////////////////////////////////////////////////////////////////////
+  if ((xmlElem = xmlRoot->FirstChildElement("Size")))
+  {
+    mWidth  = atoi(xmlElem->Attribute("width"));
+    mHeight = atoi(xmlElem->Attribute("height"));
+  }
+  if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
+  if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
+  /////////////////////////////////////////////////////////////////////////
   /// Parse the Dragging entries.
   /////////////////////////////////////////////////////////////////////////
   mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
@@ -147,16 +158,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
     mDragPosX2 = atoi(xmlElem->Attribute("width")) + mDragPosX1;
     mDragPosY2 = atoi(xmlElem->Attribute("height"))+ mDragPosY1;
   }
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the Size entries.
-  /////////////////////////////////////////////////////////////////////////
-  if ((xmlElem = xmlRoot->FirstChildElement("Size")))
-  {
-    mWidth  = atoi(xmlElem->Attribute("width"));
-    mHeight = atoi(xmlElem->Attribute("height"));
-  }
-  if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
-  if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Tooltip entries.
   /////////////////////////////////////////////////////////////////////////
@@ -262,6 +263,14 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
     textline->text = xmlElem->Attribute("text");
     mvTextline.push_back(textline);
   }
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the Statusbars.
+  /////////////////////////////////////////////////////////////////////////
+  for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
+  {
+    GuiStatusbar *statusbar = new GuiStatusbar(xmlElem, mWidth, mHeight);
+    mvStatusbar.push_back(statusbar);
+  }
 }
 
 ///=================================================================================================
@@ -341,6 +350,11 @@ void GuiWindow::drawAll()
   /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvGadget.size() ; ++i)
     mvGadget [i]->draw(mSrcPixelBox, mTexture.getPointer());
+  /////////////////////////////////////////////////////////////////////////
+  /// Draw statusbars.
+  /////////////////////////////////////////////////////////////////////////
+  for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
+    mvStatusbar [i]->draw(mSrcPixelBox, mTexture.getPointer(), -1);
   /////////////////////////////////////////////////////////////////////////
   /// Draw listbox.
   /////////////////////////////////////////////////////////////////////////

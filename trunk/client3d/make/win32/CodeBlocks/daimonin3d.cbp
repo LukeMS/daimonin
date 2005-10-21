@@ -265,6 +265,11 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
+		<Unit filename="..\..\..\source\gui_statusbar.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\source\gui_text.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
@@ -374,6 +379,13 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\gui_manager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_statusbar.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -500,13 +512,6 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\spell_range.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
-		<Unit filename="..\..\..\source\include\textinput.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

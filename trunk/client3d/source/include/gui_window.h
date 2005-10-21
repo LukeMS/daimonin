@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_graphic.h"
 #include "gui_window.h"
 #include "gui_listbox.h"
+#include "gui_statusbar.h"
 #include "gui_manager.h"
 
 class GuiManager;
@@ -86,6 +87,7 @@ private:
   std::vector<GuiGraphic*>mvGraphic;
   std::vector<GuiListbox*>mvListbox;
   std::vector<TextLine*>mvTextline;
+  std::vector<GuiStatusbar*>mvStatusbar;
   Overlay *mOverlay;
   OverlayElement *mElement;
   MaterialPtr mMaterial;
