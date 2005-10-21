@@ -1,6 +1,6 @@
 etype = event.options
 if etype == nil then
-    etype = "UNKNOWN"
+etype = "UNKNOWN"
 end
 
 event.me:SayTo(event.activator,"This is a " .. etype .. " script!")

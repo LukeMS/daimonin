@@ -8,10 +8,10 @@ last_sp 9
 ac 5
 item_level 3
 item_skill 4
-protect_impact 12
-protect_cleave 25
-protect_slash 12
-protect_pierce 25
+resist_impact 12
+resist_cleave 25
+resist_slash 12
+resist_pierce 25
 weight 6450
 value 120
 material_real 194

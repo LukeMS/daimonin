@@ -38,7 +38,6 @@ void signal_connection(object *op, oblinkpt *olp)
     if(! ignore_trigger_events)
         trigger_object_plugin_event(EVENT_TRIGGER,
                 op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
-
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
     {

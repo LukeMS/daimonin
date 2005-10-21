@@ -10,10 +10,10 @@ last_sp 6
 material 2
 material_real 65
 ac 8
-protect_impact 20
-protect_slash 20
-protect_cleave 40
-protect_pierce 20
+resist_impact 20
+resist_slash 20
+resist_cleave 40
+resist_pierce 20
 weight 24750
 value 4300
 end

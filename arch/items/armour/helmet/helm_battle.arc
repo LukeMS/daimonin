@@ -6,10 +6,10 @@ face helm_battle.101
 last_heal 8
 ac 2
 item_level 10
-protect_impact 6
-protect_cleave 6
-protect_slash 8
-protect_pierce 8
+resist_impact 6
+resist_cleave 6
+resist_slash 8
+resist_pierce 8
 weight 1000
 value 220
 material_real 65

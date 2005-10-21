@@ -28,7 +28,6 @@
 
 #include <global.h>
 
-
 struct Settings settings    =
 {
     "",                                 /* Logfile */

@@ -22,6 +22,58 @@
 */
 #include "include.h"
 
+/* imported from server - attack.h file */
+typedef enum _attacks
+{
+	/* We start with the double used attacks - for resist & protection too */
+	/* damage type: physical */
+	ATNR_PHYSICAL, /* = impact */
+	ATNR_SLASH,
+	ATNR_CLEAVE,
+	ATNR_PIERCE,
+
+	/* damage type: elemental */
+	ATNR_FIRE,
+	ATNR_COLD,
+	ATNR_ELECTRICITY,
+	ATNR_POISON,
+	ATNR_ACID,
+	ATNR_SONIC,
+
+	/* damage type: magical */
+	ATNR_FORCE,
+	ATNR_PSIONIC,
+	ATNR_LIGHT,
+	ATNR_SHADOW,
+	ATNR_LIFESTEAL,
+
+	/* damage type: sphere */
+	ATNR_AETHER,
+	ATNR_NETHER,
+	ATNR_CHAOS,
+	ATNR_DEATH,
+
+	/* damage: type only effect by invulnerable */
+	ATNR_WEAPONMAGIC,
+	ATNR_GODPOWER,
+
+	/* at this point attack effects starts - only resist maps to it */
+	ATNR_DRAIN,
+	ATNR_DEPLETION,
+	ATNR_CORRUPTION,
+	ATNR_COUNTERMAGIC,
+	ATNR_CANCELLATION,
+	ATNR_CONFUSION,
+	ATNR_FEAR,    
+	ATNR_SLOW,
+	ATNR_PARALYZE,
+	ATNR_SNARE,
+
+	/* and the real special one here */
+	ATNR_INTERNAL,
+	NROFATTACKS /* index (= 32 ATM) */
+}_attacks;
+
 #define STRINGCOMMAND 0
 #define MAX_BUF 256
 #define BIG_BUF 1024
@@ -152,7 +204,7 @@ typedef struct Stat_struct
     int  speed;      /* Gets converted to a float for display*/
     float     weapon_sp;      /* Gets converted to a float for display */
     uint16  flags;      /* contains fire on/run on flags */
-    sint16  protection[20];     /* Resistant values */
+    sint16  protection[NROFATTACKS];     /* Resistant values */
     uint32  protection_change   : 1; /* Resistant value has changed */
     sint16  skill_level[MAX_SKILL];  /* Level and experience totals for */
     sint32  skill_exp[MAX_SKILL];    /* skills */
@@ -397,32 +449,9 @@ extern char        *resists_name[NUM_RESISTS];
 #define CS_STAT_SKILLEXP_WISDOM 128
 #define CS_STAT_SKILLEXP_WILEVEL 129
 
+
 #define CS_STAT_PROT_START  130
-#define CS_STAT_PROT_END    149
-
-#define CS_STAT_PROT_HIT    130
-#define CS_STAT_PROT_SLASH  131
-#define CS_STAT_PROT_CLEAVE 132
-#define CS_STAT_PROT_PIERCE 133
-#define CS_STAT_PROT_WMAGIC 134
-
-#define CS_STAT_PROT_FIRE   135
-#define CS_STAT_PROT_COLD   136
-#define CS_STAT_PROT_ELEC   137
-#define CS_STAT_PROT_POISON 138
-#define CS_STAT_PROT_ACID   139
-
-#define CS_STAT_PROT_MAGIC  140
-#define CS_STAT_PROT_MIND   141
-#define CS_STAT_PROT_BODY   142
-#define CS_STAT_PROT_PSIONIC    143
-#define CS_STAT_PROT_ENERGY 144
-
-#define CS_STAT_PROT_NETHER 145
-#define CS_STAT_PROT_CHAOS  146
-#define CS_STAT_PROT_DEATH  147
-#define CS_STAT_PROT_HOLY   148
-#define CS_STAT_PROT_CORRUPT    149
+#define CS_STAT_PROT_END    (130+NROFATTACKS-1)
 
 /* These are used with CS_STAT_FLAGS above to communicate S->C what the
  * server thinks the fireon & runon states are.

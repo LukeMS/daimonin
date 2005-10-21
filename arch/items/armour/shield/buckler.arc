@@ -5,10 +5,10 @@ layer 3
 face buckler.101
 ac 1
 wc 1
-protect_impact 5
-protect_cleave 5
-protect_pierce 5
-protect_slash 5
+resist_impact 5
+resist_cleave 5
+resist_pierce 5
+resist_slash 5
 material_real 258
 material 16
 weight 1500

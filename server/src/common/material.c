@@ -975,7 +975,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
         /* sanity check */
         if(item->item_condition > 0)
             item->item_condition--;
- 
+                                                                     
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
             apply_special(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);
@@ -998,13 +998,36 @@ sint64 material_repair_cost(object *item, object *owner)
         /* this is a problem.. we assume, that costs (as 64 bit value) will be covered
          * by tmp as double. This will work fine if costs is not insane high - what should
          * not be. If we have here problems, then we need to split this calc in a 64 bit one
-         * with high values and small ones
+         * with high values and small one
          */
+
         tmp = (double) item->value / (double)item->item_quality; /* how much cost is 1 point of quality */
         tmp *= (double)item->item_quality - (double)item->item_condition; /* number of condition we miss */
         costs = (sint64) tmp;
     }
 
     return costs;
+}
 
+/* repair the item */
+void material_repair_item(object *item, int skill_value)
+{
+    
+    if(!item->item_quality || item->item_quality <= item->item_condition)
+        return;
+
+    /* skill_value will determinate the quality OF the repair source */
+
+    /* ATM we have disabled skill_value use - we always lose 1-3 points of quality permanent
+     * if the condition is 20% or more under quality, set it to one 
+     */
+    if(item->item_quality/5 <= item->item_quality - item->item_condition)
+    {
+        int tmp = item->item_quality - (RANDOM()%3)+1;
+
+        if(tmp <= 0)
+            tmp = 1;
+
+        item->item_quality = tmp;
+    }
 }

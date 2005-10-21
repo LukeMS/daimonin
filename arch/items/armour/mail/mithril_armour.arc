@@ -10,10 +10,10 @@ ac 7
 item_level 30
 proof_phy 1
 proof_ele 1
-protect_impact 28
-protect_slash 40
-protect_cleave 28
-protect_pierce 28
+resist_impact 28
+resist_slash 40
+resist_cleave 28
+resist_pierce 28
 weight 5100
 value 152500
 end

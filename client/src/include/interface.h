@@ -45,11 +45,6 @@ typedef struct gui_interface_link
     char cmd[128];
 }_gui_interface_link;
 
-typedef struct gui_interface_textfield
-{
-    char text[128];
-} _gui_interface_textfield;
-
 typedef struct gui_interface_message
 {
     char title[128];
@@ -92,12 +87,11 @@ typedef struct gui_interface_button
 #define MAX_INTERFACE_LINKS 10
 
 /* which area of the static gui_interface struct is used* */
-#define GUI_INTERFACE_HEAD       0x01
-#define GUI_INTERFACE_MESSAGE    0x02
-#define GUI_INTERFACE_REWARD     0x04
+#define GUI_INTERFACE_HEAD 0x1
+#define GUI_INTERFACE_MESSAGE 0x2
+#define GUI_INTERFACE_REWARD 0x4
 
-#define GUI_INTERFACE_ACCEPT     0x08
-#define GUI_INTERFACE_TEXTFIELD  0x10
+#define GUI_INTERFACE_ACCEPT    0x8
 #define GUI_INTERFACE_DECLINE    0x20
 
 /* don't use, internal */
@@ -128,7 +122,6 @@ typedef struct gui_interface_struct {
     _gui_interface_button ok;
     _gui_interface_button accept;
     _gui_interface_button decline;
-    _gui_interface_textfield textfield;
 } _gui_interface_struct;
 
 extern void reset_gui_interface(void);

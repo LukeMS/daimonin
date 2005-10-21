@@ -128,42 +128,6 @@ char * describe_attack(object *op, int newline)
     return buf;
 }
 
-/* As above, but it list the protections */
-char * describe_protections(object *op, int newline)
-{
-    static char buf[VERY_BIG_BUF];
-    char        buf1[VERY_BIG_BUF];
-    int         tmpvar, flag = 1;
-
-    buf[0] = 0;
-
-    for (tmpvar = 0; tmpvar < NROFPROTECTIONS; tmpvar++)
-    {
-        if (op->protection[tmpvar])
-        {
-            if (flag)
-            {
-                if (!newline)
-                    strcat(buf, "(Protections: ");
-            }
-            if (!newline)
-            {
-                if (!flag)
-                    strcat(buf, ", ");
-                sprintf(buf1, "%s %+d%%", attack_name[tmpvar], op->protection[tmpvar]);
-            }
-            else
-                sprintf(buf1, "%s %d%%\n", attack_name[tmpvar], op->protection[tmpvar]);
-            flag = 0;
-
-            strcat(buf, buf1);
-        }
-    }
-    if (!newline && !flag)
-        strcat(buf, ") ");
-    return buf;
-}
-
 /*
  * query_weight(object) returns a character pointer to a static buffer
  * containing the text-representation of the weight of the given object.
@@ -1127,7 +1091,6 @@ char * describe_item(object *op)
         /* resistance on flesh is only visible for quetzals */
         if (op->type != FLESH || QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
             strcat(retbuf, describe_resistance(op, 0));
-        strcat(retbuf, describe_protections(op, 0));
         DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
         DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
         DESCRIBE_PATH(retbuf, op->path_denied, "Denied");

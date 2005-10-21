@@ -299,7 +299,7 @@ typedef struct pl_player
     char                levhp[MAXLEVEL + 1];            /* What the player gained on that level */
     char                levsp[MAXLEVEL + 1];
     char                levgrace[MAXLEVEL + 1];
-    sint8               last_protection[NROFPROTECTIONS];   /* shadow register for client update resistance table */
+    sint8               last_resist[NROFATTACKS];   /* shadow register for client update resist table */
 
     uint32              player_loaded       : 1;            /* this flags is set when the player is loaded from file
                                                                      * and not just created. It is used to overrule the "no save

@@ -7,10 +7,10 @@ last_heal 10
 item_level 20
 weight 1500
 value 325
-protect_impact 8
-protect_slash 10
-protect_pierce 8
-protect_cleave 10
+resist_impact 8
+resist_slash 10
+resist_pierce 8
+resist_cleave 10
 type 99
 material 2
 material_real 65

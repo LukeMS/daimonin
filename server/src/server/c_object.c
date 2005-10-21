@@ -1101,20 +1101,6 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         strcat(buf,buf2);
     }
 
-    for (val = -1,val2 = i = 0; i < NROFPROTECTIONS; i++)
-    {
-        if (mon->protection[i] > val2)
-        {
-            val = i;
-            val2 = mon->protection[i];
-        }
-    }
-    if (val != -1)
-    {
-        sprintf(buf2,"Best armour protection seems to be for %s.\n", attack_name[val]);
-        strcat(buf,buf2);
-    }
-
     if(flag) /* we use this also for general arch description */
     {
         switch ((mon->stats.hp + 1) * 4 / (mon->stats.maxhp + 1))

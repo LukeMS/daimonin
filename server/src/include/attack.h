@@ -87,7 +87,6 @@ typedef enum _attacks
  * all attacks in the second part are effects and only covered from
  * resistance.
  */
-#define NROFPROTECTIONS (ATNR_GODPOWER+1)
 
 #ifndef INIT_C
 

@@ -7,10 +7,10 @@ ac 4
 item_level 19
 last_heal 15
 item_skill 4
-protect_impact 5
-protect_cleave 10
-protect_pierce 10
-protect_slash 5
+resist_impact 5
+resist_cleave 10
+resist_pierce 10
+resist_slash 5
 cha -1
 material_real 65
 material 2

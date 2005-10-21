@@ -35,8 +35,8 @@ wc 5
 dam 51
 weapon_speed 3.5
 attack_impact 100
-protect_poison 25
-protect_acid 25
+resist_poison 25
+resist_acid 25
 speed -0.053
 level 1
 weight 153250

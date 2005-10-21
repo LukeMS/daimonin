@@ -10,10 +10,10 @@ material_real 65
 ac 5
 item_level 3
 item_skill 4
-protect_impact 25
-protect_cleave 15
-protect_slash 25
-protect_pierce 15
+resist_impact 25
+resist_cleave 15
+resist_slash 25
+resist_pierce 15
 weight 12000
 value 125
 end
