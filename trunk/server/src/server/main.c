@@ -893,8 +893,6 @@ static void process_map_events(mapstruct *map)
     object *op, *first_obj;
     tag_t   tag;
 
-    process_players1(map);
-
     if(map == NULL)
         first_obj= active_objects;
     else
@@ -1027,8 +1025,6 @@ static void process_map_events(mapstruct *map)
             op->speed_left += FABS(op->speed);
     }
     next_active_object = NULL;
-
-    process_players2(map);
 }
 
 static void process_events()
@@ -1047,6 +1043,7 @@ static void process_events()
     gettimeofday(&start, NULL);
 #endif
 
+	process_players1(NULL);
     /* Preprocess step: move all objects in inserted_active_objects
      * into their real activelists */
     /* TODO: to make AI more efficient, keep activelist sorted with
@@ -1103,6 +1100,8 @@ static void process_events()
         if (map->active_objects && map->in_memory == MAP_IN_MEMORY)
             process_map_events(map);
     }
+	
+	process_players2(NULL);
 
 #if defined TIME_PROCESS_EVENTS
     gettimeofday(&end, NULL);

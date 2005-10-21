@@ -926,69 +926,6 @@ int singing(object *pl, int dir)
     return exp;
 }
 
-
-/* pray() - when this skill is called from do_skill(), it allows
- * the player to regain lost grace points at a faster rate. -b.t.
- * This always returns 0 - return value is used by calling function
- * such that if it returns true, player gets exp in that skill.  This
- * the effect here can be done on demand, we probably don't want to
- * give infinite exp by returning true in any cases.
- */
-
-/* This is disabled for now. Praying works differently in Daimonin */
-
-int pray(object *pl)
-{
-    char    buf[MAX_BUF];
-    object *tmp;
-
-    if (1)
-    {
-        LOG(llevBug, "BUG: pray() called (praying skill used) from %s\n", query_name(pl));
-        return 0;
-    }
-    if (pl->type != PLAYER)
-        return 0;
-
-    strcpy(buf, "You pray.");
-    /* Check all objects - we could stop at floor objects,
-     * but if someone buries an altar, I don't see a problem with
-     * going through all the objects, and it shouldn't be much slower
-     * than extra checks on object attributes.
-     */
-    for (tmp = pl->below; tmp != NULL; tmp = tmp->below)
-    {
-        /* Only if the altar actually belongs to someone do you get special benefits */
-        if (tmp && tmp->type == HOLY_ALTAR && tmp->other_arch)
-        {
-            if(trigger_object_plugin_event(EVENT_TRIGGER,
-                        tmp, pl, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
-                return 0;
-
-            sprintf(buf, "You pray over the %s.", tmp->name);
-            pray_at_altar(pl, tmp);
-            break;  /* Only pray at one altar */
-        }
-    }
-
-    new_draw_info(NDI_WHITE, 0, pl, buf);
-
-    if (pl->stats.grace < pl->stats.maxgrace)
-    {
-        pl->stats.grace++;
-        pl->last_grace = -1;
-    }
-    else
-        return 0;
-
-    /* Is this really right?  This will basically increase food
-     * consumption, hp & sp regeneration, and everything else that
-     * do_some_living does.
-     */
-    do_some_living(pl);
-    return 0;
-}
-
 /* This skill allows the player to regain a few sp or hp for a
  * brief period of concentration. No armour or weapons may be
  * wielded/applied for this to work. The amount of time needed
@@ -1061,7 +998,6 @@ void meditate(object *pl)
     else
         return;
 
-    do_some_living(pl);
 }
 
 /* write_on_item() - wrapper for write_note and write_scroll */

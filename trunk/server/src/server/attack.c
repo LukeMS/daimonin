@@ -112,6 +112,10 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         }
     }
 
+	/* don't get in hp recovery mode when something is hitting you */
+	if(op->type == PLAYER)
+		CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
+
     /* See if we hit the creature */
     if (roll >= 20 || op->stats.ac <= base_wc + roll)
     {
@@ -379,6 +383,10 @@ int hit_player(object *op, int dam, object *hitter)
             maxdam += hit_player_attacktype(op, hitter, &flags, dam, attacknum, 0);
         }
     }
+
+	/* don't get in hp recovery mode when something is hitting you */
+	if(op->type == PLAYER)
+		CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
 
     /* attack is done - lets check we have possible item dmg */
     if(flags & HIT_FLAG_DMG)

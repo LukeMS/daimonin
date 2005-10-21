@@ -561,7 +561,6 @@ int                         do_skill_ident(object *pl, int obj_class);
 int                         use_oratory(object *pl, int dir);
 int                         singing(object *pl, int dir);
 int                         find_traps(object *pl, int level);
-int                         pray(object *pl);
 void                        meditate(object *pl);
 int                         write_on_item(object *pl, char *params);
 int                         write_note(object *pl, object *item, char *msg);

@@ -374,13 +374,16 @@ static inline void regenerate_stats(object *op)
     /*  generate hp, if applicable */
     if (op->stats.Con && op->stats.hp < op->stats.maxhp)
     {
-        if (++op->last_heal > 5)
-        {
-            op->last_heal = 0;
-            op->stats.hp += op->stats.Con;
+		if(!op->enemy)
+		{
+			if (++op->last_heal > 5)
+			{
+				op->last_heal = 0;
+				op->stats.hp += op->stats.Con;
 
-            if (op->stats.hp > op->stats.maxhp)
-                op->stats.hp = op->stats.maxhp;
+				if (op->stats.hp > op->stats.maxhp)
+					op->stats.hp = op->stats.maxhp;
+			}
         }
 
         /* So if the monster has gained enough HP that they are no longer afraid */
