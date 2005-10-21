@@ -6,10 +6,10 @@ layer 3
 ac 2
 material_real 65
 material 2
-protect_impact 6
-protect_slash 6
-protect_cleave 6
-protect_pierce 6
+resist_impact 6
+resist_slash 6
+resist_cleave 6
+resist_pierce 6
 weight 940
 value 25
 end

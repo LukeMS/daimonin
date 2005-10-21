@@ -1485,7 +1485,7 @@ editor 2:items/armour/cloak
 Object
 title of lesser fire protection
 type 87
-protect_fire 15
+resist_fire 15
 is_magical 1
 value 2100
 end
@@ -1499,7 +1499,7 @@ editor 2:items/armour/cloak
 Object
 title of lesser cold protection
 type 87
-protect_cold 15
+resist_cold 15
 is_magical 1
 value 2100
 end
@@ -1513,7 +1513,7 @@ editor 2:items/armour/cloak
 Object
 title of lesser electricity protection
 type 87
-protect_electricity 15
+resist_electricity 15
 is_magical 1
 value 2100
 end
@@ -1527,7 +1527,7 @@ editor 2:items/armour/cloak
 Object
 title of lesser poison protection
 type 87
-protect_poison 15
+resist_poison 15
 is_magical 1
 value 2100
 end
@@ -1541,7 +1541,7 @@ editor 2:items/armour/cloak
 Object
 title of lesser acid protection
 type 87
-protect_acid 15
+resist_acid 15
 is_magical 1
 value 2100
 end
@@ -1698,9 +1698,9 @@ type 87
 is_magical 1
 face cape_red.101
 item_level_art 8
-protect_fire 25
-protect_impact -15
-protect_pierce -15
+resist_fire 25
+resist_impact -15
+resist_pierce -15
 value 6000
 end
 #
@@ -1715,9 +1715,9 @@ title of medium cold protection
 type 87
 item_level_art 8
 is_magical 1
-protect_cold 25
-protect_slash -15
-protect_cleave -15
+resist_cold 25
+resist_slash -15
+resist_cleave -15
 value 6000
 end
 #
@@ -1823,7 +1823,7 @@ editor 2:items/armour/mail
 Object
 title of lesser fire protection
 type 16
-protect_fire 25
+resist_fire 25
 is_magical 1
 value 9500
 end
@@ -1837,7 +1837,7 @@ editor 2:items/armour/mail
 Object
 title of lesser cold protection
 type 16
-protect_cold 25
+resist_cold 25
 is_magical 1
 value 9500
 end
@@ -1851,7 +1851,7 @@ editor 2:items/armour/mail
 Object
 title of lesser electricity protection
 type 16
-protect_electricity 25
+resist_electricity 25
 is_magical 1
 value 9500
 end
@@ -1865,7 +1865,7 @@ editor 2:items/armour/mail
 Object
 title of lesser poison protection
 type 16
-protect_poison 25
+resist_poison 25
 is_magical 1
 value 9500
 end
@@ -1879,7 +1879,7 @@ editor 2:items/armour/mail
 Object
 title of lesser acid protection
 type 16
-protect_acid 25
+resist_acid 25
 is_magical 1
 value 9500
 end
@@ -1912,7 +1912,7 @@ Object
 title of lesser fire protection
 type 33
 is_magical 1
-protect_fire 15
+resist_fire 15
 value 2400
 end
 #
@@ -1926,7 +1926,7 @@ Object
 title of lesser cold protection
 type 33
 is_magical 1
-protect_cold 15
+resist_cold 15
 value 2400
 end
 #
@@ -1940,7 +1940,7 @@ Object
 title of lesser electricity protection
 type 33
 is_magical 1
-protect_electricity 15
+resist_electricity 15
 value 2400
 end
 #
@@ -1954,7 +1954,7 @@ Object
 title of lesser poison protection
 type 33
 is_magical 1
-protect_poison 15
+resist_poison 15
 value 2400
 end
 #
@@ -1968,7 +1968,7 @@ Object
 title of lesser acid protection
 type 33
 is_magical 1
-protect_acid 15
+resist_acid 15
 value 2400
 end
 #
@@ -2471,7 +2471,7 @@ title of lesser fire protection
 item_level_art 2
 type 34
 is_magical 1
-protect_fire 15
+resist_fire 15
 value 2100
 end
 #
@@ -2487,7 +2487,7 @@ title of lesser cold protection
 item_level_art 2
 type 34
 is_magical 1
-protect_cold 15
+resist_cold 15
 value 2100
 end
 #
@@ -2503,7 +2503,7 @@ title of lesser electricity protection
 item_level_art 2
 type 34
 is_magical 1
-protect_electricity 15
+resist_electricity 15
 value 2100
 end
 #
@@ -2519,7 +2519,7 @@ title of lesser poison protection
 item_level_art 2
 type 34
 is_magical 1
-protect_poison 15
+resist_poison 15
 value 2100
 end
 #
@@ -2535,7 +2535,7 @@ title of lesser acid protection
 item_level_art 2
 type 34
 is_magical 1
-protect_acid 15
+resist_acid 15
 value 2100
 end
 #
@@ -2668,24 +2668,24 @@ title of granite
 type 99
 item_level_art 4
 is_magical 1
-protect_impact 10
-protect_slash 10
-protect_pierce 10
-protect_cleave 10
-protect_fire 6
-protect_cold 6
-protect_acid 6
-protect_electricity 6
-protect_poison 6
+resist_impact 10
+resist_slash 10
+resist_pierce 10
+resist_cleave 10
+resist_fire 6
+resist_cold 6
+resist_acid 6
+resist_electricity 6
+resist_poison 6
 value 13400
 weight 35000
 ac 3
 msg
-  What strange boots, they look very 
-  protective, but amazingly heavy.
-  There also doesn't appear to be
-  any laces, you wonder how you're ever
-  going to take them off.
+What strange boots, they look very 
+protective, but amazingly heavy.
+There also doesn't appear to be
+any laces, you wonder how you're ever
+going to take them off.
 endmsg
 cursed_perm 1
 cursed 1
@@ -2703,7 +2703,7 @@ Object
 title of lesser fire protection
 type 99
 is_magical 1
-protect_fire 9
+resist_fire 9
 value 2000
 end
 #
@@ -2717,7 +2717,7 @@ Object
 title of lesser cold protection
 type 99
 is_magical 1
-protect_cold 9
+resist_cold 9
 value 2000
 end
 #
@@ -2731,7 +2731,7 @@ Object
 title of lesser electricity protection
 type 99
 is_magical 1
-protect_electricity 9
+resist_electricity 9
 value 2000
 end
 #
@@ -2745,7 +2745,7 @@ Object
 title of lesser poison protection
 type 99
 is_magical 1
-protect_poison 9
+resist_poison 9
 value 2000
 end
 #
@@ -2759,7 +2759,7 @@ Object
 title of lesser acid protection
 type 99
 is_magical 1
-protect_acid 9
+resist_acid 9
 value 2000
 end
 #
@@ -2776,7 +2776,7 @@ title of lesser fire protection
 type 99
 item_level_art 3
 is_magical 1
-protect_fire 15
+resist_fire 15
 value 3000
 end
 #
@@ -2792,7 +2792,7 @@ title of lesser cold protection
 type 99
 item_level_art 3
 is_magical 1
-protect_cold 15
+resist_cold 15
 value 3000
 end
 #
@@ -2808,7 +2808,7 @@ title of lesser electricity protection
 type 99
 item_level_art 3
 is_magical 1
-protect_electricity 15
+resist_electricity 15
 value 3000
 end
 #
@@ -2824,7 +2824,7 @@ item_level_art 3
 title of lesser poison protection
 type 99
 is_magical 1
-protect_poison 15
+resist_poison 15
 value 3000
 end
 #
@@ -2840,7 +2840,7 @@ title of lesser acid protection
 type 99
 item_level_art 3
 is_magical 1
-protect_acid 15
+resist_acid 15
 value 3000
 end
 #
@@ -3560,17 +3560,17 @@ material_real 0
 face ring_silver_white.101
 type 70
 value 225000
-protect_cold 30
+resist_cold 30
 resist_cold 20
 path_attuned 4
 msg
-  This elemental ring is one of those made at 
-  the Guild of Magicks by the powerful wizards 
-  who survived the ancient war of the elementals.
-  The wielder is surrounded by a thin, almost 
-  invisible, globe of warmth; which protects 
-  against cold.  It also grants its holder 
-  greater control of cold spells.
+This elemental ring is one of those made at 
+the Guild of Magicks by the powerful wizards 
+who survived the ancient war of the elementals.
+The wielder is surrounded by a thin, almost 
+invisible, globe of warmth; which protects 
+against cold.  It also grants its holder 
+greater control of cold spells.
 endmsg
 end
 #
@@ -3592,18 +3592,18 @@ is_magical 1
 type 70
 value 225000
 resist_fire 20
-protect_fire 30
+resist_fire 30
 path_attuned 4
 msg
-  This elemental ring is one of those 
-  made at the Guild of Magicks by the 
-  powerful wizards who survived the 
-  ancient war of the elementals.
-  The wielder is surrounded by a thin, 
-  almost invisible, globe of coolness; 
-  which protects against heat.  It also
-  grants the holder greater facility 
-  with fire spells.
+This elemental ring is one of those 
+made at the Guild of Magicks by the 
+powerful wizards who survived the 
+ancient war of the elementals.
+The wielder is surrounded by a thin, 
+almost invisible, globe of coolness; 
+which protects against heat.  It also
+grants the holder greater facility 
+with fire spells.
 endmsg
 end
 #
@@ -3625,17 +3625,17 @@ type 70
 is_magical 1
 value 225000
 resist_electricity 20
-protect_electricity 30
+resist_electricity 30
 path_attuned 4
 msg
-  This elemental ring is one of those made 
-  at the Guild of Magicks by the powerful 
-  wizards who survived the ancient war 
-  of the elementals.  The wielder is 
-  surrounded by a thin, almost invisible, 
-  grid of force; which protects against 
-  electricity.  It also gives facility
-  with electricity spells.
+This elemental ring is one of those made 
+at the Guild of Magicks by the powerful 
+wizards who survived the ancient war 
+of the elementals.  The wielder is 
+surrounded by a thin, almost invisible, 
+grid of force; which protects against 
+electricity.  It also gives facility
+with electricity spells.
 endmsg
 end
 #
@@ -3659,18 +3659,18 @@ is_magical 1
 value 325000
 attack_electricity 20
 resist_electricity 20
-protect_electricity 30
+resist_electricity 30
 path_attuned 4
 msg
-  This elemental ring is one of those more
-  rare ones made at the Guild of Magicks by 
-  the powerful  wizards who survived the 
-  ancient war of the elementals.  The wielder
-  is  surrounded by a thin, almost invisible, 
-  grid of force; which protects against 
-  electricity and allows electric attacks.
-  It also gives facility with electricity 
-  spells and resists.
+This elemental ring is one of those more
+rare ones made at the Guild of Magicks by 
+the powerful  wizards who survived the 
+ancient war of the elementals.  The wielder
+is  surrounded by a thin, almost invisible, 
+grid of force; which protects against 
+electricity and allows electric attacks.
+It also gives facility with electricity 
+spells and resists.
 endmsg
 end
 #
@@ -3861,10 +3861,10 @@ title of minor shielding
 face amulet_lif.101
 is_magical 1
 item_level_art 10
-protect_impact 20
-protect_slash 20
-protect_pierce 20
-protect_cleave 20
+resist_impact 20
+resist_slash 20
+resist_pierce 20
+resist_cleave 20
 type 39
 value 60000
 end
@@ -3928,9 +3928,9 @@ Object
 title of assassinating
 slaying none
 msg
-  These missiles are inscribed with 
-  powerful runes for the bane of 
-  their victims.
+These missiles are inscribed with 
+powerful runes for the bane of 
+their victims.
 endmsg
 value 850
 type 13
@@ -4490,7 +4490,7 @@ is_magical 1
 title of the prayers
 grace 1
 one_drop 1
-protect_poison 8
+resist_poison 8
 identified 1
 item_level_art 15
 material 256
@@ -4512,14 +4512,14 @@ ac 7
 item_level 35
 item_quality 90
 item_condition 90
-protect_poison 30
-protect_fire -15
-protect_electricity -15
-protect_cold 30
-protect_impact 30
-protect_slash 30
-protect_cleave 30
-protect_pierce 30
+resist_poison 30
+resist_fire -15
+resist_electricity -15
+resist_cold 30
+resist_impact 30
+resist_slash 30
+resist_cleave 30
+resist_pierce 30
 is_magical 1
 value 251000
 end
@@ -4531,8 +4531,8 @@ def_arch cloak
 editor 1:uniques
 Object
 title of king Rhun
-protect_acid 8
-protect_poison 8
+resist_acid 8
+resist_poison 8
 Str 1
 Dex 1
 ac 2

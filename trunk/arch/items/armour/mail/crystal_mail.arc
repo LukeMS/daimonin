@@ -10,10 +10,10 @@ item_condition 99
 is_magical 1
 ac 10
 item_level 50
-protect_impact 45
-protect_slash 30
-protect_cleave 30
-protect_pierce 30
+resist_impact 45
+resist_slash 30
+resist_cleave 30
+resist_pierce 30
 weight 34500
 value 252600
 end

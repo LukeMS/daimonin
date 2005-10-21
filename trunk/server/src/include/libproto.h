@@ -74,7 +74,6 @@ extern void             free_all_images(void);
 /* item.c */
 extern char            *describe_resistance(object *op, int newline);
 extern char            *describe_attack(object *op, int newline);
-extern char            *describe_protections(object *op, int newline);
 extern char            *query_weight(object *op);
 extern char            *get_levelnumber(int i);
 extern char            *get_number(int i);
@@ -183,6 +182,8 @@ extern int              get_rangevector_full(object *op1, mapstruct *map1, int x
 extern int              on_same_map(object *op1, object *op2);
 /* material.c */
 extern void             material_attack_damage(object *op, int num, int chance, int base);
+extern sint64           material_repair_cost(object *item, object *owner);
+extern void             material_repair_item(object *item, int skill_value);
 /* mempool.c */
 extern uint32           nearest_pow_two_exp(uint32 n);
 extern void             init_mempools();

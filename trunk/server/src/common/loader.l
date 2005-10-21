@@ -53,7 +53,6 @@ static char msgbuf[HUGE_BUF];
  */
 #define SET_RESIST(op, type, val)  op->resist[type] = val;
 #define SET_ATTACK(op, type, val)  op->attack[type] = val;
-#define SET_PROTECTION(op, type, val)  op->protection[type] = val;
 
 #define IVAL	atoi(yval())
 #define FVAL	(float) atof(yval())
@@ -500,38 +499,35 @@ op->oy= op->y;
 ^resist_snare{S}		SET_RESIST(op, ATNR_SNARE, IVAL);
 ^resist_corruption{S}	SET_RESIST(op, ATNR_CORRUPTION, IVAL);
 
-^protect_impact{S}	SET_PROTECTION(op, ATNR_PHYSICAL, IVAL);
-^protect_slash{S}	SET_PROTECTION(op, ATNR_SLASH, IVAL);
-^protect_cleave{S}	SET_PROTECTION(op, ATNR_CLEAVE, IVAL);
-^protect_pierce{S}	SET_PROTECTION(op, ATNR_PIERCE, IVAL);
-
-^protect_fire{S}		SET_PROTECTION(op, ATNR_FIRE, IVAL);
-^protect_cold{S}		SET_PROTECTION(op, ATNR_COLD, IVAL);
-^protect_electricity{S}		SET_PROTECTION(op, ATNR_ELECTRICITY, IVAL);
-^protect_poison{S}		SET_PROTECTION(op, ATNR_POISON, IVAL);
-^protect_acid{S}		SET_PROTECTION(op, ATNR_ACID, IVAL);
-^protect_sonic{S}		SET_PROTECTION(op, ATNR_SONIC, IVAL);
-
-^protect_psionic{S}		SET_PROTECTION(op, ATNR_PSIONIC, IVAL);
-^protect_force{S}		SET_PROTECTION(op, ATNR_FORCE, IVAL);
-^protect_death{S}		SET_PROTECTION(op, ATNR_DEATH, IVAL);
-^protect_light{S}		SET_PROTECTION(op, ATNR_LIGHT, IVAL);
-^protect_shadow{S}		SET_PROTECTION(op, ATNR_SHADOW, IVAL);
-
-^protect_aether{S}		SET_PROTECTION(op, ATNR_AETHER, IVAL);
-^protect_nether{S}		SET_PROTECTION(op, ATNR_NETHER, IVAL);
-^protect_chaos{S}		SET_PROTECTION(op, ATNR_CHAOS, IVAL);
-^protect_lifesteal{S}	SET_PROTECTION(op, ATNR_LIFESTEAL, IVAL);
-^protect_weaponmagic{S}	SET_PROTECTION(op, ATNR_WEAPONMAGIC, IVAL);
-^protect_godpower{S}	SET_PROTECTION(op, ATNR_GODPOWER, IVAL);
-
 
 	/* outdate beta 3 attack/protection/resists  WE HOTMAP THEM TO NEW ONES HERE - remove this for 1.0 */
-^protect_magic{S}		SET_PROTECTION(op, ATNR_SONIC, IVAL); /* old: PROTECT_MAGIC */
-^protect_mind{S}		SET_PROTECTION(op, ATNR_LIGHT, IVAL); /* old: PROTECT_MIND */
-^protect_body{S}		SET_PROTECTION(op, ATNR_SHADOW, IVAL); /* old: PROTECT_BODY */
-^protect_spiritual{S}   SET_PROTECTION(op, ATNR_LIFESTEAL, IVAL); /* old: PROTECT_SPIRITUAL */
-^protect_corruption{S}  SET_PROTECTION(op, ATNR_AETHER, IVAL);/* old: PROTECT_CORRUPTION */
+^protect_impact{S}	SET_RESIST(op, ATNR_PHYSICAL, IVAL);
+^protect_slash{S}	SET_RESIST(op, ATNR_SLASH, IVAL);
+^protect_cleave{S}	SET_RESIST(op, ATNR_CLEAVE, IVAL);
+^protect_pierce{S}	SET_RESIST(op, ATNR_PIERCE, IVAL);
+^protect_fire{S}		SET_RESIST(op, ATNR_FIRE, IVAL);
+^protect_cold{S}		SET_RESIST(op, ATNR_COLD, IVAL);
+^protect_electricity{S}	SET_RESIST(op, ATNR_ELECTRICITY, IVAL);
+^protect_poison{S}		SET_RESIST(op, ATNR_POISON, IVAL);
+^protect_acid{S}		SET_RESIST(op, ATNR_ACID, IVAL);
+^protect_sonic{S}		SET_RESIST(op, ATNR_SONIC, IVAL);
+^protect_psionic{S}		SET_RESIST(op, ATNR_PSIONIC, IVAL);
+^protect_force{S}		SET_RESIST(op, ATNR_FORCE, IVAL);
+^protect_death{S}		SET_RESIST(op, ATNR_DEATH, IVAL);
+^protect_light{S}		SET_RESIST(op, ATNR_LIGHT, IVAL);
+^protect_shadow{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
+^protect_aether{S}		SET_RESIST(op, ATNR_AETHER, IVAL);
+^protect_nether{S}		SET_RESIST(op, ATNR_NETHER, IVAL);
+^protect_chaos{S}		SET_RESIST(op, ATNR_CHAOS, IVAL);
+^protect_lifesteal{S}	SET_RESIST(op, ATNR_LIFESTEAL, IVAL);
+^protect_weaponmagic{S}	SET_RESIST(op, ATNR_WEAPONMAGIC, IVAL);
+^protect_godpower{S}	SET_RESIST(op, ATNR_GODPOWER, IVAL);
+
+^protect_magic{S}		SET_RESIST(op, ATNR_SONIC, IVAL); /* old: PROTECT_MAGIC */
+^protect_mind{S}		SET_RESIST(op, ATNR_LIGHT, IVAL); /* old: PROTECT_MIND */
+^protect_body{S}		SET_RESIST(op, ATNR_SHADOW, IVAL); /* old: PROTECT_BODY */
+^protect_spiritual{S}   SET_RESIST(op, ATNR_LIFESTEAL, IVAL); /* old: PROTECT_SPIRITUAL */
+^protect_corruption{S}  SET_RESIST(op, ATNR_AETHER, IVAL);/* old: PROTECT_CORRUPTION */
 ^resist_magic{S}	SET_RESIST(op, ATNR_FORCE, IVAL);
 ^resist_time{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
 ^resist_demonic{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
@@ -548,7 +544,7 @@ op->oy= op->y;
 ^attack_life_steal{S}	SET_ATTACK(op, ATNR_LIFESTEAL, IVAL);
 ^resist_counterspell{S}	SET_RESIST(op, ATNR_COUNTERMAGIC, IVAL);
 ^attack_counterspell{S}	SET_ATTACK(op, ATNR_COUNTERMAGIC, IVAL);
-^protect_weapon_magic{S}	SET_PROTECTION(op, ATNR_WEAPONMAGIC, IVAL);
+^protect_weapon_magic{S}	SET_RESIST(op, ATNR_WEAPONMAGIC, IVAL);
 ^is_vul_elemental{S}	{};
 ^is_vul_magic{S}	{};
 ^is_vul_physical{S}	{};
@@ -1136,12 +1132,6 @@ char *get_ob_diff(object *op,object *op2) {
   for (tmp=0; tmp < NROFATTACKS; tmp++) {
    if (op->attack[tmp] != op2->attack[tmp]) {
 	sprintf(buf2,"attack_%s %d\n",attack_name[tmp], op->attack[tmp]);
-	strcat(buf,buf2);
-    }
-  }
-  for (tmp=0; tmp < NROFPROTECTIONS; tmp++) {
-   if (op->protection[tmp] != op2->protection[tmp]) {
-	sprintf(buf2,"protect_%s %d\n",attack_name[tmp], op->protection[tmp]);
 	strcat(buf,buf2);
     }
   }

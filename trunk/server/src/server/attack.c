@@ -34,7 +34,6 @@
 
 #define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);dam>=1.0f?(damage=(int)dam):(damage=1)
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
-#define ATTACK_PROTECT_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->protection[_anum])*(double)0.01)
 
 /* some static defines */
 static void thrown_item_effect(object *, object *);
@@ -690,7 +689,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
         if (hitter->type == POISONING) /* we have a poison force object (thats the poison we had inserted) */
         {
             attacknum = ATNR_POISON; /* map to poison... */
-            if (op->resist[attacknum] == 100 || op->protection[attacknum] == 100)
+            if (op->resist[attacknum] == 100)
             {
                 dam = 0;
                 send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -699,8 +698,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
 
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum); /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);        /* reduce to % protection */
         }
 
         if (damage && dam < 1.0)
@@ -713,7 +710,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
     /* quick check for immunity - if so, we skip here.
         * our formula is (100-resist)/100 - so test for 100 = zero division
      */
-    if (op->resist[attacknum] == 100 || (attacknum <= NROFPROTECTIONS && op->protection[attacknum] == 100))
+    if (op->resist[attacknum] == 100)
     {
         switch (attacknum)
         {
@@ -789,8 +786,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -804,8 +799,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -816,8 +809,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -828,8 +819,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -840,8 +829,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -858,8 +845,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -883,8 +868,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -896,8 +879,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -909,8 +890,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -922,8 +901,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -947,8 +924,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -959,8 +934,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -971,8 +944,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -983,8 +954,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -995,8 +964,6 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])
                 ATTACK_RESIST_DAMAGE(op, attacknum);    /* reduce to % resistance */
-            if( attacknum <= NROFPROTECTIONS)
-                ATTACK_PROTECT_DAMAGE(op, attacknum);   /* reduce to % protection */
             if (damage && dam < 1.0)
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);

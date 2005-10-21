@@ -1693,32 +1693,7 @@ int set_ring_bonus(object *op, int bonus, int level)
         case 15:
         case 16:
         case 17:
-          {
-              int b = 5 + FABS( bonus),val,protect = RANDOM() % (NROFPROTECTIONS - 4 + off);
 
-              /* Roughly generate a bonus between 100 and 35 (depending on the bonus) */
-              val = 10 + RANDOM() % b + RANDOM() % b + RANDOM() % b + RANDOM() % b;
-
-              /* Cursed items need to have higher negative values to equal out with
-                 * positive values for how protections work out.  Put another
-                 * little random element in since that they don't always end up with
-                 * even values.
-                 */
-              if (bonus < 0)
-                  val = 2 * -val - RANDOM() % b;
-
-              if (val > 35)
-                  val = 35; /* Upper limit */
-              b = 0;
-              while (op->protection[protect] != 0)
-              {
-                  if (b++ >= 4)
-                      goto set_ring_bonus_jump1; /* Not able to find a free protection*/
-                  protect = RANDOM() % (NROFPROTECTIONS - 4 + off);
-              }
-              op->protection[protect] = val;
-              break;
-          }
         case 18:
         case 19:
           {

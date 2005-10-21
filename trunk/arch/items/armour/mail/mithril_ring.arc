@@ -10,10 +10,10 @@ ac 6
 item_level 15
 proof_phy 1
 proof_ele 1
-protect_impact 22
-protect_slash 30
-protect_cleave 22
-protect_pierce 22
+resist_impact 22
+resist_slash 30
+resist_cleave 22
+resist_pierce 22
 weight 6100
 value 12500
 end

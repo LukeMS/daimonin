@@ -213,7 +213,6 @@ typedef struct obj
     sint8           resist[NROFATTACKS];    /* Intrinsic resist against damage - range from -125 to +125 */
 
     uint8           attack[NROFATTACKS];    /* our attack values (only positiv ones */
-    sint8           protection[NROFPROTECTIONS];    /* Resistance against attacks in % - range from -125 to 125%*/
 
     float           speed;              /* The overall speed of this object */
     float           speed_left;         /* How much speed is left to spend this round */

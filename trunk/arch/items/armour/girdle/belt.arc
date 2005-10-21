@@ -3,10 +3,10 @@ name belt
 layer 3
 type 113
 face belt.101
-protect_pierce 5
-protect_impact 5
-protect_cleave 5
-protect_slash 5
+resist_pierce 5
+resist_impact 5
+resist_cleave 5
+resist_slash 5
 ac 1
 item_level 10
 weight 2000

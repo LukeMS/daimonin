@@ -36,6 +36,9 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
+#ifndef ABS
+#define ABS(x) ((x)<0?-(x):(x))
+#endif
 
 /* This is for the DevCpp IDE */
 #ifndef __WIN_32
@@ -55,6 +58,9 @@ typedef signed char     sint8;
 /* later this should be insert a makefile */
 
 #include <wrapper.h>
+#ifdef INSTALL_SOUND
+#include <SDL_mixer.h>
+#endif
 
 #include <string.h>
 #include <stdlib.h>

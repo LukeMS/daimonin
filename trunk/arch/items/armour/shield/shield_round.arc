@@ -7,10 +7,10 @@ ac 2
 item_level 3
 item_skill 4
 last_heal 5
-protect_impact 5
-protect_cleave 5
-protect_pierce 10
-protect_slash 10
+resist_impact 5
+resist_cleave 5
+resist_pierce 10
+resist_slash 10
 material_real 258
 material 16
 weight 1600

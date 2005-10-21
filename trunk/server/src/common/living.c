@@ -701,30 +701,12 @@ int change_abil(object *op, object *tmp)
             success = 1;
             if (op->resist[i] > refop.resist[i])
             {
-                sprintf(message, "Your resistance to %s rises to %d%%.", attack_name[i], op->resist[i]);
+	            sprintf(message, "Your resistance to %s rises to %d%%.", attack_name[i], op->resist[i]);
                 new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, message);
             }
             else
             {
                 sprintf(message, "Your resistance to %s drops to %d%%.", attack_name[i], op->resist[i]);
-                new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, message);
-            }
-        }
-    }
-    /* Messages for changed resistance */
-    for (i = 0; i < NROFPROTECTIONS; i++)
-    {
-        if (op->protection[i] != refop.protection[i])
-        {
-            success = 1;
-            if (op->protection[i] > refop.protection[i])
-            {
-                sprintf(message, "Your protection to %s rises to %d%%.", attack_name[i], op->protection[i]);
-                new_draw_info(NDI_UNIQUE | NDI_GREEN, 0, op, message);
-            }
-            else
-            {
-                sprintf(message, "Your protection to %s drops to %d%%.", attack_name[i], op->protection[i]);
                 new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, op, message);
             }
         }
@@ -942,7 +924,6 @@ void fix_player(object *op)
     int                 tmp_item, old_glow, max_boni_hp = 0, max_boni_sp = 0, max_boni_grace = 0;
     int                 i, j, inv_flag, inv_see_flag, light, weapon_weight, best_wc, best_ac, wc, ac, base_reg;
     int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
-    int                 protect_boni[NROFPROTECTIONS], protect_mali[NROFPROTECTIONS];
     int                 potion_resist_boni[NROFATTACKS], potion_resist_mali[NROFATTACKS], potion_attack[NROFATTACKS];
     object             *tmp, *tmp_ptr, *skill_weapon = NULL;
     player             *pl;
@@ -1081,15 +1062,12 @@ void fix_player(object *op)
     if (!QUERY_FLAG(&op->arch->clone, FLAG_SEE_IN_DARK))
         CLEAR_FLAG(op, FLAG_SEE_IN_DARK);
 
-    memset(&protect_boni, 0, sizeof(protect_boni));
-    memset(&protect_mali, 0, sizeof(protect_mali));
     memset(&potion_resist_boni, 0, sizeof(potion_resist_boni));
     memset(&potion_resist_mali, 0, sizeof(potion_resist_mali));
     memset(&potion_attack, 0, sizeof(potion_attack));
 
     /* initializing player arrays from the values in player archetype clone:  */
     memset(&pl->equipment, 0, sizeof(pl->equipment));
-    memcpy(&op->protection, &op->arch->clone.protection, sizeof(op->protection));
     memcpy(&op->attack, &op->arch->clone.attack, sizeof(op->attack));
     memcpy(&op->resist, &op->arch->clone.resist, sizeof(op->resist));
     for (i = 0; i < NROFATTACKS; i++)
@@ -1447,26 +1425,24 @@ void fix_player(object *op)
                   speed_reduce_from_disease = (float) tmp->last_sp / 100.0f;
                   if (speed_reduce_from_disease == 0.0f)
                       speed_reduce_from_disease = 1.0f;
-
+				
                 case POISONING:
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
 
                 fix_player_jump_resi:
-                  for (i = 0; i < NROFPROTECTIONS; i++)
-                  {
-                      if (tmp->protection[i] > 0)
-                          protect_boni[i] += ((100 - protect_boni[i]) * tmp->protection[i]) / 100;
-                      else if (tmp->protection[i] < 0)
-                          protect_mali[i] += ((100 - protect_mali[i]) * (-tmp->protection[i])) / 100;
-                  }
-                  /* calculate resistance and attacks */
 
+					/* calculate resistance and attacks */
                   for (i = 0; i < NROFATTACKS; i++)
                   {
                       /* we add resists boni/mali */
                       if (tmp->resist[i] > 0)
-                          resists_boni[i] += ((100 - resists_boni[i]) * tmp->resist[i]) / 100;
+					  {
+						  if(tmp->resist[i]>=100)
+							  resists_boni[i] = 100;
+						  else if(resists_boni[i]<100)
+	                          resists_boni[i] += ((100 - resists_boni[i]) * tmp->resist[i]) / 100;
+					  }
                       else if (tmp->resist[i] < 0)
                           resists_mali[i] += ((100 - resists_mali[i]) * (-tmp->resist[i])) / 100;
 
@@ -1566,26 +1542,17 @@ void fix_player(object *op)
             tmp = pl->equipment[j];
             tmp_con = (float) tmp->item_condition / 100.0f;
 
-            /* only quality adjustment for *positive* values! */
-            for (i = 0; i < NROFPROTECTIONS; i++)
-            {
-                if (tmp->protection[i] > 0)
-                {
-                    tmp_item = (int) ((float) tmp->protection[i] * tmp_con);
-                    protect_boni[i] += ((100 - protect_boni[i]) * tmp_item) / 100;
-                }
-                else if (tmp->protection[i] < 0)
-                    protect_mali[i] += ((100 - protect_mali[i]) * (-tmp->protection[i])) / 100;
-            }
             /* calculate resistance and attacks */
-
             for (i = 0; i < NROFATTACKS; i++)
             {
                 /* we add resists boni/mali */
-                if (tmp->resist[i] > 0)
+                if (tmp->resist[i] > 0 && resists_boni[i]<100)
                 {
                     tmp_item = (int) ((float) tmp->resist[i] * tmp_con);
-                    resists_boni[i] += ((100 - resists_boni[i]) * tmp_item) / 100;
+					if(tmp_item>=100)
+						resists_boni[i]=100;
+					else
+	                    resists_boni[i] += ((100 - resists_boni[i]) * tmp_item) / 100;
                 }
                 else if (tmp->resist[i] < 0)
                     resists_mali[i] += ((100 - resists_mali[i]) * (-tmp->resist[i])) / 100;
@@ -1598,7 +1565,7 @@ void fix_player(object *op)
                     if (tmp->attack[i] > 0)
                     {
                         tmp_item = tmp->attack[i];
-                        if(i >= NROFPROTECTIONS)
+                        if(i >= ATNR_GODPOWER) /* Important: Don't add condition to damage attack - we did it to dmg! */
                             tmp_item = (int) ((float)tmp_item * tmp_con);
                         if ((op->attack[i] + tmp_item) <= 120)
                             op->attack[i] += tmp_item;
@@ -1631,8 +1598,13 @@ void fix_player(object *op)
         }
 
         /* add in the potion resists boni/mali */
-        if (potion_resist_boni[i] > 0)
-            resists_boni[i] += ((100 - resists_boni[i]) * potion_resist_boni[i]) / 100;
+        if (potion_resist_boni[i] > 0 && resists_boni[i] <100)
+		{
+			if(potion_resist_boni[i]>=100)
+				resists_boni[i] = 100;
+			else
+	            resists_boni[i] += ((100 - resists_boni[i]) * potion_resist_boni[i]) / 100;
+		}
 
         if (potion_resist_mali[i] < 0)
             resists_mali[i] += ((100 - resists_mali[i]) * (-potion_resist_mali[i])) / 100;
@@ -1641,23 +1613,7 @@ void fix_player(object *op)
         op->resist[i] = resists_boni[i] - resists_mali[i];
     }
 
-    /* add protection boni/mali.
-     * ensure that protection is between 0 - 100.
-     */
-    for (i = 0; i < NROFPROTECTIONS; i++)
-    {
-        int ptemp   = protect_boni[i] - protect_mali[i];
-
-        if (ptemp < 0)
-            op->protection[i] = 0;
-        else if (ptemp > 100)
-            op->protection[i] = 100;
-        else
-            op->protection[i] = ptemp;
-    }
-
     check_stat_bounds(&(op->stats));
-
 
     /* now the speed thing... */
     op->speed += speed_bonus[op->stats.Dex];

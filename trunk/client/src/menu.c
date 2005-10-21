@@ -388,106 +388,58 @@ void show_number(int x, int y)
               COLOR_WHITE, &tmp, NULL);
 }
 
+static inline void print_resist(char *name, int x, int y, int num)
+{
+	char    buf[16];
+
+	StringBlt(ScreenSurface, &SystemFont, name, x, y, (num>ATNR_GODPOWER)?COLOR_DGOLD:COLOR_HGOLD, NULL, NULL);
+	sprintf(buf, "%02d", cpl.stats.protection[num]);
+	StringBlt(ScreenSurface, &SystemFont, buf, x + 12, y, cpl.stats.protection[num] ? (cpl.stats.protection[num]<0?COLOR_RED:(cpl.stats.protection[num]>=100?COLOR_ORANGE:COLOR_WHITE)) : COLOR_GREY,NULL, NULL);
+}
+
 void show_resist(int x, int y)
 {
     char    buf[62];
 
-    StringBlt(ScreenSurface, &Font6x3Out, "Armour Protection Table", x, y + 1, COLOR_HGOLD, NULL, NULL);
+    StringBlt(ScreenSurface, &Font6x3Out, "Resistance Table", x, y + 1, COLOR_HGOLD, NULL, NULL);
 
-    StringBlt(ScreenSurface, &Font6x3Out, "Physical", x, y + 16, COLOR_HGOLD, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "I", x + 43, y + 17, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[0]);
+	print_resist("IM", x+68, y+3, ATNR_PHYSICAL);
+	print_resist("SL", x+98, y+3, ATNR_SLASH);
+	print_resist("CL", x+128, y+3, ATNR_CLEAVE);
+	print_resist("PI", x+158, y+3, ATNR_PIERCE);
 
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 53, y + 17, cpl.stats.protection[0] ? COLOR_WHITE : COLOR_GREY, NULL,
-              NULL);
+	print_resist("FI", x+8, y+15, ATNR_FIRE);
+	print_resist("CO", x+38, y+15, ATNR_COLD);
+	print_resist("EL", x+68, y+15, ATNR_ELECTRICITY);
+	print_resist("PO", x+98, y+15, ATNR_POISON);
+	print_resist("AC", x+128, y+15, ATNR_ACID);
+	print_resist("SO", x+158, y+15, ATNR_SONIC);
 
-    StringBlt(ScreenSurface, &SystemFont, "S", x + 73, y + 17, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[1]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 83, y + 17, cpl.stats.protection[1] ? COLOR_WHITE : COLOR_GREY, NULL,
-              NULL);
+	print_resist("FO", x+8, y+27, ATNR_FORCE);
+	print_resist("PS", x+38, y+27, ATNR_PSIONIC);
+	print_resist("LI", x+68, y+27, ATNR_LIGHT);
+	print_resist("SH", x+98, y+27, ATNR_SHADOW);
+	print_resist("LS", x+128, y+27, ATNR_LIFESTEAL);
+	print_resist("AE", x+158, y+27, ATNR_AETHER);
 
+	print_resist("NE", x+8, y+39, ATNR_NETHER);
+	print_resist("CH", x+38, y+39, ATNR_CHAOS);
+	print_resist("DE", x+68, y+39, ATNR_DEATH);
 
-    StringBlt(ScreenSurface, &SystemFont, "C", x + 103, y + 17, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[2]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 113, y + 17, cpl.stats.protection[2] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "P", x + 133, y + 17, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[3]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 143, y + 17, cpl.stats.protection[3] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "W", x + 163, y + 17, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[4]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 17, cpl.stats.protection[4] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
+	print_resist("WE", x+98, y+39, ATNR_WEAPONMAGIC);
+	print_resist("GO", x+128, y+39, ATNR_GODPOWER);
 
-    StringBlt(ScreenSurface, &Font6x3Out, "Elemental", x, y + 31, COLOR_HGOLD, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "F", x + 43, y + 32, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[5]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 53, y + 32, cpl.stats.protection[5] ? COLOR_WHITE : COLOR_GREY, NULL,
-              NULL);
-    StringBlt(ScreenSurface, &SystemFont, "C", x + 73, y + 32, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[6]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 83, y + 32, cpl.stats.protection[6] ? COLOR_WHITE : COLOR_GREY, NULL,
-              NULL);
+	print_resist("DR", x+8, y+51, ATNR_DRAIN);
+	print_resist("DE", x+38, y+51, ATNR_DEPLETION);
+	print_resist("CR", x+68, y+51, ATNR_CORRUPTION);
+	print_resist("CM", x+98, y+51, ATNR_COUNTERMAGIC);
+	print_resist("CA", x+128, y+51, ATNR_CANCELLATION);
+	print_resist("CF", x+158, y+51, ATNR_CONFUSION);
 
-    StringBlt(ScreenSurface, &SystemFont, "E", x + 103, y + 32, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[7]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 113, y + 32, cpl.stats.protection[7] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "P", x + 133, y + 32, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[8]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 143, y + 32, cpl.stats.protection[8] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "A", x + 163, y + 32, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[9]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 32, cpl.stats.protection[9] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-
-    StringBlt(ScreenSurface, &Font6x3Out, "Magical", x, y + 46, COLOR_HGOLD, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "M", x + 43, y + 47, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[10]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 53, y + 47, cpl.stats.protection[10] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Mi", x + 70, y + 47, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[11]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 83, y + 47, cpl.stats.protection[11] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-
-    StringBlt(ScreenSurface, &SystemFont, "B", x + 103, y + 47, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[12]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 113, y + 47, cpl.stats.protection[12] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "P", x + 133, y + 47, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[13]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 143, y + 47, cpl.stats.protection[13] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "F", x + 163, y + 47, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[14]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 47, cpl.stats.protection[14] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-
-    StringBlt(ScreenSurface, &Font6x3Out, "Spherical", x, y + 61, COLOR_HGOLD, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "N", x + 43, y + 62, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[15]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 53, y + 62, cpl.stats.protection[15] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Ch", x + 69, y + 62, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[16]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 83, y + 62, cpl.stats.protection[16] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-
-    StringBlt(ScreenSurface, &SystemFont, "D", x + 103, y + 62, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[17]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 113, y + 62, cpl.stats.protection[17] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Sp", x + 130, y + 62, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[18]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 143, y + 62, cpl.stats.protection[18] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "Co", x + 160, y + 62, COLOR_HGOLD, NULL, NULL);
-    sprintf(buf, "%02d", cpl.stats.protection[19]);
-    StringBlt(ScreenSurface, &SystemFont, buf, x + 173, y + 62, cpl.stats.protection[19] ? COLOR_WHITE : COLOR_GREY,
-              NULL, NULL);
+	print_resist("FE", x+8, y+63, ATNR_FEAR);
+	print_resist("SL", x+38, y+63, ATNR_SLOW);
+	print_resist("PA", x+68, y+63, ATNR_PARALYZE);
+	print_resist("SN", x+98, y+63, ATNR_SNARE);
 }
 
 #define ICONDEFLEN 32

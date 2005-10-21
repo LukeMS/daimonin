@@ -63,9 +63,6 @@
 #include <SDL.h>
 #include <SDL_main.h>
 #include <SDL_image.h>
-#ifdef INSTALL_SOUND
-#include <SDL_mixer.h>
-#endif
 
 #define _malloc(__d,__s) malloc(__d)
 
