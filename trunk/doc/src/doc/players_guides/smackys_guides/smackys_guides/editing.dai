@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>EDITING</title>
-    <p>I and the <a href="http://www.fsf.org/">Free Software Foundation</a> insist that you respect the <a href="./fdl.txt">GNU Free Documentation Licence</a> if you want to modify and/or distribute the text of Smacky's Guide.
+<section><title>EDITING</title>
+    <p>I and the <a href="http://www.fsf.org/">Free Software Foundation</a> insist that you respect the <a href="./fdl.txt">GNU Free Documentation Licence</a> if you want to modify and/or distribute the text of Smacky's Guides.
     </p>
-    <p>I and the <a href="http://www.daimonin.net/">Daimonin project</a> insist that you respect that project's <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/daimonin/daimonin/Artistic%20License">Artistic License</a> if you want to modify and/or distribute the graphics used in Smacky's Guide.
+    <p>I and the <a href="http://www.daimonin.net/">Daimonin project</a> insist that you respect that project's <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/daimonin/daimonin/Artistic%20License">Artistic License</a> if you want to modify and/or distribute the graphics used in Smacky's Guides.
     </p>
-    <p>I alone request that you respect the following three guidelines before editing Smacky's Guide:
+    <p>I alone request that you respect the following three guidelines before editing Smacky's Guides:
     </p>
-    <section id="minor"><title>Minor changes</title>
-        <p>If you have a suggestion or correction, please <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=index">post it to the forums</a> and if I like it I'll incorporate it (and <a href="./acknowledgements.dai">acknowledge</a> you).
-        </p>
-    </section>
-    <section id="major"><title>Major changes</title>
-        <p>If you think Smacky's Guides are inherently flawed rubbish and you could do better, please do. But start a new guide, don't usurp these ones.
-        </p>
-    </section>
-    <section id="other"><title>Other changes</title>
-        <p>If you do have an idea which fits somewhere in between those two, please <a href="http://www.daimonin.net/modules.php?op=modload&amp;name=Messages&amp;file=replypmsg&amp;send=1&amp;uname=smacky">private message</a> me and we'll see about collaboration or such.
-        </p>
-    </section>
+    <ul>
+        <li><strong>Minor changes</strong>: If you have a suggestion or correction, please <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=index">post it to the forums</a> and if I like it I'll incorporate it (and <a href="./acknowledgements.dai">acknowledge</a> you).
+        </li>
+        <li><strong>Major changes</strong>: If you think Smacky's Guides are inherently flawed rubbish and you could do better, please do. But start a new guide, don't usurp these ones.
+        </li>
+        <li><strong>Other changes</strong>: If you do have an idea which fits somewhere in between those two, please <a href="http://www.daimonin.net/modules.php?op=modload&amp;name=Messages&amp;file=replypmsg&amp;send=1&amp;uname=smacky">private message</a> me and we'll see about collaboration or such.
+        </li>
+    </ul>
+    <p>Smacky's Guides are written by hand in DAI. This is then transformed by software into a number of other formats, including the one which you are reading now. The DAI DTD, XSL transformation scripts, and the source for Smacky's Guides are available from the <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/daimonin/daimonin/">Daimonin CVS reposiitory</a>.
+    </p>
 </section>

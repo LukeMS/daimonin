@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>3-5: SKILLS, EXPERIENCE, LEVELLING, &amp; TRAINING</title>
+<section autotoc="yes"><title>SECTION 3-5: SKILLS, EXPERIENCE, LEVELLING, &amp; TRAINING</title>
     <section id="skills"><title>Skills</title>
         <p>If stats measure your basic characteristics, skills represent your ability to perform particular tasks: for example, wielding a type of weapon or disarming a trap.
         </p>
@@ -8,11 +8,85 @@
         </p>
         <p>Usually, how effectively you complete the task is dependent on your level in the skill. Your level in the skill is dependent on how much experience you have gained in that skill.
         </p>
+        <section id="skillgroups"><title>Skill groups</title>
+            <p><img alt="[Skill groups]" src="./skillgroups.png"></img>
+            </p>
+            <p>Skills are distributed amongst eight skill groups (only the first seven are shown on the main screen).
+            </p>
+            <p>The level next to each skill group on the main screen is the highest level attained of any skill within that group: for example if you are level 20 in wizardry spells and level 30 in magic devices the main screen will show level 30 in magic (Ma).
+            </p>
+            <p>Press F10 to open a dialog with your experience and levels in each individual skill detailed. SHIFT + UP/DOWN cycles through the skill groups and UP/DOWN cycles through the skills themselves.
+            </p>
+            <p>The skill groups and individual skills are as follows.
+            </p>
+            <section id="ag"><title>Agility (Ag)</title>
+                <p>Skills in this group require balance, coordination, or manual dexterity.
+                </p>
+                <ul>
+                    <li><strong>Throwing</strong>: Your proficiency at throwing things: the higher your level, the further and more accurate you can do so.
+                    </li>
+                    <li><strong>Remove traps</strong>: The likelihood that you will safely disarm a previously found trap: the higher your level, the greater your chance of success.
+                    </li>
+                    <li><strong>Find traps</strong>: The likelihood that you will discover a trap: the higher your level, the greater your chance of success.
+                    </li>
+                    <li><strong>Bow/Crossbow/Sling archery</strong>: To use the specified type of ranged weapon you must have the appropriate skill: the higher your level, the further and more accurately you can fire missiles from it, and the more damage they cause when they hit.
+                    </li>
+                </ul>
+            </section>
+            <section id="me"><title>Mental (Me)</title>
+                <p>Skills in this group require education and understanding.
+                </p>
+                <ul>
+                    <li><strong>Common literacy</strong>: Your ability to read and write in the common tongue: there is no level, you either are literate or you are not.
+                    </li>
+                </ul>
+            </section>
+            <section id="ma"><title>Magic (Ma)</title>
+                <p>Skills in this group require power of mind and arcane knowledge.
+                </p>
+                <ul>
+                    <li><strong>Wizardry spells</strong>: Your ability to cast spells: the higher your level, the more maximum mana you have, the more effective your spells are, but also the more mana they cost to cast.
+                    </li>
+                    <li><strong>Magic devices</strong>: Your ability to use magical items (for example, wands, horns, and rods): the higher your level, the more effective their use is.
+                    </li>
+                </ul>
+            </section>
+            <section id="pe"><title>Personality (Pe)</title>
+                <p>This skill group is not currently implemented.
+                </p>
+            </section>
+            <section id ="ph"><title>Physique (Ph)</title>
+                <p>Skills in this group require fitness and physical prowess.
+                </p>
+                <ul>
+                    <li><strong>Punching</strong>: How skilled you are in a fistfight: the higher your level, the more damage you do with a punch.
+                    </li>
+                    <li><strong>Cleave/Impact/Pierce/Slash weapons</strong>: To use the specified type of melee weapon you must have the appropriate skill: the higher your level, the more damage done with each hit.
+                    </li>
+                    <li><strong>Two-handed mastery</strong>: Your ability to use two-handed weapons (but only of the type in which you are skilled, as above): there is no level, you either can wield a two-handed weapon or you can not.
+                    </li>
+                    <li><strong>Polearm mastery</strong>: Your ability to use polearms (but only of the type in which you are skilled, as above): there is no level, you either can wield a polearm or you can not.
+                    </li>
+                </ul>
+            </section>
+            <section id="wi"><title>Wisdom (Wi)</title>
+                <p>Skills in this group require faith and piety.
+                </p>
+                <ul>
+                    <li><strong>Divine prayers</strong>: Your ability to recite prayers: the higher your level, the more maximum grace you have, the more effective your prayers are, but also the more grace they cost to recite.
+                    </li>
+                </ul>
+            </section>
+            <section id="misc"><title>Miscellaneous</title>
+                <p>This skill group is not currently implemented.
+                </p>
+            </section>
+        </section>
     </section>
     <section id="experience"><title>Experience &amp; levelling</title>
         <p>Experience is gained in two ways: either by practicing the skill or by receiving instruction from a NPC.
         </p>
-        <p>Please note how experience is represented graphically: the used and main skill displays (see below) show your level in the particular skill and experience numerically; they also contain ten dots and a bar underneath.
+        <p>Please note how experience is represented graphically: the <a href="#usedskill">used skill</a> and <a href="#mainskill">main skill</a> displays show your experience and level in the particular skill numerically; they also contain ten dots and a bar underneath.
         </p>
         <p>As you gain experience the bar gradually fills with colour; when the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your level increments and dots and bar are all reset and off you go again.
         </p>

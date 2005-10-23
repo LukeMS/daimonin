@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="yes"><title>SECTION 4-1: HIT &amp; RUN</title>
+    <section id="when"><title>When to use the tactic</title>
+        <p>This tactic is suited to fighting single mobs where both you and the mob are using melee attacks only.
+        </p>
+    </section>
+    <section id="where"><title>Where to use the tactic</title>
+        <p>In general it requires a good deal of space and you may eventually kill the mob some distance from where you first met. Depending on your manual dexterity on the keyboard you may be able to employ the tactic in quite small areas.
+        </p>
+    </section>
+    <section id="how"><title>How to use the tactic</title>
+        <p>The tactic takes advantage of weapon speeds. Depending on your melee weapon your weapon speed will be between 2.15 and 3.05 seconds. Mobs (currently at least) always have a weapon speed of 3.5 seconds. This means you can attack them before they can attack you.
+        </p>
+        <p>The idea is to attack, then <em>immediately</em> move away from the mob <em>regardless of whether or not your attack hit</em>. Put enough distance between you that it can't return the attack and has to spend at least the time of your weapon speed following you (this translates to at least two or three tiles distance).
+        </p>
+        <p>Then, when it catches up you can hit and run again. Repeat until it's dead.
+        </p>
+    </section>
+    <section id="advantages"><title>Advantages of the tactic</title>
+        <ul>
+            <li><strong>Armour, who needs armour?</strong>: Theoretically, it is possible to slay the mob without it even getting a chance to hit you.
+            </li>
+        </ul>
+    </section>
+    <section id="disadvantages"><title>Disadvantages of the tactic</title>
+        <ul>
+            <li><strong>Multiple mobs</strong>: Simply because there are more variables to keep track of, hit and run tends not to work well with multiple enemies, particularly if they're attacking from different directions. That said, if you can keep your wits about you there's no reason not to use the tactic.
+            </li>
+            <li><strong>Mobs with ranged or magical attacks</strong>: 
+            </li>
+            <li><strong>Mobs that run</strong>: Certain mobs try to flee when they're severely wounded. Obviously hit and run won't work if the mob is running in the opposite direction! There's no reason why you can't use the tactic up until that point, though.
+            </li>
+        </ul>
+    </section>
+</section>
