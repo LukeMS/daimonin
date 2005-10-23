@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>2: CREATING A NEW CHARACTER</title>
+<section autotoc="yes"><title>SECTION 2: CREATING A NEW CHARACTER</title>
     <p><img alt="[Character creation dialog]" src="./dialog_createcharacter.png"></img>
     </p>
     <p>Move between fields with UP/DOWN and change the value with LEFT/RIGHT.

@@ -25,10 +25,6 @@
                 <li><a href="./secn_3-4.dai">Section 3-4: Armour Protections</a>
                 </li>
                 <li><a href="./secn_3-5.dai">Section 3-5: Skills, Experience, Levelling, &amp; Training</a>
-                    <ul>
-                        <li><a href="./secn_3-5-1.dai">Section 3-5-1: Skill Groups</a>
-                        </li>
-                    </ul>
                 </li>
             </ul>
             <p>
@@ -52,7 +48,7 @@
         </li>
         <li><a href="./secn_5.dai">Section 5: Combat</a>
             <ul>
-                <li><a href="./secn_5-1.dai">Section 5-1: Switching Between Attack &amp; Hold Attack Mode</a>
+                <li><a href="./secn_5-1.dai">Section 5-1: Switching Between Hold Attack &amp; Attack Mode</a>
                 </li>
                 <li><a href="./secn_5-2.dai">Section 5-2: The Targetting System</a>
                 </li>
@@ -74,13 +70,11 @@
                 </li>
                 <li><a href="./secn_6-2.dai">Section 6-2: Potions &amp; Balms &amp; Scrolls &amp; Dust</a>
                 </li>
-                <li><a href="./secn_6-3.dai">Section 6-3: Wands</a>
+                <li><a href="./secn_6-3.dai">Section 6-3: Wands &amp; Horns &amp; Rods</a>
                 </li>
-                <li><a href="./secn_6-4.dai">Section 6-4: Horns &amp; Rods</a>
+                <li><a href="./secn_6-4.dai">Section 6-4: Amulets &amp; Rings</a>
                 </li>
-                <li><a href="./secn_6-5.dai">Section 6-5: Rings &amp; Amulets</a>
-                </li>
-                <li><a href="./secn_6-6.dai">Section 6-6: Other Magic Items</a>
+                <li><a href="./secn_6-5.dai">Section 6-5: Other Magic Items</a>
                 </li>
             </ul>
             <p>

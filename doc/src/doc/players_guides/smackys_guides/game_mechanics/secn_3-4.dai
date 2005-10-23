@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>3-4: ARMOUR PROTECTIONS</title>
+<section autotoc="yes"><title>SECTION 3-4: ARMOUR PROTECTIONS</title>
     <p><img alt="[Armour protection table]" src="./armourprotections.png"></img>
     </p>
     <p>Armour protections are the proportion of damage you can absorb from any particular attack type. They are determined by the items you have equipped and any magic currently in effect.

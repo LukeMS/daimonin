@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>10-3: LOGGING OUT (&amp; SAVING)</title>
+<section autotoc="yes"><title>SECTION 10-3: LOGGING OUT (&amp; SAVING)</title>
     <p>Logging out (or just logging as most people say) is not the same as saving. But when you logout (log) the game is automatically saved. You may, however, choose to save without logging out.
     </p>
     <p><strong>NOTE</strong>: The game is automatically saved if your logging out is unscheduled (ie, your connection is lost or your computer dies or something). Except in the most extreme circumstances it is virtually impossible to 'lose' your character.

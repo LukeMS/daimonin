@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>8-2: TRANSACTIONS WITH NPCS</title>
+<section autotoc="yes"><title>SECTION 8-2: TRANSACTIONS WITH NPCS</title>
     <p>First of all, don't be fooled: you don't trade with NPCs as such. You buy from/sell to a shop. The shopkeeper is in the shop, but, as far as trading goes, is just for the look of it.
     </p>
     <p>A shop is a building with a section behind bars. The only way to get from one side of the bars to the other is through a portal. Behind those bars the floor is strewn, literally strewn, with items for sale. Each item has a little emblem (<img alt="Unpaid" src="./unpaid.png"></img>) which shows that you have not yet paid for it.
