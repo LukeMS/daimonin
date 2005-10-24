@@ -15,6 +15,6 @@
         <li><strong>Other changes</strong>: If you do have an idea which fits somewhere in between those two, please <a href="http://www.daimonin.net/modules.php?op=modload&amp;name=Messages&amp;file=replypmsg&amp;send=1&amp;uname=smacky">private message</a> me and we'll see about collaboration or such.
         </li>
     </ul>
-    <p>Smacky's Guides are written by hand in DAI. This is then transformed by software into a number of other formats, including the one which you are reading now. The DAI DTD, XSL transformation scripts, and the source for Smacky's Guides are available from the <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/daimonin/daimonin/">Daimonin CVS reposiitory</a>.
+    <p>Smacky's Guides are written by hand in DAI. This is then transformed by software into a number of other formats, including the one which you are reading now. The DAI DTD, XSL transformation scripts, and the source for Smacky's Guides are available from the <a href="http://cvs.sourceforge.net/viewcvs.py/daimonin/">Daimonin CVS repository</a>.
     </p>
 </section>
