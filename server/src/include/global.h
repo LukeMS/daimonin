@@ -473,7 +473,7 @@ EXTERN Socket_Info              socket_info;
 EXTERN uint32                   global_group_tag; /* every group gets a unique group tag identifier */
 EXTERN uint32                   global_map_tag; /* our global map_tag value for the server (map.c)*/
 EXTERN New_Face                *new_faces;
-EXTERN archetype               *coins_arch[NUM_COINS];
+EXTERN archetype               *coins_arch[NUM_COINS+1];
 
 
 /* arch.c - sysinfo for lowlevel */

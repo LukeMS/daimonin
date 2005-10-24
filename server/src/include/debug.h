@@ -37,7 +37,7 @@
 
 #ifndef PRODUCTION_SYSTEM
 /* Active list debugging: object.c (activelist_insert_inline()) */
-#define DEBUG_ACTIVELIST_LOG /* log message when an object is added or removed from an active list */
+/*#define DEBUG_ACTIVELIST_LOG *//* log message when an object is added or removed from an active list */
 
 /* Aggro & EXP sharing debugging: aggro.c */
 #define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */

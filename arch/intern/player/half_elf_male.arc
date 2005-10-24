@@ -119,7 +119,7 @@ is_animated 1
 anim_speed 3
 type 1
 level 1
-ac 0
+ac 6
 wc 0
 hp -1
 maxhp 8

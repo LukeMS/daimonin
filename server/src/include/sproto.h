@@ -265,6 +265,7 @@ int                         command_dump(object *op, char *params);
 int                         command_patch(object *op, char *params);
 int                         command_remove(object *op, char *params);
 int                         command_free(object *op, char *params);
+int							command_setskill(object *op, char *params);
 int                         command_addexp(object *op, char *params);
 int                         command_speed(object *op, char *params);
 int                         command_stats(object *op, char *params);

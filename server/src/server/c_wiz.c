@@ -759,16 +759,24 @@ int command_free(object *op, char *params)
     return 1;
 }
 
-int command_addexp(object *op, char *params)
+/* same like addexp, but we set here the skill level explicit
+*/
+int command_setskill(object *op, char *params)
 {
     char    buf[MAX_BUF];
-    int     exp, snr;
+    int     level, snr;
     object *exp_skill, *exp_ob;
     player *pl;
 
-    if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
+    if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &level) != 3)
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Usage: addexp [who] [skill nr] [how much].");
+		int i;
+		char buf[HUGE_BUF];
+
+        sprintf(buf, "Usage: setskill [who] [skill nr] [level]\nSkills/Nr: ");
+		for(i=0;i<NROFSKILLS;i++)
+			sprintf(buf,"%s,%s(%d)", buf,  skills[i].name,i); 
+		new_draw_info(NDI_UNIQUE, 0, op, buf);
         return 1;
     }
 
@@ -801,10 +809,6 @@ int command_addexp(object *op, char *params)
         return 0; /* TODO: groups comes later  - now we skip all times */
     }
 
-    /* if we are full in this skill, then nothing is to do */
-    if (exp_skill->level >= MAXLEVEL)
-        return 0;
-
     pl->update_skills = 1; /* we will sure change skill exp, mark for update */
     exp_ob = exp_skill->exp_obj;
 
@@ -814,15 +818,85 @@ int command_addexp(object *op, char *params)
         return 0;
     }
 
-    exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
+	exp_skill->level = level;
+	exp_skill->stats.exp =  new_levels[level];
 
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
+	adjust_exp(pl->ob, exp_skill, 1); /* we add one more so we get a clean call here */
     player_lvl_adj(pl->ob, exp_skill);
     player_lvl_adj(pl->ob, exp_ob);
     player_lvl_adj(pl->ob, NULL);
 
     return 1;
+}
+
+int command_addexp(object *op, char *params)
+{
+	char    buf[MAX_BUF];
+	int     exp, snr;
+	object *exp_skill, *exp_ob;
+	player *pl;
+
+	if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
+	{
+		int i;
+		char buf[HUGE_BUF];
+
+		sprintf(buf, "Usage: addexp [who] [skill nr] [exp]\nSkills/Nr: ");
+		for(i=0;i<NROFSKILLS;i++)
+			sprintf(buf,"%s%s(%d), ", buf,  skills[i].name,i); 
+		new_draw_info(NDI_UNIQUE, 0, op, buf);
+		return 1;
+	}
+
+	pl = find_player(buf);
+
+	if (pl == NULL)
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+		return 1;
+	}
+
+	/* Bug 0000100: /addexp Cher 101 100000 crashes server */
+	/* Safety check */
+	if (snr < 0 || snr >= NROFSKILLS)
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
+		return 1;
+	}
+
+	exp_skill = pl->skill_ptr[snr];
+
+	if (!exp_skill) /* safety check */
+	{
+		/* our player don't have this skill?
+		* This can happens when group exp is devided.
+		* We must get a useful sub or we skip the exp.
+		*/
+		LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
+			query_name(pl->ob), snr, exp);
+		return 0; /* TODO: groups comes later  - now we skip all times */
+	}
+
+	pl->update_skills = 1; /* we will sure change skill exp, mark for update */
+	exp_ob = exp_skill->exp_obj;
+
+	if (!exp_ob)
+	{
+		LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(exp_skill));
+		return 0;
+	}
+
+	exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
+
+	/* adjust_exp has adjust the skill and all exp_obj and player exp */
+	/* now lets check for level up in all categories */
+	player_lvl_adj(pl->ob, exp_skill);
+	player_lvl_adj(pl->ob, exp_ob);
+	player_lvl_adj(pl->ob, NULL);
+
+	return 1;
 }
 
 int command_speed(object *op, char *params)
