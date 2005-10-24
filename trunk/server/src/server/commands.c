@@ -164,7 +164,8 @@ CommArray_s WizCommands[]           =
     {"/resetmap", command_reset,0.0},
     {"/plugout",command_unloadplugin,0.0},
     {"/create", command_create,0.0},
-    {"/addexp", command_addexp,0.0},
+	{"/addexp", command_addexp,0.0},
+	{"/setskill", command_setskill,0.0},
     {"/maps", command_maps,   0.0},
     {"/dump", command_dump,0.0}, /* dump info of object nr. x */
 

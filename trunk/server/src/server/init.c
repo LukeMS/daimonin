@@ -108,12 +108,6 @@ static void init_strings()
 
     shstr.Eldath = add_string("Eldath"); /* old and incorrect god */
     shstr.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
-
-    coins[0] = add_string("mitcoin");
-    coins[1] = add_string("goldcoin");
-    coins[2] = add_string("silvercoin");
-    coins[3] = add_string("coppercoin");
-    coins[4] = NULL;
 }
 
 /*

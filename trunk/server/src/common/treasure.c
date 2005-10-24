@@ -35,10 +35,6 @@
 
 #include <global.h>
 
-/* This should now contain shared string pointers only */
-const char *coins[NUM_COINS + 1];
- // = { "mitcoin", "goldcoin", "silvercoin", "coppercoin", NULL };
-
 /* Give 1 re-roll attempt per artifact */
 #define ARTIFACT_TRIES 2
 #define CHANCE_FIX (-1)
@@ -186,18 +182,19 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
  * we collect the archt for it out of the arch name for faster access.
  */
 static void create_money_table(void)
-{
-    int i;
+{	
+	coins_arch[0] = find_archetype("mitcoin");
+	coins_arch[1] = find_archetype("goldcoin");
+	coins_arch[2] = find_archetype("silvercoin");
+	coins_arch[3] = find_archetype("coppercoin");
+	coins_arch[4] = NULL;
 
-    for (i = 0; coins[i]; i++)
-    {
-        coins_arch[i] = find_archetype(coins[i]);
-        if (!coins_arch[i])
-        {
-            LOG(llevError, "create_money_table(): Can't find %s.\n", coins[i] ? coins[i] : "NULL");
-            return;
-        }
-    }
+	if (!coins_arch[0] || !coins_arch[1] || !coins_arch[2] || !coins_arch[3])
+	{
+		LOG(llevError, "create_money_table(): Can't find money.\n (mit: %x - gold: %x - silver: %x - copper: %x)", 
+			coins_arch[0],coins_arch[1],coins_arch[2],coins_arch[3]);
+		return;
+	}
 }
 
 

@@ -184,7 +184,7 @@ void esrv_draw_look(object *pl)
             continue;
 
         /* skip map mask, sys_objects and invisible objects when we can't see them */
-        if (tmp->layer == 2
+        if (tmp->layer <= 2
          || IS_SYS_INVISIBLE(tmp)
          || (!QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) && QUERY_FLAG(tmp, FLAG_IS_INVISIBLE)))
         {
@@ -319,7 +319,7 @@ void esrv_draw_look(object *pl)
         }
     } /* for loop */
 
-    if (got_one)
+//    if (got_one)
         Send_With_Handling(&CONTR(pl)->socket, &sl);
 
     free(sl.buf);

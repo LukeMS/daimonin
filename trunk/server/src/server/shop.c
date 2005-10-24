@@ -140,16 +140,13 @@ sint64 query_cost(object *tmp, object *who, int flag)
 /* Find the coin type that is worth more the 'c'.  Starts at the
  * cointype placement.
  */
-
 static archetype * find_next_coin(sint64 c, int *cointype)
 {
     archetype  *coin;
 
     do
     {
-        if (coins[*cointype] == NULL)
-            return NULL;
-        coin = find_archetype(coins[*cointype]);
+        coin = coins_arch[*cointype];
         if (coin == NULL)
             return NULL;
         *cointype += 1;
@@ -159,7 +156,7 @@ static archetype * find_next_coin(sint64 c, int *cointype)
     return coin;
 }
 
-/* This returns a string of how much somethign is worth based on
+/* This returns a string of how much something is worth based on
  * an integer being passed.
  */
 char * cost_string_from_value(sint64 cost)
@@ -317,14 +314,13 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
         {
             for (i = 0; i < NUM_COINS; i++)
             {
-                if (coins[NUM_COINS - 1 - i] == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
+                if (coins_arch[NUM_COINS - 1 - i]->name  == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
                 {
-                    /* This should not happen, but if it does, just     *
-                     * merge the two.                       */
+                    /* This should not happen, but if it does, just merge the two */
                     if (coin_objs[i] != NULL)
                     {
                         LOG(llevBug, "BUG: %s has two money entries of (%s)\n", query_name(pouch),
-                            coins[NUM_COINS - 1 - i]);
+                            coins_arch[NUM_COINS - 1 - i]->name);
                         remove_ob(tmp);
                         coin_objs[i]->nrof += tmp->nrof;
                         esrv_del_item(CONTR(pouch), tmp->count, tmp->env);
@@ -352,9 +348,9 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
     {
         if (coin_objs[i] == NULL)
         {
-            at = find_archetype(coins[NUM_COINS - 1 - i]);
+            at = coins_arch[NUM_COINS - 1 - i];
             if (at == NULL)
-                LOG(llevBug, "BUG: Could not find %s archetype", coins[NUM_COINS - 1 - i]);
+                LOG(llevBug, "BUG: Could not find %s archetype", coins_arch[NUM_COINS - 1 - i]->name);
             coin_objs[i] = get_object();
             copy_object(&at->clone, coin_objs[i]);
             coin_objs[i]->nrof = 0;
@@ -531,12 +527,12 @@ void sell_item(object *op, object *pl, sint64 value)
         /* return; */
     }
     /* i can't say i understand this... MT-2004 */
-    for (count = 0; coins[count] != NULL; count++)
+    for (count = 0; coins_arch[count] != NULL; count++)
     {
         /* this can be speed up - we have now a prebuild table for this MT-2004 */
-        at = find_archetype(coins[count]);
+        at = coins_arch[count];
         if (at == NULL)
-            LOG(llevBug, "BUG: Could not find %s archetype", coins[count]);
+            LOG(llevBug, "BUG: Could not find %s archetype", coins_arch[count]->name);
         else if ((i / at->clone.value) > 0)
         {
             for (pouch = pl->inv ; pouch ; pouch = pouch->below)

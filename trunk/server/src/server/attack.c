@@ -66,6 +66,7 @@ int attack_ob(object *op, object *hitter)
  */
 static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_wc)
 {
+int xxx;
     int     simple_attack, roll, dam = 0;
     tag_t   op_tag, hitter_tag;
 
@@ -86,10 +87,15 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
 
     roll = random_roll(0, 20, hitter, PREFER_HIGH);
 
+xxx= roll;
     /* Adjust roll for various situations. */
     if (!simple_attack)
         roll += adj_attackroll(hitter, op);
 
+	if (hitter->type == PLAYER)
+		new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d!", xxx, roll);
+	if (op->type == PLAYER)
+		new_draw_info_format(NDI_ORANGE, 0, op, "Hitter roll: %d - %d!", xxx, roll);
     if (hitter->type == PLAYER)
         CONTR(hitter)->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
 
@@ -198,6 +204,9 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     {
         if (hitter->type != ARROW)
         {
+			if (op->type == PLAYER)
+				new_draw_info_format(NDI_ORANGE, 0, op, "%s miss you!", hitter->name);
+
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
             else
@@ -2244,17 +2253,8 @@ static int adj_attackroll(object *hitter, object *target)
     if (IS_INVISIBLE(target, attacker) || QUERY_FLAG(attacker, FLAG_BLIND))
         adjust -= 12;
 
-    if (QUERY_FLAG(attacker, FLAG_SCARED))
-        adjust -= 3;
-
-    if (QUERY_FLAG(target, FLAG_UNAGGRESSIVE))
-        adjust += 1;
-
     if (QUERY_FLAG(target, FLAG_SCARED))
         adjust += 1;
-
-    if (QUERY_FLAG(attacker, FLAG_CONFUSED))
-        adjust -= 3;
 
     /* if we attack at a different 'altitude' its harder */
     if (QUERY_FLAG(attacker, FLAG_FLYING) != QUERY_FLAG(target, FLAG_FLYING))
