@@ -3497,11 +3497,11 @@ arch wall_stone1_1
 x 17
 y 11
 end
-arch wmask_wanted.151
-x 17
-y 11
-end
 arch floor_wood2_l2
+x 17
+y 12
+end
+arch wmask_wanted
 x 17
 y 12
 end
@@ -4059,11 +4059,11 @@ arch wall_stone1_1
 x 20
 y 11
 end
-arch wmask_wanted.151
-x 20
-y 11
-end
 arch floor_wood2_l2
+x 20
+y 12
+end
+arch wmask_wanted
 x 20
 y 12
 end

@@ -3805,8 +3805,8 @@
 /structures/ruin/wmask_ruin1a.131
 /structures/ruin/wmask_ruin1b.111
 /structures/ruin/wmask_ruin1b.131
-/indoor/masks_wall/jail/wmask_wanted.u.131
-/indoor/masks_wall/jail/wmask_wanted.u.151
+/items/readable/wmask_wanted.111
+/items/readable/wmask_wanted.171
 /mobs/human/town/woman_old.131
 /mobs/human/town/woman_old.132
 /mobs/human/town/woman_old.141

@@ -7863,19 +7863,6 @@ direction 1
 no_pick 1
 layer 7
 end
-Object wmask_wanted.151
-name paper
-type 77
-editor_folder indoor/masks_wall
-face wmask_wanted.u.151
-animation wmask_wanted.151
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-no_pick 1
-layer 7
-end
 Object pot_wall.131
 name pot
 type 77
@@ -13822,6 +13809,20 @@ identified 1
 material 1
 value 15
 weight 1250
+end
+Object wmask_wanted
+name announcement (apply to read)
+type 98
+editor_folder items/readable
+face wmask_wanted.111
+animation wmask_wanted
+is_animated 0
+anim_speed 0
+identified 1
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
 end
 Object balm_generic
 name balm
@@ -31373,9 +31374,9 @@ x 16
 y 16
 type 22
 layer 1
-slaying /tutorial
+slaying /relic/castle/castle_030a
 face info.101
-hp 1
+hp 18
 sp 1
 value 300
 weight 7200

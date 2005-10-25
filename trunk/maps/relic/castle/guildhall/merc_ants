@@ -132,7 +132,6 @@ type 83
 Wis 3
 unaggressive 0
 random_move 0
-ac 8
 dam 40
 arch quest_trigger
 name merc guild-1
@@ -196,7 +195,6 @@ arch cube_gel
 name small gelantinous cube
 type 83
 Wis 2
-ac 6
 dam 30
 exp 75
 end
@@ -422,7 +420,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75
@@ -587,7 +584,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75
@@ -706,7 +702,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75
@@ -819,7 +814,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75
@@ -1271,7 +1265,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75
@@ -1333,7 +1326,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75
@@ -1362,7 +1354,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-ac 6
 dam 30
 maxhp 40
 exp 75

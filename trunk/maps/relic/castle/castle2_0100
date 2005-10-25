@@ -490,10 +490,6 @@ arch wall_fstone_round.106
 x 7
 y 6
 end
-arch wmask_wanted.151
-x 7
-y 6
-end
 arch floor_grey3
 x 7
 y 7
@@ -744,10 +740,6 @@ x 15
 y 6
 end
 arch wall_fstone_round.104
-x 15
-y 6
-end
-arch wmask_wanted.151
 x 15
 y 6
 end
