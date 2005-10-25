@@ -10117,17 +10117,17 @@ wmask_ruin1b.131
 wmask_ruin1b.131
 wmask_ruin1b.111
 mina
-anim wmask_wanted.151
+anim wmask_wanted
 facings 9
 dummy.111
-wmask_wanted.u.151
-wmask_wanted.u.151
-wmask_wanted.u.151
-wmask_wanted.u.131
-wmask_wanted.u.131
-wmask_wanted.u.131
-wmask_wanted.u.131
-wmask_wanted.u.151
+wmask_wanted.111
+wmask_wanted.111
+wmask_wanted.111
+wmask_wanted.171
+wmask_wanted.171
+wmask_wanted.171
+wmask_wanted.171
+wmask_wanted.111
 mina
 anim woman_old
 facings 25

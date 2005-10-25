@@ -733,10 +733,6 @@ arch fwall_fstone2
 x 5
 y 3
 end
-arch wmask_wanted.151
-x 5
-y 3
-end
 arch floor_grey3
 x 5
 y 4
@@ -2388,6 +2384,14 @@ arch floor_grey3
 x 16
 y 5
 end
+arch wmask_wanted
+msg
+Hold the door closed!
+Castle Command
+endmsg
+x 16
+y 5
+end
 arch floor_grey3
 x 16
 y 6
@@ -2517,10 +2521,6 @@ x 17
 y 3
 end
 arch fwall_fstone2
-x 17
-y 3
-end
-arch wmask_wanted.151
 x 17
 y 3
 end

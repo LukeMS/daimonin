@@ -1073,6 +1073,13 @@ arch floor_ostone1
 x 9
 y 10
 end
+arch combat_boots
+identified 1
+thac0 1
+thacm 1
+x 9
+y 10
+end
 arch floor_ostone1
 x 9
 y 11
@@ -1261,6 +1268,13 @@ x 11
 y 9
 end
 arch floor_ostone1
+x 11
+y 10
+end
+arch fighting_boots
+identified 1
+thac0 -1
+thacm -1
 x 11
 y 10
 end

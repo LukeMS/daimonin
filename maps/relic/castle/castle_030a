@@ -178,15 +178,11 @@ arch wall_flagstone1b.111
 x 1
 y 8
 end
-arch wmask_wanted.151
-x 1
-y 8
-end
 arch grassd_2
 x 1
 y 9
 end
-arch magic_mouth
+arch wmask_wanted
 msg
 Attention!
 We have imprisoned a local ogre
