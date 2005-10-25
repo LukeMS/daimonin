@@ -31,8 +31,10 @@ sp -1
 maxsp 25
 hp -1
 maxhp 85
-ac 10
+ac 12
 wc 5
+thac0 18
+thacm 1
 resist_impact 10
 resist_cleave 10
 resist_pierce 10

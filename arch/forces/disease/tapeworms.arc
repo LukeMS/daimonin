@@ -6,6 +6,8 @@ face force.101
 attack_internal 100
 dam 1
 wc 1
+thac0 18
+thacm 1
 magic 1
 maxhp 1
 maxgrace -1

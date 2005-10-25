@@ -6,6 +6,8 @@ sys_object 1
 attack_internal 100
 dam 1
 wc 1
+thac0 18
+thacm 1
 magic 1
 Dex -3
 identified 1

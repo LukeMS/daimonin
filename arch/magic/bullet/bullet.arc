@@ -30,5 +30,7 @@ fly_on 1
 speed 1
 wc 200
 dam 6
+thac0 18
+thacm 1
 flying 1
 end

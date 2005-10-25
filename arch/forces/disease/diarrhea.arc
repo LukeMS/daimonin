@@ -5,6 +5,8 @@ sys_object 1
 face force.101
 other_arch disgusting_puddle
 wc 0
+thac0 18
+thacm 1
 magic 0
 maxhp 1
 identified 1

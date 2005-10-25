@@ -19,6 +19,8 @@ anim_speed 4
 speed 1.0
 wc 200
 dam 5
+thac0 18
+thacm 1
 level 1
 attack_fire 100
 terrain_flag 32767

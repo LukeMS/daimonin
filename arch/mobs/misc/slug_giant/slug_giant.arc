@@ -28,9 +28,11 @@ sp -1
 maxsp 20
 hp -1
 maxhp 56
-ac 10
+ac 11
 wc 2
 dam 58
+thac0 18
+thacm 1
 weapon_speed 3.5
 attack_impact 90
 attack_acid 10

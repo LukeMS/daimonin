@@ -19,6 +19,8 @@ attack_cold 100
 speed 1.0
 wc 200
 dam 5
+thac0 18
+thacm 1
 flying 1
 fly_on 1
 walk_on 1

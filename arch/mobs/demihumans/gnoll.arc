@@ -33,6 +33,8 @@ hp -1
 maxhp 58
 ac 11
 wc 3
+thac0 18
+thacm 1
 dam 58
 weapon_speed 3.5
 attack_slash 100

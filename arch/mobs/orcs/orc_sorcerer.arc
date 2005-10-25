@@ -32,8 +32,10 @@ sp -1
 maxsp 20
 hp -1
 maxhp 61
-ac 9
+ac 11
 wc 2
+thac0 18
+thacm 1
 dam 53
 weapon_speed 3.5
 attack_pierce 100

@@ -33,6 +33,8 @@ hp -1
 maxhp 85
 ac 11
 wc 7
+thac0 18
+thacm 1
 resist_impact 20
 resist_cleave 20
 resist_pierce 20

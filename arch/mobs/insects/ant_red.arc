@@ -29,8 +29,10 @@ sp -1
 maxsp 20
 hp -1
 maxhp 60
-ac 9
+ac 11
 wc 0
+thac0 18
+thacm 1
 dam 50
 weapon_speed 3.5
 attack_cleave 100

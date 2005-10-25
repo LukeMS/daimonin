@@ -380,6 +380,8 @@ object                     *get_return_waypoint(object *op);
 object                     *find_waypoint(object *op, const char *name);
 int                         move_monster(object *op, int mode);
 void                        object_accept_path(object *op);
+void						dump_abilities(void);
+void						print_monsters(void);
 /* monster_behaviourset.c */
 struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object *op);
 void                        init_arch_default_behaviours();
