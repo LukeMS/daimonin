@@ -209,6 +209,8 @@ struct attribute_decl       GameObject_attributes[]         =
     {"intelligence",     FIELDTYPE_SINT8, offsetof(object, stats.Int), FIELDFLAG_PLAYER_FIX},
     {"power",     FIELDTYPE_SINT8, offsetof(object, stats.Pow), FIELDFLAG_PLAYER_FIX},
     {"luck",    FIELDTYPE_SINT8, offsetof(object, stats.luck), FIELDFLAG_PLAYER_READONLY},
+	{"thac0",     FIELDTYPE_SINT8, offsetof(object, stats.thac0), FIELDFLAG_PLAYER_READONLY},
+	{"thacm",     FIELDTYPE_SINT8, offsetof(object, stats.thacm), FIELDFLAG_PLAYER_READONLY},
     {NULL}
 };
 
@@ -231,7 +233,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_reflect_missile", "f_reflect_spell",             /* 40 */
     "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
     "?f_feared", "f_unique", "f_no_drop", /* 50 */
-    NULL, "f_has_ready_spell", "f_surrendered", "?f_rooted", "?f_slowed",
+    "f_reg_f", "f_has_ready_spell", "f_surrendered", "?f_rooted", "?f_slowed",
     "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
     "f_xrays", "?f_no_apply", "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
     "f_only_attack", "?f_wiz", /* 70 */

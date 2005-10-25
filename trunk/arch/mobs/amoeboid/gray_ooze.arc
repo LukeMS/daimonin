@@ -26,8 +26,10 @@ sp -1
 maxsp 19
 hp -1
 maxhp 44
-ac 9
+ac 11
 wc 2
+thac0 18
+thacm 1
 resist_impact 10
 resist_pierce 12
 resist_paralyze 15

@@ -255,3 +255,34 @@ int transform_name_string(char *name)
 
     return tmp - name; /* i love C */
 }
+
+/*
+ * Writes <num> ones and zeros to the given string based on the
+ * <bits> variable.
+ * NOT USED ATM - MT/10.2005
+ */
+/*
+void bitstostring(long bits, int num, char *str)
+{
+    int i, j = 0;
+
+    if (num > 32)
+        num = 32;
+
+    for (i = 0; i < num; i++)
+    {
+        if (i && (i % 3) == 0)
+        {
+            str[i + j] = ' ';
+            j++;
+        }
+        if (bits & 1)
+            str[i + j] = '1';
+        else
+            str[i + j] = '0';
+        bits >>= 1;
+    }
+    str[i + j] = '\0';
+    return;
+}
+*/

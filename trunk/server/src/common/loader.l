@@ -287,6 +287,9 @@ WS	[ \t]*{NL}?
 ^wc_add{S}		op->stats.wc += IVAL;
 ^ac{S}			op->stats.ac = IVAL;
 ^ac_add{S}		op->stats.ac += IVAL;
+^thac0{S}		op->stats.thac0 = IVAL;
+^thacm{S}		op->stats.thacm = IVAL;
+
 ^x{S}		{op->x = IVAL;
 #ifdef POSITION_DEBUG
 op->ox= op->x;
@@ -419,6 +422,7 @@ op->oy= op->y;
 ^is_good{S}		   SET_OR_CLEAR_FLAG(op, FLAG_IS_GOOD, IVAL);
 ^is_neutral{S}	   SET_OR_CLEAR_FLAG(op, FLAG_IS_NEUTRAL, IVAL);
 ^lifesave{S}	    SET_OR_CLEAR_FLAG(op, FLAG_LIFESAVE, IVAL);
+^reg_f{S}			SET_OR_CLEAR_FLAG(op, FLAG_FIGHT_HPREG, IVAL);
 ^sleep{S}	    {
 			SET_OR_CLEAR_FLAG(op, FLAG_SLEEP, IVAL);
 			/*(LOG(llevDebug," Warning: Object %s has sleep set in arch.\n",op->name);*/
@@ -880,7 +884,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
 "pass_thru", "can_pass_thru", "feared", "unique", "no_drop",	/* 50 */
- NULL, "has_ready_spell", "surrendered", "rooted",
+ "reg_f", "has_ready_spell", "surrendered", "rooted",
  "slowed", "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL, "has_ready_bow",		/* 60 */
 "xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",
@@ -1029,6 +1033,10 @@ char *get_ob_diff(object *op,object *op2) {
     save_long(buf, "wc", op->stats.wc);
   if(op->stats.ac!=op2->stats.ac)
     save_long(buf, "ac", op->stats.ac);
+  if(op->stats.thac0!=op2->stats.thac0)
+    save_long(buf, "thac0", op->stats.thac0);
+  if(op->stats.thacm!=op2->stats.thacm)
+    save_long(buf, "thacm", op->stats.thacm);
   if(op->x!=op2->x)
     save_long(buf, "x", op->x);
   if(op->y!=op2->y)

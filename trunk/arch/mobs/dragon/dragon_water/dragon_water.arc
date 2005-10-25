@@ -29,6 +29,8 @@ hp -1
 maxhp 62
 ac 13
 wc 4
+thac0 18
+thacm 1
 resist_fear 50
 dam 75
 weapon_speed 3.5

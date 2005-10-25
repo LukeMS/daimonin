@@ -63,10 +63,6 @@ extern godlink         *get_rand_god(void);
 extern object          *pntr_to_god_obj(godlink *godlnk);
 extern void             free_all_god(void);
 extern void             dump_gods(void);
-/* info.c */
-extern void             dump_abilities(void);
-extern void             print_monsters(void);
-extern void             bitstostring(long bits, int num, char *str);
 /* image.c */
 extern int              ReadBmapNames(void);
 extern int              FindFace(const char *name, int error);
@@ -362,3 +358,4 @@ extern char            *cleanup_string(char *ustring);
 extern char            *get_word_from_string(char *str, int *pos);
 extern int              buf_overflow(const char *buf1, const char *buf2, int bufsize);
 extern int              transform_name_string(char *name);
+extern void             bitstostring(long bits, int num, char *str);

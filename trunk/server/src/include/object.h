@@ -119,7 +119,7 @@ typedef struct obj
     sint32          weight;             /* Attributes of the object - the weight */
     uint32          weight_limit;       /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
     sint32          carrying;           /* How much weight this object contains (of objects in inv) */
-    sint64            value;              /* How much money it is worth (or contains) */
+    sint64          value;              /* How much money it is worth (or contains) */
     uint32          nrof;               /* How many of the objects */
     uint32          damage_round_tag;   /* needed for the damage info for client in map2 */
     uint32          update_tag;         /* this is used from map2 update! */
@@ -127,7 +127,7 @@ typedef struct obj
 
     tag_t           enemy_count;            /* What count the enemy has */
     struct obj     *enemy;          /* Monster/player to follow even if not closest */
-    /* TODO: get rid of (only used by containers now =) */
+    /* (only used by containers now =) */
     tag_t           attacked_by_count;  /* the tag of attacker, so we can be sure */
     struct obj     *attacked_by;    /* This object start to attack us! only player & monster */
     tag_t           owner_count;         /* What count the owner had (in case owner has been freed) */

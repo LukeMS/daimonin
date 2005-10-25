@@ -921,6 +921,16 @@ char * describe_item(object *op)
                           sprintf(buf, "(dam%+d)", op->stats.dam);
                       strcat(retbuf, buf);
                   }
+                  if (op->stats.thac0)
+                  {
+                      sprintf(buf, "(hit%+d)", op->stats.thac0);
+                      strcat(retbuf, buf);
+                  }
+                  if (op->stats.thacm)
+                  {
+                      sprintf(buf, "(miss%+d)", op->stats.thacm);
+                      strcat(retbuf, buf);
+                  }
                   if (op->stats.ac)
                   {
                       sprintf(buf, "(ac%+d)", op->stats.ac);
@@ -953,6 +963,16 @@ char * describe_item(object *op)
                       sprintf(buf, "(%s metabolism)", attack_name[op->last_eat]);
                       strcat(retbuf, buf);
                   }
+                  if (op->stats.thac0)
+                  {
+                      sprintf(buf, "(hit%+d)", op->stats.thac0);
+                      strcat(retbuf, buf);
+                  }
+                  if (op->stats.thacm)
+                  {
+                      sprintf(buf, "(miss%+d)", op->stats.thacm);
+                      strcat(retbuf, buf);
+                  }
                   if (!QUERY_FLAG(op, FLAG_CURSED))
                   {
                       if (op->stats.hp)
@@ -973,6 +993,16 @@ char * describe_item(object *op)
             case POTION:
               if (id_true)
               {
+                  if (op->stats.thac0)
+                  {
+                      sprintf(buf, "(hit%+d)", op->stats.thac0);
+                      strcat(retbuf, buf);
+                  }
+                  if (op->stats.thacm)
+                  {
+                      sprintf(buf, "(miss%+d)", op->stats.thacm);
+                      strcat(retbuf, buf);
+                  }
                   if (op->last_sp)
                   {
                       sprintf(buf, "(range%+d)", op->last_sp);

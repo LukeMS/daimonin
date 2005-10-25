@@ -923,7 +923,7 @@ void fix_player(object *op)
     int                 snare_penalty = 0,slow_penalty = 0, ring_count = 0, skill_level_drain=0, skill_level_max = 1;
     int                 tmp_item, old_glow, max_boni_hp = 0, max_boni_sp = 0, max_boni_grace = 0;
     int                 i, j, inv_flag, inv_see_flag, light, weapon_weight, best_wc, best_ac, wc, ac, base_reg;
-    int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
+    int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS], thac0=0, thacm=0;
     int                 potion_resist_boni[NROFATTACKS], potion_resist_mali[NROFATTACKS], potion_attack[NROFATTACKS];
     object             *tmp, *tmp_ptr, *skill_weapon = NULL;
     player             *pl;
@@ -993,6 +993,9 @@ void fix_player(object *op)
 
     old_glow = op->glow_radius;
     light = op->arch->clone.glow_radius;
+
+    op->stats.thac0 = op->arch->clone.stats.thac0;
+    op->stats.thacm = op->arch->clone.stats.thacm;
 
     op->stats.luck = op->arch->clone.stats.luck;
     op->speed = op->arch->clone.speed;
@@ -1224,6 +1227,8 @@ void fix_player(object *op)
                   pl->gen_grace += tmp->stats.grace;
                   pl->gen_hp += tmp->stats.hp;
                   pl->gen_sp_armour += tmp->last_heal;
+				  thac0 += tmp->stats.thac0;
+				  thacm += tmp->stats.thacm;
 
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
@@ -1282,6 +1287,8 @@ void fix_player(object *op)
                   pl->gen_grace += tmp->stats.grace;
                   pl->gen_hp += tmp->stats.hp;
                   pl->gen_sp_armour += tmp->last_heal;
+				  thac0 += tmp->stats.thac0;
+				  thacm += tmp->stats.thacm;
 
                   for (i = 0; i < 7; i++)
                       change_attr_value(&(op->stats), i, get_attr_value(&(tmp->stats), i));
@@ -1319,6 +1326,8 @@ void fix_player(object *op)
                   /* collect highest boni & malus - only highest one count,
                              * no adding potion effects of same resist!
                              */
+				  thac0 += tmp->stats.thac0;
+				  thacm += tmp->stats.thacm;
                   for (i = 0; i < NROFATTACKS; i++)
                   {
                       /* collect highest/lowest resistance */
@@ -1337,6 +1346,8 @@ void fix_player(object *op)
 
                 case SKILL:
                   /* skills modifying the character -b.t. */
+				  thac0 += tmp->stats.thac0;
+				  thacm += tmp->stats.thacm;
                   if (tmp->stats.dam > 0)   /* skill is a 'weapon' */
                   {
                       wc += tmp->stats.wc;
@@ -1431,6 +1442,8 @@ void fix_player(object *op)
 
                 fix_player_jump_resi:
 
+				  thac0 += tmp->stats.thac0;
+				  thacm += tmp->stats.thacm;
 					/* calculate resistance and attacks */
                   for (i = 0; i < NROFATTACKS; i++)
                   {
@@ -1511,6 +1524,10 @@ void fix_player(object *op)
                 if (!QUERY_FLAG(op, FLAG_WIZ))
                     max = 1;
             }
+			
+			
+			op->stats.thac0-=thac0;
+			op->stats.thacm+=thacm;
 
             /* slow penalty .. careful with this! might be changing */
             if (tmp->stats.exp && tmp->type != EXPERIENCE && tmp->type != SKILL)

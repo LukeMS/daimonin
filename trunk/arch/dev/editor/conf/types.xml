@@ -1124,6 +1124,16 @@
     should never exceed 3, and such bonus should not be too
     frequently available.
   </attribute>
+  <attribute arch="thac0" editor="thac0 boni" type="int">
+    A attack roll is done with a w20. Every value bigger
+    as thac0 is a hit even the target ac is higher.
+    A negative value will reduce the thac0.
+  </attribute>
+  <attribute arch="thacm" editor="thacm boni" type="int">
+    A attack roll is done with a w20. Every value smaller thacm
+    is a miss, even the target ac is lower. A negative value
+    will DECREASE the thacm malus!
+  </attribute>
   <attribute arch="exp" editor="speed bonus" type="int">
     Divide by ten to get the player's speed bonus from wearing
 	this item. (The real formula to calcuate speed bonus is
@@ -3309,6 +3319,16 @@
     hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon class&gt; and resistances also
     take effect on the melee damage of a monster.
   </attribute>
+  <attribute arch="thac0" editor="thac0" type="int">
+    A attack roll is done with a w20. Every value bigger
+    as thac0 is a hit even the target ac is higher.
+    A value of 20+ will disable thac0.
+  </attribute>
+  <attribute arch="thacm" editor="thacm" type="int">
+    A attack roll is done with a w20. Every value smaller thacm
+    is a miss, even the target ac is lower. A thacm of -1
+    will disable thacm.
+  </attribute>
   <attribute arch="wc" editor="weapon class" type="int">
     Monsters of low &lt;weapon class&gt; are more likely to really hit
     their opponent. &lt;weapon class&gt; can be considered the "counterpiece"
@@ -3344,11 +3364,14 @@
     Note that the monster's level further improves armour class:
     "real armour class" = &lt;armour class&gt; - &lt;level&gt;
   </attribute>
-  <attribute arch="Con" editor="healing rate" type="int">
+  <attribute arch="Con" editor="healing (reg.) rate" type="int">
     Monsters regenerate this many hit points each move. Each time the
     monster has a move, it gets &lt;healing rate&gt; health points back.
     Hence, &lt;movement speed&gt; has great effect on the monster's healing
     rate as well.
+  </attribute>
+  <attribute arch="reg_f" editor="reg. HP in fight" type="bool">
+    Mob will regenerate when fighting. Use careful!
   </attribute>
   <attribute arch="hitback" editor="hitback" type="bool">
     Monsters with &lt;hitback&gt; enabled hurt the attacker in proportion
@@ -3721,6 +3744,16 @@
     hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon class&gt; and resistances also
     take effect on the melee damage of a monster.
   </attribute>
+  <attribute arch="thac0" editor="thac0" type="int">
+    A attack roll is done with a w20. Every value bigger
+    as thac0 is a hit even the target ac is higher.
+    A value of 20+ will disable thac0.
+  </attribute>
+  <attribute arch="thacm" editor="thacm" type="int">
+    A attack roll is done with a w20. Every value smaller thacm
+    is a miss, even the target ac is lower. A thacm of -1
+    will disable thacm.
+  </attribute>
   <attribute arch="wc" editor="weapon class" type="int">
     Monsters of low &lt;weapon class&gt; are more likely to really hit
     their opponent. &lt;weapon class&gt; can be considered the "counterpiece"
@@ -3756,11 +3789,14 @@
     Note that the monster's level further improves armour class:
     "real armour class" = &lt;armour class&gt; - &lt;level&gt;
   </attribute>
-  <attribute arch="Con" editor="healing rate" type="int">
+  <attribute arch="Con" editor="healing (reg.) rate" type="int">
     Monsters regenerate this many hit points each move. Each time the
     monster has a move, it gets &lt;healing rate&gt; health points back.
     Hence, &lt;movement speed&gt; has great effect on the monster's healing
     rate as well.
+  </attribute>
+  <attribute arch="reg_f" editor="reg. HP in fight" type="bool">
+    Mob will regenerate when fighting. Use careful!
   </attribute>
   <attribute arch="hitback" editor="hitback" type="bool">
     Monsters with &lt;hitback&gt; enabled hurt the attacker in proportion

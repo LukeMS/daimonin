@@ -92,10 +92,12 @@ xxx= roll;
     if (!simple_attack)
         roll += adj_attackroll(hitter, op);
 
+/*
 	if (hitter->type == PLAYER)
-		new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d!", xxx, roll);
+		new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d thac0/m: %d - %d (%d - %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, op->stats.ac, base_wc);
 	if (op->type == PLAYER)
-		new_draw_info_format(NDI_ORANGE, 0, op, "Hitter roll: %d - %d!", xxx, roll);
+		new_draw_info_format(NDI_PURPLE, 0, op, "Hitter roll: %d - %d thac0/m: %d - %d (%d %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, op->stats.ac, base_wc);
+*/
     if (hitter->type == PLAYER)
         CONTR(hitter)->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
 
@@ -122,8 +124,8 @@ xxx= roll;
 	if(op->type == PLAYER)
 		CONTR(op)->damage_timer = PLAYER_HPGEN_DELAY;
 
-    /* See if we hit the creature */
-    if (roll >= 20 || op->stats.ac <= base_wc + roll)
+    /* See if we hit the creature. Roll must be >= thacm(alus) and crit or AC hit */
+    if (roll >= hitter->stats.thacm && (roll>=hitter->stats.thac0 || op->stats.ac <= base_wc + roll))
     {
         int hitdam  = base_dam;
 
@@ -205,7 +207,7 @@ xxx= roll;
         if (hitter->type != ARROW)
         {
 			if (op->type == PLAYER)
-				new_draw_info_format(NDI_ORANGE, 0, op, "%s miss you!", hitter->name);
+				new_draw_info_format(NDI_PURPLE, 0, op, "%s miss you!", hitter->name);
 
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);

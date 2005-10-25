@@ -32,7 +32,9 @@ maxsp 19
 hp -1
 maxhp 78
 ac 12
-wc 8
+wc 7
+thac0 18
+thacm 1
 dam 52
 resist_pierce 25
 resist_slash 25

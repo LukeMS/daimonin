@@ -4,6 +4,8 @@ layer 3
 type 79
 face dia_icor.101
 identified 1
+thac0 18
+thacm 1
 no_pick 1
 food 15
 speed 0.01

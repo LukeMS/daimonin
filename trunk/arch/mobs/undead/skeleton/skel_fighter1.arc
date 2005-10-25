@@ -30,8 +30,10 @@ sp -1
 maxsp 20
 hp -1
 maxhp 62
-ac 9
+ac 12
 wc 3
+thac0 18
+thacm 1
 dam 51
 weapon_speed 3.5
 resist_fear 100

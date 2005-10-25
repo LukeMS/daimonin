@@ -125,8 +125,10 @@ sp -1
 maxsp 3
 grace -1
 maxgrace 3
-ac 6
+ac 3
 wc 0
+thac0 18
+thacm 1
 can_use_armour 1
 can_use_weapon 1
 is_player 1

@@ -20,6 +20,8 @@ fly_on 1
 speed 1
 wc 200
 dam 5
+thac0 18
+thacm 1
 level 1
 attack_weaponmagic 100
 terrain_flag 32767
