@@ -1100,33 +1100,12 @@ enum apply_flag
     }
 
 /*
- * random() is much better than rand().  If you have random(), use it instead.
- * You shouldn't need to change any of this
- *
- * 0.93.3: It looks like linux has random (previously, it was set below
- * to use rand).  Perhaps old version of linux lack rand?  IF you run into
- * problems, add || defined(linux) the #if immediately below.
- *
- * 0.94.2 - you probably shouldn't need to change any of the rand stuff
- * here.
+ * We use the Mersenne Twister random number generator which
+ * is much faster than the standard random function
  */
 
-#ifdef HAVE_SRANDOM
-#define RANDOM() random()
-#define SRANDOM(xyz) srandom(xyz)
-#else
-#  ifdef HAVE_SRAND48
-#  define RANDOM() lrand48()
-#  define SRANDOM(xyz) srand48(xyz)
-#  else
-#    ifdef HAVE_SRAND
-#      define RANDOM() rand()
-#      define SRANDOM(xyz) srand(xyz)
-#    else
-#      error "Could not find a usable random routine"
-#    endif
-#  endif
-#endif
+#define RANDOM() MTRand_randComp()
+#define SRANDOM(xyz) MTRand_init(xyz)
 
 #define PLUGINS
 #endif /* DEFINE_H */

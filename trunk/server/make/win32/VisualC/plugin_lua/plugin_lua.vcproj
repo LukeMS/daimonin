@@ -21,7 +21,12 @@
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
+				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				ImproveFloatingPointConsistency="TRUE"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\..\..\src\include,..\..\..\..\src\plugin_lua\include,..\..\..\..\src\lua,..\..\..\..\src\lua\include"
 				PreprocessorDefinitions="_WINDOWS;_USRDLL;WIN32;NDEBUG;LUA_PLUGIN_EXPORTS"
 				StringPooling="TRUE"
