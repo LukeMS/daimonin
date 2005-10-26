@@ -1513,7 +1513,6 @@ int set_ring_bonus(object *op, int bonus, int level)
         case 6:
           set_attr_value(&op->stats, r, (signed char) (bonus + get_attr_value(&op->stats, r)));
           break;
-        
         case 7:
           tmp = 1 + (RANDOM()%(10*bonus));
           if(bonus<0)

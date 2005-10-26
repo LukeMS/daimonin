@@ -804,8 +804,8 @@ int command_setskill(object *op, char *params)
          * This can happens when group exp is devided.
          * We must get a useful sub or we skip the exp.
          */
-        LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
-            query_name(pl->ob), snr, exp);
+        LOG(llevDebug, "TODO: command_setskill(): called for %s with skill nr %d / %d level - object has not this skill.\n",
+            query_name(pl->ob), snr, level);
         return 0; /* TODO: groups comes later  - now we skip all times */
     }
 

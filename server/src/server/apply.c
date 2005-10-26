@@ -1473,7 +1473,8 @@ static void apply_sign(object *op, object *sign)
         return;
     }
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You start reading the %s.", sign->name);
+	if(!QUERY_FLAG(sign,FLAG_SYS_OBJECT))
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "You start reading the %s.", sign->name);
     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
 }
 

@@ -374,6 +374,7 @@ static inline void regenerate_stats(object *op)
     /*  generate hp, if applicable */
     if (op->stats.Con && op->stats.hp < op->stats.maxhp)
     {
+		/* only reg when mob has no ememy or hp reg in fight is set */
 		if(QUERY_FLAG(op, FLAG_FIGHT_HPREG) || !op->enemy)
 		{
 			if (++op->last_heal > 5)

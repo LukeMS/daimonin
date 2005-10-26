@@ -21,7 +21,7 @@
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
@@ -487,6 +487,9 @@
 							Name="VCCLCompilerTool"
 							ObjectFile=".\Debug\server/"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\mtrand.c">
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\npc_communicate.c">

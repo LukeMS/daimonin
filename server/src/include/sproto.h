@@ -399,6 +399,9 @@ void                        monster_check_pickup(object *monster);
 void                        monster_check_apply(object *mon, object *item);
 void                        npc_call_help(object *op);
 mapstruct                   *normalize_and_ready_map(mapstruct *defmap, const char **path);
+/* mtrand.c */
+void                        MTRand_init(const uint32 seed);
+sint32						MTRand_randComp(void);
 /* npc_communicate.c */
 void                        communicate(object *op, char *txt);
 int                         talk_to_npc(object *op, object *npc, char *txt);
