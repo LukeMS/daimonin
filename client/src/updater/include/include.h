@@ -55,30 +55,34 @@
 #include <stddef.h>
 #endif
 
+
 #include <sys/types.h>
+#include <sys/stat.h>
 
-#include <sys/stat.h> 
-
-#ifndef WIN32 /* ---win32 we define this stuff in win32.h */
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
+#ifdef WIN32
+#include <io.h>
+#include <sys/locking.h>
+#include <share.h>
 #else
-# define dirent direct
-# define NAMLEN(dirent) (dirnet)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
+#include <dirent.h>
+#include <sys/param.h>
+#include <unistd.h>
 #endif
-#endif 
+
+#include <fcntl.h>
+
+#ifndef FALSE
+#define FALSE 0
+#define TRUE (!FALSE)
+#endif
+
+extern int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait);
 
 #ifdef WIN32
 #include <win32.h>
+#else
+extern int check_tools(char *name);
+#define p_popen popen
+#define p_pclose pclose
 #endif
 #endif

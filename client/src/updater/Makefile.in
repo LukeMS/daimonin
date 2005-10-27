@@ -24,33 +24,8 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
-	book.c\
-	client.c\
-	commands.c\
-	event.c\
-	group.c\
-	interface.c\
-	inventory.c\
-	item.c\
-	main.c\
-	map.c\
-	menu.c\
-	misc.c\
-	player.c\
-	socket.c\
-	sound.c\
-	sprite.c\
-	textwin.c\
-	wrapper.c\
-	dialog.c\
-	adler32.c \
-	crc32.c \
-	inflate.c\
-	inffast.c\
-	inftrees.c\
-	uncompr.c\
-	zutil.c\
-	filewrap.c
+	linux.c\
+	main.c
 
 ALLFILES = $(SRCS) Makefile.in
 
@@ -60,17 +35,13 @@ SED = @SED@
 
 OBJS = $(SRCS:.c=.o)
 
-SDL_CFLAGS = @SDL_CFLAGS@
-SDL_CONFIG = @SDL_CONFIG@
-SDL_LIBS = @SDL_LIBS@ -lSDL_image -lSDL_mixer
-
-CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS) $(SDL_CFLAGS)
+CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS)
 
 INCLUDES= $(EXTRA_INCLUDES) -I$(srcdir)/include
 
 LDFLAGS = @LDFLAGS@
 
-LIBS = @LIBS@ $(EXTRA_LIBS) $(SDL_LIBS)
+LIBS = @LIBS@ $(EXTRA_LIBS)
 
 SHELL = @SHELL@
 
@@ -84,7 +55,7 @@ MKDIR = @MKDIR@
 CC = @CC@
 RM = @RM@
 
-client: $(OBJS) $(LOCAL_LIBRARIES)
+daimonin_start: $(OBJS) $(LOCAL_LIBRARIES)
 	$(RM) -f $@
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LOCAL_LIBRARIES) $(LIBS)
 
@@ -92,7 +63,7 @@ depend:
 	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -- $(SRCS)
 
 clean::
-	$(RM) -f client $(OBJS) Makefile.bak
+	$(RM) -f daimonin_start $(OBJS) Makefile.bak
 
 distclean:: clean
 	$(RM) -f Makefile ./include/define.h
@@ -100,4 +71,4 @@ distclean:: clean
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $*.c
 
-all: client
+all: daimonin_start

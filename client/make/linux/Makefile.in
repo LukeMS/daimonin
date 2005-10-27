@@ -71,7 +71,7 @@ VERSION = daimonin-beta03-0.966
 
 ARCHIVE = /tmp/$(VERSION)
 
-SUBDIRS = ../../src
+SUBDIRS = ../../src/ ../../src/updater
 
 FILES = configure configure.in
 
@@ -114,11 +114,15 @@ install:: all
 	$(MKDIR) -p $(prefix)/gfx_user
 	$(MKDIR) -p $(prefix)/srv_files
 	$(MKDIR) -p $(prefix)/icons
+	$(MKDIR) -p $(prefix)/tools
+	$(MKDIR) -p $(prefix)/update
 	$(CP) ../../sfx/*.* $(prefix)/sfx
 	$(CP) ../../media/*.* $(prefix)/media
 	$(CP) ../../cache/*.* $(prefix)/cache
 	$(CP) ../../icons/*.* $(prefix)/icons
 	$(CP) ../../srv_files/*.* $(prefix)/srv_files
+	$(CP) -R ../../tools/*.* $(prefix)/tools
+	$(CP) ../../update/version $(prefix)/update
 	$(CP) ../../gfx_user/*.* $(prefix)/gfx_user
 	$(CP) ../../bitmaps/*.* $(prefix)/bitmaps
 	$(CP) ../../options.dat $(prefix)
@@ -126,7 +130,8 @@ install:: all
 	$(CP) ../../daimonin.p0 $(prefix)
 	$(CP) ../../License $(prefix)
 	$(CP) ../../archdef.dat $(prefix)
-	$(CP) ../../src/daimonin $(prefix)
+	$(CP) ../../src/client $(prefix)
+	$(CP) ../../src/updater/daimonin_start $(prefix)
 	@echo "*** Daimonin client successful installed!"
-	@echo "*** Enter your install folder and type daimonin"
+	@echo "*** Enter your install folder and type daimonin_start"
 	@echo "*** to start the game!"

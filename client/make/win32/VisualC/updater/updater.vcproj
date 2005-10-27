@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				OutputFile=".\Debug/daimonin.exe"
+				OutputFile=".\Debug/daimonin_start.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
@@ -57,7 +57,7 @@
 				TypeLibraryName=".\Debug/Daimonin.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\daimonin.exe ..\..\..\..\daimonin.exe"/>
+				CommandLine="copy Debug\daimonin_start.exe ..\..\..\..\daimonin_start.exe"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -105,7 +105,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				OutputFile=".\Release/daimonin.exe"
+				OutputFile=".\Release/daimonin_start.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				SubSystem="1"
@@ -120,7 +120,7 @@
 				TypeLibraryName=".\Release/Daimonin.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\daimonin.exe ..\..\..\..\daimonin.exe"/>
+				CommandLine="copy Release\daimonin_start.exe ..\..\..\..\daimonin_start.exe"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool

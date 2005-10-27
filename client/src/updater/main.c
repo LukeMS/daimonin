@@ -1,8 +1,8 @@
 /*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
+    Daimonin Updater, a service program for the Daimonin MMORPG.
 
 
-  Copyright (C) 2003 Michael Toennies
+  Copyright (C) 2002-2005 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,14 +22,6 @@
 */
 
 #include <include.h>
-#include <io.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/locking.h>
-#include <share.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #define UPDATE_URL "http://daimonin.sourceforge.net/patch/"
 
@@ -38,22 +30,28 @@
 #define UPDATE_VERSION "version"
 #define FOLDER_UPDATE "update"
 #define FOLDER_PATCH "update/patch/"
+
 #ifdef WIN32
-#define ACCESS_OK 6
-#define PROCESS_UPDATER "daimonin.exe"
+#define PROCESS_UPDATER "daimonin_start.exe"
 #define SYSTEM_OS_TAG 'w'
 #define FOLDER_TOOLS "tools/"
-#else
-#define ACCESS_OK 6
-#define PROCESS_UPDATER "daimonin"
-#define SYSTEM_OS_TAG 'l'
-#endif
 #define PROCESS_WGET "wget.exe"
 #define PROCESS_MD5 "md5sum.exe"
 #define PROCESS_BZ2 "bunzip2.exe"
 #define PROCESS_TAR "tar.exe"
 #define PROCESS_XDELTA "xdelta.exe"
 #define PROCESS_CLIENT "client.exe"
+#else
+#define PROCESS_UPDATER "daimonin_start"
+#define SYSTEM_OS_TAG 'l'
+#define FOLDER_TOOLS ""
+#define PROCESS_WGET "wget"
+#define PROCESS_MD5 "md5sum"
+#define PROCESS_BZ2 "bunzip2"
+#define PROCESS_TAR "tar"
+#define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
+#define PROCESS_CLIENT "client"
+#endif
 
 #define MAX_DIR_PATH 2048	/* maximal full path we support.      */
 char version_path[MAX_DIR_PATH], process_path[MAX_DIR_PATH], output[4096],
@@ -77,95 +75,6 @@ static free_resources(void)
         free(copy_buffer);
 }
 
-static int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait) 
-{
-    STARTUPINFO siStartupInfo;
-    PROCESS_INFORMATION piProcessInfo;
-    HANDLE hChildStdoutRd, hChildStdoutWr; 
-    SECURITY_ATTRIBUTES saAttr; 
-
-    DWORD dwExitCode;
-    int ret = 0;
-    char cmd[4096];
-
-    /* CreateProcess API initialization */
-    memset(&siStartupInfo, 0, sizeof(siStartupInfo));
-    memset(&piProcessInfo, 0, sizeof(piProcessInfo));
-    siStartupInfo.cb = sizeof(siStartupInfo);
-
-    if(output)/* create a pipe and redirect stdout to output */ 
-    {
-        *output='\0';
-        // Set the bInheritHandle flag so pipe handles are inherited. 
-        saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
-        saAttr.bInheritHandle =TRUE; 
-        saAttr.lpSecurityDescriptor = NULL; 
-
-        if (! CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &saAttr, 0))
-        {
-            output = NULL;
-            printf("Stdout pipe creation failed\n"); 
-        }
-
-        if(output)
-        {
-            siStartupInfo.hStdError = GetStdHandle(STD_OUTPUT_HANDLE);
-            //siStartupInfo.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-            siStartupInfo.hStdOutput = hChildStdoutWr;
-            siStartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-            siStartupInfo.dwFlags |= STARTF_USESTDHANDLES;
-        }
-    }
-
-    sprintf(cmd,"\"%s\" %s", exe_name, parms);
-    /*printf("CMD.... %s (%s)\n", cmd, prg_path);*/
-
-    /* Execute */
-    if (CreateProcess(p_path, cmd, 0, 0, TRUE,
-        CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo,
-        &piProcessInfo) != FALSE)
-    {
-        if(!seconds_to_wait)
-        {
-            CloseHandle(piProcessInfo.hProcess);
-            CloseHandle(piProcessInfo.hThread);
-            if(output)
-            {
-                DWORD dwRead; 
-
-                CloseHandle(hChildStdoutWr);
-                ReadFile(hChildStdoutRd, output, 4000, &dwRead, NULL);
-                output[dwRead]='\0';
-                CloseHandle(hChildStdoutRd);
-            }
-            return 0;
-        }
-
-        GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-        while (dwExitCode == STILL_ACTIVE && seconds_to_wait != 0)
-        {
-            GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
-            Sleep(50);
-        }
-
-        /*printf("RET: %d\n", dwExitCode);*/
-        ret = dwExitCode;
-    }
-
-    CloseHandle(piProcessInfo.hProcess);
-    CloseHandle(piProcessInfo.hThread);
-
-    if(output)
-    {
-        DWORD dwRead; 
-
-        CloseHandle(hChildStdoutWr);
-        ReadFile(hChildStdoutRd, output, 4000, &dwRead, NULL);
-        output[dwRead]='\0';
-        CloseHandle(hChildStdoutRd);
-    }
-    return ret;
-}
 
 static void updater_error(const char *msg)
 {
@@ -236,13 +145,13 @@ int main(int argc, char *argv[])
 
     printf("Daimonin AutoUpdater 1.0a\n\n");
 
-    printf("%s\n",argv[0]);
+/*    printf("%s\n",argv[0]);
     if(argc>1)
         printf("%s\n",argv[1]);
     if(argc>2)
         printf("%s\n",argv[2]);
     printf("\n");
-
+*/
     argv0 = argv[0];
     /* prepare pathes */
     if(strlen(argv[0]) + 256 >MAX_DIR_PATH)
@@ -293,10 +202,14 @@ int main(int argc, char *argv[])
             }
         }
     }
-
-    /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
-    * We don't use the guid or something because we the self instance start when the updater
-    * updates itself.
+#ifndef WIN32
+  if(!check_tools(PROCESS_XDELTA))
+  {
+  	free_resources();
+        exit(0);
+  }
+#endif
+  /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
     */
     if(update_flag==FALSE)
         printf("Loading version info.... ");
@@ -306,15 +219,16 @@ int main(int argc, char *argv[])
         /* check for access/locked */
         updater_error("\nCan't find version info.\nRun file check.\nPRESS RETURN\n");
     }
+      /* test & set the lock - if file is locked, exit*/
 #ifdef WIN32
     if( _locking(_fileno(version_handle), _LK_NBLCK, 1L ) == -1 )
+#else     
+    if(lockf(fileno(version_handle), F_TLOCK,1) == -1)
+#endif
     {
         fclose(version_handle);
         exit(-2);
     }
-#else
-    //_fcntl(fd, F_SETLKW, &fl);  /* set the lock, waiting if necessary */
-#endif
 
     fgets(version, 128 - 1, version_handle);
     /* we don't close the version file here because we need to hold the lock of it */
@@ -463,8 +377,8 @@ int main(int argc, char *argv[])
 */
 void clear_directory(char* start_dir)
 {
-    DIR* dir;			        /* pointer to the scanned directory. */
-    struct dirent* entry;	    /* pointer to one directory entry.   */
+    DIR* dir;		      /* pointer to the scanned directory. */
+    struct dirent* entry=NULL;	    /* pointer to one directory entry.   */
     char cwd[MAX_DIR_PATH+1];	/* current working directory.        */
     struct stat dir_stat;       /* used by stat().                   */
 

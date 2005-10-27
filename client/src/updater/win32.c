@@ -164,3 +164,92 @@ void rewinddir(DIR *dir_Info)
     dir_Info->handle = handle;
     free(filespec);
 }
+
+int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait) 
+{
+    int ret = 0;
+    
+    STARTUPINFO siStartupInfo;
+    PROCESS_INFORMATION piProcessInfo;
+    HANDLE hChildStdoutRd, hChildStdoutWr; 
+    SECURITY_ATTRIBUTES saAttr; 
+
+    DWORD dwExitCode;
+    char cmd[4096];
+
+    memset(&siStartupInfo, 0, sizeof(siStartupInfo));
+    memset(&piProcessInfo, 0, sizeof(piProcessInfo));
+    siStartupInfo.cb = sizeof(siStartupInfo);
+
+    if(output)
+    {
+        *output='\0';
+        saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
+        saAttr.bInheritHandle =TRUE; 
+        saAttr.lpSecurityDescriptor = NULL; 
+
+        if (! CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &saAttr, 0))
+        {
+            output = NULL;
+            printf("Stdout pipe creation failed\n"); 
+        }
+
+        if(output)
+        {
+            siStartupInfo.hStdError = GetStdHandle(STD_OUTPUT_HANDLE);
+            siStartupInfo.hStdOutput = hChildStdoutWr;
+            siStartupInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+            siStartupInfo.dwFlags |= STARTF_USESTDHANDLES;
+        }
+    }
+
+    sprintf(cmd,"\"%s\" %s", exe_name, parms);
+    //printf("CMD.... %s (%s)\n", cmd, prg_path);
+
+ 
+    if (CreateProcess(p_path, cmd, 0, 0, TRUE,
+        CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo,
+        &piProcessInfo) != FALSE)
+    {
+        if(!seconds_to_wait)
+        {
+            CloseHandle(piProcessInfo.hProcess);
+            CloseHandle(piProcessInfo.hThread);
+            if(output)
+            {
+                DWORD dwRead; 
+
+                CloseHandle(hChildStdoutWr);
+                ReadFile(hChildStdoutRd, output, 4000, &dwRead, NULL);
+                output[dwRead]='\0';
+                CloseHandle(hChildStdoutRd);
+            }
+            return 0;
+        }
+
+        GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+        while (dwExitCode == STILL_ACTIVE && seconds_to_wait != 0)
+        {
+            GetExitCodeProcess(piProcessInfo.hProcess, &dwExitCode);
+            Sleep(50);
+        }
+
+        //printf("RET: %d\n", dwExitCode);
+        ret = dwExitCode;
+    }
+
+    CloseHandle(piProcessInfo.hProcess);
+    CloseHandle(piProcessInfo.hThread);
+
+    if(output)
+    {
+        DWORD dwRead; 
+
+        CloseHandle(hChildStdoutWr);
+        ReadFile(hChildStdoutRd, output, 4000, &dwRead, NULL);
+        output[dwRead]='\0';
+        CloseHandle(hChildStdoutRd);
+    }
+
+	return ret;
+}
