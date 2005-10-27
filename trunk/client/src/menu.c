@@ -399,8 +399,6 @@ static inline void print_resist(char *name, int x, int y, int num)
 
 void show_resist(int x, int y)
 {
-    char    buf[62];
-
     StringBlt(ScreenSurface, &Font6x3Out, "Resistance Table", x, y + 1, COLOR_HGOLD, NULL, NULL);
 
 	print_resist("IM", x+68, y+3, ATNR_PHYSICAL);

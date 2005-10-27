@@ -48,7 +48,38 @@ AC_PATH_PROG(CP,cp)
 AC_PATH_PROG(RM,rm)
 AC_PATH_PROG(RMDIR,rmdir)
 AC_PATH_PROG(MKDIR,mkdir)
-AC_PATH_PROG(SDL_CONFIG, sdl-config, [ AC_MSG_ERROR([sdl-config not found...]) ])
+AC_PATH_PROG([WGET],wget, [none])
+if test "x$WGET" = "xnone"; then
+	AC_MSG_ERROR([*** wget not found! *** 
+wget is used by the auto-updater.
+Install it first please!])
+fi
+AC_PATH_PROG([MD5SUM],md5sum, [none])
+if test "x$MD5SUM" = "xnone"; then
+	AC_MSG_ERROR([*** md5sum not found! *** 
+md5sum is used by the auto-updater.
+Install it first please!])
+fi
+AC_PATH_PROG([TAR],tar, [none])
+if test "x$TAR" = "xnone"; then
+	AC_MSG_ERROR([*** tar not found! *** 
+tar is used by the auto-updater.
+Install it first please!])
+fi
+AC_PATH_PROG([BUNZIP2],bunzip2, [none])
+if test "x$BUNZIP2" = "xnone"; then
+	AC_MSG_ERROR([*** bunzip2 not found! *** 
+bunzip2 is used by the auto-updater.
+Install it first please!])
+fi
+
+AC_PATH_PROGS([SDL_CONFIG], [sdl-config sdl11-config], [none])
+if test "x$SDL_CONFIG" = "xnone"; then
+	AC_MSG_ERROR([*** SDL not found! Get SDL from www.libsdl.org.
+If you already installed it, check it's in the path. If problem remains,
+please send a mail to the address that appears in ./configure --version
+indicating your platform, the version of configure script and the problem.])
+fi
 
 AC_SUBST(SDL_CFLAGS, `${SDL_CONFIG} --cflags`)
 AC_SUBST(SDL_LIBS, `${SDL_CONFIG} --libs`)
@@ -64,4 +95,4 @@ else
 fi
 
 AC_CONFIG_HEADER(../../src/include/define.h)
-AC_OUTPUT(Makefile ../../src/Makefile)
+AC_OUTPUT(Makefile ../../src/updater/Makefile ../../src/Makefile)
