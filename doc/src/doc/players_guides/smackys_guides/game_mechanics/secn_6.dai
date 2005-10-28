@@ -4,17 +4,27 @@
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_6-1.dai">Section 6-1: Spells &amp; Prayers</a>
-            </li>
-            <li><a href="./secn_6-2.dai">Section 6-2: Potions &amp; Balms &amp; Scrolls &amp; Dust</a>
-            </li>
-            <li><a href="./secn_6-3.dai">Section 6-3: Wands &amp; Horns &amp; Rods</a>
-            </li>
-            <li><a href="./secn_6-4.dai">Section 6-4: Amulets &amp; Rings</a>
-            </li>
-            <li><a href="./secn_6-5.dai">Section 6-5: Other Magic Items</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_6-1.dai">Section 6-1: Spells &amp; Prayers</a>
+            </dt>
+            <dd>Use your innate magical abilities to cast wizardly spells or call on the powers of your deity.
+            </dd>
+            <dt><a href="./secn_6-2.dai">Section 6-2: Potions &amp; Balms &amp; Scrolls &amp; Dust</a>
+            </dt>
+            <dd>Single-use items imbued with the power of a spell or prayer.
+            </dd>
+            <dt><a href="./secn_6-3.dai">Section 6-3: Wands &amp; Horns &amp; Rods</a>
+            </dt>
+            <dd>Multi-use devices imbued with the power of a spell or prayer.
+            </dd>
+            <dt><a href="./secn_6-4.dai">Section 6-4: Amulets &amp; Rings</a>
+            </dt>
+            <dd>Jewellery with magical auras.
+            </dd>
+            <dt><a href="./secn_6-5.dai">Section 6-5: Other Magic Items</a>
+            </dt>
+            <dd>Other items may have magical effects too.
+            </dd>
+        </dl>
     </section>
 </section>

@@ -10,7 +10,7 @@
                 </th>
             </tr>
             <tr>
-                <td>?M_NORTH, ?M_NORTHEAST, ?M_EAST, ?M_SOUTHEAST,<br></br>?M_SOUTH, ?M_SOUTHWEST, ?M_WEST, ?M_NORTHWEST
+                <td>?M_NORTH, ?M_NORTHEAST, ?M_EAST, ?M_SOUTHEAST,<br/>?M_SOUTH, ?M_SOUTHWEST, ?M_WEST, ?M_NORTHWEST
                 </td>
                 <td>Perform action in specified direction
                 </td>

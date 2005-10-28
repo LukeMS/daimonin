@@ -4,11 +4,15 @@
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_2-1.dai">Section 2-1: All The Pretty Colours</a>
-            </li>
-            <li><a href="./secn_2-2.dai">Section 2-2: Know Your Foe</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_2-1.dai">Section 2-1: All The Pretty Colours</a>
+            </dt>
+            <dd>A quick reminder on relative strengths.
+            </dd>
+            <dt><a href="./secn_2-2.dai">Section 2-2: Know Your Foe</a>
+            </dt>
+            <dd>Knowledge is power.
+            </dd>
+        </dl>
     </section>
 </section>

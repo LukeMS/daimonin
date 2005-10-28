@@ -4,19 +4,31 @@
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_5-1.dai">Section 5-1: Switching Between Hold Attack &amp; Attack Mode</a>
-            </li>
-            <li><a href="./secn_5-2.dai">Section 5-2: The Targetting System</a>
-            </li>
-            <li><a href="./secn_5-3.dai">Section 5-3: Melee &amp; Punching</a>
-            </li>
-            <li><a href="./secn_5-4.dai">Section 5-4: Archery &amp; Throwing</a>
-            </li>
-            <li><a href="./secn_5-5.dai">Section 5-5: Magic</a>
-            </li>
-            <li><a href="./secn_5-6.dai">Section 5-6: Experience &amp; Bounties</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_5-1.dai">Section 5-1: Switching Between Hold Attack &amp; Attack Mode</a>
+            </dt>
+            <dd>Specify whether you're feeling pugnacious.
+            </dd>
+            <dt><a href="./secn_5-2.dai">Section 5-2: The Targetting System</a>
+            </dt>
+            <dd>Point out the object of your pugnacity.
+            </dd>
+            <dt><a href="./secn_5-3.dai">Section 5-3: Melee &amp; Punching</a>
+            </dt>
+            <dd>The most pugilistic forms of pugnastics.
+            </dd>
+            <dt><a href="./secn_5-4.dai">Section 5-4: Archery &amp; Throwing</a>
+            </dt>
+            <dd>Combat at a distance.
+            </dd>
+            <dt><a href="./secn_5-5.dai">Section 5-5: Magic</a>
+            </dt>
+            <dd>Combat with spells, prayers, device, and performance-enhancing magical effects.
+            </dd>
+            <dt><a href="./secn_5-6.dai">Section 5-6: Experience &amp; Bounties</a>
+            </dt>
+            <dd>Reasons to kill.
+            </dd>
+        </dl>
     </section>
 </section>
