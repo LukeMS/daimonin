@@ -4,15 +4,23 @@
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_4-1.dai">Section 4-1: Hit &amp; Run</a>
-            </li>
-            <li><a href="./secn_4-2.dai">Section 4-2: Stand &amp; Slog</a>
-            </li>
-            <li><a href="./secn_4-3.dai">Section 4-3: Keep Your Distance</a>
-            </li>
-            <li><a href="./secn_4-4.dai">Section 4-4: The Old In &amp; Out</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_4-1.dai">Section 4-1: Hit &amp; Run</a>
+            </dt>
+            <dd>Float like a butterfly, sting like a bee (#1).
+            </dd>
+            <dt><a href="./secn_4-2.dai">Section 4-2: Stand &amp; Slog</a>
+            </dt>
+            <dd>Float like a brick, sting like a bee.
+            </dd>
+            <dt><a href="./secn_4-3.dai">Section 4-3: Keep Your Distance</a>
+            </dt>
+            <dd>Ranged combat.
+            </dd>
+            <dt><a href="./secn_4-4.dai">Section 4-4: The Old In &amp; Out</a>
+            </dt>
+            <dd>>Float like a butterfly, sting like a bee (#2).
+            </dd>
+        </dl>
     </section>
 </section>

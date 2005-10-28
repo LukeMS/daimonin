@@ -10,19 +10,27 @@
         </p>
     </section>
     <section id="solution"><title>The solution</title>
-        <p>The potential for conflict is obvious. However, many problems can be avoided by observing the few simple guidelines detailed in this section.
+        <p>The potential for conflict is obvious. However, many problems can be avoided by observing the few common sense guidelines detailed in this section.
         </p>
     </section>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_1-1.dai">Section 1-1: Pardon Me, Friend, But Is That Mob Taken?</a>
-            </li>
-            <li><a href="./secn_1-2.dai">Section 1-2: Killstealing</a>
-            </li>
-            <li><a href="./secn_1-3.dai">Section 1-3: Luring</a>
-            </li>
-            <li><a href="./secn_1-4.dai">Section 1-4: Storming</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_1-1.dai">Section 1-1: Pardon Me, Friend, But Is That Mob Taken?</a>
+            </dt>
+            <dd>With many players training in close proximity to one another it is good practice to sort out claims <em>before</em> you begin combat.
+            </dd>
+            <dt><a href="./secn_1-2.dai">Section 1-2: Killstealing</a>
+            </dt>
+            <dd>Deliberately killing a mob which someone else was fighting is generally considered extremely rude.
+            </dd>
+            <dt><a href="./secn_1-3.dai">Section 1-3: Luring</a>
+            </dt>
+            <dd>Causing a mob to attack another player may or may not be tolerated, depending on circumstances.
+            </dd>
+            <dt><a href="./secn_1-4.dai">Section 1-4: Storming</a>
+            </dt>
+            <dd>Many players have items which cast an ice- or firestorm spell. These should be used with care!
+            </dd>
+        </dl>
     </section>
 </section>

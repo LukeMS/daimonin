@@ -46,9 +46,11 @@
         </p>
     </section>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_2-1.dai">Section 2-1: The Tutorial</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_2-1.dai">Section 2-1: The Tutorial</a>
+            </dt>
+            <dd>The tutorial explains many of the basics of gameplay. Reading this guide is <em>not</em> an alternative to playing through the tutorial.
+            </dd>
+        </dl>
     </section>
 </section>

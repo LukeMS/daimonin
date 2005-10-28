@@ -4,13 +4,19 @@
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_3-1.dai">Section 3-1: Fighting Fit</a>
-            </li>
-            <li><a href="./secn_3-2.dai">Section 3-2: One By One</a>
-            </li>
-            <li><a href="./secn_3-3.dai">Section 3-3: Fight Fire With... Water</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_3-1.dai">Section 3-1: Fighting Fit</a>
+            </dt>
+            <dd>Don't pick a fight if you're already half way to death.
+            </dd>
+            <dt><a href="./secn_3-2.dai">Section 3-2: One By One</a>
+            </dt>
+            <dd><em>Five to one, baby,</em><br/><em>One to five.</em><br/><em>Guess who won't get</em><br/><em>Out alive.</em>
+            </dd>
+            <dt><a href="./secn_3-3.dai">Section 3-3: Fight Fire With... Water</a>
+            </dt>
+            <dd>Opposites react.
+            </dd>
+        </dl>
     </section>
 </section>

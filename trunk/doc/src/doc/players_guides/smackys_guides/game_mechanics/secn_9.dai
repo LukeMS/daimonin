@@ -4,9 +4,7 @@
     <p><img alt="Text windows" src="./textwindows.png"></img>
     </p>
     <section id="communication"><title>It's what separates us from the mobs</title>
-        <p>You can communicate both with <a href="./secn_9-1.dai">NPCs</a>, for example to ask about a quest, and with <a href="./secn_9-2.dai">other players</a>, for example to buy/sell equipment or just to chat.
-        </p>
-        <p>Communication in either way takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in this manual.
+        <p>Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in this manual.
         </p>
         <p>Here, suffice to say, the top window (with the orange text) is for global messages and communication between players, and the bottom window (with the blue text) is for local messages which is often, but not always, for communication with NPCs.
         </p>
@@ -22,11 +20,15 @@
         </p>
     </section>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_9-1.dai">Section 9-1: Talking To NPCs</a>
-            </li>
-            <li><a href="./secn_9-2.dai">Section 9-2: Talking To Players</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_9-1.dai">Section 9-1: Talking To NPCs</a>
+            </dt>
+            <dd>You can communicate with NPCs.
+            </dd>
+            <dt><a href="./secn_9-2.dai">Section 9-2: Talking To Players</a>
+            </dt>
+            <dd>You can communicate with other players.
+            </dd>
+        </dl>
     </section>
 </section>

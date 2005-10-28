@@ -4,13 +4,19 @@
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_10-1.dai">Section 10-1: Key Settings</a>
-            </li>
-            <li><a href="./secn_10-2.dai">Section 10-2: Settings</a>
-            </li>
-            <li><a href="./secn_10-3.dai">Section 10-3: Logging Out (&amp; Saving)</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_10-1.dai">Section 10-1: Key Settings</a>
+            </dt>
+            <dd>You can bind an rebind game and meta commands to most keys on the keyboard.
+            </dd>
+            <dt><a href="./secn_10-2.dai">Section 10-2: Settings</a>
+            </dt>
+            <dd>There are many options to alter and customise the appearance and behaviour of Daimonin.
+            </dd>
+            <dt><a href="./secn_10-3.dai">Section 10-3: Logging Out (&amp; Saving)</a>
+            </dt>
+            <dd>You can suspend the game at any point. Your character and progress in the game are saved.
+            </dd>
+        </dl>
     </section>
 </section>

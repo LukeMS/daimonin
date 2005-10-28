@@ -10,17 +10,27 @@
     <p>The tables and displays across the top of the screen contain information about your identity, abilities, and current state of health. This section details that information.
     </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_3-1.dai">Section 3-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
-            </li>
-            <li><a href="./secn_3-2.dai">Section 3-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
-            </li>
-            <li><a href="./secn_3-3.dai">Section 3-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
-            </li>
-            <li><a href="./secn_3-4.dai">Section 3-4: Armour Protections</a>
-            </li>
-            <li><a href="./secn_3-5.dai">Section 3-5: Skills, Experience, Levelling, &amp; Training</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_3-1.dai">Section 3-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
+            </dt>
+            <dd>Basic information about your identity.
+            </dd>
+            <dt><a href="./secn_3-2.dai">Section 3-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
+            </dt>
+            <dd>Information pertaining directly to your chances of success in combat.
+            </dd>
+            <dt><a href="./secn_3-3.dai">Section 3-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
+            </dt>
+            <dd>Measurements representing your fundamental abilities and current health,
+            </dd>
+            <dt><a href="./secn_3-4.dai">Section 3-4: Armour Protections</a>
+            </dt>
+            <dd>The percentage of damage your armour can absorb from particular attacks.
+            </dd>
+            <dt><a href="./secn_3-5.dai">Section 3-5: Skills, Experience, Levelling, &amp; Training</a>
+            </dt>
+            <dd>Information on performing particular tasks and developing your proficiencies.
+            </dd>
+        </dl>
     </section>
 </section>

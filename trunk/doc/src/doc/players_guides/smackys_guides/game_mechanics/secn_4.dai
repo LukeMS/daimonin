@@ -5,22 +5,28 @@
     </p>
     <p>Any tile on the main screen over which you can pass can hold one or more items. If the tile holds a pile of items only the topmost item is visible from any distance (and this can mean that, eg, a stone giant's throne is completely obscured by an arrow).
     </p>
-    <p>Certain items, such as bags and pouches, and bits of scenery, such as cupboards and shelves, are containers and may hold further items (which may themselves be containers) within. Containers are explained in <a href="./secn_4-5.dai">"4-5: Containers"</a>.
-    </p>
-    <p>To view all the items on a tile, or examine or touch an item you need to either occupy the same tile as it or already have it in your possession. This is detailed on the <a href="./secn_4-1.dai">next page</a>.
-    </p>
     <section id="tos"><title>In this section</title>
-        <ul>
-            <li><a href="./secn_4-1.dai">Section 4-1: Things Nearby &amp; In Your Inventory</a>
-            </li>
-            <li><a href="./secn_4-2.dai">Section 4-2: Examining Things</a>
-            </li>
-            <li><a href="./secn_4-3.dai">Section 4-3: Getting &amp; Dropping Things</a>
-            </li>
-            <li><a href="./secn_4-4.dai">Section 4-4: Applying Things</a>
-            </li>
-            <li><a href="./secn_4-5.dai">Section 4-5: Containers</a>
-            </li>
-        </ul>
+        <dl>
+            <dt><a href="./secn_4-1.dai">Section 4-1: Things Nearby &amp; In Your Inventory</a>
+            </dt>
+            <dd>To interact with an item you need to either occupy the same tile as it or already have it in your possession.
+            </dd>
+            <dt><a href="./secn_4-2.dai">Section 4-2: Examining Things</a>
+            </dt>
+            <dd>Inspecting an item in detail.
+            </dd>
+            <dt><a href="./secn_4-3.dai">Section 4-3: Getting &amp; Dropping Things</a>
+            </dt>
+            <dd>How to pick items up and put them down.
+            </dd>
+            <dt><a href="./secn_4-4.dai">Section 4-4: Applying Things</a>
+            </dt>
+            <dd>To use an item, whether it be eating food or wearing a hat or wielding a weapon, you must apply it.
+            </dd>
+            <dt><a href="./secn_4-5.dai">Section 4-5: Containers</a>
+            </dt>
+            <dd>Certain items, such as bags and pouches, and bits of scenery, such as cupboards and shelves, are containers and may hold further items (which may themselves be containers) within.
+            </dd>
+        </dl>
     </section>
 </section>
