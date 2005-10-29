@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../dtd/daidoc.dtd">
+<section autotoc="Custom-named contents">
+    <title>Advanced automatic ToC generation demonstration</title>
+    <p>
+        This is a demonstration of how to automatically generate a ToC of all the sections in a DAI document (only appears in an [X]HTML transformation)..
+    </p>
+    <p>
+        The top-level section should have an autotoc attribute. If <code>autotoc="autotoc"</code> the ToC will be titled "Table of Contents". Otherwise it will be titled according to the value of autotoc (as here).
+    </p>
+    <p>
+        The autotoc attribute will be ignored in any sub-sections.
+    </p>
+    <section>
+        <title>Hierarchy</title>
+        <p>
+            The ToC is hierarchical. By default each and every section is listed in the ToC.
+        </p>
+        <section toc="include">
+            <title>Explicit inclusion</title>
+            <p>
+                If you like, give a sub-section a toc attribute with the value "include" to explicitly specify the default behaviour (maybe makes source clearer).
+            </p>
+            <p>
+                The toc attribute will be ignored in the top-level section.
+            </p>
+            <section toc="exclude">
+                <title>Explicit exclusion</title>
+                <p>
+                    If <code>toc="exclude"</code> the section is not listed in the ToC.
+                </p>
+            </section>
+            <section>
+                <title>Sub-sections after an explicit exclude</title>
+                <p>
+                    The Toc hierarchy picks up again at the next included section. But note that it is no longer the same as the section hierarchy.
+                </p>
+            </section>
+            <section>
+                <title>DAI doesn't like hierarchies of more than four sections</title>
+                <p>
+                    So don't do it. If you do the ToC will cope, and the actual section will not be transformed but will be titleless
+                </p>
+            </section>
+        </section>
+    </section>
+    <section>
+        <title>ToCs cope with complex section structures</title>
+        <section>
+            <title>Like this</title>
+            <section>
+                <title>See?</title>
+                   <p>
+                       Break me.
+                   </p>
+            </section>
+        </section>
+    </section>
+</section>
+

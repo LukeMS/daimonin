@@ -60,23 +60,35 @@
             <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h1>
-        <xsl:if test="/section/@autotoc='yes'">
-            <h2 id="toc">Table of Contents</h2>
-            <xsl:apply-templates select="/section" mode="toc"/>
+        <xsl:if test="/section/@autotoc">
+            <h2 id="toc">
+                <xsl:choose>
+                    <xsl:when test="/section/@autotoc='autotoc'">
+                        <xsl:text>Table of Contents</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="/section/@autotoc"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </h2>
+            <xsl:apply-templates select="/section/section" mode="toc"/>
         </xsl:if>
     </xsl:template>
-    
+
     <xsl:template match="section" mode="toc">
-        <xsl:if test="section">
-            <ul>
-                <xsl:for-each select="section">
+        <xsl:choose>
+            <xsl:when test="@toc='exclude'">
+                <xsl:apply-templates select="section" mode="toc"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <ul>
                     <li>
                         <a href="#{if (@id) then @id else generate-id()}"><xsl:apply-templates select="title/node()"/></a>
-                        <xsl:apply-templates select="section" mode="toc" />
                     </li>
-                </xsl:for-each>
-            </ul>
-        </xsl:if>
+                    <xsl:apply-templates select="section" mode="toc" />
+                </ul>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <xsl:template match="/section/section/title">
@@ -110,8 +122,19 @@
         <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
-        <xsl:if test="/section/@autotoc='yes'">
-            <p><a href="#toc">Table of Contents</a></p>
+        <xsl:if test="/section/@autotoc">
+            <p>
+                <a href="#toc">
+                    <xsl:choose>
+                        <xsl:when test="/section/@autotoc='autotoc'">
+                            <xsl:text>Table of Contents</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="/section/@autotoc"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </a>
+            </p>
         </xsl:if>
     </xsl:template>
 
