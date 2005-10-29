@@ -3,6 +3,6 @@ name water
 face water_floor.101
 no_teleport 1
 layer 2
-type 79
+type 28
 no_pick 1
 end

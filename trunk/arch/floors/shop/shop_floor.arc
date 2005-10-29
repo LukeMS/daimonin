@@ -1,7 +1,6 @@
 Object shop_floor
-name floor
+name shop floor (drop items to sell)
 layer 1
-is_floor 1
 no_teleport 1
 face shop_empty.111
 terrain_type 1
@@ -17,5 +16,4 @@ no_teleport 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end

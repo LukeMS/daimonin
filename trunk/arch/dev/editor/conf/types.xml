@@ -102,8 +102,8 @@
   <attribute arch="layer" editor="layer" type="int">
     This is the map layer, the object will put in. The selected layer will effect where and
     how this object is shown on client side. Layer 0 is reserved for sys_object type objects
-    and will NEVER be shown on client side. Layer 1 is for floor objects and Layer 2 for
-    floor masks. Layer 3 and 4 are for items on the ground. Layer 5 is for walls, layer 
+    and will NEVER be shown on client side.
+    Layer 3 and 4 are for items on the ground. Layer 5 is for walls, layer 
     6 is reversed for players and layer 7 is for spell effects and high flying/visible
     objects like arrows.
   </attribute>
@@ -2113,6 +2113,7 @@
 <type number="71" name="Floor">
   <ignore>
     <attribute arch="damned" />
+    <ignore_section name="default_type" />
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
   </ignore>
@@ -2124,7 +2125,6 @@
     a.) There must be a floor tile for every map position of a map.
     b.) Only ONE and exactly ONE floor tile per map position. ]]>
   </description>
-  <attribute arch="is_floor" value="1" type="fixed" />
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
   </attribute>
@@ -2140,15 +2140,6 @@
     this tile. This can be anything from normal land (= "none")
     to water, fire etc. Only creatures whith appropriate terrain-
     abilities can pass over this square.
-  </attribute>
-  <attribute arch="slow_move" editor="slow movement" type="int">
-    If &lt;slow movement&gt; is set to a value greater zero, all
-    creatures moving over this spot will be slower than normal.
-
-    &lt;slow movement&gt; 1  - rough terrain
-    &lt;slow movement&gt; 2  - very rough terrain
-    ...
-    &lt;slow movement&gt; 7  - spider web (sticky as hell)
   </attribute>
   <attribute arch="is_wooded" editor="wooded terrain" type="bool">
     This flag indicates this spot contains wood or high grass.
@@ -2549,75 +2540,6 @@
     opened after the first player passed. If you want to keep the gate shut,
     connecting it to a handle trigger is an easy solution.  ]]>
   </use>
-</type>
-
-<!--####################################################################-->
-<type number="88" name="Hazard Floor">
-  <import_type name="combat_values" />
-  <required>
-    <attribute arch="is_floor" value="1" />
-  </required>
-  <ignore>
-    <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
-  <description><![CDATA[
-    The best example for Hazard Floor is lava. It works like standard
-    floor, but damages all creatures standing on it.
-    Damage is taken in regular time intervals. ]]>
-  </description>
-  <use><![CDATA[
-    The default lava for example does minor damage. But you can turn
-    it up so that your hazard floor poses a real threat.<br>
-    Like magic walls, such floors add a permanent thrill to your map.
-    You can use that to safely chase off too-weak players, or just
-    to have something different. ]]>
-  </use>
-  <attribute arch="is_floor" value="1" type="fixed" />
-  <attribute arch="lifesave" value="1" type="fixed" />
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="dam" editor="base damage" type="int">
-    The &lt;base damage&gt; defines how much damage is inflicted to the
-    victim per hit. The final damage is influenced by several other
-    factors like the victim's resistance and level.
-  </attribute>
-  <attribute arch="wc" editor="weaponclass" type="int">
-    &lt;weapon class&gt; improves the chance of hitting the victim.
-    Lower values are better.
-    Usually, hazard floors like lave are supposed to hit the
-    victim all the time. Therefore, &lt;weaponclass&gt; should be set
-    to something like 200.
-  </attribute>
-  <attribute arch="level" editor="attack level" type="int">
-    I guess this value is supposed to work similar to monster levels.
-    But in fact, it does not seem to have an effect. Set any non-zero
-    value to be on the safe side.
-  </attribute>
-<section name="terrain">
-  <attribute arch="slow_move" editor="slow movement" type="int">
-    If &lt;slow movement&gt; is set to a value greater zero, all
-    creatures moving over this spot will be slower than normal.
-
-    &lt;slow movement&gt; 1  - rough terrain
-    &lt;slow movement&gt; 2  - very rough terrain
-    ...
-    &lt;slow movement&gt; 7  - spider web (sticky as hell)
-  </attribute>
-  <attribute arch="is_wooded" editor="wooded terrain" type="bool">
-    This flag indicates this spot contains wood or high grass.
-    Players with activated woodsman skill can move faster here.
-  </attribute>
-  <attribute arch="is_hilly" editor="hilly terrain" type="bool">
-    This flag indicates this spot contains hills or large rocks.
-    Players with activated mountaineer skill can move faster here.
-  </attribute>
-</section>
-  <attribute arch="unique" editor="unique map" type="bool">
-    Unique floor means that any items dropped on that spot
-    will be saved byond map reset. For permanent apartments,
-    all floor tiles must be set &lt;unique map&gt;.
-  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -5031,7 +4953,6 @@
     Place shop mats to enter/leave the shop, and make sure
     there is no other exit than the shop mat. ]]>
   </use>
-  <attribute arch="is_floor" value="1" type="fixed" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="no_magic" value="1" type="fixed" />
   <attribute arch="auto_apply" editor="generate goods" type="bool">
@@ -5264,40 +5185,6 @@
   <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="fly_on" value="1" type="fixed" />
 </type>
-
-<!--####################################################################-->
-<type number="138" name="Swamp">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
-  <description><![CDATA[
-    Swamp areas show a special behaviour:
-    When a player stands still on a swamp-square for too long,
-    he will start to sink in and eventually drown and die.
-    Items dropped on the swamp sink in and dissapear.
-    Players with knowledge of the woodsman skill are a lot less likely
-    to die in the swamp. ]]>
-  </description>
-  <attribute arch="walk_on" value="1" type="fixed" />
-  <attribute arch="is_floor" value="1" type="fixed" />
-  <attribute arch="is_wooded" value="1" type="fixed" />
-  <attribute arch="speed" editor="drowning speed" type="float">
-    The higher the &lt;drowning speed&gt;, the faster will players and items
-    sink into the swamp. Swamp with very high &lt;drowning speed&gt; can be a nasty
-    and unexpected death-trap. Players should get a warning before such areas.
-  </attribute>
-  <attribute arch="slow_move" editor="slow movement" type="int">
-    If &lt;slow movement&gt; is set to a value greater zero, all
-    creatures moving over this spot will be slower than normal.
-
-    &lt;slow movement&gt; 1  - rough terrain
-    &lt;slow movement&gt; 2  - very rough terrain
-    ...
-    &lt;slow movement&gt; 5  - default for deep swamp
-  </attribute>
-</type>
-
 <!--####################################################################-->
 <type number="41" name="Teleporter">
   <ignore>
@@ -6110,12 +5997,11 @@ that food.]]>
 <type available="no" number="10" name="FBULLET"/>
 <type available="no" number="11" name="FBALL"/>
 <type available="no" number="12" name="LIGHTNING"/>
-<type available="no" number="19" name="CONFUSION"/>
 <type available="no" number="22" name="MAP"/>
 <type available="no" number="23" name="DOOR"/>
 <type available="no" number="24" name="KEY"/>
 <type available="no" number="25" name="MMISSILE"/>
-<type available="no" number="28" name="GRIMREAPER"/>
+<type available="no" number="28" name="FLOORMASK"/>
 <type available="no" number="37" name="CLASS"/>
 <type available="no" number="38" name="GRAVESTONE"/>
 <type available="no" number="43" name="SKILL"/>

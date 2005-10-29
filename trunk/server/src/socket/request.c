@@ -1083,7 +1083,7 @@ void draw_client_map2(object *pl)
     MapSpace       *msp;
     New_Face       *face;
     mapstruct      *m;
-    object         *tmp, *tmph, *pname1, *pname2, *pname3, *pname4;
+    object         *tmp, *tmph, *pname2, *pname3, *pname4;
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
     int             x_start, dm_light = 0;
     int             dark, flag_tmp, special_vision;
@@ -1278,80 +1278,40 @@ void draw_client_map2(object *pl)
 
                 /* floor layer */
                 face_num0 = 0;
-                if (inv_flag)
-                    tmp = GET_MAP_SPACE_CL(msp, 0);
-                else
-                    tmp = GET_MAP_SPACE_CL_INV(msp, 0);
-                if (tmp)
-                    face_num0 = tmp->face->number ;
+				if(msp->floor_arch)
+					face_num0 = msp->floor_arch->clone.face->number;
+				/* layer 1 (floor) is really free now - we only have here
+                 * type 68 SHOP_FLOOR left using layer 1. That special floor
+                 * will be removed when we add real shop interfaces.
+                 */
+				else
+				{
+					if (inv_flag)
+						tmp = GET_MAP_SPACE_CL(msp, 0);
+					else
+						tmp = GET_MAP_SPACE_CL_INV(msp, 0);
+					if (tmp)
+						face_num0 = tmp->face->number ;
+				}
                 if (mp->faces[3] != face_num0)
                 {
                     mask |= 0x8;    /* this is the floor layer - 0x8 is floor bit */
-
-                    if (tmp && tmp->type == PLAYER)
-                    {
-                        pname_flag |= 0x08; /* we have a player as object - send name too */
-                        pname1 = tmp;
-                    }
-
                     mp->faces[3] = face_num0;       /* this is our backbuffer which we control */
                 }
 
                 /* LAYER 2 */
                 /* ok, lets explain on one layer what we do */
                 /* First, we get us the normal or invisible layer view */
+/*
                 if (inv_flag)
                     tmp = GET_MAP_SPACE_CL(msp, 1);
                 else
                     tmp = GET_MAP_SPACE_CL_INV(msp, 1);
+*/
                 probe_tmp = 0;
-
-                if (tmp) /* now we have a valid object in this tile - NULL = there is nothing here */
-                {
-                    flag_tmp = GET_CLIENT_FLAGS(tmp);
-                    face = tmp->face;
-                    tmph = tmp;
-                    /* these are the red damage numbers, the client shows when we hit something */
-                    if ((dmg_layer2 = tmp->last_damage) != -1 && tmp->damage_round_tag == ROUND_TAG)
-                        dmg_flag |= 0x4;
-
-                    quick_pos_1 = tmp->quick_pos; /* thats our multi arch id and number in 8bits */
-                    if (quick_pos_1) /* if we have a multipart object */
-                    {
-                        if ((tmph = tmp->head)) /* is a tail */
-                        {
-                            /* if update_tag = map2_count, we have send a part of this
-                             * in this map update some steps ago - skip it then */
-                            if (tmp->head->update_tag == map2_count)
-                                face = 0; /* skip */
-                            else
-                            {
-                                /* ok, mark this object as "send in this loop" */
-                                tmp->head->update_tag = map2_count;
-                                face = tmp->head->face;
-                            }
-                        }
-                        else /* its head */
-                        {
-                            /* again: if send before...*/
-                            if (tmp->update_tag == map2_count)
-                                face = 0; /* then skip this time */
-                            else
-                            {
-                                /* mark as send for other parts */
-                                tmp->update_tag = map2_count;
-                                face = tmp->face;
-                            }
-                        }
-                    }
-                }
-                else /* ok, its NULL object - but we need to update perhaps to clear something we had
-                              * submited to the client before
-                              */
-                {
-                    face = NULL;
-                    quick_pos_1 = 0;
-                }
+				tmp = tmph = NULL;
+                quick_pos_1 = 0;
+				face = msp->mask_face;
 
                 /* if we have no legal visual to send, skip it */
                 if (!face || face == blank_face)
@@ -1622,8 +1582,8 @@ void draw_client_map2(object *pl)
                 if (pname_flag)
                 {
                     SockList_AddChar(&sl, (char) pname_flag);
-                    if (pname_flag & 0x08)
-                        SockList_AddString(&sl, CONTR(pname1)->quick_name);
+                    /*if (pname_flag & 0x08)
+                        SockList_AddString(&sl, CONTR(pname1)->quick_name);*/
                     if (pname_flag & 0x04)
                         SockList_AddString(&sl, CONTR(pname2)->quick_name);
                     if (pname_flag & 0x02)

@@ -10,6 +10,5 @@ mina
 is_animated 1
 anim_speed 14
 no_pick 1
-slow_move 4
 material 32
 end

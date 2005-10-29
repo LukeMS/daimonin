@@ -3170,10 +3170,14 @@ void player_apply_below(object *pl)
     for (floors = 0; tmp != NULL; tmp = next)
     {
         next = tmp->below;
-        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+		/* this was is_floor test - but floor has moved
+         * in map node. Now, the first for sure not applyable
+         * object is the first sys_object
+         */
+        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
             floors++;
         else if (floors > 0)
-            return;   /* process only floor objects after first floor object */
+            return;   /* process only floor (or sys_objects) objects after first floor object */
         if (!IS_INVISIBLE(tmp, pl) || QUERY_FLAG(tmp, FLAG_WALK_ON) || QUERY_FLAG(tmp, FLAG_FLY_ON))
         {
             if (player_apply(pl, tmp, 0, 1) == 1)

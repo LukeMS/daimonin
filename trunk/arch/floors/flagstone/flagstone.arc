@@ -6,7 +6,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_fs_grey1b
 name floor
@@ -16,7 +15,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_fs_grey1c
 name floor
@@ -26,7 +24,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_fs_grey1d
 name floor
@@ -36,7 +33,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagstone1a
 name floor
@@ -46,7 +42,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagstone1b
 name floor
@@ -56,7 +51,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagstone1c
 name floor
@@ -66,7 +60,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagstone1d
 name floor
@@ -76,7 +69,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagm1
 name floor
@@ -86,7 +78,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagm2
 name floor
@@ -96,7 +87,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagm3
 name floor
@@ -106,7 +96,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_flagm4
 name floor
@@ -116,7 +105,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_rhomb
 name floor
@@ -126,5 +114,4 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end

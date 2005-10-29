@@ -2679,7 +2679,7 @@ static int cast_detection_old(object *op, object *target,int type) {
         for (tmp=get_map_ob(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
 
         for (tmp=last; tmp; tmp=tmp->below) {
-            if (QUERY_FLAG(tmp, FLAG_IS_FLOOR)) break;
+            if (tmp->type == FLOOR) break;
             else last=tmp;
         }
 
@@ -3711,7 +3711,7 @@ int cast_consecrate(object *op)
 
     for (tmp = op->below; tmp; tmp = tmp->below)
     {
-        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+        if (tmp->type == FLOOR)
             break;
         if (tmp->type == HOLY_ALTAR)
         {

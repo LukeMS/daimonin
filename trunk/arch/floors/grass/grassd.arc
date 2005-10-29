@@ -6,7 +6,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_2
 name grass
@@ -16,7 +15,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_3
 name grass
@@ -26,7 +24,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_4
 name grass
@@ -36,7 +33,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_5
 name grass
@@ -46,7 +42,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_6
 name grass
@@ -56,7 +51,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_7
 name grass
@@ -66,7 +60,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grassd_8
 name grass
@@ -76,7 +69,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grass_stone1
 name grass
@@ -86,7 +78,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grass_stone2
 name grass
@@ -96,7 +87,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grass_stone3
 name grass
@@ -106,7 +96,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grass_stone4
 name grass
@@ -116,7 +105,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object grass_stone5
 name grass
@@ -126,5 +114,4 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end

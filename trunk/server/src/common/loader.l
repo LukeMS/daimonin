@@ -246,9 +246,6 @@ WS	[ \t]*{NL}?
 ^speed{S}			op->speed = FVAL;
 
 ^speed_left{S}		op->speed_left = FVAL;
-^slow_move{S}	    {	SET_SLOW_PENALTY(op,FVAL);
-			SET_FLAG(op, FLAG_SLOW_MOVE);
-		    }
 ^face{S}		{
 					register int _face_ = FindFace(yval(), 0);
 					op->face = &new_faces[_face_ ];
@@ -415,7 +412,6 @@ op->oy= op->y;
 ^can_use_ring{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_RING, IVAL);
 ^xrays{S}	    SET_OR_CLEAR_FLAG(op, FLAG_XRAYS, IVAL);
 ^no_save{S}			SET_OR_CLEAR_FLAG(op, FLAG_NO_SAVE, IVAL);
-^is_floor{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_FLOOR, IVAL);
 ^is_male{S}		   SET_OR_CLEAR_FLAG(op, FLAG_IS_MALE, IVAL);
 ^is_female{S}	   SET_OR_CLEAR_FLAG(op, FLAG_IS_FEMALE, IVAL);
 ^is_evil{S}		   SET_OR_CLEAR_FLAG(op, FLAG_IS_EVIL, IVAL);
@@ -887,7 +883,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
  "reg_f", "has_ready_spell", "surrendered", "rooted",
  "slowed", "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL, "has_ready_bow",		/* 60 */
-"xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",
+"xrays", NULL, NULL, "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
  "stealth", NULL, NULL, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
@@ -1239,16 +1235,6 @@ char *get_ob_diff(object *op,object *op2) {
 
 		strcat(buf, buf2);
 
-    }
-  }
-  /* The old code was buggy - it would lose custom SLOW_PENALTY if the archetype
-   * had a different slow_penalty (eg, when saving, it would also reset to the
-   * archetype value.
-   */
-  if (QUERY_FLAG(op, FLAG_SLOW_MOVE)) {
-    if (!QUERY_FLAG(op2, FLAG_SLOW_MOVE) || SLOW_PENALTY(op) != SLOW_PENALTY(op2)) {
-	sprintf(buf2,"slow_move %f\n",SLOW_PENALTY(op));
-	strcat(buf,buf2);
     }
   }
 

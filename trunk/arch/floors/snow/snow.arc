@@ -6,7 +6,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object snow.102
 name snow
@@ -16,7 +15,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object snow.103
 name snow
@@ -26,7 +24,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object snow.104
 name snow
@@ -36,7 +33,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object snow.105
 name snow
@@ -46,7 +42,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object snow.106
 name snow
@@ -56,5 +51,4 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end

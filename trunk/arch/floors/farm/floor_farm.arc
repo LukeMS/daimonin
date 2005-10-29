@@ -6,7 +6,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1b
 name field
@@ -16,7 +15,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1c
 name field
@@ -26,7 +24,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1d
 name field
@@ -36,7 +33,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1e
 name field
@@ -46,7 +42,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1f
 name field
@@ -56,7 +51,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1g
 name field
@@ -66,7 +60,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1h
 name field
@@ -76,7 +69,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1i
 name field
@@ -86,7 +78,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1j
 name field
@@ -96,7 +87,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1k
 name field
@@ -106,7 +96,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1l
 name field
@@ -116,7 +105,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1m
 name field
@@ -126,7 +114,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1n
 name field
@@ -136,7 +123,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1o
 name field
@@ -146,7 +132,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_farm1p
 name field
@@ -156,5 +141,4 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end

@@ -1,6 +1,4 @@
-Object swamp1
-name swamp
-face swamp1.101
+Object floor_g
 no_teleport 1
 layer 1
 terrain_type 1

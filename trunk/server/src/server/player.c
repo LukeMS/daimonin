@@ -2324,7 +2324,7 @@ int pvp_area(object *attacker, object *victim)
 */
 int op_on_battleground(object *op, int *x, int *y)
 {
-    object *tmp;
+    /*object *tmp;*/
 
     /* A battleground-tile needs the following attributes to be valid:
      * is_floor 1 (has to be the FIRST floor beneath the player's feet),
@@ -2332,9 +2332,11 @@ int op_on_battleground(object *op, int *x, int *y)
      * and the exit-coordinates sp/hp must both be > 0.
      * => The intention here is to prevent abuse of the battleground-
      * feature (like pickable or hidden battleground tiles). */
+/* floors are now in map node - this needs a new logic */
+/*
     for (tmp = op->below; tmp != NULL; tmp = tmp->below)
     {
-        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+        if (tmp->type == FLOOR)
         {
             if (QUERY_FLAG(tmp, FLAG_NO_PICK)
              && tmp->name == shstr.battleground
@@ -2348,6 +2350,7 @@ int op_on_battleground(object *op, int *x, int *y)
             }
         }
     }
+*/
     /* If we got here, did not find a battleground */
     return 0;
 }

@@ -935,8 +935,54 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
             goto next;
         }
 
-        /* do some safety for containers */
-        if (op->type == CONTAINER)
+        else if (op->type == FLOOR)
+        {
+			/* be sure that floor is a.) always single arch and b.) always use "in map" offsets (no multi arch tricks) */
+			MapSpace *msp = GET_MAP_SPACE_PTR(m,op->x,op->y);
+
+			msp->floor_arch = op->arch;
+			msp->floor_terrain = op->terrain_type;
+            msp->floor_light = op->last_sp;
+
+			if(QUERY_FLAG(op,FLAG_UNIQUE))
+				msp->floor_flags |= MAP_FLOOR_FLAG_UNIQUE;
+			if(QUERY_FLAG(op,FLAG_NO_PASS))
+				msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
+			if(QUERY_FLAG(op,FLAG_PLAYER_ONLY))
+				msp->floor_flags |= MAP_FLOOR_FLAG_PLAYER_ONLY;
+
+			/* would it not be smart to set a global "load map" and then 
+             * disable in that case in insert_ob_xxx() the update_position
+             * and force a 2nd parse step here where we update all at once?
+             */
+	        msp->update_tile++; /* always be sure we calc the node new */
+			if(msp->floor_flags)
+			{		
+	            msp->flags |= (P_NEED_UPDATE | P_NO_ERROR | P_FLAGS_ONLY);
+		        update_position(m, op->x, op->y);
+			}
+			goto next;
+		}
+        else if (op->type == TYPE_FLOORMASK)
+        {
+			/* we have never animated floor masks, but perhaps turnable for adjustable pictures */
+	        if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
+		    {
+				if(NUM_FACINGS(op) == 0)
+				{
+					LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- NUM_FACINGS == 0. Bad animation? (pos:%d,%d)\n",
+						    m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
+					goto next;
+				}
+				SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+	        }
+			/* we save floor masks direct over a generic mask arch/object and don't need to store the direction.
+             * a mask will not turn ingame - thats just for the editor and to have one arch
+			 */
+			SET_MAP_FACE_MASK(m,op->x,op->y,op->face);
+			goto next;
+		}
+        else if (op->type == CONTAINER) /* do some safety for containers */
         {
             op->attacked_by = NULL; /* used for containers as link to players viewing it */
             op->attacked_by_count = 0;
@@ -968,21 +1014,20 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
 
 
         /* expand a multi arch - we have only the head saved in a map!
-             * the *real* fancy point is, that our head/tail don't must fit
-             * in this map! insert_ob will take about it and load the needed
-             * map - then this function and the map loader is called recursive!
-             */
+         * the *real* fancy point is, that our head/tail don't must fit
+         * in this map! insert_ob will take about it and load the needed
+         * map - then this function and the map loader is called recursive!
+         */
         if (op->arch->more) /* we have a multi arch head? */
         {
             /* a important note: we have sometimes the head of a multi arch
-                     * object in the inventory of objects - for example mobs
-                     * which changed type in spawn points and in the mob itself
-                     * as TYPE_BASE_INFO. As long as this arches are not on the map,
-                     * we will not come in trouble here because load_object() will them
-                     * load on the fly. That means too, that multi arches in inventories
-                     * are always NOT expanded - means no tail. For inventory objects,
-                     * we never hit this breakpoint here.
-                     */
+             * object in the inventory of objects - for example mobs
+             * which changed type in spawn points and in the mob itself
+             * as TYPE_BASE_INFO. As long as this arches are not on the map,
+             * we will not come in trouble here because load_object() will them
+             * load on the fly. That means too, that multi arches in inventories
+             * are always NOT expanded - means no tail.
+			 */
             tail = op->arch->more;
             prev = op,last_more = op;
 
@@ -1009,6 +1054,10 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
              * to speed up some core functions like moving or remove_ob()/insert_ob
              * and because there are some "arch depending and not object depending"
              * flags, we init the tails with some of the head settings.
+             * NOTE / TODO : is it not possible and easier to copy simply the WHOLE
+             * flag block from head to tail? in theorie, the tail can safely have
+             * all the flags too... Perhaps we must change one or two code parts
+             * for it but it should work MT-10.2005
              */
             if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT)
@@ -1105,9 +1154,27 @@ next:
  */
 void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 {
+    static object *floor_g=NULL, *fmask_g=NULL;
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
     char   *bptr=NULL;
+
+	/* ensure we have our "template" objects for saving floors & masks */ 
+	if(!floor_g)
+	{
+		floor_g = get_archetype("floor_g");
+		if(!floor_g)
+			LOG(llevError, "ERROR: Cant'find 'floor_g' arch\n");
+		insert_ob_in_ob(floor_g, &void_container); /* Avoid gc */
+		FREE_AND_CLEAR_HASH(floor_g->name);
+	}
+	if(!fmask_g)
+	{
+		fmask_g = get_archetype("fmask_g");
+		insert_ob_in_ob(fmask_g, &void_container); /* Avoid gc */
+		if(!fmask_g)
+			LOG(llevError, "ERROR: Cant'find 'fmask_g' arch\n");
+	}
 
     /* first, we have to remove all dynamic objects from this map.
      * from spell effects with owners (because the owner can't
@@ -1320,7 +1387,48 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
     {
         for (j = 0; j < MAP_HEIGHT(m); j++)
         {
-            for (op = get_map_ob(m, i, j); op; op = otmp)
+			MapSpace *mp = &m->spaces[i + m->width * j];
+
+			/* save first the floor and mask from the node */
+			if(mp->floor_arch)
+			{
+				floor_g->arch = mp->floor_arch;
+				floor_g->terrain_type = mp->floor_terrain;
+				floor_g->last_sp = mp->floor_light;
+				floor_g->x = i;
+				floor_g->y = j;
+				if(mp->floor_flags & MAP_FLOOR_FLAG_UNIQUE)
+					SET_FLAG(floor_g, FLAG_UNIQUE);
+				else
+					CLEAR_FLAG(floor_g, FLAG_UNIQUE);
+
+				if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS )
+					SET_FLAG(floor_g, FLAG_NO_PASS);
+				else
+					CLEAR_FLAG(floor_g, FLAG_NO_PASS);
+
+				if(mp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY)
+					SET_FLAG(floor_g, FLAG_PLAYER_ONLY);
+				else
+					CLEAR_FLAG(floor_g, FLAG_PLAYER_ONLY);
+				
+				/* black object magic... don't do this in the "normal" server code */
+				floor_g->name = floor_g->arch->clone.name;
+				floor_g->face = floor_g->arch->clone.face;
+				floor_g->animation_id = floor_g->arch->clone.animation_id;
+				save_object(fp, floor_g, 3);
+				floor_g->name = NULL;
+			}
+
+			if(mp->mask_face)
+			{
+				fmask_g->face = mp->mask_face;
+				fmask_g->x = i;
+				fmask_g->y = j;
+				save_object(fp, floor_g, 3);				
+			}
+
+            for (op = mp->first; op; op = otmp)
             {
                 otmp = op->above;
                 last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
@@ -1386,7 +1494,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                         else if (last_valid)
                             otmp = last_valid->above;
                         else
-                            otmp = get_map_ob(m, i, j); /* should be really rare */
+                            otmp = mp->first; /* should be really rare */
                     }
                     continue;
                 }
@@ -1418,7 +1526,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                         else if (last_valid)
                             otmp = last_valid->above;
                         else
-                            otmp = get_map_ob(m, i, j); /* should be really rare */
+                            otmp = mp->first; /* should be really rare */
                     }
                 }
             } /* for this space */
@@ -1990,12 +2098,13 @@ static void delete_unique_items(mapstruct *m)
     for (i = 0; i < MAP_WIDTH(m); i++)
         for (j = 0; j < MAP_HEIGHT(m); j++)
         {
-            unique = 0;
+			if(GET_MAP_FLOOR_FLAGS(m,i,j) & MAP_FLOOR_FLAG_UNIQUE)
+	            unique = 1;
+			else
+	            unique = 0;
             for (op = get_map_ob(m, i, j); op; op = next)
             {
                 next = op->above;
-                if (QUERY_FLAG(op, FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
-                    unique = 1;
                 if (op->head == NULL && (QUERY_FLAG(op, FLAG_UNIQUE) || unique))
                 {
                     if (QUERY_FLAG(op, FLAG_IS_LINKED))
@@ -2526,6 +2635,7 @@ void update_position(mapstruct *m, int x, int y)
     flags = oldflags & P_NEED_UPDATE; /* save our update flag */
 
     /* update our flags */
+	mp = &m->spaces[x + m->width * y];
     if (oldflags & P_FLAGS_UPDATE)
     {
 #ifdef DEBUG_CORE
@@ -2536,8 +2646,17 @@ void update_position(mapstruct *m, int x, int y)
 
         /* This is a key function and highly often called - every saved tick is good.
          */
-        for (tmp = get_map_ob(m, x, y); tmp; tmp = tmp->above)
+		if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS)
+			flags |= P_NO_PASS;
+		if(mp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY)
+			flags |= P_PLAYER_ONLY;
+
+		mp->move_flags |= mp->floor_terrain;
+        mp->light_value += mp->floor_light;
+
+        for (tmp =mp->first; tmp; tmp = tmp->above)
         {
+			/* should be floor only? let it in for now ... mt 10.2005 */
             if (QUERY_FLAG(tmp, FLAG_PLAYER_ONLY))
                 flags |= P_PLAYER_ONLY;
             if (tmp->type == CHECK_INV)
@@ -2600,8 +2719,10 @@ void update_position(mapstruct *m, int x, int y)
                 }
             }
 
+		/* This is set by the floor to node code now
             if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
                 move_flags |= tmp->terrain_type;
+        */ 
         } /* for stack of objects */
 
 #ifdef DEBUG_OLDFLAGS
@@ -2615,7 +2736,7 @@ void update_position(mapstruct *m, int x, int y)
 #endif
 
         SET_MAP_FLAGS(m, x, y, flags);
-        SET_MAP_MOVE_FLAGS(m, x, y, move_flags);
+        /*SET_MAP_MOVE_FLAGS(m, x, y, move_flags);*/
         /*    SET_MAP_LIGHT(m,x,y,light);*/
     } /* end flag update */
 
@@ -2626,16 +2747,22 @@ void update_position(mapstruct *m, int x, int y)
 #ifdef DEBUG_CORE
     LOG(llevDebug, "UP - LAYER: %d,%d\n", x, y);
 #endif
-    mp = &m->spaces[x + m->width * y];
+
+	/* NOTE: The whole mlayer system will become outdated with beta 5 (smooth
+     * scrolling). I will install for that client type a dynamic map protocol
+     */
     mp->client_mlayer[0] = 0; /* ALWAYS is client layer 0 (cl0) a floor. force it */
     mp->client_mlayer_inv[0] = 0;
-    if (mp->layer[1])
+
+/* disabled my floor/mask node patch 
+    if (mp->mask)
     {
         mp->client_mlayer[1] = 1;
         mp->client_mlayer_inv[1] = 1;
     }
     else
-        mp->client_mlayer_inv[1] = mp->client_mlayer[1] = -1;
+*/
+    mp->client_mlayer_inv[1] = mp->client_mlayer[1] = -1;
 
     /* and 2 layers for moving stuff */
     mp->client_mlayer[2] = mp->client_mlayer[3] = -1;

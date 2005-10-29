@@ -156,7 +156,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MMISSILE                25
 #define TIMED_GATE              26
 #define TRIGGER                 27 /* Only triggered when applied, resets after interval */
-/* type 28 - was GRIMREAPER */
+#define TYPE_FLOORMASK			28
 #define MAGIC_EAR               29
 #define TRIGGER_BUTTON          30
 #define TRIGGER_ALTAR           31
@@ -655,7 +655,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_WALK_ON        9 /* Applied when it's walked upon */
 #define FLAG_NO_PASS        10 /* Nothing can pass (wall() is true) */
 #define FLAG_ANIMATE        11 /* The object looks at archetype for faces */
-#define FLAG_SLOW_MOVE      12 /* Uses the stats.exp/1000 to slow down. Only for terrain */
+/* flag 12 is free (was FLAG_SLOW_MOVE) */
+
 #define FLAG_FLYING         13 /* Not affected by WALK_ON or SLOW_MOVE) */
 #define FLAG_MONSTER        14 /* A object with this flag is used like a object with
                                       * type == MONSTER. SO, we can use type GOLEMS objects
@@ -725,7 +726,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_READY_BOW      60 /* mob or player has a bow readied */
 #define FLAG_XRAYS          61 /* X-ray vision */
 #define FLAG_NO_APPLY       62 /* Avoids step_on/fly_on to this object */
-#define FLAG_IS_FLOOR       63 /* Can't see what's underneath this object */
+/* flag 63 is free (was FLAG_IS_FLOOR) */
 
 /* Start of values in flags[2] */
 #define FLAG_LIFESAVE       64 /* Saves a players' life once, then destr. */
@@ -861,8 +862,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define NROFNEWOBJS(xyz)    ((xyz)->stats.food)
 
-#define SLOW_PENALTY(xyz)   ((xyz)->stats.exp)/1000.0
-#define SET_SLOW_PENALTY(xyz,fl)    (xyz)->stats.exp= (sint32) ((fl)*1000.0)
+/* i disabled slow penalty ATM */
+#define SLOW_PENALTY(xyz)   0
+#define SET_SLOW_PENALTY(xyz,fl)    (xyz)->stats.exp = (sint32) ((fl)*1000.0)
 #define SET_GENERATE_TYPE(xyz,va)   (xyz)->stats.sp=(va)
 #define GENERATE_TYPE(xyz)  ((xyz)->stats.sp)
 #define GENERATE_SPEED(xyz) ((xyz)->stats.maxsp) /* if(!RANDOM()%<speed>) */

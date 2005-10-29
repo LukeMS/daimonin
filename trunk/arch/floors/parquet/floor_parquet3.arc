@@ -6,7 +6,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3b
 name floor
@@ -16,7 +15,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3c
 name floor
@@ -26,7 +24,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3d
 name floor
@@ -36,7 +33,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3e
 name floor
@@ -46,7 +42,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3f
 name floor
@@ -56,7 +51,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3g
 name floor
@@ -66,7 +60,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3h
 name floor
@@ -76,7 +69,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3i
 name floor
@@ -86,7 +78,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_parquet3j
 name floor
@@ -96,5 +87,4 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end

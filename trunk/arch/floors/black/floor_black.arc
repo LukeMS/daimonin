@@ -6,7 +6,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black1b
 name floor
@@ -16,7 +15,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black1c
 name floor
@@ -26,7 +24,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black1d
 name floor
@@ -36,7 +33,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black2a
 name floor
@@ -46,7 +42,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black2b
 name floor
@@ -56,7 +51,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black2c
 name floor
@@ -66,7 +60,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_black2d
 name floor
@@ -76,5 +69,4 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
