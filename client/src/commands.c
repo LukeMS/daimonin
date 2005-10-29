@@ -922,7 +922,8 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
 
     if (pos == len && loc != -1)
     {
-        LOG(LOG_ERROR, "ItemCmd: Got location with no other data\n");
+		/* server sends no clean command to clear below window */
+        /*LOG(LOG_ERROR, "ItemCmd: Got location with no other data\n");*/
     }
     else
     {

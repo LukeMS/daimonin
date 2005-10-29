@@ -6,7 +6,6 @@ layer 1
 terrain_type 8
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_fire1b
 name fire
@@ -16,7 +15,6 @@ layer 1
 terrain_type 8
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_fire1c
 name fire
@@ -26,5 +24,4 @@ layer 1
 terrain_type 8
 type 71
 no_pick 1
-is_floor 1
 end

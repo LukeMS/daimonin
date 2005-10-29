@@ -6,7 +6,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_sblack1b
 name floor
@@ -16,7 +15,6 @@ terrain_type 1
 type 71
 no_teleport 1
 no_pick 1
-is_floor 1
 end
 Object floor_sblack2
 name floor
@@ -26,7 +24,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_sblack2b
 name floor
@@ -36,7 +33,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_sblack3
 name floor
@@ -46,7 +42,6 @@ no_teleport 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_sblack3b
 name floor
@@ -56,7 +51,6 @@ no_teleport 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_stone_b1
 name floor
@@ -66,7 +60,6 @@ no_teleport 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_stone_b2
 name floor
@@ -76,7 +69,6 @@ no_teleport 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_stone_b3
 name floor
@@ -86,7 +78,6 @@ layer 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end
 Object floor_stone_b4
 name floor
@@ -96,5 +87,4 @@ no_teleport 1
 terrain_type 1
 type 71
 no_pick 1
-is_floor 1
 end

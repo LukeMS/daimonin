@@ -1,5 +1,6 @@
 Object map
-layer 1
+layer 0
+sys_object 1
 type 22
 slaying /relic/castle/castle_030a
 face info.101

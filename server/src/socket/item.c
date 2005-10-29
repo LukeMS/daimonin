@@ -184,7 +184,7 @@ void esrv_draw_look(object *pl)
             continue;
 
         /* skip map mask, sys_objects and invisible objects when we can't see them */
-        if (tmp->layer <= 2
+        if (tmp->layer <= 0
          || IS_SYS_INVISIBLE(tmp)
          || (!QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) && QUERY_FLAG(tmp, FLAG_IS_INVISIBLE)))
         {
@@ -1214,7 +1214,7 @@ void look_at(object *op, int dx, int dy)
          && ((!dx && !dy) || tmp->type != CONTAINER || QUERY_FLAG(op, FLAG_WIZ) || !(tmp->type) || tmp->type != FLESH))
             inventory(op, tmp->head == NULL ? tmp : tmp->head);
 
-        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR) && !QUERY_FLAG(op, FLAG_WIZ))    /* don't continue under the floor */
+        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT) && !QUERY_FLAG(op, FLAG_WIZ))    /* don't continue under the floor */
             break;
     }
 
