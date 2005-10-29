@@ -26,7 +26,8 @@
 <!ELEMENT section (title, (%Block;)+)>
 <!ATTLIST section
     id ID #IMPLIED
-    autotoc (yes|no) #IMPLIED
+    autotoc CDATA #IMPLIED
+    toc (include|exclude) 'include'
 >
 
 <!ELEMENT em (%Inline;)*>
