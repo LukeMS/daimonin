@@ -272,7 +272,7 @@ bool CEvent::frameEnded(const FrameEvent& )
       sprintf(buffer, "%d", stats.triangleCount);
       GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
     }
-    Logger::log().info() << "Time to print stats: " << clock()-time << " ms";
+    //Logger::log().info() << "Time to print stats: " << clock()-time << " ms";
   }
 
   return true;

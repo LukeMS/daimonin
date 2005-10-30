@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -119,26 +119,34 @@ public:
   void keyEvent(const char keyChar, const unsigned char key);
   void sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
   //void getMessage (int &window, int &message, int &element);
+  void setTooltip(const char*text);
 
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  
-  
+
+
   int mDragSrcWin, mDragDestWin;
   int mDragSrcContainer, mDragDestContainer;
   int mDragSrcItemPosx, mDragSrcItemPosy; // Wird bei drag start gesetzt, um Item bei falschem Drag zurückflutschen zu lassen.
   bool isDragging;
-  
+
   std::string mStrImageSetGfxFile;
+  std::string  mStrTooltip;
   std::vector<mSrcEntry*>mvSrcEntry;
   class GuiWindow *guiWindow;
   unsigned int mScreenWidth, mScreenHeight;
-  bool mHasFocus;
+  bool mHasFocus, mTooltipRefresh;
+  clock_t mTooltipDelay;
   int mFocusedWindow, mFocusedGadget;
+  int mMouseX, mMouseY;
   PixelBox mSrcPixelBox;
   Image mImageSetImg;
+  Overlay *mOverlay;
+  OverlayElement *mElement;
+  MaterialPtr mMaterial;
+  TexturePtr mTexture;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////

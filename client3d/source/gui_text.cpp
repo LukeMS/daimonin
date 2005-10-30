@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -40,7 +40,10 @@ const char TXT_SUB_CMD_VALUE08 = '@';
 
 enum
 {
-  TXT_STATE_HIGHLIGHT =1, TXT_STATE_SUM
+  TXT_STATE_HIGHLIGHT =1,
+  TXT_STATE_LOWLIGHT,
+  TXT_STATE_LINK,
+  TXT_STATE_SUM
 };
 
 ///=================================================================================================
@@ -50,9 +53,10 @@ GuiTextout::GuiTextout()
 {
   maxFontHeight = 0;
   maxFontWidth  = 0;
-  loadFont("font_12.png");
-  loadFont("font_16.png");
-  loadFont("font_16.png");
+  mSumFonts = -1;
+  loadRawFont("font_12.png");
+  loadRawFont("font_16.png");
+  loadRawFont("font_16.png");
   TextGfxBuffer = new uint32[maxFontHeight * MAX_TEXTLINE_LEN];
 }
 
@@ -65,28 +69,50 @@ GuiTextout::~GuiTextout()
 }
 
 ///=================================================================================================
-/// Load a font into main memory.
+/// Load a RAW font into main memory.
 ///=================================================================================================
-void GuiTextout::loadFont(const char * filename)
+void GuiTextout::loadRawFont(const char *filename)
 {
-  static int fontNr=-1;
-  if (++fontNr >= FONT_SUM) return;
-  mFont[fontNr].image.load(filename, "General");
-  mFont[fontNr].data = (uint32*)mFont[fontNr].image.getData();
-  mFont[fontNr].height = mFont[fontNr].image.getHeight() -1;
-  if (mFont[fontNr].height > maxFontHeight)  maxFontHeight = mFont[fontNr].height;
-  mFont[fontNr].textureWidth = mFont[fontNr].image.getWidth();
-  mFont[fontNr].width  = mFont[fontNr].image.getWidth() / CHARS_IN_FONT;
-  if (mFont[fontNr].width > maxFontWidth)  maxFontWidth = mFont[fontNr].width;
+  static int mSumFonts=-1;
+  if (++mSumFonts >= FONT_SUM) return;
+  mFont[mSumFonts].image.load(filename, "General");
+  mFont[mSumFonts].data = (uint32*)mFont[mSumFonts].image.getData();
+  mFont[mSumFonts].height = mFont[mSumFonts].image.getHeight() -1;
+  if (mFont[mSumFonts].height > maxFontHeight)  maxFontHeight = mFont[mSumFonts].height;
+  mFont[mSumFonts].textureWidth = mFont[mSumFonts].image.getWidth();
+  mFont[mSumFonts].width  = mFont[mSumFonts].image.getWidth() / CHARS_IN_FONT;
+  if (mFont[mSumFonts].width > maxFontWidth)  maxFontWidth = mFont[mSumFonts].width;
   unsigned int x;
   for (int i=0; i < CHARS_IN_FONT; ++i)
   {
-    for (x=0; x < mFont[fontNr].width-1; ++x)
+    for (x=0; x < mFont[mSumFonts].width-1; ++x)
     {
-      if (mFont[fontNr].data[x+i*mFont[fontNr].width] == 0xff00ff00) break;
+      if (mFont[mSumFonts].data[x+i*mFont[mSumFonts].width] == 0xff00ff00) break;
     }
-    mFont[fontNr].charWidth[i] = x;
+    mFont[mSumFonts].charWidth[i] = x;
   }
+}
+
+///=================================================================================================
+/// Load a TTF into main memory.
+///=================================================================================================
+void GuiTextout::loadTTFont(const char *filename)
+{
+// TODO
+/*
+  // TTF Fonts to bitmap.
+  FontPtr testFont = FontManager::getSingleton().getByName(filename);
+  Material *material = testFont.getPointer()->getMaterial().getPointer();
+  std::string strTexture = material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
+  TexturePtr ptexture = TextureManager::getSingleton().getByName(strTexture);
+  Texture *texture = ptexture.getPointer();
+
+  int h = texture->getHeight();
+  for (int i = 33 i < 128; ++i)
+  {
+    // Blit every char into the new structure.
+  }
+*/
 }
 
 ///=================================================================================================
@@ -94,7 +120,6 @@ void GuiTextout::loadFont(const char * filename)
 ///=================================================================================================
 void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
 {
-  if (!text || text[0] == 0) return;
   int fontNr = 0;
   // Restore background.
   int y =0;
@@ -106,6 +131,7 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
     }
     y += line->width;
   }
+  if (!text || text[0] == 0) return;
   // draw the text into buffer.
   drawText(line->width, TextGfxBuffer, text);
   // Blit it into the window.
@@ -153,6 +179,7 @@ void GuiTextout::drawText(int width, uint32 *dest_data, const char*text)
 
   while (*text)
   {
+    // Parse format commands.
     switch (*text)
     {
       case TXT_CMD_HIGHLIGHT:
@@ -161,7 +188,7 @@ void GuiTextout::drawText(int width, uint32 *dest_data, const char*text)
         if (state & TXT_STATE_HIGHLIGHT)
         {
           /// Parse the highlight color (8 byte hex string to uint32).
-          if (*text == '#')
+          if (*text == TXT_SUB_CMD_VALUE32)
           {
             color =0;
             for (int i = 28; i>=0; i-=4)
@@ -176,35 +203,29 @@ void GuiTextout::drawText(int width, uint32 *dest_data, const char*text)
         else color = TXT_COLOR_DEFAULT;
         break;
       default:
+        fontPosX = (*text - 32) * mFont[fontNr].width;
+        for (unsigned int y =0; y < mFont[fontNr].height; ++y)
+        {
+          for (int x=0; x < mFont[fontNr].charWidth[*text -32]; ++x)
+          { /// PixelFormat: A8 R8 G8 B8.
+            if ((pixFont = mFont[fontNr].data[y*mFont[fontNr].textureWidth + fontPosX + x]) == 0xff000000 ) continue;
+            pixColor = pixFont & 0xff000000;
+            pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
+            pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
+            pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
+            dest_data[y*width + x] = pixColor;
+          }
+        }
+        dest_data += mFont[fontNr].charWidth[*text++ - 32] +1;
         break;
     }
-    fontPosX = (*text - 32) * mFont[fontNr].width;
-    for (unsigned int y =0; y < mFont[fontNr].height; ++y)
-    {
-      for (int x=0; x < mFont[fontNr].charWidth[*text -32]; ++x)
-      { /// PixelFormat: A8 R8 G8 B8.
-        if ((pixFont = mFont[fontNr].data[y*mFont[fontNr].textureWidth + fontPosX + x]) == 0xff000000 ) continue;
-        pixColor = pixFont & 0xff000000;
-        pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
-        pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
-        pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
-        dest_data[y*width + x] = pixColor;
-      }
-    }
-    dest_data += mFont[fontNr].charWidth[*text++ - 32] +1;
   }
 }
 
-/*
-    // TTF Fonts to bitmap.
-    FontPtr testFont = FontManager::getSingleton().getByName(mStrFont);
-    Material *material = testFont.getPointer()->getMaterial().getPointer();
-    std::string strTexture = material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
-    Logger::log().error() << strTexture;
-    TexturePtr ptexture = TextureManager::getSingleton().getByName(strTexture);
-    Texture *texture = ptexture.getPointer();
-    Logger::log().error() << texture->getHeight() << " " << texture->getWidth();
-*/
+
+
+
+
 
 
 

@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -42,6 +42,7 @@ const char XML_BACKGROUND[] = "Background";
 //=================================================================================================
 int GuiWindow::msInstanceNr = -1;
 int GuiWindow::mMouseDragging = -1;
+std::string GuiWindow::mStrTooltip ="";
 
 ///=================================================================================================
 /// Delete a gadget.
@@ -93,7 +94,8 @@ GuiWindow::~GuiWindow()
     mvTextline.erase(i);
   }
   mvTextline.clear();
-
+  // Set all shared pointer to null.
+  mMaterial.setNull();
   mTexture.setNull();
 }
 
@@ -161,10 +163,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Tooltip entries.
   /////////////////////////////////////////////////////////////////////////
+/*
   if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
   {
     mStrTooltip = xmlElem->Attribute("text");
   }
+*/
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadgets.
   /////////////////////////////////////////////////////////////////////////
@@ -403,9 +407,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
           actGadgetName = mvGadget[mMousePressed]->getName();
 
-
           if (!strcmp(actGadgetName, "Button_Close")) mOverlay->hide(); // just testing.
-
 
         }
       }
@@ -436,6 +438,8 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           {
             mvGadget[mMouseOver]->draw(mSrcPixelBox, mTexture.getPointer());
             mMouseOver = -1;
+            //mStrTooltip = "";
+            GuiManager::getSingleton().setTooltip("");
           }
         }
         ////////////////////////////////////////////////////////////
@@ -444,10 +448,14 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         if (mMousePressed < 0)
         {
           gadget = getGadgetMouseIsOver(x, y);
-          if (gadget >=0 && mvGadget[gadget]->setState(STATE_M_OVER))
-          {  // (If not already done) change the gadget state to mouseover.
-            mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
-            mMouseOver = gadget;
+          if (gadget >=0)
+          {
+            if ( mvGadget[gadget]->setState(STATE_M_OVER))
+            {  // (If not already done) change the gadget state to mouseover.
+              mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
+              mMouseOver = gadget;
+              GuiManager::getSingleton().setTooltip(mvGadget[gadget]->getTooltip());
+            }
           }
         }
         else
@@ -508,7 +516,7 @@ void GuiWindow::updateDragAnimation()
 ///=================================================================================================
 void GuiWindow::update2DAnimaton()
 {
-	;
+  ;
 }
 
 ///=================================================================================================
