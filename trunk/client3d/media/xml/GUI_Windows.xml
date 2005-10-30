@@ -82,6 +82,7 @@
     <Gadget type= "BUTTON"  name = "Button_1">
       <Pos x= "25" y= "75" />
       <Label xPos= "5" yPos= "1" red= "32" green= "64" blue= "128" text= "Press"/>
+      <Tooltip  text= "This is only a test button." />
     </Gadget>
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "HealthBar">

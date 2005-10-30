@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -86,6 +86,7 @@ GuiManager::_GuiElementNames GuiManager::GuiElementNames[GUI_ELEMENTS_SUM]=
     }
   };
 
+const clock_t TOOLTIP_DELAY = 2;
 
 ///=================================================================================================
 /// .
@@ -95,6 +96,30 @@ void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_fil
   Logger::log().headline("Init GUI");
   mScreenWidth   = w;
   mScreenHeight  = h;
+  /////////////////////////////////////////////////////////////////////////
+  /// Create the tooltip overlay.
+  /////////////////////////////////////////////////////////////////////////
+  mTooltipRefresh = false;
+  mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
+             TEX_TYPE_2D, 256, 128, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+  mOverlay = OverlayManager::getSingleton().create("GUI_Tooltip_Overlay");
+  mOverlay->setZOrder(500);
+  mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Tooltip_Frame");
+  mElement->setMetricsMode(GMM_PIXELS);
+  mElement->setDimensions (256, 128);
+  mElement->setPosition(0, 0);
+  MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
+  mMaterial = tmpMaterial->clone("GUI_Tooltip_Material");
+  mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_ToolTip_Texture");
+  mMaterial->load();
+  mElement->setMaterialName("GUI_Tooltip_Material");
+  mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
+  // If the window is smaller then the texture - we have to set the delta-size to transparent.
+  PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
+  uint32 *dest_data = (uint32*)pb.data;
+  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0xffaaff33;
+  mTexture->getBuffer()->unlock();
+
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gfx datas from the imageset.
   /////////////////////////////////////////////////////////////////////////
@@ -114,6 +139,8 @@ void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_fil
 void GuiManager::freeRecources()
 {
   GuiCursor::getSingleton().freeRecources();
+  mMaterial.setNull();
+  mTexture.setNull();
 }
 
 ///=================================================================================================
@@ -250,12 +277,12 @@ struct GuiManager::mSrcEntry *GuiManager::getStateGfxPositions(const char* guiIm
 bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 {
   GuiCursor::getSingleton().setPos(rx, ry);
-  rx *= mScreenWidth;
-  ry *= mScreenHeight;
+  mMouseX = (int) (rx * mScreenWidth);
+  mMouseY = (int) (ry * mScreenHeight);
   const char *actGadgetName;
   for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
-    actGadgetName = guiWindow[i].mouseEvent(mouseAction, (int)rx, (int)ry);
+    actGadgetName = guiWindow[i].mouseEvent(mouseAction, mMouseX, mMouseY);
     if (actGadgetName)
     {
       mFocusedWindow = i;
@@ -286,4 +313,34 @@ void GuiManager::update()
     guiWindow[i].update2DAnimaton();
     guiWindow[i].updateListbox();
   }
+  /////////////////////////////////////////////////////////////////////////
+  /// Check for Tooltips.
+  /////////////////////////////////////////////////////////////////////////
+  if (mTooltipRefresh)
+  {
+    if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
+    {
+      // TODO: Make the background fit to the text. make a black border, ...
+      GuiTextout::getSingleton().Print(0, 0, 256, mTexture.getPointer(), mStrTooltip.c_str());
+      mTooltipRefresh = false;
+      mElement->setPosition(mMouseX+15, mMouseY+20); // TODO:
+      mOverlay->show();
+    }
+    else if (mStrTooltip == "")
+    {
+      mTooltipRefresh = false;
+      mOverlay->hide();
+    }
+  }
+}
+
+///=================================================================================================
+/// Update all windows.
+///=================================================================================================
+void GuiManager::setTooltip(const char*text)
+{
+  if (mStrTooltip == text) return;
+  mStrTooltip = text;
+  mTooltipRefresh = true;
+  mTooltipDelay = clock()/ CLOCKS_PER_SEC + 2;
 }
