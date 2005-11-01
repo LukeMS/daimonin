@@ -60,7 +60,7 @@
             <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h1>
-        <xsl:if test="/section/@autotoc">
+        <xsl:if test="/section/@autotoc and /section/section">
             <h2 id="toc">
                 <xsl:choose>
                     <xsl:when test="/section/@autotoc='autotoc'">
