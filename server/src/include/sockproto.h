@@ -69,7 +69,6 @@ void            ReplyCmd(char *buf, int len, player *pl);
 void            RequestFileCmd(char *buf, int len, NewSocket *ns);
 void            VersionCmd(char *buf, int len, NewSocket *ns);
 void            SetSound(char *buf, int len, NewSocket *ns);
-void            MapNewmapCmd(player *pl);
 void            MoveCmd(char *buf, int len, player *pl);
 void            send_query(NewSocket *ns, uint8 flags, char *text);
 void            esrv_update_skills(player *pl);
@@ -78,7 +77,6 @@ void            esrv_new_player(player *pl, uint32 weight);
 void            esrv_send_animation(NewSocket *ns, short anim_num);
 void            draw_client_map(object *pl);
 void            draw_client_map2(object *pl);
-void            esrv_map_scroll(NewSocket *ns, int dx, int dy);
 void            send_plugin_custom_message(object *pl, char *buf);
 /* sounds.c */
 void            play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y);

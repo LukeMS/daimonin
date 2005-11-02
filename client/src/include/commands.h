@@ -64,7 +64,6 @@ extern void UpdateItemCmd(unsigned char *data, int len);
 extern void DeleteItem(unsigned char *data, int len);
 extern void DeleteInventory(unsigned char *data, int len);
 extern void Map2Cmd(unsigned char *data, int len);
-extern void map_scrollCmd(char *data, int len);
 extern void MagicMapCmd(unsigned char *data, int len);
 extern void VersionCmd(char *data, int len);
 
@@ -72,7 +71,6 @@ extern void SendVersion(ClientSocket csock);
 extern void SendAddMe(ClientSocket csock);
 extern void RequestFile(ClientSocket csock, int index);
 extern void SendSetFaceMode(ClientSocket csock, int mode);
-extern void MapstatsCmd(unsigned char *data, int len);
 extern void SpelllistCmd(unsigned char *data, int len);
 extern void SkilllistCmd(unsigned char *data, int len);
 

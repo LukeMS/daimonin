@@ -48,8 +48,8 @@ _multi_part_obj             MultiArchs[16];
  */
 void adjust_map_cache(int xpos, int ypos)
 {
-    int x, y, i;
-    register struct MapCell                    *map;
+    int x, y /*, i*/;
+//    register struct MapCell                    *map;
     int             xreal, yreal;
 
     memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
@@ -62,18 +62,20 @@ void adjust_map_cache(int xpos, int ypos)
             if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || xreal >= MapData.ylen * 3)
                 continue;
 
+/*
             map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
             map->fog_of_war = FALSE;
             map->darkness = the_map.cells[x][y].darkness;
 
-            for (i = 0; i < MAXFACES; i++) /* lets update the whole cell for secure */
+            for (i = 0; i < MAXFACES; i++)
             {
                 map->faces[i] = the_map.cells[x][y].faces[i];
                 map->ext[i] = the_map.cells[x][y].ext[i];
                 map->pos[i] = the_map.cells[x][y].pos[i];
                 map->probe[i] = the_map.cells[x][y].probe[i];
             }
+*/
         }
     }
 }
@@ -216,7 +218,7 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
 
 void set_map_ext(int x, int y, int layer, int ext, int probe)
 {
-    register struct MapCell                    *map;
+//    register struct MapCell                    *map;
     int             xreal, yreal;
 
     the_map.cells[x][y].ext[layer] = ext;
@@ -227,17 +229,19 @@ void set_map_ext(int x, int y, int layer, int ext, int probe)
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
+/*
     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
     map->ext[layer] = ext;
     if (probe != -1)
         map->probe[layer] = probe;
+*/
 }
 
 void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
-    register struct MapCell                    *map;
-    int             xreal, yreal, i;
+ //   register struct MapCell                    *map;
+    int             xreal, yreal/*, i*/;
 
     the_map.cells[x][y].faces[layer] = face;
     if (!face)
@@ -252,12 +256,13 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
+/*
     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
     map->fog_of_war = FALSE;
     map->darkness = the_map.cells[x][y].darkness;
 
-    for (i = 0; i < MAXFACES; i++) /* lets update the whole cell for secure */
+    for (i = 0; i < MAXFACES; i++)
     {
         map->faces[i] = the_map.cells[x][y].faces[i];
         map->ext[i] = the_map.cells[x][y].ext[i];
@@ -265,11 +270,12 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
         map->probe[i] = the_map.cells[x][y].probe[i];
         strcpy(map->pname[i], the_map.cells[x][y].pname[i]);
     }
+*/
 }
 
 void display_map_clearcell(long x, long y)
 {
-    register struct MapCell                    *map;
+//    register struct MapCell                    *map;
     int             xreal, yreal, i;
 
 
@@ -287,6 +293,7 @@ void display_map_clearcell(long x, long y)
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
+/*
     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
     map->fog_of_war = TRUE;
@@ -299,12 +306,13 @@ void display_map_clearcell(long x, long y)
         map->pname[i][0] = 0;
         map->probe[i] = 0;
     }
+*/
 }
 
 
 void set_map_darkness(int x, int y, uint8 darkness)
 {
-    register struct MapCell                    *map;
+  //  register struct MapCell                    *map;
     int             xreal, yreal;
 
     if (darkness != the_map.cells[x][y].darkness)
@@ -314,10 +322,12 @@ void set_map_darkness(int x, int y, uint8 darkness)
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
+/*
     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
     if (darkness != map->darkness)
         map->darkness = darkness;
+*/
 }
 
 
@@ -393,9 +403,9 @@ void map_draw_map(void)
                     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
                         continue;
                     /*LOG(-1,"MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);*/
-                    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+//                    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-                    /*map = &the_map.cells[x][y]; */
+                    map = &the_map.cells[x][y];
                     if ((index_tmp = map->faces[k]) > 0)
                     {
                         index = index_tmp & ~0x8000;
@@ -623,35 +633,6 @@ void map_draw_map(void)
  * 2 y rows - the tiles don't touch there!
  */
 #define TILE_ISO_YLEN (23+1)
-
-/*
-static char tile_mask[TILE_ISO_YLEN][TILE_ISO_XLEN+1] ={
-"000000000000000000000011112222222222222222222222",
-"000000000000000000001111111122222222222222222222",
-"000000000000000000111111111111222222222222222222",
-"000000000000000011111111111111112222222222222222",
-"000000000000001111111111111111111122222222222222",
-"000000000000111111111111111111111111222222222222",
-"000000000011111111111111111111111111112222222222",
-"000000001111111111111111111111111111111122222222",
-"000000111111111111111111111111111111111111222222",
-"000011111111111111111111111111111111111111112222",
-"001111111111111111111111111111111111111111111122",
-"111111111111111111111111111111111111111111111111",
-"331111111111111111111111111111111111111111111144",
-"333311111111111111111111111111111111111111114444",
-"333333111111111111111111111111111111111111444444",
-"333333331111111111111111111111111111111144444444",
-"333333333311111111111111111111111111114444444444",
-"333333333333111111111111111111111111444444444444",
-"333333333333331111111111111111111144444444444444",
-"333333333333333311111111111111114444444444444444",
-"333333333333333333111111111111444444444444444444",
-"333333333333333333331111111144444444444444444444",
-"333333333333333333333311114444444444444444444444",
-"333333333333333333333333444444444444444444444444"
-};
-*/
 
 /******************************************************************
 * clac the tile-pos(tx,ty) from mouse-pos(x,y).

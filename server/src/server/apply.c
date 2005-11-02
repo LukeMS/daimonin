@@ -1407,12 +1407,6 @@ static int apply_shop_mat(object *shop_mat, object *op)
             op->x += freearr_x[i];
             op->y += freearr_y[i];
             rv = (insert_ob_in_map(op, op->map, shop_mat, 0) == NULL);
-            if (op->type == PLAYER)
-            {
-                esrv_map_scroll(&CONTR(op)->socket, freearr_x[i], freearr_y[i]); /* shop */
-                CONTR(op)->socket.update_tile = 0;
-                CONTR(op)->socket.look_position = 0;
-            }
         }
     }
 

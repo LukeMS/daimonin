@@ -95,7 +95,6 @@ typedef struct NewSocket_struct
     uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
     uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
     uint32              facecache       : 1;        /* If true, client is caching images */
-    uint32              sent_scroll     : 1;
     uint32              sound           : 1;        /* does the client want sound */
     uint32              map2cmd         : 1;        /* Always use map2 protocol command */
     uint32              ext_title_flag  : 1;        /* send ext title to client */

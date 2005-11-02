@@ -135,8 +135,10 @@ typedef struct pl_player
     NewSocket           socket;             /* Socket information for this player */
 
     /* all this is set to 0 with memset */
-    char                maplevel[MAX_BUF];          /* Name of the map the player is on */
-    struct mapdef      *last_update;        /* when moving on tiled maps, player can change
+    char                maplevel[MAX_BUF];      /* Name of the map the player is on */
+	int					map_update_cmd;			/* for server->client protocol */
+	int					map_update_tile;			/* for server->client protocol */
+    struct mapdef      *last_update;			/* when moving on tiled maps, player can change
                                                  * map without triggering mapevents and new_map_cmd.
                                                  * This will break client cache and script events.
                                                  * This value will used as control value.*/
@@ -229,6 +231,8 @@ typedef struct pl_player
     sint32              group_id;                /* unique group id number - this is a unique number like the object count */
     sint32              group_status;            /* status of invite or group */
     int                 weapon_sp;               /* weapon speed - float *1000 for the client */
+	int					map_tile_x, map_tile_y;  /* these is our last position of map we send to client */ 
+	int					map_off_x, map_off_y;  /* scroll offset between 2 maps of client update */ 
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.

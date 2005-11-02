@@ -206,7 +206,6 @@ int                         command_target(object *op, char *params);
 void                        command_face_request(char *params, int len, NewSocket *ns);
 void                        command_new_char(char *params, int len, player *pl);
 void                        command_fire(char *params, int len, player *pl);
-void                        send_mapstats_cmd(object *op, struct mapdef *map);
 void                        send_spelllist_cmd(object *op, char *spellname, int mode);
 void                        send_skilllist_cmd(object *op, object *skillp, int mode);
 void                        send_ready_skill(object *op, char *skillname);

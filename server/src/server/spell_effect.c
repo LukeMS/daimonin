@@ -1026,11 +1026,7 @@ int dimension_door(object *op, int dir)
             remove_ob(op);
             op->x = x,op->y = y;
             if (insert_ob_in_map(op, op->map, op, 0))
-            {
-                if (op->type == PLAYER)
-                    MapNewmapCmd(CONTR(op));
                 return 1;
-            }
         }
     }
     else
@@ -1070,8 +1066,6 @@ int dimension_door(object *op, int dir)
     if ((op = insert_ob_in_map(op, op->map, op, 0)) == NULL)
         return 1;
 
-    if (op->type == PLAYER)
-        MapNewmapCmd(CONTR(op));
     op->speed_left = -FABS(op->speed) * 5; /* Freeze them for a short while */
     return 1;
 }

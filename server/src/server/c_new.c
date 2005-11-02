@@ -882,20 +882,6 @@ void command_fire(char *params, int len, player *pl)
     CONTR(op)->firemode_type = -1; /* marks no client fire action */
 }
 
-/* STILL IN TEST */
-/* sends a mapstats cmd to the players client, after the player had entered the map.
- * Cmd sends map width / map height + mapinfo string.
- */
-void send_mapstats_cmd(object *op, struct mapdef *map)
-{
-    char    tmp[2024];
-
-    CONTR(op)->last_update = map; /* player: remember this is the map the client knows */
-    sprintf(tmp, "X%d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
-    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_MAPSTATS, tmp, strlen(tmp));
-}
-
-
 void send_spelllist_cmd(object *op, char *spellname, int mode)
 {
     char    tmp[1024 * 10]; /* we should careful set a big enough buffer here */
