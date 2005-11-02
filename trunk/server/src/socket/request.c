@@ -702,16 +702,6 @@ void SetSound(char *buf, int len, NewSocket *ns)
     ns->sound = atoi(buf);
 }
 
-
-void MapNewmapCmd(player *pl)
-{
-    /* we are really on a new map. tell it the client */
-    send_mapstats_cmd(pl->ob, pl->ob->map);
-    memset(&pl->socket.lastmap, 0, sizeof(struct Map));
-}
-
-
-
 /* Moves and object (typically, container to inventory
  * move <to> <tag> <nrof>
  */
@@ -1029,12 +1019,57 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
 /* Clears a map cell */
 #define map_clearcell(_cell_) memset((_cell_), 0, sizeof(MapCell));(_cell_)->count=-1
 
-/* do some checks, map name and LOS and then draw the map */
-void draw_client_map(object *pl)
+/* helper functions for draw_client_map */
+static inline int get_tiled_map_id(player *pl, struct mapdef *map)
 {
-    if (pl->type != PLAYER)
+	int i;
+
+    if (!pl->last_update)
+		return 0;
+	
+	/* we assume that last_update, if != NULL, is not swaped out or something.
+     * IF we ever put a player on a longer sleep, be sure to nullify last_update
+     */
+	for (i = 0; i < TILED_MAPS; i++)
     {
-        LOG(llevBug, "BUG: draw_client_map called with non player/non eric-server (%s)\n", pl->name);
+            if (pl->last_update-> tile_path[i] == map->path)
+				return i+1;
+	}
+	return 0;
+}
+
+static inline void copy_lastmap(NewSocket *ns, int dx, int dy)
+{
+    struct Map  newmap;
+    int         x, y;
+
+    /* the x and y here are coordinates for the new map, i.e. if we moved
+     (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
+    for (x = 0; x < ns->mapx; x++)
+    {
+        for (y = 0; y < ns->mapy; y++)
+        {
+            if (x + dx < 0 || x + dx >= ns->mapx || y + dy < 0 || y + dy >= ns->mapy)
+            {
+                memset(&(newmap.cells[x][y]), 0, sizeof(MapCell));
+                continue;
+            }
+            memcpy(&(newmap.cells[x][y]), &(ns->lastmap.cells[x + dx][y + dy]), sizeof(MapCell));
+        }
+    }
+    memcpy(&(ns->lastmap), &newmap, sizeof(struct Map));
+} 
+
+
+/* do some checks, map name and LOS and then draw the map */
+void draw_client_map(object *plobj)
+{
+	player *pl = CONTR(plobj);
+	int redraw_below=FALSE;
+
+    if (plobj->type != PLAYER)
+    {
+        LOG(llevBug, "BUG: draw_client_map called with non player/non eric-server (%s)\n", plobj->name);
         return;
     }
 
@@ -1042,21 +1077,104 @@ void draw_client_map(object *pl)
     * If so, don't try to send them a map.  All will
      * be OK once they really log in.
      */
-    if (!pl->map || pl->map->in_memory != MAP_IN_MEMORY)
+    if (!plobj->map || plobj->map->in_memory != MAP_IN_MEMORY)
         return;
 
-    /* if we has changed somewhere the map - tell it the client now */
-    if (CONTR(pl)->last_update != pl->map)
-        MapNewmapCmd(CONTR(pl));
+    /* if we has changed somewhere the map - prepare map data */
+	pl->map_update_cmd = MAP_UPDATE_CMD_SAME;
+    if (pl->last_update != plobj->map)
+	{
+		int tile_map = get_tiled_map_id(pl, plobj->map);
+
+		if(!pl->last_update || !tile_map) /* we are on a new map or set? */
+		{
+			pl->map_update_cmd = MAP_UPDATE_CMD_NEW;
+		    memset(&(pl->socket.lastmap), 0, sizeof(struct Map));
+			pl->last_update = plobj->map; 
+			redraw_below=TRUE;
+		}
+		else /* because tile_map can never != 0 if pl->last_update is NULL, tile_map always valid here */
+		{
+			pl->map_update_cmd = MAP_UPDATE_CMD_CONNECTED;
+			pl->map_update_tile = tile_map;
+			redraw_below=TRUE;
+			/* be here means, we have moved to a known, connected map related to our last position! 
+			 * lets calculate the offsets to our last position,
+             * which is: pl->last_update - pos: map_tile_x,map_tile_y
+             */
+			switch(tile_map-1)
+			{
+				case 0:
+					pl->map_off_x = plobj->x - pl->map_tile_x;
+					pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
+				break;
+
+				case 1:
+					pl->map_off_y = plobj->y - pl->map_tile_y;
+					pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
+				break;
+
+				case 2:
+					pl->map_off_x = plobj->x - pl->map_tile_x;
+					pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
+				break;
+
+				case 3:
+					pl->map_off_y = plobj->y - pl->map_tile_y;
+					pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
+				break;
+
+				case 4:
+					pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
+					pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
+				break;
+
+				case 5:
+					pl->map_off_x = (MAP_WIDTH(plobj->map) - pl->map_tile_x) + plobj->x;
+					pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
+				break;
+
+				case 6:
+					pl->map_off_y = (MAP_HEIGHT(plobj->map) - pl->map_tile_y) + plobj->y;
+					pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
+				break;
+
+				case 7:
+					pl->map_off_x = -(pl->map_tile_x + (MAP_WIDTH(plobj->map) - plobj->x));
+					pl->map_off_y = -(pl->map_tile_y + (MAP_HEIGHT(plobj->map) - plobj->y));
+				break;
+			}
+			/*LOG(llevDebug, "**** Connected: %d - %d,%d\n",  tile_map-1, pl->map_off_x, pl->map_off_y);*/
+			copy_lastmap(&pl->socket, pl->map_off_x, pl->map_off_y);
+			pl->last_update = plobj->map; 
+		}
+	}
+	else /* check still on the same postion */
+	{
+			if(pl->map_tile_x != plobj->x || pl->map_tile_y != plobj->y)
+			{
+				copy_lastmap(&pl->socket, plobj->x-pl->map_tile_x, plobj->y-pl->map_tile_y);
+				redraw_below=TRUE;
+			}
+	}
+
+	if(redraw_below) /* redraw below windows? (and backbuffer now position) */
+	{
+		/* backbuffer position so we can determinate we have moved or not */
+		pl->map_tile_x = plobj->x;
+		pl->map_tile_y = plobj->y;
+		pl->socket.update_tile = 0; /* redraw it */
+        pl->socket.look_position = 0; /* reset the "show only x items of all items belows" counter */
+	}
 
     /* do LOS after calls to update_position */
-    if (!QUERY_FLAG(pl, FLAG_WIZ) && CONTR(pl)->update_los)
+    if (!QUERY_FLAG(plobj, FLAG_WIZ) && pl->update_los)
     {
-        update_los(pl);
-        CONTR(pl)->update_los = 0;
+        update_los(plobj);
+        pl->update_los = 0;
     }
 
-    draw_client_map2(pl);
+    draw_client_map2(plobj);
 }
 
 
@@ -1083,6 +1201,7 @@ void draw_client_map2(object *pl)
     MapSpace       *msp;
     New_Face       *face;
     mapstruct      *m;
+	player		   *pl_ptr = CONTR(pl);
     object         *tmp, *tmph, *pname2, *pname3, *pname4;
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
     int             x_start, dm_light = 0;
@@ -1097,11 +1216,11 @@ void draw_client_map2(object *pl)
     int dmg_layer2, dmg_layer1, dmg_layer0;
     int wdark;
 
-#ifdef DEBUG_CORE
+#ifdef DEBUG_CORE_MAP
     int tile_count  = 0;
 #endif
 
-    if (CONTR(pl)->dm_light)
+    if (pl_ptr->dm_light)
         dm_light = global_darkness_table[MAX_DARKNESS];
 
     wdark = darkness_table[world_darkness];
@@ -1112,17 +1231,24 @@ void draw_client_map2(object *pl)
     sl.buf = sock_buf;
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_MAP2); /* sets sl.len too */
 
-    /* control player map - if not as last_update, we have changed map.
-     * Because this value will be set from normal map changing, but not from
-     * border crossing from tiled maps - so we have done a step from a linked
-     * tiled map to another - now we must give the client a hint so he can update
-     * the mapname & cache */
-    if (pl->map != CONTR(pl)->last_update)
-    {
-        /* atm, we just tell him to move the map */
-        SockList_AddChar(&sl, (char) 255); /* marker */
-        CONTR(pl)->last_update = pl->map;
-    }
+    SockList_AddChar(&sl, (char) pl_ptr->map_update_cmd); /* marker */
+	if(pl_ptr->map_update_cmd != MAP_UPDATE_CMD_SAME)
+	{
+	    SockList_AddString(&sl, pl->map->name);
+		
+		if(pl_ptr->map_update_cmd == MAP_UPDATE_CMD_CONNECTED)
+		{
+		    SockList_AddChar(&sl, (char) pl_ptr->map_update_tile);
+		    SockList_AddChar(&sl, (char) pl_ptr->map_off_x);
+		    SockList_AddChar(&sl, (char) pl_ptr->map_off_y);
+		}
+		else
+		{
+		    SockList_AddChar(&sl, (char) pl->map->width);
+		    SockList_AddChar(&sl, (char) pl->map->height);
+		}
+	}
+
     SockList_AddChar(&sl, (char) pl->x);
     SockList_AddChar(&sl, (char) pl->y);
     /* x,y are the real map locations.  ax, ay are viewport relative
@@ -1130,28 +1256,28 @@ void draw_client_map2(object *pl)
      */
 
     /* i don't trust all compilers to optimize it in this BIG loop */
-    x_start = (pl->x + (CONTR(pl)->socket.mapx + 1) / 2) - 1;
+    x_start = (pl->x + (pl_ptr->socket.mapx + 1) / 2) - 1;
 
-    for (ay = CONTR(pl)->socket.mapy - 1,y = (pl->y + (CONTR(pl)->socket.mapy + 1) / 2) - 1;
-         y >= pl->y - CONTR(pl)->socket.mapy_2;
+    for (ay = pl_ptr->socket.mapy - 1,y = (pl->y + (pl_ptr->socket.mapy + 1) / 2) - 1;
+         y >= pl->y - pl_ptr->socket.mapy_2;
          y--,ay--)
     {
-        ax = CONTR(pl)->socket.mapx - 1;
-        for (x = x_start; x >= pl->x - CONTR(pl)->socket.mapx_2; x--,ax--)
+        ax = pl_ptr->socket.mapx - 1;
+        for (x = x_start; x >= pl->x - pl_ptr->socket.mapx_2; x--,ax--)
         {
-            d = CONTR(pl)->blocked_los[ax][ay];
+            d = pl_ptr->blocked_los[ax][ay];
             mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
 
             /* space is out of map OR blocked.  Update space and clear values if needed */
             if (d & (BLOCKED_LOS_OUT_OF_MAP | BLOCKED_LOS_BLOCKED))
             {
-                if (CONTR(pl)->socket.lastmap.cells[ax][ay].count != -1)
+                if (pl_ptr->socket.lastmap.cells[ax][ay].count != -1)
                 {
-#ifdef DEBUG_CORE
+#ifdef DEBUG_CORE_MAP
                     tile_count++;
 #endif
                     SockList_AddShort(&sl, mask); /* a position mask without any flags = clear cell */
-                    map_clearcell(&CONTR(pl)->socket.lastmap.cells[ax][ay]); /* sets count to -1 too */
+                    map_clearcell(&pl_ptr->socket.lastmap.cells[ax][ay]); /* sets count to -1 too */
                 }
                 continue;
             }
@@ -1167,13 +1293,13 @@ void draw_client_map2(object *pl)
                     LOG(llevDebug, "BUG: draw_client_map2() out_of_map for player <%s> map:%s (%,%d)\n", query_name(pl),
                         pl->map->path ? pl->map->path : "<no path?>", x, y);
 
-                if (CONTR(pl)->socket.lastmap.cells[ax][ay].count != -1)
+                if (pl_ptr->socket.lastmap.cells[ax][ay].count != -1)
                 {
-#ifdef DEBUG_CORE
+#ifdef DEBUG_CORE_MAP
                     tile_count++;
 #endif
                     SockList_AddShort(&sl, mask);
-                    map_clearcell(&CONTR(pl)->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
+                    map_clearcell(&pl_ptr->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
                 }
                 continue;
             }
@@ -1200,7 +1326,7 @@ void draw_client_map2(object *pl)
                     if (!d) /* now its visible? */
                     {
                         /*LOG(-1,"SET_BV(%d,%d): was bv is now %d\n", nx,ny,d);*/
-                        CONTR(pl)->update_los = 1;
+                        pl_ptr->update_los = 1;
                     }
                 }
                 else
@@ -1208,7 +1334,7 @@ void draw_client_map2(object *pl)
                     if (d & BLOCKED_LOS_BLOCKSVIEW)
                     {
                         /*LOG(-1,"SET_BV(%d,%d): was visible is now %d\n", nx,ny,d);*/
-                        CONTR(pl)->update_los = 1;
+                        pl_ptr->update_los = 1;
                     }
                 }
             }
@@ -1237,13 +1363,13 @@ void draw_client_map2(object *pl)
                         d = 100; /* make spot visible again */
                     else
                     {
-                        if (CONTR(pl)->socket.lastmap.cells[ax][ay].count != -1)
+                        if (pl_ptr->socket.lastmap.cells[ax][ay].count != -1)
                         {
-#ifdef DEBUG_CORE
+#ifdef DEBUG_CORE_MAP
                             tile_count++;
 #endif
                             SockList_AddShort(&sl, mask);
-                            map_clearcell(&CONTR(pl)->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
+                            map_clearcell(&pl_ptr->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
                         }
                         continue;
                     }
@@ -1267,7 +1393,7 @@ void draw_client_map2(object *pl)
                 else
                     d = 30;
 
-                mp = &(CONTR(pl)->socket.lastmap.cells[ax][ay]);
+                mp = &(pl_ptr->socket.lastmap.cells[ax][ay]);
 
                 if (mp->count != d)
                 {
@@ -1323,7 +1449,7 @@ void draw_client_map2(object *pl)
                 else
                 {
                     /* show target to player (this is personlized data)*/
-                    if (tmph && CONTR(pl)->target_object_count == tmph->count)
+                    if (tmph && pl_ptr->target_object_count == tmph->count)
                     {
                         flag_tmp |= FFLAG_PROBE;
                         if (tmph->stats.hp)
@@ -1378,8 +1504,10 @@ void draw_client_map2(object *pl)
                             * has... but Daimonin/CF can't handle client map animation atm... Even it should
                             * not hard to be done. MT
                             */
+/*
                     if (pl->x == nx && pl->y == ny && tmp->layer == 6)
                         tmp = pl;
+*/
                     flag_tmp = GET_CLIENT_FLAGS(tmp);
                     tmph = tmp;
                     face = tmp->face;
@@ -1427,7 +1555,7 @@ void draw_client_map2(object *pl)
                 else
                 {
                     /* show target to player (this is personlized data)*/
-                    if (tmph && CONTR(pl)->target_object_count == tmph->count)
+                    if (tmph && pl_ptr->target_object_count == tmph->count)
                     {
                         flag_tmp |= FFLAG_PROBE;
                         if (tmph->stats.hp)
@@ -1520,7 +1648,7 @@ void draw_client_map2(object *pl)
                 else
                 {
                     /* show target to player (this is personlized data)*/
-                    if (tmph && CONTR(pl)->target_object_count == tmph->count)
+                    if (tmph && pl_ptr->target_object_count == tmph->count)
                     {
                         flag_tmp |= FFLAG_PROBE;
                         if (tmph->stats.hp)
@@ -1684,7 +1812,7 @@ void draw_client_map2(object *pl)
 
                 if (!(mask & 0x3f)) /* check all bits except the position */
                     sl.len = oldlen;
-#ifdef DEBUG_CORE
+#ifdef DEBUG_CORE_MAP
                 else
                     tile_count++;
 #endif
@@ -1693,42 +1821,13 @@ void draw_client_map2(object *pl)
     } /* for y loop */
 
     /* Verify that we in fact do need to send this */
-    if (sl.len > 3 || CONTR(pl)->socket.sent_scroll)
+	if (sl.len > 4)
     {
-        Send_With_Handling(&CONTR(pl)->socket, &sl);
-#ifdef DEBUG_CORE
-        LOG(llevDebug, "MAP2: (%d) send tiles (%d): %d \n", sl.len, CONTR(pl)->socket.sent_scroll, tile_count);
+        Send_With_Handling(&pl_ptr->socket, &sl);
+#ifdef DEBUG_CORE_MAP
+        LOG(llevDebug, "MAP2: (%d) send tiles: %d \n", sl.len, tile_count);
 #endif
-        CONTR(pl)->socket.sent_scroll = 0;
     }
-}
-
-
-void esrv_map_scroll(NewSocket *ns, int dx, int dy)
-{
-    struct Map  newmap;
-    int         x, y;
-    char        buf[MAXSOCKBUF];
-
-    sprintf(buf, "X%d %d", dx, dy);
-    Write_String_To_Socket(ns, BINARY_CMD_MAP_SCROLL, buf, strlen(buf));
-
-    /* the x and y here are coordinates for the new map, i.e. if we moved
-     (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
-    for (x = 0; x < ns->mapx; x++)
-    {
-        for (y = 0; y < ns->mapy; y++)
-        {
-            if (x + dx < 0 || x + dx >= ns->mapx || y + dy < 0 || y + dy >= ns->mapy)
-            {
-                memset(&(newmap.cells[x][y]), 0, sizeof(MapCell));
-                continue;
-            }
-            memcpy(&(newmap.cells[x][y]), &(ns->lastmap.cells[x + dx][y + dy]), sizeof(MapCell));
-        }
-    }
-    memcpy(&(ns->lastmap), &newmap, sizeof(struct Map));
-    ns->sent_scroll = 1;
 }
 
 /*****************************************************************************/
@@ -1739,6 +1838,5 @@ void esrv_map_scroll(NewSocket *ns, int dx, int dy)
 void send_plugin_custom_message(object *pl, char *buf)
 {
     /* we must add here binary_cmd! */
-    /*Write_String_To_Socket(&CONTR(pl)->socket,buf,strlen(buf));*/
 }
 

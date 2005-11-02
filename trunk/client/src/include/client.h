@@ -22,6 +22,10 @@
 */
 #include "include.h"
 
+#define MAP_UPDATE_CMD_SAME 0
+#define MAP_UPDATE_CMD_NEW 1
+#define MAP_UPDATE_CMD_CONNECTED 2
+
 /* imported from server - attack.h file */
 typedef enum _attacks
 {

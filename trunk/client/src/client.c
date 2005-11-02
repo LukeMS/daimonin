@@ -61,7 +61,6 @@ enum
     BINARY_CMD_MAP2,
     BINARY_CMD_DRAWINFO,
     BINARY_CMD_DRAWINFO2,
-    BINARY_CMD_MAP_SCROLL,
     BINARY_CMD_ITEMX,
     BINARY_CMD_SOUND,
     BINARY_CMD_TARGET,
@@ -73,7 +72,6 @@ enum
     BINARY_CMD_ANIM,
     BINARY_CMD_SKILLRDY,
     BINARY_CMD_PLAYER,
-    BINARY_CMD_MAPSTATS,
     BINARY_CMD_SPELL_LIST,
     BINARY_CMD_SKILL_LIST,
     BINARY_CMD_GOLEMCMD,
@@ -100,10 +98,10 @@ struct CmdMapping   commands[]  =
     * of cluster the related stuff together.
     */
     { "comc", CompleteCmd}, { "map2", Map2Cmd }, { "drawinfo", (CmdProc) DrawInfoCmd },
-    { "drawinfo2", (CmdProc) DrawInfoCmd2 }, { "map_scroll", (CmdProc) map_scrollCmd }, { "itemx", ItemXCmd },
+    { "drawinfo2", (CmdProc) DrawInfoCmd2 }, { "itemx", ItemXCmd },
     { "sound", SoundCmd}, { "to", TargetObject }, { "upditem", UpdateItemCmd }, { "delitem", DeleteItem },
     { "stats", StatsCmd }, { "image", ImageCmd }, { "face1", Face1Cmd}, { "anim", AnimCmd},
-    { "skill_rdy", (CmdProc) SkillRdyCmd }, { "player", PlayerCmd }, { "mapstats", MapstatsCmd },
+    { "skill_rdy", (CmdProc) SkillRdyCmd }, { "player", PlayerCmd },
     { "splist", SpelllistCmd }, { "sklist", SkilllistCmd }, { "gc", GolemCmd },
     { "addme_success", (CmdProc) AddMeSuccess }, { "addme_failed", (CmdProc) AddMeFail },
     { "version", (CmdProc) VersionCmd }, { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},

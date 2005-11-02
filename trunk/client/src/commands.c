@@ -1203,34 +1203,62 @@ void DeleteInventory(unsigned char *data, int len)
     map_udate_flag = 2;
 }
 
-
 void Map2Cmd(unsigned char *data, int len)
 {
+    static int     map_w=0, map_h=0,mx=0,my=0;
     int     mask, x, y, pos = 0, ext_flag, xdata;
-    int     ext1, ext2, ext3, probe;
+    int     mapstat, ext1, ext2, ext3, probe;
     int     map_new_flag    = FALSE;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
     char    pname1[64], pname2[64], pname3[64], pname4[64];
+	char mapname[256];
     uint16  face;
 
-    if (scrolldx || scrolldy)
-    {
-        if(cpl.menustatus != MENU_NO)
-            reset_menu_status();
-        display_mapscroll(scrolldx, scrolldy);
-    }
-
-    scrolldy = scrolldx = 0;
+    mapstat = (uint8) (data[pos++]);
     map_transfer_flag = 0;
-    xpos = (uint8) (data[pos++]);
-    if (xpos == 255) /* its not xpos, its the changed map marker */
-    {
+	if(mapstat != MAP_UPDATE_CMD_SAME)
+	{
+		strcpy(mapname, data + pos);
+		pos += strlen(mapname)+1;
+		if(mapstat == MAP_UPDATE_CMD_NEW)
+		{
+/*
         map_new_flag = TRUE;
+*/
+			map_w = (uint8) (data[pos++]);
+			map_h = (uint8) (data[pos++]);
+			xpos = (uint8) (data[pos++]);
+		    ypos = (uint8) (data[pos++]);
+			mx = xpos;
+			my = ypos;
+			InitMapData(mapname, map_w, map_h, xpos, ypos);
+		}
+		else
+		{
+			int xoff, yoff;
+		    mapstat = (sint8) (data[pos++]);
+			xoff = (sint8) (data[pos++]);
+		    yoff = (sint8) (data[pos++]);
+			xpos = (uint8) (data[pos++]);
+		    ypos = (uint8) (data[pos++]);
+			mx = xpos;
+			my = ypos;
+	        display_mapscroll(xoff, yoff);
+		}
+	}
+	else
+	{
+		xpos = (uint8) (data[pos++]);
+	    ypos = (uint8) (data[pos++]);
 
-        xpos = (uint8) (data[pos++]);
-    }
+        if(cpl.menustatus != MENU_NO && (xpos - mx || ypos - my))
+            reset_menu_status();
+        display_mapscroll(xpos - mx, ypos - my);
 
-    ypos = (uint8) (data[pos++]);
+		mx = xpos;
+		my = ypos;
+	}
+
     if (map_new_flag)
     {
         adjust_map_cache(xpos, ypos);
@@ -1403,6 +1431,7 @@ void Map2Cmd(unsigned char *data, int len)
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
+           /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x02) /* we have here a multi arch, fetch head offset */
             {
@@ -1415,7 +1444,7 @@ void Map2Cmd(unsigned char *data, int len)
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
-            /*LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
+            /*LOG(0,"we got face2: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x01) /* we have here a multi arch, fetch head offset */
             {
@@ -1428,35 +1457,6 @@ void Map2Cmd(unsigned char *data, int len)
     map_udate_flag = 2;
 }
 
-
-void map_scrollCmd(char *data, int len)
-{
-    static int  step    = 0;
-    char       *buf;
-
-    if(cpl.menustatus != MENU_NO)
-        reset_menu_status();
-
-    scrolldx += atoi(data);
-    buf = strchr(data, ' ');
-    if (!buf)
-    {
-        LOG(LOG_ERROR, "ERROR: map_scrollCmd: Got short packet.\n");
-        return;
-    }
-    buf++;
-    scrolldy += atoi(buf);
-    if (++step % 2)
-        sound_play_effect(SOUND_STEP1, 0, 0, 100);
-    else
-        sound_play_effect(SOUND_STEP2, 0, 0, 100);
-
-    if (media_show != MEDIA_SHOW_NO)
-    {
-        if (!--media_show_update)
-            media_show = MEDIA_SHOW_NO; /* kick media file depending on map position */
-    }
-}
 
 void MagicMapCmd(unsigned char *data, int len)
 {
@@ -1543,23 +1543,6 @@ void SendSetFaceMode(ClientSocket csock, int mode)
 
     sprintf(buf, "setfacemode %d", mode);
     cs_write_string(csock.fd, buf, strlen(buf));
-}
-
-
-void MapstatsCmd(unsigned char *data, int len)
-{
-    char    name[256];
-    char   *tmp;
-    int     w, h, x, y;
-
-    sscanf(data, "%d %d %d %d", &w, &h, &x, &y);
-    tmp = strchr(data, ' ');
-    tmp = strchr(tmp + 1, ' ');
-    tmp = strchr(tmp + 1, ' ');
-    tmp = strchr(tmp + 1, ' ');
-    strcpy(name, tmp + 1);
-    InitMapData(name, w, h, x, y);
-    map_udate_flag = 2;
 }
 
 void SkilllistCmd(unsigned char *data, int len)

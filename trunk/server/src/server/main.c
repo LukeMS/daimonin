@@ -396,7 +396,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 #ifdef MAX_OBJECTS_LWM
         swap_below_max(newmap->path);
 #endif
-        MapNewmapCmd(CONTR(op));
     }
 }
 

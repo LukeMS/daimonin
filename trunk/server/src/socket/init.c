@@ -146,7 +146,6 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->outputbuffer.start = 0;
     ns->outputbuffer.len = 0;
 
-    ns->sent_scroll = 0;
     sprintf((char *) buf, "%d.%d.%d.%d", (from >> 24) & 255, (from >> 16) & 255, (from >> 8) & 255, from & 255);
     ns->host = strdup_local((char *) buf);
     sprintf((char *) buf, "X%d %d %s\n", VERSION_CS, VERSION_SC, VERSION_INFO);

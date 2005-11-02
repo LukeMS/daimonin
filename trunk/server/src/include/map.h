@@ -221,6 +221,11 @@
                                    * values of blocked...
                                    */
 
+/* for server->client map protocol. Tell client how to handle its local map cache */
+#define MAP_UPDATE_CMD_SAME 0
+#define MAP_UPDATE_CMD_NEW 1
+#define MAP_UPDATE_CMD_CONNECTED 2
+
 #ifdef WIN32
 #pragma pack(push,1)
 #endif
