@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 9: COMMUNICATION</title>
-    <p><img alt="Text windows" src="./textwindows.png"></img>
-    </p>
-    <section id="communication"><title>It's what separates us from the mobs</title>
-        <p>Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in this manual.
+<section autotoc="On this page"><title>SECTION 9: COMMUNICATION</title>
+    <section id="overview"><title>Overview</title>
+        <p><img alt="Text windows" src="./textwindows.png"/>
+        </p>
+        <p>Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in this guide.
         </p>
         <p>Here, suffice to say, the top window (with the orange text) is for global messages and communication between players, and the bottom window (with the blue text) is for local messages which is often, but not always, for communication with NPCs.
         </p>
@@ -19,15 +19,19 @@
         <p>Cherbot has his own very comprehensive web page at <a href="http://www.itcqis.com/daimonin/">http://www.itcqis.com/daimonin/</a> so I won't repeat it here.
         </p>
     </section>
-    <section id="tos"><title>In this section</title>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_9-1.dai">Section 9-1: Talking To NPCs</a>
             </dt>
-            <dd>You can communicate with NPCs.
+            <dd>
+                <p>You can communicate with NPCs.
+                </p>
             </dd>
             <dt><a href="./secn_9-2.dai">Section 9-2: Talking To Players</a>
             </dt>
-            <dd>You can communicate with other players.
+            <dd>
+                <p>You can communicate with other players.
+                </p>
             </dd>
         </dl>
     </section>

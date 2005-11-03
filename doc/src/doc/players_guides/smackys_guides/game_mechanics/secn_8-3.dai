@@ -1,68 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 8-3: TRANSACTIONS WITH PLAYERS</title>
-    <section id="why"><title>Why trade with players</title>
+<section autotoc="On this page"><title>SECTION 8-3: TRANSACTIONS WITH PLAYERS</title>
+    <section id="overview"><title>Overview</title>
         <p>There are many good reasons to trade with other players rather than NPCs. From a game mechanics perspective these include:
         </p>
-        <section id="availability"><title>Availability</title>
-            <p>The shop has only a very limited and very basic selection of items on sale. Players buy and sell nearly anything.
-            </p>
-        </section>
-        <section id="price"><title>Price</title>
-            <p>Shop prices are fixed. The player marketplace is determined according to demand. Whether you're the trader or customer, you often get a better deal.
-            </p>
-        </section>
-        <section id="circulation"><title>Circulation</title>
-            <p>Items sold to the shop are removed from play. Items sold to other players remain in circulation. This benefits the community as a whole.
-            </p>
-        </section>
-    </section>
-    <p><strong>NOTE</strong>: the following (hopefully) represents common methods by which players have traded with one another. It is not telling you how you must trade, simply informing you of how you may trade.
-    </p>
-    <section id="buying"><title>Buying</title>
-        <p>Please respond to private sales <a href="./secn_9-2.dai">privately</a> and public auctions <a href="./secn_9-2.dai">publicly</a>.
+        <dl>
+            <dt><strong>Availability</strong>
+            </dt>
+            <dd>
+                <p>The shop has only a very limited and very basic selection of items on sale. Players buy and sell nearly anything.
+                </p>
+            </dd>
+            <dt><strong>Price</strong>
+            </dt>
+            <dd>
+                <p>Shop prices are fixed. But the player marketplace is determined according to demand; whether you're the trader or customer, you often get a better deal.
+                </p>
+            </dd>
+            <dt><strong>Circulation</strong>
+            </dt>
+            <dd>
+                <p>Items sold to the shop are removed from play. Items sold to other players remain in circulation. This benefits the community as a whole.
+                </p>
+            </dd>
+        </dl>
+        <p>Keep an eye on the shoutbox. Players will often announce that they are buying or selling items by <a href="./secn_9-2.dai#public">public announcement</a>. Some people prefer to subsequently conduct business <a href="./secn_9-2.dai#private">privately</a> and some through <a href="./secn_9-2.dai#public">public</a> auction.
         </p>
-    </section>
-    <section id="selling"><title>Selling</title>
-        <p>You might want to sell to a specific player. If so, you should probably conduct the sale <a href="./secn_9-2.dai">privately</a>.
+        <p>Whichever preference is specified you should respond accordingly. It is widely accepted that the default is <a href="./secn_9-2.dai#public">public</a> auction.
         </p>
-        <p>Otherwise, a <a href="./secn_9-2.dai">public</a> auction is often favoured.
-        </p>
-    </section>
-    <section id="exchange"><title>The exchange</title>
-        <p>This is a perennially controversial issue.
-        </p>
-        <p>Currently the only way to exchange money for goods is for either party to drop the one and get the other.
+        <p>Following negotiations over price you must obviously physically exchange cash for item. This is a perennially controversial issue. Currently the only way to exchange money for goods is for either party to drop the one and get the other.
         </p>
         <p>As in the real world, there is dishonesty in Daimonin and a player-player transaction may go awry in many ways: for example, the trader may grab the money and run, the customer may grab the item and run, or a third party may take the opportunity to grab anything and run.
         </p>
-        <p>This whole issue has been and continues to be debated at enormous and tedious length in the forums. I'm not even going to summarise the debate here.
+        <p>Suffice to say <a href="#advice">there are several ways to improve the chances that everyone goes home happy</a> from a player-player transaction.
         </p>
-        <section id="advice"><title>Advice on safe trading</title>
-            <p>Suffice to say there are several ways to improve the chances that everyone goes home happy from a player-player transaction:
-            </p>
-            <section id="askforstats"><title>Before you make an offer, ask the trader for the item's stats</title>
+    </section>
+    <section id="advice"><title>Advice on safe trading</title>
+        <dl>
+            <dt><strong>Before you make an offer, ask the trader for the item's stats</strong>
+            </dt>
+            <dd>
                 <p>These are discovered by <a href="./secn_4-1">examining</a> the item.
                 </p>
+            </dd>
+            <dd>
                 <p>A level 6 player who buys an item only useable after level 36 will not be a happy customer.
                 </p>
-            </section>
-            <section id="avoidthieves"><title>Don't trade with known thieves</title>
+            </dd>
+            <dt><strong>Don't trade with known thieves</strong>
+            </dt>
+            <dd>
                 <p>If your customer has just been called a thief you might think twice before dealing with her or him.
                 </p>
-            </section>
-            <section id="dontshout"><title>Don't announce the location of your trade over the shoutwaves</title>
-                <p>Trader and customer should agree a point of sale <a href="./secn_9-2.dai">privately</a>.
+            </dd>
+            <dt><strong>Don't announce the location of your trade over the shoutwaves</strong>
+            </dt>
+            <dd>
+                <p>Trader and customer should agree a point of sale <a href="./secn_9-2.dai#private">privately</a>.
                 </p>
-            </section>
-            <section id="becreative"><title>Don't trade in town</title>
+            </dd>
+            <dt><strong>Don't trade in town</strong>
+            </dt>
+            <dd>
                 <p>A common place to trade is on the site of the future tavern in Stoneglow, next to the bank, because it is safe from mobs, convenient, and accessible.
                 </p>
                 <p>Traders know this, customers know this, thieves know this.
                 </p>
                 <p>Do your transactions somewhere where there is no-one around, possibly in the wilderness or in a quiet dungeon.
                 </p>
-            </section>
-        </section>
+            </dd>
+        </dl>
     </section>
 </section>

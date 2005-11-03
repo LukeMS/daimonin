@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 6: MAGIC</title>
+<section autotoc="On this page"><title>SECTION 6: MAGIC</title>
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
-    <section id="tos"><title>In this section</title>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_6-1.dai">Section 6-1: Spells &amp; Prayers</a>
             </dt>
-            <dd>Use your innate magical abilities to cast wizardly spells or call on the powers of your deity.
+            <dd>
+                <p>Use your innate magical abilities to cast wizardly spells or call on the powers of your deity.
+                </p>
             </dd>
             <dt><a href="./secn_6-2.dai">Section 6-2: Potions &amp; Balms &amp; Scrolls &amp; Dust</a>
             </dt>
-            <dd>Single-use items imbued with the power of a spell or prayer.
+            <dd>
+                <p>Single-use items imbued with the power of a spell or prayer.
+                </p>
             </dd>
             <dt><a href="./secn_6-3.dai">Section 6-3: Wands &amp; Horns &amp; Rods</a>
             </dt>
-            <dd>Multi-use devices imbued with the power of a spell or prayer.
+            <dd>
+                <p>Multi-use devices imbued with the power of a spell or prayer.
+                </p>
             </dd>
             <dt><a href="./secn_6-4.dai">Section 6-4: Amulets &amp; Rings</a>
             </dt>
-            <dd>Jewellery with magical auras.
+            <dd>
+                <p>Jewellery with magical auras.
+                </p>
             </dd>
             <dt><a href="./secn_6-5.dai">Section 6-5: Other Magic Items</a>
             </dt>
-            <dd>Other items may have magical effects too.
+            <dd>
+                <p>Other items may have magical effects too.
+                </p>
             </dd>
         </dl>
     </section>

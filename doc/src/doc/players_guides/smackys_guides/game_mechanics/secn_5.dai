@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 5: COMBAT</title>
+<section autotoc="On this page"><title>SECTION 5: COMBAT</title>
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
-    <section id="tos"><title>In this section</title>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_5-1.dai">Section 5-1: Switching Between Hold Attack &amp; Attack Mode</a>
             </dt>
-            <dd>Specify whether you're feeling pugnacious.
+            <dd>
+                <p>Specify whether you're feeling pugnacious.
+                </p>
             </dd>
             <dt><a href="./secn_5-2.dai">Section 5-2: The Targetting System</a>
             </dt>
-            <dd>Point out the object of your pugnacity.
+            <dd>
+                <p>Point out the object of your pugnacity.
+                </p>
             </dd>
             <dt><a href="./secn_5-3.dai">Section 5-3: Melee &amp; Punching</a>
             </dt>
-            <dd>The most pugilistic forms of pugnastics.
+            <dd>
+                <p>The most pugilistic forms of pugnastics.
+                </p>
             </dd>
             <dt><a href="./secn_5-4.dai">Section 5-4: Archery &amp; Throwing</a>
             </dt>
-            <dd>Combat at a distance.
+            <dd>
+                <p>Combat at a distance.
+                </p>
             </dd>
             <dt><a href="./secn_5-5.dai">Section 5-5: Magic</a>
             </dt>
-            <dd>Combat with spells, prayers, device, and performance-enhancing magical effects.
+            <dd>
+                <p>Combat with spells, prayers, device, and performance-enhancing magical effects.
+                </p>
             </dd>
             <dt><a href="./secn_5-6.dai">Section 5-6: Experience &amp; Bounties</a>
             </dt>
-            <dd>Reasons to kill.
+            <dd>
+                <p>Reasons to kill.
+                </p>
             </dd>
         </dl>
     </section>

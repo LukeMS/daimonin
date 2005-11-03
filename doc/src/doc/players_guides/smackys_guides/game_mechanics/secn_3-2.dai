@@ -1,38 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 3-2: ARMOUR CLASS, WEAPON CLASS, DAMAGE, WEAPON SPEED, &amp; SPEED</title>
-    <p><img alt="[Player doll]" src="./playerdoll.png"></img>
-    </p>
-    <p>Here we are only interested in the textual information for now; please ignore the pretty pictures.
-    </p>
-    <section id="ac"><title>Armour class (AC)</title>
-        <p>Armour class reflects your chances of avoiding being hit. Although the merits of the armour class system are debatable it is at least very straightforward: the higher the value, the harder you are to hit.
+<section autotoc="On this page"><title>SECTION 3-2: ARMOUR CLASS, WEAPON CLASS, DAMAGE, WEAPON SPEED, &amp; SPEED</title>
+    <section id="overview"><title>Overview</title>
+        <p><img alt="[Player doll]" src="./playerdoll.png"/>
         </p>
-        <p>Armour class is affected by the quality and quantity of armour you are wearing, strength, appropriate skill levels, and magic currently in effect.
+        <p>Here we are only interested in the textual information for now; please ignore the pretty pictures.
         </p>
-    </section>
-    <section id="wc"><title>Weapon class (WC)</title>
-        <p>Weapon class is the equivalent of armour class but from the point-of-view of your chance of hitting enemies in melee: the higher the value, the more chance you have of landing a blow.
-        </p>
-        <p>Weapon class is affected by the melee weapon you wield, dexterity, appropriate skill levels, and magic currently in effect.
-        </p>
-    </section>
-    <section id="dmg"><title>Damage (DMG)</title>
-        <p>Damage is the maximum damage you can mete out in melee: obviously the higher the value, the better.
-        </p>
-        <p>Damage is affected by the melee weapon you wield, strength, appropriate skill levels, and magic currently in effect.
-        </p>
-    </section>
-    <section id="ws"><title>Weapon Speed (WS)</title>
-        <p>Weapon speed is simply the speed of your currently wielded melee weapon (how often you can attack with it): a faster weapon may seem preferable but there is often a trade-off between weapon speed and bonuses to weapon class and damage.
-        </p>
-        <p>Weapon speed is wholly dependent on the particular weapon.
-        </p>
-    </section>
-    <section id="speed"><title>Speed</title>
-        <p>Speed indicates your movement speed: the higher it is, the faster you can run.
-        </p>
-        <p>Speed is affected by the weight of loot you are carrying in relation to the maximum weight you can carry (which is determined by strength), the type of armour you are wearing, dexterity, and magic currently in effect.
-        </p>
+        <dl>
+            <dt><strong>Armour class (AC)</strong>
+            </dt>
+            <dd>
+                <p>Armour class reflects your chances of avoiding being hit. Although the merits of the armour class system are debatable it is at least very straightforward: the higher the value, the harder you are to hit.
+                </p>
+                <p>Armour class is affected by the quality and quantity of armour you are wearing, strength, appropriate skill levels, and magic currently in effect.
+                </p>
+            </dd>
+            <dt><strong>Weapon class (WC)</strong>
+            </dt>
+            <dd>
+                <p>Weapon class is the equivalent of armour class but from the point-of-view of your chance of hitting enemies in melee: the higher the value, the more chance you have of landing a blow.
+                </p>
+                <p>Weapon class is affected by the melee weapon you wield, dexterity, appropriate skill levels, and magic currently in effect.
+                </p>
+            </dd>
+            <dt><strong>Damage (DMG)</strong>
+            </dt>
+            <dd>
+                <p>Damage is the maximum damage you can mete out in melee: obviously the higher the value, the better.
+                </p>
+                <p>Damage is affected by the melee weapon you wield, strength, appropriate skill levels, and magic currently in effect.
+                </p>
+            </dd>
+            <dt><strong>Weapon Speed (WS)</strong>
+            </dt>
+            <dd>
+                <p>Weapon speed is simply the speed of your currently wielded melee weapon (how often you can attack with it): a faster weapon may seem preferable but there is often a trade-off between weapon speed and bonuses to weapon class and damage.
+                </p>
+                <p>Weapon speed is wholly dependent on the particular weapon.
+                </p>
+            </dd>
+            <dt><strong>Speed</strong>
+            </dt>
+            <dd>
+                <p>Speed indicates your movement speed: the higher it is, the faster you can run.
+                </p>
+                <p>Speed is affected by the weight of loot you are carrying in relation to the maximum weight you can carry (which is determined by strength), the type of armour you are wearing, dexterity, and magic currently in effect.
+                </p>
+            </dd>
+        </dl>
     </section>
 </section>

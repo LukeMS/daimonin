@@ -4,31 +4,55 @@
     <p>Before you dive into the guides themselves you should read this <a href="./important_note.dai">important note</a>.
     </p>
     <section id="guides"><title>The guides themselves</title>
-        <ul>
-            <li><strong><a href="../game_mechanics/index.dai">Smacky's Guide To Game Mechanics</a></strong>: Read this if you generally don't know how to do something.
-            </li>
-            <li><strong><a href="../tactics_&amp;_survival/index.dai">Smacky's Guide To Combat Tactics &amp; Survival</a></strong>: Read this if you're a combat wombat.
-            </li>
-        </ul>
+        <dl>
+            <dt><strong><a href="../game_mechanics/index.dai">Smacky's Guide To Game Mechanics</a></strong>
+            </dt>
+            <dd>
+                <p>Read this if you generally don't know how to do something.
+                </p>
+            </dd>
+            <dt><strong><a href="../tactics_&amp;_survival/index.dai">Smacky's Guide To Combat Tactics &amp; Survival</a></strong>
+            </dt>
+            <dd>
+                <p>Read this if you're a combat wombat.
+                </p>
+            </dd>
+        </dl>
     </section>
     <section id="about"><title>About Smacky's Guides</title>
-        <ul>
-            <li><strong><a href="./introduction.dai">Introduction</a></strong>: Read this if you lie awake at night worrying 'what are Smacky's Guides?' and 'just who is Smacky?'
-            </li>
-            <li><strong><a href="./editing.dai">Editing</a></strong>: Read this if you think 'Smacky's Guides would be better if ...'
-            </li>
-            <li><strong><a href="./acknowledgements.dai">Acknowledgements</a></strong>: Read this if you've contributed to Smacky's Guides and like to see your name in italics. Or show it to someone else if you like other people to see your name in italics.
-            </li>
-            <li><strong><a href="./endorsements.dai">Endorsements</a></strong>: Read this if you need other people's approval before you read things for yourself. Or if you want another chance to see your name in italics.
-            </li>
-        </ul>
+        <dl>
+            <dt><strong><a href="./introduction.dai">Introduction</a></strong>
+            </dt>
+            <dd>
+                <p>Read this if you lie awake at night worrying 'what are Smacky's Guides?' and 'just who is Smacky?'
+                </p>
+            </dd>
+            <dt><strong><a href="./editing.dai">Editing</a></strong>
+            </dt>
+            <dd>
+                <p>Read this if you think 'Smacky's Guides would be better if ...'
+                </p>
+            </dd>
+            <dt><strong><a href="./acknowledgements.dai">Acknowledgements</a></strong>
+            </dt>
+            <dd>
+                <p>Read this if you've contributed to Smacky's Guides and like to see your name in italics. Or show it to someone else if you like other people to see your name in italics.
+                </p>
+            </dd>
+            <dt><strong><a href="./endorsements.dai">Endorsements</a></strong>
+            </dt>
+            <dd>
+                <p>Read this if you need other people's approval before you read things for yourself. Or if you want another chance to see your name in italics.
+                </p>
+            </dd>
+        </dl>
     </section>
     <section id="legal"><title>Copyright &amp; license notice</title>
         <p>Copyright (c) 2005 Julian Arnold.
         </p>
         <p>Permission is granted to copy, distribute and/or modify this document under the terms of the <a href="./fdl.txt">GNU Free Documentation License, Version 1.2</a> or any later version published by the <a href="http://www.fsf.org/">Free Software Foundation</a>; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
         </p>
-        <p>A copy of the license is included in the section entitled <a href="./smackys_guides/fdl.txt">"GNU Free Documentation License"</a>.
+        <p>A copy of the license is included in the section entitled <a href="./fdl.txt">"GNU Free Documentation License"</a>.
         </p>
         <p>My aims in writing Smacky's Guides are detailed in the section entitled <a href="./introduction.dai">"Introduction"</a> and further explanation of the licensing conditions is given in the section entitled <a href="./editing.dai">"Editing"</a>.
         </p>
