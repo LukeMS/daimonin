@@ -1211,7 +1211,7 @@ void draw_client_map2(object *pl)
     uint16          face_num0, face_num1, face_num2, face_num3, face_num1m, face_num2m, face_num3m;
     uint16          mask;
     SockList        sl;
-    unsigned char sock_buf[MAXSOCKBUF];
+    unsigned char   sock_buf[MAXSOCKBUF];
     int pname_flag, ext_flag, dmg_flag, oldlen;
     int dmg_layer2, dmg_layer1, dmg_layer0;
     int wdark;
