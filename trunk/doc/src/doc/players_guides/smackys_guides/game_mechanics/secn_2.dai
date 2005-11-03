@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 2: CREATING A NEW CHARACTER</title>
-    <p><img alt="[Character creation dialog]" src="./dialog_createcharacter.png"></img>
-    </p>
-    <p>Move between fields with UP/DOWN and change the value with LEFT/RIGHT.
-    </p>
+<section autotoc="On this page"><title>SECTION 2: CREATING A NEW CHARACTER</title>
+    <section id="overview"><title>Overview</title>
+        <p>Unfortunately, very few people can plug directly into their computer. Therefore it is necessary to create a character for you to play in Daimonin.
+        </p>
+        <p><img alt="[Character creation dialog]" src="./dialog_createcharacter.png"/>
+        </p>
+        <p>Move between fields with UP/DOWN and change the value with LEFT/RIGHT.
+        </p>
+    </section>
     <section id="race"><title>Choose a race</title>
         <p>First choose a race. Daimonin currently knows only two races: human and half-elf.
         </p>
@@ -18,38 +22,68 @@
         </p>
     </section>
     <section id="stats"><title>Choose your starting stats</title>
-        <p>Lastly allocate additional points amongst your stats. A detailed explanation is in <a href="./secn_3-3.dai">"3-3: Stats"</a> but briefly they are:
+        <p>Lastly allocate additional points amongst your stats. A detailed explanation is in <a href="./secn_3-3.dai">"Section 3-3: Stats"</a> but briefly they are:
         </p>
-        <ul>
-            <li><strong>Strength (STR)</strong>: Physical prowess and brute strength.
-            </li>
-            <li><strong>Dexterity (DEX)</strong>: Nimbleness and speed of movement.
-            </li>
-            <li><strong>Constitution (CON)</strong>: Physical toughness and endurance.
-            </li>
-            <li><strong>Intelligence (INT)</strong>: Sharpness of mind and quickness of wits.
-            </li>
-            <li><strong>Wisdom (WIS)</strong>: Depth of knowledge and ability to commune with the gods.
-            </li>
-            <li><strong>Power (POW)</strong>: Force of mind and attunement to the magical plane.
-            </li>
-            <li><strong>Charisma (CHA)</strong>: Good looks and charm.
-            </li>
-        </ul>
+        <dl>
+            <dt><strong>Strength (STR)</strong>
+            </dt>
+            <dd>
+                <p>Physical prowess and brute strength.
+                </p>
+            </dd>
+            <dt><strong>Dexterity (DEX)</strong>
+            </dt>
+            <dd>
+                <p>Nimbleness and speed of movement.
+                </p>
+            </dd>
+            <dt><strong>Constitution (CON)</strong>
+            </dt>
+            <dd>
+                <p>Physical toughness and endurance.
+                </p>
+            </dd>
+            <dt><strong>Intelligence (INT)</strong>
+            </dt>
+            <dd>
+                <p>Sharpness of mind and quickness of wits.
+                </p>
+            </dd>
+            <dt><strong>Wisdom (WIS)</strong>
+            </dt>
+            <dd>
+                <p>Depth of knowledge and ability to commune with the gods.
+                </p>
+            </dd>
+            <dt><strong>Power (POW)</strong>
+            </dt>
+            <dd>
+                <p>Force of mind and attunement to the magical plane.
+                </p>
+            </dd>
+            <dt><strong>Charisma (CHA)</strong>
+            </dt>
+            <dd>
+                <p>Good looks and charm.
+                </p>
+            </dd>
+        </dl>
         <p>You have five additional points, all of which must be used. The base values are determined by your chosen race. Each stat can only be raised by up to two points above its base value and cannot be lowered below.
         </p>
     </section>
     <section id="done"><title>Create the character</title>
         <p>When you are ready press C. This will create the character in the game world.
         </p>
-        <p>Welcome to Daimonin! You are now ready for <a href="./secn_2-1.dai">"2-1: The Tutorial"</a>.
+        <p>Welcome to Daimonin! You are now ready for <a href="./secn_2-1.dai">"Section 2-1: The Tutorial"</a>.
         </p>
     </section>
-    <section id="tos"><title>In this section</title>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_2-1.dai">Section 2-1: The Tutorial</a>
             </dt>
-            <dd>The tutorial explains many of the basics of gameplay. Reading this guide is <em>not</em> an alternative to playing through the tutorial.
+            <dd>
+                <p>The tutorial explains many of the basics of gameplay. Reading this guide is <em>not</em> an alternative to playing through the tutorial.
+                </p>
             </dd>
         </dl>
     </section>

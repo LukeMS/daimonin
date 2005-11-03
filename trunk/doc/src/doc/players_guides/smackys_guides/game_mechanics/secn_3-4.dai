@@ -1,106 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 3-4: ARMOUR PROTECTIONS</title>
-    <p><img alt="[Armour protection table]" src="./armourprotections.png"></img>
-    </p>
-    <p>Armour protections are the proportion of damage you can absorb from any particular attack type. They are determined by the items you have equipped and any magic currently in effect.
-    </p>
-    <p>Armour protections are represented by percentage figures: if you have 0% electricity protection you will take maximum damage from an electrical attack; while if you have 50% cleave protection you will take only half damage from a blow from an axe.
-    </p>
-    <section id="physical"><title>Physical</title>
-        <p>These protections are from physical damage such as cuts, bruises, scrapes, and a bloody nose.
+<section autotoc="On this page"><title>SECTION 3-4: ARMOUR PROTECTIONS</title>
+    <section id="overview"><title>Overview</title>
+        <p><img alt="[Armour protection table]" src="./armourprotections.png"/>
         </p>
-        <section><title>Impact (I)</title>
-            <p>For example, bashing and crushing weapons.
-            </p>
-        </section>
-        <section><title>Slash (S)</title>
-            <p>For example, cutting and slicing weapons.
-            </p>
-        </section>
-        <section><title>Cleave (C)</title>
-            <p>For example, chopping and hewing weapons.
-            </p>
-        </section>
-        <section><title>Pierce (P)</title>
-            <p>For example, stabbing and thrusting weapons.
-            </p>
-        </section>
-        <section><title>Weapon magic (W)</title>
-            <p>???
-            </p>
-        </section>
+        <p>Armour protections are the proportion of damage you can absorb from any particular attack type. They are determined by the items you have equipped and any magic currently in effect.
+        </p>
+        <p>Armour protections are represented by percentage figures: if you have 0% electricity protection you will take maximum damage from an electrical attack; while if you have 50% cleave protection you will take only half damage from a blow from an axe.
+        </p>
     </section>
-    <section><title>Elemental</title>
-        <p>These protections are from elemental damage such as immolation and electrocution.
-        </p>
-        <section><title>Fire (F)</title>
-            <p>For example, suffering burns or scorches.
-            </p>
-        </section>
-        <section><title>Cold (C)</title>
-            <p>For example, being chilled or frozen.
-            </p>
-        </section>
-        <section><title>Electricity (E)</title>
-            <p>For example, being shocked or zapped by a source of electricity.
-            </p>
-        </section>
-        <section><title>Poison (P)</title>
-            <p>For example, absorbing a venomous substance into your blood stream.
-            </p>
-        </section>
-        <section><title>Acid (A)</title>
-            <p>For example, coming into contact with a corrosive substance.
-            </p>
-        </section>
-    </section>
-    <section><title>Magical</title>
-        <p>These protections are currently not implemented.
-        </p>
-        <section><title>Magic (M)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Mind (Mi)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Body (B)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Psionic (P)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Force (F)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-    </section>
-    <section><title>Spherical</title>
-        <p>These protections are currently not implemented.
-        </p>
-        <section><title>Nether (N)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Chaos (Ch)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Death (D)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Spiritual (Sp)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
-        <section><title>Corruption (Co)</title>
-            <p>Currently not implemented.
-            </p>
-        </section>
+    <section id="protectiongroups"><title>Armour protections by group</title>
+        <dl>
+            <dt><strong>Physical</strong>
+            </dt>
+            <dd>
+                <p>These protections are from physical damage such as cuts, bruises, scrapes, and a bloody nose:
+                </p>
+                <dl>
+                    <dt><strong>Impact (I)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, bashing and crushing weapons.
+                        </p>
+                    </dd>
+                    <dt><strong>Slash (S)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, cutting and slicing weapons.
+                        </p>
+                    </dd>
+                    <dt><strong>Cleave (C)</strong>
+                    </dt>
+                    <dd>
+                         <p>For example, chopping and hewing weapons.
+                         </p>
+                    </dd>
+                    <dt><strong>Pierce (P)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, stabbing and thrusting weapons.
+                        </p>
+                    </dd>
+                    <dt><strong>Weapon magic (W)</strong>
+                    </dt>
+                    <dd>
+                        <p>???
+                        </p>
+                    </dd>
+                </dl>
+            </dd>
+            <dt><strong>Elemental</strong>
+            </dt>
+            <dd>
+                <p>These protections are from elemental damage such as immolation and electrocution.
+                </p>
+                <dl>
+                    <dt><strong>Fire (F)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, suffering burns or scorches.
+                        </p>
+                    </dd>
+                    <dt><strong>Cold (C)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, being chilled or frozen.
+                        </p>
+                    </dd>
+                    <dt><strong>Electricity (E)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, being shocked or zapped by a source of electricity.
+                        </p>
+                    </dd>
+                    <dt><strong>Poison (P)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, absorbing a venomous substance into your blood stream.
+                        </p>
+                    </dd>
+                    <dt><strong>Acid (A)</strong>
+                    </dt>
+                    <dd>
+                        <p>For example, coming into contact with a corrosive substance.
+                        </p>
+                    </dd>
+                </dl>
+            </dd>
+            <dt><strong>Magical</strong>
+            </dt>
+            <dd>
+                <p>These protections are currently not implemented:
+                </p>
+                <dl>
+                    <dt><strong>Magic (M)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                    </dd>
+                    <dt><strong>Mind (Mi)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                    </dd>
+                    <dt><strong>Body (B)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                    </dd>
+                    <dt><strong>Psionic (P)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                    </dd>
+                    <dt><strong>Force (F)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                    </dd>
+                </dl>
+            </dd>
+            <dt><strong>Spherical</strong>
+            </dt>
+            <dd>
+                <p>These protections are currently not implemented:
+                </p>
+                <dl>
+                    <dt><strong>Nether (N)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                    </dd>
+                    <dt><strong>Chaos (Ch)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                   </dd>
+                    <dt><strong>Death (D)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                   </dd>
+                    <dt>S<strong>piritual (Sp)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                   </dd>
+                    <dt><strong>Corruption (Co)</strong>
+                    </dt>
+                    <dd>
+                        <p>Currently not implemented.
+                        </p>
+                   </dd>
+                </dl>
+            </dd>
+        </dl>
     </section>
 </section>

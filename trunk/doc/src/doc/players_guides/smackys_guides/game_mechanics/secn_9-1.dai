@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 9-1: TALKING TO NPCS</title>
-    <p><img alt="Talking to NPCs" src="./talkingtonpcs.png"></img>
-    </p>
-    <section id="initiating"><title>Initiating a conversation</title>
+<section autotoc="On this page"><title>SECTION 9-1: TALKING TO NPCS</title>
+    <section id="overview"><title>Overview</title>
+        <p><img alt="Talking to NPCs" src="./talkingtonpcs.png"/>
+        </p>
         <p>Talking to an NPC is quite simple. Just follow one rule: you can only do so when you are near (within two map tiles) of the NPC. When you are, enter the game command <code>"/say &lt;message&gt;"</code> (or just <code>"&lt;message&gt;"</code>).
         </p>
         <p>The message appears in the lower window in white text.
@@ -12,25 +12,13 @@
         </p>
         <p>This response appears as a block of light blue text with particular words and phrases highlighted in dark blue. These are further key words and phrases.
         </p>
-    </section>
-    <section id="continuing"><title>Continuing a conversation</title>
-        <p>To continue the conversation you have two options:
+        <p>To continue the conversation you should say one of the key words or phrases. This can be done either by:
         </p>
-        <section id="repetition"><title>Say <code>"hi"</code> again or just repeat your last successful comment</title>
-            <p>No, this doesn't get you very far, but just marvel at the infinite patience of the Daimonin denizens!
-            </p>
-            <p>Alright, the useful option is:
-            </p>
-        </section>
-        <section id="key"><title>Say one of the key words or phrases</title>
-            <p>There are actually two ways to do this:
-            </p>
-            <ol>
-                <li>Repeat the above process (ie, type your utterance); or
-                </li>
-                <li>left-click with the mouse on the highlighted word or phrase.
-                </li>
-            </ol>
-        </section>
+        <ol>
+            <li>repeating the above process (ie, type your utterance); or
+            </li>
+            <li>left-clicking with the mouse on the highlighted word or phrase.
+            </li>
+        </ol>
     </section>
 </section>

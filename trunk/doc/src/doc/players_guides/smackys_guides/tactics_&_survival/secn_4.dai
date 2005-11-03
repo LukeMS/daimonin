@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 4: MOBECTOMY -- TAKE IT OUT</title>
+<section autotoc="On this page"><title>SECTION 4: MOBECTOMY -- TAKE IT OUT</title>
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
-    <section id="tos"><title>In this section</title>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_4-1.dai">Section 4-1: Hit &amp; Run</a>
             </dt>
-            <dd>Float like a butterfly, sting like a bee (#1).
+            <dd>
+                <p>Float like a butterfly, sting like a bee (#1).
+                </p>
             </dd>
             <dt><a href="./secn_4-2.dai">Section 4-2: Stand &amp; Slog</a>
             </dt>
-            <dd>Float like a brick, sting like a bee.
+            <dd>
+                <p>Float like a brick, sting like a bee.
+                </p>
             </dd>
             <dt><a href="./secn_4-3.dai">Section 4-3: Keep Your Distance</a>
             </dt>
-            <dd>Ranged combat.
+            <dd>
+                <p>Ranged combat.
+                </p>
             </dd>
             <dt><a href="./secn_4-4.dai">Section 4-4: The Old In &amp; Out</a>
             </dt>
-            <dd>>Float like a butterfly, sting like a bee (#2).
+            <dd>
+                <p>Float like a butterfly, sting like a bee (#2).
+                </p>
             </dd>
         </dl>
     </section>

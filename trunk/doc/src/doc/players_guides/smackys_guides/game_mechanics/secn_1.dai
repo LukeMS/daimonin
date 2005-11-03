@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 1: LOGGING IN</title>
+<section autotoc="On this page"><title>SECTION 1: LOGGING IN</title>
     <section id="titlescreen"><title>Title screen</title>
         <p>When you run the game you are presented with the intro screen. Atmospheric, isn't it? Press any key.
         </p>
@@ -8,7 +8,7 @@
     <section id="server"><title>Choose a server</title>
         <p>You will now see a dialog with a list of known servers.
         </p>
-        <p><img alt="[Server dialog]" src="./dialog_server.png"></img>
+        <p><img alt="[Server dialog]" src="./dialog_server.png"/>
         </p>
         <p>The default is a list of two: the BETA server (damn.informatik.uni-bremen.de) and a local server (although probably there is no local server actually running).
         </p>
@@ -18,7 +18,7 @@
     <section id="login"><title>Login</title>
         <p>The next dialog prompts you to login to the chosen server.
         </p>
-        <p><img alt="[Login dialog]" src="./dialog_login.png"></img>
+        <p><img alt="[Login dialog]" src="./dialog_login.png"/>
         </p>
         <p>You will need to enter a character name and associated password, pressing RETURN after each.
         </p>
@@ -39,7 +39,7 @@
             </p>
             <p>If the third field does not appear this means someone else already has a character of that name on that server. The fields will be cleared and you will need to login again.
             </p>
-            <p>Otherwise continue with <a href="./secn_2.dai">"2: Creating A New Character"</a>.
+            <p>Otherwise continue with <a href="./secn_2.dai">"Section 2: Creating A New Character"</a>.
             </p>
         </section>
     </section>

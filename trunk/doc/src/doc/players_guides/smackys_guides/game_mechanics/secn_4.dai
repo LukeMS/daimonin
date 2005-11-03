@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 4: LOTS TO SEE &amp; LOTS TO DO</title>
-    <p>Throughout your adventuring career you will discover, acquire, manipulate, and discard many items.
-    </p>
-    <p>Any tile on the main screen over which you can pass can hold one or more items. If the tile holds a pile of items only the topmost item is visible from any distance (and this can mean that, eg, a stone giant's throne is completely obscured by an arrow).
-    </p>
-    <section id="tos"><title>In this section</title>
+<section autotoc="On this page"><title>SECTION 4: LOTS TO SEE &amp; LOTS TO DO</title>
+    <section id="overview"><title>Overview</title>
+        <p>Throughout your adventuring career you will discover, acquire, manipulate, and discard many items.
+        </p>
+        <p>Any tile on the main screen over which you can pass can hold one or more items. If the tile holds a pile of items only the topmost item is visible from any distance (and this can mean that, eg, a stone giant's throne is completely obscured by an arrow).
+        </p>
+    </section>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_4-1.dai">Section 4-1: Things Nearby &amp; In Your Inventory</a>
             </dt>
-            <dd>To interact with an item you need to either occupy the same tile as it or already have it in your possession.
+            <dd>
+                <p>To interact with an item you need to either occupy the same tile as it or already have it in your possession.
+                </p>
             </dd>
             <dt><a href="./secn_4-2.dai">Section 4-2: Examining Things</a>
             </dt>
-            <dd>Inspecting an item in detail.
+            <dd>
+                <p>Inspecting an item in detail.
+                </p>
             </dd>
             <dt><a href="./secn_4-3.dai">Section 4-3: Getting &amp; Dropping Things</a>
             </dt>
-            <dd>How to pick items up and put them down.
+            <dd>
+                <p>How to pick items up and put them down.
+                </p>
             </dd>
             <dt><a href="./secn_4-4.dai">Section 4-4: Applying Things</a>
             </dt>
-            <dd>To use an item, whether it be eating food or wearing a hat or wielding a weapon, you must apply it.
+            <dd>
+                <p>To use an item, whether it be eating food or wearing a hat or wielding a weapon, you must apply it.
+                </p>
             </dd>
             <dt><a href="./secn_4-5.dai">Section 4-5: Containers</a>
             </dt>
-            <dd>Certain items, such as bags and pouches, and bits of scenery, such as cupboards and shelves, are containers and may hold further items (which may themselves be containers) within.
+            <dd>
+                <p>Certain items, such as bags and pouches, and bits of scenery, such as cupboards and shelves, are containers and may hold further items (which may themselves be containers) within.
+                </p>
             </dd>
         </dl>
     </section>

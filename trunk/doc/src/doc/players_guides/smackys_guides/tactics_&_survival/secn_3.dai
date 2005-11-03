@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="yes"><title>SECTION 3: MOBYLATICS -- TAKING PRECAUTIONS</title>
+<section autotoc="On this page"><title>SECTION 3: MOBYLATICS -- TAKING PRECAUTIONS</title>
     <p>THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
-    <section id="tos"><title>In this section</title>
+    <section id="tos"><title>Also in this section</title>
         <dl>
             <dt><a href="./secn_3-1.dai">Section 3-1: Fighting Fit</a>
             </dt>
-            <dd>Don't pick a fight if you're already half way to death.
+            <dd>
+                <p>Don't pick a fight if you're already half way to death.
+                </p>
             </dd>
             <dt><a href="./secn_3-2.dai">Section 3-2: One By One</a>
             </dt>
-            <dd><em>Five to one, baby,</em><br/><em>One to five.</em><br/><em>Guess who won't get</em><br/><em>Out alive.</em>
+            <dd>
+                <p><em>Five to one, baby, / One to five. / Guess who won't get / Out alive.</em>
+                </p>
             </dd>
             <dt><a href="./secn_3-3.dai">Section 3-3: Fight Fire With... Water</a>
             </dt>
-            <dd>Opposites react.
+            <dd>
+                <p>Opposites react.
+                </p>
             </dd>
         </dl>
     </section>
