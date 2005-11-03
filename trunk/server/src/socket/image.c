@@ -322,7 +322,6 @@ void SendFaceCmd(char *buff, int len, NewSocket *ns)
  */
 int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 {
-    SockList    sl;
     int         fallback;
 
     if (face_num < 0 || face_num >= nrofpixmaps)
@@ -331,7 +330,6 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
         return SEND_FACE_OUT_OF_BOUNDS;
     }
 
-    sl.buf = malloc(MAXSOCKBUF);
     fallback = get_face_fallback(ns->faceset, face_num);
 
     if (facesets[fallback].faces[face_num].data == NULL)
@@ -344,56 +342,55 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
     {
         if (ns->image2)
         {
-            SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE2);
+            SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_FACE2);
         }
         else if (ns->sc_version >= 1026)
         {
-            SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE1);
+            SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_FACE1);
         }
         else
         {
-            SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE);
+            SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_FACE);
         }
 
-        SockList_AddShort(&sl, face_num);
+        SockList_AddShort(&global_sl, face_num);
         if (ns->image2)
         {
-            SockList_AddChar(&sl, (char) fallback);
+            SockList_AddChar(&global_sl, (char) fallback);
         }
         if (ns->sc_version >= 1026)
         {
-            SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
+            SockList_AddInt(&global_sl, facesets[fallback].faces[face_num].checksum);
         }
-        strcpy((char *) sl.buf + sl.len, new_faces[face_num].name);
-        sl.len += strlen(new_faces[face_num].name);
-        Send_With_Handling(ns, &sl);
+        strcpy((char *) global_sl.buf + global_sl.len, new_faces[face_num].name);
+        global_sl.len += strlen(new_faces[face_num].name);
+        Send_With_Handling(ns, &global_sl);
     }
     else
     {
         if (ns->image2)
         {
-            SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_IMAGE2);
+            SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_IMAGE2);
         }
 
         /*      strcpy((char*)sl.buf, "image2 ");*/
         else
         {
-            SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_IMAGE);
+            SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_IMAGE);
         }
         /*      strcpy((char*)sl.buf, "image ");*/
         /*  sl.len=strlen((char*)sl.buf);*/
-        SockList_AddInt(&sl, face_num);
+        SockList_AddInt(&global_sl, face_num);
         if (ns->image2)
         {
-            SockList_AddChar(&sl, (char) fallback);
+            SockList_AddChar(&global_sl, (char) fallback);
         }
-        SockList_AddInt(&sl, facesets[fallback].faces[face_num].datalen);
-        memcpy(sl.buf + sl.len, facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
-        sl.len += facesets[fallback].faces[face_num].datalen;
-        Send_With_Handling(ns, &sl);
+        SockList_AddInt(&global_sl, facesets[fallback].faces[face_num].datalen);
+        memcpy(global_sl.buf + global_sl.len, facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
+        global_sl.len += facesets[fallback].faces[face_num].datalen;
+        Send_With_Handling(ns, &global_sl);
     }
     /*ns->faces_sent[face_num] = 1;*/
-    free(sl.buf);
 
     return SEND_FACE_OK;
 }
@@ -405,32 +402,25 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
 
 void send_image_info(NewSocket *ns, char *params)
 {
-    SockList    sl;
     int         i;
 
-    sl.buf = malloc(MAXSOCKBUF);
 
-    sprintf(sl.buf, "replyinfo image_info\n%d\n%d\n", nrofpixmaps - 1, bmaps_checksum);
+    sprintf(global_sl.buf, "replyinfo image_info\n%d\n%d\n", nrofpixmaps - 1, bmaps_checksum);
     for (i = 0; i < MAX_FACE_SETS; i++)
     {
         if (facesets[i].prefix)
         {
-            sprintf(sl.buf + strlen(sl.buf), "%d:%s:%s:%d:%s:%s:%s", i, facesets[i].prefix, facesets[i].fullname,
-                    facesets[i].fallback, facesets[i].size, facesets[i].extension, facesets[i].comment);
+            sprintf(global_sl.buf + strlen(global_sl.buf), "%d:%s:%s:%d:%s:%s:%s", i, facesets[i].prefix, facesets[i].fullname, facesets[i].fallback, facesets[i].size, facesets[i].extension, facesets[i].comment);
         }
     }
-    sl.len = strlen(sl.buf);
-    Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    global_sl.len = strlen(global_sl.buf);
+    Send_With_Handling(ns, &global_sl);
 }
 
 void send_image_sums(NewSocket *ns, char *params)
 {
     int         start, stop, qq, i;
     char       *cp, buf[MAX_BUF];
-    SockList    sl;
-
-    sl.buf = malloc(MAXSOCKBUF);
 
     start = atoi(params);
     for (cp = params; *cp != '\0'; cp++)
@@ -444,30 +434,29 @@ void send_image_sums(NewSocket *ns, char *params)
         Write_String_To_Socket(ns, BINARY_CMD_REPLYINFO, buf, strlen(buf));
         return;
     }
-    sprintf(sl.buf, "Ximage_sums %d %d ", start, stop);
-    *sl.buf = BINARY_CMD_REPLYINFO;
+    sprintf(global_sl.buf, "Ximage_sums %d %d ", start, stop);
+    *global_sl.buf = BINARY_CMD_REPLYINFO;
 
-    sl.len = strlen(sl.buf);
+    global_sl.len = strlen(global_sl.buf);
 
     for (i = start; i <= stop; i++)
     {
-        SockList_AddShort(&sl, (uint16) i);
+        SockList_AddShort(&global_sl, (uint16) i);
         qq = get_face_fallback(ns->faceset, i);
-        SockList_AddInt(&sl, facesets[qq].faces[i].checksum);
-        SockList_AddChar(&sl, (char) qq);
+        SockList_AddInt(&global_sl, facesets[qq].faces[i].checksum);
+        SockList_AddChar(&global_sl, (char) qq);
         qq = strlen(new_faces[i].name);
-        SockList_AddChar(&sl, (char) (qq + 1));
-        strcpy(sl.buf + sl.len, new_faces[i].name);
-        sl.len += qq;
-        SockList_AddChar(&sl, 0);
+        SockList_AddChar(&global_sl, (char) (qq + 1));
+        strcpy(global_sl.buf + global_sl.len, new_faces[i].name);
+        global_sl.len += qq;
+        SockList_AddChar(&global_sl, 0);
     }
     /* It would make more sense to catch this pre-emptively in the code above.
      * however, if this really happens, we probably just want to cut down the
      * size to less than 1000, since that is what we claim the protocol would
      * support.
      */
-    if (sl.len > MAXSOCKBUF)
-        LOG(llevError, "ERROR: send_image_send: buffer overrun, %s > %s\n", sl.len, MAXSOCKBUF);
-    Send_With_Handling(ns, &sl);
-    free(sl.buf);
+    if (global_sl.len > MAXSOCKBUF)
+        LOG(llevError, "ERROR: send_image_send: buffer overrun, %s > %s\n", global_sl.len, MAXSOCKBUF);
+    Send_With_Handling(ns, &global_sl);
 }
