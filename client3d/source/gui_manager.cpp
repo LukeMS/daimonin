@@ -168,9 +168,11 @@ bool GuiManager::parseImagesetData(const char*fileImageSet)
     return false;
   }
   mStrImageSetGfxFile = xmlRoot->Attribute("file");
+  Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gfx coordinates.
   /////////////////////////////////////////////////////////////////////////
+  int sumEntries = 0;
   const char *strTemp;
   for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
   {
@@ -194,7 +196,9 @@ bool GuiManager::parseImagesetData(const char*fileImageSet)
       Entry->state.push_back(s);
     }
     mvSrcEntry.push_back(Entry);
+    ++sumEntries;
   }
+  Logger::log().info() << sumEntries << " Entries were parsed.";
   return true;
 }
 
@@ -206,6 +210,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
   TiXmlElement *xmlRoot, *xmlElem;
   TiXmlDocument doc(fileWindows);
   const char *valString;
+  int sumEntries;
   /////////////////////////////////////////////////////////////////////////
   /// Check for a working window description.
   /////////////////////////////////////////////////////////////////////////
@@ -218,6 +223,33 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     Logger::log().info() << "Parsing '" << valString << "' in file" << fileWindows << ".";
   else
     Logger::log().error() << "File '" << fileWindows << "' has no name entry.";
+  /////////////////////////////////////////////////////////////////////////
+  /// Parse the fonts.
+  /////////////////////////////////////////////////////////////////////////
+  sumEntries =0;
+  if ((xmlElem = xmlRoot->FirstChildElement("Fonts")))
+  {
+    for (xmlElem = xmlElem->FirstChildElement("Font"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Font"))
+    {
+      valString = xmlElem->Attribute("type");
+      if (!stricmp(valString, "RAW"))
+      {
+        GuiTextout::getSingleton().loadRawFont(xmlElem->Attribute("name"));
+        ++sumEntries;
+      }
+      else if (!stricmp(valString, "TTF"))
+      {
+        GuiTextout::getSingleton().loadTTFont(xmlElem->Attribute("name"), xmlElem->Attribute("size"));
+        ++sumEntries;
+      }
+    }
+    GuiTextout::getSingleton().createBuffer();
+    Logger::log().info() << sumEntries << " Fonts were parsed.";
+  }
+  else
+  {
+    Logger::log().error() << "CRITICAL: No fonts found in " << fileWindows;
+  }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the mouse-cursor.
   /////////////////////////////////////////////////////////////////////////
@@ -321,7 +353,7 @@ void GuiManager::update()
     if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
     {
       // TODO: Make the background fit to the text. make a black border, ...
-      GuiTextout::getSingleton().Print(0, 0, 256, mTexture.getPointer(), mStrTooltip.c_str());
+//      GuiTextout::getSingleton().Print(0, 0, 256, mTexture.getPointer(), mStrTooltip.c_str());
       mTooltipRefresh = false;
       mElement->setPosition(mMouseX+15, mMouseY+20); // TODO:
       mOverlay->show();

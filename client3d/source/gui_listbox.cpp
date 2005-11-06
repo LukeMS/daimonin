@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -90,7 +90,16 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
   /////////////////////////////////////////////////////////////////////////
   /// Create buffer to hold the pixel information of the listbox.
   /////////////////////////////////////////////////////////////////////////
-  mFontHeight = 12;
+
+
+
+
+  mFontHeight = 14;
+
+
+
+
+
   int size = mWidth * mHeight + mWidth * mFontHeight;
   mGfxBuffer = new uint32[size];
   for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
@@ -200,7 +209,7 @@ void GuiListbox::update(Texture *texture)
 
 /*
 CTextwindow *ChatWin=0, *TextWin=0;
- 
+
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
@@ -219,7 +228,7 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   std::string name= StringConverter::toString(mInstanceNr)+"_TextWindow/";
   mOverlay        = OverlayManager::getSingleton().create(name + "Overlay");
   mOverlay->setZOrder(510-mInstanceNr);
- 
+
   mContainerFrame = static_cast<OverlayContainer*>(OverlayManager::getSingleton().
                     cloneOverlayElementFromTemplate("TextWindow/Frame", name + "Frame"));
   mOverlay->add2D(mContainerFrame);
@@ -229,7 +238,7 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   mContainerFrame->addChild(mElementTitle);
   mContainerFrame->addChild(mElementButUp);
   mContainerFrame->addChild(mElementButDown);
- 
+
   for (int i=0; i < MAX_TEXT_LINES; ++i)
   {
     mElementLine[i]= static_cast<TextAreaOverlayElement*>
@@ -238,7 +247,7 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
     mElementLine[i]->setHeight(0.01);
     mContainerFrame->addChild(mElementLine[i]);
   }
- 
+
   mContainerFrame->setLeft(Xpos);
   mElementTitle  ->setWidth(-Xpos-mElementButUp->getWidth()*2);
   mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
@@ -253,8 +262,8 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   mElementTitleTxt1= OverlayManager::getSingleton(). cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
   mElementTitleTxt1->setCaption(title);
   static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt1);
- 
- 
+
+
   /////////////////////////////////////////////////////////////////////////
   /// Init all variables.
   /////////////////////////////////////////////////////////////////////////
@@ -276,10 +285,10 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, int ScreenHe
   mScroll       = 0.0f;
   mScreenHeight = ScreenHeight;
   setVisible(visible);
-  
-  
+
+
 }
- 
+
 //=================================================================================================
 // Show/Hide the Overlay.
 //=================================================================================================
@@ -288,7 +297,7 @@ void CTextwindow::setVisible(bool show)
   if (show) mOverlay->show();
   else      mOverlay->hide();
 }
- 
+
 //=================================================================================================
 // Closes the TextWindow.
 //=================================================================================================
@@ -298,7 +307,7 @@ void CTextwindow::CloseTextWin()
   mIsClosing  = true;
   mIsOpening  = false;
 }
- 
+
 //=================================================================================================
 // opens the TextWindow.
 //=================================================================================================
@@ -307,8 +316,8 @@ void CTextwindow::OpenTextWin()
   mIsOpening  = true;
   mIsClosing  = false;
 }
- 
- 
+
+
 //=================================================================================================
 // Mouse action was reported.
 //=================================================================================================
@@ -382,7 +391,7 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos)
   SizeChanged();
   return ret;
 }
- 
+
 //=================================================================================================
 // Size change of the window..
 //=================================================================================================
@@ -390,7 +399,7 @@ void CTextwindow::SizeChanged()
 {
   if (!mParent) mFirstYPos = -mContainerFrame->getTop();
   else mFirstYPos = -(mContainerFrame->getTop()- mParent->mContainerFrame->getTop());
- 
+
   mContainerFrame->setHeight(mFirstYPos);
   mSumRows   = (int) ((mFirstYPos+6) / FONT_SIZE);
   if (mSumRows > MAX_TEXT_LINES) mSumRows = MAX_TEXT_LINES;
@@ -403,7 +412,7 @@ void CTextwindow::SizeChanged()
   for (; i < MAX_TEXT_LINES; ++i) mElementLine[i]->hide();
   DockChild();
 }
- 
+
 //=================================================================================================
 // Dock child window on top of this one..
 //=================================================================================================
@@ -412,7 +421,7 @@ void CTextwindow::DockChild()
   if (!mChild) return;
   mChild->mContainerFrame->setTop(mContainerFrame->getTop()-mChild->mContainerFrame->getHeight());
 }
- 
+
 //=================================================================================================
 // Add a line of text.
 //=================================================================================================
@@ -424,7 +433,7 @@ void CTextwindow::Print(const char *text, ColourValue color)
   ++mBufferPos;
   ++mRowsToScroll;
 }
- 
+
 //=================================================================================================
 // Scroll the text.
 //=================================================================================================
@@ -460,7 +469,7 @@ void CTextwindow::Scrolling()
     }
   }
 }
- 
+
 //=================================================================================================
 // Docks on a child on top of this window.
 //=================================================================================================
@@ -473,7 +482,7 @@ void CTextwindow::setChild(CTextwindow *Child)
   mChild->mContainerFrame->setWidth(mContainerFrame->getWidth());
   mChild->mContainerFrame->setTop  (mContainerFrame->getTop()-mChild->mContainerFrame->getHeight());
 }
- 
+
 //=================================================================================================
 //
 //=================================================================================================

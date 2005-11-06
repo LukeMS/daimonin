@@ -1,112 +1,143 @@
 <?xml version= "1.0" encoding= "us-ascii"?>
+
 <XML name= "GUI"> 
+  <!--#############################################-->
+  <!--FONTS:                                       -->
+  <!--#############################################-->
+  <Fonts>
+    <!-- Fontnames:                              -->
+    <!-- RAW => Filename of the png              -->
+    <!-- TTF => Name of the OgreFontDef          -->
+    <Font type="TTF" name= "trebucbd.ttf" size="6" />
+    <Font type="TTF" name= "trebucbd.ttf" size="8" />
+    <Font type="TTF" name= "trebucbd.ttf" size="10" />
+    <Font type="TTF" name= "trebucbd.ttf" size="24" />
+    <Font type="TTF" name= "trebucbd.ttf" size="60" />
+    <Font type="TTF" name= "trebucbd.ttf" size="80" />
+    <Font type="RAW" name= "font_12.png" />
+  </Fonts>
   
+  <!--#############################################-->
+  <!--MOUSE CURSOR:                                -->
+  <!--#############################################-->
   <Cursor name= "MouseCursor" />
 
+  <!--#############################################-->
+  <!--WINDOW: Engine Statistics                    -->
+  <!--#############################################-->
   <Window name= "Statistics" relativeCoords= "false">
-    <Pos      x= "50" y= "50" zOrder = "50" />
+    <Pos      x= "15" y= "15" zOrder = "50" />
     <Size     width= "150" height= "88" />
     <DragArea x= "0" y= "0" width= "150" height= "17" />
     <Tooltip  text= "This is the Player Info Window." />
- 
-    <!--              -->
-    <!-- Borderlines  -->
-    <!--              -->
+    <!--=============================================-->
+    <!-- Borderlines                                 -->
+    <!--=============================================-->
     <Graphic type= "COLOR_FILL" >
       <Pos x= "0" y= "0" />
       <Color red= "200" green= "200" blue= "200" alpha = "255" />
       <Range width= "150" height= "88" />
     </Graphic>
-
-    <!--               -->
-    <!-- Window Tiltle -->
-    <!--               -->
+    <!--=============================================-->
+    <!-- Window Tiltle                               -->
+    <!--=============================================-->
     <Graphic type= "COLOR_FILL" >
       <Pos x= "1" y= "1" />
       <Color red= "80" green= "100" blue= "60" alpha = "255" />
       <Range width= "148" height= "17" />
     </Graphic>
-
-    <TextStatic  x= "35" y= "04" width= "100" text= "Statistics" />
+    <Label  x= "35" y= "4" font="02" text= "Statistics" />
 
     <Gadget type= "BUTTON"  name = "Button_Close">
       <Pos x= "132" y= "1" />
     </Gadget>
-
-    <!--               -->
-    <!-- Window Body   -->
-    <!--               -->
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
     <Graphic type= "COLOR_FILL" >
       <Pos x= "1" y= "19" />
       <Color red= "70" green= "90" blue= "50" alpha = "150" />
       <Range width= "148" height= "79" />
     </Graphic>
 
-    <TextStatic  x= "05" y= "25" width= "190" text= "Current FPS:" />
-    <TextDynamic name= "currentFPS" x= "100" y= "25" width= "90" text= "00.0" />
+    <Label   x=  "05" y= "25" font="02" text= "Current FPS:" />
+    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "40" name= "currentFPS" />
 
-    <TextStatic  x= "05" y= "40" width= "190" text= "Best FPS:" />
-    <TextDynamic name= "bestFPS" x= "100" y= "40" width= "90" text= "00.0" />
+    <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
+    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "40" name= "bestFPS" />
 
-    <TextStatic  x= "05" y= "55" width= "190" text= "Worst FPS:" />
-    <TextDynamic name= "worstFPS" x= "100" y= "55" width= "90" text= "00.0" />
+    <Label   x=  "05" y= "55" font="02" text= "Worst FPS:" />
+    <TextBox x= "100" y= "55" font="02" text= "000.0" width = "40" name= "worstFPS" />
 
-    <TextStatic  x= "05" y= "70" width= "190" text= "Triangles:" />
-    <TextDynamic name= "sumTris" x= "100" y= "70" width= "90" text= "0000" />
-
+    <Label   x=  "05" y= "70" font="02" text= "Triangles:" />
+    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "40" name= "sumTris" />
   </Window>
 
-
+  <!--#############################################-->
+  <!--WINDOW: Test 001                             -->
+  <!--#############################################-->
   <Window name= "PlayerInfo" relativeCoords= "false">
-    <Pos      x= "200" y= "400" zOrder = "50" />
-    <Size     width= "200" height= "200" />
-    <DragArea x= "0" y= "0" width= "100" height= "20" />
+    <Pos      x= "15" y= "150" zOrder = "250" />
+    <Size     width= "600" height= "600" />
+    <DragArea x= "0" y= "0" width= "600" height= "20" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <Graphic type= "COLOR_FILL">
       <Pos x= "0" y= "0" />
       <Color red= "128" green= "0" blue= "0" alpha = "255" />
-      <Range width= "200" height= "17" />
+      <Range width= "600" height= "17" />
     </Graphic>
 
     <Graphic type= "COLOR_FILL">
       <Pos x= "0" y= "17" />
       <Color red= "0" green= "0" blue= "255" alpha = "128" />
-      <Range width= "200" height= "200" />
+      <Range width= "600" height= "600" />
     </Graphic>
 
     <Gadget type= "BUTTON"  name = "Button_Close">
-      <Pos x= "184" y= "0" />
+      <Pos x= "584" y= "0" />
     </Gadget>
 
     <Gadget type= "BUTTON"  name = "Button_1">
-      <Pos x= "25" y= "75" />
-      <Label xPos= "5" yPos= "1" red= "32" green= "64" blue= "128" text= "Press"/>
+      <Pos x= "170" y= "75" />
+      <Label xPos= "5" yPos= "1" font="02" red= "32" green= "64" blue= "128" text= "Press"/>
       <Tooltip  text= "This is only a test button." />
     </Gadget>
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "HealthBar">
-      <Pos  x= "50" y= "100" />
+      <Pos  x= "50" y= "20" />
       <Size width= "17" height= "80" />
       <Color red= "128" green= "0" blue= "0" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "GraceBar">
-      <Pos  x= "70" y= "100" />
+      <Pos  x= "70" y= "20" />
       <Size width= "17" height= "80" />
       <Color red= "128" green= "128" blue= "0" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "ManaBar">
-      <Pos  x= "90" y= "100" />
+      <Pos  x= "90" y= "20" />
       <Size width= "17" height= "80" />
       <Color red= "0" green= "50" blue= "128" alpha = "255" />
     </Statusbar>
 
+    <Label x=  "05" y= "100" font="00" text= "Text using font #0" />
+    <Label x=  "05" y= "112" font="01" text= "Text using font #1" />
+    <Label x=  "05" y= "125" font="02" text= "Text using font #2" />
+    <Label x=  "05" y= "140" font="03" text= "Text using font #3" />
+    <Label x=  "05" y= "170" font="04" text= "Text using font #4" />
+    <Label x=  "05" y= "240" font="05" text= "Text using font #5" />
+
+
+
   </Window>
 
+  <!--#############################################-->
+  <!--WINDOW: Message Window                       -->
+  <!--#############################################-->
   <Window name= "TextWindow" relativeCoords= "false">
-    <Pos      x= "500" y= "100" zOrder = "400" />
+    <Pos      x= "600" y= "100" zOrder = "400" />
     <Size     width= "280" height= "250" />
     <DragArea x= "0" y= "0" width= "100" height= "20" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
