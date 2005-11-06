@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
-#include <OgreFontManager.h>
+//#include <OgreFontManager.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <tinyxml.h>
 
@@ -163,12 +163,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the Tooltip entries.
   /////////////////////////////////////////////////////////////////////////
-/*
-  if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
-  {
-    mStrTooltip = xmlElem->Attribute("text");
-  }
-*/
+  /*
+    if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
+    {
+      mStrTooltip = xmlElem->Attribute("text");
+    }
+  */
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadgets.
   /////////////////////////////////////////////////////////////////////////
@@ -222,48 +222,48 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
     }
   }
   /////////////////////////////////////////////////////////////////////////
-  /// Parse the static TextOutput.
+  /// Parse the Label.
   /////////////////////////////////////////////////////////////////////////
-  for (xmlElem = xmlRoot->FirstChildElement("TextStatic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextStatic"))
+  for (xmlElem = xmlRoot->FirstChildElement("Label"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Label"))
   {
     TextLine *textline = new TextLine;
-    textline->BG_Backup =0;
-    textline->x = atoi(xmlElem->Attribute("x"));
-    textline->y = atoi(xmlElem->Attribute("y"));
-    if (textline->x > mWidth - 2)  textline->x =  mWidth -2;
-    if (textline->y > mHeight- 2)  textline->y  = mHeight-2;
-    textline->width = atoi(xmlElem->Attribute("width"));
-    if (textline->x + textline->width > mWidth) textline->width = mWidth - textline->x -1;
+    textline->index = -1;
+    textline->BG_Backup = 0;
+    textline->x1   = atoi(xmlElem->Attribute("x"));
+    textline->y1   = atoi(xmlElem->Attribute("y"));
+    textline->font = atoi(xmlElem->Attribute("font"));
     textline->text = xmlElem->Attribute("text");
     mvTextline.push_back(textline);
   }
+
   /////////////////////////////////////////////////////////////////////////
-  /// Parse the dynamic TextOutput.
+  /// Parse the Textbox.
   /////////////////////////////////////////////////////////////////////////
-  for (xmlElem = xmlRoot->FirstChildElement("TextDynamic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextDynamic"))
+  for (xmlElem = xmlRoot->FirstChildElement("TextBox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextBox"))
   {
-    valString = xmlElem->Attribute("name");
-    if (!valString)
-    {
-      Logger::log().error() << "DynamicText needs a name value!";
-      return;
-    }
     TextLine *textline = new TextLine;
-    for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+    valString = xmlElem->Attribute("name");
+    if (valString)
     {
-      if (GuiManager::GuiElementNames[i].name == valString)
+      for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
       {
-        textline->index = i;
-        break;
+        if (GuiManager::GuiElementNames[i].name == valString)
+        {
+          textline->index = i;
+          break;
+        }
       }
     }
-    textline->BG_Backup = new uint32[GuiTextout::getSingleton().getMaxFontHeight() * mWidth];
-    textline->x = atoi(xmlElem->Attribute("x"));
-    textline->y = atoi(xmlElem->Attribute("y"));
-    if (textline->x > mWidth - 2)  textline->x =  mWidth -2;
-    if (textline->y > mHeight- 2)  textline->y  = mHeight-2;
-    textline->width = atoi(xmlElem->Attribute("width"));
-    if (textline->x + textline->width > mWidth) textline->width = mWidth - textline->x -1;
+    else /// Error: No assignment found. Fallback to label.
+    {
+     Logger::log().error() << "A Textbox without an assignment was found.";
+     textline->index = -1;
+    }
+    textline->BG_Backup = 0;
+    textline->font = atoi(xmlElem->Attribute("font"));
+    textline->x1   = atoi(xmlElem->Attribute("x"));
+    textline->y1   = atoi(xmlElem->Attribute("y"));
+    textline->width= atoi(xmlElem->Attribute("width"));
     textline->text = xmlElem->Attribute("text");
     mvTextline.push_back(textline);
   }
@@ -324,8 +324,6 @@ int GuiWindow::getGadgetMouseIsOver(int x, int y)
 ///=================================================================================================
 void GuiWindow::drawAll()
 {
-  // Todo delete static stuff after drawing (like bg-gfx, static text, etc).
-
   /////////////////////////////////////////////////////////////////////////
   /// Draw the background.
   /////////////////////////////////////////////////////////////////////////
@@ -336,26 +334,50 @@ void GuiWindow::drawAll()
   /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvTextline.size() ; ++i)
   {
-    // Fill the BG_Backup buffer with Window background, before printing.
-    if (mvTextline[i]->BG_Backup)
+    ///--------------------------------------------------------------------
+    /// Clipping.
+    ///--------------------------------------------------------------------
+    if (mvTextline[i]->x1 >= mWidth || mvTextline[i]->y1 >= mHeight)
     {
-      PixelBox pb(mvTextline[i]->width, GuiTextout::getSingleton().getMaxFontHeight(), 1, PF_A8R8G8B8 , mvTextline[i]->BG_Backup);
-      mTexture.getPointer()->getBuffer()->blitToMemory(Box(
-            mvTextline[i]->x,
-            mvTextline[i]->y,
-            mvTextline[i]->x + mvTextline[i]->width,
-            mvTextline[i]->y + GuiTextout::getSingleton().getMaxFontHeight()), pb);
+      mvTextline[i]->clipped = true;
+      continue;
     }
-    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str());
-    GuiTextout::getSingleton().Print(mvTextline[i]->x, mvTextline[i]->y, mvTextline[i]->width, mTexture.getPointer(), mvTextline[i]->text.c_str());
+    mvTextline[i]->clipped = false;
+    /// Calculate the needed gfx-buffer size for the text.
+    mvTextline[i]->x2 = mvTextline[i]->x1 +1;
+    mvTextline[i]->y2 = mvTextline[i]->y1 +1;
+    GuiTextout::getSingleton().CalcTextSize(
+      mvTextline[i]->x2,
+      mvTextline[i]->y2,
+      mWidth,
+      mHeight,
+      mvTextline[i]->text.c_str(),
+      mvTextline[i]->font);
+    /// Fill the BG_Backup buffer with Window background, before printing.
+    if (mvTextline[i]->index >= 0)  // Dynamic text.
+    {
+      mvTextline[i]->x2 = mvTextline[i]->x1 + mvTextline[i]->width;
+      if (mvTextline[i]->BG_Backup)  delete[] mvTextline[i]->BG_Backup;
+      mvTextline[i]->BG_Backup = new uint32[(mvTextline[i]->x2- mvTextline[i]->x1) * (mvTextline[i]->y2- mvTextline[i]->y1)];
+      mTexture.getPointer()->getBuffer()->blitToMemory(Box(
+            mvTextline[i]->x1, mvTextline[i]->y1,
+            mvTextline[i]->x2, mvTextline[i]->y2),
+          PixelBox(
+            mvTextline[i]->x2- mvTextline[i]->x1,
+            mvTextline[i]->y2- mvTextline[i]->y1,
+            1, PF_A8R8G8B8, mvTextline[i]->BG_Backup));
+    }
+    /// Print.
+    GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), mvTextline[i]->text.c_str());
   }
+
   /////////////////////////////////////////////////////////////////////////
   /// Draw gadget.
   /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvGadget.size() ; ++i)
     mvGadget [i]->draw(mSrcPixelBox, mTexture.getPointer());
   /////////////////////////////////////////////////////////////////////////
-  /// Draw statusbars.
+  /// Draw statusbar.
   /////////////////////////////////////////////////////////////////////////
   for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
     mvStatusbar [i]->draw(mSrcPixelBox, mTexture.getPointer(), -1);
@@ -363,6 +385,7 @@ void GuiWindow::drawAll()
   /// Draw listbox.
   /////////////////////////////////////////////////////////////////////////
   // not needed for text-listbox.
+
 }
 
 ///=================================================================================================
@@ -454,6 +477,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             {  // (If not already done) change the gadget state to mouseover.
               mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
               mMouseOver = gadget;
+              //mStrTooltip = mvGadget[gadget]->getTooltip();
               GuiManager::getSingleton().setTooltip(mvGadget[gadget]->getTooltip());
             }
           }
@@ -492,7 +516,7 @@ void GuiWindow::Message(int message, int element, const char *value)
     case GUI_MSG_TXT_CHANGED:
       for (unsigned int i = 0; i < mvTextline.size() ; ++i)
       {
-        if (mvTextline[i]->index != element) continue;
+        if (mvTextline[i]->index != element || mvTextline[i]->clipped) continue;
         GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value);
         break;
       }

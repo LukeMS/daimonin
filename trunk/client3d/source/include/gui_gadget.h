@@ -83,7 +83,7 @@ private:
   bool mMirrorH, mMirrorV;
   int  mX, mY, mWidth, mHeight;
   int  mType;
-  std::string mStrName, mStrLabel, mBehavior, mStrTooltip;
+  std::string mStrName, mStrLabel, mStrBgLabel, mBehavior, mStrTooltip;
   unsigned char mLabelColor[3];
   int mLabelXPos, mLabelYPos;
   int  mOldState, mState;

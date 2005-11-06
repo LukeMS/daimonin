@@ -37,8 +37,11 @@ const uint32 COLOR_WHITE = 0xffffffff;
 
 typedef struct TextLine
 {
-  int x, y, width;
+  unsigned int x1, y1, x2, y2;
+  unsigned int width;
+  int font;
   int index;
+  bool clipped;
   std::string text;
   uint32 *BG_Backup;
 }
@@ -65,9 +68,14 @@ public:
   ////////////////////////////////////////////////////////////
   static GuiTextout &getSingleton()
   {
-    static GuiTextout Singleton; return Singleton;
+    static GuiTextout Singleton;
+    return Singleton;
   }
-  void Print(int x, int y, int width, Texture *texture, const char *text);
+  void loadRawFont(const char *filename);
+  void loadTTFont (const char *filename, const char *size);
+  void createBuffer();
+
+  void CalcTextSize(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
   void Print(TextLine *line, Texture *texture, const char *text);
   void PrintToBuffer(int width, uint32 *dest_data, const char*text, uint32 color = COLOR_WHITE);
   int getMaxFontHeight()
@@ -78,31 +86,26 @@ private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  struct
+  struct mFont
   {
-    Image image;
     uint32 *data;
     unsigned int textureWidth;
     unsigned int width;
     unsigned int height;
     char charWidth[CHARS_IN_FONT];
-  }
-  mFont[FONT_SUM];
+  };
+  std::vector<mFont*>mvFont;
   uint32 *TextGfxBuffer;
   PixelBox *mPb;
   int mSumFonts;
-  unsigned int maxFontHeight, maxFontWidth;
+  unsigned int maxFontHeight;
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
   GuiTextout();
   ~GuiTextout();
   GuiTextout(const GuiTextout&); // disable copy-constructor.
-  void loadRawFont(const char * filename);
-  void loadTTFont (const char * filename);
-  void drawText(int width, uint32 *dest_data, const char*text);
+  void drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr = 0);
 };
 
 #endif
-
-

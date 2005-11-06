@@ -107,7 +107,6 @@ void GuiGadget::setStateImagePos(std::string name, int x, int y)
   }
   gfxSrcPos[state].x = x;
   gfxSrcPos[state].y = y;
-  //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
 }
 
 ///=================================================================================================
@@ -128,15 +127,20 @@ void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
   /////////////////////////////////////////////////////////////////////////
   /// Draw label.
   /////////////////////////////////////////////////////////////////////////
-  if (mState == STATE_PUSHED)
+  if (mStrLabel != "")
   {
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, mWidth, texture, mStrLabel.c_str());
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str());
-  }
-  else
-  {
-    GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str());
-    GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , mWidth, texture, mStrLabel.c_str());
+    /*
+    std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
+    if (mState == STATE_PUSHED)
+    {
+      GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, mWidth, texture, mStrBgLabel.c_str());
+      GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str());
+    }
+    else
+    {
+      GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrBgLabel.c_str());
+      GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , mWidth, texture, mStrLabel.c_str());
+    }
+    */
   }
 }
-
