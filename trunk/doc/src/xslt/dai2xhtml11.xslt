@@ -57,7 +57,6 @@
 
     <xsl:template match="/section/title">
         <h1>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h1>
         <xsl:if test="/section/@autotoc and /section/section">
@@ -84,8 +83,8 @@
                 <ul>
                     <li>
                         <a href="#{if (@id) then @id else generate-id()}"><xsl:apply-templates select="title/node()"/></a>
+                        <xsl:apply-templates select="section" mode="toc"/>
                     </li>
-                    <xsl:apply-templates select="section" mode="toc" />
                 </ul>
             </xsl:otherwise>
         </xsl:choose>
@@ -93,21 +92,18 @@
 
     <xsl:template match="/section/section/title">
         <h2>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h2>
     </xsl:template>
 
     <xsl:template match="/section/section/section/title">
         <h3>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h3>
     </xsl:template>
 
     <xsl:template match="/section/section/section/section/title">
         <h4>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h4>
     </xsl:template>

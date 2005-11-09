@@ -12,7 +12,7 @@
     <xsl:preserve-space elements="blockcode" />
 
     <xsl:output
-        method="xml"
+        method="html"
         doctype-public="-//W3C//DTD HTML 4.01//EN"
         doctype-system="http://www.w3.org/TR/html4/strict.dtd"
         encoding="iso-8859-1"
@@ -23,6 +23,7 @@
     <xsl:template match="/">
         <html>
             <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
                 <title><xsl:apply-templates select="section/title/text()"/></title>
                 <!-- Reasons for inlining the stylesheet instead of referencing an external file:
                   - The link to the external file would need to be relative, but what about html files in subdirectories?
@@ -57,18 +58,17 @@
 
     <xsl:template match="/section/title">
         <h1>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h1>
         <xsl:if test="/section/@autotoc and /section/section">
             <h2 id="toc">
                 <xsl:choose>
-                   <xsl:when test="/section/@autotoc='autotoc'">
-                       <xsl:text>Table of Contents</xsl:text>
-                   </xsl:when>
-                   <xsl:otherwise>
-                       <xsl:value-of select="/section/@autotoc"/>
-                   </xsl:otherwise>
+                    <xsl:when test="/section/@autotoc='autotoc'">
+                        <xsl:text>Table of Contents</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="/section/@autotoc"/>
+                    </xsl:otherwise>
                 </xsl:choose>
             </h2>
             <xsl:apply-templates select="/section/section" mode="toc"/>
@@ -84,30 +84,27 @@
                 <ul>
                     <li>
                         <a href="#{if (@id) then @id else generate-id()}"><xsl:apply-templates select="title/node()"/></a>
+                        <xsl:apply-templates select="section" mode="toc"/>
                     </li>
-                    <xsl:apply-templates select="section" mode="toc"/>
-               </ul>
+                </ul>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 
     <xsl:template match="/section/section/title">
         <h2>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h2>
     </xsl:template>
 
     <xsl:template match="/section/section/section/title">
         <h3>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h3>
     </xsl:template>
 
     <xsl:template match="/section/section/section/section/title">
         <h4>
-            <xsl:if test="../@id"><xsl:attribute name="id" select="../@id"/></xsl:if>
             <xsl:apply-templates/>
         </h4>
     </xsl:template>
