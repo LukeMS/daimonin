@@ -72,12 +72,16 @@ public:
     return Singleton;
   }
   void loadRawFont(const char *filename);
-  void loadTTFont (const char *filename, const char *size);
+  void loadTTFont (const char *filename, const char *size, const char *resolution);
   void createBuffer();
 
   void CalcTextSize(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
   void Print(TextLine *line, Texture *texture, const char *text);
-  void PrintToBuffer(int width, uint32 *dest_data, const char*text, uint32 color = COLOR_WHITE);
+  void PrintToBuffer(int width, uint32 *dest_data, const char*text, int font, uint32 color = COLOR_WHITE);
+  int getFontHeight(int fontNr)
+  {
+    return mvFont[fontNr]->height;
+  }
   int getMaxFontHeight()
   {
     return maxFontHeight;
@@ -97,7 +101,6 @@ private:
   std::vector<mFont*>mvFont;
   uint32 *TextGfxBuffer;
   PixelBox *mPb;
-  int mSumFonts;
   unsigned int maxFontHeight;
   ////////////////////////////////////////////////////////////
   /// Functions.
