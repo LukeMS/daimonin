@@ -151,6 +151,9 @@ void initialize_mob_data(struct mobdata *data)
 
     data->spawn_info = NULL;
     data->idle_time = 0;
+    
+    /* Intitialize this to something valid so we don't have to worry about it */
+    data->last_movement_behaviour = &behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_FRIENDSHIP];
 }
 
 /*

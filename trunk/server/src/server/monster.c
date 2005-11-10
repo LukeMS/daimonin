@@ -519,8 +519,10 @@ int move_monster(object *op, int mode)
             {
                 ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
                 (op, behaviour->parameters, & response);
-                if (response.type != MOVE_RESPONSE_NONE)
+                if (response.type != MOVE_RESPONSE_NONE) {
+                    MOB_DATA(op)->last_movement_behaviour = behaviour->declaration;
                     break;
+                }
             }
 
             /* TODO move_home alternative: move_towards_friend */
@@ -554,7 +556,7 @@ int move_monster(object *op, int mode)
      *       execution (which done on the highest-prioritized action after all decisions are finished)
      * TODO: in original rules DEX has influence over whether to try any of these or not
      */
-    jump_move_monster_action:
+jump_move_monster_action:
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_ACTIONS];
          behaviour != NULL;
          behaviour = behaviour->next)
@@ -657,8 +659,11 @@ void object_accept_path(object *op)
 #ifdef DEBUG_PATHFINDING
         {
             path_node  *tmp;
-            LOG(llevDebug, "object_accept_path(): '%s' new path -> '%s': ", STRING_OBJ_NAME(op),
-                STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
+            LOG(llevDebug, "object_accept_path(): '%s' new path -> [object '%s' / coordinate %d:%d@%s])\n", 
+                STRING_OBJ_NAME(op),
+                STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj),
+                MOB_PATHDATA(op)->target_x, MOB_PATHDATA(op)->target_y,
+                STRING_SAFE(MOB_PATHDATA(op)->target_map));
             for (tmp = path; tmp; tmp = tmp->next)
                 LOG(llevDebug, "(%d,%d) ", tmp->x, tmp->y);
             LOG(llevDebug, "\n");
@@ -678,8 +683,13 @@ void object_accept_path(object *op)
     }
     else
     {
-        LOG(llevDebug, "object_accept_path(): no path to destination ('%s' -> '%s')\n", STRING_OBJ_NAME(op),
-            STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
+        LOG(llevDebug, "object_accept_path(): no path to destination ('%s' -> [object '%s' / coordinate %d:%d@%s])\n", 
+                STRING_OBJ_NAME(op),
+                STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj),
+                MOB_PATHDATA(op)->target_x, MOB_PATHDATA(op)->target_y,
+                STRING_SAFE(MOB_PATHDATA(op)->target_map));
+        LOG(llevDebug, "  last movement behaviour of '%s': '%s'\n", 
+                STRING_OBJ_NAME(op), MOB_DATA(op)->last_movement_behaviour->name);
         SET_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
     }
 }
