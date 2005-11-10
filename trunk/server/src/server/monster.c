@@ -322,7 +322,7 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
     if (!(forbidden & (1 << dir)) && move_object(op, dir)) /* Can the monster move directly toward waypoint? */
         return TRUE;
 
-    m = 1 - (RANDOM() & 2);          /* Try left or right first? */
+    m = (RANDOM() & 2) ? 1 : -1;          /* Try left or right first? */
     /* try different detours */
     if ((!(forbidden & (1 << absdir(dir + m))) && move_object(op, absdir(dir + m)))
      || (!(forbidden & (1 << absdir(dir - m))) && move_object(op, absdir(dir - m)))
