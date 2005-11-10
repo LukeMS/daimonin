@@ -239,7 +239,10 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
       }
       else if (!stricmp(valString, "TTF"))
       {
-        GuiTextout::getSingleton().loadTTFont(xmlElem->Attribute("name"), xmlElem->Attribute("size"));
+        GuiTextout::getSingleton().loadTTFont(
+          xmlElem->Attribute("name"),
+          xmlElem->Attribute("size"),
+          xmlElem->Attribute("resolution"));
         ++sumEntries;
       }
     }
@@ -353,7 +356,7 @@ void GuiManager::update()
     if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
     {
       // TODO: Make the background fit to the text. make a black border, ...
-//      GuiTextout::getSingleton().Print(0, 0, 256, mTexture.getPointer(), mStrTooltip.c_str());
+      //      GuiTextout::getSingleton().Print(0, 0, 256, mTexture.getPointer(), mStrTooltip.c_str());
       mTooltipRefresh = false;
       mElement->setPosition(mMouseX+15, mMouseY+20); // TODO:
       mOverlay->show();

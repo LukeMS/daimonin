@@ -37,32 +37,15 @@ using namespace Ogre;
 const int MIN_GFX_SIZE = 4;
 const char XML_BACKGROUND[] = "Background";
 
-//=================================================================================================
-// Init all static Elemnts.
-//=================================================================================================
+///=================================================================================================
+/// Init all static Elemnts.
+///=================================================================================================
 int GuiWindow::msInstanceNr = -1;
 int GuiWindow::mMouseDragging = -1;
 std::string GuiWindow::mStrTooltip ="";
 
 ///=================================================================================================
-/// Delete a gadget.
-///=================================================================================================
-void GuiWindow::delGadget(int pos)
-{
-  // Delete the gadgets.
-  for (vector<GuiGadget*>::iterator i = mvGadget.begin(); i < mvGadget.end(); ++i)
-  {
-    if (!pos--)
-    {
-      delete (*i);
-      mvGadget.erase(i);
-      return;
-    }
-  }
-}
-
-///=================================================================================================
-///
+/// Destructor.
 ///=================================================================================================
 GuiWindow::~GuiWindow()
 {
@@ -113,7 +96,7 @@ void GuiWindow::Init(TiXmlElement *xmlElem, GuiManager *guiManager)
 }
 
 ///=================================================================================================
-/// .
+/// Parse the xml window data..
 ///=================================================================================================
 void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
 {
@@ -254,9 +237,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
         }
       }
     }
-    else /// Error: No assignment found. Fallback to label.
+    else /// Error: No name found. Fallback to label.
     {
-     Logger::log().error() << "A Textbox without an assignment was found.";
+     Logger::log().error() << "A Textbox without a name was found.";
      textline->index = -1;
     }
     textline->BG_Backup = 0;
@@ -278,7 +261,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot, GuiManager *guiManager)
 }
 
 ///=================================================================================================
-/// Create the window and delete all gadgets that needs only to be drawn once.
+/// Create the window.
 ///=================================================================================================
 void GuiWindow::createWindow()
 {
@@ -308,7 +291,7 @@ void GuiWindow::createWindow()
 }
 
 ///=================================================================================================
-/// .
+/// Returns the gadget under the mousepointer.
 ///=================================================================================================
 int GuiWindow::getGadgetMouseIsOver(int x, int y)
 {
@@ -320,7 +303,7 @@ int GuiWindow::getGadgetMouseIsOver(int x, int y)
 }
 
 ///=================================================================================================
-/// .
+/// Draw all window elements.
 ///=================================================================================================
 void GuiWindow::drawAll()
 {
@@ -389,7 +372,7 @@ void GuiWindow::drawAll()
 }
 
 ///=================================================================================================
-/// .
+/// Mouse Event.
 ///=================================================================================================
 const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 {
@@ -400,6 +383,8 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
   const char *actGadgetName =0;
   switch (MouseAction)
   {
+    //case M_RESIZE:
+
     case M_PRESSED:
       if (mMouseOver >= 0)
       {

@@ -11,7 +11,7 @@
     <Font type="TTF" name= "trebucbd.ttf" size="6" />
     <Font type="TTF" name= "trebucbd.ttf" size="8" />
     <Font type="TTF" name= "trebucbd.ttf" size="10" />
-    <Font type="TTF" name= "trebucbd.ttf" size="24" />
+    <Font type="TTF" name= "trebucbd.ttf" size="24" resolution="55"/>
     <Font type="TTF" name= "trebucbd.ttf" size="60" />
     <Font type="TTF" name= "trebucbd.ttf" size="80" />
     <Font type="RAW" name= "font_12.png" />
@@ -122,12 +122,12 @@
       <Color red= "0" green= "50" blue= "128" alpha = "255" />
     </Statusbar>
 
-    <Label x=  "05" y= "100" font="00" text= "Text using font #0" />
-    <Label x=  "05" y= "112" font="01" text= "Text using font #1" />
-    <Label x=  "05" y= "125" font="02" text= "Text using font #2" />
-    <Label x=  "05" y= "140" font="03" text= "Text using font #3" />
-    <Label x=  "05" y= "170" font="04" text= "Text using font #4" />
-    <Label x=  "05" y= "240" font="05" text= "Text using font #5" />
+    <Label x=  "05" y= "100" font="00" text= "Text@00 using abc font #0" />
+    <Label x=  "05" y= "112" font="01" text= "Text@00 using@01 abc font #1" />
+    <Label x=  "05" y= "125" font="02" text= "Text@00 using@02 abc font #2" />
+    <Label x=  "05" y= "140" font="03" text= "Text@00 using@03 abc font #3" />
+    <Label x=  "05" y= "170" font="04" text= "Text@00 using@04 abc font #4" />
+    <Label x=  "05" y= "240" font="05" text= "Text@00 using@05 abc font #5" />
 
 
 
@@ -147,7 +147,7 @@
       <Range width= "280" height= "18" />
     </Graphic>
 
-    <Listbox type= ""  name = "TextList">
+    <Listbox type= "" name= "TextList" font="03">
       <Pos x= "1" y= "18" />
       <Range width= "280" height= "200" />
       <Color red= "128" green= "128" blue= "128" alpha = "128" />

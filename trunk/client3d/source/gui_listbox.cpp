@@ -30,7 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 const clock_t SCROLL_SPEED = 12;
 
 ///=================================================================================================
-/// .
+/// Destructor.
 ///=================================================================================================
 GuiListbox::~GuiListbox()
 {
@@ -48,14 +48,10 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gadget.
   /////////////////////////////////////////////////////////////////////////
+  mBehavior= xmlElem->Attribute("type");
   mStrName = xmlElem->Attribute("name");
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the Behavior.
-  /////////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Behavior")))
-  {
-    mBehavior = xmlGadget->Attribute("type");
-  }
+  mFont    = atoi(xmlElem->Attribute("font"));
+  mFontHeight = GuiTextout::getSingleton().getFontHeight(mFont);
   /////////////////////////////////////////////////////////////////////////
   /// Parse the position.
   /////////////////////////////////////////////////////////////////////////
@@ -90,16 +86,6 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
   /////////////////////////////////////////////////////////////////////////
   /// Create buffer to hold the pixel information of the listbox.
   /////////////////////////////////////////////////////////////////////////
-
-
-
-
-  mFontHeight = 14;
-
-
-
-
-
   int size = mWidth * mHeight + mWidth * mFontHeight;
   mGfxBuffer = new uint32[size];
   for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
@@ -112,7 +98,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
   mBufferPos    = 0;
   mPrintPos     = 0;
   mRowsToScroll = 0;
-  mRowsToPrint  = 10; // mHeight / fontHeight;
+  mRowsToPrint  = mHeight / mFontHeight;
   mScroll       = 0;
 }
 
@@ -189,7 +175,7 @@ void GuiListbox::update(Texture *texture)
   /// New Line to scroll in.
   if (!mScroll)
   {
-    GuiTextout::getSingleton().PrintToBuffer(mWidth, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFillColor);
+    GuiTextout::getSingleton().PrintToBuffer(mWidth, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFont, mFillColor);
   }
   texture->getBuffer()->blitFromMemory(
     PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
