@@ -40,8 +40,6 @@ enum
 #define SPLIST_MODE_REMOVE 1
 #define SPLIST_MODE_UPDATE 2
 
-extern int PasswordAlreadyAsked;
-
 extern void SoundCmd(unsigned char *data, int len);
 extern void SetupCmd(char *buf, int len);
 extern void FaceCmd(unsigned char *data, int len);

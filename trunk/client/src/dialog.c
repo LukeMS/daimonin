@@ -1569,115 +1569,221 @@ void show_login_server(void)
         return;
     StringBlt(ScreenSurface, &SystemFont, "done.", x + 2, y + 92, COLOR_WHITE, NULL, NULL);
     y += 180;
-    StringBlt(ScreenSurface, &SystemFont, "Enter your Name", x, y, COLOR_HGOLD, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 15, NULL, NULL);
+    if (GameStatus <= GAME_STATUS_LOGIN)
+	{
+	    StringBlt(ScreenSurface, &SystemFont, "Query for Login. Waiting...", x, y, COLOR_HGOLD, NULL, NULL);
+        return;
+	}
+    else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
+	{
+		if(GameStatusLogin)
+		{
+		    StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+51, y+32, COLOR_BLACK, NULL, NULL);
+		    StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+49, y+30, COLOR_GREEN, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, "Create Character", x+18, y+52, COLOR_BLACK, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, "Create Character", x+16, y+50, COLOR_WHITE, NULL, NULL);
+		}
+		else
+		{
+		    StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+32, COLOR_BLACK, NULL, NULL);
+		    StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+30, COLOR_WHITE, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-3, y+52, COLOR_BLACK, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-5, y+50, COLOR_GREEN, NULL, NULL);
+		}
+		    y += 160;
+            StringBlt(ScreenSurface, &SystemFont,
+                    "Select ~Create Character~ for a new or ~Login~ for a saved character." ,
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Select ~Create Character~ for a new or ~Login~ for a saved character.",
+                    x-11, y  , COLOR_WHITE, NULL, NULL);
+            y+=12;
+			sprintf(buf,"Use ~%c,%c~ to select and press then ~Return~", ASCII_UP, ASCII_DOWN);
+            StringBlt(ScreenSurface, &SystemFont, buf ,
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, buf,
+                    x-11  , y  , COLOR_WHITE, NULL, NULL);
+
+        return;
+	}
+
+	if(GameStatusLogin)
+	{
+		StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+2, COLOR_BLACK, NULL, NULL);
+		StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+0, COLOR_WHITE, NULL, NULL);
+	}
+	else
+	{
+		StringBlt(ScreenSurface, &BigFont, "Create Character", x+18, y+2, COLOR_BLACK, NULL, NULL);
+		StringBlt(ScreenSurface, &BigFont, "Create Character", x+16, y+0, COLOR_WHITE, NULL, NULL);
+	}
+
+	if(GameStatusLogin)
+	    StringBlt(ScreenSurface, &SystemFont, "Enter your Name", x, y+20, COLOR_HGOLD, NULL, NULL);
+	else
+	    StringBlt(ScreenSurface, &SystemFont, "Select a Name", x, y+20, COLOR_HGOLD, NULL, NULL);
+
+    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 35, NULL, NULL);
     if (GameStatus == GAME_STATUS_NAME)
         StringBlt(ScreenSurface, &SystemFont,
-                  show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16), x + 2, y + 17,
+                  show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16), x + 2, y + 37,
                   COLOR_WHITE, NULL, NULL);
     else
-        StringBlt(ScreenSurface, &SystemFont, cpl.name, x + 2, y + 17, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, cpl.name, x + 2, y + 37, COLOR_WHITE, NULL, NULL);
 
-    StringBlt(ScreenSurface, &SystemFont, "Enter your Password", x + 2, y + 40, COLOR_HGOLD, NULL, NULL);
-    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 55, NULL, NULL);
+    if (GameStatus < GAME_STATUS_PSWD)
+	{
+	    if (GameStatus == GAME_STATUS_PSWD_WAIT)
+			StringBlt(ScreenSurface, &SystemFont, "sending name... waiting...", x + 2, y + 60, COLOR_WHITE, NULL, NULL);
+		else
+		{
+			if(!GameStatusLogin)
+			{
+	            StringBlt(ScreenSurface, &SystemFont, "*REMEMBER*: ~Your website account name~",x+1, y+61, COLOR_BLACK, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "*REMEMBER*: ~Your website account name~",x+2, y+60, COLOR_WHITE, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~is NOT your character name !~",x+1, y+71, COLOR_BLACK, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~is NOT your character name !~",x+2, y+70, COLOR_WHITE, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+1, y+81, COLOR_BLACK, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+2, y+80, COLOR_WHITE, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~numbers of special signs in it.~",x+1, y+91, COLOR_BLACK, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~numbers of special signs in it.~",x+2, y+90, COLOR_WHITE, NULL, NULL);
+			}
+		}
+		goto login_jmp;
+	}
+    StringBlt(ScreenSurface, &SystemFont, "Enter your Password", x + 2, y + 60, COLOR_HGOLD, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 75, NULL, NULL);
 
     if (GameStatus == GAME_STATUS_PSWD)
     {
-        strcpy(buf, show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16));
+		strcpy(buf, show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16));
         for (i = 0; i < CurrentCursorPos; i++)
             buf[i] = '*';
         for (i = CurrentCursorPos + 1; i < (int) strlen(InputString) + 1; i++)
             buf[i] = '*';
         buf[i] = 0;
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 57, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
     }
     else
     {
         for (i = 0; i < (int) strlen(cpl.password); i++)
             buf[i] = '*';buf[i] = 0;
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 57, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 77, COLOR_WHITE, NULL, NULL);
     }
+    if (GameStatus < GAME_STATUS_VERIFYPSWD)
+	{
+	    if (GameStatus == GAME_STATUS_VERIFYPSWD_WAIT)
+	        StringBlt(ScreenSurface, &SystemFont, "sending password... waiting...", x + 2, y + 100, COLOR_WHITE, NULL, NULL);
+		goto login_jmp;
+	}
+
     if (GameStatus == GAME_STATUS_VERIFYPSWD)
     {
-        StringBlt(ScreenSurface, &SystemFont, "New Character: Verify Password", x + 2, y + 80, COLOR_HGOLD, NULL, NULL);
-        sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 95, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "New Character: Verify Password", x + 2, y + 100, COLOR_HGOLD, NULL, NULL);
+        sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 115, NULL, NULL);
         strcpy(buf, show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16));
         for (i = 0; i < (int) strlen(InputString); i++)
             buf[i] = '*';
-        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 97, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, buf, x + 2, y + 117, COLOR_WHITE, NULL, NULL);
     }
 
-    y += 160;
+    login_jmp:
     switch (dialog_login_warning_level)
     {
         case DIALOG_LOGIN_WARNING_NONE:
-            StringBlt(ScreenSurface, &SystemFont,
-                    "To start playing enter your character ~name~ and ~password~." ,
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "To start playing enter your character ~name~ and ~password~.",
+		break;
+
+		case DIALOG_LOGIN_WARNING_NAME_NO:
+            StringBlt(ScreenSurface, &SystemFont, "There is no character with that name!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "There is no character with that name!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_NAME_BLOCKED:
+            StringBlt(ScreenSurface, &SystemFont, "Name or character is in creating process or blocked!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Name or character is in creating process or blocked!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_NAME_PLAYING:
+            StringBlt(ScreenSurface, &SystemFont, "Name is taken - choose a different one!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Name is taken - choose a different one!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_NAME_TAKEN:
+            StringBlt(ScreenSurface, &SystemFont, "Name is taken - choose a different one!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Name is taken - choose a different one!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_NAME_BANNED:
+            StringBlt(ScreenSurface, &SystemFont, "Name is banned - choose a different one!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Name is banned - choose a different one!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_NAME_WRONG:
+            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_PWD_WRONG:
+            StringBlt(ScreenSurface, &SystemFont, "Password is illegal or does not match!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+           StringBlt(ScreenSurface, &SystemFont, "Password is illegal or does not match!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_PWD_SHORT:
+            StringBlt(ScreenSurface, &SystemFont, "Password is to short - it must be 6 signs or longer!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+           StringBlt(ScreenSurface, &SystemFont, "Password is to short - it must be 6 signs or longer!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+		case DIALOG_LOGIN_WARNING_PWD_NAME:
+            StringBlt(ScreenSurface, &SystemFont, "Password can't be same as character name!!!",
+                    x+1, y+111  , COLOR_BLACK, NULL, NULL);
+           StringBlt(ScreenSurface, &SystemFont, "Password can't be same as character name!!!",
+                    x+2, y+110  , COLOR_ORANGE, NULL, NULL);
+			break;
+	    }
+
+    y += 157;
+	if(GameStatusLogin)	/* Login */
+	{
+            StringBlt(ScreenSurface, &SystemFont, "REMEMBER: You must have first ~created a character~ to login!",
+                    x-10, y+1  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "REMEMBER: You must have first ~created a character~ to login!",
                     x-11, y  , COLOR_WHITE, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont, "You will be asked to ~verify~ the password for new characters." ,
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "You will be asked to ~verify~ the password for new characters." ,
+            StringBlt(ScreenSurface, &SystemFont, "1.) Enter the ~name~ of your character and press RETURN.",
+                    x-10, y+1  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "1.) Enter the ~name~ of your character and press RETURN.",
+                    x-11, y  , COLOR_WHITE, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont, "2.) Then enter the ~password~ of your character.",
+                    x-10, y+1  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "2.) Then enter the ~password~ of your character.",
+                    x-11, y  , COLOR_WHITE, NULL, NULL);
+	}
+	else /* Create Char */
+	{
+            StringBlt(ScreenSurface, &SystemFont, "1.) Enter a ~name~ WITHOUT any numbers or special chars. Press RETURN.",
+                    x-10, y+1  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "1.) Enter a ~name~ WITHOUT any numbers or special chars. Press RETURN.",
+                    x-11, y  , COLOR_WHITE, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont, "2.) Enter a ~password~ WITH at last one special chars. Press RETURN." ,
+                    x-10  , y+1  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "2.) Enter a ~password~ WITH at last one special chars. Press RETURN." ,
                     x-11  , y  , COLOR_WHITE, NULL, NULL);
-            break;
-        case DIALOG_LOGIN_WARNING_WRONGNAME:
-            StringBlt(ScreenSurface, &SystemFont,
-                    "You entered an invalid character name.", x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "You entered an invalid character name.", x-11, y, COLOR_RED, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Your character name can only contain letters:",
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Your character name can only contain letters:",
-                    x-11, y, COLOR_WHITE, NULL, NULL);
-            y+=12;
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Numbers or special characters aren't allowed.",
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Numbers or special characters aren't allowed.",
-                    x-11, y, COLOR_WHITE, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "3.) Enter the ~password~ again to ~verify~ it. Press RETURN." ,
+                    x-10  , y+1  , COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "3.) Enter the ~password~ again to ~verify~ it. Press RETURN." ,
+                    x-11  , y  , COLOR_WHITE, NULL, NULL);
+	}
 
-            break;
-        case DIALOG_LOGIN_WARNING_WRONGPASS:
-            StringBlt(ScreenSurface, &SystemFont,
-                    "You entered a wrong password.", x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "You entered a wrong password.", x-11, y, COLOR_RED, NULL, NULL);
-            y+=12;
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Check your ~name~ and ~password~ and try again. If you were creating a",
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Check your ~name~ and ~password~ and try again. If you were creating a",
-                    x-11, y, COLOR_WHITE, NULL, NULL);
-            y+=12;
-            StringBlt(ScreenSurface, &SystemFont,
-                    "new character, please choose another name.",
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "new character, please choose another name.",
-                    x-11, y, COLOR_WHITE, NULL, NULL);
-            break;
-
-        case DIALOG_LOGIN_WARNING_VERIFY_FAILED:
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Password verification failed.", x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Password verification failed.", x-11, y, COLOR_RED, NULL, NULL);
-            y+=12;
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Please try again, and be careful to enter the same password twice.",
-                    x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,
-                    "Please try again, and be careful to enter the same password twice.",
-                    x-11, y, COLOR_WHITE, NULL, NULL);
-            break;
-    }
 }
 
 

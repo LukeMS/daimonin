@@ -31,7 +31,7 @@
 				PreprocessorDefinitions="_CONSOLE,DEBUG,WIN32,NDEBUG,LUA_PLUGIN_EXPORTS"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="FALSE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="4"
 				BufferSecurityCheck="FALSE"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile="$(IntDir)/daimonin.pch"

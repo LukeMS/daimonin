@@ -244,6 +244,24 @@ void free_player(player *pl)
             check_walk_off(pl->ob, NULL, MOVE_APPLY_VANISHED);
         }
     }
+    /* Free pet links - moved that before remove from active list */
+    while(pl->pets)
+        objectlink_unlink(&pl->pets, NULL, pl->pets);
+	
+	/* this is needed so we don't destroy the player queue inside the
+     * main loop. The socket loop can handle it nicely but the player
+     * loop not - with this simple trick we avoid alot work.
+	 * Remember: at this point our player object is saved and removed from the game
+     * only for the player loop and the socket its still present.
+     */
+
+	if(pl->state == ST_ZOMBIE)
+	{
+		pl->state = ST_DEAD;
+		FREE_AND_COPY_HASH(pl->ob->name, "noname"); /* we neutralize the name - we don't want find this player anymore */
+		insert_ob_in_ob(pl->ob, &void_container); /* Avoid gc of the player object */
+		return;		
+	}
 
     /* Now remove from list of players */
     if (pl->prev)
@@ -257,9 +275,6 @@ void free_player(player *pl)
         last_player = pl->prev;
     player_active--;
 
-    /* Free pet links */
-    while(pl->pets)
-        objectlink_unlink(&pl->pets, NULL, pl->pets);
     
     free_newsocket(&pl->socket);
     if (pl->ob)
@@ -287,7 +302,7 @@ int add_player(NewSocket *ns)
     p->socket.look_position = 0;
 
     start_info(p->ob);
-    get_name(p->ob);
+    get_name(p->ob, 0); /* start a nice & clean login */
 
     insert_ob_in_ob(p->ob, &void_container); /* Avoid gc of the player */
 
@@ -616,22 +631,43 @@ void give_initial_items(object *pl, struct oblnk *items)
     } /* for loop of objects in player inv */
 }
 
-void get_name(object *op)
+
+/* 
+ * value can be:
+ * 0= name is not taken, no player with that name in the system
+ * 1= name is blocked and login to this name is not allowed (is in creating or system use)
+ * 2= name is taken and its logged in right now
+ * 3= name is taken and banned
+ * 4= name is taken and not logged in
+ * 5= illegal password
+ * 6= verify password don't match
+ */
+void get_name(object *op, int value)
 {
+	char buf[8];
+
+	sprintf(buf, "QN%d", value);
     CONTR(op)->state = ST_GET_NAME;
-    send_query(&CONTR(op)->socket, 0, "What is your name?\n:");
+    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
 }
 
-void get_password(object *op)
+/* if we are here, the login name is valid */
+void get_password(object *op, int value)
 {
+	char buf[8];
+	
+	sprintf(buf, "QP%d", value);
     CONTR(op)->state = ST_GET_PASSWORD;
-    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, "What is your password?\n:");
+    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
 }
 
-void confirm_password(object *op)
+void confirm_password(object *op, int value)
 {
+	char buf[8];
+	
+	sprintf(buf, "QV%d", value);
     CONTR(op)->state = ST_CONFIRM_PASSWORD;
-    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
+    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, buf);
 }
 
 

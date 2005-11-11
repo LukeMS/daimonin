@@ -134,12 +134,20 @@ int write_socket(int fd, unsigned char *buf, int len)
         {
             LOG(LOG_ERROR, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
             draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
+	        SOCKET_CloseSocket(csocket.fd);
+			if(GameStatus != GAME_STATUS_START)
+				Sleep(3250);
+			GameStatus = GAME_STATUS_START;
             return -1;
         }
         if (amt == 0)
         {
             LOG(LOG_ERROR, "Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
             draw_info("SOCKET ERROR: No data written out", COLOR_RED);
+	        SOCKET_CloseSocket(csocket.fd);
+			if(GameStatus != GAME_STATUS_START)
+				Sleep(3250);
+			GameStatus = GAME_STATUS_START;
             return -1;
         }
         len -= amt;
@@ -332,6 +340,7 @@ void read_metaserver_data(void)
 Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 {
     void   *tmp_free;
+	int count=0;
     /* seems differents sockets have different way to shutdown connects??
      * win32 needs this
      * hard way, normally you should wait for a read() == 0...
@@ -339,7 +348,8 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
     if (socket_temp == SOCKET_NO)
         return(TRUE);
 
-    shutdown(socket_temp, SD_BOTH);
+	WSAAsyncSelect(socket_temp, NULL, 0, FD_CLOSE);
+    shutdown(socket_temp, SD_SEND);
     closesocket(socket_temp);
     tmp_free = &csocket.inbuf.buf;
     FreeMemory(tmp_free);
@@ -596,12 +606,20 @@ int write_socket(int fd, unsigned char *buf, int len)
             /* We got an error */
             LOG(LOG_ERROR, "New socket (fd=%d) write failed.\n", fd);
             draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
+	        SOCKET_CloseSocket(csocket.fd);
+			if(GameStatus != GAME_STATUS_START)
+				Sleep(3250);
+			GameStatus = GAME_STATUS_START;
             return -1;
         }
         if (amt == 0)
         {
             LOG(LOG_ERROR, "Write_To_Socket: No data written out.\n");
             draw_info("SOCKET ERROR: No data written out", COLOR_RED);
+	        SOCKET_CloseSocket(csocket.fd);
+			if(GameStatus != GAME_STATUS_START)
+				Sleep(3250);
+			GameStatus = GAME_STATUS_START;
             return -1;
         }
         len -= amt;
