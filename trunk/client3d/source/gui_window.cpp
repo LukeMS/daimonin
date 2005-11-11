@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "define.h"
 #include "gui_window.h"
-#include "gui_text.h"
+#include "gui_textout.h"
 #include "gui_manager.h"
 #include "gui_gadget.h"
 #include "gui_listbox.h"
@@ -320,7 +320,7 @@ void GuiWindow::drawAll()
     ///--------------------------------------------------------------------
     /// Clipping.
     ///--------------------------------------------------------------------
-    if (mvTextline[i]->x1 >= mWidth || mvTextline[i]->y1 >= mHeight)
+    if (mvTextline[i]->x1 >= (unsigned int) mWidth || mvTextline[i]->y1 >= (unsigned int) mHeight)
     {
       mvTextline[i]->clipped = true;
       continue;

@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -24,7 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "option.h"
 #include "logger.h"
-#include "gui_text.h"
+#include "gui_textout.h"
 #include "network.h"
 #include "TileManager.h"
 #include "gui_manager.h"
@@ -64,8 +64,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a4 ");
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a5 ");
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a6 ");
-
-//for (int i = 0; i < 80; ++i)
+  //for (int i = 0; i < 80; ++i)
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line b1 ");
 
 
@@ -217,7 +216,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
    if (!mUseBufferedInputKeys)
    {
     // one of the input modes is immediate, so setup what is needed for immediate mouse/key movement
-    if (mTimeUntilNextToggle >= 0) 
+    if (mTimeUntilNextToggle >= 0)
      mTimeUntilNextToggle -= evt.timeSinceLastFrame;
     // If this is the first frame, pick a speed
     if (evt.timeSinceLastFrame == 0)
@@ -237,7 +236,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
           if (processUnbufferedKeyInput(evt) == false) { return false; }
    }
   */
-  
+
   GuiManager::getSingleton().update();
   if (Option::getSingleton().mStartNetwork)  Network::getSingleton().Update();
   if (mQuitGame)  return false;
@@ -251,30 +250,20 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 bool CEvent::frameEnded(const FrameEvent& )
 {
   const RenderTarget::FrameStats& stats = mWindow->getStatistics();
-  const int SKIP = 10;
-
-
-
-  static char buffer[16];
-  static int skip = SKIP;
-  if (!--skip)
+  static int skipFrames = 0;
+  if (--skipFrames <= 0)
   {
-    clock_t time = clock();
-    skip = SKIP;
+    static char buffer[16];
+    skipFrames = 10;
     sprintf(buffer, "%.1f", stats.lastFPS);
-    //for (int i=0; i< 500; ++i)
-    {
-      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)buffer);
-      sprintf(buffer, "%.1f", stats.bestFPS);
-      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)buffer);
-      sprintf(buffer, "%.1f", stats.worstFPS);
-      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
-      sprintf(buffer, "%d", stats.triangleCount);
-      GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
-    }
-    //Logger::log().info() << "Time to print stats: " << clock()-time << " ms";
+    GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)buffer);
+    sprintf(buffer, "%.1f", stats.bestFPS);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)buffer);
+    sprintf(buffer, "%.1f", stats.worstFPS);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
+    sprintf(buffer, "%d", stats.triangleCount);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
   }
-
   return true;
 }
 

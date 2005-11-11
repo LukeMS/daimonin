@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <vector>
 #include <Ogre.h>
-#include "gui_text.h"
+#include "gui_textout.h"
 #include "gui_gadget.h"
 #include "gui_graphic.h"
 #include "gui_window.h"
