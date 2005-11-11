@@ -367,17 +367,14 @@ typedef struct _money_block
     long    copper;
 }_money_block;
 
-#define BAN_STRUCT_TAG 64
-
 /* ban node - see ban.c */
 typedef struct ban_struct
 {
-    int mode;
-    int ticks_init; /* how long is the ban */
-    int ticks_left; /* how long left */
-    uint32 ticks;        /* (starting) pticks + ticks_left */
-    uint32 ip;
-    char tag[BAN_STRUCT_TAG];
+    const char *name;		/* if != NULL, we have banned an name */
+    int			ticks_init; /* how long is the ban */
+    int			ticks_left; /* how long left */
+    uint32		ticks;		/* (starting) pticks + ticks_left */
+    uint32		ip;			/* if name is == NULL, we have a ip */	    
 } _ban_struct;
 
 typedef struct Settings
@@ -474,6 +471,8 @@ EXTERN uint32                   global_group_tag; /* every group gets a unique g
 EXTERN uint32                   global_map_tag; /* our global map_tag value for the server (map.c)*/
 EXTERN New_Face                *new_faces;
 EXTERN archetype               *coins_arch[NUM_COINS+1];
+EXTERN char                     global_version_msg[32];
+EXTERN SockList					global_version_sl;
 
 
 /* arch.c - sysinfo for lowlevel */
@@ -502,7 +501,9 @@ EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, cal
 EXTERN unsigned long            pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
 EXTERN long                     pticks_ums;             /* how many micro seconds has one pticks */
 EXTERN float                    pticks_second;          /* how many pticks in one second */
-
+EXTERN uint32					pticks_socket_idle;		/* 3 idle counter we use for idle sockets in socket/loop.c */
+EXTERN uint32					pticks_player_idle1;
+EXTERN uint32					pticks_player_idle2;
 /*
  * Misc global variables:
  */

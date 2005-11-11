@@ -555,7 +555,18 @@ void map_draw_map(void)
 
                                     for (s = 0; s < GROUP_MAX_MEMBER; s++)
                                     {
-                                        if (group[s].name[0] != '\0' && !strcmp(&group[s].name[0], map->pname[k]) )
+										char *name_tmp = strchr(map->pname[k], ' ');
+										int len = 0;
+
+										if(name_tmp)
+										{
+											len = name_tmp - map->pname[k];
+											if(len != strlen(&group[s].name[0]))
+												len = 0;
+										}
+
+                                        if (group[s].name[0] != '\0' && (!strcmp(&group[s].name[0], map->pname[k])||
+											(len && !strncmp(&group[s].name[0], map->pname[k], len)) ))
                                         {
                                             col = COLOR_GREEN;
                                             break;

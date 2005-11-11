@@ -57,9 +57,11 @@ struct CmdMapping
 
 enum
 {
-    BINARY_CMD_COMC                 = 1,
-    BINARY_CMD_MAP2,
+    BINARY_CMD_COMC = 1,
+    BINARY_CMD_VERSION,
     BINARY_CMD_DRAWINFO,
+    BINARY_CMD_ADDME_FAIL,
+    BINARY_CMD_MAP2,
     BINARY_CMD_DRAWINFO2,
     BINARY_CMD_ITEMX,
     BINARY_CMD_SOUND,
@@ -76,8 +78,6 @@ enum
     BINARY_CMD_SKILL_LIST,
     BINARY_CMD_GOLEMCMD,
     BINARY_CMD_ADDME_SUC,
-    BINARY_CMD_ADDME_FAIL,
-    BINARY_CMD_VERSION,
     BINARY_CMD_BYE,
     BINARY_CMD_SETUP,
     BINARY_CMD_QUERY,
@@ -97,14 +97,14 @@ struct CmdMapping   commands[]  =
     /* Order of this table doesn't make a difference.  I tried to sort
     * of cluster the related stuff together.
     */
-    { "comc", CompleteCmd}, { "map2", Map2Cmd }, { "drawinfo", (CmdProc) DrawInfoCmd },
+	{ "comc", CompleteCmd}, { "version", (CmdProc) VersionCmd }, { "drawinfo", (CmdProc) DrawInfoCmd },
+	{ "addme_failed", (CmdProc) AddMeFail }, { "map2", Map2Cmd }, 
     { "drawinfo2", (CmdProc) DrawInfoCmd2 }, { "itemx", ItemXCmd },
     { "sound", SoundCmd}, { "to", TargetObject }, { "upditem", UpdateItemCmd }, { "delitem", DeleteItem },
     { "stats", StatsCmd }, { "image", ImageCmd }, { "face1", Face1Cmd}, { "anim", AnimCmd},
     { "skill_rdy", (CmdProc) SkillRdyCmd }, { "player", PlayerCmd },
     { "splist", SpelllistCmd }, { "sklist", SkilllistCmd }, { "gc", GolemCmd },
-    { "addme_success", (CmdProc) AddMeSuccess }, { "addme_failed", (CmdProc) AddMeFail },
-    { "version", (CmdProc) VersionCmd }, { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},
+    { "addme_success", (CmdProc) AddMeSuccess },  { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},
     { "query", (CmdProc) handle_query}, { "data", (CmdProc) DataCmd}, { "new_char", (CmdProc) NewCharCmd},
     { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd },
     { "group_update", GroupUpdateCmd },

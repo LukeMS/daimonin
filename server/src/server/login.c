@@ -44,37 +44,54 @@ void delete_character(const char *name)
 }
 
 /* lets check the player name is used.
- * We only deny here when
- * a.) the name is illegal
- * b.) some other user use this name atm to create a new char (bad timing)
- * If the player is playing or just had submited the name,
- * we don't deny it here.
- * we wait for the password first!
+ * Return: 1= name is fresh and not used
+ * 2= name is blocked (perhaps unknown but someone just creates it?)
+ * 3= name is taken and somone is playing or logging in
+ * 4= name is not logged but taken
  */
 int check_name(player *me, char *name)
 {
     player     *pl;
+	int			ret = 1;
     const char *name_hash;
+	char        filename[MAX_BUF];
 
-    if (!playername_ok(name))
-    {
-        new_draw_info(NDI_UNIQUE, 0, me->ob, "That name contains illegal characters.");
-        return 0;
-    }
+    if ((name_hash = find_string(name))) /* if the name is in hash, there is a chance the name is in use */
+	{
+		for (pl = first_player; pl != NULL; pl = pl->next)
+		{
+			if(pl->ob->name == name_hash)
+			{
+				if (pl->state == ST_CREATE_CHAR )
+					return 2; /* ok, forget it in any case */
+				else
+					ret = 3;
+				break;
+			}
+		}
+	}
 
-    if (!(name_hash = find_string(name)))
-        return 1; /* perfect - no hash name, no player */
+	/* now, the status is 1 or 3 
+     * 1 means is not used - lets check for player file
+     * 3 means the sucker is somewhat in use:
+     * NOW check there is a player file - only, and only then we will allow status 3
+     * In any other case we will set status 2 to avoid possible side effects.
+     * A new created player which gets disconnected with a ghost in system have
+     * then to wait 2-3 minutes until server removes it. Safety first.
+     * */
+	sprintf( filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
+	if (access(filename, 0)) /* there is no player file? */
+	{
+		if(ret == 3) /* used but no player file? rare case - safety first: block it */
+			ret = 2;
+	}
+	else
+	{
+		if(ret == 1) /* it was not logged in but we have player file */
+			ret = 4;
+	}
 
-    for (pl = first_player; pl != NULL; pl = pl->next)
-    {
-        if (pl != me && (pl->state == ST_CONFIRM_PASSWORD || pl->state == ST_CREATE_CHAR) && pl->ob->name == name_hash)
-        {
-            new_draw_info(NDI_UNIQUE, 0, me->ob, "Someone else creates a char with that name just now!");
-            return 0;
-        }
-    }
-
-    return 1;
+    return ret;
 }
 
 
@@ -429,15 +446,15 @@ void check_login(object *op)
      */
     if (pl->state == ST_PLAYING)
     {
-        LOG(llevSystem, "HACK-BUG: >%s< from ip %s - double login!\n", op->name, pl->socket.host);
+        LOG(llevSystem, "HACK-BUG: >%s< from ip %s - double login!\n", query_name(op), pl->socket.ip_host);
         new_draw_info_format(NDI_UNIQUE, 0, op,
                              "You manipulated the login procedure.\nYour IP is ... >%s< - hack flag set!\nserver break",
-                             pl->socket.host);
+                             pl->socket.ip_host);
         pl->socket.status = Ns_Dead;
         return;
     }
 
-    LOG(llevInfo, "LOGIN: >%s< from ip %s (%d) - ", STRING_SAFE(op->name), STRING_SAFE(pl->socket.host), pl->socket.fd);
+    LOG(llevInfo, "LOGIN: >%s< from ip %s (%d) - ", query_name(op), STRING_SAFE(pl->socket.ip_host), pl->socket.fd);
 
     kick_loop_jump:
     sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
@@ -455,6 +472,9 @@ void check_login(object *op)
              * So, lets check for the name here too
              * and check for confirm_password state
              */
+		/* The new login procedure should be able to avoid this conflict.
+         * But i let it in for security reasons. MT 11.2005 
+         */         
         for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
         {
             if (ptmp != pl && ptmp->state >= ST_CONFIRM_PASSWORD && ptmp->ob->name == op->name)
@@ -463,13 +483,13 @@ void check_login(object *op)
                 new_draw_info(NDI_UNIQUE, 0, pl->ob, "Someone else creates a char with that name just now!");
                 FREE_AND_COPY_HASH(op->name, "noname");
                 pl->last_value = -1;
-                get_name(op);
+                get_name(op,2);
                 return;
             }
         }
 
         LOG(llevInfo, "new player - confirm pswd\n");
-        confirm_password(op);
+        confirm_password(op,0);
         return;
     }
     if (fstat(fileno(fp), &statbuf))
@@ -520,6 +540,8 @@ void check_login(object *op)
                         new_draw_info(NDI_UNIQUE, 0, pl->ob, "Double login! Kicking older instance!");
                         pl->state = state_tmp;
                         fclose(fp);
+						ptmp->state = ST_ZOMBIE;
+						ptmp->socket.status = Ns_Dead;
                         remove_ns_dead_player(ptmp);/* super hard kick! */
                         kick_loop++;
                         goto kick_loop_jump;
@@ -532,11 +554,38 @@ void check_login(object *op)
     if (!correct)
     {
         LOG(llevInfo, "wrong pswd!\n");
-        new_draw_info(NDI_RED, 0, op, " ** wrong password ***");
         fclose(fp);
-        FREE_AND_COPY_HASH(op->name, "noname");
         pl->last_value = -1;
-        get_name(op);
+
+		/* very simple check for stupid password guesser */
+		if(++pl->socket.pwd_try == 3)
+		{
+			/* ok - perhaps its a guesser or not.
+             * we just give him a 1 minutes IP tmp ban to think about it.
+             * we also use addme fail as "byebye".
+             */
+		    char        cmd_buf[2]  = "X";
+			char password_warning[] =
+				 "X3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
+
+			LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (%d) (player: %s).\n", 
+				pl->socket.ip_host, pl->socket.ip, query_name(pl->ob));
+		    add_ban_entry(NULL, pl->socket.ip_host, pl->socket.ip, 8*60, 8*60); /* one min temp ban for this ip */
+			Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
+			Write_String_To_Socket(&pl->socket, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+			pl->socket.login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+			pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
+			pl->socket.idle_flag = 1;
+
+			/* our friend better accept the addme_fail and the one minute, or we kick really his butt
+             * when we find him try on with a hacked client.
+             */
+		}
+		else
+	        get_name(op,7); /* (original means illegal verify) wrong password! */
+
+
+        FREE_AND_COPY_HASH(op->name, "noname");
         return;     /* Once again, rest of code just loads the char */
     }
     LOG(llevInfo, "loading player file!\n");
@@ -791,15 +840,17 @@ void check_login(object *op)
 
     /* this is a funny thing: what happens when the autosave function saves a player
      * with negative hp? (never thought thats possible but happens in a 0.95 server)
-     * Well, the sever tries to create a gravestone and heals the player... and then
+     * Well, the server tries to create a gravestone and heals the player... and then
      * server tries to insert gravestone and anim on a map - but player is still in login!
-     * So, we are nice and set hp to 1 if here negative-.
+     * So, we are nice and set hp to 1 if its to low.
      */
-    if (op->stats.hp < 0)
+    if (op->stats.hp <= 0)
         op->stats.hp = 1;
 
     pl->name_changed = 1;
+	/* *ONLY* place we set this both status */
     pl->state = ST_PLAYING;
+	pl->socket.status = Ns_Playing;
 #ifdef AUTOSAVE
     pl->last_save_tick = ROUND_TAG;
 #endif
@@ -963,7 +1014,7 @@ void check_login(object *op)
     evtid = EVENT_LOGIN;
     CFP.Value[0] = (void *) (&evtid);
     CFP.Value[1] = (void *) (pl);
-    CFP.Value[2] = (void *) (pl->socket.host);
+    CFP.Value[2] = (void *) (pl->socket.ip_host);
     GlobalEvent(&CFP);
 #endif
 #ifdef ENABLE_CHECKSUM

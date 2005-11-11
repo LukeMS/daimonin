@@ -130,6 +130,8 @@ int SockList_ReadPacket(NewSocket *ns, int len)
 
     if (stat_ret > 0)
     {
+		if(ns->status == Ns_Zombie)
+			return 0;
         sl->len += stat_ret;
 #ifdef CS_LOGSTATS
         cst_tot.ibytes += stat_ret;
@@ -180,7 +182,7 @@ static void add_to_buffer(NewSocket *ns, unsigned char *buf, int len)
     if ((len + ns->outputbuffer.len) > MAXSOCKBUF)
     {
         LOG(llevDebug, "Socket host %s has overrun internal buffer - marking as dead (bl:%d l:%d)\n",
-            STRING_SAFE(ns->host), ns->outputbuffer.len, len);
+            STRING_SAFE(ns->ip_host), ns->outputbuffer.len, len);
         ns->status = Ns_Dead;
         return;
     }

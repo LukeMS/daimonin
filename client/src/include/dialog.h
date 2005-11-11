@@ -56,11 +56,18 @@ extern int      active_button;
 extern int dialog_login_warning_level;
 extern char        *spell_tab[];
 
-
-#define DIALOG_LOGIN_WARNING_NONE       0
-#define DIALOG_LOGIN_WARNING_WRONGNAME  1
-#define DIALOG_LOGIN_WARNING_WRONGPASS  2
-#define DIALOG_LOGIN_WARNING_VERIFY_FAILED  3
+enum {
+	DIALOG_LOGIN_WARNING_NONE,
+	DIALOG_LOGIN_WARNING_NAME_NO,
+	DIALOG_LOGIN_WARNING_NAME_BLOCKED,
+	DIALOG_LOGIN_WARNING_NAME_PLAYING,
+	DIALOG_LOGIN_WARNING_NAME_TAKEN,
+	DIALOG_LOGIN_WARNING_NAME_BANNED,
+	DIALOG_LOGIN_WARNING_NAME_WRONG,
+	DIALOG_LOGIN_WARNING_PWD_WRONG,
+	DIALOG_LOGIN_WARNING_PWD_SHORT,
+	DIALOG_LOGIN_WARNING_PWD_NAME
+};
 
 int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
 extern void show_optwin(void);

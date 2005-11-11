@@ -2204,7 +2204,7 @@ static int GameObject_GetIP(lua_State *L)
 
     if (CONTR(WHO))
     {
-        result = CONTR(WHO)->socket.host;
+        result = CONTR(WHO)->socket.ip_host;
         lua_pushstring(L, result);
         return 1;
     }

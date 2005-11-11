@@ -30,7 +30,7 @@
 				AdditionalIncludeDirectories="..\..\..\..\src\lua\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_LIB"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile=".\ReleaseLog/Lualiblib.pch"

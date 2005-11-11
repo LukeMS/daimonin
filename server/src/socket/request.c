@@ -73,9 +73,15 @@ void SetUp(char *buf, int len, NewSocket *ns)
     int     s;
     char   *cmd, *param, tmpbuf[MAX_BUF], cmdback[HUGE_BUF];
 
+	if(!ns->version)
+	{
+        LOG(llevInfo, "HACKBUG: setup command before version %s\n", STRING_SAFE(ns->ip_host));
+        ns->status = Ns_Dead;
+        return;
+	} 
     if (ns->setup)
     {
-        LOG(llevInfo, "double call of setup cmd from socket %s\n", ns->host);
+        LOG(llevInfo, "HACKBUG: double call of setup cmd from socket %s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
         return;
     }
@@ -340,10 +346,19 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
     Settings    oldsettings;
     char        cmd_buf[2]  = "X";
     oldsettings = settings;
-    if (ns->status != Ns_Add || add_player(ns))
+
+	/* add_player() will move the login to the next step - adding a "connect"
+     * as a uninitialized player AND send a get_name() which is "tell me your name".
+     * ->addme flag is only a temp flag for the socket loop - because we close here
+     * the socket or, when all is ok, we change to Ns_Login mode.
+     */
+    if (!ns->setup || !ns->version || ns->status != Ns_Add || add_player(ns))
     {
         Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
-        ns->status = Ns_Dead;
+        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+		ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+		ns->idle_flag = 1;
+
     }
     else
     {
@@ -354,7 +369,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
          */
         Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
         ns->addme = 1;
-        ns->login_count = ROUND_TAG; /* reset idle counter */
+        ns->login_count = ROUND_TAG + pticks_socket_idle; /* reset idle counter */
         LOG(llevDebug, "addme_cmd(): socket %d\n", ns->fd);
         socket_info.nconns--;
         ns->status = Ns_Avail;
@@ -491,7 +506,7 @@ void ReplyCmd(char *buf, int len, player *pl)
           break;
 
         case ST_GET_NAME:
-          receive_player_name(pl->ob, MAX_PLAYER_NAME, write_buf);
+          receive_player_name(pl->ob, MAX_PLAYER_NAME, write_buf+1);
           break;
 
         case ST_GET_PASSWORD:
@@ -506,64 +521,15 @@ void ReplyCmd(char *buf, int len, player *pl)
     }
 }
 
-static void version_mismatch_msg(NewSocket *ns)
-{
-    char    buf[256];
-    char   *text1   = "3 This is Daimonin Server.";
-    char   *text2   = "3 Go to http://daimonin.sourceforge.net";
-    char   *text3   = "3 and download the latest Daimonin client!";
-    char   *text4   = "3 Goodbye. (connection closed)";
-    char   *text5   = "3 Your client version is outdated!";
-
-    if (ns->cs_version == 991013)
-    {
-        SockList    sl;
-
-        sprintf(buf, "drawinfo %s %s", text1, VERSION);
-        sl.len = strlen(buf);
-        sl.buf = (uint8 *) buf;
-        Send_With_Handling(ns, &sl);
-        sprintf(buf, "drawinfo %s", text2);
-        sl.len = strlen(buf);
-        sl.buf = (uint8 *) buf;
-        Send_With_Handling(ns, &sl);
-        sprintf(buf, "drawinfo %s", text3);
-        sl.len = strlen(buf);
-        sl.buf = (uint8 *) buf;
-        Send_With_Handling(ns, &sl);
-        sprintf(buf, "drawinfo %s", text4);
-        sl.len = strlen(buf);
-        sl.buf = (uint8 *) buf;
-        Send_With_Handling(ns, &sl);
-        sprintf(buf, "drawinfo %s", text5);
-        sl.len = strlen(buf);
-        sl.buf = (uint8 *) buf;
-        Send_With_Handling(ns, &sl);
-    }
-    else
-    {
-        sprintf(buf, "X%s %s", text1, VERSION);
-        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
-        sprintf(buf, "X%s", text2);
-        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
-        sprintf(buf, "X%s", text3);
-        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
-        sprintf(buf, "X%s", text4);
-        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
-        sprintf(buf, "X%s", text5);
-        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
-    }
-}
-
 /* request a srv_file! */
 void RequestFileCmd(char *buf, int len, NewSocket *ns)
 {
     int id;
 
     /* *only* allow this command between the first login and the "addme" command! */
-    if (ns->status != Ns_Add || !buf)
+    if (!ns->setup || !ns->version || ns->status != Ns_Add || !buf)
     {
-        LOG(llevInfo, "RF: received bad rf command for IP:%s\n", STRING_SAFE(ns->host));
+        LOG(llevInfo, "RF: received bad rf command for IP:%s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
         return;
     }
@@ -571,7 +537,7 @@ void RequestFileCmd(char *buf, int len, NewSocket *ns)
     id = atoi(buf);
     if (id < 0 || id >= SRV_CLIENT_FILES)
     {
-        LOG(llevInfo, "RF: received bad rf command for IP:%s\n", STRING_SAFE(ns->host));
+        LOG(llevInfo, "RF: received bad rf command for IP:%s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
         return;
     }
@@ -632,12 +598,12 @@ void RequestFileCmd(char *buf, int len, NewSocket *ns)
             ns->rf_anims = 1;
     }
 
-    LOG(llevDebug, "Client %s rf #%d\n", ns->host, id);
+    LOG(llevDebug, "Client %s rf #%d\n", ns->ip_host, id);
     send_srv_file(ns, id);
 }
 
 
-/* Client tells its its version.  If there is a mismatch, we close the
+/* Client tells its version.  If there is a mismatch, we close the
  * socket.  In real life, all we should care about is the client having
  * something older than the server.  If we assume the client will be
  * backwards compatible, having it be a later version should not be a
@@ -650,7 +616,6 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
 
     if (!buf || ns->version)
     {
-        version_mismatch_msg(ns);
         LOG(llevInfo, "CS: received corrupted version command\n");
         ns->status = Ns_Dead;
         return;
@@ -661,15 +626,29 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
     ns->sc_version = ns->cs_version;
     if (VERSION_CS != ns->cs_version)
     {
-        version_mismatch_msg(ns);
         LOG(llevInfo, "CS: csversion mismatch (%d,%d)\n", VERSION_CS, ns->cs_version);
-        ns->status = Ns_Dead;
+		/* our old beta 3 client has a broken version interaction - we need to trick here
+         * so the client gets a valid update string. This is important!
+         */
+		if(ns->cs_version <= 991017) /* beta 3 client */
+		{
+			char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYour client is OUTDATED!!\n**UPDATE** your client from http://www.daimonin.com !!\n"; 
+			char        cmd_buf[2]  = "X";
+
+		    ns->version = 0;
+			Write_String_To_Socket(ns, 3, warning, strlen(warning)); 	
+	        Write_String_To_Socket(ns, 22, cmd_buf, 1);
+	        ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+			ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+			ns->idle_flag = 1;
+		}
+		else
+	        ns->status = Ns_Dead;
         return;
     }
     cp = strchr(buf + 1, ' ');
     if (!cp)
     {
-        version_mismatch_msg(ns);
         LOG(llevInfo, "CS: invalid version cmd: %s\n", buf);
         ns->status = Ns_Dead;
         return;
@@ -677,7 +656,6 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
     ns->sc_version = atoi(cp);
     if (VERSION_SC != ns->sc_version)
     {
-        version_mismatch_msg(ns);
         LOG(llevInfo, "CS: scversion mismatch (%d,%d)\n", VERSION_SC, ns->sc_version);
         ns->status = Ns_Dead;
         return;
@@ -685,7 +663,6 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
     cp = strchr(cp + 1, ' ');
     if (!cp || strncmp("Daimonin SDL Client", cp + 1, 19))
     {
-        version_mismatch_msg(ns);
         if (cp)
             LOG(llevInfo, "CS: connection from false client of type <%s>\n", cp);
         else
@@ -849,12 +826,11 @@ void esrv_update_skills(player *pl)
  */
 void esrv_update_stats(player *pl)
 {
-    static char sock_buf[MAX_BUF]; /* hm, in theory... can this all be more as 256 bytes?? *I* never tested it.*/
     int         i, group_update = 0; /* set to true when a group update stat has changed */
     SockList    sl;
     uint16      flags;
 
-    sl.buf = sock_buf;
+    sl.buf = global_sl.buf;
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_STATS);
 
     /* small trick: we want send the hp bar of our target to the player.
@@ -1211,7 +1187,6 @@ void draw_client_map2(object *pl)
     uint16          face_num0, face_num1, face_num2, face_num3, face_num1m, face_num2m, face_num3m;
     uint16          mask;
     SockList        sl;
-    unsigned char   sock_buf[MAXSOCKBUF];
     int pname_flag, ext_flag, dmg_flag, oldlen;
     int dmg_layer2, dmg_layer1, dmg_layer0;
     int wdark;
@@ -1228,7 +1203,7 @@ void draw_client_map2(object *pl)
 
     map2_count++;      /* we need this to decide quickly we have updated a object before here */
 
-    sl.buf = sock_buf;
+    sl.buf = global_sl.buf;
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_MAP2); /* sets sl.len too */
 
     SockList_AddChar(&sl, (char) pl_ptr->map_update_cmd); /* marker */

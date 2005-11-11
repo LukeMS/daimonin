@@ -290,6 +290,38 @@ static void mouse_moveHero()
 #undef MY_POS
 }
 
+static int key_login_select_menu(SDL_KeyboardEvent *key)
+{
+    if (key->type == SDL_KEYDOWN)
+    {
+        switch (key->keysym.sym)
+        {
+            case SDLK_UP:
+				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				GameStatusLogin?(GameStatusLogin=FALSE):(GameStatusLogin=TRUE);
+              break;
+            case SDLK_DOWN:
+				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				GameStatusLogin?(GameStatusLogin=FALSE):(GameStatusLogin=TRUE);
+              break;
+            case SDLK_RETURN:
+				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+		        open_input_mode(12);
+				GameStatus = GAME_STATUS_ADDME;
+              break;
+
+            case SDLK_ESCAPE:
+	            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				GameStatus = GAME_STATUS_START;
+            return(0);
+
+            default:
+              break;
+        }
+    }
+    return(0);
+}
+
 int Event_PollInputDevice(void)
 {
     SDL_Event       event;
@@ -745,6 +777,8 @@ int Event_PollInputDevice(void)
               {
                   if (GameStatus <= GAME_STATUS_WAITLOOP)
                       done = key_meta_menu(&event.key);
+				  else if(GameStatus == GAME_STATUS_LOGIN_SELECT)
+                      done = key_login_select_menu(&event.key);
                   else if (GameStatus == GAME_STATUS_PLAY || GAME_STATUS_NEW_CHAR)
                       done = key_event(&event.key);
                   else
@@ -794,6 +828,7 @@ void key_connection_event(SDL_KeyboardEvent *key)
         }
     }
 }
+
 
 /* metaserver menu key */
 int key_meta_menu(SDL_KeyboardEvent *key)
@@ -1297,7 +1332,6 @@ int key_event(SDL_KeyboardEvent *key)
                             {
                                 save_quickslots_entrys();
                                 SOCKET_CloseSocket(csocket.fd);
-                                PasswordAlreadyAsked = 0;
                                 GameStatus = GAME_STATUS_INIT;
                             }
                             sound_play_effect(SOUND_SCROLL, 0, 0, 100);

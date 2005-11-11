@@ -605,17 +605,19 @@ static _new_char_template   new_char_template[] =
  */
 void command_new_char(char *params, int len, player *pl)
 {
+	int					skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
     archetype          *p_arch          = NULL;
     const char         *name_tmp        = NULL;
-    object             *op              = pl->ob;
+    object             *objtmp, *op              = pl->ob;
     int x = pl->ob->    x, y = pl->ob->y;
-    int                 stats[7], i, v;
+    int                 stats[8], i, v;
 #ifdef PLUGINS
     int                 evtid;
     CFParm              CFP;
 #endif
     char                name[HUGE_BUF]  = "";
     char                buf[HUGE_BUF]   = "";
+	char				*skillitem[] = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
 
     if (CONTR(op)->state != ST_CREATE_CHAR)
     {
@@ -630,8 +632,8 @@ void command_new_char(char *params, int len, player *pl)
         return;
     }
 
-    sscanf(params, "%s %d %d %d %d %d %d %d\n", name, &stats[0], &stats[1], &stats[2], &stats[3], &stats[4], &stats[5],
-           &stats[6]);
+    sscanf(params, "%s %d %d %d %d %d %d %d %d\n", name, &stats[0], &stats[1], &stats[2], &stats[3], &stats[4], &stats[5],
+           &stats[6],&stats[7]);
 
     /* now: we have to verify every *bit* of what the client has send us */
     /* invalid player arch? */
@@ -643,8 +645,8 @@ void command_new_char(char *params, int len, player *pl)
     }
 
 
-    LOG(llevDebug, "NewChar: %s:: ARCH: %s (%d %d %d %d %d %d %d)\n", query_name(pl->ob), name, stats[0], stats[1],
-        stats[2], stats[3], stats[4], stats[5], stats[6]);
+    LOG(llevDebug, "NewChar: %s:: ARCH: %s (%d %d %d %d %d %d %d %d)\n", query_name(pl->ob), name, stats[0], stats[1],
+        stats[2], stats[3], stats[4], stats[5], stats[6],stats[7]);
 
 
     for (i = 0; new_char_template[i].name != NULL; i++)
@@ -669,8 +671,7 @@ void command_new_char(char *params, int len, player *pl)
       + new_char_template[i].min_Cha
       + new_char_template[i].max_p;
 
-    if (v
-     != (stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6]) /* all boni put on the player? */
+    if (v != (stats[0] + stats[1] + stats[2] + stats[3] + stats[4] + stats[5] + stats[6]) /* all boni put on the player? */
      || stats[0]
       < new_char_template[i].min_Str
      || stats[0]
@@ -705,6 +706,13 @@ void command_new_char(char *params, int len, player *pl)
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
     }
+	
+	if(stats[7] < 0 || stats[7] > 3) /* selected weapon skill */
+	{
+        LOG(llevDebug, "SHACK:: %s: tried to hack NewChar! (weapon skill %d)\n", query_name(pl->ob), stats[6]);
+        pl->socket.status = Ns_Dead; /* killl socket */
+        return;
+	} 
 
     /* all is ok - now lets create this sucker */
     /* the stats of a player a saved in pl struct and copied to the object */
@@ -742,7 +750,7 @@ void command_new_char(char *params, int len, player *pl)
     evtid = EVENT_LOGIN;
     CFP.Value[0] = (void *) (&evtid);
     CFP.Value[1] = (void *) (CONTR(op));
-    CFP.Value[2] = (void *) (CONTR(op)->socket.host);
+    CFP.Value[2] = (void *) (CONTR(op)->socket.ip_host);
     GlobalEvent(&CFP);
 #endif
 
@@ -781,6 +789,24 @@ void command_new_char(char *params, int len, player *pl)
     CLEAR_FLAG(op, FLAG_WIZ);
     give_initial_items(op, op->randomitems);
     link_player_skills(op);
+	learn_skill(op, NULL, NULL, skillnr[stats[7]], 0);
+
+	objtmp = get_archetype(skillitem[stats[7]]);
+    objtmp = insert_ob_in_ob(objtmp, op);
+    SET_FLAG(objtmp, FLAG_IDENTIFIED);
+    SET_FLAG(objtmp, FLAG_KNOWN_MAGICAL);
+    SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
+	objtmp->value = 1;
+
+	/* now lets apply all base items - very useful for new players */
+	for (objtmp=op->inv; objtmp; objtmp=objtmp->below)
+	{
+		if(objtmp->type == WEAPON || objtmp->type == AMULET || objtmp->type == RING ||
+           objtmp->type == BOOTS || objtmp->type == HELMET || objtmp->type == BRACERS || objtmp->type == GIRDLE ||
+           objtmp->type == CLOAK || objtmp->type == ARMOUR || objtmp->type == SHIELD || objtmp->type == GLOVES)
+		manual_apply(op, objtmp,0); 
+	}
+
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     CONTR(op)->last_stats.exp = 1;          /* force send of skill exp data to client */
     strcpy(CONTR(op)->title, op->race);     /* no title - just what we born */
@@ -816,7 +842,7 @@ void command_face_request(char *params, int len, NewSocket *ns)
         if (esrv_send_face(ns, *((short *) (params + 1) + i), 0) == SEND_FACE_OUT_OF_BOUNDS)
         {
             LOG(llevInfo, "CLIENT BUG: command_face_request (%d) out of bounds. host: %s. close connection.\n",
-                *((short *) (params + 1) + i), STRING_SAFE(ns->host));
+                *((short *) (params + 1) + i), STRING_SAFE(ns->ip_host));
             ns->status = Ns_Dead; /* killl socket */
             return;
         }
@@ -1028,3 +1054,4 @@ void generate_ext_title(player *pl)
     sprintf( pl->ext_title, "%s\n%s%s %s\n%s\n%s\n%s\n%s\n%c\n", rank, pl->ob->name,tmp,
              title, pl->ob->race, prof, align, determine_god(pl->ob), *gender);
 }
+

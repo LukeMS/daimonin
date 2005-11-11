@@ -23,6 +23,13 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
+/* this module is mostly unused from Daimonin. 
+ * We serve pictures a bit different, have only one set
+ * and in future we will drop sending faces because we have
+ * for that with the autoupdater a better system
+ * MT 11.2005
+ */
+
 /* This file deals with the image related communication to the
  * client.  I've located all the functions in this file - this
  * localizes it more, and means that we don't need to declare

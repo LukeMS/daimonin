@@ -30,7 +30,7 @@
 				AdditionalIncludeDirectories="..\..\..\..\src\include,..\..\..\..\src\plugin_lua\include,..\..\..\..\src\lua,..\..\..\..\src\lua\include"
 				PreprocessorDefinitions="_WINDOWS;_USRDLL;WIN32;NDEBUG;LUA_PLUGIN_EXPORTS"
 				StringPooling="TRUE"
-				RuntimeLibrary="2"
+				RuntimeLibrary="4"
 				EnableFunctionLevelLinking="TRUE"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile=".\ReleaseLog/plugin_lua.pch"

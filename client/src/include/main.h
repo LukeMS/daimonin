@@ -370,11 +370,16 @@ typedef enum _game_status
     /* all setup is done, now try to enter game!*/
     GAME_STATUS_LOGIN,
     /* now we wait for LOGIN request of the server*/
+    GAME_STATUS_LOGIN_SELECT,
+    /* we have "type your name" now - but first let player decide we want a new char or login to old one */
     GAME_STATUS_NAME,
+    GAME_STATUS_NAME_WAIT,
     /* all this here is tricky*/
     GAME_STATUS_PSWD,
+    GAME_STATUS_PSWD_WAIT,
     /* server will trigger this when asking for*/
     GAME_STATUS_VERIFYPSWD,
+    GAME_STATUS_VERIFYPSWD_WAIT,
     /* client will then show input panel or so*/
     GAME_STATUS_NEW_CHAR,
     /* show new char creation screen and send /nc command when finished */
@@ -392,6 +397,7 @@ extern int          debug_layer[MAXFACES];
 extern int          music_global_fade; /* global flag for polling music fade out */
 
 extern _game_status GameStatus;     /* THE game status 2*/
+extern int			GameStatusLogin;
 extern int          MapStatusX;             /* map x,y len */
 extern int          MapStatusY;
 

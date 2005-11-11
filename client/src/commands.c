@@ -64,7 +64,6 @@
 
 #include <include.h>
 static int  scrolldx = 0, scrolldy = 0;
-int PasswordAlreadyAsked = 0;
 
 void SoundCmd(unsigned char *data, int len)
 {
@@ -263,6 +262,12 @@ void SetupCmd(char *buf, int len)
         else
         {
             LOG(LOG_ERROR, "Got setup for a command we don't understand: %s %s\n", cmd, param);
+            sprintf(buf, "The server is outdated!\nSelect a different one!");
+	        draw_info(buf, COLOR_RED);
+			LOG(LOG_ERROR, "%s\n", buf);
+			SOCKET_CloseSocket(csocket.fd);
+			GameStatus = GAME_STATUS_START;
+			return;
         }
     }
     GameStatus = GAME_STATUS_REQUEST_FILES;
@@ -295,14 +300,14 @@ void Face1Cmd(unsigned char *data, int len)
 void AddMeFail(char *data, int len)
 {
     LOG(LOG_MSG, "addme_failed received.\n");
-    GameStatus = GAME_STATUS_START;
+    SOCKET_CloseSocket(csocket.fd);
+	Sleep(1250);
+    GameStatus = GAME_STATUS_INIT;
+    /*GameStatus = GAME_STATUS_START;*/
     /* add here error handling */
     return;
 }
 
-/* This is really a throwaway command - there really isn't any reason to
- * send addme_success commands.
- */
 void AddMeSuccess(char *data, int len)
 {
     LOG(LOG_MSG, "addme_success received.\n");
@@ -764,60 +769,89 @@ void StatsCmd(unsigned char *data, int len)
 void PreParseInfoStat(char *cmd)
 {
     /* Find input name*/
-    if (strstr(cmd, "What is your name?"))
+    if (!strncmp(cmd, "QN",2))
     {
-        LOG(LOG_MSG, "Login: Enter name\n");
+		int status = cmd[2]-'0';
+
+        LOG(LOG_MSG, "Login: Enter name - status %d\n", status);
         cpl.name[0] = 0;
         cpl.password[0] = 0;
-        if (PasswordAlreadyAsked == 1)
-        {
-            dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
-            PasswordAlreadyAsked = 0;
-        }
-        else if (PasswordAlreadyAsked == 2)
-        {
-            dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
-            PasswordAlreadyAsked = 0;
-        }
-        GameStatus = GAME_STATUS_NAME;
+		
+		switch(status)
+		{
+			case 1:
+				if(!GameStatusLogin)
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+				else
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_NO;
+			break;
+			case 2:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BLOCKED;
+			break;
+			case 3:
+				if(GameStatusLogin)
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+				else
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_PLAYING;
+			break;
+			case 4:
+				if(GameStatusLogin)
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+				else
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_TAKEN;
+			break;
+			case 5:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BANNED;
+			break;
+			case 6:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+			break;
+			case 7:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
+			break;
+			
+			default: /* is also status 0 */
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+			break;
+		}
+ 
+		GameStatus = GAME_STATUS_NAME;
     }
-    if (strstr(cmd, "What is your password?"))
+    else if (!strncmp(cmd, "QP",2))
     {
+		int status = cmd[2]-'0';
+
+		dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
         LOG(LOG_MSG, "Login: Enter password\n");
+		if(status != 0)
+			dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
         GameStatus = GAME_STATUS_PSWD;
-        PasswordAlreadyAsked = 1;
     }
-    if (strstr(cmd, "Please type your password again."))
+    else if (!strncmp(cmd, "QV",2))
     {
         LOG(LOG_MSG, "Login: Enter verify password\n");
+		dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
         GameStatus = GAME_STATUS_VERIFYPSWD;
-        PasswordAlreadyAsked = 2;
     }
-    if (GameStatus >= GAME_STATUS_NAME && GameStatus <= GAME_STATUS_VERIFYPSWD)
+    if (GameStatus == GAME_STATUS_NAME)
         open_input_mode(12);
+    else if (GameStatus <= GAME_STATUS_VERIFYPSWD)
+        open_input_mode(17);
 }
 
 
 void handle_query(char *data, int len)
 {
-    char   *buf, *cp;
-    /*uint8 flags = atoi(data);*/
+    char   *buf;
+    /*uint8 flags = atoi(data); ATM unused parameter*/
 
     buf = strchr(data, ' ');
     if (buf)
         buf++;
 
-    if (buf)
-    {
-        cp = buf;
-        while ((buf = strchr(buf, '\n')) != NULL)
-        {
-            *buf++ = '\0';
-            LOG(LOG_MSG, "Received query string: %s\n", cp);
-            PreParseInfoStat(cp);
-            cp = buf;
-        }
-    }
+	/* one query string */
+    LOG(LOG_MSG, "Received query string: %s\n", buf);
+    PreParseInfoStat(buf);
 }
 
 /* Sends a reply to the server.  text contains the null terminated
@@ -1467,6 +1501,7 @@ void VersionCmd(char *data, int len)
     char   *cp;
     char    buf[1024];
 
+    LOG(LOG_MSG, "Server ID: %s\n", data);
     GameStatusVersionOKFlag = FALSE;
     GameStatusVersionFlag = TRUE;
     csocket.cs_version = atoi(data);
@@ -1484,7 +1519,10 @@ void VersionCmd(char *data, int len)
         else
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
         draw_info(buf, COLOR_RED);
+        SOCKET_CloseSocket(csocket.fd);
+		GameStatus = GAME_STATUS_START;
         LOG(LOG_ERROR, "%s\n", buf);
+		Sleep(3250);
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -1493,6 +1531,9 @@ void VersionCmd(char *data, int len)
         sprintf(buf, "Invalid version string: %s", data);
         draw_info(buf, COLOR_RED);
         LOG(LOG_ERROR, "%s\n", buf);
+        SOCKET_CloseSocket(csocket.fd);
+		GameStatus = GAME_STATUS_START;
+		Sleep(3250);
         return;
     }
     csocket.sc_version = atoi(cp);
@@ -1500,7 +1541,15 @@ void VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, csocket.sc_version);
         draw_info(buf, COLOR_RED);
+        if (VERSION_SC > csocket.sc_version)
+            sprintf(buf, "The server is outdated!\nSelect a different one!");
+        else
+            sprintf(buf, "Your client is outdated!\nUpdate your client!");
+        draw_info(buf, COLOR_RED);
         LOG(LOG_ERROR, "%s\n", buf);
+        SOCKET_CloseSocket(csocket.fd);
+		GameStatus = GAME_STATUS_START;
+		Sleep(3250);
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -1509,10 +1558,11 @@ void VersionCmd(char *data, int len)
         sprintf(buf, "Invalid server name: %s", cp);
         draw_info(buf, COLOR_RED);
         LOG(LOG_ERROR, "%s\n", buf);
+        SOCKET_CloseSocket(csocket.fd);
+		GameStatus = GAME_STATUS_START;
+		Sleep(3250);
         return;
     }
-
-    LOG(LOG_MSG, "Playing on server type %s\n", cp);
     GameStatusVersionOKFlag = TRUE;
 }
 
@@ -1521,6 +1571,7 @@ void SendVersion(ClientSocket csock)
     char    buf[MAX_BUF];
 
     sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
+	LOG(LOG_DEBUG,"Send version command: %s\n", buf);
     cs_write_string(csock.fd, buf, strlen(buf));
 }
 

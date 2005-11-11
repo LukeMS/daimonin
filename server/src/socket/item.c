@@ -1203,8 +1203,6 @@ void look_at(object *op, int dx, int dy)
     }
 }
 
-
-
 /* Client wants to apply some object.  Lets do so. */
 void LookAt(char *buf, int len, player *pl)
 {

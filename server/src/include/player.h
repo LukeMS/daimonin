@@ -295,7 +295,7 @@ typedef struct pl_player
                                                                * of this player.
                                                                */
 
-    int                last_weapon_sp;
+    int					last_weapon_sp;
 
     char                firemode_name[BIG_NAME*2];
     char                quick_name[BIG_NAME*3]; /* thats rank + name +" the xxxx" */

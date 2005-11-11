@@ -93,6 +93,7 @@ Boolean             InputStringEndFlag; /* if true, we had entered some in text 
 Boolean             InputStringEscFlag;
 
 _game_status        GameStatus; /* the global status identifier */
+int					GameStatusLogin;
 
 _anim_table         anim_table[MAXANIM]; /* the stored "anim commands" we created out of anims.tmp */
 Animations          animations[MAXANIM]; /* get this from commands.c to this place*/
@@ -293,6 +294,7 @@ void init_game_data(void)
     argServerPort = 13327;
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
+    GameStatusLogin = TRUE;
     CacheStatus = CF_FACE_CACHE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -456,6 +458,7 @@ Boolean game_status_chain(void)
     /* autoinit or reset prg data */
     if (GameStatus == GAME_STATUS_INIT)
     {
+	    GameStatusLogin = TRUE;
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -665,7 +668,12 @@ Boolean game_status_chain(void)
             request_file_chain++; /* this ensure one loop tick and updating the messages */
         }
         else if (request_file_chain == 13)
-            GameStatus = GAME_STATUS_ADDME;
+            GameStatus = GAME_STATUS_LOGIN_SELECT; /* now lets start the real login by asking "login" or "create" */
+    }
+    else if (GameStatus == GAME_STATUS_LOGIN_SELECT)
+    {
+        /* the choices are in event.c */
+        map_transfer_flag = 0;
     }
     else if (GameStatus == GAME_STATUS_ADDME)
     {
@@ -684,6 +692,7 @@ Boolean game_status_chain(void)
             sprintf(buf, "Break Login.");
             draw_info(buf, COLOR_RED);
             GameStatus = GAME_STATUS_START;
+			GameStatusLogin = TRUE;
         }
         reset_input_mode();
     }
@@ -699,21 +708,28 @@ Boolean game_status_chain(void)
             check = is_username_valid(InputString);
             if (check)
             {
+				char name_tmp[256];
+
                 strcpy(cpl.name, InputString);
                 dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
                 LOG(LOG_MSG,"Login: send name %s\n", InputString);
-                send_reply(InputString);
-                GameStatus = GAME_STATUS_LOGIN;
+				sprintf(name_tmp,"%c%s", GameStatusLogin?'L':'C', InputString);
+                send_reply(name_tmp);
+                GameStatus = GAME_STATUS_NAME_WAIT;
                 /* now wait again for next server question*/
             }
             else
             {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGNAME;
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
                 InputStringFlag=TRUE;
                 InputStringEndFlag=FALSE;
             }
         }
     }
+    else if (GameStatus == GAME_STATUS_NAME_WAIT) 
+    {
+			/* simply wait for action of the server after we send name */
+	}
     else if (GameStatus == GAME_STATUS_PSWD)
     {
         map_transfer_flag = 0;
@@ -723,14 +739,34 @@ Boolean game_status_chain(void)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
         {
+			int pwd_len = strlen(InputString);
             strncpy(cpl.password, InputString, 39);
-            cpl.password[39] = 0;   /* insanity 0 */
-            LOG(LOG_MSG, "Login: send password <*****>\n");
-            send_reply(cpl.password);
-            GameStatus = GAME_STATUS_LOGIN;
+			if (!GameStatusLogin && (pwd_len < 6 || pwd_len > 17))
+			{
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
+	            cpl.password[0] = 0;   /* insanity 0 */
+		        open_input_mode(12);
+			}
+			else if(!GameStatusLogin && !strcmp(cpl.name, cpl.password))
+			{
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
+	            cpl.password[0] = 0;   /* insanity 0 */
+		        open_input_mode(12);
+			}
+			else
+			{
+	            cpl.password[39] = 0;   /* insanity 0 */
+		        LOG(LOG_MSG, "Login: send password <*****>\n");
+			    send_reply(cpl.password);
+				GameStatus = GAME_STATUS_PSWD_WAIT;
+			}
             /* now wait again for next server question*/
         }
     }
+    else if (GameStatus == GAME_STATUS_PSWD_WAIT)
+    {
+			/* simply wait for action of the server after we send the password */
+	}
     else if (GameStatus == GAME_STATUS_VERIFYPSWD)
     {
         map_transfer_flag = 0;
@@ -741,10 +777,13 @@ Boolean game_status_chain(void)
         {
             LOG(LOG_MSG, "Login: send verify password %s\n", InputString);
             send_reply(InputString);
-            GameStatus = GAME_STATUS_LOGIN;
+            GameStatus = GAME_STATUS_VERIFYPSWD_WAIT;
             /* now wait again for next server question*/
         }
     }
+    else if (GameStatus == GAME_STATUS_VERIFYPSWD_WAIT)
+    {
+	}
     else if (GameStatus == GAME_STATUS_WAITFORPLAY)
     {
         clear_map();
@@ -1284,7 +1323,6 @@ int main(int argc, char *argv[])
                 if (GameStatus == GAME_STATUS_PLAY)
                 {
                     GameStatus = GAME_STATUS_INIT;
-                    PasswordAlreadyAsked = 0;
                 }
                 else
                     GameStatus = GAME_STATUS_START;
