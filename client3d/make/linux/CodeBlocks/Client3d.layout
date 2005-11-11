@@ -1,18 +1,13 @@
 <?xml version="1.0"?>
-<!DOCTYPE Code::Blocks_layout_file>
-<Code::Blocks_layout_file>
-	<File name="ReadMe.txt" open="1" top="0">
-		<Cursor position="0" topLine="0"/>
+<!DOCTYPE CodeBlocks_layout_file>
+<CodeBlocks_layout_file>
+	<File name="ReadMe.txt" open="1" top="1">
+		<Cursor position="2" topLine="0"/>
 	</File>
-	<File name="../../../source/client.cpp" open="1" top="1">
+	<File name="../../../source/client.cpp" open="0" top="0">
 		<Cursor position="4408" topLine="110"/>
 	</File>
-	<File name="../../../source/include/event.h" open="1" top="0">
+	<File name="../../../source/include/event.h" open="0" top="0">
 		<Cursor position="720" topLine="104"/>
 	</File>
-	<Expand folder="/Headers/source/include"/>
-	<Expand folder="/Headers/source"/>
-	<Expand folder="/Headers"/>
-	<Expand folder="/Sources/source"/>
-	<Expand folder="/Sources"/>
-</Code::Blocks_layout_file>
+</CodeBlocks_layout_file>

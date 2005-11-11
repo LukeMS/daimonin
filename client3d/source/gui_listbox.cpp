@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreHardwarePixelBuffer.h>
 #include "define.h"
 #include "gui_listbox.h"
-#include "gui_text.h"
+#include "gui_textout.h"
 #include "logger.h"
 
 #include <ctime>

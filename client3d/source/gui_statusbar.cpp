@@ -94,7 +94,7 @@ GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElem, int maxX, int maxY)
 ///=================================================================================================
 /// .
 ///=================================================================================================
-void GuiStatusbar::draw(PixelBox &mSrcPixelBox, Texture *texture, Real value)
+void GuiStatusbar::draw(PixelBox &, Texture *texture, Real)
 {
   /////////////////////////////////////////////////////////////////////////
   /// Save the original background.
