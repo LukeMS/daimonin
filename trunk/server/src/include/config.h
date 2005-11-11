@@ -548,6 +548,17 @@
 #define MOTD "motd"
 #endif
 
+/*
+ * If you want to take the game down while installing new versions, or
+ * for other reasons, put a message into the SHUTDOWN_FILE file.
+ * Remember to delete it when you open the game again.
+ * (It resides in the LIBDIR directory)
+ */
+
+#ifndef SHUTDOWN_FILE
+#define SHUTDOWN_FILE "shutdown"
+#endif
+
 
 /*
  * If undefined, malloc is always used.

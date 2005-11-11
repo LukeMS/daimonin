@@ -930,7 +930,7 @@ void fix_player(object *op)
     float               f, max = 9, added_speed = 0, bonus_speed = 0, speed_reduce_from_disease = 1, tmp_con, reg_sec;
 
 
-    /*LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", query_name(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");*/
+    LOG(llevDebug,"FIX_PLAYER called (%s} %s\n", query_name(op), QUERY_FLAG(op, FLAG_NO_FIX_PLAYER)?"IGNORED":"");
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
     {
         /* we are calling fix_player with this flag for example when manually applying an item */

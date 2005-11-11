@@ -161,12 +161,6 @@ static void init_globals()
     nrofartifacts = 0;
     nrofallowedstr = 0;
 
-	/* thats used in socket/loop.c right after we have a connect */	
-	sprintf(global_version_msg, "X%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
-	global_version_msg[0] = BINARY_CMD_VERSION;
-	global_version_sl.buf = global_version_msg;
-	global_version_sl.len = strlen((char *) global_version_msg);
-
     init_strings();
 
     trying_emergency_save = 0;
@@ -623,6 +617,25 @@ static void help()
     exit(0);
 }
 
+
+static void init_startup()
+{
+    char    buf[MAX_BUF];
+    FILE   *fp;
+
+#ifdef SHUTDOWN_FILE
+    sprintf(buf, "%s/%s", settings.localdir, SHUTDOWN_FILE);
+    if ((fp = fopen(buf, "r")) != NULL)
+    {
+        while (fgets(buf, MAX_BUF - 1, fp) != NULL)
+            printf("%s", buf);
+        fclose(fp);
+        exit(1);
+    }
+#endif
+
+}
+
 /* Signal handlers: */
 
 static void rec_sigsegv(int i)
@@ -914,6 +927,9 @@ void compile_info()
 #endif
     LOG(llevInfo, "Datadir:\t%s\n", settings.datadir);
     LOG(llevInfo, "Localdir:\t%s\n", settings.localdir);
+#ifdef SHUTDOWN_FILE
+    LOG(llevInfo, "Shutdown file:\t%s/%s\n", settings.localdir, SHUTDOWN_FILE);
+#endif
     LOG(llevInfo, "Save player:\t<true>\n");
     LOG(llevInfo, "Save mode:\t%4.4o\n", SAVE_MODE);
     LOG(llevInfo, "Playerdir:\t%s/%s\n", settings.localdir, settings.playerdir);
@@ -1153,6 +1169,7 @@ void init(int argc, char **argv)
     SRANDOM(time(NULL));
     global_map_tag = (uint32) RANDOM();
 
+    init_startup();     /* Write (C), check shutdown/forbid files */
     init_signals();     /* Sets up signal interceptions */
     init_commands();    /* Sort command tables */
     read_map_log();     /* Load up the old temp map files */

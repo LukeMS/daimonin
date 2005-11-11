@@ -54,8 +54,10 @@
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
-void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
+void InitConnection(NewSocket *ns, uint32 from)
 {
+    SockList    sl;
+    unsigned char buf[256];
     int bufsize = MAXSOCKBUF;
     int oldbufsize;
     int buflen  = sizeof(int);
@@ -90,7 +92,7 @@ void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
     LOG(llevDebug, "InitConnection: Socket buffer size now %d bytes\n", oldbufsize);
 #endif
 
-    ns->login_count = ROUND_TAG + pticks_socket_idle;
+    ns->login_count = ROUND_TAG;
     ns->idle_flag = 0;
     ns->addme = 0;
     ns->faceset = 0;
@@ -100,6 +102,7 @@ void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
     ns->ext_title_flag = 1;
     ns->map2cmd = 0;
     ns->darkness = 1;
+    ns->status = Ns_Add;
     ns->mapx = 17;
     ns->mapy = 17;
     ns->mapx_2 = 8;
@@ -120,29 +123,37 @@ void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
      * just open and close connections could get this total up.
      */
     ns->inbuf.len = 0;
-	if(!ns->inbuf.buf)
-		ns->inbuf.buf = malloc(MAXSOCKBUF_IN);
+    ns->inbuf.buf = malloc(MAXSOCKBUF_IN);
     ns->inbuf.buf[0] = 0;
 
     ns->readbuf.len = 0;
-	if(!ns->readbuf.buf)
-	    ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
+    ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
     ns->readbuf.buf[0] = 0;
 
     ns->cmdbuf.len = 0;
-	if(!ns->cmdbuf.buf)
-		ns->cmdbuf.buf = malloc(MAXSOCKBUF);
+    ns->cmdbuf.buf = malloc(MAXSOCKBUF);
     ns->cmdbuf.buf[0] = 0;
-
-	ns->pwd_try=0; 
+    ns->ip = from;
 
     memset(&ns->lastmap, 0, sizeof(struct Map));
+    /*memset(&ns->stats,0,sizeof(struct statsinfo));*/
+    /* Do this so we don't send a face command for the client for
+     * this face.  Face 0 is sent to the client to say clear
+     * face information.
+     */
+    /*ns->faces_sent[0] = 1;*/
 
     ns->outputbuffer.start = 0;
     ns->outputbuffer.len = 0;
-	ns->ip = ipnum;
-    strcpy(ns->ip_host, ip);
 
+    ns->sent_scroll = 0;
+    sprintf((char *) buf, "%d.%d.%d.%d", (from >> 24) & 255, (from >> 16) & 255, (from >> 8) & 255, from & 255);
+    ns->host = strdup_local((char *) buf);
+    sprintf((char *) buf, "X%d %d %s\n", VERSION_CS, VERSION_SC, VERSION_INFO);
+    buf[0] = BINARY_CMD_VERSION;
+    sl.buf = buf;
+    sl.len = strlen((char *) buf);
+    Send_With_Handling(ns, &sl);
 #ifdef CS_LOGSTATS
     if (socket_info.nconns > cst_tot.max_conn)
         cst_tot.max_conn = socket_info.nconns;
@@ -196,7 +207,6 @@ void init_ericserver()
 
     LOG(llevDebug, "Initialize new client/server data\n");
     init_sockets = malloc(sizeof(NewSocket));
-	memset(init_sockets,0,sizeof(NewSocket));
     socket_info.allocated_sockets = 1;
 
 #ifndef WIN32 /* non win32 */
@@ -281,7 +291,6 @@ void free_all_newserver()
 {
     LOG(llevDebug, "Freeing all new client/server information.\n");
     free_socket_images();
-	/* for clean memory remove we must loop init_sockets to free the buffers */
     free(init_sockets);
 }
 
@@ -293,8 +302,7 @@ void free_all_newserver()
 void close_newsocket(NewSocket *ns)
 {
 #ifdef WIN32
-	WSAAsyncSelect(ns->fd, NULL, 0, FD_CLOSE);
-    shutdown(ns->fd, SD_SEND);
+    shutdown(ns->fd, SD_BOTH);
     if (closesocket(ns->fd))
 #else
     if (close(ns->fd))
@@ -308,20 +316,23 @@ void close_newsocket(NewSocket *ns)
 
 void    free_newsocket  (NewSocket *ns)
 {
-    char *tmp_in = ns->inbuf.buf, 
-		 *tmp_read = ns->readbuf.buf, 
-		 *tmp_cmd = ns->cmdbuf.buf;
-
     LOG(llevDebug, "Closing socket %d\n", ns->fd);
+
     close_newsocket(ns);
 
-	/* clearout the socket but don't restore the buffers.
-     * no need to malloc them again & again.
-     */
+    if (ns->host)
+        free(ns->host);
+    if (ns->inbuf.buf)
+        ;
+    free(ns->inbuf.buf);
+    if (ns->readbuf.buf)
+        ;
+    free(ns->readbuf.buf);
+    if (ns->cmdbuf.buf)
+        ;
+    free(ns->cmdbuf.buf);
+
     memset(ns, 0, sizeof(ns));
-	ns->inbuf.buf = tmp_in; 
-	ns->readbuf.buf = tmp_read; 
-	ns->cmdbuf.buf = tmp_cmd;
 }
 
 /* as long the server don't have a autoupdate/login server

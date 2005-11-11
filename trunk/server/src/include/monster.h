@@ -145,9 +145,6 @@ struct mobdata
 
     uint8 idle_time;            /* How long have we been standing still
                                    not doing anything */
-
-    /* DEBUG DATA STORAGE */
-    struct behaviour_decl  *last_movement_behaviour;
 };
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))

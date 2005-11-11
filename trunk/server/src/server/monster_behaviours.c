@@ -768,7 +768,6 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
 {
     int     i, r;
     object *base;
-    int dirs[8] = {1,2,3,4,5,6,7,8};
 
     if(op->owner)
     {
@@ -780,13 +779,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
     /* Give up to 8 chances for a monster to move randomly */
     for (i = 0; i < 8; i++)
     {
-        /* Perform a single random shuffle of the remaining directions */
-        r = i+(RANDOM() % (8-i));
-        int t = dirs[i];
-        dirs[i] = dirs[r];
-        dirs[r] = t;
-
-        r = dirs[i];
+        r = RANDOM() % 8 + 1;
 
         /* TODO: doesn't handle map borders */
         /* check x and y direction of possible move */
@@ -801,13 +794,9 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
         {
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = r;
-//            LOG(llevDebug, "move_randomly(): i=%d, dirs={%d,%d,%d,%d,%d,%d,%d,%d}\n",
-//                    i, dirs[0], dirs[1], dirs[2], dirs[3], dirs[4], dirs[5], dirs[6], dirs[7]);
             return;
         }
     }
-    response->type = MOVE_RESPONSE_DIR;
-    response->data.direction = 0;
 }
 
 /* This behaviour is also called from some terminal move behaviours to

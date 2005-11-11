@@ -107,6 +107,11 @@ int move_ob(object *op, int dir, object *originator)
 
         for (tmp = op; tmp != NULL; tmp = tmp->more)
             tmp->x += freearr_x[dir], tmp->y += freearr_y[dir];
+        if (op->type == PLAYER)
+        {
+            esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir], freearr_y[dir]);
+            CONTR(op)->socket.look_position = 0;
+        }
         insert_ob_in_map(op, op->map, op, 0);
 
         return 1;
@@ -143,7 +148,11 @@ int move_ob(object *op, int dir, object *originator)
 
     op->x += freearr_x[dir];
     op->y += freearr_y[dir];
-
+    if (op->type == PLAYER)
+    {
+        esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir], freearr_y[dir]);
+        CONTR(op)->socket.look_position = 0;
+    }
     insert_ob_in_map(op, op->map, originator, 0);
 
     return 1;
@@ -196,6 +205,8 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator, obje
     }
 
     ret = (insert_ob_in_map(op, op->map, originator, 0) == NULL);
+    if (op->type == PLAYER)
+        MapNewmapCmd(CONTR(op));
     return ret;
 }
 
@@ -270,6 +281,8 @@ int teleport(object *teleporter, uint8 tele_type, object *user)
         tmp->y = other_teleporter->y + freearr_y[k] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
     }
     tmp = insert_ob_in_map(user, other_teleporter->map, NULL, 0);
+    if (tmp && tmp->type == PLAYER)
+        MapNewmapCmd(CONTR(tmp));
     return (tmp == NULL);
 }
 
@@ -403,7 +416,15 @@ int push_ob(object *who, int dir, object *pusher)
         who->x = temp;
         pusher->y = who->y;
         who->y = temp;
-
+        /* we presume that if the player is pushing his put, he moved in
+         * direction 'dir'.  I can' think of any case where this would not be
+         * the case.  Putting the map_scroll should also improve performance some.
+         */
+        if (pusher->type == PLAYER)
+        {
+            esrv_map_scroll(&CONTR(pusher)->socket, freearr_x[dir], freearr_y[dir]);
+            CONTR(pusher)->socket.look_position = 0;
+        }
         insert_ob_in_map(who, who->map, pusher, 0);
         insert_ob_in_map(pusher, pusher->map, pusher, 0);
 

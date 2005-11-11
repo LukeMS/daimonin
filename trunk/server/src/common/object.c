@@ -684,6 +684,7 @@ void copy_owner(object *op, object *clone)
  * If used on any object structures, be sure all pointers of the
  * base object are cleared until they are wiped with this function
  */
+
 void initialize_object(object *op)
 {
     memset(op, 0, sizeof(object));
@@ -709,6 +710,7 @@ void initialize_object(object *op)
  * and then copies the contends of the first object into the second
  * object, allocating what needs to be allocated.
  */
+
 void copy_object(object *op2, object *op)
 {
     int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
@@ -1029,6 +1031,11 @@ void update_object(object *op, int action)
         /* this is handled a bit more complex, we must always loop the flags! */
         if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
             newflags |= P_FLAGS_UPDATE;
+        else if (QUERY_FLAG(op, FLAG_IS_FLOOR)) /* floors define our node - force a update */
+        {
+            newflags |= P_FLAGS_UPDATE;
+            msp->light_value += op->last_sp;
+        }
         else /* ok, we don't must use flag loop - we can set it by hand! */
         {
             if (op->type == CHECK_INV)
@@ -1103,6 +1110,7 @@ void update_object(object *op, int action)
          || QUERY_FLAG(op, FLAG_FLY_OFF)
          || QUERY_FLAG(op, FLAG_CAN_REFL_SPELL)
          || QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE)
+         || QUERY_FLAG(op, FLAG_IS_FLOOR)
          || op->type == CHECK_INV
          || op->type == MAGIC_EAR)
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */

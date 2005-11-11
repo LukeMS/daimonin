@@ -321,7 +321,7 @@ int command_who(object *op, char *params)
                 if ((tmp = strlen(pl->ob->map->path)) > (22 - ((tmp1 = strlen(pl->ob->name)))))
                     off = tmp - (22 - tmp1);
 
-                sprintf(buf, "%s (%d) [@%s] [%s]", pl->quick_name, pl->ob->count, pl->socket.ip_host, pl->ob->map->path + off);
+                sprintf(buf, "%s (%d) [@%s] [%s]", pl->quick_name, pl->ob->count, pl->socket.host, pl->ob->map->path + off);
             }
             else
                 sprintf(buf, "%s the %s %s (lvl %d)", pl->quick_name, sex, pl->ob->race, pl->ob->level);
@@ -1111,126 +1111,63 @@ int command_sound(object *op, char *params)
 
 /* Perhaps these should be in player.c, but that file is
  * already a bit big.
- * status can be:
- * 0= start/continue login, nothing special happens
- * 1= name is not taken, no player with that name in the system
- * 2= name is blocked and login to this name is not allowed (is in creating or system use)
- * 3= name is taken and its logged in right now
- * 4= name is taken and not logged in
- * 5= name is taken and banned
- * 6= illegal password or name
- * 7= verify password don't match
  */
+
 void receive_player_name(object *op, char k, char *write_buf)
 {
-	const char *name_hash = NULL;
-	int status=0;
-
     /* be sure the player name is like "Xxxxx" */
     unsigned int name_len = transform_name_string(write_buf + 1);
 
-	/* we have a hacker? */
-	if(CONTR(op)->socket.pwd_try >= 3)
-	{
-		/* someone ignored the addme_fail and the 1min ban for 3 wrong pwd guesses? BAD idea */
-		add_ban_entry(NULL, CONTR(op)->socket.ip_host, CONTR(op)->socket.ip, 8*60*24*31, 8*60*24*31); /* one month ban */
-		/* no need to be nice and tell him whats going on - kick this sucker HARD */
-		CONTR(op)->socket.status = Ns_Dead;
-		return;
-	}
-
-    LOG(llevDebug, "Got name from client: %s\n", write_buf + 1);
-
-	/* is the name legal? */
-    if ( name_len <= 1 || name_len > MAX_PLAYER_NAME  == 1 || !playername_ok(write_buf + 1))
+    if (name_len <= 1 || name_len > MAX_PLAYER_NAME)
     {
-		get_name(op, 6); /* nice try - illegal name */
-		return;
+        get_name(op);
+        return;
+    }
+
+    if (!check_name(CONTR(op), write_buf + 1))
+    {
+        get_name(op);
+        return;
     }
 
     /* we got a legal name... NOW check this named is banned */
-	if((name_hash = find_string(write_buf+1))) /* if the name is not in the hash list, it can't be in the ban list too */
-	{
-		if (check_banned(&CONTR(op)->socket, name_hash, 0)) //* this can remove the ref count from name_hash - it is then invalid */
-		{
-			LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.ip_host);
-			if(CONTR(op)->socket.status < Ns_Zombie)
-				get_name(op, 5); /* tells client the name is banned - ask for a new name! */
-			return;
-		}
-	}
-
-	/* ok, we have a legal and unbanned name - now check how it is or was in use */
-	if((status = check_name(CONTR(op), write_buf + 1)) == 2)
+    if (check_banned(write_buf+1, -1))
     {
-		get_name(op, 2); /* means: Name denied: Name is in create, login or logout transfer */
-		return;
+        LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.host);
+        CONTR(op)->socket.status = Ns_Dead;
+        return;
     }
-	
-	/* status is now 1,3 or 4 
-     * Note: we don't trust the client! 
-     * The L/C parameter don't effect the login procedure - we only use
-     * it to hold the client in sync with our login. If the client tries to
-     * cheat, IT will be out of sync - not the server.
-     */
-	if(write_buf[0]=='C')
-	{
-		if(status != 1)
-	    {
-		    get_name(op, status); /* its 3 or 4 = taken */
-			return;
-		}
-	}
-	else /* means write_buf[0]=='L' */
-	{
-		if(status == 1) /* this name/character don't exits */
-	    {
-		    get_name(op, status); /* 1 means - don't exists for normal login */
-			return;
-		}
-	}
 
-	/* ok, login seems fine. now ask for password.
-     * Note again: The server don't care about old or new char at this point.
-     */
-	FREE_AND_COPY_HASH(op->name, write_buf + 1);
+
+    FREE_AND_COPY_HASH(op->name, write_buf + 1);
     CONTR(op)->name_changed = 1;
-    get_password(op, 0);
+    get_password(op);
 }
 
 
 /* a client send player name + password.
- * check password. Login char OR verify password
+ * check password. Login char OR very password
  * for new char creation.
  * For beta 2 we have moved the char creation to client
  */
 void receive_player_password(object *op, char k, char *write_buf)
 {
-    unsigned int pwd_len = strlen(write_buf+1);
-	    
-	if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
-	{
-	    if (pwd_len < 6 || pwd_len > 17)
-		{
-			get_password(op, 7); /* confirm password has not matched */
-	        return;
-		}
-	}
-	else
-	{
-	    if (pwd_len < 1 || pwd_len > 17)
-		{
-			get_password(op, 6); /* password is illegal */
-			return;
-		}
-	}
+    unsigned int pwd_len = strlen(write_buf);
+    if (pwd_len <= 1 || pwd_len > 17)
+    {
+        get_name(op);
+        return;
+    }
+    new_draw_info(NDI_UNIQUE, 0, op, "          "); /* To hide the password better */
+
     if (CONTR(op)->state == ST_CONFIRM_PASSWORD)
     {
-        char    cmd_buf[4]   = "X";
+        char    cmd_buf[]   = "X";
 
         if (!check_password(write_buf + 1, CONTR(op)->password))
         {
-			get_password(op, 7); /* confirm password has not matched */
+            new_draw_info(NDI_UNIQUE, 0, op, "The passwords did not match.");
+            get_name(op);
             return;
         }
         esrv_new_player(CONTR(op), 0);
