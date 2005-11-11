@@ -140,6 +140,7 @@ unsigned int query_flags(object *op)
 
 void esrv_draw_look(object *pl)
 {
+	NewSocket  *ns = &CONTR(pl)->socket;
     char       *tmp_sp;
     object     *head, *tmp, *last;
     int         len, flags, got_one = 0, anim_speed, start_look = 0, end_look = 0;
@@ -161,9 +162,9 @@ void esrv_draw_look(object *pl)
     SockList_AddInt(&global_sl, 0);
     SockList_AddInt(&global_sl, 0);
 
-    if (CONTR(pl)->socket.look_position)
+    if (ns->look_position)
     {
-        SockList_AddInt(&global_sl, 0x80000000 | (CONTR(pl)->socket.look_position - NUM_LOOK_OBJECTS));
+        SockList_AddInt(&global_sl, 0x80000000 | (ns->look_position - NUM_LOOK_OBJECTS));
         SockList_AddInt(&global_sl, 0);
         SockList_AddInt(&global_sl, -1);
         SockList_AddInt(&global_sl, prev_item_face->number);
@@ -191,12 +192,12 @@ void esrv_draw_look(object *pl)
         }
 
         /* skip all items we had send before of the 'max shown items of a tile space' */
-        if (++start_look < CONTR(pl)->socket.look_position)
+        if (++start_look < ns->look_position)
             continue;
         /* if we have to much items to send, send a 'next group' object and leave here */
         if (++end_look > NUM_LOOK_OBJECTS)
         {
-            SockList_AddInt(&global_sl, 0x80000000 | (CONTR(pl)->socket.look_position + NUM_LOOK_OBJECTS));
+            SockList_AddInt(&global_sl, 0x80000000 | (ns->look_position + NUM_LOOK_OBJECTS));
             SockList_AddInt(&global_sl, 0);
             SockList_AddInt(&global_sl, -1);
             SockList_AddInt(&global_sl, next_item_face->number);
@@ -217,8 +218,8 @@ void esrv_draw_look(object *pl)
             flags |= F_NOPICK;
 
         /*
-            if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !CONTR(pl)->socket.anims_sent[tmp->animation_id])
-                esrv_send_animation(&CONTR(pl)->socket, tmp->animation_id);
+            if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !ns->anims_sent[tmp->animation_id])
+                esrv_send_animation(ns, tmp->animation_id);
             */
 
         SockList_AddInt(&global_sl, tmp->count);
@@ -298,7 +299,7 @@ void esrv_draw_look(object *pl)
 
         if (global_sl.len > (MAXSOCKBUF - MAXITEMLEN))
         {
-            Send_With_Handling(&CONTR(pl)->socket, &global_sl);
+            Send_With_Handling(ns, &global_sl);
             SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_ITEMY);
             SockList_AddInt(&global_sl, -2); /* do no delinv */
             SockList_AddInt(&global_sl, 0);
@@ -316,8 +317,11 @@ void esrv_draw_look(object *pl)
         }
     } /* for loop */
 
-//    if (got_one)
-        Send_With_Handling(&CONTR(pl)->socket, &global_sl);
+    if (got_one || (!got_one && !ns->below_clear))
+	{
+        Send_With_Handling(ns, &global_sl);
+		ns->below_clear=0;
+	}
 }
 
 
