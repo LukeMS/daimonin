@@ -95,6 +95,7 @@ typedef struct NewSocket_struct
     SockList            cmdbuf;         /* buffer for the *real* player/char commands */
 
     Buffer              outputbuffer;       /* For undeliverable data */
+	uint32				below_clear     : 1;		/* marker to map draw/draw below */
     uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
     uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
     uint32              facecache       : 1;        /* If true, client is caching images */

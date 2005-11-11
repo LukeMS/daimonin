@@ -298,6 +298,7 @@ int add_player(NewSocket *ns)
      */
     p->socket.pl = (struct player *) p;
     p->socket.status = Ns_Login; /* now, we start the login procedure! */
+	p->socket.below_clear = 0;
     p->socket.update_tile = 0;
     p->socket.look_position = 0;
 

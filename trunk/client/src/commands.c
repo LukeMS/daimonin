@@ -925,7 +925,7 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
     dmode = GetInt_String(data);
     pos += 4;
 
-    /*LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
+    LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");
 
     loc = GetInt_String(data + pos);
 
@@ -1265,6 +1265,7 @@ void Map2Cmd(unsigned char *data, int len)
 		    ypos = (uint8) (data[pos++]);
 			mx = xpos;
 			my = ypos;
+			remove_item_inventory(locate_item(0)); /* implicit clear below */
 			InitMapData(mapname, map_w, map_h, xpos, ypos);
 		}
 		else
@@ -1277,6 +1278,7 @@ void Map2Cmd(unsigned char *data, int len)
 		    ypos = (uint8) (data[pos++]);
 			mx = xpos;
 			my = ypos;
+			remove_item_inventory(locate_item(0)); /* implicit clear below */
 	        display_mapscroll(xoff, yoff);
 		}
 	}
@@ -1285,8 +1287,13 @@ void Map2Cmd(unsigned char *data, int len)
 		xpos = (uint8) (data[pos++]);
 	    ypos = (uint8) (data[pos++]);
 
-        if(cpl.menustatus != MENU_NO && (xpos - mx || ypos - my))
-            reset_menu_status();
+		/* we have moved */
+		if((xpos - mx || ypos - my))
+		{
+			remove_item_inventory(locate_item(0)); /* implicit clear below */
+			if(cpl.menustatus != MENU_NO)
+				reset_menu_status();
+		}
         display_mapscroll(xpos - mx, ypos - my);
 
 		mx = xpos;

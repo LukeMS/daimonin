@@ -664,7 +664,7 @@ static void rec_sigpipe(int i)
      * dump core.  There is no reason that SIGPIPES should be fatal
      */
 #if 1 && !defined(WIN32) /* ***win32: we don't want send SIGPIPE */
-    LOG(llevSystem, "\nReceived SIGPIPE, ignoring...\n");
+    /*LOG(llevSystem, "\nReceived SIGPIPE, ignoring...\n");*/
     signal(SIGPIPE, rec_sigpipe);/* hocky-pux clears signal handlers */
 #else
     LOG(llevSystem, "\nSIGPIPE received, not ignoring...\n");

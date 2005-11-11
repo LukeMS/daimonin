@@ -1139,6 +1139,7 @@ void draw_client_map(object *plobj)
 		/* backbuffer position so we can determinate we have moved or not */
 		pl->map_tile_x = plobj->x;
 		pl->map_tile_y = plobj->y;
+		pl->socket.below_clear = 1; /* draw_client_map2() has implicit cleared belowed - don't send a clear again */
 		pl->socket.update_tile = 0; /* redraw it */
         pl->socket.look_position = 0; /* reset the "show only x items of all items belows" counter */
 	}

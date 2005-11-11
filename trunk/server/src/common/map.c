@@ -1425,7 +1425,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 				fmask_g->face = mp->mask_face;
 				fmask_g->x = i;
 				fmask_g->y = j;
-				save_object(fp, floor_g, 3);				
+				save_object(fp, fmask_g, 3);				
 			}
 
             for (op = mp->first; op; op = otmp)
