@@ -1407,12 +1407,6 @@ static int apply_shop_mat(object *shop_mat, object *op)
             op->x += freearr_x[i];
             op->y += freearr_y[i];
             rv = (insert_ob_in_map(op, op->map, shop_mat, 0) == NULL);
-            if (op->type == PLAYER)
-            {
-                esrv_map_scroll(&CONTR(op)->socket, freearr_x[i], freearr_y[i]); /* shop */
-                CONTR(op)->socket.update_tile = 0;
-                CONTR(op)->socket.look_position = 0;
-            }
         }
     }
 
@@ -3170,10 +3164,14 @@ void player_apply_below(object *pl)
     for (floors = 0; tmp != NULL; tmp = next)
     {
         next = tmp->below;
-        if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
+		/* this was is_floor test - but floor has moved
+         * in map node. Now, the first for sure not applyable
+         * object is the first sys_object
+         */
+        if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
             floors++;
         else if (floors > 0)
-            return;   /* process only floor objects after first floor object */
+            return;   /* process only floor (or sys_objects) objects after first floor object */
         if (!IS_INVISIBLE(tmp, pl) || QUERY_FLAG(tmp, FLAG_WALK_ON) || QUERY_FLAG(tmp, FLAG_FLY_ON))
         {
             if (player_apply(pl, tmp, 0, 1) == 1)

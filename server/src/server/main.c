@@ -396,7 +396,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 #ifdef MAX_OBJECTS_LWM
         swap_below_max(newmap->path);
 #endif
-        MapNewmapCmd(CONTR(op));
     }
 }
 
@@ -790,16 +789,11 @@ void enter_exit(object *op, object *exit_ob)
 
 void process_players1(mapstruct *map)
 {
-    player *pl, *plnext;
+    player *pl;
 
     /* Basically, we keep looping until all the players have done their actions. */
-    for (pl = first_player; pl != NULL; pl = plnext)
+    for (pl = first_player; pl != NULL; pl = pl->next)
     {
-        plnext = pl->next;
-
-        /* map is atm always NULL - we loop global */
-        /* if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;*/
-
         if (handle_newcs_player(pl) == -1) /* -1: player is invalid now */
             continue;
 
@@ -1197,7 +1191,7 @@ void leave(player *pl, int draw_exit)
             evtid = EVENT_LOGOUT;
             CFP.Value[0] = (void *) (&evtid);
             CFP.Value[1] = (void *) (pl);
-            CFP.Value[2] = (void *) (pl->socket.host);
+            CFP.Value[2] = (void *) (pl->socket.ip_host);
             GlobalEvent(&CFP);
         };
 #endif
@@ -1206,7 +1200,7 @@ void leave(player *pl, int draw_exit)
         container_unlink(pl, NULL);
 
         pl->socket.status = Ns_Dead;
-        LOG(llevInfo, "LOGOUT: >%s< from ip %s\n", pl->ob->name, pl->socket.host);
+        LOG(llevInfo, "LOGOUT: >%s< from ip %s\n", query_name(pl->ob), pl->socket.ip_host);
 
         if (pl->ob->map)
         {
