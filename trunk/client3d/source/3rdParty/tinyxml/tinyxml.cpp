@@ -100,7 +100,13 @@ void TiXmlBase::PutString( const TIXML_STRING& str, TIXML_STRING* outString )
 			// Easy pass at non-alpha/numeric/symbol
 			// Below 32 is symbolic.
 			char buf[ 32 ];
-			sprintf( buf, "&#x%02X;", (unsigned) ( c & 0xff ) );
+			
+			#if defined(TIXML_SNPRINTF)		
+				TIXML_SNPRINTF( buf, sizeof(buf), "&#x%02X;", (unsigned) ( c & 0xff ) );
+			#else
+				sprintf( buf, "&#x%02X;", (unsigned) ( c & 0xff ) );
+			#endif		
+
 			//*ME:	warning C4267: convert 'size_t' to 'int'
 			//*ME:	Int-Cast to make compiler happy ...
 			outString->append( buf, (int)strlen( buf ) );
@@ -318,7 +324,7 @@ const TiXmlNode* TiXmlNode::FirstChild( const char * _value ) const
 	const TiXmlNode* node;
 	for ( node = firstChild; node; node = node->next )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -330,7 +336,7 @@ TiXmlNode* TiXmlNode::FirstChild( const char * _value )
 	TiXmlNode* node;
 	for ( node = firstChild; node; node = node->next )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -342,7 +348,7 @@ const TiXmlNode* TiXmlNode::LastChild( const char * _value ) const
 	const TiXmlNode* node;
 	for ( node = lastChild; node; node = node->prev )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -353,7 +359,7 @@ TiXmlNode* TiXmlNode::LastChild( const char * _value )
 	TiXmlNode* node;
 	for ( node = lastChild; node; node = node->prev )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -416,7 +422,7 @@ const TiXmlNode* TiXmlNode::NextSibling( const char * _value ) const
 	const TiXmlNode* node;
 	for ( node = next; node; node = node->next )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -427,7 +433,7 @@ TiXmlNode* TiXmlNode::NextSibling( const char * _value )
 	TiXmlNode* node;
 	for ( node = next; node; node = node->next )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -438,7 +444,7 @@ const TiXmlNode* TiXmlNode::PreviousSibling( const char * _value ) const
 	const TiXmlNode* node;
 	for ( node = prev; node; node = node->prev )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -449,7 +455,7 @@ TiXmlNode* TiXmlNode::PreviousSibling( const char * _value )
 	TiXmlNode* node;
 	for ( node = prev; node; node = node->prev )
 	{
-		if ( node->SValue() == _value )
+		if ( strcmp( node->Value(), _value ) == 0 )
 			return node;
 	}
 	return 0;
@@ -715,7 +721,11 @@ int TiXmlElement::QueryDoubleAttribute( const char* name, double* dval ) const
 void TiXmlElement::SetAttribute( const char * name, int val )
 {	
 	char buf[64];
-	sprintf( buf, "%d", val );
+	#if defined(TIXML_SNPRINTF)		
+		TIXML_SNPRINTF( buf, sizeof(buf), "%d", val );
+	#else
+		sprintf( buf, "%d", val );
+	#endif
 	SetAttribute( name, buf );
 }
 
@@ -723,7 +733,11 @@ void TiXmlElement::SetAttribute( const char * name, int val )
 void TiXmlElement::SetDoubleAttribute( const char * name, double val )
 {	
 	char buf[256];
-	sprintf( buf, "%f", val );
+	#if defined(TIXML_SNPRINTF)		
+		TIXML_SNPRINTF( buf, sizeof(buf), "%f", val );
+	#else
+		sprintf( buf, "%f", val );
+	#endif
 	SetAttribute( name, buf );
 }
 
@@ -865,15 +879,30 @@ TiXmlNode* TiXmlElement::Clone() const
 }
 
 
+const char* TiXmlElement::GetText() const
+{
+	const TiXmlNode* child = this->FirstChild();
+	if ( child ) {
+		const TiXmlText* childText = child->ToText();
+		if ( childText ) {
+			return childText->Value();
+		}
+	}
+	return 0;
+}
+
+
 TiXmlDocument::TiXmlDocument() : TiXmlNode( TiXmlNode::DOCUMENT )
 {
 	tabsize = 4;
+	useMicrosoftBOM = false;
 	ClearError();
 }
 
 TiXmlDocument::TiXmlDocument( const char * documentName ) : TiXmlNode( TiXmlNode::DOCUMENT )
 {
 	tabsize = 4;
+	useMicrosoftBOM = false;
 	value = documentName;
 	ClearError();
 }
@@ -883,6 +912,7 @@ TiXmlDocument::TiXmlDocument( const char * documentName ) : TiXmlNode( TiXmlNode
 TiXmlDocument::TiXmlDocument( const std::string& documentName ) : TiXmlNode( TiXmlNode::DOCUMENT )
 {
 	tabsize = 4;
+	useMicrosoftBOM = false;
     value = documentName;
 	ClearError();
 }
@@ -941,7 +971,8 @@ bool TiXmlDocument::LoadFile( const char* filename, TiXmlEncoding encoding )
 	// Fixed with the StringToBuffer class.
 	value = filename;
 
-	FILE* file = fopen( value.c_str (), "r" );
+	// reading in binary mode so that tinyxml can normalize the EOL
+	FILE* file = fopen( value.c_str (), "rb" );	
 
 	if ( file )
 	{
@@ -963,14 +994,83 @@ bool TiXmlDocument::LoadFile( const char* filename, TiXmlEncoding encoding )
 		TIXML_STRING data;
 		data.reserve( length );
 
-		const int BUF_SIZE = 2048;
-		char buf[BUF_SIZE];
+		// Subtle bug here. TinyXml did use fgets. But from the XML spec:
+		// 2.11 End-of-Line Handling
+		// <snip>
+		// <quote>
+		// ...the XML processor MUST behave as if it normalized all line breaks in external 
+		// parsed entities (including the document entity) on input, before parsing, by translating 
+		// both the two-character sequence #xD #xA and any #xD that is not followed by #xA to 
+		// a single #xA character.
+		// </quote>
+		//
+		// It is not clear fgets does that, and certainly isn't clear it works cross platform. 
+		// Generally, you expect fgets to translate from the convention of the OS to the c/unix
+		// convention, and not work generally.
 
-		while( fgets( buf, BUF_SIZE, file ) )
+		/*
+		while( fgets( buf, sizeof(buf), file ) )
 		{
 			data += buf;
 		}
+		*/
+
+		char* buf = new char[ length+1 ];
+		buf[0] = 0;
+
+		if ( fread( buf, length, 1, file ) != 1 ) {
+		//if ( fread( buf, 1, length, file ) != (size_t)length ) {
+			SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
+			fclose( file );
+			return false;
+		}
 		fclose( file );
+
+		const char* lastPos = buf;
+		const char* p = buf;
+
+		buf[length] = 0;
+		while( *p ) {
+			assert( p < (buf+length) );
+			if ( *p == 0xa ) {
+				// Newline character. No special rules for this. Append all the characters
+				// since the last string, and include the newline.
+				data.append( lastPos, p-lastPos+1 );	// append, include the newline
+				++p;									// move past the newline
+				lastPos = p;							// and point to the new buffer (may be 0)
+				assert( p <= (buf+length) );
+			}
+			else if ( *p == 0xd ) {
+				// Carriage return. Append what we have so far, then
+				// handle moving forward in the buffer.
+				if ( (p-lastPos) > 0 ) {
+					data.append( lastPos, p-lastPos );	// do not add the CR
+				}
+				data += (char)0xa;						// a proper newline
+
+				if ( *(p+1) == 0xa ) {
+					// Carriage return - new line sequence
+					p += 2;
+					lastPos = p;
+					assert( p <= (buf+length) );
+				}
+				else {
+					// it was followed by something else...that is presumably characters again.
+					++p;
+					lastPos = p;
+					assert( p <= (buf+length) );
+				}
+			}
+			else {
+				++p;
+			}
+		}
+		// Handle any left over characters.
+		if ( p-lastPos ) {
+			data.append( lastPos, p-lastPos );
+		}		
+		delete [] buf;
+		buf = 0;
 
 		Parse( data.c_str(), 0, encoding );
 
@@ -989,6 +1089,16 @@ bool TiXmlDocument::SaveFile( const char * filename ) const
 	FILE* fp = fopen( filename, "w" );
 	if ( fp )
 	{
+		if ( useMicrosoftBOM ) 
+		{
+			const unsigned char TIXML_UTF_LEAD_0 = 0xefU;
+			const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
+			const unsigned char TIXML_UTF_LEAD_2 = 0xbfU;
+
+			fputc( TIXML_UTF_LEAD_0, fp );
+			fputc( TIXML_UTF_LEAD_1, fp );
+			fputc( TIXML_UTF_LEAD_2, fp );
+		}
 		Print( fp, 0 );
 		fclose( fp );
 		return true;
@@ -1134,23 +1244,31 @@ int TiXmlAttribute::QueryDoubleValue( double* dval ) const
 void TiXmlAttribute::SetIntValue( int _value )
 {
 	char buf [64];
-	sprintf (buf, "%d", _value);
+	#if defined(TIXML_SNPRINTF)		
+		TIXML_SNPRINTF(buf, sizeof(buf), "%d", _value);
+	#else
+		sprintf (buf, "%d", _value);
+	#endif
 	SetValue (buf);
 }
 
 void TiXmlAttribute::SetDoubleValue( double _value )
 {
 	char buf [256];
-	sprintf (buf, "%lf", _value);
+	#if defined(TIXML_SNPRINTF)		
+		TIXML_SNPRINTF( buf, sizeof(buf), "%lf", _value);
+	#else
+		sprintf (buf, "%lf", _value);
+	#endif
 	SetValue (buf);
 }
 
-const int TiXmlAttribute::IntValue() const
+int TiXmlAttribute::IntValue() const
 {
 	return atoi (value.c_str ());
 }
 
-const double  TiXmlAttribute::DoubleValue() const
+double  TiXmlAttribute::DoubleValue() const
 {
 	return atof (value.c_str ());
 }
@@ -1205,23 +1323,45 @@ TiXmlNode* TiXmlComment::Clone() const
 }
 
 
-void TiXmlText::Print( FILE* cfile, int /*depth*/ ) const
+void TiXmlText::Print( FILE* cfile, int depth ) const
 {
-	TIXML_STRING buffer;
-	PutString( value, &buffer );
-	fprintf( cfile, "%s", buffer.c_str() );
+	if ( cdata )
+	{
+		int i;
+		fprintf( cfile, "\n" );
+		for ( i=0; i<depth; i++ ) {
+			fprintf( cfile, "    " );
+		}
+		fprintf( cfile, "<![CDATA[" );
+		fprintf( cfile, "%s", value.c_str() );	// unformatted output
+		fprintf( cfile, "]]>\n" );
+	}
+	else
+	{
+		TIXML_STRING buffer;
+		PutString( value, &buffer );
+		fprintf( cfile, "%s", buffer.c_str() );
+	}
 }
 
 
 void TiXmlText::StreamOut( TIXML_OSTREAM * stream ) const
 {
-	PutString( value, stream );
+	if ( cdata )
+	{
+		(*stream) << "<![CDATA[" << value << "]]>";
+	}
+	else
+	{
+		PutString( value, stream );
+	}
 }
 
 
 void TiXmlText::CopyTo( TiXmlText* target ) const
 {
 	TiXmlNode::CopyTo( target );
+	target->cdata = cdata;
 }
 
 
