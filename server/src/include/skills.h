@@ -165,6 +165,7 @@ enum skillnrs
     NROFSKILLS,
     /* always last index! */
 };
+
 typedef struct skill_struct
 {
     char           *name;       /* how to describe it to the player */

@@ -117,8 +117,6 @@
 #define GET_MAP_LIGHT(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].light )
 #define SET_MAP_LIGHT(M,X,Y,L)  ( (M)->spaces[(X) + (M)->width * (Y)].light = (sint8) L )
 #define GET_MAP_LIGHT_VALUE(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].light_value )
-#define SET_MAP_FACE_MASK(M,X,Y,L)  ( (M)->spaces[(X) + (M)->width * (Y)].mask_face = L )
-#define GET_MAP_FLOOR_FLAGS(M,X,Y)    ( (M)->spaces[(X) + (M)->width * (Y)].floor_flags )
 
 #define GET_MAP_OB(M,X,Y)   ( (M)->spaces[(X) + (M)->width * (Y)].first )
 #define GET_MAP_OB_LAST(M,X,Y)  ( (M)->spaces[(X) + (M)->width * (Y)].last )
@@ -221,11 +219,6 @@
                                    * values of blocked...
                                    */
 
-/* for server->client map protocol. Tell client how to handle its local map cache */
-#define MAP_UPDATE_CMD_SAME 0
-#define MAP_UPDATE_CMD_NEW 1
-#define MAP_UPDATE_CMD_CONNECTED 2
-
 #ifdef WIN32
 #pragma pack(push,1)
 #endif
@@ -244,10 +237,6 @@ struct Map
     struct MapCell_struct   cells[MAP_CLIENT_X][MAP_CLIENT_Y];
 };
 
-#define MAP_FLOOR_FLAG_UNIQUE 1
-#define MAP_FLOOR_FLAG_NO_PASS 2
-#define MAP_FLOOR_FLAG_PLAYER_ONLY 4
-
 /* This represents a single atomic map tile (aka square, hex etc) */
 typedef struct MapSpace_s
 {
@@ -262,21 +251,13 @@ typedef struct MapSpace_s
     sint32              light_source;                   /* light source counter - as higher as brighter light source here */
     sint32              light_value;                    /* how much light is in this tile. 0 = total dark
                                                          * 255+ = full daylight.
-                                                        */
-	archetype           *floor_arch;					/* thats the default arch from the floor object in this node.
-                                                         * we will grap from it too the face
-                                                         */	
-    New_Face            *mask_face;						/* here we need the face for masks, because it can be turnable */
+                                                         */
     int                 flags;                          /* flags about this space (see the P_ values above) */
-	uint16				floor_terrain;
-	sint16				floor_light;
     uint16              last_damage;                    /* last_damage tmp backbuffer */
     uint16              move_flags;                     /* terrain type flags (water, underwater,...) */
-    sint16              mask;							/* picture/object ID for the floor mask of this tile */
     sint8               client_mlayer[MAP_LAYERS];      /* index for layer[] - this will send to player */
     sint8               client_mlayer_inv[MAP_LAYERS];  /* same for invisible objects */
     uint8               light;                          /* How much light this space provides */
-	uint8				floor_flags;					/* floor data: flags */
 } MapSpace;
 
 #ifdef WIN32

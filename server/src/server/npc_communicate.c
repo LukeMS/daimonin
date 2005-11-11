@@ -80,10 +80,6 @@ static msglang * parse_message(const char *msg)
         return NULL;
     }
 
-	/* TODO
-     * really ugly use of 3(!) and more malloc (there is one more here) just for parsing a message.
-     * this should be done at last in static buffers.
-     */
     msgs = (msglang *) malloc(sizeof(msglang));
     msgs->messages = (char * *) malloc(sizeof(char *) * (nrofmsgs + 1));
     msgs->keywords = (char * **) malloc(sizeof(char * *) * (nrofmsgs + 1));

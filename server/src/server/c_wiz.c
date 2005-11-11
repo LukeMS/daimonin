@@ -29,6 +29,21 @@
  */
 
 /* Some commands not accepted from socket */
+#ifndef WIN32 /* ---win32 exclude unix headers */
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#endif /* end win32 */
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
 
 #include <global.h>
 
@@ -110,11 +125,11 @@ int command_kickcmd(object *ob, char *params)
     /* we kicked player params succesfull.
      * Now we give him a 1min temp ban, so he can
      * think about it.
-     * If its a "technical" kick, the 10 sec is a protection.
+     * If its a "technical" kick, the 1min is a protection.
      * Perhaps we want reset a map or whatever.
      */
     ticks = (int) (pticks_second*10.0f);
-    add_ban_entry(params, NULL, 0, ticks, ticks);
+    add_ban_entry(params, ticks, ticks, 'p');
 
     return 1;
 }
@@ -173,6 +188,9 @@ int command_kick(object *ob, char *params)
             container_unlink(CONTR(op), NULL);
             save_player(op, 1);
             CONTR(op)->socket.status = Ns_Dead;
+#if MAP_MAXTIMEOUT
+            op->map->timeout = MAP_TIMEOUT(op->map);
+#endif
         }
     }
 
@@ -1225,7 +1243,7 @@ int command_silence(object *op, char *params)
  */
 int command_ban(object *op, char *params)
 {
-    objectlink *ol, *ol_tmp;
+    objectlink *ol;
     char *str;
 
     if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
@@ -1241,29 +1259,12 @@ int command_ban(object *op, char *params)
 
         new_draw_info(NDI_UNIQUE, 0, op, "ban list");
         new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
-        for(ol = ban_list_player;ol;ol=ol_tmp)
-		{
-			ol_tmp = ol->next;
-            if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
-                remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-			else
-	            new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s -> %d left (of %d) sec", 
-				ol->objlink.ban->name ,(ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
-		}
+        for(ol = ban_list_player;ol;ol=ol->next)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
 
-        for(ol = ban_list_ip;ol;ol=ol_tmp)
-		{
-			struct sockaddr_in addr;
-			ol_tmp = ol->next;
-            if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
-                remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-			else
-			{
-				addr.sin_addr.s_addr = ol->objlink.ban->ip;
-	            new_draw_info_format(NDI_UNIQUE, 0, op, "IP: %s (%d) :: %d left (of %d) sec", inet_ntoa(addr.sin_addr),
-								ol->objlink.ban->ip, (ol->objlink.ban->ticks-pticks)/8, ol->objlink.ban->ticks_init/8);
-			}
-		}
+        for(ol = ban_list_ip;ol;ol=ol->next)
+            new_draw_info_format(NDI_UNIQUE, 0, op, "IP:%s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
+
         return 1;
     }
     if (!(str = strchr(params, ' ')))
@@ -1273,103 +1274,86 @@ int command_ban(object *op, char *params)
     *str++ = '\0';
     if(!strcmp(params,"add"))
     {
-        int ticks=0;
-        char *name, name_buf[MAX_BUF]="";
+        int ticks=-1;
+        char mode=0, name[MAX_BUF]="";
 
-        if (sscanf(str, "%s %d", name_buf, &ticks) == 2)
+        if (sscanf(str, "%s %c %d", name, &mode, &ticks) == 3)
         {
-			ticks *=8;
-			name = cleanup_string((name = name_buf));
-            if(name && name[0]!='\0')
+            if(name && name[0]!='\0' && (mode == 'i' || mode =='p'))
             {
-				uint32 ip = 0;
+                objectlink *ol, *ol_tmp;
+                int flag=FALSE;
 
-				if(isdigit(name[0])) /* if true, we have an IP */
-				{
-					ip = inet_addr(name); /* create a int from something like "127.0.0.1" */
-					name = NULL; /* important - we want add a IP, not a name */
-					for(ol = ban_list_ip;ol;ol=ol_tmp)
-					{
-						ol_tmp = ol->next;
-						if(ol->objlink.ban->ip == ip)
-							remove_ban_entry(ol);
-					}
-				}
-				else /* we go to ban an player */
-				{
-					const char *name_hash;
-			
-					transform_name_string(name);
+                for(ol = ban_list_player;ol;ol=ol_tmp)
+                {
+                    ol_tmp = ol->next;
+                    if(!strcasecmp(ol->objlink.ban->tag,name))
+                    {
+                        flag=TRUE;
+                        remove_ban_entry(ol);
+                    }
+                    break;
+                }
+                if(!flag)
+                {
+                    for(ol = ban_list_player;ol;ol=ol_tmp)
+                    {
+                        ol_tmp = ol->next;
+                        if(!strcasecmp(ol->objlink.ban->tag,name))
+                        {
+                            flag=TRUE;
+                            remove_ban_entry(ol);
+                        }
+                        break;
+                    }
+                }
 
-					name_hash = find_string(name); /* we need an shared string to check ban list */						
-					for(ol = ban_list_player;ol;ol=ol_tmp)
-					{
-						ol_tmp = ol->next;
-						if(ol->objlink.ban->name == name_hash)
-							remove_ban_entry(ol);
-					}
-				}
-
-				if(name)
-				{
-				    new_draw_info_format(NDI_UNIQUE, 0, op, "Player %s is now banned for %d seconds.", name, ticks/8);
-				    LOG(llevSystem,"Player %s is now banned for %d seconds.\n", name, ticks/8);
-				}
-				else
-				{
-				    new_draw_info_format(NDI_UNIQUE, 0, op, "IP %s is now banned for %d seconds.", name_buf, ticks/8);
-				    LOG(llevSystem, "IP %s is now banned for %d seconds.\n", name_buf, ticks/8);
-				}
-				add_ban_entry(name, name_buf, ip, ticks, ticks);
-				return 1;
-			}
+                if(flag)
+                {
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You updated the ban entry %s (%d ticks banned)", str, ticks);
+                    LOG(llevSystem,"/ban: %s updated the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
+                }
+                else
+                {
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You added the ban entry %s (%d ticks banned)", str, ticks);
+                    LOG(llevSystem,"/ban: %s added the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
+                }
+                add_ban_entry(name, ticks, ticks, mode);
+                return 1;
+            }
         }
     }
     else if(!strcmp(params,"remove"))
     {
-		char *name = cleanup_string(str);
-
-		if(name && name[0]!='\0')
+        /* we assume that a host/ip entry has not the same name
+         * as a player name... so we don't care and compare just all
+         * against the same string.
+         */
+        for(ol = ban_list_player;ol;ol=ol->next)
         {
-			if(isdigit(name[0])) /* if true, we have an IP */
-			{
-				int ip = inet_addr(name); /* create a int from something like "127.0.0.1" */
+            if(!strcmp(ol->objlink.ban->tag,str))
+            {
+                LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
+                remove_ban_entry(ol);
+                return 1;
+            }
+        }
+        for(ol = ban_list_ip;ol;ol=ol->next)
+        {
+            if(!strcmp(ol->objlink.ban->tag,str))
+            {
+                LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
+                remove_ban_entry(ol);
+                return 1;
+            }
+        }
 
-				for(ol = ban_list_ip;ol;ol=ol_tmp)
-				{
-					ol_tmp = ol->next;
-					if(ol->objlink.ban->ip == ip)
-					{
-						LOG(llevSystem,"/ban: %s unbanned the IP %s\n", query_name(op), name);
-						new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned IP %s!", name);
-						remove_ban_entry(ol);
-					}
-				}
-			}
-			else
-			{
-				const char *name_hash;
-			
-				transform_name_string(name);
-
-				name_hash = find_string(name); /* we need an shared string to check ban list */						
-				for(ol = ban_list_player;ol;ol=ol_tmp)
-				{
-					ol_tmp = ol->next;
-					if(ol->objlink.ban->name == name_hash)
-					{
-						LOG(llevSystem,"/ban: %s unbanned the player %s\n", query_name(op), name);
-						new_draw_info_format(NDI_UNIQUE, 0, op, "You unbanned player %s!", name);
-						remove_ban_entry(ol);
-					}
-				}
-			}
-			return 1;
-		}
     }
 
 ban_usage:
-    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  list | add <name|IP> <seconds> | remove <entry>");
+    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  list | add | remove <entry>");
     return 1;
 }
 

@@ -225,7 +225,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 {
     "f_sleep", "f_confused", "?f_paralyzed", "f_scared", "f_is_blind", "f_is_invisible", "f_is_ethereal", "f_is_good",
     "f_no_pick", "f_walk_on", "f_no_pass",     /* 10 */
-    "f_is_animated", NULL, "f_flying", "f_monster", "f_friendly", "?f_is_removed", "f_been_applied", "f_auto_apply",
+    "f_is_animated", "?f_slow_move", "f_flying", "f_monster", "f_friendly", "?f_is_removed", "f_been_applied", "f_auto_apply",
     "f_treasure", "f_is_neutral", /* 20 */
     "f_see_invisible", "f_can_roll", "f_generator", "f_is_turnable", "f_walk_off", "f_fly_on", "f_fly_off",
     "f_is_used_up", "f_identified", "f_reflecting",    /* 30 */
@@ -235,7 +235,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "?f_feared", "f_unique", "f_no_drop", /* 50 */
     "f_reg_f", "f_has_ready_spell", "f_surrendered", "?f_rooted", "?f_slowed",
     "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
-    "f_xrays", "?f_no_apply", NULL, "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
+    "f_xrays", "?f_no_apply", "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
     "f_only_attack", "?f_wiz", /* 70 */
     "f_stealth", "?f_wizpass", "?f_is_linked", "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
     "f_can_use_skill", "f_is_thrown",               /* 80 */
@@ -2204,7 +2204,7 @@ static int GameObject_GetIP(lua_State *L)
 
     if (CONTR(WHO))
     {
-        result = CONTR(WHO)->socket.ip_host;
+        result = CONTR(WHO)->socket.host;
         lua_pushstring(L, result);
         return 1;
     }

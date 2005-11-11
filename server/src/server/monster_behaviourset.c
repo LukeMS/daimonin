@@ -151,9 +151,6 @@ void initialize_mob_data(struct mobdata *data)
 
     data->spawn_info = NULL;
     data->idle_time = 0;
-    
-    /* Intitialize this to something valid so we don't have to worry about it */
-    data->last_movement_behaviour = &behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_FRIENDSHIP];
 }
 
 /*
@@ -334,8 +331,8 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue = op->item_level;
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags |= AI_PARAM_PRESENT;
             }
-        } else
-            last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_HOME);
+        }
+        last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_HOME);
     }
 
     /* Actions */
