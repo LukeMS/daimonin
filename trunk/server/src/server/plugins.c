@@ -572,7 +572,9 @@ void removePlugins(void)
                 removeOnePlugin(ids[i]);
     }
 }
-
+/* TODO: remove all this old style plugin functions and move them to hooks-> 
+ * This will also remove this ugly mallocs here . MT-11.2005
+ */
 
 /*****************************************************************************/
 /* command_rskill wrapper.                                                   */

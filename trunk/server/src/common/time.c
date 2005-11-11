@@ -163,6 +163,9 @@ void set_pticks_time(long t)
 {
     pticks_ums = t;
     pticks_second = 1000000.0f/(float) t;
+	pticks_socket_idle = (uint32) ((60.0f * 3.0f) * pticks_second);
+	pticks_player_idle1 = (uint32) ((60.0f * 8.0f) * pticks_second);
+	pticks_player_idle2 = (uint32) ((60.0f * 2.0f) * pticks_second);
 }
 
 void get_tod(timeofday_t *tod)

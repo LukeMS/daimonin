@@ -39,6 +39,10 @@
 /* Active list debugging: object.c (activelist_insert_inline()) */
 /*#define DEBUG_ACTIVELIST_LOG *//* log message when an object is added or removed from an active list */
 
+/* very have debugging of the whole core server loop - mainly how map data ia send & stored */
+//#define DEBUG_CORE
+//#define DEBUG_CORE_MAP
+
 /* Aggro & EXP sharing debugging: aggro.c */
 #define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
 

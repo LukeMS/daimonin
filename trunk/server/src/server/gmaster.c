@@ -210,7 +210,7 @@ int check_gmaster_list(player *pl, int mode)
         if ( ol->objlink.gm->mode >= mode /* allow a GM to activate VOL mode for example */
              && (!strcmp(ol->objlink.gm->name, "*") || !strcasecmp(pl->ob->name, ol->objlink.gm->name))
              && (!strcmp(ol->objlink.gm->password, "*") || !strcmp(pl->password, ol->objlink.gm->password))
-             && (!strcmp(ol->objlink.gm->host, "*") || !strcasecmp(pl->socket.host, ol->objlink.gm->host)))
+             && (!strcmp(ol->objlink.gm->host, "*") || !strcasecmp(pl->socket.ip_host, ol->objlink.gm->host)))
             return TRUE;
     }
 

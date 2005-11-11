@@ -67,7 +67,6 @@ void new_draw_info(int flags, int pri, object *pl, const char *buf)
         return;
     }
 
-
     /* here handle some security stuff... a bit overhead for max secure */
     if (!pl || pl->type != PLAYER)
     {
@@ -75,15 +74,7 @@ void new_draw_info(int flags, int pri, object *pl, const char *buf)
             pri, buf);
         return;
     }
-
-    if (CONTR(pl) == NULL)
-    {
-        LOG(llevBug, "BUG:: new_draw_info: called for player with contr==NULL! %s (%x - %d) msg: %s\n", query_name(pl),
-            flags, pri, buf);
-        return;
-    }
-
-    if (CONTR(pl)->state != ST_PLAYING)
+    if (!CONTR(pl) || CONTR(pl)->state != ST_PLAYING)
         return;
 
     if (pri >= CONTR(pl)->listening) /* player don't want this */

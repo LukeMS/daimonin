@@ -186,7 +186,7 @@ int fill_command_buffer(NewSocket *ns, int len)
             if (!ns->write_overflow)
             {
                 ns->write_overflow = 1;
-                LOG(llevDebug, "OVERFLOW: socket write overflow protection on! host (%s) (%d)\n", STRING_SAFE(ns->host),
+                LOG(llevDebug, "OVERFLOW: socket write overflow protection on! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
                     ns->outputbuffer.len);
             }
             return 1; /* all is ok - we just do nothing */
@@ -194,7 +194,7 @@ int fill_command_buffer(NewSocket *ns, int len)
         else if (ns->write_overflow && (ns->outputbuffer.len <= (int) (MAXSOCKBUF * 0.33)))
         {
             ns->write_overflow = 0;
-            LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host),
+            LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
                 ns->outputbuffer.len);
         }
 
@@ -270,7 +270,7 @@ void HandleClient(NewSocket *ns, player *pl)
         /* If it is a player, and they don't have any speed left, we
             * return, and will read in the data when they do have time.
               */
-        if (ns->status == Ns_Dead || (pl && pl->state == ST_PLAYING && (!pl->ob || pl->ob->speed_left < 0.0f)))
+        if (ns->status >= Ns_Zombie || (pl && pl->state == ST_PLAYING && (!pl->ob || pl->ob->speed_left < 0.0f)))
             return;
 
         /* now we need to check what our write buffer does.
@@ -284,7 +284,7 @@ void HandleClient(NewSocket *ns, player *pl)
             if (!ns->write_overflow)
             {
                 ns->write_overflow = 1;
-                LOG(llevDebug, "OVERFLOW: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->host),
+                LOG(llevDebug, "OVERFLOW: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->ip_host),
                     ns->outputbuffer.len);
             }
             return;
@@ -292,7 +292,7 @@ void HandleClient(NewSocket *ns, player *pl)
         else if (ns->write_overflow && (ns->outputbuffer.len <= (int) (MAXSOCKBUF * 0.35)))
         {
             ns->write_overflow = 0;
-            LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host),
+            LOG(llevDebug, "OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->ip_host),
                 ns->outputbuffer.len);
         }
 
@@ -303,7 +303,7 @@ void HandleClient(NewSocket *ns, player *pl)
         /* reset idle counter */
         if (pl && pl->state == ST_PLAYING)
         {
-            ns->login_count = ROUND_TAG;
+            ns->login_count = ROUND_TAG + pticks_player_idle1;
             ns->idle_flag = 0;
         }
 
@@ -417,39 +417,42 @@ static void block_until_new_connection()
 void remove_ns_dead_player(player *pl)
 {
 
-    /* remove the player from global gmaster lists */
-    if(pl->gmaster_mode != GMASTER_MODE_NO)
-        remove_gmaster_list(pl);
+    if (pl->state != ST_DEAD && pl->state != ST_ZOMBIE)
+	{
+		/* remove the player from global gmaster lists */
+		if(pl->gmaster_mode != GMASTER_MODE_NO)
+			remove_gmaster_list(pl);
 
-    /* remove player from party */
-    if(pl->group_status & GROUP_STATUS_GROUP)
-        party_remove_member(pl, TRUE);
+		/* remove player from party */
+		if(pl->group_status & GROUP_STATUS_GROUP)
+			party_remove_member(pl, TRUE);
 
-    if(gmaster_list_DM || gmaster_list_GM)
-    {
-        objectlink *ol;
-        char buf_dm[128];
+		if(gmaster_list_DM || gmaster_list_GM)
+		{
+			objectlink *ol;
+			char buf_dm[128];
 
-        sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
+			sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
 
-        for(ol = gmaster_list_DM;ol;ol=ol->next)
-            new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+			for(ol = gmaster_list_DM;ol;ol=ol->next)
+				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 
-        for(ol = gmaster_list_GM;ol;ol=ol->next)
-            new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-    }
+			for(ol = gmaster_list_GM;ol;ol=ol->next)
+				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+		}
 
-    container_unlink(pl, NULL);
-    save_player(pl->ob, 0);
+		container_unlink(pl, NULL);
+		save_player(pl->ob, 0);
 
-    if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
-    {
-        terminate_all_pets(pl->ob);
-        leave_map(pl->ob);
-    }
+		if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
+		{
+			terminate_all_pets(pl->ob);
+			leave_map(pl->ob);
+		}
 
-    LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
-    leave(pl, 1);
+		LOG(llevDebug, "remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
+	    leave(pl, 1);
+	}
 
     free_player(pl); /* we *,must* do this here and not in the memory pool - it needs to be a syncron action */
 }
@@ -462,12 +465,7 @@ void remove_ns_dead_player(player *pl)
 static int check_ip_ban(int num, uint32 ip)
 {
     int         count, i;
-    player     *pl, *ptmp = NULL;
-
-
-    /* we first check our ban list. Perhaps this IP is on it */
-    if(check_banned(NULL, ip))
-        return TRUE;
+    player      *next_tmp, *pl, *ptmp = NULL;
 
     /*return FALSE;*/ /* this will disable the IP check */
     /* lets first check sensless connected sockets
@@ -483,10 +481,10 @@ static int check_ip_ban(int num, uint32 ip)
     {
         if (init_sockets[i].status != Ns_Avail && num != i && init_sockets[i].ip == ip)
         {
-            if (++count > 1)
+            if (++count > 1 || init_sockets[i].status <= Ns_Zombie)
             {
-                LOG(llevDebug, "check_ip_ban(): socket flood. mark Ns_Dead: %d (%d.%d.%d.%d)\n", num, (ip >> 24) & 255,
-                    (ip >> 16) & 255, (ip >> 8) & 255, ip & 255);
+                LOG(llevDebug, "check_ip_ban(): socket flood. mark Ns_Dead: %d (IP %s)\n", 
+								num, init_sockets[i].ip_host );
                 init_sockets[i].status = Ns_Dead;
                 free_newsocket(&init_sockets[i]);
                 init_sockets[i].status = Ns_Avail;
@@ -495,33 +493,46 @@ static int check_ip_ban(int num, uint32 ip)
         }
     }
 
+    /* we first check our ban list. Perhaps this IP is on it */
+    if(check_banned(&init_sockets[num], NULL, ip))
+        return FALSE; /* *IF* banned, we have turned the socket to a Ns_Zombie... */
+
     /* now check the players we have */
     count = 0;
-    for (pl = first_player; pl; pl = pl->next)
+    for (pl = first_player; pl; pl = next_tmp)
     {
-        if (pl->socket.status != Ns_Dead && pl->socket.ip == ip)
-        {
-            count++;
-            if (!ptmp)
-                ptmp = pl;
-            else
-            {
-                /* lets compare the idle time.
-                         * if needed we will kick the login with the highest idle time
-                         */
-                if (ptmp->socket.login_count <= pl->socket.login_count)
-                    ptmp = pl;
+		next_tmp = pl->next;
+		if(pl->socket.ip == ip) /* we have someone playing from same IP? */
+		{
+	        if (pl->socket.status != Ns_Playing)
+			{
+				pl->socket.status = Ns_Dead;
+	            remove_ns_dead_player(pl);
+			}
+	        else /* allow 2 logged in *real* playing accounts online from same IP */
+		    {
+			    count++;
+				if (!ptmp)
+					ptmp = pl;
+				else
+				{
+					/* lets compare the idle time.
+				     * if needed we will kick the login with the highest idle time
+                     */
+				   if (ptmp->socket.login_count <= pl->socket.login_count)
+					    ptmp = pl;
 
-                /* now the tricky part: if we have to many
-                         * connects from that IP, we KICK the login
-                         * with the highest idle time.
-                         */
-                if (count > 1)
-                {
-                    LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead: %d (%d.%d.%d.%d)\n",
-                        query_name(pl->ob), num, (ip >> 24) & 255, (ip >> 16) & 255, (ip >> 8) & 255, ip & 255);
-                    ptmp->socket.status = Ns_Dead;
-                }
+	                /* now the tricky part: if we have to many
+                     * connects from that IP, we KICK the login
+                     * with the highest idle time      
+		             */
+			        if (count > 1)
+				    {
+					    LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead: %d (IP %s)\n",
+										query_name(pl->ob), num, ptmp->socket.ip_host);
+						ptmp->socket.status = Ns_Dead;
+					}
+				}
             }
         }
     }
@@ -537,7 +548,7 @@ void doeric_server(int update, struct timeval *timeout)
     int                 i, pollret, rr,
                         update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
     uint32              update_below;
-    struct sockaddr_in  addr;
+	struct sockaddr_in	addr;
     int                 addrlen = sizeof(struct sockaddr);
     player             *pl, *next;
 
@@ -566,7 +577,7 @@ void doeric_server(int update, struct timeval *timeout)
             if (init_sockets[i].status > Ns_Wait) /* exclude socket #0 which listens for new connects */
             {
                 /* kill this after 3 minutes idle... */
-                if (init_sockets[i].login_count+ ((60.0f * 3.0f) * pticks_second) <= ROUND_TAG)
+                if (init_sockets[i].login_count < ROUND_TAG)
                 {
                     free_newsocket(&init_sockets[i]);
                     init_sockets[i].status = Ns_Avail;
@@ -596,12 +607,13 @@ void doeric_server(int update, struct timeval *timeout)
         }
         else
         {
-            if (!pl->socket.idle_flag && pl->socket.login_count+(60.0f * 8.0f * pticks_second)<=ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+            if (!pl->socket.idle_flag && pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
             {
+				pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
                 pl->socket.idle_flag = 1;
                 Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
             }
-            else if (pl->socket.login_count+(60.0f * 10.0f * pticks_second)<= ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+            else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
             {
                 player *npl = pl->next;
                 Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
@@ -659,6 +671,7 @@ void doeric_server(int update, struct timeval *timeout)
             {
                 newsocknum = socket_info.allocated_sockets;
                 socket_info.allocated_sockets++;
+				memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
                 init_sockets[newsocknum].status = Ns_Avail;
             }
             while (socket_info.allocated_sockets <= socket_info.nconns + 1);
@@ -679,19 +692,18 @@ void doeric_server(int update, struct timeval *timeout)
         init_sockets[newsocknum].fd = accept(init_sockets[0].fd, (struct sockaddr *) &addr, &addrlen);
         if (init_sockets[newsocknum].fd != -1)
         {
-            i = ntohl(addr.sin_addr.s_addr);
-            if (check_ip_ban(newsocknum, addr.sin_addr.s_addr))
-            {
-                LOG(llevDebug, "Banned:: ip %d.%d.%d.%d  (socket %d)\n",
-                        (i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255,i & 255, init_sockets[newsocknum].fd);
-                close_newsocket(&init_sockets[newsocknum]);
-            }
-            else
-            {
-                LOG(llevDebug, " ip %d.%d.%d.%d  (socket %d)(#%d)\n", (i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255,
-                    i & 255, init_sockets[newsocknum].fd, newsocknum);
-                InitConnection(&init_sockets[newsocknum], i);
-            }
+			char *tmp_ip = inet_ntoa(addr.sin_addr);
+			NewSocket *ns = &init_sockets[newsocknum];
+
+			LOG(llevDebug, " ip %s (socket %d)(#%d)\n", tmp_ip, ns->fd, newsocknum);
+            InitConnection(ns, tmp_ip, addr.sin_addr.s_addr);
+            check_ip_ban(newsocknum, addr.sin_addr.s_addr);
+			if(ns->status != Ns_Zombie) /* set from ban check */
+			{
+				ns->status = Ns_Add;
+				Send_With_Handling(ns, &global_version_sl);
+			}
+
         }
         else
             LOG(llevDebug, "Error on accept! (#%d)\n", newsocknum);
@@ -716,14 +728,14 @@ void doeric_server(int update, struct timeval *timeout)
 
             if (FD_ISSET(init_sockets[i].fd, &tmp_read))
             {
-                rr = SockList_ReadPacket(&init_sockets[i], MAXSOCKBUF_IN - 1);
-                if (rr <= 0)
-                {
-                    LOG(llevDebug, "Drop Connection: host %s\n", init_sockets[i].host ? init_sockets[i].host : "NONE");
-                    init_sockets[i].status = Ns_Dead;
-                }
-                else
-                    fill_command_buffer(&init_sockets[i], MAXSOCKBUF_IN - 1);
+				rr = SockList_ReadPacket(&init_sockets[i], MAXSOCKBUF_IN - 1);
+				if (rr < 0)
+				{
+					LOG(llevDebug, "DropA Connection: host %s\n", init_sockets[i].ip_host);
+					init_sockets[i].status = Ns_Dead;
+				}
+				else
+					fill_command_buffer(&init_sockets[i], MAXSOCKBUF_IN - 1);
             }
 
             if (init_sockets[i].status == Ns_Dead)
@@ -768,10 +780,9 @@ void doeric_server(int update, struct timeval *timeout)
             if (FD_ISSET(pl->socket.fd, &tmp_read))
             {
                 rr = SockList_ReadPacket(&pl->socket, MAXSOCKBUF_IN - 1);
-                if (rr <= 0)
+                if (rr < 0)
                 {
-                    LOG(llevDebug, "Drop Connection: %s (%s)\n", (pl ? pl->ob->name : "NONE"),
-                            pl->socket.host ? pl->socket.host : "NONE");
+                    LOG(llevDebug, "DropB Connection: %s (%s)\n", query_name(pl->ob), pl->socket.ip_host);
                     pl->socket.status = Ns_Dead;
                 }
                 else

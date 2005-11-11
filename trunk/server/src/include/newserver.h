@@ -52,6 +52,8 @@ enum Sock_Status
     Ns_Wait,
     Ns_Add,
     Ns_Login,
+	Ns_Playing,
+	Ns_Zombie,
     Ns_Dead
 };
 
@@ -76,16 +78,17 @@ typedef struct SockList_struct
 typedef struct NewSocket_struct
 {
     int                 fd;
-    struct player      *pl;             /* if != NULL this socket is part of a player struct */
-    struct Map          lastmap;        /* Thats the VISIBLE map area of the player, used to send to client */
-    uint32              ip;
+    struct player      *pl;					/* if != NULL this socket is part of a player struct */
+    struct Map          lastmap;			/* Thats the VISIBLE map area of the player, used to send to client */
     uint32              login_count;        /* if someone is too long idle in the login, we kick him here! */
     int                 mapx, mapy;         /* How large a map the client wants */
     int                 mapx_2, mapy_2;     /* same like above but /2 */
-    char               *host;               /* Which host it is connected from (ip address)*/
     uint32              cs_version;         /*client/server versions */
     uint32              sc_version;
+	int					pwd_try;			/* simple password guessing security */ 
     uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
+	uint32				ip;					/* ip in raw struct sockaddr_in addr format */
+    char                ip_host[32];            /* IP as string */
     enum Sock_Status    status;
     SockList            inbuf;          /* This holds *one* command we try to handle */
     SockList            readbuf;        /* Raw data read in from the socket  */
@@ -95,7 +98,6 @@ typedef struct NewSocket_struct
     uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
     uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
     uint32              facecache       : 1;        /* If true, client is caching images */
-    uint32              sent_scroll     : 1;
     uint32              sound           : 1;        /* does the client want sound */
     uint32              map2cmd         : 1;        /* Always use map2 protocol command */
     uint32              ext_title_flag  : 1;        /* send ext title to client */
