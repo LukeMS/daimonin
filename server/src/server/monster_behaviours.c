@@ -351,6 +351,18 @@ int calc_friendship_from_attitude(object *op, object *other)
         LOG(llevBug, "BUG: calc_friendship_from_attitude() object %s is not a monster (type=%d)\n",
                 STRING_OBJ_NAME(op), op->type);
     }
+        
+    /* pet to pet and pet to owner attitude */
+    if(op->owner && op->owner == other->owner && op->owner_count == other->owner_count)
+        friendship += FRIENDSHIP_HELP;
+    else if(op->owner == other && op->owner_count == other->count)
+        friendship += FRIENDSHIP_PET;
+    /* Very basic base values. 
+     * (TODO: Replace with flexible behaviour parameters) */
+    else if (is_enemy_of(op, other))
+        friendship += FRIENDSHIP_ATTACK;
+    else if (is_friend_of(op, other))
+        friendship += FRIENDSHIP_HELP;
 
     attitudes = MOB_DATA(op)->behaviours->attitudes;
 
@@ -453,6 +465,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     int i;
     rv_vector rv;
     int nomap = 0;
+    int attitude;
 
     if (npc == NULL)
     {
@@ -567,6 +580,20 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
                 return NULL;
     }
 
+    /* Calculate attitude as early as possible */
+    attitude = calc_friendship_from_attitude(npc, other);
+
+    /* We do a last attempt at LOS test here, for mob to mob detection, 
+     * but only if the two are enemies */
+    if(nomap == 0 && other->type != PLAYER && (friendship + attitude) < 0) 
+    {
+        if(!obj_in_line_of_sight(npc, other, &rv)) 
+        {
+            LOG(llevDebug,"register_npc_known_obj(): '%s' can't see '%s'. friendship: %d + %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), friendship, attitude);
+            return NULL;
+        }
+    }
+    
     tmp = get_poolchunk(pool_mob_knownobj);
     tmp->next = NULL;
     tmp->prev = last;
@@ -588,7 +615,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     }
 
     /* Initial friendship and attitude */
-    tmp->friendship = friendship + calc_friendship_from_attitude(npc, other);
+    tmp->friendship = friendship + attitude;
     tmp->attraction = 0;
     tmp->tmp_friendship = 0;
     tmp->tmp_attraction = 0;
@@ -1478,17 +1505,6 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
     {
         tmp->tmp_friendship = tmp->friendship;
 
-        /* pet to pet and pet to owner attitudes */
-        if(op->owner && op->owner == tmp->obj->owner && op->owner_count == tmp->obj->owner_count)
-            tmp->tmp_friendship += FRIENDSHIP_HELP;
-        else if(op->owner == tmp->obj && op->owner_count == tmp->obj->count)
-            tmp->tmp_friendship += FRIENDSHIP_PET;
-        /* Replace with flexible behaviour parameters */
-        else if (is_enemy_of(op, tmp->obj))
-            tmp->tmp_friendship += FRIENDSHIP_ATTACK;
-        else if (is_friend_of(op, tmp->obj))
-            tmp->tmp_friendship += FRIENDSHIP_HELP;
-
         /* Helps us focusing on a single enemy */
         if (tmp == MOB_DATA(op)->enemy)
             tmp->tmp_friendship += FRIENDSHIP_ENEMY_BONUS;
@@ -1575,11 +1591,6 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         MOB_DATA(op)->idle_time = 0;
         if (op->enemy)
         {
-            // Is this actually referenced to anywhere else? - Gecko 20050713
-            // Thats part of the pre-AI code: "follow target without hitting it AND target out of range
-            // until last_eat counter is zero" MT-07.2005
-//            op->last_eat = 0;   /* important: thats our "we lose aggro count" - reset to zero here */
-            
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
                 play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
 
