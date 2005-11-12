@@ -301,7 +301,7 @@ void AddMeFail(char *data, int len)
 {
     LOG(LOG_MSG, "addme_failed received.\n");
     SOCKET_CloseSocket(csocket.fd);
-	Sleep(1250);
+	SDL_Delay(1250);
     GameStatus = GAME_STATUS_INIT;
     /*GameStatus = GAME_STATUS_START;*/
     /* add here error handling */
@@ -1529,7 +1529,7 @@ void VersionCmd(char *data, int len)
         SOCKET_CloseSocket(csocket.fd);
 		GameStatus = GAME_STATUS_START;
         LOG(LOG_ERROR, "%s\n", buf);
-		Sleep(3250);
+		SDL_Delay(3250);
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -1540,7 +1540,7 @@ void VersionCmd(char *data, int len)
         LOG(LOG_ERROR, "%s\n", buf);
         SOCKET_CloseSocket(csocket.fd);
 		GameStatus = GAME_STATUS_START;
-		Sleep(3250);
+		SDL_Delay(3250);
         return;
     }
     csocket.sc_version = atoi(cp);
@@ -1556,7 +1556,7 @@ void VersionCmd(char *data, int len)
         LOG(LOG_ERROR, "%s\n", buf);
         SOCKET_CloseSocket(csocket.fd);
 		GameStatus = GAME_STATUS_START;
-		Sleep(3250);
+		SDL_Delay(3250);
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -1567,7 +1567,7 @@ void VersionCmd(char *data, int len)
         LOG(LOG_ERROR, "%s\n", buf);
         SOCKET_CloseSocket(csocket.fd);
 		GameStatus = GAME_STATUS_START;
-		Sleep(3250);
+		SDL_Delay(3250);
         return;
     }
     GameStatusVersionOKFlag = TRUE;

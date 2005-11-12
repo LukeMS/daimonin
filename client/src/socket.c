@@ -136,7 +136,7 @@ int write_socket(int fd, unsigned char *buf, int len)
             draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
 	        SOCKET_CloseSocket(csocket.fd);
 			if(GameStatus != GAME_STATUS_START)
-				Sleep(3250);
+				SDL_Delay(3250);
 			GameStatus = GAME_STATUS_START;
             return -1;
         }
@@ -146,7 +146,7 @@ int write_socket(int fd, unsigned char *buf, int len)
             draw_info("SOCKET ERROR: No data written out", COLOR_RED);
 	        SOCKET_CloseSocket(csocket.fd);
 			if(GameStatus != GAME_STATUS_START)
-				Sleep(3250);
+				SDL_Delay(3250);
 			GameStatus = GAME_STATUS_START;
             return -1;
         }
@@ -247,7 +247,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     start_timer = SDL_GetTicks();
     while (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
-        Sleep(3);
+        SDL_Delay(3);
 
         /* timeout.... without connect will REALLY hang a long time */
         if (start_timer + SOCKET_TIMEOUT_SEC * 1000 < SDL_GetTicks())
@@ -608,7 +608,7 @@ int write_socket(int fd, unsigned char *buf, int len)
             draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
 	        SOCKET_CloseSocket(csocket.fd);
 			if(GameStatus != GAME_STATUS_START)
-				Sleep(3250);
+				SDL_Delay(3250);
 			GameStatus = GAME_STATUS_START;
             return -1;
         }
@@ -618,7 +618,7 @@ int write_socket(int fd, unsigned char *buf, int len)
             draw_info("SOCKET ERROR: No data written out", COLOR_RED);
 	        SOCKET_CloseSocket(csocket.fd);
 			if(GameStatus != GAME_STATUS_START)
-				Sleep(3250);
+				SDL_Delay(3250);
 			GameStatus = GAME_STATUS_START;
             return -1;
         }
