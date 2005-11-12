@@ -101,9 +101,20 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     /* No precomputed path (yet) ? */
     if (pf->path == NULL)
     {
-        /* request new path */
+        /* TODO: here we can see if an earlier pathfinding attempt failed
+         * and decide whether or not it is worth trying again. 
+         * We need some way to see if anything changed 
+         * (our position, the target position etc).
+         * Also (or alternatively), we should use a nice backoff algo like 
+         * the TCP backoff to exponentially increase the time between 
+         * pathfinding attempts */
+        /*if(QUERY_FLAG(pf, PATHFINDFLAG_PATH_FAILED))
+        {
+        }*/
+        
         if (!QUERY_FLAG(pf, PATHFINDFLAG_PATH_REQUESTED))
         {
+            /* request new path */
             pf->target_obj = target;
             if (target)
             {
@@ -425,7 +436,9 @@ void ai_fake_process(object *op, struct mob_behaviour_param *params)
 */
 inline int ai_obj_can_move(object *obj)
 {
-    if(QUERY_FLAG(obj,FLAG_STAND_STILL))
+    if(obj->map == NULL || obj->env != NULL)
+        return FALSE;
+    if(QUERY_FLAG(obj,FLAG_STAND_STILL) || QUERY_FLAG(obj,FLAG_ROOTED))
         return FALSE;
     return TRUE;
 }
@@ -502,7 +515,7 @@ int move_monster(object *op, int mode)
 
     /* Only do movement if we are actually on a map
      * (jumping out from a container should be an action) */
-    if(op->map && op->env == NULL && !QUERY_FLAG(op,FLAG_ROOTED))
+    if(ai_obj_can_move(op))
     {
         /*
          * Normal-priority movement behaviours. The first to return
@@ -511,40 +524,37 @@ int move_monster(object *op, int mode)
         response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
         response.forbidden = 0;
 
-        if(ai_obj_can_move(op))
-        {
-            for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
+        for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
                 behaviour != NULL;
                 behaviour = behaviour->next)
-            {
-                ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
+        {
+            ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
                 (op, behaviour->parameters, & response);
-                if (response.type != MOVE_RESPONSE_NONE) {
-                    MOB_DATA(op)->last_movement_behaviour = behaviour->declaration;
-                    break;
-                }
+            if (response.type != MOVE_RESPONSE_NONE) {
+                MOB_DATA(op)->last_movement_behaviour = behaviour->declaration;
+                break;
             }
-
-            /* TODO move_home alternative: move_towards_friend */
-            /* TODO make it possible to move _away_ from waypoint or object */
-
-            /* Calculate direction from response needed and execute movement */
-            dir = direction_from_response(op, &response);
-            if (dir > 0)
-            {
-                success = do_move_monster(op, dir, response.forbidden);
-                /* TODO: handle success=0 and precomputed paths/giving up */
-            } 
-
-            /* Try to avoid standing still if we aren't allowed to */
-            if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)))
-            {
-                success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
-            }
-
-            if(success)
-                did_move = 1;
         }
+
+        /* TODO move_home alternative: move_towards_friend */
+        /* TODO make it possible to move _away_ from waypoint or object */
+
+        /* Calculate direction from response needed and execute movement */
+        dir = direction_from_response(op, &response);
+        if (dir > 0)
+        {
+            success = do_move_monster(op, dir, response.forbidden);
+            /* TODO: handle success=0 and precomputed paths/giving up */
+        } 
+
+        /* Try to avoid standing still if we aren't allowed to */
+        if((dir == 0 || success == 0) && (response.forbidden & (1 << 0)))
+        {
+            success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
+        }
+
+        if(success)
+            did_move = 1;
     }
 
     /*
