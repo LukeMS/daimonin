@@ -115,11 +115,6 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
-		<Unit filename="..\..\..\src\common\info.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
 		<Unit filename="..\..\..\src\common\item.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
@@ -809,6 +804,10 @@
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
 			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\server\mtrand.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\src\server\npc_communicate.c">
 			<Option compilerVar="CC"/>
