@@ -572,10 +572,6 @@
     If set, the object is able to "roll", so it can be pushed around.
     This setting is used for boulders and barrels.
   </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-  </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
     drops it to the ground.
@@ -792,10 +788,6 @@
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -1068,10 +1060,6 @@
 
     An item with &lt;save life&gt; should not have
     any decent additional bonuses!
-  </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -1387,10 +1375,6 @@
     A godgiven item vanishes as soon as the player
     drops it to the ground.
   </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="book content" type="text">
     This is the text that appears "written" in the book.
   </attribute>
@@ -1606,11 +1590,6 @@
     If set, the container can be used as alchemy-cauldron.
     The player can put ingredients inside, close it, cast alchemy
     and if his formulae is true, he'll get what he longed for.
-  </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-    All contents of a unique container are unique as well.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -2150,11 +2129,6 @@
     Players with activated mountaineer skill can move faster here.
   </attribute>
 </section>
-  <attribute arch="unique" editor="unique map" type="bool">
-    Unique floor means that any items dropped on that spot
-    will be saved byond map reset. For permanent apartments,
-    all floor tiles must be set &lt;unique map&gt;.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
   </attribute>
@@ -2848,7 +2822,7 @@
     The &lt;key string&gt; in the door must be identical with the
     &lt;key string&gt; in the special key, then the door is unlocked.
     It is VERY important to set the &lt;key string&gt; to something that
-    is unique among the CF mapset.  
+    is unique among the mapset.  
 
     DONT EVER USE the default string "set_individual_value".
   </attribute>
@@ -4457,10 +4431,6 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     Magic bonus increases chance to hit and damage a little bit.
   </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-  </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
     drops it to the ground.
@@ -4805,10 +4775,6 @@
     done by the shooting weapon. If &lt;ignore strength&gt; is set,
     the player's strength is ignored.
   </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-  </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
     drops it to the ground.
@@ -5099,14 +5065,6 @@
     For Special Keys, material should always be set to
     "0" (no material) or "256" (adamantite). This prevents
     the key from getting burned or otherwise destroyed.
-  </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-
-    This can be used if you want to sell apartments on your
-    map: Simply sell a unique passport/key, and place
-    an inventory checker at the entrance of your apartment.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -5465,10 +5423,6 @@
    transparent. He can move through walls and doors which has the
    PASS_THRU flag set (like ghosts and other non physical monsters).
   </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
-  </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
     drops it to the ground.
@@ -5760,10 +5714,6 @@ that food.]]>
   <attribute arch="can_roll" editor="moveable" type="bool">
     If set, the object is able to "roll", so it can be pushed around.
     This setting is used for boulders and barrels.
-  </attribute>
-  <attribute arch="unique" editor="unique item" type="bool">
-    Unique items exist only one time on a server. If the item
-    is taken, lost or destroyed - it's gone for good.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
