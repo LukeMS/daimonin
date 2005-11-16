@@ -61,7 +61,7 @@ struct plugin_hooklist  hooklist    =
     add_pet,
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
-    &shstr
+    &shstr_cons
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];

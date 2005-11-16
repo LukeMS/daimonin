@@ -1415,7 +1415,7 @@ void make_formula_book(object *book, int level)
             LOG(llevBug, "BUG: formula_msg() can't find arch %s for formula.", op_name);
 
         /* item name */
-        if (formula->title != shstr.NONE)
+        if (formula->title != shstr_cons.NONE)
         {
             sprintf(retbuf, "%sThe %s of %s", retbuf, op_name, formula->title);
             /* This results in things like pile of philo. sulfur.

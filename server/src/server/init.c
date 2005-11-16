@@ -70,44 +70,44 @@ static void init_defaults()
  */
 static void init_strings()
 {
-    shstr.undead = add_string("undead");
-    shstr.none = add_string("none"); /* Used in god code */
-    shstr.NONE = add_string("NONE"); /* Used in alchemy code */
-    shstr.quarterstaff = add_string("quarterstaff");
-    shstr.battleground = add_string("battleground");
+    shstr_cons.undead = add_string("undead");
+    shstr_cons.none = add_string("none"); /* Used in god code */
+    shstr_cons.NONE = add_string("NONE"); /* Used in alchemy code */
+    shstr_cons.quarterstaff = add_string("quarterstaff");
+    shstr_cons.battleground = add_string("battleground");
 
-    shstr.clawing = add_string("clawing");
-    shstr.dragon_skin_force = add_string("dragon_skin_force");
-    shstr.dragon_ability_force = add_string("dragon_ability_force");
-    shstr.dragon = add_string("dragon");
+    shstr_cons.clawing = add_string("clawing");
+    shstr_cons.dragon_skin_force = add_string("dragon_skin_force");
+    shstr_cons.dragon_ability_force = add_string("dragon_ability_force");
+    shstr_cons.dragon = add_string("dragon");
 
-    shstr.town_portal_destination = add_string("Town portal destination");
-    shstr.existing_town_portal = add_string("Existing town portal");
+    shstr_cons.town_portal_destination = add_string("Town portal destination");
+    shstr_cons.existing_town_portal = add_string("Existing town portal");
 
-    shstr.player = add_string("player");
-    shstr.money = add_string("money");
-    shstr.RANK_FORCE = add_string("RANK_FORCE");
-    shstr.rank_force = add_string("rank_force");
-    shstr.ALIGNMENT_FORCE = add_string("ALIGNMENT_FORCE");
-    shstr.alignment_force = add_string("alignment_force");
-    shstr.GUILD_FORCE = add_string("GUILD_FORCE");
-    shstr.guild_force = add_string("guild_force");
-    shstr.player_info = add_string("player_info");
+    shstr_cons.player = add_string("player");
+    shstr_cons.money = add_string("money");
+    shstr_cons.RANK_FORCE = add_string("RANK_FORCE");
+    shstr_cons.rank_force = add_string("rank_force");
+    shstr_cons.ALIGNMENT_FORCE = add_string("ALIGNMENT_FORCE");
+    shstr_cons.alignment_force = add_string("alignment_force");
+    shstr_cons.GUILD_FORCE = add_string("GUILD_FORCE");
+    shstr_cons.guild_force = add_string("guild_force");
+    shstr_cons.player_info = add_string("player_info");
 
-    shstr.special_prayer = add_string("special prayer");
-    shstr.grace_limit = add_string("grace limit");
-    shstr.restore_grace = add_string("restore grace");
-    shstr.restore_hitpoints = add_string("restore hitpoints");
-    shstr.restore_hitpoints = add_string("restore spellpoints");
-    shstr.heal_spell = add_string("heal spell");
-    shstr.remove_curse = add_string("remove curse");
-    shstr.remove_damnation = add_string("remove damnation");
-    shstr.heal_depletion = add_string("heal depletion");
-    shstr.message = add_string("message");
-    shstr.enchant_weapon = add_string("enchant weapon");
+    shstr_cons.special_prayer = add_string("special prayer");
+    shstr_cons.grace_limit = add_string("grace limit");
+    shstr_cons.restore_grace = add_string("restore grace");
+    shstr_cons.restore_hitpoints = add_string("restore hitpoints");
+    shstr_cons.restore_hitpoints = add_string("restore spellpoints");
+    shstr_cons.heal_spell = add_string("heal spell");
+    shstr_cons.remove_curse = add_string("remove curse");
+    shstr_cons.remove_damnation = add_string("remove damnation");
+    shstr_cons.heal_depletion = add_string("heal depletion");
+    shstr_cons.message = add_string("message");
+    shstr_cons.enchant_weapon = add_string("enchant weapon");
 
-    shstr.Eldath = add_string("Eldath"); /* old and incorrect god */
-    shstr.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
+    shstr_cons.Eldath = add_string("Eldath"); /* old and incorrect god */
+    shstr_cons.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
 }
 
 /*
@@ -1177,9 +1177,8 @@ void init(int argc, char **argv)
 void init_library()
 {
     init_environ();
-    init_globals();
     init_hash_table();
-    global_string_none = add_string("none");
+    init_globals();
     init_mempools(); /* Inits the pooling memory manager and the new object system */
     init_vars();
     init_block();

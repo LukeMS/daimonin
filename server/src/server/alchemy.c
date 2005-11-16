@@ -116,7 +116,7 @@ void attempt_do_alchemy(object *caster, object *cauldron)
             if (rp)
             {
 #ifdef ALCHEMY_DEBUG
-                if (rp->title != shstr.NONE)
+                if (rp->title != shstr_cons.NONE)
                     LOG(llevDebug, "WIZ got formula: %s of %s\n", rp->arch_name, rp->title);
                 else
                     LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n", rp->arch_name, formula / rp->index);
@@ -338,7 +338,7 @@ object * make_item_from_recipe(object *cauldron, recipe *rp)
     }
 
     /* Find the appropriate artifact template...*/
-    if (rp->title != shstr.NONE)
+    if (rp->title != shstr_cons.NONE)
     {
         if ((art = locate_recipe_artifact(rp)) == NULL)
         {

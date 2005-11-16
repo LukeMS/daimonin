@@ -455,7 +455,7 @@ int check_item(object *op, const char *item)
     op = op->below;
     while (op != NULL)
     {
-        if (strcmp(op->arch->name, item) == 0)
+        if (op->arch->name == item)
         {
             if (!QUERY_FLAG(op, FLAG_CURSED) && !QUERY_FLAG(op, FLAG_DAMNED)
                 /* Loophole bug? -FD- */ && !QUERY_FLAG(op, FLAG_UNPAID))
@@ -480,7 +480,7 @@ void eat_item(object *op, const char *item)
 
     while (op != NULL)
     {
-        if (strcmp(op->arch->name, item) == 0)
+        if (op->arch->name == item)
         {
             decrease_ob_nr(op, op->nrof);
             op = prev;
@@ -832,7 +832,7 @@ int convert_item(object *item, object *converter)
      * it wants some amount.  We don't make change (ie, if something costs
      * 3 gp and player drops a platinum, tough luck)
      */
-    if (CONV_FROM(converter) == shstr.money)
+    if (CONV_FROM(converter) == shstr_cons.money)
     {
         sint64 cost;
         nr = (int) (((sint64)item->nrof * item->value) / (sint64)CONV_NEED(converter));
@@ -1841,7 +1841,7 @@ static object * find_special_prayer_mark(object *op, int spell)
     object *tmp;
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
-        if (tmp->type == FORCE && tmp->slaying && tmp->slaying == shstr.special_prayer && tmp->stats.sp == spell)
+        if (tmp->type == FORCE && tmp->slaying && tmp->slaying == shstr_cons.special_prayer && tmp->stats.sp == spell)
             return tmp;
     return 0;
 }
@@ -2520,9 +2520,9 @@ int dragon_eat_flesh(object *op, object *meal)
     {
         if (tmp->type == FORCE)
         {
-            if (tmp->arch->name == shstr.dragon_skin_force)
+            if (tmp->arch->name == shstr_cons.dragon_skin_force)
                 skin = tmp;
-            else if (tmp->arch->name == shstr.dragon_ability_force)
+            else if (tmp->arch->name == shstr_cons.dragon_ability_force)
                 abil = tmp;
         }
     }

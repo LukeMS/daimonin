@@ -698,7 +698,7 @@ void enter_exit(object *op, object *exit_ob)
                 /* remove an old force with a slaying field == portal_dest */
                 for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
                 {
-                    if (tmp->type == FORCE && tmp->slaying && tmp->slaying == shstr.town_portal_destination)
+                    if (tmp->type == FORCE && tmp->slaying && tmp->slaying == shstr_cons.town_portal_destination)
                         break;
                 }
                 if (tmp)
@@ -1151,7 +1151,6 @@ void cleanup(int ret)
     write_todclock();   /* lets just write the clock here */
     save_ban_file();
 
-    FREE_AND_CLEAR_HASH2(global_string_none);
     free(global_sl.buf);
 
     /* that must be redone: clear cleanup so we know 100% all memory is freed */

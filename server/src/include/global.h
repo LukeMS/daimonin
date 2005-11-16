@@ -456,7 +456,6 @@ EXTERN SockList                 global_sl;
 EXTERN archetype               *global_aggro_history_arch;
 EXTERN archetype               *global_dmg_info_arch;
 
-EXTERN const char              *global_string_none; /* for quick search for string "none" */
 EXTERN object                  *active_objects; /* List of active objects that need to be processed */
 EXTERN object                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */
 EXTERN object                  *next_active_object; /* Loop index for process_events(), might be modified during the loop */
@@ -560,7 +559,7 @@ EXTERN struct shstr_constants
     const char *enchant_weapon;
     const char *Eldath;
     const char *the_Tabernacle;
-} shstr;
+} shstr_cons;
 
 EXTERN Animations              *animations;
 EXTERN int                      num_animations, animations_allocated, bmaps_checksum;

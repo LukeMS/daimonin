@@ -888,8 +888,8 @@ void check_login(object *op)
                 if (tmp->stats.Wis)
                 {
                     /* if we have old beta 1 deity Eldath - change to Tabernacle! */
-                    if (tmp->title && tmp->title == shstr.Eldath)
-                        FREE_AND_ADD_REF_HASH(tmp->title, shstr.the_Tabernacle);
+                    if (tmp->title && tmp->title == shstr_cons.Eldath)
+                        FREE_AND_ADD_REF_HASH(tmp->title, shstr_cons.the_Tabernacle);
                 }
             }
         }
@@ -965,9 +965,9 @@ void check_login(object *op)
         {
             if (tmp->type == FORCE)
             {
-                if (tmp->arch->name == shstr.dragon_ability_force)
+                if (tmp->arch->name == shstr_cons.dragon_ability_force)
                     abil = tmp;
-                else if (tmp->arch->name == shstr.dragon_skin_force)
+                else if (tmp->arch->name == shstr_cons.dragon_skin_force)
                     skin = tmp;
             }
         }
