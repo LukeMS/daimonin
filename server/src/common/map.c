@@ -39,8 +39,6 @@ int map_tiled_reverse[TILED_MAPS]           =
     2, 3, 0, 1, 6, 7, 4, 5
 };
 
-#define DEBUG_OLDFLAGS 1
-
 #if 0
 /* If 0 this block because I don't know if it is still needed.
  * if it is, it really should be done via autoconf now days
@@ -886,6 +884,23 @@ int arch_out_of_map(archetype *at, mapstruct *m, int x, int y)
     return 0;
 }
 
+/* load_objects() will fill a map but not set the tile node flags.
+ * This help function will loop through the map and set the nodes 
+ */
+static inline void update_map_tiles(mapstruct *m)
+{
+	int i,j, yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
+	MapSpace *msp = GET_MAP_SPACE_PTR(m,0,0);
+
+    for (i = 0; i < xl; i++)
+    {
+        for (j = 0; j < yl; j++)
+        {
+			update_position(m, msp++, i, j);
+		}
+	}
+}
+
 /*
  * Loads (ands parses) the objects into a given map from the specified
  * file pointer.
@@ -907,15 +922,16 @@ int arch_out_of_map(archetype *at, mapstruct *m, int x, int y)
  * in this recursive structure was the hard part but it will work now
  * without problems. MT-25.02.2004
  */
-int load_objects(mapstruct *m, FILE *fp, int mapflags)
+void load_objects(mapstruct *m, FILE *fp, int mapflags)
 {
-    int         i, unique = FALSE;
+    int         i;
     archetype  *tail;
     void       *mybuffer;
     object     *op, *prev = NULL, *last_more = NULL, *tmp;
 
     op = get_object();
     op->map = m; /* To handle buttons correctly */
+	op->map->map_flags |= MAP_FLAG_NO_UPDATE; /* be sure to avoid tile updating in the loop below */
 
     mybuffer = create_loader_buffer(fp);
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, mapflags)))
@@ -944,23 +960,11 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
 			msp->floor_terrain = op->terrain_type;
             msp->floor_light = op->last_sp;
 
-			if(QUERY_FLAG(op,FLAG_UNIQUE))
-				msp->floor_flags |= MAP_FLOOR_FLAG_UNIQUE;
 			if(QUERY_FLAG(op,FLAG_NO_PASS))
 				msp->floor_flags |= MAP_FLOOR_FLAG_NO_PASS;
 			if(QUERY_FLAG(op,FLAG_PLAYER_ONLY))
 				msp->floor_flags |= MAP_FLOOR_FLAG_PLAYER_ONLY;
 
-			/* would it not be smart to set a global "load map" and then 
-             * disable in that case in insert_ob_xxx() the update_position
-             * and force a 2nd parse step here where we update all at once?
-             */
-	        msp->update_tile++; /* always be sure we calc the node new */
-			if(msp->floor_flags)
-			{		
-	            msp->flags |= (P_NEED_UPDATE | P_NO_ERROR | P_FLAGS_ONLY);
-		        update_position(m, op->x, op->y);
-			}
 			goto next;
 		}
         else if (op->type == TYPE_FLOORMASK)
@@ -992,11 +996,6 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
         {
             add_linked_spawn(op);
         }
-
-        if (QUERY_FLAG(op, FLAG_UNIQUE))
-            unique = TRUE;                    /* we CAN avoid this check by check the map in the editor first
-                                             * and set the map data direct in the original map
-                                             */
 
         /* important pre set for the animation/face of a object */
         if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
@@ -1134,14 +1133,14 @@ next:
      * will add a light source to the caller and then the caller itself
      * here again...
      */
+	update_map_tiles(m);
+	op->map->map_flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
     m->in_memory = MAP_IN_MEMORY;
 
     /* this is the only place we can insert this because the
      * recursive nature of load_objects().
      */
     check_light_source_list(m);
-
-    return unique;
 }
 
 /* This saves all the objects on the map in a (most times) non destructive fashion.
@@ -1152,9 +1151,10 @@ next:
  * The function/engine is now multi arch/tiled map save - put on the
  * map what you like. MT-07.02.04
  */
-void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
+void save_objects(mapstruct *m, FILE *fp, int flag)
 {
     static object *floor_g=NULL, *fmask_g=NULL;
+	int		yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
     char   *bptr=NULL;
@@ -1202,9 +1202,9 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
      * and i fear the code and callings in move_apply() will need some more carefully
      * examination.
      */
-    for (i = 0; i < MAP_WIDTH(m); i++)
+    for (i = 0; i < xl; i++)
     {
-        for (j = 0; j < MAP_HEIGHT(m); j++)
+        for (j = 0; j < yl; j++)
         {
             for (op = get_map_ob(m, i, j); op; op = otmp)
             {
@@ -1386,9 +1386,9 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
      * That means all button/mashine relations are correct.
      */
 
-    for (i = 0; i < MAP_WIDTH(m); i++)
+    for (i = 0; i < xl; i++)
     {
-        for (j = 0; j < MAP_HEIGHT(m); j++)
+        for (j = 0; j < yl; j++)
         {
 			MapSpace *mp = &m->spaces[i + m->width * j];
 
@@ -1400,10 +1400,6 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 				floor_g->last_sp = mp->floor_light;
 				floor_g->x = i;
 				floor_g->y = j;
-				if(mp->floor_flags & MAP_FLOOR_FLAG_UNIQUE)
-					SET_FLAG(floor_g, FLAG_UNIQUE);
-				else
-					CLEAR_FLAG(floor_g, FLAG_UNIQUE);
 
 				if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS )
 					SET_FLAG(floor_g, FLAG_NO_PASS);
@@ -1464,20 +1460,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     tmp->x = op->x - op->arch->clone.x;
                     tmp->y = op->y - op->arch->clone.y;
 
-                    if (QUERY_FLAG(tmp, FLAG_UNIQUE))
-                    {
-                        if(!fp2)
-                        {
-                            if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
-                                /* we give an error here... thats really a awful bug */
-                                LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
-
-                            LOG(llevDebug, "Saving unique items map to %s\n", bptr);
-                        }
-                        save_object(fp2, tmp, 3);
-                    }
-                    else
-                        save_object(fp, tmp, 3);
+                    save_object(fp, tmp, 3);
 
                     tmp->x = xt;
                     tmp->y = yt;
@@ -1502,20 +1485,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     continue;
                 }
 
-                if (QUERY_FLAG(op, FLAG_UNIQUE))
-                {
-                    if(!fp2)
-                    {
-                        if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
-                            /* we give an error here... thats really a awful bug */
-                            LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
-
-                        LOG(llevDebug, "Saving unique items map to %s\n", bptr);
-                    }
-                    save_object(fp2, op, 3);
-                }
-                else
-                    save_object(fp, op, 3);
+                save_object(fp, op, 3);
 
                 if (op->more) /* its a head (because we had tails tested before) */
                 {
@@ -1535,13 +1505,6 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
             } /* for this space */
         } /* for this j */
     }
-
-    if(fp2 && fp2 != fp) /* if so, we have created fp2 here! */
-    {
-        fclose(fp2);
-        if(bptr)
-            chmod(bptr, SAVE_MODE);
-    }
 }
 
 /*
@@ -1557,24 +1520,10 @@ mapstruct * get_linked_map()
     if (map == NULL)
         LOG(llevError, "ERROR: get_linked_map(): OOM.\n");
 
-    /* why we do this? Is it really needed to put a new map on the end
-    * of the list? even when - add a last_map. So, we are smart and do
-    * a FILO list here.
-    */
-    /*
-    for (mp = first_map; mp != NULL && mp->next != NULL; mp = mp->next)
-        ;
-    if (mp == NULL)
-        first_map = map;
-    else
-        mp->next = map;
-    */
-    /* much smarter ... */
     map->next = first_map;
     first_map = map;
 
     map->in_memory = MAP_SWAPPED;
-    map->has_unique = FALSE;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
      */
@@ -1768,10 +1717,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
         {
             m->difficulty = atoi(value);
         }
-        else if (!strcmp(key, "has_unique"))
-        {
-            m->has_unique = atoi(value);
-        }
         else if (!strcmp(key, "darkness"))
         {
             MAP_DARKNESS(m) = atoi(value);
@@ -1955,7 +1900,6 @@ mapstruct * load_original_map(const char *filename, int flags)
 {
     FILE       *fp;
     mapstruct  *m;
-    int         uni;
     char        pathname[MAX_BUF];
     char        tmp_fname[MAX_BUF];
 
@@ -2011,10 +1955,7 @@ mapstruct * load_original_map(const char *filename, int flags)
     m->in_memory = MAP_LOADING;
 
     LOG(llevDebug, "load objs:");
-    uni = load_objects(m, fp, (flags & (MAP_BLOCK | MAP_STYLE)) | MAP_ORIGINAL);
-    if (!(flags & MAP_PLAYER_UNIQUE))
-        m->has_unique = uni;
-
+    load_objects(m, fp, (flags & (MAP_BLOCK | MAP_STYLE)) | MAP_ORIGINAL);
     LOG(llevDebug, "close. ");
     fclose(fp);
     LOG(llevDebug, "post set. ");
@@ -2086,62 +2027,6 @@ static mapstruct * load_temporary_map(mapstruct *m)
     fclose(fp);
     LOG(llevDebug, "done!\n");
     return m;
-}
-
-/******************************************************************************
- * This is the start of unique map handling code
- *****************************************************************************/
-
-/* This goes through map 'm' and removed any unique items on the map. */
-static void delete_unique_items(mapstruct *m)
-{
-    int     i, j, unique = 0;
-    object *op, *next;
-
-    for (i = 0; i < MAP_WIDTH(m); i++)
-        for (j = 0; j < MAP_HEIGHT(m); j++)
-        {
-			if(GET_MAP_FLOOR_FLAGS(m,i,j) & MAP_FLOOR_FLAG_UNIQUE)
-	            unique = 1;
-			else
-	            unique = 0;
-            for (op = get_map_ob(m, i, j); op; op = next)
-            {
-                next = op->above;
-                if (op->head == NULL && (QUERY_FLAG(op, FLAG_UNIQUE) || unique))
-                {
-                    if (QUERY_FLAG(op, FLAG_IS_LINKED))
-                        remove_button_link(op);
-                    activelist_remove(op, op->map);
-                    remove_ob(op);
-                    /* check off should be right here ... */
-                    check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
-                }
-            }
-        }
-}
-
-
-/*
- * Loads unique objects from file(s) into the map which is in memory
- * m is the map to load unique items into.
- */
-static void load_unique_objects(mapstruct *m)
-{
-    FILE   *fp;
-    char   *fptr;
-
-    if ((fp = fopen((fptr=create_items_path(m->path)), "r")))
-    {
-        LOG(llevDebug, "open unique items file for %s\n", fptr);
-
-        m->in_memory = MAP_LOADING;
-        if (m->tmpname == NULL)    /* if we have loaded unique items from */
-            delete_unique_items(m); /* original map before, don't duplicate them */
-        load_objects(m, fp, 0);
-        fclose(fp);
-        unlink(fptr);
-    }
 }
 
 
@@ -2226,8 +2111,6 @@ int new_save_map(mapstruct *m, int flag)
         fprintf(fp, "enter_x %d\n", m->enter_x);
     if (m->enter_y)
         fprintf(fp, "enter_y %d\n", m->enter_y);
-    if (m->has_unique)
-        fprintf(fp, "has_unique %d\n", m->has_unique);
     if (m->msg)
         fprintf(fp, "msg\n%sendmsg\n", m->msg);
     if (MAP_UNIQUE(m))
@@ -2263,36 +2146,7 @@ int new_save_map(mapstruct *m, int flag)
     }
     fprintf(fp, "end\n");
 
-    /* In the game save unique items in the different file, but
-     * in the editor save them to the normal map file.
-     * If unique map, save files in the proper destination (set by
-     * player)
-     */
-    if ((flag == 0 || flag == 2) && !MAP_UNIQUE(m))
-    {
-        if(m->has_unique) /* this original map has default unique items stored.
-                           * to ensure we always have them right set, we must force
-                           * a even clear unique file to make it consistent over server
-                           * resets.
-                           */
-        {
-            FILE *fp2;
-            char *bptr;
-            if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
-                /* we give an error here... thats really a awful bug */
-                LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
-
-            LOG(llevDebug, "Saving unique items map to %s\n", bptr);
-
-            save_objects(m, fp, fp2, 0);
-            /* flcose() is called in save_objects */
-            chmod(bptr, SAVE_MODE);
-        }
-        else
-            save_objects(m, fp, NULL, 0);
-    }
-    else /* save same file when not playing, like in editor */
-        save_objects(m, fp, fp, 0);
+    save_objects(m, fp, 0);
 
     fclose(fp);
     chmod(filename, SAVE_MODE);
@@ -2307,11 +2161,12 @@ int new_save_map(mapstruct *m, int flag)
 void free_all_objects(mapstruct *m)
 {
     int     i, j;
+	int		yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     object *op;
 
     /*LOG(llevDebug,"FAO-start: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
-    for (i = 0; i < MAP_WIDTH(m); i++)
-        for (j = 0; j < MAP_HEIGHT(m); j++)
+    for (i = 0; i < xl; i++)
+        for (j = 0; j < yl; j++)
         {
             object *previous_obj    = NULL;
             while ((op = GET_MAP_OB(m, i, j)) != NULL)
@@ -2533,6 +2388,9 @@ mapstruct * ready_map_name(const char *name, int flags)
     if ((flags & (MAP_FLUSH | MAP_PLAYER_UNIQUE)) || !m)
     {
         /* first visit or time to reset */
+		/* instanced maps should NEVER be saved as tmp maps!! 
+         * this must be fixed
+         */
         if (m)
         {
             clean_tmp_map(m);   /* Doesn't make much difference */
@@ -2542,12 +2400,6 @@ mapstruct * ready_map_name(const char *name, int flags)
         /* create and load a map */
         if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
             return NULL;
-
-        /* If a player unique map, no extra unique object file to load.
-            * if from the editor, likewise.
-            */
-        if (!(flags & (MAP_FLUSH | MAP_PLAYER_UNIQUE)))
-            load_unique_objects(m);
     }
     else
     {
@@ -2555,9 +2407,6 @@ mapstruct * ready_map_name(const char *name, int flags)
         m = load_temporary_map(m);
         if (m == NULL)
             return NULL;
-
-        LOG(llevDebug, "RMN: unique. ");
-        load_unique_objects(m);
 
         LOG(llevDebug, "clean. ");
         clean_tmp_map(m);
@@ -2621,33 +2470,36 @@ void free_all_maps()
  * has a living creatures, prevents people from passing
  * through, etc)
  */
-void update_position(mapstruct *m, int x, int y)
+void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
 {
     object     *tmp;
     MapSpace   *mp;
-    int         i, ii, flags, move_flags, light;
-
-#ifdef DEBUG_OLDFLAGS
+    int         i, ii, flags;
     int         oldflags;
-    if (!((oldflags = GET_MAP_FLAGS(m, x, y)) & (P_NEED_UPDATE | P_FLAGS_UPDATE)))
-        LOG(llevDebug, "DBUG: update_position called with P_NEED_UPDATE|P_FLAGS_UPDATE not set: %s (%d, %d)\n", m->path,
-            x, y);
-#endif
 
-    flags = oldflags & P_NEED_UPDATE; /* save our update flag */
+	if(mspace)
+	{
+		mp = mspace;
+	    flags = oldflags = (P_NO_ERROR | P_NEED_UPDATE | P_FLAGS_UPDATE);
+	}
+	else
+	{
+	    if (!((oldflags = GET_MAP_FLAGS(m, x, y)) & (P_NEED_UPDATE | P_FLAGS_UPDATE)))
+		    LOG(llevDebug, "DBUG: update_position called with P_NEED_UPDATE|P_FLAGS_UPDATE not set: %s (%d, %d)\n", m->path, x, y);
+		mp = &m->spaces[x + m->width * y];
+	    flags = oldflags & P_NEED_UPDATE; /* save our update flag */
+	}
+
 
     /* update our flags */
-	mp = &m->spaces[x + m->width * y];
     if (oldflags & P_FLAGS_UPDATE)
     {
 #ifdef DEBUG_CORE
         LOG(llevDebug, "UP - FLAGS: %d,%d\n", x, y);
 #endif
         /*LOG(llevDebug,"flags:: %x (%d, %d) %x (NU:%x NE:%x)\n", oldflags, x, y,P_NEED_UPDATE|P_NO_ERROR,P_NEED_UPDATE,P_NO_ERROR);*/
-        light = move_flags = 0;
 
-        /* This is a key function and highly often called - every saved tick is good.
-         */
+        /* This is a key function and highly often called - every saved tick is good. */
 		if(mp->floor_flags & MAP_FLOOR_FLAG_NO_PASS)
 			flags |= P_NO_PASS;
 		if(mp->floor_flags & MAP_FLOOR_FLAG_PLAYER_ONLY)
@@ -2727,19 +2579,11 @@ void update_position(mapstruct *m, int x, int y)
         */ 
         } /* for stack of objects */
 
-#ifdef DEBUG_OLDFLAGS
-        /* we don't want to rely on this function to have accurate flags, but
-         * since we're already doing the work, we calculate them here.
-         * if they don't match, logic is broken someplace.
-         */
         if (((oldflags & ~(P_FLAGS_UPDATE | P_FLAGS_ONLY | P_NO_ERROR)) != flags) && (!(oldflags & P_NO_ERROR)))
             LOG(llevDebug, "DBUG: update_position: updated flags do not match old flags: %s (%d,%d) old:%x != %x\n",
                 m->path, x, y, (oldflags & ~P_NEED_UPDATE), flags);
-#endif
 
-        SET_MAP_FLAGS(m, x, y, flags);
-        /*SET_MAP_MOVE_FLAGS(m, x, y, move_flags);*/
-        /*    SET_MAP_LIGHT(m,x,y,light);*/
+		mp->flags = flags;
     } /* end flag update */
 
     /* check we must rebuild the map layers for client view */

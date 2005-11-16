@@ -1149,7 +1149,7 @@ void update_object(object *op, int action)
         if (newflags & (P_FLAGS_UPDATE))  /* rebuild flags */
         {
             msp->flags |= (newflags | P_NO_ERROR | P_FLAGS_ONLY);
-            update_position(op->map, op->x, op->y);
+            update_position(op->map, NULL, op->x, op->y);
         }
         else
             msp->flags |= newflags;
@@ -1968,9 +1968,12 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
         }
     }
 
-    mc->update_tile++; /* we updated something here - mark this tile as changed! */
-    /* updates flags (blocked, alive, no magic, etc) for this map space */
-    update_object(op, UP_OBJ_INSERT);
+	if(!(op->map->map_flags & MAP_FLAG_NO_UPDATE))
+	{
+	    mc->update_tile++; /* we updated something here - mark this tile as changed! */
+		/* updates flags (blocked, alive, no magic, etc) for this map space */
+		update_object(op, UP_OBJ_INSERT);
+	}
 
     /* See if op moved between maps */
     if(op->speed)

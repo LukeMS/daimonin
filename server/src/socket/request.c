@@ -1289,7 +1289,7 @@ void draw_client_map2(object *pl)
                 LOG(llevDebug, "P_NEED_UPDATE (%s) pos:(%d,%d)\n", query_name(pl), nx, ny);
 #endif
                 msp->flags &= ~P_FLAGS_ONLY;
-                update_position(m, nx, ny);
+                update_position(m, NULL, nx, ny);
             }
 
             /* lets check for changed blocksview - but only tile which have

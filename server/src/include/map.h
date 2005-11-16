@@ -244,7 +244,6 @@ struct Map
     struct MapCell_struct   cells[MAP_CLIENT_X][MAP_CLIENT_Y];
 };
 
-#define MAP_FLOOR_FLAG_UNIQUE 1
 #define MAP_FLOOR_FLAG_NO_PASS 2
 #define MAP_FLOOR_FLAG_PLAYER_ONLY 4
 
@@ -285,31 +284,32 @@ typedef struct MapSpace_s
 
 /* map flags for global map settings - used in ->map_flags */
 #define MAP_FLAG_NOTHING            0
-#define MAP_FLAG_OUTDOOR            1       /* map is outdoor map - daytime effects are on */
-#define MAP_FLAG_UNIQUE             2       /* special unique map - see docs */
-#define MAP_FLAG_FIXED_RTIME        4       /* if true, reset time is not affected by
+#define MAP_FLAG_OUTDOOR            (2^0)       /* map is outdoor map - daytime effects are on */
+#define MAP_FLAG_UNIQUE             (2^1)       /* special unique map - see docs */
+#define MAP_FLAG_FIXED_RTIME        (2^2)       /* if true, reset time is not affected by
                                              * players entering/exiting map
                                              */
-#define MAP_FLAG_NOMAGIC            8       /* no sp based spells */
-#define MAP_FLAG_NOPRIEST           16      /* no grace baes spells allowed */
-#define MAP_FLAG_NOHARM             32      /* allow only no attack, no debuff spells
+#define MAP_FLAG_NOMAGIC            (2^3)       /* no sp based spells */
+#define MAP_FLAG_NOPRIEST           (2^4)      /* no grace baes spells allowed */
+#define MAP_FLAG_NOHARM             (2^5)      /* allow only no attack, no debuff spells
                                              * this is city default setting - heal for example
                                              * is allowed on you and others but no curse or
                                              * fireball or abusing stuff like darkness or create walls
                                              */
-#define MAP_FLAG_NOSUMMON           64      /* don't allow any summon/pet summon spell.
+#define MAP_FLAG_NOSUMMON           (2^6)      /* don't allow any summon/pet summon spell.
                                              * this includes "call summons" for calling pets from other maps
                                              */
-#define MAP_FLAG_FIXED_LOGIN        128     /* when set, a player login on this map will forced
+#define MAP_FLAG_FIXED_LOGIN        (2^7)     /* when set, a player login on this map will forced
                                              * to default enter_x/enter_y of this map.
                                              * this avoid map stucking and treasure camping
                                              */
-#define MAP_FLAG_PERMDEATH          256     /* this map is a perm death. */
-#define MAP_FLAG_ULTRADEATH         1024    /* this map is a ultra death map */
-#define MAP_FLAG_ULTIMATEDEATH      2048    /* this map is a ultimate death map */
-#define MAP_FLAG_PVP                4096    /* PvP is possible on this map */
-#define MAP_FLAG_NO_SAVE            8192    /* don't save maps - atm only used with unique maps */
+#define MAP_FLAG_PERMDEATH          (2^8)     /* this map is a perm death. */
+#define MAP_FLAG_ULTRADEATH         (2^9)    /* this map is a ultra death map */
+#define MAP_FLAG_ULTIMATEDEATH      (2^10)    /* this map is a ultimate death map */
+#define MAP_FLAG_PVP                (2^11)    /* PvP is possible on this map */
+#define MAP_FLAG_NO_SAVE            (2^12)    /* don't save maps - atm only used with unique maps */
 
+#define MAP_FLAG_NO_UPDATE          (2^31)    /* don't save maps - atm only used with unique maps */
 
 #define SET_MAP_TILE_VISITED(m, x, y, id) { \
     if((m)->pathfinding_id != (id)) { \
@@ -385,7 +385,6 @@ typedef struct mapdef
     uint16          width;
     uint16          enter_x;                 /* enter_x and enter_y are default entrance location */
     uint16          enter_y;                 /* on the map if none are set in the exit */
-    uint16          has_unique;              /* this original map has unique items! */
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other

@@ -731,7 +731,7 @@ void doeric_server(int update, struct timeval *timeout)
 				rr = SockList_ReadPacket(&init_sockets[i], MAXSOCKBUF_IN - 1);
 				if (rr < 0)
 				{
-					LOG(llevDebug, "DropA Connection: host %s\n", init_sockets[i].ip_host);
+					LOG(llevDebug, "Drop1 Connection: host %s\n", init_sockets[i].ip_host);
 					init_sockets[i].status = Ns_Dead;
 				}
 				else
@@ -782,7 +782,7 @@ void doeric_server(int update, struct timeval *timeout)
                 rr = SockList_ReadPacket(&pl->socket, MAXSOCKBUF_IN - 1);
                 if (rr < 0)
                 {
-                    LOG(llevDebug, "DropB Connection: %s (%s)\n", query_name(pl->ob), pl->socket.ip_host);
+                    LOG(llevDebug, "Drop2 Connection: %s (%s)\n", query_name(pl->ob), pl->socket.ip_host);
                     pl->socket.status = Ns_Dead;
                 }
                 else
