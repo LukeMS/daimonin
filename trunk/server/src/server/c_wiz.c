@@ -1026,13 +1026,10 @@ int command_reset(object *op, char *params)
     object*dummy =  NULL;
     const char     *mapfile_sh;
 
-    LOG(llevBug, "START RESET MAP1\n");
-
     if (params == NULL)
         m = has_been_loaded_sh(op->map->path);
     else
     {
-        LOG(llevBug, "START RESET MAP2\n");
         mapfile_sh = add_string(params);
         m = has_been_loaded_sh(mapfile_sh);
         free_string_shared(mapfile_sh);
@@ -1050,14 +1047,12 @@ int command_reset(object *op, char *params)
 
     if (m->in_memory != MAP_SWAPPED)
     {
-        LOG(llevBug, "START RESET MAP3\n");
         if (m->in_memory != MAP_IN_MEMORY)
         {
             LOG(llevBug, "BUG: Tried to swap out map which was not in memory.\n");
             return 0;
         }
 
-        LOG(llevBug, "START RESET MAP4\n");
         new_draw_info_format(NDI_UNIQUE, 0, op, "Start reseting map %s.", STRING_SAFE(m->path));
         /* remove now all players from this map - flag them so we can
              * put them back later.
@@ -1082,13 +1077,11 @@ int command_reset(object *op, char *params)
                 pl->dm_removed_from_map = 0;
         }
         new_draw_info_format(NDI_UNIQUE, 0, op, "removed %d players from map. Swap map.", count);
-        LOG(llevBug, "START RESET MAP5\n");
         swap_map(m, 1);
     }
 
     if (m->in_memory == MAP_SWAPPED)
     {
-        LOG(llevBug, "START RESET MAP6\n");
         LOG(llevDebug, "Resetting map %s.\n", m->path);
         clean_tmp_map(m);
         if (m->tmpname)
@@ -1121,7 +1114,6 @@ int command_reset(object *op, char *params)
     }
     else
     {
-        LOG(llevBug, "START RESET MAP7\n");
         /* Need to re-insert player if swap failed for some reason */
         for (pl = first_player; pl != NULL; pl = pl->next)
         {

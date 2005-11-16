@@ -571,7 +571,7 @@ op->oy= op->y;
 			if (*y=='\0') LOG(llevBug,"BUG: loader(): Title without value.\n");
 			else FREE_AND_COPY_HASH(op->title, y);
 		    }
-^unique{S}		SET_OR_CLEAR_FLAG(op, FLAG_UNIQUE, IVAL);
+^unique{S}			{};
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);
 ^is_wooded{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_WOODED, IVAL);
 ^is_hilly{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_HILLY, IVAL);
@@ -879,7 +879,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "blocksview", "undead", NULL, "unaggressive",
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "feared", "unique", "no_drop",	/* 50 */
+"pass_thru", "can_pass_thru", "feared", NULL, "no_drop",	/* 50 */
  "reg_f", "has_ready_spell", "surrendered", "rooted",
  "slowed", "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL, "has_ready_bow",		/* 60 */

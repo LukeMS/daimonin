@@ -711,7 +711,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
 #define FLAG_FEARED          48 /* player or monster is feared - attacks and acts alot more worse */
-#define FLAG_UNIQUE          49 /* Item is really unique (UNIQUE_ITEMS) */
+/* was FLAG_UNIQUE */
 #define FLAG_NO_DROP         50 /* Object can't be dropped */
 #define FLAG_FIGHT_HPREG	51 /* monster (player - not implemented): mob can reg hp when fighting! */
 #define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
