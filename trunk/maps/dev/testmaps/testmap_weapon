@@ -388,7 +388,7 @@ dam 0
 Wis 2
 resist_impact 0
 resist_pierce 0
-resist_paralyze2 0
+resist_paralyze 20
 resist_confusion 20
 resist_fear 20
 attack_acid 0
