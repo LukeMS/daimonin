@@ -550,6 +550,7 @@ op->oy= op->y;
 ^is_vul_physical{S}	{};
 ^is_vul_sphere{S}	{};
 ^is_indestructible{S}	{};
+^unique{S}			{};
 	/* end outdate */
 
 ^attack_movement{S} op->move_type = IVAL;
@@ -571,7 +572,6 @@ op->oy= op->y;
 			if (*y=='\0') LOG(llevBug,"BUG: loader(): Title without value.\n");
 			else FREE_AND_COPY_HASH(op->title, y);
 		    }
-^unique{S}			{};
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);
 ^is_wooded{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_WOODED, IVAL);
 ^is_hilly{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_HILLY, IVAL);
