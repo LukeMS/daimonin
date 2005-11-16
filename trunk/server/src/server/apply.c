@@ -844,8 +844,8 @@ int convert_item(object *item, object *converter)
             cost++;
 
         /* this is outdated code too... we have here a overflow problem */
-        if(cost >(2^31))
-            cost = (2^31);
+        if(cost >(1<<31))
+            cost = (1<<31);
         decrease_ob_nr(item, (int)cost);
     }
     else

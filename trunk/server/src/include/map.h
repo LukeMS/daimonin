@@ -284,32 +284,32 @@ typedef struct MapSpace_s
 
 /* map flags for global map settings - used in ->map_flags */
 #define MAP_FLAG_NOTHING            0
-#define MAP_FLAG_OUTDOOR            (2^0)       /* map is outdoor map - daytime effects are on */
-#define MAP_FLAG_UNIQUE             (2^1)       /* special unique map - see docs */
-#define MAP_FLAG_FIXED_RTIME        (2^2)       /* if true, reset time is not affected by
+#define MAP_FLAG_OUTDOOR            (1<<0)     /* map is outdoor map - daytime effects are on */
+#define MAP_FLAG_UNIQUE             (1<<1)       /* special unique map - see docs */
+#define MAP_FLAG_FIXED_RTIME        (1<<2)       /* if true, reset time is not affected by
                                              * players entering/exiting map
                                              */
-#define MAP_FLAG_NOMAGIC            (2^3)       /* no sp based spells */
-#define MAP_FLAG_NOPRIEST           (2^4)      /* no grace baes spells allowed */
-#define MAP_FLAG_NOHARM             (2^5)      /* allow only no attack, no debuff spells
+#define MAP_FLAG_NOMAGIC            (1<<3)       /* no sp based spells */
+#define MAP_FLAG_NOPRIEST           (1<<4)      /* no grace baes spells allowed */
+#define MAP_FLAG_NOHARM             (1<<5)      /* allow only no attack, no debuff spells
                                              * this is city default setting - heal for example
                                              * is allowed on you and others but no curse or
                                              * fireball or abusing stuff like darkness or create walls
                                              */
-#define MAP_FLAG_NOSUMMON           (2^6)      /* don't allow any summon/pet summon spell.
+#define MAP_FLAG_NOSUMMON           (1<<6)      /* don't allow any summon/pet summon spell.
                                              * this includes "call summons" for calling pets from other maps
                                              */
-#define MAP_FLAG_FIXED_LOGIN        (2^7)     /* when set, a player login on this map will forced
+#define MAP_FLAG_FIXED_LOGIN        (1<<7)     /* when set, a player login on this map will forced
                                              * to default enter_x/enter_y of this map.
                                              * this avoid map stucking and treasure camping
                                              */
-#define MAP_FLAG_PERMDEATH          (2^8)     /* this map is a perm death. */
-#define MAP_FLAG_ULTRADEATH         (2^9)    /* this map is a ultra death map */
-#define MAP_FLAG_ULTIMATEDEATH      (2^10)    /* this map is a ultimate death map */
-#define MAP_FLAG_PVP                (2^11)    /* PvP is possible on this map */
-#define MAP_FLAG_NO_SAVE            (2^12)    /* don't save maps - atm only used with unique maps */
+#define MAP_FLAG_PERMDEATH          (1<<8)     /* this map is a perm death. */
+#define MAP_FLAG_ULTRADEATH         (1<<9)    /* this map is a ultra death map */
+#define MAP_FLAG_ULTIMATEDEATH      (1<<10)    /* this map is a ultimate death map */
+#define MAP_FLAG_PVP                (1<<11)    /* PvP is possible on this map */
+#define MAP_FLAG_NO_SAVE            (1<<12)    /* don't save maps - atm only used with unique maps */
 
-#define MAP_FLAG_NO_UPDATE          (2^31)    /* don't save maps - atm only used with unique maps */
+#define MAP_FLAG_NO_UPDATE          (1<<31)    /* don't save maps - atm only used with unique maps */
 
 #define SET_MAP_TILE_VISITED(m, x, y, id) { \
     if((m)->pathfinding_id != (id)) { \
