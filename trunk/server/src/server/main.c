@@ -223,8 +223,8 @@ void leave_map(object *op)
 {
     mapstruct  *oldmap  = op->map;
 
-    remove_ob(op); /* TODO: hmm... never drop inv here? */
     activelist_remove(op, op->map);
+    remove_ob(op); /* TODO: hmm... never drop inv here? */
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 
     if (oldmap && !oldmap->player_first && !oldmap->perm_load)

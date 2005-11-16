@@ -1226,8 +1226,8 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                          */
                 if (QUERY_FLAG(head, FLAG_NO_SAVE))
                 {
+                    activelist_remove(head, head->map);
                     remove_ob(head);
-                    activelist_remove(head, m);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
 
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
@@ -1279,8 +1279,8 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     }
 
                     /* and remove the mob itself */
+                    activelist_remove(head, head->map);
                     remove_ob(head);
-                    activelist_remove(head, m);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
                     {
@@ -1308,8 +1308,11 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                             op->stats.sp = op->last_sp; /* force a pre spawn setting */
                             op->speed_left += 1.0f;
                             /* and delete the spawn */
+							/* note: because a spawn point always is on a map, its safe to 
+                             * have the activelist_remove() inside here
+                             */
+                            activelist_remove(op->enemy, op->enemy->map);
                             remove_ob(op->enemy);
-                            activelist_remove(op->enemy, m);
                             check_walk_off(op->enemy, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
                             op->enemy = NULL;
 
@@ -1351,8 +1354,8 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     if (head->type == GOLEM) /* a golem needs a valid release from the player... */
                     {
                         send_golem_control(head, GOLEM_CTR_RELEASE);
+                        activelist_remove(head, head->map);
                         remove_ob(head);
-                        activelist_remove(head, m);
                         check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
 
                         if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
@@ -1478,11 +1481,11 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 
                     tmp->x = xt;
                     tmp->y = yt;
+                    activelist_remove(tmp, tmp->map);
                     remove_ob(tmp); /* this is only a "trick" remove - no walk off check.
                                      * Remember: don't put important triggers near tiled map borders!
                                      */
 
-                    activelist_remove(tmp, m);
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
                     {
                         /* remember: if we have remove for example 2 or more objects above, the
@@ -1516,8 +1519,8 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 
                 if (op->more) /* its a head (because we had tails tested before) */
                 {
+                    activelist_remove(op, op->map);
                     remove_ob(op); /* only a "trick" remove - no move_apply() changes or something */
-                    activelist_remove(op, m);
 
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
                     {
@@ -2109,8 +2112,8 @@ static void delete_unique_items(mapstruct *m)
                 {
                     if (QUERY_FLAG(op, FLAG_IS_LINKED))
                         remove_button_link(op);
+                    activelist_remove(op, op->map);
                     remove_ob(op);
-                    activelist_remove(op, m);
                     /* check off should be right here ... */
                     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
                 }
@@ -2322,14 +2325,13 @@ void free_all_objects(mapstruct *m)
                 if (op->head != NULL)
                     op = op->head;
 
-                remove_ob(op); /* technical remove - no check off */
-
                 /* this is important - we can't be sure after wee removed
                  * all objects from the map, that the map structure will still
                  * stay in the memory. If not, the object GC will try - and obj->map
                  * will point to a free map struct... (/resetmap for example)
                  */
-                activelist_remove(op, m);
+                activelist_remove(op, op->map);
+                remove_ob(op); /* technical remove - no check off */
             }
         }
     /*LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/

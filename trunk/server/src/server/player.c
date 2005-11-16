@@ -236,8 +236,8 @@ void free_player(player *pl)
     /* first, we removing the player from map or whatever */
     if (pl->ob)
     {
-        activelist_remove(pl->ob,pl->ob->map);
         SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
+	    activelist_remove(pl->ob,pl->ob->map);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
             remove_ob(pl->ob);
