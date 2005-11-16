@@ -156,7 +156,7 @@ static void postparse_treasurelist(treasure *t, treasurelist *tl)
             tl->listname);
 
     /* if we have a list name && its not "none" -> link the list in */
-    if (t->name && t->name != global_string_none)
+    if (t->name && t->name != shstr_cons.none)
     {
         for (tl_tmp = first_treasurelist; tl_tmp != NULL; tl_tmp = tl_tmp->next)
         {
@@ -647,7 +647,7 @@ treasurelist * find_treasurelist(const char *name)
     * of loading archetyps, so for now, just return - second pass will
     * init these values.
     */
-    if (tmp == global_string_none || !first_treasurelist)
+    if (tmp == shstr_cons.none || !first_treasurelist)
         return NULL;
     if (tmp != NULL)
     {
@@ -781,7 +781,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
                      * we have something like "list1;none;list2".
                      * Can't think why but lets do it right.
                      */
-            if (name != global_string_none)
+            if (name != shstr_cons.none)
             {
                 tl = find_treasurelist_intern(name);
                 if (!tl)
@@ -1068,7 +1068,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                 t->magic_chance!=T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
                 tries, change_arch ? change_arch : &t->change_arch);
         }
-        else if (t->item && t->item->name != global_string_none && difficulty >= t->difficulty)
+        else if (t->item && t->item->name != shstr_cons.none && difficulty >= t->difficulty)
         {
             if (IS_SYS_INVISIBLE(&t->item->clone) || !(flag & GT_INVISIBLE))
             {
@@ -1223,7 +1223,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
         return;
     }
 
-    if (t->item && t->item->name != global_string_none && (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE))
+    if (t->item && t->item->name != shstr_cons.none && (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE))
     {
         if (t->item->clone.type != TYPE_WEALTH)
         {
@@ -2112,7 +2112,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
         {
               /* lets check we have a slaying/assassination arrow */
             case ARROW:
-              if (op->slaying == global_string_none) /* compare hash ptrs */
+              if (op->slaying == shstr_cons.none) /* compare hash ptrs */
               {
                   int           tmp = RANDOM() % global_race_counter;
                   racelink     *list;

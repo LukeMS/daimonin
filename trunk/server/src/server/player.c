@@ -948,33 +948,6 @@ int check_pick(object *op)
                     pick_up(op, tmp); /*LOG(llevInfo ,"MISSILEWEAPON\n");*/ continue;
                 }
 
-            /* careful: chairs and tables are weapons! */
-            if (CONTR(op)->mode & PU_ALLWEAPON)
-            {
-                if (tmp->type == WEAPON && tmp->name != NULL)
-                {
-                    if (strstr(tmp->name, "table")
-                     == NULL
-                     && strstr(tmp->arch->name, "table")
-                     == NULL
-                     && strstr(tmp->name,
-                                                                                                                 "chair")
-                     && strstr(tmp->arch->name,
-                               "chair")
-                     == NULL)
-                    {
-                        pick_up(op, tmp); /*LOG(llevInfo ,"WEAPON\n");*/ continue;
-                    }
-                }
-                if (tmp->type == WEAPON && tmp->name == NULL)
-                {
-                    if (strstr(tmp->arch->name, "table") == NULL && strstr(tmp->arch->name, "chair") == NULL)
-                    {
-                        pick_up(op, tmp); /*LOG(llevInfo ,"WEAPON\n");*/ continue;
-                    }
-                }
-            }
-
             /* misc stuff that's useful */
             if (CONTR(op)->mode & PU_KEY)
                 if (tmp->type == KEY || tmp->type == SPECIAL_KEY)
@@ -1899,7 +1872,7 @@ void kill_player(object *op)
         /* determine_god() seems to not work sometimes... why is this?
            Should I be using something else? GD */
         const char *god = determine_god(op);
-        if (god != shstr.none)
+        if (god != shstr_cons.none)
             new_draw_info_format(NDI_UNIQUE, 0, op,
                                  "For a brief moment you feel the holy presence of\n%s protecting you.", god);
         else
@@ -2376,7 +2349,7 @@ int op_on_battleground(object *op, int *x, int *y)
         if (tmp->type == FLOOR)
         {
             if (QUERY_FLAG(tmp, FLAG_NO_PICK)
-             && tmp->name == shstr.battleground
+             && tmp->name == shstr_cons.battleground
              && tmp->type == BATTLEGROUND
              && EXIT_X(tmp)
              && EXIT_Y(tmp))
@@ -2451,12 +2424,12 @@ void dragon_ability_gain(object *who, int atnr, int level)
     }
     else if (item->type == SKILL)
     {
-        if (item->title == shstr.clawing && change_skill(who, SK_CLAWING))
+        if (item->title == shstr_cons.clawing && change_skill(who, SK_CLAWING))
         {
             /* adding new attacktypes to the clawing skill */
             tmp = who->chosen_skill; /* clawing skill object */
 
-            if (tmp->type == SKILL && tmp->name == shstr.clawing /*&& !(tmp->attacktype & item->attacktype)*/)
+            if (tmp->type == SKILL && tmp->name == shstr_cons.clawing /*&& !(tmp->attacktype & item->attacktype)*/)
             {
                 /* always add physical if there's none */
                 /*
@@ -2477,7 +2450,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
         /* forces in the treasurelist can alter the player's stats */
         object *skin;
         /* first get the dragon skin force */
-        for (skin = who->inv; skin != NULL && skin->arch->name != shstr.dragon_skin_force; skin = skin->below)
+        for (skin = who->inv; skin != NULL && skin->arch->name != shstr_cons.dragon_skin_force; skin = skin->below)
             ;
         if (skin == NULL)
             return;
@@ -2599,7 +2572,7 @@ int is_dragon_pl(object *op)
      && op->type == PLAYER
      && op->arch != NULL
      && op->arch->clone.race != NULL
-     && op->arch->clone.race == shstr.dragon)
+     && op->arch->clone.race == shstr_cons.dragon)
         return 1;
     return 0;
 }

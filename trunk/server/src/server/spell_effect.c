@@ -87,7 +87,7 @@ void prayer_failure(object *op, int failure, int power)
 {
     const char *godname;
 
-    if ((godname = determine_god(op)) == shstr.none)
+    if ((godname = determine_god(op)) == shstr_cons.none)
         godname = "Your spirit";
 
     if (failure <= -20 && failure > -40) /* wonder */
@@ -533,8 +533,8 @@ int cast_create_town_portal(object *op, object *caster, int dir)
         LOG(llevBug, "BUG: cast_create_town_portal(): get_object failed (force for %s!)\n", op->name);
         return 0;
     }
-    FREE_AND_ADD_REF_HASH(dummy->name, shstr.town_portal_destination);
-    FREE_AND_ADD_REF_HASH(dummy->slaying, shstr.town_portal_destination);
+    FREE_AND_ADD_REF_HASH(dummy->name, shstr_cons.town_portal_destination);
+    FREE_AND_ADD_REF_HASH(dummy->slaying, shstr_cons.town_portal_destination);
 //    FREE_AND_COPY_HASH(dummy->name, PORTAL_DESTINATION_NAME);
     dummy->stats.hp = 0;
 //    FREE_AND_COPY_HASH(dummy->slaying, PORTAL_DESTINATION_NAME);
@@ -582,7 +582,7 @@ int cast_create_town_portal(object *op, object *caster, int dir)
     // Gecko 2005-07-16: line below looks buggy. portal_name wasnt initialized
 //    FREE_AND_COPY_HASH(dummy->name, portal_name);   /*Usefull for string comparaison later*/
     dummy->stats.hp = 0;
-    FREE_AND_ADD_REF_HASH(dummy->slaying, shstr.existing_town_portal);
+    FREE_AND_ADD_REF_HASH(dummy->slaying, shstr_cons.existing_town_portal);
 //    FREE_AND_COPY_HASH(dummy->slaying, PORTAL_ACTIVE_NAME);
     perm_portal = find_archetype("perm_magic_portal");
     while ((old_force = check_inv_recursive(op, dummy)))
@@ -688,7 +688,7 @@ int cast_create_town_portal(object *op, object *caster, int dir)
         FREE_AND_CLEAR_HASH(exitpath);
         return 0;
     }
-    FREE_AND_ADD_REF_HASH(force->slaying, shstr.existing_town_portal);
+    FREE_AND_ADD_REF_HASH(force->slaying, shstr_cons.existing_town_portal);
     FREE_AND_ADD_REF_HASH(force->race, op->map->path);
     FREE_AND_COPY_HASH(force->name, portal_name);
     EXIT_X(force) = dummy->x;
@@ -729,7 +729,7 @@ int cast_create_town_portal(object *op, object *caster, int dir)
         FREE_AND_CLEAR_HASH(exitpath);
         return 0;
     }
-    FREE_AND_ADD_REF_HASH(force->slaying, shstr.existing_town_portal);
+    FREE_AND_ADD_REF_HASH(force->slaying, shstr_cons.existing_town_portal);
     FREE_AND_ADD_REF_HASH(force->race, exitpath);
     FREE_AND_COPY_HASH(force->name, portal_name);
     EXIT_X(force) = dummy->x;
@@ -3238,11 +3238,11 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
 
     if (op->type != PLAYER)
         return 0;
-    if (QUERY_FLAG(caster, FLAG_UNDEAD) || (god->race && strstr(god->race, shstr.undead) != NULL))
+    if (QUERY_FLAG(caster, FLAG_UNDEAD) || (god->race && strstr(god->race, shstr_cons.undead) != NULL))
     {
         bonus = 5;
     }
-    else if (god->slaying && strstr(god->slaying, shstr.undead) != NULL)
+    else if (god->slaying && strstr(god->slaying, shstr_cons.undead) != NULL)
     {
         bonus = -5;
     }
@@ -3851,7 +3851,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
             }
             return 0;
         }
-        else if (spellnum == SP_STAFF_TO_SNAKE && weapon->name != shstr.quarterstaff)
+        else if (spellnum == SP_STAFF_TO_SNAKE && weapon->name != shstr_cons.quarterstaff)
         {
             if (op->type == PLAYER)
             {

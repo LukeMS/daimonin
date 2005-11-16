@@ -210,7 +210,7 @@ void update_button(object *op)
                 head = ab->head ? ab->head : ab;
                 if (ab != tmp
                  && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move)
-                 && (head->race == tmp->slaying || (tmp->slaying == shstr.player && head->type == PLAYER)))
+                 && (head->race == tmp->slaying || (tmp->slaying == shstr_cons.player && head->type == PLAYER)))
                     tmp->weight_limit = 1;
             }
             if (tmp->weight_limit)
@@ -357,7 +357,7 @@ int check_altar_sacrifice(object *altar, object *sacrifice)
          <= (sint16)
             (sacrifice->nrof ? sacrifice->nrof : 1))
             return 1;
-        if (ARCH_SACRIFICE(altar) == shstr.money
+        if (ARCH_SACRIFICE(altar) == shstr_cons.money
          && sacrifice->type == MONEY
          && sacrifice->nrof * sacrifice->value >= (uint32) NROF_SACRIFICE(altar))
             return 1;
@@ -393,7 +393,7 @@ int operate_altar(object *altar, object **sacrifice)
     /* check_altar_sacrifice should have already verified that enough money
      * has been dropped.
      */
-    if (ARCH_SACRIFICE(altar) == shstr.money)
+    if (ARCH_SACRIFICE(altar) == shstr_cons.money)
     {
         int number  = (int) (NROF_SACRIFICE(altar) / (*sacrifice)->value);
 
@@ -478,7 +478,7 @@ int check_trigger(object *op, object *cause)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
                   if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
-                   && (head->race == op->slaying || (op->slaying == shstr.player && head->type == PLAYER)))
+                   && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER)))
                   {
                       push = 1;
                       break;

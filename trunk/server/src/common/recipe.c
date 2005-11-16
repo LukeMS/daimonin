@@ -101,7 +101,7 @@ static int check_recipe(recipe *rp)
     if (find_archetype(rp->arch_name) != NULL)
     {
         artifact   *art = locate_recipe_artifact(rp);
-        if (!art && rp->title != shstr.NONE)
+        if (!art && rp->title != shstr_cons.NONE)
         {
             LOG(llevBug, "\n BUG: Formula %s of %s has no artifact.\n", rp->arch_name, rp->title);
             return 0;
@@ -289,11 +289,11 @@ void dump_alchemy(void)
                 if (find_archetype(string) != NULL)
                 {
                     art = locate_recipe_artifact(formula);
-                    if (!art && formula->title != shstr.NONE)
+                    if (!art && formula->title != shstr_cons.NONE)
                         LOG(llevBug, "BUG: Formula %s has no artifact\n", formula->title);
                     else
                     {
-                        if (formula->title != shstr.NONE)
+                        if (formula->title != shstr_cons.NONE)
                             sprintf(buf, "%s of %s", string, formula->title);
                         else
                             sprintf(buf, "%s", string);
@@ -494,11 +494,11 @@ void dump_alchemy_costs(void)
                 if ((at = find_archetype(string)) != NULL)
                 {
                     art = locate_recipe_artifact(formula);
-                    if (!art && formula->title != shstr.NONE)
+                    if (!art && formula->title != shstr_cons.NONE)
                         LOG(llevBug, "BUG: Formula %s has no artifact\n", formula->title);
                     else
                     {
-                        if (formula->title == shstr.NONE)
+                        if (formula->title == shstr_cons.NONE)
                             sprintf(buf, "%s", string);
                         else
                             sprintf(buf, "%s of %s", string, formula->title);

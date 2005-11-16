@@ -2053,9 +2053,9 @@ void dragon_level_gain(object *who)
     {
         if (tmp->type == FORCE)
         {
-            if (tmp->arch->name == shstr.dragon_ability_force)
+            if (tmp->arch->name == shstr_cons.dragon_ability_force)
                 abil = tmp;
-            if (tmp->arch->name == shstr.dragon_skin_force)
+            if (tmp->arch->name == shstr_cons.dragon_skin_force)
                 skin = tmp;
         }
     }

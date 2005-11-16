@@ -968,7 +968,7 @@ static int GameObject_SetRank(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr->RANK_FORCE && walk->arch->name == hooks->shstr->rank_force)
+        if (walk->name && walk->name == hooks->shstr_cons->RANK_FORCE && walk->arch->name == hooks->shstr_cons->rank_force)
         {
             if (strcmp(rank, "Mr") == 0) /* Mr = keyword to clear title and not add it as rank */
             {
@@ -1006,7 +1006,8 @@ static int GameObject_SetAlignment(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr->ALIGNMENT_FORCE && walk->arch->name == hooks->shstr->alignment_force)
+        if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
+			 walk->arch->name == hooks->shstr_cons->alignment_force)
         {
             /* we find the alignment of the player, now change it to new one */
             FREE_AND_COPY_HASH(walk->title, align);
@@ -1038,7 +1039,8 @@ static int GameObject_GetAlignmentForce(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr->ALIGNMENT_FORCE && walk->arch->name == hooks->shstr->alignment_force)
+        if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE && 
+			walk->arch->name == hooks->shstr_cons->alignment_force)
             return push_object(L, &GameObject, walk);
     }
     LOG(llevDebug, "Lua Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", STRING_OBJ_NAME(WHO));
@@ -1070,7 +1072,7 @@ static int GameObject_SetGuildForce(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr->GUILD_FORCE && walk->arch->name == hooks->shstr->guild_force)
+        if (walk->name && walk->name == hooks->shstr_cons->GUILD_FORCE && walk->arch->name == hooks->shstr_cons->guild_force)
         {
             /* we find the rank of the player, now change it to new one */
             if (guild && strcmp(guild, "")) {
@@ -1113,7 +1115,7 @@ static int GameObject_GetGuildForce(lua_State *L)
 
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->name == hooks->shstr->GUILD_FORCE && walk->arch->name == hooks->shstr->guild_force)
+        if (walk->name && walk->name == hooks->shstr_cons->GUILD_FORCE && walk->arch->name == hooks->shstr_cons->guild_force)
             return push_object(L, &GameObject, walk);
     }
 
@@ -1693,7 +1695,7 @@ static int GameObject_GetPlayerInfo(lua_State *L)
     /* get the first linked player_info arch in this inventory */
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->arch->name == hooks->shstr->player_info && !strcmp(walk->name, name))
+        if (walk->name && walk->arch->name == hooks->shstr_cons->player_info && !strcmp(walk->name, name))
             return push_object(L, &GameObject, walk);
     }
 
@@ -1724,7 +1726,7 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
     /* get the next linked player_info arch in this inventory */
     for (walk = myob->data.object->below; walk != NULL; walk = walk->below)
     {
-        if (walk->name && walk->arch->name == hooks->shstr->player_info && !strcmp(walk->name, name))
+        if (walk->name && walk->arch->name == hooks->shstr_cons->player_info && !strcmp(walk->name, name))
             return push_object(L, &GameObject, walk);
     }
 
