@@ -93,9 +93,7 @@ static shared_string   *hash_table[TABLESIZE];
 void init_hash_table()
 {
     /* A static object should be zeroed out always */
-#if !defined(__STDC__)
     (void) memset((void *) hash_table, 0, TABLESIZE * sizeof(shared_string *));
-#endif
 }
 
 /*
