@@ -932,7 +932,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 
     op = get_object();
     op->map = m; /* To handle buttons correctly */
-	op->map->map_flags |= MAP_FLAG_NO_UPDATE; /* be sure to avoid tile updating in the loop below */
+	m->map_flags |= MAP_FLAG_NO_UPDATE; /* be sure to avoid tile updating in the loop below */
 
     mybuffer = create_loader_buffer(fp);
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, mapflags)))
@@ -1138,7 +1138,7 @@ next:
      * here again...
      */
 	update_map_tiles(m);
-	op->map->map_flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
+	m->map_flags &= ~MAP_FLAG_NO_UPDATE; /* turn tile updating on again */
     m->in_memory = MAP_IN_MEMORY;
 
     /* this is the only place we can insert this because the
