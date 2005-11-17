@@ -27,8 +27,11 @@ http://www.gnu.org/licenses/licenses.html
 #include <ctime>
 
 const int MAX_TEXTLINE_LEN = 1024;
-const int MAX_FONT_SIZE = 80;
 const int MIN_FONT_SIZE =  4;
+const int MAX_FONT_SIZE = 80;
+const int MIN_RESO_SIZE = 55;
+const int MAX_RESO_SIZE = 96;
+
 
 const uint32 TXT_COLOR_DEFAULT   = 0x00ffffff;
 const uint32 TXT_COLOR_RED       = 0x00ff0000;
@@ -114,25 +117,25 @@ void GuiTextout::loadRawFont(const char *filename)
 ///=================================================================================================
 /// Load a TTFont into main memory.
 ///=================================================================================================
-void GuiTextout::loadTTFont(const char *filename, const char *size, const char *resolution)
+void GuiTextout::loadTTFont(const char *filename, const char *size, const char *reso)
 {
+
   // Load the font.
   Ogre::NameValuePairList pairList;
   int iSize, iReso;
-  if (size) iSize = atoi(size);  else iSize = 10;
+  if (size) iSize = atoi(size);  else iSize = MIN_FONT_SIZE;
   if (iSize < MIN_FONT_SIZE) iSize = MIN_FONT_SIZE;
   if (iSize > MAX_FONT_SIZE) iSize = MAX_FONT_SIZE;
-  if (resolution) iReso = atoi(resolution);  else iReso = 92;
-  if (iReso < MIN_FONT_SIZE) iReso = MIN_FONT_SIZE;
-  if (iReso > MAX_FONT_SIZE) iReso = MAX_FONT_SIZE;
+  if (reso) iReso = atoi(reso);  else iReso = MAX_RESO_SIZE;
+  if (iReso < MIN_RESO_SIZE) iReso = MIN_RESO_SIZE;
+  if (iReso > MAX_RESO_SIZE) iReso = MAX_RESO_SIZE;
   pairList["type"]      = "truetype";
   pairList["source"]    = filename;
   pairList["size"]      = StringConverter::toString(iSize);
-  pairList["resolution"]= StringConverter::toString(iReso);;
+  pairList["resolution"]= StringConverter::toString(iReso);
+  //pairList["antialias_colour"]= "true";
   FontPtr pFont = FontManager::getSingleton().create("tmpFont", "General", false, 0, &pairList);
   pFont->load();
-
-
   MaterialPtr pMaterial = pFont.getPointer()->getMaterial();
   String strTexture = pMaterial.getPointer()->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
   TexturePtr pTexture = TextureManager::getSingleton().getByName(strTexture);
@@ -178,8 +181,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   {
     xPos+= fnt->width;
     pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
-    x1 = (int)(u1 * texW); if (x1 > texW-2) x1 = texW-2; // getGlyphTexCoords can give back values > 1.0f.
-    x2 = (int)(u2 * texW); if (x2 > texW-1) x2 = texW-1; // getGlyphTexCoords can give back values > 1.0f.
+    // getGlyphTexCoords gives back values > 1.0f sometimes !?
+    x1 = (int)(u1 * texW); if (x1 > texW-2) x1 = texW-2;
+    x2 = (int)(u2 * texW); if (x2 > texW-1) x2 = texW-1;
     y1 = (int)(v1 * texH); if (y1 > texH-2) y1 = texH-1;
     y2 = (int)(v2 * texH); if (y2 > texH-1) y2 = texH-1;
     texture->getBuffer()->blitToMemory(
@@ -187,23 +191,23 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
       pb.getSubVolume(Box(xPos, 0, xPos + x2-x1, fnt->height)));
   }
 
+  fnt->baseline = iSize;
 
 
+  /*/
+    { // Save the font to disk.
+      static int nr = -1;
+      //  Texture *texture = mTexture.getPointer();
+      uint32 *testBuf = new uint32[texture->getWidth()*texture->getHeight()];
+      texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, testBuf));
+      Image img;
+      img = img.loadDynamicImage((uchar*)testBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
+      img.save("c:\\ogre"+ StringConverter::toString(++nr) + ".png");
 
-/*
-  { // Save the font to disk.
-    static int nr = -1;
-    //  Texture *texture = mTexture.getPointer();
-    uint32 *testBuf = new uint32[texture->getWidth()*texture->getHeight()];
-    texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, testBuf));
-    Image img;
-    img = img.loadDynamicImage((uchar*)testBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
-    img.save("c:\\ogre"+ StringConverter::toString(++nr) + ".png");
-
-    img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
-    img.save("c:\\daimonin"+ StringConverter::toString(nr) + ".png");
-  }
-*/
+      img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
+      img.save("c:\\daimonin"+ StringConverter::toString(nr) + ".png");
+    }
+  */
 
 
 
@@ -271,7 +275,7 @@ void GuiTextout::PrintToBuffer(int width, uint32 *dest_data, const char*text, in
 ///=================================================================================================
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr)
 {
-  int fontPosX;
+  int fontPosX, fontPosY=0;
   if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
   uint32 pixFont, pixColor;
   uint32 color = TXT_COLOR_DEFAULT;
@@ -304,6 +308,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 
       case TXT_CMD_CHANGE_FONT:
         if (!*(++text)) return;
+        //int base= mvFont[fontNr]->baseline;
         fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
         ++text;
         fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
@@ -323,7 +328,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
             pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
             pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
             pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
-            dest_data[y*width + x] = pixColor;
+            dest_data[(y+fontPosY)*width + x] = pixColor;
           }
         }
         dest_data += mvFont[fontNr]->charWidth[*text - 32] +1;

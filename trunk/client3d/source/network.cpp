@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -180,7 +180,7 @@ void Network::Update()
       /*
          if (argServerName[0] != 0)
           add_metaserver_data(argServerName, argServerPort, -1, "user server", "Server from -server '...' command line.", "", "", "");
-         // skip of -nometa in command line or no metaserver set in options 
+         // skip of -nometa in command line or no metaserver set in options
          if (options.no_meta || !options.metaserver[0])
          {
           TextWin->Print("Option '-nometa'.metaserver ignored.");
@@ -541,10 +541,10 @@ bool Network::Init()
   mInbuf.buf[1] =0;
   mGameStatusVersionFlag  = false;
   mGameStatusVersionOKFlag= true;
+  Logger::log().info() << "init socket...";
   bool status = InitSocket();
-  Logger::log().info() << "init socket..." << Logger::success(status);
-  if (!status) return false;
-  return true;
+  Logger::log().success(status);
+  return status;
 }
 
 // =====================================================================

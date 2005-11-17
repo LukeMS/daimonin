@@ -96,6 +96,7 @@ private:
     unsigned int textureWidth;
     unsigned int width;
     unsigned int height;
+    unsigned int baseline;
     char charWidth[CHARS_IN_FONT];
   };
   std::vector<mFont*>mvFont;
