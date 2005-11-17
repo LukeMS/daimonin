@@ -896,6 +896,7 @@ static inline void update_map_tiles(mapstruct *m)
     {
         for (j = 0; j < yl; j++)
         {
+			msp->update_tile++;
 			update_position(m, msp++, i, j);
 		}
 	}
@@ -1094,6 +1095,9 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         }
 
         insert_ob_in_map(op, m, op, INS_NO_MERGE | INS_NO_WALK_ON);
+
+        if (op->glow_radius)
+            adjust_light_source(op->map, op->x, op->y, op->glow_radius);
 
         /* this is from fix_auto_apply() which is removed now */
         if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
@@ -2506,7 +2510,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
 			flags |= P_PLAYER_ONLY;
 
 		mp->move_flags |= mp->floor_terrain;
-        mp->light_value += mp->floor_light;
+        /*mp->light_value += mp->floor_light;*/
 
         for (tmp =mp->first; tmp; tmp = tmp->above)
         {
