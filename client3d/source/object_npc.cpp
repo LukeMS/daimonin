@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -47,18 +47,17 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
   thisNPC = mInstanceNr;
   mDescFile = DIR_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
-  if (!mInstanceNr)
+  if (!mInstanceNr)  Logger::log().headline("Init Actor Models");
+  Logger::log().info()  << "Parse description file " << mDescFile << "...";
+  if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
   {
-    Logger::log().headline("Init Actor Models");
+    Logger::log().success(false);
+    Logger::log().error() << "CRITICAL: description file was not found!";
+    return;
   }
-  bool status = Option::getSingleton().openDescFile(mDescFile.c_str());
-  Logger::log().info()  << "Parse description file " << mDescFile << "..." << Logger::success(status);
-  if(!status)
-  {
-    Logger::log().error() << "CRITICAL: description file was not found!"; return;
-  }
-  mSceneMgr = SceneMgr;
+  Logger::log().success(true);
 
+  mSceneMgr = SceneMgr;
   // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
   // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
 
@@ -86,7 +85,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
     Event->getCamera()->pitch(Degree(-35.264));
     */
     const Real CAMERA_Y = 500;
-    
+
     Vector3 pos = Vector3(TILE_SIZE * CHUNK_SIZE_X /2 + TILE_SIZE/2, 0,
                           TILE_SIZE * CHUNK_SIZE_Z /2 - TILE_SIZE/2);
     Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);

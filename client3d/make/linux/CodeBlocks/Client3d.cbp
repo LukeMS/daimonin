@@ -322,12 +322,6 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/logger_html.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
 		<Unit filename="../../../source/include/network.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -399,10 +393,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/logger.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="../../../source/logger_html.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
