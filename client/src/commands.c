@@ -25,41 +25,6 @@
 /* Handles commands received by the server.  This does not necessarily
  * handle all commands - some might be in other files (like init.c)
  *
- * This file handles commans from the server->client.  See player.c
- * for client->server commands.
- *
- * this file contains most of the commands for the dispatch loop most of
- * the functions are self-explanatory, the pixmap/bitmap commands recieve
- * the picture, and display it.  The drawinfo command draws a string
- * in the info window, the stats command updates the local copy of the stats
- * and displays it. handle_query prompts the user for input.
- * send_reply sends off the reply for the input.
- * player command gets the player information.
- * MapScroll scrolls the map on the client by some amount
- * MapCmd displays the map either with layer packing or stack packing.
- *   packing/unpacking is best understood by looking at the server code
- *   (server/ericserver.c)
- *   stack packing is easy, for every map entry that changed, we pack
- *   1 byte for the x/y location, 1 byte for the count, and 2 bytes per
- *   face in the stack.
- *   layer packing is harder, but I seem to remember more efficient:
- *   first we pack in a list of all map cells that changed and are now
- *   empty.  The end of this list is a 255, which is bigger that 121, the
- *   maximum packed map location.
- *   For each changed location we also pack in a list of all the faces and
- *   X/Y coordinates by layer, where the layer is the depth in the map.
- *   This essentially takes slices through the map rather than stacks.
- *   Then for each layer, (max is MAXMAPCELLFACES, a bad name) we start
- *   packing the layer into the message.  First we pack in a face, then
- *   for each place on the layer with the same face, we pack in the x/y
- *   location.  We mark the last x/y location with the high bit on
- *   (11*11 = 121 < 128).  We then continue on with the next face, which
- *   is why the code marks the faces as -1 if they are finished.  Finally
- *   we mark the last face in the layer again with the high bit, clearly
- *   limiting the total number of faces to 32767, the code comments it's
- *   16384, I'm not clear why, but the second bit may be used somewhere
- *   else as well.
- *   The unpacking routines basically perform the opposite operations.
  */
 
 #include <include.h>
@@ -925,7 +890,7 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
     dmode = GetInt_String(data);
     pos += 4;
 
-    LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");
+    /*LOG(-1,"ITEMXY:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
 
     loc = GetInt_String(data + pos);
 
@@ -1781,7 +1746,7 @@ static void save_data_cmd_file(char *path, unsigned char *data, int len)
 /* server tells us to go to the new char creation */
 void NewCharCmd(char *data, int len)
 {
-    dialog_new_char_warn = FALSE;
+    dialog_new_char_warn = 0;
     GameStatus = GAME_STATUS_NEW_CHAR;
 }
 

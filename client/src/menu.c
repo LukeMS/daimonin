@@ -1527,6 +1527,7 @@ void load_settings(void)
                     ;
                     serv_char->desc[3] = malloc(strlen(adjust_string(buf)) + 1);
                     strcpy(serv_char->desc[3], buf);
+					serv_char->skill_selected = -1;
 
                     /* add this char template to list */
                     if (!first_server_char)
@@ -1576,7 +1577,7 @@ void load_settings(void)
         int g;
 
         memcpy(&new_character, first_server_char, sizeof(_server_char));
-
+		new_character.skill_selected = -1;
         /* adjust gender */
         for (g = 0; g < 4; g++)
         {

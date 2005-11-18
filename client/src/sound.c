@@ -358,7 +358,9 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
     music.data = Mix_LoadMUS_wrapper(buf);
     if (!music.data)
     {
-        draw_info("mix_loadmus() failed.", 4);
+		char msg[1024];
+	    sprintf(msg, "mix_loadmus() failed (%s).", buf);
+        draw_info(msg, 4);
         return;
     }
     music.fade = fade;
