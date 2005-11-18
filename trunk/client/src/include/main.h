@@ -35,6 +35,7 @@ typedef struct _server_char
     int                     bar_add[3];
     int                     gender[4]; /* male, female, neutrum, herm. */
     int                     gender_selected;
+	int                     skill_selected;
     char                   *char_arch[4]; /* 4 description strings */
     int                     face_id[4];
     int                     stat_points; /* points which can be added to char stats */

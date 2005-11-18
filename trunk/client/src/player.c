@@ -103,8 +103,8 @@ void new_char(_server_char *nc)
 {
     char    buf[MAX_BUF];
 
-    sprintf(buf, "nc %s %d %d %d %d %d %d %d 0", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
-            nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
+    sprintf(buf, "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
+            nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
     cs_write_string(csocket.fd, buf, strlen(buf));
 }
 

@@ -2768,11 +2768,17 @@ menu_npc_jump1:
               case SDLK_c:
                 if (new_character.stat_points)
                 {
-                    dialog_new_char_warn = TRUE;
+                    dialog_new_char_warn = 1;
                     sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
                     break;
                 }
-                dialog_new_char_warn = FALSE;
+                if (new_character.skill_selected == -1)
+                {
+                    dialog_new_char_warn = 2;
+                    sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+                    break;
+                }
+                dialog_new_char_warn = 0;
                 new_char(&new_character);
                 GameStatus = GAME_STATUS_WAITFORPLAY;
                 cpl.menustatus = MENU_NO;

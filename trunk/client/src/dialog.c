@@ -30,7 +30,7 @@
 #define X_COL2 290
 #define X_COL3 430
 
-int dialog_new_char_warn    = FALSE;
+int dialog_new_char_warn    = 0;
 int dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
 
 int add_rangebox(int x, int y, int id, int text_x, int text_, char *text, int text_color);
@@ -76,6 +76,11 @@ enum
     ATT_POW,
     ATT_CHA,
     ATT_SUM
+};
+
+static char *weapon_skill[] = 
+{
+	"-","slash","impact","cleave","pierce"
 };
 
 static _attribute   attribute[]                     =
@@ -1257,12 +1262,19 @@ void show_newplayer_server(void)
     if (add_button(x + 30, y + 397, id++, BITMAP_DIALOG_BUTTON_UP, "Create", "~C~reate"))
         check_menu_keys(MENU_CREATE, SDLK_c);
 
-    if (dialog_new_char_warn == TRUE)
+    if (dialog_new_char_warn == 1)
     {
         StringBlt(ScreenSurface, &SystemFont, "  ** ASSIGN ALL **", x + 21, y + 368, COLOR_BLACK, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, "  ** ASSIGN ALL **", x + 20, y + 367, COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, "** POINTS FIRST **", x + 21, y + 380, COLOR_BLACK, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, "** POINTS FIRST **", x + 20, y + 379, COLOR_HGOLD, NULL, NULL);
+    }
+    else if (dialog_new_char_warn == 2)
+    {
+        StringBlt(ScreenSurface, &SystemFont, "  ** ASSIGN YOUR **", x + 21, y + 368, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "  ** ASSIGN YOUR **", x + 20, y + 367, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "** W-SKILL FIRST **", x + 21, y + 380, COLOR_BLACK, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "** W-SKILL FIRST **", x + 20, y + 379, COLOR_HGOLD, NULL, NULL);
     }
 
     /* draw attributes */
@@ -1302,7 +1314,8 @@ void show_newplayer_server(void)
 
         if (delta)
         {
-            dialog_new_char_warn = FALSE;
+		
+            dialog_new_char_warn = 0;
             if (delta > 0)
             {
                 if (new_character.stats[i] + 1 <= new_character.stats_max[i] && new_character.stat_points)
@@ -1322,32 +1335,16 @@ void show_newplayer_server(void)
         }
     }
 
-
-    for (i = 0,tmpc = first_server_char; tmpc; tmpc = tmpc->next,i++)
-    {
-        SDL_Rect    box;
-        box.h = 55;
-        box.w = 55;
-        box.x = x + 125 + i * 60;
-        box.y = y + 320;
-
-        SDL_FillRect(ScreenSurface, &box, sdl_gray2);
-        blit_face(tmpc->pic_id, box.x + 5, box.y + 5);
-        StringBlt(ScreenSurface, &Font6x3Out, tmpc->name, box.x + 10, box.y + 40, COLOR_WHITE, NULL, NULL);
-
-        if (!strcmp(tmpc->name, new_character.name))
-            sprite_blt(Bitmaps[BITMAP_NCHAR_MARKER], box.x, box.y, NULL, NULL);
-    }
-
-
     if (create_list_set.entry_nr == 0)
         StringBlt(ScreenSurface, &SystemFont, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, COLOR_GREEN, NULL, NULL);
     else
         StringBlt(ScreenSurface, &SystemFont, "Race:", x + 130, y + CREATE_Y0 + 0 * 17 + 2, COLOR_WHITE, NULL, NULL);
+
+	sprintf(buf,"%s %s", gender[new_character.gender_selected], new_character.name);
     if (create_list_set.entry_nr == 0)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, new_character.name, COLOR_GREEN);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, COLOR_GREEN);
     else
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, new_character.name, COLOR_WHITE);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 0 * 17, ++id, 80, 0, buf, COLOR_WHITE);
     if (create_list_set.key_change && create_list_set.entry_nr == 0)
     {
         delta = create_list_set.key_change;
@@ -1358,91 +1355,117 @@ void show_newplayer_server(void)
     {
         int g;
 
-        for (tmpc = first_server_char; tmpc; tmpc = tmpc->next)
-        {
-            /* get our current template */
-            if (!strcmp(tmpc->name, new_character.name))
-            {
-                /* get next template */
-                if (delta > 0)
-                {
-                    tmpc = tmpc->next;
-                    if (!tmpc)
-                        tmpc = first_server_char;
-                }
-                else
-                {
-                    tmpc = tmpc->prev;
-                    if (!tmpc)
-                    {
-                        /* get last node */
-                        for (tmpc = first_server_char; tmpc->next; tmpc = tmpc->next)
-                            ;
-                    }
-                }
-                memcpy(&new_character, tmpc, sizeof(_server_char));
+		new_character.skill_selected = -1;
+		if(delta >0)
+		{
+			/* try to get a new valid gender */
+			for(;;)
+			{
+				++new_character.gender_selected;
+				if (new_character.gender_selected > 3)
+				{
+					g = -1;
+					break;
+				}
+            
+				if (new_character.gender[new_character.gender_selected])
+				{
+					g = new_character.gender_selected;
+					break;
+		        }
+			}
+		}
+		else
+		{
+			/* try to get a new valid gender */
+			for(;;)
+			{
+				--new_character.gender_selected;
+				if (new_character.gender_selected < 0)
+				{
+					g = -1;
+					break;
+				}
+            
+				if (new_character.gender[new_character.gender_selected])
+				{
+					g = new_character.gender_selected;
+					break;
+		        }
+			}
+		}
 
-                /* adjust gender */
-                for (g = 0; g < 4; g++)
-                {
-                    if (new_character.gender[g])
-                    {
-                        new_character.gender_selected = g;
-                        break;
-                    }
-                }
-                break;
-            }
+		if(g == -1)
+		{
+			for (tmpc = first_server_char; tmpc; tmpc = tmpc->next)
+			{
+				/* get our current template */
+				if (!strcmp(tmpc->name, new_character.name))
+				{
+					/* get next template */
+					if (delta > 0)
+					{
+						tmpc = tmpc->next;
+						if (!tmpc)
+							tmpc = first_server_char;
+		                memcpy(&new_character, tmpc, sizeof(_server_char));
+
+						for(new_character.gender_selected = 0;;++new_character.gender_selected)
+						{
+							if (new_character.gender[new_character.gender_selected])
+								break;
+						}	
+						break;
+					}
+					else
+					{
+						tmpc = tmpc->prev;
+						if (!tmpc)
+						{
+							/* get last node */
+							for (tmpc = first_server_char; tmpc->next; tmpc = tmpc->next)
+								;
+						}
+		                memcpy(&new_character, tmpc, sizeof(_server_char));
+
+						for(new_character.gender_selected = 3;;--new_character.gender_selected)
+						{
+							if (new_character.gender[new_character.gender_selected])
+								break;
+						}	
+						break;
+					}
+				}
+			}
         }
     }
 
     if (create_list_set.entry_nr == 1)
-        StringBlt(ScreenSurface, &SystemFont, "Gender:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_GREEN, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_GREEN, NULL, NULL);
     else
-        StringBlt(ScreenSurface, &SystemFont, "Gender:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_WHITE, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont, "W-Skill:", x + 130, y + CREATE_Y0 + 1 * 17 + 2, COLOR_WHITE, NULL, NULL);
+
     if (create_list_set.entry_nr == 1)
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, gender[new_character.gender_selected],
-                             COLOR_GREEN);
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], COLOR_GREEN);
     else
-        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, gender[new_character.gender_selected],
-                             COLOR_WHITE);
-    if (create_list_set.key_change && create_list_set.entry_nr == 1)
+        delta = add_rangebox(x + 170, y + CREATE_Y0 + 1 * 17, ++id, 80, 0, weapon_skill[new_character.skill_selected+1], COLOR_WHITE);
+ 
+   if (create_list_set.key_change && create_list_set.entry_nr == 1)
     {
         delta = create_list_set.key_change;
         create_list_set.key_change = 0;
     }
     if (delta)
     {
-        int g, tmp_g;
-
         if (delta > 0) /* +1 */
         {
-            for (g = 0; g < 4; g++)
-            {
-                tmp_g = ++new_character.gender_selected;
-                if (tmp_g > 3)
-                    tmp_g -= 4;
-                if (new_character.gender[tmp_g])
-                {
-                    new_character.gender_selected = tmp_g;
-                    break;
-                }
-            }
+			if(++new_character.skill_selected>3)
+				new_character.skill_selected = 0;
         }
         else
         {
-            for (g = 3; g >= 0; g--)
-            {
-                tmp_g = new_character.gender_selected - g;
-                if (tmp_g < 0)
-                    tmp_g += 4;
-
-                if (new_character.gender[tmp_g])
-                {
-                    new_character.gender_selected = tmp_g;
-                    break;
-                }
-            }
+			if(--new_character.skill_selected<0)
+				new_character.skill_selected = 3;
         }
     }
 
@@ -1450,6 +1473,7 @@ void show_newplayer_server(void)
     StringBlt(ScreenSurface, &SystemFont, cpl.name, x + 40, y + 85, COLOR_WHITE, NULL, NULL);
 
     blit_face(new_character.face_id[new_character.gender_selected], x + 35, y + 100);
+
     sprintf(buf, "HP: ~%d~", new_character.bar[0] * 4 + new_character.bar_add[0]);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 36, y + 146, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 35, y + 145, COLOR_WHITE, NULL, NULL);
@@ -1459,6 +1483,26 @@ void show_newplayer_server(void)
     sprintf(buf, "GR: ~%d~", new_character.bar[2] * 2 + new_character.bar_add[2]);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 36, y + 168, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 35, y + 167, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use." , x + 135, y + 324, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "W-Skill is your 'weapon skill' - the kind of weapon you are able to use.", x + 134, y + 323, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont, "There are 4 base weapon skills:" , x + 135, y + 346, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "There are 4 base weapon skills:", x + 134, y + 345, COLOR_WHITE, NULL, NULL);
+
+
+    StringBlt(ScreenSurface, &SystemFont, "* SLASH allows use of bladed weapons like swords" , x + 135, y + 358, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "* SLASH allows use of bladed weapons like swords", x + 134, y + 357, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont, "* IMPACT is for mace, morningstars, clubs and hammers" , x + 135, y + 370, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "* IMPACT is for mace, morningstars, clubs and hammers", x + 134, y + 369, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont, "* CLEAVE allows use of any sort of axes" , x + 135, y + 382, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "* CLEAVE allows use of any sort of axes", x + 134, y + 381, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont, "* PIERCE is for daggers, degen or rapiers" , x + 135, y + 394, COLOR_BLACK, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont, "* PIERCE is for daggers, degen or rapiers", x + 134, y + 393, COLOR_WHITE, NULL, NULL);
+
 
     StringBlt(ScreenSurface, &SystemFont, new_character.desc[0], x + 160, y + 434, COLOR_BLACK, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont, new_character.desc[0], x + 159, y + 433, COLOR_WHITE, NULL, NULL);
