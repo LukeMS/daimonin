@@ -731,6 +731,9 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
             case 'Q': /* (q)uality range */
                 tweak->c_arch.quality_range = atoi(parm+1);
                 break;
+            case 'B': /* (B)reak list generation if this tlist generates something */
+                tweak->break_list = TRUE;
+                break;
             default:
                 LOG(llevBug,"\nBUG ::TLIST PARSE: invalid tlist paramter: %s\n", STRING_SAFE(parm));
                 return;
@@ -820,6 +823,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
                         tweak->style = T_STYLE_UNSET;
                         tweak->difficulty = 0;
                         tweak->identified = FALSE;
+                        tweak->break_list = FALSE;
                         tweak->magic = T_MAGIC_UNSET;
                         tweak->magic_chance = T_MAGIC_CHANCE_UNSET;
                         tweak->drop_chance = 0;
@@ -1005,18 +1009,24 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
             magic_chance = T_MAGIC_CHANCE_UNSET;
 
         }
-        create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, captr);
+		/* if we have a breakpoint set here, stop creating treasures for this list */
+        if( create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, captr) &&
+						(t->parmlink.tl_tweak && t->parmlink.tl_tweak->break_list))
+			return;
+
         t = t->next;
     }
 }
 
-void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,
+int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,
                      int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
+	int ret = FALSE;
+
     if (tries++ > 100)
     {
         LOG(llevDebug, "create_treasure(): tries >100 for t-list %s.", t->listname ? t->listname : "<noname>");
-        return;
+        return ret;
     }
 
     if (t->t_style != T_STYLE_UNSET)
@@ -1025,9 +1035,11 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
         a_chance = t->artifact_chance;
 
     if (t->total_chance)
-        create_one_treasure(t, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, arch_change);
+        ret = create_one_treasure(t, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, arch_change);
     else
-        create_all_treasures(t->items, op, flag, difficulty, t_style, a_chance, magic, magic_chance,tries, arch_change);
+        ret = create_all_treasures(t->items, op, flag, difficulty, t_style, a_chance, magic, magic_chance,tries, arch_change);
+
+	return ret;
 }
 
 
@@ -1043,9 +1055,10 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
  * start with equipment, but only their abilities).
  */
 
-void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance,
+int create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance,
                           int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
+	int		ret = FALSE;
     object *tmp;
 
     /*  LOG(-1,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
@@ -1063,7 +1076,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         if (t->tlist && difficulty >= t->difficulty)
         {
             /*  LOG(-1,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
-            create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
+            ret = create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
                 t->magic!=T_MAGIC_UNSET?magic:t->magic,
                 t->magic_chance!=T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
                 tries, change_arch ? change_arch : &t->change_arch);
@@ -1072,6 +1085,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         {
             if (IS_SYS_INVISIBLE(&t->item->clone) || !(flag & GT_INVISIBLE))
             {
+				ret = TRUE; /* we have generated an item! */
                 if (t->item->clone.type != TYPE_WEALTH)
                 {
                     /*LOG(-1,"*CAT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
@@ -1118,42 +1132,43 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         }
 
         if (t->next_yes != NULL)
-            create_all_treasures(t->next_yes, op, flag, difficulty,
+            ret = create_all_treasures(t->next_yes, op, flag, difficulty,
                                  (t->next_yes->t_style == T_STYLE_UNSET) ? t_style : t->next_yes->t_style, a_chance,
                                  (t->magic!=T_MAGIC_UNSET)?t->next_yes->magic:magic,
                                  (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_yes->magic_chance:magic,
                                  tries, change_arch);
     }
     else if (t->next_no != NULL)
-        create_all_treasures(t->next_no, op, flag, difficulty,
+        ret = create_all_treasures(t->next_no, op, flag, difficulty,
                              (t->next_no->t_style == T_STYLE_UNSET) ? t_style : t->next_no->t_style, a_chance,
                              (t->magic!=T_MAGIC_UNSET)?t->next_no->magic:magic,
                              (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_no->magic_chance:magic,
                              tries, change_arch);
     if (t->next != NULL)
-        create_all_treasures(t->next, op, flag, difficulty,
+        ret = create_all_treasures(t->next, op, flag, difficulty,
                              (t->next->t_style == T_STYLE_UNSET) ? t_style : t->next->t_style, a_chance,
                              (t->magic!=T_MAGIC_UNSET)?t->next->magic:magic,
                              (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next->magic_chance:magic,
                              tries, change_arch);
+	return ret;
 }
 
-void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance,
+int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance,
                          int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
-    int         value, diff_tries = 0;
+	int			ret = FALSE, value, diff_tries = 0;
     treasure   *t;
     object     *tmp;
 
     /*LOG(-1,"-COT-: %s (%d)\n", tl->name,change_arch?tl->items->change_arch.material_quality:9999); */
     /*LOG(-1,"COT: cs: %d (%s)\n", tl->chance_fix, tl->name );*/
     if (tries++ > 100)
-        return;
+        return ret;
 
     /* well, at some point we should rework this whole system... */
     create_one_treasure_again_jmp:
     if (diff_tries > 10)
-        return;
+        return ret;
     value = RANDOM() % tl->total_chance;
 
     for (t = tl->items; t != NULL; t = t->next)
@@ -1173,7 +1188,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 
                 /* ok, difficulty is bad lets try again or break! */
                 if (tries++ > 100)
-                    return;
+                    return ret;
                 diff_tries++;
                 goto create_one_treasure_again_jmp;
             }
@@ -1190,7 +1205,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 
             /* ok, difficulty is bad lets try again or break! */
             if (tries++ > 100)
-                return;
+                return ret;
             diff_tries++;
             goto create_one_treasure_again_jmp;
         }
@@ -1205,26 +1220,27 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
     {
         LOG(llevBug, "BUG: create_one_treasure: got null object or not able to find treasure - tl:%s op:%s\n",
             tl ? tl->listname : "(null)", op ? op->name : "(null)");
-        return;
+        return ret;
     }
 
     if (t->tlist)
     {
         if (difficulty >= t->difficulty)
-            create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
+            ret = create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
                             t->magic==T_MAGIC_UNSET?magic:t->magic,
                             t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
                             tries, change_arch);
         else if (t->nrof)
-            create_one_treasure(tl, op, flag, difficulty, t_style, a_chance,
+            ret = create_one_treasure(tl, op, flag, difficulty, t_style, a_chance,
                                 t->magic==T_MAGIC_UNSET?magic:t->magic,
                                 t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
                                 tries, change_arch);
-        return;
+        return ret;
     }
 
     if (t->item && t->item->name != shstr_cons.none && (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE))
     {
+		ret = TRUE;
         if (t->item->clone.type != TYPE_WEALTH)
         {
             /*LOG(-1,"*COT*: %s (%d)\n", t->item->clone.name,change_arch?t->change_arch.material_quality:9999); */
@@ -1267,6 +1283,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
             }
         }
     }
+	return ret;
 }
 
 

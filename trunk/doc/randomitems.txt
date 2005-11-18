@@ -70,9 +70,11 @@ C<value>: set "material_range"
 q<value>: set "quality"
 Q<value>: set "quality_range"
 
-I<value>: sets the IDENTIFIED flag for the generated item(s)
 d<value>: Drop chance 1/d. This will do a random check of (random % d) before calling the list. 
           If it not 0, it skips the list. AFTER that, if the drop chance has not failed,
           the normal treasurelist chances of generating and dropping are called.
 D<value>: Drop chance in %. Same as d<value> but this is a value between 0 and 100. 100 means
           drop always, 25 means only in 25% of all cases.
+I: 		  sets the IDENTIFIED flag for the generated item(s)
+B:		  sets a breakpoint. If the tlist with that parameter successfully generates an item, tlist
+          generation stops and skips all possible lists after it.		 
