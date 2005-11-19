@@ -385,6 +385,10 @@ typedef struct mapdef
     uint16          width;
     uint16          enter_x;                 /* enter_x and enter_y are default entrance location */
     uint16          enter_y;                 /* on the map if none are set in the exit */
+
+    uint32          tileset_id;              /* All map tiles that are connected to each other with tiling
+                                                are on the same tileset. 0 means unknown */
+    sint16          tileset_x, tileset_y;    /* This maps coordinates in the tileset. Only valid if tileset_id > 0 */    
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other

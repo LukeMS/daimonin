@@ -176,6 +176,7 @@ extern int              get_rangevector_from_mapcoords(mapstruct *map1, int x1, 
 extern int              get_rangevector_full(object *op1, mapstruct *map1, int x1, int y1, object *op2, mapstruct *map2, int x2, int y2,
                                 rv_vector *retval, int flags);
 extern int              on_same_map(object *op1, object *op2);
+extern int              on_same_tileset(object *op1, object *op2);
 /* material.c */
 extern void             material_attack_damage(object *op, int num, int chance, int base);
 extern sint64           material_repair_cost(object *item, object *owner);

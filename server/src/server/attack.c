@@ -1444,10 +1444,8 @@ static int get_attack_mode(object **target, object **hitter, int *simple_attack)
     }
     if (QUERY_FLAG(*target, FLAG_REMOVED)
      || QUERY_FLAG(*hitter, FLAG_REMOVED)
-     || (*hitter)->map
-     == NULL
-     || !on_same_map((*hitter),
-                     (*target)))
+     || (*hitter)->map == NULL
+     || on_same_tileset((*hitter), (*target)))
     {
         LOG(llevBug, "BUG: hitter (arch %s, name %s) with no relation to target\n", (*hitter)->arch->name,
             query_name(*hitter));
@@ -1469,7 +1467,7 @@ static int abort_attack(object *target, object *hitter, int simple_attack)
     else if (QUERY_FLAG(target, FLAG_REMOVED)
           || QUERY_FLAG(hitter, FLAG_REMOVED)
           || hitter->map == NULL
-          || !on_same_map(hitter, target))
+          || !on_same_tileset(hitter, target))
         return 1;
     else
         new_mode = 0;
@@ -2246,7 +2244,7 @@ static int adj_attackroll(object *hitter, object *target)
     int     adjust      = 0;
 
     /* safety */
-    if (!target || !hitter || !hitter->map || !target->map || !on_same_map(hitter, target))
+    if (!target || !hitter || !hitter->map || !target->map || on_same_tileset(hitter, target))
     {
         LOG(llevBug, "BUG: adj_attackroll(): hitter and target not on same map\n");
         return 0;

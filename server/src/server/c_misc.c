@@ -1142,7 +1142,7 @@ void receive_player_name(object *op, char k, char *write_buf)
     LOG(llevDebug, "Got name from client: %s\n", write_buf + 1);
 
 	/* is the name legal? */
-    if ( name_len <= 1 || name_len > MAX_PLAYER_NAME  == 1 || !playername_ok(write_buf + 1))
+    if ( name_len <= 1 || name_len > MAX_PLAYER_NAME || !playername_ok(write_buf + 1))
     {
 		get_name(op, 6); /* nice try - illegal name */
 		return;
