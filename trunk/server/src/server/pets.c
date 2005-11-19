@@ -239,7 +239,7 @@ void pets_follow_owner(object *owner)
     objectlink *ol;
 
     for(ol = CONTR(owner)->pets; ol; ol = ol->next)
-        if(PET_VALID(ol, owner) && !on_same_map(ol->objlink.ob, owner))
+        if(PET_VALID(ol, owner) && !on_same_tileset(ol->objlink.ob, owner))
             pet_follow_owner(ol->objlink.ob);
 }
 

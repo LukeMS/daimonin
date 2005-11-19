@@ -117,16 +117,11 @@ static mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
  * will be added to x and y.
  *
  * This function does not work well with assymetrically tiled maps.
- * It will also (naturally) perform bad on very large tilesets such as the world map
- * as it may need to load all tiles into memory before finding a path between two tiles.
  *
- * One solution is to handle the world map as a special case, requiring that all tiles are
- * of equal size, and that we might be able to parse their coordinates from their names...
- *
- * A more generic and robust solution would be to build some sort of "routing table" for
- * inter-tile pathfinding. This can be built dynamically when searching, or off-line before
- * server startup and saved to a file or just in memory. The dynamic model handles dynamic
- * map changes better.
+ * To increase efficiency, maps can have precalculated tileset_id:s and 
+ * coordinates, which are used if available. If one or more of the two
+ * maps lack this data, a slow non-exhaustive breadth-first search 
+ * is attempted.
  */
 static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int *y)
 {
@@ -140,10 +135,25 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     if (map1 == NULL || map2 == NULL)
         return FALSE;
 
+    /* Precalculated tileset data available? */
+    if (map1->tileset_id > 0 && map2->tileset_id > 0)
+    {
+//        LOG(llevDebug, "relative_tile_position(): Could use tileset data for %s -> %s\n", map1->path, map2->path);
+        if(map1->tileset_id == map2->tileset_id)
+        {
+            *x += map2->tileset_x - map1->tileset_x;
+            *y += map2->tileset_y - map1->tileset_y;
+            return TRUE;
+        } else
+            return FALSE;
+    }
+    
     if (map1 == map2)
         return TRUE;
+        
+//    LOG(llevBug, "relative_tile_position(): One or both of maps %s and %s lacks tileset data\n", map1->path, map2->path);
 
-    /* The caching really helps when pathifinding across map tiles,
+    /* The caching really helps when pathfinding across map tiles,
      * but not in many other cases. */
     /* Check for cached pathfinding */
     if (map1->cached_dist_map == map2->path)
@@ -461,6 +471,10 @@ void dump_map(mapstruct *m)
 
     if (m->tmpname != NULL)
         LOG(llevSystem, "Tmpname: %s\n", m->tmpname);
+
+    LOG(llevSystem, "Tileset: %s\n", m->tileset_id);
+    if(m->tileset_id == 0)
+        LOG(llevSystem, "Tileset coords: %d,%d\n", m->tileset_x, m->tileset_y);
 
     LOG(llevSystem, "Difficulty: %d\n", m->difficulty);
     LOG(llevSystem, "Darkness: %d\n", m->darkness);
@@ -1617,6 +1631,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 {
     char    buf[HUGE_BUF], msgbuf[HUGE_BUF], *key = buf, *value, *end;
     int     msgpos  = 0;
+    int     got_end = 0;
 
     while (fgets(buf, HUGE_BUF - 1, fp) != NULL)
     {
@@ -1872,14 +1887,23 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 } /* If valid neighbour path */
             }
         }
-        else if (!strcmp(key, "end"))
+        else if (!strcmp(key, "tileset_id"))
+            m->tileset_id = atoi(value);
+        else if (!strcmp(key, "tileset_x"))
+            m->tileset_x = atoi(value);
+        else if (!strcmp(key, "tileset_y"))
+            m->tileset_y = atoi(value);
+        else if (!strcmp(key, "end")) 
+        {
+            got_end = 1;
             break;
+        } 
         else
         {
             LOG(llevBug, "BUG: Got unknown value in map header: %s %s\n", key, value);
         }
     }
-    if (strcmp(key, "end"))
+    if (! got_end)
     {
         LOG(llevBug, "BUG: Got premature eof on map header!\n");
         return 1;
@@ -3011,6 +3035,15 @@ int get_rangevector_full(
         retval->distance_x = x2 - x1;
         retval->distance_y = y2 - y1;
     }
+    else if (map1->tileset_id > 0 && map2->tileset_id > 0)
+    {
+        if(map1->tileset_id == map2->tileset_id)
+        {
+            retval->distance_x = x2 - x1 + map2->tileset_x - map1->tileset_x;
+            retval->distance_y = y2 - y1 + map2->tileset_y - map1->tileset_y;
+        } else
+            return FALSE;
+    }
     else if (map1->tile_map[0] == map2)
     {
         retval->distance_x = x2 - x1;
@@ -3129,6 +3162,22 @@ int get_rangevector_full(
     }
 
     return TRUE;
+}
+
+/* Returns true of op1 and op2 are on the same tileset
+ * (if there is a way to move between map tiles from op1 to op2)
+ */
+int on_same_tileset(object *op1, object *op2)
+{
+    if (!op1->map || !op2->map)
+        return FALSE;
+
+    /* This is the fallback in case the tileset data is
+     * unavailable */
+    if (op1->map->tileset_id == 0 || op2->map->tileset_id == 0)
+        return on_same_map(op1, op2);
+    
+    return op1->map->tileset_id == op2->map->tileset_id;
 }
 
 /* Returns true of op1 and op2 are effectively on the same map

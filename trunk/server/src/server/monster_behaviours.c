@@ -1478,7 +1478,6 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
         for (; obj; obj = obj->active_next)
         {
             if ((QUERY_FLAG(obj, FLAG_ALIVE) || obj->type == PLAYER)
-            //        && on_same_map(obj, op) // This is implicit from scanning only nearby maps
                     && obj != op
                     && mob_can_see_obj(op, obj, NULL))
             {
