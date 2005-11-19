@@ -1,0 +1,223 @@
+#!/usr/bin/perl -w
+
+# Analyzes all maps in the map directory and calculates 
+# and udpates the maps' tileset information
+
+my $modify_files = 1;
+
+if (scalar(@ARGV) && $ARGV[0] eq '-n') {
+    $modify_files = 0;
+    shift @ARGV;
+}
+
+my $mapdir = $ARGV[0] || die "Usage: $0 [-n] <path-to-map-directory>\n -n: Don't modify any files.\n";
+
+my @revdir = (0, 5, 6, 7, 8, 1, 2, 3, 4);
+
+my %maps = ();
+my %tilesets = ();
+
+scan_maps($mapdir, $mapdir, \%maps);
+validate_linking(\%maps);
+find_tilesets(\%maps, \%tilesets);
+update_map_files(\%maps, \%tilesets, $modify_files);
+
+# Go through all map files and update them with tileset_id, tileset_x and tileset_y
+sub update_map_files
+{
+    my ($maps, $tilesets, $modify) = @_;
+    
+    foreach my $tileset (keys %$tilesets)
+    {
+        print "Tileset $tileset (".(scalar @{$tilesets->{$tileset}})." tiles):\n";
+        foreach my $map (@{$tilesets->{$tileset}})
+        {
+            print "  $map->{path} ($map->{x}, $map->{y})\n";
+
+            next unless $modify;
+            
+            open (FILE_IN, $map->{'fullpath'}) || die "Couldn't read file $map->{fullpath}: $!\n";
+            open (FILE_OUT, ">$map->{'fullpath'}.new") || die "Couldn't create file $map->{fullpath}.new: $!\n";
+
+            my $msg = 0;
+            while($line = <FILE_IN>) {
+                chomp $line;
+                $msg = 1 if $line eq "msg";
+                $msg = 0 if $line eq "endmsg";
+                last if $line eq "end" && !$msg;
+                next if $line =~ /^(tileset_id)|(tileset_x)|(tileset_y)/ && !$msg;
+                print FILE_OUT $line, "\n";
+            }
+
+            print FILE_OUT "tileset_id $tileset\n";
+            print FILE_OUT "tileset_x $map->{x}\n";
+            print FILE_OUT "tileset_y $map->{y}\n";
+            print FILE_OUT $line, "\n";
+            
+            my @rest = <FILE_IN>;
+            print FILE_OUT @rest;
+            
+            close FILE_OUT;
+            close FILE_IN;
+
+            rename "$map->{'fullpath'}.new", $map->{'fullpath'};
+        }
+    }
+}
+
+# Traverse the graph and label all unique unconnected subgraphs
+sub find_tilesets
+{
+    my ($maps, $tilesets) = @_;
+    my $label = 1;
+        
+    foreach my $path (keys %$maps) {
+        next if defined $maps->{$path}->{'tileset'};
+
+        $tilesets->{$label} = label_tileset($maps->{$path}, $maps, $label, 0, 0);
+        $label++;
+    }
+}
+
+# Recurse over a tileset graph and label each tile with coordinates and
+# the tileset label
+sub label_tileset
+{
+    my ($map, $maps, $label, $x, $y) = @_;
+    
+    $map->{'tileset'} = $label;
+    $map->{'x'} = $x;
+    $map->{'y'} = $y;
+    
+    my @set = ($map);
+    my @dy=(0, -1,-1,0,1,1,1,0,-1);
+    my @dx=(0, 0,1,1,1,0,-1,-1,-1);
+    
+    for (my $i=1; $i<=8; $i++)
+    {
+        my $target = $map->{$i};
+        if (defined $target && !defined $maps->{$target}->{'tileset'}) 
+        {
+            push @set, @{label_tileset($maps->{$target}, $maps, $label, $x + $dx[$i], $y + $dy[$i])};
+        }
+    }
+
+    return \@set;
+}
+
+# Validate and clean up tile linking if possible
+sub validate_linking
+{
+    my ($maps) = @_;
+    my $errors = 0;
+    foreach my $path (keys %$maps) {
+#        print "$path\n";
+        for (my $i=1; $i<=8; $i++)
+        {
+            my $target = $maps->{$path}->{$i};
+            if (defined $target) 
+            {
+#                print "  $i: $target\n";
+                if(! defined $maps->{$target} ) {
+                    print STDERR "WARNING: $target doesn't exist (linked from $path)\n";
+                    # Remove the link for now
+                    undef $maps->{$path}->{$i};
+                } else {
+                    if (! defined $maps->{$target}->{$revdir[$i]})
+                    {
+                        print STDERR "WARNING: $target doesn't link back to $path\n";
+                         # We force the linkback here...
+                        $maps->{$target}->{$revdir[$i]} = $path;
+                    } elsif($maps->{$target}->{$revdir[$i]} ne $path) 
+                    {
+                        print STDERR "ERROR: $target links back to $maps->{$target}->{$revdir[$i]} instead of $path\n";
+                        $errors++;
+                    }
+                }
+            }
+        }
+    }
+
+    die "Aborting due to map linking errors\n" if $errors;
+}
+
+# Convert relative paths to absolute
+sub normalize_path
+{
+    my ($path, $basedir) = @_;
+
+    # Absolute paths are easy
+    return $path if $path =~ /^\//;
+    
+    # Relative paths requires a little work
+    $path = "$basedir/$path";
+    # Handle parent directory references "/../"
+    while($path =~ /(.*)\/[^\/]+\/\.\.\/(.*)/) {
+        $path = "$1/$2";
+    }
+    # Handle current directory references "/./"
+    while($path =~ /(.*)\/\.\/(.*)/) {
+        $path = "$1/$2";
+    }
+    # Handle double slashes "//"
+    while ($path =~ /\/\//) {
+        $path =~ s/\/\//\//g;
+    }
+
+    return $path;
+}
+
+# Recursively scan a directory for map files and store info about the 
+# maps in $hash
+sub scan_maps
+{
+    my ($dir, $mapdir, $hash) = @_;
+
+    opendir (DIR, $dir)  || die "Couldn't read directory $dir: $!\n";
+    my @contents = readdir DIR;
+    closedir DIR;
+    
+    foreach my $entry (@contents) {
+        # Skip some obvious non-map files and dirs
+        next if $entry =~ /(^CVS$)|(^\..*)|(.*\.txt$)|(.*\.lua$)/;
+        my $fullpath = "$dir/$entry";
+
+        # Recurse into directories
+        scan_maps($fullpath, $mapdir, $hash) if -d $fullpath;
+
+        # Scan files for map header and contents
+        if (-f $fullpath) {
+            open (FILE, $fullpath) || die "Couldn't read file $fullpath: $!\n";
+            
+            my $map = undef;
+            my $path;
+            
+            while($line = <FILE>) {
+                chomp $line;
+                if (! defined $map)
+                {
+                    last if $line ne 'arch map';
+                    $path = substr($fullpath, length($mapdir));
+                    $map = { 
+                        'fullpath' => $fullpath,
+                        'path' => $path,
+                        'directory' => substr($path, 0, rindex($path, "/")),
+                        'filename' => substr($path, rindex($path, "/"))
+                    };
+                }
+
+                if ($line =~ /tile_path_(\d) (.*)/)
+                {
+                    # We convert from mapfile tile_path numbering to normal directions
+                    my @conv = (0, 1, 3, 5, 7, 2, 4, 6, 8 );
+                    $map->{$conv[$1]} = normalize_path($2, $map->{'directory'});
+                }
+
+                last if $line eq 'end';
+            }
+            $hash->{$map->{'path'}} = $map if defined $map;
+            
+            close FILE;
+        }
+    }
+}
