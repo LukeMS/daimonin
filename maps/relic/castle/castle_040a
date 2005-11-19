@@ -12,6 +12,9 @@ tile_path_2 castle_050a
 tile_path_4 castle_030a
 tile_path_5 castle_0500
 tile_path_8 castle_0300
+tileset_id 5
+tileset_x 72
+tileset_y -48
 end
 arch water_still
 end
