@@ -916,6 +916,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
     object *item;
     player *pl;
     int r, i, flag_fix = FALSE;
+	char buf[HUGE_BUF];
 
     if(op->type != PLAYER || !(pl = CONTR(op)))
         return;
@@ -934,7 +935,12 @@ void material_attack_damage(object *op, int num, int chance, int base)
         for(i=0;i<PLAYER_EQUIP_MAX;i++)
         {
             if((item = pl->equipment[(r+i)%PLAYER_EQUIP_MAX]))
+			{
+				/* only damage weapons? */
+				if((base & HIT_FLAG_WEAPON) && item->type != WEAPON && item->type != SHIELD)
+					continue;
                 break;
+			}
         }
 
         if(i==PLAYER_EQUIP_MAX) /* nothing there we can damage */
@@ -975,7 +981,10 @@ void material_attack_damage(object *op, int num, int chance, int base)
         /* sanity check */
         if(item->item_condition > 0)
             item->item_condition--;
-                                                                     
+ 
+	    sprintf(buf, "Your %s is damaged.", query_short_name(item, NULL));
+        new_draw_info(NDI_UNIQUE, 0, op, buf);
+	    esrv_update_item(UPD_QUALITY, op, item);
         /* broken - unapply it - even its cursed */
         if(!item->item_condition)
             apply_special(op, item, AP_UNAPPLY | AP_IGNORE_CURSE);

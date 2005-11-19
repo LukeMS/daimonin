@@ -786,6 +786,11 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     {
         SockList_AddInt(&global_sl, op->nrof);
     }
+    if (flags & UPD_QUALITY)
+    {
+		SockList_AddChar(&global_sl, op->item_quality);
+		SockList_AddChar(&global_sl, op->item_condition);
+    }
     Send_With_Handling(&CONTR(pl)->socket, &global_sl);
 }
 
