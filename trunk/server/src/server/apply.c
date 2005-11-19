@@ -3220,7 +3220,7 @@ int apply_special(object *who, object *op, int aflags)
         /* always apply, so no reason to unapply */
         if (basic_flag == AP_APPLY)
             return 0;
-        if (!(aflags & AP_IGNORE_CURSE) && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
+        if (op->item_condition && !(aflags & AP_IGNORE_CURSE) && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
         {
             new_draw_info_format(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
             return 1;
@@ -3244,7 +3244,10 @@ int apply_special(object *who, object *op, int aflags)
             case WEAPON:
               change_abil(who, op);
               CLEAR_FLAG(who, FLAG_READY_WEAPON);
-              sprintf(buf, "You unwield %s.", query_name(op));
+			  if(!op->item_condition)
+	              sprintf(buf, "Your %s is broken!", query_name(op));
+			  else
+		          sprintf(buf, "You unwield %s.", query_name(op));
               break;
 
             case SKILL:
@@ -3282,13 +3285,19 @@ int apply_special(object *who, object *op, int aflags)
             case BRACERS:
             case CLOAK:
               change_abil(who, op);
-              sprintf(buf, "You unwear %s.", query_name(op));
+			  if(!op->item_condition)
+	              sprintf(buf, "Your %s is broken!", query_name(op));
+			  else
+	              sprintf(buf, "You unwear %s.", query_name(op));
               break;
             case BOW:
             case WAND:
             case ROD:
             case HORN:
-              sprintf(buf, "You unready %s.", query_name(op));
+			  if(!op->item_condition)
+	              sprintf(buf, "Your %s is broken!", query_name(op));
+			  else
+	              sprintf(buf, "You unready %s.", query_name(op));
               if (who->type == PLAYER)
               {
                   CONTR(who)->shoottype = range_none;
@@ -3361,7 +3370,23 @@ int apply_special(object *who, object *op, int aflags)
      * two parts, first a check and then the modifications */
     switch (op->type)
     {
+		case RING:
+		case AMULET:
+		case BOW:
+	        if(!op->item_condition)
+			{
+                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                return 1;
+			}
+		break;
         case WEAPON:
+	        if(!op->item_condition)
+			{
+                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                return 1;
+			}
             if (!QUERY_FLAG(who, FLAG_USE_WEAPON))
             {
                 sprintf(buf, "You can't use %s.", query_name(op));
@@ -3397,6 +3422,12 @@ int apply_special(object *who, object *op, int aflags)
             break;
         case SHIELD:
             /* don't allow of polearm or 2hand weapon with a shield */
+	        if(!op->item_condition)
+			{
+                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                return 1;
+			}
             if ((who->type == PLAYER && CONTR(who) && CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1])
                     && (CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_POLE_IMPACT
                         || CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_2H_IMPACT))
@@ -3413,13 +3444,19 @@ int apply_special(object *who, object *op, int aflags)
         case GIRDLE:
         case BRACERS:
         case CLOAK:
-          if (!QUERY_FLAG(who, FLAG_USE_ARMOUR))
-          {
-              sprintf(buf, "You can't use %s.", query_name(op));
-              new_draw_info(NDI_UNIQUE, 0, who, buf);
-              return 1;
-          }
-          break;
+	        if(!op->item_condition)
+			{
+                sprintf(buf, "The %s is broken and can't be applied.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                return 1;
+			}
+           if (!QUERY_FLAG(who, FLAG_USE_ARMOUR))
+           {
+               sprintf(buf, "You can't use %s.", query_name(op));
+               new_draw_info(NDI_UNIQUE, 0, who, buf);
+               return 1;
+           }
+           break;
 
           /* this part is needed for skill-tools */
         case SKILL:

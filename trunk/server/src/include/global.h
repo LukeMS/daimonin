@@ -215,6 +215,9 @@ typedef signed long long         sint64;
 #define SEND_FACE_OUT_OF_BOUNDS 1
 #define SEND_FACE_NO_DATA 2
 
+/* for attack.c and material.c - item damage */
+#define HIT_FLAG_WEAPON		   1024
+
 /* group define stuff */
 #define GROUP_NO (-1)
 

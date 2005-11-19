@@ -31,6 +31,7 @@
 #define HIT_FLAG_DMG           128
 #define HIT_FLAG_DMG_ACID      256
 #define HIT_FLAG_DMG_WMAGIC    512
+/* HIT_FLAG_WEAPON		==    1024 is defined in global.h */
 
 #define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);dam>=1.0f?(damage=(int)dam):(damage=1)
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
@@ -402,22 +403,31 @@ int hit_player(object *op, int dam, object *hitter)
     /* attack is done - lets check we have possible item dmg */
     if(flags & HIT_FLAG_DMG)
     {
-        int num = 1, chance = 5; /* base dmg chance for an dmg hit = 5% - for one item */
+        int num = 1, chance = 100; /* base dmg chance for an dmg hit = 2% - for one item */
 
-        /* evil: bad dmg effects are stacking */
-        if(flags & HIT_FLAG_DMG_ACID)
-        {
-            num +=2; /* base chance for dmg = 3 items */
-            chance +=5; /* increase dmg chance to 10% (+5%) */
-        }
-        if(flags & HIT_FLAG_DMG_ACID)
-        {
-            num +=1; /* base chance for dmg = 2 items */
-            chance +=10; /* increase dmg chance to 15% (+10%) */
-        }
-
-        flags &= (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL);
-        material_attack_damage(op, num, chance, flags);
+		if(op->type == PLAYER)
+		{
+	        /* evil: bad dmg effects are stacking */
+		    if(flags & HIT_FLAG_DMG_ACID)
+			{
+				num +=2; /* base chance for dmg = 3 items */
+				chance +=4; /* increase dmg chance by +4% */
+			}
+			if(flags & HIT_FLAG_DMG_WMAGIC)
+			{
+				num +=1; /* base chance for dmg = 2 items */
+				chance +=8; /* increase dmg chance by 8%  */
+			}
+			flags &= (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL);
+			material_attack_damage(op, num, chance, flags);
+		}
+		
+		/* now lets check our attacker is a player - if so, give weapon an extra chance of being damaged */
+		if(hitter->type == PLAYER)
+		{
+	        flags = (MATERIAL_BASE_PHYSICAL|MATERIAL_BASE_ELEMENTAL|MATERIAL_BASE_MAGICAL|MATERIAL_BASE_SPHERICAL|MATERIAL_BASE_SPECIAL|HIT_FLAG_WEAPON);
+		    material_attack_damage(hitter, num, chance/2, flags);
+		}
     }
 
     /* we insert the aggro data in the mob, and report to the AI system */

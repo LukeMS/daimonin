@@ -1089,7 +1089,7 @@ void InterfaceCmd(unsigned char *data, int len)
 /* UpdateItemCmd updates some attributes of an item */
 void UpdateItemCmd(unsigned char *data, int len)
 {
-    int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof;
+    int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
     uint8   direction;
     char    name[MAX_BUF];
     item   *ip, *env = NULL;
@@ -1169,7 +1169,12 @@ void UpdateItemCmd(unsigned char *data, int len)
         nrof = GetInt_String(data + pos);
         pos += 4;
     }
-    update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, 254, 254, 254, 254, direction,
+    if (sendflags & UPD_QUALITY)
+	{
+        quality = (int)(data[pos++]);
+        condition = (int)(data[pos++]);
+	}
+    update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
                 FALSE);
     map_udate_flag = 2;
 }

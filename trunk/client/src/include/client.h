@@ -521,6 +521,7 @@ enum
 #define UPD_ANIMSPEED   0x40
 #define UPD_NROF    0x80
 #define UPD_DIRECTION   0x100
+#define UPD_QUALITY   0x200
 
 #define SOUND_NORMAL    0
 #define SOUND_SPELL 1
