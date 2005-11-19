@@ -384,9 +384,6 @@ end
 arch wall_stone1_1
 x 3
 end
-arch wall_stone1_1
-x 3
-end
 arch floor_ostone1
 x 3
 y 1
@@ -866,7 +863,7 @@ look_for_other_mobs
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 dont_stand_still max_idle_time=0
@@ -1188,7 +1185,7 @@ look_for_other_mobs
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -1234,7 +1231,7 @@ look_for_other_mobs
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -2656,7 +2653,7 @@ attitude group=test1:-200 player=-1000
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -2704,7 +2701,7 @@ attitude group=test2:-200 player=-1000
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -2866,7 +2863,7 @@ attitude group=test1:-200 player=-1000
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -2914,7 +2911,7 @@ attitude group=test2:-200 player=-1000
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -3076,7 +3073,7 @@ attitude group=test1:-200 player=-1000
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
@@ -3124,7 +3121,7 @@ attitude group=test2:-200 player=-1000
 friendship
 choose_enemy
 
-moves: 
+moves:
 # stand_still
 sleep
 # run_away_from_enemy hp_threshold=6
