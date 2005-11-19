@@ -12,8 +12,6 @@ if (scalar(@ARGV) && $ARGV[0] eq '-n') {
 
 my $mapdir = $ARGV[0] || die "Usage: $0 [-n] <path-to-map-directory>\n -n: Don't modify any files.\n";
 
-my @revdir = (0, 5, 6, 7, 8, 1, 2, 3, 4);
-
 my %maps = ();
 my %tilesets = ();
 
@@ -98,7 +96,12 @@ sub label_tileset
         my $target = $map->{$i};
         if (defined $target && !defined $maps->{$target}->{'tileset'}) 
         {
-            push @set, @{label_tileset($maps->{$target}, $maps, $label, $x + $dx[$i], $y + $dy[$i])};
+            my ($x2, $y2) = ($x, $y);
+            if ($dx[$i] == -1) { $x2 -= $maps->{$target}->{'width'} }
+            elsif ($dx[$i] == 1) { $x2 += $map->{'width'} }
+            if ($dy[$i] == -1) { $y2 -= $maps->{$target}->{'height'} }
+            elsif ($dy[$i] == 1) { $y2 += $map->{'height'} }
+            push @set, @{label_tileset($maps->{$target}, $maps, $label, $x2, $y2)};
         }
     }
 
@@ -109,6 +112,9 @@ sub label_tileset
 sub validate_linking
 {
     my ($maps) = @_;
+
+    my @revdir = (0, 5, 6, 7, 8, 1, 2, 3, 4);
+    
     my $errors = 0;
     foreach my $path (keys %$maps) {
 #        print "$path\n";
@@ -173,6 +179,8 @@ sub scan_maps
 {
     my ($dir, $mapdir, $hash) = @_;
 
+    my @conv = (0, 1, 3, 5, 7, 2, 4, 6, 8 );
+
     opendir (DIR, $dir)  || die "Couldn't read directory $dir: $!\n";
     my @contents = readdir DIR;
     closedir DIR;
@@ -209,11 +217,14 @@ sub scan_maps
                 if ($line =~ /tile_path_(\d) (.*)/)
                 {
                     # We convert from mapfile tile_path numbering to normal directions
-                    my @conv = (0, 1, 3, 5, 7, 2, 4, 6, 8 );
                     $map->{$conv[$1]} = normalize_path($2, $map->{'directory'});
+                } elsif ($line =~ /^width (\d+)$/) {
+                    $map->{'width'} = $1;
+                } elsif ($line =~ /^height (\d+)$/) {
+                    $map->{'height'} = $1;
+                } elsif ($line eq 'end') {
+                    last;
                 }
-
-                last if $line eq 'end';
             }
             $hash->{$map->{'path'}} = $map if defined $map;
             

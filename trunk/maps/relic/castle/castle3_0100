@@ -7,6 +7,9 @@ endmsg
 width 24
 height 24
 darkness 2
+tileset_id 56
+tileset_x 0
+tileset_y 0
 end
 arch floor_grey3
 y 3

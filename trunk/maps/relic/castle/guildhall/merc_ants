@@ -8,6 +8,9 @@ width 16
 height 16
 difficulty 1
 darkness 3
+tileset_id 75
+tileset_x 0
+tileset_y 0
 end
 arch fstone1b
 end
