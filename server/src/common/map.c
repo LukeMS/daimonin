@@ -2172,8 +2172,17 @@ int new_save_map(mapstruct *m, int flag)
         if (m->tile_path[i])
             fprintf(fp, "tile_path_%d %s\n", i + 1, m->tile_path[i]);
     }
-    fprintf(fp, "end\n");
 
+    /* Save any tileset information */
+    if (m->tileset_id > 0)
+    {
+        fprintf(fp, "tileset_id %d\n", m->tileset_id);
+        fprintf(fp, "tileset_x %d\n", m->tileset_x);
+        fprintf(fp, "tileset_y %d\n", m->tileset_y);
+    }
+
+    fprintf(fp, "end\n");
+    
     save_objects(m, fp, 0);
 
     fclose(fp);
