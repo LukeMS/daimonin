@@ -67,7 +67,6 @@ int attack_ob(object *op, object *hitter)
  */
 static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_wc)
 {
-int xxx;
     int     simple_attack, roll, dam = 0;
     tag_t   op_tag, hitter_tag;
 
@@ -88,7 +87,6 @@ int xxx;
 
     roll = random_roll(0, 20, hitter, PREFER_HIGH);
 
-xxx= roll;
     /* Adjust roll for various situations. */
     if (!simple_attack)
         roll += adj_attackroll(hitter, op);
@@ -2243,12 +2241,13 @@ static int adj_attackroll(object *hitter, object *target)
     object *attacker    = hitter;
     int     adjust      = 0;
 
-    /* safety */
-    if (!target || !hitter || !hitter->map || !target->map || on_same_tileset(hitter, target))
+    /* safety - but this should be checked before!
+    if (!target || !hitter || !hitter->map || !target->map || !on_same_tileset(hitter, target))
     {
         LOG(llevBug, "BUG: adj_attackroll(): hitter and target not on same map\n");
         return 0;
     }
+	*/
 
     /* aimed missiles use the owning object's sight */
     if (is_aimed_missile(hitter))
