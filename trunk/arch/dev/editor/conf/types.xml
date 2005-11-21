@@ -2092,7 +2092,6 @@
 <type number="71" name="Floor">
   <ignore>
     <attribute arch="damned" />
-    <ignore_section name="default_type" />
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
   </ignore>
