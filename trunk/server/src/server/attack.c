@@ -1445,7 +1445,7 @@ static int get_attack_mode(object **target, object **hitter, int *simple_attack)
     if (QUERY_FLAG(*target, FLAG_REMOVED)
      || QUERY_FLAG(*hitter, FLAG_REMOVED)
      || (*hitter)->map == NULL
-     || on_same_tileset((*hitter), (*target)))
+     || !on_same_tileset((*hitter), (*target)))
     {
         LOG(llevBug, "BUG: hitter (arch %s, name %s) with no relation to target\n", (*hitter)->arch->name,
             query_name(*hitter));
