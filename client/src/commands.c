@@ -1080,7 +1080,6 @@ void InterfaceCmd(unsigned char *data, int len)
             cpl.menustatus = MENU_NPC;
             gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
             gui_interface_npc->starty = 50;
-            active_button = -1;
             mb_clicked=0;
         }
     }

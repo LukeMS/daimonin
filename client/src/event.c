@@ -28,6 +28,8 @@ extern int  d_ServerPort;
 static int  get_action_keycode, drop_action_keycode; /* thats the key for G'et command from keybind */
 static int  menuRepeatKey   = -1;
 
+button_status global_buttons;
+
 typedef struct _keys
 {
     Boolean         pressed; /*true: key is pressed*/
@@ -342,16 +344,22 @@ int Event_PollInputDevice(void)
         }
     }
 
+	global_buttons.valid = -1;
     while (SDL_PollEvent(&event))
     {
         static int  old_mouse_y = 0;
-        x = event.motion.x;
-        y = event.motion.y;
+        x = global_buttons.mx=event.motion.x;
+        y = global_buttons.my=event.motion.y;
 
         mb_clicked = 0;
         switch (event.type)
         {
             case SDL_MOUSEBUTTONUP:
+			  global_buttons.mx_up = x;
+			  global_buttons.my_up = y;
+			  global_buttons.down = -1;
+			  global_buttons.click = 1;
+			  global_buttons.valid = 0;
               if (GameStatus < GAME_STATUS_PLAY)
                   break;
               mb_clicked = 0;
@@ -515,6 +523,13 @@ int Event_PollInputDevice(void)
               break;
 
             case SDL_MOUSEBUTTONDOWN:
+			  global_buttons.mx_down = x;
+			  global_buttons.my_down = y;
+			  global_buttons.down = 1;
+			  global_buttons.click = -1;
+			  global_buttons.valid = -1;
+			  global_buttons.mx_up = -1;
+			  global_buttons.my_up = -1;
               mb_clicked = 1;
               if (GameStatus < GAME_STATUS_PLAY)
                   break;

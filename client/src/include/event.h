@@ -26,6 +26,16 @@
 #define MAX_KEYS 512
 #define MAX_KEYMAP 512
 
+typedef struct _button_status
+{
+	int mx,my;			/* current mouse postion */
+	int mx_down,my_down; /* position as button was pressed. -1,-1 means button is not pressed */
+	int mx_up,my_up;	/* if NOT -1,-1, we have a button up */
+	int down;			/* if != -1, we have a button down event */
+	int click;			/* if != -1, we have a down/up button event */
+	int valid;			/* if != -1 = if this is 0, no event manager has used this data for a click, >0 means used */
+} button_status;
+
 typedef struct _key_macro
 {
     char    macro[64]; /* the macro*/
@@ -99,6 +109,8 @@ enum
     DRAG_QUICKSLOT_SPELL,
     DRAG_PDOLL
 };
+
+extern button_status global_buttons;
 
 extern int          KeyScanFlag; /* for debug/alpha , remove later */
 extern int          cursor_type;

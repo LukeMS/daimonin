@@ -52,7 +52,6 @@ extern enum
 }               value_type;
 extern char    *opt_tab[];
 extern int      dialog_new_char_warn;
-extern int      active_button;
 extern int dialog_login_warning_level;
 extern char        *spell_tab[];
 

@@ -219,7 +219,7 @@ void book_clear(void)
 _gui_book_struct *load_book_interface(int mode, char *data, int len)
 {
 	_gui_book_line current_book_line, *book_line;
-	int pos=0, lc=0;
+	int pos=0, lc=0, force_line;
 	_gui_book_page current_book_page;
 	int plc=0, plc_logic=0;
 	char c;
@@ -281,13 +281,18 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 		/* we have a line */
 		if(c== '\0' || c  == 0 || c == 0x0a)
 		{
+			int l_len;
+			_gui_book_line *tmp_line;
+
+			current_book_line.line[lc++]=0;
+			force_line = FALSE;
 			force_line_jump:
-			/* we *can* check the line length here (and wrap it to next line) but atm we don't */
+
 			book_line = malloc(sizeof(_gui_book_line));
 			memcpy(book_line, &current_book_line,sizeof(_gui_book_line));
-			current_book_page.line[plc++] = book_line;
+			current_book_page.line[plc] = book_line;
+			tmp_line = current_book_page.line[plc++];
 			plc_logic++;
-			memset(&current_book_line, 0, sizeof(_gui_book_line));
 			lc=0;
 
 			if(plc_logic >= BOOK_PAGE_LINES)
@@ -301,13 +306,57 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 				plc=0;
 				plc_logic=0;
 			}
+			
+			/* now lets check the last line - if the line is to long, lets adjust it */
+			l_len = StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&SystemFont, tmp_line->line, 230);
+			if(l_len!=strlen(tmp_line->line))
+			{
+				int i;
+				/* now lets go back to a ' '
+                 * if we don't find one, we cut the line hard
+                 */
+				for(i=l_len;i>=0;i--)
+				{
+					if(tmp_line->line[i] == ' ') /* and some evil c magic */
+					{
+						tmp_line->line[i++]=0;
+						for(;;i++)
+						{
+							if(tmp_line->line[i] == 0)
+							{
+								memset(&current_book_line, 0, sizeof(_gui_book_line));								
+								continue;
+							}
 
+							if(tmp_line->line[i] != ' ')
+								break;
+						}
+						memcpy(current_book_line.line, &tmp_line->line[i], strlen(&tmp_line->line[i])+1);
+						/* we have a forced linebreak, we go back and load more chars */
+						if(force_line)
+						{
+							if(StringWidth((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&SystemFont, current_book_line.line) < BOOK_LINES_CHAR-2)
+							{
+								lc = strlen(current_book_line.line);
+								goto force_line_jump_out;
+							}
+						}
+						goto force_line_jump;
+					}
+				}
+
+			}
+			memset(&current_book_line, 0, sizeof(_gui_book_line));
+			force_line_jump_out:
 			continue;
 		}
 
 		current_book_line.line[lc++]=c;
 		if(lc>=BOOK_LINES_CHAR-2)
+		{	
+			force_line = TRUE;
 			goto force_line_jump;
+		}
 	}
 
 	if(plc_logic)
@@ -335,10 +384,10 @@ void show_book(int x, int y)
 	if(!gui_interface_book)
 		return;
 
-	box.x=x+95;
-	box.y=y+90;
-	box.w=275;
-	box.h=340;
+	box.x=x+110;
+	box.y=y+100;
+	box.w=240;
+	box.h=330;
 
 	/* get the 2 pages we show */
 	page1 = gui_interface_book->start;
@@ -354,8 +403,8 @@ void show_book(int x, int y)
 		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+120, box.y+355, COLOR_WHITE, NULL, NULL);
 
 		SDL_SetClipRect(ScreenSurface, &box);
-		//	SDL_FillRect(ScreenSurface, &box, 0);
-		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=12)
+		SDL_FillRect(ScreenSurface, &box, 35325);
+		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=16)
 		{
 			if(!page1->line[i])
 				break;
@@ -367,7 +416,7 @@ void show_book(int x, int y)
 			{
 				StringBlt(ScreenSurface, &BigFont, page1->line[i]->line, box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
 				ii++;
-				yoff+=12;
+				yoff+=16;
 			}
 			i++;
 		}
@@ -375,9 +424,9 @@ void show_book(int x, int y)
 	}
 
 
-	box.x=x+406;
-	box.y=y+90;
-	box.w=275;
+	box.x=x+435;
+	box.y=y+100;
+	box.w=260;
 	box.h=340;
 
 	if(gui_interface_book->pages)
@@ -392,7 +441,7 @@ void show_book(int x, int y)
 		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+120, box.y+355, COLOR_WHITE, NULL, NULL);
 
 		SDL_SetClipRect(ScreenSurface, &box);
-		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=12)
+		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=16)
 		{
 			if(!page2->line[i])
 				break;
@@ -404,7 +453,7 @@ void show_book(int x, int y)
 			{
 				StringBlt(ScreenSurface, &BigFont, page2->line[i]->line, box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
 				ii++;
-				yoff+=12;
+				yoff+=16;
 			}
 			i++;
 		}
