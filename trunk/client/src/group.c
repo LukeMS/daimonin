@@ -79,9 +79,6 @@ void show_group(int x, int y)
                 global_group_status = GROUP_NO;
                 send_command("/deny", -1, SC_NORMAL);
             }
-
-			if (!mb)
-				active_button = -1;
         }
     }
     else /* status: GROUP_MEMBER */
@@ -94,9 +91,6 @@ void show_group(int x, int y)
                 send_command("/leave", -1, SC_NORMAL);
             }
         }
-
-		if (!mb)
-			active_button = -1;
 
         for (s = 0; s < GROUP_MAX_MEMBER; s++)
         {

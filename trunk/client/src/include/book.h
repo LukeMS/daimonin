@@ -24,8 +24,8 @@
 #if !defined(__BOOK_H)
 #define __BOOK_H
 
-#define BOOK_PAGE_LINES 28
-#define BOOK_LINES_CHAR 64
+#define BOOK_PAGE_LINES 20
+#define BOOK_LINES_CHAR 256
 
 typedef struct gui_book_line
 {

@@ -273,10 +273,8 @@ int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
 {
     char   *text_sel;
     int     ret = 0;
-    int     mx, my, mb;
     int     xoff, yoff;
 
-    mb = SDL_GetMouseState(&mx, &my) & SDL_BUTTON(SDL_BUTTON_LEFT);
     if (text_h)
         text_sel = text_h;
     else
@@ -288,24 +286,23 @@ int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
     yoff =  (Bitmaps[gfxNr]->bitmap->h - (SystemFont.c['W'].h+1)) / 2 + 2;
     xoff =  (Bitmaps[gfxNr]->bitmap->w - (StringWidth(&SystemFont, text)+1)) / 2 + 1;
     
-    if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
+    if (global_buttons.down!=-1 && global_buttons.mx_down > x && global_buttons.my_down > y &&
+		 global_buttons.mx_down < x + Bitmaps[gfxNr]->bitmap->w && 
+		 global_buttons.my_down < y + Bitmaps[gfxNr]->bitmap->h)
     {
-//        char buf[256], buf2[256];
-//        sprintf(buf,"mb:%d mc:%d ab:%d ID:%d", mb, mb_clicked, active_button, id);
-        //if (mb && mb_clicked && active_button < 0)
-        if (mb_clicked && active_button < 0)
-            active_button = id;
-        if (active_button == id)
-        {
-            sprite_blt(Bitmaps[gfxNr + 1], x, y++, NULL, NULL);
-            if (!mb)
-                ret = 1;
-        }
-//        sprintf(buf2, "%s ->AC:%d (%d)\n",buf, active_button, ret);
-//        draw_info(buf2, COLOR_WHITE);
+        sprite_blt(Bitmaps[gfxNr + 1], x, y++, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, text, x + xoff, y + yoff, COLOR_BLACK, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, text_sel, x + (xoff-1), y + (yoff-1), COLOR_HGOLD, NULL, NULL);
+
     }
+	else if ( global_buttons.valid != -1 && global_buttons.click != -1 && 
+			 global_buttons.mx_up > x && global_buttons.my_up > y &&
+			 global_buttons.mx_up < x + Bitmaps[gfxNr]->bitmap->w && 
+			global_buttons.my_up < y + Bitmaps[gfxNr]->bitmap->h)
+	{
+		global_buttons.valid = -1;
+		ret = TRUE;
+	}
     else
     {
         StringBlt(ScreenSurface, &SystemFont, text, x + xoff, y + yoff, COLOR_BLACK, NULL, NULL);
@@ -2161,9 +2158,7 @@ int precalc_interface_npc(void)
 void show_interface_npc(int mark)
 {
     SDL_Rect    box;
-    int x=gui_interface_npc->startx, y=gui_interface_npc->starty, mb, mx, my, numButton=0,yoff, i;
-
-    mb = SDL_GetMouseState(&mx, &my);
+    int x=gui_interface_npc->startx, y=gui_interface_npc->starty, numButton=0,yoff, i;
 
     sprite_blt(Bitmaps[BITMAP_NPC_INTERFACE], x, y, NULL, NULL);
 
@@ -2385,7 +2380,6 @@ void show_interface_npc(int mark)
             {
                 draw_info("select a item first.", COLOR_GREEN);
                 sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
-                active_button = -1;
                 return;
 
             }
@@ -2396,8 +2390,6 @@ void show_interface_npc(int mark)
                 check_menu_keys(MENU_NPC, SDLK_n);
             else
                 check_menu_keys(MENU_NPC, SDLK_a);
-
-            active_button = -1;
             return;
         }
 
@@ -2407,7 +2399,6 @@ void show_interface_npc(int mark)
                             gui_interface_npc->decline.title, gui_interface_npc->decline.title2))
             {
                 check_menu_keys(MENU_NPC, SDLK_d);
-                active_button = -1;
                 return;
             }
         }
@@ -2417,7 +2408,6 @@ void show_interface_npc(int mark)
         if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP, "Ok", "~O~k"))
         {
             check_menu_keys(MENU_NPC, SDLK_o);
-            active_button = -1;
             return;
         }
     }
@@ -2436,9 +2426,6 @@ void show_interface_npc(int mark)
         StringBlt(ScreenSurface, &Font6x3Out, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
         SDL_FillRect(ScreenSurface, &box, COLOR_GREY);
     }
-
-    if (!mb)
-        active_button = -1;
 }
 
 

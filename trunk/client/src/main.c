@@ -186,7 +186,9 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"coin_gold.png", PIC_TYPE_TRANS},
     {"coin_mithril.png", PIC_TYPE_TRANS},
     {"npc_int_slider.png", PIC_TYPE_DEFAULT},
-    {"journal.png", PIC_TYPE_TRANS}
+    {"journal.png", PIC_TYPE_TRANS},
+    {"gui_button2_up.png", PIC_TYPE_TRANS},
+    {"gui_button2_down.png", PIC_TYPE_TRANS}
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -250,6 +252,9 @@ static void delete_player_lists(void)
 void init_game_data(void)
 {
     int i;
+
+	memset(&global_buttons,-1, sizeof(button_status));
+
     textwin_init();
     textwin_flags = 0;
     first_server_char = NULL;
@@ -1560,6 +1565,21 @@ int main(int argc, char *argv[])
         FrameCount++;
         LastTick = SDL_GetTicks();
         /* print frame rate*/
+/*
+        {
+            SDL_Rect    rec;
+            sprintf(buf, " valid:%d mxy: %d,%d down:%d (%d,%d) up:%d (%d,%d)",global_buttons.valid,
+				global_buttons.mx,global_buttons.my,
+				global_buttons.down,global_buttons.mx_down, global_buttons.my_down, 
+				global_buttons.click, global_buttons.mx_up, global_buttons.my_up);
+	
+                rec.x = 228;
+                rec.y = 122;
+                rec.h = 14;
+                rec.w = 225;
+                StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
+		}
+*/
         if (options.show_frame && cpl.menustatus == MENU_NO)
         {
             SDL_Rect    rec;

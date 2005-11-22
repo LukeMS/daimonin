@@ -328,6 +328,31 @@ int StringWidth(_Font *font, char *text)
 
     return w;
 }
+/* Calculate the displayed chars for a given width*/
+int StringWidthOffset(_Font *font, char *text, int len)
+{
+    int w = 0, i, c;
+    
+    for (c = i = 0; text[i] != '\0'; i++)
+    {
+        switch (text[i])
+        {
+            case '°':
+            case '~':
+            case '^':
+                break;
+
+            default:
+                w += font->c[(int) (text[i])].w + font->char_offset;
+				if(w>=len)
+					return c;
+                break;
+        }
+		c++;
+    }
+
+    return c;
+}
 
 void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
 {
