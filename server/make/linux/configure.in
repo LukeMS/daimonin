@@ -52,6 +52,7 @@ AC_PATH_PROG(LATEX, latex)
 AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(GUNZIP, gunzip)
 AC_PATH_PROG(PERL, perl)
+AC_PATH_PROG(STRIP, strip)
 
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
@@ -251,6 +252,7 @@ AC_OUTPUT(Makefile
 	../../src/random_maps/Makefile ../../src/socket/Makefile
 	../../src/server/Makefile ../../src/include/Makefile
 	../../src/utils/Makefile ../../src/common/Makefile
+	../../src/utils/Makefile ../../src/lua/config
 	../../src/utils/dmonloop
 	../../src/plugin_lua/Makefile
 	)
