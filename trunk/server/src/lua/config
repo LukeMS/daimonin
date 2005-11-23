@@ -108,8 +108,8 @@ EXTRA_LIBS= -lm
 # You need an ANSI C compiler. gcc is a popular one. We do not use -ansi in
 # WARN because it disables POSIX features used in the libraries.
 #
-CC= gcc
-WARN= -Wall
+#CC= gcc
+#WARN= -Wall
 
 # ------------------------------------------------------------------ C options
 
@@ -119,7 +119,7 @@ WARN= -Wall
 # debug information. If you only want the shared libraries, you may want to
 # add -fPIC to MYCFLAGS.
 #
-MYCFLAGS= -O3
+#MYCFLAGS= -O3
 #MYCFLAGS= -O3 -fomit-frame-pointer # -fPIC
 
 # Write here any options you may need for your C linker.
@@ -129,12 +129,14 @@ MYCFLAGS= -O3
 
 # This should work in all Unix systems.
 #
-AR= ar rcu
+#AR= ar rcu
+AR= /usr/bin/ar rcu
 
 # If your system doesn't have (or need) ranlib, use RANLIB=true.
 # On some systems, "ar s" does what ranlib would do.
 #
 RANLIB= ranlib
+#RANLIB= ranlib
 #RANLIB= ar s
 #RANLIB= true
 
@@ -142,7 +144,8 @@ RANLIB= ranlib
 
 # This should work in all Unix systems, but you may want to add options.
 #
-STRIP= strip
+#STRIP= strip
+STRIP= /usr/bin/strip
 
 # ------------------------------------------------------------------ install
 
@@ -157,8 +160,10 @@ INSTALL_MAN= $(INSTALL_ROOT)/man/man1
 # You may prefer to use "install" instead of "cp" if you have it.
 # If you use "install", you may also want to change the permissions after -m.
 #
-INSTALL_EXEC= cp
-INSTALL_DATA= cp
+INSTALL_EXEC= /bin/cp
+INSTALL_DATA= /bin/cp
+#INSTALL_EXEC= cp
+#INSTALL_DATA= cp
 #INSTALL_EXEC= install -m 0755
 #INSTALL_DATA= install -m 0644
 
@@ -173,6 +178,9 @@ LIB= $(LUA)/lib
 INCS= -I$(INC) $(EXTRA_INCS)
 DEFS= $(NUMBER) $(EXTRA_DEFS)
 
-CFLAGS= $(MYCFLAGS) $(WARN) $(INCS) $(DEFS) $(EXTRA_CFLAGS)
+CFLAGS = -g -O2 $(EXTRA_CFLAGS) 
 
 # (end of config)
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCS) $(DEFS) -c $*.c
