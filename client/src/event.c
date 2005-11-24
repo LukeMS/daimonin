@@ -240,6 +240,9 @@ static void mouse_moveHero()
 #define MY_POS 8
     int         x, y, tx, ty;
     static int  delta   = 0;
+
+	if(1)
+		return; /* disable until we have smooth moving - people think this IS the real mouse moving */
     if (delta++ & 7)
         return; /* dont move to fast */
     if (draggingInvItem(DRAG_GET_STATUS))
@@ -367,6 +370,23 @@ int Event_PollInputDevice(void)
                   break;
               cursor_type = 0;
               active_scrollbar = 0;
+
+				if(cpl.menustatus == MENU_BOOK)
+				{
+					/* no button - we can do a lazy check */
+					if( global_buttons.mx_up >= global_book_data.x &&
+						global_buttons.my_up >= global_book_data.y && 
+						global_buttons.mx_up <= global_book_data.x+global_book_data.xlen &&
+						global_buttons.my_up <= global_book_data.y+global_book_data.ylen)
+					{
+						global_buttons.click = -1;
+
+						if(global_buttons.mx_up >= global_book_data.x+(global_book_data.xlen/2))
+							check_menu_keys(MENU_BOOK, SDLK_RIGHT);
+						else
+							check_menu_keys(MENU_BOOK, SDLK_LEFT);
+					}
+				}
 
               /***********************
                      drag and drop events
@@ -558,16 +578,6 @@ int Event_PollInputDevice(void)
                   break;
               }
 
-              /* toggle range */
-              if (x > 3 && x <37 && y> 403 && y < 437)
-              {
-                  if (event.button.button == SDL_BUTTON_RIGHT)
-                      process_macro_keys(KEYFUNC_RANGE_BACK, 0);
-                  else
-                      process_macro_keys(KEYFUNC_RANGE, 0);
-                  break;
-              }
-
               /* schow-menu buttons*/
               if (x >= 748 && x <= 790)
               {
@@ -591,6 +601,18 @@ int Event_PollInputDevice(void)
                       process_macro_keys(KEYFUNC_HELP, 0);
               }
 
+              if (cpl.menustatus != MENU_NO)
+                  break;
+
+              /* toggle range */
+              if (x > 3 && x <37 && y> 403 && y < 437)
+              {
+                  if (event.button.button == SDL_BUTTON_RIGHT)
+                      process_macro_keys(KEYFUNC_RANGE_BACK, 0);
+                  else
+                      process_macro_keys(KEYFUNC_RANGE, 0);
+                  break;
+              }
               /* Toggle textwin */
               if (x >= 488 && x < 528 && y <536 && y> 521)
               {

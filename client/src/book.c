@@ -26,9 +26,11 @@
 #define BOOK_LINE_NORMAL	0
 #define BOOK_LINE_TITLE		1
 #define BOOK_LINE_ICON		2
+#define BOOK_LINE_NAME		4
 
 /* internal used */
 #define BOOK_LINE_PAGE		16
+_global_book_data global_book_data;
 
 static _gui_book_line *get_page_tag(char *data, int len, int *pos)
 {
@@ -103,6 +105,42 @@ static _gui_book_line *get_title_tag(char *data, int len, int *pos)
 	return NULL;
 }
 
+static _gui_book_line *get_name_tag(char *data, int len, int *pos)
+{
+	char *buf,c;
+	static _gui_book_line book_line;
+
+	memset(&book_line, 0 , sizeof(_gui_book_line));
+	book_line.mode = BOOK_LINE_NAME;
+	(*pos)++;
+	while((c= *(data+*pos)) != '\0' && c  != 0)
+	{
+		if(c == '>')
+			return &book_line;
+
+		(*pos)++;
+		if(c<=' ')
+			continue;
+
+		/* check inside tags */
+		switch(c)
+		{
+			case 't':
+				if(!(buf = get_parameter_string(data, pos)))
+					return NULL;
+				strncpy(book_line.line, buf,BOOK_LINES_CHAR);
+				buf[BOOK_LINES_CHAR]=0;
+			break;
+
+			default:
+				return NULL;
+			break;
+		}
+	}
+
+	return NULL;
+}
+
 static _gui_book_line *get_icon_tag(char *data, int len, int *pos)
 {
 	return NULL;
@@ -137,6 +175,13 @@ static _gui_book_line *check_book_tag(char *data, int len, int *pos)
 				return NULL;
 			return book_line;
 		}
+		else if(c=='b') /* book name */
+		{
+			book_line = get_name_tag(data, len, pos);
+			if(!book_line)
+				return NULL;
+			return book_line;
+		}
 		else
 		 return NULL;
 	}
@@ -166,7 +211,7 @@ static void book_link_page(_gui_book_page *page)
 }
 
 /* post formating & initializing of a loaded book */
-static void format_book(_gui_book_struct *book)
+static void format_book(_gui_book_struct *book, char *name)
 {
 	int pc=0;
 	_gui_book_page *page;
@@ -175,7 +220,7 @@ static void format_book(_gui_book_struct *book)
 		return;
 
 	gui_interface_book->page_show = 0;
-
+	strcpy(gui_interface_book->name, name);
 	page = gui_interface_book->start;
 	while(page)
 	{
@@ -222,8 +267,9 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 	int pos=0, lc=0, force_line;
 	_gui_book_page current_book_page;
 	int plc=0, plc_logic=0;
-	char c;
+	char c, name[256]="";
 
+	strcpy(name, "Book");
 	book_clear();
 	memset(&current_book_page, 0, sizeof(_gui_book_page));
 	memset(&current_book_line, 0, sizeof(_gui_book_line));
@@ -247,6 +293,14 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 				return NULL;
 			}
 
+			if(book_line->mode & BOOK_LINE_NAME)
+			{
+				strcpy(name, book_line->line);
+				memset(&current_book_line, 0, sizeof(_gui_book_line));
+				continue;
+			}
+
+			title_repeat_jump:
 			if((book_line->mode & BOOK_LINE_TITLE && plc_logic+2 >= BOOK_PAGE_LINES)
 				|| book_line->mode & BOOK_LINE_PAGE)
 			{
@@ -262,11 +316,47 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 
 			if(book_line->mode & BOOK_LINE_TITLE)
 			{
+				int l_len;
 				_gui_book_line *b_line = malloc(sizeof(_gui_book_line));
+
 				memcpy(b_line, book_line,sizeof(_gui_book_line));
 				b_line->mode = BOOK_LINE_TITLE;
 				current_book_page.line[plc++] = b_line;
-				plc_logic+=2;
+				plc_logic+=1;
+				
+				/* lets check we need to break the title line (because its to big) */
+				if((l_len = StringWidthOffset(&BigFont, b_line->line, 196)) != strlen(b_line->line))
+				{
+					int i = l_len;
+					b_line->line[l_len]=0;
+
+					/* now lets go back to a ' ' if we don't find one, we cut the line hard */
+					for(i=l_len;i>=0;i--)
+					{
+						if(b_line->line[i] == ' ')
+						{
+							b_line->line[i]=0; /* thats our real eof */
+							break;
+						}
+					}
+
+					/* lets see where our real eol is ... */
+					if(i<0) /* is it at i?`*/
+						i = l_len; /* nope, its our "physcial" eol */
+		
+					/* now lets remove all whitespaces.. if we hit EOL, jump back */		
+					for(;;i++)
+					{
+						if(book_line->line[i] != ' ')
+							break;
+					}
+					
+					if(strlen(&book_line->line[i]))
+					{
+						memcpy(book_line->line, &book_line->line[i],strlen(&book_line->line[i])+1);
+						goto title_repeat_jump;				
+					}
+				}
 			}
 			continue;
 		}
@@ -284,9 +374,9 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 			int l_len;
 			_gui_book_line *tmp_line;
 
-			current_book_line.line[lc++]=0;
 			force_line = FALSE;
 			force_line_jump:
+			current_book_line.line[lc]=0;
 
 			book_line = malloc(sizeof(_gui_book_line));
 			memcpy(book_line, &current_book_line,sizeof(_gui_book_line));
@@ -308,43 +398,53 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 			}
 			
 			/* now lets check the last line - if the line is to long, lets adjust it */
-			l_len = StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&SystemFont, tmp_line->line, 230);
+			l_len = StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?&BigFont:&SystemFont, tmp_line->line, 196);
 			if(l_len!=strlen(tmp_line->line))
 			{
 				int i;
-				/* now lets go back to a ' '
-                 * if we don't find one, we cut the line hard
-                 */
+
+				tmp_line->line[l_len]=0; /* bigger can't be the string - current_book_line.line is our backbuffer */
+				/* now lets go back to a ' ' if we don't find one, we cut the line hard */
 				for(i=l_len;i>=0;i--)
 				{
-					if(tmp_line->line[i] == ' ') /* and some evil c magic */
+					if(tmp_line->line[i] == ' ')
 					{
-						tmp_line->line[i++]=0;
-						for(;;i++)
-						{
-							if(tmp_line->line[i] == 0)
-							{
-								memset(&current_book_line, 0, sizeof(_gui_book_line));								
-								continue;
-							}
-
-							if(tmp_line->line[i] != ' ')
-								break;
-						}
-						memcpy(current_book_line.line, &tmp_line->line[i], strlen(&tmp_line->line[i])+1);
-						/* we have a forced linebreak, we go back and load more chars */
-						if(force_line)
-						{
-							if(StringWidth((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&SystemFont, current_book_line.line) < BOOK_LINES_CHAR-2)
-							{
-								lc = strlen(current_book_line.line);
-								goto force_line_jump_out;
-							}
-						}
-						goto force_line_jump;
+						tmp_line->line[i]=0; /* thats our real eof */
+						break;
 					}
 				}
+				/* lets see where our real eol is ... */
+				if(i<0) /* is it at i?`*/
+					i = l_len; /* nope, its our "physcial" eol */
+		
+				/* now lets remove all whitespaces.. if we hit EOL, jump back */		
+				for(;;i++)
+				{
+					if(current_book_line.line[i] == 0)
+					{
 
+						if(!force_line) /* thats a real eol */
+						{
+							/* clear input line setting */
+							memset(&current_book_line, 0, sizeof(_gui_book_line));								
+						}
+						goto force_line_jump_out;
+					}
+
+					if(current_book_line.line[i] != ' ')
+					break;
+				}
+				memcpy(current_book_line.line, &current_book_line.line[i], strlen(&current_book_line.line[i])+1);
+				/* we have a forced linebreak, we go back and load more chars */
+				lc = strlen(current_book_line.line);
+				if(force_line)
+				{
+					if(StringWidth((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&SystemFont, current_book_line.line) < BOOK_LINES_CHAR-2)
+					{
+						goto force_line_jump_out;
+					}
+				}
+				goto force_line_jump;
 			}
 			memset(&current_book_line, 0, sizeof(_gui_book_line));
 			force_line_jump_out:
@@ -368,7 +468,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 		book_link_page(page);
 	}
 
-	format_book(gui_interface_book);
+	format_book(gui_interface_book, name);
 	return gui_interface_book;
 }
 
@@ -380,13 +480,21 @@ void show_book(int x, int y)
 	_gui_book_page *page1, *page2;
 
     sprite_blt(Bitmaps[BITMAP_JOURNAL], x, y, NULL, NULL);
+	global_book_data.x = x;
+	global_book_data.y = y;
+	global_book_data.xlen = Bitmaps[BITMAP_JOURNAL]->bitmap->w;
+	global_book_data.ylen = Bitmaps[BITMAP_JOURNAL]->bitmap->h;
+
+    add_close_button(x+27, y+2, MENU_BOOK);
+	StringBlt( ScreenSurface, &BigFont, gui_interface_book->name , x+global_book_data.xlen/2-
+			   get_string_pixel_length(gui_interface_book->name, &BigFont)/2,y+9, COLOR_WHITE, NULL, NULL);
 
 	if(!gui_interface_book)
 		return;
 
-	box.x=x+110;
-	box.y=y+100;
-	box.w=240;
+	box.x=x+37;
+	box.y=y+42;
+	box.w=200;
 	box.h=330;
 
 	/* get the 2 pages we show */
@@ -400,10 +508,10 @@ void show_book(int x, int y)
 	if(page1)
 	{
 		sprintf(buf,"Page %d of %d",gui_interface_book->page_show+1,gui_interface_book->pages);
-		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+120, box.y+355, COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+70, box.y+330, COLOR_WHITE, NULL, NULL);
 
 		SDL_SetClipRect(ScreenSurface, &box);
-		SDL_FillRect(ScreenSurface, &box, 35325);
+		/*SDL_FillRect(ScreenSurface, &box, 35325);*/
 		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=16)
 		{
 			if(!page1->line[i])
@@ -415,8 +523,6 @@ void show_book(int x, int y)
 			else if(page1->line[i]->mode == BOOK_LINE_TITLE)
 			{
 				StringBlt(ScreenSurface, &BigFont, page1->line[i]->line, box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
-				ii++;
-				yoff+=16;
 			}
 			i++;
 		}
@@ -424,23 +530,24 @@ void show_book(int x, int y)
 	}
 
 
-	box.x=x+435;
-	box.y=y+100;
-	box.w=260;
-	box.h=340;
+	box.x=x+280;
+	box.y=y+42;
+	box.w=200;
+	box.h=330;
 
 	if(gui_interface_book->pages)
 	{
 		sprintf(buf,"%c and %c to turn page",ASCII_RIGHT, ASCII_LEFT);
-		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x-55, box.y+355, COLOR_GREEN, NULL, NULL);
+		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x-59, box.y+330, COLOR_GREEN, NULL, NULL);
 	}
 
 	if(page2)
 	{
 		sprintf(buf,"Page %d of %d",gui_interface_book->page_show+2,gui_interface_book->pages);
-		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+120, box.y+355, COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+76, box.y+330, COLOR_WHITE, NULL, NULL);
 
 		SDL_SetClipRect(ScreenSurface, &box);
+		/*SDL_FillRect(ScreenSurface, &box, 35325);*/
 		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=16)
 		{
 			if(!page2->line[i])
@@ -452,8 +559,6 @@ void show_book(int x, int y)
 			else if(page2->line[i]->mode == BOOK_LINE_TITLE)
 			{
 				StringBlt(ScreenSurface, &BigFont, page2->line[i]->line, box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
-				ii++;
-				yoff+=16;
 			}
 			i++;
 		}
