@@ -27,6 +27,14 @@
 #define BOOK_PAGE_LINES 20
 #define BOOK_LINES_CHAR 256
 
+typedef struct __global_book_data
+{
+	int x;
+	int y;
+	int xlen;
+	int ylen;
+}_global_book_data;
+
 typedef struct gui_book_line
 {
 	int mode;
@@ -40,6 +48,7 @@ typedef struct gui_book_struct
 	int pages;
 	int page_show;
 	struct gui_book_page *start;
+	char name[256];
 } _gui_book_struct;
 
 
@@ -48,6 +57,8 @@ typedef struct gui_book_page
 	struct gui_book_page *next;
 	_gui_book_line *line[BOOK_PAGE_LINES];
 } _gui_book_page;
+
+extern _global_book_data global_book_data;
 
 extern _gui_book_struct *load_book_interface(int mode, char *data, int len);
 extern void show_book(int x, int y);

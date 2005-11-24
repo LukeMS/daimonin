@@ -68,6 +68,7 @@ enum {
 	DIALOG_LOGIN_WARNING_PWD_NAME
 };
 
+void add_close_button(int x, int y, int menu);
 int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h);
 extern void show_optwin(void);
 extern void show_newplayer_server(void);

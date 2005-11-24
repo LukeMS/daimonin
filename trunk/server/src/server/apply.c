@@ -1739,6 +1739,8 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
 
 static void apply_book(object *op, object *tmp)
 {
+	char buf[MAX_BUF];
+
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
@@ -1779,6 +1781,9 @@ static void apply_book(object *op, object *tmp)
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_BOOK);
 
     SockList_AddInt(&global_sl, tmp->weight_limit);
+	sprintf(buf,"<b t=\"%s %s\">", STRING_SAFE(tmp->name),STRING_SAFE(tmp->title));
+    strcpy(global_sl.buf+global_sl.len, buf);
+    global_sl.len += strlen(buf);/* yes, no +1 - we want a strcat effect */
     strcpy(global_sl.buf+global_sl.len, tmp->msg);
     global_sl.len += strlen(tmp->msg)+1;
     Send_With_Handling(&CONTR(op)->socket, &global_sl);

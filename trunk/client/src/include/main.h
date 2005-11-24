@@ -592,8 +592,6 @@ typedef enum _bitmap_index
     BITMAP_COIN_MITHRIL,
     BITMAP_NPC_INT_SLIDER,
     BITMAP_JOURNAL,
-	BITMAP_BUTTON_GUI_UP,
-	BITMAP_BUTTON_GUI_DOWN,
     BITMAP_INIT
 }                           _bitmap_index;
 

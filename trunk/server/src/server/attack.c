@@ -401,7 +401,7 @@ int hit_player(object *op, int dam, object *hitter)
     /* attack is done - lets check we have possible item dmg */
     if(flags & HIT_FLAG_DMG)
     {
-        int num = 1, chance = 100; /* base dmg chance for an dmg hit = 2% - for one item */
+        int num = 1, chance = 2; /* base dmg chance for an dmg hit = 2% - for one item */
 
 		if(op->type == PLAYER)
 		{

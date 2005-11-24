@@ -186,9 +186,7 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"coin_gold.png", PIC_TYPE_TRANS},
     {"coin_mithril.png", PIC_TYPE_TRANS},
     {"npc_int_slider.png", PIC_TYPE_DEFAULT},
-    {"journal.png", PIC_TYPE_TRANS},
-    {"gui_button2_up.png", PIC_TYPE_TRANS},
-    {"gui_button2_down.png", PIC_TYPE_TRANS}
+    {"journal.png", PIC_TYPE_TRANS}
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -1513,7 +1511,7 @@ int main(int argc, char *argv[])
             StringBlt(ScreenSurface, &SystemFont, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL, NULL);
 
         /* show the current dragged item */
-        if ((drag = draggingInvItem(DRAG_GET_STATUS)))
+        if (cpl.menustatus == MENU_NO && (drag = draggingInvItem(DRAG_GET_STATUS)))
         {
             item   *Item = NULL;
             if (drag == DRAG_IWIN_INV)

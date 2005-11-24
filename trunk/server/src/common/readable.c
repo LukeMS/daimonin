@@ -1095,15 +1095,12 @@ char * mon_info_msg(int level, int booksize)
     int count=0, desc_num= (RANDOM()%5)+3;
 
     /*preamble */
-    sprintf(retbuf, "<t t=\"Beastiary\">\nHerein are detailed %d creatures\nfound in the world around.\n\n\n\n", desc_num);
+    sprintf(retbuf, "<t t=\"Beastiary\">\nHerein are detailed %d creatures\nfound in the world around.\n\n\n", desc_num);
 
     tmp = get_random_mon(1);
     do
     {
-        if(count&1)
-            strcat(retbuf,"<p>");
-        else
-            strcat(retbuf,"\n\n");
+        strcat(retbuf,"\n");
 
         /* monster description */
         strcpy(tmpbuf, mon_desc(tmp));
@@ -1197,9 +1194,6 @@ char * artifact_msg(int level, int booksize)
         if (art == NULL)
             break;
 
-        if(count++&1)
-            strcat(retbuf,"\n<p>");
-        else
         strcat(retbuf,"\n\n");
         if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
         {
