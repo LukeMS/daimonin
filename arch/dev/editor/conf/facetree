@@ -2112,6 +2112,14 @@
 /floors/water/lake.102
 /floors/water/lake.103
 /floors/water/lake.104
+/floors/water/lake_deep.101
+/floors/water/lake_deep.102
+/floors/water/lake_deep.103
+/floors/water/lake_deep.104
+/floors/water/lake_deepest.101
+/floors/water/lake_deepest.102
+/floors/water/lake_deepest.103
+/floors/water/lake_deepest.104
 /items/armour/mail/lamellar_mail.101
 /items/light/lamp_lit1.101
 /items/light/lamp_lit1.102
@@ -3042,6 +3050,10 @@
 /floors/snow/snow_fmask.118
 /floors/snow/snow_fmask.121
 /items/organic/vegetables/snozzcumber01.101
+/mobs/summoned/mage_golem/sparkle_black_mage_golem/sparkle_black_golem_mage.131
+/mobs/summoned/mage_golem/sparkle_black_mage_golem/sparkle_black_golem_mage.132
+/mobs/summoned/mage_golem/sparkle_black_mage_golem/sparkle_black_golem_mage.151
+/mobs/summoned/mage_golem/sparkle_black_mage_golem/sparkle_black_golem_mage.152
 /misc/effects/sparkle_lup.101
 /misc/effects/sparkle_lup.102
 /misc/effects/sparkle_lup.103
