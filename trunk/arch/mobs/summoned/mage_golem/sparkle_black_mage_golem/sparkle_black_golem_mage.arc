@@ -26,7 +26,7 @@ sp -1
 maxsp 20
 hp -1
 maxhp 66
-ac 12
+ac 13
 wc 4
 thac0 18
 thacm 1
@@ -76,13 +76,21 @@ sparkle_black_golem_mage.152
 sparkle_black_golem_mage.151
 sparkle_black_golem_mage.152
 sparkle_black_golem_mage.131
+sparkle_black_golem_mage.132
 sparkle_black_golem_mage.131
+sparkle_black_golem_mage.132
 sparkle_black_golem_mage.131
+sparkle_black_golem_mage.132
 sparkle_black_golem_mage.131
+sparkle_black_golem_mage.132
 sparkle_black_golem_mage.151
+sparkle_black_golem_mage.152
 sparkle_black_golem_mage.151
+sparkle_black_golem_mage.152
 sparkle_black_golem_mage.151
+sparkle_black_golem_mage.152
 sparkle_black_golem_mage.151
+sparkle_black_golem_mage.152
 mina
 is_animated 1
 anim_speed 4
