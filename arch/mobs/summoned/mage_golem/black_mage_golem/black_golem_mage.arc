@@ -26,7 +26,7 @@ sp -1
 maxsp 20
 hp -1
 maxhp 66
-ac 12
+ac 13
 wc 4
 thac0 18
 thacm 1
