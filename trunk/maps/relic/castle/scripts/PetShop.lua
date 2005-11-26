@@ -20,7 +20,12 @@ price=50000,
 arch="ant_soldier",
 name="pet ant",
 level=7
-}
+},
+["doggie"] = { 
+price=200000, 
+arch="dog_brown",
+name="pet doggie",
+level=13
 }
 
 -- Look up goods name
