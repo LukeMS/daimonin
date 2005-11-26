@@ -97,7 +97,8 @@ tl:SetDefault( function() activator:Interface(1,
 <h f="peasant.151"> 
 <m t="Pet Shop" b="Welcome to my humble shop. 
 Here you can buy yourself a loving servant from the best of breeds.
-I've got ^red^ and ^black^ ants for sale, or you can try out this adorable little ^doggie^--the tyke!
+I've got ^red^ and ^black^ ants for sale, or you can try out this 
+adorable little ^doggie^--the tyke!
 
 I can also offer you some general ^advice^ on pets handling.
 "> 
@@ -116,7 +117,7 @@ Pay ~20 gold~ and he's yours.
 
 Do you want to buy this cute li'l doggie?
 "> 
-<i m="G" f="ant_red.131" t="This li'l doggie needs lots of love!" b="blaha">
+<i m="G" f="dog.ise.111" t="This li'l doggie needs lots of love!" b="blaha">
 <a t="Accept" c="/talk buy doggie">
 <d t="Decline" c="/talk hello">
 ]]
