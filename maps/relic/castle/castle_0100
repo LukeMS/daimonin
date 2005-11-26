@@ -1428,8 +1428,7 @@ no_pass 1
 x 9
 y 18
 end
-arch earth_m14
-no_pass 1
+arch sand_dm10
 x 9
 y 18
 end
@@ -1574,7 +1573,6 @@ x 10
 y 17
 end
 arch bridge_wood_NS.171
-layer 2
 x 10
 y 18
 end
@@ -1990,16 +1988,17 @@ arch bridge_wood_NS.131
 x 13
 y 16
 end
-arch floor_earth1a
+arch water_still_deepest
 no_pass 1
 x 13
 y 17
 end
 arch bridge_wood_NS.131
+layer 1
 x 13
 y 17
 end
-arch floor_blue3
+arch water_still_deepest
 no_pass 1
 x 13
 y 18
@@ -2008,7 +2007,7 @@ arch bridge_wood_NS.131
 x 13
 y 18
 end
-arch floor_blue3
+arch water_still_deepest
 no_pass 1
 x 13
 y 19
@@ -2017,7 +2016,7 @@ arch bridge_wood_NS.131
 x 13
 y 19
 end
-arch floor_blue3
+arch water_still_deepest
 no_pass 1
 x 13
 y 20
@@ -2026,7 +2025,7 @@ arch bridge_wood_NS.131
 x 13
 y 20
 end
-arch floor_blue3
+arch water_still_deepest
 no_pass 1
 x 13
 y 21
@@ -2151,20 +2150,23 @@ arch floor_earth1a
 x 14
 y 17
 end
-arch floor_blue3
+arch water_still_deepest
 x 14
 y 18
 end
-arch floor_blue3
+arch fstone1m12
+x 14
+y 18
+end
+arch water_still_deepest
 x 14
 y 19
 end
-arch floor_blue3
+arch water_still_deepest
 x 14
 y 20
 end
-arch floor_blue3
-no_pass 1
+arch water_still_deepest
 x 14
 y 21
 end
