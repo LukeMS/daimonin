@@ -91,10 +91,28 @@ tl:SetDefault( function() activator:Interface(1,
 <h f="peasant.151"> 
 <m t="Pet Shop" b="Welcome to my humble shop. 
 Here you can buy yourself a loving servant from the best of breeds.
-Sadly, all I have in stock at the moment are ^red^ and ^black^ ants.
+I've got ^red^ and ^black^ ants for sale, or you can try out this adorable little ^doggie^--the tyke!
 
 I can also offer you some general ^advice^ on pets handling.
 "> 
+]]
+) end
+)
+
+tl:AddTopics( {"doggie", "dog"}, function() activator:Interface(1,
+[[
+<h f="peasant.151"> 
+<m t="Doggie" b="
+Ah, so you picked the little doggie!
+Such a cute fella, i'm sure you'll like him. 
+He takes a lot of love and makes a great companion. 
+Pay ~20 gold~ and he's yours.
+
+Do you want to buy this cute li'l doggie?
+"> 
+<i m="G" f="ant_red.131" t="This li'l doggie needs lots of love!" b="blaha">
+<a t="Accept" c="/talk buy doggie">
+<d t="Decline" c="/talk hello">
 ]]
 ) end
 )

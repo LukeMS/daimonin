@@ -253,6 +253,10 @@ direction 7
 x 1
 y 17
 end
+arch carpet1.131
+x 1
+y 17
+end
 arch fwall_fstone2a
 x 1
 y 18
@@ -385,24 +389,38 @@ arch floor_wood2b
 x 2
 y 16
 end
+arch carpet1.151
+x 2
+y 16
+end
 arch floor_wood2b
+x 2
+y 17
+end
+arch carpet1
 x 2
 y 17
 end
 arch spawn_point
 x 2
 y 17
-arch ant_red
-name Ardworf
+arch dog_brown
+name Ardwarf
 type 83
-title The pet ant
-friendly 1
+title the cute doggie
+unaggressive 1
 random_move 1
 item_race 3
 item_level 3
+stand_still 1
+direction 4
 end
 end
 arch floor_wood2b
+x 2
+y 18
+end
+arch carpet1.111
 x 2
 y 18
 end
@@ -553,6 +571,10 @@ x 3
 y 16
 end
 arch floor_wood2b
+x 3
+y 17
+end
+arch carpet1.171
 x 3
 y 17
 end
@@ -876,8 +898,9 @@ hp 7
 sp 20
 end
 arch event_obj
-sub_type 13
+name Lua
 race /relic/castle/scripts/PetShop.lua
+sub_type 13
 end
 arch ai_generic
 end
