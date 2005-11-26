@@ -27,6 +27,7 @@ arch="dog_brown",
 name="pet doggie",
 level=13
 }
+}
 
 -- Look up goods name
 local pet_info = goods[what]
