@@ -13,6 +13,7 @@ dnl AC_PROG_YACC
 AC_CANONICAL_SYSTEM
 AC_PROG_CC
 
+LUA_NUMBER=""
 case "$target" in
   alpha-dec-osf*)
     # If we are not using gcc, we want the ansi version of cc.
@@ -21,10 +22,15 @@ case "$target" in
       CFLAGS="$CFLAGS -std1"
     fi
     ;;
+  i586-* | i686-*)
+    # We can optimize the lua library somewhat on Pentium class processors
+    echo "Enabling Lua Pentium optimizations"
+    LUA_NUMBER="-DLUA_USER_H='\"../etc/luser_number.h\"' -DUSE_FASTROUND"
+    ;;
   *)
     ;;
 esac
-
+AC_SUBST([LUA_NUMBER])
 
 AC_PROG_CPP
 AC_PROG_LEX

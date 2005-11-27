@@ -78,6 +78,7 @@ USERCONF=
 # method for the conversion of doubles to ints can give around 20% speed
 # improvement. To use this rounding method, uncomment the following line.
 #NUMBER= -DLUA_USER_H='"../etc/luser_number.h"' -DUSE_FASTROUND
+NUMBER= @LUA_NUMBER@
 
 # For partial compatibility with old upvalue syntax, define LUA_COMPATUPSYNTAX.
 # For partial compatibility with old upvalue behavior in C functions, define
