@@ -120,7 +120,7 @@ EXTRA_LIBS= -lm
 # debug information. If you only want the shared libraries, you may want to
 # add -fPIC to MYCFLAGS.
 #
-#MYCFLAGS= -O3
+MYCFLAGS= -fPIC
 #MYCFLAGS= -O3 -fomit-frame-pointer # -fPIC
 
 # Write here any options you may need for your C linker.
@@ -179,7 +179,7 @@ LIB= $(LUA)/lib
 INCS= -I$(INC) $(EXTRA_INCS)
 DEFS= $(NUMBER) $(EXTRA_DEFS)
 
-CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS) 
+CFLAGS = @CFLAGS@ $(MYCFLAGS) $(EXTRA_CFLAGS) 
 
 # (end of config)
 
