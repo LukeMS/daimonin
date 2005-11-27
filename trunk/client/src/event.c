@@ -529,6 +529,34 @@ int Event_PollInputDevice(void)
                           cpl.win_inv_slot = cpl.win_inv_count;
                       break;
                   }
+                  /* IWIN_INV Slider */
+                  else if (active_scrollbar == 2 || (cpl.menustatus == MENU_NPC && y >= 136 && y <=474 && x>=561 && x <= 568))
+                  {
+                      active_scrollbar = 2;
+
+                    if (old_mouse_y - y > 0)
+					{
+						gui_interface_npc->yoff +=12;
+						if(gui_interface_npc->yoff >0)
+							gui_interface_npc->yoff=0;
+						if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+							gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+						if(gui_interface_npc->yoff >0)
+							gui_interface_npc->yoff=0;
+					}
+					else if (old_mouse_y - y < 0)
+					{
+						gui_interface_npc->yoff -= 12;
+
+		                if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+							gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+						if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+							gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+						if(gui_interface_npc->yoff >0)
+							gui_interface_npc->yoff=0;
+					}
+                    break;
+                  }
               }
 
               /* examine an item */
@@ -2448,6 +2476,17 @@ void check_menu_keys(int menu, int key)
             {
             case SDLK_RETURN:
             case SDLK_KP_ENTER:
+				if(gui_interface_npc->link_selected)
+				{
+					send_command(gui_interface_npc->link[gui_interface_npc->link_selected-1].cmd, -1, SC_NORMAL);
+					draw_info_format(COLOR_WHITE, "Talking about: %s", gui_interface_npc->link[gui_interface_npc->link_selected-1].link);
+
+					gui_interface_npc->link_selected=0;
+	                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+	                break;
+				}
+				
+
                 reset_keys();
                 open_input_mode(240);
                 textwin_putstring("");
@@ -2496,6 +2535,53 @@ menu_npc_jump1:
                 else
                     reset_gui_interface();
             break;
+
+            case SDLK_TAB:
+		    if(gui_interface_npc->link_count)
+			{
+				if(++gui_interface_npc->link_selected > gui_interface_npc->link_count)
+					gui_interface_npc->link_selected = 0;
+                sound_play_effect(SOUND_GET, 0, 0, 100);
+			}
+			else
+				sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+			break;
+			/* select prize */
+            case SDLK_DOWN:
+				if (gui_interface_npc->icon_count)
+				{
+					int i = gui_interface_npc->selected;
+					do {
+						if(++i >gui_interface_npc->icon_count)
+							i = 1; 
+						if(gui_interface_npc->icon[i].mode == 'S' )
+						{
+							gui_interface_npc->selected = i;
+							sound_play_effect(SOUND_GET, 0, 0, 100);
+							break;
+						}
+					} while(i!=gui_interface_npc->selected);
+				}
+			break;
+
+            case SDLK_UP:
+				if (gui_interface_npc->icon_count)
+				{
+					int i = gui_interface_npc->selected;
+					do {
+						if(--i < 1)
+							i = gui_interface_npc->icon_count; 
+						if(gui_interface_npc->icon[i].mode == 'S' )
+						{
+							gui_interface_npc->selected = i;
+							sound_play_effect(SOUND_GET, 0, 0, MENU_SOUND_VOL);
+							break;
+						}
+					} while(i!=gui_interface_npc->selected);
+				}
+			break;
+
+			/* key scroll up/down */
             case SDLK_PAGEUP:
                 gui_interface_npc->yoff +=12;
                 if(gui_interface_npc->yoff >0)

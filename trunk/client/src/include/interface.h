@@ -114,6 +114,7 @@ typedef struct gui_interface_struct {
     int starty;
     int icon_select;
     int selected;
+	int link_selected;
     _gui_interface_head head;
     _gui_interface_link link[MAX_INTERFACE_ICON];
     _gui_interface_message message;
@@ -127,5 +128,9 @@ typedef struct gui_interface_struct {
 extern void reset_gui_interface(void);
 extern _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos);
 extern void gui_interface_send_command(int mode, char *cmd);
+extern int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my);
+extern int precalc_interface_npc(void);
+extern void show_interface_npc(int mark);
+extern void gui_interface_mouse(SDL_Event *e);
 
 #endif

@@ -167,6 +167,20 @@ void textwin_init()
     }
 }
 
+void draw_info_format(int flags,char *format,...)
+{
+    char    buf[HUGE_BUF];
+    va_list ap;
+
+    va_start(ap, format);
+
+    vsprintf(buf, format, ap);
+
+    va_end(ap);
+
+	draw_info(buf, flags);
+}
+
 /******************************************************************
  add string to the text-window (perform auto-clipping).
 ******************************************************************/

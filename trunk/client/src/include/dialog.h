@@ -74,11 +74,6 @@ extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);
 extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
-extern void accept_char();
-extern int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my);
-extern int precalc_interface_npc(void);
-extern void show_interface_npc(int mark);
-extern void gui_interface_mouse(SDL_Event *e);
 
 #endif
 
