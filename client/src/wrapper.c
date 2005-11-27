@@ -43,7 +43,11 @@ void LOG(int logLevel, char *format, ...)
             flag = TRUE;
     }
     if (!logstream)     /* secure: we have no open stream*/
-        flag = FALSE;
+    {
+        logstream = fopen_wrapper(LOG_FILE, "w");
+        if (!logstream) 	
+    	    flag = FALSE;
+    }
     if (flag)
     {
         va_start(ap, format);
@@ -71,7 +75,7 @@ Boolean SYSTEM_Start(void)
     SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
 
 #if defined( __WIN_32)  || defined(__LINUX)
-    logstream = fopen_wrapper(LOG_FILE, "w");
+
     return(TRUE);
 #endif
 }
