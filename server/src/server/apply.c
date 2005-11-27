@@ -1781,7 +1781,7 @@ static void apply_book(object *op, object *tmp)
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_BOOK);
 
     SockList_AddInt(&global_sl, tmp->weight_limit);
-	sprintf(buf,"<b t=\"%s %s\">", STRING_SAFE(tmp->name),STRING_SAFE(tmp->title));
+	sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
     strcpy(global_sl.buf+global_sl.len, buf);
     global_sl.len += strlen(buf);/* yes, no +1 - we want a strcat effect */
     strcpy(global_sl.buf+global_sl.len, tmp->msg);

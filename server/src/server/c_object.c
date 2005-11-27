@@ -1345,7 +1345,7 @@ char *examine(object *op, object *tmp, int flag)
         buf[0] = '\0';
     }
     
-	if (tmp->item_quality)
+	if (tmp->item_quality && !tmp->item_condition)
         strcat(buf_out, "Item is broken!\n"); 
 
     switch (tmp->type)
