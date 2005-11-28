@@ -1,0 +1,13 @@
+arch map
+name missing arch
+msg
+Creator: Unknown Combat Dummy
+Date:    2005-11-28
+endmsg
+width 24
+height 24
+end
+arch xyz 
+x 7
+y 10
+end
