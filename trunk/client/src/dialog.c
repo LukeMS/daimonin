@@ -1685,8 +1685,8 @@ void show_login_server(void)
 	            StringBlt(ScreenSurface, &SystemFont, "                             ~is NOT your character name !~",x+2, y+70, COLOR_WHITE, NULL, NULL);
 	            StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+1, y+81, COLOR_BLACK, NULL, NULL);
 	            StringBlt(ScreenSurface, &SystemFont, "                             ~Select a different one WITHOUT~",x+2, y+80, COLOR_WHITE, NULL, NULL);
-	            StringBlt(ScreenSurface, &SystemFont, "                             ~numbers of special signs in it.~",x+1, y+91, COLOR_BLACK, NULL, NULL);
-	            StringBlt(ScreenSurface, &SystemFont, "                             ~numbers of special signs in it.~",x+2, y+90, COLOR_WHITE, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special signs in it.~",x+1, y+91, COLOR_BLACK, NULL, NULL);
+	            StringBlt(ScreenSurface, &SystemFont, "                             ~numbers and special signs in it.~",x+2, y+90, COLOR_WHITE, NULL, NULL);
 			}
 		}
 		goto login_jmp;
@@ -1809,14 +1809,14 @@ void show_login_server(void)
 	}
 	else /* Create Char */
 	{
-            StringBlt(ScreenSurface, &SystemFont, "1.) Enter a ~name~ WITHOUT any numbers or special chars. Press RETURN.",
+            StringBlt(ScreenSurface, &SystemFont, "1.) Enter a ~name~ WITHOUT any numbers and special chars. Press RETURN.",
                     x-10, y+1  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "1.) Enter a ~name~ WITHOUT any numbers or special chars. Press RETURN.",
+            StringBlt(ScreenSurface, &SystemFont, "1.) Enter a ~name~ WITHOUT any numbers and special chars. Press RETURN.",
                     x-11, y  , COLOR_WHITE, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont, "2.) Enter a ~password~ WITH at last one special chars. Press RETURN." ,
+            StringBlt(ScreenSurface, &SystemFont, "2.) Enter a ~password~ WITH at least one special chars. Press RETURN." ,
                     x-10  , y+1  , COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, "2.) Enter a ~password~ WITH at last one special chars. Press RETURN." ,
+            StringBlt(ScreenSurface, &SystemFont, "2.) Enter a ~password~ WITH at least one special chars. Press RETURN." ,
                     x-11  , y  , COLOR_WHITE, NULL, NULL);
             y+=12;
             StringBlt(ScreenSurface, &SystemFont, "3.) Enter the ~password~ again to ~verify~ it. Press RETURN." ,
