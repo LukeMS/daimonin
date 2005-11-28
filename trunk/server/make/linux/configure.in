@@ -22,7 +22,7 @@ case "$target" in
       CFLAGS="$CFLAGS -std1"
     fi
     ;;
-  i586-* | i686-*)
+  i586-* | i686-* | x86_64* )
     # We can optimize the lua library somewhat on Pentium class processors
     echo "Enabling Lua Pentium optimizations"
     LUA_NUMBER="-DLUA_USER_H='\"../etc/luser_number.h\"' -DUSE_FASTROUND"
