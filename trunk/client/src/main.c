@@ -1119,7 +1119,6 @@ int main(int argc, char *argv[])
     int             pollret, maxfd;
     struct timeval  timeout;
 
-
     init_game_data();
     while (argc > 1)
     {
@@ -1152,14 +1151,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0)
-    {
-        LOG(LOG_ERROR, "Couldn't initialize SDL: %s\n", SDL_GetError());
-        exit(1);
-    }
-    atexit(SDL_Quit);
-    SYSTEM_Start(); /* start the system AFTER start SDL */
-    list_vid_modes();
 #if defined( __LINUX)
     LOG(LOG_MSG, "**** NOTE ****\n");
     LOG(LOG_MSG, "With sound enabled SDL will throw a parachute\n");
@@ -1167,6 +1158,22 @@ int main(int argc, char *argv[])
     LOG(LOG_MSG, "Try then to start the client with 'SDL_AUDIODRIVER=null ./daimonin'\n");
     LOG(LOG_MSG, "Read the README_LINUX.txt file for more information.\n");
 #endif
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0)
+    {
+        LOG(LOG_ERROR, "Couldn't initialize SDL: %s\n", SDL_GetError());
+        if (strstr(SDL_GetError(), "console terminal"))
+        {
+            LOG(LOG_MSG, "**** NOTE ****\n");
+            LOG(LOG_MSG, "Seems that you are trying to run daimonin in framebuffer.\n");
+            LOG(LOG_MSG, "We suggest to reconfigure your x-window-system.\n");
+            LOG(LOG_MSG, "You should be able to run daimonin as root,\n");
+            LOG(LOG_MSG, "but for security reasons - this is not a good idea!\n");
+        }
+        exit(1);
+    }
+    atexit(SDL_Quit);
+    SYSTEM_Start(); /* start the system AFTER start SDL */
+    list_vid_modes();
 #ifdef INSTALL_OPENGL
     if (options.use_gl)
     {
