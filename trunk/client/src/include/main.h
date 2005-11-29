@@ -636,5 +636,6 @@ extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);
 extern void load_options_dat(void);
 extern void save_options_dat(void);
+extern void reset_input_mode(void);
 #endif
 

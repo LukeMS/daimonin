@@ -147,6 +147,7 @@ void reset_keys(void)
 {
     register int i;
 
+	reset_input_mode();
     InputStringFlag = FALSE;
     InputStringEndFlag = FALSE;
     InputStringEscFlag = FALSE;
@@ -1060,7 +1061,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                   }
                   
                   strcpy(InputString, InputHistory[HistoryPos] + 6);
-                  CurrentCursorPos = strlen(InputString);
+                  InputCount =CurrentCursorPos = strlen(InputString);
+                  InputStringFlag = TRUE;
                   
                   box.x = gui_interface_npc->startx + 95;
                   box.y = gui_interface_npc->starty + 449;
@@ -1097,7 +1099,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                       }
                   }
                   strcpy(InputString, InputHistory[HistoryPos] + 6);
-                  CurrentCursorPos = strlen(InputString);
+                  InputCount =CurrentCursorPos = strlen(InputString);
+                  InputStringFlag = TRUE;
                   box.x = gui_interface_npc->startx + 95;
                   box.y = gui_interface_npc->starty + 449;
                   box.h = 12;
@@ -2483,11 +2486,13 @@ void check_menu_keys(int menu, int key)
 
 					gui_interface_npc->link_selected=0;
 	                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+					reset_input_mode();
 	                break;
 				}
 				
 
                 reset_keys();
+				reset_input_mode();
                 open_input_mode(240);
                 textwin_putstring("");
                 cpl.input_mode = INPUT_MODE_NPCDIALOG;
@@ -2502,6 +2507,9 @@ void check_menu_keys(int menu, int key)
                     gui_interface_send_command(1, gui_interface_npc->decline.command);
                 else
                     reset_gui_interface();
+
+		        reset_keys();
+				cpl.input_mode = INPUT_MODE_NO;
                 break;
 
             case SDLK_n:
@@ -2534,6 +2542,8 @@ menu_npc_jump1:
                 }
                 else
                     reset_gui_interface();
+		    reset_keys();
+			cpl.input_mode = INPUT_MODE_NO;
             break;
 
             case SDLK_TAB:

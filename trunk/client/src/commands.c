@@ -1061,6 +1061,8 @@ void InterfaceCmd(unsigned char *data, int len)
     {
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
     }
+	reset_keys();
+	cpl.input_mode = INPUT_MODE_NO;
     reset_gui_interface();
     if(len)
     {
