@@ -78,57 +78,149 @@
   <!--#############################################-->
   <Window name= "PlayerInfo" relativeCoords= "false">
     <Pos      x= "15" y= "150" zOrder = "250" />
-    <Size     width= "600" height= "600" />
-    <DragArea x= "0" y= "0" width= "600" height= "20" />
+    <Size     width= "340" height= "440" />
+    <DragArea x= "0" y= "0" width= "250" height= "17" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
-    <Graphic type= "COLOR_FILL">
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  name = "Red_Background">
       <Pos x= "0" y= "0" />
-      <Color red= "128" green= "0" blue= "0" alpha = "255" />
-      <Range width= "600" height= "17" />
+      <Range width= "340" height= "440" />
     </Graphic>
 
-    <Graphic type= "COLOR_FILL">
-      <Pos x= "0" y= "17" />
-      <Color red= "0" green= "0" blue= "255" alpha = "128" />
-      <Range width= "600" height= "600" />
+    <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
     </Graphic>
 
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "10" y= "0" />
+      <Range width= "330" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_TR_Edge">
+      <Pos x= "331" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
+      <Pos x= "0" y= "431" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "10" y= "435" />
+      <Range width= "330" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_BR_Edge">
+      <Pos x= "331" y= "431" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+      <Pos x= "0" y= "10" />
+      <Range width= "5" height= "422" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+      <Pos x= "335" y= "10" />
+      <Range width= "5" height= "422" />
+    </Graphic>
+
+
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
+      <Pos x= "30" y= "50" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "41" y= "50" />
+      <Range width= "261" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_TR_Edge">
+      <Pos x= "300" y= "50" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+
+    <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
+      <Pos x= "30" y= "396" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "40" y= "400" />
+      <Range width= "261" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_BR_Edge">
+      <Pos x= "300" y= "396" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+      <Pos x= "30" y= "59" />
+      <Range width= "5" height= "337" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+      <Pos x= "304" y= "59" />
+      <Range width= "5" height= "337" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 2                                     -->
+    <!--=============================================-->
     <Gadget type= "BUTTON"  name = "Button_Close">
-      <Pos x= "584" y= "0" />
+      <Pos x= "325" y= "0" />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Button_1">
-      <Pos x= "170" y= "75" />
-      <Label xPos= "5" yPos= "1" font="02" red= "32" green= "64" blue= "128" text= "Press"/>
+    <Gadget type= "BUTTON"  name = "Dialog_Button">
+      <Pos x= "30" y= "410" />
+      <Label xPos= "20" yPos= "2" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
       <Tooltip  text= "This is only a test button." />
     </Gadget>
 
+    <Gadget type= "BUTTON"  name = "Dialog_Button">
+      <Pos x= "255" y= "410" />
+      <Label xPos= "6" yPos= "2" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
+      <Tooltip  text= "This is only a test button." />
+    </Gadget>
+
+
+
+
+
+
+
+
     <Statusbar type="COLOR_FILL" direction="UP" name = "HealthBar">
-      <Pos  x= "50" y= "20" />
+      <Pos  x= "150" y= "120" />
       <Size width= "17" height= "80" />
       <Color red= "128" green= "0" blue= "0" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "GraceBar">
-      <Pos  x= "70" y= "20" />
+      <Pos  x= "170" y= "120" />
       <Size width= "17" height= "80" />
       <Color red= "128" green= "128" blue= "0" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "ManaBar">
-      <Pos  x= "90" y= "20" />
+      <Pos  x= "190" y= "120" />
       <Size width= "17" height= "80" />
       <Color red= "0" green= "50" blue= "128" alpha = "255" />
     </Statusbar>
 
-    <Label x=  "05" y= "100" font="00" text= "Text@00 using abc font #0" />
-    <Label x=  "05" y= "112" font="01" text= "Text@00 using@01 abc font #1" />
-    <Label x=  "05" y= "125" font="02" text= "Text@00 using@02 abc font #2" />
-    <Label x=  "05" y= "140" font="03" text= "Text@00 using@03 abc font #3" />
-    <Label x=  "05" y= "170" font="04" text= "Text@00 using@04 abc font #4" />
-    <Label x=  "05" y= "240" font="05" text= "Text@00 using@05 abc font #5" />
-
+    <Label x=  "105" y= "210" font="00" text= "Text@00 using abc font #0" />
 
 
   </Window>

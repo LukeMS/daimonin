@@ -1,5 +1,15 @@
 <?xml version= "1.0" encoding= "us-ascii"?>
 <ImageSet file= "Imageset.png" font= "TrebuchetMSBold">
+    <!--#############################################-->
+    <!-- Mouse                                       -->
+    <!--#############################################-->
+    <Image name= "MouseCursor" width= "15" height= "25">
+        <State name= "Standard" posX= "1" posY= "65" />
+    </Image>
+
+    <!--#############################################-->
+    <!-- Dialog Style Clean                          -->
+    <!--#############################################-->
     <Image name= "Background" width= "63" height= "63">
         <State name= "Standard" posX= "0" posY= "0" />
     </Image>
@@ -8,29 +18,65 @@
         <State name= "Standard" posX= "0" posY= "90" />
     </Image>
 
-    <Image name= "MouseCursor" width= "15" height= "25">
-        <State name= "Standard" posX= "1" posY= "65" />
-    </Image>
+    <!--#############################################-->
+    <!-- Dialog Style RED                            -->
+    <!--#############################################-->
+      <!--=============================================-->
+      <!-- Backgrounds                                 -->
+      <!--=============================================-->
+      <Image name= "Red_Background" width= "250" height= "250">
+          <State name= "Standard" posX= "0" posY= "108" />
+      </Image>
+      <!--=============================================-->
+      <!-- Ornaments                                   -->
+      <!--=============================================-->
+      <Image name= "Red_TL_Edge" width= "9" height= "9">
+          <State name= "Standard" posX= "1" posY= "1" />
+      </Image>
+ 
+      <Image name= "Red_TR_Edge" width= "9" height= "9">
+          <State name= "Standard" posX= "1" posY= "1" />
+      </Image>
 
-    <Image name= "Button_1" width= "55" height= "17">
-        <State name= "Standard" posX= "64" posY= "0" />
-        <State name= "Pushed"   posX= "64" posY= "34" />
-        <State name= "M_Over"   posX= "64" posY= "17" />
-    </Image>
+      <Image name= "Red_BL_Edge" width= "9" height= "9">
+          <State name= "Standard" posX= "1" posY= "1" />
+      </Image>
+ 
+      <Image name= "Red_BR_Edge" width= "9" height= "9">
+          <State name= "Standard" posX= "1" posY= "1" />
+      </Image>
 
-    <Image name= "Button_2" width= "12" height= "16">
-        <State name= "Standard" posX= "68" posY= "20" />
-    </Image>
+      <Image name= "Red_Line_H" width= "24" height= "5">
+          <State name= "Standard" posX= "171" posY= "16" />
+      </Image>
 
-    <Image name= "Button_Close" width= "17" height= "17">
-        <State name= "Standard" posX= "125" posY= "0" />
-        <State name= "M_Over"   posX= "125" posY= "17" />
-        <State name= "Pushed"   posX= "125" posY= "34" />
-    </Image>
+      <Image name= "Red_Line_V" width= "5" height= "24">
+          <State name= "Standard" posX= "197" posY= "1" />
+      </Image>
 
-    <Image name= "Button_Cancel" width= "13" height= "13">
-        <State name= "Standard" posX= "2" posY= "20" />
-        <State name= "M_Over"   posX= "2" posY= "20" />
-        <State name= "Pushed"   posX= "2" posY= "20" />
-    </Image>
+      <!--=============================================-->
+      <!-- Buttons                                     -->
+      <!--=============================================-->
+      <Image name= "Dialog_Button" width= "55" height= "19">
+          <State name= "Standard" posX= "1" posY= "1" />
+          <State name= "Pushed"   posX= "1" posY= "21" />
+          <State name= "M_Over"   posX= "1" posY= "41" />
+      </Image>
+
+      <Image name= "Button_2" width= "12" height= "16">
+          <State name= "Standard" posX= "68" posY= "20" />
+      </Image>
+
+      <Image name= "Button_Close" width= "15" height= "15">
+          <State name= "Standard" posX= "115" posY= "1" />
+          <State name= "Pushed"   posX= "115" posY= "18" />
+          <State name= "M_Over"   posX= "115" posY= "35" />
+      </Image>
+ 
+      <Image name= "Button_Cancel" width= "13" height= "13">
+          <State name= "Standard" posX= "2" posY= "20" />
+          <State name= "Pushed"   posX= "2" posY= "20" />
+          <State name= "M_Over"   posX= "2" posY= "20" />
+      </Image>
+
 </ImageSet>

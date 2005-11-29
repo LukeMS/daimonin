@@ -85,6 +85,7 @@ private:
   int  mType;
   std::string mStrName, mStrLabel, mStrBgLabel, mBehavior, mStrTooltip;
   unsigned char mLabelColor[3];
+  int mLabelFont;
   int mLabelXPos, mLabelYPos;
   int  mOldState, mState;
 
