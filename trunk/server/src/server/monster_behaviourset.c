@@ -295,9 +295,9 @@ struct mob_behaviourset * generate_behaviourset(object *op)
             {
                 /* Behaviours for archers/mages only */
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY);
-                last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].intvalue = (int)
+                last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].intvalue = (long)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
-                last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (int)
+                last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (long)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
 
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);
@@ -496,7 +496,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
                 switch (behaviour->declaration->params[i].type)
                 {
                     case AI_INTEGER_TYPE:
-                      behaviour->parameters[i].intvalue = (int) behaviour->declaration->params[i].defaultvalue;
+                      behaviour->parameters[i].intvalue = (long) behaviour->declaration->params[i].defaultvalue;
                       break;
                     case AI_STRING_TYPE:
                       behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
