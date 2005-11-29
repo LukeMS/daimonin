@@ -105,7 +105,7 @@ struct mob_behaviour_param
 {
     struct mob_behaviour_param *next; /* Linked list of multiple definitions*/
     const char                 *stringvalue;      /* Parameter value as string */
-    int                         intvalue;                 /* Integer value */
+    long                        intvalue;                 /* Integer value */
     int                         flags;
 };
 
