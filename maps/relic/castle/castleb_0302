@@ -1,5 +1,5 @@
 arch map
-name Woman's Basement
+name Woman's Basement§barrenlands.ogg|0|-1
 msg
 Creator: Unislash
 Date:    2005-11-28
@@ -309,11 +309,11 @@ arch floor_wood2_d2
 x 3
 y 15
 end
-arch floor_wood2_d2
+arch floor_wood1b
 x 3
 y 16
 end
-arch floor_wood2_d2
+arch floor_wood2b
 x 3
 y 17
 end
@@ -321,7 +321,7 @@ arch trash_wood2.101
 x 3
 y 17
 end
-arch floor_wood2_d2
+arch floor_wood1b
 x 3
 y 18
 end
@@ -419,11 +419,11 @@ arch trash_wood2.101
 x 4
 y 15
 end
-arch floor_wood2_d2
+arch floor_wood2b
 x 4
 y 16
 end
-arch floor_wood2_d2
+arch floor_wood2
 x 4
 y 17
 end
@@ -441,7 +441,7 @@ sp 17
 x 4
 y 17
 end
-arch floor_wood2_d2
+arch floor_wood2b
 x 4
 y 18
 end
@@ -537,7 +537,7 @@ arch floor_wood2_d1
 x 5
 y 15
 end
-arch floor_wood2_d1
+arch floor_wood1b
 x 5
 y 16
 end
@@ -545,7 +545,7 @@ arch trash_wood1.101
 x 5
 y 16
 end
-arch floor_wood2_d1
+arch floor_wood2b
 x 5
 y 17
 end
@@ -553,7 +553,7 @@ arch trash_wood1.101
 x 5
 y 17
 end
-arch floor_wood2_d2
+arch floor_wood1b
 x 5
 y 18
 end

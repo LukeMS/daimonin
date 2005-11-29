@@ -1824,6 +1824,7 @@ x 14
 y 10
 end
 arch fwall_fstone2
+no_pass 0
 x 14
 y 10
 end
