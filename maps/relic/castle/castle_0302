@@ -29,10 +29,13 @@ end
 arch grassd_3
 y 2
 end
-arch wall_stone_1
+arch wall_stone_w.111
 y 2
 end
 arch floor_wood4a
+y 3
+end
+arch bench1b.111
 y 3
 end
 arch floor_wood4a
@@ -53,6 +56,9 @@ end
 arch floor_wood4a
 y 9
 end
+arch shelf3b.111
+y 9
+end
 arch wall_stone_1
 y 9
 end
@@ -65,37 +71,51 @@ end
 arch wall_stone_1
 y 11
 end
-arch floor_wood4a
+arch picture2.151
+y 11
+end
+arch floor_wood2
 y 12
 end
-arch floor_wood4a
+arch floor_wood1
 y 13
 end
-arch floor_wood4a
+arch floor_wood1
 y 14
 end
-arch floor_wood4a
+arch spawn_point
+y 14
+arch female1
+type 83
+direction 7
+end
+end
+arch floor_wood2
 y 15
 end
-arch floor_wood4a
+arch sign
+name Kill the boss script goes here
+y 15
+end
+arch floor_wood2
 y 16
 end
-arch floor_wood4b
+arch floor_wood2
 y 17
 end
-arch floor_wood4a
+arch floor_wood1
 y 18
 end
-arch floor_wood4a
+arch floor_wood1
 y 19
 end
-arch floor_wood4a
+arch floor_wood1
 y 20
 end
 arch basin1_full.101
 y 20
 end
-arch floor_wood4a
+arch floor_wood1
 y 21
 end
 arch wall_stone_1
@@ -129,6 +149,10 @@ arch floor_wood4a
 x 1
 y 3
 end
+arch bench1a.111
+x 1
+y 3
+end
 arch floor_wood4a
 x 1
 y 4
@@ -169,51 +193,76 @@ arch grassd_4
 x 1
 y 11
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 1
 y 11
 end
-arch floor_wood4a
+arch floor_wood1
 x 1
 y 12
 end
-arch floor_wood4a
+arch floor_wood1
 x 1
 y 13
 end
-arch floor_wood4a
+arch floor_wood2
 x 1
 y 14
 end
-arch floor_wood4a
+arch carpet1.131
+x 1
+y 14
+end
+arch floor_wood1
 x 1
 y 15
 end
-arch floor_wood4a
+arch floor_wood1
 x 1
 y 16
 end
-arch floor_wood4a
+arch wall_stone_8
+x 1
+y 16
+end
+arch floor_wood1
 x 1
 y 17
 end
-arch floor_wood4a
+arch wall_stone_3
+x 1
+y 17
+end
+arch floor_wood1
 x 1
 y 18
 end
-arch floor_wood4a
+arch wall_stone_3
+x 1
+y 18
+end
+arch floor_wood1
 x 1
 y 19
 end
-arch floor_wood4a
+arch doorway_wood1_1
+direction 7
+x 1
+y 19
+end
+arch floor_wood1
 x 1
 y 20
 end
-arch floor_wood4a
+arch wall_stone_3
+x 1
+y 20
+end
+arch floor_wood1
 x 1
 y 21
 end
-arch wall_stone_1
+arch wall_stone_4
 x 1
 y 21
 end
@@ -243,6 +292,10 @@ arch wall_stone_1
 x 2
 y 2
 end
+arch picture4.151
+x 2
+y 2
+end
 arch floor_wood4a
 x 2
 y 3
@@ -252,6 +305,10 @@ x 2
 y 4
 end
 arch floor_wood4a
+x 2
+y 5
+end
+arch carpet1.131
 x 2
 y 5
 end
@@ -280,7 +337,7 @@ arch floor_wood4a
 x 2
 y 9
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 2
 y 9
 end
@@ -300,31 +357,39 @@ arch wall_stone_1
 x 2
 y 11
 end
-arch floor_wood4a
+arch floor_wood1
 x 2
 y 12
 end
-arch floor_wood4a
+arch floor_wood2
 x 2
 y 13
 end
-arch chair1_111
+arch carpet1.151
 x 2
 y 13
 end
-arch floor_wood4a
+arch chair1_drop_171
+x 2
+y 13
+end
+arch floor_wood1
 x 2
 y 14
 end
-arch table_wood1.111
+arch carpet1
 x 2
 y 14
 end
-arch light4
+arch table_round1
 x 2
 y 14
 end
-arch floor_wood4a
+arch floor_wood2
+x 2
+y 15
+end
+arch carpet1.111
 x 2
 y 15
 end
@@ -333,31 +398,43 @@ direction 5
 x 2
 y 15
 end
-arch floor_wood4a
+arch floor_wood1
 x 2
 y 16
 end
-arch floor_wood4a
+arch wall_stone_1
+x 2
+y 16
+end
+arch picture1.151
+x 2
+y 16
+end
+arch floor_wood2
 x 2
 y 17
 end
-arch floor_wood4a
+arch floor_wood2
 x 2
 y 18
 end
-arch light4
-x 2
-y 18
-end
-arch floor_wood4a
+arch floor_wood2
 x 2
 y 19
 end
-arch floor_wood4a
+arch floor_wood1
 x 2
 y 20
 end
-arch floor_wood4a
+arch light3
+x 2
+y 20
+end
+arch floor_wood2
+x 2
+y 21
+end
+arch candlelight3.101
 x 2
 y 21
 end
@@ -400,7 +477,15 @@ arch floor_wood4a
 x 3
 y 3
 end
+arch locker5
+x 3
+y 3
+end
 arch floor_wood4a
+x 3
+y 4
+end
+arch carpet1.151
 x 3
 y 4
 end
@@ -413,7 +498,19 @@ direction 5
 x 3
 y 5
 end
+arch carpet1
+x 3
+y 5
+end
 arch floor_wood4a
+x 3
+y 6
+end
+arch carpet1.111
+x 3
+y 6
+end
+arch candlelight3.101
 x 3
 y 6
 end
@@ -449,31 +546,47 @@ arch wall_stone_1
 x 3
 y 11
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 12
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 13
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 14
 end
-arch floor_wood4a
+arch carpet1.171
+x 3
+y 14
+end
+arch candlelight4.101
+x 3
+y 14
+end
+arch light3
+x 3
+y 14
+end
+arch floor_wood1
 x 3
 y 15
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 16
 end
-arch floor_wood4a
+arch wall_stone_1
+x 3
+y 16
+end
+arch floor_wood1
 x 3
 y 17
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 18
 end
@@ -481,11 +594,11 @@ arch bed_1a.111
 x 3
 y 18
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 19
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 20
 end
@@ -493,11 +606,11 @@ arch bed_1a.111
 x 3
 y 20
 end
-arch floor_wood4a
+arch floor_wood1
 x 3
 y 21
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 3
 y 21
 end
@@ -531,11 +644,19 @@ arch floor_wood4a
 x 4
 y 3
 end
+arch table_small1
+x 4
+y 3
+end
 arch floor_wood4a
 x 4
 y 4
 end
 arch floor_wood4a
+x 4
+y 5
+end
+arch carpet1.171
 x 4
 y 5
 end
@@ -584,7 +705,7 @@ arch wall_stone_1
 x 4
 y 11
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 12
 end
@@ -592,27 +713,45 @@ arch shelf3b.111
 x 4
 y 12
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 13
 end
-arch floor_wood4a
+arch chair2_111
+direction 3
+x 4
+y 13
+end
+arch floor_wood2
 x 4
 y 14
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 15
 end
-arch floor_wood4a
+arch barrel.101
+x 4
+y 15
+end
+arch floor_wood2
 x 4
 y 16
 end
-arch floor_wood4a
+arch wall_stone_1
+x 4
+y 16
+end
+arch hole
+face floor_wood_hole1.101
+slaying /relic/castle/castleb_0302
+hp 4
+sp 16
+walk_on 1
 x 4
 y 17
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 18
 end
@@ -620,11 +759,11 @@ arch bed_1b.111
 x 4
 y 18
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 19
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 20
 end
@@ -632,7 +771,7 @@ arch bed_1b.111
 x 4
 y 20
 end
-arch floor_wood4a
+arch floor_wood1
 x 4
 y 21
 end
@@ -739,7 +878,7 @@ arch wall_stone_1
 x 5
 y 11
 end
-arch floor_wood4a
+arch floor_wood1
 x 5
 y 12
 end
@@ -747,7 +886,7 @@ arch wall_stone_3
 x 5
 y 12
 end
-arch floor_wood4a
+arch floor_wood2
 x 5
 y 13
 end
@@ -755,7 +894,7 @@ arch wall_stone_3
 x 5
 y 13
 end
-arch floor_wood4a
+arch floor_wood2
 x 5
 y 14
 end
@@ -763,7 +902,7 @@ arch wall_stone_3
 x 5
 y 14
 end
-arch floor_wood4a
+arch floor_wood2
 x 5
 y 15
 end
@@ -771,15 +910,15 @@ arch wall_stone_3
 x 5
 y 15
 end
-arch floor_wood4a
+arch floor_wood1
 x 5
 y 16
 end
-arch wall_stone_3
+arch wall_stone_4
 x 5
 y 16
 end
-arch floor_wood4a
+arch floor_wood1
 x 5
 y 17
 end
@@ -787,15 +926,15 @@ arch wall_stone_3
 x 5
 y 17
 end
-arch floor_wood4a
+arch floor_wood1
 x 5
 y 18
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 5
 y 18
 end
-arch floor_wood4a
+arch floor_wood2
 x 5
 y 19
 end
@@ -803,7 +942,7 @@ arch wall_stone_3
 x 5
 y 19
 end
-arch floor_wood4a
+arch floor_wood1
 x 5
 y 20
 end
@@ -811,7 +950,7 @@ arch wall_stone_3
 x 5
 y 20
 end
-arch floor_wood4a
+arch floor_wood1
 x 5
 y 21
 end
@@ -898,11 +1037,11 @@ arch plant_flower7
 x 6
 y 13
 end
-arch grassd_8
+arch grassd_2
 x 6
 y 14
 end
-arch grassd_4
+arch grassd_2
 x 6
 y 15
 end

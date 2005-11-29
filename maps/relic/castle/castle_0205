@@ -654,6 +654,11 @@ arch rack.111
 x 4
 y 21
 end
+arch chair1_111
+direction 7
+x 4
+y 21
+end
 arch floor_fs_grey1a
 x 4
 y 22
@@ -755,17 +760,7 @@ arch floor_yellow1
 x 5
 y 15
 end
-arch curtain1
-direction 3
-x 5
-y 15
-end
 arch floor_fs_grey1a
-x 5
-y 16
-end
-arch curtain1
-direction 3
 x 5
 y 16
 end
@@ -774,7 +769,6 @@ x 5
 y 17
 end
 arch curtain1
-direction 3
 x 5
 y 17
 end
@@ -782,7 +776,17 @@ arch floor_fs_grey1a
 x 5
 y 18
 end
+arch curtain1
+direction 7
+x 5
+y 18
+end
 arch floor_fs_grey1a
+x 5
+y 19
+end
+arch curtain1
+direction 7
 x 5
 y 19
 end
@@ -798,7 +802,16 @@ arch floor_fs_grey1a
 x 5
 y 21
 end
+arch table_poker1
+x 5
+y 21
+end
 arch floor_fs_grey1a
+x 5
+y 22
+end
+arch chair1_111
+direction 5
 x 5
 y 22
 end
@@ -916,6 +929,7 @@ x 6
 y 16
 end
 arch floor_fs_grey1a
+blocksview 1
 x 6
 y 17
 end
@@ -948,6 +962,11 @@ x 6
 y 21
 end
 arch rack.111
+x 6
+y 21
+end
+arch chair1_111
+direction 3
 x 6
 y 21
 end
@@ -1858,7 +1877,7 @@ arch grassd_7
 x 13
 y 18
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 13
 y 18
 end
@@ -2282,7 +2301,7 @@ arch floor_wood3b
 x 16
 y 23
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 16
 y 23
 end
@@ -2506,7 +2525,7 @@ arch floor_wood3b
 x 18
 y 19
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 18
 y 19
 end

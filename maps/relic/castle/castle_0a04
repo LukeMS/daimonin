@@ -3127,7 +3127,7 @@ arch floor_parquet3j
 x 19
 y 17
 end
-arch wall_flagstone2.111
+arch wall_flagstone2_w.111
 x 19
 y 17
 end
@@ -3206,7 +3206,7 @@ arch floor_parquet3e
 x 20
 y 7
 end
-arch wall_flagstone2.111
+arch wall_flagstone2_w.111
 x 20
 y 7
 end
@@ -3465,7 +3465,7 @@ arch grassd_8
 x 22
 y 1
 end
-arch wall_flagstone2.111
+arch wall_flagstone2_w.111
 x 22
 y 1
 end
@@ -3640,7 +3640,7 @@ arch floor_parquet3g
 x 23
 y 5
 end
-arch wall_flagstone2.131
+arch wall_flagstone2_w.131
 x 23
 y 5
 end
@@ -3672,7 +3672,7 @@ arch floor_parquet3g
 x 23
 y 9
 end
-arch wall_flagstone2.131
+arch wall_flagstone2_w.131
 x 23
 y 9
 end
@@ -3721,7 +3721,7 @@ arch floor_parquet3g
 x 23
 y 15
 end
-arch wall_flagstone2.131
+arch wall_flagstone2_w.131
 x 23
 y 15
 end

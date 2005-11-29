@@ -3538,6 +3538,7 @@ level 15
 random_move 1
 item_race 7
 item_level 7
+stand_still 1
 arch event_obj
 name lua
 race /relic/castle/scripts/Commoner.lua
