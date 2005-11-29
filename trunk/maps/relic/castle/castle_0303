@@ -41,10 +41,14 @@ end
 arch floor_wood4c
 y 6
 end
+arch desk2
+direction 7
+y 6
+end
 arch floor_wood4c
 y 7
 end
-arch wall_stone_1
+arch wall_stone_w.111
 y 7
 end
 arch grassd_6
@@ -60,6 +64,9 @@ arch wall_stone_1
 y 9
 end
 arch floor_wood1b
+y 10
+end
+arch broom.111
 y 10
 end
 arch floor_wood1b
@@ -81,6 +88,9 @@ arch floor_wood1b
 y 16
 end
 arch floor_wood1b
+y 17
+end
+arch wall_stone_1
 y 17
 end
 arch floor_wood1b
@@ -137,6 +147,11 @@ arch floor_wood4c
 x 1
 y 6
 end
+arch chair1_111
+direction 3
+x 1
+y 6
+end
 arch floor_wood4c
 x 1
 y 7
@@ -161,6 +176,10 @@ arch wall_stone_1
 x 1
 y 9
 end
+arch wmask_fire_on_1
+x 1
+y 9
+end
 arch floor_wood1b
 x 1
 y 10
@@ -182,10 +201,6 @@ arch floor_wood1b
 x 1
 y 13
 end
-arch light4
-x 1
-y 13
-end
 arch floor_wood1b
 x 1
 y 14
@@ -202,6 +217,10 @@ arch floor_wood1b
 x 1
 y 17
 end
+arch curtain1
+x 1
+y 17
+end
 arch floor_wood1b
 x 1
 y 18
@@ -211,6 +230,10 @@ x 1
 y 19
 end
 arch light4
+x 1
+y 19
+end
+arch candlelight1.101
 x 1
 y 19
 end
@@ -301,7 +324,7 @@ arch grassd_3
 x 2
 y 9
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 2
 y 9
 end
@@ -326,6 +349,14 @@ arch floor_wood1b
 x 2
 y 13
 end
+arch light4
+x 2
+y 13
+end
+arch candlelight4.101
+x 2
+y 13
+end
 arch floor_wood1b
 x 2
 y 14
@@ -339,6 +370,10 @@ x 2
 y 16
 end
 arch floor_wood1b
+x 2
+y 17
+end
+arch curtain1
 x 2
 y 17
 end
@@ -370,7 +405,7 @@ arch floor_wood1b
 x 2
 y 22
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 2
 y 22
 end
@@ -416,7 +451,7 @@ arch floor_wood4c
 x 3
 y 7
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 3
 y 7
 end
@@ -429,6 +464,10 @@ x 3
 y 9
 end
 arch wall_stone_1
+x 3
+y 9
+end
+arch picture6.151
 x 3
 y 9
 end
@@ -469,7 +508,19 @@ arch floor_wood1b
 x 3
 y 17
 end
+arch wall_stone_1
+x 3
+y 17
+end
+arch picture3.151
+x 3
+y 17
+end
 arch floor_wood1b
+x 3
+y 18
+end
+arch bowl1_full.101
 x 3
 y 18
 end
@@ -515,6 +566,10 @@ arch floor_wood4c
 x 4
 y 1
 end
+arch shelf3b.111
+x 4
+y 1
+end
 arch floor_wood4c
 x 4
 y 2
@@ -603,7 +658,7 @@ arch floor_wood1b
 x 4
 y 15
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 4
 y 15
 end
@@ -619,7 +674,7 @@ arch floor_wood1b
 x 4
 y 17
 end
-arch wall_stone_3
+arch wall_stone_4
 x 4
 y 17
 end
@@ -701,6 +756,11 @@ arch floor_wood4c
 x 5
 y 4
 end
+arch locker4
+direction 7
+x 5
+y 4
+end
 arch wall_stone_3
 x 5
 y 4
@@ -709,7 +769,7 @@ arch floor_wood4c
 x 5
 y 5
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 5
 y 5
 end

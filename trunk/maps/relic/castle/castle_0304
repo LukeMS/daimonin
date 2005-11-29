@@ -53,7 +53,15 @@ end
 arch floor_wood3d
 y 8
 end
+arch bench1b.111
+direction 7
+y 8
+end
 arch floor_wood3d
+y 9
+end
+arch bench1a.111
+direction 7
 y 9
 end
 arch floor_wood3d
@@ -75,6 +83,12 @@ arch picture2.151
 y 13
 end
 arch floor_wood3d
+y 14
+end
+arch candlelight4.101
+y 14
+end
+arch light2
 y 14
 end
 arch floor_wood3d
@@ -260,7 +274,7 @@ arch grassd_5
 x 2
 y 3
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 2
 y 3
 end
@@ -284,7 +298,7 @@ arch floor_wood3d
 x 2
 y 6
 end
-arch table_wood1.111
+arch table_round2
 x 2
 y 6
 end
@@ -305,6 +319,10 @@ arch floor_wood3d
 x 2
 y 9
 end
+arch chair1_111
+x 2
+y 9
+end
 arch floor_wood3d
 x 2
 y 10
@@ -313,7 +331,16 @@ arch light4
 x 2
 y 10
 end
+arch table_poker1
+x 2
+y 10
+end
 arch floor_wood3d
+x 2
+y 11
+end
+arch chair1_111
+direction 5
 x 2
 y 11
 end
@@ -341,10 +368,6 @@ arch floor_wood3d
 x 2
 y 16
 end
-arch light4
-x 2
-y 16
-end
 arch floor_wood3d
 x 2
 y 17
@@ -357,7 +380,7 @@ arch floor_wood3d
 x 2
 y 19
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 2
 y 19
 end
@@ -416,8 +439,7 @@ arch floor_wood3d
 x 3
 y 6
 end
-arch chair1_111
-direction 3
+arch chair1_drop_171
 x 3
 y 6
 end
@@ -552,15 +574,16 @@ arch floor_wood3d
 x 4
 y 8
 end
-arch basin1_full.101
-x 4
-y 8
-end
 arch floor_wood3d
 x 4
 y 9
 end
 arch floor_wood3d
+x 4
+y 10
+end
+arch table_small1
+name stool
 x 4
 y 10
 end
@@ -690,7 +713,7 @@ arch floor_wood3d
 x 5
 y 8
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 5
 y 8
 end
@@ -703,6 +726,11 @@ x 5
 y 9
 end
 arch floor_wood3d
+x 5
+y 10
+end
+arch table_wood1.111
+direction 7
 x 5
 y 10
 end
@@ -746,7 +774,7 @@ arch floor_wood3d
 x 5
 y 15
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 5
 y 15
 end
@@ -778,7 +806,15 @@ arch floor_wood3d
 x 5
 y 19
 end
+arch candlelight4.101
+x 5
+y 19
+end
 arch wall_stone_4
+x 5
+y 19
+end
+arch light2
 x 5
 y 19
 end

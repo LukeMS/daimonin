@@ -912,7 +912,7 @@ arch grassd_5
 x 7
 y 18
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 7
 y 18
 end
@@ -1153,7 +1153,7 @@ arch grassd_2
 x 9
 y 13
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 9
 y 13
 end
@@ -1210,7 +1210,7 @@ arch floor_wood1b
 x 9
 y 21
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 9
 y 21
 end
@@ -1768,11 +1768,11 @@ arch grassd_8
 x 14
 y 13
 end
-arch wmask_fire_on_1
+arch wall_stone_1
 x 14
 y 13
 end
-arch wall_stone_1
+arch wmask_fire_on_1
 x 14
 y 13
 end
@@ -1828,7 +1828,7 @@ arch floor_wood1b
 x 14
 y 21
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 14
 y 21
 end
@@ -1895,7 +1895,7 @@ arch grassd_2
 x 15
 y 13
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 15
 y 13
 end
@@ -2180,7 +2180,7 @@ arch floor_wood1b
 x 17
 y 20
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 17
 y 20
 end
@@ -2951,7 +2951,7 @@ arch grassd_8
 x 23
 y 5
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 5
 end
@@ -3048,7 +3048,7 @@ arch grassd_7
 x 23
 y 16
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 16
 end

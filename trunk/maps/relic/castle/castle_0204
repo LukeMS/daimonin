@@ -1567,7 +1567,7 @@ arch grassd_8
 x 11
 y 19
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 11
 y 19
 end
@@ -1767,7 +1767,7 @@ arch grassd_3
 x 13
 y 2
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 13
 y 2
 end
@@ -1831,7 +1831,7 @@ arch grassd_1
 x 13
 y 13
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 13
 y 13
 end
@@ -1947,7 +1947,7 @@ arch floor_wood3d
 x 14
 y 7
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 14
 y 7
 end
@@ -2007,7 +2007,7 @@ arch floor_wood3d
 x 14
 y 16
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 14
 y 16
 end
@@ -2299,7 +2299,7 @@ arch floor_wood3d
 x 16
 y 17
 end
-arch door_wood1
+arch doorway_wood1_1
 x 16
 y 17
 end
@@ -2361,7 +2361,7 @@ arch floor_wood3d
 x 17
 y 4
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 17
 y 4
 end
@@ -2475,7 +2475,7 @@ arch floor_wood3d
 x 17
 y 20
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 17
 y 20
 end
@@ -3268,7 +3268,7 @@ arch grassd_8
 x 23
 y 5
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 5
 end
@@ -3292,7 +3292,7 @@ arch grassd_2
 x 23
 y 8
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 8
 end
@@ -3357,7 +3357,7 @@ arch grassd_7
 x 23
 y 15
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 15
 end

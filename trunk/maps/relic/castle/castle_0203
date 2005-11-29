@@ -1848,7 +1848,7 @@ arch grassd_7
 x 11
 y 5
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 11
 y 5
 end
@@ -1857,6 +1857,11 @@ x 11
 y 6
 end
 arch wall_stone_3
+x 11
+y 6
+end
+arch picture1.151
+direction 7
 x 11
 y 6
 end
@@ -2003,6 +2008,10 @@ arch floor_wood2_d2
 x 12
 y 5
 end
+arch table_small1
+x 12
+y 5
+end
 arch floor_wood2_d2
 x 12
 y 6
@@ -2048,7 +2057,7 @@ arch grassd_8
 x 12
 y 14
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 12
 y 14
 end
@@ -2154,7 +2163,7 @@ arch grassd_8
 x 13
 y 3
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 13
 y 3
 end
@@ -2188,6 +2197,10 @@ x 13
 y 8
 end
 arch floor_wood2_d2
+x 13
+y 9
+end
+arch shelf3b.111
 x 13
 y 9
 end
@@ -2422,7 +2435,7 @@ arch floor_wood4d
 x 14
 y 20
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 14
 y 20
 end
@@ -2489,7 +2502,7 @@ arch floor_wood2_d2
 x 15
 y 9
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 15
 y 9
 end
@@ -2549,6 +2562,10 @@ arch floor_wood4d
 x 15
 y 20
 end
+arch shelf3a.111
+x 15
+y 20
+end
 arch wall_stone_1
 x 15
 y 20
@@ -2640,7 +2657,7 @@ arch grassd_1
 x 16
 y 14
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 16
 y 14
 end
@@ -2669,6 +2686,10 @@ x 16
 y 19
 end
 arch floor_wood4d
+x 16
+y 20
+end
+arch locker3.111
 x 16
 y 20
 end
@@ -2726,7 +2747,7 @@ arch floor_wood2_d2
 x 17
 y 5
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 17
 y 5
 end
@@ -2824,7 +2845,7 @@ arch floor_wood4d
 x 17
 y 19
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 17
 y 19
 end
@@ -2875,12 +2896,6 @@ arch grassd_8
 x 18
 y 5
 end
-arch bench3.111
-no_pass 0
-direction 7
-x 18
-y 5
-end
 arch grassd_6
 x 18
 y 6
@@ -2915,7 +2930,9 @@ arch grassd_7
 x 18
 y 9
 end
-arch plant17
+arch bench3.111
+no_pass 0
+direction 7
 x 18
 y 9
 end
@@ -3001,7 +3018,7 @@ arch plant_flower7
 x 18
 y 22
 end
-arch grassd_4
+arch grassd_2
 x 18
 y 23
 end
@@ -3630,7 +3647,7 @@ arch grassd_8
 x 23
 y 5
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 5
 end
@@ -3686,11 +3703,16 @@ arch wall_stone_3
 x 23
 y 12
 end
+arch light4
+x 23
+y 12
+end
 arch grassd_8
 x 23
 y 13
 end
-arch wall_stone_3
+arch door_wood1
+direction 3
 x 23
 y 13
 end
@@ -3702,6 +3724,10 @@ arch wall_stone_3
 x 23
 y 14
 end
+arch light4
+x 23
+y 14
+end
 arch grassd_7
 x 23
 y 15
@@ -3715,6 +3741,11 @@ x 23
 y 16
 end
 arch wall_stone_3
+x 23
+y 16
+end
+arch picture5.151
+direction 7
 x 23
 y 16
 end
@@ -3722,11 +3753,7 @@ arch grassd_1
 x 23
 y 17
 end
-arch light4
-x 23
-y 17
-end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 17
 end
@@ -3734,16 +3761,11 @@ arch grassd_8
 x 23
 y 18
 end
-arch door_wood1
-direction 3
+arch wall_stone_3
 x 23
 y 18
 end
 arch grassd_2
-x 23
-y 19
-end
-arch light4
 x 23
 y 19
 end
@@ -3755,7 +3777,7 @@ arch grassd_4
 x 23
 y 20
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 23
 y 20
 end
