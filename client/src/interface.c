@@ -369,6 +369,8 @@ void reset_gui_interface(void)
             free(gui_interface_npc->icon[s].picture);
         free(gui_interface_npc);
     }
+	reset_keys();
+	cpl.input_mode = INPUT_MODE_NO;
     gui_interface_npc = NULL;
     if (cpl.menustatus == MENU_NPC)
         cpl.menustatus = MENU_NO;
@@ -729,6 +731,9 @@ void gui_interface_send_command(int mode, char *cmd)
             textwin_addhistory(buf);
     }
 
+    reset_keys();
+	reset_input_mode();
+    cpl.input_mode = INPUT_MODE_NO;
     gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
 }
 

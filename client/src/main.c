@@ -196,7 +196,6 @@ static void         count_meta_server(void);
 static void         flip_screen(void);
 static void         show_intro(char *text);
 static void         delete_player_lists(void);
-void                reset_input_mode(void);
 
 /* Ensures that the username doesn't contain any invalid character */
 static int is_username_valid(const char *name)
