@@ -1586,9 +1586,9 @@ x 10
 y 8
 end
 arch sewer_hole1
-slaying guildhall/merc_ants
-hp 6
-sp 7
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 10
+sp 8
 x 10
 y 8
 end
@@ -2825,7 +2825,15 @@ arch grassd_7
 x 18
 y 8
 end
-arch box2.101
+arch ladder_down
+name boxes
+msg
+You move the boxes aside and slip through the hole, unnoticed.
+endmsg
+face box2.101
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 17
+sp 8
 x 18
 y 8
 end
