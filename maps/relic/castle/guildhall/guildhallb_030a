@@ -1,0 +1,301 @@
+arch map
+name Under Guild Hall
+msg
+Creator: Unknown Combat Dummy
+Date:    2005-11-28
+endmsg
+width 24
+height 24
+end
+arch fstone1a
+x 8
+y 6
+end
+arch fwall_wood1c
+x 8
+y 6
+end
+arch fstone1c
+x 8
+y 7
+end
+arch fwall_wood1a
+x 8
+y 7
+end
+arch fstone1a
+x 8
+y 8
+end
+arch fwall_wood1b
+x 8
+y 8
+end
+arch fstone1c
+x 8
+y 9
+end
+arch fwall_wood1c
+x 8
+y 9
+end
+arch fstone1a
+x 8
+y 10
+end
+arch fwall_wood1a
+x 8
+y 10
+end
+arch fstone1c
+x 8
+y 11
+end
+arch fwall_wood1a
+x 8
+y 11
+end
+arch fstone1a
+x 9
+y 6
+end
+arch fwall_wood1b
+x 9
+y 6
+end
+arch fstone1c
+x 9
+y 7
+end
+arch box1.101
+x 9
+y 7
+end
+arch fstone1c
+x 9
+y 8
+end
+arch box2.101
+x 9
+y 8
+end
+arch fstone1a
+x 9
+y 9
+end
+arch box1.101
+x 9
+y 9
+end
+arch fstone1c
+x 9
+y 10
+end
+arch fstone1b
+x 9
+y 11
+end
+arch fwall_wood1b
+x 9
+y 11
+end
+arch fstone1b
+x 10
+y 6
+end
+arch fwall_wood1a
+x 10
+y 6
+end
+arch fstone1a
+x 10
+y 7
+end
+arch fstone1a
+x 10
+y 8
+end
+arch ladder_up
+slaying /relic/castle/castle_030a
+hp 10
+sp 8
+x 10
+y 8
+end
+arch fstone1b
+x 10
+y 9
+end
+arch trash_wood1.101
+x 10
+y 9
+end
+arch fstone1b
+x 10
+y 10
+end
+arch trash_wood2.101
+x 10
+y 10
+end
+arch fstone1a
+x 10
+y 11
+end
+arch fwall_wood1b
+x 10
+y 11
+end
+arch fstone1c
+x 11
+y 6
+end
+arch fwall_wood1c
+x 11
+y 6
+end
+arch fstone1a
+x 11
+y 7
+end
+arch chair1_drop_171
+x 11
+y 7
+end
+arch fstone1b
+x 11
+y 8
+end
+arch ladder_down
+slaying /relic/castle/guildhall/merc_ants
+hp 11
+sp 8
+x 11
+y 8
+end
+arch fstone1c
+x 11
+y 9
+end
+arch fstone1a
+x 11
+y 10
+end
+arch grain2.101
+x 11
+y 10
+end
+arch fstone1b
+x 11
+y 11
+end
+arch fwall_wood1c
+x 11
+y 11
+end
+arch fstone1c
+x 12
+y 6
+end
+arch fwall_wood1b
+x 12
+y 6
+end
+arch fstone1a
+x 12
+y 7
+end
+arch chair1_drop_111
+x 12
+y 7
+end
+arch fstone1b
+x 12
+y 8
+end
+arch trash_wood1.101
+x 12
+y 8
+end
+arch fstone1c
+x 12
+y 9
+end
+arch straw1.101
+x 12
+y 9
+end
+arch fstone1c
+x 12
+y 10
+end
+arch straw1.101
+x 12
+y 10
+end
+arch fstone1a
+x 12
+y 11
+end
+arch fwall_wood1b
+x 12
+y 11
+end
+arch fstone1b
+x 13
+y 6
+end
+arch fwall_wood1c
+x 13
+y 6
+end
+arch fstone1c
+x 13
+y 7
+end
+arch fwall_wood1c
+x 13
+y 7
+end
+arch fstone1b
+x 13
+y 8
+end
+arch fwall_wood1a
+x 13
+y 8
+end
+arch fstone1a
+x 13
+y 9
+end
+arch fwall_wood1a
+x 13
+y 9
+end
+arch fstone1b
+x 13
+y 10
+end
+arch fwall_wood1b
+x 13
+y 10
+end
+arch fstone1a
+x 13
+y 11
+end
+arch fwall_wood1b
+x 13
+y 11
+end
+arch invis_exit
+msg
+You carefully move the boxes from the secret entrance and push yourself through.
+endmsg
+slaying /relic/castle/castle_030a
+hp 18
+sp 8
+x 18
+y 8
+end
