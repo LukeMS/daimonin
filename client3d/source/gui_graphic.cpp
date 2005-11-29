@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -78,6 +78,11 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   }
   if (mX + mDestWidth > maxX) mDestWidth = maxX-mX-1;
   if (mY + mDestHeight >maxY) mDestHeight= maxY-mY-1;
+
+
+  Logger::log().error() << mStrName << " x: " << mX << " y: " << mY
+  << " w: " << mDestWidth << " h: " << mDestHeight ;
+
 }
 
 ///=================================================================================================
@@ -135,8 +140,8 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
     bool dirty = true;
     int sumX = (mDestWidth-1)  / mSrcWidth  + 1;
     int sumY = (mDestHeight-1) / mSrcHeight + 1;
-
     y1 = 0; y2 = mSrcHeight;
+
     for (int y = 0; y < sumY; ++y)
     {
       if (dirty)
@@ -154,13 +159,13 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
         if (y1 > mDestHeight) y1 = mDestHeight-1;
         dirty = true;
       }
-      x1 = mX; x2 = mSrcWidth;
+      x1 = 0; x2 = mSrcWidth;
       for (int x = 0; x < sumX; ++x)
       {
         if (x2 > mDestWidth)
         {
           x2 = mDestWidth;
-          if (x1 > mDestWidth) x1 = mDestWidth-1;
+          if (x1 >= x2) x1 = x2-1;
           dirty = true;
         }
         if (dirty)

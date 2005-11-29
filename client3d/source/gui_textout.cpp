@@ -119,7 +119,6 @@ void GuiTextout::loadRawFont(const char *filename)
 ///=================================================================================================
 void GuiTextout::loadTTFont(const char *filename, const char *size, const char *reso)
 {
-
   // Load the font.
   Ogre::NameValuePairList pairList;
   int iSize, iReso;
@@ -133,7 +132,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   pairList["source"]    = filename;
   pairList["size"]      = StringConverter::toString(iSize);
   pairList["resolution"]= StringConverter::toString(iReso);
-  //pairList["antialias_colour"]= "true";
+  // pairList["antialias_colour"]= "true"; // doesn't seems to work.
   FontPtr pFont = FontManager::getSingleton().create("tmpFont", "General", false, 0, &pairList);
   pFont->load();
   MaterialPtr pMaterial = pFont.getPointer()->getMaterial();
@@ -191,6 +190,17 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
       pb.getSubVolume(Box(xPos, 0, xPos + x2-x1, fnt->height)));
   }
 
+  /// Transparent to color.
+  for (unsigned int i=0; i < fnt->textureWidth * fnt->height; ++i)
+  {
+    if (fnt->data[i] != 0x00ffffff)
+    {
+      int alpha = (fnt->data[i] >> 24) & 0xff;
+      if (alpha < 0x20) fnt->data[i] = 0x00ffffff;
+      else              fnt->data[i] = 0xff000000 + (alpha << 16) + (alpha <<8) + alpha;
+    }
+  }
+
   fnt->baseline = iSize;
 
 
@@ -219,8 +229,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   /////////////////////////////////////////////////////////////////////////
 
   //TODO.
-
-
 }
 
 ///=================================================================================================

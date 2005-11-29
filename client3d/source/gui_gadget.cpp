@@ -75,6 +75,7 @@ GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   {
     mLabelXPos = atoi(xmlGadget->Attribute("xPos"));
     mLabelYPos = atoi(xmlGadget->Attribute("yPos"));
+    mLabelFont = atoi(xmlGadget->Attribute("font"));
     mLabelColor[0]= (unsigned char) atoi(xmlGadget->Attribute("red"));
     mLabelColor[1]= (unsigned char) atoi(xmlGadget->Attribute("green"));
     mLabelColor[2]= (unsigned char) atoi(xmlGadget->Attribute("blue"));
@@ -129,18 +130,28 @@ void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
   /////////////////////////////////////////////////////////////////////////
   if (mStrLabel != "")
   {
-    /*
     std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
+    TextLine label;
+    label.index= -1;
+    label.font = mLabelFont;
+    label.clipped = false;
     if (mState == STATE_PUSHED)
     {
-      GuiTextout::getSingleton().Print(mX+mLabelXPos+2, mY+mLabelYPos+2, mWidth, texture, mStrBgLabel.c_str());
-      GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrLabel.c_str());
+      label.x1 = mX+ mLabelXPos+1;
+      label.x2 = label.x1 + mWidth;
+      label.y1 = mY+ mLabelYPos+1;
+      label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
     }
     else
     {
-      GuiTextout::getSingleton().Print(mX+mLabelXPos+1, mY+mLabelYPos+1, mWidth, texture, mStrBgLabel.c_str());
-      GuiTextout::getSingleton().Print(mX+mLabelXPos  , mY+mLabelYPos  , mWidth, texture, mStrLabel.c_str());
+      label.x1 = mX+ mLabelXPos;
+      label.x2 = label.x1 + mWidth;
+      label.y1 = mY+ mLabelYPos;
+      label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
     }
-    */
+    GuiTextout::getSingleton().Print(&label, texture, mStrBgLabel.c_str());
+    --label.x1;
+    --label.y1;
+    GuiTextout::getSingleton().Print(&label, texture, mStrLabel.c_str());
   }
 }
