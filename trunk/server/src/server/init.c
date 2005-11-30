@@ -148,7 +148,7 @@ static void init_globals()
     ban_list_ip=NULL;
 
     exiting = 0;
-    player_active = 0;
+    player_active_meta = player_active = 0;
     first_god = NULL;
     first_race = NULL;
     first_player = NULL;

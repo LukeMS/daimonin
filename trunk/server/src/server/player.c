@@ -139,6 +139,9 @@ static player * get_player(player *p)
             LOG(llevError, "ERROR: get_player(): out of memory\n");
 
         player_active++; /* increase player count */
+		if(player_active_meta < player_active)
+			player_active_meta = player_active;
+
         if (!last_player)
             first_player = last_player = p;
         else
@@ -274,7 +277,6 @@ void free_player(player *pl)
     else
         last_player = pl->prev;
     player_active--;
-
     
     free_newsocket(&pl->socket);
     if (pl->ob)
