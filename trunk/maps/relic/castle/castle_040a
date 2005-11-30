@@ -30,40 +30,25 @@ end
 arch grassd_7
 y 3
 end
-arch grassd_3
-y 4
-end
-arch wall_marble1.181
-y 4
-end
-arch grassd_3
-y 5
-end
-arch wall_marble1.111
-y 5
-end
 arch grassd_4
-y 6
+y 4
 end
-arch wall_marble1.111
+arch grassd_3
+y 5
+end
+arch grassd_2
 y 6
 end
 arch grassd_2
 y 7
 end
-arch wall_marble1.111
+arch plant_flower5
 y 7
 end
-arch grassd_5
+arch grassd_7
 y 8
 end
-arch wall_marble1.111
-y 8
-end
-arch grassd_5
-y 9
-end
-arch wall_marble1.111
+arch grassd_8
 y 9
 end
 arch grassd_1
@@ -170,35 +155,37 @@ arch grassd_2
 x 1
 y 3
 end
-arch grassd_1
+arch grassd_2
 x 1
 y 4
 end
-arch wall_marble1.131a
-x 1
-y 4
-end
-arch floor_grey7
+arch grassd_5
 x 1
 y 5
 end
-arch floor_grey7
+arch grassd_3
 x 1
 y 6
 end
-arch floor_grey7
+arch well_stone
+msg
+You slide yourself down the well a bit, and find a ladder do climb down.
+endmsg
+slaying /relic/castle/guildhall/guildhallb_040a
+hp 1
+sp 6
+x 1
+y 6
+end
+arch grassd_7
 x 1
 y 7
 end
-arch floor_grey7
+arch grassd_5
 x 1
 y 8
 end
-arch floor_grey7
-x 1
-y 9
-end
-arch wall_marble1.131a
+arch grassd_3
 x 1
 y 9
 end
@@ -309,35 +296,31 @@ arch plant12
 x 2
 y 3
 end
-arch grassd_2
+arch grassd_6
 x 2
 y 4
 end
-arch wall_marble1.131a
+arch plant_mushroom3
 x 2
 y 4
 end
-arch floor_grey7
+arch grassd_8
 x 2
 y 5
 end
-arch floor_grey7
+arch grassd_3
 x 2
 y 6
 end
-arch floor_grey7
+arch grassd_3
 x 2
 y 7
 end
-arch floor_grey7
+arch grassd_8
 x 2
 y 8
 end
-arch floor_grey7
-x 2
-y 9
-end
-arch wall_marble1.131a
+arch grassd_3
 x 2
 y 9
 end
@@ -456,31 +439,47 @@ arch grassd_3
 x 3
 y 4
 end
-arch wall_marble1.131a
+arch wall_marble1.181
 x 3
 y 4
 end
-arch floor_grey7
+arch grassd_3
 x 3
 y 5
 end
-arch floor_grey7
+arch wall_marble1.111
+x 3
+y 5
+end
+arch grassd_4
 x 3
 y 6
 end
-arch floor_grey7
+arch wall_marble1.111
+x 3
+y 6
+end
+arch grassd_2
 x 3
 y 7
 end
-arch floor_grey7
+arch wall_marble1.111
+x 3
+y 7
+end
+arch grassd_5
 x 3
 y 8
 end
-arch floor_grey7
+arch wall_marble1.111
+x 3
+y 8
+end
+arch grassd_5
 x 3
 y 9
 end
-arch wall_marble1.131a
+arch wall_marble1.111
 x 3
 y 9
 end
@@ -587,7 +586,7 @@ arch grassd_2
 x 4
 y 3
 end
-arch grassd_7
+arch grassd_1
 x 4
 y 4
 end
@@ -730,7 +729,7 @@ arch plant_flower2
 x 5
 y 3
 end
-arch grassd_7
+arch grassd_2
 x 5
 y 4
 end
@@ -758,15 +757,11 @@ arch floor_grey7
 x 5
 y 9
 end
-arch door1_locked
+arch wall_marble1.131a
 x 5
 y 9
 end
-arch floor_flagm1
-x 5
-y 10
-end
-arch grassd_m9
+arch grassd_3
 x 5
 y 10
 end
@@ -774,7 +769,7 @@ arch floor_flagm1
 x 5
 y 11
 end
-arch grassd_m13
+arch grassd_m10
 x 5
 y 11
 end
@@ -876,7 +871,7 @@ arch grassd_7
 x 6
 y 3
 end
-arch grassd_2
+arch grassd_3
 x 6
 y 4
 end
@@ -904,16 +899,11 @@ arch floor_grey7
 x 6
 y 9
 end
-arch door1_locked
-direction 7
+arch wall_marble1.131a
 x 6
 y 9
 end
-arch floor_flagm1
-x 6
-y 10
-end
-arch grassd_m8
+arch grassd_1
 x 6
 y 10
 end
@@ -921,7 +911,7 @@ arch floor_flagm1
 x 6
 y 11
 end
-arch grassd_m12
+arch grassd_m10
 x 6
 y 11
 end
@@ -1019,7 +1009,7 @@ arch plant_flower1
 x 7
 y 3
 end
-arch grassd_2
+arch grassd_7
 x 7
 y 4
 end
@@ -1177,7 +1167,7 @@ arch grassd_1
 x 8
 y 3
 end
-arch grassd_5
+arch grassd_7
 x 8
 y 4
 end
@@ -1205,11 +1195,15 @@ arch floor_grey7
 x 8
 y 9
 end
-arch wall_marble1.131a
+arch door1_locked
 x 8
 y 9
 end
-arch grassd_3
+arch floor_flagm1
+x 8
+y 10
+end
+arch grassd_m9
 x 8
 y 10
 end
@@ -1217,7 +1211,7 @@ arch floor_flagm1
 x 8
 y 11
 end
-arch grassd_m10
+arch grassd_m13
 x 8
 y 11
 end
@@ -1323,7 +1317,7 @@ arch grassd_4
 x 9
 y 3
 end
-arch grassd_4
+arch grassd_2
 x 9
 y 4
 end
@@ -1351,11 +1345,16 @@ arch floor_grey7
 x 9
 y 9
 end
-arch wall_marble1.131a
+arch door1_locked
+direction 7
 x 9
 y 9
 end
-arch grassd_1
+arch floor_flagm1
+x 9
+y 10
+end
+arch grassd_m8
 x 9
 y 10
 end
@@ -1363,7 +1362,7 @@ arch floor_flagm1
 x 9
 y 11
 end
-arch grassd_m10
+arch grassd_m12
 x 9
 y 11
 end
@@ -1466,15 +1465,7 @@ arch floor_grey7
 x 10
 y 5
 end
-arch wall_marble1.111
-x 10
-y 5
-end
 arch floor_grey7
-x 10
-y 6
-end
-arch wall_marble1.111
 x 10
 y 6
 end
@@ -1482,15 +1473,7 @@ arch floor_grey7
 x 10
 y 7
 end
-arch wall_marble1.111
-x 10
-y 7
-end
 arch floor_grey7
-x 10
-y 8
-end
-arch wall_marble1.111
 x 10
 y 8
 end
@@ -1498,7 +1481,7 @@ arch floor_grey7
 x 10
 y 9
 end
-arch wall_marble1.141
+arch wall_marble1.131a
 x 10
 y 9
 end
@@ -1622,31 +1605,35 @@ arch plant5
 x 11
 y 3
 end
-arch grassd_4
+arch grassd_5
 x 11
 y 4
 end
-arch grassd_3
+arch wall_marble1.131a
+x 11
+y 4
+end
+arch floor_grey7
 x 11
 y 5
 end
-arch grassd_2
+arch floor_grey7
 x 11
 y 6
 end
-arch grassd_2
+arch floor_grey7
 x 11
 y 7
 end
-arch plant_flower5
-x 11
-y 7
-end
-arch grassd_7
+arch floor_grey7
 x 11
 y 8
 end
-arch grassd_8
+arch floor_grey7
+x 11
+y 9
+end
+arch wall_marble1.131a
 x 11
 y 9
 end
@@ -1745,27 +1732,35 @@ arch grassd_2
 x 12
 y 3
 end
-arch grassd_2
+arch grassd_4
 x 12
 y 4
 end
-arch grassd_5
+arch wall_marble1.131a
+x 12
+y 4
+end
+arch floor_grey7
 x 12
 y 5
 end
-arch grassd_8
+arch floor_grey7
 x 12
 y 6
 end
-arch grassd_7
+arch floor_grey7
 x 12
 y 7
 end
-arch grassd_5
+arch floor_grey7
 x 12
 y 8
 end
-arch grassd_3
+arch floor_grey7
+x 12
+y 9
+end
+arch wall_marble1.131a
 x 12
 y 9
 end
@@ -1884,38 +1879,51 @@ arch grassd_7
 x 13
 y 3
 end
-arch grassd_6
+arch grassd_2
 x 13
 y 4
 end
-arch plant_mushroom3
+arch wall_marble1.131a
 x 13
 y 4
 end
-arch grassd_8
+arch floor_grey7
 x 13
 y 5
 end
-arch grassd_3
+arch wall_marble1.111
+x 13
+y 5
+end
+arch floor_grey7
 x 13
 y 6
 end
-arch grassd_3
+arch wall_marble1.111
+x 13
+y 6
+end
+arch floor_grey7
 x 13
 y 7
 end
-arch grassd_8
+arch wall_marble1.111
+x 13
+y 7
+end
+arch floor_grey7
 x 13
 y 8
 end
-arch grassd_3
+arch wall_marble1.111
+x 13
+y 8
+end
+arch floor_grey7
 x 13
 y 9
 end
-arch well_stone
-slaying guildhall/ants_well
-hp 1
-sp 3
+arch wall_marble1.141
 x 13
 y 9
 end
