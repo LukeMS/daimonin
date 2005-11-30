@@ -1261,6 +1261,11 @@ arch wall_stone_3
 x 8
 y 6
 end
+arch wmask_bflag_fire1_1
+direction 7
+x 8
+y 6
+end
 arch grassd_3
 x 8
 y 7
@@ -1285,11 +1290,21 @@ arch wall_stone_3
 x 8
 y 9
 end
+arch picture11
+direction 7
+x 8
+y 9
+end
 arch grassd_6
 x 8
 y 10
 end
 arch wall_stone_3
+x 8
+y 10
+end
+arch wmask_bflag_fire1_1
+direction 7
 x 8
 y 10
 end
@@ -1322,6 +1337,11 @@ x 8
 y 14
 end
 arch wall_stone_3
+x 8
+y 14
+end
+arch wmask_bflag_fire1_1
+direction 7
 x 8
 y 14
 end
@@ -1432,11 +1452,26 @@ arch floor_wood2_l1
 x 9
 y 6
 end
+arch sewer_hole1
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 10
+sp 8
+x 9
+y 6
+end
+arch light1
+x 9
+y 6
+end
 arch floor_wood2_l1
 x 9
 y 7
 end
 arch floor_wood2_l1
+x 9
+y 8
+end
+arch door1_locked
 x 9
 y 8
 end
@@ -1448,11 +1483,44 @@ arch floor_wood2_l1
 x 9
 y 10
 end
+arch carpet1.131
+x 9
+y 10
+end
+arch chair2_111
+direction 7
+x 9
+y 10
+end
+arch spawn_point
+name Mercenary Master Cashin
+x 9
+y 10
+arch ranger
+name Mercenary Master Cashin
+type 83
+level 35
+arch event_obj
+name lua
+race /relic/castle/guildhall/guild_merc.lua
+sub_type 13
+end
+end
+end
+arch carpet1.151
+x 9
+y 10
+end
+arch light3
+x 9
+y 10
+end
 arch floor_wood2_l1
 x 9
 y 11
 end
-arch wall_stone_1
+arch desk2
+direction 7
 x 9
 y 11
 end
@@ -1460,11 +1528,30 @@ arch floor_wood2_l1
 x 9
 y 12
 end
+arch wall_stone_1
+x 9
+y 12
+end
 arch floor_wood2_l1
 x 9
 y 13
 end
+arch stairs_stone_down
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 9
+sp 13
+x 9
+y 13
+end
+arch light1
+x 9
+y 13
+end
 arch floor_wood2_l1
+x 9
+y 14
+end
+arch amphora1.101
 x 9
 y 14
 end
@@ -1563,32 +1650,32 @@ arch floor_wood2_l1
 x 10
 y 6
 end
+arch wall_stone_3
+x 10
+y 6
+end
 arch floor_wood2_l1
 x 10
 y 7
 end
-arch spawn_point
+arch wall_stone_3
 x 10
 y 7
-arch ranger
-name Mercenary Master Cashin
-type 83
-level 35
-arch event_obj
-name lua
-race /relic/castle/guildhall/guild_merc.lua
-sub_type 13
 end
-end
+arch wmask_bflag_fire1_1
+direction 7
+x 10
+y 7
 end
 arch floor_wood2_l1
 x 10
 y 8
 end
-arch sewer_hole1
-slaying /relic/castle/guildhall/guildhallb_030a
-hp 10
-sp 8
+arch wall_stone_4
+x 10
+y 8
+end
+arch wmask_bflag_fire1_1
 x 10
 y 8
 end
@@ -1596,7 +1683,15 @@ arch floor_wood2_l1
 x 10
 y 9
 end
+arch carpet1.151
+x 10
+y 9
+end
 arch floor_wood2_l1
+x 10
+y 10
+end
+arch carpet1
 x 10
 y 10
 end
@@ -1604,7 +1699,12 @@ arch floor_wood2_l1
 x 10
 y 11
 end
-arch wall_stone_1
+arch carpet1.111
+x 10
+y 11
+end
+arch chair1_111
+direction 3
 x 10
 y 11
 end
@@ -1612,23 +1712,17 @@ arch floor_wood2_l1
 x 10
 y 12
 end
+arch wall_stone_1
+x 10
+y 12
+end
+arch wmask_bflag_fire1_1
+x 10
+y 12
+end
 arch floor_wood2_l1
 x 10
 y 13
-end
-arch spawn_point
-x 10
-y 13
-arch priest_green
-name Chereth
-type 83
-level 31
-arch event_obj
-name Lua
-race /relic/castle/guildhall/merc_chereth.lua
-sub_type 6
-end
-end
 end
 arch floor_wood2_l1
 x 10
@@ -1733,7 +1827,16 @@ arch floor_wood2_l1
 x 11
 y 6
 end
+arch shelf3_wall.111
+x 11
+y 6
+end
 arch floor_wood2_l1
+x 11
+y 7
+end
+arch shelf3a.111
+direction 7
 x 11
 y 7
 end
@@ -1741,7 +1844,25 @@ arch floor_wood2_l1
 x 11
 y 8
 end
+arch shelf4_wall.111
+direction 7
+x 11
+y 8
+end
+arch wall_stone_1
+x 11
+y 8
+end
 arch floor_wood2_l1
+x 11
+y 9
+end
+arch shelf3c.111
+direction 7
+x 11
+y 9
+end
+arch wall_stone_3
 x 11
 y 9
 end
@@ -1749,11 +1870,25 @@ arch floor_wood2_l1
 x 11
 y 10
 end
+arch carpet1.171
+x 11
+y 10
+end
+arch wall_stone_3
+x 11
+y 10
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 11
+y 10
+end
 arch floor_wood2_l1
 x 11
 y 11
 end
-arch wall_stone_1
+arch door_wood1
+direction 7
 x 11
 y 11
 end
@@ -1761,11 +1896,38 @@ arch floor_wood2_l1
 x 11
 y 12
 end
+arch wall_stone_4
+x 11
+y 12
+end
+arch wmask_bflag_fire1_1
+direction 7
+x 11
+y 12
+end
 arch floor_wood2_l1
 x 11
 y 13
 end
+arch carpet1.131
+x 11
+y 13
+end
+arch doorway_wood1_1
+direction 7
+x 11
+y 13
+end
 arch floor_wood2_l1
+x 11
+y 14
+end
+arch carpet1.131
+x 11
+y 14
+end
+arch doorway_wood1_1
+direction 7
 x 11
 y 14
 end
@@ -1860,11 +2022,37 @@ arch wall_stone_1
 x 12
 y 5
 end
+arch wmask_bflag_fire1_1
+x 12
+y 5
+end
 arch floor_wood2_l1
 x 12
 y 6
 end
+arch chair2_111
+x 12
+y 6
+end
+arch spawn_point
+x 12
+y 6
+arch priest_green
+name Chereth
+type 83
+level 31
+arch event_obj
+name Lua
+race /relic/castle/guildhall/merc_chereth.lua
+sub_type 6
+end
+end
+end
 arch floor_wood2_l1
+x 12
+y 7
+end
+arch table_wood1.111
 x 12
 y 7
 end
@@ -1873,6 +2061,19 @@ x 12
 y 8
 end
 arch floor_wood2_l1
+x 12
+y 9
+end
+arch locker4
+direction 7
+x 12
+y 9
+end
+arch wall_stone_1
+x 12
+y 9
+end
+arch picture15
 x 12
 y 9
 end
@@ -1888,11 +2089,23 @@ arch floor_wood2_l1
 x 12
 y 12
 end
+arch carpet1.151
+x 12
+y 12
+end
 arch floor_wood2_l1
 x 12
 y 13
 end
+arch carpet1
+x 12
+y 13
+end
 arch floor_wood2_l1
+x 12
+y 14
+end
+arch carpet1
 x 12
 y 14
 end
@@ -1999,7 +2212,19 @@ arch floor_wood2_l1
 x 13
 y 6
 end
+arch shelf2_wall.111
+x 13
+y 6
+end
 arch floor_wood2_l1
+x 13
+y 7
+end
+arch candlelight4.101
+x 13
+y 7
+end
+arch light3
 x 13
 y 7
 end
@@ -2011,6 +2236,10 @@ arch floor_wood2_l1
 x 13
 y 9
 end
+arch doorway_wood1_1
+x 13
+y 9
+end
 arch floor_wood2_l1
 x 13
 y 10
@@ -2019,11 +2248,11 @@ arch floor_wood2_l1
 x 13
 y 11
 end
-arch wall_stone_1
-x 13
-y 11
-end
 arch floor_wood2_l1
+x 13
+y 12
+end
+arch chair2_111
 x 13
 y 12
 end
@@ -2031,7 +2260,23 @@ arch floor_wood2_l1
 x 13
 y 13
 end
+arch carpet1.171
+x 13
+y 13
+end
+arch table_poker1
+x 13
+y 13
+end
+arch light3
+x 13
+y 13
+end
 arch floor_wood2_l1
+x 13
+y 14
+end
+arch carpet1.171
 x 13
 y 14
 end
@@ -2154,8 +2399,7 @@ arch floor_wood2_l1
 x 14
 y 8
 end
-arch door_wood1
-direction 3
+arch wall_stone_3
 x 14
 y 8
 end
@@ -2163,7 +2407,7 @@ arch floor_wood2_l1
 x 14
 y 9
 end
-arch wall_stone_3
+arch wall_stone_4
 x 14
 y 9
 end
@@ -2179,7 +2423,8 @@ arch floor_wood2_l1
 x 14
 y 11
 end
-arch wall_stone_4
+arch door_wood1
+direction 3
 x 14
 y 11
 end
@@ -2195,11 +2440,21 @@ arch floor_wood2_l1
 x 14
 y 13
 end
+arch chair2_111
+direction 3
+x 14
+y 13
+end
 arch wall_stone_3
 x 14
 y 13
 end
 arch floor_wood2_l1
+x 14
+y 14
+end
+arch shelf3a.111
+direction 7
 x 14
 y 14
 end
@@ -2317,11 +2572,7 @@ arch plant9
 x 15
 y 7
 end
-arch floor_flagm1
-x 15
-y 8
-end
-arch grassd_m1
+arch grassd_2
 x 15
 y 8
 end
@@ -2337,7 +2588,11 @@ arch tree_big3
 x 15
 y 10
 end
-arch grassd_2
+arch floor_flagm1
+x 15
+y 11
+end
+arch grassd_m1
 x 15
 y 11
 end
@@ -2479,7 +2734,7 @@ arch floor_flagm1
 x 16
 y 8
 end
-arch grassd_m13
+arch grassd_m9
 x 16
 y 8
 end
@@ -2503,7 +2758,7 @@ arch floor_flagm1
 x 16
 y 11
 end
-arch grassd_m9
+arch grassd_m13
 x 16
 y 11
 end
@@ -2596,6 +2851,9 @@ x 16
 y 23
 end
 arch water_still
+x 17
+end
+arch grassd_m7
 x 17
 end
 arch grassd_3
@@ -2832,7 +3090,7 @@ You move the boxes aside and slip through the hole, unnoticed.
 endmsg
 face box2.101
 slaying /relic/castle/guildhall/guildhallb_030a
-hp 17
+hp 19
 sp 8
 x 18
 y 8
@@ -3336,6 +3594,10 @@ x 21
 y 5
 end
 arch floor_sand_d1
+x 21
+y 6
+end
+arch bowl1_full.101
 x 21
 y 6
 end
