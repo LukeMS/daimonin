@@ -402,7 +402,7 @@ int command_t_tell(object *op, char *params)
          * "nasty searches" are only done if requested (RV_RECURSIVE_SEARCH)
          * and are also only useful for long distances (which talk shouldn't be).
          */
-        for (i = 0; i <= SIZEOFFREE2; i++)
+        for (i = 0; i <= SIZEOFFREE; i++)
         {
             xt = op->x + freearr_x[i];
             yt = op->y + freearr_y[i];
@@ -411,14 +411,6 @@ int command_t_tell(object *op, char *params)
 
             if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
             {
-                /*char        buf[256 * 2];*/
-                /* we do this client sided now
-                sprintf(buf, "you talk to %s: ", query_name(t_obj));
-                strncat(buf, params, MAX_BUF - strlen(buf) - 1);
-                buf[MAX_BUF - 1] = 0;
-                new_draw_info(NDI_WHITE, 0, op, buf);
-                */
-
                 if (t_obj->event_flags & EVENT_FLAG_TALK)
                     trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
                             params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);

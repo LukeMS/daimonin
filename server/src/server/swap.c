@@ -244,18 +244,16 @@ mapstruct * map_least_timeout(const char *except_level)
 void swap_below_max(const char *except_level)
 {
     mapstruct  *map;
-    int         nroffreeobjects     = (int) pool_object->nrof_free;
-    int         nrofallocobjects    = (int) pool_object->nrof_allocated;
 
-    if (nrofallocobjects - nroffreeobjects < MAX_OBJECTS)
+    if ((((int) pool_object->nrof_allocated) - ((int) pool_object->nrof_free)) < MAX_OBJECTS)
         return;
     for (; ;)
     {
 #ifdef MAX_OBJECTS_LWM
-        if (nrofallocobjects - nroffreeobjects < MAX_OBJECTS_LWM)
+        if ((((int) pool_object->nrof_allocated) - ((int) pool_object->nrof_free)) < MAX_OBJECTS_LWM)
             return;
 #else
-        if (nrofallocobjects - nroffreeobjects < MAX_OBJECTS)
+        if ((((int) pool_object->nrof_allocated) - ((int) pool_object->nrof_free)) < MAX_OBJECTS)
             return;
 #endif
         if ((map = map_least_timeout(except_level)) == NULL)

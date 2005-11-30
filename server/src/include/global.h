@@ -487,6 +487,7 @@ EXTERN int                      arch_search;    /* How many searches */
 EXTERN player                  *first_player;
 EXTERN player                  *last_player;
 EXTERN int                      player_active;
+EXTERN int                      player_active_meta;
 EXTERN mapstruct               *first_map;
 EXTERN treasurelist            *first_treasurelist;
 EXTERN artifactlist            *first_artifactlist;
