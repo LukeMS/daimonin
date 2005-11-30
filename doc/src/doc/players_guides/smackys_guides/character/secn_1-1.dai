@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 1-1: NAME, GENDER, RACE, PROFESSION, ALIGNMENT, &amp; FAITH
+    </title>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            <img alt="[Identity]" src="./identity.png"/>
+        </p>
+        <p>
+            Here is displayed basic information about your identity.
+        </p>
+    </section>
+    <section id="name">
+        <title>
+            Name, gender, &amp; race
+        </title>
+        <p>
+            Name, gender, and race have already been explained, as far as they need explaining, in <a href="../game_mechanics/secn_1.dai">"Game Mechanics, Section 1: Logging In"</a> and <a href="../game_mechanics/secn_2.dai">"Game Mechanics, Section 2: Creating A New Character"</a>.
+        </p>
+    </section>
+    <section id="profession">
+        <title>
+            Profession, alignment, &amp; faith
+        </title>
+        <p>
+            Profession, alignment, and faith are currently very rudimentary. Every character is a mercenary, true neutral, and almost certainly a follower of the Tabernacle (it is possible not to be but there are currently no other deities to follow). As such these elements have no effect on gameplay.
+        </p>
+        <p>
+            <strong>NOTE</strong>: You will often see players in-game and on the forums referring to mages, warriors, and priests. This is to do with which skills have been developed, chosen equipment, and preferred method of combat.
+        </p>
+    </section>
+</section>

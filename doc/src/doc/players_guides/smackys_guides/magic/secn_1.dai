@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 1: CASTABLE MAGIC
+    </title>
+    <p>
+        THIS SPACE INTENTIONALLY LEFT BLANK
+    </p>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_1-1.dai">Section 1-1: Wizardry Spells</a>
+            </dt>
+            <dd>
+                <p>
+                    Magic for mages.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_1-2.dai">Section 1-2: Divine Prayers</a>
+            </dt>
+            <dd>
+                <p>
+                    Magic for priests.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

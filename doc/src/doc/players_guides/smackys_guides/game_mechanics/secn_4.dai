@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 4: OPTIONS
+    </title>
+    <p>
+        THIS SPACE INTENTIONALLY LEFT BLANK
+    </p>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_4-1.dai">Section 4-1: Key Settings</a>
+            </dt>
+            <dd>
+                <p>
+                    You can bind an rebind game and meta commands to most keys on the keyboard.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_4-2.dai">Section 4-2: Settings</a>
+            </dt>
+            <dd>
+                <p>
+                    There are many options to alter and customise the appearance and behaviour of Daimonin.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

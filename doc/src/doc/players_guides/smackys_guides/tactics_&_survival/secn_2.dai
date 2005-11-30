@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 2: MOBOLOGY -- THE STUDY OF MOBS
+    </title>
+    <p>
+        THIS SPACE INTENTIONALLY LEFT BLANK
+    </p>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_2-1.dai">Section 2-1: All The Pretty Colours</a>
+            </dt>
+            <dd>
+                <p>
+                    A quick reminder on relative strengths.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_2-2.dai">Section 2-2: Know Your Foe</a>
+            </dt>
+            <dd>
+                <p>
+                    Knowledge is power.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

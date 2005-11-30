@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        APPENDIX B: META COMMANDS
+    </title>
+    <section id="movement">
+        <title>
+            Movement
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Meta Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_NORTH</code>, <code>?M_NORTHEAST</code>, <code>?M_EAST</code>, <code>?M_SOUTHEAST</code>,<br/>
+                    <code>?M_SOUTH</code>, <code>?M_SOUTHWEST</code>, <code>?M_WEST</code>, <code>?M_NORTHWEST</code>
+                </td>
+                <td>
+                    Perform action in specified direction
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_STAY</code>
+                </td>
+                <td>
+                    Perform action on self
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_UP</code>, <code>?M_DOWN</code>, <code>?M_LEFT</code>, <code>?M_RIGHT</code>
+                </td>
+                <td>
+                    Change selection/Edit text (in console)
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="textwindows">
+        <title>
+            Textwindows
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Meta Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_PAGEUP</code>, <code>?M_PAGEDOWN</code>
+                </td>
+                <td>
+                    Scroll bottom textwindow
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_PAGEDUP_TOP</code>, <code>?M_PAGEDOWN_TOP</code>
+                </td>
+                <td>
+                    Scroll top textwindow
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_CONSOLE</code>
+                </td>
+                <td>
+                    Enter console (bottom textwindow)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_MCON</code>
+                </td>
+                <td>
+                    Send partial game command to console
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="items">
+        <title>
+            Items
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Meta Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_APPLY</code>
+                </td>
+                <td>
+                    Apply selected item
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_EXAMINE</code>
+                </td>
+                <td>
+                    Examine selected item
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_LOCK</code>
+                </td>
+                <td>
+                    Lock selected item
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_MARK</code>
+                </td>
+                <td>
+                    Mark selected item
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_DROP</code>
+                </td>
+                <td>
+                    Drop selected item
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_GET</code>
+                </td>
+                <td>
+                    Get selected item
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_FIRE_READY</code>
+                </td>
+                <td>
+                    Equip selected item as ammunition
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="combat">
+        <title>
+            Combat
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Meta Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_COMBAT_TOGGLE</code>
+                </td>
+                <td>
+                    Toggle attack/hold attack mode
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_RANGE</code>
+                </td>
+                <td>
+                    Cycle through range attack options
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_TARGET_ENEMY</code>
+                </td>
+                <td>
+                    Cycle through visible enemies
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_TARGET_FRIEND</code>
+                </td>
+                <td>
+                    Cycle through visible friends
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="dialogs">
+        <title>
+            Dialogs
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Meta Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_SPELL_LIST</code>
+                </td>
+                <td>
+                    Display spell/prayer list dialog
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_SKILL_LIST</code>
+                </td>
+                <td>
+                    Display sill list dialog
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_KEYBIND</code>
+                </td>
+                <td>
+                    Display key binding dialog
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_HELP</code>
+                </td>
+                <td>
+                    Display help screens
+                </td>
+            </tr>
+        </table>
+    </section>
+</section>

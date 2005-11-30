@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section>
+    <title>
+        SMACKY'S GUIDE TO GAME MECHANICS
+    </title>
+    <ul>
+        <li>
+            <a href="./secn_1.dai">Section 1: Logging In</a>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_2.dai">Section 2: Creating A New Character</a>
+            <ul>
+                <li>
+                    <a href="./secn_2-1.dai">Section 2-1: The Tutorial</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_3.dai">Section 3: Interacting With Daimonin</a>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_4.dai">Section 4: Options</a>
+            <ul>
+                <li>
+                    <a href="./secn_4-1.dai">Section 4-1: Key Settings</a>
+                </li>
+                <li>
+                    <a href="./secn_4-2.dai">Section 4-2: Settings</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_5.dai">Section 5: Logging Out (&amp; Saving)</a>
+            <p/>
+        </li>
+        <li>
+            <a href="./appx_a.dai">Appendix A: Game Commands</a>
+            <p/>
+        </li>
+        <li>
+            <a href="./appx_b.dai">Appendix B: Meta Commands</a>
+            <p/>
+        </li>
+        <li>
+            <a href="./appx_c.dai">Appendix C: Default Bindings</a>
+            <p/>
+        </li>
+    </ul>
+</section>

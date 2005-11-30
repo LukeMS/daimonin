@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 3: KNOW THYSELF
+    </title>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            <img alt="[Window on the world]" src="./main.png"/>
+        </p>
+        <p>
+            The main part of the screen shows you (center) and a small area of the Daimonin world in all its isometric glory.
+        </p>
+        <p>
+            Surrounding this are all manner of displays, statistics, and icons. For the most part these record information about you and your current circumstances.
+        </p>
+        <p>
+            The tables and displays across the top of the screen contain information about your identity, abilities, and current state of health. This section details that information.
+        </p>
+    </section>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_1-1.dai">Section 1-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
+            </dt>
+            <dd>
+                <p>
+                    Basic information about your identity.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_1-2.dai">Section 1-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
+            </dt>
+            <dd>
+                <p>
+                    Information pertaining directly to your chances of success in combat.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_1-3.dai">Section 1-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
+            </dt>
+            <dd>
+                <p>
+                    Measurements representing your fundamental abilities and current health,
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_1-4.dai">Section 1-4: Armour Protections</a>
+            </dt>
+            <dd>
+                <p>
+                    The percentage of damage your armour can absorb from particular attacks.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_1-5.dai">Section 1-5: Skills, Experience, Levelling, &amp; Training</a>
+            </dt>
+            <dd>
+                <p>
+                    Information on performing particular tasks and developing your proficiencies.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        INTRODUCTION
+    </title>
+    <section id="whatnot">
+        <title>
+            What Smacky's Guides are not
+        </title>
+        <dl>
+            <dt>
+                <strong>FAQs</strong>
+            </dt>
+            <dd>
+                <p>
+                    Many topics aren't and possibly never will be covered in <strong><em>Smacky's Guides</em></strong>. Moreover, the answers given are not definitive.
+                </p>
+            </dd>
+            <dt>
+                <strong>Spoily</strong>
+            </dt>
+            <dd>
+                <p>
+                    Yes, technically there are some spoilers in here. But you won't find lists of statistics, or quest walkthroughs, or such.
+                </p>
+            </dd>
+            <dt>
+                <strong>Exhaustive</strong>
+            </dt>
+            <dd>
+                <p>
+                    For example, nearly everything can benefit from 'magic currently in effect.' But you won't find much more detail than that in <strong><em>Smacky's Guides</em></strong>.
+                </p>
+                <p>
+                    In fact, for all three of these things my philosophy is that you learn by playing the game, through exploration, experimentation, and experience, not by reading a manual. If you do want an exhaustive spoily FAQ stop reading here.
+                </p>
+            </dd>
+            <dt>
+                <strong>Critical</strong>
+            </dt>
+            <dd>
+                <p>
+                    Actually, knowing the author, I suspect they are a bit, but that's not the intention. The <a href="http://www.daimonin.net/modules.php?name=PNphpBB2">forums</a> are more suited to discussion and criticism of the development of Daimonin. I hope here to tell you how things are (or at least how they seem), not how I think they should be.
+                </p>
+            </dd>
+            <dt>
+                <strong>Technical</strong>
+            </dt>
+            <dd>
+                <p>
+                    Are you having trouble compiling and/or installing the game at all? Do you want to know how to try out an alternative server, or run your own? You won't find the answers to those questions and many more in <strong><em>Smacky's Guides</em></strong>.
+                </p>
+            </dd>
+            <dt>
+                <strong>Official</strong>
+            </dt>
+            <dd>
+                <p>
+                    Not at all.
+                </p>
+            </dd>
+            <dt>
+                <strong>Necessarily correct</strong>
+            </dt>
+            <dd>
+               <p>
+                   Practicing what I preach, <strong><em>Smacky's Guides</em></strong> are mostly based on my experience as a player. Hence there are bound to be errors.
+               </p>
+            </dd>
+        </dl>
+    </section>
+    <section id="whatare">
+        <title>
+            What Smacky's Guides are
+        </title>
+        <dl>
+            <dt>
+                <strong>Player's guides</strong>
+            </dt>
+            <dd>
+                <p>
+                    Written by a player for players yadda yadda yadda. If you don't understand what I'm getting at here, you should reread the bits above.
+                </p>
+            </dd>
+            <dt>
+                <strong>A WIP</strong>
+            </dt>
+            <dd>
+                <p>
+                    THIS SPACE INTENTIONALLY LEFT BLANK
+                </p>
+            </dd>
+        </dl>
+    </section>
+    <section id="whattry">
+        <title>
+            What Smacky's Guides try to be
+        </title>
+        <dl>
+            <dt>
+                <strong>Entertaining</strong>
+            </dt>
+            <dd>
+                <p>
+                    You'll laugh! You'll cry!
+                </p>
+            </dd>
+            <dt>
+                <strong>Informative</strong>
+            </dt>
+            <dd>
+                <p>
+                    You'll learn!
+                </p>
+            </dd>
+        </dl>
+    </section>
+    <section id="who">
+        <title>
+            Who Smacky is
+        </title>
+        <p>
+            <img alt="[I'm Smackycus!]" src="./smacky.png"/>
+        </p>
+        <p>
+            <em>Smacky at two days</em>
+        </p>
+    </section>
+</section>

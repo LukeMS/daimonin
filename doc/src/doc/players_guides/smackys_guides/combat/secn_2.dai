@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 1: FIGHTING SKILLS
+    </title>
+    <p>
+        THIS SPACE INTENTIONALLY LEFT BLANK
+    </p>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_2-1.dai">Section 2-1: Melee &amp; Punching</a>
+            </dt>
+            <dd>
+                <p>
+                    The most pugilistic forms of pugnastics.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_2-2.dai">Section 2-2: Archery &amp; Throwing</a>
+            </dt>
+            <dd>
+                <p>
+                    Combat at a distance.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_2-3.dai">Section 2-3: Magic</a>
+            </dt>
+            <dd>
+                <p>
+                    Combat with spells, prayers, device, and performance-enhancing magical effects.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

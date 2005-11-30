@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        APPENDIX A: GAME COMMANDS
+    </title>
+    <section id="movement">
+        <title>
+            Movement
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/run</code>
+                </td>
+                <td>
+                    Switch on run mode
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/run_stop</code>
+                </td>
+                <td>
+                    Switch off run mode
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="skills">
+        <title>
+            Skills
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/ready_skill &lt;skill&gt;</code>
+                </td>
+                <td>
+                    Ready &lt;skill&gt; for future use
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/use_skill &lt;skill&gt;</code>
+                </td>
+                <td>
+                    Use &lt;skill&gt; immediately
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="items">
+        <title>
+            Items
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/apply &lt;item&gt;</code>
+                </td>
+                <td>
+                    Apply &lt;item&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/drop &lt;item&gt;</code>
+                </td>
+                <td>
+                    Drop &lt;item&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/get &lt;item&gt;</code>
+                </td>
+                <td>
+                    Get &lt;item&gt;
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="combat">
+        <title>
+            Combat
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/combat</code>
+                </td>
+                <td>
+                    Toggle attack/hold attack mode
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/target &lt;mob&gt;</code>
+                </td>
+                <td>
+                    Target &lt;mob&gt;
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="magic">
+        <title>
+            Spells/Prayers
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/cast &lt;spell/prayer&gt;</code>
+                </td>
+                <td>
+                    Cast &lt;spell&gt; or recite &lt;prayer&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/pray</code>
+                </td>
+                <td>
+                    Pray
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/ready_spell &lt;spell/prayer&gt;</code>
+                </td>
+                <td>
+                    Ready &lt;spell/prayer&gt; for future casting/reciting
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="communication">
+        <title>
+            Communication
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/accuse</code>, <code>/beg</code>, <code>/bleed</code>, <code>/blush</code>, <code>/bounce</code>, <code>/bow</code>,<br/>
+                    <code>/burp</code>, <code>/cackle</code>, <code>/chuckle</code>, <code>/clap</code>, <code>/cough</code>, <code>/cringe</code>,<br/>
+                    <code>/cry</code>, <code>/dance</code>, <code>/flip</code>, <code>/frown</code>, <code>/gasp</code>, <code>/giggle</code>,<br/>
+                    <code>/glare</code>, <code>/grin</code>, <code>/groan</code>, <code>/growl</code>, <code>/hiccup</code>, <code>/hug</code>,<br/>
+                    <code>/kiss</code>, <code>/laugh</code>, <code>/lick</code>, <code>/nod</code>, <code>/poke</code>, <code>/pout</code>,<br/>
+                    <code>/puke</code>, <code>/scream</code>, <code>/shake</code>, <code>/shiver</code>, <code>/shrug</code>, <code>/sigh</code>,<br/>
+                    <code>/slap</code>, <code>/smile</code>, <code>/smirk</code>, <code>/snap</code>, <code>/sneeze</code>, <code>/snicker</code>,<br/>
+                    <code>/sniff</code>, <code>/snore</code>, <code>/spit</code>, <code>/strut</code>, <code>/sulk</code>, <code>/thank</code>,<br/>
+                    <code>/think</code>, <code>/twiddle</code>, <code>/wave</code>, <code>/whistle</code>, <code>/wink</code>, <code>/yawn</code>
+                </td>
+                <td>
+                    These pre-defined emotes do what they say on the tin
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/me &lt;message&gt;</code>
+                </td>
+                <td>
+                    Emote &lt;message&gt;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/reply &lt;message&gt;</code>
+                </td>
+                <td>
+                    Send private &lt;message&gt; to last player to <code>/tell</code> you
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/say &lt;message&gt;</code>
+                </td>
+                <td>
+                    Say &lt;message&gt; to all within hearing
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/shout &lt;message&gt;</code>
+                </td>
+                <td>
+                    Broadcast public &lt;message&gt; to all players
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/tell &lt;player&gt; &lt;message&gt;</code>
+                </td>
+                <td>
+                    Send private &lt;message&gt; to &lt;player&gt;
+                </td>
+            </tr>
+        </table>
+    </section>
+    <section id="misc">
+        <title>
+            Miscellaneous
+        </title>
+        <table>
+            <tr>
+                <th>
+                    Game Command
+                </th>
+                <th>
+                    Effect
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <code>/help (&lt;topic&gt;)</code>
+                </td>
+                <td>
+                    View in-game help
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/mapinfo</code>
+                </td>
+                <td>
+                    View information about current map
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/save</code>
+                </td>
+                <td>
+                    Save game
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>/time</code>
+                </td>
+                <td>
+                    View in-game time of day/year
+                </td>
+            </tr>
+        </table>
+    </section>
+</section>
