@@ -255,6 +255,7 @@ y 5
 arch kobold_big
 type 83
 level 2
+Wis 2
 end
 end
 arch floor_wood2_d2
@@ -299,6 +300,7 @@ y 13
 arch kobold
 type 83
 level 2
+Wis 1
 end
 end
 arch floor_wood2_d1
@@ -350,6 +352,8 @@ x 4
 y 4
 arch kobold
 type 83
+level 2
+Wis 1
 end
 end
 arch floor_wood2_d1
@@ -377,6 +381,8 @@ x 4
 y 9
 arch kobold
 type 83
+level 2
+Wis 1
 end
 end
 arch floor_wood2_d2
@@ -523,6 +529,7 @@ y 12
 arch kobold_big
 type 83
 level 2
+Wis 2
 end
 end
 arch floor_wood2_d2
@@ -1420,6 +1427,7 @@ y 4
 arch kobold_big
 type 83
 level 2
+Wis 2
 end
 end
 arch floor_wood2_d1
@@ -1703,6 +1711,7 @@ y 8
 arch kobold_big
 type 83
 level 2
+Wis 2
 end
 end
 arch floor_wood2_d2
@@ -1907,6 +1916,7 @@ arch goblin
 name Hagvash
 type 83
 level 5
+Wis 3
 end
 end
 arch floor_wood2_d1
@@ -2056,6 +2066,7 @@ arch kobold_big
 name kobold elite
 type 83
 level 3
+Wis 2
 end
 end
 arch floor_wood2_d1
@@ -2461,6 +2472,7 @@ arch kobold_shaman
 name elite kobold shaman
 type 83
 level 3
+Wis 4
 end
 end
 arch floor_wood2_d2
@@ -2490,6 +2502,7 @@ arch kobold_guard
 name elite kobold guard
 type 83
 level 3
+Wis 3
 end
 end
 arch floor_wood2_d1
