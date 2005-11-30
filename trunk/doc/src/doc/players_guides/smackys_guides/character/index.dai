@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section>
+    <title>
+        SMACKY'S GUIDE TO THE CHARACTER
+    </title>
+    <ul>
+        <li>
+            <a href="./secn_1.dai">Section 1: Know Thyself</a>
+            <ul>
+                <li>
+                    <a href="./secn_1-1.dai">Section 1-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
+                </li>
+                <li>
+                    <a href="./secn_1-2.dai">Section 1-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
+                </li>
+                <li>
+                    <a href="./secn_1-3.dai">Section 1-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
+                </li>
+                <li>
+                    <a href="./secn_1-4.dai">Section 1-4: Armour Protections</a>
+                </li>
+                <li>
+                    <a href="./secn_1-5.dai">Section 1-5: Skills, Experience, Levelling, &amp; Training</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_2.dai">Section 2: Death</a>
+            <p/>
+        </li>
+    </ul>
+</section>

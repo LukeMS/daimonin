@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 2: MAGIC ITEMS
+    </title>
+    <p>
+        THIS SPACE INTENTIONALLY LEFT BLANK
+    </p>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_2-1.dai">Section 2-1: Potions, Balms, Scrolls, &amp; Dust</a>
+            </dt>
+            <dd>
+                <p>
+                    Single-use magic items.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_2-2.dai">Section 2-2: Wands, Horns, &amp; Rods</a>
+            </dt>
+            <dd>
+                <p>
+                    Multiple-use magic devices.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_2-3.dai">Section 2-3: Amulets, Rings, &amp; Other Magic Items</a>
+            </dt>
+            <dd>
+                <p>
+                    Constant use magic items.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

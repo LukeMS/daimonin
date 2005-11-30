@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 2-1: TRANSACTIONS WITH NPCS
+    </title>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            First of all, don't be fooled: you don't trade with NPCs as such. You buy from/sell to a shop. The shopkeeper is in the shop, but, as far as trading goes, is just for the look of it.
+        </p>
+        <p>
+            A shop is a building with a section behind bars. The only way to get from one side of the bars to the other is through a portal. Behind those bars the floor is strewn, literally strewn, with items for sale. Each item has a little emblem (<img alt="Unpaid" src="./unpaid.png"/>) which shows that you have not yet paid for it.
+        </p>
+        <p>
+            Whether you're <a href="#buying">buying</a> or <a href="#selling">selling</a>, first step through the portal so that you're behind the bars too.
+        </p>
+        <p>
+            Sometimes players find themselves trapped in the shop, unable to step through the portal. If this happens, don't panic! You won't run out of air. You are probably experiencing a <a href="#shenanigans">temporary setback</a>.
+        </p>
+    </section>
+    <section id="buying">
+        <title>
+            Buying
+        </title>
+        <p>
+            <a href="../manipulating_objects/secn_1-1.dai">Examine</a> an item for sale to find out its price.
+        </p>
+        <p>
+            Do you want that one? Are you sure? Okay, <a href="../manipulating_objects/secn_1-2.dai">get</a> it.
+        </p>
+        <p>
+            Now step through the portal to buy it and leave the shop.
+        </p>
+    </section>
+    <section id="selling">
+        <title>
+            Selling
+        </title>
+        <p>
+            <a href="../manipulating_objects/secn_1-1.dai">Examine</a> an item in your inventory to see what the shop will pay you for it. Basically, you will get 20%, give or take depending on your charisma, of the examine value of any item.
+        </p>
+        <p>
+            If the price suits, <a href="../manipulating_objects/secn_1-2.dai">drop</a> the item to sell it.
+        </p>
+        <p>
+            <strong>NOTE</strong>: a sold item does not pass into the shop's stock for resale. It is gone forever.
+        </p>
+        <p>
+            Now step through the portal to leave the shop.
+        </p>
+    </section>
+    <section id="shenanigans">
+        <title>
+            Shopping shenanigans
+        </title>
+        <dl>
+            <dt>
+                <strong>Shop blockade</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="Shop blockade" src="./shopblockade.png"/>
+                </p>
+                <p>
+                    Are there players standing on all the tiles adjacent to the portal on the other side of the bars?
+                </p>
+                <p>
+                    If there are, you can't get out because you need a free tile to which to teleport. Try asking them nicely to step aside and they probably will.
+                </p>
+                <p>
+                    But beware, sometimes players do this deliberately because they think it's funny. And lets face it, it is. The final word is, you can't leave the shop until they move.
+                </p>
+                <p>
+                    You can of course be blocked from entering the shop in much the same way. The precise logistics of this are left as an exercise for the reader.
+                </p>
+            </dd>
+            <dt>
+                <strong>Shoplifting</strong>
+            </dt>
+            <dd>
+                <p>
+                    Do you have an unpaid item in your inventory but don't have enough cash to pay for it? Stay calm and follow these three easy steps:
+                </p>
+                <dl>
+                    <dt>
+                        <strong>STEP ONE</strong>: <a href="../manipulating_objects/secn_1.dai">Check you inventory</a>
+                    </dt>
+                    <dd>
+                        <p>
+                            See an unpaid item? If yes, <a href="../manipulating_objects/secn_1-2.dai">drop</a> it. If no:
+                        </p>
+                    </dd>
+                    <dt>
+                        <strong>STEP TWO</strong>: <a href="../manipulating_objects/secn_1-4.dai">Look in any bags or other containers you're carrying</a>
+                    </dt>
+                    <dd>
+                        <p>
+                            See an unpaid item? If yes, <a href="../manipulating_objects/secn_1-2.dai">drop</a> it. If no:
+                        </p>
+                    </dd>
+                    <dt>
+                        <strong>STEP THREE</strong>: <a href="../communication/secn_1-2.dai#public">Shout for help</a>
+                    </dt>
+                    <dd>
+                        <p>
+                            Actually, the problem should have been resolved by either step one or step two, but if not there are always other players skilled in the art of shopper extraction.
+                        </p>
+                    </dd>
+                </dl>
+            </dd>
+        </dl>
+    </section>
+</section>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section>
+    <title>
+        SMACKY'S GUIDE TO MAGIC
+    </title>
+    <ul>
+        <li>
+            <a href="./secn_1.dai">Section 1: Castable Magic</a>
+            <ul>
+                <li>
+                    <a href="./secn_1-1.dai">Section 1-1: Wizardry Spells</a>
+                </li>
+                <li>
+                    <a href="./secn_1-2.dai">Section 1-2: Divine Prayers</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_2.dai">Section 2: Magic Items</a>
+            <ul>
+                <li>
+                    <a href="./secn_2-1.dai">Section 2-1: Potions, Balms, Scrolls, &amp; Dust</a>
+                </li>
+                <li>
+                    <a href="./secn_2-2.dai">Section 2-2: Wands, Horns, &amp; Rods</a>
+                </li>
+                <li>
+                    <a href="./secn_2-3.dai">Section 2-3: Amulets, Rings, &amp; Other Magic Items</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_3.dai">Section 3: Curses &amp; Damnation!</a>
+            <p/>
+        </li>
+    </ul>
+</section>

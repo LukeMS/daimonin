@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 1: COMMUNICATION
+    </title>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            <img alt="Text windows" src="./textwindows.png"/>
+        </p>
+        <p>
+            Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in Smacky's Guides.
+        </p>
+        <p>
+            Here, suffice to say, the top window (with the orange text) is for global messages and communication between players, and the bottom window (with the blue text) is for local messages which is often, but not always, for communication with NPCs.
+        </p>
+        <p>
+            As the example shows, much insight into the human condition can be gleaned from the musings of other players...
+        </p>
+    </section>
+    <section id="cherbot">
+        <title>
+            Cherbot
+        </title>
+        <p>
+            A great deal of information, statistics, and functionality is available unofficially through Cherbot.
+        </p>
+        <p>
+            Cherbot is, wait for it, a bot (an artificial player controlled by a piece of software). He resides in a cell in Stoneglow jail.
+        </p>
+        <p>
+            Cherbot has his own very comprehensive web page at <a href="http://www.itcqis.com/daimonin/">http://www.itcqis.com/daimonin/</a> so I won't repeat it here.
+        </p>
+    </section>
+    <section id="tos">
+        <title>
+            Also in this section
+        </title>
+        <dl>
+            <dt>
+                <a href="./secn_1-1.dai">Section 1-1: Talking To NPCs</a>
+            </dt>
+            <dd>
+                <p>
+                    You can communicate with NPCs.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_1-2.dai">Section 1-2: Talking To Players</a>
+            </dt>
+            <dd>
+                <p>
+                    You can communicate with other players.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

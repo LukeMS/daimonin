@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section autotoc="On this page">
+    <title>
+        SECTION 1: CURRENCY
+    </title>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            Cash in Daimonin is in <a href="#coinsbyname">coin</a> form and is mainly acquired in two ways: either by <a href="../combat/secn_1-5.dai">finding it in bounties</a> or by <a href="./secn_2.dai">selling items</a>.
+        </p>
+        <p>
+            Coins are heavy and if you too many in your pockets your trousers will fall down. Dumping your hard-earned on the ground is not recommended so you will need to <a href="#saving">look after your savings</a> somehow.
+        </p>
+        <p>
+            Even the cheapest useful items usually cost from 10-70 copper coins. An 'average' piece of magic armour will probably set you back about 60 silver. Especially powerful or rare items (or sometimes those that just happen to be popular at the time if it is a player-player sale) can go for huge amounts (many tens or even hundreds of gold).
+        </p>
+        <p>
+            <a href="../manipulating_objects/secn_1-2.dai">Examining</a> an item will tell you its value. This is the value in terms of a <a href="./secn_2-1.dai">player-NPC sale</a>. In terms of a <a href="./secn_2-2.dai">player-player sale</a> the examine value is often highly inaccurate. It really depends on how much the buyer is willing to pay...
+        </p>
+    </section>
+    <section id="coinsbyname">
+        <title>
+             Coins by name
+        </title>
+        <p>
+            There are four flavours:
+        </p>
+        <dl>
+            <dt>
+                <strong>Copper coins</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="Copper coin" src="./coppercoin.101.png"/>
+                </p>
+                <p>
+                    Copper is the least valuable coin. You can't buy much for a copper coin besides another copper coin. Maybe a burnt torch. One copper coin weighs 0.01 kg.
+                </p>
+            </dd>
+            <dt>
+                <strong>Silver coin</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="Silver coins" src="./silvercoin.101.png"/>
+                </p>
+                <p>
+                    One silver coin is equivalent to 100 copper coins. Silver coins are probably the most standard value of currency in Daimonin. One silver coin weighs 0.008 kg.
+                </p>
+            </dd>
+            <dt>
+                <strong>Gold coins</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="Gold coins" src="./goldcoin.101.png"/>
+                </p>
+                <p>
+                    One gold coin equals 100 silver coins. Definitely the yellowest of the coins. One gold coin weighs 0.01 kg.
+                </p>
+            </dd>
+            <dt>
+                <strong>Mithril coins</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="Mithril coins" src="./mit_coin.101.png"/>
+                </p>
+                <p>
+                    One mithril coin is worth 1,000 gold coins. So one mithril coin can be turned into 10,000,000 copper coins. One mithril coin weighs 0.003 kg.
+                </p>
+            </dd>
+        </dl>
+    </section>
+    <section id="saving">
+        <title>
+            Looking after your savings
+        </title>
+        <p>
+            You have two options:
+        </p>
+        <dl>
+            <dt>
+                <strong>Open an account</strong>
+            </dt>
+            <dd>
+                <p>
+                    There is a simple bank in Stoneglow in which you can store your money. You can deposit money you have on your person, withdraw money in your account, and check your balance.
+                </p>
+                <p>
+                    The bank will change any coins to their equivalents, either up or down. Money in your account will automatically be changed to its highest value denomination (so if you deposit 1,000 silver your balance will show 10 gold and you can withdraw it as 100,000 copper).
+                </p>
+                <p>
+                    Banking is entirely safe -- only you can access your account and there are no robberies -- if not entirely confidential -- after each transaction your balance is bellowed to anyone with ears.
+                </p>
+            </dd>
+            <dt>
+                <strong>Hide it under your bed</strong>
+            </dt>
+            <dd>
+                <p>
+                    If you have an apartment you can always keep your cash under your bed (alright, technically you can't do this, but you put it somewhere in your apartment).
+                </p>
+                <p>
+                    This is also entirely safe, as only you can enter your apartment.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</section>

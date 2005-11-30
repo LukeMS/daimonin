@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<section>
+    <title>
+        SMACKY'S GUIDE TO COMBAT
+    </title>
+    <ul>
+        <li>
+            <a href="./secn_1.dai">Section 1: Basic Training: </a>
+            <ul>
+                <li>
+                    <a href="./secn_1-1.dai">Section 1-1: Switching Between Hold Attack &amp; Attack Mode</a>
+                </li>
+                <li>
+                    <a href="./secn_1-2.dai">Section 1-2: The Targetting System</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_2.dai">Section 2: Fighting Skills</a>
+            <ul>
+                <li>
+                    <a href="./secn_2-1.dai">Section 2-1: Melee &amp; Punching</a>
+                </li>
+                <li>
+                    <a href="./secn_2-2.dai">Section 2-2: Archery &amp; Throwing</a>
+                </li>
+                <li>
+                    <a href="./secn_2-3.dai">Section 2-3: Magic</a>
+                </li>
+            </ul>
+            <p/>
+        </li>
+        <li>
+            <a href="./secn_3.dai">Section 3: Experience &amp; Bounties</a>
+            <p/>
+        </li>
+    </ul>
+</section>
