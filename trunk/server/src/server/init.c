@@ -593,6 +593,8 @@ static void help()
     LOG(llevInfo, " -balanced_stat_loss - if set, death stat depletion is balanced by level etc\n");
     LOG(llevInfo, " +balanced_stat_loss - if set, ordinary death stat depletion is used\n");
     LOG(llevInfo, " -v          Print version and contributors.\n");
+    LOG(llevInfo, " -test       Run unit tests and exit.\n");
+    LOG(llevInfo, " -benchmark  Run benchmarks and exit.\n");
 
 #ifndef SECURE
     LOG(llevInfo, "\nThe following options are only available if a secure server was not compiled.\n");
@@ -993,19 +995,28 @@ struct Command_Line_Options options[]   =
     */
     {"-h", 0, 1, help},
     /* Honor -help also, since it is somewhat common */
-    {"-help", 0, 1, help}, {"-v", 0, 1, call_version}, {"-d", 0, 1, set_debug}, {"+d", 0, 1, unset_debug},
+    {"-help", 0, 1, help}, 
+    {"-v", 0, 1, call_version}, 
+    {"-d", 0, 1, set_debug}, 
+    {"+d", 0, 1, unset_debug},
     {"-mon", 0, 1, set_mondebug},
 #ifndef SECURE
-    {"-data",1,1, set_datadir}, {"-local",1,1, set_localdir}, {"-maps", 1, 1, set_mapdir},
-    {"-arch", 1, 1, set_archetypes}, {"-playerdir", 1, 1, set_playerdir}, {"-treasures", 1, 1, set_treasures},
-    {"-uniquedir", 1, 1, set_uniquedir}, {"-tmpdir", 1, 1, set_tmpdir},
+    {"-data",1,1, set_datadir}, 
+    {"-local",1,1, set_localdir},
+    {"-maps", 1, 1, set_mapdir},
+    {"-arch", 1, 1, set_archetypes}, 
+    {"-playerdir", 1, 1, set_playerdir}, 
+    {"-treasures", 1, 1, set_treasures},
+    {"-uniquedir", 1, 1, set_uniquedir}, 
+    {"-tmpdir", 1, 1, set_tmpdir},
 #endif
     {"-log", 1, 1, set_logfile},
 
     /* Pass 2 functions.  Most of these could probably be in pass 1,
     * as they don't require much of anything to bet set up.
     */
-    {"-csport", 1, 2, set_csport}, {"-detach", 0, 2, set_daemon},
+    {"-csport", 1, 2, set_csport}, 
+    {"-detach", 0, 2, set_daemon},
 
     /* Start of pass 3 information. In theory, by pass 3, all data paths
     * and defaults should have been set up.
@@ -1016,9 +1027,14 @@ struct Command_Line_Options options[]   =
     {"-m5", 0, 3, set_dumpmon5}, {"-m6", 0, 3, set_dumpmon6}, {"-m7", 0, 3, set_dumpmon7}, {"-m8", 0, 3, set_dumpmon8},
     {"-m9", 0, 3, set_dumpmon9}, {"-mA", 0, 3, set_dumpmonA}, {"-mt", 1, 3, set_dumpmont},
 #endif
-    {"-s", 0, 3, showscores}, {"-score", 1, 3, showscoresparm}, {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
-    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false}, {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
-    {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false}
+    {"-s", 0, 3, showscores}, 
+    {"-score", 1, 3, showscoresparm}, 
+    {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
+    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false}, 
+    {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
+    {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
+    {"-test", 0, 3, run_unit_tests},
+    {"-benchmark", 0, 3, run_benchmarks}
 };
 
 /* Note since this may be called before the library has been set up,
@@ -1183,7 +1199,7 @@ void init_library()
     init_vars();
     init_block();
     LOG(llevInfo, "Daimonin Server, v%s\n", VERSION);
-    LOG(llevInfo, "Copyright (C) 2002-2004 Michael Toennies.\n");
+    LOG(llevInfo, "Copyright (C) 2002-2005 Michael Toennies.\n");
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */

@@ -600,6 +600,7 @@ EXTERN archetype               *level_up_arch; /* a global animation arch we use
 #include "libproto.h"
 #include "sockproto.h"
 #include "sproto.h"
+#include "testproto.h"
 
 //#include <../random_maps/random_map.h>
 //#include <../random_maps/rproto.h>

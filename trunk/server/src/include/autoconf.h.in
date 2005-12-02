@@ -246,3 +246,8 @@
 #define GUNZIP "gunzip"
 #define BZIP "bzip2"
 #define BUNZIP "bunzip2"
+
+/* Benchmarks and tests */
+#undef HAVE_CHECK
+#undef BUILD_UNIT_TESTS
+#undef BUILD_BENCHMARKS
