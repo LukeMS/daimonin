@@ -63,7 +63,7 @@ sub update_map_files
             print FILE_OUT "tileset_id $tileset$LF";
             print FILE_OUT "tileset_x $map->{x}$LF";
             print FILE_OUT "tileset_y $map->{y}$LF";
-            print FILE_OUT $line, "\n";
+            print FILE_OUT $line, $LF;
             
             my @rest = <FILE_IN>;
             print FILE_OUT @rest;
