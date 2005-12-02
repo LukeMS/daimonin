@@ -2426,7 +2426,7 @@ arch wall_flagstone1b.111
 x 15
 y 9
 end
-arch stair_down
+arch stairs_stone_down
 slaying tests/warrior/warrior_test_0000
 hp 1
 sp 21
@@ -3044,7 +3044,7 @@ arch wall_flagstone1b.111
 x 19
 y 9
 end
-arch stair_down
+arch stairs_stone_down
 slaying tests/wizard/wizard_test_0000
 hp 1
 sp 18
@@ -3725,7 +3725,7 @@ arch wall_flagstone1b.111
 x 23
 y 9
 end
-arch stair_down
+arch stairs_stone_down
 slaying tests/priest/priest_test_0000
 hp 20
 sp 20

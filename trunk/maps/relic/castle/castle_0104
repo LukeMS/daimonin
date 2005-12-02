@@ -388,7 +388,7 @@ arch floor_fs_grey1a
 x 2
 y 10
 end
-arch stair_down
+arch stairs_stone_down
 name Traps Test
 msg
 You have decided to go into the thief test? Well, you have more on your hands now then you used to, thats for sure!

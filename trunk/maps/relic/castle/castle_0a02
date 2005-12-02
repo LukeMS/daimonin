@@ -2832,7 +2832,7 @@ arch floor_flagstone1b
 x 18
 y 2
 end
-arch stair_down
+arch stairs_stone_down
 x 18
 y 2
 end

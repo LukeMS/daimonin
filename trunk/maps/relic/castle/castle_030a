@@ -75,10 +75,16 @@ end
 arch statue_hero_b
 y 12
 end
+arch light1
+y 12
+end
 arch floor_flagm1
 y 13
 end
 arch statue_hero_c
+y 13
+end
+arch light1
 y 13
 end
 arch floor_flagm1
@@ -495,6 +501,14 @@ arch grassd_7
 x 3
 y 9
 end
+arch lantern2_magic.131
+x 3
+y 9
+end
+arch light3
+x 3
+y 9
+end
 arch floor_flagm1
 x 3
 y 10
@@ -669,6 +683,15 @@ x 4
 y 11
 end
 arch grassd_3
+x 4
+y 12
+end
+arch lantern_magic.131
+direction 5
+x 4
+y 12
+end
+arch light5
 x 4
 y 12
 end
@@ -1312,7 +1335,7 @@ arch grassd_4
 x 8
 y 11
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 8
 y 11
 end
@@ -1732,7 +1755,7 @@ arch floor_wood2_l1
 x 10
 y 15
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 10
 y 15
 end
@@ -2113,7 +2136,7 @@ arch floor_wood2_l1
 x 12
 y 15
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 12
 y 15
 end
@@ -2142,6 +2165,15 @@ x 12
 y 18
 end
 arch grassd_8
+x 12
+y 19
+end
+arch lantern_magic.131
+direction 7
+x 12
+y 19
+end
+arch light5
 x 12
 y 19
 end
@@ -2391,7 +2423,7 @@ arch floor_wood2_l1
 x 14
 y 7
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 14
 y 7
 end
@@ -2445,7 +2477,7 @@ direction 3
 x 14
 y 13
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 14
 y 13
 end
@@ -2580,11 +2612,20 @@ arch grassd_2
 x 15
 y 9
 end
+arch tree_big3
+x 15
+y 9
+end
 arch grassd_3
 x 15
 y 10
 end
-arch tree_big3
+arch lantern2_magic.131
+direction 7
+x 15
+y 10
+end
+arch light3
 x 15
 y 10
 end
@@ -2601,6 +2642,15 @@ x 15
 y 12
 end
 arch plant16
+x 15
+y 12
+end
+arch lantern2_magic.131
+direction 7
+x 15
+y 12
+end
+arch light3
 x 15
 y 12
 end
@@ -2872,6 +2922,10 @@ arch bridge_wood_EW.171
 x 17
 y 2
 end
+arch light2
+x 17
+y 2
+end
 arch floor_flagm1
 x 17
 y 3
@@ -2893,6 +2947,10 @@ x 17
 y 5
 end
 arch grassd_m8
+x 17
+y 5
+end
+arch light1
 x 17
 y 5
 end
@@ -2909,6 +2967,10 @@ x 17
 y 7
 end
 arch grassd_m8
+x 17
+y 7
+end
+arch light1
 x 17
 y 7
 end
@@ -3107,6 +3169,15 @@ arch grassd_2
 x 18
 y 10
 end
+arch lantern_magic.131
+direction 3
+x 18
+y 10
+end
+arch light5
+x 18
+y 10
+end
 arch floor_flagm1
 x 18
 y 11
@@ -3156,6 +3227,10 @@ direction 5
 x 18
 y 16
 end
+arch light1
+x 18
+y 16
+end
 arch floor_sand_d1
 x 18
 y 17
@@ -3169,6 +3244,10 @@ direction 5
 x 18
 y 17
 end
+arch light1
+x 18
+y 17
+end
 arch floor_sand_d2
 x 18
 y 18
@@ -3179,6 +3258,10 @@ y 18
 end
 arch target.111
 direction 5
+x 18
+y 18
+end
+arch light1
 x 18
 y 18
 end
@@ -3391,7 +3474,15 @@ arch bridge_wood_EW.101
 x 20
 y 1
 end
+arch light2
+x 20
+y 1
+end
 arch bridge_wood_EW.101
+x 20
+y 2
+end
+arch light2
 x 20
 y 2
 end
@@ -3430,6 +3521,10 @@ race /lua/smith.lua
 sub_type 13
 end
 end
+end
+arch light2
+x 20
+y 6
 end
 arch floor_sand_d1
 x 20
@@ -3657,6 +3752,10 @@ arch archer
 x 21
 y 14
 end
+arch light2
+x 21
+y 14
+end
 arch grassd_8
 x 21
 y 15
@@ -3848,6 +3947,10 @@ x 22
 y 17
 end
 arch ranger
+x 22
+y 17
+end
+arch light2
 x 22
 y 17
 end

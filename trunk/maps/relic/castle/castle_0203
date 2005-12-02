@@ -2278,7 +2278,7 @@ layer 5
 x 13
 y 19
 end
-arch stair_down
+arch stairs_stone_down
 msg
 ATM, this area is unavailable, due to bugs.
 endmsg

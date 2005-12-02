@@ -178,8 +178,11 @@ x 1
 y 3
 end
 arch ladder_up
+msg
+You climb up the Ladder to the upper part of the well.
+endmsg
 slaying /relic/castle/guildhall/guildhallb_040a
-hp 3
+hp 1
 sp 3
 x 1
 y 3

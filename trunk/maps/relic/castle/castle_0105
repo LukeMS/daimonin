@@ -1748,7 +1748,7 @@ arch carpet2.151
 x 11
 y 14
 end
-arch stair_down
+arch stairs_stone_down
 msg
 The stairs are blocked
 endmsg

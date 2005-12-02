@@ -2792,7 +2792,7 @@ arch floor_wood3d
 x 18
 y 6
 end
-arch stair_down
+arch stairs_stone_down
 slaying basement/basement
 hp 18
 sp 6
@@ -2899,7 +2899,7 @@ arch floor_wood3d
 x 18
 y 19
 end
-arch stair_down
+arch stairs_stone_down
 slaying basement/basement
 hp 18
 sp 19

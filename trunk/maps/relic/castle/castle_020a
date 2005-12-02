@@ -1819,6 +1819,10 @@ arch grassd_m10
 x 14
 y 9
 end
+arch light3
+x 14
+y 9
+end
 arch grassd_7
 x 14
 y 10
@@ -1841,6 +1845,10 @@ x 14
 y 12
 end
 arch grassd_m7
+x 14
+y 12
+end
+arch light3
 x 14
 y 12
 end
@@ -2566,6 +2574,15 @@ arch grassd_7
 x 19
 y 12
 end
+arch lantern_magic.131
+direction 7
+x 19
+y 12
+end
+arch light5
+x 19
+y 12
+end
 arch grassd_4
 x 19
 y 13
@@ -3000,6 +3017,14 @@ arch grassd_7
 x 22
 y 9
 end
+arch lantern2_magic.131
+x 22
+y 9
+end
+arch light4
+x 22
+y 9
+end
 arch floor_flagm1
 x 22
 y 10
@@ -3168,11 +3193,19 @@ arch statue_hero_c
 x 23
 y 12
 end
+arch light1
+x 23
+y 12
+end
 arch floor_flagm1
 x 23
 y 13
 end
 arch statue_hero_a
+x 23
+y 13
+end
+arch light1
 x 23
 y 13
 end
@@ -3193,6 +3226,15 @@ x 23
 y 15
 end
 arch grassd_7
+x 23
+y 16
+end
+arch lantern_magic.131
+direction 7
+x 23
+y 16
+end
+arch light5
 x 23
 y 16
 end

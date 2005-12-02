@@ -2228,7 +2228,7 @@ arch floor_fs_grey1a
 x 14
 y 22
 end
-arch stair_down
+arch stairs_stone_down
 slaying /relic/castle/granery_quest/granery_0000
 hp 1
 sp 1
