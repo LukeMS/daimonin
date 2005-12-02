@@ -3,6 +3,8 @@
 # Analyzes all maps in the map directory and calculates 
 # and udpates the maps' tileset information
 
+my $LF = "\012"; # We must write Unix newlines in map files...
+
 my $modify_files = 1;
 
 if (scalar(@ARGV) && $ARGV[0] eq '-n') {
@@ -15,9 +17,20 @@ my $mapdir = $ARGV[0] || die "Usage: $0 [-n] <path-to-map-directory>\n -n: Don't
 my %maps = ();
 my %tilesets = ();
 
-scan_maps($mapdir, $mapdir, \%maps);
+# Scan all subdirs except utils, unofficial and nonpub
+scan_maps($mapdir, $mapdir, \%maps, ["^/utils/*", "^/unofficial/*", "^/nonpub/*"]);
 validate_linking(\%maps);
-find_tilesets(\%maps, \%tilesets);
+find_tilesets(\%maps, \%tilesets, 1);
+update_map_files(\%maps, \%tilesets, $modify_files);
+
+# Scan nonpub last to avoid any changes there having effect on main maps
+$nrof_public_tilesets = scalar keys %tilesets;
+%maps = ();
+%tilesets = ();
+$mapdir = "$mapdir/nonpub";
+scan_maps($mapdir, $mapdir, \%maps, []);
+validate_linking(\%maps);
+find_tilesets(\%maps, \%tilesets, $nrof_public_tilesets + 1);
 update_map_files(\%maps, \%tilesets, $modify_files);
 
 # Go through all map files and update them with tileset_id, tileset_x and tileset_y
@@ -44,12 +57,12 @@ sub update_map_files
                 $msg = 0 if $line eq "endmsg";
                 last if $line eq "end" && !$msg;
                 next if $line =~ /^(tileset_id)|(tileset_x)|(tileset_y)/ && !$msg;
-                print FILE_OUT $line, "\n";
+                print FILE_OUT $line, $LF;
             }
 
-            print FILE_OUT "tileset_id $tileset\n";
-            print FILE_OUT "tileset_x $map->{x}\n";
-            print FILE_OUT "tileset_y $map->{y}\n";
+            print FILE_OUT "tileset_id $tileset$LF";
+            print FILE_OUT "tileset_x $map->{x}$LF";
+            print FILE_OUT "tileset_y $map->{y}$LF";
             print FILE_OUT $line, "\n";
             
             my @rest = <FILE_IN>;
@@ -66,8 +79,7 @@ sub update_map_files
 # Traverse the graph and label all unique unconnected subgraphs
 sub find_tilesets
 {
-    my ($maps, $tilesets) = @_;
-    my $label = 1;
+    my ($maps, $tilesets, $label) = @_;
         
     foreach my $path (keys %$maps) {
         next if defined $maps->{$path}->{'tileset'};
@@ -177,7 +189,7 @@ sub normalize_path
 # maps in $hash
 sub scan_maps
 {
-    my ($dir, $mapdir, $hash) = @_;
+    my ($dir, $mapdir, $hash, $ignore) = @_;
 
     my @conv = (0, 1, 3, 5, 7, 2, 4, 6, 8 );
 
@@ -187,25 +199,29 @@ sub scan_maps
     
     foreach my $entry (@contents) {
         # Skip some obvious non-map files and dirs
-        next if $entry =~ /(^CVS$)|(^\..*)|(.*\.txt$)|(.*\.lua$)/;
+        next if $entry =~ /(^CVS$)|(^\..*)|(.*\.txt$)|(.*\.lua$)|(^README$)/;
         my $fullpath = "$dir/$entry";
+        my $path = substr($fullpath, length($mapdir));
+        
+        # Check skip list
+        my $skip = 0;
+        foreach (@$ignore) {$skip=1 if $path =~ /$_/;};
+        next if $skip;
 
         # Recurse into directories
-        scan_maps($fullpath, $mapdir, $hash) if -d $fullpath;
+        scan_maps($fullpath, $mapdir, $hash, $ignore) if -d $fullpath;
 
         # Scan files for map header and contents
         if (-f $fullpath) {
             open (FILE, $fullpath) || die "Couldn't read file $fullpath: $!\n";
             
             my $map = undef;
-            my $path;
             
             while($line = <FILE>) {
                 chomp $line;
                 if (! defined $map)
                 {
                     last if $line ne 'arch map';
-                    $path = substr($fullpath, length($mapdir));
                     $map = { 
                         'fullpath' => $fullpath,
                         'path' => $path,
