@@ -48,6 +48,7 @@ sub update_map_files
             
             open (FILE_IN, $map->{'fullpath'}) || die "Couldn't read file $map->{fullpath}: $!\n";
             open (FILE_OUT, ">$map->{'fullpath'}.new") || die "Couldn't create file $map->{fullpath}.new: $!\n";
+            binmode FILE_OUT; 
 
             my $msg = 0;
             while($line = <FILE_IN>) {
