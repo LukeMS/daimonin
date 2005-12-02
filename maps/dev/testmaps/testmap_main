@@ -146,7 +146,7 @@ arch floor_ostone1
 x 1
 y 3
 end
-arch stair_down
+arch stairs_stone_down
 name Spawn Point Testing
 direction 5
 slaying testmap_mobs
@@ -163,7 +163,7 @@ arch floor_ostone1
 x 1
 y 5
 end
-arch stair_down
+arch stairs_stone_down
 name Fight System Test
 direction 5
 slaying testmap_fight
@@ -180,7 +180,7 @@ arch floor_ostone1
 x 1
 y 7
 end
-arch stair_down
+arch stairs_stone_down
 name Test Misc. Objects
 direction 5
 slaying testmap_misc
@@ -197,7 +197,7 @@ arch floor_ostone1
 x 1
 y 9
 end
-arch stair_down
+arch stairs_stone_down
 name Test Effects (Invisibility, Infravision,...)
 direction 5
 slaying testmap_effects
@@ -214,7 +214,7 @@ arch floor_ostone1
 x 1
 y 11
 end
-arch stair_down
+arch stairs_stone_down
 direction 5
 slaying testmap_spells
 hp 1
@@ -230,7 +230,7 @@ arch floor_ostone1
 x 1
 y 13
 end
-arch stair_down
+arch stairs_stone_down
 direction 5
 slaying testmap_quest
 hp 1
@@ -246,7 +246,7 @@ arch floor_ostone1
 x 1
 y 15
 end
-arch stair_up
+arch stairs_stone_up
 direction 5
 slaying /unofficial/lobby
 hp 1
@@ -401,7 +401,7 @@ arch floor_ostone1
 x 3
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name Test Connected Objects
 slaying testmap_connect
 hp 1
@@ -440,7 +440,7 @@ arch floor_ostone1
 x 3
 y 7
 end
-arch stair_down
+arch stairs_stone_down
 name Test Effects (Invisibility, Infravision,...)
 direction 5
 slaying testmap_effects2
@@ -457,7 +457,7 @@ arch floor_ostone1
 x 3
 y 9
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_buttons
 hp 1
 sp 1
@@ -583,7 +583,7 @@ arch floor_ostone1
 x 5
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name Test Gods, Altars and Avatars
 slaying testmap_gods
 hp 1
@@ -610,7 +610,7 @@ arch floor_ostone1
 x 5
 y 4
 end
-arch stair_down
+arch stairs_stone_down
 name stairs to waypoint testmap
 slaying testmap_waypoints
 hp 1
@@ -677,7 +677,7 @@ arch floor_ostone1
 x 5
 y 15
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_multiarch
 hp 1
 sp 1
@@ -799,7 +799,7 @@ arch floor_ostone1
 x 7
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name Test Traps
 slaying testmap_traps
 hp 1
@@ -822,7 +822,7 @@ arch floor_ostone1
 x 7
 y 3
 end
-arch stair_down
+arch stairs_stone_down
 name stairs to ai testmap
 slaying testmap_ai
 hp 1
@@ -900,7 +900,7 @@ arch floor_ostone1
 x 7
 y 15
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_random
 hp 1
 sp 1
@@ -1017,7 +1017,7 @@ arch floor_ostone1
 x 9
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name Test Shop System
 slaying testmap_shop
 hp 1
@@ -1045,7 +1045,7 @@ arch floor_ostone1
 x 9
 y 4
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_artifacts1
 hp 1
 sp 1
@@ -1215,7 +1215,7 @@ arch floor_ostone1
 x 11
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name Directors and Firewalls
 slaying testmap_special
 hp 1
@@ -1242,7 +1242,7 @@ arch floor_ostone1
 x 11
 y 4
 end
-arch stair_down
+arch stairs_stone_down
 name Test Items1
 slaying testmap_items1
 hp 1
@@ -1383,7 +1383,7 @@ arch floor_ostone1
 x 12
 y 15
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_plugin
 hp 1
 sp 1
@@ -1408,7 +1408,7 @@ arch floor_ostone1
 x 13
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name food, flesh and poison
 slaying testmap_food
 hp 1
@@ -1577,7 +1577,7 @@ arch floor_ostone1
 x 14
 y 15
 end
-arch stair_down
+arch stairs_stone_down
 name WARNING! Read sign!!!
 slaying testmap_bugs
 hp 1
@@ -1603,7 +1603,7 @@ arch floor_ostone1
 x 15
 y 1
 end
-arch stair_down
+arch stairs_stone_down
 name Connected Maps Test1 (spawns)
 slaying testmap_maps1
 hp 1
@@ -1629,7 +1629,7 @@ arch floor_ostone1
 x 15
 y 3
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_weapon
 hp 1
 sp 1
@@ -1644,7 +1644,7 @@ arch floor_ostone1
 x 15
 y 5
 end
-arch stair_down
+arch stairs_stone_down
 slaying testmap_tiled1
 hp 1
 sp 1

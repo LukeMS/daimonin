@@ -2908,7 +2908,7 @@ arch floor_parquet3g
 x 18
 y 6
 end
-arch stair_down
+arch stairs_stone_down
 slaying house_dungeon/house_basement
 hp 18
 sp 7

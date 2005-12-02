@@ -1570,7 +1570,7 @@ player_only 1
 x 10
 y 10
 end
-arch stairw_up_1
+arch stairs_wood_up
 slaying ../castle_030a
 hp 5
 sp 3

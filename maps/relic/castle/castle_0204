@@ -1080,7 +1080,7 @@ arch floor_fs_grey1a
 x 8
 y 18
 end
-arch stair_down
+arch stairs_stone_down
 direction 5
 slaying library_quest/library_secret
 hp 11
