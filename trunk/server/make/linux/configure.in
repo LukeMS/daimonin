@@ -40,7 +40,7 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
-AC_ARG_ENABLE(old-layout, [ --enable-old-layout    Use the old (0.95.3 and earlier) install layout],
+AC_ARG_ENABLE(old-layout, [  --enable-old-layout    Use the old (0.95.3 and earlier) install layout],
 	old_layout=yes, old_layout=no)
 
 
@@ -88,15 +88,6 @@ fi;
 
 AC_PATH_PROGS(BOURNE_SHELL, sh ksh bash)
 
-dnl The following are useful for debugging
-AC_ARG_ENABLE(warnings, [  --enable-warnings       compile with warnings enabled ],
-		EXTRA_CFLAGS="$EXTRA_CFLAGS -Wall", )
-
-AC_ARG_ENABLE(profiling, [  --enable-profiling      compile with profiling enabled ],
-		EXTRA_CFLAGS="$EXTRA_CFLAGS -pg"; LDFLAGS="$LDFLAGS -pg", )
-
-AC_ARG_ENABLE(optimizing, [  --disable-optimizing    compile without optimization ],
-		EXTRA_CFLAGS="$EXTRA_CFLAGS -O0", )
 
 dnl The follow two are really just a way to specify where the xpm/gtk information
 dnl resides if not with the normal X11 stuff (ie, in /opt/X11 and not /usr
@@ -120,6 +111,17 @@ AC_PATH_XTRA
 
 CPPFLAGS="$CPPFLAGS $EXTRA_INC"
 LDFLAGS="$LDFLAGS $EXTRA_LIB"
+
+CHECK_LIBS=""
+AC_ARG_ENABLE(tests, [  --enable-tests       build unit tests (default no) ],
+        AC_DEFINE(BUILD_UNIT_TESTS)
+        AC_CHECK_LIB(check, tcase_create,
+            AC_DEFINE(HAVE_CHECK) 
+            CHECK_LIBS="-lcheck" , 
+            AC_ERROR([The check framework (http://check.sf.net) is required for unit tests])))
+AC_SUBST(CHECK_LIBS)    
+
+AC_ARG_ENABLE(benchmarks, [  --enable-benchmarks       build benchmarks (default no) ], AC_DEFINE(BUILD_BENCHMARKS))
 
 dnl Some of these checks are probably excessive.  Unfortunately, on
 dnl some systems, to link in Xaw, Xt you need SM, which needs ICE.
@@ -258,7 +260,7 @@ AC_OUTPUT(Makefile
 	../../src/random_maps/Makefile ../../src/socket/Makefile
 	../../src/server/Makefile ../../src/include/Makefile
 	../../src/utils/Makefile ../../src/common/Makefile
-	../../src/utils/Makefile ../../src/lua/config
+	../../src/tests/Makefile ../../src/lua/config
 	../../src/utils/dmonloop
 	../../src/plugin_lua/Makefile
 	)

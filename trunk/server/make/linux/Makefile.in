@@ -74,8 +74,8 @@ VERSION = daimonin-beta03-0.966
 
 ARCHIVE = /tmp/$(VERSION)
 
-SUBDIRS = ../../src/common ../../src/random_maps ../../src/socket \
-	../../src/server ../../src/include ../../src/utils \
+SUBDIRS = ../../src/common ../../src/random_maps ../../src/socket ../../src/tests \
+	../../src/server ../../src/include ../../src/utils  \
 	../../src/lua ../../src/lua/lib \
 	../../src/plugin_lua
 
