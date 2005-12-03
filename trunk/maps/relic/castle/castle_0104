@@ -16,7 +16,7 @@ tile_path_5 castle_0205
 tile_path_6 castle_0203
 tile_path_7 castle_0003
 tile_path_8 castle_0005
-tileset_id 5
+tileset_id 4
 tileset_x 0
 tileset_y -168
 end
@@ -400,7 +400,7 @@ When someone tells you to go into the sparkly light, do you do it? It will chang
 *******IMPORTANT*******
 DO NOT EVER DROP ITEMS IN THIS MAP!! YOU WILL RUN THE HIGH RISK OF LOSING THEM --FOREVER--.
 endmsg
-slaying tests/traps/traps_test_0000
+slaying /nonpub/uni/castle/tests/traps/traps_test_0000
 hp 12
 sp 10
 x 2
@@ -3269,10 +3269,6 @@ direction 5
 x 21
 y 5
 end
-arch box_big.101
-x 21
-y 5
-end
 arch floor_fs_grey1a
 x 21
 y 6
@@ -3312,10 +3308,6 @@ direction 5
 x 21
 y 10
 end
-arch metal_bucket.101
-x 21
-y 10
-end
 arch floor_fs_grey1a
 x 21
 y 11
@@ -3343,10 +3335,6 @@ y 13
 end
 arch rack.111
 direction 5
-x 21
-y 13
-end
-arch box_big.101
 x 21
 y 13
 end

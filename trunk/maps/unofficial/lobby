@@ -10,7 +10,7 @@ width 24
 darkness -1
 height 24
 difficulty 1
-tileset_id 39
+tileset_id 49
 tileset_x 0
 tileset_y 0
 end
@@ -239,7 +239,7 @@ arch floor_ostone1
 x 1
 y 15
 end
-arch stair_down
+arch stairs_stone_down
 direction 5
 slaying /dev/testmaps/testmap_main
 hp 1

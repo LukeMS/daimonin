@@ -10,6 +10,9 @@ enter_x 4
 enter_y 16
 difficulty 1
 darkness 1
+tileset_id 26
+tileset_x 0
+tileset_y 0
 end
 arch wall_dungeon1.181
 x 1
@@ -2136,6 +2139,8 @@ x 19
 y 2
 end
 arch gravestone
+is_used_up 0
+speed 0
 x 19
 y 2
 end

@@ -12,7 +12,7 @@ tile_path_2 castle_050a
 tile_path_4 castle_030a
 tile_path_5 castle_0500
 tile_path_8 castle_0300
-tileset_id 5
+tileset_id 4
 tileset_x 72
 tileset_y -48
 end
@@ -2782,10 +2782,6 @@ arch grassd_1
 x 17
 y 10
 end
-arch tree_big3
-x 17
-y 10
-end
 arch grassd_4
 x 17
 y 11
@@ -3012,10 +3008,6 @@ x 19
 y 5
 end
 arch grassd_2
-x 19
-y 6
-end
-arch tree_big2
 x 19
 y 6
 end
@@ -3288,15 +3280,7 @@ arch grassd_3
 x 21
 y 7
 end
-arch tree_big3
-x 21
-y 7
-end
 arch grassd_2
-x 21
-y 8
-end
-arch plant13
 x 21
 y 8
 end
@@ -3423,7 +3407,7 @@ arch plant9
 x 22
 y 7
 end
-arch grassd_7
+arch grassd_2
 x 22
 y 8
 end
@@ -3570,10 +3554,6 @@ x 23
 y 8
 end
 arch grassd_4
-x 23
-y 9
-end
-arch tree_big3
 x 23
 y 9
 end

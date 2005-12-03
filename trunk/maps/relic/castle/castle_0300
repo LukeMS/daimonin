@@ -15,7 +15,7 @@ tile_path_5 castle_0401
 tile_path_6 castle_040a
 tile_path_7 castle_020a
 tile_path_8 castle_0201
-tileset_id 5
+tileset_id 4
 tileset_x 48
 tileset_y -72
 end
@@ -1191,10 +1191,6 @@ x 8
 y 18
 end
 arch water_plant4
-x 8
-y 18
-end
-arch water_lily
 x 8
 y 18
 end
@@ -2487,7 +2483,7 @@ x 18
 y 13
 end
 arch hole
-slaying  /nonpub/relic/castle/grey_cave/castleb_0300
+slaying /nonpub/base/grey_cave/castleb_0300
 hp 20
 sp 13
 walk_on 1

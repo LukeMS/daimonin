@@ -8,7 +8,7 @@ width 24
 height 24
 difficulty 1
 darkness 3
-tileset_id 76
+tileset_id 79
 tileset_x 0
 tileset_y 0
 end
@@ -475,10 +475,6 @@ x 2
 y 14
 end
 arch floor_grit4a
-x 2
-y 15
-end
-arch fwall_sand1b
 x 2
 y 15
 end
@@ -1574,6 +1570,7 @@ arch stairs_wood_up
 slaying ../castle_030a
 hp 5
 sp 3
+direction 5
 x 10
 y 10
 end

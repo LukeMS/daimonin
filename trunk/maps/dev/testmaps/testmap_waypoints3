@@ -9,7 +9,7 @@ height 24
 difficulty 1
 tile_path_3 testmap_waypoints4
 tile_path_4 testmap_waypoints2
-tileset_id 30
+tileset_id 31
 tileset_x 34
 tileset_y 0
 end

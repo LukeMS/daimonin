@@ -13,7 +13,7 @@ tile_path_4 /relic/forest/mountain_0502
 tile_path_5 castle_0300
 tile_path_7 /relic/forest/forest_0702
 tile_path_8 castle_0100
-tileset_id 5
+tileset_id 4
 tileset_x 24
 tileset_y -48
 end
@@ -140,11 +140,7 @@ arch plant_flower4
 x 1
 y 6
 end
-arch grassd_4
-x 1
-y 7
-end
-arch plant10
+arch grassd_2
 x 1
 y 7
 end
@@ -434,10 +430,6 @@ x 3
 y 11
 end
 arch grassd_2
-x 3
-y 12
-end
-arch tree_branch1
 x 3
 y 12
 end
