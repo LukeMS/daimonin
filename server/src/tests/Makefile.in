@@ -25,6 +25,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	test_shstr.c \
 	test_main.c \
 	benchmark_main.c
 

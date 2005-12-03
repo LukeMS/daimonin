@@ -543,6 +543,50 @@ char * ss_dump_statistics()
     return errmsg;
 }
 
+static void ss_find_totals(int *entries, int *refs, int *links, int what)
+{
+    *entries = 0, *refs = 0, *links = 0;
+    int         i;
+
+    for (i = 0; i < TABLESIZE; i++)
+    {
+        shared_string  *ss;
+
+        if ((ss = hash_table[i]) != NULL)
+        {
+            ++*entries;
+            *refs += (ss->refcount & ~TOPBIT);
+            if (what & SS_DUMP_TOTALS)
+                LOG(llevSystem, "%4d -- %4d refs '%s' %c\n", i, (ss->refcount & ~TOPBIT), ss->string,
+                    (ss->refcount & TOPBIT ? ' ' : '#'));
+            while (ss->next)
+            {
+                ss = ss->next;
+                ++*links;
+                *refs += (ss->refcount & ~TOPBIT);
+                if (what & SS_DUMP_TOTALS)
+                    LOG(llevSystem, "     -- %4d refs '%s' %c\n", (ss->refcount & ~TOPBIT), ss->string,
+                        (ss->refcount & TOPBIT ? '*' : ' '));
+            }
+        }
+    }
+}
+
+/** Returns the number of unique string entries, 
+ * the total number of references used and the total number 
+ * of links in the hash table.
+ *
+ * A large "refs" number indicates either that the memory savings
+ * of shared strings are good, or a reference leak.
+ *
+ * A "links" value much larger than "entries" indicates a too small
+ * table size and/or a bad hashing function.
+ */
+void ss_get_totals(int *entries, int *refs, int *links)
+{
+    ss_find_totals(entries, refs, links, 0);
+}
+
 /*
  * Description:
  *      If (what & SS_DUMP_TOTALS) return a string which
@@ -554,31 +598,9 @@ char * ss_dump_table(int what)
 {
     static char totals[80];
     int         entries = 0, refs = 0, links = 0;
-    int         i;
 
-    for (i = 0; i < TABLESIZE; i++)
-    {
-        shared_string  *ss;
-
-        if ((ss = hash_table[i]) != NULL)
-        {
-            ++entries;
-            refs += (ss->refcount & ~TOPBIT);
-            if (what & SS_DUMP_TOTALS)
-                LOG(llevSystem, "%4d -- %4d refs '%s' %c\n", i, (ss->refcount & ~TOPBIT), ss->string,
-                    (ss->refcount & TOPBIT ? ' ' : '#'));
-            while (ss->next)
-            {
-                ss = ss->next;
-                ++links;
-                refs += (ss->refcount & ~TOPBIT);
-                if (what & SS_DUMP_TOTALS)
-                    LOG(llevSystem, "     -- %4d refs '%s' %c\n", (ss->refcount & ~TOPBIT), ss->string,
-                        (ss->refcount & TOPBIT ? '*' : ' '));
-            }
-        }
-    }
-
+    ss_find_totals(&entries, &refs, &links, what);
+    
     sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
 
     return totals;

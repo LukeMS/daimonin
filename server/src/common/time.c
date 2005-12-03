@@ -60,32 +60,6 @@ void reset_sleep()
     GETTIMEOFDAY(&last_time);
 }
 
-
-/* Generic function for simple timeval arithmetic (addition & subtraction) */
-static inline void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)
-{
-    dst->tv_sec = a->tv_sec + b->tv_sec;
-    dst->tv_usec = a->tv_usec + b->tv_usec;
-
-    if(dst->tv_sec < 0 || (dst->tv_sec == 0 && dst->tv_usec < 0))
-    {
-        while(dst->tv_usec < -1000000) {
-            dst->tv_sec -= 1;
-            dst->tv_usec += 1000000;
-        }
-    } else
-    {
-        while(dst->tv_usec < 0) {
-            dst->tv_sec -= 1;
-            dst->tv_usec += 1000000;
-        }
-        while(dst->tv_usec > 1000000) {
-            dst->tv_sec += 1;
-            dst->tv_usec -= 1000000;
-        }
-    }
-}
-
 /* Calculate time until the next tick
  * returns 0 and steps forward time for the next tick if called
  * after the time for the next tick,
