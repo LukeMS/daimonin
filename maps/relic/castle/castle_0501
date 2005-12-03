@@ -13,7 +13,7 @@ tile_path_4 castle_0401
 tile_path_5 castle_0602
 tile_path_7 castle_0400
 tile_path_8 castle_0402
-tileset_id 5
+tileset_id 4
 tileset_x 96
 tileset_y -96
 end

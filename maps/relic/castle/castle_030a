@@ -12,7 +12,7 @@ tile_path_2 castle_040a
 tile_path_4 castle_020a
 tile_path_5 castle_0400
 tile_path_8 castle_0200
-tileset_id 5
+tileset_id 4
 tileset_x 48
 tileset_y -48
 end
@@ -533,7 +533,7 @@ arch grassd_8
 x 3
 y 13
 end
-arch tree_big3
+arch plant18
 x 3
 y 13
 end
@@ -728,14 +728,6 @@ x 4
 y 19
 end
 arch grassd_2
-x 4
-y 20
-end
-arch tree_big2
-x 4
-y 20
-end
-arch tree_big3
 x 4
 y 20
 end
@@ -1182,10 +1174,6 @@ arch grassd_2
 x 7
 y 15
 end
-arch tree_big2
-x 7
-y 15
-end
 arch grassd_3
 x 7
 y 16
@@ -1510,11 +1498,6 @@ arch carpet1.131
 x 9
 y 10
 end
-arch chair2_111
-direction 7
-x 9
-y 10
-end
 arch spawn_point
 name Mercenary Master Cashin
 x 9
@@ -1529,10 +1512,6 @@ race /relic/castle/guildhall/guild_merc.lua
 sub_type 13
 end
 end
-end
-arch carpet1.151
-x 9
-y 10
 end
 arch light3
 x 9
@@ -1780,10 +1759,6 @@ x 10
 y 18
 end
 arch grassd_2
-x 10
-y 19
-end
-arch tree_big2
 x 10
 y 19
 end
@@ -2356,10 +2331,6 @@ arch grassd_3
 x 13
 y 21
 end
-arch tree_big2
-x 13
-y 21
-end
 arch grassd_2
 x 13
 y 22
@@ -2530,10 +2501,6 @@ arch grassd_4
 x 14
 y 20
 end
-arch tree_big2
-x 14
-y 20
-end
 arch grassd_1
 x 14
 y 21
@@ -2609,10 +2576,6 @@ x 15
 y 8
 end
 arch grassd_2
-x 15
-y 9
-end
-arch tree_big3
 x 15
 y 9
 end
@@ -3281,10 +3244,6 @@ arch grassd_8
 x 18
 y 21
 end
-arch tree_big2
-x 18
-y 21
-end
 arch grassd_1
 x 18
 y 22
@@ -3444,10 +3403,6 @@ x 19
 y 20
 end
 arch plant12
-x 19
-y 20
-end
-arch tree_big3
 x 19
 y 20
 end
@@ -3748,13 +3703,16 @@ arch grassd_8
 x 21
 y 14
 end
-arch archer
-x 21
-y 14
-end
 arch light2
 x 21
 y 14
+end
+arch spawn_point
+x 21
+y 14
+arch archer
+type 83
+end
 end
 arch grassd_8
 x 21
@@ -3812,10 +3770,6 @@ x 21
 y 21
 end
 arch plant1
-x 21
-y 21
-end
-arch tree_big3
 x 21
 y 21
 end
@@ -3946,13 +3900,16 @@ arch grassd_7
 x 22
 y 17
 end
-arch ranger
-x 22
-y 17
-end
 arch light2
 x 22
 y 17
+end
+arch spawn_point
+x 22
+y 17
+arch ranger
+type 83
+end
 end
 arch grassd_4
 x 22

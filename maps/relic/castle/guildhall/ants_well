@@ -8,7 +8,7 @@ width 24
 height 24
 difficulty 1
 darkness 3
-tileset_id 24
+tileset_id 23
 tileset_x 0
 tileset_y 0
 end
@@ -1382,10 +1382,6 @@ end
 arch floor_sand_d3
 x 10
 y 7
-end
-arch floor_sand_d2
-x 10
-y 8
 end
 arch floor_sand_d2
 x 10

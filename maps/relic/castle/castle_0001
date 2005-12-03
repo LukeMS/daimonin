@@ -15,7 +15,7 @@ tile_path_5 castle_0102
 tile_path_6 castle_0100
 tile_path_7 /relic/forest/mountain_0303
 tile_path_8 castle_0a02
-tileset_id 5
+tileset_id 4
 tileset_x -24
 tileset_y -96
 end

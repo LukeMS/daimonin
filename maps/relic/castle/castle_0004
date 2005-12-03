@@ -16,7 +16,7 @@ tile_path_5 castle_0105
 tile_path_6 castle_0103
 tile_path_7 castle_0a03
 tile_path_8 castle_0a05
-tileset_id 5
+tileset_id 4
 tileset_x -24
 tileset_y -168
 end
@@ -2427,7 +2427,7 @@ x 15
 y 9
 end
 arch stairs_stone_down
-slaying tests/warrior/warrior_test_0000
+slaying /nonpub/uni/castle/tests/warrior/warrior_test_0000
 hp 1
 sp 21
 x 15
@@ -3045,9 +3045,10 @@ x 19
 y 9
 end
 arch stairs_stone_down
-slaying tests/wizard/wizard_test_0000
+slaying /nonpub/uni/castle/tests/wizard/wizard_test_0000
 hp 1
 sp 18
+direction 1
 x 19
 y 10
 end
@@ -3726,7 +3727,7 @@ x 23
 y 9
 end
 arch stairs_stone_down
-slaying tests/priest/priest_test_0000
+slaying /nonpub/uni/castle/tests/priest/priest_test_0000
 hp 20
 sp 20
 x 23

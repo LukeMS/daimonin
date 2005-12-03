@@ -14,7 +14,7 @@ tile_path_4 castle_0302
 tile_path_6 castle_0501
 tile_path_7 castle_0301
 tile_path_8 castle_0303
-tileset_id 5
+tileset_id 4
 tileset_x 72
 tileset_y -120
 end
@@ -1334,7 +1334,7 @@ x 9
 y 3
 end
 arch hole
-slaying  /nonpub/relic/castle/grey_cave/castleb_0402
+slaying /nonpub/base/grey_cave/castleb_0402
 hp 9
 sp 4
 walk_on 1

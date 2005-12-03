@@ -15,7 +15,7 @@ tile_path_5 castle_0302
 tile_path_6 castle_0300
 tile_path_7 castle_0100
 tile_path_8 castle_0102
-tileset_id 5
+tileset_id 4
 tileset_x 24
 tileset_y -96
 end
@@ -1529,13 +1529,16 @@ arch grassd_2
 x 12
 y 3
 end
-arch archer
+arch spawn_point
 x 12
 y 3
+arch archer
+type 83
 arch event_obj
 name Lua
 race /relic/castle/scripts/commoner.lua
 sub_type 6
+end
 end
 end
 arch grassd_7
@@ -1889,10 +1892,6 @@ x 15
 y 4
 end
 arch grassd_4
-x 15
-y 5
-end
-arch plant_flower5
 x 15
 y 5
 end
@@ -2326,10 +2325,6 @@ x 18
 y 21
 end
 arch grassd_2
-x 18
-y 22
-end
-arch grassd_1
 x 18
 y 22
 end
