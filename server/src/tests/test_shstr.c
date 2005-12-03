@@ -28,7 +28,6 @@
  */
 
 #include <global.h>
-
 #if defined HAVE_CHECK && defined BUILD_UNIT_TESTS
 #include <check.h>
 

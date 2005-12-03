@@ -27,8 +27,8 @@
  *
  * This is a simple shared strings package with a simple interface.
  *
- *     char *find_string(const char *str)
- *     char *add_string(const char *str)
+ *  char *find_string(const char *str)
+ *  char *add_string(const char *str)
  *  char *add_refcount(char *str)
  *  void free_string_shared(char *str)
  *  char *ss_dump_table(int what)
