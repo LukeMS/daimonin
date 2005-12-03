@@ -1286,6 +1286,9 @@
 					RelativePath="..\..\..\src\common\shstr.c">
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\stats.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\time.c">
 				</File>
 				<File
@@ -1296,6 +1299,16 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\common\win32.c">
+				</File>
+			</Filter>
+			<Filter
+				Name="tests"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\tests\benchmark_main.c">
+				</File>
+				<File
+					RelativePath="..\..\..\src\tests\test_main.c">
 				</File>
 			</Filter>
 		</Filter>
@@ -1433,6 +1446,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\sproto.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\stats.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\testproto.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\tod.h">
