@@ -329,6 +329,7 @@ typedef struct linked_char
 #include "tod.h"
 #include "pathfinder.h"
 #include "gmaster.h"
+#include "timeutils.h"
 
 /* statistical events */
 #include "stats.h"

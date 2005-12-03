@@ -308,6 +308,7 @@ extern const char      *add_refcount(const char *str);
 extern void             free_string_shared(const char *str);
 extern char            *ss_dump_statistics(void);
 extern char            *ss_dump_table(int what);
+extern void             ss_get_totals(int *entries, int *refs, int *links);
 /* time.c */
 extern void             reset_sleep(void);
 extern void             sleep_delta(void);
