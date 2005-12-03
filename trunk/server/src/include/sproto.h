@@ -714,6 +714,8 @@ void                        shuffle_attack(object *op, int change_face);
 object                     *get_pointed_target(object *op, int dir);
 int                         cast_smite_spell(object *op, object *caster, int dir, int type);
 int                         SP_lvl_dam_adjust2(object *caster, int spell_type, int base_dam);
+/* stats.c */
+void STATS_EVENT(stats_event_type type, ...);
 /* swamp.c */
 void                        walk_on_deep_swamp(object *op, object *victim);
 void                        move_deep_swamp(object *op);

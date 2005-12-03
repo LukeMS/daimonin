@@ -102,6 +102,16 @@
 #define HELPDIR   "./man"
 #endif
 
+/* Directory for active event log files */
+#ifndef STATS_DIR
+#define STATS_DIR   LOCALDIR"/stats"
+#endif
+
+/* Directory for complete event log files, ready for further processing */
+#ifndef STATS_ARCHIVE_DIR
+#define STATS_ARCHIVE_DIR   LOCALDIR"/statsarchive"
+#endif
+
 /* There are 4 main sections to this file-
  * Section 1 is feature selection (enabling/disabling certain features)
  *

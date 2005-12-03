@@ -330,6 +330,9 @@ typedef struct linked_char
 #include "pathfinder.h"
 #include "gmaster.h"
 
+/* statistical events */
+#include "stats.h"
+
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"
 
@@ -398,6 +401,8 @@ typedef struct Settings
     char                           *treasures;      /* location of the treasures file. */
     char                           *uniquedir;      /* directory for the unique items */
     char                           *tmpdir;     /* Directory to use for temporary files */
+    char                           *statsdir;          /* Directory for active logs of statistical events */
+    char                           *statsarchivedir;   /* Directory for logs, ready for further processing */
     uint8                           stat_loss_on_death; /* If true, chars lose a random stat when they die */
     uint8                           balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     int                             reset_loc_time; /* Number of seconds to put player back at home */
