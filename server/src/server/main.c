@@ -1391,6 +1391,7 @@ int main(int argc, char **argv)
 #endif
     compile_info();       /* its not a bad idea to show at start whats up */
     memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
+    STATS_EVENT(STATS_EVENT_STARTUP);
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
 
     reset_sleep(); /* init our last_time = start time - and lets go! */

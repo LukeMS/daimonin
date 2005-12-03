@@ -35,7 +35,7 @@ struct Settings settings    =
     GLOBAL_LOG_LEVEL, 0, NULL, 0,       /* dumpvalues, dumparg, daemonmode */
     0,                                  /* argc */
     NULL,                               /* argv */
-    DATADIR, LOCALDIR, PLAYERDIR, MAPDIR, ARCHETYPES, TREASURES, UNIQUE_DIR, TMPDIR, STAT_LOSS_ON_DEATH,
+    DATADIR, LOCALDIR, PLAYERDIR, MAPDIR, ARCHETYPES, TREASURES, UNIQUE_DIR, TMPDIR, STATS_DIR, STATS_ARCHIVE_DIR, STAT_LOSS_ON_DEATH,
     BALANCED_STAT_LOSS, RESET_LOCATION_TIME, 0,
     /* This and the next 3 values are metaserver values */
     "", "", 0, "", 0, 0, 0, 0, 0, 0, 0  /* worldmap settings*/
