@@ -65,6 +65,7 @@ static void setup()
     init_hash_table();
 }
 
+/* This basically benchmarks searching and ref increasing */
 START_TEST(shstr_benchmark_insert_1)
 {
     int i,j;
@@ -80,19 +81,18 @@ START_TEST(shstr_benchmark_insert_1)
 }
 END_TEST
 
+/* This benchmarks table growth */
 START_TEST(shstr_benchmark_insert_2)
 {
     int i,j;
-    printf("\nBenchmarking %d x %d shstr insertions, erasing every 2nd iteration\n", benchmark_repetitions, num_words);
+    printf("\nBenchmarking %d x %d shstr insertions, erasing after every iteration\n", benchmark_repetitions, num_words);
 
     timer_start();
     for(i=0; i<benchmark_repetitions; i++) {
         for(j=0; j<num_words; j++) {
             add_string(words[j]);
         }
-        if(i & 1) {
-            init_hash_table();
-        }
+        init_hash_table(); // Leaks memory like crazy
     }
     timer_stop(num_words * benchmark_repetitions); 
 }
