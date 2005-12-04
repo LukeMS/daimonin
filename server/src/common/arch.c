@@ -652,7 +652,7 @@ object * create_singularity(const char *name)
     LOG(llevDebug, "created Singularity: %s\n", name);
     op = arch_to_object(empty_archetype);
     FREE_AND_COPY_HASH(op->name, name);
-    FREE_AND_COPY_HASH(op->title, " (removed object)");
+    FREE_AND_COPY_HASH(op->title, " (removed object)"); 
     SET_FLAG(op, FLAG_IDENTIFIED);
     SET_FLAG(op, FLAG_SYS_OBJECT);
     SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */

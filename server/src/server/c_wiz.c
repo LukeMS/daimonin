@@ -1024,13 +1024,12 @@ int command_reset(object *op, char *params)
     mapstruct      *m;
     player         *pl;
     object*dummy =  NULL;
-    const char     *mapfile_sh;
 
     if (params == NULL)
         m = has_been_loaded_sh(op->map->path);
     else
     {
-        mapfile_sh = add_string(params);
+        const char *mapfile_sh = add_string(params);
         m = has_been_loaded_sh(mapfile_sh);
         free_string_shared(mapfile_sh);
     }

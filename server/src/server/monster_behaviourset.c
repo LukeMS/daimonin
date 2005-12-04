@@ -358,13 +358,9 @@ struct mob_behaviourset * generate_behaviourset(object *op)
 static int parse_stringint_parameter(struct mob_behaviour_param *param, const char *value)
 {
     char *sep = strchr(value, ':');
-    char buf[256];
     if(sep && sep > value && *(sep+1) != '\0')
     {
-        strncpy(buf, value, sep-value);
-        /* TODO: an add_string_l(buf, length) function to avoid copying here */
-        buf[sep-value] = '\0';
-        param->stringvalue = add_string(buf);
+        param->stringvalue = add_lstring(value, sep-value);
         param->intvalue = atoi(sep+1);
 //        LOG(llevDebug, "Stringint: %s:%d\n", param->stringvalue, param->intvalue);
         return 0;
