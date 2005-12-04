@@ -27,6 +27,8 @@ srcdir = @srcdir@
 SRCS = \
 	test_shstr.c \
 	test_main.c \
+	test_object.c \
+	test_map.c \
 	benchmark_shstr.c \
 	benchmark_main.c
 
