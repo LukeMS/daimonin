@@ -33,6 +33,9 @@
             <p>
                 The meta command <code>"?M_SKILL_LIST"</code> opens a dialog with your experience and levels in each individual skill detailed. SHIFT + UP/DOWN cycles through the skill groups and UP/DOWN cycles through the skills themselves.
             </p>
+            <p>
+                <img alt="[Skill list dialog]" src="./dialog_skilllist.png"/>
+            </p>
         </section>
         <section id="experience">
             <title>
