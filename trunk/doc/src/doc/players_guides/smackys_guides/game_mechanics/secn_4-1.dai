@@ -1,10 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 4-1: KEY SETTINGS
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            Key bindings are a very useful shortcut to enable you to enter any game command, meta command, or other macro with a single keystroke.
+        </p>
+        <p>
+            Daimonin knows <a href="./appx_c.dai">several key bindings by default</a>. These may easily be <a href="#changing">altered or new ones added</a>.
+        </p>
+        <p>
+            The meta command <code>"?M_KEYBIND"</code> opens the key binding dialog. This can also be accessed from the Options menu (ESCAPE to toggle).
+        </p>
+        <p>
+            <img alt="[Bind keys dialog]" src="./dialog_bindkeys.png"/>
+        </p>
+        <p>
+            SHIFT + UP/DOWN cycles through the groups and UP/DOWN cycles through the macros themselves.
+        </p>
+    </section>
+    <section id="changing">
+        <title>
+            Changing key bindings
+        </title>
+        <p>
+            To add a new macro or alter an existing one, highlight the slot you wish to change, press RETURN, and follow these three steps:
+        </p>
+        <ol>
+            <li>
+                type the macro you require. This may be a game command, a meta command, or any other text string. If a macro already exists in that slot, it is preserved and you can edit it. When you are done press RETURN;
+            </li>
+            <li>
+                press a key to bind the macro to that key; and
+            </li>
+            <li>
+                press R to toggle whether the macro will repeat for as long as you hold the key down (on, the default) or just be triggered once per keypress (off).
+            </li>
+        </ol>
+        <p>
+            Press D to save the bindings and return to the game.
+        </p>
+        <p>
+            Now when you press the bound key the associated macro will be sent to the console.
+        </p>
+        <p>
+            <strong>NOTE</strong>: A very useful meta command is <code>"?M_MCON"</code>. If this prefixes the macro, the console will remain open the macro has been sent, allowing you to manually complete the command. For example, the macro <code>"?M_MCON/shout "</code> bound to 1 sends the text <code>"/shout "</code> to the console, leaving you to type the message you wish to shout and press RETURN to send it.
+        </p>
+    </section>
 </section>
