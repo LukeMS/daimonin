@@ -786,7 +786,6 @@ void copy_object_data(object *op2, object *op)
     ADD_REF_NOT_NULL_HASH(op->slaying);
     ADD_REF_NOT_NULL_HASH(op->msg);
 
-
     if (QUERY_FLAG(op, FLAG_IDENTIFIED))
     {
         SET_FLAG(op, FLAG_KNOWN_MAGICAL);

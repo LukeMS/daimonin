@@ -1701,10 +1701,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 }
             }
             /* There are lots of maps that have empty messages (eg, msg/endmsg
-               * with nothing between).  There is no reason in those cases to
-                    * keep the empty message.  Also, msgbuf contains garbage data
-               * when msgpos is zero, so copying it results in crashes
-               */
+             * with nothing between).  There is no reason in those cases to
+             * keep the empty message.  Also, msgbuf contains garbage data
+             * when msgpos is zero, so copying it results in crashes
+             */
             if (msgpos != 0)
                 m->msg = strdup_local(msgbuf);
         }
@@ -2217,7 +2217,7 @@ void free_all_objects(mapstruct *m)
                 if (op->head != NULL)
                     op = op->head;
 
-                /* this is important - we can't be sure after wee removed
+                /* this is important - we can't be sure after we removed
                  * all objects from the map, that the map structure will still
                  * stay in the memory. If not, the object GC will try - and obj->map
                  * will point to a free map struct... (/resetmap for example)
@@ -2292,17 +2292,19 @@ void free_map(mapstruct *m, int flag)
     FREE_AND_NULL_PTR(m->name);
     FREE_AND_NULL_PTR(m->spaces);
     FREE_AND_NULL_PTR(m->msg);
+
     m->buttons = NULL;
     m->first_light = NULL;
+    
     for (i = 0; i < TILED_MAPS; i++)
         FREE_AND_CLEAR_HASH(m->tile_path[i]);
-    if (m->bitmap)
-    {
-        free(m->bitmap);
-        m->bitmap = NULL;
-    }
+    
+    FREE_AND_NULL_PTR(m->bitmap);
     FREE_AND_CLEAR_HASH(m->cached_dist_map);
+
     m->in_memory = MAP_SWAPPED;
+
+    /* Note: m->path and m->tmppath are freed in delete_map */
 }
 
 /*
@@ -2387,6 +2389,7 @@ void delete_map(mapstruct *m)
  *   and don't do unique items or the like.
  * 0x2 (MAP_PLAYER_UNIQUE) - this is a unique map for each player.
  *   dont do any more name translation on it.
+ * 0x? (MAP_NAME_SHARED) - name is a shared string
  *
  * Returns a pointer to the given map.
  */

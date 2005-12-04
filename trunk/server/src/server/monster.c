@@ -161,6 +161,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     /* throw away segment if we are finished with it */
     if (segment_rv.distance <= 1 && pf->path != NULL)
     {
+        free_string_shared(pf->path->map);
         return_poolchunk(pf->path, pool_path_segment);
         pf->path = pf->path->next; /* assuming poolchunk is still valid */
         pf->tried_steps = 0;
