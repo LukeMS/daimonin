@@ -27,7 +27,9 @@
 #ifndef _DAIMONIN_TIME_H_
 #define _DAIMONIN_TIME_H_
 
-#include <sys/time.h>
+#ifndef WIN32 /* ---win32 exclude unix headers */
+	#include <sys/time.h>
+#endif
 
 /* Generic function for simple timeval arithmetic (addition & subtraction) */
 static inline void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)

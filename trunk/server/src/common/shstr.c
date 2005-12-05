@@ -545,9 +545,9 @@ char * ss_dump_statistics()
 
 static void ss_find_totals(int *entries, int *refs, int *links, int what)
 {
-    *entries = 0, *refs = 0, *links = 0;
-    int         i;
+	int i;
 
+    *entries = 0, *refs = 0, *links = 0;
     for (i = 0; i < TABLESIZE; i++)
     {
         shared_string  *ss;

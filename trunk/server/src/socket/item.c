@@ -1142,15 +1142,25 @@ void MarkItem(char *data, int len, player *pl)
 
     tag = GetInt_String((uint8 *) data);
     op = esrv_get_ob_from_count(pl->ob, tag);
-    /*LOG(-1,"MARKITEM (%d) (%x)\n", tag, op);*/
-    if (!op)
-    {
-        /*new_draw_info(NDI_UNIQUE, 0, pl->ob,"Could not find object to mark");*/
-        return;
-    }
-    pl->mark = op;
-    pl->mark_count = op->count;
-    new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Marked item %s", query_name(op));
+	
+	if(!op || tag == pl->mark_count)
+	{
+		pl->mark = NULL;
+	    pl->mark_count = -1;
+	}
+	else
+	{
+		pl->mark = op;
+	    pl->mark_count = op->count;
+	}
+
+    /*LOG(-1,"MARKITEM2 (%d) (%d)\n", tag, op->count);*/
+
+    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_MARK);
+    SockList_AddInt(&global_sl, pl->mark_count);
+    Send_With_Handling(&pl->socket, &global_sl);
+
+    /*new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Marked item %s", query_name(op));*/
 }
 
 

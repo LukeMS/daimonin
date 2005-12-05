@@ -89,6 +89,7 @@ enum
     BINARY_CMD_GROUP_UPDATE,
     BINARY_CMD_INTERFACE,
     BINARY_CMD_BOOK,
+    BINARY_CMD_MARK,
     BINAR_CMD /* last entry */
 };
 
@@ -109,7 +110,7 @@ struct CmdMapping   commands[]  =
     { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd },
     { "group_update", GroupUpdateCmd },
     { "interface", InterfaceCmd },
-    { "book", BookCmd },
+    { "book", BookCmd },{ "mark", MarkCmd },
 
     /* unused! */
     { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory }

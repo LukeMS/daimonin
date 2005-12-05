@@ -23,8 +23,8 @@
 /* This is a config file for the client.
  */
 
-#define VERSION_CS 991019
-#define VERSION_SC 991019
+#define VERSION_CS 991020
+#define VERSION_SC 991020
 
 #define KEYBIND_FILE "keys.dat"
 #define OPTION_FILE  "options.dat"

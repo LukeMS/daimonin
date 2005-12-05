@@ -1013,6 +1013,15 @@ void GroupInviteCmd(unsigned char *data, int len)
     }
 }
 
+/* Server confirms our mark request
+ */
+void MarkCmd(unsigned char *data, int len)
+{
+	
+    cpl.mark_count = GetInt_String(data);
+/*	draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
+}
+
 
 void GroupUpdateCmd(unsigned char *data, int len)
 {

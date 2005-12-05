@@ -239,6 +239,7 @@ typedef struct Player_Struct
     int                     target_color;
     int                     inventory_win;  /* inventory windows */
     int                     menustatus;
+	int						mark_count;
     int                     loc;
     int                     tag;
     int                     nrof;

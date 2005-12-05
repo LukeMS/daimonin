@@ -29,6 +29,6 @@
 #define VERSION "BETA3-0.967"
 #endif
 
-#define VERSION_CS 991019
-#define VERSION_SC 991019
+#define VERSION_CS 991020
+#define VERSION_SC 991020
 #define VERSION_INFO "Daimonin Server"
