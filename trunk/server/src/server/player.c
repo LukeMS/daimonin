@@ -240,7 +240,7 @@ void free_player(player *pl)
     if (pl->ob)
     {
         SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
-	    activelist_remove(pl->ob,pl->ob->map);
+	    activelist_remove(pl->ob);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
             remove_ob(pl->ob);

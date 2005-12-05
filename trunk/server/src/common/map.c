@@ -1244,7 +1244,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                          */
                 if (QUERY_FLAG(head, FLAG_NO_SAVE))
                 {
-                    activelist_remove(head, head->map);
+                    activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
 
@@ -1297,7 +1297,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     }
 
                     /* and remove the mob itself */
-                    activelist_remove(head, head->map);
+                    activelist_remove(head);
                     remove_ob(head);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
@@ -1329,7 +1329,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
 							/* note: because a spawn point always is on a map, its safe to 
                              * have the activelist_remove() inside here
                              */
-                            activelist_remove(op->enemy, op->enemy->map);
+                            activelist_remove(op->enemy);
                             remove_ob(op->enemy);
                             check_walk_off(op->enemy, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
                             op->enemy = NULL;
@@ -1372,7 +1372,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     if (head->type == GOLEM) /* a golem needs a valid release from the player... */
                     {
                         send_golem_control(head, GOLEM_CTR_RELEASE);
-                        activelist_remove(head, head->map);
+                        activelist_remove(head);
                         remove_ob(head);
                         check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
 
@@ -1482,7 +1482,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
 
                     tmp->x = xt;
                     tmp->y = yt;
-                    activelist_remove(tmp, tmp->map);
+                    activelist_remove(tmp);
                     remove_ob(tmp); /* this is only a "trick" remove - no walk off check.
                                      * Remember: don't put important triggers near tiled map borders!
                                      */
@@ -1507,7 +1507,7 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
 
                 if (op->more) /* its a head (because we had tails tested before) */
                 {
-                    activelist_remove(op, op->map);
+                    activelist_remove(op);
                     remove_ob(op); /* only a "trick" remove - no move_apply() changes or something */
 
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
@@ -1556,6 +1556,11 @@ mapstruct * get_linked_map()
     MAP_ENTER_X(map) = 1;
     MAP_ENTER_Y(map) = 1;
 
+    /* We insert a dummy sentinel first in the activelist. This simplifies
+     * work later */
+    map->active_objects = get_object();
+    insert_ob_in_ob(map->active_objects, &void_container); /* Avoid gc of the sentinel object */
+    
     return map;
 }
 
@@ -2222,7 +2227,7 @@ void free_all_objects(mapstruct *m)
                  * stay in the memory. If not, the object GC will try - and obj->map
                  * will point to a free map struct... (/resetmap for example)
                  */
-                activelist_remove(op, op->map);
+                activelist_remove(op);
                 remove_ob(op); /* technical remove - no check off */
             }
         }
@@ -2278,14 +2283,14 @@ void free_map(mapstruct *m, int flag)
      * on objects and expect the gc to handle removal from activelists etc.
      * - Gecko 20050731
      */
-    if(m->active_objects)
+    if(m->active_objects->active_next)
     {
         LOG(llevDebug, "ACTIVEWARNING - free_map(): freed map has still active objects!\n");
-        while(m->active_objects)
+        while(m->active_objects->active_next)
         {
             if(!QUERY_FLAG(m->active_objects, FLAG_REMOVED))
-                LOG(llevBug, "ACTIVEBUG - FREE_MAP(): freed map (%s) has active non-removed object %s (%d)!\n", STRING_MAP_NAME(m), STRING_OBJ_NAME(m->active_objects), m->active_objects->count);
-            activelist_remove(m->active_objects, m);
+                LOG(llevBug, "ACTIVEBUG - FREE_MAP(): freed map (%s) has active non-removed object %s (%d)!\n", STRING_MAP_NAME(m), STRING_OBJ_NAME(m->active_objects->active_next), m->active_objects->active_next->count);
+            activelist_remove(m->active_objects->active_next);
         }
     }
 
@@ -2305,6 +2310,9 @@ void free_map(mapstruct *m, int flag)
     m->in_memory = MAP_SWAPPED;
 
     /* Note: m->path and m->tmppath are freed in delete_map */
+
+    /* Remove the list sentinel */
+    remove_ob(m->active_objects);
 }
 
 /*
@@ -2375,7 +2383,7 @@ void delete_map(mapstruct *m)
 
     /* Free our pathname (we'd like to use it above)*/
     FREE_AND_CLEAR_HASH(m->path);
-
+    
     free(m);
 }
 

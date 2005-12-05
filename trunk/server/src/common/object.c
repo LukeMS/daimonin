@@ -834,40 +834,20 @@ void update_turn_face(object *op)
  * Utility functions for inserting & removing objects
  * from activelists
  */
-static inline void activelist_remove_inline(object *op, mapstruct *map)
+static inline void activelist_remove_inline(object *op)
 {
     /* If not already on any active list, don't do anything */
     if(!QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
         return;
 
 #ifdef DEBUG_ACTIVELIST_LOG
-    LOG(llevDebug,"remove: %s (%d)  @%s\n", query_name(op), op->count, STRING_MAP_PATH(map));
+    LOG(llevDebug,"remove: %s (%d) @%s\n", query_name(op), op->count, STRING_MAP_PATH(op->map));
 #endif
-
-    if (op == active_objects)
-        active_objects = op->active_next;
-    else if (op == inserted_active_objects)
-        inserted_active_objects = op->active_next;
-    else if (map && op == map->active_objects)
-    {
-        map->active_objects = op->active_next;
-        // TODO: if map is now empty of entries, remove it from
-        // list of maps with active objects
-    }
-    else if (!op->active_prev)
-    {
-        /* Try to catch nasty bugs early */
-        LOG(llevBug, "BUG: object %s (%d) first in unknown active list "
-                "(trying to remove from %s, really on %s or in %s)\n",
-                STRING_OBJ_NAME(op), op->count, STRING_MAP_PATH(map), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(op->env));
-        return;
-    }
 
     /* If this happens to be the object we will process next,
      * update the next_active_object pointer */
     if(op == next_active_object)
         next_active_object = op->active_next;
-
 
     if (op->active_prev)
         op->active_prev->active_next = op->active_next;
@@ -896,7 +876,7 @@ static inline void activelist_insert_inline(object *op)
 
     /* Since we don't want to process objects twice, we make
      * sure to insert the object in a temporary list until the
-     * next process_events() call */
+     * next process_events() call. */
     op->active_next = inserted_active_objects;
     if (op->active_next != NULL)
         op->active_next->active_prev = op;
@@ -911,9 +891,9 @@ void activelist_insert(object *op)
     activelist_insert_inline(op);
 }
 
-void activelist_remove(object *op, mapstruct *map)
+void activelist_remove(object *op)
 {
-    activelist_remove_inline(op, map);
+    activelist_remove_inline(op);
 }
 
 
@@ -946,7 +926,7 @@ void update_ob_speed(object *op)
     if (FABS(op->speed) > MIN_ACTIVE_SPEED)
         activelist_insert_inline(op);
     else
-        activelist_remove_inline(op, op->map);
+        activelist_remove_inline(op);
 }
 
 /* OLD NOTES
@@ -1359,7 +1339,7 @@ void destroy_object(object *ob)
     if (QUERY_FLAG(ob, FLAG_IS_LINKED))
         remove_button_link(ob);
 
-    activelist_remove_inline(ob, ob->map);
+    activelist_remove_inline(ob);
 
     if (ob->type == CONTAINER && ob->attacked_by)
         container_unlink(NULL, ob);
@@ -1980,7 +1960,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
         if(op->map != old_map)
         {
             // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
-            activelist_remove_inline(op, old_map);
+            activelist_remove_inline(op);
         }
 
         activelist_insert_inline(op);
@@ -2329,7 +2309,7 @@ object * insert_ob_in_ob(object *op, object *where)
     if(op->speed && op->map != old_map)
     {
         // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
-        activelist_remove_inline(op, old_map);
+        activelist_remove_inline(op);
     } 
 
     /* Client has no idea of ordering so lets not bother ordering it here.
