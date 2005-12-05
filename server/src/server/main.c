@@ -223,7 +223,7 @@ void leave_map(object *op)
 {
     mapstruct  *oldmap  = op->map;
 
-    activelist_remove(op, op->map);
+    activelist_remove(op);
     remove_ob(op); /* TODO: hmm... never drop inv here? */
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 
@@ -887,10 +887,11 @@ static void process_map_events(mapstruct *map)
     object *op, *first_obj;
     tag_t   tag;
 
+    /* Find first object in activelist (skip sentinel) */
     if(map == NULL)
-        first_obj= active_objects;
+        first_obj = active_objects->active_next;
     else
-        first_obj = map->active_objects;
+        first_obj = map->active_objects->active_next;
 
     /* note: next_active_object is a global which
        might get modified while traversing below */
@@ -905,7 +906,7 @@ static void process_map_events(mapstruct *map)
             LOG(llevBug, "BUG: process_events(): Free object %s (count: %d (%d)) on active list for %s (%d,%d) flag:%d\n",
                             STRING_OBJ_NAME(op), op->count, op->count_debug, STRING_MAP_PATH(op->map), op->x, op->y, QUERY_FLAG(op, FLAG_IN_ACTIVELIST));
             SET_FLAG(op, FLAG_IN_ACTIVELIST);
-            activelist_remove(op, map);
+            activelist_remove(op);
             continue;
         }
 
@@ -952,7 +953,7 @@ static void process_map_events(mapstruct *map)
         {
             LOG(llevDebug, "WARNING: process_events(): object not on processed map: %s is on %s, not %s\n",
                 query_name(op), STRING_MAP_PATH(op->map), STRING_MAP_PATH(map));
-            activelist_remove(op, map);
+            activelist_remove(op);
             activelist_insert(op);
         }
 
@@ -1069,15 +1070,18 @@ static void process_events()
             }
             if(obj->map)
             {
-                obj->active_next = obj->map->active_objects;
-                obj->map->active_objects = obj;
+                /* Always insert after the sentinel */
+                obj->active_next = obj->map->active_objects->active_next;
+                obj->map->active_objects->active_next = obj;
+                obj->active_prev = obj->map->active_objects;
             }
             else
             {
-                obj->active_next = active_objects;
-                active_objects = obj;
+                /* Always insert after the sentinel */
+                obj->active_next = active_objects->active_next;
+                active_objects->active_next = obj;
+                obj->active_prev = active_objects;
             }
-            obj->active_prev = NULL;
             if(obj->active_next)
                 obj->active_next->active_prev = obj;
         }
@@ -1085,13 +1089,13 @@ static void process_events()
     }
 
     /* Now, process all map-based activelists, and the activelist
-     * for obejcts not on maps */
+     * for objects not on maps */
     process_map_events(NULL);
 
     /* TODO: only go through maps in special list of maps with active objects */
     for (map = first_map; map; map = map->next)
     {
-        if (map->active_objects && map->in_memory == MAP_IN_MEMORY)
+        if (map->active_objects->active_next && map->in_memory == MAP_IN_MEMORY)
             process_map_events(map);
     }
 	

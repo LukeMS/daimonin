@@ -1462,9 +1462,9 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     {
         object *obj;
         if(tilenr == TILED_MAPS)
-            obj = op->map->active_objects; /* Always scan op's map */
+            obj = op->map->active_objects->active_next; /* Always scan op's map */
         else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY && check_maps[tilenr])
-            obj = op->map->tile_map[tilenr]->active_objects;
+            obj = op->map->tile_map[tilenr]->active_objects->active_next;
         else
             continue;
 

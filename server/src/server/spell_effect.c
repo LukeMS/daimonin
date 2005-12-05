@@ -353,7 +353,7 @@ int cast_invisible(object *op, object *caster, int spell_type)
 
     /* Gecko: removed entirely. This is instead handled in mob AI core */
     /* Gecko: fixed to only go through active objects. Nasty loop anyway... */
-    /*  for (tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
+    /* for (tmp = active_objects->active_next; tmp != NULL; tmp = tmp->active_next)
         if (tmp->enemy == op)
             register_npc_enemy(tmp, NULL);*/
     return 1;

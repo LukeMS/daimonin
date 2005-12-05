@@ -254,7 +254,7 @@ void remove_all_pets(mapstruct *map)
 
     /* TODO: it is possible that this has the same problems as the
      * traversal of the active list. Be careful. */
-    for(tmp = map->active_objects; tmp; tmp = next_tmp)
+    for(tmp = map->active_objects->active_next; tmp; tmp = next_tmp)
     {
         next_tmp = tmp->active_next;
 

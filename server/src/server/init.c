@@ -1189,6 +1189,12 @@ void init(int argc, char **argv)
 }
 
 
+void init_lists()
+{
+    /* Add sentinels to the global activelist */
+    active_objects = get_object();
+    insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object */
+}
 
 void init_library()
 {
@@ -1204,6 +1210,8 @@ void init_library()
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
     init_dynamic();
-    init_clocks();
+    init_clocks();    
+
+    init_lists(); /* Initializes some global lists */
 }
 

@@ -111,14 +111,14 @@ int command_bug(object *op, char *params)
 static int count_active()
 {
     int     i   = 0;
-    object *tmp = active_objects;
+    object *tmp;
     mapstruct *map;
 
-    for(tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
+    for(tmp = active_objects->active_next; tmp != NULL; tmp = tmp->active_next)
         i++;
     for (map = first_map; map; map = map->next)
     {
-        for(tmp = map->active_objects; tmp != NULL; tmp = tmp->active_next)
+        for(tmp = map->active_objects->active_next; tmp != NULL; tmp = tmp->active_next)
             i++;
     }
     return i;
@@ -571,7 +571,7 @@ int command_dumpactivelist(object *op, char *params)
     int     count   = 0;
     object *tmp;
 
-    for (tmp = active_objects; tmp; tmp = tmp->active_next)
+    for (tmp = active_objects->active_next; tmp; tmp = tmp->active_next)
     {
         count++;
         sprintf(buf, "%08d %03d %f %s (%s)", tmp->count, tmp->type, tmp->speed, query_short_name(tmp, NULL),
