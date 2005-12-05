@@ -224,7 +224,6 @@ void                        drop(object *op, object *tmp);
 int                         command_dropall(object *op, char *params);
 int                         command_drop(object *op, char *params);
 int                         command_examine(object *op, char *params);
-int                         command_mark(object *op, char *params);
 object                     *find_marked_object(object *op);
 char                       *examine_monster(object *op, object *tmp, char *buf, int flag);
 char                       *long_desc(object *tmp, object *caller);

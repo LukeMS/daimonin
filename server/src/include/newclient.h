@@ -312,6 +312,7 @@ enum
     BINARY_CMD_GROUP_UPDATE,
     BINARY_CMD_INTERFACE,
     BINARY_CMD_BOOK,
+    BINARY_CMD_MARK,
 
     /* old, unused or outdated crossfire cmds! */
     BINARY_CMD_MAGICMAP,

@@ -1756,8 +1756,14 @@ Boolean process_macro_keys(int id, int value)
           if (tag == -1 || !locate_item(tag))
               return FALSE;
           send_mark_obj((it = locate_item(tag)));
-          sprintf(buf, "mark %s", it->s_name);
-          draw_info(buf, COLOR_DGOLD);
+		  if(it)
+		  {
+			if(cpl.mark_count == it->tag)
+				sprintf(buf, "unmark %s", it->s_name);
+			else
+				sprintf(buf, "mark %s", it->s_name);
+			draw_info(buf, COLOR_DGOLD);
+		  }
           return FALSE;
           break;
         case KEYFUNC_LOCK:

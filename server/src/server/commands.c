@@ -102,8 +102,6 @@ CommArray_s Commands[]                  =
 
     {"/silence",        command_silence,0.0},
 
-
-    /*{"/mark",           command_mark,           1.0f},*/
     /*  {"/sound",        command_sound,          1.0},*/
     /*  {"/delete",     command_quit,           1.0},*/
     /*  {"/pickup",     command_pickup,         1.0}, we don't want and need this anymore */

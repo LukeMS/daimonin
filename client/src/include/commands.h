@@ -80,6 +80,7 @@ extern void ItemYCmd(unsigned char *data, int len);
 extern void GroupCmd(unsigned char *data, int len);
 extern void GroupInviteCmd(unsigned char *data, int len);
 extern void GroupUpdateCmd(unsigned char *data, int len);
+extern void MarkCmd(unsigned char *data, int len);
 extern void BookCmd(unsigned char *data, int len);
 extern void InterfaceCmd(unsigned char *data, int len);
 extern void TargetObject(unsigned char *data, int len);

@@ -179,14 +179,10 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},{"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
     {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
     {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
-    {"group_hp.png", PIC_TYPE_DEFAULT},
-    {"npc_interface.png", PIC_TYPE_TRANS},
-    {"coin_copper.png", PIC_TYPE_TRANS},
-    {"coin_silver.png", PIC_TYPE_TRANS},
-    {"coin_gold.png", PIC_TYPE_TRANS},
-    {"coin_mithril.png", PIC_TYPE_TRANS},
-    {"npc_int_slider.png", PIC_TYPE_DEFAULT},
-    {"journal.png", PIC_TYPE_TRANS}
+    {"group_hp.png", PIC_TYPE_DEFAULT}, {"npc_interface.png", PIC_TYPE_TRANS},{"coin_copper.png", PIC_TYPE_TRANS},
+    {"coin_silver.png", PIC_TYPE_TRANS},{"coin_gold.png", PIC_TYPE_TRANS},
+    {"coin_mithril.png", PIC_TYPE_TRANS},{"npc_int_slider.png", PIC_TYPE_DEFAULT},
+    {"journal.png", PIC_TYPE_TRANS}, {"invslot_marked.png", PIC_TYPE_TRANS}
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -460,6 +456,7 @@ Boolean game_status_chain(void)
     /* autoinit or reset prg data */
     if (GameStatus == GAME_STATUS_INIT)
     {
+		cpl.mark_count = -1;
 	    GameStatusLogin = TRUE;
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
@@ -679,6 +676,7 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_ADDME)
     {
+		cpl.mark_count = -1;
         map_transfer_flag = 0;
         SendAddMe(csocket);
         cpl.name[0] = 0;

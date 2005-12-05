@@ -944,44 +944,6 @@ static object * find_marked_object_rec(object *op, object **marked, uint32 *mark
     return NULL;
 }
 
-
-/* op should be a player, params is any params.
- * If no params given, we print out the currently marked object.
- * otherwise, try to find a matching object - try best match first.
- */
-int command_mark(object *op, char *params)
-{
-    if (!CONTR(op))
-        return 1;
-    CONTR(op)->praying = 0;
-    if (!params)
-    {
-        object *mark    = find_marked_object(op);
-        if (!mark)
-            new_draw_info(NDI_UNIQUE, 0, op, "You have no marked object.");
-        else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s is marked.", query_name(mark));
-    }
-    else
-    {
-        object *mark1   = find_best_object_match(op, params);
-        if (!mark1)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
-            return 1;
-        }
-        else
-        {
-            CONTR(op)->mark = mark1;
-            CONTR(op)->mark_count = mark1->count;
-            new_draw_info_format(NDI_UNIQUE, 0, op, "Marked item %s", query_name(mark1));
-            return 0;
-        }
-    }
-    return 0;   /*shouldnt get here */
-}
-
-
 /* op should be a player.
  * we return the object the player has marked with the 'mark' command
  * below.  If no match is found (or object has changed), we return
