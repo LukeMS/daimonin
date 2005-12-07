@@ -1070,6 +1070,15 @@ static void process_events()
             }
             if(obj->map)
             {
+                /* In case the map was swapped out with an object in the insertion list
+                 * (This probably doesn't happen, since all objects are removed when the map
+                 * is swapped out) */
+                if(obj->map->in_memory != MAP_IN_MEMORY)
+                {
+                    /* FIXME: for now we'll just see if this happens */
+                    LOG( llevDebug, "ACTIVEBUG: object on map not in memory! obj %s in %s\n",
+                            query_name(obj), STRING_MAP_PATH(obj->map) );
+                }
                 /* Always insert after the sentinel */
                 obj->active_next = obj->map->active_objects->active_next;
                 obj->map->active_objects->active_next = obj;
