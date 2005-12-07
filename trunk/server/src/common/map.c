@@ -2310,10 +2310,6 @@ void free_map(mapstruct *m, int flag)
     m->in_memory = MAP_SWAPPED;
 
     /* Note: m->path and m->tmppath are freed in delete_map */
-
-    /* Remove the list sentinel */
-	if(!QUERY_FLAG(m->active_objects, FLAG_REMOVED))
-	    remove_ob(m->active_objects);
 }
 
 /*
@@ -2384,6 +2380,9 @@ void delete_map(mapstruct *m)
 
     /* Free our pathname (we'd like to use it above)*/
     FREE_AND_CLEAR_HASH(m->path);
+
+    /* Remove the list sentinel */
+    remove_ob(m->active_objects);
     
     free(m);
 }
