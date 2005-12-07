@@ -2289,7 +2289,7 @@ void free_map(mapstruct *m, int flag)
         while(m->active_objects->active_next)
         {
             if(!QUERY_FLAG(m->active_objects, FLAG_REMOVED))
-                LOG(llevBug, "ACTIVEBUG - FREE_MAP(): freed map (%s) has active non-removed object %s (%d)!\n", STRING_MAP_NAME(m), STRING_OBJ_NAME(m->active_objects->active_next), m->active_objects->active_next->count);
+                LOG(llevBug, "ACTIVEBUG - FREE_MAP(): freed map (%s) has active non-removed object %s (%d)!\n", STRING_MAP_PATH(m), STRING_OBJ_NAME(m->active_objects->active_next), m->active_objects->active_next->count);
             activelist_remove(m->active_objects->active_next);
         }
     }
@@ -2312,7 +2312,8 @@ void free_map(mapstruct *m, int flag)
     /* Note: m->path and m->tmppath are freed in delete_map */
 
     /* Remove the list sentinel */
-    remove_ob(m->active_objects);
+	if(!QUERY_FLAG(m->active_objects, FLAG_REMOVED))
+	    remove_ob(m->active_objects);
 }
 
 /*
