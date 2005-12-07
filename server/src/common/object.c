@@ -56,6 +56,76 @@ int                     freedir[SIZEOFFREE]                                 =
 
 /** Object management functions **/
 
+
+/*
+ * Utility functions for inserting & removing objects
+ * from activelists
+ */
+static inline void activelist_remove_inline(object *op)
+{
+    /* If not already on any active list, don't do anything */
+    if(!QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
+        return;
+
+#ifdef DEBUG_ACTIVELIST_LOG
+    LOG(llevDebug,"ACTIVE_rem: %s (%d) @%s (%x - %x - %x)\n", query_name(op), op->count, STRING_MAP_PATH(op->map),
+															op, op->active_prev, op->active_next);
+#endif
+
+    /* If this happens to be the object we will process next,
+     * update the next_active_object pointer */
+    if(op == next_active_object)
+        next_active_object = op->active_next;
+	else if(op == inserted_active_objects)
+        inserted_active_objects = op->active_next;
+
+    if (op->active_prev)
+        op->active_prev->active_next = op->active_next;
+
+    if (op->active_next)
+        op->active_next->active_prev = op->active_prev;
+
+    CLEAR_FLAG(op, FLAG_IN_ACTIVELIST);
+    op->active_next = NULL;
+    op->active_prev = NULL;
+}
+
+/* Insert an object into the insertion activelist, it will be
+ * moved to its corresponding map's activelist at the next
+ * call to process_events() */
+static inline void activelist_insert_inline(object *op)
+{
+    /* If already on any active list, don't do anything */
+    if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
+        return;
+
+#ifdef DEBUG_ACTIVELIST_LOG
+    LOG( llevDebug,"ACTIVE_add: %s (type:%d count:%d) env:%s map:%s (%d,%d) (%x - %x - %x)\n", query_name(op), op->type, op->count,
+         query_name(op->env), op->map?STRING_SAFE(op->map->path):"NULL", op->x, op->y, op, op->active_prev, op->active_next);
+#endif
+
+    /* Since we don't want to process objects twice, we make
+     * sure to insert the object in a temporary list until the
+     * next process_events() call. */
+    op->active_next = inserted_active_objects;
+    if (op->active_next != NULL)
+        op->active_next->active_prev = op;
+    inserted_active_objects = op;
+    op->active_prev = NULL;
+
+    SET_FLAG(op, FLAG_IN_ACTIVELIST);
+}
+
+void activelist_insert(object *op)
+{
+    activelist_insert_inline(op);
+}
+
+void activelist_remove(object *op)
+{
+    activelist_remove_inline(op);
+}
+
 /* Put an object in the list of removal candidates.
  * If the object has still FLAG_REMOVED set at the end of the
  * server timestep it will be freed
@@ -713,6 +783,10 @@ void copy_object(object *op2, object *op)
 {
     int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
 
+	/* remove because perhaps speed will change when we copy */
+    if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
+	    activelist_remove_inline(op);
+
     FREE_ONLY_HASH(op->name);
     FREE_ONLY_HASH(op->title);
     FREE_ONLY_HASH(op->race);
@@ -756,6 +830,8 @@ void copy_object(object *op2, object *op)
     /* Only alter speed_left when we sure we have not done it before */
     if (op->speed < 0 && op->speed_left == op->arch->clone.speed_left)
         op->speed_left += (RANDOM() % 90) / 100.0f;
+
+	CLEAR_FLAG(op, FLAG_IN_ACTIVELIST); /* perhaps our source is on active list - ignore! */
     update_ob_speed(op);
 }
 
@@ -829,76 +905,6 @@ void update_turn_face(object *op)
     SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
     update_object(op, UP_OBJ_FACE);
 }
-
-/*
- * Utility functions for inserting & removing objects
- * from activelists
- */
-static inline void activelist_remove_inline(object *op)
-{
-    /* If not already on any active list, don't do anything */
-    if(!QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
-        return;
-
-#ifdef DEBUG_ACTIVELIST_LOG
-    LOG(llevDebug,"ACTIVE_rem: %s (%d) @%s (%x - %x - %x)\n", query_name(op), op->count, STRING_MAP_PATH(op->map),
-															op, op->active_prev, op->active_next);
-#endif
-
-    /* If this happens to be the object we will process next,
-     * update the next_active_object pointer */
-    if(op == next_active_object)
-        next_active_object = op->active_next;
-	else if(op == inserted_active_objects)
-        inserted_active_objects = op->active_next;
-
-    if (op->active_prev)
-        op->active_prev->active_next = op->active_next;
-
-    if (op->active_next)
-        op->active_next->active_prev = op->active_prev;
-
-    CLEAR_FLAG(op, FLAG_IN_ACTIVELIST);
-    op->active_next = NULL;
-    op->active_prev = NULL;
-}
-
-/* Insert an object into the insertion activelist, it will be
- * moved to its corresponding map's activelist at the next
- * call to process_events() */
-static inline void activelist_insert_inline(object *op)
-{
-    /* If already on any active list, don't do anything */
-    if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
-        return;
-
-#ifdef DEBUG_ACTIVELIST_LOG
-    LOG( llevDebug,"ACTIVE_add: %s (type:%d count:%d) env:%s map:%s (%d,%d) (%x - %x - %x)\n", query_name(op), op->type, op->count,
-         query_name(op->env), op->map?STRING_SAFE(op->map->path):"NULL", op->x, op->y, op, op->active_prev, op->active_next);
-#endif
-
-    /* Since we don't want to process objects twice, we make
-     * sure to insert the object in a temporary list until the
-     * next process_events() call. */
-    op->active_next = inserted_active_objects;
-    if (op->active_next != NULL)
-        op->active_next->active_prev = op;
-    inserted_active_objects = op;
-    op->active_prev = NULL;
-
-    SET_FLAG(op, FLAG_IN_ACTIVELIST);
-}
-
-void activelist_insert(object *op)
-{
-    activelist_insert_inline(op);
-}
-
-void activelist_remove(object *op)
-{
-    activelist_remove_inline(op);
-}
-
 
 /*
  * Updates the speed of an object.  If the speed changes from 0 to another

@@ -37,7 +37,7 @@
 
 #ifndef PRODUCTION_SYSTEM
 /* Active list debugging: object.c (activelist_insert_inline()) */
-/*#define DEBUG_ACTIVELIST_LOG *//* log message when an object is added or removed from an active list */
+#define DEBUG_ACTIVELIST_LOG /* log message when an object is added or removed from an active list */
 
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 //#define DEBUG_CORE
