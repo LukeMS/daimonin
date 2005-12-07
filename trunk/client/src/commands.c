@@ -1081,6 +1081,7 @@ void InterfaceCmd(unsigned char *data, int len)
         mode = *data;
         pos ++;
 
+		LOG(LOG_DEBUG, "Interface command: %s\n", (char*)(data+pos));
         gui_interface_npc = load_gui_interface(mode, (char*)data, len, pos);
         if(!gui_interface_npc)
             draw_info("INVALID GUI CMD", COLOR_RED);
@@ -1092,6 +1093,17 @@ void InterfaceCmd(unsigned char *data, int len)
             gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
             gui_interface_npc->starty = 50;
             mb_clicked=0;
+             /* Prefilled (and focused) textfield */ 
+               if(gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD) 
+               { 
+                   gui_interface_npc->input_flag = TRUE; 
+    
+                   reset_keys(); 
+                   open_input_mode(240); 
+                   textwin_putstring(gui_interface_npc->textfield.text); 
+                   cpl.input_mode = INPUT_MODE_NPCDIALOG; 
+                   HistoryPos = 0; 
+               } 
         }
     }
 }
