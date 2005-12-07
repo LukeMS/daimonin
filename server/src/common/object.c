@@ -866,8 +866,8 @@ void copy_object_data(object *op2, object *op)
     {
         SET_FLAG(op, FLAG_KNOWN_MAGICAL);
         SET_FLAG(op, FLAG_KNOWN_CURSED);
-    }
-
+    }    
+    
     /* perhaps we have a custom treasurelist. Then we need to
      * increase the refcount here.
      */
@@ -875,7 +875,7 @@ void copy_object_data(object *op2, object *op)
         op->randomitems->ref_count++;
 
     /* We set the custom_attrset pointer to NULL to avoid
-        * really bad problems. TODO. this needs to be handled better */
+     * really bad problems. TODO. this needs to be handled better */
     op->custom_attrset = NULL;
 }
 
