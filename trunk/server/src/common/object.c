@@ -841,13 +841,16 @@ static inline void activelist_remove_inline(object *op)
         return;
 
 #ifdef DEBUG_ACTIVELIST_LOG
-    LOG(llevDebug,"remove: %s (%d) @%s\n", query_name(op), op->count, STRING_MAP_PATH(op->map));
+    LOG(llevDebug,"ACTIVE_rem: %s (%d) @%s (%x - %x - %x)\n", query_name(op), op->count, STRING_MAP_PATH(op->map),
+															op, op->active_prev, op->active_next);
 #endif
 
     /* If this happens to be the object we will process next,
      * update the next_active_object pointer */
     if(op == next_active_object)
         next_active_object = op->active_next;
+	else if(op == inserted_active_objects)
+        inserted_active_objects = op->active_next;
 
     if (op->active_prev)
         op->active_prev->active_next = op->active_next;
@@ -870,8 +873,8 @@ static inline void activelist_insert_inline(object *op)
         return;
 
 #ifdef DEBUG_ACTIVELIST_LOG
-    LOG( llevDebug,"ADD: %s (type:%d count:%d) env:%s map:%s (%d,%d))\n", query_name(op), op->type, op->count,
-         query_name(op->env), op->map?STRING_SAFE(op->map->path):"NULL", op->x, op->y);
+    LOG( llevDebug,"ACTIVE_add: %s (type:%d count:%d) env:%s map:%s (%d,%d) (%x - %x - %x)\n", query_name(op), op->type, op->count,
+         query_name(op->env), op->map?STRING_SAFE(op->map->path):"NULL", op->x, op->y, op, op->active_prev, op->active_next);
 #endif
 
     /* Since we don't want to process objects twice, we make
@@ -1459,8 +1462,9 @@ void remove_ob(object *op)
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
         /*dump_object(op)*/;
-        LOG(llevBug, "BUG: Trying to remove removed object.:%s map:%s (%d,%d)\n", query_name(op),
-            op->map ? (op->map->path ? op->map->path : "op->map->path == NULL") : "op->map==NULL", op->x, op->y);
+        LOG(llevBug, "BUG: Trying to remove removed object.:<%s> (<%d> %d %x) map:%s (%d,%d)\n", query_name(op),
+				op->arch?STRING_SAFE(op->arch->name):"NOARCH", op->type, op->count, 
+				op->map ? (op->map->path ? op->map->path : "op->map->path == NULL") : "op->map==NULL", op->x, op->y);
         return;
     }
 
