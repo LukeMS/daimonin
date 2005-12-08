@@ -1,57 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 3: INTERACTING WITH DAIMONIN
     </title>
-    <p>
-        You somehow need to interact with Daimonin, to tell the program how to behave and your character what to do. There are three ways to interact with Daimonin:
-    </p>
-    <dl>
-        <dt>
-            <strong>Entering (what I am calling) game commands</strong>
-        </dt>
-        <dd>
-            <p>
-                Game commands specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>). All game commands start with forward slash and are lowercase.
-            </p>
-            <p>
-                Game commands are entered at the console or may be bound to a key (see below). To open the console, by default press ENTER (on the keypad).
-            </p>
-            <p>
-                See <a href="./appx_a.dai">"Appendix A: Game Commands"</a> for a complete list of game commands.
-            </p>
-        </dd>
-        <dt>
-            <strong>Entering (what I am calling) meta commands</strong>
-        </dt>
-        <dd>
-            <p>
-                Meta commands generally influence the behaviour of the program (eg, <code>"?M_SKILL_LIST"</code> to open a dialog displaying all your character's skills). All meta commands start with <code>"?M_"</code> and are uppercase.
-            </p>
-            <p>
-                Meta commands may not be entered at the console. They must be bound to a key (see below).
-            </p>
-            <p>
-                See <a href="./appx_b.dai">"Appendix B: Meta Commands"</a> for a complete list of meta commands.
-            </p>
-        </dd>
-        <dt>
-            <strong>Pressing a key</strong>
-        </dt>
-        <dd>
-            <p>
-                Individual game commands and meta commands can be bound to keys (as in keyboard not front door) (eg, you might bind the game command <code>"/cast minor healing"</code> to H).
-            </p>
-            <p>
-                Many key bindings are predefined (see <a href="./appx_c.dai">"Appendix C: Default Bindings"</a> for a complete list.
-            </p>
-            <p>
-                Detailed instructions on (re)binding keys are given in <a href="./secn_4-1.dai">"Section 4-1: Key Settings"</a>.
-            </p>
-        </dd>
-    </dl>
-    <p>
-        <strong>NOTE</strong>: Given that you may have redefined your key bindings (as I have) <strong><em>Smacky's Guides</em></strong> refer to the actual game and meta commands you need to use, not the default key you should press. Obviously it's much quicker for you to simply press an appropriately bound key than type commands into the console every time so use common sense.
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            You somehow need to interact with Daimonin, to tell the program how to behave and your character what to do. There are three ways to interact with Daimonin:
+        </p>
+        <ul>
+            <li>
+                Entering (what I am calling) <a href="#gamecommands">game commands</a>
+            </li>
+            <li>
+                Entering (what I am calling) <a href="#metacommands">meta commands</a>
+            </li>
+            <li>
+                Pressing a <a href="#boundkeys">bound key</a>
+            </li>
+        </ul>
+        <p>
+            <strong>NOTE</strong>: Given that you may have redefined your key bindings (as I have) <strong><em>Smacky's Guides</em></strong> refer to the actual game and meta commands you need to use, not the default key you should press. Obviously it's much quicker for you to simply press an appropriately bound key than type commands into the console every time so use common sense.
+        </p>
+    </section>
+    <section id="gamecommands">
+        <title>
+            Game commands
+        </title>
+        <p>
+            Game commands specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>). All game commands start with forward slash and are lowercase.
+        </p>
+        <p>
+            Game commands are entered at the console or may be bound to a key (see below). To open the console, by default press ENTER (on the keypad).
+        </p>
+        <p>
+            See <a href="./appx_a.dai">"Appendix A: Game Commands"</a> for a complete list of game commands.
+        </p>
+    </section>
+    <section id="metacommands">
+        <title>
+            Meta commands
+        </title>
+        <p>
+            Meta commands generally influence the behaviour of the program (eg, <code>"?M_SKILL_LIST"</code> to open a dialog displaying all your character's skills). All meta commands start with <code>"?M_"</code> and are uppercase.
+        </p>
+        <p>
+            Meta commands may not be entered at the console. They must be bound to a key (see below).
+        </p>
+        <p>
+            See <a href="./appx_b.dai">"Appendix B: Meta Commands"</a> for a complete list of meta commands.
+        </p>
+    </section>
+    <section id="boundkeys">
+        <title>
+            Bound keys
+        </title>
+        <p>
+            Individual game commands and meta commands can be bound to keys (as in keyboard not front door) (eg, you might bind the game command <code>"/cast minor healing"</code> to H).
+        </p>
+        <p>
+            Many key bindings are predefined (see <a href="./appx_c.dai">"Appendix C: Default Bindings"</a> for a complete list.
+        </p>
+        <p>
+            Detailed instructions on (re)binding keys are given in <a href="./secn_4-1.dai">"Section 4-1: Key Settings"</a>.
+        </p>
+    </section>
 </section>
