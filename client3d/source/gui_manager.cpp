@@ -86,7 +86,7 @@ GuiManager::_GuiElementNames GuiManager::GuiElementNames[GUI_ELEMENTS_SUM]=
     }
   };
 
-const clock_t TOOLTIP_DELAY = 2;
+const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
 
 ///=================================================================================================
 /// .
@@ -114,15 +114,11 @@ void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_fil
   mMaterial->load();
   mElement->setMaterialName("GUI_Tooltip_Material");
   mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-  // If the window is smaller then the texture - we have to set the delta-size to transparent.
-  PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
-  uint32 *dest_data = (uint32*)pb.data;
-  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0xffaaff33;
-  mTexture->getBuffer()->unlock();
 
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gfx datas from the imageset.
   /////////////////////////////////////////////////////////////////////////
+  //displaySystemMessage("Parsing Imageset", 0); // TODO
   if (!parseImagesetData(XML_imageset_file)) return;
   mImageSetImg.load(mStrImageSetGfxFile, "General");
   mSrcPixelBox = mImageSetImg.getPixelBox();
@@ -356,7 +352,18 @@ void GuiManager::update()
     if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
     {
       // TODO: Make the background fit to the text. make a black border, ...
-      //      GuiTextout::getSingleton().Print(0, 0, 256, mTexture.getPointer(), mStrTooltip.c_str());
+
+      // TODO: Hide tooltip when window was closed.
+
+      TextLine label;
+      label.index= -1;
+      label.font = 2;
+      label.clipped = false;
+      label.x1 = label.y1 = 2;
+      label.x2 = 256;
+      label.y2 = GuiTextout::getSingleton().getFontHeight(label.font);
+      clearTooltip();
+      GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), mStrTooltip.c_str());
       mTooltipRefresh = false;
       mElement->setPosition(mMouseX+15, mMouseY+20); // TODO:
       mOverlay->show();
@@ -370,7 +377,26 @@ void GuiManager::update()
 }
 
 ///=================================================================================================
-/// Update all windows.
+/// .
+///=================================================================================================
+void GuiManager::displaySystemMessage(const char *, int )
+{
+  TextLine label;
+  label.index= -1;
+  label.font = 2;
+  label.clipped = false;
+  label.x1 = label.y1 = 2;
+  label.x2 = 256;
+  label.y2 = GuiTextout::getSingleton().getFontHeight(SYSTEM_FONT_NR);
+  clearTooltip();
+//  GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), text);
+  mTooltipRefresh = false;
+  mElement->setPosition(300, 100);
+  mOverlay->show();
+}
+
+///=================================================================================================
+/// .
 ///=================================================================================================
 void GuiManager::setTooltip(const char*text)
 {
@@ -378,4 +404,18 @@ void GuiManager::setTooltip(const char*text)
   mStrTooltip = text;
   mTooltipRefresh = true;
   mTooltipDelay = clock()/ CLOCKS_PER_SEC + 2;
+}
+
+///=================================================================================================
+/// Fill the tooltip overlay with the default color (overwrite the old text).
+///=================================================================================================
+void GuiManager::clearTooltip()
+{
+  PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
+  uint32 *dest_data = (uint32*)pb.data;
+  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)
+  {
+    *dest_data++ = 0x884444ff;
+  }
+  mTexture->getBuffer()->unlock();
 }

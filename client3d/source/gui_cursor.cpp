@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -77,9 +77,13 @@ void GuiCursor::setPos(Real x, Real y)
 ///=================================================================================================
 /// .
 ///=================================================================================================
-void GuiCursor::setState(int state)
+void GuiCursor::setState(PixelBox &srcPixelBox, int state)
 {
-  if (state < STATE_SUM) mState = state;
+  if (state < STATE_SUM)
+  {
+     mState = state;
+     draw(srcPixelBox);
+  }
 }
 
 ///=================================================================================================
@@ -88,9 +92,10 @@ void GuiCursor::setState(int state)
 void GuiCursor::setStateImagePos(std::string name, int x, int y)
 {
   int state = -1;
-  if      (name == "Standard") state = STATE_STANDARD;
-  else if (name == "Dragging") state = STATE_DRAGGING;
-  else if (name == "Resizing") state = STATE_RESIZING;
+  if      (name == "Standard")   state = STATE_STANDARD;
+  else if (name == "ButtonDown") state = STATE_BUTTON_DOWN;
+  else if (name == "Dragging")   state = STATE_DRAGGING;
+  else if (name == "Resizing")   state = STATE_RESIZING;
   if (state < 0)
   {
     Logger::log().error() << "MouseCursor has no State '" << name << "!";
@@ -98,7 +103,7 @@ void GuiCursor::setStateImagePos(std::string name, int x, int y)
   }
   gfxSrcPos[state].x = x;
   gfxSrcPos[state].y = y;
-  //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
+ //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
 }
 
 ///=================================================================================================

@@ -8,12 +8,12 @@
     <!-- Fontnames:                              -->
     <!-- RAW => Filename of the png              -->
     <!-- TTF => Name of the OgreFontDef          -->
-    <Font type="TTF" name= "trebucbd.ttf" size="6" />
-    <Font type="TTF" name= "trebucbd.ttf" size="8" />
-    <Font type="TTF" name= "trebucbd.ttf" size="10" />
-    <Font type="TTF" name= "trebucbd.ttf" size="24" resolution="55"/>
-    <Font type="TTF" name= "trebucbd.ttf" size="60" />
-    <Font type="TTF" name= "trebucbd.ttf" size="80" />
+    <Font type="TTF" name= "Vera.ttf" size="6" />
+    <Font type="TTF" name= "Vera.ttf" size="8" />
+    <Font type="TTF" name= "Vera.ttf" size="10" />
+    <Font type="TTF" name= "Vera.ttf" size="24" resolution="55"/>
+    <Font type="TTF" name= "Vera.ttf" size="60" />
+    <Font type="TTF" name= "Vera.ttf" size="80" />
     <Font type="RAW" name= "font_12.png" />
   </Fonts>
   
@@ -79,17 +79,20 @@
   <Window name= "PlayerInfo" relativeCoords= "false">
     <Pos      x= "15" y= "150" zOrder = "250" />
     <Size     width= "340" height= "440" />
-    <DragArea x= "0" y= "0" width= "250" height= "17" />
+    <DragArea x= "0" y= "0" width= "320" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <!--=============================================-->
-    <!-- Layer 0                                     -->
+    <!-- Seamless Background                         -->
     <!--=============================================-->
     <Graphic type= "GFX_FILL"  name = "Red_Background">
       <Pos x= "0" y= "0" />
       <Range width= "340" height= "440" />
     </Graphic>
 
+    <!--=============================================-->
+    <!-- Window Title                                -->
+    <!--=============================================-->
     <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
@@ -104,6 +107,22 @@
       <Pos x= "331" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
+
+
+    <Label x=  "100" y= "8" font="02" text= "Titlebar ygW" />
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "5" y= "30" />
+      <Range width= "335" height= "5" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!--                                 -->
+    <!--=============================================-->
+
+
+
+
 
     <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
       <Pos x= "0" y= "431" />
@@ -181,25 +200,20 @@
     <!--=============================================-->
     <Gadget type= "BUTTON"  name = "Button_Close">
       <Pos x= "325" y= "0" />
+      <Tooltip  text= "I am the close button." />
     </Gadget>
 
     <Gadget type= "BUTTON"  name = "Dialog_Button">
       <Pos x= "30" y= "410" />
-      <Label xPos= "20" yPos= "2" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
-      <Tooltip  text= "This is only a test button." />
+      <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
+      <Tooltip  text= "Press here to ACCEPT." />
     </Gadget>
 
     <Gadget type= "BUTTON"  name = "Dialog_Button">
       <Pos x= "255" y= "410" />
-      <Label xPos= "6" yPos= "2" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
-      <Tooltip  text= "This is only a test button." />
+      <Label xPos= "6" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
+      <Tooltip  text= "Press here to CANCEL." />
     </Gadget>
-
-
-
-
-
-
 
 
     <Statusbar type="COLOR_FILL" direction="UP" name = "HealthBar">
@@ -231,13 +245,46 @@
   <Window name= "TextWindow" relativeCoords= "false">
     <Pos      x= "600" y= "100" zOrder = "400" />
     <Size     width= "280" height= "250" />
-    <DragArea x= "0" y= "0" width= "100" height= "20" />
+    <DragArea x= "0" y= "0" width= "280" height= "18" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
-    <Graphic type= "GFX_FILL"  name = "textWinHead">
+    <Graphic type= "GFX_FILL"  name = "Red_Background">
       <Pos x= "0" y= "0" />
       <Range width= "280" height= "18" />
     </Graphic>
+
+
+    <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "10" y= "0" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_TR_Edge">
+      <Pos x= "271" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+
+    <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
+      <Pos x= "0" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+      <Pos x= "10" y= "13" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  name = "Red_BR_Edge">
+      <Pos x= "271" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
 
     <Listbox type= "" name= "TextList" font="03">
       <Pos x= "1" y= "18" />

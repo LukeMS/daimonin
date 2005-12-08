@@ -120,13 +120,12 @@ public:
   void sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
   //void getMessage (int &window, int &message, int &element);
   void setTooltip(const char*text);
+  void displaySystemMessage(const char*text, int type);
 
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-
-
   int mDragSrcWin, mDragDestWin;
   int mDragSrcContainer, mDragDestContainer;
   int mDragSrcItemPosx, mDragSrcItemPosy; // Wird bei drag start gesetzt, um Item bei falschem Drag zurückflutschen zu lassen.
@@ -156,6 +155,7 @@ private:
   {}
   bool parseImagesetData(const char *file);
   bool parseWindowsData (const char *file);
+  void clearTooltip();
 };
 
 #endif
