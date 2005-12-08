@@ -78,11 +78,6 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   }
   if (mX + mDestWidth > maxX) mDestWidth = maxX-mX-1;
   if (mY + mDestHeight >maxY) mDestHeight= maxY-mY-1;
-
-
-  Logger::log().error() << mStrName << " x: " << mX << " y: " << mY
-  << " w: " << mDestWidth << " h: " << mDestHeight ;
-
 }
 
 ///=================================================================================================

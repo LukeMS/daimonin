@@ -49,8 +49,7 @@ public:
   /// Functions.
   ////////////////////////////////////////////////////////////
   ~GuiWindow();
-  GuiWindow()
-  {}
+  GuiWindow();
   void Init(TiXmlElement *xmlElem, GuiManager *guiManager);
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
   void updateDragAnimation();
@@ -78,6 +77,7 @@ private:
   ////////////////////////////////////////////////////////////
   static int msInstanceNr, mMouseDragging;
   static std::string mStrTooltip;
+  static GuiManager *mGuiManager;
   int mWindowNr;
   int mMousePressed, mMouseOver;
   Image mTileImage;
@@ -106,7 +106,7 @@ private:
   void createWindow();
   void delGadget(int number);
   void drawAll();
-  void parseWindowData(TiXmlElement *xmlElem, GuiManager *guiManager);
+  void parseWindowData(TiXmlElement *xmlElem);
 };
 
 #endif

@@ -32,6 +32,7 @@ const int MAX_FONT_SIZE = 80;
 const int MIN_RESO_SIZE = 55;
 const int MAX_RESO_SIZE = 96;
 
+const char SYSTEM_FONT[] = "Vera.ttf";
 
 const uint32 TXT_COLOR_DEFAULT   = 0x00ffffff;
 const uint32 TXT_COLOR_RED       = 0x00ff0000;
@@ -59,6 +60,8 @@ enum
 GuiTextout::GuiTextout()
 {
   maxFontHeight = 0;
+  /// Build the SystemFont.
+  loadTTFont(SYSTEM_FONT, "16", "95");
 }
 
 ///=================================================================================================
@@ -82,8 +85,6 @@ GuiTextout::~GuiTextout()
     mvFont.erase(i);
   }
 }
-
-
 
 ///=================================================================================================
 /// Load a RAW font into main memory.
@@ -203,27 +204,30 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   fnt->baseline = iSize;
 
+  //////////////////////////////////////////////////////////////////////////
+  ///.The first font ever created is our system font.
+  /////////////////////////////////////////////////////////////////////////
+  static int sysFont = -1;
+  if (!++sysFont)
+  {
+    uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
+    texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
+    Image img;
+    /// This is the Ogre fontdata.
+    //img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
+    //img.save("c:\\OgreFont.png");
+    /// This is the Daimonin fontdata.
+    img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
+    img.save(FILE_SYSTEM_FONT);
+  }
 
-  /*/
-    { // Save the font to disk.
-      static int nr = -1;
-      //  Texture *texture = mTexture.getPointer();
-      uint32 *testBuf = new uint32[texture->getWidth()*texture->getHeight()];
-      texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, testBuf));
-      Image img;
-      img = img.loadDynamicImage((uchar*)testBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
-      img.save("c:\\ogre"+ StringConverter::toString(++nr) + ".png");
-
-      img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
-      img.save("c:\\daimonin"+ StringConverter::toString(nr) + ".png");
-    }
-  */
-
-
-
+  //////////////////////////////////////////////////////////////////////////
+  ///.Free Memory.
+  /////////////////////////////////////////////////////////////////////////
   MaterialManager::getSingleton().remove((ResourcePtr&)pMaterial);
   TextureManager ::getSingleton().remove((ResourcePtr&)pTexture);
   FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
+
   //////////////////////////////////////////////////////////////////////////
   ///.Create Text Cursor.
   /////////////////////////////////////////////////////////////////////////
@@ -325,10 +329,12 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
         break;
 
       default:
-        fontPosX = (*text - 32) * mvFont[fontNr]->width;
+        unsigned char chr = (*text - 32);
+        if (chr > CHARS_IN_FONT) chr = 0;
+        fontPosX = chr * mvFont[fontNr]->width;
         for (int y =0; y < (int)mvFont[fontNr]->height && y < height; ++y)
         {
-          for (int x=0; x < mvFont[fontNr]->charWidth[*text -32]; ++x)
+          for (int x=0; x < mvFont[fontNr]->charWidth[chr]; ++x)
           { /// PixelFormat: A8 R8 G8 B8.
             pixFont = mvFont[fontNr]->data[y * mvFont[fontNr]->textureWidth + fontPosX + x];
             if (pixFont <= 0xffffff) continue;
@@ -339,8 +345,9 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
             dest_data[(y+fontPosY)*width + x] = pixColor;
           }
         }
-        dest_data += mvFont[fontNr]->charWidth[*text - 32] +1;
-        if (dest_data + mvFont[fontNr]->charWidth[*text++ - 32] +1 > stopX) return;
+        dest_data += mvFont[fontNr]->charWidth[chr] +1;
+        if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
+        ++text;
         break;
     }
   }
