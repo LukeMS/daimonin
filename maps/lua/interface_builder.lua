@@ -3,8 +3,6 @@
 -- 
 
 -- TODO: make tostring work directly in a call to foo:Interface(1, ib)
--- TODO: AddIcon() AddLink() AddReward()
--- TODO: test generation of icons, links and rewards
 
 InterfaceBuilder = {}
 
@@ -29,6 +27,21 @@ end
 -- Append text to message body
 function InterfaceBuilder:AddToMessage(text)
 self.message.body = self.message.body .. text
+end
+
+-- Add a link line
+function InterfaceBuilder:AddLink(title, command)
+table.insert(self.tags, { type = 'link', title = title, command = command })
+end
+
+-- Set reward
+function InterfaceBuilder:SetReward(title, body, copper, silver, gold, mithril)
+self.reward = { title = title, body = body, copper = copper,  silver = silver, gold = gold, mithril = mithril }
+end
+
+-- Add a (reward) icon
+function InterfaceBuilder:AddIcon(title, face, body, mode)
+table.insert(self.tags, { type = 'icon', title = title, face = face, body = body, mode = mode })
 end
 
 -- Set decline button
@@ -73,12 +86,27 @@ if self.message then
 iface = iface .. '<m t="' .. default(self.message.title) .. '" b="' .. default(self.message.body) .. "\">"
 end
 
+if self.reward then
+iface = iface .. '<r t="' .. default(self.reward.title) .. '" b="' .. default(self.reward.body).. '"'
+if self.reward.copper ~= 0 then
+iface = iface .. 'c="'.. self.reward.copper .. '"'
+end
+if self.reward.silver ~= 0 then
+iface = iface .. 's="'.. self.reward.silver .. '"'
+end
+if self.reward.gold ~= 0 then
+iface = iface .. 'g="'.. self.reward.gold .. '"'
+end
+if self.reward.mithril ~= 0 then
+iface = iface .. 'm="'.. self.reward.mithril .. '"'
+end
+iface = iface .. '\>'
+end
+
 if self.tags then 
 for _,c in self.tags do
 if c.type == 'link' then
-iface = iface .. '<l t="' .. default(c.title) .. '" c="' .. default(c.command, "/talk " .. c.title) .. '">'
-elseif c.type == 'reward' then
-iface = iface .. '<r t="' .. default(c.title) .. '" b="' .. default(c.body) .. '" c="'.. default(c.copper, 0) .. '" s="'.. default(c.silver, 0) .. '" g="'.. default(c.gold, 0)'" m="'.. default(c.mithril, 0) .. '">'
+iface = iface .. '<l t="' .. default(c.title) .. '" c="' .. default("/talk " .. c.command, "/talk " .. c.title) .. '">'
 elseif c.type == 'icon' then
 iface = iface .. '<i m="' .. default(c.mode, "G") .. '" f="' .. default(c.face, badface) .. '" t="' .. default(c.title) .. '" b="' .. default(c.body) .. '">'
 end
@@ -102,7 +130,7 @@ end
 
 -- Constructor
 function InterfaceBuilder:New()
-local obj = { message = { title = "", body = "" } }
+local obj = {tags = {}, message = { title = "", body = "" }} 
 setmetatable(obj, 
 {
 __index = InterfaceBuilder,

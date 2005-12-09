@@ -391,7 +391,8 @@ int command_t_tell(object *op, char *params)
     }
 
     t_obj = CONTR(op)->target_object;
-    if (t_obj && CONTR(op)->target_object_count == t_obj->count)
+	/* lets see we have a target which CAN respond to our talk cmd */
+    if (t_obj && CONTR(op)->target_object_count == t_obj->count && t_obj->event_flags & EVENT_FLAG_TALK)
     {
         /* why i do this and not direct distance calculation?
          * because the player perhaps has leaved the mapset with the
@@ -416,11 +417,36 @@ int command_t_tell(object *op, char *params)
                             params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
                 else
                     send_clear_interface(CONTR(op));
-
                 return 1;
             }
         }
+		
+		/* our target is out of the response area - tell it the player and close the interface */
+        new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
+        send_clear_interface(CONTR(op));
     }
+	else /* we have target nothing or an invalid /talk target - lets fire up auto-target selection */
+	{
+        for (i = 0; i <= SIZEOFFREE; i++)
+        {
+            xt = op->x + freearr_x[i];
+            yt = op->y + freearr_y[i];
+            if (!(m = out_of_map(op->map, &xt, &yt)))
+                continue;
+
+			for (t_obj = get_map_ob(m, xt, yt); t_obj; t_obj = t_obj->above)
+			{
+                if (t_obj->event_flags & EVENT_FLAG_TALK)
+				{
+				    CONTR(op)->target_object = t_obj;
+				    CONTR(op)->target_object_count = t_obj->count;
+                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
+                            params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+	                return 1;
+				}
+			}
+        }
+	}
 
     send_clear_interface(CONTR(op));
     return 1;
