@@ -666,6 +666,20 @@ arch grassd_2
 x 4
 y 9
 end
+arch wmask_wanted
+msg
+A Gnoll has been sighted in Guild Hall! It's reported height is
+about 2 meters, seemed to be wielding a polearm of
+some sort, and has a red mark on its face.
+
+If you see this Gnoll, fight to the best of your abilities to
+kill it and bring proof of death to <person in Merc Guild> in the Mercenary
+Guild of Guild Hall or flee like kobolds in a cavein. Reward is
+as seen fit by <person in Merc Guild>.
+endmsg
+x 4
+y 9
+end
 arch floor_flagm1
 x 4
 y 10
