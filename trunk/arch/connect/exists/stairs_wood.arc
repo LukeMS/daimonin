@@ -30,19 +30,19 @@ face stairs_wood_down.131
 anim
 facings 9
 dummy.111
-stairs_wood_down.131
-stairs_wood_down.131
+stairs_wood_down.111
+stairs_wood_down.111
 stairs_wood_down.131
 stairs_wood_down.131
 stairs_wood_down.151
 stairs_wood_down.151
-stairs_wood_down.151
-stairs_wood_down.151
+stairs_wood_down.171
+stairs_wood_down.171
 mina
 is_animated 0
 anim_speed 0
-is_turnable 3
-direction 1
+is_turnable 1
+direction 3
 no_teleport 1
 layer 5
 hp -1
