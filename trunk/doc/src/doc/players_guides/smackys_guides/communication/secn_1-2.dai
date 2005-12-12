@@ -31,6 +31,9 @@
                     Enter the game command <code>"/shout &lt;message&gt;"</code> and your message is broadcast to all players.
                 </p>
                 <p>
+                    In an effort to combat abusive messages/spam being sent, only players of level two or higher can <code>"/shout"</code>.
+                </p>
+                <p>
                     The message appears in the upper text window in orange text.
                 </p>
             </dd>
@@ -94,6 +97,9 @@
         </p>
         <p>
             An alternative to this is <code>"/reply &lt;message&gt;"</code>. This is used when someone else has told you something; in other words it is a quicker equivalent to a <code>"/tell"</code> to the last player you heard from.
+        </p>
+        <p>
+            In an effort to combat abusive messages/spam being sent, only players of level two or higher can <code>"/tell"</code>/<code>"/reply"</code>.
         </p>
         <p>
             In either case, the message appears in the upper window in white text. A message which someone else has told you also appears in the upper window but in light blue text.
