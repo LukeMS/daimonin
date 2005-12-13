@@ -7,6 +7,7 @@ endmsg
 width 24
 height 24
 darkness 1
+tile_path_2 guildhallb_040a
 tileset_id 28
 tileset_x 0
 tileset_y 0
@@ -1449,6 +1450,7 @@ arch spawn_point
 x 9
 y 2
 arch gnoll
+name red-marked gnoll
 type 83
 level 7
 Wis 3
@@ -1682,8 +1684,8 @@ y 8
 end
 arch ladder_up
 slaying /relic/castle/castle_030a
-hp 10
-sp 8
+hp 9
+sp 6
 x 10
 y 8
 end
