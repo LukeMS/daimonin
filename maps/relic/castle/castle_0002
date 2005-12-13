@@ -1387,6 +1387,17 @@ arch floor_marble4f
 x 9
 y 9
 end
+arch spawn_point
+x 9
+y 9
+arch female1
+type 83
+level 7
+stand_still 1
+Wis 4
+direction 1
+end
+end
 arch floor_marble4f
 x 9
 y 10
@@ -1411,17 +1422,14 @@ arch floor_marble4f
 x 9
 y 13
 end
-arch ranger
-level 15
-random_move 1
-item_race 4
-item_level 4
+arch spawn_point
 x 9
 y 13
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
+arch ranger
+type 83
+level 14
+stand_still 1
+direction 1
 end
 end
 arch floor_marble4f
@@ -1679,6 +1687,17 @@ end
 arch floor_marble4f
 x 11
 y 9
+end
+arch spawn_point
+x 11
+y 9
+arch peasant
+type 83
+level 8
+stand_still 1
+Wis 4
+direction 1
+end
 end
 arch floor_marble4f
 x 11
@@ -2108,17 +2127,14 @@ arch floor_marble4f
 x 14
 y 9
 end
-arch priest_green
-level 20
-random_move 1
-item_race 4
-item_level 4
+arch spawn_point
 x 14
 y 9
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
+arch priest_green
+type 83
+level 12
+stand_still 1
+direction 1
 end
 end
 arch floor_marble4f
@@ -2430,17 +2446,14 @@ arch floor_marble4f
 x 16
 y 15
 end
-arch mage_old
-level 20
-random_move 1
-item_race 4
-item_level 4
+arch spawn_point
 x 16
 y 15
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
+arch woman_old
+type 83
+level 10
+stand_still 1
+direction 1
 end
 end
 arch floor_marble4f

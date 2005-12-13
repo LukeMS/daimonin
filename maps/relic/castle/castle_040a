@@ -984,6 +984,7 @@ x 6
 y 6
 end
 arch bank2b
+no_pass 1
 direction 5
 x 6
 y 6
@@ -993,6 +994,7 @@ x 6
 y 7
 end
 arch bank2b
+no_pass 1
 direction 5
 x 6
 y 7
@@ -1852,6 +1854,7 @@ x 11
 y 5
 end
 arch bank2c
+no_pass 1
 direction 5
 x 11
 y 5
@@ -1861,6 +1864,7 @@ x 11
 y 6
 end
 arch bank2b
+no_pass 1
 direction 5
 x 11
 y 6
@@ -1870,6 +1874,7 @@ x 11
 y 7
 end
 arch bank2b
+no_pass 1
 direction 5
 x 11
 y 7
@@ -1879,6 +1884,7 @@ x 11
 y 8
 end
 arch bank2a
+no_pass 1
 direction 5
 x 11
 y 8
