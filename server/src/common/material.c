@@ -1034,15 +1034,15 @@ void material_repair_item(object *item, int skill_value)
     if(item->item_quality/5 <= item->item_quality - item->item_condition && !(RANDOM()%3))
 	{
 		/* adjust item value because we lose quality */
-		if(item->value < (int64)(item->item_quality*10000))
+		if(item->value < (sint64)(item->item_quality*10000))
 		{
 			/* float to cover small changes in the value */
 			float tmp = ((float)item->value) / (float)item->item_quality;
-			item->value -= (int64) tmp; 
+			item->value -= (sint64) tmp; 
 		}
 		else
 		{	
-			item->value -= (item->value / (int64) item->item_quality);
+			item->value -= (item->value / (sint64) item->item_quality);
 		}
 
         item->item_quality--;
