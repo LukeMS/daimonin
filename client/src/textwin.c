@@ -195,6 +195,7 @@ void draw_info(char *str, int flags)
     char       *text;
     int         actWin, z;
 
+	LOG(LOG_MSG,"DRAW_INFO: >%s<\n", str);
     color = flags & 0xff;
     mode = flags;
     /*

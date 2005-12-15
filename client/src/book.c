@@ -325,7 +325,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 				plc_logic+=1;
 				
 				/* lets check we need to break the title line (because its to big) */
-				if((l_len = StringWidthOffset(&BigFont, b_line->line, 196)) != strlen(b_line->line))
+				if(StringWidthOffset(&BigFont, b_line->line, &l_len, 196))
 				{
 					int i = l_len;
 					b_line->line[l_len]=0;
@@ -398,8 +398,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 			}
 			
 			/* now lets check the last line - if the line is to long, lets adjust it */
-			l_len = StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?&BigFont:&SystemFont, tmp_line->line, 196);
-			if(l_len!=strlen(tmp_line->line))
+			if(StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?&BigFont:&SystemFont, tmp_line->line, &l_len, 196))
 			{
 				int i;
 
@@ -522,7 +521,7 @@ void show_book(int x, int y)
 			}
 			else if(page1->line[i]->mode == BOOK_LINE_TITLE)
 			{
-				StringBlt(ScreenSurface, &BigFont, page1->line[i]->line, box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
+				StringBlt(ScreenSurface, &BigFont, page1->line[i]->line, box.x+2, box.y+2+yoff, COLOR_DBROWN, NULL, NULL);
 			}
 			i++;
 		}
@@ -558,7 +557,7 @@ void show_book(int x, int y)
 			}
 			else if(page2->line[i]->mode == BOOK_LINE_TITLE)
 			{
-				StringBlt(ScreenSurface, &BigFont, page2->line[i]->line, box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
+				StringBlt(ScreenSurface, &BigFont, page2->line[i]->line, box.x+2, box.y+2+yoff, COLOR_DBROWN, NULL, NULL);
 			}
 			i++;
 		}

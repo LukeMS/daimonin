@@ -2417,6 +2417,7 @@ void save_keybind_file(char *fname)
 ******************************************************************/
 void check_menu_keys(int menu, int key)
 {
+	int gui_npc_decline = FALSE, gui_npc_accept = FALSE;
     int shiftPressed    = SDL_GetModState() & KMOD_SHIFT;
 
     if (cpl.menustatus == MENU_NO)
@@ -2507,50 +2508,162 @@ void check_menu_keys(int menu, int key)
                 HistoryPos = 0;
                 break;
 
-            case SDLK_d:
-                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-                if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.command[0]!='\0')
-                    gui_interface_send_command(1, gui_interface_npc->decline.command);
-                else
-                    reset_gui_interface();
-
-		        reset_keys();
-				cpl.input_mode = INPUT_MODE_NO;
-                break;
-
-            case SDLK_n:
-                if(gui_interface_npc->accept.title[0]!='N')
-                    return;
-                /*draw_info("You listen...", COLOR_WHITE);*/
-                gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
-                goto menu_npc_jump1;
-            case SDLK_a:
-                if(gui_interface_npc->accept.title[0]!='A')
-                    return;
-                draw_info("You accept.", COLOR_WHITE);
-                gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
-                goto menu_npc_jump1;
-            case SDLK_o:
-                if(gui_interface_npc->accept.title[0]!=0 && gui_interface_npc->accept.title[0]!='O')
-                    return;
-                draw_info("Ok and bye.", COLOR_WHITE);
-menu_npc_jump1:
-                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-                if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.command[0]!='\0')
-                {
-                    char cmd[1024];
-
-                    if(gui_interface_npc->icon_select)
-                        sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
-                    else
-                        strcpy(cmd, gui_interface_npc->accept.command);
-                    gui_interface_send_command(1, cmd);
-                }
-                else
-                    reset_gui_interface();
-		    reset_keys();
-			cpl.input_mode = INPUT_MODE_NO;
-            break;
+				case SDLK_a:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='A')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='A')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_b:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='B')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='B')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_c:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='C')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='C')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_d:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='D')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='D')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_e:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='E')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='E')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_f:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='F')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='F')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_g:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='G')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='G')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_h:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='H')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='H')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_i:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='I')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='I')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_j:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='J')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='J')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_k:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='K')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='K')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_l:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='L')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='L')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_m:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='M')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='M')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_n:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='N')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='N')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_o:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='O')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='O')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_p:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='P')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='P')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_q:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='Q')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='Q')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_r:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='R')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='R')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_s:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='S')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='S')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_t:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='T')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='T')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_u:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='U')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='U')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_v:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='V')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='V')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_w:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='W')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='W')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_x:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='X')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='X')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_y:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='Y')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='Y')
+						gui_npc_accept = TRUE;
+				break;
+				case SDLK_z:
+	               if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.title[0]=='Z')
+						gui_npc_decline = TRUE;
+	               else if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.title[0]=='Z')
+						gui_npc_accept = TRUE;
+				break;
 
             case SDLK_TAB:
 		    if(gui_interface_npc->link_count)
@@ -2637,6 +2750,34 @@ menu_npc_jump1:
                 break;
 
             }
+
+			/* lets check we have a named button pressed or clicked inside the npc gui */
+			if(gui_npc_decline)
+			{
+                sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				if(gui_interface_npc->decline.command[0]!='\0')
+					gui_interface_send_command(1, gui_interface_npc->decline.command);
+				else
+					reset_gui_interface();
+			}
+			else if(gui_npc_accept)
+			{
+	            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				if(gui_interface_npc->accept.command[0]!='\0')
+				{
+                    char cmd[1024];
+					
+					/* if we have accept, we must check selected for possible slot selection */
+                    if(gui_interface_npc->icon_select)
+                        sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
+                    else
+                        strcpy(cmd, gui_interface_npc->accept.command);
+
+                    gui_interface_send_command(1, cmd);
+				}
+				else
+					reset_gui_interface();
+			}
 
         break;
         case MENU_OPTION:

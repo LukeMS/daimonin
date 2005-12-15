@@ -178,7 +178,7 @@ static char        *art_author[]                =
 
 static char        *mon_book_name[]             =
 {
-    "beastuary", "catalog", "compilation", "collection", "encyclopedia", "guide", "handbook", "list", "manual", "notes",
+    "beastiary", "catalog", "compilation", "collection", "encyclopedia", "guide", "handbook", "list", "manual", "notes",
     "record", "register", "volume"
 };
 

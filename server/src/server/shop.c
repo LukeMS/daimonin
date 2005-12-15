@@ -159,7 +159,7 @@ static archetype * find_next_coin(sint64 c, int *cointype)
 /* This returns a string of how much something is worth based on
  * an integer being passed.
  */
-char * cost_string_from_value(sint64 cost)
+char * cost_string_from_value(sint64 cost, int mode)
 {
     static char buf[MAX_BUF];
     archetype  *coin, *next_coin;
@@ -174,11 +174,17 @@ char * cost_string_from_value(sint64 cost)
     num = (uint32) (cost / coin->clone.value);
     cost -= num * coin->clone.value;
     /* careful - never set a coin arch to material_real = -1 ! */
-    if (num == 1)
-        sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
-    else
-        sprintf(buf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
-
+	if(mode)
+	{
+		sprintf(buf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
+	}
+	else
+	{
+	    if (num == 1)
+		    sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
+		else
+			sprintf(buf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
+	}
     next_coin = find_next_coin(cost, &cointype);
     if (next_coin == NULL)
         return buf;
@@ -207,10 +213,17 @@ char * cost_string_from_value(sint64 cost)
         {
             strcat(endbuf, " and "); endbuf += 5;
         }
-        if (num == 1)
-            sprintf(endbuf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
-        else
-            sprintf(endbuf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
+		if(mode)
+		{
+			sprintf(endbuf, "%d%c%c", num, material_real[coin->clone.material_real].name[0], coin->clone.name[0]);
+		}
+		else
+		{
+	        if (num == 1)
+		        sprintf(endbuf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
+			else
+				sprintf(endbuf, "%d %s%ss", num, material_real[coin->clone.material_real].name, coin->clone.name);
+		}
     }
     while (next_coin);
 
@@ -219,7 +232,7 @@ char * cost_string_from_value(sint64 cost)
 
 char * query_cost_string(object *tmp, object *who, int flag)
 {
-    return cost_string_from_value(query_cost(tmp, who, flag));
+    return cost_string_from_value(query_cost(tmp, who, flag), 0);
 }
 
 /* This function finds out how much money the player is carrying,   *
@@ -443,7 +456,7 @@ int get_payment2(object *pl, object *op)
         {
             sint64 i   = query_cost(op, pl, F_BUY) - query_money(pl);
             CLEAR_FLAG(op, FLAG_UNPAID);
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i), query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i, 0), query_name(op));
             SET_FLAG(op, FLAG_UNPAID);
             return 0;
         }

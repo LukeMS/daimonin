@@ -1573,7 +1573,7 @@ int set_ring_bonus(object *op, int bonus, int level)
           break;
 
         case 11:
-          if (!RANDOM() % 3)
+          if (!(RANDOM() % 3))
               goto make_prot_items;
           tmp = 3;
           if (level < 5)
@@ -1637,7 +1637,7 @@ int set_ring_bonus(object *op, int bonus, int level)
           break;
 
         case 12:
-          if (!RANDOM() % 3)
+          if (!(RANDOM() % 3))
               goto make_prot_items;
           tmp = 3;
           if (level < 5)

@@ -201,6 +201,7 @@ int save_player(object *op, int flag)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
     fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
     fprintf(fp, "silent_login %d\n", pl->silent_login);
+    fprintf(fp, "p_ver %d\n", pl->p_ver);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
     fprintf(fp, "gen_sp %d\n", pl->gen_sp);
     fprintf(fp, "gen_grace %d\n", pl->gen_grace);
@@ -607,6 +608,7 @@ void check_login(object *op)
     pl->orig_stats.Pow = 0;
     pl->orig_stats.Wis = 0;
     pl->orig_stats.Cha = 0;
+	pl->p_ver = 0;
 
     strcpy(pl->savebed_map,EXIT_PATH(&map_archeytpe->clone) );
     pl->bed_x = map_archeytpe->clone.stats.hp;
@@ -637,6 +639,8 @@ void check_login(object *op)
             pl->dm_stealth = value;
         else if (!strcmp(buf, "silent_login"))
             pl->silent_login = value;
+        else if (!strcmp(buf, "p_ver"))
+            pl->p_ver = value;
         else if (!strcmp(buf, "gen_hp"))
             pl->gen_hp = value;
         else if (!strcmp(buf, "shoottype"))
@@ -777,6 +781,17 @@ void check_login(object *op)
     load_object(fp, op, mybuffer, LO_REPEAT, 0);
     delete_loader_buffer(mybuffer);
     fclose(fp);
+
+	/* QUICKHACKS - remove for 1.0 and clean player files */	
+	if(pl->p_ver == 0)
+	{
+        for (tmp = op->inv; tmp; tmp = tmp->below)
+        {
+			if (tmp->type == ROD || tmp->type == HORN)
+				CLEAR_FLAG(tmp, FLAG_APPLIED);
+        }
+		pl->p_ver = 1;
+	}
 
     /* at this moment, the inventory is reverse loaded.
      * Lets exchange it here.

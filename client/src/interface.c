@@ -31,6 +31,7 @@
 #define INTERFACE_CMD_DECLINE    32
 #define INTERFACE_CMD_LINK       64
 #define INTERFACE_CMD_TEXTFIELD 128
+#define INTERFACE_CMD_BUTTON    256
 
 
 static int interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
@@ -115,7 +116,10 @@ static int interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
             case 'c': /* link command */
                 if(!(buf = get_parameter_string(data, pos)))
                     return -1;
-                strcpy(head->cmd, buf);
+				head->cmd[0]=0;
+				if(buf[0] != '/')
+	                strcpy(head->cmd, "/talk ");
+	            strcat(head->cmd, buf);
                 break;
 
             default:
@@ -328,7 +332,11 @@ static int interface_cmd_button(_gui_interface_button *head, char *data, int *po
             case 'c': /* button command */
                 if(!(buf = get_parameter_string(data, pos)))
                     return -1;
-                strcpy(head->command, buf);
+
+				head->command[0]=0;
+				if(buf[0] != '/')
+	                strcpy(head->command, "/talk ");
+	            strcat(head->command, buf);
                 break;
 
             default:
@@ -404,6 +412,22 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
     int s;
 
 
+    if(gui_int->used_flag&GUI_INTERFACE_ICON)
+    {
+		char *tmp;
+
+		for(s=0;s<gui_int->icon_count;s++)
+		{
+			gui_int->icon[s].second_line = NULL;
+			tmp = strchr(gui_int->icon[s].body_text, '\n');
+			if(tmp)
+			{
+				gui_int->icon[s].second_line = tmp+1;
+				*tmp = 0;
+			}
+		}
+	}
+
     if(gui_int->used_flag&GUI_INTERFACE_HEAD)
     {
         gui_int->head.face = get_bmap_id(gui_int->head.name);
@@ -415,7 +439,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
     /* sort out the message text body to sigle lines */
     if(gui_int->used_flag&GUI_INTERFACE_MESSAGE)
     {
-        int i, c=0;
+        int i, len, c=0;
 
         gui_int->message.line_count=0;
         for(i=0;;i++)
@@ -433,7 +457,35 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
             }
             else
             {
-                gui_int->message.lines[gui_int->message.line_count][c++]=gui_int->message.body_text[i];
+				/* lets do automatic line breaks */
+                gui_int->message.lines[gui_int->message.line_count][c]=gui_int->message.body_text[i];
+
+				if(StringWidthOffset(&SystemFont, gui_int->message.lines[gui_int->message.line_count], &len, 270))
+				{
+				    char tmp_line[INTERFACE_MAX_CHAR];
+					int ii;
+	
+					strcpy(tmp_line, gui_int->message.lines[gui_int->message.line_count]); /* safe the line */
+					gui_int->message.lines[gui_int->message.line_count][len]=0; 
+					for(ii=len;ii>=0;ii--)
+					{
+						if(gui_int->message.lines[gui_int->message.line_count][ii] == ' ')
+						{
+							gui_int->message.lines[gui_int->message.line_count][ii]=0;
+							break;
+						}
+					}
+					if(ii<0) /* we have not find any usable whitespace */
+						ii = len;
+
+					/* we don't eliminate leading whitespaces because we can't know its a format issue or not 
+					 * better to live with this little glitch as to destroy perhaps the text format.
+                     */
+					strcpy(gui_int->message.lines[++gui_int->message.line_count], &tmp_line[ii+1]);
+					c = strlen(gui_int->message.lines[gui_int->message.line_count]);
+				}
+				else
+					c++;
             }
 
             if(gui_int->message.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
@@ -491,24 +543,29 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
         }
     }
 
-    /* prepare the buttons (titles) */
-    if(gui_int->used_flag&GUI_INTERFACE_DECLINE)
-    {
-        if(gui_int->decline.title[0] != '\0')
-        {
-            sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
-        }
-        else
-        {
-            strcpy(gui_int->decline.title,"Decline");
-            strcpy(gui_int->decline.title2,"~D~ecline");
-        }
-    }
+    if(gui_int->used_flag&GUI_INTERFACE_DECLINE && !(gui_int->used_flag&GUI_INTERFACE_ACCEPT))
+	{
+		if(gui_int->decline.title[0] != '\0')
+		{
+			gui_int->decline.title[0] = toupper(gui_int->decline.title[0]);
+			sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
+		}
+		else
+		{
+			strcpy(gui_int->decline.title,"Decline");
+			strcpy(gui_int->decline.title2,"~D~ecline");
+		}
 
-    if(gui_int->used_flag&GUI_INTERFACE_ACCEPT)
+		gui_int->used_flag |=GUI_INTERFACE_ACCEPT;
+		gui_int->accept.command[0]='\0';
+        strcpy(gui_int->accept.title,"Accept");
+		strcpy(gui_int->accept.title2,"~A~ccept");
+	}
+	else if(gui_int->used_flag&GUI_INTERFACE_ACCEPT)
     {
         if(gui_int->accept.title[0] != '\0')
         {
+			gui_int->accept.title[0] = toupper(gui_int->accept.title[0]);
             sprintf(gui_int->accept.title2,"~%c~%s", gui_int->accept.title[0],gui_int->accept.title+1);
         }
         else
@@ -516,7 +573,50 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
             strcpy(gui_int->accept.title,"Accept");
             strcpy(gui_int->accept.title2,"~A~ccept");
         }
+
+	    /* prepare the buttons (titles) */
+		if(gui_int->used_flag&GUI_INTERFACE_DECLINE)
+		{
+			if(gui_int->decline.title[0] != '\0')
+			{
+				gui_int->decline.title[0] = toupper(gui_int->decline.title[0]);
+				sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
+			}
+			else
+			{
+				strcpy(gui_int->decline.title,"Decline");
+				strcpy(gui_int->decline.title2,"~D~ecline");
+			}
+		}
+		else /* if we have a accept button but no decline one - we set it without command = close gui */
+		{
+			gui_int->used_flag |=GUI_INTERFACE_DECLINE;
+			gui_int->decline.command[0]='\0';
+			strcpy(gui_int->decline.title,"Decline");
+			strcpy(gui_int->decline.title2,"~D~ecline");
+		}
     }
+	else if(gui_int->used_flag&GUI_INTERFACE_BUTTON) /* means: single button */
+    {
+		gui_int->used_flag |=GUI_INTERFACE_ACCEPT; /* yes, thats right! we fake the accept button */
+		if(gui_int->accept.title[0] != '\0')
+		{
+			gui_int->accept.title[0] = toupper(gui_int->accept.title[0]);
+			sprintf(gui_int->accept.title2,"~%c~%s", gui_int->accept.title[0],gui_int->accept.title+1);
+		}
+		else
+		{
+			strcpy(gui_int->accept.title,"Bye");
+			strcpy(gui_int->accept.title2,"~B~ye");
+		}
+	}
+	else /* no accept/decline and no button? set it to 'Bye' default button */
+	{
+		gui_int->used_flag |=GUI_INTERFACE_ACCEPT; /* yes, thats right! we fake the accept button */
+		gui_int->accept.command[0]='\0';
+		strcpy(gui_int->accept.title,"Bye");
+		strcpy(gui_int->accept.title2,"~B~ye");
+	}
 
     return gui_int;
 }
@@ -673,6 +773,18 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
                         gui_int->used_flag |=GUI_INTERFACE_ACCEPT;
                         break;
 
+                    case 'b': /* define single button */
+                        cmd = INTERFACE_CMD_BUTTON;
+                        if(interface_cmd_button(&button_tmp, data, &pos))
+                        {
+                            free(gui_int);
+                            return NULL;
+                        }
+						/* we use the accept button struct for single buttons too */
+                        memcpy(&gui_int->accept, &button_tmp,sizeof(_gui_interface_button));
+                        gui_int->used_flag |=GUI_INTERFACE_BUTTON;
+                        break;
+
                     case 'd': /* define decline button */
                         cmd = INTERFACE_CMD_DECLINE;
                         if(interface_cmd_button(&button_tmp, data, &pos))
@@ -785,9 +897,9 @@ void gui_interface_send_command(int mode, char *cmd)
        { 
            yoff+=26; 
     
-           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=12) 
+           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=14) 
            { 
-               if(my >= yoff && my <=yoff+12) 
+               if(my >= yoff && my <=yoff+14) 
                { 
                    int st=0, xt, xs=x+40, s, flag=FALSE; 
     
@@ -833,9 +945,9 @@ void gui_interface_send_command(int mode, char *cmd)
     
        if(gui_interface_npc->link_count) 
        { 
-           yoff+=12; 
-           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=12) 
-               if(my >= yoff && my <=yoff+12) 
+           yoff+=14; 
+           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=13) 
+               if(my >= yoff && my <=yoff+13) 
                { 
                    int len =  get_string_pixel_length(gui_interface_npc->link[i].link, &SystemFont); 
     
@@ -870,8 +982,8 @@ void gui_interface_send_command(int mode, char *cmd)
                yoff+=15; 
            } 
        } 
-    
-    
+     
+       yoff+=5; 
        if(gui_interface_npc->icon_count) 
        { 
            int flag_s=FALSE; 
@@ -931,14 +1043,14 @@ void gui_interface_send_command(int mode, char *cmd)
            yoff+=26; 
     
            for(i=0;i<gui_interface_npc->message.line_count;i++) 
-               yoff+=12; 
+               yoff+=14; 
        } 
     
        if(gui_interface_npc->link_count) 
        { 
-           yoff+=12; 
+           yoff+=14; 
            for(i=0;i<gui_interface_npc->link_count;i++) 
-               yoff+=12; 
+               yoff+=13; 
        } 
     
        /* reward is also used as "objective" */ 
@@ -961,6 +1073,7 @@ void gui_interface_send_command(int mode, char *cmd)
            } 
        } 
     
+       yoff+=5; 
        if(gui_interface_npc->icon_count) 
        { 
            int flag_s=FALSE; 
@@ -1055,17 +1168,17 @@ void gui_interface_send_command(int mode, char *cmd)
            /*len =  get_string_pixel_length(gui_interface_npc->message.title, &BigFont); 
            StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+width2-len/2, y+yoff, COLOR_WHITE, NULL, NULL); 
            */ 
-           StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_WHITE, NULL, NULL); 
+           StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL); 
            yoff+=26; 
     
-           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=12) 
+           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=14) 
                StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL); 
        } 
     
        if(gui_interface_npc->link_count) 
        { 
-           yoff+=12; 
-           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=12) 
+           yoff+=14; 
+           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=13) 
            { 
                            if(gui_interface_npc->link_selected == i+1) 
                        StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL); 
@@ -1081,7 +1194,7 @@ void gui_interface_send_command(int mode, char *cmd)
            sprintf(xbuf, "len: %d yoff: %d (%d)", gui_interface_npc->win_length,gui_interface_npc->yoff,INTERFACE_WINLEN_NPC-gui_interface_npc->win_length); 
    */ 
            yoff +=25; 
-           StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x+40, y+yoff, COLOR_WHITE, NULL, NULL); 
+           StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL); 
            /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/ 
            yoff+=26; 
     
@@ -1130,6 +1243,7 @@ void gui_interface_send_command(int mode, char *cmd)
            } 
        } 
     
+       yoff+=5; 
        /* present now the icons for rewards or whats searched */ 
        if(gui_interface_npc->icon_count) 
        { 
@@ -1154,8 +1268,13 @@ void gui_interface_send_command(int mode, char *cmd)
                    else if(gui_interface_npc->icon[i].picture) 
                        sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL); 
     
-                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL); 
-                   yoff+=44; 
+                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL); 
+                   yoff+=10; 
+                   StringBlt(ScreenSurface, &Font6x3Out, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL); 
+                   yoff+=10; 
+				   if(gui_interface_npc->icon[i].second_line)
+	                   StringBlt(ScreenSurface, &Font6x3Out, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL); 
+                   yoff+=24; 
                } 
            } 
     
@@ -1174,8 +1293,13 @@ void gui_interface_send_command(int mode, char *cmd)
                        else if(gui_interface_npc->icon[i].picture) 
                            sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL); 
     
-                       StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL); 
-                       yoff+=44; 
+	                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL); 
+		               yoff+=10; 
+			           StringBlt(ScreenSurface, &Font6x3Out, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL); 
+				       yoff+=10; 
+					   if(gui_interface_npc->icon[i].second_line)
+						   StringBlt(ScreenSurface, &Font6x3Out, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL); 
+						yoff+=24; 
                    } 
                } 
            } 
@@ -1206,8 +1330,13 @@ void gui_interface_send_command(int mode, char *cmd)
                        else if(gui_interface_npc->icon[i].picture) 
                            sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL); 
     
-                       StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL); 
-                       yoff+=44; 
+	                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL); 
+		               yoff+=10; 
+			           StringBlt(ScreenSurface, &Font6x3Out, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL); 
+				       yoff+=10; 
+					   if(gui_interface_npc->icon[i].second_line)
+						   StringBlt(ScreenSurface, &Font6x3Out, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL); 
+						yoff+=24; 
                        t++; 
                    } 
                } 
@@ -1224,21 +1353,101 @@ void gui_interface_send_command(int mode, char *cmd)
     
            if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP, 
                                gui_interface_npc->accept.title, gui_interface_npc->accept.title2)) 
-           { 
-               if(gui_interface_npc->icon_select && !gui_interface_npc->selected) 
-               { 
-                   draw_info("select a item first.", COLOR_GREEN); 
-                   sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100); 
-                   return; 
+           {
+				int ekey=-1;
+ 
+				if(gui_interface_npc->icon_select && !gui_interface_npc->selected) 
+				{ 
+				    draw_info("select a item first.", COLOR_GREEN); 
+					sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100); 
+					return; 
     
-               } 
+				} 
     
-               if(gui_interface_npc->accept.title[0]=='O') 
-                   check_menu_keys(MENU_NPC, SDLK_o); 
-               else if(gui_interface_npc->accept.title[0]=='N') 
-                   check_menu_keys(MENU_NPC, SDLK_n); 
-               else 
-                   check_menu_keys(MENU_NPC, SDLK_a); 
+				switch(gui_interface_npc->accept.title[0])
+				{
+					case 'A':
+						ekey = SDLK_a;
+					break;
+					case 'B':
+						ekey = SDLK_b;
+					break;
+					case 'C':
+						ekey = SDLK_c;
+					break;
+					case 'D':
+						ekey = SDLK_d;
+					break;
+					case 'E':
+						ekey = SDLK_e;
+					break;
+					case 'F':
+						ekey = SDLK_f;
+					break;
+					case 'G':
+						ekey = SDLK_g;
+					break;
+					case 'H':
+						ekey = SDLK_h;
+					break;
+					case 'I':
+						ekey = SDLK_i;
+					break;
+					case 'J':
+						ekey = SDLK_j;
+					break;
+					case 'K':
+						ekey = SDLK_k;
+					break;
+					case 'L':
+						ekey = SDLK_l;
+					break;
+					case 'M':
+						ekey = SDLK_m;
+					break;
+					case 'N':
+						ekey = SDLK_n;
+					break;
+					case 'O':
+						ekey = SDLK_o;
+					break;
+					case 'P':
+						ekey = SDLK_p;
+					break;
+					case 'Q':
+						ekey = SDLK_q;
+					break;
+					case 'R':
+						ekey = SDLK_r;
+					break;
+					case 'S':
+						ekey = SDLK_s;
+					break;
+					case 'T':
+						ekey = SDLK_t;
+					break;
+					case 'U':
+						ekey = SDLK_u;
+					break;
+					case 'V':
+						ekey = SDLK_v;
+					break;
+					case 'W':
+						ekey = SDLK_w;
+					break;
+					case 'X':
+						ekey = SDLK_x;
+					break;
+					case 'Y':
+						ekey = SDLK_y;
+					break;
+					case 'Z':
+						ekey = SDLK_z;
+					break;
+				}
+				if(ekey != -1)
+					check_menu_keys(MENU_NPC, ekey); 
+
                return; 
            } 
     
@@ -1250,14 +1459,6 @@ void gui_interface_send_command(int mode, char *cmd)
                    check_menu_keys(MENU_NPC, SDLK_d); 
                    return; 
                } 
-           } 
-       } 
-       else /* if not accept button defined, kick in the default OK button */ 
-       { 
-           if (add_button(x + 35, y + 443, numButton++, BITMAP_DIALOG_BUTTON_UP, "Ok", "~O~k")) 
-           { 
-               check_menu_keys(MENU_NPC, SDLK_o); 
-               return; 
            } 
        } 
     

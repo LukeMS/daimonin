@@ -538,9 +538,9 @@ enum
 #define COLOR_YELLOW  7
 #define COLOR_DK_NAVY  8
 
-
 #define COLOR_HGOLD 64 /* client only colors */
 #define COLOR_DGOLD 65
+#define COLOR_DBROWN  44
 
 #define COLOR_BLACK 255
 extern void     DoClient(ClientSocket *csocket);

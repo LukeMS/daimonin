@@ -2453,7 +2453,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
     for (tmp = op->inv; tmp ; tmp = tmp->below)
     {
         inside_jump1:
-        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !IS_SYS_INVISIBLE(tmp) && need_identify(tmp))
+        if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !IS_SYS_INVISIBLE(tmp) && (need_identify(tmp) ||mode ==IDENTIFY_MODE_MARKED))
         {
             success2++;
             if (level < tmp->level)

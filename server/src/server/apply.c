@@ -3539,6 +3539,13 @@ int apply_special(object *who, object *op, int aflags)
         case BOW:
           if (!check_skill_to_apply(who, op))
               return 1;
+
+		  if((op->type == ROD || op->type == HORN) && who->chosen_skill->level+10+who->chosen_skill->level/12 < op->level)
+		  {
+			new_draw_info_format(NDI_UNIQUE, 0, who, "Your %s skill level is to low!", query_short_name(who->chosen_skill, who));
+			return 1;
+		  }
+ 
           SET_FLAG(op, FLAG_APPLIED);
           new_draw_info_format(NDI_UNIQUE, 0, who, "You ready %s.", query_name(op));
           if (who->type == PLAYER)

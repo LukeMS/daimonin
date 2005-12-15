@@ -997,22 +997,25 @@ void material_attack_damage(object *op, int num, int chance, int base)
 }
 
 /* repair costs for item - owner is owner of that item */
-sint64 material_repair_cost(object *item, object *owner)
+int64 material_repair_cost(object *item, object *owner)
 {
     double tmp;
-    sint64 costs=0;
+    int64 costs=0;
 
     if(item->value && item->item_quality && item->item_quality > item->item_condition)
     {
+		int64 value = item->value;
         /* this is a problem.. we assume, that costs (as 64 bit value) will be covered
          * by tmp as double. This will work fine if costs is not insane high - what should
          * not be. If we have here problems, then we need to split this calc in a 64 bit one
          * with high values and small one
          */
+		if(value < item->item_quality)
+			value = (int64) item->item_quality;
 
-        tmp = (double) item->value / (double)item->item_quality; /* how much cost is 1 point of quality */
+        tmp = (double) value / (double)item->item_quality; /* how much cost is 1 point of quality */
         tmp *= (double)item->item_quality - (double)item->item_condition; /* number of condition we miss */
-        costs = (sint64) tmp;
+        costs = (int64) tmp;
     }
 
     return costs;
@@ -1027,16 +1030,22 @@ void material_repair_item(object *item, int skill_value)
 
     /* skill_value will determinate the quality OF the repair source */
 
-    /* ATM we have disabled skill_value use - we always lose 1-3 points of quality permanent
-     * if the condition is 20% or more under quality, set it to one 
-     */
-    if(item->item_quality/5 <= item->item_quality - item->item_condition)
-    {
-        int tmp = item->item_quality - (RANDOM()%3)+1;
+	/* lose a quality point if the repair is heavy */
+    if(item->item_quality/5 <= item->item_quality - item->item_condition && !(RANDOM()%3))
+	{
+		/* adjust item value because we lose quality */
+		if(item->value < (int64)(item->item_quality*10000))
+		{
+			/* float to cover small changes in the value */
+			float tmp = ((float)item->value) / (float)item->item_quality;
+			item->value -= (int64) tmp; 
+		}
+		else
+		{	
+			item->value -= (item->value / (int64) item->item_quality);
+		}
 
-        if(tmp <= 0)
-            tmp = 1;
-
-        item->item_quality = tmp;
-    }
+        item->item_quality--;
+	}
+	item->item_condition = item->item_quality;	/* finally repair the shit */
 }
