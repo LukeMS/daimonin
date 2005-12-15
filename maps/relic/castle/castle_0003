@@ -1228,8 +1228,8 @@ type 83
 level 45
 direction 1
 arch event_obj
-sub_type 13
 race /lua/bank.lua
+sub_type 13
 end
 end
 end
@@ -1310,8 +1310,9 @@ type 83
 level 45
 direction 1
 arch event_obj
-sub_type 13
+name Lua
 race /lua/bank.lua
+sub_type 13
 end
 end
 end
