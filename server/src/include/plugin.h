@@ -317,7 +317,7 @@ struct plugin_hooklist
     sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
     void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
     int (*add_pet)(object *owner, object *pet, int mode);
-	int64 (*material_repair_cost)(object *item, object *owner);
+	sint64 (*material_repair_cost)(object *item, object *owner);
 	void (*material_repair_item)(object *item, int skill_value);
 	char * (*query_short_name)(object *op, object *caller);
     
