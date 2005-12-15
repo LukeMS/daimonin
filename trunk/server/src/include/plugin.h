@@ -307,7 +307,7 @@ struct plugin_hooklist
     void (*get_tod)(struct _timeofday *tod);
     sint64 (*query_money)(object *op);
     sint64 (*query_cost)(object *tmp, object *who, int flag);
-    char* (*cost_string_from_value)(sint64 cost);
+    char* (*cost_string_from_value)(sint64 cost, int mode);
     int (*pay_for_item)(object *op, object *pl);
     int (*pay_for_amount)(sint64 to_pay, object *pl);
     char* (*get_word_from_string)(char *str, int *pos);
@@ -317,6 +317,9 @@ struct plugin_hooklist
     sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
     void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
     int (*add_pet)(object *owner, object *pet, int mode);
+	int64 (*material_repair_cost)(object *item, object *owner);
+	void (*material_repair_item)(object *item, int skill_value);
+	char * (*query_short_name)(object *op, object *caller);
     
     /* Global variables */
     Animations **animations;

@@ -1105,9 +1105,7 @@ void fix_player(object *op)
              || tmp->type == CLOSE_CON
              || tmp->type == TYPE_LIGHT_REFILL
              || tmp->type == WAND
-             || tmp->type == ROD
-             || tmp->type == MONSTER
-             || tmp->type == HORN)
+             || tmp->type == MONSTER)
             continue;
 
         if(tmp->type == TYPE_QUEST_CONTAINER)
@@ -1183,6 +1181,11 @@ void fix_player(object *op)
         {
             switch (tmp->type) /* still applied stuff */
             {
+				case ROD:
+				case HORN:
+					pl->equipment[PLAYER_EQUIP_MTOOL] = tmp;
+				break;
+
                 case TYPE_LIGHT_APPLY:
                   if (tmp->glow_radius > light)
                       light = tmp->glow_radius;
@@ -1695,7 +1698,6 @@ void fix_player(object *op)
     /* we must do -old_gow + light */
     if (op->map && old_glow != light)
         adjust_light_source(op->map, op->x, op->y, light - old_glow);
-
 
     /* for player, max hp depend on general level, sp on magic exp, grace on wisdom exp level
      * NOTE: all values are adjusted from clone at function start.

@@ -88,6 +88,7 @@ enum
     PLAYER_EQUIP_AMULET,
     PLAYER_EQUIP_WEAPON1,
     PLAYER_EQUIP_BOW,
+    PLAYER_EQUIP_MTOOL,
     PLAYER_EQUIP_MAX
     /* last index */
 };
@@ -296,6 +297,7 @@ typedef struct pl_player
                                                                */
 
     int					last_weapon_sp;
+	int					p_ver;
 
     char                firemode_name[BIG_NAME*2];
     char                quick_name[BIG_NAME*3]; /* thats rank + name +" the xxxx" */

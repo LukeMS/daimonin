@@ -2135,15 +2135,15 @@ arch wand
 chance 90
 more
 arch rod_light
-difficulty 20
+difficulty 15
 chance 5
 more
 arch horn
-difficulty 30
+difficulty 25
 chance 3
 more
 arch rod_heavy
-difficulty 50
+difficulty 40
 chance 2
 end
 treasureone magic_rand
@@ -2294,5 +2294,5 @@ chance 60
 end
 ################ test drop (for testmaps)
 treasureone random_test
-arch ring_generic
+list book_misc
 end

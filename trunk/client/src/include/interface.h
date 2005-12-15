@@ -26,8 +26,8 @@
 
 #define INTERFACE_WINLEN_NPC 353
 
-#define INTERFACE_MAX_LINE 50
-#define INTERFACE_MAX_CHAR 128
+#define INTERFACE_MAX_LINE 100
+#define INTERFACE_MAX_CHAR 256
 
 #define INTERFACE_MAX_REWARD_LINE 15
 
@@ -78,6 +78,7 @@ typedef struct gui_interface_icon
     char name[128];          /* face (picture name) */
     item element;
     _Sprite *picture;      /* the real picture */
+	char *second_line;
     char body_text[128]; /* head title */
 }_gui_interface_icon;
 
@@ -99,6 +100,7 @@ typedef struct gui_interface_button
 #define GUI_INTERFACE_ACCEPT     0x08
 #define GUI_INTERFACE_TEXTFIELD  0x10
 #define GUI_INTERFACE_DECLINE    0x20
+#define GUI_INTERFACE_BUTTON     0x40
 
 /* don't use, internal */
 #define GUI_INTERFACE_ICON    0x40

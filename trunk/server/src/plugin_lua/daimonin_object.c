@@ -32,6 +32,10 @@
 /* Available python methods for the GameObject object */
 static struct method_decl   GameObject_methods[]            =
 {
+    {"GetName", (lua_CFunction) GameObject_GetName},
+    {"GetEquipment", (lua_CFunction) GameObject_GetEquipment},
+    {"GetRepairCost", (lua_CFunction) GameObject_GetRepairCost},
+    {"Repair", (lua_CFunction) GameObject_Repair},
     {"Sound",  (lua_CFunction) GameObject_Sound},
     {"Interface",  (lua_CFunction) GameObject_Interface},
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
@@ -254,10 +258,90 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 };
 
 /****************************************************************************/
-/*                          GameObject methods                         */
+/*                          GameObject methods                              */
 /****************************************************************************/
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
+
+/*****************************************************************************/
+/* Name   : GameObject_GetName                                               */
+/* Lua    : object:GetName()                                                 */
+/* Status : Tested                                                           */
+/* same as query_short_name() - u                                            */
+/*****************************************************************************/
+static int GameObject_GetName(lua_State *L)
+{
+    lua_object     *self, *owner = NULL;
+	object		   *obj;
+    static char    *result;
+
+    get_lua_args(L, "O|O", &self, &owner);
+
+	if(owner)
+		obj = owner->data.object;
+
+	result = hooks->query_short_name(WHO, obj);
+
+    lua_pushstring(L, result);
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetEquipment                                          */
+/* Lua    : object:GetEquipment(idnum)                                       */
+/* Status : Tested. Only works for player objects                            */
+/*****************************************************************************/
+static int GameObject_GetEquipment(lua_State *L)
+{
+    int num;
+    lua_object *self;
+
+    get_lua_args(L, "Oi", &self, &num);
+
+	if(CONTR(WHO) && num >= 0 && num < PLAYER_EQUIP_MAX && CONTR(WHO)->equipment[num])
+	    return push_object(L, &GameObject, CONTR(WHO)->equipment[num]);
+	else
+		lua_pushnil(L);
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetRepairCost                                         */
+/* Lua    : object:GetRepairCost(|value)                                     */
+/* Status : Tested.                                                          */
+/*****************************************************************************/
+static int GameObject_GetRepairCost(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+	/* the sint64 to uint32 cast should be ok - can't think about that high repair costs */
+	if(WHO)
+	    lua_pushnumber(L, (uint32)hooks->material_repair_cost(WHO, NULL));
+	else
+		lua_pushnil(L);
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_Repair                                                */
+/* Lua    : object:Repair(|skill)                                            */
+/* Status : Tested.                                                          */
+/*****************************************************************************/
+static int GameObject_Repair(lua_State *L)
+{
+	int skill = 100;
+    lua_object *self;
+
+    get_lua_args(L, "O|i", &self, &skill);
+
+	hooks->material_repair_item(WHO, skill);
+
+    return 0;
+}
 
 /*****************************************************************************/
 /* Name   : GameObject_Sound                                                 */
@@ -2246,11 +2330,15 @@ static int GameObject_ShowCost(lua_State *L)
 {
     lua_object *self;
     sint64      value;
+	int			mode = 0;
     char       *cost_string;
 
-    get_lua_args(L, "OI", &self, &value);
+    get_lua_args(L, "OI|i", &self, &value, &mode);
 
-    cost_string = hooks->cost_string_from_value(value);
+	/* mode 0: string is like "4 gold coins, 3 silver coins"...
+     * mode 1: string is like "4g, 3s"
+	 */
+    cost_string = hooks->cost_string_from_value(value, mode);
 
     lua_pushstring(L, cost_string);
     return 1;
@@ -2299,6 +2387,7 @@ static int GameObject_AddMoney(lua_State *L)
     return 0;
 }
 
+/* TODO: add int64 to pushnumber() */
 /*****************************************************************************/
 /* Name   : GameObject_GetMoney                                              */
 /* Lua    : object:GetMoney()                                                */

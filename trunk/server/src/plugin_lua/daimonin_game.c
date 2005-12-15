@@ -62,6 +62,23 @@ static struct constant_decl     Game_constants[]    =
     {"COLOR_ORANGE", NDI_ORANGE}, {"COLOR_WHITE", NDI_WHITE}, {"COLOR_NAVY", NDI_NAVY}, {"COLOR_YELLOW", NDI_YELLOW},
     {"COLOR_BLUE", NDI_BLUE}, {"COLOR_RED", NDI_RED},
 
+	/* equipment slots of the player->equipment array */
+    {"EQUIP_MAIL", PLAYER_EQUIP_MAIL},
+    {"EQUIP_GAUNTLET", PLAYER_EQUIP_GAUNTLET},
+    {"EQUIP_BRACER", PLAYER_EQUIP_BRACER},
+    {"EQUIP_HELM", PLAYER_EQUIP_HELM},
+    {"EQUIP_BOOTS", PLAYER_EQUIP_BOOTS},
+    {"EQUIP_CLOAK", PLAYER_EQUIP_CLOAK},
+    {"EQUIP_GIRDLE", PLAYER_EQUIP_GIRDLE},
+    {"EQUIP_SHIELD", PLAYER_EQUIP_SHIELD},
+    {"EQUIP_RRING", PLAYER_EQUIP_RRING},
+    {"EQUIP_LRING", PLAYER_EQUIP_LRING},
+    {"EQUIP_AMULET", PLAYER_EQUIP_AMULET},
+    {"EQUIP_WEAPON1", PLAYER_EQUIP_WEAPON1},
+    {"EQUIP_BOW", PLAYER_EQUIP_BOW},
+    {"EQUIP_MTOOL", PLAYER_EQUIP_MTOOL},
+    {"EQUIP_MAX", PLAYER_EQUIP_MAX},
+
     /* Argh, the object types. Make sure to keep up-to date if any are added/removed */
     {"TYPE_PLAYER"                  ,PLAYER}, {"TYPE_BULLET"                  ,BULLET},
     {"TYPE_ROD"                     ,ROD}, {"TYPE_TREASURE"                ,TREASURE},

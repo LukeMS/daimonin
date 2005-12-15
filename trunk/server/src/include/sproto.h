@@ -533,7 +533,7 @@ int                         trap_disarm(object *disarmer, object *trap, int risk
 void                        trap_adjust(object *trap, int difficulty);
 /* shop.c */
 sint64                      query_cost(object *tmp, object *who, int flag);
-char                       *cost_string_from_value(sint64 cost);
+char                       *cost_string_from_value(sint64 cost, int mode);
 char                       *query_cost_string(object *tmp, object *who, int flag);
 sint64                      query_money(object *op);
 int                         pay_for_amount(sint64 to_pay, object *pl);

@@ -1352,7 +1352,7 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
         {
             /* If we aren't scared because of low hp, we can stop
              * being afraid after a random delay */
-            if (!RANDOM() % 20)
+            if (!(RANDOM() % 20))
                 CLEAR_FLAG(op, FLAG_SCARED);
         }
     }

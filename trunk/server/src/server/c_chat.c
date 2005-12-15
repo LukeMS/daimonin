@@ -68,6 +68,14 @@ static int check_mute(object *op, int mode)
     if(op->type != PLAYER || CONTR(op)==NULL)
         return TRUE;
 
+	if(mode != MUTE_MODE_SAY && op->level < 2)
+	{
+		new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "You need be level 2 or higher for shout/tell!");
+		new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "for help press F12 or read the GAME GUIDES at");
+		new_draw_info( NDI_UNIQUE|NDI_ORANGE, 0, op, "HTTP://WWW.DAIMONIN.NET");
+		return FALSE;		
+	}
+
     if(CONTR(op)->mute_counter)
     {
         if(CONTR(op)->mute_counter <= pticks) /* its ok */
