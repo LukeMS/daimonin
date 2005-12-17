@@ -490,7 +490,8 @@ void CEvent::keyPressed(KeyEvent *e)
 }
 
 void CEvent::keyClicked(KeyEvent* )
-{}
+{
+}
 
 void CEvent::keyReleased(KeyEvent* e)
 {
@@ -540,6 +541,11 @@ void CEvent::mousePressed (MouseEvent *e)
   mMouseY = e->getY();
   if (GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY))
   { // Button was pressed in a gui_window.
+  }
+  else if( mInputDevice->getMouseButton( 0 ) ) // left mouse button pressed
+  {
+    // activate mouse picking of tiles
+    pgTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
   }
   e->consume();
 }

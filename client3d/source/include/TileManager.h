@@ -24,6 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "Ogre.h"
 #include "define.h"
 #include "TileChunk.h"
+#include "TileInterface.h"
 
 using namespace Ogre;
 
@@ -35,13 +36,21 @@ const int PIXEL_PER_ROW  = 1024;
 const int TEXTURES_PER_ROW = 7;
 /** Size of a tile. */
 const int TILE_SIZE = 32;
+
+/** Number of chunks in worldmap */
+#ifdef SINGLE_CHUNK
 const int CHUNK_SUM_X  = 1;
-/** Number of chunks in worldmap (on z-axis). */
 const int CHUNK_SUM_Z  = 1;
-/** Number of tiles in a chunk (on x-axis), Must be even. */
+#else
+const int CHUNK_SUM_X  = 4;
+const int CHUNK_SUM_Z  = 4;
+#endif
+
+
+/** Number of tiles in a chunk. Must be even. */
 const int CHUNK_SIZE_X = 16;
-/** Number of tiles in a chunk (on z-axis), Must be even */
 const int CHUNK_SIZE_Z = 18;
+
 /** Number of tiles in the worldmap (on x-axis). */
 const int TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;
 /** Number of tiles in the worldmap (on z-axis). */
@@ -51,7 +60,8 @@ const int HIGH_QUALITY_RANGE = 5;
 /** Minimal size of tile in the shrinked terrain texture. */
 const int MIN_TEXTURE_PIXEL = 8;
 /** LOD for the chunks. */
-enum {QUALITY_LOW, QUALITY_HIGH};
+enum {
+  QUALITY_LOW, QUALITY_HIGH};
 
 
 /**
@@ -62,64 +72,80 @@ enum {QUALITY_LOW, QUALITY_HIGH};
 class TileManager
 {
 private:
-	/**  TileEngine struct which holds the worldmap. **/
-	struct WorldMap
-	{
-		/** Average height. **/
-		unsigned char height;
-		/** Column of the texture in the terrain-texture. **/
-		unsigned char terrain_col;
-		/** Row of the texture in the terrain-texture. **/
-		unsigned char terrain_row;
-	}** m_Map;
+  /**  TileEngine struct which holds the worldmap. **/
+  struct WorldMap
+  {
+    /** Average height. **/
+    unsigned char height;
+    /** Column of the texture in the terrain-texture. **/
+    unsigned char terrain_col;
+    /** Row of the texture in the terrain-texture. **/
+    unsigned char terrain_row;
+  }
+  ** m_Map;
 
-	TileChunk m_mapchunk[CHUNK_SUM_X][CHUNK_SUM_Z];
-	SceneManager* m_SceneManager;
-	AxisAlignedBox* bounds;
-	MaterialPtr m_Kartentextur;
-	/** The z-stretching of the tiles. **/
-	float m_StretchZ;
-	int m_TileTextureSize;
-	bool mHighDetails;
-	bool mGrid;
+  TileChunk m_mapchunk[CHUNK_SUM_X][CHUNK_SUM_Z];
+  SceneManager* m_SceneManager;
+  TileInterface* m_Interface;
+  AxisAlignedBox* bounds;
+  MaterialPtr m_Kartentextur;
+  /** The z-stretching of the tiles. **/
+  float m_StretchZ;
+  int m_TileTextureSize;
+  bool mHighDetails;
+  bool mGrid;
 
 public:
-	TileManager();
-	~TileManager();
-	SceneManager* Get_pSceneManager(){ return m_SceneManager; }
-	float Get_StretchZ() { return m_StretchZ;}
-	unsigned char Get_Map_Height(short x, short y) { return m_Map[x][y].height; }
-	unsigned char Get_Map_Texture_Row(short x, short y) { return m_Map[x][y].terrain_row; }
-	unsigned char Get_Map_Texture_Col(short x, short y) { return m_Map[x][y].terrain_col; }
+  TileManager();
+  ~TileManager();
+  TileChunk* get_TileChunk(int x, int y){
+    return &m_mapchunk[x][y];}
+  SceneManager* Get_pSceneManager(){
+    return m_SceneManager; }
+  float Get_StretchZ() {
+    return m_StretchZ;}
+  unsigned char Get_Map_Height(short x, short y) {
+    return m_Map[x][y].height; }
+  unsigned char Get_Map_StretchedHeight(short x, short y) {
+    return (unsigned char) (m_Map[x][y].height*Get_StretchZ()); }
+  unsigned char Get_Map_Texture_Row(short x, short y) {
+    return m_Map[x][y].terrain_row; }
+  unsigned char Get_Map_Texture_Col(short x, short y) {
+    return m_Map[x][y].terrain_col; }
+  TileInterface* get_TileInterface(){
+    return m_Interface;}
+  void Set_Map_Height(short x, short y, short value) {
+    m_Map[x][y].height = value; }
+  void Set_Map_Texture_Row(short x, short y, unsigned char value) {
+    m_Map[x][y].terrain_row = value; }
+  void Set_Map_Texture_Col(short x, short y, unsigned char value) {
+    m_Map[x][y].terrain_col = value; }
+  void Set_Map_Textures();
+  bool LoadImage(Image &image, const std::string &filename);
 
-	void Set_Map_Height(short x, short y, short value) { m_Map[x][y].height = value; }
-	void Set_Map_Texture_Row(short x, short y, unsigned char value) { m_Map[x][y].terrain_row = value; }
-	void Set_Map_Texture_Col(short x, short y, unsigned char value) { m_Map[x][y].terrain_col = value; }
-	void Set_Map_Textures();
-	bool LoadImage(Image &image, const std::string &filename);
+  AxisAlignedBox *GetBounds();
+  void Init(SceneManager* SceneManager, int tileTextureSize = 128, int tileStretchZ = 2);
 
-	AxisAlignedBox *GetBounds();
-	void Init(SceneManager* SceneManager, int tileTextureSize = 128, int tileStretchZ = 2);
+  void CreateChunks();
+  void ChangeChunks();
+  void ControlChunks(Vector3 vector);
 
-	void CreateChunks();
-	void ChangeChunks();
-	void ControlChunks(Vector3 vector);
-
-	void CreateTexture();
-	void ChangeTexture();
-	/** Create a terrain-texture out of tile textures. **/
-	bool CreateTextureGroup(const std::string &terrain_type);
-	void SetTextureSize(int pixels);
-	void shrinkFilter();
-	void shrinkTexture(const std::string &terrain_type);
-	/** Import a 8bit png file as heightmap **/
-	void Load_Map(const std::string &png_filename);
-	/** Import a heightmap. **/
-	void Load_Map(char *mapData);
-	void ToggleMaterial();
-	void ToggleGrid();
-	void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short x, short y);
-	void CreateMipMaps(const std::string &terrain_type);
+  void CreateTexture();
+  void ChangeTexture();
+  /** Create a terrain-texture out of tile textures. **/
+  bool CreateTextureGroup(const std::string &terrain_type);
+  void SetTextureSize(int pixels);
+  void shrinkFilter();
+  void shrinkTexture(const std::string &terrain_type);
+  /** Import a 8bit png file as heightmap **/
+  void Load_Map(const std::string &png_filename);
+  /** Import a heightmap. **/
+  void Load_Map(char *mapData);
+  void Save_Map(const std::string &png_filename);
+  void ToggleMaterial();
+  void ToggleGrid();
+  void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short x, short y);
+  void CreateMipMaps(const std::string &terrain_type);
 };
 
 #endif

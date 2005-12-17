@@ -21,6 +21,12 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef DEFINE_H
 #define DEFINE_H
 
+#define DAIMONIN // Delete me for CodeBlack !!!
+
+#ifdef DAIMONIN
+  #define SINGLE_CHUNK
+#endif
+
 const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
 const char OVERLAY_TYPE_NAME[] = "Panel"; // defined in OverlayElementFactory.h
