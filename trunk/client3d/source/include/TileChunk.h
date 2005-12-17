@@ -2,16 +2,16 @@
 This source file is part of Code-Black (http://www.code-black.org)
 Copyright (c) 2005 by the Code-Black Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -22,9 +22,12 @@ http://www.gnu.org/licenses/licenses.html
 #define TILE_CHUNK_H
 
 #include "Ogre.h"
-#include "TileEnvironment.h"
+
+
 
 using namespace Ogre;
+
+class TileManager;
 
 /** Height levels for the tiles. **/
 enum {
@@ -46,6 +49,7 @@ enum {
 //enum {TERRAIN_MOUNTAIN, TERRAIN_JUNGLE, TERRAIN_PLAINS, TERRAIN_SWAMP, TERRAIN_RIFT,TERRAIN_DESERT,
 //    TERRAIN_BEACH,  TERRAIN_WATER};
 // Spezical Effects: Snopw, Rain, Lava,
+
 
 /**
  * TileEngine class which manages the tiles in a chunk.
@@ -73,7 +77,6 @@ private:
   Entity* m_Land_entity_low;
   SceneNode* m_Land;
 
-  TileEnvironment* m_TileEnvironmentPtr;
 
 public:
   /** Buffer for building meshnames. **/
@@ -110,7 +113,11 @@ public:
   {
     return m_Land_entity_high;
   }
-  void Set_Tile(short &x, short &z)
+  short get_posX(){
+    return m_posX;}
+  short get_posZ(){
+    return m_posZ;}
+   void Set_Tile(short &x, short &z)
   {
     m_posX = x; m_posZ = z;
   }
@@ -151,8 +158,6 @@ public:
   /** Create terrain-texture in multiple sizes. **/
   void CreateTexture();
   void CreateSceneNode();
-  void CreateEnvironment();
-  void ChangeEnvironment();
   void Attach(short quality);
   void Detach();
 };

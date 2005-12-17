@@ -2,16 +2,16 @@
 This source file is part of Code-Black (http://www.code-black.org)
 Copyright (c) 2005 by the Code-Black Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "define.h"
 #include "logger.h"
-#include "TileChunk.h"
+#include "TileInterface.h"
 #include "TileManager.h"
 
 ///=================================================================================================
@@ -116,7 +116,6 @@ void TileChunk::Create(short &x, short &z)
   CreateWaterLow();
   CreateWaterHigh();
   CreateSceneNode();
-  CreateEnvironment();
 }
 
 ///=================================================================================================
@@ -128,24 +127,6 @@ void TileChunk::Change()
   ChangeWaterHigh();
   ChangeLandLow();
   ChangeWaterLow();
-  ChangeEnvironment();
-}
-
-///=================================================================================================
-/// Create Environment
-///=================================================================================================
-void TileChunk::CreateEnvironment()
-{
-  m_TileEnvironmentPtr = new TileEnvironment(m_TileManagerPtr, this);
-  m_TileEnvironmentPtr->UpdateEnvironment();
-}
-
-///=================================================================================================
-/// Change Environment
-///=================================================================================================
-void TileChunk::ChangeEnvironment()
-{
-  //  TODO.
 }
 
 ///=================================================================================================
@@ -448,6 +429,20 @@ void TileChunk::CreateWaterHigh_Buffers()
         pReal[o+36] = (a-x  ) / 4.0; pReal[o+37] = (b+1-z) / 4.0;
         pReal[o+46] = (a+1-x) / 4.0; pReal[o+47] = (b-z  ) / 4.0;
         pReal[o+56] = (a+1-x) / 4.0; pReal[o+57] = (b+1-z) / 4.0;
+#ifdef USE_LIGHTMAP
+        /////////////////////////////////////////////////////////////////////////
+        // Lightmap
+        /////////////////////////////////////////////////////////////////////////
+
+        // 1. Triangle
+        pReal[o+ 8] = a / 256.0; pReal[o+ 9] = b / 256.0;
+        pReal[o+18] = (a + 1)/ 256.0; pReal[o+19] = b / 256.0;
+        pReal[o+28] = a / 256.0; pReal[o+29] = (b + 1)/ 256.0;
+        // 2. Triangle
+        pReal[o+38] = a / 256.0; pReal[o+39] = (b + 1)/ 256.0;
+        pReal[o+48] = (a + 1)/ 256.0; pReal[o+49] = b / 256.0;
+        pReal[o+58] = (a + 1)/ 256.0; pReal[o+59] = (b + 1)/ 256.0;
+#else
         /////////////////////////////////////////////////////////////////////////
         // Grid-Texture.
         /////////////////////////////////////////////////////////////////////////
@@ -459,7 +454,7 @@ void TileChunk::CreateWaterHigh_Buffers()
         pReal[o+38] = 0; pReal[o+39] = 1;
         pReal[o+48] = 1; pReal[o+49] = 0;
         pReal[o+58] = 1; pReal[o+59] = 1;
-
+#endif
         o += 60;
       } // if
     } // y
@@ -989,6 +984,28 @@ void TileChunk::CreateLandHigh_Buffers()
         pReal1[o+129] = temp * row + 1.0 / 128.0;
         pReal1[o+140] = temp * col + 1.0 / 128.0 + 1.0 / 16.0;
         pReal1[o+141] = temp * row + 1.0 / 128.0 + 1.0 / 16.0;
+
+#ifdef USE_LIGHTMAP
+        /////////////////////////////////////////////////////////////////////////
+        // Lightmap-Texture
+        /////////////////////////////////////////////////////////////////////////
+        // 1. Triangle
+        pReal1[o+ 10] = a / 256.0; pReal1[o+ 11] = (b + 1) / 256.0;
+        pReal1[o+ 22] = a / 256.0; pReal1[o+ 23] = b / 256.0;
+        pReal1[o+ 34] = (a + .5) / 256.0; pReal1[o+ 35] = (b +.5) / 256.0;
+        // 2. Triangle
+        pReal1[o+ 46] = a / 256.0; pReal1[o+ 47] = b / 256.0;
+        pReal1[o+ 58] = (a + 1) / 256.0; pReal1[o+ 59] = b / 256.0;
+        pReal1[o+ 70] = (a + .5) / 256.0; pReal1[o+ 71] = (b +.5) / 256.0;
+        // 3. Triangle
+        pReal1[o+ 82] = (a + 1) / 256.0; pReal1[o+ 83] = b / 256.0;
+        pReal1[o+ 94] = (a + 1)/ 256.0; pReal1[o+ 95] = (b + 1) / 256.0;
+        pReal1[o+106] = (a + .5) / 256.0; pReal1[o+107] = (b +.5) / 256.0;
+        // 4. Triangle
+        pReal1[o+118] = (a + 1)/ 256.0; pReal1[o+119] = (b + 1) / 256.0;
+        pReal1[o+130] = a / 256.0; pReal1[o+131] = (b + 1) / 256.0;
+        pReal1[o+142] = (a + .5) / 256.0; pReal1[o+143] = (b +.5) / 256.0;
+#else
         /////////////////////////////////////////////////////////////////////////
         // Grid-Texture.
         /////////////////////////////////////////////////////////////////////////
@@ -1004,7 +1021,7 @@ void TileChunk::CreateLandHigh_Buffers()
         // 4. Triangle
         pReal1[o+118] = 1.0; pReal1[o+119] = 0.0; pReal1[o+130] = 0.0;
         pReal1[o+131] = 0.0; pReal1[o+142] = 0.5; pReal1[o+143] = 0.5;
-
+#endif
         o += 144;
       }
     }

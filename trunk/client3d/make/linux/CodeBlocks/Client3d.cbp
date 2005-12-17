@@ -142,7 +142,7 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/TileEnvironment.cpp">
+		<Unit filename="../../../source/TileInterface.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -208,7 +208,7 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/include/TileEnvironment.h">
+		<Unit filename="../../../source/include/TileInterface.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
