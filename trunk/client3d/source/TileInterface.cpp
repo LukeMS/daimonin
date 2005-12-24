@@ -686,6 +686,7 @@ void TileSelection::create_Entity()
   m_SceneNodeCorner4->setPosition(m_x * TILE_SIZE,0,m_y * TILE_SIZE);
   m_EntityCorner4->setRenderQueueGroup(RENDER_QUEUE_OVERLAY);
 }
+
 void TileSelection::change_Selection()
 {
 
@@ -1137,9 +1138,7 @@ void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
 {
   // we start with a given tile chunk (coordinates a and b) and a ray and try to find the tile that was selected
   // we have to check every tile if it was hit and return the nearest one
-
   Real height[5], lower, higher;
-
   int vertex_x = m_TileManager->get_TileChunk(a,b)->get_posX() * CHUNK_SIZE_X;
   int vertex_y = m_TileManager->get_TileChunk(a,b)->get_posZ() * CHUNK_SIZE_Z;
 

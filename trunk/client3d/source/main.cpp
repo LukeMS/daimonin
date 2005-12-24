@@ -19,15 +19,79 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "logger.h"
-#include "client.h"
+#include "event.h"
 
+const int SUM_MIPMAPS = 0;
+
+/// ========================================================================
+/// Define the source of resources (other than current folder)
+/// ========================================================================
+void setupResources(void)
+{
+  /// Load resource paths from config file
+  ConfigFile cf;
+  cf.load("resources.cfg");
+  /// Go through all sections & settings in the file
+  ConfigFile::SectionIterator seci = cf.getSectionIterator();
+  String secName, typeName, archName;
+  while (seci.hasMoreElements())
+  {
+    secName = seci.peekNextKey();
+    ConfigFile::SettingsMultiMap *settings = seci.getNext();
+    ConfigFile::SettingsMultiMap::iterator i;
+    for (i = settings->begin(); i != settings->end(); ++i)
+    {
+      typeName = i->first;
+      archName = i->second;
+      ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+    }
+  }
+}
+
+/// ========================================================================
+/// Entry point.
+/// ========================================================================
 int main(int /*argc*/, char /* **argv*/)
 {
-  Logger::log().headline("Init Logfile");
-  DaimoninClient client;
   try
   {
-    client.go();
+    Logger::log().headline("Init Logfile");
+    Root *root = new Root();
+    setupResources();
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Show the configuration dialog and initialise the system
+    /// You can skip this and use root.restoreConfig() to load configuration
+    /// settings if you were sure there are valid ones saved in ogre.cfg
+    /// ////////////////////////////////////////////////////////////////////
+    if(!root->showConfigDialog()) return 0;
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Get the SceneManager, in this case a generic one
+    /// ////////////////////////////////////////////////////////////////////
+    RenderWindow *window   = root->initialise(true);
+    SceneManager *sceneMgr = root->getSceneManager(ST_GENERIC);
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Set default mipmap level (NB some APIs ignore this)
+    /// ////////////////////////////////////////////////////////////////////
+    //TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Optional override method where you can perform resource group loading
+    /// Must at least do initialiseAllResourceGroups();
+    /// ////////////////////////////////////////////////////////////////////
+    ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    Event= new CEvent(window, sceneMgr);
+    root->addFrameListener(Event);
+    Event->Setup();
+    root->startRendering();
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// End of mainloop -> Clean up.
+    /// ////////////////////////////////////////////////////////////////////
+    if (Event) delete Event;
+    if (root) delete root;
   }
   catch( Exception& e )
   {

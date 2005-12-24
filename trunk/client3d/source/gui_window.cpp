@@ -403,13 +403,18 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
   int y = ry - mPosY;
 
   int gadget;
-  const char *actGadgetName =0;
+  const char *actGadgetName = NULL;
   switch (MouseAction)
   {
       //case M_RESIZE:
-
     case M_PRESSED:
       GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_BUTTON_DOWN);
+      // Mouse over this window?
+      if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
+      {
+        actGadgetName = mStrName.c_str();
+      }
+      // Mouse over a gaget?
       if (mMouseOver >= 0)
       {
         mMousePressed = mMouseOver;
