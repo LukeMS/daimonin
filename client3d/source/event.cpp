@@ -28,29 +28,101 @@ http://www.gnu.org/licenses/licenses.html
 #include "network.h"
 #include "TileManager.h"
 #include "gui_manager.h"
+#include "object_manager.h"
+#include "particle_manager.h"
+#include "spell_manager.h"
+#include "TileChunk.h"
 
 using namespace Ogre;
 
-Real w_1, x_1, y_1, z_1;
-Real g_pitch = 0.2;
-char Tbuffer[80];
-int pixels =128;
-
-///=================================================================================================
-///=================================================================================================
+///================================================================================================
+/// Global variables.
+///================================================================================================
 CEvent *Event=0;
 
-///=================================================================================================
-/// Constructor.
-///=================================================================================================
-CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListener,
-               MouseListener *mMListener, bool useBufferedInputKeys, bool)
+void CEvent::Setup()
 {
-  useBufferedInputKeys = true; // avoid compiler warning.
+  /// ////////////////////////////////////////////////////////////////////
+  /// Create one viewport, entire window
+  /// ////////////////////////////////////////////////////////////////////
+  mCamera = mSceneManager->createCamera("PlayerCam");
+  Viewport *VP = mWindow->addViewport(mCamera);
+  VP->setBackgroundColour(ColourValue(0,0,0));
+  /// Alter the camera aspect ratio to match the viewport
+  mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
+
+  if (!(Option ::getSingleton().Init())) return;
+  if (!(Sound  ::getSingleton().Init())) return;
+  if (!(Network::getSingleton().Init())) return;
+  Sound::getSingleton().playSong(FILE_MUSIC_001);
+
+  /// Create the world.
+  mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
+
+  // mWorld->setPosition(0,0,0);
+  mSceneManager->setAmbientLight(ColourValue(0, 0, 0));
+  mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
+
+  Light *light;
+  light = mSceneManager->createLight("Light_Vol");
+  light->setType(Light::LT_POINT );
+  light->setPosition(-100, 200, 800);
+  //    light->setDiffuseColour(1.0, 1.0, 1.0);
+  light->setSpecularColour(1.0, 1.0, 1.0);
+  mWorld->attachObject(light);
+  setLightMember(light, 0);
+
+  light = mSceneManager->createLight("Light_Spot");
+  light->setType(Light::LT_SPOTLIGHT);
+  light->setDirection(0, -1, -1);
+  light->setPosition (-125, 200, 100);
+  light->setDiffuseColour(1.0, 1.0, 1.0);
+  // light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
+  // light->setAttenuation(1000,1,0.005,0);
+
+  mWorld->attachObject(light);
+  setLightMember(light, 1);
+  light->setVisible(false);
+
+  mTileManager = new TileManager();
+  mTileManager->Init(mSceneManager, 128,1);
+
+  SpellManager   ::getSingleton().init(mSceneManager);
+  ParticleManager::getSingleton().init(mSceneManager);
+  ObjectManager  ::getSingleton().init(mSceneManager);
+}
+
+///================================================================================================
+/// Constructor.
+///================================================================================================
+CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
+{
+  /// ////////////////////////////////////////////////////////////////////
+  /// Create unbuffered key & mouse input.
+  /// ////////////////////////////////////////////////////////////////////
+  mEventProcessor = new EventProcessor();
+  mEventProcessor->initialise(win);
+  mEventProcessor->startProcessingEvents();
+  mEventProcessor->addKeyListener(this);
+  mEventProcessor->addMouseMotionListener(this);
+  mEventProcessor->addMouseListener(this);
+  mInputDevice =  mEventProcessor->getInputReader();
+
+  mSceneManager = SceneMgr;
+  mWindow = win;
+
+  mTimeUntilNextToggle = 0;
+  mTranslateVector = Vector3(0,0,0);
+  mAniso = 1;
+  mFiltering = TFO_BILINEAR;
+  mIdleTime =0;
+  mDayTime = 15;
+  mCameraZoom = MAX_CAMERA_ZOOM;
+
   mMouseX = mMouseY =0;
-  /////////////////////////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Create all Overlays.
-  /////////////////////////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   GuiManager::getSingleton().Init(FILE_GUI_IMAGESET, FILE_GUI_WINDOWS, win->getWidth(), win->getHeight());
 
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"Welcome to ~Daimonin 3D~.");
@@ -60,47 +132,27 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a1 ");
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a2 ");
-  //for (int i = 0; i < 80; ++i)
   GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line b1 ");
 
-
-  /////////////////////////////////////////////////////////////////////////////////////////
-  /// Create unbuffered key & mouse input.
-  /////////////////////////////////////////////////////////////////////////////////////////
-  mEventProcessor = new EventProcessor();
-  mEventProcessor->initialise(win);
-  mEventProcessor->startProcessingEvents();
-  mEventProcessor->addKeyListener(this);
-  mEventProcessor->addMouseMotionListener(this);
-  mEventProcessor->addMouseListener(this);
-  mInputDevice =  mEventProcessor->getInputReader();
-  mMouseMotionListener = mMotionListener;
-  mMouseListener = mMListener;
-
   mQuitGame = false;
-  mCamera = cam;
-  mWindow = win;
-  mTimeUntilNextToggle = 0;
-  mTranslateVector = Vector3(0,0,0);
-  mAniso = 1;
-  mFiltering = TFO_BILINEAR;
-  mIdleTime =0;
-  mDayTime = 15;
-  mCameraZoom = MAX_CAMERA_ZOOM;
 }
 
-///=================================================================================================
+///================================================================================================
 /// Destructor.
-///=================================================================================================
+///================================================================================================
 CEvent::~CEvent()
 {
   if (mEventProcessor)  delete mEventProcessor;
   GuiManager::getSingleton().freeRecources();
+  if (mTileManager) delete mTileManager;
+  // Network::getSingleton().freeRecources();
+  // Option ::getSingleton().freeRecources();
+  Sound::getSingleton().freeRecources();
 }
 
-///=================================================================================================
+///================================================================================================
 /// Player has moved, update the world position.
-///=================================================================================================
+///================================================================================================
 void CEvent::setWorldPos(Vector3 &pos)
 {
   static Vector3 dPos = pos;
@@ -110,16 +162,16 @@ void CEvent::setWorldPos(Vector3 &pos)
   {
     pos.x -= dPos.x;
     short tmp[ TILES_SUM_Z+1];
-    for (short y = 0; y < TILES_SUM_Z+1; ++y) tmp[y] = pgTileManager->Get_Map_Height(0, y);
+    for (short y = 0; y < TILES_SUM_Z+1; ++y) tmp[y] = mTileManager->Get_Map_Height(0, y);
     for (int x = 1; x < TILES_SUM_X+1; ++x)
     {
       for (int y = 0; y < TILES_SUM_Z+1; ++y)
       {
-        unsigned short value = pgTileManager->Get_Map_Height(x, y);
-        pgTileManager->Set_Map_Height(x-1, y, value);
+        unsigned short value = mTileManager->Get_Map_Height(x, y);
+        mTileManager->Set_Map_Height(x-1, y, value);
       }
     }
-    for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(TILES_SUM_X, y, tmp[y] );
+    for (short y = 0; y < TILES_SUM_Z+1; ++y) mTileManager->Set_Map_Height(TILES_SUM_X, y, tmp[y] );
     ui = true;
   }
 
@@ -128,16 +180,16 @@ void CEvent::setWorldPos(Vector3 &pos)
   {
     pos.x -= dPos.x;
     short tmp[ TILES_SUM_Z+1];
-    for (short z = 0; z < TILES_SUM_Z+1; ++z) tmp[z] = pgTileManager->Get_Map_Height(TILES_SUM_X, z);
+    for (short z = 0; z < TILES_SUM_Z+1; ++z) tmp[z] = mTileManager->Get_Map_Height(TILES_SUM_X, z);
     for (int x = TILES_SUM_X-1; x >= 0; --x)
     {
       for (int y = 0; y < TILES_SUM_Z+1; ++y)
       {
-        unsigned short value = pgTileManager->Get_Map_Height(x, y);
-        pgTileManager->Set_Map_Height(x+1, y, value);
+        unsigned short value = mTileManager->Get_Map_Height(x, y);
+        mTileManager->Set_Map_Height(x+1, y, value);
       }
     }
-    for (short y = 0; y < TILES_SUM_Z+1; ++y) pgTileManager->Set_Map_Height(0, y, tmp[y] );
+    for (short y = 0; y < TILES_SUM_Z+1; ++y) mTileManager->Set_Map_Height(0, y, tmp[y] );
     ui = true;
   }
 
@@ -146,16 +198,16 @@ void CEvent::setWorldPos(Vector3 &pos)
   {
     pos.z -= dPos.z;
     short tmp[ TILES_SUM_X+1];
-    for (short x = 0; x < TILES_SUM_X+1; ++x) tmp[x] = pgTileManager->Get_Map_Height(x, 0);
+    for (short x = 0; x < TILES_SUM_X+1; ++x) tmp[x] = mTileManager->Get_Map_Height(x, 0);
     for (int z = 1; z < TILES_SUM_Z+1; ++z)
     {
       for (int x = 0; x < TILES_SUM_X+1; ++x)
       {
-        unsigned short value = pgTileManager->Get_Map_Height(x, z);
-        pgTileManager->Set_Map_Height(x, z-1, value);
+        unsigned short value = mTileManager->Get_Map_Height(x, z);
+        mTileManager->Set_Map_Height(x, z-1, value);
       }
     }
-    for (short x = 0; x < TILES_SUM_X+1; ++x) pgTileManager->Set_Map_Height(x, TILES_SUM_Z, tmp[x] );
+    for (short x = 0; x < TILES_SUM_X+1; ++x) mTileManager->Set_Map_Height(x, TILES_SUM_Z, tmp[x] );
     ui = true;
   }
 
@@ -164,23 +216,23 @@ void CEvent::setWorldPos(Vector3 &pos)
   {
     pos.z -= dPos.z;
     short tmp[ TILES_SUM_X+1];
-    for (short x = 0; x < TILES_SUM_X+1; ++x) tmp[x] = pgTileManager->Get_Map_Height(x, TILES_SUM_Z);
+    for (short x = 0; x < TILES_SUM_X+1; ++x) tmp[x] = mTileManager->Get_Map_Height(x, TILES_SUM_Z);
     for (int z = TILES_SUM_Z-1; z >= 0; --z)
     {
       for (int x = 0; x < TILES_SUM_X+1; ++x)
       {
-        unsigned short value = pgTileManager->Get_Map_Height(x, z);
-        pgTileManager->Set_Map_Height(x, z+1, value);
+        unsigned short value = mTileManager->Get_Map_Height(x, z);
+        mTileManager->Set_Map_Height(x, z+1, value);
       }
     }
-    for (short x = 0; x < TILES_SUM_X+1; ++x) pgTileManager->Set_Map_Height(x, 0, tmp[x] );
+    for (short x = 0; x < TILES_SUM_X+1; ++x) mTileManager->Set_Map_Height(x, 0, tmp[x] );
     ui = true;
   }
   dPos+=pos;
-  pgTileManager->ControlChunks(pos);
+  mTileManager->ControlChunks(pos);
   if (ui == true)
   {
-    pgTileManager->ChangeChunks();
+    mTileManager->ChangeChunks();
   }
   mCamera->move(pos);
 
@@ -190,9 +242,9 @@ void CEvent::setWorldPos(Vector3 &pos)
   // ParticleManager::getSingleton().synchToWorldPos(pos);
 }
 
-///=================================================================================================
+///================================================================================================
 /// Frame Start event.
-///=================================================================================================
+///================================================================================================
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
   if (mWindow->isClosed())
@@ -240,9 +292,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
   return true;
 }
 
-///=================================================================================================
+///================================================================================================
 /// Frame End event.
-///=================================================================================================
+///================================================================================================
 bool CEvent::frameEnded(const FrameEvent& )
 {
   const RenderTarget::FrameStats& stats = mWindow->getStatistics();
@@ -263,12 +315,13 @@ bool CEvent::frameEnded(const FrameEvent& )
   return true;
 }
 
-///=================================================================================================
+///================================================================================================
 /// Buffered Key Events.
-///=================================================================================================
+///================================================================================================
 void CEvent::keyPressed(KeyEvent *e)
 {
   mIdleTime =0;
+  static Real g_pitch = 0.2;
   if (GuiManager::getSingleton().hasFocus())
   {
     GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
@@ -356,7 +409,7 @@ void CEvent::keyPressed(KeyEvent *e)
       mCamera->yaw(Degree(-10));
       break;
     case KC_G:
-      pgTileManager->ToggleGrid();
+      mTileManager->ToggleGrid();
       break;
     case KC_I:
       ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);
@@ -368,9 +421,9 @@ void CEvent::keyPressed(KeyEvent *e)
       ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
       break;
 
-      /////////////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////////
       /// Engine settings.
-      /////////////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////////
       /*
         case KC_C:
          mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
@@ -384,10 +437,11 @@ void CEvent::keyPressed(KeyEvent *e)
       */
     case KC_X:
       {
+        static int pixels =128;
         //change pixel size of terrain textures
         pixels /= 2; // shrink pixel value
         if (pixels < 8) pixels = 128; // if value is too low resize to maximum
-        pgTileManager->SetTextureSize(pixels);
+        mTileManager->SetTextureSize(pixels);
         mTimeUntilNextToggle = .5;
       }
       break;
@@ -464,9 +518,9 @@ void CEvent::keyPressed(KeyEvent *e)
       }
       break;
 
-      /////////////////////////////////////////////////////////////////////////
-      // Screenshot.
-      /////////////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////////
+      /// Screenshot.
+      /// ////////////////////////////////////////////////////////////////////
     case KC_SYSRQ:
       {
         static int mNumScreenShots=0;
@@ -477,9 +531,9 @@ void CEvent::keyPressed(KeyEvent *e)
       }
       break;
 
-      /////////////////////////////////////////////////////////////////////////
-      // Exit game.
-      /////////////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////////
+      /// Exit game.
+      /// ////////////////////////////////////////////////////////////////////
     case KC_ESCAPE:
       mQuitGame = true;
       break;
@@ -497,9 +551,9 @@ void CEvent::keyReleased(KeyEvent* e)
 {
   switch (e->getKey())
   {
-      /////////////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////////
       /// Player Movemment.
-      /////////////////////////////////////////////////////////////////////////
+      /// ////////////////////////////////////////////////////////////////////
     case KC_UP:
     case KC_DOWN:
       ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, 0);
@@ -522,9 +576,9 @@ void CEvent::keyReleased(KeyEvent* e)
   }
 }
 
-///=================================================================================================
+///================================================================================================
 /// Buffered Mouse Events.
-///=================================================================================================
+///================================================================================================
 void CEvent::mouseMoved (MouseEvent *e)
 {
   mMouseX = e->getX();
@@ -539,13 +593,30 @@ void CEvent::mousePressed (MouseEvent *e)
 {
   mMouseX = e->getX();
   mMouseY = e->getY();
-  if (GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY))
-  { // Button was pressed in a gui_window.
+
+  int button = e->getButtonID();
+  if (button & InputEvent::BUTTON0_MASK ) // LeftButton.
+  {
+    if (GuiManager::getSingleton().mouseEvent(M_PRESSED, mMouseX, mMouseY))
+    { // Button was pressed in a gui_window.
+    }
+    else
+    {
+      //pgTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
+    }
   }
-  else if( mInputDevice->getMouseButton( 0 ) ) // left mouse button pressed
+  else if (button & InputEvent::BUTTON1_MASK ) // RightButton.
   {
     // activate mouse picking of tiles
-    pgTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
+    #ifdef WIN32
+    mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
+    #endif
+  }
+  else if (button & InputEvent::BUTTON2_MASK ) // MidButton.
+  {
+    #ifndef WIN32
+    mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
+    #endif
   }
   e->consume();
 }

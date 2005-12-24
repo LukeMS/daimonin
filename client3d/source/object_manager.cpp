@@ -55,6 +55,7 @@ bool ObjectManager::init(SceneManager *SceneMgr)
     Real posZ = atof(strTemp.c_str());
     Option::getSingleton().getDescStr("Facing", strTemp);
     Radian facing = Radian(atof(strTemp.c_str()));
+
     if (strType == "npc")
     {
       addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
@@ -64,11 +65,6 @@ bool ObjectManager::init(SceneManager *SceneMgr)
       addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
     }
   }
-
-
-
-
-
   return true;
 }
 
