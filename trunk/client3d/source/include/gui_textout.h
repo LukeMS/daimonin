@@ -34,7 +34,6 @@ const uint32 COLOR_RED   = 0xffff0000;
 const uint32 COLOR_PINK  = 0xffff00ff;
 const uint32 COLOR_YELLOW= 0xffffff00;
 const uint32 COLOR_WHITE = 0xffffffff;
-const int SYSTEM_FONT_NR = 0;
 
 typedef struct TextLine
 {
@@ -57,7 +56,7 @@ Gui_GfxBuffer;
 
 enum
 {
-  FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
+  FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
 };
 const int CHARS_IN_FONT =96;
 
@@ -101,7 +100,7 @@ private:
     char charWidth[CHARS_IN_FONT];
   };
   std::vector<mFont*>mvFont;
-  uint32 *TextGfxBuffer;
+  uint32 *mTextGfxBuffer;
   PixelBox *mPb;
   unsigned int maxFontHeight;
   ////////////////////////////////////////////////////////////

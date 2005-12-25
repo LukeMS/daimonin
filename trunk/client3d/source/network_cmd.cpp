@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -45,7 +45,7 @@ inline short GetShort_String(char *data)
 // ========================================================================
 void Network::NewCharCmd(char *, int )
 {
-  Option::getSingleton().GameStatus = GAME_STATUS_NEW_CHAR;
+  Option::getSingleton().setGameStatus(GAME_STATUS_NEW_CHAR);
   //    CloseSocket();
 }
 
@@ -191,7 +191,7 @@ void Network::SetupCmd(char *buf, int len)
       Logger::log().error()  << "Got setup for a command we don't understand: "
       << cmd << " " << param;
   }
-  Option::getSingleton().GameStatus = GAME_STATUS_REQUEST_FILES;
+  Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
 }
 
 // ========================================================================
@@ -328,12 +328,12 @@ void Network::HandleQuery(char *data, int)
 // ========================================================================
 void Network::PlayerCmd(char *, int)
 {
-  Option::getSingleton().GameStatus = GAME_STATUS_PLAY;
+  Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
 
   /*
       char    name[MAX_BUF];
       int     tag, weight, face, i = 0, nlen;
-   
+
       InputStringEndFlag = FALSE;
       tag = GetInt_String(data);
       i += 4;
@@ -344,10 +344,10 @@ void Network::PlayerCmd(char *, int)
       i += 4;
       nlen = data[i++];
       memcpy(name, (const char *) data + i, nlen);
-   
+
       name[nlen] = '\0';
       i += nlen;
-   
+
       if (i != len)
       {
           fprintf(stderr, "PlayerCmd: lengths do not match (%d!=%d)\n", len, i);
@@ -355,7 +355,7 @@ void Network::PlayerCmd(char *, int)
       new_player(tag, name, weight, (short) face);
       map_draw_map_clear();
       map_transfer_flag = 1;
-      map_udate_flag = 2;        
+      map_udate_flag = 2;
       load_quickslots_entrys();
   */
 }

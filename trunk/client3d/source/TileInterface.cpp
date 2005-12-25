@@ -952,12 +952,11 @@ void TileSelection::set_Square_Size(unsigned int SquareSize)
   m_SquareSize = SquareSize;
 }
 
+#ifndef DAIMONIN
 TileMouse::TileMouse(TileInterface* TileInterface)
 {
-#ifndef DAIMONIN
   m_Interface = TileInterface;
   m_Rect = NULL;
-#endif
 }
 
 TileMouse::~TileMouse()
@@ -966,17 +965,14 @@ TileMouse::~TileMouse()
 
 void TileMouse::move_Relative(Real x, Real y)
 {
-#ifndef DAIMONIN
   x *= MOUSE_SENSITY;
   y *= MOUSE_SENSITY;
 
   set_Position(m_x + x,m_y + y);
-#endif
 }
 
 void TileMouse::set_Position(Real x, Real y)
 {
-#ifndef DAIMONIN
   m_x = x;
   m_y = y;
 
@@ -986,12 +982,10 @@ void TileMouse::set_Position(Real x, Real y)
   else if (m_y > 1) m_y = 1;
 
   m_Rect->setCorners(m_x,m_y,m_x + 0.025,m_y - 0.05);
-#endif
 }
 
 void TileMouse::Init()
 {
-#ifndef DAIMONIN
   m_Rect = new Rectangle2D(true);
 
   m_Rect->setBoundingBox(AxisAlignedBox(-100000.0*Vector3::UNIT_SCALE, 100000.0*Vector3::UNIT_SCALE));
@@ -1003,22 +997,25 @@ void TileMouse::Init()
   set_Position(0,0);
 
   m_SceneNode->attachObject(m_Rect);
-#endif
 }
-
+#endif
 
 TileInterface::TileInterface(TileManager* TileManager)
 {
   m_TileManager = TileManager;
   m_SceneNode = m_TileManager->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode("Interface");
+  #ifndef DAIMONIN
   m_Mouse = new TileMouse(this);
+  #endif
   m_Selection = new TileSelection(m_TileManager);
   m_SquareSize = 1;
 }
 
 TileInterface::~TileInterface()
 {
+  #ifndef DAIMONIN
   delete m_Mouse;
+  #endif
   delete m_Selection;
 }
 
@@ -1031,6 +1028,7 @@ Vector2 TileInterface::get_Selection()
 void TileInterface::Init()
 {
   // Initialize mouse cursor
+#ifndef DAIMONIN
   m_Mouse->Init();
 }
 
@@ -1081,6 +1079,7 @@ void TileInterface::pick_Tile()
   {
     m_Selection->select();
   }
+  #endif
 }
 
 

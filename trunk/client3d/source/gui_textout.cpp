@@ -32,8 +32,6 @@ const int MAX_FONT_SIZE = 80;
 const int MIN_RESO_SIZE = 55;
 const int MAX_RESO_SIZE = 96;
 
-const char SYSTEM_FONT[] = "Vera.ttf";
-
 const uint32 TXT_COLOR_DEFAULT   = 0x00ffffff;
 const uint32 TXT_COLOR_RED       = 0x00ff0000;
 const uint32 TXT_COLOR_GREEN     = 0x0000ff00;
@@ -59,9 +57,8 @@ enum
 ///=================================================================================================
 GuiTextout::GuiTextout()
 {
+  mTextGfxBuffer=0;
   maxFontHeight = 0;
-  /// Build the SystemFont.
-  loadTTFont(SYSTEM_FONT, "16", "95");
 }
 
 ///=================================================================================================
@@ -69,7 +66,8 @@ GuiTextout::GuiTextout()
 ///=================================================================================================
 void GuiTextout::createBuffer()
 {
-  TextGfxBuffer = new uint32[maxFontHeight * MAX_TEXTLINE_LEN];
+  if (mTextGfxBuffer) delete[] mTextGfxBuffer;
+  mTextGfxBuffer = new uint32[maxFontHeight * MAX_TEXTLINE_LEN];
 }
 
 ///=================================================================================================
@@ -77,7 +75,7 @@ void GuiTextout::createBuffer()
 ///=================================================================================================
 GuiTextout::~GuiTextout()
 {
-  delete[] TextGfxBuffer;
+  if (mTextGfxBuffer) delete[] mTextGfxBuffer;
   for (std::vector<mFont*>::iterator i = mvFont.begin(); i < mvFont.end(); ++i)
   {
     delete[] (*i)->data;
@@ -99,7 +97,7 @@ void GuiTextout::loadRawFont(const char *filename)
   fnt->data = new uint32[size];
   memcpy(fnt->data, image.getData(), size * sizeof(uint32));
 
-  fnt->height = image.getHeight() -1;
+  fnt->height = image.getHeight();
   if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
   fnt->textureWidth = image.getWidth();
   fnt->width  = image.getWidth() / CHARS_IN_FONT;
@@ -113,6 +111,7 @@ void GuiTextout::loadRawFont(const char *filename)
     }
     fnt->charWidth[i] = x;
   }
+  createBuffer();
 }
 
 ///=================================================================================================
@@ -168,10 +167,11 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
   fnt->charWidth[0] = fnt->width/2; // ascii(32).
   fnt->textureWidth = fnt->width * CHARS_IN_FONT;
+  createBuffer();
 
   /// Build the RAW datas.
   fnt->data = new uint32[fnt->textureWidth * fnt->height];
-  for (unsigned int i=0; i < fnt->textureWidth * fnt->height; ++i)
+  for (unsigned int i=0; i < fnt->textureWidth * fnt->height -1; ++i)
     fnt->data[i] = 0x00ffffff;
   PixelBox pb(fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8 , fnt->data);
 
@@ -187,7 +187,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     y1 = (int)(v1 * texH); if (y1 > texH-2) y1 = texH-1;
     y2 = (int)(v2 * texH); if (y2 > texH-1) y2 = texH-1;
     texture->getBuffer()->blitToMemory(
-      Box(x1, y1, x2, y1 + fnt->height-1),
+      Box(x1, y1, x2, y1 + fnt->height),
       pb.getSubVolume(Box(xPos, 0, xPos + x2-x1, fnt->height)));
   }
 
@@ -204,22 +204,45 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   fnt->baseline = iSize;
 
-  //////////////////////////////////////////////////////////////////////////
+//#define CREATE_SYSTEM_FONT
+  #ifdef CREATE_SYSTEM_FONT
+  /// ////////////////////////////////////////////////////////////////////
   ///.The first font ever created is our system font.
-  /////////////////////////////////////////////////////////////////////////
+  /// Run this function only if you are in need of a new system-font!
+  /// ////////////////////////////////////////////////////////////////////
   static int sysFont = -1;
   if (!++sysFont)
   {
+    Image img;
+    /// ////////////////////////////////////////////////////////////////////
+    /// This is the Ogre fontdata.
+    /// ////////////////////////////////////////////////////////////////////
+    /*
     uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
     texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
-    Image img;
-    /// This is the Ogre fontdata.
-    //img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
-    //img.save("c:\\OgreFont.png");
+    img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
+    img.save("c:\\OgreFont.png");
+    */
+    /// ////////////////////////////////////////////////////////////////////
     /// This is the Daimonin fontdata.
+    /// ////////////////////////////////////////////////////////////////////
+    // draw the cher-end sign to get rid of the monospace.
+    uint32 *data = fnt->data;
+    for (int i=0; i < CHARS_IN_FONT; ++i)
+    {
+      for (unsigned int y = 0; y < fnt->height; ++y)
+      {
+        *(data + fnt->charWidth[i] + y*fnt->textureWidth) = 0xff00ff00;
+      }
+      data+= fnt->width;
+    }
+    // write font to disc.
     img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
-    img.save(FILE_SYSTEM_FONT);
+    std::string filename = PATH_TEXTURES;
+    filename += FILE_SYSTEM_FONT;
+    img.save(filename);
   }
+#endif
 
   //////////////////////////////////////////////////////////////////////////
   ///.Free Memory.
@@ -229,7 +252,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
 
   //////////////////////////////////////////////////////////////////////////
-  ///.Create Text Cursor.
+  ///.Create Text Cursor (for text input).
   /////////////////////////////////////////////////////////////////////////
 
   //TODO.
@@ -248,7 +271,7 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
     {
       for (unsigned int x=0; x < line->width; ++x)
       {
-        TextGfxBuffer[x + y] = line->BG_Backup[x + y];
+        mTextGfxBuffer[x + y] = line->BG_Backup[x + y];
       }
       y += line->width;
     }
@@ -257,16 +280,15 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
   { // Static text.
     texture->getBuffer()->blitToMemory(
       Box(line->x1, line->y1, line->x2, line->y2),
-      PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, TextGfxBuffer)
+      PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer)
     );
   }
-
   if (!text || text[0] == 0) return;
   /// draw the text into buffer.
-  drawText(line->x2 - line->x1, line->y2 - line->y1, TextGfxBuffer, text, line->font);
+  drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, text, line->font);
   /// Blit it into the window.
   texture->getBuffer()->blitFromMemory(
-    PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, TextGfxBuffer),
+    PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer),
     Box(line->x1, line->y1, line->x2, line->y2));
 }
 
@@ -291,6 +313,8 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
   if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
   uint32 pixFont, pixColor;
   uint32 color = TXT_COLOR_DEFAULT;
+
+  //  uint32 *strtX = dest_data;
   uint32 *stopX = dest_data + width;
 
   while (*text)
@@ -298,57 +322,67 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
     // Parse format commands.
     switch (*text)
     {
+      /*
+        // atm we draw only 1 line of text in this function!
+            case '\n':
+              strtX += mvFont[fontNr]->height * width;
+              dest_data = strtX;
+              stopX = strtX + width;
+              ++text;
+            break;
+      */
       case TXT_CMD_HIGHLIGHT:
-        if (!*(++text)) return;
-        if (color == TXT_COLOR_DEFAULT)
+      if (!*(++text)) return;
+      if (color == TXT_COLOR_DEFAULT)
+      {
+        /// Parse the highlight color (8 byte hex string to uint32).
+        if (*text == TXT_SUB_CMD_COLOR)
         {
-          /// Parse the highlight color (8 byte hex string to uint32).
-          if (*text == TXT_SUB_CMD_COLOR)
+          color =0;
+          for (int i = 28; i>=0; i-=4)
           {
-            color =0;
-            for (int i = 28; i>=0; i-=4)
-            {
-              color += (*(++text) >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
-            }
-            ++text;
+            color += (*(++text) >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
           }
-          /// Use standard highlight color.
-          else color = TXT_COLOR_HIGHLIGHT;
+          ++text;
         }
-        else color = TXT_COLOR_DEFAULT;
-        break;
+        /// Use standard highlight color.
+        else color = TXT_COLOR_HIGHLIGHT;
+      }
+      else color = TXT_COLOR_DEFAULT;
+      break;
 
       case TXT_CMD_CHANGE_FONT:
-        if (!*(++text)) return;
-        //int base= mvFont[fontNr]->baseline;
-        fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-        ++text;
-        fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
-        ++text;
-        if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
-        break;
+      if (!*(++text)) return;
+      //int base= mvFont[fontNr]->baseline;
+      fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
+      ++text;
+      fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
+      ++text;
+      if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
+      break;
 
       default:
-        unsigned char chr = (*text - 32);
-        if (chr > CHARS_IN_FONT) chr = 0;
-        fontPosX = chr * mvFont[fontNr]->width;
-        for (int y =0; y < (int)mvFont[fontNr]->height && y < height; ++y)
-        {
-          for (int x=0; x < mvFont[fontNr]->charWidth[chr]; ++x)
-          { /// PixelFormat: A8 R8 G8 B8.
-            pixFont = mvFont[fontNr]->data[y * mvFont[fontNr]->textureWidth + fontPosX + x];
-            if (pixFont <= 0xffffff) continue;
-            pixColor = pixFont & 0xff000000;
-            pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
-            pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
-            pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
-            dest_data[(y+fontPosY)*width + x] = pixColor;
-          }
+      unsigned char chr = (*text - 32);
+      if (chr > CHARS_IN_FONT) chr = 0;
+      fontPosX = chr * mvFont[fontNr]->width;
+      for (int y =0; y < (int)mvFont[fontNr]->height && y < height; ++y)
+      {
+        for (int x=0; x < mvFont[fontNr]->charWidth[chr]; ++x)
+        { /// PixelFormat: A8 R8 G8 B8.
+          pixFont = mvFont[fontNr]->data[y * mvFont[fontNr]->textureWidth + fontPosX + x];
+          if (pixFont <= 0xffffff) continue;
+          pixColor = pixFont & 0xff000000;
+          pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
+          pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
+          pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
+          dest_data[(y+fontPosY)*width + x] = pixColor;
         }
-        dest_data += mvFont[fontNr]->charWidth[chr] +1;
-        if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
-        ++text;
-        break;
+      }
+      dest_data += mvFont[fontNr]->charWidth[chr] +1;
+      if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
+      ++text;
+      break;
+
     }
   }
 }
@@ -365,22 +399,22 @@ void GuiTextout::CalcTextSize(unsigned int &x, unsigned int &y, int maxWidth, in
     switch (*text)
     {
       case TXT_CMD_HIGHLIGHT:
-        if (!*(++text)) break;
-        if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
-        break;
+      if (!*(++text)) break;
+      if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
+      break;
 
       case TXT_CMD_CHANGE_FONT:
-        if (!*(++text)) break;
-        text+= 2;  // format: "xx".
-        break;
+      if (!*(++text)) break;
+      text+= 2;  // format: "xx".
+      break;
 
       default:
-        if (x + mvFont[fontNr]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
-        {
-          x+= mvFont[fontNr]->charWidth[*text - 32] +1;
-        }
-        ++text;
-        break;
+      if (x + mvFont[fontNr]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
+      {
+        x+= mvFont[fontNr]->charWidth[*text - 32] +1;
+      }
+      ++text;
+      break;
     }
   }
   y+= mvFont[fontNr]->height;

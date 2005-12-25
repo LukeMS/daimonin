@@ -93,6 +93,7 @@ public:
   void set_Square_Size(unsigned int SquareSize);
 };
 
+#ifndef DAIMONIN
 class TileMouse
 {
 private:
@@ -117,13 +118,16 @@ public:
   void set_Position(Real x, Real y);
   void move_Relative(Real x, Real y);
 };
+#endif
 
 class TileInterface
 {
 private:
   TileManager* m_TileManager;
   SceneNode* m_SceneNode;
+  #ifndef DAIMONIN
   TileMouse* m_Mouse;
+  #endif
   TileSelection* m_Selection;
   unsigned int m_SquareSize;
 
@@ -133,11 +137,10 @@ public:
   ~TileInterface();
 
   Vector2 get_Selection();
-  SceneNode* get_SceneNode(){
-    return m_SceneNode;}
-  TileMouse* get_Mouse(){
-    return m_Mouse;}
-
+  SceneNode* get_SceneNode() { return m_SceneNode; }
+  #ifndef DAIMONIN
+  TileMouse* get_Mouse()     { return m_Mouse; }
+  #endif
   void Init();
   void pick_Tile();
   void pick_Tile(float mMouseX, float mMouseY);
@@ -149,5 +152,6 @@ public:
   void level_Tile_Corner_height(int z_direction,int SquareSize,int x,int y);//not depending on user input, for loadeing lvl methodes i.e.
   bool Tile_Corner_height_is_leveled(int z_direction,int SquareSize,int x,int y);//returns true if leveling is not needed, because its allready leveld
 };
+
 
 #endif

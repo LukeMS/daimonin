@@ -158,6 +158,10 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/event_user.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/gui_animation.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>

@@ -112,7 +112,8 @@ public:
   {
     return mHasFocus;
   }
-  void Init(const char *XML_imageset_file, const char *XML_windows_file, int w, int h);
+  void Init(int w, int h);
+  void parseImageset(const char *XML_imageset_file, const char *XML_windows_file);
   void freeRecources();
   void update();
   bool mouseEvent(int MouseAction, Real rx, Real ry);
@@ -120,7 +121,7 @@ public:
   void sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
   //void getMessage (int &window, int &message, int &element);
   void setTooltip(const char*text);
-  void displaySystemMessage(const char*text, int type);
+  void displaySystemMessage(const char*text);
 
 private:
   ////////////////////////////////////////////////////////////

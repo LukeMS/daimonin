@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -30,10 +30,22 @@ using namespace std;
 ////////////////////////////////////////////////////////////
 /// Defines.
 ////////////////////////////////////////////////////////////
-
 typedef enum _game_status
 {
-  GAME_STATUS_INIT,          // start to autoinit.
+  GAME_STATUS_INIT_VIEWPORT, // Init all basic ogre stuff.
+  GAME_STATUS_INIT_SOUND,    // Init the sound-system.
+  GAME_STATUS_INIT_LIGHT,    // Init the light-system.
+
+  GAME_STATUS_INIT_SPELL,    // Init the spells.
+  GAME_STATUS_INIT_PARTICLE, // Init the particles.
+  GAME_STATUS_INIT_OBJECT,   // Init the objects.
+
+
+  GAME_STATUS_INIT_GUI,      // Init the gui.
+  GAME_STATUS_INIT_TILE,     // Init the tile-engine.
+  GAME_STATUS_INIT_NET,      // init the network.
+  GAME_STATUS_INIT_DONE,      // DUMMY - delete me!
+
   GAME_STATUS_META,          // connect to meta server.
   GAME_STATUS_START,         // start all up (without full reset or meta calling).
   GAME_STATUS_WAITLOOP,      // we are NOT connected to anything.
@@ -53,6 +65,7 @@ typedef enum _game_status
   GAME_STATUS_WAITFORPLAY,   // we simply wait for game start means, this is not a serial stepping here
   GAME_STATUS_QUIT,          // we are in quit menu
   GAME_STATUS_PLAY,          // we play now!!
+  GAME_STATUS_SUM
 } _game_status;
 
 ////////////////////////////////////////////////////////////
@@ -89,7 +102,7 @@ public:
   /// Variables.
   ////////////////////////////////////////////////////////////
   static optionStruct optStruct[];
-  int GameStatus;
+
   std::string mMetaServer;
   unsigned int  mMetaServerPort;
   unsigned int  mSelectedMetaServer;
@@ -101,16 +114,27 @@ public:
   bool openDescFile(const char *filename);
   void closeDescFile();
   bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
-  bool Init();
+
   static Option &getSingleton()
   {
     static Option Singleton; return Singleton;
+  }
+  bool setGameStatus(int status)
+  {
+    if (status > GAME_STATUS_SUM) { return false; }
+    mGameStatus = status;
+    return true;
+  }
+  int getGameStatus()
+  {
+    return mGameStatus;
   }
 
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
+  unsigned int mGameStatus;
   bool mLogin;
   ifstream *mDescFile;
   string mDescBuffer;

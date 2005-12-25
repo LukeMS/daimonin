@@ -18,6 +18,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
+#include <string>
 #include "logger.h"
 #include "event.h"
 
@@ -84,7 +85,6 @@ int main(int /*argc*/, char /* **argv*/)
     ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     Event= new CEvent(window, sceneMgr);
     root->addFrameListener(Event);
-    Event->Setup();
     root->startRendering();
 
     /// ////////////////////////////////////////////////////////////////////
@@ -95,7 +95,14 @@ int main(int /*argc*/, char /* **argv*/)
   }
   catch( Exception& e )
   {
-    Logger::log().error() << e.getFullDescription();
+    std::string s = e.getFullDescription();
+    unsigned int found = s.find('\n');
+    while (found != std::string::npos)
+    {
+      s.replace(found, 1, "<br>\n");
+      found = s.find('\n', found+6);
+    }
+    Logger::log().error() << s;
   }
   return 0;
 }
