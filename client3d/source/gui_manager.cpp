@@ -32,6 +32,9 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+const int TOOLTIP_SIZE_X = 256;
+const int TOOLTIP_SIZE_Y = 128;
+
 GuiManager::_GuiElementNames GuiManager::GuiWindowNames[GUI_WIN_SUM]=
   {
     {"Statistics",    GUI_WIN_STATISTICS
@@ -91,7 +94,7 @@ const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
 ///=================================================================================================
 /// .
 ///=================================================================================================
-void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_file, int w, int h)
+void GuiManager::Init(int w, int h)
 {
   Logger::log().headline("Init GUI");
   mScreenWidth   = w;
@@ -101,20 +104,24 @@ void GuiManager::Init(const char *XML_imageset_file, const char *XML_windows_fil
   /////////////////////////////////////////////////////////////////////////
   mTooltipRefresh = false;
   mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
-             TEX_TYPE_2D, 256, 128, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+             TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
   mOverlay = OverlayManager::getSingleton().create("GUI_Tooltip_Overlay");
   mOverlay->setZOrder(500);
   mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Tooltip_Frame");
   mElement->setMetricsMode(GMM_PIXELS);
-  mElement->setDimensions (256, 128);
-  mElement->setPosition(0, 0);
+  mElement->setDimensions (TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y);
+  mElement->setPosition((mScreenWidth-mTexture->getWidth())/2, (mScreenHeight-mTexture->getHeight())/2);
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
   mMaterial = tmpMaterial->clone("GUI_Tooltip_Material");
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_ToolTip_Texture");
   mMaterial->load();
   mElement->setMaterialName("GUI_Tooltip_Material");
   mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
+  mOverlay->show();
+}
 
+void GuiManager::parseImageset(const char *XML_imageset_file, const char *XML_windows_file)
+{
   /////////////////////////////////////////////////////////////////////////
   /// Parse the gfx datas from the imageset.
   /////////////////////////////////////////////////////////////////////////
@@ -242,7 +249,6 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
         ++sumEntries;
       }
     }
-    GuiTextout::getSingleton().createBuffer();
     Logger::log().info() << sumEntries << " Fonts were parsed.";
   }
   else
@@ -360,7 +366,7 @@ void GuiManager::update()
       label.font = 2;
       label.clipped = false;
       label.x1 = label.y1 = 2;
-      label.x2 = 256;
+      label.x2 = TOOLTIP_SIZE_X;
       label.y2 = GuiTextout::getSingleton().getFontHeight(label.font);
       clearTooltip();
       GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), mStrTooltip.c_str());
@@ -377,22 +383,32 @@ void GuiManager::update()
 }
 
 ///=================================================================================================
-/// .
+/// CAUTION: no bounds check !!!.
 ///=================================================================================================
-void GuiManager::displaySystemMessage(const char *, int )
+void GuiManager::displaySystemMessage(const char *text)
 {
+  static int row =0;
+  if (!text || !text[0])
+  {
+    row = 0;
+    mOverlay->hide();
+    return;
+  }
+  int fontH = GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
   TextLine label;
   label.index= -1;
-  label.font = 2;
-  label.clipped = false;
-  label.x1 = label.y1 = 2;
-  label.x2 = 256;
-  label.y2 = GuiTextout::getSingleton().getFontHeight(SYSTEM_FONT_NR);
-  clearTooltip();
-//  GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), text);
+  label.font = FONT_SYSTEM;
+  //label.clipped = false;
+  label.x1 = 0;
+  label.y1 = fontH * row;
+  label.x2 = mTexture->getWidth()-1;
+  label.y2 = fontH * row + GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
+//  clearTooltip();
+  GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), text);
   mTooltipRefresh = false;
-  mElement->setPosition(300, 100);
+//  mElement->setPosition(300, 100);
   mOverlay->show();
+  ++row;
 }
 
 ///=================================================================================================
@@ -413,7 +429,7 @@ void GuiManager::clearTooltip()
 {
   PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
   uint32 *dest_data = (uint32*)pb.data;
-  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)
+  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight() -1; ++y)
   {
     *dest_data++ = 0x884444ff;
   }

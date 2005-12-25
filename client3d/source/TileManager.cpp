@@ -148,14 +148,7 @@ void TileManager::Save_Map(const std::string &png_filename)
   {
     for(int y = 0; y < TILES_SUM_Z; ++y)
     {
-      if (m_Map[x][y].height >255)
-      {
-        data[y * TILES_SUM_X + x] = uchar  (255);
-      }
-      else
-      {
-        data[y * TILES_SUM_X + x] = uchar  (m_Map[x][y].height);
-      }
+      data[y * TILES_SUM_X + x] = uchar  (m_Map[x][y].height);
     }
   }
   DataStreamPtr image_chunk(new MemoryDataStream ((void*)data,TILES_SUM_X * TILES_SUM_Z,false));
@@ -163,7 +156,7 @@ void TileManager::Save_Map(const std::string &png_filename)
   img.loadRawData(image_chunk,TILES_SUM_X,TILES_SUM_Z, 1, PF_A8);
   // save as a PNG
   std::stringstream tmp_FileName;
-  tmp_FileName <<PATH_TILE_TEXTURES << FILE_HEIGHT_MAP;
+  tmp_FileName <<PATH_TILE_TEXTURES << png_filename;
   img.save(tmp_FileName.str());
   delete data;
 }

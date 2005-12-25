@@ -74,7 +74,7 @@ bool ObjectManager::init(SceneManager *SceneMgr)
 bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing)
 {
   static int id= -1;
-  mDescFile = DIR_MODEL_DESCRIPTION;
+  mDescFile = PATH_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
 
   Logger::log().info()  << "Adding object from file " << mDescFile << "...";

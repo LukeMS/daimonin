@@ -124,20 +124,20 @@ void Network::Update()
   /////////////////////////////////////////////////////////////////////////
   /// Connected:
   /////////////////////////////////////////////////////////////////////////
-  if (Option::getSingleton().GameStatus > GAME_STATUS_CONNECT)
+  if (Option::getSingleton().getGameStatus() > GAME_STATUS_CONNECT)
   {
     if (mSocket == SOCKET_NO)
     {
-      // connection closed, so we go back to GAME_STATUS_INIT here.
-      if (Option::getSingleton().GameStatus == GAME_STATUS_PLAY)
+      // connection closed, so we go back to GAME_STATUS_INIT_NET here.
+      if (Option::getSingleton().getGameStatus() == GAME_STATUS_PLAY)
       {
-        Option::getSingleton().GameStatus = GAME_STATUS_INIT;
+        Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
         Option::getSingleton().mStartNetwork = false;
         mPasswordAlreadyAsked = 0;
       }
       else
       {
-        Option::getSingleton().GameStatus = GAME_STATUS_START;
+        Option::getSingleton().setGameStatus(GAME_STATUS_START);
       }
     }
     else
@@ -150,31 +150,31 @@ void Network::Update()
   /////////////////////////////////////////////////////////////////////////
   // Not connected: walk through connection chain and/or wait for action
   /////////////////////////////////////////////////////////////////////////
-  if (Option::getSingleton().GameStatus != GAME_STATUS_PLAY)
+  if (Option::getSingleton().getGameStatus() != GAME_STATUS_PLAY)
   {
     /////////////////////////////////////////////////////////////////////////
     // autoinit or reset prg data
     /////////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().GameStatus == GAME_STATUS_INIT)
+    if (Option::getSingleton().getGameStatus() == GAME_STATUS_INIT_NET)
     {
       clear_metaserver_data();
-      Logger::log().info() << "GAME_STATUS_INIT";
-      Option::getSingleton().GameStatus = GAME_STATUS_META;
+      Logger::log().info() << "GAME_STATUS_INIT_NET";
+      Option::getSingleton().setGameStatus(GAME_STATUS_META);
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_NEW_CHAR)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NEW_CHAR)
     {
 /*
 	      if (Dialog::getSingleton().UpdateNewChar())
       {
         CreatePlayerAccount();
-        Option::getSingleton().GameStatus = GAME_STATUS_WAITFORPLAY;
+        Option::getSingleton().setGameStatus(GAME_STATUS_WAITFORPLAY);
       }
 */
     }
     /////////////////////////////////////////////////////////////////////////
     // connect to meta and get server data
     /////////////////////////////////////////////////////////////////////////
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_META)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_META)
     {
       Logger::log().info() << "GAME_STATUS_META";
       /*
@@ -204,25 +204,25 @@ void Network::Update()
       }
       add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
 //      TextWin->Print("select a server.");
-      Option::getSingleton().GameStatus = GAME_STATUS_START;
+      Option::getSingleton().setGameStatus(GAME_STATUS_START);
     }
 
     /////////////////////////////////////////////////////////////////////////
     /// Go into standby.
     /////////////////////////////////////////////////////////////////////////
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_START)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_START)
     {
       if (mSocket != SOCKET_NO)
       {
         CloseSocket();
       }
-      Option::getSingleton().GameStatus = GAME_STATUS_WAITLOOP;
+      Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
     }
 
     /////////////////////////////////////////////////////////////////////////
     /// Wait for user to select a server.
     /////////////////////////////////////////////////////////////////////////
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITLOOP)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_WAITLOOP)
     {
 /*
 	      Dialog::getSingleton().setVisible(true);
@@ -246,13 +246,13 @@ void Network::Update()
         TextInput::getSingleton().stop();
         Dialog::getSingleton().setVisible(false);
         Option::getSingleton().mStartNetwork = false;
-        Option::getSingleton().GameStatus = GAME_STATUS_INIT;
+        Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
       }
       else if (TextInput::getSingleton().wasFinished())
       {
         TextInput::getSingleton().stop();
         Option::getSingleton().mSelectedMetaServer = TextInput::getSingleton().getSelCursorPos();
-        Option::getSingleton().GameStatus = GAME_STATUS_STARTCONNECT;
+        Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
       }
       if (TextInput::getSingleton().hasChanged())
       {
@@ -273,11 +273,11 @@ void Network::Update()
     ///////////////////////////////////////////////////////////////////////
     /// Try the selected server.
     ///////////////////////////////////////////////////////////////////////
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_STARTCONNECT)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_STARTCONNECT)
     {
-      Option::getSingleton().GameStatus = GAME_STATUS_CONNECT;
+      Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_CONNECT)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_CONNECT)
     {
       /////////////////////////////////////////////////////////////////////////
       /// This Server was selected in the dialog-window.
@@ -292,22 +292,22 @@ void Network::Update()
       if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))
       {
 //        TextWin->Print("connection failed!", TXT_RED);
-        Option::getSingleton().GameStatus = GAME_STATUS_START;
+        Option::getSingleton().setGameStatus(GAME_STATUS_START);
       }
       else
       {
-        Option::getSingleton().GameStatus = GAME_STATUS_VERSION;
+        Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
 //        TextWin->Print("Connected. exchange version.");
       }
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_VERSION)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_VERSION)
     {   // Send client version.
       Logger::log().info() << "Send Version";
       sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
       cs_write_string(buf, strlen(buf));
-      Option::getSingleton().GameStatus = GAME_STATUS_WAITVERSION;
+      Option::getSingleton().setGameStatus(GAME_STATUS_WAITVERSION);
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITVERSION)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_WAITVERSION)
     {
       Logger::log().info() << "GAME_STATUS_WAITVERSION";
       // perhaps here should be a timer ???
@@ -318,19 +318,19 @@ void Network::Update()
         // false version!
         if (!mGameStatusVersionOKFlag)
         {
-          Option::getSingleton().GameStatus = GAME_STATUS_START;
+          Option::getSingleton().setGameStatus(GAME_STATUS_START);
           Logger::log().info() << "GAME_STATUS_START";
         }
         else
         {
 //          TextWin->Print("version confirmed.");
 //          TextWin->Print("starting login procedure...");
-          Option::getSingleton().GameStatus = GAME_STATUS_SETUP;
+          Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
           Logger::log().info() << "GAME_STATUS_SETUP";
         }
       }
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_SETUP)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_SETUP)
     {
       ServerFile::getSingleton().checkFiles();
       sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
@@ -352,9 +352,9 @@ void Network::Update()
       Logger::log().info() << "Send: setup " << buf;
       mRequest_file_chain = 0;
       mRequest_file_flags = 0;
-      Option::getSingleton().GameStatus = GAME_STATUS_WAITSETUP;
+      Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_REQUEST_FILES)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_REQUEST_FILES)
     {
       Logger::log().info()  << "GAME_STATUS_REQUEST FILES ("
       << mRequest_file_chain << ")";
@@ -425,9 +425,9 @@ void Network::Update()
         mRequest_file_chain++; // this ensure one loop tick and updating the messages
       }
       else if (mRequest_file_chain == 13)
-        Option::getSingleton().GameStatus = GAME_STATUS_ADDME;
+        Option::getSingleton().setGameStatus(GAME_STATUS_ADDME);
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_ADDME)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_ADDME)
     {
       cs_write_string("addme", 5);  // SendAddMe
       /*
@@ -435,10 +435,10 @@ void Network::Update()
          cpl.name[0] = 0;
          cpl.password[0] = 0;
       */
-      Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+      Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
       // now wait for login request of the server
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_LOGIN)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_LOGIN)
     {
 /*
 	      // map_transfer_flag = 0;
@@ -448,29 +448,29 @@ void Network::Update()
         TextWin->Print("Break Login.", TXT_RED);
         TextInput::getSingleton().stop();
         Dialog::getSingleton().setVisible(false);
-        Option::getSingleton().GameStatus = GAME_STATUS_START;
+        Option::getSingleton().setGameStatus(GAME_STATUS_START);
       }
 */
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_NAME)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NAME)
     {
 /*
 	      // map_transfer_flag = 0;
       //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
       if (TextInput::getSingleton().wasCanceled())
       {
-        Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
       }
       else if (TextInput::getSingleton().wasFinished())
       {
         //strcpy(cpl.name, InputString);
         send_reply((char*)TextInput::getSingleton().getText());
         //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
-        Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
       }
 */
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_PSWD)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_PSWD)
     {
 /*
 	      // map_transfer_flag = 0;
@@ -478,35 +478,35 @@ void Network::Update()
       //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
       if (TextInput::getSingleton().wasCanceled())
       {
-        Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
       }
       else if (TextInput::getSingleton().wasFinished())
       {
         // strncpy(cpl.password, InputString, 39);
         send_reply((char*)TextInput::getSingleton().getText());
         //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
-        Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+        Option::getSingleton().getGameStatus(GAME_STATUS_LOGIN);
       }
 */
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_VERIFYPSWD)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_VERIFYPSWD)
     {
 /*
 	      // map_transfer_flag = 0;
       //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN);
       if (TextInput::getSingleton().wasCanceled())
       {
-        Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
       }
       else if (TextInput::getSingleton().wasFinished())
       {
         send_reply((char*)TextInput::getSingleton().getText());
         //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
-        Option::getSingleton().GameStatus = GAME_STATUS_LOGIN;
+        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
       }
 */
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITFORPLAY)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_WAITFORPLAY)
     {
       /*
             clear_map();
@@ -515,11 +515,11 @@ void Network::Update()
             map_transfer_flag = 1;
       */
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_NEW_CHAR)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NEW_CHAR)
     {
       // map_transfer_flag = 0;
     }
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_QUIT)
+    else if (Option::getSingleton().getGameStatus() == GAME_STATUS_QUIT)
     {
       // map_transfer_flag = 0;
     }

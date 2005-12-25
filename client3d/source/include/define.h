@@ -30,16 +30,18 @@ http://www.gnu.org/licenses/licenses.html
 const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
 const char OVERLAY_TYPE_NAME[] = "Panel"; // defined in OverlayElementFactory.h
-const char FILE_HEIGHT_MAP[]            = "Hoehenkarte.png";
-const char PATH_TILE_TEXTURES[]         = "./media/textures/tiles/";
+const char FILE_HEIGHT_MAP[]   = "Hoehenkarte.png";
 
 ///========================================================================
 /// All pathes MUST be placed here!
 ///========================================================================
-const char FILE_GUI_IMAGESET[] = "./media/xml/GUI_ImageSet.xml";
-const char FILE_GUI_WINDOWS[]  = "./media/xml/GUI_Windows.xml";
+const char FILE_GUI_IMAGESET[]          = "./media/xml/GUI_ImageSet.xml";
+const char FILE_GUI_WINDOWS[]           = "./media/xml/GUI_Windows.xml";
 
-const char FILE_SYSTEM_FONT[]  = "./media/textures/SystemFont.png";
+const char PATH_TEXTURES[]              = "./media/textures/";
+const char FILE_SYSTEM_FONT[]           = "SystemFont.png";
+
+const char PATH_TILE_TEXTURES[]         = "./media/textures/tiles/";
 
 const char FILE_CLIENT_SPELLS[]         = "./srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]         = "./srv_files/client_skills";
@@ -56,11 +58,11 @@ const char FILE_ARCHDEF[]               = "./archdef.dat";
 const char FILE_LOGGING[]               = "./client_log.html";
 const char FILE_OPTIONS[]               = "./options.dat";
 
-const char DIR_MODEL_DESCRIPTION[]      = "./media/models/";
+const char PATH_MODEL_DESCRIPTION[]     = "./media/models/";
 const char FILE_PLAYER_DESC[]           = "./media/models/player.desc";
 const char FILE_WORLD_DESC[]            = "./media/models/world.desc";
 
-const char DIR_SAMPLES[]                = "./media/sound/";
+const char PATH_SAMPLES[]               = "./media/sound/";
 const char FILE_MUSIC_001[]             = "./media/sound/invtro94.s3m";
 const char FILE_SAMPLE_DUMMY[]          = "./media/sound/dummy.wav";
 const char FILE_SAMPLE_MOUSE_CLICK[]    = "./media/sound/console.wav";

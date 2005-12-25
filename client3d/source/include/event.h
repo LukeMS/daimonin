@@ -49,7 +49,6 @@ public:
   /// ////////////////////////////////////////////////////////////////////
   CEvent(RenderWindow* win, SceneManager *mSceneMgr);
   ~CEvent();
-  void Setup();
   SceneManager *GetSceneManager()
   {
     return mSceneManager;

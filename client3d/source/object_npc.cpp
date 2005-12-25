@@ -45,7 +45,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
   mNode = Node;
   // mFacing = Facing;
   thisNPC = mInstanceNr;
-  mDescFile = DIR_MODEL_DESCRIPTION;
+  mDescFile = PATH_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
   if (!mInstanceNr)  Logger::log().headline("Init Actor Models");
   Logger::log().info()  << "Parse description file " << mDescFile << "...";
