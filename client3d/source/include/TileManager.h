@@ -48,8 +48,8 @@ const int CHUNK_SUM_Z  = 4;
 
 
 /** Number of tiles in a chunk. Must be even. */
-const int CHUNK_SIZE_X = 16;
-const int CHUNK_SIZE_Z = 18;
+const int CHUNK_SIZE_X = 12;
+const int CHUNK_SIZE_Z = 16;
 
 /** Number of tiles in the worldmap (on x-axis). */
 const int TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;

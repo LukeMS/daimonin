@@ -54,7 +54,7 @@ bool ObjectManager::init(SceneManager *SceneMgr)
     Option::getSingleton().getDescStr("StartZ", strTemp,i);
     Real posZ = atof(strTemp.c_str());
     Option::getSingleton().getDescStr("Facing", strTemp);
-    Radian facing = Radian(atof(strTemp.c_str()));
+    float facing = atof(strTemp.c_str());
 
     if (strType == "npc")
     {
@@ -71,7 +71,7 @@ bool ObjectManager::init(SceneManager *SceneMgr)
 //=================================================================================================
 //
 //=================================================================================================
-bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing)
+bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, float facing)
 {
   static int id= -1;
   mDescFile = PATH_MODEL_DESCRIPTION;
@@ -139,7 +139,7 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 //=================================================================================================
 // JUST FOR TESTING.
 //=================================================================================================
-void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
+void ObjectManager::Event(int obj_type, int action, int val1, int val2)
 {
   switch (obj_type)
   {
@@ -151,6 +151,7 @@ void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
         if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
         if (action == OBJ_TEXTURE  ) mvObject_npc[0]->toggleTexture(val1, val2);
         if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1);
+        if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
       }
       break;
     case OBJECT_NPC:

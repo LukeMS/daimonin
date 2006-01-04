@@ -2,16 +2,16 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
- 
+
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
- 
+
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -33,7 +33,7 @@ enum
 };
 enum
 {
-  OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_SUM
+  OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
 };
 
 ////////////////////////////////////////////////////////////
@@ -54,10 +54,10 @@ public:
     static ObjectManager Singleton; return Singleton;
   }
   bool init(SceneManager *SceneMgr);
-  bool addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing);
+  bool addObject(unsigned int type, const char *desc_filename, Vector3 pos, float facing);
   void delObject(int number);
   void update(int type, const FrameEvent& evt);
-  void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+  void Event(int obj_type, int action, int val1=0, int val2=0);
   void castSpell(int npc, int spell)
   {
     mvObject_npc[npc]->castSpell(spell);

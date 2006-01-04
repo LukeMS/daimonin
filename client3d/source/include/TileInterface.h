@@ -84,7 +84,7 @@ public:
 
   TileSelection( TileManager* TileManager);
   ~TileSelection();
-  Vector2 get_Selection();
+  Vector3 get_Selection();
   void create_Entity();
   void change_Selection();
   void save_Selection();
@@ -93,54 +93,26 @@ public:
   void set_Square_Size(unsigned int SquareSize);
 };
 
-#ifndef DAIMONIN
-class TileMouse
-{
-private:
-
-  Real m_x;
-  Real m_y;
-
-  TileInterface* m_Interface;
-  Rectangle2D* m_Rect;
-  SceneNode* m_SceneNode;
-
-public:
-
-  TileMouse(TileInterface* TileInterface);
-  ~TileMouse();
-
-  Real get_x(){
-    return m_x;}
-  Real get_y(){
-    return m_y;}
-  void Init();
-  void set_Position(Real x, Real y);
-  void move_Relative(Real x, Real y);
-};
-#endif
-
 class TileInterface
 {
 private:
   TileManager* m_TileManager;
   SceneNode* m_SceneNode;
-  #ifndef DAIMONIN
-  TileMouse* m_Mouse;
-  #endif
   TileSelection* m_Selection;
   unsigned int m_SquareSize;
+  RaySceneQuery* mRaySceneQuery;
 
 public:
-
   TileInterface(TileManager* TileManager);
   ~TileInterface();
-
-  Vector2 get_Selection();
-  SceneNode* get_SceneNode() { return m_SceneNode; }
-  #ifndef DAIMONIN
-  TileMouse* get_Mouse()     { return m_Mouse; }
-  #endif
+  const Vector3 get_Selection()
+  {
+    return m_Selection->get_Selection();
+  }
+  SceneNode* get_SceneNode()
+  {
+    return m_SceneNode;
+  }
   void Init();
   void pick_Tile();
   void pick_Tile(float mMouseX, float mMouseY);
@@ -152,6 +124,5 @@ public:
   void level_Tile_Corner_height(int z_direction,int SquareSize,int x,int y);//not depending on user input, for loadeing lvl methodes i.e.
   bool Tile_Corner_height_is_leveled(int z_direction,int SquareSize,int x,int y);//returns true if leveling is not needed, because its allready leveld
 };
-
 
 #endif
