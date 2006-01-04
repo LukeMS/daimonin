@@ -87,7 +87,7 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
   /// Init is done.
   /////////////////////////////////////////////////////////////////////////
   Logger::log().info() << "Init done.";
-  Logger::log().headline("Running TileEngine:");
+  Logger::log().headline("Starting TileEngine:");
 }
 
 ///=================================================================================================

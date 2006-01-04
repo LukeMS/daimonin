@@ -17,7 +17,7 @@ MeshName : "Human_M_Fighter.desc"
 StartX   : "0"
 StartY   : "0"
 StartZ   : "0"
-Facing   : "90" # [degrees]
+Facing   : "0" # [degrees]
 
 #Type     : "npc"
 #MeshName : "Human_F_Fighter.desc"

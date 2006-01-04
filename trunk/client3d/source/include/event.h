@@ -76,7 +76,6 @@ private:
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
   bool mQuitGame;
-  int mAniso;
   int mDayTime;
   int mSceneDetailIndex;
   Real mIdleTime;
@@ -93,7 +92,6 @@ private:
   Camera* mCamera;
   Light *mLight[2];
   Light *mSpotLight, *mVolLight;
-  TextureFilterOptions mFiltering;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

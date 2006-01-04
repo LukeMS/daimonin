@@ -55,8 +55,6 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
   mSceneManager = SceneMgr;
   mWindow = win;
   mTranslateVector = Vector3(0,0,0);
-  mAniso = 1;
-  mFiltering = TFO_BILINEAR;
   mIdleTime =0;
   mDayTime = 15;
   mCameraZoom = MAX_CAMERA_ZOOM;
@@ -301,12 +299,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
       Network::getSingleton().Init();
 
       GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"Welcome to ~Daimonin 3D~.");
-      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#001b1b88Text~ ~#00663310Text~ ~#0000ffffText~");
-      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#00ff0000Text~ ~#0000ff00Text~ ~#000000ffText~");
       GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"");
-      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a1 ");
-      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line a2 ");
-      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"line b1 ");
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"Press ~right~ MB on ground to move.");
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#00880000Remember:~");
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#001b1b88Server~ will send us~#00880088 one Step~ at");
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"once, so the code won't work for a");
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"bigger distance.");
+
       /// Set next state.
       Option::getSingleton().setGameStatus(GAME_STATUS_INIT_DONE);
       GuiManager::getSingleton().displaySystemMessage(NULL);

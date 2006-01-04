@@ -53,7 +53,7 @@ Animate::Animate(Entity *entity)
   mAnimSpeed = atoi(mStrTemp.c_str())/100;
 
   Option::getSingleton().getDescStr("Speed_Turn", mStrTemp);
-  mTurnSpeed = atoi(mStrTemp.c_str())/100;
+  mTurnSpeed = atoi(mStrTemp.c_str());
 
   // fill the animation states.
   for (int state = 0; state < STATE_SUM; ++state)

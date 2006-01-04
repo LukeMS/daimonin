@@ -31,6 +31,7 @@ TileSelection::TileSelection(TileManager* TileManager)
   m_vdataCorner3 = NULL;
   m_vdataCorner4 = NULL;
   m_SquareSize = 1;
+  // reset();
 }
 
 TileSelection::~TileSelection()
@@ -48,13 +49,15 @@ TileSelection::~TileSelection()
   if (m_vdataCorner3) delete m_vdataCorner3;
   if (m_vdataCorner4) delete m_vdataCorner4;
 }
-Vector2 TileSelection::get_Selection()
+Vector3 TileSelection::get_Selection()
 {
-  Vector2 tmp;
+  Vector3 tmp;
   tmp.x = m_x;
-  tmp.y = m_y;
+  tmp.y = (Real) (m_TileManager->Get_Map_Height(m_x, m_y));
+  tmp.z = m_y;
   return tmp;
 }
+
 void TileSelection::save_Selection()
 {
   m_x_old = m_x;
@@ -952,158 +955,54 @@ void TileSelection::set_Square_Size(unsigned int SquareSize)
   m_SquareSize = SquareSize;
 }
 
-#ifndef DAIMONIN
-TileMouse::TileMouse(TileInterface* TileInterface)
-{
-  m_Interface = TileInterface;
-  m_Rect = NULL;
-}
 
-TileMouse::~TileMouse()
-{
-}
 
-void TileMouse::move_Relative(Real x, Real y)
-{
-  x *= MOUSE_SENSITY;
-  y *= MOUSE_SENSITY;
 
-  set_Position(m_x + x,m_y + y);
-}
-
-void TileMouse::set_Position(Real x, Real y)
-{
-  m_x = x;
-  m_y = y;
-
-  if (m_x < -1) m_x = -1;
-  else if (m_x > 1) m_x = 1;
-  if (m_y < -1) m_y = -1;
-  else if (m_y > 1) m_y = 1;
-
-  m_Rect->setCorners(m_x,m_y,m_x + 0.025,m_y - 0.05);
-}
-
-void TileMouse::Init()
-{
-  m_Rect = new Rectangle2D(true);
-
-  m_Rect->setBoundingBox(AxisAlignedBox(-100000.0*Vector3::UNIT_SCALE, 100000.0*Vector3::UNIT_SCALE));
-  m_Rect->setMaterial("Cursor/Normal");
-  m_Rect->setRenderQueueGroup(RENDER_QUEUE_OVERLAY);
-
-  m_SceneNode = m_Interface->get_SceneNode()->createChildSceneNode("Mouse");
-
-  set_Position(0,0);
-
-  m_SceneNode->attachObject(m_Rect);
-}
-#endif
-
+///================================================================================================
+/// Constructor.
+///================================================================================================
 TileInterface::TileInterface(TileManager* TileManager)
 {
   m_TileManager = TileManager;
   m_SceneNode = m_TileManager->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode("Interface");
-  #ifndef DAIMONIN
-  m_Mouse = new TileMouse(this);
-  #endif
   m_Selection = new TileSelection(m_TileManager);
   m_SquareSize = 1;
 }
 
+///================================================================================================
+/// Destructor.
+///================================================================================================
 TileInterface::~TileInterface()
 {
-  #ifndef DAIMONIN
-  delete m_Mouse;
-  #endif
   delete m_Selection;
 }
 
-Vector2 TileInterface::get_Selection()
-{
-  Vector2 tmp = m_Selection->get_Selection();
-  return tmp;
-}
-
+///================================================================================================
+/// Init.
+///================================================================================================
 void TileInterface::Init()
 {
-  // Initialize mouse cursor
-#ifndef DAIMONIN
-  m_Mouse->Init();
+  mRaySceneQuery = this->m_TileManager->Get_pSceneManager()->createRayQuery( Ray() );
 }
 
-void TileInterface::pick_Tile()
-{
-  // mouse picking
-
-  // save old selection to compare to new selection later
-  m_Selection->save_Selection();
-
-  //reset Selection_Tile
-  m_Selection->reset();
-
-  RaySceneQuery* mRaySceneQuery = this->m_TileManager->Get_pSceneManager()->createRayQuery( Ray() );
-
-  Ray mouseRay = this->m_TileManager->Get_pSceneManager()->getCamera("PlayerCam")
-                 ->getCameraToViewportRay( (m_Mouse->get_x()+1) /2 , (1-(m_Mouse->get_y()+1) /2));
-  mRaySceneQuery->setRay( mouseRay );
-
-  // Perform the scene query
-  RaySceneQueryResult &result = mRaySceneQuery->execute();
-  RaySceneQueryResult::iterator itr = result.begin( );
-
-  // Get the results
-  while ( itr != result.end() && itr->movable) // we only collect movable objects (our terrain is movable!)
-  {
-    // make sure the query doesn't contain any overlay elements like the mouse cursor (which is always hit!)
-    if (itr->movable->getRenderQueueGroup() != RENDER_QUEUE_OVERLAY)
-    {
-      // now test if a terrain chunk is hit
-      for (int a = 0; a != CHUNK_SUM_X; ++a)
-      {
-        for (int b = 0; b != CHUNK_SUM_Z; ++b)
-        {
-          if (itr->movable == this->m_TileManager->get_TileChunk(a,b)->Get_Land_entity())
-          {
-            // we found our chunk, now search for the correct tile
-            pick_Tile(&mouseRay,a,b);
-          }
-        }
-      }
-    }
-    itr++;
-  }
-
-  // now m_Selection contains the wanted tile
-  if (m_Selection->m_x != -1 && m_Selection->m_y != -1)
-  {
-    m_Selection->select();
-  }
-  #endif
-}
-
-
+///================================================================================================
+/// Mouse picking.
+///================================================================================================
 void TileInterface::pick_Tile(float mouseX, float mouseY)
 {
-  // mouse picking
-
-  // save old selection to compare to new selection later
+  /// save old selection to compare to new selection later
   m_Selection->save_Selection();
-
-  //reset Selection_Tile
+  /// reset Selection_Tile
   m_Selection->reset();
 
-  RaySceneQuery* mRaySceneQuery = this->m_TileManager->Get_pSceneManager()->createRayQuery( Ray() );
-
-  Ray mouseRay = m_TileManager->Get_pSceneManager()
-    ->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
+  Ray mouseRay = m_TileManager->Get_pSceneManager()->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
   mRaySceneQuery->setRay( mouseRay );
 
-  // Perform the scene query
+  /// Perform the scene query
   RaySceneQueryResult &result = mRaySceneQuery->execute();
   RaySceneQueryResult::iterator itr = result.begin( );
 
-  // Get the results
+  /// Get the results
   while ( itr != result.end() && itr->movable) // we only collect movable objects (our terrain is movable!)
   {
     // make sure the query doesn't contain any overlay elements like the mouse cursor (which is always hit!)
@@ -1125,14 +1024,16 @@ void TileInterface::pick_Tile(float mouseX, float mouseY)
     itr++;
   }
 
-  // now m_Selection contains the wanted tile
+  /// now m_Selection contains the wanted tile
   if (m_Selection->m_x != -1 && m_Selection->m_y != -1)
   {
     m_Selection->select();
   }
 }
 
-
+///================================================================================================
+/// .
+///================================================================================================
 void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
 {
   // we start with a given tile chunk (coordinates a and b) and a ray and try to find the tile that was selected
@@ -1272,12 +1173,19 @@ void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
   } // end for x
 }
 
+///================================================================================================
+/// .
+///================================================================================================
 void TileInterface::set_Square_Size(unsigned int SquareSize)
 {
   m_SquareSize = SquareSize;
   m_Selection->set_Square_Size(SquareSize);// inform the marker of the selected tile
   m_Selection->change_Selection();// update the marker of the selected tile
 }
+
+///================================================================================================
+/// .
+///================================================================================================
 void TileInterface::change_Tile_height(int z_direction)
 {
   unsigned char value;
@@ -1293,6 +1201,10 @@ void TileInterface::change_Tile_height(int z_direction)
   }
   m_Selection->change_Selection();// update the marker of the selected tile
 }
+
+///================================================================================================
+/// .
+///================================================================================================
 void TileInterface::level_Tile_Corner_height(int z_direction)
 {
   int z_max = -1000;
@@ -1339,6 +1251,9 @@ void TileInterface::level_Tile_Corner_height(int z_direction)
   m_Selection->change_Selection();// update the marker of the selected tile
 }
 
+///================================================================================================
+/// .
+///================================================================================================
 void TileInterface::level_Tile_Corner_height(int z_direction,int SquareSize)
 {
   int tmpSquareSize = m_SquareSize;
@@ -1346,10 +1261,14 @@ void TileInterface::level_Tile_Corner_height(int z_direction,int SquareSize)
   level_Tile_Corner_height(z_direction);
   m_SquareSize = tmpSquareSize;
 }
+
+///================================================================================================
+/// .
+///================================================================================================
 void TileInterface::level_Tile_Corner_height(int z_direction,int SquareSize,int x,int y)
 {
   int z_max = -1000;
-  int z_min = 1000;
+  int z_min =  1000;
   unsigned char value;
 
   for (int a = x - (SquareSize-1)/2; a <= x +(SquareSize+1)/2; ++a)
@@ -1390,6 +1309,10 @@ void TileInterface::level_Tile_Corner_height(int z_direction,int SquareSize,int 
     }
   }
 }
+
+///================================================================================================
+/// .
+///================================================================================================
 bool TileInterface::Tile_Corner_height_is_leveled(int z_direction,int SquareSize,int x,int y)
 {
   int z_max = -1000;
@@ -1411,13 +1334,7 @@ bool TileInterface::Tile_Corner_height_is_leveled(int z_direction,int SquareSize
       }
     }
   }
-  if(z_min = z_max)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-
+  if(z_min == z_max) return true;
+  return false;
 }
+

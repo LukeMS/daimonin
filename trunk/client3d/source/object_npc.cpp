@@ -27,23 +27,22 @@ http://www.gnu.org/licenses/licenses.html
 #include "spell_manager.h"
 #include "event.h"
 #include "TileManager.h"
+#include "gui_manager.h"
 
-extern Camera *mCamera;
-
-//=================================================================================================
-// Init all static Elemnts.
-//=================================================================================================
+/// ===============================================================================================
+///  Init all static Elemnts.
+/// ===============================================================================================
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 static ParticleFX *tempPFX =0;
 
-//=================================================================================================
-// Init the model from the description file.
-//=================================================================================================
-NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Radian )
+/// ===============================================================================================
+/// Init the model from the description file.
+/// ===============================================================================================
+NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, float Facing)
 {
   if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
   mNode = Node;
-  // mFacing = Facing;
+  mFacing = Degree(Facing);
   thisNPC = mInstanceNr;
   mDescFile = PATH_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
@@ -64,39 +63,43 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
   string strTemp;
   Option::getSingleton().getDescStr("MeshName", strTemp);
 
+
   /// The first NPC is the player.
   if (!thisNPC)
   {
     mEntityNPC = mSceneMgr->createEntity("Player [polyveg]", strTemp.c_str());
     mNode->attachObject(mEntityNPC);
-    // mNode->roll(Radian(45));
-    // mNode->pitch(Degree(45));
-    // mNode->yaw(Degree(180));
-//    mNode->scale(Vector3(.5,.5,.5));
+    const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
+    Vector3 pos;
+    mBoundingBox.x = (TILE_SIZE- AABB.getMaximum().x - AABB.getMinimum().x)/2;
+    mBoundingBox.y = LEVEL_WATER_CLP*2;
+    mBoundingBox.z = (TILE_SIZE- AABB.getMaximum().z - AABB.getMinimum().z)/2 + LEVEL_WATER_CLP*2;
 
-    /*
-    //====== geck0's settings =====
-    mNode->scale(Vector3(.3,.3,.3));
-    mNode->setPosition(Vector3(1050, 60, 1050));
-    Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-    Event->getCamera()->setFOVy(Degree(90));
-    Event->getCamera()->setPosition(Vector3(1500, 500, 1500));
-    Event->getCamera()->yaw(Degree(45));
-    Event->getCamera()->pitch(Degree(-35.264));
-    */
+    mPosTileX = CHUNK_SIZE_X /2;
+    mPosTileZ = CHUNK_SIZE_Z /2;
+    pos.x = mPosTileX * TILE_SIZE + mBoundingBox.x;
+    pos.y = (Real) (Event->getTileManager()->Get_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
+    pos.z = mPosTileZ * TILE_SIZE + mBoundingBox.z;
+    mNode->setPosition(pos);
+
+
+
+
+//    mNode->showBoundingBox(true);
+
+
+
+
+    mAutoTurning = false;
+    mAutoMoving = false;
+
     const Real CAMERA_Y = 500;
-
-    Vector3 pos = Vector3(TILE_SIZE * CHUNK_SIZE_X /2 + TILE_SIZE/2, 0,
-                          TILE_SIZE * CHUNK_SIZE_Z /2 - TILE_SIZE/2);
     Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
     Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
-    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
-    Event->getCamera()->pitch(Degree(-45));
+//    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
 
-    Real height = Event->getTileManager()->Get_Map_Height((short)(pos.x)/TILE_SIZE, (short)(pos.z)/TILE_SIZE)*2;
-    pos.y += height;
-    //pos.z += height;
-    mNode->setPosition(pos);
+    Event->getCamera()->setPosition(Vector3((CHUNK_SIZE_X * TILE_SIZE)/2, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
+    Event->getCamera()->pitch(Degree(-45));
 
     /// Set the Init-pos of the TileEngine.
     pos = Vector3(0,0,0);
@@ -108,8 +111,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
     mNode->attachObject(mEntityNPC);
   }
 
-
-  // Create Animations and Animation sounds.
+  /// Create Animations and Animation sounds.
   mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
   mTurning      =0;
   mWalking      =0;
@@ -121,9 +123,9 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Rad
   return;
 }
 
-//=================================================================================================
-// Select a new texture.
-//=================================================================================================
+/// ===============================================================================================
+/// Select a new texture.
+/// ===============================================================================================
 void NPC::toggleTexture(int pos, int texture)
 {
   string strValue , strKeyword;
@@ -132,14 +134,14 @@ void NPC::toggleTexture(int pos, int texture)
     Logger::log().error() << "NPC::toggleTexture(...) -> description file was not found!";
     return;
   }
-  // Get material.
+  /// Get material.
   strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
   if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
   {
     return;
   }
   MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
-  // Get texture.
+  /// Get texture.
   if (texture >=0) // select a texture by value.
   {
     strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(texture, 2, '0');
@@ -148,7 +150,7 @@ void NPC::toggleTexture(int pos, int texture)
       return;
     }
   }
-  else // toggle textures
+  else /// toggle textures
   { // only for testing...
     static int actTexture[100];
     strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
@@ -163,16 +165,16 @@ void NPC::toggleTexture(int pos, int texture)
     }
     ++actTexture[pos];
   }
-  // set new texture.
+  /// set new texture.
   mpMaterial->unload();
   mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
   mpMaterial->reload();
   mpMaterial.setNull();
 }
 
-//=================================================================================================
-// Toggle npc equipment.
-//=================================================================================================
+/// ===============================================================================================
+/// Toggle npc equipment.
+/// ===============================================================================================
 void  NPC::toggleMesh(int Bone, int WeaponNr)
 {
   if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
@@ -185,7 +187,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 
   switch (Bone)
   {
-    case BONE_WEAPON_HAND:
+      case BONE_WEAPON_HAND:
       WeaponNr = ++mWeapon; // testing -> delete me!
       if (mEntityWeapon)
       {
@@ -216,7 +218,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       else mWeapon =0;  // testing -> delete me!
       break;
 
-    case BONE_SHIELD_HAND:
+      case BONE_SHIELD_HAND:
       WeaponNr = ++mShield; // testing -> delete me!
       if (mEntityShield)
       {
@@ -239,7 +241,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       else mShield =0;  // testing -> delete me!
       break;
 
-    case BONE_HEAD:
+      case BONE_HEAD:
       WeaponNr = ++mHelmet; // testing -> delete me!
       if (mEntityHelmet)
       {
@@ -262,7 +264,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       else mHelmet =0;  // testing -> delete me!
       break;
 
-    case BONE_BODY:
+      case BONE_BODY:
       WeaponNr = ++mArmor; // testing -> delete me!
       if (mEntityArmor)
       {
@@ -290,19 +292,71 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 typedef std::list<Particle*> ActiveParticleList;
 
 
-//=================================================================================================
-// Update npc.
-//=================================================================================================
+/// ===============================================================================================
+/// Update npc.
+/// ===============================================================================================
 void NPC::update(const FrameEvent& event)
 {
   mAnim->update(event);
   mTranslateVector = Vector3(0,0,0);
+  if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
+  if (mFacing.valueDegrees() <    0) mFacing += Degree(360);
+
+  if (mAutoTurning)
+  {
+    int turningDirection;
+    int deltaDegree = ((int)mFacing.valueDegrees() - (int)mNewFacing.valueDegrees());
+    if (deltaDegree <   0) deltaDegree += 360;
+    if (deltaDegree < 180) turningDirection = -1; else turningDirection = 1;
+    mFacing += Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * turningDirection);
+    mNode->yaw(Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * turningDirection));
+    /// Are we facing into the right direction (+/- 1 degree)?
+    if (deltaDegree <= 1) mAutoTurning = false;
+  }
+  else if (mAutoMoving)
+  {
+    mAnim->toggleAnimation(STATE_WALK1);
+
+    /// We are very close to destination.
+    Vector3 dist = mWalkToPos - mNode->getPosition();
+    if(dist.squaredLength() < 1)
+    {
+      Logger::log().error() << "end";
+      /// Set the exact destination pos.
+      mPosTileX = mWalkToX;
+      mPosTileZ = mWalkToZ;
+      mWalkToPos.x = mPosTileX * TILE_SIZE + mBoundingBox.x;
+      mWalkToPos.y = (Real) (Event->getTileManager()->Get_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
+      mWalkToPos.z = mPosTileZ * TILE_SIZE + mBoundingBox.z;
+      mNode->setPosition(mWalkToPos);
+      mAutoMoving = false;
+      mAnim->toggleAnimation(STATE_IDLE1);
+    }
+    /// We have to move on.
+    else
+    {
+      /*
+      // just a test...
+      mAnim->toggleAnimation(STATE_WALK1);
+      mTranslateVector.x = sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+      mTranslateVector.z = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+      */
+
+      //      mDeltaPos /= mDeltaPos.squaredLength();
+      Vector3 NewTmpPosition = mNode->getPosition() - event.timeSinceLastFrame *  mDeltaPos;
+      mPosTileX = (int) (NewTmpPosition.x / TILE_SIZE +1);
+      mPosTileZ = (int) (NewTmpPosition.z / TILE_SIZE +1);
+      //      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
+      mNode->setPosition(NewTmpPosition);
+    }
+    return;
+  }
   if (mAnim->isMovement())
   {
     if (mTurning)
     {
-      mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
-      mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
+      mFacing += Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
+      mNode->yaw(Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
     }
     if (mWalking)
     {
@@ -346,11 +400,53 @@ void NPC::update(const FrameEvent& event)
   }
 }
 
-//=================================================================================================
-// Cast a spell.
-//=================================================================================================
+/// ===============================================================================================
+/// Cast a spell.
+/// ===============================================================================================
 void NPC::castSpell(int spell)
 {
   //  if (!askServer.AllowedToCast(spell)) return;
   SpellManager::getSingleton().addObject(spell, thisNPC);
+}
+
+/// ===============================================================================================
+/// Turn the mob until it faces the given tile.
+/// ===============================================================================================
+void NPC::faceToTile(int x, int z)
+{
+  float deltaX = x - mPosTileX;
+  float deltaZ = z - mPosTileZ;
+
+  /// This is the position of the mob.
+  if (deltaX ==0 && deltaZ ==0) return;
+
+  mNewFacing = Radian(atan(deltaX/deltaZ));
+  if      (deltaZ <0) mNewFacing+=Degree(180);
+  else if (deltaX <0) mNewFacing+=Degree(360);
+  mAutoTurning = true;
+}
+
+/// ===============================================================================================
+/// Move the mob to the given tile.
+/// ===============================================================================================
+void NPC::moveToTile(int x, int z)
+{
+
+  // only for this test (tile-world smaller than screen) needed.
+  if (x < 0 || z < 0 || x > CHUNK_SIZE_X || z > CHUNK_SIZE_Z) return;
+
+
+  if(mPosTileX == x && mPosTileZ == z || mAutoTurning || mAutoMoving) return;
+
+  /// Turn the head into the moving direction.
+  faceToTile(x, z);
+
+  /// Move it.
+  mWalkToPos.x = x * TILE_SIZE + mBoundingBox.x;
+  mWalkToPos.y = (Real) (Event->getTileManager()->Get_Map_Height(x, z) + mBoundingBox.y);
+  mWalkToPos.z = z * TILE_SIZE + mBoundingBox.z;
+  mDeltaPos = mNode->getPosition() - mWalkToPos;
+  mWalkToX = x;
+  mWalkToZ = z;
+  mAutoMoving = true;
 }
