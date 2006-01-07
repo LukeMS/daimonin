@@ -149,7 +149,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2)
       {
         if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
         if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
-        if (action == OBJ_TEXTURE  ) mvObject_npc[0]->toggleTexture(val1, val2);
+//        if (action == OBJ_TEXTURE  ) mvObject_npc[0]->toggleTexture(val1, val2);
         if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1);
         if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
       }
@@ -160,7 +160,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2)
         {
           if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
           if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
-          if (action == OBJ_TEXTURE  ) mvObject_npc[i]->toggleTexture(val1, val2);
+//          if (action == OBJ_TEXTURE  ) mvObject_npc[i]->toggleTexture(val1, val2);
           if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1);
         }
       }

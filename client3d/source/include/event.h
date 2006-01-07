@@ -36,7 +36,7 @@ enum
 };
 
 const Real MIN_CAMERA_ZOOM =  20.0;
-const Real MAX_CAMERA_ZOOM = 115.0;
+const Real MAX_CAMERA_ZOOM = 110.0;
 
 /// ////////////////////////////////////////////////////////////////////
 /// Class.

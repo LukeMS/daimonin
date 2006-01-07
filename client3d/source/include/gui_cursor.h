@@ -64,6 +64,7 @@ private:
   gfxSrcPos[STATE_SUM];
   unsigned int mState;
   int mWidth, mHeight;
+  Overlay *mOverlay;
   OverlayElement *mElement;
   TexturePtr mTexture;
   MaterialPtr mMaterial;

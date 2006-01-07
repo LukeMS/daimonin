@@ -445,8 +445,11 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
           actGadgetName = mvGadget[mMousePressed]->getName();
 
-          if (!strcmp(actGadgetName, "Button_Close")) mOverlay->hide(); // just testing.
-
+          if (!strcmp(actGadgetName, "Button_Close"))
+          {
+           mOverlay->hide(); // just testing.
+           mGuiManager->getSingleton().setTooltip("");
+          }
         }
       }
       mMousePressed = -1;
@@ -476,7 +479,6 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           {
             mvGadget[mMouseOver]->draw(mSrcPixelBox, mTexture.getPointer());
             mMouseOver = -1;
-            //mStrTooltip = "";
             mGuiManager->getSingleton().setTooltip("");
           }
         }

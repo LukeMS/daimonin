@@ -22,18 +22,16 @@ http://www.gnu.org/licenses/licenses.html
 #define NPC_H
 
 #include "animate.h"
-#include "logger.h"
 
 using namespace Ogre;
 
-// Mob => (M)oveable (Ob)ject.
-
 /// /////////////////////////////////////////////////////////
-/// Defines.
-///
+/// Defines:
 /// Mob => (M)oveable (Ob)ject.
 /// /////////////////////////////////////////////////////////
 const int BONE_WEAPON_HAND = 0, BONE_SHIELD_HAND = 1, BONE_HEAD = 2, BONE_BODY = 3;
+enum { TEXTURE_POS_SKIN_HAIR, TEXTURE_POS_HAIR, TEXTURE_POS_BELT,
+       TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES };
 
 /// /////////////////////////////////////////////////////////
 /// Class.
@@ -46,7 +44,8 @@ public:
   /// /////////////////////////////////////////////////////////
   NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename, float Facing);
   ~NPC()
-  {}
+  {
+  }
   void moveToTile(int x, int z);
   void faceToTile(int x, int z);
   void walking(Real walk)
@@ -71,7 +70,7 @@ public:
   }
   void update(const FrameEvent& event);
   void castSpell(int spell);
-  void toggleTexture(int pos, int textureNr);
+  void setTexture(int pos, int textureNr);
   void toggleMesh   (int pos, int WeaponNr);
   void toggleAnimGroup()
   {
@@ -90,12 +89,14 @@ protected:
   /// /////////////////////////////////////////////////////////
   /// Variables.
   /// /////////////////////////////////////////////////////////
-  static unsigned int mInstanceNr; // mInstanceNr = Player's Hero
+  static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
   unsigned int thisNPC;
   Real mWalking, mTurning;
   Degree mFacing, mNewFacing;
-  int mPosTileX, mPosTileZ;
-  int mWalkToX, mWalkToZ;
+  int mPosTileX, mPosTileZ;   /// the actual tile-pos of the NPC.
+  int mWalkToX, mWalkToZ;     /// the destination tile-pos.
+  int maxHealth, actHelath;
+  int maxMana  , actMana;
   bool mAutoTurning, mAutoMoving;
   SceneNode *mNode;
   Entity *mEntityNPC, *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
@@ -103,7 +104,7 @@ protected:
   Animate *mAnim;
   std::string mDescFile;
   SceneManager *mSceneMgr;
-  Real animOffset; // every npc gets a random animation offset. preventing of  synchronous "dancing"
+  Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
   /// /////////////////////////////////////////////////////////
   /// Functions.

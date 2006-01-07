@@ -49,7 +49,7 @@ const int CHUNK_SUM_Z  = 4;
 
 /** Number of tiles in a chunk. Must be even. */
 const int CHUNK_SIZE_X = 12;
-const int CHUNK_SIZE_Z = 16;
+const int CHUNK_SIZE_Z = 22;
 
 /** Number of tiles in the worldmap (on x-axis). */
 const int TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;
@@ -98,28 +98,55 @@ private:
 public:
   TileManager();
   ~TileManager();
-  TileChunk* get_TileChunk(int x, int y){
-    return &m_mapchunk[x][y];}
-  SceneManager* Get_pSceneManager(){
-    return m_SceneManager; }
-  float Get_StretchZ() {
-    return m_StretchZ;}
-  unsigned char Get_Map_Height(short x, short y) {
-    return m_Map[x][y].height; }
-  unsigned char Get_Map_StretchedHeight(short x, short y) {
-    return (unsigned char) (m_Map[x][y].height*Get_StretchZ()); }
-  unsigned char Get_Map_Texture_Row(short x, short y) {
-    return m_Map[x][y].terrain_row; }
-  unsigned char Get_Map_Texture_Col(short x, short y) {
-    return m_Map[x][y].terrain_col; }
-  TileInterface* get_TileInterface(){
-    return m_Interface;}
-  void Set_Map_Height(short x, short y, short value) {
-    m_Map[x][y].height = value; }
-  void Set_Map_Texture_Row(short x, short y, unsigned char value) {
-    m_Map[x][y].terrain_row = value; }
-  void Set_Map_Texture_Col(short x, short y, unsigned char value) {
-    m_Map[x][y].terrain_col = value; }
+  TileChunk* get_TileChunk(int x, int y)
+  {
+    return &m_mapchunk[x][y];
+  }
+  SceneManager* Get_pSceneManager()
+  {
+    return m_SceneManager;
+  }
+  float Get_StretchZ()
+  {
+    return m_StretchZ;
+  }
+  unsigned char Get_Map_Height(short x, short y)
+  {
+    return m_Map[x][y].height;
+  }
+  float Get_Avg_Map_Height(short x, short y)
+  {
+    return ((m_Map[x  ][y].height*Get_StretchZ() + m_Map[x  ][y+1].height*Get_StretchZ() +
+             m_Map[x+1][y].height*Get_StretchZ() + m_Map[x+1][y+1].height*Get_StretchZ()) /4);
+  }
+  unsigned char Get_Map_StretchedHeight(short x, short y)
+  {
+    return (unsigned char) (m_Map[x][y].height*Get_StretchZ());
+  }
+  unsigned char Get_Map_Texture_Row(short x, short y)
+  {
+    return m_Map[x][y].terrain_row;
+  }
+  unsigned char Get_Map_Texture_Col(short x, short y)
+  {
+    return m_Map[x][y].terrain_col;
+  }
+  TileInterface* get_TileInterface()
+  {
+    return m_Interface;
+  }
+  void Set_Map_Height(short x, short y, short value)
+  {
+    m_Map[x][y].height = value;
+  }
+  void Set_Map_Texture_Row(short x, short y, unsigned char value)
+  {
+    m_Map[x][y].terrain_row = value;
+  }
+  void Set_Map_Texture_Col(short x, short y, unsigned char value)
+  {
+    m_Map[x][y].terrain_col = value;
+  }
   void Set_Map_Textures();
   bool LoadImage(Image &image, const std::string &filename);
 

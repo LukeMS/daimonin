@@ -45,12 +45,12 @@ void CEvent::keyPressed(KeyEvent *e)
       /// Player Movemment.
       /////////////////////////////////////////////////////////////////////////
       case KC_UP:
-//      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 1);
+      //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 1);
       //mCamera->  moveRelative (Vector3(0,100,0));
       break;
 
       case KC_DOWN:
-//      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, -1);
+      //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, -1);
       //mCamera->  moveRelative (Vector3(0,-100,0));
       break;
 
@@ -186,18 +186,17 @@ void CEvent::keyPressed(KeyEvent *e)
       /// ////////////////////////////////////////////////////////////////////
       /// Engine settings.
       /// ////////////////////////////////////////////////////////////////////
-      /*
-        case KC_C:
-         mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
-         switch(mSceneDetailIndex)
-         {
+      case KC_Y:
+      mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
+      switch(mSceneDetailIndex)
+      {
           case 0 : mCamera->setDetailLevel(SDL_SOLID) ;     break ;
           case 1 : mCamera->setDetailLevel(SDL_WIREFRAME) ; break ;
           case 2 : mCamera->setDetailLevel(SDL_POINTS) ;    break ;
-         }
-         break;
-      */
-      case KC_X:
+      }
+      break;
+
+      case KC_T:
       {
         static int pixels =128;
         //change pixel size of terrain textures

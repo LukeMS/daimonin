@@ -43,7 +43,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
   if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
   mNode = Node;
   mFacing = Degree(Facing);
-  thisNPC = mInstanceNr;
+  thisNPC = mInstanceNr++;
   mDescFile = PATH_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
   if (!mInstanceNr)  Logger::log().headline("Init Actor Models");
@@ -63,7 +63,6 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
   string strTemp;
   Option::getSingleton().getDescStr("MeshName", strTemp);
 
-
   /// The first NPC is the player.
   if (!thisNPC)
   {
@@ -71,35 +70,33 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
     mNode->attachObject(mEntityNPC);
     const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
     Vector3 pos;
-    mBoundingBox.x = (TILE_SIZE- AABB.getMaximum().x - AABB.getMinimum().x)/2;
-    mBoundingBox.y = LEVEL_WATER_CLP*2;
-    mBoundingBox.z = (TILE_SIZE- AABB.getMaximum().z - AABB.getMinimum().z)/2 + LEVEL_WATER_CLP*2;
+    mBoundingBox.x = Math::Abs(AABB.getMaximum().x) - Math::Abs(AABB.getMinimum().x) + TILE_SIZE/2;
+    mBoundingBox.y = Math::Abs(AABB.getMinimum().y) /2;
+    mBoundingBox.z = Math::Abs(AABB.getMaximum().z) - Math::Abs(AABB.getMinimum().z) + TILE_SIZE/2;
 
     mPosTileX = CHUNK_SIZE_X /2;
     mPosTileZ = CHUNK_SIZE_Z /2;
     pos.x = mPosTileX * TILE_SIZE + mBoundingBox.x;
-    pos.y = (Real) (Event->getTileManager()->Get_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
+    pos.y = (Real) (Event->getTileManager()->Get_Map_StretchedHeight(mPosTileX, mPosTileZ) + mBoundingBox.y);
     pos.z = mPosTileZ * TILE_SIZE + mBoundingBox.z;
     mNode->setPosition(pos);
-
-
-
-
-//    mNode->showBoundingBox(true);
-
-
-
 
     mAutoTurning = false;
     mAutoMoving = false;
 
+/*
     const Real CAMERA_Y = 500;
     Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
     Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
-//    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
-
+    //    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
     Event->getCamera()->setPosition(Vector3((CHUNK_SIZE_X * TILE_SIZE)/2, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
     Event->getCamera()->pitch(Degree(-45));
+*/
+
+    Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
+    Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
+    Event->getCamera()->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , pos.y+ 400, CHUNK_SIZE_Z * TILE_SIZE + 680));
+    Event->getCamera()->pitch(Degree(-25));
 
     /// Set the Init-pos of the TileEngine.
     pos = Vector3(0,0,0);
@@ -111,6 +108,34 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
     mNode->attachObject(mEntityNPC);
   }
 
+    /// ////////////////////////////////////////////////////////////////////
+    /// We ignore the material of the mesh and create a own one.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Clone the NPC-Material.
+    String tmpName = "NPC_" + StringConverter::toString(thisNPC, 3, '0');
+    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
+    MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
+    //mMaterial->unload();
+    mEntityNPC->getSubEntity(0)->setMaterialName(tmpName);
+    //mMaterial->reload();
+
+
+    /// Create a texture for the material.
+    tmpName +="_Texture";
+    Image image;
+    image.load("Human_Male.png", "General");
+    TexturePtr mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
+    mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
+    mMaterial->load();
+
+    mNode->scale(.4,.4,.4); // Remove Me!!!!
+//    mNode->showBoundingBox(true); // Remove Me!!!!
+
+
+
+
+
+
   /// Create Animations and Animation sounds.
   mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
   mTurning      =0;
@@ -119,15 +144,15 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
   mEntityShield =0;
   mEntityArmor  =0;
   mEntityHelmet =0;
-  ++mInstanceNr;
   return;
 }
 
 /// ===============================================================================================
 /// Select a new texture.
 /// ===============================================================================================
-void NPC::toggleTexture(int pos, int texture)
+void NPC::setTexture(int pos, int texture)
 {
+/*
   string strValue , strKeyword;
   if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
   {
@@ -170,6 +195,7 @@ void NPC::toggleTexture(int pos, int texture)
   mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
   mpMaterial->reload();
   mpMaterial.setNull();
+*/
 }
 
 /// ===============================================================================================
@@ -325,9 +351,12 @@ void NPC::update(const FrameEvent& event)
       /// Set the exact destination pos.
       mPosTileX = mWalkToX;
       mPosTileZ = mWalkToZ;
-      mWalkToPos.x = mPosTileX * TILE_SIZE + mBoundingBox.x;
-      mWalkToPos.y = (Real) (Event->getTileManager()->Get_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
-      mWalkToPos.z = mPosTileZ * TILE_SIZE + mBoundingBox.z;
+
+
+
+      mWalkToPos.x = mBoundingBox.x + mPosTileX * TILE_SIZE;
+      mWalkToPos.y = mBoundingBox.y + Event->getTileManager()->Get_Avg_Map_Height(mPosTileX, mPosTileZ);
+      mWalkToPos.z = mBoundingBox.z + mPosTileZ * TILE_SIZE;
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
       mAnim->toggleAnimation(STATE_IDLE1);
@@ -346,7 +375,7 @@ void NPC::update(const FrameEvent& event)
       Vector3 NewTmpPosition = mNode->getPosition() - event.timeSinceLastFrame *  mDeltaPos;
       mPosTileX = (int) (NewTmpPosition.x / TILE_SIZE +1);
       mPosTileZ = (int) (NewTmpPosition.z / TILE_SIZE +1);
-      //      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
+      //      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
       mNode->setPosition(NewTmpPosition);
     }
     return;
@@ -362,8 +391,8 @@ void NPC::update(const FrameEvent& event)
     {
       // just a test...
       mAnim->toggleAnimation(STATE_WALK1);
-      mTranslateVector.x = sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-      mTranslateVector.z = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+      mTranslateVector.x = Math::Sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+      mTranslateVector.z = Math::Cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
 
       //   mTranslateVector = mNode->getOrientation().zAxis();
       mNode->translate(mTranslateVector);
@@ -389,7 +418,7 @@ void NPC::update(const FrameEvent& event)
         Real tt = pPos.z;
         // pPos.z = 22*30 -(pPos.z- 524+10);
         pPos.z -= 534;
-        Real height = Event->getTileManager()->Get_Map_Height((short)(pPos.x)/TILE_SIZE+1, (short)(pPos.z)/TILE_SIZE);
+        Real height = Event->getTileManager()->Get_Avg_Map_Height((short)(pPos.x)/TILE_SIZE+1, (short)(pPos.z)/TILE_SIZE);
         mNode->setPosition(pPos.x, pPos.y-390 + height, tt -390);
       }
     }
@@ -420,7 +449,7 @@ void NPC::faceToTile(int x, int z)
   /// This is the position of the mob.
   if (deltaX ==0 && deltaZ ==0) return;
 
-  mNewFacing = Radian(atan(deltaX/deltaZ));
+  mNewFacing = Radian(Math::ATan(deltaX/deltaZ));
   if      (deltaZ <0) mNewFacing+=Degree(180);
   else if (deltaX <0) mNewFacing+=Degree(360);
   mAutoTurning = true;
@@ -443,7 +472,7 @@ void NPC::moveToTile(int x, int z)
 
   /// Move it.
   mWalkToPos.x = x * TILE_SIZE + mBoundingBox.x;
-  mWalkToPos.y = (Real) (Event->getTileManager()->Get_Map_Height(x, z) + mBoundingBox.y);
+  mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) + mBoundingBox.y);
   mWalkToPos.z = z * TILE_SIZE + mBoundingBox.z;
   mDeltaPos = mNode->getPosition() - mWalkToPos;
   mWalkToX = x;
