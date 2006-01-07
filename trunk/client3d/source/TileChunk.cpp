@@ -322,7 +322,7 @@ void TileChunk::ChangeWaterHigh()
 }
 
 ///=================================================================================================
-/// Create Hardware Buffers for high qality water.
+/// Create Hardware Buffers for high quality water.
 ///=================================================================================================
 void TileChunk::CreateWaterHigh_Buffers()
 {
@@ -433,7 +433,6 @@ void TileChunk::CreateWaterHigh_Buffers()
         /////////////////////////////////////////////////////////////////////////
         // Lightmap
         /////////////////////////////////////////////////////////////////////////
-
         // 1. Triangle
         pReal[o+ 8] = a / 256.0; pReal[o+ 9] = b / 256.0;
         pReal[o+18] = (a + 1)/ 256.0; pReal[o+19] = b / 256.0;
@@ -447,13 +446,13 @@ void TileChunk::CreateWaterHigh_Buffers()
         // Grid-Texture.
         /////////////////////////////////////////////////////////////////////////
         // 1. Triangle
-        pReal[o+ 8] = 0; pReal[o+ 9] = 0;
-        pReal[o+18] = 1; pReal[o+19] = 0;
-        pReal[o+28] = 0; pReal[o+29] = 1;
+        pReal[o+ 8] = 0.0; pReal[o+ 9] = 0.0;
+        pReal[o+18] = 1.0; pReal[o+19] = 0.0;
+        pReal[o+28] = 0.0; pReal[o+29] = 1.0;
         // 2. Triangle
-        pReal[o+38] = 0; pReal[o+39] = 1;
-        pReal[o+48] = 1; pReal[o+49] = 0;
-        pReal[o+58] = 1; pReal[o+59] = 1;
+        pReal[o+38] = 0.0; pReal[o+39] = 1.0;
+        pReal[o+48] = 1.0; pReal[o+49] = 0.0;
+        pReal[o+58] = 1.0; pReal[o+59] = 1.0;
 #endif
         o += 60;
       } // if
@@ -646,20 +645,13 @@ void TileChunk::CreateLandLow_Buffers()
         // Grid.
         /////////////////////////////////////////////////////////////////////////
         // 1. Triangle
-        pReal1[o+ 8] = 0;
-        pReal1[o+ 9] = 0;
-        pReal1[o+18] = 1;
-        pReal1[o+19] = 0;
-        pReal1[o+28] = 0;
-        pReal1[o+29] = 1;
+        pReal1[o+ 8] = 0.0; pReal1[o+ 9] = 0.0;
+        pReal1[o+18] = 1.0; pReal1[o+19] = 0.0;
+        pReal1[o+28] = 0.0; pReal1[o+29] = 1.0;
         // 2. Triangle
-        pReal1[o+38] = 0;
-        pReal1[o+39] = 1;
-        pReal1[o+48] = 1;
-        pReal1[o+49] = 0;
-        pReal1[o+58] = 1;
-        pReal1[o+59] = 1;
-
+        pReal1[o+38] = 0.0; pReal1[o+39] = 1.0;
+        pReal1[o+48] = 1.0; pReal1[o+49] = 0.0;
+        pReal1[o+58] = 1.0; pReal1[o+59] = 1.0;
         o += 60;
       }
     }

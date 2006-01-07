@@ -39,22 +39,29 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
   /////////////////////////////////////////////////////////////////////////
   /// Create the overlay element.
   /////////////////////////////////////////////////////////////////////////
-  Overlay *overlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
-  overlay->setZOrder(600);
+  mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
+             TEX_TYPE_2D, mWidth, mHeight, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+  mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
+  mOverlay->setZOrder(550);
   mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
+//  mElement->setMetricsMode(GMM_PIXELS);
   mElement->setHeight((Real)mHeight / (Real)screenHeight);
   mElement->setWidth ((Real)mWidth  / (Real)screenWidth );
   mElement->setTop (0.5);
   mElement->setLeft(0.5);
-  mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
-             TEX_TYPE_2D, mWidth, mHeight, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
   mMaterial = tmpMaterial->clone("GUI_Cursor_Material");
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
   mMaterial->load();
   mElement->setMaterialName("GUI_Cursor_Material");
-  overlay->add2D(static_cast<OverlayContainer*>(mElement));
-  overlay->show();
+  mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
+  mOverlay->show();
+
+  PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth()-1, mTexture->getHeight()-1), HardwareBuffer::HBL_READ_ONLY );
+  uint32 *dest_data = (uint32*)pb.data;
+  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0;
+  mTexture->getBuffer()->unlock();
+
 }
 
 ///=================================================================================================

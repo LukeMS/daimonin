@@ -385,10 +385,10 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
   {
     for (int y = 0; y < PIXEL_PER_TILE; ++y)
     {
-      if ( x == 0 || y == 0 || x == PIXEL_PER_TILE - 1 || y == PIXEL_PER_TILE -1)
-        grid_data[PIXEL_PER_TILE*y + x] = 0x323232ff;
+      if ( x < 2 || y < 2 )
+        grid_data[PIXEL_PER_TILE * y + x] = 0xffffffff;
       else
-        grid_data[PIXEL_PER_TILE*y + x] = 0x00000000;
+        grid_data[PIXEL_PER_TILE * y + x] = 0x00000000;
     }
   }
   strFilename = PATH_TILE_TEXTURES;
