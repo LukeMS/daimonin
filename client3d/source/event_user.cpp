@@ -93,11 +93,11 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_1:
-      ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
+      //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
       break;
 
       case KC_2:
-      ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
+      //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
       break;
 
       case KC_3:
@@ -105,27 +105,31 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_4:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE,1, -1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 0);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 10);
       break;
 
       case KC_5:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE,2, -1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
       break;
 
       case KC_6:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE,3, -1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 2);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
       break;
 
       case KC_7:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE,4, -1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 3);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
       break;
 
       case KC_8:
-      ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
+      //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
       break;
 
       case KC_9:
-      ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
+      //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
       break;
 
       case KC_J:
@@ -176,7 +180,7 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_P:
-      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_TEXTURE, 0, 0);
+      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
       break;
 
       case KC_Q:

@@ -71,6 +71,7 @@ CEvent::~CEvent()
   if (mEventProcessor)  delete mEventProcessor;
   if (mTileManager)     delete mTileManager;
   GuiManager::getSingleton().freeRecources();
+  ObjectManager::getSingleton().freeRecources();
   Sound     ::getSingleton().freeRecources();
 }
 

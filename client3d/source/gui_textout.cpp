@@ -26,7 +26,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include <ctime>
 
-const int MAX_TEXTLINE_LEN = 1024;
 const int MIN_FONT_SIZE =  4;
 const int MAX_FONT_SIZE = 80;
 const int MIN_RESO_SIZE = 55;
@@ -64,10 +63,10 @@ GuiTextout::GuiTextout()
 ///=================================================================================================
 /// .
 ///=================================================================================================
-void GuiTextout::createBuffer()
+void GuiTextout::createBuffer(int width)
 {
   if (mTextGfxBuffer) delete[] mTextGfxBuffer;
-  mTextGfxBuffer = new uint32[maxFontHeight * MAX_TEXTLINE_LEN];
+  mTextGfxBuffer = new uint32[maxFontHeight * width];
 }
 
 ///=================================================================================================
@@ -96,12 +95,12 @@ void GuiTextout::loadRawFont(const char *filename)
   mvFont.push_back(fnt);
   fnt->data = new uint32[size];
   memcpy(fnt->data, image.getData(), size * sizeof(uint32));
-
   fnt->height = image.getHeight();
   if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
   fnt->textureWidth = image.getWidth();
   fnt->width  = image.getWidth() / CHARS_IN_FONT;
-  // Parse the character width (a vert green line is the end sign).
+
+  /// Parse the character width (a vert green line is the end sign).
   unsigned int x;
   for (int i=0; i < CHARS_IN_FONT; ++i)
   {
@@ -111,7 +110,8 @@ void GuiTextout::loadRawFont(const char *filename)
     }
     fnt->charWidth[i] = x;
   }
-  createBuffer();
+  createBuffer(image.getWidth());
+  Logger::log().info() << "System-Font (" << image.getWidth() << "x" << image. getHeight() <<") was created.";
 }
 
 ///=================================================================================================
@@ -167,7 +167,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
   fnt->charWidth[0] = fnt->width/2; // ascii(32).
   fnt->textureWidth = fnt->width * CHARS_IN_FONT;
-  createBuffer();
+  createBuffer(fnt->textureWidth);
 
   /// Build the RAW datas.
   fnt->data = new uint32[fnt->textureWidth * fnt->height];
@@ -226,7 +226,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     /// ////////////////////////////////////////////////////////////////////
     /// This is the Daimonin fontdata.
     /// ////////////////////////////////////////////////////////////////////
-    // draw the cher-end sign to get rid of the monospace.
+    // draw the char-end sign to get rid of the monospace.
     uint32 *data = fnt->data;
     for (int i=0; i < CHARS_IN_FONT; ++i)
     {
@@ -250,7 +250,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   MaterialManager::getSingleton().remove((ResourcePtr&)pMaterial);
   TextureManager ::getSingleton().remove((ResourcePtr&)pTexture);
   FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
-
+  createBuffer(MAX_TEXTLINE_LEN); // Set standard buffer size.
   //////////////////////////////////////////////////////////////////////////
   ///.Create Text Cursor (for text input).
   /////////////////////////////////////////////////////////////////////////
