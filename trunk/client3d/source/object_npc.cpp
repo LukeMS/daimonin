@@ -33,13 +33,36 @@ http://www.gnu.org/licenses/licenses.html
 ///  Init all static Elemnts.
 /// ===============================================================================================
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
+SceneManager *NPC::mSceneMgr =0;
+
+sPicture     NPC::picSkin  = {  0,    0, 512, 512 };
+sPicture     NPC::picHair  = { 112,   0,  90,  65 };
+uint32       NPC::color[MAX_NPC_COLORS] =
+  {
+    0x00e3ad91, 0x00f2dc91, 0x00c95211, 0x0037250b,
+    0x00ffffff, 0x00000000, 0x00000000, 0x00000000,
+    0x00ffffff, 0x00000000, 0x00000000, 0x00000000,
+    0x00000000, 0x00000000, 0x00000000, 0x00000000
+  };
+
 static ParticleFX *tempPFX =0;
+
+/// ===============================================================================================
+/// Free all recources.
+/// ===============================================================================================
+void NPC::freeRecources()
+{
+  if (!--mInstanceNr) delete tempPFX;
+  if (!mAnim) delete mAnim;
+  mTexture.setNull();
+}
 
 /// ===============================================================================================
 /// Init the model from the description file.
 /// ===============================================================================================
-NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, float Facing)
+NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
 {
+  if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
   if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
   mNode = Node;
   mFacing = Degree(Facing);
@@ -56,14 +79,18 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
   }
   Logger::log().success(true);
 
-  mSceneMgr = SceneMgr;
   // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
   // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
 
-  string strTemp;
-  Option::getSingleton().getDescStr("MeshName", strTemp);
+  /// ////////////////////////////////////////////////////////////////////
+  /// Build the mesh name.
+  /// ////////////////////////////////////////////////////////////////////
+  string strTemp = desc_filename;
+  strTemp.replace(strTemp.find(".desc"), 5, ".mesh");
 
-  /// The first NPC is the player.
+  /// ////////////////////////////////////////////////////////////////////
+  /// The first NPC is our Hero.
+  /// ////////////////////////////////////////////////////////////////////
   if (!thisNPC)
   {
     mEntityNPC = mSceneMgr->createEntity("Player [polyveg]", strTemp.c_str());
@@ -84,14 +111,14 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
     mAutoTurning = false;
     mAutoMoving = false;
 
-/*
-    const Real CAMERA_Y = 500;
-    Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-    Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
-    //    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
-    Event->getCamera()->setPosition(Vector3((CHUNK_SIZE_X * TILE_SIZE)/2, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
-    Event->getCamera()->pitch(Degree(-45));
-*/
+    /*
+        const Real CAMERA_Y = 500;
+        Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
+        Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
+        //    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
+        Event->getCamera()->setPosition(Vector3((CHUNK_SIZE_X * TILE_SIZE)/2, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
+        Event->getCamera()->pitch(Degree(-45));
+    */
 
     Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
     Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
@@ -108,28 +135,29 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
     mNode->attachObject(mEntityNPC);
   }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// We ignore the material of the mesh and create a own one.
-    /// ////////////////////////////////////////////////////////////////////
-    /// Clone the NPC-Material.
-    String tmpName = "NPC_" + StringConverter::toString(thisNPC, 3, '0');
-    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
-    MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
-    //mMaterial->unload();
-    mEntityNPC->getSubEntity(0)->setMaterialName(tmpName);
-    //mMaterial->reload();
+  /// ////////////////////////////////////////////////////////////////////
+  /// We ignore the material of the mesh and create a own one.
+  /// ////////////////////////////////////////////////////////////////////
+  /// Clone the NPC-Material.
+  String tmpName = "NPC_" + StringConverter::toString(thisNPC, 3, '0');
+  MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
+  MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
+  //mMaterial->unload();
+  mEntityNPC->getSubEntity(0)->setMaterialName(tmpName);
+  //mMaterial->reload();
 
 
-    /// Create a texture for the material.
-    tmpName +="_Texture";
-    Image image;
-    image.load("Human_Male.png", "General");
-    TexturePtr mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
-    mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
-    mMaterial->load();
+  /// Create a texture for the material.
+  tmpName +="_Texture";
+  Image image;
+  image.load("Human_Male.png", "General");
+  mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
+  mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
+  //mMaterial->load();
 
-    mNode->scale(.4,.4,.4); // Remove Me!!!!
-//    mNode->showBoundingBox(true); // Remove Me!!!!
+
+  mNode->scale(.4,.4,.4); // Remove Me!!!!
+  //    mNode->showBoundingBox(true); // Remove Me!!!!
 
 
 
@@ -144,58 +172,6 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, flo
   mEntityShield =0;
   mEntityArmor  =0;
   mEntityHelmet =0;
-  return;
-}
-
-/// ===============================================================================================
-/// Select a new texture.
-/// ===============================================================================================
-void NPC::setTexture(int pos, int texture)
-{
-/*
-  string strValue , strKeyword;
-  if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-  {
-    Logger::log().error() << "NPC::toggleTexture(...) -> description file was not found!";
-    return;
-  }
-  /// Get material.
-  strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
-  if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-  {
-    return;
-  }
-  MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
-  /// Get texture.
-  if (texture >=0) // select a texture by value.
-  {
-    strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(texture, 2, '0');
-    if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-    {
-      return;
-    }
-  }
-  else /// toggle textures
-  { // only for testing...
-    static int actTexture[100];
-    strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-    if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-    {
-      actTexture[pos] =0;
-      strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-      if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-      {
-        return;
-      }
-    }
-    ++actTexture[pos];
-  }
-  /// set new texture.
-  mpMaterial->unload();
-  mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
-  mpMaterial->reload();
-  mpMaterial.setNull();
-*/
 }
 
 /// ===============================================================================================
@@ -478,4 +454,133 @@ void NPC::moveToTile(int x, int z)
   mWalkToX = x;
   mWalkToZ = z;
   mAutoMoving = true;
+}
+
+/// ===============================================================================================
+/// Select a new texture.
+/// ===============================================================================================
+void NPC::setTexture(int pos, int texColor, int textureNr)
+{
+  switch (pos)
+  {
+      case TEXTURE_POS_SKIN:
+      {
+        /// Blit the color over the whole head.
+        texColor = color[texColor];
+        /// Cretate a temporary buffer for the pixel operations.
+        uint32 *buffer = new uint32[picSkin.w * picSkin.h];
+        PixelBox pb(picSkin.w, picSkin.h, 1, PF_A8R8G8B8 , buffer);
+        /// Fill it with the color.
+        for (int i=0; i < picSkin.w * picSkin.h; ++i) buffer[i] = texColor;
+
+        /// Blit the face texture over it.
+        if (textureNr >=0)
+        {
+        }
+        /// Copy the buffer into the model-texture.
+        mTexture->getBuffer()->blitFromMemory(pb, Box(picSkin.x, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
+      }
+      break;
+
+      case TEXTURE_POS_HAIR:
+      {
+        /// Blit the color over the whole head.
+        texColor = color[texColor];
+        /// Cretate a temporary buffer for the pixel operations.
+        uint32 *buffer = new uint32[picHair.w * picHair.h];
+        PixelBox pb(picHair.w, picHair.h, 1, PF_A8R8G8B8 , buffer);
+        /// Fill it with the color.
+        for (int i=0; i < picHair.w * picHair.h; ++i) buffer[i] = texColor;
+        /// Blit the face texture over it.
+        if (textureNr >=0) // -1 -> baldness.
+        {
+        }
+        /// Copy the buffer into the model-texture.
+        mTexture->getBuffer()->blitFromMemory(
+          PixelBox(picHair.w, picHair.h, 1, PF_A8R8G8B8, buffer),
+          Box(picHair.x, picHair.y, picHair.x + picHair.w , picHair.y + picHair.h));
+
+
+
+
+        Image image;
+        image.load("Human_Male_Shadow_Blit.png", "General");
+        uint32 *copy = (uint32*)image.getData();
+        pb = mTexture->getBuffer()->lock(Box(0,0, 512, 512), HardwareBuffer::HBL_READ_ONLY );
+        uint32 *dest_data = (uint32*)pb.data;
+        uint32 pixColor,  srcColor;
+        for (unsigned int y = 0; y < 512 * 512; ++y)
+        {
+          if (!copy[y]) continue;
+          pixColor = dest_data[y];
+          srcColor = copy[y] & 0xff000000;
+          srcColor >>= 8;
+          if ((pixColor & 0x00ff0000) > srcColor )  pixColor-= srcColor;
+          srcColor >>= 8;
+          if ((pixColor & 0x0000ff00) > srcColor )  pixColor-= srcColor;
+          srcColor >>= 8;
+          if ((pixColor & 0x000000ff) > srcColor )  pixColor-= srcColor;
+          dest_data[y] = pixColor;
+        }
+        mTexture->getBuffer()->unlock();
+
+
+
+
+
+      }
+      break;
+
+
+      default:
+      Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for NPC.";
+      break;
+  }
+
+
+
+  /*
+    string strValue , strKeyword;
+    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
+    {
+      Logger::log().error() << "NPC::toggleTexture(...) -> description file was not found!";
+      return;
+    }
+    /// Get material.
+    strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
+    if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
+    {
+      return;
+    }
+    MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
+    /// Get texture.
+    if (texture >=0) // select a texture by value.
+    {
+      strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(texture, 2, '0');
+      if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
+      {
+        return;
+      }
+    }
+    else /// toggle textures
+    { // only for testing...
+      static int actTexture[100];
+      strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
+      if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
+      {
+        actTexture[pos] =0;
+        strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
+        if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
+        {
+          return;
+        }
+      }
+      ++actTexture[pos];
+    }
+    /// set new texture.
+    mpMaterial->unload();
+    mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
+    mpMaterial->reload();
+    mpMaterial.setNull();
+  */
 }

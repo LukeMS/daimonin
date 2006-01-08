@@ -89,7 +89,7 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vect
   string strTemp;
   switch (type)
   {
-    case OBJECT_STATIC:
+      case OBJECT_STATIC:
       {
         // For static objects we don't use *.desc files. So we get just the mesh name here.
         strTemp = desc_filename;
@@ -100,14 +100,14 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vect
         //            node->setScale(5, 5, 5);
         break;
       }
-    case OBJECT_NPC:
+      case OBJECT_NPC:
       {
         mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
-        NPC *npc = new NPC(mSceneMgr, mNode, desc_filename, facing);
+        NPC *npc = new NPC(mNode, desc_filename, facing);
         mvObject_npc.push_back(npc);
         break;
       }
-    default:
+      default:
       break;
   }
   return true;
@@ -120,10 +120,10 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
   switch (obj_type)
   {
-    case OBJECT_STATIC:
+      case OBJECT_STATIC:
       break;
-    case OBJECT_PLAYER:
-    case OBJECT_NPC:
+      case OBJECT_PLAYER:
+      case OBJECT_NPC:
       {
         for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
         {
@@ -131,7 +131,7 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
         }
         break;
       }
-    default:
+      default:
       break;
   }
 }
@@ -139,33 +139,33 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 //=================================================================================================
 // JUST FOR TESTING.
 //=================================================================================================
-void ObjectManager::Event(int obj_type, int action, int val1, int val2)
+void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3)
 {
   switch (obj_type)
   {
-    case OBJECT_STATIC:
+      case OBJECT_STATIC:
       break;
-    case OBJECT_PLAYER:
+      case OBJECT_PLAYER:
       {
         if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
         if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
-//        if (action == OBJ_TEXTURE  ) mvObject_npc[0]->toggleTexture(val1, val2);
+        if (action == OBJ_TEXTURE  ) mvObject_npc[0]->setTexture(val1, val2, val3);
         if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1);
         if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
       }
       break;
-    case OBJECT_NPC:
+      case OBJECT_NPC:
       {
         for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
         {
           if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
           if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
-//          if (action == OBJ_TEXTURE  ) mvObject_npc[i]->toggleTexture(val1, val2);
+          if (action == OBJ_TEXTURE  ) mvObject_npc[i]->setTexture(val1, val2, val3);
           if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1);
         }
       }
       break;
-    default:
+      default:
       break;
   }
 }
@@ -174,15 +174,20 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2)
 //
 //=================================================================================================
 void ObjectManager::delObject(int )
-{}
+{
+}
 
 //=================================================================================================
 //
 //=================================================================================================
-ObjectManager::~ObjectManager()
+void ObjectManager::freeRecources()
 {
+  Logger::log().info() << "s: "<< mvObject_npc.size();
   for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
   {
+    Logger::log().info() << "i: "<< i;
+    mvObject_npc[i]->freeRecources();
     delete mvObject_npc[i];
   }
+  mvObject_npc.clear();
 }

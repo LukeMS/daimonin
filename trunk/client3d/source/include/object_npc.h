@@ -21,6 +21,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef NPC_H
 #define NPC_H
 
+#include "define.h"
 #include "animate.h"
 
 using namespace Ogre;
@@ -29,10 +30,9 @@ using namespace Ogre;
 /// Defines:
 /// Mob => (M)oveable (Ob)ject.
 /// /////////////////////////////////////////////////////////
-const int BONE_WEAPON_HAND = 0, BONE_SHIELD_HAND = 1, BONE_HEAD = 2, BONE_BODY = 3;
-enum { TEXTURE_POS_SKIN_HAIR, TEXTURE_POS_HAIR, TEXTURE_POS_BELT,
-       TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES };
-
+enum { BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY };
+enum { TEXTURE_POS_SKIN, TEXTURE_POS_HAIR, TEXTURE_POS_BELT, TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES };
+const int MAX_NPC_COLORS = 16;
 /// /////////////////////////////////////////////////////////
 /// Class.
 /// /////////////////////////////////////////////////////////
@@ -42,10 +42,11 @@ public:
   /// /////////////////////////////////////////////////////////
   /// Functions.
   /// /////////////////////////////////////////////////////////
-  NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename, float Facing);
+  NPC(SceneNode  *Node, const char *filename, float Facing);
   ~NPC()
   {
   }
+  void freeRecources();
   void moveToTile(int x, int z);
   void faceToTile(int x, int z);
   void walking(Real walk)
@@ -70,7 +71,7 @@ public:
   }
   void update(const FrameEvent& event);
   void castSpell(int spell);
-  void setTexture(int pos, int textureNr);
+  void setTexture(int pos, int color, int textureNr);
   void toggleMesh   (int pos, int WeaponNr);
   void toggleAnimGroup()
   {
@@ -85,12 +86,17 @@ public:
     return mFacing.valueRadians();
   }
 
-protected:
+private:
   /// /////////////////////////////////////////////////////////
   /// Variables.
   /// /////////////////////////////////////////////////////////
   static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
+  static SceneManager *mSceneMgr;
+  static uint32 color[MAX_NPC_COLORS];
+  static sPicture picSkin, picHair;
+
   unsigned int thisNPC;
+  TexturePtr mTexture;
   Real mWalking, mTurning;
   Degree mFacing, mNewFacing;
   int mPosTileX, mPosTileZ;   /// the actual tile-pos of the NPC.
@@ -103,7 +109,7 @@ protected:
   Vector3 mTranslateVector, mWalkToPos, mBoundingBox, mDeltaPos;
   Animate *mAnim;
   std::string mDescFile;
-  SceneManager *mSceneMgr;
+
   Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
   /// /////////////////////////////////////////////////////////

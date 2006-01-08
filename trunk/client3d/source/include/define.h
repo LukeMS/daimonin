@@ -80,4 +80,12 @@ enum
   M_MOVED, M_PRESSED, M_CLICKED, M_DRAGGED, M_ENTERED, M_EXITED, M_RELEASED
 };
 
+typedef struct sPicture
+{
+  short x, y;
+  short w, h;
+};
+
+
+
 #endif

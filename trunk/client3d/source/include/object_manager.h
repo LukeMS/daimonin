@@ -53,11 +53,12 @@ public:
   {
     static ObjectManager Singleton; return Singleton;
   }
+  void freeRecources();
   bool init(SceneManager *SceneMgr);
   bool addObject(unsigned int type, const char *desc_filename, Vector3 pos, float facing);
   void delObject(int number);
   void update(int type, const FrameEvent& evt);
-  void Event(int obj_type, int action, int val1=0, int val2=0);
+  void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
   void castSpell(int npc, int spell)
   {
     mvObject_npc[npc]->castSpell(spell);
@@ -97,7 +98,8 @@ private:
   ////////////////////////////////////////////////////////////
   ObjectManager()
   {}
-  ~ObjectManager();
+  ~ObjectManager()
+  {}
   ObjectManager(const ObjectManager&); // disable copy-constructor.
 };
 

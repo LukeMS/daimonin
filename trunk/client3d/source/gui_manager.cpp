@@ -102,6 +102,7 @@ void GuiManager::Init(int w, int h)
   /////////////////////////////////////////////////////////////////////////
   /// Create the tooltip overlay.
   /////////////////////////////////////////////////////////////////////////
+  Logger::log().info() << "Creating Overlay for System-Messages";
   mTooltipRefresh = false;
   mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
              TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
@@ -113,11 +114,13 @@ void GuiManager::Init(int w, int h)
   mElement->setPosition((mScreenWidth-mTexture->getWidth())/2, (mScreenHeight-mTexture->getHeight())/2);
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
   mMaterial = tmpMaterial->clone("GUI_Tooltip_Material");
+  if (mMaterial.isNull() || mMaterial->isLoaded()) { Logger::log().success(false); return; }
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_ToolTip_Texture");
-  mMaterial->load();
+  //  mMaterial->reload();
   mElement->setMaterialName("GUI_Tooltip_Material");
   mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
   mOverlay->show();
+  Logger::log().success(true);
 }
 
 void GuiManager::parseImageset(const char *XML_imageset_file, const char *XML_windows_file)

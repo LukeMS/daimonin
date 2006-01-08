@@ -35,6 +35,8 @@ const uint32 COLOR_PINK  = 0xffff00ff;
 const uint32 COLOR_YELLOW= 0xffffff00;
 const uint32 COLOR_WHITE = 0xffffffff;
 
+const int MAX_TEXTLINE_LEN = 1024;
+
 typedef struct TextLine
 {
   unsigned int x1, y1, x2, y2;
@@ -73,7 +75,7 @@ public:
   }
   void loadRawFont(const char *filename);
   void loadTTFont (const char *filename, const char *size, const char *resolution);
-  void createBuffer();
+  void createBuffer(int width = MAX_TEXTLINE_LEN);
 
   void CalcTextSize(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
   void Print(TextLine *line, Texture *texture, const char *text);
