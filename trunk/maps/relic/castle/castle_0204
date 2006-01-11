@@ -517,12 +517,10 @@ arch spawn_point
 x 4
 y 10
 arch guard_pole
+msg
+Guard says: Hello traveller, you wouldn't want to be in here when the king comes in here, better move out!
+endmsg
 type 83
-arch event_obj
-name lua
-race /relic/castle/scripts/Armoryguardscript.lua
-sub_type 6
-end
 end
 end
 arch floor_fs_grey1a

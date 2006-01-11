@@ -3560,9 +3560,6 @@ x 21
 y 10
 arch guard
 msg
-@match hi
-I am Tulan the Jailor.  Please do not agrivate the prisoners.
-@match hello
 I am Tulan the Jailor.  Please do not agrivate the prisoners.
 endmsg
 type 83

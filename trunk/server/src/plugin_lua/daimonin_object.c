@@ -926,7 +926,8 @@ static int GameObject_Communicate(lua_State *L)
 /* Name   : GameObject_Say                                                   */
 /* Lua    : object:Say(message, mode)                                        */
 /* Info   : object says message to everybody on its map                      */
-/*          FIXME needs documentation of mode                                */
+/*          mode: 0 (default) talk to object - adds a "xxx says:" as prefix  */
+/*			mode: 1 raw message                                              */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Say(lua_State *L)
@@ -951,7 +952,9 @@ static int GameObject_Say(lua_State *L)
 /* Name   : GameObject_SayTo                                                 */
 /* Lua    : object:SayTo(target, message, mode)                              */
 /* Info   : NPC talks only to player but map get a "xx talks to" msg too.    */
-/*          FIXME needs documentation of mode parameter                      */
+/*          mode: 0 (default) talk to object - adds a "xxx says:" as prefix  */
+/*			mode: 1 raw message                                              */
+/*          mode: 2 adds as global map msg: xxx talks to yyy (was b3 default)*/
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_SayTo(lua_State *L)
@@ -967,13 +970,15 @@ static int GameObject_SayTo(lua_State *L)
 
     target = obptr2->data.object;
 
-    if(mode)
+    if(mode == 1)
         hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, message);
     else /* thats default */
     {
-        snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
-        hooks->new_info_map_except(NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, WHO, target, buf);
-
+	    if(mode == 2)
+		{
+	        snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
+		    hooks->new_info_map_except(NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, WHO, target, buf);
+		}
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, buf);
     }

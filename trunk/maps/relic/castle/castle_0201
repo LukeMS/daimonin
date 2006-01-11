@@ -165,20 +165,6 @@ arch floor_wood2_l2
 x 1
 y 7
 end
-arch spawn_point
-x 1
-y 7
-arch monk
-name Marlin, the apartment keeper
-type 83
-level 45
-arch event_obj
-name lua
-race /relic/castle/scripts/StonehavenHouseSeller.lua
-sub_type 6
-end
-end
-end
 arch floor_wood2_l2
 x 1
 y 8
@@ -302,15 +288,6 @@ end
 arch floor_wood2_l2
 x 2
 y 7
-end
-arch exit
-x 2
-y 7
-arch event_obj
-name lua
-race /relic/castle/scripts/app_teleport.lua
-sub_type 10
-end
 end
 arch floor_wood2_l2
 x 2
@@ -1534,11 +1511,6 @@ x 12
 y 3
 arch archer
 type 83
-arch event_obj
-name Lua
-race /relic/castle/scripts/commoner.lua
-sub_type 6
-end
 end
 end
 arch grassd_7

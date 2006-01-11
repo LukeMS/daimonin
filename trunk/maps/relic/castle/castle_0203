@@ -1326,12 +1326,13 @@ arch spawn_point
 x 7
 y 18
 arch priest_church
+name Urieuh
 type 83
 direction 6
 arch event_obj
 name lua
-race /relic/castle/scripts/Castleprivatechurchscript.lua
-sub_type 6
+race /scripts/church.lua
+sub_type 13
 end
 end
 end
@@ -2085,11 +2086,6 @@ y 16
 arch mage_old
 type 83
 direction 3
-arch event_obj
-name lua
-race /relic/castle/scripts/HorrorCavesMageScript.lua
-sub_type 6
-end
 end
 end
 arch floor_wood4d
@@ -2340,11 +2336,6 @@ x 14
 y 4
 arch archer
 type 83
-arch event_obj
-name Lua
-race /relic/castle/scripts/commoner.lua
-sub_type 6
-end
 end
 end
 arch floor_wood2_d2

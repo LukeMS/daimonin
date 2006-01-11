@@ -1809,8 +1809,8 @@ type 83
 level 50
 arch event_obj
 name lua
-race /relic/castle/scripts/Castlechurchscript.lua
-sub_type 6
+race /scripts/church.lua
+sub_type 13
 end
 end
 end

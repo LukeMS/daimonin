@@ -3486,7 +3486,7 @@ arch smith
 type 83
 arch event_obj
 name lua
-race /lua/smith.lua
+race /scripts/smith.lua
 sub_type 13
 end
 end

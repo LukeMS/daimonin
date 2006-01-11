@@ -1,6 +1,9 @@
 #ifndef STATS_H
 #define STATS_H
 
+//#define STATS_EVENT stats_event
+#define STATS_EVENT
+
 typedef enum stats_event_type
 {
     STATS_EVENT_FIRST,          /* Only used to indicate start of list */

@@ -1220,15 +1220,12 @@ x 8
 y 6
 arch priest_green
 name Menab
-msg
-@match bank
-your bank...
-endmsg
 type 83
 level 45
 direction 1
 arch event_obj
-race /lua/bank.lua
+name Lua
+race /scripts/bank.lua
 sub_type 13
 end
 end
@@ -1302,16 +1299,12 @@ x 8
 y 17
 arch priest_green
 name Nahril
-msg
-@match bank
-your bank...
-endmsg
 type 83
 level 45
 direction 1
 arch event_obj
 name Lua
-race /lua/bank.lua
+race /scripts/bank.lua
 sub_type 13
 end
 end
@@ -2768,23 +2761,21 @@ direction 7
 x 18
 y 18
 end
+arch spawn_point
+x 18
+y 18
 arch woman_old
 name Old Cook
 msg
-@match hi
-All i do is cook and read and cook and read... Elisbath does all of the important stuff these days
-@match hello
-All i do is cook and read and cook and read... Elisbath does all of the important stuff these days
-@match hey
 All i do is cook and read and cook and read... Elisbath does all of the important stuff these days
 endmsg
+type 83
 anim_speed 12
 level 3
 unaggressive 1
 stand_still 1
 direction 3
-x 18
-y 18
+end
 end
 arch floor_fs_grey1a
 x 18

@@ -1318,11 +1318,6 @@ arch guard_pole
 name Guard Captain
 type 83
 level 90
-arch event_obj
-name lua
-race /relic/castle/scripts/captain_guard.lua
-sub_type 6
-end
 end
 end
 arch grassd_1

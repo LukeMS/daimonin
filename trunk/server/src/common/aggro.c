@@ -323,8 +323,17 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 {
     if (exp)
     {
-        new_draw_info_format( NDI_UNIQUE, 0, hitter, "You got %d exp in %s.",
-                              add_exp(hitter, exp, skillnr), skills[skillnr].name);
+		if(CONTR(hitter)->exp_bonus)
+		{
+			int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
+			new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d (+%d bonus) exp in %s.",
+				add_exp(hitter, exp+exp_bonus, skillnr), skills[skillnr].name);
+		}
+		else
+		{
+			new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d exp in %s.",
+				add_exp(hitter, exp, skillnr), skills[skillnr].name);
+		}
         return TRUE;
     }
     /*

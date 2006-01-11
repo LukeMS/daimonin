@@ -64,7 +64,7 @@ CommArray_s Commands[]                  =
     {"/gsay",         command_gsay,           1.0f},
     {"/shout",        command_shout,          1.0f},
     {"/tell",         command_tell,           1.0f},
-    {"/talk",          command_t_tell,         1.0f},
+    {"/talk",         command_t_tell,         1.0f},
     {"/who",          command_who,            5.0f},
     {"/mapinfo",      command_mapinfo,        5.0f},
     {"/motd",         command_motd,           5.0f},

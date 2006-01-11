@@ -402,8 +402,6 @@ void                        MTRand_init(const uint32 seed);
 sint32						MTRand_randComp(void);
 /* npc_communicate.c */
 void                        communicate(object *op, char *txt);
-int                         talk_to_npc(object *op, object *npc, char *txt);
-int                         talk_to_wall(object *npc, char *txt);
 /* spawn_point.c */
 void                        spawn_point(object *op);
 objectlink                 *add_linked_spawn(object *spawn);
@@ -714,7 +712,7 @@ object                     *get_pointed_target(object *op, int dir);
 int                         cast_smite_spell(object *op, object *caster, int dir, int type);
 int                         SP_lvl_dam_adjust2(object *caster, int spell_type, int base_dam);
 /* stats.c */
-void STATS_EVENT(stats_event_type type, ...);
+void						stats_event(stats_event_type type, ...);
 /* swamp.c */
 void                        walk_on_deep_swamp(object *op, object *victim);
 void                        move_deep_swamp(object *op);

@@ -60,7 +60,7 @@ static struct constant_decl     Game_constants[]    =
     {"IDENTIFY_MARKED", 2}, {"CLONE_WITH_INVENTORY", 0}, {"CLONE_WITHOUT_INVENTORY", 1}, {"EXP_AGILITY", 0},
     {"EXP_PERSONAL", 1}, {"EXP_MENTAL", 2}, {"EXP_PHYSICAL", 3}, {"EXP_MAGICAL", 4}, {"EXP_WISDOM", 5},
     {"COLOR_ORANGE", NDI_ORANGE}, {"COLOR_WHITE", NDI_WHITE}, {"COLOR_NAVY", NDI_NAVY}, {"COLOR_YELLOW", NDI_YELLOW},
-    {"COLOR_BLUE", NDI_BLUE}, {"COLOR_RED", NDI_RED},
+    {"COLOR_BLUE", NDI_BLUE}, {"COLOR_RED", NDI_RED}, {"COLOR_GREY", NDI_GREY},
 
 	/* equipment slots of the player->equipment array */
     {"EQUIP_MAIL", PLAYER_EQUIP_MAIL},

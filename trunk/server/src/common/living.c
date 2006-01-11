@@ -971,10 +971,11 @@ void fix_player(object *op)
     pl->gen_sp = 1;
     pl->gen_grace = 1;
     pl->gen_sp_armour = 0;
+	pl->exp_bonus = 0;
+	pl->encumbrance = 0;
     pl->set_skill_weapon = NO_SKILL_READY;  /* the used skills for fast access */
     pl->set_skill_archery = NO_SKILL_READY;
 
-    pl->encumbrance = 0;
 
     /* for players, we adjust with the values */
     ac = op->arch->clone.stats.ac;
@@ -1244,6 +1245,8 @@ void fix_player(object *op)
                   goto fix_player_no_armour;
                 case AMULET:
                   pl->equipment[PLAYER_EQUIP_AMULET] = tmp;
+				  if(tmp->last_grace)
+					  pl->exp_bonus += tmp->last_grace;
                   goto fix_player_no_armour;
 
                 case BRACERS:

@@ -400,7 +400,7 @@ int command_t_tell(object *op, char *params)
 
     t_obj = CONTR(op)->target_object;
 	/* lets see we have a target which CAN respond to our talk cmd */
-    if (t_obj && CONTR(op)->target_object_count == t_obj->count && t_obj->event_flags & EVENT_FLAG_TALK)
+    if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
         /* why i do this and not direct distance calculation?
          * because the player perhaps has leaved the mapset with the
@@ -424,7 +424,14 @@ int command_t_tell(object *op, char *params)
                     trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
                             params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
                 else
+				{
                     send_clear_interface(CONTR(op));
+					if(t_obj->msg)
+						new_info_map(NDI_NAVY | NDI_UNIQUE, t_obj->map, t_obj->x, t_obj->y, MAP_INFO_NORMAL, t_obj->msg);
+					else
+						new_info_map_format(NDI_NAVY | NDI_UNIQUE, t_obj->map, t_obj->x, t_obj->y, MAP_INFO_NORMAL, "%s has nothing to say.", query_name(t_obj));		
+				}
+
                 return 1;
             }
         }
@@ -444,13 +451,23 @@ int command_t_tell(object *op, char *params)
 
 			for (t_obj = get_map_ob(m, xt, yt); t_obj; t_obj = t_obj->above)
 			{
-                if (t_obj->event_flags & EVENT_FLAG_TALK)
+				if((IS_LIVE(t_obj) || t_obj->type == MONSTER) && t_obj->type != PLAYER) /* be sure we can target it! */
 				{
-				    CONTR(op)->target_object = t_obj;
-				    CONTR(op)->target_object_count = t_obj->count;
-                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
-                            params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-	                return 1;
+					if (t_obj->event_flags & EVENT_FLAG_TALK)
+					{
+						CONTR(op)->target_object = t_obj;
+						CONTR(op)->target_object_count = t_obj->count;
+						trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
+						        params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+					    return 1;
+					}
+					else if(t_obj->msg)
+					{
+					    CONTR(op)->target_object = t_obj;
+					    CONTR(op)->target_object_count = t_obj->count;
+						new_info_map(NDI_NAVY | NDI_UNIQUE, t_obj->map, t_obj->x, t_obj->y, MAP_INFO_NORMAL, t_obj->msg);
+					    return 1;
+					}
 				}
 			}
         }
