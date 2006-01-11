@@ -1353,11 +1353,6 @@ type 83
 friendly 1
 random_move 1
 end
-arch ant_red
-type 83
-friendly 1
-random_move 1
-end
 end
 arch grassd_6
 x 9
@@ -1524,11 +1519,6 @@ end
 arch spawn_point
 x 10
 y 1
-arch ant_red
-type 83
-friendly 1
-random_move 1
-end
 arch ant_red
 type 83
 friendly 1

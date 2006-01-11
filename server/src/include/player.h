@@ -221,32 +221,33 @@ typedef struct pl_player
     uint32              exp_calc_tag;               /* used from aggro.c/exp.c */
     object             *exp_calc_obj;
     uint32              mark_count;                 /* count or mark object */
-    sint32              skill_exp[NROFSKILLS];   /* shadow register for updating skill values to client */
-    uint32              target_object_count;     /* count of target - NOTE: if we target ourself, this count it 0
+    sint32              skill_exp[NROFSKILLS];		/* shadow register for updating skill values to client */
+    uint32              target_object_count;		/* count of target - NOTE: if we target ourself, this count it 0
                                                     * this will kick us out of enemy target routines - all functions
                                                     * who handle self target know it and use only target_object -
                                                     * for our own player object the pointer will never change for us.
                                                     */
-    uint32              target_map_pos;         /* last target search position */
-    uint32              mode;                   /* Mode of player for pickup. */
-    sint32              group_id;                /* unique group id number - this is a unique number like the object count */
-    sint32              group_status;            /* status of invite or group */
-    int                 weapon_sp;               /* weapon speed - float *1000 for the client */
-	int					map_tile_x, map_tile_y;  /* these is our last position of map we send to client */ 
-	int					map_off_x, map_off_y;  /* scroll offset between 2 maps of client update */ 
+    uint32              target_map_pos;				/* last target search position */
+    uint32              mode;						/* Mode of player for pickup. */
+    sint32              group_id;					/* unique group id number - this is a unique number like the object count */
+    sint32              group_status;				/* status of invite or group */
+	int					exp_bonus;					/* extra exp bonus */
+    int                 weapon_sp;					/* weapon speed - float *1000 for the client */
+	int					map_tile_x, map_tile_y;		/* these is our last position of map we send to client */ 
+	int					map_off_x, map_off_y;		/* scroll offset between 2 maps of client update */ 
 
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.
      * exception is group leader - its only used to confirm a invite
      */
-    object             *group_leader;            /* pointer to group leader or invite */
-    uint32              group_leader_count;        /* for invite... */
-    object             *group_prev;                /* previous member of group */
-    object             *group_next;                /* next member of group */
+    object             *group_leader;				/* pointer to group leader or invite */
+    uint32              group_leader_count;			/* for invite... */
+    object             *group_prev;					/* previous member of group */
+    object             *group_next;					/* next member of group */
 
-    uint32              update_ticker;          /* global_round tick where player was updated */
+    uint32              update_ticker;				/* global_round tick where player was updated */
     float               last_speed;
-    float               speed;                  /* shadow speed value, set in fix_player() to cover flag effects */
+    float               speed;						/* shadow speed value, set in fix_player() to cover flag effects */
 
     sint16              target_level;
     sint16              age;        /* the age of our player */

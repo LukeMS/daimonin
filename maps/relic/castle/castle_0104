@@ -3510,12 +3510,10 @@ arch spawn_point
 x 22
 y 16
 arch smith
+msg
+Hey there chum, whats going on outside of these walls?
+endmsg
 type 83
-arch event_obj
-name lua
-race /relic/castle/scripts/Castleblacksmith1script.lua
-sub_type 6
-end
 end
 end
 arch floor_fs_grey1a
@@ -3604,12 +3602,10 @@ arch spawn_point
 x 23
 y 8
 arch smith
+msg
+smith says: Hey there chum, whats going on outside of these walls?
+endmsg
 type 83
-arch event_obj
-name lua
-race /relic/castle/scripts/Castleblacksmith2script.lua
-sub_type 6
-end
 end
 end
 arch floor_fs_grey1a

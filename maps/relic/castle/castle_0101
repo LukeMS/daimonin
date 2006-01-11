@@ -1547,11 +1547,6 @@ arch archer
 name Yordin
 type 83
 level 99
-arch event_obj
-name lua
-race /stoneglow/smith.lua
-sub_type 6
-end
 end
 end
 arch floor_wood2_l2
@@ -1626,6 +1621,11 @@ y 15
 arch smith
 name Lathair
 type 83
+arch event_obj
+name lua
+race /scripts/smith.lua
+sub_type 13
+end
 end
 end
 arch floor_wood2_l2
@@ -3124,11 +3124,6 @@ level 17
 random_move 1
 item_race 3
 item_level 3
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
-end
 end
 end
 arch floor_wood2_l2
@@ -3338,8 +3333,8 @@ item_race 9
 item_level 1
 arch event_obj
 name lua
-race /relic/castle/scripts/InnKeeper.lua
-sub_type 6
+race //scripts/tavern.lua
+sub_type 13
 end
 end
 end
@@ -3971,11 +3966,6 @@ level 15
 random_move 1
 item_race 2
 item_level 2
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
-end
 end
 end
 arch floor_wood2_l2

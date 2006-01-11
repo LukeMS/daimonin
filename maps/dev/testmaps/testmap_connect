@@ -900,6 +900,8 @@ end
 arch sign
 name magic ear object
 msg
+TODO: magic ears don't work ATM - we need to make
+them trigger a say event script.
 A magic ear is system objects, which "listen"
 to a player. If the player say a keyword,
 the magic ear works like handle.

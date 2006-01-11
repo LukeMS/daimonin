@@ -2828,7 +2828,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         return 0;
 
     /* control apply by controling a set exp object level or player exp level*/
-    if (tmp->item_level)
+	if(tmp->item_level && op->type == PLAYER)
     {
         int tmp_lev;
 

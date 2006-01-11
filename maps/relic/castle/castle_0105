@@ -1004,11 +1004,6 @@ y 16
 arch mage_old
 type 83
 level 60
-arch event_obj
-name lua
-race /relic/castle/scripts/Kingsadvisorsscript.lua
-sub_type 6
-end
 end
 end
 arch floor_fs_grey1a
@@ -1135,11 +1130,6 @@ x 8
 y 15
 arch guard_pole
 msg
-@match hi
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
-@match hello
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
-@match hey
 Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
 endmsg
 type 83
@@ -1748,14 +1738,6 @@ arch carpet2.151
 x 11
 y 14
 end
-arch stairs_stone_down
-msg
-The stairs are blocked
-endmsg
-layer 3
-x 11
-y 15
-end
 arch floor_fs_grey1a
 x 11
 y 15
@@ -2343,11 +2325,6 @@ x 14
 y 15
 arch guard_pole
 msg
-@match hi
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
-@match hello
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
-@match hey
 Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
 endmsg
 type 83
@@ -2489,13 +2466,12 @@ arch spawn_point
 x 15
 y 16
 arch priest_green
+name Jahlnor
+msg
+Jahlnor says: The King is very busy, don't bother him.
+endmsg
 type 83
 level 60
-arch event_obj
-name lua
-race /relic/castle/scripts/Kingsadvisorsscript.lua
-sub_type 6
-end
 end
 end
 arch floor_fs_grey1a

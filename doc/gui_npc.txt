@@ -114,6 +114,9 @@ GUI without sending a command.
 DECLINE: <a c="/talk finish"> 
 Same as accept button, just no t="" command is allowed. 
 
+BUTTON: <b t="Bye" c=""> 
+Same as accept but forces a single button
+
 TEXTFIELD: <t b="the password is ">
 This activates the textfield and fills it with the text from b="".
 This is useful when you want the user to enter a free-text string,

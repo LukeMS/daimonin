@@ -794,11 +794,6 @@ type 83
 level 35
 unaggressive 1
 stand_still 1
-arch event_obj
-name Lua
-race /relic/castle/scripts/GraneryQuestscript.lua
-sub_type 6
-end
 end
 end
 arch floor_fs_grey1a

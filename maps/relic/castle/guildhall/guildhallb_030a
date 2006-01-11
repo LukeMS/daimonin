@@ -3130,13 +3130,16 @@ arch earth_brown3
 x 18
 y 16
 end
+arch spawn_point
+x 18
+y 16
 arch pudding_black
 name shivering black pudding
+type 83
 level 6
 unaggressive 1
 Wis 1
-x 18
-y 16
+end
 end
 arch earth_brown3
 x 18

@@ -833,11 +833,6 @@ level 15
 random_move 1
 item_race 4
 item_level 4
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
-end
 end
 end
 arch grassd_3

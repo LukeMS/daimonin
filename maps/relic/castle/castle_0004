@@ -1152,11 +1152,6 @@ x 7
 y 15
 arch archer
 type 83
-arch event_obj
-name Lua
-race /relic/castle/scripts/commoner.lua
-sub_type 6
-end
 end
 end
 arch floor_wood3e
@@ -1327,11 +1322,6 @@ level 15
 random_move 1
 item_race 4
 item_level 4
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
-end
 end
 end
 arch floor_wood3e
@@ -3085,11 +3075,6 @@ x 19
 y 15
 arch guard_pole
 msg
-@match hi
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
-@match hello
-Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
-@match hey
 Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
 endmsg
 type 83

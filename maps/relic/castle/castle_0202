@@ -1825,11 +1825,6 @@ level 7
 random_move 1
 item_race 3
 item_level 3
-arch event_obj
-name lua
-race /relic/castle/scripts/Farmer.lua
-sub_type 6
-end
 end
 end
 arch floor_wood1b
