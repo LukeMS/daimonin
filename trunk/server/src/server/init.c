@@ -1110,7 +1110,6 @@ static void init_beforeplay()
     init_races();      /* overwrite race designations using entries in lib/races file */
     init_gods();        /* init linked list of gods from archs*/
     init_readable();    /* inits useful arrays for readable texts */
-    init_archetype_pointers(); /* Setup global pointers to archetypes */
 #ifdef ALCHEMY
     init_formulae();    /* If not called before, reads formulae from file */
 #endif

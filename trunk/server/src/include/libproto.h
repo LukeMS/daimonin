@@ -27,6 +27,14 @@ extern archetype       *find_archetype(const char *name);
 extern void             add_arch(archetype *at);
 extern archetype       *type_to_archetype(int type);
 extern object          *clone_arch(int type);
+/* artifact.c */
+extern void				load_artifacts(int mode);
+extern artifactlist    *find_artifactlist(int type);
+extern void             dump_artifacts(void);
+extern void				add_artifact_archtype(void);
+extern void             give_artifact_abilities(object *op, artifact *art);
+extern int              generate_artifact(object *op, int difficulty, int t_style, int a_chance);
+extern void             free_artifactlist(artifactlist *al);
 /* button.c */
 extern void             push_button(object *op);
 extern void             update_button(object *op);
@@ -318,8 +326,6 @@ extern void             print_tod(object *op);
 extern long             seconds(void);
 /* treasure.c */
 extern void             load_treasures(void);
-extern void             init_artifacts(void);
-extern void             init_archetype_pointers(void);
 extern treasurelist    *find_treasurelist(const char *name);
 extern objectlink      *link_treasurelists(char *liststring, uint32 flags);
 extern void             unlink_treasurelists(objectlink *list, int flag);
@@ -336,17 +342,9 @@ extern int              set_ring_bonus(object *op, int bonus, int level);
 extern int              get_magic(int diff);
 extern int              fix_generated_item(object **op, object *creator, int difficulty, int a_chance, int t_style,
                                            int max_magic, int chance_magic, int flags);
-extern artifactlist    *find_artifactlist(int type);
-void                    add_artifact_archtype(void);
-extern void             dump_artifacts(void);
 extern void             dump_monster_treasure_rec(const char *name, treasure *t, int depth);
-extern void             give_artifact_abilities(object *op, artifact *art);
-extern int              generate_artifact(object *op, int difficulty, int t_style, int a_chance);
 extern void             fix_flesh_item(object *item, object *donor);
 extern void             free_treasurestruct(treasure *t);
-extern void             free_charlinks(linked_char *lc);
-extern void             free_artifact(artifact *at);
-extern void             free_artifactlist(artifactlist *al);
 extern void             free_all_treasures(void);
 extern void             dump_monster_treasure(const char *name);
 extern int              get_enviroment_level(object *op);

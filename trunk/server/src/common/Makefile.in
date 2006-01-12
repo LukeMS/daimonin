@@ -28,6 +28,7 @@ SRCS = \
 	aggro.c \
 	anim.c \
 	arch.c\
+	artifact.c\
 	button.c\
 	exp.c\
 	holy.c\

@@ -127,6 +127,13 @@ typedef signed long long         sint64;
 
 #define query_name(_op_) query_name_full(_op_, NULL)
 
+#define ARTIFACTS_FIRST_PASS 1
+#define ARTIFACTS_SECOND_PASS 2
+
+/* Give 1 re-roll attempt per artifact and treasure */
+#define ARTIFACT_TRIES 2
+#define CHANCE_FIX (-1)
+
 /* to access strings from objects, maps, arches or other system objects,
  * for printf() or others use only this macros to avoid NULL pointer exceptions.
  * Some standard c libaries don't check for NULL in that functions - most times

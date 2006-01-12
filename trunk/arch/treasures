@@ -2292,7 +2292,3 @@ treasureone loot_device
 list food_misc
 chance 60
 end
-################ test drop (for testmaps)
-treasureone random_test
-list book_misc
-end

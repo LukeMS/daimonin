@@ -439,9 +439,8 @@ void first_arch_pass(FILE *fp)
 void second_arch_pass(FILE *fp_start)
 {
     FILE           *fp  = fp_start;
-    char            filename[MAX_BUF];
     char            buf[MAX_BUF], *variable = buf, *argument, *cp;
-    archetype*at =  NULL, *other;
+    archetype	   *at =  NULL, *other;
 
     while (fgets(buf, MAX_BUF, fp) != NULL)
     {
@@ -479,72 +478,6 @@ void second_arch_pass(FILE *fp_start)
                 at->clone.randomitems = link_treasurelists(argument, OBJLNK_FLAG_STATIC);
         }
     }
-
-
-    /* now reparse the artifacts file too! */
-
-    sprintf(filename, "%s/artifacts", settings.datadir);
-    if ((fp = fopen(filename, "r")) == NULL)
-    {
-        LOG(llevError, "ERROR: Can't open %s.\n", STRING_SAFE(filename));
-        return;
-    }
-
-    while (fgets(buf, MAX_BUF, fp) != NULL)
-    {
-        if (*buf == '#')
-            continue;
-        if ((argument = strchr(buf, ' ')) != NULL)
-        {
-            *argument = '\0',argument++;
-            cp = argument + strlen(argument) - 1;
-            while (isspace(*cp))
-            {
-                *cp = '\0';
-                cp--;
-            }
-        }
-
-        /* now we get our artifact. if we hit "def_arch", we first copy from it
-         * other_arch and treasure list to our artifact.
-         * then we search the object for other_arch and randomitems - perhaps we override them here.
-         */
-        if (!strcmp("artifact", variable)) /* be sure "artifact" command is before def_arch cm! */
-        {
-            at = find_archetype(argument);
-        }
-        else if (at && !strcmp("def_arch", variable))
-        {
-            if ((other = find_archetype(argument)) == NULL)
-            {
-                LOG(llevBug, "BUG: second artifacts pass: failed to find def_arch %s from artifact %s\n",
-                    STRING_SAFE(argument), STRING_ARCH_NAME(at));
-                continue;
-            }
-            /* now copy from real arch the stuff from above to our "fake" arches */
-            at->clone.other_arch = other->clone.other_arch;
-            if (at->clone.randomitems)
-                unlink_treasurelists(at->clone.randomitems, FALSE);
-            at->clone.randomitems = other->clone.randomitems;
-            if (at->clone.randomitems && (at->clone.randomitems->flags & OBJLNK_FLAG_REF))
-                at->clone.randomitems->ref_count++;
-        }
-        else if (!strcmp("other_arch", variable))
-        {
-            if ((other = find_archetype(argument)) == NULL)
-                LOG(llevBug, "BUG: second artifacts pass: failed to find other_arch %s\n", STRING_SAFE(argument));
-            else if (at != NULL)
-                at->clone.other_arch = other;
-        }
-        else if (at && !strcmp("randomitems", variable))
-        {
-            if (at->clone.randomitems)
-                unlink_treasurelists(at->clone.randomitems, TRUE);
-            at->clone.randomitems = link_treasurelists(argument, OBJLNK_FLAG_STATIC);
-        }
-    }
-
-    fclose(fp);
 }
 
 /*
@@ -604,12 +537,15 @@ void load_archetypes()
      * second_arch_pass reparse the archetype file again and add other_arch and
      * randomitems (= treasurelists) to the arches.
      */
-    init_artifacts();  /* If not called before, reads all artifacts from file */
+    load_artifacts(ARTIFACTS_FIRST_PASS);  /* If not called before, reads all artifacts from file */
     add_artifact_archtype();
     LOG(llevDebug, " loading treasure...\n");
     load_treasures();
     LOG(llevDebug, " done\n arch-pass 2...\n");
     second_arch_pass(fp);
+	/* now reparse the artifacts file too! */
+	LOG(llevDebug, " done\n artifact-pass 2...\n");
+	load_artifacts(ARTIFACTS_SECOND_PASS);
     LOG(llevDebug, " done.\n");
     fclose(fp);
     LOG(llevDebug, "Reading archetypes done.\n");
