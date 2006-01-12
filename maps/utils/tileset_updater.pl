@@ -199,7 +199,7 @@ sub scan_maps
     
     foreach my $entry (@contents) {
         # Skip some obvious non-map files and dirs
-        next if $entry =~ /(^CVS$)|(^\..*)|(.*\.txt$)|(.*\.lua$)|(^README$)/;
+        next if $entry =~ /(^CVS$)|(^\..*)|(.*\.txt$)|(.*\.art$)|(.*\.tl$)|(.*\.lua$)|(^README$)/;
         my $fullpath = "$dir/$entry";
         my $path = substr($fullpath, length($mapdir));
         

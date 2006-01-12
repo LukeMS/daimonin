@@ -35,11 +35,7 @@
 
 #include <global.h>
 
-/* Give 1 re-roll attempt per artifact */
-#define ARTIFACT_TRIES 2
-#define CHANCE_FIX (-1)
-
-static archetype*ring_arch =    NULL, *ring_arch_normal = NULL, *amulet_arch = NULL;
+static archetype	*ring_arch = NULL, *ring_arch_normal = NULL, *amulet_arch = NULL;
 
 
 /* static functions */
@@ -48,33 +44,43 @@ static void             change_treasure(struct _change_arch *ca, object *op); /*
 static treasurelist    *get_empty_treasurelist(void);
 static treasure        *get_empty_treasure(void);
 static void             put_treasure(object *op, object *creator, int flags);
-static artifactlist    *get_empty_artifactlist(void);
-static artifact        *get_empty_artifact(void);
 static inline void      set_material_real(object *op, struct _change_arch *change_arch);
 static void             create_money_table(void);
 static void             postparse_treasurelist(treasure *t, treasurelist *tl);
+
+/*
+* Initialize global archtype pointers:
+*/
+static void init_archetype_pointers()
+{
+	if (ring_arch_normal == NULL)
+		ring_arch_normal = find_archetype("ring_normal");
+	if (!ring_arch_normal)
+		LOG(llevBug, "BUG: Cant'find 'ring_normal' arch (from artifacts)\n");
+	if (ring_arch == NULL)
+		ring_arch = find_archetype("ring_generic");
+	if (!ring_arch)
+		LOG(llevBug, "BUG: Cant'find 'ring_generic' arch\n");
+	if (amulet_arch == NULL)
+		amulet_arch = find_archetype("amulet_generic");
+	if (!amulet_arch)
+		LOG(llevBug, "BUG: Cant'find 'amulet_generic' arch\n");
+}
 
 /*
  * Opens LIBDIR/treasure and reads all treasure-declarations from it.
  * Each treasure is parsed with the help of load_treasure().
  */
 
-void load_treasures()
+static void init_treasures(FILE *fp)
 {
-    FILE                   *fp;
-    char                    filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
-    treasurelist*previous = NULL, *tl_tmp;
+	static treasurelist	   *previous = NULL; /* important, we call this now recursive */
+    char                    buf[MAX_BUF], name[MAX_BUF];
+	treasurelist		   *tl_tmp;
     treasure               *t;
     int                     t_style, a_chance;
     char                    dummy[10];
 
-    sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
-
-    if ((fp = fopen(filename,"r")) == NULL)
-    {
-        LOG(llevError, "ERROR: Can't open treasure file.\n");
-        return;
-    }
 
     while (fgets(buf, MAX_BUF, fp) != NULL)
     {
@@ -134,15 +140,130 @@ void load_treasures()
         else
             LOG(llevError, "ERROR: Treasure-list didn't understand: %s\n", buf);
     }
-    fclose(fp);
-
-
-    LOG(llevInfo, " link treasure lists pass 2...\n");
-    for (previous = first_treasurelist; previous != NULL; previous = previous->next)
-        postparse_treasurelist(previous->items, previous);
-
-    create_money_table();
 }
+
+/*
+* recusively traverse the given directory and search for *.tl files
+* and process them like they are part of the original treasure list file
+*/
+static void traverse_treasures_files(char* start_dir)
+{
+	DIR* dir;						/* pointer to the scanned directory. */
+	struct dirent* entry=NULL;		/* pointer to one directory entry.   */
+	char *fptr, cwd[HUGE_BUF+1];	/* current working directory.        */
+	struct stat dir_stat;			/* used by stat().                   */
+
+	/* first, save path of current working directory */
+	if (!getcwd(cwd, HUGE_BUF+1)) {
+		perror("getcwd:");
+		return;
+	}
+
+	/* open the directory for reading */
+	if(start_dir)
+	{
+		dir = opendir(start_dir);
+		chdir(start_dir);
+	}
+	else
+		dir = opendir(".");
+
+	if (!dir) {
+		fprintf(stderr, "Cannot read directory '%s': ", cwd);
+		perror("");
+		return;
+	}
+
+	/* scan the directory, traversing each sub-directory, and */
+	/* matching the pattern for each file name.               */
+	while ((entry = readdir(dir))) 
+	{
+		/* check if the given entry is a directory. */
+		/* skip all ".*" entries, to avoid loops and forbidden directories. */
+		if (entry->d_name[0] == '.')
+			continue;
+
+		if (stat(entry->d_name, &dir_stat) == -1) 
+		{
+			perror("stat:");
+			continue;
+		}
+
+		/* is this a directory? */
+		if (S_ISDIR(dir_stat.st_mode))
+		{
+			/* Change into the new directory */
+			if (chdir(entry->d_name) == -1) 
+			{
+				fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
+				perror("");
+				continue;
+			}
+			/* check this directory */
+			traverse_treasures_files(NULL);
+
+			/* finally, restore the original working directory. */
+			if (chdir("..") == -1) 
+			{
+				fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
+				perror("");
+			}
+		}
+		else
+		{
+			/* lets check its a valid, local artifacts file */
+			if(entry->d_name[0] != '.' && (fptr = strrchr(entry->d_name, '.')) && !strcmp(fptr, ".tl") )
+			{
+				FILE *fp;
+
+				LOG(llevDebug, " adding local treasures from %s...", entry->d_name);
+				if ((fp = fopen(entry->d_name, "r")) == NULL)
+				{
+					LOG(llevError, "ERROR: Can't open %s.\n", entry->d_name);
+					exit(-1);
+				}
+
+				init_treasures(fp);
+				fclose(fp);
+				LOG(llevDebug, "done.\n");
+			}
+		}
+	}
+
+	closedir(dir);
+
+	if(start_dir) /* clean restore */
+		chdir(cwd);
+}
+
+
+void load_treasures(void)
+{
+	FILE                   *fp;
+	char                    filename[MAX_BUF];
+	treasurelist		   *previous = NULL;
+
+	/* load default treasure list file from /lib */
+	sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
+	if ((fp = fopen(filename,"r")) == NULL)
+	{
+		LOG(llevError, "ERROR: Can't open treasure file.\n");
+		return;
+	}
+	init_treasures(fp);
+	fclose(fp);
+
+	/* traverse the /maps folder and load every file with .tl extension as local treasure list */
+	traverse_treasures_files(settings.mapdir);
+
+	LOG(llevInfo, " link treasure lists pass 2...\n");
+	for (previous = first_treasurelist; previous != NULL; previous = previous->next)
+		postparse_treasurelist(previous->items, previous);
+
+	create_money_table();
+	init_archetype_pointers(); /* Setup global pointers to archetypes */
+}
+
 
 static void postparse_treasurelist(treasure *t, treasurelist *tl)
 {
@@ -331,243 +452,6 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
     }
     LOG(llevBug, "BUG: treasure %s lacks 'end'.>%s<\n", STRING_SAFE(t->name), STRING_SAFE(cp));
     return t;
-}
-
-/*
- * Builds up the lists of artifacts from the file in the libdir.
- */
-/* Remember: other_arch & treasurelists defined in the artifacts file
- * will be parsed in a second parse by hand - like the normal arches.
- */
-void init_artifacts()
-{
-    static int      has_been_inited = 0;
-    archetype      *atemp;
-    long            old_pos, file_pos;
-    FILE           *fp;
-    char            filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
-    artifact       *art             = NULL;
-    linked_char    *tmp;
-    int             lcount, value, none_flag = 0, editor_flag;
-    artifactlist   *al;
-    char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
-    object            *dummy_obj=get_object(), *parse_obj;
-
-    if (has_been_inited)
-        return;
-    has_been_inited = 1;
-
-    sprintf(filename, "%s/artifacts", settings.datadir);
-    LOG(llevDebug, " reading artifacts from %s...", filename);
-    if ((fp = fopen(filename, "r")) == NULL)
-    {
-        LOG(llevError, "ERROR: Can't open %s.\n", filename);
-        return;
-    }
-
-    /* start read in the artifact list */
-    while (fgets(buf, MAX_BUF, fp) != NULL)
-    {
-        if (*buf == '#')
-            continue;
-        cp = buf + (strlen(buf) - 1);
-        while(isspace(*cp))
-            --cp;
-        cp[1] = '\0';
-        cp = buf;
-        while (*cp == ' ') /* Skip blanks */
-            cp++;
-
-        /* we have a single artifact */
-        if (!strncmp(cp, "Allowed", 7))
-        {
-            art = get_empty_artifact();
-            editor_flag = FALSE;
-            nrofartifacts++;
-            none_flag = FALSE;
-            cp = strchr(cp, ' ') + 1;
-            if (!strcmp(cp, "all"))
-                continue;
-            if (!strcasecmp(cp, "none"))
-            {
-                none_flag = TRUE;
-                continue;
-            }
-            do
-            {
-                nrofallowedstr++;
-                if ((next = strchr(cp, ',')) != NULL)
-                    *(next++) = '\0';
-                tmp = (linked_char *) malloc(sizeof(linked_char));
-                tmp->name = NULL;
-                FREE_AND_COPY_HASH(tmp->name, cp);
-                tmp->next = art->allowed;
-                art->allowed = tmp;
-            }
-            while ((cp = next) != NULL);
-        }
-        else if (sscanf(cp, "t_style %d", &value))
-            art->t_style = value;
-        else if (sscanf(cp, "chance %d", &value))
-            art->chance = (uint16) value;
-        else if (sscanf(cp, "difficulty %d", &value))
-            art->difficulty = (uint8) value;
-        else if (!strncmp(cp, "artifact", 8))
-        {
-            FREE_AND_COPY_HASH(art->name, cp + 9);
-        }
-        else if (!strncmp(cp, "def_arch", 8)) /* chain a default arch to this treasure */
-        {
-            FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the def archetype name (real base arch) */
-        }
-        else if (!strncmp(cp, "Object", 6)) /* all text after Object is now like a arch file until a end comes */
-        {
-            if(editor_flag == FALSE)
-                LOG(llevError, "ERROR: Init_Artifacts: Artifact %s (%s) has no 'editor x:...' line!\n", STRING_SAFE(art->name),STRING_SAFE(art->def_at_name));
-
-            if (!art->name)
-                LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no arch id name\n", STRING_SAFE(art->def_at_name));
-
-            old_pos = ftell(fp);
-            if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH) /* we have & use a default arch */
-            {
-                if (!art->def_at_name)
-                    LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no def arch\n", art->name);
-
-                /* we patch this .clone object after Object read with the artifact data.
-                * in find_artifact, this archetype object will be returned. For the server,
-                * it will be the same as it comes from the arch list, defined in the arches.
-                * This will allow us the generate for every artifact a "default one" and we
-                * will have always a non-magical base for every artifact
-                */
-                if ((atemp = find_archetype(art->def_at_name)) == NULL)
-                    LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", art->def_at_name);
-                memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
-                art->def_at.base_clone = &atemp->clone;
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
-                ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
-                art->def_at.clone.arch = &art->def_at;
-                parse_obj = &art->def_at.clone;
-            }
-            else
-            {
-                parse_obj = dummy_obj;
-                parse_obj->type = 0; /* we need the dummy obj to get the type info of the artifact! */
-            }
-
-            /* parse the new fake arch clone with the artifact values */
-            if (!load_object(fp, parse_obj, NULL, LO_LINEMODE, MAP_STYLE))
-                LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
-
-            /* ok, now lets catch & copy the commands to our artifacts buffer.
-             * lets do some file magic here - thats the easiest way.
-             */
-            file_pos = ftell(fp);
-
-            if (fseek(fp, old_pos, SEEK_SET))
-                LOG(llevError, "ERROR: Init_Artifacts: Could not fseek(fp,%d,SEEK_SET).\n", old_pos);
-
-                 /* the lex reader will bug when it don't get feed with a <text>+0x0a+0 string.
-                          * so, we do it here and in the lex part we simple do a strlen and point
-                          * to every part without copy it.
-                          */
-            lcount = 0;
-            while (fgets(buf, MAX_BUF - 3, fp))
-            {
-                strcpy(buf_text + lcount, buf);
-                lcount += strlen(buf) + 1;
-                if (ftell(fp) == file_pos)
-                    break;
-                if (ftell(fp) > file_pos) /* should not possible! */
-                    LOG(llevError, "ERROR: Init_Artifacts: fgets() read to much data! (%d - %d)\n", file_pos, ftell(fp));
-            };
-
-            /* now store the parse text in the artifacts list entry */
-            if ((art->parse_text = malloc(lcount)) == NULL)
-                LOG(llevError, "ERROR: Init_Artifacts: out of memory in ->parse_text (size %d)\n", lcount);
-
-            memcpy(art->parse_text, buf_text, lcount);
-
-            if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
-                FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
-                                                                    * our fake arch to the fake arch name.
-                                                                    * without it, treasures will get the
-                                                                    * original arch, not this (hm, this
-                                                                    * can be a glitch in treasures too...)
-                                                                    */
-            /* now handle the <Allowed none> in the artifact to create
-             * unique items or add them to the given type list.
-             */
-            al = find_artifactlist(none_flag == FALSE ? parse_obj->type : -1);
-            if (al == NULL)
-            {
-                al = get_empty_artifactlist();
-                al->type = none_flag == FALSE ? parse_obj->type : -1;
-                al->next = first_artifactlist;
-                first_artifactlist = al;
-            }
-
-                 art->next = al->items;
-                 al->items = art;
-        }
-        else if (!strncmp(cp, "editor", 6))
-        {
-            /* QUICKHACK: we don't won't delete the pre-beta 4 fake arch items on the players */
-            art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH; /* remove this quickhack for 1.0 */
-
-            editor_flag = TRUE;
-            if(!strncmp(cp+7,"2:",2)) /* mask only */
-                continue;
-            else if(!strcmp(cp+7,"0") || !strncmp(cp+7,"1:",2) || !strncmp(cp+7,"3:",2)) /* use def arch def_at */
-                art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH;
-            else
-                LOG(llevError, "\nERROR: Invalid editor line in artifact file: %s\n", cp);
-        }
-        else
-            LOG(llevBug, "\nBUG: Unknown line in artifact file: %s\n", buf);
-    }
-    fclose(fp);
-
-    for (al = first_artifactlist; al != NULL; al = al->next)
-    {
-        for (art = al->items; art != NULL; art = art->next)
-        {
-            /*add_arch();
-                    LOG(llevDebug,"art: %s (%s %s)\n", art->name, art->def_at.name, query_name(&art->def_at.clone));*/
-
-            if (al->type == -1) /* we don't use our unique artifacts as pick table */
-                continue;
-            if (!art->chance)
-                LOG(llevBug, "BUG: artifact with no chance: %s\n", art->name);
-            else
-                al->total_chance += art->chance;
-        }
-    }
-    LOG(llevDebug, "done.\n");
-}
-
-
-/*
- * Initialize global archtype pointers:
- */
-
-void init_archetype_pointers()
-{
-    if (ring_arch_normal == NULL)
-        ring_arch_normal = find_archetype("ring_normal");
-    if (!ring_arch_normal)
-        LOG(llevBug, "BUG: Cant'find 'ring_normal' arch (from artifacts)\n");
-    if (ring_arch == NULL)
-        ring_arch = find_archetype("ring_generic");
-    if (!ring_arch)
-        LOG(llevBug, "BUG: Cant'find 'ring_generic' arch\n");
-    if (amulet_arch == NULL)
-        amulet_arch = find_archetype("amulet_generic");
-    if (!amulet_arch)
-        LOG(llevBug, "BUG: Cant'find 'amulet_generic' arch\n");
 }
 
 
@@ -2167,130 +2051,6 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
 }
 
 /*
- *
- *
- * CODE DEALING WITH ARTIFACTS STARTS HERE
- *
- *
- */
-
-/*
- * Allocate and return the pointer to an empty artifactlist structure.
- */
-
-static artifactlist * get_empty_artifactlist(void)
-{
-    artifactlist   *tl  = (artifactlist *) malloc(sizeof(artifactlist));
-
-    if (tl == NULL)
-        LOG(llevError, "ERROR: get_empty_artifactlist(): OOM!\n");
-    memset(tl, 0, sizeof(artifactlist));
-
-    return tl;
-}
-
-/*
- * Allocate and return the pointer to an empty artifact structure.
- */
-
-static artifact * get_empty_artifact(void)
-{
-    artifact   *t   = (artifact *) malloc(sizeof(artifact));
-
-    if (t == NULL)
-        LOG(llevError, "ERROR: get_empty_artifact(): OOM!\n");
-    memset(t, 0, sizeof(artifact));
-
-    return t;
-}
-
-/*
- * Searches the artifact lists and returns one that has the same type
- * of objects on it.
- */
-
-artifactlist * find_artifactlist(int type)
-{
-    artifactlist   *al;
-
-    for (al = first_artifactlist; al != NULL; al = al->next)
-        if (al->type == type)
-            return al;
-    return NULL;
-}
-
-/* not used ATM - MT 2003 */
-/*
-artifact *find_artifact(const char *name)
-{
-    artifactlist *al;
-    artifact *art=NULL;
-
-  for (al=first_artifactlist; al!=NULL; al=al->next)
-  {
-        art = al->items;
-        do
-        {
-            if (art->name && !strcmp(art->name, name))
-                return art;
-            art = art->next;
-        } while (art!=NULL);
-  }
-    return NULL;
-}
-*/
-
-void add_artifact_archtype(void)
-{
-    artifactlist   *al;
-    artifact       *art = NULL;
-
-    for (al = first_artifactlist; al != NULL; al = al->next)
-    {
-        art = al->items;
-        do
-        {
-            if (art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && art->name)
-            {
-                add_arch(&art->def_at);
-            }
-            art = art->next;
-        }
-        while (art != NULL);
-    }
-}
-
-
-/*
- * For debugging purposes.  Dumps all tables.
- */
-
-void dump_artifacts()
-{
-    artifactlist   *al;
-    artifact       *art;
-    linked_char    *next;
-
-    for (al = first_artifactlist; al != NULL; al = al->next)
-    {
-        LOG(llevInfo, "Artifact has type %d, total_chance=%d\n", al->type, al->total_chance);
-        for (art = al->items; art != NULL; art = art->next)
-        {
-            LOG(llevInfo, "Artifact %-30s Difficulty %3d T-Style %d Chance %5d\n", art->name, art->difficulty,
-                art->t_style, art->chance);
-            if (art->allowed != NULL)
-            {
-                LOG(llevInfo, "\tAllowed combinations:");
-                for (next = art->allowed; next != NULL; next = next->next)
-                    LOG(llevInfo, "%s,", next->name);
-                LOG(llevInfo, "\n");
-            }
-        }
-    }
-    LOG(llevInfo, "\n");
-}
-
-/*
  * For debugging purposes.  Dumps all treasures recursively (see below).
  */
 void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
@@ -2339,167 +2099,6 @@ void dump_monster_treasure_rec(const char *name, treasure *t, int depth)
         t = t->next;
     }
 }
-
-
-
-
-static int legal_artifact_combination(object *op, artifact *art)
-{
-    int             neg, success = 0;
-    linked_char    *tmp;
-    const char     *name;
-
-    if (art->allowed == (linked_char *) NULL)
-        return 1; /* Ie, "all" */
-    for (tmp = art->allowed; tmp; tmp = tmp->next)
-    {
-#ifdef TREASURE_VERBOSE
-        LOG(llevDebug, "legal_art: %s\n", tmp->name);
-#endif
-        if (*tmp->name == '!')
-            name = tmp->name + 1, neg = 1;
-        else
-            name = tmp->name, neg = 0;
-
-        /* If we match name, then return the opposite of 'neg' */
-        if (!strcmp(name, op->name) || (op->arch && !strcmp(name, op->arch->name)))
-            return !neg;
-
-        /* Set success as true, since if the match was an inverse, it means
-         * everything is allowed except what we match
-         */
-        else if (neg)
-            success = 1;
-    }
-    return success;
-}
-
-/*
- * Fixes the given object, giving it the abilities and titles
- * it should have due to the second artifact-template.
- */
-
-void give_artifact_abilities(object *op, artifact *art)
-{
-    sint64 tmp_value   = op->value;
-
-    op->value = 0;
-    if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_ARTIFACT))
-        LOG(llevError, "ERROR: give_artifact_abilities(): load_object() error (ob: %s art: %s).\n", op->name, art->name);
-
-    /* this will solve the problem to adjust the value for different items
-     * of same artification. Also we can safely use negative values.
-     */
-    op->value += tmp_value;
-    if (op->value < 0)
-        op->value = 0;
-
-#if 0 /* Bit verbose, but keep it here until next time I need it... */
-  {
-    char identified = QUERY_FLAG(op, FLAG_IDENTIFIED);
-    SET_FLAG(op, FLAG_IDENTIFIED);
-    LOG(llevDebug, "Generated artifact %s %s [%s]\n",
-      op->name, op->title, describe_item(op));
-    if (!identified)
-      CLEAR_FLAG(op, FLAG_IDENTIFIED);
-  }
-#endif
-    return;
-}
-
-/*
- * Decides randomly which artifact the object should be
- * turned into.  Makes sure that the item can become that
- * artifact (means magic, difficulty, and Allowed fields properly).
- * Then calls give_artifact_abilities in order to actually create
- * the artifact.
- */
-int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
-{
-    artifactlist   *al;
-    artifact       *art;
-    artifact       *art_tmp = NULL;
-    int             i, style_abs, chance_tmp = 0;
-
-    al = find_artifactlist(op->type);
-
-    style_abs = ABS(t_style);
-
-    if (al == NULL)
-    {
-#ifdef TREASURE_VERBOSE
-        LOG(llevDebug, "Couldn't change %s into artifact - no table.\n", op->name);
-#endif
-        return 0;
-    }
-
-    for (i = 0; i < ARTIFACT_TRIES; i++)
-    {
-        int roll    = RANDOM() % al->total_chance;
-
-        for (art = al->items; art != NULL; art = art->next)
-        {
-            roll -= art->chance;
-            if (roll < 0)
-                break;
-        }
-
-        if (art == NULL || roll >= 0)
-        {
-            LOG(llevBug, "BUG: Got null entry and non zero roll in generate_artifact, type %d\n", op->type);
-            return 0;
-        }
-
-        /* Map difficulty not high enough OR the t_style is set and don't match */
-        if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
-            (  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
-            || (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
-            || (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
-            )))
-            continue;
-
-        if (!legal_artifact_combination(op, art))
-        {
-#ifdef TREASURE_VERBOSE
-            LOG(llevDebug, "%s of %s was not a legal combination.\n", op->name, art->item->name);
-#endif
-            continue;
-        }
-        give_artifact_abilities(op, art);
-        return 1;
-    }
-
-    /* if we are here then we failed to generate a artifact by chance.
-     * the reasons can be many - most times we just skipped over the
-     * useful one.
-     * If (and only if) a a_chance  - then now we force our way:
-     * - lets get (if there are one) a legal artifact with the highest chance.
-     */
-    if (a_chance > 0)
-    {
-        for (art = al->items; art != NULL; art = art->next)
-        {
-            if (art->chance <= chance_tmp)
-                continue;
-            if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
-                (  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
-                || (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
-                || (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
-                )))
-                continue;
-            if (!legal_artifact_combination(op, art))
-                continue;
-            art_tmp = art; /* there we go! */
-        }
-    }
-
-    /* now we MUST have one - if there was at last one legal possible artifact */
-    if (art_tmp)
-        give_artifact_abilities(op, art_tmp);
-
-    return 1;
-}
-
 
 /* fix_flesh_item() - objects of type FLESH are similar to type
  * FOOD, except they inherit properties (name, food value, etc).
@@ -2560,46 +2159,6 @@ void free_treasurestruct(treasure *t)
     free(t);
 }
 
-void free_charlinks(linked_char *lc)
-{
-    if (lc->next)
-        free_charlinks(lc->next);
-    free(lc);
-}
-
-void free_artifact(artifact *at)
-{
-    FREE_AND_CLEAR_HASH2(at->name);
-    if (at->next)
-        free_artifact(at->next);
-    if (at->allowed)
-        free_charlinks(at->allowed);
-    if (at->parse_text)
-        free(at->parse_text);
-    if(at->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
-    {
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
-        FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
-    }
-    free(at);
-}
-
-void free_artifactlist(artifactlist *al)
-{
-    artifactlist   *nextal;
-    for (al = first_artifactlist; al != NULL; al = nextal)
-    {
-        nextal = al->next;
-        if (al->items)
-        {
-            free_artifact(al->items);
-        }
-        free(al);
-    }
-}
 
 void free_all_treasures()
 {

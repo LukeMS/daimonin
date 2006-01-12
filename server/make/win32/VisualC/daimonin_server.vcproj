@@ -1207,6 +1207,9 @@
 					RelativePath="..\..\..\src\common\arch.c">
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\artifact.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\button.c">
 				</File>
 				<File
