@@ -301,9 +301,20 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 {
     struct mempool_chunk   *old = MEM_POOLDATA(data);
 
-    if (CHUNK_FREE(data))
+    if (CHUNK_FREE(data)) 
+    {
+        /* When this happens we can choose to ignore it and return or stop and
+         * make finding the original error easier. */
+#ifdef PRODUCTION_SYSTEM
         LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool \"%s\")\n",
             pool->chunk_description);
+        return; /* Ignore the problem */
+#else
+        LOG(llevError, "ERROR: return_poolchunk on already free chunk (pool \"%s\")\n",
+            pool->chunk_description);
+        /* llevError terminates the server */
+#endif
+    }
 
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     if (old->obj_next)
