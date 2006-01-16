@@ -7,7 +7,4 @@
 	<File name="..\..\..\src\common\arch.c" open="1" top="1">
 		<Cursor position="19411" topLine="617"/>
 	</File>
-	<Expand folder="/Sources/src/common"/>
-	<Expand folder="/Sources/src"/>
-	<Expand folder="/Sources"/>
 </CodeBlocks_layout_file>
