@@ -593,44 +593,55 @@ void give_initial_items(object *pl, struct oblnk *items)
 
         /* Forces get applied per default */
         if (op->type == FORCE)
+		{
             SET_FLAG(op, FLAG_APPLIED);
-
+		}
         /* we never give weapons/armour if these cannot be used
                   by this player due to race restrictions */
-        if (pl->type == PLAYER)
-        {
-            if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR)
-              && (op->type == ARMOUR
-               || op->type == BOOTS
-               || op->type == CLOAK
-               || op->type == HELMET
-               || op->type == SHIELD
-               || op->type == GLOVES
-               || op->type == BRACERS
-               || op->type == GIRDLE))
-             || (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON))
-            {
-                remove_ob(op); /* inventory action */
-                continue;
-            }
-        }
-
-        /* Give starting characters identified, uncursed, and undamned
-         * items.  Just don't identify gold or silver, or it won't be
-         * merged properly.
-         */
-        if (need_identify(op))
-        {
-            SET_FLAG(op, FLAG_IDENTIFIED);
-            CLEAR_FLAG(op, FLAG_CURSED);
-            CLEAR_FLAG(op, FLAG_DAMNED);
-        }
-        if (op->type == ABILITY)
-        {
-            CONTR(pl)->known_spells[CONTR(pl)->nrofknownspells++] = op->stats.sp;
-            remove_ob(op);
+		else if ((!QUERY_FLAG(pl, FLAG_USE_ARMOUR)
+				&& (op->type == ARMOUR
+				|| op->type == BOOTS
+				|| op->type == CLOAK
+				|| op->type == HELMET
+				|| op->type == SHIELD
+				|| op->type == GLOVES
+				|| op->type == BRACERS
+				|| op->type == GIRDLE))
+				|| (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON))
+		{
+			remove_ob(op); /* inventory action */
             continue;
-        }
+		}
+		else if (op->type == ABILITY)
+		{
+			CONTR(pl)->known_spells[CONTR(pl)->nrofknownspells++] = op->stats.sp;
+			remove_ob(op);
+			continue;
+		}
+		/* now we apply the stuff on default - *very* useful for real new players! */
+		else  if(op->type == WEAPON || op->type == AMULET || op->type == RING ||
+				op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
+				op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES)
+		{
+			if (need_identify(op))
+			{
+				SET_FLAG(op, FLAG_IDENTIFIED);
+				CLEAR_FLAG(op, FLAG_CURSED);
+				CLEAR_FLAG(op, FLAG_DAMNED);
+			}
+			manual_apply(pl, op,0); 
+		}
+
+		/* Give starting characters identified, uncursed, and undamned
+		* items.  Just don't identify gold or silver, or it won't be
+		* merged properly.
+		*/
+		else if (need_identify(op))
+		{
+			SET_FLAG(op, FLAG_IDENTIFIED);
+			CLEAR_FLAG(op, FLAG_CURSED);
+			CLEAR_FLAG(op, FLAG_DAMNED);
+		}
     } /* for loop of objects in player inv */
 }
 

@@ -28,7 +28,7 @@
 /* IF set, does a little timing on the archetype load. */
 #define TIME_ARCH_LOAD 0
 
-#define ARCHTABLE 10007 /* Used when hashing archetypes */
+#define ARCHTABLE 10000 /* Used when hashing archetypes */
 static archetype   *arch_table[ARCHTABLE];
 
 /**
@@ -614,8 +614,7 @@ object * get_archetype(const char *name)
 /*
  * Hash-function used by the arch-hashtable.
  */
-
-unsigned long hasharch(const char *str, int tablesize)
+static inline unsigned long hasharch(const char *str, int tablesize)
 {
     unsigned long hash = 0;
     int         i = 0, rot = 0;

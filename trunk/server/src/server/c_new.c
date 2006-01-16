@@ -798,15 +798,6 @@ void command_new_char(char *params, int len, player *pl)
     SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
 	objtmp->value = 1;
 
-	/* now lets apply all base items - very useful for new players */
-	for (objtmp=op->inv; objtmp; objtmp=objtmp->below)
-	{
-		if(objtmp->type == WEAPON || objtmp->type == AMULET || objtmp->type == RING ||
-           objtmp->type == BOOTS || objtmp->type == HELMET || objtmp->type == BRACERS || objtmp->type == GIRDLE ||
-           objtmp->type == CLOAK || objtmp->type == ARMOUR || objtmp->type == SHIELD || objtmp->type == GLOVES)
-		manual_apply(op, objtmp,0); 
-	}
-
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     CONTR(op)->last_stats.exp = 1;          /* force send of skill exp data to client */
     strcpy(CONTR(op)->title, op->race);     /* no title - just what we born */

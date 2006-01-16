@@ -320,7 +320,9 @@ struct plugin_hooklist
 	sint64 (*material_repair_cost)(object *item, object *owner);
 	void (*material_repair_item)(object *item, int skill_value);
 	char * (*query_short_name)(object *op, object *caller);
-    
+	artifact * (*find_artifact)(const char *name);
+	void (*give_artifact_abilities)(object *op, artifact *art);
+
     /* Global variables */
     Animations **animations;
     New_Face **new_faces;

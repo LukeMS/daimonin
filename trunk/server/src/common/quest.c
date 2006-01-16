@@ -96,6 +96,7 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
     q_tmp->speed = 0.0f;
     CLEAR_FLAG(q_tmp, FLAG_ANIMATE);
     CLEAR_FLAG(q_tmp, FLAG_ALIVE);
+	SET_FLAG(q_tmp, FLAG_IDENTIFIED);
     /* we are storing the arch name of quest dummy items in race */
     FREE_AND_COPY_HASH(q_tmp->race, obj->arch->name);
 
@@ -209,6 +210,7 @@ void add_quest_containers(struct obj *op)
         pl->quest_one_drop = arch_to_object(archt);
         pl->quest_one_drop_count = pl->quest_one_drop->count;
         pl->quest_one_drop->sub_type1 = ST1_QUEST_ONE_DROP;
+		FREE_AND_ADD_REF_HASH(pl->quest_one_drop->name, "QC: onedrops");
         insert_ob_in_ob(pl->quest_one_drop, op);
     }
 
@@ -218,6 +220,7 @@ void add_quest_containers(struct obj *op)
         pl->quests_done = arch_to_object(archt);
         pl->quests_done_count = pl->quests_done->count;
         pl->quests_done->sub_type1 = ST1_QUESTS_TYPE_DONE;
+		FREE_AND_ADD_REF_HASH(pl->quests_done->name, "QC: list done");
         insert_ob_in_ob(pl->quests_done, op);
     }
 
@@ -226,6 +229,7 @@ void add_quest_containers(struct obj *op)
         pl->quests_type_cont = arch_to_object(archt);
         pl->quests_type_cont_count = pl->quests_type_cont->count;
         pl->quests_type_cont->sub_type1 = ST1_QUESTS_TYPE_CONT;
+		FREE_AND_ADD_REF_HASH(pl->quests_type_cont->name, "QC: container");
         insert_ob_in_ob(pl->quests_type_cont, op);
     }
 
@@ -234,6 +238,7 @@ void add_quest_containers(struct obj *op)
         pl->quests_type_kill = arch_to_object(archt);
         pl->quests_type_kill_count = pl->quests_type_kill->count;
         pl->quests_type_kill->sub_type1 = ST1_QUESTS_TYPE_KILL;
+		FREE_AND_ADD_REF_HASH(pl->quests_type_kill->name, "QC: kill");
         insert_ob_in_ob(pl->quests_type_kill, op);
     }
 
@@ -242,6 +247,7 @@ void add_quest_containers(struct obj *op)
         pl->quests_type_normal = arch_to_object(archt);
         pl->quests_type_normal_count = pl->quests_type_normal->count;
         pl->quests_type_normal->sub_type1 = ST1_QUESTS_TYPE_NORMAL;
+		FREE_AND_ADD_REF_HASH(pl->quests_type_normal->name, "QC: normal");
         insert_ob_in_ob(pl->quests_type_normal, op);
     }
 }

@@ -35,6 +35,7 @@
 
 static char *yval();
 static object *singularity;
+static artifact *amask_art;
 
 static void *cur_buffer; /* thats needed to track the used buffers for recursive calling */
 static int object_load_flag;
@@ -93,10 +94,13 @@ WS	[ \t]*{NL}?
 			  * to adjust here speed.
 			  */
 			if (op->arch) {
+				artifact *tmp_art;
 			    object *tmp, *tmp2;
 				float old_sleft,old_speed;
 
 			    tmp=get_object();
+				tmp_art = amask_art;
+				amask_art = NULL;
 			    tmp->arch = find_archetype(yval());
 			    if (tmp->arch)
 					copy_object_data(&tmp->arch->clone,tmp);
@@ -127,7 +131,13 @@ WS	[ \t]*{NL}?
 					SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
 					SET_FLAG(tmp,FLAG_KNOWN_CURSED);
 				}
+				/* artificate the item */
+				if(amask_art)
+					give_artifact_abilities(tmp, amask_art);
+
 			    insert_ob_in_ob(tmp,op);
+
+				amask_art = tmp_art;
 
 				if (!(map_flags & MAP_STYLE))
 				{
@@ -246,6 +256,10 @@ WS	[ \t]*{NL}?
 ^speed{S}			op->speed = FVAL;
 
 ^speed_left{S}		op->speed_left = FVAL;
+^amask{S}		{
+					if(!(amask_art = find_artifact(yval())))
+					    LOG(llevBug,"BUG: amask->find_artifact(): unknown artifact %s.\n", STRING_SAFE(yval()));
+				}
 ^face{S}		{
 					register int _face_ = FindFace(yval(), 0);
 					op->face = &new_faces[_face_ ];
@@ -726,6 +740,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 	 * object the right speed & speed_left.
 	 */
 	singularity = NULL;
+	amask_art = NULL;
 	old_speed=op->speed;
 	old_sleft=op->speed_left;
 	object_load_flag = 0; /* we assume a "arch" load as default */
@@ -831,6 +846,10 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		if(op->speed<0.0f && op->speed_left==op->arch->clone.speed_left)
 			op->speed_left=op->speed_left+(float)(RANDOM()%90)/100.0f;
 	  }
+				
+	  if(amask_art)
+		give_artifact_abilities(op, amask_art);
+
 	  update_ob_speed(op); /* now we have build a new object - and its not arch loading
 	                        * nor artifact list or style map. (MAP_STYLE is used to exlude them)
 							*/

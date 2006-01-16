@@ -32,7 +32,8 @@
 /* Available python methods for the GameObject object */
 static struct method_decl   GameObject_methods[]            =
 {
-    {"GetName", (lua_CFunction) GameObject_GetName},
+	{"CreateArtifact", (lua_CFunction) GameObject_CreateArtifact},
+	{"GetName", (lua_CFunction) GameObject_GetName},
     {"GetEquipment", (lua_CFunction) GameObject_GetEquipment},
     {"GetRepairCost", (lua_CFunction) GameObject_GetRepairCost},
     {"Repair", (lua_CFunction) GameObject_Repair},
@@ -262,6 +263,32 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 /****************************************************************************/
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
+
+/*****************************************************************************/
+/* Name   : GameObject_CreateArtifact                                        */
+/* Lua    : object:CreateArtifact(base_obj, artifact_mask)                   */
+/* Status : Tested. Create an artifact = apply a artifact mask to an object  */
+/*****************************************************************************/
+static int GameObject_CreateArtifact(lua_State *L)
+{
+	char *name;
+	artifact *art;	
+	lua_object *self, *whatptr;
+
+	get_lua_args(L, "OOs", &self, &whatptr, &name);
+
+	art = hooks->find_artifact(name);
+	if(art == NULL)
+		lua_pushnil(L);
+	else
+	{
+		/* WHAT itself is implicit changed */
+		hooks->give_artifact_abilities(WHAT, art);
+		return push_object(L, &GameObject, WHAT);
+	}
+
+	return 1;
+}
 
 /*****************************************************************************/
 /* Name   : GameObject_GetName                                               */

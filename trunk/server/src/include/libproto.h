@@ -21,7 +21,6 @@ extern void             second_arch_pass(FILE *fp_start);
 extern void             load_archetypes(void);
 extern object          *arch_to_object(archetype *at);
 extern object          *create_singularity(const char *name);
-extern unsigned long    hasharch(const char *str, int tablesize);
 extern object          *get_archetype(const char *name);
 extern archetype       *find_archetype(const char *name);
 extern void             add_arch(archetype *at);
@@ -29,7 +28,8 @@ extern archetype       *type_to_archetype(int type);
 extern object          *clone_arch(int type);
 /* artifact.c */
 extern void				load_artifacts(int mode);
-extern artifactlist    *find_artifactlist(int type);
+extern inline artifactlist *find_artifactlist(int type);
+extern artifact		   *find_artifact(const char *name);
 extern void             dump_artifacts(void);
 extern void				add_artifact_archtype(void);
 extern void             give_artifact_abilities(object *op, artifact *art);

@@ -25,6 +25,12 @@
 
 #include <global.h>
 
+#define ARTTABLE 6000 /* Used when hashing artifacts */
+static artifact   *art_table[ARTTABLE];
+
+/* quick table to access artifact list for types */
+static artifactlist *art_type_table[ARCH_MAX_TYPES];
+
 /*
 * Allocate and return the pointer to an empty artifactlist structure.
 */
@@ -52,6 +58,65 @@ static artifact * get_empty_artifact(void)
 
 	return t;
 }
+
+/*
+* Hash-function used by the arch-hashtable.
+*/
+static inline unsigned long hashartifact(const char *str, int tablesize)
+{
+	unsigned long hash = 0;
+	int         i = 0, rot = 0;
+	const char *p;
+
+	for (p = str; i < MAXSTRING && *p; p++, i++)
+	{
+		hash ^= (unsigned long) * p << rot;
+		rot += 2;
+		if (rot >= (sizeof(long) - sizeof(char)) * 8)
+			rot = 0;
+	}
+	return (hash % tablesize);
+}
+
+/*
+* Adds an archetype to the hashtable.
+*/
+
+static void add_artifact_hash(artifact *at)
+{
+	int index = hashartifact(at->name,  ARTTABLE),org_index = index;
+
+	for (; ;)
+	{
+		if (art_table[index] && !strcmp(art_table[index]->name, at->name))
+		{
+			LOG(llevError, "ERROR: add_artifact_hash(): double use of artifact name %s\n", STRING_SAFE(at->name));
+		}
+		if (art_table[index] == NULL)
+		{
+			art_table[index] = at;
+			return;
+		}
+		if (++index == ARTTABLE)
+			index = 0;
+		if (index == org_index)
+			LOG(llevError, "ERROR: add_artifact_hash(): artifact hash table to small\n");
+	}
+}
+
+/* fill the artifacts table */
+static void fill_artifact_table(void)
+{
+	artifactlist   *al;
+	artifact       *art;
+
+	for (al = first_artifactlist; al != NULL; al = al->next)
+	{
+		for (art = al->items; art != NULL; art = art->next)
+			add_artifact_hash(art);
+	}
+}
+
 
 /*
 * Builds up the lists of artifacts from the file in the libdir.
@@ -216,6 +281,9 @@ static void init_artifacts(FILE *fp)
 				al->type = none_flag == FALSE ? parse_obj->type : -1;
 				al->next = first_artifactlist;
 				first_artifactlist = al;
+				/* init the quick jump table */
+				if(!art_type_table[al->type+1])
+					art_type_table[al->type+1] = al;
 			}
 
 			art->next = al->items;
@@ -419,7 +487,16 @@ void load_artifacts(int mode)
 	}
 	
 	if(mode == ARTIFACTS_FIRST_PASS)
+	{
+		int i;
+
+		memset((void *) art_table, 0, ARTTABLE * sizeof(artifact *));
+
+		for(i=0;i<ARCH_MAX_TYPES;i++)
+			art_type_table[i] = NULL;
+
 		init_artifacts(fp);
+	}
 	else
 		second_artifact_pass(fp);
 
@@ -447,21 +524,46 @@ void load_artifacts(int mode)
 			}
 		}
 	}
+	else
+		fill_artifact_table(); /* last action - populate the artifacts hash table for fast access */
 }
-
 
 /*
 * Searches the artifact lists and returns one that has the same type
 * of objects on it.
 */
-artifactlist * find_artifactlist(int type)
+inline artifactlist * find_artifactlist(int type)
 {
-	artifactlist   *al;
+	return art_type_table[type+1];
+}
 
-	for (al = first_artifactlist; al != NULL; al = al->next)
-		if (al->type == type)
-			return al;
-	return NULL;
+/*
+ * find a artifact entry by name
+ * If the type is given, we jump in to the right artifactlist.
+ * TODO: create an artifact name hash table like for arches
+ * with an optimized access
+ */
+artifact *find_artifact(const char *name)
+{
+	artifact  *at;
+	unsigned long index;
+
+	if (name == NULL)
+		return NULL;
+
+	index = hashartifact(name, ARTTABLE);
+
+	for (; ;)
+	{
+		at = art_table[index];
+		if (at == NULL)
+			return NULL;
+
+		if (!strcmp(at->name, name))
+			return at;
+		if (++index >= ARTTABLE)
+			index = 0;
+	}
 }
 
 void add_artifact_archtype(void)
@@ -562,9 +664,6 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
 	int             i, style_abs, chance_tmp = 0;
 
 	al = find_artifactlist(op->type);
-
-	style_abs = ABS(t_style);
-
 	if (al == NULL)
 	{
 #ifdef TREASURE_VERBOSE
@@ -572,6 +671,8 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
 #endif
 		return 0;
 	}
+
+	style_abs = ABS(t_style);
 
 	for (i = 0; i < ARTIFACT_TRIES; i++)
 	{
