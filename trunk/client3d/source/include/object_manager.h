@@ -97,9 +97,9 @@ private:
   /// Functions.
   ////////////////////////////////////////////////////////////
   ObjectManager()
-  {}
-  ~ObjectManager()
-  {}
+  {
+  }
+  ~ObjectManager();
   ObjectManager(const ObjectManager&); // disable copy-constructor.
 };
 

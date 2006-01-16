@@ -121,7 +121,8 @@ public:
   }
   bool setGameStatus(int status)
   {
-    if (status > GAME_STATUS_SUM) { return false; }
+    if (status > GAME_STATUS_SUM) {
+      return false; }
     mGameStatus = status;
     return true;
   }

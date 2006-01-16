@@ -28,6 +28,8 @@ http://www.gnu.org/licenses/licenses.html
 #include <ctime>
 
 const clock_t SCROLL_SPEED = 12;
+static const Real CLOSING_SPEED      =  10.0f;  // default: 10.0f
+static const int  MAX_TEXT_LINES     =  20;
 
 ///=================================================================================================
 /// Destructor.
@@ -86,7 +88,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
   /////////////////////////////////////////////////////////////////////////
   /// Create buffer to hold the pixel information of the listbox.
   /////////////////////////////////////////////////////////////////////////
-  int size = mWidth * mHeight + mWidth * mFontHeight;
+  int size = mWidth * mHeight + mWidth * (mFontHeight+1);
   mGfxBuffer = new uint32[size];
   for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
   /////////////////////////////////////////////////////////////////////////
@@ -175,6 +177,7 @@ void GuiListbox::update(Texture *texture)
   /// New Line to scroll in.
   if (!mScroll)
   {
+    /// Print it to the (invisible) last line of the listbox.
     GuiTextout::getSingleton().PrintToBuffer(mWidth, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFont, mFillColor);
   }
   texture->getBuffer()->blitFromMemory(

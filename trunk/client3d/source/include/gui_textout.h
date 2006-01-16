@@ -60,7 +60,7 @@ enum
 {
   FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
 };
-const int CHARS_IN_FONT =96;
+const unsigned int CHARS_IN_FONT =96;
 
 class GuiTextout
 {
@@ -79,7 +79,7 @@ public:
 
   void CalcTextSize(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
   void Print(TextLine *line, Texture *texture, const char *text);
-  void PrintToBuffer(int width, uint32 *dest_data, const char*text, int font, uint32 color = COLOR_WHITE);
+  void PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
   int getFontHeight(int fontNr)
   {
     return mvFont[fontNr]->height;

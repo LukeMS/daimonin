@@ -52,7 +52,8 @@ Logger::~Logger()
   std::ofstream log_stream(mFilename, std::ios::out | std::ios::app);
   if(log_stream.is_open())
   {
-    if (table) { log_stream << "</table>\n"; table = false; }
+    if (table) {
+      log_stream << "</table>\n"; table = false; }
     log_stream << "\n<hr><h2>Ended: " << now() << "</h2></body></html>";
   }
 }
@@ -65,7 +66,8 @@ Logger::LogEntry::LogEntry(const char *mFilename, const char *type)
     : out(mFilename, std::ios::out | std::ios::app)
 {
   if(!out.is_open()) throw std::bad_exception();
-  if (!table) { out << "<table>\n"; table = true; }
+  if (!table) {
+    out << "<table>\n"; table = true; }
   out << "  <tr><td class=\"" << type << "\">";
 }
 
@@ -84,7 +86,8 @@ void Logger::headline(const char *text)
 {
   std::ofstream log_stream(mFilename, std::ios::out | std::ios::app);
   if(!log_stream.is_open()) throw std::bad_exception();
-  if (table) { log_stream << "</table>\n"; table = false; }
+  if (table) {
+    log_stream << "</table>\n"; table = false; }
   log_stream << "\n<hr><h2>" << text << "</h2>\n";
 }
 

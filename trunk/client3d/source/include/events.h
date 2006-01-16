@@ -18,8 +18,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef EVENTS_H
+#define EVENTS_H
 #include <Ogre.h>
 #include <OgreEventListeners.h>
 #include "TileManager.h"

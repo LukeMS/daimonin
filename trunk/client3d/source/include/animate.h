@@ -30,20 +30,7 @@ using namespace Ogre;
 /// Defines.
 ////////////////////////////////////////////////////////////
 
-enum AnimState
-{
-  STATE_IDLE1, STATE_IDLE2, STATE_IDLE3,
-  STATE_WALK1, STATE_WALK2, STATE_WALK3,
-  STATE_RUN1,  STATE_RUN2,  STATE_RUN3,
-  STATE_ATTACK1, STATE_ATTACK2, STATE_ATTACK3,
-  STATE_BLOCK1, STATE_BLOCK2, STATE_BLOCK3,
-  STATE_SLUMP1, STATE_SLUMP2, STATE_SLUMP3,
-  STATE_DEATH1, STATE_DEATH2, STATE_DEATH3,
-  STATE_HIT1,  STATE_HIT2,  STATE_HIT3,
-  /// Castings MUST be the last entries!
-  STATE_CAST1, STATE_CAST2, STATE_CAST3,
-  STATE_SUM
-};
+static const Real RAD = 3.14159265/180.0;
 
 ////////////////////////////////////////////////////////////
 /// Class.
@@ -73,11 +60,25 @@ public:
   {
     return mTurnSpeed;
   }
+  enum AnimState
+  {
+    STATE_IDLE1, STATE_IDLE2, STATE_IDLE3,
+    STATE_WALK1, STATE_WALK2, STATE_WALK3,
+    STATE_RUN1,  STATE_RUN2,  STATE_RUN3,
+    STATE_ATTACK1, STATE_ATTACK2, STATE_ATTACK3,
+    STATE_BLOCK1, STATE_BLOCK2, STATE_BLOCK3,
+    STATE_SLUMP1, STATE_SLUMP2, STATE_SLUMP3,
+    STATE_DEATH1, STATE_DEATH2, STATE_DEATH3,
+    STATE_HIT1,  STATE_HIT2,  STATE_HIT3,
+    /// Castings MUST be the last entries!
+    STATE_CAST1, STATE_CAST2, STATE_CAST3,
+    STATE_SUM
+  };
+
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  static const Real RAD = 3.14159265/180.0;
   int mAnimType;
   int mAnimGroup;
   bool mSpellTrigger;
@@ -86,6 +87,7 @@ private:
   Real mAnimSpeed, mTurnSpeed;
   std::string mStrTemp;
   int sound_handle[STATE_SUM];
+  static const char *StateNames[STATE_SUM];
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////

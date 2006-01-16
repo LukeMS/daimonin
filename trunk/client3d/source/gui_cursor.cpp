@@ -44,7 +44,7 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
   mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
   mOverlay->setZOrder(550);
   mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
-//  mElement->setMetricsMode(GMM_PIXELS);
+  //  mElement->setMetricsMode(GMM_PIXELS);
   mElement->setHeight((Real)mHeight / (Real)screenHeight);
   mElement->setWidth ((Real)mWidth  / (Real)screenWidth );
   mElement->setTop (0.5);
@@ -88,8 +88,8 @@ void GuiCursor::setState(PixelBox &srcPixelBox, int state)
 {
   if (state < STATE_SUM)
   {
-     mState = state;
-     draw(srcPixelBox);
+    mState = state;
+    draw(srcPixelBox);
   }
 }
 
@@ -110,7 +110,7 @@ void GuiCursor::setStateImagePos(std::string name, int x, int y)
   }
   gfxSrcPos[state].x = x;
   gfxSrcPos[state].y = y;
- //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
+  //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
 }
 
 ///=================================================================================================

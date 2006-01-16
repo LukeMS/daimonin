@@ -975,6 +975,8 @@ TileInterface::TileInterface(TileManager* TileManager)
 TileInterface::~TileInterface()
 {
   delete m_Selection;
+  m_TileManager->Get_pSceneManager()->destroyQuery(mRaySceneQuery);
+
 }
 
 ///================================================================================================
@@ -982,7 +984,7 @@ TileInterface::~TileInterface()
 ///================================================================================================
 void TileInterface::Init()
 {
-  mRaySceneQuery = this->m_TileManager->Get_pSceneManager()->createRayQuery( Ray() );
+  mRaySceneQuery = m_TileManager->Get_pSceneManager()->createRayQuery( Ray() );
 }
 
 ///================================================================================================

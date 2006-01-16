@@ -11,7 +11,7 @@
 		<Option compiler="0"/>
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\daimonin3d_d.exe"/>
+				<Option output="..\..\..\client3d_d.exe"/>
 				<Option working_dir="..\..\..\..\client3d"/>
 				<Option object_output="..\obj\Debug"/>
 				<Option deps_output=".deps"/>
@@ -33,7 +33,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="..\..\..\daimonin3d.exe"/>
+				<Option output="..\..\..\client3d.exe"/>
 				<Option working_dir="..\..\..\..\client3d"/>
 				<Option object_output="..\obj\Release"/>
 				<Option deps_output="C:\Downloads\Ogre\build\ogrenew\Samples\RenderToTexture\scripts\.deps"/>
@@ -217,12 +217,12 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\event.cpp">
+		<Unit filename="..\..\..\source\events.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\event_user.cpp">
+		<Unit filename="..\..\..\source\events_user.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
@@ -242,12 +242,22 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
+		<Unit filename="..\..\..\source\gui_element.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\source\gui_gadget.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\gui_graphic.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\gui_imageset.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
@@ -312,7 +322,7 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\event.h">
+		<Unit filename="..\..\..\source\include\events.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -340,6 +350,13 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
+		<Unit filename="..\..\..\source\include\gui_element.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\source\include\gui_gadget.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -348,6 +365,13 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\gui_graphic.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_imageset.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -390,6 +414,13 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\gui_window.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\light_manager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -477,6 +508,11 @@
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\light_manager.cpp">
+			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>

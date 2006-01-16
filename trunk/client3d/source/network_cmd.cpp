@@ -155,15 +155,20 @@ void Network::SetupCmd(char *buf, int len)
 
     // parse the command.
     if      (!strcmp(cmd, "sound"))
-    {}
+    {
+    }
     else if (!strcmp(cmd, "mapsize"))
-    {}
+    {
+    }
     else if (!strcmp(cmd, "map2cmd"))
-    {}
+    {
+    }
     else if (!strcmp(cmd, "darkness"))
-    {}
+    {
+    }
     else if (!strcmp(cmd, "facecache"))
-    {}
+    {
+    }
     for (f=0; f< SERVER_FILE_SUM; f++)
     {
       if (!ServerFile::getSingleton().checkID(f, cmd))
@@ -188,8 +193,9 @@ void Network::SetupCmd(char *buf, int len)
       }
     }
     if (f == SERVER_FILE_SUM-1)
-      Logger::log().error()  << "Got setup for a command we don't understand: "
-      << cmd << " " << param;
+    {
+      Logger::log().error()  << "Got setup for a command we don't understand: " << cmd << " " << param;
+    }
   }
   Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
 }
@@ -207,8 +213,7 @@ void Network::DataCmd(char *data, int len)
   unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
   if (data_cmd > SERVER_FILE_SUM)
   {
-    Logger::log().error()  << "data cmd: unknown type "
-    << data_type << " (len:" << len << ")";
+    Logger::log().error()  << "data cmd: unknown type " << data_type << " (len:" << len << ")";
     return;
   }
   --len;
@@ -237,8 +242,7 @@ void Network::DataCmd(char *data, int len)
   ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
   if (!out)
     Logger::log().error()  << "save data cmd file : write() of "
-    << ServerFile::getSingleton().getFilename(data_cmd)
-    << "failed.";
+    << ServerFile::getSingleton().getFilename(data_cmd) << "failed.";
   else
   {
     out.write(data, len);
@@ -264,38 +268,38 @@ void Network::PreParseInfoStat(char *cmd)
   // Find input name
   if (strstr(cmd, "What is your name?"))
   {
-/*
-    LogFile::getSingleton().Info("Login: Enter name\n");
-    cpl.name[0] = 0;
-    cpl.password[0] = 0;
-    if (PasswordAlreadyAsked == 1)
-    {
-      dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
-      PasswordAlreadyAsked = 0;
-    }
-    else if (PasswordAlreadyAsked == 2)
-    {
-      dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
-      PasswordAlreadyAsked = 0;
-    }
-    TextInput::getSingleton().stop();
-    Option::getSingleton().GameStatus = GAME_STATUS_NAME;
-    TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
-  }
-  if (strstr(cmd, "What is your password?"))
-  {
-    TextInput::getSingleton().stop();
-    Option::getSingleton().GameStatus = GAME_STATUS_PSWD;
-    TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
-    mPasswordAlreadyAsked = 1;
-  }
-  if (strstr(cmd, "Please type your password again."))
-  {
-    TextInput::getSingleton().stop();
-    Option::getSingleton().GameStatus = GAME_STATUS_VERIFYPSWD;
-    TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
-    mPasswordAlreadyAsked = 2;
-  */
+    /*
+        LogFile::getSingleton().Info("Login: Enter name\n");
+        cpl.name[0] = 0;
+        cpl.password[0] = 0;
+        if (PasswordAlreadyAsked == 1)
+        {
+          dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
+          PasswordAlreadyAsked = 0;
+        }
+        else if (PasswordAlreadyAsked == 2)
+        {
+          dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
+          PasswordAlreadyAsked = 0;
+        }
+        TextInput::getSingleton().stop();
+        Option::getSingleton().GameStatus = GAME_STATUS_NAME;
+        TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
+      }
+      if (strstr(cmd, "What is your password?"))
+      {
+        TextInput::getSingleton().stop();
+        Option::getSingleton().GameStatus = GAME_STATUS_PSWD;
+        TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+        mPasswordAlreadyAsked = 1;
+      }
+      if (strstr(cmd, "Please type your password again."))
+      {
+        TextInput::getSingleton().stop();
+        Option::getSingleton().GameStatus = GAME_STATUS_VERIFYPSWD;
+        TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+        mPasswordAlreadyAsked = 2;
+      */
   }
 }
 
@@ -582,5 +586,5 @@ void Network::CreatePlayerAccount()
   char    buf[MAX_BUF];
   //   sprintf(buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
   sprintf(buf, "%s", "nc human_male 14 14 13 12 12 12 12");
-  cs_write_string(buf, strlen(buf));
+  cs_write_string(buf, (int)strlen(buf));
 }

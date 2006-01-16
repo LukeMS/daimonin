@@ -72,9 +72,11 @@ private:
   /// Functions.
   ////////////////////////////////////////////////////////////
   GuiCursor()
-  {}
+  {
+  }
   ~GuiCursor()
-  {}
+  {
+  }
   GuiCursor(const GuiCursor&); // disable copy-constructor.
 };
 

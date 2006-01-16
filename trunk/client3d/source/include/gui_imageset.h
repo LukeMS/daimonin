@@ -18,16 +18,71 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_STATUSBAR_H
-#define GUI_STATUSBAR_H
+#ifndef GUI_IMAGESET_H
+#define GUI_IMAGESET_H
 
 #include <string>
-#include <tinyxml.h>
+#include <vector>
 #include <Ogre.h>
+#include <tinyxml.h>
+#include "gui_window.h"
+#include "gui_cursor.h"
+#include "gui_manager.h"
+#include "logger.h"
 
 using namespace Ogre;
 
-class GuiStatusbar // : public GuiElement
+enum {
+  // Button.
+  GUI_BUTTON_CLOSE,
+  GUI_BUTTON_OK,
+  GUI_BUTTON_CANCEL,
+  GUI_BUTTON_MINIMIZE,
+  GUI_BUTTON_MAXIMIZE,
+  // Listboxes.
+  GUI_LIST_TEXTWIN,
+  GUI_LIST_CHATWIN,
+  GUI_LIST_UP,
+  GUI_LIST_DOWN,
+  GUI_LIST_LEFT,
+  GUI_LIST_RIGHT,
+  // StatusBars.
+  GUI_STATUSBAR_PLAYER_HEALTH,
+  GUI_STATUSBAR_PLAYER_MANA,
+  GUI_STATUSBAR_PLAYER_GRACE,
+  // TextValues.
+  GUI_TEXTVALUE_STAT_CUR_FPS,
+  GUI_TEXTVALUE_STAT_BEST_FPS,
+  GUI_TEXTVALUE_STAT_WORST_FPS,
+  GUI_TEXTVALUE_STAT_SUM_TRIS,
+  // Sum of all entries.
+  GUI_ELEMENTS_SUM
+};
+
+typedef struct
+{
+  std::string name;
+  short x, y;
+}
+GuiElementState;
+
+typedef struct
+{
+  std::string name;
+  int width, height;
+  std::vector<GuiElementState*>state;
+}
+GuiSrcEntry;
+
+typedef struct
+{
+  std::string name;
+  unsigned int index;
+}
+GuiElementNames;
+
+
+class GuiImageset
 {
 public:
   ////////////////////////////////////////////////////////////
@@ -37,29 +92,40 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiStatusbar(TiXmlElement *xmlElem, int maxX, int maxY);
-  ~GuiStatusbar();
-  bool mouseOver(int x, int y)
+
+  static GuiImageset &getSingleton()
   {
-    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight) return true;
-    return false;
+    static GuiImageset singleton; return singleton;
   }
-  void draw(PixelBox &mSrcPixelBox, Texture *texture, Real value);
-  void setValue(Real value);
+  void parseXML(const char *XML_imageset_file);
+  GuiSrcEntry *getStateGfxPositions(const char* guiImage);
+  PixelBox &getPixelBox()
+  {
+    return mSrcPixelBox;
+  }
+  const std::string &getElementName(int i)
+  {
+    return mGuiElementNames[i].name;
+  }
+
 private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  int  mPosX, mPosY, mWidth, mHeight;
-  bool mHorizontal;
-  int mValue;
-  std::string mName;
-  uint32 mColor;
-  uint32 *mGfxBuffer;
-  bool mGfxBufferInit;
+  std::vector<GuiSrcEntry*>mvSrcEntry; // TODO: delete vector in destructor.
+  std::string mStrImageSetGfxFile;
+  Image mImageSetImg;
+  PixelBox mSrcPixelBox;
+  static GuiElementNames mGuiElementNames[GUI_ELEMENTS_SUM];
+
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
+  GuiImageset()
+  {
+  }
+  ~GuiImageset();
+  GuiImageset(const GuiImageset&); // disable copy-constructor.
 };
 
 #endif

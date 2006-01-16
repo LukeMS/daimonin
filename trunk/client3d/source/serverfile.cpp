@@ -50,8 +50,8 @@ void ServerFile::getFileAttibutes(int file_enum)
   ostringstream out(ios::binary);
   in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
   copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
-  setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(),  out.str().size()));
-  setLength(file_enum, out.str().size());
+  setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(), (int) out.str().size()));
+  setLength(file_enum, (int)out.str().size());
 }
 
 //=================================================================================================

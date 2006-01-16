@@ -66,6 +66,7 @@ GuiTextout::GuiTextout()
 void GuiTextout::createBuffer(int width)
 {
   if (mTextGfxBuffer) delete[] mTextGfxBuffer;
+  if (width < MAX_TEXTLINE_LEN) width = MAX_TEXTLINE_LEN;
   mTextGfxBuffer = new uint32[maxFontHeight * width];
 }
 
@@ -74,13 +75,13 @@ void GuiTextout::createBuffer(int width)
 ///=================================================================================================
 GuiTextout::~GuiTextout()
 {
-  if (mTextGfxBuffer) delete[] mTextGfxBuffer;
   for (std::vector<mFont*>::iterator i = mvFont.begin(); i < mvFont.end(); ++i)
   {
     delete[] (*i)->data;
     delete (*i);
-    mvFont.erase(i);
   }
+  mvFont.clear();
+  if (mTextGfxBuffer) delete[] mTextGfxBuffer;
 }
 
 ///=================================================================================================
@@ -90,19 +91,19 @@ void GuiTextout::loadRawFont(const char *filename)
 {
   Image image;
   image.load(filename, "General");
-  int size = image.getHeight() * image.getWidth();
+  int size = (int) image.getHeight() * (int)image.getWidth();
   mFont *fnt = new mFont;
   mvFont.push_back(fnt);
   fnt->data = new uint32[size];
   memcpy(fnt->data, image.getData(), size * sizeof(uint32));
-  fnt->height = image.getHeight();
+  fnt->height = (int) image.getHeight();
   if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
-  fnt->textureWidth = image.getWidth();
-  fnt->width  = image.getWidth() / CHARS_IN_FONT;
+  fnt->textureWidth = (int)image.getWidth();
+  fnt->width  = (int)image.getWidth() / CHARS_IN_FONT;
 
   /// Parse the character width (a vert green line is the end sign).
   unsigned int x;
-  for (int i=0; i < CHARS_IN_FONT; ++i)
+  for (unsigned int i=0; i < CHARS_IN_FONT; ++i)
   {
     for (x=0; x < fnt->width-1; ++x)
     {
@@ -110,7 +111,7 @@ void GuiTextout::loadRawFont(const char *filename)
     }
     fnt->charWidth[i] = x;
   }
-  createBuffer(image.getWidth());
+  createBuffer((int)image.getWidth());
   Logger::log().info() << "System-Font (" << image.getWidth() << "x" << image. getHeight() <<") was created.";
 }
 
@@ -154,7 +155,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   unsigned int w, h;
   Real u1,u2, v1, v2;
   int x1, x2, y1, y2;
-  for (int i=1; i < CHARS_IN_FONT; ++i)
+  for (unsigned int i=1; i < CHARS_IN_FONT; ++i)
   {
     pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
     w = (int) ((u2-u1)*texW);
@@ -167,7 +168,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
   fnt->charWidth[0] = fnt->width/2; // ascii(32).
   fnt->textureWidth = fnt->width * CHARS_IN_FONT;
-  createBuffer(fnt->textureWidth);
 
   /// Build the RAW datas.
   fnt->data = new uint32[fnt->textureWidth * fnt->height];
@@ -177,7 +177,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   /// Copy all needed chars of the font.
   int xPos = 0;
-  for (int i=1; i < CHARS_IN_FONT; ++i)
+  for (unsigned int i=1; i < CHARS_IN_FONT; ++i)
   {
     xPos+= fnt->width;
     pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
@@ -204,8 +204,8 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   fnt->baseline = iSize;
 
-//#define CREATE_SYSTEM_FONT
-  #ifdef CREATE_SYSTEM_FONT
+  //#define CREATE_SYSTEM_FONT
+#ifdef CREATE_SYSTEM_FONT
   /// ////////////////////////////////////////////////////////////////////
   ///.The first font ever created is our system font.
   /// Run this function only if you are in need of a new system-font!
@@ -295,10 +295,12 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
 ///=================================================================================================
 /// Print to a buffer.
 ///=================================================================================================
-void GuiTextout::PrintToBuffer(int width, uint32 *dest_data, const char*text, int fontNr, uint32 bgColor)
+void GuiTextout::PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int fontNr, uint32 bgColor)
 {
+  if (fontNr > mvFont.size()) fontNr = 0;
   int height = mvFont[fontNr]->height;
   /// Clear the textline.
+  Logger::log().info() << "w * h = " << width * mvFont[fontNr]->height;
   for (unsigned int i =0; i < width * mvFont[fontNr]->height; ++i) dest_data[i] = bgColor;
   if (!text || text[0] == 0) return;
   drawText(width, height, dest_data, text, fontNr);
@@ -310,7 +312,7 @@ void GuiTextout::PrintToBuffer(int width, uint32 *dest_data, const char*text, in
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr)
 {
   int fontPosX, fontPosY=0;
-  if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
+  if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
   uint32 pixFont, pixColor;
   uint32 color = TXT_COLOR_DEFAULT;
 
@@ -322,66 +324,66 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
     // Parse format commands.
     switch (*text)
     {
-      /*
-        // atm we draw only 1 line of text in this function!
-            case '\n':
-              strtX += mvFont[fontNr]->height * width;
-              dest_data = strtX;
-              stopX = strtX + width;
-              ++text;
-            break;
-      */
-      case TXT_CMD_HIGHLIGHT:
-      if (!*(++text)) return;
-      if (color == TXT_COLOR_DEFAULT)
-      {
-        /// Parse the highlight color (8 byte hex string to uint32).
-        if (*text == TXT_SUB_CMD_COLOR)
+        /*
+          // atm we draw only 1 line of text in this function!
+              case '\n':
+                strtX += mvFont[fontNr]->height * width;
+                dest_data = strtX;
+                stopX = strtX + width;
+                ++text;
+              break;
+        */
+        case TXT_CMD_HIGHLIGHT:
+        if (!*(++text)) return;
+        if (color == TXT_COLOR_DEFAULT)
         {
-          color =0;
-          for (int i = 28; i>=0; i-=4)
+          /// Parse the highlight color (8 byte hex string to uint32).
+          if (*text == TXT_SUB_CMD_COLOR)
           {
-            color += (*(++text) >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
+            color =0;
+            for (int i = 28; i>=0; i-=4)
+            {
+              color += (*(++text) >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
+            }
+            ++text;
           }
-          ++text;
+          /// Use standard highlight color.
+          else color = TXT_COLOR_HIGHLIGHT;
         }
-        /// Use standard highlight color.
-        else color = TXT_COLOR_HIGHLIGHT;
-      }
-      else color = TXT_COLOR_DEFAULT;
-      break;
+        else color = TXT_COLOR_DEFAULT;
+        break;
 
-      case TXT_CMD_CHANGE_FONT:
-      if (!*(++text)) return;
-      //int base= mvFont[fontNr]->baseline;
-      fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-      ++text;
-      fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
-      ++text;
-      if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
-      break;
+        case TXT_CMD_CHANGE_FONT:
+        if (!*(++text)) return;
+        //int base= mvFont[fontNr]->baseline;
+        fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
+        ++text;
+        fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
+        ++text;
+        if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
+        break;
 
-      default:
-      unsigned char chr = (*text - 32);
-      if (chr > CHARS_IN_FONT) chr = 0;
-      fontPosX = chr * mvFont[fontNr]->width;
-      for (int y =0; y < (int)mvFont[fontNr]->height && y < height; ++y)
-      {
-        for (int x=0; x < mvFont[fontNr]->charWidth[chr]; ++x)
-        { /// PixelFormat: A8 R8 G8 B8.
-          pixFont = mvFont[fontNr]->data[y * mvFont[fontNr]->textureWidth + fontPosX + x];
-          if (pixFont <= 0xffffff) continue;
-          pixColor = pixFont & 0xff000000;
-          pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
-          pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
-          pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
-          dest_data[(y+fontPosY)*width + x] = pixColor;
+        default:
+        unsigned char chr = (*text - 32);
+        if (chr > CHARS_IN_FONT) chr = 0;
+        fontPosX = chr * mvFont[fontNr]->width;
+        for (int y =0; y < (int)mvFont[fontNr]->height && y < height; ++y)
+        {
+          for (int x=0; x < mvFont[fontNr]->charWidth[chr]; ++x)
+          { /// PixelFormat: A8 R8 G8 B8.
+            pixFont = mvFont[fontNr]->data[y * mvFont[fontNr]->textureWidth + fontPosX + x];
+            if (pixFont <= 0xffffff) continue;
+            pixColor = pixFont & 0xff000000;
+            pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
+            pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
+            pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
+            dest_data[(y+fontPosY)*width + x] = pixColor;
+          }
         }
-      }
-      dest_data += mvFont[fontNr]->charWidth[chr] +1;
-      if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
-      ++text;
-      break;
+        dest_data += mvFont[fontNr]->charWidth[chr] +1;
+        if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
+        ++text;
+        break;
 
     }
   }
@@ -392,29 +394,30 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 ///=================================================================================================
 void GuiTextout::CalcTextSize(unsigned int &x, unsigned int &y, int maxWidth, int maxHeight, const char *text, unsigned int fontNr)
 {
-  if (fontNr >= mvFont.size()) fontNr = mvFont.size()-1;
+  if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
   //  int h = mvFont[fontNr]->height;
   while(*text)
   {
+    if ((unsigned char) *text < 32 || (unsigned char)*text >= CHARS_IN_FONT + 32) continue;
     switch (*text)
     {
-      case TXT_CMD_HIGHLIGHT:
-      if (!*(++text)) break;
-      if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
-      break;
+        case TXT_CMD_HIGHLIGHT:
+        if (!*(++text)) break;
+        if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
+        break;
 
-      case TXT_CMD_CHANGE_FONT:
-      if (!*(++text)) break;
-      text+= 2;  // format: "xx".
-      break;
+        case TXT_CMD_CHANGE_FONT:
+        if (!*(++text)) break;
+        text+= 2;  // format: "xx".
+        break;
 
-      default:
-      if (x + mvFont[fontNr]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
-      {
-        x+= mvFont[fontNr]->charWidth[*text - 32] +1;
-      }
-      ++text;
-      break;
+        default:
+        if (x + mvFont[fontNr]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
+        {
+          x+= mvFont[fontNr]->charWidth[*text - 32] +1;
+        }
+        ++text;
+        break;
     }
   }
   y+= mvFont[fontNr]->height;

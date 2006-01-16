@@ -29,9 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
-#include "gui_manager.h"
-
-class GuiManager;
 
 using namespace Ogre;
 
@@ -48,9 +45,12 @@ public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  ~GuiWindow();
+  ~GuiWindow()
+  {
+  }
   GuiWindow();
-  void Init(TiXmlElement *xmlElem, GuiManager *guiManager);
+  void freeRecources();
+  void Init(TiXmlElement *xmlElem);
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
   void updateDragAnimation();
   void update2DAnimaton();
@@ -68,16 +68,12 @@ public:
   }
 
 private:
-  enum
-  {
-    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
-  };
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
+  bool isInit;
   static int msInstanceNr, mMouseDragging;
   static std::string mStrTooltip;
-  static GuiManager *mGuiManager;
   int mWindowNr;
   int mMousePressed, mMouseOver;
   Image mTileImage;
@@ -101,7 +97,6 @@ private:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiWindow(const GuiWindow&); // disable copy-constructor.
   int getGadgetMouseIsOver(int x, int y);
   void createWindow();
   void delGadget(int number);

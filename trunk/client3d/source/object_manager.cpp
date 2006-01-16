@@ -145,6 +145,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3
   {
       case OBJECT_STATIC:
       break;
+
       case OBJECT_PLAYER:
       {
         if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
@@ -154,6 +155,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3
         if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
       }
       break;
+
       case OBJECT_NPC:
       {
         for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
@@ -165,6 +167,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3
         }
       }
       break;
+
       default:
       break;
   }
@@ -182,12 +185,23 @@ void ObjectManager::delObject(int )
 //=================================================================================================
 void ObjectManager::freeRecources()
 {
-  Logger::log().info() << "s: "<< mvObject_npc.size();
-  for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
+  for (std::vector<NPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
   {
-    Logger::log().info() << "i: "<< i;
-    mvObject_npc[i]->freeRecources();
-    delete mvObject_npc[i];
+    (*i)->freeRecources();
+    delete (*i);
   }
   mvObject_npc.clear();
+
+  for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+  {
+    delete mvObject_static[i];
+  }
+  mvObject_static.clear();
+}
+
+//=================================================================================================
+//
+//=================================================================================================
+ObjectManager::~ObjectManager()
+{
 }
