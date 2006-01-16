@@ -21,7 +21,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "particle_manager.h"
 #include "particle.h"
 #include "sound.h"
-#include "event.h"
+#include "events.h"
 #include "option.h"
 #include "logger.h"
 
