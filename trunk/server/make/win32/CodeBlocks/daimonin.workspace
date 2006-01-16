@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE Code::Blocks_workspace_file>
-<Code::Blocks_workspace_file>
+<!DOCTYPE CodeBlocks_workspace_file>
+<CodeBlocks_workspace_file>
 	<Workspace title="Daimonin">
 		<Project filename="daimonin_server.cbp" active="1"/>
 		<Project filename="lua\Lualib.cbp"/>
 		<Project filename="lua\Lualiblib.cbp"/>
 		<Project filename="plugin_lua\plugin_lua.cbp"/>
 	</Workspace>
-</Code::Blocks_workspace_file>
+</CodeBlocks_workspace_file>
