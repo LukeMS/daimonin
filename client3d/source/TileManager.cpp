@@ -102,9 +102,9 @@ void TileManager::Load_Map(const std::string &png_filename)
     return;
   }
   uchar* heightdata_temp = image.getData();
-  int dimx = image.getWidth();
-  int dimy = image.getHeight();
-  int posX = 0, posY;
+  size_t dimx = image.getWidth();
+  size_t dimy = image.getHeight();
+  unsigned int posX = 0, posY;
   short Map[TILES_SUM_X+2][TILES_SUM_Z+2];
   /////////////////////////////////////////////////////////////////////////
   /// Fill the heightdata buffer with the image-color.
@@ -408,7 +408,7 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
 #ifdef LOG_TIMING
   long time = clock();
 #endif
-  int i=-1, x=0, y = 0;
+  int i, tx, ty;
   int pix = PIXEL_PER_TILE;
   Image Filter, Texture, TextureGroup;
   while (pix >= MIN_TEXTURE_PIXEL)
@@ -422,32 +422,33 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
       return false;
     }
     uchar* Filter_data = Filter.getData();
-    i = -1; x=0, y = 0;
+    i =-1;
+    tx = 0;
+    ty = 0;
     while(1)
     {
       strFilename = terrain_type;
       strFilename+= "_"+ StringConverter::toString(++i, 2, '0');
       strFilename+= "_"+ StringConverter::toString(pix, 3, '0') + ".png";
-      if (!LoadImage(Texture, strFilename)) {
-        break; }
-      addToGroupTexture(TextureGroup_data, Filter_data, &Texture, pix, x, y);
-      if (++x == TEXTURES_PER_ROW)
+      if (!LoadImage(Texture, strFilename))  break;
+      addToGroupTexture(TextureGroup_data, Filter_data, &Texture, pix, tx, ty);
+      if (++tx == TEXTURES_PER_ROW)
       {
-        if (++y == TEXTURES_PER_ROW) {
-          break; }
-        x = 0;
+        if (++ty == TEXTURES_PER_ROW) break;
+        tx = 0;
       }
     }
     strFilename = PATH_TILE_TEXTURES + terrain_type + "_texture";
     strFilename+= "_"+ StringConverter::toString(pix, 3, '0')+".png";
     TextureGroup.save(strFilename);
 
-    delete []TextureGroup_data;
+    delete[] TextureGroup_data;
     pix /= 2;
   }
 #ifdef LOG_TIMING
   Logger::log().info() << "Time to Create Texture-Groups: " << clock()-time << " ms";
 #endif
+  delete[] grid_data;
   return true;
 }
 
@@ -469,7 +470,7 @@ void TileManager::CreateMipMaps(const std::string &terrain_type)
   for (int i = 0; i < SUM_RESOLUTIONS; ++i)
   {
     strFilename = terrain_type;
-    strFilename+= "_texture_"+ StringConverter::toString((int)pow(2, i+3), 3, '0') + ".png";
+    strFilename+= "_texture_"+ StringConverter::toString((int)pow(2.0, i+3), 3, '0') + ".png";
     if (!LoadImage(TileImage[i], strFilename))
     {
       Logger::log().error() << "Ground texture '" << strFilename << "' was not found.";
@@ -563,6 +564,7 @@ void TileManager::shrinkTexture(const std::string &terrain_type)
     pix /= 2;
   }
   Logger::log().info() << "Found " << StringConverter::toString(sum,2,'0') << " textures for group '" << terrain_type << "'.";
+  delete[] Texture_shrink_data;
 }
 
 ///=================================================================================================
@@ -570,6 +572,7 @@ void TileManager::shrinkTexture(const std::string &terrain_type)
 ///=================================================================================================
 void TileManager::shrinkFilter()
 {
+  // ToDo: replace by Image:scale(src,sclaed,Image:Filter.Biliniar)
   int pix = PIXEL_PER_TILE / 2;
   Image Filter_shrink;
   Image Filter_previous;
@@ -607,6 +610,7 @@ void TileManager::shrinkFilter()
     Filter_shrink.save(strFilename);
     pix /= 2;
   }
+  delete[] Filter_shrink_data;
 }
 
 ///=================================================================================================
@@ -667,13 +671,11 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
       TextureGroup_data[++index1] = Filter_data [index2];
     }
 
-    int i = pix;
-    int j = pix;
     index1 = 4*(pix * 8)* (pix + 1) * y
-             + 4* (pix * 8) * (i + space)
+             + 4* (pix * 8) * (pix + space)
              + 4* x * (pix + 1)
-             + 4* (j + space);
-    index2 = 3* pix * (i-1) + 3 * (j-1);
+             + 4* (pix + space);
+    index2 = 3* pix * (pix-1) + 3 * (pix-1);
     TextureGroup_data[  index1] = Texture_data[index2];
     TextureGroup_data[++index1] = Texture_data[index2 + 1];
     TextureGroup_data[++index1] = Texture_data[index2 + 2];

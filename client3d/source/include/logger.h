@@ -86,7 +86,8 @@ public:
     template <typename T>
     LogEntry& operator<<(const T &in)
     {
-      out << in; return *this;
+      out << in;
+      return *this;
     }
     ~LogEntry();
   private:
@@ -101,7 +102,8 @@ public:
     LogEntry(const char *filename, const char *type);
     friend class Logger;
     LogEntry(const LogEntry&)
-    {}
+    {
+    }
     std::ofstream out;
   };
 

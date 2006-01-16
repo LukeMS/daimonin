@@ -18,8 +18,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_LISTBOX_H
-#define GUI_LISTBOX_H
+#ifndef GUI_ELEMENT_H
+#define GUI_ELEMENT_H
 
 #include <string>
 #include <tinyxml.h>
@@ -27,19 +27,22 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-static const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
-
-class GuiListbox // : public GuiElement
+class GuiElement
 {
+  friend class GuiGadget;
+  friend class GuiGraphic;
 public:
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
-  GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY);
-  ~GuiListbox();
+  GuiElement(TiXmlElement *xmlElement, int wt, int ht, int maxXt, int maxYt);
+  virtual ~GuiElement()
+  {
+  }
+
   bool mouseOver(int x, int y)
   {
-    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight) return true;
+    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
     return false;
   }
   bool setState(int state)
@@ -48,77 +51,40 @@ public:
     mState = state;
     return true;
   }
-  const char *getName()
-  {
-    return mStrName.c_str();
-  }
   int getState()
   {
     return mState;
   }
   void setStateImagePos(std::string state, int x, int y);
-  void update(Texture *texture);
-  void addTextline(const char *text);
-
-  int getIndex()
+  virtual void draw(PixelBox &mSrcPixelBox, Texture *texture) =0;
+  const char *getTooltip()
   {
-    return mIndex;
+    return mStrTooltip.c_str();
   }
-  void setIndex(int index)
+  enum
   {
-    mIndex = index;
-  }
-private:
+    STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
+  };
 
+
+protected:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
-  enum
-  {
-    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
-  };
-  enum
-  {
-    STATE_PASSIVE, STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_SUM
-  };
-
   struct _pos
   {
     int x, y;
-  };
-  struct _pos gfxSrcPos[STATE_SUM];
-
-  struct _row
-  {
-    std::string str;
-    //    ColourValue colorTop;
-    //    ColourValue colorBottom;
   }
-  row[SIZE_STRING_BUFFER];
+  gfxSrcPos[STATE_SUM];
 
-
-  Real mClose;                 // Only Headline visible.
-  Real mLastHeight;            // The height before window was closed.
-  Real mMinHeight, mMaxHeight;
-  Real mFirstYPos;
-  bool mIsClosing, mIsOpening; // User pressed open/close button.
-  bool mVisible;
-  bool mDragging;
-  int  mScroll;
-
-  int  mRowsToScroll, mRowsToPrint;
-  int  mSumRows;
-  int  mPrintPos;
-  int  mBufferPos;
-  int  mIndex;
-  int  mFontHeight;
-  int  mPosX, mPosY, mWidth, mHeight;
+  int  mX, mY, mWidth, mHeight;
   int  mType;
-  int  mFont;
-  std::string mStrName, mStrLabel, mBehavior;
-  uint32 mFillColor;
-  uint32 *mGfxBuffer;
+  std::string mStrName, mStrLabel, mStrBgLabel, mBehavior, mStrTooltip;
+  unsigned char mLabelColor[3];
+  int mLabelFont;
+  int mLabelXPos, mLabelYPos;
   int  mOldState, mState;
+
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////

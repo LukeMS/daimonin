@@ -34,62 +34,14 @@ using namespace Ogre;
 
 const int TOOLTIP_SIZE_X = 256;
 const int TOOLTIP_SIZE_Y = 128;
-
-GuiManager::_GuiElementNames GuiManager::GuiWindowNames[GUI_WIN_SUM]=
-  {
-    {"Statistics",    GUI_WIN_STATISTICS
-    },
-    {"PlayerInfo",    GUI_WIN_PLAYERINFO
-    },
-    { "TextWindow",   GUI_WIN_TEXTWINDOW
-    }
-  };
-
-GuiManager::_GuiElementNames GuiManager::GuiElementNames[GUI_ELEMENTS_SUM]=
-  {
-    // Buttons.
-    { "ButtonClose",   GUI_BUTTON_CLOSE
-    },
-    { "ButtonOK",      GUI_BUTTON_OK
-    },
-    { "ButtonCancel",  GUI_BUTTON_CANCEL
-    },
-    { "ButtonMin",     GUI_BUTTON_MINIMIZE
-    },
-    { "ButtonMax",     GUI_BUTTON_MAXIMIZE
-    },
-    // Listboxes.
-    { "TextList",      GUI_LIST_TEXTWIN
-    },
-    { "ChatList",      GUI_LIST_CHATWIN
-    },
-    { "Requester",     GUI_LIST_UP
-    },
-    { "Requester",     GUI_LIST_DOWN
-    },
-    { "Requester",     GUI_LIST_LEFT
-    },
-    { "Requester",     GUI_LIST_RIGHT
-    },
-    // Statusbar.
-    { "HealthBar",     GUI_STATUSBAR_PLAYER_HEALTH
-    },
-    { "ManaBar",       GUI_STATUSBAR_PLAYER_MANA
-    },
-    { "GraceBar",      GUI_STATUSBAR_PLAYER_GRACE
-    },
-    // TextValues.
-    { "currentFPS",    GUI_TEXTVALUE_STAT_CUR_FPS
-    },
-    { "bestFPS",       GUI_TEXTVALUE_STAT_BEST_FPS
-    },
-    { "worstFPS",      GUI_TEXTVALUE_STAT_WORST_FPS
-    },
-    { "sumTris",       GUI_TEXTVALUE_STAT_SUM_TRIS
-    }
-  };
-
 const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
+
+GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
+  {
+    { "Statistics",  GUI_WIN_STATISTICS },
+    { "PlayerInfo",  GUI_WIN_PLAYERINFO },
+    { "TextWindow",  GUI_WIN_TEXTWINDOW }
+  };
 
 ///=================================================================================================
 /// .
@@ -114,7 +66,11 @@ void GuiManager::Init(int w, int h)
   mElement->setPosition((mScreenWidth-mTexture->getWidth())/2, (mScreenHeight-mTexture->getHeight())/2);
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
   mMaterial = tmpMaterial->clone("GUI_Tooltip_Material");
-  if (mMaterial.isNull() || mMaterial->isLoaded()) { Logger::log().success(false); return; }
+  if (mMaterial.isNull() || mMaterial->isLoaded())
+  {
+    Logger::log().success(false);
+    return;
+  }
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_ToolTip_Texture");
   //  mMaterial->reload();
   mElement->setMaterialName("GUI_Tooltip_Material");
@@ -123,90 +79,16 @@ void GuiManager::Init(int w, int h)
   Logger::log().success(true);
 }
 
-void GuiManager::parseImageset(const char *XML_imageset_file, const char *XML_windows_file)
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiManager::parseWindows(const char *XML_windows_file)
 {
-  Logger::log().headline("Starting GUI");
-  /// //////////////////////////////////////////////////////////////////////
-  /// Parse the gfx datas from the imageset.
-  /// //////////////////////////////////////////////////////////////////////
-  //displaySystemMessage("Parsing Imageset", 0); // TODO
-  if (!parseImagesetData(XML_imageset_file)) return;
-  mImageSetImg.load(mStrImageSetGfxFile, "General");
-  mSrcPixelBox = mImageSetImg.getPixelBox();
   /////////////////////////////////////////////////////////////////////////
   /// Parse the windows datas.
   /////////////////////////////////////////////////////////////////////////
   guiWindow = new GuiWindow[GUI_WIN_SUM];
   if (!parseWindowsData( XML_windows_file)) return;
-}
-
-///=================================================================================================
-/// .
-///=================================================================================================
-void GuiManager::freeRecources()
-{
-  GuiCursor::getSingleton().freeRecources();
-  mMaterial.setNull();
-  mTexture.setNull();
-}
-
-///=================================================================================================
-/// .
-///=================================================================================================
-void GuiManager::keyEvent(const char keyChar, const unsigned char key)
-{
-  Logger::log().info() << "keyChar " << keyChar << " " << key;
-  //    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
-}
-
-///=================================================================================================
-/// Read the gfx-data for the given gadget.
-///=================================================================================================
-bool GuiManager::parseImagesetData(const char*fileImageSet)
-{
-  /////////////////////////////////////////////////////////////////////////
-  /// Check for a working description file.
-  /////////////////////////////////////////////////////////////////////////
-  TiXmlElement *xmlRoot, *xmlElem, *xmlState;
-  TiXmlDocument doc(fileImageSet);
-  if (!doc.LoadFile(fileImageSet) || !(xmlRoot = doc.RootElement()) || !xmlRoot->Attribute("file"))
-  {
-    Logger::log().error() << "XML-File '" << fileImageSet << "' is broken or missing.";
-    return false;
-  }
-  mStrImageSetGfxFile = xmlRoot->Attribute("file");
-  Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the gfx coordinates.
-  /////////////////////////////////////////////////////////////////////////
-  int sumEntries = 0;
-  const char *strTemp;
-  for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
-  {
-    mSrcEntry *Entry = new mSrcEntry;
-    strTemp = xmlElem->Attribute("name");
-    if (!strTemp)  continue;
-    Entry->name   = strTemp;
-    Entry->width  = atoi(xmlElem->Attribute("width"));
-    Entry->height = atoi(xmlElem->Attribute("height"));
-    /////////////////////////////////////////////////////////////////////////
-    /// Parse the Position entries.
-    /////////////////////////////////////////////////////////////////////////
-    for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
-    {
-      strTemp = xmlState->Attribute("name");
-      if (!strTemp)  continue;
-      _state *s = new _state;
-      s->name = strTemp;
-      s->x = atoi(xmlState->Attribute("posX"));
-      s->y = atoi(xmlState->Attribute("posY"));
-      Entry->state.push_back(s);
-    }
-    mvSrcEntry.push_back(Entry);
-    ++sumEntries;
-  }
-  Logger::log().info() << sumEntries << " Entries were parsed.";
-  return true;
 }
 
 ///=================================================================================================
@@ -217,7 +99,6 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
   TiXmlElement *xmlRoot, *xmlElem;
   TiXmlDocument doc(fileWindows);
   const char *valString;
-  int sumEntries;
   /////////////////////////////////////////////////////////////////////////
   /// Check for a working window description.
   /////////////////////////////////////////////////////////////////////////
@@ -227,13 +108,17 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     return false;
   }
   if ((valString = xmlRoot->Attribute("name")))
+  {
     Logger::log().info() << "Parsing '" << valString << "' in file" << fileWindows << ".";
+  }
   else
+  {
     Logger::log().error() << "File '" << fileWindows << "' has no name entry.";
+  }
   /////////////////////////////////////////////////////////////////////////
   /// Parse the fonts.
   /////////////////////////////////////////////////////////////////////////
-  sumEntries =0;
+  int sumEntries =0;
   if ((xmlElem = xmlRoot->FirstChildElement("Fonts")))
   {
     for (xmlElem = xmlElem->FirstChildElement("Font"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Font"))
@@ -262,34 +147,45 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
   /////////////////////////////////////////////////////////////////////////
   /// Parse the mouse-cursor.
   /////////////////////////////////////////////////////////////////////////
+  GuiSrcEntry *srcEntry = NULL;
   if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("name"))))
   {
-    mSrcEntry *srcEntry = getStateGfxPositions(valString);
-    GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
-    for (unsigned int i=0; i < srcEntry->state.size(); ++i)
+    srcEntry = GuiImageset::getSingleton().getStateGfxPositions(valString);
+    if (srcEntry)
     {
-      GuiCursor::getSingleton().setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+      GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
+      for (unsigned int i=0; i < srcEntry->state.size(); ++i)
+      {
+        GuiCursor::getSingleton().setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+      }
+      GuiCursor::getSingleton().draw(GuiImageset::getSingleton().getPixelBox());
     }
-    GuiCursor::getSingleton().draw(mSrcPixelBox);
+    else
+    {
+      Logger::log().warning() << "ImageSet has no mouse-cursor defined.";
+    }
   }
   else
-  { // Create a dummy mouse-cursor.
+  {
     Logger::log().error() << "File '" << fileWindows << "' has no mouse-cursor defined.";
+  }
+  if (!srcEntry)
+  { // Create a dummy mouse-cursor.
     GuiCursor::getSingleton().Init(32, 32, mScreenWidth, mScreenHeight);
     GuiCursor::getSingleton().setStateImagePos("Standard", 128, 128);
-    GuiCursor::getSingleton().draw(mSrcPixelBox);
+    GuiCursor::getSingleton().draw(GuiImageset::getSingleton().getPixelBox());
   }
   /////////////////////////////////////////////////////////////////////////
-  /// Parse the windows.
+  /// Init the windows.
   /////////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Window"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Window"))
   {
     if (!(valString = xmlElem->Attribute("name"))) continue;
     for (int i = 0; i < GUI_WIN_SUM; ++i)
     {
-      if (GuiWindowNames[i].name == valString)
+      if (mGuiWindowNames[i].name == valString)
       {
-        guiWindow[i].Init(xmlElem, this);
+        guiWindow[i].Init(xmlElem);
         break;
       }
     }
@@ -300,16 +196,25 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
 ///=================================================================================================
 /// .
 ///=================================================================================================
-struct GuiManager::mSrcEntry *GuiManager::getStateGfxPositions(const char* guiImage)
+void GuiManager::freeRecources()
 {
-  if (guiImage)
+  if (guiWindow)
   {
-    for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
-    {
-      if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str())) return mvSrcEntry[j];
-    }
+    for (int i=0; i < GUI_WIN_SUM; ++i) guiWindow[i].freeRecources();
+    delete[] guiWindow;
   }
-  return 0;
+  GuiCursor::getSingleton().freeRecources();
+  mMaterial.setNull();
+  mTexture.setNull();
+}
+
+///=================================================================================================
+/// .
+///=================================================================================================
+void GuiManager::keyEvent(const char keyChar, const unsigned char key)
+{
+  Logger::log().info() << "keyChar " << keyChar << " " << key;
+  //    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
 }
 
 ///=================================================================================================
@@ -362,9 +267,6 @@ void GuiManager::update()
     if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
     {
       // TODO: Make the background fit to the text. make a black border, ...
-
-      // TODO: Hide tooltip when window was closed.
-
       TextLine label;
       label.index= -1;
       label.font = 2;
@@ -407,19 +309,24 @@ void GuiManager::displaySystemMessage(const char *text)
   label.y1 = fontH * row;
   label.x2 = mTexture->getWidth()-1;
   label.y2 = fontH * row + GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
-//  clearTooltip();
+  //  clearTooltip();
   GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), text);
   mTooltipRefresh = false;
-//  mElement->setPosition(300, 100);
+  //  mElement->setPosition(300, 100);
   mOverlay->show();
   ++row;
 }
 
 ///=================================================================================================
-/// .
+/// Set a tooltip text. NULL hides the tooltip.
 ///=================================================================================================
 void GuiManager::setTooltip(const char*text)
 {
+  if (!text)
+  {
+    mTooltipRefresh = false;
+    return;
+  }
   if (mStrTooltip == text) return;
   mStrTooltip = text;
   mTooltipRefresh = true;

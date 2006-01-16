@@ -30,8 +30,14 @@ using namespace Ogre;
 /// Defines:
 /// Mob => (M)oveable (Ob)ject.
 /// /////////////////////////////////////////////////////////
-enum { BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY };
-enum { TEXTURE_POS_SKIN, TEXTURE_POS_HAIR, TEXTURE_POS_BELT, TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES };
+enum
+{
+  BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY
+};
+enum
+{
+  TEXTURE_POS_SKIN, TEXTURE_POS_HAIR, TEXTURE_POS_BELT, TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES
+};
 const int MAX_NPC_COLORS = 16;
 /// /////////////////////////////////////////////////////////
 /// Class.

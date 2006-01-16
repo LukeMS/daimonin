@@ -154,11 +154,11 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/event.cpp">
+		<Unit filename="../../../source/events.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="../../../source/event_user.cpp">
+		<Unit filename="../../../source/events_user.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -174,11 +174,19 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/gui_element.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/gui_gadget.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/gui_graphic.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/gui_imageset.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
@@ -256,6 +264,12 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="../../../source/include/gui_element.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="../../../source/include/gui_gadget.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -263,6 +277,12 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="../../../source/include/gui_graphic.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="../../../source/include/gui_imageset.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

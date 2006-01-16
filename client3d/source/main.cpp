@@ -20,7 +20,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <string>
 #include "logger.h"
-#include "event.h"
+#include "events.h"
 
 const int SUM_MIPMAPS = 0;
 
@@ -70,8 +70,7 @@ int main(int /*argc*/, char /* **argv*/)
     /// ////////////////////////////////////////////////////////////////////
     /// Get the SceneManager, in this case a generic one
     /// ////////////////////////////////////////////////////////////////////
-    RenderWindow *window   = root->initialise(true);
-    SceneManager *sceneMgr = root->getSceneManager(ST_GENERIC);
+    RenderWindow *window   = root->initialise(true, "Daimonon - Client3d");
 
     /// ////////////////////////////////////////////////////////////////////
     /// Set default mipmap level (NB some APIs ignore this)
@@ -83,20 +82,20 @@ int main(int /*argc*/, char /* **argv*/)
     /// Must at least do initialiseAllResourceGroups();
     /// ////////////////////////////////////////////////////////////////////
     ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-    Event= new CEvent(window, sceneMgr);
+    Event= new CEvent(window, root->getSceneManager(ST_GENERIC));
     root->addFrameListener(Event);
     root->startRendering();
-
     /// ////////////////////////////////////////////////////////////////////
     /// End of mainloop -> Clean up.
     /// ////////////////////////////////////////////////////////////////////
     if (Event) delete Event;
     if (root) delete root;
+    return 0;
   }
   catch( Exception& e )
   {
     std::string s = e.getFullDescription();
-    unsigned int found = s.find('\n');
+    size_t found = s.find('\n');
     while (found != std::string::npos)
     {
       s.replace(found, 1, "<br>\n");

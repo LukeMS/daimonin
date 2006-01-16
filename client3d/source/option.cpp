@@ -57,7 +57,7 @@ void Option::closeDescFile()
 ///=================================================================================================
 bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int posNr)
 {
-  unsigned int pos=0, startPos=0, stopPos, entryTest;
+  size_t pos=0, startPos=0, stopPos, entryTest;
 checkForKeyword:
   startPos = mDescBuffer.find(strKeyword, startPos);
   if (startPos == string::npos)

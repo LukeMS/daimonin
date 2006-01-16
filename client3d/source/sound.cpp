@@ -44,8 +44,7 @@ bool Sound::Init()
   /////////////////////////////////////////////////////////////////////////
   if (FSOUND_GetVersion() < FMOD_VERSION)
   {
-    Logger::log().error() << "You are using the wrong DLL version! "
-    "You should be using FMOD" << FMOD_VERSION;
+    Logger::log().error() << "You are using the wrong DLL version! You should be using FMOD" << FMOD_VERSION;
     return false;
   }
 
@@ -81,8 +80,9 @@ bool Sound::Init()
 // ========================================================================
 void Sound::createSampleDummy()
 {
-  char dummy[] =
-    { 0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
+  const unsigned char dummy[] =
+    {
+      0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
       0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
       0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
       0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
@@ -93,7 +93,7 @@ void Sound::createSampleDummy()
     Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
     return;
   }
-  out.write(dummy, sizeof(dummy));
+  out.write((char*)dummy, sizeof(dummy));
 }
 
 // ========================================================================
@@ -101,14 +101,14 @@ void Sound::createSampleDummy()
 // ========================================================================
 int Sound::loadSample(const char *filename)
 {
-  FSOUND_SAMPLE *handle = FSOUND_Sample_Load(vecHandle.size() , filename, 0,0,0);
+  FSOUND_SAMPLE *handle = FSOUND_Sample_Load((int) vecHandle.size() , filename, 0,0,0);
   if (!handle)
   {
     Logger::log().error()  << "* Error on Sample '" << filename
     << "': " << FMOD_ErrorString(FSOUND_GetError())
     << Logger::endl << "-> using dummy.wav instead.";
     mSuccess = false;
-    handle = FSOUND_Sample_Load(vecHandle.size() , FILE_SAMPLE_DUMMY, 0,0,0);
+    handle = FSOUND_Sample_Load((int) vecHandle.size() , FILE_SAMPLE_DUMMY, 0,0,0);
     if (!handle)
     {
       Logger::log().error() << "Critical: Cound not load the dummy wavefile.";
@@ -116,7 +116,7 @@ int Sound::loadSample(const char *filename)
     }
   }
   vecHandle.push_back(handle);
-  return vecHandle.size();
+  return (int) vecHandle.size();
 }
 
 // ========================================================================

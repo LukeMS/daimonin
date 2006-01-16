@@ -117,7 +117,7 @@ public:
     return m_posX;}
   short get_posZ(){
     return m_posZ;}
-   void Set_Tile(short &x, short &z)
+  void Set_Tile(short &x, short &z)
   {
     m_posX = x; m_posZ = z;
   }

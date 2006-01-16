@@ -19,7 +19,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <OgreKeyEvent.h>
-#include "event.h"
+#include "events.h"
 #include "gui_manager.h"
 #include "object_manager.h"
 #include "option.h"
@@ -69,27 +69,27 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_A:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, STATE_ATTACK1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_ATTACK1);
       break;
 
       case KC_B:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, STATE_BLOCK1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_BLOCK1);
       break;
 
       case KC_C:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, STATE_CAST1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_CAST1);
       break;
 
       case KC_S:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, STATE_SLUMP1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_SLUMP1);
       break;
 
       case KC_D:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, STATE_DEATH1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_DEATH1);
       break;
 
       case KC_H:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, STATE_HIT1);
+      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_HIT1);
       break;
 
       case KC_1:
@@ -176,7 +176,7 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_I:
-      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);
+      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_ANIMATION, Animate::STATE_ATTACK1);
       break;
 
       case KC_P:
@@ -212,27 +212,29 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_F:
-      static TextureFilterOptions mFiltering = TFO_BILINEAR;
-      static int mAniso = 1;
-      switch(mFiltering)
       {
-          case TFO_BILINEAR:
-          mFiltering = TFO_TRILINEAR;
-          mAniso = 1;
-          break;
-          case TFO_TRILINEAR:
-          mFiltering = TFO_ANISOTROPIC;
-          mAniso = 8;
-          break;
-          case TFO_ANISOTROPIC:
-          mFiltering = TFO_BILINEAR;
-          mAniso = 1;
-          break;
-          default:
-          break;
+        static TextureFilterOptions mFiltering = TFO_BILINEAR;
+        static int mAniso = 1;
+        switch(mFiltering)
+        {
+            case TFO_BILINEAR:
+            mFiltering = TFO_TRILINEAR;
+            mAniso = 1;
+            break;
+            case TFO_TRILINEAR:
+            mFiltering = TFO_ANISOTROPIC;
+            mAniso = 8;
+            break;
+            case TFO_ANISOTROPIC:
+            mFiltering = TFO_BILINEAR;
+            mAniso = 1;
+            break;
+            default:
+            break;
+        }
+        MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
+        MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
       }
-      MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
-      MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
       break;
 
       case KC_L:

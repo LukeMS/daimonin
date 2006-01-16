@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
-const char *StateNames[STATE_SUM]=
+const char *Animate::StateNames[STATE_SUM]=
   {
     "Idle1", "Idle2", "Idle3",
     "Walk1", "Walk2", "Walk3",
@@ -63,9 +63,9 @@ Animate::Animate(Entity *entity)
     {
       mAnimStates[state] = entity->getAnimationState(mStrTemp.c_str());
       if (!mAnimStates[state])
-        Logger::log().error() << "Critical: No Animatin named "
-        << mStrTemp
-        << " found!";
+      {
+        Logger::log().error() << "Critical: No Animatin named " << mStrTemp << " found!";
+      }
     }
     else // not found animation-name in description file -> use the standard one (IDLE1).
     {
@@ -104,9 +104,9 @@ void Animate::toggleAnimGroup()
     mAnimGroup =0;
   }
   toggleAnimation(mAnimType, true);
-//  char buf[80];
-//  sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
-//  TextWin->Print(buf, TXT_WHITE);
+  //  char buf[80];
+  //  sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
+  //  TextWin->Print(buf, TXT_WHITE);
 }
 
 //=================================================================================================

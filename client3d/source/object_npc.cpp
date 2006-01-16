@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include "spell_manager.h"
-#include "event.h"
+#include "events.h"
 #include "TileManager.h"
 #include "gui_manager.h"
 
@@ -35,8 +35,10 @@ http://www.gnu.org/licenses/licenses.html
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 SceneManager *NPC::mSceneMgr =0;
 
-sPicture     NPC::picSkin  = {  0,    0, 512, 512 };
-sPicture     NPC::picHair  = { 112,   0,  90,  65 };
+sPicture     NPC::picSkin  = {
+                               0,    0, 512, 512 };
+sPicture     NPC::picHair  = {
+                               112,   0,  90,  65 };
 uint32       NPC::color[MAX_NPC_COLORS] =
   {
     0x00e3ad91, 0x00f2dc91, 0x00c95211, 0x0037250b,
@@ -53,7 +55,7 @@ static ParticleFX *tempPFX =0;
 void NPC::freeRecources()
 {
   if (!--mInstanceNr) delete tempPFX;
-  if (!mAnim) delete mAnim;
+  if (mAnim) delete mAnim;
   mTexture.setNull();
 }
 
@@ -156,7 +158,7 @@ NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
   //mMaterial->load();
 
 
-  mNode->scale(.4,.4,.4); // Remove Me!!!!
+  mNode->scale(.6,.6,.6); // Remove Me!!!!
   //    mNode->showBoundingBox(true); // Remove Me!!!!
 
 
@@ -317,7 +319,7 @@ void NPC::update(const FrameEvent& event)
   }
   else if (mAutoMoving)
   {
-    mAnim->toggleAnimation(STATE_WALK1);
+    mAnim->toggleAnimation(Animate::STATE_WALK1);
 
     /// We are very close to destination.
     Vector3 dist = mWalkToPos - mNode->getPosition();
@@ -335,7 +337,7 @@ void NPC::update(const FrameEvent& event)
       mWalkToPos.z = mBoundingBox.z + mPosTileZ * TILE_SIZE;
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
-      mAnim->toggleAnimation(STATE_IDLE1);
+      mAnim->toggleAnimation(Animate::STATE_IDLE1);
     }
     /// We have to move on.
     else
@@ -366,7 +368,7 @@ void NPC::update(const FrameEvent& event)
     if (mWalking)
     {
       // just a test...
-      mAnim->toggleAnimation(STATE_WALK1);
+      mAnim->toggleAnimation(Animate::STATE_WALK1);
       mTranslateVector.x = Math::Sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
       mTranslateVector.z = Math::Cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
 
@@ -400,7 +402,7 @@ void NPC::update(const FrameEvent& event)
     }
     else
     {
-      mAnim->toggleAnimation(STATE_IDLE1);
+      mAnim->toggleAnimation(Animate::STATE_IDLE1);
     }
   }
 }
@@ -479,6 +481,7 @@ void NPC::setTexture(int pos, int texColor, int textureNr)
         }
         /// Copy the buffer into the model-texture.
         mTexture->getBuffer()->blitFromMemory(pb, Box(picSkin.x, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
+        delete[] buffer;
       }
       break;
 
@@ -500,9 +503,6 @@ void NPC::setTexture(int pos, int texColor, int textureNr)
           PixelBox(picHair.w, picHair.h, 1, PF_A8R8G8B8, buffer),
           Box(picHair.x, picHair.y, picHair.x + picHair.w , picHair.y + picHair.h));
 
-
-
-
         Image image;
         image.load("Human_Male_Shadow_Blit.png", "General");
         uint32 *copy = (uint32*)image.getData();
@@ -523,11 +523,7 @@ void NPC::setTexture(int pos, int texColor, int textureNr)
           dest_data[y] = pixColor;
         }
         mTexture->getBuffer()->unlock();
-
-
-
-
-
+        delete[] buffer;
       }
       break;
 

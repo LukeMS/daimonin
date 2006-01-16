@@ -113,7 +113,7 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
   /////////////////////////////////////////////////////////////////////////
   if (color_fill)
   {
-//    clock_t time = clock();
+    //    clock_t time = clock();
     PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mDestWidth, mY+mDestHeight), HardwareBuffer::HBL_READ_ONLY );
     uint32 *dest_data = (uint32*)pb.data;
     for (int y = 0; y < mDestHeight; ++y)
@@ -124,7 +124,7 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
       }
     }
     texture->getBuffer()->unlock();
-//    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
+    //    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
   }
   /////////////////////////////////////////////////////////////////////////
   /// Fill background rect with a gfx.

@@ -26,7 +26,9 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include <tinyxml.h>
 #include "gui_window.h"
+#include "gui_imageset.h"
 #include "gui_cursor.h"
+#include "logger.h"
 
 using namespace Ogre;
 
@@ -42,32 +44,15 @@ enum {
   GUI_MSG_BUT_PRESSED,
   GUI_MSG_SUM };
 
-enum {
-  // Button.
-  GUI_BUTTON_CLOSE,
-  GUI_BUTTON_OK,
-  GUI_BUTTON_CANCEL,
-  GUI_BUTTON_MINIMIZE,
-  GUI_BUTTON_MAXIMIZE,
-  // Listboxes.
-  GUI_LIST_TEXTWIN,
-  GUI_LIST_CHATWIN,
-  GUI_LIST_UP,
-  GUI_LIST_DOWN,
-  GUI_LIST_LEFT,
-  GUI_LIST_RIGHT,
-  // StatusBars.
-  GUI_STATUSBAR_PLAYER_HEALTH,
-  GUI_STATUSBAR_PLAYER_MANA,
-  GUI_STATUSBAR_PLAYER_GRACE,
-  // TextValues.
-  GUI_TEXTVALUE_STAT_CUR_FPS,
-  GUI_TEXTVALUE_STAT_BEST_FPS,
-  GUI_TEXTVALUE_STAT_WORST_FPS,
-  GUI_TEXTVALUE_STAT_SUM_TRIS,
-  // Sum of all entries.
-  GUI_ELEMENTS_SUM
-};
+
+typedef struct
+{
+  std::string name;
+  unsigned int index;
+}
+GuiWinNam;
+
+
 
 class GuiManager
 {
@@ -77,44 +62,21 @@ public:
     MSG_CHANGE_TEXT, MSG_BUTTON_PRESSED, MSG_SUM
   };
 
-  struct _state
-  {
-    std::string name;
-    short x, y;
-  };
-
-  struct mSrcEntry
-  {
-    std::string name;
-    int width, height;
-    std::vector<_state*>state;
-  };
-
-  struct _GuiElementNames
-  {
-    std::string name;
-    unsigned int index;
-  }
-  static GuiWindowNames[], GuiElementNames[];
   ////////////////////////////////////////////////////////////
   /// Functions.
   ////////////////////////////////////////////////////////////
   static GuiManager &getSingleton()
   {
-    static GuiManager Singleton; return Singleton;
+    static GuiManager singleton; return singleton;
   }
-  struct mSrcEntry *getStateGfxPositions(const char* guiImage);
-  PixelBox &getTilesetPixelBox()
-  {
-    return mSrcPixelBox;
-  }
+  void freeRecources();
   bool hasFocus()
   {
     return mHasFocus;
   }
   void Init(int w, int h);
-  void parseImageset(const char *XML_imageset_file, const char *XML_windows_file);
-  void freeRecources();
+  void parseImageset(const char *XML_imageset_file);
+  void parseWindows (const char *XML_windows_file);
   void update();
   bool mouseEvent(int MouseAction, Real rx, Real ry);
   void keyEvent(const char keyChar, const unsigned char key);
@@ -127,22 +89,21 @@ private:
   ////////////////////////////////////////////////////////////
   /// Variables.
   ////////////////////////////////////////////////////////////
+
+
+  static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
+
   int mDragSrcWin, mDragDestWin;
   int mDragSrcContainer, mDragDestContainer;
   int mDragSrcItemPosx, mDragSrcItemPosy; // Wird bei drag start gesetzt, um Item bei falschem Drag zurückflutschen zu lassen.
   bool isDragging;
-
-  std::string mStrImageSetGfxFile;
   std::string  mStrTooltip;
-  std::vector<mSrcEntry*>mvSrcEntry;
   class GuiWindow *guiWindow;
   unsigned int mScreenWidth, mScreenHeight;
   bool mHasFocus, mTooltipRefresh;
   clock_t mTooltipDelay;
   int mFocusedWindow, mFocusedGadget;
   int mMouseX, mMouseY;
-  PixelBox mSrcPixelBox;
-  Image mImageSetImg;
   Overlay *mOverlay;
   OverlayElement *mElement;
   MaterialPtr mMaterial;
@@ -151,10 +112,15 @@ private:
   /// Functions.
   ////////////////////////////////////////////////////////////
   GuiManager()
-  {}
+  {
+    guiWindow = NULL;
+  }
   ~GuiManager()
-  {}
-  bool parseImagesetData(const char *file);
+  {
+  }
+  GuiManager(const GuiManager&); // disable copy-constructor.
+  //GuiManager& operator=(GuiManager const&);
+
   bool parseWindowsData (const char *file);
   void clearTooltip();
 };

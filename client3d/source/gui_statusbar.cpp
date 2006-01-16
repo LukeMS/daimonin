@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <ctime>
 
 
-// TODO:
+// TODO
 // 3d    type hor/vert
 // plain type hor/vert
 // gfx   type hor/vert
@@ -147,7 +147,7 @@ void GuiStatusbar::draw(PixelBox &, Texture *texture, Real)
   for (offset= 3, x=0; x <= BAR_WIDTH/2; ++x)
   {
     if (x == 1 || x == 3) --offset;
-//    for (y = mValue+5-offset; y < mHeight-offset; ++y)
+    //    for (y = mValue+5-offset; y < mHeight-offset; ++y)
     for (y = mHeight-offset; y > mValue-offset; --y)
     {
       mGfxBuffer[y*mWidth + x] = color;

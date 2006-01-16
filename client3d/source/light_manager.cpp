@@ -34,35 +34,37 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
-bool LightManager::init(SceneManager *SceneMgr, SceneNode *Node)
+bool LightManager::init(SceneManager *, SceneNode *)
 {
+  return true;
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
-bool LightManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos)
+bool LightManager::addObject(unsigned int , const char *, Vector3 )
 {
+  return true;
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
-void LightManager::update(int obj_type, const FrameEvent& evt)
+void LightManager::update(int , const FrameEvent& )
 {
 }
 
 //=================================================================================================
 // JUST FOR TESTING.
 //=================================================================================================
-void LightManager::keyEvent(int obj_type, int action, int val1, int val2)
+void LightManager::keyEvent(int , int , int , int )
 {
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
-void LightManager::delObject(int number)
+void LightManager::delObject(int )
 {
 }
 
