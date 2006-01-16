@@ -51,6 +51,8 @@
 #define CHECK_WALK_DESTROYED 1
 #define CHECK_WALK_MOVED     2
 
+
+#define ARCH_MAX_TYPES		512 /* important - this must be higher as max type number! */
 /* i sorted the members of this struct in 4 byte (32 bit) groups. This will help compiler
  * and cpu to make aligned access of the members, and can (and will) make things smaller
  * and faster - but this depends on compiler & system too.
@@ -178,7 +180,7 @@ typedef struct obj
                                                  * warning: change this when include > 15x15 monster
                                                  */
 
-    uint8           type;               /* PLAYER, BULLET, etc.  See define.h */
+    uint8           type;               /* PLAYER, BULLET, etc.  See define.h - must be < ARCH_MAX_TYPES */
     uint8           sub_type1;          /* sub type definition - this will be send to client too */
     uint8           item_quality;           /* quality of a item in range from 0-100 */
     uint8           item_condition;     /* condition of repair of an item - from 0 to 100% item_quality */

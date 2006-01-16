@@ -30,6 +30,7 @@
 #include <plugin_lua.h>
 
 /* GameObject methods  */
+static int GameObject_CreateArtifact(lua_State *L);
 static int	GameObject_GetName(lua_State *L);
 static int	GameObject_GetEquipment(lua_State *L);
 static int	GameObject_GetRepairCost(lua_State *L);

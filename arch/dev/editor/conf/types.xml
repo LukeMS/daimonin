@@ -92,6 +92,11 @@
     This is the object's title. Once an object is identified the title is
     attached to the name. Typical titels are "of mostrai", "of xray vision" etc.
   </attribute>
+  <attribute arch="amask" editor="artifact mask" type="string">
+	This is the name of a artifact mask which alters the original arch with the
+    values defined for that artifact in the artifacts file. The item is patched 
+    AFTER all commands, even following behind the artifact mask, are loaded in.
+  </attribute>
   <attribute arch="sub_type" editor="sub type" type="int">
     This important value is used to define "sub types" for objects of the same object
     type. Examples are weapons, which are all from type WEAPON but can be different sub types

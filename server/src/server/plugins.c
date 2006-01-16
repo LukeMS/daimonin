@@ -60,6 +60,8 @@ struct plugin_hooklist  hooklist    =
     query_money_type, remove_money_type,insert_money_in_player,
     add_pet, material_repair_cost, material_repair_item,
 	query_short_name,
+	find_artifact,
+	give_artifact_abilities,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
