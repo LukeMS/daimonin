@@ -121,6 +121,11 @@ enum
 
 #define PLAYER_HPGEN_DELAY 10
 
+/* QUCKHACK - can be removed for 1.0 */
+#define PLAYER_FILE_VERSION_DEFAULT 0
+#define PLAYER_FILE_VERSION_BETA3	1
+#define PLAYER_FILE_VERSION_BETA4	2
+
 #ifdef WIN32
 #pragma pack(push,1)
 #endif

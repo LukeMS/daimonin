@@ -1264,7 +1264,7 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
         /*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/
         CLEAR_FLAG(pl, FLAG_INV_LOCKED); /* funny trickm see check container */
         if ((tmp = check_container(pl, op)))
-            new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all one-drop items from this container!");
+            new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all °NO-DROP° items from this container!");
         else if (QUERY_FLAG(pl, FLAG_INV_LOCKED))
             new_draw_info(NDI_UNIQUE, 0, pl, "You can't drop a container with locked items inside!");
         else
@@ -1301,9 +1301,9 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
         if (QUERY_FLAG(pl, FLAG_INV_LOCKED) && env->env != pl)
             new_draw_info(NDI_UNIQUE, 0, pl, "You can't drop a container with locked items inside!");
         else if (tmp && env->env != pl)
-            new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all one-drop items from this container!");
+            new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all °NO-DROP° items from this container!");
         else if (QUERY_FLAG(op, FLAG_STARTEQUIP) && env->env != pl)
-            new_draw_info(NDI_UNIQUE, 0, pl, "You can't store one-drop items outside your inventory!");
+            new_draw_info(NDI_UNIQUE, 0, pl, "You can't store °NO-DROP° items outside your inventory!");
         else
             put_object_in_sack(pl, env, op, nrof);
         return;

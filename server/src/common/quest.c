@@ -25,14 +25,39 @@
 
 #include <global.h>
 
+/* recursive check the inventory for a specific quest item */
+static int find_quest_item(object *target, object *obj)
+{
+	object *tmp;
+
+	for (tmp = target->inv; tmp; tmp = tmp->below)
+	{
+		if(tmp->type == CONTAINER)
+		{
+			if(find_quest_item(tmp, obj))
+				return 1;
+		}
+		else if (tmp->type == obj->type && tmp->name == obj->name && tmp->title == obj->title)
+			return 1;
+	}
+
+	return 0;
+}
+
+/* check the player we can drop a one-drop quest trigger item */
 static inline int find_one_drop_quest_item(object *target, object *obj)
 {
     object *tmp;
+
+	/* if we have a "fake" one drop item, we check the normal inventory it is there */
+	if(!QUERY_FLAG(obj, FLAG_ONE_DROP))
+		return find_quest_item(target, obj);
 
     if ((tmp=CONTR(target)->quest_one_drop) )
     {
         for (tmp = tmp->inv; tmp; tmp = tmp->below)
         {
+			/* the race to arch compare is needed for faked items and to hold comp. to beta 3 and lower */
             if (tmp->name == obj->name && tmp->race == obj->arch->name && tmp->title == obj->title)
                 return 1;
         }
@@ -58,25 +83,6 @@ static inline object *find_quest_trigger(object *target, object *obj)
     return NULL;
 }
 
-/* recursive check the inventory for a specific quest item */
-static int find_quest_item(object *target, object *obj)
-{
-    object *tmp;
-
-    for (tmp = target->inv; tmp; tmp = tmp->below)
-    {
-        if(tmp->type == CONTAINER)
-        {
-            if(find_quest_item(tmp, obj))
-                return 1;
-        }
-        else if (tmp->type == obj->type && tmp->name == obj->name && tmp->title == obj->title)
-            return 1;
-    }
-
-    return 0;
-}
-
 /* we give a player a one drop item. This also
  * adds this item to the quest_container - instead to quest
  * items which will be added when the next quest step is triggered.
@@ -89,25 +95,26 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
     if (!CONTR(target)->quest_one_drop)
         add_quest_containers(target);
 
-    tmp = CONTR(target)->quest_one_drop;
-    q_tmp = get_object();
-    copy_object_data(obj, q_tmp); /* copy without put on active list */
-    /* just to be on the secure side ... */
-    q_tmp->speed = 0.0f;
-    CLEAR_FLAG(q_tmp, FLAG_ANIMATE);
-    CLEAR_FLAG(q_tmp, FLAG_ALIVE);
-	SET_FLAG(q_tmp, FLAG_IDENTIFIED);
-    /* we are storing the arch name of quest dummy items in race */
-    FREE_AND_COPY_HASH(q_tmp->race, obj->arch->name);
+	/* only mark the item as "real" one drop if it has the flag */
+	if(QUERY_FLAG(obj, FLAG_ONE_DROP))
+	{
+		tmp = CONTR(target)->quest_one_drop;
+		q_tmp = get_object();
+		copy_object_data(obj, q_tmp); /* copy without put on active list */
+		/* just to be on the secure side ... */
+		q_tmp->speed = 0.0f;
+		CLEAR_FLAG(q_tmp, FLAG_ANIMATE);
+		CLEAR_FLAG(q_tmp, FLAG_ALIVE);
+		SET_FLAG(q_tmp, FLAG_IDENTIFIED);
+	    /* we are storing the arch name of quest dummy items in race */
+	    FREE_AND_COPY_HASH(q_tmp->race, obj->arch->name);
+	    insert_ob_in_ob(q_tmp, tmp); /* dummy copy in quest container */
+	    SET_FLAG(obj, FLAG_IDENTIFIED);
+	}
 
-    insert_ob_in_ob(q_tmp, tmp); /* dummy copy in quest container */
-    SET_FLAG(obj, FLAG_IDENTIFIED);
-
-    /*CLEAR_FLAG(obj, FLAG_QUEST_ITEM);*/
-
+	/* now give it the player */
     q_tmp = get_object();
     copy_object(obj, q_tmp);
-    /*CLEAR_FLAG(q_tmp, FLAG_SYS_OBJECT);*/
     insert_ob_in_ob(q_tmp, target); /* real object to player */
     esrv_send_item(target, q_tmp);
 
@@ -128,7 +135,6 @@ static inline int add_quest_item(object *target, object *obj)
 
 void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 {
-    char    auto_buf[MAX_BUF];
     int flag = FALSE;
 
     if (!target || target->type != PLAYER)
@@ -136,8 +142,16 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 
     if (QUERY_FLAG(quest_trigger, FLAG_ONE_DROP)) /* marks one drop quest items */
     {
-        if(quest_trigger->level <= target->level)
+		int tmp_lev = 0;
+
+		if (quest_trigger->item_skill)
+			tmp_lev = CONTR(target)->exp_obj_ptr[quest_trigger->item_skill-1]->level; /* use player struct shortcut ptrs */
+		else
+			tmp_lev = target->level;
+
+        if(quest_trigger->item_level <= tmp_lev)
         {
+			char    auto_buf[MAX_BUF];
             object *tmp;
 
             for (tmp = quest_trigger->inv; tmp; tmp = tmp->below)
@@ -147,8 +161,13 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                     if(quest_trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT && !flag)
                         new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
                     flag = TRUE;
+					SET_FLAG(tmp, FLAG_IDENTIFIED); /* be sure the one drop is IDed - nicer gaming experience */
                     add_one_drop_quest_item(target, tmp);
-                    sprintf(auto_buf, "You solved the one drop quest %s!", query_name(tmp));
+					
+					if(QUERY_FLAG(tmp,FLAG_ONE_DROP))
+	                    sprintf(auto_buf, "You found the one drop %s!", query_short_name(tmp, target));
+					else
+						sprintf(auto_buf, "You found the special drop %s!", query_short_name(tmp, target));
                     new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
                 }
             }
@@ -169,8 +188,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                         new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
                     flag = TRUE;
                     add_quest_item(target, tmp);
-                    sprintf(auto_buf, "You found the quest item %s!", query_name(tmp));
-                    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
+                    new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, target, "You found the quest item %s!", query_short_name(tmp, target));
                 }
             }
 

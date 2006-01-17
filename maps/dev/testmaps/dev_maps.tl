@@ -4,5 +4,7 @@
 #
 ################ test drop (for testmaps)
 treasureone random_test
-list book_misc
+#list book_misc
+list magic_talisman
+artifact_chance 100
 end
