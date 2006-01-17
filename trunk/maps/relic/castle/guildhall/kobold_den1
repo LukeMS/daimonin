@@ -2731,11 +2731,6 @@ name kobold clan chief
 type 83
 Wis 2
 level 3
-arch letter
-name Frah'aks letter
-one_drop 1
-quest_item 1
-end
 end
 end
 arch floor_grit4a

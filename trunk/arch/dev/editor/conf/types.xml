@@ -249,9 +249,15 @@
     If an item is set to block view, players (and monsters) cannot
     see byond it unless they cross it or manage to stand ontop.
   </attribute>
+  <attribute arch="startequip" editor="NO-DROP item" type="bool">
+    A NO-DROP item vanishes as soon as the player
+    drops it to the ground.
+  </attribute>
   <attribute arch="one_drop" editor="one drop" type="bool">
-   In the moment a player gets or apply this items, it will
-   flaged as godgiven and vanish when droped to the ground.
+	Item is a one-drop quest item. This item will be drop the
+    first time the player triggers the quest (open chest, kill mob)
+    with a 100% chance. A second time this item never drops again for
+    that player. 
   </attribute>
   <attribute arch="quest_item" editor="quest item" type="bool">
     Item is a quest item. This item will be inserted in the 
@@ -259,8 +265,7 @@
     this item will never drop again.
   </attribute>
   <attribute arch="inv_locked" editor="inv or quest lock" type="bool">
-    Double used flag. Item is locked when in player inventory (can't be
-    dropped). It also marks closed (locked) quest info and items.
+    Item is locked when in player inventory (can't be dropped).
   </attribute>
   <attribute arch="identified" editor="identified" type="bool">
     If an item is identified, the player has
@@ -577,10 +582,6 @@
     If set, the object is able to "roll", so it can be pushed around.
     This setting is used for boulders and barrels.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
   </attribute>
@@ -793,10 +794,6 @@
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
@@ -1065,10 +1062,6 @@
 
     An item with &lt;save life&gt; should not have
     any decent additional bonuses!
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch="applied" editor="is applied" type="bool">
     If you put this item into the inventory of a monster, and
@@ -1376,10 +1369,6 @@
     The language the book is written in. Only when it matches the languages
     the player knows, the book can be written.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="book content" type="text">
     This is the text that appears "written" in the book.
   </attribute>
@@ -1595,10 +1584,6 @@
     If set, the container can be used as alchemy-cauldron.
     The player can put ingredients inside, close it, cast alchemy
     and if his formulae is true, he'll get what he longed for.
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch="other_arch" editor="animation arch" type="string">
     This is used for a certain kind of... "animation" when
@@ -2084,10 +2069,6 @@
     Dragon players always search for flesh of highest level possible,
     because it bears the best chance to gain high resistances.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the item.
   </attribute>
@@ -2213,10 +2194,6 @@
     it gets created from food effects. Only used when food has effects
     and then copied to force speed.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
 <section name="Force Effects">
   <attribute arch="Str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
@@ -2294,10 +2271,6 @@
     The &lt;speed&gt; determines how long a force will stay when
     it gets created from food/drink effects. Only used when drink 
     has effects which gets copied to a force.
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
 <section name="Force Effects">
   <attribute arch="Str" editor="strength" type="int">
@@ -2640,10 +2613,6 @@
    When applied the user gets ethereal. He can't still be seen but
    transparent. He can move through walls and doors which has the
    PASS_THRU flag set (like ghosts and other non physical monsters).
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may contain a description of the horn.
@@ -4290,10 +4259,6 @@
     This value is supposed to be the base &lt;throw range&gt;,
     The value is only valid for potions who can be thrown.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
     The player's strength will rise/fall by the given value for permanent
@@ -4435,10 +4400,6 @@
   <attribute arch="magic" editor="magic bonus" type="int">
     Magic bonus increases chance to hit and damage a little bit.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch="no_drop" editor="don't drop" type="bool">
     When a monster carries a projectile with &lt;don't drop&gt;,
     this item will never drop to the ground but
@@ -4572,10 +4533,6 @@
    When applied the user gets ethereal. He can't still be seen but
    transparent. He can move through walls and doors which has the
    PASS_THRU flag set (like ghosts and other non physical monsters).
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may contain a description of the rod.
@@ -4779,10 +4736,6 @@
     done by the shooting weapon. If &lt;ignore strength&gt; is set,
     the player's strength is ignored.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch="make_invisible" editor="make invisible" type="bool">
    When applied the user gets invisible. He can't be seen from player 
    or monster except they have "see invisible" power.
@@ -4869,10 +4822,6 @@
   <attribute arch="sp" editor="spell" type="spell">
     When a player/monster applies this scroll, the selected &lt;spell&gt;
     will be casted (once). This should work for any given spell.
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
 </type>
 
@@ -5070,10 +5019,6 @@
     "0" (no material) or "256" (adamantite). This prevents
     the key from getting burned or otherwise destroyed.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This will add a description to the object. The player can read
     this text by clicking on the item in his inventory. Use this
@@ -5110,10 +5055,6 @@
     This string also defines the contained spell (just like
     field above), but here you write the spell's name directly.
     Setting both &lt;spell&gt; and &lt;spell name&gt; makes no sense.
-  </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may contain a nice description
@@ -5427,10 +5368,6 @@
    transparent. He can move through walls and doors which has the
    PASS_THRU flag set (like ghosts and other non physical monsters).
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
 <section name="stats">
   <attribute arch="Str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
@@ -5617,10 +5554,6 @@
   thats the player can fire it again. The value is in ticks.
   8 ticks are a second.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
-    drops it to the ground.
-  </attribute>
   <attribute arch="make_invisible" editor="make invisible" type="bool">
    When applied the user gets invisible. He can't be seen from player 
    or monster except they have "see invisible" power.
@@ -5682,45 +5615,58 @@ trigger works as a container for the real quest objects.]]>
     Container events need a trigger object inside the container.
   </attribute>
   <attribute arch="name" editor="quest id string" type="string">
-    ID string which identifies the quest.
+    ID string which identifies the quest (not used for one drop quests).
   </attribute>
   <attribute arch="magic" editor="quest id number" type="int">
     A quest can have different steps. Only when the quest id string AND number
-    are equal, the quest event is triggered.
+    are equal, the quest event is triggered (not used for one drop quests).
   </attribute>
   <attribute arch="last_heal" editor="quest id step" type="int">
     If triggered, the quest trigger sets the trigger quest object to this value.
+    (not used for one drop quests)
   </attribute>
   <attribute arch="one_drop" editor="one drop quest" type="bool">
-    If set, the trigger don't is connected to a quest but its a one drop quest.
-    The object(s) inside are checked against the one drop quest container.
-    If the item is not in and the trigger level is lower or equal to the
-    players level, the one drop item is given the player.
+    If set, the trigger is not connected to a quest but its a one drop quest.
+    The object(s) inside are checked against the one drop quest container
+    IF THE ITEM HAS one_drop 1 set too. If the item has one_drop 0, the inventory
+    itself is searched. Is the item not found, the item is given. In that
+    case its NOT put in the one drop quest container. 
+	In any case the required drop skill/level is checked.
   </attribute>
-  <attribute arch="level" editor="one drop level" type="int">
-    If set, the player only gets the one drop item when his level is higher or
-    equal this setting.
+  <attribute arch="item_skill" editor="required drop skill" type="list_item_skill">
+    This attribute specifies in which skill cathegory the player
+    must meet the &lt;required level&gt; in order that a one drop
+    quest trigger drops the items.
+  </attribute>
+  <attribute arch="item_level" editor="required drop level" type="int">
+	Level needed (overall or skill specific) that a one-drop is triggered.    
   </attribute>
 </type>
 
 <!--####################################################################-->
 <type number="131" name="Quest Object">
   <ignore>
-    <ignore_list name="default_setting" />
+    <attribute arch="one_drop" />
+    <attribute arch="quest_item" />
+    <attribute arch="startequip" />
   </ignore>
   <description><![CDATA[A Quest Object is a generic object which fakes a real
 object. Its used as a dummy object when we send someone to get that sword or 
 that food.]]>
   </description>
-  <attribute arch="no_pass" editor="blocking passage" type="bool">
-    If set, the object cannot be passed by players nor monsters.
+  <attribute arch="one_drop" editor="one drop" type="bool">
+	Item is a one-drop quest item. This item will be drop the
+    first time the player triggers the quest (open chest, kill mob)
+    with a 100% chance. A second time this item never drops again for
+    that player. 
   </attribute>
-  <attribute arch="can_roll" editor="moveable" type="bool">
-    If set, the object is able to "roll", so it can be pushed around.
-    This setting is used for boulders and barrels.
+  <attribute arch="quest_item" editor="quest item" type="bool">
+    Item is a quest item. This item will be inserted in the 
+    quest container when a quest is finished and for that player
+    this item will never drop again.
   </attribute>
-  <attribute arch="startequip" editor="godgiven item" type="bool">
-    A godgiven item vanishes as soon as the player
+  <attribute arch="startequip" editor="NO-DROP item" type="bool">
+    A NO-DROP item vanishes as soon as the player
     drops it to the ground.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">

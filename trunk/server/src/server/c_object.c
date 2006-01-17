@@ -624,7 +624,7 @@ void drop_object(object *op, object *tmp, long nrof)
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
                 new_draw_info(NDI_UNIQUE, 0, op, "The shop magic put it back to the storage.");
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "The one-drop item vanishes to nowhere as you drop it!");
+                new_draw_info(NDI_UNIQUE, 0, op, "The °NO-DROP° item vanishes to nowhere as you drop it!");
             esrv_del_item(CONTR(op), tmp->count, tmp->env);
         }
         fix_player(op);
@@ -1401,7 +1401,7 @@ char *examine(object *op, object *tmp, int flag)
         strcat(buf_out, buf);
     }
 
-    if (QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_ONE_DROP))
+    if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
     {
         if (QUERY_FLAG(tmp, FLAG_UNPAID)) /* thats a unpaid clone shop item */
         {
@@ -1410,7 +1410,7 @@ char *examine(object *op, object *tmp, int flag)
         }
         else /* it is a real one drop item */
         {
-            sprintf(buf, "%s one-drop item%s.\n", tmp->nrof > 1 ? "They are" : "It is a", tmp->nrof > 1 ? "s" : "");
+            sprintf(buf, "** ~NO-DROP item%s~ **\n", tmp->nrof > 1 ? "s" : "");
             strcat(buf_out, buf);
             if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {

@@ -412,6 +412,55 @@ static void reorder_inventory(object *op)
     }
 }
 
+/* QUICKHACK: traverse b3 player inv. and apply changes */
+static void traverse_b3_player_inv(object *op)
+{
+	object *next_obj, *tmp;
+
+	/* lets check we have the quest/one drop container - we will handle it special */
+	if(op->type == TYPE_QUEST_CONTAINER)
+	{
+		/* in b3, we have one drop items and player_info quest infos inside. we do:
+         * - remove the quest_item 1 from the one_drops
+         * - remove all whats not a "real one drop"
+         */
+		for (tmp = op->inv; tmp; tmp = next_obj)
+		{
+			next_obj = tmp->below;
+			if(tmp->type == MISC_OBJECT)
+			{
+				remove_ob(tmp);
+				continue;
+			}
+			/* lets go for secure and mark it as one drop as it should */
+			CLEAR_FLAG(tmp,FLAG_QUEST_ITEM);
+			SET_FLAG(tmp,FLAG_ONE_DROP);
+		}
+		return;
+	}
+
+	for (tmp = op->inv; tmp; tmp = next_obj)
+	{
+		next_obj = tmp->below;
+		/* remove all diseases because possible setting changes and kill pending old quests */
+		if (tmp->type == DISEASE || QUERY_FLAG(tmp,FLAG_QUEST_ITEM))
+		{
+			remove_ob(tmp);
+			continue;
+		}
+		/* the one drop flag context has changed - its now a simple marker */
+		if(QUERY_FLAG(tmp,FLAG_ONE_DROP)) /* means "one drop quest item" */
+		{
+			CLEAR_FLAG(tmp,FLAG_ONE_DROP); 
+			SET_FLAG(tmp,FLAG_STARTEQUIP); /* means "NO-DROP item" */
+		}
+
+		if(tmp->inv)
+			traverse_b3_player_inv(tmp);
+	}
+
+}
+
 /* this whole player loading routine is REALLY not optimized -
  * just look for all these scanf()
  */
@@ -608,7 +657,7 @@ void check_login(object *op)
     pl->orig_stats.Pow = 0;
     pl->orig_stats.Wis = 0;
     pl->orig_stats.Cha = 0;
-	pl->p_ver = 0;
+	pl->p_ver = PLAYER_FILE_VERSION_DEFAULT;
 
     strcpy(pl->savebed_map,EXIT_PATH(&map_archeytpe->clone) );
     pl->bed_x = map_archeytpe->clone.stats.hp;
@@ -782,15 +831,31 @@ void check_login(object *op)
     delete_loader_buffer(mybuffer);
     fclose(fp);
 
-	/* QUICKHACKS - remove for 1.0 and clean player files */	
-	if(pl->p_ver == 0)
+	/* QUICKHACKS - remove for 1.0 and clean player files */
+	/* These parts will transform player files from one version
+     * to another. Mainly adjusting or removing object settings.
+     */
+	if(pl->p_ver == PLAYER_FILE_VERSION_DEFAULT)
 	{
-        for (tmp = op->inv; tmp; tmp = tmp->below)
-        {
+		for (tmp = op->inv; tmp; tmp = tmp->below)
+		{
 			if (tmp->type == ROD || tmp->type == HORN)
 				CLEAR_FLAG(tmp, FLAG_APPLIED);
-        }
-		pl->p_ver = 1;
+		}
+		pl->p_ver = PLAYER_FILE_VERSION_BETA3;
+	}
+	/* beta 3-> b4 playerfile hacks */
+	if(pl->p_ver == PLAYER_FILE_VERSION_BETA3)
+	{
+		traverse_b3_player_inv(op);
+
+		/* force guildhall as beta 4 start login for all players */
+		strcpy(pl->maplevel, EXIT_PATH(&map_archeytpe->clone));
+		strcpy(pl->savebed_map, EXIT_PATH(&map_archeytpe->clone));
+		pl->bed_x = op->x = 17;
+		pl->bed_y = op->y = 11;
+
+		pl->p_ver = PLAYER_FILE_VERSION_BETA4;
 	}
 
     /* at this moment, the inventory is reverse loaded.

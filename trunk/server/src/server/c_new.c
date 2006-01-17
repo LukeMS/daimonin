@@ -754,6 +754,7 @@ void command_new_char(char *params, int len, player *pl)
     GlobalEvent(&CFP);
 #endif
 
+	pl->p_ver = PLAYER_FILE_VERSION_BETA4;
     CONTR(op)->state = ST_PLAYING;
     FREE_AND_CLEAR_HASH2(op->msg);
 

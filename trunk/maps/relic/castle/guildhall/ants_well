@@ -3361,11 +3361,6 @@ arch ant_queen
 type 83
 level 3
 Wis 3
-arch head_ant_queen
-name water well ant queen head
-one_drop 1
-quest_item 1
-end
 end
 end
 arch light5

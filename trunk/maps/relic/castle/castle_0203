@@ -2274,17 +2274,6 @@ layer 5
 x 13
 y 19
 end
-arch stairs_stone_down
-msg
-ATM, this area is unavailable, due to bugs.
-endmsg
-layer 4
-slaying /relic/castle/castleb_0203
-hp 13
-sp 19
-x 13
-y 19
-end
 arch floor_wood4d
 x 13
 y 20

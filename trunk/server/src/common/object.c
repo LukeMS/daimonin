@@ -2348,9 +2348,6 @@ object * insert_ob_in_ob(object *op, object *where)
     otmp = is_player_inv(where);
     if (otmp && CONTR(otmp) != NULL)
     {
-        if (QUERY_FLAG(op, FLAG_ONE_DROP))
-            SET_FLAG(op, FLAG_STARTEQUIP);
-
         if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_player(otmp);
     }

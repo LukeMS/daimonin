@@ -93,10 +93,6 @@ end
 arch floor_wood2
 y 15
 end
-arch sign
-name Kill the boss script goes here
-y 15
-end
 arch floor_wood2
 y 16
 end
