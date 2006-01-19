@@ -249,7 +249,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
       case GAME_STATUS_INIT_SPELL:
       {
-        SpellManager   ::getSingleton().init(mSceneManager);
+        SpellManager::getSingleton().init(mSceneManager);
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_PARTICLE);
         GuiManager::getSingleton().displaySystemMessage("Starting the particles...");
@@ -260,17 +260,24 @@ bool CEvent::frameStarted(const FrameEvent& evt)
       {
         ParticleManager::getSingleton().init(mSceneManager);
         /// Set next state.
-        Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI);
+        Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI_IMAGESET);
         GuiManager::getSingleton().displaySystemMessage("Starting the gui...");
         GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset");
-        GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
       }
       break;
 
-      case GAME_STATUS_INIT_GUI:
+      case GAME_STATUS_INIT_GUI_IMAGESET:
+      {
+        GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
+        /// Set next state.
+        Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI_WINDOWS);
+        GuiManager::getSingleton().displaySystemMessage(" - Parsing windows");
+      }
+      break;
+
+      case GAME_STATUS_INIT_GUI_WINDOWS:
       {
         Logger::log().headline("Starting GUI");
-        GuiManager::getSingleton().displaySystemMessage(" - Parsing windows");
         GuiManager::getSingleton().parseWindows(FILE_GUI_WINDOWS);
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_TILE);

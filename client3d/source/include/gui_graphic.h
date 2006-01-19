@@ -21,63 +21,22 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_GRAPHIC_H
 #define GUI_GRAPHIC_H
 
-#include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
+#include "gui_element.h"
 
 using namespace Ogre;
 
-class GuiGraphic // : public GuiElement
+class GuiGraphic : public GuiElement
 {
 public:
-  ////////////////////////////////////////////////////////////
-  /// Functions.
-  ////////////////////////////////////////////////////////////
-  GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY);
+  GuiGraphic(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
+  {
+  }
   ~GuiGraphic()
   {
   }
-  bool mouseOver(int x, int y)
-  {
-    if (x >= mX && x <= mX + mDestWidth && y >= mY && y <= mY + mDestHeight) return true;
-    return false;
-  }
-  bool setState(int state)
-  {
-    if (mState == state) return false;
-    mState = state;
-    return true;
-  }
-  int getState()
-  {
-    return mState;
-  }
-  void setStateImagePos(std::string state, int x, int y);
   void draw(PixelBox &mSrcPixelBox, Texture *texture);
-
-private:
-  ////////////////////////////////////////////////////////////
-  /// Variables.
-  ////////////////////////////////////////////////////////////
-  enum
-  {
-    FILL_GFX, FILL_COLOR, FILL_NONE, FILL_SUM
-  };
-  struct _pos
-  {
-    int x, y;
-  }
-  gfxSrcPos;
-
-  int  mX, mY, mSrcWidth, mSrcHeight, mDestWidth, mDestHeight;
-  int  mType;
-  std::string mStrName, mStrLabel, mBehavior;
-  uint32 mFillColor;
-  int mLabelXPos, mLabelYPos;
-  int  mOldState, mState;
-  ////////////////////////////////////////////////////////////
-  /// Functions.
-  ////////////////////////////////////////////////////////////
 };
 
 #endif

@@ -32,9 +32,9 @@ const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 const char OVERLAY_TYPE_NAME[] = "Panel"; // defined in OverlayElementFactory.h
 const char FILE_HEIGHT_MAP[]   = "Hoehenkarte.png";
 
-///========================================================================
+///================================================================================================
 /// All pathes MUST be placed here!
-///========================================================================
+///================================================================================================
 const char FILE_GUI_IMAGESET[]          = "./media/xml/GUI_ImageSet.xml";
 const char FILE_GUI_WINDOWS[]           = "./media/xml/GUI_Windows.xml";
 
@@ -70,9 +70,9 @@ const char FILE_SAMPLE_PLAYER_IDLE[]    = "./media/sound/Player_Idle.ogg";
 const char FILE_SAMPLE_WRONG_INPUT[]    = "./media/sound/missspell.wav";
 
 
-///========================================================================
+///================================================================================================
 ///
-///========================================================================
+///================================================================================================
 const int HUGE_BUF = 1024;
 
 enum

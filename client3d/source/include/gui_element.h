@@ -29,17 +29,14 @@ using namespace Ogre;
 
 class GuiElement
 {
-  friend class GuiGadget;
-  friend class GuiGraphic;
 public:
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
-  GuiElement(TiXmlElement *xmlElement, int wt, int ht, int maxXt, int maxYt);
+  /// ////////////////////////////////////////////////////////////////////
+  GuiElement(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
   virtual ~GuiElement()
   {
   }
-
   bool mouseOver(int x, int y)
   {
     if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
@@ -55,8 +52,13 @@ public:
   {
     return mState;
   }
+  const char *getName()
+  {
+    return mStrName.c_str();
+  }
+
   void setStateImagePos(std::string state, int x, int y);
-  virtual void draw(PixelBox &mSrcPixelBox, Texture *texture) =0;
+  virtual void draw(PixelBox &mSrcPixelbox, Texture *texture) =0;
   const char *getTooltip()
   {
     return mStrTooltip.c_str();
@@ -65,29 +67,39 @@ public:
   {
     STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
   };
-
+  enum
+  {
+    FILL_GFX, FILL_COLOR, FILL_NONE, FILL_SUM
+  };
+  enum
+  {
+    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
+  };
 
 protected:
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Variables.
-  ////////////////////////////////////////////////////////////
-  struct _pos
+  /// ////////////////////////////////////////////////////////////////////
+  struct
   {
     int x, y;
   }
   gfxSrcPos[STATE_SUM];
 
-  int  mX, mY, mWidth, mHeight;
-  int  mType;
-  std::string mStrName, mStrLabel, mStrBgLabel, mBehavior, mStrTooltip;
+  int mX, mY, mWidth, mHeight, mSrcWidth, mSrcHeight;
+  int mFontNr;
+  int mState;
+  std::string mStrType, mStrName;
+  uint32 mFillColor;
+
+  std::string mStrLabel, mStrBgLabel, mStrTooltip;
   unsigned char mLabelColor[3];
   int mLabelFont;
   int mLabelXPos, mLabelYPos;
-  int  mOldState, mState;
 
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
 };
 
 #endif

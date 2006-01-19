@@ -21,7 +21,6 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_GADGET_H
 #define GUI_GADGET_H
 
-#include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
@@ -32,18 +31,14 @@ class GuiGadget: public GuiElement
 {
 
 public:
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   GuiGadget(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
   {
   }
-  ~GuiGadget() {
-  }
-
-  const char *getName()
+  ~GuiGadget()
   {
-    return mStrName.c_str();
   }
   void draw(PixelBox &mSrcPixelBox, Texture *texture);
 };

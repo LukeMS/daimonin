@@ -27,50 +27,42 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace std;
 
-////////////////////////////////////////////////////////////
-/// Defines.
-////////////////////////////////////////////////////////////
 typedef enum _game_status
 {
-  GAME_STATUS_INIT_VIEWPORT, // Init all basic ogre stuff.
-  GAME_STATUS_INIT_SOUND,    // Init the sound-system.
-  GAME_STATUS_INIT_LIGHT,    // Init the light-system.
+  GAME_STATUS_INIT_VIEWPORT,     // Init all basic ogre stuff.
+  GAME_STATUS_INIT_SOUND,        // Init the sound-system.
+  GAME_STATUS_INIT_LIGHT,        // Init the light-system.
+  GAME_STATUS_INIT_SPELL,        // Init the spells.
+  GAME_STATUS_INIT_PARTICLE,     // Init the particles.
+  GAME_STATUS_INIT_OBJECT,       // Init the objects.
+  GAME_STATUS_INIT_GUI_IMAGESET, // Parse the IMageSet.
+  GAME_STATUS_INIT_GUI_WINDOWS,  // Parse the Windows.
+  GAME_STATUS_INIT_TILE,         // Init the tile-engine.
+  GAME_STATUS_INIT_NET,          // init the network.
+  GAME_STATUS_INIT_DONE,         // DUMMY - delete me!
 
-  GAME_STATUS_INIT_SPELL,    // Init the spells.
-  GAME_STATUS_INIT_PARTICLE, // Init the particles.
-  GAME_STATUS_INIT_OBJECT,   // Init the objects.
-
-
-  GAME_STATUS_INIT_GUI,      // Init the gui.
-  GAME_STATUS_INIT_TILE,     // Init the tile-engine.
-  GAME_STATUS_INIT_NET,      // init the network.
-  GAME_STATUS_INIT_DONE,      // DUMMY - delete me!
-
-  GAME_STATUS_META,          // connect to meta server.
-  GAME_STATUS_START,         // start all up (without full reset or meta calling).
-  GAME_STATUS_WAITLOOP,      // we are NOT connected to anything.
-  GAME_STATUS_STARTCONNECT,  // we have a server+port, init and start.
-  GAME_STATUS_CONNECT,       // if this is set, we start connecting.
-  GAME_STATUS_VERSION,       // now the steps: Connect, we send version.
-  GAME_STATUS_WAITVERSION,   // wait for response... add up in version cmd.
-  GAME_STATUS_SETUP,         // we ready to send setup commands.
-  GAME_STATUS_WAITSETUP,     // we wait for server response.
-  GAME_STATUS_REQUEST_FILES, // after we get response from setup, we request files if needed.
-  GAME_STATUS_ADDME,         // all setup is done, now try to enter game!
-  GAME_STATUS_LOGIN,         // now we wait for LOGIN request of the server.
-  GAME_STATUS_NAME,          // all this here is tricky
-  GAME_STATUS_PSWD,          // server will trigger this when asking for
-  GAME_STATUS_VERIFYPSWD,    // client will then show input panel or so
-  GAME_STATUS_NEW_CHAR,      // show new char creation screen and send /nc command when finished
-  GAME_STATUS_WAITFORPLAY,   // we simply wait for game start means, this is not a serial stepping here
-  GAME_STATUS_QUIT,          // we are in quit menu
-  GAME_STATUS_PLAY,          // we play now!!
+  GAME_STATUS_META,              // connect to meta server.
+  GAME_STATUS_START,             // start all up (without full reset or meta calling).
+  GAME_STATUS_WAITLOOP,          // we are NOT connected to anything.
+  GAME_STATUS_STARTCONNECT,      // we have a server+port, init and start.
+  GAME_STATUS_CONNECT,           // if this is set, we start connecting.
+  GAME_STATUS_VERSION,           // now the steps: Connect, we send version.
+  GAME_STATUS_WAITVERSION,       // wait for response... add up in version cmd.
+  GAME_STATUS_SETUP,             // we ready to send setup commands.
+  GAME_STATUS_WAITSETUP,         // we wait for server response.
+  GAME_STATUS_REQUEST_FILES,     // after we get response from setup, we request files if needed.
+  GAME_STATUS_ADDME,             // all setup is done, now try to enter game!
+  GAME_STATUS_LOGIN,             // now we wait for LOGIN request of the server.
+  GAME_STATUS_NAME,              // all this here is tricky
+  GAME_STATUS_PSWD,              // server will trigger this when asking for
+  GAME_STATUS_VERIFYPSWD,        // client will then show input panel or so
+  GAME_STATUS_NEW_CHAR,          // show new char creation screen and send /nc command when finished
+  GAME_STATUS_WAITFORPLAY,       // we simply wait for game start means, this is not a serial stepping here
+  GAME_STATUS_QUIT,              // we are in quit menu
+  GAME_STATUS_PLAY,              // we play now!!
   GAME_STATUS_SUM
 } _game_status;
 
-////////////////////////////////////////////////////////////
-/// Singleton class.
-////////////////////////////////////////////////////////////
 class Option
 {
 public:
@@ -98,9 +90,9 @@ public:
     int  value_type;
   };
 
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Variables.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   static optionStruct optStruct[];
 
   std::string mMetaServer;
@@ -108,9 +100,9 @@ public:
   unsigned int  mSelectedMetaServer;
   bool mStartNetwork;
 
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   bool openDescFile(const char *filename);
   void closeDescFile();
   bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
@@ -132,9 +124,9 @@ public:
   }
 
 private:
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Variables.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   unsigned int mGameStatus;
   bool mLogin;
   ifstream *mDescFile;
@@ -148,9 +140,9 @@ private:
   static string  metaserver;
   static int   metaserver_port;
 
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   Option();
   ~Option();
   Option(const Option&); // disable copy-constructor.

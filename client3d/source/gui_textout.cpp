@@ -51,18 +51,18 @@ enum
   TXT_STATE_SUM
 };
 
-///=================================================================================================
+///================================================================================================
 /// Constructor.
-///=================================================================================================
+///================================================================================================
 GuiTextout::GuiTextout()
 {
   mTextGfxBuffer=0;
   maxFontHeight = 0;
 }
 
-///=================================================================================================
+///================================================================================================
 /// .
-///=================================================================================================
+///================================================================================================
 void GuiTextout::createBuffer(int width)
 {
   if (mTextGfxBuffer) delete[] mTextGfxBuffer;
@@ -70,9 +70,9 @@ void GuiTextout::createBuffer(int width)
   mTextGfxBuffer = new uint32[maxFontHeight * width];
 }
 
-///=================================================================================================
+///================================================================================================
 /// Destructor.
-///=================================================================================================
+///================================================================================================
 GuiTextout::~GuiTextout()
 {
   for (std::vector<mFont*>::iterator i = mvFont.begin(); i < mvFont.end(); ++i)
@@ -84,9 +84,9 @@ GuiTextout::~GuiTextout()
   if (mTextGfxBuffer) delete[] mTextGfxBuffer;
 }
 
-///=================================================================================================
+///================================================================================================
 /// Load a RAW font into main memory.
-///=================================================================================================
+///================================================================================================
 void GuiTextout::loadRawFont(const char *filename)
 {
   Image image;
@@ -115,12 +115,13 @@ void GuiTextout::loadRawFont(const char *filename)
   Logger::log().info() << "System-Font (" << image.getWidth() << "x" << image. getHeight() <<") was created.";
 }
 
-///=================================================================================================
+///================================================================================================
 /// Load a TTFont into main memory.
-///=================================================================================================
+///================================================================================================
 void GuiTextout::loadTTFont(const char *filename, const char *size, const char *reso)
 {
   // Load the font.
+  if (!filename) return;
   Ogre::NameValuePairList pairList;
   int iSize, iReso;
   if (size) iSize = atoi(size);  else iSize = MIN_FONT_SIZE;
@@ -140,9 +141,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   String strTexture = pMaterial.getPointer()->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
   TexturePtr pTexture = TextureManager::getSingleton().getByName(strTexture);
   Texture *texture = pTexture.getPointer();
-  /////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   /// Convert the font to RAW format.
-  /////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   int texW  = texture->getWidth();
   int texH  = texture->getHeight();
 
@@ -206,26 +207,26 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   //#define CREATE_SYSTEM_FONT
 #ifdef CREATE_SYSTEM_FONT
-  /// ////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   ///.The first font ever created is our system font.
   /// Run this function only if you are in need of a new system-font!
-  /// ////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   static int sysFont = -1;
   if (!++sysFont)
   {
     Image img;
-    /// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
     /// This is the Ogre fontdata.
-    /// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
     /*
     uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
     texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
     img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
     img.save("c:\\OgreFont.png");
     */
-    /// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
     /// This is the Daimonin fontdata.
-    /// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
     // draw the char-end sign to get rid of the monospace.
     uint32 *data = fnt->data;
     for (int i=0; i < CHARS_IN_FONT; ++i)
@@ -244,23 +245,23 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   }
 #endif
 
-  //////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   ///.Free Memory.
-  /////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   MaterialManager::getSingleton().remove((ResourcePtr&)pMaterial);
   TextureManager ::getSingleton().remove((ResourcePtr&)pTexture);
   FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
   createBuffer(MAX_TEXTLINE_LEN); // Set standard buffer size.
-  //////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
   ///.Create Text Cursor (for text input).
-  /////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////
 
   //TODO.
 }
 
-///=================================================================================================
+///================================================================================================
 /// .
-///=================================================================================================
+///================================================================================================
 void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
 {
   /// Restore background.
@@ -292,23 +293,22 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
     Box(line->x1, line->y1, line->x2, line->y2));
 }
 
-///=================================================================================================
+///================================================================================================
 /// Print to a buffer.
-///=================================================================================================
+///================================================================================================
 void GuiTextout::PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int fontNr, uint32 bgColor)
 {
   if (fontNr > mvFont.size()) fontNr = 0;
   int height = mvFont[fontNr]->height;
   /// Clear the textline.
-  Logger::log().info() << "w * h = " << width * mvFont[fontNr]->height;
   for (unsigned int i =0; i < width * mvFont[fontNr]->height; ++i) dest_data[i] = bgColor;
   if (!text || text[0] == 0) return;
   drawText(width, height, dest_data, text, fontNr);
 }
 
-///=================================================================================================
+///================================================================================================
 /// .
-///=================================================================================================
+///================================================================================================
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr)
 {
   int fontPosX, fontPosY=0;
@@ -389,9 +389,9 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
   }
 }
 
-///=================================================================================================
+///================================================================================================
 /// Calculate the width and height of the needed pixel-field for the given text.
-///=================================================================================================
+///================================================================================================
 void GuiTextout::CalcTextSize(unsigned int &x, unsigned int &y, int maxWidth, int maxHeight, const char *text, unsigned int fontNr)
 {
   if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
