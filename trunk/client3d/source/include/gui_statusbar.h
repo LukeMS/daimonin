@@ -21,45 +21,31 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_STATUSBAR_H
 #define GUI_STATUSBAR_H
 
-#include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
+#include "gui_element.h"
 
 using namespace Ogre;
 
-class GuiStatusbar // : public GuiElement
+class GuiStatusbar : public GuiElement
 {
 public:
-  ////////////////////////////////////////////////////////////
-  /// Variables.
-  ////////////////////////////////////////////////////////////
-
-  ////////////////////////////////////////////////////////////
-  /// Functions.
-  ////////////////////////////////////////////////////////////
-  GuiStatusbar(TiXmlElement *xmlElem, int maxX, int maxY);
-  ~GuiStatusbar();
-  bool mouseOver(int x, int y)
+  GuiStatusbar(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
   {
-    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight) return true;
-    return false;
+    mGfxBuffer = 0;
+    setValue(1.0); // default: 100%
   }
-  void draw(PixelBox &mSrcPixelBox, Texture *texture, Real value);
+  ~GuiStatusbar()
+  {
+    delete[] mGfxBuffer;
+  }
+  void draw(PixelBox &mSrcPixelBox, Texture *texture);
   void setValue(Real value);
+
 private:
-  ////////////////////////////////////////////////////////////
-  /// Variables.
-  ////////////////////////////////////////////////////////////
-  int  mPosX, mPosY, mWidth, mHeight;
   bool mHorizontal;
   int mValue;
-  std::string mName;
-  uint32 mColor;
   uint32 *mGfxBuffer;
-  bool mGfxBufferInit;
-  ////////////////////////////////////////////////////////////
-  /// Functions.
-  ////////////////////////////////////////////////////////////
 };
 
 #endif

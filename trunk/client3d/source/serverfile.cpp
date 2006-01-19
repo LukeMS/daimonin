@@ -29,9 +29,9 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace std;
 
-//=================================================================================================
-// Get length and checksum from (server sended) files.
-//=================================================================================================
+///================================================================================================
+/// Get length and checksum from (server sended) files.
+///================================================================================================
 void ServerFile::getFileAttibutes(int file_enum)
 {
   setStatus(file_enum, SERVER_FILE_STATUS_OK);
@@ -54,9 +54,9 @@ void ServerFile::getFileAttibutes(int file_enum)
   setLength(file_enum, (int)out.str().size());
 }
 
-//=================================================================================================
-// Get length and checksum from (server sended) files.
-//=================================================================================================
+///================================================================================================
+/// Get length and checksum from (server sended) files.
+///================================================================================================
 void ServerFile::checkFiles()
 {
   Logger::log().info() << "Checking all files coming from server:";

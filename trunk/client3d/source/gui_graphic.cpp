@@ -19,122 +19,25 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <ctime>
-#include <tinyxml.h>
 #include <OgreHardwarePixelBuffer.h>
-#include "define.h"
 #include "gui_graphic.h"
-#include "gui_manager.h"
-#include "gui_cursor.h"
 #include "logger.h"
 
-///=================================================================================================
-/// Parse a gadget entry.
-///=================================================================================================
-GuiGraphic::GuiGraphic(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
-{
-  TiXmlElement *xmlGadget;
-  std::string strValue;
-  const char *strTmp;
-  mState = 0;
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the gadget.
-  /////////////////////////////////////////////////////////////////////////
-  strTmp = xmlElem->Attribute("name");
-  if (strTmp) mStrName = strTmp;
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the Behavior.
-  /////////////////////////////////////////////////////////////////////////
-  mBehavior = xmlElem->Attribute("type");
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the position.
-  /////////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
-  {
-    mX = atoi(xmlGadget->Attribute("x"));
-    mY = atoi(xmlGadget->Attribute("y"));
-  }
-  if (mX > maxX-2) mX = maxX-2;
-  if (mY > maxY-2) mY = maxY-2;
-  mSrcWidth = w;
-  mSrcHeight= h;
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the fill color.
-  /////////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Color")))
-  {
-    // PixelFormat: ARGB.
-    mFillColor = atoi(xmlGadget->Attribute("blue" ));
-    mFillColor+= atoi(xmlGadget->Attribute("green")) << 8;
-    mFillColor+= atoi(xmlGadget->Attribute("red"  )) << 16;
-    mFillColor+= atoi(xmlGadget->Attribute("alpha")) << 24;
-  }
-  /////////////////////////////////////////////////////////////////////////
-  /// Parse the dimension.
-  /////////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Range")))
-  {
-    mDestWidth = atoi(xmlGadget->Attribute("width"));
-    mDestHeight= atoi(xmlGadget->Attribute("height"));
-  }
-  if (mX + mDestWidth > maxX) mDestWidth = maxX-mX-1;
-  if (mY + mDestHeight >maxY) mDestHeight= maxY-mY-1;
-}
-
-///=================================================================================================
+///================================================================================================
 /// .
-///=================================================================================================
-void GuiGraphic::setStateImagePos(std::string name, int x, int y)
-{
-  if (name == "Standard")
-  {
-    gfxSrcPos.x = x;
-    gfxSrcPos.y = y;
-  }
-  else
-  {
-    Logger::log().error() << "Graphic '" << mStrName << "' has no State '" << "' " << name;
-  }
-}
-
-///=================================================================================================
-/// .
-///=================================================================================================
+///================================================================================================
 void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
 {
-  std::string strID, strTemp;
-  int x1, y1, x2, y2;
-  bool color_fill;
-  if (mBehavior == "GFX_FILL")
-    color_fill = false;
-  else
-    color_fill = true;
-  /////////////////////////////////////////////////////////////////////////
-  /// Fill background rect with a color.
-  /////////////////////////////////////////////////////////////////////////
-  if (color_fill)
-  {
-    //    clock_t time = clock();
-    PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mDestWidth, mY+mDestHeight), HardwareBuffer::HBL_READ_ONLY );
-    uint32 *dest_data = (uint32*)pb.data;
-    for (int y = 0; y < mDestHeight; ++y)
-    {
-      for (int x= 0; x < mDestWidth; ++x)
-      {
-        dest_data[x+y*texture->getWidth()] = mFillColor;
-      }
-    }
-    texture->getBuffer()->unlock();
-    //    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
-  }
-  /////////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Fill background rect with a gfx.
-  /////////////////////////////////////////////////////////////////////////
-  else
+  /// ////////////////////////////////////////////////////////////////////
+  if (mStrType == "GFX_FILL")
   {
+    int x1, y1, x2, y2;
     PixelBox src;
     bool dirty = true;
-    int sumX = (mDestWidth-1)  / mSrcWidth  + 1;
-    int sumY = (mDestHeight-1) / mSrcHeight + 1;
+    int sumX = (mWidth-1)  / mSrcWidth  + 1;
+    int sumY = (mHeight-1) / mSrcHeight + 1;
     y1 = 0; y2 = mSrcHeight;
 
     for (int y = 0; y < sumY; ++y)
@@ -142,34 +45,34 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
       if (dirty)
       {
         src = mSrcPixelBox.getSubVolume(Box(
-                                          gfxSrcPos.x,
-                                          gfxSrcPos.y,
-                                          gfxSrcPos.x + mSrcWidth,
-                                          gfxSrcPos.y + mSrcHeight));
+                                          gfxSrcPos[mState].x,
+                                          gfxSrcPos[mState].y,
+                                          gfxSrcPos[mState].x + mSrcWidth,
+                                          gfxSrcPos[mState].y + mSrcHeight));
         dirty = false;
       }
-      if (y2 > mDestHeight)
+      if (y2 > mHeight)
       {
-        y2 = mDestHeight;
-        if (y1 > mDestHeight) y1 = mDestHeight-1;
+        y2 = mHeight;
+        if (y1 > mHeight) y1 = mHeight-1;
         dirty = true;
       }
       x1 = 0; x2 = mSrcWidth;
       for (int x = 0; x < sumX; ++x)
       {
-        if (x2 > mDestWidth)
+        if (x2 > mWidth)
         {
-          x2 = mDestWidth;
+          x2 = mWidth;
           if (x1 >= x2) x1 = x2-1;
           dirty = true;
         }
         if (dirty)
         {
           src = mSrcPixelBox.getSubVolume(Box(
-                                            gfxSrcPos.x,
-                                            gfxSrcPos.y,
-                                            gfxSrcPos.x + x2-x1,
-                                            gfxSrcPos.y + y2-y1));
+                                            gfxSrcPos[mState].x,
+                                            gfxSrcPos[mState].y,
+                                            gfxSrcPos[mState].x + x2-x1,
+                                            gfxSrcPos[mState].y + y2-y1));
         }
         texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
         x1 = x2;
@@ -179,5 +82,22 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
       y2+= mSrcHeight;
     }
   }
+  /// ////////////////////////////////////////////////////////////////////
+  /// Fill background rect with a color.
+  /// ////////////////////////////////////////////////////////////////////
+  else
+  {
+    //    clock_t time = clock();
+    PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_READ_ONLY );
+    uint32 *dest_data = (uint32*)pb.data;
+    for (int y = 0; y < mHeight; ++y)
+    {
+      for (int x= 0; x < mWidth; ++x)
+      {
+        dest_data[x+y*texture->getWidth()] = mFillColor;
+      }
+    }
+    texture->getBuffer()->unlock();
+    //    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
+  }
 }
-

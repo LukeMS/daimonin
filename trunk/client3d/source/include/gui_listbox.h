@@ -24,42 +24,43 @@ http://www.gnu.org/licenses/licenses.html
 #include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
+#include "gui_element.h"
+#include "gui_textout.h"
 
 using namespace Ogre;
 
-static const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
+static const int  SIZE_STRING_BUFFER = 128; // MUST be 2^X.
 
-class GuiListbox // : public GuiElement
+class GuiListbox : public GuiElement
 {
 public:
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
-  GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY);
+  /// ////////////////////////////////////////////////////////////////////
+  GuiListbox(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
+  {
+    /// ////////////////////////////////////////////////////////////////////
+    /// Create buffer to hold the pixel information of the listbox.
+    /// ////////////////////////////////////////////////////////////////////
+    mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
+    int size = mWidth * mHeight + mWidth * (mFontHeight+1);
+    mGfxBuffer = new uint32[size];
+    for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Set defaults.
+    /// ////////////////////////////////////////////////////////////////////
+    mIsClosing    = false;
+    mIsOpening    = false;
+    mDragging     = false;
+    mBufferPos    = 0;
+    mPrintPos     = 0;
+    mRowsToScroll = 0;
+    mRowsToPrint  = mHeight / mFontHeight;
+    mScroll       = 0;
+  }
   ~GuiListbox();
-  bool mouseOver(int x, int y)
-  {
-    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight) return true;
-    return false;
-  }
-  bool setState(int state)
-  {
-    if (mState == state) return false;
-    mState = state;
-    return true;
-  }
-  const char *getName()
-  {
-    return mStrName.c_str();
-  }
-  int getState()
-  {
-    return mState;
-  }
-  void setStateImagePos(std::string state, int x, int y);
-  void update(Texture *texture);
+  void draw(PixelBox &, Texture *texture);
   void addTextline(const char *text);
-
   int getIndex()
   {
     return mIndex;
@@ -70,24 +71,9 @@ public:
   }
 private:
 
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Variables.
-  ////////////////////////////////////////////////////////////
-  enum
-  {
-    TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
-  };
-  enum
-  {
-    STATE_PASSIVE, STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_SUM
-  };
-
-  struct _pos
-  {
-    int x, y;
-  };
-  struct _pos gfxSrcPos[STATE_SUM];
-
+  /// ////////////////////////////////////////////////////////////////////
   struct _row
   {
     std::string str;
@@ -95,7 +81,6 @@ private:
     //    ColourValue colorBottom;
   }
   row[SIZE_STRING_BUFFER];
-
 
   Real mClose;                 // Only Headline visible.
   Real mLastHeight;            // The height before window was closed.
@@ -105,23 +90,16 @@ private:
   bool mVisible;
   bool mDragging;
   int  mScroll;
-
+  uint32 *mGfxBuffer;
   int  mRowsToScroll, mRowsToPrint;
   int  mSumRows;
   int  mPrintPos;
   int  mBufferPos;
   int  mIndex;
   int  mFontHeight;
-  int  mPosX, mPosY, mWidth, mHeight;
-  int  mType;
-  int  mFont;
-  std::string mStrName, mStrLabel, mBehavior;
-  uint32 mFillColor;
-  uint32 *mGfxBuffer;
-  int  mOldState, mState;
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Functions.
-  ////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
 };
 
 #endif

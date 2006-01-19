@@ -35,56 +35,37 @@ using namespace Ogre;
 
 GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
   {
-    // Buttons.
-    { "ButtonClose",   GUI_BUTTON_CLOSE
-    },
-    { "ButtonOK",      GUI_BUTTON_OK
-    },
-    { "ButtonCancel",  GUI_BUTTON_CANCEL
-    },
-    { "ButtonMin",     GUI_BUTTON_MINIMIZE
-    },
-    { "ButtonMax",     GUI_BUTTON_MAXIMIZE
-    },
+    { "ButtonClose",   GUI_BUTTON_CLOSE    },
+    { "ButtonOK",      GUI_BUTTON_OK       },
+    { "ButtonCancel",  GUI_BUTTON_CANCEL   },
+    { "ButtonMin",     GUI_BUTTON_MINIMIZE },
+    { "ButtonMax",     GUI_BUTTON_MAXIMIZE },
     // Listboxes.
-    { "TextList",      GUI_LIST_TEXTWIN
-    },
-    { "ChatList",      GUI_LIST_CHATWIN
-    },
-    { "Requester",     GUI_LIST_UP
-    },
-    { "Requester",     GUI_LIST_DOWN
-    },
-    { "Requester",     GUI_LIST_LEFT
-    },
-    { "Requester",     GUI_LIST_RIGHT
-    },
+    { "TextList",      GUI_LIST_TEXTWIN    },
+    { "ChatList",      GUI_LIST_CHATWIN    },
+    { "Requester",     GUI_LIST_UP         },
+    { "Requester",     GUI_LIST_DOWN       },
+    { "Requester",     GUI_LIST_LEFT       },
+    { "Requester",     GUI_LIST_RIGHT      },
     // Statusbar.
-    { "HealthBar",     GUI_STATUSBAR_PLAYER_HEALTH
-    },
-    { "ManaBar",       GUI_STATUSBAR_PLAYER_MANA
-    },
-    { "GraceBar",      GUI_STATUSBAR_PLAYER_GRACE
-    },
+    { "HealthBar",     GUI_STATUSBAR_PLAYER_HEALTH  },
+    { "ManaBar",       GUI_STATUSBAR_PLAYER_MANA    },
+    { "GraceBar",      GUI_STATUSBAR_PLAYER_GRACE   },
     // TextValues.
-    { "currentFPS",    GUI_TEXTVALUE_STAT_CUR_FPS
-    },
-    { "bestFPS",       GUI_TEXTVALUE_STAT_BEST_FPS
-    },
-    { "worstFPS",      GUI_TEXTVALUE_STAT_WORST_FPS
-    },
-    { "sumTris",       GUI_TEXTVALUE_STAT_SUM_TRIS
-    }
+    { "currentFPS",    GUI_TEXTVALUE_STAT_CUR_FPS   },
+    { "bestFPS",       GUI_TEXTVALUE_STAT_BEST_FPS  },
+    { "worstFPS",      GUI_TEXTVALUE_STAT_WORST_FPS },
+    { "sumTris",       GUI_TEXTVALUE_STAT_SUM_TRIS  }
   };
 
-///=================================================================================================
+///================================================================================================
 /// Parse the gfx datas from the imageset.
-///=================================================================================================
+///================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
-  /// //////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Check for a working description file.
-  /// //////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   TiXmlElement *xmlRoot, *xmlElem, *xmlState;
   TiXmlDocument doc(fileImageSet);
   if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !xmlRoot->Attribute("file"))
@@ -94,9 +75,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
   }
   mStrImageSetGfxFile = xmlRoot->Attribute("file");
   Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
-  /////////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Parse the gfx coordinates.
-  /////////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   const char *strTemp;
   for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
   {
@@ -106,9 +87,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
     Entry->name   = strTemp;
     Entry->width  = atoi(xmlElem->Attribute("width"));
     Entry->height = atoi(xmlElem->Attribute("height"));
-    /////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
     /// Parse the Position entries.
-    /////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
     for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
     {
       strTemp = xmlState->Attribute("name");
@@ -126,9 +107,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
   mSrcPixelBox = mImageSetImg.getPixelBox();
 }
 
-///=================================================================================================
+///================================================================================================
 /// .
-///=================================================================================================
+///================================================================================================
 GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 {
   if (guiImage)
@@ -141,9 +122,9 @@ GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
   return NULL;
 }
 
-///=================================================================================================
+///================================================================================================
 /// .
-///=================================================================================================
+///================================================================================================
 GuiImageset::~GuiImageset()
 {
   for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
