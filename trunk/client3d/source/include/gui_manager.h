@@ -107,7 +107,7 @@ private:
   bool mHasFocus, mTooltipRefresh;
   clock_t mTooltipDelay;
   int mFocusedWindow, mFocusedGadget;
-  int mMouseX, mMouseY;
+  int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
   Overlay *mOverlay;
   OverlayElement *mElement;
   MaterialPtr mMaterial;

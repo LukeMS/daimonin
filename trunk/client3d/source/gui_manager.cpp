@@ -153,6 +153,12 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     srcEntry = GuiImageset::getSingleton().getStateGfxPositions(valString);
     if (srcEntry)
     {
+      mHotSpotX = mHotSpotY =0;
+      if ((xmlElem = xmlElem->FirstChildElement("HotSpotOffset")))
+      {
+        if ((valString = xmlElem->Attribute("x"))) mHotSpotX = atoi(valString);
+        if ((valString = xmlElem->Attribute("y"))) mHotSpotY = atoi(valString);
+      }
       GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
       for (unsigned int i=0; i < srcEntry->state.size(); ++i)
       {
@@ -228,7 +234,7 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
   const char *actGadgetName;
   for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
-    actGadgetName = guiWindow[i].mouseEvent(mouseAction, mMouseX, mMouseY);
+    actGadgetName = guiWindow[i].mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY);
     if (actGadgetName)
     {
       mFocusedWindow = i;
@@ -276,14 +282,9 @@ void GuiManager::update()
       label.y2 = GuiTextout::getSingleton().getFontHeight(label.font);
       clearTooltip();
       GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), mStrTooltip.c_str());
-      mTooltipRefresh = false;
-      mElement->setPosition(mMouseX+15, mMouseY+20); // TODO:
+      mElement->setPosition(mMouseX+33, mMouseY+38); // TODO:
       mOverlay->show();
-    }
-    else if (mStrTooltip == "")
-    {
       mTooltipRefresh = false;
-      mOverlay->hide();
     }
   }
 }
@@ -320,17 +321,19 @@ void GuiManager::displaySystemMessage(const char *text)
 ///================================================================================================
 /// Set a tooltip text. NULL hides the tooltip.
 ///================================================================================================
-void GuiManager::setTooltip(const char*text)
+void GuiManager::setTooltip(const char *text)
 {
-  if (!text)
+  if (!text || !(*text))
   {
     mTooltipRefresh = false;
-    return;
+    mOverlay->hide();
   }
-  if (mStrTooltip == text) return;
-  mStrTooltip = text;
-  mTooltipRefresh = true;
-  mTooltipDelay = clock()/ CLOCKS_PER_SEC + 2;
+  else
+  {
+    mTooltipRefresh = true;
+    mStrTooltip = text;
+    mTooltipDelay = clock()/ CLOCKS_PER_SEC + 2;
+  }
 }
 
 ///================================================================================================

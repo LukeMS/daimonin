@@ -44,7 +44,6 @@ private:
   std::string mDescFile;
   std::vector<Light*>mvLightObject;
 
-
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
@@ -54,11 +53,14 @@ public:
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
-  LightManager() {
-    ;}
+  LightManager()
+  {
+  }
   ~LightManager();
-  static LightManager &getSingleton() {
-    static LightManager Singleton; return Singleton; }
+  static LightManager &getSingleton()
+  {
+    static LightManager Singleton; return Singleton;
+  }
   bool init(SceneManager *SceneMgr, SceneNode  *Node);
   bool addObject(unsigned int type, const char *desc_filename, Vector3 pos);
   void delObject(int number);
