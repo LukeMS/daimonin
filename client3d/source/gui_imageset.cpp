@@ -68,36 +68,35 @@ void GuiImageset::parseXML(const char *fileImageSet)
   /// ////////////////////////////////////////////////////////////////////
   TiXmlElement *xmlRoot, *xmlElem, *xmlState;
   TiXmlDocument doc(fileImageSet);
-  if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !xmlRoot->Attribute("file"))
+  const char *strTemp;
+  if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
   {
     Logger::log().error() << "XML-File '" << fileImageSet << "' is broken or missing.";
     return;
   }
-  mStrImageSetGfxFile = xmlRoot->Attribute("file");
+  mStrImageSetGfxFile = strTemp;
   Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the gfx coordinates.
   /// ////////////////////////////////////////////////////////////////////
-  const char *strTemp;
   for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
   {
-    strTemp = xmlElem->Attribute("name");
-    if (!strTemp)  continue;
+    if (!(strTemp = xmlElem->Attribute("name"))) continue;
     GuiSrcEntry *Entry = new GuiSrcEntry;
     Entry->name   = strTemp;
-    Entry->width  = atoi(xmlElem->Attribute("width"));
-    Entry->height = atoi(xmlElem->Attribute("height"));
+    if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
+    if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Position entries.
     /// ////////////////////////////////////////////////////////////////////
     for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
     {
-      strTemp = xmlState->Attribute("name");
-      if (!strTemp)  continue;
+      if (!(strTemp= xmlState->Attribute("name")))  continue;
       GuiElementState *s = new GuiElementState;
       s->name = strTemp;
-      s->x = atoi(xmlState->Attribute("posX"));
-      s->y = atoi(xmlState->Attribute("posY"));
+      s->x = s->y = 0;
+      if ((strTemp= xmlState->Attribute("posX"))) s->x = atoi(strTemp);
+      if ((strTemp= xmlState->Attribute("posY"))) s->y = atoi(strTemp);
       Entry->state.push_back(s);
     }
     mvSrcEntry.push_back(Entry);

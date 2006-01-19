@@ -30,7 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
-//#include <OgreFontManager.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <tinyxml.h>
 
@@ -115,17 +114,17 @@ void GuiWindow::Init(TiXmlElement *xmlElem)
 void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 {
   TiXmlElement *xmlElem;
-  const char *valString;
-  std::string strTmp;
-  mStrName = xmlRoot->Attribute("name");
+  const char *strTmp;
+
+  if ((strTmp = xmlRoot->Attribute("name"))) mStrName = strTmp;
   Logger::log().info () << "Parsing window: " << mStrName;
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the Coordinates type.
   /// ////////////////////////////////////////////////////////////////////
   mSizeRelative = false;
-  if ((valString = xmlRoot->Attribute("relativeCoords")))
+  if ((strTmp = xmlRoot->Attribute("relativeCoords")))
   {
-    if (!stricmp(valString, "true"))  mSizeRelative = true;
+    if (!stricmp(strTmp, "true"))  mSizeRelative = true;
   }
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the Position entries.
@@ -133,17 +132,17 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   mPosX = mPosY = mPosZ = 100;
   if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
   {
-    mPosX = atoi(xmlElem->Attribute("x"));
-    mPosY = atoi(xmlElem->Attribute("y"));
-    mPosZ = atoi(xmlElem->Attribute("zOrder"));
+    if ((strTmp = xmlElem->Attribute("x")))      mPosX = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("y")))      mPosY = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("zOrder"))) mPosZ = atoi(strTmp);
   }
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the Size entries.
   /// ////////////////////////////////////////////////////////////////////
   if ((xmlElem = xmlRoot->FirstChildElement("Size")))
   {
-    mWidth  = atoi(xmlElem->Attribute("width"));
-    mHeight = atoi(xmlElem->Attribute("height"));
+    if ((strTmp = xmlElem->Attribute("width")))  mWidth = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("height"))) mHeight = atoi(strTmp);
   }
   if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
   if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
@@ -153,17 +152,17 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
   if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
   {
-    mDragPosX1 = atoi(xmlElem->Attribute("x"));
-    mDragPosY1 = atoi(xmlElem->Attribute("y"));
-    mDragPosX2 = atoi(xmlElem->Attribute("width")) + mDragPosX1;
-    mDragPosY2 = atoi(xmlElem->Attribute("height"))+ mDragPosY1;
+    if ((strTmp = xmlElem->Attribute("x")))      mDragPosX1 = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("y")))      mDragPosY1 = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("width")))  mDragPosX2 = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("height"))) mDragPosY2 = atoi(strTmp);
   }
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the Tooltip entries.
   /// ////////////////////////////////////////////////////////////////////
   if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
-  { // We will show tooltip only if mouse is over the moving area.
-    mStrTooltip = xmlElem->Attribute("text");
+  { /// We will show tooltip only if mouse is over the moving area.
+    if ((strTmp = xmlElem->Attribute("text")))  mStrTooltip = strTmp;
   }
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the gadgets.
@@ -172,7 +171,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
   {
     /// Find the gfx data in the tileset.
-    srcEntry = GuiImageset::getSingleton().getStateGfxPositions(xmlElem->Attribute("name"));
+    if (!(strTmp = xmlElem->Attribute("name"))) continue;
+    srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
     if (srcEntry)
     {
       GuiGadget *gadget = new GuiGadget(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
@@ -184,8 +184,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     }
     else
     {
-      Logger::log().warning() << xmlElem->Attribute("name") << " was defined in '"
-      << FILE_GUI_WINDOWS << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
+      Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
+                              << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
     }
   }
   /// ////////////////////////////////////////////////////////////////////
@@ -193,10 +193,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   /// ////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
   {
-    if (!stricmp(xmlElem->Attribute("type"), "GFX_FILL"))
+    if (!(strTmp = xmlElem->Attribute("type"))) continue;
+    if (!stricmp(strTmp, "GFX_FILL"))
     { /// This is a GFX_FILL.
       /// Find the gfx data in the tileset.
-      GuiSrcEntry *srcEntry = GuiImageset::getSingleton().getStateGfxPositions(xmlElem->Attribute("name"));
+      if (!(strTmp = xmlElem->Attribute("name"))) continue;
+      GuiSrcEntry *srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
       if (srcEntry)
       {
         GuiGraphic *graphic = new GuiGraphic(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
@@ -208,8 +210,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
       }
       else
       {
-        Logger::log().warning() << xmlElem->Attribute("name") << " was defined in '"
-        << FILE_GUI_WINDOWS << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
+        Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
+                                << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
       }
     }
     else
@@ -223,11 +225,11 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   /// ////////////////////////////////////////////////////////////////////
   for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
   {
-    valString = xmlElem->Attribute("name");
+    if (!(strTmp = xmlElem->Attribute("name"))) continue;
     GuiListbox *listbox = new GuiListbox(xmlElem, 0, 0, mWidth, mHeight);
     for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
     {
-      if (GuiImageset::getSingleton().getElementName(i) != valString) continue;
+      if (GuiImageset::getSingleton().getElementName(i) != strTmp) continue;
       listbox->setIndex(i);
       break;
     }
@@ -241,10 +243,10 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     TextLine *textline = new TextLine;
     textline->index = -1;
     textline->BG_Backup = 0;
-    textline->x1   = atoi(xmlElem->Attribute("x"));
-    textline->y1   = atoi(xmlElem->Attribute("y"));
-    textline->font = atoi(xmlElem->Attribute("font"));
-    textline->text = xmlElem->Attribute("text");
+    if ((strTmp = xmlElem->Attribute("x")))    textline->x1   = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("y")))    textline->y1   = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("font"))) textline->font = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("text"))) textline->text = strTmp;
     mvTextline.push_back(textline);
   }
   /// ////////////////////////////////////////////////////////////////////
@@ -253,12 +255,11 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   for (xmlElem = xmlRoot->FirstChildElement("TextBox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextBox"))
   {
     TextLine *textline = new TextLine;
-    valString = xmlElem->Attribute("name");
-    if (valString)
+    if ((strTmp = xmlElem->Attribute("name")))
     {
       for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
       {
-        if (GuiImageset::getSingleton().getElementName(i) == valString)
+        if (GuiImageset::getSingleton().getElementName(i) == strTmp)
         {
           textline->index = i;
           break;
@@ -271,11 +272,11 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
       textline->index = -1;
     }
     textline->BG_Backup = 0;
-    textline->font = atoi(xmlElem->Attribute("font"));
-    textline->x1   = atoi(xmlElem->Attribute("x"));
-    textline->y1   = atoi(xmlElem->Attribute("y"));
-    textline->width= atoi(xmlElem->Attribute("width"));
-    textline->text = xmlElem->Attribute("text");
+    if ((strTmp = xmlElem->Attribute("font")))  textline->font = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("x")))     textline->x1   = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("y")))     textline->y1   = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("width"))) textline->width= atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("text")))  textline->text = strTmp;
     mvTextline.push_back(textline);
   }
   /// ////////////////////////////////////////////////////////////////////
@@ -453,8 +454,8 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 
           if (!strcmp(actGadgetName, "Button_Close"))
           {
-            mOverlay->hide(); // just testing.
             GuiManager::getSingleton().setTooltip(NULL);
+            mOverlay->hide(); // just testing.
           }
         }
       }
@@ -485,7 +486,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           {
             mvGadget[mMouseOver]->draw(mSrcPixelBox, mTexture.getPointer());
             mMouseOver = -1;
-            GuiManager::getSingleton().setTooltip(" ");
+            GuiManager::getSingleton().setTooltip(NULL);
           }
         }
         /// ////////////////////////////////////////////////////////////////////
@@ -500,7 +501,6 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             {  // (If not already done) change the gadget state to mouseover.
               mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
               mMouseOver = gadget;
-              //mStrTooltip = mvGadget[gadget]->getTooltip();
               GuiManager::getSingleton().setTooltip(mvGadget[gadget]->getTooltip());
             }
           }
