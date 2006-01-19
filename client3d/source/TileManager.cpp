@@ -532,7 +532,7 @@ void TileManager::shrinkTexture(const std::string &terrain_type)
       strFilename+= "_"+ StringConverter::toString(pix+pix, 3, '0') + ".png";
       if (!LoadImage(image, strFilename)) break;
       /// Resize the Image.
-      image.resize((ushort)image.getWidth()/2, (ushort)image.getHeight()/2, Image::FILTER_BILINEAR);
+      image.resize((Ogre::ushort)image.getWidth()/2, (Ogre::ushort)image.getHeight()/2, Image::FILTER_BILINEAR);
       /// Save the Image.
       strFilename = PATH_TILE_TEXTURES;
       strFilename+= terrain_type;
@@ -562,7 +562,7 @@ void TileManager::shrinkFilter()
       Logger::log().error() << "Filter texture '" << strFilename << "' was not found.";
       return;
     }
-    image.resize((ushort)image.getWidth()/2, (ushort)image.getHeight()/2, Image::FILTER_BILINEAR);
+    image.resize((Ogre::ushort)image.getWidth()/2, (Ogre::ushort)image.getHeight()/2, Image::FILTER_BILINEAR);
     strFilename = PATH_TILE_TEXTURES;
     strFilename+= "filter_" + StringConverter::toString(pix, 3, '0') + ".png";
     image.save(strFilename);
