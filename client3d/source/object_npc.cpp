@@ -35,11 +35,9 @@ http://www.gnu.org/licenses/licenses.html
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 SceneManager *NPC::mSceneMgr =0;
 
-sPicture     NPC::picSkin  = {
-                               0,    0, 512, 512 };
-sPicture     NPC::picHair  = {
-                               112,   0,  90,  65 };
-uint32       NPC::color[MAX_NPC_COLORS] =
+sPicture NPC::picSkin  = { 1,   1, 255, 255 };
+sPicture NPC::picHair  = {55,   0,  45,  32 };
+uint32   NPC::color[MAX_NPC_COLORS] =
   {
     0x00e3ad91, 0x00f2dc91, 0x00c95211, 0x0037250b,
     0x00ffffff, 0x00000000, 0x00000000, 0x00000000,
@@ -158,7 +156,7 @@ NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
   //mMaterial->load();
 
 
-  mNode->scale(.6,.6,.6); // Remove Me!!!!
+  mNode->scale(.4,.4,.4); // Remove Me!!!!
   //    mNode->showBoundingBox(true); // Remove Me!!!!
 
 
@@ -477,13 +475,14 @@ void NPC::setTexture(int pos, int texColor, int textureNr)
         {
         }
         /// Copy the buffer into the model-texture.
-        mTexture->getBuffer()->blitFromMemory(pb, Box(picSkin.x, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
+        mTexture->getBuffer()->blitFromMemory(pb, Box(0, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
         delete[] buffer;
       }
       break;
 
       case TEXTURE_POS_HAIR:
       {
+break;
         /// Blit the color over the whole head.
         texColor = color[texColor];
         /// Cretate a temporary buffer for the pixel operations.

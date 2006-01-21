@@ -29,6 +29,7 @@ using namespace std;
 
 typedef enum _game_status
 {
+  GAME_STATUS_CHECK_HARDWARE,
   GAME_STATUS_INIT_VIEWPORT,     // Init all basic ogre stuff.
   GAME_STATUS_INIT_SOUND,        // Init the sound-system.
   GAME_STATUS_INIT_LIGHT,        // Init the light-system.
@@ -122,6 +123,14 @@ public:
   {
     return mGameStatus;
   }
+  void setHighTextureDetails(bool highDetails)
+  {
+    mHighTexDetails = highDetails;
+  }
+  bool getHighTextureDetails()
+  {
+    return mHighTexDetails;
+  }
 
 private:
   /// ////////////////////////////////////////////////////////////////////
@@ -129,6 +138,7 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   unsigned int mGameStatus;
   bool mLogin;
+  bool mHighTexDetails;
   ifstream *mDescFile;
   string mDescBuffer;
   string mFilename;

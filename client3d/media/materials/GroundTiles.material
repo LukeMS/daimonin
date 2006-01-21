@@ -80,14 +80,14 @@ material Land_HighDetails064
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture_064.png 2d 3
+				texture terrain_texture_064.png 2d 2
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_texture_064.png 2d 3
+				texture terrain_texture_064.png 2d 2
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
@@ -133,14 +133,14 @@ material Land_HighDetails032
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture_032.png 2d 2
+				texture terrain_texture_032.png 2d 1
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_texture_032.png 2d 2
+				texture terrain_texture_032.png 2d 1
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
@@ -186,14 +186,14 @@ material Land_HighDetails016
 		{
 			texture_unit 0 
 			{
-				texture terrain_texture_016.png 2d 1
+				texture terrain_texture_016.png 2d 0
 				tex_coord_set 0
 				tex_address_mode clamp
 			}
 
 			texture_unit 1
 			{
-				texture terrain_texture_016.png 2d 1
+				texture terrain_texture_016.png 2d 0
 				tex_coord_set 1
 				colour_op alpha_blend
 			}
@@ -217,60 +217,6 @@ material Land_HighDetails016_Grid
 			texture_unit 1
 			{
 				texture terrain_texture_016.png
-				tex_coord_set 1
-				colour_op alpha_blend
-			}
-			texture_unit 2
-			{
-				filtering none
-				texture grid_128.png
-				tex_coord_set 2
-				colour_op alpha_blend
-			}
-		}
-	}
-}
-
-material Land_HighDetails008
-{
-	technique
-	{
-		pass
-		{
-			texture_unit 0 
-			{
-				texture terrain_texture_008.png 2d 0
-				tex_coord_set 0
-				tex_address_mode clamp
-			}
-
-			texture_unit 1
-			{
-				texture terrain_texture_008.png 2d 0
-				tex_coord_set 1
-				colour_op alpha_blend
-			}
-
-		}
-	}
-}
-
-material Land_HighDetails008_Grid
-{
-	technique
-	{
-		pass
-		{
-			texture_unit 0 
-			{
-				texture terrain_texture_008.png 2d 0
-				tex_coord_set 0
-				tex_address_mode clamp
-			}
-
-			texture_unit 1
-			{
-				texture terrain_texture_008.png 2d 0
 				tex_coord_set 1
 				colour_op alpha_blend
 			}

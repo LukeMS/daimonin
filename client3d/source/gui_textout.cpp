@@ -22,6 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreFontManager.h>
 #include "define.h"
+#include "option.h"
 #include "gui_textout.h"
 #include "logger.h"
 #include <ctime>
@@ -135,15 +136,20 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   pairList["size"]      = StringConverter::toString(iSize);
   pairList["resolution"]= StringConverter::toString(iReso);
   // pairList["antialias_colour"]= "true"; // doesn't seems to work.
+  if (iSize > 16 && !Option::getSingleton().getHighTextureDetails())
+  {
+    Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
+    return;
+  }
   FontPtr pFont = FontManager::getSingleton().create("tmpFont", "General", false, 0, &pairList);
   pFont->load();
   MaterialPtr pMaterial = pFont.getPointer()->getMaterial();
   String strTexture = pMaterial.getPointer()->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
   TexturePtr pTexture = TextureManager::getSingleton().getByName(strTexture);
   Texture *texture = pTexture.getPointer();
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   /// Convert the font to RAW format.
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   int texW  = texture->getWidth();
   int texH  = texture->getHeight();
 
@@ -207,26 +213,26 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   //#define CREATE_SYSTEM_FONT
 #ifdef CREATE_SYSTEM_FONT
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   ///.The first font ever created is our system font.
   /// Run this function only if you are in need of a new system-font!
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   static int sysFont = -1;
   if (!++sysFont)
   {
     Image img;
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
     /// This is the Ogre fontdata.
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
     /*
     uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
     texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
     img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
     img.save("c:\\OgreFont.png");
     */
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
     /// This is the Daimonin fontdata.
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
     // draw the char-end sign to get rid of the monospace.
     uint32 *data = fnt->data;
     for (int i=0; i < CHARS_IN_FONT; ++i)
@@ -245,16 +251,16 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   }
 #endif
 
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   ///.Free Memory.
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   MaterialManager::getSingleton().remove((ResourcePtr&)pMaterial);
   TextureManager ::getSingleton().remove((ResourcePtr&)pTexture);
   FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
   createBuffer(MAX_TEXTLINE_LEN); // Set standard buffer size.
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
   ///.Create Text Cursor (for text input).
-/// ////////////////////////////////////////////////////////////////////
+  /// ////////////////////////////////////////////////////////////////////
 
   //TODO.
 }
