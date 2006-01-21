@@ -108,14 +108,14 @@ void TileChunk::Detach()
 ///================================================================================================
 /// Create a new Chunk.
 ///================================================================================================
-void TileChunk::Create(short &x, short &z)
+void TileChunk::Create(short &x, short &z, int tileTextureSize)
 {
   Set_Tile(x, z);
-  #ifndef SINGLE_CHUNK
+#ifndef SINGLE_CHUNK
   CreateLandLow();
   CreateWaterLow();
-  #endif
-  CreateLandHigh();
+#endif
+  CreateLandHigh(tileTextureSize);
   CreateWaterHigh();
   CreateSceneNode();
 }
@@ -125,10 +125,10 @@ void TileChunk::Create(short &x, short &z)
 ///================================================================================================
 void TileChunk::Change()
 {
-  #ifndef SINGLE_CHUNK
+#ifndef SINGLE_CHUNK
   ChangeLandLow();
   ChangeWaterLow();
-  #endif
+#endif
   ChangeLandHigh();
   ChangeWaterHigh();
 }
@@ -167,7 +167,7 @@ void TileChunk::CreateWaterLow()
 ///================================================================================================
 void TileChunk::CreateWaterLow_Buffers()
 {
-  #ifndef SINGLE_CHUNK
+#ifndef SINGLE_CHUNK
   int x = m_posX * CHUNK_SIZE_X;
   int z = m_posZ * CHUNK_SIZE_Z;
   float StretchZ = m_TileManagerPtr->Get_StretchZ();
@@ -289,7 +289,7 @@ hasWater:
 
   m_IsAttached = false;
   // m_Water->attachObject( m_Water_entity );
-  #endif
+#endif
 }
 
 ///================================================================================================
@@ -491,10 +491,10 @@ void TileChunk::CreateWaterHigh_Buffers()
 ///================================================================================================
 void TileChunk::ChangeLandLow()
 {
-  #ifndef SINGLE_CHUNK
+#ifndef SINGLE_CHUNK
   delete m_Land_subMesh_low->vertexData;
   CreateLandLow_Buffers();
-  #endif
+#endif
 }
 
 ///================================================================================================
@@ -508,7 +508,7 @@ void TileChunk::ChangeLandLow()
 ///================================================================================================
 void TileChunk::CreateLandLow()
 {
-  #ifndef SINGLE_CHUNK
+#ifndef SINGLE_CHUNK
   int x = m_posX * CHUNK_SIZE_X;
   int z = m_posZ * CHUNK_SIZE_Z;
   /// ////////////////////////////////////////////////////////////////////
@@ -688,7 +688,7 @@ void TileChunk::CreateLandLow_Buffers()
 
   m_IsAttached = false;
   //m_Land->attachObject( m_Land_entity_low );
-  #endif
+#endif
 }
 
 ///================================================================================================
@@ -702,7 +702,7 @@ void TileChunk::CreateLandLow_Buffers()
 /// |/  2 \|
 /// +------+
 ///================================================================================================
-void TileChunk::CreateLandHigh()
+void TileChunk::CreateLandHigh(int tileTextureSize)
 {
   int x = m_posX * CHUNK_SIZE_X;
   int z = m_posZ * CHUNK_SIZE_Z;
@@ -713,7 +713,8 @@ void TileChunk::CreateLandHigh()
   m_Land_Mesh_high = MeshManager::getSingleton().createManual(MeshName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
   sprintf(TempName, "SubLand[%d,%d] High", x, z);
   m_Land_subMesh_high = m_Land_Mesh_high->createSubMesh(TempName);
-  m_Land_subMesh_high->setMaterialName("Land_HighDetails128");
+  std::string matLand = "Land_HighDetails" + StringConverter::toString(tileTextureSize, 3, '0');
+  m_Land_subMesh_high->setMaterialName(matLand);
 
   CreateLandHigh_Buffers();
 

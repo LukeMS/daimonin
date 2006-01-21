@@ -21,6 +21,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <string>
 #include "logger.h"
 #include "events.h"
+#include "option.h"
 
 const int SUM_MIPMAPS = 0;
 
@@ -50,16 +51,33 @@ void setupResources(void)
 }
 
 ///================================================================================================
+/// Write the excepition into the logfile.
+///================================================================================================
+void LogException(Exception& e)
+{
+  std::string s = e.getFullDescription();
+  size_t found = s.find('\n');
+  while (found != std::string::npos)
+  {
+    s.replace(found, 1, "<br>\n");
+    found = s.find('\n', found+6);
+  }
+  Logger::log().error() << s;
+}
+
+///================================================================================================
 /// Entry point.
 ///================================================================================================
 int main(int /*argc*/, char /* **argv*/)
 {
+  Logger::log().headline("Init Logfile");
+  Option::getSingleton().setGameStatus(GAME_STATUS_CHECK_HARDWARE);
+  Root *root;
+  RenderWindow *window;
   try
   {
-    Logger::log().headline("Init Logfile");
-    Root *root = new Root();
+    root = new Root();
     setupResources();
-
     /// ////////////////////////////////////////////////////////////////////
     /// Show the configuration dialog and initialise the system
     /// You can skip this and use root.restoreConfig() to load configuration
@@ -70,8 +88,37 @@ int main(int /*argc*/, char /* **argv*/)
     /// ////////////////////////////////////////////////////////////////////
     /// Get the SceneManager, in this case a generic one
     /// ////////////////////////////////////////////////////////////////////
-    RenderWindow *window   = root->initialise(true, "Daimonon - Client3d");
-
+    window   = root->initialise(true, "Daimonon - Client3d");
+  }
+  catch(Exception& e)
+  {
+    LogException(e);
+    return 0;
+  }
+  /// ////////////////////////////////////////////////////////////////////
+  /// Check for GFX-Hardware.
+  /// ////////////////////////////////////////////////////////////////////
+  if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VBO))
+    Logger::log().error() << "Your gfx-card doesn't support hardware vertex/index buffer!";
+  TexturePtr mTexture;
+  try
+  { /// try to create a 64MB texture in Video Ram.
+    mTexture = TextureManager::getSingleton().createManual("test", "General",
+               TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+//               TEX_TYPE_2D, 112048, 112048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+    mTexture.getPointer()->unload();
+    mTexture.setNull();
+    Option::getSingleton().setHighTextureDetails(true);
+  }
+  catch( Exception& e )
+  {
+    mTexture.setNull();
+    Logger::log().warning() << "You are using an outdated videocard, or the device driver is broken!";
+    Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
+    Option::getSingleton().setHighTextureDetails(false);
+  }
+  try
+  {
     /// ////////////////////////////////////////////////////////////////////
     /// Set default mipmap level (NB some APIs ignore this)
     /// ////////////////////////////////////////////////////////////////////
@@ -90,18 +137,10 @@ int main(int /*argc*/, char /* **argv*/)
     /// ////////////////////////////////////////////////////////////////////
     if (Event) delete Event;
     if (root) delete root;
-    return 0;
   }
-  catch( Exception& e )
+  catch(Exception& e)
   {
-    std::string s = e.getFullDescription();
-    size_t found = s.find('\n');
-    while (found != std::string::npos)
-    {
-      s.replace(found, 1, "<br>\n");
-      found = s.find('\n', found+6);
-    }
-    Logger::log().error() << s;
+    LogException(e);
   }
   return 0;
 }

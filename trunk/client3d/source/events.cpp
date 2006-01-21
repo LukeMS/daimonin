@@ -293,7 +293,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         mEventProcessor->addMouseMotionListener(this);
         mEventProcessor->addMouseListener(this);
         mTileManager = new TileManager();
-        mTileManager->Init(mSceneManager, 128,1);
+        if (Option::getSingleton().getHighTextureDetails())
+          mTileManager->Init(mSceneManager, 128,1);
+        else
+          mTileManager->Init(mSceneManager, 16,1);
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_OBJECT);
         GuiManager::getSingleton().displaySystemMessage("Starting the objects...");

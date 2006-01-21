@@ -58,7 +58,7 @@ const int TILES_SUM_Z  = CHUNK_SUM_Z * CHUNK_SIZE_Z;
 /** Radius of the area where the tiles are drawn in high quality. */
 const int HIGH_QUALITY_RANGE = 5;
 /** Minimal size of tile in the shrinked terrain texture. */
-const int MIN_TEXTURE_PIXEL = 8;
+const int MIN_TEXTURE_PIXEL = 16;
 /** LOD for the chunks. */
 enum {
   QUALITY_LOW, QUALITY_HIGH};

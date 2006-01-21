@@ -61,7 +61,6 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
   m_TileTextureSize = tileTextureSize;
   mHighDetails = true;
   mGrid = false;
-
   m_Interface = new TileInterface(this);
   m_Interface->Init();
 
@@ -243,7 +242,7 @@ void TileManager::CreateChunks()
   {
     for (short y = 0; y < CHUNK_SUM_Z; ++y)
     {
-      m_mapchunk[x][y].Create(x, y);
+      m_mapchunk[x][y].Create(x, y, m_TileTextureSize);
     }
   }
   delete TileChunk::m_bounds;
@@ -458,17 +457,17 @@ void TileManager::CreateMipMaps(const std::string &terrain_type)
   // Load tile texture images in all resolutions
   enum
   {
-    Pix008, Pix016, Pix032, Pix064, Pix128
+    PIX_016, PIX_032, PIX_064, PIX_128, PIX_SUM
   };
-  const int SUM_RESOLUTIONS = 5;
-  Image TileImage[SUM_RESOLUTIONS];
+  Image TileImage[PIX_SUM];
   std::string strFilename;
   TexturePtr TileTexture;
 
-  for (int i = 0; i < SUM_RESOLUTIONS; ++i)
+  /// Load all tile textures-sets.
+  for (int i = 0; i < PIX_SUM; ++i)
   {
     strFilename = terrain_type;
-    strFilename+= "_texture_"+ StringConverter::toString((int)pow(2.0, i+3), 3, '0') + ".png";
+    strFilename+= "_texture_"+ StringConverter::toString((int)pow(2.0, i+4), 3, '0') + ".png";
     if (!LoadImage(TileImage[i], strFilename))
     {
       Logger::log().error() << "Ground texture '" << strFilename << "' was not found.";
@@ -476,41 +475,26 @@ void TileManager::CreateMipMaps(const std::string &terrain_type)
     }
   }
 
-  // TODO: put it into the for() loop.
-  // create mipmaps for 128x128 pixel textures
+  /// create mipmaps for 128x128 pixel textures
   TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_128.png",
-                "General",TEX_TYPE_2D, 1024,1024, 4, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[Pix128].getPixelBox());
-  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[Pix064].getPixelBox());
-  TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[Pix032].getPixelBox());
-  TileTexture->getBuffer(0,3)->blitFromMemory(TileImage[Pix016].getPixelBox());
-  TileTexture->getBuffer(0,4)->blitFromMemory(TileImage[Pix008].getPixelBox());
+                "General",TEX_TYPE_2D, 1024,1024, 3, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_128].getPixelBox());
+  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_064].getPixelBox());
+  TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+  TileTexture->getBuffer(0,3)->blitFromMemory(TileImage[PIX_016].getPixelBox());
 
   // create mipmaps for 64x64 pixel textures
   TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_064.png",
-                "General",TEX_TYPE_2D, 512, 512, 3, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[Pix064].getPixelBox());
-  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[Pix032].getPixelBox());
-  TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[Pix016].getPixelBox());
-  TileTexture->getBuffer(0,3)->blitFromMemory(TileImage[Pix008].getPixelBox());
+                "General",TEX_TYPE_2D, 512, 512, 2, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_064].getPixelBox());
+  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+  TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[PIX_016].getPixelBox());
 
   // create mipmaps for 32x32 pixel textures
   TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_032.png",
-                "General",TEX_TYPE_2D, 256, 256, 2, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[Pix032].getPixelBox());
-  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[Pix016].getPixelBox());
-  TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[Pix008].getPixelBox());
-
-  // create mipmaps for 16x16 pixel textures
-  TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_016.png",
-                "General",TEX_TYPE_2D, 128, 128, 1, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[Pix016].getPixelBox());
-  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[Pix008].getPixelBox());
-
-  // create mipmaps for 8x8 pixel textures
-  TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_008.png",
-                "General",TEX_TYPE_2D, 64, 64, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[Pix008].getPixelBox());
+                "General",TEX_TYPE_2D, 256, 256, 1, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+  TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+  TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_016].getPixelBox());
 }
 
 ///================================================================================================

@@ -121,14 +121,14 @@ public:
   {
     m_posX = x; m_posZ = z;
   }
-  void Create(short &x, short &z);
+  void Create(short &x, short &z, int tileTextureSize);
   void Change();
 
   /** Every chunk must have a land- AND a waterSubmesh,
   if there is one of them missing, we make a dummy submesh. **/
   void Create_Dummy(SubMesh* submesh);
   /** Create a (high poly) land chunk. **/
-  void CreateLandHigh();
+  void CreateLandHigh(int tileTextureSize);
   /** Change a (high poly) land chunk. **/
   void ChangeLandHigh();
   /** Create HW buffers for (high poly) land chunk. **/

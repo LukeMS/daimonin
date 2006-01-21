@@ -117,11 +117,6 @@
     <!--=============================================-->
     <!--                                 -->
     <!--=============================================-->
-
-
-
-
-
     <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
       <Pos x= "0" y= "431" />
       <Range width= "9" height= "9" />
@@ -233,8 +228,8 @@
     </Statusbar>
 
     <Label x=  "60" y= "210" font="03" text= "Text@00 using system font" />
-    <Label x=  "60" y= "222" font="03" text= "Text@01 using font #1" />
-    <Label x=  "60" y= "235" font="03" text= "Text@02 using font #2" />
+    <Label x=  "60" y= "222" font="03" text= "Text@03 using font #3" />
+    <Label x=  "60" y= "235" font="03" text= "Text@04 using font #4" />
 
 
   </Window>

@@ -205,7 +205,7 @@ void CEvent::keyPressed(KeyEvent *e)
         static int pixels =128;
         //change pixel size of terrain textures
         pixels /= 2; // shrink pixel value
-        if (pixels < 8) pixels = 128; // if value is too low resize to maximum
+        if (pixels < MIN_TEXTURE_PIXEL) pixels = 128; // if value is too low resize to maximum
         mTileManager->SetTextureSize(pixels);
         mTimeUntilNextToggle = .5;
       }
