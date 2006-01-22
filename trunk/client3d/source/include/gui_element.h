@@ -89,7 +89,7 @@ protected:
   int mX, mY, mWidth, mHeight, mSrcWidth, mSrcHeight;
   int mFontNr;
   int mState;
-  std::string mStrType, mStrName;
+  std::string mStrType, mStrName, mStrImageName;
   uint32 mFillColor;
 
   std::string mStrLabel, mStrBgLabel, mStrTooltip;

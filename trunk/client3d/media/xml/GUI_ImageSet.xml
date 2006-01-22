@@ -58,26 +58,16 @@
       <!--=============================================-->
       <!-- Buttons                                     -->
       <!--=============================================-->
-      <Image name= "Dialog_Button" width= "55" height= "19">
+      <Image name= "Button_01_Std" width= "55" height= "19">
           <State name= "Standard" posX= "1" posY= "1" />
           <State name= "Pushed"   posX= "1" posY= "21" />
           <State name= "M_Over"   posX= "1" posY= "41" />
       </Image>
 
-      <Image name= "Button_2" width= "12" height= "16">
-          <State name= "Standard" posX= "68" posY= "20" />
-      </Image>
-
-      <Image name= "Button_Close" width= "15" height= "15">
+      <Image name= "Button_01_Close" width= "15" height= "15">
           <State name= "Standard" posX= "115" posY= "1" />
           <State name= "Pushed"   posX= "115" posY= "18" />
           <State name= "M_Over"   posX= "115" posY= "35" />
-      </Image>
- 
-      <Image name= "Button_Cancel" width= "13" height= "13">
-          <State name= "Standard" posX= "2" posY= "20" />
-          <State name= "Pushed"   posX= "2" posY= "20" />
-          <State name= "M_Over"   posX= "2" posY= "20" />
       </Image>
 
 </ImageSet>

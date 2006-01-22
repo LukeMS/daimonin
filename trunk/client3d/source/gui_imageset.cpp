@@ -35,27 +35,23 @@ using namespace Ogre;
 
 GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
   {
-    { "ButtonClose",   GUI_BUTTON_CLOSE    },
-    { "ButtonOK",      GUI_BUTTON_OK       },
-    { "ButtonCancel",  GUI_BUTTON_CANCEL   },
-    { "ButtonMin",     GUI_BUTTON_MINIMIZE },
-    { "ButtonMax",     GUI_BUTTON_MAXIMIZE },
+    { "But_Close",      GUI_BUTTON_CLOSE    },
+    { "But_OK",         GUI_BUTTON_OK       },
+    { "But_Cancel",     GUI_BUTTON_CANCEL   },
+    { "But_Min",        GUI_BUTTON_MINIMIZE },
+    { "But_Max",        GUI_BUTTON_MAXIMIZE },
     // Listboxes.
-    { "TextList",      GUI_LIST_TEXTWIN    },
-    { "ChatList",      GUI_LIST_CHATWIN    },
-    { "Requester",     GUI_LIST_UP         },
-    { "Requester",     GUI_LIST_DOWN       },
-    { "Requester",     GUI_LIST_LEFT       },
-    { "Requester",     GUI_LIST_RIGHT      },
+    { "List_Msg",       GUI_LIST_MSGWIN    },
+    { "List_Chat",      GUI_LIST_CHATWIN    },
     // Statusbar.
-    { "HealthBar",     GUI_STATUSBAR_PLAYER_HEALTH  },
-    { "ManaBar",       GUI_STATUSBAR_PLAYER_MANA    },
-    { "GraceBar",      GUI_STATUSBAR_PLAYER_GRACE   },
+    { "Bar_Health",     GUI_STATUSBAR_PLAYER_HEALTH  },
+    { "Bar_Mana",       GUI_STATUSBAR_PLAYER_MANA    },
+    { "Bar_Grace",      GUI_STATUSBAR_PLAYER_GRACE   },
     // TextValues.
-    { "currentFPS",    GUI_TEXTVALUE_STAT_CUR_FPS   },
-    { "bestFPS",       GUI_TEXTVALUE_STAT_BEST_FPS  },
-    { "worstFPS",      GUI_TEXTVALUE_STAT_WORST_FPS },
-    { "sumTris",       GUI_TEXTVALUE_STAT_SUM_TRIS  }
+    { "Engine_CurrentFPS", GUI_TEXTVALUE_STAT_CUR_FPS   },
+    { "Engine_BestFPS",    GUI_TEXTVALUE_STAT_BEST_FPS  },
+    { "Engine_WorstFPS",   GUI_TEXTVALUE_STAT_WORST_FPS },
+    { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS  }
   };
 
 ///================================================================================================
@@ -63,6 +59,7 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
 ///================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
+  Logger::log().headline("Parsing the imageset");
   /// ////////////////////////////////////////////////////////////////////
   /// Check for a working description file.
   /// ////////////////////////////////////////////////////////////////////
@@ -102,6 +99,12 @@ void GuiImageset::parseXML(const char *fileImageSet)
     mvSrcEntry.push_back(Entry);
   }
   Logger::log().info() << (int) mvSrcEntry.size() << " Entries were parsed.";
+  if (Option::getSingleton().getListGuiElements())
+  {
+    Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
+    for (int i =0; i < GUI_ELEMENTS_SUM; ++i)
+      Logger::log().warning() << mGuiElementNames[i].name;
+  }
   mImageSetImg.load(mStrImageSetGfxFile, "General");
   mSrcPixelBox = mImageSetImg.getPixelBox();
 }

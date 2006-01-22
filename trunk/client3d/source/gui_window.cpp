@@ -171,7 +171,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
   {
     /// Find the gfx data in the tileset.
-    if (!(strTmp = xmlElem->Attribute("name"))) continue;
+    if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
     srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
     if (srcEntry)
     {
@@ -197,8 +197,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     if (!stricmp(strTmp, "GFX_FILL"))
     { /// This is a GFX_FILL.
       /// Find the gfx data in the tileset.
-      if (!(strTmp = xmlElem->Attribute("name"))) continue;
-      GuiSrcEntry *srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
+      if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
+      srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
       if (srcEntry)
       {
         GuiGraphic *graphic = new GuiGraphic(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
@@ -241,7 +241,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
   for (xmlElem = xmlRoot->FirstChildElement("Label"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Label"))
   {
     TextLine *textline = new TextLine;
-    textline->index = -1;
+    textline->index = -1; /// Value < 0 => Can be deleted after drawing.
     textline->BG_Backup = 0;
     if ((strTmp = xmlElem->Attribute("x")))    textline->x1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("y")))    textline->y1   = atoi(strTmp);
@@ -261,7 +261,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
       {
         if (GuiImageset::getSingleton().getElementName(i) == strTmp)
         {
-          textline->index = i;
+          textline->index = GuiImageset::getSingleton().getElementIndex(i);
           break;
         }
       }
@@ -385,6 +385,12 @@ void GuiWindow::drawAll()
     /// Print.
     GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), mvTextline[i]->text.c_str());
   }
+  /// Now delete all TextLines with index < 0.
+  for (vector<TextLine*>::iterator i = mvTextline.end(); i< mvTextline.begin(); --i)
+  {
+    if ((*i)->index < 0) mvTextline.erase(i);
+  }
+
   /// ////////////////////////////////////////////////////////////////////
   /// Draw gadget.
   /// ////////////////////////////////////////////////////////////////////
@@ -452,7 +458,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
           actGadgetName = mvGadget[mMousePressed]->getName();
 
-          if (!strcmp(actGadgetName, "Button_Close"))
+          if (GuiImageset::getSingleton().getElementName(GUI_BUTTON_CLOSE)== actGadgetName)
           {
             GuiManager::getSingleton().setTooltip(NULL);
             mOverlay->hide(); // just testing.

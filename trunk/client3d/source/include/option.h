@@ -114,8 +114,7 @@ public:
   }
   bool setGameStatus(int status)
   {
-    if (status > GAME_STATUS_SUM) {
-      return false; }
+    if (status > GAME_STATUS_SUM) return false;
     mGameStatus = status;
     return true;
   }
@@ -131,6 +130,17 @@ public:
   {
     return mHighTexDetails;
   }
+  void setListGuiElements(bool listGuiElements)
+  {
+    mListGuiElements = listGuiElements;
+  }
+  bool getListGuiElements()
+  {
+    return mListGuiElements;
+  }
+
+
+
 
 private:
   /// ////////////////////////////////////////////////////////////////////
@@ -138,7 +148,7 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   unsigned int mGameStatus;
   bool mLogin;
-  bool mHighTexDetails;
+  bool mHighTexDetails, mListGuiElements;
   ifstream *mDescFile;
   string mDescBuffer;
   string mFilename;

@@ -1,4 +1,5 @@
 /*-----------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
@@ -245,14 +246,14 @@ void CEvent::keyPressed(KeyEvent *e)
       if (mDayTime)
       {
         mDayTime =0;
-        mLight[LIGHT_VOL ]->setVisible(false);
-        mLight[LIGHT_SPOT]->setVisible(true);
+       // mLight[LIGHT_VOL ]->setVisible(false);
+       // mLight[LIGHT_SPOT]->setVisible(true);
       }
       else
       {
         mDayTime =15;
-        mLight[LIGHT_VOL ]->setVisible(true);
-        mLight[LIGHT_SPOT]->setVisible(false);
+        //mLight[LIGHT_VOL ]->setVisible(true);
+        //mLight[LIGHT_SPOT]->setVisible(false);
       }
       break;
 
