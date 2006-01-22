@@ -30,14 +30,14 @@ face stairs_stone_down.131
 anim
 facings 9
 dummy.111
-stairs_stone_down.131
-stairs_stone_down.131
+stairs_stone_down.111
+stairs_stone_down.111
 stairs_stone_down.131
 stairs_stone_down.131
 stairs_stone_down.151
 stairs_stone_down.151
-stairs_stone_down.151
-stairs_stone_down.151
+stairs_stone_down.171
+stairs_stone_down.171
 mina
 is_animated 0
 anim_speed 0
