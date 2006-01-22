@@ -96,6 +96,7 @@ Option::Option()
   mMetaServer ="damn.informatik.uni-bremen.de";
   mMetaServerPort = 13326;
   mSelectedMetaServer =0;
+  mListGuiElements = false;
   mStartNetwork = false;
   int i, sheets = 0;
   for (i=0; optStruct[i].name; ++i)

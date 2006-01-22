@@ -41,6 +41,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
   /// ////////////////////////////////////////////////////////////////////
   if ((tmp = xmlElem->Attribute("type"))) mStrType = tmp;
   if ((tmp = xmlElem->Attribute("name"))) mStrName = tmp;
+  if ((tmp = xmlElem->Attribute("image_name"))) mStrImageName = tmp;
   if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
   /// ////////////////////////////////////////////////////////////////////
   /// Parse the position.
@@ -114,52 +115,4 @@ void GuiElement::setStateImagePos(std::string name, int x, int y)
   }
   gfxSrcPos[state].x = x;
   gfxSrcPos[state].y = y;
-}
-
-///================================================================================================
-/// .
-///================================================================================================
-void GuiElement::draw(PixelBox &mSrcPixelBox, Texture *texture)
-{
-  /// ////////////////////////////////////////////////////////////////////
-  /// Draw gaget.
-  /// ////////////////////////////////////////////////////////////////////
-  PixelBox src = mSrcPixelBox.getSubVolume(Box(
-                   gfxSrcPos[mState].x,
-                   gfxSrcPos[mState].y,
-                   gfxSrcPos[mState].x + mWidth,
-                   gfxSrcPos[mState].y + mHeight));
-  //  Logger::log().info() << "dest: " << gfxSrcPos[mState].x << " "<< gfxSrcPos[mState].y << " "<<mWidth << " "<< mHeight;
-  texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
-  /// ////////////////////////////////////////////////////////////////////
-  /// Draw label.
-  /// ////////////////////////////////////////////////////////////////////
-  /*
-    if (mStrLabel != "")
-    {
-      std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
-      TextLine label;
-      label.index= -1;
-      label.font = mLabelFont;
-      label.clipped = false;
-      if (mState == STATE_PUSHED)
-      {
-        label.x1 = mX+ mLabelXPos+1;
-        label.x2 = label.x1 + mWidth;
-        label.y1 = mY+ mLabelYPos+1;
-        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-      }
-      else
-      {
-        label.x1 = mX+ mLabelXPos;
-        label.x2 = label.x1 + mWidth;
-        label.y1 = mY+ mLabelYPos;
-        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-      }
-      GuiTextout::getSingleton().Print(&label, texture, mStrBgLabel.c_str());
-      --label.x1;
-      --label.y1;
-      GuiTextout::getSingleton().Print(&label, texture, mStrLabel.c_str());
-    }
-  */
 }

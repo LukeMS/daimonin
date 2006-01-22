@@ -216,31 +216,30 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
       case GAME_STATUS_INIT_LIGHT:
       {
-
         /*
-            /// Todo: lightmanager
-            Light *light;
-            light = mSceneManager->createLight("Light_Vol");
-            light->setType(Light::LT_POINT );
-            light->setPosition(-100, 200, 800);
-            //    light->setDiffuseColour(1.0, 1.0, 1.0);
-            light->setSpecularColour(1.0, 1.0, 1.0);
-            mWorld->attachObject(light);
-            setLightMember(light, 0);
+        /// Todo: lightmanager
+        Light *light;
+        light = mSceneManager->createLight("Light_Vol");
+        light->setType(Light::LT_POINT );
+        light->setPosition(-100, 200, 800);
+        //    light->setDiffuseColour(1.0, 1.0, 1.0);
+        light->setSpecularColour(1.0, 1.0, 1.0);
+        mWorld->attachObject(light);
+        setLightMember(light, 0);
 
-            light = mSceneManager->createLight("Light_Spot");
-            light->setType(Light::LT_SPOTLIGHT);
-            light->setDirection(0, -1, -1);
-            light->setPosition (-125, 200, 100);
-            light->setDiffuseColour(1.0, 1.0, 1.0);
-            // light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
-            // light->setAttenuation(1000,1,0.005,0);
+        light = mSceneManager->createLight("Light_Spot");
+        light->setType(Light::LT_SPOTLIGHT);
+        light->setDirection(0, -1, -1);
+        light->setPosition (-125, 200, 100);
+        light->setDiffuseColour(1.0, 1.0, 1.0);
+        // light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
+        // light->setAttenuation(1000,1,0.005,0);
 
-            mWorld->attachObject(light);
-            setLightMember(light, 1);
-            light->setVisible(false);
-            mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
-            */
+        mWorld->attachObject(light);
+        setLightMember(light, 1);
+        light->setVisible(false);
+        mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
+        */
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SPELL);
         GuiManager::getSingleton().displaySystemMessage("Starting the spells...");
@@ -316,13 +315,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
       case GAME_STATUS_INIT_NET:
       {
         Network::getSingleton().Init();
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"Welcome to ~Daimonin 3D~.");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"Press ~right~ MB on ground to move.");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#00880000Remember:~");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"~#001b1b88Server~ will send us~#00880088 one Step~ at");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"once, so the code won't work for a");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_TEXTWIN  , (void*)"bigger distance.");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#00880000Remember:~");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#001b1b88Server~ will send us~#00880088 one Step~ at");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"once, so the code won't work for a");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"bigger distance.");
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_DONE);
         GuiManager::getSingleton().displaySystemMessage("");

@@ -40,7 +40,7 @@ enum {
   GUI_BUTTON_MINIMIZE,
   GUI_BUTTON_MAXIMIZE,
   // Listboxes.
-  GUI_LIST_TEXTWIN,
+  GUI_LIST_MSGWIN,
   GUI_LIST_CHATWIN,
   GUI_LIST_UP,
   GUI_LIST_DOWN,
@@ -106,6 +106,10 @@ public:
   const std::string &getElementName(int i)
   {
     return mGuiElementNames[i].name;
+  }
+  int getElementIndex(int i)
+  {
+    return mGuiElementNames[i].index;
   }
 
 private:

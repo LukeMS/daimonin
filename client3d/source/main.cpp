@@ -26,6 +26,42 @@ http://www.gnu.org/licenses/licenses.html
 const int SUM_MIPMAPS = 0;
 
 ///================================================================================================
+/// Parse the command line.
+///================================================================================================
+bool parseCmdLine(const char *cmd, const char *value)
+{
+  if (cmd[0] == '-')
+  {
+    if      ((cmd[1] == 'l' || !stricmp(cmd, "--list"  )) && !stricmp(value, "gui"))
+    {
+      Option::getSingleton().setListGuiElements(true);
+      return true;
+    }
+    else if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "rawfonts"))
+    {
+      Logger::log().info() << "You told me to create a raw-font from every ttf." << FILE_GUI_WINDOWS;
+      return true;
+    }
+    else if ((cmd[1] == 's' || !stricmp(cmd, "--server")))
+    {
+      Logger::log().info() << "You told me to use Server " << value;
+      return true;
+    }
+    else if ((cmd[1] == 'p' || !stricmp(cmd, "--port"  )))
+    {
+      Logger::log().info() << "You told me to connect on port " << value;
+      return true;
+    }
+  }
+  cout << "\nusage:\n"
+  << "--list gui          -l gui\n"
+  << "--create rawfonts   -c rawfonts\n"
+  << "--server <name>     -s <name>\n"
+  << "--port   <num>      -p <num>\n";
+  return false;
+}
+
+///================================================================================================
 /// Define the source of resources (other than current folder)
 ///================================================================================================
 void setupResources(void)
@@ -68,10 +104,15 @@ void LogException(Exception& e)
 ///================================================================================================
 /// Entry point.
 ///================================================================================================
-int main(int /*argc*/, char /* **argv*/)
+int main(int argc, char *argv[])
 {
   Logger::log().headline("Init Logfile");
   Option::getSingleton().setGameStatus(GAME_STATUS_CHECK_HARDWARE);
+  Logger::log().headline("Parse CmdLine");
+  while (--argc)
+  {
+    if (!parseCmdLine(argv[argc], argv[argc--])) return 0;
+  }
   Root *root;
   RenderWindow *window;
   try
@@ -105,12 +146,12 @@ int main(int /*argc*/, char /* **argv*/)
   { /// try to create a 64MB texture in Video Ram.
     mTexture = TextureManager::getSingleton().createManual("test", "General",
                TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-//               TEX_TYPE_2D, 112048, 112048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+    //               TEX_TYPE_2D, 112048, 112048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
     mTexture.getPointer()->unload();
     mTexture.setNull();
     Option::getSingleton().setHighTextureDetails(true);
   }
-  catch( Exception& e )
+  catch( Exception& )
   {
     mTexture.setNull();
     Logger::log().warning() << "You are using an outdated videocard, or the device driver is broken!";

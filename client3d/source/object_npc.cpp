@@ -35,7 +35,7 @@ http://www.gnu.org/licenses/licenses.html
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 SceneManager *NPC::mSceneMgr =0;
 
-sPicture NPC::picSkin  = { 1,   1, 255, 255 };
+sPicture NPC::picSkin  = {1,   1, 255, 255 };
 sPicture NPC::picHair  = {55,   0,  45,  32 };
 uint32   NPC::color[MAX_NPC_COLORS] =
   {
@@ -482,7 +482,6 @@ void NPC::setTexture(int pos, int texColor, int textureNr)
 
       case TEXTURE_POS_HAIR:
       {
-break;
         /// Blit the color over the whole head.
         texColor = color[texColor];
         /// Cretate a temporary buffer for the pixel operations.
@@ -493,30 +492,29 @@ break;
         /// Blit the face texture over it.
         if (textureNr >=0) // -1 -> baldness.
         {
-        }
-        /// Copy the buffer into the model-texture.
-        mTexture->getBuffer()->blitFromMemory(
-          PixelBox(picHair.w, picHair.h, 1, PF_A8R8G8B8, buffer),
-          Box(picHair.x, picHair.y, picHair.x + picHair.w , picHair.y + picHair.h));
-
-        Image image;
-        image.load("Human_Male_Shadow_Blit.png", "General");
-        uint32 *copy = (uint32*)image.getData();
-        pb = mTexture->getBuffer()->lock(Box(0,0, 512, 512), HardwareBuffer::HBL_READ_ONLY );
-        uint32 *dest_data = (uint32*)pb.data;
-        uint32 pixColor,  srcColor;
-        for (unsigned int y = 0; y < 512 * 512; ++y)
-        {
-          if (!copy[y]) continue;
-          pixColor = dest_data[y];
-          srcColor = copy[y] & 0xff000000;
-          srcColor >>= 8;
-          if ((pixColor & 0x00ff0000) > srcColor )  pixColor-= srcColor;
-          srcColor >>= 8;
-          if ((pixColor & 0x0000ff00) > srcColor )  pixColor-= srcColor;
-          srcColor >>= 8;
-          if ((pixColor & 0x000000ff) > srcColor )  pixColor-= srcColor;
-          dest_data[y] = pixColor;
+          /// Copy the buffer into the model-texture.
+          mTexture->getBuffer()->blitFromMemory(
+            PixelBox(picHair.w, picHair.h, 1, PF_A8R8G8B8, buffer),
+            Box(picHair.x, picHair.y, picHair.x + picHair.w , picHair.y + picHair.h));
+          Image image;
+          image.load("Human_M_Default.jpg", "General");
+          uint32 *copy = (uint32*)image.getData();
+          pb = mTexture->getBuffer()->lock(Box(0,0, 256, 256), HardwareBuffer::HBL_READ_ONLY );
+          uint32 *dest_data = (uint32*)pb.data;
+          uint32 pixColor,  srcColor;
+          for (unsigned int y = 0; y < 256 * 256; ++y)
+          {
+            if (!copy[y]) continue;
+            pixColor = dest_data[y];
+            srcColor = copy[y] & 0xff000000;
+            srcColor >>= 8;
+            if ((pixColor & 0x00ff0000) > srcColor )  pixColor-= srcColor;
+            srcColor >>= 8;
+            if ((pixColor & 0x0000ff00) > srcColor )  pixColor-= srcColor;
+            srcColor >>= 8;
+            if ((pixColor & 0x000000ff) > srcColor )  pixColor-= srcColor;
+            dest_data[y] = pixColor;
+          }
         }
         mTexture->getBuffer()->unlock();
         delete[] buffer;

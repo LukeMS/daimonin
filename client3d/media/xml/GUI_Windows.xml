@@ -46,7 +46,7 @@
     </Graphic>
     <Label  x= "35" y= "4" font="02" text= "Statistics" />
 
-    <Gadget type= "BUTTON"  name = "Button_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
       <Pos x= "132" y= "1" />
     </Gadget>
     <!--=============================================-->
@@ -59,16 +59,16 @@
     </Graphic>
 
     <Label   x=  "05" y= "25" font="02" text= "Current FPS:" />
-    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "40" name= "currentFPS" />
+    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "40" name= "Engine_CurrentFPS" />
 
     <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
-    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "40" name= "bestFPS" />
+    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "40" name= "Engine_BestFPS" />
 
     <Label   x=  "05" y= "55" font="02" text= "Worst FPS:" />
-    <TextBox x= "100" y= "55" font="02" text= "000.0" width = "40" name= "worstFPS" />
+    <TextBox x= "100" y= "55" font="02" text= "000.0" width = "40" name= "Engine_WorstFPS" />
 
     <Label   x=  "05" y= "70" font="02" text= "Triangles:" />
-    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "40" name= "sumTris" />
+    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "40" name= "Engine_SumTris" />
   </Window>
 
   <!--#############################################-->
@@ -83,7 +83,7 @@
     <!--=============================================-->
     <!-- Seamless Background                         -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  name = "Red_Background">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
       <Pos x= "0" y= "0" />
       <Range width= "340" height= "440" />
     </Graphic>
@@ -91,17 +91,17 @@
     <!--=============================================-->
     <!-- Window Title                                -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "10" y= "0" />
       <Range width= "330" height= "5" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_TR_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
       <Pos x= "331" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
@@ -109,35 +109,35 @@
 
     <Label x=  "100" y= "8" font="02" text= "Titlebar ygW" />
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "5" y= "30" />
       <Range width= "335" height= "5" />
     </Graphic>
 
     <!--=============================================-->
-    <!--                                 -->
+    <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
       <Pos x= "0" y= "431" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "10" y= "435" />
       <Range width= "330" height= "5" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_BR_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
       <Pos x= "331" y= "431" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
       <Pos x= "0" y= "10" />
       <Range width= "5" height= "422" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
       <Pos x= "335" y= "10" />
       <Range width= "5" height= "422" />
     </Graphic>
@@ -146,44 +146,44 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
       <Pos x= "30" y= "50" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "41" y= "50" />
       <Range width= "261" height= "5" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_TR_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
       <Pos x= "300" y= "50" />
       <Range width= "9" height= "9" />
     </Graphic>
 
 
-    <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
       <Pos x= "30" y= "396" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "40" y= "400" />
       <Range width= "261" height= "5" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_BR_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
       <Pos x= "300" y= "396" />
       <Range width= "9" height= "9" />
     </Graphic>
 
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
       <Pos x= "30" y= "59" />
       <Range width= "5" height= "337" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_V">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
       <Pos x= "304" y= "59" />
       <Range width= "5" height= "337" />
     </Graphic>
@@ -191,37 +191,37 @@
     <!--=============================================-->
     <!-- Layer 2                                     -->
     <!--=============================================-->
-    <Gadget type= "BUTTON"  name = "Button_Close">
+    <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
       <Pos x= "325" y= "0" />
       <Tooltip  text= "I am the close button." />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Dialog_Button">
+    <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
       <Pos x= "30" y= "410" />
       <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
       <Tooltip  text= "Press here to ACCEPT." />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Dialog_Button">
+    <Gadget type= "BUTTON"  name = "But_Cancel" image_name = "Button_01_Std">
       <Pos x= "255" y= "410" />
       <Label xPos= "6" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
       <Tooltip  text= "Press here to CANCEL." />
     </Gadget>
 
 
-    <Statusbar type="COLOR_FILL" direction="UP" name = "HealthBar">
+    <Statusbar type="COLOR_FILL" name = "Bar_Health">
       <Pos  x= "150" y= "120" />
       <Range width= "17" height= "80" />
       <Color red= "128" green= "0" blue= "0" alpha = "255" />
     </Statusbar>
 
-    <Statusbar type="COLOR_FILL" direction="UP" name = "GraceBar">
+    <Statusbar type="COLOR_FILL" name = "Bar_Grace">
       <Pos  x= "170" y= "120" />
       <Range width= "17" height= "80" />
       <Color red= "128" green= "128" blue= "0" alpha = "255" />
     </Statusbar>
 
-    <Statusbar type="COLOR_FILL" direction="UP" name = "ManaBar">
+    <Statusbar type="COLOR_FILL" name = "Bar_Mana">
       <Pos  x= "190" y= "120" />
       <Range width= "17" height= "80" />
       <Color red= "0" green= "50" blue= "128" alpha = "255" />
@@ -243,45 +243,45 @@
     <DragArea x= "0" y= "0" width= "280" height= "18" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
-    <Graphic type= "GFX_FILL"  name = "Red_Background">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
       <Pos x= "0" y= "0" />
       <Range width= "280" height= "18" />
     </Graphic>
 
 
-    <Graphic type= "GFX_FILL"  name = "Red_TL_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "10" y= "0" />
       <Range width= "260" height= "5" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_TR_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
       <Pos x= "271" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
 
 
-    <Graphic type= "GFX_FILL"  name = "Red_BL_Edge">
+    <Graphic type= "GFX_FILL"  image_namee = "Red_BL_Edge">
       <Pos x= "0" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_Line_H">
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "10" y= "13" />
       <Range width= "260" height= "5" />
     </Graphic>
 
-    <Graphic type= "GFX_FILL"  name = "Red_BR_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
       <Pos x= "271" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>
 
 
-    <Listbox type= "" name= "TextList" font="03">
+    <Listbox type= "" name= "List_Msg" font="03">
       <Pos x= "1" y= "18" />
       <Range width= "280" height= "200" />
       <Color red= "128" green= "128" blue= "128" alpha = "128" />
