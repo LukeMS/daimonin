@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<!DOCTYPE Code::Blocks_project_file>
-<Code::Blocks_project_file>
+<!DOCTYPE CodeBlocks_project_file>
+<CodeBlocks_project_file>
 	<FileVersion major="1" minor="1"/>
 	<Project>
 		<Option title="YAMeshEditor"/>
@@ -13,7 +13,6 @@
 				<Option working_dir="..\..\"/>
 				<Option object_output="object"/>
 				<Option deps_output=".deps"/>
-				<Option external_deps=""/>
 				<Option type="0"/>
 				<Option compiler="0"/>
 				<Option projectResourceIncludeDirsRelation="0"/>
@@ -21,7 +20,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall"/>
-			<Add directory="..\..\fltk_inc"/>
+			<Add directory="fltk_inc"/>
 			<Add directory="..\..\src"/>
 		</Compiler>
 		<Linker>
@@ -110,4 +109,4 @@
 			<Option target="default"/>
 		</Unit>
 	</Project>
-</Code::Blocks_project_file>
+</CodeBlocks_project_file>
