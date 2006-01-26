@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 1-1: WIZARDRY SPELLS
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            <a href="../character/secn_1-5.dai#skillsbygroup">Wizardry spells</a> is the name of both a type of magic (usually called simply 'spells') and the <a href="../character/secn_1-5.dai#skills">skill</a> which determines your ability to use that magic.
+        </p>
+        <p>
+            <a href="../character/secn_1-5.dai#experience">Experience</a> gained via cast spells (see <a href="./secn_1.dai">"Section 1: Castable Magic"</a> for an explanation of how to cast spells) goes to the wizardry spells skill, and as your <a href="../character/secn_1-5.dai#experience">level</a> in this skill increases you will be able to cast more powerful spells.
+        </p>
+        <p>
+            However, the precise number of individual spells you can cast is determined by your current reserves of <a href="../character/secn_1-3.dai#currentstatus">mana</a>. Mana is affected by your level in wizardry spells and <a href="../character/secn_1-3.dai#stats">power</a>.
+        </p>
+        <p>
+            So your mana increase as you level wizardry spells. However, the cost in mana of spells also increases (as does their effectiveness, eg, damage done) as you increase your level in this skill. Therefore there is a theoretical trade-off in levelling wizardry spells.
+        </p>
+        <p>
+            Some effort has been spent balancing the game so in fact the trade-off is not something with which to be overly concerned -- the practical issue to keep in mind is that as your maximum mana increases it will take longer and longer to <a href="../character/secn_1-3.dai#regeneration">regenerate</a>.
+        </p>
+    </section>
 </section>
