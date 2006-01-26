@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 1-2: DIVINE PRAYERS
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            <a href="../character/secn_1-5.dai#skillsbygroup">Divine prayers</a> is the name of both a type of magic (usually called simply 'prayers') and the <a href="../character/secn_1-5.dai#skills">skill</a> which determines your ability to use that magic.
+        </p>
+        <p>
+            <a href="../character/secn_1-5.dai#experience">Experience</a> gained via invoked prayers (see <a href="./secn_1.dai">"Section 1: Castable Magic"</a> for an explanation of how to invoke prayers) goes to the divine prayers skill, and as your <a href="../character/secn_1-5.dai#experience">level</a> in this skill increases you will be able to invoke more powerful prayers.
+        </p>
+        <p>
+            However, the precise number of individual prayers you can invoke is determined by your current reserves of <a href="../character/secn_1-3.dai#currentstatus">grace</a>. Grace is affected by your level in divine prayers and <a href="../character/secn_1-3.dai#stats">wisdom</a>.
+        </p>
+        <p>
+            So your grace increase as you level divine prayers. However, the cost in grace of prayers also increases (as does their effectiveness, eg, damage done) as you increase your level in this skill. Therefore there is a theoretical trade-off in levelling divine prayers.
+        </p>
+        <p>
+            Some effort has been spent balancing the game so in fact the trade-off is not something with which to be overly concerned -- the practical issue to keep in mind is that as your maximum grace increases it will take longer and longer to <a href="../character/secn_1-3.dai#regeneration">regenerate</a>.
+        </p>
+    </section>
 </section>
