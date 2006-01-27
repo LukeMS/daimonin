@@ -34,7 +34,7 @@
             </dt>
             <dd>
                 <p>
-                    <img alt="Copper coin" src="./coppercoin.101.png"/>
+                    <img alt="[Copper coins]" src="./coppercoin.png"/>
                 </p>
                 <p>
                     Copper is the least valuable coin. You can't buy much for a copper coin besides another copper coin. Maybe a burnt torch. One copper coin weighs 0.01 kg.
@@ -45,7 +45,7 @@
             </dt>
             <dd>
                 <p>
-                    <img alt="Silver coins" src="./silvercoin.101.png"/>
+                    <img alt="[Silver coins]" src="./silvercoin.png"/>
                 </p>
                 <p>
                     One silver coin is equivalent to 100 copper coins. Silver coins are probably the most standard value of currency in Daimonin. One silver coin weighs 0.008 kg.
@@ -56,7 +56,7 @@
             </dt>
             <dd>
                 <p>
-                    <img alt="Gold coins" src="./goldcoin.101.png"/>
+                    <img alt="[Gold coins]" src="./goldcoin.png"/>
                 </p>
                 <p>
                     One gold coin equals 100 silver coins. Definitely the yellowest of the coins. One gold coin weighs 0.01 kg.
@@ -67,7 +67,7 @@
             </dt>
             <dd>
                 <p>
-                    <img alt="Mithril coins" src="./mit_coin.101.png"/>
+                    <img alt="[Mithril coins]" src="./mit_coin.png"/>
                 </p>
                 <p>
                     One mithril coin is worth 1,000 gold coins. So one mithril coin can be turned into 10,000,000 copper coins. One mithril coin weighs 0.003 kg.
