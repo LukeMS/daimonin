@@ -12,8 +12,34 @@
             Most items may have magical qualities. While for some this is to be expected -- potions, wands, and scrolls, for example -- as magic is their raison d'etre, for others -- bags, for example -- it may be less obvious (or not).
         </p> 
         <p>
-            The magic in <a href="./secn_2-1.dai">some items may be used once and then the item disappears</a>; the effect is usually temporary but may be permanent. <a href="./secn_2-2.dai">Others may be used many times</a>; they may run out of charges or they may have unlimited charges but they will never disappear. Still <a href="./secn_2-3.dai">others will have a constant magical effect</a> while applied.
+            Magic items may be categorised according to use:
         </p>
+        <dl>
+            <dt>
+                <strong>Some items may be <a href="./secn_2-1.dai">used once and then the item disappears</a></strong>
+            </dt>
+            <dd>
+                <p>
+                    The effect is usually temporary but may be permanent.
+                </p>
+            </dd>
+            <dt>
+                <strong>Others may be <a href="./secn_2-2.dai">used many times</a></strong>
+            </dt>
+            <dd>
+                <p>
+                    They may run out of charges or they may have unlimited charges but they will never disappear.
+                </p>
+            </dd>
+            <dt>
+                <strong>Still others <a href="./secn_2-3.dai">have a constant magical effect</a> while applied</strong>
+            </dt>
+            <dd>
+                <p>
+                    The magic in these items will never run out.
+                </p>
+            </dd>
+        </dl>
     </section>
     <section id="tos">
         <title>
