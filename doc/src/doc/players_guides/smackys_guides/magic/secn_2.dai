@@ -4,9 +4,14 @@
     <title>
         SECTION 2: MAGIC ITEMS
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            THIS SPACE INTENTIONALLY LEFT BLANK
+        </p> 
+    </section>
     <section id="tos">
         <title>
             Also in this section
@@ -29,11 +34,19 @@
                 </p>
             </dd>
             <dt>
-                <a href="./secn_2-3.dai">Section 2-3: Amulets, Rings, &amp; Other Magic Items</a>
+                <a href="./secn_2-3.dai">Section 2-3: Amulets &amp; Rings</a>
             </dt>
             <dd>
                 <p>
                     Constant use magic items.
+                </p>
+            </dd>
+            <dt>
+                <a href="./secn_2-4.dai">Section 2-4: Other Magic Items</a>
+            </dt>
+            <dd>
+                <p>
+                    Everything else
                 </p>
             </dd>
         </dl>
