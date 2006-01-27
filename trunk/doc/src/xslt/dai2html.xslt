@@ -142,7 +142,7 @@
     </xsl:template>
 
     <xsl:template match="a">
-        <a href="{replace(@href, '.dai$', '.html')}">
+        <a href="{replace(@href, '.dai', '.html')}">
             <xsl:apply-templates select="@*[not(local-name()='href')]"/>
             <xsl:apply-templates/>
         </a>
