@@ -29,15 +29,15 @@ http://www.gnu.org/licenses/licenses.html
 //=================================================================================================
 const char *Animate::StateNames[STATE_SUM]=
   {
-    "Idle1", "Idle2", "Idle3",
-    "Walk1", "Walk2", "Walk3",
-    "Run1",  "Run2",  "Run3",
+    "Idle1",   "Idle2",   "Idle3",
+    "Walk1",   "Walk2",   "Walk3",
+    "Run1",    "Run2",    "Run3",
     "Attack1", "Attack2", "Attack3",
-    "Block1", "Block2", "Block3",
-    "Slump1", "Slump2", "Slump3",
-    "Death1", "Death2", "Death3",
-    "Hit1",  "Hit2",  "Hit3",
-    "Cast1", "Cast2", "Cast3"
+    "Block1",  "Block2",  "Block3",
+    "Slump1",  "Slump2",  "Slump3",
+    "Death1",  "Death2",  "Death3",
+    "Hit1",    "Hit2",    "Hit3",
+    "Cast1",   "Cast2",   "Cast3"
   };
 
 const std::string sndPreFix  = "Sound_";
@@ -74,17 +74,19 @@ Animate::Animate(Entity *entity)
       mAnimStates[state] = entity->getAnimationState(mStrTemp.c_str());
     }
     // load the sound for this animation.
+/*
     soundName = sndPreFix + StateNames[state];
     if (Option::getSingleton().getDescStr(soundName.c_str(), mStrTemp))
     {
       mStrTemp = PATH_SAMPLES + mStrTemp;
-      sound_handle[state] = Sound::getSingleton().loadSample(mStrTemp.c_str());
+      sound_handle[state] = Sound::getSingleton().createStream(mStrTemp.c_str());
     }
     else
     {
       // LogFile::getSingleton().Info("- Animation: %s has no sound defined\n", soundName.c_str());
-      sound_handle[state] = Sound::getSingleton().loadSample(FILE_SAMPLE_DUMMY);
+      sound_handle[state] = Sound::getSingleton().createStream(FILE_SAMPLE_DUMMY);
     }
+*/
   }
   mAnimGroup = 0;
   mAnimType  =-1;
@@ -148,5 +150,5 @@ void Animate::toggleAnimation(int animationNr, bool force)
   mAnimState->setEnabled(true);
   mAnimState->setTimePosition(0);
   mAnimState->setLoop(false);
-  if (mAnimType > STATE_RUN3) Sound::getSingleton().playSample(sound_handle[animationNr -1 + mAnimGroup]);
+  if (mAnimType > STATE_RUN3) Sound::getSingleton().playStream(sound_handle[animationNr -1 + mAnimGroup]);
 }

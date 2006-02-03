@@ -34,12 +34,20 @@ bool parseCmdLine(const char *cmd, const char *value)
   {
     if      ((cmd[1] == 'l' || !stricmp(cmd, "--list"  )) && !stricmp(value, "gui"))
     {
+      Logger::log().info() << "You told me to list all interactive gui-elements.";
       Option::getSingleton().setListGuiElements(true);
       return true;
     }
     else if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "rawfonts"))
     {
       Logger::log().info() << "You told me to create a raw-font from every ttf." << FILE_GUI_WINDOWS;
+      Option::getSingleton().setCreateRawFonts(true);
+      return true;
+    }
+    else if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "tileTextures"))
+    {
+      Logger::log().info() << "You told me to create all textures for the TileEngine.";
+      Option::getSingleton().setCreateTileTextures(true);
       return true;
     }
     else if ((cmd[1] == 's' || !stricmp(cmd, "--server")))
@@ -54,10 +62,11 @@ bool parseCmdLine(const char *cmd, const char *value)
     }
   }
   cout << "\nusage:\n"
-  << "--list gui          -l gui\n"
-  << "--create rawfonts   -c rawfonts\n"
-  << "--server <name>     -s <name>\n"
-  << "--port   <num>      -p <num>\n";
+  << "--list gui              -l gui\n"
+  << "--create rawFonts       -c rawFonts\n"
+  << "--create tileTextures   -c tileTextures\n"
+  << "--server <name>         -s <name>\n"
+  << "--port   <num>          -p <num>\n";
   return false;
 }
 

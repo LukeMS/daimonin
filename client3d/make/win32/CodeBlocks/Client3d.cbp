@@ -53,9 +53,6 @@
 					<Add directory="..\ogre_lib_gcc"/>
 					<Add directory="..\fmod_lib"/>
 				</Linker>
-				<ExtraCommands>
-					<Add after="strip ..\..\..\daimonin3d.exe"/>
-				</ExtraCommands>
 			</Target>
 		</Build>
 		<Compiler>
@@ -68,7 +65,7 @@
 		<Linker>
 			<Add option="-Wl,--enable-runtime-pseudo-reloc"/>
 			<Add library="ws2_32"/>
-			<Add library="fmod"/>
+			<Add library="fmodex"/>
 			<Add directory="ogre_lib"/>
 			<Add directory="fmod_lib"/>
 		</Linker>

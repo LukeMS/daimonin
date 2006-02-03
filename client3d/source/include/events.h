@@ -49,6 +49,10 @@ public:
   {
     return mSceneManager;
   }
+  SceneNode *GetWorldNode()
+  {
+    return mWorld;
+  }
   const Vector3 &getWorldPos()
   {
     return mWorld->getPosition();

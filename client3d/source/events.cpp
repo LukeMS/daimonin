@@ -187,11 +187,14 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         VP->setBackgroundColour(ColourValue(0,0,0));
         /// Alter the camera aspect ratio to match the viewport
         mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
+        mCamera->setProjectionType(PT_ORTHOGRAPHIC);
+        mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
+        mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2 + 942));
+        mCamera->pitch(Degree(-25));
         /// ////////////////////////////////////////////////////////////////////
         /// Create the world.
         /// ////////////////////////////////////////////////////////////////////
         mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
-        // mWorld->setPosition(0,0,0);
         /// ////////////////////////////////////////////////////////////////////
         /// Create a minimal gui for some loading infos..
         /// ////////////////////////////////////////////////////////////////////
@@ -207,7 +210,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
       case GAME_STATUS_INIT_SOUND:
       {
         Sound::getSingleton().Init();
-        Sound::getSingleton().playSong(FILE_MUSIC_001);
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_LIGHT);
         GuiManager::getSingleton().displaySystemMessage("Starting lights...");
@@ -239,6 +241,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         setLightMember(light, 1);
         light->setVisible(false);
         mSceneManager->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
+
+        // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
+        // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
+
         */
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SPELL);
@@ -299,13 +305,14 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_OBJECT);
         GuiManager::getSingleton().displaySystemMessage("Starting the objects...");
-
+        Vector3 pos = Vector3::ZERO;
+        setWorldPos(pos);
       }
       break;
 
       case GAME_STATUS_INIT_OBJECT:
       {
-        ObjectManager  ::getSingleton().init(mSceneManager);
+        ObjectManager::getSingleton().init();
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
         GuiManager::getSingleton().displaySystemMessage("Starting the network...");
@@ -335,7 +342,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         mIdleTime += evt.timeSinceLastFrame;
         if (mIdleTime > 30.0)
         {
-          Sound::getSingleton().playSample(SAMPLE_PLAYER_IDLE);
+          Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
           mIdleTime = 0;
         }
 

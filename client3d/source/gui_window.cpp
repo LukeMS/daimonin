@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
 #include "option.h"
+#include "sound.h"
 #include "logger.h"
 #include <Ogre.h>
 #include <OgreHardwarePixelBuffer.h>
@@ -461,6 +462,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
           if (GuiImageset::getSingleton().getElementName(GUI_BUTTON_CLOSE)== actGadgetName)
           {
             GuiManager::getSingleton().setTooltip(NULL);
+            Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
             mOverlay->hide(); // just testing.
           }
         }

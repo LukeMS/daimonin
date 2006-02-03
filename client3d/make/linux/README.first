@@ -1,4 +1,33 @@
-Later the build and install scripts for Linux will be here.
+//====================================================================
+// Client3d as CodeBlocks project.
+//====================================================================
+This is the recommended way to compile client3d.
+Look into the CodeBlocks folder for more details.
 
-But for now, read client3d/README.install and follow the 
-instructions there.
+//====================================================================
+// Client3d as build scripts project.
+//====================================================================
+Later the build and install scripts for Linux will be here.
+You can try to compile using the test buikd stuff,
+but you won't get any support for this right now.
+
+1) (as root) copy client3d/make/linux/libfmod*.so to /usr/lib
+2) If you compiling on x86_64 you need to 
+   change -lfmodex.so to -lmodex64 in the folowing files:
+   client3d/source/Makefile.am
+   client3d/configure.in
+   (and vice versa)   
+3) bootstrap.sh
+4) make
+5) make install
+5) run_client3d
+
+//====================================================================
+// Ogre compiling tips (Ogre 1.0.6).
+//====================================================================
+On my system (adm64, geforce) i had to do this for compiling ogre3d:
+  LDFLAGS=' -lstdc++' ./configure --with-platform=GLX
+
+If you get a libpng exception look in ogre3d forums for the
+libpng and deviL modifikations.
+

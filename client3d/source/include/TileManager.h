@@ -47,9 +47,9 @@ const int CHUNK_SUM_Z  = 4;
 #endif
 
 
-/** Number of tiles in a chunk. Must be even. */
-const int CHUNK_SIZE_X = 12;
-const int CHUNK_SIZE_Z = 22;
+/** Number of tiles in a chunk. */
+const int CHUNK_SIZE_X = 13;
+const int CHUNK_SIZE_Z = 21;
 
 /** Number of tiles in the worldmap (on x-axis). */
 const int TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;
@@ -60,8 +60,10 @@ const int HIGH_QUALITY_RANGE = 5;
 /** Minimal size of tile in the shrinked terrain texture. */
 const int MIN_TEXTURE_PIXEL = 16;
 /** LOD for the chunks. */
-enum {
-  QUALITY_LOW, QUALITY_HIGH};
+enum
+{
+  QUALITY_LOW, QUALITY_HIGH
+};
 
 
 /**

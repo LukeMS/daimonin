@@ -21,16 +21,39 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <fstream>
 #include "fmod.h"
-#include "fmod_errors.h"  //optional.
+#include "fmod_errors.h"
 #include "define.h"
 #include "sound.h"
 #include "logger.h"
 
+/// We can't use c++ api on non m$ compilers - shame on fmod!
+
 using namespace std;
 
-static FMUSIC_MODULE *mpSong   =0;
-static FSOUND_STREAM *mpStream =0;
-static vector<FSOUND_SAMPLE*> vecHandle;
+FMOD_SYSTEM *soundSystem = 0;
+FMOD_RESULT result;
+
+typedef struct
+{
+  const char   *filename;
+  FMOD_SOUND   *sound;
+  FMOD_CHANNEL *channel;
+  bool isMusic;
+  bool is2D;
+  //FMOD_VECTOR  pos;
+  //FMOD_VECTOR vel;
+}
+SoundFiles;
+
+SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
+  {
+    { "invtro94.s3m"   , 0, 0, true , true  },
+    { "dummy.wav"      , 0, 0, false, true  },
+    { "console.wav"    , 0, 0, false, true  },
+    { "Player_Idle.ogg", 0, 0, false, false },
+  };
+
+const float DISTANCEFACTOR = 1.0f; /// Units per meter. (feet = 3.28.  cm = 100).
 
 ///================================================================================================
 /// Init the sound-system.
@@ -38,47 +61,64 @@ static vector<FSOUND_SAMPLE*> vecHandle;
 bool Sound::Init()
 {
   Logger::log().headline("Init Sound-System");
-
+  mInit = false;
   /// ////////////////////////////////////////////////////////////////////
-  /// Check Version.
+  /// Create the main system object.
   /// ////////////////////////////////////////////////////////////////////
-  if (FSOUND_GetVersion() < FMOD_VERSION)
+  result = FMOD_System_Create(&soundSystem);
+  if (result != FMOD_OK)
   {
-    Logger::log().error() << "You are using the wrong DLL version! You should be using FMOD" << FMOD_VERSION;
+    Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
     return false;
   }
-
   /// ////////////////////////////////////////////////////////////////////
   /// Init Fmod.
   /// ////////////////////////////////////////////////////////////////////
-  Logger::log().info() << "Starting fmod...";
-  if (!FSOUND_Init(44100, 32, 0))
+  result = FMOD_System_Init(soundSystem, 32, FMOD_INIT_NORMAL, NULL);
+  if (result != FMOD_OK)
   {
-    Logger::log().success(false);
-    Logger::log().error() << "FSound init: " << FMOD_ErrorString(FSOUND_GetError());
+    Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
     return false;
   }
-  Logger::log().success(true);
-
+  result = FMOD_System_Set3DSettings(soundSystem, 1.0, DISTANCEFACTOR, 1.0f);
+  if (result != FMOD_OK)
+  {
+    Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
+    return false;
+  }
+  mMusicVolume = 0.5;
+  mSoundVolume = 1.0;
+  mInit = true;
   /// ////////////////////////////////////////////////////////////////////
   /// Load all samples.
   /// ////////////////////////////////////////////////////////////////////
-  createSampleDummy();
-  // if you change something here - you must change it in enum SampleName, too.
-  Logger::log().info() << "Loading samples...";
-  loadSample(FILE_SAMPLE_MOUSE_CLICK);
-  loadSample(FILE_SAMPLE_PLAYER_IDLE);
-  Logger::log().success(true);
-  mWeight = 1.0;
-  mMusicVolume  = 50;
-  mSampleVolume =255;
+  createDummy();
+  Logger::log().info() << "Loading all Sounds.";
+  for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
+  {
+    createStream(i);
+  }
+  playStream(BG_MUSIC);
   return true;
 }
 
 ///================================================================================================
-/// Sets the 3D-pos of the sample.
+/// Free all stuff.
 ///================================================================================================
-void Sound::createSampleDummy()
+void Sound::freeRecources()
+{
+  for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
+  {
+    FMOD_Sound_Release(mSoundFiles[i].sound);
+  }
+  result = FMOD_System_Close(soundSystem);
+  result = FMOD_System_Release(soundSystem);
+}
+
+///================================================================================================
+/// Create a dummy Sample.
+///================================================================================================
+void Sound::createDummy()
 {
   const unsigned char dummy[] =
     {
@@ -87,7 +127,9 @@ void Sound::createSampleDummy()
       0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
       0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
     };
-  ofstream out(FILE_SAMPLE_DUMMY, ios::binary);
+  std::string filename = PATH_SAMPLES;
+  filename += mSoundFiles[DUMMY].filename;
+  ofstream out(filename.c_str(), ios::binary);
   if (!out)
   {
     Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
@@ -97,147 +139,92 @@ void Sound::createSampleDummy()
 }
 
 ///================================================================================================
-/// Sets the 3D-pos of the sample.
+/// Create a stream.
 ///================================================================================================
-int Sound::loadSample(const char *filename)
+void Sound::createStream(int id)
 {
-  FSOUND_SAMPLE *handle = FSOUND_Sample_Load((int) vecHandle.size() , filename, 0,0,0);
-  if (!handle)
+  std::string filename = PATH_SAMPLES;
+  filename += mSoundFiles[id].filename;
+  int options = FMOD_HARDWARE;
+  if (mSoundFiles[id].isMusic) options |= FMOD_LOOP_NORMAL; else options |= FMOD_LOOP_OFF;
+  if (mSoundFiles[id].is2D   ) options |= FMOD_2D;          else options |= FMOD_3D;
+  result = FMOD_System_CreateStream(
+             soundSystem,
+             filename.c_str(),
+             options,
+             0,
+             &mSoundFiles[id].sound);
+  if (result != FMOD_OK)
   {
-    Logger::log().error()  << "* Error on Sample '" << filename
-    << "': " << FMOD_ErrorString(FSOUND_GetError())
-    << Logger::endl << "-> using dummy.wav instead.";
-    mSuccess = false;
-    handle = FSOUND_Sample_Load((int) vecHandle.size() , FILE_SAMPLE_DUMMY, 0,0,0);
-    if (!handle)
-    {
-      Logger::log().error() << "Critical: Cound not load the dummy wavefile.";
-      return -1;
-    }
+    Logger::log().error() << "Error on creating Soundstream "
+    << mSoundFiles[id].filename << " : "
+    << FMOD_ErrorString(result);
   }
-  vecHandle.push_back(handle);
-  return (int) vecHandle.size();
-}
-
-///================================================================================================
-/// Sets the 3D-pos of the sample.
-///================================================================================================
-void Sound::setSamplePos3D(unsigned int channel, float &posX, float &posY, float &posZ)
-{
-  //if (channel > ) { return; }
-  float pos[3];
-  pos[0] =  posX * mWeight;
-  pos[1] =  posY * mWeight;
-  pos[2] = -posZ * mWeight;
-  FSOUND_3D_SetAttributes(channel, &pos[0], 0);
-}
-
-///================================================================================================
-/// Plays a sample.
-///================================================================================================
-int Sound::playSample(unsigned int id, float posX, float posY, float posZ)
-{
-  if (id > vecHandle.size())
-  {
-    return -1;
-  }
-  mChannel = FSOUND_PlaySound(FSOUND_FREE, vecHandle[id]);
-  setSamplePos3D(mChannel, posX, posY, posZ);
-  setVolume(mChannel, mSampleVolume);
-  return mChannel;
-}
-
-///================================================================================================
-/// Stops a sample.
-///================================================================================================
-void Sound::stopSample(unsigned int channel)
-{
-  if (channel <= vecHandle.size())
-  {
-    FSOUND_StopSound(channel);
-  }
-}
-
-///================================================================================================
-/// Set the volume.
-///================================================================================================
-void Sound::setVolume(unsigned int channel, int volume)
-{
-  FSOUND_SetVolume(channel, volume);
-}
-
-///================================================================================================
-/// Plays a song.
-///================================================================================================
-void Sound::playSong(const char *filename)
-{
-  stopSong();
-  mpSong = FMUSIC_LoadSong(filename);
-  if (!mpSong)
-  {
-    Logger::log().error() << "Song load: " << FMOD_ErrorString(FSOUND_GetError());
-    return;
-  }
-  FMUSIC_SetMasterVolume(mpSong, mMusicVolume);
-  FMUSIC_PlaySong(mpSong);
-}
-
-///================================================================================================
-/// Plays a song.
-///================================================================================================
-void Sound::stopSong()
-{
-  if (!mpSong)
-  {
-    return;
-  }
-  FMUSIC_StopSong(mpSong);
 }
 
 ///================================================================================================
 /// Plays a stream.
 ///================================================================================================
-void Sound::playStream(const char *filename)
+void Sound::playStream(int id)
 {
-  stopStream();
-  mpStream = FSOUND_Stream_Open(filename, FSOUND_LOOP_NORMAL, 0, 0);
-  if (!mpStream)
+  if (!mInit) return;
+  stopStream(id);
+  result = FMOD_System_PlaySound(
+             soundSystem,
+             FMOD_CHANNEL_FREE,
+             mSoundFiles[id].sound,
+             0,
+             &mSoundFiles[id].channel);
+  if (result != FMOD_OK)
   {
-    Logger::log().error() << "Music load: " << FMOD_ErrorString(FSOUND_GetError());
+    Logger::log().error() << "Error on play Soundstream "
+    << mSoundFiles[id].filename << " : "
+    << FMOD_ErrorString(result);
     return;
   }
-  mChannel = FSOUND_Stream_Play(FSOUND_FREE, mpStream);
-  if (mChannel < 0)
-  {
-    Logger::log().error() << "FSOUND_Stream_Play returned " << mChannel;
-    return;
-  }
-  setVolume(mChannel, mMusicVolume);
+  setVolume(id);
+  //set3DPos(id, );
 }
 
 ///================================================================================================
 /// Stops the stream.
 ///================================================================================================
-void Sound::stopStream()
+void Sound::stopStream(int id)
 {
-  if (!mpStream)
-  {
-    return;
-  }
-  FSOUND_Stream_Stop(mpStream);
-  mpStream = 0;
+  if (!mInit) return;
+  FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
 }
 
 ///================================================================================================
-/// Free all stuff.
+/// Set the volume.
 ///================================================================================================
-void Sound::freeRecources()
+void Sound::setVolume(unsigned int id, float volume)
 {
-  stopStream();
-  FMUSIC_FreeSong(mpSong);
-  for (unsigned int i = 0; i< vecHandle.size(); ++i)
+  if (!mInit) return;
+  if (volume <0)
   {
-    FSOUND_Sample_Free(vecHandle[i]);
+    if (mSoundFiles[id].isMusic)
+      FMOD_Channel_SetVolume(mSoundFiles[id].channel, mMusicVolume);
+    else
+      FMOD_Channel_SetVolume(mSoundFiles[id].channel, mSoundVolume);
   }
-  FSOUND_Close();
+  else
+  {
+    FMOD_Channel_SetVolume(mSoundFiles[id].channel, volume);
+  }
+}
+
+///================================================================================================
+/// Sets the 3D-pos of the stream.
+///================================================================================================
+void Sound::set3DPos(unsigned int id, float &posX, float &posY, float &posZ)
+{
+  if (!mInit) return;
+  FMOD_VECTOR pos = { posX * DISTANCEFACTOR, posY, posZ };
+  FMOD_VECTOR vel = {  0.0f, 0.0f, 0.0f };
+  result = FMOD_Channel_Set3DAttributes(mSoundFiles[id].channel, &pos, &vel);
+  if (result != FMOD_OK)
+  {
+    Logger::log().error() << "Coundn't set 3D pos of sound. " << result << " " << FMOD_ErrorString(result);
+  }
 }

@@ -21,16 +21,21 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef SOUND_H
 #define SOUND_H
 
-enum SampleName
-{
-  SAMPLE_BUTTON_CLICK,
-  SAMPLE_PLAYER_IDLE,
-  SAMPLE_SUM
-};
-
 class Sound
 {
 public:
+  /// ////////////////////////////////////////////////////////////////////
+  /// Variables.
+  /// ////////////////////////////////////////////////////////////////////
+  enum SampleName
+  {
+    BG_MUSIC,
+    DUMMY,
+    BUTTON_CLICK,
+    PLAYER_IDLE,
+    SAMPLE_SUM
+  };
+
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
@@ -40,29 +45,20 @@ public:
   }
   bool Init();
   void freeRecources();
-  // Streams.
-  void playStream( const char *filename );
-  void stopStream();
-  // Songs.
-  void playSong( const char *filename );
-  void stopSong();
-  // Samples.
-  void setSamplePos3D( unsigned int channel,  float &posX, float &posY, float &posZ );
-  int  loadSample( const char *filename );
-  int  playSample( unsigned int id, float posX = 1.0, float posY = 1.0 , float posZ = 1.0 );
-  void stopSample( unsigned int channel );
-  void createSampleDummy();
-  void setVolume( unsigned int channel, int volume );
+  void createDummy();
+  void createStream(int id);
+  void playStream(int id);
+  void stopStream(int id);
+  void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
+  void setVolume( unsigned int channel, float volume =-1);
 
 private:
   /// ////////////////////////////////////////////////////////////////////
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
-  float mWeight;
+  float mMusicVolume, mSoundVolume;
   bool  mSound3D;
-  bool  mSuccess;
-  int   mMusicVolume, mSampleVolume;
-  int   mChannel;
+  bool  mInit;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
