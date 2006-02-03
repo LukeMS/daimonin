@@ -112,6 +112,7 @@ public:
   {
     static Option Singleton; return Singleton;
   }
+
   bool setGameStatus(int status)
   {
     if (status > GAME_STATUS_SUM) return false;
@@ -122,25 +123,42 @@ public:
   {
     return mGameStatus;
   }
-  void setHighTextureDetails(bool highDetails)
+
+  void setHighTextureDetails(bool value)
   {
-    mHighTexDetails = highDetails;
+    mHighTexDetails = value;
   }
   bool getHighTextureDetails()
   {
     return mHighTexDetails;
   }
-  void setListGuiElements(bool listGuiElements)
+
+  void setListGuiElements(bool value)
   {
-    mListGuiElements = listGuiElements;
+    mListGuiElements = value;
   }
   bool getListGuiElements()
   {
     return mListGuiElements;
   }
 
+  void setCreateRawFonts(bool value)
+  {
+    mCreateRawFonts = value;
+  }
+  bool getCreateRawFonts()
+  {
+    return mCreateRawFonts;
+  }
 
-
+  void setCreateTileTextures(bool value)
+  {
+    mCreateTileTextures = value;
+  }
+  bool getCreateTileTextures()
+  {
+    return mCreateTileTextures;
+  }
 
 private:
   /// ////////////////////////////////////////////////////////////////////
@@ -148,7 +166,7 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   unsigned int mGameStatus;
   bool mLogin;
-  bool mHighTexDetails, mListGuiElements;
+  bool mHighTexDetails, mListGuiElements, mCreateRawFonts, mCreateTileTextures;
   ifstream *mDescFile;
   string mDescBuffer;
   string mFilename;

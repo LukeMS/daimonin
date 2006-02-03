@@ -44,7 +44,7 @@ public:
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
-  NPC(SceneNode  *Node, const char *filename, float Facing);
+  NPC(const char *filename, int posX, int posY, float Facing);
   ~NPC()
   {
   }
@@ -101,9 +101,9 @@ private:
   TexturePtr mTexture;
   Real mWalking, mTurning;
   Degree mFacing, mNewFacing;
-  int mPosTileX, mPosTileZ;   /// the actual tile-pos of the NPC.
+  int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
   int mWalkToX, mWalkToZ;     /// the destination tile-pos.
-  int maxHealth, actHelath;
+  int maxHealth, actHealth;
   int maxMana  , actMana;
   bool mAutoTurning, mAutoMoving;
   SceneNode *mNode;
@@ -111,7 +111,6 @@ private:
   Vector3 mTranslateVector, mWalkToPos, mBoundingBox, mDeltaPos;
   Animate *mAnim;
   std::string mDescFile;
-
   Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
   /// ////////////////////////////////////////////////////////////////////

@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "TileChunk.h"
 #include "TileManager.h"
 #include "logger.h"
+#include "option.h"
 
 //#define LOW_QUALITY_RENDERING
 
@@ -75,8 +76,11 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
   /// ////////////////////////////////////////////////////////////////////
   std::string strTextureGroup = "terrain";
   Logger::log().info() << "Creating texture group " << strTextureGroup;
-  CreateTextureGroup(strTextureGroup); // only used once, to create a new texture group (if a texture has changed)
-  CreateMipMaps(strTextureGroup); // has to be called everytime
+  if (Option::getSingleton().getCreateTileTextures())
+  { /// only needed after a tile-texture has changed.
+    CreateTextureGroup(strTextureGroup);
+  }
+  CreateMipMaps(strTextureGroup); /// has to be called everytime.
   /// ////////////////////////////////////////////////////////////////////
   /// Create TileChunks.
   /// ////////////////////////////////////////////////////////////////////
@@ -153,7 +157,7 @@ void TileManager::Save_Map(const std::string &png_filename)
   DataStreamPtr image_chunk(new MemoryDataStream ((void*)data,TILES_SUM_X * TILES_SUM_Z,false));
   Image img;
   img.loadRawData(image_chunk,TILES_SUM_X,TILES_SUM_Z, 1, PF_A8);
-  // save as a PNG
+  /// save as a PNG
   std::stringstream tmp_FileName;
   tmp_FileName <<PATH_TILE_TEXTURES << png_filename;
   img.save(tmp_FileName.str());

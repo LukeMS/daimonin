@@ -22,20 +22,32 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "option.h"
 #include "logger.h"
+#include "events.h"
+#include "gui_manager.h"
+
+
+
+#include "object_npc.h"
+#include "particle.h"
+#include "sound.h"
+#include "option.h"
+#include "logger.h"
+#include "spell_manager.h"
+#include "events.h"
+#include "TileManager.h"
+#include "gui_manager.h"
+
+
 
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
 
-
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
-bool ObjectManager::init(SceneManager *SceneMgr)
+bool ObjectManager::init()
 {
-  mSceneMgr = SceneMgr;
-  mParentNode = mSceneMgr->getRootSceneNode();
-
   string strType, strTemp, strMesh;
   int i=0;
   while(1)
@@ -47,22 +59,20 @@ bool ObjectManager::init(SceneManager *SceneMgr)
     }
     if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) break;
     Option::getSingleton().getDescStr("MeshName", strMesh,i);
-    Option::getSingleton().getDescStr("StartX", strTemp,i);
-    Real posX = atof(strTemp.c_str());
-    Option::getSingleton().getDescStr("StartY", strTemp,i);
-    Real posY = atof(strTemp.c_str());
-    Option::getSingleton().getDescStr("StartZ", strTemp,i);
-    Real posZ = atof(strTemp.c_str());
+    Option::getSingleton().getDescStr("PosX", strTemp,i);
+    int posX = atoi(strTemp.c_str());
+    Option::getSingleton().getDescStr("PosY", strTemp,i);
+    int posY = atoi(strTemp.c_str());
     Option::getSingleton().getDescStr("Facing", strTemp);
     float facing = atof(strTemp.c_str());
 
     if (strType == "npc")
     {
-      addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
+      addObject(OBJECT_NPC, strMesh.c_str(), posX, posY, facing);
     }
     else
     {
-      addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);
+      addObject(OBJECT_STATIC, strMesh.c_str(), posX, posY, facing);
     }
   }
   return true;
@@ -71,40 +81,33 @@ bool ObjectManager::init(SceneManager *SceneMgr)
 ///================================================================================================
 ///
 ///================================================================================================
-bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, float facing)
+bool ObjectManager::addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing)
 {
-  static int id= -1;
   mDescFile = PATH_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
 
-  Logger::log().info()  << "Adding object from file " << mDescFile << "...";
   if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
   {
-    Logger::log().success(false);
-    Logger::log().error() << "CRITICAL: description file was not found!";
+    Logger::log().error() << "Description file " << mDescFile <<" (used in ObjectManager::addObject) was not found.";
     return false;
   }
-  Logger::log().success(true);
 
   string strTemp;
   switch (type)
   {
       case OBJECT_STATIC:
       {
-        // For static objects we don't use *.desc files. So we get just the mesh name here.
-        strTemp = desc_filename;
-        Entity  *entity = mSceneMgr->createEntity("Object_"+StringConverter::toString(++id), strTemp.c_str());
-        mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
-        mNode->attachObject(entity);
-        mvObject_static.push_back(entity);
-        //            node->setScale(5, 5, 5);
+        /// For static objects we don't use *.desc files.
+        ObjStatic *obj_static = new ObjStatic(desc_filename, posX, posY, facing);
+        if (!obj_static) return false;
+        mvObject_static.push_back(obj_static);
         break;
       }
       case OBJECT_NPC:
       {
-        mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
-        NPC *npc = new NPC(mNode, desc_filename, facing);
-        mvObject_npc.push_back(npc);
+        NPC *obj_player = new NPC(desc_filename, posX, posY, facing);
+        if (!obj_player) return false;
+        mvObject_npc.push_back(obj_player);
         break;
       }
       default:

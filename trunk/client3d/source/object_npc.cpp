@@ -35,7 +35,7 @@ http://www.gnu.org/licenses/licenses.html
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 SceneManager *NPC::mSceneMgr =0;
 
-sPicture NPC::picSkin  = {1,   1, 255, 255 };
+sPicture NPC::picSkin  = { 1,   1, 255, 255 };
 sPicture NPC::picHair  = {55,   0,  45,  32 };
 uint32   NPC::color[MAX_NPC_COLORS] =
   {
@@ -45,6 +45,7 @@ uint32   NPC::color[MAX_NPC_COLORS] =
     0x00000000, 0x00000000, 0x00000000, 0x00000000
   };
 
+typedef std::list<Particle*> ActiveParticleList;
 static ParticleFX *tempPFX =0;
 
 ///================================================================================================
@@ -60,17 +61,19 @@ void NPC::freeRecources()
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
-NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
+NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
 {
   if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
-  if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
-  mNode = Node;
+  if (!mInstanceNr)
+  {
+    tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
+    Logger::log().headline("Init Actor Models");
+  }
   mFacing = Degree(Facing);
   thisNPC = mInstanceNr++;
   mDescFile = PATH_MODEL_DESCRIPTION;
   mDescFile += desc_filename;
-  if (!mInstanceNr)  Logger::log().headline("Init Actor Models");
-  Logger::log().info()  << "Parse description file " << mDescFile << "...";
+  Logger::log().info()  << "Adding object from file: " << mDescFile << "...";
   if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
   {
     Logger::log().success(false);
@@ -79,61 +82,37 @@ NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
   }
   Logger::log().success(true);
 
-  // mSceneMgr->setFog(FOG_LINEAR , ColourValue(.7,.7,.7), 0.005, 450, 800);
-  // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
-
   /// ////////////////////////////////////////////////////////////////////
   /// Build the mesh name.
   /// ////////////////////////////////////////////////////////////////////
   string strTemp = desc_filename;
   strTemp.replace(strTemp.find(".desc"), 5, ".mesh");
-
   /// ////////////////////////////////////////////////////////////////////
   /// The first NPC is our Hero.
   /// ////////////////////////////////////////////////////////////////////
   if (!thisNPC)
   {
     mEntityNPC = mSceneMgr->createEntity("Player [polyveg]", strTemp.c_str());
-    mNode->attachObject(mEntityNPC);
-    const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
-    Vector3 pos;
-    mBoundingBox.x = Math::Abs(AABB.getMaximum().x) - Math::Abs(AABB.getMinimum().x) + TILE_SIZE/2;
-    mBoundingBox.y = Math::Abs(AABB.getMinimum().y) /2;
-    mBoundingBox.z = Math::Abs(AABB.getMaximum().z) - Math::Abs(AABB.getMinimum().z) + TILE_SIZE/2;
-
-    mPosTileX = CHUNK_SIZE_X /2;
-    mPosTileZ = CHUNK_SIZE_Z /2;
-    pos.x = mPosTileX * TILE_SIZE + mBoundingBox.x;
-    pos.y = (Real) (Event->getTileManager()->Get_Map_StretchedHeight(mPosTileX, mPosTileZ) + mBoundingBox.y);
-    pos.z = mPosTileZ * TILE_SIZE + mBoundingBox.z;
-    mNode->setPosition(pos);
-
-    mAutoTurning = false;
-    mAutoMoving = false;
-
-    /*
-        const Real CAMERA_Y = 500;
-        Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-        Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
-        //    Event->getCamera()->setPosition(Vector3(pos.x, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
-        Event->getCamera()->setPosition(Vector3((CHUNK_SIZE_X * TILE_SIZE)/2, pos.y+CAMERA_Y, pos.z+CAMERA_Y));
-        Event->getCamera()->pitch(Degree(-45));
-    */
-
-    Event->getCamera()->setProjectionType(PT_ORTHOGRAPHIC);
-    Event->getCamera()->setFOVy(Degree(MAX_CAMERA_ZOOM));
-    Event->getCamera()->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , pos.y+ 400, CHUNK_SIZE_Z * TILE_SIZE + 680));
-    Event->getCamera()->pitch(Degree(-25));
-
-    /// Set the Init-pos of the TileEngine.
-    pos = Vector3(0,0,0);
-    Event->setWorldPos(pos);
+    mPosX = CHUNK_SIZE_X /2;
+    mPosZ = CHUNK_SIZE_Z /2;
   }
   else /// This is a NPC.
   {
-    mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
-    mNode->attachObject(mEntityNPC);
+    mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(thisNPC), strTemp.c_str());
+    mPosX = posX;
+    mPosZ = posZ;
   }
+  const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
+  mBoundingBox.x = Math::Abs(AABB.getMaximum().x) - Math::Abs(AABB.getMinimum().x) + TILE_SIZE/2;
+  mBoundingBox.y = Math::Abs(AABB.getMinimum().y);
+  mBoundingBox.z = Math::Abs(AABB.getMaximum().z) - Math::Abs(AABB.getMinimum().z) + TILE_SIZE/2;
+  Vector3 pos;
+  pos.x = mPosX * TILE_SIZE + mBoundingBox.x;
+  pos.y = (Real) (Event->getTileManager()->Get_Map_StretchedHeight(mPosX, mPosZ) + mBoundingBox.y);
+  pos.z = mPosZ * TILE_SIZE + mBoundingBox.z;
+  mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
+  //mNode = Event->GetWorldNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
+  mNode->attachObject(mEntityNPC);
 
   /// ////////////////////////////////////////////////////////////////////
   /// We ignore the material of the mesh and create a own one.
@@ -146,7 +125,6 @@ NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
   mEntityNPC->getSubEntity(0)->setMaterialName(tmpName);
   //mMaterial->reload();
 
-
   /// Create a texture for the material.
   tmpName +="_Texture";
   Image image;
@@ -154,18 +132,12 @@ NPC::NPC(SceneNode *Node, const char *desc_filename, float Facing)
   mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
   //mMaterial->load();
-
-
-  mNode->scale(.4,.4,.4); // Remove Me!!!!
-  //    mNode->showBoundingBox(true); // Remove Me!!!!
-
-
-
-
-
+  //mNode->showBoundingBox(true); // Remove Me!!!!
 
   /// Create Animations and Animation sounds.
   mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
+  mAutoTurning = false;
+  mAutoMoving = false;
   mTurning      =0;
   mWalking      =0;
   mEntityWeapon =0;
@@ -291,9 +263,6 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
   }
 }
 
-typedef std::list<Particle*> ActiveParticleList;
-
-
 ///================================================================================================
 /// Update npc.
 ///================================================================================================
@@ -318,18 +287,17 @@ void NPC::update(const FrameEvent& event)
   else if (mAutoMoving)
   {
     mAnim->toggleAnimation(Animate::STATE_WALK1);
-
     /// We are very close to destination.
     Vector3 dist = mWalkToPos - mNode->getPosition();
     if(dist.squaredLength() < 1)
     {
       /// Set the exact destination pos.
-      mPosTileX = mWalkToX;
-      mPosTileZ = mWalkToZ;
+      mPosX = mWalkToX;
+      mPosZ = mWalkToZ;
 
-      mWalkToPos.x = mBoundingBox.x + mPosTileX * TILE_SIZE;
-      mWalkToPos.y = mBoundingBox.y + Event->getTileManager()->Get_Avg_Map_Height(mPosTileX, mPosTileZ);
-      mWalkToPos.z = mBoundingBox.z + mPosTileZ * TILE_SIZE;
+      mWalkToPos.x = mBoundingBox.x + mPosX * TILE_SIZE;
+      mWalkToPos.y = mBoundingBox.y + Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ);
+      mWalkToPos.z = mBoundingBox.z + mPosZ * TILE_SIZE;
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
       mAnim->toggleAnimation(Animate::STATE_IDLE1);
@@ -346,8 +314,8 @@ void NPC::update(const FrameEvent& event)
 
       //      mDeltaPos /= mDeltaPos.squaredLength();
       Vector3 NewTmpPosition = mNode->getPosition() - event.timeSinceLastFrame *  mDeltaPos;
-      mPosTileX = (int) (NewTmpPosition.x / TILE_SIZE +1);
-      mPosTileZ = (int) (NewTmpPosition.z / TILE_SIZE +1);
+      mPosX = (int) (NewTmpPosition.x / TILE_SIZE +1);
+      mPosZ = (int) (NewTmpPosition.z / TILE_SIZE +1);
       //      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
       mNode->setPosition(NewTmpPosition);
     }
@@ -412,14 +380,14 @@ void NPC::castSpell(int spell)
 }
 
 ///================================================================================================
-/// Turn the mob until it faces the given tile.
+/// Turn the player until it faces the given tile.
 ///================================================================================================
 void NPC::faceToTile(int x, int z)
 {
-  float deltaX = x - mPosTileX;
-  float deltaZ = z - mPosTileZ;
+  float deltaX = x - mPosX;
+  float deltaZ = z - mPosZ;
 
-  /// This is the position of the mob.
+  /// This is the position of the player.
   if (deltaX ==0 && deltaZ ==0) return;
 
   mNewFacing = Radian(Math::ATan(deltaX/deltaZ));
@@ -429,20 +397,16 @@ void NPC::faceToTile(int x, int z)
 }
 
 ///================================================================================================
-/// Move the mob to the given tile.
+/// Move the player to the given tile.
 ///================================================================================================
 void NPC::moveToTile(int x, int z)
 {
-
-  // only for this test (tile-world smaller than screen) needed.
+  // only for testing (tile-world smaller than screen) needed.
   if (x < 0 || z < 0 || x > CHUNK_SIZE_X || z > CHUNK_SIZE_Z) return;
 
-
-  if(mPosTileX == x && mPosTileZ == z || mAutoTurning || mAutoMoving) return;
-
+  if(mPosX == x && mPosZ == z || mAutoTurning || mAutoMoving) return;
   /// Turn the head into the moving direction.
   faceToTile(x, z);
-
   /// Move it.
   mWalkToPos.x = x * TILE_SIZE + mBoundingBox.x;
   mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) + mBoundingBox.y);
@@ -520,7 +484,6 @@ void NPC::setTexture(int pos, int texColor, int textureNr)
         delete[] buffer;
       }
       break;
-
 
       default:
       Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for NPC.";

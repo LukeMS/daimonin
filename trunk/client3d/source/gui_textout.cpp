@@ -210,15 +210,10 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   }
 
   fnt->baseline = iSize;
-
-  //#define CREATE_SYSTEM_FONT
-#ifdef CREATE_SYSTEM_FONT
   /// ////////////////////////////////////////////////////////////////////
-  ///.The first font ever created is our system font.
-  /// Run this function only if you are in need of a new system-font!
+  /// Create a raw font.
   /// ////////////////////////////////////////////////////////////////////
-  static int sysFont = -1;
-  if (!++sysFont)
+  if (Option::getSingleton().getCreateRawFonts())
   {
     Image img;
     /// ////////////////////////////////////////////////////////////////////
@@ -233,9 +228,9 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     /// ////////////////////////////////////////////////////////////////////
     /// This is the Daimonin fontdata.
     /// ////////////////////////////////////////////////////////////////////
-    // draw the char-end sign to get rid of the monospace.
+    /// draw the char-end sign to get rid of the monospace size.
     uint32 *data = fnt->data;
-    for (int i=0; i < CHARS_IN_FONT; ++i)
+    for (unsigned int i=0; i < CHARS_IN_FONT; ++i)
     {
       for (unsigned int y = 0; y < fnt->height; ++y)
       {
@@ -243,13 +238,17 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
       }
       data+= fnt->width;
     }
-    // write font to disc.
+    /// write font to disc.
     img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
-    std::string filename = PATH_TEXTURES;
-    filename += FILE_SYSTEM_FONT;
-    img.save(filename);
+    std::string rawFilename = PATH_TEXTURES;
+    rawFilename += "NoLonger";
+    rawFilename += filename;
+    rawFilename.resize(rawFilename.size()-4);
+    rawFilename += '_'+ StringConverter::toString(iSize, 3, '0');
+    rawFilename += '_'+ StringConverter::toString(iReso, 3, '0');
+    rawFilename += ".png";
+    img.save(rawFilename);
   }
-#endif
 
   /// ////////////////////////////////////////////////////////////////////
   ///.Free Memory.

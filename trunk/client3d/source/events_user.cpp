@@ -1,5 +1,4 @@
 /*-----------------------------------------------------------------------------
-/*-----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html

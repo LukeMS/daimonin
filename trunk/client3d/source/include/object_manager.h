@@ -24,8 +24,15 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include "Ogre.h"
 #include "object_npc.h"
+#include "object_static.h"
 
 using namespace Ogre;
+
+/// ////////////////////////////////////////////////////////////////////
+/// Define:
+/// player:  human controlled.
+/// monster: ai controlled.
+/// ////////////////////////////////////////////////////////////////////
 
 enum
 {
@@ -47,8 +54,8 @@ public:
     static ObjectManager Singleton; return Singleton;
   }
   void freeRecources();
-  bool init(SceneManager *SceneMgr);
-  bool addObject(unsigned int type, const char *desc_filename, Vector3 pos, float facing);
+  bool init();
+  bool addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing);
   void delObject(int number);
   void update(int type, const FrameEvent& evt);
   void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
@@ -80,10 +87,8 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
-  SceneManager *mSceneMgr;
-  SceneNode *mParentNode, *mNode;
   std::string mDescFile;
-  std::vector<Entity*>mvObject_static;
+  std::vector<ObjStatic*>mvObject_static;
   std::vector<NPC*   >mvObject_npc;
 
   /// ////////////////////////////////////////////////////////////////////
