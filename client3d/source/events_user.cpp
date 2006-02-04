@@ -105,13 +105,16 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_4:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 0);
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 10);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_BODY, color);
+        if (++color > 4 ) color =0;
+      }
       break;
 
       case KC_5:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 1);
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
+      //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_BODY, 1);
+      //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
       break;
 
       case KC_6:
@@ -245,8 +248,8 @@ void CEvent::keyPressed(KeyEvent *e)
       if (mDayTime)
       {
         mDayTime =0;
-       // mLight[LIGHT_VOL ]->setVisible(false);
-       // mLight[LIGHT_SPOT]->setVisible(true);
+        // mLight[LIGHT_VOL ]->setVisible(false);
+        // mLight[LIGHT_SPOT]->setVisible(true);
       }
       else
       {

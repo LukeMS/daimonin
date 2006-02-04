@@ -14,14 +14,36 @@ TileBlending : "0" # blending offset isn't used for movement atm (=very ugly wal
 # First "NPC" is our Hero
 Type     : "npc"
 MeshName : "Human_M_Fighter.desc"
-StartX   : "0"
-StartY   : "0"
-StartZ   : "0"
+PosX     : "7"
+PosY     : "7"
 Facing   : "0" # [degrees]
 
-#Type     : "static"
-#MeshName : "tree01.mesh"
-#StartX   : "140"
-#StartY   : "-8"
-#StartZ   : "6"
-#Facing   : "90"   # Not used in static meshes.
+Type     : "npc"
+MeshName : "Human_M_Fighter.desc"
+PosX     : "2"
+PosY     : "2"
+Facing   : "15" # [degrees]
+
+Type     : "static"
+MeshName : "tree1.mesh"
+PosX     : "8"
+PosY     : "8"
+Facing   : "90"   # Not used in static meshes.
+
+Type     : "static"
+MeshName : "tree1.mesh"
+PosX     : "9"
+PosY     : "9"
+Facing   : "90"   # Not used in static meshes.
+
+Type     : "static"
+MeshName : "tree1.mesh"
+PosX     : "10"
+PosY     : "10"
+Facing   : "90"   # Not used in static meshes.
+
+Type     : "static"
+MeshName : "tree1.mesh"
+PosX     : "11"
+PosY     : "11"
+Facing   : "90"   # Not used in static meshes.

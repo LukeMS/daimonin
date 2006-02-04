@@ -35,8 +35,21 @@ http://www.gnu.org/licenses/licenses.html
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 SceneManager *NPC::mSceneMgr =0;
 
-sPicture NPC::picSkin  = { 1,   1, 255, 255 };
-sPicture NPC::picHair  = {55,   0,  45,  32 };
+sPicture NPC::picSkin = {
+                          10,10, 1,   1, 255, 255 }
+                        ; // wrong values!
+sPicture NPC::picHair = {
+                          10, 10, 55,   0,  45,  32 }
+                        ; // wrong values!
+sPicture NPC::picBody =
+  {
+    180, 150, // w, h
+    315, 335, // mask pos.
+    17,  93,  // front src pos.
+    64,  70,  // front dst pos.
+    212,  93, // back  src pos.
+    261,  70  // back  dst pos.
+  };
 uint32   NPC::color[MAX_NPC_COLORS] =
   {
     0x00e3ad91, 0x00f2dc91, 0x00c95211, 0x0037250b,
@@ -422,68 +435,144 @@ void NPC::moveToTile(int x, int z)
 ///================================================================================================
 void NPC::setTexture(int pos, int texColor, int textureNr)
 {
+  texColor = color[texColor];
   switch (pos)
   {
-      case TEXTURE_POS_SKIN:
-      {
-        /// Blit the color over the whole head.
-        texColor = color[texColor];
-        /// Cretate a temporary buffer for the pixel operations.
-        uint32 *buffer = new uint32[picSkin.w * picSkin.h];
-        PixelBox pb(picSkin.w, picSkin.h, 1, PF_A8R8G8B8 , buffer);
-        /// Fill it with the color.
-        for (int i=0; i < picSkin.w * picSkin.h; ++i) buffer[i] = texColor;
-
-        /// Blit the face texture over it.
-        if (textureNr >=0)
-        {
-        }
-        /// Copy the buffer into the model-texture.
-        mTexture->getBuffer()->blitFromMemory(pb, Box(0, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
-        delete[] buffer;
-      }
-      break;
-
       case TEXTURE_POS_HAIR:
       {
-        /// Blit the color over the whole head.
-        texColor = color[texColor];
-        /// Cretate a temporary buffer for the pixel operations.
-        uint32 *buffer = new uint32[picHair.w * picHair.h];
-        PixelBox pb(picHair.w, picHair.h, 1, PF_A8R8G8B8 , buffer);
-        /// Fill it with the color.
-        for (int i=0; i < picHair.w * picHair.h; ++i) buffer[i] = texColor;
-        /// Blit the face texture over it.
-        if (textureNr >=0) // -1 -> baldness.
-        {
-          /// Copy the buffer into the model-texture.
-          mTexture->getBuffer()->blitFromMemory(
-            PixelBox(picHair.w, picHair.h, 1, PF_A8R8G8B8, buffer),
-            Box(picHair.x, picHair.y, picHair.x + picHair.w , picHair.y + picHair.h));
-          Image image;
-          image.load("Human_M_Default.jpg", "General");
-          uint32 *copy = (uint32*)image.getData();
-          pb = mTexture->getBuffer()->lock(Box(0,0, 256, 256), HardwareBuffer::HBL_READ_ONLY );
-          uint32 *dest_data = (uint32*)pb.data;
-          uint32 pixColor,  srcColor;
-          for (unsigned int y = 0; y < 256 * 256; ++y)
-          {
-            if (!copy[y]) continue;
-            pixColor = dest_data[y];
-            srcColor = copy[y] & 0xff000000;
-            srcColor >>= 8;
-            if ((pixColor & 0x00ff0000) > srcColor )  pixColor-= srcColor;
-            srcColor >>= 8;
-            if ((pixColor & 0x0000ff00) > srcColor )  pixColor-= srcColor;
-            srcColor >>= 8;
-            if ((pixColor & 0x000000ff) > srcColor )  pixColor-= srcColor;
-            dest_data[y] = pixColor;
-          }
-        }
-        mTexture->getBuffer()->unlock();
-        delete[] buffer;
+        /*
+                /// Cretate a temporary buffer for the pixel operations.
+                uint32 *buffer = new uint32[picSkin.w * picSkin.h];
+                PixelBox pb(picSkin.w, picSkin.h, 1, PF_A8R8G8B8 , buffer);
+                /// Fill it with the color.
+                for (int i=0; i < picSkin.w * picSkin.h; ++i) buffer[i] = texColor;
+
+                /// Blit the face texture over it.
+                if (textureNr >=0)
+                {
+                }
+                /// Copy the buffer into the model-texture.
+                mTexture->getBuffer()->blitFromMemory(pb, Box(0, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
+                delete[] buffer;
+        */
       }
       break;
+
+      case TEXTURE_POS_BODY:
+      {
+        /// Load the shadow textue.
+        Image image;
+        image.load("shadow.png", "General");
+        uint32 *texRace = (uint32*)image.getData();
+        int width = (int)image.getWidth();
+        uint32 *buffer = new uint32[picBody.w * picBody.h];
+
+        for (int side = 0; side < 2; ++side)
+        {
+          /// Get the current model-texture fragment.
+          PixelBox pb(picBody.w, picBody.h, 1, PF_A8R8G8B8 , buffer);
+          mTexture->getBuffer()->blitToMemory(
+            Box(picBody.side[side].dstX,
+                picBody.side[side].dstY,
+                picBody.side[side].dstX + picBody.w,
+                picBody.side[side].dstY + picBody.h),
+            pb);
+          /// Fill the buffer with the selected color.
+          int i= 0;
+          uint32 colVal, srcColor, dstColor;
+          for (int y=0; y < picBody.h; ++y)
+          {
+            for (int x=0; x < picBody.w; ++x)
+            {
+              if (texRace[(y+picBody.mskY)*width + (x+picBody.mskX)] == 0xff000000)
+              {
+                /// 1) draw the color.
+                buffer[i] = texColor;
+                /// 2) draw the shadow.
+                colVal = texRace[(y+picBody.side[side].srcY)*width + (x+picBody.side[side].srcX)];
+                //Logger::log().info() << colVal;
+                if (colVal != 0xffffffff)
+                {
+                  dstColor = texColor;
+                  srcColor = 0xff - (colVal & 0xff);
+                  if ((dstColor & 0x0000ff) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x0000ff;
+                  srcColor <<= 8;
+                  if ((dstColor & 0x00ff00) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x00ff00;
+                  srcColor <<= 8;
+                  if ((dstColor & 0xff0000) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor &0xff0000;
+                  buffer[i] = dstColor;
+                }
+              }
+              ++i;
+            }
+          }
+          /// Copy the buffer back into the model-texture.
+          mTexture->getBuffer()->blitFromMemory(
+            PixelBox(picBody.w, picBody.h, 1, PF_A8R8G8B8, buffer),
+            Box(picBody.side[side].dstX,
+                picBody.side[side].dstY,
+                picBody.side[side].dstX + picBody.w,
+                picBody.side[side].dstY + picBody.h));
+        }
+        delete[] buffer;
+        /*
+        Image img;
+        uint32 *sysFontBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
+        mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
+        img = img.loadDynamicImage((uchar*)sysFontBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
+        img.save("c:\\ModelTexture_BodyChanged.png");
+        */
+      }
+      break;
+
+
+
+      /*
+              pb = mTexture->getBuffer()->lock(Box(0,0, TEX_SIZE, TEX_SIZE), HardwareBuffer::HBL_READ_ONLY );
+              uint32 *dest_data = (uint32*)pb.data;
+              uint32 pixColor,  srcColor;
+                        for (unsigned int y = 0; y < TEX_SIZE * TEX_SIZE; ++y)
+                        {
+                          if (!copy[y]) continue;
+                          pixColor = dest_data[y];
+                          srcColor = copy[y] & 0xff000000;
+                          srcColor >>= 8;
+                          if ((pixColor & 0x00ff0000) > srcColor )  pixColor-= srcColor;
+                          srcColor >>= 8;
+                          if ((pixColor & 0x0000ff00) > srcColor )  pixColor-= srcColor;
+                          srcColor >>= 8;
+                          if ((pixColor & 0x000000ff) > srcColor )  pixColor-= srcColor;
+                          dest_data[y] = pixColor;
+                        }
+
+              mTexture->getBuffer()->unlock();
+              */
+
+
+
+      /*
+            case TEXTURE_POS_HAIR:
+            {
+              /// Blit the color over the whole head.
+              texColor = color[texColor];
+              /// Cretate a temporary buffer for the pixel operations.
+              uint32 *buffer = new uint32[picSkin.w * picSkin.h];
+              PixelBox pb(picSkin.w, picSkin.h, 1, PF_A8R8G8B8 , buffer);
+              /// Fill it with the color.
+              for (int i=0; i < picSkin.w * picSkin.h; ++i) buffer[i] = texColor;
+
+              /// Blit the face texture over it.
+              if (textureNr >=0)
+              {
+              }
+              /// Copy the buffer into the model-texture.
+              mTexture->getBuffer()->blitFromMemory(pb, Box(0, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
+              delete[] buffer;
+            }
+            break;
+      */
+
+
 
       default:
       Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for NPC.";

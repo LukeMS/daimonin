@@ -37,6 +37,23 @@ enum
   TEXTURE_POS_SKIN, TEXTURE_POS_HAIR, TEXTURE_POS_BELT, TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES
 };
 const int MAX_NPC_COLORS = 16;
+const int SIDE_BACK  =0;
+const int SIDE_FRONT =1;
+
+typedef struct
+{
+  short srcX, srcY;
+  short dstX, dstY;
+}
+sSide;
+
+typedef struct
+{
+  short w, h;
+  short mskX, mskY;
+  sSide side[2];
+}
+sPicture;
 
 class NPC
 {
@@ -95,7 +112,7 @@ private:
   static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
   static SceneManager *mSceneMgr;
   static uint32 color[MAX_NPC_COLORS];
-  static sPicture picSkin, picHair;
+  static sPicture picSkin, picHair, picBody;
 
   unsigned int thisNPC;
   TexturePtr mTexture;
