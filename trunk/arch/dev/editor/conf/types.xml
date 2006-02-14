@@ -77,6 +77,7 @@
     <xi:include href="lists.xml" />
     <xi:include href="ignorelists.xml" />
 
+
 <!--###################### default attributes ######################-->
 
 <!--
@@ -133,6 +134,9 @@
   object status of the button). IS_TURNABLE will enable direction turning
   for some object types. These flags are all "system" related. Be VERY
   careful to change them.
+  </attribute>
+  <attribute arch="is_turnable" editor="is turnable" type="bool">
+  System flag. Object can be turned to the directions.
   </attribute>
   <attribute arch="speed_left" editor="start speed" type="float">
     NOTE: without speed != 0, this value is not used. Only use
@@ -194,64 +198,68 @@
   <attribute arch="no_pick" editor="non-pickable" type="bool">
     If set, the object cannot be picked up (Neither by players nor monsters).
   </attribute>
-  <attribute arch="player_only" editor="player only" type="bool">
-    If set, only players can enter the tile the object with this flag is in too.
+  <attribute arch="no_pass" editor="blocking passage" type="bool">
+    If set, the object cannot be passed by players nor monsters.
   </attribute>
-  <attribute arch="is_ethereal" editor="ethereal (pass thru)" type="bool">
-    If no_pass (blocking passage) is set for a object, no one can pass
-    the tile is it in (true for walls or closed doors). But if this
-    flag is set, the monster can pass through all no_pass objects
-    which has pass_thru set. 
-    This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
-    Orcs who moves without reason through walls are not senseful.
-    NOTE: ethereal has special abilities. It has the same effect
-    like can_pass_thru flag but its special. Its like the difference
-    between a being make out of dust (which is still kind of matter)
-    and a real ghost which is pure energy.
+  <attribute arch="blocksview" editor="block view" type="bool">
+    If an item is set to block view, players (and monsters) cannot
+    see byond it unless they cross it or manage to stand ontop.
   </attribute>
   <attribute arch="pass_ethereal" editor="etheral can pass" type="bool">
     If no_pass (blocking passage) is set, no one can pass. If this
     flag is set too, etheral flaged objects and CAN_PASS_THRU flag can pass.
-  </attribute>
-  <attribute arch="can_pass_thru" editor="pass thru blocked" type="bool">
-    If no_pass (blocking passage) is set for a object, no one can pass
-    the tile is it in (true for walls or closed doors). But if this
-    flag is set, the monster can pass through all no_pass objects
-    which has pass_thru set. 
-    This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
-    Orcs who moves without reason through walls are not senseful.
-    NOTE: can_pass_thru is a sub-effect from ethereality. See below.
   </attribute>
   <attribute arch="pass_thru" editor="can pass (no ethereal)" type="bool">
     If no_pass (blocking passage) is set, no one can pass. If this
     flag is set too, objects with the CAN_PASS_THRU flag can pass.
     Ethereal can't pass this as long pass_ethereal is not set!
   </attribute>
-  <attribute arch="is_invisible" editor="invisible" type="bool">
-    Generally makes the object invisible. Invisible objects will be shown
-    if the player has "see invisible" (from spell or item). To hide objects
-    totally from detection, use "sys_object".
+  <attribute arch="no_magic" editor="no spells" type="bool">
+    If enabled, it is impossible for players to use (wizard-)
+    spells on that spot.
   </attribute>
+  <attribute arch="no_cleric" editor="no prayers" type="bool">
+    If enabled, it is impossible for players to use (cleric-)
+    prayers on that spot.
+  </attribute>
+  <attribute arch="player_only" editor="player only" type="bool">
+    If set, only players can enter the tile the object with this flag is in too.
+  </attribute>
+</default_type>
+
+<!-- This ignorelist is for all system objects which are non pickable
+     and invisible. They don't interact with players at all. -->
+
+<!--####################################################################-->
+<type number="998" name="default_flags">
+  <description><![CDATA[
+	This is not a type - its a template for the item flags we need for import.
+    ]]>
+  </description>
+<section name="flags">
   <attribute arch="sys_object" editor="inv. system object" type="bool">
     Marks an object as system object. System objects are ALWAYS invisible and
     hidden from the players. They can't be seen or detected and never will send
     any information about them to the players client. System objects are put
     in layer 0 under the floor tiles.
   </attribute>
-  <attribute arch="no_teleport" editor="no teleport" type="bool">
-    Marks an object as no teleport object. A no teleport object can't be
-    teleported by teleporter except the object is inside the inventory of 
-    another object which can be teleported.
+  <attribute arch="is_invisible" editor="invisible" type="bool">
+    Generally makes the object invisible. Invisible objects will be shown
+    if the player has "see invisible" (from spell or item). To hide objects
+    totally from detection, use "sys_object".
   </attribute>
-  <attribute arch="blocksview" editor="block view" type="bool">
-    If an item is set to block view, players (and monsters) cannot
-    see byond it unless they cross it or manage to stand ontop.
+  <attribute arch="identified" editor="identified" type="bool">
+    If an item is identified, the player has
+    full knowledge about it.
   </attribute>
   <attribute arch="startequip" editor="NO-DROP item" type="bool">
     A NO-DROP item vanishes as soon as the player
     drops it to the ground.
+  </attribute>
+  <attribute arch="quest_item" editor="quest item" type="bool">
+    Item is a quest item. This item will be inserted in the 
+    quest container when a quest is finished and for that player
+    this item will never drop again.
   </attribute>
   <attribute arch="one_drop" editor="one drop" type="bool">
 	Item is a one-drop quest item. This item will be drop the
@@ -259,23 +267,11 @@
     with a 100% chance. A second time this item never drops again for
     that player. 
   </attribute>
-  <attribute arch="quest_item" editor="quest item" type="bool">
-    Item is a quest item. This item will be inserted in the 
-    quest container when a quest is finished and for that player
-    this item will never drop again.
+  <attribute arch="is_named" editor="named item" type="bool">
+    Item is named and prefix like race or material is not shown.
   </attribute>
-  <attribute arch="inv_locked" editor="inv or quest lock" type="bool">
+  <attribute arch="inv_locked" editor="iventory lock" type="bool">
     Item is locked when in player inventory (can't be dropped).
-  </attribute>
-  <attribute arch="identified" editor="identified" type="bool">
-    If an item is identified, the player has
-    full knowledge about it.
-  </attribute>
-  <attribute arch="can_reflect_spell" editor="can reflect spells" type="bool">
-  object CAN reflect spells. See reflect spells.
-  </attribute>
-  <attribute arch="can_reflect_missile" editor="can reflect missiles" type="bool">
-   object CAN reflect missiles. See reflect missiles.
   </attribute>
   <attribute arch="is_magical" editor="magical" type="bool">
     If set, this object count as "magical". Detect magic or
@@ -301,32 +297,33 @@
     or unapplying will set "damned 1" again. This flag can't be
     removed by remove damnation.
   </attribute>
-  <attribute arch="no_magic" editor="no spells" type="bool">
-    If enabled, it is impossible for players to use (wizard-)
-    spells on that spot.
-  </attribute>
-  <attribute arch="no_cleric" editor="no prayers" type="bool">
-    If enabled, it is impossible for players to use (cleric-)
-    prayers on that spot.
-  </attribute>
   <attribute arch="unpaid" editor="unpaid" type="bool">
     An &lt;unpaid&gt; item cannot be used unless a player carried it over
     a shop mat, paying the demanded price. Setting this flag makes sense
     only for pickable items inside shops.
   </attribute>
-  <attribute arch="is_turnable" editor="is turnable" type="bool">
-  System flag. Object can be turned to the directions.
+  <attribute arch="can_reflect_spell" editor="can reflect spells" type="bool">
+  object CAN reflect spells. See reflect spells.
   </attribute>
-</default_type>
+  <attribute arch="can_reflect_missile" editor="can reflect missiles" type="bool">
+   object CAN reflect missiles. See reflect missiles.
+  </attribute>
+  <attribute arch="can_roll" editor="moveable" type="bool">
+    If set, the object is able to "roll", so it can be pushed around.
+    This setting is used for boulders and barrels.
+  </attribute>
+  <attribute arch="no_teleport" editor="no teleport" type="bool">
+    Marks an object as no teleport object. A no teleport object can't be
+    teleported by teleporter except the object is inside the inventory of 
+    another object which can be teleported.
+  </attribute>
+</section>
+</type>
 
-<!-- This ignorelist is for all system objects which are non pickable
-     and invisible. They don't interact with players at all. -->
 
 <!--####################################################################-->
 <type number="999" name="combat_values">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
 	This is not a type - its a template for the combat values we need for import.
     ]]>
@@ -368,8 +365,9 @@
   <attribute arch="attack_sonic" editor="sonic (elemental)" length="15" type="int">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="attack_force" editor="force (magical)" length="15" type="int">
-    Force belongs to the group of magical attacks. Pure damage.
+  <attribute arch="attack_magic" editor="magic (magical)" length="15" type="int">
+    Magic belongs to the group of magical attacks. Its pure mana used to attack.
+    damage only.
   </attribute>
   <attribute arch="attack_light" editor="light (magical)" length="15" type="int">
     Light belongs to the group of magical attacks. Can inflict blinding effects.
@@ -474,8 +472,8 @@
   <attribute arch="resist_sonic" editor="sonic (elemental)" length="15" type="int">
     Sonic belongs to the group of elemental attacks. Pure damage.
   </attribute>
-  <attribute arch="resist_force" editor="force (magical)" length="15" type="int">
-    Force belongs to the group of magical attacks. Pure damage.
+  <attribute arch="resist_magic" editor="magic (magical)" length="15" type="int">
+    Magic belongs to the group of magical attacks. Pure mana used for damage only.
   </attribute>
   <attribute arch="resist_light" editor="light (magical)" length="15" type="int">
     Light belongs to the group of magical attacks. Can inflict blinding effects.
@@ -547,9 +545,7 @@
 
 <!--####################################################################-->
 <type number="126" name="AI Object">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     AI objects define how a mob behaves in the game. By select and fine-tuning low-level 
     behaviours many different kinds of high-level behaviours can be achieved.
@@ -568,20 +564,11 @@
 
 <!--####################################################################-->
 <type number="79" name="Misc Object">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     MISC_OBJECT are objects without special features, using the base setting of
     the game engine. This includes many decorative objects like statues or rocks. ]]>
   </description>
-  <attribute arch="no_pass" editor="blocking passage" type="bool">
-    If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="can_roll" editor="moveable" type="bool">
-    If set, the object is able to "roll", so it can be pushed around.
-    This setting is used for boulders and barrels.
-  </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may describe the object.
   </attribute>
@@ -589,9 +576,9 @@
 
 <!--####################################################################-->
 <type number="78" name="Light Source">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="speed_left" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
 	Light Sources are system objects which used as a light/darkness set point. ]]>
@@ -603,12 +590,12 @@
 
 <!--####################################################################-->
 <type number="74" name="Applyable Light">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
     <attribute arch="speed_left" />
     <attribute arch="glow_radius" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
 	A applyable light source for a player or monster. It has a 3 way apply chain:
@@ -706,11 +693,11 @@
 
 <!--####################################################################-->
 <type number="82" name="Light Refill Object">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
     <attribute arch="speed_left" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
 	Light Sources are system objects which u]]>
@@ -785,9 +772,6 @@
          other types like "monster & npc" which also have type number 0. -->
     <attribute arch="misc" value="x" />
   </required>
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
 	WARNING: Type 0 is a invalid type setting in Daimonin and 
       will cause a warning for the server. ]]>
@@ -802,13 +786,12 @@
 
 <!--####################################################################-->
 <type number="110" name="Ability">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="speed_left" />
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="is_magical" />
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Abilities are to be put in a monster's inventory. They grant monsters the
@@ -874,10 +857,7 @@
 
 <!--####################################################################-->
 <type number="18" name="Altar">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     When a player puts a defined number of certain items on the altar,
     then either a spell is casted (on the player) or a connector is
@@ -936,10 +916,7 @@
 
 <!--####################################################################-->
 <type number="31" name="Altar Trigger">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Altar_triggers work pretty much like normal altars
     (drop sacrifice -&gt; connection activated), except for the fact that
@@ -1015,7 +992,6 @@
 	<section name="resistance" />
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing an amulet, the object's stats will directly be inherited to
@@ -1027,14 +1003,14 @@
   </use>
   <attribute arch="ac" editor="armour class" type="int">
     This value defines the amount of armour-class bonus for wearing
-    this item. &lt;Armour class&gt; lessens the chance of being hit. Lower
+    this item. &lt;Armour class&gt; lessens the chance of being hit. Higher
     values are better. It should usually be set only for armour-like equipment.
   </attribute>
   <attribute arch="wc" editor="weapon class" type="int">
     The &lt;weapon class&gt; value adds to the overall weapon class of the wielder's
     melee attacks. Weapon class improves the chance of hitting the opponent.
     Weapon class is the "counterpiece" of &lt;armour class&gt;. It should usually
-    be set only for weapon-like items. Lower values are better.
+    be set only for weapon-like items. Higher values are better.
   </attribute>
   <attribute arch="item_level" editor="required level" type="int">
     If &lt;required level&gt; is set to a value greater zero, players cannot
@@ -1307,7 +1283,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Bracers are armour-plates worn around the wrists.
@@ -1332,7 +1307,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing an armour, the object's stats will directly be inherited to
@@ -1359,9 +1333,7 @@
 
 <!--####################################################################-->
 <type number="8" name="Book">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Applying a book, the containing message is displayed to the player. ]]>
   </description>
@@ -1380,7 +1352,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing boots, the object's stats will directly be inherited to
@@ -1419,10 +1390,7 @@
 
 <!--####################################################################-->
 <type number="92" name="Button">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     When a predefined amount of weight is placed on a button, the
     &lt;connection&gt; value is triggered. In most cases this happens when a
@@ -1453,10 +1421,7 @@
 
 <!--####################################################################-->
 <type number="30" name="Trigger Button">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     When a predefined amount of weigh is placed on a trigger button, the
     &lt;connection&gt; value is triggered. In most cases this happens when a
@@ -1495,7 +1460,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing a cloak, the object's stats will directly be inherited to
@@ -1518,9 +1482,7 @@
 
 <!--####################################################################-->
 <type number="9" name="Clock">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Applying a clock, the time is displayed to the player. ]]>
   </description>
@@ -1531,10 +1493,10 @@
 
 <!--####################################################################-->
 <type number="122" name="Container">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A player can put (certain kinds of) items in the container.
@@ -1579,11 +1541,6 @@
     percent, when put inside the container. &lt;reduce weight %&gt; 1.0 means no
     reduction, &lt;reduce weight %&gt; 0 means items are weightless inside.
     0.5 means weight is halfed.
-  </attribute>
-  <attribute arch="is_cauldron" editor="alchemy cauldron" type="bool">
-    If set, the container can be used as alchemy-cauldron.
-    The player can put ingredients inside, close it, cast alchemy
-    and if his formulae is true, he'll get what he longed for.
   </attribute>
   <attribute arch="other_arch" editor="animation arch" type="string">
     This is used for a certain kind of... "animation" when
@@ -1644,10 +1601,7 @@
 
 <!--####################################################################-->
 <type number="103" name="Converter">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Converters are like "exchange tables". When the player drops a
     specific type of items, they get converted into other items, at a
@@ -1690,10 +1644,7 @@
 
 <!--####################################################################-->
 <type number="42" name="Creator">
-  <ignore>
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     A creator is an object which creates another object when it
     is triggered. The child object can be anything. Creators are
@@ -1733,10 +1684,7 @@
 
 <!--####################################################################-->
 <type number="51" name="Detector">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Detectors work quite much like inv. checkers/pedestals: If the detector
     finds a specific object, it toggles its connected value.
@@ -1776,10 +1724,7 @@
 
 <!--####################################################################-->
 <type number="112" name="Director">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Directors change the direction of spell objects and other projectiles
     that fly past. Unlike spinners, directors always move objects in the
@@ -1818,10 +1763,6 @@
 <!--####################################################################-->
 <type number="158" name="Disease">
   <import_type name="combat_values" />
-  <ignore>
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     Diseases are an intersting form of spellcraft in Daimonin.
     Once casted, they can spread out and infect creatures in a large
@@ -1975,10 +1916,7 @@
 
 <!--####################################################################-->
 <type number="66" name="Exit">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     When the player applies an exit, he is transferred to a different location.
     (Monsters cannot use exits.) Depending on how it is set, the player applies
@@ -2051,9 +1989,6 @@
 <!--####################################################################-->
 <type number="72" name="Flesh">
   <import_type name="combat_values" />
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
     stomache and gain a little health. ]]>
@@ -2076,10 +2011,9 @@
 
 <!--####################################################################-->
 <type number="71" name="Floor">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Floors are the base ground objects, which "defines" the tile.
@@ -2121,11 +2055,10 @@
 
 <!--####################################################################-->
 <type number="77" name="Wall">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Walls are like floor basic objects for maps.
@@ -2134,10 +2067,6 @@
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="can_roll" editor="moveable" type="bool">
-    If set, the object is able to "roll", so it can be pushed around.
-    This setting is used for boulders and barrels.
   </attribute>
   <attribute arch="no_magic" editor="restrict spells" type="bool">
     This takes effect only with &lt;blocksview&gt; disabled.
@@ -2156,7 +2085,6 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="speed_left" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
@@ -2232,7 +2160,6 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="speed_left" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     DRINK Objects are like food objects - just liquids instead
@@ -2306,11 +2233,10 @@
 
 <!--####################################################################-->
 <type number="91" name="Gate">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Gates play an important role in Daimonin. Gates can be opened
@@ -2348,11 +2274,10 @@
 
 <!--####################################################################-->
 <type number="26" name="Timed Gate">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Timed Gates are like normal gates except they close automatically after
@@ -2397,7 +2322,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-   <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing a girdle, the object's stats will directly be inherited to
@@ -2425,7 +2349,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing gloves, the object's stats will directly be inherited to
@@ -2444,10 +2367,7 @@
 
 <!--####################################################################-->
 <type number="93" name="Handle">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     A handle can be applied by players and (certain) monsters.
     Every time it is applied, the &lt;connection&gt; value is triggered. ]]>
@@ -2477,10 +2397,6 @@
 <!--####################################################################-->
 <type number="27" name="Handle Trigger">
   <import_type name="Handle" />
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     Handle triggers are handles which reset after a short period
     of time. Every time it is either applied or reset, the
@@ -2499,7 +2415,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing a helmet, the object's stats will directly be inherited to
@@ -2532,10 +2447,7 @@
 
 <!--####################################################################-->
 <type number="56" name="Holy Altar">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Holy_altars are altars for the various religions. Praying
     at a Holy_altar will make you a follower of that god, and
@@ -2563,9 +2475,9 @@
 
 <!--####################################################################-->
 <type number="35" name="Horn">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="title" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Horns are very similar to rods. The difference is that horns regenerate
@@ -2622,9 +2534,6 @@
 <!--####################################################################-->
 <type number="73" name="Inorganic">
   <import_type name="combat_values" />
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     Inorganic materials are generally used as ingredients for
     alchemical receipes. By themselves, they have no special
@@ -2636,10 +2545,7 @@
 
 <!--####################################################################-->
 <type number="64" name="Inventory Checker">
-  <ignore>
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Inventory checkers passively check the players inventory for a
     specific object. You can set a connected value that is triggered
@@ -2720,9 +2626,7 @@
 
 <!--####################################################################-->
 <type number="60" name="Gems">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Items of the type Gems are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
@@ -2736,9 +2640,7 @@
 
 <!--####################################################################-->
 <type number="116" name="Jewels">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Items of the type Jewels are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
@@ -2752,9 +2654,21 @@
 
 <!--####################################################################-->
 <type number="117" name="Nuggets">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
+  <description><![CDATA[
+    Items of the type Nuggets are handled like a currency.
+    Unlike for any other type of item, in shops, the buy- and selling
+    prices differ only marginally. ]]>
+  </description>
+  <attribute arch="race" value="gold and jewels" type="fixed" />
+  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
+    This text may describe the object.
+  </attribute>
+</type>
+
+<!--####################################################################-->
+<type number="135" name="Pearls">
+  <import_type name="default_flags" />
   <description><![CDATA[
     Items of the type Nuggets are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
@@ -2768,11 +2682,10 @@
 
 <!--####################################################################-->
 <type number="20" name="Locked Door">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A locked door can be opened only when car
@@ -2828,10 +2741,7 @@
 
 <!--####################################################################-->
 <type number="29" name="Magic Ear">
-  <ignore>
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Magic_ears trigger a connected value
     when the player speaks a specific keyword. ]]>
@@ -2854,25 +2764,13 @@
     same connection value, every time it is activated.
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="keyword-matching" type="text">
-    This textfield contains the keyword-matching-syntax. The text should
-    have the following format: "@match &lt;keyword1&gt;|&lt;keyword2&gt;|... ".
-    Any number of keywords from one to infinite is allowed. Make sure
-    they are seperated by a '|'.
-
-    Examples: "@match yes", "@match gold|treasure". The connected
-    value will be triggerd when the player speaks any of the given
-    keywords within a two-square radius. IMPORTANT: Upper/lower case
-    does not make a difference!
+	Some text
   </attribute>
 </type>
 
 <!--####################################################################-->
 <type number="62" name="Magic Wall">
   <import_type name="combat_values" />
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     Magic walls fire spells in a given direction, in regular intervals.
     Magic walls can contain any spell. However, some spells do not
@@ -2951,10 +2849,7 @@
 
 <!--####################################################################-->
 <type number="55" name="Marker">
-  <ignore>
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     A marker is an object that inserts an invisible force (a mark) into a
     player stepping on it. This force does nothing except containing a
@@ -3016,9 +2911,9 @@
 
 <!--####################################################################-->
 <type number="36" name="Money">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="unpaid" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Items of the type Money are handled as currency.
@@ -3044,7 +2939,6 @@
     <attribute arch="value" />
     <attribute arch="unpaid" />
     <attribute arch="identified" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Monsters can behave in various kinds of ways.
@@ -3151,6 +3045,29 @@
   </attribute>
   <attribute arch="invulnerable" editor="invulnerable" type="bool">
     This mob will NEVER take any damage - so it can't die by damage.
+  </attribute>
+  <attribute arch="can_pass_thru" editor="pass thru blocked" type="bool">
+    If no_pass (blocking passage) is set for a object, no one can pass
+    the tile is it in (true for walls or closed doors). But if this
+    flag is set, the monster can pass through all no_pass objects
+    which has pass_thru set. 
+    This is used for example from ghosts who moves through doors.
+    Be careful! This is a extrem powerful ability! Use it in context!
+    Orcs who moves without reason through walls are not senseful.
+    NOTE: can_pass_thru is a sub-effect from ethereality. See below.
+  </attribute>
+  <attribute arch="is_ethereal" editor="ethereal (pass thru)" type="bool">
+    If no_pass (blocking passage) is set for a object, no one can pass
+    the tile is it in (true for walls or closed doors). But if this
+    flag is set, the monster can pass through all no_pass objects
+    which has pass_thru set. 
+    This is used for example from ghosts who moves through doors.
+    Be careful! This is a extrem powerful ability! Use it in context!
+    Orcs who moves without reason through walls are not senseful.
+    NOTE: ethereal has special abilities. It has the same effect
+    like can_pass_thru flag but its special. Its like the difference
+    between a being make out of dust (which is still kind of matter)
+    and a real ghost which is pure energy.
   </attribute>
   <attribute arch="no_attack" editor="never attack" type="bool">
     This mob will NEVER attack or fight back. Its permanent unaggressive.
@@ -3407,6 +3324,7 @@
 
 <!--####################################################################-->
 <type number="81" name="Spawn Point">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
@@ -3414,7 +3332,6 @@
     <attribute arch="value" />
     <attribute arch="unpaid" />
     <attribute arch="identified" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Spawn points are used to spawn monsters.
@@ -3474,7 +3391,6 @@
     <attribute arch="value" />
     <attribute arch="unpaid" />
     <attribute arch="identified" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Spawn Point Mobs are Monsters, put in the inventory
@@ -3568,6 +3484,29 @@
   </attribute>
   <attribute arch="invulnerable" editor="invulnerable" type="bool">
     This mob will NEVER take any damage - so it can't die by damage.
+  </attribute>
+  <attribute arch="can_pass_thru" editor="pass thru blocked" type="bool">
+    If no_pass (blocking passage) is set for a object, no one can pass
+    the tile is it in (true for walls or closed doors). But if this
+    flag is set, the monster can pass through all no_pass objects
+    which has pass_thru set. 
+    This is used for example from ghosts who moves through doors.
+    Be careful! This is a extrem powerful ability! Use it in context!
+    Orcs who moves without reason through walls are not senseful.
+    NOTE: can_pass_thru is a sub-effect from ethereality. See below.
+  </attribute>
+  <attribute arch="is_ethereal" editor="ethereal (pass thru)" type="bool">
+    If no_pass (blocking passage) is set for a object, no one can pass
+    the tile is it in (true for walls or closed doors). But if this
+    flag is set, the monster can pass through all no_pass objects
+    which has pass_thru set. 
+    This is used for example from ghosts who moves through doors.
+    Be careful! This is a extrem powerful ability! Use it in context!
+    Orcs who moves without reason through walls are not senseful.
+    NOTE: ethereal has special abilities. It has the same effect
+    like can_pass_thru flag but its special. Its like the difference
+    between a being make out of dust (which is still kind of matter)
+    and a real ghost which is pure energy.
   </attribute>
   <attribute arch="no_attack" editor="never attack" type="bool">
     This mob will NEVER attack or fight back. Its permanent unaggressive.
@@ -3829,10 +3768,9 @@
 
 <!--####################################################################-->
 <type number="65" name="Mood Floor">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="damned" />
-    <ignore_list name="system_object" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     As the name implies, mood floors can change the "mood" of
@@ -3886,10 +3824,7 @@
 
 <!--####################################################################-->
 <type number="40" name="Mover">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Movers move the objects above them. However, only living objects
     are affected (monsters/NPCs always, players optional). Movers have
@@ -3965,10 +3900,7 @@
 
 <!--####################################################################-->
 <type number="17" name="Pedestal">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
- </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Pedestals are designed to detect certain types of living objects or keys.
     When a predefined type of living creature steps on the pedestal, the
@@ -4012,10 +3944,7 @@
 
 <!--####################################################################-->
 <type number="32" name="Trigger Pedestal">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Trigger Pedestals are like normal Pedestal but they reset after they got triggered
     automatically. In the reset time they can't be triggered again.
@@ -4061,10 +3990,7 @@
 
 <!--####################################################################-->
 <type number="94" name="Pit">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Pits are holes, transporting the player when he walks (and falls) into them.
     A speciality about pits is that they don't transport the player to
@@ -4142,7 +4068,6 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="speed_left" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When eating, the player's stomache is drained by 1/4 of food
@@ -4211,9 +4136,9 @@
 
 <!--####################################################################-->
 <type number="86" name="Organic">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="speed_left" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     These are body parts which can't be eaten (dragon scales, hair...).]]>
@@ -4224,9 +4149,6 @@
 <!--####################################################################-->
 <type number="5" name="Potion">
   <import_type name="combat_values" />
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     The player can drink these and gain various kinds of benefits
     (/penalties) by doing so. ]]>
@@ -4307,9 +4229,7 @@
 
 <!--####################################################################-->
 <type number="156" name="Power Crystal">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Power crystals can store a player's mana:
     When the player applies the crystal with full mana, half of
@@ -4335,7 +4255,6 @@
     <attribute arch="material" />
     <attribute arch="material_real" />
     <attribute arch="sub_type" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Projectiles like arrows/crossbow bolts are used as ammunition
@@ -4465,7 +4384,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Rings are worn on the hands - one ring each.
@@ -4485,9 +4403,9 @@
 
 <!--####################################################################-->
 <type number="3" name="Rod">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="title" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A rod contains a spell. The player can use this spell by applying and
@@ -4542,10 +4460,6 @@
 <!--####################################################################-->
 <type number="154" name="Rune &amp; Trap">
   <import_type name="combat_values" />
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
   <description><![CDATA[
     A rune is a magical enscription on the dungeon floor. Traps are just
     like runes except they are not magical in nature, and generally have
@@ -4624,10 +4538,7 @@
 
 <!--####################################################################-->
 <type number="106" name="Savebed">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     When the player applies a savebed, he is not only saved. Both his
     respawn-after-death and his word-of-recall positions are pointing
@@ -4659,7 +4570,6 @@
     <attribute arch="material" />
     <attribute arch="material_real" />
     <attribute arch="sub_type" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Schooting weapons like bows/crossbows are used to shoot projectiles
@@ -4799,9 +4709,9 @@
 
 <!--####################################################################-->
 <type number="111" name="Scroll">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="title" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Scrolls contain spells (similar to spell-potions). Unlike potions,
@@ -4831,7 +4741,6 @@
   <ignore>
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wearing a shield, the object's stats will directly be inherited to
@@ -4851,10 +4760,7 @@
 
 <!--####################################################################-->
 <type number="68" name="Shop Floor">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Shop floor is used for shops. It acts like a combination of the
     common floor- and the treasure type: When the map is loaded,
@@ -4897,10 +4803,7 @@
 
 <!--####################################################################-->
 <type number="69" name="Shop Mat">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Shop mats are used for entering/leaving shops. You should always
     have exactly TWO shop mats on your shop-map: One inside the
@@ -4928,10 +4831,7 @@
 
 <!--####################################################################-->
 <type number="98" name="Sign &amp; MagicMouth">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     The purpose of a sign or magic_mouth is to display a certain message to
     the player. There are three ways to have the player get this message:
@@ -4986,9 +4886,9 @@
 
 <!--####################################################################-->
 <type number="21" name="Special Key">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="material" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When carrying the appropriate special key, a locked door can
@@ -5030,9 +4930,7 @@
 
 <!--####################################################################-->
 <type number="85" name="Spellbook">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     By reading a spellbook, the player has a chance of learning the
     contained spell. Once learned from a book, the spell is available
@@ -5064,10 +4962,7 @@
 
 <!--####################################################################-->
 <type number="90" name="Spinner">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Spinners change the direction of spell objects and other projectiles
     that fly past. Unlike directors, it does make a difference from what
@@ -5090,10 +4985,7 @@
 </type>
 <!--####################################################################-->
 <type number="41" name="Teleporter">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     When the player walks into a teleporter, he is transferred to a
     different location. The main difference to the object-type exit
@@ -5176,10 +5068,7 @@
 
 <!--####################################################################-->
 <type number="95" name="Trapdoor">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Trapdoors are very similar to pits. The difference is that they
     can not be closed. Instead, the weight of the object on the
@@ -5235,6 +5124,7 @@
 
 <!--####################################################################-->
 <type number="4" name="Treasure">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="nrof" />
     <attribute arch="title" />
@@ -5242,7 +5132,6 @@
     <attribute arch="weight" />
     <attribute arch="material" />
     <attribute arch="material_real" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A treasure-object turns into certain randomitems when the map is loaded
@@ -5286,7 +5175,6 @@
     <attribute arch="material" />
     <attribute arch="material_real" />
     <attribute arch="sub_type" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wielding a weapon, the object's stats will directly be inherited to the
@@ -5495,10 +5383,9 @@
 
 <!--####################################################################-->
 <type number="102" name="Random Drop Container">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Random drop container are used from spawn points.
@@ -5520,9 +5407,7 @@
 
 <!--####################################################################-->
 <type number="109" name="Wand &amp; Staff">
-  <ignore>
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Wands contain a certain spell. The player can apply (ready) and
     fire the wand. After a defined number of casts, the wand is
@@ -5570,11 +5455,10 @@
 
 <!--####################################################################-->
 <type number="118" name="Event Object">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="sub_type" />
     <attribute arch="damned" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     The event object can hold script or other events triggered
@@ -5599,6 +5483,7 @@
 
 <!--####################################################################-->
 <type number="129" name="Quest Trigger">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="sub_type" />
     <attribute arch="one_drop" />
@@ -5625,6 +5510,10 @@ trigger works as a container for the real quest objects.]]>
     If triggered, the quest trigger sets the trigger quest object to this value.
     (not used for one drop quests)
   </attribute>
+  <attribute arch="last_grace" editor="drop chance" type="int">
+    (one drop/special only): If set, there is 1/drop_chance that the trigger is triggered.
+    0 is the default value and means "always". 
+  </attribute>
   <attribute arch="one_drop" editor="one drop quest" type="bool">
     If set, the trigger is not connected to a quest but its a one drop quest.
     The object(s) inside are checked against the one drop quest container
@@ -5645,6 +5534,7 @@ trigger works as a container for the real quest objects.]]>
 
 <!--####################################################################-->
 <type number="131" name="Quest Object">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="one_drop" />
     <attribute arch="quest_item" />
@@ -5676,13 +5566,12 @@ that food.]]>
 
 <!--####################################################################-->
 <type number="119" name="Waypoint Object">
+  <import_type name="default_flags" />
   <ignore>
     <attribute arch="ac" />
     <attribute arch="sub_type" />
     <attribute arch="damned" />
     <attribute arch="cursed" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     The waypoint object can hold a position that a mob is to reach.
@@ -5730,10 +5619,7 @@ that food.]]>
 
 <!--####################################################################-->
 <type number="132" name="Timer">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Timers are used to trigger connections at specific time intervals. <br>
     A timer that is stored as running will start countdown as soon as the
@@ -5775,10 +5661,7 @@ that food.]]>
 
 <!--####################################################################-->
 <type number="133" name="Environment Sensor">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Environment sensors periodically watch their environment for specific
     conditions. Currently they can check for time of day (ToD), day of week (DoW) and brightness, all at the same time.
@@ -5842,10 +5725,7 @@ that food.]]>
 
 <!--####################################################################-->
 <type number="134" name="Connection Sensor">
-  <ignore>
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
-  </ignore>
+  <import_type name="default_flags" />
   <description><![CDATA[
     Connection sensors are trigger objects that take one or more other connections as input.
     The inputs can be combined according to a logical rule, and generate a script event or

@@ -30,7 +30,7 @@
 #endif /* win32 */
 
 
-static int              static_walk_semaphore                               = FALSE; /* see walk_off/walk_on functions  */
+static int static_walk_semaphore = FALSE; /* see walk_off/walk_on functions  */
 
 
 int                     freearr_x[SIZEOFFREE]                               =
@@ -540,90 +540,6 @@ void dump_me(object *op, char *outstr)
         strcat(outstr, "\n");
         strcat(outstr, "end\n");
     }
-}
-
-/* Gecko: outdated dumping functions */
-#if 0
-/*
- * This is really verbose...Can be triggered by the P key while in DM mode.
- * All objects are dumped to stderr (or alternate logfile, if in server-mode)
- */
-
-void dump_all_objects() {
-  object *op;
-  for(op=objects;op!=NULL;op=op->next) {
-    dump_object(op);
-    LOG(llevInfo, "Object %d\n:%s\n", op->count, errmsg);
-  }
-}
-
-/*
- * get_nearest_part(multi-object, object 2) returns the part of the
- * multi-object 1 which is closest to the second object.
- * If it's not a multi-object, it is returned.
- */
-
-/* OUTDATED !!!
-object *get_nearest_part(object *op,object *pl) {
-
-  object *tmp,*closest;
-  int last_dist,i;
-  if(op->more==NULL)
-    return op;
-  for(last_dist=distance(op,pl),closest=op,tmp=op->more;tmp!=NULL;tmp=tmp->more)
-    if((i=distance(tmp,pl))<last_dist)
-      closest=tmp,last_dist=i;
-  return closest;
-}
-*/
-#endif
-
-/* Gecko: we could at least search through the active, friend and player lists here... */
-
-/*
- * Returns the object which has the count-variable equal to the argument.
- */
-
-object * find_object(int i)
-{
-    return NULL;
-    /* object *op;
-
-    for(op=objects;op!=NULL;op=op->next)
-      if(op->count==(tag_t) i)
-        break;
-    return op;*/
-}
-
-/*
- * Returns the first object which has a name equal to the argument.
- * Used only by the patch command, but not all that useful.
- * Enables features like "patch <name-of-other-player> food 999"
- */
-
-object * find_object_name(char *str)
-{
-    return NULL;
-
-    /* if find_string() can't find the string -
-     * then its impossible that op->name will match.
-     * if we get a string - its the hash table
-     * ptr for this string.
-     */
-    /*
-      const char *name=find_string(str);
-      object *op;
-
-      if(name==NULL)
-          return NULL;
-
-      for(op=objects;op!=NULL;op=op->next)
-      {
-        if(op->name==name)
-            break;
-      }
-
-      return op;*/
 }
 
 void free_all_object_data()
@@ -2339,7 +2255,7 @@ object * insert_ob_in_ob(object *op, object *where)
      */
     if (op->type == TYPE_EVENT_OBJECT && op->sub_type1)
         where->event_flags |= (1U << (op->sub_type1 - 1));
-    else if(op->type == TYPE_QUEST_TRIGGER && op->sub_type1 == ST1_QUEST_TRIGGER_CONT && where->type == CONTAINER)
+    else if(op->type == TYPE_QUEST_TRIGGER && op->sub_type1 == ST1_QUEST_TRIGGER_NORMAL && where->type == CONTAINER)
         where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
 
     /* if player, adjust one drop items and fix player if not

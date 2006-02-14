@@ -47,22 +47,20 @@
 #endif
 
 
-/* Gecko: since we no longer maintain a complete list of all objects,
- * all functions using find_object are a lot less useful...
+/* Gecko: we could at least search through the active, friend and player lists here... */
+/* Michtoen: When reworking the DM commands - make this browsing all, why not? its a DM command.
+* browse active list, all players and even all maps - this IS a super special command,
+* don't care about cpu usage. Its important to patch or fix objects online.
+*/
+/*
+ * Helper function get an object somewhere in the game
+ * Returns the object which has the count-variable equal to the argument.
  */
 
-/* This finds and returns the object which matches the name or
- * object nubmer (specified via num #whatever).
- */
-
-static object * find_object_both(char *params)
+static object * find_object(int i)
 {
-    if (!params)
-        return NULL;
-    if (params[0] == '#')
-        return find_object(atol(params + 1));
-    else
-        return find_object_name(params);
+	/* i is the count - browse ALL and return the object */
+	return NULL;
 }
 
 /* Sets the god for some objects.  params should contain two values -
@@ -80,7 +78,7 @@ int command_setgod(object *op, char *params)
     }
     /* kill the space, and set string to the next param */
     *str++ = '\0';
-    if (!(ob = find_object_both(params)))
+    if (!(ob = find_object(atol(params))))
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "Set whose god - can not find object %s?", params);
         return 1;
@@ -705,7 +703,6 @@ int command_patch(object *op, char *params)
 {
     int     i;
     char   *arg, *arg2;
-    char    buf[MAX_BUF];
     object *tmp;
 
     tmp = NULL;
@@ -715,8 +712,6 @@ int command_patch(object *op, char *params)
             tmp = op;
         else if (sscanf(params, "%d", &i))
             tmp = find_object(i);
-        else if (sscanf(params, "%s", buf))
-            tmp = find_object_name(buf);
     }
     if (tmp == NULL)
     {

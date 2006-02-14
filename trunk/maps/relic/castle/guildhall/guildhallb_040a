@@ -8,8 +8,8 @@ width 24
 height 24
 darkness 1
 tile_path_4 guildhallb_030a
-tileset_id 76
-tileset_x 0
+tileset_id 28
+tileset_x 24
 tileset_y 0
 end
 arch floor_flagstone1c

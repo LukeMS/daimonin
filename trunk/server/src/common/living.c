@@ -1010,7 +1010,6 @@ void fix_player(object *op)
     pl->quests_done = NULL;
     pl->quests_type_kill = NULL;
     pl->quests_type_normal = NULL;
-    pl->quests_type_cont = NULL;
 
     /* only adjust skills which has no own level/exp values */
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
@@ -1133,17 +1132,11 @@ void fix_player(object *op)
                 pl->quests_type_kill = tmp;
                 pl->quests_type_kill_count = tmp->count;
             }
-            else if(tmp->sub_type1 == ST1_QUESTS_TYPE_CONT)
-            {
-                pl->quests_type_cont = tmp;
-                pl->quests_type_cont_count = tmp->count;
-            }
             else /* this really should not happens... */
             {
                 LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
                     tmp->sub_type1, query_name(op));
-                /* we *can* remove it - but lets keep it for further investigations for now */
-                /*remove_ob(tmp);*/
+                remove_ob(tmp);
             }
             continue;
         }

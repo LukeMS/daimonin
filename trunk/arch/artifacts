@@ -3538,6 +3538,7 @@ value 250000
 type 70
 item_level_art 22
 material 256
+is_named 1
 item_quality 100
 item_condition 100
 material_real 0
@@ -3566,6 +3567,7 @@ item_quality 100
 item_condition 100
 material 256
 material_real 0
+is_named 1
 face ring_silver_white.101
 type 70
 value 225000
@@ -3595,6 +3597,7 @@ item_quality 100
 item_condition 100
 material 256
 item_level_art 12
+is_named 1
 material_real 0
 face ring_silver_red.101
 is_magical 1
@@ -3629,6 +3632,7 @@ item_level_art 12
 item_quality 100
 item_condition 100
 material_real 0
+is_named 1
 face ring_silver_blue.101
 type 70
 is_magical 1
@@ -3661,6 +3665,7 @@ material 256
 item_level_art 35
 item_quality 100
 item_condition 100
+is_named 1
 material_real 0
 face ring_silver_blue.101
 type 70
@@ -3694,6 +3699,7 @@ Object
 title of Yordan
 face ring_gold_white.101
 item_level_art 18
+is_named 1
 item_quality 100
 item_condition 100
 material 256
@@ -3718,6 +3724,7 @@ face ring_gold_white.101
 item_level_art 7
 item_quality 90
 item_condition 90
+is_named 1
 material 256
 material_real 0
 type 70
@@ -4611,4 +4618,5 @@ A
 B
 endmsg
 end
+#
 #

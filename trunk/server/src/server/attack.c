@@ -765,7 +765,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 return 0;
                 break;
 
-            case ATNR_FORCE:
+            case ATNR_MAGIC:
             case ATNR_LIGHT:
             case ATNR_SHADOW: 
             case ATNR_PSIONIC:
@@ -831,7 +831,7 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
             break;
 
-        case ATNR_FORCE:
+        case ATNR_MAGIC:
             *flags |=HIT_FLAG_DMG|MATERIAL_BASE_MAGICAL;
             ATTACK_HIT_DAMAGE(hitter, attacknum);       /* get % of dam from this attack form */
             if (op->resist[attacknum])

@@ -322,6 +322,9 @@ struct plugin_hooklist
 	char * (*query_short_name)(object *op, object *caller);
 	artifact * (*find_artifact)(const char *name);
 	void (*give_artifact_abilities)(object *op, artifact *art);
+	const char * (*find_string)(const char *str);
+	int (*get_nrof_quest_item)(const struct obj *target, const char *aname, const char *name, const char *title);
+	object * (*is_player_inv)(object *op);
 
     /* Global variables */
     Animations **animations;

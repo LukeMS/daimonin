@@ -140,7 +140,9 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
     if (!target || target->type != PLAYER)
         return;
 
-    if (QUERY_FLAG(quest_trigger, FLAG_ONE_DROP)) /* marks one drop quest items */
+	/* its a one drop - it triggers when the drop chance is not set or triggers */
+    if (QUERY_FLAG(quest_trigger, FLAG_ONE_DROP)
+			&& (!quest_trigger->last_grace || !(RANDOM() % quest_trigger->last_grace))) /* marks one drop quest items */
     {
 		int tmp_lev = 0;
 
@@ -158,8 +160,6 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
             {
                 if(!find_one_drop_quest_item(target, tmp))
                 {
-                    if(quest_trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT && !flag)
-                        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
                     flag = TRUE;
 					SET_FLAG(tmp, FLAG_IDENTIFIED); /* be sure the one drop is IDed - nicer gaming experience */
                     add_one_drop_quest_item(target, tmp);
@@ -183,9 +183,6 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
             {
                 if(!find_quest_item(target, tmp))
                 {
-
-                    if(quest_trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT && !flag)
-                        new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
                     flag = TRUE;
                     add_quest_item(target, tmp);
                     new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, target, "You found the quest item %s!", query_short_name(tmp, target));
@@ -228,7 +225,7 @@ void add_quest_containers(struct obj *op)
         pl->quest_one_drop = arch_to_object(archt);
         pl->quest_one_drop_count = pl->quest_one_drop->count;
         pl->quest_one_drop->sub_type1 = ST1_QUEST_ONE_DROP;
-		FREE_AND_ADD_REF_HASH(pl->quest_one_drop->name, "QC: onedrops");
+		FREE_AND_COPY_HASH(pl->quest_one_drop->name, "QC: onedrops");
         insert_ob_in_ob(pl->quest_one_drop, op);
     }
 
@@ -238,17 +235,8 @@ void add_quest_containers(struct obj *op)
         pl->quests_done = arch_to_object(archt);
         pl->quests_done_count = pl->quests_done->count;
         pl->quests_done->sub_type1 = ST1_QUESTS_TYPE_DONE;
-		FREE_AND_ADD_REF_HASH(pl->quests_done->name, "QC: list done");
+		FREE_AND_COPY_HASH(pl->quests_done->name, "QC: list done");
         insert_ob_in_ob(pl->quests_done, op);
-    }
-
-    if(!pl->quests_type_cont || !OBJECT_VALID(pl->quests_type_cont,pl->quests_type_cont_count) || pl->quests_type_cont->env != op)
-    {
-        pl->quests_type_cont = arch_to_object(archt);
-        pl->quests_type_cont_count = pl->quests_type_cont->count;
-        pl->quests_type_cont->sub_type1 = ST1_QUESTS_TYPE_CONT;
-		FREE_AND_ADD_REF_HASH(pl->quests_type_cont->name, "QC: container");
-        insert_ob_in_ob(pl->quests_type_cont, op);
     }
 
     if(!pl->quests_type_kill || !OBJECT_VALID(pl->quests_type_kill,pl->quests_type_kill_count) || pl->quests_type_kill->env != op)
@@ -256,7 +244,7 @@ void add_quest_containers(struct obj *op)
         pl->quests_type_kill = arch_to_object(archt);
         pl->quests_type_kill_count = pl->quests_type_kill->count;
         pl->quests_type_kill->sub_type1 = ST1_QUESTS_TYPE_KILL;
-		FREE_AND_ADD_REF_HASH(pl->quests_type_kill->name, "QC: kill");
+		FREE_AND_COPY_HASH(pl->quests_type_kill->name, "QC: kill");
         insert_ob_in_ob(pl->quests_type_kill, op);
     }
 
@@ -265,7 +253,7 @@ void add_quest_containers(struct obj *op)
         pl->quests_type_normal = arch_to_object(archt);
         pl->quests_type_normal_count = pl->quests_type_normal->count;
         pl->quests_type_normal->sub_type1 = ST1_QUESTS_TYPE_NORMAL;
-		FREE_AND_ADD_REF_HASH(pl->quests_type_normal->name, "QC: normal");
+		FREE_AND_COPY_HASH(pl->quests_type_normal->name, "QC: normal");
         insert_ob_in_ob(pl->quests_type_normal, op);
     }
 }
@@ -280,10 +268,9 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
 
     if(trigger->sub_type1 == ST1_QUEST_TRIGGER_NORMAL) /* normal */
         insert_ob_in_ob(trigger, CONTR(who)->quests_type_normal);
-    else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL) /* kill */
-        insert_ob_in_ob(trigger, CONTR(who)->quests_type_kill);
-    else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT) /* cont */
-        insert_ob_in_ob(trigger, CONTR(who)->quests_type_cont);
+	else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL || 
+			 trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM) /* kill */
+		insert_ob_in_ob(trigger, CONTR(who)->quests_type_kill);
     else
     {
         LOG(llevBug, "BUG: add_quest_trigger(): wrong quest type %d\n", trigger->sub_type1);
@@ -310,7 +297,10 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
     trigger->last_eat = q_status;
 
     if(q_status == -1) /* move it to quests_done */
+	{
+		remove_ob_inv(trigger); /* clear quest data inventory before we neutralize */
         insert_ob_in_ob(trigger, CONTR(who)->quests_done);
+	}
     else
         add_quest_trigger(who, trigger);
 }
@@ -323,25 +313,66 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
  */
 void check_kill_quest_event(struct obj *pl, struct obj *op)
 {
-    object *tmp;
+    object *tmp, *tmp_info;
 
+	if (!CONTR(pl)->quests_type_kill)
+		add_quest_containers(pl);
 
+	/* browse the quest triggers */
     for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below)
     {
-        /* hey, we got one! */
-        if(tmp->other_arch == op->arch && tmp->slaying == op->name && tmp->title == op->title)
-        {
-            /* we have any event left in this trigger? */
-            if(tmp->level < tmp->last_sp)
-            {
-                char buf[MAX_BUF];
+		/* inside the quest triggers are quest_info object with the kill info */
+		for(tmp_info=tmp->inv;tmp_info;tmp_info=tmp_info->below)
+		{
+			if( tmp_info->race && tmp_info->race != op->arch->name)
+				continue; /* quick check we have something legal */
+			
+			/* we have a hit when one of this 3 possible names match */
+			if( (tmp_info->name && tmp_info->name == op->name)
+				|| (tmp_info->title && tmp_info->title == op->name)
+				|| (tmp_info->slaying && tmp_info->slaying == op->name))
+			{
+				/* ok, we have a hit... now lets check what we have - kill or kill item */
+				if(tmp->sub_type1 == ST1_QUEST_TRIGGER_KILL_ITEM)
+				{
+					int nrof;
 
-                tmp->level++;
-                /* tell player he has triggered a kill quest again */
-                sprintf(buf, "You killed %d of %d %s.", tmp->level, tmp->last_sp,query_name(op));
-                new_draw_info(NDI_NAVY, 0, pl, buf);
-            }
-        }
+					/* the drop chance can be random ... */
+					if(tmp_info->last_grace && (RANDOM() % tmp_info->last_grace))
+						continue; /* good kill, bad luck, no item */
+
+					/* Its real: give the item inside the quest_info the player */
+					if(!tmp_info->inv)
+					{
+						LOG(llevBug,"BUG: check_kill_quest_event:: tmp_info has no inventory item (quest %s)\n", 
+								query_name(tmp));
+						continue;
+					}
+					else
+					{
+						object *newob;
+
+						/* don't give out more as needed items */
+						nrof = get_nrof_quest_item(pl, tmp_info->inv->arch->name, tmp_info->inv->name, tmp_info->inv->title);
+						if(nrof++ >= tmp_info->last_sp)
+							continue;
+
+						/* create a clone and put it in player inventory */
+						copy_object(tmp_info->inv, (newob = get_object()));
+						esrv_send_item(pl, insert_ob_in_ob(newob, pl));
+					}
+
+					new_draw_info_format(NDI_NAVY, 0, pl, "You found a quest item!\nYou found %d of %d %s!", 
+								(nrof > tmp_info->last_sp)?tmp_info->last_sp:nrof, tmp_info->last_sp, 
+								query_short_name(tmp_info->inv, NULL));
+				}
+				else if(tmp_info->level < tmp_info->last_sp) /* pure kill quest - alot easier */
+				{
+					new_draw_info_format(NDI_NAVY, 0, pl, "Quest %s: You killed %d of %d %s.",tmp->name, 
+									++tmp_info->level, tmp_info->last_sp, query_name(op));
+				}
+			}
+		}
     }
 }
 
@@ -356,7 +387,26 @@ void check_cont_quest_event(struct obj *pl, struct obj *sack)
     /* lets browse the inventory of the container for quest_trigger object */
     for(tmp=sack->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type ==TYPE_QUEST_TRIGGER && tmp->sub_type1 == ST1_QUEST_TRIGGER_CONT)
+        if(tmp->type ==TYPE_QUEST_TRIGGER && tmp->sub_type1 == ST1_QUEST_TRIGGER_NORMAL)
             insert_quest_item(tmp, pl);
     }
+}
+
+/* recursive check the (legal, non hidden with containers) inventory for nrof of an item */
+int get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title)
+{
+	int nrof = 0;
+	object *tmp;
+
+	for (tmp = target->inv; tmp; tmp = tmp->below)
+	{
+		if(QUERY_FLAG(tmp, FLAG_SYS_OBJECT)) /* search only "real" inventory */
+			continue;
+		if (tmp->arch->name == aname && tmp->name == name && tmp->title == title)
+			nrof += tmp->nrof?tmp->nrof:1;
+		if(tmp->type == CONTAINER)
+			nrof += get_nrof_quest_item(tmp, aname, name, title);
+	}
+
+	return nrof;
 }

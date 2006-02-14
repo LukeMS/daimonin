@@ -212,6 +212,12 @@ typedef signed long long         sint64;
 #define T_STYLE_UNSET (-999)
 #define ART_CHANCE_UNSET (-1)
 
+/* ego items */
+#define EGO_ITEM_BOUND_OK 0
+#define EGO_ITEM_BOUND_UNBOUND 1
+#define EGO_ITEM_BOUND_PLAYER 2
+#define EGO_ITEM_BOUND_CLAN 3
+
 /* mob defines */
 #define MIN_MON_RADIUS 2  /* minimum monster detection radius */
 #define MAX_AGGRO_RANGE 9 /* if target of mob is out of this range (or stats.Wis if higher)*/

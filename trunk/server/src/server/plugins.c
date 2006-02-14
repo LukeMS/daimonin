@@ -62,6 +62,9 @@ struct plugin_hooklist  hooklist    =
 	query_short_name,
 	find_artifact,
 	give_artifact_abilities,
+	find_string,
+	get_nrof_quest_item,
+	is_player_inv,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,

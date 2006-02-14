@@ -47,6 +47,7 @@ void                        apply_player_light_refill(object *who, object *op);
 void                        apply_player_light(object *who, object *op);
 void                        apply_lighter(object *who, object *lighter);
 void                        scroll_failure(object *op, int failure, int power);
+int                         apply_power_crystal(object *op, object *crystal);
 /* attack.c */
 int                         attack_ob(object *op, object *hitter);
 int                         hit_player(object *op, int dam, object *hitter);
@@ -159,6 +160,7 @@ int                         command_dumpallarchetypes(object *op, char *params);
 int                         command_dm_dev(object *op, char *params);
 int                         command_dm_stealth(object *op, char *params);
 int                         command_dm_light(object *op, char *params);
+int                         command_dm_password(object *op, char *params);
 int                         command_dumpactivelist(object *op, char *params);
 int                         command_setmaplight(object *op, char *params);
 int                         command_start_shutdown(object *op, char *params);
@@ -215,6 +217,7 @@ void                        generate_ext_title(player *pl);
 object                     *find_best_object_match(object *pl, char *params);
 int                         command_uskill(object *pl, char *params);
 int                         command_rskill(object *pl, char *params);
+int							command_egobind ( object *pl, char *params); 
 int                         command_apply(object *op, char *params);
 int                         sack_can_hold(object *pl, object *sack, object *op, int nrof);
 void                        pick_up(object *op, object *alt);
@@ -304,8 +307,9 @@ object                     *find_disease(object *victim);
 int                         cure_disease(object *sufferer, object *caster);
 int                         reduce_symptoms(object *sufferer, int reduction);
 /* egoitem.c */
-object                     *create_artifact(object *op, char *artifactname);
-int                         apply_power_crystal(object *op, object *crystal);
+int							check_ego_item(object *pl, object *ob);
+char					   *get_ego_item_name(object *ob);
+void						create_ego_item(object *ob, const char *name, int mode);
 /* gmaster.c */
 void                        remove_gmaster_list(player *pl);
 int                            check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode);

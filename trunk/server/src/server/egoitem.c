@@ -25,57 +25,64 @@
 
 #include <global.h>
 
-/* GROS: I put this here, because no other file seemed quite good.*/
-object * create_artifact(object *op, char *artifactname)
+
+/* return the name prefix of an ego item.
+* Careful: return is a static char array
+*/
+char *get_ego_item_name(object *ob)
 {
-    artifactlist   *al;
-    artifact       *art;
-    al = find_artifactlist(op->type);
-    if (al == NULL)
-        return NULL;
-    for (art = al->items; art != NULL; art = art->next)
-    {
-        if (!strcmp(art->name, artifactname))
-        {
-            give_artifact_abilities(op, art);
-        }
-    };
-    return NULL;
+	char *cptr;
+	static char sc[] = "'";
+	static char name_buf[MAX_BUF];
+
+	if(!ob || !ob->name || !(cptr = strchr(ob->name, '\'')))
+		return NULL;
+
+
+	strncpy(name_buf, ob->name, (int) (cptr-ob->name));
+	name_buf[cptr-ob->name]=0;
+
+	return(name_buf);
 }
 
-
-/*  peterm:  do_power_crystal
-
-  object *op, object *crystal
-
-  This function handles the application of power crystals.
-  Power crystals, when applied, either suck power from the applier,
-  if he's at full spellpoints, or gives him power, if it's got
-  spellpoins stored.
-
+/* check the item is an ego item which can be applied
+* return: 0 = OK, 1= EGO unbound, 2= bound wrong person, 3= bound wrong clan
 */
-
-int apply_power_crystal(object *op, object *crystal)
+int check_ego_item(object *pl, object *ob)
 {
-    int available_power;
-    int power_space;
-    int power_grab;
+	if(QUERY_FLAG(ob, FLAG_IS_EGOCLAN))
+		return EGO_ITEM_BOUND_CLAN;
 
-    available_power = op->stats.sp - op->stats.maxsp;
-    power_space = crystal->stats.maxsp - crystal->stats.sp;
-    power_grab = 0;
-    if (available_power >= 0 && power_space > 0)
-        power_grab = (int) MIN((float) power_space, ((float) 0.5 * (float) op->stats.sp));
-    if (available_power <0 && crystal->stats.sp>0)
-        power_grab = -MIN(-available_power, crystal->stats.sp);
+	if(QUERY_FLAG(ob, FLAG_IS_EGOBOUND))
+	{	
+		char *tmp_char = get_ego_item_name(ob);
 
-    op->stats.sp -= power_grab;
-    crystal->stats.sp += power_grab;
-    crystal->speed = (float) crystal->stats.sp / (float) crystal->stats.maxsp;
-    update_ob_speed(crystal);
-    if (op->type == PLAYER)
-        esrv_update_item(UPD_ANIMSPEED, op, crystal);
+		if(tmp_char && !strcmp(pl->name, tmp_char))
+			return EGO_ITEM_BOUND_OK; /* its the right player */		
 
-    return 1;
+		return EGO_ITEM_BOUND_PLAYER;
+	}
+
+	if(QUERY_FLAG(ob, FLAG_IS_EGOITEM))
+		return EGO_ITEM_BOUND_UNBOUND;
+
+	return EGO_ITEM_BOUND_OK;
+}
+
+/* create an ego item by changing the name of the object
+* and setting the right flags.
+* mode: EGO_ITEM_BOUND_CLAN or EGO_ITEM_BOUND_PLAYER
+*/
+void create_ego_item(object *ob, const char *name, int mode)
+{
+	char buf[MAX_BUF];
+
+	if(mode == EGO_ITEM_BOUND_CLAN)
+		SET_FLAG(ob, FLAG_IS_EGOCLAN);
+
+	SET_FLAG(ob, FLAG_IS_EGOBOUND);
+
+	sprintf(buf, "%s's %s", name, ob->name);
+	FREE_AND_COPY_HASH(ob->name, buf);
 }
 

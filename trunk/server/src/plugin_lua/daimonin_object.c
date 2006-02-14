@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* First let's include the header file needed                                */
+/* First let's include the header file needed */
 #include <global.h>
 #include <daimonin_object.h>
 
@@ -56,17 +56,21 @@ static struct method_decl   GameObject_methods[]            =
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
     {"CheckQuest", (lua_CFunction) GameObject_CheckQuest},
     {"AddQuest", (lua_CFunction) GameObject_AddQuest},
-    {"SetQuest", (lua_CFunction) GameObject_SetQuest},
+	{"AddKillQuestTarget", (lua_CFunction) GameObject_AddKillQuestTarget},
+	{"AddKillQuestItem", (lua_CFunction) GameObject_AddKillQuestItem},
+	{"NrofKillQuestItem", (lua_CFunction) GameObject_NrofKillQuestItem}, 
+	{"RemoveKillQuestItem", (lua_CFunction) GameObject_RemoveKillQuestItem}, 
     {"SetQuestStatus", (lua_CFunction) GameObject_SetQuestStatus},
-    {"CheckQuestItem", (lua_CFunction) GameObject_CheckQuestItem},
-    {"AddQuestItem", (lua_CFunction) GameObject_AddQuestItem},
+    {"CheckOneDropQuest", (lua_CFunction) GameObject_CheckOneDropQuest},
+    {"AddOneDropQuest", (lua_CFunction) GameObject_AddOneDropQuest},
     {"CreatePlayerForce", (lua_CFunction) GameObject_CreatePlayerForce},
     {"CreatePlayerInfo", (lua_CFunction) GameObject_CreatePlayerInfo},
     {"GetPlayerInfo", (lua_CFunction) GameObject_GetPlayerInfo},
     {"GetNextPlayerInfo", (lua_CFunction) GameObject_GetNextPlayerInfo},
     {"CheckInvisibleObjectInside", (lua_CFunction) GameObject_CheckInvisibleInside},
     {"CreateInvisibleObjectInside", (lua_CFunction) GameObject_CreateInvisibleInside},
-    {"CreateObjectInside", (lua_CFunction) GameObject_CreateObjectInside},
+	{"CreateObjectInside", (lua_CFunction) GameObject_CreateObjectInside},
+	{"CreateObjectInsideEx", (lua_CFunction) GameObject_CreateObjectInsideEx},
     {"CheckInventory", (lua_CFunction) GameObject_CheckInventory}, {"Remove", (lua_CFunction) GameObject_Remove},
     {"Destruct", (lua_CFunction) GameObject_Destruct}, {"SetPosition", (lua_CFunction) GameObject_SetPosition},
     {"IdentifyItem", (lua_CFunction) GameObject_IdentifyItem},
@@ -81,7 +85,8 @@ static struct method_decl   GameObject_methods[]            =
     {"Save", (lua_CFunction) GameObject_Save}, {"GetIP", (lua_CFunction) GameObject_GetIP},
     {"GetArchName", (lua_CFunction) GameObject_GetArchName}, {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
     {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
-    {"AddMoney",  (lua_CFunction) GameObject_AddMoney},
+	{"AddMoney",  (lua_CFunction) GameObject_AddMoney},
+	{"AddMoneyEx",  (lua_CFunction) GameObject_AddMoneyEx},
     {"GetMoney",  (lua_CFunction) GameObject_GetMoney},
     {"PayForItem", (lua_CFunction) GameObject_PayForItem}, {"PayAmount", (lua_CFunction) GameObject_PayAmount},
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
@@ -254,7 +259,8 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "?f_spawn_mob_flag", "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
     "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",
     "f_can_reflect_missile", "f_can_reflect_spell", "f_is_assassin", NULL /* internal flag: HAS_MOVED */, "?f_no_save",
-    "f_pass_ethereal",
+	"f_pass_ethereal","f_ego", "f_egobound", "f_egoclan", "f_egolock",
+
     FLAGLIST_END_MARKER /* Marks the end of the list */
 };
 
@@ -647,9 +653,7 @@ static int GameObject_TeleportTo(lua_State *L)
 static int GameObject_InsertInside(lua_State *L)
 {
     lua_object *whereptr;
-    object     *myob;
-    object     *obenv;
-    object     *tmp;
+    object     *myob, *tmp, *obenv;
     lua_object *self;
 
     get_lua_args(L, "OO", &self, &whereptr);
@@ -664,17 +668,10 @@ static int GameObject_InsertInside(lua_State *L)
     }
 
     myob = hooks->insert_ob_in_ob(myob, WHERE);
+	hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
 
-    /* Make sure the inventory image/text is updated */
-    /* FIXME: what if object was not carried by player ? */
-    for (tmp = WHERE; tmp != NULL; tmp = tmp->env)
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_item(tmp, myob);
-
-    /* If we're taking from player. */
-    for (tmp = obenv; tmp != NULL; tmp = tmp->env)
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_inventory(tmp, tmp);
+	if((tmp = hooks->is_player_inv(obenv)))
+		hooks->esrv_send_inventory(tmp, tmp);
 
     return 0;
 }
@@ -1532,8 +1529,7 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     /* setup the force and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
     myob = hooks->insert_ob_in_ob(myob, WHERE);
-
-    hooks->esrv_send_item(WHERE, myob);
+	hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1566,15 +1562,6 @@ static int GameObject_CheckQuest(lua_State *L)
     if(CONTR(WHO)->quests_type_kill)
     {
         for (walk = CONTR(WHO)->quests_type_kill->inv; walk != NULL; walk = walk->below)
-        {
-            if (walk->name && !strcmp(walk->name, name))
-                return push_object(L, &GameObject, walk);
-        }
-    }
-
-    if(CONTR(WHO)->quests_type_cont)
-    {
-        for (walk = CONTR(WHO)->quests_type_cont->inv; walk != NULL; walk = walk->below)
         {
             if (walk->name && !strcmp(walk->name, name))
                 return push_object(L, &GameObject, walk);
@@ -1633,56 +1620,258 @@ static int GameObject_AddQuest(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_SetQuest                                              */
-/* Lua    : object:SetQuest(nrof_kills, k_arch, k_name, k_title, msg)        */
-/* Info   : We need this to set hash strings & arch objects                  */
+/* Name   : GameObject_AddKillQuestTarget                                    */
+/* Lua    : object:AddKillQuestTarget(nrof_kills, k_arch, k_name, k_title)   */
+/* Info   : define a kill mob. Careful: if all are "" then ALL mobs are part */
+/*        : of this quest. If only arch set, all mobs using that base arch   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_SetQuest(lua_State *L)
+static int GameObject_AddKillQuestTarget(lua_State *L)
 {
-    char       *msg = NULL, *kill_arch, *kill_name, *kill_title;
-    int            kill_nr;
+    char       *kill_arch, *kill_name=NULL, *kill_sym_name1=NULL, *kill_sym_name2=NULL;
+    int         kill_nr;
     object     *myob;
     lua_object *self;
 
-    get_lua_args(L, "Oisss|s", &self, &kill_nr, &kill_arch, &kill_name, &kill_title, &msg);
+    get_lua_args(L, "Ois|s|s|s", &self, &kill_nr, &kill_arch, &kill_name, &kill_sym_name1, &kill_sym_name2);
 
-    myob = self->data.object;
+	myob = hooks->get_archetype("quest_info");
+	if(!myob)
+	{
+		LOG(llevBug, "Lua Warning -> AddKillQuestTarget:: Can't find quest_info arch!");
+		return 0;
+	}
+	myob->last_sp = kill_nr;
+    myob->level = 0; /* reset counter. if you want hold him, back it up in the script */
 
-    if(kill_nr != -1)
-    {
-        myob->last_sp = kill_nr;
-        myob->level = 0; /* reset counter. if you want hold him, back it up in the script */
+	/* to be sure we get the right mob we use the arch object name */ 
+	if(*kill_arch!='\0')
+	{
+		FREE_AND_COPY_HASH(myob->race, kill_arch);
+	}
+	else
+	{
+		FREE_ONLY_HASH(myob->race);
+	}
 
-        myob->other_arch = hooks->find_archetype(kill_arch);
-        if(*kill_name!='\0')
-            FREE_AND_COPY_HASH(myob->slaying, kill_name);
-        if(*kill_title!='\0')
-            FREE_AND_COPY_HASH(myob->title, kill_title);
-    }
+	/* this is the "base" name of the kill mob */
+	if(kill_name && *kill_name!='\0')
+	{
+		FREE_AND_COPY_HASH(myob->name, kill_name);
+	}
+	else
+	{
+		FREE_ONLY_HASH(myob->name);
+	}
 
-    if(msg)
-    {
-        if(*msg!='\0')
-        {
-            FREE_AND_CLEAR_HASH(myob->msg);
-        }
-        else
-            FREE_AND_COPY_HASH(myob->msg, msg);
-    }
+	/* perhaps name is "giant spiders" - now we have at the spot
+     * "large spiders" and "huge spiders" too. With the sym
+     * names we can add a bit "fuzzy" to our kill quests and
+     * allow kills of them too. A bit like "kill quest mob group".
+     */
+	if(kill_sym_name1 && *kill_sym_name1!='\0')
+	{
+		FREE_AND_COPY_HASH(myob->slaying, kill_sym_name1);
+	}
+	else
+	{
+		FREE_ONLY_HASH(myob->slaying);
+	}
+    if(kill_sym_name2 && *&kill_sym_name2!='\0')
+	{
+		FREE_AND_COPY_HASH(myob->title, kill_sym_name2);
+	}
+	else
+	{
+		FREE_ONLY_HASH(myob->title);
+	}
 
-    return 0; /* there was non */
+	/* finally add it to the quest_trigger object */
+	hooks->insert_ob_in_ob(myob, self->data.object);
+
+	/* we need that when we want do more with this object - for example adding kill items */
+	return push_object(L, &GameObject, myob);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_AddKillQuestItem                                      */
+/* Lua    : quest_obj:AddKillQuestItem(chance, arch, face, |name, |title)    */
+/* Info   : Add a kill quest item to a kill quest target object              */
+/*        : (see GameObject_AddKillQuestTarget)                              */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_AddKillQuestItem(lua_State *L)
+{
+	int         id, drop_chance;
+	char	   *i_arch, *i_face, *i_name = NULL, *i_title = NULL;
+	object     *myob;
+	lua_object *self;
+
+	get_lua_args(L, "Oiss|s|s", &self, &drop_chance, &i_arch, &i_face, &i_name, &i_title);
+
+	myob = hooks->get_archetype(i_arch);
+	if(!myob)
+	{
+		LOG(llevBug, "Lua Warning -> AddKillQuestTarget:: Can't find quest_info arch!");
+		return 0;
+	}
+
+	if(i_face && *i_face !='\0') /* "" will skip the face setting */
+	{
+		id = hooks->find_face(i_face, -1);
+		if(id == -1)
+			luaL_error(L, "no such face exists: %s", STRING_SAFE(i_face));
+		else
+			myob->face = &(*hooks->new_faces)[id];
+	}
+
+	/* we can set or delete the name or title with this.
+	 * Thats just to speed things up, we can of course call the
+     * set/get functions explicit in the scripts.
+     */
+	if(i_name)
+	{
+		if(*i_name!='\0')
+		{
+			FREE_AND_COPY_HASH(myob->name, i_name);
+		}
+		else
+		{
+			FREE_ONLY_HASH(myob->name);
+		}
+	}
+
+	if(i_title)
+	{
+		if(*i_title!='\0')
+		{
+			FREE_AND_COPY_HASH(myob->title, i_title);
+		}
+		else
+		{
+			FREE_ONLY_HASH(myob->title);
+		}
+	}
+	
+	/* important: the chance is a applied to the target object. */
+	self->data.object->last_grace = drop_chance;
+
+	/* finally add it to our target object*/
+	hooks->insert_ob_in_ob(myob, self->data.object);
+
+	return 0;
+}
+
+
+/*****************************************************************************/
+/* Name   : GameObject_NrofKillQuestItem                                     */
+/* Lua    : kill_target_obj:NrofKillQuestItem()                              */
+/* Info   : counts kill quest items inside the inventory of the player       */
+/*        : where kill_target_obj is inside                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_NrofKillQuestItem(lua_State *L)
+{
+	int				 nrof=0;
+	const object	*myob, *pl;
+	lua_object		*self;
+
+	get_lua_args(L, "O", &self);
+
+	/* kill object is inside our target object - see function GameObject_AddKillQuestItem */
+	pl = hooks->is_player_inv(self->data.object);
+	myob = self->data.object->inv;
+
+	if(myob && pl)
+		nrof = hooks->get_nrof_quest_item(pl, myob->arch->name, myob->name, myob->title);
+
+	lua_pushnumber(L, nrof);
+	return 1;
+}
+
+/* helper function for GameObject_RemoveKillQuestItem - recursive used */
+static int remove_kill_quest_items(const object *inv, const object *myob, int nrof)
+{
+	object *walk, *walk_below;
+
+	for (walk = (object*)inv; walk != NULL; walk = walk_below)
+	{
+		walk_below = walk->below;
+
+		if(QUERY_FLAG(walk, FLAG_SYS_OBJECT)) /* only real inventory items */
+			continue;
+
+		if(walk->type == CONTAINER)
+		{
+			if(!(nrof = remove_kill_quest_items(walk->inv, myob, nrof)))
+				return nrof;
+		}
+		
+		/* we have a hit */
+		if (walk->arch->name == myob->arch->name && walk->name == myob->name && walk->title == myob->title)
+		{
+			int tmp = walk->nrof?walk->nrof:1;
+
+			if(nrof > tmp) /* we have then still some more to do */
+			{
+				hooks->decrease_ob_nr(walk, tmp);
+				nrof -= tmp;
+			}
+			else
+			{
+				hooks->decrease_ob_nr(walk, nrof);
+				return 0;
+			}
+		}
+	}
+	return nrof;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_RemoveKillQuestItem                                   */
+/* Lua    : kill_target_obj:RemoveKillQuestItem()                            */
+/* Info   : removes the kill items from the players inventory.               */
+/*        : Get the template info from the kill target obj inventory         */
+/*        : NOTE: the function tries to remove given objects, count them     */
+/*        : before calling this function.                                    */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_RemoveKillQuestItem(lua_State *L)
+{
+	int				 nrof = -1;
+	object			*myob, *pl;
+	lua_object		*self;
+
+	get_lua_args(L, "O|i", &self, &nrof);
+
+	pl = hooks->is_player_inv(self->data.object);
+	myob = self->data.object->inv;
+
+	if(nrof == -1) /* if we don't have an explicit number, use number from kill target */
+		nrof = self->data.object->last_sp;
+
+	/* some sanity checks */
+	if(myob && pl && pl->type == PLAYER)
+	{
+		hooks->new_draw_info_format(NDI_WHITE, 0, pl, "%s is removed from your inventory.",
+														hooks->query_short_name(myob, NULL));
+		remove_kill_quest_items(pl->inv, myob, nrof);
+	}
+
+	return 0;
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_SetQuestStatus                                        */
 /* Lua    : object:SetQuest(status. step-id)                                 */
 /* Info   : We need this function because quest_trigger must be moved        */
+/*        : q_status: -1 = done, q_type: can change type (kill, normal..)    */
+/*        : Common call is SetQuestStatus(-1) to "finish"/neutralize a quest */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_SetQuestStatus(lua_State *L)
 {
-    int            q_status, q_type = -1;
+    int         q_status, q_type = -1;
     object     *myob;
     lua_object *self;
 
@@ -1695,30 +1884,38 @@ static int GameObject_SetQuestStatus(lua_State *L)
 
     hooks->set_quest_status(myob, q_status, q_type);
 
-    return 0; /* there was non */
+    return 0;
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_CheckQuestItem                                        */
-/* Lua    : object:CheckQuestItem(archetype, name)                           */
+/* Name   : GameObject_CheckOneDropQuest                                     */
+/* Lua    : object:CheckOneDropQuest(archetype, name)                        */
 /* Status : Stable                                                           */
 /* Info   : Check the one drop and single quest item container for an item   */
 /*****************************************************************************/
-static int GameObject_CheckQuestItem(lua_State *L)
+static int GameObject_CheckOneDropQuest(lua_State *L)
 {
+	const char *name_hash, *title_hash;
+	archetype *arch;
     char       *arch_name;
-    char       *name;
+    char       *name, *title = NULL;
     object     *walk;
     lua_object *self;
 
-    get_lua_args(L, "Oss", &self, &arch_name, &name);
+    get_lua_args(L, "Os|s", &self, &arch_name, &name, &title);
 
-    if (WHO->type == PLAYER && CONTR(WHO)->quest_one_drop )
+	arch = hooks->find_archetype(arch_name); /* no arch - nothing to find */
+	name_hash = hooks->find_string(name);
+	if(title)
+		title_hash = hooks->find_string(title);
+	else
+		title_hash = arch->clone.title;
+
+    if (WHO->type == PLAYER && CONTR(WHO)->quest_one_drop)
     {
-
         for (walk = CONTR(WHO)->quest_one_drop->inv; walk != NULL; walk = walk->below)
         {
-            if (walk->race && !strcmp(walk->race, arch_name) && walk->name && !strcmp(walk->name, name))
+            if (walk->race == arch->name && walk->name == name_hash && walk->title == title_hash)
                 return push_object(L, &GameObject, walk);
         }
     }
@@ -1727,34 +1924,30 @@ static int GameObject_CheckQuestItem(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_AddQuestItem                                          */
-/* Lua    : object:AddQuestItem(archetype, name)                             */
+/* Name   : GameObject_AddOneDropQuest                                       */
+/* Lua    : object:AddOneDropQuest(archetype, name, |title)                  */
 /* Status : Stable                                                           */
-/* Info   : Add the misc'ed quest object to players quest container.         */
+/* Info   : add a one drop item to the player                                */
 /*        : create the quest container if needed                             */
 /*****************************************************************************/
-static int GameObject_AddQuestItem(lua_State *L)
+static int GameObject_AddOneDropQuest(lua_State *L)
 {
-    char       *arch_name, *name, *title=NULL;
+    char       *name, *title=NULL;
     object     *myob;
-    lua_object *self;
+    lua_object *self, *whatptr;
 
-    get_lua_args(L, "Oss|s", &self, &arch_name, &name, &title);
+    get_lua_args(L, "OOs|s", &self, &whatptr, &name, &title);
 
-    myob = hooks->get_archetype("player_info");
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "Lua WARNING:: AddQuestObject: Cant't find archtype 'player_info'\n");
-        luaL_error(L, "Can't find archtype 'player_info'");
-    }
+	myob = WHAT;
 
     /* store name & arch name of the quest obj. so we can id it later */
-    FREE_AND_COPY_HASH(myob->name, name);
-    FREE_AND_COPY_HASH(myob->race, arch_name);
+	FREE_AND_COPY_HASH(myob->name, name);
+    FREE_AND_COPY_HASH(myob->race, myob->arch->name);
     if(title)
         FREE_AND_COPY_HASH(myob->title, title);
 
-    hooks->add_quest_containers(WHO);
+	if(!CONTR(WHO)->quest_one_drop)
+	    hooks->add_quest_containers(WHO);
     hooks->insert_ob_in_ob(myob, CONTR(WHO)->quest_one_drop);
 
     return push_object(L, &GameObject, myob);
@@ -1788,8 +1981,7 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     /* setup the info and put it in activator */
     FREE_AND_COPY_HASH(myob->name, txt);
     myob = hooks->insert_ob_in_ob(myob, WHERE);
-
-    hooks->esrv_send_item(WHERE, myob);
+	hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1878,10 +2070,50 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     /*update_ob_speed(myob); */
     FREE_AND_COPY_HASH(myob->slaying, txt);
     myob = hooks->insert_ob_in_ob(myob, WHERE);
-
-    hooks->esrv_send_item(WHERE, myob);
+	hooks->esrv_send_item(hooks->is_player_inv(WHERE), myob);
 
     return push_object(L, &GameObject, myob);
+}
+
+/* code body of the CreateObjectInside functions */
+static object *CreateObjectInside_body(lua_State *L)
+{
+	object     *myob;
+	int         value = -1, id, nrof = 1;
+	char       *txt;
+	lua_object *whereptr;
+
+	/* 0: name
+	1: object we want give <name>
+	2: if 1, set FLAG_IDENTIFIED
+	3: nr of objects to create: 0 and 1 don't change default nrof setting
+	3: if not -1, use it for myob->value
+	*/
+
+	get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
+
+	myob = hooks->get_archetype(txt);
+	if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
+	{
+		LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));
+		luaL_error(L, "Failed to create the object. Did you use an existing arch?");
+	}
+
+	if (value != -1) /* -1 means, we use original value */
+		myob->value = value;
+	if (id)
+	{
+		SET_FLAG(myob, FLAG_IDENTIFIED);
+		SET_FLAG(myob, FLAG_KNOWN_MAGICAL);
+		SET_FLAG(myob, FLAG_KNOWN_CURSED);
+	}
+	if (nrof > 1)
+		myob->nrof = nrof;
+
+	myob = hooks->insert_ob_in_ob(myob, WHERE);
+	push_object(L, &GameObject, myob);
+
+	return myob;
 }
 
 /*****************************************************************************/
@@ -1893,52 +2125,37 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 /*          otherwise the value will be taken from the arch.                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* i must change this a bit - only REAL arch names - not object names */
-
 static int GameObject_CreateObjectInside(lua_State *L)
 {
-    object     *myob, *tmp;
-    int         value = -1, id, nrof = 1;
-    char       *txt;
-    lua_object *whereptr;
+	object *myob;
 
-    /* 0: name
-       1: object we want give <name>
-       2: if 1, set FLAG_IDENTIFIED
-       3: nr of objects to create: 0 and 1 don't change default nrof setting
-       3: if not -1, use it for myob->value
-       */
+	myob = CreateObjectInside_body(L);
+	hooks->esrv_send_item(hooks->is_player_inv(myob), myob);
 
-    get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
+	return 1;
+}
 
-    myob = hooks->get_archetype(txt);
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));
-        luaL_error(L, "Failed to create the object. Did you use an existing arch?");
-    }
+/*****************************************************************************/
+/* Name   : GameObject_CreateObjectInsideEx                                  */
+/* Lua    : object:CreateObjectInsideEx(archname, identified, number, value) */
+/* Info   : Same as GameObject_CreateObjectInsideE but give message to player*/
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_CreateObjectInsideEx(lua_State *L)
+{
+	object *myob, *pl;
 
-    if (value != -1) /* -1 means, we use original value */
-        myob->value = value;
-    if (id)
-    {
-        SET_FLAG(myob, FLAG_IDENTIFIED);
-        SET_FLAG(myob, FLAG_KNOWN_MAGICAL);
-        SET_FLAG(myob, FLAG_KNOWN_CURSED);
-    }
-    if (nrof > 1)
-        myob->nrof = nrof;
+	myob = CreateObjectInside_body(L);
 
-    myob = hooks->insert_ob_in_ob(myob, WHERE);
+	pl = hooks->is_player_inv(myob);
+	if(pl)
+	{
+		hooks->esrv_send_item(pl, myob);
+		hooks->new_draw_info_format(NDI_WHITE, 0, pl, "you got %d %s",
+				myob->nrof?myob->nrof:1, hooks->query_short_name(myob, NULL));
+	}
 
-    /* Make sure inventory image/text is updated */
-    for (tmp = WHERE; tmp != NULL; tmp = tmp->env)
-    {
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_item(tmp, myob);
-    }
-
-    return push_object(L, &GameObject, myob);
+	return 1;
 }
 
 /* help function for GameObject_CheckInventory
@@ -2409,14 +2626,57 @@ static int GameObject_GetItemCost(lua_State *L)
 
 static int GameObject_AddMoney(lua_State *L)
 {
-    lua_object *self;
-    int            c, s, g, m;
+	lua_object *self;
+	int            c, s, g, m;
 
-    get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
+	get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
 
-    hooks->add_money_to_player(WHO, c, s, g, m);
+	hooks->add_money_to_player(WHO, c, s, g, m);
 
-    return 0;
+	return 0;
+}
+
+
+/*****************************************************************************/
+/* Name   : GameObject_AddMoneyEx                                            */
+/* Lua    : object:AddMoneyEx()                                              */
+/* Info   : Same as AddMoney but with message to player how much he got      */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+
+static int GameObject_AddMoneyEx(lua_State *L)
+{
+	lua_object *self;
+	char		buf[MAX_BUF];
+	int         c, s, g, m, flag=FALSE;
+
+	get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
+
+	hooks->add_money_to_player(WHO, c, s, g, m);
+
+	strcpy(buf, "You got");
+	if(m)
+	{
+		sprintf(buf, "%s %d %s", buf, m, "mithril");
+		flag = TRUE;
+	}
+	if(g)
+	{
+		sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", g,"gold");
+		flag = TRUE;
+	}
+	if(s)
+	{
+		sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", s, "silver");
+		flag = TRUE;
+	}
+	if(c)
+		sprintf(buf, "%s%s %d %s",buf,  flag?" and ":"", c, "copper");
+
+	strcat(buf, " coin.");
+	hooks->new_draw_info(NDI_WHITE, 0, WHO, buf);
+
+	return 0;
 }
 
 /* TODO: add int64 to pushnumber() */
@@ -2681,7 +2941,7 @@ static int GameObject_SetFace(lua_State *L)
 
     id = hooks->find_face(face, -1);
     if(id == -1)
-        luaL_error(L, "no such face exists: %s", face);
+        luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
     if(inv)
         WHO->inv_face = &(*hooks->new_faces)[id];
@@ -2798,7 +3058,6 @@ static int GameObject_GetUnmodifiedAttribute(GameObject* whoptr, PyObject* args)
 /* This gets called before and after an attribute has been set in an object */
 static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib, int before)
 {
-    object *tmp;
     object *who = obj->data.object;
 
     /* Pre-setting hook */
@@ -2809,11 +3068,8 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
         return 0;
     }
 
-    /* Make sure player's inventory image/text is updated */
-    /* FIXME: what if object was not carried by player ? */
-    for (tmp = who->env; tmp != NULL; tmp = tmp->env)
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_item(tmp, who);
+	/* update player inv when needed */
+	hooks->esrv_send_item(hooks->is_player_inv(who), who);
 
     /* Special handling for some player stuff */
     if (who->type == PLAYER)
@@ -2844,7 +3100,6 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
 static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
 {
     int     value;
-    object *tmp;
 
     if (lua_isnumber(L, -1))
         value = (int) lua_tonumber(L, -1);
@@ -2856,11 +3111,7 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
     else
         CLEAR_FLAG(obj->data.object, flagno);
 
-    /* Make sure the inventory image/text is updated */
-    /* FIXME: what if object was not carried by player ? */
-    for (tmp = obj->data.object->env; tmp != NULL; tmp = tmp->env)
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_item(tmp, obj->data.object);
+	hooks->esrv_send_item(hooks->is_player_inv(obj->data.object), obj->data.object);
 
     /* TODO: if gender changed:
     if()
