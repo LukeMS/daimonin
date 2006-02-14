@@ -40,11 +40,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_force 25
+resist_magic 25
 dam 40
 weapon_speed 3.5
 attack_pierce 40
-attack_force 30
+attack_magic 30
 attack_weaponmagic 30
 speed -0.0495
 level 1

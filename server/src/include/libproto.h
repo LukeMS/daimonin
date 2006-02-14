@@ -209,8 +209,6 @@ extern void             dump_object2(object *op);
 extern void             dump_object(object *op);
 extern void             dump_me(object *op, char *outstr);
 extern void             dump_all_objects(void);
-extern object          *find_object(int i);
-extern object          *find_object_name(char *str);
 extern void             free_all_object_data(void);
 extern object          *get_owner(object *op);
 extern void             clear_owner(object *op);

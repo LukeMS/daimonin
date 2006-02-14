@@ -9,7 +9,7 @@ height 17
 enter_x 1
 enter_y 1
 difficulty 1
-tileset_id 75
+tileset_id 77
 tileset_x 0
 tileset_y 0
 end
@@ -159,23 +159,6 @@ arch floor_ostone1
 x 1
 y 8
 end
-arch spawn_point
-x 1
-y 8
-arch giant_hill
-name hill giant clan leader
-type 83
-level 10
-Wis 3
-arch horn
-name clan horn of the hill giants
-one_drop 1
-quest_item 1
-value 0
-speed 0
-end
-end
-end
 arch floor_ostone1
 x 1
 y 9
@@ -191,22 +174,6 @@ end
 arch floor_ostone1
 x 1
 y 12
-end
-arch spawn_point
-x 1
-y 12
-arch wyvern
-name elder wyvern
-type 83
-Wis 3
-level 12
-arch tooth
-name elder wyvern tooth
-one_drop 1
-quest_item 1
-value 0
-end
-end
 end
 arch floor_ostone1
 x 1
@@ -394,7 +361,7 @@ x 4
 y 1
 end
 arch ladder_down3
-slaying testmap_quest_one
+slaying quests/testmap_quest_onedrop
 hp 1
 sp 1
 x 4
@@ -631,6 +598,13 @@ arch floor_ostone1
 x 7
 y 1
 end
+arch ladder_down3
+slaying quests/testmap_quest_item
+hp 1
+sp 1
+x 7
+y 1
+end
 arch floor_ostone1
 x 7
 y 2
@@ -702,6 +676,15 @@ arch fwall_brown1
 x 8
 end
 arch floor_ostone1
+x 8
+y 1
+end
+arch sign
+name quests & quest item
+msg
+Event (mob kill, container,..) drops a quest item
+when the player has the quest for it..
+endmsg
 x 8
 y 1
 end
@@ -921,6 +904,13 @@ arch floor_ostone1
 x 10
 y 1
 end
+arch ladder_down3
+slaying quests/testmap_quest_kill
+hp 1
+sp 1
+x 10
+y 1
+end
 arch floor_ostone1
 x 10
 y 2
@@ -1022,6 +1012,14 @@ arch floor_ostone1
 x 11
 y 1
 end
+arch sign
+name kill quests
+msg
+You has to kill a number of monster xy to solve a quest
+endmsg
+x 11
+y 1
+end
 arch floor_ostone1
 x 11
 y 2
@@ -1170,6 +1168,13 @@ arch floor_ostone1
 x 13
 y 1
 end
+arch ladder_down3
+slaying quests/testmap_quest_kill_item
+hp 1
+sp 1
+x 13
+y 1
+end
 arch floor_ostone1
 x 13
 y 2
@@ -1241,6 +1246,14 @@ arch fwall_brown1
 x 14
 end
 arch floor_ostone1
+x 14
+y 1
+end
+arch sign
+name kill item quests
+msg
+You has to collect a number of items by killing mobs
+endmsg
 x 14
 y 1
 end

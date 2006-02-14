@@ -427,15 +427,15 @@ int command_t_tell(object *op, char *params)
 				{
                     send_clear_interface(CONTR(op));
 					if(t_obj->msg)
-						new_info_map(NDI_NAVY | NDI_UNIQUE, t_obj->map, t_obj->x, t_obj->y, MAP_INFO_NORMAL, t_obj->msg);
+						new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
 					else
-						new_info_map_format(NDI_NAVY | NDI_UNIQUE, t_obj->map, t_obj->x, t_obj->y, MAP_INFO_NORMAL, "%s has nothing to say.", query_name(t_obj));		
+						new_draw_info_format(NDI_NAVY | NDI_UNIQUE, 0, op, "%s has nothing to say.", query_name(t_obj));		
 				}
 
                 return 1;
             }
         }
-		
+
 		/* our target is out of the response area - tell it the player and close the interface */
         new_draw_info(NDI_UNIQUE, 0, op, "Your talk target is not in range.");
         send_clear_interface(CONTR(op));
@@ -465,7 +465,7 @@ int command_t_tell(object *op, char *params)
 					{
 					    CONTR(op)->target_object = t_obj;
 					    CONTR(op)->target_object_count = t_obj->count;
-						new_info_map(NDI_NAVY | NDI_UNIQUE, t_obj->map, t_obj->x, t_obj->y, MAP_INFO_NORMAL, t_obj->msg);
+						new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, t_obj->msg);
 					    return 1;
 					}
 				}

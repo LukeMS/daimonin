@@ -317,7 +317,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
 #define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
 #define TYPE_PEARL                135        /* gem/jewel type pearl */
-/* Some free type values here! */
+#define TYPE_QUEST_INFO			136
+/* More free type values here =) */
+
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
 #define CANCELLATION            141
@@ -455,12 +457,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_QUESTS_TYPE_DONE    1
 #define ST1_QUESTS_TYPE_NORMAL    2
 #define ST1_QUESTS_TYPE_KILL    3
-#define ST1_QUESTS_TYPE_CONT    4
 
 /* subtypes for QUEST_TRIGGER */
-#define ST1_QUEST_TRIGGER_NORMAL    0
+#define ST1_QUEST_TRIGGER_NORMAL      0
 #define ST1_QUEST_TRIGGER_KILL        1
-#define ST1_QUEST_TRIGGER_CONT        2
+#define ST1_QUEST_TRIGGER_KILL_ITEM   2
 
 /* subtypes for TYPE_CONN_SENSOR */
 #define ST1_CONN_SENSOR_NAND        0 /* NAND / NOT */
@@ -669,7 +670,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * you move this flag!
  */
 #define FLAG_REMOVED        16 /* Object is not in any map or invenory */
-#define FLAG_BEEN_APPLIED   17 /* The object has been applied */
+#define FLAG_BEEN_APPLIED   17 /* The object has been applied in the past - its "identified by using" */
 #define FLAG_AUTO_APPLY     18 /* Will be applied when created */
 #define FLAG_TREASURE       19 /* Will generate treasure when applied */
 #define FLAG_IS_NEUTRAL     20 /* alignment of this object: we need the explicit neutral setting for items */
@@ -801,10 +802,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_MAKE_INVISIBLE     114 /* if a applyable item has this set, he makes the wearer invisible */
 #define FLAG_MAKE_ETHEREAL      115 /* same as make_invisibile but for ethereal */
 #define FLAG_IS_PLAYER          116 /* object "is player". */
-#define FLAG_IS_NAMED           117 /* object name is "unique"- for artifacts like Stormbringer.
-                                         * Unique object normally don't have a race or material
-                                         * (no "elven iron Stormbringer")
-                                         */
+#define FLAG_IS_NAMED           117 /* object is named - for artifacts like Stormbringer.
+                                     * Named object don't have a race or material tag
+                                     */
 #define FLAG_SPAWN_MOB          118 /* monster with this flag are created by spawn point
                                          * and have a spawn info object inside inventory
                                          */
@@ -845,10 +845,15 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
+#define FLAG_IS_EGOITEM			136		/* item MUST be bound before applyable */
+#define FLAG_IS_EGOBOUND		137		/* item is bound to player or clan */
+#define FLAG_IS_EGOCLAN         138		/* item is bound to clan (if not set, always to player (not implemented) */
+#define FLAG_IS_EGOLOCK			139		/* the bound is permanent - can't be remove (not implemented) */
+
 /* FREE flag: 59 */
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
 
-#define NUM_FLAGS       135 /* Should always be equal to the last defined flag */
+#define NUM_FLAGS       139 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32    5   /* the number of uint32 we need to store all flags */
 
 /* macros for invisible test. the first tests only system objects */

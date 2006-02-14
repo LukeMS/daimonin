@@ -565,6 +565,84 @@ int command_dm_light(object *op, char *params)
     return 0;
 }
 
+int command_dm_password (object *op, char *params)
+{
+	player *pl;
+	FILE *fp, *fpout;
+	const char *name_hash;
+	char pfile[MAX_BUF], bufall[MAX_BUF], outfile[MAX_BUF];
+	char name[MAX_BUF]="", pwd[MAX_BUF]="";
+
+	if(params==NULL || !sscanf(params, "%s %s", name, pwd) || name[0] == 0 || pwd[0]== 0)
+	{
+		new_draw_info(NDI_UNIQUE, 0,op, "dm_pwd: missing/invalid parameter\nUsage: /dm_pwd <playername> <new password>");
+		return 0;
+	}
+	transform_name_string(name);
+
+	/* we have now 2 strings - name and password - lets check there is a player file for that name */
+	sprintf(pfile, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(name), name, name);
+	if (access(pfile, F_OK)==-1)
+	{
+		new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: player %s don't exists or has no player file!", name);
+		return 0;	
+	}
+
+	/* All ok - player exists and player file can be altered - load in the player file */
+	strcpy(outfile, pfile);
+	strcat(outfile, ".tmp");
+
+	/* lets do a safe read/write in a temp. file */
+	if((fp=fopen(pfile,"r"))==NULL)
+	{
+		new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", pfile);
+		return 0;	
+	}
+
+	if((fpout=fopen(outfile,"w"))==NULL)
+	{
+		new_draw_info_format(NDI_UNIQUE, 0,op, "dm_pwd: error open file %s!", outfile);
+		return 0;	
+	}
+
+	while (fgets(bufall,MAX_BUF-1,fp) != NULL)
+	{
+		if(!strncmp(bufall,"password ",9))
+			fprintf(fpout,"password %s\n", crypt_string(pwd,NULL));
+		else
+			fputs(bufall, fpout);
+	}
+
+	/* now, this is important - perhaps the player is online!
+	* be sure we change the password in the player struct too!
+	*/
+	if((name_hash = find_string(name)))
+	{
+		for(pl=first_player;pl!=NULL;pl=pl->next)
+		{
+			/* we don't care about removed or such - just force to be sure the change
+			* in the player* struct. 
+			*/
+			if(pl->ob && pl->ob->name == name_hash)
+			{
+				strcpy(pl->password,crypt_string(pwd,NULL));
+				break;
+			}
+		}
+	}
+
+	fclose(fp);
+	fclose(fpout);
+
+	/* delete the original file and move the tmp file */
+	unlink(pfile);
+	rename(outfile, pfile);
+
+	new_draw_info_format(NDI_UNIQUE, 0,op, "Done. Changed password of %s to %s!", name, pwd);
+
+	return 0;
+}
+
 int command_dumpactivelist(object *op, char *params)
 {
     char    buf[1024];

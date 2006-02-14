@@ -77,6 +77,7 @@ CommArray_s Commands[]                  =
     {"/use_skill",    command_uskill,         0.1f},
     {"/ready_skill",  command_rskill,         0.1f},
     {"/silent_login", command_silent_login,   0.0f},
+	{"/egobind",	  command_egobind,		  1.0f},
 
     /* group commands */
     {"/invite",        command_party_invite,    4.0f},
@@ -170,6 +171,7 @@ CommArray_s WizCommands[]           =
     {"/dm_stealth", command_dm_stealth,0.0},
     {"/dm_dev", command_dm_dev,0.0},
     {"/dm_light", command_dm_light,0.0},
+	{"/dm_pwd", command_dm_password,0.0},
     {"/d_active", command_dumpactivelist,0.0},
     {"/d_arches", command_dumpallarchetypes,0.0},
     {"/d_maps", command_dumpallmaps,0.0},

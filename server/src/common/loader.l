@@ -326,6 +326,10 @@ op->oy= op->y;
 ^state{S}					op->state = IVAL;
 ^hidden{S}					op->hide = IVAL;
 ^layer{S}					op->layer = IVAL;
+^ego{S}						SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOITEM, IVAL);
+^egobound{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOBOUND, IVAL);
+^egoclan{S}					SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOCLAN, IVAL);
+^egolock{S}					SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOITEM, IVAL);
 ^door_closed{S}				SET_OR_CLEAR_FLAG(op, FLAG_DOOR_CLOSED, IVAL);
 ^cursed_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
 ^damned_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
@@ -366,7 +370,7 @@ op->oy= op->y;
 ^fly_off{S}					SET_OR_CLEAR_FLAG(op, FLAG_FLY_OFF, IVAL);
 ^is_animated{S}				{
 								SET_OR_CLEAR_FLAG(op, FLAG_ANIMATE, IVAL);
-								SET_FLAG(op,FLAG_CLIENT_SENT); /* we using this flag for debugging - ignore */
+								/*SET_FLAG(op,FLAG_CLIENT_SENT);*/ /* we using this flag for debugging - ignore */
 							}
 ^flying{S}					SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
 ^levitate{S}				SET_OR_CLEAR_FLAG(op, FLAG_LEVITATE, IVAL);
@@ -472,7 +476,7 @@ op->oy= op->y;
 ^attack_psionic{S}	SET_ATTACK(op, ATNR_PSIONIC, IVAL);
 
 ^attack_light{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
-^attack_force{S}	SET_ATTACK(op, ATNR_FORCE, IVAL);
+^attack_magic{S}	SET_ATTACK(op, ATNR_MAGIC, IVAL);
 ^attack_aether{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
 ^attack_snare{S}		SET_ATTACK(op, ATNR_SNARE, IVAL);
 ^attack_shadow{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
@@ -506,7 +510,7 @@ op->oy= op->y;
 ^resist_sonic{S}	SET_RESIST(op, ATNR_SONIC, IVAL);
 ^resist_psionic{S}	SET_RESIST(op, ATNR_PSIONIC, IVAL);
 
-^resist_force{S}	SET_RESIST(op, ATNR_FORCE, IVAL);
+^resist_magic{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
 ^resist_aether{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
 ^resist_light{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^resist_shadow{S}	SET_RESIST(op, ATNR_SHADOW, IVAL);
@@ -526,7 +530,7 @@ op->oy= op->y;
 ^protect_acid{S}		SET_RESIST(op, ATNR_ACID, IVAL);
 ^protect_sonic{S}		SET_RESIST(op, ATNR_SONIC, IVAL);
 ^protect_psionic{S}		SET_RESIST(op, ATNR_PSIONIC, IVAL);
-^protect_force{S}		SET_RESIST(op, ATNR_FORCE, IVAL);
+^protect_force{S}		SET_RESIST(op, ATNR_MAGIC, IVAL);
 ^protect_death{S}		SET_RESIST(op, ATNR_DEATH, IVAL);
 ^protect_light{S}		SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^protect_shadow{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
@@ -542,14 +546,14 @@ op->oy= op->y;
 ^protect_body{S}		SET_RESIST(op, ATNR_SHADOW, IVAL); /* old: PROTECT_BODY */
 ^protect_spiritual{S}   SET_RESIST(op, ATNR_LIFESTEAL, IVAL); /* old: PROTECT_SPIRITUAL */
 ^protect_corruption{S}  SET_RESIST(op, ATNR_AETHER, IVAL);/* old: PROTECT_CORRUPTION */
-^resist_magic{S}	SET_RESIST(op, ATNR_FORCE, IVAL);
+^resist_force{S}	SET_RESIST(op, ATNR_MAGIC, IVAL);
 ^resist_time{S}		SET_RESIST(op, ATNR_SHADOW, IVAL);
 ^resist_demonic{S}	SET_RESIST(op, ATNR_AETHER, IVAL);
 ^resist_blind{S}	SET_RESIST(op, ATNR_LIGHT, IVAL);
 ^resist_purity{S}	SET_RESIST(op, ATNR_CORRUPTION, IVAL);
 ^resist_ghosthit{S}	SET_RESIST(op, ATNR_SNARE, IVAL);
 ^attack_blind{S}	SET_ATTACK(op, ATNR_LIGHT, IVAL);
-^attack_magic{S}	SET_ATTACK(op, ATNR_FORCE, IVAL);
+^attack_force{S}	SET_ATTACK(op, ATNR_MAGIC, IVAL);
 ^attack_demonic{S}	SET_ATTACK(op, ATNR_AETHER, IVAL);
 ^attack_purity{S}	SET_ATTACK(op, ATNR_CORRUPTION, IVAL);
 ^attack_time{S}		SET_ATTACK(op, ATNR_SHADOW, IVAL);
@@ -917,7 +921,8 @@ NULL, NULL, "is_male",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
 "was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",
-NULL /* internal flag: HAS_MOVED */, "no_save", "pass_ethereal"
+NULL /* internal flag: HAS_MOVED */, "no_save", "pass_ethereal",
+"ego", "egobound", "egoclan", "egolock"
 };
 
 

@@ -2568,7 +2568,7 @@ static object * find_arrow_ext(object *op, const char *type, int tag)
  */
 int atnr_is_dragon_enabled(int attacknr)
 {
-    if (attacknr == ATNR_FORCE
+    if (attacknr == ATNR_MAGIC
      || attacknr == ATNR_FIRE
      || attacknr == ATNR_ELECTRICITY
      || attacknr == ATNR_COLD

@@ -413,7 +413,7 @@ void show_resist(int x, int y)
 	print_resist("AC", x+128, y+15, ATNR_ACID);
 	print_resist("SO", x+158, y+15, ATNR_SONIC);
 
-	print_resist("FO", x+8, y+27, ATNR_FORCE);
+	print_resist("MA", x+8, y+27, ATNR_FORCE);
 	print_resist("PS", x+38, y+27, ATNR_PSIONIC);
 	print_resist("LI", x+68, y+27, ATNR_LIGHT);
 	print_resist("SH", x+98, y+27, ATNR_SHADOW);

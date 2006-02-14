@@ -294,7 +294,7 @@ void esrv_draw_look(object *pl)
         SockList_AddChar(&global_sl, (char) anim_speed);
 
         SockList_AddInt(&global_sl, tmp->nrof);
-        SET_FLAG(tmp, FLAG_CLIENT_SENT);
+        /*SET_FLAG(tmp, FLAG_CLIENT_SENT);*/
         got_one++;
 
         if (global_sl.len > (MAXSOCKBUF - MAXITEMLEN))
@@ -410,7 +410,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
         SockList_AddChar(sl, (char) anim_speed);
 
         SockList_AddInt(sl, tmp->nrof);
-        SET_FLAG(tmp, FLAG_CLIENT_SENT);
+        /*SET_FLAG(tmp, FLAG_CLIENT_SENT);*/
         got_one++;
 
         if (sl->len > (MAXSOCKBUF - MAXITEMLEN))
@@ -529,7 +529,7 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
         }
         SockList_AddChar(sl, (char) anim_speed);
         SockList_AddInt(sl, tmp->nrof);
-        SET_FLAG(tmp, FLAG_CLIENT_SENT);
+        /*SET_FLAG(tmp, FLAG_CLIENT_SENT);*/
         got_one++;
 
         /* IT is possible for players to accumulate a huge amount of
@@ -660,7 +660,7 @@ void esrv_send_inventory(object *pl, object *op)
             }
             SockList_AddChar(&global_sl, (char) anim_speed);
             SockList_AddInt(&global_sl, tmp->nrof);
-            SET_FLAG(tmp, FLAG_CLIENT_SENT);
+            /*SET_FLAG(tmp, FLAG_CLIENT_SENT);*/
             got_one++;
 
             /* IT is possible for players to accumulate a huge amount of
@@ -822,6 +822,10 @@ static void esrv_send_item_send(object *pl, object *op)
     int         anim_speed;
     char        item_n[MAX_BUF];
 
+
+	if(!pl ||!op)
+		return;
+
     /* If this is not the player object, do some more checks */
     if (op != pl)
     {
@@ -924,12 +928,15 @@ static void esrv_send_item_send(object *pl, object *op)
     SockList_AddChar(&global_sl, (char) anim_speed);
     SockList_AddInt(&global_sl, op->nrof);
     Send_With_Handling(&CONTR(pl)->socket, &global_sl);
-    SET_FLAG(op, FLAG_CLIENT_SENT);
+    /*SET_FLAG(op, FLAG_CLIENT_SENT);*/
 }
 
 void esrv_send_item(object *pl, object *op)
 {
     object *tmp;
+
+	if(!pl ||!op)
+		return;
 
     /* special case: update something in a container.
      * we don't care about where the container is,

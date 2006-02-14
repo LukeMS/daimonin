@@ -679,7 +679,7 @@ void SetSound(char *buf, int len, NewSocket *ns)
     ns->sound = atoi(buf);
 }
 
-/* Moves and object (typically, container to inventory
+/* Moves an object (typically, container to inventory
  * move <to> <tag> <nrof>
  */
 void MoveCmd(char *buf, int len, player *pl)
@@ -949,7 +949,7 @@ void esrv_new_player(player *pl, uint32 weight)
 
     Send_With_Handling(&pl->socket, &global_sl);
 
-    SET_FLAG(pl->ob, FLAG_CLIENT_SENT);
+    /*SET_FLAG(pl->ob, FLAG_CLIENT_SENT);*/
 }
 
 /* Need to send an animation sequence to the client.

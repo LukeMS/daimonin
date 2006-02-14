@@ -40,8 +40,23 @@ self.reward = { title = title, body = body, copper = copper,  silver = silver, g
 end
 
 -- Add a (reward) icon
-function InterfaceBuilder:AddIcon(title, face, body, mode)
-table.insert(self.tags, { type = 'icon', title = title, face = face, body = body, mode = mode })
+function InterfaceBuilder:AddIcon(title, face, body)
+table.insert(self.tags, { type = 'icon', title = title, face = face, body = body})
+end
+
+-- Add a (reward) selectable icon
+function InterfaceBuilder:AddSelect(title, face, body)
+table.insert(self.tags, { type = 'select', title = title, face = face, body = body})
+end
+
+-- Set (reward) selectable icon mode to unselectable
+function InterfaceBuilder:SelectOff()
+self.select.mode = 's'
+end
+
+-- Set (reward) selectable icon mode to selectable (default)
+function InterfaceBuilder:SelectOn()
+self.select.mode = 'S'
 end
 
 -- Set single button
@@ -108,12 +123,18 @@ end
 iface = iface .. '\>'
 end
 
+if self.select.mode ~= 'S' then
+self.select.mode = 's'
+end
+
 if self.tags then 
 for _,c in self.tags do
 if c.type == 'link' then
 iface = iface .. '<lt="' .. default(c.title) .. '"c="' .. default(c.command, c.title) .. '">'
 elseif c.type == 'icon' then
-iface = iface .. '<im="' .. default(c.mode, "G") .. '"f="' .. default(c.face, badface) .. '"t="' .. default(c.title) .. '"b="' .. default(c.body) .. '">'
+iface = iface .. '<im="G" f="' .. default(c.face, badface) .. '"t="' .. default(c.title) .. '"b="' .. default(c.body) .. '">'
+elseif c.type == 'select' then
+iface = iface .. '<im="' .. self.select.mode .. '"f="' .. default(c.face, badface) .. '"t="' .. default(c.title) .. '"b="' .. default(c.body) .. '">'
 end
 end
 end        
@@ -160,7 +181,7 @@ end
 
 -- Constructor
 function InterfaceBuilder:New()
-local obj = {tags = {}, message = { title = "", body = "" }} 
+local obj = {tags = {}, select = {mode ="S" }, message = { title = "", body = "" }} 
 setmetatable(obj, 
 {
 __index = InterfaceBuilder,

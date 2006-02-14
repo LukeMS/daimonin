@@ -421,7 +421,7 @@ void first_arch_pass(FILE *fp)
 
               break;
         }
-        CLEAR_FLAG((&at->clone), FLAG_CLIENT_SENT); /* we using this flag for debugging - ignore */
+        /*CLEAR_FLAG((&at->clone), FLAG_CLIENT_SENT);*/ /* we using this flag for debugging - ignore */
         at = get_archetype_struct();
         initialize_object(op); /* clear - op is only temp. buffer for at->clone */
         op->arch = at;

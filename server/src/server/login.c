@@ -448,6 +448,10 @@ static void traverse_b3_player_inv(object *op)
 			remove_ob(tmp);
 			continue;
 		}
+
+		if(QUERY_FLAG(tmp, FLAG_IS_EGOITEM) && !QUERY_FLAG(tmp, FLAG_IS_EGOBOUND))
+			CLEAR_FLAG(tmp, FLAG_APPLIED);
+
 		/* the one drop flag context has changed - its now a simple marker */
 		if(QUERY_FLAG(tmp,FLAG_ONE_DROP)) /* means "one drop quest item" */
 		{

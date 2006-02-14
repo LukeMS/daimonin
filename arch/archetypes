@@ -6422,12 +6422,12 @@ resist_impact 45
 resist_cleave 45
 resist_pierce 45
 resist_slash 45
-resist_force 50
+resist_magic 50
 resist_electricity 100
 dam 85
 weapon_speed 3.5
 attack_slash 25
-attack_force 25
+attack_magic 25
 attack_weaponmagic 25
 attack_electricity 25
 speed -0.025
@@ -8435,6 +8435,33 @@ weight 200000
 value 40
 nrof 1
 end
+Object close_gift
+name rewrap the gift
+type 121
+editor_folder indoor/show all
+face gift_open.111
+layer 3
+no_drop 1
+no_pick 1
+end
+Object close_stocking
+name close stocking
+type 121
+editor_folder indoor/show all
+face stocking.111
+layer 3
+no_drop 1
+no_pick 1
+end
+Object close_stocking_bow
+name close stocking
+type 121
+editor_folder indoor/show all
+face stocking_bow.111
+layer 3
+no_drop 1
+no_pick 1
+end
 Object close_bag
 name close the bag
 type 121
@@ -8658,6 +8685,42 @@ layer 3
 no_drop 1
 no_pick 1
 identified 1
+end
+Object xmas_present_green_open
+name close the gift
+type 121
+editor_folder indoor/show all
+face xmas_present_green_open.101
+layer 3
+no_drop 1
+no_pick 1
+end
+Object xmas_present_red_open
+name close the gift
+type 121
+editor_folder indoor/show all
+face xmas_present_red_open.101
+layer 3
+no_drop 1
+no_pick 1
+end
+Object xmas_present_white_open
+name close the gift
+type 121
+editor_folder indoor/show all
+face xmas_present_white_open.101
+layer 3
+no_drop 1
+no_pick 1
+end
+Object xmas_present_yellow_open
+name close the gift
+type 121
+editor_folder indoor/show all
+face xmas_present_yellow_open.101
+layer 3
+no_drop 1
+no_pick 1
 end
 Object lamp_wall_1_unlit
 name attached lamp
@@ -8972,6 +9035,15 @@ known_cursed 1
 face force.101
 no_drop 1
 speed 0
+end
+Object quest_info
+type 136
+editor_folder indoor/show all
+sys_object 1
+applied 0
+no_drop 1
+layer 0
+face info.101
 end
 Object skill_alchemy
 name alchemy
@@ -12360,6 +12432,115 @@ material 18
 value 350
 container 15000
 weight 15000
+weapon_speed 1.0
+end
+Object gift
+name wrapped gift
+type 122
+editor_folder items/container
+other_arch close_gift
+face gift_closed.111
+layer 3
+level 1
+material 1
+material_real 1
+value 15
+weight 250
+container 10000
+weapon_speed 1.0
+end
+Object stocking
+name stocking
+type 122
+editor_folder items/container
+other_arch close_stocking
+face stocking.101
+layer 3
+level 1
+material 1
+material_real 1
+value 15
+weight 250
+container 1000
+weapon_speed 1.0
+end
+Object stocking_bow
+name stocking
+type 122
+editor_folder items/container
+other_arch close_stocking_bow
+face stocking_bow.101
+layer 3
+level 1
+material 1
+material_real 1
+value 15
+weight 250
+container 1000
+weapon_speed 1.0
+end
+Object xmas_present_green
+name Christmas Present
+type 122
+editor_folder items/container
+other_arch xmas_present_green_open
+face xmas_present_green_close.101
+no_pick 1
+layer 3
+level 1
+material 3
+material_real 450
+value 13
+weight 250
+container 75000
+weapon_speed 1.0
+end
+Object xmas_present_red
+name Christmas Present
+type 122
+editor_folder items/container
+other_arch xmas_present_red_open
+face xmas_present_red_close.101
+no_pick 1
+layer 3
+level 1
+material 3
+material_real 450
+value 13
+weight 250
+container 75000
+weapon_speed 1.0
+end
+Object xmas_present_white
+name Christmas Present
+type 122
+editor_folder items/container
+other_arch xmas_present_white_open
+face xmas_present_white_close.101
+no_pick 1
+layer 3
+level 1
+material 3
+material_real 450
+value 13
+weight 250
+container 75000
+weapon_speed 1.0
+end
+Object xmas_present_yellow
+name Christmas Present
+type 122
+editor_folder items/container
+other_arch xmas_present_yellow_open
+face xmas_present_yellow_close.101
+no_pick 1
+layer 3
+level 1
+material 3
+material_real 450
+value 13
+weight 250
+container 75000
 weapon_speed 1.0
 end
 Object coppercoin
@@ -21029,11 +21210,11 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_force 20
+resist_magic 20
 dam 42
 weapon_speed 3.5
 attack_pierce 60
-attack_force 30
+attack_magic 30
 attack_weaponmagic 10
 speed -0.049
 level 1
@@ -21085,11 +21266,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_force 50
+resist_magic 50
 dam 55
 weapon_speed 3.5
 attack_slash 35
-attack_force 35
+attack_magic 35
 attack_weaponmagic 30
 speed -0.048
 level 1
@@ -21141,11 +21322,11 @@ resist_impact 12
 resist_cleave 12
 resist_pierce 12
 resist_slash 12
-resist_force 30
+resist_magic 30
 dam 45
 weapon_speed 3.5
 attack_cleave 50
-attack_force 25
+attack_magic 25
 attack_weaponmagic 25
 speed -0.048
 level 1
@@ -21197,11 +21378,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_force 50
+resist_magic 50
 dam 65
 weapon_speed 3.5
 attack_slash 35
-attack_force 35
+attack_magic 35
 attack_weaponmagic 30
 speed -0.0485
 level 1
@@ -21253,11 +21434,11 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_force 50
+resist_magic 50
 dam 35
 weapon_speed 3.5
 attack_pierce 20
-attack_force 50
+attack_magic 50
 attack_weaponmagic 30
 speed -0.047
 level 1
@@ -21308,11 +21489,11 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_force 50
+resist_magic 50
 dam 48
 weapon_speed 3.5
 attack_impact 60
-attack_force 20
+attack_magic 20
 attack_weaponmagic 20
 speed -0.049
 level 1
@@ -21626,11 +21807,11 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_force 50
+resist_magic 50
 dam 40
 weapon_speed 3.5
 attack_impact 60
-attack_force 30
+attack_magic 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -21683,11 +21864,11 @@ resist_impact 10
 resist_cleave 10
 resist_pierce 10
 resist_slash 10
-resist_force 50
+resist_magic 50
 dam 36
 weapon_speed 3.5
 attack_impact 60
-attack_force 30
+attack_magic 30
 attack_weaponmagic 10
 speed -0.048
 level 1
@@ -21740,11 +21921,11 @@ resist_impact 15
 resist_cleave 15
 resist_pierce 15
 resist_slash 15
-resist_force 25
+resist_magic 25
 dam 40
 weapon_speed 3.5
 attack_pierce 40
-attack_force 30
+attack_magic 30
 attack_weaponmagic 30
 speed -0.0495
 level 1
@@ -21796,7 +21977,7 @@ resist_impact 20
 resist_cleave 20
 resist_pierce 20
 resist_slash 20
-resist_force 50
+resist_magic 50
 dam 48
 weapon_speed 3.5
 attack_impact 50
@@ -24241,7 +24422,7 @@ last_eat 1
 maxsp 1
 ac 3
 exp 50
-resist_force 100
+resist_magic 100
 resist_fire 100
 resist_electricity 100
 resist_cold 100
@@ -24299,6 +24480,8 @@ type 131
 editor_folder special/special
 quest_item 1
 startequip 1
+identified 1
+nrof 1
 item_quality 100
 item_condition 100
 layer 3

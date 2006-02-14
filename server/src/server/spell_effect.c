@@ -1641,7 +1641,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           force->resist[ATNR_PHYSICAL] = 100;
           break;
         case SP_IMMUNE_MAGIC:
-          force->resist[ATNR_FORCE] = 100;
+          force->resist[ATNR_MAGIC] = 100;
           break;
 
         case SP_INVULNERABILITY:

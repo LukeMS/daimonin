@@ -2807,6 +2807,8 @@ int is_legal_2ways_exit(object *op, object *exit)
 
 int manual_apply(object *op, object *tmp, int aflag)
 {
+	int ego_mode;
+
     if (tmp->head)
         tmp = tmp->head;
 
@@ -2826,6 +2828,20 @@ int manual_apply(object *op, object *tmp, int aflag)
     /* monsters mustn't apply random chests, nor magic_mouths with a counter */
     if (op->type != PLAYER && tmp->type == TREASURE)
         return 0;
+
+	/* lets check we have an ego item */
+	if((ego_mode = check_ego_item(op, tmp)))
+	{
+		if(op->type == PLAYER)
+		{
+			if(ego_mode == EGO_ITEM_BOUND_UNBOUND)
+				new_draw_info (NDI_UNIQUE, 0, op, "This is an ego item!\nType \"/egobind\" for more info about applying it!");
+			else if(ego_mode == EGO_ITEM_BOUND_PLAYER)
+
+				new_draw_info (NDI_UNIQUE, 0, op, "This is not your ego item!");
+		}
+		return 1;
+	}
 
     /* control apply by controling a set exp object level or player exp level*/
 	if(tmp->item_level && op->type == PLAYER)
@@ -3204,7 +3220,7 @@ void player_apply_below(object *pl)
 int apply_special(object *who, object *op, int aflags)
 {
     /* wear/wield */
-    int     basic_flag  = aflags &AP_BASIC_FLAGS;
+    int     ego_mode, basic_flag  = aflags &AP_BASIC_FLAGS;
     int     tmp_flag    = 0;
     object *tmp;
     char    buf[HUGE_BUF];
@@ -3218,6 +3234,20 @@ int apply_special(object *who, object *op, int aflags)
 
     if (op->env != who)
         return 1;   /* op is not in inventory */
+
+	/* lets check we have an ego item */
+	if((ego_mode = check_ego_item(op, who)))
+	{
+		if(op->type == PLAYER)
+		{
+			if(ego_mode == EGO_ITEM_BOUND_UNBOUND)
+				new_draw_info (NDI_UNIQUE, 0, op, "This is an ego item!\nType \"/egobind\" for more info about applying it!");
+			else if(ego_mode == EGO_ITEM_BOUND_PLAYER)
+
+				new_draw_info (NDI_UNIQUE, 0, op, "This is not your ego item!");
+		}
+		return 1;
+	}
 
     buf[0] = '\0';      /* Needs to be initialized */
     if (QUERY_FLAG(op, FLAG_APPLIED))
@@ -3737,9 +3767,12 @@ void turn_on_light(object *op)
     {
         if (op->last_eat) /* we have a non permanent source */
             SET_FLAG(op, FLAG_CHANGING);
-        SET_FLAG(op, FLAG_ANIMATE);
-        op->animation_id = op->arch->clone.animation_id; /* be sure to get the right anim */
-        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+		if(op->speed)
+		{
+	        SET_FLAG(op, FLAG_ANIMATE);
+		    op->animation_id = op->arch->clone.animation_id; /* be sure to get the right anim */
+			SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+		}
         if (tricky_flag)
             op = insert_ob_in_ob(op, op_old->env);
         op->glow_radius = (sint8) op->last_sp;
@@ -3748,10 +3781,12 @@ void turn_on_light(object *op)
     {
         if (op->last_eat) /* we have a non permanent source */
             SET_FLAG(op, FLAG_CHANGING);
-        SET_FLAG(op, FLAG_ANIMATE);
-        op->animation_id = op->arch->clone.animation_id;
-        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-
+		if(op->speed)
+		{
+			SET_FLAG(op, FLAG_ANIMATE);
+			op->animation_id = op->arch->clone.animation_id;
+			SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+		}
         if (QUERY_FLAG(op, FLAG_PERM_CURSED))
             SET_FLAG(op, FLAG_CURSED);
         if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
@@ -4062,4 +4097,38 @@ void scroll_failure(object *op, int failure, int power)
         cast_mana_storm(op, power);
     }
 #endif
+}
+
+/*  peterm:  do_power_crystal
+
+object *op, object *crystal
+
+This function handles the application of power crystals.
+Power crystals, when applied, either suck power from the applier,
+if he's at full spellpoints, or gives him power, if it's got
+spellpoins stored.
+
+*/
+int apply_power_crystal(object *op, object *crystal)
+{
+	int available_power;
+	int power_space;
+	int power_grab;
+
+	available_power = op->stats.sp - op->stats.maxsp;
+	power_space = crystal->stats.maxsp - crystal->stats.sp;
+	power_grab = 0;
+	if (available_power >= 0 && power_space > 0)
+		power_grab = (int) MIN((float) power_space, ((float) 0.5 * (float) op->stats.sp));
+	if (available_power <0 && crystal->stats.sp>0)
+		power_grab = -MIN(-available_power, crystal->stats.sp);
+
+	op->stats.sp -= power_grab;
+	crystal->stats.sp += power_grab;
+	crystal->speed = (float) crystal->stats.sp / (float) crystal->stats.maxsp;
+	update_ob_speed(crystal);
+	if (op->type == PLAYER)
+		esrv_update_item(UPD_ANIMSPEED, op, crystal);
+
+	return 1;
 }

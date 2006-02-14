@@ -78,7 +78,18 @@ static struct constant_decl     Game_constants[]    =
     {"EQUIP_BOW", PLAYER_EQUIP_BOW},
     {"EQUIP_MTOOL", PLAYER_EQUIP_MTOOL},
     {"EQUIP_MAX", PLAYER_EQUIP_MAX},
-
+	
+	/* quest type */
+	{"QUEST_NORMAL", 0},
+	{"QUEST_KILL", 1},
+	{"QUEST_KILLITEM", 2},
+	/* quest steps */	
+	{"QSTAT_NO", 1},
+	{"QSTAT_ACTIVE", 2},
+	{"QSTAT_SOLVED", 3},
+	{"QSTAT_DONE", 4},
+	{"QSTAT_INCOMPLETE", 5},
+	
     /* Argh, the object types. Make sure to keep up-to date if any are added/removed */
     {"TYPE_PLAYER"                  ,PLAYER}, {"TYPE_BULLET"                  ,BULLET},
     {"TYPE_ROD"                     ,ROD}, {"TYPE_TREASURE"                ,TREASURE},

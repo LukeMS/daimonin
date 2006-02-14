@@ -31,5 +31,6 @@ extern void add_quest_trigger(struct obj *who, struct obj *trigger);
 extern void set_quest_status(struct obj *trigger, int q_status, int q_type);
 extern void check_kill_quest_event(struct obj *pl, struct obj *op);
 extern void check_cont_quest_event(struct obj *pl, struct obj *op);
+extern int get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title);
 
 #endif

@@ -50,7 +50,7 @@ typedef enum _attacks
     ATNR_SONIC,
 
     /* damage type: magical */
-    ATNR_FORCE,
+    ATNR_MAGIC,
     ATNR_PSIONIC,
     ATNR_LIGHT,
     ATNR_SHADOW,
@@ -100,7 +100,7 @@ EXTERN char    *attack_name[NROFATTACKS]            =
 {
     "impact", "slash", "cleave", "pierce", 
     "fire", "cold", "electricity", "poison", "acid", "sonic",
-    "force", "psionic", "light", "shadow", "lifesteal",
+    "magic", "psionic", "light", "shadow", "lifesteal",
     "aether", "nether", "chaos", "death", 
     "weaponmagic", "godpower",
     "drain", "depletion", "corruption",
@@ -115,10 +115,10 @@ EXTERN char    *attack_name[NROFATTACKS]            =
  */
 EXTERN int      resist_table[]                      =
 {
-    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_FORCE, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
+    ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE, ATNR_ELECTRICITY, ATNR_COLD,
     ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_SHADOW, ATNR_POISON, ATNR_SLOW, ATNR_PARALYZE, ATNR_LIGHT, ATNR_FEAR,
     ATNR_SLASH, ATNR_DEPLETION, ATNR_CLEAVE, ATNR_SONIC, ATNR_PHYSICAL, ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC,
-    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_FORCE, ATNR_FIRE,
+    ATNR_NETHER, ATNR_PIERCE, ATNR_SLASH, ATNR_CLEAVE, ATNR_PIERCE, ATNR_PHYSICAL, ATNR_MAGIC, ATNR_FIRE,
     ATNR_ELECTRICITY, ATNR_COLD, ATNR_CONFUSION, ATNR_ACID, ATNR_DRAIN, ATNR_LIGHT, ATNR_POISON, ATNR_SLOW,
     ATNR_PARALYZE, ATNR_SNARE, ATNR_FEAR, ATNR_CANCELLATION, ATNR_DEPLETION, ATNR_COUNTERMAGIC, ATNR_SONIC, ATNR_CORRUPTION,
     ATNR_SNARE, ATNR_LIFESTEAL, ATNR_PSIONIC, ATNR_NETHER, ATNR_AETHER, ATNR_DEATH, ATNR_CHAOS, ATNR_GODPOWER,

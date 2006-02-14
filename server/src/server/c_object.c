@@ -80,6 +80,51 @@ int command_rskill(object *pl, char *params)
     return change_skill(pl, skillno);
 }
 
+
+int command_egobind ( object *pl, char *params) 
+{
+	object *mark;
+
+	if(pl->type != PLAYER || !CONTR(pl))
+		return 0;
+
+	mark = find_marked_object(pl);
+
+	if(!mark)
+	{
+		new_draw_info(NDI_UNIQUE, 0,pl, "MARK first the ego item - then type: /egobind ");
+		return 0;
+	}
+
+	/* kein egoitem or previous bound */
+	if(!QUERY_FLAG(mark, FLAG_IS_EGOITEM) || QUERY_FLAG(mark, FLAG_IS_EGOBOUND))
+	{
+		new_draw_info_format(NDI_UNIQUE, 0,pl, "Your marked item %s is not an unbound ego item!", query_name(mark));
+		return 0;
+	}
+
+	if(!params)
+	{
+		new_draw_info_format(NDI_UNIQUE, 0,pl, "To bind the %s type: /egobind %d", query_name(mark), mark->count);
+		return 0;
+
+	}
+
+	/* be sure we REALLY bind the marked and previous announced item! */
+	if(mark->count != (uint32) strtoul(params, NULL, 10))
+	{
+		new_draw_info_format(NDI_UNIQUE, 0,pl, "The numbers don't match!\nTo bind the %s type: /egobind %d", query_name(mark), mark->count);
+		return 0;
+	}
+
+	new_draw_info_format(NDI_UNIQUE, 0,pl, "You has bound the %s!", query_name(mark));
+	create_ego_item(mark, pl->name, EGO_ITEM_BOUND_PLAYER);
+	esrv_update_item (UPD_NAME, pl, mark);
+	play_sound_player_only (CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
+
+	return 1;
+}
+
 int command_apply(object *op, char *params)
 {
     if (op->type == PLAYER)
@@ -301,7 +346,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
 
 void pick_up(object *op, object *alt)
 {
-    int         need_fix_tmp    = 0;
+    int         ego_mode, need_fix_tmp    = 0;
     object     *tmp             = NULL;
     mapstruct  *tmp_map         = NULL;
     int         count;
@@ -326,6 +371,18 @@ void pick_up(object *op, object *alt)
         }
         tmp = op->below;
     }
+
+	/* lets check we have an ego item */
+	if((ego_mode = check_ego_item(op, tmp)) )
+	{
+		/* only disallow handling of bound items not yours */
+		if(ego_mode == EGO_ITEM_BOUND_PLAYER)
+		{
+			if(op->type == PLAYER)
+				new_draw_info (NDI_UNIQUE, 0, op, "This is not your ego item!");
+			return;
+		}
+	}
 
     if (tmp->type == CONTAINER)
         container_unlink(NULL, tmp);
@@ -415,6 +472,7 @@ void pick_up(object *op, object *alt)
  */
 void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
 {
+	int		ego_mode;
     tag_t   tmp_tag, tmp2_tag;
     object *tmp2, *tmp_cont;
     /*object *sack2;*/
@@ -425,6 +483,18 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
         LOG(llevDebug, "puty_object_in_sack: op not a player\n");
         return;
     }
+
+	/* lets check we have an ego item */
+	if((ego_mode = check_ego_item(op, tmp)) || (!ego_mode && check_ego_item(op, sack)) )
+	{
+		/* only disallow handling of bound items not yours */
+		if(ego_mode == EGO_ITEM_BOUND_PLAYER)
+		{
+			if(op->type == PLAYER)
+				new_draw_info (NDI_UNIQUE, 0, op, "This is not your ego item!");
+			return;
+		}
+	}
 
     if (sack == tmp)
         return; /* Can't put an object in itself */

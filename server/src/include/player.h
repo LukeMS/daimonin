@@ -215,13 +215,11 @@ typedef struct pl_player
     object               *quests_done;
     object               *quests_type_normal;
     object               *quests_type_kill;
-    object               *quests_type_cont;
 
     tag_t                quest_one_drop_count;
     tag_t                quests_done_count;
     tag_t                quests_type_normal_count;
     tag_t                quests_type_kill_count;
-    tag_t                quests_type_cont_count;
 
     uint32              exp_calc_tag;               /* used from aggro.c/exp.c */
     object             *exp_calc_obj;
