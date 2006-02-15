@@ -775,7 +775,7 @@ Boolean game_status_chain(void)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
         {
-            LOG(LOG_MSG, "Login: send verify password %s\n", InputString);
+		    LOG(LOG_MSG, "Login: send verify password <*****>\n");
             send_reply(InputString);
             GameStatus = GAME_STATUS_VERIFYPSWD_WAIT;
             /* now wait again for next server question*/
