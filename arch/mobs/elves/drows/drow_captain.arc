@@ -1,5 +1,5 @@
 Object drow_captain
-name drow captain
+name Drow Captain
 face drow_captain.131
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

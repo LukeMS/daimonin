@@ -1,5 +1,5 @@
 Object guard_royal
-name royal guard
+name Royal Guard
 race human
 face guard_royal.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

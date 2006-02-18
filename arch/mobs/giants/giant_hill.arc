@@ -1,5 +1,5 @@
 Object giant_hill
-name hill giant
+name Hill Giant
 face giant_hill.131
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

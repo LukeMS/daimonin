@@ -1,5 +1,5 @@
 Object golem_mage
-name mage golem
+name Mage Golem
 face golem_mage.131
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

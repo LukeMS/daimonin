@@ -125,8 +125,8 @@ y 1
 end
 arch stairs_wood_up
 slaying ../testmap_quest
-hp 4
-sp 1
+hp 1
+sp 5
 direction 5
 x 1
 y 1

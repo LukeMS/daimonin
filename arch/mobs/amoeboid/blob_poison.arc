@@ -1,5 +1,5 @@
 Object blob_poison
-name poison blob
+name Poison Blob
 race slime
 face blob_poison.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

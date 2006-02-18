@@ -1,5 +1,5 @@
 Object guard
-name guard
+name Guard
 race human
 face guard1.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -1,5 +1,5 @@
 Object lost_soul
-name lost soul
+name Lost Soul
 face lost_soul.131
 race ghost
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

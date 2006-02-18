@@ -54,12 +54,13 @@ static struct method_decl   GameObject_methods[]            =
     {"FindSkill", (lua_CFunction) GameObject_FindSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
-    {"CheckQuest", (lua_CFunction) GameObject_CheckQuest},
-    {"AddQuest", (lua_CFunction) GameObject_AddQuest},
-	{"AddKillQuestTarget", (lua_CFunction) GameObject_AddKillQuestTarget},
-	{"AddKillQuestItem", (lua_CFunction) GameObject_AddKillQuestItem},
-	{"NrofKillQuestItem", (lua_CFunction) GameObject_NrofKillQuestItem}, 
-	{"RemoveKillQuestItem", (lua_CFunction) GameObject_RemoveKillQuestItem}, 
+	{"AddQuest", (lua_CFunction) GameObject_AddQuest},
+	{"GetQuest", (lua_CFunction) GameObject_GetQuest},
+	{"CheckQuestLevel", (lua_CFunction) GameObject_CheckQuestLevel},
+ 	{"AddQuestTarget", (lua_CFunction) GameObject_AddQuestTarget},
+	{"AddQuestItem", (lua_CFunction) GameObject_AddQuestItem},
+	{"NrofQuestItem", (lua_CFunction) GameObject_NrofQuestItem}, 
+	{"RemoveQuestItem", (lua_CFunction) GameObject_RemoveQuestItem}, 
     {"SetQuestStatus", (lua_CFunction) GameObject_SetQuestStatus},
     {"CheckOneDropQuest", (lua_CFunction) GameObject_CheckOneDropQuest},
     {"AddOneDropQuest", (lua_CFunction) GameObject_AddOneDropQuest},
@@ -408,14 +409,11 @@ static int GameObject_Interface(lua_State *L)
 {
     lua_object *self;
     char       *txt;
-    int            mode;
+    int         mode;
 
     get_lua_args(L, "Oi|s", &self, &mode, &txt);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&mode);
-    GCFP.Value[2] = (char *) (txt);
-    (PlugHooks[HOOK_INTERFACE]) (&GCFP);
+	hooks->gui_interface(WHO, mode, txt, NULL);
 
     return 0;
 }
@@ -1535,114 +1533,125 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_CheckQuest                                            */
-/* Lua    : object:CheckQuest(archetype, name)                               */
-/* Status : Stable                                                           */
-/* Info   : We browse the quest object container for a quest_trigger object  */
-/*****************************************************************************/
-static int GameObject_CheckQuest(lua_State *L)
-{
-    char       *name;
-    object     *walk;
-    lua_object *self;
-
-    get_lua_args(L, "Os", &self, &name);
-
-
-    if(CONTR(WHO)->quests_type_normal)
-
-    {
-        for (walk = CONTR(WHO)->quests_type_normal->inv; walk != NULL; walk = walk->below)
-        {
-            if (walk->name && !strcmp(walk->name, name))
-                return push_object(L, &GameObject, walk);
-        }
-    }
-
-    if(CONTR(WHO)->quests_type_kill)
-    {
-        for (walk = CONTR(WHO)->quests_type_kill->inv; walk != NULL; walk = walk->below)
-        {
-            if (walk->name && !strcmp(walk->name, name))
-                return push_object(L, &GameObject, walk);
-        }
-    }
-
-    if(CONTR(WHO)->quests_done)
-    {
-        for (walk = CONTR(WHO)->quests_done->inv; walk != NULL; walk = walk->below)
-        {
-            if (walk->name && !strcmp(walk->name, name))
-                return push_object(L, &GameObject, walk);
-        }
-    }
-
-    return 0;
-}
-
-/*****************************************************************************/
 /* Name   : GameObject_AddQuest                                              */
-/* Lua    : object:AddQuest(quest_name, mode, id_nr, msg)                    */
+/* Lua    : object:AddQuest(q_name, mode, start, stop, level, skill, msg)    */
 /* Info   : Add a quest_trigger to a quest_container = give player a quest   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_AddQuest(lua_State *L)
 {
-    char       *name, *msg;
-    int            mode, nr;
-    object     *myob;
-    lua_object *self;
+	char       *name, *msg;
+	int         mode, lev, skill_lev, step_start, step_end;
+	object     *myob;
+	lua_object *self;
 
-    get_lua_args(L, "Osii|s", &self, &name, &mode, &nr, &msg);
+	get_lua_args(L, "Osiiiii|s", &self, &name, &mode, &step_start, &step_end, &lev, &skill_lev, &msg);
 
+	/* if we return NULL, the quest can't be given - if we are a player because we it max quests */
+	if(WHO->type != PLAYER || hooks->quest_count_pending(WHO) >= QUESTS_PENDING_MAX)
+	{
+		hooks->new_draw_info_format(NDI_YELLOW, 0, WHO, "You can't have more as %d open quests.\nRemove one first!", QUESTS_PENDING_MAX);
+		lua_pushnil(L);
+		return 0;
+	}
 
-    if (WHO->type != PLAYER)
-        return 0;
+	myob = hooks->get_archetype("quest_trigger");
 
-    myob = hooks->get_archetype("quest_trigger");
+	if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
+	{
+		LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_trigger'\n");
+		luaL_error(L, "Can't find archtype 'quest_trigger'");
+	}
 
-    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
-    {
-        LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_trigger'\n");
-        luaL_error(L, "Can't find archtype 'quest_trigger'");
-    }
+	/* store name & arch name of the quest obj. so we can id it later */
+	FREE_AND_COPY_HASH(myob->name, name);
+	if(msg)
+		FREE_AND_COPY_HASH(myob->msg, msg);
 
-    /* store name & arch name of the quest obj. so we can id it later */
-    FREE_AND_COPY_HASH(myob->name, name);
-    if(msg)
-        FREE_AND_COPY_HASH(myob->msg, msg);
-    myob->sub_type1 = (uint8)mode;
-    myob->last_heal = (sint16)nr;
+	myob->sub_type1 = (uint8)mode;
+	myob->last_heal = (sint16)step_start;
+	myob->state = step_end;
+	myob->item_skill = skill_lev;
+	myob->item_level = lev;
 
-    hooks->add_quest_trigger(WHO, myob);
+	hooks->add_quest_trigger(WHO, myob);
 
-    return push_object(L, &GameObject, myob);
+	return push_object(L, &GameObject, myob);
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_AddKillQuestTarget                                    */
-/* Lua    : object:AddKillQuestTarget(nrof_kills, k_arch, k_name, k_title)   */
+/* Name   : GameObject_GetQuest                                              */
+/* Lua    : object:GetQuest(archetype, name)                                 */
+/* Status : Stable                                                           */
+/* Info   : We browse the quest object container for a quest_trigger object  */
+/*****************************************************************************/
+static int GameObject_GetQuest(lua_State *L)
+{
+    char       *name;
+    lua_object *self;
+
+    get_lua_args(L, "Os", &self, &name);
+
+	return push_object(L, &GameObject, hooks->quest_find_name(WHO, name));
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_CheckQuestLevel                                       */
+/* Lua    : object:CheckQuestLevel(level, skill_level)                       */
+/* Status : Stable                                                           */
+/* Info   : We check a quest is possible to start                            */
+/*****************************************************************************/
+static int GameObject_CheckQuestLevel(lua_State *L)
+{
+	int level, skill_level, tmp_lev;
+	lua_object *self;
+	object *who;
+	player *pl;
+
+	get_lua_args(L, "Oii", &self, &level, &skill_level);
+
+	who = WHO;
+	/* some sanity checks */
+	if(who->type != PLAYER || !(pl=CONTR(who)) || skill_level < 0 || skill_level > NROFSKILLGROUPS)
+		return 0;
+
+	/* player is high enough for this quest? */
+	if (skill_level)
+		tmp_lev = pl->exp_obj_ptr[skill_level-1]->level; /* use player struct shortcut ptrs */
+	else
+		tmp_lev = who->level;
+
+	if (level < tmp_lev) /* to low */
+		return 0;
+
+	return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_AddQuestTarget                                        */
+/* Lua    : object:AddQuestTarget(chance, nrof, k_arch, k_name, k_title)     */
 /* Info   : define a kill mob. Careful: if all are "" then ALL mobs are part */
 /*        : of this quest. If only arch set, all mobs using that base arch   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_AddKillQuestTarget(lua_State *L)
+static int GameObject_AddQuestTarget(lua_State *L)
 {
     char       *kill_arch, *kill_name=NULL, *kill_sym_name1=NULL, *kill_sym_name2=NULL;
-    int         kill_nr;
+    int         nrof, chance;
     object     *myob;
     lua_object *self;
 
-    get_lua_args(L, "Ois|s|s|s", &self, &kill_nr, &kill_arch, &kill_name, &kill_sym_name1, &kill_sym_name2);
+    get_lua_args(L, "Oiis|s|s|s", &self, &chance, &nrof, &kill_arch, &kill_name, &kill_sym_name1, &kill_sym_name2);
 
 	myob = hooks->get_archetype("quest_info");
 	if(!myob)
 	{
-		LOG(llevBug, "Lua Warning -> AddKillQuestTarget:: Can't find quest_info arch!");
+		LOG(llevBug, "Lua Warning -> AddQuestTarget:: Can't find quest_info arch!");
 		return 0;
 	}
-	myob->last_sp = kill_nr;
-    myob->level = 0; /* reset counter. if you want hold him, back it up in the script */
+
+	myob->last_grace = chance;
+	myob->last_sp = nrof; /* can be overruled by ->inv objects */
 
 	/* to be sure we get the right mob we use the arch object name */ 
 	if(*kill_arch!='\0')
@@ -1694,25 +1703,25 @@ static int GameObject_AddKillQuestTarget(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_AddKillQuestItem                                      */
-/* Lua    : quest_obj:AddKillQuestItem(chance, arch, face, |name, |title)    */
-/* Info   : Add a kill quest item to a kill quest target object              */
-/*        : (see GameObject_AddKillQuestTarget)                              */
+/* Name   : GameObject_AddQuestItem                                          */
+/* Lua    : quest_obj:AddQuestItem(nrof, arch, face, |name, |title)          */
+/* Info   : Add a quest item to a quest or base object                       */
+/*        : (see GameObject_AddQuestTarget)                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_AddKillQuestItem(lua_State *L)
+static int GameObject_AddQuestItem(lua_State *L)
 {
-	int         id, drop_chance;
+	int         id, nrof;
 	char	   *i_arch, *i_face, *i_name = NULL, *i_title = NULL;
 	object     *myob;
 	lua_object *self;
 
-	get_lua_args(L, "Oiss|s|s", &self, &drop_chance, &i_arch, &i_face, &i_name, &i_title);
+	get_lua_args(L, "Oiss|s|s", &self, &nrof, &i_arch, &i_face, &i_name, &i_title);
 
 	myob = hooks->get_archetype(i_arch);
 	if(!myob)
 	{
-		LOG(llevBug, "Lua Warning -> AddKillQuestTarget:: Can't find quest_info arch!");
+		LOG(llevBug, "Lua Warning -> AddQuestTarget:: Can't find quest_info arch!");
 		return 0;
 	}
 
@@ -1752,9 +1761,9 @@ static int GameObject_AddKillQuestItem(lua_State *L)
 			FREE_ONLY_HASH(myob->title);
 		}
 	}
-	
-	/* important: the chance is a applied to the target object. */
-	self->data.object->last_grace = drop_chance;
+
+	/* how many we have/need to find */	
+	myob->nrof = nrof;
 
 	/* finally add it to our target object*/
 	hooks->insert_ob_in_ob(myob, self->data.object);
@@ -1764,13 +1773,13 @@ static int GameObject_AddKillQuestItem(lua_State *L)
 
 
 /*****************************************************************************/
-/* Name   : GameObject_NrofKillQuestItem                                     */
-/* Lua    : kill_target_obj:NrofKillQuestItem()                              */
-/* Info   : counts kill quest items inside the inventory of the player       */
-/*        : where kill_target_obj is inside                                  */
+/* Name   : GameObject_NrofQuestItem                                         */
+/* Lua    : base_obj:NrofQuestItem()                                         */
+/* Info   : counts quest items inside the inventory of the player            */
+/*        : where target_obj is inside                                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_NrofKillQuestItem(lua_State *L)
+static int GameObject_NrofQuestItem(lua_State *L)
 {
 	int				 nrof=0;
 	const object	*myob, *pl;
@@ -1778,9 +1787,13 @@ static int GameObject_NrofKillQuestItem(lua_State *L)
 
 	get_lua_args(L, "O", &self);
 
-	/* kill object is inside our target object - see function GameObject_AddKillQuestItem */
+	/* object is inside our target object - see function GameObject_AddQuestItem */
 	pl = hooks->is_player_inv(self->data.object);
+
+	/* kill items are inside target, normal items inside the quest object itself */
 	myob = self->data.object->inv;
+	if(!myob)
+		myob = self->data.object;
 
 	if(myob && pl)
 		nrof = hooks->get_nrof_quest_item(pl, myob->arch->name, myob->name, myob->title);
@@ -1790,7 +1803,7 @@ static int GameObject_NrofKillQuestItem(lua_State *L)
 }
 
 /* helper function for GameObject_RemoveKillQuestItem - recursive used */
-static int remove_kill_quest_items(const object *inv, const object *myob, int nrof)
+static int remove_quest_items(const object *inv, const object *myob, int nrof)
 {
 	object *walk, *walk_below;
 
@@ -1803,7 +1816,7 @@ static int remove_kill_quest_items(const object *inv, const object *myob, int nr
 
 		if(walk->type == CONTAINER)
 		{
-			if(!(nrof = remove_kill_quest_items(walk->inv, myob, nrof)))
+			if(!(nrof = remove_quest_items(walk->inv, myob, nrof)))
 				return nrof;
 		}
 		
@@ -1828,15 +1841,15 @@ static int remove_kill_quest_items(const object *inv, const object *myob, int nr
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_RemoveKillQuestItem                                   */
-/* Lua    : kill_target_obj:RemoveKillQuestItem()                            */
-/* Info   : removes the kill items from the players inventory.               */
+/* Name   : GameObject_RemoveQuestItem                                       */
+/* Lua    : kill_target_obj:RemoveQuestItem(|nrof)                           */
+/* Info   : removes the items from the players inventory.                    */
 /*        : Get the template info from the kill target obj inventory         */
-/*        : NOTE: the function tries to remove given objects, count them     */
-/*        : before calling this function.                                    */
+/*        : NOTE: the function tries to remove given objects even when there,*/
+/*        : are not enough! count them before calling this function.         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_RemoveKillQuestItem(lua_State *L)
+static int GameObject_RemoveQuestItem(lua_State *L)
 {
 	int				 nrof = -1;
 	object			*myob, *pl;
@@ -1847,15 +1860,15 @@ static int GameObject_RemoveKillQuestItem(lua_State *L)
 	pl = hooks->is_player_inv(self->data.object);
 	myob = self->data.object->inv;
 
-	if(nrof == -1) /* if we don't have an explicit number, use number from kill target */
-		nrof = self->data.object->last_sp;
-
 	/* some sanity checks */
 	if(myob && pl && pl->type == PLAYER)
 	{
+		if(nrof == -1) /* if we don't have an explicit number, use number from kill target */
+			nrof = myob->nrof;
+
 		hooks->new_draw_info_format(NDI_WHITE, 0, pl, "%s is removed from your inventory.",
 														hooks->query_short_name(myob, NULL));
-		remove_kill_quest_items(pl->inv, myob, nrof);
+		remove_quest_items(pl->inv, myob, nrof);
 	}
 
 	return 0;

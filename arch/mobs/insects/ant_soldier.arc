@@ -1,5 +1,5 @@
 Object ant_soldier
-name ant soldier
+name Ant Soldier
 face ant_soldier.131
 race ant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

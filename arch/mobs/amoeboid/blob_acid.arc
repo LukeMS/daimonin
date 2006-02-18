@@ -1,5 +1,5 @@
 Object blob_acid
-name acid blob
+name Acid Blob
 race slime
 face blob_acid.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

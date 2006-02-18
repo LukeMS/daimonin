@@ -1,5 +1,5 @@
 Object jelly_ochre
-name ochre jelly
+name Ochre Jelly
 face ochre_jelly.111
 race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

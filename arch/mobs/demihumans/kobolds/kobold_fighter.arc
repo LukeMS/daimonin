@@ -1,5 +1,5 @@
 Object kobold_fighter
-name kobold fighter
+name Kobold Fighter
 face kobold_fighter.131
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

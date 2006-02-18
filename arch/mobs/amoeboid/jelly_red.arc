@@ -1,5 +1,5 @@
 Object jelly_red
-name red jelly
+name Red Jelly
 face jelly_red.111
 race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

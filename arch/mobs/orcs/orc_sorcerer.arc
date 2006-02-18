@@ -1,5 +1,5 @@
 Object orc_sorcerer
-name orc sorcerer
+name Orc Sorcerer
 face orc_sorcerer.131
 race orc
 randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

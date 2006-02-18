@@ -1,5 +1,5 @@
 Object icegolem
-name ice golem
+name Ice Golem
 face icegolem.031
 race golem
 randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2

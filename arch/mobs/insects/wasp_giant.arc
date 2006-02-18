@@ -1,5 +1,5 @@
 Object wasp_giant
-name giant wasp
+name Giant Wasp
 face wasp_giant.131
 race wasp
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

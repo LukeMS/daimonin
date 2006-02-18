@@ -1,5 +1,5 @@
 Object cube_gel
-name gelantinous cube
+name Gelantinous Cube
 race slime
 face gel_cube.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

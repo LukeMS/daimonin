@@ -45,6 +45,11 @@ typedef struct gui_interface_link
     char cmd[128];
 }_gui_interface_link;
 
+typedef struct gui_interface_who
+{
+	char body[128];
+}_gui_interface_who;
+
 typedef struct gui_interface_textfield
 {
     char text[128];
@@ -57,6 +62,13 @@ typedef struct gui_interface_message
     int line_count;
     char lines[INTERFACE_MAX_LINE][INTERFACE_MAX_CHAR];
 }_gui_interface_message;
+
+typedef struct gui_interface_xtended
+{
+	char title[128];
+	char body_text[4096];
+	int line_count;
+}_gui_interface_xtended;
 
 typedef struct gui_interface_reward
 {
@@ -89,8 +101,8 @@ typedef struct gui_interface_button
     char command[128];
 }_gui_interface_button;
 
-#define MAX_INTERFACE_ICON 10
-#define MAX_INTERFACE_LINKS 10
+#define MAX_INTERFACE_ICON 15
+#define MAX_INTERFACE_LINKS 25
 
 /* which area of the static gui_interface struct is used* */
 #define GUI_INTERFACE_HEAD       0x01
@@ -101,10 +113,12 @@ typedef struct gui_interface_button
 #define GUI_INTERFACE_TEXTFIELD  0x10
 #define GUI_INTERFACE_DECLINE    0x20
 #define GUI_INTERFACE_BUTTON     0x40
+#define GUI_INTERFACE_WHO        0x80
 
 /* don't use, internal */
-#define GUI_INTERFACE_ICON    0x40
-#define GUI_INTERFACE_LINK    0x80
+#define GUI_INTERFACE_XTENDED     0x0100
+#define GUI_INTERFACE_ICON    0x0200
+#define GUI_INTERFACE_LINK    0x0400
 
 #define GUI_INTERFACE_STATUS_NORMAL 0
 #define GUI_INTERFACE_STATUS_WAIT 1
@@ -124,9 +138,11 @@ typedef struct gui_interface_struct {
     int selected;
     int link_selected;
     _gui_interface_head head;
-    _gui_interface_link link[MAX_INTERFACE_ICON];
-    _gui_interface_message message;
-    _gui_interface_reward reward;
+    _gui_interface_link link[MAX_INTERFACE_LINKS];
+	_gui_interface_message message;
+	_gui_interface_xtended xtended;
+	_gui_interface_reward reward;
+	_gui_interface_who who;
     _gui_interface_icon icon[MAX_INTERFACE_ICON];
     _gui_interface_button ok;
     _gui_interface_button accept;

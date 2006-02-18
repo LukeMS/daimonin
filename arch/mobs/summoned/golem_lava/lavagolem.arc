@@ -1,5 +1,5 @@
 Object lavagolem
-name lava golem
+name Lava Golem
 face lavagolem.031
 race golem
 randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1

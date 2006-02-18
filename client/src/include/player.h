@@ -41,6 +41,7 @@ extern void             look_at(int x, int y);
 extern void             client_send_apply(int tag);
 extern void             client_send_examine(int tag);
 extern void             client_send_move(int loc, int tag, int nrof);
+extern void				client_send_tell_extended(char* body, char *tail);
 extern void             move_player(int dir);
 extern void             stop_fire(void);
 extern void             clear_fire_run(void);

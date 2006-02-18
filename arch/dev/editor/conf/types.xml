@@ -252,6 +252,14 @@
     If an item is identified, the player has
     full knowledge about it.
   </attribute>
+  <attribute arch="known_magical" editor="known magical" type="bool">
+    If an item is known magical, the player has
+    knowledge about it and will see the magical symbol.
+  </attribute>
+  <attribute arch="known_cursed" editor="known cursed" type="bool">
+    If an item is known cursed, the player has
+    knowledge about it and see the cursed flag.
+  </attribute>
   <attribute arch="startequip" editor="NO-DROP item" type="bool">
     A NO-DROP item vanishes as soon as the player
     drops it to the ground.
@@ -792,6 +800,7 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="is_magical" />
+    <ignore_list name="system_object" />
   </ignore>
   <description><![CDATA[
     Abilities are to be put in a monster's inventory. They grant monsters the
@@ -858,6 +867,10 @@
 <!--####################################################################-->
 <type number="18" name="Altar">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     When a player puts a defined number of certain items on the altar,
     then either a spell is casted (on the player) or a connector is
@@ -917,6 +930,10 @@
 <!--####################################################################-->
 <type number="31" name="Altar Trigger">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Altar_triggers work pretty much like normal altars
     (drop sacrifice -&gt; connection activated), except for the fact that
@@ -1391,6 +1408,10 @@
 <!--####################################################################-->
 <type number="92" name="Button">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     When a predefined amount of weight is placed on a button, the
     &lt;connection&gt; value is triggered. In most cases this happens when a
@@ -1422,6 +1443,10 @@
 <!--####################################################################-->
 <type number="30" name="Trigger Button">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     When a predefined amount of weigh is placed on a trigger button, the
     &lt;connection&gt; value is triggered. In most cases this happens when a
@@ -1602,6 +1627,10 @@
 <!--####################################################################-->
 <type number="103" name="Converter">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Converters are like "exchange tables". When the player drops a
     specific type of items, they get converted into other items, at a
@@ -1645,6 +1674,10 @@
 <!--####################################################################-->
 <type number="42" name="Creator">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     A creator is an object which creates another object when it
     is triggered. The child object can be anything. Creators are
@@ -1685,6 +1718,10 @@
 <!--####################################################################-->
 <type number="51" name="Detector">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Detectors work quite much like inv. checkers/pedestals: If the detector
     finds a specific object, it toggles its connected value.
@@ -1725,6 +1762,10 @@
 <!--####################################################################-->
 <type number="112" name="Director">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Directors change the direction of spell objects and other projectiles
     that fly past. Unlike spinners, directors always move objects in the
@@ -1763,6 +1804,10 @@
 <!--####################################################################-->
 <type number="158" name="Disease">
   <import_type name="combat_values" />
+  <ignore>
+    <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Diseases are an intersting form of spellcraft in Daimonin.
     Once casted, they can spread out and infect creatures in a large
@@ -1917,6 +1962,10 @@
 <!--####################################################################-->
 <type number="66" name="Exit">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     When the player applies an exit, he is transferred to a different location.
     (Monsters cannot use exits.) Depending on how it is set, the player applies
@@ -2014,6 +2063,7 @@
   <import_type name="default_flags" />
   <ignore>
     <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
     Floors are the base ground objects, which "defines" the tile.
@@ -2059,6 +2109,7 @@
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
     Walls are like floor basic objects for maps.
@@ -2237,6 +2288,7 @@
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
     Gates play an important role in Daimonin. Gates can be opened
@@ -2278,6 +2330,7 @@
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
     Timed Gates are like normal gates except they close automatically after
@@ -2368,6 +2421,10 @@
 <!--####################################################################-->
 <type number="93" name="Handle">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     A handle can be applied by players and (certain) monsters.
     Every time it is applied, the &lt;connection&gt; value is triggered. ]]>
@@ -2397,6 +2454,10 @@
 <!--####################################################################-->
 <type number="27" name="Handle Trigger">
   <import_type name="Handle" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Handle triggers are handles which reset after a short period
     of time. Every time it is either applied or reset, the
@@ -2448,6 +2509,10 @@
 <!--####################################################################-->
 <type number="56" name="Holy Altar">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Holy_altars are altars for the various religions. Praying
     at a Holy_altar will make you a follower of that god, and
@@ -2546,6 +2611,10 @@
 <!--####################################################################-->
 <type number="64" name="Inventory Checker">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Inventory checkers passively check the players inventory for a
     specific object. You can set a connected value that is triggered
@@ -2686,6 +2755,7 @@
   <ignore>
     <attribute arch="no_magic" />
     <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
     A locked door can be opened only when car
@@ -2742,6 +2812,10 @@
 <!--####################################################################-->
 <type number="29" name="Magic Ear">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Magic_ears trigger a connected value
     when the player speaks a specific keyword. ]]>
@@ -2771,6 +2845,10 @@
 <!--####################################################################-->
 <type number="62" name="Magic Wall">
   <import_type name="combat_values" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Magic walls fire spells in a given direction, in regular intervals.
     Magic walls can contain any spell. However, some spells do not
@@ -2850,6 +2928,10 @@
 <!--####################################################################-->
 <type number="55" name="Marker">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     A marker is an object that inserts an invisible force (a mark) into a
     player stepping on it. This force does nothing except containing a
@@ -3771,6 +3853,7 @@
   <import_type name="default_flags" />
   <ignore>
     <attribute arch="damned" />
+    <ignore_list name="system_object" />
   </ignore>
   <description><![CDATA[
     As the name implies, mood floors can change the "mood" of
@@ -3825,6 +3908,10 @@
 <!--####################################################################-->
 <type number="40" name="Mover">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Movers move the objects above them. However, only living objects
     are affected (monsters/NPCs always, players optional). Movers have
@@ -3901,6 +3988,10 @@
 <!--####################################################################-->
 <type number="17" name="Pedestal">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Pedestals are designed to detect certain types of living objects or keys.
     When a predefined type of living creature steps on the pedestal, the
@@ -3945,6 +4036,10 @@
 <!--####################################################################-->
 <type number="32" name="Trigger Pedestal">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Trigger Pedestals are like normal Pedestal but they reset after they got triggered
     automatically. In the reset time they can't be triggered again.
@@ -3991,6 +4086,10 @@
 <!--####################################################################-->
 <type number="94" name="Pit">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Pits are holes, transporting the player when he walks (and falls) into them.
     A speciality about pits is that they don't transport the player to
@@ -4460,6 +4559,10 @@
 <!--####################################################################-->
 <type number="154" name="Rune &amp; Trap">
   <import_type name="combat_values" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     A rune is a magical enscription on the dungeon floor. Traps are just
     like runes except they are not magical in nature, and generally have
@@ -4539,6 +4642,10 @@
 <!--####################################################################-->
 <type number="106" name="Savebed">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     When the player applies a savebed, he is not only saved. Both his
     respawn-after-death and his word-of-recall positions are pointing
@@ -4761,6 +4868,10 @@
 <!--####################################################################-->
 <type number="68" name="Shop Floor">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Shop floor is used for shops. It acts like a combination of the
     common floor- and the treasure type: When the map is loaded,
@@ -4804,6 +4915,10 @@
 <!--####################################################################-->
 <type number="69" name="Shop Mat">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Shop mats are used for entering/leaving shops. You should always
     have exactly TWO shop mats on your shop-map: One inside the
@@ -4832,6 +4947,10 @@
 <!--####################################################################-->
 <type number="98" name="Sign &amp; MagicMouth">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     The purpose of a sign or magic_mouth is to display a certain message to
     the player. There are three ways to have the player get this message:
@@ -4963,6 +5082,10 @@
 <!--####################################################################-->
 <type number="90" name="Spinner">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Spinners change the direction of spell objects and other projectiles
     that fly past. Unlike directors, it does make a difference from what
@@ -4986,6 +5109,10 @@
 <!--####################################################################-->
 <type number="41" name="Teleporter">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     When the player walks into a teleporter, he is transferred to a
     different location. The main difference to the object-type exit
@@ -5069,6 +5196,10 @@
 <!--####################################################################-->
 <type number="95" name="Trapdoor">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Trapdoors are very similar to pits. The difference is that they
     can not be closed. Instead, the weight of the object on the
@@ -5386,6 +5517,8 @@
   <import_type name="default_flags" />
   <ignore>
     <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Random drop container are used from spawn points.
@@ -5459,7 +5592,8 @@
   <ignore>
     <attribute arch="sub_type" />
     <attribute arch="damned" />
-  </ignore>
+    <ignore_list name="non_pickable" />
+ </ignore>
   <description><![CDATA[
     The event object can hold script or other events triggered
     in the game. The event object is inserted in the target object
@@ -5530,6 +5664,10 @@ trigger works as a container for the real quest objects.]]>
   <attribute arch="item_level" editor="required drop level" type="int">
 	Level needed (overall or skill specific) that a one-drop is triggered.    
   </attribute>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
+    This text describes the weapons's "story". Every decent artifact weapon
+    should have such a description.
+  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -5572,6 +5710,7 @@ that food.]]>
     <attribute arch="sub_type" />
     <attribute arch="damned" />
     <attribute arch="cursed" />
+    <ignore_list name="non_pickable" />
   </ignore>
   <description><![CDATA[
     The waypoint object can hold a position that a mob is to reach.
@@ -5620,6 +5759,10 @@ that food.]]>
 <!--####################################################################-->
 <type number="132" name="Timer">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Timers are used to trigger connections at specific time intervals. <br>
     A timer that is stored as running will start countdown as soon as the
@@ -5662,6 +5805,10 @@ that food.]]>
 <!--####################################################################-->
 <type number="133" name="Environment Sensor">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Environment sensors periodically watch their environment for specific
     conditions. Currently they can check for time of day (ToD), day of week (DoW) and brightness, all at the same time.
@@ -5726,6 +5873,10 @@ that food.]]>
 <!--####################################################################-->
 <type number="134" name="Connection Sensor">
   <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Connection sensors are trigger objects that take one or more other connections as input.
     The inputs can be combined according to a logical rule, and generate a script event or

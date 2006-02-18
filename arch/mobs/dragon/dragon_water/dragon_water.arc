@@ -1,5 +1,5 @@
 Object dragon_water_small
-name small water dragon
+name Small Water Dragon
 face dragon_water.131
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

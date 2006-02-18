@@ -1,5 +1,5 @@
 Object bear_grey
-name grey bear
+name Grey Bear
 face bear_grey.131
 race bear
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -1,5 +1,5 @@
 Object dwarf_fighter
-name dwarf fighter
+name Dwarf Fighter
 face dwarf_fighter.131
 race dwarf
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

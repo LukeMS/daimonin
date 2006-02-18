@@ -442,7 +442,8 @@ typedef enum _bitmap_index
     BITMAP_FONT1,
     BITMAP_FONT6x3OUT,
     BITMAP_BIGFONT,
-    BITMAP_FONT1OUT,
+	BITMAP_FONT1OUT,
+	BITMAP_FONTMEDIUM,
     BITMAP_INTRO,
     BITMAP_DOLL,
     BITMAP_BLACKTILE,
@@ -621,6 +622,7 @@ extern struct gui_interface_struct *gui_interface_npc;
 extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */
 
 extern struct _Font         BigFont;            /* bigger font */
+extern struct _Font         MediumFont;
 extern struct _Font         SystemFont;         /* our main font*/
 extern struct _Font         SystemFontOut;          /* our main font*/
 extern struct _Font         Font6x3Out;         /* 6x3 mini font */

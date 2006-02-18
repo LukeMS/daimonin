@@ -1,5 +1,5 @@
 Object noble
-name noble
+name Noble
 race human
 face noble.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

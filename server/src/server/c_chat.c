@@ -366,7 +366,7 @@ int command_tell(object *op, char *params)
 }
 
 
-int command_t_tell(object *op, char *params)
+int command_talk(object *op, char *params)
 {
     object     *t_obj;
     int         i, xt, yt;

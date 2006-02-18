@@ -1,5 +1,5 @@
 Object drow_sorcerer
-name drow sorcerer
+name Drow Sorcerer
 face drow_sorcerer.131
 race drow
 randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

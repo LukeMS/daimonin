@@ -1,5 +1,5 @@
 Object king
-name king
+name King
 race human
 face king.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

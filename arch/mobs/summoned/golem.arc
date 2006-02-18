@@ -1,5 +1,5 @@
 Object golem
-name golem
+name Golem
 face golem.131
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

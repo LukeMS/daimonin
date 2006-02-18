@@ -1,5 +1,5 @@
 Object sparkle_black_golem_mage
-name black sparkle mage golem
+name Black Sparkle Mage Golem
 face sparkle_black_golem_mage.131
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

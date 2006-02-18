@@ -1,5 +1,5 @@
 Object wyvern
-name wyvern
+name Wyvern
 face wyvern.141
 race wyvern
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

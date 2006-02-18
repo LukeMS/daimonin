@@ -1,5 +1,5 @@
 Object archer
-name archer
+name Archer
 race human
 face archer.131
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
