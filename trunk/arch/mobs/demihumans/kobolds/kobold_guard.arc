@@ -1,5 +1,5 @@
 Object kobold_guard
-name kobold guard
+name Kobold Guard
 face kobold_guard.131
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

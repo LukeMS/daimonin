@@ -1,5 +1,5 @@
 Object lom_lobon
-name lom lobon
+name Lom Lobon
 face lom_lobon.131
 race drow
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

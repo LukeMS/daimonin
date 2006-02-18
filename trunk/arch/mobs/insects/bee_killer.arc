@@ -1,5 +1,5 @@
 Object bee_killer
-name killer bee
+name Killer Bee
 face bee_killer.131
 race bee
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -25,12 +25,19 @@
 #ifndef __QUEST_H
 #define __QUEST_H
 
+/* how much open/pending quests a player can have at once (and which are listed in the quest list) */
+#define QUESTS_PENDING_MAX 15
+
 extern void insert_quest_item(struct obj *quest_trigger, struct obj *target);
 extern void add_quest_containers(struct obj *op);
 extern void add_quest_trigger(struct obj *who, struct obj *trigger);
 extern void set_quest_status(struct obj *trigger, int q_status, int q_type);
 extern void check_kill_quest_event(struct obj *pl, struct obj *op);
 extern void check_cont_quest_event(struct obj *pl, struct obj *op);
-extern int get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title);
+extern uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const char *name, const char *title);
+extern int quest_count_pending(const struct obj *pl);
+extern struct obj *quest_find_name(const struct obj *pl, const char *name);
+extern void send_quest_list(struct obj *pl);
+extern void quest_list_command(struct obj *pl, char *cmd);
 
 #endif

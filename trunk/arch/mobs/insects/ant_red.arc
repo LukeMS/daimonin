@@ -1,5 +1,5 @@
 Object ant_red
-name red ant
+name Red Ant
 face ant_red.131
 race ant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

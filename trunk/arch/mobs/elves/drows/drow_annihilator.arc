@@ -1,5 +1,5 @@
 Object drow_annihilator
-name drow annihilator
+name Drow Annihilator
 face drow_annihilator.131
 race drow
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

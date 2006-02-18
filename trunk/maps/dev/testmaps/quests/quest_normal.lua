@@ -1,4 +1,4 @@
--- template for a "item quest" script
+-- template for a "normal (state based) quest" script
 require("topic_list")
 require("quest_check")
 require("interface_builder")
@@ -7,8 +7,9 @@ local activator = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
 
-local q_name_1  = "Dev Item Test Quest"
+local q_name_1  = "Dev Normal Test Quest"
 local q_step_1  = 0
+local q_end_1  = 1
 local q_level_1  = 1
 local q_skill_1  = game.ITEM_SKILL_NO
 
@@ -22,13 +23,13 @@ local function topicDefault()
 if q_stat_1 < game.QSTAT_DONE then
 ib:AddToMessage("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
 if q_stat_1 == game.QSTAT_NO then
-ib:SetTitle("Item Test Quest")
+ib:SetTitle("Normal Test Quest")
 ib:AddToMessage("[intro] I need your help with... (explain)")
-ib:AddLink("Start Item Test Quest", "startq1")
+ib:AddLink("Start Normal Test Quest", "startq1")
 else
-ib:SetTitle("Item Test Quest solved?")
+ib:SetTitle("Normal Test Quest solved?")
 ib:AddToMessage("[pending] You has done the quest?")
-ib:AddLink("Finish Item Test Quest", "checkq1")
+ib:AddLink("Finish Normal Test Quest", "checkq1")
 end
 else
 activator:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
@@ -43,7 +44,7 @@ local function quest_icons1()
 ib:AddIcon("quest-reward-name", "shield.101", "i am the stats/description line") 
 end
 local function quest_body1()
-ib:SetMessage("[Explain what & why]\nBring me a °Item Test Helm°.\nKill the ant or open the chest.")
+ib:SetMessage("[Explain what & why]\nOpen and examine the °Chest°.\nThen return to me.")
 ib:SetReward("Reward", "[reward-text] This is the reward you will get", 1, 2, 0, 0)
 end
 
@@ -52,7 +53,7 @@ local function topStartQ1()
 if q_stat_1 ~= game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("START: Item Test Quest")
+ib:SetTitle("START: Normal Test Quest")
 quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
@@ -66,12 +67,11 @@ local function topAcceptQ1()
 if q_stat_1 == game.QSTAT_NO then
 quest_body1()
 quest_icons1()
-q_obj_1 = activator:AddQuest(q_name_1, game.QUEST_ITEM, q_step_1, q_step_1, q_level_1, q_skill_1, ib:Build())
+q_obj_1 = activator:AddQuest(q_name_1, game.QUEST_NORMAL, q_step_1, q_end_1, q_level_1, q_skill_1, ib:Build())
 if q_obj_1 ~= null then
-q_obj_1:AddQuestItem(1, "quest_object", "helm_leather.101", "Item Test Helm")
 q_stat_1 = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
 activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest 'Item Test Quest'.", game.COLOR_NAVY)
+activator:Write("You take the quest 'Normal Test Quest'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
@@ -84,14 +84,14 @@ local function topCheckQ1()
 if q_stat_1 == game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("FINAL CHECK: Item Test Quest")
+ib:SetTitle("FINAL CHECK: Normal Test Quest")
 ib:SetMessage("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
 if q_stat_1 ~= game.QSTAT_SOLVED then
-ib:AddToMessage("[not-done-text] Come back if you have it!\n")
+ib:AddToMessage("[not-done-text] You has not looked in the chest?!\n")
 Q_List(q_obj_1, ib)
 ib:SetButton("Back", "hi") 
 else
-ib:AddToMessage("[final-text] Very well done! You found the helm.\n")
+ib:AddToMessage("[final-text] Very well done! You opened the chest!\n")
 ib:SetReward("Reward", "here it is...", 1, 2, 0, 0)
 quest_icons1()
 Q_List(q_obj_1, ib)
@@ -107,13 +107,12 @@ local function topFinishQ1()
 if q_stat_1 ~= game.QSTAT_SOLVED then
 topicDefault()
 else
-q_obj_1:RemoveQuestItem()
 q_obj_1:SetQuestStatus(-1)
 q_stat_1 = game.QSTAT_DONE
 activator:Sound(0, 0, 2, 0)
 activator:CreateObjectInsideEx("shield", 1,1)
 activator:AddMoneyEx(1,2,0,0)
-ib:SetTitle("QUEST END: Item Test Quest")
+ib:SetTitle("QUEST END: Normal Test Quest")
 ib:SetMessage("Very well done! Here is your reward!")
 ib:SetButton("Ok", "hi") 
 activator:Interface(1, ib:Build())

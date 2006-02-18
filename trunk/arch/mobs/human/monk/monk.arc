@@ -1,5 +1,5 @@
 Object monk
-name monk
+name Monk
 race human
 face monk.131
 type 80

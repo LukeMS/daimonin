@@ -141,6 +141,13 @@ void client_send_move(int loc, int tag, int nrof)
     cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
+void client_send_tell_extended(char *body, char *tail)
+{
+	char    buf[MAX_BUF];
+
+	sprintf(buf, "tx %s %s", body, tail);
+	cs_write_string(csocket.fd, buf, strlen(buf));
+}
 
 /* This should be used for all 'command' processing.  Other functions should
  * call this so that proper windowing will be done.

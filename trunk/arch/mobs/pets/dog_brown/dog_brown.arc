@@ -1,5 +1,5 @@
 Object dog_brown
-name doggie
+name Doggie
 face dog.ise.111
 race dog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

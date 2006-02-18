@@ -1,5 +1,5 @@
 Object slug_giant
-name giant slug
+name Giant Slug
 face slug_giant.131
 race slug
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -1,5 +1,5 @@
 Object bartender
-name bartender
+name Bartender
 race human
 face bartender.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -524,7 +524,7 @@ x 6
 y 1
 end
 arch monk
-name Quest-Tester: Kill (single reward)
+name Quest-Tester: Kill Quest
 invulnerable 1
 no_attack 1
 unaggressive 1
@@ -578,7 +578,7 @@ last_grace 0
 x 6
 y 7
 arch ant_red
-name big red ant
+name Big Red Ant
 type 83
 random_move 0
 stand_still 1

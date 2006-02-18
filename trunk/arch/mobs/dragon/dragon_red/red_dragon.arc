@@ -1,5 +1,5 @@
 Object dragon_red
-name red dragon 
+name Red Dragon 
 face dragon_red.131
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

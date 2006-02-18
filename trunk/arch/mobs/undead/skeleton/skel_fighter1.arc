@@ -1,5 +1,5 @@
 Object skel_fighter1
-name skeleton fighter
+name Skeleton Fighter
 face skel_fighter1.131
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

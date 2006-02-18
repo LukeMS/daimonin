@@ -1,5 +1,5 @@
 Object treant_evil
-name evil treant
+name Evil Treant
 face treant_evil.131
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

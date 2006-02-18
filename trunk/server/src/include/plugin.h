@@ -178,7 +178,7 @@
 #define HOOK_CHECKFORSPELL      19
 #define HOOK_DESTRUCTOBJECT     20
 #define HOOK_CLONEOBJECT        21
-#define HOOK_INTERFACE          22
+#define HOOK_MAPSAVE            22
 #define HOOK_UPDATESPEED        23
 #define HOOK_UPDATEOBJECT       24
 #define HOOK_FINDANIMATION      25
@@ -195,9 +195,8 @@
 #define HOOK_LOADOBJECT         35
 #define HOOK_REMOVEOBJECT       36
 #define HOOK_MAPTRANSERITEMS     37
-#define HOOK_MAPSAVE             38
 
-#define NR_OF_HOOKS              39
+#define NR_OF_HOOKS              38
 
 
 /*****************************************************************************/
@@ -323,9 +322,12 @@ struct plugin_hooklist
 	artifact * (*find_artifact)(const char *name);
 	void (*give_artifact_abilities)(object *op, artifact *art);
 	const char * (*find_string)(const char *str);
-	int (*get_nrof_quest_item)(const struct obj *target, const char *aname, const char *name, const char *title);
+	uint32 (*get_nrof_quest_item)(const struct obj *target, const char *aname, const char *name, const char *title);
 	object * (*is_player_inv)(object *op);
-
+	void (*gui_interface)(object *who, int mode, char *text, const char *tail);
+	int (*quest_count_pending)(const struct obj *pobj);
+	struct obj *(*quest_find_name)(const struct obj *pl, const char *name);
+	
     /* Global variables */
     Animations **animations;
     New_Face **new_faces;

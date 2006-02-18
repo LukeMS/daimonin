@@ -1,5 +1,5 @@
 arch map
-name Testmaps - Quest
+name Testmaps - Quests (normal)
 msg
 Creator: Daimonin Map Editor
 Date:    4/13/2003
@@ -9,7 +9,7 @@ height 17
 enter_x 1
 enter_y 1
 difficulty 1
-tileset_id 77
+tileset_id 33
 tileset_x 0
 tileset_y 0
 end
@@ -124,9 +124,9 @@ x 1
 y 1
 end
 arch stairs_wood_up
-slaying testmap_main
-hp 1
-sp 13
+slaying ../testmap_quest
+hp 4
+sp 1
 direction 5
 x 1
 y 1
@@ -143,23 +143,7 @@ arch floor_ostone1
 x 1
 y 4
 end
-arch sign
-name one drop quests
-msg
-one drop "quests".
-These quests don't need any script of trigger/npc.
-endmsg
-x 1
-y 4
-end
 arch floor_ostone1
-x 1
-y 5
-end
-arch ladder_down3
-slaying quests/testmap_quest_onedrop
-hp 1
-sp 1
 x 1
 y 5
 end
@@ -222,8 +206,9 @@ x 2
 y 1
 end
 arch sign
+name quests - normal
 msg
-testing GUI & quests types
+Normal quests - means state (step) based
 endmsg
 x 2
 y 1
@@ -376,13 +361,6 @@ arch floor_ostone1
 x 4
 y 1
 end
-arch ladder_down3
-slaying quests/testmap_quest_normal
-hp 1
-sp 1
-x 4
-y 1
-end
 arch floor_ostone1
 x 4
 y 2
@@ -456,36 +434,38 @@ end
 arch floor_ostone1
 x 5
 y 1
+end
+arch floor_ostone1
+x 5
+y 2
+end
+arch floor_ostone1
+x 5
+y 3
+end
+arch floor_ostone1
+x 5
+y 4
+end
+arch floor_ostone1
+x 5
+y 5
+end
+arch floor_ostone1
+x 5
+y 6
+end
+arch floor_ostone1
+x 5
+y 7
 end
 arch sign
-name normal quests
+name quest ticker
 msg
-normal quests (state based & triggered)
+These chest will set the quest to "done" when
+you open it.
+A quest like that could be "look in the chest and examine the corpse inside, then come back"
 endmsg
-x 5
-y 1
-end
-arch floor_ostone1
-x 5
-y 2
-end
-arch floor_ostone1
-x 5
-y 3
-end
-arch floor_ostone1
-x 5
-y 4
-end
-arch floor_ostone1
-x 5
-y 5
-end
-arch floor_ostone1
-x 5
-y 6
-end
-arch floor_ostone1
 x 5
 y 7
 end
@@ -539,6 +519,19 @@ arch floor_ostone1
 x 6
 y 1
 end
+arch monk
+name Quest-Tester: Normal
+invulnerable 1
+no_attack 1
+unaggressive 1
+x 6
+y 1
+arch event_obj
+name Lua
+race /dev/testmaps/quests/quest_normal.lua
+sub_type 13
+end
+end
 arch floor_ostone1
 x 6
 y 2
@@ -566,6 +559,24 @@ end
 arch floor_ostone1
 x 6
 y 8
+end
+arch chest_sm_1
+direction 5
+x 6
+y 8
+arch quest_trigger
+name Dev Normal Test Quest
+msg
+NOTE: This text is the msg/endmsg part of the
+~quest_trigger~ object inside the container.
+It can be used to give advises or something.
+Very useful for this "object and event less" quests.
+This trigger has set the quest to 1 - its now complete.
+Check the quest list!
+endmsg
+sub_type 3
+last_heal 1
+end
 end
 arch floor_ostone1
 x 6
@@ -613,13 +624,6 @@ arch floor_ostone1
 x 7
 y 1
 end
-arch ladder_down3
-slaying quests/testmap_quest_item
-hp 1
-sp 1
-x 7
-y 1
-end
 arch floor_ostone1
 x 7
 y 2
@@ -694,15 +698,6 @@ arch floor_ostone1
 x 8
 y 1
 end
-arch sign
-name quests & quest item
-msg
-Event (mob kill, container,..) drops a quest item
-when the player has the quest for it..
-endmsg
-x 8
-y 1
-end
 arch floor_ostone1
 x 8
 y 2
@@ -723,14 +718,6 @@ arch floor_ostone1
 x 8
 y 6
 end
-arch sign
-name sign (normal - common)
-msg
-just a normal sign, can be read by anyone
-endmsg
-x 8
-y 6
-end
 arch floor_ostone1
 x 8
 y 7
@@ -739,71 +726,11 @@ arch floor_ostone1
 x 8
 y 8
 end
-arch note
-msg
-Well, here is something written in, right?
-endmsg
-x 8
-y 8
-end
 arch floor_ostone1
 x 8
 y 9
 end
 arch floor_ostone1
-x 8
-y 10
-end
-arch book
-name book in common
-msg
-<t t="Welcome to the Book GUI">1
-
-2
-
-3
-
-Test, Test
-<p><t t="This is a title 2nd page">And some more text 2nd page.
-
-aaaaa
-bbbbbb
-
-cccccccc
-ddddddd
-<p>And here we are on the 3rd page.
-<p>And the 4th... Now we play around with overflow.
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-Thats all!
-endmsg
 x 8
 y 10
 end
@@ -919,13 +846,6 @@ arch floor_ostone1
 x 10
 y 1
 end
-arch ladder_down3
-slaying quests/testmap_quest_kill
-hp 1
-sp 1
-x 10
-y 1
-end
 arch floor_ostone1
 x 10
 y 2
@@ -946,15 +866,6 @@ arch floor_ostone1
 x 10
 y 6
 end
-arch sign
-name sign (in gnomish)
-msg
-Iam a sign in gnomish
-endmsg
-container 32
-x 10
-y 6
-end
 arch floor_ostone1
 x 10
 y 7
@@ -963,29 +874,11 @@ arch floor_ostone1
 x 10
 y 8
 end
-arch note
-msg
-Well, here is something written in, right?
-endmsg
-container 128
-x 10
-y 8
-end
 arch floor_ostone1
 x 10
 y 9
 end
 arch floor_ostone1
-x 10
-y 10
-end
-arch book
-name book of test
-msg
-Iam the first line - dwarvish.
-Of a message.
-endmsg
-container 2
 x 10
 y 10
 end
@@ -1024,14 +917,6 @@ arch fwall_brown1
 x 11
 end
 arch floor_ostone1
-x 11
-y 1
-end
-arch sign
-name kill quests
-msg
-You has to kill a number of monster xy to solve a quest
-endmsg
 x 11
 y 1
 end
@@ -1180,13 +1065,6 @@ arch fwall_brown1
 x 13
 end
 arch floor_ostone1
-x 13
-y 1
-end
-arch ladder_down3
-slaying quests/testmap_quest_kill_item
-hp 1
-sp 1
 x 13
 y 1
 end
@@ -1261,14 +1139,6 @@ arch fwall_brown1
 x 14
 end
 arch floor_ostone1
-x 14
-y 1
-end
-arch sign
-name kill item quests
-msg
-You has to collect a number of items by killing mobs
-endmsg
 x 14
 y 1
 end

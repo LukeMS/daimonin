@@ -1,5 +1,5 @@
 Object pudding_green
-name green pudding
+name Green Pudding
 face pudding_green.111
 race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

@@ -1,5 +1,5 @@
 Object drow_fighter
-name drow fighter
+name Drow Fighter
 face drow_fighter.131
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -462,6 +462,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_QUEST_TRIGGER_NORMAL      0
 #define ST1_QUEST_TRIGGER_KILL        1
 #define ST1_QUEST_TRIGGER_KILL_ITEM   2
+#define ST1_QUEST_TRIGGER_ITEM		  3
 
 /* subtypes for TYPE_CONN_SENSOR */
 #define ST1_CONN_SENSOR_NAND        0 /* NAND / NOT */

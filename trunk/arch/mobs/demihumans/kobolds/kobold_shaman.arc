@@ -1,5 +1,5 @@
 Object kobold_shaman
-name kobold shaman
+name Kobold Shaman
 face kobold_shaman.131
 race kobold
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

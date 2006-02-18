@@ -1,5 +1,5 @@
 Object demilich
-name demilich
+name Demilich
 face demilich.131
 race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

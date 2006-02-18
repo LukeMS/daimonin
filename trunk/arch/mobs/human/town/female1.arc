@@ -1,5 +1,5 @@
 Object female1
-name woman
+name Woman
 race human
 face female1.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

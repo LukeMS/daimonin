@@ -1,5 +1,5 @@
 Object raas
-name raas
+name Raas
 face raas.131
 race demon
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

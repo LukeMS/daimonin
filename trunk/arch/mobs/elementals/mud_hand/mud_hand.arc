@@ -1,5 +1,5 @@
 Object mud_hand
-name mud hand
+name Mud Hand
 face mud_hand.101
 race mud elemental
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -1,5 +1,5 @@
 Object troll
-name troll
+name Troll
 face troll.131
 race troll
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

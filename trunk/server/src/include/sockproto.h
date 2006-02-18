@@ -42,6 +42,7 @@ void            look_at(object *op, int dx, int dy);
 void            LookAt(char *buf, int len, player *pl);
 void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
+void			command_talk_ex(char *data, int len, player *pl);
 void            remove_ns_dead_player(player *pl);
 void            RequestInfo(char *buf, int len, NewSocket *ns);
 void            HandleClient(NewSocket *ns, player *pl);

@@ -1,5 +1,5 @@
 Object quickwood
-name quickwood
+name Quickwood
 face quickwood.131
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27

@@ -206,7 +206,7 @@ x 2
 y 1
 end
 arch sign
-name quests - normal
+name quests - item
 msg
 Event (mob kill, container,..) drops a quest item
 when the player has the quest for it..
@@ -526,13 +526,14 @@ x 6
 y 1
 end
 arch monk
-name Quest-Tester: Normal (single reward)
+name Quest-Tester: Item (single reward)
 invulnerable 1
 no_attack 1
 unaggressive 1
 x 6
 y 1
 arch event_obj
+name Lua
 race /dev/testmaps/quests/quest_item.lua
 sub_type 13
 end
@@ -569,18 +570,9 @@ random_move 0
 stand_still 1
 no_attack 1
 arch quest_trigger
-name test quest1
-msg
-You can now finish the Test Quest1.
-This text is the msg part of the quest_trigger
-object inside the slime. It can be used to give
-advises or something.
-endmsg
+name Dev Item Test Quest
+sub_type 3
 last_heal 1
-arch quest_object
-name test quest1 item
-face helm_leather.101
-end
 end
 end
 end
@@ -597,18 +589,28 @@ direction 5
 x 6
 y 8
 arch quest_trigger
-name test quest1
+name Dev Item Test Quest
 msg
-You can now finish the Test Quest1.
-This text is the msg/endmsg part of the ~quest_trigger~
-object inside the container. It can be used to give
-advises or something.
+NOTE: This text is the msg/endmsg part of the
+~quest_trigger~ object inside the container.
+It can be used to give advises or something.
+To show how it works, only this trigger has a
+msg, but not the one in the mob.
 endmsg
+sub_type 3
 last_heal 1
-arch quest_object
-name test quest1 item
-face helm_leather.101
 end
+arch quest_trigger
+name Dev Item Test Quest Multi 1
+msg
+NOTE: This text is the msg/endmsg part of the
+~quest_trigger~ object inside the container.
+It can be used to give advises or something.
+To show how it works, only this trigger has a
+msg, but not the one in the mob.
+endmsg
+sub_type 3
+last_heal 1
 end
 end
 arch floor_ostone1
@@ -619,6 +621,23 @@ arch floor_ostone1
 x 6
 y 10
 end
+arch chest_sw_1
+direction 5
+x 6
+y 10
+arch quest_trigger
+name Dev Item Test Quest Multi 2
+msg
+NOTE: This text is the msg/endmsg part of the
+~quest_trigger~ object inside the container.
+It can be used to give advises or something.
+To show how it works, only this trigger has a
+msg, but not the one in the mob.
+endmsg
+sub_type 3
+last_heal 1
+end
+end
 arch floor_ostone1
 x 6
 y 11
@@ -626,6 +645,23 @@ end
 arch floor_ostone1
 x 6
 y 12
+end
+arch chest7_111
+direction 5
+x 6
+y 12
+arch quest_trigger
+name Dev Item Test Quest Multi 3
+msg
+NOTE: This text is the msg/endmsg part of the
+~quest_trigger~ object inside the container.
+It can be used to give advises or something.
+To show how it works, only this trigger has a
+msg, but not the one in the mob.
+endmsg
+sub_type 3
+last_heal 1
+end
 end
 arch floor_ostone1
 x 6
@@ -954,14 +990,14 @@ x 11
 y 1
 end
 arch monk
-name Quest-Tester: Normal (select reward)
+name Quest-Tester: 2+1 Multi Item 
 invulnerable 1
 no_attack 1
 unaggressive 1
 x 11
 y 1
 arch event_obj
-race /dev/testmaps/quests/quest_item_select.lua
+race /dev/testmaps/quests/quest_item_multi.lua
 sub_type 13
 end
 end

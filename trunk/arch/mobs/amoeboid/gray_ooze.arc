@@ -1,5 +1,5 @@
 Object gray_ooze
-name gray ooze
+name Gray Ooze
 race slime
 face gray_ooze.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

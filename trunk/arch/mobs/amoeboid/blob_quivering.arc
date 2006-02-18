@@ -1,5 +1,5 @@
 Object blob_quivering
-name quivering blob
+name Quivering Blob
 face quivering_blob.111
 race slime
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28

@@ -30,6 +30,7 @@ SDL_Surface        *ScreenSurface; /* THE main surface (backbuffer)*/
 _Font               SystemFont;         /* our main font*/
 _Font               SystemFontOut;      /* our main font - black outlined*/
 _Font               BigFont;            /* bigger special font*/
+_Font               MediumFont;
 _Font               Font6x3Out;     /* our main font with shadow*/
 struct sockaddr_in  insock; /* Server's attributes */
 ClientSocket        csocket;
@@ -126,7 +127,8 @@ typedef struct _bitmap_name
 static _bitmap_name bitmap_name[BITMAP_INIT]    =
 {
     {"palette.png", PIC_TYPE_PALETTE}, {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
-    {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"intro.png", PIC_TYPE_DEFAULT},
+    {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
+	 {"intro.png", PIC_TYPE_DEFAULT},
     {"player_doll1.png", PIC_TYPE_TRANS}, {"black_tile.png", PIC_TYPE_DEFAULT}, {"textwin.png", PIC_TYPE_DEFAULT},
     {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS}, {"testtubes.png", PIC_TYPE_TRANS},
     {"hp.png", PIC_TYPE_TRANS}, {"sp.png", PIC_TYPE_TRANS}, {"grace.png", PIC_TYPE_TRANS}, {"food.png", PIC_TYPE_TRANS},
@@ -811,9 +813,10 @@ void load_bitmaps(void)
     for (i = 0; i <= BITMAP_INTRO; i++) /* add later better error handling here*/
         load_bitmap(i);
     CreateNewFont(Bitmaps[BITMAP_FONT1], &SystemFont, 16, 16, 1);
+	CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT1OUT], &SystemFontOut, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT6x3OUT], &Font6x3Out, 16, 16, -1);
-    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 3);
+	CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 3);
 }
 
 Boolean load_bitmap(int index)

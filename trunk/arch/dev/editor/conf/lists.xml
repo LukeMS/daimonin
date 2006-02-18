@@ -75,7 +75,8 @@
 <list name="q_trigger">
 <listentry value="0" name="normal" />
 <listentry value="1" name="kill quest" />
-<listentry value="2" name="container quest" />
+<listentry value="2" name="kill_item quest" />
+<listentry value="3" name="item quest" />
 </list>
 
 <list name="conn_sensor">

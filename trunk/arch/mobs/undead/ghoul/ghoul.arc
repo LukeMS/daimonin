@@ -1,5 +1,5 @@
 Object ghoul
-name ghoul
+name Ghoul
 face ghoul.131
 race ghoul
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
