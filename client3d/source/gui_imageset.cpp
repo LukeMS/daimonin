@@ -51,7 +51,11 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     { "Engine_CurrentFPS", GUI_TEXTVALUE_STAT_CUR_FPS   },
     { "Engine_BestFPS",    GUI_TEXTVALUE_STAT_BEST_FPS  },
     { "Engine_WorstFPS",   GUI_TEXTVALUE_STAT_WORST_FPS },
-    { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS  }
+    { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS  },
+    // TextInput.
+    { "Input_Password", GUI_TEXTINPUT_PASSWORD   },
+
+
   };
 
 ///================================================================================================

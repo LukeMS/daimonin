@@ -23,6 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "gui_gadget.h"
 #include "gui_cursor.h"
+#include "gui_textinput.h"
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
@@ -40,7 +41,8 @@ GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
   {
     { "Statistics",  GUI_WIN_STATISTICS },
     { "PlayerInfo",  GUI_WIN_PLAYERINFO },
-    { "TextWindow",  GUI_WIN_TEXTWINDOW }
+    { "TextWindow",  GUI_WIN_TEXTWINDOW },
+//    { "Creation"  ,  GUI_WIN_CREATION   },
   };
 
 ///================================================================================================
@@ -76,6 +78,7 @@ void GuiManager::Init(int w, int h)
   mElement->setMaterialName("GUI_Tooltip_Material");
   mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
   mOverlay->show();
+  mProcessingTextInput = false;
   Logger::log().success(true);
 }
 
@@ -215,12 +218,26 @@ void GuiManager::freeRecources()
 }
 
 ///================================================================================================
-/// .
+/// KeyEvent was reported.
 ///================================================================================================
-void GuiManager::keyEvent(const char keyChar, const unsigned char key)
+bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 {
-  Logger::log().info() << "keyChar " << keyChar << " " << key;
-  //    TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
+  if (!mProcessingTextInput) return false;
+  if (key == KC_ESCAPE)
+  {
+    sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
+    GuiTextinput::getSingleton().stop();
+    mProcessingTextInput = false;
+    return true;
+  }
+  GuiTextinput::getSingleton().keyEvent(keyChar, key);
+  if (GuiTextinput::getSingleton().wasFinished())
+  {
+    sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
+    GuiTextinput::getSingleton().stop();
+    mProcessingTextInput = false;
+  }
+  return true;
 }
 
 ///================================================================================================
@@ -237,7 +254,7 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
     actGadgetName = guiWindow[i].mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY);
     if (actGadgetName)
     {
-      mFocusedWindow = i;
+      mActiveWindow = i;
       //mFocusedGadget = actGadgetName;
       return true;
     }
@@ -248,10 +265,28 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 ///================================================================================================
 /// Send a message to a GuiWindow.
 ///================================================================================================
-void GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
+const char *GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
 {
-  value2 = 0;
-  guiWindow[window].Message(message, element, (const char*)value1);
+  value2 = 0; // no need for value2 atm.
+  return guiWindow[window].Message(message, element, (const char*)value1);
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiManager::startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces)
+{
+  if (mProcessingTextInput || !guiWindow[window].isVisible()) return;
+  mProcessingTextInput = true;
+  mActiveWindow = window;
+  mActiveElement= winElement;
+  const char *tmp = sendMessage(mActiveWindow, GUI_MSG_TXT_GET, mActiveElement);
+  if (tmp)
+    mBackupTextInputString = tmp;
+  else
+    mBackupTextInputString = "";
+  GuiTextinput::getSingleton().setString(mBackupTextInputString);
+  GuiTextinput::getSingleton().startTextInput(maxChars, useNumbers, useWhitespaces);
 }
 
 ///================================================================================================
@@ -259,6 +294,9 @@ void GuiManager::sendMessage(int window, int message, int element, void *value1,
 ///================================================================================================
 void GuiManager::update()
 {
+  if (mProcessingTextInput)
+    sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
+
   for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
     guiWindow[i].updateDragAnimation();  // "zurückflutschen" bei falschem drag.

@@ -28,8 +28,8 @@ http://www.gnu.org/licenses/licenses.html
 #include <ctime>
 
 const clock_t SCROLL_SPEED = 12;
-static const Real CLOSING_SPEED      =  10.0f;  // default: 10.0f
-static const int  MAX_TEXT_LINES     =  20;
+static const Real CLOSING_SPEED  =  10.0f;  // default: 10.0f
+static const int  MAX_TEXT_LINES =  20;
 
 ///================================================================================================
 /// Destructor.
@@ -109,6 +109,15 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
 ///================================================================================================
 void GuiListbox::addTextline(const char *text)
 {
+  const char *actTextLine;
+  while (GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) > mWidth)
+  {
+    /// Text needs a linebreak.
+    actTextLine = text;
+    break; // delete me!
+    // ToDo.
+  }
+  Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
   row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
   ++mBufferPos;
   ++mRowsToScroll;
@@ -119,9 +128,6 @@ void GuiListbox::addTextline(const char *text)
 ///================================================================================================
 void GuiListbox::draw(PixelBox &, Texture *texture)
 {
-
-
-
   /// ////////////////////////////////////////////////////////////////////
   /// User pressed the down-button.
   /// ////////////////////////////////////////////////////////////////////

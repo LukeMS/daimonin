@@ -33,12 +33,15 @@ void CEvent::keyPressed(KeyEvent *e)
 {
   mIdleTime =0;
   static Real g_pitch = 0.2;
-  if (GuiManager::getSingleton().hasFocus())
+
+  /// Is this keyEvent related to gui?
+  if (GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey()))
   {
-    GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
     e->consume();
     return;
   }
+
+  /// InGame keyEvent.
   switch (e->getKey())
   {
       /// ////////////////////////////////////////////////////////////////////
@@ -68,66 +71,91 @@ void CEvent::keyPressed(KeyEvent *e)
       ObjectManager::getSingleton().toggleAnimGroup(OBJECT_PLAYER);
       break;
 
+      case KC_F2:
+      GuiManager::getSingleton().startTextInput(GUI_WIN_PLAYERINFO, GUI_TEXTINPUT_PASSWORD, 20, true, true);
+      break;
+
+
       case KC_A:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_ATTACK1);
+      //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_ATTACK1);
       break;
 
       case KC_B:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_BLOCK1);
+      //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_BLOCK1);
       break;
 
       case KC_C:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_CAST1);
+      //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_CAST1);
       break;
 
       case KC_S:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_SLUMP1);
+      //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_SLUMP1);
       break;
 
       case KC_D:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_DEATH1);
+      //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_DEATH1);
       break;
 
       case KC_H:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_HIT1);
+      //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_HIT1);
       break;
 
       case KC_1:
       //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, color++);
+      }
       break;
 
       case KC_2:
       //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_FACE, color++);
+      }
       break;
 
       case KC_3:
       //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, color++);
+      }
       break;
 
       case KC_4:
       {
         static int color =0;
-        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_BODY, color);
-        if (++color > 4 ) color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_BODY, color++);
       }
       break;
 
       case KC_5:
-      //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_BODY, 1);
-      //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_LEGS, color++);
+      }
       break;
-
       case KC_6:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 2);
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_BELT, color++);
+      }
       break;
 
       case KC_7:
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SKIN, 3);
-      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HAIR, 4);
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_SHOES, color++);
+      }
       break;
 
       case KC_8:
+      {
+        static int color =0;
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, TEXTURE_POS_HANDS, color++);
+      }
       //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
       break;
 
@@ -179,8 +207,14 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_I:
-      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_ANIMATION, Animate::STATE_ATTACK1);
+//      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_ANIMATION, Animate::STATE_ATTACK1);
+        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
       break;
+
+      case KC_O:
+      ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 0);
+      break;
+
 
       case KC_P:
       ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
@@ -281,7 +315,8 @@ void CEvent::keyPressed(KeyEvent *e)
 
       case KC_SUBTRACT:
       {
-        if (mCameraZoom < MAX_CAMERA_ZOOM) mCameraZoom += 5;
+        //if (mCameraZoom < MAX_CAMERA_ZOOM)
+        mCameraZoom += 5;
         mCamera->setFOVy(Degree(mCameraZoom));
       }
       break;

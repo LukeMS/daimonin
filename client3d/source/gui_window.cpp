@@ -362,7 +362,7 @@ void GuiWindow::drawAll()
     /// Calculate the needed gfx-buffer size for the text.
     mvTextline[i]->x2 = mvTextline[i]->x1 +1;
     mvTextline[i]->y2 = mvTextline[i]->y1 +1;
-    GuiTextout::getSingleton().CalcTextSize(
+    GuiTextout::getSingleton().getClippingPos(
       mvTextline[i]->x2,
       mvTextline[i]->y2,
       mWidth,
@@ -531,7 +531,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 ///================================================================================================
 /// Parse a message.
 ///================================================================================================
-void GuiWindow::Message(int message, int element, const char *value)
+const char *GuiWindow::Message(int message, int element, const char *value)
 {
   switch (message)
   {
@@ -548,7 +548,17 @@ void GuiWindow::Message(int message, int element, const char *value)
       for (unsigned int i = 0; i < mvTextline.size() ; ++i)
       {
         if (mvTextline[i]->index != element || mvTextline[i]->clipped) continue;
+        mvTextline[i]->text = value;
         GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value);
+        break;
+      }
+      break;
+
+      case GUI_MSG_TXT_GET:
+      for (unsigned int i = 0; i < mvTextline.size() ; ++i)
+      {
+        if (mvTextline[i]->index != element || mvTextline[i]->clipped) continue;
+        return mvTextline[i]->text.c_str();
         break;
       }
       break;
@@ -556,6 +566,7 @@ void GuiWindow::Message(int message, int element, const char *value)
       default:
       break;
   }
+  return NULL;
 }
 
 ///================================================================================================

@@ -34,30 +34,27 @@ enum
 };
 enum
 {
-  TEXTURE_POS_SKIN, TEXTURE_POS_HAIR, TEXTURE_POS_BELT, TEXTURE_POS_LEGS, TEXTURE_POS_BODY, TEXTURE_POS_ARMS,  TEXTURE_POS_SHOES
+  TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
+  TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
+  TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
 };
-const int MAX_NPC_COLORS = 16;
+
 const int SIDE_BACK  =0;
 const int SIDE_FRONT =1;
-
-typedef struct
-{
-  short srcX, srcY;
-  short dstX, dstY;
-}
-sSide;
-
-typedef struct
-{
-  short w, h;
-  short mskX, mskY;
-  sSide side[2];
-}
-sPicture;
+const int MAX_MODEL_TEXTURE_SIZE = 512;
 
 class NPC
 {
 public:
+  typedef struct
+  {
+    short w, h;             /// width and height of the image.
+    short dstX, dstY;       /// pos of the image in the model-texture.
+    short srcX, srcY;       /// pos of the image in the race-template-texture.
+    short offsetX, offsetY; /// offset for the next source image.
+  }
+  sPicture;
+
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
@@ -66,6 +63,7 @@ public:
   {
   }
   void freeRecources();
+  void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
   void moveToTile(int x, int z);
   void faceToTile(int x, int z);
   void walking(Real walk)
@@ -111,8 +109,8 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
   static SceneManager *mSceneMgr;
-  static uint32 color[MAX_NPC_COLORS];
-  static sPicture picSkin, picHair, picBody;
+  static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
+  static uchar *texImageBuf;
 
   unsigned int thisNPC;
   TexturePtr mTexture;

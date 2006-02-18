@@ -23,6 +23,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <ctime>
 #include <string>
 #include "sound.h"
+#include "gui_textout.h"
 
 using namespace std;
 
@@ -33,18 +34,20 @@ enum
   INPUT_MODE_SUM               /**< Sum of input modes **/
 };
 
+const char CURSOR[] = { CHARS_IN_FONT+31, 0};
+
 /**
  ** TextInput class which manages the keyboard input for the Dialog class.
  *****************************************************************************/
-class TextInput
+class GuiTextinput
 {
 public:
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
-  static TextInput &getSingleton()
+  static GuiTextinput &getSingleton()
   {
-    static TextInput singleton; return singleton;
+    static GuiTextinput singleton; return singleton;
   }
   void addString(string &addString)
   {
@@ -79,7 +82,7 @@ public:
   };
   int size()
   {
-    return mStrTextInput.size();
+    return (int) mStrTextInput.size();
   };
   void stop()
   {
@@ -93,23 +96,19 @@ public:
    ** @param showTextCursor Shows the cursor within the text.
    *****************************************************************************/
 
-  const char *getText(bool showTextCursor = false)
+  const char *getText(bool showTextCursor = true)
   {
     static clock_t time = clock();
     static bool cursorOn = true;
     if (!showTextCursor || mFinished || mCanceled) return mStrTextInput.c_str();
     mStrTextInputWithCursor = mStrTextInput;
-    /// ////////////////////////////////////////////////////////////////////
-    /// For Cursor blinking "|" and " " must have the same size.
-    /// Can be finetuned by the space_width setting in TextAreaOverlay.
-    /// ////////////////////////////////////////////////////////////////////
     if (clock()-time > 500)
     {
       time = clock();
       cursorOn = !cursorOn;
     }
     if (cursorOn)
-      mStrTextInputWithCursor.insert(mCursorPos, "|");
+      mStrTextInputWithCursor.insert(mCursorPos, CURSOR);
     else
       mStrTextInputWithCursor.insert(mCursorPos, " ");
     return mStrTextInputWithCursor.c_str();
@@ -132,6 +131,7 @@ public:
     mUseNumbers  = useNumbers;
     mUseWhiteSpc = useWhitespaces;
     mMaxChars    = maxChars;
+    mCursorPos   = (int)mStrTextInput.size();
   }
 
   /**
@@ -165,12 +165,12 @@ public:
   {
     if (key == KEY_RETURN || key == KEY_TAB)
     {
-      TextInput::getSingleton().finished();
+      finished();
       return;
     }
     if (key == KEY_ESCAPE)
     {
-      TextInput::getSingleton().canceled();
+      canceled();
       return;
     }
     /// ////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ public:
               || (!mUseNumbers  && (keyChar >= '0' && keyChar <= '9'))
               || (!mUseWhiteSpc && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
       {
-        Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
+//        Sound::getSingleton().playStream(SAMPLE_BUTTON_CLICK);
         return;
       }
       mStrTextInput.insert(mCursorPos,1,keyChar);
@@ -267,13 +267,13 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
   /// ////////////////////////////////////////////////////////////////////
-  TextInput()
+  GuiTextinput()
   {
   }
-  ~TextInput()
+  ~GuiTextinput()
   {
   }
-  TextInput(const TextInput&);
+  GuiTextinput(const GuiTextinput&);
 };
 
 #endif
