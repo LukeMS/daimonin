@@ -29,33 +29,144 @@ http://www.gnu.org/licenses/licenses.html
 #include "TileManager.h"
 #include "gui_manager.h"
 
+// #define WRITE_MODELTEXTURE_TO_FILE
+
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
 unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
 SceneManager *NPC::mSceneMgr =0;
+uchar *NPC::texImageBuf = 0;
 
-sPicture NPC::picSkin = {
-                          10,10, 1,   1, 255, 255 }
-                        ; // wrong values!
-sPicture NPC::picHair = {
-                          10, 10, 55,   0,  45,  32 }
-                        ; // wrong values!
-sPicture NPC::picBody =
+const uint32 MASK_COLOR = 0xffc638db; /// This is our mask. Pixel with this color will not be drawn.
+
+NPC::sPicture NPC::picFace =
   {
-    180, 150, // w, h
-    315, 335, // mask pos.
-    17,  93,  // front src pos.
-    64,  70,  // front dst pos.
-    212,  93, // back  src pos.
-    261,  70  // back  dst pos.
+    65, 75, // w, h
+    324, 13,  // dst pos.
+    188,  1,  // src pos.
+    0, 79 // offest next src pic.
   };
-uint32   NPC::color[MAX_NPC_COLORS] =
+NPC::sPicture NPC::picHair =
   {
-    0x00e3ad91, 0x00f2dc91, 0x00c95211, 0x0037250b,
-    0x00ffffff, 0x00000000, 0x00000000, 0x00000000,
-    0x00ffffff, 0x00000000, 0x00000000, 0x00000000,
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+    49, 85, // w, h
+    130, 3,  // dst pos.
+    254, 1,  // src pos.
+    0, 86 // offest next src pic.
+  };
+NPC::sPicture NPC::picBody[2] =
+  {
+    { // Back
+      186, 153, // w, h
+      61,  70,  // dst pos.
+      1,  155,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Front
+      186, 153, // w, h
+      261,  70,  // dst pos.
+      1,  1,  // src pos.
+      0, 0 // offest next src pic.
+    }
+  };
+NPC::sPicture NPC::picArms[4] =
+  {
+    { // Back Left
+      38, 81, // w, h
+      56,  155,  // dst pos.
+      1,  529,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Back Right
+      38, 81, // w, h
+      212,  155,  // dst pos.
+      40,  529,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Front Left
+      38, 81, // w, h
+      256,  155,  // dst pos.
+      79,  529,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Front Right
+      38, 81, // w, h
+      412,  155,  // dst pos.
+      118, 529,  // src pos.
+      0, 0 // offest next src pic.
+    }
+  };
+NPC::sPicture NPC::picHands[4] =
+  {
+    { // Back
+      29, 57, // w, h
+      58,  236,  // dst pos.
+      261, 297,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Back
+      29, 57, // w, h
+      221, 236,  // dst pos.
+      261, 355,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Front
+      29, 57, // w, h
+      259, 236,  // dst pos.
+      261, 413,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Front
+      29, 57, // w, h
+      421, 236,  // dst pos.
+      261, 471,  // src pos.
+      0, 0 // offest next src pic.
+    }
+  };
+NPC::sPicture NPC::picBelt[2] =
+  {
+    { // Back
+      129, 22, // w, h
+      89, 223,  // dst pos.
+      157, 529,  // src pos.
+      0, 87 // offest next src pic.
+    },
+    { // Front
+      129, 22, // w, h
+      291, 223,  // dst pos.
+      157, 529,  // src pos.
+      0, 87 // offest next src pic.
+    }
+  };
+NPC::sPicture NPC::picLegs[2] =
+  {
+    { // Back
+      129, 219, // w, h
+      89, 245,  // dst pos.
+      1,  309,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Front
+      129, 219, // w, h
+      291, 245,  // dst pos.
+      131,  309,  // src pos.
+      0, 0 // offest (x,y) for next src pic.
+    }
+  };
+NPC::sPicture NPC::picShoes[2] =
+  {
+    { // Left
+      43, 63, // w, h
+      304, 446,  // dst pos.
+      157,  575,  // src pos.
+      0, 0 // offest next src pic.
+    },
+    { // Right
+      43, 63, // w, h
+      363, 446,  // dst pos.
+      201, 575,  // src pos.
+      0, 0 // offest next src pic.
+    }
   };
 
 typedef std::list<Particle*> ActiveParticleList;
@@ -66,7 +177,11 @@ static ParticleFX *tempPFX =0;
 ///================================================================================================
 void NPC::freeRecources()
 {
-  if (!--mInstanceNr) delete tempPFX;
+  if (!--mInstanceNr)
+  {
+    if (tempPFX) delete tempPFX;
+    if (texImageBuf) delete[] texImageBuf;
+  }
   if (mAnim) delete mAnim;
   mTexture.setNull();
 }
@@ -79,6 +194,7 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
   if (!mInstanceNr)
   {
+    texImageBuf = new uchar[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
     tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
     Logger::log().headline("Init Actor Models");
   }
@@ -126,26 +242,31 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
   //mNode = Event->GetWorldNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
   mNode->attachObject(mEntityNPC);
-
   /// ////////////////////////////////////////////////////////////////////
-  /// We ignore the material of the mesh and create a own one.
+  /// We ignore the material of the mesh and create an own material.
   /// ////////////////////////////////////////////////////////////////////
   /// Clone the NPC-Material.
   String tmpName = "NPC_" + StringConverter::toString(thisNPC, 3, '0');
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
   MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
-  //mMaterial->unload();
   mEntityNPC->getSubEntity(0)->setMaterialName(tmpName);
-  //mMaterial->reload();
 
   /// Create a texture for the material.
-  tmpName +="_Texture";
   Image image;
-  image.load("Human_Male.png", "General");
+  image.loadDynamicImage(texImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);
+  tmpName +="_Texture";
   mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
   mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
-  //mMaterial->load();
   //mNode->showBoundingBox(true); // Remove Me!!!!
+
+  /// Set the default Colors of the model.
+  setTexture(   0,   0,   0);
+  setTexture(   2,   1,   0);
+  setTexture(   3,   2,   0);
+  setTexture(   4,   3,   0);
+  setTexture(   5,   4,   0);
+  setTexture(   6,   5,   0);
+  setTexture(   7,   6,   0);
 
   /// Create Animations and Animation sounds.
   mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
@@ -206,49 +327,64 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       break;
 
       case BONE_SHIELD_HAND:
-      WeaponNr = ++mShield; // testing -> delete me!
-      if (mEntityShield)
       {
-        mEntityNPC->detachObjectFromBone("shield");
-        mSceneMgr->removeEntity(mEntityShield);
-        mEntityShield =0;
+        WeaponNr = ++mShield; // testing -> delete me!
+        if (mEntityShield)
+        {
+          mEntityNPC->detachObjectFromBone("shield");
+          mSceneMgr->removeEntity(mEntityShield);
+          mEntityShield =0;
+        }
+        if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
+        {
+          mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);     //  oben  links  vorne
+          Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
+          Real posX = atof(mStrTemp.c_str());
+          Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
+          Real posY = atof(mStrTemp.c_str());
+          Option::getSingleton().getDescStr("StartZ_Shield", mStrTemp, WeaponNr);
+          Real posZ = atof(mStrTemp.c_str());
+          Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
+          mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+        }
+        else mShield =0;  // testing -> delete me!
       }
-      if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
-      {
-        mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);     //  oben  links  vorne
-        Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
-        Real posX = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
-        Real posY = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("StartZ_Shield", mStrTemp, WeaponNr);
-        Real posZ = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
-        mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
-      }
-      else mShield =0;  // testing -> delete me!
       break;
 
       case BONE_HEAD:
-      WeaponNr = ++mHelmet; // testing -> delete me!
-      if (mEntityHelmet)
       {
-        mEntityNPC->detachObjectFromBone("helmet");
-        mSceneMgr->removeEntity(mEntityHelmet);
-        mEntityHelmet =0;
+        { // delete me!
+          if (WeaponNr) mNode->scale(1.1, 1.1, 1.1);
+          else          mNode->scale(0.9, 0.9, 0.9);
+          Vector3 sc = mNode->getScale();
+          std::string scale= "model size: " + StringConverter::toString(sc.x);
+          GuiManager::getSingleton().sendMessage(
+            GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*) scale.c_str());
+          return;
+        }
+
+
+        WeaponNr = ++mHelmet; // testing -> delete me!
+        if (mEntityHelmet)
+        {
+          mEntityNPC->detachObjectFromBone("helmet");
+          mSceneMgr->removeEntity(mEntityHelmet);
+          mEntityHelmet =0;
+        }
+        if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
+        {
+          mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
+          Option::getSingleton().getDescStr("StartX_Helmet", mStrTemp, WeaponNr);
+          Real posX = atof(mStrTemp.c_str());
+          Option::getSingleton().getDescStr("StartY_Helmet", mStrTemp, WeaponNr);
+          Real posY = atof(mStrTemp.c_str());
+          Option::getSingleton().getDescStr("StartZ_Helmet", mStrTemp, WeaponNr);
+          Real posZ = atof(mStrTemp.c_str());
+          Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
+          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+        }
+        else mHelmet =0;  // testing -> delete me!
       }
-      if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
-      {
-        mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
-        Option::getSingleton().getDescStr("StartX_Helmet", mStrTemp, WeaponNr);
-        Real posX = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("StartY_Helmet", mStrTemp, WeaponNr);
-        Real posY = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("StartZ_Helmet", mStrTemp, WeaponNr);
-        Real posZ = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
-        mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
-      }
-      else mHelmet =0;  // testing -> delete me!
       break;
 
       case BONE_BODY:
@@ -431,198 +567,139 @@ void NPC::moveToTile(int x, int z)
 }
 
 ///================================================================================================
+/// Draw a part of the texture.
+///================================================================================================
+inline void NPC::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber, uint32 texColor)
+{
+
+   texNumber = 0; // delete me!
+
+
+  uint32 srcColor, dstColor;
+  uint32 *texRace = (uint32*)image.getData();
+  uint32 *buffer  = new uint32[picPart.w * picPart.h];
+  uint32 *buf = buffer;
+  int width = (int)image.getWidth();
+  /// Get the color information from the top line of the texture-shadow picture.
+  /// We have to swap R and B Color information (default texture format is A8R8G8B8).
+  srcColor = texRace[texColor & 0xff];
+  texColor = (srcColor & 0xff00ff00);
+  texColor+= (srcColor & 0x000000ff) << 16;
+  texColor+= (srcColor & 0x00ff0000) >> 16;
+  /// Get the current model-texture fragment.
+  PixelBox pb(picPart.w, picPart.h, 1, PF_A8R8G8B8 , buffer);
+  mTexture->getBuffer()->blitToMemory(
+    Box(picPart.dstX,
+        picPart.dstY,
+        picPart.dstX + picPart.w,
+        picPart.dstY + picPart.h),
+    pb);
+  /// Fill the buffer with the selected color (darkened by the shadow texture).
+  for (int y=0; y < picPart.h; ++y)
+  {
+    for (int x=0; x < picPart.w; ++x)
+    {
+      srcColor = texRace[(y+picPart.srcY)*width + (x+picPart.srcX)];
+      if (srcColor != MASK_COLOR)
+      {
+        dstColor = texColor;
+        if (srcColor != 0xffffffff) /// darkening.
+        {
+          srcColor = 0xff - (srcColor & 0xff);
+          if ((dstColor & 0x0000ff) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x0000ff;
+          srcColor <<= 8;
+          if ((dstColor & 0x00ff00) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x00ff00;
+          srcColor <<= 8;
+          if ((dstColor & 0xff0000) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0xff0000;
+        }
+        *buffer = dstColor;
+      }
+      ++buffer;
+    }
+  }
+  /// Copy the buffer back into the model-texture.
+  mTexture->getBuffer()->blitFromMemory(
+    pb, Box(picPart.dstX,
+            picPart.dstY,
+            picPart.dstX + picPart.w,
+            picPart.dstY + picPart.h));
+
+  delete[] buf;
+
+
+#ifdef WRITE_MODELTEXTURE_TO_FILE
+  /// Writes the just blitted model-texture as png to disk.
+  {
+    Image img;
+    uint32 *sysFontBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
+    mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
+    img = img.loadDynamicImage((uchar*)sysFontBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
+    img.save("Texture_Changed.png");
+  }
+#endif
+}
+
+///================================================================================================
 /// Select a new texture.
 ///================================================================================================
-void NPC::setTexture(int pos, int texColor, int textureNr)
+void NPC::setTexture(int pos, int textureColor, int textureNr)
 {
-  texColor = color[texColor];
+  /// Load the shadow texture.
+  Image image;
+  image.load("shadow.png", "General");
   switch (pos)
   {
+      case TEXTURE_POS_SKIN:
+      {
+        drawBopyPart(picFace, image, textureNr, textureColor);
+        for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], image,  textureNr, textureColor);
+        break;
+      }
+
+      case TEXTURE_POS_FACE:
+      {
+        drawBopyPart(picFace, image, textureNr, textureColor);
+        break;
+      }
+
       case TEXTURE_POS_HAIR:
       {
-        /*
-                /// Cretate a temporary buffer for the pixel operations.
-                uint32 *buffer = new uint32[picSkin.w * picSkin.h];
-                PixelBox pb(picSkin.w, picSkin.h, 1, PF_A8R8G8B8 , buffer);
-                /// Fill it with the color.
-                for (int i=0; i < picSkin.w * picSkin.h; ++i) buffer[i] = texColor;
-
-                /// Blit the face texture over it.
-                if (textureNr >=0)
-                {
-                }
-                /// Copy the buffer into the model-texture.
-                mTexture->getBuffer()->blitFromMemory(pb, Box(0, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
-                delete[] buffer;
-        */
+        drawBopyPart(picHair, image, textureNr, textureColor);
+        break;
       }
-      break;
 
       case TEXTURE_POS_BODY:
       {
-        /// Load the shadow textue.
-        Image image;
-        image.load("shadow.png", "General");
-        uint32 *texRace = (uint32*)image.getData();
-        int width = (int)image.getWidth();
-        uint32 *buffer = new uint32[picBody.w * picBody.h];
-
-        for (int side = 0; side < 2; ++side)
-        {
-          /// Get the current model-texture fragment.
-          PixelBox pb(picBody.w, picBody.h, 1, PF_A8R8G8B8 , buffer);
-          mTexture->getBuffer()->blitToMemory(
-            Box(picBody.side[side].dstX,
-                picBody.side[side].dstY,
-                picBody.side[side].dstX + picBody.w,
-                picBody.side[side].dstY + picBody.h),
-            pb);
-          /// Fill the buffer with the selected color.
-          int i= 0;
-          uint32 colVal, srcColor, dstColor;
-          for (int y=0; y < picBody.h; ++y)
-          {
-            for (int x=0; x < picBody.w; ++x)
-            {
-              if (texRace[(y+picBody.mskY)*width + (x+picBody.mskX)] == 0xff000000)
-              {
-                /// 1) draw the color.
-                buffer[i] = texColor;
-                /// 2) draw the shadow.
-                colVal = texRace[(y+picBody.side[side].srcY)*width + (x+picBody.side[side].srcX)];
-                //Logger::log().info() << colVal;
-                if (colVal != 0xffffffff)
-                {
-                  dstColor = texColor;
-                  srcColor = 0xff - (colVal & 0xff);
-                  if ((dstColor & 0x0000ff) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x0000ff;
-                  srcColor <<= 8;
-                  if ((dstColor & 0x00ff00) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x00ff00;
-                  srcColor <<= 8;
-                  if ((dstColor & 0xff0000) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor &0xff0000;
-                  buffer[i] = dstColor;
-                }
-              }
-              ++i;
-            }
-          }
-          /// Copy the buffer back into the model-texture.
-          mTexture->getBuffer()->blitFromMemory(
-            PixelBox(picBody.w, picBody.h, 1, PF_A8R8G8B8, buffer),
-            Box(picBody.side[side].dstX,
-                picBody.side[side].dstY,
-                picBody.side[side].dstX + picBody.w,
-                picBody.side[side].dstY + picBody.h));
-        }
-        delete[] buffer;
-        /*
-        Image img;
-        uint32 *sysFontBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
-        mTexture->getBuffer()->blitToMemory(PixelBox(mTexture->getWidth(), mTexture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
-        img = img.loadDynamicImage((uchar*)sysFontBuf, mTexture->getWidth(), mTexture->getHeight(), PF_A8R8G8B8);
-        img.save("c:\\ModelTexture_BodyChanged.png");
-        */
+        for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], image,  textureNr, textureColor);
+        break;
       }
-      break;
 
+      case TEXTURE_POS_LEGS:
+      {
+        for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], image,  textureNr, textureColor);
+        break;
+      }
 
+      case TEXTURE_POS_BELT:
+      {
+        for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], image, textureNr, textureColor);
+        break;
+      }
 
-      /*
-              pb = mTexture->getBuffer()->lock(Box(0,0, TEX_SIZE, TEX_SIZE), HardwareBuffer::HBL_READ_ONLY );
-              uint32 *dest_data = (uint32*)pb.data;
-              uint32 pixColor,  srcColor;
-                        for (unsigned int y = 0; y < TEX_SIZE * TEX_SIZE; ++y)
-                        {
-                          if (!copy[y]) continue;
-                          pixColor = dest_data[y];
-                          srcColor = copy[y] & 0xff000000;
-                          srcColor >>= 8;
-                          if ((pixColor & 0x00ff0000) > srcColor )  pixColor-= srcColor;
-                          srcColor >>= 8;
-                          if ((pixColor & 0x0000ff00) > srcColor )  pixColor-= srcColor;
-                          srcColor >>= 8;
-                          if ((pixColor & 0x000000ff) > srcColor )  pixColor-= srcColor;
-                          dest_data[y] = pixColor;
-                        }
+      case TEXTURE_POS_SHOES:
+      {
+        for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], image,  textureNr, textureColor);
+        break;
+      }
 
-              mTexture->getBuffer()->unlock();
-              */
-
-
-
-      /*
-            case TEXTURE_POS_HAIR:
-            {
-              /// Blit the color over the whole head.
-              texColor = color[texColor];
-              /// Cretate a temporary buffer for the pixel operations.
-              uint32 *buffer = new uint32[picSkin.w * picSkin.h];
-              PixelBox pb(picSkin.w, picSkin.h, 1, PF_A8R8G8B8 , buffer);
-              /// Fill it with the color.
-              for (int i=0; i < picSkin.w * picSkin.h; ++i) buffer[i] = texColor;
-
-              /// Blit the face texture over it.
-              if (textureNr >=0)
-              {
-              }
-              /// Copy the buffer into the model-texture.
-              mTexture->getBuffer()->blitFromMemory(pb, Box(0, picSkin.y, picSkin.x + picSkin.w , picSkin.y + picSkin.h));
-              delete[] buffer;
-            }
-            break;
-      */
-
-
+      case TEXTURE_POS_HANDS:
+      {
+        for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], image,  textureNr, textureColor);
+        break;
+      }
 
       default:
       Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for NPC.";
       break;
   }
-
-
-
-  /*
-    string strValue , strKeyword;
-    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-    {
-      Logger::log().error() << "NPC::toggleTexture(...) -> description file was not found!";
-      return;
-    }
-    /// Get material.
-    strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
-    if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-    {
-      return;
-    }
-    MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
-    /// Get texture.
-    if (texture >=0) // select a texture by value.
-    {
-      strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(texture, 2, '0');
-      if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-      {
-        return;
-      }
-    }
-    else /// toggle textures
-    { // only for testing...
-      static int actTexture[100];
-      strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-      if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-      {
-        actTexture[pos] =0;
-        strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Texture_" + StringConverter::toString(actTexture[pos], 2, '0');
-        if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue)))
-        {
-          return;
-        }
-      }
-      ++actTexture[pos];
-    }
-    /// set new texture.
-    mpMaterial->unload();
-    mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
-    mpMaterial->reload();
-    mpMaterial.setNull();
-  */
 }

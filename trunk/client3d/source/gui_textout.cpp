@@ -162,7 +162,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   unsigned int w, h;
   Real u1,u2, v1, v2;
   int x1, x2, y1, y2;
-  for (unsigned int i=1; i < CHARS_IN_FONT; ++i)
+  for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
   {
     pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
     w = (int) ((u2-u1)*texW);
@@ -184,7 +184,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 
   /// Copy all needed chars of the font.
   int xPos = 0;
-  for (unsigned int i=1; i < CHARS_IN_FONT; ++i)
+  for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
   {
     xPos+= fnt->width;
     pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
@@ -197,8 +197,16 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
       Box(x1, y1, x2, y1 + fnt->height),
       pb.getSubVolume(Box(xPos, 0, xPos + x2-x1, fnt->height)));
   }
+  /// ////////////////////////////////////////////////////////////////////
+  ///.Create Text Cursor (for text input).
+  /// ////////////////////////////////////////////////////////////////////
+  fnt->charWidth[CHARS_IN_FONT-1] = fnt->charWidth[0];
+  for (int x = 0; x < fnt->charWidth[0]; ++x)
+    fnt->data[(CHARS_IN_FONT-1)*fnt->width + (fnt->height-2)*fnt->textureWidth+x] = 0xff000000;
 
+  /// ////////////////////////////////////////////////////////////////////
   /// Transparent to color.
+  /// ////////////////////////////////////////////////////////////////////
   for (unsigned int i=0; i < fnt->textureWidth * fnt->height; ++i)
   {
     if (fnt->data[i] != 0x00ffffff)
@@ -257,11 +265,6 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   TextureManager ::getSingleton().remove((ResourcePtr&)pTexture);
   FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
   createBuffer(MAX_TEXTLINE_LEN); // Set standard buffer size.
-  /// ////////////////////////////////////////////////////////////////////
-  ///.Create Text Cursor (for text input).
-  /// ////////////////////////////////////////////////////////////////////
-
-  //TODO.
 }
 
 ///================================================================================================
@@ -289,9 +292,12 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
       PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer)
     );
   }
-  if (!text || text[0] == 0) return;
+  if (!text) return;
   /// draw the text into buffer.
-  drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, text, line->font);
+  if (!text[0])
+    drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, " " , line->font);
+  else
+    drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, text, line->font);
   /// Blit it into the window.
   texture->getBuffer()->blitFromMemory(
     PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer),
@@ -395,11 +401,11 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 }
 
 ///================================================================================================
-/// Calculate the width and height of the needed pixel-field for the given text.
+/// .
 ///================================================================================================
-void GuiTextout::CalcTextSize(unsigned int &x, unsigned int &y, int maxWidth, int maxHeight, const char *text, unsigned int fontNr)
+void GuiTextout::getClippingPos(unsigned int &x, unsigned int &y, int maxWidth, int maxHeight, const char *text, unsigned int fontNr)
 {
-  if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
+  if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
   //  int h = mvFont[fontNr]->height;
   while(*text)
   {
@@ -427,4 +433,39 @@ void GuiTextout::CalcTextSize(unsigned int &x, unsigned int &y, int maxWidth, in
   }
   y+= mvFont[fontNr]->height;
   if (y > (unsigned int)maxHeight) y = (unsigned int)maxHeight;
+}
+
+///================================================================================================
+/// Calculate the gfx-width for the given text.
+///================================================================================================
+int GuiTextout::CalcTextWidth(const char *text, unsigned int fontNr)
+{
+  int x =0;
+  if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
+  while(*text)
+  {
+    if ((unsigned char) *text < 32 || (unsigned char)*text >= CHARS_IN_FONT + 32) continue;
+    switch (*text)
+    {
+        case TXT_CMD_HIGHLIGHT:
+        if (!*(++text)) break;
+        if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
+        break;
+
+        case TXT_CMD_CHANGE_FONT:
+        if (!*(++text)) break;
+        fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
+        ++text;
+        fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
+        ++text;
+        if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
+        break;
+
+        default:
+        x+= mvFont[fontNr]->charWidth[*text - 32] +1;
+        ++text;
+        break;
+    }
+  }
+  return x;
 }

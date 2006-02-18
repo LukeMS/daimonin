@@ -19,25 +19,14 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "define.h"
-#include "object_manager.h"
 #include "option.h"
 #include "logger.h"
 #include "events.h"
-#include "gui_manager.h"
-
-
-
 #include "object_npc.h"
 #include "particle.h"
 #include "sound.h"
-#include "option.h"
-#include "logger.h"
 #include "spell_manager.h"
-#include "events.h"
-#include "TileManager.h"
-#include "gui_manager.h"
-
-
+#include "object_manager.h"
 
 ///================================================================================================
 /// Init all static Elemnts.
@@ -65,7 +54,6 @@ bool ObjectManager::init()
     int posY = atoi(strTemp.c_str());
     Option::getSingleton().getDescStr("Facing", strTemp);
     float facing = atof(strTemp.c_str());
-
     if (strType == "npc")
     {
       addObject(OBJECT_NPC, strMesh.c_str(), posX, posY, facing);

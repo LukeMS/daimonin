@@ -37,17 +37,18 @@ enum
   GUI_WIN_STATISTICS,
   GUI_WIN_PLAYERINFO,
   GUI_WIN_TEXTWINDOW,
+//  GUI_WIN_CREATION,
   GUI_WIN_SUM
 };
 
 enum
 {
+  GUI_MSG_TXT_GET,
   GUI_MSG_TXT_CHANGED,
   GUI_MSG_ADD_TEXTLINE,
   GUI_MSG_BUT_PRESSED,
   GUI_MSG_SUM
 };
-
 
 typedef struct
 {
@@ -55,8 +56,6 @@ typedef struct
   unsigned int index;
 }
 GuiWinNam;
-
-
 
 class GuiManager
 {
@@ -74,40 +73,34 @@ public:
     static GuiManager singleton; return singleton;
   }
   void freeRecources();
-  bool hasFocus()
-  {
-    return mHasFocus;
-  }
   void Init(int w, int h);
   void parseImageset(const char *XML_imageset_file);
   void parseWindows (const char *XML_windows_file);
   void update();
   bool mouseEvent(int MouseAction, Real rx, Real ry);
-  void keyEvent(const char keyChar, const unsigned char key);
-  void sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
-  //void getMessage (int &window, int &message, int &element);
+  bool keyEvent(const char keyChar, const unsigned char key);
+  const char *sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
   void setTooltip(const char*text);
   void displaySystemMessage(const char*text);
+  void startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces);
 
 private:
   /// ////////////////////////////////////////////////////////////////////
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
-
-
   static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
-
   int mDragSrcWin, mDragDestWin;
   int mDragSrcContainer, mDragDestContainer;
   int mDragSrcItemPosx, mDragSrcItemPosy; // Wird bei drag start gesetzt, um Item bei falschem Drag zurückflutschen zu lassen.
+  int mProcessingTextInput;
+  int mActiveWindow, mActiveElement;
+  int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
+  bool mTooltipRefresh;
   bool isDragging;
-  std::string  mStrTooltip;
+  std::string  mStrTooltip, mBackupTextInputString;
   class GuiWindow *guiWindow;
   unsigned int mScreenWidth, mScreenHeight;
-  bool mHasFocus, mTooltipRefresh;
   clock_t mTooltipDelay;
-  int mFocusedWindow, mFocusedGadget;
-  int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
   Overlay *mOverlay;
   OverlayElement *mElement;
   MaterialPtr mMaterial;

@@ -43,6 +43,10 @@ public:
   }
   GuiWindow();
   void freeRecources();
+  bool isVisible()
+  {
+    return mOverlay->isVisible();
+  }
   void Init(TiXmlElement *xmlElem);
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
   void updateDragAnimation();
@@ -52,8 +56,7 @@ public:
   {
     return mStrName.c_str();
   }
-  void Message(int message, int element, int value);
-  void Message(int message, int element, const char *value);
+  const char *Message(int message, int element, const char *value);
   const char *mouseEvent(int MouseAction, int x, int y);
   const char *getTooltip()
   {
