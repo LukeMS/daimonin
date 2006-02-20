@@ -266,8 +266,8 @@ typedef signed long long         sint64;
 
 /* client interface communication */
 #define NPC_INTERFACE_MODE_NO  -1
-#define NPC_INTERFACE_MODE_QLIST  0
 #define NPC_INTERFACE_MODE_NPC  1
+#define NPC_INTERFACE_MODE_QLIST  2
 
 /* number of connected maps from a tiled map */
 #define TILED_MAPS 8

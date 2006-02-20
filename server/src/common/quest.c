@@ -26,7 +26,7 @@
 #include <global.h>
 
 static char *skill_group_name[] = {
-	{""},{"agility "}, {"personality "},{"mental "},{"physical "},{"magic "},{"wisdom "},{""},{""}
+	"","agility ", "personality ","mental ","physical ","magic ","wisdom ","",""
 };
 
 /* recursive check the inventory for a specific quest item */
