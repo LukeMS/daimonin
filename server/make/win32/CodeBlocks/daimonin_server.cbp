@@ -108,6 +108,16 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
+		<Unit filename="..\..\..\src\common\hashfunc.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\common\hashtable.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
 		<Unit filename="..\..\..\src\common\holy.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
@@ -156,6 +166,7 @@
 		<Unit filename="..\..\..\src\common\material.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
+			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\common\mempool.c">
 			<Option compilerVar="CC"/>
@@ -192,7 +203,7 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
-		<Unit filename="..\..\..\src\common\shstr.c">
+		<Unit filename="..\..\..\src\common\shstr_ng.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
 			<Option target="Debug"/>
@@ -200,6 +211,7 @@
 		<Unit filename="..\..\..\src\common\stats.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
+			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\common\time.c">
 			<Option compilerVar="CC"/>
@@ -284,6 +296,13 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
+		<Unit filename="..\..\..\src\include\debug.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
 		<Unit filename="..\..\..\src\include\define.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -313,6 +332,20 @@
 			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\include\god.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\include\hashfunc.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\include\hashtable.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -466,7 +499,7 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
-		<Unit filename="..\..\..\src\include\shstr.h">
+		<Unit filename="..\..\..\src\include\shstr_ng.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -522,6 +555,27 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
+		<Unit filename="..\..\..\src\include\stats.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\include\testproto.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\include\timeutils.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
 		<Unit filename="..\..\..\src\include\tod.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -544,13 +598,6 @@
 			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\include\win32.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\include\xdir.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
