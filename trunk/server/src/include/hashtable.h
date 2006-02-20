@@ -9,6 +9,7 @@
 #include <win32.h>
 #include <stddef.h>
 #define SIZEOF_VOID_P 4
+typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef  uint32_t ub4;    /* unsigned 4-byte quantities */
 typedef unsigned _int64 uint64_t;
