@@ -1,0 +1,15 @@
+#ifndef _COMMON_SUPPORT_H_
+#define _COMMON_SUPPORT_H_
+
+#define WORDS_FILE "words"
+
+extern char *words[];
+extern int num_words;
+extern int word_lengths[];
+extern void read_words(void); /* Can be used as a text fixture */
+    
+static void dummy_teardown() /* Usable as a fixture teardown */
+{
+}
+
+#endif

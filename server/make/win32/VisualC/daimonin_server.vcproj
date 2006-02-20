@@ -1216,6 +1216,12 @@
 					RelativePath="..\..\..\src\common\exp.c">
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\hashfunc.c">
+				</File>
+				<File
+					RelativePath="..\..\..\src\common\hashtable.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\holy.c">
 				</File>
 				<File
@@ -1286,7 +1292,7 @@
 					RelativePath="..\..\..\src\common\recipe.c">
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\shstr.c">
+					RelativePath="..\..\..\src\common\shstr_ng.c">
 				</File>
 				<File
 					RelativePath="..\..\..\src\common\stats.c">
@@ -1364,6 +1370,12 @@
 				RelativePath="..\..\..\src\include\god.h">
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\hashfunc.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\hashtable.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\includes.h">
 			</File>
 			<File
@@ -1427,7 +1439,7 @@
 				RelativePath="..\..\..\src\include\recipe.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\shstr.h">
+				RelativePath="..\..\..\src\include\shstr_ng.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\skillist.h">
@@ -1455,6 +1467,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\testproto.h">
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\timeutils.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\tod.h">
