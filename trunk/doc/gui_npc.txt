@@ -114,11 +114,21 @@ GUI without sending a command.
 DECLINE: <a c="/talk finish"> 
 Same as accept button, just no t="" command is allowed. 
 
-BUTTON: <b t="Bye" c=""> 
-Same as accept but forces a single button
-
 TEXTFIELD: <t b="the password is ">
 This activates the textfield and fills it with the text from b="".
 This is useful when you want the user to enter a free-text string,
 for example when depositing money at the bank (b="deposit ") or 
 entering a secret password.
+
+WHO: <w b="<tag>">
+This tag tells the client how to interprete the incoming GUI data. The 
+default mode is INTERFACE_MODE_NPC.
+Other tags:
+'Q': INTERFACE_MODE_QLIST (quest list)
+
+XTENDED: <m t="Title" b="message text"> 
+This tag is used to "override" a previous (static) generated GUI string
+with data by adding a <x...> tag to the string. 
+Same format and usage as MESSAGE tag. A set title will overwrite or add
+a previous message tag (if given). The body will be ADDED to the previous
+message text.

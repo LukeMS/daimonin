@@ -324,7 +324,7 @@ struct plugin_hooklist
 	const char * (*find_string)(const char *str);
 	uint32 (*get_nrof_quest_item)(const struct obj *target, const char *aname, const char *name, const char *title);
 	object * (*is_player_inv)(object *op);
-	void (*gui_interface)(object *who, int mode, char *text, const char *tail);
+	void (*gui_interface)(object *who, int mode, const char *text, const char *tail);
 	int (*quest_count_pending)(const struct obj *pobj);
 	struct obj *(*quest_find_name)(const struct obj *pl, const char *name);
 	

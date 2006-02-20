@@ -891,7 +891,7 @@ int set_variable(object *op,char *buf) {
  * the 15'th element of this array should match that name.
  * If an entry is NULL, that is a flag not to loaded/saved.
  */
-static char *flag_names[NUM_FLAGS+1] = {
+static const char *flag_names[NUM_FLAGS+1] = {
 "sleep", "confused", "paralyzed", "scared", "is_blind","is_invisible" , "is_ethereal" ,
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
 "is_animated", NULL, "flying", "monster", "friendly",

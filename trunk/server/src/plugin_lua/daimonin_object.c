@@ -1603,7 +1603,7 @@ static int GameObject_GetQuest(lua_State *L)
 /*****************************************************************************/
 static int GameObject_CheckQuestLevel(lua_State *L)
 {
-	int level, skill_level, tmp_lev;
+	int level, skill_level, tmp_lev, ret=1;
 	lua_object *self;
 	object *who;
 	player *pl;
@@ -1622,8 +1622,9 @@ static int GameObject_CheckQuestLevel(lua_State *L)
 		tmp_lev = who->level;
 
 	if (level < tmp_lev) /* to low */
-		return 0;
+		ret = 0;
 
+    	lua_pushboolean(L, ret);
 	return 1;
 }
 

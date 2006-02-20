@@ -245,15 +245,15 @@ void swap_below_max(const char *except_level)
 {
     mapstruct  *map;
 
-    if ((((int) pool_object->nrof_allocated) - ((int) pool_object->nrof_free)) < MAX_OBJECTS)
+    if ((pool_object->nrof_allocated - pool_object->nrof_free) < (uint32) MAX_OBJECTS)
         return;
     for (; ;)
     {
 #ifdef MAX_OBJECTS_LWM
-        if ((((int) pool_object->nrof_allocated) - ((int) pool_object->nrof_free)) < MAX_OBJECTS_LWM)
+        if ((pool_object->nrof_allocated - pool_object->nrof_free) < (uint32) MAX_OBJECTS_LWM)
             return;
 #else
-        if ((((int) pool_object->nrof_allocated) - ((int) pool_object->nrof_free)) < MAX_OBJECTS)
+        if ((pool_object->nrof_allocated - pool_object->nrof_free) < (uint32) MAX_OBJECTS)
             return;
 #endif
         if ((map = map_least_timeout(except_level)) == NULL)
