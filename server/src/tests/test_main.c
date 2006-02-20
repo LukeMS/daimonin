@@ -55,6 +55,7 @@ Suite *basic_suite(void)
 extern Suite *shstr_suite(void);
 extern Suite *object_suite(void);
 extern Suite *map_suite(void);
+extern Suite *hashtable_suite(void);
     
 void run_unit_tests(void)
 {
@@ -63,6 +64,7 @@ void run_unit_tests(void)
     srunner_add_suite(sr, shstr_suite());
     srunner_add_suite(sr, object_suite());
     srunner_add_suite(sr, map_suite());
+    srunner_add_suite(sr, hashtable_suite());
     
     fprintf(stderr, "Running Daimonin Test Suites\n");
     

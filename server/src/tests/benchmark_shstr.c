@@ -31,31 +31,7 @@
 #if defined HAVE_CHECK && defined BUILD_BENCHMARKS
 #include <check.h>
 #include "benchmark.h"
-
-#define MAX_WORDS 10000
-static char *words[MAX_WORDS];
-static int num_words;
-
-static void read_words(void)
-{
-    FILE *f = fopen("words", "r");
-    char buf[1024], *ptr;
-    fail_if(f == NULL, "  No 'words' file found. Use for example http://homepages.gold.ac.uk/rachel/words.txt\n");
-
-    if(f == NULL)
-        return;
-
-    num_words = 0;
-    while(num_words < MAX_WORDS && fgets(buf, 1023, f)) {            
-        ptr = malloc(strlen(buf)+1);
-        strcpy(ptr, buf);
-        words[num_words++] = ptr;
-    }
-}
-
-static void dummy_teardown()
-{
-}
+#include "common_support.h"
 
 /* Test fixture. Since this clears the global list we
  * must run it as a checked fixture so later higher level
@@ -98,6 +74,25 @@ START_TEST(shstr_benchmark_insert_2)
 }
 END_TEST
 
+/* This benchmarks basic searching */
+START_TEST(shstr_benchmark_search)
+{
+    int i,j;
+    printf("\nBenchmarking %d x %d shstr find_string\n", benchmark_repetitions, num_words);
+        
+    for(j=0; j<num_words; j++) 
+        add_string(words[j]);
+
+    timer_start();
+    for(i=0; i<benchmark_repetitions; i++) 
+    {
+        for(j=0; j<num_words; j++) 
+            find_string(words[j]);
+    }
+    timer_stop(num_words * benchmark_repetitions); 
+}
+END_TEST
+
 Suite *shstr_benchmark_suite(void)
 {
   Suite *s = suite_create("Sharedstrings");
@@ -109,6 +104,7 @@ Suite *shstr_benchmark_suite(void)
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, shstr_benchmark_insert_1);
   tcase_add_test(tc_core, shstr_benchmark_insert_2);
+  tcase_add_test(tc_core, shstr_benchmark_search);
   tcase_set_timeout(tc_core, 0);
 
   return s;

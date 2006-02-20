@@ -104,7 +104,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     if (known_obj && known_obj->last_seen == ROUND_TAG)
         return TRUE;
 
-    /* Pets */
+    /* Pets can always see their owners */
     if (op->owner == obj && op->owner_count == obj->count)
         return TRUE;
 
@@ -270,7 +270,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
     /* TODO: added checks for NULL maps here (happens if monster is picked up, for example).
      * Actually, it would be slightly more interesting if we could get the coordinates for the
      * container of the mob, so that mobs can for example hide in containers until the enemy
-     * is far enough away. Or reversly, hide in container and later jump out and attack enemy. *
+     * is far enough away. Or reversly, hide in container and later jump out and attack enemy.
      * Gecko 2005-05-08 */
     if ( op == NULL || op->map == NULL || op->env ||
             known_obj == NULL || known_obj->obj->map == NULL || known_obj->obj->env)
@@ -531,6 +531,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     if (QUERY_FLAG(npc, FLAG_SURRENDERED))
         return NULL;
 
+    /* If an unagressive mob was attacked, it now turns agressive */
     /* TODO: get rid of flag_unaggressive and use only friendship */
     if (friendship < 0 && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
     {
@@ -857,12 +858,16 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
     /* TODO: parameterize */
     if(rv->distance < 8)
     {
+        /* TODO: if pet is close to owner, give it a large chance to rest instead of stroll
+         * TODO: if it has recently rested, give it a reduced chance to stroll
+         */
+        
         /* The further from owner, the lesser chance to
          * stroll randomly */
         if((RANDOM() % (8-rv->distance)) > 2)
         {
             response->type = MOVE_RESPONSE_DIR;
-            response->data.direction = RANDOM() % 8;
+            response->data.direction = RANDOM() % 8 + 1;
             return;
         }
     }
