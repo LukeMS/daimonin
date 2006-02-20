@@ -25,12 +25,15 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	test_hashtable.c \
 	test_shstr.c \
 	test_main.c \
 	test_object.c \
 	test_map.c \
+	benchmark_hashtable.c \
 	benchmark_shstr.c \
-	benchmark_main.c
+	benchmark_main.c \
+	common_support.c
 
 ALLFILES=$(SRCS) README Makefile.in
 

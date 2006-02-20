@@ -25,8 +25,7 @@
 
 #include <global.h>
 
-#define ARTTABLE 6000 /* Used when hashing artifacts */
-static artifact   *art_table[ARTTABLE];
+static hashtable *art_table;
 
 /* quick table to access artifact list for types */
 static artifactlist *art_type_table[ARCH_MAX_TYPES];
@@ -78,42 +77,23 @@ static inline unsigned long hashartifact(const char *str, int tablesize)
 	return (hash % tablesize);
 }
 
-/*
-* Adds an archetype to the hashtable.
-*/
-
-static void add_artifact_hash(artifact *at)
-{
-	int index = hashartifact(at->name,  ARTTABLE),org_index = index;
-
-	for (; ;)
-	{
-		if (art_table[index] && !strcmp(art_table[index]->name, at->name))
-		{
-			LOG(llevError, "ERROR: add_artifact_hash(): double use of artifact name %s\n", STRING_SAFE(at->name));
-		}
-		if (art_table[index] == NULL)
-		{
-			art_table[index] = at;
-			return;
-		}
-		if (++index == ARTTABLE)
-			index = 0;
-		if (index == org_index)
-			LOG(llevError, "ERROR: add_artifact_hash(): artifact hash table to small\n");
-	}
-}
-
 /* fill the artifacts table */
 static void fill_artifact_table(void)
 {
 	artifactlist   *al;
 	artifact       *art;
 
+    art_table = string_hashtable_new(4096);
+    
 	for (al = first_artifactlist; al != NULL; al = al->next)
 	{
 		for (art = al->items; art != NULL; art = art->next)
-			add_artifact_hash(art);
+        {
+            if (! hashtable_insert(art_table, art->name, art))
+            {
+                LOG(llevError, "ERROR: add_artifact_hash(): double use of artifact name %s\n", STRING_SAFE(art->name));
+            }
+        }
 	}
 }
 
@@ -133,7 +113,7 @@ static void init_artifacts(FILE *fp)
 	char            buf[MAX_BUF], *cp, *next;
 	artifact       *art             = NULL;
 	linked_char    *tmp;
-	int             lcount, value, none_flag = 0, editor_flag;
+	int             lcount, value, none_flag = 0, editor_flag = 0;
 	artifactlist   *al;
 	char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
 	object            *dummy_obj=get_object(), *parse_obj;
@@ -490,8 +470,6 @@ void load_artifacts(int mode)
 	{
 		int i;
 
-		memset((void *) art_table, 0, ARTTABLE * sizeof(artifact *));
-
 		for(i=0;i<ARCH_MAX_TYPES;i++)
 			art_type_table[i] = NULL;
 
@@ -539,31 +517,13 @@ inline artifactlist * find_artifactlist(int type)
 
 /*
  * find a artifact entry by name
- * If the type is given, we jump in to the right artifactlist.
- * TODO: create an artifact name hash table like for arches
- * with an optimized access
  */
 artifact *find_artifact(const char *name)
 {
-	artifact  *at;
-	unsigned long index;
-
 	if (name == NULL)
 		return NULL;
-
-	index = hashartifact(name, ARTTABLE);
-
-	for (; ;)
-	{
-		at = art_table[index];
-		if (at == NULL)
-			return NULL;
-
-		if (!strcmp(at->name, name))
-			return at;
-		if (++index >= ARTTABLE)
-			index = 0;
-	}
+    
+    return (artifact *)hashtable_find(art_table, name);
 }
 
 void add_artifact_archtype(void)
@@ -768,6 +728,9 @@ static void free_artifact(artifact *at)
 	free(at);
 }
 
+/*
+ * TODO: this should also clean up the hashtable
+ */
 void free_artifactlist(artifactlist *al)
 {
 	artifactlist   *nextal;

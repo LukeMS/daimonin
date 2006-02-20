@@ -90,7 +90,7 @@ START_TEST (shstr_add_lstring)
     a = add_lstring("hello foobar", 5);
     b = add_lstring("world snafu", 5);
     ss_get_totals(&entries, &refs, &links);
-    fail_unless(entries == 2 && refs == 4, "Strings are not shared");
+    fail_unless(entries == 2 && refs == 4, "Strings are not shared (%d!=2 || %d!=4)", entries, refs);
     fail_unless(strcmp(a, "hello") == 0, "String was modified");
     fail_unless(strcmp(b, "world") == 0, "String was modified");
 }

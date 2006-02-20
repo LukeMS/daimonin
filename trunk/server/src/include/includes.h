@@ -91,8 +91,11 @@
 #endif
 
 #include <sys/types.h>
-
 #include <sys/stat.h>
+
+/* Generic hashtables */
+#include "hashtable.h"
+#include "hashfunc.h"
 
 #include "config.h"
 #include "define.h"

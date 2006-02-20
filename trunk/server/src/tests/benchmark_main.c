@@ -2,7 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001-2005 Michael Toennies
+    Copyright (C) 2001-2006 Michael Toennies
 
     A split from Crossfire, a Multiplayer game for X-windows.
 
@@ -28,7 +28,7 @@
  * We use the check framework for benchmarks too, to take advantage
  * of the "checked fxitures"
  *
- * Copyright (C) 2005 Björn Axelsson
+ * Copyright (C) 2005-2006 Björn Axelsson
  */
 
 #include <global.h>
@@ -45,16 +45,18 @@ void print_delta_time(struct timeval *start, struct timeval *stop, int nops)
     start->tv_sec = -start->tv_sec;
     start->tv_usec = -start->tv_usec;
     add_time(&delta, stop, start);
-    printf("  Time elapsed for %d ops: %ld.%06ld seconds (%0.6f seconds/op)\n", nops, delta.tv_sec, delta.tv_usec, ((double)delta.tv_sec + ((double)delta.tv_usec / 1000000.0)) / (double)nops);
+    printf("  %d ops in %ld ms (%0.6f ms/op)\n", nops, delta.tv_sec * 1000 + delta.tv_usec / 1000, ((double)delta.tv_sec * 1000.0 + ((double)delta.tv_usec / 1000.0)) / (double)nops);
 }
 
 Suite *shstr_benchmark_suite(void);
+Suite *hashtable_benchmark_suite(void);
     
 void run_benchmarks(void)
 {
     /* See http://check.sourceforge.net/doc/ for a check tutorial */
     int failed = 0;
     SRunner *sr = srunner_create(shstr_benchmark_suite());
+    srunner_add_suite(sr, hashtable_benchmark_suite());
 
     fprintf(stderr, "Running Daimonin Benchmarks\n");
 

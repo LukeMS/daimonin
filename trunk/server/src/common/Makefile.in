@@ -31,6 +31,8 @@ SRCS = \
 	artifact.c\
 	button.c\
 	exp.c\
+	hashtable.c \
+	hashfunc.c \
 	holy.c\
 	image.c \
 	item.c\
@@ -48,7 +50,7 @@ SRCS = \
 	re-cmp.c\
 	readable.c\
 	recipe.c\
-	shstr.c\
+	shstr_ng.c\
 	stats.c\
 	time.c\
 	treasure.c\

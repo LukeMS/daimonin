@@ -62,6 +62,7 @@ AC_PATH_PROG(STRIP, strip)
 
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
+AC_CHECK_SIZEOF(void *)
 
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";

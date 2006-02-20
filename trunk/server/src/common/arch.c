@@ -28,8 +28,7 @@
 /* IF set, does a little timing on the archetype load. */
 #define TIME_ARCH_LOAD 0
 
-#define ARCHTABLE 10000 /* Used when hashing archetypes */
-static archetype   *arch_table[ARCHTABLE];
+static hashtable *arch_table;
 
 /**
  * GROS -  This function retrieves an archetype given the name that appears
@@ -258,7 +257,7 @@ void arch_info(object *op)
 
 void clear_archetable()
 {
-    memset((void *) arch_table, 0, ARCHTABLE * sizeof(archetype *));
+    arch_table = string_hashtable_new(8192);
 }
 
 /*
@@ -612,50 +611,16 @@ object * get_archetype(const char *name)
 }
 
 /*
- * Hash-function used by the arch-hashtable.
- */
-static inline unsigned long hasharch(const char *str, int tablesize)
-{
-    unsigned long hash = 0;
-    int         i = 0, rot = 0;
-    const char *p;
-
-    for (p = str; i < MAXSTRING && *p; p++, i++)
-    {
-        hash ^= (unsigned long) * p << rot;
-        rot += 2;
-        if (rot >= (sizeof(long) - sizeof(char)) * 8)
-            rot = 0;
-    }
-    return (hash % tablesize);
-}
-
-/*
  * Finds, using the hashtable, which archetype matches the given name.
  * returns a pointer to the found archetype, otherwise NULL.
  */
 
 archetype * find_archetype(const char *name)
 {
-    archetype  *at;
-    unsigned long index;
-
     if (name == NULL)
         return (archetype *) NULL;
 
-    index = hasharch(name, ARCHTABLE);
-    arch_search++;
-    for (; ;)
-    {
-        at = arch_table[index];
-        if (at == NULL)
-            return NULL;
-        arch_cmp++;
-        if (!strcmp(at->name, name))
-            return at;
-        if (++index >= ARCHTABLE)
-            index = 0;
-    }
+    return (archetype *)hashtable_find(arch_table, name);
 }
 
 /*
@@ -664,22 +629,9 @@ archetype * find_archetype(const char *name)
 
 void add_arch(archetype *at)
 {
-    int index = hasharch(at->name,  ARCHTABLE),org_index = index;
-    for (; ;)
+    if (! hashtable_insert(arch_table, at->name, at))
     {
-        if (arch_table[index] && !strcmp(arch_table[index]->name, at->name))
-        {
-            LOG(llevError, "ERROR: add_arch(): double use of arch name %s\n", STRING_ARCH_NAME(at));
-        }
-        if (arch_table[index] == NULL)
-        {
-            arch_table[index] = at;
-            return;
-        }
-        if (++index == ARCHTABLE)
-            index = 0;
-        if (index == org_index)
-            LOG(llevError, "ERROR: add_arch(): archtable to small\n");
+        LOG(llevError, "ERROR: add_arch(): double use of arch name %s\n", STRING_ARCH_NAME(at));
     }
 }
 

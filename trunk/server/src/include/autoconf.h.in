@@ -213,6 +213,9 @@
 /* The size of a `long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
 
+/* The size of a `void *', as computed by sizeof. */
+#undef SIZEOF_VOID_P
+
 /* Just a phoney so that we will recompile if the user changes the
  * prefix or libdir
  */
