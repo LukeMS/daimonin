@@ -9,10 +9,12 @@
 #include <win32.h>
 #include <stddef.h>
 #define SIZEOF_VOID_P 4
+#ifndef MIN_GW
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef  uint32_t ub4;    /* unsigned 4-byte quantities */
 typedef unsigned _int64 uint64_t;
+#endif
 #else
 #include <stdint.h>
 #endif
@@ -39,16 +41,16 @@ typedef struct hashtable_s
 {
     hashtable_size_t (*hash)(const hashtable_const_key_t);
     int (*equals)(const hashtable_const_key_t, const hashtable_const_key_t);
-     
+
     struct hashtable_entry *table;
     hashtable_size_t num_elements;
     hashtable_size_t num_deleted;
     hashtable_size_t num_buckets;
-    
+
     hashtable_size_t shrink_threshold;
     hashtable_size_t enlarge_threshold;
     int consider_shrink;
-        
+
     hashtable_const_key_t deleted_key;
     hashtable_const_key_t empty_key;
 } hashtable;
@@ -65,7 +67,7 @@ void hashtable_delete(hashtable *ht);
 
 void hashtable_clear(hashtable *ht);
 hashtable_value_t hashtable_find(const hashtable *ht, const hashtable_const_key_t key);
-int hashtable_insert(hashtable *ht, 
+int hashtable_insert(hashtable *ht,
         const hashtable_const_key_t key, const hashtable_value_t obj);
 int hashtable_erase(hashtable *ht, const hashtable_const_key_t key);
 
@@ -74,12 +76,12 @@ static inline hashtable_size_t hashtable_size(const hashtable *ht)
     return ht->num_elements - ht->num_deleted;
 }
 
-void hashtable_resize_delta(hashtable *ht, 
-        hashtable_size_t delta, 
+void hashtable_resize_delta(hashtable *ht,
+        hashtable_size_t delta,
         hashtable_size_t min_buckets_wanted);
 
 hashtable_size_t hashtable_num_probes_needed(const hashtable *ht, const hashtable_const_key_t key);
- 
+
 /* Hashtable iterators are useful, but 5-10 times slower than a simple
  * linked list iteration. Avoid in time-critical areas */
 /* NOTE: the iterators assume a const table while iterating. */
