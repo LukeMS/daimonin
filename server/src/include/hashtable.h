@@ -12,11 +12,12 @@
 #ifndef MIN_GW
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
-typedef  uint32_t ub4;    /* unsigned 4-byte quantities */
+typedef uint32_t ub4;    /* unsigned 4-byte quantities */
 typedef unsigned _int64 uint64_t;
 #endif
 #else
 #include <stdint.h>
+#include <autoconf.h>
 #endif
 
 #include <string.h>
@@ -66,33 +67,33 @@ hashtable *hashtable_new(
 void hashtable_delete(hashtable *ht);
 
 void hashtable_clear(hashtable *ht);
-hashtable_value_t hashtable_find(const hashtable *ht, const hashtable_const_key_t key);
-int hashtable_insert(hashtable *ht,
+hashtable_value_t hashtable_find(const hashtable *const ht, const hashtable_const_key_t key);
+int hashtable_insert(hashtable *const ht,
         const hashtable_const_key_t key, const hashtable_value_t obj);
-int hashtable_erase(hashtable *ht, const hashtable_const_key_t key);
+int hashtable_erase(hashtable *const ht, const hashtable_const_key_t key);
 
-static inline hashtable_size_t hashtable_size(const hashtable *ht)
+static inline hashtable_size_t hashtable_size(const hashtable *const ht)
 {
     return ht->num_elements - ht->num_deleted;
 }
 
-void hashtable_resize_delta(hashtable *ht,
+void hashtable_resize_delta(hashtable *const ht,
         hashtable_size_t delta,
         hashtable_size_t min_buckets_wanted);
 
-hashtable_size_t hashtable_num_probes_needed(const hashtable *ht, const hashtable_const_key_t key);
+hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const hashtable_const_key_t key);
 
 /* Hashtable iterators are useful, but 5-10 times slower than a simple
  * linked list iteration. Avoid in time-critical areas */
 /* NOTE: the iterators assume a const table while iterating. */
-hashtable_iterator_t hashtable_iterator(const hashtable *ht);
-hashtable_iterator_t hashtable_iterator_next(const hashtable *ht, hashtable_iterator_t i);
+hashtable_iterator_t hashtable_iterator(const hashtable *const ht);
+hashtable_iterator_t hashtable_iterator_next(const hashtable *const ht, hashtable_iterator_t i);
 
-static inline hashtable_const_key_t hashtable_iterator_key(const hashtable *const ht, hashtable_iterator_t i)
+static inline hashtable_const_key_t hashtable_iterator_key(const hashtable *const ht, const hashtable_iterator_t i)
 {
     return i == HASHTABLE_ITERATOR_END ? NULL : ht->table[i].key;
 }
-static inline hashtable_value_t hashtable_iterator_value(const hashtable *const ht, hashtable_iterator_t i)
+static inline hashtable_value_t hashtable_iterator_value(const hashtable *const ht, const hashtable_iterator_t i)
 {
     return i == HASHTABLE_ITERATOR_END ? NULL : ht->table[i].value;
 }

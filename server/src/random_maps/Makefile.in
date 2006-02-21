@@ -72,7 +72,7 @@ INSTALL = @INSTALL@
 MKDIR = @MKDIR@
 CC = @CC@
 RM = @RM@
-FLEX = @LEX@
+FLEX = @FLEX@
 AR = @AR@
 
 random_map: $(OBJS)

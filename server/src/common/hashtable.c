@@ -76,8 +76,8 @@
 //    probes/successful lookup    1.06  1.5   1.75  2.5   3.0   5.5   50.5
 //    probes/unsuccessful lookup  1.12  2.5   3.6   8.5   13.0  50.0  5000.0
 
-#include <assert.h>
 #include "hashtable.h"
+#include <assert.h>
 
 // The probing method
 // Linear probing
@@ -91,15 +91,16 @@
 #define HASHTABLE_EMPTY_FLT (0.4 * HASHTABLE_OCCUPANCY_FLT)
 
 // Private functions
-static void hashtable_reset_thresholds(hashtable *ht);
-static void hashtable_resize(hashtable *ht, const hashtable_size_t sz);
+static void hashtable_reset_thresholds(hashtable *const ht);
+static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz);
 static hashtable_size_t hashtable_min_size(const hashtable_size_t num_elts, 
         const hashtable_size_t min_buckets_wanted);
-static void hashtable_maybe_shrink(hashtable *ht);
-static int hashtable_insert_noresize(hashtable *ht, const hashtable_const_key_t key, 
+static void hashtable_maybe_shrink(hashtable *const ht);
+static int hashtable_insert_noresize(hashtable *const ht, 
+        const hashtable_const_key_t key, 
         const hashtable_value_t obj);
-static void hashtable_find_position(const hashtable *ht, const hashtable_const_key_t key, 
-        hashtable_size_t *found_position, hashtable_size_t *insert_position);
+static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key, 
+        hashtable_size_t *const found_position, hashtable_size_t *const insert_position);
 
 /* Notes on the equals(a,b) function usage:
  * 1. If a is empty_key or deleted_key, b is guaranteed to be empty_key or
@@ -175,7 +176,7 @@ void hashtable_clear(hashtable *ht)
 #endif
 }
 
-hashtable_value_t hashtable_find(const hashtable *ht, const hashtable_const_key_t key)
+hashtable_value_t hashtable_find(const hashtable *const ht, const hashtable_const_key_t key)
 {
     hashtable_size_t found_position, insert_position;
     if((ht->num_elements - ht->num_deleted) == 0)
@@ -193,7 +194,7 @@ hashtable_value_t hashtable_find(const hashtable *ht, const hashtable_const_key_
 /* This is the normal insert routine. 
  * Returns: 1 if the entry was inserted, 0 if key already existed 
  */
-int hashtable_insert(hashtable *ht, 
+int hashtable_insert(hashtable *const ht, 
         const hashtable_const_key_t key, const hashtable_value_t obj)
 {
     hashtable_resize_delta(ht, 1, 0); // Make room if needed
@@ -204,7 +205,7 @@ int hashtable_insert(hashtable *ht,
 /* Deletion routine
  * Returns: 1 if the entry was deleted, 0 if key didn't exist
  */
-int hashtable_erase(hashtable *ht, const hashtable_const_key_t key)
+int hashtable_erase(hashtable *const ht, const hashtable_const_key_t key)
 {
     hashtable_size_t found_pos, insert_pos;
 
@@ -224,9 +225,9 @@ int hashtable_erase(hashtable *ht, const hashtable_const_key_t key)
 // We'll let you resize a hashtable -- though this makes us copy all!
 // When you resize, you say, "make it big enough for this many more elements"
 // This is also useful for forcing a resize after a bunch of erases
-void hashtable_resize_delta(hashtable *ht, 
-        hashtable_size_t delta, 
-        hashtable_size_t min_buckets_wanted)
+void hashtable_resize_delta(hashtable *const ht, 
+        const hashtable_size_t delta, 
+        const hashtable_size_t min_buckets_wanted)
 {
 	hashtable_size_t resize_to;
 
@@ -248,7 +249,7 @@ void hashtable_resize_delta(hashtable *ht,
 
 /* Get the number of probes needed to find the key (or HASHTABLE_ILLEGAL_BUCKET
  * if the key isn't in the table) */
-hashtable_size_t hashtable_num_probes_needed(const hashtable *ht, const hashtable_const_key_t key)
+hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const hashtable_const_key_t key)
 {
     hashtable_size_t num_probes = 0;              // how many times we've probed
     const hashtable_size_t bucket_count_minus_one = ht->num_buckets - 1;
@@ -266,7 +267,7 @@ hashtable_size_t hashtable_num_probes_needed(const hashtable *ht, const hashtabl
     return HASHTABLE_ILLEGAL_BUCKET;
 }
 
-hashtable_iterator_t hashtable_iterator(const hashtable *ht)
+hashtable_iterator_t hashtable_iterator(const hashtable *const ht)
 {
     hashtable_iterator_t i;
 
@@ -282,7 +283,7 @@ hashtable_iterator_t hashtable_iterator(const hashtable *ht)
     return HASHTABLE_ITERATOR_END;
 }
 
-hashtable_iterator_t hashtable_iterator_next(const hashtable *ht, hashtable_iterator_t i)
+hashtable_iterator_t hashtable_iterator_next(const hashtable *const ht, hashtable_iterator_t i)
 {
     for(++i; i<ht->num_buckets; i++)
     {
@@ -297,7 +298,7 @@ hashtable_iterator_t hashtable_iterator_next(const hashtable *ht, hashtable_iter
  * Private functions
  */
 
-static void hashtable_reset_thresholds(hashtable *ht)
+static void hashtable_reset_thresholds(hashtable *const ht)
 {
     ht->enlarge_threshold = (hashtable_size_t)((double)ht->num_buckets * HASHTABLE_OCCUPANCY_FLT);
     ht->shrink_threshold = (hashtable_size_t) ((double)ht->num_buckets * HASHTABLE_EMPTY_FLT);
@@ -315,7 +316,7 @@ static void hashtable_reset_thresholds(hashtable *ht)
 
 // resize to sz buckets
 // Used to actually do the rehashing when we grow/shrink a hashtable
-static void hashtable_resize(hashtable *ht, const hashtable_size_t sz)
+static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
 {
     struct hashtable_entry *new_table;
     hashtable_size_t i;
@@ -375,7 +376,7 @@ static hashtable_size_t hashtable_min_size(
 }
 
 // Used after a string of deletes
-static void hashtable_maybe_shrink(hashtable *ht) 
+static void hashtable_maybe_shrink(hashtable *const ht) 
 {
     assert(ht->num_elements >= ht->num_deleted);
     assert((ht->num_buckets & (ht->num_buckets-1)) == 0); // is a power of two
@@ -400,8 +401,8 @@ static void hashtable_maybe_shrink(hashtable *ht)
 // insert_position is ILLEGAL_BUCKET if it is.
 // Note: because of deletions where-to-insert is not trivial: it's the
 // first deleted bucket we see, as long as we don't find the key later
-static void hashtable_find_position(const hashtable *ht, const hashtable_const_key_t key, 
-        hashtable_size_t *found_position, hashtable_size_t *insert_position)
+static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key, 
+        hashtable_size_t *const found_position, hashtable_size_t *const insert_position)
 {
     hashtable_size_t num_probes = 0;              // how many times we've probed
     const hashtable_size_t bucket_count_minus_one = ht->num_buckets - 1;
@@ -435,7 +436,9 @@ static void hashtable_find_position(const hashtable *ht, const hashtable_const_k
 }
 
 // If you know the hashtable is big enough to hold obj, use this routine
-static int hashtable_insert_noresize(hashtable *ht, const hashtable_const_key_t key, 
+static int hashtable_insert_noresize(
+        hashtable *const ht, 
+        const hashtable_const_key_t key, 
         const hashtable_value_t obj)
 {
     hashtable_size_t found_position, insert_position;

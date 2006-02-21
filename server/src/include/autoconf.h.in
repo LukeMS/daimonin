@@ -240,15 +240,11 @@
 /* Define as __inline if that's what the C compiler calls it.  */
 #undef inline
 
-/* Start of definitions for compression information - put in generic
- * defaults that may work
- */
-#define COMPRESS "compress"
-#define UNCOMPRESS "uncompress"
-#define GZIP "gzip"
-#define GUNZIP "gunzip"
-#define BZIP "bzip2"
-#define BUNZIP "bunzip2"
+/* Define if you want faster but non-redistributable binaries */
+#undef NO_REDISTRIBUTION
+
+/* Define if you want to disable debugging */
+#define NDEBUG 1
 
 /* Benchmarks and tests */
 #undef HAVE_CHECK
