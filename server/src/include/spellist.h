@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-spell   spells[NROFREALSPELLS]          =
+spell spells[NROFREALSPELLS]          =
 {
     {"firestorm",                   SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0, 1.0,
     4,      5,      4,      4, 9,   SOUND_MAGIC_FIRE,
