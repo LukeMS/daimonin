@@ -30,7 +30,9 @@ int int64_key_equals(const hashtable_const_key_t key1, const hashtable_const_key
 #define pointer_key_equals int32_key_equals
 #elif SIZEOF_VOID_P == 8
 #define pointer_hash int64_hash
-#define pointer_key_equals int64_key_equals
+/* Note: this might look wrong, but should always be int32_key_equals.
+ * int64_key_equals dereferences the key as a pointer to a 64bit value */
+#define pointer_key_equals int32_key_equals
 #else
 #error Unknown pointer size
 #endif

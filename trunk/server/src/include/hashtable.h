@@ -50,10 +50,11 @@ typedef struct hashtable_s
 
     hashtable_size_t shrink_threshold;
     hashtable_size_t enlarge_threshold;
-    int consider_shrink;
 
     hashtable_const_key_t deleted_key;
     hashtable_const_key_t empty_key;
+    
+    int consider_shrink;
 } hashtable;
 
 /* Public functions */
