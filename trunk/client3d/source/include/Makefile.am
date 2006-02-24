@@ -1,4 +1,4 @@
-SUBDIRS = fmod
+SUBDIRS = .
 
 noinst_HEADERS = \
 	client.h  event.h     logfile.h  option.h      sprite.h      zconf.h \

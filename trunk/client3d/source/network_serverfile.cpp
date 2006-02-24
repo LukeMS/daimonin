@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <sstream>
 #include <iterator>
 #include <iomanip>
-#include "serverfile.h"
+#include "network_serverfile.h"
 #include "logger.h"
 #include "define.h"
 #include "zlib.h"

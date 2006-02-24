@@ -190,11 +190,6 @@
 			<Option target="32bit"/>
 			<Option target="64bit"/>
 		</Unit>
-		<Unit filename="../../../source/animate.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="32bit"/>
-			<Option target="64bit"/>
-		</Unit>
 		<Unit filename="../../../source/events.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="32bit"/>
@@ -280,13 +275,6 @@
 			<Option target="64bit"/>
 		</Unit>
 		<Unit filename="../../../source/include/TileManager.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="32bit"/>
-			<Option target="64bit"/>
-		</Unit>
-		<Unit filename="../../../source/include/animate.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -419,6 +407,20 @@
 			<Option target="32bit"/>
 			<Option target="64bit"/>
 		</Unit>
+		<Unit filename="../../../source/include/network_serverfile.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="32bit"/>
+			<Option target="64bit"/>
+		</Unit>
+		<Unit filename="../../../source/include/object_animate.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="32bit"/>
+			<Option target="64bit"/>
+		</Unit>
 		<Unit filename="../../../source/include/object_manager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -514,6 +516,16 @@
 			<Option target="32bit"/>
 			<Option target="64bit"/>
 		</Unit>
+		<Unit filename="../../../source/network_serverfile.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="32bit"/>
+			<Option target="64bit"/>
+		</Unit>
+		<Unit filename="../../../source/object_animate.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="32bit"/>
+			<Option target="64bit"/>
+		</Unit>
 		<Unit filename="../../../source/object_manager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="32bit"/>
@@ -545,11 +557,6 @@
 			<Option target="64bit"/>
 		</Unit>
 		<Unit filename="../../../source/particle_manager.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="32bit"/>
-			<Option target="64bit"/>
-		</Unit>
-		<Unit filename="../../../source/serverfile.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="32bit"/>
 			<Option target="64bit"/>

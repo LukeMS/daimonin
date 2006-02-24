@@ -275,7 +275,7 @@ void CEvent::keyPressed(KeyEvent *e)
       break;
 
       case KC_L:
-      Option::getSingleton().mStartNetwork = true;
+      //Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
       break;
 
       case KC_W:

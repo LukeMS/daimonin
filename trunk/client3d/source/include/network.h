@@ -41,8 +41,8 @@ const int  SRV_CLIENT_FLAG_SETTING = 4;
 const int  SRV_CLIENT_FLAG_SKILL   = 8;
 const int  SRV_CLIENT_FLAG_SPELL   =16;
 const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
-const int  VERSION_CS = 991017;
-const int  VERSION_SC = 991017;
+const int  VERSION_CS = 991020;
+const int  VERSION_SC = 991020;
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
 struct SockList
@@ -122,6 +122,7 @@ private:
   int mCommand_sent, mCommand_received;
   int mCommand_time; // Time (in ms) players commands currently take to execute
   int mSocketStatusErrorNr;
+  int mOpenPort;
   SockList  mInbuf;
   int mSocket;
   list<mStructServer*> mServerList;

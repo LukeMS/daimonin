@@ -136,7 +136,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   pairList["size"]      = StringConverter::toString(iSize);
   pairList["resolution"]= StringConverter::toString(iReso);
   // pairList["antialias_colour"]= "true"; // doesn't seems to work.
-  if (iSize > 16 && !Option::getSingleton().getHighTextureDetails())
+  if (iSize > 16 && !Option::getSingleton().getIntValue(Option::HIGH_TEXTURE_DETAILS))
   {
     Logger::log().warning() << "Can't load TTF's with size > 16 on this gfx-card. You must use raw-fonts instead!";
     return;
@@ -221,7 +221,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
   /// ////////////////////////////////////////////////////////////////////
   /// Create a raw font.
   /// ////////////////////////////////////////////////////////////////////
-  if (Option::getSingleton().getCreateRawFonts())
+  if (Option::getSingleton().getIntValue(Option::CREATE_RAW_FONTS))
   {
     Image img;
     /// ////////////////////////////////////////////////////////////////////

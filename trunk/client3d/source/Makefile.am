@@ -29,7 +29,6 @@ client3d_SOURCES = \
 	TileChunk.cpp \
 	TileInterface.cpp \
 	TileManager.cpp \
-	animate.cpp \
 	events.cpp \
 	events_user.cpp \
 	gui_animation.cpp \
@@ -49,6 +48,8 @@ client3d_SOURCES = \
 	main.cpp \
 	network.cpp \
 	network_cmd.cpp \
+	network_serverfile.cpp \
+	object_animate.cpp \
 	object_manager.cpp \
 	object_npc.cpp \
 	object_static.cpp \
@@ -56,7 +57,6 @@ client3d_SOURCES = \
 	option_init.cpp \
 	particle.cpp \
 	particle_manager.cpp \
-	serverfile.cpp \
 	sound.cpp \
 	spell_manager.cpp \
 	spell_range.cpp

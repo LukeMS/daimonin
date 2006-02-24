@@ -34,7 +34,9 @@ enum
   INPUT_MODE_SUM               /**< Sum of input modes **/
 };
 
-const char CURSOR[] = { CHARS_IN_FONT+31, 0};
+const int CURSOR_FREQUENCY = 500;
+const char CURSOR[] = {
+                        CHARS_IN_FONT+31, 0};
 
 /**
  ** TextInput class which manages the keyboard input for the Dialog class.
@@ -84,6 +86,9 @@ public:
   {
     return (int) mStrTextInput.size();
   };
+  /**
+   ** Important: stop() must be called when text input is done.
+   *****************************************************************************/
   void stop()
   {
     mStrTextInput= "";
@@ -95,41 +100,40 @@ public:
    ** Returns the input text.
    ** @param showTextCursor Shows the cursor within the text.
    *****************************************************************************/
-
   const char *getText(bool showTextCursor = true)
   {
     static clock_t time = clock();
     static bool cursorOn = true;
     if (!showTextCursor || mFinished || mCanceled) return mStrTextInput.c_str();
-    mStrTextInputWithCursor = mStrTextInput;
-    if (clock()-time > 500)
+    string strTemp = mStrTextInput;
+    if (clock()-time > CURSOR_FREQUENCY)
     {
       time = clock();
       cursorOn = !cursorOn;
     }
     if (cursorOn)
-      mStrTextInputWithCursor.insert(mCursorPos, CURSOR);
+      strTemp.insert(mCursorPos, CURSOR);
     else
-      mStrTextInputWithCursor.insert(mCursorPos, " ");
-    return mStrTextInputWithCursor.c_str();
+      strTemp.insert(mCursorPos, " ");
+    return strTemp.c_str();
   }
-
   /**
    ** Inits a text input session.
-   ** @param maxChars Maximuum text input length.
-   ** @param useNumbers Input of numbers is allowed.
-   ** @param useWhitespaces Input of whhitespaces is allowed.
+   ** Important: stop() must be called when text input is done.
+   ** @param maxChars Maximum text input length.
+   ** @param blockNumbers Input of numbers will be blocked.
+   ** @param blockWhitespaces Input of whitespaces will be blocked.
    *****************************************************************************/
-  void startTextInput(int maxChars, bool useNumbers = true, bool useWhitespaces = true)
+  void startTextInput(int maxChars, bool blockNumbers = false, bool blockWhitespaces = false)
   {
-    // we start only over, if the last operation was ended.
+    /// we start only over, if the last operation was ended.
     if (mInProgress == true) return;
     mInProgress  = true;
     mInputMode   = INPUT_MODE_TEXT;
     mFinished    = false;
     mCanceled    = false;
-    mUseNumbers  = useNumbers;
-    mUseWhiteSpc = useWhitespaces;
+    mBlockNumbers  = blockNumbers;
+    mBlockWhiteSpace = blockWhitespaces;
     mMaxChars    = maxChars;
     mCursorPos   = (int)mStrTextInput.size();
   }
@@ -150,7 +154,7 @@ public:
     mCanceled   = false;
     mChange     = true;
     mMaxValue   = sizeSeletionField-1;
-    if (mMaxValue > MAX_SELECTION_ENTRYS) mMaxValue = MAX_SELECTION_ENTRYS;
+    if (mMaxValue > MAX_SELECTION_ENTRIES) mMaxValue = MAX_SELECTION_ENTRIES;
     mActValue   = actualSelectedPos;
     if (mActValue > mMaxValue) mActValue = mMaxValue;
     return true;
@@ -200,10 +204,10 @@ public:
       }
       if ((!keyChar || mStrTextInput.size() >= mMaxChars)
               || (keyChar == '_' ) // used for TextCursor.
-              || (!mUseNumbers  && (keyChar >= '0' && keyChar <= '9'))
-              || (!mUseWhiteSpc && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
+              || (!mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
+              || (!mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
       {
-//        Sound::getSingleton().playStream(SAMPLE_BUTTON_CLICK);
+        Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
         return;
       }
       mStrTextInput.insert(mCursorPos,1,keyChar);
@@ -248,7 +252,7 @@ private:
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
   /** The maximum number of selectable entries for a selection field. **/
-  static const unsigned int MAX_SELECTION_ENTRYS = 20;
+  static const unsigned int MAX_SELECTION_ENTRIES = 20;
   enum
   {
     KEY_RETURN = 0x1C, KEY_TAB = 0x0F, KEY_DELETE= 0xD3, KEY_BACKSPACE = 0x0E,
@@ -260,9 +264,8 @@ private:
   int  mInputMode;
   bool mChange;
   bool mFinished, mCanceled, mInProgress;
-  bool mUseNumbers;
-  bool mUseWhiteSpc;
-  string mStrTextInput, mStrTextInputWithCursor;
+  bool mBlockNumbers, mBlockWhiteSpace;
+  string mStrTextInput;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

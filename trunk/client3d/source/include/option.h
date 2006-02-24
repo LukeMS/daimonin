@@ -22,8 +22,9 @@ http://www.gnu.org/licenses/licenses.html
 #define OPTION_H
 
 #include <string>
-#include <iostream>
 #include <fstream>
+#include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -40,8 +41,7 @@ typedef enum _game_status
   GAME_STATUS_INIT_GUI_WINDOWS,  // Parse the Windows.
   GAME_STATUS_INIT_TILE,         // Init the tile-engine.
   GAME_STATUS_INIT_NET,          // init the network.
-  GAME_STATUS_INIT_DONE,         // DUMMY - delete me!
-
+//  GAME_STATUS_INIT_DONE,         // DUMMY - delete me!
   GAME_STATUS_META,              // connect to meta server.
   GAME_STATUS_START,             // start all up (without full reset or meta calling).
   GAME_STATUS_WAITLOOP,          // we are NOT connected to anything.
@@ -62,44 +62,53 @@ typedef enum _game_status
   GAME_STATUS_QUIT,              // we are in quit menu
   GAME_STATUS_PLAY,              // we play now!!
   GAME_STATUS_SUM
-} _game_status;
+};
+
+const int SEPARATOR = 10000;
 
 class Option
 {
 public:
-  enum
+  enum enumOption
   {
-    VAL_BOOL, VAL_CHAR, VAL_INT, VAL_TEXT
+    VOL_SOUND, VOL_MUSIC, VOL_VOICE,
+    META_SERVER_NAME, META_SERVER_PORT,
+    /// values < 1000 are listed in dialog windows.
+    SEL_META_SEVER = SEPARATOR,
+    HIGH_TEXTURE_DETAILS,
+    LOG_GUI_ELEMENTS,
+    CREATE_RAW_FONTS,
+    CREATE_TILE_TEXTURES,
+    UPDATE_NETWORK,
+    CMDLINE_SERVER_NAME,
+    CMDLINE_SERVER_PORT,
   };
-  enum
+  enum selType
   {
-    SEL_BUTTON, SEL_CHECKBOX, SEL_RANGE, SEL_TEXT
-  }; // selection types
+    SEL_BUTTON,
+    SEL_CHECKBOX,
+    SEL_INT_RANGE,
+    /// values < 1000 are integer values.
+    SEL_TXT_RANGE = SEPARATOR,
+    SEL_TEXT
+  };
   typedef struct optionStruct
   {
-    char *name;
-    /** info text row 1 **/
-    char *info1;
-    /** info text row 2 **/
-    char *info2;
-    /*** text-replacement for number values. if value_type == VAL_TEXT then the first entry is the default text. **/
-    char *val_text;
-    int  sel_type;
+    selType type;
+    char *name;     /**< Name of the Option**/
+    char *info1;    /**< Info text row 1 **/
+    char *info2;    /**< Info text row 2 **/
+    char *val_text; /**< Text-replacement (values are separated by '#') **/
+    std::string txtValue;
+    int  intValue;
     int  minRange, maxRange, deltaRange;
-    int  default_val;
-    void *value;
-    int  value_type;
+    bool pageFeed;
   };
-
   /// ////////////////////////////////////////////////////////////////////
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
   static optionStruct optStruct[];
-
-  std::string mMetaServer;
-  unsigned int  mMetaServerPort;
-  unsigned int  mSelectedMetaServer;
-  bool mStartNetwork;
+  static std::string  optValue[];
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
@@ -113,6 +122,57 @@ public:
     static Option Singleton; return Singleton;
   }
 
+  int getIntValue(enumOption option)
+  {
+    if (option < SEPARATOR)
+    {
+      return optStruct[option].intValue;
+    }
+    else
+    {
+      return atoi(optValue[option - SEPARATOR].c_str());
+    }
+  }
+
+  void setIntValue(enumOption option, int value)
+  {
+    if (option < SEPARATOR)
+    {
+      optStruct[option].intValue = value;
+    }
+    else
+    {
+      std::ostringstream os;
+      os << value;
+      optValue[option - SEPARATOR] = os.str();
+      os.rdbuf()->str("");
+    }
+  }
+
+  void setStrValue(enumOption option, const char *value)
+  {
+    if (option < SEPARATOR)
+    {
+      optStruct[option].txtValue = value;
+    }
+    else
+    {
+      optValue[option - SEPARATOR] = value;
+    }
+  }
+
+  const char *getStrValue(enumOption option)
+  {
+    if (option < SEPARATOR)
+    {
+      return optStruct[option].txtValue.c_str();
+    }
+    else
+    {
+      return optValue[option - SEPARATOR].c_str();
+    }
+  }
+
   bool setGameStatus(int status)
   {
     if (status > GAME_STATUS_SUM) return false;
@@ -124,59 +184,14 @@ public:
     return mGameStatus;
   }
 
-  void setHighTextureDetails(bool value)
-  {
-    mHighTexDetails = value;
-  }
-  bool getHighTextureDetails()
-  {
-    return mHighTexDetails;
-  }
-
-  void setListGuiElements(bool value)
-  {
-    mListGuiElements = value;
-  }
-  bool getListGuiElements()
-  {
-    return mListGuiElements;
-  }
-
-  void setCreateRawFonts(bool value)
-  {
-    mCreateRawFonts = value;
-  }
-  bool getCreateRawFonts()
-  {
-    return mCreateRawFonts;
-  }
-
-  void setCreateTileTextures(bool value)
-  {
-    mCreateTileTextures = value;
-  }
-  bool getCreateTileTextures()
-  {
-    return mCreateTileTextures;
-  }
-
 private:
   /// ////////////////////////////////////////////////////////////////////
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
   unsigned int mGameStatus;
-  bool mLogin;
-  bool mHighTexDetails, mListGuiElements, mCreateRawFonts, mCreateTileTextures;
   ifstream *mDescFile;
   string mDescBuffer;
   string mFilename;
-
-  // Sound
-  static int  sound_volume;
-  static int  music_volume;
-  // Server
-  static string  metaserver;
-  static int   metaserver_port;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

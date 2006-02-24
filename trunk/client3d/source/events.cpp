@@ -202,6 +202,19 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SOUND);
+
+        /*
+                mCamera->setFOVy(Degree(55));
+                mCamera->setPosition(Vector3(0 , 60, 80));
+                mCamera->lookAt(0, 0, 0);
+                SceneNode *n = mSceneManager->getRootSceneNode()->createChildSceneNode("node_loading");
+                BillboardSet* set = mSceneManager->createBillboardSet("loading", 1);
+                set->setMaterialName("LoadScreen");
+                set->setVisible(true);
+                n->attachObject(set);
+                Billboard* a = set->createBillboard(0, 0, 0);
+        */
+
         GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
         GuiManager::getSingleton().displaySystemMessage("Starting the sound-system...");
       }
@@ -298,7 +311,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         mEventProcessor->addMouseMotionListener(this);
         mEventProcessor->addMouseListener(this);
         mTileManager = new TileManager();
-        if (Option::getSingleton().getHighTextureDetails())
+        if (Option::getSingleton().getIntValue(Option::HIGH_TEXTURE_DETAILS))
           mTileManager->Init(mSceneManager, 128,1);
         else
           mTileManager->Init(mSceneManager, 16,1);
@@ -333,7 +346,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~4~ to change t-shirt.");
 
         /// Set next state.
-        Option::getSingleton().setGameStatus(GAME_STATUS_INIT_DONE);
+        Option::getSingleton().setGameStatus(GAME_STATUS_META);
         GuiManager::getSingleton().displaySystemMessage("");
       }
       break;
@@ -348,7 +361,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
           Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
           mIdleTime = 0;
         }
-
         /*
          if (!mUseBufferedInputKeys)
          {
@@ -374,7 +386,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
          }
         */
         GuiManager::getSingleton().update();
-        if (Option::getSingleton().mStartNetwork)  Network::getSingleton().Update();
+        if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
+          Network::getSingleton().Update();
       }
       break;
   }

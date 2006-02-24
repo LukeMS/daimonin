@@ -18,8 +18,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef ANIMATE_H
-#define ANIMATE_H
+#ifndef OBJECT_ANIMATE_H
+#define OBJECT_ANIMATE_H
 
 #include <Ogre.h>
 #include <OgreSceneManager.h>
