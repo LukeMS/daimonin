@@ -35,29 +35,31 @@ bool parseCmdLine(const char *cmd, const char *value)
     if      ((cmd[1] == 'l' || !stricmp(cmd, "--list"  )) && !stricmp(value, "gui"))
     {
       Logger::log().info() << "You told me to list all interactive gui-elements.";
-      Option::getSingleton().setListGuiElements(true);
+      Option::getSingleton().setIntValue(Option::LOG_GUI_ELEMENTS, true);
       return true;
     }
     else if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "rawfonts"))
     {
       Logger::log().info() << "You told me to create a raw-font from every ttf." << FILE_GUI_WINDOWS;
-      Option::getSingleton().setCreateRawFonts(true);
+      Option::getSingleton().setIntValue(Option::CREATE_RAW_FONTS, true);
       return true;
     }
     else if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "tileTextures"))
     {
       Logger::log().info() << "You told me to create all textures for the TileEngine.";
-      Option::getSingleton().setCreateTileTextures(true);
+      Option::getSingleton().setIntValue(Option::CREATE_TILE_TEXTURES, true);
       return true;
     }
     else if ((cmd[1] == 's' || !stricmp(cmd, "--server")))
     {
       Logger::log().info() << "You told me to use Server " << value;
+      Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_NAME, value);
       return true;
     }
     else if ((cmd[1] == 'p' || !stricmp(cmd, "--port"  )))
     {
       Logger::log().info() << "You told me to connect on port " << value;
+      Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_PORT, value);
       return true;
     }
   }
@@ -155,17 +157,17 @@ int main(int argc, char *argv[])
   { /// try to create a 64MB texture in Video Ram.
     mTexture = TextureManager::getSingleton().createManual("test", "General",
                TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-    //               TEX_TYPE_2D, 112048, 112048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+    //TEX_TYPE_2D, 112048, 112048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
     mTexture.getPointer()->unload();
     mTexture.setNull();
-    Option::getSingleton().setHighTextureDetails(true);
+    Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
   }
   catch( Exception& )
   {
     mTexture.setNull();
     Logger::log().warning() << "You are using an outdated videocard, or the device driver is broken!";
     Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
-    Option::getSingleton().setHighTextureDetails(false);
+    Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
   }
   try
   {

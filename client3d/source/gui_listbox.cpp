@@ -117,7 +117,7 @@ void GuiListbox::addTextline(const char *text)
     break; // delete me!
     // ToDo.
   }
-  Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
+  //Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
   row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
   ++mBufferPos;
   ++mRowsToScroll;

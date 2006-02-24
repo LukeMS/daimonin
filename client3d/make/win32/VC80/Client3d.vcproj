@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="Client3d"
-	ProjectGUID="{626E801B-D221-493D-B294-6F0C9F3723E1}"
 	RootNamespace="Client3d"
 	Keyword="Win32Proj"
 	>
@@ -196,10 +195,6 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath="..\..\..\source\animate.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\events.cpp"
 				>
 			</File>
@@ -276,6 +271,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\network_serverfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\object_animate.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\object_manager.cpp"
 				>
 			</File>
@@ -301,10 +304,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\particle_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\serverfile.cpp"
 				>
 			</File>
 			<File
@@ -336,10 +335,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
-			<File
-				RelativePath="..\..\..\source\include\animate.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\source\include\define.h"
 				>
@@ -413,6 +408,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\network_serverfile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\object_animate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\object_manager.h"
 				>
 			</File>
@@ -434,10 +437,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\particle_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\serverfile.h"
 				>
 			</File>
 			<File

@@ -20,35 +20,39 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "option.h"
 
-int Option::sound_volume    = 0;
-int Option::music_volume    = 0;
-int Option::metaserver_port = 0;
-std::string Option::metaserver = "";
-
 Option::optionStruct Option::optStruct[] =
   {
     /// ////////////////////////////////////////////////////////////////////
     /// Sound settings.
     /// ////////////////////////////////////////////////////////////////////
-    { "Sound volume:", "set sound volume for effects.","", "",
-      SEL_RANGE, 0,100,5,100, &sound_volume, VAL_INT
+    { SEL_INT_RANGE, "Sound volume:", "set sound volume for effects.","", "",
+      "", 100, 0,100,5, false
     },
-    { "Music volume:", "set music volume for background.","Sub info","",
-      SEL_RANGE, 0,100,5,80, &music_volume, VAL_INT
+    { SEL_INT_RANGE,"Music volume:", "set music volume for background.","Sub info","",
+      "", 100, 0,100,5, false
     },
-    { "#",0,0,0,0,0,0,0,0,0,0 // End of Page
-    },
-    /// ////////////////////////////////////////////////////////////////////
-    /// xyz settings.
-    /// ////////////////////////////////////////////////////////////////////
-    { "MetaServer:", "gdfhdfhdfh.","Sub info","Damn.Info",
-      SEL_RANGE, 0,100,5,80, &metaserver, VAL_TEXT
-    },
-    { "#",0,0,0,0,0,0,0,0,0,0 // End of Page
+    { SEL_INT_RANGE,"Voice volume:", "set voice volume.","Sub info","",
+      "", 100, 0,100,5, true
     },
     /// ////////////////////////////////////////////////////////////////////
-    /// End of options.
+    /// Server settings.
     /// ////////////////////////////////////////////////////////////////////
-    {0,0,0,0,0,0,0,0,0,0,0
+    { SEL_TXT_RANGE,"MetaServer:", "gdfhdfhdfh.","Sub info","",
+       "damn.informatik.uni-bremen.de", 0, 0,100,5, false
     },
+    { SEL_INT_RANGE,"Metaserver port:", "","","",
+      "", 13326, 0,100,5, true
+    },
+  };
+
+std::string Option::optValue[] =
+  {
+    "0", // SEL_META_SEVER
+    "0", // HIGH_TEXTURE_DETAILS
+    "0", // LOG_GUI_ELEMENTS
+    "0", // CREATE_RAW_FONTS
+    "0", // CREATE_TILE_TEXTURES
+    "0", // UPDATE_NETWORK
+    "0", // CMDLINE_SERVER_NAME
+    "0", // CMDLINE_SERVER_PORT
   };

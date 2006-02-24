@@ -92,32 +92,6 @@ checkForKeyword:
 Option::Option()
 {
   Logger::log().headline("Init Options");
-  mDescFile = 0;
-  mMetaServer ="damn.informatik.uni-bremen.de";
-  mMetaServerPort = 13326;
-  mSelectedMetaServer =0;
-  mListGuiElements = false;
-  mStartNetwork = false;
-  int i, sheets = 0;
-  for (i=0; optStruct[i].name; ++i)
-  {
-    if (optStruct[i].name[0] == '#')
-    {
-      ++sheets;
-      continue;
-    }
-    if (optStruct[i].value_type == VAL_TEXT)
-    {
-      *((std::string*)optStruct[i].value) = optStruct[i].val_text;
-    }
-    else
-    {
-      *((int*)optStruct[i].value) = optStruct[i].default_val;
-    }
-  }
-  Logger::log().info() << "Parsing of " << i-sheets << " options on "<< sheets << " sheets was done.";
-
-  mLogin = false;
   mDescFile =0;
 }
 

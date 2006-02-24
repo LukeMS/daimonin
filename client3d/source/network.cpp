@@ -36,9 +36,10 @@ const int SOCKET_ERROR =-1;
 #include "logger.h"
 #include "option.h"
 #include "define.h"
-#include "serverfile.h"
+#include "network_serverfile.h"
 
 #include "TileManager.h"
+#include "gui_manager.h"
 
 #define DEBUG_ON
 
@@ -133,7 +134,7 @@ void Network::Update()
       if (Option::getSingleton().getGameStatus() == GAME_STATUS_PLAY)
       {
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-        Option::getSingleton().mStartNetwork = false;
+        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
         mPasswordAlreadyAsked = 0;
       }
       else
@@ -154,7 +155,7 @@ void Network::Update()
   if (Option::getSingleton().getGameStatus() != GAME_STATUS_PLAY)
   {
     /// ////////////////////////////////////////////////////////////////////
-    /// autoinit or reset prg data
+    /// Autoinit or reset prg data.
     /// ////////////////////////////////////////////////////////////////////
     if (Option::getSingleton().getGameStatus() == GAME_STATUS_INIT_NET)
     {
@@ -162,6 +163,9 @@ void Network::Update()
       Logger::log().info() << "GAME_STATUS_INIT_NET";
       Option::getSingleton().setGameStatus(GAME_STATUS_META);
     }
+    /// ////////////////////////////////////////////////////////////////////
+    /// Create a new character.
+    /// ////////////////////////////////////////////////////////////////////
     else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NEW_CHAR)
     {
       /*
@@ -178,36 +182,41 @@ void Network::Update()
     else if (Option::getSingleton().getGameStatus() == GAME_STATUS_META)
     {
       Logger::log().info() << "GAME_STATUS_META";
+      if (!Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME))
+      {
+        add_metaserver_data(
+          Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME),
+          Option::getSingleton().getIntValue(Option::CMDLINE_SERVER_PORT),
+          -1, "user server", "Server from -server '...' command line.", "", "", "");
+      }
       /*
-         if (argServerName[0] != 0)
-          add_metaserver_data(argServerName, argServerPort, -1, "user server", "Server from -server '...' command line.", "", "", "");
-         // skip of -nometa in command line or no metaserver set in options
-         if (options.no_meta || !options.metaserver[0])
-         {
-          TextWin->Print("Option '-nometa'.metaserver ignored.");
-         }
-              else
+            /// skip of -nometa in command line or no metaserver set in options
+            if (options.no_meta || !options.metaserver[0])
+            {
+              GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Option '-nometa'.metaserver ignored.");
+            }
+            else
       */
       {
-        Logger::log().info()  << "Query Metaserver " << Option::getSingleton().mMetaServer
-        << " on port " << Option::getSingleton().mMetaServerPort;
-        //        TextWin->Print("query metaserver...");
-        //        sprintf(buf, "trying %s:%d", Option::getSingleton().mMetaServer.c_str(), Option::getSingleton().mMetaServerPort);
-        //        TextWin->Print(buf);
-        if (OpenSocket(Option::getSingleton().mMetaServer.c_str(),Option::getSingleton().mMetaServerPort))
+        Logger::log().info()
+        << "Query Metaserver " << Option::getSingleton().getIntValue(Option::META_SERVER_NAME)
+        << " on port "         << Option::getSingleton().getIntValue(Option::META_SERVER_PORT);
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"query metaserver...");
+        sprintf(buf, "trying %s:%d", Option::getSingleton().getStrValue(Option::META_SERVER_NAME), Option::getSingleton().getIntValue(Option::META_SERVER_PORT));
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
+        if (OpenSocket(Option::getSingleton().getStrValue(Option::META_SERVER_NAME),Option::getSingleton().getIntValue(Option::META_SERVER_PORT)))
         {
           read_metaserver_data();
           CloseSocket();
-          //          TextWin->Print("done.");
+          GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"done.");
         }
         else
-          ; //TextWin->Print("metaserver failed! using default list.", TXT_RED);
+          GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"metaserver failed! using default list.");
       }
       add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
-      //      TextWin->Print("select a server.");
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"select a server.");
       Option::getSingleton().setGameStatus(GAME_STATUS_START);
     }
-
     /// ////////////////////////////////////////////////////////////////////
     /// Go into standby.
     /// ////////////////////////////////////////////////////////////////////
@@ -219,7 +228,6 @@ void Network::Update()
       }
       Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
     }
-
     /// ////////////////////////////////////////////////////////////////////
     /// Wait for user to select a server.
     /// ////////////////////////////////////////////////////////////////////
@@ -269,8 +277,15 @@ void Network::Update()
               Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
             }
       */
-    }
 
+
+     // Testing: delete me.
+     Option::getSingleton().setIntValue(Option::SEL_META_SEVER, 0);
+     Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
+
+
+
+    }
     /// ////////////////////////////////////////////////////////////////////
     /// Try the selected server.
     /// ////////////////////////////////////////////////////////////////////
@@ -286,19 +301,19 @@ void Network::Update()
       mGameStatusVersionFlag = false;
       //      Dialog::getSingleton().clearInfoText();
       list<mStructServer*>::const_iterator iter = mServerList.begin();
-      for (unsigned int i=0 ; i < Option::getSingleton().mSelectedMetaServer; ++i)
+      for (int i=0 ; i < Option::getSingleton().getIntValue(Option::SEL_META_SEVER); ++i)
       {
         ++iter;
       }
       if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))
       {
-        //        TextWin->Print("connection failed!", TXT_RED);
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"connection failed!");
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
       }
       else
       {
         Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
-        //        TextWin->Print("Connected. exchange version.");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Connected. exchange version.");
       }
     }
     else if (Option::getSingleton().getGameStatus() == GAME_STATUS_VERSION)
@@ -324,8 +339,8 @@ void Network::Update()
         }
         else
         {
-          //          TextWin->Print("version confirmed.");
-          //          TextWin->Print("starting login procedure...");
+          GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"version confirmed.");
+          GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"starting login procedure...");
           Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
           Logger::log().info() << "GAME_STATUS_SETUP";
         }
@@ -445,7 +460,7 @@ void Network::Update()
             TextInput::getSingleton().startTextInput(1); // every start() needs a stop()!
             if (TextInput::getSingleton().wasCanceled())
             {
-              TextWin->Print("Break Login.", TXT_RED);
+              GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Break Login.");
               TextInput::getSingleton().stop();
               Dialog::getSingleton().setVisible(false);
               Option::getSingleton().setGameStatus(GAME_STATUS_START);
@@ -574,8 +589,9 @@ inline bool Network::InitSocket()
 ///================================================================================================
 /// Open a scoket to "host" on "port"
 ///================================================================================================
-inline bool Network::OpenSocket(const char *host, int port)
+bool Network::OpenSocket(const char *host, int port)
 {
+  mOpenPort = port;
   mInbuf.len = 0;
   sockaddr_in mInsock;
   mInsock.sin_family = AF_INET;
@@ -660,14 +676,13 @@ inline bool Network::OpenSocket(const char *host, int port)
   /// ////////////////////////////////////////////////////////////////////
   /// we got a connect here!
   /// ////////////////////////////////////////////////////////////////////
-  int oldbufsize;
-  int newbufsize = 65535, buflen = sizeof(int);
+  int oldbufsize, newbufsize = 65535;
 #ifdef WIN32
-  if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+  int buflen = sizeof(int);
 #else
-  socklen_t socklen= buflen;
-  if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &socklen) == -1)
+  socklen_t buflen = sizeof(int);
 #endif
+  if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
   {
     oldbufsize = 0;
   }
@@ -779,8 +794,7 @@ void Network::read_metaserver_data()
   // Description4.
   strDesc4 = strMetaData.substr(startPos, strMetaData.size()-startPos);
 
-  const int port = 13327;
-  add_metaserver_data(strName.c_str(), port, atoi(strPlayer.c_str()), strVersion.c_str(),
+  add_metaserver_data(strName.c_str(), mOpenPort, atoi(strPlayer.c_str()), strVersion.c_str(),
                       strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
 }
 
@@ -825,13 +839,13 @@ int Network::write_socket(unsigned char *buf, int len)
     if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
     {
       Logger::log().error()  << "New socket write failed (wsb) ("  << WSAGetLastError() << ").";
-      //      TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"SOCKET ERROR: Server write failed.");
       return -1;
     }
     if (amt == 0)
     {
       Logger::log().error()  << "Write_To_Socket: No data written out (" << WSAGetLastError() << ").";
-      //      TextWin->Print("SOCKET ERROR: No data written out", TXT_RED);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"SOCKET ERROR: No data written out");
       return -1;
     }
 #else
@@ -843,7 +857,7 @@ int Network::write_socket(unsigned char *buf, int len)
         continue;
       }
       Logger::log().error() << "New socket (fd=" << mSocket << ") write failed.";
-      //      TextWin->Print("SOCKET ERROR: Server write failed.", TXT_RED);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"SOCKET ERROR: Server write failed.");
       return -1;
     }
 #endif
@@ -1107,7 +1121,7 @@ int Network::read_socket()
       if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
       {
         Logger::log().error()  << "ReadPacket got error " << WSAGetLastError() << ", returning -1\n";
-        //        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Lost or bad server connection.");
         return -1;
       }
       return 0;
@@ -1125,7 +1139,7 @@ int Network::read_socket()
       {
         Logger::log().error()  << "ReadPacket got error " << errno
         << "%d, returning 0";
-        //        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Lost or bad server connection.");
         return -1;
       }
       return 0;
@@ -1133,7 +1147,7 @@ int Network::read_socket()
 #endif
     if (stat==0)
     {
-      //      TextWin->Print("WARNING: Server read package error.", TXT_RED);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
       return -1;
     }
     mInbuf.len += stat;
@@ -1148,7 +1162,7 @@ int Network::read_socket()
   toread = 2 + (mInbuf.buf[0] << 8) + mInbuf.buf[1] - mInbuf.len;
   if ((toread + mInbuf.len) > MAXSOCKBUF)
   {
-    //    TextWin->Print("WARNING: Server read package error.", TXT_RED);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
     Logger::log().error() << "SockList_ReadPacket: Want to read more bytes than will fit in buffer.";
     // return error so the socket is closed
     return -1;
@@ -1173,14 +1187,14 @@ int Network::read_socket()
       {
 #endif
         Logger::log().error()   << "ReadPacket got error " << errno  << ", returning 0";
-        //        TextWin->Print("WARNING: Lost or bad server connection.", TXT_RED);
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Lost or bad server connection.");
         return -1;
       }
       return 0;
     }
     if (stat==0)
     {
-      //      TextWin->Print("WARNING: Server read package error.", TXT_RED);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
       return -1;
     }
     mInbuf.len += stat;
@@ -1192,7 +1206,7 @@ int Network::read_socket()
     if (toread < 0)
     {
       Logger::log().error() << "SockList_ReadPacket: Read more bytes than desired.";
-      //      TextWin->Print("WARNING: Server read package error.", TXT_RED);
+      GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
       return -1;
     }
   }

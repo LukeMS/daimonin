@@ -19,9 +19,9 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "option.h"
-#include "animate.h"
 #include "logger.h"
 #include "sound.h"
+#include "object_animate.h"
 #include "object_manager.h"
 
 //=================================================================================================

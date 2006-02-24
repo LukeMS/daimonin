@@ -363,7 +363,6 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
           return;
         }
 
-
         WeaponNr = ++mHelmet; // testing -> delete me!
         if (mEntityHelmet)
         {
@@ -451,9 +450,9 @@ void NPC::update(const FrameEvent& event)
       mAutoMoving = false;
       mAnim->toggleAnimation(Animate::STATE_IDLE1);
     }
-    /// We have to move on.
     else
     {
+      /// We have to move on.
       /*
       // just a test...
       mAnim->toggleAnimation(STATE_WALK1);

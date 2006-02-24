@@ -26,8 +26,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "zlib.h"
 #include "define.h"
 #include "option.h"
-
-#include "serverfile.h"
+#include "gui_manager.h"
+#include "network_serverfile.h"
 #include "TileManager.h"
 
 using namespace std;
@@ -67,12 +67,12 @@ void Network::VersionCmd(char *data, int )
   if (VERSION_CS != mCs_version)
   {
     sprintf(buf, "Invalid CS version (%d,%d)", VERSION_CS, mCs_version);
-    //draw_info(buf, COLOR_RED);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
     if (VERSION_CS > mCs_version)
       sprintf(buf, "The server is outdated!\nSelect a different one!");
     else
       sprintf(buf, "Your client is outdated!\nUpdate your client!");
-    //draw_info(buf, COLOR_RED);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
     Logger::log().error() << buf;
     return;
   }
@@ -80,7 +80,7 @@ void Network::VersionCmd(char *data, int )
   if (!cp)
   {
     sprintf(buf, "Invalid version string: %s", data);
-    //draw_info(buf, COLOR_RED);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
     Logger::log().error() << buf;
     return;
   }
@@ -88,7 +88,7 @@ void Network::VersionCmd(char *data, int )
   if (mCs_version != VERSION_SC)
   {
     sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, mCs_version);
-    //draw_info(buf, COLOR_RED);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
     Logger::log().error() << buf;
     return;
   }
@@ -96,7 +96,7 @@ void Network::VersionCmd(char *data, int )
   if (!cp || strncmp(cp + 1, "Daimonin Server", 15))
   {
     sprintf(buf, "Invalid server name: %s", cp);
-    //draw_info(buf, COLOR_RED);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
     Logger::log().error() << buf;
     return;
   }

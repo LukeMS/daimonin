@@ -103,7 +103,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
     mvSrcEntry.push_back(Entry);
   }
   Logger::log().info() << (int) mvSrcEntry.size() << " Entries were parsed.";
-  if (Option::getSingleton().getListGuiElements())
+  if (Option::getSingleton().getIntValue(Option::LOG_GUI_ELEMENTS))
   {
     Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
     for (int i =0; i < GUI_ELEMENTS_SUM; ++i)
