@@ -8,7 +8,7 @@
         <title>
             Overview
         </title>
-        <section id="skills">
+        <section id="skillsover">
             <title>
                 Skills
             </title>
@@ -19,25 +19,19 @@
                 It is always the case that to perform a task at all you must possess the skill.
             </p>
             <p>
-                Usually, how effectively you complete the task is dependent on your level in the skill. <a href="#experience">Your level in the skill is dependent on how much experience you have gained in that skill</a>.
+                Usually, how effectively you complete the task is dependent on your level in the skill. <a href="#expetcover">Your level in the skill is dependent on how much experience you have gained in that skill</a>.
             </p>
             <p>
                 <img alt="[Skill groups]" src="./skillgroups.png"/>
             </p>
             <p>
-                Skills are distributed amongst <a href="#skillsbygroup">eight skill groups</a> (only the first seven are shown on the main screen).
+                Skills are distributed amongst <a href="#skillsdeta">eight skill groups</a> (only the first seven are shown on the main screen).
             </p>
             <p>
                 The number next to each skill group on the main screen is the highest level attained of any skill within that group: for example if you are level 20 in wizardry spells and level 30 in magic devices the main screen will show level 30 in magic (Ma).
             </p>
-            <p>
-                The meta command <code>"?M_SKILL_LIST"</code> opens a dialog with your experience and levels in each individual skill detailed. SHIFT + UP/DOWN cycles through the skill groups and UP/DOWN cycles through the skills themselves.
-            </p>
-            <p>
-                <img alt="[Skill list dialog]" src="./dialog_skilllist.png"/>
-            </p>
         </section>
-        <section id="experience">
+        <section id="expetcover">
             <title>
                 Experience, levelling, &amp; training
             </title>
@@ -51,7 +45,7 @@
                 Some skills cannot be trained: you either have the skill, and can perform the task, or you do not, and can't.
             </p>
             <p>
-                Please note how experience is represented graphically: the <a href="#usingskills">used skill and main skill</a> displays show your experience and level in the particular skill numerically; they also contain ten dots and a bar underneath.
+                Please note how experience is represented graphically: the <a href="#usingskillsover">used skill and main skill</a> displays show your experience and level in the particular skill numerically; they also contain ten dots and a bar underneath.
             </p>
             <p>
                 As you gain experience the bar gradually fills with colour; when the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your level increments and dots and bar are all reset and off you go again.
@@ -60,7 +54,7 @@
                 The maximum level for any skill is 110.
             </p>
         </section>
-        <section id="usingskills">
+        <section id="usingskillsover">
             <title>
                 Using skills
             </title>
@@ -90,173 +84,171 @@
             </p>
         </section>
     </section>
-    <section id="skillsbygroup">
+    <section id="details">
         <title>
-            Skills by group
+            Details
         </title>
-        <dl>
-            <dt>
-                <strong>Agility (Ag)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Skills in this group require balance, coordination, or manual dexterity:
-                </p>
-                <dl>
-                    <dt>
-                        <strong>Throwing</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your proficiency at throwing things: the higher your level, the further and more accurate you can do so.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Remove traps</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            The likelihood that you will safely disarm a previously found trap: the higher your level, the greater your chance of success.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Find traps</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            The likelihood that you will discover a trap: the higher your level, the greater your chance of success.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Bow/Crossbow/Sling archery</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            To use the specified type of ranged weapon you must have the appropriate skill: the higher your level, the further and more accurately you can fire missiles from it, and the more damage they cause when they hit.
-                        </p>
-                    </dd>
-                </dl>
-            </dd>
-            <dt>
-                <strong>Mental (Me)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Skills in this group require education and understanding:
-                </p>
-                <dl>
-                    <dt>
-                        <strong>Common literacy</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your ability to read and write in the common tongue: there is no level, you either are literate or you are not.
-                        </p>
-                    </dd>
-                </dl>
-            </dd>
-            <dt>
-                <strong>Magic (Ma)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Skills in this group require power of mind and arcane knowledge:
-                </p>
-                <dl>
-                    <dt>
-                        <strong>Wizardry spells</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your ability to cast spells: the higher your level, the more maximum mana you have, the more effective your spells are, but also the more mana they cost to cast.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Magic devices</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your ability to use magical items (for example, wands, horns, and rods): the higher your level, the more effective their use is.
-                        </p>
-                    </dd>
-                </dl>
-            </dd>
-            <dt>
-                <strong>Personality (Pe)</strong>
-            </dt>
-            <dd>
-                <p>
-                    This skill group is not currently implemented.
-                </p>
-            </dd>
-            <dt>
-                <strong>Physique (Ph)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Skills in this group require fitness and physical prowess:
-                </p>
-                <dl>
-                    <dt>
-                        <strong>Punching</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            How skilled you are in a fistfight: the higher your level, the more damage you do with a punch.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Cleave/Impact/Pierce/Slash weapons</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            To use the specified type of melee weapon you must have the appropriate skill: the higher your level, the more damage done with each hit.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Two-handed mastery</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your ability to use two-handed weapons (but only of the type in which you are skilled, as above): there is no level, you either can wield a two-handed weapon or you can not.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Polearm mastery</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your ability to use polearms (but only of the type in which you are skilled, as above): there is no level, you either can wield a polearm or you can not.
-                        </p>
-                    </dd>
-                </dl>
-            </dd>
-            <dt>
-                <strong>Wisdom (Wi)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Skills in this group require faith and piety:
-                </p>
-                <dl>
-                    <dt>
-                        <strong>Divine prayers</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            Your ability to recite prayers: the higher your level, the more maximum grace you have, the more effective your prayers are, but also the more grace they cost to recite.
-                        </p>
-                    </dd>
-                </dl>
-            </dd>
-            <dt>
-                <strong>Miscellaneous</strong>
-            </dt>
-            <dd>
-                <p>
-                    This skill group is not currently implemented.
-                 </p>
-            </dd>
-        </dl>
+        <section id="agdeta">
+            <title>
+                Agility (Ag) skill group
+            </title>
+            <p>
+                Skills in this group require balance, coordination, or manual dexterity:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Throwing</strong>
+                </dt>
+                <dd>
+                     <p>
+                         Your proficiency at throwing things: the higher your level, the further and more accurate you can do so.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Remove traps</strong>
+                </dt>
+                <dd>
+                    <p>
+                        The likelihood that you will safely disarm a previously found trap: the higher your level, the greater your chance of success.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Find traps</strong>
+                </dt>
+                <dd>
+                    <p>
+                        The likelihood that you will discover a trap: the higher your level, the greater your chance of success.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Bow/Crossbow/Sling archery</strong>
+                </dt>
+                <dd>
+                    <p>
+                        To use the specified type of ranged weapon you must have the appropriate skill: the higher your level, the further and more accurately you can fire missiles from it, and the more damage they cause when they hit.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="medeta">
+            <title>
+                Mental (Me) skill group
+            </title>
+            <p>
+                Skills in this group require education and understanding:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Common literacy</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Your ability to read and write in the common tongue: there is no level, you either are literate or you are not.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="madeta">
+            <title>
+                Magic (Ma) skill group
+            </title>
+            <p>
+                Skills in this group require power of mind and arcane knowledge:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Wizardry spells</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Your ability to cast spells: the higher your level, the more maximum mana you have, the more effective your spells are, but also the more mana they cost to cast.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Magic devices</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Your ability to use magical items (for example, wands, horns, and rods): the higher your level, the more effective their use is.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="pedeta">
+            <title>
+                Personality (Pe)
+            </title>
+            <p>
+                This skill group is not currently implemented.
+            </p>
+        </section>
+        <section id="phdeta">
+            <title>
+                Physique (Ph) skill group
+            </title>
+            <p>
+                Skills in this group require fitness and physical prowess:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Punching</strong>
+                </dt>
+                <dd>
+                    <p>
+                        How skilled you are in a fistfight: the higher your level, the more damage you do with a punch.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Cleave/Impact/Pierce/Slash weapons</strong>
+                </dt>
+                <dd>
+                    <p>
+                        To use the specified type of melee weapon you must have the appropriate skill: the higher your level, the more damage done with each hit.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Two-handed mastery</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Your ability to use two-handed weapons (but only of the type in which you are skilled, as above): there is no level, you either can wield a two-handed weapon or you can not.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Polearm mastery</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Your ability to use polearms (but only of the type in which you are skilled, as above): there is no level, you either can wield a polearm or you can not.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="wideta">
+            <title>
+                Wisdom (Wi) skill group
+            </title>
+            <p>
+                Skills in this group require faith and piety:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Divine prayers</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Your ability to recite prayers: the higher your level, the more maximum grace you have, the more effective your prayers are, but also the more grace they cost to recite.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="miscdeta">
+            <title>
+                Miscellaneous skills
+            </title>
+            <p>
+                This skill group is not currently implemented.
+             </p>
+        </section>
     </section>
 </section>

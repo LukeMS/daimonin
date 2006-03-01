@@ -1,10 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 2-3: AMULETS, RINGS, &amp; OTHER ITEMS
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            These items have a constant magical effect while <a href="../manipulating_objects/secn_1-3.dai">applied</a> (ie, worn in the case of rings, amulets or armour, wielded in the case of weapons, etc.).
+        </p>
+    </section>
+    <section id="details">
+        <title>
+            Details
+        </title>
+        <section id="amuletsdeta">
+            <title>
+                Amulets
+            </title>
+            <p>
+                <img alt="[Amulet]" src="./amulet.png"/>
+            </p>
+            <p>
+                Amulets are unsightly pendants and medallions slung on chains worn round the neck. The number of amulets worn at once is therefore limited by the number of necks you have.
+            </p>
+        </section>
+        <section id="ringsdeta">
+            <title>
+                Rings
+            </title>
+            <p>
+                <img alt="[Ring]" src="./ring.png"/>
+            </p>
+            <p>
+                Rings on fingers, rings on fingers. For practical reasons and to maintain game balance you can only wear one ring on either hand.
+            </p>
+        </section>
+        <section id="otherdeta">
+            <title>
+                Other Items
+            </title>
+            <p>
+                <img alt="[Magic sword]" src="./magicsword.png"/>
+            </p>
+            <p>
+                Almost any item not already mentioned can have magical properties, the most frequent and varied being weapons (which may do increased damage over the common or garden variety) and armour (which may offer increased protection).
+            </p>
+        </section>
+    </section>
 </section>

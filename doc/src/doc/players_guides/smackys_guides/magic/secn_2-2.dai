@@ -1,10 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 2-2: WANDS, HORNS, &amp; RODS
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            These items may be used many times, but this multiple use may be limited, as described below.
+        </p>
+        <p>
+            These items are collectively known as magic devices and <a href="../character/secn_1-5.dai#expetcover">experience</a> gained through their use is awarded to your <a href="../character/secn_1-5.dai#skills">skill</a> also called <a href="../character/secn_1-5.dai#skillsdeta">magic devices</a>.
+        </p>
+        <p>
+            Your <a href="../character/secn_1-5.dai#expetcover">level</a> in this skill is particularly relevant to using horns and rods. This is because you cannot use such a device which has a substantially higher level than your magic devices skill level. Wands are unaffected by this calculation so you should <a href="../character/secn_1-5.dai#expetcover">train</a> magic devices with wands for at least the first 20 or so levels.
+        </p>
+        <p>
+            Some mention should be made of how to use a magic device. Unlike most items, simply <a href="./manipulating_items/secn_1-3.dai">applying</a> them is not enough. This will only equip the device as your ranged tool. To actually fire the device you must use the <a href="../game_mechanics/secn_3.dai#rangesystemdeta">range system</a>.
+        </p>
+    </section>
+    <section id="details">
+        <title>
+            Details
+        </title>
+        <section id="wandsdeta">
+            <title>
+                Wands
+            </title>
+            <p>
+                <img alt="[Wand]" src="./wand.png"/>
+            </p>
+            <p>
+                A wand is basically a wizard in a stick. Wands have a finite number of charges (usually between 13 and 18) and each use decreases this number by one. Currently there is no way to recharge a spent wand.
+            </p>
+        </section>
+        <section id="hornsdeta">
+            <title>
+                Horns
+            </title>
+            <p>
+                <img alt="[Horn]" src="./horn.png"/>
+            </p>
+            <p>
+                Horns are similar to wands but have unlimited charges. Instead they have a rather slower fire-rate. That is, you have to wait five seconds between blasts.
+            </p>
+        </section>
+        <section id="rodsdeta">
+            <title>
+                Rods
+            </title>
+            <p>
+                <img alt="[Rod]" src="./rod.png"/>
+            </p>
+            <p>
+                Rods are much like horns, except the fire-rate is slightly faster (about four-and-a-half seconds between shots). Additionally, some rods will start to whine and not function if used too often.
+            </p>
+        </section>
+    </section>
 </section>

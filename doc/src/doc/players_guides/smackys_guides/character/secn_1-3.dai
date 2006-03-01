@@ -11,12 +11,12 @@
         <p>
             <img alt="[Stats, etc.]" src="./statsetc.png"/>
         </p>
-        <section id="stats">
+        <section id="statsover">
             <title>
                 Stats
             </title>
             <p>
-                Stats are a way of measuring your basic physical and mental characteristics. There are <a href="#statsbyname">seven independent stats</a>, each of which affects one or more abilities, such as movement speed, damage done with various attacks, and certain interactions with NPCs:
+                Stats are a way of measuring your basic physical and mental characteristics. There are <a href="#statsdeta">seven independent stats</a>, each of which affects one or more abilities, such as movement speed, damage done with various attacks, and certain interactions with NPCs:
             </p>
             <p>
                 Each stat is represented by a numerical value, higher being better. Most stats have a range (usually between 11 and 15) which represents the average individual and has little to no effect on your abilities. A higher value will result in a bonus and a lower value will, of course, result in a penalty.
@@ -25,12 +25,12 @@
                 Stats may deplete because of <a href="./secn_2.dai">death</a>. Such depletion may be magically removed, and stats may also be temporarily raised through magical means.
             </p>
         </section>
-        <section id="currentstatus">
+        <section id="statusover">
             <title>
                 Hit points, mana, and grace
             </title>
             <p>
-                <a href="#currentstatusbyname">Hit points, mana, and grace</a> represent your current health status. They all decrease according to circumstances -- most obviously, during combat any and all are likely to decrease: hit points each time an enemy scores a hit; mana when you cast a spell; and grace when you recite a prayer.
+                <a href="#statusdeta">Hit points, mana, and grace</a> represent your current health status. They all decrease according to circumstances -- most obviously, during combat any and all are likely to decrease: hit points each time an enemy scores a hit; mana when you cast a spell; and grace when you recite a prayer.
             </p>
             <p>
                 When mana or grace reach zero you won't be able to cast or recite any more.
@@ -39,9 +39,9 @@
                 However, when hit points reach zero the situation is far more dire as your character will die (while <a href="./secn_2.dai">death</a> is a temporary inconvenience in Daimonin it is still best avoided).
             </p>
             <p>
-                Fortunately, hit points, mana, and grace can all be <a href="#regeneration">regenerated</a>.
+                Fortunately, hit points, mana, and grace can all be <a href="#regenerationover">regenerated</a>.
             </p>
-            <section id="regeneration">
+            <section id="regenerationover">
                 <title>
                     Regeneration
                  </title>
@@ -56,7 +56,7 @@
                 </p>
             </section>
         </section>
-        <section id="food">
+        <section id="foodover">
             <title>
                 Food
             </title>
@@ -73,120 +73,125 @@
                 If food runs out and you have something edible in your inventory you will eat it automatically, even if it's not identified.
             </p>
         </section>
-   </section>
-    <section id="statsbyname">
-        <title>
-            Stats by name
-        </title>
-        <dl>
-            <dt>
-                <strong>Strength (Str)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Affects carry limit and melee damage.
-                </p>
-            </dd>
-            <dt>
-                <strong>Dexterity (Dex)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Affects armour class, weapon class and speed.
-                </p>
-            </dd>
-            <dt>
-                <strong>Constitution (Con)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Affects maximum hit points.
-                </p>
-            </dd>
-            <dt>
-                <strong>Intelligence (Int)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Not currently implemented.
-                </p>
-            </dd>
-            <dt>
-                <strong>Wisdom (Wis)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Affects maximum grace and the chance of failure when reciting prayers.
-                </p>
-            </dd>
-            <dt>
-                <strong>Power (Pow)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Affects maximum mana.
-                </p>
-            </dd>
-            <dt>
-                <strong>Charisma (Cha)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Affects the prices you can buy/sell items for in the shop.
-                </p>
-            </dd>
-        </dl>
     </section>
-    <section id="currentstatusbyname">
+    <section id="details">
         <title>
-            Hit points, mana, &amp; grace
+            Details
         </title>
-        <dl>
-            <dt>
-                <strong>Hit points (HP)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Hit points indicate your current physical health: the more hit points you have, the more punishment you can take. If hit points reach zero, you die (see <a href="./secn_2.dai">"Section 2: Death"</a>).
-                </p>
-                <p>
-                    Maximum hit points are determined by your main level, constitution, magic currently in effect, and an element of chance.
-                </p>
-                <p>
-                    Hit points decrease as you take physical damage: for example, in combat or through acute blood poisoning.
-                </p>
-                <p>
-                    When your hit points drop below a certain level (20% of maximum by default) a warning symbol appears above your head (<img alt="[Low hit point warning]" src="./warn_hp.png"/>).
-               </p>
-            </dd>
-            <dt>
-                <strong>Mana</strong>
-            </dt>
-            <dd>
-                <p>
-                    Mana is needed to cast spells: the more mana you have, the more spells you can cast and the more powerful they are.
-                </p>
-                <p>
-                    Maximum mana is determined by your skill level in wizardry spells, power, magic currently in effect, and an element of chance.
-                </p>
-                <p>
-                    Mana decreases each time you cast a spell.
-                </p>
-            </dd>
-            <dt>
-                <strong>Grace</strong>
-            </dt>
-            <dd>
-                <p>
-                    Grace is needed to recite prayers: the more grace you have, the more prayers you can recite and the more powerful they are.
-                </p>
-                <p>
-                    Maximum grace is determined by your skill level in divine prayers, wisdom, magic currently in effect, and an element of chance.
-                </p>
-                <p>
-                    Grace decreases each time you recite a prayer.
-                </p>
-            </dd>
-        </dl>
+        <section id="statsdeta">
+            <title>
+                Stats
+            </title>
+            <dl>
+                <dt>
+                    <strong>Strength (Str)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Affects carry limit and melee damage.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Dexterity (Dex)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Affects armour class, weapon class and speed.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Constitution (Con)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Affects maximum hit points.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Intelligence (Int)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Not currently implemented.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Wisdom (Wis)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Affects maximum grace and the chance of failure when reciting prayers.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Power (Pow)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Affects maximum mana.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Charisma (Cha)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Affects the prices you can buy/sell items for in the shop.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="statusdeta">
+            <title>
+                Hit points, mana, &amp; grace
+            </title>
+            <dl>
+                <dt>
+                    <strong>Hit points (HP)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Hit points indicate your current physical health: the more hit points you have, the more punishment you can take. If hit points reach zero, you die (see <a href="./secn_2.dai">"Section 2: Death"</a>).
+                    </p>
+                    <p>
+                        Maximum hit points are determined by your main level, constitution, magic currently in effect, and an element of chance.
+                    </p>
+                    <p>
+                        Hit points decrease as you take physical damage: for example, in combat or through acute blood poisoning.
+                    </p>
+                    <p>
+                        When your hit points drop below a certain level (20% of maximum by default) a warning symbol appears above your head (<img alt="[Low hit point warning]" src="./warn_hp.png"/>).
+                   </p>
+                </dd>
+                <dt>
+                    <strong>Mana</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Mana is needed to cast spells: the more mana you have, the more spells you can cast and the more powerful they are.
+                    </p>
+                    <p>
+                        Maximum mana is determined by your skill level in wizardry spells, power, magic currently in effect, and an element of chance.
+                    </p>
+                    <p>
+                        Mana decreases each time you cast a spell.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Grace</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Grace is needed to recite prayers: the more grace you have, the more prayers you can recite and the more powerful they are.
+                    </p>
+                    <p>
+                        Maximum grace is determined by your skill level in divine prayers, wisdom, magic currently in effect, and an element of chance.
+                    </p>
+                    <p>
+                        Grace decreases each time you recite a prayer.
+                    </p>
+                </dd>
+            </dl>
+        </section>
     </section>
 </section>

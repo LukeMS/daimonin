@@ -17,108 +17,124 @@
         <p>
             Move between fields with UP/DOWN and change the value with LEFT/RIGHT.
         </p>
+        <section id="noobover">
+            <title>
+                Newbie questions
+            </title>
+            <p>
+                <img alt="[ADVICE]" src="../smackys_guides/advice.png"/>
+            </p>
+            <p>
+                Before we get into the details of character creation and game mechanics it would be a <em>really good idea</em> for new players (that's you) to read the stickies and maybe browse the other threads in the <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=19">Newbie Questions forum</a> which contain FAQs not addressed in <strong><em>Smacky's Guides</em></strong>, more detailed coverage of some technical issues, and lots of other bits of useful information to prevent a new player looking from like a <strong>noob</strong>.
+            </p>
+        </section>
     </section>
-    <section id="race">
+    <section id="details">
         <title>
-            Choose a race
+            Details
         </title>
-        <p>
-            First choose a race. Daimonin currently knows only two races: human and half-elf.
-        </p>
-        <p>
-            Race determines the base values of your stats (see below) but has no other effect on gameplay.
-        </p>
-    </section>
-    <section id="gender">
-        <title>
-            Choose a gender
-        </title>
-        <p>
-            Next choose a gender from the conventional male and female.
-        </p>
-        <p>
-            Gender has no effect on gameplay.
-        </p>
-    </section>
-    <section id="stats">
-        <title>
-            Choose your starting stats
-        </title>
-        <p>
-            Lastly allocate additional points amongst your stats. A detailed explanation is in <a href="../character/secn_1-3.dai">"The Character, Section 1-3: Stats"</a> but briefly they are:
-        </p>
-        <dl>
-            <dt>
-                <strong>Strength (STR)</strong>
-            </dt>
-            <dd>
-                <p>
-                   Physical prowess and brute strength.
-                </p>
-            </dd>
-            <dt>
-                <strong>Dexterity (DEX)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Nimbleness and speed of movement.
-                </p>
-            </dd>
-            <dt>
-                <strong>Constitution (CON)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Physical toughness and endurance.
-                </p>
-            </dd>
-            <dt>
-                <strong>Intelligence (INT)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Sharpness of mind and quickness of wits.
-                </p>
-            </dd>
-            <dt>
-                <strong>Wisdom (WIS)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Depth of knowledge and ability to commune with the gods.
-                </p>
-            </dd>
-            <dt>
-                <strong>Power (POW)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Force of mind and attunement to the magical plane.
-                </p>
-            </dd>
-            <dt>
-                <strong>Charisma (CHA)</strong>
-            </dt>
-            <dd>
-                <p>
-                    Good looks and charm.
-                </p>
-            </dd>
-        </dl>
-        <p>
-            You have five additional points, all of which must be used. The base values are determined by your chosen race. Each stat can only be raised by up to two points above its base value and cannot be lowered below.
-        </p>
-    </section>
-    <section id="done">
-        <title>
-            Create the character
-        </title>
-        <p>
-            When you are ready press C. This will create the character in the game world.
-        </p>
-        <p>
-            Welcome to Daimonin! You are now ready for <a href="./secn_2-1.dai">"Section 2-1: The Tutorial"</a>.
-        </p>
+        <section id="racedeta">
+            <title>
+                Choose a race
+            </title>
+            <p>
+                First choose a race. Daimonin currently knows only two races: human and half-elf.
+            </p>
+            <p>
+                Race determines the base values of your stats (see below) but has no other effect on gameplay.
+            </p>
+        </section>
+        <section id="genderdeta">
+            <title>
+                Choose a gender
+            </title>
+            <p>
+                Next choose a gender from the conventional male and female.
+            </p>
+            <p>
+                Gender has no effect on gameplay.
+            </p>
+        </section>
+        <section id="statsdeta">
+            <title>
+                Choose your starting stats
+            </title>
+            <p>
+                Lastly allocate additional points amongst your stats. A detailed explanation is in <a href="../character/secn_1-3.dai">"The Character, Section 1-3: Stats"</a> but briefly they are:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Strength (STR)</strong>
+                </dt>
+                <dd>
+                    <p>
+                       Physical prowess and brute strength.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Dexterity (DEX)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Nimbleness and speed of movement.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Constitution (CON)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Physical toughness and endurance.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Intelligence (INT)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Sharpness of mind and quickness of wits.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Wisdom (WIS)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Depth of knowledge and ability to commune with the gods.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Power (POW)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Force of mind and attunement to the magical plane.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Charisma (CHA)</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Good looks and charm.
+                    </p>
+                </dd>
+            </dl>
+            <p>
+                You have five additional points, all of which must be used. The base values are determined by your chosen race. Each stat can only be raised by up to two points above its base value and cannot be lowered below.
+            </p>
+        </section>
+        <section id="donedeta">
+            <title>
+                Create the character
+            </title>
+            <p>
+                When you are ready press C. This will create the character in the game world.
+            </p>
+            <p>
+                Welcome to Daimonin! You are now ready for <a href="./secn_2-1.dai">"Section 2-1: The Tutorial"</a>.
+            </p>
+        </section>
     </section>
     <section id="tos">
         <title>

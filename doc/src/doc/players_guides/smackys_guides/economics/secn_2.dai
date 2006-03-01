@@ -4,9 +4,14 @@
     <title>
         SECTION 2: TRADE
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            THIS SPACE INTENTIONALLY LEFT BLANK
+        </p>
+    </section>
     <section id="tos">
         <title>
             Also in this section
