@@ -15,66 +15,53 @@
             Practical differences are covered in <a href="./secn_1-1.dai">"Section 1-1: Wizardry Spells"</a> and <a href="./secn_1-2.dai">"Section 1-2: Divine Prayers"</a>. Here note the major similarity, that spells may be cast and prayers invoked in via the same methods,
         </p>
     </section>
-    <section id="casting">
+    <section id="details">
         <title>
-            How to cast spells &amp; prayers
+           Details
         </title>
-        <p>
-            There are three major ways to cast spells and prayers:
-        </p>
-        <dl>
-            <dt>
-                <strong>By entering a game command</strong>
-            </dt>
-            <dd>
-                <p>
-                    To cast the spell/prayer immediately, use <code>"/cast &lt;spell/prayer&gt;"</code>.
-                </p>
-                <p>
-                    Alternatively, to ready the spell/prayer for future casting, use <code>"/ready_spell &lt;spell/prayer&gt;"</code>. This will have the same effect as pressing an assigned quickslot key (see below).
-                </p>
-                <p>
-                    Obviously this is a clumsy and time-consuming way of doing things so you are recommended to instead use either of the methods described below.
-                </p>
-            </dd>
-            <dt>
-                <strong>By pressing a key bound to the command</strong>
-            </dt>
-            <dd>
-                <p>
-                    Binding keys is explained in <a href="../game_mechanics/secn_4-1.dai">"Game Mechanics, Section 4-1: Key Settings"</a>.
-                </p>
-                <p>
-                    Be aware that directed spells/prayers (eg, magic bullet) will only fire in the direction you are facing when <code>"/cast"</code> in this way (either from the console or via a bound key).
-                </p>
-            </dd>
-            <dt>
-                <strong>By using the quickslots</strong>
-            </dt>
-            <dd>
-                <p>
-                    For general information on the quickslots and their use, see <a href="../game_mechanics/secn_3.dai">"Game Mechanics, Section 3: Interacting With Daimonin"</a>.
-                </p>
-                <p>
-                    To assign a spell/prayer to a quickslot open the spell list dialog (<code>"?M_SPELL_LIST"</code>). Now navigate through the dialog with LEFT/RIGHT to toggle between spells and prayer, SHIFT + UP/DOWN to select a spell group, and UP/DOWN to highlight an individual spell.
-                </p>
-                <p>
-                    When you have highlighted the spell you want press one of the quickslot keys (F1-F8) to assign it to that quickslot. Alternatively, you can simply press RETURN at this point to ready the highlighted spell and return to the game. Below is an example:
-                </p>
-                <p>
-                    <img alt="[Spell list dialog]" src="./dialog_spelllist.png"/>
-                </p>
-                <p>
-                    When you're done press ESCAPE to close the dialog and return to the game.
-                </p>
-                <p>
-                    You can now press the appropriate quickslot key at any time to ready the assigned spell/prayer.
-                </p>
-                <p>
-                    To cast a readied spell/prayer in a specified direction use CONTROL + direction.
-                </p>
-            </dd>
-        </dl>
+        <section id="castingdeta">
+            <title>
+                How to cast spells &amp; prayers
+            </title>
+            <p>
+                There are three major ways to cast spells and prayers:
+            </p>
+            <dl>
+                <dt>
+                    <strong>By entering a game command</strong>
+                </dt>
+                <dd>
+                    <p>
+                        To cast the spell/prayer immediately, use <code>"/cast &lt;spell/prayer&gt;"</code>.
+                    </p>
+                    <p>
+                        Alternatively, to ready the spell/prayer for future casting, use <code>"/ready_spell &lt;spell/prayer&gt;"</code>. This will have the same effect as pressing an assigned quickslot key (see below).
+                    </p>
+                    <p>
+                        Obviously this is a clumsy and time-consuming way of doing things so you are recommended to instead use either of the methods described below.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>By pressing a key bound to the command</strong>
+                </dt>
+                <dd>
+                    <p>
+                        For general information on key bindings and commands, see <a href="../game_mechanics/secn_3.dai#commandsdeta">"Game Mechanics, Section 3: Interacting With Daimonin"</a>.
+                    </p>
+                    <p>
+                        Be aware that directed spells/prayers (eg, magic bullet) will only fire in the direction you are facing when <code>"/cast"</code> in this way (either from the console or via a bound key).
+                    </p>
+                </dd>
+                <dt>
+                    <strong>By using the quickbar</strong>
+                </dt>
+                <dd>
+                    <p>
+                        For general information on the quickbar and its use, see <a href="../game_mechanics/secn_3.dai#quickbardeta">"Game Mechanics, Section 3: Interacting With Daimonin"</a>.
+                    </p>
+                </dd>
+            </dl>
+        </section>
     </section>
     <section id="tos">
         <title>

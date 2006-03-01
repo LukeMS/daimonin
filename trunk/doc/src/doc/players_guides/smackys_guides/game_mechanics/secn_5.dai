@@ -12,85 +12,99 @@
             Logging out (or just logging as most people say) is not the same as saving. But when you logout (log) the game is automatically saved. You may, however, choose to save without logging out.
         </p>
         <p>
-            <strong>NOTE</strong>: The game is automatically saved if your logging out is unscheduled (ie, your connection is lost or your computer dies or something). Except in the most extreme circumstances it is virtually impossible to 'lose' your character.
+            <img alt="[NOTE]" src="../smackys_guides/note.png"/> If your logging out is unscheduled (ie, your connection is lost or your computer dies or something) the game is automatically saved. Under these circumstances your character will remain in-game for eight minutes until it is automatically kicked. For security reasons, you will not be able to log into that character during that time. If this happens, do not worry, <em>it is perfectly normal</em>.
+        </p>
+        <p>
+            Except in the most extreme circumstances it is virtually impossible to 'lose' your character.
         </p>
     </section>
-    <section id="howto">
+    <section id="details">
         <title>
-            How to logout/save
+            Details
         </title>
-        <p>
-            There are three in-game methods to save your progress, two of which involve logging out:
-        </p>
-        <dl>
-            <dt>
-                <strong>Logging out</strong>
-            </dt>
-            <dd>
-                <p>
-                    Press ESCAPE and select "Logout" from the menu. This can be done anywhere at any time.
-                </p>
-                <p>
-                    Your game is saved and you are returned to the server selection dialog. So you can <a href="./secn_1.dai">login</a> again or press ESCAPE to exit the game entirely.
-                </p>
-            </dd>
-            <dt>
-                <strong>Going to bed</strong>
-            </dt>
-            <dd>
-                <p>
-                    If you own an apartment you can <a href="../manipulating_objects/secn_1-4.dai">apply</a> your bed to save and logout.
-                </p>
-            </dd>
-            <dt>
-                <strong>Saving</strong>
-            </dt>
-            <dd>
-                <p>
-                    You can enter the game command <code>"/save"</code> to save your game without logging out.
-                </p>
-                <p>
-                    Although you can save in this way at any time, it is never necessary, with one exception. That is new characters must save once before logging out.
-                </p>
-            </dd>
-        </dl>
-    </section>
-    <section id="advice">
-        <title>
-            Advice on logging out
-        </title>
-        <p>
-            Before you logout, be aware of a couple of points:
-        </p>
-        <dl>
-            <dt>
-                <strong>Get some experience before you logout</strong>
-            </dt>
-            <dd>
-                <p>
-                    For practical reasons (to reduce the number of dormant accounts) your character will not be saved unless you have some experience (that is, you have killed something).
-                </p>
-                <p>
-                    A Croatian wise woman once said: "Remember: the ants must be braved before the char can be saved."
-                </p>
-                <p>
-                    So don't, as has been done, create a shiny new character, have a friend load you up with powerful magic items, and then logout having just emerged from the tutorial. The character will not be saved and <em>the items will be lost forever</em>.
-                </p>
-            </dd>
-            <dt>
-                <strong>Be careful where you logout</strong>
-            </dt>
-            <dd>
-                <p>
-                    Be aware that when you logout your character is suspended; you are safe from harm, yes. But the world around you is persistent and may have changed for the worse when you next login. Consider this example:
-                </p>
-                <p>
-                    Following an epic victory in a five-on-one battle you have been reduced to single-figure hit points. But the point is you're still standing while around you lie the fetid carcasses of your foes. Flushed with success you decide to logout and celebrate with jam and scones (or jelly and biscuits if you must).
-                </p>
-                <p>
-                    Sometime later you login again. Horrors! The erstwhile eviscerated enemies have respawned; you're surrounded and have only seven hit points. Your fingers are still sticky with jam and you cannot press the keys fast enough to beat a retreat. Better go read <a href="../character/secn_2.dai">"The Character, Section 2: Death"</a> again.
-                </p>
-            </dd>
-        </dl>
+        <section id="howto">
+            <title>
+                How to logout/save
+            </title>
+            <p>
+                There are three in-game methods to save your progress, two of which involve logging out:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Logging out</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Press ESCAPE and select "Logout" from the menu. This can be done anywhere at any time.
+                    </p>
+                    <p>
+                        Your game is saved and you are returned to the server selection dialog. So you can <a href="./secn_1.dai">login</a> again or press ESCAPE to exit the game entirely.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Going to bed</strong>
+                </dt>
+                <dd>
+                    <p>
+                        <img alt="[Teddy]" src="./teddy.png"/>
+                    </p>
+                    <p>
+                        If you own an apartment you can <a href="../manipulating_objects/secn_1-4.dai">apply</a> your bed to save and logout.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Saving</strong>
+                </dt>
+                <dd>
+                    <p>
+                        You can enter the game command <code>"/save"</code> to save your game without logging out.
+                    </p>
+                    <p>
+                        Although you can save in this way at any time, it is never necessary, with one exception. That is new characters must save once before logging out.
+                    </p>
+                </dd>
+            </dl>
+        </section>
+        <section id="advicedeta">
+            <title>
+                Advice on logging out
+            </title>
+            <p>
+                <img alt="[ADVICE]" src="../smackys_guides/advice.png"/>
+            </p>
+            <p>
+                Before you logout, be aware of a couple of points:
+            </p>
+            <dl>
+                <dt>
+                    <strong>Get some experience before you logout</strong>
+                </dt>
+                <dd>
+                    <p>
+                        For practical reasons (to reduce the number of dormant accounts) your character will not be saved unless you have some experience (that is, you have killed something).
+                    </p>
+                    <p>
+                        A Croatian wise woman once said: "Remember: the ants must be braved before the char can be saved."
+                    </p>
+                    <p>
+                        So don't, as has been done, create a shiny new character, have a friend load you up with powerful magic items, and then logout having just emerged from the tutorial. The character will not be saved and <em>the items will be lost forever</em>.
+                    </p>
+                </dd>
+                <dt>
+                    <strong>Be careful where you logout</strong>
+                </dt>
+                <dd>
+                    <p>
+                        Be aware that when you logout your character is suspended; you are safe from harm, yes. But the world around you is persistent and may have changed for the worse when you next login. Consider this example:
+                    </p>
+                    <p>
+                        Following an epic victory in a five-on-one battle you have been reduced to single-figure hit points. But the point is you're still standing while around you lie the fetid carcasses of your foes. Flushed with success you decide to logout and celebrate with jam and scones (or jelly and biscuits if you must).
+                    </p>
+                    <p>
+                        Sometime later you login again. Horrors! The erstwhile eviscerated enemies have respawned; you're surrounded and have only seven hit points. Your fingers are still sticky with jam and you cannot press the keys fast enough to beat a retreat. Better go read <a href="../character/secn_2.dai">"The Character, Section 2: Death"</a> again.
+                    </p>
+                </dd>
+            </dl>
+        </section>
     </section>
 </section>

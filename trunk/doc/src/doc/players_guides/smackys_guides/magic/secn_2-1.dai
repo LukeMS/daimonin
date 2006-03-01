@@ -1,10 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
+<section autotoc="On this page">
     <title>
         SECTION 2-1: POTIONS, BALMS, SCROLLS, &amp; DUST
     </title>
-    <p>
-        THIS SPACE INTENTIONALLY LEFT BLANK
-    </p>
+    <section id="overview">
+        <title>
+            Overview
+        </title>
+        <p>
+            These items may only be used once, then they disappeaar.
+        </p>
+        <p>
+            <a href="../character/secn_1-5.dai#expetcover">Experience</a> gained through these items is awarded to different <a href="../character/secn_1-5.dai#skillsover">skills</a>, as described below.
+        </p>
+    </section>
+    <section id="details">
+        <title>
+            Details
+        </title>
+        <section id="potionsdeta">
+            <title>
+                Potions
+            </title>
+            <p>
+                <img alt="[Potion]" src="./potion.png"/>
+            </p>
+            <p>
+                Potions are vials of magical liquid, a chemical mixture by an alchemist or a concoction of all manner of ingredients by a witch.
+            </p>
+            <p>
+                Usually their magical properties are released by drinking (that is, <a href="../manipulating_items/secn_1-3.dai">applying</a>) them. There is only enough liquid for a single draught. Some potions need to be <a href="../combat/secn_2-2.dai#throwingdeta">thrown</a> to have their effect.
+            </p>
+            <p>
+                Experience ???
+            </p>   
+        </section>
+        <section id="balmsdeta">
+            <title>
+                Balms
+            </title>
+            <p>
+                <img alt="[Balm]" src="./balm.png"/>
+            </p>
+            <p>
+                The method of preparation of balms is quite similar to that of potions except the end result is a small tub of paste or ointment.
+            </p>
+            <p>
+                This ointment is rubbed directly into the skin (that is, <a href="../manipulating_items/secn_1-3.dai">applied</a>) and magical effects result.
+            </p>
+            <p>
+                Experience cannot be gained through use of a balm.
+            </p>
+        </section>
+        <section id="scrollsdeta">
+            <title>
+                Scrolls
+            </title>
+            <p>
+                <img alt="[Scroll]" src="./scroll.png"/>
+            </p>
+            <p>
+                Scrolls are spells (or prayers) scribed on parchment by a master wizard (or priest).
+            </p>
+            <p>
+                When read (that is, <a href="../manipulating objects/secn_1-3.dai">applied</a>) the spell is cast (or prayer invoked) at no cost to your mana (or grace). The magical power unleashed tends to destroy the scroll.
+            </p>
+            <p>
+                Experience gained through use of a scroll goes to the skill you would have trained had you cast the magic on the scroll. That is, wizardry spells for a spell and divine prayers for a prayer.
+            </p>
+        </section>
+        <section id="dustdeta">
+            <title>
+                Dust
+            </title>
+            <p>
+                <img alt="[Dust]" src="./dust.png"/>
+            </p>
+            <p>
+                It is not clear how magical dust is manufactured. Is it simply a potion or balm dehydrated? Or perhaps a scroll shredded and ground to fine powder? Or is it something entirely different, a material unto itself?
+            </p>
+            <p>
+                Wherever its origins lie the application of dust is clear: when sprinkled in the air (that is, <a href="../manipulating_objects/secn_1-3.dai">applied</a>) its magical qualities take effect.
+            </p>
+            <p>
+                Experience gained through use of dust goes to magic devices.
+            </p>
+        </section>
+    </section>
 </section>

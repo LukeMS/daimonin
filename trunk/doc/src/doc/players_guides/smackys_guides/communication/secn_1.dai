@@ -9,7 +9,7 @@
             Overview
         </title>
         <p>
-            <img alt="Text windows" src="./textwindows.png"/>
+            <img alt="[Text windows]" src="./textwindows.png"/>
         </p>
         <p>
             Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in Smacky's Guides.
@@ -20,20 +20,20 @@
         <p>
             As the example shows, much insight into the human condition can be gleaned from the musings of other players...
         </p>
-    </section>
-    <section id="cherbot">
-        <title>
-            Cherbot
-        </title>
-        <p>
-            A great deal of information, statistics, and functionality is available unofficially through Cherbot.
-        </p>
-        <p>
-            Cherbot is, wait for it, a bot (an artificial player controlled by a piece of software). He resides in a cell in Stoneglow jail.
-        </p>
-        <p>
-            Cherbot has his own very comprehensive web page at <a href="http://www.itcqis.com/daimonin/">http://www.itcqis.com/daimonin/</a> so I won't repeat it here.
-        </p>
+        <section id="cherbotover">
+            <title>
+                Cherbot
+            </title>
+            <p>
+                A great deal of information, statistics, and functionality is available unofficially through Cherbot.
+            </p>
+            <p>
+                Cherbot is, wait for it, a bot (an artificial player controlled by a piece of software). He resides in a cell in Stoneglow jail.
+            </p>
+            <p>
+                Cherbot has his own very comprehensive web page at <a href="http://www.itcqis.com/daimonin/">http://www.itcqis.com/daimonin/</a> so I won't repeat it here.
+            </p>
+        </section>
     </section>
     <section id="tos">
         <title>

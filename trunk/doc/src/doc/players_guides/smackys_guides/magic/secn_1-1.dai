@@ -9,19 +9,37 @@
             Overview
         </title>
         <p>
-            <a href="../character/secn_1-5.dai#skillsbygroup">Wizardry spells</a> is the name of both a type of magic (usually called simply 'spells') and the <a href="../character/secn_1-5.dai#skills">skill</a> which determines your ability to use that magic.
+            <a href="../character/secn_1-5.dai#skillsdeta">Wizardry spells</a> is the name of both a type of magic (usually called simply 'spells') and the <a href="../character/secn_1-5.dai#skillsover">skill</a> which determines your ability to use that magic.
         </p>
-        <p>
-            <a href="../character/secn_1-5.dai#experience">Experience</a> gained via cast spells (see <a href="./secn_1.dai">"Section 1: Castable Magic"</a> for an explanation of how to cast spells) goes to the wizardry spells skill, and as your <a href="../character/secn_1-5.dai#experience">level</a> in this skill increases you will be able to cast more powerful spells.
-        </p>
-        <p>
-            However, the precise number of individual spells you can cast is determined by your current reserves of <a href="../character/secn_1-3.dai#currentstatus">mana</a>. Mana is affected by your level in wizardry spells and <a href="../character/secn_1-3.dai#stats">power</a>.
-        </p>
-        <p>
-            So your mana increase as you level wizardry spells. However, the cost in mana of spells also increases (as does their effectiveness, eg, damage done) as you increase your level in this skill. Therefore there is a theoretical trade-off in levelling wizardry spells.
-        </p>
-        <p>
-            Some effort has been spent balancing the game so in fact the trade-off is not something with which to be overly concerned -- the practical issue to keep in mind is that as your maximum mana increases it will take longer and longer to <a href="../character/secn_1-3.dai#regeneration">regenerate</a>.
-        </p>
+    </section>
+    <section id="details">
+        <title>
+            Details
+        </title>
+        <section id="trainingdeta">
+            <title>
+                Training wizardry spells
+            </title>
+            <p>
+                <a href="../character/secn_1-5.dai#expetcover">Experience</a> gained via <a href="./secn_1.dai#castingdeta">casting spells</a> goes to the wizardry spells skill, and as your <a href="../character/secn_1-5.dai#expetcover">level</a> in this skill increases you will be able to cast more and more powerful spells.
+            </p>
+            <p>
+                <img alt="[NOTE]" src="../smackys_guides/note.png"/> You will <em>only</em> get experience for killing a mob with a spell. Therefore, non-offensive spells will <em>not</em> train wizardry spells.
+            </p>
+        </section>
+        <section id="qualandquandeta">
+            <title>
+                Spell power and cost
+            </title>
+            <p>
+                The precise number of individual spells you can cast is determined by your current reserves of <a href="../character/secn_1-3.dai#statusover">mana</a>. Mana is affected by your level in wizardry spells and <a href="../character/secn_1-3.dai#statsover">power</a>.
+            </p>
+            <p>
+                So your mana increases as you level wizardry spells. However, the cost in mana of spells also increases (as does their effectiveness, eg, damage done) as you increase your level in this skill. Therefore there is a theoretical trade-off in levelling wizardry spells.
+            </p>
+            <p>
+                Some effort has been spent balancing the game so in fact the trade-off is not something with which to be overly concerned -- the practical issue to keep in mind is that as your maximum mana increases it will take longer and longer to <a href="../character/secn_1-3.dai#regenerationover">regenerate</a>.
+            </p>
+        </section>
     </section>
 </section>
