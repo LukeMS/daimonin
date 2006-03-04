@@ -258,6 +258,8 @@ extern int              was_destroyed(object *op, tag_t old_tag);
 extern object          *load_object_str(char *obstr);
 extern void             object_gc();
 extern int              auto_apply(object *op);
+extern object          *locate_beacon(shstr *id);
+extern void             init_object_initializers();
 /* porting.c */
 extern char            *tempnam_local(char *dir, char *pfx);
 extern void             remove_directory(const char *path);

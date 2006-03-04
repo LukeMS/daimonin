@@ -327,6 +327,7 @@ struct plugin_hooklist
 	void (*gui_interface)(object *who, int mode, const char *text, const char *tail);
 	int (*quest_count_pending)(const struct obj *pobj);
 	struct obj *(*quest_find_name)(const struct obj *pl, const char *name);
+    object *(*locate_beacon)(shstr *id);
 	
     /* Global variables */
     Animations **animations;

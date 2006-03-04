@@ -28,8 +28,7 @@
 #include <daimonin_game.h>
 
 /*
- * - Game contains the old Daimonin functions and constants
- *   that don't fit into objects
+ * - Game contains functions and constants  that don't fit into objects
  */
 
 static struct method_decl       Game_methods[]      =
@@ -44,6 +43,7 @@ static struct method_decl       Game_methods[]      =
     {"GetSkillNr", Game_GetSkillNr},
     {"IsValid", Game_IsValid},
     {"GetTime", Game_GetTime},
+    {"LocateBeacon", Game_LocateBeacon},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
 };
@@ -166,18 +166,19 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_AGGRO_HISTORY"           ,TYPE_AGGRO_HISTORY}, {"TYPE_DAMAGE_INFO"            ,TYPE_DAMAGE_INFO},
     {"TYPE_SKILLSCROLL"             ,SKILLSCROLL},
     {"TYPE_QUEST_OBJECT"            ,TYPE_QUEST_OBJECT},
-    {"TYPE_TIMER"                    ,TYPE_TIMER},
-    {"TYPE_ENV_SENSOR"                ,TYPE_ENV_SENSOR},
-    {"TYPE_CONN_SENSOR"                ,TYPE_CONN_SENSOR},
-    {"TYPE_PEARL"                    ,TYPE_PEARL},
+    {"TYPE_TIMER"                   ,TYPE_TIMER},
+    {"TYPE_ENV_SENSOR"              ,TYPE_ENV_SENSOR},
+    {"TYPE_CONN_SENSOR"             ,TYPE_CONN_SENSOR},
+    {"TYPE_PEARL"                   ,TYPE_PEARL},
     {"TYPE_DEEP_SWAMP"              ,DEEP_SWAMP},
     {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR}, {"TYPE_CANCELLATION"            ,CANCELLATION},
     {"TYPE_MENU"                    ,MENU}, {"TYPE_BALL_LIGHTNING"         ,BALL_LIGHTNING},
     {"TYPE_SWARM_SPELL"             ,SWARM_SPELL}, {"TYPE_RUNE"                   ,RUNE},
     {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL,}, {"TYPE_CORPSE"                 ,CORPSE},
     {"TYPE_DISEASE"                 ,DISEASE}, {"TYPE_SYMPTOM"                ,SYMPTOM},
-    {"TYPE_QUEST_TRIGGER"                ,TYPE_QUEST_TRIGGER},
-    {"TYPE_QUEST_OBJECT"                ,TYPE_QUEST_OBJECT},
+    {"TYPE_QUEST_TRIGGER"           ,TYPE_QUEST_TRIGGER},
+    {"TYPE_QUEST_OBJECT"            ,TYPE_QUEST_OBJECT},
+    {"TYPE_BEACON"                  ,TYPE_BEACON},
     {NULL, 0}
 };
 
@@ -423,6 +424,30 @@ static int Game_IsValid(lua_State *L)
     }
 
     return 1;
+}
+
+/*****************************************************************************/
+/* Name   : Game_LocateBeacon                                                */
+/* Lua    : game:LocateBeacon(name)                                          */
+/* Info   : Locates the named beacon if it is in memory. Returns nil         */
+/*          otherwise                                                        */
+/*          Beacons are very useful for locating objects or locations on maps*/
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int Game_LocateBeacon(lua_State *L)
+{
+    char   *id;
+    shstr  *id_s = NULL;
+    lua_object *self;
+    object *foundob = NULL;
+
+    get_lua_args(L, "Gs", &self, &id);
+
+    FREE_AND_COPY_HASH(id_s, id);
+    foundob = hooks->locate_beacon(id_s);
+    FREE_ONLY_HASH(id_s);
+    
+    return push_object(L, &GameObject, foundob);
 }
 
 /*****************************************************************************/

@@ -1188,19 +1188,25 @@ void init(int argc, char **argv)
 }
 
 
-void init_lists()
+void init_lists_and_tables()
 {
     /* Add sentinels to the global activelist */
     active_objects = get_object();
     insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object */
+
+    /* Set up object initializers */
+    init_object_initializers();
+
+    /* Set up the table of beacons */
+    beacon_table = pointer_hashtable_new(32);
 }
 
 void init_library()
 {
     init_environ();
-    init_hash_table();
+    init_hash_table(); /* inits the shstr system */
     init_globals();
-    init_mempools(); /* Inits the pooling memory manager and the new object system */
+    init_mempools();   /* Inits the mempool manager and the object system */
     init_vars();
     init_block();
     LOG(llevInfo, "Daimonin Server, v%s\n", VERSION);
@@ -1211,6 +1217,6 @@ void init_library()
     init_dynamic();
     init_clocks();    
 
-    init_lists(); /* Initializes some global lists */
+    init_lists_and_tables(); /* Initializes some global lists and tables */
 }
 

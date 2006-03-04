@@ -5920,6 +5920,37 @@ that food.]]>
   </attribute>
 </type>
 
+<!--####################################################################-->
+<type number="137" name="Beacon">
+  <import_type name="default_flags" />
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+    Beacons are markers that indicate important locations and objects
+    for scripts and waypoints. A beacon can be located regardless of 
+    its current position as long as the map it is on is loaded in memory.
+    ]]>
+  </description>
+  <use><![CDATA[
+    Make sure to give the beacon a unique ID.
+
+    To mark a map location, just put the beacon somewhere on the map. To
+    mark a specific object, put the beacon in the inventory of the object.
+
+    Remember that a beacon cannot be located when it is not in memory, e.g. if 
+    its map times out or is reset, or if is carried by a player that logs out.
+     ]]>
+  </use>
+  <attribute arch="no_pick" value="1" type="fixed" />
+  <attribute arch="sys_object" value="1" type="fixed" />
+  <attribute arch="name" editor="beacon ID" type="string">
+    The ID should be a globally unique string, for example "gecko_quest44_chestmarker". This 
+    ID is used by scripts or waypoints to locate the beacon wherever it is.
+  </attribute>
+</type>
+
 <!-- The following types are moved here from typenumbers.xml.
   - This allows typenumbers.xml to be removed.
   -->
@@ -5972,6 +6003,7 @@ that food.]]>
 <type available="no" number="128" name="TYPE_DAMAGE_INFO"/>
 <type available="no" number="130" name="SKILLSCROLL"/>
 <type available="no" number="135" name="TYPE_PEARL"/>
+<type available="no" number="137" name="BEACON"/>
 <type available="no" number="139" name="IDENTIFY_ALTAR"/>
 <type available="no" number="141" name="CANCELLATION"/>
 <type available="no" number="150" name="MENU"/>

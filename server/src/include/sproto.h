@@ -376,6 +376,7 @@ void                        dequeue_path_requests(void);
 void                        do_specials(void);
 void                        shutdown_agent(int timer, char *reason);
 int                         main(int argc, char **argv);
+void                        process_events();
 /* monster.c */
 object                     *get_active_waypoint(object *op);
 object                     *get_aggro_waypoint(object *op);

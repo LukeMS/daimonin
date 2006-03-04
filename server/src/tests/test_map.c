@@ -56,7 +56,7 @@ START_TEST (map_loading)
     
     map = ready_map_name(path, 0);
     fail_unless(has_been_loaded_sh(path) != NULL, "Map not loaded");
-    fail_unless(map != NULL, "Couldn't load %s", map);
+    fail_unless(map != NULL, "Couldn't load %s", path);
     fail_unless(strcmp(map->path, path) == 0, "Wierd path");
     fail_if(strstr(map->name, "Stoneglow") == 0, "Not stoneglow");
     

@@ -107,6 +107,47 @@ START_TEST (object_strings)
 }
 END_TEST
 
+/*
+ * Tests for specific object types and their related 
+ * support functions
+ */
+
+START_TEST (object_type_beacon)
+{
+    shstr *path = add_string("/dev/testmaps/testmap_plugin");
+    shstr *b1_name = add_string("script_tester_beacon_1");
+    shstr *b2_name = add_string("script_tester_beacon_2");
+    
+    mapstruct *map;
+    object *beacon1, *beacon2, *lostsoul;
+
+    fail_if(beacon_table == NULL, "Beacon hashtable not initialized\n");
+    fail_if(locate_beacon(b1_name) != NULL, "Inv beacon available before test");
+    fail_if(locate_beacon(b2_name) != NULL, "Map beacon available before test");
+    
+    map = ready_map_name(path, 0);
+    fail_unless(map != NULL, "Couldn't load %s", path);
+    
+    /* Locate the two beacons by hardcoded coordinates */
+    lostsoul = present(MONSTER, map, 8, 3);
+    fail_unless(lostsoul != NULL, "Couldn't find lost soul on %s", path);
+    beacon1 = present_in_ob(TYPE_BEACON, lostsoul);
+    fail_unless(beacon1 != NULL, "Couldn't find beacon in lost soul on %s", path);
+    beacon2 = present(TYPE_BEACON, map, 8, 16);
+    fail_unless(beacon2 != NULL, "Couldn't find beacon 2 on %s", path);    
+
+    fail_if(locate_beacon(b1_name) != beacon1, "Inventory beacon not available");
+    fail_if(locate_beacon(b2_name) != beacon2, "Map beacon not available");
+    
+    delete_map(map);
+    object_gc();
+    
+    fail_if(locate_beacon(b1_name) != NULL, "Inventory beacon available after garbage collection");
+    fail_if(locate_beacon(b2_name) != NULL, "Map beacon available after garbage collection");
+}
+END_TEST
+
+
 Suite *object_suite(void)
 {
   Suite *s = suite_create("Objects");
@@ -118,6 +159,7 @@ Suite *object_suite(void)
   tcase_add_test(tc_core, object_creation);
   tcase_add_test(tc_core, arch_creation);
   tcase_add_test(tc_core, object_strings);
+  tcase_add_test(tc_core, object_type_beacon);
 
   return s;
 }

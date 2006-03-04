@@ -341,6 +341,7 @@ direction 3
 x 1
 y 18
 arch event_obj
+name lua
 race /dev/testmaps/Event_Trigger.lua
 sub_type 10
 end
@@ -482,6 +483,7 @@ connected 100
 x 2
 y 18
 arch event_obj
+name lua
 race /dev/testmaps/Event_Apply.lua
 sub_type 1
 end
@@ -1084,6 +1086,9 @@ name Lua
 race /dev/testmaps/lost_soul.lua
 sub_type 6
 end
+arch beacon
+name script_tester_beacon_1
+end
 end
 arch floor_ostone1
 x 8
@@ -1134,6 +1139,11 @@ x 8
 y 15
 end
 arch floor_ostone1
+x 8
+y 16
+end
+arch beacon
+name script_tester_beacon_2
 x 8
 y 16
 end
