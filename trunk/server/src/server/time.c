@@ -1782,10 +1782,10 @@ int process_object(object *op)
                 }
 
                 /* now we do something funny: WHEN the corpse is a (personal) bounty,
-                     * we delete the bounty marker (->slaying) and reseting the counter.
-                     * Now other people can access the corpse for stuff which are leaved
-                     * here perhaps.
-                     */
+                 * we delete the bounty marker (->slaying) and reseting the counter.
+                 * Now other people can access the corpse for stuff which are leaved
+                 * here perhaps.
+                 */
                 if (op->slaying)
                 {
                     FREE_AND_CLEAR_HASH2(op->slaying);
