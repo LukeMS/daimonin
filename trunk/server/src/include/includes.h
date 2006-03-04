@@ -97,6 +97,8 @@
 #include "hashtable.h"
 #include "hashfunc.h"
 
+#include "shstr_ng.h"
+
 #include "config.h"
 #include "define.h"
 #include "version.h"

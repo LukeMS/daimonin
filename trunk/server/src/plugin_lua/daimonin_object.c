@@ -113,6 +113,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"below", FIELDTYPE_OBJECT, offsetof(object, below), FIELDFLAG_READONLY},
     {"above", FIELDTYPE_OBJECT, offsetof(object, above), FIELDFLAG_READONLY},
     {"inventory", FIELDTYPE_OBJECT, offsetof(object, inv), FIELDFLAG_READONLY},
+    {"environment", FIELDTYPE_OBJECT, offsetof(object, env), FIELDFLAG_READONLY},
     {"map", FIELDTYPE_MAP, offsetof(object, map), FIELDFLAG_READONLY},
     {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY},
     {"name", FIELDTYPE_SHSTR, offsetof(object, name), 0},

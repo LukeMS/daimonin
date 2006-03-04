@@ -1307,6 +1307,11 @@ void destroy_object(object *ob)
               return_poolchunk(ob->custom_attrset, pool_mob_data);
               break;
 
+            case TYPE_BEACON:
+              /* the original object name is stored in custom_attrset */
+              hashtable_erase(beacon_table, ob->custom_attrset);
+              break;
+
             default:
               LOG(llevBug, "BUG: destroy_object() custom attrset found in unsupported object %s (type %d)\n",
                   STRING_OBJ_NAME(ob), ob->type);
@@ -2878,4 +2883,46 @@ int auto_apply(object *op)
     }
 
     return tmp ? 1 : 0;
+}
+
+/** Tries to locate a beacon. 
+ * @return the named beacon object if it was in memory, 
+ *         or NULL otherwise */
+object *locate_beacon(shstr *id)
+{
+    if(id == NULL) 
+    {
+        LOG(llevBug, "locate_beacon(NULL)\n");
+        return NULL;
+    }
+    return (object *)hashtable_find(beacon_table, id);
+}
+
+/** Intializer function for TYPE_BEACON objects.
+ * Ensures the beacon is added to the beacon hashtable.
+ */
+static void beacon_initializer(object *op)
+{
+    LOG(llevDebug, "beacon (%s) initialized\n", STRING_OBJ_NAME(op));
+    
+    if(op->custom_attrset) {
+        LOG(llevBug, "BUG: beacon (%s) initialized twice\n", STRING_OBJ_NAME(op));
+        return;
+    }
+    if(op->name == NULL) {
+        LOG(llevBug, "BUG: beacon with NULL name\n");
+        return;
+    }
+        
+    /* Store original name in the attrset, so that a name change
+     * doesn't mess things up */
+    add_refcount(op->name);
+    op->custom_attrset = (void *)op->name;
+    hashtable_insert(beacon_table, op->name, op);
+}
+
+/** Initialize the table of object initializers. */
+void init_object_initializers()
+{
+    object_initializers[TYPE_BEACON] = beacon_initializer;    
 }

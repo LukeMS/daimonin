@@ -177,7 +177,9 @@ WS	[ \t]*{NL}?
 					  */
 					else if(tmp->randomitems && (map_flags & MAP_ORIGINAL) &&(op->type != SPAWN_POINT ))
 						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),ART_CHANCE_UNSET,0);
-
+                    
+                    if(object_initializers[tmp->type] != NULL)
+                        object_initializers[tmp->type](tmp);
 				}
 			}
 			/* This is the actual archetype definition then */
@@ -723,7 +725,7 @@ void *create_loader_buffer(void *fp)
  *  LO_NOREAD (3): disabled
  *  LO_MEMORYMODE (4): read from a memory buffer instead of a file.
  */
-/* load_object() is now recursive save - this kind of call can happens when a multi
+/* load_object() is now recursive safe - this kind of call can happens when a multi
  * arch is expanded after loading in a map and out_of_map() triggers a map loading for
  * parts in a different map. Because we don't need any order of objects when we load a map,
  * this will work fine.
@@ -857,7 +859,11 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 	  update_ob_speed(op); /* now we have build a new object - and its not arch loading
 	                        * nor artifact list or style map. (MAP_STYLE is used to exlude them)
 							*/
+
+      if(object_initializers[op->type] != NULL)
+          object_initializers[op->type](op);
 	}
+
 
     /*LOG(llevDebug," load completed, object=%s %s (%d - %d)\n",op->name,op->title, op->item_quality, op->item_condition);*/
     return retval;

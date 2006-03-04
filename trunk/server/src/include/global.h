@@ -381,7 +381,8 @@ typedef struct linked_char
 
 typedef struct _money_block
 {
-    int     mode; /* 0, 1, or -1: see get_money_from_string() */
+    /** 0, 1, or -1: see get_money_from_string() */
+    int     mode;
     long    mithril;
     long    gold;
     long    silver;
@@ -485,6 +486,9 @@ EXTERN object                  *next_active_object; /* Loop index for process_ev
 EXTERN struct mempool_chunk    *removed_objects; /* List of objects that have been removed
                                                  * during the last server timestep
                                                  */
+
+/** Intialization functions for the different object types */
+EXTERN void (*object_initializers[256])(object *);
 
 EXTERN _srv_client_files        SrvClientFiles[SRV_CLIENT_FILES];
 EXTERN Socket_Info              socket_info;
@@ -613,6 +617,9 @@ EXTERN archetype               *empty_archetype;    /* Nice to have fast access 
 EXTERN archetype               *base_info_archetype;    /* Nice to have fast access to it */
 EXTERN archetype               *map_archeytpe;
 EXTERN archetype               *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
+
+/* hashtable of beacons */
+EXTERN hashtable               *beacon_table;
 
 /* include some global project headers */
 #include "plugin.h"

@@ -1022,7 +1022,7 @@ static void process_map_events(mapstruct *map)
     next_active_object = NULL;
 }
 
-static void process_events()
+void process_events()
 {
     mapstruct *map;
 #if defined TIME_PROCESS_EVENTS

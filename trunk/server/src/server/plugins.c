@@ -68,6 +68,7 @@ struct plugin_hooklist  hooklist    =
 	gui_interface,
 	quest_count_pending,
 	quest_find_name,
+    locate_beacon,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
