@@ -205,13 +205,13 @@ int fill_command_buffer(NewSocket *ns, int len)
     do
     {
         /* now we need to check what our write buffer does.
-             * We have not many choices, if its to full.
-             * In badest case, we get a overflow - then we kick the
-             * user. So, we try here to "freeze" the socket until we
-             * the output buffers are balanced again.
-             * Freezing works only for "active" action - we can't and don't
-             * want stop sending needed syncronization stuff.
-             */
+         * We have not many choices, if its to full.
+         * In badest case, we get a overflow - then we kick the
+         * user. So, we try here to "freeze" the socket until we
+         * the output buffers are balanced again.
+         * Freezing works only for "active" action - we can't and don't
+         * want stop sending needed syncronization stuff.
+         */
         if (ns->outputbuffer.len >= (int) (MAXSOCKBUF * 0.75))
         {
             if (!ns->write_overflow)
@@ -232,8 +232,8 @@ int fill_command_buffer(NewSocket *ns, int len)
         if ((rr = socket_read_pp(&ns->inbuf, &ns->readbuf, len)))
         {
             /* check its a system command.
-                     * If so, process it. If not, store it.
-                     */
+             * If so, process it. If not, store it.
+             */
             ns->inbuf.buf[ns->inbuf.len] = '\0';  /* Terminate buffer - useful for string data */
             for (i = 0; nscommands[i].cmdname != NULL; i++)
             {
@@ -299,17 +299,17 @@ void HandleClient(NewSocket *ns, player *pl)
     while (1)
     {
         /* If it is a player, and they don't have any speed left, we
-            * return, and will read in the data when they do have time.
-              */
+         * return, and will read in the data when they do have time.
+         */
         if (ns->status >= Ns_Zombie || (pl && pl->state == ST_PLAYING && (!pl->ob || pl->ob->speed_left < 0.0f)))
             return;
 
         /* now we need to check what our write buffer does.
-             * We have not many choices, if its to full.
-             * In badest case, we get a overflow - then we kick the
-             * user. So, we try here to "freeze" the socket until we
-             * the output buffers are balanced again.
-             */
+         * We have not many choices, if its to full.
+         * In badest case, we get a overflow - then we kick the
+         * user. So, we try here to "freeze" the socket until we
+         * the output buffers are balanced again.
+         */
         if (ns->outputbuffer.len >= (int) (MAXSOCKBUF * 0.85))
         {
             if (!ns->write_overflow)
@@ -339,10 +339,10 @@ void HandleClient(NewSocket *ns, player *pl)
         }
 
         /* First, break out beginning word.  There are at least
-            * a few commands that do not have any paremeters.  If
-            * we get such a command, don't worry about trying
-            * to break it up.
-            */
+         * a few commands that do not have any paremeters.  If
+         * we get such a command, don't worry about trying
+         * to break it up.
+         */
         data = (unsigned char *) strchr((char *) ns->inbuf.buf + 2, ' ');
         if (data)
         {
@@ -383,10 +383,9 @@ void HandleClient(NewSocket *ns, player *pl)
         }
 
         /* If we get here, we didn't find a valid command.  Logging
-            * this might be questionable, because a broken client/malicious
-            * user could certainly send a whole bunch of invalid commands.
-            */
-
+         * this might be questionable, because a broken client/malicious
+         * user could certainly send a whole bunch of invalid commands.
+         */
         LOG(llevDebug, "HACKBUG: Bad command from client (%s) (%s)\n", STRING_SAFE((char *) ns->inbuf.buf + 2),
             STRING_SAFE((char *) data));
         ns->status = Ns_Dead;
