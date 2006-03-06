@@ -127,16 +127,16 @@ typedef struct obj
     uint32          update_tag;         /* this is used from map2 update! */
     uint32          flags[NUM_FLAGS_32]; /* various flags */
 
-    tag_t           enemy_count;            /* What count the enemy has */
-    struct obj     *enemy;          /* Monster/player to follow even if not closest */
+    tag_t           enemy_count;        /* What count the enemy has */
+    struct obj     *enemy;              /* Monster/player to follow even if not closest */
     /* (only used by containers now =) */
     tag_t           attacked_by_count;  /* the tag of attacker, so we can be sure */
-    struct obj     *attacked_by;    /* This object start to attack us! only player & monster */
-    tag_t           owner_count;         /* What count the owner had (in case owner has been freed) */
-    struct obj     *owner;          /* Pointer to the object which controls this one
-                                             * Owner should not be referred to directly
-                                             * - get_owner() should be used instead.
-                                             */
+    struct obj     *attacked_by;        /* This object start to attack us! only player & monster */
+    tag_t           owner_count;        /* What count the owner had (in case owner has been freed) */
+    struct obj     *owner;              /* Pointer to the object which controls this one
+                                         * Owner should not be referred to directly
+                                         * - get_owner() should be used instead.
+                                         */
     /* *map is part of "object head" but this not? hmm */
     sint16          x;                  /* X-Position in the map for this object */
     sint16          y;                  /* Y-Position in the map for this object */
@@ -145,11 +145,11 @@ typedef struct obj
     uint16          path_repelled;      /* Paths the object is repelled from */
     uint16          path_denied;        /* Paths the object is denied access to */
 
-    uint16          last_damage;            /* thats the damage send with map2 */
+    uint16          last_damage;        /* thats the damage send with map2 */
 
     uint16          terrain_type;       /* type flags for different enviroment (tile is under water, firewalk,...)
-                                                 * A object which can be applied GIVES this terrain flags to his owner
-                                                 */
+                                         * A object which can be applied GIVES this terrain flags to his owner
+                                         */
     uint16          terrain_flag;       /* The object can move over/is unaffected from this terrain type */
 
 
@@ -157,7 +157,7 @@ typedef struct obj
     sint16          material_real;      /* This hold the real material value like what kind of steel */
 
     sint16          last_heal;          /* Last healed. Depends on constitution */
-    sint16          last_sp;                /* As last_heal, but for spell points */
+    sint16          last_sp;            /* As last_heal, but for spell points */
 
     sint16          last_grace;         /* as last_sp, except for grace */
     sint16          last_eat;           /* How long since we last ate */
@@ -165,7 +165,7 @@ typedef struct obj
     uint16          animation_id;       /* An index into the animation array */
     uint16          inv_animation_id;   /* An index into the animation array for the client inv */
 
-    sint8           glow_radius;            /* object is a light source */
+    sint8           glow_radius;        /* object is a light source */
     /* some stuff for someone coming softscrolling / smooth animations */
     /*sint8 tile_xoff;*/            /* x-offset of position of an object inside a tile */
     /*sint8 tile_yoff;*/            /* same for y-offset */
@@ -176,13 +176,13 @@ typedef struct obj
     sint8           direction;          /* Means the object is moving that way. */
     sint8           facing;             /* Object is oriented/facing that way. */
     uint8           quick_pos;          /* quick pos is 0 for single arch, xxxx0000 for a head
-                                                 * or x/y offset packed to 4 bits for a tail
-                                                 * warning: change this when include > 15x15 monster
-                                                 */
+                                         * or x/y offset packed to 4 bits for a tail
+                                         * warning: change this when include > 15x15 monster
+                                         */
 
     uint8           type;               /* PLAYER, BULLET, etc.  See define.h - must be < ARCH_MAX_TYPES */
     uint8           sub_type1;          /* sub type definition - this will be send to client too */
-    uint8           item_quality;           /* quality of a item in range from 0-100 */
+    uint8           item_quality;       /* quality of a item in range from 0-100 */
     uint8           item_condition;     /* condition of repair of an item - from 0 to 100% item_quality */
 
     uint8           item_race;          /* item crafted from race x. "orcish xxx", "dwarven xxxx" */
@@ -190,13 +190,13 @@ typedef struct obj
     uint8           item_skill;         /* if set and item_level, item_level in this skill is needed */
 
     /* TODO: get rid of those two with AI system change */
-    sint8           move_status;            /* What stage in attack mode */
+    sint8           move_status;        /* What stage in attack mode */
     uint8           move_type;          /* What kind of attack movement */
 
-    sint8           anim_enemy_dir;       /* special shadow variable: show dir to targeted enemy */
-    sint8           anim_moving_dir;      /* sic: shows moving dir or -1 when object do something else */
+    sint8           anim_enemy_dir;     /* special shadow variable: show dir to targeted enemy */
+    sint8           anim_moving_dir;    /* sic: shows moving dir or -1 when object do something else */
 
-    sint8           anim_enemy_dir_last;    /* if we change facing in movement, we must test for update the anim*/
+    sint8           anim_enemy_dir_last; /* if we change facing in movement, we must test for update the anim*/
     sint8           anim_moving_dir_last; /* sic:*/
     sint8           anim_last_facing;     /* the last direction this monster was facing */
     sint8           anim_last_facing_last;/* the last direction this monster was facing backbuffer*/
@@ -204,21 +204,21 @@ typedef struct obj
     uint8           anim_speed;         /* animation speed in ticks */
     uint8           last_anim;          /* ticks between animation-frames */
     /* TODO: get rid of this one with AI system change */
-    uint8           run_away;               /* Monster runs away if it's hp goes below this percentage. */
+    uint8           run_away;           /* Monster runs away if it's hp goes below this percentage. */
 
-    uint8           hide;                   /* The object is hidden. We don't use a flag here because
-                                                         * the range from 0-255 tells us the quality of the hide
-                                                         */
+    uint8           hide;               /* The object is hidden. We don't use a flag here because
+                                         * the range from 0-255 tells us the quality of the hide
+                                         */
     uint8           layer;              /* the layer in a map, this object will be sorted in */
 
     /* TODO: get rid of using attrsets? */
-    sint8           resist[NROFATTACKS];    /* Intrinsic resist against damage - range from -125 to +125 */
+    sint8           resist[NROFATTACKS];/* Intrinsic resist against damage - range from -125 to +125 */
 
-    uint8           attack[NROFATTACKS];    /* our attack values (only positiv ones */
+    uint8           attack[NROFATTACKS];/* our attack values (only positiv ones */
 
     float           speed;              /* The overall speed of this object */
     float           speed_left;         /* How much speed is left to spend this round */
-    float           weapon_speed;           /* new weapon speed system. swing of weapon */
+    float           weapon_speed;       /* new weapon speed system. swing of weapon */
     float           weapon_speed_left;
 
     living          stats;              /* object stats like hp, sp, grace ... */
@@ -227,7 +227,7 @@ typedef struct obj
     sint16          ox, oy;             /* For debugging: Where it was last inserted */
 #endif
 
-    void           *custom_attrset;       /* Type-dependant extra data. */
+    void           *custom_attrset;     /* Type-dependant extra data. */
 } object;
 
 #ifdef WIN32
