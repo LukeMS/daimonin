@@ -275,7 +275,8 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 /*****************************************************************************/
 /* Name   : GameObject_CreateArtifact                                        */
 /* Lua    : object:CreateArtifact(base_obj, artifact_mask)                   */
-/* Status : Tested. Create an artifact = apply a artifact mask to an object  */
+/* Info   : Create an artifact = apply a artifact mask to an object          */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_CreateArtifact(lua_State *L)
 {
@@ -301,8 +302,8 @@ static int GameObject_CreateArtifact(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetName                                               */
 /* Lua    : object:GetName()                                                 */
+/* Info   : same as query_short_name()                                       */
 /* Status : Tested                                                           */
-/* same as query_short_name() - u                                            */
 /*****************************************************************************/
 static int GameObject_GetName(lua_State *L)
 {
@@ -324,7 +325,8 @@ static int GameObject_GetName(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetEquipment                                          */
 /* Lua    : object:GetEquipment(idnum)                                       */
-/* Status : Tested. Only works for player objects                            */
+/* Info   : Only works for player objects                                    */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_GetEquipment(lua_State *L)
 {
@@ -343,8 +345,8 @@ static int GameObject_GetEquipment(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetRepairCost                                         */
-/* Lua    : object:GetRepairCost(|value)                                     */
-/* Status : Tested.                                                          */
+/* Lua    : object:GetRepairCost()                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_GetRepairCost(lua_State *L)
 {
@@ -363,8 +365,8 @@ static int GameObject_GetRepairCost(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Repair                                                */
-/* Lua    : object:Repair(|skill)                                            */
-/* Status : Tested.                                                          */
+/* Lua    : object:Repair(skill_nr)                                          */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Repair(lua_State *L)
 {
@@ -1032,8 +1034,8 @@ static int GameObject_Write(lua_State *L)
 /* Name   : GameObject_SetGender                                             */
 /* Lua    : object:SetGender(gender)                                         */
 /* Info   : Changes the gender of object. gender_string should be one of     */
-/*          Daimonin.NEUTER, Daimonin.MALE, Daimonin.GENDER_FEMALE or        */
-/*          Daimonin.HERMAPHRODITE                                           */
+/*          game.NEUTER, game.MALE, game.GENDER_FEMALE or                    */
+/*          game.HERMAPHRODITE                                               */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_SetGender(lua_State *L)
@@ -1706,7 +1708,7 @@ static int GameObject_AddQuestTarget(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddQuestItem                                          */
-/* Lua    : quest_obj:AddQuestItem(nrof, arch, face, |name, |title)          */
+/* Lua    : object:AddQuestItem(nrof, arch, face, name, title)               */
 /* Info   : Add a quest item to a quest or base object                       */
 /*        : (see GameObject_AddQuestTarget)                                  */
 /* Status : Stable                                                           */
@@ -1776,7 +1778,7 @@ static int GameObject_AddQuestItem(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_NrofQuestItem                                         */
-/* Lua    : base_obj:NrofQuestItem()                                         */
+/* Lua    : object:NrofQuestItem()                                           */
 /* Info   : counts quest items inside the inventory of the player            */
 /*        : where target_obj is inside                                       */
 /* Status : Stable                                                           */
@@ -1844,7 +1846,7 @@ static int remove_quest_items(const object *inv, const object *myob, int nrof)
 
 /*****************************************************************************/
 /* Name   : GameObject_RemoveQuestItem                                       */
-/* Lua    : kill_target_obj:RemoveQuestItem(|nrof)                           */
+/* Lua    : object:RemoveQuestItem(nrof)                                     */
 /* Info   : removes the items from the players inventory.                    */
 /*        : Get the template info from the kill target obj inventory         */
 /*        : NOTE: the function tries to remove given objects even when there,*/
@@ -1878,7 +1880,7 @@ static int GameObject_RemoveQuestItem(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetQuestStatus                                        */
-/* Lua    : object:SetQuest(status. step-id)                                 */
+/* Lua    : object:SetQuestStatus(status, step_id)                           */
 /* Info   : We need this function because quest_trigger must be moved        */
 /*        : q_status: -1 = done, q_type: can change type (kill, normal..)    */
 /*        : Common call is SetQuestStatus(-1) to "finish"/neutralize a quest */
@@ -1940,7 +1942,7 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddOneDropQuest                                       */
-/* Lua    : object:AddOneDropQuest(archetype, name, |title)                  */
+/* Lua    : object:AddOneDropQuest(archetype, name, title)                   */
 /* Status : Stable                                                           */
 /* Info   : add a one drop item to the player                                */
 /*        : create the quest container if needed                             */
@@ -1948,24 +1950,21 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
 static int GameObject_AddOneDropQuest(lua_State *L)
 {
     char       *name, *title=NULL;
-    object     *myob;
     lua_object *self, *whatptr;
 
     get_lua_args(L, "OOs|s", &self, &whatptr, &name, &title);
 
-	myob = WHAT;
-
     /* store name & arch name of the quest obj. so we can id it later */
-	FREE_AND_COPY_HASH(myob->name, name);
-    FREE_AND_COPY_HASH(myob->race, myob->arch->name);
+	FREE_AND_COPY_HASH(WHAT->name, name);
+    FREE_AND_COPY_HASH(WHAT->race, WHAT->arch->name);
     if(title)
-        FREE_AND_COPY_HASH(myob->title, title);
+        FREE_AND_COPY_HASH(WHAT->title, title);
 
 	if(!CONTR(WHO)->quest_one_drop)
 	    hooks->add_quest_containers(WHO);
-    hooks->insert_ob_in_ob(myob, CONTR(WHO)->quest_one_drop);
+    hooks->insert_ob_in_ob(WHAT, CONTR(WHO)->quest_one_drop);
 
-    return push_object(L, &GameObject, myob);
+    return push_object(L, &GameObject, WHAT);
 }
 
 /*****************************************************************************/
@@ -2065,13 +2064,12 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
 static int GameObject_CreateInvisibleInside(lua_State *L)
 {
     char       *txt;
-    char        txt2[6] = "force";
     object     *myob;
     lua_object *whereptr;
 
     get_lua_args(L, "Os", &whereptr, &txt);
 
-    myob = hooks->get_archetype(txt2);
+    myob = hooks->get_archetype("force");
 
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
@@ -2091,23 +2089,9 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 }
 
 /* code body of the CreateObjectInside functions */
-static object *CreateObjectInside_body(lua_State *L)
+static object *CreateObjectInside_body(lua_State *L, object *where, char *archname, int id, int nrof, int value)
 {
-	object     *myob;
-	int         value = -1, id, nrof = 1;
-	char       *txt;
-	lua_object *whereptr;
-
-	/* 0: name
-	1: object we want give <name>
-	2: if 1, set FLAG_IDENTIFIED
-	3: nr of objects to create: 0 and 1 don't change default nrof setting
-	3: if not -1, use it for myob->value
-	*/
-
-	get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
-
-	myob = hooks->get_archetype(txt);
+	object *myob = hooks->get_archetype(archname);
 	if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
 	{
 		LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));
@@ -2125,10 +2109,7 @@ static object *CreateObjectInside_body(lua_State *L)
 	if (nrof > 1)
 		myob->nrof = nrof;
 
-	myob = hooks->insert_ob_in_ob(myob, WHERE);
-	push_object(L, &GameObject, myob);
-
-	return myob;
+	return hooks->insert_ob_in_ob(myob, where);
 }
 
 /*****************************************************************************/
@@ -2142,25 +2123,36 @@ static object *CreateObjectInside_body(lua_State *L)
 /*****************************************************************************/
 static int GameObject_CreateObjectInside(lua_State *L)
 {
-	object *myob;
+    object *myob;
+	int         value = -1, id, nrof = 1;
+	char       *txt;
+	lua_object *whereptr;
 
-	myob = CreateObjectInside_body(L);
+	get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
+
+	myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
+    
 	hooks->esrv_send_item(hooks->is_player_inv(myob), myob);
 
-	return 1;
+	return push_object(L, &GameObject, myob);
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_CreateObjectInsideEx                                  */
 /* Lua    : object:CreateObjectInsideEx(archname, identified, number, value) */
-/* Info   : Same as GameObject_CreateObjectInsideE but give message to player*/
+/* Info   : Same as GameObject_CreateObjectInside  but give message to player*/
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_CreateObjectInsideEx(lua_State *L)
 {
-	object *myob, *pl;
+    object     *myob, *pl;
+	int         value = -1, id, nrof = 1;
+	char       *txt;
+	lua_object *whereptr;
 
-	myob = CreateObjectInside_body(L);
+	get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
+
+	myob = CreateObjectInside_body(L, WHERE, txt, id, nrof, value);
 
 	pl = hooks->is_player_inv(myob);
 	if(pl)
@@ -2170,7 +2162,7 @@ static int GameObject_CreateObjectInsideEx(lua_State *L)
 				myob->nrof?myob->nrof:1, hooks->query_short_name(myob, NULL));
 	}
 
-	return 1;
+	return push_object(L, &GameObject, myob);
 }
 
 /* help function for GameObject_CheckInventory
@@ -2502,7 +2494,7 @@ static int GameObject_IdentifyItem(lua_State *L)
 /* Info   : returns 1 if object is of the specified type, or 0 otherwise.    */
 /*          (e.g. game.TYPE_MONSTER for monster/NPC, or game.TYPE_PLAYER for */
 /*          players)                                                         */
-/* Status : Tested                                                           */
+/* Status : Deprecated - use object.type == game.TYPE_MONSTER instead        */
 /*****************************************************************************/
 static int GameObject_IsOfType(lua_State *L)
 {
@@ -2633,9 +2625,8 @@ static int GameObject_GetItemCost(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddMoney                                              */
-/* Lua    : object:AddMoney()                                                */
+/* Lua    : object:AddMoney(copper, silver, gold, mithril)                   */
 /* Info   : adds to inventory of caller coin object = money                  */
-/*        : format: AddMoney(copper, silver, gold, mithirl)                  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 
@@ -2654,7 +2645,7 @@ static int GameObject_AddMoney(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddMoneyEx                                            */
-/* Lua    : object:AddMoneyEx()                                              */
+/* Lua    : object:AddMoneyEx(copper, silver, gold, mithril)                 */
 /* Info   : Same as AddMoney but with message to player how much he got      */
 /* Status : Tested                                                           */
 /*****************************************************************************/
