@@ -556,6 +556,11 @@ int move_monster(object *op, int mode)
             did_move = 1;
     }
 
+    /* Clear anim indicators if we didn't do anything.
+     * This enables idle animations */
+    if(!did_move)
+        op->anim_moving_dir = -1;
+
     /*
      * Other mutually exclusive action commands
      * First to return TRUE disables the rest
@@ -583,10 +588,6 @@ jump_move_monster_action:
     else
         MOB_DATA(op)->idle_time++;
 
-    /* Clear anim indicators if we didn't do anything.
-     * This enables idle animations */
-    if(!did_move)
-        op->anim_moving_dir = -1;
     if(!did_action)
         op->anim_enemy_dir = -1;  
     
