@@ -478,9 +478,6 @@ int move_monster(object *op, int mode)
     /*
      * First, some general monster-management
      */
-    tmp_dir = op->anim_enemy_dir;
-    op->anim_enemy_dir = -1;      /* control the facings 25 animations */
-    op->anim_moving_dir = -1;     /* the same for movement */
 
     /* Pets temporarily stored inside a player gets a chance to escape */
     if(op->env && op->env->type == PLAYER && QUERY_FLAG(op, FLAG_SYS_OBJECT))
@@ -555,7 +552,7 @@ int move_monster(object *op, int mode)
             success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
         }
 
-        if(success)
+        if(success) 
             did_move = 1;
     }
 
@@ -586,6 +583,13 @@ jump_move_monster_action:
     else
         MOB_DATA(op)->idle_time++;
 
+    /* Clear anim indicators if we didn't do anything.
+     * This enables idle animations */
+    if(!did_move)
+        op->anim_moving_dir = -1;
+    if(!did_action)
+        op->anim_enemy_dir = -1;  
+    
     return 0;
 }
 
