@@ -858,9 +858,23 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
     /* TODO: parameterize */
     if(rv->distance < 8)
     {
-        /* TODO: if pet is close to owner, give it a large chance to rest instead of stroll
-         * TODO: if it has recently rested, give it a reduced chance to stroll
-         */
+        /* If very close to owner, possibly rest a little */
+        if(rv->distance < 4)
+        {
+            int rest_chance;
+            if(op->anim_moving_dir == -1) 
+                /* Already resting? high chance of staying. */
+                rest_chance = 85;
+            else
+                rest_chance = 40 - rv->distance * 10;
+
+            if((RANDOM() % 100) < rest_chance) 
+            {
+                response->type = MOVE_RESPONSE_DIR;
+                response->data.direction = 0;
+                return;
+            }
+        }
         
         /* The further from owner, the lesser chance to
          * stroll randomly */
