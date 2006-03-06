@@ -149,16 +149,16 @@ for filename in listCFiles(sys.argv[1]):
 							elif types[i] == 'd':
 								tp = 'double'
 							elif types[i] == 'O':
-								if c != 0 or prefix != 'object':
+								if i != 0 or prefix != 'object':
 									tp = 'object'
 							elif types[i] == 'G':
-								if c != 0 or prefix != 'game':
+								if i != 0 or prefix != 'game':
 									tp = 'game'
 							elif types[i] == 'M':
-								if c != 0 or prefix != 'map':
+								if i != 0 or prefix != 'map':
 									tp = 'map'
 							elif types[i] == 'A':
-								if c != 0 or prefix != 'ai':
+								if i != 0 or prefix != 'ai':
 									tp = 'ai'
 							elif types[i] == '|':
 								optional = 1
