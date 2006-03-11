@@ -6,7 +6,8 @@ Date:    2005-11-28
 endmsg
 width 24
 height 24
-darkness 2
+difficulty 1
+darkness 3
 tileset_id 78
 tileset_x 0
 tileset_y 0
@@ -155,7 +156,8 @@ arch grain2.101
 x 6
 y 2
 end
-arch fstone1b
+arch floor_cave2
+type -666
 x 6
 y 3
 end
@@ -172,15 +174,15 @@ unaggressive 0
 random_move 0
 dam 40
 arch quest_trigger
-name merc guild-1
+name The Mercenary Guild Quest
+sub_type 3
 last_heal 1
-arch quest_object
-name Cashin's leather cap
-face helm_leather.101
-identified 1
 end
 end
 end
+arch light5
+x 6
+y 3
 end
 arch fstone1b
 x 6
@@ -475,10 +477,6 @@ arch fstone1b
 x 8
 y 13
 end
-arch light1
-x 8
-y 13
-end
 arch fstone1b
 x 8
 y 14
@@ -764,6 +762,10 @@ arch ladder_up
 slaying /relic/castle/guildhall/guildhallb_030a
 hp 11
 sp 8
+x 11
+y 8
+end
+arch light9
 x 11
 y 8
 end
@@ -1163,6 +1165,10 @@ arch pottery4.101
 x 15
 y 8
 end
+arch light5
+x 15
+y 8
+end
 arch fstone1b
 x 15
 y 9
@@ -1292,10 +1298,6 @@ arch fstone1b
 x 16
 y 14
 end
-arch light1
-x 16
-y 14
-end
 arch fstone1b
 x 16
 y 15
@@ -1321,10 +1323,6 @@ x 17
 y 2
 end
 arch fstone1b
-x 17
-y 3
-end
-arch light1
 x 17
 y 3
 end
@@ -1433,7 +1431,7 @@ name glowing mushroom
 x 18
 y 2
 end
-arch light2
+arch light5
 x 18
 y 2
 end
@@ -1524,6 +1522,10 @@ dam 30
 maxhp 40
 exp 75
 end
+end
+arch light5
+x 18
+y 14
 end
 arch fstone1b
 x 18

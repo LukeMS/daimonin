@@ -1077,7 +1077,6 @@ void InterfaceCmd(unsigned char *data, int len)
     {
         int mode, pos = 0;
 
-        /*interface_mode = INTERFACE_MODE_NPC;*/
         mode = *data;
         pos ++;
 

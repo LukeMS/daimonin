@@ -1,4 +1,4 @@
--- template for a "item quest" script
+-- template for a "item quest" script3
 require("topic_list")
 require("quest_check")
 require("interface_builder")
@@ -91,7 +91,7 @@ local function topStartQ1()
 if q_stat_1 ~= game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("START: Item Test Quest Multi 1")
+ib:SetTitle(q_name_1)
 quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
@@ -110,7 +110,7 @@ if q_obj_1 ~= null then
 q_obj_1:AddQuestItem(1, "quest_object", "helm_leather.101", "Item Test Helm Multi 1")
 q_stat_1 = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
 activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest 'Item Test Quest Multi 1'.", game.COLOR_NAVY)
+activator:Write("You take the quest '"..q_name_1.."'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
@@ -174,7 +174,7 @@ local function topStartQ2()
 if q_stat_2 ~= game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("START: Item Test Quest Multi 2")
+ib:SetTitle(q_name_2)
 quest_body2()
 quest_icons2()
 ib:SetAccept(nil, "acceptq2") 
@@ -193,7 +193,7 @@ if q_obj_2 ~= null then
 q_obj_2:AddQuestItem(1, "quest_object", "helm_leather.101", "Item Test Helm Multi 2")
 q_stat_2 = Q_Status(activator, q_obj_2, q_step_2, q_level_2, q_skill_2, "Dev Item Test Quest Multi 1")
 activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest 'Item Test Quest Multi 2'.", game.COLOR_NAVY)
+activator:Write("You take the quest '"..q_name_2.."'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
@@ -257,7 +257,7 @@ local function topStartQ3()
 if q_stat_3 ~= game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("START: Item Test Quest Multi 3")
+ib:SetTitle(q_name_1)
 quest_body3()
 quest_icons3()
 ib:SetAccept(nil, "acceptq3") 
@@ -276,8 +276,7 @@ if q_obj_3 ~= null then
 q_obj_3:AddQuestItem(1, "quest_object", "helm_leather.101", "Item Test Helm Multi 3")
 q_stat_3 = Q_Status(activator, q_obj_3, q_step_3, q_level_3, q_skill_3)
 activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest 'Item Test Quest Multi 3'.", game.COLOR_NAVY)
-end
+activator:Write("You take the quest '"..q_name_3.."'.", game.COLOR_NAVY)
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
 end

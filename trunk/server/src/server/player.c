@@ -201,11 +201,6 @@ static player * get_player(player *p)
     p->last_speed = 0;
     p->update_los = 1;
 
-    /* the default skill groups for non guild players */
-    p->base_skill_group[0]=SKILLGROUP_PHYSIQUE;
-    p->base_skill_group[1]=SKILLGROUP_AGILITY;
-    p->base_skill_group[2]=SKILLGROUP_WISDOM;
-
     strncpy(p->title, op->arch->clone.name, MAX_NAME);
     FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
 

@@ -53,7 +53,7 @@ local function topStartQ1()
 if q_stat_1 ~= game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("START: Normal Test Quest")
+ib:SetTitle(q_name_1)
 quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
@@ -71,7 +71,7 @@ q_obj_1 = activator:AddQuest(q_name_1, game.QUEST_NORMAL, q_step_1, q_end_1, q_l
 if q_obj_1 ~= null then
 q_stat_1 = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
 activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest 'Normal Test Quest'.", game.COLOR_NAVY)
+activator:Write("You take the quest '"..q_name_1.."'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)

@@ -160,7 +160,9 @@ typedef struct pl_player
     object             *equipment[PLAYER_EQUIP_MAX]; /* pointers to applied items in the players inventory */
     object             *skill_ptr[NROFSKILLS];       /* quick jump table to skill objects in the players inv. */
 
-    int                 base_skill_group[3];            /* guild/base exp skill groups for default exp gain */
+	int                 base_skill_group[3];            /* guild/base exp skill groups for default exp gain */
+	int                 base_skill_group_exp[3];        /* % adjustment for exp gain */
+	object			   *guild_force;
     object             *highest_skill[NROFSKILLGROUPS]; /* highest skill of every skill group */
 
     object             *exp_obj_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */

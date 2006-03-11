@@ -327,6 +327,9 @@ struct plugin_hooklist
 	void (*gui_interface)(object *who, int mode, const char *text, const char *tail);
 	int (*quest_count_pending)(const struct obj *pobj);
 	struct obj *(*quest_find_name)(const struct obj *pl, const char *name);
+	object * (*guild_get)(player *pl, char *name);
+	object * (*guild_join)(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
+	void (*guild_leave)(player *pl);
     object *(*locate_beacon)(shstr *id);
 	
     /* Global variables */

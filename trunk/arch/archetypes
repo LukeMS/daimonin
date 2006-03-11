@@ -8814,7 +8814,7 @@ invulnerable 1
 end
 Object guild_force
 name GUILD_FORCE
-type 114
+type 140
 editor_folder indoor/show all
 item_quality 100
 item_condition 100
@@ -8822,9 +8822,15 @@ nrof 1
 identified 1
 known_magical 1
 known_cursed 1
+sub_type 1
 sys_object 1
+last_eat 3
+last_sp 0
+last_heal 5
+last_grace 100
+magic 100
+state 100
 layer 0
-applied 1
 face force.101
 no_drop 1
 speed 0
@@ -24242,6 +24248,13 @@ no_pick 1
 x 1
 y 1
 end
+Object beacon
+type 137
+editor_folder special/special
+no_pick 1
+face beacon.101
+sys_object 1
+end
 Object bed_save
 name save bed
 type 106
@@ -29285,6 +29298,15 @@ name stone wall
 type 77
 editor_folder walls/marble
 face wall_marble1_w2.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-01
 layer 5
 no_pick 1
 no_pass 1

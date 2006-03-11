@@ -68,6 +68,9 @@ struct plugin_hooklist  hooklist    =
 	gui_interface,
 	quest_count_pending,
 	quest_find_name,
+	guild_get,
+	guild_join,
+	guild_leave,
     locate_beacon,
 
     /* global variables */

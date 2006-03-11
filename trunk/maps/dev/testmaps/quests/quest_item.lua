@@ -52,7 +52,7 @@ local function topStartQ1()
 if q_stat_1 ~= game.QSTAT_NO then
 topicDefault()
 else
-ib:SetTitle("START: Item Test Quest")
+ib:SetTitle(q_name_1)
 quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
@@ -71,7 +71,7 @@ if q_obj_1 ~= null then
 q_obj_1:AddQuestItem(1, "quest_object", "helm_leather.101", "Item Test Helm")
 q_stat_1 = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
 activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest 'Item Test Quest'.", game.COLOR_NAVY)
+activator:Write("You take the quest '"..q_name_1.."'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)

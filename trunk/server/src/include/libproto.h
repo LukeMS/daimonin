@@ -63,6 +63,10 @@ extern void             apply_death_exp_penalty(object *op);
 extern float            calc_level_difference(int who_lvl, int op_lvl);
 extern int              calc_skill_exp(object *who, object *op, float mod, int level, int *real);
 extern void             init_new_exp_system(void);
+/* guild.c */
+extern object		   *guild_get(player *pl, char *name);
+extern object		   *guild_join(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
+extern void				guild_leave(player *pl);
 /* holy.c */
 extern void             init_gods(void);
 extern void             add_god_to_list(archetype *god_arch);

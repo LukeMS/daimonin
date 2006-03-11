@@ -496,7 +496,13 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 {
     int s;
 
-
+	interface_mode = INTERFACE_MODE_NPC;
+	if(gui_int->used_flag&GUI_INTERFACE_WHO)
+	{
+		if(*gui_int->who.body == 'Q')
+			interface_mode = INTERFACE_MODE_QLIST;
+	}
+	
     if(gui_int->used_flag&GUI_INTERFACE_ICON)
     {
 		char *tmp;
@@ -516,6 +522,13 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
     if(gui_int->used_flag&GUI_INTERFACE_HEAD)
     {
         gui_int->head.face = get_bmap_id(gui_int->head.name);
+
+		if(gui_int->head.face==-1)
+		{
+			char line[256];
+			sprintf(line, "%s%s.png", GetIconDirectory(), gui_int->head.name);
+			gui_int->head.picture = sprite_load_file(line, 0);
+		}
 
         if(gui_int->head.body_text[0]=='\0')
             strcpy(gui_int->head.body_text, cpl.target_name?cpl.target_name:"");
@@ -542,7 +555,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
             if(gui_int->message.body_text[i]==0x0a || gui_int->message.body_text[i]=='\0')
             {
                 gui_int->message.lines[gui_int->message.line_count][c]='\0';
-        // draw_info(gui_int->message.lines[gui_int->message.line_count], COLOR_YELLOW);
+				// draw_info(gui_int->message.lines[gui_int->message.line_count], COLOR_YELLOW);
                 gui_int->message.line_count++;
                 if(gui_int->message.body_text[i]=='\0')
                     break;
@@ -591,6 +604,62 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 
     if(gui_int->used_flag&GUI_INTERFACE_REWARD)
     {
+		int i, len, c=0;
+
+		gui_int->reward.line_count=0;
+		for(i=0;;i++)
+		{
+			if(gui_int->reward.body_text[i]==0x0d)
+				continue;
+			if(gui_int->reward.body_text[i]==0x0a || gui_int->reward.body_text[i]=='\0')
+			{
+				gui_int->reward.lines[gui_int->reward.line_count][c]='\0';
+				// draw_info(gui_int->reward.lines[gui_int->message.line_count], COLOR_YELLOW);
+				gui_int->reward.line_count++;
+				if(gui_int->reward.body_text[i]=='\0')
+					break;
+				c=0;
+			}
+			else
+			{
+				/* lets do automatic line breaks */
+				gui_int->reward.lines[gui_int->reward.line_count][c]=gui_int->reward.body_text[i];
+
+				if(StringWidthOffset(&MediumFont, gui_int->reward.lines[gui_int->reward.line_count], &len, 270))
+				{
+					char tmp_line[INTERFACE_MAX_CHAR];
+					int ii;
+
+					strcpy(tmp_line, gui_int->reward.lines[gui_int->reward.line_count]); /* safe the line */
+					gui_int->reward.lines[gui_int->reward.line_count][len]=0; 
+					for(ii=len;ii>=0;ii--)
+					{
+						if(gui_int->reward.lines[gui_int->reward.line_count][ii] == ' ')
+						{
+							gui_int->reward.lines[gui_int->reward.line_count][ii]=0;
+							break;
+						}
+					}
+					if(ii<0) /* we have not find any usable whitespace */
+						ii = len;
+
+					/* we don't eliminate leading whitespaces because we can't know its a format issue or not 
+					* better to live with this little glitch as to destroy perhaps the text format.
+					*/
+					strcpy(gui_int->reward.lines[++gui_int->reward.line_count], &tmp_line[ii+1]);
+					c = strlen(gui_int->reward.lines[gui_int->reward.line_count]);
+				}
+				else
+					c++;
+			}
+
+			if(gui_int->reward.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
+			{
+				LOG(LOG_ERROR, "ERROR: interface call out of borders: %s\n", gui_int->reward.body_text);
+				break;
+			}
+		}
+/*
         int i, c=0;
 
         gui_int->reward.line_count=0;
@@ -618,6 +687,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
                 break;
             }
         }
+		*/
     }
 
     /* icons */
@@ -1260,15 +1330,31 @@ void gui_interface_send_command(int mode, char *cmd)
     
                box.x=x+4; 
                box.y=y+4; 
-               box.w=56; 
-               box.h=56; 
+               box.w=54; 
+               box.h=54; 
     
                SDL_SetClipRect(ScreenSurface, &box); 
-               xp = box.x+(box.w/2)-(FaceList[gui_interface_npc->head.face].sprite->bitmap->w/2); 
-               yp = box.y+(box.h/2)-(FaceList[gui_interface_npc->head.face].sprite->bitmap->h/2); 
-               sprite_blt(FaceList[gui_interface_npc->head.face].sprite, xp,yp, NULL, NULL); 
+               xp = box.x+(box.w/2)-((FaceList[gui_interface_npc->head.face].sprite->bitmap->w-FaceList[gui_interface_npc->head.face].sprite->border_left)/2); 
+               yp = box.y+(box.h/2)-((FaceList[gui_interface_npc->head.face].sprite->bitmap->h-FaceList[gui_interface_npc->head.face].sprite->border_down)/2); 
+               sprite_blt(FaceList[gui_interface_npc->head.face].sprite, xp-FaceList[gui_interface_npc->head.face].sprite->border_left,yp, NULL, NULL); 
                SDL_SetClipRect(ScreenSurface, NULL); 
            } 
+		   else if(gui_interface_npc->head.picture)
+		   {
+			   int xp, yp; 
+
+			   box.x=x+4; 
+			   box.y=y+4; 
+			   box.w=54; 
+			   box.h=54; 
+
+			   SDL_SetClipRect(ScreenSurface, &box); 
+			   xp = box.x+(box.w/2)-(gui_interface_npc->head.picture->bitmap->w/2); 
+			   yp = box.y+(box.h/2)-(gui_interface_npc->head.picture->bitmap->h/2); 
+			   sprite_blt(gui_interface_npc->head.picture, xp, yp, NULL, NULL); 
+			   SDL_SetClipRect(ScreenSurface, NULL); 
+
+		   }
        } 
     
        yoff = 79; 
@@ -1390,7 +1476,7 @@ void gui_interface_send_command(int mode, char *cmd)
     
                    if(gui_interface_npc->icon[i].element.face>0) 
                        blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff); 
-                   else if(gui_interface_npc->icon[i].picture) 
+                   else if(gui_interface_npc->icon[i].picture)
                        sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL); 
     
                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL); 
