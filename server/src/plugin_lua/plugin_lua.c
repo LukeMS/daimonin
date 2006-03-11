@@ -736,16 +736,30 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     if (context->parm4 == SCRIPT_FIX_ALL)
     {
-        if (context->other && context->other->type == PLAYER)
+        if (context->other && context->other->type == PLAYER && 
+				QUERY_FLAG(context->other, FLAG_FIX_PLAYER))
+		{
+			CLEAR_FLAG(context->other, FLAG_FIX_PLAYER);
             hooks->fix_player(context->other);
-        if (context->self && context->self->type == PLAYER)
+		}
+        if (context->self && context->self->type == PLAYER && 
+				QUERY_FLAG(context->self, FLAG_FIX_PLAYER))
+		{
+			CLEAR_FLAG(context->self, FLAG_FIX_PLAYER);
             hooks->fix_player(context->self);
-        if (context->activator && context->activator->type == PLAYER)
+		}
+        if (context->activator && context->activator->type == PLAYER && 
+				QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
+		{
+			CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
             hooks->fix_player(context->activator);
+		}
     }
     else if (context->parm4 == SCRIPT_FIX_ACTIVATOR &&
-            context->activator && context->activator->type == PLAYER)
+				context->activator && context->activator->type == PLAYER &&
+				QUERY_FLAG(context->activator, FLAG_FIX_PLAYER))
     {
+		CLEAR_FLAG(context->activator, FLAG_FIX_PLAYER);
         hooks->fix_player(context->activator);
     }
 

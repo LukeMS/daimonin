@@ -569,9 +569,9 @@ void send_quest_list(struct obj *pl)
 	}
 
 	if(count)
-		sprintf(msg, "<bt=\"Close\"><wb=\"Q\"><hf=\"skin.101\"b=\"Quests: °%d°/°%d°\"><mt=\"QUEST LIST\"b=\"Click for details:\">", count, QUESTS_PENDING_MAX);
+		sprintf(msg, "<bt=\"Close\"><wb=\"Q\"><hf=\"quests\"b=\"Quests: °%d°/°%d°\"><mt=\"QUEST LIST\"b=\"Click for details:\">", count, QUESTS_PENDING_MAX);
 	else
-		sprintf(msg, "<bt=\"Close\"><wb=\"Q\"><hf=\"skin.101\"b=\"Quests: °0°/°%d°\"><mt=\"QUEST LIST\"b=\"You has no open or pending quests.\">", QUESTS_PENDING_MAX);
+		sprintf(msg, "<bt=\"Close\"><wb=\"Q\"><hf=\"quests\"b=\"Quests: °0°/°%d°\"><mt=\"QUEST LIST\"b=\"You has no open or pending quests.\">", QUESTS_PENDING_MAX);
 
 	strcat(buf, msg);
 

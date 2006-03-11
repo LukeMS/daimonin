@@ -642,7 +642,7 @@
  */
 /*#define BLOCK_UNTIL_CONNECTION*/
 
-#define USE_CHECKSUM
+/*#define USE_CHECKSUM*/
 /* #define ENABLE_CHECKSUM */ /* Will be default in distant future versions */
 
 /*

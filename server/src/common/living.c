@@ -946,6 +946,7 @@ void fix_player(object *op)
         fix_monster(op);
         return;
     }
+	LOG(llevDebug, "FIX_player(): called for object %s!!\n", query_name(op));
 
     /* for secure */
     if (op->type != PLAYER)
@@ -965,7 +966,8 @@ void fix_player(object *op)
     op->stats.Pow = pl->orig_stats.Pow;
     op->stats.Cha = pl->orig_stats.Cha;
 
-    pl->selected_weapon = pl->skill_weapon = NULL;
+	pl->guild_force = pl->selected_weapon = pl->skill_weapon = NULL;
+	pl->quest_one_drop = pl->quests_done = pl->quests_type_kill = pl->quests_type_normal = NULL;
     pl->digestion = 3;
     pl->gen_hp = 1;
     pl->gen_sp = 1;
@@ -973,8 +975,12 @@ void fix_player(object *op)
     pl->gen_sp_armour = 0;
 	pl->exp_bonus = 0;
 	pl->encumbrance = 0;
-    pl->set_skill_weapon = NO_SKILL_READY;  /* the used skills for fast access */
-    pl->set_skill_archery = NO_SKILL_READY;
+    pl->set_skill_weapon = pl->set_skill_archery = NO_SKILL_READY;
+	/* the default skill groups for non guild players */
+	pl->base_skill_group[0]=SKILLGROUP_PHYSIQUE;
+	pl->base_skill_group[1]=SKILLGROUP_AGILITY;
+	pl->base_skill_group[2]=SKILLGROUP_WISDOM;
+	pl->base_skill_group_exp[0]=pl->base_skill_group_exp[1]=pl->base_skill_group_exp[2]=100;
 
 
     /* for players, we adjust with the values */
@@ -1005,11 +1011,6 @@ void fix_player(object *op)
     op->path_repelled = op->arch->clone.path_repelled;
     op->path_denied = op->arch->clone.path_denied;
     op->terrain_flag = op->arch->clone.terrain_flag;        /* reset terrain moving abilities */
-
-    pl->quest_one_drop = NULL;
-    pl->quests_done = NULL;
-    pl->quests_type_kill = NULL;
-    pl->quests_type_normal = NULL;
 
     /* only adjust skills which has no own level/exp values */
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
@@ -1096,8 +1097,8 @@ void fix_player(object *op)
     {
         tmp_ptr = tmp->below;
         /*
-             * add here more types we can and must skip.
-             */
+         * add here more types we can and must skip.
+         */
         if (tmp->type == SCROLL
              || tmp->type == EXPERIENCE
              || tmp->type == POTION
@@ -1107,9 +1108,19 @@ void fix_player(object *op)
              || tmp->type == WAND
              || tmp->type == MONSTER)
             continue;
+		else if(tmp->type == TYPE_GUILD_FORCE)
+		{
+			pl->guild_force = tmp;
+			pl->base_skill_group[0]=tmp->last_eat;
+			pl->base_skill_group[1]=tmp->last_sp;
+			pl->base_skill_group[2]=tmp->last_heal;
 
-        if(tmp->type == TYPE_QUEST_CONTAINER)
-        {
+			pl->base_skill_group_exp[0]=tmp->last_grace;
+			pl->base_skill_group_exp[1]=tmp->magic;
+			pl->base_skill_group_exp[2]=tmp->state;
+		}
+		else if(tmp->type == TYPE_QUEST_CONTAINER)
+		{
             /* one drop container */
             /* TODO: this should be replaced with a switch statement */
             if(tmp->sub_type1 == ST1_QUEST_ONE_DROP)
@@ -1140,19 +1151,8 @@ void fix_player(object *op)
             }
             continue;
         }
-
-        /* this is needed, because our applied light can be overruled by a light giving
-             * object like holy glowing aura force or something
-             */
-        if (tmp->glow_radius > light)
-        {
-            /* don't use this item when it is a 'not applied TYPE_LIGHT_APPLY' */
-            if (tmp->type != TYPE_LIGHT_APPLY || QUERY_FLAG(tmp, FLAG_APPLIED))
-                light = tmp->glow_radius;
-        }
-
         /* all skills, not only the applied ones */
-        if (tmp->type == SKILL)
+       else  if (tmp->type == SKILL)
         {
             /* create list of highest skills */
             if(!pl->highest_skill[tmp->magic] || tmp->stats.exp > pl->highest_skill[tmp->magic]->stats.exp)
@@ -1169,6 +1169,16 @@ void fix_player(object *op)
                     skill_weapon = tmp;
             }
         }
+
+		/* this is needed, because our applied light can be overruled by a light giving
+		* object like holy glowing aura force or something
+		*/
+		if (tmp->glow_radius > light)
+		{
+			/* don't use this item when it is a 'not applied TYPE_LIGHT_APPLY' */
+			if (tmp->type != TYPE_LIGHT_APPLY || QUERY_FLAG(tmp, FLAG_APPLIED))
+				light = tmp->glow_radius;
+		}
 
         /* this checks all applied items in the inventory */
         if (QUERY_FLAG(tmp, FLAG_APPLIED))

@@ -78,8 +78,8 @@ static inline hashtable_size_t hashtable_size(const hashtable *const ht)
 }
 
 void hashtable_resize_delta(hashtable *const ht,
-        hashtable_size_t delta,
-        hashtable_size_t min_buckets_wanted);
+     const hashtable_size_t delta,
+     const hashtable_size_t min_buckets_wanted);
 
 hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const hashtable_const_key_t key);
 

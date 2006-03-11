@@ -59,6 +59,7 @@ extern _server_char     new_character; /* if we login as new char, thats the val
 
 #define INTERFACE_MODE_NO 0
 #define INTERFACE_MODE_NPC    1
+#define INTERFACE_MODE_QLIST    2
 
 #define BMAPTABLE 5003 /* prime nubmer for hash table */
 /* struct for out bmap data */

@@ -450,7 +450,7 @@ inline int ai_obj_can_move(object *obj)
 int move_monster(object *op, int mode)
 {
     move_response           response;
-    int                     dir, tmp_dir;
+    int                     dir;
     int                     success = 0;
     struct mob_behaviour   *behaviour;
     int                     did_move = 0, did_action = 0;

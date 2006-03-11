@@ -803,11 +803,13 @@ void command_new_char(char *params, int len, player *pl)
     link_player_skills(op);
 	learn_skill(op, NULL, NULL, skillnr[stats[7]], 0);
 
+	/* give the player his initial weapon based on the selected skill */
 	objtmp = get_archetype(skillitem[stats[7]]);
     objtmp = insert_ob_in_ob(objtmp, op);
     SET_FLAG(objtmp, FLAG_IDENTIFIED);
     SET_FLAG(objtmp, FLAG_KNOWN_MAGICAL);
     SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
+	manual_apply(op, objtmp, 0); 
 	objtmp->value = 1;
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

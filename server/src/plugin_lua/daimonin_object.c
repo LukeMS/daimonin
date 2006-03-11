@@ -81,8 +81,10 @@ static struct method_decl   GameObject_methods[]            =
     {"SetGender",  (lua_CFunction) GameObject_SetGender}, {"SetRank",  (lua_CFunction) GameObject_SetRank},
     {"SetAlignment",  (lua_CFunction) GameObject_SetAlignment},
     {"GetAlignmentForce",  (lua_CFunction) GameObject_GetAlignmentForce},
-    {"SetGuildForce",  (lua_CFunction) GameObject_SetGuildForce},
-    {"GetGuildForce",  (lua_CFunction) GameObject_GetGuildForce}, {"IsOfType", (lua_CFunction) GameObject_IsOfType},
+	{"GetGuild",  (lua_CFunction) GameObject_GetGuild},
+	{"CheckGuild",  (lua_CFunction) GameObject_CheckGuild},
+	{"JoinGuild",  (lua_CFunction) GameObject_JoinGuild},
+	{"LeaveGuild",  (lua_CFunction) GameObject_LeaveGuild},
     {"Save", (lua_CFunction) GameObject_Save}, {"GetIP", (lua_CFunction) GameObject_GetIP},
     {"GetArchName", (lua_CFunction) GameObject_GetArchName}, {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
     {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
@@ -241,7 +243,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_treasure", "f_is_neutral", /* 20 */
     "f_see_invisible", "f_can_roll", "f_generator", "f_is_turnable", "f_walk_off", "f_fly_on", "f_fly_off",
     "f_is_used_up", "f_identified", "f_reflecting",    /* 30 */
-    "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", NULL /* Unused flag */, "f_unaggressive",
+    "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", "f_fix_player", "f_unaggressive",
     "f_reflect_missile", "f_reflect_spell",             /* 40 */
     "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
     "?f_feared", NULL, "f_no_drop", /* 50 */
@@ -376,6 +378,7 @@ static int GameObject_Repair(lua_State *L)
     get_lua_args(L, "O|i", &self, &skill);
 
 	hooks->material_repair_item(WHO, skill);
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
 
     return 0;
 }
@@ -478,6 +481,7 @@ static int GameObject_SetSkill(lua_State *L)
     if (type != SKILL)
         return 0;
 
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
     /* Browse the inventory of object to find a matching skill. */
     for (tmp = WHO->inv; tmp; tmp = tmp->below)
     {
@@ -594,6 +598,7 @@ static int GameObject_SetGod(lua_State *L)
 
     get_lua_args(L, "Os", &self, &txt);
 
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
     FREE_AND_COPY_HASH(prayname, "praying");
 
     GCFP1.Value[0] = (void *) (WHO);
@@ -1048,6 +1053,7 @@ static int GameObject_SetGender(lua_State *L)
     /* set object to neuter */
     CLEAR_FLAG(WHO, FLAG_IS_MALE);
     CLEAR_FLAG(WHO, FLAG_IS_FEMALE);
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
 
     /* reset to male or female */
     if (gender & 1)
@@ -1080,6 +1086,7 @@ static int GameObject_SetRank(lua_State *L)
     if (WHO->type != PLAYER)
         return 0;
 
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
         if (walk->name && walk->name == hooks->shstr_cons->RANK_FORCE && walk->arch->name == hooks->shstr_cons->rank_force)
@@ -1118,6 +1125,7 @@ static int GameObject_SetAlignment(lua_State *L)
     if (WHO->type != PLAYER)
         return 0;
 
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
         if (walk->name && walk->name == hooks->shstr_cons->ALIGNMENT_FORCE &&
@@ -1163,81 +1171,94 @@ static int GameObject_GetAlignmentForce(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_SetGuildForce                                         */
-/* Lua    : object:SetGuildForce(rank_string)                                */
-/* Info   : Sets the current rank of object to rank_string. Returns          */
-/*          the guild_force object that was modified.                        */
+/* Name   : GameObject_GetGuild                                              */
+/* Lua    : object:GetGuild()                                                */
+/* Info   :                                                                  */
 /* Status : Stable                                                           */
-/* Warning: This set only the title. The guild tag is in <slaying>           */
-/*          For test of a special guild, you must use GetGuild()             */
-/*          For settings inside a guild script, you can use this function    */
-/*          Because it returns the guild_force obj after setting the title   */
 /*****************************************************************************/
-static int GameObject_SetGuildForce(lua_State *L)
+static int GameObject_GetGuild(lua_State *L)
 {
-    object     *walk;
-    char       *guild;
-    lua_object *self;
+	char *name;
+	lua_object *self;
+	object *force;
 
-    get_lua_args(L, "Os", &self, &guild);
+	get_lua_args(L, "Os", &self, &name);
 
-    if (WHO->type != PLAYER)
-        return 0;
+	force = hooks->guild_get(CONTR(WHO),name);
 
-    for (walk = WHO->inv; walk != NULL; walk = walk->below)
-    {
-        if (walk->name && walk->name == hooks->shstr_cons->GUILD_FORCE && walk->arch->name == hooks->shstr_cons->guild_force)
-        {
-            /* we find the rank of the player, now change it to new one */
-            if (guild && strcmp(guild, "")) {
-                FREE_AND_COPY_HASH(walk->title, guild);
-            } else
-                FREE_ONLY_HASH(walk->title);
+	if(force)
+		push_object(L, &GameObject, force);
+	else
+		lua_pushnil(L);
 
-            CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
-            return push_object(L, &GameObject, walk);
-        }
-    }
-    LOG(llevDebug, "Lua Warning -> SetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
-
-    walk = hooks->get_archetype("guild_force");
-    walk= hooks->insert_ob_in_ob(walk, WHO);
-    if (guild && strcmp(guild, "")) {
-        FREE_AND_COPY_HASH(walk->title, guild);
-    } else
-        FREE_ONLY_HASH(walk->title);
-
-    CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
-    return push_object(L, &GameObject, walk);
+	return 1;
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_GetGuildForce                                         */
-/* Lua    : object:GetGuildForce()                                           */
-/* Info   : This gets the guild_force from a inventory (should be player?)   */
+/* Name   : GameObject_CheckGuild                                            */
+/* Lua    : object:CheckGuild(name)                                          */
+/* Info   :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_GetGuildForce(lua_State *L)
+static int GameObject_CheckGuild(lua_State *L)
 {
-    object     *walk;
-    lua_object *self;
+	int vret = 0;
+	char *name;
+	lua_object *self;
 
-    get_lua_args(L, "O", &self);
+	get_lua_args(L, "O", &self, &name);
 
-    if (WHO->type != PLAYER)
-        return 0;
+	if(name && !strcmp(WHO->slaying, name))
+		vret = 1;
 
-    for (walk = WHO->inv; walk != NULL; walk = walk->below)
-    {
-        if (walk->name && walk->name == hooks->shstr_cons->GUILD_FORCE && walk->arch->name == hooks->shstr_cons->guild_force)
-            return push_object(L, &GameObject, walk);
-    }
+	lua_pushboolean(L, vret);
 
-    LOG(llevDebug, "Lua Warning -> GetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
-    walk = hooks->get_archetype("guild_force");
-    walk= hooks->insert_ob_in_ob(walk, WHO);
+	return 1;
+}
 
-    return push_object(L, &GameObject, walk);
+/*****************************************************************************/
+/* Name   : GameObject_JoinGuild                                             */
+/* Lua    : object:JoinGuild(name, skill1, v1, skill2, v2, skill3, v3)       */
+/* Info   :                                                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_JoinGuild(lua_State *L)
+{
+	char *name;
+	int s1,s2,s3,sv1, sv2, sv3;
+	lua_object *self;
+	object *force;
+
+	get_lua_args(L, "Os|iiiiii", &self, &name, &s1, &sv1, &s2, &sv2, &s3, &sv3);
+
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
+
+	force = hooks->guild_join(CONTR(WHO), name, s1, sv1, s2, sv2, s3, sv3);
+	hooks->new_draw_info_format(NDI_WHITE, 0, WHO, "you join %s Guild.", name);
+
+	if(force)
+		push_object(L, &GameObject, force);
+	else
+		lua_pushnil(L);
+
+	return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_LeaveGuild                                            */
+/* Lua    : object:LeaveGuild(rank_string)                                   */
+/* Info   :                                                                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_LeaveGuild(lua_State *L)
+{
+	lua_object *self;
+
+	get_lua_args(L, "O", &self);
+
+	SET_FLAG(WHO, FLAG_FIX_PLAYER);
+	hooks->guild_leave(CONTR(WHO));
+	return 0;
 }
 
 /*****************************************************************************/

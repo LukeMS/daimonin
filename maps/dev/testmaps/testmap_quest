@@ -175,11 +175,45 @@ arch floor_ostone1
 x 1
 y 8
 end
+arch chest_sw_1
+name chest for guild test quest 1
+direction 5
+x 1
+y 8
+arch quest_trigger
+name guild test quest1
+sub_type 3
+last_heal 1
+end
+end
 arch floor_ostone1
 x 1
 y 9
 end
+arch monk
+name Guild Tester 1
+invulnerable 1
+no_attack 1
+unaggressive 1
+x 1
+y 9
+arch event_obj
+name Lua
+race /dev/testmaps/guild_test1.lua
+sub_type 13
+end
+end
 arch floor_ostone1
+x 1
+y 10
+end
+arch sign
+name Guild Test Scripts
+msg
+A guild script is often connected to a
+"i let you join, if... quest". The 2nd type is a
+level/pre guild requirement
+endmsg
 x 1
 y 10
 end
@@ -195,9 +229,35 @@ arch floor_ostone1
 x 1
 y 13
 end
+arch monk
+name Guild Special Tester
+invulnerable 1
+no_attack 1
+unaggressive 1
+x 1
+y 13
+arch event_obj
+name Lua
+race /dev/testmaps/guild_test_special1.lua
+sub_type 13
+end
+end
 arch floor_ostone1
 x 1
 y 14
+end
+arch monk
+name Guild Special Tester
+invulnerable 1
+no_attack 1
+unaggressive 1
+x 1
+y 14
+arch event_obj
+name Lua
+race /dev/testmaps/guild_test_special2.lua
+sub_type 13
+end
 end
 arch floor_ostone1
 x 1

@@ -1216,6 +1216,9 @@
 					RelativePath="..\..\..\src\common\exp.c">
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\guild.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\hashfunc.c">
 				</File>
 				<File

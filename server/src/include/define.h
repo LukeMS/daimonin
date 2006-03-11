@@ -269,11 +269,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define GLOVES                  100
 #define TYPE_BASE_INFO          101 /* This object holds the real base stats of mobs or other active objects */
 #define TYPE_RANDOM_DROP        102 /* only true for spawn points atm: if found, there is a random check against
-                                     * carrying. If greater as carrying - all ->inv is droped.
-                                     */
+                                         * carrying. If greater as carrying - all ->inv is droped.
+                                         */
 #define CONVERTER               103
 #define BRACERS                 104
-#define POISONING               105 /* thats the poison force... if a player applies for example
+#define POISONING               105 /* thats the poison force... if á player applies for example
                                      * a POISON object (poison food), this force is inserted in
                                      * the player and does the poison effect until it wear out
                                      * or get removed
@@ -298,39 +298,41 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ARMOUR_IMPROVER         123
 #define WEAPON_IMPROVER         124
 
-#define TYPE_WEALTH             125    /* this is a "raw" (abstract) wealth object. When generated
-                                        * its tranformed in real money depending on the enviroment
-                                        * where its generated. (most times by treasure list and
-                                        * tranformed to money by using level of mob or map to generating
-                                        * a fitting amount of money basing on the base setting).
-                                        */
-#define TYPE_AI                 126    /* MOB AI definition object */
-#define TYPE_AGGRO_HISTORY      127    /* aggro history - core base object for aggro handling. */
-#define TYPE_DAMAGE_INFO        128    /* info object for aggro, group damage, exp sharing and DOT handling */
+#define TYPE_WEALTH             125     /* this is a "raw" (abstract) wealth object. When generated
+                                                 * its tranformed in real money depending on the enviroment
+                                                 * where its generated. (most times by treasure list and
+                                                 * tranformed to money by using level of mob or map to generating
+                                                 * a fitting amount of money basing on the base setting).
+                                                 */
+#define TYPE_AI                 126     /* MOB AI definition object */
+#define TYPE_AGGRO_HISTORY        127        /* aggro history - core base object for aggro handling. */
+#define TYPE_DAMAGE_INFO        128        /* info object for aggro, group damage, exp sharing and DOT handling */
 
-#define TYPE_QUEST_TRIGGER      129    /* a quest trigger describes & interact with quests & other quest things */
-#define SKILLSCROLL             130    /* can add a skill to player's inventory -bt.*/
-#define TYPE_QUEST_OBJECT       131    /* a quest object - it will be set to what we need. Its better & cleaner to
-                                        * use a own type for it instead of marking "real" object with fancy flags
-                                        */
-#define TYPE_TIMER              132    /* Trigger a connection after a time period */
-#define TYPE_ENV_SENSOR         133    /* Triggers depending on environment (TOD, brightness etc) */
-#define TYPE_CONN_SENSOR        134    /* Triggers on other connections */
-#define TYPE_PEARL              135    /* gem/jewel type pearl */
+#define TYPE_QUEST_TRIGGER        129        /* a quest trigger describes & interact with quests & other quest things */
+#define SKILLSCROLL             130        /* can add a skill to player's inventory -bt.*/
+#define TYPE_QUEST_OBJECT        131        /* a quest object - it will be set to what we need. Its better & cleaner to
+                                         * use a own type for it instead of marking "real" object with fancy flags
+                                         */
+#define TYPE_TIMER              132     /* Trigger a connection after a time period */
+#define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
+#define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
+#define TYPE_PEARL              135        /* gem/jewel type pearl */
 #define TYPE_QUEST_INFO			136
 #define TYPE_BEACON             137    /* Beacons are used mostly to locate objects by scripts */
+
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
+#define TYPE_GUILD_FORCE		140
 #define CANCELLATION            141
 /* More free type values here =) */
 #define MENU                    150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
-
 #define SWARM_SPELL             153
 #define RUNE                    154
 
 #define POWER_CRYSTAL           156
 #define CORPSE                  157
+
 #define DISEASE                 158
 #define SYMPTOM                 159
 
@@ -462,6 +464,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_QUEST_TRIGGER_KILL        1
 #define ST1_QUEST_TRIGGER_KILL_ITEM   2
 #define ST1_QUEST_TRIGGER_ITEM		  3
+
+/* for guild force */
+#define ST1_GUILD_IN        1
+#define ST1_GUILD_OLD       2
 
 /* subtypes for TYPE_CONN_SENSOR */
 #define ST1_CONN_SENSOR_NAND        0 /* NAND / NOT */
@@ -693,7 +699,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_STARTEQUIP     34 /* Object was given to player at start */
 #define FLAG_BLOCKSVIEW     35 /* Object blocks view */
 #define FLAG_UNDEAD         36 /* Monster is undead */
-/* 37 -  UNUSED old FREED flag - seems be fine - can be used again after b4 is released & stable */
+#define FLAG_FIX_PLAYER     37 /* fix_player() WILL be called one time (use it dynamically in scripts!) */
 #define FLAG_UNAGGRESSIVE   38 /* Monster doesn't attack players */
 #define FLAG_REFL_MISSILE   39 /* object will give missile reflection */
 

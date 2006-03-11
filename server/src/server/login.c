@@ -416,6 +416,10 @@ static void reorder_inventory(object *op)
 static void traverse_b3_player_inv(object *op)
 {
 	object *next_obj, *tmp;
+	static const char *g_info = NULL;
+
+	if(!g_info)
+		g_info = find_string("GUILD_INFO");
 
 	/* lets check we have the quest/one drop container - we will handle it special */
 	if(op->type == TYPE_QUEST_CONTAINER)
@@ -443,7 +447,8 @@ static void traverse_b3_player_inv(object *op)
 	{
 		next_obj = tmp->below;
 		/* remove all diseases because possible setting changes and kill pending old quests */
-		if (tmp->type == DISEASE || QUERY_FLAG(tmp,FLAG_QUEST_ITEM))
+		if ( tmp->type == DISEASE || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
+			(tmp->arch->name == shstr_cons.player_info && tmp->name == g_info))
 		{
 			remove_ob(tmp);
 			continue;

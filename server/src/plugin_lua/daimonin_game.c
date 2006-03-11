@@ -87,17 +87,30 @@ static struct constant_decl     Game_constants[]    =
 	{"ITEM_SKILL_MAGIC", 5},
 	{"ITEM_SKILL_WISDOM", 6},
 
+	{"SKILLGROUP_AGILITY", 0},
+	{"SKILLGROUP_PERSONALITY", 1},
+	{"SKILLGROUP_MENTAL", 2},
+	{"SKILLGROUP_PHYSIQUE", 3},
+	{"SKILLGROUP_MAGIC", 4},
+	{"SKILLGROUP_WISDOM", 5},
+
+
 	/* quest type */
 	{"QUEST_NORMAL", ST1_QUEST_TRIGGER_NORMAL},
 	{"QUEST_KILL", ST1_QUEST_TRIGGER_KILL},
 	{"QUEST_KILLITEM", ST1_QUEST_TRIGGER_KILL_ITEM},
 	{"QUEST_ITEM", ST1_QUEST_TRIGGER_ITEM},
+
 	/* quest steps */	
 	{"QSTAT_NO", 1},
 	{"QSTAT_ACTIVE", 2},
 	{"QSTAT_SOLVED", 3},
 	{"QSTAT_DONE", 4},
 	{"QSTAT_DISALLOW", 5},
+
+	{"GUILD_NO", 0},
+	{"GUILD_IN", ST1_GUILD_IN},
+	{"GUILD_OLD", ST1_GUILD_OLD},
 	
     /* Argh, the object types. Make sure to keep up-to date if any are added/removed */
     {"TYPE_PLAYER"                  ,PLAYER}, {"TYPE_BULLET"                  ,BULLET},
@@ -179,6 +192,7 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_QUEST_TRIGGER"           ,TYPE_QUEST_TRIGGER},
     {"TYPE_QUEST_OBJECT"            ,TYPE_QUEST_OBJECT},
     {"TYPE_BEACON"                  ,TYPE_BEACON},
+    {"TYPE_GUILD_FORCE"             ,TYPE_GUILD_FORCE},
     {NULL, 0}
 };
 

@@ -379,22 +379,30 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.50f, tmp->level, &exp);
+			if(pl->base_skill_group_exp[0] != 100)
+				e1 = (e1 * pl->base_skill_group_exp[0])/100;
             ret |=add_aggro_exp(hitter, e1, tmp->stats.sp);
         }
         if((tmp = pl->highest_skill[pl->base_skill_group[1]]))
         {
             e2 = calc_skill_exp(hitter, victim, 0.30f, tmp->level, &exp);
+			if(pl->base_skill_group_exp[1] != 100)
+				e2 = (e2 * pl->base_skill_group_exp[1])/100;
             ret |=add_aggro_exp(hitter, e2, tmp->stats.sp);
         }
         if((tmp = pl->highest_skill[pl->base_skill_group[2]]))
         {
             e3 = calc_skill_exp(hitter, victim, 0.20f, tmp->level, &exp);
+			if(pl->base_skill_group_exp[2] != 100)
+				e3 = (e3 * pl->base_skill_group_exp[2])/100;
             ret |=add_aggro_exp(hitter, e3, tmp->stats.sp);
         }
     }
     else if(s2 == -1) /* 100% exp in skill s1 */
     {
         e1 = calc_skill_exp(hitter, victim, 1.0f, pl->skill_ptr[s1]->level, &exp);
+		if(pl->base_skill_group_exp[0] != 100)
+			e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |= add_aggro_exp(hitter, e1, s1);
 #ifdef DEBUG_AGGRO
         LOG(-1,".. 100%% to skill %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1);
@@ -403,8 +411,12 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     else if(s3 == -1) /* 65% s1, 35% in s2 */
     {
         e1 = calc_skill_exp(hitter, victim, 0.65f, pl->skill_ptr[s1]->level, &exp);
+		if(pl->base_skill_group_exp[0] != 100)
+			e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |=add_aggro_exp(hitter, e1, s1);
         e2 = calc_skill_exp(hitter, victim, 0.35f, pl->skill_ptr[s2]->level, &exp);
+		if(pl->base_skill_group_exp[1] != 100)
+			e2 = (e2 * pl->base_skill_group_exp[1])/100;
         ret |=add_aggro_exp(hitter, e2, s2);
 #ifdef DEBUG_AGGRO
         LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1,
@@ -414,10 +426,16 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     else /* 50% in s1, 30% in s2, 20% in s3 */
     {
         e1 = calc_skill_exp(hitter, victim, 0.50f, pl->skill_ptr[s1]->level, &exp);
+		if(pl->base_skill_group_exp[0] != 100)
+			e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |=add_aggro_exp(hitter, e1, s1);
         e2 = calc_skill_exp(hitter, victim, 0.30f, pl->skill_ptr[s2]->level, &exp);
+		if(pl->base_skill_group_exp[1] != 100)
+			e2 = (e2 * pl->base_skill_group_exp[1])/100;
         ret |=add_aggro_exp(hitter, e2, s2);
         e3 = calc_skill_exp(hitter, victim, 0.20f, pl->skill_ptr[s3]->level, &exp);
+		if(pl->base_skill_group_exp[2] != 100)
+			e3 = (e3 * pl->base_skill_group_exp[2])/100;
         ret |=add_aggro_exp(hitter, e3, s3);
 #ifdef DEBUG_AGGRO
         LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d), 20%% to %s (%d)\n",
@@ -564,13 +582,14 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* at last ... part the exp to the group members */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
+		player *pl = CONTR(tmp);
         /* skip exp when we are not in range to victim/hitter.
          * mark group_status as NO_EXP - thats important and used
          * from the quest item function (= no quest item for leecher)
          */
         if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
         {
-            CONTR(tmp)->group_status |= GROUP_STATUS_NOEXP; /* mark tmp as loser and skip exp */
+            pl->group_status |= GROUP_STATUS_NOEXP; /* mark tmp as loser and skip exp */
             continue;
         }
 
@@ -580,10 +599,10 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
         if(kill_msg && aggro->enemy != tmp)
             new_draw_info(NDI_YELLOW, 0, tmp, kill_msg);
 
-        CONTR(tmp)->group_status &= ~GROUP_STATUS_NOEXP;
-        if(CONTR(tmp)->exp_calc_tag == exp_calc_tag)
+        pl->group_status &= ~GROUP_STATUS_NOEXP;
+        if(pl->exp_calc_tag == exp_calc_tag)
         {
-            aggro_exp_single(victim, CONTR(tmp)->exp_calc_obj, exp);
+            aggro_exp_single(victim, pl->exp_calc_obj, exp);
         }
         else /* this member has not done any dmg to the mob - assign exp to guild exp list */
         {
@@ -591,19 +610,25 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 #ifdef DEBUG_AGGRO
             LOG(-1,".. no skill dmg - use guild base dmg\n");
 #endif
-            if((member = CONTR(tmp)->highest_skill[CONTR(tmp)->base_skill_group[0]]))
+            if((member = CONTR(tmp)->highest_skill[pl->base_skill_group[0]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.50f, member->level, &exp);
+				if(pl->base_skill_group_exp[0] != 100)
+					e = (e * pl->base_skill_group_exp[0])/100;
                 ret |=add_aggro_exp(tmp, e, member->stats.sp);
             }
-            if((member = CONTR(tmp)->highest_skill[CONTR(tmp)->base_skill_group[1]]))
+            if((member = pl->highest_skill[pl->base_skill_group[1]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.30f, member->level, &exp);
+				if(pl->base_skill_group_exp[1] != 100)
+					e = (e * pl->base_skill_group_exp[1])/100;
                 ret |=add_aggro_exp(tmp, e, member->stats.sp);
             }
-            if((member = CONTR(tmp)->highest_skill[CONTR(tmp)->base_skill_group[2]]))
+            if((member = pl->highest_skill[pl->base_skill_group[2]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.20f, member->level, &exp);
+				if(pl->base_skill_group_exp[2] != 100)
+					e = (e * pl->base_skill_group_exp[2])/100;
                 ret |=add_aggro_exp(tmp, e, member->stats.sp);
             }
         }
