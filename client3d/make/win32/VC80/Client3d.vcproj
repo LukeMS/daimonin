@@ -149,7 +149,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="OgreMain.lib user32.lib Uuid.lib fmodvc.lib WS2_32.Lib"
+				AdditionalDependencies="OgreMain.lib user32.lib Uuid.lib fmodex_vc.lib WS2_32.Lib"
 				OutputFile="$(OutDir)/Client3d.exe"
 				Version="0.99"
 				LinkIncremental="1"

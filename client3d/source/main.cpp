@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
     /// Must at least do initialiseAllResourceGroups();
     /// ////////////////////////////////////////////////////////////////////
     ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-    Event= new CEvent(window, root->getSceneManager(ST_GENERIC));
+	Event= new CEvent(window, root->createSceneManager(ST_GENERIC, "RefAppSMInstance"));
     root->addFrameListener(Event);
     root->startRendering();
     /// ////////////////////////////////////////////////////////////////////

@@ -40,8 +40,9 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     { "But_Cancel",     GUI_BUTTON_CANCEL   },
     { "But_Min",        GUI_BUTTON_MINIMIZE },
     { "But_Max",        GUI_BUTTON_MAXIMIZE },
+    { "But_Resize",     GUI_BUTTON_RESIZE   },
     // Listboxes.
-    { "List_Msg",       GUI_LIST_MSGWIN    },
+    { "List_Msg",       GUI_LIST_MSGWIN     },
     { "List_Chat",      GUI_LIST_CHATWIN    },
     // Statusbar.
     { "Bar_Health",     GUI_STATUSBAR_PLAYER_HEALTH  },

@@ -52,7 +52,7 @@ enum
 
 typedef struct
 {
-  std::string name;
+  char *name;
   unsigned int index;
 }
 GuiWinNam;

@@ -75,6 +75,7 @@ private:
   Image mTileImage;
   int mPosX, mPosY, mPosZ, mWidth, mHeight;
   int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
+  int mMinimized, mDefaultHeight;
   bool mSizeRelative;
   PixelBox mSrcPixelBox;
   SceneManager *mSceneMgr;
@@ -95,6 +96,7 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   int getGadgetMouseIsOver(int x, int y);
   void createWindow();
+  void setHeight(int h);
   void delGadget(int number);
   void drawAll();
   void parseWindowData(TiXmlElement *xmlElem);

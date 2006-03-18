@@ -300,7 +300,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       if (mEntityWeapon)
       {
         mEntityNPC->detachObjectFromBone("weapon");
-        mSceneMgr->removeEntity(mEntityWeapon);
+        mSceneMgr->destroyEntity(mEntityWeapon);
         mEntityWeapon =0;
       }
       if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
@@ -332,7 +332,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         if (mEntityShield)
         {
           mEntityNPC->detachObjectFromBone("shield");
-          mSceneMgr->removeEntity(mEntityShield);
+          mSceneMgr->destroyEntity(mEntityShield);
           mEntityShield =0;
         }
         if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
@@ -367,7 +367,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         if (mEntityHelmet)
         {
           mEntityNPC->detachObjectFromBone("helmet");
-          mSceneMgr->removeEntity(mEntityHelmet);
+          mSceneMgr->destroyEntity(mEntityHelmet);
           mEntityHelmet =0;
         }
         if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
@@ -391,7 +391,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       if (mEntityArmor)
       {
         mEntityNPC->detachObjectFromBone("armor");
-        mSceneMgr->removeEntity(mEntityArmor);
+        mSceneMgr->destroyEntity(mEntityArmor);
         mEntityArmor =0;
       }
       if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))

@@ -363,7 +363,7 @@ bool TileManager::LoadImage(Image &image, const std::string &strFilename)
 {
   std::string strTemp = PATH_TILE_TEXTURES + strFilename;
   std::ifstream chkFile;
-  chkFile.open(strTemp.data());
+  chkFile.open(strTemp.c_str());
   if (!chkFile) return false;
   chkFile.close();
   image.load(strFilename, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);

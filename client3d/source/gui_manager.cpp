@@ -192,7 +192,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     if (!(valString = xmlElem->Attribute("name"))) continue;
     for (int i = 0; i < GUI_WIN_SUM; ++i)
     {
-      if (mGuiWindowNames[i].name == valString)
+      if (!stricmp(mGuiWindowNames[i].name,valString))
       {
         guiWindow[i].Init(xmlElem);
         break;

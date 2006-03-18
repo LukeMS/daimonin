@@ -17,7 +17,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
+#include "events.h"
 #include "particle.h"
 
 ///================================================================================================
@@ -32,7 +32,7 @@ ParticleFX::ParticleFX(SceneNode *parent, const std::string &name, const std::st
   mName      = name;
   mPfxName   = particleFX;
   mParent    = parent;
-  mParticleFX= ParticleSystemManager::getSingleton().createSystem(mName, mPfxName);
+  mParticleFX= Event->GetSceneManager()->createParticleSystem(mName, mPfxName);
 }
 
 ///================================================================================================
