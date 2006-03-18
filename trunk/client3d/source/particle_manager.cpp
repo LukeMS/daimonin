@@ -36,7 +36,7 @@ static std::vector<sParticleObj*>mvObject_Node;
 bool ParticleManager::init(SceneManager *SceneMgr)
 {
   mSceneMgr = SceneMgr;
-  mNode =  mSceneMgr->getRootSceneNode();;
+  mNode =  mSceneMgr->getRootSceneNode();
   mNodeCounter = mBoneCounter = 0;
   return true;
 }
@@ -49,7 +49,7 @@ void ParticleManager::addNodeObject(const SceneNode *parentNode, const char* par
   sParticleObj *obj = new sParticleObj;
   mvObject_Node.push_back(obj);
   Vector3 posOffset = Vector3(0,15,-10);
-  obj->particleSys = ParticleSystemManager::getSingleton().createSystem("Node"+StringConverter::toString(mNodeCounter), particleFX);
+  obj->particleSys = mSceneMgr->createParticleSystem("Node"+StringConverter::toString(mNodeCounter), particleFX);
   obj->node = mNode->createChildSceneNode(parentNode->getPosition()+ posOffset, parentNode->getOrientation());
   obj->node->attachObject(obj->particleSys);
   obj->direction = parentNode->getOrientation().zAxis();

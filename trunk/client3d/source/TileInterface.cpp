@@ -51,7 +51,14 @@ Vector3 TileSelection::get_Selection()
 {
   Vector3 tmp;
   tmp.x = m_x;
-  tmp.y = (Real) (m_TileManager->Get_Map_Height(m_x, m_y));
+  if (m_x <0 || m_y <0)
+  {
+    tmp.y = 20;
+  }
+  else
+  {
+    tmp.y = (Real) (m_TileManager->Get_Map_Height(m_x, m_y));
+  }
   tmp.z = m_y;
   return tmp;
 }

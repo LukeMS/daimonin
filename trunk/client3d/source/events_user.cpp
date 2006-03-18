@@ -189,7 +189,7 @@ void CEvent::keyPressed(KeyEvent *e)
         static bool once = true;
         if (once)
         {
-          ParticleSystem *pSys = ParticleSystemManager::getSingleton().createSystem("Node", "Particle/GreenyNimbus");
+          ParticleSystem *pSys = mSceneManager->createParticleSystem("Node", "Particle/GreenyNimbus");
           SceneNode *node = mSceneManager->getRootSceneNode()->createChildSceneNode();
           Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
           pos.x = (pos.x +0.5) * TILE_SIZE ;
@@ -228,12 +228,12 @@ void CEvent::keyPressed(KeyEvent *e)
       /// Engine settings.
       /// ////////////////////////////////////////////////////////////////////
       case KC_Y:
-      mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
+      mSceneDetailIndex = (mSceneDetailIndex+1)%3;
       switch(mSceneDetailIndex)
       {
-          case 0 : mCamera->setDetailLevel(SDL_SOLID) ;     break ;
-          case 1 : mCamera->setDetailLevel(SDL_WIREFRAME) ; break ;
-          case 2 : mCamera->setDetailLevel(SDL_POINTS) ;    break ;
+          case 0 : mCamera->setPolygonMode(PM_SOLID);     break ;
+          case 1 : mCamera->setPolygonMode(PM_WIREFRAME); break ;
+          case 2 : mCamera->setPolygonMode(PM_POINTS);    break ;
       }
       break;
 

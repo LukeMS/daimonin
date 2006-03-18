@@ -39,6 +39,7 @@ enum {
   GUI_BUTTON_CANCEL,
   GUI_BUTTON_MINIMIZE,
   GUI_BUTTON_MAXIMIZE,
+  GUI_BUTTON_RESIZE,
   // Listboxes.
   GUI_LIST_MSGWIN,
   GUI_LIST_CHATWIN,
@@ -78,7 +79,7 @@ GuiSrcEntry;
 
 typedef struct
 {
-  std::string name;
+  const char *name;
   unsigned int index;
 }
 GuiElementNames;
@@ -105,7 +106,7 @@ public:
   {
     return mSrcPixelBox;
   }
-  const std::string &getElementName(int i)
+  const char *getElementName(int i)
   {
     return mGuiElementNames[i].name;
   }
