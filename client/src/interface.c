@@ -1324,7 +1324,7 @@ void gui_interface_send_command(int mode, char *cmd)
            */ 
            StringBlt(ScreenSurface,&MediumFont , gui_interface_npc->head.body_text, x+75, y+48, COLOR_WHITE, NULL, NULL); 
     
-           if(gui_interface_npc->head.face>=0) 
+		   if(gui_interface_npc->head.face>=0 && FaceList[gui_interface_npc->head.face].sprite != NULL)
            { 
                int xp, yp; 
     
