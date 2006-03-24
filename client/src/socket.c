@@ -160,24 +160,31 @@ int write_socket(int fd, unsigned char *buf, int len)
 Boolean SOCKET_InitSocket(void)
 {
     WSADATA w;
+	WORD	wVersionRequested = MAKEWORD( 2, 2 );
     int     error;
 
     csocket.fd = SOCKET_NO;
     csocket.cs_version = 0;
 
     SocketStatusErrorNr = 0;
-    error = WSAStartup(0x0101, &w);
+    error = WSAStartup(wVersionRequested, &w);
     if (error)
     {
-        LOG(LOG_ERROR, "Error:  Error init starting Winsock: %d!\n", error);
-        return(FALSE);
+		wVersionRequested = MAKEWORD( 2, 0 );
+		error = WSAStartup(wVersionRequested, &w);
+		if (error)
+		{
+			wVersionRequested = MAKEWORD( 1, 1 );
+			error = WSAStartup(wVersionRequested, &w);
+			if (error)
+			{
+		        LOG(LOG_ERROR, "Error:  Error init starting Winsock: %d!\n", error);
+			    return(FALSE);
+			}
+		}
     }
 
-    if (w.wVersion != 0x0101)
-    {
-        LOG(LOG_ERROR, "Error:  Wrong WinSock version!\n");
-        return(FALSE);
-    }
+	LOG(LOG_MSG, "Using socket version %x!\n", w.wVersion);
 
     return(TRUE);
 }
