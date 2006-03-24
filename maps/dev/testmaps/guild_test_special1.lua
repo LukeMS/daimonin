@@ -34,7 +34,7 @@ end
 local function topJoinG1()
 -- for a rejoin its enough to give the guild_tag
 -- activator:JoinGuild(guild_tag)
-activator:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, game.SKILLGROUP_AGILITY, game.SKILLGROUP_WISDOM, 100, 100, 100)
+activator:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
 setGuild()
 topicDefault()
 end
