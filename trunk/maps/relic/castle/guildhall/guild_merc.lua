@@ -134,7 +134,7 @@ activator:Sound(0, 0, 2, 0)
 local q_i1 = activator:CreateObjectInside("helm_leather", 1,1) 
 q_i1.name = q_iname1
 activator:Write("You got ".. q_iname1..".", game.COLOR_WHITE) 
-activator:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, game.SKILLGROUP_AGILITY, game.SKILLGROUP_WISDOM, 100, 100, 100)
+activator:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
 setGuild()
 ib:SetTitle("Welcome Mercenary!")
 ib:SetMessage("Very well done!\n\nYou are now a member of the Mercenary Guild!")
