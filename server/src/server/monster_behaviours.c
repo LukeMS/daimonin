@@ -469,7 +469,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (npc == NULL)
     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): Called with NULL npc obj\n");
 #endif
         return NULL;
@@ -477,7 +477,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (other == NULL)
     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): Called with NULL other obj\n");
 #endif
         return NULL;
@@ -485,7 +485,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (npc == other)
     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): Called for itself '%s'\n", STRING_OBJ_NAME(npc));
 #endif
         return NULL;
@@ -501,7 +501,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     */
     if (other->type != PLAYER && !QUERY_FLAG(other, FLAG_ALIVE))
     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): Called for non PLAYER/IS_ALIVE '%s'\n", STRING_OBJ_NAME(npc));
 #endif
         return NULL;
@@ -509,7 +509,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (npc->type != MONSTER)
     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): Called on non-mob object '%s' type %d\n", STRING_OBJ_NAME(npc),
             npc->type);
 #endif
@@ -519,7 +519,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     /* this check will hopefully be unnecessary in the future */
     if (MOB_DATA(npc) == NULL)
     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): No mobdata (yet) for '%s'\n", STRING_OBJ_NAME(npc));
 #endif
         return NULL;
@@ -562,14 +562,18 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     /* Special handling of mobs inside containers or not on maps */
     if(other->map == NULL || other->env != NULL || npc->map == NULL || npc->env != NULL)
     {
+#ifdef DEBUG_AI_NPC_KNOWN
         LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' and at least one not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+#endif
         nomap = 1;
 //        return NULL;
     } else {
         /* It was a new, previously unknown object */
         if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
         {
+#ifdef DEBUG_AI_NPC_KNOWN
             LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+#endif
             return NULL;
         }
 
@@ -590,7 +594,9 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     {
         if(!obj_in_line_of_sight(npc, other, &rv)) 
         {
+#ifdef DEBUG_AI_NPC_KNOWN
             LOG(llevDebug,"register_npc_known_obj(): '%s' can't see '%s'. friendship: %d + %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), friendship, attitude);
+#endif
             return NULL;
         }
     }
@@ -630,8 +636,9 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     else
         MOB_DATA(npc)->known_mobs = tmp;
 
+#ifdef DEBUG_AI_NPC_KNOWN
     //    LOG(llevDebug,"register_npc_known_obj(): '%s' detected '%s'. friendship: %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), tmp->friendship);
-
+#endif
     return tmp;
 }
 
@@ -1228,6 +1235,10 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     int         try_next_wp = 0;
 
     wp = get_active_waypoint(op);
+#ifdef DEBUG_AI_WAYPOINT
+	LOG(llevDebug, "FOUND waypoint(): '%s' has active waypoint '%s'\n",
+										STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
+#endif
     if (wp)
     {
         mapstruct  *destmap = normalize_and_ready_map(op->map, &WP_MAP(wp));
@@ -1268,7 +1279,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                     }
                     else
                     {
-#ifdef DEBUG_AI
+#ifdef DEBUG_AI_WAYPOINT
                         LOG(llevDebug, "ai_move_towards_waypoint(): '%s' reached destination '%s'\n",
                             STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif

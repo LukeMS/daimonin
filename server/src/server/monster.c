@@ -307,7 +307,9 @@ static inline int direction_from_response(object *op, move_response *response)
 //          LOG(llevDebug,"dir_from_response(): '%s' -> '%s' (object; %d:%d)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response->data.target.obj), response->data.target.obj->x, response->data.target.obj->y);
           return calc_direction_towards_object(op, response->data.target.obj);
         case MOVE_RESPONSE_WAYPOINT:
-//          LOG(llevDebug,"dir_from_response(): '%s' -> '%s' (waypoint; %d:%d)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response->data.target.obj), response->data.target.obj->x, response->data.target.obj->y);
+#ifdef DEBUG_AI_WAYPOINT
+          LOG(llevDebug,"dir_from_response(): '%s' -> '%s' (waypoint; %d:%d)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response->data.target.obj), response->data.target.obj->x, response->data.target.obj->y);
+#endif
           return calc_direction_towards_waypoint(op, response->data.target.obj);
         case MOVE_RESPONSE_COORD:
 //          LOG(llevDebug,"dir_from_response(): '%s' -> %d:%d\n", STRING_OBJ_NAME(op), response->data.coord.x, response->data.coord.y);
@@ -457,7 +459,12 @@ int move_monster(object *op, int mode)
 
     if (op == NULL || op->type != MONSTER)
     {
-        LOG(llevBug, "move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
+		LOG(llevBug, "BUG: move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
+		if(op->type == SPAWN_POINT_MOB)
+		{
+	        LOG(llevBug, "BUG: move_monster(): Found Spawn Point Mob on map! Removing '%s'\n", STRING_OBJ_NAME(op));
+			remove_ob(op);
+		}
         return 0;
     }
 

@@ -865,7 +865,8 @@ static int basic_emote(object *op, char *params, int emotion)
         /* name is ok but be sure we have something like "Xxxxx" */
         if (emotion != EMOTE_ME) {
             /* But only capitalize on those emotes that are for sure a player name param. */
-            transform_name_string(params);
+			if(op->type == PLAYER)
+	            transform_name_string(params);
         }
     }
 

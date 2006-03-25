@@ -42,10 +42,6 @@ end
 end
 end
 
-function topicStillThere()
-me:Communicate("/spit " .. activator.name)
-end
-
 function topicTeachMeFindTraps()
 skill = game:GetSkillNr("find traps")
 if skill == -1 then
@@ -119,7 +115,6 @@ end
 tl = TopicList()
 tl:SetDefault(topicDefault)
 tl:AddGreeting(nil, topicGreeting)
-tl:AddTopics("still there, frah'ak??", topicStillThere)
 tl:AddTopics("warrior", "Me big chief. Me ogre destroy you.\nStomp on. Dragon kakka.")
 tl:AddTopics("kobolds", [[
 

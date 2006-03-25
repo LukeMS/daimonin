@@ -648,8 +648,7 @@ surrendered 1
 stand_still 1
 level 4
 arch event_obj
-name Lua
-race /relic/castle/guildhall/jail_ogre.lua
+race /relic/castle/guildhall/jail_ogre_say.lua
 sub_type 6
 end
 end

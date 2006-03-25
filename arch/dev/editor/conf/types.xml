@@ -5704,7 +5704,6 @@ that food.]]>
 
 <!--####################################################################-->
 <type number="119" name="Waypoint Object">
-  <import_type name="default_flags" />
   <ignore>
     <attribute arch="ac" />
     <attribute arch="sub_type" />

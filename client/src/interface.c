@@ -177,7 +177,8 @@ static int interface_cmd_reward(_gui_interface_reward *head, char *data, int *po
 {
     char *buf, c;
     memset(head, 0, sizeof(_gui_interface_reward));
-
+	strcpy(head->title, "Description"); /* default title */
+	
     (*pos)++;
     while((c= *(data+*pos)) != '\0' && c  != 0)
     {
@@ -659,35 +660,6 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 				break;
 			}
 		}
-/*
-        int i, c=0;
-
-        gui_int->reward.line_count=0;
-        for(i=0;;i++)
-        {
-            if(gui_int->reward.body_text[i]==0x0d)
-                continue;
-            if(gui_int->reward.body_text[i]==0x0a || gui_int->reward.body_text[i]=='\0')
-            {
-                gui_int->reward.lines[gui_int->reward.line_count][c]='\0';
-                // draw_info(gui_int->message.lines[gui_int->message.line_count], COLOR_YELLOW);
-                gui_int->reward.line_count++;
-                if(gui_int->reward.body_text[i]=='\0')
-                    break;
-                c=0;
-            }
-            else
-            {
-                gui_int->reward.lines[gui_int->reward.line_count][c++]=gui_int->reward.body_text[i];
-            }
-
-            if(gui_int->reward.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
-            {
-                LOG(LOG_ERROR, "ERROR: interface call out of borders: %s\n", gui_int->reward.body_text);
-                break;
-            }
-        }
-		*/
     }
 
     /* icons */
@@ -1092,9 +1064,9 @@ void gui_interface_send_command(int mode, char *cmd)
        { 
            yoff+=26; 
     
-           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=14) 
+           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=15) 
            { 
-               if(my >= yoff && my <=yoff+14) 
+               if(my >= yoff && my <=yoff+15) 
                { 
                    int st=0, xt, xs=x+40, s, flag=FALSE; 
     
@@ -1140,9 +1112,9 @@ void gui_interface_send_command(int mode, char *cmd)
     
        if(gui_interface_npc->link_count) 
        { 
-           yoff+=14; 
-           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=13) 
-               if(my >= yoff && my <=yoff+13) 
+           yoff+=15; 
+           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=15) 
+               if(my >= yoff && my <=yoff+15) 
                { 
                    int len =  get_string_pixel_length(gui_interface_npc->link[i].link, &MediumFont); 
     
@@ -1166,7 +1138,7 @@ void gui_interface_send_command(int mode, char *cmd)
            yoff +=51; 
     
            for(i=0;i<gui_interface_npc->reward.line_count;i++) 
-               yoff+=12; 
+               yoff+=15; 
     
            if(gui_interface_npc->reward.copper || gui_interface_npc->reward.gold || 
                gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril || 
@@ -1238,14 +1210,14 @@ void gui_interface_send_command(int mode, char *cmd)
            yoff+=26; 
     
            for(i=0;i<gui_interface_npc->message.line_count;i++) 
-               yoff+=14; 
+               yoff+=15; 
        } 
     
        if(gui_interface_npc->link_count) 
        { 
-           yoff+=14; 
+           yoff+=15; 
            for(i=0;i<gui_interface_npc->link_count;i++) 
-               yoff+=13; 
+               yoff+=15; 
        } 
     
        /* reward is also used as "objective" */ 
@@ -1253,7 +1225,7 @@ void gui_interface_send_command(int mode, char *cmd)
        { 
            yoff +=51; 
     
-           for(i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=12) 
+           for(i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15) 
                ; 
     
            yoff+=15; 
@@ -1382,14 +1354,14 @@ void gui_interface_send_command(int mode, char *cmd)
            StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_HGOLD, NULL, NULL); 
            yoff+=26; 
     
-           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=14) 
+           for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=15) 
                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL); 
        } 
     
        if(gui_interface_npc->link_count) 
        { 
-           yoff+=14; 
-           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=13) 
+           yoff+=15; 
+           for(i=0;i<gui_interface_npc->link_count;i++,yoff+=15) 
            { 
                            if(gui_interface_npc->link_selected == i+1) 
                        StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_DK_NAVY, NULL, NULL); 
@@ -1410,7 +1382,7 @@ void gui_interface_send_command(int mode, char *cmd)
            yoff+=26; 
     
     
-           for(i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=12) 
+           for(i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15) 
                StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL); 
     
            /* only print the "Your rewards:" message when there is one */ 
@@ -1481,10 +1453,10 @@ void gui_interface_send_command(int mode, char *cmd)
     
                    StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL); 
                    yoff+=10; 
-                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL); 
+                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL); 
                    yoff+=10; 
 				   if(gui_interface_npc->icon[i].second_line)
-	                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL); 
+	                   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL); 
                    yoff+=24; 
                } 
            } 
@@ -1506,10 +1478,10 @@ void gui_interface_send_command(int mode, char *cmd)
     
 	                   StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->icon[i].title, x+80, y+yoff-3, COLOR_WHITE, NULL, NULL); 
 		               yoff+=10; 
-			           StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+78, y+yoff-1, COLOR_WHITE, NULL, NULL); 
+			           StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].body_text, x+80, y+yoff, COLOR_WHITE, NULL, NULL); 
 				       yoff+=10; 
 					   if(gui_interface_npc->icon[i].second_line)
-						   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+78, y+yoff, COLOR_WHITE, NULL, NULL); 
+						   StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].second_line, x+80, y+yoff+1, COLOR_WHITE, NULL, NULL); 
 						yoff+=24; 
                    } 
                } 
