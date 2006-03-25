@@ -841,167 +841,168 @@ arch floor_ostone1
 x 9
 y 1
 end
-arch floor_ostone1
-x 9
-y 2
-end
-arch floor_ostone1
-x 9
-y 3
-end
-arch floor_ostone1
-x 9
-y 4
-end
-arch floor_ostone1
-x 9
-y 5
-end
-arch floor_ostone1
-x 9
-y 6
-end
-arch floor_ostone1
-x 9
-y 7
-end
-arch floor_ostone1
-x 9
-y 8
-end
-arch floor_ostone1
-x 9
-y 9
-end
-arch floor_ostone1
-x 9
-y 10
-end
-arch floor_ostone1
-x 9
-y 11
-end
-arch floor_ostone1
-x 9
-y 12
-end
-arch floor_ostone1
-x 9
-y 13
-end
-arch floor_ostone1
-x 9
-y 14
-end
-arch floor_ostone1
-x 9
-y 15
-end
-arch floor_ostone1
-x 9
-y 16
-end
-arch fwall_brown1
-x 9
-y 16
-end
-arch floor_ostone1
-x 10
-end
-arch fwall_brown1
-x 10
-end
-arch floor_ostone1
-x 10
-y 1
-end
-arch floor_ostone1
-x 10
-y 2
-end
-arch floor_ostone1
-x 10
-y 3
-end
-arch floor_ostone1
-x 10
-y 4
-end
-arch floor_ostone1
-x 10
-y 5
-end
-arch floor_ostone1
-x 10
-y 6
-end
-arch floor_ostone1
-x 10
-y 7
-end
-arch floor_ostone1
-x 10
-y 8
-end
-arch floor_ostone1
-x 10
-y 9
-end
-arch floor_ostone1
-x 10
-y 10
-end
-arch floor_ostone1
-x 10
-y 11
-end
-arch floor_ostone1
-x 10
-y 12
-end
-arch floor_ostone1
-x 10
-y 13
-end
-arch floor_ostone1
-x 10
-y 14
-end
-arch floor_ostone1
-x 10
-y 15
-end
-arch floor_ostone1
-x 10
-y 16
-end
-arch fwall_brown1
-x 10
-y 16
-end
-arch floor_ostone1
-x 11
-end
-arch fwall_brown1
-x 11
-end
-arch floor_ostone1
-x 11
-y 1
-end
 arch monk
-name Quest-Tester: 2+1 Multi Item 
+name Quest-Tester: 2+1 Multi Item
 invulnerable 1
 no_attack 1
 unaggressive 1
-x 11
+x 9
 y 1
 arch event_obj
+name Lua
 race /dev/testmaps/quests/quest_item_multi.lua
 sub_type 13
 end
 end
 arch floor_ostone1
+x 9
+y 2
+end
+arch floor_ostone1
+x 9
+y 3
+end
+arch floor_ostone1
+x 9
+y 4
+end
+arch floor_ostone1
+x 9
+y 5
+end
+arch floor_ostone1
+x 9
+y 6
+end
+arch floor_ostone1
+x 9
+y 7
+end
+arch floor_ostone1
+x 9
+y 8
+end
+arch floor_ostone1
+x 9
+y 9
+end
+arch floor_ostone1
+x 9
+y 10
+end
+arch floor_ostone1
+x 9
+y 11
+end
+arch floor_ostone1
+x 9
+y 12
+end
+arch floor_ostone1
+x 9
+y 13
+end
+arch floor_ostone1
+x 9
+y 14
+end
+arch floor_ostone1
+x 9
+y 15
+end
+arch floor_ostone1
+x 9
+y 16
+end
+arch fwall_brown1
+x 9
+y 16
+end
+arch floor_ostone1
+x 10
+end
+arch fwall_brown1
+x 10
+end
+arch floor_ostone1
+x 10
+y 1
+end
+arch floor_ostone1
+x 10
+y 2
+end
+arch floor_ostone1
+x 10
+y 3
+end
+arch floor_ostone1
+x 10
+y 4
+end
+arch floor_ostone1
+x 10
+y 5
+end
+arch floor_ostone1
+x 10
+y 6
+end
+arch floor_ostone1
+x 10
+y 7
+end
+arch floor_ostone1
+x 10
+y 8
+end
+arch floor_ostone1
+x 10
+y 9
+end
+arch floor_ostone1
+x 10
+y 10
+end
+arch floor_ostone1
+x 10
+y 11
+end
+arch floor_ostone1
+x 10
+y 12
+end
+arch floor_ostone1
+x 10
+y 13
+end
+arch floor_ostone1
+x 10
+y 14
+end
+arch floor_ostone1
+x 10
+y 15
+end
+arch floor_ostone1
+x 10
+y 16
+end
+arch fwall_brown1
+x 10
+y 16
+end
+arch floor_ostone1
+x 11
+end
+arch fwall_brown1
+x 11
+end
+arch floor_ostone1
+x 11
+y 1
+end
+arch floor_ostone1
 x 11
 y 2
 end
@@ -1075,6 +1076,16 @@ arch floor_ostone1
 x 12
 y 1
 end
+arch chest_sw_1
+direction 3
+x 12
+y 1
+arch quest_trigger
+name Dev Item Select Test Quest
+sub_type 3
+last_heal 1
+end
+end
 arch floor_ostone1
 x 12
 y 2
@@ -1148,6 +1159,18 @@ end
 arch floor_ostone1
 x 13
 y 1
+end
+arch monk
+name Quest-Tester: Selectable Reward
+invulnerable 1
+no_attack 1
+unaggressive 1
+x 13
+y 1
+arch event_obj
+race /dev/testmaps/quests/quest_item_select.lua
+sub_type 13
+end
 end
 arch floor_ostone1
 x 13

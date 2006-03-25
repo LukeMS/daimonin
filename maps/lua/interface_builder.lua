@@ -20,12 +20,12 @@ self.message.title = title
 end
 
 -- Replace message body
-function InterfaceBuilder:SetMessage(body)
+function InterfaceBuilder:SetMsg(body)
 self.message.body = body
 end
 
 -- Append text to message body
-function InterfaceBuilder:AddToMessage(text)
+function InterfaceBuilder:AddMsg(text)
 self.message.body = self.message.body .. text
 end
 
@@ -34,9 +34,9 @@ function InterfaceBuilder:AddLink(title, command)
 table.insert(self.tags, { type = 'link', title = title, command = command })
 end
 
--- Set reward
-function InterfaceBuilder:SetReward(title, body, copper, silver, gold, mithril)
-self.reward = { title = title, body = body, copper = copper,  silver = silver, gold = gold, mithril = mithril }
+-- Set description & reward
+function InterfaceBuilder:SetDesc(body, copper, silver, gold, mithril, title)
+self.reward = {body = body, copper = copper,  silver = silver, gold = gold, mithril = mithril, title = title }
 end
 
 -- Add a (reward) icon
@@ -107,7 +107,10 @@ iface = iface .. '<mt="' .. default(self.message.title) .. '"b="' .. default(sel
 end
 
 if self.reward then
-iface = iface .. '<rt="' .. default(self.reward.title) .. '"b="' .. default(self.reward.body).. '"'
+iface = iface .. '<rb="' .. default(self.reward.body).. '"'
+if self.reward.title ~= nil then
+iface = iface .. 't="' .. default(self.reward.title) .. '"'
+end
 if self.reward.copper ~= 0 then
 iface = iface .. 'c="'.. self.reward.copper .. '"'
 end

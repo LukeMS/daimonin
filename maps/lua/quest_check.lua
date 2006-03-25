@@ -53,13 +53,13 @@ end
 function Q_List(_qobj, _ib)
 local _ic
 local _kcount = _qobj.inventory
-_ib:AddToMessage("\n°STATUS:°")
+_ib:AddMsg("\n°STATUS:°")
 if _qobj.sub_type_1 == game.QUEST_KILL then
 while (_kcount ~= nil) do
 if _kcount.last_sp > _kcount.level then
-_ib:AddToMessage("\n".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp)
+_ib:AddMsg("\n".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp)
 else
-_ib:AddToMessage("\n°".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)°")
+_ib:AddMsg("\n°".. _kcount.name ..": " .. _kcount.level .. "/" .. _kcount.last_sp .. " (complete)°")
 end
 _kcount = _kcount.below
 end
@@ -67,9 +67,9 @@ elseif _qobj.sub_type_1 == game.QUEST_ITEM then
 while (_kcount ~= nil) do
 _ic = _kcount:NrofQuestItem()
 if _kcount.quantity > _ic then
-_ib:AddToMessage("\n".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity)
+_ib:AddMsg("\n".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity)
 else
-_ib:AddToMessage("\n°".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)°")
+_ib:AddMsg("\n°".. _kcount.name ..": " .. _ic .. "/" .. _kcount.quantity .. " (complete)°")
 end
 _kcount = _kcount.below
 end
@@ -77,17 +77,17 @@ elseif _qobj.sub_type_1 == game.QUEST_KILLITEM then
 while (_kcount ~= nil) do
 _ic = _kcount:NrofQuestItem()
 if _kcount.inventory.quantity > _ic then
-_ib:AddToMessage("\n".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp)
+_ib:AddMsg("\n".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp)
 else
-_ib:AddToMessage("\n°".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)°")
+_ib:AddMsg("\n°".. _kcount.inventory.name ..": " .. _ic .. "/" .. _kcount.last_sp .. " (complete)°")
 end
 _kcount = _kcount.below
 end
 else
 if _qobj.state == _qobj.magic then
-_ib:AddToMessage("\n°Complete!°")
+_ib:AddMsg("\n°Complete!°")
 else
-_ib:AddToMessage("\nIncomplete")
+_ib:AddMsg("\nIncomplete")
 end
 end
 end

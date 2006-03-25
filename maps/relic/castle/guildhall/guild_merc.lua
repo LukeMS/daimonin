@@ -3,7 +3,7 @@ require("topic_list")
 require("quest_check")
 require("interface_builder")
 
-local activator = event.activator
+local pl        = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
 
@@ -22,10 +22,10 @@ local guild_stat = game.GUILD_NO
 local guild_force = nil
 
 local function setGuild()
-guild_force = activator:GetGuild(guild_tag)
+guild_force = pl:GetGuild(guild_tag)
 if guild_force == nil then
-q_obj_1   = activator:GetQuest(q_name_1)
-q_stat_1  = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
+q_obj_1   = pl:GetQuest(q_name_1)
+q_stat_1  = Q_Status(pl, q_obj_1, q_step_1, q_level_1, q_skill_1)
 else
 guild_stat = guild_force.sub_type_1
 end
@@ -39,11 +39,11 @@ local function topicDefault()
 if q_stat_1 < game.QSTAT_DONE then
 if q_stat_1 == game.QSTAT_NO then
 ib:SetTitle("Welcome to the Mercenary Guild")
-ib:AddToMessage("Hello!\nWelcome to the Mercenary Guild of Thraal!\n\nYou need a job?\nYou really would be welcome in our ranks. Our ^troops^ are an important part of the imperial defence.\n\nYou want join our guild?")
+ib:AddMsg("Hello!\nWelcome to the Mercenary Guild of Thraal!\n\nYou need a job?\nYou really would be welcome in our ranks. Our ^troops^ are an important part of the imperial defence.\n\nYou want join our guild?")
 ib:AddLink("Start the Mercenry Guild Quest", "startq1")
 else
 ib:SetTitle("You Solved the Quest?")
-ib:AddToMessage("You has done the task?\n\nShow me the helm and you can join our guild.")
+ib:AddMsg("You has done the task?\n\nShow me the helm and you can join our guild.")
 ib:AddLink("Show Cashin the Helm", "checkq1")
 end
 else
@@ -53,9 +53,9 @@ ib:SetTitle("Welcome Back")
 else
 ib:SetTitle("Hello Guildmember")
 end
-ib:AddToMessage("Good to see you back. How are you?\n\nNice that you have joined our ^troops^.")
+ib:AddMsg("Good to see you back. How are you?\n\nNice that you have joined our ^troops^.")
 end
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -63,8 +63,8 @@ local function quest_icons1()
 ib:AddIcon("Mercenary Guild Membership", "guild_merc", "") 
 end
 local function quest_body1()
-ib:SetMessage("Before you can join the guild I have a small task for you.\n\nWe have a problem with giant ants in the last time.\nSee this hole to the old guild cellar on my side!\n\nOne of those silly ants has stolen my old helmet!\nEnter the hole and kill the ants there!\nNo fear, they are weak.\n\nBring me the helm back and you can join the guild.")
-ib:SetReward("Reward", "You can join the mercenary guild when you recover the helm for Cashin.", 0, 0, 0, 0)
+ib:SetMsg("Before you can join the guild I have a small task for you.\n\nWe have a problem with giant ants in the last time.\nSee this hole to the old guild cellar on my side!\n\nOne of those silly ants has stolen my old helmet!\nEnter the hole and kill the ants there!\nNo fear, they are weak.\n\nBring me the helm back and you can join the guild.")
+ib:SetDesc("You can join the mercenary guild when you recover the helm for Cashin.", 0, 0, 0, 0)
 end
 
 -- start: accept or decline the quest
@@ -77,7 +77,7 @@ quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
 ib:SetDecline(nil, "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 
@@ -86,12 +86,12 @@ local function topAcceptQ1()
 if q_stat_1 == game.QSTAT_NO then
 quest_body1()
 quest_icons1()
-q_obj_1 = activator:AddQuest(q_name_1, game.QUEST_ITEM, q_step_1, q_step_1, q_level_1, q_skill_1, ib:Build())
+q_obj_1 = pl:AddQuest(q_name_1, game.QUEST_ITEM, q_step_1, q_step_1, q_level_1, q_skill_1, ib:Build())
 if q_obj_1 ~= null then
 q_obj_1:AddQuestItem(1, "quest_object", "helm_leather.101", q_iname1)
-q_stat_1 = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
-activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest '".. q_name_1 .."'.", game.COLOR_NAVY)
+q_stat_1 = Q_Status(pl, q_obj_1, q_step_1, q_level_1, q_skill_1)
+pl:Sound(0, 0, 2, 0)
+pl:Write("You take the quest '".. q_name_1 .."'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
@@ -106,19 +106,19 @@ topicDefault()
 else
 ib:SetTitle("Join the Mercenary Guild")
 if q_stat_1 ~= game.QSTAT_SOLVED then
-ib:AddToMessage("Where is my helm???\n\nCome back if you have found it!\n")
+ib:AddMsg("Where is my helm???\n\nCome back if you have found it!\n")
 Q_List(q_obj_1, ib)
 ib:SetButton("Back", "hi") 
 else
-ib:AddToMessage("Very well done! You found the helm.\n\nYou can keep the helm.\nIt will protect you well.\n")
-ib:SetReward("Reward", "Join the Mercenary Guild and take the Helm.", 0, 0, 0, 0)
+ib:AddMsg("Very well done! You found the helm.\n\nYou can keep the helm.\nIt will protect you well.\n")
+ib:SetDesc("Join the Mercenary Guild and take the Helm.", 0, 0, 0, 0)
 ib:AddIcon(q_iname1, "helm_leather.101", "") 
 quest_icons1()
 Q_List(q_obj_1, ib)
 ib:SetAccept(nil, "finishq1") 
 ib:SetDecline(nil, "hi") 
 end
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 
@@ -130,16 +130,16 @@ else
 q_obj_1:RemoveQuestItem()
 q_obj_1:SetQuestStatus(-1)
 q_stat_1 = game.QSTAT_DONE
-activator:Sound(0, 0, 2, 0)
-local q_i1 = activator:CreateObjectInside("helm_leather", 1,1) 
+pl:Sound(0, 0, 2, 0)
+local q_i1 = pl:CreateObjectInside("helm_leather", 1,1) 
 q_i1.name = q_iname1
-activator:Write("You got ".. q_iname1..".", game.COLOR_WHITE) 
-activator:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
+pl:Write("You got ".. q_iname1..".", game.COLOR_WHITE) 
+pl:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
 setGuild()
 ib:SetTitle("Welcome Mercenary!")
-ib:SetMessage("Very well done!\n\nYou are now a member of the Mercenary Guild!")
+ib:SetMsg("Very well done!\n\nYou are now a member of the Mercenary Guild!")
 ib:SetButton("Ok", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 
@@ -148,37 +148,37 @@ if guild_stat ~= game.GUILD_OLD then
 topicDefault()
 end
 ib:SetTitle("Rejoin our Guild?")
-ib:SetMessage("You really want rejoin our guild?\n\nWe would be proud to have you back in our ranks!")
+ib:SetMsg("You really want rejoin our guild?\n\nWe would be proud to have you back in our ranks!")
 ib:SetAccept(nil, "rejoing1") 
 ib:SetDecline(nil, "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 local function topRejoinG1()
 if guild_stat ~= game.GUILD_OLD then
 topicDefault()
 end
-activator:Sound(0, 0, 2, 0)
-activator:JoinGuild(guild_tag)
+pl:Sound(0, 0, 2, 0)
+pl:JoinGuild(guild_tag)
 setGuild()
 ib:SetTitle("Welcome Back!")
-ib:SetMessage("Welcome back to our guild!")
+ib:SetMsg("Welcome back to our guild!")
 ib:SetButton("Ok", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 local function topTroops()
 ib:SetTitle("The Mercenary Troops")
-ib:SetMessage("We, as part of the the Thraal army corps, are invading the abandomed areas after the defeat of Moroch.\n\nWell, the chronomancers ensured us after they created the portal that we are still in the galactic main sphere.\n\nBut it seems to me that these lands have many wormholes to other places...\n\nPerhaps the long time under Morochs influence has weakened the borders between the planes. You should ask ^Jahrlen^ about it.")
+ib:SetMsg("We, as part of the the Thraal army corps, are invading the abandomed areas after the defeat of Moroch.\n\nWell, the chronomancers ensured us after they created the portal that we are still in the galactic main sphere.\n\nBut it seems to me that these lands have many wormholes to other places...\n\nPerhaps the long time under Morochs influence has weakened the borders between the planes. You should ask ^Jahrlen^ about it.")
 ib:SetButton("Ok", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 local function topJahrlen()
 ib:SetTitle("Jahrlen the Chronomancer")
-ib:SetMessage("Jahrlen is our guild mage.\n\nWell, normally we don't have a guild mage.\nBut we are at war here and he was assigned to us.\n\nIn fact, he is a high level chronomancer and we are honored he helps us.\n\nHe is in our guild rooms. Talk to him when you meet him! He often has tasks and quests for newbies.")
+ib:SetMsg("Jahrlen is our guild mage.\n\nWell, normally we don't have a guild mage.\nBut we are at war here and he was assigned to us.\n\nIn fact, he is a high level chronomancer and we are honored he helps us.\n\nHe is in our guild rooms. Talk to him when you meet him! He often has tasks and quests for newbies.")
 ib:SetButton("Ok", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 tl = TopicList()

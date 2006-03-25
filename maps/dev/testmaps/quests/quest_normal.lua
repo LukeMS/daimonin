@@ -3,7 +3,7 @@ require("topic_list")
 require("quest_check")
 require("interface_builder")
 
-local activator = event.activator
+local pl        = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
 
@@ -13,30 +13,30 @@ local q_end_1  = 1
 local q_level_1  = 1
 local q_skill_1  = game.ITEM_SKILL_NO
 
-local q_obj_1   = activator:GetQuest(q_name_1)
-local q_stat_1  = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
+local q_obj_1   = pl:GetQuest(q_name_1)
+local q_stat_1  = Q_Status(pl, q_obj_1, q_step_1, q_level_1, q_skill_1)
 
 local ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
 
 local function topicDefault()
 if q_stat_1 < game.QSTAT_DONE then
-ib:AddToMessage("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
+ib:AddMsg("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
 if q_stat_1 == game.QSTAT_NO then
 ib:SetTitle("Normal Test Quest")
-ib:AddToMessage("[intro] I need your help with... (explain)")
+ib:AddMsg("[INTRO] A 'normal' quest just increase a counter. There is no item involved. There is a QUEST_TRIGGER inside a object (here a chest) which inc the counter.")
 ib:AddLink("Start Normal Test Quest", "startq1")
 else
 ib:SetTitle("Normal Test Quest solved?")
-ib:AddToMessage("[pending] You has done the quest?")
+ib:AddMsg("[pending] You has done the quest?")
 ib:AddLink("Finish Normal Test Quest", "checkq1")
 end
 else
-activator:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
-activator:Interface(-1, "") 
+pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
+pl:Interface(-1, "") 
 return
 end
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 -- quest body (added to player quest obj for quest list)
@@ -44,8 +44,8 @@ local function quest_icons1()
 ib:AddIcon("quest-reward-name", "shield.101", "i am the stats/description line") 
 end
 local function quest_body1()
-ib:SetMessage("[Explain what & why]\nOpen and examine the °Chest°.\nThen return to me.")
-ib:SetReward("Reward", "[reward-text] This is the reward you will get", 1, 2, 0, 0)
+ib:SetMsg("[WHY] This quest is a 'normal' (itemless) test quest example.")
+ib:SetDesc("[WHAT] Open and examine the °Chest°.\nThen return to me.", 1, 2, 0, 0)
 end
 
 -- start: accept or decline the quest
@@ -58,7 +58,7 @@ quest_body1()
 quest_icons1()
 ib:SetAccept(nil, "acceptq1") 
 ib:SetDecline(nil, "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 
@@ -67,11 +67,11 @@ local function topAcceptQ1()
 if q_stat_1 == game.QSTAT_NO then
 quest_body1()
 quest_icons1()
-q_obj_1 = activator:AddQuest(q_name_1, game.QUEST_NORMAL, q_step_1, q_end_1, q_level_1, q_skill_1, ib:Build())
+q_obj_1 = pl:AddQuest(q_name_1, game.QUEST_NORMAL, q_step_1, q_end_1, q_level_1, q_skill_1, ib:Build())
 if q_obj_1 ~= null then
-q_stat_1 = Q_Status(activator, q_obj_1, q_step_1, q_level_1, q_skill_1)
-activator:Sound(0, 0, 2, 0)
-activator:Write("You take the quest '"..q_name_1.."'.", game.COLOR_NAVY)
+q_stat_1 = Q_Status(pl, q_obj_1, q_step_1, q_level_1, q_skill_1)
+pl:Sound(0, 0, 2, 0)
+pl:Write("You take the quest '"..q_name_1.."'.", game.COLOR_NAVY)
 end
 ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
@@ -85,20 +85,20 @@ if q_stat_1 == game.QSTAT_NO then
 topicDefault()
 else
 ib:SetTitle("FINAL CHECK: Normal Test Quest")
-ib:SetMessage("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
+ib:SetMsg("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
 if q_stat_1 ~= game.QSTAT_SOLVED then
-ib:AddToMessage("[not-done-text] You has not looked in the chest?!\n")
+ib:AddMsg("[not-done-text] You has not looked in the chest?!\n")
 Q_List(q_obj_1, ib)
 ib:SetButton("Back", "hi") 
 else
-ib:AddToMessage("[final-text] Very well done! You opened the chest!\n")
-ib:SetReward("Reward", "here it is...", 1, 2, 0, 0)
+ib:AddMsg("[final-text] Very well done! You opened the chest!\n")
+ib:SetDesc("here it is...", 1, 2, 0, 0)
 quest_icons1()
 Q_List(q_obj_1, ib)
 ib:SetAccept(nil, "finishq1") 
 ib:SetDecline(nil, "hi") 
 end
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 
@@ -109,13 +109,13 @@ topicDefault()
 else
 q_obj_1:SetQuestStatus(-1)
 q_stat_1 = game.QSTAT_DONE
-activator:Sound(0, 0, 2, 0)
-activator:CreateObjectInsideEx("shield", 1,1)
-activator:AddMoneyEx(1,2,0,0)
+pl:Sound(0, 0, 2, 0)
+pl:CreateObjectInsideEx("shield", 1,1)
+pl:AddMoneyEx(1,2,0,0)
 ib:SetTitle("QUEST END: Normal Test Quest")
-ib:SetMessage("Very well done! Here is your reward!")
+ib:SetMsg("Very well done! Here is your reward!")
 ib:SetButton("Ok", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 

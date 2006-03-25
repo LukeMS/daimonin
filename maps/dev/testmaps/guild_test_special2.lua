@@ -3,7 +3,7 @@ require("topic_list")
 require("quest_check")
 require("interface_builder")
 
-local activator = event.activator
+local pl = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
 
@@ -13,7 +13,7 @@ local guild_stat = game.GUILD_NO
 local guild_force = nil
 
 local function setGuild()
-guild_force = activator:GetGuild(guild_tag)
+guild_force = pl:GetGuild(guild_tag)
 if guild_force ~= nil then
 guild_stat = guild_force.sub_type_1
 end
@@ -25,22 +25,22 @@ ib:SetHeader(me, me.name)
 
 local function topicDefault()
 ib:SetTitle("Test Guild Special *2*")
-ib:AddToMessage("\n\n[DEVMSG] The guild status is: ".. guild_stat .."\n")
+ib:AddMsg("\n\n[DEVMSG] The guild status is: ".. guild_stat .."\n")
 ib:AddLink("LEAVE current guild!", "leaveg1")
 ib:AddLink("JOIN / REJOIN the Test Guild Special 2", "joing1")
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 local function topJoinG1()
 -- for a rejoin its enough to give the guild_tag
--- activator:JoinGuild(guild_tag)
-activator:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
+-- pl:JoinGuild(guild_tag)
+pl:JoinGuild(guild_tag, game.SKILLGROUP_PHYSIQUE, 100, game.SKILLGROUP_AGILITY, 100, game.SKILLGROUP_WISDOM, 100)
 setGuild()
 topicDefault()
 end
 
 local function topLeaveG1()
-activator:LeaveGuild()
+pl:LeaveGuild()
 setGuild()
 topicDefault()
 end
