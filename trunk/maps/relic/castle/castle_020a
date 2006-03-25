@@ -3151,6 +3151,41 @@ arch guard
 name Jail Guard Sahrel
 type 83
 level 25
+unaggressive 1
+attack_movement 176
+arch waypoint
+name wp3
+title wp1
+slaying castle_020a
+hp 23
+sp 7
+wc 3
+grace 1
+end
+arch waypoint
+name wp2
+title wp3
+slaying castle_030a
+hp 2
+sp 6
+grace 1
+arch event_obj
+name Lua
+race /relic/castle/guildhall/sahrel.lua
+sub_type 10
+end
+end
+arch waypoint
+name wp1
+title wp2
+slaying castle_030a
+hp 5
+sp 18
+grace 1
+cursed 1
+end
+arch ai_generic
+end
 end
 end
 arch floor_sblack2

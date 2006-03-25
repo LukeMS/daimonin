@@ -37,7 +37,7 @@
 
 #ifndef PRODUCTION_SYSTEM
 /* Active list debugging: object.c (activelist_insert_inline()) */
-#define DEBUG_ACTIVELIST_LOG /* log message when an object is added or removed from an active list */
+/* #define DEBUG_ACTIVELIST_LOG */ /* log message when an object is added or removed from an active list */
 
 /* very have debugging of the whole core server loop - mainly how map data ia send & stored */
 //#define DEBUG_CORE
@@ -59,10 +59,12 @@
 
 /* This turns the "probe" spell into a powerful charm spell as
  * an easy way to aquire pets for testing of the pets code */
-#define DEBUG_PROBE_IS_CHARM
+/* #define DEBUG_PROBE_IS_CHARM */
 
 /* Controls debugging of the mob behaviours and movement */
-/* #define DEBUG_AI */
+#define DEBUG_AI
+#define DEBUG_AI_WAYPOINT
+/*#define DEBUG_AI_NPC_KNOWN*/
 
 /* Uncomment this to enable some verbose pathfinding debug messages */
 /* #define DEBUG_PATHFINDING */
