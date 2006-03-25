@@ -1,7 +1,7 @@
 require("topic_list")
 require("interface_builder")
 
-local activator = event.activator
+local pl = event.activator
 local me = event.me
 local msg = string.lower(event.message)
 
@@ -15,61 +15,61 @@ end
 
 function topicDefault()
 ib:SetTitle("The Smithy")
-ib:SetMessage("Hello! I am " .. me.name .. ", the smith.\n")
-ib:AddToMessage("i can repair or identify your equipment.\n\n")
-ib:AddToMessage("What would you like to do?")
-ib:AddLink("Repair my equipment", "repair")
-ib:AddLink("Identify something", "identify")
-activator:Interface(1, ib:Build())
+ib:SetMsg("Hello! I am " .. me.name .. ", the smith.\n")
+ib:AddMsg("i can repair or identify your equipment.\n\n")
+ib:AddMsg("What would you like to do?")
+ib:AddLink("Repair my Equipment", "repair")
+ib:AddLink("Identify Items", "identify")
+pl:Interface(1, ib:Build())
 end
 
 function topicRepair()
 local flag = false
 ib:SetTitle("Repair my Equipment")
-ib:SetMessage("Let me check your equipment...\nPerhaps an item need a fix.\nI will tell you how much each will cost.")
-tmp = activator:FindMarkedObject()
+ib:SetMsg("Let me check your equipment...\nPerhaps an item need a fix.\nI will tell you how much each will cost.")
+tmp = pl:FindMarkedObject()
 if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-ib:AddLink("°*M*° ".. tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. activator:ShowCost(repairCost(tmp), 1), "itemfix ".. -1)
+ib:AddLink("°*M*° ".. tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. -1)
 flag = true
 end
 for i=0,game.EQUIP_MAX,1 do
-tmp = activator:GetEquipment(i)
+tmp = pl:GetEquipment(i)
 if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-ib:AddLink(tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. activator:ShowCost(repairCost(tmp), 1), "itemfix ".. i)
+ib:AddLink(tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. i)
 flag = true
 end
 end
 if flag == false then
-ib:AddToMessage("\n\n°Your equipment don't need any repair°")
+ib:AddMsg("\n\n°Your equipment don't need any repair°")
 end
 ib:SetButton("Back", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 function topicItemFix()
 local words = string.split(event.message)
 local num = tonumber(words[2])
 if words[2]=="-1" then 
-tmp = activator:FindMarkedObject()
+tmp = pl:FindMarkedObject()
 elseif num ~= nil then
-tmp = activator:GetEquipment(num)
+tmp = pl:GetEquipment(num)
 end
 if tmp == nil then
 topicRepair()
 else
 ib:SetTitle("Repairing")
 if tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
-ib:SetMessage("Will cost you " .. activator:ShowCost(repairCost(tmp),0))
-ib:AddToMessage(".\n\nYou have " .. activator:ShowCost(activator:GetMoney()) .. ".\n\n") 
-ib:AddToMessage("Should i repair it now?")
+ib:SetMsg("Will cost you " .. pl:ShowCost(repairCost(tmp),0))
+ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
+ib:AddMsg("Should i repair it now?")
 ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: °'.. tmp.item_condition .. '°    Quality: °' ..tmp.item_quality .. '°')
 ib:SetAccept("Repair", "fix " .. words[2])
 ib:SetDecline(nil, "repair") 
 else
-ib:SetMessage("The item don't need any repair.")
+ib:SetMsg("The item don't need any repair.")
 ib:SetButton("Back", "repair") 
 end
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 end
 
@@ -77,77 +77,77 @@ function topicFix()
 local words = string.split(event.message)
 local num = tonumber(words[2])
 if words[2]=="-1" then 
-tmp = activator:FindMarkedObject()
+tmp = pl:FindMarkedObject()
 else
 if num == nil then
 topicRepair()
 return
 end
-tmp = activator:GetEquipment(num)
+tmp = pl:GetEquipment(num)
 end
 ib:SetTitle("Pay and Repair")
 if tmp == nil then
-ib:SetMessage("Hm, where is the item??")
+ib:SetMsg("Hm, where is the item??")
 else
 if tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
 local qua = tmp.item_quality
-if activator:PayAmount(repairCost(tmp)) == 1 then
+if pl:PayAmount(repairCost(tmp)) == 1 then
 tmp:Repair()
-ib:SetMessage("°** ".. me.name .." takes your money and the item **°\n")
-ib:AddToMessage("°** after some times he returns **°\n\n")
+ib:SetMsg("°** ".. me.name .." takes your money and the item **°\n")
+ib:AddMsg("°** after some times he returns **°\n\n")
 if tmp.item_quality < qua then
-ib:AddToMessage("Here is your repaired stuff!\nSadly it has lost a bit in quality!\nAnything else i can do for you?\n")
+ib:AddMsg("Here is your repaired stuff!\nSadly it has lost a bit in quality!\nAnything else i can do for you?\n")
 else
-ib:AddToMessage("Here is your repaired stuff!\nThanks you. Anything else i can do for you?\n")
+ib:AddMsg("Here is your repaired stuff!\nThanks you. Anything else i can do for you?\n")
 end
 else
-ib:SetMessage("You don't have enough money!")
+ib:SetMsg("You don't have enough money!")
 end
 else
-ib:SetMessage("The item don't need any repair.")
+ib:SetMsg("The item don't need any repair.")
 end
 ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: °'.. tmp.item_condition .. '°    Quality: °' .. tmp.item_quality .. '°')
 end
 ib:SetButton("Back", "repair") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 function topicIdentify()
 ib:SetTitle("Item Identification")
-ib:SetMessage("Lets see what i can do for you.\nI can °identify° a single item or all.\nI can °detect magic° or °detect curse°.\nRember you must mark the single item first.\n\n")
-ib:AddToMessage(".You have " .. activator:ShowCost(activator:GetMoney()) .. ".\n\n") 
-ib:AddToMessage("What would you like to do?\n")
-tmp = activator:FindMarkedObject()
+ib:SetMsg("Lets see what i can do for you.\nI can °identify° a single item or all.\nI can °detect magic° or °detect curse°.\nRember you must mark the single item first.\n\n")
+ib:AddMsg(".You have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\n") 
+ib:AddMsg("What would you like to do?\n")
+tmp = pl:FindMarkedObject()
 if tmp ~= nil then
 if tmp.f_identified ~= true then
 ib:AddLink("°*M*° Identify ".. tmp:GetName() .. " for 150 copper", "detect single")
 else
-ib:AddToMessage("\n°*M*° Your marked item is allready identified.")
+ib:AddMsg("\n°*M*° Your marked item is allready identified.")
 end
 end
 ib:AddLink("Identify all for 5 silver", "detect all")
 ib:AddLink("Detect magic for 50 copper", "detect magic")
 ib:AddLink("Detect curse for 50 copper", "detect curse")
 ib:SetButton("Back", "hi") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 function topicDetect()
 local words = string.split(event.message)
 ib:SetTitle("It will cost you")
 if words[2]=="magic" then
-ib:SetMessage("I can cast °Detect Magic° for 50 copper")
+ib:SetMsg("I can cast °Detect Magic° for 50 copper")
 elseif words[2] == "all" then
-ib:SetMessage("I can °Identify all° for 5 silver")
+ib:SetMsg("I can °Identify all° for 5 silver")
 elseif words[2] == "curse" then
-ib:SetMessage("I can cast °Detect Curse° for 50 copper")
+ib:SetMsg("I can cast °Detect Curse° for 50 copper")
 else
-ib:SetMessage("I can °Identify One Item° for 150 copper")
+ib:SetMsg("I can °Identify One Item° for 150 copper")
 end
-ib:AddToMessage("coins.\n\nYou have " .. activator:ShowCost(activator:GetMoney()) .. ".\n\nYou want me to do it now?") 
+ib:AddMsg("coins.\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want me to do it now?") 
 ib:SetAccept(nil, "cast " .. words[2]) 
 ib:SetDecline(nil, "identify") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 function topicCast()
@@ -162,27 +162,27 @@ elseif words[2] == "all" then
 sum = 500
 else
 sum = 150
-mark = activator:FindMarkedObject(); 
+mark = pl:FindMarkedObject(); 
 if mark == nil then
 topicIdentify()
 return
 end
 end
 ib:SetTitle("Identification...")
-if activator:PayAmount(sum) == 1 then
+if pl:PayAmount(sum) == 1 then
 if sum == 500 then
-me:IdentifyItem(activator, nil, game.IDENTIFY_ALL); 
+me:IdentifyItem(pl, nil, game.IDENTIFY_ALL); 
 elseif sum == 150 then
-me:IdentifyItem(activator, mark, game.IDENTIFY_MARKED)
+me:IdentifyItem(pl, mark, game.IDENTIFY_MARKED)
 else
-me:CastSpell(activator, game:GetSpellNr(spell), 1, 0, "")
+me:CastSpell(pl, game:GetSpellNr(spell), 1, 0, "")
 end
-ib:SetMessage("°**" .. me.name .. " takes your money **°\n\ndone!")
+ib:SetMsg("°**" .. me.name .. " takes your money **°\n\ndone!")
 else
-ib:SetMessage("You don't have enough money!")
+ib:SetMsg("You don't have enough money!")
 end
 ib:SetButton("Back", "identify") 
-activator:Interface(1, ib:Build())
+pl:Interface(1, ib:Build())
 end
 
 tl = TopicList()

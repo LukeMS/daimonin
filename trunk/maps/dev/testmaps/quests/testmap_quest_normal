@@ -574,7 +574,6 @@ Very useful for this "object and event less" quests.
 This trigger has set the quest to 1 - its now complete.
 Check the quest list!
 endmsg
-sub_type 3
 last_heal 1
 end
 end
