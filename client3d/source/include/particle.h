@@ -28,41 +28,46 @@ using namespace Ogre;
 class ParticleFX
 {
 public:
-  ParticleFX(SceneNode *parent, const std::string &pfxName, const std::string &name);
-  ~ParticleFX()
-  {
-  }
+    ParticleFX(Real time);
+    ~ParticleFX();
 
-  void attach();
-  void detach();
+    void addFreeObject(const char *particleScript, Vector3 pos);
+    void addNodeObject(const char *particleScript, SceneNode *sn, Vector3 pos);
+    void attach();
+    void detach();
+    bool update(Real dTime);
 
-  const Vector3 &getPosition() const
-  {
-    return mNode->getPosition();
-  }
-  SceneNode *getSceneNode() const
-  {
-    return mNode;
-  }
-  ParticleSystem *getParticleFX() const
-  {
-    return mParticleFX;
-  }
+    const Vector3 &getPosition() const
+    {
+        return mScenNode->getPosition();
+    }
+    SceneNode *getSceneNode() const
+    {
+        return mScenNode;
+    }
+    ParticleSystem *getParticleSystem() const
+    {
+        return mParticleSystem;
+    }
 
-  void SetPosition(const Ogre::Vector3 &position);
-  void SetSceneNode(SceneNode *node)
-  {
-    mNode = node;
-  }
-  void SetParticleFX(ParticleSystem *pfx)
-  {
-    mParticleFX = pfx;
-  }
-
+    void SetPosition(const Ogre::Vector3 &position);
+    void SetSceneNode(SceneNode *node)
+    {
+        mScenNode = node;
+    }
+    void SetParticleFX(ParticleSystem *pfx)
+    {
+        mParticleSystem = pfx;
+    }
+    static unsigned int mInstanceNr;
+    static long pTime;
 private:
-  SceneNode *mNode, *mParent;
-  ParticleSystem *mParticleFX;
-  std::string mName, mPfxName;
+    Real speed;       //  0: Object has static Position.
+    Real mLifeTime;   // -1: Infinity Lifetime.
+    Vector3 mDir;
+    SceneNode *mScenNode, *mNode;
+    ParticleSystem *mParticleSystem;
+    std::string mName, mPfxName;
 };
 
 #endif

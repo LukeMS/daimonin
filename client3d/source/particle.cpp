@@ -24,27 +24,73 @@ http://www.gnu.org/licenses/licenses.html
 /// Init all static Elemnts.
 ///================================================================================================
 
+unsigned int  ParticleFX::mInstanceNr = 0;
+long          ParticleFX::pTime =0;
+
 ///================================================================================================
-///
+/// .
 ///================================================================================================
-ParticleFX::ParticleFX(SceneNode *parent, const std::string &name, const std::string &particleFX)
+ParticleFX::ParticleFX(Real time)
 {
-  mName      = name;
-  mPfxName   = particleFX;
-  mParent    = parent;
-  mParticleFX= Event->GetSceneManager()->createParticleSystem(mName, mPfxName);
+    mNode     = 0;
+    mScenNode  = 0;
+    mLifeTime = time;
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+ParticleFX::~ParticleFX()
+{
+    Event->GetSceneManager()->destroyParticleSystem(mParticleSystem);
+    mScenNode->removeChild(mNode);
+}
+
+///================================================================================================
+/// Adds an idependant ParticleSystem.
+///================================================================================================
+void ParticleFX::addFreeObject(const char *particleScript, Vector3 pos)
+{
+    mParticleSystem = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mInstanceNr++), particleScript);
+    mScenNode = Event->GetSceneManager()->getRootSceneNode();
+    mNode = mScenNode->createChildSceneNode();
+    mNode->attachObject(mParticleSystem);
+    mNode->setPosition(pos);
+}
+
+///================================================================================================
+/// Adds an ParticleSystem to an already exiting Node.
+///================================================================================================
+void ParticleFX::addNodeObject(const char *particleScript, SceneNode *sn, Vector3 pos)
+{
+    mScenNode  = sn;
+    mParticleSystem= Event->GetSceneManager()->createParticleSystem(StringConverter::toString(mInstanceNr++), particleScript);
+    mNode = mScenNode->createChildSceneNode(sn->getPosition()+ pos, sn->getOrientation());
+    mNode->attachObject(mParticleSystem);
+}
+
+///================================================================================================
+/// Update the Particle. Returns false for expired lifteime.
+///================================================================================================
+bool ParticleFX::update(Real dTime)
+{
+    if (mLifeTime >=0) // Needs lifetime check.
+    {
+        mLifeTime-= dTime;
+        if (mLifeTime <0)
+            return false;
+    }
+    return true;
 }
 
 ///================================================================================================
 ///
 ///================================================================================================
 void ParticleFX::attach()
-{
-}
+{}
 
 ///================================================================================================
 //
 ///================================================================================================
 void ParticleFX::detach()
-{
-}
+{}

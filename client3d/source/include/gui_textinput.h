@@ -105,17 +105,17 @@ public:
     static clock_t time = clock();
     static bool cursorOn = true;
     if (!showTextCursor || mFinished || mCanceled) return mStrTextInput.c_str();
-    string strTemp = mStrTextInput;
-    if (clock()-time > CURSOR_FREQUENCY)
+    mStrTextInputWithCursor = mStrTextInput;
+    if (clock()-time > 500)
     {
       time = clock();
       cursorOn = !cursorOn;
     }
     if (cursorOn)
-      strTemp.insert(mCursorPos, CURSOR);
+      mStrTextInputWithCursor.insert(mCursorPos, CURSOR);
     else
-      strTemp.insert(mCursorPos, " ");
-    return strTemp.c_str();
+      mStrTextInputWithCursor.insert(mCursorPos, " ");
+    return mStrTextInputWithCursor.c_str();
   }
   /**
    ** Inits a text input session.
@@ -265,7 +265,7 @@ private:
   bool mChange;
   bool mFinished, mCanceled, mInProgress;
   bool mBlockNumbers, mBlockWhiteSpace;
-  string mStrTextInput;
+  string mStrTextInput, mStrTextInputWithCursor;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

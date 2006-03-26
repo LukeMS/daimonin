@@ -29,7 +29,7 @@ TileSelection::TileSelection(TileManager* TileManager)
   m_TileManager = TileManager;
   m_SquareSize = 1;
   reset();
-  create_Entity();
+//  create_Entity();
 }
 
 ///================================================================================================
@@ -50,16 +50,18 @@ TileSelection::~TileSelection()
 Vector3 TileSelection::get_Selection()
 {
   Vector3 tmp;
-  tmp.x = m_x;
   if (m_x <0 || m_y <0)
   {
+    tmp.x = 0;
+    tmp.z = 0;
     tmp.y = 20;
   }
   else
   {
-    tmp.y = (Real) (m_TileManager->Get_Map_Height(m_x, m_y));
+    tmp.x = m_x;
+    tmp.z = m_y;
+    tmp.y = (Real) (m_TileManager->Get_Avg_Map_Height(m_x, m_y));
   }
-  tmp.z = m_y;
   return tmp;
 }
 
@@ -87,24 +89,23 @@ void TileSelection::reset()
 ///================================================================================================
 void TileSelection::select()
 {
+/*
   change_Selection();
-
   if (m_x != m_x_old && m_y != m_y_old)
   {
     // note: insert actions here
-
-    /*char name[50];
+    char name[50];
     sprintf( name, "Light %d", counter);
     Light* light = m_TileManager->Get_pSceneManager()->createLight( name );
     light->setType( Light::LT_SPOTLIGHT );
     light->setPosition( Vector3
-     ((m_x + .5) * TILE_SIZE, this->m_TileManager->Get_Map_Height(m_x, m_y) + 150 , (m_y+.5) * TILE_SIZE) );
+     ((m_x + .5) * TILE_SIZE, m_TileManager->Get_Map_Height(m_x, m_y) + 150 , (m_y+.5) * TILE_SIZE) );
     light->setDiffuseColour( .8, .8, 1.0 );
     light->setDirection(0,-1,0);
     light->setSpecularColour( 0.0, 1.0, 0.0 );
     light->setSpotlightRange( Degree(45), Degree(120) );
-    */
   }
+*/
 }
 
 ///================================================================================================
@@ -280,38 +281,33 @@ void TileInterface::pick_Tile(float mouseX, float mouseY)
 {
   /// save old selection to compare to new selection later
   m_Selection->save_Selection();
-  /// reset Selection_Tile
   m_Selection->reset();
 
   Ray mouseRay = m_TileManager->Get_pSceneManager()->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
-  mRaySceneQuery->setRay( mouseRay );
+  mRaySceneQuery->setRay(mouseRay);
+  mRaySceneQuery->setQueryMask(QUERY_TILES_LAND_MASK);
 
-  /// Perform the scene query
+  /// Perform the scene query.
   RaySceneQueryResult &result = mRaySceneQuery->execute();
-  RaySceneQueryResult::iterator itr = result.begin( );
-
-  /// Get the results
-  while ( itr != result.end() && itr->movable) // we only collect movable objects (our terrain is movable!)
+  RaySceneQueryResult::iterator itr = result.begin();
+  if (result.size() >1)
   {
-    // make sure the query doesn't contain any overlay elements like the mouse cursor (which is always hit!)
-    if (itr->movable->getRenderQueueGroup() != RENDER_QUEUE_OVERLAY)
+    Logger::log().error() << "BUG in TileInterface.cpp: RaySceneQuery returned more than 1 result.";
+    Logger::log().error() << "(You created Entities without setting a setQueryFlags(...) on them)";
+  }
+  /// now test which terrain chunk is hit.
+  /// TODO: Extract the chunk-pos out of the entity name.
+  for (int a = 0; a < CHUNK_SUM_X; ++a)
+  {
+    for (int b = 0; b < CHUNK_SUM_Z; ++b)
     {
-      // now test if a terrain chunk is hit
-      for (int a = 0; a != CHUNK_SUM_X; ++a)
+      if (itr->movable == m_TileManager->get_TileChunk(a,b)->Get_Land_entity())
       {
-        for (int b = 0; b != CHUNK_SUM_Z; ++b)
-        {
-          if (itr->movable == this->m_TileManager->get_TileChunk(a,b)->Get_Land_entity())
-          {
-            // we found our chunk, now search for the correct tile
-            pick_Tile(&mouseRay,a,b);
-          }
-        }
+        // we found our chunk, now search for the correct tile
+        pick_Tile(&mouseRay,a,b);
       }
     }
-    itr++;
   }
-
   /// now m_Selection contains the wanted tile
   if (m_Selection->m_x != -1 && m_Selection->m_y != -1)
   {

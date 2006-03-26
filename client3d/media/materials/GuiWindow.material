@@ -16,3 +16,39 @@ material GUI/Window
    }
 }
 
+material GUI/LoadScreen1
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend add
+      depth_write off
+
+      texture_unit
+      {
+        texture loading1.jpg
+      }
+    }
+  }
+}
+
+material GUI/LoadScreen2
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend add
+      depth_write off
+
+      texture_unit
+      {
+        texture loading2.jpg
+      }
+    }
+  }
+}
+
