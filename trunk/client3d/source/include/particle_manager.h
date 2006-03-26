@@ -23,16 +23,9 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <Ogre.h>
 #include <vector>
+#include "particle.h"
 
 using namespace Ogre;
-
-struct sParticleObj
-{
-  SceneNode *node;
-  ParticleSystem *particleSys;
-  Vector3 direction;
-  Real speed; // 0: Object has static Position.
-};
 
 class ParticleManager
 {
@@ -45,6 +38,7 @@ public:
     static ParticleManager Singleton; return Singleton;
   }
   bool init(SceneManager *SceneMgr);
+  void addFreeObject(Vector3 pos, const char *name, Real time);
   void addBoneObject(unsigned int npc, unsigned int spell);
   void delBoneObject(int nr);
   void addNodeObject(const SceneNode *node, const char* particleFX);
@@ -52,6 +46,7 @@ public:
   void delObject(int number);
   void synchToWorldPos(const Vector3 &pos);
   void moveNodeObject(const FrameEvent& event);
+  void update(Real time);
 
 private:
   /// ////////////////////////////////////////////////////////////////////
@@ -59,7 +54,8 @@ private:
   /// ////////////////////////////////////////////////////////////////////
   SceneManager *mSceneMgr;
   SceneNode    *mNode;
-  unsigned int mNodeCounter, mBoneCounter;
+  unsigned int mCounter;
+  std::vector<ParticleFX*>mvParticle;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

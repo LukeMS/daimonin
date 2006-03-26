@@ -54,7 +54,8 @@ ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing
   /// ////////////////////////////////////////////////////////////////////
   /// Build the mesh name.
   /// ////////////////////////////////////////////////////////////////////
-  mEntity = mSceneMgr->createEntity("ObjStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
+  mEntity =mSceneMgr->createEntity("ObjStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
+  mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
   mPosX = posX;
   mPosZ = posZ;
   const AxisAlignedBox &AABB = mEntity->getBoundingBox();

@@ -65,7 +65,7 @@ void GuiManager::Init(int w, int h)
   mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Tooltip_Frame");
   mElement->setMetricsMode(GMM_PIXELS);
   mElement->setDimensions (TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y);
-  mElement->setPosition((mScreenWidth-mTexture->getWidth())/2, (mScreenHeight-mTexture->getHeight())/2);
+  mElement->setPosition((mScreenWidth-mTexture->getWidth())/3*2, (mScreenHeight-mTexture->getHeight())/2);
   MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
   mMaterial = tmpMaterial->clone("GUI_Tooltip_Material");
   if (mMaterial.isNull() || mMaterial->isLoaded())
@@ -78,6 +78,7 @@ void GuiManager::Init(int w, int h)
   mElement->setMaterialName("GUI_Tooltip_Material");
   mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
   mOverlay->show();
+
   mProcessingTextInput = false;
   Logger::log().success(true);
 }
@@ -292,15 +293,19 @@ void GuiManager::startTextInput(int window, int winElement, int maxChars, bool u
 ///================================================================================================
 /// Update all windows.
 ///================================================================================================
-void GuiManager::update()
+void GuiManager::update(Real timeSinceLastFrame)
 {
-  if (mProcessingTextInput)
-    sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
 
+
+  if (mProcessingTextInput)
+  {
+     Logger::log().info() << GuiTextinput::getSingleton().getText(false);
+    sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
+  }
   for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
     guiWindow[i].updateDragAnimation();  // "zurückflutschen" bei falschem drag.
-    guiWindow[i].update2DAnimaton();
+    guiWindow[i].updateAnimaton(timeSinceLastFrame);
     guiWindow[i].updateListbox();
   }
   /// ////////////////////////////////////////////////////////////////////

@@ -28,17 +28,16 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
-static std::vector<sParticleObj*>mvObject_Node;
 
 ///================================================================================================
-//
+///
 ///================================================================================================
 bool ParticleManager::init(SceneManager *SceneMgr)
 {
-  mSceneMgr = SceneMgr;
-  mNode =  mSceneMgr->getRootSceneNode();
-  mNodeCounter = mBoneCounter = 0;
-  return true;
+    mSceneMgr = SceneMgr;
+    mNode =  mSceneMgr->getRootSceneNode();
+    mCounter = 0;
+    return true;
 }
 
 ///================================================================================================
@@ -46,39 +45,82 @@ bool ParticleManager::init(SceneManager *SceneMgr)
 ///================================================================================================
 void ParticleManager::addNodeObject(const SceneNode *parentNode, const char* particleFX)
 {
-  sParticleObj *obj = new sParticleObj;
-  mvObject_Node.push_back(obj);
-  Vector3 posOffset = Vector3(0,15,-10);
-  obj->particleSys = mSceneMgr->createParticleSystem("Node"+StringConverter::toString(mNodeCounter), particleFX);
-  obj->node = mNode->createChildSceneNode(parentNode->getPosition()+ posOffset, parentNode->getOrientation());
-  obj->node->attachObject(obj->particleSys);
-  obj->direction = parentNode->getOrientation().zAxis();
-  obj->speed = 180;
-  ++mNodeCounter;
+    /*
+        sParticleObj *obj = new sParticleObj;
+        mvObject_Node.push_back(obj);
+        Vector3 posOffset = Vector3(0,15,-10);
+        obj->particleSys = mSceneMgr->createParticleSystem("Node"+StringConverter::toString(mNodeCounter), particleFX);
+        obj->node = mNode->createChildSceneNode(parentNode->getPosition()+ posOffset, parentNode->getOrientation());
+        obj->node->attachObject(obj->particleSys);
+        obj->direction = parentNode->getOrientation().zAxis();
+        obj->speed = 180;
+        ++mNodeCounter;
+    */
+}
+
+///================================================================================================
+/// Add an independant ParticleSystem.
+///================================================================================================
+void ParticleManager::addFreeObject(Vector3 pos, const char *particleScript, Real lifeTime)
+{
+    ParticleFX *obj = new ParticleFX(lifeTime);
+    mvParticle.push_back(obj);
+    obj->addFreeObject(particleScript, pos);
 }
 
 ///================================================================================================
 ///
 ///================================================================================================
-void ParticleManager::delNodeObject(int )
+void ParticleManager::update(Real time)
 {
+    for (std::vector<ParticleFX*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    {
+       if (!(*i)->update(time))
+       {
+          delete (*i);
+          i = mvParticle.erase(i);
+       }
+    }
 }
+
+///================================================================================================
+///
+///================================================================================================
+void ParticleManager::delObject(int )
+{
+
+}
+
+
+/*
+  for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
+  {
+    (*i)->state.clear();
+    delete (*i);
+  }
+  mvSrcEntry.clear();
+*/
+
+
+
 
 ///================================================================================================
 ///
 ///================================================================================================
 void ParticleManager::synchToWorldPos(const Vector3 &pos)
 {
-  int sum;
-  Particle* p;
-  for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
-  {
-    for (sum = (int)mvObject_Node[i]->particleSys->getNumParticles()-1; sum >=0; --sum)
-    {
-      p = mvObject_Node[i]->particleSys->getParticle(sum);
-      p->position += pos;
-    }
-  }
+    /*
+        int sum;
+        Particle* p;
+        for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
+        {
+            for (sum = (int)mvObject_Node[i]->particleSys->getNumParticles()-1; sum >=0; --sum)
+            {
+                p = mvObject_Node[i]->particleSys->getParticle(sum);
+                p->position += pos;
+            }
+        }
+    */
 }
 
 ///================================================================================================
@@ -86,9 +128,12 @@ void ParticleManager::synchToWorldPos(const Vector3 &pos)
 ///================================================================================================
 void ParticleManager::moveNodeObject(const FrameEvent& event)
 {
-  for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
-  {
-    if (!mvObject_Node[i]->speed) continue;
-    mvObject_Node[i]->node->translate(mvObject_Node[i]->direction * mvObject_Node[i]->speed * event.timeSinceLastFrame);
-  }
+    /*
+        for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
+        {
+            if (!mvObject_Node[i]->speed)
+                continue;
+            mvObject_Node[i]->node->translate(mvObject_Node[i]->direction * mvObject_Node[i]->speed * event.timeSinceLastFrame);
+        }
+    */
 }

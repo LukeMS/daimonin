@@ -76,13 +76,21 @@ public:
   void Init(int w, int h);
   void parseImageset(const char *XML_imageset_file);
   void parseWindows (const char *XML_windows_file);
-  void update();
+  void update(Real);
   bool mouseEvent(int MouseAction, Real rx, Real ry);
   bool keyEvent(const char keyChar, const unsigned char key);
   const char *sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
   void setTooltip(const char*text);
   void displaySystemMessage(const char*text);
   void startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces);
+  int getScreenWidth()
+  {
+    return mScreenWidth;
+  }
+  int getScreenHeight()
+  {
+    return mScreenHeight;
+  }
 
 private:
   /// ////////////////////////////////////////////////////////////////////

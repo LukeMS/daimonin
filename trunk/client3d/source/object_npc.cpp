@@ -170,7 +170,7 @@ NPC::sPicture NPC::picShoes[2] =
   };
 
 typedef std::list<Particle*> ActiveParticleList;
-static ParticleFX *tempPFX =0;
+//static ParticleFX *tempPFX =0;
 
 ///================================================================================================
 /// Free all recources.
@@ -179,7 +179,7 @@ void NPC::freeRecources()
 {
   if (!--mInstanceNr)
   {
-    if (tempPFX) delete tempPFX;
+//    if (tempPFX) delete tempPFX;
     if (texImageBuf) delete[] texImageBuf;
   }
   if (mAnim) delete mAnim;
@@ -195,7 +195,7 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   if (!mInstanceNr)
   {
     texImageBuf = new uchar[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
-    tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
+//    tempPFX = new ParticleFX("Particle/SwordGlow", 0, Vector3(0,0,0));
     Logger::log().headline("Init Actor Models");
   }
   mFacing = Degree(Facing);
@@ -222,12 +222,14 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   if (!thisNPC)
   {
     mEntityNPC = mSceneMgr->createEntity("Player [polyveg]", strTemp.c_str());
+    mEntityNPC->setQueryFlags(QUERY_NPC_MASK);
     mPosX = CHUNK_SIZE_X /2;
     mPosZ = CHUNK_SIZE_Z /2;
   }
   else /// This is a NPC.
   {
     mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(thisNPC), strTemp.c_str());
+    mEntityNPC->setQueryFlags(QUERY_NPC_MASK);
     mPosX = posX;
     mPosZ = posZ;
   }
@@ -306,6 +308,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
       {
         mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
+        mEntityWeapon->setQueryFlags(QUERY_EQUIPMENT_MASK);
         Option::getSingleton().getDescStr("StartX_Weapon", mStrTemp, WeaponNr);
         Real posX = atof(mStrTemp.c_str());
         Option::getSingleton().getDescStr("StartY_Weapon", mStrTemp, WeaponNr);
@@ -316,11 +319,11 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
         if (WeaponNr==1)
         {
-          mEntityNPC->attachObjectToBone(mStrTemp, tempPFX->getParticleFX(), Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ+5));
+//          mEntityNPC->attachObjectToBone(mStrTemp, tempPFX->getParticleFX(), Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ+5));
         }
         if (WeaponNr==2)
         {
-          mEntityNPC->detachObjectFromBone("SwordGlow");
+//          mEntityNPC->detachObjectFromBone("SwordGlow");
         }
       }
       else mWeapon =0;  // testing -> delete me!
@@ -338,6 +341,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
         {
           mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);     //  oben  links  vorne
+          mEntityShield->setQueryFlags(QUERY_EQUIPMENT_MASK);
           Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
           Real posX = atof(mStrTemp.c_str());
           Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
@@ -373,6 +377,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
         {
           mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
+          mEntityHelmet->setQueryFlags(QUERY_EQUIPMENT_MASK);
           Option::getSingleton().getDescStr("StartX_Helmet", mStrTemp, WeaponNr);
           Real posX = atof(mStrTemp.c_str());
           Option::getSingleton().getDescStr("StartY_Helmet", mStrTemp, WeaponNr);
@@ -396,7 +401,8 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       }
       if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
       {
-        mEntityArmor = mSceneMgr->createEntity("armor", mStrTemp);
+        mEntityArmor =mSceneMgr->createEntity("armor", mStrTemp);
+        mEntityArmor->setQueryFlags(QUERY_EQUIPMENT_MASK);
         Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
         Real posX = atof(mStrTemp.c_str());
         Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
@@ -446,6 +452,9 @@ void NPC::update(const FrameEvent& event)
       mWalkToPos.x = mBoundingBox.x + mPosX * TILE_SIZE;
       mWalkToPos.y = mBoundingBox.y + Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ);
       mWalkToPos.z = mBoundingBox.z + mPosZ * TILE_SIZE;
+
+      // Logger::log().error() <<   mWalkToPos.x << "   "    <<   mWalkToPos.y << "   "    << mWalkToPos.z ;
+
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
       mAnim->toggleAnimation(Animate::STATE_IDLE1);
@@ -509,6 +518,8 @@ void NPC::update(const FrameEvent& event)
         pPos.z -= 534;
         Real height = Event->getTileManager()->Get_Avg_Map_Height((short)(pPos.x)/TILE_SIZE+1, (short)(pPos.z)/TILE_SIZE);
         mNode->setPosition(pPos.x, pPos.y-390 + height, tt -390);
+
+
       }
     }
     else

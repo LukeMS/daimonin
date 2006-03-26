@@ -172,6 +172,7 @@ void CEvent::setWorldPos(Vector3 &pos)
 ///================================================================================================
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
+  static Overlay *mOverlay;
   if (mWindow->isClosed() || mQuitGame)
     return false;
 
@@ -191,6 +192,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
         mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2 + 942));
         mCamera->pitch(Degree(-25));
+        const Vector3 *corner = mCamera->getWorldSpaceCorners();
+        mCamCornerX =  (corner[0].x - corner[1].x)/2;
+        mCamCornerY = -(corner[0].y - corner[2].y)/2 -13.57;  // Todo: clean up.
         /// ////////////////////////////////////////////////////////////////////
         /// Create the world.
         /// ////////////////////////////////////////////////////////////////////
@@ -202,8 +206,15 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SOUND);
+        /// Show the loading-gfx.
+        mOverlay = OverlayManager::getSingleton().getByName ("Overlay/Loading");
+        mOverlay->show();
+        if (Root::getSingleton().getTimer()->getMilliseconds() & 1)
+          mOverlay->getChild("OverlayElement/Screen1")->hide();
+        else
+          mOverlay->getChild("OverlayElement/Screen2")->hide();
 
-        /*
+      /*
                 mCamera->setFOVy(Degree(55));
                 mCamera->setPosition(Vector3(0 , 60, 80));
                 mCamera->lookAt(0, 0, 0);
@@ -348,6 +359,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         /// Set next state.
         Option::getSingleton().setGameStatus(GAME_STATUS_META);
         GuiManager::getSingleton().displaySystemMessage("");
+        OverlayManager::getSingleton().destroy(mOverlay);
       }
       break;
 
@@ -385,7 +397,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 if (processUnbufferedKeyInput(evt) == false) { return false; }
          }
         */
-        GuiManager::getSingleton().update();
+        GuiManager::getSingleton().update(evt.timeSinceLastFrame);
+        ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
         if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
           Network::getSingleton().Update();
       }

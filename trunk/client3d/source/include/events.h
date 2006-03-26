@@ -70,6 +70,14 @@ public:
   {
     return mTileManager;
   }
+  Real getCamCornerX()
+  {
+    return mCamCornerX;
+  }
+  Real getCamCornerY()
+  {
+    return mCamCornerY;
+  }
 
 private:
   /// ////////////////////////////////////////////////////////////////////
@@ -81,6 +89,7 @@ private:
   Real mIdleTime;
   Real mCameraZoom;
   Real mMouseX, mMouseY;
+  Real mCamCornerX, mCamCornerY;
   Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
   SceneNode *mWorld;
   SceneManager *mSceneManager;

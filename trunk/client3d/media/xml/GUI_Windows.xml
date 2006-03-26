@@ -106,7 +106,6 @@
       <Range width= "9" height= "9" />
     </Graphic>
 
-
     <Label x=  "100" y= "8" font="02" text= "Titlebar ygW" />
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
@@ -161,7 +160,6 @@
       <Range width= "9" height= "9" />
     </Graphic>
 
-
     <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
       <Pos x= "30" y= "396" />
       <Range width= "9" height= "9" />
@@ -196,6 +194,16 @@
       <Tooltip  text= "I am the close button." />
     </Gadget>
 
+    <Gadget type= "BUTTON"  name = "But_Min" image_name = "Button_01_Close">
+      <Pos x= "0" y= "0" />
+      <Tooltip  text= "I am the close button." />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "But_Max" image_name = "Button_01_Close">
+      <Pos x= "15" y= "0" />
+      <Tooltip  text= "I am the close button." />
+    </Gadget>
+
     <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
       <Pos x= "30" y= "410" />
       <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
@@ -207,7 +215,6 @@
       <Label xPos= "6" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
       <Tooltip  text= "Press here to CANCEL." />
     </Gadget>
-
 
     <Statusbar type="COLOR_FILL" name = "Bar_Health">
       <Pos  x= "150" y= "120" />
@@ -231,6 +238,9 @@
     <Label x=  "60" y= "222" font="03" text= "Text@03 using font #3" />
     <Label x=  "60" y= "235" font="03" text= "Text@04 using font #4" />
 
+    <TextBox x= "100" y= "65" font="02" text= "input test" width = "100" name= "Input_Password" />
+
+    <NPC_Head x= "95" y= "170" mesh= "facial.mesh" name="Trader" />
 
   </Window>
 
@@ -248,7 +258,6 @@
       <Range width= "280" height= "18" />
     </Graphic>
 
-
     <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
       <Pos x= "0" y= "0" />
       <Range width= "9" height= "9" />
@@ -265,7 +274,7 @@
     </Graphic>
 
 
-    <Graphic type= "GFX_FILL"  image_namee = "Red_BL_Edge">
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
       <Pos x= "0" y= "9" />
       <Range width= "9" height= "9" />
     </Graphic>

@@ -50,7 +50,7 @@ public:
   void Init(TiXmlElement *xmlElem);
   void keyEvent(int obj_type, int action, int val1=0, int val2=0);
   void updateDragAnimation();
-  void update2DAnimaton();
+  void updateAnimaton(Real timeSinceLastFrame);
   void updateListbox();
   const char *getName()
   {
@@ -74,12 +74,14 @@ private:
   int mMousePressed, mMouseOver;
   Image mTileImage;
   int mPosX, mPosY, mPosZ, mWidth, mHeight;
+  int mHeadPosX, mHeadPosY;
+
   int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
   int mMinimized, mDefaultHeight;
   bool mSizeRelative;
   PixelBox mSrcPixelBox;
   SceneManager *mSceneMgr;
-  SceneNode *mParentNode, *mNode;
+  SceneNode *mSceneNode;
   std::string mStrName;
   std::string mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
   std::vector<GuiGadget *>mvGadget;
@@ -87,8 +89,9 @@ private:
   std::vector<GuiListbox*>mvListbox;
   std::vector<TextLine*>mvTextline;
   std::vector<GuiStatusbar*>mvStatusbar;
-  Overlay *mOverlay;
+  Overlay *mOverlay, *mNPC_HeadOverlay;
   OverlayElement *mElement;
+  AnimationState *mSpeakAnimState, *mManualAnimState;
   MaterialPtr mMaterial;
   TexturePtr mTexture;
   /// ////////////////////////////////////////////////////////////////////

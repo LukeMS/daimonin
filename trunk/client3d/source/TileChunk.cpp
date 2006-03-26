@@ -160,6 +160,7 @@ void TileChunk::CreateWaterLow()
   m_Water_subMesh_low->setMaterialName("Water_LowDetails");
   sprintf( TempName, "Water[%d,%d] Low Entity", m_posX, m_posZ );
   m_Water_entity_low = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
+  m_Water_entity_low->setQueryFlags(QUERY_TILES_WATER_MASK);
 }
 
 ///================================================================================================
@@ -217,7 +218,7 @@ hasWater:
   VertexBufferBinding* vbbind = vdata->vertexBufferBinding;
   vbbind->setBinding(0, vbuf0);
 
-  Real *pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NORMAL));
+  Real *pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
 
   /// ////////////////////////////////////////////////////////////////////
   /// 1. Triangle
@@ -315,6 +316,7 @@ void TileChunk::CreateWaterHigh()
 
   sprintf( TempName, "Water[%d,%d] High Entity", m_posX, m_posZ );
   m_Water_entity_high = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
+  m_Water_entity_high->setQueryFlags(QUERY_TILES_WATER_MASK);
   m_IsAttached = false;
 }
 
@@ -381,7 +383,7 @@ void TileChunk::CreateWaterHigh_Buffers()
 
   long o = 0;
   Real StretchZ = m_TileManagerPtr->Get_StretchZ();
-  Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NORMAL));
+  Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
   for (short a = x; a < x+ CHUNK_SIZE_X; ++a)
   {
     for (short b = z; b < z +CHUNK_SIZE_Z; ++b)
@@ -525,6 +527,7 @@ void TileChunk::CreateLandLow()
   m_Land_subMesh_low->setMaterialName("Land_LowDetails");
   sprintf( TempName, "Land[%d,%d] Low Entity", m_posX, m_posZ );
   m_Land_entity_low = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
+  m_Land_entity_low->SetQueryFlags(QUERY_TILES_LAND_MASK);
   // m_Land->attachObject( m_Land_entity_low );
   m_IsAttached = false;
 }
@@ -581,7 +584,7 @@ void TileChunk::CreateLandLow_Buffers()
 
   vdata->vertexBufferBinding->setBinding(0, m_vbuf0);
 
-  Real* pReal1 = static_cast<Real*>(m_vbuf0->lock(HardwareBuffer::HBL_NORMAL));
+  Real* pReal1 = static_cast<Real*>(m_vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
 
   int o = 0;
   Real g,h,d,f;
@@ -722,6 +725,7 @@ void TileChunk::CreateLandHigh(int tileTextureSize)
   m_Land_Mesh_high->load();
   sprintf( TempName, "Land[%d,%d] High Entity", m_posX, m_posZ );
   m_Land_entity_high = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
+  m_Land_entity_high->setQueryFlags(QUERY_TILES_LAND_MASK);
   // m_Land->attachObject( m_Land_entity_high );
   m_IsAttached = false;
 }
@@ -793,7 +797,7 @@ void TileChunk::CreateLandHigh_Buffers()
   long o = 0;
   Real g, h, d, f, row, col;
   Real average, StretchZ = m_TileManagerPtr->Get_StretchZ();
-  Real* pReal1 = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NORMAL));
+  Real* pReal1 = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
   for (short a = x; a < x+ CHUNK_SIZE_X; ++a)
   {
     for (short b = z; b < z +CHUNK_SIZE_Z; ++b)
@@ -1029,7 +1033,6 @@ void TileChunk::CreateLandHigh_Buffers()
       }
     }
   }
-
   vbuf0->unlock();
   /// ////////////////////////////////////////////////////////////////////
   /// Create Index-buffer
@@ -1064,10 +1067,7 @@ void TileChunk::Create_Dummy(SubMesh* submesh)
   size_t offset = 0;
   vdec->addElement( 0, offset, VET_FLOAT3, VES_POSITION );
   offset += VertexElement::getTypeSize(VET_FLOAT3);
-  vdec->addElement( 0, offset, VET_FLOAT3, VES_NORMAL );
-  offset += VertexElement::getTypeSize(VET_FLOAT3);
-  vdec->addElement( 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0); // Ground-texture.
-  offset += VertexElement::getTypeSize(VET_FLOAT2);
+
   HardwareVertexBufferSharedPtr vbuf0;
   vbuf0 = HardwareBufferManager::getSingleton().createVertexBuffer(
             offset, // size of one whole vertex
@@ -1075,17 +1075,11 @@ void TileChunk::Create_Dummy(SubMesh* submesh)
             HardwareBuffer::HBU_STATIC_WRITE_ONLY, // usage
             false); // no shadow buffer
   vdata->vertexBufferBinding->setBinding(0, vbuf0);
-  Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NORMAL));
+  Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
   // Triangle 1
-  pReal[ 0] = 0; pReal[ 1] =-100; pReal[ 2] = 0;
-  pReal[ 3] = 0; pReal[ 4] =   0; pReal[ 5] = 0;
-  pReal[ 6] = 0; pReal[ 7] =   0;
-  pReal[ 8] = 5; pReal[ 9] =-100; pReal[10] = 0;
-  pReal[11] = 0; pReal[12] =   0; pReal[13] = 0;
-  pReal[14] = 0; pReal[15] =   0;
-  pReal[16] = 5; pReal[17] =-100; pReal[18] =0;
-  pReal[19] = 0; pReal[20] =   0; pReal[21] = 0;
-  pReal[22] = 0; pReal[23] =   0;
+  pReal[ 0] =-1; pReal[ 1] =-100; pReal[ 2] =-1;
+  pReal[ 8] =-1; pReal[ 9] =-100; pReal[10] = 0;
+  pReal[16] = 0; pReal[17] =-100; pReal[18] =-1;
   vbuf0->unlock();
 
   HardwareIndexBufferSharedPtr ibuf;
