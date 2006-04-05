@@ -870,7 +870,7 @@ void process_players2(mapstruct *map)
                 else if (is_melee_range(pl->ob, pl->ob->enemy))
                 {
                     /* tell our enemy we swing at him now */
-                    register_npc_known_obj(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK);
+                    update_npc_knowledge(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK, 0);
                     pl->praying = 0;
                     skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
                     pl->ob->weapon_speed_left += FABS(pl->ob->weapon_speed);

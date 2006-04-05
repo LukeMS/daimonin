@@ -1125,3 +1125,51 @@ void make_sure_not_seen(object *op)
 {
 }
 
+/** Tests if an object is in the line of sight of another object. 
+ * Relatively slow. Do not use for players, since they always have
+ * a precalculated area of sight which can be used instead.
+ * @param op the looking object 
+ * @param obj the object to look for
+ * @param rv pre-calculated rv from op to obj
+ * @return TRUE if there's an unblocked line of sight from op to obj, FALSE otherwise
+ */
+int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
+{
+    /* Bresenham variables */
+    int fraction, dx2, dy2, stepx, stepy;
+
+    /* Stepping variables */
+    mapstruct *m = rv->part->map;
+    int x = rv->part->x, y = rv->part->y;
+
+    /*
+    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n",
+            STRING_OBJ_NAME(op), op->x, op->y,
+            STRING_OBJ_NAME(obj), obj->x, obj->y);
+    */
+
+    BRESENHAM_INIT(rv->distance_x, rv->distance_y, fraction, stepx, stepy, dx2, dy2);
+
+    while(1)
+    {
+//        LOG(llevDebug, " (%d:%d)", x, y);
+        if(x == obj->x && y == obj->y && m == obj->map)
+        {
+//            LOG(llevDebug, "  can see!\n");
+            return TRUE;
+        }
+
+        if(m == NULL || GET_MAP_FLAGS(m,x,y) & P_BLOCKSVIEW)
+        {
+//            LOG(llevDebug, "  blocked!\n");
+            return FALSE;
+        }
+
+        BRESENHAM_STEP(x, y, fraction, stepx, stepy, dx2, dy2);
+
+        m = out_of_map(m, &x, &y);
+    }
+/*
+    LOG(llevDebug, "  out of range!\n");
+    return FALSE;*/
+}

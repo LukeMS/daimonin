@@ -2510,25 +2510,6 @@ static int GameObject_IdentifyItem(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_IsOfType                                              */
-/* Lua    : object:IsOfType(type)                                            */
-/* Info   : returns 1 if object is of the specified type, or 0 otherwise.    */
-/*          (e.g. game.TYPE_MONSTER for monster/NPC, or game.TYPE_PLAYER for */
-/*          players)                                                         */
-/* Status : Deprecated - use object.type == game.TYPE_MONSTER instead        */
-/*****************************************************************************/
-static int GameObject_IsOfType(lua_State *L)
-{
-    lua_object *self;
-    int         type;
-
-    get_lua_args(L, "Oi", &self, &type);
-
-    lua_pushboolean(L, WHO->type == type);
-    return 1;
-}
-
-/*****************************************************************************/
 /* Name   : GameObject_Save                                                  */
 /* Lua    : object:Save()                                                    */
 /* Status : Untested                                                         */

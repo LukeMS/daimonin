@@ -291,8 +291,8 @@ static int AI_Register(lua_State *L)
 
     get_lua_args(L, "AO|ii", &self, &obj, &friendship, &attraction);
 
-    hooks->register_npc_known_obj(self->data.object, obj->data.object,
-            friendship);
+    hooks->update_npc_knowledge(self->data.object, obj->data.object,
+            friendship, attraction);
 
     return 0;
 }

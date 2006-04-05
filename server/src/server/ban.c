@@ -227,7 +227,7 @@ int check_banned(NewSocket *ns, const char *name, uint32 ip)
 				}
 				else if (s<=90) /* we are nice for all under 90 seconds (1.5 minutes) */
 				{
-					sprintf(buf, "X2 Name %d is blocked for %d seconds!\nDon't try to login to it again!",name, s);
+					sprintf(buf, "X2 Name %s is blocked for %d seconds!\nDon't try to login to it again!",name, s);
 					ban_buf_name = buf;
 				}
 				else if (s < 60*60)

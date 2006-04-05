@@ -97,7 +97,7 @@ int add_pet(object *owner, object *pet, int force)
     /* Set pet owner */
     pet->owner = owner;
     pet->owner_count = owner->count;
-    if(! (MOB_DATA(pet)->owner = register_npc_known_obj(pet, owner, 0)))
+    if(! (MOB_DATA(pet)->owner = update_npc_knowledge(pet, owner, 0, 0)))
     {
         LOG(llevBug, "BUG: add_pet(): Couldn't register owner (%s) of pet (%s)\n", STRING_OBJ_NAME(owner), STRING_OBJ_NAME(pet));
         return -1;
