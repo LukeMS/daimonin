@@ -293,7 +293,7 @@ int add_player(NewSocket *ns)
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
      */
-    p->socket.pl = (struct player *) p;
+    p->socket.pl = p;
     p->socket.status = Ns_Login; /* now, we start the login procedure! */
 	p->socket.below_clear = 0;
     p->socket.update_tile = 0;

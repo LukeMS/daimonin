@@ -114,17 +114,18 @@ WS	[ \t]*{NL}?
 				lex_load(tmp, map_flags);
 			    if (!tmp->arch)
 				    tmp = tmp2;
-				  /* we set here AND in load_object the material real values.
+
+				/* we set here AND in load_object the material real values.
 				   * we do: If item_quality == 0 AND material defines a base
 				   * material, then use material_real to set quality & condition.
                    * So, we don't set it for floor or walls or some else objects
                    * were we don't need it.
                    */
-				   if(tmp->material && !tmp->item_quality && tmp->material_real>=0)
-				   {
-				       tmp->item_quality = material_real[tmp->material_real].quality;
-	                   tmp->item_condition = tmp->item_quality;
-				   }
+				if(tmp->material && !tmp->item_quality && tmp->material_real>=0)
+				{
+					tmp->item_quality = material_real[tmp->material_real].quality;
+	                tmp->item_condition = tmp->item_quality;
+				}
 
 				if(QUERY_FLAG(tmp,FLAG_IDENTIFIED))
 				{
@@ -134,6 +135,17 @@ WS	[ \t]*{NL}?
 				/* artificate the item */
 				if(amask_art)
 					give_artifact_abilities(tmp, amask_art);
+
+				if (tmp->type == CONTAINER) /* do some safety for containers */
+				{
+					tmp->attacked_by = NULL; /* used for containers as link to players viewing it */
+					tmp->attacked_by_count = 0;
+				}
+				 
+				if(tmp->inv && !QUERY_FLAG(tmp,FLAG_SYS_OBJECT))
+					tmp->carrying = sum_weight(tmp);			/* ensure right weight for inventories */
+				else
+					tmp->carrying = 0; /* sanity setting... this means too - NO double use of ->carrying! */
 
 			    insert_ob_in_ob(tmp,op);
 
@@ -211,11 +223,9 @@ WS	[ \t]*{NL}?
 			/* Just print a warning so we can be reasonably safe
 			 * about not overflowing the buffer.
 			 */
-			 /*
-			if (strlen(op->msg) > (HUGE_BUF/2))
-			    LOG(llevDebug, "\n\tDebug: Warning message length > %d (max allowed=%d): %d\n>%.80s<\n",
+			if (strlen(op->msg) > 4000 )
+			    LOG(llevDebug, "\n\tDebug: Warning message length > %d (max allowed=%d): %d\n>%.40s<\n",
 				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
-				*/
 		    }
 			/*<MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }*/
 <MESSAGE>.*{WS}	strcat(msgbuf, yytext);
@@ -571,6 +581,9 @@ op->oy= op->y;
 ^is_vul_sphere{S}	{};
 ^is_indestructible{S}	{};
 ^unique{S}			{};
+^attacktype{S}			{};
+^wc_range{S}			{};
+^has_ready_skill{S}			{};
 	/* end outdate */
 
 ^attack_movement{S} op->move_type = IVAL;

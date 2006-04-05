@@ -989,7 +989,6 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                 m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
             goto next;
         }
-
         else if (op->type == FLOOR)
         {
 			/* be sure that floor is a.) always single arch and b.) always use "in map" offsets (no multi arch tricks) */
@@ -1029,7 +1028,6 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         {
             op->attacked_by = NULL; /* used for containers as link to players viewing it */
             op->attacked_by_count = 0;
-            sum_weight(op);
         }
         else if(op->type == SPAWN_POINT && op->slaying)
         {
@@ -1049,7 +1047,10 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         }
 
-
+		if(op->inv && !QUERY_FLAG(op,FLAG_SYS_OBJECT) )
+			op->carrying = sum_weight(op);			/* ensure right weight for inventories */
+		else
+			op->carrying = 0; /* sanity setting... this means too - NO double use of ->carrying! */
 
         /* expand a multi arch - we have only the head saved in a map!
          * the *real* fancy point is, that our head/tail don't must fit

@@ -189,9 +189,8 @@ int sack_can_hold(object *pl, object *sack, object *op, int nrof)
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
         sprintf(buf, "You don't want put the key into %s.", query_name(sack));
 
-    if (sack->weight_limit
-     && sack->carrying
-      + (sint32) ((float) (((nrof ? nrof : 1) * op->weight) + op->carrying) * sack->weapon_speed)
+    if (sack->weight_limit 
+		&& sack->carrying + (sint32) ((float) (((nrof ? nrof : 1) * op->weight) + op->carrying) * sack->weapon_speed)
       > (sint32) sack->weight_limit)
         sprintf(buf, "That won't fit in the %s!", query_name(sack));
     if (buf[0])
@@ -216,7 +215,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
      */
     char    buf[HUGE_BUF];
     object *env         = tmp->env;
-    uint32  weight, effective_weight_limit;
+    sint32  effective_weight_limit;
     int     tmp_nrof    = tmp->nrof ? tmp->nrof : 1;    
 
     if (pl->type == PLAYER)
@@ -241,17 +240,20 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
     if (nrof > tmp_nrof || nrof == 0)
         nrof = tmp_nrof;
     /* Figure out how much weight this object will add to the player */
-    weight = tmp->weight * nrof;
-    if (tmp->inv)
-        weight += tmp->carrying;
     if (pl->stats.Str <= MAX_STAT)
         effective_weight_limit = weight_limit[pl->stats.Str];
     else
         effective_weight_limit = weight_limit[MAX_STAT];
-    if ((pl->carrying + weight) > effective_weight_limit)
+    if (!QUERY_FLAG(pl, FLAG_WIZ) && (pl->carrying + (tmp->weight * nrof) + tmp->carrying) > effective_weight_limit)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "That item is too heavy for you to pick up.");
-        return;
+		object *tmp_pl = is_player_inv(tmp);
+
+		/* last check - we allow inv to inv transfer from same player */
+		if(!tmp_pl || tmp_pl != is_player_inv(op))
+		{
+			new_draw_info(NDI_UNIQUE, 0, pl, "That item is to heavy to pick up.");
+			return;
+		}
     }
 
     /* As usual, try to run the plugin _after_ tests, but _before_ side effects */
@@ -495,9 +497,16 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
 			return;
 		}
 	}
+	if (sack == tmp)
+		return;
 
-    if (sack == tmp)
+    if (check_magical_container(tmp,sack))
+	{
+		if(op->type == PLAYER)
+			new_draw_info (NDI_UNIQUE, 0, op, "You can't put a magical container in another!");
         return; /* Can't put an object in itself */
+	}
+
     if (sack->type != CONTAINER)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is not a container.", query_name(sack));
@@ -507,40 +516,6 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
     if (tmp->type == CONTAINER)
         container_unlink(NULL, tmp);
 
-    /*
-       if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
-         new_draw_info_format(NDI_UNIQUE, 0,op,
-    "You cannot put the %s in the container.", query_name(tmp));
-         return;
-       }
-    */
-
-    /* Eneq(@csd.uu.se): If the object to be dropped is a container
-     * we instead move the contents of that container into the active
-     * container, this is only done if the object has something in it.
-     */
-    /* we really don't need this anymore - after i had fixed the "can fit in"
-     * now we put containers with something in REALLY in other containers.
-    */
-    /*
-       if (tmp->type == CONTAINER && tmp->inv) {
-         sack2 = tmp;
-         new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.",
-            query_name(tmp), query_name(op->container));
-         for (tmp2 = tmp->inv; tmp2; tmp2 = tmp) {
-      tmp = tmp2->below;
-    if (sack_can_hold(op, op->container, tmp2,tmp2->nrof))
-      put_object_in_sack (op, sack, tmp2, 0);
-    else {
-      sprintf(buf,"Your %s fills up.", query_name(op->container));
-      new_draw_info(NDI_UNIQUE, 0,op, buf);
-      break;
-    }
-         }
-         esrv_update_item (UPD_WEIGHT, op, sack2);
-         return;
-       }
-    */
     if (!sack_can_hold(op, sack, tmp, (nrof ? nrof : tmp->nrof)))
         return;
 
@@ -646,9 +621,7 @@ void drop_object(object *op, object *tmp, long nrof)
     if (tmp->type == CONTAINER)
         container_unlink(NULL, tmp);
 
-    /* We are only dropping some of the items.  We split the current objec
-     * off
-     */
+    /* We are only dropping some of the items.  We split the current object */
     if (nrof && tmp->nrof != (uint32) nrof)
     {
         object*tmp2 =   tmp, *tmp2_cont = tmp->env;
@@ -668,13 +641,16 @@ void drop_object(object *op, object *tmp, long nrof)
                 esrv_del_item(CONTR(op), tmp2_tag, tmp2_cont);
             else
                 esrv_send_item(op, tmp2);
+			/* Update the container the object was in */
+			if (tmp2->env && tmp2->env != op && tmp2->env != tmp2)
+				esrv_update_item(UPD_WEIGHT, op, tmp2->env);
         }
     }
     else
     {
         remove_ob(tmp);
-        if (check_walk_off(tmp, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-            return;
+		if (tmp->env && tmp->env != op && tmp->env != tmp)
+			esrv_update_item(UPD_WEIGHT, op, tmp->env);
     }
 
     tmp_nrof = (int)nrof;
@@ -744,23 +720,6 @@ void drop_object(object *op, object *tmp, long nrof)
 
 void drop(object *op, object *tmp)
 {
-    /* Hopeful fix for disappearing objects when dropping from a container -
-     * somehow, players get an invisible object in the container, and the
-     * old logic would skip over invisible objects - works fine for the
-     * playes inventory, but drop inventory wants to use the next value.
-     */
-    /* hmhm... THIS looks strange... for the new invisible system, i removed it MT-11-2002 */
-    /* if somewhat get invisible, the we still can handle it - SYS_INV is now always forbidden
-       if (IS_SYS_INVISIBLE(tmp)) {
-    if (tmp->env && tmp->env->type != PLAYER) {
-        remove_ob(tmp);
-        return;
-    } else {
-        while(tmp!=NULL && IS_SYS_INVISIBLE(tmp))
-        tmp=tmp->below;
-    }
-       }
-       */
     if (tmp == NULL)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You don't have anything to drop.");
@@ -1436,7 +1395,14 @@ char *examine(object *op, object *tmp, int flag)
                                   100.0f - (tmp->weapon_speed * 100.0f));
                   }
               }
+			  if (buf[0] != '\0')
+				  strcat(buf_out, buf);
           }
+			if(tmp->weapon_speed != 1.0f)
+				sprintf(buf, "It contains %.1f kg reduced to %.1f kg.\n", (float) tmp->carrying / 1000.0f,
+							(float) tmp->damage_round_tag / 1000.0f);
+			else
+				sprintf(buf, "It contains %.1f kg.\n", (float) tmp->carrying / 1000.0f);
           break;
 
         case WAND:

@@ -43,9 +43,6 @@ static int      check_container(object *pl, object *con);
  *
  ******************************************************************************/
 
-/* This is more or less stolen from the query_weight function. */
-#define WEIGHT(op) (op->nrof?op->weight:op->weight+op->carrying)
-
 /* This is a simple function that we use a lot here.  It basically
  * adds the specified buffer into the socklist, but prepends a
  * single byte in length.  If the data is longer than that byte, it is
@@ -224,7 +221,22 @@ void esrv_draw_look(object *pl)
 
         SockList_AddInt(&global_sl, tmp->count);
         SockList_AddInt(&global_sl, flags);
-        SockList_AddInt(&global_sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
+
+		if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+		{
+			SockList_AddInt(&global_sl, -1);
+		}
+		else
+		{
+			if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f) /* magical containers */
+			{
+				SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
+			}
+			else
+			{
+			    SockList_AddInt(&global_sl, WEIGHT(tmp) );
+			}
+		}
         if (tmp->head)
         {
             if (tmp->head->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
@@ -354,7 +366,23 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 
         SockList_AddInt(sl, tmp->count);
         SockList_AddInt(sl, flags);
-        SockList_AddInt(sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
+
+		if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+		{
+			SockList_AddInt(&global_sl, -1);
+		}
+		else
+		{
+			if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
+			{
+				SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
+			}
+			else
+			{
+				SockList_AddInt(&global_sl, WEIGHT(tmp) );
+			}
+		}
+
         if (tmp->head)
         {
             SockList_AddInt(sl, tmp->head->face->number);
@@ -465,7 +493,22 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
 
         SockList_AddInt(sl, tmp->count);
         SockList_AddInt(sl, flags);
-        SockList_AddInt(sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
+
+		if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+		{
+			SockList_AddInt(&global_sl, -1);
+		}
+		else
+		{
+			if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
+			{
+				SockList_AddInt(&global_sl, tmp->damage_round_tag + tmp->weight);
+			}
+			else
+			{
+				SockList_AddInt(&global_sl, WEIGHT(tmp) );
+			}
+		}
 
         if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
@@ -596,7 +639,22 @@ void esrv_send_inventory(object *pl, object *op)
 
             SockList_AddInt(&global_sl, tmp->count);
             SockList_AddInt(&global_sl, flags);
-            SockList_AddInt(&global_sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
+
+			if(QUERY_FLAG(tmp, FLAG_NO_PICK))
+			{
+				SockList_AddInt(&global_sl, -1);
+			}
+			else
+			{
+				if(tmp->type == CONTAINER && tmp->weapon_speed != 1.0f)
+				{
+					SockList_AddInt(&global_sl, tmp->damage_round_tag  + tmp->weight);
+				}
+				else
+				{
+					SockList_AddInt(&global_sl, WEIGHT(tmp) );
+				}
+			}
 
             if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
@@ -712,7 +770,14 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     }
     if (flags & UPD_WEIGHT)
     {
-        SockList_AddInt(&global_sl, WEIGHT(op));
+		if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+		{
+			SockList_AddInt(&global_sl, op->damage_round_tag  + op->weight);
+		}
+		else
+		{
+		    SockList_AddInt(&global_sl, WEIGHT(op));
+		}
     }
     if (flags & UPD_FACE)
     {
@@ -841,7 +906,15 @@ static void esrv_send_item_send(object *pl, object *op)
     SockList_AddInt(&global_sl, (op->env ? op->env->count : 0));
     SockList_AddInt(&global_sl, op->count);
     SockList_AddInt(&global_sl, query_flags(op));
-    SockList_AddInt(&global_sl, WEIGHT(op));
+
+	if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+	{
+		SockList_AddInt(&global_sl, op->damage_round_tag  + op->weight);
+	}
+	else
+	{
+		SockList_AddInt(&global_sl, WEIGHT(op));
+	}
 
     if (op->head)
     {
@@ -960,7 +1033,7 @@ void esrv_send_item(object *pl, object *op)
 }
 
 
-static void esrv_del_item_send(player *pl, int tag)
+static inline void esrv_del_item_send(player *pl, int tag)
 {
 
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_DELITEM);
@@ -986,7 +1059,8 @@ void esrv_del_item(player *pl, int tag, object *cont)
         return;
     }
 
-    esrv_del_item_send(pl, tag);
+	if(pl)
+	    esrv_del_item_send(pl, tag);
 }
 
 

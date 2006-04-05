@@ -1649,7 +1649,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
                   for (ab = trap->above,tot = 0; ab != NULL; ab = ab->above)
                       if (!QUERY_FLAG(ab, FLAG_FLYING) && !QUERY_FLAG(ab, FLAG_FLYING))
                       {
-                          tot += (ab->nrof ? ab->nrof : 1) * ab->weight + ab->carrying;
+                          tot += WEIGHT(ab);
                       }
                   if (!(trap->weight_limit = (tot > trap->weight) ? 1 : 0))
                       goto leave;
