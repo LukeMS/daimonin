@@ -275,6 +275,15 @@
     with a 100% chance. A second time this item never drops again for
     that player. 
   </attribute>
+  <attribute arch="ego" editor="ego item" type="bool">
+    Item is an ego item an can only be applied when bound to a player.
+  </attribute>
+  <attribute arch="egobound" editor="egobound item" type="bool">
+    Item is egobound and can only be applied by the specific player.
+  </attribute>
+  <attribute arch="egoclan" editor="egoclan item" type="bool">
+    Item is ego bound to a clan and can only be applied by member of that clan (NOT DONE).
+  </attribute>
   <attribute arch="is_named" editor="named item" type="bool">
     Item is named and prefix like race or material is not shown.
   </attribute>
