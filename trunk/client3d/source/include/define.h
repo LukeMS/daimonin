@@ -84,6 +84,7 @@ enum
 
   QUERY_NPC_MASK        =1 << 4,
   QUERY_EQUIPMENT_MASK  =1 << 5,
+  QUERY_NPC_SELECT_MASK =1 << 6,
 };
 
 

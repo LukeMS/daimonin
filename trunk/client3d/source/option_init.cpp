@@ -20,19 +20,19 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "option.h"
 
-Option::optionStruct Option::optStruct[] =
+Option::optionStruct Option::optStruct[SEPARATOR] =
   {
     /// ////////////////////////////////////////////////////////////////////
     /// Sound settings.
     /// ////////////////////////////////////////////////////////////////////
     { SEL_INT_RANGE, "Sound volume:", "set sound volume for effects.","", "",
-      "", 100, 0,100,5, false
+      "_", 100, 0,100,5, false
     },
     { SEL_INT_RANGE,"Music volume:", "set music volume for background.","Sub info","",
-      "", 100, 0,100,5, false
+      "_", 100, 0,100,5, false
     },
     { SEL_INT_RANGE,"Voice volume:", "set voice volume.","Sub info","",
-      "", 100, 0,100,5, true
+      "_", 100, 0,100,5, true
     },
     /// ////////////////////////////////////////////////////////////////////
     /// Server settings.
@@ -41,18 +41,21 @@ Option::optionStruct Option::optStruct[] =
        "damn.informatik.uni-bremen.de", 0, 0,100,5, false
     },
     { SEL_INT_RANGE,"Metaserver port:", "","","",
-      "", 13326, 0,100,5, true
+      "_", 13326, 0,100,5, true
     },
   };
 
-std::string Option::optValue[] =
+std::string Option::optValue[SUM_OPTIONS - SEPARATOR-1] =
   {
     "0", // SEL_META_SEVER
     "0", // HIGH_TEXTURE_DETAILS
+    "0", // HIGH_TILES_DETAILS
     "0", // LOG_GUI_ELEMENTS
     "0", // CREATE_RAW_FONTS
     "0", // CREATE_TILE_TEXTURES
     "0", // UPDATE_NETWORK
     "0", // CMDLINE_SERVER_NAME
     "0", // CMDLINE_SERVER_PORT
+    "0", // CMDLINE_FALLBACK
   };
+

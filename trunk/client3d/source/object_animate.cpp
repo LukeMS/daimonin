@@ -30,9 +30,15 @@ http://www.gnu.org/licenses/licenses.html
 const char *Animate::StateNames[STATE_SUM]=
   {
     "Idle1",   "Idle2",   "Idle3",
+    "Idle4",   "Idle5",   "Idle6",
+    "Idle7",   "Idle8",   "Idle9", "Idle10",
+    "Idle11",  "Idle12",  "Idle13",
+    "Idle14",  "Idle15",  "Idle16",
+    "Idle17",  "Idle18",  "Idle19", "Idle120",
     "Walk1",   "Walk2",   "Walk3",
     "Run1",    "Run2",    "Run3",
     "Attack1", "Attack2", "Attack3",
+    "Attack4", "Attack5", "Attack6",
     "Block1",  "Block2",  "Block3",
     "Slump1",  "Slump2",  "Slump3",
     "Death1",  "Death2",  "Death3",
@@ -150,5 +156,5 @@ void Animate::toggleAnimation(int animationNr, bool force)
   mAnimState->setEnabled(true);
   mAnimState->setTimePosition(0);
   mAnimState->setLoop(false);
-  if (mAnimType > STATE_RUN3) Sound::getSingleton().playStream(sound_handle[animationNr -1 + mAnimGroup]);
+ // if (mAnimType > STATE_RUN3) Sound::getSingleton().playStream(sound_handle[animationNr -1 + mAnimGroup]);
 }

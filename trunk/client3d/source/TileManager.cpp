@@ -29,9 +29,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "logger.h"
 #include "option.h"
 
-//#define LOW_QUALITY_RENDERING
-
-
 ///================================================================================================
 /// Constructor
 ///================================================================================================
@@ -259,7 +256,6 @@ void TileManager::CreateChunks()
     }
     delete TileChunk::m_bounds;
 #ifdef LOG_TIMING
-
     Logger::log().info() << "Time to create Chunks: " << clock()-time << " ms";
 #endif
 }
@@ -346,6 +342,9 @@ void TileManager::ChangeTexture()
 ///================================================================================================
 void TileManager::ControlChunks(Vector3 vector)
 {
+     // only for testing...
+     if (Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK)) return;
+
     /// ////////////////////////////////////////////////////////////////////
     /// Just for testing...
     /// ////////////////////////////////////////////////////////////////////
@@ -370,7 +369,6 @@ void TileManager::ControlChunks(Vector3 vector)
             }
             else
 #endif
-
             {
                 m_mapchunk[cx][cy].Attach(QUALITY_LOW);
             }

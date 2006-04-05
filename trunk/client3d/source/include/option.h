@@ -64,24 +64,29 @@ typedef enum _game_status
   GAME_STATUS_SUM
 };
 
-const int SEPARATOR = 10000;
 
 class Option
 {
 public:
   enum enumOption
   {
+    /// Dialog window options.
     VOL_SOUND, VOL_MUSIC, VOL_VOICE,
     META_SERVER_NAME, META_SERVER_PORT,
-    /// values < 1000 are listed in dialog windows.
-    SEL_META_SEVER = SEPARATOR,
+    ///
+    SEPARATOR,
+    /// Non-Dialog options.
+    SEL_META_SEVER,
     HIGH_TEXTURE_DETAILS,
+    HIGH_TILES_DETAILS,
     LOG_GUI_ELEMENTS,
     CREATE_RAW_FONTS,
     CREATE_TILE_TEXTURES,
     UPDATE_NETWORK,
     CMDLINE_SERVER_NAME,
     CMDLINE_SERVER_PORT,
+    CMDLINE_FALLBACK,
+    SUM_OPTIONS
   };
   enum selType
   {
@@ -107,8 +112,8 @@ public:
   /// ////////////////////////////////////////////////////////////////////
   /// Variables.
   /// ////////////////////////////////////////////////////////////////////
-  static optionStruct optStruct[];
-  static std::string  optValue[];
+  static optionStruct optStruct[SEPARATOR];
+  static std::string  optValue[SUM_OPTIONS - SEPARATOR-1];
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.
@@ -130,7 +135,7 @@ public:
     }
     else
     {
-      return atoi(optValue[option - SEPARATOR].c_str());
+      return atoi(optValue[option - SEPARATOR-1].c_str());
     }
   }
 
@@ -144,7 +149,7 @@ public:
     {
       std::ostringstream os;
       os << value;
-      optValue[option - SEPARATOR] = os.str();
+      optValue[option - SEPARATOR-1] = os.str();
       os.rdbuf()->str("");
     }
   }
@@ -157,7 +162,7 @@ public:
     }
     else
     {
-      optValue[option - SEPARATOR] = value;
+      optValue[option - SEPARATOR-1] = value;
     }
   }
 
@@ -169,7 +174,7 @@ public:
     }
     else
     {
-      return optValue[option - SEPARATOR].c_str();
+      return optValue[option - SEPARATOR-1].c_str();
     }
   }
 

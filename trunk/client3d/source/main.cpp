@@ -17,8 +17,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
-#include <string>
+#include <Ogre.h>
 #include "logger.h"
 #include "events.h"
 #include "option.h"
@@ -62,13 +61,20 @@ bool parseCmdLine(const char *cmd, const char *value)
       Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_PORT, value);
       return true;
     }
+    else if ((cmd[1] == 'f' || !stricmp(cmd, "--fallback"  )))
+    {
+      Logger::log().info() << "You told me to disable the TileEngine ";
+      Option::getSingleton().setIntValue(Option::CMDLINE_FALLBACK, true);
+      return true;
+    }
   }
   cout << "\nusage:\n"
   << "--list gui              -l gui\n"
   << "--create rawFonts       -c rawFonts\n"
   << "--create tileTextures   -c tileTextures\n"
   << "--server <name>         -s <name>\n"
-  << "--port   <num>          -p <num>\n";
+  << "--port   <num>          -p <num>\n"
+  << "--fallback              -f disable TileEngine\n";
   return false;
 }
 
@@ -115,14 +121,21 @@ void LogException(Exception& e)
 ///================================================================================================
 /// Entry point.
 ///================================================================================================
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
   Logger::log().headline("Init Logfile");
   Option::getSingleton().setGameStatus(GAME_STATUS_CHECK_HARDWARE);
   Logger::log().headline("Parse CmdLine");
   while (--argc)
   {
-    if (!parseCmdLine(argv[argc], argv[argc--])) return 0;
+    if (argc > 1)
+    {
+      if (!parseCmdLine(argv[--argc], argv[argc])) return 0;
+    }
+    else
+    {
+      if (!parseCmdLine(argv[argc], "0")) return 0;
+    }
   }
   Root *root;
   RenderWindow *window;
@@ -135,8 +148,11 @@ int main(int argc, char *argv[])
     /// You can skip this and use root.restoreConfig() to load configuration
     /// settings if you were sure there are valid ones saved in ogre.cfg
     /// ////////////////////////////////////////////////////////////////////
-    if(!root->showConfigDialog()) return 0;
-
+    if(!root->showConfigDialog())
+    {
+      delete root;
+      return 0;
+    }
     /// ////////////////////////////////////////////////////////////////////
     /// Get the SceneManager, in this case a generic one
     /// ////////////////////////////////////////////////////////////////////
@@ -147,25 +163,41 @@ int main(int argc, char *argv[])
     LogException(e);
     return 0;
   }
+
   /// ////////////////////////////////////////////////////////////////////
   /// Check for GFX-Hardware.
   /// ////////////////////////////////////////////////////////////////////
   if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VBO))
     Logger::log().error() << "Your gfx-card doesn't support hardware vertex/index buffer!";
-  TexturePtr mTexture;
+  TexturePtr mTexture, mTextur2;
   try
   { /// try to create a 64MB texture in Video Ram.
-    mTexture = TextureManager::getSingleton().createManual("test", "General",
-               TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-    //TEX_TYPE_2D, 112048, 112048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+    mTexture = TextureManager::getSingleton().createManual("64 MB", "General",  TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
     mTexture.getPointer()->unload();
     mTexture.setNull();
     Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
   }
   catch( Exception& )
   {
-    mTexture.setNull();
-    Logger::log().warning() << "You are using an outdated videocard, or the device driver is broken!";
+     mTexture.setNull();
+      try
+      { /// try to create a 32MB texture in Video Ram.
+         mTexture = TextureManager::getSingleton().createManual("16MB nr. 1", "General",  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+         mTextur2 = TextureManager::getSingleton().createManual("16MB nr. 2", "General",  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+         mTexture.getPointer()->unload();
+         mTextur2.getPointer()->unload();
+         mTexture.setNull();
+         mTextur2.setNull();
+        Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
+     }
+    catch( Exception& )
+    {
+      Logger::log().warning() << "Your gfx-card seems to have less than 64 MB";
+      Logger::log().warning() << "Switching to minimal Details.";
+      Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
+      Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, false);
+   }
+    Logger::log().warning() << "Your gfx-card seems to only have 64 MB";
     Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
     Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
   }
@@ -181,7 +213,7 @@ int main(int argc, char *argv[])
     /// Must at least do initialiseAllResourceGroups();
     /// ////////////////////////////////////////////////////////////////////
     ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-	Event= new CEvent(window, root->createSceneManager(ST_GENERIC, "RefAppSMInstance"));
+	  Event= new CEvent(window, root->createSceneManager(ST_GENERIC, "RefAppSMInstance"));
     root->addFrameListener(Event);
     root->startRendering();
     /// ////////////////////////////////////////////////////////////////////
@@ -195,4 +227,6 @@ int main(int argc, char *argv[])
     LogException(e);
   }
   return 0;
-}
+  }
+
+

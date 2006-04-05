@@ -78,11 +78,21 @@ void CEvent::keyPressed(KeyEvent *e)
 
 
         case KC_A:
-        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_ATTACK1);
+        {
+         static int offset =1;
+         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_IDLE1 + offset);
+         if (++offset>= 20) offset =1;
+        }
         break;
 
         case KC_B:
         //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_BLOCK1);
+        {
+         static int offset =1;
+         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_ATTACK1 + offset);
+         if (++offset> 5) offset =1;
+        }
+
         break;
 
         case KC_C:
@@ -168,25 +178,20 @@ void CEvent::keyPressed(KeyEvent *e)
         // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
         //mCamera->yaw(Degree(10));
         {
-            static bool once = true;
-            if (once)
-            {
-                Entity * entity = mSceneManager->createEntity("test01", "tree1.mesh");
+            static int tree = 0;
+                Entity * entity = mSceneManager->createEntity("tree_"+StringConverter::toString(++tree), "tree1.mesh");
                 const AxisAlignedBox &AABB = entity->getBoundingBox();
                 Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-                pos.x = (pos.x +0.5) * TILE_SIZE + (fabs(AABB.getMaximum().x) - fabs(AABB.getMinimum().x))/2;
+                pos.x = (pos.x +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
                 pos.y+= fabs(AABB.getMaximum().y) - TILE_SIZE/2;
-                pos.z = (pos.z +0.5) * TILE_SIZE + (fabs(AABB.getMaximum().z) - fabs(AABB.getMinimum().z))/2;
+                pos.z = (pos.z +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
                 SceneNode *node = mSceneManager->getRootSceneNode()->createChildSceneNode();
                 node->attachObject(entity);
                 node->setPosition(pos.x, pos.y, pos.z);
-                once = false;
-            }
         }
         break;
 
         case KC_K:
-    {}
         break;
 
         case KC_G:
@@ -194,17 +199,15 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_I:
-        //      ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_ANIMATION, Animate::STATE_ATTACK1);
-        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
+          ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
         break;
 
         case KC_O:
-        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 0);
+          ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         break;
 
-
         case KC_P:
-        ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+          ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
         break;
 
         case KC_Q:
@@ -361,6 +364,7 @@ void CEvent::keyReleased(KeyEvent* e)
         /// ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
+        /*
         //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0);
         long time = clock();
         for (int i=0; i < 1000; ++i)
@@ -368,6 +372,7 @@ void CEvent::keyReleased(KeyEvent* e)
             Event->getTileManager()->ChangeChunks();
         }
         Logger::log().info() << "Time to create Chunks: " << clock()-time << " ms";
+        */
         break;
 
         case KC_RIGHT:
@@ -417,6 +422,7 @@ void CEvent::mousePressed (MouseEvent *e)
         }
         else
         {
+
             RaySceneQuery *mRaySceneQuery;
             mRaySceneQuery =mSceneManager->createRayQuery( Ray() );
             mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
@@ -424,10 +430,35 @@ void CEvent::mousePressed (MouseEvent *e)
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (result.size())
             {
-            RaySceneQueryResult::iterator itr = result.begin();
-            String tt = itr->movable->getName();
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)tt.c_str());
-            mSceneManager->destroyQuery(mRaySceneQuery);
+                RaySceneQueryResult::iterator itr = result.begin();
+                String tt = itr->movable->getName();
+
+                static bool once =true;
+                static SceneNode *mNode =0;
+                static Entity *mEntity;
+                if (once ==true)
+                {
+                    mEntity = mSceneManager->createEntity("Selection", "selection.mesh");
+                    mEntity->setQueryFlags(QUERY_NPC_SELECT_MASK);
+                    once =false;
+                }
+                if (mNode) mNode->getParentSceneNode()->removeAndDestroyChild("SelNode");
+                mNode = itr->movable->getParentSceneNode()->createChildSceneNode("SelNode");
+                mNode->attachObject(mEntity);
+                mNode->scale(.10,.10,.10);
+
+
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)tt.c_str());
+                mSceneManager->destroyQuery(mRaySceneQuery);
+                const AxisAlignedBox &AABB = itr->movable->getBoundingBox();
+                //            Math::Abs(AABB.getMinimum().y);
+                //Vector3 pos = itr->movable->getParentNode()->getPosition();
+                Vector3 pos = mNode->getPosition();
+                pos.y= AABB.getMinimum().y +3;
+                mNode->setPosition(pos);
+
+
+
             }
         }
     }
@@ -438,8 +469,9 @@ void CEvent::mousePressed (MouseEvent *e)
 
     else if (button & MouseEvent::BUTTON2_MASK )
 #endif
-
     {
+        if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
+        {
         /// activate mouse picking of tiles
         mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
         {
@@ -453,6 +485,7 @@ void CEvent::mousePressed (MouseEvent *e)
         /// Move the player.
         Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_GOTO, (int)pos.x, (int) pos.z);
+        }
     }
     e->consume();
 }

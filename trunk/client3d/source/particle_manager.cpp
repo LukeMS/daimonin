@@ -35,15 +35,15 @@ http://www.gnu.org/licenses/licenses.html
 bool ParticleManager::init(SceneManager *SceneMgr)
 {
     mSceneMgr = SceneMgr;
-    mNode =  mSceneMgr->getRootSceneNode();
-    mCounter = 0;
+    mSceneNode=  mSceneMgr->getRootSceneNode();
+    mCounter  = 0;
     return true;
 }
 
 ///================================================================================================
 ///
 ///================================================================================================
-void ParticleManager::addNodeObject(const SceneNode *parentNode, const char* particleFX)
+ParticleSystem *ParticleManager::addNodeObject(const SceneNode *parentNode, const char* particleFX)
 {
     /*
         sParticleObj *obj = new sParticleObj;
@@ -56,27 +56,55 @@ void ParticleManager::addNodeObject(const SceneNode *parentNode, const char* par
         obj->speed = 180;
         ++mNodeCounter;
     */
+  return 0; // switch off compiler warning.
+}
+
+///================================================================================================
+/// Add a ParticleSystem to a bone.
+///================================================================================================
+ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone, const char* pScript, Real lifeTime)
+{
+    sParticles *obj = new sParticles;
+    mvParticle.push_back(obj);
+    obj->lifeTime = lifeTime;
+    obj->pSystem = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->sceneNode=0;
+    obj->entity = ent;
+    obj->entity->attachObjectToBone(strBone, obj->pSystem);
+    return obj->pSystem;
 }
 
 ///================================================================================================
 /// Add an independant ParticleSystem.
 ///================================================================================================
-void ParticleManager::addFreeObject(Vector3 pos, const char *particleScript, Real lifeTime)
+ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript, Real lifeTime)
 {
-    ParticleFX *obj = new ParticleFX(lifeTime);
+    sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
-    obj->addFreeObject(particleScript, pos);
+    obj->lifeTime = lifeTime;
+    obj->pSystem  = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->entity = 0;
+    obj->sceneNode= Event->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
+    obj->sceneNode->attachObject(obj->pSystem);
+    obj->sceneNode->setPosition(pos);
+    return obj->pSystem;
 }
 
 ///================================================================================================
-///
+/// Update the particle. Deletes all particles with expired lifetime.
 ///================================================================================================
-void ParticleManager::update(Real time)
+void ParticleManager::update(Real dTime)
 {
-    for (std::vector<ParticleFX*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
-       if (!(*i)->update(time))
+       if ( (*i)->lifeTime <0 ) continue; // Infity lifeTime or already deleted.
+       if (((*i)->lifeTime-= dTime) <0)
        {
+          if ((*i)->entity)
+            (*i)->entity->detachObjectFromBone((*i)->pSystem);
+          if ((*i)->sceneNode)
+            (*i)->sceneNode->getParentSceneNode()->removeChild((*i)->sceneNode);
+          Event->GetSceneManager()->destroyParticleSystem((*i)->pSystem);
           delete (*i);
           i = mvParticle.erase(i);
        }
@@ -84,25 +112,19 @@ void ParticleManager::update(Real time)
 }
 
 ///================================================================================================
-///
+/// Prepare a particle for deleting.
 ///================================================================================================
-void ParticleManager::delObject(int )
+void ParticleManager::delObject(ParticleSystem *pSystem)
 {
-
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    {
+       if ( (*i)->pSystem == pSystem )
+       {
+          (*i)->lifeTime = 0;
+          return;
+       }
+    }
 }
-
-
-/*
-  for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
-  {
-    (*i)->state.clear();
-    delete (*i);
-  }
-  mvSrcEntry.clear();
-*/
-
-
-
 
 ///================================================================================================
 ///

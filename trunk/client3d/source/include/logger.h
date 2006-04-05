@@ -40,37 +40,16 @@ public:
    ** method is invoked.
    ** @return Reference to a static singleton Logger object.
    *****************************************************************************/
-  static Logger& log()
+  static Logger &log()
   {
-    static Logger Singleton(FILE_LOGGING, PRG_NAME); return Singleton;
+    static Logger Singleton; return Singleton;
   }
   /**
    ** The constructor create the log file and initalizes it
    ** with the html header. If a file with the given file name
    ** already exists, ctor overwrites it.
    ** If ctor can't open file a std::bad_exception is thrown.
-   ** @param file_name A pointer to the C-string containing the log file name.
-   ** @param title A pointer to the C-string contaning the title of the log.
    ** @todo If ctor fails in opening file throw a more specific exception.
-   *****************************************************************************/
-  Logger(const char *filename, const char *title);
-  /**
-   ** Destructor closes the log writing a closing html header.
-   ** If it fails in opening the file it ingnores the error.
-   ** Throwing an exception here would be useless an dangerous if
-   ** the object is static.
-   ** Both HTML 4.01 Transitional as well as HTML 4.01 Strict
-   ** allow the omission of the HTML and BODY start and end tag.
-   ** So we can consider not an error leaving the log
-   ** without the closing header.
-   ** In the same manner we can skip the problem of adding the closing header
-   ** to the log file during the play.
-   *****************************************************************************/
-  ~Logger();
-  /**
-   ** This nested class provides a way for using Logger objects with
-   ** a stream-like sintax. LogEntry objects can't be created by users of
-   ** Logger and can't be copied.
    *****************************************************************************/
   class LogEntry
   {
@@ -99,7 +78,7 @@ public:
      **        shown at the begining of the line.
      ** @todo If it fails to open file throw a more specific exception.
      *****************************************************************************/
-    LogEntry(const char *filename, const char *type);
+    LogEntry(const char *type);
     friend class Logger;
     LogEntry(const LogEntry&)
     {
@@ -113,7 +92,7 @@ public:
    *****************************************************************************/
   LogEntry info()
   {
-    return LogEntry(mFilename, "Info");
+    return LogEntry("Info");
   }
 
   /**
@@ -122,7 +101,7 @@ public:
    *****************************************************************************/
   LogEntry warning()
   {
-    return LogEntry(mFilename, "Warn");
+    return LogEntry("Warn");
   }
 
   /**
@@ -131,7 +110,7 @@ public:
    *****************************************************************************/
   LogEntry error()
   {
-    return LogEntry(mFilename, "Error");
+    return LogEntry("Error");
   }
 
   /**
@@ -150,19 +129,29 @@ public:
    *****************************************************************************/
   void success(bool status);
 
+private:
+  Logger();
+  /**
+   ** Destructor closes the log writing a closing html header.
+   ** If it fails in opening the file it ingnores the error.
+   ** Throwing an exception here would be useless an dangerous if
+   ** the object is static.
+   ** Both HTML 4.01 Transitional as well as HTML 4.01 Strict
+   ** allow the omission of the HTML and BODY start and end tag.
+   ** So we can consider not an error leaving the log
+   ** without the closing header.
+   ** In the same manner we can skip the problem of adding the closing header
+   ** to the log file during the play.
+   *****************************************************************************/
+  ~Logger();
   /**
    ** Helper function. Returns a formatted representation
    ** of the time when called.
    *****************************************************************************/
-  static const char* now();
+  const char* now();
 
-  /**
-   ** Use this to break the line instead of std::endl;
-   *****************************************************************************/
-  static const char* endl;
-
-private:
-  const char *mFilename;
+  static bool mTable;
+  static const char *mFilename;
 };
 
 #endif
