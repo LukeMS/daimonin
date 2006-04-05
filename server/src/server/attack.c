@@ -350,7 +350,6 @@ int hit_player(object *op, int dam, object *hitter)
             dmg_obj = aggro_insert_damage(op, hitter);
     }
 
-
     /* slaying door ... when i think about it, its broken,,,
      * and iam more and more sure we don't need it.
      * because: IF there is a closed door - then seek key.

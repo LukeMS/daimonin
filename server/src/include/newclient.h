@@ -57,7 +57,6 @@
 
 #define CS_QUERY_HIDEINPUT 0x4  /* Hide input being entered */
 
-
 /* These are multiplication values that should be used when changing
  * floats to ints, and vice version.  MULTI is integer representatin
  * (float to int), MULTF is float, for going from int to float.

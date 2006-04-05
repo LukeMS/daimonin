@@ -92,6 +92,7 @@ extern char            *describe_item(object *op);
 extern int              need_identify(object *op);
 extern void             identify(object *op);
 extern void             set_traped_flag(object *op);
+extern int				check_magical_container(object *op, object *env);
 /* links.c */
 extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
@@ -209,7 +210,7 @@ extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 ar
 extern void             mark_object_removed(object *ob);
 extern int              CAN_MERGE(object *ob1, object *ob2);
 extern object          *merge_ob(object *op, object *top);
-extern signed long      sum_weight(object *op);
+extern sint32			sum_weight(object *op);
 extern object          *is_player_inv(object *op);
 extern void             dump_object2(object *op);
 extern void             dump_object(object *op);
@@ -232,7 +233,6 @@ extern void             update_object(object *op, int action);
 extern void             destroy_object(object *ob);
 extern int              count_free(void);
 extern int              count_used(void);
-extern void             sub_weight(object *op, sint32 weight);
 extern void             remove_ob(object *op);
 extern void             destruct_ob(object *op);
 extern void             drop_ob_inv(object *op);
@@ -241,7 +241,6 @@ extern object          *insert_ob_in_map(object *op, mapstruct *m, object *origi
 extern void             replace_insert_ob_in_map(char *arch_string, object *op);
 extern object          *get_split_ob(object *orig_ob, int nr);
 extern object          *decrease_ob_nr(object *op, int i);
-extern void             add_weight(object *op, sint32 weight);
 extern object          *insert_ob_in_ob(object *op, object *where);
 extern int              check_walk_on(object *op, object *originator, int flags);
 extern int              check_walk_off(object *op, object *originator, int flags);

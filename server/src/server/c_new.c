@@ -815,6 +815,7 @@ void command_new_char(char *params, int len, player *pl)
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
     CONTR(op)->last_stats.exp = 1;          /* force send of skill exp data to client */
     strcpy(CONTR(op)->title, op->race);     /* no title - just what we born */
+	op->carrying = sum_weight(op);			/* sanity calc to ensure right inventory weight for new player */
     fix_player(op);                         /* THATS our first fix_player() when we create a new char
                                                                  * add this time, hp and sp will be set
                                                                  */

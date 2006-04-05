@@ -1304,3 +1304,23 @@ void set_traped_flag(object *op)
             esrv_update_item(UPD_FLAGS, op->env, op);
     }
 }
+
+/* We don't want allow to put a magical container inside another
+ * magical container. This function returns FALSE when op can be
+ * put in env of TRUE when both are magical.
+ */
+int check_magical_container(object *op, object *env)
+{
+
+	/* is op a magical container? */
+	if(!op || op->type != CONTAINER || op->weapon_speed == 1.0f)
+		return FALSE;
+
+	for(;env;env = env->env)
+	{
+		if(env->type == CONTAINER && env->weapon_speed != 1.0f)
+			return TRUE;
+	}
+
+	return FALSE;
+}

@@ -943,7 +943,7 @@ void check_login(object *op)
 #ifdef AUTOSAVE
     pl->last_save_tick = ROUND_TAG;
 #endif
-    op->carrying = sum_weight(op);
+    op->carrying = sum_weight(op); /* sanity calc for inventory weight of loaded players */
 
      link_player_skills(op); /* link all exp group & skill objects to the player */
 

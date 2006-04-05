@@ -193,10 +193,16 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
                 }
             }
 
-            if((quest->magic != (sint8) quest_trigger->last_heal || flag) && quest_trigger->msg)
-                new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
-            if(quest->magic != (sint8) quest_trigger->last_heal)
-                quest->magic = (sint8) quest_trigger->last_heal;
+			if(quest->magic != (sint8) quest_trigger->last_heal ||flag)
+			{
+				if(!flag)
+					new_draw_info_format(NDI_UNIQUE | NDI_NAVY, 0, target, "You completed the quest '%s'!", query_short_name(quest, target));
+
+				if(quest_trigger->msg)
+					new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
+
+				quest->magic = (sint8) quest_trigger->last_heal;
+			}
         }
     }
 
