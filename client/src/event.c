@@ -1359,11 +1359,21 @@ int key_event(SDL_KeyboardEvent *key)
 
                   break;
                 case SDLK_ESCAPE:
-                  if (show_help_screen)
-                  {
-                      show_help_screen = 0;
-                      break;
-                  }
+					if (show_help_screen)
+						show_help_screen = 0;
+					if (show_help_screen_new)
+					{
+						show_help_screen_new = FALSE;
+						draw_info("QUICK HELP REMINDER", COLOR_GREEN);
+						draw_info("- you move with NUMPAD keys", COLOR_GREEN);
+						draw_info("- you target NPC's with the 'S' key", COLOR_GREEN);
+						draw_info("- you speak to NPC's with the 'T' key", COLOR_GREEN);
+						draw_info("- hold SHIFT pressed for your IVENTORY", COLOR_GREEN);
+						draw_info("- use cursor keys to select an item", COLOR_GREEN);
+						draw_info("- use 'A' key to use an item or 'E' to examine it", COLOR_GREEN);
+						draw_info("- visit the daimonin website: °www.daimonin.net°", COLOR_GREEN);
+						break;
+					}
                   if (esc_menu_flag == FALSE)
                   {
                       map_udate_flag = 1;
@@ -1916,10 +1926,20 @@ Boolean process_macro_keys(int id, int value)
           draw_info(buf, COLOR_DGOLD);
           return FALSE;
           break;
-        case KEYFUNC_HELP:
-          if (cpl.menustatus == MENU_KEYBIND)
-              save_keybind_file(KEYBIND_FILE);
 
+        case KEYFUNC_HELP:
+			if (cpl.menustatus == MENU_KEYBIND)
+				save_keybind_file(KEYBIND_FILE);
+
+			cpl.menustatus = MENU_NO;
+			sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+			if (show_help_screen_new)
+				show_help_screen_new = FALSE;
+			else
+				show_help_screen_new = TRUE;
+
+
+		/*
           cpl.menustatus = MENU_NO;
           sound_play_effect(SOUND_SCROLL, 0, 0, 100);
           if (show_help_screen)
@@ -1929,7 +1949,7 @@ Boolean process_macro_keys(int id, int value)
           }
           else
               show_help_screen = 1;
-
+*/
           return FALSE;
           break;
 
@@ -2161,6 +2181,12 @@ static void move_keys(int num)
 {
     char    buf[256];
     char    msg[256];
+
+	if (show_help_screen_new)
+	{
+		draw_info("First close the QUICK HELP with ESC key.", COLOR_WHITE);
+		return;
+	}
 
     if(cpl.menustatus != MENU_NO)
         reset_menu_status();

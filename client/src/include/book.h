@@ -24,7 +24,7 @@
 #if !defined(__BOOK_H)
 #define __BOOK_H
 
-#define BOOK_PAGE_LINES 20
+#define BOOK_PAGE_LINES 16
 #define BOOK_LINES_CHAR 256
 
 typedef struct __global_book_data

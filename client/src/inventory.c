@@ -34,7 +34,7 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
     register int i = 0;
     int ret = -1;
 
-    cpl.window_weight = 0.0f;
+    cpl.window_weight = 0;
     *ctag = -1;
     *count = 0;
     if (!op)
@@ -54,7 +54,7 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
     {
         (*count)++;
 
-        cpl.window_weight += tmp->weight * (float) tmp->nrof;
+		cpl.window_weight += tmp->weight;
         if (tmp->tag == cpl.container_tag)
             cpl.container = tmp;
         if (cpl.container && cpl.container->tag == tmp->tag)
@@ -108,7 +108,7 @@ static void show_inventory_item_stats(item *tmp, int x, int y)
         sprintf(buf, "%s", tmp->s_name);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y - 26, COLOR_HGOLD, &tmp_rect, NULL);
 
-    sprintf(buf, "weight: %4.3f", tmp->weight * (float) tmp->nrof);
+	sprintf(buf, "weight: %4.3f", (float)tmp->weight/1000.0f);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 160, y - 14, COLOR_HGOLD, NULL, NULL);
 
 

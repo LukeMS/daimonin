@@ -325,7 +325,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 				plc_logic+=1;
 				
 				/* lets check we need to break the title line (because its to big) */
-				if(StringWidthOffset(&BigFont, b_line->line, &l_len, 196))
+				if(StringWidthOffset(&BigFont, b_line->line, &l_len, 186))
 				{
 					int i = l_len;
 					b_line->line[l_len]=0;
@@ -398,9 +398,10 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 			}
 			
 			/* now lets check the last line - if the line is to long, lets adjust it */
-			if(StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?&BigFont:&SystemFont, tmp_line->line, &l_len, 196))
+			if(StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?&BigFont:&MediumFont, tmp_line->line, &l_len, 186))
 			{
-				int i;
+				int i, wspace_flag = TRUE;
+
 
 				tmp_line->line[l_len]=0; /* bigger can't be the string - current_book_line.line is our backbuffer */
 				/* now lets go back to a ' ' if we don't find one, we cut the line hard */
@@ -411,34 +412,47 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 						tmp_line->line[i]=0; /* thats our real eof */
 						break;
 					}
+					else if(i>0)
+					{
+						if(tmp_line->line[i] == '(' && tmp_line->line[i-1] == ')')
+						{
+							tmp_line->line[i]=0;
+							wspace_flag = FALSE;
+							break;
+						}
+					}
 				}
 				/* lets see where our real eol is ... */
 				if(i<0) /* is it at i?`*/
 					i = l_len; /* nope, its our "physcial" eol */
 		
 				/* now lets remove all whitespaces.. if we hit EOL, jump back */		
-				for(;;i++)
+				if(wspace_flag)
 				{
-					if(current_book_line.line[i] == 0)
+					for(;;i++)
 					{
-
-						if(!force_line) /* thats a real eol */
+						if(current_book_line.line[i] == 0)
 						{
-							/* clear input line setting */
-							memset(&current_book_line, 0, sizeof(_gui_book_line));								
+							if(!force_line) /* thats a real eol */
+							{
+								/* clear input line setting */
+								memset(&current_book_line, 0, sizeof(_gui_book_line));								
+							}
+							goto force_line_jump_out;
 						}
-						goto force_line_jump_out;
-					}
 
-					if(current_book_line.line[i] != ' ')
-					break;
+						if(current_book_line.line[i] != ' ')
+						break;
+					}
 				}
+
 				memcpy(current_book_line.line, &current_book_line.line[i], strlen(&current_book_line.line[i])+1);
 				/* we have a forced linebreak, we go back and load more chars */
 				lc = strlen(current_book_line.line);
 				if(force_line)
 				{
-					if(StringWidth((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&SystemFont, current_book_line.line) < BOOK_LINES_CHAR-2)
+					//if(StringWidthOffset((tmp_line->mode == BOOK_LINE_TITLE) ?&BigFont:&MediumFont, tmp_line->line, &l_len, 186))
+					if(StringWidth((tmp_line->mode == BOOK_LINE_TITLE) ?& BigFont:&MediumFont, current_book_line.line) < 186)
 					{
 						goto force_line_jump_out;
 					}
@@ -491,10 +505,10 @@ void show_book(int x, int y)
 	if(!gui_interface_book)
 		return;
 
-	box.x=x+37;
-	box.y=y+42;
+	box.x=x+47;
+	box.y=y+72;
 	box.w=200;
-	box.h=330;
+	box.h=300;
 
 	/* get the 2 pages we show */
 	page1 = gui_interface_book->start;
@@ -502,12 +516,10 @@ void show_book(int x, int y)
 		;
 	page2=page1->next;
 
-
-
 	if(page1)
 	{
 		sprintf(buf,"Page %d of %d",gui_interface_book->page_show+1,gui_interface_book->pages);
-		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+70, box.y+330, COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+70, box.y+295, COLOR_WHITE, NULL, NULL);
 
 		SDL_SetClipRect(ScreenSurface, &box);
 		/*SDL_FillRect(ScreenSurface, &box, 35325);*/
@@ -517,7 +529,7 @@ void show_book(int x, int y)
 				break;
 			if(page1->line[i]->mode == BOOK_LINE_NORMAL)
 			{
-				StringBlt(ScreenSurface, &SystemFont, page1->line[i]->line , box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
+				StringBlt(ScreenSurface, &MediumFont, page1->line[i]->line , box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
 			}
 			else if(page1->line[i]->mode == BOOK_LINE_TITLE)
 			{
@@ -530,20 +542,20 @@ void show_book(int x, int y)
 
 
 	box.x=x+280;
-	box.y=y+42;
+	box.y=y+72;
 	box.w=200;
-	box.h=330;
+	box.h=300;
 
 	if(gui_interface_book->pages)
 	{
 		sprintf(buf,"%c and %c to turn page",ASCII_RIGHT, ASCII_LEFT);
-		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x-59, box.y+330, COLOR_GREEN, NULL, NULL);
+		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x-59, box.y+300, COLOR_GREEN, NULL, NULL);
 	}
 
 	if(page2)
 	{
 		sprintf(buf,"Page %d of %d",gui_interface_book->page_show+2,gui_interface_book->pages);
-		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+76, box.y+330, COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+76, box.y+295, COLOR_WHITE, NULL, NULL);
 
 		SDL_SetClipRect(ScreenSurface, &box);
 		/*SDL_FillRect(ScreenSurface, &box, 35325);*/
@@ -553,7 +565,7 @@ void show_book(int x, int y)
 				break;
 			if(page2->line[i]->mode == BOOK_LINE_NORMAL)
 			{
-				StringBlt(ScreenSurface, &SystemFont, page2->line[i]->line , box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
+				StringBlt(ScreenSurface, &MediumFont, page2->line[i]->line , box.x+2, box.y+2+yoff, COLOR_BLACK, NULL, NULL);
 			}
 			else if(page2->line[i]->mode == BOOK_LINE_TITLE)
 			{

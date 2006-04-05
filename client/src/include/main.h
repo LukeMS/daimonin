@@ -409,6 +409,7 @@ extern char         ServerName[];   /* name of the server we want connect */
 extern int          ServerPort;         /* port addr */
 
 extern int          show_help_screen;
+extern int          show_help_screen_new;
 
 extern int          map_udate_flag, map_transfer_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
@@ -527,12 +528,11 @@ typedef enum _bitmap_index
     BITMAP_TARGET_SPOT,
     BITMAP_BELOW,
     BITMAP_FLINE,
-    BITMAP_HELP1,
+    BITMAP_HELP_START,
     BITMAP_TARGET_ATTACK,
     BITMAP_TARGET_TALK,
     BITMAP_TARGET_NORMAL,
     BITMAP_LOADING,
-    BITMAP_HELP2,
     BITMAP_WARN_HP,
     BITMAP_WARN_FOOD,
     BITMAP_LOGO270,

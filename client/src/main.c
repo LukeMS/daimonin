@@ -40,6 +40,7 @@ Uint32              sdl_dgreen, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_
 
 int                 music_global_fade   = FALSE;
 int                 show_help_screen;
+int                 show_help_screen_new;
 int                 mb_clicked          = 0;
 
 int                    interface_mode;
@@ -155,9 +156,9 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"border2.png", PIC_TYPE_TRANS}, {"border3.png", PIC_TYPE_TRANS}, {"border4.png", PIC_TYPE_TRANS},
     {"border5.png", PIC_TYPE_TRANS}, {"border6.png", PIC_TYPE_TRANS}, {"panel_p1.png", PIC_TYPE_DEFAULT},
     {"group_spot.png", PIC_TYPE_DEFAULT}, {"target_spot.png", PIC_TYPE_DEFAULT}, {"below.png", PIC_TYPE_DEFAULT},
-    {"frame_line.png", PIC_TYPE_DEFAULT}, {"help1.png", PIC_TYPE_DEFAULT}, {"target_attack.png", PIC_TYPE_TRANS},
+    {"frame_line.png", PIC_TYPE_DEFAULT}, {"help_start.png", PIC_TYPE_DEFAULT}, {"target_attack.png", PIC_TYPE_TRANS},
     {"target_talk.png", PIC_TYPE_TRANS}, {"target_normal.png", PIC_TYPE_TRANS}, {"loading.png", PIC_TYPE_TRANS},
-    {"help2.png", PIC_TYPE_DEFAULT}, {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT},
+    {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT},
     {"logo270.png", PIC_TYPE_DEFAULT}, {"dialog_bg.png", PIC_TYPE_DEFAULT},
     {"dialog_title_options.png", PIC_TYPE_DEFAULT}, {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
     {"dialog_title_skill.png", PIC_TYPE_DEFAULT}, {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
@@ -280,7 +281,8 @@ void init_game_data(void)
     init_player_data();
     clear_metaserver_data();
     reset_input_mode();
-    show_help_screen = 0;
+	show_help_screen = 0;
+	show_help_screen_new = FALSE;
 
     start_anim = NULL; /* anim queue of current active map */
 
@@ -294,7 +296,7 @@ void init_game_data(void)
     argServerPort = 13327;
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
-    GameStatusLogin = TRUE;
+    GameStatusLogin = FALSE;
     CacheStatus = CF_FACE_CACHE;
     SoundStatus = 1;
     MapStatusX = MAP_MAX_SIZE;
@@ -459,7 +461,7 @@ Boolean game_status_chain(void)
     if (GameStatus == GAME_STATUS_INIT)
     {
 		cpl.mark_count = -1;
-	    GameStatusLogin = TRUE;
+	    GameStatusLogin = FALSE;
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -694,7 +696,7 @@ Boolean game_status_chain(void)
             sprintf(buf, "Break Login.");
             draw_info(buf, COLOR_RED);
             GameStatus = GAME_STATUS_START;
-			GameStatusLogin = TRUE;
+			GameStatusLogin = FALSE;
         }
         reset_input_mode();
     }
@@ -796,6 +798,7 @@ Boolean game_status_chain(void)
     else if (GameStatus == GAME_STATUS_NEW_CHAR)
     {
         map_transfer_flag = 0;
+		show_help_screen_new = TRUE;
     }
     else if (GameStatus == GAME_STATUS_QUIT)
     {
@@ -1372,6 +1375,7 @@ int main(int argc, char *argv[])
         }
 
         /* show help system or game screen */
+/*
         if (show_help_screen)
         {
             SDL_FillRect(ScreenSurface, NULL, 0);
@@ -1381,6 +1385,8 @@ int main(int argc, char *argv[])
                 sprite_blt(Bitmaps[BITMAP_HELP2], 0, 0, NULL, NULL);
         }
         else
+*/
+
         {
             if (GameStatus == GAME_STATUS_PLAY)
             {
@@ -1441,10 +1447,10 @@ int main(int argc, char *argv[])
                                                          INVITEMYLEN);
                     cpl.real_weight = cpl.window_weight;
                     StringBlt(ScreenSurface, &SystemFont, "Carry", 125, 470, COLOR_HGOLD, NULL, NULL);
-                    sprintf(buf, "%4.3f kg", cpl.real_weight);
+                    sprintf(buf, "%4.3f kg", (float)cpl.real_weight/1000.0f);
                     StringBlt(ScreenSurface, &SystemFont, buf, 125 + 35, 470, COLOR_DEFAULT, NULL, NULL);
                     StringBlt(ScreenSurface, &SystemFont, "Limit", 125, 481, COLOR_HGOLD, NULL, NULL);
-                    sprintf(buf, "%4.3f kg", (float) (cpl.weight_limit / 1000));
+                    sprintf(buf, "%4.3f kg", (float) cpl.weight_limit / 1000.0);
                     StringBlt(ScreenSurface, &SystemFont, buf, 125 + 35, 481, COLOR_DEFAULT, NULL, NULL);
                     cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
                                                            &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
@@ -1561,6 +1567,10 @@ int main(int argc, char *argv[])
         else if (GameStatus == GAME_STATUS_NEW_CHAR)
             cpl.menustatus = MENU_CREATE;
 
+		if (show_help_screen_new && GameStatus == GAME_STATUS_PLAY)
+		{
+			sprite_blt(Bitmaps[BITMAP_HELP_START] , 799-Bitmaps[BITMAP_HELP_START]->bitmap->w , 0, NULL, NULL);
+		}
         /* show all kind of the big dialog windows */
         show_menu();
         /* show all kind of the small dialog windows */
