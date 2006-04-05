@@ -1619,17 +1619,17 @@ void show_login_server(void)
 	{
 		if(GameStatusLogin)
 		{
-		    StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+51, y+32, COLOR_BLACK, NULL, NULL);
-		    StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+49, y+30, COLOR_GREEN, NULL, NULL);
-			StringBlt(ScreenSurface, &BigFont, "Create Character", x+18, y+52, COLOR_BLACK, NULL, NULL);
-			StringBlt(ScreenSurface, &BigFont, "Create Character", x+16, y+50, COLOR_WHITE, NULL, NULL);
+		    StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+51, y+52, COLOR_BLACK, NULL, NULL);
+		    StringBlt(ScreenSurface, &BigFont, ">> Login <<", x+49, y+50, COLOR_GREEN, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, "Create Character", x+18, y+32, COLOR_BLACK, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, "Create Character", x+16, y+30, COLOR_WHITE, NULL, NULL);
 		}
 		else
 		{
-		    StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+32, COLOR_BLACK, NULL, NULL);
-		    StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+30, COLOR_WHITE, NULL, NULL);
-			StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-3, y+52, COLOR_BLACK, NULL, NULL);
-			StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-5, y+50, COLOR_GREEN, NULL, NULL);
+		    StringBlt(ScreenSurface, &BigFont, "Login", x+72, y+52, COLOR_BLACK, NULL, NULL);
+		    StringBlt(ScreenSurface, &BigFont, "Login", x+70, y+50, COLOR_WHITE, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-3, y+32, COLOR_BLACK, NULL, NULL);
+			StringBlt(ScreenSurface, &BigFont, ">> Create Character <<", x-5, y+30, COLOR_GREEN, NULL, NULL);
 		}
 		    y += 160;
             StringBlt(ScreenSurface, &SystemFont,

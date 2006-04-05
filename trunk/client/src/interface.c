@@ -1287,7 +1287,8 @@ void gui_interface_send_command(int mode, char *cmd)
        int x=gui_interface_npc->startx, y=gui_interface_npc->starty, numButton=0,yoff, i; 
     
        sprite_blt(Bitmaps[BITMAP_NPC_INTERFACE], x, y, NULL, NULL); 
-    
+	   add_close_button(x-113, y+4, MENU_NPC);
+
        if(gui_interface_npc->used_flag&GUI_INTERFACE_HEAD) 
        { 
            /* print head */ 
@@ -1337,7 +1338,7 @@ void gui_interface_send_command(int mode, char *cmd)
        box.h=INTERFACE_WINLEN_NPC; 
     
        blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_interface_npc->win_length, INTERFACE_WINLEN_NPC, 
-           gui_interface_npc->yoff*-1, -1, x + 341, y + 86); 
+           gui_interface_npc->yoff*-1, -1, x + 340, y + 90); 
     
        SDL_SetClipRect(ScreenSurface, &box); 
        /*SDL_FillRect(ScreenSurface, &box, 3);*/ 

@@ -232,7 +232,7 @@ typedef struct Player_Struct
     item                   *ranges[range_size]; /* Object that is used for that */
 
 
-    uint32                  weight_limit;
+    sint32                  weight_limit;
     uint32                  count;      /* Repeat count on command */
     int                     target_mode;
     int                     target_code;
@@ -278,8 +278,8 @@ typedef struct Player_Struct
     uint32                  runkey_on           : 1;    /* sic! */
     uint32                  echo_bindings       : 1;/* If true, echo the command that the key */
 
-    float                   window_weight;
-    float                   real_weight;
+    sint32                   window_weight;
+    sint32                   real_weight;
 
 
     uint16                  count_left; /* count for commands */

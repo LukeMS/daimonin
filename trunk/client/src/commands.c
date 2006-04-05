@@ -949,6 +949,7 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
             memcpy(name, (char *) data + pos, nlen);
             pos += nlen;
             name[nlen] = '\0';
+			LOG(-1,"WEIGHT %s :: %d (%d)\n", name, weight, tag);
             anim = GetShort_String(data + pos); pos += 2;
             animspeed = data[pos++];
             nrof = GetInt_String(data + pos); pos += 4;
@@ -1129,7 +1130,7 @@ void UpdateItemCmd(unsigned char *data, int len)
     *name = '\0';
     loc = ip->env ? ip->env->tag : 0;
     /*LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); */
-    weight = (int) (ip->weight * 1000);
+    weight = ip->weight;
     face = ip->face;
     request_face(face, 0);
     flags = ip->flagsval;
@@ -1195,6 +1196,7 @@ void UpdateItemCmd(unsigned char *data, int len)
         quality = (int)(data[pos++]);
         condition = (int)(data[pos++]);
 	}
+LOG(-1,"U-WEIGHT %s :: %d (%d)\n", name, weight, tag);
     update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
                 FALSE);
     map_udate_flag = 2;
@@ -1210,7 +1212,7 @@ void DeleteItem(unsigned char *data, int len)
         delete_item(tag);
     }
     if (pos > len)
-        fprintf(stderr, "ItemCmd: Overread buffer: %d > %d\n", pos, len);
+        fprintf(stderr, "DeleteCmd: Overread buffer: %d > %d\n", pos, len);
     map_udate_flag = 2;
 }
 

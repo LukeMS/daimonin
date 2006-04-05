@@ -53,7 +53,7 @@ typedef struct item_struct
     char                flags[NAME_LEN];    /* item's status information */
     uint32              tag;            /* item identifier (0 = free) */
     sint32              nrof;       /* number of items */
-    float               weight;     /* how much item weights */
+    sint32              weight;     /* how much item weights */
     sint16              face;       /* index for face array */
     uint16              animation_id;   /* Index into animation array */
     uint16              anim_speed;     /* how often to animate */

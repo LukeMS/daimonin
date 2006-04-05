@@ -554,7 +554,7 @@ void set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags
 
     if (op->env)
         op->env->inv_updated = 1;
-    op->weight = (float) weight / 1000;
+    op->weight = weight;
     if (itype != 254)
         op->itype = itype;
     if (stype != 254)
@@ -660,7 +660,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags, 
          * two players merged together, so nrof should always be one
          */
         player->nrof = get_nrof(name);
-        player->weight = (float) weight / 1000;
+        player->weight = weight;
         player->face = face;
         get_flags(player, flags);
         if (player->inv)

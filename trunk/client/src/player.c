@@ -93,7 +93,7 @@ void clear_player(void)
 void new_player(uint32 tag, char *name, uint32 weight, short face)
 {
     cpl.ob->tag = tag;
-    cpl.ob->weight = (float) weight / 1000;
+    cpl.ob->weight = weight;
     cpl.ob->face = face;
     copy_name(cpl.ob->d_name, name);
 }
