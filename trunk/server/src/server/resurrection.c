@@ -45,7 +45,7 @@ void dead_player(object *op)
     char    path[MAX_BUF];
 
     /*  set up our paths/strings...  */
-    sprintf(path, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
+    sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
 
     strcpy(filename, path);
     strcat(filename, ".pl");

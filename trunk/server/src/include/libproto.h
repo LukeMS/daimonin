@@ -147,11 +147,13 @@ extern void             make_sure_not_seen(object *op);
 extern void             adjust_light_source(mapstruct *map, int x, int y, int light);
 extern void             check_light_source_list(mapstruct *map);
 extern void             remove_light_source_list(mapstruct *map);
+extern int              obj_in_line_of_sight(object *op, object *obj, rv_vector *rv);
 /* map.c */
 extern mapstruct       *has_been_loaded_sh(const char *name);
 extern char            *create_pathname(const char *name);
 extern int              check_path(const char *name, int prepend_dir);
 extern char            *normalize_path(const char *src, const char *dst, char *path);
+extern mapstruct       *normalize_and_ready_map(mapstruct *defmap, const char **path);
 extern void             dump_map(mapstruct *m);
 extern void             dump_all_maps(void);
 extern int              map_brightness(mapstruct *m, int x, int y);

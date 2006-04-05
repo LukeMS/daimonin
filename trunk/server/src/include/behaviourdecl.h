@@ -48,7 +48,7 @@ BehaviourClass(PROCESSES,
         Parameter(ATTITUDE, RACE, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against an archetype */
         Parameter(ATTITUDE, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
-        /** Attitude against a named object/mob/player */
+        /** Attitude against a named mob/player */
         Parameter(ATTITUDE, NAME, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against any player */
         Parameter(ATTITUDE, PLAYER, INTEGER, OPTIONAL, 0)
@@ -56,6 +56,20 @@ BehaviourClass(PROCESSES,
         Parameter(ATTITUDE, GROUP, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against the followers of a named god */
         Parameter(ATTITUDE, GOD, STRINGINT, MULTI | OPTIONAL, "X:0")
+    )
+    
+    /** Determines the initial attraction of a mob towards another object */
+    Behaviour(ATTRACTION, ai_fake_process,
+        /** Attraction towards an archetype */
+        Parameter(ATTRACTION, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
+        /** Attraction towards a named object/mob/player */
+        Parameter(ATTRACTION, NAME, STRINGINT, MULTI | OPTIONAL, "X:0")
+        /** Attraction towards an object type */
+        Parameter(ATTRACTION, TYPE, TYPEINT, MULTI | OPTIONAL, "X:0")
+        /** Attraction towards cursed objects */
+        Parameter(ATTRACTION, CURSED, INTEGER, OPTIONAL, 0)
+        /** Attraction towards cursed objects of a specific type */
+        Parameter(ATTRACTION, CURSEDTYPE, TYPEINT, MULTI | OPTIONAL, "X:0")
     )
 
     /** Configures the group membership of the mob, not a real behaviour.
@@ -69,6 +83,10 @@ BehaviourClass(PROCESSES,
 
     /** Simply look around for other mobs nearby */
     Behaviour(LOOK_FOR_OTHER_MOBS, ai_look_for_other_mobs, NIL)
+    
+    /** Look around for interesting objects nearby
+     * (see ATTRACTION for the definition of interesting) */
+    Behaviour(LOOK_FOR_OBJECTS, ai_look_for_objects, NIL)
 
     /** Classify all detected mobs and assign friendship values to them.
      * Should always come after look_for_other_mobs */
@@ -135,6 +153,19 @@ BehaviourClass(MOVES,
 
     /** Move towards the current active waypoint if any */
     Behaviour(MOVE_TOWARDS_WAYPOINT, ai_move_towards_waypoint, NIL)
+  
+    /** Avoid stepping on repulsive items. Hint: put early in list
+     * for high strictness (won't cross repulsive items even to attack)
+     * or late for more relaxed avoidance. */
+    Behaviour(AVOID_REPULSIVE_ITEMS, ai_avoid_repulsive_items, NIL)
+    
+    /** Move towards a nearby attractive item, investigate it and then continue */
+    Behaviour(INVESTIGATE_ATTRACTION, ai_investigate_attraction, 
+        /** Investigate an archetype */
+//        Parameter(INVESTIGATE_ATTRACTION, ARCH, STRING, MULTI | OPTIONAL, NULL)
+        /** Investigate a named object/mob/player */
+//        Parameter(INVESTIGATE_ATTRACTION, NAME, STRING, MULTI | OPTIONAL, NULL)
+    )
 
     /** Runs away from the current enemy if scared. */
     Behaviour(RUN_AWAY_FROM_ENEMY, ai_run_away_from_enemy,

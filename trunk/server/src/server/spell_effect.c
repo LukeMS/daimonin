@@ -1813,7 +1813,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
                     }
                 }
                 tmp->speed_left = -1;
-                register_npc_known_obj(tmp, op->enemy, FRIENDSHIP_ATTACK);
+                update_npc_knowledge(tmp, op->enemy, FRIENDSHIP_ATTACK, 0);
                 tmp->type = 0;
             }
             if (head == NULL)
@@ -3650,7 +3650,7 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
                 tmp->move_type = PETMOVE;
                 tmp->speed_left = -1;
                 tmp->type = 0;
-                register_npc_known_obj(tmp->enemy, op->enemy, FRIENDSHIP_ATTACK);
+                update_npc_knowledge(tmp->enemy, op->enemy, FRIENDSHIP_ATTACK, 0);
             }
             else
                 tmp->type = GOLEM;

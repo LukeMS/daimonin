@@ -455,6 +455,30 @@ char * normalize_path(const char *src, const char *dst, char *path)
     return (path);
 }
 
+/** Normalize a given map path and make sure it is valid and
+ * that the map is loaded. Can return NULL in case of failure.
+ * Moved from monster_behaviours.c - Gecko 2005-04-05. */
+mapstruct *normalize_and_ready_map(mapstruct *defmap, const char **path)
+{
+    /* Default map is current map */
+    if (path == NULL || *path == NULL || **path == '\0')
+        return defmap;
+
+    /* If path not normalized: normalize it */
+    if (**path != '/')
+    {
+        char    temp_path[HUGE_BUF];
+        normalize_path(defmap->path, *path, temp_path);
+        FREE_AND_COPY_HASH(*path, temp_path);
+    }
+
+    /* check if we are already on the map */
+    if (*path == defmap->path)
+        return defmap;
+    else
+        return ready_map_name(*path, MAP_NAME_SHARED);
+}
+
 /*
  * Prints out debug-information about a map.
  * Dumping these at llevError doesn't seem right, but is

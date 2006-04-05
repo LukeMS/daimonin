@@ -422,7 +422,7 @@ int push_ob(object *who, int dir, object *pusher)
     if(CONTR(pusher)->run_on) {
         new_draw_info_format(NDI_UNIQUE, 0, pusher,
                  "You start to attack %s !!",who->name);
-           register_npc_known_obj(who, pusher, FRIENDSHIP_PUSH);
+           update_npc_knowledge(who, pusher, FRIENDSHIP_PUSH, 0);
            return 1;
     }
     else

@@ -170,7 +170,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
     {
         /* Update hittee's friendship level towards hitter */
         object                 *root_hitter = hitter_owner ? hitter_owner : hitter;
-        struct mob_known_obj   *enemy       = register_npc_known_obj(target, root_hitter, -dmg);
+        struct mob_known_obj   *enemy       = update_npc_knowledge(target, root_hitter, -dmg, 0);
 
         /* Attacking someone neutral always makes you an enemy (for now) */
         if (enemy && enemy->friendship > FRIENDSHIP_ATTACK && dmg > 0)

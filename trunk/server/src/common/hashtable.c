@@ -114,6 +114,15 @@ static void hashtable_find_position(const hashtable *const ht, const hashtable_c
 /*
  * Creator / destructor
  */
+
+/** Create a new hashtable.
+ * @param hash_func key hashing function
+ * @param equals_func key equality test function
+ * @param empty_key key for empty buckets. Must not be part of normal keyspace.
+ * @param deleted_key key for deleted buckets. Must not be part of normal keyspace.
+ * @param num_buckets initial number of buckets in hashtable
+ * @return pointer to an empty hashtable
+ */
 hashtable *hashtable_new(
         hashtable_size_t (*hash_func)(const hashtable_const_key_t),
         int (*equals_func)(const hashtable_const_key_t, const hashtable_const_key_t),
@@ -147,17 +156,29 @@ hashtable *hashtable_new(
     return ht;
 }
 
+/** Delete the hashtable from memory.
+ * This does not free any extra data associated with keys or values,
+ * so make sure to free that before calling this function.
+ * @param ht hashtable to delete. may be NULL
+ */
 void hashtable_delete(hashtable *ht)
 {
-    free(ht->table);
-    ht->table = NULL; // To catch reuse errors
-    free(ht);
+    if(ht) {
+        free(ht->table);
+        ht->table = NULL; // To catch reuse errors
+        free(ht);
+    }
 }
 
 /*
  * Public insert/search/remove
  */
 
+/** Remove all entries from the hashtable.
+ * This does not free any extra data associated with keys or values,
+ * so make sure to free that before calling this function.
+ * @param ht hasthtable to erase
+ */
 void hashtable_clear(hashtable *ht)
 {   
     assert(NULL);
@@ -176,6 +197,11 @@ void hashtable_clear(hashtable *ht)
 #endif
 }
 
+/** find an entry in a hashtable.
+ * @param ht hashtable to search in.
+ * @param key to search for
+ * @return value for key, or NULL if not found.
+ */
 hashtable_value_t hashtable_find(const hashtable *const ht, const hashtable_const_key_t key)
 {
     hashtable_size_t found_position, insert_position;
@@ -191,8 +217,11 @@ hashtable_value_t hashtable_find(const hashtable *const ht, const hashtable_cons
 // TODO: possibly add a int hashtable_find2(hashtable *ht, const hashtable_const_key_t key, const hashtable_value_t *value)
 // for keyspaces that include NULL
 
-/* This is the normal insert routine. 
- * Returns: 1 if the entry was inserted, 0 if key already existed 
+/** Insert a new entry into the hashtable.
+ * @param ht hashtable to insert in.
+ * @param key of entry to insert
+ * @param obj value of entry to insert
+ * @return 1 if the entry was inserted, 0 if key already existed 
  */
 int hashtable_insert(hashtable *const ht, 
         const hashtable_const_key_t key, const hashtable_value_t obj)
@@ -202,8 +231,10 @@ int hashtable_insert(hashtable *const ht,
     return hashtable_insert_noresize(ht, key, obj);
 }
 
-/* Deletion routine
- * Returns: 1 if the entry was deleted, 0 if key didn't exist
+/** Delete single entry from hashtable.
+ * @param ht hasthable to delete from.
+ * @param key key of entry to delete.
+ * @return 1 if the entry was deleted, 0 if key didn't exist
  */
 int hashtable_erase(hashtable *const ht, const hashtable_const_key_t key)
 {
@@ -222,9 +253,14 @@ int hashtable_erase(hashtable *const ht, const hashtable_const_key_t key)
     }        
 }
 
-// We'll let you resize a hashtable -- though this makes us copy all!
-// When you resize, you say, "make it big enough for this many more elements"
-// This is also useful for forcing a resize after a bunch of erases
+/** Force a resize of the hashtable.
+ * We'll let you resize a hashtable -- though this makes us copy and rehash all buckets.
+ * When you resize, you say, "make it big enough for this many more elements"
+ * This is also useful for forcing a resize after a bunch of erases
+ * @param ht hashtable to resize
+ * @param delta relative size change (or 0)
+ * @param min_buckets_wanted minimum size wanted
+ */
 void hashtable_resize_delta(hashtable *const ht, 
         const hashtable_size_t delta, 
         const hashtable_size_t min_buckets_wanted)
@@ -247,8 +283,11 @@ void hashtable_resize_delta(hashtable *const ht,
  * Public informative/statistical functions
  */
 
-/* Get the number of probes needed to find the key (or HASHTABLE_ILLEGAL_BUCKET
- * if the key isn't in the table) */
+/** Get the number of probes needed to find the key.
+ * @param ht hashtable to operate on.
+ * @param key key to search for.
+ * @return number of probes needed to find the key, or HASHTABLE_ILLEGAL_BUCKET if the key isn't in the table) 
+ */
 hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const hashtable_const_key_t key)
 {
     hashtable_size_t num_probes = 0;              // how many times we've probed
@@ -267,11 +306,26 @@ hashtable_size_t hashtable_num_probes_needed(const hashtable *const ht, const ha
     return HASHTABLE_ILLEGAL_BUCKET;
 }
 
+/** Get an iterator for the hashtable.
+ * The iterator will indicate the first available element of the
+ * hashtable.
+ * 
+ * Any iterator obtained before an insert or remove operation is
+ * invalid after the operation. The result of accessing an invalid
+ * iterator is undefined (but expect crashes).
+ * 
+ * If the hashtable was empty, the returned iterator will be equal to
+ * hashtable_iterator_last(ht).
+ * 
+ * @param ht hasthable to get an iterator for. May be NULL.
+ * @return an iterator indicating the first available element of ht,
+ * or hashtable_iterator_last(ht) if none was found.
+ */
 hashtable_iterator_t hashtable_iterator(const hashtable *const ht)
 {
-    hashtable_iterator_t i;
+    hashtable_iterator_t i;    
 
-    if(ht->num_elements - ht->num_deleted == 0)
+    if(ht == NULL || ht->num_elements - ht->num_deleted == 0)
         return HASHTABLE_ITERATOR_END;
     
     for(i=0; i<ht->num_buckets; i++)
@@ -283,6 +337,13 @@ hashtable_iterator_t hashtable_iterator(const hashtable *const ht)
     return HASHTABLE_ITERATOR_END;
 }
 
+/** Get the next element using an iterator.
+ * The iterator will indicate the next available element of the
+ * hashtable.
+ * @see hashtable_iterator
+ * @return an iterator indicating the next available element of ht,
+ * or hashtable_iterator_last(ht) if none was found.
+ */
 hashtable_iterator_t hashtable_iterator_next(const hashtable *const ht, hashtable_iterator_t i)
 {
     for(++i; i<ht->num_buckets; i++)
@@ -314,8 +375,11 @@ static void hashtable_reset_thresholds(hashtable *const ht)
  * to resize it a few times during its lifetime.
  */
 
-// resize to sz buckets
-// Used to actually do the rehashing when we grow/shrink a hashtable
+/** resize ht to sz buckets.
+ * Used to actually do the rehashing when we grow/shrink a hashtable
+ * @param ht hasthable to resize and rehash
+ * @param sz new number of buckets for ht.
+ */
 static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
 {
     struct hashtable_entry *new_table;
@@ -363,8 +427,10 @@ static void hashtable_resize(hashtable *const ht, const hashtable_size_t sz)
     hashtable_reset_thresholds(ht);
 }
 
-// This is the smallest size a hashtable can be without being too crowded
-// If you like, you can give a min #buckets as well as a min #elts
+/** This is the smallest size a hashtable can be without being too crowded.
+ * @param num_elts wanted number of elements
+ * @param min_buckets_wanted suggested minimum number of buckets
+ */
 static hashtable_size_t hashtable_min_size(
         const hashtable_size_t num_elts, 
         const hashtable_size_t min_buckets_wanted) 
@@ -375,7 +441,7 @@ static hashtable_size_t hashtable_min_size(
     return sz;
 }
 
-// Used after a string of deletes
+/** Used after a string of deletes */
 static void hashtable_maybe_shrink(hashtable *const ht) 
 {
     assert(ht->num_elements >= ht->num_deleted);
@@ -395,12 +461,15 @@ static void hashtable_maybe_shrink(hashtable *const ht)
     ht->consider_shrink = 0;                // because we just considered it
 }
 
-// Returns a pair of positions: found_position where the object is, 
-// insert_position where it would go if you wanted to insert it. 
-// found_position is ILLEGAL_BUCKET if object is not found; 
-// insert_position is ILLEGAL_BUCKET if it is.
-// Note: because of deletions where-to-insert is not trivial: it's the
-// first deleted bucket we see, as long as we don't find the key later
+/** Returns a pair of positions.
+ * Note: because of deletions where-to-insert is not trivial: it's the
+ * first deleted bucket we see, as long as we don't find the key later
+ * 
+ * @param ht hashtable to search/insert in
+ * @param key key to search for/insert
+ * @param found_position where the object is, or ILLEGAL_BUCKET if object is not found
+ * @param insert_position where it would go if you wanted to insert it, or ILLEGAL_BUCKET if it was already in the table.
+ */
 static void hashtable_find_position(const hashtable *const ht, const hashtable_const_key_t key, 
         hashtable_size_t *const found_position, hashtable_size_t *const insert_position)
 {
@@ -435,7 +504,7 @@ static void hashtable_find_position(const hashtable *const ht, const hashtable_c
     }
 }
 
-// If you know the hashtable is big enough to hold obj, use this routine
+/** If you know the hashtable is big enough to hold obj, use this routine */
 static int hashtable_insert_noresize(
         hashtable *const ht, 
         const hashtable_const_key_t key, 

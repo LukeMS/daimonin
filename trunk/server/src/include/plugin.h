@@ -286,7 +286,7 @@ struct plugin_hooklist
     void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
     object * (*arch_to_object)(archetype *at);
     archetype * (*find_archetype)(const char *name);
-    struct mob_known_obj * (*register_npc_known_obj)(object *npc, object *enemy, int friendship);
+    struct mob_known_obj * (*update_npc_knowledge)(object *npc, object *other, int delta_friendship, int delta_attraction);
     int (*get_rangevector)(object *op1, object *op2, rv_vector *retval, int flags);
     int (*get_rangevector_from_mapcoords)(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
     object * (*get_archetype)(const char *name);

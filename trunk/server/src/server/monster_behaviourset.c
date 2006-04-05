@@ -102,6 +102,8 @@ void cleanup_mob_data(struct mobdata *data)
         return_poolchunk(tmp, pool_mob_knownobj);
     for (tmp = data->known_objs; tmp; tmp = tmp->next)
         return_poolchunk(tmp, pool_mob_knownobj);
+    if(data->known_objs_ht)
+        hashtable_delete(data->known_objs_ht);
 
     set = data->behaviours;
     set->refcount--;
@@ -118,6 +120,7 @@ void cleanup_mob_data(struct mobdata *data)
             //            LOG(llevDebug, "Parsed behaviourset with refcount==0 being freed...\n");
             if (set == parsed_behavioursets)
                 parsed_behavioursets = set->next;
+            FREE_ONLY_HASH(set->definition);
         }
         else
         {
@@ -126,7 +129,6 @@ void cleanup_mob_data(struct mobdata *data)
             if (set == generated_behavioursets)
                 generated_behavioursets = set->next;
         }
-        FREE_ONLY_HASH(set->definition);
         return_poolchunk(set, pool_mob_behaviourset);
     }
 }
@@ -144,6 +146,7 @@ void initialize_mob_data(struct mobdata *data)
 
     data->known_mobs = NULL;
     data->known_objs = NULL;
+    data->known_objs_ht = NULL;
 
     data->owner = NULL;
     data->enemy = NULL;
@@ -653,6 +656,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
     behaviourset->definition = add_refcount(conf_text);
     behaviourset->bghash = 0;
     behaviourset->attitudes = NULL;
+    behaviourset->attractions = NULL;
     behaviourset->groups = NULL;
 
     /* Insert in list */
@@ -753,10 +757,18 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
                 /* Special handling for some behaviours */
                 if(new_behaviour && class == BEHAVIOURCLASS_PROCESSES)
                 {
-                    if(new_behaviour->declaration->id == AIBEHAVIOUR_ATTITUDE)
-                        behaviourset->attitudes = new_behaviour->parameters;
-                    else if(new_behaviour->declaration->id == AIBEHAVIOUR_GROUPS)
-                        behaviourset->groups = new_behaviour->parameters;
+                    switch(new_behaviour->declaration->id)
+                    {
+                        case AIBEHAVIOUR_ATTITUDE:
+                            behaviourset->attitudes = new_behaviour->parameters;
+                            break;
+                        case AIBEHAVIOUR_ATTRACTION:
+                            behaviourset->attractions = new_behaviour->parameters;
+                            break;
+                        case AIBEHAVIOUR_GROUPS:
+                            behaviourset->groups = new_behaviour->parameters;
+                            break;
+                    }
                 }
             }
 

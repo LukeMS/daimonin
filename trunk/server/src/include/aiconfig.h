@@ -19,12 +19,14 @@ enum
     AI_STRING_TYPE,
     AI_STRINGINT_TYPE
 };
+/** TYPEINTs are just STRINGINTs where the string is a type number */
+#define AI_TYPEINT_TYPE AI_STRINGINT_TYPE 
 
 /* Attributes for parameter specifications */
-#define AI_OPTIONAL_PARAM  0 /* default: param is optional */
-#define AI_MANDATORY_PARAM 1 /* param is mandatory */
-#define AI_SINGLE_PARAM    0 /* default: param can only be specified once */
-#define AI_MULTI_PARAM     2 /* param can be specified 0 or more times */
+#define AI_OPTIONAL_PARAM  0 /**< default: param is optional */
+#define AI_MANDATORY_PARAM 1 /**< param is mandatory */
+#define AI_SINGLE_PARAM    0 /**< default: param can only be specified once */
+#define AI_MULTI_PARAM     2 /**< param can be specified 0 or more times */
 
 struct behaviourparam_decl
 {

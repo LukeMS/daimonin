@@ -44,7 +44,7 @@ struct plugin_hooklist  hooklist    =
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
     arch_to_object, find_archetype,
-    register_npc_known_obj,
+    update_npc_knowledge,
     get_rangevector, get_rangevector_from_mapcoords,
     get_archetype,
     play_sound_player_only,

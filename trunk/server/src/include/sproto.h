@@ -386,6 +386,10 @@ int                         move_monster(object *op, int mode);
 void                        object_accept_path(object *op);
 void						dump_abilities(void);
 void						print_monsters(void);
+struct mob_known_obj       *update_npc_knowledge(object *npc, object *other, int delta_friendship, int delta_attraction);
+void                        update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
+struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction);
+rv_vector                  *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
 /* monster_behaviourset.c */
 struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object *op);
 void                        init_arch_default_behaviours();
@@ -397,7 +401,6 @@ void                        cleanup_mob_known_obj(struct mob_known_obj *data);
 int                         can_hit(object *ob1, object *ob2, rv_vector *rv);
 /* monster_behaviours.c */
 int                         is_friend_of(object *op, object *obj);
-struct mob_known_obj       *register_npc_known_obj(object *npc, object *enemy, int friendship);
 object                     *monster_choose_random_spell(object *monster);
 void                        monster_check_pickup(object *monster);
 void                        monster_check_apply(object *mon, object *item);

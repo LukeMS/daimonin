@@ -97,7 +97,6 @@ static int  GameObject_SetPosition(lua_State *L);
 static int  GameObject_Move(lua_State *L);
 static int  GameObject_IdentifyItem(lua_State *L);
 static int  GameObject_Write(lua_State *L);
-static int  GameObject_IsOfType(lua_State *L);
 static int  GameObject_GetIP(lua_State *L);
 static int  GameObject_GetArchName(lua_State *L);
 static int  GameObject_ShowCost(lua_State *L);

@@ -32,58 +32,15 @@
 
 #include <aiconfig.h>
 
+#define DEBUG_AI
+
 /* Those behaviours are called from other behaviours (ugly, I know...) */
 void ai_choose_enemy(object *op, struct mob_behaviour_param *params);
 void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response);
 
-/* the attribute Str is atm not used from monsters (was used in push code) MT-06.2005 */
-rv_vector      *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
-
 /*
  * A few random unsorted utility functions
  */
-
-/* Tests if an object is in the line of sight of another object. */
-int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
-{
-    /* Bresenham variables */
-    int fraction, dx2, dy2, stepx, stepy;
-
-    /* Stepping variables */
-    mapstruct *m = rv->part->map;
-    int x = rv->part->x, y = rv->part->y;
-
-    /*
-    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n",
-            STRING_OBJ_NAME(op), op->x, op->y,
-            STRING_OBJ_NAME(obj), obj->x, obj->y);
-    */
-
-    BRESENHAM_INIT(rv->distance_x, rv->distance_y, fraction, stepx, stepy, dx2, dy2);
-
-    while(1)
-    {
-//        LOG(llevDebug, " (%d:%d)", x, y);
-        if(x == obj->x && y == obj->y && m == obj->map)
-        {
-//            LOG(llevDebug, "  can see!\n");
-            return TRUE;
-        }
-
-        if(m == NULL || GET_MAP_FLAGS(m,x,y) & P_BLOCKSVIEW)
-        {
-//            LOG(llevDebug, "  blocked!\n");
-            return FALSE;
-        }
-
-        BRESENHAM_STEP(x, y, fraction, stepx, stepy, dx2, dy2);
-
-        m = out_of_map(m, &x, &y);
-    }
-/*
-    LOG(llevDebug, "  out of range!\n");
-    return FALSE;*/
-}
 
 /* Beginnings of can_see_obj */
 /* known_obj is optional but increases efficiency somewhat
@@ -260,62 +217,6 @@ int is_friend_of(object *op, object *obj)
     return FALSE;
 }
 
-/*
- * Get the rangevector to a known object. If an earlier calculated rangevector is
- * older than maxage then we calculate a new one (set maxage to 0 to force update).
- * Returns a pointer to the rangevector, or NULL if get_rangevector() failed.
- */
-rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage)
-{
-    /* TODO: added checks for NULL maps here (happens if monster is picked up, for example).
-     * Actually, it would be slightly more interesting if we could get the coordinates for the
-     * container of the mob, so that mobs can for example hide in containers until the enemy
-     * is far enough away. Or reversly, hide in container and later jump out and attack enemy.
-     * Gecko 2005-05-08 */
-    if ( op == NULL || op->map == NULL || op->env ||
-            known_obj == NULL || known_obj->obj->map == NULL || known_obj->obj->env)
-        return NULL;
-
-    if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
-    {
-        /*
-        if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
-            mapstruct *map = ready_map_name(known_obj->last_map, MAP_NAME_SHARED);
-            if(get_rangevector_full(op, op->map, op->x, op->y,
-                        known_obj->obj, map, known_obj->last_x, known_obj->last_y,
-                        &known_obj->rv, RV_EUCLIDIAN_DISTANCE))
-            {
-                known_obj->rv_time = global_round_tag;
-            } else
-            {
-                known_obj->rv_time = 0;
-                return NULL;
-            }
-        }
-        */
-
-        if (get_rangevector(op, known_obj->obj, &known_obj->rv, 0))
-        {
-            known_obj->rv_time = ROUND_TAG;
-        }
-        else
-        {
-            known_obj->rv_time = 0;
-            return NULL;
-        }
-    }
-
-    /* hotfix for this bug. part should here NOT be NULL */
-    if (!known_obj->rv.part)
-    {
-        LOG(-1, "CRASHBUG: rv->part == NULL for %s on map %s with enemy %s and map %s\n", query_name(op),
-            op->map ? STRING_SAFE(op->map->path) : "NULL", query_name(known_obj->obj),
-            known_obj->obj ? STRING_SAFE(known_obj->obj->map ? STRING_SAFE(known_obj->obj->map->path) : "NULL") : "NULL");
-        return NULL;
-    }
-    return &known_obj->rv;
-}
-
 /* TODO: make a real behaviour... */
 #if 0
 void npc_call_for_help(object *op) {
@@ -336,6 +237,173 @@ void npc_call_for_help(object *op) {
 }
 #endif
 
+/** Test if ob1 can hit ob2 with a melee attack */
+int can_hit_melee(object *ob1, object *ob2, rv_vector *rv)
+{
+    if (QUERY_FLAG(ob1, FLAG_CONFUSED) && !(RANDOM() % 3))
+        return 0;
+    return abs(rv->distance_x) < 2 && abs(rv->distance_y) < 2;
+}
+
+/** Test if ob1 can hit ob2 with a missile weapon / distance attack.
+ * @param ob1 origin mob
+ * @param ob2 target mob
+ * @param rv precalculated rv from ob1 to ob2
+ * @param mode
+ * 1 - exact 45 deg
+ * 2 - 45 deg +- one tile
+ * 3 - free 360 deg LOF
+ *
+ * @todo rename to is_in_line_of_fire
+ * @todo actually perform a rough line of sight calculation
+ */
+int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
+{
+
+    switch (mode)
+    {
+        case 2:
+          /* 45 deg +- one tile */
+          return abs(rv->distance_x) <= 1
+              || abs(rv->distance_y) <= 1
+              || abs(abs(rv->distance_x) - abs(rv->distance_y)) <= 1;
+
+        case 3:
+          /* free 360 deg line of fire */
+          return TRUE;
+
+        case 1:
+            /* exact 45 deg */
+        default:
+            return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;
+    }
+}
+
+/** Test if the given coordinate is in the line of fire from op1.
+ * @see can_hit_missile()
+ */
+int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode)
+{
+    rv_vector rv;
+    get_rangevector_full(op1, op1->map, op1->x, op1->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
+    return can_hit_missile(op1, NULL, &rv, mode);
+}
+
+/* scary function - need rework. even in crossfire its changed now */
+void monster_check_apply(object *mon, object *item)
+{
+    /* this function is simply to bad - for example will potions applied
+     * not depending on the situation... why applying a heal potion when
+     * full hp? firestorm potion when standing next to own people?
+     * IF we do some AI stuff here like using items we must FIRST
+     * add a AI - then doing the things. Think first, act later!
+     */
+}
+
+/*
+ * Attraction/friendship pseudobehaviours. These are configured like
+ * normal behaviours, but called from the sensing functions.
+ */
+
+/** Pseudobehaviour to calculate the attraction/repulsion of one monster towards another object.
+ * Attraction is controlled by the "attraction" behaviour. 
+ * @param op the monster to calculate attraction for
+ * @param other the object to calculate attraction towards
+ * @return a positive (attraction) or negative (repulsion) value, or zero (indifference / "don't care")
+ * @todo there's much duplicated code between this and calc_friendship_from_attitude(). 
+ * Any suggestions?
+ * @see the "attraction" behaviour.
+ */
+int get_npc_object_attraction(object *op, object *other)
+{
+    int attraction = 0;
+    struct mob_behaviour_param *attractions;
+    struct mob_behaviour_param *tmp;
+
+    if(op->head)
+        op = op->head;
+
+    if(op->type != MONSTER)
+    {
+        LOG(llevBug, "BUG: get_npc_object_attraction() object %s is not a monster (type=%d)\n",
+                STRING_OBJ_NAME(op), op->type);
+    }
+        
+    /* pets are attracted to owners */
+    if(op->owner == other && op->owner_count == other->count)
+        attraction += ATTRACTION_HOME;
+
+    attractions = MOB_DATA(op)->behaviours->attractions;
+
+    if(attractions == NULL)
+        return attraction;
+
+    /* Arch attraction */
+    if(attractions[AIPARAM_ATTRACTION_ARCH].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attractions[AIPARAM_ATTRACTION_ARCH]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(other->arch->name && tmp->stringvalue == other->arch->name)
+                attraction += tmp->intvalue;
+        }
+    }
+
+    /* Named object attitude */
+    if(attractions[AIPARAM_ATTRACTION_NAME].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attractions[AIPARAM_ATTRACTION_NAME]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(other->name && tmp->stringvalue == other->name)
+                attraction += tmp->intvalue;
+        }
+    }
+    
+    /* Numbered type attitude */
+    if(attractions[AIPARAM_ATTRACTION_TYPE].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attractions[AIPARAM_ATTRACTION_TYPE]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(other->type == atoi(tmp->stringvalue))
+                attraction += tmp->intvalue;
+        }
+    }
+    
+    /* cursed object attitude */
+    if(attractions[AIPARAM_ATTRACTION_CURSEDTYPE].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attractions[AIPARAM_ATTRACTION_CURSEDTYPE]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(QUERY_FLAG(other, FLAG_CURSED))
+                attraction += tmp->intvalue;
+        }
+    }
+
+    /* Numbered type and cursed attitude */
+    if(attractions[AIPARAM_ATTRACTION_CURSEDTYPE].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attractions[AIPARAM_ATTRACTION_CURSEDTYPE]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(QUERY_FLAG(other, FLAG_CURSED) && other->type == atoi(tmp->stringvalue))
+                attraction += tmp->intvalue;
+        }
+    }
+
+    return attraction;
+}
+
+/** Pseudobehaviour to calculate the base friendship/hate ("attitude") of one monster towards another.
+ * Attitude is partly controlled by the "attitude" behaviour, but also 
+ * by "petness" and alignment ("friendly"/"non-friendly"). 
+ * @param op the monster to calculate friendship for
+ * @param other the object to calculate friendship towards
+ * @return a positive (friendship) or negative (hate) value, or zero (neutral)
+ * @see the "attitude" and "friendship" behaviours.
+ */
 int calc_friendship_from_attitude(object *op, object *other)
 {
     int friendship = 0;
@@ -455,318 +523,6 @@ int calc_friendship_from_attitude(object *op, object *other)
 //    LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
 
     return friendship;
-}
-
-/* register a new enemy or friend for the NPC */
-struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int friendship)
-{
-    struct mob_known_obj   *tmp;
-    struct mob_known_obj   *last    = NULL;
-    int i;
-    rv_vector rv;
-    int nomap = 0;
-    int attitude;
-
-    if (npc == NULL)
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): Called with NULL npc obj\n");
-#endif
-        return NULL;
-    }
-
-    if (other == NULL)
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): Called with NULL other obj\n");
-#endif
-        return NULL;
-    }
-
-    if (npc == other)
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): Called for itself '%s'\n", STRING_OBJ_NAME(npc));
-#endif
-        return NULL;
-    }
-
-   /*
-    * this is really needed.
-    * a hitter object can be a "system object" ...even a object
-    * in the inventory of npc (like a disease). These objects have
-    * usually no map.
-    *
-    * Gecko: Hmm... I have to fix this to be able to handle non-mob objects
-    */
-    if (other->type != PLAYER && !QUERY_FLAG(other, FLAG_ALIVE))
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): Called for non PLAYER/IS_ALIVE '%s'\n", STRING_OBJ_NAME(npc));
-#endif
-        return NULL;
-    }
-
-    if (npc->type != MONSTER)
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): Called on non-mob object '%s' type %d\n", STRING_OBJ_NAME(npc),
-            npc->type);
-#endif
-        return NULL;
-    }
-
-    /* this check will hopefully be unnecessary in the future */
-    if (MOB_DATA(npc) == NULL)
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): No mobdata (yet) for '%s'\n", STRING_OBJ_NAME(npc));
-#endif
-        return NULL;
-    }
-
-    /* never register anything when surrendered.
-     * A surrendered mob don't deal in friends or enemies.
-     */
-    if (QUERY_FLAG(npc, FLAG_SURRENDERED))
-        return NULL;
-
-    /* If an unagressive mob was attacked, it now turns agressive */
-    /* TODO: get rid of flag_unaggressive and use only friendship */
-    if (friendship < 0 && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
-    {
-        CLEAR_FLAG(npc, FLAG_UNAGGRESSIVE);
-        friendship += FRIENDSHIP_ATTACK;
-    }
-
-    /* Does npc already know this other? */
-    for (tmp = MOB_DATA(npc)->known_mobs; tmp; tmp = tmp->next)
-    {
-        if (tmp->obj == other && tmp->obj_count == other->count)
-        {
-            tmp->last_seen = ROUND_TAG;
-            FREE_AND_ADD_REF_HASH(tmp->last_map, other->map->path);
-            tmp->last_x = other->x;
-            tmp->last_y = other->y;
-            tmp->friendship += friendship;
-            /*            if(friendship)
-                            LOG(llevDebug,"register_npc_known_obj(): '%s' changed mind about '%s'. friendship: %d -> %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), tmp->friendship - friendship, tmp->friendship);*/
-            return tmp;
-        }
-        last = tmp;
-    }
-
-    /* TODO: keep count of enemies and push out less
-     * important if new ones are added beyond a reasonable max number */
-    
-    /* Special handling of mobs inside containers or not on maps */
-    if(other->map == NULL || other->env != NULL || npc->map == NULL || npc->env != NULL)
-    {
-#ifdef DEBUG_AI_NPC_KNOWN
-        LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' and at least one not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
-#endif
-        nomap = 1;
-//        return NULL;
-    } else {
-        /* It was a new, previously unknown object */
-        if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
-        {
-#ifdef DEBUG_AI_NPC_KNOWN
-            LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
-#endif
-            return NULL;
-        }
-
-        /* We check LOS here, only if we are registering a new object */
-        /* Also, we only check against players, and not if we have 
-         * been hit or helped by them, or if they own us */        
-        if(other->type == PLAYER && friendship == 0 && npc->owner != other)
-            if(!obj_in_line_of_sight(npc, other, &rv))
-                return NULL;
-    }
-
-    /* Calculate attitude as early as possible */
-    attitude = calc_friendship_from_attitude(npc, other);
-
-    /* We do a last attempt at LOS test here, for mob to mob detection, 
-     * but only if the two are enemies */
-    if(nomap == 0 && other->type != PLAYER && (friendship + attitude) < 0) 
-    {
-        if(!obj_in_line_of_sight(npc, other, &rv)) 
-        {
-#ifdef DEBUG_AI_NPC_KNOWN
-            LOG(llevDebug,"register_npc_known_obj(): '%s' can't see '%s'. friendship: %d + %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), friendship, attitude);
-#endif
-            return NULL;
-        }
-    }
-    
-    tmp = get_poolchunk(pool_mob_knownobj);
-    tmp->next = NULL;
-    tmp->prev = last;
-    tmp->obj = other;
-    tmp->obj_count = other->count;
-
-    tmp->last_map = add_refcount(other->map->path);
-    tmp->last_x = other->x;
-    tmp->last_y = other->y;
-
-    tmp->last_seen = ROUND_TAG; /* If we got here, we have seen it */
-    if(nomap) 
-        tmp->rv_time = 0;
-    else
-    {
-        //    tmp->rv_time = 0;           /* Makes cached rv invalid */
-        tmp->rv_time = ROUND_TAG;   /* Cache the rv we calculated above. */
-        tmp->rv = rv;
-    }
-
-    /* Initial friendship and attitude */
-    tmp->friendship = friendship + attitude;
-    tmp->attraction = 0;
-    tmp->tmp_friendship = 0;
-    tmp->tmp_attraction = 0;
-
-    for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
-        tmp->flags[i] = 0;
-
-    /* Insert last in list of known objects */
-    if (last)
-        last->next = tmp;
-    else
-        MOB_DATA(npc)->known_mobs = tmp;
-
-#ifdef DEBUG_AI_NPC_KNOWN
-    //    LOG(llevDebug,"register_npc_known_obj(): '%s' detected '%s'. friendship: %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), tmp->friendship);
-#endif
-    return tmp;
-}
-
-/*
- * Waypoint utility functions
- */
-
-/* Find a monster's currently active waypoint, if any */
-object * get_active_waypoint(object *op)
-{
-    object *wp  = NULL;
-
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, WP_FLAG_ACTIVE))
-            break;
-
-    return wp;
-}
-
-/* Find a monster's current return-home wp, if any */
-object * get_return_waypoint(object *op)
-{
-    object *wp  = NULL;
-
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, FLAG_REFLECTING))
-            break;
-
-    return wp;
-}
-
-/* Find a monster's waypoint by name (used for getting the next waypoint) */
-/* name must be a shared string */
-object * find_waypoint(object *op, const char *name)
-{
-    object *wp  = NULL;
-
-    if (name == NULL)
-        return NULL;
-
-    for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && wp->name == name)
-            break;
-
-    return wp;
-}
-
-/*
- * Some other utility functions
- */
-
-int can_hit_melee(object *ob1, object *ob2, rv_vector *rv)
-{
-    if (QUERY_FLAG(ob1, FLAG_CONFUSED) && !(RANDOM() % 3))
-        return 0;
-    return abs(rv->distance_x) < 2 && abs(rv->distance_y) < 2;
-}
-
-/* modes:
- * 1 - exact 45 deg
- * 2 - 45 deg +- one tile
- * 3 - free 360 deg LOF
- *
- * TODO: rename to is_in_line_of_fire
- */
-int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
-{
-    /* TODO: actually perform a rough line of sight calculation */
-
-    switch (mode)
-    {
-        case 2:
-          /* 45 deg +- one tile */
-          return abs(rv->distance_x) <= 1
-              || abs(rv->distance_y) <= 1
-              || abs(abs(rv->distance_x) - abs(rv->distance_y)) <= 1;
-
-        case 3:
-          /* free 360 deg line of fire */
-          return TRUE;
-
-        case 1:
-            /* exact 45 deg */
-        default:
-            return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;
-    }
-}
-
-/* Ugly hack for now... */
-int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode)
-{
-    rv_vector rv;
-    get_rangevector_full(op1, op1->map, op1->x, op1->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
-    return can_hit_missile(op1, NULL, &rv, mode);
-}
-
-/* Normalize a given map path and make sure it is valid and
- * that the map is loaded. Can return NULL in case of failure */
-mapstruct *normalize_and_ready_map(mapstruct *defmap, const char **path)
-{
-    /* Default map is current map */
-    if (path == NULL || *path == NULL || **path == '\0')
-        return defmap;
-
-    /* If path not normalized: normalize it */
-    if (**path != '/')
-    {
-        char    temp_path[HUGE_BUF];
-        normalize_path(defmap->path, *path, temp_path);
-        FREE_AND_COPY_HASH(*path, temp_path);
-    }
-
-    /* check if we are already on the map */
-    if (*path == defmap->path)
-        return defmap;
-    else
-        return ready_map_name(*path, MAP_NAME_SHARED);
-}
-
-/* scary function - need rework. even in crossfire its changed now */
-void monster_check_apply(object *mon, object *item)
-{
-    /* this function is simply to bad - for example will potions applied
-     * not depending on the situation... why applying a heal potion when
-     * full hp? firestorm potion when standing next to own people?
-     * IF we do some AI stuff here like using items we must FIRST
-     * add a AI - then doing the things. Think first, act later!
-     */
 }
 
 /*
@@ -924,11 +680,77 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
     }
 }
 
-/* Useful if mob is much slower than enemy? */
+/** Investigate the nearest(?), most attractive item */
+void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    int max_attraction = 0;
+    struct mob_known_obj *max_attractor = NULL, *tmp;
+    
+    if(MOB_DATA(op)->known_objs == NULL)
+        return;
+    
+    /* Find known_obj with highest attraction. TODO: consider distance too */
+    for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
+    {
+        if(tmp->attraction > max_attraction && OBJECT_VALID(tmp->obj, tmp->obj_count))
+        {
+            max_attraction = tmp->attraction;
+            max_attractor = tmp;
+        }
+    }
+
+    if(max_attractor)
+    {
+        LOG(llevDebug, "  %s investigating %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(max_attractor->obj));
+        
+        rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
+        if(rv)
+        {
+            if (rv->distance <= 1)
+            {
+                response->type = MOVE_RESPONSE_DIR;
+                response->data.direction = 0;
+
+                if(MOB_DATA(op)->idle_time > 4)
+                    max_attractor->attraction = 0;
+            } 
+            else 
+            {
+                response->type = MOVE_RESPONSE_OBJECT;
+                response->data.target.obj = max_attractor->obj;
+                response->data.target.obj_count = max_attractor->obj_count;
+            }
+        }
+    }
+}
+
+/** Avoid stepping on repulsive items.
+ * @todo also parameterize trigger distance
+ */
+void ai_avoid_repulsive_items(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    struct mob_known_obj *tmp;
+    
+    /* Find nearby repulsive known_objs */
+    for(tmp = MOB_DATA(op)->known_objs; tmp; tmp = tmp->next)
+    {
+        if(tmp->attraction < 0)
+        {
+            rv_vector *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
+            if(rv && rv->distance <= 1)
+            {
+                response->forbidden |= (1 << rv->direction);
+            }
+        }
+    }
+}
+
+/** Useful if mob is much slower than enemy? 
+ * @note experimental. not finished, tested or used */
 void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    if (op->weapon_speed_left > 0 && OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy,
-                                                                                                 MOB_DATA(op)->enemy))
+    if (op->weapon_speed_left > 0 && OBJECT_VALID(op->enemy, op->enemy_count)
+            && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
     {
         rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
 
@@ -1427,6 +1249,71 @@ void ai_plugin_move(object *op, struct mob_behaviour_param *params, move_respons
  * Misc behaviours
  */
 
+/** Scans the nearby area for interesting (non-zero attraction) items.
+ * @todo optimization - only look at newly discovered squares after a move
+ * (for example, only look at the new squares to the east after having moved east).
+ * But sometimes (random interval?) look at old squares to detect dropped/thrown/spawned
+ * objects without moving. Also rescan all squares if having been teleported or newly spawned.
+ * We also must remember to periodically check the already known objects to see if they
+ * have moved or disappeared and to update their memory timeout
+ * XXX: currently very experimental */
+void ai_look_for_objects(object *op, struct mob_behaviour_param *params)
+{
+    int dx, dy, x, y;
+    int sense_range;
+    mapstruct *m;
+    
+    /* initialize hashtable if needed */
+    if(MOB_DATA(op)->known_objs_ht == NULL)
+        MOB_DATA(op)->known_objs_ht = pointer_hashtable_new(32);
+
+    /* The "real" sense range calculation is in mob_can_see_ob(), this is
+     * a simplified version */
+    sense_range = op->stats.Wis;
+    if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
+        sense_range /= 2;
+    sense_range = MAX(MIN_MON_RADIUS, sense_range);
+
+    /* TODO: change to a more circular scanning area */
+    for(dx = -sense_range; dx <= sense_range; dx++)
+    {
+        for(dy = -sense_range; dy <= sense_range; dy++)
+        {
+            x = op->x + dx;
+            y = op->y + dy;
+            m = out_of_map(op->map, &x, &y);
+            if(m)
+            {
+                object *tmp = GET_MAP_OB(m,x,y);
+                for(; tmp; tmp = tmp->above)
+                {
+                    struct mob_known_obj *known;
+                    /* TODO: filter out pointless objects 
+                     * (monster, player, sys_invisible, decoration, etc) */
+                    if(tmp->type == MONSTER || tmp->type == PLAYER ||
+                            QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+                        continue;
+                    /* TODO: what is best - to first see if the object is
+                     * "interesting" or to first see if we already know it? */
+                    known = hashtable_find(MOB_DATA(op)->known_objs_ht, tmp);
+                    if(! known)
+                    {
+                        int attraction = get_npc_object_attraction(op, tmp);
+                        if(attraction) {
+                            register_npc_known_obj(op, tmp, 0, attraction);
+#if defined DEBUG_AI
+                            LOG(llevDebug, "attraction of '%s' -> '%s': %d\n", 
+                                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp), attraction);
+#endif                            
+                        }
+    
+                    } else
+                        update_npc_known_obj(known, 0, 0);
+                }
+            }
+        }
+    }
+}
 
 void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 {
@@ -1511,10 +1398,18 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
                     && obj != op
                     && mob_can_see_obj(op, obj, NULL))
             {
+                struct mob_known_obj *tmp;
+                /* See if we already know this mob */
+                for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
+                    if(tmp->obj == op && tmp->obj_count == op->count)
+                        break;
+                if(tmp)
+                    update_npc_known_obj(tmp, 0, 0);
+                else
+                    register_npc_known_obj(op, obj, 0, 0);
                 /* TODO: get rid of double rv calculation
                  * (both can_see_obj() and register_npc_known_obj)
                  */
-                register_npc_known_obj(op, obj, 0);
             }
         }
     }
@@ -1554,7 +1449,7 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
 
     /* Learn about owner's enemy if we didn't know of it */
     if(owner_enemy && !op->enemy && !known_owner_enemy)
-        register_npc_known_obj(op, owner_enemy, 0);
+        register_npc_known_obj(op, owner_enemy, 0, 0);
 }
 
 /* TODO: parameterize MAX_IDLE_TIME */
