@@ -18,7 +18,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "OgreParticleSystem.h"
+#include "particle_manager.h"
 #include "object_npc.h"
 #include "particle.h"
 #include "sound.h"
@@ -195,7 +195,6 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   if (!mInstanceNr)
   {
     texImageBuf = new uchar[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
-//    tempPFX = new ParticleFX("Particle/SwordGlow", 0, Vector3(0,0,0));
     Logger::log().headline("Init Actor Models");
   }
   mFacing = Degree(Facing);
@@ -233,16 +232,15 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
     mPosX = posX;
     mPosZ = posZ;
   }
-  const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
-  mBoundingBox.x = Math::Abs(AABB.getMaximum().x) - Math::Abs(AABB.getMinimum().x) + TILE_SIZE/2;
-  mBoundingBox.y = Math::Abs(AABB.getMinimum().y);
-  mBoundingBox.z = Math::Abs(AABB.getMaximum().z) - Math::Abs(AABB.getMinimum().z) + TILE_SIZE/2;
   Vector3 pos;
+  const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
+  mBoundingBox.x = TILE_SIZE/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
+  mBoundingBox.z = TILE_SIZE/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+  mBoundingBox.y = AABB.getMinimum().y;
   pos.x = mPosX * TILE_SIZE + mBoundingBox.x;
-  pos.y = (Real) (Event->getTileManager()->Get_Map_StretchedHeight(mPosX, mPosZ) + mBoundingBox.y);
-  pos.z = mPosZ * TILE_SIZE + mBoundingBox.z;
-  mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
-  //mNode = Event->GetWorldNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
+  pos.z = mPosZ * TILE_SIZE + mBoundingBox.z;;
+  pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
+  mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
   mNode->attachObject(mEntityNPC);
   /// ////////////////////////////////////////////////////////////////////
   /// We ignore the material of the mesh and create an own material.
@@ -280,6 +278,11 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   mEntityShield =0;
   mEntityArmor  =0;
   mEntityHelmet =0;
+
+
+
+  mAnim->toggleAnimation(Animate::STATE_IDLE1);
+
 }
 
 ///================================================================================================
@@ -309,21 +312,22 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
       {
         mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
         mEntityWeapon->setQueryFlags(QUERY_EQUIPMENT_MASK);
-        Option::getSingleton().getDescStr("StartX_Weapon", mStrTemp, WeaponNr);
-        Real posX = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("StartY_Weapon", mStrTemp, WeaponNr);
-        Real posY = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("StartZ_Weapon", mStrTemp, WeaponNr);
-        Real posZ = atof(mStrTemp.c_str());
         Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
-        mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+
+/*
+        const AxisAlignedBox &AABB = mEntityWeapon->getBoundingBox();
+        Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+        mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
+*/
+        mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon);
+        static ParticleSystem *pSystem;
         if (WeaponNr==1)
         {
-//          mEntityNPC->attachObjectToBone(mStrTemp, tempPFX->getParticleFX(), Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ+5));
+            pSystem = ParticleManager::getSingleton().addBoneObject(mEntityNPC, mStrTemp.c_str(), "Particle/SwordGlow", -1);
         }
         if (WeaponNr==2)
         {
-//          mEntityNPC->detachObjectFromBone("SwordGlow");
+            ParticleManager::getSingleton().delObject(pSystem);
         }
       }
       else mWeapon =0;  // testing -> delete me!
@@ -340,16 +344,12 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         }
         if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
         {
-          mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);     //  oben  links  vorne
+          mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);
           mEntityShield->setQueryFlags(QUERY_EQUIPMENT_MASK);
-          Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
-          Real posX = atof(mStrTemp.c_str());
-          Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
-          Real posY = atof(mStrTemp.c_str());
-          Option::getSingleton().getDescStr("StartZ_Shield", mStrTemp, WeaponNr);
-          Real posZ = atof(mStrTemp.c_str());
+          const AxisAlignedBox &AABB = mEntityShield->getBoundingBox();
+          Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
           Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
-          mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+          mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
         }
         else mShield =0;  // testing -> delete me!
       }
@@ -357,6 +357,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 
       case BONE_HEAD:
       {
+/*
         { // delete me!
           if (WeaponNr) mNode->scale(1.1, 1.1, 1.1);
           else          mNode->scale(0.9, 0.9, 0.9);
@@ -366,7 +367,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*) scale.c_str());
           return;
         }
-
+*/
         WeaponNr = ++mHelmet; // testing -> delete me!
         if (mEntityHelmet)
         {
@@ -378,41 +379,49 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
         {
           mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
           mEntityHelmet->setQueryFlags(QUERY_EQUIPMENT_MASK);
-          Option::getSingleton().getDescStr("StartX_Helmet", mStrTemp, WeaponNr);
-          Real posX = atof(mStrTemp.c_str());
-          Option::getSingleton().getDescStr("StartY_Helmet", mStrTemp, WeaponNr);
-          Real posY = atof(mStrTemp.c_str());
-          Option::getSingleton().getDescStr("StartZ_Helmet", mStrTemp, WeaponNr);
-          Real posZ = atof(mStrTemp.c_str());
           Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
-          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+/*
+          const AxisAlignedBox &AABB = mEntityHelmet->getBoundingBox();
+          Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
+*/
+          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet);
         }
         else mHelmet =0;  // testing -> delete me!
       }
       break;
 
       case BONE_BODY:
-      WeaponNr = ++mArmor; // testing -> delete me!
-      if (mEntityArmor)
       {
-        mEntityNPC->detachObjectFromBone("armor");
-        mSceneMgr->destroyEntity(mEntityArmor);
-        mEntityArmor =0;
-      }
-      if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
-      {
-        mEntityArmor =mSceneMgr->createEntity("armor", mStrTemp);
-        mEntityArmor->setQueryFlags(QUERY_EQUIPMENT_MASK);
+        WeaponNr = ++mArmor; // testing -> delete me!
+        if (mEntityArmor)
+        {
+          mEntityNPC->detachObjectFromBone("armor");
+          mSceneMgr->destroyEntity(mEntityArmor);
+          mEntityArmor =0;
+        }
+        if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
+        {
+          mEntityArmor =mSceneMgr->createEntity("armor", mStrTemp);
+          mEntityArmor->setQueryFlags(QUERY_EQUIPMENT_MASK);
+          const AxisAlignedBox &AABB = mEntityArmor->getBoundingBox();
+          Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
+
+          Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+
+/*
+        Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
         Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
         Real posX = atof(mStrTemp.c_str());
         Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
         Real posY = atof(mStrTemp.c_str());
         Option::getSingleton().getDescStr("StartZ_Armor", mStrTemp, WeaponNr);
         Real posZ = atof(mStrTemp.c_str());
-        Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
-        mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion::IDENTITY, Vector3(posX, posY, posZ));
+*/
+          mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion::IDENTITY, pos);
+        }
+        else mArmor =0;  // testing -> delete me!
       }
-      else mArmor =0;  // testing -> delete me!
       break;
   }
 }
@@ -429,6 +438,7 @@ void NPC::update(const FrameEvent& event)
 
   if (mAutoTurning)
   {
+    mAnim->toggleAnimation(Animate::STATE_IDLE1);
     int turningDirection;
     int deltaDegree = ((int)mFacing.valueDegrees() - (int)mNewFacing.valueDegrees());
     if (deltaDegree <   0) deltaDegree += 360;
@@ -440,21 +450,18 @@ void NPC::update(const FrameEvent& event)
   }
   else if (mAutoMoving)
   {
-    mAnim->toggleAnimation(Animate::STATE_WALK1);
+   // mAnim->toggleAnimation(Animate::STATE_WALK1);
     /// We are very close to destination.
     Vector3 dist = mWalkToPos - mNode->getPosition();
-    if(dist.squaredLength() < 1)
+    dist.y =0;
+    if(dist.squaredLength() < 1)   // choose 30 for slow systems.
     {
       /// Set the exact destination pos.
       mPosX = mWalkToX;
       mPosZ = mWalkToZ;
-
       mWalkToPos.x = mBoundingBox.x + mPosX * TILE_SIZE;
-      mWalkToPos.y = mBoundingBox.y + Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ);
       mWalkToPos.z = mBoundingBox.z + mPosZ * TILE_SIZE;
-
-      // Logger::log().error() <<   mWalkToPos.x << "   "    <<   mWalkToPos.y << "   "    << mWalkToPos.z ;
-
+      mWalkToPos.y = Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ) - mBoundingBox.y;
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
       mAnim->toggleAnimation(Animate::STATE_IDLE1);
@@ -462,22 +469,34 @@ void NPC::update(const FrameEvent& event)
     else
     {
       /// We have to move on.
-      /*
       // just a test...
-      mAnim->toggleAnimation(STATE_WALK1);
+      mAnim->toggleAnimation(Animate::STATE_WALK1);
+
       mTranslateVector.x = sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
       mTranslateVector.z = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-      */
-
       //      mDeltaPos /= mDeltaPos.squaredLength();
       Vector3 NewTmpPosition = mNode->getPosition() - event.timeSinceLastFrame *  mDeltaPos;
+/*
       mPosX = (int) (NewTmpPosition.x / TILE_SIZE +1);
       mPosZ = (int) (NewTmpPosition.z / TILE_SIZE +1);
-      //      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosTileX, mPosTileZ) + mBoundingBox.y);
+      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
+*/
       mNode->setPosition(NewTmpPosition);
     }
     return;
   }
+
+
+
+
+
+
+
+//return;
+
+
+
+
   if (mAnim->isMovement())
   {
     if (mTurning)
@@ -485,6 +504,7 @@ void NPC::update(const FrameEvent& event)
       mFacing += Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
       mNode->yaw(Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
     }
+/*
     if (mWalking)
     {
       // just a test...
@@ -524,8 +544,9 @@ void NPC::update(const FrameEvent& event)
     }
     else
     {
-      mAnim->toggleAnimation(Animate::STATE_IDLE1);
+     // mAnim->toggleAnimation(Animate::STATE_IDLE1);
     }
+  */
   }
 }
 
@@ -568,12 +589,13 @@ void NPC::moveToTile(int x, int z)
   faceToTile(x, z);
   /// Move it.
   mWalkToPos.x = x * TILE_SIZE + mBoundingBox.x;
-  mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) + mBoundingBox.y);
+  mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) - mBoundingBox.y);
   mWalkToPos.z = z * TILE_SIZE + mBoundingBox.z;
   mDeltaPos = mNode->getPosition() - mWalkToPos;
   mWalkToX = x;
   mWalkToZ = z;
   mAutoMoving = true;
+  mAnim->toggleAnimation(Animate::STATE_WALK1);
 }
 
 ///================================================================================================

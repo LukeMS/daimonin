@@ -1,13 +1,12 @@
-material Selection
+material selection
 {
    technique
    {
       pass
       {
-         depth_check off
+       //depth_check off
 	 depth_write off
          scene_blend alpha_blend
-         
 	 texture_unit
          {
             texture selection.png

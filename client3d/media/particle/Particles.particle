@@ -163,8 +163,8 @@ Particle/SwordGlow
 {
 	quota	10000
 	material	Particle/Flare
-	particle_width	15
-	particle_height	15
+	particle_width	7
+	particle_height	5
 	cull_each	false
 	renderer	billboard
 	sorted	false
@@ -186,7 +186,7 @@ Particle/SwordGlow
 		colour_range_end	1 0.1 0.1 1
 		direction	0 1 0
 		emission_rate	50
-		position	0 0 0
+		position	0 0 7
 		velocity	0
 		velocity_min	0
 		velocity_max	0
@@ -199,8 +199,8 @@ Particle/SwordGlow
 		repeat_delay	0
 		repeat_delay_min	0
 		repeat_delay_max	0
-		width	20
-		height	20
+		width	7
+		height	5
 		depth	0
 	}
 

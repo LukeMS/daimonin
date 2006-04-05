@@ -30,6 +30,8 @@ TileSelection::TileSelection(TileManager* TileManager)
   m_SquareSize = 1;
   reset();
 //  create_Entity();
+   m_x = CHUNK_SIZE_X /2;
+   m_y = CHUNK_SIZE_Z /2;
 }
 
 ///================================================================================================

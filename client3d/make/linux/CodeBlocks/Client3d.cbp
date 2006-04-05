@@ -10,20 +10,23 @@
 		<Option compiler="0"/>
 		<Build>
 			<Target title="32bit">
-				<Option output="../../../Client3d"/>
+				<Option output="../../../client3d"/>
 				<Option working_dir="../../../"/>
 				<Option object_output=".objs"/>
 				<Option deps_output=".deps"/>
 				<Option type="1"/>
 				<Option compiler="0"/>
 				<Option projectResourceIncludeDirsRelation="1"/>
+				<Compiler>
+					<Add option="-march=pentium2"/>
+				</Compiler>
 				<Linker>
 					<Add library="fmodex"/>
 					<Add directory="../../linux"/>
 				</Linker>
 			</Target>
 			<Target title="64bit">
-				<Option output="../../../Client3d"/>
+				<Option output="../../../client3d"/>
 				<Option working_dir="../../../"/>
 				<Option object_output=".objs"/>
 				<Option deps_output=".deps"/>
@@ -36,7 +39,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-DEXT_HASH"/>
+			<Add option="-w"/>
 			<Add directory="/usr/include/OGRE"/>
 			<Add directory="../../../source/include"/>
 			<Add directory="../../../source/3rdParty/zlib"/>
@@ -44,6 +47,7 @@
 			<Add directory="../../../source/3rdParty/fmod"/>
 		</Compiler>
 		<Linker>
+			<Add option="-s"/>
 			<Add library="OgreMain"/>
 			<Add directory="../../linux"/>
 		</Linker>

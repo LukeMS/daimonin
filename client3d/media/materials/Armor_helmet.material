@@ -1,0 +1,15 @@
+
+
+material Helmet
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture Armor_Helmet.jpg
+			}
+		}
+	}
+}

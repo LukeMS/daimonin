@@ -56,7 +56,7 @@ void GuiManager::Init(int w, int h)
   /// ////////////////////////////////////////////////////////////////////
   /// Create the tooltip overlay.
   /// ////////////////////////////////////////////////////////////////////
-  Logger::log().info() << "Creating Overlay for System-Messages";
+  Logger::log().info() << "Creating Overlay for System-Messages...";
   mTooltipRefresh = false;
   mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
              TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
