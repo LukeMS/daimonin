@@ -1,4 +1,2 @@
--- Jail Guard Sahrel is on patrol in stoneglow
--- He say ask the ogre about still in jail - what he don't like
-
+-- jail guard scripts to make ogre spit
 event.activator:Communicate("still there, Frah'ak?")

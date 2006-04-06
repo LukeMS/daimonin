@@ -1,173 +1,132 @@
+-- template for a "item quest" script
 require("topic_list")
+require("quest_check")
+require("interface_builder")
 
-activator = event.activator
-me = event.me
-quest_arch_name = "head_ant_queen"
-quest_item_name = "water well ant queen head"
+local pl        = event.activator
+local me        = event.me
+local msg       = string.lower(event.message)
 
-qitem = activator:CheckQuestObject(quest_arch_name, quest_item_name)
-item = activator:CheckInventory(1, quest_arch_name, quest_item_name)
+local q_name_1  = "Dev Item Test Quest"
+local q_step_1  = 0
+local q_level_1  = 1
+local q_skill_1  = game.ITEM_SKILL_NO
 
-function topicDefault()
-activator:Write(me.name .. " listens to you without answer.", game.COLOR_WHITE)
-end
+local q_obj_1   = pl:GetQuest(q_name_1)
+local q_stat_1  = Q_Status(pl, q_obj_1, q_step_1, q_level_1, q_skill_1)
 
-function topicGreeting()
-if qitem == nil then
-if item == nil then
-me:SayTo(activator, [[
+local ib = InterfaceBuilder()
+ib:SetHeader(me, me.name)
 
-Hello, mercenary. I am Supply Chief Chereth.
-Fomerly Archery Commander Chereth,
-before I lost my eyes.
-Well, I still know alot about ^archery^.
-Perhaps you want to ^learn^ an archery skill?]])
-
+local function topicDefault()
+if q_stat_1 < game.QSTAT_DONE then
+ib:AddMsg("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
+if q_stat_1 == game.QSTAT_NO then
+ib:SetTitle("Item Test Quest")
+ib:AddMsg("[INTRO] A quest which needs an item delivered. The item is inside the quest object inside the player which is given the player when this quest is accepted. There is a QUEST_TRIGGER inside a object (chest or mob) which will move a visible copy to the players inventory.")
+ib:AddLink("Start Item Test Quest", "startq1")
 else
-me:SayTo(activator, [[
-
-The head! You have done it!
-Now we can repair the water well.
-Say ^teach^ to me now to learn an archery skill!]])
-
+ib:SetTitle("Item Test Quest solved?")
+ib:AddMsg("[pending] You has done the quest?")
+ib:AddLink("Finish Item Test Quest", "checkq1")
 end
 else
-me:SayTo(activator, [[
-
-Hello ]] .. activator.name .. [[.
-Good to see you back.
-I have no quest for you or your ^archery^ skill.]])
-
+pl:Write(me.name .." has nothing to say.", game.COLOR_NAVY)
+pl:Interface(-1, "") 
+return
 end
+pl:Interface(1, ib:Build())
 end
 
-function topicLearn()
-if qitem ~= nil then
-me:SayTo(activator, "\nSorry, I can only teach you *one* archery skill.")
+-- quest body (added to player quest obj for quest list)
+local function quest_icons1()
+ib:AddIcon("quest-reward-name", "shield.101", "i am the stats/description line") 
+end
+local function quest_body1()
+ib:SetMsg("[WHY] Get the item this test quest needs.")
+ib:SetDesc("[WHAT] Bring me a °Item Test Helm°.\nKill the ant or open the chest.", 1, 2, 0, 0)
+end
+
+-- start: accept or decline the quest
+local function topStartQ1()
+if q_stat_1 ~= game.QSTAT_NO then
+topicDefault()
 else
-me:SayTo(activator, [[
-
-Well, there are three different ^archery^ skills.
-I can teach you only *ONE* of them.
-You have to stay with it then. So choose wisely.
-I can tell you more about ^archery^. But before i teach you i have a little ^quest^ for you.]])
-
+ib:SetTitle(q_name_1)
+quest_body1()
+quest_icons1()
+ib:SetAccept(nil, "acceptq1") 
+ib:SetDecline(nil, "hi") 
+pl:Interface(1, ib:Build())
 end
 end
 
-function topicTeachMeBow()
-if qitem ~= nil or item == nil then
-me:SayTo(activator, "\nI can't ^teach^ you this now.")
+-- accepted: start the quest
+local function topAcceptQ1()
+if q_stat_1 == game.QSTAT_NO then
+quest_body1()
+quest_icons1()
+q_obj_1 = pl:AddQuest(q_name_1, game.QUEST_ITEM, q_step_1, q_step_1, q_level_1, q_skill_1, ib:Build())
+if q_obj_1 ~= null then
+q_obj_1:AddQuestItem(1, "quest_object", "helm_leather.101", "Item Test Helm")
+q_stat_1 = Q_Status(pl, q_obj_1, q_step_1, q_level_1, q_skill_1)
+pl:Sound(0, 0, 2, 0)
+pl:Write("You take the quest '"..q_name_1.."'.", game.COLOR_NAVY)
+end
+ib = InterfaceBuilder()
+ib:SetHeader(me, me.name)
+end
+topicDefault()
+end
+
+-- try to finish: check the quest
+local function topCheckQ1()
+if q_stat_1 == game.QSTAT_NO then
+topicDefault()
 else
-activator:AddQuestObject(quest_arch_name, quest_item_name)
-item:Remove()
-me:SayTo(activator, "Here we go!")
-me.map:Message(me.x, me.y, game.MAP_INFO_NORMAL, "Chereth teaches some ancient skill.", game.COLOR_YELLOW)
-activator:AcquireSkill(game:GetSkillNr("bow archery"), game.LEARN)
-activator:CreateObjectInside("bow_short", 1, 1)
-activator:Write("Chereth gives you a short bow.", game.COLOR_WHITE)
-activator:CreateObjectInside("arrow", 1, 12)
-activator:Write("Chereth gives you 12 arrows.", game.COLOR_WHITE)
-end
-end
-
-function topicTeachMeSling()
-if qitem ~= nil or item == nil then
-me:SayTo(activator, "\nI can't ^teach^ you this now.")
+ib:SetTitle("FINAL CHECK: Item Test Quest")
+ib:SetMsg("[DEVMSG] The quest status is: ".. q_stat_1 .."\n\n")
+if q_stat_1 ~= game.QSTAT_SOLVED then
+ib:AddMsg("[not-done-text] Come back if you have it!\n")
+Q_List(q_obj_1, ib)
+ib:SetButton("Back", "hi") 
 else
-activator:AddQuestObject(quest_arch_name, quest_item_name)
-item:Remove()
-me:SayTo(activator, "Here we go!")
-me.map:Message(me.x, me.y, game.MAP_INFO_NORMAL, "Chereth teaches some ancient skill.", game.COLOR_YELLOW)
-activator:AcquireSkill(game:GetSkillNr("sling archery"), game.LEARN)
-activator:CreateObjectInside("sling_small", 1, 1)
-activator:Write("Chereth gives you a small sling.", game.COLOR_WHITE)
-activator:CreateObjectInside("sstone", 1, 12)
-activator:Write("Chereth gives you 12 sling stones.", game.COLOR_WHITE)
+ib:AddMsg("[final-text] Very well done! You found the helm.\n")
+ib:SetDesc("here it is...", 1, 2, 0, 0)
+quest_icons1()
+Q_List(q_obj_1, ib)
+ib:SetAccept(nil, "finishq1") 
+ib:SetDecline(nil, "hi") 
+end
+pl:Interface(1, ib:Build())
 end
 end
 
-function topicTeachMeCrossbow()
-if qitem ~= nil or item == nil then
-me:SayTo(activator, "\nI can't ^teach^ you this now.")
+-- done: finish quest and give reward
+local function topFinishQ1()
+if q_stat_1 ~= game.QSTAT_SOLVED then
+topicDefault()
 else
-activator:AddQuestObject(quest_arch_name, quest_item_name)
-item:Remove()
-me:SayTo(activator, "Here we go!")
-me.map:Message(me.x, me.y, game.MAP_INFO_NORMAL, "Chereth teaches some ancient skill.", game.COLOR_YELLOW)
-activator:AcquireSkill(game:GetSkillNr("crossbow archery"), game.LEARN)
-activator:CreateObjectInside("crossbow_small", 1, 1)
-activator:Write("Chereth gives you a small crossbow.", game.COLOR_WHITE)
-activator:CreateObjectInside("bolt", 1, 12)
-activator:Write("Chereth gives you 12 bolts.", game.COLOR_WHITE)
+q_obj_1:RemoveQuestItem()
+q_obj_1:SetQuestStatus(-1)
+q_stat_1 = game.QSTAT_DONE
+pl:Sound(0, 0, 2, 0)
+pl:CreateObjectInsideEx("shield", 1,1)
+pl:AddMoneyEx(1,2,0,0)
+ib:SetTitle("QUEST END: Item Test Quest")
+ib:SetMsg("Very well done! Here is your reward!")
+ib:SetButton("Ok", "hi") 
+pl:Interface(1, ib:Build())
 end
 end
 
-function topicQuest()
-if qitem ~= nil then
-me:SayTo(activator, "\nI have no quest for you after you helped us out.")
-else
-if item == nil then
-me:SayTo(activator, [[
-
-Yes, we need your help first.
-As supply chief the water support of this outpost
-is under my command. We noticed last few days problems
-with our main water source.
-It seems a traveling hive of giant ants has invaded the
-caverns under our water well.
-Enter the well next to this house and kill the ant queen!
-Bring me her head as a trophy and I will ^teach^ you.]])
-
-else
-me:SayTo(activator, [[
-
-The head! You have done it!
-Now we can repair the water well.
-Say ^teach^ to me now to learn an archery skill!]])
-
+tl = TopicList()
+tl:AddGreeting(nil, topicDefault)
+tl:SetDefault(topicDefault)
+if q_stat_1 < game.QSTAT_DONE then
+tl:AddTopics("startq1", topStartQ1) 
+tl:AddTopics("acceptq1", topAcceptQ1) 
+tl:AddTopics("checkq1", topCheckQ1) 
+tl:AddTopics("finishq1", topFinishQ1) 
 end
-end
-end
-
-function topicTeach()
-if qitem ~= nil then
-me:SayTo(activator, "\nSorry, I can only teach you *one* archery skill.")
-else
-if item == nil then
-me:SayTo(activator, [[
-
-Where is the queen's head? I don't see it.
-Solve the ^quest^ first and kill the ant queen.
-Then I will teach you.]])
-
-else
-me:SayTo(activator, [[
-
-As reward I will teach you an archery skill.
-Choose wisely. I can only teach you *one* of three skills!!
-You want some info about the ^archery^ skills?
-If you know your choice tell me ^teach me bow^,
-^teach me sling^ or ^teach me crossbow^.]])
-
-end
-end
-end
-
-local tl = TopicList()
-tl:AddGreeting(nil, topicGreeting)
-tl:AddTopics("archery", [[
-
-Yes, there are three archery skills then
-Bow Archery is the most common firing arrows.
-Sling Archery allows fast firing stones with less damage.
-Crossbow Archery uses x-bows and bolts. Slow but powerful.]])
-
-tl:AddTopics("learn", topicLearn)
-tl:AddTopics("teach me bow", topicTeachMeBow)
-tl:AddTopics("teach me sling", topicTeachMeSling)
-tl:AddTopics("teach me crossbow", topicTeachMeCrossbow)
-tl:AddTopics("quest", topicQuest)
-tl:AddTopics("teach", topicTeach)
-
 tl:CheckMessage(event)

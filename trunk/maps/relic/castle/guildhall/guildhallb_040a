@@ -120,6 +120,10 @@ arch floor_flagstone1b
 x 1
 y 6
 end
+arch light2
+x 1
+y 6
+end
 arch ladder_up
 msg
 You climb the short ladder up halfway and have to jump to safety.
@@ -127,10 +131,6 @@ endmsg
 slaying /relic/castle/castle_040a
 hp 1
 sp 6
-x 1
-y 6
-end
-arch light2
 x 1
 y 6
 end
