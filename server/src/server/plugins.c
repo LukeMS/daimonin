@@ -105,8 +105,7 @@ object * get_event_object(object *op, int event_nr)
 
 int trigger_object_plugin_event(
         int event_type,
-        /* value[2], value[1], value[3] */
-        object *me, object *activator, object *other,
+        object *const me, object *const activator, object *const other,
         const char *msg,
         int *parm1, int *parm2, int *parm3,
         int flags)

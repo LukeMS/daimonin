@@ -54,7 +54,7 @@ static char     levelnumbers_10[11][20] =
  * if newline is true, we don't put parens around the description
  * but do put a newline at the end.  Useful when dumping to files
  */
-char * describe_resistance(object *op, int newline)
+char * describe_resistance(const object *const op, int newline)
 {
     static char buf[VERY_BIG_BUF];
     char        buf1[VERY_BIG_BUF];
@@ -94,7 +94,7 @@ char * describe_resistance(object *op, int newline)
  * if newline is true, we don't put parens around the description
  * but do put a newline at the end.  Useful when dumping to files
  */
-char * describe_attack(object *op, int newline)
+char * describe_attack(const object *const op, int newline)
 {
     static char buf[VERY_BIG_BUF];
     char        buf1[VERY_BIG_BUF];
@@ -194,7 +194,7 @@ char * get_number(int i)
  * query_short_name(object) is similar to query_name, but doesn't
  * contain any information about object status (worn/cursed/etc.)
  */
-char * query_short_name(object *op, object *caller)
+char * query_short_name(const object *const op, const object *const caller)
 {
     static char buf[HUGE_BUF];
     char        buf2[HUGE_BUF];
@@ -403,7 +403,7 @@ char * query_short_name(object *op, object *caller)
  * use several names much easier (don't need to store them to temp variables.)
  *
  */
-char  *query_name_full(object *op, object *caller)
+char  *query_name_full(const object *op, const object *caller)
 {
     static char buf[5][HUGE_BUF];
     static int  use_buf = 0;
@@ -690,7 +690,7 @@ char *query_base_name(object *op, object *caller)
 /* describe terrain flags
  * we use strcat only - prepare the retbuf before call.
  */
-static void describe_terrain(object *op, char *retbuf)
+static void describe_terrain(const object *const op, char *const retbuf)
 {
     if (op->terrain_flag & TERRAIN_AIRBREATH)
         strcat(retbuf, "(air breathing)");
@@ -719,7 +719,7 @@ static void describe_terrain(object *op, char *retbuf)
 /* i rewrite this to describe *every* object in the game.
  * That includes a description of every flag, etc.
  * MT-2003 */
-char * describe_item(object *op)
+char * describe_item(const object *const op)
 {
     object     *tmp;
     int         attr, val, more_info = 0, id_true = FALSE;
@@ -1159,7 +1159,7 @@ char * describe_item(object *op)
  * should need it.
  */
 
-int need_identify(object *op)
+int need_identify(const object *const op)
 {
     switch (op->type)
     {

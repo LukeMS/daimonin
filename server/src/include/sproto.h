@@ -23,12 +23,9 @@ int                         improve_weapon(object *op, object *improver, object 
 int                         check_improve_weapon(object *op, object *tmp);
 int                         improve_armour(object *op, object *improver, object *armour);
 int                         convert_item(object *item, object *converter);
-int                         container_link(player *pl, object *sack);
-int                         container_unlink(player *pl, object *sack);
 int                         esrv_apply_container(object *op, object *sack);
-int                         container_trap(object *op, object *container);
 char                       *gravestone_text(object *op);
-void                        move_apply(object *trap, object *victim, object *originator, int flags);
+void                        move_apply(object *const trap, object *const victim, object *const originator, const int flags);
 void                        do_learn_spell(object *op, int spell, int special_prayer);
 void                        do_forget_spell(object *op, int spell);
 void                        apply_poison(object *op, object *tmp);
@@ -220,11 +217,6 @@ int                         command_uskill(object *pl, char *params);
 int                         command_rskill(object *pl, char *params);
 int							command_egobind ( object *pl, char *params); 
 int                         command_apply(object *op, char *params);
-int                         sack_can_hold(object *pl, object *sack, object *op, int nrof);
-void                        pick_up(object *op, object *alt);
-void                        put_object_in_sack(object *op, object *sack, object *tmp, long nrof);
-void                        drop_object(object *op, object *tmp, long nrof);
-void                        drop(object *op, object *tmp);
 int                         command_dropall(object *op, char *params);
 int                         command_drop(object *op, char *params);
 int                         command_examine(object *op, char *params);
@@ -292,6 +284,15 @@ int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 void                        send_clear_interface(player *pl);
+/* container.c */
+int                         container_link(player *const pl, object *const sack);
+int                         container_unlink(player *const pl, object *sack);
+int                         container_trap(object *const op, object *const container);
+int                         sack_can_hold(object *const pl, object *const sack, object *const op, const uint32 nrof);
+void                        pick_up(object *const op, object *const ori);
+void                        put_object_in_sack(object *const op, object *const sack, object *tmp, const uint32 nrof);
+void                        drop_object(object *const op, object *tmp, const uint32 nrof);
+void                        drop(object *const op, object *const ori);
 /* daemon.c */
 FILE                       *BecomeDaemon(char *filename);
 /* disease.c */
@@ -475,7 +476,9 @@ int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object *op);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
-int                         trigger_object_plugin_event(int event_type, object *me, object *activator, object *other, const char *msg, int *parm1, int *parm2, int *parm3, int flags);
+int							trigger_object_plugin_event(int event_type,
+								object *const me, object *const activator, object *const other,
+								const char *msg, int *parm1, int *parm2, int *parm3, int flags);
 CommArray_s                *find_plugin_command(const char *cmd, object *op);
 void                        displayPluginsList(object *op);
 int                         findPlugin(const char *id);

@@ -495,7 +495,7 @@ object * is_player_inv(object *op)
  * The result of the dump is stored in the static global errmsg array.
  */
 
-void dump_object2(object *op)
+void dump_object2(const object *op)
 {
     char   *cp;
     /*  object *tmp;*/
@@ -543,7 +543,7 @@ void dump_object2(object *op)
  * Dumps an object.  Returns output in the static global errmsg array.
  */
 
-void dump_object(object *op)
+void dump_object(const object *op)
 {
     if (op == NULL)
     {
@@ -1625,7 +1625,7 @@ void remove_ob_inv(object *op)
  * explicit when we want make a "move/step" for a object which can trigger it.
  */
 
-object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag)
+object * insert_ob_in_map(object *const op, mapstruct *m, object *const originator, const int flag)
 {
     object*tmp =    NULL, *top;
     MapSpace       *mc;
@@ -1706,7 +1706,6 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
         op->y = y;
     }
 
-    /* hm, i not checked this, but is it not smarter to remove op instead and return? MT */
     if (op->nrof && !(flag & INS_NO_MERGE))
     {
         for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
@@ -2039,13 +2038,13 @@ void replace_insert_ob_in_map(char *arch_string, object *op)
  * global static errmsg array.
  */
 
-object * get_split_ob(object *orig_ob, int nr)
+object * get_split_ob(object *orig_ob, uint32 nr)
 {
     object *newob;
     object *tmp, *event;
     int     is_removed  = (QUERY_FLAG(orig_ob, FLAG_REMOVED) != 0);
 
-    if ((int) orig_ob->nrof < nr)
+    if (orig_ob->nrof < nr)
     {
         sprintf(errmsg, "There are only %d %ss.", orig_ob->nrof ? orig_ob->nrof : 1, query_name(orig_ob));
         return NULL;
@@ -2098,15 +2097,15 @@ object * get_split_ob(object *orig_ob, int nr)
  * Return value: 'op' if something is left, NULL if the amount reached 0
  */
 
-object * decrease_ob_nr(object *op, int i)
+object * decrease_ob_nr(object *op, uint32 i)
 {
     object *tmp;
 
     if (i == 0)   /* objects with op->nrof require this check */
         return op;
 
-    if (i > (int) op->nrof)
-        i = (int) op->nrof;
+    if (i > op->nrof)
+        i = op->nrof;
 
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
@@ -2127,7 +2126,7 @@ object * decrease_ob_nr(object *op, int i)
                 tmp = op->env->attacked_by;
         }
 
-        if (i < (int) op->nrof) /* there are still some */
+        if (i < op->nrof) /* there are still some */
         {
             if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 sub_weight(op, i);
@@ -2155,7 +2154,7 @@ object * decrease_ob_nr(object *op, int i)
     {
         object *above   = op->above;
 
-        if (i < (int) op->nrof)
+        if (i < op->nrof)
         {
             op->nrof -= i;
         }
@@ -2322,7 +2321,7 @@ object * insert_ob_in_ob(object *op, object *where)
  * on top.
  */
 
-int check_walk_on(object *op, object *originator, int flags)
+int check_walk_on(object *const op, object *const originator, int flags)
 {
     object     *tmp /*, *head=op->head?op->head:op*/;
     int         local_walk_semaphore    = FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
@@ -2803,7 +2802,7 @@ object * ObjectCreateClone(object *asrc)
     return dst;
 }
 
-int was_destroyed(object *op, tag_t old_tag)
+int was_destroyed(const object *const op, const tag_t old_tag)
 {
     /* checking for OBJECT_FREE isn't necessary, but makes this function more
      * robust */

@@ -969,7 +969,7 @@ void init_vars() {
  * (op2 is the objects original archetype)
  */
 
-char *get_ob_diff(object *op,object *op2) {
+char *get_ob_diff(const object *op, const object *op2) {
     /* I plan to optimize this heavily */
     /* TODO: One good optimization would be to keep track of the end of buf
      * instead of using strcat() which must find the end at every call 
