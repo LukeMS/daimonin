@@ -207,7 +207,7 @@
 /*****************************************************************************/
 typedef struct _CFParm
 {
-    int     Type[15];   /* Currently unused, but may prove useful later.     */
+    const int     Type[15];   /* Currently unused, but may prove useful later.     */
     void   *Value[15];  /* The values contained in the CFParm structure.     */
 } CFParm;
 
@@ -254,83 +254,75 @@ struct plugin_hooklist
     void (*LOG)(LogLevel, char *, ...);
     char*(*create_pathname)(const char *);
     char*(*re_cmp)(char *, char *);
-
-    void (*new_draw_info)(int flags, int pri, object *pl, const char *buf);
-    void (*new_draw_info_format)(int flags, int pri, object *pl, char *format, ...);
-    void (*new_info_map)(int color, mapstruct *map, int x, int y, int dist, const char *str);
-    void (*new_info_map_except)(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str);
-    int (*map_brightness)(mapstruct *map, int x, int y);
-    int (*wall)(mapstruct *map, int x, int y);
-
-    void (*free_string_shared)(const char *str);
-    const char*(*add_string)(const char *str);
-    const char*(*add_refcount)(const char *str);
-
-    void (*fix_player)(object *op);
-    void (*esrv_send_item)(object *pl, object *op);
-    void (*esrv_send_inventory)(object *pl, object *op);
-
-    int (*lookup_skill_by_name)(char *string);
-    int (*look_up_spell_name)(const char *spname);
-
-    object*(*insert_ob_in_ob)(object *op, object *where);
-    object*(*insert_ob_in_map)(object *op, mapstruct *m, object *originator, int flag);
-    int (*move_ob)(object *op, int dir, object *originator);
-
-    void (*free_mempool)(struct mempool *pool);
-    struct mempool*(*create_mempool)(const char *description, uint32 expand, uint32 size,
-                                       uint32 flags, chunk_constructor constructor,
-                                       chunk_destructor destructor);
-    uint32 (*nearest_pow_two_exp)(uint32 n);
-    void (*return_poolchunk_array_real)(void *data, uint32 arraysize_exp, struct mempool *pool);
-    void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
-    object * (*arch_to_object)(archetype *at);
-    archetype * (*find_archetype)(const char *name);
-    struct mob_known_obj * (*update_npc_knowledge)(object *npc, object *other, int delta_friendship, int delta_attraction);
-    int (*get_rangevector)(object *op1, object *op2, rv_vector *retval, int flags);
-    int (*get_rangevector_from_mapcoords)(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
-    object * (*get_archetype)(const char *name);
-    void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
-    void (*add_money_to_player)(object *pl, int c, int s, int g, int m);
-    void (*drop_ob_inv)(object *ob);
-    object * (*decrease_ob_nr)(object *op, int i);
-    void (*add_quest_containers)(object *op);
-    void (*add_quest_trigger)(object *who, object *trigger);
-    void (*set_quest_status)(struct obj *trigger, int q_status, int q_type);
-    void (*spring_trap)(object *trap, object *victim);
-    int  (*cast_spell)(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item, char *stringarg);
-    void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
-    object * (*find_skill)(object *op, int skillnr);
-    int  (*find_animation)(char *name);
-    int  (*find_face)(const char *name, int error);
-    void (*get_tod)(struct _timeofday *tod);
-    sint64 (*query_money)(object *op);
-    sint64 (*query_cost)(object *tmp, object *who, int flag);
-    char* (*cost_string_from_value)(sint64 cost, int mode);
-    int (*pay_for_item)(object *op, object *pl);
-    int (*pay_for_amount)(sint64 to_pay, object *pl);
-    char* (*get_word_from_string)(char *str, int *pos);
-    int (*get_money_from_string)(char *text, struct _money_block *money);
-    void (*sell_item)(object *op, object *pl, sint64 value);
-    int (*query_money_type)(object *op, int value);
-    sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
-    void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
-    int (*add_pet)(object *owner, object *pet, int mode);
-	sint64 (*material_repair_cost)(object *item, object *owner);
-	void (*material_repair_item)(object *item, int skill_value);
-	char * (*query_short_name)(object *op, object *caller);
-	artifact * (*find_artifact)(const char *name);
-	void (*give_artifact_abilities)(object *op, artifact *art);
-	const char * (*find_string)(const char *str);
-	uint32 (*get_nrof_quest_item)(const struct obj *target, const char *aname, const char *name, const char *title);
-	object * (*is_player_inv)(object *op);
-	void (*gui_interface)(object *who, int mode, const char *text, const char *tail);
-	int (*quest_count_pending)(const struct obj *pobj);
-	struct obj *(*quest_find_name)(const struct obj *pl, const char *name);
-	object * (*guild_get)(player *pl, char *name);
-	object * (*guild_join)(player *pl, char *name, int s1_group, int s1_value, int s2_group, int s2_value, int s3_group, int s3_value);
-	void (*guild_leave)(player *pl);
-    object *(*locate_beacon)(shstr *id);
+    void (*new_draw_info)(int, int, object *, const char *);
+    void (*new_draw_info_format)(int, int, object *, char *, ...);
+    void (*new_info_map)(int, mapstruct *, int, int, int, const char *);
+    void (*new_info_map_except)(int, mapstruct *, int, int, int, object *, object *, const char *);
+    int (*map_brightness)(mapstruct *, int, int);
+    int (*wall)(mapstruct *, int, int);
+    void (*free_string_shared)(const char *);
+    const char*(*add_string)(const char *);
+    const char*(*add_refcount)(const char *);
+    void (*fix_player)(object *);
+    void (*esrv_send_item)(object *, object *);
+    void (*esrv_send_inventory)(object *, object *);
+    int (*lookup_skill_by_name)(char *);
+    int (*look_up_spell_name)(const char *);
+    object*(*insert_ob_in_ob)(object *, object *);
+    object*(*insert_ob_in_map)(object * const, mapstruct *, object *const, const int);
+    int (*move_ob)(object *, int, object *);
+    void (*free_mempool)(struct mempool *);
+    struct mempool*(*create_mempool)(const char *, uint32, uint32, uint32, chunk_constructor, chunk_destructor);
+    uint32 (*nearest_pow_two_exp)(uint32);
+    void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
+    void*(*get_poolchunk_array_real)(struct mempool *, uint32);
+    object * (*arch_to_object)(archetype *);
+    archetype * (*find_archetype)(const char *);
+    struct mob_known_obj * (*update_npc_knowledge)(object *, object *, int, int);
+    int (*get_rangevector)(object *, object *, rv_vector *, int);
+    int (*get_rangevector_from_mapcoords)(mapstruct *, int, int, mapstruct *, int, int, rv_vector *, int);
+    object * (*get_archetype)(const char *);
+    void (*play_sound_player_only)(player *, int, int, int, int);
+    void (*add_money_to_player)(object *, int, int, int, int);
+    void (*drop_ob_inv)(object *);
+    object * (*decrease_ob_nr)(object *, uint32);
+    void (*add_quest_containers)(object *);
+    void (*add_quest_trigger)(object *, object *);
+    void (*set_quest_status)(struct obj *, int, int);
+    void (*spring_trap)(object *, object *);
+    int  (*cast_spell)(object *, object *, int, int, int, SpellTypeFrom, char *);
+    void (*play_sound_map)(mapstruct *, int, int, int, int);
+    object * (*find_skill)(object *, int);
+    int  (*find_animation)(char *);
+    int  (*find_face)(const char *, int);
+    void (*get_tod)(struct _timeofday *);
+    sint64 (*query_money)(object *);
+    sint64 (*query_cost)(object *, object *, int);
+    char* (*cost_string_from_value)(sint64, int);
+    int (*pay_for_item)(object *, object *);
+    int (*pay_for_amount)(sint64, object *);
+    char* (*get_word_from_string)(char *, int *);
+    int (*get_money_from_string)(char *, struct _money_block *);
+    void (*sell_item)(object *, object *, sint64);
+    int (*query_money_type)(object *, int);
+    sint64 (*remove_money_type)(object *, object *, sint64, sint64);
+    void (*insert_money_in_player)(object *, object *, uint32);
+    int (*add_pet)(object *, object *, int);
+	sint64 (*material_repair_cost)(object *, object *);
+	void (*material_repair_item)(object *, int);
+	char * (*query_short_name)(const object *const, const object *const);
+	artifact * (*find_artifact)(const char *);
+	void (*give_artifact_abilities)(object *, artifact *);
+	const char * (*find_string)(const char *);
+	uint32 (*get_nrof_quest_item)(const struct obj *, const char *, const char *, const char *);
+	object * (*is_player_inv)(object *);
+	void (*gui_interface)(object *, int, const char *, const char *);
+	int (*quest_count_pending)(const struct obj *);
+	struct obj *(*quest_find_name)(const struct obj *, const char *);
+	object * (*guild_get)(player *, char *);
+	object * (*guild_join)(player *, char *, int, int, int, int, int, int);
+	void (*guild_leave)(player *);
+    object *(*locate_beacon)(shstr *);
 	
     /* Global variables */
     Animations **animations;

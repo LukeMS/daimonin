@@ -701,9 +701,9 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 
     if(max_attractor)
     {
+		rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
         LOG(llevDebug, "  %s investigating %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(max_attractor->obj));
         
-        rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
         if(rv)
         {
             if (rv->distance <= 1)

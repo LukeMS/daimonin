@@ -2,7 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
+    Copyright (C) 2001-2006 Michael Toennies
 
     A split from Crossfire, a Multiplayer game for X-windows.
 
@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include <global.h>
@@ -883,196 +883,6 @@ int convert_item(object *item, object *converter)
     return 1;
 }
 
-
-/* a player has opened a container - link him to the
- * list of player which have (perhaps) it opened too.
- */
-int container_link(player *pl, object *sack)
-{
-    int ret = 0;
-
-    /* for safety reasons, lets check this is valid */
-    if (sack->attacked_by)
-    {
-        if (sack->attacked_by->type != PLAYER
-         || !CONTR(sack->attacked_by)
-         || CONTR(sack->attacked_by)->container != sack)
-        {
-            LOG(llevBug, "BUG: container_link() - invalid player linked: <%s>\n", query_name(sack->attacked_by));
-            sack->attacked_by = NULL;
-        }
-    }
-
-    /* the open/close logic should be handled elsewhere.
-     * for that reason, this function should only be called
-     * when valid - broken open/close logic elsewhere is bad.
-     * so, give a bug warning out!
-     */
-    if (pl->container)
-    {
-        LOG(llevBug, "BUG: container_link() - called from player with open container!: <%s> sack:<%s>\n",
-            query_name(sack->attacked_by), query_name(sack));
-        container_unlink(pl, sack);
-    }
-
-    /* ok, at this point we are SURE a player opens this container.
-     * here we kick in the check for quest item given for container access-
-     * = container (apply) event.
-     */
-    if(sack->event_flags & EVENT_FLAG_SPECIAL_QUEST)
-        check_cont_quest_event(pl->ob, sack);
-
-    pl->container = sack;
-    pl->container_count = sack->count;
-
-    pl->container_above = sack->attacked_by;
-
-    if (sack->attacked_by)
-        CONTR(sack->attacked_by)->container_below = pl->ob;
-    else /* we are the first one opening this container */
-    {
-        SET_FLAG(sack, FLAG_APPLIED);
-        if (sack->other_arch) /* faking open container face */
-        {
-            sack->face = sack->other_arch->clone.face;
-            sack->animation_id = sack->other_arch->clone.animation_id;
-            if (sack->animation_id)
-                SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
-            update_object(sack, UP_OBJ_FACE);
-        }
-        esrv_update_item(UPD_FLAGS | UPD_FACE, pl->ob, sack);
-        container_trap(pl->ob, sack);   /* search & explode a rune in the container */
-        ret = 1;
-    }
-
-    esrv_send_inventory(pl->ob, sack);
-    pl->container_below = NULL; /* we are first element */
-    sack->attacked_by = pl->ob;
-    sack->attacked_by_count = pl->ob->count;
-
-    return ret;
-}
-
-/* remove a player from the container list.
- * unlink is a bit more tricky - pl OR sack can be NULL.
- * if pl == NULL, we unlink ALL players from sack.
- * if sack == NULL, we unlink the current container from pl.
- */
-int container_unlink(player *pl, object *sack)
-{
-    object *tmp, *tmp2;
-
-    if (pl == NULL && sack == NULL)
-    {
-        LOG(llevBug, "BUG: container_unlink() - *pl AND *sack == NULL!\n");
-        return 0;
-    }
-
-    if (pl)
-    {
-        if (!pl->container)
-            return 0;
-
-        if (pl->container->count != pl->container_count)
-        {
-            pl->container = NULL;
-            pl->container_count = 0;
-            return 0;
-        }
-
-        sack = pl->container;
-        update_object(sack, UP_OBJ_FACE);
-        esrv_close_container(pl->ob);
-        /* ok, there is a valid container - unlink the player now */
-        if (!pl->container_below && !pl->container_above) /* we are only applier */
-        {
-            if (pl->container->attacked_by != pl->ob) /* we should be that object... */
-            {
-                LOG(llevBug, "BUG: container_unlink() - container link don't match player!: <%s> sack:<%s> (%s)\n",
-                    query_name(pl->ob), query_name(sack->attacked_by), query_name(sack));
-                return 0;
-            }
-
-            pl->container = NULL;
-            pl->container_count = 0;
-
-            CLEAR_FLAG(sack, FLAG_APPLIED);
-            if (sack->other_arch)
-            {
-                sack->face = sack->arch->clone.face;
-                sack->animation_id = sack->arch->clone.animation_id;
-                if (sack->animation_id)
-                    SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
-                update_object(sack, UP_OBJ_FACE);
-            }
-            sack->attacked_by = NULL;
-            sack->attacked_by_count = 0;
-            esrv_update_item(UPD_FLAGS | UPD_FACE, pl->ob, sack);
-            return 1;
-        }
-
-        /* because there is another player applying that container, we don't close it */
-
-        if (!pl->container_below) /* we are first player in list */
-        {
-            /* mark above as first player applying this container */
-            sack->attacked_by = pl->container_above;
-            sack->attacked_by_count = pl->container_above->count;
-            CONTR(pl->container_above)->container_below = NULL;
-
-            pl->container_above = NULL;
-            pl->container = NULL;
-            pl->container_count = 0;
-            return 0;
-        }
-
-        /* we are somehwere in the middle or last one - it don't matter */
-        CONTR(pl->container_below)->container_above = pl->container_above;
-        if (pl->container_above)
-            CONTR(pl->container_above)->container_below = pl->container_below;
-
-        pl->container_below = NULL;
-        pl->container_above = NULL;
-        pl->container = NULL;
-        pl->container_count = 0;
-        return 0;
-    }
-
-    CLEAR_FLAG(sack, FLAG_APPLIED);
-    if (sack->other_arch)
-    {
-        sack->face = sack->arch->clone.face;
-        sack->animation_id = sack->arch->clone.animation_id;
-        if (sack->animation_id)
-            SET_ANIMATION(sack, (NUM_ANIMATIONS(sack) / NUM_FACINGS(sack)) * sack->direction);
-        update_object(sack, UP_OBJ_FACE);
-    }
-    tmp = sack->attacked_by;
-    sack->attacked_by = NULL;
-    sack->attacked_by_count = 0;
-
-    /* if we are here, we are called with (NULL,sack) */
-    while (tmp)
-    {
-        if (!CONTR(tmp) || CONTR(tmp)->container != sack) /* valid player in list? */
-        {
-            LOG(llevBug, "BUG: container_unlink() - container link list mismatch!: player?:<%s> sack:<%s> (%s)\n",
-                query_name(tmp), query_name(sack), query_name(sack->attacked_by));
-            return 1;
-        }
-
-        tmp2 = CONTR(tmp)->container_above;
-        CONTR(tmp)->container = NULL;
-        CONTR(tmp)->container_count = 0;
-        CONTR(tmp)->container_below = NULL;
-        CONTR(tmp)->container_above = NULL;
-        esrv_update_item(UPD_FLAGS | UPD_FACE, tmp, sack);
-        esrv_close_container(tmp);
-        tmp = tmp2;
-    }
-    return 1;
-}
-
 /*
  * Eneq(@csd.uu.se): Handle apply on containers.
  * op is the player, sack is the container the player is opening or closing.
@@ -1216,54 +1026,6 @@ int esrv_apply_container(object *op, object *sack)
     return 1;
 }
 
-
-/* Frees a monster trapped in container when opened by a player */
-void free_container_monster(object *monster, object *op)
-{
-    int     i;
-    object *container   = monster->env;
-
-    if (container == NULL)
-        return;
-
-    remove_ob(monster); /* in container, no walk off check */
-    monster->x = container->x;
-    monster->y = container->y;
-    i = find_free_spot(monster->arch, op->map, monster->x, monster->y, 0, 9);
-    if (i != -1)
-    {
-        monster->x += freearr_x[i];
-        monster->y += freearr_y[i];
-    }
-    fix_monster(monster);
-    if (insert_ob_in_map(monster, op->map, monster, 0))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
-}
-
-/* examine the items in a container which gets readied or opened by player .
- * Explode or trigger every trap & rune in there and free trapped monsters.
- */
-int container_trap(object *op, object *container)
-{
-    int     ret = 0;
-    object *tmp;
-
-    for (tmp = container->inv; tmp; tmp = tmp->below)
-    {
-        if (tmp->type == RUNE) /* search for traps & runes */
-        {
-            ret++;
-            spring_trap(tmp, op);
-        }
-        else if (tmp->type == MONSTER) /* search for monsters living in containers */
-        {
-            ret++;
-            free_container_monster(tmp, op);
-        }
-    }
-
-    return ret;/* ret=0 -> no trap or monster found/exploded/freed */
-}
 
 /*
  * Returns pointer a static string containing gravestone text
@@ -1488,8 +1250,9 @@ static void apply_sign(object *op, object *sign)
  * like trapdoors or teleporter traps for example which have a "FLY/MOVE_OFF"
  * set. This will avoid that they touch invalid objects.
  */
-void move_apply(object *trap, object *victim, object *originator, int flags)
+void move_apply(object *const trap_obj, object *const victim, object *const originator, const int flags)
 {
+	object *const trap = trap_obj->head ? trap_obj->head: trap_obj;
     static int  recursion_depth = 0;
 
     /* move_apply() is the most likely candidate for causing unwanted and
@@ -1508,8 +1271,6 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
         return;
     }
     recursion_depth++;
-    if (trap->head)
-        trap = trap->head;
 
     /* TODO: handle return value */
     /* TODO: move to better position */

@@ -292,7 +292,7 @@ void change_attr_value(living *stats, int attr, signed char value)
  * returns the specified stat.  See also set_attr_value().
  */
 
-signed char get_attr_value(living *stats, int attr)
+signed char get_attr_value(const living *const stats, const int attr)
 {
     switch (attr)
     {
