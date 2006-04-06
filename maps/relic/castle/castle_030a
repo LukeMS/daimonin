@@ -648,8 +648,14 @@ surrendered 1
 stand_still 1
 level 4
 arch event_obj
+name Lua
 race /relic/castle/guildhall/jail_ogre_say.lua
 sub_type 6
+end
+arch event_obj
+name Lua
+race /relic/castle/guildhall/jail_ogre.lua
+sub_type 13
 end
 end
 end
@@ -1155,6 +1161,10 @@ arch grassd_1
 x 7
 y 9
 end
+arch bank1.111
+x 7
+y 9
+end
 arch grassd_7
 x 7
 y 10
@@ -1261,6 +1271,10 @@ arch grassd_6
 x 8
 y 2
 end
+arch tree29
+x 8
+y 2
+end
 arch grassd_6
 x 8
 y 3
@@ -1294,7 +1308,7 @@ arch grassd_3
 x 8
 y 7
 end
-arch wall_stone_3
+arch wall_stone_w.131
 x 8
 y 7
 end
@@ -1456,7 +1470,7 @@ arch grassd_1
 x 9
 y 3
 end
-arch plant_flower5
+arch wall_ruin_c3b
 x 9
 y 3
 end
@@ -1464,11 +1478,15 @@ arch grassd_7
 x 9
 y 4
 end
+arch wall_ruin_c1b
+x 9
+y 4
+end
 arch grassd_5
 x 9
 y 5
 end
-arch wall_stone_1
+arch wall_stone_4
 x 9
 y 5
 end
@@ -1476,14 +1494,7 @@ arch floor_wood2_l1
 x 9
 y 6
 end
-arch sewer_hole1
-slaying /relic/castle/guildhall/guildhallb_030a
-hp 10
-sp 8
-x 9
-y 6
-end
-arch light1
+arch table_poker2
 x 9
 y 6
 end
@@ -1491,11 +1502,11 @@ arch floor_wood2_l1
 x 9
 y 7
 end
-arch floor_wood2_l1
+arch table_small1
 x 9
-y 8
+y 7
 end
-arch door1_locked
+arch floor_wood2_l1
 x 9
 y 8
 end
@@ -1503,30 +1514,14 @@ arch floor_wood2_l1
 x 9
 y 9
 end
+arch sewer_hole1
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 10
+sp 7
+x 9
+y 9
+end
 arch floor_wood2_l1
-x 9
-y 10
-end
-arch carpet1.131
-x 9
-y 10
-end
-arch spawn_point
-name Mercenary Master Cashin
-x 9
-y 10
-arch ranger
-name Mercenary Master Cashin
-type 83
-level 35
-arch event_obj
-name lua
-race /relic/castle/guildhall/guild_merc.lua
-sub_type 13
-end
-end
-end
-arch light3
 x 9
 y 10
 end
@@ -1551,14 +1546,10 @@ arch floor_wood2_l1
 x 9
 y 13
 end
-arch stairs_stone_down
-slaying /relic/castle/guildhall/guildhallb_030a
-hp 9
-sp 13
-x 9
-y 13
-end
-arch light1
+arch stairs_wood_down
+slaying guildhall/merc_up
+hp 1
+sp 8
 x 9
 y 13
 end
@@ -1566,7 +1557,10 @@ arch floor_wood2_l1
 x 9
 y 14
 end
-arch amphora1.101
+arch stairs_wood_down
+slaying guildhall/merc_up
+hp 1
+sp 9
 x 9
 y 14
 end
@@ -1645,11 +1639,15 @@ arch grassd_5
 x 10
 y 3
 end
-arch plant9
+arch stone1
 x 10
 y 3
 end
 arch grassd_1
+x 10
+y 4
+end
+arch small_stones
 x 10
 y 4
 end
@@ -1665,32 +1663,29 @@ arch floor_wood2_l1
 x 10
 y 6
 end
-arch wall_stone_3
+arch shelf3a.111
 x 10
 y 6
+arch book_dai_vol7
+end
+arch book_dai_vol6
+end
+arch book_dai_vol5
+end
+arch book_dai_vol4
+end
+arch book_dai_vol3
+end
+arch book_dai_vol2
+end
+arch book_dai_vol1
+end
 end
 arch floor_wood2_l1
 x 10
 y 7
 end
-arch wall_stone_3
-x 10
-y 7
-end
-arch wmask_bflag_fire1_1
-direction 7
-x 10
-y 7
-end
 arch floor_wood2_l1
-x 10
-y 8
-end
-arch wall_stone_4
-x 10
-y 8
-end
-arch wmask_bflag_fire1_1
 x 10
 y 8
 end
@@ -1698,28 +1693,11 @@ arch floor_wood2_l1
 x 10
 y 9
 end
-arch carpet1.151
-x 10
-y 9
-end
 arch floor_wood2_l1
 x 10
 y 10
 end
-arch carpet1
-x 10
-y 10
-end
 arch floor_wood2_l1
-x 10
-y 11
-end
-arch carpet1.111
-x 10
-y 11
-end
-arch chair1_111
-direction 3
 x 10
 y 11
 end
@@ -1810,15 +1788,19 @@ arch water_still
 x 11
 y 1
 end
-arch water_still
+arch grassd_3
 x 11
 y 2
 end
-arch grassd_m7
+arch wall_ruin_c3a
 x 11
 y 2
 end
 arch grassd_8
+x 11
+y 3
+end
+arch wall_ruin_c2b
 x 11
 y 3
 end
@@ -1830,7 +1812,7 @@ arch grassd_4
 x 11
 y 5
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 11
 y 5
 end
@@ -1838,16 +1820,7 @@ arch floor_wood2_l1
 x 11
 y 6
 end
-arch shelf3_wall.111
-x 11
-y 6
-end
 arch floor_wood2_l1
-x 11
-y 7
-end
-arch shelf3a.111
-direction 7
 x 11
 y 7
 end
@@ -1855,64 +1828,47 @@ arch floor_wood2_l1
 x 11
 y 8
 end
-arch shelf4_wall.111
-direction 7
+arch table_lab3.111
 x 11
 y 8
+end
+arch floor_wood2_l1
+x 11
+y 9
+end
+arch floor_wood2_l1
+x 11
+y 10
+end
+arch spawn_point
+name Mercenary Master Cashin
+x 11
+y 10
+arch ranger
+name Mercenary Master Cashin
+type 83
+glow_radius 7
+level 35
+arch event_obj
+name lua
+race /relic/castle/guildhall/guild_merc.lua
+sub_type 13
+end
+end
+end
+arch floor_wood2_l1
+x 11
+y 11
+end
+arch potted_plant1
+x 11
+y 11
+end
+arch floor_wood2_l1
+x 11
+y 12
 end
 arch wall_stone_1
-x 11
-y 8
-end
-arch floor_wood2_l1
-x 11
-y 9
-end
-arch shelf3c.111
-direction 7
-x 11
-y 9
-end
-arch wall_stone_3
-x 11
-y 9
-end
-arch floor_wood2_l1
-x 11
-y 10
-end
-arch carpet1.171
-x 11
-y 10
-end
-arch wall_stone_3
-x 11
-y 10
-end
-arch wmask_bflag_fire1_1
-direction 7
-x 11
-y 10
-end
-arch floor_wood2_l1
-x 11
-y 11
-end
-arch door_wood1
-direction 7
-x 11
-y 11
-end
-arch floor_wood2_l1
-x 11
-y 12
-end
-arch wall_stone_4
-x 11
-y 12
-end
-arch wmask_bflag_fire1_1
-direction 7
 x 11
 y 12
 end
@@ -2009,15 +1965,27 @@ arch water_still
 x 12
 y 1
 end
-arch water_still
+arch grassd_3
 x 12
 y 2
 end
-arch grassd_m7
+arch wall_ruin_c1a
 x 12
 y 2
 end
-arch grassd_2
+arch floor_ruin1
+x 12
+y 3
+end
+arch floor_ruin1
+x 12
+y 3
+end
+arch stairs_stone_down
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 1
+sp 1
+direction 5
 x 12
 y 3
 end
@@ -2045,25 +2013,7 @@ arch chair2_111
 x 12
 y 6
 end
-arch spawn_point
-x 12
-y 6
-arch priest_green
-name Chereth
-type 83
-level 31
-arch event_obj
-name Lua
-race /relic/castle/guildhall/merc_chereth.lua
-sub_type 6
-end
-end
-end
 arch floor_wood2_l1
-x 12
-y 7
-end
-arch table_wood1.111
 x 12
 y 7
 end
@@ -2072,19 +2022,6 @@ x 12
 y 8
 end
 arch floor_wood2_l1
-x 12
-y 9
-end
-arch locker4
-direction 7
-x 12
-y 9
-end
-arch wall_stone_1
-x 12
-y 9
-end
-arch picture15
 x 12
 y 9
 end
@@ -2200,19 +2137,19 @@ arch water_still
 x 13
 y 1
 end
-arch water_still
+arch grassd_3
 x 13
 y 2
 end
-arch grassd_m14
+arch wall_ruin_c1a
 x 13
 y 2
 end
-arch water_still
+arch floor_ruin4
 x 13
 y 3
 end
-arch grassd_m3
+arch grassd_m7
 x 13
 y 3
 end
@@ -2224,7 +2161,7 @@ arch grassd_2
 x 13
 y 5
 end
-arch wall_stone_1
+arch wall_stone_w.111
 x 13
 y 5
 end
@@ -2232,7 +2169,7 @@ arch floor_wood2_l1
 x 13
 y 6
 end
-arch shelf2_wall.111
+arch table_lab2.111
 x 13
 y 6
 end
@@ -2256,10 +2193,6 @@ arch floor_wood2_l1
 x 13
 y 9
 end
-arch doorway_wood1_1
-x 13
-y 9
-end
 arch floor_wood2_l1
 x 13
 y 10
@@ -2272,19 +2205,11 @@ arch floor_wood2_l1
 x 13
 y 12
 end
-arch chair2_111
-x 13
-y 12
-end
 arch floor_wood2_l1
 x 13
 y 13
 end
 arch carpet1.171
-x 13
-y 13
-end
-arch table_poker1
 x 13
 y 13
 end
@@ -2367,21 +2292,42 @@ arch grassd_m11
 x 14
 y 1
 end
-arch water_still
+arch grassd_3
 x 14
 y 2
 end
-arch grassd_m8
+arch wall_ruin_c2a
 x 14
 y 2
 end
-arch water_still
+arch floor_ruin1
 x 14
 y 3
 end
 arch grassd_m5
 x 14
 y 3
+end
+arch sack
+name Fanrir's Sack
+layer 5
+no_pick 1
+container 1
+material_real 0
+identified 1
+is_named 1
+x 14
+y 3
+arch cape
+name Fanrir's Cape
+no_pick 1
+identified 1
+is_named 1
+end
+arch quest_trigger
+name Examine Fanrir's Sack
+last_heal 1
+end
 end
 arch grassd_3
 x 14
@@ -2423,7 +2369,7 @@ arch floor_wood2_l1
 x 14
 y 9
 end
-arch wall_stone_4
+arch wall_stone_w.131
 x 14
 y 9
 end
@@ -2466,11 +2412,6 @@ x 14
 y 13
 end
 arch floor_wood2_l1
-x 14
-y 14
-end
-arch shelf3a.111
-direction 7
 x 14
 y 14
 end
@@ -2547,6 +2488,21 @@ end
 arch grassd_3
 x 15
 y 2
+end
+arch spawn_point
+x 15
+y 2
+arch monk
+name Advisor Fanrir
+type 83
+glow_radius 7
+level 15
+arch event_obj
+name lua
+race  /relic/castle/guildhall/gh_fanrir.lua
+sub_type 13
+end
+end
 end
 arch grassd_6
 x 15
@@ -2926,7 +2882,7 @@ arch grassd_m8
 x 17
 y 5
 end
-arch light1
+arch light3
 x 17
 y 5
 end
@@ -2943,10 +2899,6 @@ x 17
 y 7
 end
 arch grassd_m8
-x 17
-y 7
-end
-arch light1
 x 17
 y 7
 end
@@ -3203,10 +3155,6 @@ direction 5
 x 18
 y 16
 end
-arch light1
-x 18
-y 16
-end
 arch floor_sand_d1
 x 18
 y 17
@@ -3220,7 +3168,7 @@ direction 5
 x 18
 y 17
 end
-arch light1
+arch light3
 x 18
 y 17
 end
@@ -3234,10 +3182,6 @@ y 18
 end
 arch target.111
 direction 5
-x 18
-y 18
-end
-arch light1
 x 18
 y 18
 end
@@ -3474,23 +3418,11 @@ arch forge_111
 x 20
 y 5
 end
+arch light3
+x 20
+y 5
+end
 arch floor_sand_d1
-x 20
-y 6
-end
-arch spawn_point
-x 20
-y 6
-arch smith
-type 83
-arch event_obj
-name lua
-race /scripts/smith.lua
-sub_type 13
-end
-end
-end
-arch light2
 x 20
 y 6
 end
@@ -3656,6 +3588,10 @@ arch forge_111
 x 21
 y 5
 end
+arch light3
+x 21
+y 5
+end
 arch floor_sand_d1
 x 21
 y 6
@@ -3716,15 +3652,13 @@ arch grassd_8
 x 21
 y 14
 end
-arch light2
-x 21
-y 14
-end
 arch spawn_point
 x 21
 y 14
 arch archer
 type 83
+glow_radius 7
+level 25
 end
 end
 arch grassd_8
@@ -3857,6 +3791,20 @@ arch grassd_m5
 x 22
 y 8
 end
+arch spawn_point
+x 22
+y 8
+arch smith
+type 83
+glow_radius 7
+level 25
+arch event_obj
+name lua
+race /scripts/smith.lua
+sub_type 13
+end
+end
+end
 arch grassd_5
 x 22
 y 9
@@ -3913,15 +3861,13 @@ arch grassd_7
 x 22
 y 17
 end
-arch light2
-x 22
-y 17
-end
 arch spawn_point
 x 22
 y 17
 arch ranger
 type 83
+glow_radius 7
+level 20
 end
 end
 arch grassd_4
@@ -3987,10 +3933,6 @@ arch grassd_4
 x 23
 y 4
 end
-arch tree_big2
-x 23
-y 4
-end
 arch grassd_7
 x 23
 y 5
@@ -4044,10 +3986,6 @@ x 23
 y 12
 end
 arch grassd_3
-x 23
-y 13
-end
-arch tree_big2
 x 23
 y 13
 end

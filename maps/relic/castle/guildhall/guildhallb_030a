@@ -12,30 +12,65 @@ tileset_id 28
 tileset_x 0
 tileset_y 0
 end
-arch floor_ostone2
-x 1
+arch floor_ostone4
 end
 arch wall_stone_8
+end
+arch floor_ostone4
+y 1
+end
+arch wall_stone_3
+y 1
+end
+arch floor_ostone4
+y 2
+end
+arch wall_stone_3
+y 2
+end
+arch sewer_wall
+direction 5
+y 2
+end
+arch floor_ostone4
+y 3
+end
+arch wall_stone_3
+y 3
+end
+arch ring_wall.151
+direction 5
+y 3
+end
+arch floor_ostone4
+y 4
+end
+arch wall_stone_3
+y 4
+end
+arch floor_ostone4
+x 1
+end
+arch wall_stone_1
 x 1
 end
 arch floor_ostone4
 x 1
 y 1
 end
-arch wall_stone_3
+arch stairs_stone_up
+slaying /relic/castle/castle_030a
+hp 12
+sp 3
+direction 5
 x 1
 y 1
 end
-arch floor_ostone2
+arch light9
 x 1
-y 2
+y 1
 end
-arch wall_stone_3
-x 1
-y 2
-end
-arch wmask_bflag_fire1_1
-direction 7
+arch floor_ostone4
 x 1
 y 2
 end
@@ -43,20 +78,19 @@ arch floor_ostone4
 x 1
 y 3
 end
-arch wall_stone_3
+arch pile_floor3
 x 1
 y 3
 end
-arch floor_ostone2
+arch light9
+x 1
+y 3
+end
+arch floor_ostone4
 x 1
 y 4
 end
-arch wall_stone_3
-x 1
-y 4
-end
-arch picture10
-direction 7
+arch wall_stone_1
 x 1
 y 4
 end
@@ -64,12 +98,7 @@ arch floor_ostone4
 x 1
 y 5
 end
-arch wall_stone_3
-x 1
-y 5
-end
-arch wmask_bflag_fire1_1
-direction 7
+arch wall_stone_8
 x 1
 y 5
 end
@@ -215,14 +244,14 @@ end
 arch wall_stone_1
 x 2
 end
-arch wmask_bflag_fire1_1
+arch plant1_wall.151
 x 2
 end
-arch floor_ostone2
+arch floor_ostone4
 x 2
 y 1
 end
-arch box_big.101
+arch chest_4.111
 x 2
 y 1
 end
@@ -230,31 +259,31 @@ arch floor_ostone4
 x 2
 y 2
 end
-arch box1.101
+arch dirt_floor1
 x 2
 y 2
 end
-arch floor_ostone2
+arch floor_ostone4
 x 2
 y 3
+end
+arch table_small1b
+x 2
+y 3
+end
+arch floor_ostone4
+x 2
+y 4
 end
 arch wall_stone_1
 x 2
-y 3
-end
-arch wmask_bflag_fire1_1
-x 2
-y 3
+y 4
 end
 arch floor_ostone4
 x 2
-y 4
+y 5
 end
-arch light5
-x 2
-y 4
-end
-arch floor_ostone2
+arch wall_stone_1
 x 2
 y 5
 end
@@ -400,25 +429,28 @@ arch fwall_rock2
 x 2
 y 23
 end
-arch floor_ostone2
+arch floor_ostone4
 x 3
 end
 arch wall_stone_1
 x 3
 end
+arch plant2_wall.151
+x 3
+end
 arch floor_ostone4
 x 3
 y 1
 end
-arch box2.101
+arch chest_4.111
 x 3
 y 1
 end
-arch floor_ostone2
+arch floor_ostone4
 x 3
 y 2
 end
-arch light4
+arch pile_floor1
 x 3
 y 2
 end
@@ -426,15 +458,23 @@ arch floor_ostone4
 x 3
 y 3
 end
-arch door1_locked
+arch trash_wood1.101
 x 3
 y 3
 end
-arch floor_ostone2
+arch floor_ostone4
+x 3
+y 4
+end
+arch wall_stone_1
 x 3
 y 4
 end
 arch floor_ostone4
+x 3
+y 5
+end
+arch wall_stone_1
 x 3
 y 5
 end
@@ -562,14 +602,18 @@ end
 arch wall_stone_1
 x 4
 end
-arch wmask_bflag_fire1_1
+arch plant1_wall.151
 x 4
 end
-arch floor_ostone2
+arch floor_ostone4
 x 4
 y 1
 end
-arch wall_stone_3
+arch chest_4.111
+x 4
+y 1
+end
+arch light9
 x 4
 y 1
 end
@@ -577,19 +621,19 @@ arch floor_ostone4
 x 4
 y 2
 end
-arch wall_stone_3
+arch dirt_floor2
 x 4
 y 2
 end
-arch floor_ostone2
+arch floor_ostone4
 x 4
 y 3
 end
-arch wall_stone_4
+arch dirt_floor1
 x 4
 y 3
 end
-arch wmask_bflag_fire1_1
+arch light9
 x 4
 y 3
 end
@@ -597,15 +641,15 @@ arch floor_ostone4
 x 4
 y 4
 end
-arch chair2_111
+arch wall_stone_1
 x 4
 y 4
 end
-arch floor_ostone2
+arch floor_ostone4
 x 4
 y 5
 end
-arch table_wood1.111
+arch wall_stone_1
 x 4
 y 5
 end
@@ -749,25 +793,47 @@ y 23
 end
 arch floor_ostone4
 x 5
-y 3
 end
 arch wall_stone_1
 x 5
-y 3
 end
-arch picture11
+arch floor_ostone4
+x 5
+y 1
+end
+arch wall_stone_3
+x 5
+y 1
+end
+arch floor_ostone4
+x 5
+y 2
+end
+arch wall_stone_3
+x 5
+y 2
+end
+arch floor_ostone4
 x 5
 y 3
 end
-arch floor_ostone2
+arch wall_stone_3
+x 5
+y 3
+end
+arch floor_ostone4
 x 5
 y 4
 end
-arch light3
+arch wall_stone_4
 x 5
 y 4
 end
 arch floor_ostone4
+x 5
+y 5
+end
+arch wall_stone_1
 x 5
 y 5
 end
@@ -891,31 +957,11 @@ arch fwall_rock1
 x 5
 y 23
 end
-arch floor_ostone2
-x 6
-y 3
-end
-arch wall_stone_1
-x 6
-y 3
-end
-arch wmask_bflag_fire1_1
-x 6
-y 3
-end
 arch floor_ostone4
-x 6
-y 4
-end
-arch chair2_111
-x 6
-y 4
-end
-arch floor_ostone2
 x 6
 y 5
 end
-arch table_wood1.111
+arch wall_stone_1
 x 6
 y 5
 end
@@ -940,6 +986,10 @@ x 6
 y 8
 end
 arch wmask_bflag_fire1_1
+x 6
+y 8
+end
+arch ring_wall.151
 x 6
 y 8
 end
@@ -1041,25 +1091,9 @@ y 23
 end
 arch floor_ostone4
 x 7
-y 3
-end
-arch wall_stone_1
-x 7
-y 3
-end
-arch floor_ostone2
-x 7
-y 4
-end
-arch wall_stone_3
-x 7
-y 4
-end
-arch floor_ostone4
-x 7
 y 5
 end
-arch wall_stone_3
+arch wall_stone_1
 x 7
 y 5
 end
@@ -1103,21 +1137,11 @@ arch floor_ostone2
 x 7
 y 10
 end
-arch shelf3c.111
-direction 7
-x 7
-y 10
-end
 arch wall_stone_3
 x 7
 y 10
 end
 arch floor_ostone4
-x 7
-y 11
-end
-arch shelf3c.111
-direction 7
 x 7
 y 11
 end
@@ -1484,19 +1508,14 @@ arch fstone1c
 x 9
 y 7
 end
-arch box1.101
-x 9
-y 7
-end
-arch light9
+arch ladder_up
+slaying /relic/castle/castle_030a
+hp 9
+sp 8
 x 9
 y 7
 end
 arch fstone1c
-x 9
-y 8
-end
-arch box2.101
 x 9
 y 8
 end
@@ -1512,7 +1531,7 @@ arch fstone1c
 x 9
 y 10
 end
-arch light1
+arch light3
 x 9
 y 10
 end
@@ -1532,22 +1551,19 @@ arch wall_stone_1
 x 9
 y 12
 end
-arch wmask_bflag_fire1_1
-x 9
-y 12
-end
 arch floor_ostone4
 x 9
 y 13
 end
-arch stairs_stone_up
-slaying /relic/castle/castle_030a
-hp 9
-sp 13
+arch light5
 x 9
 y 13
 end
-arch light5
+arch stairs_stone_up
+slaying merc_up
+hp 1
+sp 1
+direction 5
 x 9
 y 13
 end
@@ -1678,14 +1694,18 @@ arch dirt_floor1
 x 10
 y 7
 end
-arch floor_cave2
+arch light3
 x 10
 y 8
 end
-arch ladder_up
-slaying /relic/castle/castle_030a
-hp 9
-sp 6
+arch floor_ruin1
+x 10
+y 8
+end
+arch ladder_down
+slaying /relic/castle/guildhall/merc_ants
+hp 11
+sp 8
 x 10
 y 8
 end
@@ -1847,18 +1867,7 @@ arch fstone1b
 x 11
 y 8
 end
-arch ladder_down
-slaying /relic/castle/guildhall/merc_ants
-hp 11
-sp 8
-x 11
-y 8
-end
 arch fstone1c
-x 11
-y 9
-end
-arch light9
 x 11
 y 9
 end
@@ -2008,11 +2017,11 @@ arch fstone1a
 x 12
 y 7
 end
-arch chair1_drop_111
+arch light3
 x 12
 y 7
 end
-arch light1
+arch chair1_drop_111
 x 12
 y 7
 end
@@ -2036,11 +2045,11 @@ arch fstone1c
 x 12
 y 10
 end
-arch straw1.101
+arch light3
 x 12
 y 10
 end
-arch light1
+arch straw1.101
 x 12
 y 10
 end
@@ -3676,10 +3685,6 @@ x 21
 y 9
 end
 arch earth_brown3
-x 21
-y 10
-end
-arch rock_big2
 x 21
 y 10
 end

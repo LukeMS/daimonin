@@ -157,7 +157,6 @@ x 6
 y 2
 end
 arch floor_cave2
-type -666
 x 6
 y 3
 end
@@ -758,14 +757,14 @@ player_only 1
 x 11
 y 8
 end
-arch ladder_up
-slaying /relic/castle/guildhall/guildhallb_030a
-hp 11
-sp 8
+arch light9
 x 11
 y 8
 end
-arch light9
+arch ladder_up
+slaying /relic/castle/guildhall/guildhallb_030a
+hp 10
+sp 8
 x 11
 y 8
 end
