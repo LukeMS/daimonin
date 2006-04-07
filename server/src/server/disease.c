@@ -453,7 +453,7 @@ int do_symptoms(object *disease)
     {
         float   scale;
         symptom->weight_limit += disease->stats.ac;
-        scale = (float) 1.0 + (float) symptom->weight_limit / (float) 100.0;
+        scale = 1.0f + (float) symptom->weight_limit / 100.0f;
         /* now rescale all the debilities */
         symptom->stats.Str = (int) (scale * disease->stats.Str);
         symptom->stats.Dex = (int) (scale * disease->stats.Dex);

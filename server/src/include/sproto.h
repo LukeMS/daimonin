@@ -288,7 +288,7 @@ void                        send_clear_interface(player *pl);
 int                         container_link(player *const pl, object *const sack);
 int                         container_unlink(player *const pl, object *sack);
 int                         container_trap(object *const op, object *const container);
-int                         sack_can_hold(object *const pl, object *const sack, object *const op, const uint32 nrof);
+int							sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof);
 void                        pick_up(object *const op, object *const ori);
 void                        put_object_in_sack(object *const op, object *const sack, object *tmp, const uint32 nrof);
 void                        drop_object(object *const op, object *tmp, const uint32 nrof);

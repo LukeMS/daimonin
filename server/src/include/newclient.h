@@ -100,28 +100,6 @@
 #define CS_STAT_REG_GRACE 30
 #define CS_STAT_TARGET_HP 31
 
-/* Start & end of resistances, inclusive. */
-#define CS_STAT_RESIST_START    100
-#define CS_STAT_RESIST_END  117
-#define CS_STAT_RES_PHYS    100
-#define CS_STAT_RES_MAG     101
-#define CS_STAT_RES_FIRE    102
-#define CS_STAT_RES_ELEC    103
-#define CS_STAT_RES_COLD    104
-#define CS_STAT_RES_CONF    105
-#define CS_STAT_RES_ACID    106
-#define CS_STAT_RES_DRAIN   107
-#define CS_STAT_RES_GHOSTHIT    108
-#define CS_STAT_RES_POISON  109
-#define CS_STAT_RES_SLOW    110
-#define CS_STAT_RES_PARA    111
-#define CS_STAT_TIME        112
-#define CS_STAT_RES_FEAR    113
-#define CS_STAT_RES_DEPLETE 114
-#define CS_STAT_RES_DEATH   115
-#define CS_STAT_RES_HOLYWORD    116
-#define CS_STAT_RES_BLIND   117
-
 /* Start & end of skill experience + skill level, inclusive. */
 #define CS_STAT_SKILLEXP_START 118
 #define CS_STAT_SKILLEXP_END 129

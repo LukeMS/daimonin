@@ -422,32 +422,29 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 * certain number of objects to drop, so we can pass that number, and
 * not need to use split_ob and stuff.
 */
-int sack_can_hold(object *const pl, object *const sack, object *const op, const uint32 nrof)
+int sack_can_hold(const object *const pl, const object *const sack, const object *const op, const uint32 nrof)
 {
-	char    buf[MAX_BUF];
-	buf[0] = 0;
-
 	if (!QUERY_FLAG(sack, FLAG_APPLIED))
-		sprintf(buf, "The %s is not active.", query_name(sack));
-	if (sack == op)
-		sprintf(buf, "You can't put the %s into itself.", query_name(sack));
-	if ((sack->race && (sack->sub_type1 & 1) != ST1_CONTAINER_CORPSE)
+		new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is not active.", query_short_name(sack, pl));
+	else if (sack == op)
+		new_draw_info_format(NDI_UNIQUE, 0, pl, "You can't put the %s into itself.", query_short_name(sack, pl));
+	else if ((sack->race && (sack->sub_type1 & 1) != ST1_CONTAINER_CORPSE)
 		&& (sack->race != op->race || op->type == CONTAINER || (sack->stats.food && sack->stats.food != op->type)))
-		sprintf(buf, "You can put only %s into the %s.", sack->race, query_name(sack));
-	if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
-		sprintf(buf, "You don't want put the key into %s.", query_name(sack));
-
-	if (sack->weight_limit 
-		&& sack->carrying + (sint32) ((float) (((nrof ? nrof : 1) * op->weight) + op->carrying) * sack->weapon_speed)
-	> (sint32) sack->weight_limit)
-	sprintf(buf, "That won't fit in the %s!", query_name(sack));
-	if (buf[0])
+		new_draw_info_format(NDI_UNIQUE, 0, pl, "You can put only %s into the %s.", sack->race, 
+							 query_short_name(sack, pl));
+	else if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
+		new_draw_info_format(NDI_UNIQUE, 0, pl, "You don't want put the key into %s.", query_short_name(sack, pl));
+	else 
 	{
-		if (pl)
-			new_draw_info(NDI_UNIQUE, 0, pl, buf);
-		return 0;
+		if(sack->weight_limit == 0 || (sack->weight_limit > 0 && sack->weight_limit > sack->carrying + (sint32)
+		((op->type==CONTAINER && op->weapon_speed!=1.0f)?(op->damage_round_tag+op->weight):WEIGHT_NROF(op, nrof))))
+			return TRUE;
+
+		new_draw_info_format(NDI_UNIQUE, 0, pl, "The %s is to heavy for the %s!", 
+									query_short_name(op, pl),query_name(sack));
 	}
-	return 1;
+
+	return FALSE;
 }
 
 void pick_up(object *const op, object *const ori)

@@ -775,7 +775,7 @@ char *examine(object *op, object *tmp, int flag)
           {
               if (tmp->race != NULL)
               {
-                  if (tmp->weight_limit)
+                  if (tmp->weight_limit >0)
                       sprintf(buf, "It can hold only %s and its weight limit is %.1f kg.\n", tmp->race,
                               (float) tmp->weight_limit / 1000.0f);
                   else
@@ -793,7 +793,7 @@ char *examine(object *op, object *tmp, int flag)
               }
               else
               {
-                  if (tmp->weight_limit)
+                  if (tmp->weight_limit > 0)
                   {
                       sprintf(buf, "Its weight limit is %.1f kg.\n", (float) tmp->weight_limit / 1000.0f);
                   }

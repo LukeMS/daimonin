@@ -161,12 +161,11 @@ BehaviourClass(MOVES,
     
     /** Move towards a nearby attractive item, investigate it and then continue */
     Behaviour(INVESTIGATE_ATTRACTION, ai_investigate_attraction, 
-            NIL
         /** Investigate an archetype */
 //        Parameter(INVESTIGATE_ATTRACTION, ARCH, STRING, MULTI | OPTIONAL, NULL)
         /** Investigate a named object/mob/player */
 //        Parameter(INVESTIGATE_ATTRACTION, NAME, STRING, MULTI | OPTIONAL, NULL)
-    )
+    NIL)
 
     /** Runs away from the current enemy if scared. */
     Behaviour(RUN_AWAY_FROM_ENEMY, ai_run_away_from_enemy,

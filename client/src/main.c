@@ -42,6 +42,7 @@ int                 music_global_fade   = FALSE;
 int                 show_help_screen;
 int                 show_help_screen_new;
 int                 mb_clicked          = 0;
+int				    InputFirstKeyPress;
 
 int                    interface_mode;
 
@@ -982,6 +983,7 @@ void open_input_mode(int maxchar)
 {
     reset_input_mode();
     InputMax = maxchar;
+	InputFirstKeyPress = TRUE;
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     if (cpl.input_mode != INPUT_MODE_NUMBER)
         cpl.inventory_win = IWIN_BELOW;

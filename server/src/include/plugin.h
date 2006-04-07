@@ -254,10 +254,11 @@ struct plugin_hooklist
     void (*LOG)(LogLevel, char *, ...);
     char*(*create_pathname)(const char *);
     char*(*re_cmp)(char *, char *);
-    void (*new_draw_info)(int, int, object *, const char *);
-    void (*new_draw_info_format)(int, int, object *, char *, ...);
-    void (*new_info_map)(int, mapstruct *, int, int, int, const char *);
-    void (*new_info_map_except)(int, mapstruct *, int, int, int, object *, object *, const char *);
+    void (*new_draw_info)(const int, const int, const object *const , const char *const);
+    void (*new_draw_info_format)(const int, const int, const object *const, const char *const, ...);
+    void (*new_info_map)(const int, const mapstruct *const, const int, const int, const int, const char *const);
+    void (*new_info_map_except)(const int, const mapstruct *const, const int, const int, const int, 
+		  const object *const, const object *const, const char *const);
     int (*map_brightness)(mapstruct *, int, int);
     int (*wall)(mapstruct *, int, int);
     void (*free_string_shared)(const char *);

@@ -47,15 +47,15 @@
  * in the flags.
  *
  */
-void new_draw_info(int flags, int pri, object *pl, const char *buf)
+void new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf)
 {
     char        info_string[HUGE_BUF];
     SockList    sl;
 
     if (!buf) /* should not happen - generate save string and LOG it */
     {
-        buf = "[NULL]";
         LOG(llevBug, "BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", query_name(pl), flags, pri);
+		return;
     }
 
     /* here we handle global messages - still not sure i want this here */
@@ -98,7 +98,8 @@ void new_draw_info(int flags, int pri, object *pl, const char *buf)
  * client/server bandwidth (client could keep track of various strings
  */
 
-void new_draw_info_format(int flags, int pri, object *pl, char *format, ...)
+void new_draw_info_format(const int flags, const int pri, const object *const pl, const char *const format, ...)
+//void new_draw_info_format(int flags, int pri, object *pl, char *format, ...)
 {
     char    buf[HUGE_BUF];
 
@@ -114,7 +115,8 @@ void new_draw_info_format(int flags, int pri, object *pl, char *format, ...)
 
 /* we want give msg to all people on one, specific map
  */
-static void new_info_map_all_except(int color, mapstruct *map, object *op1, object *op, const char *str)
+static void new_info_map_all_except(const int color, const mapstruct *const map, const object *const op1,
+									const object *const op, const char *const str)
 {
     object *tmp;
 
@@ -132,7 +134,7 @@ static void new_info_map_all_except(int color, mapstruct *map, object *op1, obje
  * write to everyone on the current map in a defined area
  *
 */
-void new_info_map(int color, mapstruct *map, int x, int y, int dist, const char *str)
+void new_info_map(const int color, const mapstruct *const map, const int x, const int y, const int dist, const char *const str)
 {
     int     xt, yt, d;
     object *tmp;
@@ -238,7 +240,8 @@ void new_info_map(int color, mapstruct *map, int x, int y, int dist, const char 
 /*
  * write to everyone on the map *except* op and op1.  This is useful for emotions.
  */
-void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str)
+void new_info_map_except(const int color, const mapstruct *const map, const int x, const int y, const int dist,
+						 const  object *const op1, const object *const op, const char *const str)
 {
     int     xt, yt, d;
     object *tmp;
@@ -342,7 +345,7 @@ void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, obje
 }
 
 /* same as above but as formated string version */
-void new_info_map_format(int color, mapstruct *map, int x, int y, int dist, char *format, ...)
+void new_info_map_format(const int color, const mapstruct *const map, const int x, const int y, const int dist, const char *const format, ...)
 {
     char    buf[HUGE_BUF];
     va_list ap;
@@ -357,7 +360,7 @@ void new_info_map_format(int color, mapstruct *map, int x, int y, int dist, char
 }
 
 /* same as above but as formated string version */
-void new_info_map_except_format(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, char *format, ...)
+void new_info_map_except_format(const int color, const mapstruct *const map, const int x, const int y, const int dist, const object *const op1, const object *const op, const char *const format, ...)
 {
     char    buf[HUGE_BUF];
     va_list ap;

@@ -354,7 +354,7 @@ typedef struct pl_player
 
     unsigned char       fire_on;
     unsigned char       run_on;
-    uint32              last_weight_limit;  /* Last weight limit transmitted to client */
+    sint32              last_weight_limit;  /* Last weight limit transmitted to client */
     living              orig_stats;       /* Can be less in case of poisoning */
     living              last_stats;       /* Last stats drawn with draw_stats() */
     signed long         last_value;  /* Same usage as last_stats */
