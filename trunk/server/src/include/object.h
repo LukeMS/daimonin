@@ -122,7 +122,7 @@ typedef struct obj
     New_Face       *inv_face;           /* struct ptr to the inventory 'face' - the picture(s) */
 
     sint32          weight;             /* Attributes of the object - the weight */
-    uint32          weight_limit;       /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
+    sint32          weight_limit;       /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
     sint32          carrying;           /* How much weight this object contains (of objects in inv) */
     sint64          value;              /* How much money it is worth (or contains) */
     uint32          nrof;               /* How many of the objects */

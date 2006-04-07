@@ -1209,6 +1209,11 @@ static void key_string_event(SDL_KeyboardEvent *key)
                       }
                       if (c)
                       {
+						  if(InputFirstKeyPress == TRUE)
+						  {
+							  CurrentCursorPos = 0;
+							  InputCount = 0;
+						  }
                           InputString[CurrentCursorPos++] = c;
                           InputCount++;
                           InputString[InputCount] = 0;
@@ -1239,6 +1244,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
               }
               break;
         }
+		InputFirstKeyPress = FALSE;
     }
 }
 

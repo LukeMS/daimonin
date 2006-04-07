@@ -410,6 +410,7 @@ extern int          ServerPort;         /* port addr */
 
 extern int          show_help_screen;
 extern int          show_help_screen_new;
+extern int		    InputFirstKeyPress;
 
 extern int          map_udate_flag, map_transfer_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
