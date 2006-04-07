@@ -9,7 +9,7 @@ nrof 1
 item_quality 100
 item_condition 100
 material 32
-material_real 0
+material_real -1
 value 10
 weight 125
 end

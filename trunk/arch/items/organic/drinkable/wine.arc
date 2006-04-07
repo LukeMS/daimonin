@@ -9,7 +9,7 @@ layer 3
 type 6
 speed_left 0.002
 material 32
-material_real 0
+material_real -1
 value 125
 weight 100
 end
@@ -24,7 +24,7 @@ layer 3
 type 6
 speed_left 0.002
 material 32
-material_real 0
+material_real -1
 value 125
 weight 110
 end
@@ -39,7 +39,7 @@ layer 3
 type 6
 speed_left 0.002
 material 32
-material_real 0
+material_real -1
 value 600
 weight 100
 end

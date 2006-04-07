@@ -5,7 +5,7 @@ type 79
 nrof 1
 layer 3
 material 64
-material_real 0
+material_real -1
 value 10000
 weight 50
 end
