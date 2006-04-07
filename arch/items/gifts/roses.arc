@@ -5,7 +5,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 110
 weight 20
 end
@@ -16,7 +16,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 220
 weight 40
 end
@@ -27,7 +27,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 125
 weight 20
 end
@@ -38,7 +38,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 250
 weight 40
 end
@@ -49,7 +49,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 110
 weight 20
 end
@@ -60,7 +60,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 220
 weight 40
 end
@@ -71,7 +71,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 110
 weight 20
 end
@@ -82,7 +82,7 @@ type 79
 nrof 1
 layer 3
 material 256
-material_real 0
+material_real -1
 value 220
 weight 40
 end

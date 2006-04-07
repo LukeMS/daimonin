@@ -7,6 +7,7 @@ item_condition 100
 identified 1
 nrof 1
 material 32
+material_real -1
 type 86
 weight 1
 value 10

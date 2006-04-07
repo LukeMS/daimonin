@@ -31,7 +31,7 @@ is_animated 1
 is_turnable 1
 anim_speed 4
 material 32
-material_real 0
+material_real -1
 weight 1500
 maxhp 1000
 food 1000

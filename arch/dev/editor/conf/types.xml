@@ -189,6 +189,8 @@
     consists. It is much more specific than &lt;material class&gt;,
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
+    A value of -1 will disable it and avoid every "material" setting or prefix
+    when the object is loaded.
   </attribute>
   <attribute arch="glow_radius" editor="glow radius" type="int">
     If &lt;glow radius&gt; is set to a value greater zero, the object
@@ -669,6 +671,8 @@
     consists. It is much more specific than &lt;material class&gt;,
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
+    A value of -1 will disable it and avoid every "material" setting or prefix
+    when the object is loaded.
   </attribute>
   <attribute arch="item_quality" editor="max. quality %" type="int">
     Every item has a natural material quality, ranging from 0 top 100.
@@ -741,6 +745,8 @@
     consists. It is much more specific than &lt;material class&gt;,
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
+    A value of -1 will disable it and avoid every "material" setting or prefix
+    when the object is loaded.
   </attribute>
   <attribute arch="item_quality" editor="max. quality %" type="int">
     Every item has a natural material quality, ranging from 0 top 100.
@@ -1259,6 +1265,8 @@
     consists. It is much more specific than &lt;material class&gt;,
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
+    A value of -1 will disable it and avoid every "material" setting or prefix
+    when the object is loaded.
   </attribute>
   <attribute arch="item_quality" editor="max. quality %" type="int">
     Every item has a natural material quality, ranging from 0 top 100.
@@ -1595,6 +1603,8 @@
     consists. It is much more specific than &lt;material class&gt;,
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
+    A value of -1 will disable it and avoid every "material" setting or prefix
+    when the object is loaded.
   </attribute>
   <attribute arch="item_quality" editor="max. quality %" type="int">
     Every item has a natural material quality, ranging from 0 top 100.
@@ -4444,6 +4454,8 @@
     consists. It is much more specific than &lt;material class&gt;,
     however only one material can be selected, not multiple.
     &lt;material&gt; is not required to be set, it can be left 'undefined'.
+    A value of -1 will disable it and avoid every "material" setting or prefix
+    when the object is loaded.
   </attribute>
   <attribute arch="item_quality" editor="max. quality %" type="int">
     Every item has a natural material quality, ranging from 0 top 100.

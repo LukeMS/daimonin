@@ -17,7 +17,7 @@ type 6
 weight 400
 value 100
 material 32
-material_real 0
+material_real -1
 speed_left 0.002
 nrof 1
 end
