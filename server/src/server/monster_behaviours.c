@@ -1057,13 +1057,13 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     int         try_next_wp = 0;
 
     wp = get_active_waypoint(op);
-#ifdef DEBUG_AI_WAYPOINT
-	LOG(llevDebug, "FOUND waypoint(): '%s' has active waypoint '%s'\n",
-										STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
-#endif
     if (wp)
     {
         mapstruct  *destmap = normalize_and_ready_map(op->map, &WP_MAP(wp));
+#ifdef DEBUG_AI_WAYPOINT
+        LOG(llevDebug, "FOUND waypoint(): '%s' has active waypoint '%s'\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
+#endif
         if (destmap)
         {
             /* We know which map we want to. Can we figure out where that
