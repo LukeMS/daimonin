@@ -290,15 +290,15 @@ static int GameObject_CreateArtifact(lua_State *L)
 
 	art = hooks->find_artifact(name);
 	if(art == NULL)
-		lua_pushnil(L);
+    {
+        return 0;
+    }
 	else
 	{
 		/* WHAT itself is implicit changed */
 		hooks->give_artifact_abilities(WHAT, art);
 		return push_object(L, &GameObject, WHAT);
 	}
-
-	return 1;
 }
 
 /*****************************************************************************/
@@ -340,9 +340,7 @@ static int GameObject_GetEquipment(lua_State *L)
 	if(CONTR(WHO) && num >= 0 && num < PLAYER_EQUIP_MAX && CONTR(WHO)->equipment[num])
 	    return push_object(L, &GameObject, CONTR(WHO)->equipment[num]);
 	else
-		lua_pushnil(L);
-
-    return 1;
+		return 0;
 }
 
 /*****************************************************************************/
@@ -358,11 +356,11 @@ static int GameObject_GetRepairCost(lua_State *L)
 
 	/* the sint64 to uint32 cast should be ok - can't think about that high repair costs */
 	if(WHO)
+    {
 	    lua_pushnumber(L, (uint32)hooks->material_repair_cost(WHO, NULL));
-	else
-		lua_pushnil(L);
-
-    return 1;
+        return 1;
+    } else
+		return 0;
 }
 
 /*****************************************************************************/
@@ -1187,11 +1185,9 @@ static int GameObject_GetGuild(lua_State *L)
 	force = hooks->guild_get(CONTR(WHO),name);
 
 	if(force)
-		push_object(L, &GameObject, force);
+		return push_object(L, &GameObject, force);
 	else
-		lua_pushnil(L);
-
-	return 1;
+		return 0;
 }
 
 /*****************************************************************************/
@@ -1237,11 +1233,9 @@ static int GameObject_JoinGuild(lua_State *L)
 	hooks->new_draw_info_format(NDI_WHITE, 0, WHO, "you join %s Guild.", name);
 
 	if(force)
-		push_object(L, &GameObject, force);
+		return push_object(L, &GameObject, force);
 	else
-		lua_pushnil(L);
-
-	return 1;
+        return 0;
 }
 
 /*****************************************************************************/
@@ -1575,7 +1569,6 @@ static int GameObject_AddQuest(lua_State *L)
 	if(WHO->type != PLAYER || hooks->quest_count_pending(WHO) >= QUESTS_PENDING_MAX)
 	{
 		hooks->new_draw_info_format(NDI_YELLOW, 0, WHO, "You can't have more as %d open quests.\nRemove one first!", QUESTS_PENDING_MAX);
-		lua_pushnil(L);
 		return 0;
 	}
 
@@ -2893,10 +2886,11 @@ static int GameObject_GetFace(lua_State *L)
 
     face = inv ? WHO->inv_face : WHO->face;
     if(face)
+    {
         lua_pushstring(L, face->name);
-    else
-        lua_pushnil(L);
-    return 1;
+        return 1;
+    } else
+        return 0;
 }
 
 /*****************************************************************************/
