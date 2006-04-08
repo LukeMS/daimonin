@@ -387,6 +387,8 @@ int                         move_monster(object *op, int mode);
 void                        object_accept_path(object *op);
 void						dump_abilities(void);
 void						print_monsters(void);
+/* monster_memory.c */
+void                        cleanup_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
 struct mob_known_obj       *update_npc_knowledge(object *npc, object *other, int delta_friendship, int delta_attraction);
 void                        update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
 struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction);

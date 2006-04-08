@@ -54,6 +54,7 @@ SRCS = \
 	monster.c\
 	monster_behaviours.c\
 	monster_behaviourset.c\
+	monster_memory.c\
 	move.c\
 	mtrand.c\
 	npc_communicate.c\
