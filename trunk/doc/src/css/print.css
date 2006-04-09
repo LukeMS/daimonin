@@ -1,0 +1,15 @@
+h2
+{
+    background-color:#eee;
+    border-top:1px solid #000;
+}
+
+div.section
+{
+    margin-left:1em;
+}
+
+div.section h2, div.section h3, div.section h4
+{
+    margin-left:-1em;
+}
