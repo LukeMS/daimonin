@@ -24,24 +24,11 @@
         <html>
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-                <title><xsl:apply-templates select="section/title/text()"/></title>
-                <!-- Reasons for inlining the stylesheet instead of referencing an external file:
-                  - The link to the external file would need to be relative, but what about html files in subdirectories?
-                  -->
-                <style type="text/css">
-                    h2 {
-                        border-top-style:solid;
-                        border-top-width:1px;
-                        border-top-color:#000;
-                        background-color:#eee;
-                    }
-                    div.section {
-                        margin-left:1em;
-                    }
-                    div.section h2, div.section h3, div.section h4 {
-                        margin-left:-1em;
-                    }
-                </style>
+                <title>
+                    <xsl:apply-templates select="section/title/text()"/>
+                </title>
+                <link href="./print.css" media="print" rel="stylesheet" title="default" type="text/css"/>
+                <link href="./screen.css" media="screen" rel="stylesheet" title="default" type="text/css"/>
             </head>
             <body>
                 <xsl:apply-templates/>
@@ -53,7 +40,9 @@
     </xsl:template>
 
     <xsl:template match="/section">
-        <xsl:apply-templates/>
+        <div class="section">
+            <xsl:apply-templates/>
+        </div>
     </xsl:template>
 
     <xsl:template match="/section/title">
@@ -61,17 +50,19 @@
             <xsl:apply-templates/>
         </h1>
         <xsl:if test="/section/@autotoc and /section/section">
-            <h2 id="toc">
-                <xsl:choose>
-                    <xsl:when test="/section/@autotoc='autotoc'">
-                        <xsl:text>Table of Contents</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="/section/@autotoc"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </h2>
-            <xsl:apply-templates select="/section/section" mode="toc"/>
+            <div class="toc">
+                <h2 id="toc">
+                    <xsl:choose>
+                        <xsl:when test="/section/@autotoc='autotoc'">
+                            <xsl:text>Table of Contents</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="/section/@autotoc"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </h2>
+                <xsl:apply-templates select="/section/section" mode="toc"/>
+            </div>
         </xsl:if>
     </xsl:template>
 
@@ -118,21 +109,21 @@
     <xsl:template match="/section/section">
         <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
+            <xsl:if test="/section/@autotoc">
+                <p class="toc">
+                    <a href="#toc">
+                        <xsl:choose>
+                            <xsl:when test="/section/@autotoc='autotoc'">
+                                <xsl:text>Table of Contents</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="/section/@autotoc"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </a>
+                </p>
+            </xsl:if>
         </div>
-        <xsl:if test="/section/@autotoc">
-            <p>
-                <a href="#toc">
-                    <xsl:choose>
-                        <xsl:when test="/section/@autotoc='autotoc'">
-                            <xsl:text>Table of Contents</xsl:text>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="/section/@autotoc"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </a>
-            </p>
-        </xsl:if>
     </xsl:template>
 
     <xsl:template match="section/section/section">
@@ -172,9 +163,13 @@
     </xsl:template>
 
     <xsl:template match="text()">
-        <xsl:if test="matches(.,'^\s')"><xsl:text> </xsl:text></xsl:if>
+        <xsl:if test="matches(.,'^\s')">
+            <xsl:text> </xsl:text>
+        </xsl:if>
         <xsl:value-of select="normalize-space(.)"/>
-        <xsl:if test="matches(.,'\s$')"><xsl:text> </xsl:text></xsl:if>
+        <xsl:if test="matches(.,'\s$')">
+            <xsl:text> </xsl:text>
+        </xsl:if>
     </xsl:template>
 
 </xsl:transform>

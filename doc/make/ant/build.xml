@@ -70,6 +70,16 @@
             style     = "src/xslt/dai2html.xslt"
             includes  = "**/*.dai"
         />
+        <copy todir = "gen/html4">
+            <fileset dir = "src/css">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
+        <copy overwrite="yes" todir="gen/html4">
+            <fileset dir = "src/doc">
+                <include name="**/*.css"/>
+            </fileset>
+        </copy>
         <copy
             todir = "gen/html4"
         >
@@ -99,6 +109,16 @@
             style     = "src/xslt/dai2xhtml11.xslt"
             includes  = "**/*.dai"
         />
+        <copy todir = "gen/xhtml11">
+            <fileset dir = "src/css">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
+        <copy overwrite="yes" todir="gen/xhtml11">
+            <fileset dir = "src/doc">
+                <include name="**/*.css"/>
+            </fileset>
+        </copy>
         <copy
             todir = "gen/xhtml11"
         >
