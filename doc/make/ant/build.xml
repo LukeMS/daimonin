@@ -28,14 +28,14 @@
     </target>
 
     <target
-        name        = "bbCode"
+        name        = "bbcode"
         description = "Generates documentation in bbCode format"
         depends     = "validate"
     >
-        <mkdir dir="gen/bbCode" />
+        <mkdir dir="gen/bbcode" />
         <xslt
             basedir   = "src/doc"
-            destdir   = "gen/bbCode"
+            destdir   = "gen/bbcode"
             extension = ".bbc"
             style     = "src/xslt/dai2bbcode.xslt"
             includes  = "**/*.dai"
@@ -43,16 +43,16 @@
     </target>
 
     <target
-        name        = "phpWiki"
+        name        = "phpwiki"
         description = "Generates documentation in phpWiki format"
         depends     = "validate"
     >
-        <mkdir dir="gen/phpWiki" />
+        <mkdir dir="gen/phpwiki" />
         <xslt
             basedir   = "src/doc"
-            destdir   = "gen/phpWiki"
+            destdir   = "gen/phpwiki"
             extension = ".wiki"
-            style     = "src/xslt/dai2phpWiki.xslt"
+            style     = "src/xslt/dai2phpwiki.xslt"
             includes  = "**/*.dai"
         />
     </target>
