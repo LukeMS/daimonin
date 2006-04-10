@@ -12,7 +12,7 @@
     <target
         name        = "all"
         description = "Validates the documentation source files and then generates all available formats"
-        depends     = "bbCode, phpWiki, html4, xhtml11, ascii"
+        depends     = "bbcode, phpwiki, html4, xhtml11, ascii"
     />
 
     <target
