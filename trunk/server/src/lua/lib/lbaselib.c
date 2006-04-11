@@ -4,15 +4,13 @@
 */
 
 
+#define lbaselib_c
+#include "lua.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define lbaselib_c
-
-#include "lua.h"
 
 #include "lauxlib.h"
 #include "lualib.h"

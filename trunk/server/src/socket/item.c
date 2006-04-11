@@ -164,7 +164,7 @@ void esrv_draw_look(object *pl)
         SockList_AddInt(&global_sl, 0x80000000 | (ns->look_position - NUM_LOOK_OBJECTS));
         SockList_AddInt(&global_sl, 0);
         SockList_AddInt(&global_sl, -1);
-        SockList_AddInt(&global_sl, prev_item_face->number);
+        SockList_AddInt(&global_sl, (uint32) prev_item_face->number);
         SockList_AddChar(&global_sl, 0);
         sprintf(buf, "A'pply (click) to see %d previous items", NUM_LOOK_OBJECTS);
         add_stringlen_to_sockbuf(buf, &global_sl);
@@ -197,7 +197,7 @@ void esrv_draw_look(object *pl)
             SockList_AddInt(&global_sl, 0x80000000 | (ns->look_position + NUM_LOOK_OBJECTS));
             SockList_AddInt(&global_sl, 0);
             SockList_AddInt(&global_sl, -1);
-            SockList_AddInt(&global_sl, next_item_face->number);
+            SockList_AddInt(&global_sl, (uint32) next_item_face->number);
             SockList_AddChar(&global_sl, 0);
             sprintf(buf, "A'pply (click) to see next group of items");
             add_stringlen_to_sockbuf(buf, &global_sl);
@@ -241,22 +241,22 @@ void esrv_draw_look(object *pl)
         {
             if (tmp->head->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
-                SockList_AddInt(&global_sl, tmp->head->inv_face->number);
+                SockList_AddInt(&global_sl, (uint32)tmp->head->inv_face->number);
             }
             else
             {
-                SockList_AddInt(&global_sl, tmp->head->face->number);
+                SockList_AddInt(&global_sl, (uint32)tmp->head->face->number);
             }
         }
         else
         {
             if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
-                SockList_AddInt(&global_sl, tmp->inv_face->number);
+                SockList_AddInt(&global_sl,(uint32) tmp->inv_face->number);
             }
             else
             {
-                SockList_AddInt(&global_sl, tmp->face->number);
+                SockList_AddInt(&global_sl, (uint32)tmp->face->number);
             }
         }
         SockList_AddChar(&global_sl, tmp->facing);
@@ -350,7 +350,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
     SockList_AddInt(sl, 0);
     SockList_AddInt(sl, 0);
     SockList_AddInt(sl, -1);
-    SockList_AddInt(sl, blank_face->number);
+    SockList_AddInt(sl, (uint32) blank_face->number);
     len = strlen("in inventory") + 1;
     SockList_AddChar(sl, (char) len);
     add_stringlen_to_sockbuf("in inventory", sl);
@@ -385,11 +385,11 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 
         if (tmp->head)
         {
-            SockList_AddInt(sl, tmp->head->face->number);
+            SockList_AddInt(sl, (uint32)tmp->head->face->number);
         }
         else
         {
-            SockList_AddInt(sl, tmp->face->number);
+            SockList_AddInt(sl, (uint32)tmp->face->number);
         }
         SockList_AddChar(sl, tmp->facing);
 
@@ -458,7 +458,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
     SockList_AddInt(sl, 0);
     SockList_AddInt(sl, 0);
     SockList_AddInt(sl, -1);
-    SockList_AddInt(sl, blank_face->number);
+    SockList_AddInt(sl, (uint32) blank_face->number);
     len = strlen("end of inventory") + 1;
     SockList_AddChar(sl, (char) len);
     add_stringlen_to_sockbuf("end of inventory", sl);
@@ -512,11 +512,11 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
 
         if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
-            SockList_AddInt(sl, tmp->inv_face->number);
+            SockList_AddInt(sl, (uint32) tmp->inv_face->number);
         }
         else
         {
-            SockList_AddInt(sl, tmp->face->number);
+            SockList_AddInt(sl, (uint32) tmp->face->number);
         }
 
         SockList_AddChar(sl, tmp->facing);
@@ -658,11 +658,11 @@ void esrv_send_inventory(object *pl, object *op)
 
             if (tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
-                SockList_AddInt(&global_sl, tmp->inv_face->number);
+                SockList_AddInt(&global_sl, (uint32) tmp->inv_face->number);
             }
             else
             {
-                SockList_AddInt(&global_sl, tmp->face->number);
+                SockList_AddInt(&global_sl, (uint32) tmp->face->number);
             }
 
             SockList_AddChar(&global_sl, tmp->facing);
@@ -783,11 +783,11 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
     {
         if (op->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
         {
-            SockList_AddInt(&global_sl, op->inv_face->number);
+            SockList_AddInt(&global_sl, (uint32) op->inv_face->number);
         }
         else
         {
-            SockList_AddInt(&global_sl, op->face->number);
+            SockList_AddInt(&global_sl, (uint32) op->face->number);
         }
     }
     if (flags & UPD_DIRECTION)
@@ -920,22 +920,22 @@ static void esrv_send_item_send(object *pl, object *op)
     {
         if (op->head->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
         {
-            SockList_AddInt(&global_sl, op->head->inv_face->number);
+            SockList_AddInt(&global_sl, (uint32) op->head->inv_face->number);
         }
         else
         {
-            SockList_AddInt(&global_sl, op->head->face->number);
+            SockList_AddInt(&global_sl, (uint32) op->head->face->number);
         }
     }
     else
     {
         if (op->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
         {
-            SockList_AddInt(&global_sl, op->inv_face->number);
+            SockList_AddInt(&global_sl, (uint32) op->inv_face->number);
         }
         else
         {
-            SockList_AddInt(&global_sl, op->face->number);
+            SockList_AddInt(&global_sl, (uint32) op->face->number);
         }
     }
 

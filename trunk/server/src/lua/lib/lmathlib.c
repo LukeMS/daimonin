@@ -3,13 +3,11 @@
 ** See Copyright Notice in lua.h
 */
 
+#define lmathlib_c
+#include "lua.h"
 
 #include <stdlib.h>
 #include <math.h>
-
-#define lmathlib_c
-
-#include "lua.h"
 
 #include "lauxlib.h"
 #include "lualib.h"

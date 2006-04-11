@@ -941,7 +941,7 @@ void esrv_new_player(player *pl, uint32 weight)
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_PLAYER);
     SockList_AddInt(&global_sl, pl->ob->count);
     SockList_AddInt(&global_sl, weight);
-    SockList_AddInt(&global_sl, pl->ob->face->number);
+    SockList_AddInt(&global_sl, (uint32) pl->ob->face->number);
 
     SockList_AddChar(&global_sl, (char)(len=strlen(pl->ob->name)));
     strcpy((char*)global_sl.buf+global_sl.len, pl->ob->name);

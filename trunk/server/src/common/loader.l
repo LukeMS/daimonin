@@ -24,12 +24,15 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-
+#ifdef WIN32
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
 
 #include <global.h>
 #include <loader.h>
 #include <newserver.h>
 #include <sproto.h>
+
 
 #define YY_DECL int lex_load(object *op, int map_flags)
 

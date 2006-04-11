@@ -35,8 +35,8 @@ a wall.
 */
 
 
-#include <stdio.h>
 #include <global.h>
+#include <stdio.h>
 #include <time.h>
 
 #include <maze_gen.h>

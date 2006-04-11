@@ -9,9 +9,12 @@
 #ifndef lua_h
 #define lua_h
 
+#ifdef WIN32
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
+
 #include <stdarg.h>
 #include <stddef.h>
-
 
 #define LUA_VERSION    "Lua 5.0.2"
 #define LUA_COPYRIGHT    "Copyright (C) 1994-2004 Tecgraf, PUC-Rio"

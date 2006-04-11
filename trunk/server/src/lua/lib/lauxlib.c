@@ -3,6 +3,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#define lauxlib_c
+#include "lua.h"
 
 #include <ctype.h>
 #include <errno.h>
@@ -15,9 +17,6 @@
 ** Any function declared here could be written as an application function.
 */
 
-#define lauxlib_c
-
-#include "lua.h"
 
 #include "lauxlib.h"
 

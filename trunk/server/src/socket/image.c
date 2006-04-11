@@ -392,7 +392,7 @@ int esrv_send_face(NewSocket *ns, short face_num, int nocache)
         {
             SockList_AddChar(&global_sl, (char) fallback);
         }
-        SockList_AddInt(&global_sl, facesets[fallback].faces[face_num].datalen);
+        SockList_AddInt(&global_sl, (uint32)facesets[fallback].faces[face_num].datalen);
         memcpy(global_sl.buf + global_sl.len, facesets[fallback].faces[face_num].data, facesets[fallback].faces[face_num].datalen);
         global_sl.len += facesets[fallback].faces[face_num].datalen;
         Send_With_Handling(ns, &global_sl);

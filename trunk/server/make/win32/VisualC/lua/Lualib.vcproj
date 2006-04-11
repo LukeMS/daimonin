@@ -1,76 +1,123 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="8,00"
 	Name="Lualib"
-	SccProjectName=""
-	SccLocalPath="">
+	ProjectGUID="{20D4E564-6917-426D-8AB8-70F5CC019891}"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="ReleaseLog|Win32"
-			OutputDirectory=".\ReleaseLog"
-			IntermediateDirectory=".\ReleaseLog"
+			OutputDirectory=".\ReleaseLogLib"
+			IntermediateDirectory=".\ReleaseLogLib"
 			ConfigurationType="4"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="1"
+			BuildLogFile="$(IntDir)\BuildLogLib.htm"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				ImproveFloatingPointConsistency="TRUE"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\..\..\src\lua\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_LIB,LUA_OPNAMES"
-				StringPooling="TRUE"
-				RuntimeLibrary="4"
-				EnableFunctionLevelLinking="TRUE"
+				StringPooling="true"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile=".\ReleaseLog/Lualib.pch"
 				AssemblerListingLocation=".\ReleaseLog/"
 				ObjectFile=".\ReleaseLog/"
 				ProgramDataBaseFileName=".\ReleaseLog/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				CompileAs="1"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="4105"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/LTCG"
 				OutputFile="ReleaseLog\lua.lib"
-				SuppressStartupBanner="TRUE"
-				IgnoreAllDefaultLibraries="TRUE"/>
+				SuppressStartupBanner="true"
+				IgnoreAllDefaultLibraries="true"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="4105"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory=".\DebugLib"
+			IntermediateDirectory=".\DebugLib"
 			ConfigurationType="4"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			BuildLogFile="$(IntDir)\BuildLogLib.htm"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -79,164 +126,220 @@
 				PreprocessorDefinitions="WIN32,_DEBUG,_LIB,LUA_OPNAMES"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="lualib.pch"
 				PrecompiledHeaderFile=".\Debug/Lualib.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
+				SuppressStartupBanner="true"
+				CompileAs="1"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="Debug\luad.lib"
-				SuppressStartupBanner="TRUE"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="4105"/>
+				Culture="4105"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="Debug\luad.lib"
+				SuppressStartupBanner="true"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
 			<File
-				RelativePath="..\..\..\..\src\lua\lapi.c">
+				RelativePath="..\..\..\..\src\lua\lapi.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lcode.c">
+				RelativePath="..\..\..\..\src\lua\lcode.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldebug.c">
+				RelativePath="..\..\..\..\src\lua\ldebug.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldo.c">
+				RelativePath="..\..\..\..\src\lua\ldo.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldump.c">
+				RelativePath="..\..\..\..\src\lua\ldump.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lfunc.c">
+				RelativePath="..\..\..\..\src\lua\lfunc.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lgc.c">
+				RelativePath="..\..\..\..\src\lua\lgc.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\llex.c">
+				RelativePath="..\..\..\..\src\lua\llex.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lmem.c">
+				RelativePath="..\..\..\..\src\lua\lmem.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lobject.c">
+				RelativePath="..\..\..\..\src\lua\lobject.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lopcodes.c">
+				RelativePath="..\..\..\..\src\lua\lopcodes.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lparser.c">
+				RelativePath="..\..\..\..\src\lua\lparser.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstate.c">
+				RelativePath="..\..\..\..\src\lua\lstate.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstring.c">
+				RelativePath="..\..\..\..\src\lua\lstring.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltable.c">
+				RelativePath="..\..\..\..\src\lua\ltable.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltests.c">
+				RelativePath="..\..\..\..\src\lua\ltests.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltm.c">
+				RelativePath="..\..\..\..\src\lua\ltm.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lundump.c">
+				RelativePath="..\..\..\..\src\lua\lundump.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lvm.c">
+				RelativePath="..\..\..\..\src\lua\lvm.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lzio.c">
+				RelativePath="..\..\..\..\src\lua\lzio.c"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="*.h">
+			Filter="*.h"
+			>
 			<File
-				RelativePath="..\..\..\..\src\lua\lapi.h">
+				RelativePath="..\..\..\..\src\lua\lapi.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lcode.h">
+				RelativePath="..\..\..\..\src\lua\lcode.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldebug.h">
+				RelativePath="..\..\..\..\src\lua\ldebug.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ldo.h">
+				RelativePath="..\..\..\..\src\lua\ldo.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lfunc.h">
+				RelativePath="..\..\..\..\src\lua\lfunc.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lgc.h">
+				RelativePath="..\..\..\..\src\lua\lgc.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\llex.h">
+				RelativePath="..\..\..\..\src\lua\llex.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\llimits.h">
+				RelativePath="..\..\..\..\src\lua\llimits.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lmem.h">
+				RelativePath="..\..\..\..\src\lua\lmem.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lobject.h">
+				RelativePath="..\..\..\..\src\lua\lobject.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lopcodes.h">
+				RelativePath="..\..\..\..\src\lua\lopcodes.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lparser.h">
+				RelativePath="..\..\..\..\src\lua\lparser.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstate.h">
+				RelativePath="..\..\..\..\src\lua\lstate.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lstring.h">
+				RelativePath="..\..\..\..\src\lua\lstring.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltable.h">
+				RelativePath="..\..\..\..\src\lua\ltable.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\ltm.h">
+				RelativePath="..\..\..\..\src\lua\ltm.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\include\lua.h">
+				RelativePath="..\..\..\..\src\lua\include\lua.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lundump.h">
+				RelativePath="..\..\..\..\src\lua\lundump.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lvm.h">
+				RelativePath="..\..\..\..\src\lua\lvm.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\lua\lzio.h">
+				RelativePath="..\..\..\..\src\lua\lzio.h"
+				>
 			</File>
 		</Filter>
 	</Files>

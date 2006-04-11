@@ -1,42 +1,44 @@
-Microsoft Visual Studio Solution File, Format Version 7.00
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "daimonin_server", "daimonin_server.vcproj", "{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E1879D7-ACCD-4847-991C-D04368E1300F} = {5E1879D7-ACCD-4847-991C-D04368E1300F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_lua", "plugin_lua\plugin_lua.vcproj", "{5E1879D7-ACCD-4847-991C-D04368E1300F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{20D4E564-6917-426D-8AB8-70F5CC019891} = {20D4E564-6917-426D-8AB8-70F5CC019891}
+		{A179CC7C-0092-415E-8E60-575F3ED1CF3B} = {A179CC7C-0092-415E-8E60-575F3ED1CF3B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lualib", "lua\Lualib.vcproj", "{20D4E564-6917-426D-8AB8-70F5CC019891}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lualiblib", "lua\Lualiblib.vcproj", "{A179CC7C-0092-415E-8E60-575F3ED1CF3B}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug
-		ConfigName.1 = ReleaseLog
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		ReleaseLog|Win32 = ReleaseLog|Win32
 	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
-		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.0 = {5E1879D7-ACCD-4847-991C-D04368E1300F}
-		{5E1879D7-ACCD-4847-991C-D04368E1300F}.0 = {20D4E564-6917-426D-8AB8-70F5CC019891}
-		{20D4E564-6917-426D-8AB8-70F5CC019891}.0 = {A179CC7C-0092-415E-8E60-575F3ED1CF3B}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.Debug|Win32.Build.0 = Debug|Win32
+		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.ReleaseLog|Win32.ActiveCfg = ReleaseLog|Win32
+		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.ReleaseLog|Win32.Build.0 = ReleaseLog|Win32
+		{5E1879D7-ACCD-4847-991C-D04368E1300F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5E1879D7-ACCD-4847-991C-D04368E1300F}.Debug|Win32.Build.0 = Debug|Win32
+		{5E1879D7-ACCD-4847-991C-D04368E1300F}.ReleaseLog|Win32.ActiveCfg = ReleaseLog|Win32
+		{5E1879D7-ACCD-4847-991C-D04368E1300F}.ReleaseLog|Win32.Build.0 = ReleaseLog|Win32
+		{20D4E564-6917-426D-8AB8-70F5CC019891}.Debug|Win32.ActiveCfg = Debug|Win32
+		{20D4E564-6917-426D-8AB8-70F5CC019891}.Debug|Win32.Build.0 = Debug|Win32
+		{20D4E564-6917-426D-8AB8-70F5CC019891}.ReleaseLog|Win32.ActiveCfg = ReleaseLog|Win32
+		{20D4E564-6917-426D-8AB8-70F5CC019891}.ReleaseLog|Win32.Build.0 = ReleaseLog|Win32
+		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.Debug|Win32.Build.0 = Debug|Win32
+		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.ReleaseLog|Win32.ActiveCfg = ReleaseLog|Win32
+		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.ReleaseLog|Win32.Build.0 = ReleaseLog|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.Debug.ActiveCfg = Debug|Win32
-		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.Debug.Build.0 = Debug|Win32
-		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.ReleaseLog.ActiveCfg = ReleaseLog|Win32
-		{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}.ReleaseLog.Build.0 = ReleaseLog|Win32
-		{5E1879D7-ACCD-4847-991C-D04368E1300F}.Debug.ActiveCfg = Debug|Win32
-		{5E1879D7-ACCD-4847-991C-D04368E1300F}.Debug.Build.0 = Debug|Win32
-		{5E1879D7-ACCD-4847-991C-D04368E1300F}.ReleaseLog.ActiveCfg = ReleaseLog|Win32
-		{5E1879D7-ACCD-4847-991C-D04368E1300F}.ReleaseLog.Build.0 = ReleaseLog|Win32
-		{20D4E564-6917-426D-8AB8-70F5CC019891}.Debug.ActiveCfg = Debug|Win32
-		{20D4E564-6917-426D-8AB8-70F5CC019891}.Debug.Build.0 = Debug|Win32
-		{20D4E564-6917-426D-8AB8-70F5CC019891}.ReleaseLog.ActiveCfg = ReleaseLog|Win32
-		{20D4E564-6917-426D-8AB8-70F5CC019891}.ReleaseLog.Build.0 = ReleaseLog|Win32
-		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.Debug.ActiveCfg = Debug|Win32
-		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.Debug.Build.0 = Debug|Win32
-		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.ReleaseLog.ActiveCfg = ReleaseLog|Win32
-		{A179CC7C-0092-415E-8E60-575F3ED1CF3B}.ReleaseLog.Build.0 = ReleaseLog|Win32
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

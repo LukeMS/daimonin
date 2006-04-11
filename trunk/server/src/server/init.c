@@ -1165,7 +1165,8 @@ void init(int argc, char **argv)
     init_word_darkness();
     parse_args(argc, argv, 2);
 
-    SRANDOM(time(NULL));
+
+    SRANDOM((uint32)time(NULL));
     global_map_tag = (uint32) RANDOM();
 
     init_signals();     /* Sets up signal interceptions */

@@ -1,77 +1,117 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="8,00"
 	Name="daimonin_server"
-	SccProjectName=""
-	SccLocalPath="">
+	ProjectGUID="{6A3BD0B7-270E-4B12-B4ED-13F63FE5E136}"
+	RootNamespace="daimonin_server"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="ReleaseLog|Win32"
 			OutputDirectory=".\ReleaseLog"
 			IntermediateDirectory=".\ReleaseLog"
 			ConfigurationType="1"
-			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			UseOfMFC="1"
+			ATLMinimizesCRunTimeLibraryUsage="true"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\ReleaseLog/daimonin_server.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
-				ImproveFloatingPointConsistency="TRUE"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="..\..\..\src\include,..\..\..\src\random_maps"
 				PreprocessorDefinitions="_CONSOLE,DEBUG,WIN32,NDEBUG,LUA_PLUGIN_EXPORTS"
-				MinimalRebuild="FALSE"
-				ExceptionHandling="FALSE"
-				RuntimeLibrary="4"
-				BufferSecurityCheck="FALSE"
+				MinimalRebuild="false"
+				ExceptionHandling="0"
+				RuntimeLibrary="0"
+				BufferSecurityCheck="false"
+				FloatingPointModel="2"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile="$(IntDir)/daimonin.pch"
 				AssemblerListingLocation=".\ReleaseLog/"
 				ObjectFile=".\ReleaseLog/"
 				ProgramDataBaseFileName=".\ReleaseLog/"
 				WarningLevel="3"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
+				WarnAsError="true"
+				SuppressStartupBanner="true"
+				CompileAs="1"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib winmm.lib"
 				OutputFile=".\ReleaseLog/daimonin_server.exe"
 				LinkIncremental="0"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="MSVCRT.lib"
+				DelayLoadDLLs="$(NOINHERIT)"
 				SubSystem="1"
 				OptimizeReferences="2"
-				EnableCOMDATFolding="2"/>
+				EnableCOMDATFolding="2"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\ReleaseLog/daimonin_server.tlb"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ReleaseLog\*.exe ..\..\..\*.exe"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1031"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
+				CommandLine="copy ReleaseLog\*.exe ..\..\..\*.exe"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
@@ -79,1415 +119,1883 @@
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
 			UseOfMFC="2"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TypeLibraryName=".\Debug/daimonin_server.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="2"
-				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories="..\..\..\src\include,..\..\..\src\random_maps"
 				PreprocessorDefinitions="_CONSOLE,DEBUG,DEBUG_MOVEATTACK,WIN32,NDEBUG,LUA_PLUGIN_EXPORTS"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="FALSE"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="3"
-				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="global.h"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile="$(IntDir)/daimonin.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
-				BrowseInformation="1"
+				BrowseInformation="0"
 				WarningLevel="3"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				Detect64BitPortabilityProblems="FALSE"
+				WarnAsError="true"
+				SuppressStartupBanner="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				CompileAs="0"/>
+				CompileAs="1"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
 				AdditionalDependencies="wsock32.lib winmm.lib"
 				OutputFile=".\Debug/daimonin_server.exe"
 				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/daimonin_server.pdb"
-				GenerateMapFile="TRUE"
+				GenerateMapFile="true"
 				MapFileName=".\Debug/daimonin_server.map"
-				SubSystem="1"/>
+				SubSystem="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				TypeLibraryName=".\Debug/daimonin_server.tlb"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\*.exe ..\..\..\*.exe"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1031"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
+				CommandLine="copy Debug\*.exe ..\..\..\*.exe"
+			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
 			<Filter
 				Name="server"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\..\src\server\aiconfig.c">
+					RelativePath="..\..\..\src\server\aiconfig.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\alchemy.c">
+					RelativePath="..\..\..\src\server\alchemy.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\apply.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\attack.c">
+					RelativePath="..\..\..\src\server\apply.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\ban.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\c_chat.c">
+					RelativePath="..\..\..\src\server\attack.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\c_misc.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\c_move.c">
+					RelativePath="..\..\..\src\server\ban.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\c_new.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\c_object.c">
+					RelativePath="..\..\..\src\server\c_chat.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\c_party.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\c_range.c">
+					RelativePath="..\..\..\src\server\c_misc.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\c_wiz.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\commands.c">
+					RelativePath="..\..\..\src\server\c_move.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\disease.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\egoitem.c">
+					RelativePath="..\..\..\src\server\c_new.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\gmaster.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\gods.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\hiscore.c">
+					RelativePath="..\..\..\src\server\c_object.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\init.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\login.c">
+					RelativePath="..\..\..\src\server\c_party.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\main.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\monster.c">
+					RelativePath="..\..\..\src\server\c_range.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\monster_behaviours.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\monster_behaviourset.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\move.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\mtrand.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\npc_communicate.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\pathfinder.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\pets.c">
+					RelativePath="..\..\..\src\server\c_wiz.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\player.c">
+					RelativePath="..\..\..\src\server\commands.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\plugins.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\resurrection.c">
+					RelativePath="..\..\..\src\server\container.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\disease.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\rune.c">
+					RelativePath="..\..\..\src\server\egoitem.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\shop.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\skill_util.c">
+					RelativePath="..\..\..\src\server\gmaster.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\gods.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\skills.c">
+					RelativePath="..\..\..\src\server\hiscore.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\spawn_point.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\spell_effect.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\spell_util.c">
+					RelativePath="..\..\..\src\server\init.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\swamp.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\swap.c">
+					RelativePath="..\..\..\src\server\login.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\time.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\server\weather.c">
+					RelativePath="..\..\..\src\server\main.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
+							ObjectFile=".\ReleaseLog\server/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\monster.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\monster_behaviours.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\monster_behaviourset.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\monster_memory.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\move.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\mtrand.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\npc_communicate.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\pathfinder.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\pets.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\player.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\plugins.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\resurrection.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\rune.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\shop.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\skill_util.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\skills.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\spawn_point.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\spell_effect.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\spell_util.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\swamp.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\swap.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\time.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\weather.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\server/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\server/"
+						/>
 					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
 				Name="socket"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\..\src\socket\adler32.c">
+					RelativePath="..\..\..\src\socket\adler32.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\compress.c">
+					RelativePath="..\..\..\src\socket\compress.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\crc32.c">
+					RelativePath="..\..\..\src\socket\crc32.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\crc32.h">
+					RelativePath="..\..\..\src\socket\crc32.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\deflate.c">
+					RelativePath="..\..\..\src\socket\deflate.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\deflate.h">
+					RelativePath="..\..\..\src\socket\deflate.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\image.c">
+					RelativePath="..\..\..\src\socket\image.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\info.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
+							ObjectFile=".\Debug\socket/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\init.c">
+					RelativePath="..\..\..\src\socket\info.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\item.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
+							ObjectFile=".\Debug\socket/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\loop.c">
+					RelativePath="..\..\..\src\socket\init.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\lowlevel.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
+							ObjectFile=".\Debug\socket/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\metaserver.c">
+					RelativePath="..\..\..\src\socket\item.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\socket\request.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
+							ObjectFile=".\Debug\socket/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\sounds.c">
+					RelativePath="..\..\..\src\socket\loop.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\socket/"/>
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\socket/"/>
+							ObjectFile=".\Debug\socket/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\trees.c">
+					RelativePath="..\..\..\src\socket\lowlevel.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\socket/"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\trees.h">
+					RelativePath="..\..\..\src\socket\metaserver.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\socket/"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\zconf.h">
+					RelativePath="..\..\..\src\socket\request.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\socket/"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\zlib.h">
+					RelativePath="..\..\..\src\socket\sounds.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\socket/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\socket/"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\zutil.c">
+					RelativePath="..\..\..\src\socket\trees.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\socket\zutil.h">
+					RelativePath="..\..\..\src\socket\trees.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\socket\zconf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\socket\zlib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\socket\zutil.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\socket\zutil.h"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="random_maps"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\..\src\random_maps\decor.c">
+					RelativePath="..\..\..\src\random_maps\decor.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\door.c">
+					RelativePath="..\..\..\src\random_maps\door.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\exit.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\expand2x.c">
+					RelativePath="..\..\..\src\random_maps\exit.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\expand2x.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\floor.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\maze_gen.c">
+					RelativePath="..\..\..\src\random_maps\expand2x.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\maze_gen.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\monster.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\random_map.c">
+					RelativePath="..\..\..\src\random_maps\expand2x.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\floor.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\random_map.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\reader.c">
+					RelativePath="..\..\..\src\random_maps\maze_gen.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\reader.l">
+					RelativePath="..\..\..\src\random_maps\maze_gen.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\monster.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\random_maps/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\random_map.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\random_maps/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\random_map.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\reader.l"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i -Prmap -o$(InputDir)$(InputName).c $(InputPath)
-"
-							Outputs="$(InputDir)$(InputName).c"/>
+							CommandLine="..\..\..\..\dev\win32\flex.exe -i -Prmap -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							Outputs="$(InputDir)$(InputName).c"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i -Prmap -o$(InputDir)$(InputName).c $(InputPath)
-"
-							Outputs="$(InputDir)$(InputName).c"/>
+							CommandLine="..\..\..\..\dev\win32\flex.exe -i -Prmap -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							Outputs="$(InputDir)$(InputName).c"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\rogue_layout.c">
+					RelativePath="..\..\..\src\random_maps\reader_wrap.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\rogue_layout.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\room_gen.h">
+					RelativePath="..\..\..\src\random_maps\room_gen.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\room_gen_onion.c">
+					RelativePath="..\..\..\src\random_maps\room_gen_onion.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\room_gen_spiral.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\rproto.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\snake.c">
+					RelativePath="..\..\..\src\random_maps\room_gen_spiral.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\special.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\square_spiral.c">
+					RelativePath="..\..\..\src\random_maps\rproto.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\snake.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\style.c">
+					RelativePath="..\..\..\src\random_maps\special.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\random_maps\treasure.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\random_maps\wall.c">
+					RelativePath="..\..\..\src\random_maps\square_spiral.c"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\random_maps/"/>
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\random_maps/"/>
+							ObjectFile=".\Debug\random_maps/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\style.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\random_maps/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\treasure.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\random_maps/"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\random_maps\wall.c"
+					>
+					<FileConfiguration
+						Name="ReleaseLog|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\ReleaseLog\random_maps/"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\random_maps/"
+						/>
 					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
 				Name="common"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\..\src\common\aggro.c">
+					RelativePath="..\..\..\src\common\aggro.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\anim.c">
+					RelativePath="..\..\..\src\common\anim.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\arch.c">
+					RelativePath="..\..\..\src\common\arch.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\artifact.c">
+					RelativePath="..\..\..\src\common\artifact.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\button.c">
+					RelativePath="..\..\..\src\common\button.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\exp.c">
+					RelativePath="..\..\..\src\common\exp.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\guild.c">
+					RelativePath="..\..\..\src\common\guild.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\hashfunc.c">
+					RelativePath="..\..\..\src\common\hashfunc.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\hashtable.c">
+					RelativePath="..\..\..\src\common\hashtable.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\holy.c">
+					RelativePath="..\..\..\src\common\holy.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\image.c">
+					RelativePath="..\..\..\src\common\image.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\item.c">
+					RelativePath="..\..\..\src\common\item.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\links.c">
+					RelativePath="..\..\..\src\common\links.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\living.c">
+					RelativePath="..\..\..\src\common\living.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\loader.c">
-				</File>
-				<File
-					RelativePath="..\..\..\src\common\loader.l">
+					RelativePath="..\..\..\src\common\loader.l"
+					>
 					<FileConfiguration
-						Name="ReleaseLog|Win32">
+						Name="ReleaseLog|Win32"
+						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)
-"
-							Outputs="$(InputDir)$(InputName).c"/>
+							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							Outputs="$(InputDir)$(InputName).c"
+						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|Win32">
+						Name="Debug|Win32"
+						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)
-"
-							Outputs="$(InputDir)$(InputName).c"/>
+							CommandLine="..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)$(InputName).c $(InputPath)&#x0D;&#x0A;"
+							Outputs="$(InputDir)$(InputName).c"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\logger.c">
+					RelativePath="..\..\..\src\common\loader_wrap.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\los.c">
+					RelativePath="..\..\..\src\common\logger.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\map.c">
+					RelativePath="..\..\..\src\common\los.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\material.c">
+					RelativePath="..\..\..\src\common\map.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\mempool.c">
+					RelativePath="..\..\..\src\common\material.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\object.c">
+					RelativePath="..\..\..\src\common\mempool.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\porting.c">
+					RelativePath="..\..\..\src\common\object.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\quest.c">
+					RelativePath="..\..\..\src\common\porting.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\re-cmp.c">
+					RelativePath="..\..\..\src\common\quest.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\readable.c">
+					RelativePath="..\..\..\src\common\re-cmp.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\recipe.c">
+					RelativePath="..\..\..\src\common\readable.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\shstr_ng.c">
+					RelativePath="..\..\..\src\common\recipe.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\stats.c">
+					RelativePath="..\..\..\src\common\shstr_ng.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\time.c">
+					RelativePath="..\..\..\src\common\stats.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\treasure.c">
+					RelativePath="..\..\..\src\common\time.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\utils.c">
+					RelativePath="..\..\..\src\common\treasure.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\common\win32.c">
+					RelativePath="..\..\..\src\common\utils.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\common\win32.c"
+					>
 				</File>
 			</Filter>
 			<Filter
 				Name="tests"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\..\src\tests\benchmark_main.c">
+					RelativePath="..\..\..\src\tests\benchmark_main.c"
+					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\tests\test_main.c">
+					RelativePath="..\..\..\src\tests\test_main.c"
+					>
 				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl">
+			Filter="h;hpp;hxx;hm;inl"
+			>
 			<File
-				RelativePath="..\..\..\src\include\aggro.h">
+				RelativePath="..\..\..\src\include\aggro.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\aiconfig.h">
+				RelativePath="..\..\..\src\include\aiconfig.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\arch.h">
+				RelativePath="..\..\..\src\include\arch.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\artifact.h">
+				RelativePath="..\..\..\src\include\artifact.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\attack.h">
+				RelativePath="..\..\..\src\include\attack.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\behaviourdecl.h">
+				RelativePath="..\..\..\src\include\behaviourdecl.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\book.h">
+				RelativePath="..\..\..\src\include\book.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\commands.h">
+				RelativePath="..\..\..\src\include\commands.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\config.h">
+				RelativePath="..\..\..\src\include\config.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\debug.h">
+				RelativePath="..\..\..\src\include\debug.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\define.h">
+				RelativePath="..\..\..\src\include\define.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\face.h">
+				RelativePath="..\..\..\src\include\face.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\global.h">
+				RelativePath="..\..\..\src\include\global.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\gmaster.h">
+				RelativePath="..\..\..\src\include\gmaster.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\god.h">
+				RelativePath="..\..\..\src\include\god.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\hashfunc.h">
+				RelativePath="..\..\..\src\include\hashfunc.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\hashtable.h">
+				RelativePath="..\..\..\src\include\hashtable.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\includes.h">
+				RelativePath="..\..\..\src\include\includes.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\libproto.h">
+				RelativePath="..\..\..\src\include\libproto.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\links.h">
+				RelativePath="..\..\..\src\include\links.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\living.h">
+				RelativePath="..\..\..\src\include\living.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\loader.h">
+				RelativePath="..\..\..\src\include\loader.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\logger.h">
+				RelativePath="..\..\..\src\include\logger.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\map.h">
+				RelativePath="..\..\..\src\include\map.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\material.h">
+				RelativePath="..\..\..\src\include\material.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\mempool.h">
+				RelativePath="..\..\..\src\include\mempool.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\monster.h">
+				RelativePath="..\..\..\src\include\metrics.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\newclient.h">
+				RelativePath="..\..\..\src\include\monster.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\newserver.h">
+				RelativePath="..\..\..\src\include\newclient.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\object.h">
+				RelativePath="..\..\..\src\include\newserver.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\pathfinder.h">
+				RelativePath="..\..\..\src\include\object.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\player.h">
+				RelativePath="..\..\..\src\include\pathfinder.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\plugin.h">
+				RelativePath="..\..\..\src\include\player.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\plugproto.h">
+				RelativePath="..\..\..\src\include\plugin.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\quest.h">
+				RelativePath="..\..\..\src\include\plugproto.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\race.h">
+				RelativePath="..\..\..\src\include\quest.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\re-cmp.h">
+				RelativePath="..\..\..\src\include\race.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\recipe.h">
+				RelativePath="..\..\..\src\include\re-cmp.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\shstr_ng.h">
+				RelativePath="..\..\..\src\include\recipe.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\skillist.h">
+				RelativePath="..\..\..\src\include\shstr_ng.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\skills.h">
+				RelativePath="..\..\..\src\include\skillist.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\sockproto.h">
+				RelativePath="..\..\..\src\include\skills.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\sounds.h">
+				RelativePath="..\..\..\src\include\sockproto.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\spellist.h">
+				RelativePath="..\..\..\src\include\sounds.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\spells.h">
+				RelativePath="..\..\..\src\include\spellist.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\sproto.h">
+				RelativePath="..\..\..\src\include\spells.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\stats.h">
+				RelativePath="..\..\..\src\include\sproto.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\testproto.h">
+				RelativePath="..\..\..\src\include\stats.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\timeutils.h">
+				RelativePath="..\..\..\src\include\testproto.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\tod.h">
+				RelativePath="..\..\..\src\include\timeutils.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\treasure.h">
+				RelativePath="..\..\..\src\include\tod.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\version.h">
+				RelativePath="..\..\..\src\include\treasure.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\win32.h">
+				RelativePath="..\..\..\src\include\version.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\xdir.h">
+				RelativePath="..\..\..\src\include\win32.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\xdir.h"
+				>
 			</File>
 		</Filter>
 	</Files>

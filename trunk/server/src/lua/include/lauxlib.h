@@ -7,6 +7,9 @@
 #ifndef lauxlib_h
 #define lauxlib_h
 
+#ifdef WIN32
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
 
 #include <stddef.h>
 #include <stdio.h>

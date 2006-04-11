@@ -3,12 +3,10 @@
 ** See Copyright Notice in lua.h
 */
 
+#define ltablib_c
+#include "lua.h"
 
 #include <stddef.h>
-
-#define ltablib_c
-
-#include "lua.h"
 
 #include "lauxlib.h"
 #include "lualib.h"

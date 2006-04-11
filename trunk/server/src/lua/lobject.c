@@ -3,14 +3,13 @@
 ** See Copyright Notice in lua.h
 */
 
+#define lobject_c
+#include "lua.h"
+
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define lobject_c
-
-#include "lua.h"
 
 #include "ldo.h"
 #include "lmem.h"

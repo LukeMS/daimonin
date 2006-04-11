@@ -88,11 +88,14 @@ typedef signed long long         sint64;
 #ifndef _stat
 #define _stat stat
 #endif
+
+#ifndef WIN32
 #ifndef _isatty
 #define _isatty(__x) isatty(__x)
 #endif
 #ifndef _fileno
 #define _fileno(__x) fileno(__x)
+#endif
 #endif
 
 #ifdef USE_CALLOC

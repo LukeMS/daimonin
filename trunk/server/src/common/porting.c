@@ -32,6 +32,7 @@
 
 
 #ifdef WIN32 /* ---win32 exclude/include headers */
+#define _CRT_SECURE_NO_DEPRECATE
 #include "process.h"
 #define pid_t int  /* we include it non global, because there is a redefinition in python.h */
 #else
