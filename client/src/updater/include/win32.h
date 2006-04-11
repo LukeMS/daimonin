@@ -34,8 +34,9 @@
 #pragma once
 #endif /* _MSC_VER > 1000 */
 
-#endif /* !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_) */
+#endif
 
+#define _CRT_SECURE_NO_DEPRECATE
 #define WIN32_LEAN_AND_MEAN
 /* includes for VC - plz add other include settings for different compiler
  * when needed and comment it
@@ -80,10 +81,23 @@
 /* Many defines to redirect unix functions or fake standard unix values */
 #define inline __inline
 #define unlink(__a) _unlink(__a)
-#define mkdir(__a, __b) mkdir(__a)
+#define mkdir(__a, __b) _mkdir(__a)
+#define rmdir(__a) _rmdir(__a)
 #define getpid() _getpid()
 #define popen(__a, __b) _popen(__a, __b)
 #define pclose(__a) _pclose(__a)
+#define strdup(__a) _strdup(__a)
+#define stricmp(__a, __b) _stricmp(__a, __b)
+#define strnicmp(__a, __b, __c) _strnicmp(__a, __b, __c)
+#define getcwd(__a, __b) _getcwd(__a, __b)
+#define chdir(__a) _chdir(__a)
+#define access(__a, __b) _access(__a, __b)
+#define chmod(__a, __b) _chmod(__a, __b)
+#define hypot(__a, __b) _hypot(__a, __b)
+#define fileno(__a) _fileno(__a)
+#define umask(__a) _umask(__a)
+#define lseek(__a, __b, __c) _lseek(__a, __b, __c)
+
 
 #define PREFIXDIR ""
 

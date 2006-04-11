@@ -22,6 +22,10 @@
 */
 #if !defined(__INCLUDE_H)
 #define __INCLUDE_H
+
+#ifdef WIN32
+#include <win32.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -78,9 +82,7 @@
 
 extern int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait);
 
-#ifdef WIN32
-#include <win32.h>
-#else
+#ifndef WIN32
 extern int check_tools(char *name);
 #define p_popen popen
 #define p_pclose pclose

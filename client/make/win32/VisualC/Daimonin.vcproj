@@ -1,340 +1,485 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="8,00"
 	Name="client"
-	SccProjectName=""
-	SccLocalPath="">
+	ProjectGUID="{029B7383-4C4F-4660-BB6E-F471A85986E5}"
+	RootNamespace="client"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			UseOfMFC="1"
+			ATLMinimizesCRunTimeLibraryUsage="true"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/Daimonin.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
 				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="2"
+				RuntimeLibrary="1"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="include.h"
 				PrecompiledHeaderFile=".\Debug/client.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
 				WarningLevel="3"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
+				WarnAsError="true"
+				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
-				CompileAs="0"/>
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib"
 				OutputFile=".\Debug/client.exe"
 				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="msvcrt.lib"
-				GenerateDebugInformation="TRUE"
+				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="msvcrt.lib;libcmt.lib"
+				DelayLoadDLLs="$(NOINHERIT)"
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/Daimonin.pdb"
-				SubSystem="1"/>
+				SubSystem="1"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/Daimonin.tlb"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\client.exe ..\..\..\client.exe"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1031"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
+				CommandLine="copy Debug\client.exe ..\..\..\client.exe"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory=".\Release"
 			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			UseOfMFC="1"
+			ATLMinimizesCRunTimeLibraryUsage="true"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/Daimonin.tlb"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="TRUE"
+				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../../../,../../../src/include,.\sdl_inc,.\sdl_inc\SDL\"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
-				ExceptionHandling="FALSE"
-				RuntimeLibrary="2"
+				ExceptionHandling="0"
+				RuntimeLibrary="0"
 				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile=".\Release/client.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				WarningLevel="3"
-				WarnAsError="TRUE"
-				SuppressStartupBanner="TRUE"
-				CompileAs="0"/>
+				WarnAsError="true"
+				SuppressStartupBanner="true"
+				CompileAs="1"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1031"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib"
 				OutputFile=".\Release/client.exe"
 				LinkIncremental="1"
-				SuppressStartupBanner="TRUE"
+				SuppressStartupBanner="true"
+				GenerateManifest="false"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames="MSVCRT.lib"
+				DelayLoadDLLs="$(NOINHERIT)"
 				SubSystem="2"
 				OptimizeReferences="2"
-				EnableCOMDATFolding="2"/>
+				EnableCOMDATFolding="2"
+			/>
 			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Release/Daimonin.tlb"/>
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\client.exe ..\..\..\client.exe"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="1031"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
+				CommandLine="copy Release\client.exe ..\..\..\client.exe"
+			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Quellcodedateien"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
 			<File
-				RelativePath="..\..\..\src\adler32.c">
+				RelativePath="..\..\..\src\adler32.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\book.c">
+				RelativePath="..\..\..\src\book.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\client.c">
+				RelativePath="..\..\..\src\client.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\commands.c">
+				RelativePath="..\..\..\src\commands.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\crc32.c">
+				RelativePath="..\..\..\src\crc32.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\dialog.c">
+				RelativePath="..\..\..\src\dialog.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\event.c">
+				RelativePath="..\..\..\src\event.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\filewrap.c">
+				RelativePath="..\..\..\src\filewrap.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\group.c">
+				RelativePath="..\..\..\src\group.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\inffast.c">
+				RelativePath="..\..\..\src\inffast.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\inflate.c">
+				RelativePath="..\..\..\src\inflate.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\inftrees.c">
+				RelativePath="..\..\..\src\inftrees.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\interface.c">
+				RelativePath="..\..\..\src\interface.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\inventory.c">
+				RelativePath="..\..\..\src\inventory.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\item.c">
+				RelativePath="..\..\..\src\item.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\main.c">
+				RelativePath="..\..\..\src\main.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\map.c">
+				RelativePath="..\..\..\src\map.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\menu.c">
+				RelativePath="..\..\..\src\menu.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\misc.c">
+				RelativePath="..\..\..\src\misc.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\player.c">
+				RelativePath="..\..\..\src\player.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\socket.c">
+				RelativePath="..\..\..\src\socket.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\sound.c">
+				RelativePath="..\..\..\src\sound.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\sprite.c">
+				RelativePath="..\..\..\src\sprite.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\textwin.c">
+				RelativePath="..\..\..\src\textwin.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\uncompr.c">
+				RelativePath="..\..\..\src\uncompr.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\wrapper.c">
+				RelativePath="..\..\..\src\wrapper.c"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\zutil.c">
+				RelativePath="..\..\..\src\zutil.c"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header-Dateien"
-			Filter="h;hpp;hxx;hm;inl">
+			Filter="h;hpp;hxx;hm;inl"
+			>
 			<File
-				RelativePath="..\..\..\src\include\book.h">
+				RelativePath="..\..\..\src\include\book.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\cflinux.h">
+				RelativePath="..\..\..\src\include\cflinux.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\client.h">
+				RelativePath="..\..\..\src\include\client.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\commands.h">
+				RelativePath="..\..\..\src\include\commands.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\config.h">
+				RelativePath="..\..\..\src\include\config.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\crc32.h">
+				RelativePath="..\..\..\src\include\crc32.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\dialog.h">
+				RelativePath="..\..\..\src\include\dialog.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\event.h">
+				RelativePath="..\..\..\src\include\event.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\filewrap.h">
+				RelativePath="..\..\..\src\include\filewrap.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\group.h">
+				RelativePath="..\..\..\src\include\group.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\include.h">
+				RelativePath="..\..\..\src\include\include.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\inffast.h">
+				RelativePath="..\..\..\src\include\inffast.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\inflate.h">
+				RelativePath="..\..\..\src\include\inflate.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\inftrees.h">
+				RelativePath="..\..\..\src\include\inftrees.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\interface.h">
+				RelativePath="..\..\..\src\include\interface.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\inventory.h">
+				RelativePath="..\..\..\src\include\inventory.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\item.h">
+				RelativePath="..\..\..\src\include\item.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\main.h">
+				RelativePath="..\..\..\src\include\main.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\map.h">
+				RelativePath="..\..\..\src\include\map.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\menu.h">
+				RelativePath="..\..\..\src\include\menu.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\misc.h">
+				RelativePath="..\..\..\src\include\misc.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\player.h">
+				RelativePath="..\..\..\src\include\player.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\sdlsocket.h">
+				RelativePath="..\..\..\src\include\sdlsocket.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\sound.h">
+				RelativePath="..\..\..\src\include\sound.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\sprite.h">
+				RelativePath="..\..\..\src\include\sprite.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\textwin.h">
+				RelativePath="..\..\..\src\include\textwin.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\win32.h">
+				RelativePath="..\..\..\src\include\win32.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\wrapper.h">
+				RelativePath="..\..\..\src\include\wrapper.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\zconf.h">
+				RelativePath="..\..\..\src\include\zconf.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\zlib.h">
+				RelativePath="..\..\..\src\include\zlib.h"
+				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\include\zutil.h">
+				RelativePath="..\..\..\src\include\zutil.h"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Ressourcendateien"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
 		</Filter>
 		<File
-			RelativePath=".\sdl_lib\SDL.lib">
+			RelativePath=".\sdl_lib\SDL.lib"
+			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDL_image.lib">
+			RelativePath=".\sdl_lib\SDL_image.lib"
+			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDL_mixer.lib">
+			RelativePath=".\sdl_lib\SDL_mixer.lib"
+			>
 		</File>
 		<File
-			RelativePath=".\sdl_lib\SDLmain.lib">
+			RelativePath=".\sdl_lib\SDLmain.lib"
+			>
 		</File>
 	</Files>
 	<Globals>
