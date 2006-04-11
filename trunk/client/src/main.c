@@ -257,7 +257,7 @@ void init_game_data(void)
     first_server_char = NULL;
 
     esc_menu_flag = FALSE;
-    srand(time(NULL));
+    srand((uint32) time(NULL));
 
     memset(anim_table, 0, sizeof(anim_table));
     memset(animations, 0, sizeof(animations));
