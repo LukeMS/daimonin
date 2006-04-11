@@ -28,8 +28,8 @@
  * on this place - another reason to kill the crosslib.a asap.
  */
 
-#include <stdio.h>
 #include <global.h>
+#include <stdio.h>
 
 
 float           lev_exp[MAXLEVEL + 1]       =

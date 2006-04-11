@@ -3,6 +3,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#define lvm_c
+#include "lua.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -10,10 +12,6 @@
 
 /* needed only when `lua_number2str' uses `sprintf' */
 #include <stdio.h>
-
-#define lvm_c
-
-#include "lua.h"
 
 #include "ldebug.h"
 #include "ldo.h"

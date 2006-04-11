@@ -45,6 +45,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #ifndef WIN32 /* ---win32 exclude unix configuration part */
 #include <autoconf.h>
+#else
+#define _CRT_SECURE_NO_DEPRECATE
 #endif
 
 #include <debug.h> /* global & explicit debug settings */

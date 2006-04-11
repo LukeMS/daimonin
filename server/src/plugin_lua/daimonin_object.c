@@ -1638,10 +1638,10 @@ static int GameObject_CheckQuestLevel(lua_State *L)
 	else
 		tmp_lev = who->level;
 
-	if (level < tmp_lev) /* to low */
+	if (level > tmp_lev) /* to low */
 		ret = 0;
 
-    	lua_pushboolean(L, ret);
+    lua_pushboolean(L, ret);
 	return 1;
 }
 

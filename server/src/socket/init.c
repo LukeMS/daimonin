@@ -28,7 +28,6 @@
  * The reading of data is handled in ericserver.c
  */
 
-
 #include <global.h>
 #ifndef WIN32 /* ---win32 exclude include files */
 #include <sys/types.h>
@@ -38,7 +37,7 @@
 #include <netdb.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#endif /* win32 */
+#endif /* !win32 */
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>

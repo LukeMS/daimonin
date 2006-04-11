@@ -23,9 +23,9 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
+#include <global.h>
 #include <time.h>
 #include <stdio.h>
-#include <global.h>
 #include <maze_gen.h>
 #include <room_gen.h>
 #include <random_map.h>
@@ -58,7 +58,7 @@ mapstruct * generate_random_map(char *OutFileName, RMParms *RP)
 
     /* pick a random seed, or use the one from the input file */
     if (RP->random_seed == 0)
-        SRANDOM(time(0));
+        SRANDOM((uint32)time(0));
     else
         SRANDOM(RP->random_seed);
 

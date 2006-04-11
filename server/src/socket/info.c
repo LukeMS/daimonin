@@ -99,7 +99,6 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
  */
 
 void new_draw_info_format(const int flags, const int pri, const object *const pl, const char *const format, ...)
-//void new_draw_info_format(int flags, int pri, object *pl, char *format, ...)
 {
     char    buf[HUGE_BUF];
 

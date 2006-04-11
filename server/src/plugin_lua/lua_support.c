@@ -794,7 +794,7 @@ int load_file_cache(struct lua_State *L, const char *file)
 
             /* store the load time */
             lua_pushvalue(L, -1);
-            lua_pushnumber(L, time(NULL));
+            lua_pushnumber(L, (lua_Number) time(NULL));
             lua_rawset(L, -5);
 
             /* Store the function */

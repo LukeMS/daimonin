@@ -33,6 +33,10 @@
  */
 
 
+#ifdef WIN32
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
+
 #include <stdio.h>
 
 #include "hashtable.h"
