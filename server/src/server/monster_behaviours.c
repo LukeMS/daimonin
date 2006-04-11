@@ -1401,7 +1401,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
                 struct mob_known_obj *tmp;
                 /* See if we already know this mob */
                 for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
-                    if(tmp->obj == op && tmp->obj_count == op->count)
+                    if(tmp->obj == obj && tmp->obj_count == obj->count)
                         break;
                 if(tmp)
                     update_npc_known_obj(tmp, 0, 0);
