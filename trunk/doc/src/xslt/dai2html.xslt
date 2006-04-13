@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  - Transformation for converting DaiDoc to strict HTML 4.01.
+  - Transformation for converting DaiML to strict HTML 4.01.
   -->
 <xsl:transform
     version="2.0"
@@ -20,12 +20,12 @@
         indent="no"
     />
 
-    <xsl:template match="/daidoc">
+    <xsl:template match="/daiml">
         <html>
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
                 <title>
-                    <xsl:apply-templates select="title/text()"/>
+                    <xsl:value-of select="@title"/>
                 </title>
                 <link href="./print.css" media="print" rel="stylesheet" title="default" type="text/css"/>
                 <link href="./screen.css" media="screen" rel="stylesheet" title="default" type="text/css"/>
@@ -33,7 +33,7 @@
             <body>
                 <div class="document">
                     <h1>
-                        <xsl:apply-templates select="title/text()"/>
+                        <xsl:value-of select="@title"/>
                     </h1>
                 </div>
                 <xsl:if test="@autotoc and section">
@@ -60,18 +60,18 @@
         </html>
     </xsl:template>
 
-    <xsl:template match="/daidoc/section">
+    <xsl:template match="/daiml/section">
         <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
-            <xsl:if test="/daidoc/@autotoc">
+            <xsl:if test="/daiml/@autotoc">
                 <p class="toc">
                     <a href="#toc">
                         <xsl:choose>
-                            <xsl:when test="/daidoc/@autotoc='autotoc'">
+                            <xsl:when test="/daiml/@autotoc='autotoc'">
                                 <xsl:text>Table of Contents</xsl:text>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="/daidoc/@autotoc"/>
+                                <xsl:value-of select="/daiml/@autotoc"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </a>
@@ -102,25 +102,25 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="/daidoc/section/title">
+    <xsl:template match="/daiml/section/title">
         <h2>
             <xsl:apply-templates/>
         </h2>
     </xsl:template>
 
-    <xsl:template match="/daidoc/section/section/title">
+    <xsl:template match="/daiml/section/section/title">
         <h3>
             <xsl:apply-templates/>
         </h3>
     </xsl:template>
 
-    <xsl:template match="/daidoc/section/section/section/title">
+    <xsl:template match="/daiml/section/section/section/title">
         <h4>
             <xsl:apply-templates/>
         </h4>
     </xsl:template>
 
-    <xsl:template match="/daidoc/section/section/section/section/title">
+    <xsl:template match="/daiml/section/section/section/section/title">
         <h5>
             <xsl:apply-templates/>
         </h5>
