@@ -14,6 +14,9 @@
 <!ENTITY % Mixed  "%Inline;|%Block;">
 
 <!ENTITY % LinkTypes "start|next|prev|contents|index|glossary|copyright|chapter|section|subsection|appendix">
+<!ENTITY % MediaTypes
+    "screen|print|all"
+>
 
 
 <!--
@@ -35,6 +38,15 @@
 <!ATTLIST link
     rel (%LinkTypes;) #REQUIRED
     href CDATA #REQUIRED
+>
+
+<!ELEMENT stylesheet
+    EMPTY
+>
+<!ATTLIST stylesheet
+    href CDATA #REQUIRED
+    media (%MediaTypes;) 'all'
+    title CDATA #IMPLIED
 >
 
 <!ELEMENT section (title, (%Block;)+)>
