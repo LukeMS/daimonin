@@ -27,8 +27,30 @@
                 <title>
                     <xsl:value-of select="@title"/>
                 </title>
-                <link href="./print.css" media="print" rel="stylesheet" title="default" type="text/css"/>
-                <link href="./screen.css" media="screen" rel="stylesheet" title="default" type="text/css"/>
+                <xsl:choose>
+                    <xsl:when test="stylesheet">
+                        <xsl:apply-templates select="stylesheet"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <style type="text/css">
+h2
+{
+    background-color:#eee;
+    border-top:1px solid #000;
+}
+
+div.section
+{
+    margin-left:1em;
+}
+
+div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
+{
+    margin-left:-1em;
+}
+                        </style>
+                    </xsl:otherwise>
+                </xsl:choose>
             </head>
             <body>
                 <div class="document">
@@ -58,6 +80,11 @@
                 </p>
             </body>
         </html>
+    </xsl:template>
+
+    <xsl:template match="stylesheet">
+        <link href="{@href}" media="{@media}" rel="stylesheet" title="{@title}" type="text/css"/>
+        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="/daiml/section">
