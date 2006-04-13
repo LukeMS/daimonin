@@ -23,9 +23,10 @@
 <!-- Number. See Context for range or decimal fractions. -->
 <!ENTITY % number "CDATA">
 
-<!ELEMENT daidoc (title, link*, section+)>
-<!ATTLIST daidoc
+<!ELEMENT daiml (link*, section+)>
+<!ATTLIST daiml
     autotoc CDATA #IMPLIED
+    title CDATA #REQUIRED
 >
 
 <!ELEMENT title (%Inline;)*>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  - Transformation for converting DaiDoc to plain XHTML 1.1.
+  - Transformation for converting DaiML to plain XHTML 1.1.
   -->
 <xsl:transform
     version="2.0"
@@ -20,16 +20,36 @@
         indent="no"
     />
 
-    <xsl:template match="/">
+    <xsl:template match="/daiml">
         <html>
             <head>
                 <title>
-                    <xsl:apply-templates select="section/title/text()"/>
+                    <xsl:value-of select="@title"/>
                 </title>
                 <link href="./print.css" media="print" rel="stylesheet" title="default" type="text/css"/>
                 <link href="./screen.css" media="screen" rel="stylesheet" title="default" type="text/css"/>
             </head>
             <body>
+                <div class="document">
+                    <h1>
+                        <xsl:value-of select="@title"/>
+                    </h1>
+                </div>
+                <xsl:if test="@autotoc and section">
+                    <div class="toc">
+                        <h2 id="toc">
+                            <xsl:choose>
+                                <xsl:when test="@autotoc='autotoc'">
+                                    <xsl:text>Table of Contents</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="@autotoc"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </h2>
+                        <xsl:apply-templates select="section" mode="toc"/>
+                    </div>
+                </xsl:if>
                 <xsl:apply-templates/>
                 <p>
                     <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
@@ -38,31 +58,30 @@
         </html>
     </xsl:template>
 
-    <xsl:template match="/section">
-        <div class="section">
+    <xsl:template match="/daiml/section">
+        <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
+            <xsl:if test="/daiml/@autotoc">
+                <p class="toc">
+                    <a href="#toc">
+                        <xsl:choose>
+                            <xsl:when test="/daiml/@autotoc='autotoc'">
+                                <xsl:text>Table of Contents</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="/daiml/@autotoc"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </a>
+                </p>
+            </xsl:if>
         </div>
     </xsl:template>
 
-    <xsl:template match="/section/title">
-        <h1>
+    <xsl:template match="section/section">
+        <div class="section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
-        </h1>
-        <xsl:if test="/section/@autotoc and /section/section">
-            <div class="toc">
-                <h2 id="toc">
-                    <xsl:choose>
-                        <xsl:when test="/section/@autotoc='autotoc'">
-                            <xsl:text>Table of Contents</xsl:text>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="/section/@autotoc"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </h2>
-                <xsl:apply-templates select="/section/section" mode="toc"/>
-            </div>
-        </xsl:if>
+        </div>
     </xsl:template>
 
     <xsl:template match="section" mode="toc">
@@ -81,54 +100,40 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="/section/section/title">
+    <xsl:template match="/daiml/section/title">
         <h2>
             <xsl:apply-templates/>
         </h2>
     </xsl:template>
 
-    <xsl:template match="/section/section/section/title">
+    <xsl:template match="/daiml/section/section/title">
         <h3>
             <xsl:apply-templates/>
         </h3>
     </xsl:template>
 
-    <xsl:template match="/section/section/section/section/title">
+    <xsl:template match="/daiml/section/section/section/title">
         <h4>
             <xsl:apply-templates/>
         </h4>
+    </xsl:template>
+
+    <xsl:template match="/daiml/section/section/section/section/title">
+        <h5>
+            <xsl:apply-templates/>
+        </h5>
+    </xsl:template>
+
+    <xsl:template match="section/section/section/section/section/title">
+        <h6>
+            <xsl:apply-templates/>
+        </h6>
     </xsl:template>
 
     <xsl:template match="blockcode">
         <pre>
             <xsl:apply-templates/>
         </pre>
-    </xsl:template>
-
-    <xsl:template match="/section/section">
-        <div class="section" id="{if (@id) then @id else generate-id()}">
-            <xsl:apply-templates/>
-            <xsl:if test="/section/@autotoc">
-                <p class="toc">
-                    <a href="#toc">
-                        <xsl:choose>
-                            <xsl:when test="/section/@autotoc='autotoc'">
-                                <xsl:text>Table of Contents</xsl:text>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="/section/@autotoc"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </a>
-                </p>
-            </xsl:if>
-        </div>
-    </xsl:template>
-
-    <xsl:template match="section/section/section">
-        <div class="section" id="{if (@id) then @id else generate-id()}">
-            <xsl:apply-templates/>
-        </div>
     </xsl:template>
 
     <xsl:template match="a">
