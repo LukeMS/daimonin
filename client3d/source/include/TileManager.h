@@ -86,6 +86,7 @@ private:
   }
   ** m_Map;
 
+  TexturePtr mTileTexture;
   TileChunk m_mapchunk[CHUNK_SUM_X][CHUNK_SUM_Z];
   SceneManager* m_SceneManager;
   TileInterface* m_Interface;
@@ -94,7 +95,6 @@ private:
   /** The z-stretching of the tiles. **/
   float m_StretchZ;
   int m_TileTextureSize;
-  bool mHighDetails;
   bool mGrid;
 
 public:
@@ -111,6 +111,10 @@ public:
   float Get_StretchZ()
   {
     return m_StretchZ;
+  }
+  int getTextureSize()
+  {
+    return m_TileTextureSize;
   }
   unsigned char Get_Map_Height(short x, short y)
   {
@@ -163,7 +167,7 @@ public:
   void ChangeTexture();
   /** Create a terrain-texture out of tile textures. **/
   bool CreateTextureGroup(const std::string &terrain_type);
-  void SetTextureSize(int pixels);
+  void CreateTextureGroupBorders(uchar* TextureGroup_data, short pix);
   void shrinkFilter();
   void shrinkTexture(const std::string &terrain_type);
   /** Import a 8bit png file as heightmap **/
@@ -171,10 +175,10 @@ public:
   /** Import a heightmap. **/
   void Load_Map(char *mapData);
   void Save_Map(const std::string &png_filename);
-  void ToggleMaterial();
+  void setMaterialLOD(int pix);
   void ToggleGrid();
   void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short x, short y);
-  void CreateMipMaps(const std::string &terrain_type);
+  void CreateMipMaps(const std::string &terrain_type, int pixel);
 };
 
 #endif

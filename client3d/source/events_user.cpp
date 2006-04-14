@@ -235,12 +235,12 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_T:
         {
-            static int pixels =128;
+            static int pixel =128;
             //change pixel size of terrain textures
-            pixels /= 2; // shrink pixel value
-            if (pixels < MIN_TEXTURE_PIXEL)
-                pixels = 128; // if value is too low resize to maximum
-            mTileManager->SetTextureSize(pixels);
+            pixel /= 2; // shrink pixel value
+            if (pixel < MIN_TEXTURE_PIXEL)
+                pixel = 128; // if value is too low resize to maximum
+            mTileManager->setMaterialLOD(pixel);
             mTimeUntilNextToggle = .5;
         }
         break;

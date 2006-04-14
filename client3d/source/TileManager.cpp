@@ -60,10 +60,10 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
     m_SceneManager = SceneMgr;
     m_StretchZ = tileStretchZ;
     m_TileTextureSize = tileTextureSize;
-    mHighDetails = true;
     mGrid = false;
     m_Interface = new TileInterface(this);
     m_Interface->Init();
+    mTileTexture.setNull();
 
     srand(1);
     Logger::log().info() << "Creating map";
@@ -82,12 +82,13 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
     { /// only needed after a tile-texture has changed.
         CreateTextureGroup(strTextureGroup);
     }
-    CreateMipMaps(strTextureGroup); /// has to be called everytime.
     /// ////////////////////////////////////////////////////////////////////
     /// Create TileChunks.
     /// ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "Creating tile-chunks";
     CreateChunks();
+    setMaterialLOD(tileTextureSize);
+
     /// ////////////////////////////////////////////////////////////////////
     /// Init is done.
     /// ////////////////////////////////////////////////////////////////////
@@ -245,8 +246,8 @@ void TileManager::CreateChunks()
 
     TileChunk::m_TileManagerPtr = this;
     TileChunk::m_bounds = new AxisAlignedBox(
-                              -TILE_SIZE * CHUNK_SIZE_X, 0             , -TILE_SIZE * CHUNK_SIZE_Z,
-                              TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
+                              -TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
+                              +TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
     for (short x = 0; x < CHUNK_SUM_X; ++x)
     {
         for (short y = 0; y < CHUNK_SUM_Z; ++y)
@@ -256,6 +257,7 @@ void TileManager::CreateChunks()
     }
     delete TileChunk::m_bounds;
 #ifdef LOG_TIMING
+
     Logger::log().info() << "Time to create Chunks: " << clock()-time << " ms";
 #endif
 }
@@ -309,7 +311,7 @@ void TileManager::ChangeChunks()
 void TileManager::ChangeTexture()
 {
     static bool once = false;
-    const std::string strFilename = "terrain_016_texture.png";
+    const std::string strFilename = "terrain_032_texture.png";
     if (once)
         return;
     else
@@ -342,8 +344,9 @@ void TileManager::ChangeTexture()
 ///================================================================================================
 void TileManager::ControlChunks(Vector3 vector)
 {
-     // only for testing...
-     if (Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK)) return;
+    // only for testing...
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
+        return;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Just for testing...
@@ -369,6 +372,7 @@ void TileManager::ControlChunks(Vector3 vector)
             }
             else
 #endif
+
             {
                 m_mapchunk[cx][cy].Attach(QUALITY_LOW);
             }
@@ -434,12 +438,13 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
 
     int i, tx, ty;
     int pix = PIXEL_PER_TILE;
+    uchar* TextureGroup_data;
     Image Filter, Texture, TextureGroup;
     while (pix >= MIN_TEXTURE_PIXEL)
     {
-        uchar* TextureGroup_data = new uchar[PIXEL_PER_ROW * PIXEL_PER_ROW *4];
+        TextureGroup_data = new uchar[PIXEL_PER_ROW * PIXEL_PER_ROW *4];
         TextureGroup.loadDynamicImage(TextureGroup_data, pix * 8, pix * 8,PF_A8B8G8R8);
-        strFilename = "filter_" + StringConverter::toString(pix, 3, '0') + ".png";
+        strFilename = "filter_" + StringConverter::toString(pix/2, 3, '0') + ".png";
         if (!LoadImage(Filter, strFilename))
         {
             Logger::log().error() << "Filter texture '" << strFilename << "' was not found.";
@@ -464,6 +469,7 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
                 tx = 0;
             }
         }
+        CreateTextureGroupBorders(TextureGroup_data, pix);
         strFilename = PATH_TILE_TEXTURES + terrain_type + "_texture";
         strFilename+= "_"+ StringConverter::toString(pix, 3, '0')+".png";
         TextureGroup.save(strFilename);
@@ -482,49 +488,62 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
 ///================================================================================================
 /// Create MipMaps for tile textures
 ///================================================================================================
-void TileManager::CreateMipMaps(const std::string &terrain_type)
+void TileManager::CreateMipMaps(const std::string &terrain_type, int pixel)
 {
-    // Load tile texture images in all resolutions
-    enum
-    {
-        PIX_016, PIX_032, PIX_064, PIX_128, PIX_SUM
-    };
-    Image TileImage[PIX_SUM];
-    std::string strFilename;
-    TexturePtr TileTexture;
-
-    /// Load all tile textures-sets.
-    for (int i = 0; i < PIX_SUM; ++i)
-    {
-        strFilename = terrain_type;
-        strFilename+= "_texture_"+ StringConverter::toString((int)pow(2.0, i+4), 3, '0') + ".png";
-        if (!LoadImage(TileImage[i], strFilename))
+    /*
+        // Load tile texture images in all resolutions
+        enum
         {
-            Logger::log().error() << "Ground texture '" << strFilename << "' was not found.";
-            return;
+            PIX_032, PIX_064, PIX_128, PIX_SUM
+        };
+        Image TileImage[PIX_SUM];
+        std::string strFilename;
+
+        if (!mTileTexture.isNull()) TextureManager::getSingleton().remove((ResourcePtr&)mTileTexture);
+
+        /// Load all tile textures-sets.
+        for (int i = 0; i < PIX_SUM; ++i)
+        {
+            strFilename = terrain_type;
+            strFilename+= "_texture_"+ StringConverter::toString((int)pow(2.0, i+4), 3, '0') + ".png";
+            if (!LoadImage(TileImage[i], strFilename))
+            {
+                Logger::log().error() << "Ground texture '" << strFilename << "' was not found.";
+                return;
+            }
         }
-    }
-
-    /// create mipmaps for 128x128 pixel textures
-    TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_128.png",
-                  "General",TEX_TYPE_2D, 1024,1024, 3, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-    TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_128].getPixelBox());
-    TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_064].getPixelBox());
-    TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-    TileTexture->getBuffer(0,3)->blitFromMemory(TileImage[PIX_016].getPixelBox());
-
-    // create mipmaps for 64x64 pixel textures
-    TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_064.png",
-                  "General",TEX_TYPE_2D, 512, 512, 2, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-    TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_064].getPixelBox());
-    TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-    TileTexture->getBuffer(0,2)->blitFromMemory(TileImage[PIX_016].getPixelBox());
-
-    // create mipmaps for 32x32 pixel textures
-    TileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_032.png",
-                  "General",TEX_TYPE_2D, 256, 256, 1, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-    TileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-    TileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_016].getPixelBox());
+        if (pixel == 128)
+        {
+            /// create mipmaps for 128x128 pixel textures
+            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_128.png",
+                          "General",TEX_TYPE_2D, 1024,1024, 2, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_128].getPixelBox());
+            mTileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_064].getPixelBox());
+            mTileTexture->getBuffer(0,2)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+        }
+        else if (pixel == 64)
+        {
+            /// create mipmaps for 64x64 pixel textures
+            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_064.png",
+                          "General",TEX_TYPE_2D, 512, 512, 1, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_064].getPixelBox());
+            mTileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+        }
+        else if (pixel == 32)
+        {
+            /// create mipmaps for 32x32 pixel textures
+            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_032.png",
+                          "General",TEX_TYPE_2D, 256, 256, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+        }
+        else
+        {
+            /// create mipmaps for 32x32 pixel textures
+            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_016.png",
+                          "General",TEX_TYPE_2D, 128, 128, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_032].getPixelBox());
+        }
+      */
 }
 
 ///================================================================================================
@@ -566,10 +585,10 @@ void TileManager::shrinkTexture(const std::string &terrain_type)
 ///================================================================================================
 void TileManager::shrinkFilter()
 {
-    int pix = PIXEL_PER_TILE / 2;
+    int pix = PIXEL_PER_TILE / 4;
     Image image;
     std::string strFilename;
-    while (pix >= MIN_TEXTURE_PIXEL)
+    while (pix > MIN_TEXTURE_PIXEL/4)
     {
         strFilename = "filter_" + StringConverter::toString(pix+pix, 3, '0') + ".png";
         if (!LoadImage(image, strFilename))
@@ -590,260 +609,233 @@ void TileManager::shrinkFilter()
 ///================================================================================================
 inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pix, short x, short y)
 {
-    unsigned long index1, index2;
+    const int RGBA = 4;
+    const int RGB  = 3;
+    unsigned long index1, index2, index3;
     uchar* Texture_data = Texture->getData();
-    int space = pix / 16;
-
-    /// ////////////////////////////////////////////////////////////////////
-    /// Texture size 8 pix.
-    /// ////////////////////////////////////////////////////////////////////
-    if (pix <= 8)
+    int SPACE;
+    if (pix <= MIN_TEXTURE_PIXEL)
     {
+        SPACE = 1;
+        index2 = 0;
+        index1 = RGBA* (pix * 8)* (pix + 2*SPACE) * y +
+                 RGBA* (pix * 8) * SPACE +
+                 RGBA* x * (pix + 2*SPACE) +
+                 RGBA* SPACE;
+
         for (int i = 0; i < pix; ++i)
         {
-            for (int j = 0; j < pix; ++j)
+            TextureGroup_data[index1-4] = Texture_data[index2+ RGB*(pix-1)+0];
+            TextureGroup_data[index1-3] = Texture_data[index2+ RGB*(pix-1)+1];
+            TextureGroup_data[index1-2] = Texture_data[index2+ RGB*(pix-1)+2];
+            TextureGroup_data[index1-1] = 255;
+            for (int posX = 0; posX < pix; ++posX)
             {
-                index1 = 4*(pix * 8)* (pix + 1) * y
-                         + 4* (pix * 8) * (i + space)
-                         + 4* x * (pix + 1)
-                         + 4* (j + space);
-                index2 = 3* pix * i + 3 * j;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = Filter_data [index2];
+                TextureGroup_data[  index1] = Texture_data[  index2];
+                TextureGroup_data[++index1] = Texture_data[++index2];
+                TextureGroup_data[++index1] = Texture_data[++index2];
+                TextureGroup_data[++index1] = 255;
+                ++index1;
+                ++index2;
             }
+            TextureGroup_data[index1+0] = Texture_data[index2-RGB*(pix-1)+ 0];
+            TextureGroup_data[index1+1] = Texture_data[index2-RGB*(pix-1)+ 1];
+            TextureGroup_data[index1+2] = Texture_data[index2-RGB*(pix-1)+ 2];
+            TextureGroup_data[index1+3] = 255;
+            index1+= RGBA* (pix * 7);
         }
+        index1 = RGBA* (pix * 8)* (pix + 2*SPACE) * y +
+                 RGBA* x * (pix + 2*SPACE);
 
-        for (int j = 0; j < pix; ++j)
+        for (int i = 0; i < pix+2*SPACE; ++i)
         {
-            int i = pix;
-            index1 = 4*(pix * 8)* (pix+1) * y
-                     + 4* (pix * 8) * (i + space)
-                     + 4* x * (pix + 1)
-                     + 4* (j + space);
-            index2 = 3* pix * (i-1) + 3 * j;
-            TextureGroup_data[  index1] = Texture_data[index2];
-            TextureGroup_data[++index1] = Texture_data[index2 + 1];
-            TextureGroup_data[++index1] = Texture_data[index2 + 2];
-            TextureGroup_data[++index1] = Filter_data [index2];
-        }
+            TextureGroup_data[  index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
+            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
 
-        for (int i = 0; i < pix; ++i)
+            TextureGroup_data[++index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
+            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
+
+            TextureGroup_data[++index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
+            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
+
+            TextureGroup_data[++index1]                    = 255;
+            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = 255;
+
+            ++index1;
+        }
+        return;
+    }
+    SPACE = pix / 32; // mipmap space.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Copy the tile into the texture.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Group-texture : 32 bit (RGBA)
+    /// Tile-texture  : 24 bit (RGB)
+    /// Filter-texture: 24 bit (RGB)
+    int dstOffX = RGBA* (pix/2 + 2*SPACE);
+    int dstOffY = RGBA* (pix/2 + 2*SPACE) * pix * 8;
+    int srcOffX = RGB * (pix/2);
+    int srcOffY = RGB * (pix/2) * pix;
+    uchar alpha = 255;
+
+    index2 = index3 =0;
+    index1 = RGBA* (pix * 8) * (pix + 4 * SPACE) * y +
+             RGBA* (pix * 8) *SPACE +
+             RGBA*  x * (pix + 4* SPACE) +
+             RGBA* SPACE;
+    for (int posY = 0; posY < pix/2; ++posY)
+    {
+        for (int posX = 0; posX < pix/2; ++posX)
         {
-            int j = pix;
-            index1 = 4*(pix * 8)* (pix + 1) * y
-                     + 4* (pix * 8) * (i + space)
-                     + 4* x * (pix + 1)
-                     + 4* (j + space);
-            index2 = 3* pix * i + 3 * (j-1);
-            TextureGroup_data[  index1] = Texture_data[index2];
-            TextureGroup_data[++index1] = Texture_data[index2 + 1];
-            TextureGroup_data[++index1] = Texture_data[index2 + 2];
-            TextureGroup_data[++index1] = Filter_data [index2];
-        }
+            TextureGroup_data[  index1                ] = Texture_data[  index2                ]; /// Top Left  subTile.
+            TextureGroup_data[  index1+dstOffX        ] = Texture_data[  index2+srcOffX        ]; /// Top Right subTile.
+            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ]; /// Bot Left subTile.
+            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY]; /// Bot Righr subTile.
 
-        index1 = 4*(pix * 8)* (pix + 1) * y
-                 + 4* (pix * 8) * (pix + space)
-                 + 4* x * (pix + 1)
-                 + 4* (pix + space);
-        index2 = 3* pix * (pix-1) + 3 * (pix-1);
-        TextureGroup_data[  index1] = Texture_data[index2];
-        TextureGroup_data[++index1] = Texture_data[index2 + 1];
-        TextureGroup_data[++index1] = Texture_data[index2 + 2];
-        TextureGroup_data[++index1] = Filter_data [index2];
+            TextureGroup_data[++index1                ] = Texture_data[++index2                ];
+            TextureGroup_data[  index1+dstOffX        ] = Texture_data[  index2+srcOffX        ];
+            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ];
+            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY];
+
+            TextureGroup_data[++index1                ] = Texture_data[++index2                ];
+            TextureGroup_data[  index1+dstOffX        ] = Texture_data[  index2+srcOffX        ];
+            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ];
+            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY];
+
+            if (pix > MIN_TEXTURE_PIXEL)
+                alpha = Filter_data[index3];
+            TextureGroup_data[++index1                ] = alpha;
+            TextureGroup_data[  index1+dstOffX        ] = alpha;
+            TextureGroup_data[  index1+dstOffY        ] = alpha;
+            TextureGroup_data[  index1+dstOffX+dstOffY] = alpha;
+
+            ++index1;
+            ++index2;
+            index3+= 3;
+        }
+        index1+= 4* (pix * 8 - pix/2);
+        index2+= 3* (pix/2);
+    }
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+inline void TileManager::CreateTextureGroupBorders(uchar* TextureGroup_data, short pix)
+{
+    if (pix <= MIN_TEXTURE_PIXEL)
+        return;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Vertical border creation
+    /// ////////////////////////////////////////////////////////////////////
+    const int RGBA = 4;
+    const int SPACE = pix / 32; // mipmap space.
+    long index1;
+    for (int col = 0; col < 7; ++col)
+    {
+        index1 = col * RGBA* (pix + 4 *SPACE);
+        for (int posY = 0; posY < pix *8; ++posY)
+        {
+            for (int posX = 0; posX < SPACE; ++posX)
+            {
+                TextureGroup_data[index1]                        = TextureGroup_data[index1+ RGBA*(pix   + 2*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 1*SPACE)]= TextureGroup_data[index1+ RGBA*(pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 2*SPACE)]= TextureGroup_data[index1+ RGBA*(pix/2)];
+                TextureGroup_data[index1+ RGBA*(pix   + 3*SPACE)]= TextureGroup_data[index1+ RGBA*(SPACE)];
+                ++index1;
+                TextureGroup_data[index1]                        = TextureGroup_data[index1+ RGBA*(pix + 2*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 1*SPACE)]= TextureGroup_data[index1+ RGBA*(pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 2*SPACE)]= TextureGroup_data[index1+ RGBA*(pix/2)];
+                TextureGroup_data[index1+ RGBA*(pix   + 3*SPACE)]= TextureGroup_data[index1+ RGBA*(SPACE)];
+                ++index1;
+                TextureGroup_data[index1]                        = TextureGroup_data[index1+ RGBA*(pix + 2*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 1*SPACE)]= TextureGroup_data[index1+ RGBA*(pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 2*SPACE)]= TextureGroup_data[index1+ RGBA*(pix/2)];
+                TextureGroup_data[index1+ RGBA*(pix   + 3*SPACE)]= TextureGroup_data[index1+ RGBA*(SPACE)];
+                ++index1;
+                TextureGroup_data[index1]                        = 255 -TextureGroup_data[index1+ RGBA*(pix + 2*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 1*SPACE)]= 255 -TextureGroup_data[index1+ RGBA*(pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ RGBA*(pix/2 + 2*SPACE)]= 255 -TextureGroup_data[index1+ RGBA*(pix/2)];
+                TextureGroup_data[index1+ RGBA*(pix   + 3*SPACE)]= 255 -TextureGroup_data[index1+ RGBA*(SPACE)];
+                ++index1;
+            }
+            index1 += RGBA* (pix * 8 - SPACE);
+        }
     }
 
+    const int ROW_SKIP = RGBA* (pix * 8);
     /// ////////////////////////////////////////////////////////////////////
-    /// Texture size > 8 pix.
+    /// Horizontal border creation
     /// ////////////////////////////////////////////////////////////////////
-    else
+    index1 =0;
+    for (int row = 0; row < 7; ++row) // ersetzen durch x/y pos.
     {
-        for (int i = 0; i < pix; ++i)
+        for (int posY = 0; posY < SPACE; ++posY)
         {
-            for (int j = 0; j < pix; ++j)
+            for (int posX = 0; posX < pix*8; ++posX)
             {
-                index1 = 4*(pix * 8)* (pix + 2 * space) * y
-                         + 4* (pix * 8) * (i + space)
-                         + 4* x * (pix + 2* space)
-                         + 4* (j + space);
-                index2 = 3* pix * i + 3 * j;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = Filter_data [index2];
+                TextureGroup_data[index1]                           = TextureGroup_data[index1+ ROW_SKIP* (pix   + 2*SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+  SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+2*SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (pix/2)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix  +3*SPACE)]= TextureGroup_data[index1+ ROW_SKIP* SPACE];
+                ++index1;
+                TextureGroup_data[index1]                           = TextureGroup_data[index1+ ROW_SKIP* (pix + 2 * SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+  SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+2*SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (pix/2)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix  +3*SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (SPACE)];
+                ++index1;
+                TextureGroup_data[index1]                           = TextureGroup_data[index1+ ROW_SKIP* (pix + 2 * SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+  SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+2*SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (pix/2)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix  +3*SPACE)]= TextureGroup_data[index1+ ROW_SKIP* (SPACE)];
+                ++index1;
+                TextureGroup_data[index1]                           = 255 -TextureGroup_data[index1+ ROW_SKIP* (pix + 2 * SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+  SPACE)]= 255 -TextureGroup_data[index1+ ROW_SKIP* (pix/2 + 3*SPACE)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix/2+2*SPACE)]= 255 -TextureGroup_data[index1+ ROW_SKIP* (pix/2)];
+                TextureGroup_data[index1+ ROW_SKIP* (pix  +3*SPACE)]= 255 -TextureGroup_data[index1+ ROW_SKIP* (SPACE)];
+                ++index1;
             }
         }
-        /// ////////////////////////////////////////////////////////////////////
-        /// left border creation
-        /// ////////////////////////////////////////////////////////////////////
-        for (int i = 0; i != pix; ++i)
-        {
-            for (int j = 0; j!= space ; ++j)
-            {
-                index1 = 4* (pix * 8) * (pix + 2 * space) * y
-                         + 4* (pix * 8) * (i + space)
-                         + 4* x * (pix + 2* space) +
-                         4* j;
-                index2 = 3* pix * i + 3 * (pix - space + j);
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255 - Filter_data[index2];
-            }
-        }
-        /// ////////////////////////////////////////////////////////////////////
-        /// right border creation
-        /// ////////////////////////////////////////////////////////////////////
-        for (int i = 0; i != pix; ++i)
-        {
-            for (int j = 0; j!= space ; ++j)
-            {
-                index1 = 4* (pix * 8) * (pix + 2 * space) * y
-                         + 4* (pix * 8) * (i + space)
-                         + 4* x * (pix + 2* space) +
-                         4* (pix + space + j);
-                index2 = 3* pix * i + 3 * j;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255 - Filter_data[index2];
-            }
-        }
-        /// ////////////////////////////////////////////////////////////////////
-        /// upper border creation
-        /// ////////////////////////////////////////////////////////////////////
-        for (int i = 0; i != space; ++i)
-        {
-            for (int j = 0; j!= pix; ++j)
-            {
-                index1 = 4* (pix * 8) * (pix + 2 * space) * y
-                         + 4* (pix * 8) * i
-                         + 4* x * (pix + 2* space) +
-                         4* (space + j);
-                index2 = 3* pix * (pix - space + i) + 3 * j;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255 - Filter_data[index2];
-            }
-        }
-        /// ////////////////////////////////////////////////////////////////////
-        /// lower border creation
-        /// ////////////////////////////////////////////////////////////////////
-        for (int i = 0; i != space; ++i)
-        {
-            for (int j = 0; j!= pix; ++j)
-            {
-                index1 = 4* (pix * 8) * (pix + 2 * space) * y
-                         + 4* (pix * 8) * (pix + space + i)
-                         + 4* x * (pix + 2* space) +
-                         4* (space + j);
-                index2 = 3* pix * i + 3 * j;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255 - Filter_data[index2];
-            }
-        }
-        /// ////////////////////////////////////////////////////////////////////
-        /// remaining 4 edges
-        /// ////////////////////////////////////////////////////////////////////
-        // upper left
-        for (int i = 0; i != space; ++i)
-        {
-            for (int j = 0; j!= space; ++j)
-            {
-                index1 = 4*(pix * 8)* (pix + 2 * space) * y
-                         + 4* (pix * 8) * i
-                         + 4* x * (pix + 2* space)
-                         + 4* j;
-                index2 = 0;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255;
-            }
-        }
-        // upper right
-        for (int i = pix + space; i != pix + 2*space; ++i)
-        {
-            for (int j = 0; j!= space; ++j)
-            {
-                index1 = 4*(pix * 8)* (pix + 2 * space) * y
-                         + 4* (pix * 8) * i
-                         + 4* x * (pix + 2* space)
-                         + 4* j;
-                index2 = 0;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255;
-            }
-        }
-        // lower left
-        for (int i = 0; i != space; ++i)
-        {
-            for (int j = pix + space; j!= pix + 2* space; ++j)
-            {
-                index1 = 4*(pix * 8)* (pix + 2 * space) * y
-                         + 4* (pix * 8) * i
-                         + 4* x * (pix + 2* space)
-                         + 4* j;
-                index2 = 0;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255;
-            }
-        }
-        // lower right
-        for (int i = pix + space; i != pix + 2* space; ++i)
-        {
-            for (int j = pix + space; j!= pix + 2* space; ++j)
-            {
-                index1 = 4*(pix * 8)* (pix + 2 * space) * y
-                         + 4* (pix * 8) * i
-                         + 4* x * (pix + 2* space)
-                         + 4* j;
-                index2 = 0;
-                TextureGroup_data[  index1] = Texture_data[index2];
-                TextureGroup_data[++index1] = Texture_data[index2 + 1];
-                TextureGroup_data[++index1] = Texture_data[index2 + 2];
-                TextureGroup_data[++index1] = 255;
-            }
-        }
+        index1 += RGBA* (pix * 8) * (pix + 3*SPACE);
     }
 }
 
 ///================================================================================================
 /// Toggle Material.
 ///================================================================================================
-void TileManager::ToggleMaterial()
+void TileManager::setMaterialLOD(int pixel)
 {
+    if (pixel != 128 && pixel !=64 && pixel != 32 && pixel != 16)
+        return;
+
     std::string matWater, matLand;
-    mHighDetails = !mHighDetails;
-    if (mHighDetails)
+    int lod;
+    m_TileTextureSize = pixel;
+    if (pixel >16)
     {
         matLand = "Land_HighDetails" + StringConverter::toString(m_TileTextureSize, 3, '0');
         matWater= "Water_HighDetails";
+        lod = QUALITY_HIGH;
     }
     else
     {
         matLand = "Land_LowDetails";
         matWater= "Water_LowDetails";
+        lod = QUALITY_LOW;
     }
     if (mGrid)
     {
         matLand +="_Grid";
         matWater+="_Grid";
     }
+    CreateMipMaps("terrain", m_TileTextureSize);
     for (int x = 0; x < CHUNK_SUM_X; ++x)
     {
         for (int y = 0; y < CHUNK_SUM_Z; ++y)
         {
             m_mapchunk[x][y].Get_Land_entity() ->setMaterialName(matLand);
             m_mapchunk[x][y].Get_Water_entity()->setMaterialName(matWater);
+            m_mapchunk[x][y].Attach(lod);
         }
     }
 }
@@ -854,28 +846,6 @@ void TileManager::ToggleMaterial()
 void TileManager::ToggleGrid()
 {
     mGrid = !mGrid;
-    mHighDetails = !mHighDetails;
-    ToggleMaterial();
+    setMaterialLOD(m_TileTextureSize);
 }
 
-///================================================================================================
-/// Change resolution of terrain texture
-///================================================================================================
-void TileManager::SetTextureSize(int pixels)
-{
-    if (pixels != 128 && pixels !=64 && pixels != 32 && pixels != 16 && pixels != 8)
-        return;
-    m_TileTextureSize = pixels;
-    std::string matLand = "Land_HighDetails" + StringConverter::toString(m_TileTextureSize, 3, '0');
-    {
-        for (int x = 0; x < CHUNK_SUM_X; ++x)
-        {
-            for (int y = 0; y < CHUNK_SUM_Z; ++y)
-            {
-                m_mapchunk[x][y].Get_Land_entity()->setMaterialName(matLand);
-            }
-        }
-    }
-    mHighDetails = !mHighDetails;
-    ToggleMaterial();
-}
