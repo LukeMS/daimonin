@@ -8,17 +8,17 @@ body
 
 a:link, a:visited
 {
-    color:darkslateblue;
+    color:#00008b; /* darkslateblue */
 }
 
 a:hover
 {
-    background:darkgoldenrod;
+    background:#b8840b; /* darkgoldenrod */
 }
 
 a:active
 {
-    background:goldenrod;
+    background:#daa520; /* goldenrod */
 }
 
 h1, h2, h3, h4, h5, h6
@@ -71,7 +71,7 @@ p
 
 table
 {
-    border:thin solid darkslateblue;
+    border:thin solid #00008b; /* darkslateblue */
     margin-left:1em;
 }
 
@@ -83,7 +83,7 @@ td
 
 th
 {
-    background:lightsteelblue;
+    background:#b0c4ed; /* lightsteelblue */
     border:none;
     text-align:center;
 }
@@ -93,8 +93,8 @@ th
 
 div.advice, div.note
 {
-    background:lightsteelblue;
-    border:thin solid darkslateblue;
+    background:#b0c4ed; /* lightsteelblue */
+    border:thin solid #00008b; /* darkslateblue */
     margin-left:1em;
     margin-top:2px;
     padding:2px;
@@ -108,7 +108,7 @@ div.advice img, div.note img
 
 div.advice p, div.note p
 {
-    background:lightsteelblue;
+    background:#b0c4ed; /* lightsteelblue */
 }
 
 
@@ -136,8 +136,8 @@ div.dialog p
 
 div.document h1
 {
-    background:slateblue;
-    border-top:thick solid darkslateblue;
+    background:#6a5acd; /* slateblue */
+    border-top:thick solid #00008b; /* darkslateblue */
     color:white;
     padding:2px;
     text-align:center;
@@ -148,15 +148,15 @@ div.document h1
 
 div.section
 {
-    border-bottom:thin solid darkslateblue;
+    border-bottom:thin solid #00008b; /* darkslateblue */
     margin-left:1em;
     padding-bottom:2px;
 }
 
 div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
 {
-    background:slateblue;
-    border-top:thick solid darkslateblue;
+    background:#6a5acd; /* slateblue */
+    border-top:thick solid #00008b; /* darkslateblue */
     color:white;
     padding:2px;
 }
@@ -166,8 +166,8 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
 
 div.toc
 {
-    background:lightsteelblue;
-    border:thin solid darkslateblue;
+    background:#b0c4ed; /* lightsteelblue */
+    border:thin solid #00008b; /* darkslateblue */
     font-size:66%;
     text-align:left;
     width:35%;
@@ -175,7 +175,7 @@ div.toc
 
 div.toc h2
 {
-    background:slateblue;
+    background:#6a5acd; /* slateblue */
     color:white;
     padding:2px;
 }
