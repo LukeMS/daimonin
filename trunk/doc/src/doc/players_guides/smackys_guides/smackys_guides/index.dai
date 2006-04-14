@@ -1,170 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
-    <title>
-        SMACKY'S GUIDES
-    </title>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guides">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
     <section id="guides">
         <title>
             The guides
         </title>
         <p>
-            <strong><em>Smacky's Guides</em></strong> are here presented in the recommended order of reading. But of course, they're intended for reference so feel free to jump to whichever looks like it will answer your specific question.
+            <strong><em>Smacky's Guides</em></strong> are here presented in the recommended order of reading for new players. But of course, they're intended <a href="./introduction.dai#forreference">for reference</a> by all players, so feel free to jump to whichever looks like it will answer your specific question.
         </p>
-        <table>
-            <tr>
-                <th>
-                    Beginner Guides<br/>
-                    All players should familiarise themselves with these guides
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <dl>
-                        <dt>
-                            <strong><a href="../game_mechanics/index.dai">Smacky's Guide To Game Mechanics</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                This guide contains important information on interacting with Daimonin and reference appendices of commands and default keyboard shortcuts.
-                            </p>
-                            <p>
-                                New players in particular should read the section on logging in and creating a new character.
-                            </p>
-                        </dd>
-                        <dt>
-                            <strong><a href="../character/index.dai">Smacky's Guide To The Character</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                This guide explains how your character's identity, abilities, and development are measured and represented on screen.
-                            </p>
-                        </dd>
-                    </dl>
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Intermediate Guides<br/>
-                    Once you understand yourself and how you fit into the world it's time to think about the world into which you fit.
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <dl>
-                        <dt>
-                            <strong><a href="../manipulating_objects/index.dai">Smacky's Guide To Manipulating Objects</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                A good way to start is by considering inanimate objects and your inventory and how to view, manipulate, and manage them.
-                            </p>
-                        </dd>
-                        <dt>
-                            <strong><a href="../communication/index.dai">Smacky's Guide To Communication</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                You're never alone in Daimonin. There are, of course, dozens of other players as well as a host of non-player characters with whom you will frequently want to communicate...
-                            </p>
-                        </dd>
-                        <dt>
-                            <strong><a href="../combat/index.dai">Smacky's Guide To Combat</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                ... There is also a whole host of mobs with whom you will frequently want to, or at least have to, fight.
-                            </p>
-                        </dd>
-                        <dt>
-                            <strong><a href="../magic/index.dai">Smacky's Guide To Magic</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                Daimonin is a world of magic.
-                            </p>
-                        </dd>
-                        <dt>
-                             <strong><a href="../economics/index.dai">Smacky's Guide To Economics</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                Everybody sells, everybody buys.
-                            </p>
-                        </dd>
-                    </dl>
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Advanced Guides<br/>
-                    If you're happy with your grasp of the topics covered above, you could move on to this expert advice.
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <dl>
-                        <dt>
-                           <strong><a href="../tactics_&amp;_survival/index.dai">Smacky's Guide To Combat Tactics &amp; Survival</a></strong>
-                        </dt>
-                        <dd>
-                            <p>
-                                This is an advanced guide on the intricacies of fighting mobs and some tactics you might employ.
-                            </p>
-                            <p>
-                                Read this if you're a combat wombat.
-                            </p>
-                        </dd>
-                    </dl>
-                </td>
-            </tr>
-        </table>
+        <div class="advice">
+            <p>
+                    <img alt="[ADVICE]" src="../advice.png"/> To make things even easier for new players, logging in to a server and creating a character are handled in a somewhat <a href="./introduction.dai#tutorials">tutorial</a>-like way. So you may find it helpful to work though these sections as you run the client for the first time. <a href="../game_mechanics/secn_1.dai">Click here to do that</a>.
+            </p>
+        </div>
+        <section id="beginnerguides">
+            <title>
+                Beginner guides
+            </title>
+            <p>
+                All players should familiarise themselves with these guides
+            </p>
+            <section id="character">
+                <title>
+                    <a href="../character/index.dai">Smacky's Guide To The Character</a>
+                </title>
+                <p>
+                    This guide explains character creation, and how Daimonin measures and records your character's identity, abilities, and development.
+                </p>
+            </section>
+            <section id="gamemechanics">
+                <title>
+                    <a href="../game_mechanics/index.dai">Smacky's Guide To Game Mechanics</a>
+                </title>
+                <p>
+                    This guide contains important information on interacting with Daimoninand customoising the client, and reference appendices of commands and default keyboard shortcuts.
+                </p>
+            </section>
+        </section>
+        <section id="intermediateguides">
+            <title>
+                Intermediate guides
+            </title>
+            <p>
+                Once you understand yourself and how you fit into the world it's time to think about the world into which you fit.
+            </p>
+            <section id="manipulatingobjects">
+                <title>
+                    <a href="../manipulating_objects/index.dai">Smacky's Guide To Manipulating Objects</a>
+                </title>
+                <p>
+                    A good way to start is by considering inanimate objects and your inventory and how to view, manipulate, and manage them.
+                </p>
+            </section>
+            <section id="communication">
+                <title>
+                    <a href="../communication/index.dai">Smacky's Guide To Communication</a>
+                </title>
+                <p>
+                    You're never alone in Daimonin. There are, of course, dozens of other players as well as a host of non-player characters with whom you will frequently want to communicate...
+                </p>
+            </section>
+            <section id="combat">
+                <title>
+                    <a href="../combat/index.dai">Smacky's Guide To Combat</a>
+                </title>
+                <p>
+                    ... There is also a whole host of mobs with whom you will frequently want to, or at least have to, fight.
+                </p>
+            </section>
+            <section id="magic">
+                <title>
+                    <a href="../magic/index.dai">Smacky's Guide To Magic</a>
+                </title>
+                <p>
+                    Daimonin is a world of magic.
+                </p>
+            </section>
+            <section id="economics">
+                <title>
+                     <a href="../economics/index.dai">Smacky's Guide To Economics</a>
+                </title>
+                <p>
+                    Everybody sells, everybody buys.
+                </p>
+            </section>
+        </section>
+        <section id="advancedguides">
+            <title>
+                Advanced guides
+            </title>
+            <p>
+                If you're happy with your grasp of the topics covered above, you could move on to this expert advice.
+            </p>
+            <section id="tacticsandsurvival">
+                <title>
+                   <a href="../tactics_&amp;_survival/index.dai">Smacky's Guide To Combat Tactics &amp; Survival</a>
+                </title>
+                <p>
+                    This is an advanced guide on the intricacies of fighting mobs and some tactics you might employ.
+                </p>
+                <p>
+                    Read this if you're a combat wombat.
+                </p>
+            </section>
+        </section>
+    </section>
+    <section id="forums">
+        <title>
+            The forums
+        </title>
+        <div class="advice">
+            <p>
+                <img alt="[ADVICE]" src="../advice.png"/> As well as perusing <strong><em>Smacky's Guides</em></strong> it would be a <em>really good idea</em> for new players to read the stickies and maybe browse the other threads in the <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=19">Newbie Questions forum</a> which contain FAQs not addressed here, more detailed coverage of some technical issues, and lots of other bits of useful information to prevent a new player from looking like a <strong>noob</strong>.
+            </p>
+        </div>
     </section>
     <section id="about">
         <title>
             About Smacky's Guides
         </title>
-        <dl>
-            <dt>
-                <strong><a href="./introduction.dai">Introduction</a></strong>
-            </dt>
-            <dd>
-                <p>
-                    Read this if you lie awake at night worrying 'what are <strong><em>Smacky's Guides</em></strong>?' and 'just who is Smacky?'
-                </p>
-            </dd>
-            <dt>
-                <strong><a href="./editing.dai">Editing</a></strong>
-            </dt>
-            <dd>
-                <p>
-                    Read this if you think '<strong><em>Smacky's Guides</em></strong> would be better if ...'
-                </p>
-            </dd>
-            <dt>
-                <strong><a href="./acknowledgements.dai">Acknowledgements</a></strong>
-            </dt>
-            <dd>
-                <p>
-                    Read this if you've contributed to <strong><em>Smacky's Guides</em></strong> and like to see your name in italics. Or show it to someone else if you like other people to see your name in italics.
-                </p>
-            </dd>
-            <dt>
-                <strong><a href="./endorsements.dai">Endorsements</a></strong>
-            </dt>
-            <dd>
-                <p>
-                    Read this if you need other people's approval before you read things for yourself. Or if you want another chance to see your name in italics.
-                </p>
-            </dd>
-        </dl>
+        <section id="introduction">
+            <title>
+                <a href="./introduction.dai">Introduction</a>
+            </title>
+            <p>
+                Read this if you lie awake at night worrying 'what are <strong><em>Smacky's Guides</em></strong>?' and 'just who is Smacky?'
+            </p>
+        </section>
+        <section id="editing">
+            <title>
+                <a href="./editing.dai">Editing</a>
+            </title>
+            <p>
+                Read this if you think '<strong><em>Smacky's Guides</em></strong> would be better if ...'
+            </p>
+        </section>
+        <section id="acknowledgements">
+            <title>
+                <a href="./acknowledgements.dai">Acknowledgements</a>
+            </title>
+            <p>
+                Read this if you've contributed to <strong><em>Smacky's Guides</em></strong> and like to see your name in italics. Or show it to someone else if you like other people to see your name in italics.
+            </p>
+        </section>
+        <section id="endorsements">
+            <title>
+                <a href="./endorsements.dai">Endorsements</a>
+            </title>
+            <p>
+                Read this if you need other people's approval before you read things for yourself. Or if you want another chance to see your name in italics.
+            </p>
+        </section>
     </section>
-    <section id="legal">
+    <section id="copyrightandlicense">
         <title>
             Copyright &amp; license notice
         </title>
         <p>
-            Copyright (c) 2005,2006 Julian Arnold.
+            Copyright (c) 2005, 2006 Julian Arnold.
         </p>
         <p>
             Permission is granted to copy, distribute and/or modify this document under the terms of the <a href="./fdl.txt">GNU Free Documentation License, Version 1.2</a> or any later version published by the <a href="http://www.fsf.org/">Free Software Foundation</a>; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
@@ -178,8 +172,13 @@
         <p>
             This copyright and licence notice applies only to the text of this document. All graphics are taken from the <a href="http://www.daimonin.net/">Daimonin project</a> and used with permission. They remain subject to the copyright and licensing conditions specified in that project's <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/daimonin/daimonin/Artistic%20License">Artistic License</a>.
         </p>
+    </section>
+    <section id="disclaimer">
+        <title>
+            Disclaimer
+        </title>
         <p>
             While Smacky makes considerable effort to ensure the veracity of Smacky's Guides, Smacky's Guides are not necessarily correct. Where Smacky's Guides are correct, Smacky's Guides are correct for Daimonin vBETA3-0.966. All information of a technical nature in Smacky's Guides is given in good faith. As Smacky's Guides are supplied gratis, with no demand or request for payment or other recompense, Smacky is hereby pleased to announce that in no event whatsoever will he be held liable in any way for any loss of data, loss of earnings, loss of savings, general disappointment or other unhappiness resulting from the use of or abuse of or inability to use any and all information or misinformation within or indeed without Smacky's Guides, or from any admission or omission therein or thereof which either directly or indirectly causes any one, or any combination of two or more, of the aforementioned unpleasantries. On the other hand, feel free to attribute any good things which happen to you or those around you to Smacky's Guides in general, and to Smacky in particular.
         </p>
     </section>
-</section>
+</daiml>

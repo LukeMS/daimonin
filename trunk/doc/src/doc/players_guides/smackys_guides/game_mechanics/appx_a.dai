@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
-    <title>
-        APPENDIX A: GAME COMMANDS
-    </title>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics,, Appendix A: Game commands">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
     <section id="movement">
         <title>
             Movement
@@ -293,4 +291,4 @@
             </tr>
         </table>
     </section>
-</section>
+</daiml>

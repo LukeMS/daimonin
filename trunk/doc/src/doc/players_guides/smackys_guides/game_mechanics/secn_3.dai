@@ -1,239 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
-    <title>
-        SECTION 3: INTERACTING WITH DAIMONIN
-    </title>
-    <section id="overview">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 3: Options">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
         <title>
-            Overview
+            Introduction
         </title>
         <p>
-            You somehow need to interact with Daimonin, to tell the program how to behave and your character what to do.
+            At any point you can open the options menu by pressing ESCAPE (and press it again to close the menu and return to play).
         </p>
         <p>
-            To do this, for the most part, you <a href="#commandsdeta">enter textual commands</a>, either by typing them at the console or by pressing an appropriately bound key.
+            From this menu you have three options. You can:
         </p>
-        <p>
-            <img alt="[NOTE]" src="../smackys_guides/note.png"/> Given that you may have redefined your key bindings (as I have) <strong><em>Smacky's Guides</em></strong> refer to the actual commands you need to use, not the default bound key you should press. Obviously it's much quicker for you to simply press an key than type commands into the console every time so use common sense.
-        </p>
-        <p>
-            There is also a specialised <a href="#rangesystemdeta">range system</a> and a <a href="#quickbardeta">quickbar</a> which can be used in certain circumstances.
-        </p>
+        <ol>
+            <li>
+                open the <a href="#keysettings">key settings</a> dialog;
+            </li>
+            <li>
+                open the <a href="#settings">settings</a> dialog; or
+            </li>
+            <li>
+                <a href="./secn_1.dai#logout">logout</a>.
+            </li>
+        </ol>
     </section>
-    <section id="details">
+    <section id="keysettings">
         <title>
-            Details
+            Key Settings
         </title>
-        <section id="commandsdeta">
-            <title>
-                Commands
-            </title>
-            <dl>
-                <dt>
-                    <strong>Game commands</strong>
-                </dt>
-                <dd>
-                    <p>
-                        Game commands specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>).
-                    </p>
-                    <p>
-                        All game commands start with forward slash and are lowercase. Game commands are entered at the console or may be bound to a key (see below). To open the console, by default press ENTER (on the keypad) (the meta command <code>"?M_CONSOLE"</code>).
-                    </p>
-                    <p>
-                        See <a href="./appx_a.dai">"Appendix A: Game Commands"</a> for a complete list of game commands.
-                    </p>
-                </dd>
-                <dt>
-                    <strong>Meta commands</strong>
-                </dt>
-                <dd>
-                    <p>
-                        Meta commands generally influence the behaviour of the program (eg, <code>"?M_SKILL_LIST"</code> to open a dialog displaying all your character's skills).
-                    </p>
-                    <p>
-                        All meta commands start with <code>"?M_"</code> and are uppercase. Meta commands may not be entered at the console. They must be bound to a key (see below).
-                    </p>
-                    <p>
-                        See <a href="./appx_b.dai">"Appendix B: Meta Commands"</a> for a complete list of meta commands.
-                    </p>
-                </dd>
-                <dt>
-                    <strong>Bound keys</strong>
-                </dt>
-                <dd>
-                    <p>
-                        Individual game commands and meta commands can be bound to keys (as in keyboard not front door) (eg, you might bind the game command <code>"/cast minor healing"</code> to H).
-                    </p>
-                    <p>
-                        Many key bindings are predefined (see <a href="./appx_c.dai">"Appendix C: Default Bindings"</a> for a complete list.
-                    </p>
-                    <p>
-                        Detailed instructions on (re)binding keys are given in <a href="./secn_4-1.dai">"Section 4-1: Key Settings"</a>.
-                    </p>
-                </dd>
-            </dl>
-        </section>
-        <section id="rangesystemdeta">
-            <title>
-                Range system
-            </title>
-            <p>
-                <img alt="[Range system]" src="./rangesystem.png"/>
-            </p>
-            <p>
-                The range system provides an interface to allow you to perform certain more complex actions.
-            </p>
-            <p>
-                The range system windows are located towards the bottom left of the screen.
-            </p>
-            <section id="usingrangedeta">
-                <title>
-                    Using the range system
-                </title>
-                <p>
-                    Using the range system is very simple:
-                </p>
-                <ol>
-                    <li>
-                        Press TAB to cycle through the <a href="#settinguprangedeta">actions listed below</a>.
-                    </li>
-                    <li>
-                        When the desired action is shown and has been <a href="#settinguprangedeta">correctly set up</a> press CONTROL + direction to perform that action in the specified direction.
-                    </li>
-                </ol>
-            </section>
-            <section id="settinguprangedeta">
-                <title>
-                    Setting up the range system
-                </title>
-                <p>
-                    Generally the action will be shown in the lefthand window and the object of that action in the righthand window, as follows:
-                </p>
-                <dl>
-                    <dt>
-                        <strong>Archery</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            <img alt="[Archery]" src="./range_archery.png"/>
-                        </p>
-                        <p>
-                            If you have the appropriate <a href="../character/secn_1-5.dai#agdeta">archery skill</a>, a corresponding weapon, and ammunition to fit you can set up the range system to allow you to <a href="../combat/secn_2-2.dai#archery">fire that weapon</a>.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Mind control</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            <img alt="[Mind control]" src="./range_mindcontrol.png"/>
-                        </p>
-                        <p>
-                            Currently not implemented.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Ranged tools</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            <img alt="[Ranged tools]" src="./range_tool.png"/>
-                        </p>
-                        <p>
-                            A <a href="../magic/secn_2-2.dai">magic device</a> can be <a href="./manipulating_items/secn_1-3.dai">applied</a> to equip it as your current ranged tool.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Cast spells</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            <img alt="[Cast spells]" src="./range_spell.png"/>
-                        </p>
-                        <p>
-                            <a href="../magic/secn_1.dai">Spells and prayers can be cast</a> using the range system. Open the spell list dialog (<code>"?M_SPELL_LIST"</code>). Now navigate through the dialog with LEFT/RIGHT to toggle between spells and prayer, SHIFT + UP/DOWN to select a spell/prayer group, and UP/DOWN to highlight an individual spell/prayer. (See <a href="#quickbardeta">the image below</a>.)
-                        </p>
-                        <p>
-                            When you have highlighted the spell/prayer you want press RETURN to ready the highlighted spell/prayer and return to the game.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Throwing</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            <img alt="[Throwing]" src="./range_throwing.png"/>
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>General skills</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            <img alt="[General skills]" src="./range_skill.png"/>
-                        </p>
-                        <p>
-                            Open the skill list dialog (<code>"?M_SKILL_LIST"</code>). Navigate through the dialog with SHIFT + UP/DOWN to cycle through the skill groups, and UP/DOWN to highlight an individual skill.
-                        </p>
-                        <p>
-                            <img alt="[Skill list dialog]" src="./dialog_skilllist.png"/>
-                        </p>
-                        <p>
-                            When you have highlighted the skill you want press RETURN to ready the highlighted skill and return to the game.
-                        </p>
-                    </dd>
-                </dl>
-            </section>
-        </section>
-        <section id="quickbardeta">
-            <title>
-                Quickbar
-            </title>
-            <p>
-                <img alt="[Quickbar]" src="./quickbar.png"/>
-            </p>
-            <section id="usingquickbardeta">
-                <title>
-                    Using the quickbar
-                </title>
-                <p>
-                    The quickbar can be used to quickly ready <a href="../magic/secn_1.dai">spells/prayer for casting</a> or <a href="../manipulating_objects/secn_1-3.dai">apply</a> items in your <a href="../manipulatinig_objects/secn_1.dai">inventory</a>.
-                </p>
-                <p>
-                    There are eight slots in the quickbar. These are accessed by pressing one of the predefined quickslot keys, F1 to F8.
-                </p>
-                <p>
-                    Items are applied immediately, according to the <a href="../manipulating_objects/secn_1-3.dai">normal rules</a>, while spells/prayers are readied in the range system for subsequent casting as <a href="#rangesystemdeta">detailed above</a>.
-                </p>
-            </section>
-            <section id="settingupquickbardeta">
-               <title>
-                   Setting up the quickbar
-                </title>
-                <dl>
-                    <dt>
-                        <strong>Spells/prayers</strong>
-                    </dt>
-                    <dd>
-                        <p>
-                            To assign a spell/prayer to the quickbar open the spell list dialog (<code>"?M_SPELL_LIST"</code>). Now navigate through the dialog with LEFT/RIGHT to toggle between spells and prayer, SHIFT + UP/DOWN to select a spell group, and UP/DOWN to highlight an individual spell/prayer.
-                        </p>
-                        <p>
-                            <img alt="[Spell list dialog]" src="./dialog_spelllist.png"/>
-                        </p>
-                        <p>
-                            When you have highlighted the spell/prayer you want press one of the quickslot keys (F1-F8) to assign it to that quickslot. When you're done press ESCAPE to close the dialog and return to the game.
-                        </p>
-                    </dd>
-                    <dt>
-                        <strong>Items</strong>
-                    </dt>
-                    <dd>
-                        <p/>
-                    </dd>
-                </dl>
-            </section>
-        </section>
+        <p>
+            You can bind and rebind <a href="./secn_2-1.dai#gamecommands">game</a> and <a href="./secn_2-1.dai#metacommands">meta commands</a> to most keys on the keyboard.
+        </p>
+        <p>
+            Key binding is detailed in <a href="./secn_3-1.dai">"Section 3-1: Key settings"</a>
+        </p>
     </section>
-</section>
+    <section id="settings">
+        <title>
+            Settings
+        </title>
+        <p>
+            There are many options to alter and customise the appearance and behaviour of Daimonin.
+        </p>
+        <p>
+            Changing options is detailed in <a href="./secn_3-2.dai">Section 3-2: Settings</a>
+        </p>
+    </section>
+</daiml>

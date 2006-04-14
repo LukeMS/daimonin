@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 5: Armour protections">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            Armour protections are the proportion of damage you can absorb from any particular attack type. There are 20 different types of attack in Daimonin and when you are hit by one of these you will take damage; that is, you will lose <a href="./secn_3.dai#hitpoints">hit points</a>. Depending on your armour and magical protections damage from any or all of these attack types may be reduced by varying amounts.
+        </p>
+        <p>
+            Armour protections are represented by percentage figures. If you have 0% electricity protection you will take maximum damage from an electrical attack, while if you have 50% cleave protection you will take only half damage from a blow from an axe.
+        </p>
+    </section>
+    <section id="physical">
+        <title>
+            Physical armour protections
+        </title>
+        <p>
+            These protections are from physical damage such as cuts, bruises, scrapes, and a bloody nose:
+        </p>
+        <section id="impact">
+            <title>
+                Impact (I)
+            </title>
+            <p>
+                For example, bashing and crushing weapons.
+            </p>
+        </section>
+        <section id="slash">
+            <title>
+                Slash (S)
+            </title>
+            <p>
+                For example, cutting and slicing weapons.
+            </p>
+        </section>
+        <section id="cleave">
+            <title>
+                Cleave (C)
+            </title>
+            <p>
+                For example, chopping and hewing weapons.
+            </p>
+        </section>
+        <section id="pierce">
+            <title>
+                Pierce (P)
+            </title>
+            <p>
+                For example, stabbing and thrusting weapons.
+            </p>
+        </section>
+        <section id="weaponmagic">
+            <title>
+                Weapon magic (W)
+            </title>
+            <p>
+                ???
+            </p>
+        </section>
+    </section>
+    <section id="elemental">
+        <title>
+            Elemental armour protections
+        </title>
+        <p>
+            These protections are from elemental damage such as immolation and electrocution.
+        </p>
+        <section id="fire">
+            <title>
+                Fire (F)
+            </title>
+            <p>
+                For example, suffering burns or scorches.
+            </p>
+        </section>
+        <section id="cold">
+            <title>
+                Cold (C)
+            </title>
+            <p>
+                For example, being chilled or frozen.
+            </p>
+        </section>
+        <section id="electricity">
+            <title>
+                Electricity (E)
+            </title>
+            <p>
+                For example, being shocked or zapped by a source of electricity.
+            </p>
+        </section>
+        <section id="poison">
+            <title>
+                Poison (P)
+            </title>
+            <p>
+                For example, absorbing a venomous substance into your blood stream.
+            </p>
+        </section>
+        <section id="acid">
+            <title>
+                Acid (A)
+            </title>
+            <p>
+                For example, coming into contact with a corrosive substance.
+            </p>
+        </section>
+    </section>
+    <section id="magical">
+        <title>
+            Magical armour protections
+        </title>
+        <p>
+            These protections are currently not implemented:
+        </p>
+        <section id="magic">
+            <title>
+                Magic (M)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="mind">
+            <title>
+                Mind (Mi)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="body">
+            <title>
+                Body (B)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="psionic">
+            <title>
+                Psionic (P)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="force">
+            <title>
+                Force (F)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+    </section>
+    <section id="spherical">
+        <title>
+            Spherical armour protections
+        </title>
+        <p>
+            These protections are currently not implemented:
+        </p>
+        <section id="nether">
+            <title>
+                Nether (N)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="chaos">
+            <title>
+                Chaos (Ch)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="death">
+            <title>
+                Death (D)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="spiritual">
+            <title>
+                Spiritual (Sp)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="corruption">
+            <title>
+                Corruption (Co)
+            </title>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+    </section>
+</daiml>

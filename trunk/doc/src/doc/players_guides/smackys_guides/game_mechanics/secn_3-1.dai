@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 3-1: Key settings">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
+        <title>
+            Key bindings
+        </title>
+        <p>
+            Key bindings are a very useful shortcut to enable you to enter any <a href="./secn_2-1.dai#gamecommands">game command</a>, <a href="./secn_2-1.dai#metacommands">meta command</a>, or other macro with a single keystroke.
+        </p>
+        <p>
+            Daimonin knows several <a href="./appx_c.dai">default</a> key bindings. These may easily be <a href="#binding">changed and new ones created</a>.
+        </p>
+    </section>
+    <section id="binding">
+        <title>
+            Changing/creating key bindings
+        </title>
+        <p>
+            To add a new binding or alter an existing one use the <a href="./secn_2-4.dai#bindkeys">bind keys dialog</a>. When you have selected a slot:
+        </p>
+        <ol>
+            <li>
+                type the macro you require. This may be a <a href="./secn_2-1.dai#gamecommands">game command</a>, a <a href="./secn_2-1.dai#metacommands">meta command</a>, or any other text string. If a macro already exists in that slot, it is preserved and you can edit it. When you are done press RETURN;
+            </li>
+            <li>
+                press a key to bind the macro to that key; and
+            </li>
+            <li>
+                press 'R' to toggle whether the macro will repeat for as long as you hold the key down (on, the default) or just be triggered once per keypress (off).
+            </li>
+        </ol>
+        <p>
+            Press 'D' to save the bindings and return to the game.
+        </p>
+        <p>
+            Now when you press the bound key the associated macro will be sent to the console.
+        </p>
+        <div class="advice">
+            <p>
+                <img alt="[ADVICE]" src="../advice.png"/> A very useful meta command is <code>"?M_MCON"</code>. If this prefixes a game command, the console will remain open after the macro has been sent, allowing you to manually complete the command. For example, the macro <code>"?M_MCON/shout "</code> sends the text <code>"/shout "</code> to the console, leaving you to type the message you wish to shout and press RETURN to send it.
+            </p>
+        </div>
+    </section>
+</daiml>

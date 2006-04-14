@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-4: Using dialogs">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="usingdialogs">
+        <title>
+            Using dialogs
+        </title>
+    <p>
+        Using dialogs is actually fairly self-explanatory and each dialog has instructions on which keys do what printed on the window itself.
+    </p>
+    <p>
+        Nevertheless, this section documents each of the <a href="#ingamedialogs">ingame dialogs</a>.
+    </p>
+    <section id="ingamedialogs">
+        <title>
+            The ingame dialogs
+        </title>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> As the server selection and login dialogs have been detailed in <a href="./secn_1.dai#loggingin">"Section 1: Logging in &amp; logging out"</a> and the character creation dialog in <a href="../character/secn_1.dai">"Smacky's Guide To The Character, Section 1: Character Creation"</a> those dialogs will not be covered again here.
+           </p>
+        </div>
+        <section id="spelllist">
+            <title>
+                The spell list dialog
+            </title>
+            <p>
+                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_SPELL_LIST"</code> ('F9' by <a href="./appx_c.dai">default</a>).
+            </p>
+            <div class="dialog">
+                <p>
+                    <img alt="[Spell list dialog]" src="./dialog_spelllist.png"/>
+                </p>
+                <table>
+                    <tr>
+                        <th>
+                            LEFT/RIGHT
+                        </th>
+                        <td>
+                            toggle between spells and prayers
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            SHIFT + UP/DOWN
+                        </th>
+                        <td>
+                            select a spell/prayer path
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            UP/DOWN
+                        </th>
+                        <td>
+                            highlight an individual spell/prayer
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            RETURN
+                        </th>
+                        <td>
+                            ready the higlighted spell/prayer and return to the game
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            F1 - F8
+                        </th>
+                        <td>
+                            assign the highlighted spell/prayer to the specified quickslot
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            ESCAPE
+                        </th>
+                        <td>
+                            abort the dialog and return to the game
+                        </td>
+                    </tr>
+                </table>
+                <p/>
+            </div>
+            <p>
+                Casting a selected spell/prayer is detailed in <a href="./secn_2-2.dai#casting">"Section 2-2: The range system"</a> and <a href="./secn_2-3.dai#spells">"Section 2-3: The quickbar"</a>.
+            </p>
+        </section>
+        <section id="skilllist">
+            <title>
+                The skill list dialog
+            </title>
+            <p>
+                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_SKILL_LIST"</code> ('F10' by <a href="appx_c.dai">default</a>).
+            </p>
+            <div class="dialog">
+                <p>
+                    <img alt="[Skill list dialog]" src="./dialog_skilllist.png"/>
+                </p>
+                <table>
+                    <tr>
+                        <th>
+                            SHIFT + UP/DOWN
+                        </th>
+                        <td>
+                            select a skill group
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            UP/DOWN
+                        </th>
+                        <td>
+                            highlight an individual skill
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            RETURN
+                        </th>
+                        <td>
+                            ready the higlighted skill and return to the game
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            ESCAPE
+                        </th>
+                        <td>
+                            abort the dialog and return to the game
+                        </td>
+                    </tr>
+                </table>
+                <p/>
+            </div>
+            <p>
+                Using a selected skill is detailed in <a href="./secn_2-2.dai#doing">"Section 2-2: The range system"</a>.
+            </p>
+        </section>
+        <section id="bindkeys">
+            <title>
+                The bind keys dialog
+            </title>
+            <p>
+                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_KEYBIND"</code> ('F11' by <a href="./appx_c.dai">default</a>).
+            </p>
+            <div class="dialog">
+                <p>
+                    <img alt="[Bind keys dialog]" src="./dialog_bindkeys.png"/>
+                </p>
+                <table>
+                    <tr>
+                        <th>
+                            SHIFT + UP/DOWN
+                        </th>
+                        <td>
+                            select a group
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            UP/DOWN
+                        </th>
+                        <td>
+                            highlight an individual slot
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            RETURN
+                        </th>
+                        <td>
+                            change/create a keybinding
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            'R'
+                        </th>
+                        <td>
+                            toggle repeat on/off for the highlighted binding
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            'D'
+                        </th>
+                        <td>
+                            save the bindings list and return to the game
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            ESCAPE
+                        </th>
+                        <td>
+                            abort the dialog and return to the game
+                        </td>
+                    </tr>
+                </table>
+                <p/>
+            </div>
+        </section>
+        <section id="options">
+            <title>
+                The options dialogs
+            </title>
+            <p>
+                <img alt="[Options dialog]" src="./dialog_options.png"/>
+            </p>
+        </section>
+    </section>
+    </section>
+</daiml>

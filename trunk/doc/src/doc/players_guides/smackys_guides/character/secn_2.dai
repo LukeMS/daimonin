@@ -1,69 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
-    <title>
-        SECTION 2: DEATH
-    </title>
-    <section id="overview">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 2: Your identity">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="name">
         <title>
-            Overview
+            Name
         </title>
         <p>
-            There's no easy way to say this. As in the real world, everyone dies eventually.
+            Your name is simply the name used to login to the game.
         </p>
     </section>
-    <section id="details">
+    <section id="gender">
         <title>
-            Details
+            Gender
         </title>
-        <section id="afterlifedeta">
+        <p>
+            Gender is pretty much standard, either male or female.
+        </p>
+    </section>
+    <section id="race">
+        <title>
+            Race
+        </title>
+        <p>
+            This indicates ŧhe race you chose during <a href="./secn_1.dai">character creation</a>. The races currently available are:
+        </p>
+        <section id="human">
             <title>
-                Is there an afterlife?
+                Human
             </title>
             <p>
-                Happily, unlike the real world, death is not permanent. Also, there is no limit on how often or frequently you can die.
+                <img alt="[Male human]" src="./humanmale.png"/>
+                <img alt="[Female human]" src="./humanfemale.png"/>
             </p>
+            <table>
+                <tr>
+                    <th>
+                        Primary stat
+                    </th>
+                    <td>
+                        Str
+                    </td>
+                    <td>
+                        Dex
+                    </td>
+                    <td>
+                        Con
+                    </td>
+                    <td>
+                        Int
+                    </td>
+                    <td>
+                        Wis
+                    </td>
+                    <td>
+                        Pow
+                    </td>
+                    <td>
+                        Cha
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Base value
+                    </th>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                </tr>
+            </table>
         </section>
-        <section id="wheregodeta">
+        <section id="halfelf">
             <title>
-                Where do I go?
+                Half-elf
             </title>
             <p>
-                When you die you will be transported back to the church (or to bed if you own an apartment).
+                <img alt="[Male half-elf]" src="./halfelfmale.png"/>
+                <img alt="[Female half-elf]" src="./halfelffemale.png"/>
             </p>
-        </section>
-        <section id="whathappensdeta">
-            <title>
-                What happens to me?
-            </title>
-            <p>
-                You will also be cured of any disease you are currently suffering and relieved of any poison in your bloodstream.
-            </p>
-            <p>
-                If your level is three or above you will also lose a chunk of <a href="./secn_1-5.dai#expetcover">experience</a> from <em>every</em> <a href="./secn_1-5.dai#skillsover">skill</a> (although you cannot lose a level in this way), and possibly one point from a random <a href="./secn_1-3.dai#statsover">stat</a>.
-            </p>
-        </section>
-        <section id="fondmemoriesdeta">
-            <title>
-                Will I be remembered?
-            </title>
-            <p>
-                <img alt="[Gravestone]" src="./gravestone.png"/>
-            </p>
-            <p>
-                A temporary gravestone marks the spot where you met your demise.
-            </p>
-            <p>
-                Also, a short message (your name and cause of death) is broadcast to all players for their amusement.
-            </p>
-        </section>
-        <section id="lifegoesondeta">
-            <title>
-                What happens next?
-            </title>
-            <p>
-                Now wipe away the tears and go and avenge your death!
-            </p>
+            <table>
+                <tr>
+                    <th>
+                        Primary stat
+                    </th>
+                    <td>
+                        Str
+                    </td>
+                    <td>
+                        Dex
+                    </td>
+                    <td>
+                        Con
+                    </td>
+                    <td>
+                        Int
+                    </td>
+                    <td>
+                        Wis
+                    </td>
+                    <td>
+                        Pow
+                    </td>
+                    <td>
+                        Cha
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Base value
+                    </th>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        13
+                    </td>
+                    <td>
+                        11
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        11
+                    </td>
+                    <td>
+                        13
+                    </td>
+                    <td>
+                        12
+                    </td>
+                </tr>
+            </table>
         </section>
     </section>
-</section>
+    <section id="profession">
+        <title>
+            Profession
+        </title>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> You will often see players in-game and on the forums referring to mages, warriors, and priests. This is to do with which skills have been developed, chosen equipment, and preferred method of combat. There are no rigid classes in Daimonin.
+            </p>
+        </div>
+    </section>
+    <section id="alignment">
+        <title>
+            Alignment
+        </title>
+        <p/>
+    </section>
+    <section id="faith">
+        <title>
+            Faith
+        </title>
+        <p/>
+    </section>
+</daiml>

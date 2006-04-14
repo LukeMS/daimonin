@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Overview">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="charactercreation">
+        <title>
+           Character creation
+        </title>
+        <p>
+            You're probably itching to create a character and dive right in. Of course, you <em>can</em> do this, but it's in your interests to read the rest of this short overview first.
+        </p>
+        <p>
+            Still, if you really must, jump to <a href="./secn_1.dai">"Section 1: Character creation"</a> straight away. Otherwise, read on.
+        </p>
+    </section>
+    <section id="identity">
+        <title>
+            Identity
+        </title>
+        <p>
+            In the top left corner is some basic textual information about your character's identity. Much of this information is currently of no consequence to gameplay. For now, simply note that this shows your character's name (hereafter, simply 'you') and race.
+        </p>
+        <p>
+            All the identity information is detailed in <a href="./secn_2.dai">"Section 2: Your identity"</a>.
+        </p>
+    </section>
+    <section id="statsandhealthindicators">
+        <title>
+            Primary stats, secondary stats, &amp; health indicators
+        </title>
+        <p>
+            In Daimonin, your fundamental attributes -- your physical strength, toughness, intelligence, and so on -- are represented by seven primary statistics, usually simply referred to as stats. These are determined during character creation.
+        </p>
+        <p>
+            Primary stats may only be increased, temporarily, by magical means. They do not increase as you advance in level. They may randomly deplete if you die. They will stay depleted until magically restored.
+        </p>
+        <p>
+            More specialised than primary stats, secondary stats are mostly of importance in (melee) combat. They affect things like your chances of hitting with your attacks, dodging those aimed at you, the amount of damage you inflict, and so on.
+        </p>
+        <p>
+            Your current wellbeing is shown by a number of health indicators, including hit points (which indicate the amount of physical punishment you can take before you <a href="#death">die</a>), mana (which indicates your reserves of magical power, necessary for casting spells), and grace (which is similar to mana but needed for invoking prayers).
+        </p>
+        <p>
+            Primary stats influence your secondary stats and the maximum values of your health indicators.
+        </p>
+        <p>
+            Primary stats, secondary stats, and health indicators are detailed in <a href="./secn_3.dai">"Section 3: Stats &amp; health indicators"</a>.
+        </p>
+    </section>
+    <section id="skillsexperienceandlevels">
+        <title>
+            Skills, experience, &amp; levels
+        </title>
+        <p>
+            Your ability to perform any given task, of any significant complexity, is represented through the skill system. Skills determine your proficiency with certain melee or ranged weapons, your aptitude for casting magical spells, even your ability to read and write, and so on.
+        </p>
+        <p>
+            In general, successfully performing a skill will gain experience in that skill. Once you gain sufficient experience in a skill you will increase your level in that skill.
+        </p>
+        <p>
+            As you level certain skills, some of your <a href="#statsandhealthindicators">secondary stats and health indicators</a> may also increase.
+        </p>
+        <p>
+            Skills, experience, and levels are detailed in <a href="./secn_4.dai">"Section 4: Skills, experience, &amp; levels"</a>.
+        </p>
+    </section>
+    <section id="armourprotections">
+        <title>
+            Armour protections
+        </title>
+        <p>
+            There are 20 different types of attack in Daimonin. When you are hit by one of these you will take damage; that is, you will lose <a href="#statsandhealthindicators">hit points</a>. Depending on your armour and magical protections damage from any or all of these attack types may be reduced by varying amounts.
+        </p>
+        <p>
+            Armour protections are detailed in <a href="./secn_5.dai">"Section 5: Armour protections"</a>.
+        </p>
+    </section>
+    <section id="death">
+        <title>
+            Death
+        </title>
+        <p>
+            When you lose all your <a href="#statsandhealthindicators">hit points</a> you die.
+        </p>
+        <p>
+            Death is detailed in <a href="./secn_6.dai">"Section 6: Death"</a>.
+        </p>
+    </section>
+</daiml>
