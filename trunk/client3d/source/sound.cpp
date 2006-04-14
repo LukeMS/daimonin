@@ -24,6 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "fmod_errors.h"
 #include "define.h"
 #include "sound.h"
+#include "option.h"
 #include "logger.h"
 
 /// We can't use c++ api on non m$ compilers - shame on fmod!
@@ -60,8 +61,9 @@ const float DISTANCEFACTOR = 1.0f; /// Units per meter. (feet = 3.28.  cm = 100)
 ///================================================================================================
 bool Sound::Init()
 {
-  Logger::log().headline("Init Sound-System");
   mInit = false;
+  if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
+  Logger::log().headline("Init Sound-System");
   /// ////////////////////////////////////////////////////////////////////
   /// Create the main system object.
   /// ////////////////////////////////////////////////////////////////////

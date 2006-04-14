@@ -86,6 +86,7 @@ public:
     CMDLINE_SERVER_NAME,
     CMDLINE_SERVER_PORT,
     CMDLINE_FALLBACK,
+    CMDLINE_OFF_SOUND,
     SUM_OPTIONS
   };
   enum selType

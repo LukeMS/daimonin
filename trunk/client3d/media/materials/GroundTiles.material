@@ -27,7 +27,7 @@ material Land_HighDetails128
 				texture terrain_texture_128.png
 				tex_coord_set 0
 				tex_address_mode clamp
-				filtering linear linear linear
+				filtering linear linear point
 			}
 
 			texture_unit 1
@@ -35,12 +35,13 @@ material Land_HighDetails128
 				texture terrain_texture_128.png
 				tex_coord_set 1
 				colour_op alpha_blend
-				filtering linear linear linear
+				filtering linear linear point
 			}
 
 		}
 	}
 }
+
 material Land_HighDetails128_Grid
 {
 	technique
@@ -178,58 +179,6 @@ material Land_HighDetails032_Grid
 	}
 }
 
-material Land_HighDetails016
-{
-	technique
-	{
-		pass
-		{
-			texture_unit 0 
-			{
-				texture terrain_texture_016.png 2d 0
-				tex_coord_set 0
-				tex_address_mode clamp
-			}
-
-			texture_unit 1
-			{
-				texture terrain_texture_016.png 2d 0
-				tex_coord_set 1
-				colour_op alpha_blend
-			}
-
-		}
-	}
-}
-material Land_HighDetails016_Grid
-{
-	technique
-	{
-		pass
-		{
-			texture_unit 0 
-			{
-				texture terrain_texture_016.png
-				tex_coord_set 0
-				tex_address_mode clamp
-			}
-
-			texture_unit 1
-			{
-				texture terrain_texture_016.png
-				tex_coord_set 1
-				colour_op alpha_blend
-			}
-			texture_unit 2
-			{
-				filtering none
-				texture grid_128.png
-				tex_coord_set 2
-				colour_op alpha_blend
-			}
-		}
-	}
-}
 
 
 material Land_LowDetails
@@ -240,39 +189,14 @@ material Land_LowDetails
 		{
 			texture_unit 0 
 			{
+				filtering linear linear none
+				//filtering none
 				texture terrain_texture_016.png 2d 0
  				tex_coord_set 0
- 				tex_address_mode clamp
  			}
 		}
 	}
 }
-
-material Land_LowDetails_Grid
-{
-	technique
-	{
-		pass
-		{
-			texture_unit 0 
-			{
-				texture terrain_texture_016.png
-				tex_coord_set 0
-				tex_address_mode clamp
-				filtering none
-			}
-			texture_unit 1
-			{
-				filtering none
-				texture grid_128.png
-				tex_coord_set 2
-				colour_op alpha_blend
-			}
-		}
-	}
-}
-
-
 
 material Water_HighDetails
 {
