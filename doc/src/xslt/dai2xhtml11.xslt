@@ -74,7 +74,8 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
                 </xsl:if>
                 <xsl:apply-templates/>
                 <p>
-                    <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
+                    <xsl:text>Last modified: </xsl:text>
+                    <xsl:value-of select="current-dateTime()"/>
                 </p>
             </body>
         </html>
@@ -162,6 +163,7 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
             <xsl:apply-templates/>
         </pre>
     </xsl:template>
+
 
     <xsl:template match="a">
         <a href="{replace(@href, '.dai', '.xhtml')}">
