@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-2: The range system">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            The range system provides an interface to allow you to perform certain more complex actions.
+        </p>
+        <p>
+            Visually, the range system is represented by two icons, side-by-side:
+        </p>
+        <p>
+            <img alt="[Range system]" src="./rangesystem.png"/>
+        </p>
+        <p>
+            The lefthand icon shows the currently selected <a href="#actions">action</a> (for example, that you wish to <a href="#throwing">throw</a> an item or use a <a href="#rangedtools">ranged tool</a>). The righthand icon shows the chosen focus of that <a href="#actions">action</a> (for example, the ammunition to be used with <a href="#archery">archery</a> or the spell to be <a href="#casting">cast</a>).
+        </p>
+        <p>
+            To cycle through the <a href="#actions">available actions</a> enter the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_RANGE"</code> (TAB by <a href="./appx_c.dai">default</a>).
+        </p>
+        <section id="actions">
+            <title>
+                Available actions
+            </title>
+            <section id="archery">
+                <title>
+                    Archery
+                </title>
+                <p>
+                    <img alt="[Archery]" src="./range_archery.png"/>
+                </p>
+                <p>
+                    If you have the appropriate <a href="../character/secn_4.dai#archery">archery skill</a>, a corresponding weapon, and ammunition to fit you can set up the range system to allow you to fire that weapon.
+                </p>
+            </section>
+            <section id="mindcontrol">
+                <title>
+                    Mind control
+                </title>
+                <p>
+                    <img alt="[Mind control]" src="./range_mindcontrol.png"/>
+                </p>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="rangedtools">
+                <title>
+                    Ranged tools
+                </title>
+                <p>
+                    <img alt="[Ranged tools]" src="./range_tool.png"/>
+                </p>
+            </section>
+            <section id="casting">
+                <title>
+                    Cast spells
+                </title>
+                <p>
+                    <img alt="[Cast spells]" src="./range_spell.png"/>
+                </p>
+                <p>
+                    To cast a spell/prayer via the range system simply choose the spell/prayer from the <a href="./secn_2-4.dai#spelllist">spell list dialog</a>.
+                </p>
+            </section>
+            <section id="throwing">
+                <title>
+                    Throwing
+                </title>
+                <p>
+                    <img alt="[Throwing]" src="./range_throwing.png"/>
+                </p>
+            </section>
+            <section id="doing">
+                <title>
+                    General skills
+                </title>
+                <p>
+                    <img alt="[General skills]" src="./range_skill.png"/>
+                </p>
+                <p>
+                    To use a skill via the range system simply choose the skill from the <a href="./secn_2-4.dai#skilllist">skill list dialog</a>.
+                </p>
+            </section>
+        </section>
+    </section>
+</daiml>

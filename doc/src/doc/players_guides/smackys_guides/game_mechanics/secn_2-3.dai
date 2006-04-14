@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-3: The quickbar">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            The quickbar can be used to quickly ready spells/prayers for casting or apply items in your inventory.
+        </p>
+        <p>
+            <img alt="[Quickbar]" src="./quickbar.png"/>
+        </p>
+        <p>
+            There are eight slots in the quickbar. These are accessed by pressing one of the predefined quickslot keys, F1 to F8.
+        </p>
+        <p>
+            Items are applied immediately, according to the normal rules, while spells/prayers are readied in the range system for subsequent <a href="./secn_2-2.dai#casting">casting</a>.
+        </p>
+        <section id="spells">
+            <title>
+                Spells/prayers
+            </title>
+            <p/>
+        </section>
+        <section id="items">
+            <title>
+                Items
+            </title>
+            <p/>
+        </section>
+    </section>
+</daiml>

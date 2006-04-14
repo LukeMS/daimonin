@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Game Mechanics, Section 3-2: Settings">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section>
+        <title>
+            Introduction
+        </title>
+        <p>
+            THIS SPACE INTENTIONALLY LEFT BLANK
+        </p>
+    </section>
+</daiml>

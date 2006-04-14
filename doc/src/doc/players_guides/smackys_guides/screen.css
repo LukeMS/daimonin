@@ -1,0 +1,186 @@
+/* General */
+
+body
+{
+    margin-left:3em;
+    margin-right:1em;
+}
+
+a:link, a:visited
+{
+    color:darkslateblue;
+}
+
+a:hover
+{
+    background:darkgoldenrod;
+}
+
+a:active
+{
+    background:goldenrod;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+    text-align:left;
+}
+
+h1
+{
+    font-size:200%;
+}
+
+h2
+{
+    font-size:185%;
+}
+
+h3
+{
+    font-size:170%;
+}
+
+h4
+{
+    font-size:155%;
+}
+
+h5
+{
+    font-size:140%;
+}
+
+h6
+{
+    font-size:125%;
+}
+
+h1 :link, h2 :link, h3 :link, h4 :link, h5 :link, h6 :link, h1 :visited, h2 :visited, h3 :visited, h4 :visited, h5 :visited, h6 :visited
+{
+    color:white;
+}
+
+p
+{
+    background:white;
+    color:black;
+    font-size:100%;
+    text-align:justify;
+}
+
+table
+{
+    border:thin solid darkslateblue;
+    margin-left:1em;
+}
+
+td
+{
+    background:white;
+    border:none;
+}
+
+th
+{
+    background:lightsteelblue;
+    border:none;
+    text-align:center;
+}
+
+
+/* advice and note */
+
+div.advice, div.note
+{
+    background:lightsteelblue;
+    border:thin solid darkslateblue;
+    margin-left:1em;
+    margin-top:2px;
+    padding:2px;
+}
+
+div.advice img, div.note img
+{
+    float:left;
+    margin-right:1em;
+}
+
+div.advice p, div.note p
+{
+    background:lightsteelblue;
+}
+
+
+/* dialog */
+
+div.dialog
+{
+    border:thin solid white;
+    margin-bottom:1em;
+}
+
+div.dialog img
+{
+    float:left;
+    margin-right:1em;
+}
+
+div.dialog p
+{
+    clear:both;
+}
+
+
+/* document */
+
+div.document h1
+{
+    background:slateblue;
+    border-top:thick solid darkslateblue;
+    color:white;
+    padding:2px;
+    text-align:center;
+}
+
+
+/* section */
+
+div.section
+{
+    border-bottom:thin solid darkslateblue;
+    margin-left:1em;
+    padding-bottom:2px;
+}
+
+div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
+{
+    background:slateblue;
+    border-top:thick solid darkslateblue;
+    color:white;
+    padding:2px;
+}
+
+
+/* toc */
+
+div.toc
+{
+    background:lightsteelblue;
+    border:thin solid darkslateblue;
+    font-size:66%;
+    text-align:left;
+    width:35%;
+}
+
+div.toc h2
+{
+    background:slateblue;
+    color:white;
+    padding:2px;
+}
+
+p.toc
+{
+    text-align:right;
+}

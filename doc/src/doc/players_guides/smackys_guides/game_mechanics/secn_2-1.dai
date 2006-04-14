@@ -1,16 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section>
-    <title>
-        SECTION 2-1: THE TUTORIAL
-    </title>
-    <p>
-        <img alt="[NOTE]" src="../smackys_guides/note.png"/> The tutorial, as you might suppose, will guide you through the basic game mechanics. As well, your character can gain items and money, skills, a god to worship, and a prayer in the tutorial so it is important that you <strong>play through all of it and pay attention</strong>.
-    </p>
-    <p>
-        As there is plenty of in-game explanation the tutorial is not covered in detail here.
-    </p>
-    <p>
-        When you have completed the tutorial, walk into the portal to enter Daimonin proper!
-    </p>
-</section>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-1: Commands &amp; bound keys">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="commands">
+        <title>
+            Commands
+        </title>
+        <p>
+            Daimonin knows two flavours of command, <a href="#gamecommands">game commands</a> and <a href="#metacommands">meta commands</a>.
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> I classified the commands thusly when I first wrote <strong><em>Smacky's Guides</em></strong>. The names aren't entirely accurate but they're good enough. In fact, the difference is that game commands often (but not always) take one or more arguments (eg, <code>"/apply &lt;item&gt;"</code>) whereas meta commands never do (they may, however, act on the item highlighted by the cursor in the inventory or below windows).
+            </p>
+        </div>
+        <section id="gamecommands">
+            <title>
+                Game commands
+            </title>
+            <p>
+                Game commands tend to specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>).
+            </p>
+            <p>
+                All game commands start with forward slash and are lowercase. Game commands are entered at the console or may be <a href="#boundkeys">bound to a key</a>. To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
+            </p>
+            <p>
+                You will now see a cursor in the lower textwindow. This means you can start typing (<a href="#boundkeys">key bindings</a> are ignored).
+            </p>
+            <p>
+                The rules in the console are simple. If the text you enter begins with a backslash ('/') it is taken as a <a href="#gamecommands">game command</a>. Otherwise the text will be echoed to other players (and NPCs) nearby.
+            </p>
+            <p>
+                In the console, a number of editing keys are available:
+            </p>
+            <table>
+                <tr>
+                    <th>
+                        LEFT/RIGHT
+                    </th>
+                    <td>
+                        move the cursor within the text you have typed
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        HOME/END
+                    </th>
+                    <td>
+                        move to the beginning/end of the string
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        UP/DOWN
+                    </th>
+                    <td>
+                        cycle through the history
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        DELETE/BACKSPACE
+                    </th>
+                    <td>
+                        delete the next/previous character from the cursor
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        RETURN/KPENTER
+                    </th>
+                    <td>
+                        enter any text you have typed and return to the game
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        ESCAPE
+                    </th>
+                    <td>
+                        return to the game
+                    </td>
+                </tr>
+            </table>
+            <p>
+                See <a href="./appx_a.dai">"Appendix A: Game commands"</a> for a complete list of game commands.
+            </p>
+        </section>
+        <section id="metacommands">
+            <title>
+                Meta commands
+            </title>
+            <p>
+                Meta commands generally influence the behaviour of the program (eg, <code>"?M_SKILL_LIST"</code> to open a dialog displaying all your character's skills).
+            </p>
+            <p>
+                All meta commands start with <code>"?M_"</code> and are uppercase. Meta commands may not be entered at the console. They must be <a href="#boundkeys">bound to a key</a>.
+            </p>
+            <p>
+                See <a href="./appx_b.dai">"Appendix B: Meta commands"</a> for a complete list of meta commands.
+            </p>
+        </section>
+    </section>
+    <section id="boundkeys">
+        <title>
+            Bound keys
+        </title>
+        <p>
+            Individual <a href="#gamecommands">game commands</a> and <a href="#metacommands">meta commands</a> can be bound to keys. For example, you might bind the game command <code>"/cast minor healing"</code> to 'H'.
+        </p>
+        <p>
+            Detailed instructions on (re)binding keys are given in <a href="./secn_3-1.dai">"Section 3-1: Key settings"</a>.
+        </p>
+        <p>
+            See <a href="./appx_c.dai">"Appendix C: Default bindings"</a> for a complete list of the default key bindings.
+        </p>
+    </section>
+</daiml>

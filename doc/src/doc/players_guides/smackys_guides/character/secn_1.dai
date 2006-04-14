@@ -1,71 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
-    <title>
-        SECTION 3: KNOW THYSELF
-    </title>
-    <section id="overview">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 1: Character creation">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
         <title>
-            Overview
+            Introduction
+        </title>
+        <div class="dialog">
+            <p>
+                <img alt="[Character creation dialog]" src="./dialog_createcharacter.png"/>
+            </p>
+            <table>
+                <tr>
+                    <th>
+                        UP/DOWN
+                    </th>
+                    <td>
+                        move between fields
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        LEFT/RIGHT
+                    </th>
+                    <td>
+                        change value
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        'C'
+                    </th>
+                    <td>
+                        create character
+                    </td>
+                </tr>
+            </table>
+            <p/>
+        </div>
+    </section>
+    <section id="raceandgender">
+        <title>
+            Choose your race &amp; gender
         </title>
         <p>
-            <img alt="[Window on the world]" src="./main.png"/>
+            First choose a <a href="./secn_2.dai#race">race</a>. <a href="./secn_2.dai#race">Race</a> determines the <a href="#stats">base values of your primary stats</a>.
         </p>
         <p>
-            The main part of the screen shows you (center) and a small area of the Daimonin world in all its isometric glory.
+            Also choose a <a href="./secn_2.dai#gender">gender</a>.
         </p>
         <p>
-            Surrounding this are all manner of displays, statistics, and icons. For the most part these record information about you and your current circumstances.
-        </p>
-        <p>
-            The tables and displays across the top of the screen contain information about your identity, abilities, and current state of health. This section details that information.
+            Your combination of <a href="./secn_2.dai#race">race</a> and <a href="./secn_2.dai#gender">gender</a> will determine the graphics used to represent your character. They have no further effects on gameplay.
         </p>
     </section>
-    <section id="tos">
+    <section id="stats">
         <title>
-            Also in this section
+            Choose your starting stats
         </title>
-        <dl>
-            <dt>
-                <a href="./secn_1-1.dai">Section 1-1: Name, Gender, Age, Profession, Alignment, &amp; Faith</a>
-            </dt>
-            <dd>
-                <p>
-                    Basic information about your identity.
-                </p>
-            </dd>
-            <dt>
-                <a href="./secn_1-2.dai">Section 1-2: Armour Class, Weapon Class, Damage, Weapon Speed, &amp; Speed</a>
-            </dt>
-            <dd>
-                <p>
-                    Information pertaining directly to your chances of success in combat.
-                </p>
-            </dd>
-            <dt>
-                <a href="./secn_1-3.dai">Section 1-3: Stats, Hit Points, Mana, Grace, &amp; Food</a>
-            </dt>
-            <dd>
-                <p>
-                    Measurements representing your fundamental abilities and current health,
-                </p>
-            </dd>
-            <dt>
-                <a href="./secn_1-4.dai">Section 1-4: Armour Protections</a>
-            </dt>
-            <dd>
-                <p>
-                    The percentage of damage your armour can absorb from particular attacks.
-                </p>
-            </dd>
-            <dt>
-                <a href="./secn_1-5.dai">Section 1-5: Skills, Experience, Levelling, &amp; Training</a>
-            </dt>
-            <dd>
-                <p>
-                    Information on performing particular tasks and developing your proficiencies.
-                </p>
-            </dd>
-        </dl>
+        <p>
+            Lastly allocate additional points amongst your <a href="./secn_3.dai">primary stats</a>.
+        </p>
+        <p>
+            You have five additional points, all of which must be used. Each stat can only be raised by up to two points above its base value and cannot be lowered below.
+        </p>
     </section>
-</section>
+    <section id="done">
+        <title>
+            Create your character
+        </title>
+        <p>
+            When you are ready press 'C'. This will create the character and start the tutorial.
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> The tutorial, as you might suppose, will guide you through the basic game mechanics. As well, your character can gain items and money, skills, a god to worship, and a prayer in the tutorial so it is important that you <strong>play through all of it and pay attention</strong>.
+            </p>
+        </div>
+        <p>
+            As there is plenty of in-game explanation the tutorial is not covered in detail here.
+        </p>
+        <p>
+            When you have completed the tutorial, walk into the portal at the end.
+        </p>
+        <p>
+            Welcome to Daimonin!
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> <strong>Get some experience before you logout!</strong> For practical reasons (to reduce the number of dormant accounts) your character will not be saved unless you have some experience (that is, you have killed something). So don't, as has been done, create a shiny new character, have a friend load you up with powerful magic items, and then logout having just emerged from the tutorial. The character will not be saved and <em>the items will be lost forever</em>.
+            </p>
+        </div>
+    </section>
+</daiml>

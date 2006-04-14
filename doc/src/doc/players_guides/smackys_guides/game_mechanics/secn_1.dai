@@ -1,80 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
-    <title>
-        SECTION 1: LOGGING IN
-    </title>
-    <section id="titlescreen">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 1: Logging in &amp; logging out">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="loggingin">
         <title>
-            Title screen
+            Logging in
         </title>
-        <p>
-            When you run the game you are presented with the intro screen. Atmospheric, isn't it? Press any key.
-        </p>
-    </section>
-    <section id="server">
-        <title>
-            Choose a server
-        </title>
-        <p>
-            You will now see a dialog with a list of known servers.
-        </p>
-        <p>
-            <img alt="[Server dialog]" src="./dialog_server.png"/>
-        </p>
-        <p>
-            The default is a list of two: the BETA server (daimonin.game-server.cc) and a local server (although probably there is no local server actually running).
-        </p>
-        <p>
-            Choose a server (highlight it with UP/DOWN and press RETURN).
-        </p>
-    </section>
-    <section id="login"><title>Login</title>
-        <p>
-            The next dialog prompts you to login to the chosen server.
-        </p>
-        <p>
-            <img alt="[Login dialog]" src="./dialog_login.png"/>
-        </p>
-        <p>
-            You will need to enter a character name and associated password, pressing RETURN after each.
-        </p>
-        <p>
-            The name must be between two and 12 characters long. Letters, dash ('-'), and underscore ('_') are accepted but no numbers, spaces, or other characters. It is case insensitive.
-        </p>
-        <p>
-            The password must be between one and 12 characters long. All characters are accepted, though only asterisks ('*') will be displayed. It is case sensitive.
-        </p>
-        <p>
-            Once you have created a character neither name nor password can be changed so make sure you're happy with both.
-        </p>
-        <p>
-            <img alt="[NOTE]" src="../smackys_guides/note.png"/> Your in-game login name/password and your website login name/password are entirely separate. That said, for convenience and clarity it is quite a good idea to have the same name for both. But the choice is yours. Indeed, you don't even need to register with the one to have an account with the other.
-        </p>
-        <p>
-            <img alt="[NOTE]" src="../smackys_guides/note.png"/> If you are experiencing  problems logging in despite following the instructions here, please read <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=1466">this more detailed information</a> before complaining.
-        </p>
-        <section id="restore">
+        <section id="server">
             <title>
-                Restore an existing character
+                Choose a server
             </title>
             <p>
-                To restore an existing character you should enter the name and password for a previously saved character, remembering the case sensitivity rules mentioned above.
+                After the title page you will see a dialog with a list of known servers.
+            </p>
+            <div class="dialog">
+                <p>
+                    <img alt="[Server dialog]" src="./dialog_server.png"/>
+                </p>
+                <table>
+                    <tr>
+                        <th>
+                            UP/DOWN
+                        </th>
+                        <td>
+                            highlight a server
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            RETURN
+                        </th>
+                        <td>
+                            connect to the highlighted server
+                        </td>
+                    </tr>
+                 </table>
+                 <p/>
+            </div>
+            <p>
+                The default is a list of two: the BETA server (daimonin.game-server.cc) and a local server (although probably there is no local server actually running).
+            </p>
+            <p>
+                Choose a server (highlight it with UP/DOWN and press RETURN).
             </p>
         </section>
-        <section id="new">
+        <section id="login">
             <title>
-                Create a new character
+                Login
             </title>
             <p>
-                When you have entered both name and password and the server does not recognise a character by that name a third field will appear prompting you to verify the password; just type it again. This will create a new character of that name.
+                The next dialog prompts you to login to the chosen server.
+            </p>
+            <div class="dialog">
+                <p>
+                    <img alt="[Login dialog]" src="./dialog_login.png"/>
+                </p>
+                <table>
+                    <tr>
+                        <th>
+                            NAME
+                        </th>
+                        <td>
+                            the name must be between two and 12 characters long. Letters, dash ('-'), and underscore ('_') are accepted but no numbers, spaces, or other characters. It is case insensitive.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            PASSWORD
+                        </th>
+                        <td>
+                            the password must be between one and 12 characters long. All characters are accepted, though only asterisks ('*') will be displayed. It is case sensitive.
+                        </td>
+                    </tr>
+                 </table>
+                <p/>
+            </div>
+            <p>
+                You will need to enter a character name and associated password, pressing RETURN after each.
+            </p>
+            <div class="advice">
+                <p>
+                    <img alt="[ADVICE]" src="../advice.png"/> Once you have created a character neither name nor password can be changed so make sure you're happy with both.
+                </p>
+            </div>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> Your in-game login name/password and your website login name/password are entirely separate. That said, for convenience and clarity it is quite a good idea to have the same name for both. But the choice is yours. Indeed, you don't even need to register with the one to have an account with the other.
+                </p>
+            </div>
+            <section id="restorecharacter">
+                <title>
+                    Restore an existing character
+                </title>
+                <p>
+                    To restore an existing character you should enter the name and password for a previously saved character, remembering the case sensitivity rules mentioned above.
+                </p>
+            </section>
+            <section id="createcharacter">
+                <title>
+                    Create a new character
+                </title>
+                <p>
+                    When you have entered both name and password and the server does not recognise a character by that name a third field will appear prompting you to verify the password; just type it again. This will create a new character of that name.
+                </p>
+                <p>
+                    If the third field does not appear this means someone else already has a character of that name on that server. The fields will be cleared and you will need to login again.
+                </p>
+                <p>
+                    Otherwise continue with <a href="../character/secn_1.dai">"Smacky's Guide To The Character, Section 1: Character creation"</a>.
+                </p>
+            </section>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> If you are experiencing  problems logging in despite following the instructions here, please read <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=1466">this more detailed information</a> before complaining.
+                </p>
+            </div>
+        </section>
+    </section>
+    <section id="loggingout">
+        <title>
+            Logging out
+        </title>
+        <p>
+            Logging out (or just logging as most people say) is not the same as saving. But when you logout (log) the game is automatically saved. You may, however, choose to save without logging out.
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> If your logging out is unscheduled (ie, your connection is lost or your computer dies or something) the game is automatically saved. Under these circumstances your character will remain in-game for eight minutes until it is automatically kicked. For security reasons, you will not be able to log into that character during that time. If this happens, do not worry, <em>it is perfectly normal</em>.
             </p>
             <p>
-                If the third field does not appear this means someone else already has a character of that name on that server. The fields will be cleared and you will need to login again.
+                Except in the most extreme circumstances it is virtually impossible to 'lose' your character.
+            </p>
+        </div>
+        <p>
+            There are three in-game methods to save your progress, two of which involve logging out:
+        </p>
+        <section id="logout">
+            <title>
+                Logging out
+            </title>
+            <p>
+                Press ESCAPE and select "Logout" from the menu. This can be done anywhere at any time.
             </p>
             <p>
-                Otherwise continue with <a href="./secn_2.dai">"Section 2: Creating A New Character"</a>.
+                Your game is saved and you are returned to the server selection dialog. So you can <a href="./secn_1.dai">login</a> again or press ESCAPE to exit the game entirely.
+            </p>
+            <div class="advice">
+                <p>
+                    <img alt="[ADVICE]" src="../advice.png"/> Be aware that when you logout your character is suspended; you are safe from harm, yes. But the world around you is persistent and may have changed for the worse when you next login. Consider this example:
+                </p>
+                <p>
+                    Following an epic victory in a five-on-one battle you have been reduced to single-figure hit points. But the point is you're still standing while around you lie the fetid carcasses of your foes. Flushed with success you decide to logout and celebrate with jam and scones (or jelly and biscuits if you must).
+                </p>
+                <p>
+                    Sometime later you login again. Horrors! The erstwhile eviscerated enemies have respawned; you're surrounded and have only seven hit points. Your fingers are still sticky with jam and you cannot press the keys fast enough to beat a retreat. Better go read <a href="../character/secn_2.dai">"The Character, Section 2: Death"</a> again.
+                </p>
+            </div>
+        </section>
+        <section id="bed">
+            <title>
+                Going to bed
+            </title>
+            <p>
+                <img alt="[Teddy]" src="./teddy.png"/>
+            </p>
+            <p>
+                If you own an apartment you can <a href="../manipulating_objects/secn_1-4.dai">apply</a> your bed to save and logout.
+            </p>
+        </section>
+        <section id="saving">
+            <title>
+                Saving
+            </title>
+            <p>
+                You can enter the game command <code>"/save"</code> to save your game without logging out.
+            </p>
+            <p>
+                Although you can save in this way at any time, it is never necessary, with one exception. That is new characters must save once before logging out.
             </p>
         </section>
     </section>
-</section>
+</daiml>
