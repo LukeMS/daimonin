@@ -12,7 +12,7 @@
     <target
         name        = "all"
         description = "Validates the documentation source files and then generates all available formats"
-        depends     = "bbcode, phpwiki, html4, xhtml11, ascii"
+        depends     = "bbcode, bookgui, phpwiki, html4, xhtml11, ascii"
     />
 
     <target
@@ -38,6 +38,21 @@
             destdir   = "gen/bbcode"
             extension = ".bbc"
             style     = "src/xslt/dai2bbcode.xslt"
+            includes  = "**/*.dai"
+        />
+    </target>
+
+    <target
+        name        = "bookgui"
+        description = "Generates documentation in Daimonin BookGUI format"
+        depends     = "validate"
+    >
+        <mkdir dir="gen/bookgui" />
+        <xslt
+            basedir   = "src/doc"
+            destdir   = "gen/bookgui"
+            extension = ".book"
+            style     = "src/xslt/dai2bookgui.xslt"
             includes  = "**/*.dai"
         />
     </target>
