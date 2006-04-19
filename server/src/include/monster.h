@@ -172,6 +172,9 @@ struct mobdata
 
     object                     *spawn_info;    /**< quick pointer to spawn info (and so to its spawn point - if one) */
 
+    /** Self-estimated combat strength */
+    int combat_strength; 
+
     uint8 idle_time;            /**< How long have we been standing still not doing anything */
 
     /** DEBUG DATA STORAGE */

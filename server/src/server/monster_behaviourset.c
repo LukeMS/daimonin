@@ -275,6 +275,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     last = set->behaviours[BEHAVIOURCLASS_PROCESSES] = init_behaviour(BEHAVIOURCLASS_PROCESSES,
                                                                       AIBEHAVIOUR_LOOK_FOR_OTHER_MOBS);
     last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_FRIENDSHIP);
+    last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_ATTRACTION);
     if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_CHOOSE_ENEMY);
 
@@ -759,7 +760,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
                 {
                     switch(new_behaviour->declaration->id)
                     {
-                        case AIBEHAVIOUR_ATTITUDE:
+                        case AIBEHAVIOUR_FRIENDSHIP:
                             behaviourset->attitudes = new_behaviour->parameters;
                             break;
                         case AIBEHAVIOUR_ATTRACTION:

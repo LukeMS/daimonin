@@ -33,7 +33,7 @@
 
 /* Those are pseudobehaviours in monster_behaviour.c */
 extern int get_npc_object_attraction(object *op, object *other);
-extern int calc_friendship_from_attitude(object *op, object *other);
+extern int get_npc_mob_attitude(object *op, object *other);
     
 /** Purge a single object from list of known mobs/objects */
 static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable *ht)
@@ -78,6 +78,8 @@ void update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int
 {
     known->friendship += delta_friendship;
     known->attraction += delta_attraction;
+    known->tmp_friendship += delta_friendship;
+    known->tmp_attraction += delta_attraction;
     known->last_seen = ROUND_TAG;
 
     if(known->obj->map)
@@ -145,10 +147,10 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
     }
 
     /* Calculate attitude and/or attraction if needed */
-    if(is_object && attraction == 0) 
+    if(attraction == 0) 
         attraction = get_npc_object_attraction(npc, other);
-    else if(!is_object && friendship == 0)
-        friendship = calc_friendship_from_attitude(npc, other);
+    if(!is_object && friendship == 0)
+        friendship = get_npc_mob_attitude(npc, other);
 
     /* We do a last attempt at LOS test here, for mob to mob detection, 
      * but only if the two are enemies */

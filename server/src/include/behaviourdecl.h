@@ -40,26 +40,29 @@
  * are always executed
  */
 BehaviourClass(PROCESSES,
-    /** Determines the personal attitude of the mob, not a real behaviour.
-     * (The values here determine initial friendship value at first sight)
-     */
-    Behaviour(ATTITUDE, ai_fake_process,
+    /**Classify all detected mobs and assign friendship values to them.
+     * (The parameters here modifies initial friendship value at first sight)
+     * Should always come after look_for_other_mobs */
+    Behaviour(FRIENDSHIP, ai_friendship,
         /** Attitude against a race */
-        Parameter(ATTITUDE, RACE, STRINGINT, MULTI | OPTIONAL, "X:0")
+        Parameter(FRIENDSHIP, RACE, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against an archetype */
-        Parameter(ATTITUDE, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
+        Parameter(FRIENDSHIP, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against a named mob/player */
-        Parameter(ATTITUDE, NAME, STRINGINT, MULTI | OPTIONAL, "X:0")
+        Parameter(FRIENDSHIP, NAME, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against any player */
-        Parameter(ATTITUDE, PLAYER, INTEGER, OPTIONAL, 0)
+        Parameter(FRIENDSHIP, PLAYER, INTEGER, OPTIONAL, 0)
         /** Attitude against a named AI group, see the "groups" behaviour */
-        Parameter(ATTITUDE, GROUP, STRINGINT, MULTI | OPTIONAL, "X:0")
+        Parameter(FRIENDSHIP, GROUP, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against the followers of a named god */
-        Parameter(ATTITUDE, GOD, STRINGINT, MULTI | OPTIONAL, "X:0")
+        Parameter(FRIENDSHIP, GOD, STRINGINT, MULTI | OPTIONAL, "X:0")
     )
     
-    /** Determines the initial attraction of a mob towards another object */
-    Behaviour(ATTRACTION, ai_fake_process,
+    /** Determines the initial attraction of a mob towards another object or mob.
+     * (The parameters here modifies initial attraction value at first sight)
+     * Should always come after look_for_other_mobs and
+     * look_for_objects. */
+    Behaviour(ATTRACTION, ai_attraction,
         /** Attraction towards an archetype */
         Parameter(ATTRACTION, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attraction towards a named object/mob/player */
@@ -87,10 +90,6 @@ BehaviourClass(PROCESSES,
     /** Look around for interesting objects nearby
      * (see ATTRACTION for the definition of interesting) */
     Behaviour(LOOK_FOR_OBJECTS, ai_look_for_objects, NIL)
-
-    /** Classify all detected mobs and assign friendship values to them.
-     * Should always come after look_for_other_mobs */
-    Behaviour(FRIENDSHIP, ai_friendship, NIL)
 
     /** Choose the known mob with the lowest negative friendship as the current enemy
      * should always come after friendship */

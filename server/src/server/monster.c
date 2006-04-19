@@ -438,17 +438,6 @@ object * find_waypoint(object *op, const char *name)
     return wp;
 }
 
-
-/*
- * Special case processes
- */
-
-/* Placeholder function for some special processes */
-void ai_fake_process(object *op, struct mob_behaviour_param *params)
-{
-    LOG(llevBug, "BUG: ai_fake_process() should never be called\n");
-}
-
 /*
  * Main AI function
  */
@@ -467,7 +456,7 @@ inline int ai_obj_can_move(object *obj)
 }
 
 
-/* Move-monster returns 1 if the object has been freed, otherwise 0.  */
+/**  Move-monster returns 1 if the object has been freed, otherwise 0.  */
 int move_monster(object *op, int mode)
 {
     move_response           response;
@@ -525,6 +514,9 @@ int move_monster(object *op, int mode)
 
     regenerate_stats(op); /* Regenerate if applicable */
 
+    /* Mark own combat strength as needing recalculation */
+    MOB_DATA(op)->combat_strength = -1;
+
     /*
      * Internal thought and sensing behaviours
      * All of those are always executed
@@ -532,10 +524,7 @@ int move_monster(object *op, int mode)
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_PROCESSES];
          behaviour != NULL; behaviour = behaviour->next)
     {
-        /* TODO: find a slightly more efficient way of handling
-         * non-executable "fake" processes */
-        if(behaviour->declaration->func != ai_fake_process)
-            ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
+        ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
     }
 
     /* Only do movement if we are actually on a map

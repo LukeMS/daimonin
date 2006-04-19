@@ -119,13 +119,13 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 }
 
 /* TODO: these two new functions are already obsolete and should be replaced
- * with configuration options in the ai_friendship / attitudes behaviour,
+ * with configuration options in the ai_friendship behaviour,
  * but they serve well as a base...
  *
  * Uses:
  *  a) in time.c for letting arrows through friends
  *     this should be replaced by looking up known_ob->friendship if shooter knows
- *     victim, or by calling calc_friendship_from_attitude otherwise.
+ *     victim, or by calling get_npc_mob_attitude() otherwise.
  *     If shooter is a player, a reverse lookup should be made. For PvP maps,
  *     we could look at player factions or at least group.
  *
@@ -136,7 +136,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
  *
  *  b) base friendship value in ai_friendship
  *     this should be replaced with factions, groups, spawn links and/or default
- *     attitude patters (for example "race=$other$:-100" and "race=$same$:100")
+ *     attitude patterns (for example "race=$other$:-100" and "race=$same$:100")
  *
  *     One problem is to avoid having to recalculate attitudes every tick, but still
  *     be able to handle faction switching, mind control etc. The current handling of
@@ -301,6 +301,101 @@ void monster_check_apply(object *mon, object *item)
 }
 
 /*
+ * Support functions for combat strength and fear calculations
+ */
+
+/** Let op to estimate other's combat strength.
+ * op's attributes should matter a lot here, for example:
+ * - lower level lifeforms shouldn't do any estimation at all
+ *   (e.g. puddings, insects, etc)
+ * - most animals should only consider physical attributes such 
+ *   as apparent size and strength
+ * - more intelligent mobs should also consider equipment and
+ *   use of magic.
+ * @return estimated combat strength, always => 0. 
+ *  A defenseless tiny creature (smoething like a real-life fly) 
+ *  should have a combat strength of 0.
+ */
+int estimate_combat_strength(object *op, object *other)
+{
+    int level = other->level;
+    int health = (op->stats.hp * 100) / op->stats.maxhp; /* health in % */
+    int cs;
+    
+/* TODO: need an efficient way of detecting poison or (deadly) sickness
+ * if(QUERY_FLAG(other, FLAG_POISONED))
+        other->health -= 10;
+        */
+    health = CLAMP(health, 0, 100);
+
+    /* TODO: incredibly basic algorithm for now */
+    cs = level + health;
+    return MAX(0, cs);
+}
+
+/** Give the relative perceived combat strength between
+ * op and other in percent.
+ * @return around 100 - matching combat strength, 
+ *   >100 other is stronger (200: other is twice as strong as op), 
+ *   <100 op is stronger (50: op is twice as strong as other).
+ */ 
+int relative_combat_strength(object *op, object *other)
+{
+    /* Update own combat strength if needed */
+    if(MOB_DATA(op)->combat_strength == -1)
+    {
+        MOB_DATA(op)->combat_strength = estimate_combat_strength(op, op);
+        /* Make sure never <= 0 */
+        MOB_DATA(op)->combat_strength = MAX(MOB_DATA(op)->combat_strength, 1);
+    }
+        
+    return estimate_combat_strength(op, other) * 100 / MOB_DATA(op)->combat_strength;
+}
+
+/** Assess tactical situation. Calculates a "tactical center" which is
+ * the vector sum of all friends and enemies and our fear/attraction for them.
+ * @param op object to calculate the center for
+ * @param dx return variable for relative x location of attraction center
+ * @param dy return variable for relative y location of attraction center
+ * @return attraction sum. if negative, the coordinate is dangerous. 
+ *         if positive, the coordinate is safe. The size of the value
+ *         indicates the relative combat strength around the point.
+ */
+int assess_tactical_situation(object *op, int *dx, int *dy)
+{
+    struct mob_known_obj *tmp;
+    int weight_sum = 0;
+    
+    int max_distance = 10; /* TODO: parameterize? */
+    
+    *dx = 0;
+    *dy = 0;
+    
+    for(tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
+    {
+        rv_vector *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
+        if(rv && rv->distance < max_distance)
+        {
+            /* Let the attraction/fear fall off by the square of the distance */
+            int weight = tmp->tmp_attraction - (tmp->tmp_attraction * (int)(rv->distance * rv->distance)) / (max_distance * max_distance);
+            *dx += rv->distance_x * weight;
+            *dy += rv->distance_y * weight;
+            LOG(llevDebug, "%s -> %s, attraction: %d, distance: %d, weight: %d\n", 
+                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_attraction, rv->distance, weight);
+            weight_sum += weight;
+        }
+    }
+
+    if(weight_sum != 0)
+    {
+        *dx /= weight_sum;
+        *dy /= weight_sum;
+    }
+    
+    return weight_sum;
+}
+
+/*
  * Attraction/friendship pseudobehaviours. These are configured like
  * normal behaviours, but called from the sensing functions.
  */
@@ -310,7 +405,7 @@ void monster_check_apply(object *mon, object *item)
  * @param op the monster to calculate attraction for
  * @param other the object to calculate attraction towards
  * @return a positive (attraction) or negative (repulsion) value, or zero (indifference / "don't care")
- * @todo there's much duplicated code between this and calc_friendship_from_attitude(). 
+ * @todo there's much duplicated code between this and get_npc_mob_attitude(). 
  * Any suggestions?
  * @see the "attraction" behaviour.
  */
@@ -329,10 +424,6 @@ int get_npc_object_attraction(object *op, object *other)
                 STRING_OBJ_NAME(op), op->type);
     }
         
-    /* pets are attracted to owners */
-    if(op->owner == other && op->owner_count == other->count)
-        attraction += ATTRACTION_HOME;
-
     attractions = MOB_DATA(op)->behaviours->attractions;
 
     if(attractions == NULL)
@@ -397,14 +488,14 @@ int get_npc_object_attraction(object *op, object *other)
 }
 
 /** Pseudobehaviour to calculate the base friendship/hate ("attitude") of one monster towards another.
- * Attitude is partly controlled by the "attitude" behaviour, but also 
+ * Attitude is partly controlled by the "friendship" behaviour parameters, but also 
  * by "petness" and alignment ("friendly"/"non-friendly"). 
  * @param op the monster to calculate friendship for
  * @param other the object to calculate friendship towards
  * @return a positive (friendship) or negative (hate) value, or zero (neutral)
- * @see the "attitude" and "friendship" behaviours.
+ * @see the "friendship" behaviour.
  */
-int calc_friendship_from_attitude(object *op, object *other)
+int get_npc_mob_attitude(object *op, object *other)
 {
     int friendship = 0;
     struct mob_behaviour_param *attitudes;
@@ -416,7 +507,7 @@ int calc_friendship_from_attitude(object *op, object *other)
     if(op->type != MONSTER)
     {
         /* TODO: implement reverse lookup and PvP */
-        LOG(llevBug, "BUG: calc_friendship_from_attitude() object %s is not a monster (type=%d)\n",
+        LOG(llevBug, "BUG: get_npc_mob_attitude() object %s is not a monster (type=%d)\n",
                 STRING_OBJ_NAME(op), op->type);
     }
         
@@ -438,9 +529,9 @@ int calc_friendship_from_attitude(object *op, object *other)
         return friendship;
 
     /* Race attitude */
-    if(attitudes[AIPARAM_ATTITUDE_RACE].flags & AI_PARAM_PRESENT)
+    if(attitudes[AIPARAM_FRIENDSHIP_RACE].flags & AI_PARAM_PRESENT)
     {
-        for(tmp = &attitudes[AIPARAM_ATTITUDE_RACE]; tmp != NULL;
+        for(tmp = &attitudes[AIPARAM_FRIENDSHIP_RACE]; tmp != NULL;
                 tmp = tmp->next)
         {
             if(other->race && tmp->stringvalue == other->race)
@@ -449,9 +540,9 @@ int calc_friendship_from_attitude(object *op, object *other)
     }
 
     /* Arch attitude */
-    if(attitudes[AIPARAM_ATTITUDE_ARCH].flags & AI_PARAM_PRESENT)
+    if(attitudes[AIPARAM_FRIENDSHIP_ARCH].flags & AI_PARAM_PRESENT)
     {
-        for(tmp = &attitudes[AIPARAM_ATTITUDE_ARCH]; tmp != NULL;
+        for(tmp = &attitudes[AIPARAM_FRIENDSHIP_ARCH]; tmp != NULL;
                 tmp = tmp->next)
         {
             if(other->arch->name && tmp->stringvalue == other->arch->name)
@@ -460,9 +551,9 @@ int calc_friendship_from_attitude(object *op, object *other)
     }
 
     /* Named object attitude */
-    if(attitudes[AIPARAM_ATTITUDE_NAME].flags & AI_PARAM_PRESENT)
+    if(attitudes[AIPARAM_FRIENDSHIP_NAME].flags & AI_PARAM_PRESENT)
     {
-        for(tmp = &attitudes[AIPARAM_ATTITUDE_NAME]; tmp != NULL;
+        for(tmp = &attitudes[AIPARAM_FRIENDSHIP_NAME]; tmp != NULL;
                 tmp = tmp->next)
         {
             if(other->name && tmp->stringvalue == other->name)
@@ -471,7 +562,7 @@ int calc_friendship_from_attitude(object *op, object *other)
     }
 
     /* Named group attitude */
-    if(attitudes[AIPARAM_ATTITUDE_GROUP].flags & AI_PARAM_PRESENT)
+    if(attitudes[AIPARAM_FRIENDSHIP_GROUP].flags & AI_PARAM_PRESENT)
     {
         /* Make sure other is a monster that belongs to one or more groups */
         if(other->type == MONSTER && MOB_DATA(other) &&
@@ -479,7 +570,7 @@ int calc_friendship_from_attitude(object *op, object *other)
                 MOB_DATA(other)->behaviours->groups[AIPARAM_GROUPS_NAME].flags & AI_PARAM_PRESENT)
         {
             /* Match my group attitudes to the other's group memberships */
-            for(tmp = &attitudes[AIPARAM_ATTITUDE_GROUP]; tmp != NULL;
+            for(tmp = &attitudes[AIPARAM_FRIENDSHIP_GROUP]; tmp != NULL;
                     tmp = tmp->next)
             {
                 struct mob_behaviour_param *group;
@@ -495,14 +586,14 @@ int calc_friendship_from_attitude(object *op, object *other)
     }
 
     /* Player attitude */
-    if(attitudes[AIPARAM_ATTITUDE_PLAYER].flags & AI_PARAM_PRESENT)
+    if(attitudes[AIPARAM_FRIENDSHIP_PLAYER].flags & AI_PARAM_PRESENT)
     {
         if(other->type == PLAYER)
-            friendship += attitudes[AIPARAM_ATTITUDE_PLAYER].intvalue;
+            friendship += attitudes[AIPARAM_FRIENDSHIP_PLAYER].intvalue;
     }
 
     /* Named god attitude */
-    if(attitudes[AIPARAM_ATTITUDE_GOD].flags & AI_PARAM_PRESENT)
+    if(attitudes[AIPARAM_FRIENDSHIP_GOD].flags & AI_PARAM_PRESENT)
     {
         /* For now the god test is only done on players.
          * calling determine_god() on a generic mob will give that mob a
@@ -511,7 +602,7 @@ int calc_friendship_from_attitude(object *op, object *other)
         if(other->type == PLAYER)
         {
             const char *godname = determine_god(other);
-            for(tmp = &attitudes[AIPARAM_ATTITUDE_GOD]; tmp != NULL;
+            for(tmp = &attitudes[AIPARAM_FRIENDSHIP_GOD]; tmp != NULL;
                     tmp = tmp->next)
             {
                 if(godname == tmp->stringvalue)
@@ -1246,8 +1337,13 @@ void ai_plugin_move(object *op, struct mob_behaviour_param *params, move_respons
 }
 
 /*
- * Misc behaviours
+ * Processes (misc. behaviours)
  */
+
+/* Dummy function for some special processes */
+void ai_fake_process(object *op, struct mob_behaviour_param *params)
+{
+}
 
 /** Scans the nearby area for interesting (non-zero attraction) items.
  * @todo optimization - only look at newly discovered squares after a move
@@ -1415,7 +1511,7 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     }
 }
 
-/* Calculate friendship level of each known mob */
+/** Update friendship level of each known mob */
 void ai_friendship(object *op, struct mob_behaviour_param *params)
 {
     struct mob_known_obj   *tmp;
@@ -1450,6 +1546,47 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
     /* Learn about owner's enemy if we didn't know of it */
     if(owner_enemy && !op->enemy && !known_owner_enemy)
         register_npc_known_obj(op, owner_enemy, 0, 0);
+}
+
+/** Update attraction/fear level of each known mob */
+void ai_attraction(object *op, struct mob_behaviour_param *params)
+{
+    struct mob_known_obj   *tmp;
+
+    for (tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
+    {
+        tmp->tmp_attraction = tmp->attraction;
+
+        /* Undeads don't deal with dynamic attractions or fears */
+        if(op->race == shstr_cons.undead)
+            continue;
+        
+        /* pets are attracted to owners */
+        if(op->owner == tmp->obj && op->owner_count == tmp->obj->count)
+            tmp->tmp_attraction += ATTRACTION_HOME;
+
+        /* Attraction/fear for other mobs is calculated from the
+         * perceived relative combad strength */
+        if(tmp->tmp_friendship > FRIENDSHIP_HELP)
+            tmp->tmp_attraction += relative_combat_strength(op, tmp->obj);
+        else if(tmp->tmp_friendship < FRIENDSHIP_ATTACK)
+            tmp->tmp_attraction -= relative_combat_strength(op, tmp->obj);
+
+#if 0
+        LOG(llevDebug, "ai_attraction(): %s attraction towards %s: %d\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_attraction);
+#endif        
+    }
+
+    /* Tactical awareness work-in-progress temporarily disabled. Gecko 2006-04-19 */
+#if 0
+    {
+        int dx, dy, sum;
+        sum = assess_tactical_situation(op, &dx, &dy);
+        LOG(llevDebug, "ai_attraction(): %s (%d) tacsit: %d@%d,%d\n",
+                STRING_OBJ_NAME(op), op->count, sum, dx, dy);
+    }
+#endif        
 }
 
 /* TODO: parameterize MAX_IDLE_TIME */
