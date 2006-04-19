@@ -28,7 +28,7 @@ SRCS =	random_map.c \
 	room_gen_onion.c \
         room_gen_spiral.c \
 	maze_gen.c \
-	reader_wrap.c \
+	reader.c \
 	floor.c \
 	wall.c \
 	monster.c \
