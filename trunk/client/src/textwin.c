@@ -195,7 +195,11 @@ void draw_info(char *str, int flags)
     char       *text;
     int         actWin, z;
 
-	LOG(LOG_MSG,"DRAW_INFO: >%s<\n", str);
+    /* Create a modifiable version of str */
+    char *buf2 = malloc(strlen(str)+1);
+    strcpy(buf2, str);
+
+	LOG(LOG_MSG,"DRAW_INFO: >%s<\n", buf2);
     color = flags & 0xff;
     mode = flags;
     /*
@@ -203,10 +207,10 @@ void draw_info(char *str, int flags)
      * except 0x0a - this is EOL for us and will be set to
      * 0 to mark C style end of string
      */
-    for (i = 0; str[i] != 0; i++)
+    for (i = 0; buf2[i] != 0; i++)
     {
-        if (str[i] < 32 && str[i] != 0x0a && str[i] != '§')
-            str[i] = 32;
+        if (buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
+            buf2[i] = 32;
     }
     /*
      * ok, here we must cut a string to make it fit in window
@@ -217,31 +221,31 @@ void draw_info(char *str, int flags)
     gflag = FALSE;
     for (a = i = 0; ; i++)
     {
-        if (str[i] == '§' || gflag)
+        if (buf2[i] == '§' || gflag)
         {
-            if (str[i] == '§')
+            if (buf2[i] == '§')
             {
                 media = i;
                 gflag = TRUE;
             }
             else
             {
-                if (str[i] == 0x0a)
+                if (buf2[i] == 0x0a)
                 {
-                    str[i] = 0;
-                    init_media_tag(&str[media]);
+                    buf2[i] = 0;
+                    init_media_tag(&buf2[media]);
                     gflag = FALSE;
                 }
             }
             continue;
         }
-        if (str[i] != '^')
-            len += SystemFont.c[(int) (str[i])].w + SystemFont.char_offset;
+        if (buf2[i] != '^')
+            len += SystemFont.c[(int) (buf2[i])].w + SystemFont.char_offset;
 
-        if (len >= winlen || str[i] == 0x0a || str[i] == 0)
+        if (len >= winlen || buf2[i] == 0x0a || buf2[i] == 0)
         {
             /*
-                        if(str[i]==0 && !a)
+                        if(buf2[i]==0 && !a)
                             break;
                      */
 
@@ -252,21 +256,21 @@ void draw_info(char *str, int flags)
 
                 while (ii >= a / 2)
                 {
-                    if (str[it] == ' '
-                     || str[it] == ':'
-                     || str[it] == '.'
-                     || str[it] == ','
-                     || str[it] == '('
-                     || str[it] == ';'
-                     || str[it] == '-'
-                     || str[it] == '+'
-                     || str[it] == '*'
-                     || str[it] == '?'
-                     || str[it] == '/'
-                     || str[it] == '='
-                     || str[it] == '.'
-                     || str[it] == 0
-                     || str[it] == 0x0a)
+                    if (buf2[it] == ' '
+                     || buf2[it] == ':'
+                     || buf2[it] == '.'
+                     || buf2[it] == ','
+                     || buf2[it] == '('
+                     || buf2[it] == ';'
+                     || buf2[it] == '-'
+                     || buf2[it] == '+'
+                     || buf2[it] == '*'
+                     || buf2[it] == '?'
+                     || buf2[it] == '/'
+                     || buf2[it] == '='
+                     || buf2[it] == '.'
+                     || buf2[it] == 0
+                     || buf2[it] == 0x0a)
                     {
                         tx = it;
                         ix = ii;
@@ -309,12 +313,14 @@ void draw_info(char *str, int flags)
                 key_start = 0;
 
             a = len = 0;
-            if (str[i] == 0)
+            if (buf2[i] == 0)
                 break;
         }
-        if (str[i] != 0x0a)
-            buf[a++] = str[i];
+        if (buf2[i] != 0x0a)
+            buf[a++] = buf2[i];
     }
+
+    free(buf2);
 }
 
 /******************************************************************
