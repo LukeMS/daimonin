@@ -691,7 +691,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
             total_dmg += tmp->stats.hp;
     }
 #ifdef DEBUG_AGGRO
-    LOG(-1,"%s KILLED (%d). All dmg: %d  - player dmg: %d \n", query_name(victim), history->stats.hp, total_dmg_all, total_dmg);
+    LOG(-1,"%s (%d) KILLED (%d). All dmg: %d  - player dmg: %d \n", query_name(victim), victim->count, history->stats.hp, total_dmg_all, total_dmg);
 #endif
     highest_dmg = -1;
     /* now run through the dmg left and give all their share of the exp */
