@@ -39,7 +39,7 @@ SRCS = \
 	item.c\
 	links.c\
 	living.c\
-	loader_wrap.c\
+	loader.c\
 	logger.c\
 	los.c\
 	map.c\
