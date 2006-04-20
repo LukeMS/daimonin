@@ -214,7 +214,7 @@ CommArray_s WizCommands[]           =
 
 const int   WizCommandsSize             = sizeof(WizCommands) / sizeof(CommArray_s);
 
-static int compare_A(const void *a, const void *b)
+static int __cdecl compare_A(const void *a, const void *b)
 {
     return strcmp(((CommArray_s *) a)->name, ((CommArray_s *) b)->name);
 }

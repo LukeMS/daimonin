@@ -55,7 +55,7 @@ struct bmappair
 
 static struct bmappair *xbm = NULL;
 
-static int compar(struct bmappair *a, struct bmappair *b)
+static int __cdecl compar(struct bmappair *a, struct bmappair *b)
 {
     return strcmp(a->name, b->name);
 }

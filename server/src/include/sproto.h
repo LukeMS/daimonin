@@ -555,7 +555,6 @@ sint64                      pay_from_container(object *op, object *pouch, sint64
 int                         get_payment2(object *pl, object *op);
 int                         get_payment(object *pl);
 void                        sell_item(object *op, object *pl, sint64 value);
-void                        shop_listing(object *op);
 int                         get_money_from_string(char *text, struct _money_block *money);
 int                         query_money_type(object *op, int value);
 sint64                      remove_money_type(object *who, object *op, sint64 value, sint64 amount);

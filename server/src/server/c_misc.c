@@ -386,7 +386,7 @@ int command_sstable(object *op, char *params)
         flags = SS_DUMP_TOTALS;
 
     LOG(llevSystem, "HASH TABLE DUMP\n");
-    ss_dump_statistics();
+    ss_dump_statistics(errmsg);
     if (errmsg[0] != '\0')
     {
         new_draw_info(NDI_UNIQUE, 0, op, errmsg);
