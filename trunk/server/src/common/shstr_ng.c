@@ -32,11 +32,6 @@
  * Copyright (C) 2006 Björn Axelsson (gecko)
  */
 
-
-#ifdef WIN32
-#define _CRT_SECURE_NO_DEPRECATE
-#endif
-
 #include <stdio.h>
 
 #include "hashtable.h"
@@ -385,35 +380,35 @@ void free_string_shared(shstr *str)
  * Description:
  *      The routines will gather statistics if SS_STATISTICS is defined.
  *      A call to this function will cause the statistics to be dumped
- *      into the string errmsg, which must be large.
+ *      into the string msg, which must be large.
  * Return values:
- *      pointer to errmsg
+ *      pointer to msg
  */
-char * ss_dump_statistics(char *errmsg)
+char * ss_dump_statistics(char *msg)
 {
     char    line[126];
-    errmsg[0] = '\0';
+    msg[0] = '\0';
 
 #ifdef SS_STATISTICS
-    sprintf(errmsg, "%-13s   %6s %6s %6s %6s %6s\n", "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
+    sprintf(msg, "%-13s   %6s %6s %6s %6s %6s\n", "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "add_string:", add_stats.calls, add_stats.hashed, add_stats.strcmps,
             add_stats.search, add_stats.linked);
-    strcat(errmsg, line);
+    strcat(msg, line);
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "ladd_string:", ladd_stats.calls, ladd_stats.hashed, ladd_stats.strcmps,
             ladd_stats.search, ladd_stats.linked);
-    strcat(errmsg, line);
+    strcat(msg, line);
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "find_string:", find_stats.calls, find_stats.hashed,
             find_stats.strcmps, find_stats.search, find_stats.linked);
-    strcat(errmsg, line);
+    strcat(msg, line);
     sprintf(line, "%-13s %6d\n", "add_refcount:", add_ref_stats.calls);
-    strcat(errmsg, line);
+    strcat(msg, line);
     sprintf(line, "%-13s %6d\n", "free_string:", free_stats.calls);
-    strcat(errmsg, line);
+    strcat(msg, line);
     sprintf(line, "%-13s %6d", "hashstr:", hash_stats.calls);
-    strcat(errmsg, line);
+    strcat(msg, line);
 #endif
 
-    return errmsg;
+    return msg;
 }
 
 static void ss_find_totals(int *entries, int *refs, int *links, int what)

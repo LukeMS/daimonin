@@ -2846,7 +2846,6 @@ int manual_apply(object *op, object *tmp, int aflag)
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
-              shop_listing(op);
               return 4;
           }
           return 0;

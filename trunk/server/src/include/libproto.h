@@ -319,7 +319,7 @@ extern int              query_refcount(const char *str);
 extern const char      *find_string(const char *str);
 extern const char      *add_refcount(const char *str);
 extern void             free_string_shared(const char *str);
-extern char            *ss_dump_statistics(void);
+extern char            *ss_dump_statistics(char *msg);
 extern char            *ss_dump_table(int what);
 extern void             ss_get_totals(int *entries, int *refs, int *links);
 /* time.c */

@@ -942,11 +942,6 @@ void compile_info()
     LOG(llevInfo, "Use_calloc:\t<false>\n");
 #endif
 
-#ifdef SHOP_LISTINGS
-    LOG(llevInfo, "Shop listings:\t<true>\n");
-#else
-    LOG(llevInfo, "Shop listings:\t<false>\n");
-#endif
     LOG(llevInfo, "Max_time:\t%d (%f)\n", pticks_ums, pticks_second);
 
     LOG(llevInfo, "Logfilename:\t%s (llev:%d)\n", settings.logfilename, settings.debug);

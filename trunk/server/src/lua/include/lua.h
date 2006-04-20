@@ -9,10 +9,6 @@
 #ifndef lua_h
 #define lua_h
 
-#ifdef WIN32
-#define _CRT_SECURE_NO_DEPRECATE
-#endif
-
 #include <stdarg.h>
 #include <stddef.h>
 

@@ -38,8 +38,6 @@
 
 #endif 
 
-#define _CRT_SECURE_NO_DEPRECATE
-
 #define WIN32_LEAN_AND_MEAN
 /* includes for VC - plz add other include settings for different compiler
  * when needed and comment it
