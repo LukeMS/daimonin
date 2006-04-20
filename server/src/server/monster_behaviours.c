@@ -366,7 +366,7 @@ int assess_tactical_situation(object *op, int *dx, int *dy)
     struct mob_known_obj *tmp;
     int weight_sum = 0;
     
-    int max_distance = 10; /* TODO: parameterize? */
+    unsigned int max_distance = 10; /* TODO: parameterize? */
     
     *dx = 0;
     *dy = 0;

@@ -414,7 +414,7 @@ void removeOnePlugin(const char *id)
 
 #ifndef HAVE_SCANDIR
 
-extern int __cdecl alphasort(struct dirent **a, struct dirent **b);
+extern int alphasort(struct dirent **a, struct dirent **b);
 #endif
 
 /*****************************************************************************/
