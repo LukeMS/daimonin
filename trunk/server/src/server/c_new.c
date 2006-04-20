@@ -72,7 +72,7 @@ static int  map_pos_array[][2]  =
 #define NROF_MAP_NODE (sizeof(map_pos_array) /(sizeof(int)*2))
 
 
-static int __cdecl compare_A(const void *a, const void *b)
+static int compare_A(const void *a, const void *b)
 {
     return strcmp(((CommArray_s *) a)->name, ((CommArray_s *) b)->name);
 }
