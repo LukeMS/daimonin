@@ -499,11 +499,13 @@ void show_book(int x, int y)
 	global_book_data.ylen = Bitmaps[BITMAP_JOURNAL]->bitmap->h;
 
     add_close_button(x+27, y+2, MENU_BOOK);
-	StringBlt( ScreenSurface, &BigFont, gui_interface_book->name , x+global_book_data.xlen/2-
-			   get_string_pixel_length(gui_interface_book->name, &BigFont)/2,y+9, COLOR_WHITE, NULL, NULL);
 
 	if(!gui_interface_book)
 		return;
+
+	if(gui_interface_book->name)
+		StringBlt( ScreenSurface, &BigFont, gui_interface_book->name , x+global_book_data.xlen/2-
+			   get_string_pixel_length(gui_interface_book->name, &BigFont)/2,y+9, COLOR_WHITE, NULL, NULL);
 
 	box.x=x+47;
 	box.y=y+72;

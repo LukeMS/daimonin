@@ -1133,11 +1133,11 @@ int main(int argc, char *argv[])
             argServerPort = atoi(argv[argc]);
             --argc;
         }
-        else if (strcmp(argv[argc - 1], "-server") == 0)
+/*        else if (strcmp(argv[argc - 1], "-server") == 0)
         {
             strcpy(argServerName, argv[argc]);
             --argc;
-        }
+        }*/
         else if (strcmp(argv[argc], "-nometa") == 0)
         {
             options.no_meta = 1;

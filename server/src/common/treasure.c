@@ -1936,8 +1936,9 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                   /* books w/ info are worth more! */
                   op->value += (int)((float)(((op->level > 10 ? op->level : (op->level + 1) / 2) * ((strlen(op->msg) / 45) + 1)))*1.11);
                   /* creator related stuff */
-                  if (QUERY_FLAG(creator, FLAG_NO_PICK)) /* for library, chained books! */
-                      SET_FLAG(op, FLAG_NO_PICK);
+				  /* for library, chained books! */
+                  /*if (QUERY_FLAG(creator, FLAG_NO_PICK))
+                      SET_FLAG(op, FLAG_NO_PICK);*/
                   if (creator->slaying && !op->slaying) /* for check_inv floors */
                       FREE_AND_COPY_HASH(op->slaying, creator->slaying);
               }
