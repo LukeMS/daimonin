@@ -630,7 +630,7 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
 		/* our old beta 3 client has a broken version interaction - we need to trick here
          * so the client gets a valid update string. This is important!
          */
-		if(ns->cs_version <= 991017) /* beta 3 client */
+		if(ns->cs_version <= 991019) /* beta 3 client */
 		{
 			/*char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYour client is OUTDATED!!\n**UPDATE** your client from http://www.daimonin.com !!\n"; */
 			char		warning[256] ="X3 Connection denied.\nYou are running a BETA 3 client!\nYou need a BETA 4 preview test client for this server.\nCheck the news & forum on http://www.daimonin.com !!\n"; 
