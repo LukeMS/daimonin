@@ -264,6 +264,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     set->next = set->prev = NULL;
     set->attitudes = NULL;
     set->groups = NULL;
+    set->attractions = NULL;
 
     /* Insert in list */
     set->next = generated_behavioursets;
