@@ -83,7 +83,7 @@
             Secondary stats
         </title>
         <p>
-            <img alt="[Player doll]" src="./playerdoll.png"/>
+            <img alt="[Secondary stats]" src="./secondarystats.png"/>
         </p>
         <p>
             Here we are only interested in the textual information for now; please ignore the pretty pictures.
@@ -162,6 +162,9 @@
         <title>
             Health indicators
         </title>
+        <p>
+             <img alt="[Health indicators]" src="./healthindicators.png"/>
+        </p>
         <p>
             Health indicators represent your current health status. They all decrease according to circumstances -- most obviously, during combat any and all are likely to decrease: <a href="#hitpoints">hit points</a> each time an enemy scores a hit; <a href="#mana">mana</a> when you cast a spell; and <a href="#grace">grace</a> when you recite a prayer.
         </p>

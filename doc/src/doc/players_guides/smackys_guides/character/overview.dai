@@ -18,7 +18,7 @@
             Identity
         </title>
         <p>
-            In the top left corner is some basic textual information about your character's identity. Much of this information is currently of no consequence to gameplay. For now, simply note that this shows your character's name (hereafter, simply 'you') and race.
+            You character has a name, race, gender, faith, profession, and alignment. Much of this information is currently of no consequence to gameplay.
         </p>
         <p>
             All the identity information is detailed in <a href="./secn_2.dai">"Section 2: Your identity"</a>.
