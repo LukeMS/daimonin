@@ -7,6 +7,9 @@
             Introduction
         </title>
         <p>
+            <img alt="[Armour protection table]" src="./armourprotectiontable.png"/>
+        </p>
+        <p>
             Armour protections are the proportion of damage you can absorb from any particular attack type. There are 20 different types of attack in Daimonin and when you are hit by one of these you will take damage; that is, you will lose <a href="./secn_3.dai#hitpoints">hit points</a>. Depending on your armour and magical protections damage from any or all of these attack types may be reduced by varying amounts.
         </p>
         <p>

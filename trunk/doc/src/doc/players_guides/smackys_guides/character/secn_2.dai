@@ -2,6 +2,17 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 2: Your identity">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            <img alt="[Identity]" src="./identity.png"/>
+        </p>
+        <p>
+            This basic information about your identity has, as yet, very little or no effect on gameplay as detailed below.
+        </p>
+    </section>
     <section id="name">
         <title>
             Name
@@ -156,6 +167,9 @@
         <title>
             Profession
         </title>
+        <p>
+            This is currently not implemented. All characters are mercenaries.
+        </p>
         <div class="note">
             <p>
                 <img alt="[NOTE]" src="../note.png"/> You will often see players in-game and on the forums referring to mages, warriors, and priests. This is to do with which skills have been developed, chosen equipment, and preferred method of combat. There are no rigid classes in Daimonin.
@@ -166,12 +180,17 @@
         <title>
             Alignment
         </title>
-        <p/>
+        <p>
+            This is currently not implemented. All characters are true neutral.
+        </p>
     </section>
     <section id="faith">
         <title>
             Faith
         </title>
+        <p>
+            This is currently not implemented. All characters are followers of the Tabernacle.
+        </p>
         <p/>
     </section>
 </daiml>
