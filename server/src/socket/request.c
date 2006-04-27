@@ -73,6 +73,9 @@ void SetUp(char *buf, int len, NewSocket *ns)
     int     s;
     char   *cmd, *param, tmpbuf[MAX_BUF], cmdback[HUGE_BUF];
 
+	if (!buf || !len)
+		return;
+
 	if(!ns->version)
 	{
         LOG(llevInfo, "HACKBUG: setup command before version %s\n", STRING_SAFE(ns->ip_host));
@@ -383,12 +386,19 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
  */
 void PlayerCmd(char *buf, int len, player *pl)
 {
-    /* The following should never happen with a proper or honest client.
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	/* The following should never happen with a proper or honest client.
      * Therefore, the error message doesn't have to be too clear - if
      * someone is playing with a hacked/non working client, this gives them
      * an idea of the problem, but they deserve what they get
      */
-    if (pl->state != ST_PLAYING)
+	if (pl->state != ST_PLAYING)
     {
         new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "You can not issue commands - state is not ST_PLAYING (%s)", buf);
         return;
@@ -439,7 +449,14 @@ void NewPlayerCmd(char *buf, int len, player *pl)
     char    command[MAX_BUF];
     /*    SockList sl;*/
 
-    if (len < 7)
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	if (len < 7)
     {
         /*LOG(llevBug,"BUG: Corrupt ncom command from player %s - not long enough (len: %d)- discarding\n", pl->ob->name,len);*/
         return;
@@ -490,8 +507,12 @@ void ReplyCmd(char *buf, int len, player *pl)
      * function then does not try to do additional input.
      */
 
-    if (pl->socket.status == Ns_Dead) /* why ever... */
-        return;
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
 
     strcpy(write_buf, ":");
     strncat(write_buf, buf, 250);
@@ -527,7 +548,7 @@ void RequestFileCmd(char *buf, int len, NewSocket *ns)
     int id;
 
     /* *only* allow this command between the first login and the "addme" command! */
-    if (!ns->setup || !ns->version || ns->status != Ns_Add || !buf)
+    if (!ns->setup || !ns->version || ns->status != Ns_Add || !buf || !len)
     {
         LOG(llevInfo, "RF: received bad rf command for IP:%s\n", STRING_SAFE(ns->ip_host));
         ns->status = Ns_Dead;
@@ -614,7 +635,7 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
     char   *cp;
 
 
-    if (!buf || ns->version)
+    if (!buf || !len || ns->version)
     {
         LOG(llevInfo, "CS: received corrupted version command\n");
         ns->status = Ns_Dead;
@@ -677,7 +698,10 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
 
 void SetSound(char *buf, int len, NewSocket *ns)
 {
-    ns->sound = atoi(buf);
+	if (!buf || !len)
+		return;
+
+	ns->sound = atoi(buf);
 }
 
 /* Moves an object (typically, container to inventory
@@ -686,6 +710,13 @@ void SetSound(char *buf, int len, NewSocket *ns)
 void MoveCmd(char *buf, int len, player *pl)
 {
     int vals[3], i;
+
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
 
     /* A little funky here.  We only cycle for 2 records, because
      * we obviously am not going to find a space after the third

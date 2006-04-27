@@ -1149,8 +1149,18 @@ static object * esrv_get_ob_from_count_DM(object *pl, tag_t count)
 /* Client wants to examine some object.  So lets do so. */
 void ExamineCmd(char *buf, int len, player *pl)
 {
-    long    tag = atoi(buf);
-    object *op  = esrv_get_ob_from_count(pl->ob, tag);
+    long    tag;
+    object *op;
+
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	tag = atoi(buf);
+	op  = esrv_get_ob_from_count(pl->ob, tag);
 
     if (!op)
     {
@@ -1163,14 +1173,23 @@ void ExamineCmd(char *buf, int len, player *pl)
 /* Client wants to apply some object.  Lets do so. */
 void ApplyCmd(char *buf, int len, player *pl)
 {
-    uint32  tag = atoi(buf);
-    object *op  = esrv_get_ob_from_count(pl->ob, tag);
+    uint32  tag;
+    object *op;
 
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
     /* sort of a hack, but if the player saves and the player then manually
      * applies a savebed (or otherwise tries to do stuff), we run into trouble.
      */
     if (QUERY_FLAG(pl->ob, FLAG_REMOVED))
         return;
+
+	tag = atoi(buf);
+	op  = esrv_get_ob_from_count(pl->ob, tag);
 
     /* If the high bit is set, player applied a pseudo object. */
     if (tag & 0x80000000)
@@ -1194,7 +1213,14 @@ void LockItem(char *data, int len, player *pl)
     int     flag, tag;
     object *op;
 
-    flag = data[0];
+	if (!data || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	flag = data[0];
     tag = GetInt_String((uint8 *) data + 1);
     op = esrv_get_ob_from_count(pl->ob, tag);
 
@@ -1221,7 +1247,14 @@ void MarkItem(char *data, int len, player *pl)
     int     tag;
     object *op;
 
-    tag = GetInt_String((uint8 *) data);
+	if (!data || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	tag = GetInt_String((uint8 *) data);
     op = esrv_get_ob_from_count(pl->ob, tag);
 	
 	if(!op || tag == pl->mark_count)
@@ -1309,7 +1342,14 @@ void LookAt(char *buf, int len, player *pl)
     int     dx, dy;
     char   *cp;
 
-    dx = atoi(buf);
+	if (!buf || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	dx = atoi(buf);
     if (!(cp = strchr(buf, ' ')))
     {
         return;
