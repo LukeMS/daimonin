@@ -10,13 +10,13 @@
             If stats measure your basic characteristics, skills represent your ability to perform particular tasks. Examples include wielding a weapon or disarming a trap. It is always the case that to perform a task at all you must possess the skill.
         </p>
         <p>
-            Usually, how effectively you complete the task is dependent on your <a href="#levels">level</a> in the skill. Your <a href="#levels">level</a> is dependent on how much <a href="#experience">experience</a> you have in that skill.
+            Usually, how effectively you complete the task is dependent on your <a href="#experienceandlevels">level</a> in the skill. Your <a href="#experienceandlevels">level</a> is dependent on how much <a href="#experienceandlevels">experience</a> you have in that skill.
         </p>
         <p>
             <img alt="[Skill groups]" src="./skillgroups.png"/>
         </p>
         <p>
-            Skills are distributed amongst eight skill groups (only the first seven are shown on the main screen). The number next to each skill group is the highest <a href="#levels">level</a> attained of any skill within that group. For example if you are level 20 in wizardry spells and level 30 in magic devices the skill groups list will show level 30 in magic (Ma).
+            Skills are distributed amongst eight skill groups (only the first seven are shown on the main screen). The number next to each skill group is the highest <a href="#experienceandlevels">level</a> attained of any skill within that group. For example if you are level 20 in wizardry spells and level 30 in magic devices the skill groups list will show level 30 in magic (Ma).
         </p>
         <p>
             Practically speaking, most skills are used automatically. Examples include the melee weapons and magic casting skills. That is, you perform an action -- such as attacking a mob or casting a spell -- and the appropriate skill is used.
@@ -32,12 +32,6 @@
         </p>
         <p>
             The last skill you used/readied is indicated on the main screen.
-        </p>
-        <p>
-            <img alt="[Main skill]" src="./mainskill.png"/>
-        </p>
-        <p>
-            Your main skill is your highest <a href="#levels">level</a> skill. This is also the level of your character.
         </p>
         <p>
            The skill groups and individual skills are:
@@ -200,46 +194,31 @@
             Experience &amp; levels
         </title>
         <p>
-            Your <a href="#levels">level</a> in a <a href="#skills">skill </a> represents your proficiency and effectiveness in performing that task, and <a href="#experience">experience</a> records your progress towards the next <a href="#levels">level</a>.
+            Your level a <a href="#skills">skill </a> represents your proficiency and effectiveness in performing that task, and experience records your progress towards the next level
         </p>
         <p>
-            Gaining <a href="#experience">experience</a> is commonly known as <strong>training</strong> a skill and getting to the next <a href="#levels">level</a> is unsurprisingly referred to as <strong>levelling</strong>.
+            Gaining experience is commonly known as <strong>training</strong> a skill and getting to the next level is unsurprisingly referred to as <strong>levelling</strong>.
+        </p>
+        <p>
+            You train a <a href="#skills">skill</a> by either performing (practicing) the <a href="#skills">skill</a> or receiving instruction from an NPC (usually for a considerable fee).
+        </p>
+        <p>
+            When you learn a <a href="#skills">skill</a> it starts at level 1. The maximum level for any <a href="#skills">skill</a> is 110.
+        </p>
+        <p>
+            Your main <a href="#skills">skill</a> is your highest level skill. This is also the level of your character.
         </p>
         <p>
             Some <a href="#skills">skills</a> can not be trained and/or levelled. You either have the <a href="#skills">skill</a>, and can perform the task, or you do not, and can not.
         </p>
         <p>
-            Please note how experience and levels are represented on the screen. The used skill and main skill displays show your <a href="#experience">experience</a> and <a href="#levels">level</a> in the particular <a href="#skills">skill</a> numerically. They also contain ten dots and a bar underneath.
+            Please note how experience and levels are represented on the screen. The used skill and main skill displays show your experience and level in the particular <a href="#skills">skill</a> numerically. They also contain ten dots and a bar underneath.
         </p>
         <p>
-            As you gain <a href="#experience">experience</a> the bar gradually fills with colour. When the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your <a href="#levels">level</a> increments and dots and bar are all reset and off you go again. This is a lot more fun in practice than it seems on paper. Honest.
+            <img alt="[Main skill]" src="./mainskill.png"/>
         </p>
-        <section id="experience">
-            <title>
-                Experience
-            </title>
-            <p>
-                You gain experience by either:
-            </p>
-            <ol>
-                <li>
-                    practicing the <a href="#skills">skill</a>; or
-                </li>
-                <li>
-                    receiving instruction from a NPC.
-                </li>
-            </ol>
-        </section>
-        <section id="levels">
-            <title>
-                Levels
-            </title>
-            <p>
-                When you learn a <a href="#skills">skill</a> it starts at level 1.
-            </p>
-            <p>
-                The maximum level for any <a href="#skills">skill</a> is 110.
-            </p>
-        </section>
+        <p>
+            As you gain experience the bar gradually fills with colour. When the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your level increments and dots and bar are all reset and off you go again. This is a lot more fun in practice than it seems on paper. Honest.
+        </p>
     </section>
 </daiml>
