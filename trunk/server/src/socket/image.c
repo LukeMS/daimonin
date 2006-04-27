@@ -306,10 +306,16 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
 
 void SendFaceCmd(char *buff, int len, NewSocket *ns)
 {
-    long    tmpnum  = atoi(buff);
-    short   facenum = (short)(tmpnum & 0xffff);
+    long    tmpnum;
+    short   facenum;
 
-    if (facenum != 0)
+	if (!buff || !len)
+		return;
+
+	tmpnum  = atoi(buff);
+	facenum = (short)(tmpnum & 0xffff);
+
+	if (facenum != 0)
         esrv_send_face(ns, facenum, 1);
 }
 

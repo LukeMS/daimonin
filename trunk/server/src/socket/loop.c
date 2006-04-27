@@ -136,6 +136,13 @@ NsCmdMapping        nscommands[]    =
  */
 void command_talk_ex(char *data, int len, player *pl)
 {
+	if (!data || !len || !pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
 	/* the talk ex command has the same command as the
      * "normal" /talk, except a head part which are max. 2
      * numbers: "<mode> <count>"
@@ -158,12 +165,15 @@ void command_talk_ex(char *data, int len, player *pl)
  */
 void RequestInfo(char *buf, int len, NewSocket *ns)
 {
-    char*params =       NULL, *cp;
+    char				*params = NULL, *cp;
     /* No match */
     char                bigbuf[MAX_BUF];
     int                 slen;
 
-    /* Set up replyinfo before we modify any of the buffers - this is used
+	if (!buf || !len)
+		return;
+
+	/* Set up replyinfo before we modify any of the buffers - this is used
      * if we don't find a match.
      */
     /*strcpy(bigbuf,"replyinfo ");*/

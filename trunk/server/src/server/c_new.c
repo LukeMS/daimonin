@@ -619,7 +619,7 @@ void command_new_char(char *params, int len, player *pl)
 	int					skillnr[]       = {SK_SLASH_WEAP, SK_MELEE_WEAPON, SK_CLEAVE_WEAP, SK_PIERCE_WEAP};
     archetype          *p_arch          = NULL;
     const char         *name_tmp        = NULL;
-    object             *objtmp, *op              = pl->ob;
+    object             *objtmp, *op;
     int x = pl->ob->    x, y = pl->ob->y;
     int                 stats[8], i, v;
 #ifdef PLUGINS
@@ -630,14 +630,22 @@ void command_new_char(char *params, int len, player *pl)
     char                buf[HUGE_BUF]   = "";
 	char				*skillitem[] = {"shortsword", "mstar_small", "axe_small", "dagger_large"};
 
-    if (CONTR(op)->state != ST_CREATE_CHAR)
+	if (!pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	op = pl->ob;
+	if (pl->state != ST_CREATE_CHAR)
     {
         LOG(llevDebug, "SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
     }
 
-    if (!params || len > MAX_BUF)
+    if (!params || !len || len > MAX_BUF)
     {
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
@@ -839,7 +847,7 @@ void command_face_request(char *params, int len, NewSocket *ns)
 {
     int i, count;
 
-    if (!params)
+    if (!params || !len)
         return;
     count = *(uint8 *) params;
 
@@ -857,10 +865,17 @@ void command_face_request(char *params, int len, NewSocket *ns)
 
 void command_fire(char *params, int len, player *pl)
 {
-    int     dir = 0, type, tag1, tag2;
+    int     dir = 0, type=0, tag1=-1, tag2=-1;
     object *op  = pl->ob;
 
-    if (!params)
+	if (!pl || pl->socket.status == Ns_Dead)
+	{
+		if(pl)
+			pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	if (!params || !len)
         return;
 
     CONTR(op)->fire_on = 1;
