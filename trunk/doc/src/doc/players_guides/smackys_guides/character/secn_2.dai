@@ -44,6 +44,9 @@
                 <img alt="[Male human]" src="./humanmale.png"/>
                 <img alt="[Female human]" src="./humanfemale.png"/>
             </p>
+            <p>
+                "Humans are the generalists of the races. They are fit for any trade, and usually pick up a skill from their parents in addition to what they've learned as apprentices in their craft."
+            </p>
             <table>
                 <tr>
                     <th>
@@ -106,6 +109,9 @@
             <p>
                 <img alt="[Male half-elf]" src="./halfelfmale.png"/>
                 <img alt="[Female half-elf]" src="./halfelffemale.png"/>
+            </p>
+            <p>
+                "The name half-elf can be confusing because it is used for humans which elvish blood in the 2nd or 3rd generation. Real half bloods are normally counted to the elves. Half-elves are very similar to humans but a bit more focused to power and dexterity."
             </p>
             <table>
                 <tr>
