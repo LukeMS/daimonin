@@ -258,7 +258,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
     "f_one_hit", NULL /* debug flag CLIENT_SENT */, "f_berserk", "f_no_attack",   /* 100 */
     "f_invulnerable", "f_quest_item", "f_is_traped", "f_proof_phy", "f_proof_ele", /* 105 */
-    "f_proof_mag", "f_proof_sph", NULL, NULL, "f_sys_object", /* 110 */
+    "f_proof_mag", "f_proof_sph", "f_no_inv", NULL, "f_sys_object", /* 110 */
     "f_use_fix_pos", "f_unpaid", "f_is_aged", "f_make_invisible", "f_make_ethereal", "f_is_player", "f_is_named",
     "?f_spawn_mob_flag", "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
     "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",

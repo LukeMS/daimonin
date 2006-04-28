@@ -433,6 +433,7 @@ static void traverse_b3_player_inv(object *op)
 			next_obj = tmp->below;
 			if(tmp->type == MISC_OBJECT)
 			{
+				SET_FLAG(tmp,FLAG_SYS_OBJECT);
 				remove_ob(tmp);
 				continue;
 			}
@@ -450,6 +451,7 @@ static void traverse_b3_player_inv(object *op)
 		if ( tmp->type == DISEASE || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
 			(tmp->arch->name == shstr_cons.player_info && tmp->name == g_info))
 		{
+			SET_FLAG(tmp,FLAG_SYS_OBJECT);
 			remove_ob(tmp);
 			continue;
 		}
