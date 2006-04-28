@@ -146,8 +146,13 @@ WS	[ \t]*{NL}?
 				else
 					tmp->carrying = 0; /* sanity setting... this means too - NO double use of ->carrying! */
 
+			    if(QUERY_FLAG(op, FLAG_NO_INVENTORY) )
+			    {
+					destroy_object(tmp);
+				}
+				else
+				{
 			    insert_ob_in_ob(tmp,op);
-
 				amask_art = tmp_art;
 
 				if (!(map_flags & MAP_STYLE))
@@ -191,6 +196,7 @@ WS	[ \t]*{NL}?
                     
                     if(object_initializers[tmp->type] != NULL)
                         object_initializers[tmp->type](tmp);
+				}
 				}
 			}
 			/* This is the actual archetype definition then */
@@ -341,6 +347,7 @@ op->oy= op->y;
 ^egobound{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOBOUND, IVAL);
 ^egoclan{S}					SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOCLAN, IVAL);
 ^egolock{S}					SET_OR_CLEAR_FLAG(op, FLAG_IS_EGOITEM, IVAL);
+^no_inv{S}					SET_OR_CLEAR_FLAG(op, FLAG_NO_INVENTORY, IVAL);
 ^door_closed{S}				SET_OR_CLEAR_FLAG(op, FLAG_DOOR_CLOSED, IVAL);
 ^cursed_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
 ^damned_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
@@ -934,7 +941,7 @@ NULL, NULL, "is_male",
 "no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
-"proof_mag", "proof_sph", NULL, NULL, "sys_object", /* 110 */
+"proof_mag", "proof_sph", "no_inv", NULL, "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
@@ -1318,9 +1325,11 @@ void save_object(FILE *fp,object *op, int flag) {
 
     if (flag & 2 )
 	{
-		for(tmp=op->inv;tmp;tmp=tmp->below)
-			save_object(fp,tmp,flag);
-
+		if(!QUERY_FLAG(op, FLAG_NO_INVENTORY) )
+		{
+			for(tmp=op->inv;tmp;tmp=tmp->below)
+				save_object(fp,tmp,flag);
+		}
 	    /* Slightly different logic because tmp/op will be removed by
 		* the save_object we call.  So we just keep looking at op->inv
 		* until there is nothing left.  In theory, the variable old
