@@ -84,7 +84,7 @@ fi
 AC_SUBST(SDL_CFLAGS, `${SDL_CONFIG} --cflags`)
 AC_SUBST(SDL_LIBS, `${SDL_CONFIG} --libs`)
 
-AC_CHECK_FUNCS(stricmp strnicmp strcasecmp strncasecmp)
+AC_CHECK_FUNCS(stricmp strnicmp strcasecmp strncasecmp getaddrinfo)
 AC_CHECK_HEADERS([unistd.h])
 AC_CHECK_HEADERS([fcntl.h])
 
