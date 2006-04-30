@@ -171,8 +171,6 @@ struct attribute_decl       GameObject_attributes[]         =
     {"item_level",   FIELDTYPE_UINT8 , offsetof(object, item_level), 0},
     {"item_skill",   FIELDTYPE_UINT8 , offsetof(object, item_skill), 0},
     {"glow_radius",  FIELDTYPE_SINT8 , offsetof(object, glow_radius), 0},
-    {"move_status",  FIELDTYPE_SINT8 , offsetof(object, move_status), 0},
-    {"move_type",    FIELDTYPE_UINT8 , offsetof(object, move_type), 0},
     {"anim_enemy_dir", FIELDTYPE_SINT8 , offsetof(object, anim_enemy_dir), 0},
     {"anim_moving_dir", FIELDTYPE_SINT8 , offsetof(object, anim_moving_dir), 0},
     {"anim_enemy_dir_last", FIELDTYPE_SINT8 , offsetof(object, anim_enemy_dir_last), 0},

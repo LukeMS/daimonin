@@ -753,6 +753,9 @@ int do_skill_ident(object *pl, int obj_class)
 
 int use_oratory(object *pl, int dir)
 {
+    LOG(llevBug, "BUG: unimplemented oratory skill used\n");
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     int x = pl->x + freearr_x[dir], y = pl->y + freearr_y[dir], chance;
     int             stat1   = get_skill_stat1(pl);
     object         *tmp;
@@ -793,6 +796,7 @@ int use_oratory(object *pl, int dir)
             new_draw_info_format(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
             return 0;
         }
+        
         /* it's already allied! */
         if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && (tmp->move_type == PETMOVE))
         {
@@ -840,6 +844,7 @@ int use_oratory(object *pl, int dir)
             CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
         }
     } /* For loop cyclign through the objects on this space */
+#endif        
     return 0;   /* Fall through - if we get here, we didn't charm anything */
 }
 

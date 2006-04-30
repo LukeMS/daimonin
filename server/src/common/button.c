@@ -714,8 +714,12 @@ int get_button_value(object *button)
  * by b.t. thomas@nomad.astro.psu.edu
  */
 
+/* TODO: this needs to be updated for the new AI system if it is going to 
+ * be used at all. Gecko 2005-04-30 */
 void do_mood_floor(object *op, object *op2)
 {
+    LOG(llevBug, "BUG: mood floor used (not implemented yet)\n");
+#if 0    
     object *tmp;
     object *tmp2;
 
@@ -738,10 +742,9 @@ void do_mood_floor(object *op, object *op2)
           if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
           {
               CLEAR_FLAG(tmp, FLAG_FRIENDLY);
-              tmp->move_type = 0;
               /* lots of checks here, but want to make sure we don't
-                     * dereference a null value
-                     */
+               * dereference a null value
+               */
               if (tmp->type == GOLEM && tmp->owner && tmp->owner->type == PLAYER && CONTR(tmp->owner)->golem == tmp)
               {
                   send_golem_control(tmp, GOLEM_CTR_RELEASE);
@@ -788,6 +791,7 @@ void do_mood_floor(object *op, object *op2)
         default:
           break;
     }
+#endif    
 }
 
 /* this function returns the object it matches, or NULL if non.

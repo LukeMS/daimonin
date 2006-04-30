@@ -423,16 +423,13 @@ object * get_return_waypoint(object *op)
 
 /** Find a monster's waypoint by name (used for getting the next waypoint). 
  * @param op operand mob
- * @param name must be a shared string */
+ * @param name must be a shared string or NULL to find any waypoint */
 object * find_waypoint(object *op, const char *name)
 {
     object *wp  = NULL;
 
-    if (name == NULL)
-        return NULL;
-
     for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && wp->name == name)
+        if (wp->type == TYPE_WAYPOINT_OBJECT && (name == NULL || wp->name == name))
             break;
 
     return wp;
