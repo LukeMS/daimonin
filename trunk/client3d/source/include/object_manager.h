@@ -63,10 +63,6 @@ public:
   {
     mvObject_npc[npc]->castSpell(spell);
   }
-  void toggleAnimGroup(int npc)
-  {
-    mvObject_npc[npc]->toggleAnimGroup();
-  }
   void toggleMesh(int npc, int pos, int WeaponNr)
   {
     mvObject_npc[npc]->toggleMesh(pos, WeaponNr);

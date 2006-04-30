@@ -41,14 +41,14 @@ TileChunk::TileChunk()
 {
     m_posX = -1;
     m_posZ = -1;
-    m_Land_subMesh_high  = NULL;
-    m_Land_subMesh_low   = NULL;
-    m_Land_entity_high   = NULL;
-    m_Land_entity_low    = NULL;
-    m_Water_subMesh_high = NULL;
-    m_Water_subMesh_low  = NULL;
-    m_Water_entity_high  = NULL;
-    m_Water_entity_low   = NULL;
+    m_Land_subMesh_high  = 0;
+    m_Land_subMesh_low   = 0;
+    m_Land_entity_high   = 0;
+    m_Land_entity_low    = 0;
+    m_Water_subMesh_high = 0;
+    m_Water_subMesh_low  = 0;
+    m_Water_entity_high  = 0;
+    m_Water_entity_low   = 0;
 }
 
 ///================================================================================================
@@ -398,7 +398,6 @@ void TileChunk::CreateWaterHigh_Buffers()
         Create_Dummy(m_Water_subMesh_high);
         return;
     }
-
     /// ////////////////////////////////////////////////////////////////////
     /// Create VertexData.
     /// ////////////////////////////////////////////////////////////////////
@@ -424,9 +423,15 @@ void TileChunk::CreateWaterHigh_Buffers()
     vdata->vertexBufferBinding->setBinding(0, vbuf0);
 
     long o = 0;
+    static Real offsetWave = 0.05;
+    static Real WaveHigh = 0;
+    WaveHigh+= offsetWave;
+
+
+    if (WaveHigh >1.5 || WaveHigh < -1.5) offsetWave*=-1;
     Real StretchZ = m_TileManagerPtr->Get_StretchZ();
-    Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE))
-                  ;
+    Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
+    Real q1, q2;
     for (short a = x; a < x+ CHUNK_SIZE_X; ++a)
     {
         for (short b = z; b < z +CHUNK_SIZE_Z; ++b)
@@ -437,25 +442,39 @@ void TileChunk::CreateWaterHigh_Buffers()
                 /// ////////////////////////////////////////////////////////////////////
                 /// Position.
                 /// ////////////////////////////////////////////////////////////////////
+              if ((a&1) != (b&1))
+              {
+                q1 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
+                q2 = LEVEL_WATER_CLP * StretchZ - WaveHigh;
+              }
+              else
+              {
+                q1 = LEVEL_WATER_CLP * StretchZ - WaveHigh;
+                q2 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
+              }
                 // 1. Triangle
                 pReal[o   ] = TILE_SIZE * (a-x);
-                pReal[o+ 1] = LEVEL_WATER_CLP * StretchZ;
+                pReal[o+ 1] = q1;
                 pReal[o+ 2] = TILE_SIZE * (b-z);
+
                 pReal[o+10] = TILE_SIZE * ((a-x)+1);
-                pReal[o+11] = LEVEL_WATER_CLP* StretchZ;
+                pReal[o+11] = q2;
                 pReal[o+12] = TILE_SIZE * (b-z);
+
                 pReal[o+20] = TILE_SIZE * (a-x);
-                pReal[o+21] = LEVEL_WATER_CLP* StretchZ;
+                pReal[o+21] = q2;
                 pReal[o+22] = TILE_SIZE * ((b-z)+1);
                 // 2. Triangle
                 pReal[o+30] = TILE_SIZE * (a-x);
-                pReal[o+31] = LEVEL_WATER_CLP* StretchZ;
+                pReal[o+31] = q2;
                 pReal[o+32] = TILE_SIZE * ((b-z)+1);
+
                 pReal[o+40] = TILE_SIZE * ((a-x)+1);
-                pReal[o+41] = LEVEL_WATER_CLP * StretchZ;
+                pReal[o+41] = q2;
                 pReal[o+42] = TILE_SIZE * (b-z);
+
                 pReal[o+50] = TILE_SIZE * ((a-x)+1);
-                pReal[o+51] = LEVEL_WATER_CLP * StretchZ;
+                pReal[o+51] = q1;
                 pReal[o+52] = TILE_SIZE * ((b-z)+1);
 
                 /// ////////////////////////////////////////////////////////////////////
@@ -647,8 +666,6 @@ void TileChunk::CreateLandLow_Buffers()
     offset += VertexElement::getTypeSize(VET_FLOAT3);
     vdec->addElement( 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
     offset += VertexElement::getTypeSize(VET_FLOAT2);
-//    vdec->addElement( 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1);  // Gittertextur
-//    offset += VertexElement::getTypeSize(VET_FLOAT2);
 
     HardwareVertexBufferSharedPtr m_vbuf0;
     m_vbuf0 = HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -851,8 +868,8 @@ void TileChunk::CreateLandHigh_Buffers()
     {
         for (int b = z; b < z + CHUNK_SIZE_Z; ++b)
         {
-            if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
+//            if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
+//                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
             {
                 numVertices += 12;
             }
@@ -900,8 +917,8 @@ void TileChunk::CreateLandHigh_Buffers()
     {
         for (short b = z; b < z +CHUNK_SIZE_Z; ++b)
         {
-            if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
+            //if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
+//                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
             {
                 g = m_TileManagerPtr->Get_Map_Height(a  , b  ) * StretchZ;
                 h = m_TileManagerPtr->Get_Map_Height(a+1, b  ) * StretchZ;

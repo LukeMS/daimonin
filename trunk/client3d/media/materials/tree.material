@@ -1,0 +1,34 @@
+material Tree/Tree
+{
+    technique
+    {
+        pass
+        {
+            scene_blend alpha_blend 
+            alpha_rejection greater_equal 128
+            texture_unit
+            {
+                texture tree.png
+            }
+        }
+    }
+}
+
+material Tree/Leafs
+{
+    technique
+    {
+        pass
+        {
+            scene_blend alpha_blend 
+            alpha_rejection greater_equal 128
+            texture_unit
+            {
+		//filtering linear linear point
+		filtering none
+                texture leaf.png 
+        }
+    }
+}
+
+

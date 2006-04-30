@@ -90,13 +90,9 @@ public:
   void castSpell(int spell);
   void setTexture(int pos, int color, int textureNr);
   void toggleMesh   (int pos, int WeaponNr);
-  void toggleAnimGroup()
+  void toggleAnimation(int animGroup, int animNr)
   {
-    mAnim->toggleAnimGroup();
-  }
-  void toggleAnimation(int animationNr)
-  {
-    mAnim->toggleAnimation(animationNr);
+    mAnim->toggleAnimation(animGroup, animNr);
   }
   Real getFacing()
   {
@@ -125,8 +121,8 @@ private:
   Entity *mEntityNPC, *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
   Vector3 mTranslateVector, mWalkToPos, mBoundingBox, mDeltaPos;
   Animate *mAnim;
-  std::string mDescFile;
   Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
+  std::string mDescFile;
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

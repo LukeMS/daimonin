@@ -20,141 +20,130 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "option.h"
 #include "logger.h"
-#include "sound.h"
 #include "object_animate.h"
-#include "object_manager.h"
 
-//=================================================================================================
-// Init all static Elemnts.
-//=================================================================================================
-const char *Animate::StateNames[STATE_SUM]=
-  {
-    "Idle1",   "Idle2",   "Idle3",
-    "Idle4",   "Idle5",   "Idle6",
-    "Idle7",   "Idle8",   "Idle9", "Idle10",
-    "Idle11",  "Idle12",  "Idle13",
-    "Idle14",  "Idle15",  "Idle16",
-    "Idle17",  "Idle18",  "Idle19", "Idle120",
-    "Walk1",   "Walk2",   "Walk3",
-    "Run1",    "Run2",    "Run3",
-    "Attack1", "Attack2", "Attack3",
-    "Attack4", "Attack5", "Attack6",
-    "Block1",  "Block2",  "Block3",
-    "Slump1",  "Slump2",  "Slump3",
-    "Death1",  "Death2",  "Death3",
-    "Hit1",    "Hit2",    "Hit3",
-    "Cast1",   "Cast2",   "Cast3"
-  };
+/// IMPORTANT:
+/// Every animated model MUST have at least the Idle1 animation.
 
-const std::string sndPreFix  = "Sound_";
-const std::string animPreFix = "Anim_";
+///=================================================================================================
+/// Init all static Elemnts.
+///=================================================================================================
+const char *Animate::StateNames[SUM_ANIM_GROUP]=
+    {
+        "Idle", "Idle_Fun",
+        "Walk",
+        "Run",
+        "Ability",
+        "Attack", "Attack_Fun",
+        "Block",
+        "Hit",
+        "Slump",
+        "Death",
+        "Cast", "Cast_Fun",
+    };
 
-//=================================================================================================
-// Constructor. (Description File must be open when you call me.)
-//=================================================================================================
+///=================================================================================================
+/// Constructor.
+///=================================================================================================
 Animate::Animate(Entity *entity)
 {
-  std::string animName, soundName;
-  Option::getSingleton().getDescStr("Speed_Anim", mStrTemp);
-  mAnimSpeed = atoi(mStrTemp.c_str())/100;
+    mAnimSpeed = 2;
+    mIsAnimated = false;
+    std::string strTmp, strGroup;
+    AnimationState *AnimState;
 
-  Option::getSingleton().getDescStr("Speed_Turn", mStrTemp);
-  mTurnSpeed = atoi(mStrTemp.c_str());
-
-  // fill the animation states.
-  for (int state = 0; state < STATE_SUM; ++state)
-  {
-    animName = animPreFix + StateNames[state];
-    if (Option::getSingleton().getDescStr(animName.c_str(), mStrTemp))
+    // fill the animation states.
+    int j;
+    int sum =0;
+    for (int i=0; i < SUM_ANIM_GROUP; ++i)
     {
-      mAnimStates[state] = entity->getAnimationState(mStrTemp.c_str());
-      if (!mAnimStates[state])
-      {
-        Logger::log().error() << "Critical: No Animatin named " << mStrTemp << " found!";
-      }
+        mAnimGroupEntries[i] =0;
+        strGroup = StateNames[i];
+        try
+        {
+            j =0;
+            while(1)
+            {
+                strTmp = strGroup + StringConverter::toString(++j);
+                AnimState = entity->getAnimationState(strTmp.c_str());
+                mAnimState.push_back(AnimState);
+                mAnimGroupEntries[i]= j;
+                ++sum;
+            }
+        }
+        catch(Exception& e)
+        {
+            // No animation with this name found.
+        }
     }
-    else // not found animation-name in description file -> use the standard one (IDLE1).
+    if (sum)
     {
-      //            LogFile::getSingleton().Info("- Animation: %s has no animation defined\n", animName.c_str());
-      Option::getSingleton().getDescStr(StateNames[STATE_IDLE1], mStrTemp);
-      mAnimStates[state] = entity->getAnimationState(mStrTemp.c_str());
-    }
-    // load the sound for this animation.
-/*
-    soundName = sndPreFix + StateNames[state];
-    if (Option::getSingleton().getDescStr(soundName.c_str(), mStrTemp))
-    {
-      mStrTemp = PATH_SAMPLES + mStrTemp;
-      sound_handle[state] = Sound::getSingleton().createStream(mStrTemp.c_str());
+      mIsAnimated = true;
+      Logger::log().info() << "- Model has " << sum << " valid animations.";
     }
     else
     {
-      // LogFile::getSingleton().Info("- Animation: %s has no sound defined\n", soundName.c_str());
-      sound_handle[state] = Sound::getSingleton().createStream(FILE_SAMPLE_DUMMY);
+      Logger::log().info() << "- Model is not animated.";
+      return;
     }
-*/
-  }
-  mAnimGroup = 0;
-  mAnimType  =-1;
-  mAnimState = mAnimStates[STATE_IDLE1];
-  mAnimState->setEnabled(true);
-  mAnimState->setLoop(false);
-  mSpellTrigger = false;
+    /// Set the init-anim to Idle1.
+    mActState= mAnimState[ANIM_GROUP_IDLE + 0];
+    toggleAnimation(ANIM_GROUP_IDLE, 0, true, true);
 }
 
-//=================================================================================================
-//
-//=================================================================================================
-void Animate::toggleAnimGroup()
+///=================================================================================================
+/// Constructor.
+///=================================================================================================
+Animate::~Animate()
 {
-  if (++mAnimGroup >2)
-  {
-    mAnimGroup =0;
-  }
-  toggleAnimation(mAnimType, true);
-  //  char buf[80];
-  //  sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
-  //  TextWin->Print(buf, TXT_WHITE);
+  mAnimState.clear();
 }
 
-//=================================================================================================
-//
-//=================================================================================================
+///=================================================================================================
+/// Update the animation.
+///=================================================================================================
 void Animate::update(const FrameEvent& event)
 {
-  mAnimState = mAnimStates[mAnimType + mAnimGroup];
-  mAnimState->addTime(event.timeSinceLastFrame * mAnimSpeed);
-  // if an animation ends, then force the idle animation.
-  if (mAnimState->getTimePosition() >= mAnimState->getLength())
-  {
-    toggleAnimation(STATE_IDLE1, true);
-  }
-  if (!mSpellTrigger && mAnimType >= STATE_CAST1)
-  {
-    if (mAnimState->getTimePosition() >= 1)
+    if (!mIsAnimated) return;
+    mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
+    /// if an animation ends -> force the idle animation.
+    if (mActState->getTimePosition() >= mActState->getLength())
     {
-      const int SPELL_FIREBALL =0;
-      ObjectManager::getSingleton().castSpell(OBJECT_PLAYER, SPELL_FIREBALL);
-      mSpellTrigger = true;
+        toggleAnimation(ANIM_GROUP_IDLE, 0, true, true);
     }
-  }
 }
 
-//=================================================================================================
-//
-//=================================================================================================
-void Animate::toggleAnimation(int animationNr, bool force)
+///=================================================================================================
+/// Toggle the animation.
+///=================================================================================================
+void Animate::toggleAnimation(int animGroup, int animNr, bool loop, bool force)
 {
-  if (!force && (mAnimType == animationNr || ( !isMovement() && animationNr >= STATE_ATTACK1)))
-  {
-    return;
-  }
-  mSpellTrigger = false;
-  mAnimType = animationNr;
-  mAnimState->setEnabled(false);
-  mAnimState = mAnimStates[mAnimType + mAnimGroup];
-  mAnimState->setEnabled(true);
-  mAnimState->setTimePosition(0);
-  mAnimState->setLoop(false);
- // if (mAnimType > STATE_RUN3) Sound::getSingleton().playStream(sound_handle[animationNr -1 + mAnimGroup]);
+    if (!mIsAnimated) return;
+    /// Is the selected animation already running?
+    if (animGroup == mAnimGroup && animNr == mAnimNr)
+      return;
+    /// Dont change a running (none-movement) anim without the force-switch.
+    if (!force && !isMovement())
+      return;
+
+    /// On invalid animGroup choose Idle.
+    if (animGroup >= SUM_ANIM_GROUP || !mAnimGroupEntries[animGroup])
+        animGroup = ANIM_GROUP_IDLE;
+    /// On invalid animNr choose 0.
+    if (animNr >= mAnimGroupEntries[animGroup])
+        animNr = 0;
+    mAnimNr = animNr;
+    mAnimGroup = animGroup;
+    mActState->setEnabled(false);
+    /// Find the anim pos in the anim-vector.
+    animGroup =0;
+    for (int i=0; i< mAnimGroup; ++i)
+    {
+      animGroup+= mAnimGroupEntries[i];
+    }
+    /// Set the Animation.
+    mActState= mAnimState[animGroup+ animNr];
+    mActState->setTimePosition(0);
+    mActState->setEnabled(true);
+    mActState->setLoop(loop);
 }

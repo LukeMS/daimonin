@@ -109,10 +109,27 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, int 
 ///================================================================================================
 void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
+    for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+    {
+      mvObject_static [i]->update(evt);
+    }
+    for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
+    {
+      mvObject_npc[i]->update(evt);
+    }
+
+
+/*
   switch (obj_type)
   {
       case OBJECT_STATIC:
-      break;
+      {
+        for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+        {
+          mvObject_static [i]->update(evt);
+        }
+        break;
+      }
       case OBJECT_PLAYER:
       case OBJECT_NPC:
       {
@@ -125,6 +142,7 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
       default:
       break;
   }
+*/
 }
 
 ///================================================================================================
@@ -142,7 +160,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3
         if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
         if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
         if (action == OBJ_TEXTURE  ) mvObject_npc[0]->setTexture(val1, val2, val3);
-        if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1);
+        if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1, val2);
         if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
       }
       break;
@@ -154,7 +172,7 @@ void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3
           if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
           if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
           if (action == OBJ_TEXTURE  ) mvObject_npc[i]->setTexture(val1, val2, val3);
-          if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1);
+          if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1, val2);
         }
       }
       break;

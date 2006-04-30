@@ -69,7 +69,6 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_F1:
-        ObjectManager::getSingleton().toggleAnimGroup(OBJECT_PLAYER);
         break;
 
         case KC_F2:
@@ -79,18 +78,17 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_A:
         {
-         static int offset =1;
-         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_IDLE1 + offset);
-         if (++offset>= 20) offset =1;
+         static int animNr= 0;
+         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::ANIM_GROUP_IDLE, animNr);
+         if (++animNr >= 16) animNr= 0;
         }
         break;
 
         case KC_B:
-        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_BLOCK1);
         {
-         static int offset =1;
-         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::STATE_ATTACK1 + offset);
-         if (++offset> 5) offset =1;
+         static int animNr= 0;
+         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::ANIM_GROUP_ATTACK, animNr);
+         if (++animNr >= 16) animNr= 0;
         }
 
         break;

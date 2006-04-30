@@ -115,63 +115,6 @@ void TileSelection::select()
 ///================================================================================================
 void TileSelection::create_Entity()
 {
-  unsigned long numVertices = 6;
-  float StretchZ = m_TileManager->Get_StretchZ();
-  char name[50];
-  char name2[50];
-  IndexData* idata;
-
-  for (int c = 0; c < MAX_SEL_TILES; ++c)
-  {
-    m_vdata[c] = new VertexData();
-    sprintf( name, "Selection  %d",c );
-    m_Mesh[c] = MeshManager::getSingleton().createManual( name,ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME );
-    sprintf( name2, "SubSelection  %d",c);
-    m_SubMesh[c]= m_Mesh[c]->createSubMesh(name2);
-    idata = m_SubMesh[c]->indexData;
-    m_vdata[c]->vertexCount = numVertices; // Wichtig! Anzahl der Punkte muss angegeben werden, sonst Objekt nicht existent
-
-    VertexDeclaration* vdec = m_vdata[c]->vertexDeclaration;
-    size_t offset = 0;
-    vdec->addElement( 0, offset, VET_FLOAT3, VES_POSITION );
-    offset += VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement( 0, offset, VET_FLOAT3, VES_NORMAL );
-    offset += VertexElement::getTypeSize(VET_FLOAT3);
-    vdec->addElement( 0, offset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
-    offset += VertexElement::getTypeSize(VET_FLOAT2);
-    m_vbuf0[c] = HardwareBufferManager::getSingleton().createVertexBuffer(
-                         offset, // size of one whole vertex
-                         numVertices, // number of vertices
-                         HardwareBuffer::HBU_STATIC_WRITE_ONLY, // usage
-                         false); // no shadow buffer
-    VertexBufferBinding* vbbind = m_vdata[c]->vertexBufferBinding;
-    vbbind->setBinding(0, m_vbuf0[c]);
-
-    HardwareIndexBufferSharedPtr ibuf = HardwareBufferManager::getSingleton().
-        createIndexBuffer(
-          HardwareIndexBuffer::IT_16BIT, // type of index
-          numVertices, // number of indexes
-          HardwareBuffer::HBU_STATIC_WRITE_ONLY, // usage
-          false); // no shadow buffer
-    idata->indexBuffer = ibuf;
-    idata->indexStart = 0;
-    idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
-
-    for (unsigned short a = 0; a < (unsigned short)numVertices; a++) pIdx[a] = a;
-    ibuf->unlock();
-    m_SubMesh[c]->operationType = RenderOperation::OT_TRIANGLE_LIST;
-    m_SubMesh[c]->useSharedVertices = false;
-    m_SubMesh[c]->vertexData = m_vdata[c];
-    m_Mesh[c]->_setBounds(AxisAlignedBox(0, 0 , 0, TILE_SIZE, 255 * StretchZ , TILE_SIZE));
-    m_SubMesh[c]->setMaterialName("Selection");
-    sprintf( name2, "Selection Entity %d",c);
-    m_Entity[c] = m_TileManager->Get_pSceneManager()->createEntity(name2, name);
-    m_SceneNode[c] = m_TileManager->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
-    m_SceneNode[c]->attachObject( m_Entity[c] );
-    m_SceneNode[c]->setPosition(m_x * TILE_SIZE,0,m_y * TILE_SIZE);
-  }
-  m_Entity[0]->setRenderQueueGroup(RENDER_QUEUE_OVERLAY);
 }
 
 ///================================================================================================

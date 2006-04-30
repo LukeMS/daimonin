@@ -25,25 +25,13 @@ PosY     : "2"
 Facing   : "15" # [degrees]
 
 Type     : "static"
-MeshName : "tree1.mesh"
-PosX     : "8"
-PosY     : "8"
+MeshName : "Tree.mesh"
+PosX     : "3"
+PosY     : "12"
 Facing   : "90"   # Not used in static meshes.
 
 Type     : "static"
-MeshName : "tree1.mesh"
-PosX     : "9"
-PosY     : "9"
-Facing   : "90"   # Not used in static meshes.
-
-Type     : "static"
-MeshName : "tree1.mesh"
-PosX     : "10"
-PosY     : "10"
-Facing   : "90"   # Not used in static meshes.
-
-Type     : "static"
-MeshName : "tree1.mesh"
-PosX     : "11"
-PosY     : "11"
+MeshName : "Bush.mesh"
+PosX     : "3"
+PosY     : "15"
 Facing   : "90"   # Not used in static meshes.
