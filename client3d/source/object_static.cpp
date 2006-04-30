@@ -40,6 +40,7 @@ SceneManager *ObjStatic::mSceneMgr =0;
 ///================================================================================================
 void ObjStatic::freeRecources()
 {
+  if (mAnim) delete mAnim;
   mTexture.setNull();
 }
 
@@ -54,28 +55,34 @@ ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing
   /// ////////////////////////////////////////////////////////////////////
   /// Build the mesh name.
   /// ////////////////////////////////////////////////////////////////////
+  Logger::log().info()  << "Adding object: " << mesh_filename << ".";
   mEntity =mSceneMgr->createEntity("ObjStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
   mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
   mPosX = posX;
   mPosZ = posZ;
   const AxisAlignedBox &AABB = mEntity->getBoundingBox();
   Vector3 pos;
-  mBoundingBox.x = Math::Abs(AABB.getMaximum().x) - Math::Abs(AABB.getMinimum().x) + TILE_SIZE/2;
-  mBoundingBox.y = Math::Abs(AABB.getMinimum().y);
-  mBoundingBox.z = Math::Abs(AABB.getMaximum().z) - Math::Abs(AABB.getMinimum().z) + TILE_SIZE/2;
+  mBoundingBox.x = TILE_SIZE/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
+  mBoundingBox.z = TILE_SIZE/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+  mBoundingBox.y = AABB.getMinimum().y;
   pos.x = mPosX * TILE_SIZE + mBoundingBox.x;
-  pos.y = (Real) (Event->getTileManager()->Get_Map_StretchedHeight(mPosX, mPosZ) + mBoundingBox.y);
   pos.z = mPosZ * TILE_SIZE + mBoundingBox.z;
-  mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
+  pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
+  mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
   mNode->attachObject(mEntity);
-}
 
+  //mNode->scale(10,10,10);
+
+  mAnim = new Animate(mEntity);
+}
 
 ///================================================================================================
 /// Update npc.
 ///================================================================================================
-void ObjStatic::update(const FrameEvent&)
+void ObjStatic::update(const FrameEvent& event)
 {
+  //    Logger::log().info() << "hier";
+    mAnim->update(event);
 }
 
 ///================================================================================================

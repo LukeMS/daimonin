@@ -24,6 +24,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "define.h"
 #include "object_static.h"
+#include "object_animate.h"
 
 using namespace Ogre;
 
@@ -75,6 +76,8 @@ private:
   SceneNode *mNode;
   Entity *mEntity;
   Vector3 mTranslateVector, mBoundingBox;
+  Animate *mAnim;
+  Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
   /// ////////////////////////////////////////////////////////////////////
   /// Functions.

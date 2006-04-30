@@ -82,6 +82,7 @@ CEvent::~CEvent()
 ///================================================================================================
 void CEvent::setWorldPos(Vector3 &pos)
 {
+  return;
   static Vector3 dPos = pos;
   bool ui = false;
   /// East
@@ -403,6 +404,24 @@ bool CEvent::frameStarted(const FrameEvent& evt)
          }
         */
         GuiManager::getSingleton().update(evt.timeSinceLastFrame);
+
+  static clock_t time = clock();
+  if (clock() - time > 80.0)
+        {
+   //       mTileManager->ChangeChunks();
+          time = clock();
+        }
+
+
+/*
+        static Real time = evt.timeSinceLastFrame+1.0;
+        if (evt.timeSinceLastFrame > time)
+        {
+          mTileManager->ChangeChunks();
+           time = evt.timeSinceLastFrame+1.0;
+        }
+*/
+
         ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
         if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
           Network::getSingleton().Update();

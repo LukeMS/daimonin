@@ -172,6 +172,9 @@ NPC::sPicture NPC::picShoes[2] =
 typedef std::list<Particle*> ActiveParticleList;
 //static ParticleFX *tempPFX =0;
 
+const Real WALK_PRECISON = 1.0;
+const int TURN_SPEED    = 200;
+
 ///================================================================================================
 /// Free all recources.
 ///================================================================================================
@@ -269,7 +272,7 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   setTexture(   7,   6,   0);
 
   /// Create Animations and Animation sounds.
-  mAnim = new Animate(mEntityNPC); // Description File must be open when you call me.
+  mAnim = new Animate(mEntityNPC);
   mAutoTurning = false;
   mAutoMoving = false;
   mTurning      =0;
@@ -278,11 +281,6 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   mEntityShield =0;
   mEntityArmor  =0;
   mEntityHelmet =0;
-
-
-
-  mAnim->toggleAnimation(Animate::STATE_IDLE1);
-
 }
 
 ///================================================================================================
@@ -438,23 +436,23 @@ void NPC::update(const FrameEvent& event)
 
   if (mAutoTurning)
   {
-    mAnim->toggleAnimation(Animate::STATE_IDLE1);
+    mAnim->toggleAnimation(Animate::ANIM_GROUP_IDLE, 0);
     int turningDirection;
     int deltaDegree = ((int)mFacing.valueDegrees() - (int)mNewFacing.valueDegrees());
     if (deltaDegree <   0) deltaDegree += 360;
     if (deltaDegree < 180) turningDirection = -1; else turningDirection = 1;
-    mFacing += Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * turningDirection);
-    mNode->yaw(Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * turningDirection));
+    mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection);
+    mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection));
     /// Are we facing into the right direction (+/- 1 degree)?
-    if (deltaDegree <= 1) mAutoTurning = false;
+    if (deltaDegree <= WALK_PRECISON) mAutoTurning = false;
   }
   else if (mAutoMoving)
   {
-   // mAnim->toggleAnimation(Animate::STATE_WALK1);
     /// We are very close to destination.
+    mAnim->toggleAnimation(Animate::ANIM_GROUP_WALK, 0);
     Vector3 dist = mWalkToPos - mNode->getPosition();
     dist.y =0;
-    if(dist.squaredLength() < 1)   // choose 30 for slow systems.
+    if(dist.squaredLength() < WALK_PRECISON)   // choose 30 for slow systems.
     {
       /// Set the exact destination pos.
       mPosX = mWalkToX;
@@ -464,13 +462,12 @@ void NPC::update(const FrameEvent& event)
       mWalkToPos.y = Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ) - mBoundingBox.y;
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
-      mAnim->toggleAnimation(Animate::STATE_IDLE1);
+      mAnim->toggleAnimation(Animate::ANIM_GROUP_IDLE, 0);
     }
     else
     {
       /// We have to move on.
       // just a test...
-      mAnim->toggleAnimation(Animate::STATE_WALK1);
 
       mTranslateVector.x = sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
       mTranslateVector.z = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
@@ -486,6 +483,11 @@ void NPC::update(const FrameEvent& event)
     return;
   }
 
+  if (mAnim->isMovement() && mTurning)
+  {
+      mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning);
+      mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning));
+  }
 
 
 
@@ -497,18 +499,11 @@ void NPC::update(const FrameEvent& event)
 
 
 
-  if (mAnim->isMovement())
-  {
-    if (mTurning)
-    {
-      mFacing += Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
-      mNode->yaw(Degree(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
-    }
 /*
     if (mWalking)
     {
       // just a test...
-      mAnim->toggleAnimation(Animate::STATE_WALK1);
+      mAnim->toggleAnimation(Animate::STATE_WALK,0);
       mTranslateVector.x = Math::Sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
       mTranslateVector.z = Math::Cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
 
@@ -544,10 +539,9 @@ void NPC::update(const FrameEvent& event)
     }
     else
     {
-     // mAnim->toggleAnimation(Animate::STATE_IDLE1);
+      mAnim->toggleAnimation(Animate::ANIM_GROUP_IDLE, 0);
     }
   */
-  }
 }
 
 ///================================================================================================
@@ -595,7 +589,6 @@ void NPC::moveToTile(int x, int z)
   mWalkToX = x;
   mWalkToZ = z;
   mAutoMoving = true;
-  mAnim->toggleAnimation(Animate::STATE_WALK1);
 }
 
 ///================================================================================================

@@ -275,7 +275,7 @@ void TileManager::ChangeChunks()
     TileChunk::m_bounds = new AxisAlignedBox(
                               -TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
                               TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
-
+/*
     // Test start
     unsigned char value;
     for (int a = 0 ; a < TILES_SUM_X; ++a)
@@ -289,7 +289,7 @@ void TileManager::ChangeChunks()
         }
     }
     // Test stop
-
+*/
     Set_Map_Textures();
     for (short x = 0; x < CHUNK_SUM_X; ++x)
     {
@@ -299,6 +299,7 @@ void TileManager::ChangeChunks()
         }
     }
     delete TileChunk::m_bounds;
+
 #ifdef LOG_TIMING
 
     Logger::log().info() << "Time to change Chunks: " << clock()-time << " ms";
@@ -833,8 +834,8 @@ void TileManager::setMaterialLOD(int pixel)
     {
         for (int y = 0; y < CHUNK_SUM_Z; ++y)
         {
-            m_mapchunk[x][y].Get_Land_entity() ->setMaterialName(matLand);
-            m_mapchunk[x][y].Get_Water_entity()->setMaterialName(matWater);
+            if (m_mapchunk[x][y].Get_Land_entity() ) m_mapchunk[x][y].Get_Land_entity() ->setMaterialName(matLand);
+            if (m_mapchunk[x][y].Get_Water_entity()) m_mapchunk[x][y].Get_Water_entity()->setMaterialName(matWater);
             m_mapchunk[x][y].Attach(lod);
         }
     }

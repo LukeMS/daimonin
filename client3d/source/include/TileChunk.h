@@ -37,11 +37,11 @@ enum {
   LEVEL_MOUNTAIN_DWN = 40,
   // Plains
   LEVEL_PLAINS_TOP = 18,
-  LEVEL_PLAINS_MID = 14,
-  LEVEL_PLAINS_DWN = 12,
-  LEVEL_PLAINS_SUB = 10,
+  LEVEL_PLAINS_MID = 16,
+  LEVEL_PLAINS_DWN = 14,
+  LEVEL_PLAINS_SUB = 12,
   // Water
-  LEVEL_WATER_CLP = LEVEL_PLAINS_SUB+1, // At this point the water clips the land-tiles.
+  LEVEL_WATER_CLP = LEVEL_PLAINS_SUB +2, // At this point the water clips the land-tiles.
   LEVEL_WATER_TOP = LEVEL_WATER_CLP -1,
 };
 

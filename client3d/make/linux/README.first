@@ -31,3 +31,13 @@ On my system (adm64, geforce) i had to do this for compiling ogre3d:
 If you get a libpng exception look in ogre3d forums for the
 libpng and deviL modifikations.
 
+//====================================================================
+// Ogre compiling tips (Ogre 1.2rc2).
+//====================================================================
+You need libmng-1.0.8 to get ogre3d compiled.
+
+If "make install" cant find libOgreMain.lai then make a copy of libOgreMain.la in OgreMain/src/.libs.
+In libOgreMain.lai set installed=yes
+same for the other libs.
+
+
