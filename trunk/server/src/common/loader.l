@@ -592,8 +592,8 @@ op->oy= op->y;
 ^has_ready_skill{S}			{};
 	/* end outdate */
 
-^attack_movement{S} op->move_type = IVAL;
-^move_state{S}	    op->move_status = IVAL;
+^attack_movement{S} LOG(llevBug, "BUG: loader(): deprecated attack_movement setting\n");
+^move_state{S}	    LOG(llevBug, "BUG: loader(): deprecated move_state setting\n");
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
 ^paralyzed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PARALYZED, IVAL);
 ^feared{S}			SET_OR_CLEAR_FLAG(op, FLAG_FEARED, IVAL);
@@ -1162,10 +1162,6 @@ char *get_ob_diff(const object *op, const object *op2) {
     strcat(buf,buf2);
   }
 
-  if(op->move_status != op2->move_status)
-    save_long(buf, "move_state", op->move_status);
-  if(op->move_type != op2->move_type)
-    save_long(buf, "attack_movement", op->move_type);
   if(op->nrof!=op2->nrof)
     save_long(buf, "nrof", op->nrof);
   if(op->level!=op2->level)

@@ -901,8 +901,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
             }
             else if (op->enemy->type == MONSTER)
             {
-                if(QUERY_FLAG(op->enemy, FLAG_READY_WEAPON) || //* ready weapon marks special mobs always in melee */
-                    (! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) && ! QUERY_FLAG(op->enemy, FLAG_READY_BOW)))
+                if(! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) && ! QUERY_FLAG(op->enemy, FLAG_READY_BOW))
                     return;
                 SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
             }

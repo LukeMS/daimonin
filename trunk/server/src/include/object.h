@@ -192,9 +192,8 @@ typedef struct obj
     uint8           item_level;         /* level needed to use or apply this item */
     uint8           item_skill;         /* if set and item_level, item_level in this skill is needed */
 
-    /* TODO: get rid of those two with AI system change */
-    sint8           move_status;        /* What stage in attack mode */
-    uint8           move_type;          /* What kind of attack movement */
+    sint8           deprecated1;        /* was: move_status */
+    uint8           deprecated2;        /* was: move_type */
 
     sint8           anim_enemy_dir;     /* special shadow variable: show dir to targeted enemy */
     sint8           anim_moving_dir;    /* sic: shows moving dir or -1 when object do something else */

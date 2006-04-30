@@ -173,7 +173,7 @@ uint32 bghash(object *op)
         hash |= 1;
     if (QUERY_FLAG(op, FLAG_STAND_STILL))
         hash |= 2;
-    if ((op->move_type & HI4) == WPOINT)
+    if(find_waypoint(op, NULL))
         hash |= 4;
     if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
         hash |= 8;
@@ -296,10 +296,10 @@ struct mob_behaviourset * generate_behaviourset(object *op)
 
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         {
+            /* Behaviours for ranged-only fighters */
             if (!QUERY_FLAG(op, FLAG_READY_WEAPON) &&
                 (QUERY_FLAG(op, FLAG_READY_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW)))
             {
-                /* Behaviours for archers/mages only */
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY);
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].intvalue = (long)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
@@ -309,23 +309,24 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);
 
             }
-            else
+            
+            /* Behaviours for melee-only fighters */
+            if(!QUERY_FLAG(op, FLAG_READY_SPELL) && !QUERY_FLAG(op, FLAG_READY_BOW))
             {
-                /* Behaviours for melee fighters */
-                /*
+                last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_AVOID_LINE_OF_FIRE);
+            }
+                
+            /* TODO: any behaviours for melee figheters
                 last = last->next = init_behaviour(
                         BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_STEP_BACK_AFTER_SWING);
                 last->parameters[AIPARAM_STEP_BACK_AFTER_SWING_DIST].intvalue = (int)behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_STEP_BACK_AFTER_SWING].params[AIPARAM_STEP_BACK_AFTER_SWING_DIST].defaultvalue;
-                */
-
-                last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_AVOID_LINE_OF_FIRE);
-            }
+            */
 
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY);
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY_LAST_KNOWN_POS);
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SEARCH_FOR_LOST_ENEMY);
         }
-        if ((op->move_type & HI4) == WPOINT)
+        if(find_waypoint(op, NULL))
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_WAYPOINT);
         if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
         {

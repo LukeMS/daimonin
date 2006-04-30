@@ -950,6 +950,10 @@ int cast_create_obj(object *op, object *caster, object *new_op, int dir)
 
 int summon_monster(object *op, object *caster, int dir, archetype *at, int spellnum)
 {
+    LOG(llevBug, "BUG: unimplemented function 'summon monster'\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     object     *tmp;
     mapstruct  *mt;
     int         xt, yt;
@@ -1036,6 +1040,7 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
     tmp->direction = dir;
     insert_ob_in_map(tmp, mt, op, 0);
     return 1;
+#endif    
 }
 
 

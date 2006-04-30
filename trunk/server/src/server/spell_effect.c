@@ -1741,6 +1741,12 @@ struct summoned_mon pets_summoned = {
 
 int summon_pet(object *op, int dir, SpellTypeFrom item)
 {
+    LOG(llevBug, "BUG: unimplemented summon pet spell used\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
+    
+    
     int         level, number, i;
     char       *monster;
     archetype  *at;
@@ -1858,6 +1864,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
     if (item != spellNormal && op->stats.sp < 0)
         op->stats.sp = 0;
     return 1;
+#endif
 }
 
 int create_bomb(object *op, object *caster, int dir, int spell_type, char *name)
@@ -3189,6 +3196,10 @@ int summon_hostile_monsters(object *op, int n, const char *monstername)
 
 int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
 {
+    LOG(llevBug, "BUG: unimplemented spell 'charm'\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     int         i, xt, yt;
     object     *tmp, *effect;
     mapstruct  *m;
@@ -3228,10 +3239,15 @@ int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
         tmp->move_type = PETMOVE;
     }
     return 1;
+#endif    
 }
 
 int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
 {
+    LOG(llevBug, "BUG: unimplemented spell 'charm undead'\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     int         i, bonus, xt, yt;
     mapstruct  *m;
     object     *tmp, *effect, *god = find_god(determine_god(op));
@@ -3282,6 +3298,7 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
         tmp->move_type = PETMOVE;
     }
     return 1;
+#endif    
 }
 
 /* Returns a monster (chosen at random) that this particular player (and his
@@ -3613,6 +3630,10 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
  */
 object * fix_summon_pet(archetype *at, object *op, int dir, int type)
 {
+    LOG(llevBug, "BUG: unimplemented function 'fix_summon_pet()' called\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     archetype      *atmp;
     object*tmp =    NULL, *prev = NULL, *head = NULL;
 
@@ -3687,6 +3708,7 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
         CLEAR_FLAG(head, FLAG_SPLITTING);
 
     return head;
+#endif    
 }
 
 /* cast_consecrate() - a spell to make an altar your god's */
@@ -3794,6 +3816,10 @@ int finger_of_death(object *op, object *caster, int dir)
 
 int animate_weapon(object *op, object *caster, int dir, archetype *at, int spellnum)
 {
+    LOG(llevBug, "BUG: unimplemented spell 'animate_weapon'\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     object *weapon, *tmp;
     char    buf[MAX_BUF];
     int     a, i, j;
@@ -4044,6 +4070,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
     tmp->direction = dir;
     insert_ob_in_map(tmp, op->map, op, 0);
     return 1;
+#endif    
 }
 
 
@@ -4317,6 +4344,9 @@ void move_aura(object *aura)
 
 void move_peacemaker(object *op)
 {
+    LOG(llevBug, "BUG: unimplemented function 'move_peacemaker'\n");
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     object *tmp;
     char    buf[MAX_BUF];
 
@@ -4356,11 +4386,16 @@ void move_peacemaker(object *op)
             }
         }
     }
+#endif    
 }
 
 
 int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int type)
 {
+    LOG(llevBug, "BUG: unimplemented spell 'casuse conflict'\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-04-30 */
+#if 0        
     int         i, j, xt, yt;
     int         r;    /*  peterm:  added to make area of effect level dep.  */
     int         level;
@@ -4400,4 +4435,5 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
             }
         }
     return 1;
+#endif    
 }
