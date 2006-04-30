@@ -224,7 +224,6 @@ daimonin_SOURCES = \
 AUTOMAKE_OPTIONS = subdir-objects
 daimonin_OBJDIR = objs
 daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
-#AM_CPPFLAGS = @SDL_CFLAGS@ 
 AM_CFLAGS = @SDL_CFLAGS@ -Wall
 AM_LDFLAGS = @LDFLAGS@ 
 all: all-am

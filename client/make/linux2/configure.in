@@ -297,7 +297,7 @@ AC_CHECK_TYPES([ptrdiff_t])
 AC_FUNC_MALLOC
 AC_FUNC_SELECT_ARGTYPES
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([atexit gethostbyname memset modf select socket strcasecmp strchr strerror strncasecmp strrchr strstr strtoul stricmp strnicmp getpwuid])
+AC_CHECK_FUNCS([atexit gethostbyname memset modf select socket strcasecmp strchr strerror strncasecmp strrchr strstr strtoul stricmp strnicmp getpwuid getaddrinfo])
 
 # Checks for header files.
 AC_HEADER_STDC

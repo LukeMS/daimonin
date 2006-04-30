@@ -365,11 +365,13 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 }
 
 #elif __LINUX
-Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int
-port)
+Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port)
 {
-    struct protoent    *protox;
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int), temp;
+
+/* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
+#ifndef HAVE_GETADDRINFO
+    struct protoent *protox;
     struct sockaddr_in  insock;
 
     printf("Opening to %s %i\n", host, port);
@@ -388,8 +390,6 @@ port)
         *socket_temp = SOCKET_NO;
         return FALSE;
     }
-    csocket.inbuf.buf = (unsigned char *) _malloc(MAXSOCKBUF, "SOCKET_OpenSocket(): MAXSOCKBUF");
-    csocket.inbuf.len = 0;
     insock.sin_family = AF_INET;
     insock.sin_port = htons((unsigned short) port);
     if (isdigit(*host))
@@ -404,17 +404,61 @@ port)
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
-    csock->command_sent = 0;
-    csock->command_received = 0;
-    csock->command_time = 0;
-
-    temp = 1;   /* non-block*/
 
     if (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == (-1))
     {
         perror("Can't connect to server");
         return FALSE;
     }
+#else
+    struct addrinfo hints;
+    struct addrinfo *res = NULL, *ai;
+    char port_str[6], hostaddr[40];
+
+    printf("Opening to %s %i\n", host, port);
+
+    snprintf(port_str, sizeof(port_str), "%d", port);
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    if (getaddrinfo(host, port_str, &hints, &res) != 0)
+        return FALSE;
+
+    for (ai = res; ai != NULL; ai = ai->ai_next) {
+        getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
+        printf("  trying %s\n", hostaddr);
+
+        *socket_temp = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+        if (*socket_temp == -1) {
+            *socket_temp = SOCKET_NO;
+            continue;
+        }
+
+        if (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0) {
+            close(*socket_temp);
+            *socket_temp = SOCKET_NO;
+            continue;
+        }
+
+        break;
+    }
+
+    freeaddrinfo(res);
+    if (*socket_temp == SOCKET_NO) {
+        perror("Can't connect to server");
+        return FALSE;
+    }
+#endif
+
+    csock->command_sent=0;
+    csock->command_received=0;
+    csock->command_time=0;
+
+    csocket.inbuf.buf=(unsigned char *)_malloc(MAXSOCKBUF,"SOCKET_OpenSocket(): MAXSOCKBUF");
+    csocket.inbuf.len=0;
+
     if (fcntl(*socket_temp, F_SETFL, O_NDELAY) == -1)
     {
         fprintf(stderr, "InitConnection:  Error on fcntl.\n");
