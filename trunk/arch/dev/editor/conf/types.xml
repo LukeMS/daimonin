@@ -3170,9 +3170,6 @@
     between a being make out of dust (which is still kind of matter)
     and a real ghost which is pure energy.
   </attribute>
-  <attribute arch="no_attack" editor="never attack" type="bool">
-    This mob will NEVER attack or fight back. Its permanent unaggressive.
-  </attribute>
   <attribute arch="flying" editor="flying" type="bool">
     Flying monsters won't get slowed down in rough terrain
     and they won't be affected by movers.
@@ -3190,12 +3187,16 @@
     the carried weight.
   </attribute>
   <attribute arch="is_male" editor="male" type="bool">
-    This monster is male. You can create male, female and neuter monsters.
-	But for some reason, two-sexed monsters doesn't seem to work really well.
+    This monster is male. You can create male, female, hermaphroditic or neuter monsters.
   </attribute>
   <attribute arch="is_female" editor="female" type="bool">
-    This monster is female. You can create male, female and neuter monsters.
-	But for some reason, two-sexed monsters doesn't seem to work really well.
+    This monster is female. You can create male, female, hermaphroditic or neuter monsters.
+  </attribute>
+  <attribute arch="sleep" editor="asleep" type="bool">
+    Being &lt;asleep&gt;, a monster won't move unless a player enters the
+    &lt;sensing range&gt; of the monster. Usually the sensing range is
+    larger than the players line of sight. Due to that, in most cases
+    the player won't ever notice weither a monster was asleep or not.
   </attribute>
 
 <section name="melee">
@@ -3330,6 +3331,10 @@
     creature can move. If nothing is set, the creature
     can walk on land surface.
   </attribute>
+  <attribute arch="can_open_door" editor="can open doors" type="bool">
+    This entry defines which kinds of environment actions the
+    creature is able to perform.
+  </attribute>
   <attribute arch="Dex" editor="use ability 1/" type="int">
     The &lt;use ability&gt; value is a 1/x chance that the monster
     *try* to use per active tick a special ability like spellcasting,
@@ -3340,6 +3345,13 @@
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
+  </attribute>
+  <attribute arch="Wis" editor="sensing range" type="int">
+    &lt;sensing range&gt; determines how close a player needs to be before
+    the creature wakes up. This is done as a square, for reasons of speed.
+    Thus, if the &lt;sensing range&gt; is 11, any player that moves within the
+    11x11 square of the monster will wake the monster up. If the player
+    has stealth, the size of this square is reduced in half plus 1.
   </attribute>
   <attribute arch="see_invisible" editor="see invisible" type="bool">
     A monster with the ability to &lt;see invisible&gt; cannot be fooled
@@ -3357,31 +3369,46 @@
 
 <section name="behave">
   <attribute arch="unaggressive" editor="unaggressive" type="bool">
-    &lt;unaggressive&gt; monsters do not attack players unless attacked first.
+    &lt;unaggressive&gt; monsters do not attack unless attacked first. If attacked at any time, the unaggressive status will be removed forever.
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
     &lt;surrendered&gt; monsters do not attack and don't count as target.
   </attribute>
-  <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
-    This mob will search always direct melee even when it has range or spells.
-  </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
-    non-friendly monsters in range.
+    non-friendly monsters in range. 
+    
+    This sets the basic monster/NPC alignment. The "friendship" AI behaviour gives more detailed control over whom to consider friends or enemies.
+  </attribute>
+  <attribute arch="no_attack" editor="never attack" type="bool">
+    This mob will NEVER attack or fight back. It's permanently unaggressive.
+
+    This setting only has effect if the monster doesn't have an AI object.
+  </attribute>
+  <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
+    This mob will primarily do melee attacks, even if it has range weapons or spells available.
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="random_move" editor="random movement" type="bool">
     Monsters with this flag enabled move around at random.
     Specifically, that means they do not approach enemy players
     when agressive, but they never stand still either.
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 
   <attribute arch="item_race" editor="random move range X" type="int">
    if random_move is set, this determinates a ABS() value of x position
    the creatures can move away from the spawn point.
+  
+   This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="item_level" editor="random move range Y" type="int">
    if random_move is set, this determinates a ABS() value of y position
    the creatures can move away from the spawn point.
+
+   This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 
   <attribute arch="stand_still" editor="stand still" type="bool">
@@ -3392,31 +3419,15 @@
     When lining up &lt;stand still&gt;-monster in order to "defend"
     something: Be aware that such monsters are rather easy to kill.
     It's good for low level maps, but not much more.
-  </attribute>
-  <attribute arch="sleep" editor="asleep" type="bool">
-    Being &lt;asleep&gt;, a monster won't move unless a player enters the
-    &lt;sensing range&gt; of the monster. Usually the sensing range is
-    larger than the players line of sight. Due to that, in most cases
-    the player won't ever notice weither a monster was asleep or not.
-  </attribute>
-  <attribute arch="can_open_door" editor="can open doors" type="bool">
-    This entry defines which kinds of environment actions the
-    creature is able to perform.
-  </attribute>
-  <attribute arch="Wis" editor="sensing range" type="int">
-    &lt;sensing range&gt; determines how close a player needs to be before
-    the creature wakes up. This is done as a square, for reasons of speed.
-    Thus, if the &lt;sensing range&gt; is 11, any player that moves within the
-    11x11 square of the monster will wake the monster up. If the player
-    has stealth, the size of this square is reduced in half plus 1.
-  </attribute>
-  <attribute arch="attack_movement" editor="attack movement" type="doublelist:attack_type,move_type"> 
-	FIXME: copy documentation from define.h 
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="run_away" editor="run at % health" type="int">
     This is a percentage based value in the range 0-100.
     The creature will attempt to run from the attacker when it's
     health points drops below this percentage of max health.
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
@@ -3625,6 +3636,18 @@
     value can be set to reflect the slowdown due to
     the carried weight.
   </attribute>
+  <attribute arch="is_male" editor="male" type="bool">
+    This monster is male. You can create male, female, hermaphroditic or neuter monsters.
+  </attribute>
+  <attribute arch="is_female" editor="female" type="bool">
+    This monster is female. You can create male, female, hermaphroditic or neuter monsters.
+  </attribute>
+  <attribute arch="sleep" editor="asleep" type="bool">
+    Being &lt;asleep&gt;, a monster won't move unless a player enters the
+    &lt;sensing range&gt; of the monster. Usually the sensing range is
+    larger than the players line of sight. Due to that, in most cases
+    the player won't ever notice weither a monster was asleep or not.
+  </attribute>
 <section name="spawn-settings">
   <attribute arch="object_int1" editor="chance to spawn" type="int">
     The spawn point will use a random number between 0-9999 to
@@ -3776,6 +3799,10 @@
     creature can move. If nothing is set, the creature
     can walk on land surface.
   </attribute>
+  <attribute arch="can_open_door" editor="can open doors" type="bool">
+    This entry defines which kinds of environment actions the
+    creature is able to perform.
+  </attribute>
   <attribute arch="Dex" editor="use ability 1/" type="int">
     The &lt;use ability&gt; value is a 1/x chance that the monster
     *try* to use per active tick a special ability like spellcasting,
@@ -3786,6 +3813,13 @@
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
+  </attribute>
+  <attribute arch="Wis" editor="sensing range" type="int">
+    &lt;sensing range&gt; determines how close a player needs to be before
+    the creature wakes up. This is done as a square, for reasons of speed.
+    Thus, if the &lt;sensing range&gt; is 11, any player that moves within the
+    11x11 square of the monster will wake the monster up. If the player
+    has stealth, the size of this square is reduced in half plus 1.
   </attribute>
   <attribute arch="see_invisible" editor="see invisible" type="bool">
     A monster with the ability to &lt;see invisible&gt; cannot be fooled
@@ -3803,31 +3837,43 @@
 
 <section name="behave">
   <attribute arch="unaggressive" editor="unaggressive" type="bool">
-    &lt;unaggressive&gt; monsters do not attack players unless attacked first.
+    &lt;unaggressive&gt; monsters do not attack unless attacked first. If attacked at any time, the unaggressive status will be removed forever.
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
     &lt;surrendered&gt; monsters do not attack and don't count as target.
   </attribute>
-  <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
-    This mob will search always direct melee even when it has range or spells.
-  </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
     non-friendly monsters in range.
+    
+    This sets the basic monster/NPC alignment. The "friendship" AI behaviour gives more detailed control over whom to consider friends or enemies.
+  </attribute>
+  <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
+    This mob will primarily do melee attacks, even if it has range weapons or spells available.
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="random_move" editor="random movement" type="bool">
     Monsters with this flag enabled move around at random.
     Specifically, that means they do not approach enemy players
     when agressive, but they never stand still either.
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
+
   <attribute arch="item_race" editor="random move range X" type="int">
    if random_move is set, this determinates a ABS() value of x position
    the creatures can move away from the spawn point.
+  
+   This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="item_level" editor="random move range Y" type="int">
    if random_move is set, this determinates a ABS() value of y position
    the creatures can move away from the spawn point.
+
+   This setting only has effect if the monster doesn't have an AI object.
   </attribute>
+
   <attribute arch="stand_still" editor="stand still" type="bool">
     Monsters which &lt;stand still&gt; won't move to leave their position.
     When agressive, they will attack all enemies who get close to
@@ -3836,31 +3882,15 @@
     When lining up &lt;stand still&gt;-monster in order to "defend"
     something: Be aware that such monsters are rather easy to kill.
     It's good for low level maps, but not much more.
-  </attribute>
-  <attribute arch="sleep" editor="asleep" type="bool">
-    Being &lt;asleep&gt;, a monster won't move unless a player enters the
-    &lt;sensing range&gt; of the monster. Usually the sensing range is
-    larger than the players line of sight. Due to that, in most cases
-    the player won't ever notice weither a monster was asleep or not.
-  </attribute>
-  <attribute arch="can_open_door" editor="can open doors" type="bool">
-    This entry defines which kinds of environment actions the
-    creature is able to perform.
-  </attribute>
-  <attribute arch="Wis" editor="sensing range" type="int">
-    &lt;sensing range&gt; determines how close a player needs to be before
-    the creature wakes up. This is done as a square, for reasons of speed.
-    Thus, if the &lt;sensing range&gt; is 11, any player that moves within the
-    11x11 square of the monster will wake the monster up. If the player
-    has stealth, the size of this square is reduced in half plus 1.
-  </attribute>
-  <attribute arch="attack_movement" editor="attack movement" type="doublelist:attack_type,move_type"> 
-	FIXME: copy documentation from define.h 
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
   <attribute arch="run_away" editor="run at % health" type="int">
     This is a percentage based value in the range 0-100.
     The creature will attempt to run from the attacker when it's
     health points drops below this percentage of max health.
+
+    This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
@@ -5735,8 +5765,7 @@ that food.]]>
   <description><![CDATA[
     The waypoint object can hold a position that a mob is to reach.
 	
-	Mobs will only use waypoints if their attack_movement attribute is between 176 and 
-    191 or if they have a behaviour list with move_towards_waypoint in the moves class.
+	Mobs will use waypoints automatically if they don't have an AI object, or if they have a behaviour list with move_towards_waypoint in the moves class. If a mob has a default race or arch AI objects without move_towards_waypoint you might want to override it to enable waypoints for that mob.
 	
 	When the mob reaches the destination it will either continue to
 	the next waypoint, or stop. Waypoints can be used to set up patrol 
