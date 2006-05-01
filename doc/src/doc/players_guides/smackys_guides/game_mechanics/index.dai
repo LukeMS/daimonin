@@ -6,72 +6,96 @@
         <title>
             <a href="./secn_1.dai">Section 1: Logging in &amp; logging out</a>
         </title>
-        <p/>
+        <p>
+            How to get into the game and get out again (and save your character).
+        </p>
     </section>
     <section id="section2">
         <title>
             <a href="./secn_2.dai">Section 2: Interacting with Daimonin</a>
         </title>
-        <p/>
-            <section id="section2-1">
-               <title>
-                    <a href="./secn_2-1.dai">Section 2-1: Commands &amp; bound keys</a>
-                </title>
-                <p/>
-            </section>
-                <section id="section2-2">
-                    <title>
-                        <a href="./secn_2-2.dai">Section 2-2: The range system</a>
-                    </title>
-            <p/>
-                </section>
-                <section id="section2-3">
-                    <title>
-                        <a href="./secn_2-3.dai">Section 2-3: The quickbar</a>
-                    </title>
-            <p/>
-                </section>
-                <section id="section2-4">
-                    <title>
-                        <a href="./secn_2-4.dai">Section 2-4: Using dialogs</a>
-                    </title>
-            <p/>
-                </section>
-        </section>
-        <section id="section3">
-            <title>
-                <a href="./secn_3.dai">Section 3: Options</a>
+        <p>
+            How to tell Daimonin what you want to do...
+        </p>
+        <section id="section2-1">
+           <title>
+                <a href="./secn_2-1.dai">Section 2-1: Commands &amp; bound keys</a>
             </title>
-            <p/>
-                <section id="section3-1">
-                    <title>
-                        <a href="./secn_3-1.dai">Section 3-1: Key settings</a>
-                    </title>
-            <p/>
-                </section>
-                <section id="section3-2">
-                    <title>
-                        <a href="./secn_3-2.dai">Section 3-2: Settings</a>
-                    </title>
-            <p/>
-                </section>
+            <p>
+                ...via typed commands.
+            </p>
         </section>
-        <section id="appendixa">
+        <section id="section2-2">
             <title>
-                <a href="./appx_a.dai">Appendix A: Game commands</a>
+                <a href="./secn_2-2.dai">Section 2-2: The range system</a>
             </title>
-            <p/>
+            <p>
+                ...via the range system for complex actions.
+            </p>
         </section>
-        <section id="appendixb">
+        <section id="section2-3">
             <title>
-                <a href="./appx_b.dai">Appendix B: Meta commands</a>
+                <a href="./secn_2-3.dai">Section 2-3: The quickbar</a>
             </title>
-            <p/>
+            <p>
+                ...via the quickbar for certain quite simple actions.
+            </p>
         </section>
-        <section id="appendixc">
+        <section id="section2-4">
             <title>
-                <a href="./appx_c.dai">Appendix C: Default bindings</a>
+                <a href="./secn_2-4.dai">Section 2-4: Using dialogs</a>
             </title>
-            <p/>
+            <p>
+                ...via dialogs for the really cumbersome stuff.
+            </p>
         </section>
+    </section>
+    <section id="section3">
+        <title>
+            <a href="./secn_3.dai">Section 3: Options</a>
+        </title>
+        <p>
+            How to change the behaviour of Daimonin...
+        </p>
+        <section id="section3-1">
+            <title>
+                <a href="./secn_3-1.dai">Section 3-1: Key settings</a>
+            </title>
+            <p>
+                ...as regards which keys do what.
+            </p>
+        </section>
+        <section id="section3-2">
+            <title>
+                <a href="./secn_3-2.dai">Section 3-2: Settings</a>
+            </title>
+            <p>
+                ...as regards the optional features of the client.
+            </p>
+        </section>
+    </section>
+    <section id="appendixa">
+        <title>
+            <a href="./appx_a.dai">Appendix A: Game commands</a>
+        </title>
+        <p>
+            Categorised lists of all the game commands,
+        </p>
+    </section>
+    <section id="appendixb">
+        <title>
+            <a href="./appx_b.dai">Appendix B: Meta commands</a>
+        </title>
+        <p>
+            Categorised lists of all the meta commands.
+        </p>
+    </section>
+    <section id="appendixc">
+        <title>
+            <a href="./appx_c.dai">Appendix C: Default bindings</a>
+        </title>
+        <p>
+            Categorised lists of all the default key bindings.
+        </p>
+    </section>
 </daiml>
