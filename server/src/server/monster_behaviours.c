@@ -388,6 +388,18 @@ int get_npc_object_attraction(object *op, object *other)
     return attraction;
 }
 
+/** Request the friendship between op and other.
+ * Calculates the friendship between any two players, npcs and/or 
+ * monsters. Takes monster memory, AI settings, pet status and PvP status
+ * in consideration.
+ * @param op object to calculate friendship for
+ * @param other object to calculate friendship towards
+ * @return if friendship <= FRIENDSHIP_ATTACK then other is an enemy of op
+ *         if friendship >= FRIENDSHIP_HELP, then other is a friend of op
+ *         the values inbetween are considered neutral
+ * @todo this belongs to another file, but which one?
+ * @todo handle groups
+ */
 int get_friendship(object *op, object *other)
 {
     if(op == NULL || other == NULL)
@@ -420,15 +432,22 @@ int get_friendship(object *op, object *other)
                 return known->friendship;
 
         /* Calculate it then */
-        return get_attitude(op, other);
+        return get_npc_attitude(op, other);
     } 
     else if (op->type == PLAYER)
     {
         /* Try reverse lookup */
         if(other->type == MONSTER)
             return get_friendship(other, op);
-        else
-            return FRIENDSHIP_HELP; /* TODO: Player vs player */
+        else 
+        {
+            /* Check for PvP. TODO: group PvP */
+            if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
+                    && ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
+                return FRIENDSHIP_NEUTRAL;
+            else
+                return FRIENDSHIP_HELP;
+        }
     }
         
     LOG(llevBug, "BUG: get_friendship('%s', '%s') with non-player/monster op parameter\n",
@@ -444,14 +463,12 @@ int get_friendship(object *op, object *other)
  * Friendship is also dynamically modified by mobs' actions, so this function is only part of 
  * the puzzle.
  * 
- * This function can also be used to figure if target is a friend or enemy of the player.
- *
  * @param op the monster/player to calculate friendship for
  * @param other the object to calculate friendship towards
  * @return a positive (friendship) or negative (hate) value, or zero (neutral)
  * @see the "friendship" behaviour.
  */
-int get_attitude(object *op, object *other)
+int get_npc_attitude(object *op, object *other)
 {
     int friendship = 0;
     struct mob_behaviour_param *attitudes;
@@ -473,10 +490,8 @@ int get_attitude(object *op, object *other)
      * see if we can do a reverse lookup */
     if(op->type != MONSTER)
     {   
-        if(other->type == MONSTER)
-            return get_attitude(other, op);
-        else
-            return FRIENDSHIP_HELP; /* TODO: Player vs player */
+        LOG(llevBug, "BUG: get_npc_attitude('%s','%s') called for non-monster\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
     } 
     else if(MOB_DATA(op) == NULL)
     {

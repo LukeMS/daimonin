@@ -33,7 +33,7 @@
 
 /* Those are pseudobehaviours in monster_behaviour.c */
 extern int get_npc_object_attraction(object *op, object *other);
-extern int get_attitude(object *op, object *other);
+extern int get_npc_attitude(object *op, object *other);
     
 /** Purge a single object from list of known mobs/objects */
 static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable *ht)
@@ -150,7 +150,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
     if(attraction == 0) 
         attraction = get_npc_object_attraction(npc, other);
     if(!is_object && friendship == 0)
-        friendship = get_attitude(npc, other);
+        friendship = get_npc_attitude(npc, other);
 
     /* We do a last attempt at LOS test here, for mob to mob detection, 
      * but only if the two are enemies */

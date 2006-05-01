@@ -141,6 +141,7 @@ void cast_magic_storm(object *op, object *tmp, int lvl)
  * Enemy will be deleted in check_enemy() if not friendly->non friendly or visa verse */
 /* this is a pretty bad implementation and is not working with tiled maps. i
  * comment it out until we write a better aggravation system. MT */
+/* TODO: it might be easy to implement now with the new AI system. Gecko 2006-05-01 */
 void aggravate_monsters(object *op)
 {
     /*

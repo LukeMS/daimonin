@@ -103,7 +103,7 @@ int add_pet(object *owner, object *pet, int force)
         return -1;
     }
 
-    SET_FLAG(pet, FLAG_FRIENDLY); /* Brainwash */
+    SET_OR_CLEAR_FLAG(pet, FLAG_FRIENDLY, QUERY_FLAG(owner, FLAG_FRIENDLY)); /* Brainwash */
     pet->enemy = NULL;
     MOB_DATA(pet)->enemy = NULL;
 

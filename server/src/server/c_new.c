@@ -164,18 +164,18 @@ void send_target_command(player *pl)
     else if (pl->target_object_count == pl->target_object->count)
     {
         /* ok, a last check... i put it here to have clear code:
-             * perhaps we have legal issues why we can't aim or attack
-             * our target anymore... invisible & stuff are handled here.
-             * stuff like a out of pvp area moved player are handled different.
-             * we HOLD the target - perhaps the guy moved back.
-             * this special stuff is handled deeper in attack() functions.
-             */
+         * perhaps we have legal issues why we can't aim or attack
+         * our target anymore... invisible & stuff are handled here.
+         * stuff like a out of pvp area moved player are handled different.
+         * we HOLD the target - perhaps the guy moved back.
+         * this special stuff is handled deeper in attack() functions.
+         */
         if (QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT)
          || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE)))
             aim_self_flag = TRUE;
         else
         {
-            if (pl->target_object->type == PLAYER || QUERY_FLAG(pl->target_object, FLAG_FRIENDLY))
+            if (get_friendship(pl->ob, pl->target_object) >= FRIENDSHIP_HELP)
                 tmp[3] = 2; /* friend */
             else
             {
@@ -273,6 +273,22 @@ int command_combat(object *op, char *params)
     return 1;
 }
 
+/** Filter for valid targets */
+static int valid_new_target(object *op, object *candidate)
+{
+    /* TODO: how about golems? */
+    if (candidate->type == PLAYER || candidate->type == MONSTER)
+    {
+        if(candidate == CONTR(op)->target_object
+                || QUERY_FLAG(candidate, FLAG_SYS_OBJECT)
+                || (QUERY_FLAG(candidate, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
+            return FALSE;
+        else
+            return TRUE;
+    }
+    return FALSE;
+}
+
 /* enter combat mode and attack the object in front of us - IF we are in combat
  * and have a enemy/target, skip it and stop attacking.
  */
@@ -280,12 +296,20 @@ int command_combat(object *op, char *params)
  * we need a better and smarter client information strategy - MT2003
  */
 /* this function needs a rework... its a bit bulky after adding all this exceptions MT-2004 */
+/*
+ * Currently, "target friend" targets mobs with friendship >= FRIENDSHIP_HELP, 
+ * which is basically anyone of the same alignment or players on non-pvp maps.
+ * "target enemy" targets anything with friendship < FRIENDSHIP_HELP which 
+ * includes neutral NPCs and PvP players. This ensures that "target enemy" 
+ * includes all potential targets but gives a big risk for unintentional attacks
+ * on neutral targets. Gecko 2006-05-01
+ */
 int command_target(object *op, char *params)
 {
     mapstruct  *m;
     object     *tmp, *head;
     int         jump_in, jump_in_n, get_ob_flag;
-    int         n, nt, xt, yt, block, pvp_flag = FALSE;
+    int         n, nt, xt, yt, block;
 
     if (!op || !op->map || op->type != PLAYER || !CONTR(op) || !params || params[0] == 0)
         return 1;
@@ -307,10 +331,10 @@ int command_target(object *op, char *params)
             int xx, yy;
 
             /* thats the trick: we get  op map pos, but we have 2 offsets:
-                     * the offset from the client mouse click - can be
-                     * +- CONTR(op)->socket.mapx/2 - and the freearr_x/y offset for
-                     * the search.
-                     */
+             * the offset from the client mouse click - can be
+             * +- CONTR(op)->socket.mapx/2 - and the freearr_x/y offset for
+             * the search.
+             */
             xt = op->x + (xx = freearr_x[n] + xstart);
             yt = op->y + (yy = freearr_y[n] + ystart);
 
@@ -325,19 +349,15 @@ int command_target(object *op, char *params)
                 continue;
 
             /* we can have more as one possible target
-                     * on a square - but i try this first without
-                     * handle it.
-                     */
+             * on a square - but i try this first without
+             * handle it.
+             */
             for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
             {
                 /* this is a possible target */
                 tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
-                if (QUERY_FLAG(head, FLAG_MONSTER) || QUERY_FLAG(head, FLAG_FRIENDLY) || head->type == PLAYER)
+                if (valid_new_target(op, head))
                 {
-                    /* this can happen when our old target has moved to next position */
-                    if (QUERY_FLAG(head, FLAG_SYS_OBJECT)
-                     || (QUERY_FLAG(head, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
-                        continue;
                     CONTR(op)->target_object = head;
                     CONTR(op)->target_level = head->level;
                     CONTR(op)->target_object_count = head->count;
@@ -350,27 +370,17 @@ int command_target(object *op, char *params)
     else if (params[0] == '0')
     {
         /* if our target before was a non enemy, start new search
-             * if it was an enemy, use old value.
-             */
+         * if it was an enemy, use old value.
+         */
         n = 0;
         nt = -1;
 
         /* lets search for enemy object! */
-        if (CONTR(op)->target_object
-         && OBJECT_ACTIVE(CONTR(op)->target_object)
-         && CONTR(op)->target_object_count
-         == CONTR(op)->target_object->count
-         && !QUERY_FLAG(CONTR(op)->target_object,
-                        FLAG_FRIENDLY))
+        if(OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
+                && get_friendship(op, CONTR(op)->target_object) < FRIENDSHIP_HELP)
             n = CONTR(op)->target_map_pos;
         else
-            CONTR(op)->target_object = NULL;
-
-        /* now check where we are. IF we are on a PvP map or in a PvP area - then we can
-            * target players on a PvP area too... TODO: group check for group PvP
-            */
-        if (GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP)
-            pvp_flag = TRUE;
+            CONTR(op)->target_object = NULL;        
 
         for (; n < NROF_MAP_NODE && n != nt; n++)
         {
@@ -387,23 +397,17 @@ int command_target(object *op, char *params)
                 continue;
             }
             /* we can have more as one possible target
-                 * on a square - but i try this first without
-                 * handle it.
-                 */
+             * on a square - but i try this first without
+             * handle it.
+             */
             for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
             {
                 /* this is a possible target */
                 tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
-                if ((QUERY_FLAG(head, FLAG_MONSTER) && !QUERY_FLAG(head, FLAG_FRIENDLY))
-                 || (pvp_flag
-                  && (head->type == PLAYER && ((GET_MAP_FLAGS(m, xt, yt) & P_IS_PVP) || (m->map_flags & MAP_FLAG_PVP)))))
+                if((valid_new_target(op, head) || op == head)
+                        && get_friendship(op, head) < FRIENDSHIP_HELP)
                 {
                     /* this can happen when our old target has moved to next position */
-                    if (head == CONTR(op)->target_object
-                     || head == op
-                     || QUERY_FLAG(head, FLAG_SYS_OBJECT)
-                     || (QUERY_FLAG(head, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
-                        continue;
                     CONTR(op)->target_object = head;
                     CONTR(op)->target_level = head->level;
                     CONTR(op)->target_object_count = head->count;
@@ -418,10 +422,8 @@ int command_target(object *op, char *params)
     else if (params[0] == '1') /* friend */
     {
         /* if /target friend but old target was enemy - target self first */
-        if (CONTR(op)->target_object
-         && OBJECT_ACTIVE(CONTR(op)->target_object)
-         && CONTR(op)->target_object_count == CONTR(op)->target_object->count
-         && !QUERY_FLAG(CONTR(op)->target_object, FLAG_FRIENDLY))
+        if(OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
+                && get_friendship(op, CONTR(op)->target_object) < FRIENDSHIP_HELP)
         {
             CONTR(op)->target_object = op;
             CONTR(op)->target_level = op->level;
@@ -431,8 +433,8 @@ int command_target(object *op, char *params)
         else /* ok - search for a friendly object now! */
         {
             /* if our target before was a non enemy, start new search
-                     * if it was an enemy, use old value.
-                     */
+             * if it was an enemy, use old value.
+             */
             n = 0;
             nt = -1;
             /* lets search for last friendly object position! */
@@ -444,7 +446,7 @@ int command_target(object *op, char *params)
                 tmp = op->above;
             }
             else if (OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
-                  && (QUERY_FLAG(CONTR(op)->target_object, FLAG_FRIENDLY) || CONTR(op)->target_object->type == PLAYER))
+                  && get_friendship(op, CONTR(op)->target_object) >= FRIENDSHIP_HELP)
             {
                 get_ob_flag = 0;
                 jump_in = 1;
@@ -459,13 +461,6 @@ int command_target(object *op, char *params)
                 jump_in = 0;
                 get_ob_flag = 1;
             }
-
-            /* now check where we are. IF we are on a PvP map or in a PvP area - then we can
-                     * target players on a PvP area too... TODO: group check for group PvP
-                     */
-            if (GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP)
-                pvp_flag = TRUE;
-
 
             for (; n < NROF_MAP_NODE && n != nt; n++)
             {
@@ -482,9 +477,8 @@ int command_target(object *op, char *params)
                     continue;
                 }
                 /* we can have more as one possible target
-                        * on a square - but i try this first without
-                        * handle it.
-                        */
+                 * on a square - but i try this first without
+                 * handle it.  */
                 if (get_ob_flag)
                     tmp = get_map_ob(m, xt, yt);
 
@@ -492,19 +486,9 @@ int command_target(object *op, char *params)
                 {
                     /* this is a possible target */
                     tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
-                    if (QUERY_FLAG(head, FLAG_FRIENDLY)
-                     || (!pvp_flag
-                      && head->type == PLAYER
-                      && !(GET_MAP_FLAGS(m, xt, yt) & P_IS_PVP)
-                      && !(m->map_flags & MAP_FLAG_PVP)))
+                    if(valid_new_target(op, head) 
+                            && get_friendship(op, head) >= FRIENDSHIP_HELP)
                     {
-                        /* this can happen when our old target has moved to next position
-                                             * i have no tmp == op here to allow self targeting in the friendly chain
-                                             */
-                        if (head == CONTR(op)->target_object
-                         || QUERY_FLAG(head, FLAG_SYS_OBJECT)
-                         || (QUERY_FLAG(head, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)))
-                            continue;
                         CONTR(op)->target_object = head;
                         CONTR(op)->target_level = head->level;
                         CONTR(op)->target_object_count = head->count;

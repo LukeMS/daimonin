@@ -860,6 +860,10 @@ int use_oratory(object *pl, int dir)
 
 int singing(object *pl, int dir)
 {
+    LOG(llevBug, "BUG: unimplemented singing skill used\n");
+    return 0;
+    /* TODO: update for the new AI and pet systems. Gecko 2006-05-01 */
+#if 0        
     int         xt, yt, i, exp = 0, stat1 = get_skill_stat1(pl), chance;
     object     *tmp;
     mapstruct  *m;
@@ -929,6 +933,7 @@ int singing(object *pl, int dir)
         }
     }
     return exp;
+#endif    
 }
 
 /* This skill allows the player to regain a few sp or hp for a
