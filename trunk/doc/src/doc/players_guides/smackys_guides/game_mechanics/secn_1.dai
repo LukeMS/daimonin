@@ -38,7 +38,10 @@
                  <p/>
             </div>
             <p>
-                The default is a list of two: the BETA server (daimonin.game-server.cc) and a local server (although probably there is no local server actually running).
+                The default is a list of three: the BETA3 server (daimonin.game-server.cc), the BETA4 test server (test-server.game-server.cc), and a local server (although probably there is no local server actually running).
+            </p>
+            <p>
+                The BETA3 server requires client vBETA3-0.967 to login, while the BETA4 test server requires the BETA4 preview client to login. To login to a local server your client and server versions must match.
             </p>
             <p>
                 Choose a server (highlight it with UP/DOWN and press RETURN).
@@ -126,7 +129,7 @@
         </p>
         <div class="note">
             <p>
-                <img alt="[NOTE]" src="../note.png"/> If your logging out is unscheduled (ie, your connection is lost or your computer dies or something) the game is automatically saved. Under these circumstances your character will remain in-game for eight minutes until it is automatically kicked. For security reasons, you will not be able to log into that character during that time. If this happens, do not worry, <em>it is perfectly normal</em>.
+                <img alt="[NOTE]" src="../note.png"/> If your logging out is unscheduled (ie, your connection is lost or your computer dies or something) the game is automatically saved. Under these circumstances your character will remain in-game for ten minutes until it is automatically kicked. For security reasons, you will not be able to log into that character during that time. If this happens, do not worry, <em>it is perfectly normal</em>.
             </p>
             <p>
                 Except in the most extreme circumstances it is virtually impossible to 'lose' your character.
@@ -134,6 +137,20 @@
         </div>
         <p>
             There are three in-game methods to save your progress, two of which involve logging out:
+        </p>
+        <ol>
+            <li>
+                <a href="#logout">logging out</a>;
+            </li>
+            <li>
+                <a href="#bed">going to bed</a>; and
+            </li>
+            <li>
+                <a href="#save">saving</a>.
+            </li>
+        </ol>
+        <p>
+            These are detailed below:
         </p>
         <section id="logout">
             <title>
@@ -143,7 +160,7 @@
                 Press ESCAPE and select "Logout" from the menu. This can be done anywhere at any time.
             </p>
             <p>
-                Your game is saved and you are returned to the server selection dialog. So you can <a href="./secn_1.dai">login</a> again or press ESCAPE to exit the game entirely.
+                Your game is saved and you are returned to the server selection dialog. So you can <a href="./secn_1.dai">login</a> again, or press ESCAPE to exit the game entirely.
             </p>
             <div class="advice">
                 <p>
@@ -165,7 +182,7 @@
                 <img alt="[Teddy]" src="./teddy.png"/>
             </p>
             <p>
-                If you own an apartment you can <a href="../manipulating_objects/secn_1-4.dai">apply</a> your bed to save and logout.
+                If you own an apartment you can simply go to bed to save and logout.
             </p>
         </section>
         <section id="saving">
@@ -174,9 +191,6 @@
             </title>
             <p>
                 You can enter the game command <code>"/save"</code> to save your game without logging out.
-            </p>
-            <p>
-                Although you can save in this way at any time, it is never necessary, with one exception. That is new characters must save once before logging out.
             </p>
         </section>
     </section>

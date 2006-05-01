@@ -22,13 +22,23 @@
             <title>
                 Spells/prayers
             </title>
-            <p/>
+            <p>
+                Highlight a spell/prayer in the <a href="./secn_2-4.dai#spelllist">spell list dialog</a> then press one of the quickslot keys to assign the spell/prayer to that quickslot. When you are done press ESCAPE to return to the game.
+            </p>
+            <p>
+                To cast the spell/prayer simply press the appropriate quickslot key and the spell/prayer will be loaded into the <a href="./secn_2-2.dai#castspells">range system</a>.
+            </p>
         </section>
         <section id="items">
             <title>
                 Items
             </title>
-            <p/>
+            <p>
+                Open your inventory (<a href="./appx_c.dai">hardwired</a> to SHIFT), and highlight an item. Then press one of the quickslot keys to assign the item to that quickslot.
+            </p>
+            <p>
+                To apply/unapply the item simply press the appropriate quickslot key.
+            </p>
         </section>
     </section>
 </daiml>
