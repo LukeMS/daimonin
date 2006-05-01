@@ -44,6 +44,11 @@ BehaviourClass(PROCESSES,
      * (The parameters here modifies initial friendship value at first sight)
      * Should always come after look_for_other_mobs */
     Behaviour(FRIENDSHIP, ai_friendship,
+        /** Creatures of the same alignment (currently: friendly/non-friendly) */
+        Parameter(FRIENDSHIP, SAME_ALIGNMENT, INTEGER, OPTIONAL, 100)
+        /** Creatures of the opposite alignment (currently: friendly/non-friendly).
+         * Set this to 0 to have mobs that only attack if attacked first. */
+        Parameter(FRIENDSHIP, OPPOSITE_ALIGNMENT, INTEGER, OPTIONAL, -100)
         /** Attitude against a race */
         Parameter(FRIENDSHIP, RACE, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against an archetype */

@@ -420,10 +420,8 @@ int command_target(object *op, char *params)
         /* if /target friend but old target was enemy - target self first */
         if (CONTR(op)->target_object
          && OBJECT_ACTIVE(CONTR(op)->target_object)
-         && CONTR(op)->target_object_count
-         == CONTR(op)->target_object->count
-         && !QUERY_FLAG(CONTR(op)->target_object,
-                        FLAG_FRIENDLY))
+         && CONTR(op)->target_object_count == CONTR(op)->target_object->count
+         && !QUERY_FLAG(CONTR(op)->target_object, FLAG_FRIENDLY))
         {
             CONTR(op)->target_object = op;
             CONTR(op)->target_level = op->level;
@@ -825,8 +823,7 @@ void command_new_char(char *params, int len, player *pl)
     strcpy(CONTR(op)->title, op->race);     /* no title - just what we born */
 	op->carrying = sum_weight(op);			/* sanity calc to ensure right inventory weight for new player */
     fix_player(op);                         /* THATS our first fix_player() when we create a new char
-                                                                 * add this time, hp and sp will be set
-                                                                 */
+                                             * add this time, hp and sp will be set */
     esrv_update_item(UPD_FACE, op, op);
     esrv_send_inventory(op, op);
 

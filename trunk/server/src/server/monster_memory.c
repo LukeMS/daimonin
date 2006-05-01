@@ -33,7 +33,7 @@
 
 /* Those are pseudobehaviours in monster_behaviour.c */
 extern int get_npc_object_attraction(object *op, object *other);
-extern int get_npc_mob_attitude(object *op, object *other);
+extern int get_attitude(object *op, object *other);
     
 /** Purge a single object from list of known mobs/objects */
 static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first, hashtable *ht)
@@ -150,7 +150,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
     if(attraction == 0) 
         attraction = get_npc_object_attraction(npc, other);
     if(!is_object && friendship == 0)
-        friendship = get_npc_mob_attitude(npc, other);
+        friendship = get_attitude(npc, other);
 
     /* We do a last attempt at LOS test here, for mob to mob detection, 
      * but only if the two are enemies */
@@ -302,11 +302,10 @@ struct mob_known_obj *update_npc_knowledge(object *npc, object *other, int delta
     {
         update_npc_known_obj(known, delta_friendship, delta_attraction);
 
-        /* If an unaggressive mob was attacked, it now turns aggressive */
-        /* TODO: get rid of flag_unaggressive and use only friendship */
-        if (!is_object && delta_friendship < 0 && QUERY_FLAG(other, FLAG_UNAGGRESSIVE))
+        /* If an unaggressive mob was attacked, it now turns aggressive forever */
+        if (!is_object && delta_friendship < 0 && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
         {
-            CLEAR_FLAG(other, FLAG_UNAGGRESSIVE);
+            CLEAR_FLAG(npc, FLAG_UNAGGRESSIVE);
             known->friendship += FRIENDSHIP_ATTACK;
         }
     }
