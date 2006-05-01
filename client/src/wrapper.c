@@ -367,6 +367,37 @@ uint32 get_video_flags(void)
     }
 }
 
+/* Parse server host into address and port 
+ * Allows URL style syntax with address in brackets
+ * for addresses which include colons
+ */
+int parse_serverhost(char *tmp, char *server, int *port)
+{
+    char *servstr, *portstr;
+
+    servstr = tmp;
+    portstr = servstr;
+    if(servstr[0] == '[') {
+        char *tmp;
+
+        tmp = strchr(++servstr, ']');
+        if (tmp == NULL)
+           return -1;
+        *tmp = '\0';
+        portstr = tmp+1;
+    }
+    portstr = strchr(portstr, ':');
+    if (portstr != NULL) {
+        *port = atoi(portstr + 1);
+        *portstr = '\0';
+    } else {
+        *port = DEFAULT_SERVER_PORT;
+    }
+    strcpy(server, servstr);
+
+    return 0;
+}
+
 /* This is really, really a bad implementation.
  * This is still weird test code and need a real code solution.
  */
@@ -387,10 +418,11 @@ void parse_metaserver_data(char *info)
             break;
         if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
             break;
-        strncpy(server, tmp, s);
         if (s >= 1023)
             s = 1023;
-        server[s] = 0;
+        tmp[s] = 0;
+        if(parse_serverhost(tmp, server, &port) == -1)
+            break;
         /* player */
         if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
             break;
@@ -429,7 +461,6 @@ void parse_metaserver_data(char *info)
             desc_line[3][ss] = 0;
         }
         read_substr_char(info, tmp, &count, 0x0a);
-        port = 13327;
         /*if(version[0] == 'D')*/ /* Daimonin marker */
         add_metaserver_data(server, port, player, version, &desc_line[0][0], &desc_line[1][0], &desc_line[2][0],
                             &desc_line[3][0]);

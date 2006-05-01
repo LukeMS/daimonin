@@ -23,6 +23,9 @@
 /* This is a config file for the client.
  */
 
+#define DEFAULT_SERVER_PORT 13327
+#define DEFAULT_METASERVER_PORT 13326
+
 #define VERSION_CS 991021
 #define VERSION_SC 991021
 

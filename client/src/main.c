@@ -292,9 +292,9 @@ void init_game_data(void)
     map_transfer_flag = 0;
     start_server = NULL;
     ServerName[0] = 0;
-    ServerPort = 13327;
+    ServerPort = DEFAULT_SERVER_PORT;
     argServerName[0] = 0;
-    argServerPort = 13327;
+    argServerPort = DEFAULT_SERVER_PORT;
     SoundSystem = SOUND_SYSTEM_OFF;
     GameStatus = GAME_STATUS_INIT;
     GameStatusLogin = FALSE;
@@ -439,7 +439,7 @@ void load_options_dat(void)
      TODO implement server options.
     */
     strcpy(options.metaserver, "damn.informatik.uni-bremen.de");
-    options.metaserver_port = 13326;
+    options.metaserver_port = DEFAULT_METASERVER_PORT;
 
     if ((txtwin[TW_MSG].size + txtwin[TW_CHAT].size) > 36)
     {
@@ -505,7 +505,7 @@ Boolean game_status_chain(void)
                 draw_info("metaserver failed! using default list.", COLOR_GREEN);
         }
 
-        add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "",
+        add_metaserver_data("127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "",
                             "", "");
         count_meta_server();
         draw_info("select a server.", COLOR_GREEN);
