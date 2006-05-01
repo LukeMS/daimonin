@@ -271,13 +271,15 @@ int hit_player(object *op, int dam, object *hitter)
             query_name(hitter), query_name(get_owner(hitter)), hit_level, query_name(op), target_obj->arch->name,
             query_name(get_owner(op)), target_obj->level);
 
-    /* this is hard cut - perhaps we do something more smart later.
-     * no friendly object take damage from player now.
-     */
-    if (hit_obj->type == PLAYER && QUERY_FLAG(target_obj, FLAG_FRIENDLY))
+    /* New (but still very basic) code for avoiding mobs (and players) on
+     * the same side to damage each other. */
+    if(get_friendship(hit_obj, target_obj) >= FRIENDSHIP_HELP) 
+    {
+        LOG(llevDebug, "DEBUG: hit_player(): friendly hit ('%s' => '%s' / '%s' => '%s') ignored\n",
+                query_name(hitter), query_name(op),
+                query_name(hit_obj), query_name(target_obj));
         return 0;
-    if (QUERY_FLAG(hit_obj, FLAG_FRIENDLY) && (target_obj->type == PLAYER || QUERY_FLAG(target_obj, FLAG_FRIENDLY)))
-        return 0;
+    }
 
     if (hit_level > target_obj->level && hit_obj->type == MONSTER) /* i turned it now off for players! */
     {
@@ -477,6 +479,8 @@ int hit_player(object *op, int dam, object *hitter)
     /* Lets handle creatures that are splitting now */
     else if (!OBJECT_FREE(op) && QUERY_FLAG(op, FLAG_SPLITTING))
     {
+        /* TODO: this might need some updating for the new AI system
+         * gecko 2006-05-01 */
         int     i;
         int     friendly        = QUERY_FLAG(op, FLAG_FRIENDLY);
         int     unaggressive    = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
@@ -525,7 +529,7 @@ int hit_player(object *op, int dam, object *hitter)
  */
 int hit_map(object *op, int dir)
 {
-    object     *tmp, *next, *tmp_obj, *tmp_head;
+    object     *tmp, *next, *tmp_obj;
     mapstruct  *map;
     int         x, y;
     int         mflags, retflag = 0;  /* added this flag..  will return 1 if it hits a monster */
@@ -596,7 +600,7 @@ int hit_map(object *op, int dir)
              *
              * Gecko: this may be a little different now, since we don't really destroy object until
              * end of timestep.
-            */
+             */
             break;
         }
         tmp = next;
@@ -617,43 +621,14 @@ int hit_map(object *op, int dir)
         if (tmp->map != map || tmp->x != x || tmp->y != y)
             continue;
 
-        /* we have found a player */
-        if (QUERY_FLAG(tmp, FLAG_IS_PLAYER))
-        {
-            /* no damage from friendly objects */
-            if (QUERY_FLAG(tmp_obj, FLAG_FRIENDLY))
-                continue;
-            hit_player(tmp, op->stats.dam, op);
-            retflag |= 1;
-            if (was_destroyed(op, op_tag))
-                break;
-        }
-        else if (IS_LIVE(tmp))
-        {
-            tmp_head = tmp->head ? tmp->head : tmp;
-            if (tmp_head->type == MONSTER)
-            {
-                if (tmp_obj->type == MONSTER) /* monster vs. monster */
-                {
-                    /* lets decide that monster of same kind don't hurt itself */
-                    if (QUERY_FLAG(tmp_head, FLAG_FRIENDLY))
-                    {
-                        if (QUERY_FLAG(tmp_obj, FLAG_FRIENDLY))
-                            continue;
-                    }
-                    else
-                    {
-                        if (!QUERY_FLAG(tmp_obj, FLAG_FRIENDLY))
-                            continue;
-                    }
-                }
-            }
-            /*LOG(-1,"HM: %s hit %s (%d)with dam %d\n",op->name,tmp->name,tmp->type,op->stats.dam);*/
-            hit_player(tmp, op->stats.dam, op);
-            retflag |= 1;
-            if (was_destroyed(op, op_tag))
-                break;
-        }
+        /* monsters on the same side don't hurt each other */
+        if(get_friendship(tmp_obj, tmp) >= FRIENDSHIP_HELP)
+            continue;
+
+        hit_player(tmp, op->stats.dam, op);
+        retflag |= 1;
+        if (was_destroyed(op, op_tag))
+            break;
     }
 
     return 0;

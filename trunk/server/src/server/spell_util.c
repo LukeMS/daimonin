@@ -2015,7 +2015,7 @@ void check_fired_arch(object *op)
 {
     tag_t op_tag = op-> count, tmp_tag;
     object             *tmp, *hitter, *tmp_head;
-    int                 dam, flag, friendly = FALSE;
+    int                 dam, flag;
 
     /* we return here if we have NOTHING blocking here */
     if (!blocked(op, op->map, op->x, op->y, op->terrain_flag))
@@ -2039,9 +2039,6 @@ void check_fired_arch(object *op)
     if (!hitter)
         hitter = op;
 
-    if (hitter->type == PLAYER || QUERY_FLAG(hitter, FLAG_FRIENDLY))
-        friendly = TRUE;
-
     flag = GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP;
     for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
     {
@@ -2049,35 +2046,13 @@ void check_fired_arch(object *op)
         if (!tmp_head)
             tmp_head = tmp;
 
-        if (friendly) /* attacker is player or friendly */
-        {
-            if (hitter->type == PLAYER)
-            {
-                /* player can attack player on pvp but never npc */
-                if (tmp_head->type == PLAYER && !flag && !(tmp_head->map->map_flags & MAP_FLAG_PVP))
-                    continue;
-            }
-
-            /* we need a extra check for pets & golems here later
-                     * but atm player & npc can't hit other friendly npc
-                     */
-            if (!IS_LIVE(tmp_head) || QUERY_FLAG(tmp_head, FLAG_FRIENDLY))
-                continue;
-        }
-        else /* its a mob */
-        {
-            /* don't attach non living objects.
-                     * if they are alive, only attack player or friendly
-                     */
-            if (!IS_LIVE(tmp_head) || (tmp_head->type != PLAYER && !QUERY_FLAG(tmp_head, FLAG_FRIENDLY)))
-                continue;
-        }
-
-
-        /*        if (IS_LIVE (tmp) && ((tmp->type!=PLAYER && hitter->type == PLAYER)||
-                    (tmp->type==PLAYER && hitter->type != PLAYER) ||
-                    (hitter->type == PLAYER && (flag || tmp->map->map_flags&MAP_FLAG_PVP))))
-        */
+        /* we need a extra check for pets & golems here later
+         * but atm player & npc can't hit other friendly npc
+         */
+        if(!IS_LIVE(tmp_head))
+            continue;
+        if(get_friendship(hitter, tmp_head) >= FRIENDSHIP_HELP)
+            continue;
 
         tmp_tag = tmp->count;
         dam = hit_player(tmp, op->stats.dam, op);
@@ -2198,12 +2173,9 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
     if (flags & SPELL_DESC_DIRECTION) /* we cast something on the map... no target */
         return TRUE;
 
-
-
     if (op->type == PLAYER) /* a player has invoked this spell */
     {
-        /* try to cast on self but only when really no friendly or enemy is set
-             */
+        /* try to cast on self but only when really no friendly or enemy is set */
         if ((flags & SPELL_DESC_SELF) && !(flags & (SPELL_DESC_ENEMY | SPELL_DESC_FRIENDLY)))
         {
             *target = op; /* self ... and no other tests */
@@ -2216,7 +2188,6 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
         if (!tmp || !OBJECT_ACTIVE(tmp) || tmp == CONTR(op)->ob || CONTR(op)->target_object_count != tmp->count)
         {
             /* no valid target, or we target self! */
-
             if (flags & SPELL_DESC_SELF) /* can we cast this on self? */
             {
                 *target = op; /* right, we are target */
@@ -2225,65 +2196,25 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
         }
         else /* we have a target and its not self */
         {
-            if (tmp->type == PLAYER) /* player? */
+            /* Friendly and self spells are always allowed */
+            if (flags & SPELL_DESC_FRIENDLY)
             {
-                /* now it will be tricky...
-                         * a.) friendly spell - always allowed to cast
-                         * b.) enemy spell - only allowed when op AND target
-                         * are in a pvp area.
-                         * c.) if not a. and b. AND self - cast on self
-                         */
-                if (flags & SPELL_DESC_FRIENDLY)
-                {
-                    *target = tmp;
-                    return TRUE;
-                }
-
-                if (flags & SPELL_DESC_ENEMY)
-                {
-                    /* ok... now op AND tmp must be in PvP - if one not,
-                                 * this is not allowed.
-                                 */
-                    if (op->map
-                     && tmp->map
-                     && (GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP)
-                     && (GET_MAP_FLAGS(tmp->map, tmp->x, tmp->y) & P_IS_PVP || tmp->map->map_flags & MAP_FLAG_PVP))
-                    {
-                        *target = tmp; /* here we go... PvP! */
-                        return TRUE;
-                    }
-                }
-                if (flags & SPELL_DESC_SELF)
-                {
-                    *target = op;
-                    return TRUE;
-                }
+                *target = tmp;
+                return TRUE;
             }
-            else if (QUERY_FLAG(tmp, FLAG_FRIENDLY)) /* friendly NPC? */
-            {
-                if (flags & SPELL_DESC_FRIENDLY)
-                {
-                    *target = tmp;
-                    return TRUE;
-                }
 
-                if (flags & SPELL_DESC_SELF)
-                {
-                    *target = op;
-                    return TRUE;
-                }
+            if (flags & SPELL_DESC_SELF)
+            {
+                *target = op;
+                return TRUE;
             }
-            else /* ok, is a bad guy */
-            {
-                if (flags & SPELL_DESC_ENEMY)
-                {
-                    *target = tmp;
-                    return TRUE;
-                }
 
-                if (flags & SPELL_DESC_SELF)
+            /* enemy spells only allowed on enemies or neutrals */
+            if (flags & SPELL_DESC_ENEMY)
+            {
+                if (get_friendship(op, tmp) < FRIENDSHIP_HELP)
                 {
-                    *target = op;
+                    *target = tmp; 
                     return TRUE;
                 }
             }

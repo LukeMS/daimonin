@@ -853,7 +853,7 @@ void process_players2(mapstruct *map)
             && OBJECT_ACTIVE(pl->target_object)
             && pl->target_object_count != pl->ob->count
             */
-            && !QUERY_FLAG(pl->target_object, FLAG_FRIENDLY))
+            && get_friendship(pl->ob, pl->target_object) < FRIENDSHIP_HELP)
         {
                 /* now we force target as enemy */
                 pl->ob->enemy = pl->target_object;
