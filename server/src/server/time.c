@@ -1012,7 +1012,7 @@ void move_arrow(object *op)
             /* Let friends fire through friends */
             /* TODO: shouldn't do this if on pvp map, but that
              * also requires smarter mob/npc archers */
-            if (tmp == hitter || is_friend_of(hitter, tmp))
+            if (tmp == hitter || get_friendship(hitter, tmp) >= FRIENDSHIP_HELP)
             {
                 /* Gecko: testing to let friends fire through friendly
                  * reflectors */

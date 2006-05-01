@@ -118,105 +118,6 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     return cached_result;
 }
 
-/* TODO: these two new functions are already obsolete and should be replaced
- * with configuration options in the ai_friendship behaviour,
- * but they serve well as a base...
- *
- * Uses:
- *  a) in time.c for letting arrows through friends
- *     this should be replaced by looking up known_ob->friendship if shooter knows
- *     victim, or by calling get_npc_mob_attitude() otherwise.
- *     If shooter is a player, a reverse lookup should be made. For PvP maps,
- *     we could look at player factions or at least group.
- *
- *   - pets might use reverse lookup of a targets attitude towards the player
- *     when deciding on the friendship of a target? Or just consider any mob that
- *     targets its owner as an enemy as its enemy too.
- *     ("my friend's enemies are also my enemies" - might work for other mobs too)
- *
- *  b) base friendship value in ai_friendship
- *     this should be replaced with factions, groups, spawn links and/or default
- *     attitude patterns (for example "race=$other$:-100" and "race=$same$:100")
- *
- *     One problem is to avoid having to recalculate attitudes every tick, but still
- *     be able to handle faction switching, mind control etc. The current handling of
- *     "charming" mobs as pets is a hack. Maybe we could use a flag or tick indicator
- *     in mobs that is reset when any relevant values have changed. Then, for any known
- *     mob we recalculate the attitude if the mob's change-time is newer than our attitude.
- *     (requires for each mob: 1+max_known_mobs storage for timer + max_known_mobs
- *     storage for basic attitude.)
- *     Also requires some way to mark all mobs in for example a specific faction
- *     when there are global intra-faction attitude changes.
- */
-int is_enemy_of(object *op, object *obj)
-{
-    /* TODO: add a few other odd types here, such as god & golem */
-    if (!(obj->type == PLAYER || obj->type == MONSTER) || op == obj
-        || QUERY_FLAG(obj, FLAG_SURRENDERED) || QUERY_FLAG(op, FLAG_SURRENDERED))
-        return FALSE;
-
-    /* Unagressive mobs are never enemies to anything (?) Gecko
-     *
-     * Wrong. Unaggressive means: "i never attack first".
-     * So, a monster can be your enemy, but atm it want talk to you
-     * and don't attack (like a demon appears and talk to you). If you
-     * attack, it attacks back. If you aggravate the demon, he lose his
-     * unaggressive flag and attacks you. A friendly unaggressive would
-     * just go away but never attack you. MT-07.2005
-     *
-     * Disabled due to minor reorganisation and above comment. Gecko 2005-07-28
-     */
-/*    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) || QUERY_FLAG(obj, FLAG_UNAGGRESSIVE))
-        return FALSE; */
-
-    /* Pets aren't enemies of their owners */
-    if (op->owner == obj && op->owner_count == obj->count)
-        return FALSE;
-
-    /* TODO: this needs to be sorted out better */
-    if (QUERY_FLAG(op, FLAG_FRIENDLY))
-    {
-        if (QUERY_FLAG(obj, FLAG_MONSTER) && !QUERY_FLAG(obj, FLAG_FRIENDLY))
-            return TRUE;
-    }
-    else
-    {
-        if (QUERY_FLAG(obj, FLAG_FRIENDLY) || obj->type == PLAYER)
-            return TRUE;
-    }
-
-    return FALSE;
-}
-
-int is_friend_of(object *op, object *obj)
-{
-    /* TODO: add a few other odd types here, such as god & golem */
-    if (!(obj->type == PLAYER || obj->type == MONSTER) || !(op->type == PLAYER || op->type == MONSTER) || op == obj)
-        return FALSE;
-
-    /* Pets are friends of their owners */
-    if (op->owner == obj && op->owner_count == obj->count)
-        return TRUE;
-
-    /* TODO: this needs to be sorted out better */
-    if (QUERY_FLAG(op, FLAG_FRIENDLY) || op->type == PLAYER)
-    {
-        if (!QUERY_FLAG(obj, FLAG_MONSTER) || QUERY_FLAG(obj, FLAG_FRIENDLY) || obj->type == PLAYER)
-        {
-            return TRUE;
-        }
-    }
-    else
-    {
-        if (!QUERY_FLAG(obj, FLAG_FRIENDLY) && obj->type != PLAYER)
-        {
-            return TRUE;
-        }
-    }
-
-    return FALSE;
-}
-
 /* TODO: make a real behaviour... */
 #if 0
 void npc_call_for_help(object *op) {
@@ -487,28 +388,101 @@ int get_npc_object_attraction(object *op, object *other)
     return attraction;
 }
 
-/** Pseudobehaviour to calculate the base friendship/hate ("attitude") of one monster towards another.
+int get_friendship(object *op, object *other)
+{
+    if(op == NULL || other == NULL)
+    {
+        LOG(llevBug, "BUG: get_friendship('%s', '%s') with NULL parameter\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+        return 0;
+    }
+    
+    if(op->head)
+        op = op->head;
+    if(other->head)
+        other = other->head;    
+    
+    if(op->type == MONSTER)
+    {
+        struct mob_known_obj *known;
+        
+        /* Do we know anything? */
+        if(MOB_DATA(op) == NULL) 
+        {
+            LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
+                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+            return 0;
+        }
+
+        /* Do we already know this other? */
+        for(known = MOB_DATA(op)->known_mobs; known; known = known->next)
+            if(known->obj == other && known->obj_count == other->count)
+                return known->friendship;
+
+        /* Calculate it then */
+        return get_attitude(op, other);
+    } 
+    else if (op->type == PLAYER)
+    {
+        /* Try reverse lookup */
+        if(other->type == MONSTER)
+            return get_friendship(other, op);
+        else
+            return FRIENDSHIP_HELP; /* TODO: Player vs player */
+    }
+        
+    LOG(llevBug, "BUG: get_friendship('%s', '%s') with non-player/monster op parameter\n",
+            STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+
+    return 0; /* Unhandled types */
+}
+
+/** Help function to calculate the base friendship/hate ("attitude") of one monster towards another.
  * Attitude is partly controlled by the "friendship" behaviour parameters, but also 
- * by "petness" and alignment ("friendly"/"non-friendly"). 
- * @param op the monster to calculate friendship for
+ * by "petness". If there's no "friendship" behaviour to get parameters from, it falls back to 
+ * the alignment ("friendly"/"non-friendly" flag).
+ * Friendship is also dynamically modified by mobs' actions, so this function is only part of 
+ * the puzzle.
+ * 
+ * This function can also be used to figure if target is a friend or enemy of the player.
+ *
+ * @param op the monster/player to calculate friendship for
  * @param other the object to calculate friendship towards
  * @return a positive (friendship) or negative (hate) value, or zero (neutral)
  * @see the "friendship" behaviour.
  */
-int get_npc_mob_attitude(object *op, object *other)
+int get_attitude(object *op, object *other)
 {
     int friendship = 0;
     struct mob_behaviour_param *attitudes;
     struct mob_behaviour_param *tmp;
 
+    if(op == NULL || other == NULL)
+    {
+        LOG(llevBug, "BUG: get_npc_mob_attitude('%s', '%s') with NULL parameter\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+        return 0;
+    }
+    
     if(op->head)
         op = op->head;
-
+    if(other->head)
+        other = other->head;    
+        
+    /* If we are asked about a player's attitude to something,
+     * see if we can do a reverse lookup */
     if(op->type != MONSTER)
+    {   
+        if(other->type == MONSTER)
+            return get_attitude(other, op);
+        else
+            return FRIENDSHIP_HELP; /* TODO: Player vs player */
+    } 
+    else if(MOB_DATA(op) == NULL)
     {
-        /* TODO: implement reverse lookup and PvP */
-        LOG(llevBug, "BUG: get_npc_mob_attitude() object %s is not a monster (type=%d)\n",
-                STRING_OBJ_NAME(op), op->type);
+        LOG(llevDebug, "Warning: AI not initialized when requesting attitude of monster '%s' towards '%s'.\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+        return 0;
     }
         
     /* pet to pet and pet to owner attitude */
@@ -516,18 +490,25 @@ int get_npc_mob_attitude(object *op, object *other)
         friendship += FRIENDSHIP_HELP;
     else if(op->owner == other && op->owner_count == other->count)
         friendship += FRIENDSHIP_PET;
-    /* Very basic base values. 
-     * (TODO: Replace with flexible behaviour parameters) */
-    else if (is_enemy_of(op, other))
-        friendship += FRIENDSHIP_ATTACK;
-    else if (is_friend_of(op, other))
-        friendship += FRIENDSHIP_HELP;
-
+    
     attitudes = MOB_DATA(op)->behaviours->attitudes;
 
-    if(attitudes == NULL)
+    if(attitudes == NULL) {
+        /* Default alignment handling */
+        if (QUERY_FLAG(op, FLAG_FRIENDLY) == QUERY_FLAG(other, FLAG_FRIENDLY))
+            friendship += FRIENDSHIP_HELP;
+        else 
+            friendship += FRIENDSHIP_ATTACK;
+        
         return friendship;
+    }
 
+    /* Configurable alignment attitudes */
+    if (QUERY_FLAG(op, FLAG_FRIENDLY) == QUERY_FLAG(other, FLAG_FRIENDLY))
+        friendship += attitudes[AIPARAM_FRIENDSHIP_SAME_ALIGNMENT].intvalue;
+    else 
+        friendship += attitudes[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].intvalue;
+    
     /* Race attitude */
     if(attitudes[AIPARAM_FRIENDSHIP_RACE].flags & AI_PARAM_PRESENT)
     {

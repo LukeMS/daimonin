@@ -403,7 +403,8 @@ void                        cleanup_behaviourset(struct mob_behaviourset *data);
 void                        cleanup_mob_known_obj(struct mob_known_obj *data);
 int                         can_hit(object *ob1, object *ob2, rv_vector *rv);
 /* monster_behaviours.c */
-int                         is_friend_of(object *op, object *obj);
+int                         get_friendship(object *op, object *obj);
+int                         get_attitude(object *op, object *obj);
 object                     *monster_choose_random_spell(object *monster);
 void                        monster_check_pickup(object *monster);
 void                        monster_check_apply(object *mon, object *item);
