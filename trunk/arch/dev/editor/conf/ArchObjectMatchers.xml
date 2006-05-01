@@ -34,7 +34,7 @@
     <ArchObjectMatcher>
         <title xml:lang="en">Exits</title>
         <title xml:lang="de">Ausgänge</title>
-        <TypeNrs numbers="41 66 69 94 95" />
+        <TypeNrs numbers="41 66 94 95" />
     </ArchObjectMatcher>
     <ArchObjectMatcher>
         <title xml:lang="en">Treasure</title>
