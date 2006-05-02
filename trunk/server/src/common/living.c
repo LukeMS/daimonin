@@ -2206,8 +2206,14 @@ void fix_monster(object *op)
 
     /* pre adjust */
     op->stats.maxhp = (base->stats.maxhp * (op->level + 3) + (op->level / 2) * base->stats.maxhp) / 10;
+	if(op->stats.maxhp <= 0)
+		op->stats.maxhp = 1;
     op->stats.maxsp = base->stats.maxsp * (op->level + 1);
+	if(op->stats.maxsp <= 0)
+		op->stats.maxsp = 1;
     op->stats.maxgrace = base->stats.maxgrace * (op->level + 1);
+	if(op->stats.maxgrace <= 0)
+		op->stats.maxgrace = 1;
 
     /* remember: -1 is a place holder - if == -1, we fill in max value.
      * if the value is != -1, object has explicit set to a different value
