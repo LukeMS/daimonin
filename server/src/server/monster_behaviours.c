@@ -388,73 +388,6 @@ int get_npc_object_attraction(object *op, object *other)
     return attraction;
 }
 
-/** Request the friendship between op and other.
- * Calculates the friendship between any two players, npcs and/or 
- * monsters. Takes monster memory, AI settings, pet status and PvP status
- * in consideration.
- * @param op object to calculate friendship for
- * @param other object to calculate friendship towards
- * @return if friendship <= FRIENDSHIP_ATTACK then other is an enemy of op
- *         if friendship >= FRIENDSHIP_HELP, then other is a friend of op
- *         the values inbetween are considered neutral
- * @todo this belongs to another file, but which one?
- * @todo handle groups
- */
-int get_friendship(object *op, object *other)
-{
-    if(op == NULL || other == NULL)
-    {
-        LOG(llevBug, "BUG: get_friendship('%s', '%s') with NULL parameter\n",
-                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-        return 0;
-    }
-    
-    if(op->head)
-        op = op->head;
-    if(other->head)
-        other = other->head;    
-    
-    if(op->type == MONSTER)
-    {
-        struct mob_known_obj *known;
-        
-        /* Do we know anything? */
-        if(MOB_DATA(op) == NULL) 
-        {
-            LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
-                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-            return 0;
-        }
-
-        /* Do we already know this other? */
-        for(known = MOB_DATA(op)->known_mobs; known; known = known->next)
-            if(known->obj == other && known->obj_count == other->count)
-                return known->friendship;
-
-        /* Calculate it then */
-        return get_npc_attitude(op, other);
-    } 
-    else if (op->type == PLAYER)
-    {
-        /* Try reverse lookup */
-        if(other->type == MONSTER)
-            return get_friendship(other, op);
-        else 
-        {
-            /* Check for PvP. TODO: group PvP */
-            if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
-                    && ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
-                return FRIENDSHIP_NEUTRAL;
-            else
-                return FRIENDSHIP_HELP;
-        }
-    }
-        
-    LOG(llevBug, "BUG: get_friendship('%s', '%s') with non-player/monster op parameter\n",
-            STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-
-    return 0; /* Unhandled types */
-}
 
 /** Help function to calculate the base friendship/hate ("attitude") of one monster towards another.
  * Attitude is partly controlled by the "friendship" behaviour parameters, but also 
@@ -611,6 +544,77 @@ int get_npc_attitude(object *op, object *other)
 
     return friendship;
 }
+
+
+
+/** Request the friendship between op and other.
+* Calculates the friendship between any two players, npcs and/or 
+* monsters. Takes monster memory, AI settings, pet status and PvP status
+* in consideration.
+* @param op object to calculate friendship for
+* @param other object to calculate friendship towards
+* @return if friendship <= FRIENDSHIP_ATTACK then other is an enemy of op
+*         if friendship >= FRIENDSHIP_HELP, then other is a friend of op
+*         the values inbetween are considered neutral
+* @todo this belongs to another file, but which one?
+* @todo handle groups
+*/
+int get_friendship(object *op, object *other)
+{
+	if(op == NULL || other == NULL)
+	{
+		LOG(llevBug, "BUG: get_friendship('%s', '%s') with NULL parameter\n",
+			STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+		return 0;
+	}
+
+	if(op->head)
+		op = op->head;
+	if(other->head)
+		other = other->head;    
+
+	if(op->type == MONSTER)
+	{
+		struct mob_known_obj *known;
+
+		/* Do we know anything? */
+		if(MOB_DATA(op) == NULL) 
+		{
+			LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
+				STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+			return 0;
+		}
+
+		/* Do we already know this other? */
+		for(known = MOB_DATA(op)->known_mobs; known; known = known->next)
+			if(known->obj == other && known->obj_count == other->count)
+				return known->friendship;
+
+		/* Calculate it then */
+		return get_npc_attitude(op, other);
+	} 
+	else if (op->type == PLAYER)
+	{
+		/* Try reverse lookup */
+		if(other->type == MONSTER)
+			return get_friendship(other, op);
+		else 
+		{
+			/* Check for PvP. TODO: group PvP */
+			if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
+				&& ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
+				return FRIENDSHIP_NEUTRAL;
+			else
+				return FRIENDSHIP_HELP;
+		}
+	}
+
+	LOG(llevBug, "BUG: get_friendship('%s', '%s') with non-player/monster op parameter\n",
+		STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+
+	return 0; /* Unhandled types */
+}
+
 
 /*
  * Mutually exclusive movement behaviours
