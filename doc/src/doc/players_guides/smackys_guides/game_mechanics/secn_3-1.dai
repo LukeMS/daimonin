@@ -4,7 +4,7 @@
     <stylesheet href="../screen.css" media="screen" title="Default"/>
     <section id="introduction">
         <title>
-            Key bindings
+            Introduction
         </title>
         <p>
             Key bindings are a very useful shortcut to enable you to enter any <a href="./secn_2-1.dai#gamecommands">game command</a>, <a href="./secn_2-1.dai#metacommands">meta command</a>, or other macro with a single keystroke.

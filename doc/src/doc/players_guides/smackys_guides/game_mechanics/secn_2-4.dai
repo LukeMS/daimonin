@@ -2,16 +2,17 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-4: Using dialogs">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
-    <section id="usingdialogs">
+    <section id="introduction">
         <title>
-            Using dialogs
+            Introduction
         </title>
-    <p>
-        Using dialogs is actually fairly self-explanatory and each dialog has instructions on which keys do what printed on the window itself.
-    </p>
-    <p>
-        Nevertheless, this section documents each of the <a href="#ingamedialogs">ingame dialogs</a>.
-    </p>
+        <p>
+            Using dialogs is actually fairly self-explanatory and each dialog has instructions on which keys do what printed on the window itself.
+        </p>
+        <p>
+            Nevertheless, this section documents each of the <a href="#ingamedialogs">ingame dialogs</a>.
+        </p>
+    </section>
     <section id="ingamedialogs">
         <title>
             The ingame dialogs
@@ -202,15 +203,17 @@
                 </table>
                 <p/>
             </div>
+            <p>
+                Binding keys is detailed in <a href="./secn_3-1.dai">"Section 3-1: Key Settings"</a>.
+            </p>
         </section>
         <section id="options">
             <title>
                 The options dialogs
             </title>
             <p>
-                <img alt="[Options dialog]" src="./dialog_options.png"/>
+                THIS SPACE INTENTIONALLY LEFT BLANK
             </p>
         </section>
-    </section>
     </section>
 </daiml>
