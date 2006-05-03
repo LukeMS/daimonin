@@ -478,82 +478,81 @@ int command_talk(object *op, char *params)
 }
 
 
-/* Reply to last person who told you something [mids 01/14/2002] */
 int command_reply(object *op, char *params)
 {
-    char    buf[MAX_BUF];
-    char    buf2[MAX_BUF];
-    player *pl;
+	char    buf[MAX_BUF];
+	char    buf2[MAX_BUF];
+	player *pl;
 
-    if(!check_mute(op, MUTE_MODE_SHOUT))
-        return 0;
+	if(!check_mute(op, MUTE_MODE_SHOUT))
+		return 0;
 
-    if (params)
-        params = cleanup_chat_string(params);
+	if (params)
+		params = cleanup_chat_string(params);
 
-    /* this happens when whitespace only string was submited */
-    if (!params || *params == '\0')
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
-        return 1;
-    }
+	/* this happens when whitespace only string was submited */
+	if (!params || *params == '\0')
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
+		return 1;
+	}
 
-    if (CONTR(op)->last_tell[0] == '\0')
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
-        return 1;
-    }
+	if (CONTR(op)->last_tell[0] == '\0')
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
+		return 1;
+	}
 
-    /* Find player object of player to reply to and check if player still exists */
-    pl = find_player(CONTR(op)->last_tell);
+	/* Find player object of player to reply to and check if player still exists */
+	pl = find_player(CONTR(op)->last_tell);
 
-    if (pl == NULL || pl->dm_stealth)
-    {
-        if(pl->dm_stealth)
-        {
-            sprintf(buf, "%s replies you: ", op->name);
-            strncat(buf, params, MAX_BUF - strlen(buf) - 1);
-            buf[MAX_BUF - 1] = 0;
-            new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
-            LOG(llevInfo, buf);
-        }
-        new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
-        return 1;
-    }
+	if (pl == NULL || pl->dm_stealth)
+	{
+		if(pl->dm_stealth)
+		{
+			sprintf(buf, "%s replies you: ", op->name);
+			strncat(buf, params, MAX_BUF - strlen(buf) - 1);
+			buf[MAX_BUF - 1] = 0;
+			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+			LOG(llevInfo, buf);
+		}
+		new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
+		return 1;
+	}
 
-    sprintf(buf2, "%s replied %s: ", op->name, pl->ob->name);
-    strncat(buf2, params, MAX_BUF - strlen(buf) - 1);
-    LOG(llevInfo, buf2);
+	sprintf(buf, "%s replies you: ", op->name);
+	strncat(buf, params, MAX_BUF - strlen(buf) - 1);
+	buf[MAX_BUF - 1] = 0;
 
-    if(gmaster_list_DM || gmaster_list_GM)
-    {
-        objectlink *ol;
+	/* create special log version */
+	sprintf(buf2, "REPLY::(to %s) %s",pl->ob->name, buf);
+	LOG(llevInfo, buf2);
 
-        for(ol = gmaster_list_DM;ol;ol=ol->next)
-        {
-            if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-        }
+	if(gmaster_list_DM || gmaster_list_GM)
+	{
+		objectlink *ol;
 
-        for(ol = gmaster_list_GM;ol;ol=ol->next)
-        {
-            if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-        }
-    }
+		for(ol = gmaster_list_DM;ol;ol=ol->next)
+		{
+			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+		}
 
-    sprintf(buf, "%s replies you: ", op->name);
-    strncat(buf, params, MAX_BUF - strlen(buf) - 1);
-    buf[MAX_BUF - 1] = 0;
+		for(ol = gmaster_list_GM;ol;ol=ol->next)
+		{
+			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
+				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+		}
+	}
 
-    /* Update last_tell value */
-    strcpy(pl->last_tell, op->name);
+	/* Update last_tell value */
+	strcpy(pl->last_tell, op->name);
 
-    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
-    sprintf(buf2, "You reply %s: %s", pl->ob->name, params);
-    new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, buf2);
+	new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+	sprintf(buf, "You reply %s: %s", pl->ob->name, params);
+	new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, buf);
 
-    return 1;
+	return 1;
 }
 
 
