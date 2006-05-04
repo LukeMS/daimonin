@@ -35,7 +35,7 @@
             Primary stats may only be increased, temporarily, by magical means. They do not increase as you advance in level. They may randomly deplete if you die. They will stay depleted until magically restored.
         </p>
         <p>
-            More specialised than primary stats, secondary stats are mostly of importance in (melee) combat. They affect things like your chances of hitting with your attacks, dodging those aimed at you, the amount of damage you inflict, and so on.
+            More specialised than primary stats, secondary stats are mostly of importance in (melee) combat. They affect things like your chances of hitting with your attacks, your speed at fleeing your enemies, the amount of damage you inflict, and so on.
         </p>
         <p>
             Your current wellbeing is shown by a number of health indicators, including hit points (which indicate the amount of physical punishment you can take before you <a href="#death">die</a>), mana (which indicates your reserves of magical power, necessary for casting spells), and grace (which is similar to mana but needed for invoking prayers).

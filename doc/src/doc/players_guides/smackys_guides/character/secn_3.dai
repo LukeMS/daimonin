@@ -34,7 +34,7 @@
                 Dexterity (Dex)
             </title>
             <p>
-                Affects <a href="#armourclass">armour class</a>, <a href="#weaponclass">weapon class</a>, and <a href="#speed">speed</a>.
+                Affects <a href="#weaponclass">weapon class</a> and <a href="#speed">speed</a>.
             </p>
         </section>
         <section id="constitution">
@@ -58,7 +58,7 @@
                 Wisdom (Wis)
             </title>
             <p>
-                Affects maximum <a href="#grace">grace</a> and the chance of failure when reciting prayers.
+                Affects maximum <a href="#grace">grace</a>.
             </p>
         </section>
         <section id="power">
@@ -99,7 +99,7 @@
                 This reflects your chances of avoiding being hit. Although the merits of the armour class system are debatable it is at least very straightforward: the higher the value, the harder you are to hit.
             </p>
             <p>
-                Armour class is affected by the quality and quantity of armour you are wearing, your <a href="#strength">strength</a>, appropriate skill levels, and magic currently in effect.
+                Armour class is affected by the quality and quantity of armour you are wearing, appropriate skill levels, and magic currently in effect.
             </p>
         </section>
         <section id="weaponclass">
@@ -156,6 +156,11 @@
             <p>
                 Carry limit is directly determined by your <a href="#strength">strength</a>.
             </p>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> As you collect more and more items you in your inventory, and so the closer you get to your carry limit, the more your <a href="#speed">speed</a> will be affected. Your effective <a href="#speed">speed</a> tends to decrease as you carry 65% or more of your carry limit.
+                </p>
+            </div>
         </section>
     </section>
     <section id="healthindicators">
