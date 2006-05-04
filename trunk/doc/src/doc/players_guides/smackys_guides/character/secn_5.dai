@@ -15,6 +15,14 @@
         <p>
             Armour protections are represented by percentage figures. If you have 0% electricity protection you will take maximum damage from an electrical attack, while if you have 50% cleave protection you will take only half damage from a blow from an axe.
         </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> You may also have resistances to particular attack types, for example via an amulet. Reesistances are also expressed in percentages, although they are not recorded on screen.
+            </p>
+            <p>
+                Resistances work in a very similar way to protections (there are technical differences but these can essentially be ignored). If you have <em>either</em> resistance <em>or</em> protection of 20% the results are the same: an attack for 100 damage will actually only hit you for 100 - 20% = 80. If you have <em>both</em> resistance <em>and</em> protection of 20% both are taken into account to account (resistance first): an attack for 100 damage will actually hit for 100 - 20% = 80 - 20% =64.
+            </p>
+        </div>
     </section>
     <section id="physical">
         <title>
