@@ -82,7 +82,18 @@ CEvent::~CEvent()
 ///================================================================================================
 void CEvent::setWorldPos(Vector3 &pos)
 {
+
+return;
+
+
+
+
+//   mCamera->move(Vector3(.1,0,.1));
+   mCamera->move(pos);
   return;
+
+
+
   static Vector3 dPos = pos;
   bool ui = false;
   /// East
@@ -164,7 +175,7 @@ void CEvent::setWorldPos(Vector3 &pos)
   }
   mCamera->move(pos);
 
-  // mCamera->setPosition(mCamera->getPosition()+pos);
+
   // ParticleManager::getSingleton().synchToWorldPos(pos);
 }
 
@@ -190,12 +201,20 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         /// Alter the camera aspect ratio to match the viewport
         mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
         mCamera->setProjectionType(PT_ORTHOGRAPHIC);
+
+        // rigidly map.
         mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
         mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2 + 942));
         mCamera->pitch(Degree(-25));
         const Vector3 *corner = mCamera->getWorldSpaceCorners();
         mCamCornerX =  (corner[0].x - corner[1].x)/2;
         mCamCornerY = -(corner[0].y - corner[2].y)/2 -13.57;  // Todo: clean up.
+/*
+        // rotating map.
+        mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2));
+        mCamera->lookAt(0,-1,0);
+        mCamera->pitch(Degree(5));
+*/
         /// ////////////////////////////////////////////////////////////////////
         /// Create the world.
         /// ////////////////////////////////////////////////////////////////////
@@ -408,7 +427,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
   static clock_t time = clock();
   if (clock() - time > 80.0)
         {
-   //       mTileManager->ChangeChunks();
+         // mTileManager->ChangeChunks();
           time = clock();
         }
 

@@ -41,6 +41,18 @@ bool ParticleManager::init(SceneManager *SceneMgr)
 }
 
 ///================================================================================================
+/// Clean up.
+///================================================================================================
+ParticleManager::~ParticleManager()
+{
+	for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    {
+        delete (*i);
+    }
+	mvParticle.clear();
+}
+
+///================================================================================================
 ///
 ///================================================================================================
 ParticleSystem *ParticleManager::addNodeObject(const SceneNode *parentNode, const char* particleFX)
@@ -56,7 +68,7 @@ ParticleSystem *ParticleManager::addNodeObject(const SceneNode *parentNode, cons
         obj->speed = 180;
         ++mNodeCounter;
     */
-  return 0; // switch off compiler warning.
+    return 0; // switch off compiler warning.
 }
 
 ///================================================================================================
@@ -97,17 +109,17 @@ void ParticleManager::update(Real dTime)
 {
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
-       if ( (*i)->lifeTime <0 ) continue; // Infity lifeTime or already deleted.
-       if (((*i)->lifeTime-= dTime) <0)
-       {
-          if ((*i)->entity)
-            (*i)->entity->detachObjectFromBone((*i)->pSystem);
-          if ((*i)->sceneNode)
-            (*i)->sceneNode->getParentSceneNode()->removeChild((*i)->sceneNode);
-          Event->GetSceneManager()->destroyParticleSystem((*i)->pSystem);
-          delete (*i);
-          i = mvParticle.erase(i);
-       }
+        if ( (*i)->lifeTime <0 ) continue; // Infity lifeTime or already deleted.
+        if (((*i)->lifeTime-= dTime) <0)
+        {
+            if ((*i)->entity)
+                (*i)->entity->detachObjectFromBone((*i)->pSystem);
+            if ((*i)->sceneNode)
+                (*i)->sceneNode->getParentSceneNode()->removeChild((*i)->sceneNode);
+            Event->GetSceneManager()->destroyParticleSystem((*i)->pSystem);
+            delete (*i);
+            i = mvParticle.erase(i);
+        }
     }
 }
 
@@ -118,11 +130,11 @@ void ParticleManager::delObject(ParticleSystem *pSystem)
 {
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
-       if ( (*i)->pSystem == pSystem )
-       {
-          (*i)->lifeTime = 0;
-          return;
-       }
+        if ((*i)->pSystem == pSystem)
+        {
+            (*i)->lifeTime = 0;
+            return;
+        }
     }
 }
 

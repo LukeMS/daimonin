@@ -71,7 +71,7 @@ Animate::Animate(Entity *entity)
                 ++sum;
             }
         }
-        catch(Exception& e)
+        catch(Exception& )
         {
             // No animation with this name found.
         }

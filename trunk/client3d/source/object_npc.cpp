@@ -245,6 +245,12 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
   mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
   mNode->attachObject(mEntityNPC);
+
+  if (!thisNPC)
+  {
+   // mNode->attachObject(Event->getCamera()); // rotating map.
+  }
+
   /// ////////////////////////////////////////////////////////////////////
   /// We ignore the material of the mesh and create an own material.
   /// ////////////////////////////////////////////////////////////////////
@@ -467,18 +473,9 @@ void NPC::update(const FrameEvent& event)
     else
     {
       /// We have to move on.
-      // just a test...
-
-      mTranslateVector.x = sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-      mTranslateVector.z = cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-      //      mDeltaPos /= mDeltaPos.squaredLength();
-      Vector3 NewTmpPosition = mNode->getPosition() - event.timeSinceLastFrame *  mDeltaPos;
-/*
-      mPosX = (int) (NewTmpPosition.x / TILE_SIZE +1);
-      mPosZ = (int) (NewTmpPosition.z / TILE_SIZE +1);
-      NewTmpPosition.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
-*/
-      mNode->setPosition(NewTmpPosition);
+      Vector3 NewTmpPosition = - event.timeSinceLastFrame * mDeltaPos;;
+      mNode->setPosition(mNode->getPosition() + NewTmpPosition);
+      Event->setWorldPos(NewTmpPosition);
     }
     return;
   }
@@ -488,60 +485,6 @@ void NPC::update(const FrameEvent& event)
       mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning);
       mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning));
   }
-
-
-
-
-
-
-//return;
-
-
-
-
-/*
-    if (mWalking)
-    {
-      // just a test...
-      mAnim->toggleAnimation(Animate::STATE_WALK,0);
-      mTranslateVector.x = Math::Sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-      mTranslateVector.z = Math::Cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
-
-      //   mTranslateVector = mNode->getOrientation().zAxis();
-      mNode->translate(mTranslateVector);
-      if(thisNPC) // All NPC's.
-      {
-        mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking);
-        mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking));
-        mNode->translate(mTranslateVector);
-      }
-      else // Hero has moved.
-      {
-        static Vector3 pos = mNode->getPosition();
-        pos+= mTranslateVector;
-        Event->setWorldPos(mTranslateVector);
-
-        // Add the terrain height to the y-pos of player.
-        Vector3 myPos = mNode->getPosition();
-
-        /// Iportant no bounds check for get_map_height right now.
-        /// It will crash if you leave the map!
-
-        Vector3 pPos = Event->getCamera()->getPosition();
-        Real tt = pPos.z;
-        // pPos.z = 22*30 -(pPos.z- 524+10);
-        pPos.z -= 534;
-        Real height = Event->getTileManager()->Get_Avg_Map_Height((short)(pPos.x)/TILE_SIZE+1, (short)(pPos.z)/TILE_SIZE);
-        mNode->setPosition(pPos.x, pPos.y-390 + height, tt -390);
-
-
-      }
-    }
-    else
-    {
-      mAnim->toggleAnimation(Animate::ANIM_GROUP_IDLE, 0);
-    }
-  */
 }
 
 ///================================================================================================

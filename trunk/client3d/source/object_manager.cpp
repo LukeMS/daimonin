@@ -201,9 +201,10 @@ void ObjectManager::freeRecources()
   }
   mvObject_npc.clear();
 
-  for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+  for (std::vector<ObjStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
   {
-    delete mvObject_static[i];
+    (*i)->freeRecources();
+    delete (*i);
   }
   mvObject_static.clear();
 }

@@ -23,26 +23,24 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "Ogre.h"
 
-
-
 using namespace Ogre;
 
 class TileManager;
 
 /** Height levels for the tiles. **/
 enum {
-  // Mountains
-  LEVEL_MOUNTAIN_TOP = 70,
-  LEVEL_MOUNTAIN_MID = 60,
-  LEVEL_MOUNTAIN_DWN = 40,
-  // Plains
-  LEVEL_PLAINS_TOP = 18,
-  LEVEL_PLAINS_MID = 16,
-  LEVEL_PLAINS_DWN = 14,
-  LEVEL_PLAINS_SUB = 12,
-  // Water
-  LEVEL_WATER_CLP = LEVEL_PLAINS_SUB +2, // At this point the water clips the land-tiles.
-  LEVEL_WATER_TOP = LEVEL_WATER_CLP -1,
+    // Mountains
+    LEVEL_MOUNTAIN_TOP = 70,
+    LEVEL_MOUNTAIN_MID = 60,
+    LEVEL_MOUNTAIN_DWN = 40,
+    // Plains
+    LEVEL_PLAINS_TOP = 18,
+    LEVEL_PLAINS_MID = 16,
+    LEVEL_PLAINS_DWN = 14,
+    LEVEL_PLAINS_SUB = 12,
+    // Water
+    LEVEL_WATER_CLP = LEVEL_PLAINS_SUB +2, // At this point the water clips the land-tiles.
+    LEVEL_WATER_TOP = LEVEL_WATER_CLP -1,
 };
 
 // Outdoor
@@ -57,109 +55,112 @@ enum {
 class TileChunk
 {
 private:
-  /** Buffersize for meshnames. **/
-  static const int NAME_BUFFER_SIZE = 50;
-  bool m_IsAttached;
-  MeshPtr m_Water_Mesh_high;
-  MeshPtr m_Water_Mesh_low;
-  SubMesh* m_Water_subMesh_high;
-  SubMesh* m_Water_subMesh_low;
-  Entity* m_Water_entity_high;
-  Entity* m_Water_entity_low;
-  SceneNode* m_Water;
+    /** Buffersize for meshnames. **/
+    static const int NAME_BUFFER_SIZE = 50;
+    bool m_IsAttached;
+    MeshPtr m_Water_Mesh_high;
+    MeshPtr m_Water_Mesh_low;
+    SubMesh* m_Water_subMesh_high;
+    SubMesh* m_Water_subMesh_low;
+    Entity* m_Water_entity_high;
+    Entity* m_Water_entity_low;
+    SceneNode* m_Water;
 
-  MeshPtr m_Land_Mesh_high;
-  MeshPtr m_Land_Mesh_low;
-  SubMesh* m_Land_subMesh_high;
-  SubMesh* LandSubMesh;
-  SubMesh* m_Land_subMesh_low;
-  Entity* m_Land_entity_high;
-  Entity* m_Land_entity_low;
-  SceneNode* m_Land;
-
+    MeshPtr m_Land_Mesh_high;
+    MeshPtr m_Land_Mesh_low;
+    SubMesh* m_Land_subMesh_high;
+    SubMesh* LandSubMesh;
+    SubMesh* m_Land_subMesh_low;
+    Entity* m_Land_entity_high;
+    Entity* m_Land_entity_low;
+    SceneNode* m_Land;
 
 public:
-  /** Buffer for building meshnames. **/
-  static char MeshName[NAME_BUFFER_SIZE];
-  /** Buffer for temporary actions. **/
-  static char TempName[NAME_BUFFER_SIZE];
-  static TileManager* m_TileManagerPtr;
-  static AxisAlignedBox* m_bounds;
+    /** Buffer for building meshnames. **/
+    static char MeshName[NAME_BUFFER_SIZE];
+    /** Buffer for temporary actions. **/
+    static char TempName[NAME_BUFFER_SIZE];
+    static TileManager* m_TileManagerPtr;
+    static AxisAlignedBox* m_bounds;
 
-  /** X pos of the chunk. **/
-  short m_posX;
-  /** Z pos of the chunk. **/
-  short m_posZ;
+    /** X pos of the chunk. **/
+    short m_posX;
+    /** Z pos of the chunk. **/
+    short m_posZ;
 
-  TileChunk();
-  ~TileChunk();
-  SceneNode* Get_Land()
-  {
-    return m_Land;
-  }
-  SceneNode* Get_Water()
-  {
-    return m_Water;
-  }
-  Entity* Get_Water_entity()
-  {
-    return m_Water_entity_high;
-  }
-  SubMesh* Get_Land_subMesh()
-  {
-    return m_Land_subMesh_high;
-  }
-  Entity* Get_Land_entity()
-  {
-    return m_Land_entity_high;
-  }
-  short get_posX(){
-    return m_posX;}
-  short get_posZ(){
-    return m_posZ;}
-  void Set_Tile(short &x, short &z)
-  {
-    m_posX = x; m_posZ = z;
-  }
-  void Create(short &x, short &z, int tileTextureSize);
-  void Change();
+    TileChunk();
+    ~TileChunk();
+    SceneNode* Get_Land()
+    {
+        return m_Land;
+    }
+    SceneNode* Get_Water()
+    {
+        return m_Water;
+    }
+    Entity* Get_Water_entity()
+    {
+        return m_Water_entity_high;
+    }
+    SubMesh* Get_Land_subMesh()
+    {
+        return m_Land_subMesh_high;
+    }
+    Entity* Get_Land_entity()
+    {
+        return m_Land_entity_high;
+    }
+    short get_posX()
+    {
+        return m_posX;
+    }
+    short get_posZ()
+    {
+        return m_posZ;
+    }
+    void Set_Tile(short &x, short &z)
+    {
+        m_posX = x; m_posZ = z;
+    }
+    void Create(short &x, short &z, int tileTextureSize);
+    void Change();
 
-  /** Every chunk must have a land- AND a waterSubmesh,
-  if there is one of them missing, we make a dummy submesh. **/
-  void Create_Dummy(SubMesh* submesh);
-  /** Create a (high poly) land chunk. **/
-  void CreateLandHigh(int tileTextureSize);
-  /** Change a (high poly) land chunk. **/
-  void ChangeLandHigh();
-  /** Create HW buffers for (high poly) land chunk. **/
-  void CreateLandHigh_Buffers();
+    /** Every chunk must have a land- AND a waterSubmesh,
+    if there is one of them missing, we make a dummy submesh. **/
+    void Create_Dummy(SubMesh* submesh);
+    /** Create a (high poly) land chunk. **/
+    void CreateLandHigh(int tileTextureSize);
+    /** Change a (high poly) land chunk. **/
+    void ChangeLandHigh();
+    /** Create HW buffers for (high poly) land chunk. **/
+    void CreateLandHigh_Buffers();
 
-  /** Create a (low poly) land chunk. **/
-  void CreateLandLow();
-  /** Change a (low poly) land chunk. **/
-  void ChangeLandLow();
-  /** Create HW buffers for (low poly) land chunk. **/
-  void CreateLandLow_Buffers();
+    /** Create a (low poly) land chunk. **/
+    void CreateLandLow();
+    /** Change a (low poly) land chunk. **/
+    void ChangeLandLow();
+    /** Create HW buffers for (low poly) land chunk. **/
+    void CreateLandLow_Buffers();
 
-  /** Create a (high poly) water chunk. **/
-  void CreateWaterHigh();
-  /** Change a (high poly) water chunk. **/
-  void ChangeWaterHigh();
-  /** Create HW buffers for (high poly) water chunk. **/
-  void CreateWaterHigh_Buffers();
+    /** Create a (high poly) water chunk. **/
+    void CreateWaterHigh();
+    /** Change a (high poly) water chunk. **/
+    void ChangeWaterHigh();
+    /** Create HW buffers for (high poly) water chunk. **/
+    void CreateWaterHigh_Buffers();
 
-  /** Create a (low poly) water chunk. **/
-  void CreateWaterLow();
-  /** Change a (low poly) water chunk. **/
-  void ChangeWaterLow();
-  /** Create HW buffers for (low poly) water chunk. **/
-  void CreateWaterLow_Buffers();
+    /** Create a (low poly) water chunk. **/
+    void CreateWaterLow();
+    /** Change a (low poly) water chunk. **/
+    void ChangeWaterLow();
+    /** Create HW buffers for (low poly) water chunk. **/
+    void CreateWaterLow_Buffers();
 
-  /** Create terrain-texture in multiple sizes. **/
-  void CreateTexture();
-  void CreateSceneNode();
-  void Attach(short quality);
-  void Detach();
+    /** Create terrain-texture in multiple sizes. **/
+    void CreateTexture();
+    void CreateSceneNode();
+    void Attach(short quality);
+    void Detach();
 };
 
 #endif

@@ -6,6 +6,7 @@ material GUI/Window
       {
          lighting off
          scene_blend alpha_blend
+	 alpha_rejection greater_equal 128
          depth_check off
 	 depth_write off
          texture_unit

@@ -67,10 +67,22 @@ TileChunk::~TileChunk()
 ///================================================================================================
 void TileChunk::CreateSceneNode()
 {
+
+
+
     m_Land  = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
     m_Land ->setPosition(m_posX * TILE_SIZE * CHUNK_SIZE_X, 0, m_posZ * TILE_SIZE * CHUNK_SIZE_Z);
     m_Water = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
     m_Water->setPosition(m_posX * TILE_SIZE * CHUNK_SIZE_X, 0, m_posZ * TILE_SIZE * CHUNK_SIZE_Z);
+
+
+    static StaticGeometry *s=m_TileManagerPtr->Get_pSceneManager()->createStaticGeometry("test");
+    s->setRegionDimensions(Vector3(5,5,5));
+    s->addSceneNode(m_Land);
+    s->addSceneNode(m_Water);
+    s->build();
+
+
 }
 
 ///================================================================================================
@@ -82,15 +94,13 @@ void TileChunk::Attach(short quality)
         m_Land->detachAllObjects();
     if (m_Water)
         m_Water->detachAllObjects();
-    if (quality == QUALITY_HIGH)
-    {
+    if (quality == QUALITY_HIGH) {
         if (m_Land_entity_high)
             m_Land ->attachObject(m_Land_entity_high);
         if (m_Water_entity_high)
             m_Water->attachObject(m_Water_entity_high);
     }
-    else
-    {
+    else {
         if (m_Land_entity_low)
             m_Land ->attachObject(m_Land_entity_low);
         if (m_Water_entity_low)
@@ -104,8 +114,7 @@ void TileChunk::Attach(short quality)
 ///================================================================================================
 void TileChunk::Detach()
 {
-    if (m_IsAttached == true)
-    {
+    if (m_IsAttached == true) {
         // tile->detachObject(TempName);
         // TileManager->Get_pSceneManager()->removeEntity(custom);
         // TileManager->Get_pSceneManager()->getRootSceneNode()->removeChild(tile);
@@ -188,19 +197,15 @@ void TileChunk::CreateWaterLow_Buffers()
     unsigned long numVertices = 0;
 
     // Bestimmung der Anzahl der Geometriepunkte
-    for (short a = x; a < x + CHUNK_SIZE_X; ++a)
-    {
-        for (short b = z; b < z + CHUNK_SIZE_Z; ++b)
-        {
+    for (short a = x; a < x + CHUNK_SIZE_X; ++a) {
+        for (short b = z; b < z + CHUNK_SIZE_Z; ++b) {
             if (m_TileManagerPtr->Get_Map_Height(a, b  ) <= LEVEL_WATER_TOP && m_TileManagerPtr->Get_Map_Height(a+1, b  ) <= LEVEL_WATER_TOP &&
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) <= LEVEL_WATER_TOP && m_TileManagerPtr->Get_Map_Height(a+1, b+1) <= LEVEL_WATER_TOP)
-            {
+                    m_TileManagerPtr->Get_Map_Height(a, b+1) <= LEVEL_WATER_TOP && m_TileManagerPtr->Get_Map_Height(a+1, b+1) <= LEVEL_WATER_TOP) {
                 goto hasWater;
             }
         }
     }
-    if (numVertices == 0)
-    {
+    if (numVertices == 0) {
         Create_Dummy(m_Water_subMesh_low);
         return;
     }
@@ -382,19 +387,15 @@ void TileChunk::CreateWaterHigh_Buffers()
     /// Count the Vertices in this chunk.
     /// ////////////////////////////////////////////////////////////////////
     unsigned int numVertices = 0;
-    for (short a = x; a < x + CHUNK_SIZE_X; ++a)
-    {
-        for (short b = z; b < z + CHUNK_SIZE_Z; ++b)
-        {
+    for (short a = x; a < x + CHUNK_SIZE_X; ++a) {
+        for (short b = z; b < z + CHUNK_SIZE_Z; ++b) {
             if (m_TileManagerPtr->Get_Map_Height(a, b  ) <= LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) <= LEVEL_WATER_TOP ||
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) <= LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) <= LEVEL_WATER_TOP)
-            {
+                    m_TileManagerPtr->Get_Map_Height(a, b+1) <= LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) <= LEVEL_WATER_TOP) {
                 numVertices += 6;
             }
         }
     }
-    if (numVertices == 0)
-    {
+    if (numVertices == 0) {
         Create_Dummy(m_Water_subMesh_high);
         return;
     }
@@ -423,35 +424,30 @@ void TileChunk::CreateWaterHigh_Buffers()
     vdata->vertexBufferBinding->setBinding(0, vbuf0);
 
     long o = 0;
+
     static Real offsetWave = 0.05;
     static Real WaveHigh = 0;
     WaveHigh+= offsetWave;
-
-
     if (WaveHigh >1.5 || WaveHigh < -1.5) offsetWave*=-1;
+
     Real StretchZ = m_TileManagerPtr->Get_StretchZ();
     Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE));
     Real q1, q2;
-    for (short a = x; a < x+ CHUNK_SIZE_X; ++a)
-    {
-        for (short b = z; b < z +CHUNK_SIZE_Z; ++b)
-        {
+    for (short a = x; a < x+ CHUNK_SIZE_X; ++a) {
+        for (short b = z; b < z +CHUNK_SIZE_Z; ++b) {
             if (m_TileManagerPtr->Get_Map_Height(a, b  ) <= LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) <= LEVEL_WATER_TOP ||
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) <= LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) <= LEVEL_WATER_TOP)
-            {
+                    m_TileManagerPtr->Get_Map_Height(a, b+1) <= LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) <= LEVEL_WATER_TOP) {
                 /// ////////////////////////////////////////////////////////////////////
                 /// Position.
                 /// ////////////////////////////////////////////////////////////////////
-              if ((a&1) != (b&1))
-              {
-                q1 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
-                q2 = LEVEL_WATER_CLP * StretchZ - WaveHigh;
-              }
-              else
-              {
-                q1 = LEVEL_WATER_CLP * StretchZ - WaveHigh;
-                q2 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
-              }
+                if ((a&1) != (b&1)) {
+                    q1 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
+                    q2 = LEVEL_WATER_CLP * StretchZ - WaveHigh;
+                }
+                else {
+                    q1 = LEVEL_WATER_CLP * StretchZ - WaveHigh;
+                    q2 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
+                }
                 // 1. Triangle
                 pReal[o   ] = TILE_SIZE * (a-x);
                 pReal[o+ 1] = q1;
@@ -638,20 +634,16 @@ void TileChunk::CreateLandLow_Buffers()
     /// ////////////////////////////////////////////////////////////////////
     /// Bestimmung der Anzahl der Geometriepunkte
     /// ////////////////////////////////////////////////////////////////////
-    for (short a = x; a < x + CHUNK_SIZE_X; ++a)
-    {
-        for (short b = z; b < z + CHUNK_SIZE_Z; ++b)
-        {
+    for (short a = x; a < x + CHUNK_SIZE_X; ++a) {
+        for (short b = z; b < z + CHUNK_SIZE_Z; ++b) {
             if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP
-            ||
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
-            {
+                    ||
+                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP) {
                 numVertices += 6;
             }
         }
     }
-    if (numVertices == 0)
-    {
+    if (numVertices == 0) {
         Create_Dummy(m_Land_subMesh_low);
         return;
     }
@@ -680,13 +672,10 @@ void TileChunk::CreateLandLow_Buffers()
     int o = 0;
     Real g,h,d,f;
     Real row, col;
-    for (int a = x; a < x+ CHUNK_SIZE_X; a += 1)
-    {
-        for (int b = z; b < z +CHUNK_SIZE_Z; b +=1 )
-        {
+    for (int a = x; a < x+ CHUNK_SIZE_X; a += 1) {
+        for (int b = z; b < z +CHUNK_SIZE_Z; b +=1 ) {
             if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
-                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
-            {
+                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP) {
                 g = m_TileManagerPtr->Get_Map_Height(a  ,b  ) * StretchZ;
                 h = m_TileManagerPtr->Get_Map_Height(a+1,b  ) * StretchZ;
                 d = m_TileManagerPtr->Get_Map_Height(a  ,b+1) * StretchZ;
@@ -864,19 +853,16 @@ void TileChunk::CreateLandHigh_Buffers()
     /// Count the Vertices in this chunk.
     /// ////////////////////////////////////////////////////////////////////
     unsigned int numVertices = 0;
-    for (int a = x; a < x + CHUNK_SIZE_X; ++a)
-    {
-        for (int b = z; b < z + CHUNK_SIZE_Z; ++b)
-        {
-//            if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
-//                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
+    for (int a = x; a < x + CHUNK_SIZE_X; ++a) {
+        for (int b = z; b < z + CHUNK_SIZE_Z; ++b) {
+            //            if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
+            //                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
             {
                 numVertices += 12;
             }
         }
     }
-    if (numVertices == 0)
-    {
+    if (numVertices == 0) {
         Create_Dummy(m_Land_subMesh_high);
         return;
     }
@@ -913,12 +899,10 @@ void TileChunk::CreateLandHigh_Buffers()
     Real average, StretchZ = m_TileManagerPtr->Get_StretchZ();
     Real* pReal1 = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE))
                    ;
-    for (short a = x; a < x+ CHUNK_SIZE_X; ++a)
-    {
-        for (short b = z; b < z +CHUNK_SIZE_Z; ++b)
-        {
+    for (short a = x; a < x+ CHUNK_SIZE_X; ++a) {
+        for (short b = z; b < z +CHUNK_SIZE_Z; ++b) {
             //if (m_TileManagerPtr->Get_Map_Height(a, b  ) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b  ) > LEVEL_WATER_TOP ||
-//                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
+            //                    m_TileManagerPtr->Get_Map_Height(a, b+1) > LEVEL_WATER_TOP || m_TileManagerPtr->Get_Map_Height(a+1, b+1) > LEVEL_WATER_TOP)
             {
                 g = m_TileManagerPtr->Get_Map_Height(a  , b  ) * StretchZ;
                 h = m_TileManagerPtr->Get_Map_Height(a+1, b  ) * StretchZ;
