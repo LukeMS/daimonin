@@ -4,7 +4,6 @@ material Tree/Tree
     {
         pass
         {
-            scene_blend alpha_blend 
             alpha_rejection greater_equal 128
             texture_unit
             {
@@ -20,13 +19,11 @@ material Tree/Leafs
     {
         pass
         {
-            scene_blend alpha_blend 
             alpha_rejection greater_equal 128
             texture_unit
             {
-		//filtering linear linear point
 		filtering none
-                texture leaf.png 
+                texture leaf.png 2d 0
         }
     }
 }

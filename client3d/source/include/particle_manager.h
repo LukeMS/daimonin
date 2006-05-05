@@ -72,9 +72,7 @@ private:
   ParticleManager()
   {
   }
-  ~ParticleManager()
-  {
-  }
+  ~ParticleManager();
   ParticleManager(const ParticleManager&); // disable copy-constructor.
 };
 

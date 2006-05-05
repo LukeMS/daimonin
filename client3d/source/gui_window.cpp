@@ -92,8 +92,7 @@ void GuiWindow::freeRecources()
     // Delete the statusbars.
     for (vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
     {
-        delete (*i)
-        ;
+        delete (*i);
     }
     mvStatusbar.clear();
     // Set all shared pointer to null.
@@ -327,7 +326,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the "Talking Head".
     /// ////////////////////////////////////////////////////////////////////
-    mSceneNode = 0;
+	mSceneNode = 0;
     /// Currently we are using only 1 head !
     for (xmlElem = xmlRoot->FirstChildElement("NPC_Head"); xmlElem; xmlElem = xmlElem->NextSiblingElement("NPC_Head"))
     {
@@ -357,18 +356,14 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             manualKeyFrame->addPoseReference(poseIndexes[i], 0.0f);
         }
         Entity* head = Event->GetSceneManager()->createEntity("Head", strTmp);
-        //        mSceneNode = Event->GetSceneManager()->createSceneNode();
-        mSceneNode = new SceneNode(NULL);
+        mSceneNode = Event->GetSceneManager()->createSceneNode("Head");
         mSceneNode->attachObject(head);
-
-
         Real px, py;
         px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
              *(mPosX+ mHeadPosX) - Event->getCamCornerX();
         py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
              *(mPosY+ mHeadPosY) - Event->getCamCornerY();
         mSceneNode->setPosition(px, py, -200);
-
 
         mSceneNode->scale(.5, .5, .5); // testing
 

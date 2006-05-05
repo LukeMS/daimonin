@@ -240,8 +240,9 @@
 
     <TextBox x= "100" y= "65" font="02" text= "input test" width = "100" name= "Input_Password" />
 
+<!--
     <NPC_Head x= "95" y= "170" mesh= "facial.mesh" name="Trader" />
-
+-->
   </Window>
 
   <!--#############################################-->

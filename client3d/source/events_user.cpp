@@ -78,17 +78,17 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_A:
         {
-         static int animNr= 0;
-         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::ANIM_GROUP_IDLE, animNr);
-         if (++animNr >= 16) animNr= 0;
+            static int animNr= 0;
+            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::ANIM_GROUP_IDLE, animNr);
+            if (++animNr >= 16) animNr= 0;
         }
         break;
 
         case KC_B:
         {
-         static int animNr= 0;
-         ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::ANIM_GROUP_ATTACK, animNr);
-         if (++animNr >= 16) animNr= 0;
+            static int animNr= 0;
+            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, Animate::ANIM_GROUP_ATTACK, animNr);
+            if (++animNr >= 16) animNr= 0;
         }
 
         break;
@@ -177,15 +177,15 @@ void CEvent::keyPressed(KeyEvent *e)
         //mCamera->yaw(Degree(10));
         {
             static int tree = 0;
-                Entity * entity = mSceneManager->createEntity("tree_"+StringConverter::toString(++tree), "tree1.mesh");
-                const AxisAlignedBox &AABB = entity->getBoundingBox();
-                Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-                pos.x = (pos.x +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
-                pos.y+= fabs(AABB.getMaximum().y) - TILE_SIZE/2;
-                pos.z = (pos.z +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
-                SceneNode *node = mSceneManager->getRootSceneNode()->createChildSceneNode();
-                node->attachObject(entity);
-                node->setPosition(pos.x, pos.y, pos.z);
+            Entity * entity = mSceneManager->createEntity("tree_"+StringConverter::toString(++tree), "tree1.mesh");
+            const AxisAlignedBox &AABB = entity->getBoundingBox();
+            Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
+            pos.x = (pos.x +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
+            pos.y+= fabs(AABB.getMaximum().y) - TILE_SIZE/2;
+            pos.z = (pos.z +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
+            SceneNode *node = mSceneManager->getRootSceneNode()->createChildSceneNode();
+            node->attachObject(entity);
+            node->setPosition(pos.x, pos.y, pos.z);
         }
         break;
 
@@ -197,15 +197,15 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_I:
-          ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
+        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
         break;
 
         case KC_O:
-          ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
+        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         break;
 
         case KC_P:
-          ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
+        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
         break;
 
         case KC_Q:
@@ -351,7 +351,8 @@ void CEvent::keyPressed(KeyEvent *e)
 }
 
 void CEvent::keyClicked(KeyEvent* )
-{}
+{
+}
 
 void CEvent::keyReleased(KeyEvent* e)
 {
@@ -470,19 +471,19 @@ void CEvent::mousePressed (MouseEvent *e)
     {
         if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
         {
-        /// activate mouse picking of tiles
-        mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
-        {
+            /// activate mouse picking of tiles
+            mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
+            {
+                Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
+                pos.x = (pos.x +0.5) * TILE_SIZE;
+                pos.z = (pos.z +0.5) * TILE_SIZE;
+                ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 2.0);
+            }
+
+
+            /// Move the player.
             Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-            pos.x = (pos.x +0.5) * TILE_SIZE;
-            pos.z = (pos.z +0.5) * TILE_SIZE;
-            ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 2.0);
-        }
-
-
-        /// Move the player.
-        Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_GOTO, (int)pos.x, (int) pos.z);
+            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_GOTO, (int)pos.x, (int) pos.z);
         }
     }
     e->consume();
