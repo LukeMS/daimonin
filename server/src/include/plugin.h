@@ -273,7 +273,9 @@ struct plugin_hooklist
     object*(*insert_ob_in_map)(object * const, mapstruct *, object *const, const int);
     int (*move_ob)(object *, int, object *);
     void (*free_mempool)(struct mempool *);
-    struct mempool*(*create_mempool)(const char *, uint32, uint32, uint32, chunk_constructor, chunk_destructor);
+	struct mempool * (*create_mempool)(const char *description, uint32 expand, uint32 size,
+		uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
+		chunk_constructor constructor, chunk_destructor destructor);
     uint32 (*nearest_pow_two_exp)(uint32);
     void (*return_poolchunk_array_real)(void *, uint32, struct mempool *);
     void*(*get_poolchunk_array_real)(struct mempool *, uint32);

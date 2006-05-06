@@ -200,9 +200,9 @@ extern void             material_repair_item(object *item, int skill_value);
 extern uint32           nearest_pow_two_exp(uint32 n);
 extern void             init_mempools();
 extern void             free_mempool(struct mempool *pool);
-extern struct mempool  *create_mempool(const char *description, uint32 expand, uint32 size,
-                                       uint32 flags, chunk_constructor constructor,
-                                       chunk_destructor destructor);
+extern struct mempool * (create_mempool)(const char *description, uint32 expand, uint32 size,
+						uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
+						chunk_constructor constructor, chunk_destructor destructor);
 extern void             free_empty_puddles(struct mempool *pool);
 extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool);
 extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);

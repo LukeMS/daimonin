@@ -795,7 +795,9 @@ void process_players1(mapstruct *map)
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
         if (handle_newcs_player(pl) == -1) /* -1: player is invalid now */
+		{
             continue;
+		}
 
         do_some_living(pl->ob);
 

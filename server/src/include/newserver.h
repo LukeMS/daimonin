@@ -72,13 +72,27 @@ typedef struct Buffer_struct
 typedef struct SockList_struct
 {
     int             len;
+	int			    pos;
     unsigned char  *buf;
 } SockList;
+
+/* different fixed sized command nodes */
+typedef struct _command_struct
+{
+	void			*next;
+	void			*last;
+	struct mempool  *pool;
+	int				 len;       /* the length of the data inside buf[] */
+	char			*buf;		/* buf[0] is the binary command tag */
+} command_struct;
+
 
 typedef struct NewSocket_struct
 {
     int                 fd;
-    struct pl_player    *pl;					/* if != NULL this socket is part of a player struct */
+    struct pl_player    *pl;			    /* if != NULL this socket is part of a player struct */
+	command_struct	   *cmd_start;          /* pointer to the list of incoming commands in process */
+	command_struct	   *cmd_end;
     struct Map          lastmap;			/* Thats the VISIBLE map area of the player, used to send to client */
     uint32              login_count;        /* if someone is too long idle in the login, we kick him here! */
     int                 mapx, mapy;         /* How large a map the client wants */
@@ -88,13 +102,11 @@ typedef struct NewSocket_struct
 	int					pwd_try;			/* simple password guessing security */ 
     uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
 	uint32				ip;					/* ip in raw struct sockaddr_in addr format */
-    char                ip_host[32];            /* IP as string */
+    char                ip_host[32];        /* IP as string */
     enum Sock_Status    status;
-    SockList            inbuf;          /* This holds *one* command we try to handle */
-    SockList            readbuf;        /* Raw data read in from the socket  */
-    SockList            cmdbuf;         /* buffer for the *real* player/char commands */
+    SockList            readbuf;			/* Raw data read in from the socket  */
 
-    Buffer              outputbuffer;       /* For undeliverable data */
+    Buffer              outputbuffer;				/* For undeliverable data */
 	uint32				below_clear     : 1;		/* marker to map draw/draw below */
     uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
     uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */

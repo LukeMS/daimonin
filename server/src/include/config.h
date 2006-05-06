@@ -40,10 +40,12 @@
  * flags  However, for some things, that would just be too messy.
  */
 
+/* Not very interesting logs. Remember that we are interested in real traffic. */
+/*
 #ifndef CS_LOGSTATS
 #define CS_LOGSTATS
 #endif
-
+*/
 /* I moved this settings of the lib directory and the local directory
    to this location. I want have ALL this definitions at one location.
    As long we have no setup or install tool, we should use this file.
@@ -596,7 +598,7 @@
 #define SETTINGS    "settings"
 
 #define MAX_ERRORS  25  /* Bail out if more are received during tick */
-#define OBJECT_EXPAND      100     /* How big steps to use when expanding array */
+#define OBJECT_EXPAND      2500     /* How big steps to use when expanding array */
 
 #define HIGHSCORE_LENGTH 10 /* How many entries there are room for */
 

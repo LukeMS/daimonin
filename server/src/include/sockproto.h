@@ -54,9 +54,8 @@ void            doeric_server(int update, struct timeval *timeout);
 void            doeric_server_write(void);
 /* lowlevel.c */
 void            SockList_AddString(SockList *sl, char *data);
-int             socket_read_pp(SockList *sl1, SockList *sl, int len);
 int             fill_command_buffer(NewSocket *ns, int len);
-int             SockList_ReadPacket(NewSocket *ns, int len);
+int             SockList_ReadPacket(NewSocket *ns);
 void            write_socket_buffer(NewSocket *ns);
 void            Write_To_Socket(NewSocket *ns, unsigned char *buf, int len);
 void            Send_With_Handling(NewSocket *ns, SockList *msg);

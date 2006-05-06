@@ -346,16 +346,15 @@ void SetUp(char *buf, int len, NewSocket *ns)
  */
 void AddMeCmd(char *buf, int len, NewSocket *ns)
 {
-    Settings    oldsettings;
+	player     *pl=NULL;
     char        cmd_buf[2]  = "X";
-    oldsettings = settings;
 
 	/* add_player() will move the login to the next step - adding a "connect"
      * as a uninitialized player AND send a get_name() which is "tell me your name".
      * ->addme flag is only a temp flag for the socket loop - because we close here
      * the socket or, when all is ok, we change to Ns_Login mode.
      */
-    if (!ns->setup || !ns->version || ns->status != Ns_Add || add_player(ns))
+    if (!ns->setup || !ns->version || ns->status != Ns_Add || !(pl=add_player(ns)))
     {
         Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
         ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
@@ -365,19 +364,18 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
     }
     else
     {
-        /* Basically, the add_player copies the socket structure into
-         * the player structure, so this one (which is from init_sockets)
-         * is not needed anymore.  The write below should still work, as the
-         * stuff in ns is still relevant.
-         */
+		/* lets preset our old socket so it can be given back */
+		ns->addme = 1;
+		ns = &pl->socket; /* map us to our copied socket - command queue was copied too! */
+		/* remove now the FIRST command in the command queue - that MUST be our addme.
+		 * don't remove our poolchunk, thats done in the caller function
+		 */
+		ns->cmd_start = ns->cmd_start->next;
+		if(!ns->cmd_start)
+			ns->cmd_end = NULL;
         Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
-        ns->addme = 1;
-        ns->login_count = ROUND_TAG + pticks_socket_idle; /* reset idle counter */
         LOG(llevDebug, "addme_cmd(): socket %d\n", ns->fd);
-        socket_info.nconns--;
-        ns->status = Ns_Avail;
     }
-    settings = oldsettings;
 }
 
 
