@@ -105,7 +105,7 @@ int SockList_ReadPacket(NewSocket *ns)
 #else
     do
     {
-        stat_ret = read(ns->fd, sl->buf + sl->pos, read_bytes);
+        stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
     }
     while (stat_ret < 0 && errno == EINTR);
 #endif
