@@ -182,19 +182,19 @@ void init_mempools()
 
 	/* for testing purpose, we get everytime only 1 buffer more */
 	pool_cmd_buf16 = create_mempool("command buffer 16b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer16, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer16, NULL, NULL, NULL);
 	pool_cmd_buf32 = create_mempool("command buffer 32b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer32, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer32, NULL, NULL, NULL);
 	pool_cmd_buf64 = create_mempool("command buffer 64b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer64, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer64, NULL, NULL, NULL);
 	pool_cmd_buf128 = create_mempool("command buffer 128b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer128, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer128, NULL, NULL, NULL);
 	pool_cmd_buf256 = create_mempool("command buffer 256b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer256, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer256, NULL, NULL, NULL);
 	pool_cmd_buf1024 = create_mempool("command buffer 1024b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer1024, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer1024, NULL, NULL, NULL);
 	pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0, 
-		initialize_command_buffer4096, NULL, NULL, NULL);
+		(chunk_initialisator) initialize_command_buffer4096, NULL, NULL, NULL);
 
     /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;

@@ -319,7 +319,7 @@ static int socket_prepare_commands(NewSocket *ns)
 int fill_command_buffer(NewSocket *ns, int len)
 {
 	command_struct *cmdtmp;
-    unsigned char * data;
+    char * data;
     int i, data_len;
 
 	if(socket_prepare_commands(ns))
@@ -365,12 +365,12 @@ int fill_command_buffer(NewSocket *ns, int len)
                 {
                     /* pre process the command */
 
-                    data = (unsigned char *) strchr((char *) ns->cmd_start->buf, ' ');
+                    data = strchr((char *) ns->cmd_start->buf, ' ');
                     if (data)
                     {
                         *data = '\0';
                         data++;
-                        data_len = ns->cmd_start->len - (data - ns->cmd_start->buf);
+                        data_len = ns->cmd_start->len - (int)(data - ns->cmd_start->buf);
                     }
                     else
                         data_len = 0;
@@ -415,7 +415,7 @@ int fill_command_buffer(NewSocket *ns, int len)
 void HandleClient(NewSocket *ns, player *pl)
 {
     int len = 0, i, cmd_count = 0;
-    unsigned char * data;
+    char * data;
 	command_struct *cmdtmp;
 
     /* Loop through this - maybe we have several complete packets here. */
@@ -453,12 +453,12 @@ void HandleClient(NewSocket *ns, player *pl)
         }
 
 		/* preprocess command */
-		data = (unsigned char *) strchr((char *) ns->cmd_start->buf, ' ');
+		data = strchr((char *) ns->cmd_start->buf, ' ');
 		if (data)
 		{
 			*data = '\0';
 			data++;
-			len = ns->cmd_start->len - (data - ns->cmd_start->buf);
+			len = ns->cmd_start->len - (int)(data - ns->cmd_start->buf);
 		}
 		else
 			len = 0;
