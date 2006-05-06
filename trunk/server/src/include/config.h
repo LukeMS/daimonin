@@ -41,11 +41,11 @@
  */
 
 /* Not very interesting logs. Remember that we are interested in real traffic. */
-/*
+
 #ifndef CS_LOGSTATS
 #define CS_LOGSTATS
 #endif
-*/
+
 /* I moved this settings of the lib directory and the local directory
    to this location. I want have ALL this definitions at one location.
    As long we have no setup or install tool, we should use this file.
