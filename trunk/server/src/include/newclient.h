@@ -47,7 +47,7 @@
 /* max. socket input buffer we can read/fill when reading from socket.
  * This is raw data until we sort it out and put it in the player command queue.
  */
-#define MAXSOCKBUF_IN (2*1024)
+#define MAXSOCKBUF_IN (3*1024)
 
 /* Maximum size of any packet we expect.  Using this makes it so we don't need to
 * allocated and deallocated teh same buffer over and over again and the price

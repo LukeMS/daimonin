@@ -236,3 +236,32 @@ void send_clear_interface(player *pl)
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
     Send_With_Handling(&pl->socket, &global_sl);
 }
+
+void initialize_command_buffer16(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(16);	
+}
+void initialize_command_buffer32(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(32);	
+}
+void initialize_command_buffer64(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(64);	
+}
+void initialize_command_buffer128(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(128);	
+}
+void initialize_command_buffer256(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(256);	
+}
+void initialize_command_buffer1024(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(1024);	
+}
+void initialize_command_buffer4096(command_struct *cmdbuf)
+{
+	cmdbuf->buf = (char*)malloc(4096);	
+}

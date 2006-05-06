@@ -283,11 +283,14 @@ void free_player(player *pl)
  * mode.
  */
 
-int add_player(NewSocket *ns)
+player *add_player(NewSocket *ns)
 {
     player *p;
 
     p = get_player(NULL);
+	if(!p)
+		return NULL;
+
     memcpy(&p->socket, ns, sizeof(NewSocket));
     /* Needed because the socket we just copied over needs to be cleared.
      * Note that this can result in a client reset if there is partial data
@@ -304,7 +307,7 @@ int add_player(NewSocket *ns)
 
     insert_ob_in_ob(p->ob, &void_container); /* Avoid gc of the player */
 
-    return 0;
+    return p;
 }
 
 /*

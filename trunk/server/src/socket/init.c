@@ -113,25 +113,18 @@ void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
     ns->can_write = 0;
     ns->write_overflow = 0;
 
+	ns->cmd_start = NULL;
+	ns->cmd_end = NULL;
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
      * duplicating (not likely in normal cases, but malicous attacks that
      * just open and close connections could get this total up.
      */
-    ns->inbuf.len = 0;
-	if(!ns->inbuf.buf)
-		ns->inbuf.buf = malloc(MAXSOCKBUF_IN);
-    ns->inbuf.buf[0] = 0;
-
     ns->readbuf.len = 0;
+	ns->readbuf.pos = 0;
 	if(!ns->readbuf.buf)
 	    ns->readbuf.buf = malloc(MAXSOCKBUF_IN);
     ns->readbuf.buf[0] = 0;
-
-    ns->cmdbuf.len = 0;
-	if(!ns->cmdbuf.buf)
-		ns->cmdbuf.buf = malloc(MAXSOCKBUF);
-    ns->cmdbuf.buf[0] = 0;
 
 	ns->pwd_try=0; 
 
@@ -307,9 +300,7 @@ void close_newsocket(NewSocket *ns)
 
 void    free_newsocket  (NewSocket *ns)
 {
-    char *tmp_in = ns->inbuf.buf, 
-		 *tmp_read = ns->readbuf.buf, 
-		 *tmp_cmd = ns->cmdbuf.buf;
+    char *tmp_read = ns->readbuf.buf;
 
     LOG(llevDebug, "Closing socket %d\n", ns->fd);
     close_newsocket(ns);
@@ -318,9 +309,7 @@ void    free_newsocket  (NewSocket *ns)
      * no need to malloc them again & again.
      */
     memset(ns, 0, sizeof(ns));
-	ns->inbuf.buf = tmp_in; 
 	ns->readbuf.buf = tmp_read; 
-	ns->cmdbuf.buf = tmp_cmd;
 }
 
 /* as long the server don't have a autoupdate/login server

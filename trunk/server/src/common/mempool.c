@@ -80,7 +80,9 @@ struct mempool *pool_puddle;
 struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
-    *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak;
+    *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak,
+	*pool_cmd_buf16,*pool_cmd_buf32,*pool_cmd_buf64,
+	*pool_cmd_buf128,*pool_cmd_buf256,*pool_cmd_buf1024,*pool_cmd_buf4096;
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
@@ -117,7 +119,8 @@ void free_mempool(struct mempool *pool)
 }
 
 struct mempool *create_mempool(const char *description, uint32 expand, uint32 size,
-        uint32 flags, chunk_constructor constructor, chunk_destructor destructor)
+        uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
+		chunk_constructor constructor, chunk_destructor destructor)
 {
     int i;
     struct mempool *pool;
@@ -133,6 +136,8 @@ struct mempool *create_mempool(const char *description, uint32 expand, uint32 si
     pool->expand_size = expand;
     pool->chunksize = size;
     pool->flags = flags;
+	pool->initialisator = initialisator;
+	pool->deinitialisator = deinitialisator;
     pool->constructor = constructor;
     pool->destructor = destructor;
 
@@ -156,24 +161,40 @@ struct mempool *create_mempool(const char *description, uint32 expand, uint32 si
 void init_mempools()
 {
 #ifdef MEMPOOL_TRACKING
-    pool_puddle = create_mempool("puddles", 10, sizeof(struct puddle_info), MEMPOOL_ALLOW_FREEING, NULL, NULL);
+    pool_puddle = create_mempool("puddles", 10, sizeof(struct puddle_info), MEMPOOL_ALLOW_FREEING, NULL, NULL, NULL, NULL);
 #endif
-    pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0,
+    pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0, NULL, NULL,
             (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
-    pool_player = create_mempool("players", 25, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL);
-    pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL);
-    pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL);
-    pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL);
-    pool_mob_knownobj=  create_mempool("mob known objects", 100, sizeof(struct mob_known_obj), 0, NULL, NULL);
-    pool_mob_behaviourset = create_mempool("mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL);
-    pool_mob_behaviour = create_mempool("mob behaviours", 100, sizeof(struct mob_behaviour), 0, NULL, NULL);
-    pool_mob_behaviourparam = create_mempool("mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL);
-    pool_objectlink = create_mempool("object links", 500, sizeof(objectlink), 0, NULL, NULL);
+    pool_player = create_mempool("players", 25, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL, NULL, NULL);
+    pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL, NULL, NULL);
+    pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL, NULL, NULL);
+    pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL, NULL, NULL);
+    pool_mob_knownobj=  create_mempool("mob known objects", 100, sizeof(struct mob_known_obj), 0, NULL, NULL, NULL, NULL);
+    pool_mob_behaviourset = create_mempool("mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL, NULL, NULL);
+    pool_mob_behaviour = create_mempool("mob behaviours", 100, sizeof(struct mob_behaviour), 0, NULL, NULL, NULL, NULL);
+    pool_mob_behaviourparam = create_mempool("mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL, NULL, NULL);
+    pool_objectlink = create_mempool("object links", 500, sizeof(objectlink), 0, NULL, NULL, NULL, NULL);
 
-    pool_gmasters = create_mempool("gmaster entries", 10, sizeof(gmaster_struct), 0, NULL, NULL);
-    pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_struct), 0, NULL, NULL);
+    pool_gmasters = create_mempool("gmaster entries", 10, sizeof(gmaster_struct), 0, NULL, NULL, NULL, NULL);
+    pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_struct), 0, NULL, NULL, NULL, NULL);
 
-    pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL);
+    pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL, NULL, NULL);
+
+	/* for testing purpose, we get everytime only 1 buffer more */
+	pool_cmd_buf16 = create_mempool("command buffer 16b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer16, NULL, NULL, NULL);
+	pool_cmd_buf32 = create_mempool("command buffer 32b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer32, NULL, NULL, NULL);
+	pool_cmd_buf64 = create_mempool("command buffer 64b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer64, NULL, NULL, NULL);
+	pool_cmd_buf128 = create_mempool("command buffer 128b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer128, NULL, NULL, NULL);
+	pool_cmd_buf256 = create_mempool("command buffer 256b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer256, NULL, NULL, NULL);
+	pool_cmd_buf1024 = create_mempool("command buffer 1024b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer1024, NULL, NULL, NULL);
+	pool_cmd_buf4096 = create_mempool("command buffer 4096b", 1, sizeof(command_struct), 0, 
+		initialize_command_buffer4096, NULL, NULL, NULL);
 
     /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;
@@ -229,11 +250,16 @@ static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
         ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
         ptr->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
-        ptr = ptr->next = (struct mempool_chunk *) (((char *) ptr) + chunksize_real);
+		if (pool->initialisator )
+			pool->initialisator(MEM_USERDATA(ptr));
+
+		ptr = ptr->next = (struct mempool_chunk *) (((char *) ptr) + chunksize_real);
     }
 
     /* and the last element */
     ptr->next = &end_marker;
+	if (pool->initialisator )
+		pool->initialisator(MEM_USERDATA(ptr));
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     ptr->obj_next = ptr->obj_prev = 0; /* secure */
     ptr->pool = pool;
@@ -334,6 +360,8 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 
     if (pool->flags & MEMPOOL_BYPASS_POOLS)
     {
+		if (pool->deinitialisator )
+			pool->deinitialisator(MEM_USERDATA(old));
         free(old);
         pool->nrof_allocated[arraysize_exp]--;
     }

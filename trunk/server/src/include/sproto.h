@@ -284,6 +284,13 @@ int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
 void                        send_clear_interface(player *pl);
+void						initialize_command_buffer16(command_struct *cmdbuf);
+void						initialize_command_buffer32(command_struct *cmdbuf);
+void						initialize_command_buffer64(command_struct *cmdbuf);
+void						initialize_command_buffer128(command_struct *cmdbuf);
+void						initialize_command_buffer256(command_struct *cmdbuf);
+void						initialize_command_buffer1024(command_struct *cmdbuf);
+void						initialize_command_buffer4096(command_struct *cmdbuf);
 /* container.c */
 int                         container_link(player *const pl, object *const sack);
 int                         container_unlink(player *const pl, object *sack);
@@ -444,7 +451,7 @@ player                     *find_player(char *plname);
 player                     *find_player_hash(const char *plname);
 void                        display_motd(object *op);
 int                         playername_ok(char *cp);
-int                         add_player(NewSocket *ns);
+player                     *add_player(NewSocket *ns);
 archetype                  *get_player_archetype(archetype *at);
 void                        free_player(player *pl);
 object                     *get_nearest_player(object *mon);

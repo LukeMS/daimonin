@@ -983,7 +983,7 @@ MODULEAPI void init_Daimonin_Lua()
     strcpy(lua_path, hooks->create_pathname(LUA_PATH));
     map_path = hooks->create_pathname("");
 
-    pool_luacontext = hooks->create_mempool("lua contexts", 5, sizeof(struct lua_context), 0, NULL, NULL);
+    pool_luacontext = hooks->create_mempool("lua contexts", 5, sizeof(struct lua_context), 0, NULL, NULL, NULL, NULL);
 
     global_state = lua_open();
 

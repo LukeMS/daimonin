@@ -70,40 +70,6 @@ void SockList_AddString(SockList *sl, char *data)
  ******************************************************************************/
 
 
-/* TEMP. FUNCTIONS TO SIMULATE A NEW SOCKET - THIS IS JUST A QUICK HACK TO
- * TEST THE read packet function. Code is in the style of education source.
- */
-
-/* When called, we fill sl1 with a command.
- * If return is 1, we have a valid command.
- * 0 means we got not a valid.
- */
-int socket_read_pp(SockList *sl1, SockList *sl, int len)
-{
-    int toread, ret = 0;
-
-    sl1->buf[0] = 0;
-    sl1->len = 0;
-
-    if (sl->len >= 2) /* there is something in our in buffer we had read before */
-    {
-        toread = 2 + (sl->buf[0] << 8) + sl->buf[1]; /* len of the command */
-
-        if (toread <= sl->len) /* if we have a command, copy it *now* */
-        {
-            memcpy(sl1->buf, sl->buf, toread);
-            sl1->len = toread;
-            if (sl->len - toread)
-                memcpy(sl->buf, sl->buf + toread, sl->len - toread);
-            sl->len -= toread;
-            ret = toread;
-        }
-    }
-
-    return ret;
-}
-
-
 /* New ReadPacket function.
  * This is the only place we read from the TCP/IP socket.
  * We read in 0-x commands at once - as much we can get with one
@@ -111,17 +77,35 @@ int socket_read_pp(SockList *sl1, SockList *sl, int len)
  * The command processing will take care about incomplete or damaged
  * commands.
  */
-int SockList_ReadPacket(NewSocket *ns, int len)
+int SockList_ReadPacket(NewSocket *ns)
 {
     SockList   *sl  = &ns->readbuf;
-    int         stat_ret;
+    int         stat_ret, read_bytes, tmp;
+
+	if(ns->status == Ns_Zombie) /* zombie clients don't read anything */
+		return 0;
+
+	/* calculate how many bytes can be read in one row in our round robin buffer */
+	tmp = sl->pos+sl->len;
+
+	/* we have still some bytes until we hit our buffer border ?*/
+	if(tmp >= MAXSOCKBUF_IN)
+	{
+		tmp = tmp-MAXSOCKBUF_IN; /* thats our start offset */
+		read_bytes = sl->pos - tmp; /* thats our free buffer until ->pos*/
+	}
+	else
+	{
+		/* tmp is our offset and there is still a bit to read in */
+		read_bytes = MAXSOCKBUF_IN-tmp;
+	}
 
 #ifdef WIN32
-    stat_ret = recv(ns->fd, sl->buf + sl->len, len - sl->len, 0);
+    stat_ret = recv(ns->fd, sl->buf + tmp, read_bytes, 0);
 #else
     do
     {
-        stat_ret = read(ns->fd, sl->buf + sl->len, len - sl->len);
+        stat_ret = read(ns->fd, sl->buf + sl->pos, read_bytes);
     }
     while (stat_ret < 0 && errno == EINTR);
 #endif
@@ -130,9 +114,8 @@ int SockList_ReadPacket(NewSocket *ns, int len)
 
     if (stat_ret > 0)
     {
-		if(ns->status == Ns_Zombie)
-			return 0;
         sl->len += stat_ret;
+
 #ifdef CS_LOGSTATS
         cst_tot.ibytes += stat_ret;
         cst_lst.ibytes += stat_ret;
@@ -357,7 +340,7 @@ void write_socket_buffer(NewSocket *ns)
      * The only difference in this function is that we take a SockList
      *, and we prepend the length information.
      */
-    void    Send_With_Handling  (NewSocket *ns, SockList *msg)
+void    Send_With_Handling  (NewSocket *ns, SockList *msg)
     {
         unsigned char sbuf[4];
 
