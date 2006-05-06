@@ -1096,16 +1096,19 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
                     return tmp;
             }
         }
-        for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
-        {
-            if (op->count == count)
-                return op;
-            else if (op->inv)
-            {
-                if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
-                    return tmp;
-            }
-        }
+		if(pl->map)
+		{
+			for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
+			{
+				if (op->count == count)
+				    return op;
+				else if (op->inv)
+				{
+					if ((tmp = esrv_get_ob_from_count_DM(op->inv, count)))
+					    return tmp;
+				}
+			}
+		}
         return NULL;
     }
 
@@ -1117,13 +1120,16 @@ object * esrv_get_ob_from_count(object *pl, tag_t count)
                 if (tmp->count == count)
                     return tmp;
 
-    for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
-        if (op->count == count)
-            return op;
-        else if (op->type == CONTAINER && CONTR(pl)->container == op)
-            for (tmp = op->inv; tmp; tmp = tmp->below)
-                if (tmp->count == count)
-                    return tmp;
+	if(pl->map)
+	{
+		for (op = get_map_ob(pl->map, pl->x, pl->y); op; op = op->above)
+			if (op->count == count)
+				return op;
+			else if (op->type == CONTAINER && CONTR(pl)->container == op)
+				for (tmp = op->inv; tmp; tmp = tmp->below)
+					if (tmp->count == count)
+						return tmp;
+	}
     return NULL;
 }
 
