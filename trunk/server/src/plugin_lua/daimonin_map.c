@@ -212,15 +212,20 @@ static int Map_Delete(lua_State *L)
 /*****************************************************************************/
 /* Name   : Map_PlaySound                                                    */
 /* Lua    : map:PlaySound(x, y, soundnumber, soundtype)                      */
+/* Info   : play the sound on the map, sounding like it comes from the given */
+/*          x,y coordinates.                                                 */
+/*          If soundtype is game.SOUNDTYPE_NORMAL (the default), then        */
+/*          soundnumber should be one of the game.SOUND_xxx constants        */
+/*          If soundtype is game.SOUNDTYPE_SPELL, then the sound number      */
+/*          should be a spell number, to play the sound of that spell        */
 /* Status : Tested                                                           */
-/* TODO   : supply constants for the sounds                                  */
 /*****************************************************************************/
 static int Map_PlaySound(lua_State *L)
 {
-    int         x, y, soundnumber, soundtype;
+    int         x, y, soundnumber, soundtype = SOUND_NORMAL;
     lua_object *map;
 
-    get_lua_args(L, "Miiii", &map, &x, &y, &soundnumber, &soundtype);
+    get_lua_args(L, "Miii|i", &map, &x, &y, &soundnumber, &soundtype);
 
     hooks->play_sound_map(map->data.map, x, y, soundnumber, soundtype);
 
@@ -232,6 +237,7 @@ static int Map_PlaySound(lua_State *L)
 /* Lua    : map:Message(x, y, distance, messagem,color)                      */
 /* Info   : Writes a message to all players on a map                         */
 /*          Starting point x,y for all players in distance                   */
+/*          color should be one of the game.COLOR_xxx constants.             */
 /*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
 /* Status : Tested                                                           */
 /*****************************************************************************/
