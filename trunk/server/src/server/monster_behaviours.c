@@ -598,7 +598,7 @@ int get_friendship(object *op, object *other)
 		/* Try reverse lookup */
 		if(other->type == MONSTER)
 			return get_friendship(other, op);
-		else 
+		else if (other->type == PLAYER)
 		{
 			/* Check for PvP. TODO: group PvP */
 			if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
@@ -606,13 +606,18 @@ int get_friendship(object *op, object *other)
 				return FRIENDSHIP_NEUTRAL;
 			else
 				return FRIENDSHIP_HELP;
-		}
+		} 
+        else 
+        {
+            LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
+                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+            return 0;
+        }
 	}
+    
+    /* Unhandled op types are for example POISON, DISEASE */
 
-	LOG(llevBug, "BUG: get_friendship('%s', '%s') with non-player/monster op parameter\n",
-		STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-
-	return 0; /* Unhandled types */
+	return 0; 
 }
 
 
