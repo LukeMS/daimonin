@@ -396,10 +396,10 @@ typedef struct _money_block
 typedef struct ban_struct
 {
     const char *name;		/* if != NULL, we have banned an name */
-    int			ticks_init; /* how long is the ban */
-    int			ticks_left; /* how long left */
-    uint32		ticks;		/* (starting) pticks + ticks_left */
-    uint32		ip;			/* if name is == NULL, we have a ip */	    
+    int			 ticks_init; /* how long is the ban */
+    int			 ticks_left; /* how long left */
+    uint32		 ticks;		/* (starting) pticks + ticks_left */
+    char		*ip;		/* if name is == NULL, we have a ip */	    
 } _ban_struct;
 
 typedef struct Settings

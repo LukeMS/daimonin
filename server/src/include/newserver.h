@@ -99,10 +99,9 @@ typedef struct NewSocket_struct
     int                 mapx_2, mapy_2;     /* same like above but /2 */
     uint32              cs_version;         /*client/server versions */
     uint32              sc_version;
-	int					pwd_try;			/* simple password guessing security */ 
+    int			pwd_try;			/* simple password guessing security */ 
     uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
-	uint32				ip;					/* ip in raw struct sockaddr_in addr format */
-    char                ip_host[32];        /* IP as string */
+    char                ip_host[40];            /* IP as string */
     enum Sock_Status    status;
     SockList            readbuf;			/* Raw data read in from the socket  */
 

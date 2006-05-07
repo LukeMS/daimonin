@@ -67,9 +67,9 @@ int                         is_melee_range(object *hitter, object *enemy);
 /* ban.c */
 void                        load_ban_file(void);
 void                        save_ban_file(void);
-struct objectlink          *add_ban_entry(char *banned, char *ip_string, uint32 ip, int ticks, int ticks_left);
+struct objectlink          *add_ban_entry(char *banned, char *ip_string, int ticks, int ticks_left);
 void                        remove_ban_entry(struct oblnk *entry);
-int                         check_banned(NewSocket *ns, const char *name, uint32 ip);
+int                         check_banned(NewSocket *ns, const char *name, char *ip);
 /* c_chat.c */
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
