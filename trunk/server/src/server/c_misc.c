@@ -1211,7 +1211,7 @@ void receive_player_name(object *op, char k, char *write_buf)
 	if(CONTR(op)->socket.pwd_try >= 3)
 	{
 		/* someone ignored the addme_fail and the 1min ban for 3 wrong pwd guesses? BAD idea */
-		add_ban_entry(NULL, CONTR(op)->socket.ip_host, CONTR(op)->socket.ip, 8*60*24*31, 8*60*24*31); /* one month ban */
+		add_ban_entry(NULL, CONTR(op)->socket.ip_host, 8*60*24*31, 8*60*24*31); /* one month ban */
 		/* no need to be nice and tell him whats going on - kick this sucker HARD */
 		CONTR(op)->socket.status = Ns_Dead;
 		return;

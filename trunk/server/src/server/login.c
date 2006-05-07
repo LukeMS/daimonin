@@ -629,9 +629,9 @@ void check_login(object *op)
 			char password_warning[] =
 				 "X3 You entered 3 times a wrong password.\nTry new login in 1 minute!\nConnection closed.";
 
-			LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (%d) (player: %s).\n", 
-				pl->socket.ip_host, pl->socket.ip, query_name(pl->ob));
-		    add_ban_entry(NULL, pl->socket.ip_host, pl->socket.ip, 8*60, 8*60); /* one min temp ban for this ip */
+			LOG(llevInfo,"PWD GUESS BAN (1min): IP %s (player: %s).\n", 
+				pl->socket.ip_host, query_name(pl->ob));
+		    add_ban_entry(NULL, pl->socket.ip_host, 8*60, 8*60); /* one min temp ban for this ip */
 			Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO,password_warning , strlen(password_warning));
 			Write_String_To_Socket(&pl->socket, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
 			pl->socket.login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);

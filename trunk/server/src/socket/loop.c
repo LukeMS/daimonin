@@ -52,6 +52,8 @@ char            _idle_warn_text[]    = "X4 8 minutes idle warning!\nServer will 
 char            _idle_warn_text2[]    = "X3 You was to long idle! Server closed connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
 
+NewSocket *socket_get_available();
+
 /*****************************************************************************
  * Start of command dispatch area.
  * The commands here are protocol commands.
@@ -600,7 +602,7 @@ void remove_ns_dead_player(player *pl)
  * b.) or is the ip (range) banned
  * return TRUE means banned, FALSE is ok.
  */
-static int check_ip_ban(int num, uint32 ip)
+static int check_ip_ban(NewSocket *sock, char *ip)
 {
     int         count, i;
     player      *next_tmp, *pl, *ptmp = NULL;
@@ -617,12 +619,12 @@ static int check_ip_ban(int num, uint32 ip)
     count = 0;
     for (i = socket_info.allocated_sockets - 1; i > 0; i--)
     {
-        if (init_sockets[i].status != Ns_Avail && num != i && init_sockets[i].ip == ip)
+        if (init_sockets[i].status != Ns_Avail && sock != &init_sockets[i] && !strcmp(init_sockets[i].ip_host, ip))
         {
             if (++count > 1 || init_sockets[i].status <= Ns_Zombie)
             {
                 LOG(llevDebug, "check_ip_ban(): socket flood. mark Ns_Dead: %d (IP %s)\n", 
-								num, init_sockets[i].ip_host );
+								i, init_sockets[i].ip_host );
                 init_sockets[i].status = Ns_Dead;
                 free_newsocket(&init_sockets[i]);
                 init_sockets[i].status = Ns_Avail;
@@ -632,45 +634,45 @@ static int check_ip_ban(int num, uint32 ip)
     }
 
     /* we first check our ban list. Perhaps this IP is on it */
-    if(check_banned(&init_sockets[num], NULL, ip))
+    if(check_banned(sock, NULL, ip))
         return FALSE; /* *IF* banned, we have turned the socket to a Ns_Zombie... */
 
     /* now check the players we have */
     count = 0;
     for (pl = first_player; pl; pl = next_tmp)
     {
-		next_tmp = pl->next;
-		if(pl->socket.ip == ip) /* we have someone playing from same IP? */
+        next_tmp = pl->next;
+	if(!strcmp(pl->socket.ip_host, ip)) /* we have someone playing from same IP? */
+	{
+	    if (pl->socket.status != Ns_Playing)
+	    {
+		pl->socket.status = Ns_Dead;
+	        remove_ns_dead_player(pl);
+	    }
+	    else /* allow 2 logged in *real* playing accounts online from same IP */
+	    {
+	        count++;
+		if (!ptmp)
+	   	    ptmp = pl;
+		else
 		{
-	        if (pl->socket.status != Ns_Playing)
-			{
-				pl->socket.status = Ns_Dead;
-	            remove_ns_dead_player(pl);
-			}
-	        else /* allow 2 logged in *real* playing accounts online from same IP */
-		    {
-			    count++;
-				if (!ptmp)
-					ptmp = pl;
-				else
-				{
-					/* lets compare the idle time.
-				     * if needed we will kick the login with the highest idle time
+		    /* lets compare the idle time.
+		     * if needed we will kick the login with the highest idle time
                      */
-				   if (ptmp->socket.login_count <= pl->socket.login_count)
-					    ptmp = pl;
+		    if (ptmp->socket.login_count <= pl->socket.login_count)
+		        ptmp = pl;
 
-	                /* now the tricky part: if we have to many
+	            /* now the tricky part: if we have to many
                      * connects from that IP, we KICK the login
                      * with the highest idle time      
-		             */
-			        if (count > 1)
-				    {
-					    LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead: %d (IP %s)\n",
-										query_name(pl->ob), num, ptmp->socket.ip_host);
-						ptmp->socket.status = Ns_Dead;
-					}
-				}
+		     */
+		    if (count > 1)
+		    {
+		        LOG(llevDebug, "check_ip_ban(): connection flood: mark player %s Ns_Dead (IP %s)\n",
+					query_name(pl->ob), ptmp->socket.ip_host);
+			ptmp->socket.status = Ns_Dead;
+		    }
+		}
             }
         }
     }
@@ -793,58 +795,27 @@ void doeric_server(int update, struct timeval *timeout)
     /* Following adds a new connection */
     if (pollret && FD_ISSET(init_sockets[0].fd, &tmp_read))
     {
-        int newsocknum  = 0;
+	NewSocket *newsock;
 
         LOG(llevInfo, "CONNECT from... ");
-        /* If this is the case, all sockets currently in used */
-        if (socket_info.allocated_sockets <= socket_info.nconns + 1)
-        {
-            init_sockets = realloc(init_sockets, sizeof(NewSocket) * (socket_info.nconns + 2));
-            LOG(llevDebug, "(new sockets: %d (old# %d)) ", (socket_info.nconns - socket_info.allocated_sockets) + 2,
-                socket_info.allocated_sockets);
-            if (!init_sockets)
-                LOG(llevError, "\nERROR: doeric_server(): out of memory\n");
+	newsock = socket_get_available();
 
-            do
-            {
-                newsocknum = socket_info.allocated_sockets;
-                socket_info.allocated_sockets++;
-				memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
-                init_sockets[newsocknum].status = Ns_Avail;
-            }
-            while (socket_info.allocated_sockets <= socket_info.nconns + 1);
+        newsock->fd = accept(init_sockets[0].fd, (struct sockaddr *) &addr, &addrlen);
+        if (newsock->fd != -1)
+        {
+	    char *tmp_ip = inet_ntoa(addr.sin_addr);
+
+            LOG(llevDebug, " ip %s (socket %d) (%x)\n", tmp_ip, newsock->fd, newsock);
+            InitConnection(newsock, tmp_ip);
+            check_ip_ban(newsock, tmp_ip);
+            if(newsock->status != Ns_Zombie) /* set from ban check */
+	    {
+		newsock->status = Ns_Add;
+		Send_With_Handling(newsock, &global_version_sl);
+	    }
         }
         else
-        {
-            int j;
-
-            for (j = 1; j < socket_info.allocated_sockets; j++)
-            {
-                if (init_sockets[j].status == Ns_Avail)
-                {
-                    newsocknum = j;
-                    break;
-                }
-            }
-        }
-        init_sockets[newsocknum].fd = accept(init_sockets[0].fd, (struct sockaddr *) &addr, &addrlen);
-        if (init_sockets[newsocknum].fd != -1)
-        {
-			char *tmp_ip = inet_ntoa(addr.sin_addr);
-			NewSocket *ns = &init_sockets[newsocknum];
-
-			LOG(llevDebug, " ip %s (socket %d)(#%d) (%x)\n", tmp_ip, ns->fd, newsocknum, ns);
-            InitConnection(ns, tmp_ip, addr.sin_addr.s_addr);
-            check_ip_ban(newsocknum, addr.sin_addr.s_addr);
-			if(ns->status != Ns_Zombie) /* set from ban check */
-			{
-				ns->status = Ns_Add;
-				Send_With_Handling(ns, &global_version_sl);
-			}
-
-        }
-        else
-            LOG(llevDebug, "Error on accept! (#%d)\n", newsocknum);
+            LOG(llevDebug, "Error on accept!\n");
     }
 
     /* Check for any exceptions/input on the sockets */
@@ -1022,4 +993,43 @@ void doeric_server_write(void)
             pl->socket.can_write = 0;
         }
     } /* for() end */
+}
+
+NewSocket *socket_get_available()
+{
+    int newsocknum = 0;
+
+    /* If this is the case, all sockets currently in used */
+    if (socket_info.allocated_sockets <= socket_info.nconns + 1)
+    {
+        init_sockets = realloc(init_sockets, sizeof(NewSocket) * (socket_info.nconns + 2));
+        LOG(llevDebug, "(new sockets: %d (old# %d)) ", (socket_info.nconns - socket_info.allocated_sockets) + 2,
+            socket_info.allocated_sockets);
+        if (!init_sockets)
+            LOG(llevError, "\nERROR: doeric_server(): out of memory\n");
+
+        do
+        {
+            newsocknum = socket_info.allocated_sockets;
+            socket_info.allocated_sockets++;
+		memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
+            init_sockets[newsocknum].status = Ns_Avail;
+        }
+        while (socket_info.allocated_sockets <= socket_info.nconns + 1);
+    }
+    else
+    {
+        int j;
+
+        for (j = 1; j < socket_info.allocated_sockets; j++)
+        {
+            if (init_sockets[j].status == Ns_Avail)
+            {
+                newsocknum = j;
+                break;
+            }
+        }
+    }
+
+    return &init_sockets[newsocknum];
 }

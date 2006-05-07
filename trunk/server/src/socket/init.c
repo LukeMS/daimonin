@@ -53,7 +53,7 @@
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
-void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
+void InitConnection(NewSocket *ns, char *ip)
 {
     int bufsize = MAXSOCKBUF;
     int oldbufsize;
@@ -132,7 +132,6 @@ void InitConnection(NewSocket *ns, char *ip, uint32 ipnum)
 
     ns->outputbuffer.start = 0;
     ns->outputbuffer.len = 0;
-	ns->ip = ipnum;
     strcpy(ns->ip_host, ip);
 
 #ifdef CS_LOGSTATS

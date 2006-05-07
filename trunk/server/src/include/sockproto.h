@@ -21,7 +21,7 @@ void            new_info_map_except_format(const int color, const mapstruct *con
 											const int dist, const object *const op1, const object *const op,
 											const char *const format, ...);
 /* init.c */
-void            InitConnection(NewSocket *ns, char *str_ip, uint32 ipnum);
+void            InitConnection(NewSocket *ns, char *str_ip);
 void            init_ericserver(void);
 void            free_all_newserver(void);
 void            close_newsocket(NewSocket *ns);

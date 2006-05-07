@@ -83,7 +83,7 @@ void load_ban_file(void)
 {
     FILE   *dmfile;
     int     ticks, ticks_left;
-    uint32  ip;
+    char    ip[40];
     char    buf[HUGE_BUF];
     char    line_buf[MAX_BUF], name[MAX_BUF];
 
@@ -98,10 +98,10 @@ void load_ban_file(void)
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%s %d %d %d", name, &ip, &ticks, &ticks_left) < 2)
+        if (sscanf(line_buf, "%s %s %d %d", name, &ip, &ticks, &ticks_left) < 2)
             LOG(llevBug, "BUG: malformed banfile file entry: %s\n", line_buf);
         else
-			add_ban_entry(!strcmp(name,"_")?NULL:name, NULL, ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
+	    add_ban_entry(!strcmp(name, "_") ? NULL : name, ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
     }
 }
 
@@ -130,7 +130,7 @@ void save_ban_file(void)
             remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
         else
         {
-            fprintf(fp, "%s 0 %d %ld\n",ol->objlink.ban->name, ol->objlink.ban->ticks_init,
+            fprintf(fp, "%s _ %d %ld\n",ol->objlink.ban->name, ol->objlink.ban->ticks_init,
                                         ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
         }
     }
@@ -142,7 +142,7 @@ void save_ban_file(void)
             remove_ban_entry(ol);
         else
         {
-            fprintf(fp, "_ %d %d %ld\n",ol->objlink.ban->ip, ol->objlink.ban->ticks_init,
+            fprintf(fp, "_ %s %d %ld\n",ol->objlink.ban->ip, ol->objlink.ban->ticks_init,
                 ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
         }
     }
@@ -154,19 +154,24 @@ void save_ban_file(void)
  * value in ticks (which means how long that entry get banned).
  * tick:-1 = perm. ban
  */
-struct objectlink    *add_ban_entry(char *banned, char *ip_string, uint32 ip, int ticks, int ticks_left)
+struct objectlink *add_ban_entry(char *banned, char *ip, int ticks, int ticks_left)
 {
     objectlink *ol = get_ban_node();
+
+    if (ip == NULL)
+	ip = "_"; /* ip shouldn't be NULL, only causes trouble elsewhere, a string
+                     that doesn't match any IP will do too */
 
     ol->objlink.ban->ticks_init = ticks;
     ol->objlink.ban->ticks_left = ticks_left;
     ol->objlink.ban->ticks = pticks+ticks_left;
-    ol->objlink.ban->ip = ip; 
-	if(banned)
-	    FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
+    ol->objlink.ban->ip = malloc(strlen(ip) + 1);
+    strcpy(ol->objlink.ban->ip, ip); 
+    if(banned)
+        FREE_AND_COPY_HASH(ol->objlink.ban->name, banned);
 
-	LOG(-1,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name), 
-			STRING_SAFE(ip_string), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(ol->objlink.ban->ticks-pticks)/8); 
+    LOG(-1,"Banning: %s (IP: %s) for %d seconds (%d sec left).\n", STRING_SAFE(ol->objlink.ban->name), 
+	    STRING_SAFE(ip), ticks/8,ol->objlink.ban->ticks_init==-1?-1:(ol->objlink.ban->ticks-pticks)/8); 
 
     if(banned) /* add to name list */
         objectlink_link(&ban_list_player, NULL, NULL, ban_list_player, ol);
@@ -182,12 +187,12 @@ struct objectlink    *add_ban_entry(char *banned, char *ip_string, uint32 ip, in
  */
 void remove_ban_entry(struct oblnk *entry)
 {
+    free(entry->objlink.ban->ip);
     if(entry->objlink.ban->name)
-	{
-		FREE_ONLY_HASH(entry->objlink.ban->name);
+    {
+	FREE_ONLY_HASH(entry->objlink.ban->name);
         objectlink_unlink(&ban_list_player, NULL, entry);
-		
-	}
+    }
     else
         objectlink_unlink(&ban_list_ip, NULL, entry);
 
@@ -198,7 +203,7 @@ void remove_ban_entry(struct oblnk *entry)
  * if name of player is NULL, check the IP.
  * Note: name is shared hash string
  */
-int check_banned(NewSocket *ns, const char *name, uint32 ip)
+int check_banned(NewSocket *ns, const char *name, char *ip)
 {
     objectlink *ol, *ol_tmp;
 
@@ -250,15 +255,15 @@ int check_banned(NewSocket *ns, const char *name, uint32 ip)
 				if(++ns->pwd_try == 3)
 				{
 				    char        cmd_buf[2]  = "X";
-					char password_warning[] = "X3 Don't login to banned chars!\nTry login again not before 2 minutes!";
+				    char password_warning[] = "X3 Don't login to banned chars!\nTry login again not before 2 minutes!";
 
-					LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (%d) (player: %s).\n",ns->ip_host,ns->ip,name);
-				    add_ban_entry(NULL, ns->ip_host, ns->ip, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
-					Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, password_warning , strlen(password_warning));
-					Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
-					ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
-					ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
-					ns->idle_flag = 1;
+				    LOG(llevInfo,"BANNED NAME: 3 login tries (2min): IP %s (player: %s).\n",ns->ip_host,name);
+				    add_ban_entry(NULL, ns->ip_host, 8*60*2, 8*60*2); /* 2 min temp ban for this ip */
+				    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, password_warning , strlen(password_warning));
+				    Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
+				    ns->login_count = ROUND_TAG+(uint32)(10.0f * pticks_second);
+				    ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
+				    ns->idle_flag = 1;
 				}
                 return TRUE;
 			}
@@ -274,7 +279,7 @@ int check_banned(NewSocket *ns, const char *name, uint32 ip)
 
             if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
                 remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-            else if(ol->objlink.ban->ip == ip)
+            else if(!strcmp(ol->objlink.ban->ip, ip))
 			{
 				char *ban_buf_ip, buf[256], cmd_buf[]  = "X";
 				int h=0,m=0, s = ol->objlink.ban->ticks_init/8;
@@ -289,7 +294,7 @@ int check_banned(NewSocket *ns, const char *name, uint32 ip)
 					ban_buf_ip = buf;
 					s = ol->objlink.ban->ticks_init;
 					remove_ban_entry(ol);
-					add_ban_entry(NULL, ns->ip_host, ip, s, s);
+					add_ban_entry(NULL, ns->ip_host, s, s);
 				}
 				else if (s < 60*60)
 				{
@@ -298,7 +303,7 @@ int check_banned(NewSocket *ns, const char *name, uint32 ip)
 					ban_buf_ip = buf;
 					s = ol->objlink.ban->ticks_init;
 					remove_ban_entry(ol);
-					add_ban_entry(NULL, ns->ip_host, ip, s, s);
+					add_ban_entry(NULL, ns->ip_host, s, s);
 				}
 				else /* must be an ass... */
 				{
@@ -312,7 +317,7 @@ int check_banned(NewSocket *ns, const char *name, uint32 ip)
 					else
 					{
 						remove_ban_entry(ol);
-						add_ban_entry(NULL, ns->ip_host, ip, s, s);
+						add_ban_entry(NULL, ns->ip_host, s, s);
 					}
 				}
 
