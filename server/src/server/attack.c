@@ -625,6 +625,10 @@ int hit_map(object *op, int dir)
         if (tmp->map != map || tmp->x != x || tmp->y != y)
             continue;
 
+        /* Can only hit live objects (for now) */
+        if(!IS_LIVE(tmp))
+            continue;
+
         /* monsters on the same side don't hurt each other */
         if(get_friendship(tmp_obj, tmp) >= FRIENDSHIP_HELP)
             continue;
