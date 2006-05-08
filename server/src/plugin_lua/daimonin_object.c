@@ -382,21 +382,16 @@ static int GameObject_Repair(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_Sound                                                 */
 /* Lua    : object:Sound(x, y, soundnumber, soundtype)                       */
-/* Info   : play the sound for the given player only, sounding like it comes */
-/*          from the given x,y coordinates.                                  */
-/*          If soundtype is game.SOUNDTYPE_NORMAL (the default), then        */
-/*          soundnumber should be one of the game.SOUND_xxx constants        */
-/*          If soundtype is game.SOUNDTYPE_SPELL, then the sound number      */
-/*          should be a spell number, to play the sound of that spell        */
+/* Info   : Play a "player only" sound                                       */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 
 static int GameObject_Sound(lua_State *L)
 {
-    int         x, y, soundnumber, soundtype = SOUND_NORMAL;
+    int         x, y, soundnumber, soundtype;
     lua_object *self;
 
-    get_lua_args(L, "Oiii|i", &self, &x, &y, &soundnumber, &soundtype);
+    get_lua_args(L, "Oiiii", &self, &x, &y, &soundnumber, &soundtype);
 
     hooks->play_sound_player_only(CONTR(WHO),soundnumber,soundtype, x, y);
 
@@ -1021,8 +1016,6 @@ static int GameObject_SayTo(lua_State *L)
 /* Name   : GameObject_Write                                                 */
 /* Lua    : object:Write(message, color)                                     */
 /* Info   : Writes a message to a specific player.                           */
-/*          color should be one of the game.COLOR_xxx constants.             */
-/*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Write(lua_State *L)
@@ -1336,7 +1329,7 @@ static int GameObject_Kill(lua_State *L)
 /* Name   : GameObject_CastSpell                                             */
 /* Lua    : object:CastSpell(target, spell, mode, direction, option)         */
 /* Info   : object casts the spell numbered spellno on target.               */
-/*          mode = game.CAST_NORMAL or game.CAST_POTION              */
+/*          mode = Daimonin.CAST_NORMAL or Daimonin.CAST_POTION              */
 /*          direction is the direction to cast the spell in                  */
 /*          option is additional string option(s)                            */
 /*          NPCs can cast spells even in no-spell areas.                     */
@@ -1401,7 +1394,7 @@ static int GameObject_DoKnowSpell(lua_State *L)
 /* Name   : GameObject_AcquireSpell                                          */
 /* Lua    : object:AcquireSpell(spell, mode)                                 */
 /* Info   : object will learn or unlearn spell.                              */
-/*          mode should be  game.LEARN or game.UNLEARN                       */
+/*          mode: Daimonin.LEARN or Daimonin.UNLEARN                         */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_AcquireSpell(lua_State *L)
@@ -1446,8 +1439,8 @@ static int GameObject_FindSkill(lua_State *L)
 /* Name   : GameObject_AcquireSkill                                          */
 /* Lua    : object:AcquireSkill(skillno, mode)                               */
 /* Info   : object will learn or unlearn skill.                              */
-/*          mode should be game.LEARN or game.UNLEARN                        */
-/*          Get skill number with game.GetSkillNr()                          */
+/*          mode: Daimonin.LEARN or Daimonin.UNLEARN                         */
+/*          Get skill number with Daimonin.GetSkillNr()                      */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_AcquireSkill(lua_State *L)
@@ -2136,7 +2129,6 @@ static object *CreateObjectInside_body(lua_State *L, object *where, char *archna
 /* Lua    : object:CreateObjectInside(archname, identified, number, value)   */
 /* Info   : Creates an object from archname and inserts into object.         */
 /*          identified is either game.IDENTIFIED or game.UNIDENTIFIED        */
-/*          number is the number of objects to create in a stack             */
 /*          If value is >= 0 it will be used as the new object's value,      */
 /*          otherwise the value will be taken from the arch.                 */
 /* Status : Stable                                                           */
@@ -2161,11 +2153,6 @@ static int GameObject_CreateObjectInside(lua_State *L)
 /* Name   : GameObject_CreateObjectInsideEx                                  */
 /* Lua    : object:CreateObjectInsideEx(archname, identified, number, value) */
 /* Info   : Same as GameObject_CreateObjectInside  but give message to player*/
-/*          Creates an object from archname and inserts into object.         */
-/*          identified is either game.IDENTIFIED or game.UNIDENTIFIED        */
-/*          number is the number of objects to create in a stack             */
-/*          If value is >= 0 it will be used as the new object's value,      */
-/*          otherwise the value will be taken from the arch.                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_CreateObjectInsideEx(lua_State *L)

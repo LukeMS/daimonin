@@ -2169,7 +2169,6 @@ void fix_monster(object *op)
                 /* nothing special here - depletion is at first an anti player feature */
                 wc_mali = tmp->stats.Str+tmp->stats.Con+tmp->stats.Int;
                 ac_mali = tmp->stats.Dex+tmp->stats.Wis+tmp->stats.Pow;
-                LOG(-1,"MAIL: WC: %d AC:%d\n", wc_mali, ac_mali);
             }
         }
         else if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
