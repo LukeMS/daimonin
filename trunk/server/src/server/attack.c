@@ -430,7 +430,11 @@ int hit_player(object *op, int dam, object *hitter)
     }
 
     /* we insert the aggro data in the mob, and report to the AI system */
+	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+	SET_FLAG(hitter, FLAG_NO_FIX_PLAYER);
     aggro_obj = aggro_update_info(op, target_obj, hitter, hit_obj, maxdam<op->stats.hp?maxdam:op->stats.hp, 0);
+	CLEAR_FLAG(hitter, FLAG_NO_FIX_PLAYER);
+	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     /* this is needed to send the hit number animations to the clients */
     if (op->damage_round_tag != ROUND_TAG)

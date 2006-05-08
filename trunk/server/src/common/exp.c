@@ -415,10 +415,12 @@ sint32 add_exp(object *op, int exp, int skill_nr)
  */
 void player_lvl_adj(object *who, object *op)
 {
+	int fix_flag;
     char    buf[MAX_BUF];
 
     if (!op)        /* when rolling stats */
         op = who;
+	fix_flag = !QUERY_FLAG(who, FLAG_NO_FIX_PLAYER);
 
     if (op->type == SKILL && !op->last_eat) /* no exp gain for indirect skills */
     {
@@ -488,49 +490,47 @@ void player_lvl_adj(object *who, object *op)
                 }
             }
             sprintf(buf, "You are now level %d in %s based skills.", op->level, op->name);
-            if (who)
+            if (fix_flag)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
         else if (op->level > 1 && op->type == SKILL)
         {
             sprintf(buf, "You are now level %d in the skill %s.", op->level, op->name);
-            if (who)
+            if (fix_flag)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
         else
         {
             sprintf(buf, "You are now level %d.", op->level);
-            if (who)
+            if (fix_flag)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
 
-        if (who)
-            fix_player(who);
+        fix_player(who);
         player_lvl_adj(who, op); /* To increase more levels */
     }
     else if (op->level > 1 && op->stats.exp < (sint32) level_exp(op->level, 1.0))
     {
         op->level--;
 
-        if (who)
-            fix_player(who);
+        fix_player(who);
 
         if (op->type == EXPERIENCE)
         {
             sprintf(buf, "-You are now level %d in %s based skills.", op->level, op->name);
-            if (who)
+            if (fix_flag)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
         else if (op->type == SKILL)
         {
             sprintf(buf, "-You are now level %d in the skill %s.", op->level, op->name);
-            if (who)
+            if (fix_flag)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
         else
         {
             sprintf(buf, "-You are now level %d.", op->level);
-            if (who)
+            if (fix_flag)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
         }
         player_lvl_adj(who, op); /* To decrease more levels */
@@ -636,6 +636,7 @@ void apply_death_exp_penalty(object *op)
     float   loss_p;
     long    level_exp, loss_exp;
 
+	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
     CONTR(op)->update_skills = 1; /* we will sure change skill exp, mark for update */
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
@@ -685,6 +686,8 @@ void apply_death_exp_penalty(object *op)
             player_lvl_adj(op, tmp); /* adjust exp objects levels */
     }
     player_lvl_adj(op, NULL);        /* and at last adjust the player level */
+	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+	fix_player(op);
 }
 
 /* i reworked this...
