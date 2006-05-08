@@ -1006,6 +1006,7 @@ void move_arrow(object *op)
         /* search for a vulnerable object */
         for (tmp = GET_MAP_OB_LAYER(m, new_x, new_y, 5); tmp != NULL; tmp = tmp->above)
         {
+            /* Can only damage live objects (for now) */
             if (!IS_LIVE(tmp))
                 continue;
 
