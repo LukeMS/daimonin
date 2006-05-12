@@ -37,7 +37,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-daimonin_PROGRAMS = daimonin$(EXEEXT)
+daimonin_PROGRAMS = daimonin$(EXEEXT) updater$(EXEEXT)
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in \
 	$(top_srcdir)/../../src/include/define.h.in \
@@ -74,6 +74,10 @@ am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/wrapper.$(OBJEXT) ../../src/zutil.$(OBJEXT)
 daimonin_OBJECTS = $(am_daimonin_OBJECTS)
 daimonin_DEPENDENCIES =
+am_updater_OBJECTS = ../../src/updater/linux.$(OBJEXT) \
+	../../src/updater/main.$(OBJEXT)
+updater_OBJECTS = $(am_updater_OBJECTS)
+updater_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/../../src/include
 depcomp = $(SHELL) $(top_srcdir)/make_utils/depcomp
 am__depfiles_maybe = depfiles
@@ -81,8 +85,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(daimonin_SOURCES)
-DIST_SOURCES = $(daimonin_SOURCES)
+SOURCES = $(daimonin_SOURCES) $(updater_SOURCES)
+DIST_SOURCES = $(daimonin_SOURCES) $(updater_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -104,6 +108,7 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BUNZIP2 = @BUNZIP2@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -128,6 +133,7 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MD5SUM = @MD5SUM@
 MKDIR = @MKDIR@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -147,7 +153,10 @@ SDL_MIXER_LIBS = @SDL_MIXER_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TAR = @TAR@
 VERSION = @VERSION@
+WGET = @WGET@
+XDELTA = @XDELTA@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
@@ -221,9 +230,14 @@ daimonin_SOURCES = \
 	../../src/wrapper.c \
 	../../src/zutil.c
 
-AUTOMAKE_OPTIONS = subdir-objects
-daimonin_OBJDIR = objs
 daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
+daimonin_OBJDIR = objs
+updater_SOURCES = \
+	../../src/updater/linux.c \
+	../../src/updater/main.c 
+
+updater_OBJDIR = updater_objs
+AUTOMAKE_OPTIONS = subdir-objects
 AM_CFLAGS = @SDL_CFLAGS@ -Wall
 AM_LDFLAGS = @LDFLAGS@ 
 all: all-am
@@ -366,6 +380,19 @@ clean-daimoninPROGRAMS:
 daimonin$(EXEEXT): $(daimonin_OBJECTS) $(daimonin_DEPENDENCIES) 
 	@rm -f daimonin$(EXEEXT)
 	$(LINK) $(daimonin_LDFLAGS) $(daimonin_OBJECTS) $(daimonin_LDADD) $(LIBS)
+../../src/updater/$(am__dirstamp):
+	@$(mkdir_p) ../../src/updater
+	@: > ../../src/updater/$(am__dirstamp)
+../../src/updater/$(DEPDIR)/$(am__dirstamp):
+	@$(mkdir_p) ../../src/updater/$(DEPDIR)
+	@: > ../../src/updater/$(DEPDIR)/$(am__dirstamp)
+../../src/updater/linux.$(OBJEXT): ../../src/updater/$(am__dirstamp) \
+	../../src/updater/$(DEPDIR)/$(am__dirstamp)
+../../src/updater/main.$(OBJEXT): ../../src/updater/$(am__dirstamp) \
+	../../src/updater/$(DEPDIR)/$(am__dirstamp)
+updater$(EXEEXT): $(updater_OBJECTS) $(updater_DEPENDENCIES) 
+	@rm -f updater$(EXEEXT)
+	$(LINK) $(updater_LDFLAGS) $(updater_OBJECTS) $(updater_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -394,6 +421,8 @@ mostlyclean-compile:
 	-rm -f ../../src/sprite.$(OBJEXT)
 	-rm -f ../../src/textwin.$(OBJEXT)
 	-rm -f ../../src/uncompr.$(OBJEXT)
+	-rm -f ../../src/updater/linux.$(OBJEXT)
+	-rm -f ../../src/updater/main.$(OBJEXT)
 	-rm -f ../../src/wrapper.$(OBJEXT)
 	-rm -f ../../src/zutil.$(OBJEXT)
 
@@ -427,6 +456,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/uncompr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/zutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/linux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/updater/$(DEPDIR)/main.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`; \
@@ -649,6 +680,8 @@ distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-rm -f ../../src/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ../../src/$(am__dirstamp)
+	-rm -f ../../src/updater/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ../../src/updater/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -659,7 +692,7 @@ clean-am: clean-daimoninPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ../../src/$(DEPDIR)
+	-rm -rf ../../src/$(DEPDIR) ../../src/updater/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -689,7 +722,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ../../src/$(DEPDIR)
+	-rm -rf ../../src/$(DEPDIR) ../../src/updater/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -736,17 +769,21 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
 	$(MKDIR) -p $(d_datadir)/icons
+	$(MKDIR) -p $(d_datadir)/tools
+	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
 	$(CP) ../../media/*.* $(d_datadir)/media
 	$(CP) ../../cache/*.* $(d_datadir)/cache
 	$(CP) ../../icons/*.* $(d_datadir)/icons
 	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
+	$(CP) -R ../../tools/*.* $(d_datadir)/tools
+	$(CP) ../../update/version $(d_datadir)/update
 	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
 	$(CP) ../../bitmaps/*.* $(d_datadir)/bitmaps
 	$(CP) ../../options.dat $(d_datadir)
 	$(CP) ../../keys.dat $(d_datadir)
 	$(CP) ../../daimonin.p0 $(d_datadir)
-	$(CP) ../../License $(d_datadir)
+	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
 	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
 	@echo "*** Enter your install folder and type ./daimonin"

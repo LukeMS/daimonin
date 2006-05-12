@@ -1,5 +1,6 @@
 daimonindir=$(d_bindir)
-daimonin_PROGRAMS = daimonin
+daimonin_PROGRAMS = daimonin updater
+
 daimonin_SOURCES =  \
 	../../src/adler32.c \
 	../../src/book.c \
@@ -28,10 +29,15 @@ daimonin_SOURCES =  \
 	../../src/uncompr.c \
 	../../src/wrapper.c \
 	../../src/zutil.c
+daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
+daimonin_OBJDIR = objs
+
+updater_SOURCES = \
+	../../src/updater/linux.c \
+	../../src/updater/main.c 
+updater_OBJDIR = updater_objs
 
 AUTOMAKE_OPTIONS = subdir-objects
-daimonin_OBJDIR = objs
-daimonin_LDADD = -lSDL_mixer -lSDL_image @SDL_LIBS@ @EXTRA_LIBS@
 AM_CFLAGS = @SDL_CFLAGS@ -Wall
 AM_LDFLAGS = @LDFLAGS@ 
 
@@ -49,17 +55,21 @@ install-data-hook:
 	$(MKDIR) -p $(d_datadir)/gfx_user
 	$(MKDIR) -p $(d_datadir)/srv_files
 	$(MKDIR) -p $(d_datadir)/icons
+	$(MKDIR) -p $(d_datadir)/tools
+	$(MKDIR) -p $(d_datadir)/update
 	$(CP) ../../sfx/*.* $(d_datadir)/sfx
 	$(CP) ../../media/*.* $(d_datadir)/media
 	$(CP) ../../cache/*.* $(d_datadir)/cache
 	$(CP) ../../icons/*.* $(d_datadir)/icons
 	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
+	$(CP) -R ../../tools/*.* $(d_datadir)/tools
+	$(CP) ../../update/version $(d_datadir)/update
 	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
 	$(CP) ../../bitmaps/*.* $(d_datadir)/bitmaps
 	$(CP) ../../options.dat $(d_datadir)
 	$(CP) ../../keys.dat $(d_datadir)
 	$(CP) ../../daimonin.p0 $(d_datadir)
-	$(CP) ../../License $(d_datadir)
+	$(CP) ../../License $(d_datadir) || $(CP) ../../../License $(d_datadir)
 	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
 	@echo "*** Enter your install folder and type ./daimonin"
