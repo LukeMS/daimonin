@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
-#include <include.h>
+#include "include/include.h"
 
 int check_tools(char *name)
 {
@@ -30,7 +30,7 @@ int check_tools(char *name)
 	res = stat(name, &stat_buf);
 	if (res < 0) 
 	{
-    		perror("Can't find xdelta!\n");
+        fprintf(stderr, "Can't find %s\n", name);
 		return FALSE;
 	}
         return TRUE;
