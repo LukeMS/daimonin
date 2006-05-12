@@ -9,7 +9,6 @@ AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(daimonin_client, BETA3-0.966)
 
 AC_CONFIG_SRCDIR(../../src/client.c)
-#AC_PREFIX_DEFAULT($HOME)
 
 AM_PROG_CC_C_O
 
@@ -309,6 +308,47 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 #   AC_DEFINE_UNQUOTED(PREFIX, "${ac_default_prefix}", [Installation prefix])
 #fi
 
+#
+# Check for stuff needed by the auto-updater
+#
+
+if test "x$simplelayout" <> "xyes"; then
+    build_xdelta="no"
+    
+    AC_PATH_PROG(BUNZIP2, bunzip2)
+    AC_PATH_PROG(MD5SUM, md5sum)
+    AC_PATH_PROG(WGET, wget)
+    AC_PATH_PROG(TAR, tar)
+    AC_PATH_PROG(XDELTA, xdelta)
+
+    missing_binaries=""
+    if test "x$BUNZIP2" = "x"; then 
+        missing_binaries="${missing_binaries}bunzip2 "
+    fi
+    if test "x$MD5SUM" = "x"; then 
+        missing_binaries="${missing_binaries}md5sum "
+    fi
+    if test "x$WGET" = "x"; then 
+        missing_binaries="${missing_binaries}wget "
+    fi
+    if test "x$TAR" = "x"; then 
+        missing_binaries="${missing_binaries}tar "
+    fi
+    
+    # TODO: build xdelta from tarball or embed into autoupdater
+    if test "x$XDELTA" = "x"; then 
+        missing_binaries="${missing_binaries}xdelta "
+    fi
+
+    if test "x$missing_binaries" <> "x"; then
+        autoupdater="disabled (missing tool(s): $missing_binaries)"
+    else
+        autoupdater="disabled (not finished yet)"
+    fi        
+else
+    autoupdater="disabled (only for simple directory layout)"
+fi
+
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(EXTRA_LIBS)
@@ -341,3 +381,4 @@ echo
 echo "** Setup information:"
 echo "  Installation path:       $prefix"
 echo "  Simple directory layout: $simplelayout"
+echo "  Auto-updater:            $autoupdater"
