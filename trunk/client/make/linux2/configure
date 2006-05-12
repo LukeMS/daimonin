@@ -7754,7 +7754,7 @@ done
 # Check for stuff needed by the auto-updater
 #
 
-if test "x$simplelayout" <> "xyes"; then
+if test "x$simplelayout" = "xyes"; then
     build_xdelta="no"
 
     # Extract the first word of "bunzip2", so it can be a program name with args.
@@ -7972,7 +7972,7 @@ fi
         missing_binaries="${missing_binaries}xdelta "
     fi
 
-    if test "x$missing_binaries" <> "x"; then
+    if test "x$missing_binaries" != "x"; then
         autoupdater="disabled (missing tool(s): $missing_binaries)"
     else
         autoupdater="disabled (not finished yet)"

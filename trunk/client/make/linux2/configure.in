@@ -312,7 +312,7 @@ AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h malloc.h netdb.h netinet/in.h std
 # Check for stuff needed by the auto-updater
 #
 
-if test "x$simplelayout" <> "xyes"; then
+if test "x$simplelayout" = "xyes"; then
     build_xdelta="no"
     
     AC_PATH_PROG(BUNZIP2, bunzip2)
@@ -340,7 +340,7 @@ if test "x$simplelayout" <> "xyes"; then
         missing_binaries="${missing_binaries}xdelta "
     fi
 
-    if test "x$missing_binaries" <> "x"; then
+    if test "x$missing_binaries" != "x"; then
         autoupdater="disabled (missing tool(s): $missing_binaries)"
     else
         autoupdater="disabled (not finished yet)"
