@@ -4438,3 +4438,34 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
     return 1;
 #endif    
 }
+
+void restore_drained_level(object *op)
+{
+	object *force;
+	static archetype  *at = NULL;
+
+	if (!at)
+	{
+		at = find_archetype("drain");
+		if (!at)
+		{
+			LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+			return;
+		}
+	}
+
+	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+
+	force = present_arch_in_ob(at, op);
+	if(force)
+		remove_ob(force);
+
+	force = present_arch_in_ob_temp(at, op);
+	if(force)
+		remove_ob(force);
+
+	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+	fix_player(op); /* will redirect to fix_monster() automatically */
+	if(op->type == PLAYER)
+		new_draw_info(NDI_UNIQUE, 0, op, "Your level is restored!");
+}

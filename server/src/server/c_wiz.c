@@ -830,9 +830,9 @@ int command_setskill(object *op, char *params)
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
 	adjust_exp(pl->ob, exp_skill, 1); /* we add one more so we get a clean call here */
-    player_lvl_adj(pl->ob, exp_skill);
-    player_lvl_adj(pl->ob, exp_ob);
-    player_lvl_adj(pl->ob, NULL);
+    player_lvl_adj(pl->ob, exp_skill, TRUE);
+    player_lvl_adj(pl->ob, exp_ob, TRUE);
+    player_lvl_adj(pl->ob, NULL, TRUE);
 
     return 1;
 }
@@ -898,9 +898,9 @@ int command_addexp(object *op, char *params)
 
 	/* adjust_exp has adjust the skill and all exp_obj and player exp */
 	/* now lets check for level up in all categories */
-	player_lvl_adj(pl->ob, exp_skill);
-	player_lvl_adj(pl->ob, exp_ob);
-	player_lvl_adj(pl->ob, NULL);
+	player_lvl_adj(pl->ob, exp_skill, TRUE);
+	player_lvl_adj(pl->ob, exp_ob, TRUE);
+	player_lvl_adj(pl->ob, NULL, TRUE);
 
 	return 1;
 }

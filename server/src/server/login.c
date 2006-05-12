@@ -448,7 +448,7 @@ static void traverse_b3_player_inv(object *op)
 	{
 		next_obj = tmp->below;
 		/* remove all diseases because possible setting changes and kill pending old quests */
-		if ( tmp->type == DISEASE || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
+		if ( tmp->type == DISEASE ||tmp->type == SYMPTOM || QUERY_FLAG(tmp,FLAG_QUEST_ITEM) || 
 			(tmp->arch->name == shstr_cons.player_info && tmp->name == g_info))
 		{
 			SET_FLAG(tmp,FLAG_SYS_OBJECT);
@@ -995,7 +995,7 @@ void check_login(object *op)
                 for (i = 0; i <= MAXLEVEL; i++)
                 {
                     /* if exp < exp from i+1, our level is i */
-                    if ((uint32) tmp->stats.exp < new_levels[i + 1])
+                    if (tmp->stats.exp < new_levels[i + 1])
                     {
                         tmp->level = i;
                         break;

@@ -76,7 +76,6 @@ int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
 int                         command_tell(object *op, char *params);
 int                         command_talk(object *op, char *params);
-int                         command_reply(object *op, char *params);
 int                         command_nod(object *op, char *params);
 int                         command_dance(object *op, char *params);
 int                         command_kiss(object *op, char *params);
@@ -682,6 +681,7 @@ int                         cast_cause_disease(object *op, object *caster, int d
 void                        move_aura(object *aura);
 void                        move_peacemaker(object *op);
 int                         cast_cause_conflict(object *op, object *caster, archetype *spellarch, int type);
+void						restore_drained_level(object *op);
 /* spell_util.c */
 void                        init_spells(void);
 void                        dump_spells(void);

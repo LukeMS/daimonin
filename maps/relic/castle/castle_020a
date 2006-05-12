@@ -9,9 +9,9 @@ height 24
 outdoor 1
 tile_path_1 castle_0200
 tile_path_2 castle_030a
-tile_path_4 /relic/forest/mountain_0502
+tile_path_4 ../mountain_0502
 tile_path_5 castle_0300
-tile_path_7 /relic/forest/forest_0702
+tile_path_7 ../forest_0702
 tile_path_8 castle_0100
 tileset_id 4
 tileset_x 24

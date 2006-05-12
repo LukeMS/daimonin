@@ -1672,6 +1672,7 @@ void kill_player(object *op)
     cast_heal(op, 110, op, SP_CURE_POISON);
     /*cast_heal(op, op, SP_CURE_CONFUSION);*/
     cure_disease(op, NULL);  /* remove any disease */
+	restore_drained_level(op);
 
     apply_death_exp_penalty(op);
     if (op->stats.food < 0)

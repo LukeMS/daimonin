@@ -177,6 +177,8 @@ typedef signed long long         sint64;
 #define MAX_PLAYER_NAME        12
 #define MAX_PLAYER_PASSWORD    16
 
+#define GET_LEVEL_EXP(_level_) new_levels[_level_]
+
 /* used for eric_server() */
 #define SOCKET_UPDATE_PLAYER 1
 #define SOCKET_UPDATE_CLIENT 2
@@ -450,7 +452,7 @@ typedef struct Settings
 /* these varaibles are direct initialized in their modules. So we
  * can't use EXTERN.
  */
-extern uint32                   new_levels[MAXLEVEL + 2];
+extern sint32                   new_levels[MAXLEVEL + 2];
 extern float                    lev_exp[MAXLEVEL + 1];
 extern int                      freearr_x[SIZEOFFREE];
 extern int                      freearr_y[SIZEOFFREE];

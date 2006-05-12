@@ -64,9 +64,9 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
 {
     char                styledirname[256];
     mapstruct          *style_map       = 0;
-    long unsigned int   total_experience;  /* used for matching difficulty */
+    sint32              total_experience;  /* used for matching difficulty */
     int                 failed_placements;
-    long unsigned int   exp_per_sq;
+    sint32              exp_per_sq;
     int                 number_monsters = 0;
 
     sprintf(styledirname, "%s", "/styles/monsterstyles");
@@ -79,7 +79,7 @@ void place_monsters(mapstruct *map, char *monsterstyle, int difficulty, RMParms 
     total_experience = 0;
     failed_placements = 0;
     exp_per_sq = 0;
-    while (exp_per_sq <= level_exp(difficulty, 1.0)
+    while (exp_per_sq <= GET_LEVEL_EXP(difficulty)
         && failed_placements < 100
         && number_monsters < (RP->Xsize * RP->Ysize) / 8)
     {

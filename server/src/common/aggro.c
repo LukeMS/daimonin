@@ -39,6 +39,10 @@
 
 #include <global.h>
 
+/* disabled inline for debugging */
+#undef inline
+#define inline
+
 static uint32 exp_calc_tag=1; /* used to tag the player/group */
 
 /*
@@ -327,7 +331,7 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 		{
 			int exp_bonus = (int)(((double)exp/100.0)*(double)CONTR(hitter)->exp_bonus);
 			new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d (+%d bonus) exp in %s.",
-				add_exp(hitter, exp+exp_bonus, skillnr), skills[skillnr].name);
+				add_exp(hitter, exp+exp_bonus, skillnr), exp_bonus, skills[skillnr].name);
 		}
 		else
 		{
@@ -378,7 +382,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 #endif
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
-            e1 = calc_skill_exp(hitter, victim, 0.50f, tmp->level, &exp);
+            e1 = calc_skill_exp(hitter, victim, 0.55f, tmp->level, &exp);
 			if(pl->base_skill_group_exp[0] != 100)
 				e1 = (e1 * pl->base_skill_group_exp[0])/100;
             ret |=add_aggro_exp(hitter, e1, tmp->stats.sp);
@@ -392,7 +396,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
         }
         if((tmp = pl->highest_skill[pl->base_skill_group[2]]))
         {
-            e3 = calc_skill_exp(hitter, victim, 0.20f, tmp->level, &exp);
+            e3 = calc_skill_exp(hitter, victim, 0.15f, tmp->level, &exp);
 			if(pl->base_skill_group_exp[2] != 100)
 				e3 = (e3 * pl->base_skill_group_exp[2])/100;
             ret |=add_aggro_exp(hitter, e3, tmp->stats.sp);
@@ -425,7 +429,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     }
     else /* 50% in s1, 30% in s2, 20% in s3 */
     {
-        e1 = calc_skill_exp(hitter, victim, 0.50f, pl->skill_ptr[s1]->level, &exp);
+        e1 = calc_skill_exp(hitter, victim, 0.55f, pl->skill_ptr[s1]->level, &exp);
 		if(pl->base_skill_group_exp[0] != 100)
 			e1 = (e1 * pl->base_skill_group_exp[0])/100;
         ret |=add_aggro_exp(hitter, e1, s1);
@@ -433,7 +437,7 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
 		if(pl->base_skill_group_exp[1] != 100)
 			e2 = (e2 * pl->base_skill_group_exp[1])/100;
         ret |=add_aggro_exp(hitter, e2, s2);
-        e3 = calc_skill_exp(hitter, victim, 0.20f, pl->skill_ptr[s3]->level, &exp);
+        e3 = calc_skill_exp(hitter, victim, 0.15f, pl->skill_ptr[s3]->level, &exp);
 		if(pl->base_skill_group_exp[2] != 100)
 			e3 = (e3 * pl->base_skill_group_exp[2])/100;
         ret |=add_aggro_exp(hitter, e3, s3);
@@ -587,13 +591,16 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
          * mark group_status as NO_EXP - thats important and used
          * from the quest item function (= no quest item for leecher)
          */
+#ifdef DEBUG_AGGRO
+		LOG(-1,"GROUP_MEMBER: %s (%x)\n", query_name(tmp), pl);
+#endif
         if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
         {
             pl->group_status |= GROUP_STATUS_NOEXP; /* mark tmp as loser and skip exp */
             continue;
         }
 
-        /* We have have moved the kill message all the because we want it BEFORE
+        /* We have have moved the kill message because we want it BEFORE
          * the exp gain messages... ugly, but well, better as double calc the exp gain
          */
         if(kill_msg && aggro->enemy != tmp)

@@ -14,7 +14,7 @@ end
 arch floor_ostone1
 end
 arch exit
-slaying /stoneglow/stoneglow_0000
-hp 22
-sp 7
+slaying /relic/castle/castle_0002
+hp 12
+sp 5
 end
