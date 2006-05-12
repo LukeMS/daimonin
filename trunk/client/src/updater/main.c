@@ -50,7 +50,7 @@
 #define PROCESS_BZ2 "bunzip2"
 #define PROCESS_TAR "tar"
 #define PROCESS_XDELTA "./tools/xdelta-1.1.3/xdelta"
-#define PROCESS_CLIENT "client"
+#define PROCESS_CLIENT "./daimonin"
 #endif
 
 #define MAX_DIR_PATH 2048	/* maximal full path we support.      */
@@ -78,23 +78,24 @@ static void free_resources(void)
 
 static void updater_error(const char *msg)
 {
-    printf("\nUpdater Error!!\n");
-    printf(msg);
+    printf("\nUpdater Error: %s\n", msg);
     printf("\nPRESS RETURN");
     getchar();
     free_resources();
-    fclose(version_handle);
+    if(version_handle)
+        fclose(version_handle);
     exit(-1);
 }
 
 static void start_client_and_close(char *p_path)
 {
-    printf("Starting client....\n");
+    printf("Starting client...\n");
     strcpy(process_path, p_path);
     strcat(process_path, PROCESS_CLIENT); /* '/' will work in windows too */
     execute_process(process_path, PROCESS_CLIENT, "", NULL, 0);
     free_resources();
-    fclose(version_handle);
+    if(version_handle)
+        fclose(version_handle);
     exit(0);
 }
 
@@ -202,14 +203,16 @@ int main(int argc, char *argv[])
             }
         }
     }
+
 #ifndef WIN32
-  if(!check_tools(PROCESS_XDELTA))
-  {
-  	free_resources();
-        exit(0);
-  }
+    if(!check_tools(PROCESS_XDELTA))
+    {
+        printf("Missing requirements. Autoupdater will not run.\n");
+        start_client_and_close(prg_path);
+    }
 #endif
-  /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
+
+    /* we use the version file as lock/unlock to avoid different instances of the updater running at once.
     */
     if(update_flag==FALSE)
         printf("Loading version info.... ");
@@ -263,7 +266,7 @@ int main(int argc, char *argv[])
         if( execute_process(process_path, PROCESS_WGET, parms, NULL, 100) != 0)
         {
             /* failed to get a update... lets start the client anyway and try to connect to a server */
-            printf("Update failed!\nTry starting client without update.\nPRESS RETURN\n");
+            printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
             getchar();
             start_client_and_close(prg_path);
         }
@@ -275,7 +278,7 @@ int main(int argc, char *argv[])
     sprintf(file_path,"%s%s/%s", prg_path, FOLDER_UPDATE, UPDATE_FILE);
     if ((stream = fopen(file_path, "rt")) == NULL)
     {
-        printf("Can't find update file!!\nUpdate failed!\nTry starting client without update.\nPRESS RETURN\n");
+        printf("Can't find update file!\nUpdate failed!\nStarting client without update.\nPRESS RETURN\n");
         getchar();
         start_client_and_close(prg_path);
     }
@@ -300,7 +303,7 @@ int main(int argc, char *argv[])
             {
                 /* failed to get a update... lets start the client anyway and try to connect to a server */
                 fclose(stream);
-                printf("Update failed!\nTry starting client without update.\nPRESS RETURN\n");
+                printf("Update failed!\nStarting client without update.\nPRESS RETURN\n");
                 getchar();
                 start_client_and_close(prg_path);
             }
