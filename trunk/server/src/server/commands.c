@@ -69,7 +69,6 @@ CommArray_s Commands[]                  =
 	{"/qlist",        command_questlist,      5.0f},
     {"/mapinfo",      command_mapinfo,        5.0f},
     {"/motd",         command_motd,           5.0f},
-    {"/reply",        command_reply,          1.0f},
     {"/usekeys",      command_usekeys,        1.0f},
     {"/time",         command_time,           1.0f},
     {"/version",      command_version,        1.0f},

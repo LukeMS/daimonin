@@ -44,10 +44,12 @@
 //#define DEBUG_CORE_MAP
 
 /* Aggro & EXP sharing debugging: aggro.c */
-/*#define DEBUG_AGGRO *//* Warning: ALOT debug log lines with this option - disable it for played server */
+#define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
+
+#define DEBUG_GROUP_UPDATE
 
 /* Debug Link Spawns: spawn_point.c */
-/*#define DEBUG_LINK_SPAWN *//* log message when a linked spawn point is added, removed or called */
+#define DEBUG_LINK_SPAWN /* log message when a linked spawn point is added, removed or called */
 
 /* Track & log mempool object using: mempool.c */
 /*#define DEBUG_MEMPOOL_OBJECT_TRACKING*/  /* enables a global list of *all* objects

@@ -2417,7 +2417,7 @@ x 15
 y 9
 end
 arch stairs_stone_down
-slaying /nonpub/uni/castle/tests/warrior/warrior_test_0000
+slaying tests/warrior/warrior_test_0000
 hp 1
 sp 21
 x 15
@@ -3035,7 +3035,7 @@ x 19
 y 9
 end
 arch stairs_stone_down
-slaying /nonpub/uni/castle/tests/wizard/wizard_test_0000
+slaying wizard/wizard_test_0000
 hp 1
 sp 18
 direction 1
@@ -3712,7 +3712,7 @@ x 23
 y 9
 end
 arch stairs_stone_down
-slaying /nonpub/uni/castle/tests/priest/priest_test_0000
+slaying priest/priest_test_0000
 hp 20
 sp 20
 x 23

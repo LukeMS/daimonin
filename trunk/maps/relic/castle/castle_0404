@@ -1516,13 +1516,6 @@ arch grassd_7
 x 10
 y 8
 end
-arch tele_stone
-slaying /relic/castle/castleb_0203
-hp 3
-sp 17
-x 10
-y 8
-end
 arch water_still
 x 10
 y 9
@@ -1556,7 +1549,7 @@ x 10
 y 12
 end
 arch hole
-slaying /nonpub/base/grey_cave/castleb_0404
+slaying grey_cave/castleb_0404
 hp 10
 sp 11
 walk_on 1

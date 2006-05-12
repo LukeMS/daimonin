@@ -477,26 +477,35 @@ void party_client_group_kill(object *member)
 void party_client_group_update(object *member, int flag)
 {
     object *tmp;
-    player *pl;
+    player *pl, *plm;
     char buf2[HUGE_BUF];
-    char buf[HUGE_BUF]="";
+    char buf[HUGE_BUF];
 
     /* TODO: change to binary data/cmd after testing using GROUP_UPDATE_xxx */
 
-    sprintf(buf2,"|%d %d %d %d %d %d %d %d\n",CONTR(member)->group_nr,
+	plm = CONTR(member);
+#ifdef DEBUG_GROUP_UPDATE
+	LOG(-1,"GROUP UPDATE: %s (gid: %d) (leader: %s) --> ", query_name(member), plm->group_nr,query_name(plm->group_leader));
+#endif
+    sprintf(buf2,"|%d %d %d %d %d %d %d %d\n",plm->group_nr,
         member->stats.hp, member->stats.maxhp,
         member->stats.sp, member->stats.maxsp,
         member->stats.grace, member->stats.maxgrace, member->level);
 
-    strcat(buf,buf2);
-    CONTR(member)->update_ticker = ROUND_TAG;
+#ifdef DEBUG_GROUP_UPDATE
+	LOG(-1,"gstats: %s\n", buf2);
+#endif
 
-    for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
+    strcpy(buf,buf2);
+    plm->update_ticker = ROUND_TAG;
+
+    for(tmp=plm->group_leader;tmp;tmp=pl->group_next)
     {
-        if(CONTR(tmp)->update_ticker != ROUND_TAG)
+#ifdef DEBUG_GROUP_UPDATE
+		LOG(-1,"GROUP UPDATE: %s (gid: %d) (leader: %s)::\n", query_name(tmp), CONTR(tmp)->group_nr,query_name(CONTR(tmp)->group_leader));
+#endif
+        if((pl = CONTR(tmp))->update_ticker != ROUND_TAG)
         {
-            pl = CONTR(tmp);
-
             /* TODO: use GROUP_UPDATE_xxx for a binary cmd which really holds
              * only the different data!
              * ATM we transer alot redundant data.
@@ -515,6 +524,9 @@ void party_client_group_update(object *member, int flag)
                     tmp->stats.sp, tmp->stats.maxsp,
                     tmp->stats.grace, tmp->stats.maxgrace,tmp->level);
 
+#ifdef DEBUG_GROUP_UPDATE
+				LOG(-1,"gstats: %s\n", buf2);
+#endif
                 strcat(buf,buf2);
                 pl->update_ticker = ROUND_TAG;
             }
@@ -528,6 +540,6 @@ void party_client_group_update(object *member, int flag)
     global_sl.len += strlen(buf)+1;
 
     /* broadcast command to all members */
-    for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
+    for(tmp=plm->group_leader;tmp;tmp=CONTR(tmp)->group_next)
         Send_With_Handling(&CONTR(tmp)->socket, &global_sl);
 }

@@ -206,7 +206,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         if (hitter->type != ARROW)
         {
 			if (op->type == PLAYER)
-				new_draw_info_format(NDI_PURPLE, 0, op, "%s miss you!", hitter->name);
+				new_draw_info_format(NDI_PURPLE, 0, op, "%s misses you!", hitter->name);
 
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
@@ -625,15 +625,15 @@ int hit_map(object *op, int dir)
         if (tmp->map != map || tmp->x != x || tmp->y != y)
             continue;
 
-        /* Can only hit live objects (for now) */
-        if(!IS_LIVE(tmp))
-            continue;
-
         /* monsters on the same side don't hurt each other */
         if(get_friendship(tmp_obj, tmp) >= FRIENDSHIP_HELP)
             continue;
 
-        hit_player(tmp, op->stats.dam, op);
+         /* Can only hit live objects (for now) */
+         if(!IS_LIVE(tmp))
+			continue;
+
+		hit_player(tmp, op->stats.dam, op);
         retflag |= 1;
         if (was_destroyed(op, op_tag))
             break;

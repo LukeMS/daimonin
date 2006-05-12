@@ -451,7 +451,7 @@ x 4
 y 8
 end
 arch exit
-slaying /stoneglow/stoneglow_0000
+slaying /lost_worlds/stoneglow/stoneglow_0000
 hp 6
 sp 8
 x 4
