@@ -21,7 +21,7 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
-#include <include.h>
+#include "include/include.h"
 
 #define UPDATE_URL "http://daimonin.sourceforge.net/patch/"
 
@@ -69,7 +69,7 @@ extern void copy_patch_files(char* start_dir);
 extern int process_patch_file(char *patch_file, int mode);
 extern void copy_patch(char *src, char *dest);
 
-static free_resources(void)
+static void free_resources(void)
 {
     if(copy_buffer)
         free(copy_buffer);
