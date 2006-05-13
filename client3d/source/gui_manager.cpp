@@ -304,7 +304,7 @@ void GuiManager::update(Real timeSinceLastFrame)
   }
   for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
   {
-    guiWindow[i].updateDragAnimation();  // "zurückflutschen" bei falschem drag.
+    guiWindow[i].updateDragAnimation();  // move back on wrong drag.
     guiWindow[i].updateAnimaton(timeSinceLastFrame);
     guiWindow[i].updateListbox();
   }

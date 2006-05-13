@@ -246,8 +246,8 @@ void TileManager::CreateChunks()
 
     TileChunk::m_TileManagerPtr = this;
     TileChunk::m_bounds = new AxisAlignedBox(
-                              -TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
-                              +TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
+                              -TILE_SIZE_X * CHUNK_SIZE_X, 0               , -TILE_SIZE_Z * CHUNK_SIZE_Z,
+                              +TILE_SIZE_X * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE_Z * CHUNK_SIZE_Z);
     for (short x = 0; x < CHUNK_SUM_X; ++x)
     {
         for (short y = 0; y < CHUNK_SUM_Z; ++y)
@@ -273,8 +273,8 @@ void TileManager::ChangeChunks()
 
     TileChunk::m_TileManagerPtr = this;
     TileChunk::m_bounds = new AxisAlignedBox(
-                              -TILE_SIZE * CHUNK_SIZE_X, 0               , -TILE_SIZE * CHUNK_SIZE_Z,
-                              TILE_SIZE * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE * CHUNK_SIZE_Z);
+                              -TILE_SIZE_X * CHUNK_SIZE_X, 0               , -TILE_SIZE_Z * CHUNK_SIZE_Z,
+                              TILE_SIZE_X * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE_Z * CHUNK_SIZE_Z);
 /*
     // Test start
     unsigned char value;
@@ -354,8 +354,8 @@ void TileManager::ControlChunks(Vector3 vector)
     /// ////////////////////////////////////////////////////////////////////
     // ChangeChunks();
 
-    int x = (int)vector.x / (TILE_SIZE * CHUNK_SIZE_X)+1;
-    int y = (int)vector.z / (TILE_SIZE * CHUNK_SIZE_Z)+1;
+    int x = (int)vector.x / (TILE_SIZE_X * CHUNK_SIZE_X)+1;
+    int y = (int)vector.z / (TILE_SIZE_Z * CHUNK_SIZE_Z)+1;
     if ( x > CHUNK_SUM_X || y > CHUNK_SUM_Z)
     {
         return;

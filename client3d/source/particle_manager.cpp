@@ -117,8 +117,10 @@ void ParticleManager::update(Real dTime)
             if ((*i)->sceneNode)
                 (*i)->sceneNode->getParentSceneNode()->removeChild((*i)->sceneNode);
             Event->GetSceneManager()->destroyParticleSystem((*i)->pSystem);
+
             delete (*i);
             i = mvParticle.erase(i);
+            if (mvParticle.empty()) break;
         }
     }
 }

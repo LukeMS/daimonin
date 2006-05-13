@@ -24,6 +24,7 @@ material Tree/Leafs
             {
 		filtering none
                 texture leaf.png 2d 0
+            }
         }
     }
 }

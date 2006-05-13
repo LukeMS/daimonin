@@ -180,9 +180,9 @@ void CEvent::keyPressed(KeyEvent *e)
             Entity * entity = mSceneManager->createEntity("tree_"+StringConverter::toString(++tree), "tree1.mesh");
             const AxisAlignedBox &AABB = entity->getBoundingBox();
             Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-            pos.x = (pos.x +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
-            pos.y+= fabs(AABB.getMaximum().y) - TILE_SIZE/2;
-            pos.z = (pos.z +0.5) * TILE_SIZE -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
+            pos.x = (pos.x +0.5) * TILE_SIZE_X -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
+            pos.y+= fabs(AABB.getMaximum().y) - TILE_SIZE_X/2;
+            pos.z = (pos.z +0.5) * TILE_SIZE_Z -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
             SceneNode *node = mSceneManager->getRootSceneNode()->createChildSceneNode();
             node->attachObject(entity);
             node->setPosition(pos.x, pos.y, pos.z);
@@ -410,6 +410,9 @@ void CEvent::mouseMoved (MouseEvent *e)
 
 void CEvent::mousePressed (MouseEvent *e)
 {
+   // Ignoe button while init.
+   if (Option::getSingleton().getGameStatus() < GAME_STATUS_INIT_NET) return;
+
     mMouseX = e->getX();
     mMouseY = e->getY();
 
@@ -475,8 +478,8 @@ void CEvent::mousePressed (MouseEvent *e)
             mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
             {
                 Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-                pos.x = (pos.x +0.5) * TILE_SIZE;
-                pos.z = (pos.z +0.5) * TILE_SIZE;
+                pos.x = (pos.x +0.5) * TILE_SIZE_X;
+                pos.z = (pos.z +0.5) * TILE_SIZE_Z;
                 ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 2.0);
             }
 

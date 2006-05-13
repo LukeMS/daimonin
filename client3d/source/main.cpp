@@ -151,8 +151,8 @@ int main(int argc, char **argv)
                 return 0;
         }
     }
-    Root *root;
-    RenderWindow *window;
+    Root *root =0;
+    RenderWindow *window=0;
     try
     {
         root = new Root();

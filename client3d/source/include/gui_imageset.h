@@ -25,9 +25,10 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 #include <tinyxml.h>
-#include "gui_window.h"
-#include "gui_cursor.h"
-#include "gui_manager.h"
+
+//#include "gui_window.h"
+//#include "gui_cursor.h"
+//#include "gui_manager.h"
 #include "logger.h"
 
 using namespace Ogre;
@@ -58,6 +59,8 @@ enum {
   GUI_TEXTVALUE_STAT_SUM_TRIS,
   // TextInput
   GUI_TEXTINPUT_PASSWORD,
+	// Combobox
+	GUI_COMBOBOX_TEST,
   // Sum of all entries.
   GUI_ELEMENTS_SUM
 };

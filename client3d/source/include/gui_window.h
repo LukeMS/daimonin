@@ -25,12 +25,21 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_textout.h"
 #include "gui_gadget.h"
+#include "gui_gadget_button.h"
+#include "gui_gadget_combobox.h"
 #include "gui_graphic.h"
 #include "gui_window.h"
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
 
 using namespace Ogre;
+
+enum
+{
+	GUI_ACTION_NONE,
+	GUI_ACTION_START_TEXT_INPUT,
+	GUI_ACTION_SUM
+};
 
 class GuiWindow
 {
@@ -52,6 +61,7 @@ public:
   void updateDragAnimation();
   void updateAnimaton(Real timeSinceLastFrame);
   void updateListbox();
+	void PreformActions();
   const char *getName()
   {
     return mStrName.c_str();
@@ -85,6 +95,8 @@ private:
   std::string mStrName;
   std::string mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
   std::vector<GuiGadget *>mvGadget;
+  std::vector<GuiGadgetCombobox*>mvCombobox;
+  std::vector<GuiGadgetButton *>mvButton;
   std::vector<GuiGraphic*>mvGraphic;
   std::vector<GuiListbox*>mvListbox;
   std::vector<TextLine*>mvTextline;

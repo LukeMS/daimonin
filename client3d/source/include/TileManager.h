@@ -35,7 +35,8 @@ const int PIXEL_PER_ROW  = 1024;
 /** Numbers of tile textures in one row/col of the terrain texture. */
 const int TEXTURES_PER_ROW = 7;
 /** Size of a tile. */
-const int TILE_SIZE = 32;
+const int TILE_SIZE_X = 32;
+const int TILE_SIZE_Z = 32;
 
 /** Number of chunks in worldmap */
 #ifdef SINGLE_CHUNK

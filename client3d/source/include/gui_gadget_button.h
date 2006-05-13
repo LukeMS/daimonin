@@ -18,38 +18,28 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_H
-#define GUI_GADGET_H
-
-class GuiGadget;
+#ifndef GUI_GADGET_BUTTON_H
+#define GUI_GADGET_BUTTON_H
 
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
-
+#include "gui_gadget.h"
 using namespace Ogre;
 
-class GuiGadget: public GuiElement
+class GuiGadgetButton: public GuiGadget
 {
 
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
-  virtual ~GuiGadget();
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
 
-  virtual bool setState(int state);
-  virtual void draw(PixelBox &mSrcPixelBox, Texture *texture);
-	virtual void addTextline(const char *value);
-	virtual void setText(const char *value);
-	virtual const char *getText();
-	virtual bool mouseOver(int x, int y);
+    GuiGadgetButton(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
+    ~GuiGadgetButton();
 
-	int getAction();
-	int index;
-protected:
-	int mAction;
+    void draw(PixelBox &mSrcPixelBox, Texture *texture);
 };
 
-#endif
+
+#endif // GUI_GADGET_H

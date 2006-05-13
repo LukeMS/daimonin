@@ -153,29 +153,29 @@ void TileSelection::change_Selection()
     pReal[ 3] =   0; pReal[ 4] =   0; pReal[5] = 1;
     pReal[ 6] =   0; pReal[ 7] =   0;
 
-    pReal[ 8] =   0; pReal[ 9] =   height[2] ; pReal[10] = TILE_SIZE;
+    pReal[ 8] =   0; pReal[ 9] =   height[2] ; pReal[10] = TILE_SIZE_Z;
     pReal[11] =   0; pReal[12] =   0; pReal[13] = 1;
     pReal[14] =   0; pReal[15] =   1;
 
-    pReal[16] =   TILE_SIZE; pReal[17] =  height[1] ; pReal[18] = 0;
+    pReal[16] =   TILE_SIZE_X; pReal[17] =  height[1] ; pReal[18] = 0;
     pReal[19] =   0; pReal[20] =   0; pReal[21] = 1;
     pReal[22] =   1; pReal[23] =   0;
 
     // 2nd triangle
-    pReal[24] =   TILE_SIZE; pReal[25] =   height[1] ; pReal[26] = 0;
+    pReal[24] =   TILE_SIZE_X; pReal[25] =   height[1] ; pReal[26] = 0;
     pReal[27] =   0; pReal[28] =   0; pReal[29] = 1;
     pReal[30] =   1; pReal[31] =   0;
 
-    pReal[32] =   0; pReal[33] =  height[2] ; pReal[34] = TILE_SIZE;
+    pReal[32] =   0; pReal[33] =  height[2] ; pReal[34] = TILE_SIZE_Z;
     pReal[35] =   0; pReal[36] =   0; pReal[37] = 1;
     pReal[38] =   0; pReal[39] =   1;
 
-    pReal[40] =   TILE_SIZE; pReal[41] =   height[3]; pReal[42] = TILE_SIZE;
+    pReal[40] =   TILE_SIZE_X; pReal[41] =   height[3]; pReal[42] = TILE_SIZE_Z;
     pReal[43] =   0; pReal[44] =   0; pReal[45] = 1;
     pReal[46] =   1; pReal[47] =   1;
     m_vbuf0[c]->unlock();
 
-    m_SceneNode[c]->setPosition((m_x + offsetX )* TILE_SIZE,0,(m_y + offsetY)* TILE_SIZE);
+    m_SceneNode[c]->setPosition((m_x + offsetX )* TILE_SIZE_X,0,(m_y + offsetY)* TILE_SIZE_Z);
     m_Entity[c]->setVisible(true);
     offsetX *= -1;
     if (c ==1) offsetY*= -1;
@@ -302,16 +302,16 @@ void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
       {
         if (height[edge] > avgHeight)
           Test = mouseRay->intersects(
-                   AxisAlignedBox((vertex_x + x + offsetX      )* TILE_SIZE, avgHeight,
-                                  (vertex_y + y + offsetY      )* TILE_SIZE,
-                                  (vertex_x + x + offsetX + 0.5)* TILE_SIZE, height[edge],
-                                  (vertex_y + y + offsetY + 0.5)* TILE_SIZE));
+                   AxisAlignedBox((vertex_x + x + offsetX      )* TILE_SIZE_X, avgHeight,
+                                  (vertex_y + y + offsetY      )* TILE_SIZE_Z,
+                                  (vertex_x + x + offsetX + 0.5)* TILE_SIZE_X, height[edge],
+                                  (vertex_y + y + offsetY + 0.5)* TILE_SIZE_Z));
         else
           Test = mouseRay->intersects(
-                   AxisAlignedBox((vertex_x + x + offsetX      )* TILE_SIZE, height[edge],
-                                  (vertex_y + y + offsetY      )* TILE_SIZE,
-                                  (vertex_x + x + offsetX + 0.5)* TILE_SIZE, avgHeight,
-                                  (vertex_y + y + offsetY + 0.5)* TILE_SIZE));
+                   AxisAlignedBox((vertex_x + x + offsetX      )* TILE_SIZE_X, height[edge],
+                                  (vertex_y + y + offsetY      )* TILE_SIZE_Z,
+                                  (vertex_x + x + offsetX + 0.5)* TILE_SIZE_X, avgHeight,
+                                  (vertex_y + y + offsetY + 0.5)* TILE_SIZE_Z));
         offsetX+= 0.5;
         if (offsetX > 0.5)
         {
