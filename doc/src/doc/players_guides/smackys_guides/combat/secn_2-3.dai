@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Combat, Section 2-3: Magic">
 <section>
     <title>
         SECTION 2-3: MAGIC
@@ -8,3 +9,4 @@
         THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
 </section>
+</daiml>

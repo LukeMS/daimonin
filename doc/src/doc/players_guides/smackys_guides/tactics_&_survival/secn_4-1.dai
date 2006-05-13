@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Combat Tactics &amp; Survival, Section 4-1: Hit &amp; run">
+<section>
     <title>
         SECTION 4-1: HIT &amp; RUN
     </title>
@@ -79,3 +80,4 @@
         </dl>
     </section>
 </section>
+</daiml>

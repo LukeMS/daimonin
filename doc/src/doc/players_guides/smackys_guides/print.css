@@ -6,19 +6,9 @@ body
     margin-right:1em;
 }
 
-a:link, a:visited
+a
 {
-    color:#00008b; /* darkslateblue */
-}
-
-a:hover
-{
-    background:#b8840b; /* darkgoldenrod */
-}
-
-a:active
-{
-    background:#daa520; /* goldenrod */
+    text-decoration:none;
 }
 
 h1, h2, h3, h4, h5, h6
@@ -166,21 +156,10 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
 
 div.toc
 {
-    background:#b0c4ed; /* lightsteelblue */
-    border:thin solid #00008b; /* darkslateblue */
-    font-size:66%;
-    text-align:left;
-    width:35%;
-}
-
-div.toc h2
-{
-    background:#6a5acd; /* slateblue */
-    color:#fff;
-    padding:2px;
+    display:none;
 }
 
 p.toc
 {
-    text-align:right;
+    display:none;
 }

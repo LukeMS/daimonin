@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml title="Smacky's Guides, Acknowledgements">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section>
         <title>
             People who have been particularly helpful
@@ -29,6 +30,9 @@
         </p>
         <p>
             <em>Antoneja</em> for providing a tip <em>in verse</em>.
+        </p>
+        <p>
+            <em>Ellwoodblues</em> for creating some alternative link buttons for the website.
         </p>
         <p>
             Finally, the many unnamed readers who have invested time proof-reading <strong><em>Smacky's Guides</em></strong> or offered corrections or suggestions: thank you, this wouldn't be the same without your input.

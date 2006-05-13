@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Comomunication, Index">
 <section>
     <title>
         SMACKY'S GUIDE TO COMMUNICATION
@@ -19,3 +20,4 @@
         </li>
     </ul>
 </section>
+</daiml>

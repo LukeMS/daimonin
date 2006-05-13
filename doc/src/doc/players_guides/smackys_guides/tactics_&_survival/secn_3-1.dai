@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Combat Tactics &amp; Survival, Section 3-1: Fighting fit">
 <section>
     <title>
         SECTION 3-1: FIGHTING FIT
@@ -8,3 +9,4 @@
         THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
 </section>
+</daiml>
