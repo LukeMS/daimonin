@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 1: Logging in &amp; logging out">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="loggingin">
         <title>
             Logging in

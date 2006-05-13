@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Economics, Section 1: Currency">
+<section>
     <title>
         SECTION 1: CURRENCY
     </title>
@@ -122,3 +123,4 @@
         </section>
     </section>
 </section>
+</daiml>

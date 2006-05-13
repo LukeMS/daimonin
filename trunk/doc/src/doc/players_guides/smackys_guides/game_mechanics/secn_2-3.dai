@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-3: The quickbar">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="introduction">
         <title>
             Introduction

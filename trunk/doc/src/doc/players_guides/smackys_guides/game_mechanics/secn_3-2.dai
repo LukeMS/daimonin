@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml title="Smacky's Guide To Game Mechanics, Section 3-2: Settings">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section>
         <title>
             Introduction

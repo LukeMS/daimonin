@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Combat, Section 1-2: The targetting system">
 <section>
     <title>
         SECTION 1-2: THE TARGETTING SYSTEM
@@ -8,3 +9,4 @@
         THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
 </section>
+</daiml>

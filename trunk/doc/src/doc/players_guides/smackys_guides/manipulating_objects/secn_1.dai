@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Manipulating Objects, Section 1: Things nearby &amp; in your inventory">
+<section>
     <title>
         SECTION 1: THINGS NEARBY &amp; IN YOUR INVENTORY
     </title>
@@ -55,3 +56,4 @@
         </dl>
     </section>
 </section>
+</daiml>

@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 6: Death">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="introduction">
         <title>
             Introduction

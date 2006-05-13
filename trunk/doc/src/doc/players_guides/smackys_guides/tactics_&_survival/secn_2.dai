@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
-<section autotoc="On this page">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Combat Tactics &amp; Survival, Section 2: Mobology -- the study of mobs">
+<section>
     <title>
         SECTION 2: MOBOLOGY -- THE STUDY OF MOBS
     </title>
@@ -31,3 +32,4 @@
         </dl>
     </section>
 </section>
+</daiml>

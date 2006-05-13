@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Combat Tactics &amp; Survival, Index">
 <section>
     <title>
         SMACKY'S GUIDE TO COMBAT TACTICS &amp; SURVIVAL
@@ -70,3 +71,4 @@
         </li>
     </ul>
 </section>
+</daiml>

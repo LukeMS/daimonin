@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guides, Editing">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="textlicence">
         <title>
             Smacky's Guides are free documentation
@@ -30,7 +31,7 @@
                 Minor changes
             </title>
             <p>
-                If you have a suggestion or correction, please <a href="http://www.daimonin.net/index.php?name=phpBB2&amp;file=viewtopic&amp;t=1001">post it to the forums</a> and if it makes sense to me I'll incorporate it (and <a href="./acknowledgements.dai">acknowledge</a> you).
+                If you have a suggestion or correction, please <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=1001">post it to the forums</a> and if it makes sense to me I'll incorporate it (and <a href="./acknowledgements.dai">acknowledge</a> you).
             </p>
         </section>
         <section id="major">
@@ -46,7 +47,7 @@
                 Other changes
             </title>
             <p>
-                If you do have an idea which fits somewhere in between those two, please <a href="http://www.daimonin.net/modules.php?op=modload&amp;name=Messages&amp;file=replypmsg&amp;send=1&amp;uname=smacky">private message</a> me and we'll see about collaboration or such.
+                If you do have an idea which fits somewhere in between those two, please email me at <a href="mailto:smacky@smackysguides.net">smacky@smackysguides.net</a> and we'll see about collaboration or such.
             </p>
         </section>
     </section>

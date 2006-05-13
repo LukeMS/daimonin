@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Combat Tactics &amp; Survival, Section 1-1: Pardon me, friend, but is that mob taken?">
 <section>
     <title>
         SECTION 1-1: PARDON ME, FRIEND, BUT IS THAT MOB TAKEN?
@@ -8,3 +9,4 @@
         THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
 </section>
+</daiml>

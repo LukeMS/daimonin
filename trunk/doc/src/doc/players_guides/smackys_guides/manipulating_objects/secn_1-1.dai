@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE section SYSTEM "../../../../dtd/daidoc.dtd">
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml title="Smacky's Guide To Manipulating Objects, Section 1-1: Examining things"> 
 <section>
     <title>
-        SECTION 1-2: EXAMINING THINGS
+        SECTION 1-1: EXAMINING THINGS
     </title>
     <p>
         THIS SPACE INTENTIONALLY LEFT BLANK
     </p>
 </section>
+</daiml>

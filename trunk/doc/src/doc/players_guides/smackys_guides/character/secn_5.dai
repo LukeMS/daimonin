@@ -2,6 +2,7 @@
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 5: Armour protections">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="introduction">
         <title>
             Introduction
@@ -17,10 +18,10 @@
         </p>
         <div class="note">
             <p>
-                <img alt="[NOTE]" src="../note.png"/> You may also have resistances to particular attack types, for example via an amulet. Reesistances are also expressed in percentages, although they are not recorded on screen.
+                <img alt="[NOTE]" src="../note.png"/> You may also have resistances to particular attack types, for example via an amulet. Resistances are also expressed in percentages, although they are not recorded on screen.
             </p>
             <p>
-                Resistances work in a very similar way to protections (there are technical differences but these can essentially be ignored). If you have <em>either</em> resistance <em>or</em> protection of 20% the results are the same: an attack for 100 damage will actually only hit you for 100 - 20% = 80. If you have <em>both</em> resistance <em>and</em> protection of 20% both are taken into account to account (resistance first): an attack for 100 damage will actually hit for 100 - 20% = 80 - 20% =64.
+                Resistances work in a very similar way to protections (there are technical differences but these can essentially be ignored). If you have <em>either</em> resistance <em>or</em> protection of 20% the results are the same: an attack for 100 damage will actually only hit you for 100 - 20% = 80. If you have <em>both</em> resistance <em>and</em> protection of 20% both are taken into account (resistance first): an attack for 100 damage will actually hit for 100 - 20% = 80 - 20% = 64.
             </p>
         </div>
     </section>
