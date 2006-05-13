@@ -1,4 +1,3 @@
-
 material drbunsen_head
 {
 	technique
@@ -6,12 +5,11 @@ material drbunsen_head
 		pass
 		{
 
+			depth_write on
+			depth_check off
+			alpha_rejection greater 1
 			texture_unit
 			{
-				depth_write on
-				depth_check off
-				alpha_rejection greater 1
-				scene_blend off
 				texture Dr_Bunsen_Head.jpg
 			}
 		}

@@ -55,6 +55,8 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS  },
     // TextInput.
     { "Input_Password", GUI_TEXTINPUT_PASSWORD   },
+		// Combobox.
+		{ "ComboBoxTest"						, GUI_COMBOBOX_TEST },
 
 
   };

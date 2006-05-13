@@ -237,11 +237,11 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
   }
   Vector3 pos;
   const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
-  mBoundingBox.x = TILE_SIZE/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
-  mBoundingBox.z = TILE_SIZE/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+  mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
+  mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
   mBoundingBox.y = AABB.getMinimum().y;
-  pos.x = mPosX * TILE_SIZE + mBoundingBox.x;
-  pos.z = mPosZ * TILE_SIZE + mBoundingBox.z;;
+  pos.x = mPosX * TILE_SIZE_X + mBoundingBox.x;
+  pos.z = mPosZ * TILE_SIZE_Z + mBoundingBox.z;;
   pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
   mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
   mNode->attachObject(mEntityNPC);
@@ -463,8 +463,8 @@ void NPC::update(const FrameEvent& event)
       /// Set the exact destination pos.
       mPosX = mWalkToX;
       mPosZ = mWalkToZ;
-      mWalkToPos.x = mBoundingBox.x + mPosX * TILE_SIZE;
-      mWalkToPos.z = mBoundingBox.z + mPosZ * TILE_SIZE;
+      mWalkToPos.x = mBoundingBox.x + mPosX * TILE_SIZE_X;
+      mWalkToPos.z = mBoundingBox.z + mPosZ * TILE_SIZE_Z;
       mWalkToPos.y = Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ) - mBoundingBox.y;
       mNode->setPosition(mWalkToPos);
       mAutoMoving = false;
@@ -525,9 +525,9 @@ void NPC::moveToTile(int x, int z)
   /// Turn the head into the moving direction.
   faceToTile(x, z);
   /// Move it.
-  mWalkToPos.x = x * TILE_SIZE + mBoundingBox.x;
+  mWalkToPos.x = x * TILE_SIZE_X + mBoundingBox.x;
   mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) - mBoundingBox.y);
-  mWalkToPos.z = z * TILE_SIZE + mBoundingBox.z;
+  mWalkToPos.z = z * TILE_SIZE_Z + mBoundingBox.z;
   mDeltaPos = mNode->getPosition() - mWalkToPos;
   mWalkToX = x;
   mWalkToZ = z;
@@ -541,7 +541,6 @@ inline void NPC::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber,
 {
 
    texNumber = 0; // delete me!
-
 
   uint32 srcColor, dstColor;
   uint32 *texRace = (uint32*)image.getData();
@@ -593,7 +592,6 @@ inline void NPC::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber,
             picPart.dstY + picPart.h));
 
   delete[] buf;
-
 
 #ifdef WRITE_MODELTEXTURE_TO_FILE
   /// Writes the just blitted model-texture as png to disk.

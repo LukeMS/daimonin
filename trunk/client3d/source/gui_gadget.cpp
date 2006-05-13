@@ -22,48 +22,86 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_gadget.h"
 #include "gui_textout.h"
 #include "logger.h"
+#include "gui_imageset.h"
+#include "gui_window.h"
+
+GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY) :GuiElement(xmlElem, w, h, maxX, maxY)
+{
+    const char* strTmp;
+    GuiSrcEntry *srcEntry;
+
+    /// Find the gfx data in the tileset.
+    if (!(strTmp = xmlElem->Attribute("image_name")))
+        return;
+    srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
+    if (srcEntry)
+    {
+        for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
+            setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+    }
+    else
+    {
+        Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
+        << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
+    }
+		
+		if ((strTmp = xmlElem->Attribute("name")))
+		{
+				for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+				{
+						if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
+						{
+								index = GuiImageset::getSingleton().getElementIndex(i);
+								break;
+						}
+				}
+		}
+}
+
+GuiGadget::~GuiGadget()
+{
+
+}
 
 ///================================================================================================
 /// .
 ///================================================================================================
 void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
 {
-  /// ////////////////////////////////////////////////////////////////////
-  /// Draw gaget.
-  /// ////////////////////////////////////////////////////////////////////
-  PixelBox src = mSrcPixelBox.getSubVolume(Box(
-                   gfxSrcPos[mState].x,
-                   gfxSrcPos[mState].y,
-                   gfxSrcPos[mState].x + mWidth,
-                   gfxSrcPos[mState].y + mHeight));
-  texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
-  /// ////////////////////////////////////////////////////////////////////
-  /// Draw label.
-  /// ////////////////////////////////////////////////////////////////////
-  if (mStrLabel != "")
-  {
-    std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
-    TextLine label;
-    label.index= -1;
-    label.font = mLabelFont;
-    label.clipped = false;
-    if (mState == STATE_PUSHED)
-    {
-      label.x1 = mX+ mLabelXPos+1;
-      label.x2 = label.x1 + mWidth;
-      label.y1 = mY+ mLabelYPos+1;
-      label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-    }
-    else
-    {
-      label.x1 = mX+ mLabelXPos;
-      label.x2 = label.x1 + mWidth;
-      label.y1 = mY+ mLabelYPos;
-      label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-    }
-    GuiTextout::getSingleton().Print(&label, texture, mStrBgLabel.c_str());
-    --label.x1;
-    --label.y1;
-    GuiTextout::getSingleton().Print(&label, texture, mStrLabel.c_str());
-  }
+
+}
+
+///================================================================================================
+/// Just to forward method or to silently handle it
+///================================================================================================
+bool GuiGadget::setState(int state)
+{
+    return GuiElement::setState(state);
+}
+
+void GuiGadget::addTextline(const char *value)
+{
+
+}
+
+void GuiGadget::setText(const char *value)
+{
+
+}
+
+const char *GuiGadget::getText()
+{
+	return NULL;
+}
+
+int GuiGadget::getAction()
+{
+	int ret = mAction;
+	mAction = GUI_ACTION_NONE;
+	return ret;
+}
+
+bool GuiGadget::mouseOver(int x, int y)
+{
+	return GuiElement::mouseOver(x,y);
 }

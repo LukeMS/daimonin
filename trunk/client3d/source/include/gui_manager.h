@@ -99,7 +99,7 @@ private:
   static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
   int mDragSrcWin, mDragDestWin;
   int mDragSrcContainer, mDragDestContainer;
-  int mDragSrcItemPosx, mDragSrcItemPosy; // Wird bei drag start gesetzt, um Item bei falschem Drag zurückflutschen zu lassen.
+  int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
   int mProcessingTextInput;
   int mActiveWindow, mActiveElement;
   int mMouseX, mMouseY, mHotSpotX, mHotSpotY;

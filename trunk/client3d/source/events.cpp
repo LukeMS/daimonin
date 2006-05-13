@@ -97,7 +97,7 @@ return;
   static Vector3 dPos = pos;
   bool ui = false;
   /// East
-  if (pos.x + dPos.x > TILE_SIZE)
+  if (pos.x + dPos.x > TILE_SIZE_X)
   {
     pos.x -= dPos.x;
     short tmp[ TILES_SUM_Z+1];
@@ -115,7 +115,7 @@ return;
   }
 
   /// West
-  else if (pos.x + dPos.x < -TILE_SIZE)
+  else if (pos.x + dPos.x < -TILE_SIZE_X)
   {
     pos.x -= dPos.x;
     short tmp[ TILES_SUM_Z+1];
@@ -133,7 +133,7 @@ return;
   }
 
   /// South
-  else if (pos.z + dPos.z > TILE_SIZE)
+  else if (pos.z + dPos.z > TILE_SIZE_Z)
   {
     pos.z -= dPos.z;
     short tmp[ TILES_SUM_X+1];
@@ -151,7 +151,7 @@ return;
   }
 
   /// North
-  else if (pos.z + dPos.z < -TILE_SIZE)
+  else if (pos.z + dPos.z < -TILE_SIZE_Z)
   {
     pos.z -= dPos.z;
     short tmp[ TILES_SUM_X+1];
@@ -204,7 +204,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         // rigidly map.
         mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
-        mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2 + 942));
+        mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE_X/2 , 450, CHUNK_SIZE_Z * TILE_SIZE_Z/2 + 942));
         mCamera->pitch(Degree(-25));
         const Vector3 *corner = mCamera->getWorldSpaceCorners();
         mCamCornerX =  (corner[0].x - corner[1].x)/2;
@@ -375,7 +375,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"bigger distance.");
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~4 ... 8~ to change cloth.");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~g~ for grid. ");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~a~ to change Idle animation.");
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~b~ to change Attack animation.");
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");

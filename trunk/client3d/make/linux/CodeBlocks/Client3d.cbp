@@ -225,6 +225,16 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../source/gui_gadget_button.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/gui_gadget_combobox.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../source/gui_graphic.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
@@ -325,6 +335,20 @@
 		</Unit>
 		<Unit filename="../../../source/include/gui_gadget.h">
 			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/include/gui_gadget_button.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/include/gui_gadget_combobox.h">
+			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
 			<Option target="32bit" />

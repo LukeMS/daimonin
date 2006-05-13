@@ -62,11 +62,11 @@ ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing
   mPosZ = posZ;
   const AxisAlignedBox &AABB = mEntity->getBoundingBox();
   Vector3 pos;
-  mBoundingBox.x = TILE_SIZE/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
-  mBoundingBox.z = TILE_SIZE/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+  mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
+  mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
   mBoundingBox.y = AABB.getMinimum().y;
-  pos.x = mPosX * TILE_SIZE + mBoundingBox.x;
-  pos.z = mPosZ * TILE_SIZE + mBoundingBox.z;
+  pos.x = mPosX * TILE_SIZE_X + mBoundingBox.x;
+  pos.z = mPosZ * TILE_SIZE_Z + mBoundingBox.z;
   pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
   mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
   mNode->attachObject(mEntity);

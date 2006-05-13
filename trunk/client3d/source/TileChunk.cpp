@@ -71,9 +71,9 @@ void TileChunk::CreateSceneNode()
 
 
     m_Land  = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
-    m_Land ->setPosition(m_posX * TILE_SIZE * CHUNK_SIZE_X, 0, m_posZ * TILE_SIZE * CHUNK_SIZE_Z);
+    m_Land ->setPosition(m_posX * TILE_SIZE_X * CHUNK_SIZE_X, 0, m_posZ * TILE_SIZE_Z * CHUNK_SIZE_Z);
     m_Water = m_TileManagerPtr->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode();
-    m_Water->setPosition(m_posX * TILE_SIZE * CHUNK_SIZE_X, 0, m_posZ * TILE_SIZE * CHUNK_SIZE_Z);
+    m_Water->setPosition(m_posX * TILE_SIZE_X * CHUNK_SIZE_X, 0, m_posZ * TILE_SIZE_Z * CHUNK_SIZE_Z);
 
 
     static StaticGeometry *s=m_TileManagerPtr->Get_pSceneManager()->createStaticGeometry("test");
@@ -254,7 +254,7 @@ hasWater:
     pReal[8] = 0;
     pReal[9] = 0;
     /// ////////////////////////////////////////////////////////////////////
-    pReal[10] = TILE_SIZE * CHUNK_SIZE_X;
+    pReal[10] = TILE_SIZE_X * CHUNK_SIZE_X;
     pReal[11] = LEVEL_WATER_TOP * StretchZ;
     pReal[12] = 0;
     pReal[13] = 0;
@@ -267,7 +267,7 @@ hasWater:
     /// ////////////////////////////////////////////////////////////////////
     pReal[20] = 0;
     pReal[21] = LEVEL_WATER_TOP * StretchZ;
-    pReal[22] = TILE_SIZE * CHUNK_SIZE_Z;
+    pReal[22] = TILE_SIZE_Z * CHUNK_SIZE_Z;
     pReal[23] = 0;
     pReal[24] = 1;
     pReal[25] = 0;
@@ -280,7 +280,7 @@ hasWater:
     /// ////////////////////////////////////////////////////////////////////
     pReal[30] = 0;
     pReal[31] = LEVEL_WATER_TOP * StretchZ;
-    pReal[32] = TILE_SIZE * CHUNK_SIZE_Z;
+    pReal[32] = TILE_SIZE_Z * CHUNK_SIZE_Z;
     pReal[33] = 0;
     pReal[34] = 1;
     pReal[35] = 0;
@@ -289,7 +289,7 @@ hasWater:
     pReal[38] = 0;
     pReal[39] = 1;
     /// ////////////////////////////////////////////////////////////////////
-    pReal[40] = TILE_SIZE * CHUNK_SIZE_X;
+    pReal[40] = TILE_SIZE_X * CHUNK_SIZE_X;
     pReal[41] = LEVEL_WATER_TOP * StretchZ;
     pReal[42] = 0;
     pReal[43] = 0;
@@ -300,9 +300,9 @@ hasWater:
     pReal[48] = 1;
     pReal[49] = 0;
     /// ////////////////////////////////////////////////////////////////////
-    pReal[50] = TILE_SIZE * CHUNK_SIZE_X;
+    pReal[50] = TILE_SIZE_X * CHUNK_SIZE_X;
     pReal[51] = LEVEL_WATER_TOP * StretchZ;
-    pReal[52] = TILE_SIZE * CHUNK_SIZE_Z;
+    pReal[52] = TILE_SIZE_Z * CHUNK_SIZE_Z;
     pReal[53] = 0;
     pReal[54] = 1;
     pReal[55] = 0;
@@ -449,29 +449,29 @@ void TileChunk::CreateWaterHigh_Buffers()
                     q2 = LEVEL_WATER_CLP * StretchZ + WaveHigh;
                 }
                 // 1. Triangle
-                pReal[o   ] = TILE_SIZE * (a-x);
+                pReal[o   ] = TILE_SIZE_X * (a-x);
                 pReal[o+ 1] = q1;
-                pReal[o+ 2] = TILE_SIZE * (b-z);
+                pReal[o+ 2] = TILE_SIZE_Z * (b-z);
 
-                pReal[o+10] = TILE_SIZE * ((a-x)+1);
+                pReal[o+10] = TILE_SIZE_X * ((a-x)+1);
                 pReal[o+11] = q2;
-                pReal[o+12] = TILE_SIZE * (b-z);
+                pReal[o+12] = TILE_SIZE_Z * (b-z);
 
-                pReal[o+20] = TILE_SIZE * (a-x);
+                pReal[o+20] = TILE_SIZE_X * (a-x);
                 pReal[o+21] = q2;
-                pReal[o+22] = TILE_SIZE * ((b-z)+1);
+                pReal[o+22] = TILE_SIZE_Z * ((b-z)+1);
                 // 2. Triangle
-                pReal[o+30] = TILE_SIZE * (a-x);
+                pReal[o+30] = TILE_SIZE_X * (a-x);
                 pReal[o+31] = q2;
-                pReal[o+32] = TILE_SIZE * ((b-z)+1);
+                pReal[o+32] = TILE_SIZE_Z * ((b-z)+1);
 
-                pReal[o+40] = TILE_SIZE * ((a-x)+1);
+                pReal[o+40] = TILE_SIZE_X * ((a-x)+1);
                 pReal[o+41] = q2;
-                pReal[o+42] = TILE_SIZE * (b-z);
+                pReal[o+42] = TILE_SIZE_Z * (b-z);
 
-                pReal[o+50] = TILE_SIZE * ((a-x)+1);
+                pReal[o+50] = TILE_SIZE_X * ((a-x)+1);
                 pReal[o+51] = q1;
-                pReal[o+52] = TILE_SIZE * ((b-z)+1);
+                pReal[o+52] = TILE_SIZE_Z * ((b-z)+1);
 
                 /// ////////////////////////////////////////////////////////////////////
                 /// Normalvektoren
@@ -685,30 +685,30 @@ void TileChunk::CreateLandLow_Buffers()
                 /// Position.
                 /// ////////////////////////////////////////////////////////////////////
                 // 1. Triangle
-                pReal1[o+ 0] = TILE_SIZE * (a-x);
+                pReal1[o+ 0] = TILE_SIZE_X * (a-x);
                 pReal1[o+ 1] = g;
-                pReal1[o+ 2] = TILE_SIZE * (b-z);
+                pReal1[o+ 2] = TILE_SIZE_Z * (b-z);
 
-                pReal1[o+ 8] = TILE_SIZE * (a-x+1);
+                pReal1[o+ 8] = TILE_SIZE_X * (a-x+1);
                 pReal1[o+ 9] = h;
-                pReal1[o+10] = TILE_SIZE * (b-z);
+                pReal1[o+10] = TILE_SIZE_Z * (b-z);
 
-                pReal1[o+16] = TILE_SIZE * (a-x);
+                pReal1[o+16] = TILE_SIZE_X * (a-x);
                 pReal1[o+17] = d;
-                pReal1[o+18] = TILE_SIZE * (b-z+1);
+                pReal1[o+18] = TILE_SIZE_Z * (b-z+1);
 
                 // 2. Triangle
-                pReal1[o+24] = TILE_SIZE * (a-x);
+                pReal1[o+24] = TILE_SIZE_X * (a-x);
                 pReal1[o+25] = d;
-                pReal1[o+26] = TILE_SIZE * (b-z+1);
+                pReal1[o+26] = TILE_SIZE_Z * (b-z+1);
 
-                pReal1[o+32] = TILE_SIZE * (a-x+1);
+                pReal1[o+32] = TILE_SIZE_X * (a-x+1);
                 pReal1[o+33] = h;
-                pReal1[o+34] = TILE_SIZE * (b-z);
+                pReal1[o+34] = TILE_SIZE_Z * (b-z);
 
-                pReal1[o+40] = TILE_SIZE * (a-x+1);
+                pReal1[o+40] = TILE_SIZE_X * (a-x+1);
                 pReal1[o+41] = f;
-                pReal1[o+42] = TILE_SIZE * (b-z+1);
+                pReal1[o+42] = TILE_SIZE_Z * (b-z+1);
                 /// ////////////////////////////////////////////////////////////////////
                 /// Normals.
                 /// ////////////////////////////////////////////////////////////////////
@@ -828,6 +828,12 @@ void TileChunk::CreateLandHigh(int tileTextureSize)
     sprintf( TempName, "Land[%d,%d] High Entity", m_posX, m_posZ );
     m_Land_entity_high = m_TileManagerPtr->Get_pSceneManager()->createEntity(TempName, MeshName);
     m_Land_entity_high->setQueryFlags(QUERY_TILES_LAND_MASK);
+
+
+#define COLOR_MODULATE_PARAM_INDEX 1
+    //SubEntity* pSub = m_Land_entity_high->getSubEntity(0);
+    //pSub->setCustomParameter(COLOR_MODULATE_PARAM_INDEX, Vector4(0.f, 0.f, 1.0f, 0.2f));
+
     // m_Land->attachObject( m_Land_entity_high );
     m_IsAttached = false;
 }
@@ -913,56 +919,56 @@ void TileChunk::CreateLandHigh_Buffers()
                 /// Position.
                 /// ////////////////////////////////////////////////////////////////////
                 // 1. Triangle
-                pReal1[o   ] = TILE_SIZE * (a-x);
+                pReal1[o   ] = TILE_SIZE_X * (a-x);
                 pReal1[o+ 1] = d;
-                pReal1[o+ 2] = TILE_SIZE * (b-z+1);
+                pReal1[o+ 2] = TILE_SIZE_Z * (b-z+1);
 
-                pReal1[o+12] = TILE_SIZE * (a-x );
+                pReal1[o+12] = TILE_SIZE_X * (a-x );
                 pReal1[o+13] = g;
-                pReal1[o+14] = TILE_SIZE * (b-z );
+                pReal1[o+14] = TILE_SIZE_Z * (b-z );
 
-                pReal1[o+24] = TILE_SIZE * (a-x+.5);
+                pReal1[o+24] = TILE_SIZE_X * (a-x+.5);
                 pReal1[o+25] = average;
-                pReal1[o+26] = TILE_SIZE * (b-z+.5);
+                pReal1[o+26] = TILE_SIZE_Z * (b-z+.5);
 
                 // 2. Triangle
-                pReal1[o+36] = TILE_SIZE * (a-x);
+                pReal1[o+36] = TILE_SIZE_X * (a-x);
                 pReal1[o+37] = g;
-                pReal1[o+38] = TILE_SIZE * (b-z);
+                pReal1[o+38] = TILE_SIZE_Z * (b-z);
 
-                pReal1[o+48] = TILE_SIZE * (a-x+1);
+                pReal1[o+48] = TILE_SIZE_X * (a-x+1);
                 pReal1[o+49] = h;
-                pReal1[o+50] = TILE_SIZE * (b-z);
+                pReal1[o+50] = TILE_SIZE_Z * (b-z);
 
-                pReal1[o+60] = TILE_SIZE * (a-x +.5);
+                pReal1[o+60] = TILE_SIZE_X * (a-x +.5);
                 pReal1[o+61] = average;
-                pReal1[o+62] = TILE_SIZE * (b-z +.5);
+                pReal1[o+62] = TILE_SIZE_Z * (b-z +.5);
 
                 // 3. Triangle
-                pReal1[o+72] = TILE_SIZE * (a-x+1);
+                pReal1[o+72] = TILE_SIZE_X * (a-x+1);
                 pReal1[o+73] = h;
-                pReal1[o+74] = TILE_SIZE * (b-z);
+                pReal1[o+74] = TILE_SIZE_Z * (b-z);
 
-                pReal1[o+84] = TILE_SIZE * (a-x +1);
+                pReal1[o+84] = TILE_SIZE_X * (a-x +1);
                 pReal1[o+85] = f;
-                pReal1[o+86] = TILE_SIZE * (b-z +1);
+                pReal1[o+86] = TILE_SIZE_Z * (b-z +1);
 
-                pReal1[o+96] = TILE_SIZE * (a-x+.5);
+                pReal1[o+96] = TILE_SIZE_X * (a-x+.5);
                 pReal1[o+97] = average;
-                pReal1[o+98] = TILE_SIZE * (b-z+.5);
+                pReal1[o+98] = TILE_SIZE_Z * (b-z+.5);
 
                 // 4. Triangle
-                pReal1[o+108] = TILE_SIZE * (a-x +1);
+                pReal1[o+108] = TILE_SIZE_X * (a-x +1);
                 pReal1[o+109] = f;
-                pReal1[o+110] = TILE_SIZE * (b-z +1);
+                pReal1[o+110] = TILE_SIZE_Z * (b-z +1);
 
-                pReal1[o+120] = TILE_SIZE * (a-x   );
+                pReal1[o+120] = TILE_SIZE_X * (a-x   );
                 pReal1[o+121] = d;
-                pReal1[o+122] = TILE_SIZE * (b-z +1);
+                pReal1[o+122] = TILE_SIZE_Z * (b-z +1);
 
-                pReal1[o+132] = TILE_SIZE * (a-x+.5);
+                pReal1[o+132] = TILE_SIZE_X * (a-x+.5);
                 pReal1[o+133] = average;
-                pReal1[o+134] = TILE_SIZE * (b-z+.5);
+                pReal1[o+134] = TILE_SIZE_Z * (b-z+.5);
 
                 /// ////////////////////////////////////////////////////////////////////
                 /// Normalvektoren
@@ -1047,6 +1053,42 @@ void TileChunk::CreateLandHigh_Buffers()
                 pReal1[o+127] = row;
                 pReal1[o+138] = col + 0.5 / 16.0;
                 pReal1[o+139] = row + 0.5 / 16.0;
+
+
+/*
+
+                // 1. Triangle links
+                pReal1[o+  6] = 0.0;
+                pReal1[o+  7] = 0.0;
+                pReal1[o+ 18] = 0.0;
+                pReal1[o+ 19] = 1.0;
+                pReal1[o+ 30] = 0.5;
+                pReal1[o+ 31] = 0.5;
+
+                // 2. Triangle oben
+                pReal1[o+ 42] = 0.0;
+                pReal1[o+ 43] = 1.0;
+                pReal1[o+ 54] = 1.0;
+                pReal1[o+ 55] = 1.0;
+                pReal1[o+ 66] = 0.5;
+                pReal1[o+ 67] = 0.5;
+                // 3. Triangle
+                pReal1[o+ 78] = 1.0;
+                pReal1[o+ 79] = 1.0;
+                pReal1[o+ 90] = 1.0;
+                pReal1[o+ 91] = 0.0;
+                pReal1[o+102] = 0.5;
+                pReal1[o+103] = 0.5;
+                // 4. Triangle
+                pReal1[o+114] = 1.0;
+                pReal1[o+115] = 0.0;
+                pReal1[o+126] = 0.0;
+                pReal1[o+127] = 0.0;
+                pReal1[o+138] = 0.5;
+                pReal1[o+139] = 0.5;
+*/
+
+
                 /// ////////////////////////////////////////////////////////////////////
                 /// Filter-Texture.
                 /// ////////////////////////////////////////////////////////////////////
@@ -1143,12 +1185,42 @@ void TileChunk::CreateLandHigh_Buffers()
                 pReal1[o+129] = row;
                 pReal1[o+140] = col + 0.5 / 16.0;
                 pReal1[o+141] = row + 0.5 / 16.0;
+/*
+                // 1. Triangle
+                pReal1[o+  8] = 0.0;
+                pReal1[o+  9] = 0.0;
+                pReal1[o+ 20] = 0.0;
+                pReal1[o+ 21] = 1.0;
+                pReal1[o+ 32] = 0.5;
+                pReal1[o+ 33] = 0.5;
+                // 2. Triangle
+                pReal1[o+ 44] = 0.0;
+                pReal1[o+ 45] = 1.0;
+                pReal1[o+ 56] = 1.0;
+                pReal1[o+ 57] = 1.0;
+                pReal1[o+ 68] = 0.5;
+                pReal1[o+ 69] = 0.5;
+                // 3. Triangle
+                pReal1[o+ 80] = 1.0;
+                pReal1[o+ 81] = 1.0;
+                pReal1[o+ 92] = 1.0;
+                pReal1[o+ 93] = 0.0;
+                pReal1[o+104] = 0.5;
+                pReal1[o+105] = 0.5;
+                // 4. Triangle
+                pReal1[o+116] = 1.0;
+                pReal1[o+117] = 0.0;
+                pReal1[o+128] = 0.0;
+                pReal1[o+129] = 0.0;
+                pReal1[o+140] = 0.5;
+                pReal1[o+141] = 0.5;
+*/
                 /// ////////////////////////////////////////////////////////////////////
                 /// Grid-Texture.
                 /// ////////////////////////////////////////////////////////////////////
                 // 1. Triangle
                 pReal1[o+ 10] = 0.0;
-                pReal1[o+ 11] = 1.0;
+                pReal1[o+ 11] = 0.0;
                 pReal1[o+ 22] = 0.0;
                 pReal1[o+ 23] = 1.0;
                 pReal1[o+ 34] = 0.5;

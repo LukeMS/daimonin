@@ -191,24 +191,34 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     GuiSrcEntry *srcEntry;
     for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
     {
-        /// Find the gfx data in the tileset.
-        if (!(strTmp = xmlElem->Attribute("image_name")))
-            continue;
-        srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
-        if (srcEntry)
+        int w = 0;
+        int h = 0;
+
+
+        if ((strTmp = xmlElem->Attribute("image_name")))
         {
-            GuiGadget *gadget = new GuiGadget(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
-            for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
+            if (( srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp)))
             {
-                gadget->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+                w = srcEntry->width;
+                h = srcEntry->height;
             }
-            mvGadget.push_back(gadget);
+        }
+
+        if ( !strcmp(xmlElem->Attribute("type"), "BUTTON"))
+        {
+            GuiGadgetButton *button = new GuiGadgetButton(xmlElem, w, h, mWidth, mHeight);
+            mvGadget.push_back(button);
+            mvButton.push_back(button);
+        }
+        else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
+        {
+            GuiGadgetCombobox *combobox = new GuiGadgetCombobox(xmlElem, w, h, mWidth, mHeight);
+            mvCombobox.push_back(combobox);
+            mvGadget.push_back(combobox);
         }
         else
-        {
-            Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
-            << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
-        }
+            Logger::log().warning() << xmlElem->Attribute("type") << " is not a defined gadget type.";
+
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the graphics.
@@ -326,7 +336,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the "Talking Head".
     /// ////////////////////////////////////////////////////////////////////
-	mSceneNode = 0;
+    mSceneNode = 0;
     /// Currently we are using only 1 head !
     for (xmlElem = xmlRoot->FirstChildElement("NPC_Head"); xmlElem; xmlElem = xmlElem->NextSiblingElement("NPC_Head"))
     {
@@ -356,14 +366,18 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             manualKeyFrame->addPoseReference(poseIndexes[i], 0.0f);
         }
         Entity* head = Event->GetSceneManager()->createEntity("Head", strTmp);
-        mSceneNode = Event->GetSceneManager()->createSceneNode("Head");
+        //        mSceneNode = Event->GetSceneManager()->createSceneNode();
+        mSceneNode = new SceneNode(NULL);
         mSceneNode->attachObject(head);
+
+
         Real px, py;
         px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
              *(mPosX+ mHeadPosX) - Event->getCamCornerX();
         py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
              *(mPosY+ mHeadPosY) - Event->getCamCornerY();
         mSceneNode->setPosition(px, py, -200);
+
 
         mSceneNode->scale(.5, .5, .5); // testing
 
@@ -372,6 +386,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         mManualAnimState = head->getAnimationState("manual");
         mManualAnimState->setTimePosition(0);
     }
+
+
 }
 
 ///================================================================================================
@@ -486,8 +502,8 @@ void GuiWindow::drawAll()
     /// Now delete all TextLines with index < 0.
     for (vector<TextLine*>::iterator i = mvTextline.end(); i< mvTextline.begin(); --i)
     {
-        if ((*i)->
-                index < 0) mvTextline.erase(i);
+        if ((*i)->index < 0) mvTextline.erase(i);
+		if (mvTextline.empty()) break;
     }
 
     /// ////////////////////////////////////////////////////////////////////
@@ -517,6 +533,10 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 
     int gadget;
     const char *actGadgetName = NULL;
+
+    // Dont pass the action throw this window
+    if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
+        actGadgetName = "";
     switch (MouseAction)
     {
         //case M_RESIZE:
@@ -649,7 +669,24 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             break;
         }
     }
+
+		PreformActions();
     return actGadgetName;
+}
+
+void GuiWindow::PreformActions()
+{
+	for( unsigned int i = 0 ; i < mvGadget.size() ; i++ )
+	{
+		switch( mvGadget[i]->getAction() )
+		{
+		case GUI_ACTION_START_TEXT_INPUT:
+			GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->index, 20, true, true);
+			mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
+			break;
+		}
+	}
+
 }
 
 ///================================================================================================
@@ -657,7 +694,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 ///================================================================================================
 const char *GuiWindow::Message(int message, int element, const char *value)
 {
-    switch (message)
+		switch (message)
     {
         case GUI_MSG_ADD_TEXTLINE:
         for (unsigned int i = 0; i < mvListbox.size() ; ++i)
@@ -676,6 +713,16 @@ const char *GuiWindow::Message(int message, int element, const char *value)
                 continue;
             mvTextline[i]->text = value;
             GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value);
+						return NULL;
+            break;
+        }
+				for (unsigned int i = 0; i < mvGadget.size() ; ++i)
+        {
+            if (mvGadget[i]->index != element)
+                continue;
+            mvGadget[i]->setText(value);
+            mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
+						return NULL;
             break;
         }
         break;
@@ -687,6 +734,13 @@ const char *GuiWindow::Message(int message, int element, const char *value)
                 continue;
             return mvTextline[i]->text.c_str();
             break;
+        }
+				for (unsigned int i = 0; i < mvGadget.size() ; ++i)
+        {
+            if (mvGadget[i]->index != element)
+                continue;
+            return mvGadget[i]->getText();
+						break;
         }
         break;
 
@@ -715,7 +769,7 @@ void GuiWindow::setHeight(int newHeight)
 ///================================================================================================
 void GuiWindow::updateDragAnimation()
 {
-    ;// "zurückflutschen" bei falschem drag.
+    ;// move back on wrong drag
 }
 
 ///================================================================================================
@@ -744,3 +798,4 @@ void GuiWindow::updateListbox()
         (*i)->draw(mSrcPixelBox /* just a dummy */, mTexture.getPointer());
     }
 }
+

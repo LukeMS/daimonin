@@ -18,38 +18,51 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_H
-#define GUI_GADGET_H
+#ifndef GUI_GADGET_COMBOBOX_H
+#define GUI_GADGET_COMBOBOX_H
 
-class GuiGadget;
+class GuiGadgetCombobox;
 
+#include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
-#include "gui_element.h"
+#include "gui_imageset.h"
+#include "gui_gadget.h"
+#include "gui_textout.h"
 
 using namespace Ogre;
 
-class GuiGadget: public GuiElement
+
+class GuiGadgetCombobox : public GuiGadget
 {
-
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  GuiGadget(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
-  virtual ~GuiGadget();
+    GuiGadgetCombobox(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
+    ~GuiGadgetCombobox();
 
-  virtual bool setState(int state);
-  virtual void draw(PixelBox &mSrcPixelBox, Texture *texture);
-	virtual void addTextline(const char *value);
-	virtual void setText(const char *value);
-	virtual const char *getText();
-	virtual bool mouseOver(int x, int y);
-
-	int getAction();
-	int index;
-protected:
-	int mAction;
+    void draw(PixelBox &mSrcPixelBox, Texture *texture);
+		void setText(const char *value);
+    bool setState(int state);
+		bool mouseOver(int x, int y);
+		
+		const char *getText();
+private:
+		GuiSrcEntry *srcButton;
+		uint32 *mGfxBuffer;
+    int  mFontHeight;
+		int mMaxChars;
+		int mEntryHeight;
+		int bw;
+		int mMouseX, mMouseY;
+		int mActiveDropdownOption;
+    bool mUseNumbers;
+    bool mUseWhitespaces;
+		bool mDispDropdown;
+		bool mDDButton;
+    std::vector<std::string> mvOption;
+    std::vector<int> mvValue;
+    
 };
 
-#endif
+
+#endif // GUI_COMBOBOX_H
+

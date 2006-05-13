@@ -224,6 +224,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\gui_gadget_button.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\gui_gadget_combobox.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\gui_graphic.cpp"
 				>
 			</File>
@@ -362,6 +370,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\gui_gadget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\gui_gadget_button.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\gui_gadget_combobox.h"
 				>
 			</File>
 			<File
