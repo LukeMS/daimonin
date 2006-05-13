@@ -6,17 +6,16 @@ rem ====================================
 rem ====================================
 rem Unpack all files.
 rem ====================================
-..\..\_Tools_\gunzip -c ogre_lib.tgz >ogre_lib.tar
-..\..\_Tools_\tar xvf ogre_lib.tar
-..\..\_Tools_\gunzip -c ogre_inc.tgz >ogre_inc.tar
-..\..\_Tools_\tar xvf ogre_inc.tar
-..\..\_Tools_\gunzip -c ogre_dll.tgz >ogre_dll.tar
-..\..\_Tools_\tar xvf ogre_dll.tar
-
 ..\..\_Tools_\gunzip -c fmod_lib.tgz >fmod_lib.tar
 ..\..\_Tools_\tar xvf fmod_lib.tar
 ..\..\_Tools_\gunzip -c fmod_dll.tgz >fmod_dll.tar
 ..\..\_Tools_\tar xvf fmod_dll.tar
+..\..\_Tools_\gunzip -c ogre_dll.tgz >ogre_dll.tar
+..\..\_Tools_\tar xvf ogre_dll.tar
+..\..\_Tools_\gunzip -c ogre_inc.tgz >ogre_inc.tar
+..\..\_Tools_\tar xvf ogre_inc.tar
+..\..\_Tools_\gunzip -c stlport.tgz >stlport.tar
+..\..\_Tools_\tar xvf stlport.tar
 
 rem ====================================
 rem Copy the dll's to main folder.
@@ -25,11 +24,6 @@ move ogre_dll\*.* ..\..\..\
 move fmod_dll\*.* ..\..\..\
 rmdir ogre_dll
 rmdir fmod_dll
-
-rem ====================================
-rem We need the Code::Blocks plugins.
-rem ====================================
-copy plugins.cfg ..\..\..\
 
 rem ====================================
 rem Clean up.

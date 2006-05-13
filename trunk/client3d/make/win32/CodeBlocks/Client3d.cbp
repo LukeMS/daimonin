@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="3" />
+	<FileVersion major="1" minor="4" />
 	<Project>
 		<Option title="client3d" />
 		<Option compiler="gcc" />
@@ -14,7 +14,6 @@
 				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
-					<Add option="-W" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-DWIN32" />
@@ -23,9 +22,14 @@
 					<Add option="-D_STLP_DEBUG" />
 				</Compiler>
 				<Linker>
-					<Add library="stlportstlg.5.0.dll" />
-					<Add library="..\..\..\OgreMain_d.dll" />
+					<Add library="OgreMain_d" />
+					<Add library="stlportstlg.5.0" />
+					<Add directory="ogre_dll\debug" />
 				</Linker>
+				<ExtraCommands>
+					<Add after=".\..\..\_Tools_\cp.exe plugins_debug.cfg ..\..\..\plugins.cfg" />
+					<Mode after="always" />
+				</ExtraCommands>
 			</Target>
 			<Target title="Release">
 				<Option output="..\..\..\client3d.exe" />
@@ -36,6 +40,7 @@
 				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
+					<Add option="-O3" />
 					<Add option="-Wall" />
 					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
@@ -43,9 +48,14 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="stlport.5.0.dll" />
+					<Add library="stlport.5.0" />
 					<Add library="OgreMain" />
+					<Add directory="ogre_dll\release" />
 				</Linker>
+				<ExtraCommands>
+					<Add after=".\..\..\_Tools_\cp.exe plugins_release.cfg  ..\..\..\plugins.cfg" />
+					<Mode after="always" />
+				</ExtraCommands>
 			</Target>
 		</Build>
 		<Compiler>
@@ -55,6 +65,7 @@
 			<Add option="-fident" />
 			<Add option="-D_STLP_NO_CUSTOM_IO" />
 			<Add option="-D_STLP_USE_DYNAMIC_LIB" />
+			<Add option="-DMINGW" />
 			<Add directory="ogre_inc" />
 			<Add directory="stlport\stlport" />
 			<Add directory="..\..\..\source\include" />
@@ -260,6 +271,16 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\source\gui_gadget_button.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\gui_gadget_combobox.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\..\source\gui_graphic.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
@@ -360,6 +381,20 @@
 		</Unit>
 		<Unit filename="..\..\..\source\include\gui_gadget.h">
 			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_gadget_button.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\include\gui_gadget_combobox.h">
+			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
 			<Option target="Debug" />

@@ -24,7 +24,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="copy .\ogre_dll\debug\*.dll ..\..\..\"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -97,6 +97,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=".\..\..\_Tools_\cp.exe plugins_debug.cfg ..\..\..\plugins.cfg&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -109,7 +110,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="copy .\ogre_dll\release\*.dll ..\..\..\"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -183,7 +184,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=""
+				CommandLine=".\..\..\_Tools_\cp.exe plugins_release.cfg ..\..\..\plugins.cfg&quot;"
 			/>
 		</Configuration>
 	</Configurations>
