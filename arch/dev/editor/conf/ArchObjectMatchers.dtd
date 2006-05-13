@@ -5,6 +5,10 @@
 
 <!ELEMENT ArchObjectMatchers (ArchObjectMatcher+)>
 <!ELEMENT ArchObjectMatcher (title+,%Match;)>
+<!ATTLIST ArchObjectMatcher
+    id CDATA #IMPLIED
+>
+
 <!ELEMENT title (#PCDATA)>
 <!ATTLIST title
     xml:lang CDATA #REQUIRED
