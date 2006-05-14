@@ -1,0 +1,78 @@
+///===================================================
+/// Style
+///===================================================
+
+* Astyle is used as source code formatter.
+  Identation:
+  - Indentation size: 4 spaces
+  - Converts TABs to spaces
+  - Indent case:
+  Formatting:
+  - Brackets: Break
+  - Don't break complex statements and multiple statements residing in a single line
+  - Don't break one-line blocks
+
+* Variables / Function names uses a mixed case format, starting with a lower case letter.
+  Example: sumMonsters
+
+* Private and protected member variables are prefixed with a lower case "m".
+  It can be followed by lower case "v" for Vector, "p" for Pointer, ...
+  Followed by the variable name starting with an upper case letter.
+  Example: mvParticle
+
+* Constants are upper case only. Underscore will be used for separating words.
+  Example: MAX_LIGHTS
+
+* Use one whitespace after , and ;
+  Example: Vector3(1, 2, 3)
+
+* Use one whitespace before and after operator.
+  Example: if ((a * 3) >0)
+
+* Use brackets to improve readability.
+
+
+///===================================================
+/// Design Guidelines
+///===================================================
+
+* There are no gloabal variables.
+
+* Constants are not defined by #define but by const.
+  Example: const int MAX_LIGHTS = 4;
+
+* Use const when it is possible. This includes variables and method declaration.
+
+* Each class should be contained in its own file.
+
+* Use pass-by-reference over pass-by-value when possible.
+
+* Strongly prefer C++ style casts to C style casts.
+
+* For STL containers, use empty() instead of checking size() against zero.
+
+* ++var should be preferred over var++.
+
+* If a base class has virtual functions, derived classes should have the "virtual" keyword repeated for those functions.
+
+* C++ style headers should be preferred over C style.
+  Example: #inclue <cstring>
+
+* Prefer standard C++ library and STL functions over C stdlib functions.
+
+* All class variables should be initialized to a sane value in the constructor.
+
+* It is not necessary to check that a pointer value is not 0 before deleting it.
+  C++ guarantees that delete on a 0 value is safe.
+
+* When a member value pointer is deleted, it should be set to 0.
+
+* 0 should be preferred over NULL.
+
+* Prefer Ogre::String over std::string or other string types.
+
+* When adding comments prefer // over /* */
+  /* */ is fine for license texts, or for large function explanations before each function or method.
+  But inside of a code block its forbidden.
+
+* Use pass-by-reference over pass-by-value when the type passed is larger than one int.
