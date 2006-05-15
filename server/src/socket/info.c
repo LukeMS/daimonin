@@ -63,9 +63,13 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     {
         player *tmppl;
         for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next)
-            new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
+		{
+			if(tmppl->state != ST_DEAD && tmppl->state != ST_ZOMBIE && tmppl->socket.status != Ns_Dead)
+	            new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
+		}
         return;
     }
+
 
     /* here handle some security stuff... a bit overhead for max secure */
     if (!pl || pl->type != PLAYER)

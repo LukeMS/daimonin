@@ -557,7 +557,7 @@ static void block_until_new_connection()
 void remove_ns_dead_player(player *pl)
 {
 
-    if (pl->state != ST_DEAD && pl->state != ST_ZOMBIE)
+    if (pl->state != ST_DEAD)
 	{
 		/* remove the player from global gmaster lists */
 		if(pl->gmaster_mode != GMASTER_MODE_NO)
@@ -607,7 +607,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
     int         count, i;
     player      *next_tmp, *pl, *ptmp = NULL;
 
-    return FALSE; /* this will disable the IP check */
+    /*return FALSE;*/ /* this will disable the IP check */
     /* lets first check sensless connected sockets
      * from same IP.
      * Mark all from same IP as dead.

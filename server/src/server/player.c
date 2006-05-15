@@ -235,7 +235,18 @@ void free_player(player *pl)
     if (pl->ob)
     {
         SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
-	    activelist_remove(pl->ob);
+
+		container_unlink(pl, NULL);
+
+		/* remove the player from global gmaster lists */
+		if(pl->gmaster_mode != GMASTER_MODE_NO)
+			remove_gmaster_list(pl);
+
+		/* remove player from party */
+		if(pl->group_status & GROUP_STATUS_GROUP)
+			party_remove_member(pl, TRUE);
+		
+		activelist_remove(pl->ob);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED))
         {
             remove_ob(pl->ob);
