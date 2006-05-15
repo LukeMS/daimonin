@@ -42,16 +42,16 @@ static void party_dump(object *pobj)
 	{
 		if(QUERY_FLAG(tmp, FLAG_REMOVED))
 		{
-			LOG(llevDebug, "PARTY_DUMP %d: object %s REMOVED?!", i, query_name(pobj));
+			LOG(llevDebug, "PARTY_DUMP %d: object %x REMOVED?!", i, tmp);
 			return;
 		}
 		if(tmp->type != PLAYER ||!CONTR(tmp))
 		{
-			LOG(llevDebug, "PARTY_DUMP %d: object %s no CONTR/NO PLAYER?!", i, query_name(pobj));
+			LOG(llevDebug, "PARTY_DUMP %d: object %x no CONTR/NO PLAYER?!", i, tmp);
 			return;
 		}
-		LOG(llevDebug, "PARTY_DUMP %d: player %s (%x)-> s:%d id:%d nr:%d nrof:%d l:%x p:%x n:%x\n", i, query_name(tmp),
-			tmp, CONTR(tmp)->group_status, CONTR(tmp)->group_id,CONTR(tmp)->group_nr, CONTR(tmp)->group_nrof,
+		LOG(llevDebug, "PARTY_DUMP %d: player %s (%x c:%d)-> s:%d id:%d nr:%d nrof:%d l:%x p:%x n:%x\n", i, query_name(tmp),
+			tmp, tmp->count, CONTR(tmp)->group_status, CONTR(tmp)->group_id,CONTR(tmp)->group_nr, CONTR(tmp)->group_nrof,
 			CONTR(tmp)->group_leader, CONTR(tmp)->group_prev, CONTR(tmp)->group_next);
 	}
 }

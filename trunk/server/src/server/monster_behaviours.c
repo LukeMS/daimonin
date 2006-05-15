@@ -609,8 +609,10 @@ int get_friendship(object *op, object *other)
 		} 
         else 
         {
-            LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
+#ifdef DEBUG_FRIENDSHIP_WARNING		
+			LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
                     STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+#endif
             return 0;
         }
 	}

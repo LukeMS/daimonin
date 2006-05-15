@@ -51,6 +51,8 @@
 #define DEBUG_GROUP
 #define DEBUG_GROUP_UPDATE
 
+/*#define DEBUG_FRIENDSHIP_WARNING*/
+
 /* Debug Link Spawns: spawn_point.c */
 #define DEBUG_LINK_SPAWN /* log message when a linked spawn point is added, removed or called */
 

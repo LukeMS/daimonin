@@ -601,6 +601,7 @@ void check_login(object *op)
                         new_draw_info(NDI_UNIQUE, 0, pl->ob, "Double login! Kicking older instance!");
                         pl->state = state_tmp;
                         fclose(fp);
+						save_player(ptmp->ob, 1);
 						ptmp->state = ST_ZOMBIE;
 						ptmp->socket.status = Ns_Dead;
                         remove_ns_dead_player(ptmp);/* super hard kick! */
