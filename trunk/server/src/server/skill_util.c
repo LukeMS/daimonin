@@ -24,7 +24,6 @@
 */
 
 /* define the following for skills utility debuging */
-/* #define SKILL_UTIL_DEBUG */
 
 #include <global.h>
 #include "skillist.h"
@@ -1138,6 +1137,9 @@ float get_skill_time(object *op, int skillnr)
  */
 int check_skill_action_time(object *op, object *skill)
 {
+	if(!skill)
+		return FALSE;
+
     switch (skill->stats.sp)
     {
           /* spells */

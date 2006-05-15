@@ -1067,7 +1067,8 @@ static int basic_emote(object *op, char *params, int emotion)
             {
                 for (pl = first_player; pl != NULL; pl = pl->next)
                 {
-                    if (pl->ob->name == name_hash && pl->state == ST_PLAYING && !QUERY_FLAG(pl->ob,FLAG_REMOVED))
+                    if (pl->ob->name == name_hash && pl->state == ST_PLAYING && !
+						QUERY_FLAG(pl->ob,FLAG_REMOVED) && !pl->dm_stealth)
                     {
                         rv_vector   rv; /* lets check range */
                         get_rangevector(op, pl->ob, &rv, 0);
