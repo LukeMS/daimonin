@@ -607,7 +607,7 @@ static int check_ip_ban(NewSocket *sock, char *ip)
     int         count, i;
     player      *next_tmp, *pl, *ptmp = NULL;
 
-    /*return FALSE;*/ /* this will disable the IP check */
+    return FALSE; /* this will disable the IP check */
     /* lets first check sensless connected sockets
      * from same IP.
      * Mark all from same IP as dead.

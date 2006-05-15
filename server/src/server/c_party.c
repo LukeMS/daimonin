@@ -25,6 +25,38 @@
 #include <stdarg.h>
 #include <global.h>
 
+/* DEBUG ONLY */
+#ifdef DEBUG_GROUP
+static void party_dump(object *pobj)
+{
+	int i=0;
+	object *tmp;
+
+	if(!CONTR(pobj))
+	{
+		LOG(llevDebug, "PARTY_DUMP: object %s without controller!", query_name(pobj));
+		return;
+	}
+
+	for(tmp=CONTR(pobj)->group_leader;tmp;tmp=CONTR(tmp)->group_next,i++)
+	{
+		if(QUERY_FLAG(tmp, FLAG_REMOVED))
+		{
+			LOG(llevDebug, "PARTY_DUMP %d: object %s REMOVED?!", i, query_name(pobj));
+			return;
+		}
+		if(tmp->type != PLAYER ||!CONTR(tmp))
+		{
+			LOG(llevDebug, "PARTY_DUMP %d: object %s no CONTR/NO PLAYER?!", i, query_name(pobj));
+			return;
+		}
+		LOG(llevDebug, "PARTY_DUMP %d: player %s (%x)-> s:%d id:%d nr:%d nrof:%d l:%x p:%x n:%x\n", i, query_name(tmp),
+			tmp, CONTR(tmp)->group_status, CONTR(tmp)->group_id,CONTR(tmp)->group_nr, CONTR(tmp)->group_nrof,
+			CONTR(tmp)->group_leader, CONTR(tmp)->group_prev, CONTR(tmp)->group_next);
+	}
+}
+#endif
+
 /* Invite <name> to a group.
  * Command can only be used from a group leader
  * or someone without a group.
@@ -47,7 +79,7 @@ int command_party_invite ( object *pl, char *params)
     }
 
 
-    if(!(target = find_player(params)))
+    if(!(target = find_player(params)) || target->dm_stealth)
     {
         /* ok - its not a player we want invite.
          * now check for keywords like "on", "off" or "allow <name>".
@@ -75,13 +107,16 @@ int command_party_invite ( object *pl, char *params)
         if(!strncasecmp(params,"allow ",6))
         {
             params = strchr(params,' ')+1; /* we KNOW there is a ' ' - that ptr+1 is start of name or '/0'*/
-            if(find_player(params))
+            if((target = find_player(params)))
             {
-                if(activator->group_status & GROUP_STATUS_INVITE)
-                    command_party_deny (pl, NULL); /* automatic /deny */
-                activator->group_mode = GROUP_MODE_INVITE;
-                strcpy(activator->group_invite_name, params);
-                new_draw_info_format(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
+				if(!target->dm_stealth)
+				{
+					if(activator->group_status & GROUP_STATUS_INVITE)
+					    command_party_deny (pl, NULL); /* automatic /deny */
+					activator->group_mode = GROUP_MODE_INVITE;
+					strcpy(activator->group_invite_name, params);
+					new_draw_info_format(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
+				}
             }
         }
 
@@ -183,7 +218,7 @@ int command_party_join ( object *pl, char *params)
      * group, this invite should fail.
      */
     if(target->group_status & GROUP_STATUS_GROUP && target->group_leader != target->ob)
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/join: %s has joined another group.", query_name(target->ob));
+        new_draw_info_format(NDI_UNIQUE, 0,pl, "/join: %s joined another group.", query_name(target->ob));
 
     /* target is the group leader. activator the member who wants join */
     party_add_member(target, activator);
@@ -282,11 +317,18 @@ void party_add_member(player *leader, player *member)
     /* don't allow more as GROUP_MAX_MEMBER people in a group */
     if(leader->group_nrof == GROUP_MAX_MEMBER)
     {
-        new_draw_info(NDI_YELLOW, 0, member->ob, "Group is full.");
+		new_draw_info(NDI_YELLOW, 0, member->ob, "Group is full.");
         return;
     }
 
-    if(!(tmp=leader->group_next)) /* new group! */
+#ifdef DEBUG_GROUP
+	LOG(-1,"PARTY_ADD: START dump!\n"); 
+	party_dump(leader->ob);
+	party_dump(member->ob);
+	LOG(-1,"PARTY_ADD: START adding!\n"); 
+#endif
+
+	if(!(tmp=leader->group_next)) /* new group! */
     {
         leader->group_status = GROUP_STATUS_GROUP;
         leader->group_id = global_group_tag++; /* unique group id - it also tells how many groups has been build */
@@ -296,9 +338,15 @@ void party_add_member(player *leader, player *member)
 
         member->group_prev = leader->ob;
         member->group_next = NULL;
+#ifdef DEBUG_GROUP
+		LOG(-1,"PARTY_ADD: new group!\n"); 
+#endif
     }
     else /* existing group, attach our player */
     {
+#ifdef DEBUG_GROUP
+		LOG(-1,"PARTY_ADD: add to group!\n"); 
+#endif
         /* get last valid member of the group */
         for(;CONTR(tmp)->group_next;tmp=CONTR(tmp)->group_next)
             ;
@@ -316,7 +364,11 @@ void party_add_member(player *leader, player *member)
     for(i=0,tmp=leader->ob;tmp;tmp=CONTR(tmp)->group_next,i++)
         CONTR(tmp)->group_nr=i;
 
-    party_message(0,NDI_YELLOW, 0,leader->ob, member->ob, "%s joined the group.", query_name(member->ob));
+#ifdef DEBUG_GROUP
+	party_dump(member->ob);
+#endif
+	
+	party_message(0,NDI_YELLOW, 0,leader->ob, member->ob, "%s joined the group.", query_name(member->ob));
     if( leader->group_nrof == 2)
         new_draw_info(NDI_YELLOW, 0, leader->ob, "Use /gsay for group speak or /help group for help.");
     new_draw_info(NDI_YELLOW, 0, member->ob, "You joined the group.");
@@ -355,7 +407,12 @@ void party_remove_member(player *member, int flag)
         return;
     }
 
-    if(flag)
+#ifdef DEBUG_GROUP
+	LOG(-1,"PARTY_REM: remove member - start\n"); 
+	party_dump(member->ob);
+#endif
+
+	if(flag)
     {
         party_message(0,NDI_YELLOW, 0, member->group_leader , member->ob, "%s left the group.", query_name(member->ob));
         new_draw_info(NDI_YELLOW, 0, member->ob, "You left the group.");
@@ -364,6 +421,9 @@ void party_remove_member(player *member, int flag)
     /* if only 1 member in the group is left - destruct the whole group! */
     if(CONTR(member->group_leader)->group_nrof == 2)
     {
+#ifdef DEBUG_GROUP
+		LOG(-1,"PARTY_REM: kill group!\n"); 
+#endif
         party_client_group_kill(member->group_leader);
         party_client_group_kill((tmp=CONTR(member->group_leader)->group_next));
 
@@ -377,6 +437,9 @@ void party_remove_member(player *member, int flag)
     /* group will stay but we must remove member */
     if(member->group_leader == member->ob) /* we are leader */
     {
+#ifdef DEBUG_GROUP
+		LOG(-1,"PARTY_REM: remove member1!\n"); 
+#endif
         CONTR(member->group_next)->group_prev = NULL; /* unlink the leader */
 
         for(tmp=member->group_next;tmp;tmp=CONTR(tmp)->group_next)
@@ -386,6 +449,9 @@ void party_remove_member(player *member, int flag)
     }
     else /* we are member 2+ */
     {
+#ifdef DEBUG_GROUP
+		LOG(-1,"PARTY_REM: remove member2!\n"); 
+#endif
         /* MUST be legal because we are not first member */
         CONTR(member->group_prev)->group_next = member->group_next;
         if(member->group_next)
@@ -403,6 +469,9 @@ void party_remove_member(player *member, int flag)
     party_client_group_kill(member->ob);
     party_clear_links(member);
 
+#ifdef DEBUG_GROUP
+	party_dump(leader);
+#endif
     party_client_group_status(leader);
 }
 
@@ -485,27 +554,24 @@ void party_client_group_update(object *member, int flag)
 
 	plm = CONTR(member);
 #ifdef DEBUG_GROUP_UPDATE
-	LOG(-1,"GROUP UPDATE: %s (gid: %d) (leader: %s) --> ", query_name(member), plm->group_nr,query_name(plm->group_leader));
+	LOG(-1,"GROUP UPDATE: %s (id:%d nr:%d)\n", query_name(member), plm->group_id, plm->group_nr);
+	party_dump(member);
 #endif
     sprintf(buf2,"|%d %d %d %d %d %d %d %d\n",plm->group_nr,
         member->stats.hp, member->stats.maxhp,
         member->stats.sp, member->stats.maxsp,
         member->stats.grace, member->stats.maxgrace, member->level);
 
-#ifdef DEBUG_GROUP_UPDATE
-	LOG(-1,"gstats: %s\n", buf2);
-#endif
-
     strcpy(buf,buf2);
     plm->update_ticker = ROUND_TAG;
 
     for(tmp=plm->group_leader;tmp;tmp=pl->group_next)
     {
-#ifdef DEBUG_GROUP_UPDATE
-		LOG(-1,"GROUP UPDATE: %s (gid: %d) (leader: %s)::\n", query_name(tmp), CONTR(tmp)->group_nr,query_name(CONTR(tmp)->group_leader));
-#endif
         if((pl = CONTR(tmp))->update_ticker != ROUND_TAG)
         {
+#ifdef DEBUG_GROUP_UPDATE
+			LOG(-1,"GROUP UPDATE (tag): %s (id:%d nr:%d)\n", query_name(tmp), CONTR(tmp)->group_id, CONTR(tmp)->group_nr);
+#endif
             /* TODO: use GROUP_UPDATE_xxx for a binary cmd which really holds
              * only the different data!
              * ATM we transer alot redundant data.
@@ -524,9 +590,6 @@ void party_client_group_update(object *member, int flag)
                     tmp->stats.sp, tmp->stats.maxsp,
                     tmp->stats.grace, tmp->stats.maxgrace,tmp->level);
 
-#ifdef DEBUG_GROUP_UPDATE
-				LOG(-1,"gstats: %s\n", buf2);
-#endif
                 strcat(buf,buf2);
                 pl->update_ticker = ROUND_TAG;
             }
