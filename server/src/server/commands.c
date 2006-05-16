@@ -79,6 +79,9 @@ CommArray_s Commands[]                  =
     {"/silent_login", command_silent_login,   0.0f},
 	{"/egobind",	  command_egobind,		  1.0f},
 
+#ifdef _TESTSERVER
+	{"/stuck",		command_stuck,0.0},
+#endif
     /* group commands */
     {"/invite",        command_party_invite,    4.0f},
     {"/join",            command_party_join,        0.1f},
@@ -93,6 +96,10 @@ CommArray_s Commands[]                  =
     {"/dm_list",        command_dm_list,1.0f},
     {"/malloc",            command_malloc,   0.0},        /* check the server stats */
     {"/kick",            command_kickcmd, 0.0},            /* kick with a 1m temp login ban */
+
+#ifdef _TESTSERVER
+	{"/restart",         command_restart,0.0},
+#endif
 
     {"/mute",            command_mute,1.0f},            /* max 5 min for VOL */
 

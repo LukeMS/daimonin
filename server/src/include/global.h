@@ -122,9 +122,10 @@ typedef signed long long         sint64;
 
 #define POW2(x) ((x) * (x))
 
-#define EXIT_NORMAL    0
+#define EXIT_NORMAL     0
 #define EXIT_ERROR     -1
 #define EXIT_SHUTODWN  -2
+#define EXIT_RESETMAP  -3
 
 #define ROUND_TAG            pticks /* put this here because the DIFF */
 

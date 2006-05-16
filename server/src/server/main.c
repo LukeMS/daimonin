@@ -1309,9 +1309,9 @@ void do_specials()
  * It gives out messages to all player to announce
  * the shutdown and the status of the shutdown.
  */
-void shutdown_agent(int timer, char *reason)
+void shutdown_agent(int timer, int ret, char *reason)
 {
-    static int              sd_timer = -1, m_count, real_count = -1;
+    static int sd_timer = -1, m_count, real_count = -1, ret_signal = EXIT_NORMAL;
     static struct timeval   tv1, tv2;
 
     if (timer == -1 && sd_timer == -1)
@@ -1322,7 +1322,7 @@ void shutdown_agent(int timer, char *reason)
             {
                 LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
                 command_kick(NULL, NULL);
-                cleanup(EXIT_SHUTODWN);
+				cleanup(ret_signal);
             }
         }
         return; /* nothing to do */
@@ -1335,6 +1335,7 @@ void shutdown_agent(int timer, char *reason)
         sd_timer = timer;
 
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
+		ret_signal = ret;
         if (reason)
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
 
@@ -1415,7 +1416,7 @@ int main(int argc, char **argv)
         nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
         pticks++;                       /* ROUND_TAG ! this is THE global tick counter . Use ROUND_TAG in the code */
 
-        shutdown_agent(-1, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
+        shutdown_agent(-1, EXIT_NORMAL, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
 
 #ifdef AUTO_MSG
         if(!(auto_msg_count--))            /* trigger the auto message system */

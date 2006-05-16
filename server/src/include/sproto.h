@@ -159,6 +159,7 @@ int                         command_dm_light(object *op, char *params);
 int                         command_dm_password(object *op, char *params);
 int                         command_dumpactivelist(object *op, char *params);
 int                         command_setmaplight(object *op, char *params);
+int							command_restart(object *ob, char *params);
 int                         command_start_shutdown(object *op, char *params);
 int                         command_dumpmap(object *op, char *params);
 int                         command_dumpallmaps(object *op, char *params);
@@ -183,6 +184,7 @@ int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
 int                         command_silent_login(object *op, char *params);
 char                        *get_subdir(const char *name);
+int							command_stuck(object *op, char *params);
 /* c_move.c */
 int                         command_east(object *op, char *params);
 int                         command_north(object *op, char *params);
@@ -381,7 +383,7 @@ void                        cleanup(int exit);
 void                        leave(player *pl, int draw_exit);
 void                        dequeue_path_requests(void);
 void                        do_specials(void);
-void                        shutdown_agent(int timer, char *reason);
+void                        shutdown_agent(int timer, int ret, char *reason);
 int                         main(int argc, char **argv);
 void                        process_events();
 /* monster.c */

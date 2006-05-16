@@ -43,7 +43,7 @@
 /* #define DEBUG_CORE */
 /* #define DEBUG_CORE_MAP */
 
-#define SKILL_UTIL_DEBUG
+/*#define SKILL_UTIL_DEBUG*/
 
 /* Aggro & EXP sharing debugging: aggro.c */
 #define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
