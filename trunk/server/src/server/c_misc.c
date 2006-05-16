@@ -664,6 +664,22 @@ int command_dumpactivelist(object *op, char *params)
     return 0;
 }
 
+/* special test server/ map wizard server command to shutdown the server
+ * using the shutdown command with special signal for map update
+ */
+int command_restart(object *ob, char *params)
+{
+	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+		return 0;
+
+	LOG(llevSystem, "Shutdown Agent started with /restart!\n");
+	shutdown_agent(30, EXIT_RESETMAP, "30 second shutdown - server will update maps!" );
+	new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, ob, "shutdown agent started! (timer set to %d seconds).", 30);
+
+	return 0;
+}
+
+
 int command_start_shutdown(object *op, char *params)
 {
     char   *bp  = NULL;
@@ -689,7 +705,7 @@ int command_start_shutdown(object *op, char *params)
     }
 
     LOG(llevSystem, "Shutdown Agent started!\n");
-    shutdown_agent(i, bp);
+    shutdown_agent(i, EXIT_SHUTODWN, bp);
     new_draw_info_format(NDI_UNIQUE | NDI_GREEN, 0, op, "shutdown agent started! (timer set to %d seconds).", i);
 
     return 0;
@@ -1416,4 +1432,14 @@ char *get_subdir(const char *name)
         subdir[3] = rest_dir;
     subdir[4] = '\0';
     return subdir;
+}
+
+
+int command_stuck(object *op, char *params)
+{
+	if (op->type == PLAYER && CONTR(op))
+	{
+		command_goto(op, "/relic/castle/castle_030a 5 11");
+	}
+	return 0;
 }
