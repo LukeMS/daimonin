@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Communication, Section 4: Speaking publically to all players currently online -- shouting">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            To speak publically to all players currently online, use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/shout &lt;message&gt;"</code>.
+        </p>
+        <p>
+            The message appears in the upper text window in orange text.
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> In an effort to combat abusive/spam messages being shouted, only players of level two or higher can <code>"/shout"</code>.
+            </p>
+        </div>
+    </section>
+</daiml>

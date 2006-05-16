@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Communication, Appendix A: Speaking to other players via Cherbot -- mail and clan chat">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            A great deal of information, statistics, and functionality is available unofficially through Cherbot, inluding some useful communication features
+        </p>
+        <p>
+            Cherbot is... wait for it... a bot (an artificial player controlled by a piece of software). He resides in a cell in Stoneglow jail.
+        </p>
+        <p>
+            Cherbot's two most important functions as regards communication are:
+        </p>
+        <ul>
+            <li>
+                <a href="#mail">mail</a>; and
+            </li>
+            <li>
+                <a href="#clanchat">clan chat</a>.
+            </li>
+        </ul>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> Cherbot has his own very comprehensive web page at <a href="http://www.itcqis.com/daimonin/">http://www.itcqis.com/daimonin/</a> so I won't repeat it in detail here.
+            </p>
+        </div>
+    </section>
+    <section id="mail">
+        <title>
+            Mail
+        </title>
+        <p/>
+    </section>
+    <section id="clanchat">
+        <title>
+            Clan chat
+        </title>
+        <p/>
+    </section>
+</daiml>

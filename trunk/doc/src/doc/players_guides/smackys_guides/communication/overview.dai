@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Communication, Overview">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in <strong><em>Smacky's Guides</em></strong>.
+        </p>
+        <p>
+            Here, suffice to say, the top window (with the orange text) is for global messages and communication between players, and the bottom window (with the blue text) is for local messages and communication between players and with NPCs.
+        </p>
+        <section id="mcon">
+            <title>
+                Speakingmorequickly
+            </title>
+            <p>
+                The <a href="../game_mechanics/secn_2-1.dai#metacommands">meta command</a> <code>"?M_MCON"</code> can be used to send a partial <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> to the console, leaving the console active so you can complete the text.
+            </p>
+            <p>
+                An example should make it clear: <a href="../game_mechanics/secn_3-1.dai">bind a key</a> to the macro <code>"?M_MCON/shout "</code>. Now when you press that key you will enter the console and the text <code>"/shout "</code> appears automatically. The console remains open so you can type in the message.
+            </p>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> You can do this with any <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> but it makes most sense to do it with the communication commands.
+                </p>
+            </div>
+        </section>
+    </section>
+    <section id="saying">
+        <title>
+            Speaking publically to players and NPCs nearby
+        </title>
+        <p>
+            Speaking publically to players and NPCs nearby is detailed in <a href="./secn_1.dai">"Section 1: Speaking publically to players and NPCs nearby -- saying"</a>.
+        </p>
+    </section>
+    <section id="talking">
+        <title>
+            Speaking privately to NPCs nearby
+        </title>
+        <p>
+            Speaking privately to NPCs nearby is detailed in <a href="./secn_2.dai">"Section 2: Speaking privately to NPCs nearby -- talking"</a>.
+        </p>
+    </section>
+    <section id="emoting">
+        <title>
+            Communicating non-verbally with players nearby
+        </title>
+        <p>
+            Communicating non-verbally with players nearby is detailed in <a href="./secn_3.dai">"Section 3: Communicating non-verbally with players nearby -- emoting"</a>.
+        </p>
+    </section>
+    <section id="shouting">
+        <title>
+            Speaking publically to all players currently online
+        </title>
+        <p>
+            Speaking publically to all players currently online is detailed in <a href="./secn_4.dai">"Section 4: Speaking publically to all players currently online -- shouting"</a>.
+        </p>
+    </section>
+    <section id="tellingandreplying">
+        <title>
+            Speaking privately to individual players currently online
+        </title>
+        <p>
+            Speaking privately to individual players currently online is detailed in <a href="./secn_5.dai">"Section 5: Speaking privately to individual players currently online -- telling and replying"</a>.
+        </p>
+    </section>
+    <section id="groupsaying">
+        <title>
+            Speaking privately to all players currently online within your group
+        </title>
+        <p>
+            Speaking privately to all players currently online within your group is detailed in <a href="./secn_6.dai">"Section 6: Speaking privately to all players currently online within your group -- group saying"</a>.
+        </p>
+    </section>
+    <section id="cherbot">
+        <title>
+            Speaking to other players via Cherbot
+        </title>
+        <p>
+            Speaking to other players via Cherbot is detailed in <a href="./appx_a.dai">"Appendix A: Speaking to other players via Cherbot -- mail and clan chat"</a>.
+        </p>
+    </section>
+</daiml>

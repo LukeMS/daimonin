@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Communication, Section 5: Speaking privately to individual players currently online -- telling and replying">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+            <p>
+                To speak privately to individual players currently online, use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/tell &lt;player&gt; &lt;message&gt;"</code>.
+            </p>
+            <p>
+                An alternative to this is <code>"/reply &lt;message&gt;"</code>. This is used when someone else has told you something.
+            </p>
+            <div class="advice">
+                <p>
+                    <img alt="[ADVICE]" src="../advice.png"/> If you receive the message 'Litillitttil tells you: Do you like my name?' it is obviously easier just to <code>"/reply No"</code> than to muddle through his name in an effort to <code>"/tell Litillitttil No"</code>.
+                </p>
+            </div>
+            <p>
+                In either case, the message appears in the upper window in white text. A message which someone else has told you also appears in the upper window but in light blue text.
+            </p>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> In an effort to combat abusive/spam messages being sent, only players of level two or higher can <code>"/tell"</code>/<code>"/reply"</code>.
+                </p>
+            </div>
+    </section>
+</daiml>

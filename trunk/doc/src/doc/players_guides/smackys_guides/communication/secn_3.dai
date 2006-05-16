@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Communication, Section 3: Communicating non-verbally with players nearby -- emoting">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            There are two ways to emote:
+        </p>
+        <ul>
+            <li>
+                <a href="#predefined">predefined emoting</a>; and
+            </li>
+            <li>
+                <a href="#freeform">freeform emoting</a>.
+            </li>
+        </ul>
+        <p>
+            Emotes appear in the lower text window in yellow text to other players and white text to you.
+        </p>
+        <p>
+            Emoting is essentially for fun and has no effect on gameplay.
+        </p>
+    </section>
+    <section id="predefined">
+        <title>
+            Predefined emoting
+        </title>
+        <p>
+            To predefined emote, use a game command such as <code>"/dance"</code> and a set message will be seen by nearby players.
+        </p>
+        <p>
+            A complete list of the predefined emotes can be obtained by entering the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/help emotes"</code> (or referring to <a href="../game_mechanics/appx_a.dai#communication">"Smacky's Guide To Game Mechanics, Appendix A: Game commands"</a>).
+        </p>
+        <p>
+            It is possible to predefined emote at a specific player, NPC, or mob. <a href="../combat/secn_1-2">Target</a> the object of your attentions and let rip. Ain't interaction fun?
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> Emoting at a target in this way has no gameplay effect. It is purely for fun. NPCs and mobs will not respond.
+            </p>
+        </div>
+    </section>
+    <section id="freeform">
+        <title>
+            Freeform emoting
+        </title>
+        <p>
+            To freeform emote, use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/me &lt;message&gt;"</code> and a message beginning with your name will be seen by nearby players.
+        </p>
+    </section>
+</daiml>
