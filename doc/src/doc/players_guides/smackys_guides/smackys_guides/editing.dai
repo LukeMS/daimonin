@@ -16,7 +16,7 @@
             But the graphics aren't
         </title>
         <p>
-            I and the <a href="https://sourceforge.net/projects/daimonin/">Daimonin project</a> insist that you respect that project's <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/daimonin/daimonin/Artistic%20License">Artistic License</a> if you want to modify and/or distribute the graphics used in <strong><em>Smacky's Guides</em></strong>.
+            I and the <a href="https://sourceforge.net/projects/daimonin/">Daimonin project</a> insist that you respect that project's <a href="http://daimonin.cvs.sourceforge.net/daimonin/daimonin/Artistic%20License?view=markup">Artistic License</a> if you want to modify and/or distribute the graphics used in <strong><em>Smacky's Guides</em></strong>.
         </p>
     </section>
     <section id="etiquette">
@@ -59,7 +59,7 @@
             <strong><em>Smacky's Guides</em></strong> are written by hand in DaiML. This is then transformed by software into a number of other formats, including the one which you are reading now.
         </p>
         <p>
-            The DaiML DTD, XSL transformation scripts, and the source for <strong><em>Smacky's Guides</em></strong> are available from the <a href="http://cvs.sourceforge.net/viewcvs.py/daimonin/">Daimonin CVS repository</a>.
+            The DaiML DTD, XSL transformation scripts, and the source for <strong><em>Smacky's Guides</em></strong> are available from the <a href="http://daimonin.cvs.sourceforge.net/daimonin/daimonin/doc/">Daimonin CVS repository</a>.
         </p>
     </section>
 </daiml>
