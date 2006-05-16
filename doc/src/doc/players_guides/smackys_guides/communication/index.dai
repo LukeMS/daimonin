@@ -1,23 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
-<daiml title="Smacky's Guide To Comomunication, Index">
-<section>
-    <title>
-        SMACKY'S GUIDE TO COMMUNICATION
-    </title>
-    <ul>
-        <li>
-            <a href="./secn_1.dai">Section 1: Communication</a>
-            <ul>
-                <li>
-                    <a href="./secn_1-1.dai">Section 1-1: Talking To NPCs</a>
-                </li>
-                <li>
-                    <a href="./secn_1-2.dai">Section 1-2: Talking To Players</a>
-                </li>
-            </ul>
-            <p/>
-        </li>
-    </ul>
-</section>
+<daiml title="Smacky's Guide To Communication, Index">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="overview">
+        <title>
+            <a href="./overview.dai">Overview</a>
+        </title>
+        <p>
+            Short introduction covering all the following sections in overview.
+        </p>
+    </section>
+    <section id="section1">
+        <title>
+            <a href="./secn_1.dai">Section 1: Speaking publically to players and NPCs nearby -- saying</a>
+        </title>
+        <p>
+            Such as asking NPCs for specific services and general chit-chat with other players in the immediate area.
+        </p>
+    </section>
+    <section id="section2">
+        <title>
+            <a href="./secn_2.dai">Section 2: Speaking privately to NPCs nearby -- talking</a>
+        </title>
+        <p>
+            Such as discussing quests with NPCs -- NOT IMPLEMENTED IN B3.
+        </p>
+    </section>
+    <section id="section3">
+        <title>
+            <a href="./secn_3.dai">Section 3: Communicating non-verbally with players nearby -- emoting</a>
+        </title>
+        <p>
+            Such as gesturing to, performing inconsequential actions on, and generally having a laugh with your fellow players.
+        </p>
+    </section>
+    <section id="section4">
+        <title>
+            <a href="./secn_4.dai">Section 4: Speaking publically to all players currently online -- shouting</a>
+        </title>
+        <p>
+            Such as holding a public auction or asking for help.
+        </p>
+    </section>
+    <section id="section5">
+        <title>
+            <a href="./secn_5.dai">Section 5: Speaking privately to individual players currently online -- telling and replying</a>
+        </title>
+        <p>
+            Such as arranging to meet a player somewhere, somewhen or exchanging information that is inappropriate to be public knowledge.
+        </p>
+    </section>
+    <section id="section6">
+        <title>
+            <a href="./secn_6.dai">Section 6: Speaking privately to all players currently online within your group -- group saying</a>
+        </title>
+        <p>
+            Such as co-ordinating tactics or calling for back-up -- NOT IMPLEMENTED IN B3.
+        </p>
+    </section>
+    <section id="appendixa">
+        <title>
+            <a href="./appx_a.dai">Appendix A: Speaking to other players via Cherbot -- mail and clan chat</a>
+        </title>
+        <p>
+            Cherbot is a bot providing a range of unofficial functions, including clan chat and in-game mail.
+        </p>
+    </section>
 </daiml>
