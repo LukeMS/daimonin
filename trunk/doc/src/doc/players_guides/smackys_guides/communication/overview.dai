@@ -11,7 +11,7 @@
             Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in <strong><em>Smacky's Guides</em></strong>.
         </p>
         <p>
-            Here, suffice to say, the top window (with the orange text) is for global messages and communication between players, and the bottom window (with the blue text) is for local messages and communication between players and with NPCs.
+            Here, suffice to say, the top window is for <em>global</em> messages and communication between players, and the bottom window is for <em>local</em> messages and communication between players and with NPCs.
         </p>
         <section id="mcon">
             <title>
@@ -35,6 +35,12 @@
             Speaking publically to players and NPCs nearby
         </title>
         <p>
+            You will often want to say something to the players in your immediate area. This may be general chat, negotiating over training rights, making a humourous obsevation, etc., etc.
+        </p>
+        <p>
+            Similarly, you will often want to speak with a nearby NPC. This may be to get information or to ask them to perform a specific service.
+        </p>
+        <p>
             Speaking publically to players and NPCs nearby is detailed in <a href="./secn_1.dai">"Section 1: Speaking publically to players and NPCs nearby -- saying"</a>.
         </p>
     </section>
@@ -42,6 +48,9 @@
         <title>
             Speaking privately to NPCs nearby
         </title>
+        <p>
+            Some NPCs will offer quests. There is a separate interface for conversing with NPCs about quests and rewards.
+        </p>
         <p>
             Speaking privately to NPCs nearby is detailed in <a href="./secn_2.dai">"Section 2: Speaking privately to NPCs nearby -- talking"</a>.
         </p>
@@ -51,6 +60,9 @@
             Communicating non-verbally with players nearby
         </title>
         <p>
+            It's surprising just how much control over their own bodily functions Daimonin characters have. Naturally, this control can be used to comedic effect.
+        </p>
+        <p>
             Communicating non-verbally with players nearby is detailed in <a href="./secn_3.dai">"Section 3: Communicating non-verbally with players nearby -- emoting"</a>.
         </p>
     </section>
@@ -58,6 +70,9 @@
         <title>
             Speaking publically to all players currently online
         </title>
+        <p>
+            Daimonin is as much about communication with other humans as it is about changing the configuration of pixels on the screen.
+        </p>
         <p>
             Speaking publically to all players currently online is detailed in <a href="./secn_4.dai">"Section 4: Speaking publically to all players currently online -- shouting"</a>.
         </p>
@@ -67,6 +82,9 @@
             Speaking privately to individual players currently online
         </title>
         <p>
+            Not everything needs to be heard by everyone.
+        </p>
+        <p>
             Speaking privately to individual players currently online is detailed in <a href="./secn_5.dai">"Section 5: Speaking privately to individual players currently online -- telling and replying"</a>.
         </p>
     </section>
@@ -75,6 +93,9 @@
             Speaking privately to all players currently online within your group
         </title>
         <p>
+            There will often be times when you want to share information only with your close friends and allies.
+        </p>
+        <p>
             Speaking privately to all players currently online within your group is detailed in <a href="./secn_6.dai">"Section 6: Speaking privately to all players currently online within your group -- group saying"</a>.
         </p>
     </section>
@@ -82,6 +103,9 @@
         <title>
             Speaking to other players via Cherbot
         </title>
+        <p>
+            Cherbot is an authorised bot found only on Server Daimonin. He is unofficial but much-loved. He provides features which augment the official communication commands.
+        </p>
         <p>
             Speaking to other players via Cherbot is detailed in <a href="./appx_a.dai">"Appendix A: Speaking to other players via Cherbot -- mail and clan chat"</a>.
         </p>
