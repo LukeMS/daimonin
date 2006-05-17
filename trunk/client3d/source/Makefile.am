@@ -35,6 +35,8 @@ client3d_SOURCES = \
 	gui_container.cpp \
 	gui_cursor.cpp \
 	gui_element.cpp \
+	gui_gadget_button.cpp \
+	gui_gadget_combobox.cpp \
 	gui_gadget.cpp \
 	gui_graphic.cpp \
 	gui_imageset.cpp \
