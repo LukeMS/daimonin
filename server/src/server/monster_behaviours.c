@@ -656,8 +656,10 @@ void ai_sleep(object *op, struct mob_behaviour_param *params, move_response *res
 void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     int     i, r;
-    object *base;
     int dirs[8] = {1,2,3,4,5,6,7,8};
+    object *base;
+    mapstruct *basemap = NULL;
+    rv_vector rv;
 
     if(op->owner)
     {
@@ -666,10 +668,19 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
     }
 
     base = find_base_info_object(op);
+    if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
+            || (params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT))
+    {
+        if((basemap = ready_map_name(base->slaying, MAP_NAME_SHARED)))
+            if(!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE))
+                basemap = NULL;
+    }
+    
     /* Give up to 8 chances for a monster to move randomly */
     for (i = 0; i < 8; i++)
     {
         int t = dirs[i];
+        
         /* Perform a single random shuffle of the remaining directions */
         r = i+(RANDOM() % (8-i));
         dirs[i] = dirs[r];
@@ -677,14 +688,18 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
 
         r = dirs[i];
 
-        /* TODO: doesn't handle map borders */
-        /* check x and y direction of possible move */
-        if (params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
-            if (abs(op->x + freearr_x[r] - base->x) > params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue)
+        /* check x and y direction of possible move against limit parameters*/
+        if(basemap)
+        {
+            if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
+                    && SGN(rv.distance_x) == SGN(freearr_x[r])
+                    && abs(rv.distance_x + freearr_x[r]) > params[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue)
                 continue;
-        if (params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT)
-            if (abs(op->y + freearr_y[r] - base->y) > params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue)
+            if ((params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT)
+                    && SGN(rv.distance_y) == SGN(freearr_y[r])
+                    && abs(rv.distance_y + freearr_y[r]) > params[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue)
                 continue;
+        }
 
         if (!blocked_link(op, freearr_x[r], freearr_y[r]))
         {
