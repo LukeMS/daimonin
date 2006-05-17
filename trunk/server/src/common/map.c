@@ -3014,11 +3014,11 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
     return NULL;
 }
 
-/* Distance between two objects. See get_rangevector_full() for info */
-/* TODO: this should probably be replaced with a macro or an inline function */
-/*
+/** Get distance and direction between two objects. 
+ * TODO: this should probably be replaced with a macro or an inline function 
  * Note: this function was changed from always calculating euclidian distance to
  * defaulting to calculating manhattan distance. Gecko 20050714
+ * @see get_rangevector_full
  */
 int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 {
@@ -3028,9 +3028,11 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
             retval, flags);
 }
 
-/* Distance between two coords. See get_rangevector_full() for info */
-/* Never adjusts for multipart objects (since objects are unknown) */
-/* TODO: this should probably be replaced with a macro or an inline function */
+/** Get distance and direction between two coordinates.
+ * Never adjusts for multipart objects (since objects are unknown)
+ * TODO: this should probably be replaced with a macro or an inline function 
+ * @see get_rangevector_full
+ */
 int get_rangevector_from_mapcoords(
         mapstruct *map1, int x1, int y1,
         mapstruct *map2, int x2, int y2,
@@ -3039,7 +3041,7 @@ int get_rangevector_from_mapcoords(
     return get_rangevector_full(NULL, map1, x1, y1, NULL, map2, x2, y2, retval, flags);
 }
 
-/*
+/** Get distance and direction between two points. 
  * This is the base for all get_rangevector_* functions. It can compute the
  * rangevector between any two points on any maps, with or without adjusting
  * for multipart objects.
@@ -3047,12 +3049,9 @@ int get_rangevector_from_mapcoords(
  * op1 and op2 are optional, but are required (separately or together) for multipart
  * object handling. (Currently op2 is ignored but might be used in the future)
  *
- * If the function fails (because of the maps being separate), it will return FALSE
- * and the vector is not otherwise touched. Otherwise it will return TRUE.
- *
  * Returns (through retval):
  *  distance_x/y are distance away, which can be negative.
- *  direction is the crossfire direction scheme from p1 to p2.
+ *  direction is the daimonin direction scheme from p1 to p2.
  *  part is the part of op1 that is closest to p2. (can be NULL)
  *  distance is an absolute distance value according to the selected algorithm.
  *
@@ -3067,6 +3066,8 @@ int get_rangevector_from_mapcoords(
  *  RV_FAST_EUCLIDIAN_DISTANCE - squared straight line distance (slow)
  *  RV_DIAGONAL_DISTANCE  - diagonal (max(dx + dy)) distance (fast) (default)
  *  RV_NO_DISTANCE        - don't calculate distance (or direction) (fastest)
+ *
+ * @return FALSE if the function fails (because of the maps being separate), and the rangevector will not be touched. Otherwise it will return TRUE.
  *
  *  TODO: support multipart->multipart handling
  */
