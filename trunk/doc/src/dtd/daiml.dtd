@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  - Document Type Definition for DaiML
+  -->
+
+<!-- Extension hooks. -->
+<!ENTITY % InlineExt
+    ""
+>
+
+<!ENTITY % BlockExt
+    ""
+>
+
+
+<!-- Complex content types. -->
+<!ENTITY % Inline
+    "#PCDATA|span|em|strong|code|a|img%InlineExt;"
+>
+
+<!ENTITY % Block
+    "div|br|blockcode|p|ul|table|ol|dl|section%BlockExt;"
+>
+
+<!ENTITY % Mixed
+    "%Inline;|%Block;"
+>
+
+
+<!ENTITY % RelTypes
+    "start|next|prev|contents|index|glossary|copyright|chapter|section|subsection|appendix"
+>
+
+<!ENTITY % MediaTypes
+    "screen|print|all"
+>
+
+
+<!-- Number. See Context for range or decimal fractions. -->
+<!ENTITY % number "CDATA">
+
+
+<!--
+  - Attribute types.
+  -->
+<!ELEMENT daiml
+    ((relationship|stylesheet)*, section+)
+>
+
+<!ATTLIST daiml
+    autotoc CDATA #IMPLIED
+    title CDATA #REQUIRED
+>
+
+<!ELEMENT title
+    (%Inline;)*
+>
+
+<!ELEMENT relationship
+    EMPTY
+>
+
+<!ATTLIST relationship
+    href CDATA #REQUIRED
+    rel (%RelTypes;) #REQUIRED
+>
+
+<!ELEMENT stylesheet
+    EMPTY
+>
+
+<!ATTLIST stylesheet
+    href CDATA #REQUIRED
+    media (%MediaTypes;) 'all'
+    title CDATA #IMPLIED
+>
+
+<!ELEMENT section (title, (%Block;)+)>
+
+<!ATTLIST section
+    id ID #IMPLIED
+    toc (include|exclude) 'include'
+>
+
+<!ELEMENT div
+    (%Block;)*
+>
+
+<!ATTLIST div
+    class CDATA #REQUIRED
+>
+
+
+<!ELEMENT span
+    (%Inline;)*
+>
+
+<!ATTLIST span
+    class CDATA #REQUIRED
+>
+
+<!ELEMENT em
+    (%Inline;)*
+>
+
+<!ELEMENT strong
+    (%Inline;)*
+>
+
+<!ELEMENT code
+    (%Inline;)*
+>
+
+<!ELEMENT img
+    EMPTY
+>
+
+<!ATTLIST img
+    alt CDATA #REQUIRED
+    src CDATA #REQUIRED
+>
+
+<!ELEMENT a
+    (#PCDATA)
+>
+
+<!ATTLIST a
+    href CDATA #REQUIRED
+>
+
+<!ELEMENT table
+    (tr+)
+>
+<!ATTLIST table
+    border (yes|no) 'yes'
+>
+
+<!ELEMENT tr
+    (th|td)+
+>
+
+<!ELEMENT th
+    (%Mixed;)*
+>
+<!ATTLIST th
+    align (left|center|right) #IMPLIED
+    colspan %number; '1'
+    rowspan %number; '1'
+>
+
+<!ELEMENT td
+    (%Mixed;)*
+>
+<!ATTLIST td
+    align (left|center|right) #IMPLIED
+    colspan %number; '1'
+    rowspan %number; '1'
+>
+
+<!ELEMENT p
+    (%Inline;)*
+>
+
+<!ELEMENT ul
+    (li+)
+>
+
+<!ELEMENT ol
+    (li+)
+>
+
+<!ELEMENT li
+    (%Mixed;)*
+>
+
+<!ELEMENT dl
+    (dt|dd)+
+>
+
+<!ELEMENT dt
+    (%Mixed;)*
+>
+
+<!ELEMENT dd
+    (%Mixed;)*
+>
+
+<!ELEMENT blockcode
+    (#PCDATA)
+>
+
+<!ELEMENT br
+    EMPTY
+>
