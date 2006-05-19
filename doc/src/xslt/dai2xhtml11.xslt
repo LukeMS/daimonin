@@ -28,7 +28,7 @@
                 </title>
                 <xsl:choose>
                     <xsl:when test="stylesheet">
-                        <xsl:apply-templates select="stylesheet"/>
+                        <xsl:apply-templates select="stylesheet" mode="head"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <style type="text/css">
@@ -74,17 +74,18 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
                 </xsl:if>
                 <xsl:apply-templates/>
                 <p>
-                    <xsl:text>Last modified: </xsl:text>
-                    <xsl:value-of select="current-dateTime()"/>
+                    <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
                 </p>
             </body>
         </html>
     </xsl:template>
 
-    <xsl:template match="stylesheet">
+    <xsl:template match="stylesheet" mode="head">
         <link href="{@href}" media="{@media}" rel="stylesheet" title="{@title}" type="text/css"/>
         <xsl:apply-templates/>
     </xsl:template>
+
+    <xsl:template match="stylesheet"/>
 
     <xsl:template match="/daiml/section">
         <div class="section" id="{if (@id) then @id else generate-id()}">
@@ -163,7 +164,6 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
             <xsl:apply-templates/>
         </pre>
     </xsl:template>
-
 
     <xsl:template match="a">
         <a href="{if (matches(@href, 'dai$') or matches(@href, '.dai#')) then replace(@href, '.dai', '.xhtml') else @href}">
