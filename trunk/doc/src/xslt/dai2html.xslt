@@ -126,7 +126,7 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
             <xsl:otherwise>
                 <ul>
                     <li>
-                        <a href="#{if (@id) then @id else generate-id()}"><xsl:apply-templates select="title/node()"/></a>
+                        <a href="#{if (@id) then @id else generate-id()}"><xsl:value-of select="normalize-space(title)"/></a>
                         <xsl:apply-templates select="section" mode="toc"/>
                     </li>
                 </ul>
