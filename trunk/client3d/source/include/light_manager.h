@@ -31,41 +31,40 @@ using namespace Ogre;
 
 
 enum {
-  LIGHT_SPOT, LIGHT_SUM };
+    LIGHT_SPOT, LIGHT_SUM };
 
 class LightManager
 {
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  SceneManager *mSceneMgr;
-  SceneNode  *mNode;
-  std::string mDescFile;
-  std::vector<Light*>mvLightObject;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    SceneManager *mSceneMgr;
+    SceneNode  *mNode;
+    std::string mDescFile;
+    std::vector<Light*>mvLightObject;
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  LightManager(const LightManager&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    LightManager(const LightManager&); // disable copy-constructor.
 
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  LightManager()
-  {
-  }
-  ~LightManager();
-  static LightManager &getSingleton()
-  {
-    static LightManager Singleton; return Singleton;
-  }
-  bool init(SceneManager *SceneMgr, SceneNode  *Node);
-  bool addObject(unsigned int type, const char *desc_filename, Vector3 pos);
-  void delObject(int number);
-  void update(int type, const FrameEvent& evt);
-  void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    LightManager()
+    {}
+    ~LightManager();
+    static LightManager &getSingleton()
+    {
+        static LightManager Singleton; return Singleton;
+    }
+    bool init(SceneManager *SceneMgr, SceneNode  *Node);
+    bool addObject(unsigned int type, const char *desc_filename, Vector3 pos);
+    void delObject(int number);
+    void update(int type, const FrameEvent& evt);
+    void keyEvent(int obj_type, int action, int val1=0, int val2=0);
 };
 
 #endif

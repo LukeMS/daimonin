@@ -26,13 +26,8 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-enum
-{
-  LIGHT_VOL, LIGHT_SPOT
-};
-
 const Real MIN_CAMERA_ZOOM =  20.0;
-const Real MAX_CAMERA_ZOOM = 105.0;
+const Real MAX_CAMERA_ZOOM =  95.0;
 
 ///================================================================================================
 /// Class.
@@ -40,93 +35,102 @@ const Real MAX_CAMERA_ZOOM = 105.0;
 class CEvent: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  CEvent(RenderWindow* win, SceneManager *mSceneMgr);
-  ~CEvent();
-  SceneManager *GetSceneManager()
-  {
-    return mSceneManager;
-  }
-  SceneNode *GetWorldNode()
-  {
-    return mWorld;
-  }
-  const Vector3 &getWorldPos()
-  {
-    return mWorld->getPosition();
-  }
-  void setWorldPos(Vector3 &pos);
-  void setLightMember(Light *light, int nr)
-  {
-    mLight[nr] = light;
-  }
-  Camera *getCamera()
-  {
-    return mCamera;
-  }
-  TileManager *getTileManager()
-  {
-    return mTileManager;
-  }
-  Real getCamCornerX()
-  {
-    return mCamCornerX;
-  }
-  Real getCamCornerY()
-  {
-    return mCamCornerY;
-  }
+    enum
+    {
+        LIGHT_VOL, LIGHT_SPOT
+    };
+    enum
+    {
+         WSYNC_INIT,   /// Set the distance of the destination tile.
+         WSYNC_OFFSET, /// Move the camera for moving within a tile.
+         WSYNC_MOVE    /// Sync all objects to the new player pos..
+    };
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    CEvent(RenderWindow* win, SceneManager *mSceneMgr);
+    ~CEvent();
+    SceneManager *GetSceneManager()
+    {
+        return mSceneManager;
+    }
+    SceneNode *GetWorldNode()
+    {
+        return mWorld;
+    }
+    const Vector3 &getWorldPos()
+    {
+        return mWorld->getPosition();
+    }
+    void setWorldPos(Vector3 &pos, int posX, int posZ, int func);
+    void setLightMember(Light *light, int nr)
+    {
+        mLight[nr] = light;
+    }
+    Camera *getCamera()
+    {
+        return mCamera;
+    }
+    TileManager *getTileManager()
+    {
+        return mTileManager;
+    }
+    Real getCamCornerX()
+    {
+        return mCamCornerX;
+    }
+    Real getCamCornerY()
+    {
+        return mCamCornerY;
+    }
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  bool mQuitGame;
-  int mDayTime;
-  int mSceneDetailIndex;
-  Real mIdleTime;
-  Real mCameraZoom;
-  Real mMouseX, mMouseY;
-  Real mCamCornerX, mCamCornerY;
-  Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
-  SceneNode *mWorld;
-  SceneManager *mSceneManager;
-  TileManager *mTileManager;
-  EventProcessor *mEventProcessor;
-  InputReader* mInputDevice;
-  Vector3 mTranslateVector;
-  RenderWindow* mWindow;
-  Camera* mCamera;
-  Light *mLight[2];
-  Light *mSpotLight, *mVolLight;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    bool mQuitGame;
+    int mDayTime;
+    int mSceneDetailIndex;
+    Real mIdleTime;
+    Real mCameraZoom;
+    Real mMouseX, mMouseY;
+    Real mCamCornerX, mCamCornerY;
+    Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
+    SceneNode *mWorld;
+    SceneManager *mSceneManager;
+    TileManager *mTileManager;
+    EventProcessor *mEventProcessor;
+    InputReader* mInputDevice;
+    Vector3 mTranslateVector;
+    RenderWindow* mWindow;
+    Camera* mCamera;
+    Light *mLight[2];
+    Light *mSpotLight, *mVolLight;
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  bool frameStarted(const FrameEvent& evt);
-  bool frameEnded  (const FrameEvent& evt);
-  void keyClicked (KeyEvent *e);
-  void keyPressed (KeyEvent *e);
-  void keyReleased(KeyEvent *e);
-  void mouseMoved   (MouseEvent *e);
-  void mouseDragged (MouseEvent *e);
-  void mouseClicked (MouseEvent *e);
-  void mouseEntered (MouseEvent *e);
-  void mouseExited  (MouseEvent *e);
-  void mousePressed (MouseEvent *e);
-  void mouseReleased(MouseEvent *e);
-  void mouseDragEntered(MouseEvent* )
-  {
-  }
-  void mouseDragExited(MouseEvent* )
-  {
-  }
-  void mouseDragDropped(MouseEvent* )
-  {
-  }
-};
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    bool frameStarted(const FrameEvent& evt);
+    bool frameEnded  (const FrameEvent& evt);
+    void keyClicked (KeyEvent *e);
+    void keyPressed (KeyEvent *e);
+    void keyReleased(KeyEvent *e);
+    void mouseMoved   (MouseEvent *e);
+    void mouseDragged (MouseEvent *e);
+    void mouseClicked (MouseEvent *e);
+    void mouseEntered (MouseEvent *e);
+    void mouseExited  (MouseEvent *e);
+    void mousePressed (MouseEvent *e);
+    void mouseReleased(MouseEvent *e);
+    void mouseDragEntered(MouseEvent* )
+    {}
+    void mouseDragExited(MouseEvent* )
+    {}
+    void mouseDragDropped(MouseEvent* )
+    {}
+}
+;
 
 extern  CEvent *Event;
 

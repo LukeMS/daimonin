@@ -40,40 +40,50 @@ SceneManager *ObjStatic::mSceneMgr =0;
 ///================================================================================================
 void ObjStatic::freeRecources()
 {
-  if (mAnim) delete mAnim;
-  mTexture.setNull();
+    if (mAnim) delete mAnim;
+    mTexture.setNull();
 }
+
+///================================================================================================
+/// .
+///================================================================================================
+void ObjStatic::move(Vector3 &pos)
+{
+    pos.y =0;
+    mNode->setPosition(mNode->getPosition() + pos);
+}
+
 
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
 ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing)
 {
-  if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
-  mFacing = Degree(Facing);
-  thisStatic = mInstanceNr++;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Build the mesh name.
-  /// ////////////////////////////////////////////////////////////////////
-  Logger::log().info()  << "Adding object: " << mesh_filename << ".";
-  mEntity =mSceneMgr->createEntity("ObjStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
-  mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
-  mPosX = posX;
-  mPosZ = posZ;
-  const AxisAlignedBox &AABB = mEntity->getBoundingBox();
-  Vector3 pos;
-  mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
-  mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
-  mBoundingBox.y = AABB.getMinimum().y;
-  pos.x = mPosX * TILE_SIZE_X + mBoundingBox.x;
-  pos.z = mPosZ * TILE_SIZE_Z + mBoundingBox.z;
-  pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
-  mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
-  mNode->attachObject(mEntity);
+    if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
+    mFacing = Degree(Facing);
+    thisStatic = mInstanceNr++;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Build the mesh name.
+    /// ////////////////////////////////////////////////////////////////////
+    Logger::log().info()  << "Adding object: " << mesh_filename << ".";
+    mEntity =mSceneMgr->createEntity("ObjStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
+    mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
+    mPosX = posX;
+    mPosZ = posZ;
+    const AxisAlignedBox &AABB = mEntity->getBoundingBox();
+    Vector3 pos;
+    mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
+    mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+    mBoundingBox.y = AABB.getMinimum().y;
+    pos.x = mPosX * TILE_SIZE_X + mBoundingBox.x;
+    pos.z = mPosZ * TILE_SIZE_Z + mBoundingBox.z;
+    pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
+    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
+    mNode->attachObject(mEntity);
 
-  //mNode->scale(10,10,10);
+    //mNode->scale(10,10,10);
 
-  mAnim = new Animate(mEntity);
+    mAnim = new Animate(mEntity);
 }
 
 ///================================================================================================
@@ -81,7 +91,7 @@ ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing
 ///================================================================================================
 void ObjStatic::update(const FrameEvent& event)
 {
-  //    Logger::log().info() << "hier";
+    //    Logger::log().info() << "hier";
     mAnim->update(event);
 }
 
@@ -89,19 +99,16 @@ void ObjStatic::update(const FrameEvent& event)
 /// Turn the mob until it faces the given tile.
 ///================================================================================================
 void ObjStatic::faceToTile(int, int)
-{
-}
+{}
 
 ///================================================================================================
 /// Move the mob to the given tile.
 ///================================================================================================
 void ObjStatic::moveToTile(int, int)
-{
-}
+{}
 
 ///================================================================================================
 /// Select a new texture.
 ///================================================================================================
 void ObjStatic::setTexture(int, int, int)
-{
-}
+{}

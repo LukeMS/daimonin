@@ -351,8 +351,7 @@ void CEvent::keyPressed(KeyEvent *e)
 }
 
 void CEvent::keyClicked(KeyEvent* )
-{
-}
+{}
 
 void CEvent::keyReleased(KeyEvent* e)
 {
@@ -363,15 +362,7 @@ void CEvent::keyReleased(KeyEvent* e)
         /// ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
-        /*
-        //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0);
-        long time = clock();
-        for (int i=0; i < 1000; ++i)
-        {
-            Event->getTileManager()->ChangeChunks();
-        }
-        Logger::log().info() << "Time to create Chunks: " << clock()-time << " ms";
-        */
+        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0);
         break;
 
         case KC_RIGHT:
@@ -410,8 +401,8 @@ void CEvent::mouseMoved (MouseEvent *e)
 
 void CEvent::mousePressed (MouseEvent *e)
 {
-   // Ignoe button while init.
-   if (Option::getSingleton().getGameStatus() < GAME_STATUS_INIT_NET) return;
+    // Ignoe button while init.
+    if (Option::getSingleton().getGameStatus() < GAME_STATUS_INIT_NET) return;
 
     mMouseX = e->getX();
     mMouseY = e->getY();

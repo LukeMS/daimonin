@@ -34,24 +34,24 @@ using namespace std;
 ///================================================================================================
 void ServerFile::getFileAttibutes(int file_enum)
 {
-  setStatus(file_enum, SERVER_FILE_STATUS_OK);
-  setLength(file_enum, SERVER_FILE_STATUS_OK);
-  setCRC   (file_enum, SERVER_FILE_STATUS_OK);
-  ifstream in(srv_file[file_enum].filename, ios::in | ios::binary);
-  Logger::log().info()  << "- Reading Attributes from " << srv_file[file_enum].filename << "...";
-  if (!in.is_open())
-  {
-    Logger::log().success(false);
-    Logger::log().error()  << "Can't open file '" << srv_file[file_enum].filename << "'.";
-    return;
-  }
-  Logger::log().success(true);
+    setStatus(file_enum, SERVER_FILE_STATUS_OK);
+    setLength(file_enum, SERVER_FILE_STATUS_OK);
+    setCRC   (file_enum, SERVER_FILE_STATUS_OK);
+    ifstream in(srv_file[file_enum].filename, ios::in | ios::binary);
+    Logger::log().info()  << "- Reading Attributes from " << srv_file[file_enum].filename << "...";
+    if (!in.is_open())
+    {
+        Logger::log().success(false);
+        Logger::log().error()  << "Can't open file '" << srv_file[file_enum].filename << "'.";
+        return;
+    }
+    Logger::log().success(true);
 
-  ostringstream out(ios::binary);
-  in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
-  copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
-  setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(), (int) out.str().size()));
-  setLength(file_enum, (int)out.str().size());
+    ostringstream out(ios::binary);
+    in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
+    copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
+    setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(), (int) out.str().size()));
+    setLength(file_enum, (int)out.str().size());
 }
 
 ///================================================================================================
@@ -59,6 +59,6 @@ void ServerFile::getFileAttibutes(int file_enum)
 ///================================================================================================
 void ServerFile::checkFiles()
 {
-  Logger::log().info() << "Checking all files coming from server:";
-  for (int i=0; i< SERVER_FILE_SUM; i++) getFileAttibutes(i);
+    Logger::log().info() << "Checking all files coming from server:";
+    for (int i=0; i< SERVER_FILE_SUM; i++) getFileAttibutes(i);
 }

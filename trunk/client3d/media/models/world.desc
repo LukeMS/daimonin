@@ -18,11 +18,11 @@ PosX     : "7"
 PosY     : "7"
 Facing   : "0" # [degrees]
 
-Type     : "npc"
-MeshName : "Human_M_Fighter.desc"
-PosX     : "2"
-PosY     : "2"
-Facing   : "15" # [degrees]
+#Type     : "npc"
+#MeshName : "Human_M_Fighter.desc"
+#PosX     : "2"
+#PosY     : "2"
+#Facing   : "15" # [degrees]
 
 Type     : "static"
 MeshName : "Tree.mesh"

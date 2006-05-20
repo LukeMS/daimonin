@@ -32,6 +32,15 @@ class GuiGadgetCombobox;
 
 using namespace Ogre;
 
+enum
+{
+    GUI_GADGET_COMBOBOX_NONE,
+    GUI_GADGET_COMBOBOX_DDBUTTON,
+    GUI_GADGET_COMBOBOX_SCROLL_UP,
+    GUI_GADGET_COMBOBOX_SCROLL_DOWN,
+    GUI_GADGET_COMBOBOX_SCROLL_BAR,
+    GUI_GADGET_COMBOBOX_SUM
+};
 
 class GuiGadgetCombobox : public GuiGadget
 {
@@ -40,29 +49,33 @@ public:
     ~GuiGadgetCombobox();
 
     void draw(PixelBox &mSrcPixelBox, Texture *texture);
-		void setText(const char *value);
+    void setText(const char *value);
     bool setState(int state);
-		bool mouseOver(int x, int y);
-		
-		const char *getText();
+    bool mouseOver(int x, int y);
+
+    const char *getText();
 private:
-		GuiSrcEntry *srcButton;
-		uint32 *mGfxBuffer;
-    int  mFontHeight;
-		int mMaxChars;
-		int mEntryHeight;
-		int bw;
-		int mMouseX, mMouseY;
-		int mActiveDropdownOption;
+    GuiSrcEntry *srcButton;
+    GuiSrcEntry *srcScrollbarUp;
+    GuiSrcEntry *srcScrollbarDown;
+    uint32 *mGfxBuffer;
+    int mFontHeight;
+    int mMaxChars;
+    int mEntryHeight;
+    int bw;
+    int mMouseX, mMouseY;
+    int mActiveDropdownOption;
+    int mVirtualHeight;
+    int mScrollPos;
+    int mViewport;
+    int mButton;
+    bool mNeedsScroll;
     bool mUseNumbers;
     bool mUseWhitespaces;
-		bool mDispDropdown;
-		bool mDDButton;
+    bool mDispDropdown;
+	bool mDDButton;
     std::vector<std::string> mvOption;
     std::vector<int> mvValue;
-    
 };
 
-
 #endif // GUI_COMBOBOX_H
-

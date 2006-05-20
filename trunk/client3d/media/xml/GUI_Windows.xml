@@ -9,8 +9,8 @@
     <Font type="TTF" name= "Vera.ttf" size="8" />
     <Font type="TTF" name= "Vera.ttf" size="10" />
     <Font type="TTF" name= "Vera.ttf" size="24" resolution="55"/>
-    <Font type="TTF" name= "Vera.ttf" size="60" />
-    <Font type="TTF" name= "Vera.ttf" size="80" />
+    <Font type="TTF" name= "Vera.ttf" size="12" />
+    <Font type="TTF" name= "Vera.ttf" size="14" />
   </Fonts>
   
   <!--#############################################-->

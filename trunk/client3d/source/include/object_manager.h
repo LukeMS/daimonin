@@ -36,65 +36,65 @@ using namespace Ogre;
 
 enum
 {
-  OBJECT_PLAYER, OBJECT_NPC, OBJECT_STATIC, OBJECT_SUM
+    OBJECT_PLAYER, OBJECT_NPC, OBJECT_STATIC, OBJECT_SUM
 };
 enum
 {
-  OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
+    OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
 };
 
 class ObjectManager
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  static ObjectManager &getSingleton()
-  {
-    static ObjectManager Singleton; return Singleton;
-  }
-  void freeRecources();
-  bool init();
-  bool addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing);
-  void delObject(int number);
-  void update(int type, const FrameEvent& evt);
-  void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
-  void castSpell(int npc, int spell)
-  {
-    mvObject_npc[npc]->castSpell(spell);
-  }
-  void toggleMesh(int npc, int pos, int WeaponNr)
-  {
-    mvObject_npc[npc]->toggleMesh(pos, WeaponNr);
-  }
-  const Vector3& getPos(int npc)
-  {
-    return mvObject_npc[npc]->getPos();
-  }
-  const Vector3& getWorldPos()
-  {
-    return mvObject_npc[0]->getWorldPos();
-  }
-  const SceneNode *getNpcNode(int npc)
-  {
-    return mvObject_npc[npc]->getNode();
-  }
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    static ObjectManager &getSingleton()
+    {
+        static ObjectManager Singleton; return Singleton;
+    }
+    void freeRecources();
+    bool init();
+    bool addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing);
+    void delObject(int number);
+    void update(int type, const FrameEvent& evt);
+    void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
+    void castSpell(int npc, int spell)
+    {
+        mvObject_npc[npc]->castSpell(spell);
+    }
+    void toggleMesh(int npc, int pos, int WeaponNr)
+    {
+        mvObject_npc[npc]->toggleMesh(pos, WeaponNr);
+    }
+    const Vector3& getPos(int npc)
+    {
+        return mvObject_npc[npc]->getPos();
+    }
+    const Vector3& getWorldPos()
+    {
+        return mvObject_npc[0]->getWorldPos();
+    }
+    const SceneNode *getNpcNode(int npc)
+    {
+        return mvObject_npc[npc]->getNode();
+    }
+    void ObjectManager::synchToWorldPos(Vector3 pos);
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  std::string mDescFile;
-  std::vector<ObjStatic*>mvObject_static;
-  std::vector<NPC*   >mvObject_npc;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    std::string mDescFile;
+    std::vector<ObjStatic*>mvObject_static;
+    std::vector<NPC*   >mvObject_npc;
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  ObjectManager()
-  {
-  }
-  ~ObjectManager();
-  ObjectManager(const ObjectManager&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    ObjectManager()
+    {}
+    ~ObjectManager();
+    ObjectManager(const ObjectManager&); // disable copy-constructor.
 };
 
 #endif

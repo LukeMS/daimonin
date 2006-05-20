@@ -30,50 +30,49 @@ using namespace Ogre;
 class ParticleManager
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  static ParticleManager &getSingleton()
-  {
-    static ParticleManager Singleton; return Singleton;
-  }
-  bool init(SceneManager *SceneMgr);
-  ParticleSystem *addFreeObject(Vector3 pos, const char *name, Real time);
-  ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
-  ParticleSystem *addNodeObject(const SceneNode *node, const char* particleFX);
-  void delNodeObject(int nr);
-  void delObject(ParticleSystem *pSystem);
-  void synchToWorldPos(const Vector3 &pos);
-  void moveNodeObject(const FrameEvent& event);
-  void update(Real time);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    static ParticleManager &getSingleton()
+    {
+        static ParticleManager Singleton; return Singleton;
+    }
+    bool init(SceneManager *SceneMgr);
+    ParticleSystem *addFreeObject(Vector3 pos, const char *name, Real time);
+    ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
+    ParticleSystem *addNodeObject(const SceneNode *node, const char* particleFX);
+    void delNodeObject(int nr);
+    void delObject(ParticleSystem *pSystem);
+    void synchToWorldPos(const Vector3 &pos);
+    void moveNodeObject(const FrameEvent& event);
+    void update(Real time);
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  SceneManager *mSceneMgr;
-  SceneNode    *mSceneNode;
-  unsigned int mCounter;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    SceneManager *mSceneMgr;
+    SceneNode    *mSceneNode;
+    unsigned int mCounter;
 
-  struct sParticles
-  {
-    Real speed;      //  0: Object has a static position.
-    Real lifeTime;   // -1: Infinity lifetime.
-    Vector3 mDir;
-    SceneNode *sceneNode;
-    ParticleSystem *pSystem;
-    Entity *entity;
-  };
-  std::vector<sParticles*>mvParticle;
+    struct sParticles
+    {
+        Real speed;      //  0: Object has a static position.
+        Real lifeTime;   // -1: Infinity lifetime.
+        Vector3 mDir;
+        SceneNode *sceneNode;
+        ParticleSystem *pSystem;
+        Entity *entity;
+    };
+    std::vector<sParticles*>mvParticle;
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  ParticleManager()
-  {
-  }
-  ~ParticleManager();
-  ParticleManager(const ParticleManager&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    ParticleManager()
+    {}
+    ~ParticleManager();
+    ParticleManager(const ParticleManager&); // disable copy-constructor.
 };
 
 #endif

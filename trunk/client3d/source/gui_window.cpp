@@ -367,7 +367,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         Entity* head = Event->GetSceneManager()->createEntity("Head", strTmp);
         //        mSceneNode = Event->GetSceneManager()->createSceneNode();
-        mSceneNode = new SceneNode(NULL);
+        mSceneNode = new SceneNode(0);
         mSceneNode->attachObject(head);
 
 
@@ -503,7 +503,7 @@ void GuiWindow::drawAll()
     for (vector<TextLine*>::iterator i = mvTextline.end(); i< mvTextline.begin(); --i)
     {
         if ((*i)->index < 0) mvTextline.erase(i);
-		if (mvTextline.empty()) break;
+        if (mvTextline.empty()) break;
     }
 
     /// ////////////////////////////////////////////////////////////////////
@@ -532,7 +532,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     int y = ry - mPosY;
 
     int gadget;
-    const char *actGadgetName = NULL;
+    const char *actGadgetName = 0;
 
     // Dont pass the action throw this window
     if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
@@ -583,7 +583,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 
                     if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_CLOSE), actGadgetName))
                     {
-                        GuiManager::getSingleton().setTooltip(NULL);
+                        GuiManager::getSingleton().setTooltip(0);
                         Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
                         mOverlay->hide();
                         if (mSceneNode) mNPC_HeadOverlay->hide();
@@ -638,7 +638,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                 {
                     mvGadget[mMouseOver]->draw(mSrcPixelBox, mTexture.getPointer());
                     mMouseOver = -1;
-                    GuiManager::getSingleton().setTooltip(NULL);
+                    GuiManager::getSingleton().setTooltip(0);
                 }
             }
             /// ////////////////////////////////////////////////////////////////////
@@ -670,22 +670,22 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         }
     }
 
-		PreformActions();
+    PreformActions();
     return actGadgetName;
 }
 
 void GuiWindow::PreformActions()
 {
-	for( unsigned int i = 0 ; i < mvGadget.size() ; i++ )
-	{
-		switch( mvGadget[i]->getAction() )
-		{
-		case GUI_ACTION_START_TEXT_INPUT:
-			GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->index, 20, true, true);
-			mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
-			break;
-		}
-	}
+    for( unsigned int i = 0 ; i < mvGadget.size() ; i++ )
+    {
+        switch( mvGadget[i]->getAction() )
+        {
+            case GUI_ACTION_START_TEXT_INPUT:
+            GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->index, 20, true, true);
+            mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
+            break;
+        }
+    }
 
 }
 
@@ -694,7 +694,7 @@ void GuiWindow::PreformActions()
 ///================================================================================================
 const char *GuiWindow::Message(int message, int element, const char *value)
 {
-		switch (message)
+    switch (message)
     {
         case GUI_MSG_ADD_TEXTLINE:
         for (unsigned int i = 0; i < mvListbox.size() ; ++i)
@@ -713,16 +713,16 @@ const char *GuiWindow::Message(int message, int element, const char *value)
                 continue;
             mvTextline[i]->text = value;
             GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value);
-						return NULL;
+            return 0;
             break;
         }
-				for (unsigned int i = 0; i < mvGadget.size() ; ++i)
+        for (unsigned int i = 0; i < mvGadget.size() ; ++i)
         {
             if (mvGadget[i]->index != element)
                 continue;
             mvGadget[i]->setText(value);
             mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
-						return NULL;
+            return 0;
             break;
         }
         break;
@@ -735,19 +735,19 @@ const char *GuiWindow::Message(int message, int element, const char *value)
             return mvTextline[i]->text.c_str();
             break;
         }
-				for (unsigned int i = 0; i < mvGadget.size() ; ++i)
+        for (unsigned int i = 0; i < mvGadget.size() ; ++i)
         {
             if (mvGadget[i]->index != element)
                 continue;
             return mvGadget[i]->getText();
-						break;
+            break;
         }
         break;
 
         default:
         break;
     }
-    return NULL;
+    return 0;
 }
 
 ///================================================================================================

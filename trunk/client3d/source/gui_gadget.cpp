@@ -44,23 +44,22 @@ GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY) :G
         Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
         << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
     }
-		
-		if ((strTmp = xmlElem->Attribute("name")))
-		{
-				for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
-				{
-						if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
-						{
-								index = GuiImageset::getSingleton().getElementIndex(i);
-								break;
-						}
-				}
-		}
+
+    if ((strTmp = xmlElem->Attribute("name")))
+    {
+        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+        {
+            if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
+            {
+                index = GuiImageset::getSingleton().getElementIndex(i);
+                break;
+            }
+        }
+    }
 }
 
 GuiGadget::~GuiGadget()
 {
-
 }
 
 ///================================================================================================
@@ -68,7 +67,6 @@ GuiGadget::~GuiGadget()
 ///================================================================================================
 void GuiGadget::draw(PixelBox &mSrcPixelBox, Texture *texture)
 {
-
 }
 
 ///================================================================================================
@@ -81,27 +79,25 @@ bool GuiGadget::setState(int state)
 
 void GuiGadget::addTextline(const char *value)
 {
-
 }
 
 void GuiGadget::setText(const char *value)
 {
-
 }
 
 const char *GuiGadget::getText()
 {
-	return NULL;
+    return NULL;
 }
 
 int GuiGadget::getAction()
 {
-	int ret = mAction;
-	mAction = GUI_ACTION_NONE;
-	return ret;
+    int ret = mAction;
+    mAction = GUI_ACTION_NONE;
+    return ret;
 }
 
 bool GuiGadget::mouseOver(int x, int y)
 {
-	return GuiElement::mouseOver(x,y);
+    return GuiElement::mouseOver(x,y);
 }

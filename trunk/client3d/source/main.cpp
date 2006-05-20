@@ -217,6 +217,8 @@ int main(int argc, char **argv)
     }
     try
     {
+        Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
+        Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
         /// ////////////////////////////////////////////////////////////////////
         /// Set default mipmap level (NB some APIs ignore this)
         /// ////////////////////////////////////////////////////////////////////
