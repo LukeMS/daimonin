@@ -32,14 +32,18 @@
     </section>
     <section id="mail">
         <title>
-            Mail
+            <a href="http://www.itcqis.de/daimonin/commands#mail">Mail</a>
         </title>
-        <p/>
+        <p>
+            Using these commands you can send a private message to a player regardless of whether he is online or offline, and of course manage such messages which have been sent to you.
+        </p>
     </section>
     <section id="clanchat">
         <title>
-            Clan chat
+            <a href="http://www.itcqis.de/daimonin/commands#groups">Clan chat</a>
         </title>
-        <p/>
+        <p>
+            Using these commands you can send a message to all players currently online who are members of a particular clan (you must be a member too).
+        </p>
     </section>
 </daiml>
