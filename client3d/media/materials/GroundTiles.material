@@ -172,12 +172,12 @@ material Water_HighDetails
       depth_write off
       texture_unit 0
       {
+	filtering none
         texture water_00_128.png
 	// Give me alpha.
-        //alpha_op_ex source2 src_current src_manual 0.4 
         alpha_op_ex modulate src_texture src_manual 0.4 
         scroll_anim 0.05 0.05
-        wave_xform scale_x triangle 1.0 0.2 0.1 0.1
+        //wave_xform scale_x triangle 1.0 0.2 0.1 0.1
       }
 
     }
@@ -194,11 +194,12 @@ material Water_HighDetails_Grid
       texture_unit 0
       {
         texture water_00_128.png
-        scroll_anim 0.05 0.05
+        //scroll_anim 0.05 0.05
         tex_coord_set 0
         //wave_xform scale_x sine 1.0 0.1 0.0 5.0
         //wave_xform scale_x sine 1.0 0.2 0.1 0.05
-        wave_xform scale_x triangle 1.0 0.2 0.1 0.1
+        
+	//wave_xform scale_x triangle 1.0 0.2 0.1 0.1
         tex_address_mode wrap
       }
       texture_unit 1

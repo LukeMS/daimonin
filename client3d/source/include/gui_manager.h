@@ -34,100 +34,99 @@ using namespace Ogre;
 
 enum
 {
-  GUI_WIN_STATISTICS,
-  GUI_WIN_PLAYERINFO,
-  GUI_WIN_TEXTWINDOW,
-//  GUI_WIN_CREATION,
-  GUI_WIN_SUM
+    GUI_WIN_STATISTICS,
+    GUI_WIN_PLAYERINFO,
+    GUI_WIN_TEXTWINDOW,
+    //  GUI_WIN_CREATION,
+    GUI_WIN_SUM
 };
 
 enum
 {
-  GUI_MSG_TXT_GET,
-  GUI_MSG_TXT_CHANGED,
-  GUI_MSG_ADD_TEXTLINE,
-  GUI_MSG_BUT_PRESSED,
-  GUI_MSG_SUM
+    GUI_MSG_TXT_GET,
+    GUI_MSG_TXT_CHANGED,
+    GUI_MSG_ADD_TEXTLINE,
+    GUI_MSG_BUT_PRESSED,
+    GUI_MSG_SUM
 };
 
 typedef struct
 {
-  char *name;
-  unsigned int index;
+    char *name;
+    unsigned int index;
 }
 GuiWinNam;
 
 class GuiManager
 {
 public:
-  enum
-  {
-    MSG_CHANGE_TEXT, MSG_BUTTON_PRESSED, MSG_SUM
-  };
+    enum
+    {
+        MSG_CHANGE_TEXT, MSG_BUTTON_PRESSED, MSG_SUM
+    };
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  static GuiManager &getSingleton()
-  {
-    static GuiManager singleton; return singleton;
-  }
-  void freeRecources();
-  void Init(int w, int h);
-  void parseImageset(const char *XML_imageset_file);
-  void parseWindows (const char *XML_windows_file);
-  void update(Real);
-  bool mouseEvent(int MouseAction, Real rx, Real ry);
-  bool keyEvent(const char keyChar, const unsigned char key);
-  const char *sendMessage(int window, int message, int element, void *value1 = NULL, void *value2 = NULL);
-  void setTooltip(const char*text);
-  void displaySystemMessage(const char*text);
-  void startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces);
-  int getScreenWidth()
-  {
-    return mScreenWidth;
-  }
-  int getScreenHeight()
-  {
-    return mScreenHeight;
-  }
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    static GuiManager &getSingleton()
+    {
+        static GuiManager singleton; return singleton;
+    }
+    void freeRecources();
+    void Init(int w, int h);
+    void parseImageset(const char *XML_imageset_file);
+    void parseWindows (const char *XML_windows_file);
+    void update(Real);
+    bool mouseEvent(int MouseAction, Real rx, Real ry);
+    bool keyEvent(const char keyChar, const unsigned char key);
+    const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
+    void setTooltip(const char*text);
+    void displaySystemMessage(const char*text);
+    void startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces);
+    int getScreenWidth()
+    {
+        return mScreenWidth;
+    }
+    int getScreenHeight()
+    {
+        return mScreenHeight;
+    }
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
-  int mDragSrcWin, mDragDestWin;
-  int mDragSrcContainer, mDragDestContainer;
-  int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
-  int mProcessingTextInput;
-  int mActiveWindow, mActiveElement;
-  int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
-  bool mTooltipRefresh;
-  bool isDragging;
-  std::string  mStrTooltip, mBackupTextInputString;
-  class GuiWindow *guiWindow;
-  unsigned int mScreenWidth, mScreenHeight;
-  clock_t mTooltipDelay;
-  Overlay *mOverlay;
-  OverlayElement *mElement;
-  MaterialPtr mMaterial;
-  TexturePtr mTexture;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  GuiManager()
-  {
-    guiWindow = NULL;
-  }
-  ~GuiManager()
-  {
-  }
-  GuiManager(const GuiManager&); // disable copy-constructor.
-  //GuiManager& operator=(GuiManager const&);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
+    int mDragSrcWin, mDragDestWin;
+    int mDragSrcContainer, mDragDestContainer;
+    int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
+    int mProcessingTextInput;
+    int mActiveWindow, mActiveElement;
+    int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
+    bool mTooltipRefresh;
+    bool isDragging;
+    std::string  mStrTooltip, mBackupTextInputString;
+    class GuiWindow *guiWindow;
+    unsigned int mScreenWidth, mScreenHeight;
+    clock_t mTooltipDelay;
+    Overlay *mOverlay;
+    OverlayElement *mElement;
+    MaterialPtr mMaterial;
+    TexturePtr mTexture;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    GuiManager()
+    {
+        guiWindow = 0;
+    }
+    ~GuiManager()
+    {}
+    GuiManager(const GuiManager&); // disable copy-constructor.
+    //GuiManager& operator=(GuiManager const&);
 
-  bool parseWindowsData (const char *file);
-  void clearTooltip();
+    bool parseWindowsData (const char *file);
+    void clearTooltip();
 };
 
 #endif

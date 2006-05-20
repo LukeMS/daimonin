@@ -29,57 +29,56 @@ using namespace Ogre;
 
 enum
 {
-  SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM
+    SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM
 };
 enum
 {
-  SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM
+    SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM
 };
 enum
 {
-  SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM
+    SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM
 };
 
 struct _Spell
 {
-  SceneNode *node;
-  ParticleSystem* particleSys;
+    SceneNode *node;
+    ParticleSystem* particleSys;
 };
 
 class SpellManager
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  static SpellManager &getSingleton()
-  {
-    static SpellManager Singleton; return Singleton;
-  }
-  bool init(SceneManager *SceneMgr);
-  bool addObject( unsigned int npc, unsigned int spell);
-  void delObject(int number);
-  void update(int type, const FrameEvent& evt);
-  void keyEvent(int obj_type, int action, int val1=0, int val2=0);
-  void test(Vector3 pos);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    static SpellManager &getSingleton()
+    {
+        static SpellManager Singleton; return Singleton;
+    }
+    bool init(SceneManager *SceneMgr);
+    bool addObject( unsigned int npc, unsigned int spell);
+    void delObject(int number);
+    void update(int type, const FrameEvent& evt);
+    void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+    void test(Vector3 pos);
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  SceneManager *mSceneMgr;
-  SceneNode  *mNode;
-  std::string mDescFile;
-  std::vector<SpellRange*>mvObject_range;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    SceneManager *mSceneMgr;
+    SceneNode  *mNode;
+    std::string mDescFile;
+    std::vector<SpellRange*>mvObject_range;
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  SpellManager()
-  {
-  }
-  ~SpellManager();
-  SpellManager(const SpellManager&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    SpellManager()
+    {}
+    ~SpellManager();
+    SpellManager(const SpellManager&); // disable copy-constructor.
 };
 
 #endif

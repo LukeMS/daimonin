@@ -18,9 +18,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------*/
 
-#ifdef LOG_TIMING
-#include <ctime>
-#endif
 #include <cmath>
 #include <iostream>
 #include "OgreHardwarePixelBuffer.h"
@@ -34,7 +31,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 ///================================================================================================
 TileManager::TileManager()
 {
-    m_Interface = NULL;
+    m_Interface = 0;
+    mapPosX = 1000;
+    mapPosZ = 1000;
 }
 
 ///================================================================================================
@@ -136,15 +135,123 @@ void TileManager::Load_Map(const std::string &png_filename)
     }
 
     // TODO : put this loop in the upper loop.
-    for (int x = 0; x < TILES_SUM_X+1; ++x)
+    for (int x = 0; x < TILES_SUM_X; ++x)
     {
-        for (int y = 0; y < TILES_SUM_Z+1; ++y)
+        for (int y = 0; y < TILES_SUM_Z; ++y)
         {
-            m_Map[x][y].height = (Map[x][y] + Map[x][y+1] + Map[x+1][y] + Map[x+1][y+1]) / 4;
+            m_Map[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
+            if (m_Map[x][y].height > 30) m_Map[x][y].height =30;
         }
     }
     Set_Map_Textures();
 }
+
+///================================================================================================
+/// Saves the map.
+///================================================================================================
+void TileManager::scrollMap(int dx, int dz)
+{
+    // Quick hack. server will send us the map later.
+
+    if (dx)
+    {
+        char bufferH[TILES_SUM_Z];
+        if (dx <0)
+        {
+            for(int y = 0; y < TILES_SUM_Z; ++y)
+            {
+                bufferH[y] = m_Map[0][y].height ;
+            }
+            for(int x = 0; x < TILES_SUM_X-1; ++x)
+            {
+                for(int y = 0; y < TILES_SUM_Z; ++y)
+                {
+                    m_Map[x][y].height      = m_Map[x+1][y].height;
+                }
+            }
+            for(int y = 0; y < TILES_SUM_Z; ++y)
+            {
+                m_Map[TILES_SUM_X-1][y].height = bufferH[y] ;
+            }
+        }
+        else
+        {
+            for(int y = 0; y < TILES_SUM_Z; ++y)
+            {
+                bufferH[y] = m_Map[TILES_SUM_X-1][y].height ;
+            }
+            for(int x = TILES_SUM_X-1; x >0; --x)
+            {
+                for(int y = 0; y < TILES_SUM_Z; ++y)
+                {
+                    m_Map[x][y].height      = m_Map[x-1][y].height;
+                }
+            }
+            for(int y = 0; y < TILES_SUM_Z; ++y)
+            {
+                m_Map[0][y].height      = bufferH[y] ;
+            }
+        }
+    }
+
+    if (dz)
+    {
+        char bufferH[TILES_SUM_X];
+        if (dz <0)
+        {
+            for(int x = 0; x < TILES_SUM_X; ++x)
+            {
+                bufferH[x] = m_Map[x][0].height ;
+            }
+
+            for(int x = 0; x < TILES_SUM_X; ++x)
+            {
+                for(int y = 0; y < TILES_SUM_Z-1; ++y)
+                {
+                    m_Map[x][y].height = m_Map[x][y+1].height;
+                }
+            }
+
+            for(int x = 0; x < TILES_SUM_X; ++x)
+            {
+                m_Map[x][TILES_SUM_Z-1].height = bufferH[x] ;
+            }
+        }
+
+        else
+        {
+            for(int x = 0; x < TILES_SUM_X; ++x)
+            {
+                bufferH[x] = m_Map[x][TILES_SUM_Z-1].height ;
+            }
+            for(int x = 0; x < TILES_SUM_X; ++x)
+            {
+                for(int y = TILES_SUM_Z-1; y > 0; --y)
+                {
+                    m_Map[x][y].height = m_Map[x][y-1].height;
+                }
+            }
+            for(int x = 0; x < TILES_SUM_X; ++x)
+            {
+                m_Map[x][0].height  = bufferH[x] ;
+            }
+        }
+    }
+
+    mapPosX+= dx;
+    mapPosZ+= dz;
+    ChangeChunks();
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void TileManager::getMapPos(int &x, int &z)
+{
+    x = mapPosX;
+    z = mapPosZ;
+}
+
 
 ///================================================================================================
 /// Saves the map.
@@ -241,9 +348,8 @@ void TileManager::Set_Map_Textures()
 void TileManager::CreateChunks()
 {
 #ifdef LOG_TIMING
-    long time = clock();
+    unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-
     TileChunk::m_TileManagerPtr = this;
     TileChunk::m_bounds = new AxisAlignedBox(
                               -TILE_SIZE_X * CHUNK_SIZE_X, 0               , -TILE_SIZE_Z * CHUNK_SIZE_Z,
@@ -257,8 +363,8 @@ void TileManager::CreateChunks()
     }
     delete TileChunk::m_bounds;
 #ifdef LOG_TIMING
-
-    Logger::log().info() << "Time to create Chunks: " << clock()-time << " ms";
+    Logger::log().info() << "Time to create Chunks: "
+    << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
 #endif
 }
 
@@ -268,29 +374,28 @@ void TileManager::CreateChunks()
 void TileManager::ChangeChunks()
 {
 #ifdef LOG_TIMING
-    long time = clock();
+    unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-
     TileChunk::m_TileManagerPtr = this;
     TileChunk::m_bounds = new AxisAlignedBox(
                               -TILE_SIZE_X * CHUNK_SIZE_X, 0               , -TILE_SIZE_Z * CHUNK_SIZE_Z,
                               TILE_SIZE_X * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE_Z * CHUNK_SIZE_Z);
-/*
-    // Test start
-    unsigned char value;
-    for (int a = 0 ; a < TILES_SUM_X; ++a)
-    {
-        for (int b = 0; b < TILES_SUM_Z; ++b)
+    /*
+        // Test start
+        unsigned char value;
+        for (int a = 0 ; a < TILES_SUM_X; ++a)
         {
-            value = Get_Map_Height(a, b)+ 1;
-            if (value > 220)
-                value = 0;
-            Set_Map_Height(a, b, value);
+            for (int b = 0; b < TILES_SUM_Z; ++b)
+            {
+                value = Get_Map_Height(a, b)+ 1;
+                if (value > 220)
+                    value = 0;
+                Set_Map_Height(a, b, value);
+            }
         }
-    }
-    // Test stop
-*/
-    Set_Map_Textures();
+        // Test stop
+    */
+        Set_Map_Textures();
     for (short x = 0; x < CHUNK_SUM_X; ++x)
     {
         for (short y = 0; y < CHUNK_SUM_Z; ++y)
@@ -301,8 +406,8 @@ void TileManager::ChangeChunks()
     delete TileChunk::m_bounds;
 
 #ifdef LOG_TIMING
-
-    Logger::log().info() << "Time to change Chunks: " << clock()-time << " ms";
+    Logger::log().info() << "Time to change Chunks: "
+    << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
 #endif
 }
 
@@ -318,10 +423,8 @@ void TileManager::ChangeTexture()
     else
         once=true;
 #ifdef LOG_TIMING
-
-    long time = clock();
+    unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-
     Image tMap;
     if (!LoadImage(tMap, strFilename))
     {
@@ -335,8 +438,8 @@ void TileManager::ChangeTexture()
     // mMaterial->unload();
     mMaterial->load();
 #ifdef LOG_TIMING
-
-    Logger::log().info() << "Time to change Texture: " << clock()-time << " ms";
+    Logger::log().info() << "Time to change Chunks: "
+    << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
 #endif
 }
 
@@ -432,11 +535,6 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
     /// ////////////////////////////////////////////////////////////////////
     /// Create group-texture in various sizes.
     /// ////////////////////////////////////////////////////////////////////
-#ifdef LOG_TIMING
-
-    long time = clock();
-#endif
-
     int i, tx, ty;
     int pix = PIXEL_PER_TILE;
     uchar* TextureGroup_data;
@@ -478,10 +576,6 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
         delete[] TextureGroup_data;
         pix /= 2;
     }
-#ifdef LOG_TIMING
-    Logger::log().info() << "Time to Create Texture-Groups: " << clock()-time << " ms";
-#endif
-
     delete[] grid_data;
     return true;
 }
@@ -724,8 +818,7 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
 ///================================================================================================
 inline void TileManager::CreateTextureGroupBorders(uchar* TextureGroup_data, short pix)
 {
-    if (pix <= MIN_TEXTURE_PIXEL)
-        return;
+    if (pix <= MIN_TEXTURE_PIXEL) return;
     /// ////////////////////////////////////////////////////////////////////
     /// Vertical border creation
     /// ////////////////////////////////////////////////////////////////////

@@ -30,22 +30,22 @@ using namespace Ogre;
 class GuiStatusbar : public GuiElement
 {
 public:
-  GuiStatusbar(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
-  {
-    mGfxBuffer = 0;
-    setValue(1.0); // default: 100%
-  }
-  ~GuiStatusbar()
-  {
-    delete[] mGfxBuffer;
-  }
-  void draw(PixelBox &mSrcPixelBox, Texture *texture);
-  void setValue(Real value);
+    GuiStatusbar(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
+    {
+        mGfxBuffer = 0;
+        setValue(1.0); // default: 100%
+    }
+    ~GuiStatusbar()
+    {
+        delete[] mGfxBuffer;
+    }
+    void draw(PixelBox &mSrcPixelBox, Texture *texture);
+    void setValue(Real value);
 
 private:
-  bool mHorizontal;
-  int mValue;
-  uint32 *mGfxBuffer;
+    bool mHorizontal;
+    int mValue;
+    uint32 *mGfxBuffer;
 };
 
 #endif

@@ -27,17 +27,17 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 bool Option::openDescFile(const char *filename)
 {
-  closeDescFile();
-  mDescFile = new ifstream(filename, ios::in);
-  if (!mDescFile)  return false;
-  mFilename = filename;
-  mDescBuffer ="";
-  string buf;
-  while (getline(*mDescFile, buf))
-  { // skip comments.
-    if (buf.find("#") > 5)  mDescBuffer+= buf;
-  }
-  return true;
+    closeDescFile();
+    mDescFile = new ifstream(filename, ios::in);
+    if (!mDescFile)  return false;
+    mFilename = filename;
+    mDescBuffer ="";
+    string buf;
+    while (getline(*mDescFile, buf))
+    { // skip comments.
+        if (buf.find("#") > 5)  mDescBuffer+= buf;
+    }
+    return true;
 }
 
 ///================================================================================================
@@ -45,10 +45,10 @@ bool Option::openDescFile(const char *filename)
 ///================================================================================================
 void Option::closeDescFile()
 {
-  if (!mDescFile) return;
-  mDescFile->close();
-  delete mDescFile;
-  mDescFile = 0;
+    if (!mDescFile) return;
+    mDescFile->close();
+    delete mDescFile;
+    mDescFile = 0;
 }
 
 ///================================================================================================
@@ -57,33 +57,33 @@ void Option::closeDescFile()
 ///================================================================================================
 bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int posNr)
 {
-  size_t pos=0, startPos=0, stopPos, entryTest;
+    size_t pos=0, startPos=0, stopPos, entryTest;
 checkForKeyword:
-  startPos = mDescBuffer.find(strKeyword, startPos);
-  if (startPos == string::npos)
-  {
-    return false;
-  }
-  entryTest= mDescBuffer.find(":",  startPos)+1;
-  startPos = mDescBuffer.find("\"", startPos)+1;
-  // keyword and value can have the same name. If ':' comes before '"' in the description-text
-  // we have a keyword, else we have the value and search again.
-  if (entryTest > startPos)
-  {
-    goto checkForKeyword;
-  }
-  stopPos   = mDescBuffer.find("\"", startPos)-startPos;
-  strBuffer = mDescBuffer.substr(startPos, stopPos);
-  if (++pos < posNr)
-  {
-    goto checkForKeyword;
-  }
-  //if (posNr) LogFile::getSingleton().Error("string: %s\n", strBuffer.c_str());
-  if (strBuffer.size() == 0)
-  {
-    return false;
-  }
-  return true;
+    startPos = mDescBuffer.find(strKeyword, startPos);
+    if (startPos == string::npos)
+    {
+        return false;
+    }
+    entryTest= mDescBuffer.find(":",  startPos)+1;
+    startPos = mDescBuffer.find("\"", startPos)+1;
+    // keyword and value can have the same name. If ':' comes before '"' in the description-text
+    // we have a keyword, else we have the value and search again.
+    if (entryTest > startPos)
+    {
+        goto checkForKeyword;
+    }
+    stopPos   = mDescBuffer.find("\"", startPos)-startPos;
+    strBuffer = mDescBuffer.substr(startPos, stopPos);
+    if (++pos < posNr)
+    {
+        goto checkForKeyword;
+    }
+    //if (posNr) LogFile::getSingleton().Error("string: %s\n", strBuffer.c_str());
+    if (strBuffer.size() == 0)
+    {
+        return false;
+    }
+    return true;
 }
 
 ///================================================================================================
@@ -91,8 +91,8 @@ checkForKeyword:
 ///================================================================================================
 Option::Option()
 {
-  Logger::log().headline("Init Options");
-  mDescFile =0;
+    Logger::log().headline("Init Options");
+    mDescFile =0;
 }
 
 ///================================================================================================
@@ -100,5 +100,5 @@ Option::Option()
 ///================================================================================================
 Option::~Option()
 {
-  closeDescFile();
+    closeDescFile();
 }

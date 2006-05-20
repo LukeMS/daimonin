@@ -36,23 +36,27 @@ FMOD_RESULT result;
 
 typedef struct
 {
-  const char   *filename;
-  FMOD_SOUND   *sound;
-  FMOD_CHANNEL *channel;
-  bool isMusic;
-  bool is2D;
-  //FMOD_VECTOR  pos;
-  //FMOD_VECTOR vel;
+    const char   *filename;
+    FMOD_SOUND   *sound;
+    FMOD_CHANNEL *channel;
+    bool isMusic;
+    bool is2D;
+    //FMOD_VECTOR  pos;
+    //FMOD_VECTOR vel;
 }
 SoundFiles;
 
 SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
-  {
-    { "invtro94.s3m"   , 0, 0, true , true  },
-    { "dummy.wav"      , 0, 0, false, true  },
-    { "console.wav"    , 0, 0, false, true  },
-    { "Player_Idle.ogg", 0, 0, false, false },
-  };
+    {
+        { "invtro94.s3m"   , 0, 0, true , true
+        },
+        { "dummy.wav"      , 0, 0, false, true
+        },
+        { "console.wav"    , 0, 0, false, true
+        },
+        { "Player_Idle.ogg", 0, 0, false, false
+        },
+    };
 
 const float DISTANCEFACTOR = 1.0f; /// Units per meter. (feet = 3.28.  cm = 100).
 
@@ -61,47 +65,47 @@ const float DISTANCEFACTOR = 1.0f; /// Units per meter. (feet = 3.28.  cm = 100)
 ///================================================================================================
 bool Sound::Init()
 {
-  mInit = false;
-  if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
-  Logger::log().headline("Init Sound-System");
-  /// ////////////////////////////////////////////////////////////////////
-  /// Create the main system object.
-  /// ////////////////////////////////////////////////////////////////////
-  result = FMOD_System_Create(&soundSystem);
-  if (result != FMOD_OK)
-  {
-    Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
-    return false;
-  }
-  /// ////////////////////////////////////////////////////////////////////
-  /// Init Fmod.
-  /// ////////////////////////////////////////////////////////////////////
-  result = FMOD_System_Init(soundSystem, 32, FMOD_INIT_NORMAL, NULL);
-  if (result != FMOD_OK)
-  {
-    Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
-    return false;
-  }
-  result = FMOD_System_Set3DSettings(soundSystem, 1.0, DISTANCEFACTOR, 1.0f);
-  if (result != FMOD_OK)
-  {
-    Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
-    return false;
-  }
-  mMusicVolume = 0.5;
-  mSoundVolume = 1.0;
-  mInit = true;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Load all samples.
-  /// ////////////////////////////////////////////////////////////////////
-  createDummy();
-  Logger::log().info() << "Loading all Sounds.";
-  for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
-  {
-    createStream(i);
-  }
-  playStream(BG_MUSIC);
-  return true;
+    mInit = false;
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_OFF_SOUND)) return false;
+    Logger::log().headline("Init Sound-System");
+    /// ////////////////////////////////////////////////////////////////////
+    /// Create the main system object.
+    /// ////////////////////////////////////////////////////////////////////
+    result = FMOD_System_Create(&soundSystem);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
+        return false;
+    }
+    /// ////////////////////////////////////////////////////////////////////
+    /// Init Fmod.
+    /// ////////////////////////////////////////////////////////////////////
+    result = FMOD_System_Init(soundSystem, 32, FMOD_INIT_NORMAL, 0);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
+        return false;
+    }
+    result = FMOD_System_Set3DSettings(soundSystem, 1.0, DISTANCEFACTOR, 1.0f);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "FMOD error! " << result << " " << FMOD_ErrorString(result);
+        return false;
+    }
+    mMusicVolume = 0.5;
+    mSoundVolume = 1.0;
+    mInit = true;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Load all samples.
+    /// ////////////////////////////////////////////////////////////////////
+    createDummy();
+    Logger::log().info() << "Loading all Sounds.";
+    for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
+    {
+        createStream(i);
+    }
+    playStream(BG_MUSIC);
+    return true;
 }
 
 ///================================================================================================
@@ -109,12 +113,12 @@ bool Sound::Init()
 ///================================================================================================
 void Sound::freeRecources()
 {
-  for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
-  {
-    FMOD_Sound_Release(mSoundFiles[i].sound);
-  }
-  result = FMOD_System_Close(soundSystem);
-  result = FMOD_System_Release(soundSystem);
+    for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
+    {
+        FMOD_Sound_Release(mSoundFiles[i].sound);
+    }
+    result = FMOD_System_Close(soundSystem);
+    result = FMOD_System_Release(soundSystem);
 }
 
 ///================================================================================================
@@ -122,22 +126,22 @@ void Sound::freeRecources()
 ///================================================================================================
 void Sound::createDummy()
 {
-  const unsigned char dummy[] =
+    const unsigned char dummy[] =
+        {
+            0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
+            0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
+            0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
+            0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
+        };
+    std::string filename = PATH_SAMPLES;
+    filename += mSoundFiles[DUMMY].filename;
+    ofstream out(filename.c_str(), ios::binary);
+    if (!out)
     {
-      0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
-      0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
-      0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
-      0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
-    };
-  std::string filename = PATH_SAMPLES;
-  filename += mSoundFiles[DUMMY].filename;
-  ofstream out(filename.c_str(), ios::binary);
-  if (!out)
-  {
-    Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
-    return;
-  }
-  out.write((char*)dummy, sizeof(dummy));
+        Logger::log().error() << "Critical: Cound not create the dummy wavefile.";
+        return;
+    }
+    out.write((char*)dummy, sizeof(dummy));
 }
 
 ///================================================================================================
@@ -145,23 +149,23 @@ void Sound::createDummy()
 ///================================================================================================
 void Sound::createStream(int id)
 {
-  std::string filename = PATH_SAMPLES;
-  filename += mSoundFiles[id].filename;
-  int options = FMOD_HARDWARE;
-  if (mSoundFiles[id].isMusic) options |= FMOD_LOOP_NORMAL; else options |= FMOD_LOOP_OFF;
-  if (mSoundFiles[id].is2D   ) options |= FMOD_2D;          else options |= FMOD_3D;
-  result = FMOD_System_CreateStream(
-             soundSystem,
-             filename.c_str(),
-             options,
-             0,
-             &mSoundFiles[id].sound);
-  if (result != FMOD_OK)
-  {
-    Logger::log().error() << "Error on creating Soundstream "
-    << mSoundFiles[id].filename << " : "
-    << FMOD_ErrorString(result);
-  }
+    std::string filename = PATH_SAMPLES;
+    filename += mSoundFiles[id].filename;
+    int options = FMOD_HARDWARE;
+    if (mSoundFiles[id].isMusic) options |= FMOD_LOOP_NORMAL; else options |= FMOD_LOOP_OFF;
+    if (mSoundFiles[id].is2D   ) options |= FMOD_2D;          else options |= FMOD_3D;
+    result = FMOD_System_CreateStream(
+                 soundSystem,
+                 filename.c_str(),
+                 options,
+                 0,
+                 &mSoundFiles[id].sound);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "Error on creating Soundstream "
+        << mSoundFiles[id].filename << " : "
+        << FMOD_ErrorString(result);
+    }
 }
 
 ///================================================================================================
@@ -169,23 +173,23 @@ void Sound::createStream(int id)
 ///================================================================================================
 void Sound::playStream(int id)
 {
-  if (!mInit) return;
-  stopStream(id);
-  result = FMOD_System_PlaySound(
-             soundSystem,
-             FMOD_CHANNEL_FREE,
-             mSoundFiles[id].sound,
-             0,
-             &mSoundFiles[id].channel);
-  if (result != FMOD_OK)
-  {
-    Logger::log().error() << "Error on play Soundstream "
-    << mSoundFiles[id].filename << " : "
-    << FMOD_ErrorString(result);
-    return;
-  }
-  setVolume(id);
-  //set3DPos(id, );
+    if (!mInit) return;
+    stopStream(id);
+    result = FMOD_System_PlaySound(
+                 soundSystem,
+                 FMOD_CHANNEL_FREE,
+                 mSoundFiles[id].sound,
+                 0,
+                 &mSoundFiles[id].channel);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "Error on play Soundstream "
+        << mSoundFiles[id].filename << " : "
+        << FMOD_ErrorString(result);
+        return;
+    }
+    setVolume(id);
+    //set3DPos(id, );
 }
 
 ///================================================================================================
@@ -193,8 +197,8 @@ void Sound::playStream(int id)
 ///================================================================================================
 void Sound::stopStream(int id)
 {
-  if (!mInit) return;
-  FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
+    if (!mInit) return;
+    FMOD_Channel_SetPaused(mSoundFiles[id].channel, true);
 }
 
 ///================================================================================================
@@ -202,18 +206,18 @@ void Sound::stopStream(int id)
 ///================================================================================================
 void Sound::setVolume(unsigned int id, float volume)
 {
-  if (!mInit) return;
-  if (volume <0)
-  {
-    if (mSoundFiles[id].isMusic)
-      FMOD_Channel_SetVolume(mSoundFiles[id].channel, mMusicVolume);
+    if (!mInit) return;
+    if (volume <0)
+    {
+        if (mSoundFiles[id].isMusic)
+            FMOD_Channel_SetVolume(mSoundFiles[id].channel, mMusicVolume);
+        else
+            FMOD_Channel_SetVolume(mSoundFiles[id].channel, mSoundVolume);
+    }
     else
-      FMOD_Channel_SetVolume(mSoundFiles[id].channel, mSoundVolume);
-  }
-  else
-  {
-    FMOD_Channel_SetVolume(mSoundFiles[id].channel, volume);
-  }
+    {
+        FMOD_Channel_SetVolume(mSoundFiles[id].channel, volume);
+    }
 }
 
 ///================================================================================================
@@ -221,12 +225,18 @@ void Sound::setVolume(unsigned int id, float volume)
 ///================================================================================================
 void Sound::set3DPos(unsigned int id, float &posX, float &posY, float &posZ)
 {
-  if (!mInit) return;
-  FMOD_VECTOR pos = { posX * DISTANCEFACTOR, posY, posZ };
-  FMOD_VECTOR vel = {  0.0f, 0.0f, 0.0f };
-  result = FMOD_Channel_Set3DAttributes(mSoundFiles[id].channel, &pos, &vel);
-  if (result != FMOD_OK)
-  {
-    Logger::log().error() << "Coundn't set 3D pos of sound. " << result << " " << FMOD_ErrorString(result);
-  }
+    if (!mInit) return;
+    FMOD_VECTOR pos =
+        {
+            posX * DISTANCEFACTOR, posY, posZ
+        };
+    FMOD_VECTOR vel =
+        {
+            0.0f, 0.0f, 0.0f
+        };
+    result = FMOD_Channel_Set3DAttributes(mSoundFiles[id].channel, &pos, &vel);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "Coundn't set 3D pos of sound. " << result << " " << FMOD_ErrorString(result);
+    }
 }

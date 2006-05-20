@@ -24,52 +24,50 @@ http://www.gnu.org/licenses/licenses.html
 class Sound
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  enum SampleName
-  {
-    BG_MUSIC,
-    DUMMY,
-    BUTTON_CLICK,
-    PLAYER_IDLE,
-    SAMPLE_SUM
-  };
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    enum SampleName
+    {
+        BG_MUSIC,
+        DUMMY,
+        BUTTON_CLICK,
+        PLAYER_IDLE,
+        SAMPLE_SUM
+    };
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  static Sound &getSingleton()
-  {
-    static Sound Singleton; return Singleton;
-  }
-  bool Init();
-  void freeRecources();
-  void createDummy();
-  void createStream(int id);
-  void playStream(int id);
-  void stopStream(int id);
-  void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
-  void setVolume( unsigned int channel, float volume =-1);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    static Sound &getSingleton()
+    {
+        static Sound Singleton; return Singleton;
+    }
+    bool Init();
+    void freeRecources();
+    void createDummy();
+    void createStream(int id);
+    void playStream(int id);
+    void stopStream(int id);
+    void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
+    void setVolume( unsigned int channel, float volume =-1);
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  float mMusicVolume, mSoundVolume;
-  bool  mSound3D;
-  bool  mInit;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    float mMusicVolume, mSoundVolume;
+    bool  mSound3D;
+    bool  mInit;
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  Sound()
-  {
-  }
-  ~Sound()
-  {
-  }
-  Sound( const Sound& ); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    Sound()
+    {}
+    ~Sound()
+    {}
+    Sound( const Sound& ); // disable copy-constructor.
 };
 
 #endif

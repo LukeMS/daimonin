@@ -37,60 +37,60 @@ static const Real RAD = 3.14159265/180.0;
 class Animate
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  Animate(Entity *entity);
-  ~Animate();
-  bool isMovement()
-  {
-    return (mAnimGroup <= ANIM_GROUP_RUN);
-  }
-  int getSumAnimsInGroup(int animGroup)
-  {
-    return mAnimGroupEntries[animGroup];
-  }
-  void update(const FrameEvent& event);
-  void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false);
-  Real getAnimSpeed()
-  {
-    return mAnimSpeed;
-  }
-  enum AnimGroup
-  {
-    /// Movement.
-    ANIM_GROUP_IDLE,
-    ANIM_GROUP_IDLE_FUN,
-    ANIM_GROUP_WALK,
-    ANIM_GROUP_RUN,
-    /// Non-movement.
-    ANIM_GROUP_ABILITY,
-    ANIM_GROUP_ATTACK,
-    ANIM_GROUP_ATTACK_FUN,
-    ANIM_GROUP_BLOCK,
-    ANIM_GROUP_HIT,
-    ANIM_GROUP_SLUMP,
-    ANIM_GROUP_DEATH,
-    ANIM_GROUP_CAST,
-    ANIM_GROUP_CAST_FUN,
-    SUM_ANIM_GROUP
-  };
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    Animate(Entity *entity);
+    ~Animate();
+    bool isMovement()
+    {
+        return (mAnimGroup <= ANIM_GROUP_RUN);
+    }
+    int getSumAnimsInGroup(int animGroup)
+    {
+        return mAnimGroupEntries[animGroup];
+    }
+    void update(const FrameEvent& event);
+    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false);
+    Real getAnimSpeed()
+    {
+        return mAnimSpeed;
+    }
+    enum AnimGroup
+    {
+        /// Movement.
+        ANIM_GROUP_IDLE,
+        ANIM_GROUP_IDLE_FUN,
+        ANIM_GROUP_WALK,
+        ANIM_GROUP_RUN,
+        /// Non-movement.
+        ANIM_GROUP_ABILITY,
+        ANIM_GROUP_ATTACK,
+        ANIM_GROUP_ATTACK_FUN,
+        ANIM_GROUP_BLOCK,
+        ANIM_GROUP_HIT,
+        ANIM_GROUP_SLUMP,
+        ANIM_GROUP_DEATH,
+        ANIM_GROUP_CAST,
+        ANIM_GROUP_CAST_FUN,
+        SUM_ANIM_GROUP
+    };
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  int mAnimGroup, mAnimNr;
-  bool mPause;
-  bool mIsAnimated;
-  Real mAnimSpeed;
-  AnimationState *mActState;
-  std::vector<AnimationState*>mAnimState;
-  unsigned char mAnimGroupEntries[SUM_ANIM_GROUP];
-  static const char *StateNames[SUM_ANIM_GROUP];
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    int mAnimGroup, mAnimNr;
+    bool mPause;
+    bool mIsAnimated;
+    Real mAnimSpeed;
+    AnimationState *mActState;
+    std::vector<AnimationState*>mAnimState;
+    unsigned char mAnimGroupEntries[SUM_ANIM_GROUP];
+    static const char *StateNames[SUM_ANIM_GROUP];
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
 };
 
 #endif

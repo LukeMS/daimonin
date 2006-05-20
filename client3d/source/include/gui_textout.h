@@ -39,26 +39,26 @@ const int MAX_TEXTLINE_LEN = 1024;
 
 typedef struct TextLine
 {
-  unsigned int x1, y1, x2, y2;
-  unsigned int width;
-  int font;
-  int index;
-  bool clipped;
-  std::string text;
-  uint32 *BG_Backup;
+    unsigned int x1, y1, x2, y2;
+    unsigned int width;
+    int font;
+    int index;
+    bool clipped;
+    std::string text;
+    uint32 *BG_Backup;
 }
 TextLine;
 
 typedef struct Gui_GfxBuffer
 {
-  int width, height;
-  uint32 *buffer;
+    int width, height;
+    uint32 *buffer;
 }
 Gui_GfxBuffer;
 
 enum
 {
-  FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
+    FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
 };
 
 const unsigned int CHARS_IN_FONT =96;
@@ -66,54 +66,54 @@ const unsigned int CHARS_IN_FONT =96;
 class GuiTextout
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  static GuiTextout &getSingleton()
-  {
-    static GuiTextout Singleton;
-    return Singleton;
-  }
-  void loadRawFont(const char *filename);
-  void loadTTFont (const char *filename, const char *size, const char *resolution);
-  void createBuffer(int width = MAX_TEXTLINE_LEN);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    static GuiTextout &getSingleton()
+    {
+        static GuiTextout Singleton;
+        return Singleton;
+    }
+    void loadRawFont(const char *filename);
+    void loadTTFont (const char *filename, const char *size, const char *resolution);
+    void createBuffer(int width = MAX_TEXTLINE_LEN);
 
-  void getClippingPos(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
-  void Print(TextLine *line, Texture *texture, const char *text);
-  void PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
-  int CalcTextWidth(const char *text, unsigned int fontNr = 1);
-  int getFontHeight(int fontNr)
-  {
-    return mvFont[fontNr]->height;
-  }
-  int getMaxFontHeight()
-  {
-    return maxFontHeight;
-  }
+    void getClippingPos(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
+    void Print(TextLine *line, Texture *texture, const char *text);
+    void PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
+    int CalcTextWidth(const char *text, unsigned int fontNr = 1);
+    int getFontHeight(int fontNr)
+    {
+        return mvFont[fontNr]->height;
+    }
+    int getMaxFontHeight()
+    {
+        return maxFontHeight;
+    }
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  struct mFont
-  {
-    uint32 *data;
-    unsigned int textureWidth;
-    unsigned int width;
-    unsigned int height;
-    unsigned int baseline;
-    char charWidth[CHARS_IN_FONT];
-  };
-  std::vector<mFont*>mvFont;
-  uint32 *mTextGfxBuffer;
-  PixelBox *mPb;
-  unsigned int maxFontHeight;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  GuiTextout();
-  ~GuiTextout();
-  GuiTextout(const GuiTextout&); // disable copy-constructor.
-  void drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr = 0);
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    struct mFont
+    {
+        uint32 *data;
+        unsigned int textureWidth;
+        unsigned int width;
+        unsigned int height;
+        unsigned int baseline;
+        char charWidth[CHARS_IN_FONT];
+    };
+    std::vector<mFont*>mvFont;
+    uint32 *mTextGfxBuffer;
+    PixelBox *mPb;
+    unsigned int maxFontHeight;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    GuiTextout();
+    ~GuiTextout();
+    GuiTextout(const GuiTextout&); // disable copy-constructor.
+    void drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr = 0);
 };
 
 #endif

@@ -78,13 +78,13 @@ Animate::Animate(Entity *entity)
     }
     if (sum)
     {
-      mIsAnimated = true;
-      Logger::log().info() << "- Model has " << sum << " valid animations.";
+        mIsAnimated = true;
+        Logger::log().info() << "- Model has " << sum << " valid animations.";
     }
     else
     {
-      Logger::log().info() << "- Model is not animated.";
-      return;
+        Logger::log().info() << "- Model is not animated.";
+        return;
     }
     /// Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];
@@ -96,7 +96,7 @@ Animate::Animate(Entity *entity)
 ///=================================================================================================
 Animate::~Animate()
 {
-  mAnimState.clear();
+    mAnimState.clear();
 }
 
 ///=================================================================================================
@@ -121,10 +121,10 @@ void Animate::toggleAnimation(int animGroup, int animNr, bool loop, bool force)
     if (!mIsAnimated) return;
     /// Is the selected animation already running?
     if (animGroup == mAnimGroup && animNr == mAnimNr)
-      return;
+        return;
     /// Dont change a running (none-movement) anim without the force-switch.
     if (!force && !isMovement())
-      return;
+        return;
 
     /// On invalid animGroup choose Idle.
     if (animGroup >= SUM_ANIM_GROUP || !mAnimGroupEntries[animGroup])
@@ -139,7 +139,7 @@ void Animate::toggleAnimation(int animGroup, int animNr, bool loop, bool force)
     animGroup =0;
     for (int i=0; i< mAnimGroup; ++i)
     {
-      animGroup+= mAnimGroupEntries[i];
+        animGroup+= mAnimGroupEntries[i];
     }
     /// Set the Animation.
     mActState= mAnimState[animGroup+ animNr];

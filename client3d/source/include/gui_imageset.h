@@ -34,56 +34,56 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 enum {
-  // Button.
-  GUI_BUTTON_CLOSE,
-  GUI_BUTTON_OK,
-  GUI_BUTTON_CANCEL,
-  GUI_BUTTON_MINIMIZE,
-  GUI_BUTTON_MAXIMIZE,
-  GUI_BUTTON_RESIZE,
-  // Listboxes.
-  GUI_LIST_MSGWIN,
-  GUI_LIST_CHATWIN,
-  GUI_LIST_UP,
-  GUI_LIST_DOWN,
-  GUI_LIST_LEFT,
-  GUI_LIST_RIGHT,
-  // StatusBars.
-  GUI_STATUSBAR_PLAYER_HEALTH,
-  GUI_STATUSBAR_PLAYER_MANA,
-  GUI_STATUSBAR_PLAYER_GRACE,
-  // TextValues.
-  GUI_TEXTVALUE_STAT_CUR_FPS,
-  GUI_TEXTVALUE_STAT_BEST_FPS,
-  GUI_TEXTVALUE_STAT_WORST_FPS,
-  GUI_TEXTVALUE_STAT_SUM_TRIS,
-  // TextInput
-  GUI_TEXTINPUT_PASSWORD,
-	// Combobox
-	GUI_COMBOBOX_TEST,
-  // Sum of all entries.
-  GUI_ELEMENTS_SUM
+    // Button.
+    GUI_BUTTON_CLOSE,
+    GUI_BUTTON_OK,
+    GUI_BUTTON_CANCEL,
+    GUI_BUTTON_MINIMIZE,
+    GUI_BUTTON_MAXIMIZE,
+    GUI_BUTTON_RESIZE,
+    // Listboxes.
+    GUI_LIST_MSGWIN,
+    GUI_LIST_CHATWIN,
+    GUI_LIST_UP,
+    GUI_LIST_DOWN,
+    GUI_LIST_LEFT,
+    GUI_LIST_RIGHT,
+    // StatusBars.
+    GUI_STATUSBAR_PLAYER_HEALTH,
+    GUI_STATUSBAR_PLAYER_MANA,
+    GUI_STATUSBAR_PLAYER_GRACE,
+    // TextValues.
+    GUI_TEXTVALUE_STAT_CUR_FPS,
+    GUI_TEXTVALUE_STAT_BEST_FPS,
+    GUI_TEXTVALUE_STAT_WORST_FPS,
+    GUI_TEXTVALUE_STAT_SUM_TRIS,
+    // TextInput
+    GUI_TEXTINPUT_PASSWORD,
+    // Combobox
+    GUI_COMBOBOX_TEST,
+    // Sum of all entries.
+    GUI_ELEMENTS_SUM
 };
 
 typedef struct
 {
-  std::string name;
-  short x, y;
+    std::string name;
+    short x, y;
 }
 GuiElementState;
 
 typedef struct
 {
-  std::string name;
-  int width, height;
-  std::vector<GuiElementState*>state;
+    std::string name;
+    int width, height;
+    std::vector<GuiElementState*>state;
 }
 GuiSrcEntry;
 
 typedef struct
 {
-  const char *name;
-  unsigned int index;
+    const char *name;
+    unsigned int index;
 }
 GuiElementNames;
 
@@ -91,51 +91,50 @@ GuiElementNames;
 class GuiImageset
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
 
-  static GuiImageset &getSingleton()
-  {
-    static GuiImageset singleton; return singleton;
-  }
-  void parseXML(const char *XML_imageset_file);
-  GuiSrcEntry *getStateGfxPositions(const char* guiImage);
-  PixelBox &getPixelBox()
-  {
-    return mSrcPixelBox;
-  }
-  const char *getElementName(int i)
-  {
-    return mGuiElementNames[i].name;
-  }
-  int getElementIndex(int i)
-  {
-    return mGuiElementNames[i].index;
-  }
+    static GuiImageset &getSingleton()
+    {
+        static GuiImageset singleton; return singleton;
+    }
+    void parseXML(const char *XML_imageset_file);
+    GuiSrcEntry *getStateGfxPositions(const char* guiImage);
+    PixelBox &getPixelBox()
+    {
+        return mSrcPixelBox;
+    }
+    const char *getElementName(int i)
+    {
+        return mGuiElementNames[i].name;
+    }
+    int getElementIndex(int i)
+    {
+        return mGuiElementNames[i].index;
+    }
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  std::vector<GuiSrcEntry*>mvSrcEntry; // TODO: delete vector in destructor.
-  std::string mStrImageSetGfxFile;
-  Image mImageSetImg;
-  PixelBox mSrcPixelBox;
-  static GuiElementNames mGuiElementNames[GUI_ELEMENTS_SUM];
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    std::vector<GuiSrcEntry*>mvSrcEntry; // TODO: delete vector in destructor.
+    std::string mStrImageSetGfxFile;
+    Image mImageSetImg;
+    PixelBox mSrcPixelBox;
+    static GuiElementNames mGuiElementNames[GUI_ELEMENTS_SUM];
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  GuiImageset()
-  {
-  }
-  ~GuiImageset();
-  GuiImageset(const GuiImageset&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    GuiImageset()
+    {}
+    ~GuiImageset();
+    GuiImageset(const GuiImageset&); // disable copy-constructor.
 };
 
 #endif

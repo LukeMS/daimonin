@@ -45,11 +45,11 @@ bool ParticleManager::init(SceneManager *SceneMgr)
 ///================================================================================================
 ParticleManager::~ParticleManager()
 {
-	for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
         delete (*i);
     }
-	mvParticle.clear();
+    mvParticle.clear();
 }
 
 ///================================================================================================

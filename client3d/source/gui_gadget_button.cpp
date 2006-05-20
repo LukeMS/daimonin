@@ -25,12 +25,10 @@ http://www.gnu.org/licenses/licenses.html
 
 GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY) : GuiGadget(xmlElement, w, h, maxX, maxY)
 {
-
 }
 
 GuiGadgetButton::~GuiGadgetButton()
 {
-
 }
 
 ///================================================================================================
@@ -38,43 +36,43 @@ GuiGadgetButton::~GuiGadgetButton()
 ///================================================================================================
 void GuiGadgetButton::draw(PixelBox &mSrcPixelBox, Texture *texture)
 {
-  /// ////////////////////////////////////////////////////////////////////
-  /// Draw gaget.
-  /// ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
+    /// Draw gaget.
+    /// ////////////////////////////////////////////////////////////////////
 
-  PixelBox src = mSrcPixelBox.getSubVolume(Box(
-                   gfxSrcPos[mState].x,
-                   gfxSrcPos[mState].y,
-                   gfxSrcPos[mState].x + mWidth,
-                   gfxSrcPos[mState].y + mHeight));
-  texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
-  /// ////////////////////////////////////////////////////////////////////
-  /// Draw label.
-  /// ////////////////////////////////////////////////////////////////////
-  if (mStrLabel != "")
-  {
-    std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
-    TextLine label;
-    label.index= -1;
-    label.font = mLabelFont;
-    label.clipped = false;
-    if (mState == STATE_PUSHED)
+    PixelBox src = mSrcPixelBox.getSubVolume(Box(
+                       gfxSrcPos[mState].x,
+                       gfxSrcPos[mState].y,
+                       gfxSrcPos[mState].x + mWidth,
+                       gfxSrcPos[mState].y + mHeight));
+    texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+    /// ////////////////////////////////////////////////////////////////////
+    /// Draw label.
+    /// ////////////////////////////////////////////////////////////////////
+    if (mStrLabel != "")
     {
-      label.x1 = mX+ mLabelXPos+1;
-      label.x2 = label.x1 + mWidth;
-      label.y1 = mY+ mLabelYPos+1;
-      label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+        std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
+        TextLine label;
+        label.index= -1;
+        label.font = mLabelFont;
+        label.clipped = false;
+        if (mState == STATE_PUSHED)
+        {
+            label.x1 = mX+ mLabelXPos+1;
+            label.x2 = label.x1 + mWidth;
+            label.y1 = mY+ mLabelYPos+1;
+            label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+        }
+        else
+        {
+            label.x1 = mX+ mLabelXPos;
+            label.x2 = label.x1 + mWidth;
+            label.y1 = mY+ mLabelYPos;
+            label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+        }
+        GuiTextout::getSingleton().Print(&label, texture, mStrBgLabel.c_str());
+        --label.x1;
+        --label.y1;
+        GuiTextout::getSingleton().Print(&label, texture, mStrLabel.c_str());
     }
-    else
-    {
-      label.x1 = mX+ mLabelXPos;
-      label.x2 = label.x1 + mWidth;
-      label.y1 = mY+ mLabelYPos;
-      label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-    }
-    GuiTextout::getSingleton().Print(&label, texture, mStrBgLabel.c_str());
-    --label.x1;
-    --label.y1;
-    GuiTextout::getSingleton().Print(&label, texture, mStrLabel.c_str());
-  }
 }

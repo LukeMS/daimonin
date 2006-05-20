@@ -34,9 +34,9 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 bool SpellManager::init(SceneManager *SceneMgr)
 {
-  mSceneMgr = SceneMgr;
-  mNode = mSceneMgr->getRootSceneNode();;
-  return true;
+    mSceneMgr = SceneMgr;
+    mNode = mSceneMgr->getRootSceneNode();;
+    return true;
 }
 
 ///================================================================================================
@@ -44,41 +44,38 @@ bool SpellManager::init(SceneManager *SceneMgr)
 ///================================================================================================
 bool SpellManager::addObject(unsigned int , unsigned int )
 {
-  // Player cast Fireball.
-  const SceneNode *node = ObjectManager::getSingleton().getNpcNode(0);
-  //ParticleManager::getSingleton().addNodeObject(node, "Particle/GreenyNimbus");
-  ParticleManager::getSingleton().addNodeObject(node, "Particle/FireBall");
-  return true;
+    // Player cast Fireball.
+    const SceneNode *node = ObjectManager::getSingleton().getNpcNode(0);
+    //ParticleManager::getSingleton().addNodeObject(node, "Particle/GreenyNimbus");
+    ParticleManager::getSingleton().addNodeObject(node, "Particle/FireBall");
+    return true;
 }
 
 ///================================================================================================
 ///
 ///================================================================================================
 void SpellManager::update(int , const FrameEvent& )
-{
-}
+{}
 
 ///================================================================================================
 /// JUST FOR TESTING.
 ///================================================================================================
 void SpellManager::keyEvent(int , int , int , int )
-{
-}
+{}
 
 ///================================================================================================
 ///
 ///================================================================================================
 void SpellManager::delObject(int )
-{
-}
+{}
 
 ///================================================================================================
 ///
 ///================================================================================================
 SpellManager::~SpellManager()
 {
-  for (unsigned int i = 0; i < mvObject_range.size(); ++i)
-  {
-    delete mvObject_range[i];
-  }
+    for (unsigned int i = 0; i < mvObject_range.size(); ++i)
+    {
+        delete mvObject_range[i];
+    }
 }

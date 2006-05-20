@@ -27,50 +27,48 @@ using namespace Ogre;
 class GuiCursor
 {
 public:
-  enum
-  {
-    STATE_STANDARD, STATE_BUTTON_DOWN, STATE_DRAGGING, STATE_RESIZING, STATE_SUM
-  };
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  void setPos(Real x, Real y);
-  void setStateImagePos(std::string state, int x, int y);
-  void setState(PixelBox &SrcPixelBox, int state);
-  void draw(PixelBox &SrcPixelBox);
-  void Init(int w, int h, int screenHeight, int screenWidth);
-  void freeRecources();
-  static GuiCursor &getSingleton()
-  {
-    static GuiCursor Singleton; return Singleton;
-  }
+    enum
+    {
+        STATE_STANDARD, STATE_BUTTON_DOWN, STATE_DRAGGING, STATE_RESIZING, STATE_SUM
+    };
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    void setPos(Real x, Real y);
+    void setStateImagePos(std::string state, int x, int y);
+    void setState(PixelBox &SrcPixelBox, int state);
+    void draw(PixelBox &SrcPixelBox);
+    void Init(int w, int h, int screenHeight, int screenWidth);
+    void freeRecources();
+    static GuiCursor &getSingleton()
+    {
+        static GuiCursor Singleton; return Singleton;
+    }
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  unsigned int mScreenWidth, mScreenHeight;
-  struct _pos
-  {
-    int x, y;
-  }
-  gfxSrcPos[STATE_SUM];
-  unsigned int mState;
-  int mWidth, mHeight;
-  Overlay *mOverlay;
-  OverlayElement *mElement;
-  TexturePtr mTexture;
-  MaterialPtr mMaterial;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  GuiCursor()
-  {
-  }
-  ~GuiCursor()
-  {
-  }
-  GuiCursor(const GuiCursor&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    unsigned int mScreenWidth, mScreenHeight;
+    struct _pos
+    {
+        int x, y;
+    }
+    gfxSrcPos[STATE_SUM];
+    unsigned int mState;
+    int mWidth, mHeight;
+    Overlay *mOverlay;
+    OverlayElement *mElement;
+    TexturePtr mTexture;
+    MaterialPtr mMaterial;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    GuiCursor()
+    {}
+    ~GuiCursor()
+    {}
+    GuiCursor(const GuiCursor&); // disable copy-constructor.
 };
 
 #endif

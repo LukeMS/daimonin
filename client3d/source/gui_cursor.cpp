@@ -29,38 +29,38 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
 {
-  mState = STATE_STANDARD;
-  mWidth = w;
-  mHeight= h;
-  if (mWidth <   4) mWidth =   4;
-  if (mHeight<   4) mHeight=   4;
-  if (mWidth > 128) mWidth = 128;
-  if (mHeight> 128) mHeight= 128;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Create the overlay element.
-  /// ////////////////////////////////////////////////////////////////////
-  mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
-             TEX_TYPE_2D, mWidth, mHeight, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-  mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
-  mOverlay->setZOrder(550);
-  mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
-  //  mElement->setMetricsMode(GMM_PIXELS);
-  mElement->setHeight((Real)mHeight / (Real)screenHeight);
-  mElement->setWidth ((Real)mWidth  / (Real)screenWidth );
-  mElement->setTop (0.5);
-  mElement->setLeft(0.5);
-  MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
-  mMaterial = tmpMaterial->clone("GUI_Cursor_Material");
-  mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
-  mMaterial->load();
-  mElement->setMaterialName("GUI_Cursor_Material");
-  mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-  mOverlay->show();
+    mState = STATE_STANDARD;
+    mWidth = w;
+    mHeight= h;
+    if (mWidth <   4) mWidth =   4;
+    if (mHeight<   4) mHeight=   4;
+    if (mWidth > 128) mWidth = 128;
+    if (mHeight> 128) mHeight= 128;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Create the overlay element.
+    /// ////////////////////////////////////////////////////////////////////
+    mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
+               TEX_TYPE_2D, mWidth, mHeight, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+    mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
+    mOverlay->setZOrder(550);
+    mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
+    //  mElement->setMetricsMode(GMM_PIXELS);
+    mElement->setHeight((Real)mHeight / (Real)screenHeight);
+    mElement->setWidth ((Real)mWidth  / (Real)screenWidth );
+    mElement->setTop (0.5);
+    mElement->setLeft(0.5);
+    MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
+    mMaterial = tmpMaterial->clone("GUI_Cursor_Material");
+    mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
+    mMaterial->load();
+    mElement->setMaterialName("GUI_Cursor_Material");
+    mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
+    mOverlay->show();
 
-  PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth()-1, mTexture->getHeight()-1), HardwareBuffer::HBL_READ_ONLY );
-  uint32 *dest_data = (uint32*)pb.data;
-  for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0;
-  mTexture->getBuffer()->unlock();
+    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth()-1, mTexture->getHeight()-1), HardwareBuffer::HBL_READ_ONLY );
+    uint32 *dest_data = (uint32*)pb.data;
+    for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0;
+    mTexture->getBuffer()->unlock();
 
 }
 
@@ -69,8 +69,8 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
 ///================================================================================================
 void GuiCursor::freeRecources()
 {
-  mMaterial.setNull();
-  mTexture.setNull();
+    mMaterial.setNull();
+    mTexture.setNull();
 }
 
 ///================================================================================================
@@ -78,19 +78,19 @@ void GuiCursor::freeRecources()
 ///================================================================================================
 void GuiCursor::setPos(Real x, Real y)
 {
-  mElement->setTop (y);
-  mElement->setLeft(x);
+    mElement->setTop (y);
+    mElement->setLeft(x);
 }
 ///================================================================================================
 /// .
 ///================================================================================================
 void GuiCursor::setState(PixelBox &srcPixelBox, int state)
 {
-  if (state < STATE_SUM)
-  {
-    mState = state;
-    draw(srcPixelBox);
-  }
+    if (state < STATE_SUM)
+    {
+        mState = state;
+        draw(srcPixelBox);
+    }
 }
 
 ///================================================================================================
@@ -98,19 +98,19 @@ void GuiCursor::setState(PixelBox &srcPixelBox, int state)
 ///================================================================================================
 void GuiCursor::setStateImagePos(std::string name, int x, int y)
 {
-  int state = -1;
-  if      (name == "Standard")   state = STATE_STANDARD;
-  else if (name == "ButtonDown") state = STATE_BUTTON_DOWN;
-  else if (name == "Dragging")   state = STATE_DRAGGING;
-  else if (name == "Resizing")   state = STATE_RESIZING;
-  if (state < 0)
-  {
-    Logger::log().error() << "MouseCursor has no State '" << name << "!";
-    return;
-  }
-  gfxSrcPos[state].x = x;
-  gfxSrcPos[state].y = y;
-  //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
+    int state = -1;
+    if      (name == "Standard")   state = STATE_STANDARD;
+    else if (name == "ButtonDown") state = STATE_BUTTON_DOWN;
+    else if (name == "Dragging")   state = STATE_DRAGGING;
+    else if (name == "Resizing")   state = STATE_RESIZING;
+    if (state < 0)
+    {
+        Logger::log().error() << "MouseCursor has no State '" << name << "!";
+        return;
+    }
+    gfxSrcPos[state].x = x;
+    gfxSrcPos[state].y = y;
+    //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
 }
 
 ///================================================================================================
@@ -118,10 +118,10 @@ void GuiCursor::setStateImagePos(std::string name, int x, int y)
 ///================================================================================================
 void GuiCursor::draw(PixelBox &SrcPixelBox)
 {
-  PixelBox src = SrcPixelBox.getSubVolume(Box(
-                                            gfxSrcPos[mState].x,
-                                            gfxSrcPos[mState].y,
-                                            gfxSrcPos[mState].x + mWidth,
-                                            gfxSrcPos[mState].y + mHeight ));
-  mTexture->getBuffer()->blitFromMemory(src);
+    PixelBox src = SrcPixelBox.getSubVolume(Box(
+                                                gfxSrcPos[mState].x,
+                                                gfxSrcPos[mState].y,
+                                                gfxSrcPos[mState].x + mWidth,
+                                                gfxSrcPos[mState].y + mHeight ));
+    mTexture->getBuffer()->blitFromMemory(src);
 }

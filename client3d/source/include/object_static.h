@@ -31,58 +31,58 @@ using namespace Ogre;
 class ObjStatic
 {
 public:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  ObjStatic(const char *filename, int posX, int posY, float Facing);
-  ~ObjStatic()
-  {
-  }
-  void freeRecources();
-  void moveToTile(int x, int z);
-  void faceToTile(int x, int z);
-  const Vector3 &getPos()
-  {
-    return mNode->getPosition();
-  }
-  const Vector3 &getWorldPos()
-  {
-    return mTranslateVector;
-  }
-  const SceneNode *getNode()
-  {
-    return mNode;
-  }
-  void update(const FrameEvent& event);
-  void setTexture(int pos, int color, int textureNr);
-  void toggleMesh   (int pos, int WeaponNr);
-  Real getFacing()
-  {
-    return mFacing.valueRadians();
-  }
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    ObjStatic(const char *filename, int posX, int posY, float Facing);
+    ~ObjStatic()
+    {}
+    void freeRecources();
+    void moveToTile(int x, int z);
+    void faceToTile(int x, int z);
+    void move(Vector3 &pos);
+    const Vector3 &getPos()
+    {
+        return mNode->getPosition();
+    }
+    const Vector3 &getWorldPos()
+    {
+        return mTranslateVector;
+    }
+    const SceneNode *getNode()
+    {
+        return mNode;
+    }
+    void update(const FrameEvent& event);
+    void setTexture(int pos, int color, int textureNr);
+    void toggleMesh   (int pos, int WeaponNr);
+    Real getFacing()
+    {
+        return mFacing.valueRadians();
+    }
 
 
 private:
-  /// ////////////////////////////////////////////////////////////////////
-  /// Variables.
-  /// ////////////////////////////////////////////////////////////////////
-  static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
-  static SceneManager *mSceneMgr;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
+    static SceneManager *mSceneMgr;
 
-  unsigned int thisStatic;
-  TexturePtr mTexture;
-  Degree mFacing, mNewFacing;
-  int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
-  SceneNode *mNode;
-  Entity *mEntity;
-  Vector3 mTranslateVector, mBoundingBox;
-  Animate *mAnim;
-  Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
+    unsigned int thisStatic;
+    TexturePtr mTexture;
+    Degree mFacing, mNewFacing;
+    int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
+    SceneNode *mNode;
+    Entity *mEntity;
+    Vector3 mTranslateVector, mBoundingBox;
+    Animate *mAnim;
+    Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
-  /// ////////////////////////////////////////////////////////////////////
-  /// Functions.
-  /// ////////////////////////////////////////////////////////////////////
-  ObjStatic(const ObjStatic&); // disable copy-constructor.
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    ObjStatic(const ObjStatic&); // disable copy-constructor.
 };
 
 #endif

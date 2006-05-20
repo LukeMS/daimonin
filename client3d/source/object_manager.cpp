@@ -32,38 +32,39 @@ http://www.gnu.org/licenses/licenses.html
 /// Init all static Elemnts.
 ///================================================================================================
 
+
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
 bool ObjectManager::init()
 {
-  string strType, strTemp, strMesh;
-  int i=0;
-  while(1)
-  {
-    if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC)))
+    string strType, strTemp, strMesh;
+    int i=0;
+    while(1)
     {
-      Logger::log().info() << "Parse description file " << FILE_WORLD_DESC << ".";
-      return false;
+        if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC)))
+        {
+            Logger::log().info() << "Parse description file " << FILE_WORLD_DESC << ".";
+            return false;
+        }
+        if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) break;
+        Option::getSingleton().getDescStr("MeshName", strMesh,i);
+        Option::getSingleton().getDescStr("PosX", strTemp,i);
+        int posX = atoi(strTemp.c_str());
+        Option::getSingleton().getDescStr("PosY", strTemp,i);
+        int posY = atoi(strTemp.c_str());
+        Option::getSingleton().getDescStr("Facing", strTemp);
+        float facing = atof(strTemp.c_str());
+        if (strType == "npc")
+        {
+            addObject(OBJECT_NPC, strMesh.c_str(), posX, posY, facing);
+        }
+        else
+        {
+            addObject(OBJECT_STATIC, strMesh.c_str(), posX, posY, facing);
+        }
     }
-    if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) break;
-    Option::getSingleton().getDescStr("MeshName", strMesh,i);
-    Option::getSingleton().getDescStr("PosX", strTemp,i);
-    int posX = atoi(strTemp.c_str());
-    Option::getSingleton().getDescStr("PosY", strTemp,i);
-    int posY = atoi(strTemp.c_str());
-    Option::getSingleton().getDescStr("Facing", strTemp);
-    float facing = atof(strTemp.c_str());
-    if (strType == "npc")
-    {
-      addObject(OBJECT_NPC, strMesh.c_str(), posX, posY, facing);
-    }
-    else
-    {
-      addObject(OBJECT_STATIC, strMesh.c_str(), posX, posY, facing);
-    }
-  }
-  return true;
+    return true;
 }
 
 ///================================================================================================
@@ -71,37 +72,37 @@ bool ObjectManager::init()
 ///================================================================================================
 bool ObjectManager::addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing)
 {
-  mDescFile = PATH_MODEL_DESCRIPTION;
-  mDescFile += desc_filename;
+    mDescFile = PATH_MODEL_DESCRIPTION;
+    mDescFile += desc_filename;
 
-  if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
-  {
-    Logger::log().error() << "Description file " << mDescFile <<" (used in ObjectManager::addObject) was not found.";
-    return false;
-  }
+    if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
+    {
+        Logger::log().error() << "Description file " << mDescFile <<" (used in ObjectManager::addObject) was not found.";
+        return false;
+    }
 
-  string strTemp;
-  switch (type)
-  {
-      case OBJECT_STATIC:
-      {
-        /// For static objects we don't use *.desc files.
-        ObjStatic *obj_static = new ObjStatic(desc_filename, posX, posY, facing);
-        if (!obj_static) return false;
-        mvObject_static.push_back(obj_static);
+    string strTemp;
+    switch (type)
+    {
+        case OBJECT_STATIC:
+        {
+            /// For static objects we don't use *.desc files.
+            ObjStatic *obj_static = new ObjStatic(desc_filename, posX, posY, facing);
+            if (!obj_static) return false;
+            mvObject_static.push_back(obj_static);
+            break;
+        }
+        case OBJECT_NPC:
+        {
+            NPC *obj_player = new NPC(desc_filename, posX, posY, facing);
+            if (!obj_player) return false;
+            mvObject_npc.push_back(obj_player);
+            break;
+        }
+        default:
         break;
-      }
-      case OBJECT_NPC:
-      {
-        NPC *obj_player = new NPC(desc_filename, posX, posY, facing);
-        if (!obj_player) return false;
-        mvObject_npc.push_back(obj_player);
-        break;
-      }
-      default:
-      break;
-  }
-  return true;
+    }
+    return true;
 }
 
 ///================================================================================================
@@ -111,38 +112,49 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
     for (unsigned int i = 0; i < mvObject_static.size(); ++i)
     {
-      mvObject_static [i]->update(evt);
+        mvObject_static [i]->update(evt);
     }
     for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
     {
-      mvObject_npc[i]->update(evt);
+        mvObject_npc[i]->update(evt);
     }
 
 
-/*
-  switch (obj_type)
-  {
-      case OBJECT_STATIC:
+    /*
+      switch (obj_type)
       {
-        for (unsigned int i = 0; i < mvObject_static.size(); ++i)
-        {
-          mvObject_static [i]->update(evt);
-        }
-        break;
+          case OBJECT_STATIC:
+          {
+            for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+            {
+              mvObject_static [i]->update(evt);
+            }
+            break;
+          }
+          case OBJECT_PLAYER:
+          case OBJECT_NPC:
+          {
+            for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
+            {
+              mvObject_npc[i]->update(evt);
+            }
+            break;
+          }
+          default:
+          break;
       }
-      case OBJECT_PLAYER:
-      case OBJECT_NPC:
-      {
-        for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
-        {
-          mvObject_npc[i]->update(evt);
-        }
-        break;
-      }
-      default:
-      break;
-  }
-*/
+    */
+}
+
+///================================================================================================
+/// JUST FOR TESTING.
+///================================================================================================
+void ObjectManager::synchToWorldPos(Vector3 pos)
+{
+    for(unsigned int i = 0; i < mvObject_static.size(); ++i)
+    {
+        mvObject_static[i]->move(pos);
+    }
 }
 
 ///================================================================================================
@@ -150,68 +162,66 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 ///================================================================================================
 void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3)
 {
-  switch (obj_type)
-  {
-      case OBJECT_STATIC:
-      break;
+    switch (obj_type)
+    {
+        case OBJECT_STATIC:
+        break;
 
-      case OBJECT_PLAYER:
-      {
-        if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
-        if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
-        if (action == OBJ_TEXTURE  ) mvObject_npc[0]->setTexture(val1, val2, val3);
-        if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1, val2);
-        if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
-      }
-      break;
-
-      case OBJECT_NPC:
-      {
-        for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
+        case OBJECT_PLAYER:
         {
-          if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
-          if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
-          if (action == OBJ_TEXTURE  ) mvObject_npc[i]->setTexture(val1, val2, val3);
-          if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1, val2);
+            if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
+            if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
+            if (action == OBJ_TEXTURE  ) mvObject_npc[0]->setTexture(val1, val2, val3);
+            if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1, val2);
+            if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
         }
-      }
-      break;
+        break;
 
-      default:
-      break;
-  }
+        case OBJECT_NPC:
+        {
+            for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
+            {
+                if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
+                if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
+                if (action == OBJ_TEXTURE  ) mvObject_npc[i]->setTexture(val1, val2, val3);
+                if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1, val2);
+            }
+        }
+        break;
+
+        default:
+        break;
+    }
 }
 
 ///================================================================================================
 ///
 ///================================================================================================
 void ObjectManager::delObject(int )
-{
-}
+{}
 
 ///================================================================================================
 ///
 ///================================================================================================
 void ObjectManager::freeRecources()
 {
-  for (std::vector<NPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
-  {
-    (*i)->freeRecources();
-    delete (*i);
-  }
-  mvObject_npc.clear();
+    for (std::vector<NPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
+    {
+        (*i)->freeRecources();
+        delete (*i);
+    }
+    mvObject_npc.clear();
 
-  for (std::vector<ObjStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
-  {
-    (*i)->freeRecources();
-    delete (*i);
-  }
-  mvObject_static.clear();
+    for (std::vector<ObjStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
+    {
+        (*i)->freeRecources();
+        delete (*i);
+    }
+    mvObject_static.clear();
 }
 
 ///================================================================================================
 ///
 ///================================================================================================
 ObjectManager::~ObjectManager()
-{
-}
+{}

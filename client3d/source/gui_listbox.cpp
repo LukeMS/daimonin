@@ -25,8 +25,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_textout.h"
 #include "logger.h"
 
-#include <ctime>
-
 const clock_t SCROLL_SPEED = 12;
 static const Real CLOSING_SPEED  =  10.0f;  // default: 10.0f
 static const int  MAX_TEXT_LINES =  20;
@@ -36,7 +34,7 @@ static const int  MAX_TEXT_LINES =  20;
 ///================================================================================================
 GuiListbox::~GuiListbox()
 {
-  delete[] mGfxBuffer;
+    delete[] mGfxBuffer;
 }
 /*
 ///================================================================================================
@@ -109,18 +107,18 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
 ///================================================================================================
 void GuiListbox::addTextline(const char *text)
 {
-  const char *actTextLine;
-  while (GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) > mWidth)
-  {
-    /// Text needs a linebreak.
-    actTextLine = text;
-    break; // delete me!
-    // ToDo.
-  }
-  //Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
-  row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
-  ++mBufferPos;
-  ++mRowsToScroll;
+    const char *actTextLine;
+    while (GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) > mWidth)
+    {
+        /// Text needs a linebreak.
+        actTextLine = text;
+        break; // delete me!
+        // ToDo.
+    }
+    //Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
+    row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
+    ++mBufferPos;
+    ++mRowsToScroll;
 }
 
 ///================================================================================================
@@ -128,78 +126,78 @@ void GuiListbox::addTextline(const char *text)
 ///================================================================================================
 void GuiListbox::draw(PixelBox &, Texture *texture)
 {
-  /// ////////////////////////////////////////////////////////////////////
-  /// User pressed the down-button.
-  /// ////////////////////////////////////////////////////////////////////
-  /*
-    if (mIsClosing)
-    {
-      Real top = mContainerFrame->getTop() + CLOSING_SPEED;
-      if (!mParent)
+    /// ////////////////////////////////////////////////////////////////////
+    /// User pressed the down-button.
+    /// ////////////////////////////////////////////////////////////////////
+    /*
+      if (mIsClosing)
       {
-        if (top >= mMinHeight)
+        Real top = mContainerFrame->getTop() + CLOSING_SPEED;
+        if (!mParent)
         {
-          top = mMinHeight;
-          mIsClosing = false;
+          if (top >= mMinHeight)
+          {
+            top = mMinHeight;
+            mIsClosing = false;
+          }
         }
-      }
-      else
-      {
-        if (top - mParent->mContainerFrame->getTop()  >= mMinHeight)
+        else
         {
-          top = mParent->mContainerFrame->getTop()+mMinHeight;;
-          mIsClosing = false;
+          if (top - mParent->mContainerFrame->getTop()  >= mMinHeight)
+          {
+            top = mParent->mContainerFrame->getTop()+mMinHeight;;
+            mIsClosing = false;
+          }
         }
+        mContainerFrame->setTop(top);
+        SizeChanged();
+        return;
       }
-      mContainerFrame->setTop(top);
-      SizeChanged();
-      return;
-    }
-  */
-  /*
-  /// ////////////////////////////////////////////////////////////////////
-    /// User pressed the up-button.
-  /// ////////////////////////////////////////////////////////////////////
-    if (mIsOpening)
-    {
-      Real top = mContainerFrame->getHeight() + CLOSING_SPEED;
-      if (top > mLastHeight)
+    */
+    /*
+    /// ////////////////////////////////////////////////////////////////////
+      /// User pressed the up-button.
+    /// ////////////////////////////////////////////////////////////////////
+      if (mIsOpening)
       {
-        top = mLastHeight;
-        mIsOpening = false;
+        Real top = mContainerFrame->getHeight() + CLOSING_SPEED;
+        if (top > mLastHeight)
+        {
+          top = mLastHeight;
+          mIsOpening = false;
+        }
+        if (!mParent)
+          mContainerFrame->setTop(-top);
+        else
+          mContainerFrame->setTop(mParent->mContainerFrame->getTop()-top);
+        SizeChanged();
+        return;
       }
-      if (!mParent)
-        mContainerFrame->setTop(-top);
-      else
-        mContainerFrame->setTop(mParent->mContainerFrame->getTop()-top);
-      SizeChanged();
-      return;
+    */
+    /// ////////////////////////////////////////////////////////////////////
+    /// Scroll the text.
+    /// ////////////////////////////////////////////////////////////////////
+    static clock_t time = clock();
+    if (!mRowsToScroll || mDragging) return;
+    if (clock() - time < SCROLL_SPEED) return;
+    time = clock();
+    /// New Line to scroll in.
+    if (!mScroll)
+    {
+        /// Print it to the (invisible) last line of the listbox.
+        GuiTextout::getSingleton().PrintToBuffer(mWidth, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, mFillColor);
     }
-  */
-  /// ////////////////////////////////////////////////////////////////////
-  /// Scroll the text.
-  /// ////////////////////////////////////////////////////////////////////
-  static clock_t time = clock();
-  if (!mRowsToScroll || mDragging) return;
-  if (clock() - time < SCROLL_SPEED) return;
-  time = clock();
-  /// New Line to scroll in.
-  if (!mScroll)
-  {
-    /// Print it to the (invisible) last line of the listbox.
-    GuiTextout::getSingleton().PrintToBuffer(mWidth, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, mFillColor);
-  }
-  texture->getBuffer()->blitFromMemory(
-    PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
-    Box(mX, mY, mX + mWidth, mY + mHeight));
-  /// The complete row was scrolled.
-  if (++mScroll >= mFontHeight)
-  {
-    --mRowsToScroll;
-    ++mPrintPos;
-    mScroll =0;
-    memcpy(mGfxBuffer, mGfxBuffer + mWidth *mFontHeight, mWidth * mHeight * sizeof(uint32));
-  }
+    texture->getBuffer()->blitFromMemory(
+        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
+        Box(mX, mY, mX + mWidth, mY + mHeight));
+    /// The complete row was scrolled.
+    if (++mScroll >= mFontHeight)
+    {
+        --mRowsToScroll;
+        ++mPrintPos;
+        mScroll =0;
+        memcpy(mGfxBuffer, mGfxBuffer + mWidth *mFontHeight, mWidth * mHeight * sizeof(uint32));
+    }
 }
 
 

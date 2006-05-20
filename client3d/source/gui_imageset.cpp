@@ -34,86 +34,103 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
-  {
-    { "But_Close",      GUI_BUTTON_CLOSE    },
-    { "But_OK",         GUI_BUTTON_OK       },
-    { "But_Cancel",     GUI_BUTTON_CANCEL   },
-    { "But_Min",        GUI_BUTTON_MINIMIZE },
-    { "But_Max",        GUI_BUTTON_MAXIMIZE },
-    { "But_Resize",     GUI_BUTTON_RESIZE   },
-    // Listboxes.
-    { "List_Msg",       GUI_LIST_MSGWIN     },
-    { "List_Chat",      GUI_LIST_CHATWIN    },
-    // Statusbar.
-    { "Bar_Health",     GUI_STATUSBAR_PLAYER_HEALTH  },
-    { "Bar_Mana",       GUI_STATUSBAR_PLAYER_MANA    },
-    { "Bar_Grace",      GUI_STATUSBAR_PLAYER_GRACE   },
-    // TextValues.
-    { "Engine_CurrentFPS", GUI_TEXTVALUE_STAT_CUR_FPS   },
-    { "Engine_BestFPS",    GUI_TEXTVALUE_STAT_BEST_FPS  },
-    { "Engine_WorstFPS",   GUI_TEXTVALUE_STAT_WORST_FPS },
-    { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS  },
-    // TextInput.
-    { "Input_Password", GUI_TEXTINPUT_PASSWORD   },
-		// Combobox.
-		{ "ComboBoxTest"						, GUI_COMBOBOX_TEST },
+    {
+        { "But_Close",      GUI_BUTTON_CLOSE
+        },
+        { "But_OK",         GUI_BUTTON_OK
+        },
+        { "But_Cancel",     GUI_BUTTON_CANCEL
+        },
+        { "But_Min",        GUI_BUTTON_MINIMIZE
+        },
+        { "But_Max",        GUI_BUTTON_MAXIMIZE
+        },
+        { "But_Resize",     GUI_BUTTON_RESIZE
+        },
+        // Listboxes.
+        { "List_Msg",       GUI_LIST_MSGWIN
+        },
+        { "List_Chat",      GUI_LIST_CHATWIN
+        },
+        // Statusbar.
+        { "Bar_Health",     GUI_STATUSBAR_PLAYER_HEALTH
+        },
+        { "Bar_Mana",       GUI_STATUSBAR_PLAYER_MANA
+        },
+        { "Bar_Grace",      GUI_STATUSBAR_PLAYER_GRACE
+        },
+        // TextValues.
+        { "Engine_CurrentFPS", GUI_TEXTVALUE_STAT_CUR_FPS
+        },
+        { "Engine_BestFPS",    GUI_TEXTVALUE_STAT_BEST_FPS
+        },
+        { "Engine_WorstFPS",   GUI_TEXTVALUE_STAT_WORST_FPS
+        },
+        { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS
+        },
+        // TextInput.
+        { "Input_Password", GUI_TEXTINPUT_PASSWORD
+        },
+        // Combobox.
+        { "ComboBoxTest"      , GUI_COMBOBOX_TEST
+        },
 
 
-  };
+    };
 
 ///================================================================================================
 /// Parse the gfx datas from the imageset.
 ///================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
-  Logger::log().headline("Parsing the imageset");
-  /// ////////////////////////////////////////////////////////////////////
-  /// Check for a working description file.
-  /// ////////////////////////////////////////////////////////////////////
-  TiXmlElement *xmlRoot, *xmlElem, *xmlState;
-  TiXmlDocument doc(fileImageSet);
-  const char *strTemp;
-  if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
-  {
-    Logger::log().error() << "XML-File '" << fileImageSet << "' is broken or missing.";
-    return;
-  }
-  mStrImageSetGfxFile = strTemp;
-  Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
-  /// ////////////////////////////////////////////////////////////////////
-  /// Parse the gfx coordinates.
-  /// ////////////////////////////////////////////////////////////////////
-  for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
-  {
-    if (!(strTemp = xmlElem->Attribute("name"))) continue;
-    GuiSrcEntry *Entry = new GuiSrcEntry;
-    Entry->name   = strTemp;
-    if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
-    if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
+    Logger::log().headline("Parsing the imageset");
     /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Position entries.
+    /// Check for a working description file.
     /// ////////////////////////////////////////////////////////////////////
-    for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
+    TiXmlElement *xmlRoot, *xmlElem, *xmlState;
+    TiXmlDocument doc(fileImageSet);
+    const char *strTemp;
+    if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
     {
-      if (!(strTemp= xmlState->Attribute("name")))  continue;
-      GuiElementState *s = new GuiElementState;
-      s->name = strTemp;
-      s->x = s->y = 0;
-      if ((strTemp= xmlState->Attribute("posX"))) s->x = atoi(strTemp);
-      if ((strTemp= xmlState->Attribute("posY"))) s->y = atoi(strTemp);
-      Entry->state.push_back(s);
+        Logger::log().error() << "XML-File '" << fileImageSet << "' is broken or missing.";
+        return;
     }
-    mvSrcEntry.push_back(Entry);
-  }
-  Logger::log().info() << (int) mvSrcEntry.size() << " Entries were parsed.";
-  if (Option::getSingleton().getIntValue(Option::LOG_GUI_ELEMENTS))
-  {
-    Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
-    for (int i =0; i < GUI_ELEMENTS_SUM; ++i)
-      Logger::log().warning() << mGuiElementNames[i].name;
-  }
-  mImageSetImg.load(mStrImageSetGfxFile, "General");
-  mSrcPixelBox = mImageSetImg.getPixelBox();
+    mStrImageSetGfxFile = strTemp;
+    Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
+    /// ////////////////////////////////////////////////////////////////////
+    /// Parse the gfx coordinates.
+    /// ////////////////////////////////////////////////////////////////////
+    for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
+    {
+        if (!(strTemp = xmlElem->Attribute("name"))) continue;
+        GuiSrcEntry *Entry = new GuiSrcEntry;
+        Entry->name   = strTemp;
+        if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
+        if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
+        /// ////////////////////////////////////////////////////////////////////
+        /// Parse the Position entries.
+        /// ////////////////////////////////////////////////////////////////////
+        for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
+        {
+            if (!(strTemp= xmlState->Attribute("name")))  continue;
+            GuiElementState *s = new GuiElementState;
+            s->name = strTemp;
+            s->x = s->y = 0;
+            if ((strTemp= xmlState->Attribute("posX"))) s->x = atoi(strTemp);
+            if ((strTemp= xmlState->Attribute("posY"))) s->y = atoi(strTemp);
+            Entry->state.push_back(s);
+        }
+        mvSrcEntry.push_back(Entry);
+    }
+    Logger::log().info() << (int) mvSrcEntry.size() << " Entries were parsed.";
+    if (Option::getSingleton().getIntValue(Option::LOG_GUI_ELEMENTS))
+    {
+        Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
+        for (int i =0; i < GUI_ELEMENTS_SUM; ++i)
+            Logger::log().warning() << mGuiElementNames[i].name;
+    }
+    mImageSetImg.load(mStrImageSetGfxFile, "General");
+    mSrcPixelBox = mImageSetImg.getPixelBox();
 }
 
 ///================================================================================================
@@ -121,14 +138,14 @@ void GuiImageset::parseXML(const char *fileImageSet)
 ///================================================================================================
 GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 {
-  if (guiImage)
-  {
-    for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
+    if (guiImage)
     {
-      if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str())) return mvSrcEntry[j];
+        for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
+        {
+            if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str())) return mvSrcEntry[j];
+        }
     }
-  }
-  return NULL;
+    return 0;
 }
 
 ///================================================================================================
@@ -136,14 +153,14 @@ GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 ///================================================================================================
 GuiImageset::~GuiImageset()
 {
-  for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
-  {
-    for (std::vector<GuiElementState*>::iterator j = (*i)->state.begin(); j < (*i)->state.end(); ++j)
+    for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
     {
-      delete (*j);
+        for (std::vector<GuiElementState*>::iterator j = (*i)->state.begin(); j < (*i)->state.end(); ++j)
+        {
+            delete (*j);
+        }
+        (*i)->state.clear();
+        delete (*i);
     }
-    (*i)->state.clear();
-    delete (*i);
-  }
-  mvSrcEntry.clear();
+    mvSrcEntry.clear();
 }

@@ -18,7 +18,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include <ctime>
 #include <OgreHardwarePixelBuffer.h>
 #include "gui_graphic.h"
 #include "logger.h"
@@ -28,76 +27,76 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
 {
-  /// ////////////////////////////////////////////////////////////////////
-  /// Fill background rect with a gfx.
-  /// ////////////////////////////////////////////////////////////////////
-  if (mStrType == "GFX_FILL")
-  {
-    int x1, y1, x2, y2;
-    PixelBox src;
-    bool dirty = true;
-    int sumX = (mWidth-1)  / mSrcWidth  + 1;
-    int sumY = (mHeight-1) / mSrcHeight + 1;
-    y1 = 0; y2 = mSrcHeight;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Fill background rect with a gfx.
+    /// ////////////////////////////////////////////////////////////////////
+    if (mStrType == "GFX_FILL")
+    {
+        int x1, y1, x2, y2;
+        PixelBox src;
+        bool dirty = true;
+        int sumX = (mWidth-1)  / mSrcWidth  + 1;
+        int sumY = (mHeight-1) / mSrcHeight + 1;
+        y1 = 0; y2 = mSrcHeight;
 
-    for (int y = 0; y < sumY; ++y)
-    {
-      if (dirty)
-      {
-        src = mSrcPixelBox.getSubVolume(Box(
-                                          gfxSrcPos[mState].x,
-                                          gfxSrcPos[mState].y,
-                                          gfxSrcPos[mState].x + mSrcWidth,
-                                          gfxSrcPos[mState].y + mSrcHeight));
-        dirty = false;
-      }
-      if (y2 > mHeight)
-      {
-        y2 = mHeight;
-        if (y1 > mHeight) y1 = mHeight-1;
-        dirty = true;
-      }
-      x1 = 0; x2 = mSrcWidth;
-      for (int x = 0; x < sumX; ++x)
-      {
-        if (x2 > mWidth)
+        for (int y = 0; y < sumY; ++y)
         {
-          x2 = mWidth;
-          if (x1 >= x2) x1 = x2-1;
-          dirty = true;
+            if (dirty)
+            {
+                src = mSrcPixelBox.getSubVolume(Box(
+                                                    gfxSrcPos[mState].x,
+                                                    gfxSrcPos[mState].y,
+                                                    gfxSrcPos[mState].x + mSrcWidth,
+                                                    gfxSrcPos[mState].y + mSrcHeight));
+                dirty = false;
+            }
+            if (y2 > mHeight)
+            {
+                y2 = mHeight;
+                if (y1 > mHeight) y1 = mHeight-1;
+                dirty = true;
+            }
+            x1 = 0; x2 = mSrcWidth;
+            for (int x = 0; x < sumX; ++x)
+            {
+                if (x2 > mWidth)
+                {
+                    x2 = mWidth;
+                    if (x1 >= x2) x1 = x2-1;
+                    dirty = true;
+                }
+                if (dirty)
+                {
+                    src = mSrcPixelBox.getSubVolume(Box(
+                                                        gfxSrcPos[mState].x,
+                                                        gfxSrcPos[mState].y,
+                                                        gfxSrcPos[mState].x + x2-x1,
+                                                        gfxSrcPos[mState].y + y2-y1));
+                }
+                texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
+                x1 = x2;
+                x2+= mSrcWidth;
+            }
+            y1 = y2;
+            y2+= mSrcHeight;
         }
-        if (dirty)
-        {
-          src = mSrcPixelBox.getSubVolume(Box(
-                                            gfxSrcPos[mState].x,
-                                            gfxSrcPos[mState].y,
-                                            gfxSrcPos[mState].x + x2-x1,
-                                            gfxSrcPos[mState].y + y2-y1));
-        }
-        texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
-        x1 = x2;
-        x2+= mSrcWidth;
-      }
-      y1 = y2;
-      y2+= mSrcHeight;
     }
-  }
-  /// ////////////////////////////////////////////////////////////////////
-  /// Fill background rect with a color.
-  /// ////////////////////////////////////////////////////////////////////
-  else
-  {
-    //    clock_t time = clock();
-    PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_READ_ONLY );
-    uint32 *dest_data = (uint32*)pb.data;
-    for (int y = 0; y < mHeight; ++y)
+    /// ////////////////////////////////////////////////////////////////////
+    /// Fill background rect with a color.
+    /// ////////////////////////////////////////////////////////////////////
+    else
     {
-      for (int x= 0; x < mWidth; ++x)
-      {
-        dest_data[x+y*texture->getWidth()] = mFillColor;
-      }
+        //    clock_t time = clock();
+        PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_READ_ONLY );
+        uint32 *dest_data = (uint32*)pb.data;
+        for (int y = 0; y < mHeight; ++y)
+        {
+            for (int x= 0; x < mWidth; ++x)
+            {
+                dest_data[x+y*texture->getWidth()] = mFillColor;
+            }
+        }
+        texture->getBuffer()->unlock();
+        //    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
     }
-    texture->getBuffer()->unlock();
-    //    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
-  }
 }

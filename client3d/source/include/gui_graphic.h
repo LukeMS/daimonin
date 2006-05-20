@@ -30,13 +30,11 @@ using namespace Ogre;
 class GuiGraphic : public GuiElement
 {
 public:
-  GuiGraphic(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
-  {
-  }
-  ~GuiGraphic()
-  {
-  }
-  void draw(PixelBox &mSrcPixelBox, Texture *texture);
+    GuiGraphic(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
+    {}
+    ~GuiGraphic()
+    {}
+    void draw(PixelBox &mSrcPixelBox, Texture *texture);
 };
 
 #endif
