@@ -23,7 +23,7 @@
                 Game commands tend to specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>).
             </p>
             <p>
-                All game commands start with forward slash and are lowercase. Game commands are entered at the console or may be <a href="#boundkeys">bound to a key</a>. To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
+                All game commands start with forward slash and are lowercase. Game commands are entered at the console or may be <a href="#boundkeys">bound to a key</a>. To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai#textwindows">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
             </p>
             <p>
                 You will now see a cursor in the lower textwindow. This means you can start typing (<a href="#boundkeys">key bindings</a> are ignored).

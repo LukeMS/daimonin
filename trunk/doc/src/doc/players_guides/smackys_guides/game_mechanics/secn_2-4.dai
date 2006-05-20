@@ -28,7 +28,7 @@
                 The spell list dialog
             </title>
             <p>
-                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_SPELL_LIST"</code> ('F9' by <a href="./appx_c.dai">default</a>).
+                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_SPELL_LIST"</code> (F9 by <a href="./appx_c.dai#menus">default</a>).
             </p>
             <div class="dialog">
                 <p>
@@ -95,7 +95,7 @@
                 The skill list dialog
             </title>
             <p>
-                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_SKILL_LIST"</code> ('F10' by <a href="appx_c.dai">default</a>).
+                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_SKILL_LIST"</code> (F10 by <a href="appx_c.dai#menus">default</a>).
             </p>
             <div class="dialog">
                 <p>
@@ -146,7 +146,7 @@
                 The bind keys dialog
             </title>
             <p>
-                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_KEYBIND"</code> ('F11' by <a href="./appx_c.dai">default</a>).
+                Access this dialog with the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_KEYBIND"</code> (F11 by <a href="./appx_c.dai#menus">default</a>).
             </p>
             <div class="dialog">
                 <p>

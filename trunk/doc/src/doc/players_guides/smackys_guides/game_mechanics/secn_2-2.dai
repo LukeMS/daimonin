@@ -20,93 +20,93 @@
             The lefthand icon shows the currently selected <a href="#actions">action</a> (for example, that you wish to <a href="#throwing">throw</a> an item or use a <a href="#rangedtools">ranged tool</a>). The righthand icon shows the chosen focus of that <a href="#actions">action</a> (for example, the ammunition to be used with <a href="#archery">archery</a> or the spell to be <a href="#casting">cast</a>).
         </p>
         <p>
-            To cycle through the <a href="#actions">available actions</a> enter the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_RANGE"</code> (TAB by <a href="./appx_c.dai">default</a>).
+            To cycle through the <a href="#actions">available actions</a> enter the <a href="./secn_2-1.dai#metacommands">meta command</a> <code>"?M_RANGE"</code> (TAB by <a href="./appx_c.dai#targeting">default</a>).
         </p>
-        <section id="actions">
+    </section>
+    <section id="actions">
+        <title>
+            Available actions
+        </title>
+        <section id="archery">
             <title>
-                Available actions
+                Archery
             </title>
-            <section id="archery">
-                <title>
-                    Archery
-                </title>
-                <p>
-                    <img alt="[Archery]" src="./range_archery.png"/>
-                </p>
-                <p>
-                    If you have the appropriate <a href="../character/secn_4.dai#archery">archery skill</a>, a corresponding weapon, and ammunition to fit you can set up the range system to allow you to fire that weapon.
-                </p>
-                <p>
-                    Cycle through the range system to the archery action, then apply the weapon ('A' by <a href="./appx_c.dai">default</a>) -- it will appear in the lefthand icon -- and ready the ammo or a quiver containing the ammo ('F' by <a href="./appx_c.dai">default</a>) -- it will appear in the righthand icon. To fire the weapon in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai">default</a>).
-                </p>
-            </section>
-            <section id="mindcontrol">
-                <title>
-                    Mind control
-                </title>
-                <p>
-                    <img alt="[Mind control]" src="./range_mindcontrol.png"/>
-                </p>
-                <p>
-                    Currently not implemented.
-                </p>
-            </section>
-            <section id="rangedtools">
-                <title>
-                    Ranged tools
-                </title>
-                <p>
-                    <img alt="[Ranged tools]" src="./range_tool.png"/>
-                </p>
-                <p>
-                    If you have an appropriate magic device (wand, rod, or horn) you can set up the range system to allow you to fire that device.
-                </p>
-                <p>
-                    Cycle through the range system to the ranged tools action, then apply a magic device ('A' by <a href="./appx_c.dai">default</a>) -- it will appear in the righthand icon. To fire the device in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai">default</a>).
-                </p>
-            </section>
-            <section id="casting">
-                <title>
-                    Cast spells
-                </title>
-                <p>
-                    <img alt="[Cast spells]" src="./range_spell.png"/>
-                </p>
-                <p>
-                    You can set up the range system to allow you to cast spells/prayers.
-                </p>
-                <p>
-                    Cycle through the range system to the cast spell action, then choose the spell/prayer from the <a href="./secn_2-4.dai#spelllist">spell list dialog</a> -- it will appear in the righthand icon. To cast the spell/prayer in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai">default</a>).
-                </p>
-            </section>
-            <section id="throwing">
-                <title>
-                    Throwing
-                </title>
-                <p>
-                    <img alt="[Throwing]" src="./range_throwing.png"/>
-                </p>
-                <p>
-                    If you have a throwable item (for example, a throwing dagger or a potion) you can set up the range system to allow you to throw that item.
-                </p>
-                <p>
-                    Cycle through the range system to the throwing action, then ready the item or stack of items to be thrown ('F' by <a href="./appx_c.dai">default</a>) -- it will appear in the righthand icon. To throw the item in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai">default</a>).
-                </p>
-            </section>
-            <section id="doing">
-                <title>
-                    General skills
-                </title>
-                <p>
-                    <img alt="[General skills]" src="./range_skill.png"/>
-                </p>
-                <p>
-                    You can set up the range system to allow you to use certain skills.
-                </p>
-                <p>
-                    Cycle through the range system to the use skill action, then choose the skill from the <a href="./secn_2-4.dai#skilllist">skill list dialog</a> -- it will appear in the righthand icon. To use the skill in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai">default</a>).
-                </p>
-            </section>
+            <p>
+                <img alt="[Archery]" src="./range_archery.png"/>
+            </p>
+            <p>
+                If you have the appropriate <a href="../character/secn_4.dai#archery">archery skill</a>, a corresponding weapon, and ammunition to fit you can set up the range system to allow you to fire that weapon.
+            </p>
+            <p>
+                Cycle through the range system to the archery action, then apply the weapon ('A' by <a href="./appx_c.dai#inventory">default</a>) -- it will appear in the lefthand icon -- and ready the ammo or a quiver containing the ammo ('F' by <a href="./appx_c.dai#targeting">default</a>) -- it will appear in the righthand icon. To fire the weapon in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai#movement">default</a>).
+            </p>
+        </section>
+        <section id="mindcontrol">
+            <title>
+                Mind control
+            </title>
+            <p>
+                <img alt="[Mind control]" src="./range_mindcontrol.png"/>
+            </p>
+            <p>
+                Currently not implemented.
+            </p>
+        </section>
+        <section id="rangedtools">
+            <title>
+                Ranged tools
+            </title>
+            <p>
+                <img alt="[Ranged tools]" src="./range_tool.png"/>
+            </p>
+            <p>
+                If you have an appropriate magic device (wand, rod, or horn) you can set up the range system to allow you to fire that device.
+            </p>
+            <p>
+                Cycle through the range system to the ranged tools action, then apply a magic device ('A' by <a href="./appx_c.dai#inventory">default</a>) -- it will appear in the righthand icon. To fire the device in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai#movement">default</a>).
+            </p>
+        </section>
+        <section id="casting">
+            <title>
+                Cast spells
+            </title>
+            <p>
+                <img alt="[Cast spells]" src="./range_spell.png"/>
+            </p>
+            <p>
+                You can set up the range system to allow you to cast spells/prayers.
+            </p>
+            <p>
+                Cycle through the range system to the cast spell action, then choose the spell/prayer from the <a href="./secn_2-4.dai#spelllist">spell list dialog</a> -- it will appear in the righthand icon. To cast the spell/prayer in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai#movement">default</a>).
+            </p>
+        </section>
+        <section id="throwing">
+            <title>
+                Throwing
+            </title>
+            <p>
+                <img alt="[Throwing]" src="./range_throwing.png"/>
+            </p>
+            <p>
+                If you have a throwable item (for example, a throwing dagger or a potion) you can set up the range system to allow you to throw that item.
+            </p>
+            <p>
+                Cycle through the range system to the throwing action, then ready the item or stack of items to be thrown ('F' by <a href="./appx_c.dai#targeting">default</a>) -- it will appear in the righthand icon. To throw the item in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai#movement">default</a>).
+            </p>
+        </section>
+        <section id="doing">
+            <title>
+                General skills
+            </title>
+            <p>
+                <img alt="[General skills]" src="./range_skill.png"/>
+            </p>
+            <p>
+                You can set up the range system to allow you to use certain skills.
+            </p>
+            <p>
+                Cycle through the range system to the use skill action, then choose the skill from the <a href="./secn_2-4.dai#skilllist">skill list dialog</a> -- it will appear in the righthand icon. To use the skill in a specified direction press CONTROL + direction (KP1 to KP9 by <a href="./appx_c.dai#movement">default</a>).
+            </p>
         </section>
     </section>
 </daiml>

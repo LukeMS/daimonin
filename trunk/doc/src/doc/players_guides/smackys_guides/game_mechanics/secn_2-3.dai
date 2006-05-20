@@ -14,32 +14,32 @@
             <img alt="[Quickbar]" src="./quickbar.png"/>
         </p>
         <p>
-            There are eight slots in the quickbar. These are accessed by pressing one of the predefined quickslot keys, F1 to F8.
+            There are eight slots in the quickbar. These are accessed by pressing one of the quickslot keys (<a href="./appx_c.dai#hardwired">hardwired</a> to F1 to F8).
         </p>
         <p>
             Items are applied immediately, according to the normal rules, while spells/prayers are readied in the range system for subsequent <a href="./secn_2-2.dai#casting">casting</a>.
         </p>
-        <section id="spells">
-            <title>
-                Spells/prayers
-            </title>
-            <p>
-                Highlight a spell/prayer in the <a href="./secn_2-4.dai#spelllist">spell list dialog</a> then press one of the quickslot keys to assign the spell/prayer to that quickslot. When you are done press ESCAPE to return to the game.
-            </p>
-            <p>
-                To cast the spell/prayer simply press the appropriate quickslot key and the spell/prayer will be loaded into the <a href="./secn_2-2.dai#castspells">range system</a>.
-            </p>
-        </section>
-        <section id="items">
-            <title>
-                Items
-            </title>
-            <p>
-                Open your inventory (<a href="./appx_c.dai">hardwired</a> to SHIFT), and highlight an item. Then press one of the quickslot keys to assign the item to that quickslot.
-            </p>
-            <p>
-                To apply/unapply the item simply press the appropriate quickslot key.
-            </p>
-        </section>
+    </section>
+    <section id="spells">
+        <title>
+           Spells/prayers
+        </title>
+        <p>
+            Highlight a spell/prayer in the <a href="./secn_2-4.dai#spelllist">spell list dialog</a> then press one of the quickslot keys to assign the spell/prayer to that quickslot. When you are done press ESCAPE to return to the game.
+        </p>
+        <p>
+            To cast the spell/prayer simply press the appropriate quickslot key and the spell/prayer will be loaded into the <a href="./secn_2-2.dai#castspells">range system</a>.
+        </p>
+    </section>
+    <section id="items">
+        <title>
+            Items
+        </title>
+        <p>
+            Open your inventory (<a href="./appx_c.dai#hardwired">hardwired</a> to SHIFT), and highlight an item. Then press one of the quickslot keys to assign the item to that quickslot.
+        </p>
+        <p>
+            To apply/unapply the item simply press the appropriate quickslot key.
+        </p>
     </section>
 </daiml>
