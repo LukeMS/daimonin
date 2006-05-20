@@ -15,7 +15,7 @@
         </p>
         <div class="note">
             <p>
-                <img alt="[NOTE]" src="../note.png"/> In an effort to combat abusive/spam messages being shouted, only players of level two or higher can <code>"/shout"</code>.
+                <img alt="[NOTE]" src="../note.png"/> In an effort to combat abusive/spam messages being shouted, only players of level two or higher can shout.
             </p>
         </div>
     </section>

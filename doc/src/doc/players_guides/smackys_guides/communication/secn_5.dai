@@ -7,24 +7,50 @@
         <title>
             Introduction
         </title>
+        <p>
+            There are obviously two ways to speak privately to individual players currently online:
+        </p>
+        <ul>
+            <li>
+                <a href="#telling">telling</a>; and
+            </li>
+            <li>
+                <a href="#replying">replying</a>.
+            </li>
+        </ul>
+        <p>
+            In either case, the message appears in the upper window in white text. A message which someone else has told/replied you also appears in the upper window but in light blue text.
+        </p>
+        <div class="note">
             <p>
-                To speak privately to individual players currently online, use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/tell &lt;player&gt; &lt;message&gt;"</code>.
+                <img alt="[NOTE]" src="../note.png"/> In an effort to combat abusive/spam messages being sent, only players of level two or higher can tell/reply.
             </p>
+        </div>
+    </section>
+    <section id="telling">
+        <title>
+            Telling
+        </title>
+        <p>
+            Use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/tell &lt;player&gt; &lt;message&gt;"</code>.
+        </p>
+    </section>
+    <section id="replying">
+        <title>
+           Replying
+        </title>
+        <p>
+            Use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/reply &lt;message&gt;"</code>. This is used to reply to the last player who told you something.
+        </p>
+        <div class="advice">
             <p>
-                An alternative to this is <code>"/reply &lt;message&gt;"</code>. This is used when someone else has told you something.
+                <img alt="[ADVICE]" src="../advice.png"/> If you receive the message 'Litillitttil tells you: Do you like my name?' it is obviously easier just to <code>"/reply No"</code> than to muddle through his name in an effort to <code>"/tell Litillitttil No"</code>.
             </p>
-            <div class="advice">
-                <p>
-                    <img alt="[ADVICE]" src="../advice.png"/> If you receive the message 'Litillitttil tells you: Do you like my name?' it is obviously easier just to <code>"/reply No"</code> than to muddle through his name in an effort to <code>"/tell Litillitttil No"</code>.
-                </p>
-            </div>
+        </div>
+        <div class="advice">
             <p>
-                In either case, the message appears in the upper window in white text. A message which someone else has told you also appears in the upper window but in light blue text.
+                <img alt="[ADVICE]" src="../advice.png"/> It is easy to send your message to the wrong person with reply. For instance, if Bert tells you something while you are typing a reply to Abigail your reply will go to Bert. Therefore it is advisable <em>not</em> to use <code>"/reply"</code> for sensitive messages.
             </p>
-            <div class="note">
-                <p>
-                    <img alt="[NOTE]" src="../note.png"/> In an effort to combat abusive/spam messages being sent, only players of level two or higher can <code>"/tell"</code>/<code>"/reply"</code>.
-                </p>
-            </div>
+        </div>
     </section>
 </daiml>
