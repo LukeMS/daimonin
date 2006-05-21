@@ -437,6 +437,10 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 void NPC::update(const FrameEvent& event)
 {
     mAnim->update(event);
+    ///  Finish the current (non movement) anim first.
+    if (!mAnim->isMovement()) return;
+
+
     mTranslateVector = Vector3(0,0,0);
     if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
     if (mFacing.valueDegrees() <    0) mFacing += Degree(360);
@@ -676,4 +680,13 @@ void NPC::setTexture(int pos, int textureColor, int textureNr)
         Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for NPC.";
         break;
     }
+}
+
+///================================================================================================
+/// Just for testing.
+///================================================================================================
+void NPC::move(Vector3 &pos)
+{
+    if (!mInstanceNr) return;
+    mNode->setPosition(mNode->getPosition() + pos);
 }

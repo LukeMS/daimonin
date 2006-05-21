@@ -99,8 +99,9 @@ void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
     if (func == WSYNC_MOVE)
     {
         mTileManager->scrollMap(posX, posZ); // server has to do this!
+        distance.y =0;
         ObjectManager::getSingleton().synchToWorldPos(distance);
-        ParticleManager::getSingleton().synchToWorldPos(pos);
+        ParticleManager::getSingleton().synchToWorldPos(distance);
         mCamera->setPosition(pos + Vector3(0, 420, 900));
         return;
     }
@@ -302,8 +303,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#00880000Remember:~");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#001b1b88Server~ will send us~#00880088 one Step~ at");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"once, so the code won't work for a");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"bigger distance.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"once, so movement is limited in this");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"demo to a distance of 2 tiles.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~4 ... 8~ to change cloth.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");

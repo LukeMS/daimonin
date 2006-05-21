@@ -1,6 +1,6 @@
 <?xml version= "1.0" encoding= "us-ascii"?>
 
-<XML name= "GUI"> 
+<XML name= "GUI">
   <!--#############################################-->
   <!--FONTS:                                       -->
   <!--#############################################-->
@@ -9,17 +9,17 @@
     <Font type="TTF" name= "Vera.ttf" size="8" />
     <Font type="TTF" name= "Vera.ttf" size="10" />
     <Font type="TTF" name= "Vera.ttf" size="24" resolution="55"/>
-    <Font type="TTF" name= "Vera.ttf" size="12" />
-    <Font type="TTF" name= "Vera.ttf" size="14" />
+    <Font type="TTF" name= "Vera.ttf" size="20" />
+    <Font type="TTF" name= "Vera.ttf" size="22" />
   </Fonts>
-  
+
   <!--#############################################-->
   <!--MOUSE CURSOR:                                -->
   <!--#############################################-->
   <Cursor name= "MouseCursor">
    <HotSpotOffset x="0" y="0" />
   </Cursor>
-  
+
   <!--#############################################-->
   <!--WINDOW: Engine Statistics                    -->
   <!--#############################################-->
@@ -204,6 +204,26 @@
       <Tooltip  text= "I am the close button." />
     </Gadget>
 
+<!--
+    <Gadget type= "COMBOBOX"  name = "ComboBoxTest" image_name = "Blue_Background">
+      <Pos x= "40" y= "380" />
+      <Range width= "148" height= "17" />
+      <Label xPos= "40" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "CBox"/>
+      <Tooltip  text= "I am suposed to be a combobox." />
+      <Button image_name="Button_01_Down" />
+      <Option text="Monkey With a Long tail"/>
+      <Option text="PigMMMMMMMMMMMMMMMMMMMMMMMMM"/>
+      <Option text="1"/>
+      <Option text="2"/>
+      <Option text="3"/>
+      <Scroll>
+        <Down image_name="ScrollButton_01_Down" />
+        <Up image_name="ScrollButton_01_Up" />
+      </Scroll>
+     </Gadget>
+-->
+
+
     <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
       <Pos x= "30" y= "410" />
       <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
@@ -294,9 +314,9 @@
     <Listbox type= "" name= "List_Msg" font="03">
       <Pos x= "1" y= "18" />
       <Range width= "280" height= "200" />
-      <Color red= "128" green= "128" blue= "128" alpha = "128" />
+      <Color red= "60" green= "56" blue= "31" alpha = "200" />
     </Listbox>
-	
+
   </Window>
 
 </XML>

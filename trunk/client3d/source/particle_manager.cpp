@@ -145,18 +145,16 @@ void ParticleManager::delObject(ParticleSystem *pSystem)
 ///================================================================================================
 void ParticleManager::synchToWorldPos(const Vector3 &pos)
 {
-    /*
-        int sum;
-        Particle* p;
-        for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
+    size_t sum;
+    Particle* p;
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    {
+        for (sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
         {
-            for (sum = (int)mvObject_Node[i]->particleSys->getNumParticles()-1; sum >=0; --sum)
-            {
-                p = mvObject_Node[i]->particleSys->getParticle(sum);
-                p->position += pos;
-            }
+            p = (*i)->pSystem->getParticle(sum);
+            p->position += pos;
         }
-    */
+    }
 }
 
 ///================================================================================================

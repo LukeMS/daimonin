@@ -155,6 +155,11 @@ void ObjectManager::synchToWorldPos(Vector3 pos)
     {
         mvObject_static[i]->move(pos);
     }
+    // mvObject_npc[0] is the player.
+    for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
+    {
+        mvObject_npc[i]->move(pos);
+    }
 }
 
 ///================================================================================================
