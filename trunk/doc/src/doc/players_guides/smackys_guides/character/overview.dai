@@ -76,15 +76,15 @@
             Armour protections are detailed in <a href="./secn_5.dai">"Section 5: Armour protections"</a>.
         </p>
     </section>
-    <section id="death">
+    <section id="poisondiseaseanddeath">
         <title>
-            Death
+            Poison, disease, &amp; death
         </title>
         <p>
-            When you lose all your <a href="#statsandhealthindicators">hit points</a> you die.
+            Nasty things can happen to the unwary: you get sick and when you lose all your <a href="#statsandhealthindicators">hit points</a> you die.
         </p>
         <p>
-            Death is detailed in <a href="./secn_6.dai">"Section 6: Death"</a>.
+            Poison, disease, and death are detailed in <a href="./secn_6.dai">"Section 6: Poison, disease, &amp; death"</a>.
         </p>
     </section>
 </daiml>
