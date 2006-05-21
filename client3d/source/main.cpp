@@ -184,6 +184,10 @@ int main(int argc, char **argv)
     if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VBO))
         Logger::log().error() << "Your gfx-card doesn't support hardware vertex/index buffer!";
     TexturePtr mTexture, mTextur2;
+
+    Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
+    Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
+/*
     try
     { /// try to create a 64MB texture in Video Ram.
         mTexture = TextureManager::getSingleton().createManual("64 MB", "General",  TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
@@ -215,10 +219,9 @@ int main(int argc, char **argv)
         Logger::log().warning() << "High texture details and large ttf-fonts support will be disabled.";
         Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, false);
     }
+*/
     try
     {
-        Option::getSingleton().setIntValue(Option::HIGH_TEXTURE_DETAILS, true);
-        Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
         /// ////////////////////////////////////////////////////////////////////
         /// Set default mipmap level (NB some APIs ignore this)
         /// ////////////////////////////////////////////////////////////////////

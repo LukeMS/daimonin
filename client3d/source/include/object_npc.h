@@ -102,7 +102,7 @@ public:
     {
         return mFacing.valueRadians();
     }
-
+    void move(Vector3 &pos);
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.

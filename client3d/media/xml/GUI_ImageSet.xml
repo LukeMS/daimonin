@@ -28,13 +28,16 @@
       <Image name= "Red_Background" width= "250" height= "250">
           <State name= "Standard" posX= "0" posY= "108" />
       </Image>
+      <Image name= "Blue_Background" width= "250" height= "250">
+          <State name= "Standard" posX= "250" posY= "108" />
+      </Image>
       <!--=============================================-->
       <!-- Ornaments                                   -->
       <!--=============================================-->
       <Image name= "Red_TL_Edge" width= "9" height= "9">
           <State name= "Standard" posX= "1" posY= "1" />
       </Image>
- 
+
       <Image name= "Red_TR_Edge" width= "9" height= "9">
           <State name= "Standard" posX= "1" posY= "1" />
       </Image>
@@ -42,7 +45,7 @@
       <Image name= "Red_BL_Edge" width= "9" height= "9">
           <State name= "Standard" posX= "1" posY= "1" />
       </Image>
- 
+
       <Image name= "Red_BR_Edge" width= "9" height= "9">
           <State name= "Standard" posX= "1" posY= "1" />
       </Image>
@@ -70,4 +73,15 @@
           <State name= "M_Over"   posX= "115" posY= "35" />
       </Image>
 
+      <Image name= "Button_01_Down" width= "15" height= "15">
+          <State name= "Standard"   posX= "149" posY= "35" />
+      </Image>
+
+      <Image name= "ScrollButton_01_Down" width= "10" height= "7">
+          <State name= "Standard"   posX= "166" posY= "101" />
+      </Image>
+
+      <Image name= "ScrollButton_01_Up" width= "10" height= "7">
+          <State name= "Standard"   posX= "166" posY= "34" />
+      </Image>
 </ImageSet>

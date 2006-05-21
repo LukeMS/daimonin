@@ -49,7 +49,6 @@ void ObjStatic::freeRecources()
 ///================================================================================================
 void ObjStatic::move(Vector3 &pos)
 {
-    pos.y =0;
     mNode->setPosition(mNode->getPosition() + pos);
 }
 
