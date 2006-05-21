@@ -8,11 +8,19 @@
             Introduction
         </title>
         <p>
+            <img alt="[Textwindows]" src="./textwindows.png"/>
+        </p>
+        <p>
             Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in <strong><em>Smacky's Guides</em></strong>.
         </p>
         <p>
             Here, suffice to say, the top window is for <em>global</em> messages and communication between players, and the bottom window is for <em>local</em> messages and communication between players and with NPCs.
         </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> You can scroll either textwindow with the <a href="../game_mechanics/secn_2-1.dai#metacommands">meta commands</a> <code>"?M_PAGEUP_TOP"</code> / <code>"?M_PAGEDOWN_TOP"</code> for the top window and <code>"?M_PAGEUP"</code> / <code>"?M_PAGEDOWN"</code> for the bottom window (INSERT / DELETE and PAGEUP / PAGEDOWN by <a href="../game_mechanics/appx_c.dai#textwindows">default</a>).
+            </p>
+        </div>
         <section id="mcon">
             <title>
                 Speakingmorequickly

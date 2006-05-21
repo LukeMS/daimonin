@@ -8,6 +8,9 @@
             Introduction
         </title>
         <p>
+            <img alt="[Shouting]" src="./shouting.png"/>
+        </p>
+        <p>
             To speak publically to all players currently online, use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/shout &lt;message&gt;"</code>.
         </p>
         <p>
