@@ -30,10 +30,16 @@
             Predefined emoting
         </title>
         <p>
+            <img alt="[Predefined emoting]" src="./predefinedemoting.png"/>
+        </p>
+        <p>
             To predefined emote, use a game command such as <code>"/dance"</code> and a set message will be seen by nearby players.
         </p>
         <p>
             A complete list of the predefined emotes can be obtained by using the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/help emotes"</code> (or referring to <a href="../game_mechanics/appx_a.dai#communication">"Smacky's Guide To Game Mechanics, Appendix A: Game commands"</a>).
+        </p>
+        <p>
+            <img alt="[Targeted emoting]" src="./targetedemoting.png"/>
         </p>
         <p>
             It is possible to predefined emote at a specific player, NPC, or mob. <a href="../combat/secn_1-2">Target</a> the object of your attentions and let rip. Ain't interaction fun?
@@ -43,11 +49,19 @@
                 <img alt="[NOTE]" src="../note.png"/> Emoting at a target in this way has no gameplay effect. It is purely for fun. NPCs and mobs will not respond.
             </p>
         </div>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> You can also emote at a specific player, NPC, or mob within two tiles of you by typing their name as the first parameter of the emote, as in <code>"/slap &lt;target&gt;"</code>.
+            </p>
+        </div>
     </section>
     <section id="freeform">
         <title>
             Freeform emoting
         </title>
+        <p>
+            <img alt="[Freeform emoting]" src="./freeformemoting.png"/>
+        </p>
         <p>
             To freeform emote, use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>"/me &lt;message&gt;"</code> and a message beginning with your name will be seen by nearby players.
         </p>

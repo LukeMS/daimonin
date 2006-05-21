@@ -19,6 +19,9 @@
             Saying to players
         </title>
         <p>
+            <img alt="[Saying to players]" src="./sayingtoplayers.png"/>
+        </p>
+        <p>
             This is very straightforward. Simply <a href="#introduction">say</a> your message and it is broadcast to all players within 'earshot' (which translates broadly to 'on the same screen; walls are no obstacle').
         </p>
     </section>
@@ -26,6 +29,9 @@
         <title>
             Saying to NPCs
         </title>
+        <p>
+            <img alt="[Saying to NPCs]" src="./sayingtonpcs.png"/>
+        </p>
         <p>
             Just follow one rule: you can only do so when you are near (within two map tiles) of the NPC.
         </p>
