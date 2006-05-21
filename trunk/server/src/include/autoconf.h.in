@@ -60,8 +60,11 @@
 /* Define if you have the mkdir function.  */
 #undef HAVE_MKDIR
 
-/* Define if you have the mkdir function.  */
+/* Define if you have the scandir function.  */
 #undef HAVE_SCANDIR
+
+/* Define if you have the getaddrinfo function. */
+#undef HAVE_GETADDRINFO
 
 /* Define if you have the mktime function.  */
 #undef HAVE_MKTIME
