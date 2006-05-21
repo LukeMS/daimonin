@@ -1,63 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
-<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 6: Death">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 6: Poison, disease, &amp; death">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
     <stylesheet href="../print.css" media="print" title="Default"/>
-    <section id="introduction">
+    <section id="poison">
         <title>
-            Introduction
+            Poison
         </title>
         <p>
-            There's no easy way to say this. As in the real world, everyone dies eventually.
+            One of the hazards of the adventurer's lifestyle is the poison needle which is frequently found inside of the corpses you loot. Another thing to be wary of is that food and drink may be poisoned.
         </p>
+        <section id="whatdoespoison">
+            <title>
+                What does poison do?
+            </title>
+            <p>
+                Whichever is your preferred method of adiministration, the effects of poison can be devastating.
+            </p>
+            <p>
+                As well as doing actual damage (in terms of decreasing your current <a href="./secn_3.dai#hitpoints">hit points</a>) poison may temporarily decrease one or more <a href="./secn_3.dai#primarystats">primary stats</a>. In turn, this will affect your <a href="./secn_3.dai#secondarystats">secondary stats</a> and <a href="./secn_3.dai#healthindicators">health indicator</a>.
+            </p>
+        </section>
+        <section id="whattreatspoison">
+            <title>
+                What treatments are available?
+            </title>
+            <p>
+                Fortunately, poison is only temporary and eventually, if you survive, your body will be cleansed and everything will return to normal.
+            </p>
+            <p>
+                Poison can be cured or it's symptoms alleviated by magic, and the damage done per 'hit' can be reduced by building up your <a href="./secn_5.dai#poison">protection to poison</a>.
+            </p>
+        </section>
     </section>
-    <section id="afterlife">
+    <section id="disease">
         <title>
-            Is there an afterlife?
+            Disease
         </title>
         <p>
-            Happily, unlike the real world, death is not permanent. Also, there is no limit on how often or frequently you can die.
+            Disease is a common side-effect of rummaging through corpses.
         </p>
+        <p>
+            The afflictions currently endemic to the world of Daimonin include warts, athlete's foot, uncontrollable diarrhea, and tapeworms.
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> Disease are also transmissable from player to player (or NPC or mob) so be wary of standing too close to the unwell!
+            </p>
+        </div>
+        <section id="whatdoesdisease">
+            <title>
+                What does disease do?
+            </title>
+            <p>
+                Fortunately, none of these fall into the life-threatening category, but they are all very annoying. For example, it is difficult to concentrate when you are afflicted so praying becomes a bit of a stop-start affair.
+            </p>
+        </section>
+        <section id="whattreatsdisease">
+            <title>
+                What treatments are available?
+            </title>
+            <p>
+                Disease can be cured by magic or, with the exception of tapeworms, if you can bear to leave the condition untreated for long enough you will become immune.
+            </p>
+        </section>
     </section>
-    <section id="where">
+    <section id="death">
         <title>
-            Where do I go?
+            Death
         </title>
         <p>
-            When you die you will be transported back to the church (or to bed if you own an apartment).
+            There's no easy way to say this. As in the real world, everyone dies eventually. It is natural to have questions:
         </p>
-    </section>
-    <section id="what">
-        <title>
-            What happens to me?
-        </title>
-        <p>
-            You will also be cured of any disease you are currently suffering and relieved of any poison in your bloodstream.
-        </p>
-        <p>
-            If your <a href="./secn_4.dai#levels">level</a> is three or above you will also lose a chunk of <a href="./secn_4.dai#experience">experience</a> from <em>every</em> <a href="./secn_4.dai#skills">skill</a> (although you cannot lose a <a href="./secn_4.dai#levels">level</a> in this way), and possibly one point from a random <a href="./secn_3.dai#primarystats">primary stat</a>.
-        </p>
-    </section>
-    <section id="fondmemories">
-        <title>
-            Will I be remembered?
-        </title>
-        <p>
-            <img alt="[Gravestone]" src="./gravestone.png"/>
-        </p>
-        <p>
-            A temporary gravestone marks the spot where you met your demise.
-        </p>
-        <p>
-            Also, a short message (your name and cause of death) is broadcast to all players for their amusement.
-        </p>
-    </section>
-    <section id="lifegoeson">
-        <title>
-            What happens next?
-        </title>
-        <p>
-            Now wipe away the tears and go and avenge your death!
-        </p>
+        <section id="afterlife">
+            <title>
+                Is there an afterlife?
+            </title>
+            <p>
+                Happily, unlike the real world, death is not permanent. Also, there is no limit on how often or frequently you can die.
+            </p>
+        </section>
+        <section id="wheredeath">
+            <title>
+                Where do I go?
+            </title>
+            <p>
+                When you die you will be transported back to the church (or to bed if you own an apartment).
+            </p>
+        </section>
+        <section id="whatdeath">
+            <title>
+                What happens to me?
+            </title>
+            <p>
+                You will also be cured of any disease you are currently suffering and relieved of any poison in your bloodstream.
+            </p>
+            <p>
+                If your <a href="./secn_4.dai#levels">level</a> is three or above you will also lose a chunk of <a href="./secn_4.dai#experience">experience</a> from <em>every</em> <a href="./secn_4.dai#skills">skill</a> (although you cannot lose a <a href="./secn_4.dai#levels">level</a> in this way), and possibly one point from a random <a href="./secn_3.dai#primarystats">primary stat</a>.
+            </p>
+        </section>
+        <section id="fondmemories">
+            <title>
+                Will I be remembered?
+            </title>
+            <p>
+                <img alt="[Gravestone]" src="./gravestone.png"/>
+            </p>
+            <p>
+                A temporary gravestone marks the spot where you met your demise.
+            </p>
+            <p>
+                Also, a short message (your name and cause of death) is broadcast to all players for their amusement.
+            </p>
+        </section>
+        <section id="lifegoeson">
+            <title>
+                What happens next?
+            </title>
+            <p>
+                Now wipe away the tears and go and avenge your death!
+            </p>
+        </section>
     </section>
 </daiml>

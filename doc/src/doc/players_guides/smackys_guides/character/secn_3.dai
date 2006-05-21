@@ -178,7 +178,7 @@
             When <a href="#mana">mana</a> or <a href="#grace">grace</a> reach zero you won't be able to cast or recite any more.
         </p>
         <p>
-            However, when <a href="#hitpoints">hit points</a> reach zero the situation is far more dire as your character will die (while this is a temporary inconvenience in Daimonin it is still best avoided).
+            However, when <a href="#hitpoints">hit points</a> reach zero the situation is far more dire as your character will <a href="./secn_6.dai#death">die</a> (while this is a temporary inconvenience in Daimonin it is still best avoided).
         </p>
         <p>
             Fortunately, these health indicators can all be regenerated.
