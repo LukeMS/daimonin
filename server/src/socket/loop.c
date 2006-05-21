@@ -685,12 +685,16 @@ static int check_ip_ban(NewSocket *sock, char *ip)
  */
 void doeric_server(int update, struct timeval *timeout)
 {
-    int                 i, pollret, rr,
-                        update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
-    uint32              update_below;
-	struct sockaddr_in	addr;
-    int                 addrlen = sizeof(struct sockaddr);
-    player             *pl, *next;
+    int                 	i, pollret, rr,
+                    		update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
+    uint32              	update_below;
+#if WIN32 || !HAVE_GETADDRINFO
+    struct sockaddr_in		addr;
+#else
+    struct sockaddr_storage	addr;
+#endif
+    unsigned int		addrlen = sizeof(addr);
+    player             	       *pl, *next;
 
 #ifdef CS_LOGSTATS
     if ((time(NULL) - cst_lst.time_start) >= CS_LOGTIME)
@@ -803,8 +807,13 @@ void doeric_server(int update, struct timeval *timeout)
         newsock->fd = accept(init_sockets[0].fd, (struct sockaddr *) &addr, &addrlen);
         if (newsock->fd != -1)
         {
+#if WIN32 || !HAVE_GETADDRINFO
 	    char *tmp_ip = inet_ntoa(addr.sin_addr);
+#else
+	    char tmp_ip[NI_MAXHOST];
 
+	    getnameinfo((struct sockaddr *) &addr, addrlen, tmp_ip, sizeof(tmp_ip), NULL, 0, NI_NUMERICHOST);
+#endif
             LOG(llevDebug, " ip %s (socket %d) (%x)\n", tmp_ip, newsock->fd, newsock);
             InitConnection(newsock, tmp_ip);
             check_ip_ban(newsock, tmp_ip);

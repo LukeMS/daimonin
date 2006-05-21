@@ -57,7 +57,7 @@ void InitConnection(NewSocket *ns, char *ip)
 {
     int bufsize = MAXSOCKBUF;
     int oldbufsize;
-    int buflen  = sizeof(int);
+    unsigned int buflen  = sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
     int temp    = 1;
@@ -144,15 +144,148 @@ void InitConnection(NewSocket *ns, char *ip)
     socket_info.nconns++;
 }
 
+void setsockopts(int fd)
+{
+    struct linger       linger_opt;
+
+    linger_opt.l_onoff = 0;
+    linger_opt.l_linger = 0;
+    if (setsockopt(fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+    {
+        LOG(llevBug, "BUG: Error on setsockopt LINGER\n");
+    }
+    /* Would be nice to have an autoconf check for this.  It appears that
+     * these functions are both using the same calling syntax, just one
+     * of them needs extra valus passed.
+     */
+#if !defined(_WEIRD_OS_) /* means is true for most (win32, linux, etc. ) */
+    {
+        int tmp = 1;
+
+        if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &tmp, sizeof(tmp)))
+            LOG(llevDebug, "error on setsockopt REUSEADDR\n");
+    }
+#else
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) NULL, 0))
+        LOG(llevDebug, "error on setsockopt REUSEADDR\n");
+
+#endif
+}
+
+#define QUEUE_LEN 5
+
+#if WIN32 || !HAVE_GETADDRINFO
+int create_socket()
+{
+    int fd;
+    struct sockaddr_in  insock;
+
+#ifndef WIN32 /* non win32 */
+    struct protoent    *protox;
+
+    protox = getprotobyname("tcp");
+    if (protox == NULL)
+    {
+        LOG(llevBug, "BUG: init_ericserver: Error getting protox\n");
+        return -1;
+    }
+    fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
+
+#else /* win32 */
+    /* there was reported problems under windows using the protox
+     * struct - IPPROTO_TCP should fix it.
+     */
+    fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
+
+    if (fd == -1)
+        LOG(llevError, "ERROR: Error creating socket on port\n");
+    insock.sin_family = AF_INET;
+    insock.sin_port = htons(settings.csport);
+    insock.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    setsockopts(fd);
+
+    if (bind(fd, (struct sockaddr *) &insock, sizeof(insock)) == (-1))
+    {
+#ifdef WIN32 /* ***win32: close() -> closesocket() */
+        shutdown(fd, SD_BOTH);
+        closesocket(fd);
+#else
+        close(fd);
+#endif /* win32 */
+        LOG(llevError, "error on bind command.\n");
+    }
+
+    if (listen(fd, QUEUE_LEN) == (-1))
+    {
+#ifdef WIN32 /* ***win32: close() -> closesocket() */
+        shutdown(fd, SD_BOTH);
+        closesocket(fd);
+#else
+        close(fd);
+#endif /* win32 */
+        LOG(llevError, "error on listen\n");
+    }
+
+    return fd;
+}
+#else
+int create_socket()
+{
+    /* 
+     * this function create a socket on the first available protocol. If there
+     * is only one available it is no problem at all. But for IPv6 system it
+     * requires that IPv6 sockets can handle IPv4 connections too, which is the
+     * case on most system. It would be better to try to create sockets for all
+     * protocols, but that requires that the server can handle multiple listen 
+     * sockets (coming soon). Creating a IPv4 socket will fail when an IPv6 
+     * socket that handles IPv4 already has been create, so failures will have
+     * to be ignored as long as at least one socket is created.     
+     */
+    int fd;
+    struct addrinfo hints, *res, *ai;
+    char portstr[NI_MAXSERV];
+
+    memset(&hints, 0, sizeof(struct addrinfo));
+
+    hints.ai_flags    = AI_PASSIVE;
+    hints.ai_family   = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    sprintf(portstr, "%d", settings.csport);
+    if (getaddrinfo(NULL, portstr, &hints, &res) != 0)
+	return -1;
+
+    for (ai = res; ai != NULL; ai = ai->ai_next) {
+	fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if (fd <= 0)
+	    continue;
+
+	setsockopts(fd);
+
+	if (bind(fd, res->ai_addr, res->ai_addrlen) == 0)
+	    break;
+
+	close(fd);
+	fd = -1;
+    }
+
+    freeaddrinfo(res);
+
+    if (listen(fd, QUEUE_LEN) < 0) {
+	close(fd);
+	return -1;
+    }
+
+    return fd;
+}
+#endif
 
 /* This sets up the socket and reads all the image information into memory. */
 void init_ericserver()
 {
-    struct sockaddr_in  insock;
-    struct linger       linger_opt;
-
 #ifndef WIN32 /* non windows */
-    struct protoent    *protox;
 
 #ifdef HAVE_SYSCONF
     socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
@@ -190,72 +323,11 @@ void init_ericserver()
 	memset(init_sockets,0,sizeof(NewSocket));
     socket_info.allocated_sockets = 1;
 
-#ifndef WIN32 /* non win32 */
-    protox = getprotobyname("tcp");
-    if (protox == NULL)
-    {
-        LOG(llevBug, "BUG: init_ericserver: Error getting protox\n");
-        return;
-    }
-    init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
-
-#else /* win32 */
-    /* there was reported problems under windows using the protox
-     * struct - IPPROTO_TCP should fix it.
-     */
-    init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-#endif
-
+    init_sockets[0].fd = create_socket();
     if (init_sockets[0].fd == -1)
         LOG(llevError, "ERROR: Error creating socket on port\n");
-    insock.sin_family = AF_INET;
-    insock.sin_port = htons(settings.csport);
-    insock.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    linger_opt.l_onoff = 0;
-    linger_opt.l_linger = 0;
-    if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
-    {
-        LOG(llevBug, "BUG: Error on setsockopt LINGER\n");
-    }
-    /* Would be nice to have an autoconf check for this.  It appears that
-     * these functions are both using the same calling syntax, just one
-     * of them needs extra valus passed.
-     */
-#if !defined(_WEIRD_OS_) /* means is true for most (win32, linux, etc. ) */
-    {
-        int tmp = 1;
-
-        if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_REUSEADDR, (char *) &tmp, sizeof(tmp)))
-            LOG(llevDebug, "error on setsockopt REUSEADDR\n");
-    }
-#else
-    if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_REUSEADDR, (char *) NULL, 0))
-        LOG(llevDebug, "error on setsockopt REUSEADDR\n");
-
-#endif
-
-    if (bind(init_sockets[0].fd, (struct sockaddr *) &insock, sizeof(insock)) == (-1))
-    {
-#ifdef WIN32 /* ***win32: close() -> closesocket() */
-        shutdown(init_sockets[0].fd, SD_BOTH);
-        closesocket(init_sockets[0].fd);
-#else
-        close(init_sockets[0].fd);
-#endif /* win32 */
-        LOG(llevError, "error on bind command.\n");
-    }
-    if (listen(init_sockets[0].fd, 5) == (-1))
-    {
-#ifdef WIN32 /* ***win32: close() -> closesocket() */
-        shutdown(init_sockets[0].fd, SD_BOTH);
-        closesocket(init_sockets[0].fd);
-#else
-        close(init_sockets[0].fd);
-#endif /* win32 */
-        LOG(llevError, "error on listen\n");
-    }
     init_sockets[0].status = Ns_Wait;
+
     read_client_images();
     init_srv_files(); /* load all srv_xxx files or generate them */
 }

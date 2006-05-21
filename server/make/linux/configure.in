@@ -144,7 +144,7 @@ AC_FUNC_SETPGRP
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(gettimeofday mkdir mktime rmdir select socket strcspn strerror strspn strstr strtol strcasecmp strncasecmp stricmp strnicmp snprintf setsid srandom getdtablesize srand48 srand sysconf scandir)
+AC_CHECK_FUNCS(gettimeofday mkdir mktime rmdir select socket strcspn strerror strspn strstr strtol strcasecmp strncasecmp stricmp strnicmp snprintf setsid srandom getdtablesize srand48 srand sysconf scandir getaddrinfo)
 
 AC_MSG_CHECKING(how many args gettimeofday uses)
 AC_CACHE_VAL(ac_cv_gettimeofday_args,
