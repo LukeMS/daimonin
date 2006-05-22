@@ -27,9 +27,6 @@
                 <title>
                     <xsl:value-of select="@title"/>
                 </title>
-                <xsl:if test="relationship">
-                    <xsl:apply-templates select="relationship"/>
-                </xsl:if>
                 <xsl:choose>
                     <xsl:when test="stylesheet">
                         <xsl:apply-templates select="stylesheet" mode="head"/>
