@@ -27,11 +27,7 @@
 >
 
 
-<!ENTITY % RelTypes
-    "start|next|prev|contents|index|glossary|copyright|chapter|section|subsection|appendix"
->
-
-<!ENTITY % MediaTypes
+<!ENTITY % MediaType
     "screen|print|all"
 >
 
@@ -44,7 +40,7 @@
   - Attribute types.
   -->
 <!ELEMENT daiml
-    ((relationship|stylesheet)*, section+)
+    (stylesheet*, section+)
 >
 
 <!ATTLIST daiml
@@ -56,22 +52,13 @@
     (%Inline;)*
 >
 
-<!ELEMENT relationship
-    EMPTY
->
-
-<!ATTLIST relationship
-    href CDATA #REQUIRED
-    rel (%RelTypes;) #REQUIRED
->
-
 <!ELEMENT stylesheet
     EMPTY
 >
 
 <!ATTLIST stylesheet
     href CDATA #REQUIRED
-    media (%MediaTypes;) 'all'
+    media (%MediaType;) 'all'
     title CDATA #IMPLIED
 >
 
