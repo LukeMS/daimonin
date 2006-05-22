@@ -24,7 +24,7 @@ melee_attack_enemy
 bow_attack_enemy
 spell_attack_enemy
 endmsg
-editor_folder ai/ai
+editor_folder ai
 face ai.101
 sys_object 1
 end
@@ -56,7 +56,7 @@ melee_attack_enemy
 bow_attack_enemy
 spell_attack_enemy
 endmsg
-editor_folder ai/ai
+editor_folder ai
 face ai.101
 sys_object 1
 end
@@ -94,7 +94,7 @@ processes:
 moves: 
 actions:
 endmsg
-editor_folder ai/ai
+editor_folder ai
 face ai.101
 sys_object 1
 end
@@ -154,7 +154,7 @@ sys_object 1
 end
 Object altar
 type 18
-editor_folder connect/connect
+editor_folder connect
 slaying food
 layer 4
 face altar.111
@@ -172,7 +172,7 @@ end
 Object button_plate
 name large button
 type 92
-editor_folder connect/connect
+editor_folder connect
 layer 3
 face button_big.101
 animation button_plate
@@ -186,7 +186,7 @@ end
 Object button_small
 name small button
 type 92
-editor_folder connect/connect
+editor_folder connect
 layer 3
 face button_small.101
 animation button_small
@@ -200,7 +200,7 @@ end
 Object check_inv
 name check_inv
 type 64
-editor_folder connect/connect
+editor_folder connect
 layer 3
 face pedestal.111
 animation check_inv
@@ -216,7 +216,7 @@ end
 Object connection_sensor
 name Connection sensor
 type 134
-editor_folder connect/connect
+editor_folder connect
 sub_type 1
 no_pick 1
 no_teleport 1
@@ -226,7 +226,7 @@ end
 Object detector
 name detector
 type 51
-editor_folder connect/connect
+editor_folder connect
 slaying player
 layer 3
 face pedestal.111
@@ -242,7 +242,7 @@ end
 Object environment_sensor
 name Environment sensor
 type 133
-editor_folder connect/connect
+editor_folder connect
 no_pick 1
 no_teleport 1
 sys_object 1
@@ -359,6 +359,38 @@ no_pick 1
 animation portal_big
 is_animated 1
 anim_speed 2
+end
+Object ropeladder_down
+name rope ladder going down
+type 66
+editor_folder connect/exists
+face ropeladder_down.131
+animation ropeladder_down
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+hp -1
+sp -1
+layer 5
+no_pick 1
+end
+Object ropeladder_down2
+name rope ladder going down
+type 66
+editor_folder connect/exists
+face ropeladder_down2.131
+animation ropeladder_down2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+hp -1
+sp -1
+layer 5
+no_pick 1
 end
 Object sewer_hole1
 name sewer hole
@@ -752,7 +784,7 @@ end
 Object handle_lever
 name big lever
 type 93
-editor_folder connect/connect
+editor_folder connect
 layer 3
 no_pick 1
 face lever.111
@@ -768,7 +800,7 @@ msg
 @match sesame
 Click.
 endmsg
-editor_folder connect/connect
+editor_folder connect
 face magic_ear.111
 no_teleport 1
 no_pick 1
@@ -777,7 +809,7 @@ end
 Object pedestal
 name pedestal
 type 17
-editor_folder connect/connect
+editor_folder connect
 layer 3
 slaying player
 face pedestal.111
@@ -826,7 +858,7 @@ end
 Object shop_mat
 name shop teleporter
 type 69
-editor_folder connect/connect
+editor_folder connect
 layer 4
 face exit.101
 no_pick 1
@@ -841,7 +873,7 @@ end
 Object timer
 name Timer
 type 132
-editor_folder connect/connect
+editor_folder connect
 no_pick 1
 no_teleport 1
 sys_object 1
@@ -854,7 +886,7 @@ end
 Object altar_trigger
 name altar
 type 31
-editor_folder connect/connect
+editor_folder connect
 slaying food
 food 5
 layer 4
@@ -873,7 +905,7 @@ end
 Object button_trigger
 name button
 type 30
-editor_folder connect/connect
+editor_folder connect
 layer 3
 face button_small.101
 animation button_trigger
@@ -888,7 +920,7 @@ end
 Object trigger_lever
 name lever
 type 27
-editor_folder connect/connect
+editor_folder connect
 layer 3
 no_pick 1
 face lever.111
@@ -902,7 +934,7 @@ end
 Object pedestal_trigger
 name pedestal
 type 32
-editor_folder connect/connect
+editor_folder connect
 slaying player
 layer 3
 face pedestal.111
@@ -1068,7 +1100,7 @@ no_pick 1
 end
 Object blocked
 type 71
-editor_folder floors/floors
+editor_folder floors
 face blocked.111
 layer 1
 no_teleport 1
@@ -1837,7 +1869,7 @@ end
 Object earth_m1
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m1.101
 no_teleport 1
 layer 2
@@ -1846,7 +1878,7 @@ end
 Object earth_m2
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m2.101
 no_teleport 1
 layer 2
@@ -1855,7 +1887,7 @@ end
 Object earth_m3
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m3.101
 no_teleport 1
 layer 2
@@ -1864,7 +1896,7 @@ end
 Object earth_m4
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m4.101
 no_teleport 1
 layer 2
@@ -1873,7 +1905,7 @@ end
 Object earth_m5
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m5.101
 no_teleport 1
 layer 2
@@ -1882,7 +1914,7 @@ end
 Object earth_m6
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m6.101
 no_teleport 1
 layer 2
@@ -1891,7 +1923,7 @@ end
 Object earth_m7
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m7.101
 no_teleport 1
 layer 2
@@ -1900,7 +1932,7 @@ end
 Object earth_m8
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m8.101
 no_teleport 1
 layer 2
@@ -1909,7 +1941,7 @@ end
 Object earth_m9
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m9.101
 no_teleport 1
 layer 2
@@ -1918,7 +1950,7 @@ end
 Object earth_m10
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m10.101
 no_teleport 1
 layer 2
@@ -1927,7 +1959,7 @@ end
 Object earth_m11
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m11.101
 no_teleport 1
 layer 2
@@ -1936,7 +1968,7 @@ end
 Object earth_m12
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m12.101
 no_teleport 1
 layer 2
@@ -1945,7 +1977,7 @@ end
 Object earth_m13
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m13.101
 no_teleport 1
 layer 2
@@ -1954,7 +1986,7 @@ end
 Object earth_m14
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m14.101
 no_teleport 1
 layer 2
@@ -1963,7 +1995,7 @@ end
 Object earth_m15
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m15.101
 no_teleport 1
 layer 2
@@ -1972,7 +2004,7 @@ end
 Object earth_m16
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m16.101
 no_teleport 1
 layer 2
@@ -1981,7 +2013,7 @@ end
 Object earth_m17
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m17.101
 no_teleport 1
 layer 2
@@ -1990,7 +2022,7 @@ end
 Object earth_m18
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m18.101
 no_teleport 1
 layer 2
@@ -1999,7 +2031,7 @@ end
 Object earth_m19
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m19.101
 no_teleport 1
 layer 2
@@ -2008,7 +2040,7 @@ end
 Object earth_m20
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m20.101
 no_teleport 1
 layer 2
@@ -2017,7 +2049,7 @@ end
 Object earth_m21
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m21.101
 no_teleport 1
 layer 2
@@ -2026,7 +2058,7 @@ end
 Object earth_m22
 name earth
 type 28
-editor_folder floors/earth
+editor_folder floors/earth/earth_fmasks
 face earth_m22.101
 no_teleport 1
 layer 2
@@ -2454,7 +2486,7 @@ no_pick 1
 end
 Object floor_g
 type 71
-editor_folder floors/floors
+editor_folder floors
 no_teleport 1
 layer 1
 terrain_type 1
@@ -2463,7 +2495,7 @@ end
 Object floor_inv
 name floor
 type 71
-editor_folder floors/floors
+editor_folder floors
 face trans.101
 layer 1
 terrain_type 1
@@ -2473,7 +2505,7 @@ end
 Object reed_sm1
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m1.101
 no_teleport 1
 layer 2
@@ -2482,7 +2514,7 @@ end
 Object reed_sm2
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m2.101
 no_teleport 1
 layer 2
@@ -2491,7 +2523,7 @@ end
 Object reed_sm3
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m3.101
 no_teleport 1
 layer 2
@@ -2500,7 +2532,7 @@ end
 Object reed_sm4
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m4.101
 no_teleport 1
 layer 2
@@ -2509,7 +2541,7 @@ end
 Object reed_sm5
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m5.101
 no_teleport 1
 layer 2
@@ -2518,7 +2550,7 @@ end
 Object reed_sm6
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m6.101
 no_teleport 1
 layer 2
@@ -2527,7 +2559,7 @@ end
 Object reed_sm7
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m7.101
 no_teleport 1
 layer 2
@@ -2536,7 +2568,7 @@ end
 Object reed_sm8
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m8.101
 no_teleport 1
 layer 2
@@ -2545,7 +2577,7 @@ end
 Object reed_sm9
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m9.101
 no_teleport 1
 layer 2
@@ -2554,7 +2586,7 @@ end
 Object reed_sm10
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m10.101
 no_teleport 1
 layer 2
@@ -2563,7 +2595,7 @@ end
 Object reed_sm11
 name reed
 type 28
-editor_folder floors/fmasks
+editor_folder floors/fmasks/reed
 face reed_small_m11.101
 no_teleport 1
 layer 2
@@ -2571,7 +2603,7 @@ no_pick 1
 end
 Object fmask_g
 type 28
-editor_folder floors/floors
+editor_folder floors
 no_teleport 1
 layer 2
 no_pick 1
@@ -2769,7 +2801,7 @@ end
 Object grassd_m1
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m1.101
 no_teleport 1
 layer 2
@@ -2778,7 +2810,7 @@ end
 Object grassd_m2
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m2.101
 no_teleport 1
 layer 2
@@ -2787,7 +2819,7 @@ end
 Object grassd_m3
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m3.101
 no_teleport 1
 layer 2
@@ -2796,7 +2828,7 @@ end
 Object grassd_m4
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m4.101
 no_teleport 1
 layer 2
@@ -2805,7 +2837,7 @@ end
 Object grassd_m5
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m5.101
 no_teleport 1
 layer 2
@@ -2814,7 +2846,7 @@ end
 Object grassd_m6
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m6.101
 no_teleport 1
 layer 2
@@ -2823,7 +2855,7 @@ end
 Object grassd_m7
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m7.101
 no_teleport 1
 layer 2
@@ -2832,7 +2864,7 @@ end
 Object grassd_m8
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m8.101
 no_teleport 1
 layer 2
@@ -2841,7 +2873,7 @@ end
 Object grassd_m9
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m9.101
 no_teleport 1
 layer 2
@@ -2850,7 +2882,7 @@ end
 Object grassd_m10
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m10.101
 no_teleport 1
 layer 2
@@ -2859,7 +2891,7 @@ end
 Object grassd_m11
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m11.101
 no_teleport 1
 layer 2
@@ -2868,7 +2900,7 @@ end
 Object grassd_m12
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m12.101
 no_teleport 1
 layer 2
@@ -2877,7 +2909,7 @@ end
 Object grassd_m13
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m13.101
 no_teleport 1
 layer 2
@@ -2886,7 +2918,7 @@ end
 Object grassd_m14
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grassd_m14.101
 no_teleport 1
 layer 2
@@ -2895,7 +2927,7 @@ end
 Object grass_ne
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.111
 no_teleport 1
 layer 2
@@ -2904,7 +2936,7 @@ end
 Object grass_e
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.121
 no_teleport 1
 layer 2
@@ -2913,7 +2945,7 @@ end
 Object grass_e_edge
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.122
 no_teleport 1
 layer 2
@@ -2922,7 +2954,7 @@ end
 Object grass_se
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.131
 no_teleport 1
 layer 2
@@ -2931,7 +2963,7 @@ end
 Object grass_s
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.141
 no_teleport 1
 layer 2
@@ -2940,7 +2972,7 @@ end
 Object grass_s_edge
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.142
 no_teleport 1
 layer 2
@@ -2949,7 +2981,7 @@ end
 Object grass_sw
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.151
 no_teleport 1
 layer 2
@@ -2958,7 +2990,7 @@ end
 Object grass_w
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.161
 no_teleport 1
 layer 2
@@ -2967,7 +2999,7 @@ end
 Object grass_w_edge
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.162
 no_teleport 1
 layer 2
@@ -2976,7 +3008,7 @@ end
 Object grass_nw
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.171
 no_teleport 1
 layer 2
@@ -2985,7 +3017,7 @@ end
 Object grass_n
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.181
 no_teleport 1
 layer 2
@@ -2994,7 +3026,7 @@ end
 Object grass_n_edge
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass.182
 no_teleport 1
 layer 2
@@ -3003,7 +3035,7 @@ end
 Object grass_scarce
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_scarce.101
 no_teleport 1
 layer 2
@@ -3012,7 +3044,7 @@ end
 Object grass_leafm1
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm1.101
 no_teleport 1
 layer 2
@@ -3021,7 +3053,7 @@ end
 Object grass_leafm2
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm2.101
 no_teleport 1
 layer 2
@@ -3030,7 +3062,7 @@ end
 Object grass_leafm3
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm3.101
 no_teleport 1
 layer 2
@@ -3039,7 +3071,7 @@ end
 Object grass_leafm4
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm4.101
 no_teleport 1
 layer 2
@@ -3048,7 +3080,7 @@ end
 Object grass_leafm5
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm5.101
 no_teleport 1
 layer 2
@@ -3057,7 +3089,7 @@ end
 Object grass_leafm6
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm6.101
 no_teleport 1
 layer 2
@@ -3066,7 +3098,7 @@ end
 Object grass_leafm7
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm7.101
 no_teleport 1
 layer 2
@@ -3075,7 +3107,7 @@ end
 Object grass_leafm8
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm8.101
 no_teleport 1
 layer 2
@@ -3084,7 +3116,7 @@ end
 Object grass_leafm9
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm9.101
 no_teleport 1
 layer 2
@@ -3093,7 +3125,7 @@ end
 Object grass_leafm10
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm10.101
 no_teleport 1
 layer 2
@@ -3102,7 +3134,7 @@ end
 Object grass_leafm11
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm11.101
 no_teleport 1
 layer 2
@@ -3111,7 +3143,7 @@ end
 Object grass_leafm12
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm12.101
 no_teleport 1
 layer 2
@@ -3120,7 +3152,7 @@ end
 Object grass_leafm13
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm13.101
 no_teleport 1
 layer 2
@@ -3129,7 +3161,7 @@ end
 Object grass_leafm14
 name leaves
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_leafm14.101
 no_teleport 1
 layer 2
@@ -3138,7 +3170,7 @@ end
 Object grass_thickm1
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m1.101
 no_teleport 1
 layer 2
@@ -3147,7 +3179,7 @@ end
 Object grass_thickm2
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m2.101
 no_teleport 1
 layer 2
@@ -3156,7 +3188,7 @@ end
 Object grass_thickm3
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m3.101
 no_teleport 1
 layer 2
@@ -3165,7 +3197,7 @@ end
 Object grass_thickm4
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m4.101
 no_teleport 1
 layer 2
@@ -3174,7 +3206,7 @@ end
 Object grass_thickm5
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m5.101
 no_teleport 1
 layer 2
@@ -3183,7 +3215,7 @@ end
 Object grass_thickm6
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m6.101
 no_teleport 1
 layer 2
@@ -3192,7 +3224,7 @@ end
 Object grass_thickm7
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m7.101
 no_teleport 1
 layer 2
@@ -3201,7 +3233,7 @@ end
 Object grass_thickm8
 name grass
 type 28
-editor_folder floors/grass
+editor_folder floors/grass/grass_fmasks
 face grass_thick_m8.101
 no_teleport 1
 layer 2
@@ -4752,7 +4784,7 @@ end
 Object sand_dm1
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm1.101
 no_teleport 1
 layer 2
@@ -4761,7 +4793,7 @@ end
 Object sand_dm2
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm2.101
 no_teleport 1
 layer 2
@@ -4770,7 +4802,7 @@ end
 Object sand_dm3
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm3.101
 no_teleport 1
 layer 2
@@ -4779,7 +4811,7 @@ end
 Object sand_dm4
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm4.101
 no_teleport 1
 layer 2
@@ -4788,7 +4820,7 @@ end
 Object sand_dm5
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm5.101
 no_teleport 1
 layer 2
@@ -4797,7 +4829,7 @@ end
 Object sand_dm6
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm6.101
 no_teleport 1
 layer 2
@@ -4806,7 +4838,7 @@ end
 Object sand_dm7
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm7.101
 no_teleport 1
 layer 2
@@ -4815,7 +4847,7 @@ end
 Object sand_dm8
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm8.101
 no_teleport 1
 layer 2
@@ -4824,7 +4856,7 @@ end
 Object sand_dm9
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm9.101
 no_teleport 1
 layer 2
@@ -4833,7 +4865,7 @@ end
 Object sand_dm10
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm10.101
 no_teleport 1
 layer 2
@@ -4842,7 +4874,7 @@ end
 Object sand_dm11
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm11.101
 no_teleport 1
 layer 2
@@ -4851,7 +4883,7 @@ end
 Object sand_dm12
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm12.101
 no_teleport 1
 layer 2
@@ -4860,7 +4892,7 @@ end
 Object sand_dm13
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm13.101
 no_teleport 1
 layer 2
@@ -4869,7 +4901,7 @@ end
 Object sand_dm14
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm14.101
 no_teleport 1
 layer 2
@@ -4878,7 +4910,7 @@ end
 Object sand_dm15
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm15.101
 no_teleport 1
 layer 2
@@ -4887,7 +4919,7 @@ end
 Object sand_dm16
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm16.101
 no_teleport 1
 layer 2
@@ -4896,7 +4928,7 @@ end
 Object sand_dm17
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm17.101
 no_teleport 1
 layer 2
@@ -4905,7 +4937,7 @@ end
 Object sand_dm18
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm18.101
 no_teleport 1
 layer 2
@@ -4914,7 +4946,7 @@ end
 Object sand_dm19
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm19.101
 no_teleport 1
 layer 2
@@ -4923,7 +4955,7 @@ end
 Object sand_dm20
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm20.101
 no_teleport 1
 layer 2
@@ -4932,7 +4964,7 @@ end
 Object sand_dm21
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm21.101
 no_teleport 1
 layer 2
@@ -4941,7 +4973,7 @@ end
 Object sand_dm22
 name sand
 type 28
-editor_folder floors/sand
+editor_folder floors/sand/sand_fmasks
 face sand_dm22.101
 no_teleport 1
 layer 2
@@ -5148,7 +5180,7 @@ end
 Object snow_path.111
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path.111
 layer 1
 terrain_type 1
@@ -5158,7 +5190,7 @@ end
 Object snow_path.131
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path.131
 layer 1
 terrain_type 1
@@ -5168,7 +5200,7 @@ end
 Object snow_path_cross.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_cross.101
 layer 1
 terrain_type 1
@@ -5178,7 +5210,7 @@ end
 Object snow_path_ne.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_ne.101
 layer 1
 terrain_type 1
@@ -5188,7 +5220,7 @@ end
 Object snow_path_nt.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_nt.101
 layer 1
 terrain_type 1
@@ -5198,7 +5230,7 @@ end
 Object snow_path_nw.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_nw.101
 layer 1
 terrain_type 1
@@ -5208,7 +5240,7 @@ end
 Object snow_path_se.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_se.101
 layer 1
 terrain_type 1
@@ -5218,7 +5250,7 @@ end
 Object snow_path_st.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_st.101
 layer 1
 terrain_type 1
@@ -5228,7 +5260,7 @@ end
 Object snow_path_sw.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_sw.101
 layer 1
 terrain_type 1
@@ -5238,7 +5270,7 @@ end
 Object snow_path_wide.111
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide.111
 layer 1
 terrain_type 1
@@ -5248,7 +5280,7 @@ end
 Object snow_path_wide.112
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide.112
 layer 1
 terrain_type 1
@@ -5258,7 +5290,7 @@ end
 Object snow_path_wide.131
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide.131
 layer 1
 terrain_type 1
@@ -5268,7 +5300,7 @@ end
 Object snow_path_wide.132
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide.132
 layer 1
 terrain_type 1
@@ -5278,7 +5310,7 @@ end
 Object snow_path_wide_el.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_el.101
 layer 1
 terrain_type 1
@@ -5288,7 +5320,7 @@ end
 Object snow_path_wide_ne.111
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_ne.111
 layer 1
 terrain_type 1
@@ -5298,7 +5330,7 @@ end
 Object snow_path_wide_nl.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_nl.101
 layer 1
 terrain_type 1
@@ -5308,7 +5340,7 @@ end
 Object snow_path_wide_nw.111
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_nw.111
 layer 1
 terrain_type 1
@@ -5318,7 +5350,7 @@ end
 Object snow_path_wide_se.111
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_se.111
 layer 1
 terrain_type 1
@@ -5328,7 +5360,7 @@ end
 Object snow_path_wide_sl.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_sl.101
 layer 1
 terrain_type 1
@@ -5338,7 +5370,7 @@ end
 Object snow_path_wide_sw.111
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_sw.111
 layer 1
 terrain_type 1
@@ -5348,7 +5380,7 @@ end
 Object snow_path_wide_wl.101
 name snow path
 type 71
-editor_folder floors/snow
+editor_folder floors/snow/snow_path
 face snow_path_wide_wl.101
 layer 1
 terrain_type 1
@@ -5628,7 +5660,7 @@ end
 Object fstone1m1
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m1.101
 no_teleport 1
 layer 2
@@ -5637,7 +5669,7 @@ end
 Object fstone1m2
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m2.101
 no_teleport 1
 layer 2
@@ -5646,7 +5678,7 @@ end
 Object fstone1m3
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m3.101
 no_teleport 1
 layer 2
@@ -5655,7 +5687,7 @@ end
 Object fstone1m4
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m4.101
 no_teleport 1
 layer 2
@@ -5664,7 +5696,7 @@ end
 Object fstone1m5
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m5.101
 no_teleport 1
 layer 2
@@ -5673,7 +5705,7 @@ end
 Object fstone1m6
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m6.101
 no_teleport 1
 layer 2
@@ -5682,7 +5714,7 @@ end
 Object fstone1m7
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m7.101
 no_teleport 1
 layer 2
@@ -5691,7 +5723,7 @@ end
 Object fstone1m8
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m8.101
 no_teleport 1
 layer 2
@@ -5700,7 +5732,7 @@ end
 Object fstone1m9
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m9.101
 no_teleport 1
 layer 2
@@ -5709,7 +5741,7 @@ end
 Object fstone1m10
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m10.101
 no_teleport 1
 layer 2
@@ -5718,7 +5750,7 @@ end
 Object fstone1m11
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m11.101
 no_teleport 1
 layer 2
@@ -5727,7 +5759,7 @@ end
 Object fstone1m12
 name stones
 type 28
-editor_folder floors/stone
+editor_folder floors/stone/stone_fmasks
 face fstone1_m12.101
 no_teleport 1
 layer 2
@@ -5746,7 +5778,7 @@ end
 Object swamp1m1
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m1.101
 no_teleport 1
 layer 2
@@ -5755,7 +5787,7 @@ end
 Object swamp1m2
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m2.101
 no_teleport 1
 layer 2
@@ -5764,7 +5796,7 @@ end
 Object swamp1m3
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m3.101
 no_teleport 1
 layer 2
@@ -5773,7 +5805,7 @@ end
 Object swamp1m4
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m4.101
 no_teleport 1
 layer 2
@@ -5782,7 +5814,7 @@ end
 Object swamp1m5
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m5.101
 no_teleport 1
 layer 2
@@ -5791,7 +5823,7 @@ end
 Object swamp1m6
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m6.101
 no_teleport 1
 layer 2
@@ -5800,7 +5832,7 @@ end
 Object swamp1m7
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m7.101
 no_teleport 1
 layer 2
@@ -5809,7 +5841,7 @@ end
 Object swamp1m8
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m8.101
 no_teleport 1
 layer 2
@@ -5818,7 +5850,7 @@ end
 Object swamp1m9
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m9.101
 no_teleport 1
 layer 2
@@ -5827,7 +5859,7 @@ end
 Object swamp1m10
 name swamp
 type 28
-editor_folder floors/swamp
+editor_folder floors/swamp/swamp_fmasks
 face swamp1m10.101
 no_teleport 1
 layer 2
@@ -6340,7 +6372,7 @@ wc 7
 end
 Object blindness
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 identified 1
@@ -6352,7 +6384,7 @@ is_used_up 1
 end
 Object confusion
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 identified 1
@@ -6364,7 +6396,7 @@ is_used_up 1
 end
 Object deathsick
 type 114
-editor_folder forces/forces
+editor_folder forces
 face force.101
 identified 1
 layer 0
@@ -6374,7 +6406,7 @@ no_drop 1
 end
 Object depletion
 type 114
-editor_folder forces/forces
+editor_folder forces
 face force.101
 identified 1
 layer 0
@@ -6526,7 +6558,7 @@ level 5
 end
 Object drain
 type 114
-editor_folder forces/forces
+editor_folder forces
 face force.101
 identified 1
 layer 0
@@ -6536,7 +6568,7 @@ no_drop 1
 end
 Object fear
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 identified 1
@@ -6549,7 +6581,7 @@ end
 Object force
 name force
 type 114
-editor_folder forces/forces
+editor_folder forces
 layer 0
 face force.101
 identified 1
@@ -6560,7 +6592,7 @@ speed_left -1
 end
 Object luck
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 identified 1
@@ -6568,7 +6600,7 @@ no_drop 1
 end
 Object paralyze
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 identified 1
@@ -6581,7 +6613,7 @@ end
 Object poisoning
 name applied poison
 type 105
-editor_folder forces/forces
+editor_folder forces
 face force.101
 identified 1
 food 6
@@ -6596,7 +6628,7 @@ no_drop 1
 end
 Object slowness
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 exp -1
@@ -6610,7 +6642,7 @@ is_used_up 1
 end
 Object snare
 type 114
-editor_folder forces/forces
+editor_folder forces
 sys_object 1
 face force.101
 identified 1
@@ -6742,7 +6774,7 @@ end
 Object shrine1.111
 name shrine
 type 79
-editor_folder gods/gods
+editor_folder gods
 face shrine1.111
 animation shrine1.111
 is_animated 0
@@ -6824,7 +6856,7 @@ type 20
 msg
 You need a special key to open this door.
 endmsg
-editor_folder indoor/bar
+editor_folder indoor/bar/bar_door
 layer 5
 sub_type 1
 door_closed 1
@@ -6841,7 +6873,7 @@ end
 Object basin1.101
 name basin
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face basin1.101
 no_pick 1
 layer 4
@@ -6849,7 +6881,7 @@ end
 Object basin1_full.101
 name basin
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face basin1_full.101
 no_pick 1
 layer 4
@@ -6857,7 +6889,7 @@ end
 Object basket1.101
 name basket
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face basket1.101
 no_pick 1
 layer 4
@@ -6865,7 +6897,7 @@ end
 Object basket2.101
 name basket
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face basket2.101
 no_pick 1
 layer 4
@@ -6951,7 +6983,7 @@ end
 Object beer_barrel.101
 name beer barrel
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face beer_barrel.101
 no_pick 1
 layer 4
@@ -7029,7 +7061,7 @@ end
 Object bowl1.101
 name bowl
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bowl1.101
 no_pick 1
 layer 4
@@ -7037,7 +7069,7 @@ end
 Object bowl1_full.101
 name bowl
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bowl1_full.101
 no_pick 1
 layer 4
@@ -7045,7 +7077,7 @@ end
 Object bowl2.101
 name bowl
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bowl2.101
 no_pick 1
 layer 4
@@ -7053,7 +7085,7 @@ end
 Object broom.111
 name broom
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face broom.111
 animation broom.111
 is_animated 0
@@ -7066,7 +7098,7 @@ end
 Object metal_bucket.101
 name metal bucket
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face metal_bucket.101
 no_pick 1
 layer 4
@@ -7074,7 +7106,7 @@ end
 Object candlelight1.101
 name candlelight
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face candlelight1.101
 no_pick 1
 layer 4
@@ -7082,7 +7114,7 @@ end
 Object candlelight2.101
 name candlelight
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face candlelight2.101
 no_pick 1
 layer 4
@@ -7090,7 +7122,7 @@ end
 Object candlelight3.101
 name candlelight
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face candlelight3.101
 no_pick 1
 layer 4
@@ -7098,7 +7130,7 @@ end
 Object candlelight4.101
 name candlelight
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face candlelight4.101
 no_pick 1
 layer 4
@@ -7328,7 +7360,7 @@ end
 Object flagwall_short_brick1.111
 name Pond Wall
 type 77
-editor_folder indoor/indoor
+editor_folder indoor
 face flagwall_short_brick1.111
 layer 5
 no_pick 1
@@ -7337,7 +7369,7 @@ end
 Object flagwall_short_brick1.131
 name Pond Wall
 type 77
-editor_folder indoor/indoor
+editor_folder indoor
 face flagwall_short_brick1.131
 layer 5
 no_pick 1
@@ -7346,7 +7378,7 @@ end
 Object flagwall_short_brick1.141
 name Pond Wall
 type 77
-editor_folder indoor/indoor
+editor_folder indoor
 face flagwall_short_brick1.141
 layer 5
 no_pick 1
@@ -7355,7 +7387,7 @@ end
 Object flagwall_short_brick1.181
 name Pond Wall
 type 77
-editor_folder indoor/indoor
+editor_folder indoor
 face flagwall_short_brick1.181
 layer 5
 no_pick 1
@@ -7364,7 +7396,7 @@ end
 Object glower.101
 name glower
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face glower.101
 no_pick 1
 layer 4
@@ -7372,7 +7404,7 @@ end
 Object grain1.101
 name grain
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face grain1.101
 no_pick 1
 layer 4
@@ -7380,7 +7412,7 @@ end
 Object grain2.101
 name grain
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face grain2.101
 no_pick 1
 layer 4
@@ -7388,7 +7420,7 @@ end
 Object grain3.101
 name grain
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face grain3.101
 no_pick 1
 layer 4
@@ -7396,7 +7428,7 @@ end
 Object grain4.101
 name grain
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face grain4.101
 no_pick 1
 layer 4
@@ -7404,7 +7436,7 @@ end
 Object grain5.101
 name grain
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face grain5.101
 no_pick 1
 layer 4
@@ -7472,7 +7504,7 @@ end
 Object carpet1
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet1.101
 no_teleport 1
 layer 2
@@ -7481,7 +7513,7 @@ end
 Object carpet1.111
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet1.111
 no_teleport 1
 layer 2
@@ -7490,7 +7522,7 @@ end
 Object carpet1.131
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet1.131
 no_teleport 1
 layer 2
@@ -7499,7 +7531,7 @@ end
 Object carpet1.151
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet1.151
 no_teleport 1
 layer 2
@@ -7508,7 +7540,7 @@ end
 Object carpet1.171
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet1.171
 no_teleport 1
 layer 2
@@ -7517,7 +7549,7 @@ end
 Object carpet2a
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2a.101
 no_teleport 1
 layer 2
@@ -7526,7 +7558,7 @@ end
 Object carpet2b
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2b.101
 no_teleport 1
 layer 2
@@ -7535,7 +7567,7 @@ end
 Object carpet2c
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2c.101
 no_teleport 1
 layer 2
@@ -7544,7 +7576,7 @@ end
 Object carpet2d
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2d.101
 no_teleport 1
 layer 2
@@ -7553,7 +7585,7 @@ end
 Object carpet2e
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2e.101
 no_teleport 1
 layer 2
@@ -7562,7 +7594,7 @@ end
 Object carpet2f
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2f.101
 no_teleport 1
 layer 2
@@ -7571,7 +7603,7 @@ end
 Object carpet2g
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2g.101
 no_teleport 1
 layer 2
@@ -7580,7 +7612,7 @@ end
 Object carpet2h
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2h.101
 no_teleport 1
 layer 2
@@ -7589,7 +7621,7 @@ end
 Object carpet2i
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2i.101
 no_teleport 1
 layer 2
@@ -7598,7 +7630,7 @@ end
 Object carpet2j
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2j.101
 no_teleport 1
 layer 2
@@ -7607,7 +7639,7 @@ end
 Object carpet2k
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2k.101
 no_teleport 1
 layer 2
@@ -7616,7 +7648,7 @@ end
 Object carpet2.111
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2.111
 no_teleport 1
 layer 2
@@ -7625,7 +7657,7 @@ end
 Object carpet2.131
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2.131
 no_teleport 1
 layer 2
@@ -7634,7 +7666,7 @@ end
 Object carpet2.151
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2.151
 no_teleport 1
 layer 2
@@ -7643,7 +7675,7 @@ end
 Object carpet2.171
 name carpet
 type 28
-editor_folder indoor/masks_floor
+editor_folder indoor/masks_floor/carpets
 face carpet2.171
 no_teleport 1
 layer 2
@@ -7742,7 +7774,7 @@ end
 Object wmask_bflag_brown_1
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face wmask_bflag_brown.u.151
 animation wmask_bflag_brown_1
 is_animated 0
@@ -7755,7 +7787,7 @@ end
 Object wmask_bflag_fire1_1
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face wmask_bflag_fire1.u.151
 animation wmask_bflag_fire1_1
 is_animated 0
@@ -7768,7 +7800,7 @@ end
 Object flag_01
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face flag_01.u.151
 animation flag_01
 is_animated 0
@@ -7781,7 +7813,7 @@ end
 Object flag_02
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face flag_02.u.151
 animation flag_02
 is_animated 0
@@ -7794,7 +7826,7 @@ end
 Object flag_03
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face flag_03.u.151
 animation flag_03
 is_animated 0
@@ -7807,7 +7839,7 @@ end
 Object flag_04
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face flag_04.u.151
 animation flag_04
 is_animated 0
@@ -7820,7 +7852,7 @@ end
 Object flag_05
 name big flag
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/flags
 face flag_05.u.151
 animation flag_05
 is_animated 0
@@ -7833,7 +7865,7 @@ end
 Object wmask_fire_on_1
 name fire place
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/house
 face wmask_fire_on.151
 animation wmask_fire_on_1
 is_animated 0
@@ -7846,7 +7878,7 @@ end
 Object wmask_fire_off_1
 name fire place
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/house
 face wmask_fire_off.151
 animation wmask_fire_off_1
 is_animated 0
@@ -7859,7 +7891,7 @@ end
 Object chains1.151
 name chains
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/jail
 face chains1.u.151
 animation chains1.151
 is_animated 0
@@ -7872,7 +7904,7 @@ end
 Object chains2.151
 name chains
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/jail
 face chains2.u.151
 animation chains2.151
 is_animated 0
@@ -7885,7 +7917,7 @@ end
 Object chains3.151
 name chains
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/jail
 face chains3.u.151
 animation chains3.151
 is_animated 0
@@ -7898,7 +7930,7 @@ end
 Object pot_wall.131
 name pot
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/kitchen
 face pot_wall.u.151
 animation pot_wall.131
 is_animated 0
@@ -7911,7 +7943,7 @@ end
 Object picture1.151
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture1.u.151
 animation picture1.151
 is_animated 0
@@ -7924,7 +7956,7 @@ end
 Object picture2.151
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture2.u.151
 animation picture2.151
 is_animated 0
@@ -7937,7 +7969,7 @@ end
 Object picture3.151
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture3.u.151
 animation picture3.151
 is_animated 0
@@ -7950,7 +7982,7 @@ end
 Object picture4.151
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture4.u.151
 animation picture4.151
 is_animated 0
@@ -7963,7 +7995,7 @@ end
 Object picture5.151
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture5.u.151
 animation picture5.151
 is_animated 0
@@ -7976,7 +8008,7 @@ end
 Object picture6.151
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture6.u.151
 animation picture6.151
 is_animated 0
@@ -7989,7 +8021,7 @@ end
 Object picture7
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture7.u.151
 animation picture7
 is_animated 0
@@ -8002,7 +8034,7 @@ end
 Object picture8
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture8.u.151
 animation picture8
 is_animated 0
@@ -8015,7 +8047,7 @@ end
 Object picture9
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture9.u.151
 animation picture9
 is_animated 0
@@ -8028,7 +8060,7 @@ end
 Object picture10
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture10.u.151
 animation picture10
 is_animated 0
@@ -8041,7 +8073,7 @@ end
 Object picture11
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture11.u.151
 animation picture11
 is_animated 0
@@ -8054,7 +8086,7 @@ end
 Object picture12
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture12.u.151
 animation picture12
 is_animated 0
@@ -8067,7 +8099,7 @@ end
 Object picture13
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture13.u.151
 animation picture13
 is_animated 0
@@ -8080,7 +8112,7 @@ end
 Object picture14
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture14.u.151
 animation picture14
 is_animated 0
@@ -8093,7 +8125,7 @@ end
 Object picture15
 name picture
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/pictures
 face picture15.u.151
 animation picture15
 is_animated 0
@@ -8106,7 +8138,7 @@ end
 Object plant1_wall.151
 name plants
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/plants
 face plant1_wall.151
 animation plant1_wall.151
 is_animated 0
@@ -8119,7 +8151,7 @@ end
 Object plant2_wall.151
 name plants
 type 77
-editor_folder indoor/masks_wall
+editor_folder indoor/masks_wall/plants
 face plant2_wall.151
 animation plant2_wall.151
 is_animated 0
@@ -8275,7 +8307,7 @@ end
 Object mirror_big.111
 name mirror
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face mirror_big.111
 animation mirror_big.111
 is_animated 0
@@ -8288,7 +8320,7 @@ end
 Object rows
 name rows
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face rows.101
 no_pick 1
 layer 4
@@ -8296,7 +8328,7 @@ end
 Object rubbish.101
 name rubbish
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face rubbish.101
 no_pass 1
 no_pick 1
@@ -8344,7 +8376,7 @@ end
 Object straw1.101
 name straw
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face straw1.101
 no_pick 1
 no_pass 1
@@ -8353,7 +8385,7 @@ end
 Object straw2.111
 name straw
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face straw2.111
 animation straw2.111
 is_animated 0
@@ -8475,7 +8507,7 @@ end
 Object bath_tube1.101
 name bath tube
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bath_tube1.101
 no_pick 1
 layer 4
@@ -8483,7 +8515,7 @@ end
 Object bath_tube2.101
 name bath tube
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bath_tube2.101
 no_pick 1
 layer 4
@@ -8491,7 +8523,7 @@ end
 Object bath_tube3.101
 name bath tube
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bath_tube3.101
 no_pick 1
 layer 4
@@ -8499,7 +8531,7 @@ end
 Object bath_tube_big1.101
 name bath tube
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face bath_tube_big1.101
 no_pick 1
 layer 4
@@ -8507,7 +8539,7 @@ end
 Object wall_well.131
 name well
 type 77
-editor_folder indoor/indoor
+editor_folder indoor
 face wall_well.131
 animation wall_well.131
 is_animated 0
@@ -8520,7 +8552,7 @@ end
 Object wood_pile.101
 name pile of wood
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face wood_pile.101
 no_pick 1
 layer 4
@@ -8528,7 +8560,7 @@ end
 Object trash_wood1.101
 name wood
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face trash_wood1.101
 no_pick 1
 layer 4
@@ -8536,7 +8568,7 @@ end
 Object trash_wood2.101
 name wood
 type 79
-editor_folder indoor/indoor
+editor_folder indoor
 face trash_wood2.101
 no_pick 1
 layer 4
@@ -8621,7 +8653,7 @@ layer 4
 end
 Object aggro_history
 type 127
-editor_folder indoor/show all
+editor_folder intern
 layer 0
 no_save 1
 sys_object 1
@@ -8630,7 +8662,7 @@ no_drop 1
 end
 Object base_info
 type 101
-editor_folder indoor/show all
+editor_folder intern
 layer 0
 sys_object 1
 face info.101
@@ -8638,7 +8670,7 @@ no_drop 1
 end
 Object dmg_info
 type 128
-editor_folder indoor/show all
+editor_folder intern
 layer 0
 no_save 1
 sys_object 1
@@ -8647,13 +8679,13 @@ no_drop 1
 end
 Object empty_archetype
 type 79
-editor_folder indoor/show all
+editor_folder intern
 sys_object 1
 end
 Object tabernacle_avatar_info
 name avatar
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/infos
 layer 0
 sys_object 1
 other_arch tabernacle_avatar
@@ -8665,7 +8697,7 @@ type 8
 msg
 You feel a bond with the powers of the Tabernacle.
 endmsg
-editor_folder indoor/show all
+editor_folder intern/gods/infos
 layer 0
 sys_object 1
 face power.101
@@ -8673,7 +8705,7 @@ end
 Object tabernacle_holy_servant_info
 name holy servant
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/infos
 layer 0
 sys_object 1
 other_arch ant_red
@@ -8682,7 +8714,7 @@ end
 Object god_cure_blindness
 name heal spell
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 slaying cure blindness
 face power.101
@@ -8690,7 +8722,7 @@ end
 Object god_cure_confusion
 name heal spell
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 slaying cure confusion
 face power.101
@@ -8698,7 +8730,7 @@ end
 Object god_cure_disease
 name heal spell
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 slaying cure disease
 face power.101
@@ -8706,7 +8738,7 @@ end
 Object god_cure_poison
 name heal spell
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 slaying cure poison
 face power.101
@@ -8714,7 +8746,7 @@ end
 Object god_grace_limit_high
 name grace limit
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 face power.101
 sys_object 1
 grace 600
@@ -8722,7 +8754,7 @@ end
 Object god_grace_limit_insane
 name grace limit
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 face power.101
 sys_object 1
 grace 1000
@@ -8730,7 +8762,7 @@ end
 Object god_grace_limit_low
 name grace limit
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 face power.101
 sys_object 1
 grace 100
@@ -8738,7 +8770,7 @@ end
 Object god_grace_limit_medium
 name grace limit
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 face power.101
 sys_object 1
 grace 300
@@ -8746,42 +8778,42 @@ end
 Object god_remove_curse
 name remove curse
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 face power.101
 end
 Object god_remove_damnation
 name remove damnation
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 face power.101
 end
 Object god_remove_depletion
 name heal depletion
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 face power.101
 end
 Object god_restore_grace
 name restore grace
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 face power.101
 end
 Object god_restore_hitpoints
 name restore hitpoints
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 face power.101
 end
 Object god_restore_spellpoints_high
 name restore spellpoints
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 maxsp 150
 face power.101
@@ -8789,7 +8821,7 @@ end
 Object god_restore_spellpoints_low
 name restore spellpoints
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 maxsp 80
 face power.101
@@ -8797,7 +8829,7 @@ end
 Object god_restore_spellpoints_medium
 name restore spellpoints
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 maxsp 100
 face power.101
@@ -8805,14 +8837,14 @@ end
 Object god_restore_spellpoints_very_high
 name restore spellpoints
 type 8
-editor_folder indoor/show all
+editor_folder intern/gods/powers
 sys_object 1
 maxsp 200
 face power.101
 end
 Object gravestone
 type 38
-editor_folder indoor/show all
+editor_folder intern
 layer 3
 face gravestone.101
 identified 1
@@ -8830,7 +8862,7 @@ end
 Object close_gift
 name rewrap the gift
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face gift_open.111
 layer 3
 no_drop 1
@@ -8839,7 +8871,7 @@ end
 Object close_stocking
 name close stocking
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face stocking.111
 layer 3
 no_drop 1
@@ -8848,7 +8880,7 @@ end
 Object close_stocking_bow
 name close stocking
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face stocking_bow.111
 layer 3
 no_drop 1
@@ -8857,7 +8889,7 @@ end
 Object close_bag
 name close the bag
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 layer 3
 face close_bag.101
 no_pick 1
@@ -8867,7 +8899,7 @@ end
 Object cauldron_open
 name close the cauldron
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 layer 3
 face cauldron_open.101
 no_pick 1
@@ -8876,7 +8908,7 @@ end
 Object close_chest1_111
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_mm_open.111
 animation close_chest1_111
 is_animated 0
@@ -8891,7 +8923,7 @@ end
 Object close_chest_m1_1
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_lm_open.111
 animation close_chest_m1_1
 is_animated 0
@@ -8906,7 +8938,7 @@ end
 Object close_chest_w1_1
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_lw_open.111
 animation close_chest_w1_1
 is_animated 0
@@ -8921,7 +8953,7 @@ end
 Object close_chest_4.111
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_mw_open.111
 animation close_chest_4.111
 is_animated 0
@@ -8936,7 +8968,7 @@ end
 Object close_chest_sm_1
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_sm_open.111
 animation close_chest_sm_1
 is_animated 0
@@ -8951,7 +8983,7 @@ end
 Object close_chest_sw_1
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_sw_open.111
 animation close_chest_sw_1
 is_animated 0
@@ -8966,7 +8998,7 @@ end
 Object close_chest7_111
 name open chest
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face chest_mm2_open.111
 animation close_chest7_111
 is_animated 0
@@ -8981,7 +9013,7 @@ end
 Object close_dbox
 name close the deposit box
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_dbox.101
 layer 3
 no_drop 1
@@ -8991,7 +9023,7 @@ end
 Object close_key_ring
 name close the key ring
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 layer 3
 face close_keys.101
 no_drop 1
@@ -9001,7 +9033,7 @@ end
 Object close_luggage
 name close the luggage
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 layer 3
 face close_lugg.101
 no_pick 1
@@ -9011,7 +9043,7 @@ end
 Object close_mail
 name close the mailbox
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face closemail.101
 layer 3
 no_pick 1
@@ -9021,7 +9053,7 @@ end
 Object close_pouch
 name close the pouch
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_pouch.101
 layer 3
 no_drop 1
@@ -9031,7 +9063,7 @@ end
 Object close_quiver_b
 name close the quiver
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_quiv_b.101
 layer 3
 no_drop 1
@@ -9041,7 +9073,7 @@ end
 Object close_quiver_s
 name close the quiver
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_quiv_s.101
 layer 3
 no_drop 1
@@ -9051,7 +9083,7 @@ end
 Object close_quiver
 name close the quiver
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_quiv.101
 layer 3
 no_drop 1
@@ -9061,7 +9093,7 @@ end
 Object close_rsack
 name close the rucksack
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_rsack.101
 layer 3
 no_drop 1
@@ -9071,7 +9103,7 @@ end
 Object close_sack
 name close the sack
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face close_sack.101
 layer 3
 no_drop 1
@@ -9081,7 +9113,7 @@ end
 Object xmas_present_green_open
 name close the gift
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face xmas_present_green_open.101
 layer 3
 no_drop 1
@@ -9090,7 +9122,7 @@ end
 Object xmas_present_red_open
 name close the gift
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face xmas_present_red_open.101
 layer 3
 no_drop 1
@@ -9099,7 +9131,7 @@ end
 Object xmas_present_white_open
 name close the gift
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face xmas_present_white_open.101
 layer 3
 no_drop 1
@@ -9108,7 +9140,7 @@ end
 Object xmas_present_yellow_open
 name close the gift
 type 121
-editor_folder indoor/show all
+editor_folder intern/items/container
 face xmas_present_yellow_open.101
 layer 3
 no_drop 1
@@ -9117,7 +9149,7 @@ end
 Object cane_pole_unlit
 name pole lamp
 type 74
-editor_folder indoor/show all
+editor_folder intern/items/light
 face cane_pole.130
 layer 5
 sub_type 1
@@ -9137,7 +9169,7 @@ end
 Object jack_unlit
 name jack'o'lantern
 type 74
-editor_folder indoor/show all
+editor_folder intern/items/light
 layer 5
 sub_type 1
 face jackolantern_01.101
@@ -9157,7 +9189,7 @@ end
 Object lamp_post_unlit
 name lamp post
 type 74
-editor_folder indoor/show all
+editor_folder intern/items/light
 face lamp_post.132
 layer 5
 sub_type 1
@@ -9177,7 +9209,7 @@ end
 Object lamp_wall_1_unlit
 name attached lamp
 type 74
-editor_folder indoor/show all
+editor_folder intern/items/light
 layer 5
 sub_type 1
 face lamp_wall.110
@@ -9197,7 +9229,7 @@ end
 Object torch_wall_1_unlit
 name attached torch
 type 74
-editor_folder indoor/show all
+editor_folder intern/items/light
 layer 5
 sub_type 1
 face torch_wall.110
@@ -9214,10 +9246,23 @@ weight 1250
 material 144
 food 1
 end
+Object map
+x 16
+y 16
+type 22
+layer 0
+sys_object 1
+slaying /relic/castle/castle_030a
+face info.101
+hp 18
+sp 1
+value 300
+weight 7200
+end
 Object age_force
 name age force
 type 67
-editor_folder indoor/show all
+editor_folder intern/player
 layer 0
 sys_object 1
 item_quality 100
@@ -9234,7 +9279,7 @@ end
 Object alignment_force
 name ALIGNMENT_FORCE
 type 114
-editor_folder indoor/show all
+editor_folder intern/player
 layer 0
 item_quality 100
 item_condition 100
@@ -9251,7 +9296,7 @@ end
 Object corpse_pl
 name player corpse
 type 122
-editor_folder indoor/show all
+editor_folder intern/player
 layer 3
 face corpse_pl.101
 sub_type 1
@@ -9267,7 +9312,7 @@ end
 Object guild_force
 name GUILD_FORCE
 type 140
-editor_folder indoor/show all
+editor_folder intern/player
 item_quality 100
 item_condition 100
 nrof 1
@@ -9289,7 +9334,7 @@ speed 0
 end
 Object half_elf_female
 type 1
-editor_folder indoor/show all
+editor_folder intern/player
 race half-elf
 randomitems player_half_elf_female
 layer 6
@@ -9325,7 +9370,7 @@ food 750
 end
 Object half_elf_male
 type 1
-editor_folder indoor/show all
+editor_folder intern/player
 race half-elf
 face human_m.isw.111
 randomitems player_half_elf_male
@@ -9361,7 +9406,7 @@ food 750
 end
 Object human_female
 type 1
-editor_folder indoor/show all
+editor_folder intern/player
 race human
 randomitems player_human_female
 layer 6
@@ -9397,7 +9442,7 @@ food 750
 end
 Object human_male
 type 1
-editor_folder indoor/show all
+editor_folder intern/player
 race human
 face human_m.isw.111
 randomitems player_human_male
@@ -9433,7 +9478,7 @@ food 750
 end
 Object player_force
 type 114
-editor_folder indoor/show all
+editor_folder intern/player
 sys_object 1
 applied 1
 item_quality 100
@@ -9449,7 +9494,7 @@ speed 0
 end
 Object player_info
 type 79
-editor_folder indoor/show all
+editor_folder intern/player
 sys_object 1
 applied 0
 no_drop 1
@@ -9464,7 +9509,7 @@ face info.101
 end
 Object quest_container
 type 120
-editor_folder indoor/show all
+editor_folder intern/player
 sys_object 1
 applied 0
 no_drop 1
@@ -9480,7 +9525,7 @@ end
 Object rank_force
 name RANK_FORCE
 type 114
-editor_folder indoor/show all
+editor_folder intern/player
 sys_object 1
 applied 1
 layer 0
@@ -9496,7 +9541,7 @@ speed 0
 end
 Object quest_info
 type 136
-editor_folder indoor/show all
+editor_folder intern
 sys_object 1
 applied 0
 no_drop 1
@@ -9506,7 +9551,7 @@ end
 Object skill_alchemy
 name alchemy
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 2
 item_quality 100
@@ -9526,7 +9571,7 @@ end
 Object skill_bargaining
 name bargaining
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 2
 sys_object 1
@@ -9545,7 +9590,7 @@ end
 Object skill_bowyer
 name bowyer lore
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 2
 item_quality 100
@@ -9564,7 +9609,7 @@ end
 Object skill_clawing
 name clawing
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9586,7 +9631,7 @@ end
 Object skill_disarm_trap
 name disarm traps
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9605,7 +9650,7 @@ end
 Object experience_agility
 name agility
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 sys_object 1
 no_drop 1
@@ -9623,7 +9668,7 @@ end
 Object experience_charisma
 name personality
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 sys_object 1
 item_quality 100
@@ -9641,7 +9686,7 @@ end
 Object experience_mental
 name mental
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 item_quality 100
 item_condition 100
 nrof 1
@@ -9659,7 +9704,7 @@ end
 Object experience_misc
 name misc
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 item_quality 100
 item_condition 100
 nrof 1
@@ -9676,7 +9721,7 @@ end
 Object experience_physical
 name physique
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 3
 sys_object 1
 item_quality 100
@@ -9695,7 +9740,7 @@ end
 Object experience_power
 name magic
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 4
 face exp.101
 item_quality 100
@@ -9713,7 +9758,7 @@ end
 Object experience_wis
 name wisdom
 type 44
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 5
 item_quality 100
 item_condition 100
@@ -9731,7 +9776,7 @@ end
 Object skill_find_traps
 name find traps
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 item_quality 100
 item_condition 100
 nrof 1
@@ -9750,7 +9795,7 @@ end
 Object skill_flame_touch
 name flame touch
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9772,7 +9817,7 @@ end
 Object skill_hide
 name hide in shadows
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9791,7 +9836,7 @@ end
 Object skill_identify
 name identify items
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9811,7 +9856,7 @@ end
 Object skill_inscription
 name inscription
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 face skill.101
 sys_object 1
@@ -9831,7 +9876,7 @@ end
 Object skill_jeweler
 name jeweler lore
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 2
 sys_object 1
@@ -9850,7 +9895,7 @@ end
 Object skill_jumping
 name jumping
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9870,7 +9915,7 @@ end
 Object skill_karate
 name karate
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 weapon_speed 3.0
 attack_impact 100
 face skill.101
@@ -9895,7 +9940,7 @@ end
 Object skill_levitate
 name levitation
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 1
 sys_object 1
@@ -9916,7 +9961,7 @@ end
 Object skill_literacy
 name common literacy
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 face skill.101
 magic 2
@@ -9935,7 +9980,7 @@ end
 Object skill_lockpick
 name pick locks
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 1
 item_quality 100
@@ -9954,7 +9999,7 @@ end
 Object skill_thaumaturgy
 name magic lore
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 face skill.101
 magic 6
@@ -9973,7 +10018,7 @@ end
 Object skill_meditation
 name meditation
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9992,7 +10037,7 @@ end
 Object skill_climbing
 name mountaineer
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 sys_object 1
 face skill.101
@@ -10011,7 +10056,7 @@ end
 Object skill_oratory
 name oratory
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 item_quality 100
 item_condition 100
@@ -10031,7 +10076,7 @@ end
 Object skill_praying
 name divine prayers
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 item_quality 100
 item_condition 100
@@ -10057,7 +10102,7 @@ end
 Object skill_punching
 name punching
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 weapon_speed 4.0
 face skill.101
 attack_impact 100
@@ -10081,7 +10126,7 @@ end
 Object skill_bow_archery
 name bow archery
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 0
 item_quality 100
@@ -10102,7 +10147,7 @@ end
 Object skill_sling_archery
 name sling archery
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 0
 sys_object 1
@@ -10123,7 +10168,7 @@ end
 Object skill_xbow_archery
 name crossbow archery
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -10144,7 +10189,7 @@ end
 Object skill_remove_trap
 name remove traps
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -10163,7 +10208,7 @@ end
 Object skill_sense_curse
 name sense curse
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 item_quality 100
 item_condition 100
@@ -10183,7 +10228,7 @@ end
 Object skill_sense_magic
 name sense magic
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -10203,7 +10248,7 @@ end
 Object skill_set_trap
 name set traps
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -10223,7 +10268,7 @@ end
 Object skill_singing
 name singing
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -10243,7 +10288,7 @@ end
 Object skill_smithery
 name smithery lore
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 item_quality 100
 item_condition 100
@@ -10263,7 +10308,7 @@ end
 Object skill_spellcasting
 name wizardry spells
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -10283,7 +10328,7 @@ end
 Object skill_stealing
 name stealing
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 face skill.101
 sub_type 1
 item_quality 100
@@ -10303,7 +10348,7 @@ end
 Object skill_throwing
 name throwing
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 wc 5
 sub_type 0
 item_quality 100
@@ -10324,7 +10369,7 @@ end
 Object skill_use_magic_item
 name magic devices
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 item_quality 100
 item_condition 100
@@ -10344,7 +10389,7 @@ end
 Object skill_cleave_weapon
 name cleave weapons
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 item_quality 100
@@ -10364,7 +10409,7 @@ end
 Object skill_impact_weapon
 name impact weapons
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -10384,7 +10429,7 @@ end
 Object skill_pierce_weapon
 name pierce weapons
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 sys_object 1
 face skill.101
@@ -10404,7 +10449,7 @@ end
 Object skill_slash_weapon
 name slash weapons
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -10424,7 +10469,7 @@ end
 Object skill_2h_mastery
 name two-hand mastery
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 face skill.101
 sys_object 1
@@ -10443,7 +10488,7 @@ end
 Object skill_pole_mastery
 name polearm mastery
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 item_quality 100
 item_condition 100
@@ -10462,7 +10507,7 @@ end
 Object skill_woodsman
 name ranger lore
 type 43
-editor_folder indoor/show all
+editor_folder intern/skills
 sub_type 2
 face skill.101
 item_quality 100
@@ -10480,7 +10525,7 @@ exp 0
 end
 Object spawn_info
 type 84
-editor_folder indoor/show all
+editor_folder intern
 layer 0
 identified 1
 sys_object 1
@@ -10489,7 +10534,7 @@ no_drop 1
 end
 Object wealth
 type 125
-editor_folder indoor/show all
+editor_folder intern
 value 4
 face wealth.101
 sys_object 1
@@ -10514,7 +10559,7 @@ end
 Object combat_boots
 name combat boots
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face combat_boots.101
 layer 3
 value 120
@@ -10532,7 +10577,7 @@ end
 Object fencing_boots
 name fencing boots
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face fencing_boots.101
 layer 3
 ac 1
@@ -10550,7 +10595,7 @@ end
 Object fighting_boots
 name fighting boots
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face fighting_boots.101
 layer 3
 ac 1
@@ -10568,7 +10613,7 @@ end
 Object high_boots
 name high boots
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face high_boots.101
 last_heal 4
 layer 3
@@ -10586,7 +10631,7 @@ end
 Object kicking_boots
 name kicking boots
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face kicking_boots.101
 layer 3
 ac 1
@@ -10604,7 +10649,7 @@ end
 Object leggings_chain
 name chain leggings
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face leggings_chain.101
 layer 3
 ac 2
@@ -10622,7 +10667,7 @@ end
 Object leggings_leather
 name leggings
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face leggings_leather.101
 layer 3
 ac 2
@@ -10640,7 +10685,7 @@ end
 Object leggings_plate
 name plate leggings
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face leggings_plate.101
 layer 3
 ac 2
@@ -10658,7 +10703,7 @@ end
 Object low_boots
 name low boots
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face low_boots.101
 layer 3
 value 40
@@ -10674,7 +10719,7 @@ end
 Object sandals
 name sandals
 type 99
-editor_folder items/armour
+editor_folder items/armour/boots
 face sandals.101
 last_heal 1
 layer 3
@@ -10690,7 +10735,7 @@ end
 Object bracers_ac
 name bracers
 type 104
-editor_folder items/armour
+editor_folder items/armour/bracers
 layer 3
 face bracers_ac.101
 ac 1
@@ -10707,7 +10752,7 @@ end
 Object cape
 name cape
 type 87
-editor_folder items/armour
+editor_folder items/armour/cloak
 face cape.101
 layer 3
 weight 350
@@ -10722,7 +10767,7 @@ end
 Object cloak
 name cloak
 type 87
-editor_folder items/armour
+editor_folder items/armour/cloak
 face cloak_leather.101
 layer 3
 ac 1
@@ -10739,7 +10784,7 @@ end
 Object robe
 name robe
 type 87
-editor_folder items/armour
+editor_folder items/armour/cloak
 face robe_lgrey.101
 layer 3
 weight 350
@@ -10754,7 +10799,7 @@ end
 Object gauntlets
 name chain gauntlets
 type 100
-editor_folder items/armour
+editor_folder items/armour/gauntlets
 layer 3
 face gauntlets_chain.101
 ac 1
@@ -10772,7 +10817,7 @@ end
 Object gauntlets_leather
 name leather gauntlets
 type 100
-editor_folder items/armour
+editor_folder items/armour/gauntlets
 layer 3
 face gauntlets_leather.101
 ac 1
@@ -10788,7 +10833,7 @@ end
 Object gauntlets_plate
 name plate gauntlets
 type 100
-editor_folder items/armour
+editor_folder items/armour/gauntlets
 layer 3
 face gauntlets_plate.101
 ac 1
@@ -10806,7 +10851,7 @@ end
 Object gloves
 name gloves
 type 100
-editor_folder items/armour
+editor_folder items/armour/gauntlets
 layer 3
 face gloves.101
 resist_impact 4
@@ -10821,7 +10866,7 @@ end
 Object belt
 name belt
 type 113
-editor_folder items/armour
+editor_folder items/armour/girdle
 layer 3
 face belt.101
 resist_pierce 5
@@ -10838,7 +10883,7 @@ end
 Object girdle
 name girdle
 type 113
-editor_folder items/armour
+editor_folder items/armour/girdle
 layer 3
 face girdle.101
 resist_pierce 2
@@ -10853,7 +10898,7 @@ end
 Object coif_chain
 name chain coif
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 face coif_chain.101
 layer 3
 last_heal 5
@@ -10871,7 +10916,7 @@ end
 Object coif_scale
 name scale coif
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 face coif_scale.101
 layer 3
 last_heal 5
@@ -10889,7 +10934,7 @@ end
 Object crown_generic
 name crown
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 face crown.101
 layer 3
 Cha 1
@@ -10905,7 +10950,7 @@ end
 Object hat_blue
 name  blue colored hat
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face hat_wiz.101
 weight 250
@@ -10920,7 +10965,7 @@ end
 Object hat_feather
 name  feathered hat
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face hat_feather.101
 weight 200
@@ -10935,7 +10980,7 @@ end
 Object helm_battle
 name battle helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_battle.101
 last_heal 8
@@ -10953,7 +10998,7 @@ end
 Object helm_field
 name field helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_field.101
 last_heal 8
@@ -10971,7 +11016,7 @@ end
 Object full_helmet
 name full helmet
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face fullhelmet.101
 last_heal 10
@@ -10989,7 +11034,7 @@ end
 Object helm_guard
 name guard helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_guard.101
 last_heal 8
@@ -11007,7 +11052,7 @@ end
 Object helm_horn
 name horned helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_horn.101
 last_heal 6
@@ -11024,7 +11069,7 @@ end
 Object helm_iron
 name helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 face helm_iron.101
 layer 3
 last_heal 5
@@ -11041,7 +11086,7 @@ end
 Object helm_leather
 name  cap
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_leather.101
 last_heal 5
@@ -11058,7 +11103,7 @@ end
 Object helm_plate
 name plate helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_plate.101
 last_heal 9
@@ -11076,7 +11121,7 @@ end
 Object helm_war
 name war helm
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face helm_war.101
 last_heal 10
@@ -11094,7 +11139,7 @@ end
 Object santahat
 name Santa's Hat
 type 34
-editor_folder items/armour
+editor_folder items/armour/helmet
 layer 3
 face santahat.101
 weight 250
@@ -11109,7 +11154,7 @@ end
 Object banded_mail
 name banded mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face banded_mail.101
 layer 3
 last_heal 25
@@ -11129,7 +11174,7 @@ end
 Object bone_armour
 name bone armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face bone_armour.101
 last_heal 20
@@ -11149,7 +11194,7 @@ end
 Object bplate_mail
 name plate mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face bplate_mail.101
 layer 3
 last_heal 27
@@ -11169,7 +11214,7 @@ end
 Object breastplate
 name breastplate
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face breastplate.101
 last_heal 30
@@ -11189,7 +11234,7 @@ end
 Object brigandine
 name brigandine
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face brigandine.101
 last_heal 20
@@ -11209,7 +11254,7 @@ end
 Object chain_mail
 name chain mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face chainmail.101
 last_heal 20
@@ -11229,7 +11274,7 @@ end
 Object chain_hauberk
 name chainmail hauberk
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face chain_hauberk.101
 layer 3
 last_heal 25
@@ -11249,7 +11294,7 @@ end
 Object chitin_mail
 name mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face chitin_mail.101
 layer 3
 last_heal 25
@@ -11269,7 +11314,7 @@ end
 Object crystal_mail
 name crystal mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face crystal_mail.101
 layer 3
 material 256
@@ -11289,7 +11334,7 @@ end
 Object dress
 name dress
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face dress.101
 ac 1
@@ -11305,7 +11350,7 @@ end
 Object coat
 name coat
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face coat.101
 ac 1
@@ -11321,7 +11366,7 @@ end
 Object lamellar_mail
 name lamellar mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face lamellar_mail.101
 layer 3
 last_heal 20
@@ -11341,7 +11386,7 @@ end
 Object leather_armour
 name armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face leather_ar.101
 last_heal 6
@@ -11358,7 +11403,7 @@ end
 Object leather_cuirass
 name cuirass
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face leather_cuirass.101
 last_heal 18
@@ -11378,7 +11423,7 @@ end
 Object padded_armour
 name padded armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face leather_padded.101
 last_heal 5
@@ -11395,7 +11440,7 @@ end
 Object leather_spiked
 name spiked armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face leather_spiked.101
 last_heal 8
@@ -11413,7 +11458,7 @@ end
 Object leather_studded
 name studded armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face leather_studded.101
 last_heal 12
@@ -11433,7 +11478,7 @@ end
 Object ring_mail
 name ring mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face ring_mail.101
 last_heal 15
@@ -11453,7 +11498,7 @@ end
 Object mithril_armour
 name armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face mithril_armour.101
 layer 3
 material 256
@@ -11473,7 +11518,7 @@ end
 Object mithril_coat
 name coat
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face mithril_coat.101
 layer 3
 material 256
@@ -11493,7 +11538,7 @@ end
 Object mithril_ring
 name ringmail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face mithril_ring.101
 layer 3
 material 256
@@ -11513,7 +11558,7 @@ end
 Object plate_field
 name field plate
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face plate_field.101
 last_heal 30
@@ -11533,7 +11578,7 @@ end
 Object plate_full
 name full plate
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face plate_full.101
 last_heal 30
@@ -11553,7 +11598,7 @@ end
 Object plate_mail
 name plate mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face plate_mail.101
 last_heal 30
@@ -11573,7 +11618,7 @@ end
 Object scale_armour
 name armour
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 layer 3
 face scale_armour.101
 last_heal 20
@@ -11593,7 +11638,7 @@ end
 Object scale_mail
 name scale mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face scale_mail.101
 layer 3
 last_heal 25
@@ -11613,7 +11658,7 @@ end
 Object splint_mail
 name splint mail
 type 16
-editor_folder items/armour
+editor_folder items/armour/mail
 face splint_mail.101
 layer 3
 last_heal 25
@@ -11633,7 +11678,7 @@ end
 Object ball_and_chain
 name ball and chain
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face ball_and_chain.101
 ac 2
@@ -11653,7 +11698,7 @@ end
 Object blade_stopper
 name blade stopper
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face blade_stopper.101
 ac 4
@@ -11672,7 +11717,7 @@ end
 Object buckler
 name buckler
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face buckler.101
 ac 1
@@ -11689,7 +11734,7 @@ end
 Object shield
 name shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield.101
 ac 2
@@ -11708,7 +11753,7 @@ end
 Object shield_battle
 name battle shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_battle.101
 ac 4
@@ -11727,7 +11772,7 @@ end
 Object shield_bone
 name bone shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_bone.101
 ac 3
@@ -11746,7 +11791,7 @@ end
 Object shield_chitin
 name shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_chitin.101
 ac 3
@@ -11765,7 +11810,7 @@ end
 Object shield_defender
 name defender
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_defender.101
 ac 4
@@ -11784,7 +11829,7 @@ end
 Object shield_demon
 name demon shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_demon.101
 ac 4
@@ -11804,7 +11849,7 @@ end
 Object shield_eye
 name eye shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_eye.101
 ac 3
@@ -11823,7 +11868,7 @@ end
 Object shield_heater
 name heater shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_heater.101
 ac 3
@@ -11842,7 +11887,7 @@ end
 Object shield_high
 name high shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_high.101
 ac 3
@@ -11861,7 +11906,7 @@ end
 Object shield_kite
 name kite shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_kite.101
 ac 2
@@ -11880,7 +11925,7 @@ end
 Object shield_protector
 name protector
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_protector.101
 ac 4
@@ -11899,7 +11944,7 @@ end
 Object shield_round
 name round shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_round.101
 ac 2
@@ -11918,7 +11963,7 @@ end
 Object shield_scale
 name shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_scale_white.101
 ac 3
@@ -11937,7 +11982,7 @@ end
 Object shield_war
 name war shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 layer 3
 face shield_war.101
 ac 4
@@ -11956,7 +12001,7 @@ end
 Object small_shield
 name small shield
 type 33
-editor_folder items/armour
+editor_folder items/armour/shield
 face small_shie.101
 layer 3
 ac 2
@@ -12211,7 +12256,7 @@ end
 Object desk1.111
 name desk
 type 122
-editor_folder items/container
+editor_folder items/container/desks
 face desk1.111
 animation desk1.111
 is_animated 0
@@ -12230,7 +12275,7 @@ end
 Object desk2
 name desk
 type 122
-editor_folder items/container
+editor_folder items/container/desks
 face desk2.111
 animation desk2
 is_animated 0
@@ -12249,7 +12294,7 @@ end
 Object drawers1.111
 name drawer
 type 122
-editor_folder items/container
+editor_folder items/container/drawers
 face drawers1.111
 animation drawers1.111
 is_animated 0
@@ -12284,7 +12329,7 @@ end
 Object locker1.111
 name locker
 type 122
-editor_folder items/container
+editor_folder items/container/lockers
 face locker1.111
 animation locker1.111
 is_animated 0
@@ -12303,7 +12348,7 @@ end
 Object locker2.111
 name locker
 type 122
-editor_folder items/container
+editor_folder items/container/lockers
 face locker2.111
 animation locker2.111
 is_animated 0
@@ -12322,7 +12367,7 @@ end
 Object locker3.111
 name locker
 type 122
-editor_folder items/container
+editor_folder items/container/lockers
 face locker3.111
 animation locker3.111
 is_animated 0
@@ -12341,7 +12386,7 @@ end
 Object locker4
 name locker
 type 122
-editor_folder items/container
+editor_folder items/container/lockers
 face locker4.111
 animation locker4
 is_animated 0
@@ -12360,7 +12405,7 @@ end
 Object locker5
 name locker
 type 122
-editor_folder items/container
+editor_folder items/container/lockers
 face locker5.111
 animation locker5
 is_animated 0
@@ -12481,7 +12526,7 @@ end
 Object rack.111
 name weapon rack
 type 122
-editor_folder items/container
+editor_folder items/container/racks
 face rack.111
 animation rack.111
 is_animated 0
@@ -12530,7 +12575,7 @@ end
 Object shelf1.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf1.111
 animation shelf1.111
 is_animated 0
@@ -12549,7 +12594,7 @@ end
 Object shelf2.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf2.111
 animation shelf2.111
 is_animated 0
@@ -12568,7 +12613,7 @@ end
 Object shelf3.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3.111
 animation shelf3.111
 is_animated 0
@@ -12587,7 +12632,7 @@ end
 Object shelf3a.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3a.111
 animation shelf3a.111
 is_animated 0
@@ -12606,7 +12651,7 @@ end
 Object shelf3b.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3b.111
 animation shelf3b.111
 is_animated 0
@@ -12625,7 +12670,7 @@ end
 Object shelf3c.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3c.111
 animation shelf3c.111
 is_animated 0
@@ -12644,7 +12689,7 @@ end
 Object shelf3_dem1.111
 name demolished shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3_dem1.111
 animation shelf3_dem1.111
 is_animated 0
@@ -12663,7 +12708,7 @@ end
 Object shelf3_dem2.111
 name demolished shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3_dem2.111
 animation shelf3_dem2.111
 is_animated 0
@@ -12682,7 +12727,7 @@ end
 Object shelf3_dem3.111
 name demolished shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3_dem3.111
 animation shelf3_dem3.111
 is_animated 0
@@ -12701,7 +12746,7 @@ end
 Object shelf_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf_wall.111
 animation shelf_wall.111
 is_animated 0
@@ -12720,7 +12765,7 @@ end
 Object shelf1_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf1_wall.111
 animation shelf1_wall.111
 is_animated 0
@@ -12739,7 +12784,7 @@ end
 Object shelf2_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf2_wall.111
 animation shelf2_wall.111
 is_animated 0
@@ -12758,7 +12803,7 @@ end
 Object shelf3_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf3_wall.111
 animation shelf3_wall.111
 is_animated 0
@@ -12777,7 +12822,7 @@ end
 Object shelf4_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf4_wall.111
 animation shelf4_wall.111
 is_animated 0
@@ -12796,7 +12841,7 @@ end
 Object shelf5_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf5_wall.111
 animation shelf5_wall.111
 is_animated 0
@@ -12815,7 +12860,7 @@ end
 Object shelf6_wall.111
 name shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf6_wall.111
 animation shelf6_wall.111
 is_animated 0
@@ -12834,7 +12879,7 @@ end
 Object shelf_wall_dem1.111
 name demolished shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf_wall_dem1.111
 animation shelf_wall_dem1.111
 is_animated 0
@@ -12853,7 +12898,7 @@ end
 Object shelf_wall_dem2.111
 name demolished shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf_wall_dem2.111
 animation shelf_wall_dem2.111
 is_animated 0
@@ -12872,7 +12917,7 @@ end
 Object shelf_wall_dem3.111
 name demolished shelf
 type 122
-editor_folder items/container
+editor_folder items/container/shelfs
 face shelf_wall_dem3.111
 animation shelf_wall_dem3.111
 is_animated 0
@@ -12891,7 +12936,7 @@ end
 Object wagon_small.111
 name small wagon
 type 122
-editor_folder items/container
+editor_folder items/container/wagon
 face wagon_small.111
 animation wagon_small.111
 is_animated 0
@@ -12910,7 +12955,7 @@ end
 Object gift
 name wrapped gift
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch close_gift
 face gift_closed.111
 layer 3
@@ -12925,7 +12970,7 @@ end
 Object stocking
 name stocking
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch close_stocking
 face stocking.101
 layer 3
@@ -12940,7 +12985,7 @@ end
 Object stocking_bow
 name stocking
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch close_stocking_bow
 face stocking_bow.101
 layer 3
@@ -12955,7 +13000,7 @@ end
 Object xmas_present_green
 name Christmas Present
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch xmas_present_green_open
 face xmas_present_green_close.101
 no_pick 1
@@ -12971,7 +13016,7 @@ end
 Object xmas_present_red
 name Christmas Present
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch xmas_present_red_open
 face xmas_present_red_close.101
 no_pick 1
@@ -12987,7 +13032,7 @@ end
 Object xmas_present_white
 name Christmas Present
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch xmas_present_white_open
 face xmas_present_white_close.101
 no_pick 1
@@ -13003,7 +13048,7 @@ end
 Object xmas_present_yellow
 name Christmas Present
 type 122
-editor_folder items/container
+editor_folder items/container/xmas
 other_arch xmas_present_yellow_open
 face xmas_present_yellow_close.101
 no_pick 1
@@ -13692,7 +13737,7 @@ material 16
 end
 Object bread
 type 6
-editor_folder items/organic
+editor_folder items/organic/bakery
 face bread01.101
 food 30
 item_quality 100
@@ -13708,7 +13753,7 @@ end
 Object bread1
 name bread
 type 6
-editor_folder items/organic
+editor_folder items/organic/bakery
 face bread02.101
 food 30
 item_quality 100
@@ -13723,7 +13768,7 @@ weight 125
 end
 Object cookie
 type 6
-editor_folder items/organic
+editor_folder items/organic/bakery
 face cookie01.101
 food 30
 item_quality 100
@@ -13739,7 +13784,7 @@ end
 Object figpud
 name Fig Pudding
 type 6
-editor_folder items/organic
+editor_folder items/organic/bakery
 food 300
 layer 3
 item_quality 100
@@ -13758,7 +13803,7 @@ end
 Object figpud2
 name Fig Pudding
 type 6
-editor_folder items/organic
+editor_folder items/organic/bakery
 food 250
 layer 3
 item_quality 100
@@ -13777,7 +13822,7 @@ end
 Object eye_beholder
 name beholder eye
 type 86
-editor_folder items/organic
+editor_folder items/organic/bodyparts
 layer 3
 identified 1
 face eye_beholder.101
@@ -13791,7 +13836,7 @@ end
 Object head_ant_queen
 name ant queen head
 type 86
-editor_folder items/organic
+editor_folder items/organic/bodyparts
 layer 3
 identified 1
 face head_ant_queen.101
@@ -13805,7 +13850,7 @@ end
 Object tooth
 name tooth
 type 86
-editor_folder items/organic
+editor_folder items/organic/bodyparts
 layer 3
 face tooth.101
 item_quality 100
@@ -13836,7 +13881,7 @@ end
 Object eggnog
 name eggnog
 type 6
-editor_folder items/organic
+editor_folder items/organic/drinkable
 face eggnog.111
 food 380
 item_quality 100
@@ -13852,7 +13897,7 @@ end
 Object whitewine
 name white wine
 type 6
-editor_folder items/organic
+editor_folder items/organic/drinkable
 face whitewine.101
 food 100
 item_quality 100
@@ -13868,7 +13913,7 @@ end
 Object redwine
 name red wine
 type 6
-editor_folder items/organic
+editor_folder items/organic/drinkable
 face redwine.101
 food 120
 item_quality 100
@@ -13884,7 +13929,7 @@ end
 Object champagne
 name champagne
 type 6
-editor_folder items/organic
+editor_folder items/organic/drinkable
 face champagne.101
 food 90
 item_quality 100
@@ -13913,7 +13958,7 @@ end
 Object flesh_generic
 name piece of flesh
 type 72
-editor_folder items/organic
+editor_folder items/organic/flesh
 nrof 1
 face skin.101
 item_quality 100
@@ -13966,7 +14011,7 @@ weight 400
 end
 Object apple
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face apple01.101
 food 200
 item_quality 100
@@ -13981,7 +14026,7 @@ weight 400
 end
 Object apricot
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face apricot01.101
 food 200
 item_quality 100
@@ -13996,7 +14041,7 @@ weight 400
 end
 Object banana
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face banana01.101
 food 200
 item_quality 100
@@ -14011,7 +14056,7 @@ weight 400
 end
 Object cherries
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face cherries01.101
 food 200
 item_quality 100
@@ -14026,7 +14071,7 @@ weight 400
 end
 Object grapes
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face grapes01.101
 food 200
 item_quality 100
@@ -14042,7 +14087,7 @@ end
 Object grapes1
 name grapes
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face grapes02.101
 food 200
 item_quality 100
@@ -14057,7 +14102,7 @@ weight 400
 end
 Object lemon
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face lemon01.101
 food 200
 item_quality 100
@@ -14072,7 +14117,7 @@ weight 400
 end
 Object lychee
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face lychee01.101
 food 200
 item_quality 100
@@ -14087,7 +14132,7 @@ weight 400
 end
 Object orange
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face orange01.101
 food 200
 item_quality 100
@@ -14102,7 +14147,7 @@ weight 400
 end
 Object peach
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face peach01.101
 food 200
 item_quality 100
@@ -14117,7 +14162,7 @@ weight 400
 end
 Object pear
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face pear01.101
 food 200
 item_quality 100
@@ -14133,7 +14178,7 @@ end
 Object pear1
 name pear
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face pear02.101
 food 200
 item_quality 100
@@ -14148,7 +14193,7 @@ weight 400
 end
 Object pineapple
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face pineapple01.101
 food 200
 item_quality 100
@@ -14163,7 +14208,7 @@ weight 400
 end
 Object rambutan
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face rambutan01.101
 food 200
 item_quality 100
@@ -14178,7 +14223,7 @@ weight 400
 end
 Object strawberry
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face strawberry01.101
 food 200
 item_quality 100
@@ -14193,7 +14238,7 @@ weight 400
 end
 Object sultana
 type 6
-editor_folder items/organic
+editor_folder items/organic/fruits
 face sultana01.101
 food 200
 item_quality 100
@@ -14208,7 +14253,7 @@ weight 400
 end
 Object bacon
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face bacon01.101
 food 200
 item_quality 100
@@ -14224,7 +14269,7 @@ end
 Object beef_jerky
 name beef jerky
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face beef_jerky01.101
 food 200
 item_quality 100
@@ -14239,7 +14284,7 @@ weight 400
 end
 Object drumstick
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face drumstick01.101
 food 200
 item_quality 100
@@ -14254,7 +14299,7 @@ weight 400
 end
 Object roast
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face roast01.101
 food 200
 item_quality 100
@@ -14269,7 +14314,7 @@ weight 400
 end
 Object sausage
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face sausage01.101
 food 200
 item_quality 100
@@ -14284,7 +14329,7 @@ weight 400
 end
 Object steak
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face steak01.101
 food 200
 item_quality 100
@@ -14300,7 +14345,7 @@ end
 Object steak2
 name steak
 type 6
-editor_folder items/organic
+editor_folder items/organic/meat
 face steak02.101
 food 200
 item_quality 100
@@ -14315,7 +14360,7 @@ weight 400
 end
 Object egg
 type 6
-editor_folder items/organic
+editor_folder items/organic/natural
 face egg01.101
 food 30
 item_quality 100
@@ -14330,7 +14375,7 @@ weight 125
 end
 Object honeycomb
 type 6
-editor_folder items/organic
+editor_folder items/organic/natural
 face honeycomb01.101
 food 30
 item_quality 100
@@ -14346,7 +14391,7 @@ end
 Object bonbons
 name bonbons
 type 6
-editor_folder items/organic
+editor_folder items/organic/others
 face bonbons.101
 food 70
 item_quality 100
@@ -14361,7 +14406,7 @@ weight 50
 end
 Object cheese
 type 6
-editor_folder items/organic
+editor_folder items/organic/others
 face cheese01.101
 food 30
 item_quality 100
@@ -14377,7 +14422,7 @@ end
 Object olive_oil
 name olive oil
 type 6
-editor_folder items/organic
+editor_folder items/organic/others
 food 30
 layer 3
 face olive_oil.101
@@ -14393,7 +14438,7 @@ end
 Object carrot
 name carrot
 type 6
-editor_folder items/organic
+editor_folder items/organic/vegetables
 face carrot01.101
 food 30
 item_quality 100
@@ -14409,7 +14454,7 @@ end
 Object choko
 name choko
 type 6
-editor_folder items/organic
+editor_folder items/organic/vegetables
 face choko01.101
 food 25
 item_quality 100
@@ -14425,7 +14470,7 @@ end
 Object melon
 name melon
 type 6
-editor_folder items/organic
+editor_folder items/organic/vegetables
 face melon01.101
 food 40
 item_quality 100
@@ -14441,7 +14486,7 @@ end
 Object salad
 name salad
 type 6
-editor_folder items/organic
+editor_folder items/organic/vegetables
 face salad01.101
 food 20
 item_quality 100
@@ -14456,7 +14501,7 @@ weight 290
 end
 Object snozzcumber
 type 6
-editor_folder items/organic
+editor_folder items/organic/vegetables
 face snozzcumber01.101
 food 23
 item_quality 100
@@ -14471,7 +14516,7 @@ weight 240
 end
 Object tomato
 type 6
-editor_folder items/organic
+editor_folder items/organic/vegetables
 face tomato01.101
 food 30
 item_quality 100
@@ -14486,7 +14531,7 @@ weight 140
 end
 Object random_treasure
 type 4
-editor_folder items/items
+editor_folder items
 face rand_treasure.111
 layer 3
 randomitems chest
@@ -14498,7 +14543,7 @@ type 4
 msg
 Touching the treasure chest it crumbles to dust.
 endmsg
-editor_folder items/items
+editor_folder items
 face chest_wood_s.111
 animation random_chest_wood
 is_animated 0
@@ -14520,7 +14565,7 @@ type 4
 msg
 Touching the treasure chest it crumbles to dust.
 endmsg
-editor_folder items/items
+editor_folder items
 face chest_black_s.111
 animation random_chest_black
 is_animated 0
@@ -14542,7 +14587,7 @@ type 4
 msg
 Touching the treasure chest it crumbles to dust.
 endmsg
-editor_folder items/items
+editor_folder items
 face chest_metal_s.111
 animation random_chest_metal
 is_animated 0
@@ -14691,7 +14736,7 @@ end
 Object potion_generic
 name potion
 type 5
-editor_folder items/spells
+editor_folder items/spells/potions
 nrof 1
 layer 3
 sp -1
@@ -14708,7 +14753,7 @@ end
 Object scroll_generic
 name scroll
 type 111
-editor_folder items/spells
+editor_folder items/spells/scrolls
 face scroll.101
 sp -1
 inv_face inv_s_generic.101
@@ -14743,7 +14788,7 @@ end
 Object teddy
 name teddy
 type 79
-editor_folder items/items
+editor_folder items
 face teddy.101
 layer 3
 material_real 193
@@ -14754,7 +14799,7 @@ end
 Object axe
 name axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe.101
 attack_cleave 100
@@ -14772,7 +14817,7 @@ end
 Object axe_battle
 name battle axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_battle.101
 attack_cleave 100
@@ -14790,7 +14835,7 @@ end
 Object axe_broad
 name broad axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_broad.101
 attack_cleave 100
@@ -14808,7 +14853,7 @@ end
 Object axe_double
 name double axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_double.101
 attack_cleave 100
@@ -14826,7 +14871,7 @@ end
 Object axe_great
 name great axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_great.101
 attack_cleave 100
@@ -14844,7 +14889,7 @@ end
 Object axe_hand
 name hand axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_hand.101
 attack_cleave 100
@@ -14862,7 +14907,7 @@ end
 Object axe_small
 name small axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_small.101
 attack_cleave 100
@@ -14878,7 +14923,7 @@ end
 Object axe_war
 name war axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face axe_war.101
 attack_cleave 100
@@ -14896,7 +14941,7 @@ end
 Object cleaver_battle
 name battle cleaver
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face cleaver_battle.101
 attack_cleave 100
@@ -14914,7 +14959,7 @@ end
 Object cleaver_war
 name war cleaver
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face cleaver_war.101
 attack_cleave 100
@@ -14932,7 +14977,7 @@ end
 Object pick_axe
 name pick axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face pick_axe.101
 attack_cleave 100
@@ -14948,7 +14993,7 @@ end
 Object whip
 name whip
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face whip.101
 attack_cleave 100
@@ -14964,7 +15009,7 @@ end
 Object whip_war
 name war whip
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/cleave
 layer 3
 face whip_war.101
 attack_cleave 100
@@ -14982,7 +15027,7 @@ end
 Object ancus
 name ancus
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face ancus.101
 layer 3
 weapon_speed 3.25
@@ -15000,7 +15045,7 @@ end
 Object club
 name small club
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face club.101
 layer 3
 weapon_speed 3.25
@@ -15016,7 +15061,7 @@ end
 Object club_big
 name club
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face club_big.101
 layer 3
 weapon_speed 3.25
@@ -15034,7 +15079,7 @@ end
 Object club_rough
 name rough club
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face club_rough.101
 layer 3
 weapon_speed 3.25
@@ -15052,7 +15097,7 @@ end
 Object club_spiked
 name spiked club
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face club_spiked.101
 layer 3
 weapon_speed 3.25
@@ -15070,7 +15115,7 @@ end
 Object flail_war
 name war flail
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face flail_war.101
 layer 3
 weapon_speed 3.25
@@ -15088,7 +15133,7 @@ end
 Object hammer
 name hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face hammer.101
 layer 3
 weapon_speed 3.25
@@ -15106,7 +15151,7 @@ end
 Object hammer_battle
 name battle hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face hammer_battle.101
 layer 3
 weapon_speed 3.25
@@ -15124,7 +15169,7 @@ end
 Object hammer_military
 name military hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face hammer_military.101
 layer 3
 weapon_speed 3.25
@@ -15142,7 +15187,7 @@ end
 Object hammer_small
 name small hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face hammer_small.101
 layer 3
 weapon_speed 3.25
@@ -15158,7 +15203,7 @@ end
 Object hammer_war
 name war hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face hammer_war.101
 layer 3
 weapon_speed 3.25
@@ -15176,7 +15221,7 @@ end
 Object mace
 name mace
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mace.101
 layer 3
 weapon_speed 3.25
@@ -15194,7 +15239,7 @@ end
 Object mace_battle
 name battle mace
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mace_battle.101
 layer 3
 weapon_speed 3.25
@@ -15212,7 +15257,7 @@ end
 Object mace_spiked
 name spiked mace
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mace_spiked.101
 layer 3
 weapon_speed 3.25
@@ -15230,7 +15275,7 @@ end
 Object mace_spiked_war
 name spiked war mace
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mace_spiked_war.101
 layer 3
 weapon_speed 3.25
@@ -15248,7 +15293,7 @@ end
 Object mace_war
 name war mace
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mace_war.101
 layer 3
 weapon_speed 3.25
@@ -15266,7 +15311,7 @@ end
 Object mstar
 name morningstar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mstar.101
 layer 3
 weapon_speed 3.25
@@ -15284,7 +15329,7 @@ end
 Object mstar_large
 name large morningstar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mstar_large.101
 layer 3
 weapon_speed 3.25
@@ -15302,7 +15347,7 @@ end
 Object mstar_small
 name small morningstar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face mstar_small.101
 layer 3
 weapon_speed 3.25
@@ -15318,7 +15363,7 @@ end
 Object nunchacu
 name nunchacu
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face nunchacu.101
 layer 3
 weapon_speed 3.25
@@ -15334,7 +15379,7 @@ end
 Object nunchacu_war
 name war nunchacu
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face nunchacu_war.101
 layer 3
 weapon_speed 3.25
@@ -15352,7 +15397,7 @@ end
 Object shootingstar
 name shootingstar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/impact
 face shootingstar.101
 layer 3
 weapon_speed 3.25
@@ -15370,7 +15415,7 @@ end
 Object athame
 name athame
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face athame.101
 weapon_speed 3.25
@@ -15388,7 +15433,7 @@ end
 Object cutlass
 name cutlass
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face cutlass.101
 weapon_speed 3.25
@@ -15406,7 +15451,7 @@ end
 Object dagger
 name dagger
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face dagger.101
 weapon_speed 3.25
@@ -15422,7 +15467,7 @@ end
 Object dagger_large
 name large dagger
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face dagger_large.101
 weapon_speed 3.25
@@ -15438,7 +15483,7 @@ end
 Object dagger_small
 name small dagger
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face dagger_small.101
 weapon_speed 3.25
@@ -15454,7 +15499,7 @@ end
 Object degen
 name degen
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face degen.101
 weapon_speed 3.25
@@ -15472,7 +15517,7 @@ end
 Object flamberge
 name flamberge
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face flamberge.101
 weapon_speed 3.25
@@ -15490,7 +15535,7 @@ end
 Object pallasch
 name pallasch
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face pallasch.101
 weapon_speed 3.25
@@ -15508,7 +15553,7 @@ end
 Object rapier
 name rapier
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face rapier.101
 weapon_speed 3.25
@@ -15526,7 +15571,7 @@ end
 Object saber
 name saber
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face saber.101
 weapon_speed 3.25
@@ -15544,7 +15589,7 @@ end
 Object shiavona
 name shiavona
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face shiavona.101
 weapon_speed 3.25
@@ -15562,7 +15607,7 @@ end
 Object tanto
 name tanto
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/pierce
 layer 3
 face tanto.101
 weapon_speed 3.25
@@ -15580,7 +15625,7 @@ end
 Object baselard
 name baselard
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face baselard.101
 weapon_speed 3.25
@@ -15596,7 +15641,7 @@ end
 Object bastardsword
 name bastardsword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face bastardsword.101
 weapon_speed 3.25
@@ -15614,7 +15659,7 @@ end
 Object broadsword
 name broadsword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face broadsword.101
 weapon_speed 3.25
@@ -15632,7 +15677,7 @@ end
 Object falchion
 name falchion
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face falchion.101
 weapon_speed 3.25
@@ -15650,7 +15695,7 @@ end
 Object gladius
 name gladius
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face gladius.101
 weapon_speed 3.25
@@ -15668,7 +15713,7 @@ end
 Object katana
 name katana
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face katana.101
 weapon_speed 3.25
@@ -15686,7 +15731,7 @@ end
 Object longsword
 name longsword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face longsword.101
 weapon_speed 3.25
@@ -15704,7 +15749,7 @@ end
 Object ninjato
 name ninjato
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face ninjato.101
 weapon_speed 3.25
@@ -15722,7 +15767,7 @@ end
 Object scimitar
 name scimitar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face scimitar.101
 weapon_speed 3.25
@@ -15740,7 +15785,7 @@ end
 Object scythe_military
 name military scythe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face scythe_military.101
 weapon_speed 3.25
@@ -15758,7 +15803,7 @@ end
 Object shortsword
 name shortsword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face shortsword.101
 weapon_speed 3.25
@@ -15774,7 +15819,7 @@ end
 Object sword
 name sword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face sword.101
 weapon_speed 3.25
@@ -15792,7 +15837,7 @@ end
 Object sword_curved
 name curved sword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face sword_curved.101
 weapon_speed 3.25
@@ -15810,7 +15855,7 @@ end
 Object tsurugi
 name tsurugi
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face tsurugi.101
 weapon_speed 3.25
@@ -15828,7 +15873,7 @@ end
 Object tulwar
 name tulwar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face tulwar.101
 weapon_speed 3.25
@@ -15844,7 +15889,7 @@ end
 Object wakizashi
 name wakizashi
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_1h/slash
 layer 3
 face wakizashi.101
 weapon_speed 3.25
@@ -15862,7 +15907,7 @@ end
 Object axe_2h
 name 2h axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/cleave
 layer 3
 face axe_2h.101
 attack_cleave 100
@@ -15880,7 +15925,7 @@ end
 Object axe_2h_battle
 name 2h battle axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/cleave
 layer 3
 face axe_2h_battle.101
 attack_cleave 100
@@ -15898,7 +15943,7 @@ end
 Object axe_2h_great
 name 2h great axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/cleave
 layer 3
 face axe_2h_great.101
 attack_cleave 100
@@ -15916,7 +15961,7 @@ end
 Object axe_2h_war
 name 2h war axe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/cleave
 layer 3
 face axe_2h_war.101
 attack_cleave 100
@@ -15934,7 +15979,7 @@ end
 Object mattock
 name mattock
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/cleave
 layer 3
 face mattock.101
 attack_cleave 100
@@ -15952,7 +15997,7 @@ end
 Object bo
 name bo
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face bo.101
 weapon_speed 4.25
@@ -15970,7 +16015,7 @@ end
 Object club_giant
 name giant club
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face club_giant.101
 weapon_speed 4.25
@@ -15988,7 +16033,7 @@ end
 Object club_giant_spiked
 name giant spiked club
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face club_giant_spiked.101
 weapon_speed 4.25
@@ -16006,7 +16051,7 @@ end
 Object hammer_giant
 name giant hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face hammer_giant.101
 weapon_speed 4.25
@@ -16024,7 +16069,7 @@ end
 Object hammer_swar_giant
 name spiked war hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face hammer_swar_giant.101
 weapon_speed 4.25
@@ -16042,7 +16087,7 @@ end
 Object hammer_war_giant
 name war hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face hammer_war_giant.101
 weapon_speed 4.25
@@ -16060,7 +16105,7 @@ end
 Object mstar_2h
 name 2h-morningstar
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face mstar_2h.101
 weapon_speed 4.25
@@ -16078,7 +16123,7 @@ end
 Object quaterstaff
 name quaterstaff
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/impact
 layer 3
 face quaterstaff.101
 weapon_speed 4.25
@@ -16096,7 +16141,7 @@ end
 Object forc
 name forc
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/pierce
 layer 3
 weapon_speed 4.25
 attack_pierce 100
@@ -16114,7 +16159,7 @@ end
 Object forc_military
 name military forc
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/pierce
 layer 3
 weapon_speed 4.25
 attack_pierce 100
@@ -16132,7 +16177,7 @@ end
 Object spear
 name spear
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/pierce
 layer 3
 weapon_speed 4.25
 attack_pierce 100
@@ -16150,7 +16195,7 @@ end
 Object trident
 name trident
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/pierce
 layer 3
 weapon_speed 4.25
 attack_pierce 100
@@ -16168,7 +16213,7 @@ end
 Object claymore
 name claymore
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16186,7 +16231,7 @@ end
 Object no_dachi
 name no-dachi
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16204,7 +16249,7 @@ end
 Object panzerstecher
 name Panzerstecher
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16222,7 +16267,7 @@ end
 Object scythe_war
 name war scythe
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16240,7 +16285,7 @@ end
 Object sword2h
 name two-handed sword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16258,7 +16303,7 @@ end
 Object sword_double
 name double sword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16276,7 +16321,7 @@ end
 Object sword_great
 name great sword
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_2h/slash
 layer 3
 weapon_speed 4.25
 attack_slash 100
@@ -16294,7 +16339,7 @@ end
 Object bardiche
 name bardiche
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/cleave
 layer 3
 face bardiche.101
 item_level 11
@@ -16313,7 +16358,7 @@ end
 Object halberd
 name halberd
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/cleave
 layer 3
 face halberd.101
 attack_cleave 100
@@ -16332,7 +16377,7 @@ end
 Object spetum
 name spetum
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/cleave
 layer 3
 face spetum.101
 attack_cleave 100
@@ -16351,7 +16396,7 @@ end
 Object voulge
 name voulge
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/cleave
 layer 3
 face voulge.101
 attack_cleave 100
@@ -16370,7 +16415,7 @@ end
 Object bec_de_corbin
 name bec de corbin
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/impact
 layer 3
 face bec_de_corbin.101
 weapon_speed 4.5
@@ -16389,7 +16434,7 @@ end
 Object lucern_hammer
 name lucern hammer
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/impact
 layer 3
 face lucern_hammer.101
 weapon_speed 4.5
@@ -16408,7 +16453,7 @@ end
 Object bill_guisarme
 name bill-guisarme
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/pierce
 layer 3
 weapon_speed 4.5
 attack_pierce 100
@@ -16427,7 +16472,7 @@ end
 Object guisarme
 name guisarme
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/pierce
 layer 3
 weapon_speed 4.5
 attack_pierce 100
@@ -16446,7 +16491,7 @@ end
 Object partisan
 name partisan
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/pierce
 layer 3
 weapon_speed 4.5
 attack_pierce 100
@@ -16465,7 +16510,7 @@ end
 Object pike
 name pike
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/pierce
 layer 3
 weapon_speed 4.5
 attack_pierce 100
@@ -16484,7 +16529,7 @@ end
 Object ranseur
 name ranseur
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/pierce
 layer 3
 weapon_speed 4.5
 item_level 11
@@ -16503,7 +16548,7 @@ end
 Object fauchard
 name fauchard
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/slash
 layer 3
 weapon_speed 4.5
 attack_slash 100
@@ -16522,7 +16567,7 @@ end
 Object glaive
 name glaive
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/slash
 layer 3
 weapon_speed 4.5
 attack_slash 100
@@ -16541,7 +16586,7 @@ end
 Object naginata
 name naginata
 type 15
-editor_folder items/weapon
+editor_folder items/weapon/hand_pole/slash
 layer 3
 weapon_speed 4.5
 item_level 11
@@ -16560,7 +16605,7 @@ end
 Object arrow
 name arrow
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/missile/amun
 layer 3
 race arrows
 face arrow.101
@@ -16583,7 +16628,7 @@ end
 Object bolt
 name bolt
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/missile/amun
 layer 3
 race crossbow bolts
 attack_cleave 100
@@ -16606,7 +16651,7 @@ end
 Object sstone
 name sling stone
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/missile/amun
 race sling stones
 layer 3
 face sstone.101
@@ -16629,7 +16674,7 @@ end
 Object bow
 name bow
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race arrows
 wc 5
@@ -16647,7 +16692,7 @@ end
 Object bow_long
 name long bow
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race arrows
 wc 6
@@ -16665,7 +16710,7 @@ end
 Object bow_short
 name short bow
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race arrows
 wc 4
@@ -16681,7 +16726,7 @@ end
 Object crossbow
 name crossbow
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race crossbow bolts
 sub_type 1
@@ -16699,7 +16744,7 @@ end
 Object crossbow_large
 name large crossbow
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race crossbow bolts
 sub_type 1
@@ -16717,7 +16762,7 @@ end
 Object crossbow_small
 name small crossbow
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race crossbow bolts
 sub_type 1
@@ -16733,7 +16778,7 @@ end
 Object sling
 name sling
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race sling stones
 sub_type 2
@@ -16751,7 +16796,7 @@ end
 Object sling_heavy
 name heavy sling
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race sling stones
 sub_type 2
@@ -16769,7 +16814,7 @@ end
 Object sling_small
 name small sling
 type 14
-editor_folder items/weapon
+editor_folder items/weapon/missile
 layer 3
 race sling stones
 sub_type 2
@@ -16785,7 +16830,7 @@ end
 Object ball
 name ball
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw
 face ball.101
 layer 3
 material_real 193
@@ -16806,7 +16851,7 @@ end
 Object t_axe
 name throwing axe
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw/cleave
 race rock
 face t_axe.101
 layer 3
@@ -16830,7 +16875,7 @@ end
 Object t_hammer
 name throwing hammer
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw/impact
 race rock
 layer 3
 face hammer_2.101
@@ -16854,7 +16899,7 @@ end
 Object t_dagger
 name throwing dagger
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw/pierce
 race rock
 layer 3
 face t_dagger.101
@@ -16878,7 +16923,7 @@ end
 Object starsdavid2
 name throwing goldstar
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw/slash
 face starsofdavid.101
 race rock
 layer 3
@@ -16902,7 +16947,7 @@ end
 Object starsdavid
 name throwing star of david
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw/slash
 face starsdavid.101
 race rock
 layer 3
@@ -16926,7 +16971,7 @@ end
 Object t_star
 name throwing star
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw/slash
 race rock
 face t_star.101
 layer 3
@@ -16950,7 +16995,7 @@ end
 Object snow_ball
 name snow ball
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw
 face snowball.101
 race rock
 layer 3
@@ -16971,7 +17016,7 @@ end
 Object snow_ball2
 name big snow ball
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw
 face snowball2.101
 race rock
 layer 3
@@ -16992,7 +17037,7 @@ end
 Object t_boulder
 name boulder
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw
 race rock
 layer 3
 face t_boulder.101
@@ -17015,7 +17060,7 @@ end
 Object t_lboulder
 name large boulder
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw
 race rock
 layer 3
 face t_lboulder.101
@@ -17037,7 +17082,7 @@ end
 Object t_rock
 name rock
 type 13
-editor_folder items/weapon
+editor_folder items/weapon/throw
 race rock
 layer 3
 face t_rock.101
@@ -17149,7 +17194,7 @@ end
 Object cactus
 name cactus
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/cactus
 layer 4
 face cactus.101
 is_wooded 1
@@ -17208,7 +17253,7 @@ end
 Object plant_flower1
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower1.101
 no_pick 1
@@ -17216,7 +17261,7 @@ end
 Object plant_flower2
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower2.101
 no_pick 1
@@ -17224,7 +17269,7 @@ end
 Object plant_flower3
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower3.101
 no_pick 1
@@ -17232,7 +17277,7 @@ end
 Object plant_flower4
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower4.101
 no_pick 1
@@ -17240,7 +17285,7 @@ end
 Object plant_flower5
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower5.101
 no_pick 1
@@ -17248,7 +17293,7 @@ end
 Object plant_flower6
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower6.101
 no_pick 1
@@ -17256,7 +17301,7 @@ end
 Object plant_flower7
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower7.101
 no_pick 1
@@ -17264,7 +17309,7 @@ end
 Object plant_flower8
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower8.101
 no_pick 1
@@ -17272,7 +17317,7 @@ end
 Object plant_flower9
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower9.101
 no_pick 1
@@ -17280,7 +17325,7 @@ end
 Object plant_flower10
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower10.101
 no_pick 1
@@ -17288,7 +17333,7 @@ end
 Object plant_flower11
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower11.101
 no_pick 1
@@ -17296,7 +17341,7 @@ end
 Object plant_flower12
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower12.101
 no_pick 1
@@ -17304,7 +17349,7 @@ end
 Object plant_flower13
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower13.101
 no_pick 1
@@ -17312,7 +17357,7 @@ end
 Object plant_flower14
 name flower
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/flowers
 layer 4
 face plant_flower14.101
 no_pick 1
@@ -17320,7 +17365,7 @@ end
 Object mushroom_giant1
 name giant mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face mushroom_giant1.101
 no_pick 1
@@ -17328,7 +17373,7 @@ end
 Object mushroom_giant2
 name giant mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face mushroom_giant2.101
 no_pick 1
@@ -17336,7 +17381,7 @@ end
 Object mushroom_giant3
 name giant mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face mushroom_giant3.101
 no_pick 1
@@ -17344,7 +17389,7 @@ end
 Object plant_mushroom1
 name mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face plant_mushroom1.101
 no_pick 1
@@ -17352,7 +17397,7 @@ end
 Object plant_mushroom2
 name mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face plant_mushroom2.101
 no_pick 1
@@ -17360,7 +17405,7 @@ end
 Object plant_mushroom3
 name mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face plant_mushroom3.101
 no_pick 1
@@ -17368,7 +17413,7 @@ end
 Object plant_mushroom4
 name mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face plant_mushroom4.101
 no_pick 1
@@ -17376,7 +17421,7 @@ end
 Object plant_mushroom5
 name mushroom
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/mushrooms
 layer 4
 face plant_mushroom5.101
 no_pick 1
@@ -17644,7 +17689,7 @@ end
 Object potted_plant1
 name potted plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/plant_potted
 layer 4
 face potted_plant1.101
 no_pick 1
@@ -17652,7 +17697,7 @@ end
 Object potted_plant2
 name potted plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/plant_potted
 layer 4
 face potted_plant2.101
 no_pick 1
@@ -17660,7 +17705,7 @@ end
 Object potted_plant3
 name potted plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/plant_potted
 layer 4
 face potted_plant3.101
 no_pick 1
@@ -17668,7 +17713,7 @@ end
 Object potted_plant4
 name potted plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/plant_potted
 layer 4
 face potted_plant4.101
 no_pick 1
@@ -17676,7 +17721,7 @@ end
 Object potted_plant5
 name potted plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/plant_potted
 layer 4
 face potted_plant5.101
 no_pick 1
@@ -17694,7 +17739,7 @@ end
 Object au_tree1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face au_tree1.101
 no_pick 1
@@ -17704,7 +17749,7 @@ end
 Object au_tree2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face au_tree2.101
 no_pick 1
@@ -17714,7 +17759,7 @@ end
 Object au_tree3
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face au_tree3.101
 no_pick 1
@@ -17724,7 +17769,7 @@ end
 Object woods_2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_b.101
 no_pick 1
@@ -17734,7 +17779,7 @@ end
 Object woods_tree
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_c.101
 no_pick 1
@@ -17743,7 +17788,7 @@ end
 Object tree_big
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big.101
 no_pick 1
@@ -17753,7 +17798,7 @@ end
 Object tree_big2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big2.101
 no_pick 1
@@ -17763,7 +17808,7 @@ end
 Object tree_big3
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big3.101
 no_pick 1
@@ -17773,7 +17818,7 @@ end
 Object tree_big4
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big4.101
 no_pick 1
@@ -17783,7 +17828,7 @@ end
 Object tree_big5
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big5.101
 no_pick 1
@@ -17793,7 +17838,7 @@ end
 Object tree_big4b
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big4b.101
 no_pick 1
@@ -17803,7 +17848,7 @@ end
 Object tree_big5b
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big5b.101
 no_pick 1
@@ -17813,7 +17858,7 @@ end
 Object tree20
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree20.101
 no_pick 1
@@ -17823,7 +17868,7 @@ end
 Object tree21
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree21.101
 no_pick 1
@@ -17833,7 +17878,7 @@ end
 Object tree22
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree22.101
 no_pick 1
@@ -17843,7 +17888,7 @@ end
 Object tree23
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree23.101
 no_pick 1
@@ -17853,7 +17898,7 @@ end
 Object tree24
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree24.101
 no_pick 1
@@ -17863,7 +17908,7 @@ end
 Object tree25
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree25.101
 no_pick 1
@@ -17873,7 +17918,7 @@ end
 Object tree26
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree26.101
 no_pick 1
@@ -17883,7 +17928,7 @@ end
 Object tree27
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree27.101
 no_pick 1
@@ -17893,7 +17938,7 @@ end
 Object tree28
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree28.101
 no_pick 1
@@ -17903,7 +17948,7 @@ end
 Object tree29
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree29.101
 no_pick 1
@@ -17913,7 +17958,7 @@ end
 Object tree30
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree30.101
 no_pick 1
@@ -17923,7 +17968,7 @@ end
 Object tree31
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree31.101
 no_pick 1
@@ -17933,7 +17978,7 @@ end
 Object tree32
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree32.101
 no_pick 1
@@ -17943,7 +17988,7 @@ end
 Object tree33
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree33.101
 no_pick 1
@@ -17953,7 +17998,7 @@ end
 Object tree34
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree34.101
 no_pick 1
@@ -17963,7 +18008,7 @@ end
 Object tree35
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree35.101
 no_pick 1
@@ -17973,7 +18018,7 @@ end
 Object tree36
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree36.101
 no_pick 1
@@ -17983,7 +18028,7 @@ end
 Object tree37
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree37.101
 no_pick 1
@@ -17993,7 +18038,7 @@ end
 Object tree38
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree38.101
 no_pick 1
@@ -18003,7 +18048,7 @@ end
 Object tree39
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree39.101
 no_pick 1
@@ -18013,7 +18058,7 @@ end
 Object tree40
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree40.101
 no_pick 1
@@ -18023,7 +18068,7 @@ end
 Object tree41
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree41.101
 no_pick 1
@@ -18033,7 +18078,7 @@ end
 Object tree42
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree42.101
 no_pick 1
@@ -18043,7 +18088,7 @@ end
 Object tree43
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree43.101
 no_pick 1
@@ -18053,7 +18098,7 @@ end
 Object tree44
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree44.101
 no_pick 1
@@ -18063,7 +18108,7 @@ end
 Object tree45
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree45.101
 no_pick 1
@@ -18073,7 +18118,7 @@ end
 Object tree46
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree46.101
 no_pick 1
@@ -18083,7 +18128,7 @@ end
 Object tree47
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree47.101
 no_pick 1
@@ -18093,7 +18138,7 @@ end
 Object tree48
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree48.101
 no_pick 1
@@ -18103,7 +18148,7 @@ end
 Object tree49
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree49.101
 no_pick 1
@@ -18113,7 +18158,7 @@ end
 Object tree50
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree50.101
 no_pick 1
@@ -18123,7 +18168,7 @@ end
 Object tree51
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree51.101
 no_pick 1
@@ -18133,7 +18178,7 @@ end
 Object tree_burned1
 name burned tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_burned1.101
 no_pick 1
@@ -18143,7 +18188,7 @@ end
 Object tree_burned2
 name burned tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_burned2.101
 no_pick 1
@@ -18153,7 +18198,7 @@ end
 Object tree_burned2_winter
 name burned tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_burned2_winter.101
 no_pick 1
@@ -18164,7 +18209,7 @@ end
 Object tree_burned3
 name burned tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_burned3.101
 no_pick 1
@@ -18174,7 +18219,7 @@ end
 Object tree_burned4
 name burned tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_burned4.101
 no_pick 1
@@ -18184,7 +18229,7 @@ end
 Object snowy_pinetree1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_pinetree1.101
 no_pick 1
@@ -18195,7 +18240,7 @@ end
 Object snowy_pinetree2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_pinetree2.101
 no_pick 1
@@ -18206,7 +18251,7 @@ end
 Object tree_big5_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree_big5_winter.101
 no_pick 1
@@ -18217,7 +18262,7 @@ end
 Object snowy_autree2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_autree2.101
 no_pick 1
@@ -18228,7 +18273,7 @@ end
 Object snowy_burnedtree1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_burnedtree1.101
 no_pick 1
@@ -18239,7 +18284,7 @@ end
 Object snowy_burnedtree2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_burnedtree2.101
 no_pick 1
@@ -18250,7 +18295,7 @@ end
 Object snowy_tree1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_tree1.101
 no_pick 1
@@ -18261,7 +18306,7 @@ end
 Object snowy_tree2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_tree2.101
 no_pick 1
@@ -18272,7 +18317,7 @@ end
 Object snowy_tree_big1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_tree_big1.101
 no_pick 1
@@ -18283,7 +18328,7 @@ end
 Object snowy_tree_big2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_tree_big2.101
 no_pick 1
@@ -18294,7 +18339,7 @@ end
 Object snowy_tree_bigb1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_tree_bigb1.101
 no_pick 1
@@ -18305,7 +18350,7 @@ end
 Object snowy_tree_bigb2
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_tree_bigb2.101
 no_pick 1
@@ -18316,7 +18361,7 @@ end
 Object snowy_treeb1
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face snowy_treeb1.101
 no_pick 1
@@ -18327,7 +18372,7 @@ end
 Object tree32_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree32_winter.101
 no_pick 1
@@ -18338,7 +18383,7 @@ end
 Object tree33_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree33_winter.101
 no_pick 1
@@ -18349,7 +18394,7 @@ end
 Object tree27_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree27_winter.101
 no_pick 1
@@ -18360,7 +18405,7 @@ end
 Object tree43_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree43_winter.101
 no_pick 1
@@ -18371,7 +18416,7 @@ end
 Object tree44_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree44_winter.101
 no_pick 1
@@ -18382,7 +18427,7 @@ end
 Object tree45_winter
 name tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 5
 face tree45_winter.101
 no_pick 1
@@ -18393,7 +18438,7 @@ end
 Object tree_cuta
 name old tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_cut1.101
 is_wooded 1
@@ -18402,7 +18447,7 @@ end
 Object tree_branch1
 name branch
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_branch1.101
 no_pick 1
@@ -18410,7 +18455,7 @@ end
 Object tree_branch2
 name branch
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_branch2.101
 no_pick 1
@@ -18418,7 +18463,7 @@ end
 Object tree_branch3
 name branch
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_branch3.101
 no_pick 1
@@ -18426,7 +18471,7 @@ end
 Object tree_branch1_winter
 name branch
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_branch1_winter.101
 no_pick 1
@@ -18434,7 +18479,7 @@ end
 Object tree_branch2_winter
 name branch
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_branch2_winter.101
 no_pick 1
@@ -18442,7 +18487,7 @@ end
 Object tree_branch3_winter
 name branch
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 layer 4
 face tree_branch3_winter.101
 no_pick 1
@@ -18450,7 +18495,7 @@ end
 Object tree_small
 name small tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 face tree_small.101
 layer 4
 no_pick 1
@@ -18459,7 +18504,7 @@ end
 Object tree_small_dead
 name small dead tree
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/trees
 face tree_smalld.101
 layer 4
 no_pick 1
@@ -18468,7 +18513,7 @@ end
 Object water_lily
 name water lily
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_lily1.101
 no_pick 1
@@ -18477,7 +18522,7 @@ end
 Object water_lily2
 name water lily
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_lily2.101
 no_pick 1
@@ -18486,7 +18531,7 @@ end
 Object water_lily3
 name water lily
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_lily3.101
 no_pick 1
@@ -18495,7 +18540,7 @@ end
 Object water_plant1
 name water plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_plant1.101
 no_pick 1
@@ -18504,7 +18549,7 @@ end
 Object water_plant2
 name water plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_plant2.101
 no_pick 1
@@ -18513,7 +18558,7 @@ end
 Object water_plant3
 name water plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_plant3.101
 no_pick 1
@@ -18522,7 +18567,7 @@ end
 Object water_plant4
 name water plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_plant4.101
 no_pick 1
@@ -18531,7 +18576,7 @@ end
 Object water_plant5
 name water plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_plant5.101
 no_pick 1
@@ -18540,7 +18585,7 @@ end
 Object water_plant6
 name water plant
 type 79
-editor_folder landscape/plants
+editor_folder landscape/plants/water
 layer 5
 face water_plant6.101
 no_pick 1
@@ -20096,7 +20141,7 @@ no_pick 1
 end
 Object probebullet
 type 2
-editor_folder magic/magic
+editor_folder magic
 face probe.101
 layer 7
 no_save 1
@@ -20288,7 +20333,7 @@ food 9
 end
 Object fog
 type 79
-editor_folder misc/misc
+editor_folder misc
 face fog.111
 other_arch fog
 terrain_flag 65535
@@ -20310,7 +20355,7 @@ end
 Object fog_glow1
 name strange glowing fog
 type 79
-editor_folder misc/misc
+editor_folder misc
 layer 7
 face fog.111
 other_arch fog_glow1
@@ -20332,7 +20377,7 @@ end
 Object fog_glow2
 name strange glowing fog
 type 79
-editor_folder misc/misc
+editor_folder misc
 face fog.111
 layer 7
 terrain_flag 65535
@@ -20354,7 +20399,7 @@ end
 Object sign
 name sign ('a'pply to read)
 type 98
-editor_folder misc/misc
+editor_folder misc
 face sign.111
 layer 4
 no_pick 1
@@ -20362,7 +20407,7 @@ end
 Object temp_fog
 name fog
 type 79
-editor_folder misc/misc
+editor_folder misc
 face fog.111
 layer 7
 animation temp_fog
@@ -21265,7 +21310,7 @@ end
 Object bear_grey
 name Grey Bear
 type 80
-editor_folder mobs/animals
+editor_folder mobs/animals/bears
 face bear_grey.131
 race bear
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -21406,7 +21451,7 @@ Object beholder_dread
 name Dread Beholder
 type 80
 mpart_id 3
-editor_folder mobs/beholder
+editor_folder mobs/beholder/beholder_dread
 face beholder_dread.131
 race beholder
 randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
@@ -21757,7 +21802,7 @@ end
 Object kobold
 name Kobold
 type 80
-editor_folder mobs/demihumans
+editor_folder mobs/demihumans/kobolds
 face kobold.131
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -21806,7 +21851,7 @@ end
 Object kobold_big
 name Big Kobold
 type 80
-editor_folder mobs/demihumans
+editor_folder mobs/demihumans/kobolds
 face kobold_big.131
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -21855,7 +21900,7 @@ end
 Object kobold_fighter
 name Kobold Fighter
 type 80
-editor_folder mobs/demihumans
+editor_folder mobs/demihumans/kobolds
 face kobold_fighter.131
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -21904,7 +21949,7 @@ end
 Object kobold_guard
 name Kobold Guard
 type 80
-editor_folder mobs/demihumans
+editor_folder mobs/demihumans/kobolds
 face kobold_guard.131
 race kobold
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -21953,7 +21998,7 @@ end
 Object kobold_shaman
 name Kobold Shaman
 type 80
-editor_folder mobs/demihumans
+editor_folder mobs/demihumans/kobolds
 face kobold_shaman.131
 race kobold
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22048,6 +22093,54 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object oty
+name Oty
+type 80
+editor_folder mobs/demon
+face oty.131
+race demon
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_male 1
+is_evil 1
+terrain_flag 1
+can_open_door 1
+can_see_in_dark 1
+can_use_weapon 1
+can_use_armour 1
+has_ready_spell 1
+Int 10
+Wis 6
+Dex 3
+Con 15
+exp 115
+magic 1
+Pow 10
+sp -1
+maxsp 17
+hp -1
+maxhp 85
+ac 15
+wc 5
+thac0 18
+thacm 1
+dam 66
+weapon_speed 3.5
+attack_cleave 100
+speed -0.060
+level 1
+weight 162500
+animation oty
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object raas
 name Raas
 type 80
@@ -22100,7 +22193,7 @@ Object dragon_red
 name Red Dragon
 type 80
 mpart_id 3
-editor_folder mobs/dragon
+editor_folder mobs/dragon/dragon_red
 face dragon_red.131
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22195,7 +22288,7 @@ Object dragon_skeletal
 name Skeletal Dragon
 type 80
 mpart_id 3
-editor_folder mobs/dragon
+editor_folder mobs/dragon/dragon_skeletal
 face dragon_skeletal.131
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22288,7 +22381,7 @@ end
 Object dragon_water_small
 name Small Water Dragon
 type 80
-editor_folder mobs/dragon
+editor_folder mobs/dragon/dragon_water
 face dragon_water.131
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22335,7 +22428,7 @@ Object dwarf_fighter
 name Dwarf Fighter
 type 80
 editor_folder mobs/dwarfs
-face dwarf_fighter.131
+face dwarf.131
 race dwarf
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
@@ -22387,7 +22480,7 @@ end
 Object mud_hand
 name Mud Hand
 type 80
-editor_folder mobs/elementals
+editor_folder mobs/elementals/mud_hand
 face mud_hand.101
 race mud elemental
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22431,7 +22524,7 @@ end
 Object drow_annihilator
 name Drow Annihilator
 type 80
-editor_folder mobs/elves
+editor_folder mobs/elves/drows
 face drow_annihilator.131
 race drow
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22481,7 +22574,7 @@ end
 Object drow_captain
 name Drow Captain
 type 80
-editor_folder mobs/elves
+editor_folder mobs/elves/drows
 face drow_captain.131
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22530,7 +22623,7 @@ end
 Object drow_fighter
 name Drow Fighter
 type 80
-editor_folder mobs/elves
+editor_folder mobs/elves/drows
 face drow_fighter.131
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22579,7 +22672,7 @@ end
 Object drow_guard
 name Drow Guard
 type 80
-editor_folder mobs/elves
+editor_folder mobs/elves/drows
 face drow_guard.131
 race drow
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22628,7 +22721,7 @@ end
 Object drow_sorcerer
 name Drow Sorcerer
 type 80
-editor_folder mobs/elves
+editor_folder mobs/elves/drows
 face drow_sorcerer.131
 race drow
 randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22678,7 +22771,7 @@ end
 Object ettin
 name Ettin
 type 80
-editor_folder mobs/giants
+editor_folder mobs/giants/ettin
 face ettin.131
 race giant
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22926,7 +23019,7 @@ end
 Object archer
 name Archer
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/archers
 race human
 face archer.131
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -22983,7 +23076,7 @@ end
 Object guard
 name Guard
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/guards
 race human
 face guard1.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23036,10 +23129,66 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object guard2
+name Guard
+type 80
+editor_folder mobs/human/guards
+race human
+face guard2.131
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+friendly 1
+alive 1
+monster 1
+is_male 1
+is_good 1
+terrain_flag 1
+can_open_door 1
+can_reflect_spell 1
+can_use_weapon 1
+can_use_armour 1
+can_use_ring 1
+Int 10
+Wis 7
+Dex 3
+Con 15
+exp 100
+magic 1
+Pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 90
+ac 13
+wc 6
+thac0 18
+thacm 1
+resist_impact 15
+resist_cleave 15
+resist_pierce 15
+resist_slash 15
+resist_magic 50
+dam 55
+weapon_speed 3.5
+attack_slash 35
+attack_magic 35
+attack_weaponmagic 30
+speed -0.048
+level 1
+weight 85000
+animation guard2
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object guard_pole
 name Guard
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/guards
 race human
 face guard_pole.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23095,7 +23244,7 @@ end
 Object guard_royal
 name Royal Guard
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/guards
 race human
 face guard_royal.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23151,7 +23300,7 @@ end
 Object mage_old
 name Old Mage
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/mages
 race human
 face mage_old.131
 randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23207,7 +23356,7 @@ end
 Object monk
 name Monk
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/monk
 race human
 face monk.131
 layer 6
@@ -23262,7 +23411,7 @@ end
 Object king
 name King
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/nobles
 race human
 face king.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23315,7 +23464,7 @@ end
 Object king1
 name King
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/nobles
 race human
 face king1.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23368,7 +23517,7 @@ end
 Object noble
 name Noble
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/nobles
 race human
 face noble.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23421,7 +23570,7 @@ end
 Object queen
 name Queen
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/nobles
 race human
 face queen.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23474,7 +23623,7 @@ end
 Object hobo_old
 name Old Hobo
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/peasant
 race human
 face hobo_old.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23523,7 +23672,7 @@ end
 Object peasant
 name Peasant
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/peasant
 race human
 face peasant.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23572,7 +23721,7 @@ end
 Object traveller_parka
 name Traveller
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/peasant
 race human
 face traveller_parka.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23621,7 +23770,7 @@ end
 Object traveller_wife
 name Traveller
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/peasant
 race human
 face traveller_wife.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23670,7 +23819,7 @@ end
 Object priest_church
 name Church Priest
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/priests
 race human
 face priest_church.131
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23727,7 +23876,7 @@ end
 Object priest_green
 name Priest
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/priests
 race human
 face priest_green.131
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23784,7 +23933,7 @@ end
 Object sadpriest
 name Sad Priest
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/priests
 race human
 face sadpriest.121
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23841,7 +23990,7 @@ end
 Object ranger
 name Ranger
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/rangers
 race human
 face ranger.131
 randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23898,7 +24047,7 @@ end
 Object smith
 name Smith
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/smithy
 race human
 face smith.141
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -23953,7 +24102,7 @@ end
 Object bartender
 name Bartender
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/tavern
 race human
 face bartender.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -24002,7 +24151,7 @@ end
 Object female1
 name Woman
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/town
 race human
 face female1.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -24051,7 +24200,7 @@ end
 Object female2
 name Woman
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/town
 race human
 face female2.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -24100,7 +24249,7 @@ end
 Object woman_old
 name old woman
 type 80
-editor_folder mobs/human
+editor_folder mobs/human/town
 race human
 face woman_old.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -24428,7 +24577,7 @@ end
 Object slug_giant
 name Giant Slug
 type 80
-editor_folder mobs/misc
+editor_folder mobs/misc/slug_giant
 face slug_giant.131
 race slug
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -24479,7 +24628,7 @@ Object worm_purple
 name Purple Worm
 type 80
 mpart_id 3
-editor_folder mobs/misc
+editor_folder mobs/misc/worm_purple
 face worm_purple.131
 race worm
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -24961,7 +25110,7 @@ end
 Object dog_brown
 name Doggie
 type 80
-editor_folder mobs/pets
+editor_folder mobs/pets/dog_brown
 face dog.ise.111
 race dog
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25000,7 +25149,7 @@ end
 Object quickwood
 name Quickwood
 type 80
-editor_folder mobs/plants
+editor_folder mobs/plants/quickwood
 face quickwood.131
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25044,7 +25193,7 @@ end
 Object treant_evil
 name Evil Treant
 type 80
-editor_folder mobs/plants
+editor_folder mobs/plants/treant
 face treant_evil.131
 race tree
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25088,7 +25237,7 @@ no_pick 1
 end
 Object spawn_point
 type 81
-editor_folder mobs/mobs
+editor_folder mobs
 other_arch spawn_info
 face spawn_point.101
 last_grace 8
@@ -25150,7 +25299,7 @@ end
 Object icegolem
 name Ice Golem
 type 80
-editor_folder mobs/summoned
+editor_folder mobs/summoned/golem_ice
 face icegolem.031
 race golem
 randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2
@@ -25199,7 +25348,7 @@ end
 Object lavagolem
 name Lava Golem
 type 80
-editor_folder mobs/summoned
+editor_folder mobs/summoned/golem_lava
 face lavagolem.031
 race golem
 randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1
@@ -25248,7 +25397,7 @@ end
 Object black_golem_mage
 name Black Mage Golem
 type 80
-editor_folder mobs/summoned
+editor_folder mobs/summoned/mage_golem/black_mage_golem
 face black_golem_mage.131
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25295,7 +25444,7 @@ end
 Object golem_mage
 name Mage Golem
 type 80
-editor_folder mobs/summoned
+editor_folder mobs/summoned/mage_golem
 face golem_mage.131
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25342,7 +25491,7 @@ end
 Object sparkle_black_golem_mage
 name Black Sparkle Mage Golem
 type 80
-editor_folder mobs/summoned
+editor_folder mobs/summoned/mage_golem/sparkle_black_mage_golem
 face sparkle_black_golem_mage.131
 race golem
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25438,7 +25587,7 @@ end
 Object dancerf1
 name Dancer
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/vday
 race human
 face dancerf1.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25487,7 +25636,7 @@ end
 Object dancerf2
 name Dancer
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/vday
 race human
 face dancerf2.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25536,7 +25685,7 @@ end
 Object dancerf3
 name Dancer
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/vday
 race human
 face dancerf3.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25585,7 +25734,7 @@ end
 Object dancerm1
 name Dancer
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/vday
 race human
 face dancerm1.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25634,7 +25783,7 @@ end
 Object dancerm2
 name Dancer
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/vday
 race human
 face dancerm2.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25683,7 +25832,7 @@ end
 Object dancerm3
 name Dancer
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/vday
 race human
 face dancerm3.111
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25732,7 +25881,7 @@ end
 Object santa
 name Santa
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/xmas
 face santa.131
 race human
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25787,7 +25936,7 @@ end
 Object snowman_evil
 name Snowman
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/xmas
 race snowcreature
 face snowman_evil.131
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25834,7 +25983,7 @@ end
 Object snowman_evil2
 name Big Snowman
 type 80
-editor_folder mobs/theme
+editor_folder mobs/theme/xmas
 race snowcreature
 face snowman_evil2.121
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -25975,7 +26124,7 @@ end
 Object demilich
 name Demilich
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/demilich
 face demilich.131
 race lich
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26029,7 +26178,7 @@ end
 Object ghoul
 name Ghoul
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/ghoul
 face ghoul.131
 race ghoul
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26081,7 +26230,7 @@ end
 Object lost_soul
 name Lost Soul
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/lost_soul
 face lost_soul.131
 race ghost
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26135,7 +26284,7 @@ end
 Object skel_fighter1
 name Skeleton Fighter
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/skeleton
 face skel_fighter1.131
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26184,7 +26333,7 @@ end
 Object skel_fighter2
 name Skeleton Fighter
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/skeleton
 face skel_fighter2.131
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26233,7 +26382,7 @@ end
 Object skel_fighter3
 name Skeleton Fighter
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/skeleton
 face skel_fighter3.131
 race skeleton
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26282,7 +26431,7 @@ end
 Object skel_mage
 name Skeleton Mage
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/skeleton
 face skel_mage.131
 race skeleton
 randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26336,7 +26485,7 @@ end
 Object wraith
 name Wraith
 type 80
-editor_folder mobs/undead
+editor_folder mobs/undead/wraith
 face wraith.131
 race ghost
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
@@ -26648,7 +26797,7 @@ end
 Object tipper
 name tipper
 type 79
-editor_folder outdoor/outdoor
+editor_folder outdoor
 face tipper.111
 animation tipper
 is_animated 0
@@ -26762,7 +26911,7 @@ layer 4
 end
 Object beacon
 type 137
-editor_folder special/special
+editor_folder special
 no_pick 1
 face beacon.101
 sys_object 1
@@ -26770,7 +26919,7 @@ end
 Object bed_save
 name save bed
 type 106
-editor_folder special/special
+editor_folder special
 layer 3
 face bed_save.111
 weight 200000
@@ -26782,7 +26931,7 @@ end
 Object creator
 name creator
 type 42
-editor_folder special/special
+editor_folder special
 face creator.111
 no_teleport 1
 layer 0
@@ -26811,7 +26960,7 @@ end
 Object event_obj
 name Lua
 type 118
-editor_folder special/special
+editor_folder special
 face event.101
 no_pick 1
 no_drop 1
@@ -26820,7 +26969,7 @@ end
 Object light1
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_1.111
 glow_radius 1
 no_pick 1
@@ -26831,7 +26980,7 @@ end
 Object light2
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_2.111
 glow_radius 2
 no_pick 1
@@ -26842,7 +26991,7 @@ end
 Object light3
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_3.111
 glow_radius 3
 no_pick 1
@@ -26853,7 +27002,7 @@ end
 Object light4
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_4.111
 no_pick 1
 no_drop 1
@@ -26864,7 +27013,7 @@ end
 Object light5
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_5.111
 no_pick 1
 no_drop 1
@@ -26875,7 +27024,7 @@ end
 Object light6
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_6.111
 no_pick 1
 no_drop 1
@@ -26886,7 +27035,7 @@ end
 Object light7
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_7.111
 no_pick 1
 no_drop 1
@@ -26897,7 +27046,7 @@ end
 Object light8
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_8.111
 no_pick 1
 no_drop 1
@@ -26908,7 +27057,7 @@ end
 Object light9
 name light
 type 78
-editor_folder special/special
+editor_folder special
 face light_bulb_9.111
 no_pick 1
 no_drop 1
@@ -26918,7 +27067,7 @@ sys_object 1
 end
 Object magic_mouth
 type 98
-editor_folder special/special
+editor_folder special
 face magicmouth.111
 walk_on 1
 fly_on 1
@@ -26974,7 +27123,7 @@ end
 Object marker
 name marker
 type 55
-editor_folder special/special
+editor_folder special
 face info.101
 food 32700
 slaying put your code here
@@ -27002,7 +27151,7 @@ fly_on 1
 end
 Object quest_object
 type 131
-editor_folder special/special
+editor_folder special
 quest_item 1
 startequip 1
 identified 1
@@ -27013,7 +27162,7 @@ layer 3
 end
 Object quest_trigger
 type 129
-editor_folder special/special
+editor_folder special
 sys_object 1
 applied 0
 no_drop 1
@@ -27022,7 +27171,7 @@ face quest.101
 end
 Object rand_drop
 type 102
-editor_folder special/special
+editor_folder special
 face creator.111
 layer 0
 sys_object 1
@@ -27048,7 +27197,7 @@ anim_speed 3
 end
 Object waypoint
 type 119
-editor_folder special/special
+editor_folder special
 sp 0
 exp 0
 wc 0
@@ -27300,7 +27449,7 @@ Object dolmen
 name dolmen
 type 79
 mpart_id 5
-editor_folder structures/structures
+editor_folder structures
 face dolmen01.101
 material 64
 layer 5
@@ -27659,7 +27808,7 @@ Object igloo2
 name igloo
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face igloo.151
 no_pass 1
@@ -27703,7 +27852,7 @@ Object igloo
 name igloo
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face igloo.131
 no_pass 1
@@ -27773,7 +27922,7 @@ end
 Object pair_human
 name Lovebirds
 type 79
-editor_folder structures/structures
+editor_folder structures
 face pair_human.131
 layer 5
 is_turnable 1
@@ -28569,7 +28718,7 @@ Object stonehenge
 name stonehenge
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face stonehenge.111
 animation stonehenge
@@ -28618,7 +28767,7 @@ Object tent_small
 name small tent
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face tent_small.131
 no_pass 1
@@ -28662,7 +28811,7 @@ Object tent_small2
 name small tent
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face tent_small.151
 no_pass 1
@@ -28706,7 +28855,7 @@ Object tent_large
 name large tent
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face tent_large.131
 no_pass 1
@@ -28750,7 +28899,7 @@ Object tent_large2
 name large tent
 type 79
 mpart_id 3
-editor_folder structures/structures
+editor_folder structures
 layer 5
 face tent_large.151
 no_pass 1
@@ -28796,7 +28945,7 @@ type 154
 msg
 You are caught by a bear trap!
 endmsg
-editor_folder traps/traps
+editor_folder traps
 face tspikes.101
 hp 1
 animation trap_bear_trap
@@ -28817,7 +28966,7 @@ type 154
 msg
 You set off a Blades trap!
 endmsg
-editor_folder traps/traps
+editor_folder traps
 face blades.101
 hp 1
 animation trap_blades
@@ -28838,7 +28987,7 @@ type 154
 msg
 You set off a falling rocks trap!
 endmsg
-editor_folder traps/traps
+editor_folder traps
 face falling_rocks.101
 hp 1
 animation trap_rocks
@@ -28855,7 +29004,7 @@ Cha 20
 end
 Object glue
 type 79
-editor_folder traps/traps
+editor_folder traps
 face glue.101
 speed -0.06
 layer 4
@@ -28868,7 +29017,7 @@ end
 Object trap_diseased_needle
 name diseased parts
 type 154
-editor_folder traps/traps
+editor_folder traps
 sub_type 128
 face needle.101
 randomitems traps_needle_diseases
@@ -28889,7 +29038,7 @@ type 154
 msg
 You are pricked by a needle!
 endmsg
-editor_folder traps/traps
+editor_folder traps
 face needle.101
 hp 1
 animation trap_needle
@@ -28928,7 +29077,7 @@ end
 Object spider_web
 name spider web
 type 79
-editor_folder traps/traps
+editor_folder traps
 face spider_web.111
 layer 4
 speed -0.01
@@ -28944,7 +29093,7 @@ type 154
 msg
 You are stabbed by spikes!
 endmsg
-editor_folder traps/traps
+editor_folder traps
 face spiked_pit.101
 layer 4
 hp 1
@@ -28963,7 +29112,7 @@ end
 Object trapdoor
 name trapdoor
 type 95
-editor_folder traps/traps
+editor_folder traps
 layer 4
 face trapdoor_1.101
 animation trapdoor
@@ -34651,17 +34800,4 @@ face wall_wood_w.131
 layer 5
 no_pick 1
 no_pass 1
-end
-Object map
-x 16
-y 16
-type 22
-layer 0
-sys_object 1
-slaying /relic/castle/castle_030a
-face info.101
-hp 18
-sp 1
-value 300
-weight 7200
 end
