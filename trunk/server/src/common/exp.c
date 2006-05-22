@@ -674,7 +674,7 @@ void apply_death_exp_penalty(object *op)
             player_lvl_adj(op, tmp, FALSE); /* adjust exp objects levels */
     }
     player_lvl_adj(op, NULL, FALSE);        /* and at last adjust the player level */
-	fix_player(op);
+	FIX_PLAYER(op, "apply death penalty - end");
 }
 
 /* i reworked this...

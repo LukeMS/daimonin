@@ -1009,7 +1009,7 @@ int command_abil(object *op, char *params)
         pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
     sprintf(buf, "%s has been altered.", pl->ob->name);
     new_draw_info(NDI_UNIQUE, 0, op, buf);
-    fix_player(pl->ob);
+	FIX_PLAYER(pl->ob ,"command abil");
     return 1;
 }
 

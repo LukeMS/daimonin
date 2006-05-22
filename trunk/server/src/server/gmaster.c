@@ -260,7 +260,7 @@ void remove_gmaster_mode(player *pl)
         CLEAR_FLAG(pl->ob, FLAG_WIZ);
         CLEAR_FLAG(pl->ob, FLAG_WIZPASS);
         CLEAR_MULTI_FLAG(pl->ob, FLAG_FLYING);
-        fix_player(pl->ob);
+        FIX_PLAYER(pl->ob, "set_gmaster_mode");
         pl->socket.update_tile = 0;
         esrv_send_inventory(pl->ob, pl->ob);
         pl->update_los = 1;

@@ -264,7 +264,11 @@ struct plugin_hooklist
     void (*free_string_shared)(const char *);
     const char*(*add_string)(const char *);
     const char*(*add_refcount)(const char *);
-    void (*fix_player)(object *);
+#ifdef DEBUG_FIX_PLAYER
+    void (*fix_player)(object *, char *msg);
+#else
+	void (*fix_player)(object *);
+#endif
     void (*esrv_send_item)(object *, object *);
     void (*esrv_send_inventory)(object *, object *);
     int (*lookup_skill_by_name)(char *);

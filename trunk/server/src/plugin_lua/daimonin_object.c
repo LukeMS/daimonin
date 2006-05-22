@@ -820,7 +820,7 @@ static int GameObject_Deposit(lua_State *L)
     else if (money.mode == MONEYSTRING_ALL)
     {
         bank->value += hooks->remove_money_type(WHO, WHO, -1, 0);
-        hooks->fix_player(WHO);
+		hooks->FIX_PLAYER(WHO, "LUA: deposit - remove money");
     }
     else
     {
@@ -838,7 +838,7 @@ static int GameObject_Deposit(lua_State *L)
         if(hooks->pay_for_amount(amount, WHO)) 
         {
             bank->value += amount;
-            hooks->fix_player(WHO);
+			hooks->FIX_PLAYER(WHO, "LUA: deposit - pay for amount");
         }
         else
         {
@@ -894,7 +894,7 @@ static int GameObject_Withdraw(lua_State *L)
     {
         hooks->sell_item(NULL, WHO, bank->value);
         bank->value = 0;
-        hooks->fix_player(WHO);
+		hooks->FIX_PLAYER(WHO, "LUA: withdraw - sell item");
     }
     else
     {
@@ -922,7 +922,7 @@ static int GameObject_Withdraw(lua_State *L)
                     hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, money.copper);
 
                 bank->value -= big_value;
-                hooks->fix_player(WHO);
+				hooks->FIX_PLAYER(WHO, "LUA: withdraw - insert money");
             }
         }
     }
@@ -1272,7 +1272,7 @@ static int GameObject_Fix(lua_State *L)
     lua_object *self;
     get_lua_args(L, "O", &self);
 
-    hooks->fix_player(WHO);
+    hooks->FIX_PLAYER(WHO, "LUA - fix player");
 
     return 0;
 }
@@ -3103,7 +3103,7 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
             CONTR(who)->orig_stats.Pow = (sint8) lua_tonumber(L, -1);
 
         if (attrib->flags & FIELDFLAG_PLAYER_FIX)
-            hooks->fix_player(who);
+            hooks->FIX_PLAYER(who, "LUA - set attribute");
     }
 
     return 0;

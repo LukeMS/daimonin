@@ -45,6 +45,11 @@
 
 /*#define SKILL_UTIL_DEBUG*/
 
+/* debug the fix_xxxxxx flow */
+#define DEBUG_FIX_PLAYER
+/*#define DEBUG_FIX_PLAYER_SKIPPED */
+#define DEBUG_FIX_MONSTER
+
 /* Aggro & EXP sharing debugging: aggro.c */
 #define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
 
@@ -76,5 +81,11 @@
 /* Uncomment this to enable some verbose pathfinding debug messages */
 /* #define DEBUG_PATHFINDING */
 #endif /* ifndef PRODUCTION_SYSTEM */
+
+#ifdef DEBUG_FIX_PLAYER
+#define FIX_PLAYER(_o_, _m_) fix_player(_o_, _m_)
+#else
+#define FIX_PLAYER(_o_, _m_) fix_player(_o_)
+#endif
 
 #endif

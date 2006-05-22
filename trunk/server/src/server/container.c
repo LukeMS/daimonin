@@ -674,7 +674,7 @@ void put_object_in_sack(object *const op, object *const sack, object *tmp, const
 	tmp_cont = tmp->env;
 	tmp2 = insert_ob_in_ob(tmp, sack);
 	new_draw_info(NDI_UNIQUE, 0, op, buf);
-	fix_player(op); /* This is overkill, fix_player() is called somewhere */
+	FIX_PLAYER(op, "put_object_in_sack"); /* This is overkill, fix_player() is called somewhere */
 	/* in object.c */
 
 	/* If an object merged (and thus, different object), we need to
@@ -774,7 +774,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
 				new_draw_info(NDI_UNIQUE, 0, op, "The °NO-DROP° item vanishes to nowhere as you drop it!");
 			esrv_del_item(CONTR(op), tmp->count, tmp->env);
 		}
-		fix_player(op);
+		FIX_PLAYER(op,"drop_object - startequip");
 		return;
 	}
 
@@ -790,7 +790,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
 				new_draw_info_format(NDI_UNIQUE, 0, op, "The shop magic put it to the storage.");
 				esrv_del_item(CONTR(op), tmp->count, tmp->env);
 			}
-			fix_player(op);
+			FIX_PLAYER(op ,"drop_object - unpaid");
 			if (op->type == PLAYER)
 				esrv_send_item(op, op);
 
@@ -814,7 +814,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
 	/* Need to update the weight for the player */
 	if (op->type == PLAYER)
 	{
-		fix_player(op);
+		FIX_PLAYER(op ,"drop object - end");
 		esrv_send_item(op, op);
 	}
 }

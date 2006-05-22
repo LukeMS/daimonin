@@ -946,7 +946,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
         if(i==PLAYER_EQUIP_MAX) /* nothing there we can damage */
         {
             if(flag_fix)
-                fix_player(op);
+                FIX_PLAYER(op ,"material_attack_damage - leave");
             return;
         }
 
@@ -993,7 +993,7 @@ void material_attack_damage(object *op, int num, int chance, int base)
     }
 
     if(flag_fix)
-        fix_player(op);
+        FIX_PLAYER(op ,"material_attack_damage - end");
 }
 
 /* repair costs for item - owner is owner of that item */

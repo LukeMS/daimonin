@@ -825,7 +825,7 @@ int command_statistics(object *pl, char *params)
 
 int command_fix_me(object *op, char *params)
 {
-    fix_player(op);
+	FIX_PLAYER(op ,"command fix_me");
     return 1;
 }
 

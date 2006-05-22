@@ -902,7 +902,7 @@ int attack_hth(object *pl, int dir, char *string)
                 continue;
             CLEAR_FLAG(weapon, FLAG_APPLIED);
             CLEAR_FLAG(pl, FLAG_READY_WEAPON);
-            fix_player(pl);
+			FIX_PLAYER(pl ,"attack hth");
             if (pl->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, pl, "You unwield your weapon in order to attack.");

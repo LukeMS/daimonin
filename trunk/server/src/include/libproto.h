@@ -112,7 +112,11 @@ extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
 extern void             drain_level(object *op, int level, int mode, int ticks);
 extern void             change_luck(object *op, int value);
+#ifdef DEBUG_FIX_PLAYER
+extern void             fix_player(object *op, char *msg);
+#else
 extern void             fix_player(object *op);
+#endif
 extern void             set_dragon_name(object *pl, object *abil, object *skin);
 extern void             dragon_level_gain(object *who);
 extern void             fix_monster(object *op);

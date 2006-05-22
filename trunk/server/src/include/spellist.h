@@ -101,16 +101,15 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_DIRECTION,
     PATH_EARTH, "bullet",SPELL_ACTIVE
     },
-    /* NOT ACTIVE */
     {"summon golem",                SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
     4,      5,      4,      4, 9,   SOUND_MAGIC_SUMMON1,
     SPELL_USE_CAST | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD | SPELL_USE_BOOK,
     SPELL_DESC_DIRECTION,
-    PATH_CONJURATION, "golem",SPELL_DEACTIVE
+	PATH_CONJURATION, "golem",SPELL_DEACTIVE     /* NOT ACTIVE */
     },
-    {"remove depletion",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,/* aka potion of restoration/life */
+    {"remove depletion",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
     0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
-    SPELL_USE_CAST, /* npc/god only atm */
+    SPELL_USE_CAST,
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
@@ -126,8 +125,16 @@ spell spells[NROFREALSPELLS]          =
     SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
     PATH_LIFE, "meffect_purple",SPELL_ACTIVE
     },
-    /* next we need a debuff - curse for example */
+	{"restoration",            SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0, 1.0,
+	0,       0,     0,      0,0,    SOUND_MAGIC_STAT,
+	SPELL_USE_CAST | SPELL_USE_SCROLL | SPELL_USE_HORN | SPELL_USE_WAND | SPELL_USE_ROD, /* npc/god only atm */
+	SPELL_DESC_SELF | SPELL_DESC_TOWN | SPELL_DESC_WIS,
+	PATH_LIFE, "meffect_purple",SPELL_ACTIVE
+	},
+
+	/* next we need a debuff - curse for example */
 };
+
 /*
 {"probe",            1, 3, 40, 2, 1, 75,  6,  1, 0, 0, 0,
 0,0,0,0,0,0,1,0,0,1,
@@ -494,8 +501,6 @@ spell spells_DUMMY[]={
  PATH_ABJURE, "enchantment",},
 {"cure confusion",              7,8,     0, 15, 1, 4, 1,  1, 0, 1, 1,
 0,0,1,0,0,0,1,1,0,0,
- PATH_RESTORE, "healing",},
-{"restoration",                 13,80,   0, 30, 1, 1, 1,  1, 0, 1, 1,
 0,0,1,0,0,0,1,1,0,0,
  PATH_RESTORE, "healing",},
 {"summon evil monster",         8,8,     0, 30, 0, 0, 0,  0, 0, 0, 0,
