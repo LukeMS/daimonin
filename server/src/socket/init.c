@@ -198,8 +198,10 @@ int create_socket()
     fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 #endif
 
+    LOG(llevInfo, "create_socket(): standard.\n");
+
     if (fd == -1)
-        LOG(llevError, "ERROR: Error creating socket on port\n");
+        LOG(llevError, "ERROR: create_socket() Error creating socket on port\n");
     insock.sin_family = AF_INET;
     insock.sin_port = htons(settings.csport);
     insock.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -247,6 +249,7 @@ int create_socket()
     struct addrinfo hints, *res, *ai;
     char portstr[NI_MAXSERV];
 
+    LOG(llevInfo, "create_socket(): check protocol\n");
     memset(&hints, 0, sizeof(struct addrinfo));
 
     hints.ai_flags    = AI_PASSIVE;
@@ -255,27 +258,30 @@ int create_socket()
 
     sprintf(portstr, "%d", settings.csport);
     if (getaddrinfo(NULL, portstr, &hints, &res) != 0)
-	return -1;
+		return -1;
 
-    for (ai = res; ai != NULL; ai = ai->ai_next) {
-	fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-	if (fd <= 0)
-	    continue;
+    for (ai = res; ai != NULL; ai = ai->ai_next) 
+    {
+       LOG(llevInfo,"checking family:%d socktype:%d protocol:%d\n",ai->ai_family,ai->ai_socktype,ai->ai_protocol);  
+		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+		if (fd <= 0)
+	    	continue;
 
-	setsockopts(fd);
+		setsockopts(fd);
 
-	if (bind(fd, res->ai_addr, res->ai_addrlen) == 0)
-	    break;
+		if (bind(fd, ai->ai_addr, ai->ai_addrlen) == 0)
+	    	break;
 
-	close(fd);
-	fd = -1;
+		close(fd);
+		fd = -1;
     }
 
     freeaddrinfo(res);
 
-    if (listen(fd, QUEUE_LEN) < 0) {
-	close(fd);
-	return -1;
+    if (listen(fd, QUEUE_LEN) < 0) 
+    {
+		close(fd);
+		return -1;
     }
 
     return fd;
@@ -325,7 +331,7 @@ void init_ericserver()
 
     init_sockets[0].fd = create_socket();
     if (init_sockets[0].fd == -1)
-        LOG(llevError, "ERROR: Error creating socket on port\n");
+        LOG(llevError, "ERROR: init_ericserver(): Error creating socket on port\n");
     init_sockets[0].status = Ns_Wait;
 
     read_client_images();
