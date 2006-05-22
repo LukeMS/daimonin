@@ -175,6 +175,26 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
         </a>
     </xsl:template>
 
+    <xsl:template match="ol">
+        <ol>
+            <xsl:choose>
+                <xsl:when test="@type='decimal'">
+                    <xsl:attribute name="style">list-style-type:decimal</xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@type='roman'">
+                    <xsl:attribute name="style">list-style-type:lower-roman</xsl:attribute>
+                </xsl:when>
+                <xsl:when test="@type='alpha'">
+                    <xsl:attribute name="style">list-style-type:lower-alpha</xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="style">list-style-type:none</xsl:attribute>
+                </xsl:otherwise>
+             </xsl:choose>
+             <xsl:apply-templates/>
+        </ol>
+    </xsl:template>
+
     <xsl:template match="*">
         <xsl:element name="{local-name()}">
             <xsl:apply-templates select="@*"/>
