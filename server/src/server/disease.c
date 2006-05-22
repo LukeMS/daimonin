@@ -204,7 +204,7 @@ int remove_symptoms(object *disease)
         object *victim  = symptom->env;
         destruct_ob(symptom);
         if (victim)
-            fix_player(victim);
+			FIX_PLAYER(victim ,"remove symptoms ");
     }
     return 0;
 }
@@ -473,7 +473,7 @@ int do_symptoms(object *disease)
         symptom->other_arch = disease->other_arch;
     }
     SET_FLAG(symptom, FLAG_APPLIED);
-    fix_player(victim);
+	FIX_PLAYER(victim ,"do symptoms");
     return 1;
 }
 

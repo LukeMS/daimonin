@@ -656,6 +656,7 @@ int                         cast_create_missile(object *op, object *caster, int 
 int                         alchemy(object *op);
 int                         remove_depletion(object *op, object *target);
 int                         remove_deathsick(object *op, object *target);
+int                         restoration(object *op, object *target);
 int                         remove_curse(object *op, object *target, int type, SpellTypeFrom src);
 int                         cast_identify(object *op, int level, object *single_ob, int mode);
 int                         cast_detection(object *op, object *target, int type);
@@ -683,7 +684,6 @@ int                         cast_cause_disease(object *op, object *caster, int d
 void                        move_aura(object *aura);
 void                        move_peacemaker(object *op);
 int                         cast_cause_conflict(object *op, object *caster, archetype *spellarch, int type);
-void						restore_drained_level(object *op);
 /* spell_util.c */
 void                        init_spells(void);
 void                        dump_spells(void);

@@ -1638,7 +1638,7 @@ void kill_player(object *op)
                     change_attr_value(&(dep->stats), i, -1);
                     SET_FLAG(dep, FLAG_APPLIED);
                     new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
-                    fix_player(op);
+					FIX_PLAYER(op ,"kill player - change attr");
                     lost_a_stat = 1;
                 }
             }
@@ -1683,7 +1683,7 @@ void kill_player(object *op)
     cast_heal(op, 110, op, SP_CURE_POISON);
     /*cast_heal(op, op, SP_CURE_CONFUSION);*/
     cure_disease(op, NULL);  /* remove any disease */
-	restore_drained_level(op);
+	restoration(NULL, op);
 
     apply_death_exp_penalty(op);
     if (op->stats.food < 0)

@@ -427,7 +427,7 @@ int change_abil(object *op, object *tmp)
      * to multiple items.  if fix_player always has to be called after
      * change_ability then might as well call it from here
      */
-    fix_player(op);
+    FIX_PLAYER(op, "change_abil");
 
     if (tmp->attack[ATNR_CONFUSION])
     {
@@ -807,7 +807,7 @@ void drain_specific_stat(object *op, int deplete_stats)
     if(op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, drain_msg[deplete_stats]);
 
-    fix_player(op);
+    FIX_PLAYER(op, "drain_specific_stat");
 }
 
 /* Drain the "real" level of a player or mob.
@@ -851,7 +851,7 @@ void drain_level(object *op, int level, int mode, int ticks)
     }
 
     force->level += level;
-    fix_player(op); /* will redirect to fix_monster() automatically */
+    FIX_PLAYER(op, "drain_level"); /* will redirect to fix_monster() automatically */
     if(op->type == PLAYER)
         new_draw_info(NDI_UNIQUE, 0, op, "You lose a level!");
 }
@@ -918,7 +918,11 @@ void change_luck(object *op, int value)
  * the mobs out and call fix_monster. This function is still a heavy weight. There
  * is a lot of abuse and redundant call of this function, so it is worth to monitor it. MT
  */
+#ifdef DEBUG_FIX_PLAYER
+void fix_player(object *op, char *debug_msg)
+#else
 void fix_player(object *op)
+#endif
 {
     int                 snare_penalty = 0,slow_penalty = 0, ring_count = 0, skill_level_drain=0, skill_level_max = 1;
     int                 tmp_item, old_glow, max_boni_hp = 0, max_boni_sp = 0, max_boni_grace = 0;
@@ -934,7 +938,9 @@ void fix_player(object *op)
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
     {
         /* we are calling fix_player with this flag for example when manually applying an item */
-        /*LOG(llevDebug, "fix_player(): called for object %s with FLAG_NO_FIX_PLAYER set\n", query_name(op));*/
+#ifdef DEBUG_FIX_PLAYER_SKIPPED
+        LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> *SKIP*\n", query_name(op), op->count);
+#endif
         return;
     }
     /* ok, in crossfire, fix_player is called for objects not for players
@@ -942,18 +948,33 @@ void fix_player(object *op)
      */
     if (QUERY_FLAG(op, FLAG_MONSTER) && op->type != PLAYER)
     {
-        LOG(llevDebug, "fix_player(): called for object %s (non player)\n", query_name(op));
+#ifdef DEBUG_FIX_PLAYER
+		LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster (%s)\n", 
+			query_name(op),op->count, debug_msg);
+#else
+		LOG(llevDebug, "fix_player(%s [%x]): >> non player - redirect to fix_monster\n", 
+			query_name(op),op->count);
+#endif
         fix_monster(op);
         return;
     }
-	LOG(llevDebug, "FIX_player(): called for object %s!!\n", query_name(op));
 
     /* for secure */
     if (op->type != PLAYER)
     {
-        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s (type %d)\n", query_name(op), op->type);
+#ifdef DEBUG_FIX_PLAYER
+        LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d) (%s)\n", 
+				query_name(op), op->count, op->type, debug_msg);
+#else
+		LOG(llevDebug, "fix_player(): called from non Player/Mob object: %s [%x] (type %d)\n", 
+			query_name(op), op->count, op->type);
+#endif
         return;
     }
+
+#ifdef DEBUG_FIX_PLAYER
+	LOG(llevDebug, "FIX_PLAYER(%s [%x]): >> %s\n", query_name(op), op->count, debug_msg);
+#endif
 
     pl = CONTR(op);
     inv_flag = inv_see_flag = weapon_weight = best_wc = best_ac = wc = ac = 0;
@@ -2114,7 +2135,11 @@ void fix_monster(object *op)
     if (op->head) /* don't adjust tails or player - only single objects or heads */
         return;
 
-    base = insert_base_info_object(op); /* will insert or/and return base info */
+#ifdef DEBUG_FIX_MONSTER
+	LOG(llevDebug, "FIX_MONSTER(%s [%x]): called\n", query_name(op), op->count);
+#endif
+
+	base = insert_base_info_object(op); /* will insert or/and return base info */
     op->level = base->level;
 
     if (!QUERY_FLAG(&op->arch->clone, FLAG_BLIND))

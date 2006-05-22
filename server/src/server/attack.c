@@ -1776,7 +1776,7 @@ void poison_player(object *op, object *hitter, float dam)
                     new_draw_info_format(NDI_UNIQUE, 0, op, "%s has poisoned you!", query_name(hitter));
                     insert_ob_in_ob(tmp, op);
                     SET_FLAG(tmp, FLAG_APPLIED);
-                    fix_player(op);
+					FIX_PLAYER(op ,"attack - poison");
                 }
             }
             else /* its a mob! */
@@ -1848,7 +1848,7 @@ void slow_player(object *op, object *hitter, int dam)
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
             new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly moves slower!", STRING_SAFE(op->name));
         SET_FLAG(tmp, FLAG_APPLIED);
-        fix_player(op); /* will set FLAG_SLOWED */
+		FIX_PLAYER(op ," attack - slow"); /* will set FLAG_SLOWED */
     }
 
 }
@@ -1888,7 +1888,7 @@ void fear_player(object *op, object *hitter, int dam)
         if (!QUERY_FLAG(op, FLAG_CONFUSED) && op->map)
             new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly looks scared!", STRING_SAFE(op->name));
         SET_FLAG(tmp, FLAG_APPLIED);
-        fix_player(op); /* will set FLAG_FEAR */
+		FIX_PLAYER(op ,"attack fear"); /* will set FLAG_FEAR */
     }
 
 }
@@ -1949,7 +1949,7 @@ void snare_player(object *op, object *hitter, int dam)
                 new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s suddenly stops walking!", STRING_SAFE(op->name));
         }
         SET_FLAG(tmp, FLAG_APPLIED);
-        fix_player(op); /* will set FLAG_SNEAR */
+		FIX_PLAYER(op ,"attack snear "); /* will set FLAG_SNEAR */
     }
 
 }
@@ -2021,7 +2021,7 @@ void remove_confusion(object *op)
     if (op->map)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s regains his senses!", STRING_SAFE(op->name));
 
-    fix_player(op);
+	FIX_PLAYER(op ,"attack - remove confusion");
 }
 
 void blind_player(object *op, object *hitter, int dam)
@@ -2091,7 +2091,7 @@ void remove_blindness(object *op)
     if (op->map)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can see again!", STRING_SAFE(op->name));
 
-    fix_player(op);
+	FIX_PLAYER(op ,"attack - remove blind");
 }
 
 
@@ -2128,7 +2128,7 @@ void paralyze_player(object *op, object *hitter, int dam)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s looks paralyzed!", STRING_SAFE(op->name));
 
     SET_FLAG(tmp, FLAG_APPLIED);
-    fix_player(op); /* will set FLAG_PARALYZE */
+	FIX_PLAYER(op ,"attach paralyze"); /* will set FLAG_PARALYZE */
 }
 
 /* remove paralyze effect and force (if there is one)
@@ -2162,7 +2162,7 @@ void remove_paralyze(object *op)
     if (op->map)
         new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, op, "%s can move again!", STRING_SAFE(op->name));
 
-    fix_player(op);
+	FIX_PLAYER(op ,"attack - remove paralyze");
 }
 
 /* thrown_item_effect() - handles any special effects of thrown

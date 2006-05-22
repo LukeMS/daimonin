@@ -1047,7 +1047,7 @@ void check_login(object *op)
     if (!legal_range(op, pl->shoottype))
         pl->shoottype = range_none;
 
-    fix_player(op);
+	FIX_PLAYER(op ,"check login - first fix");
 
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL)

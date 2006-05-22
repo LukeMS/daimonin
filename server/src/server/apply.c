@@ -241,7 +241,7 @@ int apply_potion(object *op, object *tmp)
                     drain_stat(op);
                     drain_stat(op);
                 }
-                fix_player(op);
+				FIX_PLAYER(op ,"apply_potion - minor restoration - damned");
                 decrease_ob(tmp);
                 insert_spell_effect("meffect_purple", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
@@ -261,7 +261,7 @@ int apply_potion(object *op, object *tmp)
                         new_draw_info(NDI_UNIQUE, 0, op, restore_msg[i]);
                 }
                 remove_ob(depl); /* in inventory of ... */
-                fix_player(op);
+				FIX_PLAYER(op ,"apply_potion - minor restoration");
             }
             else
                 new_draw_info(NDI_UNIQUE, 0, op, "You feel a great loss...");
@@ -385,14 +385,14 @@ int apply_potion(object *op, object *tmp)
             }
             else if (success_flag == 1)
             {
-                fix_player(op);
+				FIX_PLAYER(op ,"apply_potion - improvement");
                 insert_spell_effect("meffect_yellow", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
                 new_draw_info(NDI_UNIQUE, 0, op, "You feel a little more perfect!");
             }
             else if (success_flag == 2)
             {
-                fix_player(op);
+				FIX_PLAYER(op ,"apply_potion - improvement - cursed");
                 insert_spell_effect("meffect_purple", op->map, op->x, op->y);
                 play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON, SOUND_NORMAL);
                 new_draw_info(NDI_UNIQUE, 0, op, "The foul potion burns like fire in you!");
@@ -426,7 +426,7 @@ int apply_potion(object *op, object *tmp)
         decrease_ob(tmp);
         /* if youre dead, no point in doing this... */
         if (!QUERY_FLAG(op, FLAG_REMOVED))
-            fix_player(op);
+			FIX_PLAYER(op ,"apply_potion - cast something");
         return 1;
     }
 
@@ -436,7 +436,7 @@ int apply_potion(object *op, object *tmp)
      * up all the stats.
      */
     CLEAR_FLAG(tmp, FLAG_APPLIED);
-    fix_player(op);
+	FIX_PLAYER(op ,"apply_potion - end");
     decrease_ob(tmp);
     return 1;
 }
@@ -556,7 +556,7 @@ int improve_weapon_stat(object *op, object *improver, object *weapon, signed cha
     decrease_ob(improver);
 
     /* So it updates the players stats and the window */
-    fix_player(op);
+	FIX_PLAYER(op ,"improve weapon stat");
     return 1;
 }
 
@@ -808,7 +808,7 @@ int improve_armour(object *op, object *improver, object *armour)
     {
         esrv_send_item(op, armour);
         if (QUERY_FLAG(armour, FLAG_APPLIED))
-            fix_player(op);
+			FIX_PLAYER(op ,"improve armour");
     }
     decrease_ob(improver);
     return 1;
@@ -1585,7 +1585,7 @@ static void apply_skillscroll(object *op, object *tmp)
           new_draw_info_format(NDI_UNIQUE, 0, op, "You succeed in learning %s", skills[tmp->stats.sp].name);
           new_draw_info_format(NDI_UNIQUE, 0, op, "Type 'bind ready_skill %s", skills[tmp->stats.sp].name);
           new_draw_info(NDI_UNIQUE, 0, op, "to store the skill in a key.");
-          fix_player(op); /* to immediately link new skill to exp object */
+		  FIX_PLAYER(op ,"apply skill scroll");
           decrease_ob(tmp);
           return;
 
@@ -2148,7 +2148,7 @@ void create_food_force(object *who, object *food, object *force)
     if(who->type == PLAYER)
         change_abil(who, force); /* Mostly to display any messages */
     else
-        fix_player(who);        /* This takes care of some stuff that change_abil() */
+		FIX_PLAYER(who ,"create food force (bug? can't be fix_player. fix_monster?"); /* huch? should be fix_monster, right? */
 }
 
 /* OUTDATED: eat_special_food() - some food may (temporarily) alter
@@ -2379,7 +2379,7 @@ int dragon_eat_flesh(object *op, object *meal)
     {
         /* resistance increased! */
         skin->resist[i]++;
-        fix_player(op);
+		FIX_PLAYER(op ,"dragon eat flesh - resist");
 
         sprintf(buf, "Your skin is now more resistant to %s!", attack_name[i]);
         new_draw_info(NDI_UNIQUE | NDI_RED, 0, op, buf);
@@ -2899,7 +2899,7 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
     tmp = manual_apply(pl, op, aflag);
     CLEAR_FLAG(pl, FLAG_NO_FIX_PLAYER);
     if(tmp == 1)
-        fix_player(pl);
+		FIX_PLAYER(pl ,"player apply ");
 
     if (!quiet)
     {
@@ -3112,7 +3112,7 @@ int apply_special(object *who, object *op, int aflags)
             if (who->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, who, buf);
-                fix_player(who);
+				FIX_PLAYER(who ,"apply special ");
             }
             else
                 fix_monster(who);
@@ -3366,7 +3366,7 @@ int apply_special(object *who, object *op, int aflags)
         new_draw_info(NDI_UNIQUE, 0, who, buf);
     if (tmp != NULL)
         tmp = insert_ob_in_ob(tmp, who);
-    fix_player(who);
+	FIX_PLAYER(who ,"apply special - you apply ");
     if (op->type != WAND && who->type == PLAYER)
         SET_FLAG(op, FLAG_BEEN_APPLIED);
 
@@ -3478,7 +3478,7 @@ void apply_player_light_refill(object *who, object *op)
         esrv_send_item(who, filler);
     }
     esrv_send_item(who, item);
-    fix_player(who);
+	FIX_PLAYER(who ,"apply light refill");
 }
 
 void turn_on_light(object *op)
@@ -3629,7 +3629,7 @@ void apply_player_light(object *who, object *op)
         turn_off_light(op);
 
         update_object(who, UP_OBJ_FACE);
-        fix_player(who);
+		FIX_PLAYER(who ,"apply light - unlight");
     }
     else
     {
@@ -3676,7 +3676,7 @@ void apply_player_light(object *who, object *op)
 
             new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare %s to light.", query_name(op));
             turn_on_light(op);
-            fix_player(who);
+			FIX_PLAYER(who ,"apply light - turn on light");
         }
         else
         {
@@ -3712,7 +3712,7 @@ void apply_player_light(object *who, object *op)
 
                 new_draw_info_format(NDI_UNIQUE, 0, who, "You apply %s as light.", query_name(op));
                 SET_FLAG(op, FLAG_APPLIED);
-                fix_player(who);
+				FIX_PLAYER(who ," apply light - apply light");
                 update_object(who, UP_OBJ_FACE);
             }
             else /* not part of player inv - turn light off ! */
@@ -3802,7 +3802,7 @@ void apply_lighter(object *who, object *lighter)
         {
             new_draw_info_format(NDI_UNIQUE, 0, who, "You light the %s with the %s.", item_name, lighter->name);
             if (is_player_env)
-                fix_player(who);
+				FIX_PLAYER(who ,"apply lighter ");
         }
         else
         {

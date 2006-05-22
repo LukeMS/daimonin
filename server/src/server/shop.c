@@ -271,7 +271,7 @@ int pay_for_amount(sint64 to_pay, object *pl)
 
     pay_from_container(NULL, pl, to_pay);
 
-    fix_player(pl);
+	FIX_PLAYER(pl ,"pay for amount");
     return 1;
 }
 
@@ -290,7 +290,7 @@ int pay_for_item(object *op, object *pl)
 
     pay_from_container(op, pl, to_pay);
 
-    fix_player(pl);
+	FIX_PLAYER(pl ,"pay for item");
     return 1;
 }
 

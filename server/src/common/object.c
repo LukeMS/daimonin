@@ -1467,7 +1467,7 @@ void remove_ob(object *op)
          * the flag is set from outside... perhaps from a drop_all() function.
          */
         if ((otmp = is_player_inv(op->env)) != NULL && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-            fix_player(otmp);
+			FIX_PLAYER(otmp,"remove_ob: env remove");
 
         if (op->above != NULL)
             op->above->below = op->below;
@@ -2292,7 +2292,7 @@ object * insert_ob_in_ob(object *op, object *where)
     if (otmp && CONTR(otmp) != NULL)
     {
         if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-            fix_player(otmp);
+            FIX_PLAYER(otmp , "insert_ob_in_ob - player inv");
     }
 
     /* Make sure the object is on an activelist if needed */

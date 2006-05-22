@@ -469,7 +469,11 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
           break;
         case SP_REMOVE_DEATHSICK:
             success = remove_deathsick(op, target);
-            break;
+        break;
+
+		case SP_RESTORATION:
+			success = restoration(op, target);
+			break;
 
         case SP_REMOVE_CURSE:
         case SP_REMOVE_DAMNATION:

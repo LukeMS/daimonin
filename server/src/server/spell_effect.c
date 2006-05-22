@@ -1692,7 +1692,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         if(tmp->type == PLAYER)
             change_abil(tmp, force); /* Mostly to display any messages */
         else
-            fix_player(tmp);        /* This takes care of some stuff that change_abil() */
+			FIX_PLAYER(tmp ,"cast change attr - bug? bogus call - fix monster?"); /* fix monster? */
     }
 
     return 1;
@@ -2279,7 +2279,7 @@ int remove_depletion(object *op, object *target)
             }
         }
         remove_ob(depl);
-        fix_player(target);
+		FIX_PLAYER(target ,"remove depletion");
     }
 
     if (op != target && op->type == PLAYER)
@@ -2295,6 +2295,66 @@ int remove_depletion(object *op, object *target)
 
     insert_spell_effect(spells[SP_REMOVE_DEPLETION].archname, target->map, target->x, target->y);
     return success;
+}
+
+int restoration(object *caster, object *target)
+{
+	int success = 0;
+	object *force;
+	static archetype  *at = NULL;
+
+	if (!at)
+	{
+		at = find_archetype("drain");
+		if (!at)
+		{
+			LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
+			return 0;
+		}
+	}
+
+	/* try to find and remove the draining forces */
+	SET_FLAG(target, FLAG_NO_FIX_PLAYER);
+	force = present_arch_in_ob(at, target);
+	if(force)
+	{
+		success = 1;
+		remove_ob(force);
+	}
+	force = present_arch_in_ob_temp(at, target);
+	if(force)
+	{
+		success = 1;
+		remove_ob(force);
+	}
+	CLEAR_FLAG(target, FLAG_NO_FIX_PLAYER);
+
+	if(caster)
+	{
+		if (caster->type == PLAYER)
+		{
+			if(caster == target)
+				new_draw_info(NDI_UNIQUE, 0, caster, "You cast restoration on yourself.");
+			else
+				new_draw_info_format(NDI_UNIQUE, 0, caster, "You cast restoration on %s.", query_base_name(target, caster));
+		}
+		if (caster != target && target->type == PLAYER)
+		{
+			new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast restoration on you.", query_base_name(caster, target));
+		}
+	}
+
+	if(success)
+	{
+
+		FIX_PLAYER(target ,"restoration");
+		if(target->type == PLAYER)
+			new_draw_info(NDI_UNIQUE, 0, target, "Your level is restored!");
+		if (caster && caster != target && target->type == PLAYER)
+			new_draw_info_format(NDI_UNIQUE, 0, caster, "You restored %s.", query_base_name(caster, target));
+	}
+
+	return success;
 }
 
 int remove_deathsick(object *op, object *target)
@@ -2342,7 +2402,7 @@ int remove_deathsick(object *op, object *target)
             }
         }
         remove_ob(depl);
-        fix_player(target);
+		FIX_PLAYER(target, "remove deathsick");
     }
 
     if (op != target && op->type == PLAYER)
@@ -4439,33 +4499,3 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
 #endif    
 }
 
-void restore_drained_level(object *op)
-{
-	object *force;
-	static archetype  *at = NULL;
-
-	if (!at)
-	{
-		at = find_archetype("drain");
-		if (!at)
-		{
-			LOG(llevBug, "BUG: Couldn't find archetype drain.\n");
-			return;
-		}
-	}
-
-	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
-
-	force = present_arch_in_ob(at, op);
-	if(force)
-		remove_ob(force);
-
-	force = present_arch_in_ob_temp(at, op);
-	if(force)
-		remove_ob(force);
-
-	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-	fix_player(op); /* will redirect to fix_monster() automatically */
-	if(op->type == PLAYER)
-		new_draw_info(NDI_UNIQUE, 0, op, "Your level is restored!");
-}
