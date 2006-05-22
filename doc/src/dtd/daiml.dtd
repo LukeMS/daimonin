@@ -31,6 +31,10 @@
     "screen|print|all"
 >
 
+<!ENTITY % ListStyleType
+    "decimal|roman|alpha"
+>
+
 
 <!-- Number. See Context for range or decimal fractions. -->
 <!ENTITY % number "CDATA">
@@ -154,6 +158,9 @@
 
 <!ELEMENT ol
     (li+)
+>
+<!ATTLIST ol
+    type (%ListStyleType;) 'decimal'
 >
 
 <!ELEMENT li

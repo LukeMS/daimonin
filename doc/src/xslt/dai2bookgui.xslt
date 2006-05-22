@@ -19,8 +19,8 @@
     />
 
     <xsl:template match="/daiml">
-        <xsl:text>&lt;bt="</xsl:text>
-        <xsl:value-of select="@title"/>
+        <xsl:text>&lt;b t="</xsl:text>
+        <xsl:value-of select="normalize-space(@title)"/>
         <xsl:text>"&gt;&#xa;</xsl:text>
         <xsl:apply-templates/>
     </xsl:template>
@@ -30,8 +30,8 @@
     </xsl:template>
 
     <xsl:template match="/daiml/section/title">
-        <xsl:text>&lt;pt="</xsl:text>
-        <xsl:value-of select="."/>
+        <xsl:text>&lt;p t="</xsl:text>
+        <xsl:value-of select="normalize-space(.)"/>
         <xsl:text>"&gt;&#xa;</xsl:text>
     </xsl:template>
 
@@ -40,8 +40,8 @@
     </xsl:template>
 
     <xsl:template match="section/section/title">
-        <xsl:text>&lt;tt="</xsl:text>
-        <xsl:value-of select="."/>
+        <xsl:text>&lt;t t="</xsl:text>
+        <xsl:value-of select="normalize-space(.)"/>
         <xsl:text>"&gt;&#xa;</xsl:text>
         <xsl:apply-templates/>
     </xsl:template>
