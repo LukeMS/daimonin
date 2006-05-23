@@ -2,23 +2,12 @@
 <!--
   - Transformation for converting DaiML to strict HTML 4.01.
   -->
-<xsl:transform
-    version="2.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    exclude-result-prefixes="xsl"
->
+<xsl:transform version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" exclude-result-prefixes="xsl">
 
-    <xsl:strip-space elements="*" />
-    <xsl:preserve-space elements="blockcode" />
+    <xsl:strip-space elements="*"/>
+    <xsl:preserve-space elements="blockcode"/>
 
-    <xsl:output
-        method="html"
-        doctype-public="-//W3C//DTD HTML 4.01//EN"
-        doctype-system="http://www.w3.org/TR/html4/strict.dtd"
-        encoding="iso-8859-1"
-        omit-xml-declaration="yes"
-        indent="no"
-    />
+    <xsl:output method="html" doctype-public="-//W3C//DTD HTML 4.01//EN" doctype-system="http://www.w3.org/TR/html4/strict.dtd" encoding="iso-8859-1" omit-xml-declaration="yes" indent="no"/>
 
     <xsl:template match="/daiml">
         <html>

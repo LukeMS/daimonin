@@ -10,10 +10,14 @@
     <xsl:output method="text" encoding="utf-8" indent="no"/>
 
     <xsl:template match="/daiml">
-        <xsl:text>[size=20][b]</xsl:text> <xsl:value-of select="@title"/> <xsl:text>[/b][/size]</xsl:text>
+        <xsl:text>[size=20][b]</xsl:text>
+            <xsl:value-of select="@title"/>
+        <xsl:text>[/b][/size]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>&#xA;&#xA;&#xA;[size=10][color=gray][i]This document was automatically generated from DaiML source.&#xA;</xsl:text>
-        <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/> <xsl:text>[/i][/color][/size]</xsl:text>
+        <xsl:text>&#xA;&#xA;&#xA;[size=10][color=gray][i]</xsl:text>
+            <xsl:text>This document was automatically generated from DaiML source.&#xA;</xsl:text>
+            <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/>
+        <xsl:text>[/i][/color][/size]</xsl:text>
     </xsl:template>
 
     <xsl:template match="section">
@@ -23,25 +27,25 @@
 
     <xsl:template match="/daiml/section/title">
         <xsl:text>&#xA;&#xA;[size=18][b]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/b][/size]</xsl:text>
     </xsl:template>
 
     <xsl:template match="/daiml/section/section/title">
         <xsl:text>&#xA;&#xA;[size=16][b]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/b][/size]</xsl:text>
     </xsl:template>
 
     <xsl:template match="/daiml/section/section/section/title">
         <xsl:text>&#xA;&#xA;[size=14][b]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/b][/size]</xsl:text>
     </xsl:template>
 
     <xsl:template match="section/section/section/section/title">
         <xsl:text>&#xA;&#xA;[size=12][b]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/b][/size]</xsl:text>
     </xsl:template>
 
@@ -61,6 +65,11 @@
                     <xsl:apply-templates/>
                 <xsl:text>[/url]</xsl:text>
             </xsl:when>
+            <xsl:when test="matches(@href, '^#')">
+                <xsl:text>[color=blue]</xsl:text>
+                    <xsl:apply-templates/>
+                <xsl:text>[/color]</xsl:text>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates/>
             </xsl:otherwise>
@@ -69,19 +78,19 @@
 
     <xsl:template match="em">
         <xsl:text>[i]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/i]</xsl:text>
     </xsl:template>
 
     <xsl:template match="strong">
         <xsl:text>[b]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/b]</xsl:text>
     </xsl:template>
 
     <xsl:template match="code">
         <xsl:text>[b]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/b]</xsl:text>
     </xsl:template>
 
@@ -100,7 +109,7 @@
                 <xsl:text>&#xA;&#xA;[list]</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>&#xA;[/list]</xsl:text>
     </xsl:template>
 
@@ -111,7 +120,7 @@
 
     <xsl:template match="dt">
         <xsl:text>&#xA;&#xA;[*][b][i]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/i][/b]</xsl:text>
     </xsl:template>
 
@@ -122,7 +131,7 @@
 
     <xsl:template match="blockcode">
         <xsl:text>&#xA;&#xA;[code]</xsl:text>
-        <xsl:apply-templates/>
+            <xsl:apply-templates/>
         <xsl:text>[/code]</xsl:text>
     </xsl:template>
 
