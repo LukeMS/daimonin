@@ -94,7 +94,7 @@ typedef struct NewSocket_struct
 	command_struct	   *cmd_start;          /* pointer to the list of incoming commands in process */
 	command_struct	   *cmd_end;
     struct Map          lastmap;			/* Thats the VISIBLE map area of the player, used to send to client */
-    uint32              login_count;        /* if someone is too long idle in the login, we kick him here! */
+    uint32              login_count;        /* if someone is to long idle in the login, we kick him here! */
     int                 mapx, mapy;         /* How large a map the client wants */
     int                 mapx_2, mapy_2;     /* same like above but /2 */
     uint32              cs_version;         /*client/server versions */
@@ -115,7 +115,6 @@ typedef struct NewSocket_struct
     uint32              ext_title_flag  : 1;        /* send ext title to client */
     uint32              darkness        : 1;        /* True if client wants darkness information */
     uint32              image2          : 1;        /* Client wants image2/face2 commands */
-    uint32              can_write       : 1;        /* Can we write to this socket? */
     uint32              version         : 1;
     uint32              write_overflow  : 1;
     uint32              setup           : 1;

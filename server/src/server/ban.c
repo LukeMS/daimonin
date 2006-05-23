@@ -322,7 +322,6 @@ int check_banned(NewSocket *ns, const char *name, char *ip)
 				}
 
 				LOG(-1,"***BANNED IP Login: %s\n", ns->ip_host);
-				ns->status = Ns_Zombie; /* we hold the socket open for a *bit* */
 				Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, ban_buf_ip, strlen(ban_buf_ip)); 	
 		        Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf, 1);
 				ns->login_count = ROUND_TAG+(uint32)(5.0f * pticks_second);

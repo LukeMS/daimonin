@@ -1269,7 +1269,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     }
 }
 
-/* Makes sure the mob doesn't stand still too long */
+/* Makes sure the mob doesn't stand still to long */
 void ai_dont_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     if(MOB_DATA(op)->idle_time >= AIPARAM_INT(AIPARAM_DONT_STAND_STILL_MAX_IDLE_TIME))

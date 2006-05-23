@@ -49,7 +49,7 @@
 #include <newserver.h>
 
 char            _idle_warn_text[]    = "X4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";
-char            _idle_warn_text2[]    = "X3 You was to long idle! Server closed connection.";
+char            _idle_warn_text2[]    = "X3 Max idle time reached! Server is closing connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
 
 NewSocket *socket_get_available();
@@ -122,6 +122,133 @@ NsCmdMapping        nscommands[]    =
     {"fr",              command_face_request},
     { NULL, NULL}   /* terminator */
 };
+
+/* low level read from socket. This function don't knows about packages.
+* It handles streams.
+*/
+static inline int read_socket_buffer(NewSocket *ns)
+{
+	SockList   *sl  = &ns->readbuf;
+	int         stat_ret, read_bytes, tmp;
+
+	if(ns->status == Ns_Zombie) /* zombie clients don't read anything */
+		return 0;
+
+	/* calculate how many bytes can be read in one row in our round robin buffer */
+	tmp = sl->pos+sl->len;
+
+	/* we have still some bytes until we hit our buffer border ?*/
+	if(tmp >= MAXSOCKBUF_IN)
+	{
+		tmp = tmp-MAXSOCKBUF_IN; /* thats our start offset */
+		read_bytes = sl->pos - tmp; /* thats our free buffer until ->pos*/
+	}
+	else
+	{
+		/* tmp is our offset and there is still a bit to read in */
+		read_bytes = MAXSOCKBUF_IN-tmp;
+	}
+
+#ifdef WIN32
+	stat_ret = recv(ns->fd, sl->buf + tmp, read_bytes, 0);
+#else
+	do
+	{
+		stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
+	}
+	while (stat_ret < 0 && errno == EINTR);
+#endif
+
+	/*LOG(-1,"STAT: %d (%d)\n", stat_ret, sl->len);*/
+
+	if (stat_ret > 0)
+	{
+		sl->len += stat_ret;
+
+#ifdef CS_LOGSTATS
+		cst_tot.ibytes += stat_ret;
+		cst_lst.ibytes += stat_ret;
+#endif
+	}
+	else if (stat_ret < 0) /* lets check its a real problem */
+	{
+#ifdef WIN32
+		if (WSAGetLastError() != WSAEWOULDBLOCK)
+		{
+			if (WSAGetLastError() == WSAECONNRESET)
+				LOG(llevDebug, "Connection closed by client\n");
+			else
+				LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
+			return stat_ret;
+		}
+#else
+		if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
+		{
+			LOG(llevDebug, "ReadPacket got error %d, returning 0\n", errno);
+			return stat_ret;
+		}
+#endif
+		return 1;
+	}
+
+	return stat_ret;
+}
+
+/* When the socket is clear to write, and we have backlogged data, this
+* is called to write it out.
+*/
+static inline void write_socket_buffer(NewSocket *ns)
+{
+	int amt, max;
+
+	if (ns->outputbuffer.len == 0)
+		return;
+
+	do
+	{
+		max = MAXSOCKBUF - ns->outputbuffer.start;
+		if (ns->outputbuffer.len < max)
+			max = ns->outputbuffer.len;
+
+#ifdef WIN32
+		amt = send(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max, 0);
+#else
+		do
+		{
+			amt = write(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max);
+		}
+		while ((amt < 0) && (errno == EINTR));
+#endif
+
+		if (amt < 0) /* error */
+		{
+#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				LOG(llevDebug, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
+#else
+			if (errno != EWOULDBLOCK)
+			{
+				LOG(llevDebug, "New socket write failed (wsb) (%d: %s).\n", errno, strerror_local(errno));
+#endif
+				ns->status = Ns_Dead;
+				return;
+			}
+			return;
+		}
+		ns->outputbuffer.start += amt;    
+		/* wrap back to start of buffer */    
+		if (ns->outputbuffer.start == MAXSOCKBUF)
+			ns->outputbuffer.start = 0;
+		ns->outputbuffer.len -= amt;
+#ifdef CS_LOGSTATS
+		cst_tot.obytes += amt;
+		cst_lst.obytes += amt;
+#endif
+	}
+	while (ns->outputbuffer.len > 0);
+}
+
 
 /* This don't belongs here - the whole command & server/client interface
  * will be worked out for the 3d client and the new commands later.
@@ -685,9 +812,9 @@ static int check_ip_ban(NewSocket *sock, char *ip)
  */
 void doeric_server(int update, struct timeval *timeout)
 {
-    int                 	i, pollret, rr,
-                    		update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
-    uint32              	update_below;
+    int		i, pollret, update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
+    uint32	update_below;
+
 #if WIN32 || !HAVE_GETADDRINFO
     struct sockaddr_in		addr;
 #else
@@ -751,24 +878,35 @@ void doeric_server(int update, struct timeval *timeout)
         }
         else
         {
-            if (!pl->socket.idle_flag && pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
-            {
-				pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
-                pl->socket.idle_flag = 1;
-                Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
-            }
-            else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
-            {
-                player *npl = pl->next;
-                Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
-                pl->socket.can_write = 1;
-                write_socket_buffer(&pl->socket);
-                pl->socket.can_write = 0;
-                pl->socket.status = Ns_Dead;
-                remove_ns_dead_player(pl);
-                pl = npl;
-                continue;
-            }
+			if(pl->socket.status != Ns_Zombie)
+			{
+				if (!pl->socket.idle_flag && pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+				{
+					pl->socket.login_count = ROUND_TAG + pticks_player_idle2;
+				    pl->socket.idle_flag = 1;
+				    Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
+				}
+				else if (pl->socket.login_count < ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+				{
+					Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
+					pl->socket.login_count = ROUND_TAG+(uint32)(2.0f * pticks_second);
+					pl->socket.status = Ns_Zombie; /* we hold the socket open for a *bit* */
+					pl->socket.idle_flag = 1;
+					pl = pl->next;
+	                continue;
+	            }
+			}
+			else
+			{
+				if (pl->socket.login_count < ROUND_TAG) /* time to kill! */
+				{
+					player *npl = pl->next;
+					pl->socket.status = Ns_Dead;
+					remove_ns_dead_player(pl);  /* or player has left game */
+					pl = npl;
+					continue;
+				}
+			}
 
             FD_SET((uint32) pl->socket.fd, &tmp_read);
             FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
@@ -818,10 +956,10 @@ void doeric_server(int update, struct timeval *timeout)
             InitConnection(newsock, tmp_ip);
             check_ip_ban(newsock, tmp_ip);
             if(newsock->status != Ns_Zombie) /* set from ban check */
-	    {
-		newsock->status = Ns_Add;
-		Send_With_Handling(newsock, &global_version_sl);
-	    }
+			{
+				newsock->status = Ns_Add;
+				Send_With_Handling(newsock, &global_version_sl);
+			}
         }
         else
             LOG(llevDebug, "Error on accept!\n");
@@ -846,10 +984,9 @@ void doeric_server(int update, struct timeval *timeout)
 
             if (FD_ISSET(init_sockets[i].fd, &tmp_read))
             {
-				rr = SockList_ReadPacket(&init_sockets[i]);
-				if (rr < 0)
+				if (read_socket_buffer(&init_sockets[i]) < 0)
 				{
-					LOG(llevDebug, "Drop1 Connection: host %s\n", init_sockets[i].ip_host);
+					LOG(llevDebug, "Drop ConnectionA: host %s\n", init_sockets[i].ip_host);
 					init_sockets[i].status = Ns_Dead;
 				}
 				else
@@ -865,11 +1002,7 @@ void doeric_server(int update, struct timeval *timeout)
             }
 
             if (FD_ISSET(init_sockets[i].fd, &tmp_write))
-            {
-                init_sockets[i].can_write = 1;
                 write_socket_buffer(&init_sockets[i]);
-                init_sockets[i].can_write = 0;
-            }
 
             if (init_sockets[i].status == Ns_Dead)
             {
@@ -897,10 +1030,9 @@ void doeric_server(int update, struct timeval *timeout)
                      */
             if (FD_ISSET(pl->socket.fd, &tmp_read))
             {
-                rr = SockList_ReadPacket(&pl->socket);
-                if (rr < 0)
+                if (read_socket_buffer(&pl->socket) < 0)
                 {
-                    LOG(llevDebug, "Drop2 Connection: %s (%s)\n", query_name(pl->ob), pl->socket.ip_host);
+                    LOG(llevDebug, "Drop ConnectionB: %s (%s)\n", query_name(pl->ob), pl->socket.ip_host);
                     pl->socket.status = Ns_Dead;
                 }
                 else
@@ -938,11 +1070,7 @@ void doeric_server(int update, struct timeval *timeout)
                     }
 
                     if (FD_ISSET(pl->socket.fd, &tmp_write))
-                    {
-                        pl->socket.can_write = 1;
                         write_socket_buffer(&pl->socket);
-                        pl->socket.can_write = 0;
-                    }
                 }
             }
         }
@@ -996,11 +1124,7 @@ void doeric_server_write(void)
 
         /* and *now* write back to player */
         if (FD_ISSET(pl->socket.fd, &writeset))
-        {
-            pl->socket.can_write = 1;
             write_socket_buffer(&pl->socket);
-            pl->socket.can_write = 0;
-        }
     } /* for() end */
 }
 
