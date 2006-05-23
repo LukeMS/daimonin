@@ -98,7 +98,7 @@ void load_ban_file(void)
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%s %s %d %d", name, &ip, &ticks, &ticks_left) < 2)
+        if (sscanf(line_buf, "%s %s %d %d", name, ip, &ticks, &ticks_left) < 2)
             LOG(llevBug, "BUG: malformed banfile file entry: %s\n", line_buf);
         else
 	    add_ban_entry(!strcmp(name, "_") ? NULL : name, ip, ticks, ticks_left); /* "_" is a placeholder for IP only */
