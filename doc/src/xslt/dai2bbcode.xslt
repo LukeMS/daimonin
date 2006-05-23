@@ -12,7 +12,8 @@
     <xsl:template match="/daiml">
         <xsl:text>[size=20][b]</xsl:text> <xsl:value-of select="@title"/> <xsl:text>[/b][/size]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>&#xA;&#xA;&#xA;[size=10][color=gray][i]Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/> <xsl:text>[/i][/color][/size]</xsl:text>
+        <xsl:text>&#xA;&#xA;&#xA;[size=10][color=gray][i]This document was automatically generated from DaiML source.&#xA;</xsl:text>
+        <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/> <xsl:text>[/i][/color][/size]</xsl:text>
     </xsl:template>
 
     <xsl:template match="section">
