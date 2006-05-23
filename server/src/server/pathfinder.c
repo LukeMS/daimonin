@@ -95,7 +95,7 @@ int pathfinder_queue_enqueue(object *op)
 }
 
 /* Get the first waypoint from the queue (or NULL if empty) */
-object * pathfinder_queue_dequeue(int *count)
+object * pathfinder_queue_dequeue(tag_t *count)
 {
     object *op;
 

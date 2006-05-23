@@ -1543,9 +1543,9 @@ static void apply_book(object *op, object *tmp)
 
     SockList_AddInt(&global_sl, tmp->weight_limit);
 	sprintf(buf,"<b t=\"%s%s%s\">", tmp->name?tmp->name:"Book",tmp->title?" ":"",tmp->title?tmp->title:"");
-    strcpy(global_sl.buf+global_sl.len, buf);
+    strcpy((char *)global_sl.buf+global_sl.len, buf);
     global_sl.len += strlen(buf);/* yes, no +1 - we want a strcat effect */
-    strcpy(global_sl.buf+global_sl.len, tmp->msg);
+    strcpy((char *)global_sl.buf+global_sl.len, tmp->msg);
     global_sl.len += strlen(tmp->msg)+1;
     Send_With_Handling(&CONTR(op)->socket, &global_sl);
 

@@ -283,7 +283,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 	char    buf[HUGE_BUF];
 	object *env         = tmp->env;
 	uint32  effective_weight_limit;
-	uint32     tmp_nrof    = tmp->nrof ? tmp->nrof : 1;    
+	uint32  tmp_nrof    = tmp->nrof ? tmp->nrof : 1;    
 
 	if (pl->type == PLAYER)
 		CONTR(pl)->praying = 0;
@@ -326,7 +326,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, uint32 nrof)
 	/* As usual, try to run the plugin _after_ tests, but _before_ side effects */
 	/* Non-zero return value means to abort the pickup */
 	if(trigger_object_plugin_event(EVENT_PICKUP, tmp, pl, op, NULL,
-		&tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
+		(int *)&tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
 		return;
 
 	if (tmp->type == CONTAINER)
@@ -755,7 +755,7 @@ void drop_object(object *const op, object *tmp, const uint32 nrof)
 	}
 
 	tmp_nrof = nrof;
-	if(trigger_object_plugin_event(EVENT_DROP, tmp, op, NULL, NULL, &tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
+	if(trigger_object_plugin_event(EVENT_DROP, tmp, op, NULL, NULL, (int *)&tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
 	{
 		/* TODO: handle cases where we might want to reinsert the object */
 		return;

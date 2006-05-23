@@ -376,7 +376,7 @@ void close_newsocket(NewSocket *ns)
 
 void    free_newsocket  (NewSocket *ns)
 {
-    char *tmp_read = ns->readbuf.buf;
+    unsigned char *tmp_read = ns->readbuf.buf;
 
     LOG(llevDebug, "Closing socket %d\n", ns->fd);
     close_newsocket(ns);
@@ -394,7 +394,7 @@ void    free_newsocket  (NewSocket *ns)
 static void load_srv_files(char *fname, int id, int cmd)
 {
     FILE   *fp;
-    char   *file_tmp, *comp_tmp;
+    unsigned char *file_tmp, *comp_tmp;
     int     flen;
     unsigned long numread;
     struct stat statbuf;
@@ -410,7 +410,7 @@ static void load_srv_files(char *fname, int id, int cmd)
     SrvClientFiles[id].crc = crc32(1L, file_tmp, numread);
     SrvClientFiles[id].len_ucomp = numread;
     numread = flen * 2;
-    comp_tmp = (char *) malloc(numread);
+    comp_tmp = (unsigned char *) malloc(numread);
     compress2(comp_tmp, &numread, file_tmp, flen, Z_BEST_COMPRESSION);
     /* we prepare the files with the right commands - so we can flush
      * then direct from this buffer to the client.
@@ -523,7 +523,7 @@ void send_srv_file(NewSocket *ns, int id)
 {
     SockList    sl;
 
-    sl.buf = SrvClientFiles[id].file;
+    sl.buf = (unsigned char *)SrvClientFiles[id].file;
 
     if (SrvClientFiles[id].len != -1)
         sl.len = SrvClientFiles[id].len + 2;
