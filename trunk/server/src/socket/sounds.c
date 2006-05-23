@@ -34,7 +34,7 @@
 void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int y)
 {
     SockList    sl;
-    char        buf[32];
+    unsigned char buf[32];
 
     if (!pl->socket.sound) /* player has disabled sound */
         return;

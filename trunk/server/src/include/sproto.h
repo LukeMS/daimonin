@@ -785,7 +785,7 @@ int                         cftimer_destroy(int id);
 int                         cftimer_find_free_id(void);
 /* pathfinder.c */
 int                         pathfinder_queue_enqueue(object *waypoint);
-object                     *pathfinder_queue_dequeue(int *count);
+object                     *pathfinder_queue_dequeue(tag_t *count);
 void                        request_new_path(object *waypoint);
 object                     *get_next_requested_path(void);
 struct path_segment        *encode_path(path_node *path, struct path_segment **last_segment);

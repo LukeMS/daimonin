@@ -180,7 +180,7 @@ int command_party_invite ( object *pl, char *params)
 
     /* send the /invite to our player */
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INVITE);
-    strcpy(global_sl.buf+global_sl.len, pl->name);
+    strcpy((char *)global_sl.buf+global_sl.len, pl->name);
     global_sl.len += strlen(pl->name)+1;
     Send_With_Handling(&target->socket, &global_sl);
 
@@ -519,7 +519,7 @@ void party_client_group_status(object *member)
     }
 
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_GROUP);
-    strcpy(global_sl.buf+global_sl.len, buf);
+    strcpy((char *)global_sl.buf+global_sl.len, buf);
     global_sl.len += strlen(buf)+1;
 
     /* broadcast command to all members */
@@ -599,7 +599,7 @@ void party_client_group_update(object *member, int flag)
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_GROUP_UPDATE);
     /*Send_With_Handling(&CONTR(member)->socket, &global_sl);*/
 
-    strcpy(global_sl.buf+global_sl.len, buf);
+    strcpy((char *)global_sl.buf+global_sl.len, buf);
     global_sl.len += strlen(buf)+1;
 
     /* broadcast command to all members */

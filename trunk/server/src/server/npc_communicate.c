@@ -129,11 +129,11 @@ void gui_interface(object *who, int mode, const char *text, const char *tail)
 	if(mode != NPC_INTERFACE_MODE_NO)
 	{
 		SockList_AddChar(&global_sl, (char)mode);
-		strcpy(global_sl.buf+global_sl.len, text);
+		strcpy((char *)global_sl.buf+global_sl.len, text);
 		global_sl.len += strlen(text)+1;
 		if(tail)
 		{
-			strcpy(global_sl.buf+global_sl.len, tail);
+			strcpy((char *)global_sl.buf+global_sl.len, tail);
 			global_sl.len += strlen(tail)+1;
 		}
 	}

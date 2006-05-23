@@ -417,16 +417,15 @@ void send_image_info(NewSocket *ns, char *params)
 {
     int         i;
 
-
-    sprintf(global_sl.buf, "replyinfo image_info\n%d\n%d\n", nrofpixmaps - 1, bmaps_checksum);
+    sprintf((char *)global_sl.buf, "replyinfo image_info\n%d\n%d\n", nrofpixmaps - 1, bmaps_checksum);
     for (i = 0; i < MAX_FACE_SETS; i++)
     {
         if (facesets[i].prefix)
         {
-            sprintf(global_sl.buf + strlen(global_sl.buf), "%d:%s:%s:%d:%s:%s:%s", i, facesets[i].prefix, facesets[i].fullname, facesets[i].fallback, facesets[i].size, facesets[i].extension, facesets[i].comment);
+            sprintf((char *)global_sl.buf + strlen((char *)global_sl.buf), "%d:%s:%s:%d:%s:%s:%s", i, facesets[i].prefix, facesets[i].fullname, facesets[i].fallback, facesets[i].size, facesets[i].extension, facesets[i].comment);
         }
     }
-    global_sl.len = strlen(global_sl.buf);
+    global_sl.len = strlen((char *)global_sl.buf);
     Send_With_Handling(ns, &global_sl);
 }
 
@@ -447,10 +446,10 @@ void send_image_sums(NewSocket *ns, char *params)
         Write_String_To_Socket(ns, BINARY_CMD_REPLYINFO, buf, strlen(buf));
         return;
     }
-    sprintf(global_sl.buf, "Ximage_sums %d %d ", start, stop);
+    sprintf((char *)global_sl.buf, "Ximage_sums %d %d ", start, stop);
     *global_sl.buf = BINARY_CMD_REPLYINFO;
 
-    global_sl.len = strlen(global_sl.buf);
+    global_sl.len = strlen((char *)global_sl.buf);
 
     for (i = start; i <= stop; i++)
     {
@@ -460,7 +459,7 @@ void send_image_sums(NewSocket *ns, char *params)
         SockList_AddChar(&global_sl, (char) qq);
         qq = strlen(new_faces[i].name);
         SockList_AddChar(&global_sl, (char) (qq + 1));
-        strcpy(global_sl.buf + global_sl.len, new_faces[i].name);
+        strcpy((char *)global_sl.buf + global_sl.len, new_faces[i].name);
         global_sl.len += qq;
         SockList_AddChar(&global_sl, 0);
     }

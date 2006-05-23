@@ -49,7 +49,7 @@
  */
 void new_draw_info(const int flags, const int pri, const object *const pl, const char *const buf)
 {
-    char        info_string[HUGE_BUF];
+    unsigned char info_string[HUGE_BUF];
     SockList    sl;
 
     if (!buf) /* should not happen - generate save string and LOG it */
@@ -87,7 +87,7 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
     sl.buf = info_string;
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_DRAWINFO2);
     SockList_AddShort(&sl, flags & NDI_FLAG_MASK);
-    strcpy(sl.buf + sl.len, buf);
+    strcpy((char *)sl.buf + sl.len, buf);
     sl.len += strlen(buf);
     Send_With_Handling(&CONTR(pl)->socket, &sl);
 

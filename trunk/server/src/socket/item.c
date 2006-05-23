@@ -271,14 +271,14 @@ void esrv_draw_look(object *pl)
         {
             len = 128; /* 127 chars + 0 marker */
             SockList_AddChar(&global_sl, (char) len);
-            strncpy(global_sl.buf + global_sl.len, tmp_sp, 127);
+            strncpy((char *)global_sl.buf + global_sl.len, tmp_sp, 127);
             global_sl.len += len;
             *(global_sl.buf + global_sl.len) = 0;
         }
         else
         {
             SockList_AddChar(&global_sl, (char) len);
-            strcpy(global_sl.buf + global_sl.len, tmp_sp);
+            strcpy((char *)global_sl.buf + global_sl.len, tmp_sp);
             global_sl.len += len;
         }
 
@@ -403,14 +403,14 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
         {
             len = 128; /* 127 chars + 0 marker */
             SockList_AddChar(sl, (char) len);
-            strncpy(sl->buf + sl->len, tmp_sp, 127);
+            strncpy((char *)sl->buf + sl->len, tmp_sp, 127);
             sl->len += len;
             *(sl->buf + sl->len) = 0;
         }
         else
         {
             SockList_AddChar(sl, (char) len);
-            strcpy(sl->buf + sl->len, tmp_sp);
+            strcpy((char *)sl->buf + sl->len, tmp_sp);
             sl->len += len;
         }
 
