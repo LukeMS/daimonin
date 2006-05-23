@@ -144,7 +144,13 @@
     </xsl:template>
 
     <xsl:template match="text()">
+        <xsl:if test="matches(., '^\s')">
+            <xsl:text> </xsl:text>
+        </xsl:if>
         <xsl:value-of select="normalize-space(.)"/>
+        <xsl:if test="matches(., '\s$')">
+            <xsl:text> </xsl:text>
+        </xsl:if>
     </xsl:template>
 
 </xsl:transform>
