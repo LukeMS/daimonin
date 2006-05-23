@@ -32,22 +32,16 @@
                     </xsl:when>
                     <xsl:otherwise>
                         <style type="text/css">
-h2
-{
+h2 {
     background-color:#eee;
-    border-top:1px solid #000;
+    border-top:1px solid #000
 }
-
-div.section
-{
-    margin-left:1em;
-}
-
-div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
-{
-    margin-left:-1em;
-}
-                        </style>
+div.daiml-section { margin-left:1em }
+div.daiml-section h2, div.daiml-section h3, div.daiml-section h4, div.daiml-section h5, div.daiml-section h6 { margin-left:-1em }
+ol.daiml-alpha { list-style-type:lower-alpha }
+ol.daiml-decimal { list-style-type:decimal }
+ol.daiml-roman { list-style-type:lower-roman }
+                    </style>
                     </xsl:otherwise>
                 </xsl:choose>
             </head>
@@ -174,22 +168,8 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
     </xsl:template>
 
     <xsl:template match="ol">
-        <ol>
-            <xsl:choose>
-                <xsl:when test="@type='decimal'">
-                    <xsl:attribute name="style">list-style-type:decimal</xsl:attribute>
-                </xsl:when>
-                <xsl:when test="@type='roman'">
-                    <xsl:attribute name="style">list-style-type:lower-roman</xsl:attribute>
-                </xsl:when>
-                <xsl:when test="@type='alpha'">
-                    <xsl:attribute name="style">list-style-type:lower-alpha</xsl:attribute>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:attribute name="style">list-style-type:none</xsl:attribute>
-                </xsl:otherwise>
-             </xsl:choose>
-             <xsl:apply-templates/>
+        <ol class="daiml-{@type}">
+            <xsl:apply-templates/>
         </ol>
     </xsl:template>
 
