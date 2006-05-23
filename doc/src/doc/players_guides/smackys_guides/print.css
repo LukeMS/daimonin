@@ -46,7 +46,7 @@ h6
     font-size:125%;
 }
 
-h1 :link, h2 :link, h3 :link, h4 :link, h5 :link, h6 :link, h1 :visited, h2 :visited, h3 :visited, h4 :visited, h5 :visited, h6 :visited
+h1 :link, h2 :link, h1 :visited, h2 :visited
 {
     color:#fff;
 }
@@ -124,7 +124,7 @@ div.dialog p
 
 /* document */
 
-div.document h1
+div.daiml-document h1
 {
     background:#6a5acd; /* slateblue */
     border-top:thick solid #00008b; /* darkslateblue */
@@ -136,14 +136,14 @@ div.document h1
 
 /* section */
 
-div.section
+div.daiml-section
 {
     border-bottom:thin solid #00008b; /* darkslateblue */
     margin-left:1em;
     padding-bottom:2px;
 }
 
-div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
+div.daiml-section h2
 {
     background:#6a5acd; /* slateblue */
     border-top:thick solid #00008b; /* darkslateblue */
@@ -151,15 +151,22 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
     padding:2px;
 }
 
+div.daiml-section h3, div.daiml-section h4, div.daiml-section h5, div.daiml-section h6
+{
+    border-top:thick solid #00008b; /* darkslateblue */
+    color:#6a5acd; /* slateblue */
+    padding:2px;
+}
+
 
 /* toc */
 
-div.toc
+div.daiml-toc
 {
     display:none;
 }
 
-p.toc
+p.daiml-toc
 {
     display:none;
 }
