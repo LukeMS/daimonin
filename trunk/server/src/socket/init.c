@@ -110,7 +110,6 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->rf_spells = 0;
     ns->rf_anims = 0;
     ns->rf_bmaps = 0;
-    ns->can_write = 0;
     ns->write_overflow = 0;
 
 	ns->cmd_start = NULL;

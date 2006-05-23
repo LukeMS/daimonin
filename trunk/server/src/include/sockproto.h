@@ -49,17 +49,15 @@ void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 void			command_talk_ex(char *data, int len, player *pl);
 void            remove_ns_dead_player(player *pl);
 void            RequestInfo(char *buf, int len, NewSocket *ns);
+int             fill_command_buffer(NewSocket *ns, int len);
 void            HandleClient(NewSocket *ns, player *pl);
 void            doeric_server(int update, struct timeval *timeout);
 void            doeric_server_write(void);
 /* lowlevel.c */
 void            SockList_AddString(SockList *sl, char *data);
-int             fill_command_buffer(NewSocket *ns, int len);
-int             SockList_ReadPacket(NewSocket *ns);
-void            write_socket_buffer(NewSocket *ns);
-void            Write_To_Socket(NewSocket *ns, unsigned char *buf, int len);
-void            Send_With_Handling(NewSocket *ns, SockList *msg);
 void            Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len);
+void            Send_With_Handling(NewSocket *ns, SockList *msg);
+void            Write_To_Socket(NewSocket *ns, unsigned char *buf, int len);
 void            write_cs_stats(void);
 /* metaserver.c */
 void            metaserver_init(void);

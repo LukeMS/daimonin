@@ -509,7 +509,7 @@ void dump_object2(const object *op)
         if ((cp = get_ob_diff(op, &empty_archetype->clone)) != NULL)
             strcat(errmsg, cp);
 #if 0
-      /* Don't dump player diffs - they are too long, mostly meaningless, and
+      /* Don't dump player diffs - they are to long, mostly meaningless, and
        * will overflow the buffer.
        * Changed so that we don't dump inventory either.  This may
        * also overflow the buffer.
