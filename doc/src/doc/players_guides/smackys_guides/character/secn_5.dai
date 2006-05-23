@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
-<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 5: Armour protections">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 5: Armour protections and resistances">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
     <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="introduction">
@@ -8,213 +8,238 @@
             Introduction
         </title>
         <p>
+            <a href="#protections">Armour protections</a> and <a href="#resistances">resistances</a> determine the proportion of damage you can absorb from any particular <a href="#attacktypes">attack type</a>.
+        </p>
+        <p>
+            There are <a href="#attacktypes">20 different attack types</a> in Daimonin and when you are hit by one of these you will take damage; that is, you will lose <a href="./secn_3.dai#hitpoints">hit points</a>. Depending on your <a href="#protections">armour protections</a> and <a href="#resistances">resistances</a> damage from any or all of these <a href="#attacktypes">attack types</a> may be reduced by varying amounts.
+        </p>
+    </section>
+    <section id="protections">
+        <title>
+            Armour protections
+        </title>
+        <p>
             <img alt="[Armour protection table]" src="./armourprotectiontable.png"/>
         </p>
         <p>
-            Armour protections are the proportion of damage you can absorb from any particular attack type. There are 20 different types of attack in Daimonin and when you are hit by one of these you will take damage; that is, you will lose <a href="./secn_3.dai#hitpoints">hit points</a>. Depending on your armour and magical protections damage from any or all of these attack types may be reduced by varying amounts.
+            Armour protections are expressed in percentages. If you have 0% <a href="#electricity">electricity</a> protection you will take maximum damage from an <a href="#electricity">electrical attack</a>, while if you have 50% <a href="cleave">cleave</a> protection you will take only half damage from a <a href="#cleave">blow from an axe</a>.
         </p>
         <p>
-            Armour protections are represented by percentage figures. If you have 0% electricity protection you will take maximum damage from an electrical attack, while if you have 50% cleave protection you will take only half damage from a blow from an axe.
+            Armour protections are determined by the quantity and quality of armour you wear as well as magic currently in effect.
         </p>
-        <div class="note">
-            <p>
-                <img alt="[NOTE]" src="../note.png"/> You may also have resistances to particular attack types, for example via an amulet. Resistances are also expressed in percentages, although they are not recorded on screen.
-            </p>
-            <p>
-                Resistances work in a very similar way to protections (there are technical differences but these can essentially be ignored). If you have <em>either</em> resistance <em>or</em> protection of 20% the results are the same: an attack for 100 damage will actually only hit you for 100 - 20% = 80. If you have <em>both</em> resistance <em>and</em> protection of 20% both are taken into account (resistance first): an attack for 100 damage will actually hit for 100 - 20% = 80 - 20% = 64.
-            </p>
-        </div>
     </section>
-    <section id="physical">
+    <section id="resistances">
         <title>
-            Physical armour protections
+            Resistances
         </title>
         <p>
-            These protections are from physical damage such as cuts, bruises, scrapes, and a bloody nose:
+            Resistances are also expressed in percentages, although they are not recorded on screen.
         </p>
-        <section id="impact">
-            <title>
-                Impact (I)
-            </title>
-            <p>
-                For example, bashing and crushing weapons.
-            </p>
-        </section>
-        <section id="slash">
-            <title>
-                Slash (S)
-            </title>
-            <p>
-                For example, cutting and slicing weapons.
-            </p>
-        </section>
-        <section id="cleave">
-            <title>
-                Cleave (C)
-            </title>
-            <p>
-                For example, chopping and hewing weapons.
-            </p>
-        </section>
-        <section id="pierce">
-            <title>
-                Pierce (P)
-            </title>
-            <p>
-                For example, stabbing and thrusting weapons.
-            </p>
-        </section>
-        <section id="weaponmagic">
-            <title>
-                Weapon magic (W)
-            </title>
-            <p>
-                ???
-            </p>
-        </section>
-    </section>
-    <section id="elemental">
-        <title>
-            Elemental armour protections
-        </title>
         <p>
-            These protections are from elemental damage such as immolation and electrocution.
+            Resistances work in a very similar way to <a href="protections">protections</a> (there are technical differences but these can essentially be ignored).
         </p>
-        <section id="fire">
-            <title>
-                Fire (F)
-            </title>
-            <p>
-                For example, suffering burns or scorches.
-            </p>
-        </section>
-        <section id="cold">
-            <title>
-                Cold (C)
-            </title>
-            <p>
-                For example, being chilled or frozen.
-            </p>
-        </section>
-        <section id="electricity">
-            <title>
-                Electricity (E)
-            </title>
-            <p>
-                For example, being shocked or zapped by a source of electricity.
-            </p>
-        </section>
-        <section id="poison">
-            <title>
-                Poison (P)
-            </title>
-            <p>
-                For example, absorbing a venomous substance into your blood stream.
-            </p>
-        </section>
-        <section id="acid">
-            <title>
-                Acid (A)
-            </title>
-            <p>
-                For example, coming into contact with a corrosive substance.
-            </p>
-        </section>
-    </section>
-    <section id="magical">
-        <title>
-            Magical armour protections
-        </title>
         <p>
-            These protections are currently not implemented:
+            For any given <a href="attacktypes">attack type</a>, if you have <em>either</em> resistance <em>or</em> <a href="#protections">protection</a> of 20% the results are the same: an attack for 100 damage will actually only hit you for 100 - 20% = 80. If you have <em>both</em> resistance <em>and</em> <a href="protections">protection</a> of 20% both are taken into account (resistance first): an attack for 100 damage will actually hit for 100 - 20% = 80 - 20% = 64.
         </p>
-        <section id="magic">
-            <title>
-                Magic (M)
-            </title>
-            <p>
-                Currently not implemented.
-            </p>
-        </section>
-        <section id="mind">
-            <title>
-                Mind (Mi)
-            </title>
-            <p>
-                Currently not implemented.
-            </p>
-        </section>
-        <section id="body">
-            <title>
-                Body (B)
-            </title>
-            <p>
-                Currently not implemented.
-            </p>
-        </section>
-        <section id="psionic">
-            <title>
-                Psionic (P)
-            </title>
-            <p>
-                Currently not implemented.
-            </p>
-        </section>
-        <section id="force">
-            <title>
-                Force (F)
-            </title>
-            <p>
-                Currently not implemented.
-            </p>
-        </section>
-    </section>
-    <section id="spherical">
-        <title>
-            Spherical armour protections
-        </title>
         <p>
-            These protections are currently not implemented:
+            Resistances are determined by the quantity and quality of armour you wear as well as magic currently in effect.
         </p>
-        <section id="nether">
+    </section>
+    <section id="attacktypes">
+        <title>
+            The attack types
+        </title>
+        <section id="physical">
             <title>
-                Nether (N)
+                Physical attacks
             </title>
             <p>
-                Currently not implemented.
+                These attack types include physical damage such as cuts, bruises, scrapes, and a bloody nose:
             </p>
+            <section id="impact">
+                <title>
+                    Impact (I)
+                </title>
+                <p>
+                    For example, bashing and crushing weapons.
+                </p>
+            </section>
+            <section id="slash">
+                <title>
+                    Slash (S)
+                </title>
+                <p>
+                    For example, cutting and slicing weapons.
+                </p>
+            </section>
+            <section id="cleave">
+                <title>
+                    Cleave (C)
+                </title>
+                <p>
+                    For example, chopping and hewing weapons.
+                </p>
+            </section>
+            <section id="pierce">
+                <title>
+                    Pierce (P)
+                </title>
+                <p>
+                    For example, stabbing and thrusting weapons.
+                </p>
+            </section>
+            <section id="weaponmagic">
+                <title>
+                    Weapon magic (W)
+                </title>
+                <p>
+                    ???
+                </p>
+            </section>
         </section>
-        <section id="chaos">
+        <section id="elemental">
             <title>
-                Chaos (Ch)
+                Elemental attacks
             </title>
             <p>
-                Currently not implemented.
+                These attack types include elemental damage such as immolation and electrocution.
             </p>
+            <section id="fire">
+                <title>
+                    Fire (F)
+                </title>
+                <p>
+                    For example, suffering burns or scorches.
+                </p>
+            </section>
+            <section id="cold">
+                <title>
+                    Cold (C)
+                </title>
+                <p>
+                    For example, being chilled or frozen.
+                </p>
+            </section>
+            <section id="electricity">
+                <title>
+                    Electricity (E)
+                </title>
+                <p>
+                    For example, being shocked or zapped by a source of electricity.
+                </p>
+            </section>
+            <section id="poison">
+                <title>
+                    Poison (P)
+                </title>
+                <p>
+                    For example, absorbing a venomous substance into your blood stream.
+                </p>
+            </section>
+            <section id="acid">
+                <title>
+                    Acid (A)
+                </title>
+                <p>
+                    For example, coming into contact with a corrosive substance.
+                </p>
+            </section>
         </section>
-        <section id="death">
+        <section id="magical">
             <title>
-                Death (D)
+                Magical attacks
             </title>
             <p>
-                Currently not implemented.
+                These attack types are currently not implemented:
             </p>
+            <section id="magic">
+                <title>
+                    Magic (M)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="mind">
+                <title>
+                    Mind (Mi)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="body">
+                <title>
+                    Body (B)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="psionic">
+                <title>
+                    Psionic (P)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="force">
+                <title>
+                    Force (F)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
         </section>
-        <section id="spiritual">
+        <section id="spherical">
             <title>
-                Spiritual (Sp)
+                Spherical attacks
             </title>
             <p>
-                Currently not implemented.
+                These attack types are currently not implemented:
             </p>
-        </section>
-        <section id="corruption">
-            <title>
-                Corruption (Co)
-            </title>
-            <p>
-                Currently not implemented.
-            </p>
+            <section id="nether">
+                <title>
+                    Nether (N)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="chaos">
+                <title>
+                    Chaos (Ch)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="death">
+                <title>
+                    Death (D)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="spiritual">
+                <title>
+                    Spiritual (Sp)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
+            <section id="corruption">
+                <title>
+                    Corruption (Co)
+                </title>
+                <p>
+                    Currently not implemented.
+                </p>
+            </section>
         </section>
     </section>
 </daiml>
