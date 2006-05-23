@@ -53,13 +53,13 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
                 </xsl:choose>
             </head>
             <body>
-                <div class="document">
+                <div class="daiml-document">
                     <h1>
                         <xsl:value-of select="@title"/>
                     </h1>
                 </div>
                 <xsl:if test="@autotoc and section">
-                    <div class="toc">
+                    <div class="daiml-toc">
                         <h2 id="toc">
                             <xsl:choose>
                                 <xsl:when test="@autotoc='autotoc'">
@@ -74,9 +74,9 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
                     </div>
                 </xsl:if>
                 <xsl:apply-templates/>
-                <p>
-                    <xsl:text>Last modified: </xsl:text>
-                    <xsl:value-of select="current-dateTime()"/>
+                <p class="daiml-generator">
+                    <xsl:text>This document was automatically generated from DaiML source</xsl:text><br/>
+                    <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/>
                 </p>
             </body>
         </html>
@@ -90,10 +90,10 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
     <xsl:template match="stylesheet"/>
 
     <xsl:template match="/daiml/section">
-        <div class="section" id="{if (@id) then @id else generate-id()}">
+        <div class="daiml-section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
             <xsl:if test="/daiml/@autotoc">
-                <p class="toc">
+                <p class="daiml-toc">
                     <a href="#toc">
                         <xsl:choose>
                             <xsl:when test="/daiml/@autotoc='autotoc'">
@@ -110,7 +110,7 @@ div.section h2, div.section h3, div.section h4, div.section h5, div.section h6
     </xsl:template>
 
     <xsl:template match="section/section">
-        <div class="section" id="{if (@id) then @id else generate-id()}">
+        <div class="daiml-section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
         </div>
     </xsl:template>
