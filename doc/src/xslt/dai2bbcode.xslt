@@ -14,7 +14,7 @@
             <xsl:value-of select="@title"/>
         <xsl:text>[/b][/size]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>&#xA;&#xA;&#xA;[size=10][color=gray][i]</xsl:text>
+        <xsl:text>&#xA;&#xA;&#xA;&#xA;[size=10][color=gray][i]</xsl:text>
             <xsl:text>This document was automatically generated from DaiML source.&#xA;</xsl:text>
             <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/>
         <xsl:text>[/i][/color][/size]</xsl:text>
@@ -26,7 +26,7 @@
     </xsl:template>
 
     <xsl:template match="/daiml/section/title">
-        <xsl:text>&#xA;&#xA;[size=18][b]</xsl:text>
+        <xsl:text>&#xA;&#xA;&#xA;[size=18][b]</xsl:text>
             <xsl:apply-templates/>
         <xsl:text>[/b][/size]</xsl:text>
     </xsl:template>
@@ -89,9 +89,9 @@
     </xsl:template>
 
     <xsl:template match="code">
-        <xsl:text>[b]</xsl:text>
+        <xsl:text>[color=green]</xsl:text>
             <xsl:apply-templates/>
-        <xsl:text>[/b]</xsl:text>
+        <xsl:text>[/color]</xsl:text>
     </xsl:template>
 
     <xsl:template match="dl|ol|ul">
@@ -100,7 +100,12 @@
                 <xsl:text>&#xA;&#xA;[list=1]</xsl:text>
             </xsl:when>
             <xsl:when test="@type='roman'">
-                <xsl:text>&#xA;&#xA;[list=1]</xsl:text>
+                <xsl:if test="ancestor::ol/@type='decimal'">
+                    <xsl:text>&#xA;&#xA;[list=a]</xsl:text>
+                </xsl:if>
+                <xsl:if test="ancestor::ol/@type='alpha'">
+                    <xsl:text>&#xA;&#xA;[list=1]</xsl:text>
+                </xsl:if>
             </xsl:when>
             <xsl:when test="@type='alpha'">
                 <xsl:text>&#xA;&#xA;[list=a]</xsl:text>
