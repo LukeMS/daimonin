@@ -57,7 +57,7 @@ ol.daiml-roman { list-style-type:lower-roman }
                 </xsl:if>
                 <xsl:apply-templates/>
                 <p class="daiml-generator">
-                    <xsl:text>This document was automatically generated from DaiML source</xsl:text></br>
+                    <xsl:text>This document was automatically generated from DaiML source</xsl:text><br/>
                     <xsl:text>Last modified: </xsl:text> <xsl:value-of select="current-dateTime()"/>
                 </p>
             </body>
