@@ -162,14 +162,7 @@ static inline int read_socket_buffer(NewSocket *ns)
 	/*LOG(-1,"STAT: %d (%d)\n", stat_ret, sl->len);*/
 
 	if (stat_ret > 0)
-	{
 		sl->len += stat_ret;
-
-#ifdef CS_LOGSTATS
-		cst_tot.ibytes += stat_ret;
-		cst_lst.ibytes += stat_ret;
-#endif
-	}
 	else if (stat_ret < 0) /* lets check its a real problem */
 	{
 #ifdef WIN32
@@ -241,10 +234,6 @@ static inline void write_socket_buffer(NewSocket *ns)
 		if (ns->outputbuffer.start == MAXSOCKBUF)
 			ns->outputbuffer.start = 0;
 		ns->outputbuffer.len -= amt;
-#ifdef CS_LOGSTATS
-		cst_tot.obytes += amt;
-		cst_lst.obytes += amt;
-#endif
 	}
 	while (ns->outputbuffer.len > 0);
 }
@@ -822,11 +811,6 @@ void doeric_server(int update, struct timeval *timeout)
 #endif
     unsigned int		addrlen = sizeof(addr);
     player             	       *pl, *next;
-
-#ifdef CS_LOGSTATS
-    if ((time(NULL) - cst_lst.time_start) >= CS_LOGTIME)
-        write_cs_stats();
-#endif
 
     /* would it not be possible to use FD_CLR too and avoid the
      * reseting every time?
