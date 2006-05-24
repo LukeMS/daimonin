@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
-<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 5: Armour protections and resistances">
+<daiml autotoc="On this page" title="Smacky's Guide To The Character, Section 5: Armour protections, resistances, &amp; attack types">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
     <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="introduction">
