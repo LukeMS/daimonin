@@ -67,13 +67,13 @@
     </section>
     <section id="armourprotectionsandresistances">
         <title>
-            Armour protections
+            Armour protections, resistances, &amp; attack types
         </title>
         <p>
             There are 20 different types of attack in Daimonin. When you are hit by one of these you will take damage; that is, you will lose <a href="#statsandhealthindicators">hit points</a>. Depending on your armour, magical protections, and resistances damage from any or all of these attack types may be reduced by varying amounts.
         </p>
         <p>
-            Armour protections and resistancesare detailed in <a href="./secn_5.dai">"Section 5: Armour protections and resistances"</a>.
+            Armour protections, resistances, and attack types are detailed in <a href="./secn_5.dai">"Section 5: Armour protections, resistances, &amp; attack types"</a>.
         </p>
     </section>
     <section id="poisondiseaseanddeath">

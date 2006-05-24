@@ -17,7 +17,7 @@
             <img alt="[Skill groups]" src="./skillgroups.png"/>
         </p>
         <p>
-            Skills are distributed amongst eight skill groups (only the first seven are shown on the main screen). The number next to each skill group is the highest <a href="#experienceandlevels">level</a> attained of any skill within that group. For example if you are level 20 in wizardry spells and level 30 in magic devices the skill groups list will show level 30 in magic (Ma).
+            <a href="#skillgroups">Skills are distributed amongst eight skill groups</a> (only the first seven are shown on the main screen). The number next to each skill group is the highest <a href="#experienceandlevels">level</a> attained of any skill within that group. For example if you are level 20 in wizardry spells and level 30 in magic devices the skill groups list will show level 30 in magic (Ma).
         </p>
         <p>
             Practically speaking, most skills are used automatically. Examples include the melee weapons and magic casting skills. That is, you perform an action -- such as attacking a mob or casting a spell -- and the appropriate skill is used.
@@ -34,9 +34,43 @@
         <p>
             The last skill you used/readied is indicated on the main screen.
         </p>
+    </section>
+    <section id="experienceandlevels">
+        <title>
+            Experience &amp; levels
+        </title>
         <p>
-           The skill groups and individual skills are:
+            Your level in a <a href="#skills">skill</a> represents your proficiency and effectiveness in performing that task, and experience records your progress towards the next level
         </p>
+        <p>
+            Gaining experience is commonly known as <strong>training</strong> a <a href="#skills">skill</a> and getting to the next level is unsurprisingly referred to as <strong>levelling</strong>.
+        </p>
+        <p>
+            You train a <a href="#skills">skill</a> by either performing (practicing) the <a href="#skills">skill</a> or receiving instruction from an NPC (usually for a considerable fee).
+        </p>
+        <p>
+            When you learn a <a href="#skills">skill</a> it starts at level 1. The maximum level for any <a href="#skills">skill</a> is 110.
+        </p>
+        <p>
+            Your main <a href="#skills">skill</a> is your highest level <a href="#skills">skill</a>. This is also the level of your character.
+        </p>
+        <p>
+            Some <a href="#skills">skills</a> can not be trained and/or levelled. You either have the <a href="#skills">skill</a>, and can perform the task, or you do not, and can not.
+        </p>
+        <p>
+            <img alt="[Main skill]" src="./mainskill.png"/>
+        </p>
+        <p>
+            Please note how experience and levels are represented on the screen. The used skill and main skill displays show your experience and level in the particular <a href="#skills">skill</a> numerically. They also contain ten dots and a bar underneath.
+        </p>
+        <p>
+            As you gain experience the bar gradually fills with colour. When the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your level increments and dots and bar are all reset and off you go again. This is a lot more fun in practice than it seems on paper. Honest.
+        </p>
+    </section>
+    <section id="skillgroups">
+        <title>
+            Skill groups &amp; individual skills
+        </title>
         <section id="agility">
             <title>
                 Agility (Ag) skill group
@@ -183,43 +217,11 @@
         </section>
         <section id="miscellaneous">
             <title>
-                Miscellaneous skills
+                Miscellaneous skill group
             </title>
             <p>
                 This skill group is currently not implemented.
-             </p>
+            </p>
         </section>
-    </section>
-    <section id="experienceandlevels">
-        <title>
-            Experience &amp; levels
-        </title>
-        <p>
-            Your level a <a href="#skills">skill </a> represents your proficiency and effectiveness in performing that task, and experience records your progress towards the next level
-        </p>
-        <p>
-            Gaining experience is commonly known as <strong>training</strong> a skill and getting to the next level is unsurprisingly referred to as <strong>levelling</strong>.
-        </p>
-        <p>
-            You train a <a href="#skills">skill</a> by either performing (practicing) the <a href="#skills">skill</a> or receiving instruction from an NPC (usually for a considerable fee).
-        </p>
-        <p>
-            When you learn a <a href="#skills">skill</a> it starts at level 1. The maximum level for any <a href="#skills">skill</a> is 110.
-        </p>
-        <p>
-            Your main <a href="#skills">skill</a> is your highest level skill. This is also the level of your character.
-        </p>
-        <p>
-            Some <a href="#skills">skills</a> can not be trained and/or levelled. You either have the <a href="#skills">skill</a>, and can perform the task, or you do not, and can not.
-        </p>
-        <p>
-            Please note how experience and levels are represented on the screen. The used skill and main skill displays show your experience and level in the particular <a href="#skills">skill</a> numerically. They also contain ten dots and a bar underneath.
-        </p>
-        <p>
-            <img alt="[Main skill]" src="./mainskill.png"/>
-        </p>
-        <p>
-            As you gain experience the bar gradually fills with colour. When the bar is full a dot lights up and the bar is reset. This continues until the tenth dot. This time, when the bar fills, your level increments and dots and bar are all reset and off you go again. This is a lot more fun in practice than it seems on paper. Honest.
-        </p>
     </section>
 </daiml>
