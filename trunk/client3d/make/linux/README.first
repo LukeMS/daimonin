@@ -14,7 +14,7 @@ but you won't get any support for this right now.
 1) (as root) copy client3d/make/linux/libfmod*.so to /usr/lib
 2) If you compiling on x86_64 you need to 
    change -lfmodex.so to -lmodex64 in the folowing files:
-   client3d/source/Makefile.am
+   client3d/Makefile.am
    client3d/configure.in
    (and vice versa)
 3) Edit the plugins.cfg to fit your preferences.
