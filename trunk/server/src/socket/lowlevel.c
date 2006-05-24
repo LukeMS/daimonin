@@ -131,39 +131,3 @@ void    Write_To_Socket (NewSocket *ns, unsigned char *buf, int len)
 	}
 	ns->outputbuffer.len += len;
 }
-
-/******************************************************************************
- *
- * statistics logging functions.
- *
- ******************************************************************************/
-
-#ifdef CS_LOGSTATS
-/* cst_tot is for the life of the server, cst_last is for the last series of
- * stats
- */
-
-/* Writes out the gathered stats.  We clear cst_lst.
- */
-void write_cs_stats()
-{
-    time_t  now = time(NULL);
-
-    /* If no connections recently, don't both to log anything */
-    if (cst_lst.ibytes == 0 && cst_lst.obytes == 0)
-        return;
-
-    /* CSSTAT is put in so scripts can easily find the line */
-    LOG(llevInfo, "CSSTAT: %.16s tot in:%d out:%d maxc:%d time:%d last block-> in:%d out:%d maxc:%d time:%d\n",
-        ctime(&now), cst_tot.ibytes, cst_tot.obytes, cst_tot.max_conn, now - cst_tot.time_start, cst_lst.ibytes,
-        cst_lst.obytes, cst_lst.max_conn, now - cst_lst.time_start);
-
-    LOG(llevInfo, "SYSINFO: objs: %d allocated, %d free, arch-srh:%d (%d cmp)\n", pool_object->nrof_allocated,
-        pool_object->nrof_free, arch_search, arch_cmp);
-
-    cst_lst.ibytes = 0;
-    cst_lst.obytes = 0;
-    cst_lst.max_conn = socket_info.nconns;
-    cst_lst.time_start = now;
-}
-#endif

@@ -468,9 +468,6 @@ extern spell                    spells[NROFREALSPELLS];
  * variables are bind in there. In every other module, EXTERN is
  * defined as #define EXTERN extern.
  */
-#ifdef CS_LOGSTATS
-EXTERN CS_Stats                 cst_tot, cst_lst;
-#endif
 
 /* lists of the active ingame gmasters */
 EXTERN objectlink               *gmaster_list;

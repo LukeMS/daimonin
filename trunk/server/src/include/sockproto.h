@@ -58,7 +58,6 @@ void            SockList_AddString(SockList *sl, char *data);
 void            Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len);
 void            Send_With_Handling(NewSocket *ns, SockList *msg);
 void            Write_To_Socket(NewSocket *ns, unsigned char *buf, int len);
-void            write_cs_stats(void);
 /* metaserver.c */
 void            metaserver_init(void);
 void            metaserver_update(void);

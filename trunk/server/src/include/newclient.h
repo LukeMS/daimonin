@@ -215,14 +215,6 @@ enum
 #define UPD_DIRECTION   0x100
 #define UPD_QUALITY   0x200
 
-typedef struct CS_Stats
-{
-    int     ibytes; /* ibytes, obytes are bytes in, out */
-    int     obytes;
-    short   max_conn;   /* Maximum connections received */
-    time_t  time_start; /* When we started logging this */
-} CS_Stats;
-
 typedef struct _srv_client_files
 {
     char           *file;       /* file data, compressed or not */

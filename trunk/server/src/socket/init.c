@@ -133,13 +133,6 @@ void InitConnection(NewSocket *ns, char *ip)
     ns->outputbuffer.len = 0;
     strcpy(ns->ip_host, ip);
 
-#ifdef CS_LOGSTATS
-    if (socket_info.nconns > cst_tot.max_conn)
-        cst_tot.max_conn = socket_info.nconns;
-    if (socket_info.nconns > cst_lst.max_conn)
-        cst_lst.max_conn = socket_info.nconns;
-#endif
-
     socket_info.nconns++;
 }
 
@@ -315,13 +308,6 @@ void init_ericserver()
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
     socket_info.nconns = 0;
-
-#ifdef CS_LOGSTATS
-    memset(&cst_tot, 0, sizeof(CS_Stats));
-    memset(&cst_lst, 0, sizeof(CS_Stats));
-    cst_tot.time_start = time(NULL);
-    cst_lst.time_start = time(NULL);
-#endif
 
     LOG(llevDebug, "Initialize new client/server data\n");
     init_sockets = malloc(sizeof(NewSocket));

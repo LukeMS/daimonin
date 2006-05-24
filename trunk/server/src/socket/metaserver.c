@@ -129,8 +129,7 @@ void    metaserver_update   ()
     if (metafd == -1)
         return; /* No valid connection */
 
-    sprintf(data, "%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, player_active_meta, VERSION, settings.meta_comment,
-            cst_tot.ibytes, cst_tot.obytes, (long) time(NULL) - cst_tot.time_start);
+    sprintf(data, "%s|%d|%s|%s|0|0|0", settings.meta_host, player_active_meta, VERSION, settings.meta_comment);
 	player_active_meta = player_active;
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *) &sock, sizeof(sock)) < 0)
         LOG(llevDebug, "metaserver_update: sendto failed, err = %d\n", errno);

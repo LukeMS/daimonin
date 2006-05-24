@@ -40,12 +40,6 @@
  * flags  However, for some things, that would just be too messy.
  */
 
-/* Not very interesting logs. Remember that we are interested in real traffic. */
-
-#ifndef CS_LOGSTATS
-#define CS_LOGSTATS
-#endif
-
 /* I moved this settings of the lib directory and the local directory
    to this location. I want have ALL this definitions at one location.
    As long we have no setup or install tool, we should use this file.
@@ -139,7 +133,6 @@
 * Short list of features, and what to search for:
 * ALCHEMY - enables alchemy code
 * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
-* CS_LOGSTATS - log various new client/server data.
 * DEBUG - more verbose message logging?
 * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
 * MAX_TIME - how long an internal tick is in microseconds
@@ -199,20 +192,6 @@
 #define BALSL_NUMBER_LOSSES_RATIO  6
 #define BALSL_MAX_LOSS_RATIO       2
 
-
-/* CS_LOGSTATS will cause the server to log various usage stats
- * (number of connections, amount of data sent, amount of data received,
- * and so on.)  This can be very useful if you are trying to measure
- * server/bandwidth usage.  It will periodially dump out information
- * which contains usage stats for the last X amount of time.
- * CS_LOGTIME is how often it will print out stats.
- */
-#ifndef WIN32    /* ***win32 we set the following stuff in the IDE */
-/*#define CS_LOGSTATS*/
-#endif
-#ifdef CS_LOGSTATS
-#define CS_LOGTIME  600
-#endif
 
 /* DEBUG generates copious amounts of output.  I tend to change the CC options
  * in the crosssite.def file if I want this.  By default, you probably

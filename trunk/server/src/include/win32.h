@@ -69,7 +69,6 @@
 #define HAVE_STRICMP
 #define HAVE_STRNICMP
 
-#define CS_LOGSTATS
 #define HAVE_SRAND
 #ifndef HAVE_FCNTL_H
 #define HAVE_FCNTL_H
