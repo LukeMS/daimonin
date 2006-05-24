@@ -29,38 +29,21 @@ class TileInterface;
 
 using namespace Ogre;
 
-const Real MOUSE_SENSITY = 0.002;
-const int MAX_SEL_TILES  = 4;
 class TileSelection
 {
 private:
-    MeshPtr m_Mesh[MAX_SEL_TILES];
-    HardwareVertexBufferSharedPtr m_vbuf0[MAX_SEL_TILES];
-
-
-    Entity* m_Entity[MAX_SEL_TILES];
-    //IndexData* m_idata[MAX_SEL_TILES];
-    SubMesh* m_SubMesh[MAX_SEL_TILES];
-    VertexData* m_vdata[MAX_SEL_TILES];
-    SceneNode* m_SceneNode[MAX_SEL_TILES];
     int m_x_old, m_y_old;
     TileManager* m_TileManager;
-
 public:
     int m_x, m_y;
     unsigned int m_SquareSize;
     Real m_distance;
-
     TileSelection( TileManager* TileManager);
     ~TileSelection();
     Vector3 get_Selection();
-    void create_Entity();
     void change_Selection();
     void save_Selection();
     void reset();
-    void freeResources();
-    void select();
-    void set_Square_Size(unsigned int SquareSize);
 };
 
 class TileInterface
@@ -87,12 +70,6 @@ public:
     void pick_Tile();
     void pick_Tile(float mMouseX, float mMouseY);
     void pick_Tile(Ray* mouseRay, int a, int b);
-    void set_Square_Size(unsigned int SquareSize);
-    void change_Tile_height(int z_direction);
-    void level_Tile__height(int z_direction);//directly: x,y retrieved from the mouse selection,squaresize from the user input
-    void level_Tile__height(int z_direction,int SquareSize);//x,y retrieved from the mouse selection
-    void level_Tile__height(int z_direction,int SquareSize,int x,int y);//not depending on user input, for loadeing lvl methodes i.e.
-    bool Tile__height_is_leveled(int z_direction,int SquareSize,int x,int y);//returns true if leveling is not needed, because its allready leveld
 };
 
 #endif

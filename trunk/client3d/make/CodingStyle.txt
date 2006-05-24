@@ -31,6 +31,11 @@
 
 * Use brackets to improve readability.
 
+* Filenames (.cpp/.h) are lower case with underscore for separating words.
+  Example: particle_manager.cpp
+
+* Class names are the filenames without underscore. First letter of each Word is upper case.
+  Example: ParticleManager
 
 ///===================================================
 /// Design Guidelines

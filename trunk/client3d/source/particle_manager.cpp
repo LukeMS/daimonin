@@ -107,20 +107,22 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
 ///================================================================================================
 void ParticleManager::update(Real dTime)
 {
-    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+	for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
     {
-        if ( (*i)->lifeTime <0 ) continue; // Infity lifeTime or already deleted.
-        if (((*i)->lifeTime-= dTime) <0)
+        if ((*i)->lifeTime <0  // Infinite lifeTime.
+		|| ((*i)->lifeTime-= dTime) >=0) // Lifeteme not expired.
+		{
+			++i;	
+		}
+		else
         {
             if ((*i)->entity)
                 (*i)->entity->detachObjectFromBone((*i)->pSystem);
             if ((*i)->sceneNode)
                 (*i)->sceneNode->getParentSceneNode()->removeChild((*i)->sceneNode);
             Event->GetSceneManager()->destroyParticleSystem((*i)->pSystem);
-
             delete (*i);
             i = mvParticle.erase(i);
-            if (mvParticle.empty()) break;
         }
     }
 }
@@ -143,18 +145,42 @@ void ParticleManager::delObject(ParticleSystem *pSystem)
 ///================================================================================================
 ///
 ///================================================================================================
-void ParticleManager::synchToWorldPos(const Vector3 &pos)
+void ParticleManager::pauseAll(bool pause)
 {
-    size_t sum;
-    Particle* p;
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
-        for (sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
+        if (pause)
+        {
+            (*i)->pSystem->setSpeedFactor(0.0f);
+            (*i)->pSystem->getEmitter(0)->setEnabled(false);
+        }
+        else
+        {
+            (*i)->pSystem->setSpeedFactor(1.0f);
+            (*i)->pSystem->getEmitter(0)->setEnabled(true);
+        }
+    }
+}
+
+///================================================================================================
+///
+///================================================================================================
+void ParticleManager::synchToWorldPos(const Vector3 &pos)
+{
+    Particle* p;
+    //ParticleEmitter *pe;
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
+    {
+        for (size_t sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
         {
             p = (*i)->pSystem->getParticle(sum);
             p->position += pos;
+//            Logger::log().error() << ": " << p->position.x << " ......  " << p->position.z;
+
         }
+//        Logger::log().error() << "emitters: " << (*i)->pSystem->getNumEmitters();
     }
+//    Logger::log().error() << "-------------- " << (*i)->pSystem->getNumParticles();;
 }
 
 ///================================================================================================

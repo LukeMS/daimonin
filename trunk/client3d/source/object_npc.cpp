@@ -20,13 +20,12 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "particle_manager.h"
 #include "object_npc.h"
-#include "particle.h"
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
 #include "spell_manager.h"
 #include "events.h"
-#include "TileManager.h"
+#include "tile_manager.h"
 #include "gui_manager.h"
 
 // #define WRITE_MODELTEXTURE_TO_FILE
@@ -34,27 +33,27 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
-unsigned int NPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
-SceneManager *NPC::mSceneMgr =0;
-uchar *NPC::texImageBuf = 0;
+unsigned int ObjectNPC::mInstanceNr = 0; // mInstanceNr 0 = Player's Hero
+SceneManager *ObjectNPC::mSceneMgr =0;
+uchar *ObjectNPC::texImageBuf = 0;
 
 const uint32 MASK_COLOR = 0xffc638db; /// This is our mask. Pixel with this color will not be drawn.
 
-NPC::sPicture NPC::picFace =
+ObjectNPC::sPicture ObjectNPC::picFace =
     {
         65, 75, // w, h
         324, 13,  // dst pos.
         188,  1,  // src pos.
         0, 79 // offest next src pic.
     };
-NPC::sPicture NPC::picHair =
+ObjectNPC::sPicture ObjectNPC::picHair =
     {
         49, 85, // w, h
         130, 3,  // dst pos.
         254, 1,  // src pos.
         0, 86 // offest next src pic.
     };
-NPC::sPicture NPC::picBody[2] =
+ObjectNPC::sPicture ObjectNPC::picBody[2] =
     {
         { // Back
             186, 153, // w, h
@@ -69,7 +68,7 @@ NPC::sPicture NPC::picBody[2] =
             0, 0 // offest next src pic.
         }
     };
-NPC::sPicture NPC::picArms[4] =
+ObjectNPC::sPicture ObjectNPC::picArms[4] =
     {
         { // Back Left
             38, 81, // w, h
@@ -96,7 +95,7 @@ NPC::sPicture NPC::picArms[4] =
             0, 0 // offest next src pic.
         }
     };
-NPC::sPicture NPC::picHands[4] =
+ObjectNPC::sPicture ObjectNPC::picHands[4] =
     {
         { // Back
             29, 57, // w, h
@@ -123,7 +122,7 @@ NPC::sPicture NPC::picHands[4] =
             0, 0 // offest next src pic.
         }
     };
-NPC::sPicture NPC::picBelt[2] =
+ObjectNPC::sPicture ObjectNPC::picBelt[2] =
     {
         { // Back
             129, 22, // w, h
@@ -138,7 +137,7 @@ NPC::sPicture NPC::picBelt[2] =
             0, 87 // offest next src pic.
         }
     };
-NPC::sPicture NPC::picLegs[2] =
+ObjectNPC::sPicture ObjectNPC::picLegs[2] =
     {
         { // Back
             129, 219, // w, h
@@ -153,7 +152,7 @@ NPC::sPicture NPC::picLegs[2] =
             0, 0 // offest (x,y) for next src pic.
         }
     };
-NPC::sPicture NPC::picShoes[2] =
+ObjectNPC::sPicture ObjectNPC::picShoes[2] =
     {
         { // Left
             43, 63, // w, h
@@ -169,16 +168,13 @@ NPC::sPicture NPC::picShoes[2] =
         }
     };
 
-typedef std::list<Particle*> ActiveParticleList;
-//static ParticleFX *tempPFX =0;
-
 const Real WALK_PRECISON = 1.0;
 const int TURN_SPEED    = 200;
 
 ///================================================================================================
 /// Free all recources.
 ///================================================================================================
-void NPC::freeRecources()
+void ObjectNPC::freeRecources()
 {
     if (!--mInstanceNr)
     {
@@ -192,16 +188,16 @@ void NPC::freeRecources()
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
-NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
+ObjectNPC::ObjectNPC(const char *desc_filename, int posX, int posZ, float Facing)
 {
+    mIndex = mInstanceNr++;
     if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
-    if (!mInstanceNr)
+    if (!mIndex)
     {
         texImageBuf = new uchar[MAX_MODEL_TEXTURE_SIZE * MAX_MODEL_TEXTURE_SIZE * sizeof(uint32)];
         Logger::log().headline("Init Actor Models");
     }
     mFacing = Degree(Facing);
-    thisNPC = mInstanceNr++;
     mDescFile = PATH_MODEL_DESCRIPTION;
     mDescFile += desc_filename;
     Logger::log().info()  << "Adding object from file: " << mDescFile << "...";
@@ -219,34 +215,34 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
     string strTemp = desc_filename;
     strTemp.replace(strTemp.find(".desc"), 5, ".mesh");
     /// ////////////////////////////////////////////////////////////////////
-    /// The first NPC is our Hero.
+    /// The first ObjectNPC is our Hero.
     /// ////////////////////////////////////////////////////////////////////
-    if (!thisNPC)
+    if (!mIndex)
     {
         mEntityNPC = mSceneMgr->createEntity("Player [polyveg]", strTemp.c_str());
         mEntityNPC->setQueryFlags(QUERY_NPC_MASK);
-        mPosX = CHUNK_SIZE_X /2;
-        mPosZ = CHUNK_SIZE_Z /2;
+        mActPos.x = CHUNK_SIZE_X /2;
+        mActPos.z = CHUNK_SIZE_Z /2;
     }
     else /// This is a NPC.
     {
-        mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(thisNPC), strTemp.c_str());
+        mEntityNPC = mSceneMgr->createEntity("ObjectNPC_"+StringConverter::toString(mIndex), strTemp.c_str());
         mEntityNPC->setQueryFlags(QUERY_NPC_MASK);
-        mPosX = posX;
-        mPosZ = posZ;
+        mActPos.x = posX;
+        mActPos.z = posZ;
     }
     Vector3 pos;
     const AxisAlignedBox &AABB = mEntityNPC->getBoundingBox();
     mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
     mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
     mBoundingBox.y = AABB.getMinimum().y;
-    pos.x = mPosX * TILE_SIZE_X + mBoundingBox.x;
-    pos.z = mPosZ * TILE_SIZE_Z + mBoundingBox.z;;
-    pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
+    pos.x = mActPos.x * TILE_SIZE_X + mBoundingBox.x;
+    pos.z = mActPos.z * TILE_SIZE_Z + mBoundingBox.z;;
+    pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mActPos.x, mActPos.z)) - mBoundingBox.y;
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
     mNode->attachObject(mEntityNPC);
 
-    if (!thisNPC)
+    if (!mIndex)
     {
         Event->setWorldPos(pos, 0, 0, CEvent::WSYNC_MOVE);
         // mNode->attachObject(Event->getCamera()); // rotating map.
@@ -255,8 +251,8 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
     /// ////////////////////////////////////////////////////////////////////
     /// We ignore the material of the mesh and create an own material.
     /// ////////////////////////////////////////////////////////////////////
-    /// Clone the NPC-Material.
-    String tmpName = "NPC_" + StringConverter::toString(thisNPC, 3, '0');
+    /// Clone the ObjectNPC-Material.
+    String tmpName = "NPC_" + StringConverter::toString(mIndex, 3, '0');
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
     MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
     mEntityNPC->getSubEntity(0)->setMaterialName(tmpName);
@@ -279,7 +275,7 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
     setTexture(   7,   6,   0);
 
     /// Create Animations and Animation sounds.
-    mAnim = new Animate(mEntityNPC);
+    mAnim = new ObjectAnimate(mEntityNPC);
     mAutoTurning = false;
     mAutoMoving = false;
     mTurning      =0;
@@ -291,9 +287,9 @@ NPC::NPC(const char *desc_filename, int posX, int posZ, float Facing)
 }
 
 ///================================================================================================
-/// Toggle npc equipment.
+/// Toggle ObjectNPC equipment.
 ///================================================================================================
-void  NPC::toggleMesh(int Bone, int WeaponNr)
+void  ObjectNPC::toggleMesh(int Bone, int WeaponNr)
 {
     if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
     {
@@ -432,9 +428,9 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
 }
 
 ///================================================================================================
-/// Update npc.
+/// Update ObjectNPC.
 ///================================================================================================
-void NPC::update(const FrameEvent& event)
+void ObjectNPC::update(const FrameEvent& event)
 {
     mAnim->update(event);
     ///  Finish the current (non movement) anim first.
@@ -447,7 +443,7 @@ void NPC::update(const FrameEvent& event)
 
     if (mAutoTurning)
     {
-        mAnim->toggleAnimation(Animate::ANIM_GROUP_IDLE, 0);
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
         int turningDirection;
         int deltaDegree = ((int)mFacing.valueDegrees() - (int)mNewFacing.valueDegrees());
         if (deltaDegree <   0) deltaDegree += 360;
@@ -460,26 +456,30 @@ void NPC::update(const FrameEvent& event)
     else if (mAutoMoving)
     {
         /// We are very close to destination.
-        mAnim->toggleAnimation(Animate::ANIM_GROUP_WALK, 0);
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0);
         Vector3 dist = mWalkToPos - mNode->getPosition();
         dist.y =0;
         if(dist.squaredLength() < WALK_PRECISON)
         {
             /// Set the exact destination pos.
-            mWalkToPos.x = mBoundingBox.x + mPosX * TILE_SIZE_X;
-            mWalkToPos.z = mBoundingBox.z + mPosZ * TILE_SIZE_Z;
-            mWalkToPos.y = Event->getTileManager()->Get_Avg_Map_Height(mWalkToX, mWalkToZ) - mBoundingBox.y;
+            mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
+            mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
+            mWalkToPos.y = Event->getTileManager()->Get_Avg_Map_Height(mDstPos.x, mDstPos.z) - mBoundingBox.y;
             mNode->setPosition(mWalkToPos);
-            Event->setWorldPos(mWalkToPos, mPosX - mWalkToX, mPosZ - mWalkToZ, CEvent::WSYNC_MOVE);
+            if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
             mAutoMoving = false;
-            mAnim->toggleAnimation(Animate::ANIM_GROUP_IDLE, 0);
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
         }
         else
         {
             /// We have to move on.
             Vector3 NewTmpPosition = - event.timeSinceLastFrame * mDeltaPos;;
+            //ParticleManager::getSingleton().pauseAll(true);
+
             mNode->setPosition(mNode->getPosition() + NewTmpPosition);
-            Event->setWorldPos(NewTmpPosition, 0, 0, CEvent::WSYNC_OFFSET);
+            if (!mIndex) Event->setWorldPos(NewTmpPosition, 0, 0, CEvent::WSYNC_OFFSET);
+            //ParticleManager::getSingleton().pauseAll(false);
+
         }
         return;
     }
@@ -494,19 +494,19 @@ void NPC::update(const FrameEvent& event)
 ///================================================================================================
 /// Cast a spell.
 ///================================================================================================
-void NPC::castSpell(int spell)
+void ObjectNPC::castSpell(int spell)
 {
     //  if (!askServer.AllowedToCast(spell)) return;
-    SpellManager::getSingleton().addObject(spell, thisNPC);
+    SpellManager::getSingleton().addObject(spell, mIndex);
 }
 
 ///================================================================================================
 /// Turn the player until it faces the given tile.
 ///================================================================================================
-void NPC::faceToTile(int x, int z)
+void ObjectNPC::faceToTile(int x, int z)
 {
-    float deltaX = x - mPosX;
-    float deltaZ = z - mPosZ;
+    float deltaX = x - mActPos.x;
+    float deltaZ = z - mActPos.z;
 
     /// This is the position of the player.
     if (deltaX ==0 && deltaZ ==0) return;
@@ -520,18 +520,18 @@ void NPC::faceToTile(int x, int z)
 ///================================================================================================
 /// Move the player to the given tile.
 ///================================================================================================
-void NPC::moveToTile(int x, int z)
+void ObjectNPC::moveToTile(int x, int z)
 {
-    if(mPosX == x && mPosZ == z || mAutoTurning || mAutoMoving) return;
+    if(mActPos.x == x && mActPos.z == z || mAutoTurning || mAutoMoving) return;
 
     /// Split into waypoints (distance = 1 tile)
     // todo
 
     // testing: limit the moving distance.
-    if (x > mPosX+1) x = mPosX+1;
-    if (x < mPosX-1) x = mPosX-1;
-    if (z > mPosZ+1) z = mPosZ+1;
-    if (z < mPosZ-1) z = mPosZ-1;
+    if (x > mActPos.x+1) x = mActPos.x+1;
+    if (x < mActPos.x-1) x = mActPos.x-1;
+    if (z > mActPos.z+1) z = mActPos.z+1;
+    if (z < mActPos.z-1) z = mActPos.z-1;
 
     /// Turn the head into the moving direction.
     faceToTile(x, z);
@@ -540,16 +540,16 @@ void NPC::moveToTile(int x, int z)
     mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) - mBoundingBox.y);
     mWalkToPos.z = z * TILE_SIZE_Z + mBoundingBox.z;
     mDeltaPos = mNode->getPosition() - mWalkToPos;
-    Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
-    mWalkToX = x;
-    mWalkToZ = z;
+    if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
+    mDstPos.x = x;
+    mDstPos.z = z;
     mAutoMoving = true;
 }
 
 ///================================================================================================
 /// Draw a part of the texture.
 ///================================================================================================
-inline void NPC::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber, uint32 texColor)
+inline void ObjectNPC::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber, uint32 texColor)
 {
 
     texNumber = 0; // delete me!
@@ -620,7 +620,7 @@ inline void NPC::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber,
 ///================================================================================================
 /// Select a new texture.
 ///================================================================================================
-void NPC::setTexture(int pos, int textureColor, int textureNr)
+void ObjectNPC::setTexture(int pos, int textureColor, int textureNr)
 {
     /// Load the shadow texture.
     Image image;
@@ -677,7 +677,7 @@ void NPC::setTexture(int pos, int textureColor, int textureNr)
         }
 
         default:
-        Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for NPC.";
+        Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for ObjectNPC.";
         break;
     }
 }
@@ -685,8 +685,8 @@ void NPC::setTexture(int pos, int textureColor, int textureNr)
 ///================================================================================================
 /// Just for testing.
 ///================================================================================================
-void NPC::move(Vector3 &pos)
+void ObjectNPC::move(Vector3 &pos)
 {
-    if (!mInstanceNr) return;
+    if (!mIndex) return;
     mNode->setPosition(mNode->getPosition() + pos);
 }

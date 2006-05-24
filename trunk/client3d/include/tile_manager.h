@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "Ogre.h"
 #include "define.h"
-#include "TileChunk.h"
-#include "TileInterface.h"
+#include "tile_chunk.h"
+#include "tile_interface.h"
 
 using namespace Ogre;
 
@@ -36,7 +36,7 @@ const int PIXEL_PER_ROW  = 1024;
 const int TEXTURES_PER_ROW = 7;
 /** Size of a tile. */
 const int TILE_SIZE_X = 32;
-const int TILE_SIZE_Z = 32;
+const int TILE_SIZE_Z = 64;
 
 /** Number of chunks in worldmap */
 #ifdef SINGLE_CHUNK
@@ -49,8 +49,8 @@ const int CHUNK_SUM_Z  = 4;
 
 
 /** Number of tiles in a chunk. */
-const int CHUNK_SIZE_X = 13;
-const int CHUNK_SIZE_Z = 22;
+const int CHUNK_SIZE_X = 16;
+const int CHUNK_SIZE_Z = 16;
 
 /** Number of tiles in the worldmap (on x-axis). */
 const int TILES_SUM_X  = CHUNK_SUM_X * CHUNK_SIZE_X;

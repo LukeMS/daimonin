@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "gui_manager.h"
 #include "network_serverfile.h"
-#include "TileManager.h"
+#include "tile_manager.h"
 
 using namespace std;
 

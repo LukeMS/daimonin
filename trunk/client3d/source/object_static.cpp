@@ -26,19 +26,19 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "spell_manager.h"
 #include "events.h"
-#include "TileManager.h"
+#include "tile_manager.h"
 #include "gui_manager.h"
 
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
-unsigned int  ObjStatic::mInstanceNr = 0;
-SceneManager *ObjStatic::mSceneMgr =0;
+unsigned int  ObjectStatic::mInstanceNr = 0;
+SceneManager *ObjectStatic::mSceneMgr =0;
 
 ///================================================================================================
 /// Free all recources.
 ///================================================================================================
-void ObjStatic::freeRecources()
+void ObjectStatic::freeRecources()
 {
     if (mAnim) delete mAnim;
     mTexture.setNull();
@@ -47,7 +47,7 @@ void ObjStatic::freeRecources()
 ///================================================================================================
 /// .
 ///================================================================================================
-void ObjStatic::move(Vector3 &pos)
+void ObjectStatic::move(Vector3 &pos)
 {
     mNode->setPosition(mNode->getPosition() + pos);
 }
@@ -56,7 +56,7 @@ void ObjStatic::move(Vector3 &pos)
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
-ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing)
+ObjectStatic::ObjectStatic(const char *mesh_filename, int posX, int posZ, float Facing)
 {
     if (!mSceneMgr) mSceneMgr = Event->GetSceneManager();
     mFacing = Degree(Facing);
@@ -65,7 +65,7 @@ ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing
     /// Build the mesh name.
     /// ////////////////////////////////////////////////////////////////////
     Logger::log().info()  << "Adding object: " << mesh_filename << ".";
-    mEntity =mSceneMgr->createEntity("ObjStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
+    mEntity =mSceneMgr->createEntity("ObjectStatic_" + StringConverter::toString(thisStatic, 3, '0'), mesh_filename);
     mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
     mPosX = posX;
     mPosZ = posZ;
@@ -82,13 +82,13 @@ ObjStatic::ObjStatic(const char *mesh_filename, int posX, int posZ, float Facing
 
     //mNode->scale(10,10,10);
 
-    mAnim = new Animate(mEntity);
+    mAnim = new ObjectAnimate(mEntity);
 }
 
 ///================================================================================================
 /// Update npc.
 ///================================================================================================
-void ObjStatic::update(const FrameEvent& event)
+void ObjectStatic::update(const FrameEvent& event)
 {
     //    Logger::log().info() << "hier";
     mAnim->update(event);
@@ -97,17 +97,17 @@ void ObjStatic::update(const FrameEvent& event)
 ///================================================================================================
 /// Turn the mob until it faces the given tile.
 ///================================================================================================
-void ObjStatic::faceToTile(int, int)
+void ObjectStatic::faceToTile(int, int)
 {}
 
 ///================================================================================================
 /// Move the mob to the given tile.
 ///================================================================================================
-void ObjStatic::moveToTile(int, int)
+void ObjectStatic::moveToTile(int, int)
 {}
 
 ///================================================================================================
 /// Select a new texture.
 ///================================================================================================
-void ObjStatic::setTexture(int, int, int)
+void ObjectStatic::setTexture(int, int, int)
 {}

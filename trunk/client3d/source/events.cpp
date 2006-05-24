@@ -25,7 +25,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include "network.h"
-#include "TileManager.h"
+#include "tile_manager.h"
 #include "gui_textout.h"
 #include "gui_manager.h"
 #include "gui_imageset.h"
@@ -98,11 +98,18 @@ void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
     /// Server::getSingleton.getTiles(posX, posZ);
     if (func == WSYNC_MOVE)
     {
+
         mTileManager->scrollMap(posX, posZ); // server has to do this!
         distance.y =0;
+
         ObjectManager::getSingleton().synchToWorldPos(distance);
         ParticleManager::getSingleton().synchToWorldPos(distance);
+
         mCamera->setPosition(pos + Vector3(0, 420, 900));
+
+
+
+
         return;
     }
     /// ////////////////////////////////////////////////////////////////////

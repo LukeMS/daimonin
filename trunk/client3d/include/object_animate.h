@@ -18,61 +18,79 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef PARTICLE_MANAGER_H
-#define PARTICLE_MANAGER_H
+#ifndef OBJECT_ANIMATE_H
+#define OBJECT_ANIMATE_H
 
 #include <Ogre.h>
-#include <vector>
-#include "particle.h"
 
 using namespace Ogre;
 
-class ParticleManager
+/// ////////////////////////////////////////////////////////////////////
+/// Defines.
+/// ////////////////////////////////////////////////////////////////////
+
+static const Real RAD = 3.14159265/180.0;
+
+///================================================================================================
+/// Class.
+///================================================================================================
+class ObjectAnimate
 {
 public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    static ParticleManager &getSingleton()
+    ObjectAnimate(Entity *entity);
+    ~ObjectAnimate();
+    bool isMovement()
     {
-        static ParticleManager Singleton; return Singleton;
+        return (mAnimGroup <= ANIM_GROUP_RUN);
     }
-    bool init(SceneManager *SceneMgr);
-    ParticleSystem *addFreeObject(Vector3 pos, const char *name, Real time);
-    ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
-    ParticleSystem *addNodeObject(const SceneNode *node, const char* particleFX);
-    void delNodeObject(int nr);
-    void delObject(ParticleSystem *pSystem);
-    void synchToWorldPos(const Vector3 &pos);
-    void moveNodeObject(const FrameEvent& event);
-    void update(Real time);
+    int getSumAnimsInGroup(int animGroup)
+    {
+        return mAnimGroupEntries[animGroup];
+    }
+    void update(const FrameEvent& event);
+    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false);
+    Real getAnimSpeed()
+    {
+        return mAnimSpeed;
+    }
+    enum AnimGroup
+    {
+        /// Movement.
+        ANIM_GROUP_IDLE,
+        ANIM_GROUP_IDLE_FUN,
+        ANIM_GROUP_WALK,
+        ANIM_GROUP_RUN,
+        /// Non-movement.
+        ANIM_GROUP_ABILITY,
+        ANIM_GROUP_ATTACK,
+        ANIM_GROUP_ATTACK_FUN,
+        ANIM_GROUP_BLOCK,
+        ANIM_GROUP_HIT,
+        ANIM_GROUP_SLUMP,
+        ANIM_GROUP_DEATH,
+        ANIM_GROUP_CAST,
+        ANIM_GROUP_CAST_FUN,
+        SUM_ANIM_GROUP
+    };
 
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    SceneManager *mSceneMgr;
-    SceneNode    *mSceneNode;
-    unsigned int mCounter;
-
-    struct sParticles
-    {
-        Real speed;      //  0: Object has a static position.
-        Real lifeTime;   // -1: Infinity lifetime.
-        Vector3 mDir;
-        SceneNode *sceneNode;
-        ParticleSystem *pSystem;
-        Entity *entity;
-    };
-    std::vector<sParticles*>mvParticle;
-
+    int mAnimGroup, mAnimNr;
+    bool mPause;
+    bool mIsAnimated;
+    Real mAnimSpeed;
+    AnimationState *mActState;
+    std::vector<AnimationState*>mAnimState;
+    unsigned char mAnimGroupEntries[SUM_ANIM_GROUP];
+    static const char *StateNames[SUM_ANIM_GROUP];
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ParticleManager()
-    {}
-    ~ParticleManager();
-    ParticleManager(const ParticleManager&); // disable copy-constructor.
 };
 
 #endif

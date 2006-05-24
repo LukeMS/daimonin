@@ -93,7 +93,7 @@ const char *GuiGadget::getText()
 int GuiGadget::getAction()
 {
     int ret = mAction;
-    mAction = GUI_ACTION_NONE;
+    mAction = GuiWindow::GUI_ACTION_NONE;
     return ret;
 }
 

@@ -18,8 +18,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef NPC_H
-#define NPC_H
+#ifndef ObjectNPC_H
+#define ObjectNPC_H
 
 #include "define.h"
 #include "object_animate.h"
@@ -28,22 +28,9 @@ using namespace Ogre;
 
 /// Defines:
 /// Mob => (M)oveable (Ob)ject.
-enum
-{
-    BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY
-};
-enum
-{
-    TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
-    TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
-    TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
-};
-
-const int SIDE_BACK  =0;
-const int SIDE_FRONT =1;
 const int MAX_MODEL_TEXTURE_SIZE = 512;
 
-class NPC
+class ObjectNPC
 {
 public:
     typedef struct
@@ -54,12 +41,21 @@ public:
         short offsetX, offsetY; /// offset for the next source image.
     }
     sPicture;
-
+    enum
+    {
+        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY
+    };
+    enum
+    {
+        TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
+        TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
+        TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
+    };
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    NPC(const char *filename, int posX, int posY, float Facing);
-    ~NPC()
+    ObjectNPC(const char *filename, int posX, int posY, float Facing);
+    ~ObjectNPC()
     {}
     void freeRecources();
     void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
@@ -77,10 +73,13 @@ public:
     {
         return mNode->getPosition();
     }
-    void getMapPos(int &x, int &z)
+    const Pos2D &getActMapPos()
     {
-        x = mPosX;
-        z = mPosZ;
+        return mActPos;
+    }
+    const Pos2D &getDestMapPos()
+    {
+        return mActPos;
     }
     const Vector3 &getWorldPos()
     {
@@ -111,27 +110,32 @@ private:
     static SceneManager *mSceneMgr;
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
     static uchar *texImageBuf;
+    enum
+    {
+        SIDE_BACK,
+        SIDE_FRONT
+    };
 
-    unsigned int thisNPC;
+    unsigned int mIndex;
     TexturePtr mTexture;
     Real mWalking, mTurning;
     Degree mFacing, mNewFacing;
-    int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
-    int mWalkToX, mWalkToZ;     /// the destination tile-pos.
+    Pos2D mActPos;   /**< the actual pos in the map. **/
+    Pos2D mDstPos;   /**< the destination pos in the map. **/
     int maxHealth, actHealth;
     int maxMana  , actMana;
     bool mAutoTurning, mAutoMoving;
     SceneNode *mNode;
     Entity *mEntityNPC, *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
     Vector3 mTranslateVector, mWalkToPos, mBoundingBox, mDeltaPos;
-    Animate *mAnim;
-    Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
+    ObjectAnimate *mAnim;
+    Real animOffset; /**< every NPC gets a random animation offset. preventing of synchronous "dancing" **/
     std::string mDescFile;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    NPC(const NPC&); // disable copy-constructor.
+    ObjectNPC(const ObjectNPC&); // disable copy-constructor.
 };
 
 #endif

@@ -22,13 +22,12 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "object_animate.h"
 
-/// IMPORTANT:
-/// Every animated model MUST have at least the Idle1 animation.
+/** IMPORTANT: Every animated model MUST have at least the Idle1 animation. **/
 
 ///=================================================================================================
 /// Init all static Elemnts.
 ///=================================================================================================
-const char *Animate::StateNames[SUM_ANIM_GROUP]=
+const char *ObjectAnimate::StateNames[SUM_ANIM_GROUP]=
     {
         "Idle", "Idle_Fun",
         "Walk",
@@ -45,7 +44,7 @@ const char *Animate::StateNames[SUM_ANIM_GROUP]=
 ///=================================================================================================
 /// Constructor.
 ///=================================================================================================
-Animate::Animate(Entity *entity)
+ObjectAnimate::ObjectAnimate(Entity *entity)
 {
     mAnimSpeed = 2;
     mIsAnimated = false;
@@ -55,6 +54,7 @@ Animate::Animate(Entity *entity)
     // fill the animation states.
     int j;
     int sum =0;
+
     for (int i=0; i < SUM_ANIM_GROUP; ++i)
     {
         mAnimGroupEntries[i] =0;
@@ -71,7 +71,7 @@ Animate::Animate(Entity *entity)
                 ++sum;
             }
         }
-        catch(Exception& )
+        catch (Exception& )
         {
             // No animation with this name found.
         }
@@ -94,7 +94,7 @@ Animate::Animate(Entity *entity)
 ///=================================================================================================
 /// Constructor.
 ///=================================================================================================
-Animate::~Animate()
+ObjectAnimate::~ObjectAnimate()
 {
     mAnimState.clear();
 }
@@ -102,7 +102,7 @@ Animate::~Animate()
 ///=================================================================================================
 /// Update the animation.
 ///=================================================================================================
-void Animate::update(const FrameEvent& event)
+void ObjectAnimate::update(const FrameEvent& event)
 {
     if (!mIsAnimated) return;
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
@@ -116,7 +116,7 @@ void Animate::update(const FrameEvent& event)
 ///=================================================================================================
 /// Toggle the animation.
 ///=================================================================================================
-void Animate::toggleAnimation(int animGroup, int animNr, bool loop, bool force)
+void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force)
 {
     if (!mIsAnimated) return;
     /// Is the selected animation already running?

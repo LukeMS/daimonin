@@ -38,7 +38,7 @@ const uint32 TXT_COLOR_BLUE      = 0x000000ff;
 const uint32 TXT_COLOR_HIGHLIGHT = 0x0000ff00;
 
 const char TXT_CMD_HIGHLIGHT   = '~';
-const char TXT_CMD_LOWLIGHT    = 0xb0; // prevent anjuta and codeblocks problems with the degree character.
+const char TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
 const char TXT_CMD_LINK        = '^';
 const char TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
