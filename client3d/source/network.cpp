@@ -38,7 +38,7 @@ const int SOCKET_ERROR =-1;
 #include "define.h"
 #include "network_serverfile.h"
 
-#include "TileManager.h"
+#include "tile_manager.h"
 #include "gui_manager.h"
 
 #define DEBUG_ON

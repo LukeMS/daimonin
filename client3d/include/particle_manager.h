@@ -18,71 +18,62 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJ_STATIC_H
-#define OBJ_STATIC_H
+#ifndef PARTICLE_MANAGER_H
+#define PARTICLE_MANAGER_H
 
 #include <Ogre.h>
-#include "define.h"
-#include "object_static.h"
-#include "object_animate.h"
+#include <vector>
+#include "particle.h"
 
 using namespace Ogre;
 
-class ObjStatic
+class ParticleManager
 {
 public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjStatic(const char *filename, int posX, int posY, float Facing);
-    ~ObjStatic()
-    {}
-    void freeRecources();
-    void moveToTile(int x, int z);
-    void faceToTile(int x, int z);
-    void move(Vector3 &pos);
-    const Vector3 &getPos()
+    static ParticleManager &getSingleton()
     {
-        return mNode->getPosition();
+        static ParticleManager Singleton; return Singleton;
     }
-    const Vector3 &getWorldPos()
-    {
-        return mTranslateVector;
-    }
-    const SceneNode *getNode()
-    {
-        return mNode;
-    }
-    void update(const FrameEvent& event);
-    void setTexture(int pos, int color, int textureNr);
-    void toggleMesh   (int pos, int WeaponNr);
-    Real getFacing()
-    {
-        return mFacing.valueRadians();
-    }
-
+    bool init(SceneManager *SceneMgr);
+    ParticleSystem *addFreeObject(Vector3 pos, const char *name, Real time);
+    ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
+    ParticleSystem *addNodeObject(const SceneNode *node, const char* particleFX);
+    void delNodeObject(int nr);
+    void delObject(ParticleSystem *pSystem);
+    void synchToWorldPos(const Vector3 &pos);
+    void moveNodeObject(const FrameEvent& event);
+    void update(Real time);
+    void pauseAll(bool pause);
 
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
-    static SceneManager *mSceneMgr;
+    SceneManager *mSceneMgr;
+    SceneNode    *mSceneNode;
+    unsigned int mCounter;
 
-    unsigned int thisStatic;
-    TexturePtr mTexture;
-    Degree mFacing, mNewFacing;
-    int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
-    SceneNode *mNode;
-    Entity *mEntity;
-    Vector3 mTranslateVector, mBoundingBox;
-    Animate *mAnim;
-    Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
+    struct sParticles
+    {
+        Real speed;      //  0: Object has a static position.
+        Real lifeTime;   // -1: Infinity lifetime.
+        Vector3 mDir;
+        SceneNode *sceneNode;
+        ParticleSystem *pSystem;
+        Entity *entity;
+    };
+    std::vector<sParticles*>mvParticle;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjStatic(const ObjStatic&); // disable copy-constructor.
+    ParticleManager()
+    {}
+    ~ParticleManager();
+    ParticleManager(const ParticleManager&); // disable copy-constructor.
 };
 
 #endif

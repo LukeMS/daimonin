@@ -34,16 +34,28 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-enum
-{
-    GUI_ACTION_NONE,
-    GUI_ACTION_START_TEXT_INPUT,
-    GUI_ACTION_SUM
-};
-
 class GuiWindow
 {
 public:
+    enum
+    {
+        GUI_ACTION_NONE,
+        GUI_ACTION_START_TEXT_INPUT,
+        GUI_ACTION_SUM
+    };
+    /** Mouse Events **/
+    enum
+    {
+        MOUSE_MOVEMENT,
+        MOUSE_RESIZING,
+        BUTTON_PRESSED,
+        BUTTON_CLICKED,
+        BUTTON_RELEASED,
+        DRAGGING,
+        DRAG_ENTER,
+        DRAG_EXIT,
+    };
+
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

@@ -67,13 +67,6 @@ const char PATH_SAMPLES[]               = "./media/sound/";
 ///================================================================================================
 ///
 ///================================================================================================
-const int HUGE_BUF = 1024;
-
-enum
-{
-    M_MOVED, M_PRESSED, M_CLICKED, M_DRAGGED, M_ENTERED, M_EXITED, M_RELEASED
-};
-
 enum
 {
     QUERY_PARTICLE_MASK   =1 << 0,
@@ -87,5 +80,17 @@ enum
     QUERY_NPC_SELECT_MASK =1 << 6,
 };
 
+typedef struct
+{
+    int x, z;
+}
+Pos2D;
+
+typedef struct
+{
+    int x, z;
+    int subPos;
+}
+SubPos2D;
 
 #endif

@@ -18,79 +18,83 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJECT_ANIMATE_H
-#define OBJECT_ANIMATE_H
+#ifndef OBJECT_MANAGER_H
+#define OBJECT_MANAGER_H
 
-#include <Ogre.h>
+#include <vector>
+#include "Ogre.h"
+#include "object_npc.h"
+#include "object_static.h"
 
 using namespace Ogre;
 
 /// ////////////////////////////////////////////////////////////////////
-/// Defines.
+/// Define:
+/// player:  human controlled.
+/// monster: ai controlled.
 /// ////////////////////////////////////////////////////////////////////
 
-static const Real RAD = 3.14159265/180.0;
+enum
+{
+    OBJECT_PLAYER, OBJECT_NPC, OBJECT_STATIC, OBJECT_SUM
+};
+enum
+{
+    OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
+};
 
-///================================================================================================
-/// Class.
-///================================================================================================
-class Animate
+class ObjectManager
 {
 public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    Animate(Entity *entity);
-    ~Animate();
-    bool isMovement()
+    static ObjectManager &getSingleton()
     {
-        return (mAnimGroup <= ANIM_GROUP_RUN);
+        static ObjectManager Singleton; return Singleton;
     }
-    int getSumAnimsInGroup(int animGroup)
+    void freeRecources();
+    bool init();
+    bool addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing);
+    void delObject(int number);
+    void update(int type, const FrameEvent& evt);
+    void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
+    void castSpell(int npc, int spell)
     {
-        return mAnimGroupEntries[animGroup];
+        mvObject_npc[npc]->castSpell(spell);
     }
-    void update(const FrameEvent& event);
-    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false);
-    Real getAnimSpeed()
+    void toggleMesh(int npc, int pos, int WeaponNr)
     {
-        return mAnimSpeed;
+        mvObject_npc[npc]->toggleMesh(pos, WeaponNr);
     }
-    enum AnimGroup
+    const Vector3& getPos(int npc)
     {
-        /// Movement.
-        ANIM_GROUP_IDLE,
-        ANIM_GROUP_IDLE_FUN,
-        ANIM_GROUP_WALK,
-        ANIM_GROUP_RUN,
-        /// Non-movement.
-        ANIM_GROUP_ABILITY,
-        ANIM_GROUP_ATTACK,
-        ANIM_GROUP_ATTACK_FUN,
-        ANIM_GROUP_BLOCK,
-        ANIM_GROUP_HIT,
-        ANIM_GROUP_SLUMP,
-        ANIM_GROUP_DEATH,
-        ANIM_GROUP_CAST,
-        ANIM_GROUP_CAST_FUN,
-        SUM_ANIM_GROUP
-    };
-
+        return mvObject_npc[npc]->getPos();
+    }
+    const Vector3& getWorldPos()
+    {
+        return mvObject_npc[0]->getWorldPos();
+    }
+    const SceneNode *getNpcNode(int npc)
+    {
+        return mvObject_npc[npc]->getNode();
+    }
+    void ObjectManager::synchToWorldPos(Vector3 pos);
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    int mAnimGroup, mAnimNr;
-    bool mPause;
-    bool mIsAnimated;
-    Real mAnimSpeed;
-    AnimationState *mActState;
-    std::vector<AnimationState*>mAnimState;
-    unsigned char mAnimGroupEntries[SUM_ANIM_GROUP];
-    static const char *StateNames[SUM_ANIM_GROUP];
+    std::string mDescFile;
+    std::vector<ObjectStatic*>mvObject_static;
+    std::vector<ObjectNPC*   >mvObject_npc;
+
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
+    ObjectManager()
+    {}
+    ~ObjectManager();
+    ObjectManager(const ObjectManager&); // disable copy-constructor.
 };
 
 #endif

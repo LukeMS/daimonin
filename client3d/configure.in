@@ -5,7 +5,7 @@ AM_INIT_AUTOMAKE([Daimonin_3D_Client], 0.0.1)
 #AM_CONFIG_HEADER(../../source/include/config.h)
 
 #AC_CONFIG_AUX_DIR(make_utils)
-AC_PREFIX_DEFAULT(../../../client-3d-alpha1)
+AC_PREFIX_DEFAULT(./../../client-3d-alpha1)
 
 AM_PROG_CC_C_O
 AC_PROG_CC
@@ -22,7 +22,7 @@ AC_SUBST(OGRE_LIBS)
 
 # Find fmod stuff
 AC_SUBST(FMOD_CFLAGS, "-I3rdParty/fmod")
-AC_SUBST(FMOD_LIBS, "-L../make/linux -lfmodex64")
+AC_SUBST(FMOD_LIBS, "-L../make/linux -lfmodex")
 
 # Find tinyxml stuff
 AC_SUBST(TXML_CFLAGS, "-I3rdParty/tinyxml")
@@ -47,4 +47,4 @@ else
 fi
 
 #AC_CONFIG_HEADER(../../src/include/define.h)
-AC_OUTPUT(Makefile source/Makefile source/include/Makefile source/3rdParty/fmod/Makefile source/3rdParty/tinyxml/Makefile source/3rdParty/zlib/Makefile)
+AC_OUTPUT(Makefile source/Makefile include/Makefile 3rdParty/fmod/Makefile 3rdParty/tinyxml/Makefile 3rdParty/zlib/Makefile)

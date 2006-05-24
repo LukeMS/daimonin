@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\ogre_inc;..\..\..\source\include;..\..\..\source\3rdParty\fmod;..\..\..\source\3rdParty\zlib;..\..\..\source\3rdParty\tinyxml"
+				AdditionalIncludeDirectories=".\ogre_inc;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -204,62 +204,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\gui_animation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_container.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_cursor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_element.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_gadget.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_gadget_button.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_gadget_combobox.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_graphic.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_imageset.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_listbox.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_statusbar.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_textout.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\gui_window.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\light_manager.cpp"
 				>
 			</File>
@@ -300,6 +244,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\object_visuals.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\option.cpp"
 				>
 			</File>
@@ -328,158 +276,478 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\TileChunk.cpp"
+				RelativePath="..\..\..\source\tile_chunk.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\TileInterface.cpp"
+				RelativePath="..\..\..\source\tile_interface.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\TileManager.cpp"
+				RelativePath="..\..\..\source\tile_manager.cpp"
 				>
 			</File>
+			<Filter
+				Name="gui"
+				>
+				<File
+					RelativePath="..\..\..\source\gui\gui_animation.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_container.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_cursor.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_element.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_gadget.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_gadget_button.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_gadget_combobox.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_graphic.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_imageset.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_listbox.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_manager.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_statusbar.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_textout.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_window.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="..\..\..\source\include\define.h"
+				RelativePath="..\..\..\include\define.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\events.h"
+				RelativePath="..\..\..\include\events.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_animation.h"
+				RelativePath="..\..\..\include\light_manager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_container.h"
+				RelativePath="..\..\..\include\logger.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_cursor.h"
+				RelativePath="..\..\..\include\network.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_element.h"
+				RelativePath="..\..\..\include\network_serverfile.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_gadget.h"
+				RelativePath="..\..\..\include\object_animate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_gadget_button.h"
+				RelativePath="..\..\..\include\object_manager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_gadget_combobox.h"
+				RelativePath="..\..\..\include\object_npc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_graphic.h"
+				RelativePath="..\..\..\include\object_static.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_imageset.h"
+				RelativePath="..\..\..\include\object_visuals.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_listbox.h"
+				RelativePath="..\..\..\include\option.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_manager.h"
+				RelativePath="..\..\..\include\particle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_statusbar.h"
+				RelativePath="..\..\..\include\particle_manager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_textinput.h"
+				RelativePath="..\..\..\include\sound.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_textout.h"
+				RelativePath="..\..\..\include\spell_manager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\gui_window.h"
+				RelativePath="..\..\..\include\spell_range.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\light_manager.h"
+				RelativePath="..\..\..\include\tile_chunk.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\logger.h"
+				RelativePath="..\..\..\include\tile_interface.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\network.h"
+				RelativePath="..\..\..\include\tile_manager.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\source\include\network_serverfile.h"
+			<Filter
+				Name="gui"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\object_animate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\object_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\object_npc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\object_static.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\option.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\particle.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\particle_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\sound.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\spell_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\spell_range.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\TileChunk.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\TileInterface.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\TileManager.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_animation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_container.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_cursor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_element.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_gadget.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_gadget_button.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_gadget_combobox.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_graphic.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_imageset.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_listbox.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_manager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_statusbar.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_textinput.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_textout.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_window.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="3rdParty"
@@ -488,19 +756,35 @@
 				Name="fmod"
 				>
 				<File
-					RelativePath="..\..\..\source\3rdParty\fmod\fmod.h"
+					RelativePath="..\..\..\3rdParty\fmod\fmod.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\fmod\fmod_errors.h"
+					RelativePath="..\..\..\3rdParty\fmod\fmod.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\fmod\fmoddyn.h"
+					RelativePath="..\..\..\3rdParty\fmod\fmod_codec.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\fmod\wincompat.h"
+					RelativePath="..\..\..\3rdParty\fmod\fmod_dsp.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\fmod\fmod_errors.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\fmod\fmod_output.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\fmod\fmoddyn.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\fmod\wincompat.h"
 					>
 				</File>
 			</Filter>
@@ -508,59 +792,59 @@
 				Name="zlib"
 				>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\adler32.c"
+					RelativePath="..\..\..\3rdParty\zlib\adler32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\crc32.c"
+					RelativePath="..\..\..\3rdParty\zlib\crc32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\crc32.h"
+					RelativePath="..\..\..\3rdParty\zlib\crc32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\inffast.c"
+					RelativePath="..\..\..\3rdParty\zlib\inffast.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\inffast.h"
+					RelativePath="..\..\..\3rdParty\zlib\inffast.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\inflate.c"
+					RelativePath="..\..\..\3rdParty\zlib\inflate.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\inflate.h"
+					RelativePath="..\..\..\3rdParty\zlib\inflate.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\inftrees.c"
+					RelativePath="..\..\..\3rdParty\zlib\inftrees.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\inftrees.h"
+					RelativePath="..\..\..\3rdParty\zlib\inftrees.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\uncompr.c"
+					RelativePath="..\..\..\3rdParty\zlib\uncompr.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\zconf.h"
+					RelativePath="..\..\..\3rdParty\zlib\zconf.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\zlib.h"
+					RelativePath="..\..\..\3rdParty\zlib\zlib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\zutil.c"
+					RelativePath="..\..\..\3rdParty\zlib\zutil.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\zlib\zutil.h"
+					RelativePath="..\..\..\3rdParty\zlib\zutil.h"
 					>
 				</File>
 			</Filter>
@@ -568,106 +852,38 @@
 				Name="tinyxml"
 				>
 				<File
-					RelativePath="..\..\..\source\3rdParty\tinyxml\tinystr.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\source\3rdParty\tinyxml\tinystr.h"
+					RelativePath="..\..\..\3rdParty\tinyxml\tinystr.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\tinyxml\tinyxml.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\source\3rdParty\tinyxml\tinyxml.h"
+					RelativePath="..\..\..\3rdParty\tinyxml\tinystr.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\tinyxml\tinyxmlerror.cpp"
+					RelativePath="..\..\..\3rdParty\tinyxml\tinyxml.cpp"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\source\3rdParty\tinyxml\tinyxmlparser.cpp"
+					RelativePath="..\..\..\3rdParty\tinyxml\tinyxml.h"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-						/>
-					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\tinyxml\tinyxmlerror.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\3rdParty\tinyxml\tinyxmlparser.cpp"
+					>
 				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Others"
 			>
+			<File
+				RelativePath="..\..\CodingStyle.txt"
+				>
+			</File>
 			<File
 				RelativePath=".\ReadMe.txt"
 				>

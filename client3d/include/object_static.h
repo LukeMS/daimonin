@@ -18,83 +18,71 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJECT_MANAGER_H
-#define OBJECT_MANAGER_H
+#ifndef OBJ_STATIC_H
+#define OBJ_STATIC_H
 
-#include <vector>
-#include "Ogre.h"
-#include "object_npc.h"
+#include <Ogre.h>
+#include "define.h"
 #include "object_static.h"
+#include "object_animate.h"
 
 using namespace Ogre;
 
-/// ////////////////////////////////////////////////////////////////////
-/// Define:
-/// player:  human controlled.
-/// monster: ai controlled.
-/// ////////////////////////////////////////////////////////////////////
-
-enum
-{
-    OBJECT_PLAYER, OBJECT_NPC, OBJECT_STATIC, OBJECT_SUM
-};
-enum
-{
-    OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
-};
-
-class ObjectManager
+class ObjectStatic
 {
 public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    static ObjectManager &getSingleton()
-    {
-        static ObjectManager Singleton; return Singleton;
-    }
+    ObjectStatic(const char *filename, int posX, int posY, float Facing);
+    ~ObjectStatic()
+    {}
     void freeRecources();
-    bool init();
-    bool addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing);
-    void delObject(int number);
-    void update(int type, const FrameEvent& evt);
-    void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
-    void castSpell(int npc, int spell)
+    void moveToTile(int x, int z);
+    void faceToTile(int x, int z);
+    void move(Vector3 &pos);
+    const Vector3 &getPos()
     {
-        mvObject_npc[npc]->castSpell(spell);
+        return mNode->getPosition();
     }
-    void toggleMesh(int npc, int pos, int WeaponNr)
+    const Vector3 &getWorldPos()
     {
-        mvObject_npc[npc]->toggleMesh(pos, WeaponNr);
+        return mTranslateVector;
     }
-    const Vector3& getPos(int npc)
+    const SceneNode *getNode()
     {
-        return mvObject_npc[npc]->getPos();
+        return mNode;
     }
-    const Vector3& getWorldPos()
+    void update(const FrameEvent& event);
+    void setTexture(int pos, int color, int textureNr);
+    void toggleMesh   (int pos, int WeaponNr);
+    Real getFacing()
     {
-        return mvObject_npc[0]->getWorldPos();
+        return mFacing.valueRadians();
     }
-    const SceneNode *getNpcNode(int npc)
-    {
-        return mvObject_npc[npc]->getNode();
-    }
-    void ObjectManager::synchToWorldPos(Vector3 pos);
+
+
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    std::string mDescFile;
-    std::vector<ObjStatic*>mvObject_static;
-    std::vector<NPC*   >mvObject_npc;
+    static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
+    static SceneManager *mSceneMgr;
+
+    unsigned int thisStatic;
+    TexturePtr mTexture;
+    Degree mFacing, mNewFacing;
+    int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
+    SceneNode *mNode;
+    Entity *mEntity;
+    Vector3 mTranslateVector, mBoundingBox;
+    ObjectAnimate *mAnim;
+    Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjectManager()
-    {}
-    ~ObjectManager();
-    ObjectManager(const ObjectManager&); // disable copy-constructor.
+    ObjectStatic(const ObjectStatic&); // disable copy-constructor.
 };
 
 #endif

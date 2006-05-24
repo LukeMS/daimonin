@@ -22,7 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #define EVENTS_H
 #include <Ogre.h>
 #include <OgreEventListeners.h>
-#include "TileManager.h"
+#include "tile_manager.h"
 
 using namespace Ogre;
 

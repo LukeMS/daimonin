@@ -72,29 +72,27 @@ bool ObjectManager::init()
 ///================================================================================================
 bool ObjectManager::addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing)
 {
-    mDescFile = PATH_MODEL_DESCRIPTION;
-    mDescFile += desc_filename;
-
-    if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
-    {
-        Logger::log().error() << "Description file " << mDescFile <<" (used in ObjectManager::addObject) was not found.";
-        return false;
-    }
-
     string strTemp;
     switch (type)
     {
         case OBJECT_STATIC:
         {
             /// For static objects we don't use *.desc files.
-            ObjStatic *obj_static = new ObjStatic(desc_filename, posX, posY, facing);
+            ObjectStatic *obj_static = new ObjectStatic(desc_filename, posX, posY, facing);
             if (!obj_static) return false;
             mvObject_static.push_back(obj_static);
             break;
         }
         case OBJECT_NPC:
         {
-            NPC *obj_player = new NPC(desc_filename, posX, posY, facing);
+            mDescFile = PATH_MODEL_DESCRIPTION;
+            mDescFile += desc_filename;
+            if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
+            {
+                Logger::log().error() << "Description file " << mDescFile << " (used in ObjectManager::addObject) was not found.";
+                return false;
+            }
+            ObjectNPC *obj_player = new ObjectNPC(desc_filename, posX, posY, facing);
             if (!obj_player) return false;
             mvObject_npc.push_back(obj_player);
             break;
@@ -210,14 +208,14 @@ void ObjectManager::delObject(int )
 ///================================================================================================
 void ObjectManager::freeRecources()
 {
-    for (std::vector<NPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
+    for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);
     }
     mvObject_npc.clear();
 
-    for (std::vector<ObjStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
+    for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);

@@ -540,7 +540,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     switch (MouseAction)
     {
         //case M_RESIZE:
-        case M_PRESSED:
+        case BUTTON_PRESSED:
         {
             GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_BUTTON_DOWN);
             // Mouse over this window?
@@ -565,7 +565,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         }
         break;
 
-        case M_RELEASED:
+        case BUTTON_RELEASED:
         {
             GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_STANDARD);
             /// ////////////////////////////////////////////////////////////////////
@@ -606,7 +606,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         }
         break;
 
-        case M_MOVED:
+        case MOUSE_MOVEMENT:
         /// ////////////////////////////////////////////////////////////////////
         /// Dragging.
         /// ////////////////////////////////////////////////////////////////////
