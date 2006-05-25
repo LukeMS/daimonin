@@ -122,7 +122,7 @@ extern void             dragon_level_gain(object *who);
 extern void             fix_monster(object *op);
 extern object          *insert_base_info_object(object *op);
 extern object          *find_base_info_object(object *op);
-extern void             set_mobile_speed(object *op, int index);
+extern void             set_mobile_speed(object *op, int factor);
 /* loader.c */
 extern int              lex_load(object *op, int map_flags);
 extern void             yyrestart(FILE *input_file);

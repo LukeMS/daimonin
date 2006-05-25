@@ -2123,7 +2123,7 @@ void dragon_level_gain(object *who)
 }
 
 
-/* This adjust the monsters dats to level, map settings and game settings
+/** Adjust the monster's datas for level, map settings and game settings
  * when put in play.
  */
 void fix_monster(object *op)
@@ -2406,41 +2406,50 @@ object * find_base_info_object(object *op)
     return NULL; /* no base_info in this object found */
 }
 
-/* we set the moving speed of a mobile.
- * We go for this: base speed of a mob is 1/5 of the max.
- * 1/5 = mob is slowed (by magic)
- * 2/5 = normal mob speed - moving normal
- * 3/5 = mob is moving fast
- * 4/5 = mov is running/attack speed
- * 5/5 = mob is hasted and moving full speed
+/** Set set the movement speed of a mobile.
+ * 
+ * The base speed of a mob is stored in base->speed_left.
+ * The actual speed is stored in op->speed as base->speed_left * factor.
+ *
+ * Possible factors: 
+ * 1 = mob is slowed (by magic) (minimum factor)
+ * 2 = normal mob speed - moving normal
+ * 3 = mob is moving fast
+ * 4 = mob is running/attack speed
+ * 5 = mob is hasted and moving full speed (maximum factor)
+ *
+ * @input op mob object to set speed for
+ * @input factor a speed factor for forcing a speed, or 0 to automatically
+ * compute a factor based on the AI state, spells etc.
  */
-/* we need to include better logic when we add hast/slow spells
- * and effects!
- */
-void set_mobile_speed(object *op, int index)
+void set_mobile_speed(object *op, int factor)
 {
     object *base;
-    float   speed, tmp;
+    float   old_speed;
+    int actual_factor;
 
     base = insert_base_info_object(op); /* will insert or/and return base info */
 
-    speed = base->speed_left;
+    old_speed = op->speed;
 
-    tmp = op->speed;
-
-    if (index) /* if index != 0, we force a setting of this speed */
-        op->speed = speed * index;
+    if (factor) /* if factor != 0, we force a setting of this speed */
+        actual_factor = factor;
     else /* we will generate the speed by setting of the mobile */
     {
-        speed += base->speed_left;
-        if (OBJECT_VALID(op->enemy, op->enemy_count)) /* valid enemy - mob is fighting! */
-        {
-            speed += base->speed_left*2;
-        }
-        op->speed = speed;
+        /* TODO: more logic when we add haste/slow spells */
+        
+        if(op->type == MONSTER && MOB_DATA(op))
+            actual_factor = MOB_DATA(op)->move_speed_factor; /* AI-selected speed */
+        else if (OBJECT_VALID(op->enemy, op->enemy_count))
+            actual_factor = 4; /* Attack speed */
+        else
+            actual_factor = 2; /* Backup */
     }
-    /*  LOG(-1,"SET SPEED: %s ->%f (%f) b:%f s:%f t:%f\n", query_name(op), op->speed, base->speed_left, speed, tmp);*/
+        
+    op->speed = base->speed_left * CLAMP(actual_factor, 1, 5);
+    
+     LOG(-1,"SET SPEED: %s ->%f (=%d*%f) o:%f\n", query_name(op), op->speed, actual_factor, base->speed_left, old_speed);
     /* update speed if needed */
-    if ((tmp && !op->speed) || (!tmp && op->speed))
+    if ((old_speed && !op->speed) || (!old_speed && op->speed))
         update_ob_speed(op);
 }

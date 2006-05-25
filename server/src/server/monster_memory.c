@@ -335,6 +335,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
 
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
+        /* TODO: I can't remember why this was disabled. Gecko 2006-05-07 */
         /*
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
             mapstruct *map = ready_map_name(known_obj->last_map, MAP_NAME_SHARED);

@@ -72,6 +72,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         return 0;
     }
 
+
     /* Close enough already? */
     if (target_rv.distance <= 1)
     {
@@ -80,6 +81,8 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         else
             return target_rv.direction;
     }
+    
+    pf->last_best_distance = pf->best_distance;
 
 #ifdef DEBUG_PATHFINDING
     LOG(llevDebug, "calc_direction_towards() '%s'->'%s' (distance = %d)\n",
@@ -461,6 +464,7 @@ int move_monster(object *op, int mode)
     int                     success = 0;
     struct mob_behaviour   *behaviour;
     int                     did_move = 0, did_action = 0;
+    int                     old_speed_factor;
 
     if (op == NULL || op->type != MONSTER)
     {
@@ -479,14 +483,19 @@ int move_monster(object *op, int mode)
     /* Set up mob data if missing */
     if (MOB_DATA(op) == NULL)
     {
+        LOG(llevDebug, "DEBUG: move_monster(): mob '%s' without AI, is this really possible?\n", STRING_OBJ_NAME(op));
         op->custom_attrset = get_poolchunk(pool_mob_data);
         MOB_DATA(op)->behaviours = setup_behaviours(op);
     }
     
+    old_speed_factor = MOB_DATA(op)->move_speed_factor;
+
     /* we only have a valid weapon swing - no move */
     if(mode == FALSE)
         goto jump_move_monster_action;
     
+    MOB_DATA(op)->move_speed_factor = 2;
+
     /*
      * First, some general monster-management
      */
@@ -513,7 +522,7 @@ int move_monster(object *op, int mode)
 
     /* Mark own combat strength as needing recalculation */
     MOB_DATA(op)->combat_strength = -1;
-
+    
     /*
      * Internal thought and sensing behaviours
      * All of those are always executed
@@ -534,6 +543,7 @@ int move_monster(object *op, int mode)
          */
         response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
         response.forbidden = 0;
+        response.success_callback = NULL;
 
         for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
                 behaviour != NULL;
@@ -564,8 +574,11 @@ int move_monster(object *op, int mode)
             success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
         }
 
-        if(success) 
+        if(success) {
             did_move = 1;
+            if(response.success_callback != NULL)
+                response.success_callback(op, dir);
+        }
     }
 
     /* Clear anim indicators if we didn't do anything.
@@ -602,6 +615,10 @@ jump_move_monster_action:
 
     if(!did_action)
         op->anim_enemy_dir = -1;  
+
+    /* Change gears? */
+    if(MOB_DATA(op)->move_speed_factor != old_speed_factor)
+        set_mobile_speed(op, 0);
     
     return 0;
 }

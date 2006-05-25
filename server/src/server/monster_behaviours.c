@@ -201,6 +201,25 @@ void monster_check_apply(object *mon, object *item)
      */
 }
 
+/** Callback function for successful moves toward a waypoint.
+ * Updates the monster's "home" position to its current position, 
+ * if it got closer to the waypoint than it has been before */
+static void update_home_position_for_wp_move(object *op, int last_movement_dir)
+{
+    /* TODO: this needs more testing */
+//    LOG(llevDebug, "%s: best dist %d, last best: %d\n", STRING_OBJ_NAME(op),MOB_PATHDATA(op)->best_distance, MOB_PATHDATA(op)->last_best_distance); 
+    if(MOB_PATHDATA(op)->best_distance <= 1
+            || MOB_PATHDATA(op)->last_best_distance == -1
+            || MOB_PATHDATA(op)->best_distance <  MOB_PATHDATA(op)->last_best_distance)
+    {
+        object *base = find_base_info_object(op);
+        base->x = op->x;
+        base->y = op->y;
+        FREE_AND_ADD_REF_HASH(base->slaying, op->map->path);
+//        LOG(llevDebug, "Updating home for '%s'\n", STRING_OBJ_NAME(op));
+    }
+}
+
 /*
  * Support functions for combat strength and fear calculations
  */
@@ -719,6 +738,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
 void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     rv_vector *rv;
+    object *base = find_base_info_object(op);
 
     if(! OBJECT_VALID(op->owner, op->owner_count) || MOB_DATA(op)->owner == NULL)
     {
@@ -729,8 +749,8 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
 
     rv = get_known_obj_rv(op, MOB_DATA(op)->owner, MAX_KNOWN_OBJ_RV_AGE);
     if(! rv)
-        return;
-
+        return;    
+    
     /* TODO: parameterize */
     if(rv->distance < 8)
     {
@@ -765,6 +785,11 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
     response->type = MOVE_RESPONSE_OBJECT;
     response->data.target.obj = op->owner;
     response->data.target.obj_count = op->owner_count;
+
+    /* Update the pet's home position to the owner's current position */
+    base->x = op->owner->x;
+    base->y = op->owner->y;
+    FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->path); 
 }
 
 void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
@@ -783,12 +808,13 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
         /* If mob isn't already home */
         if (op->x != base->x || op->y != base->y || op->map->path != base->slaying)
         {
-            mapstruct  *map = normalize_and_ready_map(op->map, &base->slaying);
+            mapstruct  *map = ready_map_name(base->slaying, MAP_NAME_SHARED);
 
             response->type = MOVE_RESPONSE_COORD;
             response->data.coord.x = base->x;
             response->data.coord.y = base->y;
             response->data.coord.map = map;
+            MOB_DATA(op)->move_speed_factor=4; /* Move quickly towards home */
         }
     }
 }
@@ -1063,7 +1089,8 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
 
         /* Go through the mob list yet again (should only be done once) */
         /* TODO: keep track of second_worst_enemy instead... */
-        ai_choose_enemy(op, params);
+        // ai_choose_enemy(op, XXX: need parameters here...);
+        op->enemy = NULL;
 
 //        LOG(llevDebug, "ai_move_towards_enemy(): %s chose new enemy: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
         if(op->enemy == NULL)
@@ -1181,11 +1208,6 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
             /* We know which map we want to. Can we figure out where that
              * map lies relative to current position? */
 
-            /* This rv may be computed several times, this is generally
-             * not a performance problem, since the cache in the recursive
-             * search usually catches that.
-             * TODO: extend cache in recursive search with longer memory
-             */
             if (!get_rangevector_full(
                         op, op->map, op->x, op->y,
                         NULL, destmap, WP_X(wp), WP_Y(wp), &rv,
@@ -1224,6 +1246,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
 
                         MOB_PATHDATA(op)->goal_delay_counter = 0;
                         MOB_PATHDATA(op)->best_distance = -1;
+                        MOB_PATHDATA(op)->last_best_distance = -1;
                         MOB_PATHDATA(op)->tried_steps = 0;
                         CLEAR_FLAG(wp, WP_FLAG_ACTIVE);
                         try_next_wp = 1;
@@ -1250,6 +1273,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
 #endif
             SET_FLAG(wp, WP_FLAG_ACTIVE); /* activate new waypoint */
             MOB_PATHDATA(op)->best_distance = -1;
+            MOB_PATHDATA(op)->last_best_distance = -1;
             MOB_PATHDATA(op)->tried_steps = 0;
         }
         else
@@ -1266,6 +1290,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         response->type = MOVE_RESPONSE_WAYPOINT;
         response->data.target.obj = wp;
         response->data.target.obj_count = wp->count;
+        response->success_callback = update_home_position_for_wp_move;
     }
 }
 
@@ -1616,8 +1641,11 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 {
     object                 *oldenemy    = op->enemy;
     struct mob_known_obj   *tmp, *worst_enemy = NULL;
+    int antilure_dist_2 = AIPARAM_INT(AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE); 
+    object *base = NULL; 
+    mapstruct *base_map = NULL;
 
-    /* We won't look for enemies if we are unagressive */
+    /* We won't look for enemies if we are unaggressive */
     if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
     {
         if(op->enemy)
@@ -1625,6 +1653,20 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         return;
     }
 
+    /* Enable anti-luring protection? (distance -1 = disable)*/
+    if(antilure_dist_2 >= 0)
+    {
+        /* Try to find a legal home map */
+        base = find_base_info_object(op);
+        if(base->slaying)
+            if ((base_map = has_been_loaded_sh(base->slaying))) 
+                if (base_map->in_memory != MAP_IN_MEMORY)
+                    base_map = NULL;
+
+        /* square distance for fast euclidian distance comparisons */
+        antilure_dist_2 = antilure_dist_2 * antilure_dist_2;
+    }
+        
     /* Go through list of known mobs and choose the most hated
      * that we can get to.
      */
@@ -1636,13 +1678,30 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             if ((worst_enemy == NULL || tmp->tmp_friendship < worst_enemy->tmp_friendship))
             {
                 /* Ignore if we can't get to it at all */
-                /* TODO: should probably use get_last_known_obj_rv() */
                 rv_vector  *rv  = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
-                if (rv)
+                if (! rv)
+                    continue;
+
+                /* Ignore enemy if too far from home position */
+                if(base_map && tmp->obj->map && tmp->obj->map->in_memory == MAP_IN_MEMORY)
                 {
-                    op->anim_enemy_dir = rv->direction;
-                    worst_enemy = tmp;
+                    rv_vector base_rv;
+                    /* TODO: actually use tmp->last_map, last_x, last_y */
+                    if(get_rangevector_from_mapcoords(tmp->obj->map, tmp->obj->x, tmp->obj->y, base_map, base->x, base->y, &base_rv, RV_FAST_EUCLIDIAN_DISTANCE))
+                    {
+                        if(base_rv.distance > antilure_dist_2)
+                        {
+#ifdef DEBUG_AI                            
+                            LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
+                                    query_name(op), query_name(tmp->obj));
+#endif
+                            continue;
+                        }
+                    }
                 }
+
+                op->anim_enemy_dir = rv->direction;
+                worst_enemy = tmp;
             }
         }
     }
@@ -1659,6 +1718,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         op->enemy = worst_enemy->obj;
         MOB_DATA(op)->enemy = worst_enemy;
         op->enemy_count = worst_enemy->obj_count;
+        MOB_DATA(op)->move_speed_factor = 4; /* Attack speed */
     }
     else
     {
@@ -1671,6 +1731,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     if (op->enemy != oldenemy)
     {
         MOB_DATA(op)->idle_time = 0;
+        
         if (op->enemy)
         {
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
@@ -1687,7 +1748,6 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             //            npc_call_for_help(op);
             //            }
         }
-        set_mobile_speed(op, 0);
     }
 
 /* TODO: disabled until somone comes up with a test case where this

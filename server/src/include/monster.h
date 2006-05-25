@@ -32,7 +32,7 @@
 #define MAX_KNOWN_OBJ_RV_AGE 1
 
 /** Maximum number of ticks a mob remembers an object that it can't see */
-#define MAX_KNOWN_OBJ_AGE 200
+#define MAX_KNOWN_OBJ_AGE 80 /* 80 = 10 seconds */
 
 /** A path request has been enqueued for this mob */
 #define PATHFINDFLAG_PATH_REQUESTED 0 
@@ -67,6 +67,7 @@ struct mobdata_pathfinding
 
     uint16                  goal_delay_counter; /**< compared to wp->goal_delay */
     sint16                  best_distance; /**< to subgoal */
+    sint16                  last_best_distance; /**< to subgoal */
     uint8                   tried_steps; /**< steps that didn't get us closer to subgoal */
 
     uint32                  flags[ (NROF_PATHFIND_FLAGS/32)+1 ]; 
@@ -176,6 +177,7 @@ struct mobdata
     int combat_strength; 
 
     uint8 idle_time;            /**< How long have we been standing still not doing anything */
+    uint8 move_speed_factor;    /**< Wanted speed factor. 2 is normal speed. @see set_mobile_speed() */
 
     /** DEBUG DATA STORAGE */
     struct behaviour_decl  *last_movement_behaviour;
@@ -222,6 +224,7 @@ typedef struct behaviour_move_response
 {
     move_response_type  type; /**< @see move_response_type */
     uint16              forbidden; /**< bitmap of forbidden directions */
+    void (*success_callback)(object *op, int dir); /**< callback function in case the movement turned out successful */
     union
     {
         int direction;  /**< single direction to move in */
