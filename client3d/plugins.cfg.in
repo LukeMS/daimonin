@@ -2,10 +2,9 @@
 
 # Define plugin folder
 # Choose your Ogre library path:
-#PluginFolder=/usr/local/lib/OGRE
-PluginFolder=/usr/lib/OGRE
+PluginFolder=@OGRE_PLUGINDIR@
 
-# Define D3D rendering implementation plugin
+# Select OpenGL rendering system
 Plugin=RenderSystem_GL.so
 Plugin=Plugin_ParticleFX.so
 #Plugin=Plugin_BSPSceneManager.so
