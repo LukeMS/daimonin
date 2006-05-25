@@ -10,14 +10,9 @@
     <xsl:output method="text" encoding="utf-8" indent="no"/>
 
     <xsl:template match="/daiml">
-        <xsl:text>[size=20][b]</xsl:text>
-        <xsl:value-of select="@title"/>
-        <xsl:text>[/b][/size]</xsl:text>
+        <xsl:text>[size=20][b]</xsl:text> <xsl:value-of select="@title"/> <xsl:text>[/b][/size]</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>&#xA;&#xA;&#xA;&#xA;[size=10][color=gray][i]</xsl:text>
-        <xsl:text>This document was automatically generated from DaiML source.&#xA;</xsl:text>
-        <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/>
-        <xsl:text>[/i][/color][/size]</xsl:text>
+        <xsl:text>&#xA;&#xA;&#xA;&#xA;[size=10][color=gray][i]</xsl:text> <xsl:text>This document was automatically generated from DaiML source.&#xA;</xsl:text> <xsl:text>Last modified: </xsl:text><xsl:value-of select="current-dateTime()"/> <xsl:text>[/i][/color][/size]</xsl:text>
     </xsl:template>
 
     <xsl:template match="section">
@@ -72,6 +67,17 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template match="img">
+        <xsl:choose>
+            <xsl:when test="matches(@src, '^http://')">
+                <xsl:text>[img]</xsl:text> <xsl:value-of select="@src"/> <xsl:text>[/img]</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>[color=red][** INVALID IMAGE URL: </xsl:text> <xsl:value-of select="@alt"/> <xsl:text> **][/color]</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -137,10 +143,14 @@
         <xsl:apply-templates/>
     </xsl:template>
 
+    <xsl:template match="table">
+        <xsl:text>&#xA;&#xA;[color=red][** TABLE REMOVED **][/color]</xsl:text>
+    </xsl:template>
+
     <xsl:template match="blockcode">
-        <xsl:text>&#xA;&#xA;[code]</xsl:text>
+        <xsl:text>&#xA;&#xA;[code]&#xA;</xsl:text>
         <xsl:apply-templates/>
-        <xsl:text>[/code]</xsl:text>
+        <xsl:text>&#xA;[/code]</xsl:text>
     </xsl:template>
 
     <xsl:template match="*">
