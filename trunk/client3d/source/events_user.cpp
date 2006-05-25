@@ -12,6 +12,12 @@ This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
+In addition, as a special exception, the copyright holders of client3d give
+you permission to combine the client3d program with lgpl libraries of your
+choice and/or with the fmod libraries.
+You may copy and distribute such a system following the terms of the GNU GPL
+for client3d and the licenses of the other code concerned.
+
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
@@ -22,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "events.h"
 #include "gui_manager.h"
 #include "object_manager.h"
+#include "object_visuals.h"
 #include "particle_manager.h"
 #include "option.h"
 
@@ -418,38 +425,16 @@ void CEvent::mousePressed (MouseEvent *e)
         }
         else
         {
-            // RayQuery seems to works bad at screen borders.
-            RaySceneQuery *mRaySceneQuery;
-            mRaySceneQuery = mSceneManager->createRayQuery(Ray());
+            RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
             mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
             mRaySceneQuery->setQueryMask(QUERY_NPC_MASK);
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (!result.empty())
             {
                 RaySceneQueryResult::iterator itr = result.begin();
+                ObjectManager::getSingleton().selectNPC(itr->movable);
                 String tt = itr->movable->getName();
-                static bool once =true;
-                static SceneNode *mNode =0;
-                static Entity *mEntity;
-                if (once ==true)
-                {
-                    mEntity = mSceneManager->createEntity("Selection", "selection.mesh");
-                    mEntity->setQueryFlags(QUERY_NPC_SELECT_MASK);
-                    once =false;
-                }
-                if (mNode) mNode->getParentSceneNode()->removeAndDestroyChild("SelNode");
-                mNode = itr->movable->getParentSceneNode()->createChildSceneNode("SelNode");
-                mNode->attachObject(mEntity);
-                mNode->scale(.10,.10,.10);
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)tt.c_str());
-                const AxisAlignedBox &AABB = itr->movable->getBoundingBox();
-                Vector3 pos = mNode->getPosition();
-                pos.y= AABB.getMinimum().y +3;
-                mNode->setPosition(pos);
-            }
-            else
-            {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"empty");
             }
 			mSceneManager->destroyQuery(mRaySceneQuery);
         }
