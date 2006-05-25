@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Make sure data paths are correct
+if [ -f configure.in ]; then
+    cd ../..
+fi    
+
 # Setup up search path to find fmod library
 export LD_LIBRARY_PATH=make/linux:.:/usr/local/lib:/usr/lib
-./client3d
+make/linux/client3d
