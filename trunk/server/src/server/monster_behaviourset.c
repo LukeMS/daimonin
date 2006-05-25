@@ -155,6 +155,7 @@ void initialize_mob_data(struct mobdata *data)
 
     data->spawn_info = NULL;
     data->idle_time = 0;
+    data->move_speed_factor = 2; /* Normal movement speed */
     
     /* Intitialize this to something valid so we don't have to worry about it */
     data->last_movement_behaviour = &behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_FRIENDSHIP];
@@ -278,7 +279,11 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_FRIENDSHIP);
     last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_ATTRACTION);
     if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
+    {
         last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_CHOOSE_ENEMY);
+        last->parameters[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].intvalue = (long)
+            behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_CHOOSE_ENEMY].params[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].defaultvalue;
+    }
 
     /* Moves */
     if (QUERY_FLAG(op, FLAG_STAND_STILL))
@@ -302,9 +307,9 @@ struct mob_behaviourset * generate_behaviourset(object *op)
             {
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY);
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].intvalue = (long)
-                                                                                     behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
+                    behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (long)
-                                                                                     behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
+                    behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
 
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);
 

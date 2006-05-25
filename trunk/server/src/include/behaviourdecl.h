@@ -98,7 +98,17 @@ BehaviourClass(PROCESSES,
 
     /** Choose the known mob with the lowest negative friendship as the current enemy
      * should always come after friendship */
-    Behaviour(CHOOSE_ENEMY, ai_choose_enemy, NIL)
+    Behaviour(CHOOSE_ENEMY, ai_choose_enemy, 
+            /** The anti-luring protection works by ignoring any
+             * enemy at a specific distance from the "home" point.
+             * In most cases "home" is the starting point of the mob, 
+             * but for mobs following wayponts it is the last recently 
+             * treaded square on a path towards the current waypoint.
+             * For pets "home" is the current position of the owner.
+             * Deactivate by using a distance setting of -1.
+             */
+            Parameter(CHOOSE_ENEMY, ANTILURE_DISTANCE, INTEGER, OPTIONAL, 15)
+    )
 
     /** Plugin interface for processes */
     Behaviour(PLUGIN_PROCESS, ai_plugin_process,
