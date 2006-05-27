@@ -60,7 +60,6 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
     mEventProcessor->initialise(win);
     mEventProcessor->startProcessingEvents();
     mInputDevice =  mEventProcessor->getInputReader();
-    mTileManager = 0;
     mTimeUntilNextToggle = 0;
     mTranslateVector = Vector3(0,0,0);
     mIdleTime =0;
@@ -77,7 +76,7 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
 CEvent::~CEvent()
 {
     if (mEventProcessor)  delete mEventProcessor;
-    if (mTileManager)     delete mTileManager;
+    TileManager  ::getSingleton().freeRecources();
     ObjectManager::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
     Sound        ::getSingleton().freeRecources();
@@ -104,18 +103,11 @@ void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
     /// Server::getSingleton.getTiles(posX, posZ);
     if (func == WSYNC_MOVE)
     {
-
-        mTileManager->scrollMap(posX, posZ); // server has to do this!
+        TileManager::getSingleton().scrollMap(posX, posZ); // server has to do this!
         distance.y =0;
-
         ObjectManager::getSingleton().synchToWorldPos(distance);
         ParticleManager::getSingleton().synchToWorldPos(distance);
-
         mCamera->setPosition(pos + Vector3(0, 420, 900));
-
-
-
-
         return;
     }
     /// ////////////////////////////////////////////////////////////////////
@@ -286,11 +278,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             mEventProcessor->addKeyListener(this);
             mEventProcessor->addMouseMotionListener(this);
             mEventProcessor->addMouseListener(this);
-            mTileManager = new TileManager();
             if (Option::getSingleton().getIntValue(Option::HIGH_TEXTURE_DETAILS))
-                mTileManager->Init(mSceneManager, 128,1);
+                TileManager::getSingleton().Init(mSceneManager, 128);
             else
-                mTileManager->Init(mSceneManager, 16,1);
+                TileManager::getSingleton().Init(mSceneManager, 16);
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_OBJECT);
             GuiManager::getSingleton().displaySystemMessage("Starting the objects...");
@@ -371,7 +362,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 80.0)
             {
-                //mTileManager->ChangeChunks();
+                //TileManager::getSingleton().ChangeChunks();
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
 
@@ -380,7 +371,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     static Real time = evt.timeSinceLastFrame+1.0;
                     if (evt.timeSinceLastFrame > time)
                     {
-                      mTileManager->ChangeChunks();
+                      TileManager::getSingleton().ChangeChunks();
                        time = evt.timeSinceLastFrame+1.0;
                     }
             */

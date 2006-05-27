@@ -1,24 +1,29 @@
 /*-----------------------------------------------------------------------------
-This source file is part of Code-Black (http://www.code-black.org)
-Copyright (c) 2005 by the Code-Black Team
+This source file is part of Daimonin (http://daimonin.sourceforge.net)
+Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
 
 This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU Lesser General Public License as published by the Free Software
+the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License along with
+In addition, as a special exception, the copyright holders of client3d give
+you permission to combine the client3d program with lgpl libraries of your
+choice and/or with the fmod libraries.
+You may copy and distribute such a system following the terms of the GNU GPL
+for client3d and the licenses of the other code concerned.
+
+You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/lesser.txt.
+http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include <cmath>
 #include <iostream>
 #include "OgreHardwarePixelBuffer.h"
 #include "tile_chunk.h"
@@ -26,52 +31,53 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "logger.h"
 #include "option.h"
 
+/** Pixel per tile in the terrain-texture. */
+const int PIXEL_PER_TILE =  128;
+
+/** Pixel per col/row in the terrain-texture. */
+const int PIXEL_PER_ROW  = 1024;
+
+/** Numbers of tile textures in one row/col of the terrain texture. */
+const int TEXTURES_PER_ROW = 7;
+
 ///================================================================================================
-/// Constructor
+/// Constructor.
 ///================================================================================================
 TileManager::TileManager()
 {
-    m_Interface = 0;
-    mapPosX = 1000;
-    mapPosZ = 1000;
+    mInterface = 0;
+    mapScrollX = 1000;
+    mapScrollZ = 1000;
 }
 
 ///================================================================================================
-/// Destructor
+/// Destructor.
 ///================================================================================================
 TileManager::~TileManager()
-{
-    for(int x = 0; x < TILES_SUM_X + 1; ++x)
-    {
-        delete[] m_Map[x];
-    }
-    delete[] m_Map;
+{}
 
-    delete m_Interface;
+///================================================================================================
+///
+///================================================================================================
+void TileManager::freeRecources()
+{
+    mMapchunk.freeRecources();
+    delete mInterface;
 }
 
 ///================================================================================================
 /// Init the TileEngine.
 ///================================================================================================
-void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStretchZ)
+void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
 {
     Logger::log().headline("Init TileEngine:");
-    m_SceneManager = SceneMgr;
-    m_StretchZ = tileStretchZ;
-    m_TileTextureSize = tileTextureSize;
+    mSceneManager = SceneMgr;
+    mTileTextureSize = tileTextureSize;
     mGrid = false;
-    m_Interface = new TileInterface(this);
-    m_Interface->Init();
-    mTileTexture.setNull();
+    mInterface = new TileInterface(SceneMgr);
 
-    srand(1);
     Logger::log().info() << "Creating map";
-    m_Map = new WorldMap*[TILES_SUM_X+1];
-    for (int x = 0; x < TILES_SUM_X + 1; ++x)
-    {
-        m_Map[x] = new WorldMap[TILES_SUM_Z + 1];
-    }
-    Load_Map(FILE_HEIGHT_MAP);
+    loadMap(FILE_HEIGHT_MAP);
     /// ////////////////////////////////////////////////////////////////////
     /// Create all TextureGroups.
     /// ////////////////////////////////////////////////////////////////////
@@ -79,13 +85,13 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
     Logger::log().info() << "Creating texture group " << strTextureGroup;
     if (Option::getSingleton().getIntValue(Option::CREATE_TILE_TEXTURES))
     { /// only needed after a tile-texture has changed.
-        CreateTextureGroup(strTextureGroup);
+        createTextureGroup(strTextureGroup);
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Create TileChunks.
     /// ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "Creating tile-chunks";
-    CreateChunks();
+    createChunks();
     setMaterialLOD(tileTextureSize);
 
     /// ////////////////////////////////////////////////////////////////////
@@ -98,10 +104,10 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize, int tileStre
 ///================================================================================================
 /// Create the worldmap.
 ///================================================================================================
-void TileManager::Load_Map(const std::string &png_filename)
+void TileManager::loadMap(const std::string &png_filename)
 {
     Image image;
-    if (!LoadImage(image, png_filename))
+    if (!loadImage(image, png_filename))
     {
         Logger::log().error() << "Heightmap '" << png_filename << "' was not found.";
         return;
@@ -110,16 +116,16 @@ void TileManager::Load_Map(const std::string &png_filename)
     size_t dimx = image.getWidth();
     size_t dimy = image.getHeight();
     unsigned int posX = 0, posY;
-    short Map[TILES_SUM_X+2][TILES_SUM_Z+2];
+    short Map[CHUNK_SIZE_X+2][CHUNK_SIZE_Z+2];
     /// ////////////////////////////////////////////////////////////////////
     /// Fill the heightdata buffer with the image-color.
     /// ////////////////////////////////////////////////////////////////////
-    for(int x = 0; x < TILES_SUM_X+2; ++x)
+    for(int x = 0; x < CHUNK_SIZE_X+2; ++x)
     {
         posY =0;
-        for(int y = 0; y < TILES_SUM_Z+2; ++y)
+        for(int y = 0; y < CHUNK_SIZE_Z+2; ++y)
         {
-            if ( x && x != TILES_SUM_X && y && y != TILES_SUM_Z)
+            if ( x && x != CHUNK_SIZE_X && y && y != CHUNK_SIZE_Z)
             {
                 Map[x][y] = heightdata_temp[posY * dimx + posX];
             }
@@ -134,16 +140,16 @@ void TileManager::Load_Map(const std::string &png_filename)
             posX =0; // if necessary, repeat the image.
     }
 
-    // TODO : put this loop in the upper loop.
-    for (int x = 0; x < TILES_SUM_X; ++x)
+    for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
-        for (int y = 0; y < TILES_SUM_Z; ++y)
+        for (int y = 0; y < CHUNK_SIZE_Z; ++y)
         {
-            m_Map[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
-            if (m_Map[x][y].height > 60) m_Map[x][y].height =60;
+            mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
+            //if (mMap[x][y].height > 60) mMap[x][y].height =60;
+            mMap[x][y].height/=2;
         }
     }
-    Set_Map_Textures();
+    setMapTextures();
 }
 
 ///================================================================================================
@@ -152,191 +158,166 @@ void TileManager::Load_Map(const std::string &png_filename)
 void TileManager::scrollMap(int dx, int dz)
 {
     // Quick hack. server will send us the map later.
-
     if (dx)
     {
-        char bufferH[TILES_SUM_Z];
+        char bufferH[CHUNK_SIZE_Z];
         if (dx <0)
         {
-            for(int y = 0; y < TILES_SUM_Z; ++y)
+            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                bufferH[y] = m_Map[0][y].height ;
+                bufferH[y] = mMap[0][y].height ;
             }
-            for(int x = 0; x < TILES_SUM_X-1; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X-1; ++x)
             {
-                for(int y = 0; y < TILES_SUM_Z; ++y)
+                for(int y = 0; y < CHUNK_SIZE_Z; ++y)
                 {
-                    m_Map[x][y].height      = m_Map[x+1][y].height;
+                    mMap[x][y].height      = mMap[x+1][y].height;
                 }
             }
-            for(int y = 0; y < TILES_SUM_Z; ++y)
+            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                m_Map[TILES_SUM_X-1][y].height = bufferH[y] ;
+                mMap[CHUNK_SIZE_X-1][y].height = bufferH[y] ;
             }
         }
         else
         {
-            for(int y = 0; y < TILES_SUM_Z; ++y)
+            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                bufferH[y] = m_Map[TILES_SUM_X-1][y].height ;
+                bufferH[y] = mMap[CHUNK_SIZE_X-1][y].height ;
             }
-            for(int x = TILES_SUM_X-1; x >0; --x)
+            for(int x = CHUNK_SIZE_X-1; x >0; --x)
             {
-                for(int y = 0; y < TILES_SUM_Z; ++y)
+                for(int y = 0; y < CHUNK_SIZE_Z; ++y)
                 {
-                    m_Map[x][y].height      = m_Map[x-1][y].height;
+                    mMap[x][y].height      = mMap[x-1][y].height;
                 }
             }
-            for(int y = 0; y < TILES_SUM_Z; ++y)
+            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                m_Map[0][y].height      = bufferH[y] ;
+                mMap[0][y].height      = bufferH[y] ;
             }
         }
     }
 
     if (dz)
     {
-        char bufferH[TILES_SUM_X];
+        char bufferH[CHUNK_SIZE_X];
         if (dz <0)
         {
-            for(int x = 0; x < TILES_SUM_X; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                bufferH[x] = m_Map[x][0].height ;
+                bufferH[x] = mMap[x][0].height ;
             }
 
-            for(int x = 0; x < TILES_SUM_X; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                for(int y = 0; y < TILES_SUM_Z-1; ++y)
+                for(int y = 0; y < CHUNK_SIZE_Z-1; ++y)
                 {
-                    m_Map[x][y].height = m_Map[x][y+1].height;
+                    mMap[x][y].height = mMap[x][y+1].height;
                 }
             }
 
-            for(int x = 0; x < TILES_SUM_X; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                m_Map[x][TILES_SUM_Z-1].height = bufferH[x] ;
+                mMap[x][CHUNK_SIZE_Z-1].height = bufferH[x] ;
             }
         }
 
         else
         {
-            for(int x = 0; x < TILES_SUM_X; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                bufferH[x] = m_Map[x][TILES_SUM_Z-1].height ;
+                bufferH[x] = mMap[x][CHUNK_SIZE_Z-1].height ;
             }
-            for(int x = 0; x < TILES_SUM_X; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                for(int y = TILES_SUM_Z-1; y > 0; --y)
+                for(int y = CHUNK_SIZE_Z-1; y > 0; --y)
                 {
-                    m_Map[x][y].height = m_Map[x][y-1].height;
+                    mMap[x][y].height = mMap[x][y-1].height;
                 }
             }
-            for(int x = 0; x < TILES_SUM_X; ++x)
+            for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                m_Map[x][0].height  = bufferH[x] ;
+                mMap[x][0].height  = bufferH[x] ;
             }
         }
     }
 
-    mapPosX+= dx;
-    mapPosZ+= dz;
-    ChangeChunks();
+    mapScrollX+= dx;
+    mapScrollZ+= dz;
+    changeChunks();
 }
 
 ///================================================================================================
 /// .
 ///================================================================================================
-void TileManager::getMapPos(int &x, int &z)
+void TileManager::getMapScroll(int &x, int &z)
 {
-    x = mapPosX;
-    z = mapPosZ;
-}
-
-
-///================================================================================================
-/// Saves the map.
-///================================================================================================
-void TileManager::Save_Map(const std::string &png_filename)
-{
-    uchar *data = new uchar[TILES_SUM_X * TILES_SUM_Z];
-    for(int x = 0; x < TILES_SUM_X; ++x)
-    {
-        for(int y = 0; y < TILES_SUM_Z; ++y)
-        {
-            data[y * TILES_SUM_X + x] = uchar  (m_Map[x][y].height);
-        }
-    }
-    DataStreamPtr image_chunk(new MemoryDataStream ((void*)data,TILES_SUM_X * TILES_SUM_Z,false));
-    Image img;
-    img.loadRawData(image_chunk,TILES_SUM_X,TILES_SUM_Z, 1, PF_A8);
-    /// save as a PNG
-    std::stringstream tmp_FileName;
-    tmp_FileName <<PATH_TILE_TEXTURES << png_filename;
-    img.save(tmp_FileName.str());
-    delete data;
+    x = mapScrollX;
+    z = mapScrollZ;
 }
 
 ///================================================================================================
 /// Set the textures for the given height.
 ///================================================================================================
-void TileManager::Set_Map_Textures()
+void TileManager::setMapTextures()
 {
     short height;
-    for (int x = 0; x < TILES_SUM_X; ++x)
+    for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
-        for (int y = 0; y < TILES_SUM_Z; ++y)
+        for (int y = 0; y < CHUNK_SIZE_Z; ++y)
         {
-            height = m_Map[x][y].height;
+            height = mMap[x][y].height;
             /// ////////////////////////////////////////////////////////////////////
             // Highland.
             /// ////////////////////////////////////////////////////////////////////
-            if (height > LEVEL_MOUNTAIN_TOP)
+            if (height > TileChunk::LEVEL_MOUNTAIN_TOP)
             {
-                m_Map[x][y].terrain_col = 0;
-                m_Map[x][y].terrain_row = 1;
+                mMap[x][y].terrain_col = 0;
+                mMap[x][y].terrain_row = 1;
             }
-            else if (height > LEVEL_MOUNTAIN_MID)
+            else if (height > TileChunk::LEVEL_MOUNTAIN_MID)
             {
                 {
-                    m_Map[x][y].terrain_col = 0;
-                    m_Map[x][y].terrain_row = 0;
+                    mMap[x][y].terrain_col = 0;
+                    mMap[x][y].terrain_row = 0;
                 }
             }
-            else if (height > LEVEL_MOUNTAIN_DWN)
+            else if (height > TileChunk::LEVEL_MOUNTAIN_DWN)
             {
-                m_Map[x][y].terrain_col = 3;
-                m_Map[x][y].terrain_row = 2;
+                mMap[x][y].terrain_col = 3;
+                mMap[x][y].terrain_row = 2;
             }
             /// ////////////////////////////////////////////////////////////////////
             /// Plain.
             /// ////////////////////////////////////////////////////////////////////
-            else if (height > LEVEL_PLAINS_TOP)
+            else if (height > TileChunk::LEVEL_PLAINS_TOP)
             { // Plain
-                m_Map[x][y].terrain_col = 2;
-                m_Map[x][y].terrain_row = 2;
+                mMap[x][y].terrain_col = 2;
+                mMap[x][y].terrain_row = 2;
             }
-            else if (height > LEVEL_PLAINS_MID)
+            else if (height > TileChunk::LEVEL_PLAINS_MID)
             {
-                m_Map[x][y].terrain_col = 6;
-                m_Map[x][y].terrain_row = 3;
+                mMap[x][y].terrain_col = 6;
+                mMap[x][y].terrain_row = 3;
             }
-            else if (height > LEVEL_PLAINS_DWN)
+            else if (height > TileChunk::LEVEL_PLAINS_DWN)
             {
-                m_Map[x][y].terrain_col = 0;
-                m_Map[x][y].terrain_row = 4;
+                mMap[x][y].terrain_col = 0;
+                mMap[x][y].terrain_row = 4;
             }
-            else if (height > LEVEL_PLAINS_SUB)
+            else if (height > TileChunk::LEVEL_PLAINS_SUB)
             {
-                m_Map[x][y].terrain_col = 3;
-                m_Map[x][y].terrain_row = 3;
+                mMap[x][y].terrain_col = 3;
+                mMap[x][y].terrain_row = 3;
             }
             /// ////////////////////////////////////////////////////////////////////
             /// Sea-Ground.
             /// ////////////////////////////////////////////////////////////////////
             else
             {
-                m_Map[x][y].terrain_col = 3;
-                m_Map[x][y].terrain_row = 3;
+                mMap[x][y].terrain_col = 3;
+                mMap[x][y].terrain_row = 3;
             }
         }
     }
@@ -345,23 +326,16 @@ void TileManager::Set_Map_Textures()
 ///================================================================================================
 /// Create all chunks.
 ///================================================================================================
-void TileManager::CreateChunks()
+void TileManager::createChunks()
 {
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-    TileChunk::m_TileManagerPtr = this;
-    TileChunk::m_bounds = new AxisAlignedBox(
-                              -TILE_SIZE_X * CHUNK_SIZE_X, 0               , -TILE_SIZE_Z * CHUNK_SIZE_Z,
-                              +TILE_SIZE_X * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE_Z * CHUNK_SIZE_Z);
-    for (short x = 0; x < CHUNK_SUM_X; ++x)
-    {
-        for (short y = 0; y < CHUNK_SUM_Z; ++y)
-        {
-            m_mapchunk[x][y].Create(x, y, m_TileTextureSize);
-        }
-    }
-    delete TileChunk::m_bounds;
+    TileChunk::mBounds = new AxisAlignedBox(
+                             -TILE_SIZE_X * CHUNK_SIZE_X, 0  , -TILE_SIZE_Z * CHUNK_SIZE_Z,
+                             +TILE_SIZE_X * CHUNK_SIZE_X, 100,  TILE_SIZE_Z * CHUNK_SIZE_Z);
+    mMapchunk.create(mTileTextureSize);
+    delete TileChunk::mBounds;
 #ifdef LOG_TIMING
     Logger::log().info() << "Time to create Chunks: "
     << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
@@ -371,21 +345,20 @@ void TileManager::CreateChunks()
 ///================================================================================================
 /// Change all Chunks.
 ///================================================================================================
-void TileManager::ChangeChunks()
+void TileManager::changeChunks()
 {
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-    TileChunk::m_TileManagerPtr = this;
-    TileChunk::m_bounds = new AxisAlignedBox(
-                              -TILE_SIZE_X * CHUNK_SIZE_X, 0               , -TILE_SIZE_Z * CHUNK_SIZE_Z,
-                              TILE_SIZE_X * CHUNK_SIZE_X, 100 * m_StretchZ,  TILE_SIZE_Z * CHUNK_SIZE_Z);
+    TileChunk::mBounds = new AxisAlignedBox(
+                             -TILE_SIZE_X * CHUNK_SIZE_X, 0 , -TILE_SIZE_Z * CHUNK_SIZE_Z,
+                             TILE_SIZE_X * CHUNK_SIZE_X, 100,  TILE_SIZE_Z * CHUNK_SIZE_Z);
     /*
         // Test start
         unsigned char value;
-        for (int a = 0 ; a < TILES_SUM_X; ++a)
+        for (int a = 0 ; a < TILES_SUmX; ++a)
         {
-            for (int b = 0; b < TILES_SUM_Z; ++b)
+            for (int b = 0; b < TILES_SUmZ; ++b)
             {
                 value = Get_Map_Height(a, b)+ 1;
                 if (value > 220)
@@ -395,15 +368,9 @@ void TileManager::ChangeChunks()
         }
         // Test stop
     */
-        Set_Map_Textures();
-    for (short x = 0; x < CHUNK_SUM_X; ++x)
-    {
-        for (short y = 0; y < CHUNK_SUM_Z; ++y)
-        {
-            m_mapchunk[x][y].Change();
-        }
-    }
-    delete TileChunk::m_bounds;
+    setMapTextures();
+    mMapchunk.change();
+    delete TileChunk::mBounds;
 
 #ifdef LOG_TIMING
     Logger::log().info() << "Time to change Chunks: "
@@ -414,7 +381,7 @@ void TileManager::ChangeChunks()
 ///================================================================================================
 /// Change Tile and Environmet textures.
 ///================================================================================================
-void TileManager::ChangeTexture()
+void TileManager::changeTexture()
 {
     static bool once = false;
     const std::string strFilename = "terrain_032_texture.png";
@@ -426,7 +393,7 @@ void TileManager::ChangeTexture()
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
     Image tMap;
-    if (!LoadImage(tMap, strFilename))
+    if (!loadImage(tMap, strFilename))
     {
         Logger::log().error() << "Group texture '" << strFilename << "' was not found.";
         return;
@@ -444,50 +411,9 @@ void TileManager::ChangeTexture()
 }
 
 ///================================================================================================
-/// +/- 5 Chunks around the camera are drawn in high quality.
-///================================================================================================
-void TileManager::ControlChunks(Vector3 vector)
-{
-    // only for testing...
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
-        return;
-
-    /// ////////////////////////////////////////////////////////////////////
-    /// Just for testing...
-    /// ////////////////////////////////////////////////////////////////////
-    // ChangeChunks();
-
-    int x = (int)vector.x / (TILE_SIZE_X * CHUNK_SIZE_X)+1;
-    int y = (int)vector.z / (TILE_SIZE_Z * CHUNK_SIZE_Z)+1;
-    if ( x > CHUNK_SUM_X || y > CHUNK_SUM_Z)
-    {
-        return;
-    }
-
-    for(int cx = 0; cx < CHUNK_SUM_X; ++cx)
-    {
-        for (int cy = 0; cy < CHUNK_SUM_Z; ++cy)
-        {
-#ifndef LOW_QUALITY_RENDERING
-            if (cx >= x - HIGH_QUALITY_RANGE && cx <= x + HIGH_QUALITY_RANGE
-                    && cy >= y - HIGH_QUALITY_RANGE && cy <= y + HIGH_QUALITY_RANGE)
-            {
-                m_mapchunk[cx][cy].Attach(QUALITY_HIGH);
-            }
-            else
-#endif
-
-            {
-                m_mapchunk[cx][cy].Attach(QUALITY_LOW);
-            }
-        }
-    }
-}
-
-///================================================================================================
 /// If the file exists load it into an image.
 ///================================================================================================
-bool TileManager::LoadImage(Image &image, const std::string &strFilename)
+bool TileManager::loadImage(Image &image, const std::string &strFilename)
 {
     std::string strTemp = PATH_TILE_TEXTURES + strFilename;
     std::ifstream chkFile;
@@ -502,7 +428,7 @@ bool TileManager::LoadImage(Image &image, const std::string &strFilename)
 ///================================================================================================
 /// Create the texture-file out of the single textures + filter texture.
 ///================================================================================================
-bool TileManager::CreateTextureGroup(const std::string &terrain_type)
+bool TileManager::createTextureGroup(const std::string &terrain_type)
 {
     std::string strFilename;
     /// ////////////////////////////////////////////////////////////////////
@@ -544,7 +470,7 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
         TextureGroup_data = new uchar[PIXEL_PER_ROW * PIXEL_PER_ROW *4];
         TextureGroup.loadDynamicImage(TextureGroup_data, pix * 8, pix * 8,PF_A8B8G8R8);
         strFilename = "filter_" + StringConverter::toString(pix/2, 3, '0') + ".png";
-        if (!LoadImage(Filter, strFilename))
+        if (!loadImage(Filter, strFilename))
         {
             Logger::log().error() << "Filter texture '" << strFilename << "' was not found.";
             return false;
@@ -558,7 +484,7 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
             strFilename = terrain_type;
             strFilename+= "_"+ StringConverter::toString(++i, 2, '0');
             strFilename+= "_"+ StringConverter::toString(pix, 3, '0') + ".png";
-            if (!LoadImage(Texture, strFilename))
+            if (!loadImage(Texture, strFilename))
                 break;
             addToGroupTexture(TextureGroup_data, Filter_data, &Texture, pix, tx, ty);
             if (++tx == TEXTURES_PER_ROW)
@@ -568,7 +494,7 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
                 tx = 0;
             }
         }
-        CreateTextureGroupBorders(TextureGroup_data, pix);
+        createTextureGroupBorders(TextureGroup_data, pix);
         strFilename = PATH_TILE_TEXTURES + terrain_type + "_texture";
         strFilename+= "_"+ StringConverter::toString(pix, 3, '0')+".png";
         TextureGroup.save(strFilename);
@@ -578,67 +504,6 @@ bool TileManager::CreateTextureGroup(const std::string &terrain_type)
     }
     delete[] grid_data;
     return true;
-}
-
-///================================================================================================
-/// Create MipMaps for tile textures
-///================================================================================================
-void TileManager::CreateMipMaps(const std::string &terrain_type, int pixel)
-{
-    /*
-        // Load tile texture images in all resolutions
-        enum
-        {
-            PIX_032, PIX_064, PIX_128, PIX_SUM
-        };
-        Image TileImage[PIX_SUM];
-        std::string strFilename;
-
-        if (!mTileTexture.isNull()) TextureManager::getSingleton().remove((ResourcePtr&)mTileTexture);
-
-        /// Load all tile textures-sets.
-        for (int i = 0; i < PIX_SUM; ++i)
-        {
-            strFilename = terrain_type;
-            strFilename+= "_texture_"+ StringConverter::toString((int)pow(2.0, i+4), 3, '0') + ".png";
-            if (!LoadImage(TileImage[i], strFilename))
-            {
-                Logger::log().error() << "Ground texture '" << strFilename << "' was not found.";
-                return;
-            }
-        }
-        if (pixel == 128)
-        {
-            /// create mipmaps for 128x128 pixel textures
-            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_128.png",
-                          "General",TEX_TYPE_2D, 1024,1024, 2, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_128].getPixelBox());
-            mTileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_064].getPixelBox());
-            mTileTexture->getBuffer(0,2)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-        }
-        else if (pixel == 64)
-        {
-            /// create mipmaps for 64x64 pixel textures
-            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_064.png",
-                          "General",TEX_TYPE_2D, 512, 512, 1, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_064].getPixelBox());
-            mTileTexture->getBuffer(0,1)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-        }
-        else if (pixel == 32)
-        {
-            /// create mipmaps for 32x32 pixel textures
-            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_032.png",
-                          "General",TEX_TYPE_2D, 256, 256, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-        }
-        else
-        {
-            /// create mipmaps for 32x32 pixel textures
-            mTileTexture = TextureManager::getSingleton().createManual(terrain_type+"_texture_016.png",
-                          "General",TEX_TYPE_2D, 128, 128, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
-            mTileTexture->getBuffer(0,0)->blitFromMemory(TileImage[PIX_032].getPixelBox());
-        }
-      */
 }
 
 ///================================================================================================
@@ -658,7 +523,7 @@ void TileManager::shrinkTexture(const std::string &terrain_type)
             strFilename = terrain_type;
             strFilename+= "_"+ StringConverter::toString(sum, 2, '0');
             strFilename+= "_"+ StringConverter::toString(pix+pix, 3, '0') + ".png";
-            if (!LoadImage(image, strFilename))
+            if (!loadImage(image, strFilename))
                 break;
             /// Resize the Image.
             image.resize((Ogre::ushort)image.getWidth()/2, (Ogre::ushort)image.getHeight()/2, Image::FILTER_BILINEAR);
@@ -686,7 +551,7 @@ void TileManager::shrinkFilter()
     while (pix > MIN_TEXTURE_PIXEL/4)
     {
         strFilename = "filter_" + StringConverter::toString(pix+pix, 3, '0') + ".png";
-        if (!LoadImage(image, strFilename))
+        if (!loadImage(image, strFilename))
         {
             Logger::log().error() << "Filter texture '" << strFilename << "' was not found.";
             return;
@@ -768,9 +633,9 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
     /// Tile-texture  : 24 bit (RGB)
     /// Filter-texture: 24 bit (RGB)
     int dstOffX = RGBA* (pix/2 + 2*SPACE);
-//    int dstOffY = RGBA* (pix/2) * pix * 8;
+    //    int dstOffY = RGBA* (pix/2) * pix * 8;
     int srcOffX = RGB * (pix/2);
-//    int srcOffY = RGB * (pix/2) * pix;
+    //    int srcOffY = RGB * (pix/2) * pix;
     uchar alpha = 255;
 
     index2 = index3 =0;
@@ -784,25 +649,25 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
         {   // R
             TextureGroup_data[  index1                ] = Texture_data[  index2                ]; /// Top Left  subTile.
             TextureGroup_data[  index1+dstOffX        ] = Texture_data[  index2+srcOffX        ]; /// Top Right subTile.
-//            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ]; /// Bot Left subTile.
-//            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY]; /// Bot Righr subTile.
+            //            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ]; /// Bot Left subTile.
+            //            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY]; /// Bot Righr subTile.
             // G
             TextureGroup_data[++index1                ] = Texture_data[++index2                ];
             TextureGroup_data[  index1+dstOffX        ] = Texture_data[  index2+srcOffX        ];
-//            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ];
-//            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY];
-			// B
+            //            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ];
+            //            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY];
+            // B
             TextureGroup_data[++index1                ] = Texture_data[++index2                ];
             TextureGroup_data[  index1+dstOffX        ] = Texture_data[  index2+srcOffX        ];
-//            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ];
-//            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY];
-			// Alpha
+            //            TextureGroup_data[  index1+dstOffY        ] = Texture_data[  index2+srcOffY        ];
+            //            TextureGroup_data[  index1+dstOffX+dstOffY] = Texture_data[  index2+srcOffX+srcOffY];
+            // Alpha
             if (pix > MIN_TEXTURE_PIXEL)
                 alpha = Filter_data[index3];
             TextureGroup_data[++index1                ] = alpha;
             TextureGroup_data[  index1+dstOffX        ] = alpha;
-//            TextureGroup_data[  index1+dstOffY        ] = alpha;
-//            TextureGroup_data[  index1+dstOffX+dstOffY] = alpha;
+            //            TextureGroup_data[  index1+dstOffY        ] = alpha;
+            //            TextureGroup_data[  index1+dstOffX+dstOffY] = alpha;
 
             ++index1;
             ++index2;
@@ -816,7 +681,7 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
 ///================================================================================================
 /// .
 ///================================================================================================
-inline void TileManager::CreateTextureGroupBorders(uchar* TextureGroup_data, short pix)
+inline void TileManager::createTextureGroupBorders(uchar* TextureGroup_data, short pix)
 {
     if (pix <= MIN_TEXTURE_PIXEL) return;
     /// ////////////////////////////////////////////////////////////////////
@@ -894,44 +759,24 @@ void TileManager::setMaterialLOD(int pixel)
     if (pixel != 128 && pixel !=64 && pixel != 32 && pixel != 16)
         return;
 
-    std::string matWater, matLand;
-    int lod;
-    m_TileTextureSize = pixel;
-    if (pixel >16)
-    {
-        matLand = "Land_HighDetails" + StringConverter::toString(m_TileTextureSize, 3, '0');
-        matWater= "Water_HighDetails";
-        lod = QUALITY_HIGH;
-    }
-    else
-    {
-        matLand = "Land_LowDetails";
-        matWater= "Water_LowDetails";
-        lod = QUALITY_LOW;
-    }
+    String matWater, matLand;
+    mTileTextureSize = pixel;
+    matLand = "LandTiles" + StringConverter::toString(mTileTextureSize, 3, '0');
+    matWater= "WaterTiles";
     if (mGrid)
     {
         matLand +="_Grid";
         matWater+="_Grid";
     }
-    CreateMipMaps("terrain", m_TileTextureSize);
-    for (int x = 0; x < CHUNK_SUM_X; ++x)
-    {
-        for (int y = 0; y < CHUNK_SUM_Z; ++y)
-        {
-            if (m_mapchunk[x][y].Get_Land_entity() ) m_mapchunk[x][y].Get_Land_entity() ->setMaterialName(matLand);
-            if (m_mapchunk[x][y].Get_Water_entity()) m_mapchunk[x][y].Get_Water_entity()->setMaterialName(matWater);
-            m_mapchunk[x][y].Attach(lod);
-        }
-    }
+    mMapchunk.setMaterial(matLand, matWater);
 }
 
 ///================================================================================================
 /// Switch Grid.
 ///================================================================================================
-void TileManager::ToggleGrid()
+void TileManager::toggleGrid()
 {
     mGrid = !mGrid;
-    setMaterialLOD(m_TileTextureSize);
+    setMaterialLOD(mTileTextureSize);
 }
 

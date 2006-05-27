@@ -1,17 +1,17 @@
-material Land_HighDetails128
+material LandTiles128
 {
   technique
   {
     pass
     {
-      texture_unit 0
+      texture_unit
       {
         filtering linear linear point
         tex_coord_set 0
         texture terrain_texture_128.png
       }
 
-      texture_unit 1
+      texture_unit
       {
         filtering linear linear point
         colour_op alpha_blend
@@ -23,7 +23,7 @@ material Land_HighDetails128
   }
 }
 
-material Land_HighDetails128_Grid
+material LandTiles128_Grid
 {
   technique
   {
@@ -54,7 +54,7 @@ material Land_HighDetails128_Grid
   }
 }
 
-material Land_HighDetails064
+material LandTiles064
 {
   technique
   {
@@ -77,7 +77,7 @@ material Land_HighDetails064
     }
   }
 }
-material Land_HighDetails064_Grid
+material LandTiles064_Grid
 {
   technique
   {
@@ -107,7 +107,7 @@ material Land_HighDetails064_Grid
   }
 }
 
-material Land_HighDetails032
+material LandTiles032
 {
   technique
   {
@@ -130,7 +130,7 @@ material Land_HighDetails032
     }
   }
 }
-material Land_HighDetails032_Grid
+material LandTiles032_Grid
 {
   technique
   {
@@ -160,9 +160,47 @@ material Land_HighDetails032_Grid
   }
 }
 
+material LandTiles016
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture terrain_texture_016.png 2d 1
+        tex_coord_set 0
+        tex_address_mode clamp
+      }
+
+    }
+  }
+}
+material LandTiles016_Grid
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture terrain_texture_016.png
+        tex_coord_set 0
+        tex_address_mode clamp
+      }
+      texture_unit
+      {
+        filtering none
+        texture grid_128.png
+        tex_coord_set 2
+        colour_op alpha_blend
+      }
+    }
+  }
+}
 
 
-material Water_HighDetails
+material WaterTiles
 {
   technique
   {
@@ -176,7 +214,7 @@ material Water_HighDetails
         texture water_00_128.png
 	// Give me alpha.
         alpha_op_ex modulate src_texture src_manual 0.4 
-        scroll_anim 0.05 0.05
+        scroll_anim 0.02 0.02
         //wave_xform scale_x triangle 1.0 0.2 0.1 0.1
       }
 
@@ -185,24 +223,25 @@ material Water_HighDetails
   }
 }
 
-material Water_HighDetails_Grid
+material WaterTiles_Grid
 {
   technique
   {
     pass
     {
-      texture_unit 0
+      scene_blend alpha_blend
+      depth_write off
+      texture_unit
       {
-        texture water_00_128.png
-        //scroll_anim 0.05 0.05
+	filtering none
         tex_coord_set 0
-        //wave_xform scale_x sine 1.0 0.1 0.0 5.0
-        //wave_xform scale_x sine 1.0 0.2 0.1 0.05
-        
-	//wave_xform scale_x triangle 1.0 0.2 0.1 0.1
-        tex_address_mode wrap
+        texture water_00_128.png
+	// Give me alpha.
+        alpha_op_ex modulate src_texture src_manual 0.4 
+        scroll_anim 0.02 0.02
+        //wave_xform scale_x triangle 1.0 0.2 0.1 0.1
       }
-      texture_unit 1
+      texture_unit
       {
         // filtering none
         texture grid_128.png
@@ -212,33 +251,3 @@ material Water_HighDetails_Grid
     }
   }
 }
-
-
-material Land_LowDetails
-{
-  technique
-  {
-    pass
-    {
-      texture_unit 0
-      {
-        texture terrain_texture_016.png 2d 0
-      }
-    }
-  }
-}
-
-material Water_LowDetails
-{
-  technique
-  {
-    pass
-    {
-      texture_unit 0
-      {
-        texture water_00_128.png 2d 0
-      }
-    }
-  }
-}
-

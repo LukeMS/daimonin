@@ -24,26 +24,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 ///================================================================================================
 ///
 ///================================================================================================
-TileSelection::TileSelection(TileManager* TileManager)
-{
-    m_TileManager = TileManager;
-    reset();
-}
-
-///================================================================================================
-///
-///================================================================================================
-TileSelection::~TileSelection()
-{
-}
-
-///================================================================================================
-///
-///================================================================================================
-Vector3 TileSelection::get_Selection()
+const Vector3 TileInterface::get_Selection()
 {
     Vector3 tmp;
-    if (m_x <0 || m_y <0)
+    if (mX <0 || mZ <0)
     {
         tmp.x = 0;
         tmp.z = 0;
@@ -51,41 +35,20 @@ Vector3 TileSelection::get_Selection()
     }
     else
     {
-        tmp.x = m_x;
-        tmp.z = m_y;
-        tmp.y = (Real) (m_TileManager->Get_Avg_Map_Height(m_x, m_y));
+        tmp.x = mX;
+        tmp.z = mZ;
+        tmp.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mX, mZ));
     }
     return tmp;
 }
 
 ///================================================================================================
-///
-///================================================================================================
-void TileSelection::save_Selection()
-{
-    m_x_old = m_x;
-    m_y_old = m_y;
-}
-
-///================================================================================================
-///
-///================================================================================================
-void TileSelection::reset()
-{
-    m_distance = 1000000; // something big
-    m_x = -1;
-    m_y = -1;
-}
-
-///================================================================================================
 /// Constructor.
 ///================================================================================================
-TileInterface::TileInterface(TileManager* TileManager)
+TileInterface::TileInterface(SceneManager* sceneManager)
 {
-    m_TileManager = TileManager;
-    m_SceneNode = m_TileManager->Get_pSceneManager()->getRootSceneNode()->createChildSceneNode("Interface");
-    m_Selection = new TileSelection(m_TileManager);
-    m_SquareSize = 1;
+    mSceneManager = sceneManager;
+    mRaySceneQuery = mSceneManager->createRayQuery(Ray());
 }
 
 ///================================================================================================
@@ -93,17 +56,7 @@ TileInterface::TileInterface(TileManager* TileManager)
 ///================================================================================================
 TileInterface::~TileInterface()
 {
-    delete m_Selection;
-    m_TileManager->Get_pSceneManager()->destroyQuery(mRaySceneQuery);
-
-}
-
-///================================================================================================
-/// Init.
-///================================================================================================
-void TileInterface::Init()
-{
-    mRaySceneQuery = m_TileManager->Get_pSceneManager()->createRayQuery( Ray() );
+  mSceneManager->destroyQuery(mRaySceneQuery);
 }
 
 ///================================================================================================
@@ -112,52 +65,29 @@ void TileInterface::Init()
 void TileInterface::pick_Tile(float mouseX, float mouseY)
 {
     /// save old selection to compare to new selection later
-    m_Selection->save_Selection();
-    m_Selection->reset();
+    mDistance = 1000000; // something big
+    mX = -1;
+    mZ = -1;
 
-    Ray mouseRay = m_TileManager->Get_pSceneManager()->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
+    Ray mouseRay = TileManager::getSingleton().getSceneManager()->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
     mRaySceneQuery->setRay(mouseRay);
     mRaySceneQuery->setQueryMask(QUERY_TILES_LAND_MASK);
 
     /// Perform the scene query.
     RaySceneQueryResult &result = mRaySceneQuery->execute();
-    RaySceneQueryResult::iterator itr = result.begin();
     if (result.size() >1)
     {
         Logger::log().error() << "BUG in TileInterface.cpp: RaySceneQuery returned more than 1 result.";
         Logger::log().error() << "(You created Entities without setting a setQueryFlags(...) on them)";
     }
-    /// now test which terrain chunk is hit.
-    /// TODO: Extract the chunk-pos out of the entity name.
-    for (int a = 0; a < CHUNK_SUM_X; ++a)
-    {
-        for (int b = 0; b < CHUNK_SUM_Z; ++b)
-        {
-            if (itr->movable == m_TileManager->get_TileChunk(a,b)->Get_Land_entity())
-            {
-                // we found our chunk, now search for the correct tile
-                pick_Tile(&mouseRay,a,b);
-            }
-        }
-    }
-}
 
-///================================================================================================
-/// .
-///================================================================================================
-void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
-{
     /// ////////////////////////////////////////////////////////////////////
     /// we start with a given tile chunk (coordinates a and b) and a ray
     /// and try to find the tile that was selected. we have to check every
     /// tile if it was hit and return the nearest one
     /// ////////////////////////////////////////////////////////////////////
     Real height[4], avgHeight;
-    int vertex_x = m_TileManager->get_TileChunk(a,b)->get_posX() * CHUNK_SIZE_X;
-    int vertex_y = m_TileManager->get_TileChunk(a,b)->get_posZ() * CHUNK_SIZE_Z;
-
-    float StretchZ = m_TileManager->Get_StretchZ();
-
+    Real offsetX, offsetY;
     for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
         for (int y = 0; y < CHUNK_SIZE_Z; ++y)
@@ -167,10 +97,10 @@ void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
             /// intersects this box.
             /// To do this, we need the height of the tile  vertices.
             /// ////////////////////////////////////////////////////////////////////
-            height[0] = m_TileManager->Get_Map_Height(vertex_x + x    , vertex_y + y    ) * StretchZ;
-            height[1] = m_TileManager->Get_Map_Height(vertex_x + x + 1, vertex_y + y    ) * StretchZ;
-            height[2] = m_TileManager->Get_Map_Height(vertex_x + x    , vertex_y + y + 1) * StretchZ;
-            height[3] = m_TileManager->Get_Map_Height(vertex_x + x + 1, vertex_y + y + 1) * StretchZ;
+            height[0] = TileManager::getSingleton().getMapHeight(x    , y    );
+            height[1] = TileManager::getSingleton().getMapHeight(x + 1, y    );
+            height[2] = TileManager::getSingleton().getMapHeight(x    , y + 1);
+            height[3] = TileManager::getSingleton().getMapHeight(x + 1, y + 1);
             avgHeight = (height[0]+height[1]+height[2]+height[3]) /4.0;
             /// ////////////////////////////////////////////////////////////////////
             /// now we build 4 bounding boxes per tile to increase picking accuracy
@@ -179,21 +109,21 @@ void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
             /// which height value is greater
             /// ////////////////////////////////////////////////////////////////////
             std::pair<bool, Real> Test;
-            Real offsetX =0, offsetY=0;
+            offsetX =0, offsetY=0;
             for (int edge=0; edge < 4; ++edge)
             {
                 if (height[edge] > avgHeight)
-                    Test = mouseRay->intersects(
-                               AxisAlignedBox((vertex_x + x + offsetX      )* TILE_SIZE_X, avgHeight,
-                                              (vertex_y + y + offsetY      )* TILE_SIZE_Z,
-                                              (vertex_x + x + offsetX + 0.5)* TILE_SIZE_X, height[edge],
-                                              (vertex_y + y + offsetY + 0.5)* TILE_SIZE_Z));
+                    Test = mouseRay.intersects(
+                               AxisAlignedBox((x + offsetX      )* TILE_SIZE_X, avgHeight,
+                                              (y + offsetY      )* TILE_SIZE_Z,
+                                              (x + offsetX + 0.5)* TILE_SIZE_X, height[edge],
+                                              (y + offsetY + 0.5)* TILE_SIZE_Z));
                 else
-                    Test = mouseRay->intersects(
-                               AxisAlignedBox((vertex_x + x + offsetX      )* TILE_SIZE_X, height[edge],
-                                              (vertex_y + y + offsetY      )* TILE_SIZE_Z,
-                                              (vertex_x + x + offsetX + 0.5)* TILE_SIZE_X, avgHeight,
-                                              (vertex_y + y + offsetY + 0.5)* TILE_SIZE_Z));
+                    Test = mouseRay.intersects(
+                               AxisAlignedBox((x + offsetX      )* TILE_SIZE_X, height[edge],
+                                              (y + offsetY      )* TILE_SIZE_Z,
+                                              (x + offsetX + 0.5)* TILE_SIZE_X, avgHeight,
+                                              (y + offsetY + 0.5)* TILE_SIZE_Z));
                 offsetX+= 0.5;
                 if (offsetX > 0.5)
                 {
@@ -202,15 +132,15 @@ void TileInterface::pick_Tile(Ray* mouseRay, int a, int b)
                 }
                 if (Test.first == true)
                 { /// intersection! Find the closest intersection to the camera.
-                    if (Test.second < m_Selection->m_distance)
+                    if (Test.second < mDistance)
                     {
-                        m_Selection->m_distance = Test.second;
-                        m_Selection->m_x  = vertex_x + x;
-                        m_Selection->m_y  = vertex_y + y;
+                        mDistance = Test.second;
+                        mX  = x;
+                        mZ  = y;
                     }
                 }
             }
-        } // end for y
-    } // end for x
+        }
+    }
 }
 

@@ -51,6 +51,7 @@ public:
     }
     void selectNPC(MovableObject *mob);
     void setPosLifebar(Vector3 pos);
+    void updateSelection(Real facing);
     void setLengthLifebar(int maxLength, int currentLength);
 
 private:
@@ -60,13 +61,13 @@ private:
     Real mWidthLifebarGFX; /**< Lifebar has the same width like the NPC. **/
     Entity *mEntityLifebar, *mEntitySelection;
     SceneNode *mNodeLifebar, *mNodeSelection;
-    bool mSelectionVsible;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
     ObjectVisuals();
     ~ObjectVisuals();
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
+    void buildEntity(int index, const char *meshName, const char *entityName);
 };
 
 #endif

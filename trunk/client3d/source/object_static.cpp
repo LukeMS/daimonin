@@ -82,12 +82,9 @@ ObjectStatic::ObjectStatic(const char *mesh_filename, int posX, int posZ, float 
     mBoundingBox.y = AABB.getMinimum().y;
     pos.x = mPosX * TILE_SIZE_X + mBoundingBox.x;
     pos.z = mPosZ * TILE_SIZE_Z + mBoundingBox.z;
-    pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mPosX, mPosZ)) - mBoundingBox.y;
+    pos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mPosX, mPosZ)) - mBoundingBox.y;
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
     mNode->attachObject(mEntity);
-
-    //mNode->scale(10,10,10);
-
     mAnim = new ObjectAnimate(mEntity);
 }
 
@@ -96,7 +93,6 @@ ObjectStatic::ObjectStatic(const char *mesh_filename, int posX, int posZ, float 
 ///================================================================================================
 void ObjectStatic::update(const FrameEvent& event)
 {
-    //    Logger::log().info() << "hier";
     mAnim->update(event);
 }
 

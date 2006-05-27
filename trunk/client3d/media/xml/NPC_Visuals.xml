@@ -1,0 +1,10 @@
+<?xml version= "1.0" encoding= "us-ascii"?>
+ <!--=============================================-->
+ <!-- Texture size must be 128x128pix             -->
+ <!--=============================================-->
+ <XML name= "NPC">
+    <Image name= "Selection" posX= "0" posY= "0" width= "60" height= "60" size= "10" />
+    <Image name= "Lifebar_L" posX= "0" posY= "358" width= "60" height= "60" size= "10" />
+    <Image name= "Lifebar_R" posX= "0" posY= "358" width= "60" height= "60" size= "10" />
+    <Image name= "Lifebar_M" posX= "0" posY= "358" width= "60" height= "60" size= "10" />
+</XML>

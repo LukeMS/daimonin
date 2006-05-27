@@ -24,52 +24,21 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "Ogre.h"
 #include "logger.h"
 
-class TileManager;
-class TileInterface;
-
 using namespace Ogre;
-
-class TileSelection
-{
-private:
-    int m_x_old, m_y_old;
-    TileManager* m_TileManager;
-public:
-    int m_x, m_y;
-    unsigned int m_SquareSize;
-    Real m_distance;
-    TileSelection( TileManager* TileManager);
-    ~TileSelection();
-    Vector3 get_Selection();
-    void change_Selection();
-    void save_Selection();
-    void reset();
-};
 
 class TileInterface
 {
 private:
-    TileManager* m_TileManager;
-    SceneNode* m_SceneNode;
-    TileSelection* m_Selection;
-    unsigned int m_SquareSize;
     RaySceneQuery* mRaySceneQuery;
+    SceneManager* mSceneManager;
+    Real mDistance;
+    int mX, mZ;
 
 public:
-    TileInterface(TileManager* TileManager);
+    TileInterface(SceneManager* sceneManager);
     ~TileInterface();
-    const Vector3 get_Selection()
-    {
-        return m_Selection->get_Selection();
-    }
-    SceneNode* get_SceneNode()
-    {
-        return m_SceneNode;
-    }
-    void Init();
-    void pick_Tile();
+    const Vector3 get_Selection();
     void pick_Tile(float mMouseX, float mMouseY);
-    void pick_Tile(Ray* mouseRay, int a, int b);
 };
 
 #endif
