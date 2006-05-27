@@ -27,12 +27,6 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef DEFINE_H
 #define DEFINE_H
 
-#define DAIMONIN // Delete me for CodeBlack !!!
-
-#ifdef DAIMONIN
-  #define SINGLE_CHUNK
-#endif
-
 const char PRG_NAME[] =  "Daimonin Ogre3d Client";
 
 const char OVERLAY_TYPE_NAME[] = "Panel"; // defined in OverlayElementFactory.h
@@ -43,6 +37,7 @@ const char FILE_HEIGHT_MAP[]   = "Hoehenkarte.png";
 ///================================================================================================
 const char FILE_GUI_IMAGESET[]          = "./media/xml/GUI_ImageSet.xml";
 const char FILE_GUI_WINDOWS[]           = "./media/xml/GUI_Windows.xml";
+const char FILE_NPC_VISUALS[]           = "./media/xml/NPC_Visuals.xml";
 
 const char PATH_TEXTURES[]              = "./media/textures/";
 const char FILE_SYSTEM_FONT[]           = "SystemFont.png";
@@ -76,11 +71,9 @@ const char PATH_SAMPLES[]               = "./media/sound/";
 enum
 {
     QUERY_PARTICLE_MASK   =1 << 0,
-
     QUERY_TILES_WATER_MASK=1 << 1,
     QUERY_TILES_LAND_MASK =1 << 2,
     QUERY_ENVIRONMENT_MASK=1 << 3,
-
     QUERY_NPC_MASK        =1 << 4,
     QUERY_EQUIPMENT_MASK  =1 << 5,
     QUERY_NPC_SELECT_MASK =1 << 6,

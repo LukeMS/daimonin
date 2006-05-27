@@ -183,7 +183,7 @@ void CEvent::keyPressed(KeyEvent *e)
         // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
         //mCamera->yaw(Degree(10));
         {
-            Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
+            Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
             ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree1.mesh", (int)pos.x, (int)pos.z, 0);
             /*
             static int tree = 0;
@@ -204,7 +204,7 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_G:
-        mTileManager->ToggleGrid();
+        TileManager::getSingleton().toggleGrid();
         break;
 
         case KC_I:
@@ -249,7 +249,7 @@ void CEvent::keyPressed(KeyEvent *e)
             pixel /= 2; // shrink pixel value
             if (pixel < MIN_TEXTURE_PIXEL)
                 pixel = 128; // if value is too low resize to maximum
-            mTileManager->setMaterialLOD(pixel);
+            TileManager::getSingleton().setMaterialLOD(pixel);
             mTimeUntilNextToggle = .5;
         }
         break;
@@ -449,17 +449,15 @@ void CEvent::mousePressed (MouseEvent *e)
         if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
         {
             /// activate mouse picking of tiles
-            mTileManager->get_TileInterface()->pick_Tile(mMouseX, mMouseY);
+            TileManager::getSingleton().getTileInterface()->pick_Tile(mMouseX, mMouseY);
             {
-                Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
+                Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
                 pos.x = (pos.x +0.5) * TILE_SIZE_X;
                 pos.z = (pos.z +0.5) * TILE_SIZE_Z;
                 ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
             }
-
-
             /// Move the player.
-            Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
+            Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
             ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_GOTO, (int)pos.x, (int) pos.z);
         }
     }

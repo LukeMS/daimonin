@@ -78,10 +78,6 @@ public:
     {
         return mCamera;
     }
-    TileManager *getTileManager()
-    {
-        return mTileManager;
-    }
     Real getCamCornerX()
     {
         return mCamCornerX;
@@ -105,7 +101,6 @@ private:
     Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
     SceneNode *mWorld;
     SceneManager *mSceneManager;
-    TileManager *mTileManager;
     EventProcessor *mEventProcessor;
     InputReader* mInputDevice;
     Vector3 mTranslateVector;

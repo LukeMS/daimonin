@@ -29,117 +29,141 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "events.h"
 #include "object_visuals.h"
+#include <tinyxml.h>
 
-///================================================================================================
+///===================================================
 /// Init all static Elemnts.
-///================================================================================================
+///===================================================
 
+enum
+{
+    NPC_SELECTION,
+    NPC_SUM
+};
 
-///================================================================================================
+struct
+{
+    std::string name;
+    Real x1, x2, z1, z2;
+    Real size;
+}
+GfxEntry[NPC_SUM];
+
+const int TEXTURE_SIZE = 128;
+const char MATERIAL_NAME[] = "NPC_Visuals";
+
+///===================================================
 /// Free all recources.
-///================================================================================================
+///===================================================
 void ObjectVisuals::freeRecources()
 {}
 
-///================================================================================================
+///===================================================
 /// .
-///================================================================================================
+///===================================================
 ObjectVisuals::~ObjectVisuals()
 {}
 
-///================================================================================================
+///===================================================
 /// .
-///================================================================================================
+///===================================================
 ObjectVisuals::ObjectVisuals()
 {
-    mSelectionVsible = false;
     mNodeSelection = 0;
 
+    Logger::log().headline("Creating Object Visuals.");
     /// ////////////////////////////////////////////////////////////////////
-    /// Create texture.
+    /// Check for a working description file.
     /// ////////////////////////////////////////////////////////////////////
-    // todo:
-    // build texture from font + Imageset.png (*.xml)
-
+    TiXmlElement *xmlRoot, *xmlElem;
+    TiXmlDocument doc(FILE_NPC_VISUALS);
+    const char *strTemp;
+    if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()))
+    {
+        Logger::log().error() << "XML-File '" << FILE_NPC_VISUALS << "' is broken or missing.";
+        return;
+    }
+    Logger::log().info() << "Parsing the ImageSet file '" << FILE_NPC_VISUALS << "'.";
     /// ////////////////////////////////////////////////////////////////////
-    /// Create selection entity..
+    /// Parse the gfx coordinates.
     /// ////////////////////////////////////////////////////////////////////
-    const Real SIZE = 10.0;
-    ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject("mob", ManualObjectFactory::FACTORY_TYPE_NAME));
-    mob->begin("selection"); // MAterial name;
-    mob->position(-SIZE, 0.0, -SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(0.0, 0.0);
-    mob->position(-SIZE, 0.0, SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(0.0, 1.0);
-    mob->position(SIZE, 0.0, -SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(1.0, 0.0);
-    mob->position(SIZE, 0.0, SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(1.0, 1.0);
-    mob->triangle( 0, 1, 2);
-    mob->triangle( 3, 2, 1);
-    mob->end();
-    mob->convertToMesh("selection.mesh");
-    mEntitySelection=Event->GetSceneManager()->createEntity("Selection","selection.mesh");
-    mEntitySelection->setQueryFlags(QUERY_NPC_SELECT_MASK);
-
-    /// ////////////////////////////////////////////////////////////////////
-    /// Create lifebar entity.
-    /// ////////////////////////////////////////////////////////////////////
-/*
-    const Real SIZE = 100.0;
-    ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject("mob", ManualObjectFactory::FACTORY_TYPE_NAME));
-    mob->begin("selection"); // MAterial name;
-    mob->position(-SIZE, 0.0, -SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(0.0, 0.0);
-    mob->position(-SIZE, 0.0, SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(0.0, 1.0);
-    mob->position(SIZE, 0.0, -SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(1.0, 0.0);
-    mob->position(SIZE, 0.0, SIZE);
-    mob->normal(0,0,1);
-    mob->textureCoord(1.0, 1.0);
-    mob->triangle( 0, 1, 2);
-    mob->triangle( 3, 2, 1);
-    mob->end();
-    mob->convertToMesh("selection.mesh");
-    mEntitySelection=Event->GetSceneManager()->createEntity("Selection","selection.mesh");
-    mEntitySelection->setQueryFlags(QUERY_NPC_SELECT_MASK);
-*/
+    int index =-1;
+    for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
+    {
+        if (!(strTemp = xmlElem->Attribute("name"))) continue;
+        if (++index >= NPC_SUM) break;
+        GfxEntry[index].name = strTemp;
+        if ((strTemp = xmlElem->Attribute("posX"  ))) GfxEntry[index].x1  = atof(strTemp)/ TEXTURE_SIZE;
+        if ((strTemp = xmlElem->Attribute("posY"  ))) GfxEntry[index].z1  = atof(strTemp)/ TEXTURE_SIZE;
+        if ((strTemp = xmlElem->Attribute("width" ))) GfxEntry[index].x2  = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].x1;
+        if ((strTemp = xmlElem->Attribute("height"))) GfxEntry[index].z2  = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].z1;
+        if ((strTemp = xmlElem->Attribute("size"  ))) GfxEntry[index].size= atof(strTemp);
+    }
+    buildEntity(NPC_SELECTION, "selectionMesh", "Selection");
 }
 
-///================================================================================================
+///===================================================
+/// Create selection entity.
+///===================================================
+void ObjectVisuals::buildEntity(int index, const char *meshName, const char *entityName)
+{
+    Real size = GfxEntry[index].size;
+    ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject("mob", ManualObjectFactory::FACTORY_TYPE_NAME));
+    mob->begin(MATERIAL_NAME);
+    mob->position(-size, 0.0, -size);
+    mob->normal(0,0,1);
+    mob->textureCoord(GfxEntry[index].x1, GfxEntry[index].z1);
+    mob->position(-size, 0.0, size);
+    mob->normal(0,0,1);
+    mob->textureCoord(GfxEntry[index].x1, GfxEntry[index].z2);
+    mob->position(size, 0.0, -size);
+    mob->normal(0,0,1);
+    mob->textureCoord(GfxEntry[index].x2, GfxEntry[index].z1);
+    mob->position(size, 0.0, size);
+    mob->normal(0,0,1);
+    mob->textureCoord(GfxEntry[index].x2, GfxEntry[index].z2);
+    mob->triangle(0, 1, 2);
+    mob->triangle(3, 2, 1);
+    mob->end();
+    mob->convertToMesh(meshName);
+    mEntitySelection=Event->GetSceneManager()->createEntity(entityName, meshName);
+    mEntitySelection->setQueryFlags(QUERY_NPC_SELECT_MASK);
+}
+
+
+///===================================================
 /// .
-///================================================================================================
+///===================================================
 void ObjectVisuals::setPosLifebar(Vector3 pos)
 {}
 
-///================================================================================================
+///===================================================
 /// .
-///================================================================================================
+///===================================================
 void ObjectVisuals::setLengthLifebar(int maxLength, int currentLength)
 {
     if (!maxLength) return; // prevent division by zero.
-    Real filling = (mWidthLifebarGFX * currentLength) / maxLength;
+//    Real filling = (mWidthLifebarGFX * currentLength) / maxLength;
     // subMesh3->setScale(filling, 1.0f, 1.0f);
 }
 
-///================================================================================================
+///===================================================
 /// Select a NPC.
-///================================================================================================
+///===================================================
 void ObjectVisuals::selectNPC(MovableObject *mob)
 {
     if (mNodeSelection) mNodeSelection->getParentSceneNode()->removeAndDestroyChild("SelNode");
     mNodeSelection = mob->getParentSceneNode()->createChildSceneNode("SelNode");
     mNodeSelection->attachObject(mEntitySelection);
-
+    //mNodeSelection->attachObject(mEntityLifebar);
     const AxisAlignedBox &AABB = mob->getBoundingBox();
     Vector3 pos = mNodeSelection->getPosition();
     mNodeSelection->setPosition(pos.x, AABB.getMinimum().y +3, pos.z);
+}
+
+///===================================================
+/// Always face the camera.
+///===================================================
+void ObjectVisuals::updateSelection(Real facing)
+{
 }

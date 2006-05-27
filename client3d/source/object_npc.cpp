@@ -244,14 +244,13 @@ ObjectNPC::ObjectNPC(const char *desc_filename, int posX, int posZ, float Facing
     mBoundingBox.y = AABB.getMinimum().y;
     pos.x = mActPos.x * TILE_SIZE_X + mBoundingBox.x;
     pos.z = mActPos.z * TILE_SIZE_Z + mBoundingBox.z;;
-    pos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(mActPos.x, mActPos.z)) - mBoundingBox.y;
+    pos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mActPos.x, mActPos.z)) - mBoundingBox.y;
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
     mNode->attachObject(mEntityNPC);
 
     if (!mIndex)
     {
         Event->setWorldPos(pos, 0, 0, CEvent::WSYNC_MOVE);
-        // mNode->attachObject(Event->getCamera()); // rotating map.
     }
 
     /// ////////////////////////////////////////////////////////////////////
@@ -272,9 +271,9 @@ ObjectNPC::ObjectNPC(const char *desc_filename, int posX, int posZ, float Facing
     //mNode->showBoundingBox(true); // Remove Me!!!!
 
     /// Set the default Colors of the model.
-    setTexture(   0,   0,   0);
-    setTexture(   2,   1,   0);
-    setTexture(   3,   2,   0);
+    setTexture(0,   0,   0);
+    setTexture(2,   1,   0);
+    setTexture(3,   2,   0);
     setTexture(   4,   3,   0);
     setTexture(   5,   4,   0);
     setTexture(   6,   5,   0);
@@ -470,7 +469,7 @@ void ObjectNPC::update(const FrameEvent& event)
             /// Set the exact destination pos.
             mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
             mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
-            mWalkToPos.y = Event->getTileManager()->Get_Avg_Map_Height(mDstPos.x, mDstPos.z) - mBoundingBox.y;
+            mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
             mNode->setPosition(mWalkToPos);
             if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
             mAutoMoving = false;
@@ -543,7 +542,7 @@ void ObjectNPC::moveToTile(int x, int z)
     faceToTile(x, z);
     /// Move it.
     mWalkToPos.x = x * TILE_SIZE_X + mBoundingBox.x;
-    mWalkToPos.y = (Real) (Event->getTileManager()->Get_Avg_Map_Height(x, z) - mBoundingBox.y);
+    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(x, z) - mBoundingBox.y);
     mWalkToPos.z = z * TILE_SIZE_Z + mBoundingBox.z;
     mDeltaPos = mNode->getPosition() - mWalkToPos;
     if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
