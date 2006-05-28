@@ -17,13 +17,13 @@
 				<Compiler>
 					<Add option="-W" />
 					<Add option="-D_CONSOLE" />
-					<Add option="-DDEBUG" />
 					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DMIN_GW" />
 				</Compiler>
 				<Linker>
+					<Add option="-s" />
 					<Add library="wsock32" />
 					<Add library="winmm" />
 				</Linker>
@@ -46,7 +46,7 @@
 					<Add option="-D_CONSOLE" />
 					<Add option="-DDEBUG" />
 					<Add option="-DDEBUG_MOVEATTACK" />
-					<Add option="-DWIN32,NDEBUG" />
+					<Add option="-DWIN32" />
 					<Add option="-DLUA_PLUGIN_EXPORTS" />
 					<Add option="-DMIN_GW" />
 				</Compiler>
@@ -57,7 +57,6 @@
 				<ExtraCommands>
 					<Add before="..\..\..\..\dev\win32\flex.exe -i -Prmap -o..\..\..\src\random_maps\reader.c  ..\..\..\src\random_maps\reader.l" />
 					<Add before="..\..\..\..\dev\win32\flex.exe -i -o..\..\..\src\common\loader.c  ..\..\..\src\common\loader.l" />
-					<Add after="copy Debug\*.exe ..\..\..\*.exe" />
 				</ExtraCommands>
 			</Target>
 		</Build>

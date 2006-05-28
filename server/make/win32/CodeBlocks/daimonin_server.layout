@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget index="1" />
+	<ActiveTarget index="0" />
 	<File name="readme.txt" open="1" top="1" tabpos="1">
-		<Cursor position="335" topLine="0" />
-	</File>
-	<File name="..\..\..\src\common\aggro.c" open="0" top="0" tabpos="0">
-		<Cursor position="1601" topLine="27" />
-	</File>
-	<File name="..\..\..\src\common\arch.c" open="0" top="0" tabpos="0">
-		<Cursor position="19411" topLine="605" />
-	</File>
-	<File name="..\..\..\src\common\artifact.c" open="0" top="0" tabpos="0">
-		<Cursor position="18225" topLine="622" />
-	</File>
-	<File name="..\..\..\src\include\win32.h" open="0" top="0" tabpos="0">
-		<Cursor position="2634" topLine="80" />
-	</File>
-	<File name="..\..\..\src\server\init.c" open="0" top="0" tabpos="0">
-		<Cursor position="8936" topLine="257" />
+		<Cursor position="262" topLine="0" />
 	</File>
 </CodeBlocks_layout_file>
