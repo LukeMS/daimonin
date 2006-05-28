@@ -44,9 +44,8 @@
   - Attribute types.
   -->
 <!ELEMENT daiml
-    (stylesheet*, section+)
+    (style*, stylesheet*, section+)
 >
-
 <!ATTLIST daiml
     autotoc CDATA #IMPLIED
     title CDATA #REQUIRED
@@ -56,10 +55,13 @@
     (%Inline;)*
 >
 
+<!ELEMENT style
+    (#PCDATA)
+>
+
 <!ELEMENT stylesheet
     EMPTY
 >
-
 <!ATTLIST stylesheet
     href CDATA #REQUIRED
     media (%MediaType;) 'all'
@@ -67,7 +69,6 @@
 >
 
 <!ELEMENT section (title, (%Block;)+)>
-
 <!ATTLIST section
     id ID #IMPLIED
     toc (include|exclude) 'include'
@@ -76,7 +77,6 @@
 <!ELEMENT div
     (%Block;)*
 >
-
 <!ATTLIST div
     class CDATA #REQUIRED
 >
@@ -85,7 +85,6 @@
 <!ELEMENT span
     (%Inline;)*
 >
-
 <!ATTLIST span
     class CDATA #REQUIRED
 >
@@ -105,7 +104,6 @@
 <!ELEMENT img
     EMPTY
 >
-
 <!ATTLIST img
     alt CDATA #REQUIRED
     src CDATA #REQUIRED
@@ -114,7 +112,6 @@
 <!ELEMENT a
     (#PCDATA)
 >
-
 <!ATTLIST a
     href CDATA #REQUIRED
 >

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  - Transformation for converting DaiML to plain XHTML 1.1.
+  - Transformation for converting DaiML to XHTML 1.1 Strict.
   -->
 <xsl:transform version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xsl">
 
@@ -9,30 +9,23 @@
 
     <xsl:output method="xml" doctype-public="-//W3C//DTD XHTML 1.1//EN" doctype-system="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd" encoding="utf-8" indent="no"/>
 
+<!-- Sort out the basic head and body structure of the output XHTML, including:
+       * any author-specified inline style or external stylesheet;
+       * an auto-ToC, if specifed;
+       * daiml/@title as a header; and
+       * a note about DaiML/modification time as a footer -->
     <xsl:template match="/daiml">
         <html>
             <head>
                 <title>
                     <xsl:value-of select="@title"/>
                 </title>
-                <xsl:choose>
-                    <xsl:when test="stylesheet">
-                        <xsl:apply-templates select="stylesheet" mode="head"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <style type="text/css">
-h2 {
-    background-color:#eee;
-    border-top:1px solid #000
-}
-div.daiml-section { margin-left:1em }
-div.daiml-section h2, div.daiml-section h3, div.daiml-section h4, div.daiml-section h5, div.daiml-section h6 { margin-left:-1em }
-ol.daiml-alpha { list-style-type:lower-alpha }
-ol.daiml-decimal { list-style-type:decimal }
-ol.daiml-roman { list-style-type:lower-roman }
-                    </style>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:if test="style">
+                    <xsl:apply-templates select="style" mode="head"/>
+                </xsl:if>
+                <xsl:if test="stylesheet">
+                    <xsl:apply-templates select="stylesheet" mode="head"/>
+                </xsl:if>
             </head>
             <body>
                 <div class="daiml-document">
@@ -64,6 +57,15 @@ ol.daiml-roman { list-style-type:lower-roman }
         </html>
     </xsl:template>
 
+<!-- Transforms style and stylesheet into XHTML style and link elements and ensures that they only appear in the output XHTML head -->
+    <xsl:template match="style" mode="head">
+        <style type="text/css">
+            <xsl:apply-templates/>
+        </style>
+    </xsl:template>
+
+    <xsl:template match="style"/>
+
     <xsl:template match="stylesheet" mode="head">
         <link href="{@href}" media="{@media}" rel="stylesheet" title="{@title}" type="text/css"/>
         <xsl:apply-templates/>
@@ -71,10 +73,11 @@ ol.daiml-roman { list-style-type:lower-roman }
 
     <xsl:template match="stylesheet"/>
 
-    <xsl:template match="/daiml/section">
+<!-- Puts a backlink to the ToC, if there is one, at the bottom of every level 1 section -->
+    <xsl:template match="section">
         <div class="daiml-section" id="{if (@id) then @id else generate-id()}">
             <xsl:apply-templates/>
-            <xsl:if test="/daiml/@autotoc">
+            <xsl:if test=".. = daiml and ../@autotoc">
                 <p class="daiml-toc">
                     <a href="#toc">
                         <xsl:choose>
@@ -91,12 +94,7 @@ ol.daiml-roman { list-style-type:lower-roman }
         </div>
     </xsl:template>
 
-    <xsl:template match="section/section">
-        <div class="daiml-section" id="{if (@id) then @id else generate-id()}">
-            <xsl:apply-templates/>
-        </div>
-    </xsl:template>
-
+<!-- Creates the ToC, skipping those sections with @toc='exclude' -->
     <xsl:template match="section" mode="toc">
         <xsl:choose>
             <xsl:when test="@toc='exclude'">
@@ -113,42 +111,49 @@ ol.daiml-roman { list-style-type:lower-roman }
         </xsl:choose>
     </xsl:template>
 
+<!-- Level 1 section header -->
     <xsl:template match="/daiml/section/title">
         <h2>
             <xsl:apply-templates/>
         </h2>
     </xsl:template>
 
+<!-- Level 2 section header -->
     <xsl:template match="/daiml/section/section/title">
         <h3>
             <xsl:apply-templates/>
         </h3>
     </xsl:template>
 
+<!-- Level 3 section header -->
     <xsl:template match="/daiml/section/section/section/title">
         <h4>
             <xsl:apply-templates/>
         </h4>
     </xsl:template>
 
+<!-- Level 4 section header -->
     <xsl:template match="/daiml/section/section/section/section/title">
         <h5>
             <xsl:apply-templates/>
         </h5>
     </xsl:template>
 
+<!-- Level 5+ section header -->
     <xsl:template match="section/section/section/section/section/title">
         <h6>
             <xsl:apply-templates/>
         </h6>
     </xsl:template>
 
+<!-- Code blocks -->
     <xsl:template match="blockcode">
         <pre>
             <xsl:apply-templates/>
         </pre>
     </xsl:template>
 
+<!-- Anchors: properly transforms a/@href -->
     <xsl:template match="a">
         <a href="{if (matches(@href, 'dai$') or matches(@href, '.dai#')) then replace(@href, '.dai', '.xhtml') else @href}">
             <xsl:apply-templates select="@*[not(local-name()='href')]"/>
@@ -156,6 +161,7 @@ ol.daiml-roman { list-style-type:lower-roman }
         </a>
     </xsl:template>
 
+<!-- Ordered list: Gives the output element a class according to ol/@type rather than using the deprecated HTML type attribute or a specific style attribute. May change? -->
     <xsl:template match="ol">
         <ol class="daiml-{@type}">
             <xsl:apply-templates/>
@@ -169,6 +175,7 @@ ol.daiml-roman { list-style-type:lower-roman }
         </xsl:element>
     </xsl:template>
 
+<!-- Tables -->
     <xsl:template match="table/@border">
         <xsl:if test=".='yes'">
             <xsl:attribute name="border">border</xsl:attribute>
