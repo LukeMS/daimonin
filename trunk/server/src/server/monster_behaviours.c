@@ -1658,13 +1658,20 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     {
         /* Try to find a legal home map */
         base = find_base_info_object(op);
-        if(base->slaying)
-            if ((base_map = has_been_loaded_sh(base->slaying))) 
-                if (base_map->in_memory != MAP_IN_MEMORY)
-                    base_map = NULL;
 
-        /* square distance for fast euclidian distance comparisons */
-        antilure_dist_2 = antilure_dist_2 * antilure_dist_2;
+		/* crashed on testserver - give log mesg */ 
+		if(!base)
+			LOG(llevDebug, "BUG: ai_choose_enemy(%s)> no base info object!\n", query_name(op));
+		else
+		{
+			if(base->slaying)
+				if ((base_map = has_been_loaded_sh(base->slaying))) 
+					if (base_map->in_memory != MAP_IN_MEMORY)
+						base_map = NULL;
+
+			/* square distance for fast euclidian distance comparisons */
+			antilure_dist_2 = antilure_dist_2 * antilure_dist_2;
+		}
     }
         
     /* Go through list of known mobs and choose the most hated
@@ -1689,7 +1696,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                     /* TODO: actually use tmp->last_map, last_x, last_y */
                     if(get_rangevector_from_mapcoords(tmp->obj->map, tmp->obj->x, tmp->obj->y, base_map, base->x, base->y, &base_rv, RV_FAST_EUCLIDIAN_DISTANCE))
                     {
-                        if(base_rv.distance > antilure_dist_2)
+                        if((int)base_rv.distance > antilure_dist_2)
                         {
 #ifdef DEBUG_AI                            
                             LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
