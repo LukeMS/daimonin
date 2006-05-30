@@ -149,40 +149,46 @@ static inline int read_socket_buffer(NewSocket *ns)
 		read_bytes = MAXSOCKBUF_IN-tmp;
 	}
 
+	/* with this settings we can adjust in a hard way the maximum bytes read per round per socket */
+	/*
+	if(read_bytes >256)
+		read_bytes = 256;
+	*/
+
 #ifdef WIN32
 	stat_ret = recv(ns->fd, sl->buf + tmp, read_bytes, 0);
 #else
-	do
-	{
-		stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
-	}
-	while (stat_ret < 0 && errno == EINTR);
+	stat_ret = read(ns->fd, sl->buf + tmp, read_bytes);
 #endif
 
-	/*LOG(-1,"STAT: %d (%d)\n", stat_ret, sl->len);*/
+	/*LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, ns->fd, stat_ret);*/
 
 	if (stat_ret > 0)
 		sl->len += stat_ret;
 	else if (stat_ret < 0) /* lets check its a real problem */
 	{
 #ifdef WIN32
-		if (WSAGetLastError() != WSAEWOULDBLOCK)
-		{
-			if (WSAGetLastError() == WSAECONNRESET)
-				LOG(llevDebug, "Connection closed by client\n");
-			else
-				LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
-			return stat_ret;
-		}
+		if (WSAGetLastError() == WSAEWOULDBLOCK)
+			return 1;
+
+		if (WSAGetLastError() == WSAECONNRESET)
+			LOG(llevDebug, "Connection closed by client\n");
+		else
+			LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
 #else
-		if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
-		{
-			LOG(llevDebug, "ReadPacket got error %d, returning 0\n", errno);
-			return stat_ret;
-		}
+		if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+			return 1;
+			
+		LOG(llevDebug, "ReadPacket got error %d, returning 0\n", errno);
 #endif
-		return 1;
 	}
+#ifndef WIN32
+	else if (!stat_ret)
+	{
+		/* a valueof zero for a linux socket read() means client closed the socket */
+		return -1;
+	}
+#endif
 
 	return stat_ret;
 }
@@ -197,45 +203,55 @@ static inline void write_socket_buffer(NewSocket *ns)
 	if (ns->outputbuffer.len == 0)
 		return;
 
-	do
+	max = MAXSOCKBUF - ns->outputbuffer.start;
+	if (ns->outputbuffer.len < max)
+		max = ns->outputbuffer.len;
+
+	/* with this settings we can adjust in a hard way the maximum bytes written per round per socket */
+	/*
+	if(max >256)
+		max = 256;
+	*/
+
+	amt = send(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max, MSG_DONTWAIT);
+
+	/*LOG(-1,"WRITE(%d)(%d): %d (%d)\n", ROUND_TAG, ns->fd, amt, max);*/
+
+	/* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
+     * send() with MSG_DONTWAIT under linux can return 0 which means the data 
+     * is "queued for transmission". I was not able to find that in the send() man pages...
+     * In my testings it never happend, so i put it here in to have it perhaps triggered in
+     * some server runs (but we should trust perhaps ibm developer infos...).
+     */
+#ifndef WIN32 /* linux only ATM */
+	if(!amt)
 	{
-		max = MAXSOCKBUF - ns->outputbuffer.start;
-		if (ns->outputbuffer.len < max)
-			max = ns->outputbuffer.len;
-
-#ifdef WIN32
-		amt = send(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max, 0);
-#else
-		do
-		{
-			amt = write(ns->fd, ns->outputbuffer.data + ns->outputbuffer.start, max);
-		}
-		while ((amt < 0) && (errno == EINTR));
-#endif
-
-		if (amt < 0) /* error */
-		{
-#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
-			if (WSAGetLastError() != WSAEWOULDBLOCK)
-			{
-				LOG(llevDebug, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
-#else
-			if (errno != EWOULDBLOCK)
-			{
-				LOG(llevDebug, "New socket write failed (wsb) (%d: %s).\n", errno, strerror_local(errno));
-#endif
-				ns->status = Ns_Dead;
-				return;
-			}
-			return;
-		}
-		ns->outputbuffer.start += amt;    
-		/* wrap back to start of buffer */    
-		if (ns->outputbuffer.start == MAXSOCKBUF)
-			ns->outputbuffer.start = 0;
-		ns->outputbuffer.len -= amt;
+		LOG(llevDebug,"IMPORTANT: send() in write_socket_buffer() returned ZERO! check the comment text in loop.c around line 200. (max: %d)\n", max);
+		amt = max; /* as i understand, the data is now internal buffered? So remove it from our write buffer */
 	}
-	while (ns->outputbuffer.len > 0);
+#endif
+
+	if (amt < 0) /* error */
+	{
+#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
+		if (WSAGetLastError() == WSAEWOULDBLOCK)
+			return;
+				
+		LOG(llevDebug, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
+#else
+		if (errno == EWOULDBLOCK || errno == EINTR)
+			return;
+		LOG(llevDebug, "New socket write failed (wsb %d) (%d: %s).\n", EAGAIN, errno, strerror_local(errno));
+#endif
+		ns->status = Ns_Dead;
+		return;
+	}
+
+	ns->outputbuffer.start += amt;    
+	/* wrap back to start of buffer */    
+	if (ns->outputbuffer.start == MAXSOCKBUF)
+		ns->outputbuffer.start = 0;
+	ns->outputbuffer.len -= amt;
 }
 
 

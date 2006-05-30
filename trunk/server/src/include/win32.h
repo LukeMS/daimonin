@@ -79,6 +79,10 @@
 #define GETTIMEOFDAY_TWO_ARGS
 #define MAXPATHLEN 256
 
+#ifndef MSG_DONTWAIT
+#define MSG_DONTWAIT 0
+#endif
+
 /* Many defines to redirect unix functions or fake standard unix values */
 #define inline __inline
 #define unlink(__a) _unlink(__a)
