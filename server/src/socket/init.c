@@ -34,6 +34,7 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -49,44 +50,36 @@
 #include <newserver.h>
 #include "zlib.h"
 
+static int 	send_bufsize = 24*1024;
+static int 	read_bufsize = 8*1024;
+
+
 /* Initializes a connection - really, it just sets up the data structure,
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
  */
 void InitConnection(NewSocket *ns, char *ip)
 {
-    int bufsize = MAXSOCKBUF;
     int oldbufsize;
     unsigned int buflen  = sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-    int temp    = 1;
+    int temp = 1;
 
     if (ioctlsocket(ns->fd, FIONBIO, &temp) == -1)
         LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
 #else
-    if (fcntl(ns->fd, F_SETFL, O_NDELAY) == -1)
-    {
-        LOG(llevDebug, "InitConnection:  Error on fcntl.\n");
-    }
+	LOG(llevDebug, "InitConnection:  fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(ns->fd, F_GETFL));
+    if (fcntl(ns->fd, F_SETFL, fcntl(ns->fd, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
+        LOG(llevError, "InitConnection:  Error on fcntl %x.\n", fcntl(ns->fd, F_GETFL));
+	LOG(llevDebug, "InitConnection:  fcntl %x.\n", fcntl(ns->fd, F_GETFL));
 #endif /* end win32 */
 
-    if (getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen) == -1)
-        oldbufsize = 0;
-    if (oldbufsize < bufsize)
-    {
 #ifdef ESRV_DEBUG
-        LOG(llevDebug, "InitConnection: Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
-#endif
-        if (setsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &bufsize, sizeof(int)))
-        {
-            LOG(llevDebug, "InitConnection: setsockopt unable to set output buf size to %d\n", bufsize);
-        }
-    }
-    buflen = sizeof(oldbufsize);
-    getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
-#ifdef ESRV_DEBUG
-    LOG(llevDebug, "InitConnection: Socket buffer size now %d bytes\n", oldbufsize);
+	getsockopt(ns->fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
+	LOG(llevDebug, "InitConnection: Socket send buffer size is %d bytes\n", oldbufsize);
+	getsockopt(ns->fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
+	LOG(llevDebug, "InitConnection: Socket read buffer size is %d bytes\n", oldbufsize);
 #endif
 
     ns->login_count = ROUND_TAG + pticks_socket_idle;
@@ -139,23 +132,43 @@ void InitConnection(NewSocket *ns, char *ip)
 void setsockopts(int fd)
 {
     struct linger       linger_opt;
+	int tmp = 1;
 
-    linger_opt.l_onoff = 0;
+#ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
+
+	if (ioctlsocket(fd, FIONBIO, &tmp) == -1)
+		LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
+#else
+	LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));
+	if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
+		LOG(llevError, "InitConnection:  Error on fcntl %x.\n", fcntl(fd, F_GETFL));
+	LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));
+#endif /* end win32 */
+
+	/* Turn LINGER off (don't send left data in background if socket get closed) */
+	linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
     if (setsockopt(fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
-    {
-        LOG(llevBug, "BUG: Error on setsockopt LINGER\n");
-    }
-    /* Would be nice to have an autoconf check for this.  It appears that
+        LOG(llevError, "BUG: Error on setsockopt LINGER\n");
+
+	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
+		LOG(llevError, "error on setsockopt TCP_NODELAY\n");
+
+	if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (char *) &send_bufsize, sizeof(send_bufsize)))
+		LOG(llevError, "error on setsockopt SO_SNDBUF\n");
+
+	if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (char *) &read_bufsize, sizeof(read_bufsize)))
+		LOG(llevError, "error on setsockopt SO_RCVBUF\n");
+
+
+	/* Would be nice to have an autoconf check for this.  It appears that
      * these functions are both using the same calling syntax, just one
      * of them needs extra valus passed.
      */
 #if !defined(_WEIRD_OS_) /* means is true for most (win32, linux, etc. ) */
     {
-        int tmp = 1;
-
         if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) &tmp, sizeof(tmp)))
-            LOG(llevDebug, "error on setsockopt REUSEADDR\n");
+            LOG(llevError, "error on setsockopt REUSEADDR\n");
     }
 #else
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *) NULL, 0))
@@ -283,6 +296,8 @@ int create_socket()
 /* This sets up the socket and reads all the image information into memory. */
 void init_ericserver()
 {
+	int oldbufsize;
+	unsigned int buflen  = sizeof(int);
 #ifndef WIN32 /* non windows */
 
 #ifdef HAVE_SYSCONF
@@ -318,6 +333,29 @@ void init_ericserver()
     if (init_sockets[0].fd == -1)
         LOG(llevError, "ERROR: init_ericserver(): Error creating socket on port\n");
     init_sockets[0].status = Ns_Wait;
+
+	/* under some OS the send and read buffer size will 2 times our default size. */
+	getsockopt(init_sockets[0].fd, SOL_SOCKET, SO_SNDBUF, (char *) &oldbufsize, &buflen);
+	if(oldbufsize > send_bufsize)
+	{
+		send_bufsize = (int)((float)send_bufsize*((float)send_bufsize/(float)oldbufsize));
+
+		if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_SNDBUF, (char *) &send_bufsize, sizeof(send_bufsize)))
+			LOG(llevError, "error on setsockopt SO_SNDBUF\n");
+		LOG(llevDebug, "InitSocket: send buffer adjusted to %d bytes! (old value: %d bytes)\n", send_bufsize, oldbufsize);
+	}
+
+	getsockopt(init_sockets[0].fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen);
+	if(oldbufsize > read_bufsize)
+	{
+		read_bufsize = (int)((float)read_bufsize*((float)read_bufsize/(float)oldbufsize));
+
+		if (setsockopt(init_sockets[0].fd, SOL_SOCKET, SO_RCVBUF, (char *) &read_bufsize, sizeof(read_bufsize)))
+			LOG(llevError, "error on setsockopt SO_RCVBUF\n");
+
+		LOG(llevDebug, "InitSocket: read buffer adjusted to %d bytes! (old value: %d bytes)\n", read_bufsize, oldbufsize);
+	}
+
 
     read_client_images();
     init_srv_files(); /* load all srv_xxx files or generate them */
