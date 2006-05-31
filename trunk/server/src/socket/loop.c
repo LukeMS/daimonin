@@ -182,13 +182,8 @@ static inline int read_socket_buffer(NewSocket *ns)
 		LOG(llevDebug, "ReadPacket got error %d, returning 0\n", errno);
 #endif
 	}
-#ifndef WIN32
-	else if (!stat_ret)
-	{
-		/* a valueof zero for a linux socket read() means client closed the socket */
-		return -1;
-	}
-#endif
+	else
+		return -1; /* return value of zero means closed socket */
 
 	return stat_ret;
 }

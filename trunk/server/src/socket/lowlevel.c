@@ -93,9 +93,20 @@ void Send_With_Handling  (NewSocket *ns, SockList *msg)
 	if (msg->len >= MAXSOCKBUF)
 		LOG(llevError, "Trying to send a buffer beyond properly size, len =%d\n", msg->len);
 
-	sbuf[0] = ((uint32) (msg->len) >> 8) & 0xFF;
-	sbuf[1] = ((uint32) (msg->len)) & 0xFF;
-	Write_To_Socket(ns, sbuf, 2);
+	if(msg->len > 32*1024-1) /* if > 32kb use 3 bytes header and set the high bit to show it client */
+	{
+		sbuf[0] = ((uint32) (msg->len) >> 16) & 0xFF;
+		sbuf[0] |= 0x80; /* high bit marker for the client */
+		sbuf[1] = ((uint32) (msg->len) >> 8) & 0xFF;
+		sbuf[2] = ((uint32) (msg->len)) & 0xFF;
+		Write_To_Socket(ns, sbuf, 3);
+	}
+	else
+	{
+		sbuf[0] = ((uint32) (msg->len) >> 8) & 0xFF;
+		sbuf[1] = ((uint32) (msg->len)) & 0xFF;
+		Write_To_Socket(ns, sbuf, 2);
+	}
 	Write_To_Socket(ns, msg->buf, msg->len);
 }
 

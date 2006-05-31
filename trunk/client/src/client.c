@@ -140,9 +140,18 @@ void DoClient(ClientSocket *csocket)
             return;   /* Don't have a full packet */
         csocket->inbuf.buf[csocket->inbuf.len] = '\0';
 
-        cmd_id = (uint8) csocket->inbuf.buf[2];
-        data = csocket->inbuf.buf + 3;
-        len = csocket->inbuf.len - 3; /* 2 byte package len + 1 byte binary cmd */
+		if(csocket->inbuf.buf[0] & 0x80) /* 3 byte header */
+		{
+			cmd_id = (uint8) csocket->inbuf.buf[3];
+			data = csocket->inbuf.buf + 4;
+			len = csocket->inbuf.len - 4; /* 3 byte package len + 1 byte binary cmd */
+		}
+		else
+		{
+			cmd_id = (uint8) csocket->inbuf.buf[2];
+			data = csocket->inbuf.buf + 3;
+			len = csocket->inbuf.len - 3; /* 2 byte package len + 1 byte binary cmd */
+		}
 
         /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
         if (!cmd_id || cmd_id >= BINAR_CMD)

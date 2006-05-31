@@ -128,5 +128,5 @@ Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname)
 
 Mix_Music *Mix_LoadMUS_wrapper(const char *file)
 {
-    return Mix_LoadMUS(file_path(file, "r"));
+	return Mix_LoadMUS(file_path(file, "r"));
 }
