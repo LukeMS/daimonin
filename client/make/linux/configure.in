@@ -3,10 +3,10 @@ AC_PREREQ(2.59)
 
 # The package name is used in the client-server handshake and must be exactly
 # "Daimonin SDL Client".
-AC_INIT([Daimonin SDL Client], [BETA3-0.966], [http://www.daimonin.net])
+AC_INIT([Daimonin SDL Client], [BETA4-0.970p2], [http://www.daimonin.net])
 AC_CONFIG_AUX_DIR(make_utils)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(daimonin_client, BETA3-0.966)
+AM_INIT_AUTOMAKE(daimonin_client, BETA4-0.970p2)
 
 AC_CONFIG_SRCDIR(../../src/client.c)
 

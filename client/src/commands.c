@@ -949,7 +949,6 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
             memcpy(name, (char *) data + pos, nlen);
             pos += nlen;
             name[nlen] = '\0';
-			LOG(-1,"WEIGHT %s :: %d (%d)\n", name, weight, tag);
             anim = GetShort_String(data + pos); pos += 2;
             animspeed = data[pos++];
             nrof = GetInt_String(data + pos); pos += 4;
@@ -1196,7 +1195,6 @@ void UpdateItemCmd(unsigned char *data, int len)
         quality = (int)(data[pos++]);
         condition = (int)(data[pos++]);
 	}
-LOG(-1,"U-WEIGHT %s :: %d (%d)\n", name, weight, tag);
     update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
                 FALSE);
     map_udate_flag = 2;

@@ -26,8 +26,8 @@
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
 
-#define VERSION_CS 991021
-#define VERSION_SC 991021
+#define VERSION_CS 991022
+#define VERSION_SC 991022
 
 #define KEYBIND_FILE "keys.dat"
 #define OPTION_FILE  "options.dat"

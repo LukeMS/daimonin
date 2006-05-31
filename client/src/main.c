@@ -1023,7 +1023,7 @@ static void play_action_sounds(void)
     }
 }
 
-void list_vid_modes(void)
+static void list_vid_modes(int videomodes)
 {
     const SDL_VideoInfo    *vinfo   = NULL;
     SDL_Rect               **modes;
@@ -1031,7 +1031,7 @@ void list_vid_modes(void)
 
     LOG(LOG_MSG, "List Video Modes\n");
     /* Get available fullscreen/hardware modes */
-    modes = SDL_ListModes(NULL, SDL_HWACCEL);
+	modes = SDL_ListModes(NULL, videomodes);
 
     /* Check is there are any modes available */
     if (modes == (SDL_Rect * *) 0)
@@ -1178,38 +1178,16 @@ int main(int argc, char *argv[])
     }
     atexit(SDL_Quit);
     SYSTEM_Start(); /* start the system AFTER start SDL */
-    list_vid_modes();
-#ifdef INSTALL_OPENGL
-    if (options.use_gl)
-    {
-        const SDL_VideoInfo    *info    = NULL;
-        info = SDL_GetVideoInfo();
-
-        SDL_GL_LoadLibrary(NULL);
-
-        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-        options.used_video_bpp = info->vfmt->BitsPerPixel;
-        LOG(LOG_MSG, "Using OpenGL: bpp:%d\n", options.used_video_bpp);
-        videoflags = SDL_OPENGL;
-    }
-#endif
 
     videoflags = get_video_flags();
+	list_vid_modes(videoflags);
     options.used_video_bpp = 16;//2^(options.video_bpp+3);
-    if (!options.fullscreen_flag)
-    {
-        if (options.auto_bpp_flag)
-        {
-            const SDL_VideoInfo    *info    = NULL;
-            info = SDL_GetVideoInfo();
-            options.used_video_bpp = info->vfmt->BitsPerPixel;
-        }
-    }
+	if (options.auto_bpp_flag)
+	{
+		const SDL_VideoInfo    *info    = NULL;
+		info = SDL_GetVideoInfo();
+		options.used_video_bpp = info->vfmt->BitsPerPixel;
+	}
     if ((ScreenSurface = SDL_SetVideoMode(SCREEN_XLEN, SCREEN_YLEN, options.used_video_bpp, videoflags)) == NULL)
     {
         LOG(LOG_ERROR, "Couldn't set 800x600x%d video mode: %s\n", options.used_video_bpp, SDL_GetError());
