@@ -51,7 +51,7 @@ void communicate(object *op, char *txt)
 {
     object     *npc;
     mapstruct  *m;
-    int         i, xt, yt;
+    int         flags, i, xt, yt;
 
     char        buf[HUGE_BUF];
 
@@ -93,7 +93,12 @@ void communicate(object *op, char *txt)
     sprintf(buf, "%s says: ", query_name(op));
     strncat(buf, txt, MAX_BUF - strlen(buf) - 1);
     buf[MAX_BUF - 1] = 0;
-    new_info_map(NDI_WHITE, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
+
+	flags = NDI_WHITE;
+	if(op->type == PLAYER)
+		flags |= (NDI_SAY | NDI_PLAYER);
+
+	new_info_map(flags, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
 
     /* Players can chat with a marked object in their inventory */
     if(op->type == PLAYER && (npc = find_marked_object(op)))

@@ -1235,6 +1235,8 @@ int main(int argc, char *argv[])
     read_anims();
     show_intro("load bmaps");
     read_bmaps();
+	show_intro("load ignore list");
+	ignore_list_load();
     show_intro(NULL);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 

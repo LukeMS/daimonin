@@ -259,6 +259,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\ignore.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\inffast.c"
 				>
 			</File>
@@ -373,6 +377,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\group.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\include\ignore.h"
 				>
 			</File>
 			<File

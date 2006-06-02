@@ -71,7 +71,9 @@ am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/player.$(OBJEXT) ../../src/socket.$(OBJEXT) \
 	../../src/sound.$(OBJEXT) ../../src/sprite.$(OBJEXT) \
 	../../src/textwin.$(OBJEXT) ../../src/uncompr.$(OBJEXT) \
-	../../src/wrapper.$(OBJEXT) ../../src/zutil.$(OBJEXT)
+	../../src/wrapper.$(OBJEXT) ../../src/zutil.$(OBJEXT) \
+	../../src/ignore.$(OBJEXT)
+
 daimonin_OBJECTS = $(am_daimonin_OBJECTS)
 daimonin_DEPENDENCIES =
 am_updater_OBJECTS = ../../src/updater/linux.$(OBJEXT) \
@@ -211,6 +213,7 @@ daimonin_SOURCES = \
 	../../src/event.c \
 	../../src/filewrap.c \
 	../../src/group.c \
+	../../src/ignore.c \
 	../../src/inffast.c \
 	../../src/inflate.c \
 	../../src/inftrees.c \
@@ -341,6 +344,8 @@ clean-daimoninPROGRAMS:
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/group.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
+../../src/ignore.$(OBJEXT): ../../src/$(am__dirstamp) \
+	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/inffast.$(OBJEXT): ../../src/$(am__dirstamp) \
 	../../src/$(DEPDIR)/$(am__dirstamp)
 ../../src/inflate.$(OBJEXT): ../../src/$(am__dirstamp) \
@@ -405,6 +410,7 @@ mostlyclean-compile:
 	-rm -f ../../src/event.$(OBJEXT)
 	-rm -f ../../src/filewrap.$(OBJEXT)
 	-rm -f ../../src/group.$(OBJEXT)
+	-rm -f ../../src/ignore.$(OBJEXT)
 	-rm -f ../../src/inffast.$(OBJEXT)
 	-rm -f ../../src/inflate.$(OBJEXT)
 	-rm -f ../../src/inftrees.$(OBJEXT)
@@ -438,6 +444,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/event.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/filewrap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/group.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/ignore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/inffast.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/inflate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../../src/$(DEPDIR)/inftrees.Po@am__quote@

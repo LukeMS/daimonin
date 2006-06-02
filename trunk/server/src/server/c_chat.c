@@ -205,7 +205,7 @@ int command_gsay(object *op, char *params)
     strncat(buf, params, MAX_BUF - 30);
     buf[MAX_BUF - 30] = '\0';
 
-    party_message(0,NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->group_leader, NULL, buf);
+    party_message(0,NDI_GSAY | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->group_leader, NULL, buf);
 
     return 1;
 }
@@ -236,7 +236,7 @@ int command_shout(object *op, char *params)
     strcat(buf, " shouts: ");
     strncat(buf, params, MAX_BUF - 30);
     buf[MAX_BUF - 30] = '\0';
-    new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, buf);
+    new_draw_info(NDI_SHOUT | NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, buf);
 #ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
     evtid = EVENT_SHOUT;
@@ -345,14 +345,14 @@ int command_tell(object *op, char *params)
                 sprintf(buf, "%s tells you (dm_stealth): ", op->name);
                 strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
                 buf[MAX_BUF - 1] = 0;
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
                 break; /* we send it but we kick the "no such player" on */
             }
             else
             {
                 sprintf(buf2, "You tell %s: %s", name, msg);
                 new_draw_info(NDI_PLAYER | NDI_UNIQUE, 0, op, buf2);
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+                new_draw_info(NDI_TELL | NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
                 return 1;
             }
         }
@@ -575,7 +575,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
           break;
         case EMOTE_SLAP:
           sprintf(buf, "You slap %s.", name);
-          sprintf(buf2, "You are slapped by %s.", op->name);
+          sprintf(buf2, "%s slapped you!", op->name);
           sprintf(buf3, "%s slaps %s.", op->name, name);
           break;
         case EMOTE_SNEEZE:
@@ -630,7 +630,7 @@ static void emote_other(object *op, object *target, char *str, char *buf, char *
           break;
         default:
           sprintf(buf, "You are still nuts.");
-          sprintf(buf2, "You get the distinct feeling that %s is nuts.", op->name);
+          sprintf(buf2, "%s looks nuts. You get the distinct feeling that he IS nuts.", op->name);
           sprintf(buf3, "%s is eyeing %s quizzically.", name, op->name);
           break;
     }
@@ -743,7 +743,7 @@ static void emote_self(object *op, char *buf, char *buf2, int emotion)
           break;
         default:
           sprintf(buf, "My god! is that LEGAL?");
-          sprintf(buf2, "You look away from %s.", op->name);
+          sprintf(buf2, "%s looks nuts. You look away.", op->name);
           break;
     }/*case*/
 }
@@ -803,9 +803,8 @@ static int basic_emote(object *op, char *params, int emotion)
                 emote_other(op, CONTR(op)->target_object, NULL, buf, buf2, buf3, emotion);
                 new_draw_info(NDI_UNIQUE, 0, op, buf);
                 if (CONTR(op)->target_object->type == PLAYER)
-                    new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->target_object, buf2);
-                new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, CONTR(op)->target_object,
-                                    buf3);
+                    new_draw_info(NDI_EMOTE | NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->target_object, buf2);
+                new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, CONTR(op)->target_object, buf3);
                 return 0;
             }
             new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
@@ -1046,7 +1045,7 @@ static int basic_emote(object *op, char *params, int emotion)
             sprintf(buf, "%s %s", op->name, params);
             strcpy(buf2, buf);
             LOG(llevInfo, "ME:: %s\n", buf2);
-            new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
+            new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
             if (op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, buf2);
             return(0);
@@ -1059,7 +1058,7 @@ static int basic_emote(object *op, char *params, int emotion)
             {
                 emote_self(op, buf, buf2, emotion);
                 new_draw_info(NDI_UNIQUE, 0, op, buf);
-                new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
+                new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
                 return 0;
             }
 
@@ -1081,8 +1080,8 @@ static int basic_emote(object *op, char *params, int emotion)
                             {
                                 emote_other(op, pl->ob, NULL, buf, buf2, buf3, emotion);
                                 new_draw_info(NDI_UNIQUE, 0, op, buf);
-                                new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, buf2);
-                                new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, pl->ob, buf3);
+                                new_draw_info(NDI_EMOTE | NDI_PLAYER |NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, buf2);
+                                new_info_map_except(NDI_EMOTE | NDI_PLAYER |NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, pl->ob, buf3);
                             }
                             else /* npc */
                             {
@@ -1110,7 +1109,7 @@ static int basic_emote(object *op, char *params, int emotion)
             {
                 emote_self(op, buf, buf2, -1); /* force neutral default emote */
                 new_draw_info(NDI_UNIQUE, 0, op, buf);
-                new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
+                new_info_map_except(NDI_EMOTE | NDI_PLAYER | NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
             }
             else
             {

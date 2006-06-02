@@ -153,7 +153,37 @@ int client_command_check(char *cmd)
         draw_info("unknown spell.", COLOR_GREEN);
         return TRUE;
     }
-    else if (!strnicmp(cmd, "/pray", strlen("/pray")))
+
+	else if (!strnicmp(cmd, "/ignore", strlen("/ignore")))
+	{
+		ignore_command(cmd+8);
+		return TRUE;
+	}
+
+	else if (!strnicmp(cmd, "/reply", strlen("/reply")))
+	{
+		cmd = strchr(cmd, ' ');
+		if (!cmd || *++cmd == 0)
+			draw_info("usage: /reply <message>", COLOR_GREEN);
+		else
+		{
+			
+			if(!cpl.player_reply[0])
+			{
+				draw_info("There is no one you can /reply.", COLOR_GREEN);
+			}
+			else
+			{
+				char buf[2048];
+				
+				sprintf(buf,"/tell %s %s", cpl.player_reply, cmd);
+				LOG(-1,"REPLY: %s\n", buf);
+				send_command(buf, -1, SC_NORMAL);
+			}
+		}
+		return TRUE;
+	}
+	else if (!strnicmp(cmd, "/pray", strlen("/pray")))
     {
         /* give out "you are at full grace." when needed -
              * server will not send us anything when this happens

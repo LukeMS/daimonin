@@ -322,6 +322,7 @@ typedef struct Player_Struct
     char                    alignment[MAX_BUF]; /* alignment */
     char                    gender[MAX_BUF];    /* Gender */
     char                    range[MAX_BUF]; /* Range attack chosen */
+	char					player_reply[64];
 } Client_Player;
 
 extern Client_Player    cpl;        /* Player object. */
@@ -448,8 +449,12 @@ extern char        *resists_name[NUM_RESISTS];
 #define NDI_SAY     0x0100  /* its a say command */
 #define NDI_SHOUT   0x0200
 #define NDI_TELL    0x0400
-#define NDI_PLAYER  0x0800 /* this comes from a player */
-#define NDI_SYSTEM  0x01000 /* if this is set, its a "system" message */
+#define NDI_GSAY    0x0800
+#define NDI_EMOTE   0x01000
+#define NDI_GM		0x02000 /* Its from a staff member */
+#define NDI_PLAYER  0x04000 /* this comes from a player */
+#define NDI_SYSTEM  0x08000 /* if this is set, its a "system" message */
+
 
 #define NDI_UNIQUE  0x10000 /* Print this out immediately, don't buffer */
 #define NDI_ALL     0x20000 /* Inform all players of this message */
