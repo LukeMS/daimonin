@@ -407,7 +407,7 @@ void DrawInfoCmd(char *data, int len)
 void DrawInfoCmd2(char *data, int len)
 {
     int     flags;
-    char    buf[2048];
+    char    *tmp=NULL, buf[2048];
 
     flags = (int) GetShort_String(data);
     data += 2;
@@ -422,6 +422,28 @@ void DrawInfoCmd2(char *data, int len)
     }
     else
         buf[0] = 0;
+
+	if(buf[0])
+	{
+
+		tmp = strchr(data, ' ');
+		if(tmp)
+			*tmp = 0;
+	}
+	/* we have communication input */
+	if(tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
+	{
+		if( !(flags & NDI_GM) && ignore_check(data))
+			return;
+
+		/* save last incomming tell player for client sided /reply */
+		if(flags & NDI_TELL)
+			strcpy(cpl.player_reply, data);
+
+		/*LOG(-1,"IGNORE?: player >%s<\n", data);*/
+		if(flags & NDI_EMOTE)
+			flags &= ~NDI_PLAYER;
+	}
     draw_info(buf, flags);
 }
 

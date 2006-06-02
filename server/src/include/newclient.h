@@ -53,7 +53,7 @@
 * allocated and deallocated teh same buffer over and over again and the price
 * of using a bit of extra memory.  IT also makes the code simpler.
 */
-#define MAXSOCKBUF (64*1024)
+#define MAXSOCKBUF (128*1024)
 
 #define CS_QUERY_HIDEINPUT 0x4  /* Hide input being entered */
 
@@ -159,8 +159,11 @@
 #define NDI_SAY     0x0100  /* its a say command */
 #define NDI_SHOUT   0x0200
 #define NDI_TELL    0x0400
-#define NDI_PLAYER  0x0800 /* this comes from a player */
-#define NDI_SYSTEM  0x01000 /* if this is set, its a "system" message */
+#define NDI_GSAY    0x0800
+#define NDI_EMOTE   0x01000
+#define NDI_GM		0x02000 /* Its from a staff member */
+#define NDI_PLAYER  0x04000 /* this comes from a player */
+#define NDI_SYSTEM  0x08000 /* if this is set, its a "system" message */
 
 
 #define NDI_UNIQUE  0x10000 /* Print this out immediately, don't buffer */

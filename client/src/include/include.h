@@ -71,6 +71,7 @@ typedef signed char     sint8;
 
 #include <client.h>
 #include <sdlsocket.h>
+#include <ignore.h>
 #include <commands.h>
 #include <main.h>
 #include <player.h>
