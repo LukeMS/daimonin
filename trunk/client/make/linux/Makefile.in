@@ -63,17 +63,16 @@ am_daimonin_OBJECTS = ../../src/adler32.$(OBJEXT) \
 	../../src/commands.$(OBJEXT) ../../src/crc32.$(OBJEXT) \
 	../../src/dialog.$(OBJEXT) ../../src/event.$(OBJEXT) \
 	../../src/filewrap.$(OBJEXT) ../../src/group.$(OBJEXT) \
-	../../src/inffast.$(OBJEXT) ../../src/inflate.$(OBJEXT) \
-	../../src/inftrees.$(OBJEXT) ../../src/interface.$(OBJEXT) \
-	../../src/inventory.$(OBJEXT) ../../src/item.$(OBJEXT) \
-	../../src/main.$(OBJEXT) ../../src/map.$(OBJEXT) \
-	../../src/menu.$(OBJEXT) ../../src/misc.$(OBJEXT) \
-	../../src/player.$(OBJEXT) ../../src/socket.$(OBJEXT) \
-	../../src/sound.$(OBJEXT) ../../src/sprite.$(OBJEXT) \
-	../../src/textwin.$(OBJEXT) ../../src/uncompr.$(OBJEXT) \
-	../../src/wrapper.$(OBJEXT) ../../src/zutil.$(OBJEXT) \
-	../../src/ignore.$(OBJEXT)
-
+	../../src/ignore.$(OBJEXT) ../../src/inffast.$(OBJEXT) \
+	../../src/inflate.$(OBJEXT) ../../src/inftrees.$(OBJEXT) \
+	../../src/interface.$(OBJEXT) ../../src/inventory.$(OBJEXT) \
+	../../src/item.$(OBJEXT) ../../src/main.$(OBJEXT) \
+	../../src/map.$(OBJEXT) ../../src/menu.$(OBJEXT) \
+	../../src/misc.$(OBJEXT) ../../src/player.$(OBJEXT) \
+	../../src/socket.$(OBJEXT) ../../src/sound.$(OBJEXT) \
+	../../src/sprite.$(OBJEXT) ../../src/textwin.$(OBJEXT) \
+	../../src/uncompr.$(OBJEXT) ../../src/wrapper.$(OBJEXT) \
+	../../src/zutil.$(OBJEXT)
 daimonin_OBJECTS = $(am_daimonin_OBJECTS)
 daimonin_DEPENDENCIES =
 am_updater_OBJECTS = ../../src/updater/linux.$(OBJEXT) \
@@ -240,6 +239,8 @@ updater_SOURCES = \
 	../../src/updater/main.c 
 
 updater_OBJDIR = updater_objs
+
+# NOTE: if building xdelta, run its configure with "--disable-shared"
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CFLAGS = @SDL_CFLAGS@ -Wall
 AM_LDFLAGS = @LDFLAGS@ 
