@@ -11,6 +11,7 @@ daimonin_SOURCES =  \
 	../../src/event.c \
 	../../src/filewrap.c \
 	../../src/group.c \
+	../../src/ignore.c \
 	../../src/inffast.c \
 	../../src/inflate.c \
 	../../src/inftrees.c \
@@ -36,6 +37,8 @@ updater_SOURCES = \
 	../../src/updater/linux.c \
 	../../src/updater/main.c 
 updater_OBJDIR = updater_objs
+
+# NOTE: if building xdelta, run its configure with "--disable-shared"
 
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CFLAGS = @SDL_CFLAGS@ -Wall
