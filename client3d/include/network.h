@@ -47,8 +47,8 @@ const int  SRV_CLIENT_FLAG_SETTING = 4;
 const int  SRV_CLIENT_FLAG_SKILL   = 8;
 const int  SRV_CLIENT_FLAG_SPELL   =16;
 const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
-const int  VERSION_CS = 991020;
-const int  VERSION_SC = 991020;
+const int  VERSION_CS = 991021;
+const int  VERSION_SC = 991021;
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
 struct SockList
@@ -76,6 +76,20 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        DIALOG_LOGIN_WARNING_NONE,
+        DIALOG_LOGIN_WARNING_NAME_NO,
+        DIALOG_LOGIN_WARNING_NAME_BLOCKED,
+        DIALOG_LOGIN_WARNING_NAME_PLAYING,
+        DIALOG_LOGIN_WARNING_NAME_TAKEN,
+        DIALOG_LOGIN_WARNING_NAME_BANNED,
+        DIALOG_LOGIN_WARNING_NAME_WRONG,
+        DIALOG_LOGIN_WARNING_PWD_WRONG,
+        DIALOG_LOGIN_WARNING_PWD_SHORT,
+        DIALOG_LOGIN_WARNING_PWD_NAME
+    };
+
     int  mRequest_file_chain;
     int  mRequest_file_flags;
     int  mPasswordAlreadyAsked;
@@ -97,9 +111,9 @@ public:
     bool CloseSocket();
     void Update();
     int  request_face(int pnum, int mode);
-    void send_reply(char *text);
+    void send_reply(const char *text);
     void read_metaserver_data();
-    int  cs_write_string(char *buf, int len);
+    int  cs_write_string(const char *buf, int len);
     int  send_socklist(SockList &msg);
     int  read_socket();
     int  write_socket(unsigned char *buf, int len);
@@ -131,7 +145,9 @@ private:
     int mOpenPort;
     SockList  mInbuf;
     int mSocket;
+    bool GameStatusLogin;
     list<mStructServer*> mServerList;
+    int dialog_login_warning_level;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.

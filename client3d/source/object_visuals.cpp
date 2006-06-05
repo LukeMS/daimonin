@@ -35,19 +35,13 @@ http://www.gnu.org/licenses/licenses.html
 /// Init all static Elemnts.
 ///===================================================
 
-enum
-{
-    NPC_SELECTION,
-    NPC_SUM
-};
-
 struct
 {
     std::string name;
     Real x1, x2, z1, z2;
-    Real size;
+    Real sizeX, sizeY, sizeZ;
 }
-GfxEntry[NPC_SUM];
+GfxEntry[ObjectVisuals::NPC_SUM];
 
 const int TEXTURE_SIZE = 128;
 const char MATERIAL_NAME[] = "NPC_Visuals";
@@ -69,9 +63,8 @@ ObjectVisuals::~ObjectVisuals()
 ///===================================================
 ObjectVisuals::ObjectVisuals()
 {
-    mNodeSelection = 0;
-
     Logger::log().headline("Creating Object Visuals.");
+    for (int i=0; i < NPC_SUM; ++i) mNode[i] = 0;
     /// ////////////////////////////////////////////////////////////////////
     /// Check for a working description file.
     /// ////////////////////////////////////////////////////////////////////
@@ -93,13 +86,17 @@ ObjectVisuals::ObjectVisuals()
         if (!(strTemp = xmlElem->Attribute("name"))) continue;
         if (++index >= NPC_SUM) break;
         GfxEntry[index].name = strTemp;
-        if ((strTemp = xmlElem->Attribute("posX"  ))) GfxEntry[index].x1  = atof(strTemp)/ TEXTURE_SIZE;
-        if ((strTemp = xmlElem->Attribute("posY"  ))) GfxEntry[index].z1  = atof(strTemp)/ TEXTURE_SIZE;
-        if ((strTemp = xmlElem->Attribute("width" ))) GfxEntry[index].x2  = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].x1;
-        if ((strTemp = xmlElem->Attribute("height"))) GfxEntry[index].z2  = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].z1;
-        if ((strTemp = xmlElem->Attribute("size"  ))) GfxEntry[index].size= atof(strTemp);
-    }
-    buildEntity(NPC_SELECTION, "selectionMesh", "Selection");
+        if ((strTemp = xmlElem->Attribute("posX"     ))) GfxEntry[index].x1    = atof(strTemp)/ TEXTURE_SIZE;
+        if ((strTemp = xmlElem->Attribute("posY"     ))) GfxEntry[index].z1    = atof(strTemp)/ TEXTURE_SIZE;
+        if ((strTemp = xmlElem->Attribute("width"    ))) GfxEntry[index].x2    = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].x1;
+        if ((strTemp = xmlElem->Attribute("height"   ))) GfxEntry[index].z2    = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].z1;
+        if ((strTemp = xmlElem->Attribute("meshSizeX" ))) GfxEntry[index].sizeX  = atof(strTemp);
+        if ((strTemp = xmlElem->Attribute("meshSizeY" ))) GfxEntry[index].sizeY  = atof(strTemp);
+        if ((strTemp = xmlElem->Attribute("meshSizeZ" ))) GfxEntry[index].sizeZ  = atof(strTemp);
+     }
+    buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
+    buildEntity(NPC_LIFEBAR_L, "MeshLifebarL",  "EntityLifebarL");
+//    buildEntity(NPC_LIFEBAR_R, "MeshLifebarR",  "EntityLifebarR");
 }
 
 ///===================================================
@@ -107,27 +104,32 @@ ObjectVisuals::ObjectVisuals()
 ///===================================================
 void ObjectVisuals::buildEntity(int index, const char *meshName, const char *entityName)
 {
-    Real size = GfxEntry[index].size;
-    ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject("mob", ManualObjectFactory::FACTORY_TYPE_NAME));
+    String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
+    ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
     mob->begin(MATERIAL_NAME);
-    mob->position(-size, 0.0, -size);
+
+    mob->position(-GfxEntry[index].sizeX, 0.0, -GfxEntry[index].sizeZ);
     mob->normal(0,0,1);
     mob->textureCoord(GfxEntry[index].x1, GfxEntry[index].z1);
-    mob->position(-size, 0.0, size);
+
+    mob->position(-GfxEntry[index].sizeX, -GfxEntry[index].sizeY, GfxEntry[index].sizeZ);
     mob->normal(0,0,1);
     mob->textureCoord(GfxEntry[index].x1, GfxEntry[index].z2);
-    mob->position(size, 0.0, -size);
+
+    mob->position(GfxEntry[index].sizeX, 0.0, -GfxEntry[index].sizeZ);
     mob->normal(0,0,1);
     mob->textureCoord(GfxEntry[index].x2, GfxEntry[index].z1);
-    mob->position(size, 0.0, size);
+
+    mob->position(GfxEntry[index].sizeX, -GfxEntry[index].sizeY, GfxEntry[index].sizeZ);
     mob->normal(0,0,1);
     mob->textureCoord(GfxEntry[index].x2, GfxEntry[index].z2);
+
     mob->triangle(0, 1, 2);
     mob->triangle(3, 2, 1);
     mob->end();
     mob->convertToMesh(meshName);
-    mEntitySelection=Event->GetSceneManager()->createEntity(entityName, meshName);
-    mEntitySelection->setQueryFlags(QUERY_NPC_SELECT_MASK);
+    mEntity[index]=Event->GetSceneManager()->createEntity(entityName, meshName);
+    mEntity[index]->setQueryFlags(QUERY_NPC_SELECT_MASK);
 }
 
 
@@ -143,7 +145,7 @@ void ObjectVisuals::setPosLifebar(Vector3 pos)
 void ObjectVisuals::setLengthLifebar(int maxLength, int currentLength)
 {
     if (!maxLength) return; // prevent division by zero.
-//    Real filling = (mWidthLifebarGFX * currentLength) / maxLength;
+    //    Real filling = (mWidthLifebarGFX * currentLength) / maxLength;
     // subMesh3->setScale(filling, 1.0f, 1.0f);
 }
 
@@ -152,18 +154,39 @@ void ObjectVisuals::setLengthLifebar(int maxLength, int currentLength)
 ///===================================================
 void ObjectVisuals::selectNPC(MovableObject *mob)
 {
-    if (mNodeSelection) mNodeSelection->getParentSceneNode()->removeAndDestroyChild("SelNode");
-    mNodeSelection = mob->getParentSceneNode()->createChildSceneNode("SelNode");
-    mNodeSelection->attachObject(mEntitySelection);
-    //mNodeSelection->attachObject(mEntityLifebar);
     const AxisAlignedBox &AABB = mob->getBoundingBox();
-    Vector3 pos = mNodeSelection->getPosition();
-    mNodeSelection->setPosition(pos.x, AABB.getMinimum().y +3, pos.z);
+    Vector3 pos;
+    String strNode;
+
+    // Selection ring.
+    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_SELECTION, 3, '0');
+    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(strNode);
+    mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    mNode[NPC_SELECTION]->attachObject(mEntity[NPC_SELECTION]);
+    pos = mNode[NPC_SELECTION]->getPosition();
+    mNode[NPC_SELECTION]->setPosition(pos.x, AABB.getMinimum().y +3, pos.z);
+
+/*
+    // Lifebar left bracket.
+    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_L, 3, '0');
+    if (mNode[NPC_LIFEBAR_L]) mNode[NPC_LIFEBAR_L]->getParentSceneNode()->removeAndDestroyChild(strNode);
+    mNode[NPC_LIFEBAR_L] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    mNode[NPC_LIFEBAR_L]->attachObject(mEntity[NPC_LIFEBAR_L]);
+    pos = mNode[NPC_LIFEBAR_L]->getPosition();
+    mNode[NPC_LIFEBAR_L]->setPosition(AABB.getMinimum().x, AABB.getMaximum().y +5, pos.z);
+
+    // Lifebar right bracket.
+    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_R, 3, '0');
+    if (mNode[NPC_LIFEBAR_R]) mNode[NPC_LIFEBAR_R]->getParentSceneNode()->removeAndDestroyChild(strNode);
+    mNode[NPC_LIFEBAR_R] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    mNode[NPC_LIFEBAR_R]->attachObject(mEntity[NPC_LIFEBAR_R]);
+    pos = mNode[NPC_LIFEBAR_R]->getPosition();
+    mNode[NPC_LIFEBAR_R]->setPosition(AABB.getMaximum().x, AABB.getMaximum().y +5, pos.z);
+*/
 }
 
 ///===================================================
 /// Always face the camera.
 ///===================================================
 void ObjectVisuals::updateSelection(Real facing)
-{
-}
+{}

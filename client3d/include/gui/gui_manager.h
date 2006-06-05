@@ -43,6 +43,7 @@ enum
     GUI_WIN_STATISTICS,
     GUI_WIN_PLAYERINFO,
     GUI_WIN_TEXTWINDOW,
+    GUI_WIN_LOGIN,
     //  GUI_WIN_CREATION,
     GUI_WIN_SUM
 };
@@ -51,6 +52,7 @@ enum
 {
     GUI_MSG_TXT_GET,
     GUI_MSG_TXT_CHANGED,
+    GUI_MSG_BAR_CHANGED,
     GUI_MSG_ADD_TEXTLINE,
     GUI_MSG_BUT_PRESSED,
     GUI_MSG_SUM
@@ -89,6 +91,11 @@ public:
     void setTooltip(const char*text);
     void displaySystemMessage(const char*text);
     void startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces);
+    bool brokenTextInput();
+    bool finishedTextInput();
+    void cancelTextInput();
+    const char *getTextInput();
+    void showWindow(int window, bool visible);
     int getScreenWidth()
     {
         return mScreenWidth;
@@ -106,11 +113,11 @@ private:
     int mDragSrcWin, mDragDestWin;
     int mDragSrcContainer, mDragDestContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
-    int mProcessingTextInput;
     int mActiveWindow, mActiveElement;
     int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
     bool mTooltipRefresh;
-    bool isDragging;
+    bool mIsDragging;
+    bool mProcessingTextInput;
     std::string  mStrTooltip, mBackupTextInputString;
     class GuiWindow *guiWindow;
     unsigned int mScreenWidth, mScreenHeight;
@@ -119,6 +126,7 @@ private:
     OverlayElement *mElement;
     MaterialPtr mMaterial;
     TexturePtr mTexture;
+    String mStrTextInput;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

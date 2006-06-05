@@ -61,7 +61,10 @@ public:
     {
         return mStrName.c_str();
     }
-
+    int getIndex()
+    {
+        return mIndex;
+    }
     void setStateImagePos(std::string state, int x, int y);
     virtual void draw(PixelBox &mSrcPixelbox, Texture *texture) =0;
     const char *getTooltip()
@@ -96,7 +99,7 @@ protected:
     int mState;
     std::string mStrType, mStrName, mStrImageName;
     uint32 mFillColor;
-
+    int mIndex;
     std::string mStrLabel, mStrBgLabel, mStrTooltip;
     unsigned char mLabelColor[3];
     int mLabelFont;

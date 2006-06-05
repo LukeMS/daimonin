@@ -51,6 +51,92 @@ const int SOCKET_ERROR =-1;
 
 int SoundStatus=1;
 
+enum
+{
+    CMD_COMPLETE=1,
+    CMD_VERSION,
+    CMD_DRAW_INFO,
+    CMD_ADD_ME_FAIL,
+    CMD_MAP2,
+    CMD_DRAW_INFO2,
+    CMD_ITEM_X,
+    CMD_SOUND,
+    CMD_TARGET_OBJECT,
+    CMD_UPDATE_ITEM,
+    CMD_DELETE_ITEM,
+    CMD_STATS,
+    CMD_IMAGE,
+    CMD_FACE1,
+    CMD_ANIM,
+    CMD_SKILL_RDY,
+    CMD_SKILL_RDY_PLAYER,
+    CMD_SPELL_LIST,
+    CMD_SKILL_LIST,
+    CMD_GOLEM,
+    CMD_ADD_ME_SUCCSESS,
+    CMD_GOOD_BYE,
+    CMD_SETUP,
+    CMD_HANDLE_QUERY,
+    CMD_DATA,
+
+    CMD_NEW_CHAR,
+    CMD_ITEM_Y,
+    CMD_GROUP,
+    CMD_GROUP_UPDATE,
+    CMD_INTERFACE,
+    CMD_BOOK,
+    CMD_MARK,
+    CMD_SUM
+};
+/*
+ { "comc", CompleteCmd},
+ { "version", (CmdProc) VersionCmd },
+ { "drawinfo", (CmdProc) DrawInfoCmd },
+ { "addme_failed", (CmdProc) AddMeFail },
+ { "map2", Map2Cmd },
+    { "drawinfo2", (CmdProc) DrawInfoCmd2 },
+    { "itemx", ItemXCmd },
+    { "sound", SoundCmd},
+    { "to", TargetObject },
+    { "upditem", UpdateItemCmd },
+    { "delitem", DeleteItem },
+    { "stats", StatsCmd },
+    { "image", ImageCmd },
+    { "face1", Face1Cmd},
+    { "anim", AnimCmd},
+    { "skill_rdy", (CmdProc) SkillRdyCmd },
+    { "player", PlayerCmd },
+    { "splist", SpelllistCmd },
+    { "sklist", SkilllistCmd },
+    { "gc", GolemCmd },
+    { "addme_success", (CmdProc) AddMeSuccess },
+    { "goodbye", (CmdProc) GoodbyeCmd },
+    { "setup", (CmdProc) SetupCmd},
+    { "query", (CmdProc) handle_query},
+    { "data", (CmdProc) DataCmd},
+    { "new_char", (CmdProc) NewCharCmd},
+    { "itemy", ItemYCmd },
+    { "group", GroupCmd },
+    { "group_invite", GroupInviteCmd },
+    { "group_update", GroupUpdateCmd },
+    { "interface", InterfaceCmd },
+    { "book", BookCmd },
+    { "mark", MarkCmd },
+*/
+
+///================================================================================================
+/// Check if the username contains any invalid character.
+///================================================================================================
+inline bool is_username_valid(const char *name)
+{
+    for(int i=0; i< (int)strlen(name); ++i)
+    {
+        if (name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
+            return false;
+    }
+    return true;
+}
+
 ///================================================================================================
 /// Clear the MeatServer list.
 ///================================================================================================
@@ -101,7 +187,9 @@ void Network::get_meta_server_data(int num, char *server, int *port)
 /// Constructor.
 ///================================================================================================
 Network::Network()
-{}
+{
+    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+}
 
 ///================================================================================================
 /// Destructor.
@@ -115,7 +203,7 @@ Network::~Network()
 /// Sends a reply to the server.  text contains the null terminated string
 /// of text to send.  This function basically just packs the stuff up.
 ///================================================================================================
-void Network::send_reply(char *text)
+void Network::send_reply(const char *text)
 {
     char buf[MAXSOCKBUF];
     sprintf(buf, "reply %s", text);
@@ -154,155 +242,137 @@ void Network::Update()
         }
     }
 
+    if (Option::getSingleton().getGameStatus() == GAME_STATUS_PLAY)
+        return;
+
     /// ////////////////////////////////////////////////////////////////////
     /// Not connected: walk through connection chain and/or wait for action
     /// ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() != GAME_STATUS_PLAY)
+    switch (Option::getSingleton().getGameStatus())
     {
         /// ////////////////////////////////////////////////////////////////////
         /// Autoinit or reset prg data.
         /// ////////////////////////////////////////////////////////////////////
-        if (Option::getSingleton().getGameStatus() == GAME_STATUS_INIT_NET)
-        {
-            clear_metaserver_data();
-            Logger::log().info() << "GAME_STATUS_INIT_NET";
-            Option::getSingleton().setGameStatus(GAME_STATUS_META);
-        }
-        /// ////////////////////////////////////////////////////////////////////
-        /// Create a new character.
-        /// ////////////////////////////////////////////////////////////////////
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NEW_CHAR)
-        {
-            /*
-                   if (Dialog::getSingleton().UpdateNewChar())
-                  {
-                    CreatePlayerAccount();
-                    Option::getSingleton().setGameStatus(GAME_STATUS_WAITFORPLAY);
-                  }
-            */
-        }
+        case GAME_STATUS_INIT_NET:
+        clear_metaserver_data();
+        Logger::log().info() << "GAME_STATUS_INIT_NET";
+        Option::getSingleton().setGameStatus(GAME_STATUS_META);
+        break;
+
         /// ////////////////////////////////////////////////////////////////////
         /// connect to meta and get server data
         /// ////////////////////////////////////////////////////////////////////
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_META)
+        case GAME_STATUS_META:
+        Logger::log().info() << "GAME_STATUS_META";
+        if (!Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME))
         {
-            Logger::log().info() << "GAME_STATUS_META";
-            if (!Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME))
-            {
-                add_metaserver_data(
-                    Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME),
-                    Option::getSingleton().getIntValue(Option::CMDLINE_SERVER_PORT),
-                    -1, "user server", "Server from -server '...' command line.", "", "", "");
-            }
-            /*
-                  /// skip of -nometa in command line or no metaserver set in options
-                  if (options.no_meta || !options.metaserver[0])
-                  {
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Option '-nometa'.metaserver ignored.");
-                  }
-                  else
-            */
-            {
-                Logger::log().info()
-                << "Query Metaserver " << Option::getSingleton().getIntValue(Option::META_SERVER_NAME)
-                << " on port "         << Option::getSingleton().getIntValue(Option::META_SERVER_PORT);
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"query metaserver...");
-                sprintf(buf, "trying %s:%d", Option::getSingleton().getStrValue(Option::META_SERVER_NAME), Option::getSingleton().getIntValue(Option::META_SERVER_PORT));
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
-                if (OpenSocket(Option::getSingleton().getStrValue(Option::META_SERVER_NAME),Option::getSingleton().getIntValue(Option::META_SERVER_PORT)))
-                {
-                    read_metaserver_data();
-                    CloseSocket();
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"done.");
-                }
-                else
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"metaserver failed! using default list.");
-            }
-            add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"select a server.");
-            Option::getSingleton().setGameStatus(GAME_STATUS_START);
+            add_metaserver_data(
+                Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME),
+                Option::getSingleton().getIntValue(Option::CMDLINE_SERVER_PORT),
+                -1, "user server", "Server from -server '...' command line.", "", "", "");
         }
+        /*
+              /// skip of -nometa in command line or no metaserver set in options
+              if (options.no_meta || !options.metaserver[0])
+              {
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Option '-nometa'.metaserver ignored.");
+              }
+              else
+        */
+        {
+            Logger::log().info()
+            << "Query Metaserver " << Option::getSingleton().getIntValue(Option::META_SERVER_NAME)
+            << " on port "         << Option::getSingleton().getIntValue(Option::META_SERVER_PORT);
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"query metaserver...");
+            sprintf(buf, "trying %s:%d", Option::getSingleton().getStrValue(Option::META_SERVER_NAME), Option::getSingleton().getIntValue(Option::META_SERVER_PORT));
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
+            if (OpenSocket(Option::getSingleton().getStrValue(Option::META_SERVER_NAME),Option::getSingleton().getIntValue(Option::META_SERVER_PORT)))
+            {
+                read_metaserver_data();
+                CloseSocket();
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"done.");
+            }
+            else
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"metaserver failed! using default list.");
+        }
+        add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"select a server.");
+        Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        break;
+
         /// ////////////////////////////////////////////////////////////////////
         /// Go into standby.
         /// ////////////////////////////////////////////////////////////////////
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_START)
-        {
-            if (mSocket != SOCKET_NO)
-            {
-                CloseSocket();
-            }
-            Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
-        }
+        case GAME_STATUS_START:
+        if (mSocket != SOCKET_NO) CloseSocket();
+        Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
+        break;
+
         /// ////////////////////////////////////////////////////////////////////
         /// Wait for user to select a server.
         /// ////////////////////////////////////////////////////////////////////
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_WAITLOOP)
-        {
-            /*
-                   Dialog::getSingleton().setVisible(true);
-                  if (TextInput::getSingleton().startCursorSelection(mServerList.size()))
+        case GAME_STATUS_WAITLOOP:
+        /*
+               Dialog::getSingleton().setVisible(true);
+              if (TextInput::getSingleton().startCursorSelection(mServerList.size()))
+              {
+                list<mStructServer*>::const_iterator iter = mServerList.begin();
+                for (unsigned int i=0 ; iter != mServerList.end(); ++iter)
+                {
+                  Dialog::getSingleton().setSelText(i++, (*iter)->nameip.c_str());
+                  // Fill the dialog-Info field.
+                  if (i == TextInput::getSingleton().getSelCursorPos())
                   {
-                    list<mStructServer*>::const_iterator iter = mServerList.begin();
-                    for (unsigned int i=0 ; iter != mServerList.end(); ++iter)
-                    {
-                      Dialog::getSingleton().setSelText(i++, (*iter)->nameip.c_str());
-                      // Fill the dialog-Info field.
-                      if (i == TextInput::getSingleton().getSelCursorPos())
-                      {
-                        Dialog::getSingleton().setInfoText(0, (*iter)->desc1.c_str());
-                        Dialog::getSingleton().setInfoText(1, (*iter)->desc2.c_str());
-                      }
-                    }
-                    Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
+                    Dialog::getSingleton().setInfoText(0, (*iter)->desc1.c_str());
+                    Dialog::getSingleton().setInfoText(1, (*iter)->desc2.c_str());
                   }
-                  if (TextInput::getSingleton().wasCanceled())
-                  {
-                    TextInput::getSingleton().stop();
-                    Dialog::getSingleton().setVisible(false);
-                    Option::getSingleton().mStartNetwork = false;
-                    Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-                  }
-                  else if (TextInput::getSingleton().wasFinished())
-                  {
-                    TextInput::getSingleton().stop();
-                    Option::getSingleton().mSelectedMetaServer = TextInput::getSingleton().getSelCursorPos();
-                    Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
-                  }
-                  if (TextInput::getSingleton().hasChanged())
-                  {
-                    list<mStructServer*>::const_iterator iter = mServerList.begin();
-                    for (unsigned int i=0 ; i < TextInput::getSingleton().getSelCursorPos(); ++i)
-                    {
-                      ++iter;
-                    }
-                    Dialog::getSingleton().setInfoText(0, (*iter)->version.c_str(), TXT_WHITE);
-                    Dialog::getSingleton().setInfoText(1, (*iter)->desc1.c_str());
-                    Dialog::getSingleton().setInfoText(2, "");
-                    Dialog::getSingleton().setInfoText(3, "");
-                    Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
-                  }
-            */
+                }
+                Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
+              }
+              if (TextInput::getSingleton().wasCanceled())
+              {
+                TextInput::getSingleton().stop();
+                Dialog::getSingleton().setVisible(false);
+                Option::getSingleton().mStartNetwork = false;
+                Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
+              }
+              else if (TextInput::getSingleton().wasFinished())
+              {
+                TextInput::getSingleton().stop();
+                Option::getSingleton().mSelectedMetaServer = TextInput::getSingleton().getSelCursorPos();
+                Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
+              }
+              if (TextInput::getSingleton().hasChanged())
+              {
+                list<mStructServer*>::const_iterator iter = mServerList.begin();
+                for (unsigned int i=0 ; i < TextInput::getSingleton().getSelCursorPos(); ++i)
+                {
+                  ++iter;
+                }
+                Dialog::getSingleton().setInfoText(0, (*iter)->version.c_str(), TXT_WHITE);
+                Dialog::getSingleton().setInfoText(1, (*iter)->desc1.c_str());
+                Dialog::getSingleton().setInfoText(2, "");
+                Dialog::getSingleton().setInfoText(3, "");
+                Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
+              }
+        */
+        // Testing: delete me.
+        Option::getSingleton().setIntValue(Option::SEL_META_SEVER, 0);
+        Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
+        break;
 
-
-            // Testing: delete me.
-            Option::getSingleton().setIntValue(Option::SEL_META_SEVER, 0);
-            Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
-
-
-
-        }
         /// ////////////////////////////////////////////////////////////////////
         /// Try the selected server.
         /// ////////////////////////////////////////////////////////////////////
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_STARTCONNECT)
+        case GAME_STATUS_STARTCONNECT:
+        Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// This Server was selected in the dialog-window.
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_CONNECT:
         {
-            Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_CONNECT)
-        {
-            /// ////////////////////////////////////////////////////////////////////
-            /// This Server was selected in the dialog-window.
-            /// ////////////////////////////////////////////////////////////////////
             mGameStatusVersionFlag = false;
             //      Dialog::getSingleton().clearInfoText();
             list<mStructServer*>::const_iterator iter = mServerList.begin();
@@ -321,229 +391,312 @@ void Network::Update()
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Connected. exchange version.");
             }
         }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_VERSION)
-        {   // Send client version.
-            Logger::log().info() << "Send Version";
-            sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
-            cs_write_string(buf, (int)strlen(buf));
-            Option::getSingleton().setGameStatus(GAME_STATUS_WAITVERSION);
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_WAITVERSION)
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_VERSION:
+        Logger::log().info() << "Send Version";
+        sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
+        cs_write_string(buf, (int)strlen(buf));
+        Option::getSingleton().setGameStatus(GAME_STATUS_WAITVERSION);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_WAITVERSION:
+        Logger::log().info() << "GAME_STATUS_WAITVERSION";
+        // perhaps here should be a timer ???
+        // remember, the version exchange server<->client is asynchron so perhaps
+        // the server send his version faster as the client send it to server.
+        if (mGameStatusVersionFlag) // wait for version answer when needed
         {
-            Logger::log().info() << "GAME_STATUS_WAITVERSION";
-            // perhaps here should be a timer ???
-            // remember, the version exchange server<->client is asynchron so perhaps
-            // the server send his version faster as the client send it to server.
-            if (mGameStatusVersionFlag) // wait for version answer when needed
+            // false version!
+            if (!mGameStatusVersionOKFlag)
             {
-                // false version!
-                if (!mGameStatusVersionOKFlag)
-                {
-                    Option::getSingleton().setGameStatus(GAME_STATUS_START);
-                    Logger::log().info() << "GAME_STATUS_START";
-                }
-                else
-                {
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"version confirmed.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"starting login procedure...");
-                    Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
-                    Logger::log().info() << "GAME_STATUS_SETUP";
-                }
+                Option::getSingleton().setGameStatus(GAME_STATUS_START);
+                Logger::log().info() << "GAME_STATUS_START";
+            }
+            else
+            {
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"version confirmed.");
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"starting login procedure...");
+                Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
+                Logger::log().info() << "GAME_STATUS_SETUP";
             }
         }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_SETUP)
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_SETUP:
+        ServerFile::getSingleton().checkFiles();
+        sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
+                " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+                //   SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
+                11, 16,16,
+                ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
+                ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
+                ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),
+                ServerFile::getSingleton().getCRC   (SERVER_FILE_SPELLS),
+                ServerFile::getSingleton().getLength(SERVER_FILE_BMAPS),
+                ServerFile::getSingleton().getCRC   (SERVER_FILE_BMAPS),
+                ServerFile::getSingleton().getLength(SERVER_FILE_SETTINGS),
+                ServerFile::getSingleton().getCRC   (SERVER_FILE_SETTINGS),
+                ServerFile::getSingleton().getLength(SERVER_FILE_ANIMS),
+                ServerFile::getSingleton().getCRC   (SERVER_FILE_ANIMS));
+        cs_write_string(buf, (int)strlen(buf));
+        buf[strlen(buf)] =0;
+        Logger::log().info() << "Send: setup " << buf;
+        mRequest_file_chain = 0;
+        mRequest_file_flags = 0;
+        Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_REQUEST_FILES:
+        Logger::log().info()  << "GAME_STATUS_REQUEST FILES (" << mRequest_file_chain << ")";
+        if (mRequest_file_chain == 0) // check setting list
         {
-            ServerFile::getSingleton().checkFiles();
-            sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
-                    " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-                    //   SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
-                    11, 16,16,
-                    ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SPELLS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_BMAPS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_BMAPS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_SETTINGS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SETTINGS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_ANIMS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_ANIMS));
-            cs_write_string(buf, (int)strlen(buf));
-            buf[strlen(buf)] =0;
-            Logger::log().info() << "Send: setup " << buf;
-            mRequest_file_chain = 0;
-            mRequest_file_flags = 0;
-            Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
+            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SETTINGS)
+                    == SERVER_FILE_STATUS_UPDATE)
+            {
+                mRequest_file_chain = 1;
+                RequestFile(SERVER_FILE_SETTINGS);
+            }
+            else mRequest_file_chain = 2;
         }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_REQUEST_FILES)
+        else if (mRequest_file_chain == 2) // check spell list
         {
-            Logger::log().info()  << "GAME_STATUS_REQUEST FILES (" << mRequest_file_chain << ")";
-            if (mRequest_file_chain == 0) // check setting list
+            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
             {
-                if (ServerFile::getSingleton().getStatus(SERVER_FILE_SETTINGS)
-                        == SERVER_FILE_STATUS_UPDATE)
-                {
-                    mRequest_file_chain = 1;
-                    RequestFile(SERVER_FILE_SETTINGS);
-                }
-                else mRequest_file_chain = 2;
+                mRequest_file_chain = 3;
+                RequestFile(SERVER_FILE_SPELLS);
             }
-            else if (mRequest_file_chain == 2) // check spell list
-            {
-                if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
-                {
-                    mRequest_file_chain = 3;
-                    RequestFile(SERVER_FILE_SPELLS);
-                }
-                else
-                    mRequest_file_chain = 4;
-            }
-            else if (mRequest_file_chain == 4) // check skill list
-            {
-                if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
-                {
-                    mRequest_file_chain = 5;
-                    RequestFile(SERVER_FILE_SKILLS);
-                }
-                else
-                    mRequest_file_chain = 6;
-            }
-            else if (mRequest_file_chain == 6)
-            {
-                if (ServerFile::getSingleton().getStatus(SERVER_FILE_BMAPS) == SERVER_FILE_STATUS_UPDATE)
-                {
-                    mRequest_file_chain = 7;
-                    RequestFile(SERVER_FILE_BMAPS);
-                }
-                else
-                    mRequest_file_chain = 8;
-            }
-            else if (mRequest_file_chain == 8)
-            {
-                if (ServerFile::getSingleton().getStatus(SERVER_FILE_ANIMS) == SERVER_FILE_STATUS_UPDATE)
-                {
-                    mRequest_file_chain = 9;
-                    RequestFile(SERVER_FILE_ANIMS);
-                }
-                else
-                    mRequest_file_chain = 10;
-            }
-            else if (mRequest_file_chain == 10) // we have all files - start check
-            {
-                mRequest_file_chain++; // this ensure one loop tick and updating the messages
-            }
-            else if (mRequest_file_chain == 11)
-            {
-                // ok... now we check for bmap & anims processing...
-                // TileGfx::getSingleton().read_bmap_tmp();
-                // TileGfx::getSingleton().read_anim_tmp();
-                // load_settings();
-                mRequest_file_chain++;
-            }
-            else if (mRequest_file_chain == 12)
-            {
-                mRequest_file_chain++; // this ensure one loop tick and updating the messages
-            }
-            else if (mRequest_file_chain == 13)
-                Option::getSingleton().setGameStatus(GAME_STATUS_ADDME);
+            else
+                mRequest_file_chain = 4;
         }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_ADDME)
+        else if (mRequest_file_chain == 4) // check skill list
         {
-            cs_write_string("addme", 5);  // SendAddMe
+            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
+            {
+                mRequest_file_chain = 5;
+                RequestFile(SERVER_FILE_SKILLS);
+            }
+            else
+                mRequest_file_chain = 6;
+        }
+        else if (mRequest_file_chain == 6)
+        {
+            if (ServerFile::getSingleton().getStatus(SERVER_FILE_BMAPS) == SERVER_FILE_STATUS_UPDATE)
+            {
+                mRequest_file_chain = 7;
+                RequestFile(SERVER_FILE_BMAPS);
+            }
+            else
+                mRequest_file_chain = 8;
+        }
+        else if (mRequest_file_chain == 8)
+        {
+            if (ServerFile::getSingleton().getStatus(SERVER_FILE_ANIMS) == SERVER_FILE_STATUS_UPDATE)
+            {
+                mRequest_file_chain = 9;
+                RequestFile(SERVER_FILE_ANIMS);
+            }
+            else
+                mRequest_file_chain = 10;
+        }
+        else if (mRequest_file_chain == 10) // we have all files - start check
+        {
+            mRequest_file_chain++; // this ensure one loop tick and updating the messages
+        }
+        else if (mRequest_file_chain == 11)
+        {
+            // ok... now we check for bmap & anims processing...
+            // TileGfx::getSingleton().read_bmap_tmp();
+            // TileGfx::getSingleton().read_anim_tmp();
+            // load_settings();
+            mRequest_file_chain++;
+        }
+        else if (mRequest_file_chain == 12)
+        {
+            mRequest_file_chain++; // this ensure one loop tick and updating the messages
+        }
+        else if (mRequest_file_chain == 13)
+            Option::getSingleton().setGameStatus(GAME_STATUS_ADDME);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_ADDME:
+        cs_write_string("addme", 5);  // SendAddMe
+        /*
+           map_transfer_flag = 0;
+           cpl.name[0] = 0;
+           cpl.password[0] = 0;
+        */
+        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
+        // now wait for login request of the server
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// Server wants Player name.
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_NAME_INIT:
+        // map_transfer_flag = 0;
+        GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
+        GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_NAME, 20, true, true);
+        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_LOOP);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_NAME_LOOP:
+        if (GuiManager::getSingleton().brokenTextInput())
+        {
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Break Login.");
+            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, false);
+            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
+            Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        }
+        else  if (GuiManager::getSingleton().finishedTextInput())
+        {
+            if (is_username_valid(GuiManager::getSingleton().getTextInput()))
+            {
+                char name_tmp[256];
+
+                //strcpy(cpl.name, InputString);
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                sprintf(name_tmp,"%c%s", GameStatusLogin?'L':'C', GuiManager::getSingleton().getTextInput());
+                Logger::log().info() << "Login: send name" << name_tmp;
+                send_reply(name_tmp);
+                Option::getSingleton().setGameStatus(GAME_STATUS_NAME_WAIT);
+                // now wait again for next server question
+            }
+            else
+            {
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+                GuiManager::getSingleton().cancelTextInput();
+                Option::getSingleton().setGameStatus(GAME_STATUS_NAME_INIT);
+            }
+        }
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// Server wants Player password.
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_PSWD_INIT:
+        GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_PASSWD, 20, true, true);
+        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_LOOP);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_PSWD_LOOP:
+        //map_transfer_flag = 0;
+        if (GuiManager::getSingleton().brokenTextInput())
+        {
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"Break Login.");
+            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, false);
+            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
+            Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        }
+        else  if (GuiManager::getSingleton().finishedTextInput())
+        {
+            const char *InputString = GuiManager::getSingleton().getTextInput();
+            int strLen = strlen(InputString);
+            if (!GameStatusLogin && (strLen < 6 || strLen > 17))
+            {
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
+            }
             /*
-               map_transfer_flag = 0;
-               cpl.name[0] = 0;
-               cpl.password[0] = 0;
+                            else if (!GameStatusLogin && !strcmp(cpl.name, InputString))
+                            {
+                                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
+                            }
             */
-            Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-            // now wait for login request of the server
+            else
+            {
+                Logger::log().info() << "Login: send password <*****>";
+                send_reply(InputString);
+                Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_WAIT);
+            }
+            // now wait again for next server question
         }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_LOGIN)
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// Server wants Player password AGAIN.
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_VRFY_INIT:
+        GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_VERIFY, 20, true, true);
+        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_LOOP);
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_VRFY_LOOP:
         {
-            /*
-                   // map_transfer_flag = 0;
-                  TextInput::getSingleton().startTextInput(1); // every start() needs a stop()!
-                  if (TextInput::getSingleton().wasCanceled())
-                  {
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Break Login.");
-                    TextInput::getSingleton().stop();
-                    Dialog::getSingleton().setVisible(false);
-                    Option::getSingleton().setGameStatus(GAME_STATUS_START);
-                  }
-            */
+            //map_transfer_flag = 0;
+            char *InputString = (char*)GuiManager::getSingleton().getTextInput();
+            if (GuiManager::getSingleton().brokenTextInput())
+            {
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"Break Login.");
+                GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, false);
+                Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
+                Option::getSingleton().setGameStatus(GAME_STATUS_START);
+            }
+            else  if (GuiManager::getSingleton().finishedTextInput())
+            {
+                Logger::log().info() << "Login: send verify password <*****>";
+                send_reply(InputString);
+                Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_WAIT);
+                // now wait again for next server question
+            }
         }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NAME)
-        {
-            /*
-                   // map_transfer_flag = 0;
-                  //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
-                  if (TextInput::getSingleton().wasCanceled())
-                  {
-                    Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-                  }
-                  else if (TextInput::getSingleton().wasFinished())
-                  {
-                    //strcpy(cpl.name, InputString);
-                    send_reply((char*)TextInput::getSingleton().getText());
-                    //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
-                    Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-                  }
-            */
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_PSWD)
-        {
-            /*
-                   // map_transfer_flag = 0;
-                  // textwin_clearhistory();
-                  //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
-                  if (TextInput::getSingleton().wasCanceled())
-                  {
-                    Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-                  }
-                  else if (TextInput::getSingleton().wasFinished())
-                  {
-                    // strncpy(cpl.password, InputString, 39);
-                    send_reply((char*)TextInput::getSingleton().getText());
-                    //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
-                    Option::getSingleton().getGameStatus(GAME_STATUS_LOGIN);
-                  }
-            */
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_VERIFYPSWD)
-        {
-            /*
-                   // map_transfer_flag = 0;
-                  //Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN);
-                  if (TextInput::getSingleton().wasCanceled())
-                  {
-                    Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-                  }
-                  else if (TextInput::getSingleton().wasFinished())
-                  {
-                    send_reply((char*)TextInput::getSingleton().getText());
-                    //Dialog::getSingleton().setWarning(DIALOG_WARNING_NONE);
-                    Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-                  }
-            */
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_WAITFORPLAY)
-        {
-            /*
-                  clear_map();
-                  map_draw_map_clear();
-                  map_udate_flag = 2;
-                  map_transfer_flag = 1;
-            */
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_NEW_CHAR)
-        {
-            // map_transfer_flag = 0;
-        }
-        else if (Option::getSingleton().getGameStatus() == GAME_STATUS_QUIT)
-        {
-            // map_transfer_flag = 0;
-        }
-        return;
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// Create a new character.
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_NEW_CHAR:
+        Option::getSingleton().setGameStatus(GAME_STATUS_WAITFORPLAY);
+        /*
+               if (Dialog::getSingleton().UpdateNewChar())
+              {
+                CreatePlayerAccount();
+                Option::getSingleton().setGameStatus(GAME_STATUS_WAITFORPLAY);
+              }
+        */
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// .
+        /// ////////////////////////////////////////////////////////////////////
+        case  GAME_STATUS_WAITFORPLAY:
+        /*
+              clear_map();
+              map_draw_map_clear();
+              map_udate_flag = 2;
+              map_transfer_flag = 1;
+        */
+        break;
+
+        /// ////////////////////////////////////////////////////////////////////
+        /// User quits the game.
+        /// ////////////////////////////////////////////////////////////////////
+        case GAME_STATUS_QUIT:
+        // map_transfer_flag = 0;
+        break;
     }
 }
 
@@ -610,7 +763,7 @@ bool Network::OpenSocket(const char *host, int port)
         struct hostent *mHostbn = gethostbyname(host);
         if (mHostbn == (struct hostent *) 0)
         {
-            Logger::log().error() << "Unknown host: " << host;
+            Logger::log().warning() << "Unknown host: " << host;
             mSocket = SOCKET_NO;
             return false;
         }
@@ -628,6 +781,7 @@ bool Network::OpenSocket(const char *host, int port)
     {
         Logger::log().error() << "Error in ioctlsocket(*socket_temp, FIONBIO , &temp)";
         mSocket = SOCKET_NO;
+        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
         return false;
     }
     int error = 0;
@@ -639,6 +793,7 @@ bool Network::OpenSocket(const char *host, int port)
         {
             Logger::log().error() << "Connect Error: " << mSocketStatusErrorNr;
             mSocket = SOCKET_NO;
+            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
             return false;
         }
         mSocketStatusErrorNr = WSAGetLastError();
@@ -651,7 +806,6 @@ bool Network::OpenSocket(const char *host, int port)
             error = 1;
         }
     }
-
 #else
     struct protoent *protox;
     protox = getprotobyname("tcp");
@@ -665,6 +819,7 @@ bool Network::OpenSocket(const char *host, int port)
     {
         Logger::log().error() << "Init connection: Error on socket command.";
         mSocket = SOCKET_NO;
+        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
         return false;
     }
     if (connect(mSocket,(struct sockaddr *)&mInsock,sizeof(mInsock)) ==  SOCKET_ERROR)
@@ -807,7 +962,7 @@ void Network::read_metaserver_data()
 /// Takes a string of data, and writes it out to the socket. A very handy
 /// shortcut function.
 ///================================================================================================
-int Network::cs_write_string(char *buf, int len)
+int Network::cs_write_string(const char *buf, int len)
 {
     static SockList sl;
     sl.len = len;
@@ -907,203 +1062,219 @@ void Network::DoClient()
         }
         return; // Still don't have a full packet
     }
+
+
     switch (mInbuf.buf[2])
     {
-        case  1: // BINARY_CMD_COMC
+
+        case  CMD_SKILL_RDY_PLAYER:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_COMC (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_RDY_PLAYER (" << (int) mInbuf.buf[2] << ")";
+#endif
+        PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+        break;
+
+        case  CMD_COMPLETE:
+#ifdef DEBUG_ON
+        Logger::log().info() << "command: BINARY_CMD_COMPLETE (" << (int) mInbuf.buf[2] << ")";
 #endif
         // CompleteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  2: // BINARY_CMD_MAP2
+        case CMD_MAP2:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_MAP2 (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_MAP2 (" << (int) mInbuf.buf[2] << ")";
 #endif
         Map2Cmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  3: // BINARY_CMD_DRAWINFO
+        case  CMD_DRAW_INFO:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DRAWINFO (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_DRAWINFO (" << (int) mInbuf.buf[2] << ")";
 #endif
         // DrawInfoCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  4: // BINARY_CMD_DRAWINFO2
+        case  CMD_DRAW_INFO2:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DRAWINFO2 (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_DRAWINFO2 (" << (int) mInbuf.buf[2] << ")";
 #endif
         // DrawInfoCmd2(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  5: // BINARY_CMD_MAP_SCROLL
+        /*
+                case  5: // BINARY_CMD_MAP_SCROLL
+        #ifdef DEBUG_ON
+                Logger::log().info() << "command: BINARY_CMD_MAP_SCROLL (" << (int) mInbuf.buf[2] << ")";
+        #endif
+                // map_scrollCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+                break;
+        */
+        case  CMD_ITEM_X:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_MAP_SCROLL (" << mInbuf.buf[2] << ")";
-#endif
-        // map_scrollCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case  6: // BINARY_CMD_ITEMX
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ITEMX (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_ITEMX (" << (int) mInbuf.buf[2] << ")";
 #endif
         // ItemXCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  7: // BINARY_CMD_SOUND
+        case  CMD_SOUND:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SOUND (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_SOUND (" << (int) mInbuf.buf[2] << ")";
 #endif
         // SoundCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  8: // BINARY_CMD_TARGET
+        case  CMD_TARGET_OBJECT:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_TARGET (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_TARGET (" << (int) mInbuf.buf[2] << ")";
 #endif
         // TargetObject(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case  9: // BINARY_CMD_UPITEM
+        case  CMD_UPDATE_ITEM:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_UPITEM (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_UPITEM (" << (int) mInbuf.buf[2] << ")";
 #endif
         // UpdateItemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 10: // BINARY_CMD_DELITEM
+        case CMD_DELETE_ITEM:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DELITEM (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_DELITEM (" << (int) mInbuf.buf[2] << ")";
 #endif
         // DeleteItem(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 11: // BINARY_CMD_STATS
+        case CMD_STATS:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_STATS (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_STATS (" << (int) mInbuf.buf[2] << ")";
 #endif
         // StatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 12: // BINARY_CMD_IMAGE
+        case CMD_IMAGE:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_IMAGE (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_IMAGE (" << (int) mInbuf.buf[2] << ")";
 #endif
         // ImageCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 13: // BINARY_CMD_FACE1
+        case CMD_FACE1:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_FACE1 (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_FACE1 (" << (int) mInbuf.buf[2] << ")";
 #endif
         // Face1Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 14: // BINARY_CMD_ANIM
+        case CMD_ANIM:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ANIM (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_ANIM (" << (int) mInbuf.buf[2] << ")";
 #endif
         // AnimCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 15: // BINARY_CMD_SKILLRDY
+        case CMD_SKILL_RDY:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SKILLRDY (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_SKILLRDY (" << (int) mInbuf.buf[2] << ")";
 #endif
         // SkillRdyCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 16: // BINARY_CMD_PLAYER
+        /*
+                case 16: // BINARY_CMD_PLAYER
+        #ifdef DEBUG_ON
+                Logger::log().info() << "command: BINARY_CMD_PLAYER (" << (int) mInbuf.buf[2] << ")";
+        #endif
+                //Dialog::getSingleton().setVisible(false);
+                PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+                break;
+                case 17: // BINARY_CMD_MAPSTATS
+        #ifdef DEBUG_ON
+                Logger::log().info() << "command: BINARY_CMD_MAPSTATS (" << (int) mInbuf.buf[2] << ")";
+        #endif
+                // MapstatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+                break;
+        */
+        case CMD_SPELL_LIST:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_PLAYER (" << mInbuf.buf[2] << ")";
-#endif
-        //Dialog::getSingleton().setVisible(false);
-        PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case 17: // BINARY_CMD_MAPSTATS
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_MAPSTATS (" << mInbuf.buf[2] << ")";
-#endif
-        // MapstatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case 18: // BINARY_CMD_SPELL_LIST
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SPELL_LIST (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_SPELL_LIST (" << (int) mInbuf.buf[2] << ")";
 #endif
         // SpelllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 19: // BINARY_CMD_SKILL_LIST
+        case CMD_SKILL_LIST:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SKILL_LIST (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_SKILL_LIST (" << (int) mInbuf.buf[2] << ")";
 #endif
         // SkilllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 20: // BINARY_CMD_GOLEMCMD
+        case CMD_GOLEM:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_GOLEMCMD (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_GOLEMCMD (" << (int) mInbuf.buf[2] << ")";
 #endif
         // GolemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 21: // BINARY_CMD_ADDME_SUC
+        case CMD_ADD_ME_SUCCSESS:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ADDME_SUC (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_ADDME_SUC (" << (int) mInbuf.buf[2] << ")";
 #endif
         // AddMeSuccess(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 22: // BINARY_CMD_ADDME_FAIL
+        case CMD_ADD_ME_FAIL:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ADDME_FAIL (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_ADDME_FAIL (" << (int) mInbuf.buf[2] << ")";
 #endif
         // AddMeFail(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 23: // BINARY_CMD_VERSION
+        case CMD_VERSION:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_VERSION (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_VERSION (" << (int) mInbuf.buf[2] << ")";
 #endif
         VersionCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 24: // BINARY_CMD_BYE
+        case CMD_GOOD_BYE:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_BYE (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_BYE (" << (int) mInbuf.buf[2] << ")";
 #endif
         // GoodbyeCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 25: // BINARY_CMD_SETUP
+        case CMD_SETUP:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SETUP (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_SETUP (" << (int) mInbuf.buf[2] << ")";
 #endif
         SetupCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 26: // BINARY_CMD_QUERY
+        case CMD_HANDLE_QUERY: // BINARY_CMD_QUERY
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_QUERY (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_QUERY (" << (int) mInbuf.buf[2] << ")";
 #endif
         HandleQuery((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 27: // BINARY_CMD_DATA
+        case CMD_DATA:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DATA (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_DATA (" << (int) mInbuf.buf[2] << ")";
 #endif
         DataCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 28: // BINARY_CMD_NEW_CHAR
+        case CMD_NEW_CHAR:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_NEW_CHAR (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_NEW_CHAR (" << (int) mInbuf.buf[2] << ")";
 #endif
         NewCharCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 29: // BINARY_CMD_ITEMY
+        case CMD_ITEM_Y:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ITEMY (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_ITEMY (" << (int) mInbuf.buf[2] << ")";
 #endif
         // ItemYCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 30: // BINARY_CMD_GROUP
+        case CMD_GROUP:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_GROUP (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_GROUP (" << (int) mInbuf.buf[2] << ")";
 #endif
         // GroupCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 31: // BINARY_CMD_INVITE
+        case CMD_GROUP_UPDATE:
 #ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_INVITE (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: BINARY_CMD_INVITE (" << (int) mInbuf.buf[2] << ")";
 #endif
         // GroupInviteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
         break;
-        case 32: // BINARY_CMD_GROUP_UPDATE
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_GROUP_UPDATE (" << mInbuf.buf[2] << ")";
-#endif
-        // GroupUpdateCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
+        /*
+                case 32: // BINARY_CMD_GROUP_UPDATE
+        #ifdef DEBUG_ON
+                Logger::log().info() << "command: BINARY_CMD_GROUP_UPDATE (" << (int) mInbuf.buf[2] << ")";
+        #endif
+                // GroupUpdateCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+                break;
+        */
         default: // ERROR
-        Logger::log().info() << "command: <UNKNOWN> (" << mInbuf.buf[2] << ")";
+        Logger::log().info() << "command: <UNKNOWN> (" << (int) mInbuf.buf[2] << ")";
         break;
     }
     mInbuf.len =0;

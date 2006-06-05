@@ -79,7 +79,6 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_F2:
-        GuiManager::getSingleton().startTextInput(GUI_WIN_PLAYERINFO, GUI_TEXTINPUT_PASSWORD, 20, true, true);
         break;
 
 
@@ -185,18 +184,6 @@ void CEvent::keyPressed(KeyEvent *e)
         {
             Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
             ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree1.mesh", (int)pos.x, (int)pos.z, 0);
-            /*
-            static int tree = 0;
-            Entity * entity = mSceneManager->createEntity("tree_"+StringConverter::toString(++tree), "tree1.mesh");
-            const AxisAlignedBox &AABB = entity->getBoundingBox();
-            Vector3 pos = mTileManager->get_TileInterface()->get_Selection();
-            pos.x = (pos.x +0.5) * TILE_SIZE_X -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
-            pos.y+= fabs(AABB.getMaximum().y) - TILE_SIZE_X/2;
-            pos.z = (pos.z +0.5) * TILE_SIZE_Z -(AABB.getMaximum() .x+ AABB.getMinimum().x)/2;
-            SceneNode *node = mSceneManager->getRootSceneNode()->createChildSceneNode();
-            node->attachObject(entity);
-            node->setPosition(pos.x, pos.y, pos.z);
-            */
         }
         break;
 
@@ -281,7 +268,7 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_L:
-        //Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
+          Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
         break;
 
         case KC_W:

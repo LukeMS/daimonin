@@ -233,7 +233,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     {
         if (!(strTmp = xmlElem->Attribute("type")))
             continue;
-        if (!stricmp(strTmp, "GFX_FILL"))
+        if (!stricmp(strTmp, "COLOR_FILL"))
+        { /// This is a COLOR_FILL.
+            GuiGraphic *graphic = new GuiGraphic(xmlElem, 0, 0, mWidth, mHeight);
+            mvGraphic.push_back(graphic);
+        }
+        else
         { /// This is a GFX_FILL.
             /// Find the gfx data in the tileset.
             if (!(strTmp = xmlElem->Attribute("image_name")))
@@ -254,11 +259,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
                 << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
             }
         }
-        else
-        { /// This is a COLOR_FILL.
-            GuiGraphic *graphic = new GuiGraphic(xmlElem, 0, 0, mWidth, mHeight);
-            mvGraphic.push_back(graphic);
-        }
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the listboxes.
@@ -268,13 +268,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if (!(strTmp = xmlElem->Attribute("name")))
             continue;
         GuiListbox *listbox = new GuiListbox(xmlElem, 0, 0, mWidth, mHeight);
-        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
-        {
-            if (stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
-                continue;
-            listbox->setIndex(i);
-            break;
-        }
         mvListbox.push_back(listbox);
     }
     /// ////////////////////////////////////////////////////////////////////
@@ -305,11 +298,13 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         {
             for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
             {
+Logger::log().error() << "1";
                 if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
                 {
                     textline->index = GuiImageset::getSingleton().getElementIndex(i);
                     break;
                 }
+Logger::log().error() << "2";
             }
         }
         else /// Error: No name found. Fallback to label.
@@ -317,6 +312,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             Logger::log().error() << "A Textbox without a name was found.";
             textline->index = -1;
         }
+Logger::log().error() << "3";
         textline->BG_Backup = 0;
         if ((strTmp = xmlElem->Attribute("font")))
             textline->font = atoi(strTmp);
@@ -336,6 +332,16 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
     {
         GuiStatusbar *statusbar = new GuiStatusbar(xmlElem, 0,0, mWidth, mHeight);
+        if (!(strTmp = xmlElem->Attribute("image_name")))
+            continue;
+        srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
+        if (srcEntry)
+        {
+            for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
+            {
+                statusbar->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+            }
+        }
         mvStatusbar.push_back(statusbar);
     }
 
@@ -418,7 +424,7 @@ void GuiWindow::createWindow()
     mMaterial->load();
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-    mOverlay->show();
+    //mOverlay->show();
     ///
     if (mSceneNode)
     {
@@ -468,9 +474,9 @@ void GuiWindow::drawAll()
     /// ////////////////////////////////////////////////////////////////////
     for (unsigned int i = 0; i < mvTextline.size() ; ++i)
     {
-        ///--------------------------------------------------------------------
+        /// ////////////////////////////////////////////////////////////////////
         /// Clipping.
-        ///--------------------------------------------------------------------
+        /// ////////////////////////////////////////////////////////////////////
         if (mvTextline[i]->x1 >= (unsigned int) mWidth || mvTextline[i]->y1 >= (unsigned int) mHeight)
         {
             mvTextline[i]->clipped = true;
@@ -688,7 +694,7 @@ void GuiWindow::PreformActions()
         switch( mvGadget[i]->getAction() )
         {
             case GUI_ACTION_START_TEXT_INPUT:
-            GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->index, 20, true, true);
+            GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->getIndex(), 20, true, true);
             mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
             break;
         }
@@ -699,7 +705,7 @@ void GuiWindow::PreformActions()
 ///================================================================================================
 /// Parse a message.
 ///================================================================================================
-const char *GuiWindow::Message(int message, int element, const char *value)
+const char *GuiWindow::Message(int message, int element, void *value)
 {
     switch (message)
     {
@@ -708,8 +714,19 @@ const char *GuiWindow::Message(int message, int element, const char *value)
         {
             if (mvListbox[i]->getIndex() != element)
                 continue;
-            mvListbox[i]->addTextline(value);
+            mvListbox[i]->addTextline((const char *)value);
             break;
+        }
+        break;
+
+        case GUI_MSG_BAR_CHANGED:
+        for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
+        {
+            if (mvStatusbar[i]->getIndex() != element)
+                continue;
+            mvStatusbar[i]->setValue(*((Real*)(value)));
+            mvStatusbar[i]->draw(mSrcPixelBox, mTexture.getPointer());
+            return 0;
         }
         break;
 
@@ -718,19 +735,17 @@ const char *GuiWindow::Message(int message, int element, const char *value)
         {
             if (mvTextline[i]->index != element || mvTextline[i]->clipped)
                 continue;
-            mvTextline[i]->text = value;
-            GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), value);
+            mvTextline[i]->text = (const char*)value;
+            GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), (const char *)value);
             return 0;
-            break;
         }
         for (unsigned int i = 0; i < mvGadget.size() ; ++i)
         {
-            if (mvGadget[i]->index != element)
+            if (mvGadget[i]->getIndex() != element)
                 continue;
-            mvGadget[i]->setText(value);
+            mvGadget[i]->setText((const char *)value);
             mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
             return 0;
-            break;
         }
         break;
 
@@ -740,14 +755,12 @@ const char *GuiWindow::Message(int message, int element, const char *value)
             if (mvTextline[i]->index != element || mvTextline[i]->clipped)
                 continue;
             return mvTextline[i]->text.c_str();
-            break;
         }
         for (unsigned int i = 0; i < mvGadget.size() ; ++i)
         {
-            if (mvGadget[i]->index != element)
+            if (mvGadget[i]->getIndex() != element)
                 continue;
             return mvGadget[i]->getText();
-            break;
         }
         break;
 

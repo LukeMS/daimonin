@@ -41,7 +41,7 @@ const int  BAR_WIDTH = 16;
 ///================================================================================================
 /// .
 ///================================================================================================
-void GuiStatusbar::draw(PixelBox &, Texture *texture)
+void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
 {
     /// ////////////////////////////////////////////////////////////////////
     /// Save the original background.
@@ -54,46 +54,85 @@ void GuiStatusbar::draw(PixelBox &, Texture *texture)
             Box(mX, mY, mX + mWidth, mY + mHeight),
             PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer));
     }
-
     /// ////////////////////////////////////////////////////////////////////
     /// Restore background into a tmp buffer.
     /// ////////////////////////////////////////////////////////////////////
-
     //TODO
 
     /// ////////////////////////////////////////////////////////////////////
     /// Draw the bar into a temp buffer.
     /// ////////////////////////////////////////////////////////////////////
-    int x, y, offset;
-    uint32 color;
-    uint32 dColor = 0x00000000;
-    dColor+=(((mFillColor & 0x00ff0000)/ 6) & 0x00ff0000);
-    dColor+=(((mFillColor & 0x0000ff00)/ 6) & 0x0000ff00);
-    dColor+=(((mFillColor & 0x000000ff)/ 6) & 0x000000ff);
-
-    /// Draw top of the bar.
-    color = mFillColor;
-    for (offset =3, y= mValue-5; y < mValue; ++y)
+    if (mStrType == "GFX_FILL")
     {
-        for (x=offset; x <= BAR_WIDTH-offset; ++x) mGfxBuffer[y*mWidth +x] = color;
-        if (y < mValue-3) --offset;
-        color+= dColor;
-    }
-
-    /// Draw the bar.
-    color = 0xff000000;
-    for (offset= 3, x=0; x <= BAR_WIDTH/2; ++x)
-    {
-        if (x == 1 || x == 3) --offset;
-        //    for (y = mValue+5-offset; y < mHeight-offset; ++y)
-        for (y = mHeight-offset; y > mValue-offset; --y)
+        /// ////////////////////////////////////////////////////////////////////
+        /// Background part.
+        /// ////////////////////////////////////////////////////////////////////
+        uint32 *src = (uint32*)pb.data;
+        uint32 color, pixColor;
+        for (int y = 0; y < mHeight; ++y)
         {
-            mGfxBuffer[y*mWidth + x] = color;
-            mGfxBuffer[y*mWidth + BAR_WIDTH-x] = color;
+            for (int x= 0; x < mWidth; ++x)
+            {
+                color = src[(y+gfxSrcPos[0].y) * pb.getWidth() + x+gfxSrcPos[0].x];
+                if (color & 0xff000000)
+                    mGfxBuffer[y*mWidth + x] = color;
+            }
         }
-        color+= dColor;
+        /// ////////////////////////////////////////////////////////////////////
+        /// The dynamic part.
+        /// ////////////////////////////////////////////////////////////////////
+        uint32 barColor=  0xff000000+ (mLabelColor[0] << 16) + (mLabelColor[1] << 8) +mLabelColor[2];
+        for (int y = mLabelYPos + mValue; y < mHeight-mLabelYPos; ++y)
+        {
+            for (int x= mLabelXPos; x < mWidth-mLabelXPos; ++x)
+            {
+                color = src[(y+gfxSrcPos[0].y) * pb.getWidth() + x+gfxSrcPos[0].x];
+                if (color & 0xff000000)
+                {
+                    pixColor = color & 0xff000000;
+                    pixColor+= ((barColor&0x0000ff) < (color& 0x0000ff))? barColor & 0x0000ff : color & 0x0000ff;
+                    pixColor+= ((barColor&0x00ff00) < (color& 0x00ff00))? barColor & 0x00ff00 : color & 0x00ff00;
+                    pixColor+= ((barColor&0xff0000) < (color& 0xff0000))? barColor & 0xff0000 : color & 0xff0000;
+                    mGfxBuffer[y*mWidth + x] = pixColor;
+                }
+            }
+        }
     }
+    else
+    {
+        /// ////////////////////////////////////////////////////////////////////
+        /// Draw the bar into a temp buffer.
+        /// ////////////////////////////////////////////////////////////////////
+        int x, y, offset;
+        uint32 color;
+        uint32 dColor = 0x00000000;
+        dColor+=(((mFillColor & 0x00ff0000)/ 6) & 0x00ff0000);
+        dColor+=(((mFillColor & 0x0000ff00)/ 6) & 0x0000ff00);
+        dColor+=(((mFillColor & 0x000000ff)/ 6) & 0x000000ff);
 
+        /// Draw top of the bar.
+        color = mFillColor;
+        for (offset =3, y= mValue-5; y < mValue; ++y)
+        {
+            for (x=offset; x <= BAR_WIDTH-offset; ++x) mGfxBuffer[y*mWidth +x] = color;
+            if (y < mValue-3) --offset;
+            color+= dColor;
+        }
+
+        /// Draw the bar.
+        color = 0xff000000;
+        for (offset= 3, x=0; x <= BAR_WIDTH/2; ++x)
+        {
+            if (x == 1 || x == 3) --offset;
+            //    for (y = mValue+5-offset; y < mHeight-offset; ++y)
+            for (y = mHeight-offset; y > mValue-offset; --y)
+            {
+                mGfxBuffer[y*mWidth + x] = color;
+                mGfxBuffer[y*mWidth + BAR_WIDTH-x] = color;
+            }
+            color+= dColor;
+        }
+    }
     /// ////////////////////////////////////////////////////////////////////
     /// Blit buffer into the window-texture.
     /// ////////////////////////////////////////////////////////////////////
@@ -107,7 +146,12 @@ void GuiStatusbar::draw(PixelBox &, Texture *texture)
 ///================================================================================================
 void GuiStatusbar::setValue(Real value)
 {
+/*
     mValue = (int) (mHeight * (1-value));
     if (mValue > mHeight) mValue = mHeight;
     if (mValue < 5) mValue = 5;
+*/
+    mValue = (int) ((mHeight-2*mLabelYPos) * (1-value));
+    if (mValue > mHeight) mValue = mHeight;
+    if (mValue < 0) mValue = 0;
 }

@@ -55,16 +55,22 @@ enum {
     GUI_LIST_LEFT,
     GUI_LIST_RIGHT,
     // StatusBars.
-    GUI_STATUSBAR_PLAYER_HEALTH,
+    GUI_STATUSBAR_NPC_HEALTH,
+    GUI_STATUSBAR_NPC_MANA,
+    GUI_STATUSBAR_NPC_GRACE,
+
     GUI_STATUSBAR_PLAYER_MANA,
     GUI_STATUSBAR_PLAYER_GRACE,
+    GUI_STATUSBAR_PLAYER_HEALTH,
     // TextValues.
     GUI_TEXTVALUE_STAT_CUR_FPS,
     GUI_TEXTVALUE_STAT_BEST_FPS,
     GUI_TEXTVALUE_STAT_WORST_FPS,
     GUI_TEXTVALUE_STAT_SUM_TRIS,
     // TextInput
-    GUI_TEXTINPUT_PASSWORD,
+    GUI_TEXTINPUT_LOGIN_NAME,
+    GUI_TEXTINPUT_LOGIN_PASSWD,
+    GUI_TEXTINPUT_LOGIN_VERIFY,
     // Combobox
     GUI_COMBOBOX_TEST,
     // Sum of all entries.
@@ -115,14 +121,8 @@ public:
     {
         return mSrcPixelBox;
     }
-    const char *getElementName(int i)
-    {
-        return mGuiElementNames[i].name;
-    }
-    int getElementIndex(int i)
-    {
-        return mGuiElementNames[i].index;
-    }
+    const char *getElementName(int i);
+    int getElementIndex(int i);
 
 private:
     /// ////////////////////////////////////////////////////////////////////
