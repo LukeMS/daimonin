@@ -10,9 +10,10 @@ ib:SetHeader(me, me.name)
 
 local function topicDefault()
 ib:SetTitle("The Church of the Tabernacle")
-ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\nIf you are confused by my services, i can ^explain^ it.\nYou need some of our service?")
+ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to the church of the Tabernacle!\n\nIf you are confused by my services, i can ^explain^ it.\nYou need some of our services?")
 ib:AddLink("Remove Death Sickness", "cast sick")
 ib:AddLink("Remove Depletion", "cast deplete")
+ib:AddLink("Restoration", "cast restore")
 ib:AddLink("Cure Disease", "cast disease")
 ib:AddLink("Cure Poison", "cast poison")
 ib:AddLink("Remove Curse from items", "cast curse")
@@ -45,6 +46,8 @@ ib:SetTitle("Casting Remove Death Sickness")
 ib:SetMsg("I can cast °Remove Deathsick° for " .. pl:ShowCost(100 + (4 * pl. level * pl.level)))
 elseif words[2] == "deplete" then
 ib:SetMsg("I can cast °Remove Depletion° for ".. pl:ShowCost(5 * pl.level))
+elseif words[2] == "restore" then
+ib:SetMsg("I can cast °Restoration° for 150 copper")
 elseif words[2] == "poison" then
 ib:SetMsg("I will cast °Cure Poison° for " .. pl:ShowCost(5 * pl.level))
 elseif words[2] == "disease" then
@@ -64,10 +67,13 @@ local function topicDoCast()
 local words = string.split(event.message)
 if words[2] == "sick" then
 sum = 100 + (4 * pl. level * pl.level)
-spell = "remove deathsick"
+spell = "remove death sickness"
 elseif words[2] == "deplete" then
 sum = 5 * pl.level
 spell = "remove depletion"
+elseif words[2] == "restore" then
+sum = 150
+spell = "restoration"
 elseif words[2] == "poison" then
 sum = 5 * pl.level
 spell = "cure poison"

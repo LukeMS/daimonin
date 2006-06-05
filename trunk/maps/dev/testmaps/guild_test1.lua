@@ -42,7 +42,7 @@ ib:AddMsg("[intro] You can join when you fetch me the guild hammer (in the chest
 ib:AddLink("Start the Guild Quest", "startq1")
 else
 ib:SetTitle("Test Guild 1 Quest solved?")
-ib:AddMsg("[pending] You has done the quest?")
+ib:AddMsg("[pending] You have done the quest?")
 ib:AddLink("Join the Test Guild 1", "checkq1")
 end
 else

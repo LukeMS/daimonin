@@ -39,11 +39,11 @@ local function topicDefault()
 if q_stat_1 < game.QSTAT_DONE then
 if q_stat_1 == game.QSTAT_NO then
 ib:SetTitle("Welcome to the Mercenary Guild")
-ib:AddMsg("Hello!\nWelcome to the Mercenary Guild of Thraal!\n\nYou need a job?\nYou really would be welcome in our ranks. Our ^troops^ are an important part of the imperial defence.\n\nYou want join our guild?")
+ib:AddMsg("Hello!\nWelcome to the Mercenary Guild of Thraal!\n\nYou need a job?\nYou really would be welcome in our ranks. Our ^troops^ are an important part of the imperial defence.\n\nYou want to join our guild?")
 ib:AddLink("Start the Mercenry Guild Quest", "startq1")
 else
 ib:SetTitle("You Solved the Quest?")
-ib:AddMsg("You has done the task?\n\nShow me the helm and you can join our guild.")
+ib:AddMsg("You have done the task?\n\nShow me the helm and you can join our guild.")
 ib:AddLink("Show Cashin the Helm", "checkq1")
 end
 else
@@ -63,7 +63,7 @@ local function quest_icons1()
 ib:AddIcon("Mercenary Guild Membership", "guild_merc", "") 
 end
 local function quest_body1()
-ib:SetMsg("Before you can join the guild I have a small task for you.\n\nWe have a problem with giant ants in the last time.\nSee this hole to the old guild cellar on my side!\n\nOne of those silly ants has stolen my old helmet!\nEnter the hole and kill the ants there!\nNo fear, they are weak.\n\nBring me the helm back and you can join the guild.")
+ib:SetMsg("Before you can join the guild I have a small task for you.\n\nWe have a problem with giant ants for some time now.\nSee this hole to the old guild cellar on my side?\n\nOne of those silly ants has stolen my old helmet!\nEnter the hole and kill the ants there!\nNo fear, they are weak.\n\nBring me the helm back and you can join the guild.")
 ib:SetDesc("You can join the mercenary guild when you recover the helm for Cashin.", 0, 0, 0, 0)
 end
 
@@ -169,14 +169,14 @@ end
 
 local function topTroops()
 ib:SetTitle("The Mercenary Troops")
-ib:SetMsg("We, as part of the the Thraal army corps, are invading the abandomed areas after the defeat of Moroch.\n\nWell, the chronomancers ensured us after they created the portal that we are still in the galactic main sphere.\n\nBut it seems to me that these lands have many wormholes to other places...\n\nPerhaps the long time under Morochs influence has weakened the borders between the planes. You should ask ^Jahrlen^ about it.")
+ib:SetMsg("We, as part of the the Thraal army corps, are invading the abandoned areas after the defeat of Moroch.\n\nWell, the chronomancers ensured us after they created the portal that we are still in the galactic main sphere.\n\nBut it seems to me that these lands have many wormholes to other places...\n\nPerhaps the long time under Morochs influence has weakened the borders between the planes. You should ask ^Jahrlen^ about it.")
 ib:SetButton("Ok", "hi") 
 pl:Interface(1, ib:Build())
 end
 
 local function topJahrlen()
 ib:SetTitle("Jahrlen the Chronomancer")
-ib:SetMsg("Jahrlen is our guild mage.\n\nWell, normally we don't have a guild mage.\nBut we are at war here and he was assigned to us.\n\nIn fact, he is a high level chronomancer and we are honored he helps us.\n\nHe is in our guild rooms. Talk to him when you meet him! He often has tasks and quests for newbies.")
+ib:SetMsg("Jahrlen is our guild mage.\n\nWell, normally we don't have a guild mage.\nBut we are at war here and he was assigned to us.\n\nIn fact, he is a high level chronomancer and we are honored to have him help us.\n\nHe is in our guild rooms. Talk to him when you meet him! He often has tasks and quests for newbies.")
 ib:SetButton("Ok", "hi") 
 pl:Interface(1, ib:Build())
 end
