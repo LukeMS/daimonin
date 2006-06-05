@@ -12,7 +12,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'detect curse' for 2s on you.")
 activator:Write("You pay the money.", 0)
 whoami:CastSpell(activator,game:GetSpellNr("detect curse"), 1,0,"")
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 )
@@ -24,7 +24,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'remove curse' for 3s on you.")
 activator:Write("You pay the money.", 0)
 whoami:CastSpell(activator,game:GetSpellNr("remove curse"), 1,0,"")
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 )
@@ -36,7 +36,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'remove damnation' for 30s on you.")
 activator:Write("You pay the money.", 0)
 whoami:CastSpell(activator,game:GetSpellNr("remove damnation"), 1,0,"")
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 )
@@ -48,7 +48,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'detect magic' for 2s on you.")
 activator:Write("You pay the money.", 0)
 whoami:CastSpell(activator,game:GetSpellNr("detect magic"), 1,0,"")
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 )
@@ -60,7 +60,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'remove depletion' for 35s on you.")
 activator:Write("You pay the money.", 0)
 whoami:CastSpell(activator,game:GetSpellNr("remove depletion"), 1,0,"")
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 )
@@ -76,7 +76,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'identify' for 20s over the "..objec
 activator:Write("You pay the money.", 0)
 whoami:IdentifyItem(activator, object, game.IDENTIFY_MARKED)
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 end
@@ -89,7 +89,7 @@ whoami:SayTo(activator,"\nOk, i will cast a 'identify all' for 50s.")
 activator:Write("You pay the money.", 0)
 whoami:IdentifyItem(activator, None, game.IDENTIFY_ALL)
 else
-whoami:SayTo(activator,"\nSorry, you have not enough money.")
+whoami:SayTo(activator,"\nSorry, you do not have enough money.")
 end
 end
 )

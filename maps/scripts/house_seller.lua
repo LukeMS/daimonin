@@ -58,11 +58,11 @@ ib:SetTitle("About apartments")
 ib:AddMsg("An apartment is a kind of unique place you can buy.\n")
 ib:AddMsg("Only you can enter it!\n")
 ib:AddMsg("You can safely store or drop your items there.\n")
-ib:AddMsg("They will not vanish with the time:\n")
+ib:AddMsg("They will not vanish over time:\n")
 ib:AddMsg("If you leave the game they will be still there\n")
 ib:AddMsg("when you come back later.\n")
 ib:AddMsg("Apartments have different size and styles.\n")
-ib:AddMsg("You can have only one apartment at once at city,\n")
+ib:AddMsg("You can have only one apartment at once in the city,\n")
 ib:AddMsg("but you can ^upgrade^ it.")
 ib:SetButton("Back", "hi")
 pl:Interface(1, ib:Build())
@@ -76,7 +76,7 @@ ib:AddMsg("It has only a bed and a chest.\n")
 ib:AddMsg("Every apartment is a kind of ^pocket dimension^.\n")
 ib:AddMsg("You can enter it by using the teleporter there.\n")
 ib:AddMsg("Say ^sell me a cheap apartment^ to buy it!\n")
-ib:AddMsg("Choose wise!")
+ib:AddMsg("Choose wisely!")
 ib:SetButton("Back", "hi")
 pl:Interface(1, ib:Build())
 reset()
@@ -89,7 +89,7 @@ ib:AddMsg("It has some storing devices and some furniture.\n")
 ib:AddMsg("Every apartment is a kind of ^pocket dimension^.\n")
 ib:AddMsg("You can enter it by using the teleporter there.\n")
 ib:AddMsg("Say ^sell me a normal apartment^ to buy it!\n")
-ib:AddMsg("Choose wise!")
+ib:AddMsg("Choose wisely!")
 ib:SetButton("Back", "hi")
 pl:Interface(1, ib:Build())
 reset()
@@ -98,11 +98,11 @@ end
 function topicExpensive()
 ib:SetTitle("Expensive Apartment")
 ib:AddMsg("The expensive apartment will cost you 15 gold.\n")
-ib:AddMsg("It is large for a single apartment and has many places to store items including a nice bed room.\n")
+ib:AddMsg("It is large for a single apartment and has many places to store items including a nice bedroom.\n")
 ib:AddMsg("Every apartment is a kind of ^pocket dimension^.\n")
 ib:AddMsg("You can enter it by using the teleporter there.\n")
 ib:AddMsg("Say ^sell me an expensive apartment^ to buy it!\n")
-ib:AddMsg("Choose wise!")
+ib:AddMsg("Choose wisely!")
 ib:SetButton("Back", "hi")
 pl:Interface(1, ib:Build())
 reset()
@@ -111,11 +111,11 @@ end
 function topicLux()
 ib:SetTitle("Luxurious Apartment")
 ib:AddMsg("The luxurious apartment will cost you 200 gold.\n")
-ib:AddMsg("It is very large for a single apartment and has alot places to store items including a nice bed room.\n")
+ib:AddMsg("It is very large for a single apartment and has a lot of places to store items including a nice bedroom.\n")
 ib:AddMsg("Every apartment is a kind of ^pocket dimension^.\n")
 ib:AddMsg("You can enter it by using the teleporter there.\n")
 ib:AddMsg("Say ^sell me an luxurious apartment^ to buy it!\n")
-ib:AddMsg("Choose wise!")
+ib:AddMsg("Choose wisely!")
 ib:SetButton("Back", "hi")
 pl:Interface(1, ib:Build())
 reset()
@@ -142,7 +142,7 @@ ib:AddMsg("a.) Choose your new home in the upgrade procedure.\n")
 ib:AddMsg("b.) You get *no* money back for your old apartment.\n")
 ib:AddMsg("c.) All items in your old apartment are *automatically* transfered, including items in containers. They appear in a big pile in your new apartment.\n")
 ib:AddMsg("d.) Your old apartment is exchanged with your new one.\n")
-ib:AddMsg("Upgrading will also work to change a expensive apartment to a cheap one.\n")
+ib:AddMsg("Upgrading will also work to change an expensive apartment to a cheap one.\n")
 ib:AddMsg("Go to upgrade ^procedure^ when you want upgrade now.\n")
 end
 ib:SetButton("Back", "hi")
@@ -194,19 +194,19 @@ end
 function topicConfirm()
 ib:SetTitle("Confirm your choice!")
 if pinfo.last_heal==1 then
-ib:AddMsg("You have choosen to upgrade to °cheap apartment°.\nIt will cost you °30 silver!°\n")
+ib:AddMsg("You have chosen to upgrade to °cheap apartment°.\nIt will cost you °30 silver!°\n")
 end
 if pinfo.last_heal==2 then
-ib:AddMsg("You have choosen to upgrade to °normal apartment°.\nIt will cost you °250 silver!°\n")
+ib:AddMsg("You have chosen to upgrade to °normal apartment°.\nIt will cost you °250 silver!°\n")
 end
 if pinfo.last_heal==3 then
-ib:AddMsg("You have choosen to upgrade to °expensive apartment°.\nIt will cost you °15 gold!°\n")
+ib:AddMsg("You have chosen to upgrade to °expensive apartment°.\nIt will cost you °15 gold!°\n")
 end
 if pinfo.last_heal==4 then
-ib:AddMsg("You have choosen to upgrade to °luxurious apartment°.\nIt will cost you °200 gold!°\n")
+ib:AddMsg("You have chosen to upgrade to °luxurious apartment°.\nIt will cost you °200 gold!°\n")
 end
 ib:AddMsg([[
-Be sure it is correct choise, then:
+Be sure it is the correct choice, then:
 Choose °Acccept° button again and it will be done.
 Choose °Decline° to cancel it.]])
 
@@ -272,7 +272,7 @@ ib:AddMsg("You pay the money.\n")
 pinfo = pl:CreatePlayerInfo(sglow_app_tag)
 pinfo.slaying = appid_cheap -- thats the apartment type info
 ib:AddMsg("Darlin is casting some strange magic.\n")
-ib:AddMsg("Congratulations! Thats was all!\n");
+ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
 ib:AddMsg("Enter the teleporter and you will be there!\n")
 ib:AddMsg("Have a good day.\n")
@@ -296,7 +296,7 @@ ib:AddMsg("You pay the money.\n")
 pinfo = pl:CreatePlayerInfo(sglow_app_tag)
 pinfo.slaying = appid_normal -- thats the apartment type info
 ib:AddMsg("Darlin is casting some strange magic.\n")
-ib:AddMsg("Congratulations! Thats was all!\n");
+ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
 ib:AddMsg("Enter the teleporter and you will be there!\n")
 ib:AddMsg("Have a good day.\n")
@@ -320,7 +320,7 @@ ib:AddMsg("You pay the money.\n")
 pinfo = pl:CreatePlayerInfo(sglow_app_tag)
 pinfo.slaying = appid_expensive -- thats the apartment type info
 ib:AddMsg("Darlin is casting some strange magic.\n")
-ib:AddMsg("Congratulations! Thats was all!\n");
+ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
 ib:AddMsg("Enter the teleporter and you will be there!\n")
 ib:AddMsg("Have a good day.\n")
@@ -344,7 +344,7 @@ ib:AddMsg("You pay the money.\n")
 pinfo = pl:CreatePlayerInfo(sglow_app_tag)
 pinfo.slaying = appid_luxurious -- thats the apartment type info
 ib:AddMsg("Darlin is casting some strange magic.\n")
-ib:AddMsg("Congratulations! Thats was all!\n");
+ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
 ib:AddMsg("Enter the teleporter and you will be there!\n")
 ib:AddMsg("Have a good day.\n")

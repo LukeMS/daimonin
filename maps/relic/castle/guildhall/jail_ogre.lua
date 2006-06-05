@@ -27,7 +27,7 @@ ib:AddMsg("[INTRO] A quest which needs an item delivered. The item is inside the
 ib:AddLink("Start Item Test Quest", "startq1")
 else
 ib:SetTitle("Item Test Quest solved?")
-ib:AddMsg("[pending] You has done the quest?")
+ib:AddMsg("[pending] You have done the quest?")
 ib:AddLink("Finish Item Test Quest", "checkq1")
 end
 else

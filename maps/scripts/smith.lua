@@ -26,7 +26,7 @@ end
 function topicRepair()
 local flag = false
 ib:SetTitle("Repair my Equipment")
-ib:SetMsg("Let me check your equipment...\nPerhaps an item need a fix.\nI will tell you how much each will cost.")
+ib:SetMsg("Let me check your equipment...\nPerhaps an item needs a fix.\nI will tell you how much each will cost.")
 tmp = pl:FindMarkedObject()
 if tmp ~= nil and tmp.item_quality > 0 and tmp.item_condition < tmp.item_quality then
 ib:AddLink("°*M*° ".. tmp:GetName() .. '  ('.. tmp.item_condition .. '/' ..tmp.item_quality .. ')  costs: ' .. pl:ShowCost(repairCost(tmp), 1), "itemfix ".. -1)
@@ -40,7 +40,7 @@ flag = true
 end
 end
 if flag == false then
-ib:AddMsg("\n\n°Your equipment don't need any repair°")
+ib:AddMsg("\n\n°Your equipment doesn't need any repair°")
 end
 ib:SetButton("Back", "hi") 
 pl:Interface(1, ib:Build())
@@ -66,7 +66,7 @@ ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: °'.. tmp.item_condition .. 
 ib:SetAccept("Repair", "fix " .. words[2])
 ib:SetDecline(nil, "repair") 
 else
-ib:SetMsg("The item don't need any repair.")
+ib:SetMsg("The item doesn't need any repair.")
 ib:SetButton("Back", "repair") 
 end
 pl:Interface(1, ib:Build())
@@ -104,7 +104,7 @@ else
 ib:SetMsg("You don't have enough money!")
 end
 else
-ib:SetMsg("The item don't need any repair.")
+ib:SetMsg("The item doesn't need any repair.")
 end
 ib:AddIcon(tmp:GetName(), tmp:GetFace(), 'Condition: °'.. tmp.item_condition .. '°    Quality: °' .. tmp.item_quality .. '°')
 end
@@ -122,7 +122,7 @@ if tmp ~= nil then
 if tmp.f_identified ~= true then
 ib:AddLink("°*M*° Identify ".. tmp:GetName() .. " for 150 copper", "detect single")
 else
-ib:AddMsg("\n°*M*° Your marked item is allready identified.")
+ib:AddMsg("\n°*M*° Your marked item is already identified.")
 end
 end
 ib:AddLink("Identify all for 5 silver", "detect all")

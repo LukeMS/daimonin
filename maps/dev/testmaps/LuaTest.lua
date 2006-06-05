@@ -260,15 +260,15 @@ elseif (msg == 'weight') then
     if (marked == nil) then
         me:SayTo(activator, "You must mark an item first.");
     else
-        me:SayTo(activator, "Your item weighted " .. marked.weight .. "g");
+        me:SayTo(activator, "Your item weighed " .. marked.weight .. "g");
         marked.weight = marked.weight - 5;
-        me:SayTo(activator, "Your item now weights " .. marked.weight .. "g");
+        me:SayTo(activator, "Your item now weighs " .. marked.weight .. "g");
     end
 elseif (msg == 'quantity') then
     if (marked == nil) then
         me:SayTo(activator, "You must mark an item first.");
     else
-        me:SayTo(activator, "There was " .. marked.quantity .. " items");
+        me:SayTo(activator, "There were " .. marked.quantity .. " items");
         marked.quantity = marked.quantity + 1;
         me:SayTo(activator, "Now there are " .. marked.quantity);
     end
@@ -518,7 +518,7 @@ elseif msg == 'recursive_part_2' then
     me:Communicate("recursive3")
 
     tl2 = TopicList()
-    tl2:SetDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
+    tl2:SetDefault( function() event.me:Say("lvl2 tl: something weird happened to the topiclist class") end)
     tl2:AddTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
     tl2:CheckMessage(event)
 

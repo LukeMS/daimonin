@@ -10,7 +10,7 @@ ib:SetHeader(me, me.name)
 
 local function topicDefault()
 ib:SetTitle("Tavern")
-ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to our tavern.\nWe serve all kinds of booze here.\n\nWhat you want?")
+ib:SetMsg("Hello! I am " .. me.name ..".\n\nWelcome to our tavern.\nWe serve all kinds of booze here.\n\nWhat do you want?")
 ib:AddLink("Buy water for 2 copper", "buy water")
 ib:AddLink("Buy booze for 7 copper", "buy booze")
 pl:Interface(1, ib:Build())
@@ -28,7 +28,7 @@ ib:SetMsg("One °booze° will cost you 7 copper")
 ib:SetAccept(nil, "booze") 
 ib:AddIcon("booze", "booze.101", "")
 end
-ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want buy it?") 
+ib:AddMsg(".\n\nYou have " .. pl:ShowCost(pl:GetMoney()) .. ".\n\nYou want to buy it?") 
 ib:SetDecline(nil, "hi")
 pl:Interface(1, ib:Build())
 end

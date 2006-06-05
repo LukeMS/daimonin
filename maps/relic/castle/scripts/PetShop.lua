@@ -100,7 +100,7 @@ Here you can buy yourself a loving servant from the best of breeds.
 I've got ^red^ and ^black^ ants for sale, or you can try out this 
 adorable little ^doggie^--the tyke!
 
-I can also offer you some general ^advice^ on pets handling.
+I can also offer you some general ^advice^ on pet handling.
 "> 
 ]]
 ) end
@@ -111,7 +111,7 @@ tl:AddTopics( {"doggie", "dog"}, function() activator:Interface(1,
 <h f="peasant.151"> 
 <m t="Doggie" b="
 Ah, so you picked the little doggie!
-Such a cute fella, i'm sure you'll like him. 
+Such a cute fella, I'm sure you'll like him. 
 He takes a lot of love and makes a great companion. 
 Pay ~20 gold~ and he's yours.
 
@@ -128,7 +128,7 @@ tl:AddTopics( {"red", "red ant"}, function() activator:Interface(1,
 [[
 <h f="peasant.151"> 
 <m t="Red Ant" b="
-A good choice for a young active person as yourself. 
+A good choice for a young active person such as yourself. 
 The red ant is loyal and requires little care. 
 It will be yours for only ~1 gold~.
 
@@ -146,7 +146,7 @@ tl:AddTopics( {"black", "black ant"}, function() activator:Interface(1,
 <h f="peasant.151"> 
 <m t="Black Ant" b="
 Now, that is an excellent fit for you. 
-A black ant will protect you and help hunting down your enemies. 
+A black ant will protect you and help hunt down your enemies. 
 It is yours for only ~5 gold~.
 
 Would you like to buy this?
