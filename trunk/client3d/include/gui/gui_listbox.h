@@ -68,10 +68,6 @@ public:
     void draw(PixelBox &, Texture *texture);
     const char *extractFirstLineOfText(const char &text);
     void addTextline(const char *text);
-    int getIndex()
-    {
-        return mIndex;
-    }
     void setIndex(int index)
     {
         mIndex = index;
@@ -102,7 +98,6 @@ private:
     int  mSumRows;
     int  mPrintPos;
     int  mBufferPos;
-    int  mIndex;
     int  mFontHeight;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.

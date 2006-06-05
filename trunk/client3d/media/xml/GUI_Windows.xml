@@ -258,7 +258,25 @@
     <Label x=  "60" y= "222" font="03" text= "Text@03 using font #3" />
     <Label x=  "60" y= "235" font="03" text= "Text@04 using font #4" />
 
-    <TextBox x= "100" y= "65" font="02" text= "input test" width = "100" name= "Input_Password" />
+
+    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "PlayerHealthbar">
+      <Pos x= "65" y= "65" />
+      <Range width= "50" height= "136" />
+      <Label xPos= "0" yPos= "20" red= "128" green= "11" blue= "11" alpha = "255" />
+    </Statusbar>
+
+    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerHealthbar">
+      <Pos x= "120" y= "65" />
+      <Range width= "50" height= "136" />
+      <Label xPos= "0" yPos= "20" red= "11" green= "128" blue= "11" alpha = "255" />
+    </Statusbar>
+
+    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerHealthbar">
+      <Pos x= "175" y= "65" />
+      <Range width= "50" height= "136" />
+      <Label xPos= "0" yPos= "20" red= "128" green= "128" blue= "11" alpha = "255" />
+    </Statusbar>
+
 
 <!--
     <NPC_Head x= "95" y= "170" mesh= "facial.mesh" name="Trader" />
@@ -317,6 +335,159 @@
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
     </Listbox>
 
+
+
+
+
+
+
+
   </Window>
+
+
+
+
+
+
+
+
+
+
+  <!--#############################################-->
+  <!--WINDOW: Login Window                         -->
+  <!--#############################################-->
+  <Window name= "Login" relativeCoords= "false">
+    <Pos      x= "200" y= "200" zOrder = "250" />
+    <Size     width= "300" height= "400" />
+    <DragArea x= "0" y= "0" width= "200" height= "29" />
+    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
+
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
+      <Pos x= "0" y= "0" />
+      <Range width= "300" height= "400" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Window Title                                -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "0" />
+      <Range width= "290" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
+      <Pos x= "291" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Label x=  "125" y= "8" font="04" text= "Login" />
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "5" y= "30" />
+      <Range width= "295" height= "5" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
+      <Pos x= "0" y= "391" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "395" />
+      <Range width= "290" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
+      <Pos x= "291" y= "391" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "0" y= "10" />
+      <Range width= "5" height= "422" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "295" y= "10" />
+      <Range width= "5" height= "422" />
+    </Graphic>
+
+
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
+      <Pos x= "30" y= "50" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "41" y= "50" />
+      <Range width= "221" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
+      <Pos x= "260" y= "50" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
+      <Pos x= "30" y= "356" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "40" y= "360" />
+      <Range width= "221" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
+      <Pos x= "260" y= "356" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "30" y= "59" />
+      <Range width= "5" height= "297" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "264" y= "59" />
+      <Range width= "5" height= "297" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 2                                     -->
+    <!--=============================================-->
+
+
+    <Label   x= "100" y=  "65" font="02" red= "32" green= "64" blue= "128" text= "Enter your Name:" />
+    <TextBox x= "100" y=  "85" font="02" text= "" width = "100" name= "Input_Login_Name" />
+
+    <Label   x=  "65" y=  "165" font="03" text= "Text@00 using system font" />
+    <TextBox x= "100" y=  "185" font="02" text= "" width = "100" name= "Input_Login_Passwd" />
+
+    <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Verify" />
+
+    <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Very" />
+
+
+  </Window>
+
+
+
+
 
 </XML>

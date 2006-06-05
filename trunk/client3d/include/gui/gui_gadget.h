@@ -53,7 +53,6 @@ public:
 	virtual bool mouseOver(int x, int y);
 
 	int getAction();
-	int index;
 protected:
 	int mAction;
 };

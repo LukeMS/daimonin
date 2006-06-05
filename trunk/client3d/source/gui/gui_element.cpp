@@ -19,6 +19,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "gui_element.h"
+#include "gui_imageset.h"
 #include "logger.h"
 #include <Ogre.h>
 
@@ -40,7 +41,18 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
     /// Parse the element.
     /// ////////////////////////////////////////////////////////////////////
     if ((tmp = xmlElem->Attribute("type"))) mStrType = tmp;
-    if ((tmp = xmlElem->Attribute("name"))) mStrName = tmp;
+    if ((tmp = xmlElem->Attribute("name")))
+    {
+        mStrName = tmp;
+        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+        {
+            if (!stricmp(GuiImageset::getSingleton().getElementName(i), tmp))
+            {
+                mIndex = GuiImageset::getSingleton().getElementIndex(i);
+                break;
+            }
+        }
+    }
     if ((tmp = xmlElem->Attribute("image_name"))) mStrImageName = tmp;
     if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
     /// ////////////////////////////////////////////////////////////////////
@@ -84,9 +96,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
         if ((tmp = xmlGadget->Attribute("xPos")))  mLabelXPos = atoi(tmp);
         if ((tmp = xmlGadget->Attribute("yPos")))  mLabelYPos = atoi(tmp);
         if ((tmp = xmlGadget->Attribute("font")))  mLabelFont = atoi(tmp);
-        if ((tmp =  xmlGadget->Attribute("red")))  mLabelColor[0]= (unsigned char) atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("red")))   mLabelColor[0]= (unsigned char) atoi(tmp);
         if ((tmp = xmlGadget->Attribute("green"))) mLabelColor[1]= (unsigned char) atoi(tmp);
-        if ((tmp =xmlGadget->Attribute("blue")))   mLabelColor[2]= (unsigned char) atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("blue")))  mLabelColor[2]= (unsigned char) atoi(tmp);
         if ((tmp = xmlGadget->Attribute("text")))  mStrLabel = tmp;
     }
     /// ////////////////////////////////////////////////////////////////////

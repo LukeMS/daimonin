@@ -37,7 +37,16 @@ using namespace Ogre;
 class ObjectVisuals
 {
 public:
-     /// ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        NPC_SELECTION,
+        NPC_LIFEBAR_L,
+        NPC_LIFEBAR_R,
+        NPC_LIFEBAR_M,
+        NPC_SUM
+    };
+
+    /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
     static ObjectVisuals &getSingleton()
@@ -47,7 +56,6 @@ public:
     void freeRecources();
     void showLifebar(bool visible)
     {
-        mEntityLifebar->setVisible(visible);
     }
     void selectNPC(MovableObject *mob);
     void setPosLifebar(Vector3 pos);
@@ -59,8 +67,8 @@ private:
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
     Real mWidthLifebarGFX; /**< Lifebar has the same width like the NPC. **/
-    Entity *mEntityLifebar, *mEntitySelection;
-    SceneNode *mNodeLifebar, *mNodeSelection;
+    Entity *mEntity[NPC_SUM];
+    SceneNode *mNode[NPC_SUM];
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

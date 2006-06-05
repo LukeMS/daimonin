@@ -87,12 +87,18 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
             y2+= mSrcHeight;
         }
     }
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Fill background rect without destroying the previrious layer.
+    /// ////////////////////////////////////////////////////////////////////
+    else if (mStrType == "GFX_ALPHA_FILL")
+    {
+    }
     /// ////////////////////////////////////////////////////////////////////
     /// Fill background rect with a color.
     /// ////////////////////////////////////////////////////////////////////
-    else
+    else if (mStrType == "COLOR_FILL")
     {
-        //    clock_t time = clock();
         PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_READ_ONLY );
         uint32 *dest_data = (uint32*)pb.data;
         for (int y = 0; y < mHeight; ++y)
@@ -103,6 +109,5 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
             }
         }
         texture->getBuffer()->unlock();
-        //    Logger::log().info() << "Time to fill fill: " << clock()-time << " ms";
     }
 }

@@ -321,6 +321,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             Option::getSingleton().setGameStatus(GAME_STATUS_META);
             GuiManager::getSingleton().displaySystemMessage("");
             OverlayManager::getSingleton().destroy(mOverlay);
+
+            GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
         }
         break;
 
@@ -392,9 +396,10 @@ bool CEvent::frameEnded(const FrameEvent& )
 {
     if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET)
         return true;
-
     const RenderTarget::FrameStats& stats = mWindow->getStatistics();
     static int skipFrames = 0;
+    static Real health=0;
+
     if (--skipFrames <= 0 )
     {
         static char buffer[16];
@@ -407,6 +412,10 @@ bool CEvent::frameEnded(const FrameEvent& )
         GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
         sprintf(buffer, "%d", stats.triangleCount);
         GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
+
+        GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERINFO, GUI_MSG_BAR_CHANGED, GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
+        health+=.01;
+        if (health>1.0) health=0.0;
     }
     return true;
 }

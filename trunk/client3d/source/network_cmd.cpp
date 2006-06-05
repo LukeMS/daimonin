@@ -46,13 +46,22 @@ inline short GetShort_String(char *data)
     return ((((unsigned char)data[0]) << 8) + (unsigned char)data[1]);
 }
 
+std::string strTemp;
+
+char playerName[80];
+char playerPassword[80];
+
+
+
+
 ///================================================================================================
 /// Compare server and client version number.
 ///================================================================================================
 void Network::NewCharCmd(char *, int )
 {
+    //dialog_new_char_warn = 0;
     Option::getSingleton().setGameStatus(GAME_STATUS_NEW_CHAR);
-    //    CloseSocket();
+    Logger::log().error() << "set GAME_STATUS_NEW_CHAR";
 }
 
 ///================================================================================================
@@ -60,11 +69,10 @@ void Network::NewCharCmd(char *, int )
 ///================================================================================================
 void Network::VersionCmd(char *data, int )
 {
-    char   *cp;
-    char    buf[1024];
+    char *cp;
 
     mGameStatusVersionOKFlag = false;
-    mGameStatusVersionFlag   =  true;
+    mGameStatusVersionFlag   = true;
     mCs_version = atoi(data);
 
     /// The first version is the client to server version the server wants
@@ -72,38 +80,43 @@ void Network::VersionCmd(char *data, int )
     /// Later it will be smart to define range where the differences are ok
     if (VERSION_CS != mCs_version)
     {
-        sprintf(buf, "Invalid CS version (%d,%d)", VERSION_CS, mCs_version);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Server/Client versions dont match!");
         if (VERSION_CS > mCs_version)
-            sprintf(buf, "The server is outdated!\nSelect a different one!");
+            Logger::log().error() << "The server is outdated!\nSelect a different one!";
         else
-            sprintf(buf, "Your client is outdated!\nUpdate your client!");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
-        Logger::log().error() << buf;
+        {
+            Logger::log().error() << "Your client is outdated!\nUpdate your client!";
+        }
+        /// Switch off the network.
+        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
         return;
     }
-    cp = (char *) (strchr(data, ' '));
+    cp = strchr(data, ' ');
     if (!cp)
     {
-        sprintf(buf, "Invalid version string: %s", data);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
-        Logger::log().error() << buf;
+        strTemp = "Invalid version string: ";
+        strTemp+= data;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)strTemp.c_str());
+        Logger::log().error() << strTemp;
         return;
     }
     mCs_version = atoi(cp);
     if (mCs_version != VERSION_SC)
     {
-        sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, mCs_version);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
-        Logger::log().error() << buf;
+        strTemp = "Invalid version string: ";
+        strTemp+= VERSION_SC +" ";
+        strTemp+= mCs_version;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)strTemp.c_str());
+        Logger::log().error() << strTemp;
         return;
     }
-    cp = (char *) (strchr(cp + 1, ' '));
+    cp = strchr(cp + 1, ' ');
     if (!cp || strncmp(cp + 1, "Daimonin Server", 15))
     {
-        sprintf(buf, "Invalid server name: %s", cp);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
-        Logger::log().error() << buf;
+        strTemp = "Invalid server name: ";
+        strTemp+= cp;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)strTemp.c_str());
+        Logger::log().error() << strTemp;
         return;
     }
     Logger::log().info() << "Playing on server type " << cp;
@@ -243,7 +256,7 @@ void Network::DataCmd(char *data, int len)
     ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
     if (!out)
         Logger::log().error()  << "save data cmd file : write() of "
-        << ServerFile::getSingleton().getFilename(data_cmd) << "failed.";
+        << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
     else
     {
         out.write(data, len);
@@ -267,40 +280,59 @@ void Network::DataCmd(char *data, int len)
 void Network::PreParseInfoStat(char *cmd)
 {
     // Find input name
-    if (strstr(cmd, "What is your name?"))
+    if (!strncmp(cmd, "QN",2))
     {
-        /*
-            LogFile::getSingleton().Info("Login: Enter name\n");
-            cpl.name[0] = 0;
-            cpl.password[0] = 0;
-            if (PasswordAlreadyAsked == 1)
-            {
-              dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
-              PasswordAlreadyAsked = 0;
-            }
-            else if (PasswordAlreadyAsked == 2)
-            {
-              dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
-              PasswordAlreadyAsked = 0;
-            }
-            TextInput::getSingleton().stop();
-            Option::getSingleton().GameStatus = GAME_STATUS_NAME;
-            TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
-          }
-          if (strstr(cmd, "What is your password?"))
-          {
-            TextInput::getSingleton().stop();
-            Option::getSingleton().GameStatus = GAME_STATUS_PSWD;
-            TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
-            mPasswordAlreadyAsked = 1;
-          }
-          if (strstr(cmd, "Please type your password again."))
-          {
-            TextInput::getSingleton().stop();
-            Option::getSingleton().GameStatus = GAME_STATUS_VERIFYPSWD;
-            TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
-            mPasswordAlreadyAsked = 2;
-          */
+		int status = cmd[2]-'0';
+
+        Logger::log().info() << "Login: Enter name - status " << status;
+        playerName[0] = 0;
+        playerPassword[0] = 0;
+		dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+		switch(status)
+		{
+			case 1:
+				if(GameStatusLogin)
+    				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_NO;
+			break;
+			case 2:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BLOCKED;
+			break;
+			case 3:
+				if(!GameStatusLogin)
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_PLAYING;
+			break;
+			case 4:
+				if(!GameStatusLogin)
+					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_TAKEN;
+			break;
+			case 5:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BANNED;
+			break;
+			case 6:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+			break;
+			case 7:
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
+			break;
+
+			default: // is also status 0
+				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+			break;
+		}
+        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_INIT);
+    }
+    else if (!strncmp(cmd, "QP",2))
+    {
+		int status = cmd[2]-'0';
+    	Logger::log().info() << "Login: Enter password";
+		if(status)
+			dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
+        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_INIT);
+    }
+    else if (!strncmp(cmd, "QV",2))
+    {
+        Logger::log().info() << "Login: Enter verify password\n";
+        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_INIT);
     }
 }
 
@@ -309,23 +341,11 @@ void Network::PreParseInfoStat(char *cmd)
 ///================================================================================================
 void Network::HandleQuery(char *data, int)
 {
-    char   *buf, *cp;
+    char *buf;
+    // uint8 flags = atoi(data); ATM unused parameter
     buf = strchr(data, ' ');
-    if (buf)
-    {
-        ++buf;
-    }
-    if (buf)
-    {
-        cp = buf;
-        while ((buf = strchr(buf, '\n')) != NULL)
-        {
-            *buf++ = '\0';
-            Logger::log().info() << "Received query string:" << cp;
-            PreParseInfoStat(cp);
-            cp = buf;
-        }
-    }
+    if (buf) ++buf;
+    PreParseInfoStat(buf);
 }
 
 ///================================================================================================

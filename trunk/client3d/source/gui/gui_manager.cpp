@@ -51,6 +51,10 @@ GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         },
         { "TextWindow",  GUI_WIN_TEXTWINDOW
         },
+        { "Login",       GUI_WIN_LOGIN
+        },
+
+
         //    { "Creation"  ,  GUI_WIN_CREATION   },
     };
 
@@ -65,7 +69,7 @@ void GuiManager::Init(int w, int h)
     /// ////////////////////////////////////////////////////////////////////
     /// Create the tooltip overlay.
     /// ////////////////////////////////////////////////////////////////////
-    Logger::log().info() << "Creating Overlay for System-Messages...";
+    Logger::log().info() << "- Creating Overlay for System-Messages...";
     mTooltipRefresh = false;
     mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
                TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
@@ -236,14 +240,15 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
     if (key == KC_ESCAPE)
     {
         sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
-        GuiTextinput::getSingleton().stop();
+        GuiTextinput::getSingleton().canceled();
         mProcessingTextInput = false;
         return true;
     }
     GuiTextinput::getSingleton().keyEvent(keyChar, key);
     if (GuiTextinput::getSingleton().wasFinished())
     {
-        sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
+        mStrTextInput = GuiTextinput::getSingleton().getText();
+        sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mStrTextInput.c_str());
         GuiTextinput::getSingleton().stop();
         mProcessingTextInput = false;
     }
@@ -278,7 +283,7 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 const char *GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
 {
     value2 = 0; // no need for value2 atm.
-    return guiWindow[window].Message(message, element, (const char*)value1);
+    return guiWindow[window].Message(message, element, (void*)value1);
 }
 
 ///================================================================================================
@@ -299,16 +304,58 @@ void GuiManager::startTextInput(int window, int winElement, int maxChars, bool u
     GuiTextinput::getSingleton().startTextInput(maxChars, useNumbers, useWhitespaces);
 }
 
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiManager::cancelTextInput()
+{
+    GuiTextinput::getSingleton().canceled();
+}
+
+
+///================================================================================================
+/// .
+///================================================================================================
+bool GuiManager::brokenTextInput()
+{
+    return GuiTextinput::getSingleton().wasCanceled();
+}
+
+
+///================================================================================================
+/// .
+///================================================================================================
+bool GuiManager::finishedTextInput()
+{
+    return GuiTextinput::getSingleton().wasFinished();
+}
+
+
+///================================================================================================
+/// .
+///================================================================================================
+const char *GuiManager::getTextInput()
+{
+    return mStrTextInput.c_str();
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiManager::showWindow(int window, bool visible)
+{
+    guiWindow[window].setVisible(visible);
+}
+
 ///================================================================================================
 /// Update all windows.
 ///================================================================================================
 void GuiManager::update(Real timeSinceLastFrame)
 {
-
-
     if (mProcessingTextInput)
     {
-        Logger::log().info() << GuiTextinput::getSingleton().getText(false);
+        //Logger::log().info() << GuiTextinput::getSingleton().getText(false);
         sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
     }
     for (unsigned int i=0; i < GUI_WIN_SUM; ++i)

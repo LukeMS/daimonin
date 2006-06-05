@@ -59,11 +59,17 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "List_Chat",      GUI_LIST_CHATWIN
         },
         // Statusbar.
-        { "Bar_Health",     GUI_STATUSBAR_PLAYER_HEALTH
+        { "Bar_Health",     GUI_STATUSBAR_NPC_HEALTH
         },
         { "Bar_Mana",       GUI_STATUSBAR_PLAYER_MANA
         },
         { "Bar_Grace",      GUI_STATUSBAR_PLAYER_GRACE
+        },
+        { "Bar_PlayerHealth",GUI_STATUSBAR_PLAYER_HEALTH
+        },
+        { "Bar_PlayerMana",GUI_STATUSBAR_NPC_MANA
+        },
+        { "Bar_PlayerGrace",GUI_STATUSBAR_NPC_GRACE
         },
         // TextValues.
         { "Engine_CurrentFPS", GUI_TEXTVALUE_STAT_CUR_FPS
@@ -75,8 +81,13 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS
         },
         // TextInput.
-        { "Input_Password", GUI_TEXTINPUT_PASSWORD
+        { "Input_Login_Name",  GUI_TEXTINPUT_LOGIN_NAME
         },
+        { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD
+        },
+        { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY
+        },
+
         // Combobox.
         { "ComboBoxTest"      , GUI_COMBOBOX_TEST
         },
@@ -169,4 +180,26 @@ GuiImageset::~GuiImageset()
         delete (*i);
     }
     mvSrcEntry.clear();
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+const char *GuiImageset::getElementName(int i)
+{
+   if (i < GUI_ELEMENTS_SUM && mGuiElementNames[i].name)
+        return mGuiElementNames[i].name;
+    else
+        return "ERROR";
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+int GuiImageset::getElementIndex(int i)
+{
+    if (i < GUI_ELEMENTS_SUM)
+        return mGuiElementNames[i].index;
+    else
+        return -1;
 }

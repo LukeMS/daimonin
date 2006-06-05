@@ -50,18 +50,6 @@ GuiGadget::GuiGadget(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY) :G
         Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
         << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
     }
-
-    if ((strTmp = xmlElem->Attribute("name")))
-    {
-        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
-        {
-            if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
-            {
-                index = GuiImageset::getSingleton().getElementIndex(i);
-                break;
-            }
-        }
-    }
 }
 
 GuiGadget::~GuiGadget()
