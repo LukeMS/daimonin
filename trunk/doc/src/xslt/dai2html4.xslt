@@ -36,7 +36,7 @@
                 </div>
                 <xsl:if test="@autotoc and section">
                     <div class="daiml-toc">
-                        <h2 id="toc">
+                        <h4 id="toc">
                             <xsl:choose>
                                 <xsl:when test="@autotoc='autotoc'">
                                     <xsl:text>Table of Contents</xsl:text>
@@ -45,7 +45,7 @@
                                     <xsl:value-of select="@autotoc"/>
                                 </xsl:otherwise>
                             </xsl:choose>
-                        </h2>
+                        </h4>
                         <xsl:apply-templates select="section" mode="toc"/>
                     </div>
                 </xsl:if>
