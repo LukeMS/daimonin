@@ -2221,8 +2221,7 @@ object * insert_ob_in_ob(object *op, object *where)
         return op;
     }
 
-    CLEAR_FLAG(op, FLAG_REMOVED);
-
+    /* Merge objects? */
     if (op->nrof)
     {
         for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
@@ -2230,7 +2229,6 @@ object * insert_ob_in_ob(object *op, object *where)
             if (CAN_MERGE(tmp, op))
             {
                 remove_ob(tmp); /* and fix old object's links (we will insert it further down)*/
-                CLEAR_FLAG(tmp, FLAG_REMOVED); /* Just kidding about previous remove */
 				tmp->nrof += op->nrof;
 				op = tmp;
                 break;
@@ -2238,6 +2236,7 @@ object * insert_ob_in_ob(object *op, object *where)
 		}
     }
     
+    CLEAR_FLAG(op, FLAG_REMOVED);    
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
     op->map = NULL;
     op->env = where;

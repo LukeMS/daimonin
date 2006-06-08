@@ -682,7 +682,6 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
         if ((tmp = strchr(liststring, ';')))
             *tmp = 0;
 
-
         /* find parameter marker. */
         if ((parm = strchr(liststring, '&')))
             *parm = 0;
@@ -695,10 +694,10 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
         else
         {
             /* we have a 'none' string?
-                     * normally, we should break here but perhaps
-                     * we have something like "list1;none;list2".
-                     * Can't think why but lets do it right.
-                     */
+             * normally, we should break here but perhaps
+             * we have something like "list1;none;list2".
+             * Can't think why but lets do it right.
+             */
             if (name != shstr_cons.none)
             {
                 tl = find_treasurelist_intern(name);
@@ -733,7 +732,6 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
                         /* save the tname with paramter. don't patch, save the whole name */
                         *parm = '&';
                         tweak->name = add_string(liststring);
-                        *parm = '0';
                         tweak->artifact_chance = ART_CHANCE_UNSET;
                         tweak->style = T_STYLE_UNSET;
                         tweak->difficulty = 0;
@@ -754,7 +752,7 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
             liststring = tmp + 1;
     }
     while (tmp);
-
+    
     return list_start;
 }
 
@@ -943,7 +941,7 @@ int create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t
         LOG(llevDebug, "create_treasure(): tries >100 for t-list %s.", t->listname ? t->listname : "<noname>");
         return ret;
     }
-
+        
     if (t->t_style != T_STYLE_UNSET)
         t_style = t->t_style;
     if (t->artifact_chance != ART_CHANCE_UNSET)
@@ -1216,14 +1214,14 @@ int create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, 
 static void put_treasure(object *op, object *creator, int flags)
 {
     object *tmp;
-
+    
     if (flags & GT_ENVIRONMENT)
     {
         op->x = creator->x;
         op->y = creator->y;
         /* this must be handled carefully... we don't want drop items on a button
-             * which is then not triggered. MT-2004
-             */
+         * which is then not triggered. MT-2004
+         */
         /*insert_ob_in_map(op, creator->map, op, INS_NO_MERGE | INS_NO_WALK_ON);*/
         insert_ob_in_map(op, creator->map, op, INS_NO_WALK_ON);
     }
