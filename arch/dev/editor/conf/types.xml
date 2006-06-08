@@ -5766,6 +5766,8 @@ that food.]]>
     The waypoint object can hold a position that a mob is to reach.
 	
 	Mobs will use waypoints automatically if they don't have an AI object, or if they have a behaviour list with move_towards_waypoint in the moves class. If a mob has a default race or arch AI objects without move_towards_waypoint you might want to override it to enable waypoints for that mob.
+
+    Waypoints can either use exact map coordinates (map name, x, y) as destination, or target a named beacon.
 	
 	When the mob reaches the destination it will either continue to
 	the next waypoint, or stop. Waypoints can be used to set up patrol 
@@ -5777,6 +5779,13 @@ that food.]]>
   	Name of the next waypoint to go to when this is reached. Use this to
 	chain together several waypoints.
   </attribute>
+  <attribute arch="race" editor="destination beacon" type="string">
+    Name of a beacon to target. Overrides destination map, destination x and destination y.
+    This only works if the beacon can be found (i.e. it is on a map that is loaded in memory), so using a destination map might be a better idea 
+    if crossing one or more map tiles.
+
+    Leave this empty if you want to use an explicit target coordinate (map, x, y).
+  </attribute>
   <attribute arch="slaying" editor="destination map" type="string">
     Path to destination map. Leave blank to use current map.
     You can enter an absolute path, beginning with '/' (for example
@@ -5785,12 +5794,18 @@ that food.]]>
     relative path "Fire1"). Use relative paths whenever possible! Note that
     upper/lower case must always be set correctly. However, please use lower
     case only. 
+
+    Leave this empty if targeting a beacon.
   </attribute>
   <attribute arch="hp" editor="destination X" type="int">
     The destinations define the (x, y)-coordinates where the mob should go.
+    
+    Ignored if targeting a beacon.
   </attribute>
   <attribute arch="sp" editor="destination Y" type="int">
     The destinations define the (x, y)-coordinates where the mob should go.
+
+    Ignored if targeting a beacon.
   </attribute>
   <attribute arch="wc" editor="pause" type="int">
     Amount of time the mob should wait at this waypoint before proceeding to the next.

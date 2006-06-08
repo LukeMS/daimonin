@@ -275,7 +275,21 @@ static int calc_direction_towards_object(object *op, object *target)
  * tries to use precomputed path if available or request path finding if needed */
 static int calc_direction_towards_waypoint(object *op, object *wp)
 {
-    return calc_direction_towards(op, wp, normalize_and_ready_map(op->map, &WP_MAP(wp)), WP_X(wp), WP_Y(wp));
+    if(WP_BEACON(wp))
+    {
+        object *beacon = locate_beacon(WP_BEACON(wp));
+        if(beacon)
+        {
+            while(beacon->env)
+                beacon = beacon->env;
+            return calc_direction_towards(op, wp, beacon->map, beacon->x, beacon->y);
+        }
+        else
+            return 0; /* TODO: what to do? */
+    } else
+    {    
+        return calc_direction_towards(op, wp, normalize_and_ready_map(op->map, &WP_MAP(wp)), WP_X(wp), WP_Y(wp));
+    }
 }
 
 int choose_direction_from_bitmap(object *op, int bitmap)
@@ -633,7 +647,8 @@ jump_move_monster_action:
  */
 void object_accept_path(object *op)
 {
-    mapstruct  *goal_map;
+    object     *goal_object = NULL;
+    mapstruct  *goal_map = NULL;
     int         goal_x, goal_y;
     path_node  *path;
     object     *target;
@@ -660,31 +675,55 @@ void object_accept_path(object *op)
     }
     else if (target->type == TYPE_WAYPOINT_OBJECT)
     {
-        /* Default map is current map */
-        goal_x = WP_X(target);
-        goal_y = WP_Y(target);
-        goal_map = normalize_and_ready_map(op->map, &WP_MAP(target));
+        if(WP_BEACON(target))
+            goal_object = locate_beacon(WP_BEACON(target));
+        else
+        {
+            /* Default map is current map */
+            goal_x = WP_X(target);
+            goal_y = WP_Y(target);
+            goal_map = normalize_and_ready_map(op->map, &WP_MAP(target));
 
-        FREE_AND_CLEAR_HASH(MOB_PATHDATA(op)->goal_map);
+            FREE_AND_CLEAR_HASH(MOB_PATHDATA(op)->goal_map);
+        }
     }
     else
     {
-        goal_x = target->x;
-        goal_y = target->y;
-        if (target->type == TYPE_BASE_INFO)
+        goal_object = target;
+    }
+    
+    if(goal_object)
+    {
+        if (goal_object->type == TYPE_BASE_INFO)
         {
-            goal_map = normalize_and_ready_map(op->map, &target->slaying);
+            goal_map = normalize_and_ready_map(op->map, &goal_object->slaying);
 /*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n",
                     STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), op->map,
                     STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_map), goal_map);*/
         }
         else
-            goal_map = target->map;
+        {
+            while(goal_object->env)
+                goal_object = goal_object->env;
+            goal_map = goal_object->map;
+        }
+        goal_x = goal_object->x;
+        goal_y = goal_object->y;
 
-        /* Keep track of targets that may move */
-        FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_map->path);
-        MOB_PATHDATA(op)->goal_x = goal_x;
-        MOB_PATHDATA(op)->goal_y = goal_y;
+        if(goal_map)
+        {
+            /* Keep track of targets that may move */
+            FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_map->path);
+            MOB_PATHDATA(op)->goal_x = goal_x;
+            MOB_PATHDATA(op)->goal_y = goal_y;
+        }
+    }
+
+    if(goal_map == NULL)
+    {
+        LOG(llevDebug, "object_accept_path(): NULL goal map. op=%s, map %s, target=%s\n",
+                STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(target));
+        return;
     }
 
     /* Make sure we aren't already close enough */
