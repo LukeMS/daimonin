@@ -22,6 +22,7 @@
 */
 
 #include <include.h>
+#include <signal.h>
 
 _server_char       *first_server_char   = NULL; /* list of possible chars/race with setup when we want create a char */
 _server_char        new_character; /* if we login as new char, thats the values of it we set */
@@ -1120,9 +1121,10 @@ int main(int argc, char *argv[])
     uint32          anim_tick;
     Uint32          videoflags;
     int             i, done = 0, FrameCount = 0;
-    fd_set          tmp_read, tmp_write, tmp_exceptions;
-    int             pollret, maxfd;
-    struct timeval  timeout;
+    //fd_set          tmp_read, tmp_write, tmp_exceptions;
+    int             maxfd;
+    //struct timeval  timeout;
+	// pollret;
 
     init_game_data();
     while (argc > 1)
@@ -1177,6 +1179,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
     atexit(SDL_Quit);
+    signal(SIGSEGV, SIG_DFL); /* allows better debugging under linux by removing SDL parachute for this signal */
+
     SYSTEM_Start(); /* start the system AFTER start SDL */
 
     videoflags = get_video_flags();
@@ -1271,6 +1275,7 @@ int main(int argc, char *argv[])
     maxfd = csocket.fd + 1;
     LastTick = tmpGameTick = anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
+	socket_thread_start();
 
     /* the one and only main loop */
     /* TODO: frame update can be optimized. It uses some cpu time because it
@@ -1324,6 +1329,7 @@ int main(int argc, char *argv[])
             }
             else
             {
+				/*
                 FD_ZERO(&tmp_read);
                 FD_ZERO(&tmp_write);
                 FD_ZERO(&tmp_exceptions);
@@ -1332,26 +1338,13 @@ int main(int argc, char *argv[])
                 FD_SET((unsigned int) csocket.fd, &tmp_read);
                 FD_SET((unsigned int) csocket.fd, &tmp_write);
 
-
-                /*
-                                if (MAX_TIME!=0)
-                                {
-                                    timeout.tv_sec = MAX_TIME / 100000;
-                                    timeout.tv_usec = MAX_TIME % 100000;
-                                }
-                                else
-                                {
-                                    timeout.tv_sec = 0;
-                                    timeout.tv_usec =0;
-                                }
-                */
                 timeout.tv_sec = 0;
                 timeout.tv_usec = 0;
-                /* main poll point for the socket */
                 if ((pollret = select(maxfd, &tmp_read, &tmp_write, &tmp_exceptions, &timeout)) == -1)
                     LOG(LOG_MSG, "Got errno %d on selectcall.\n", SOCKET_GetError());
                 else if (FD_ISSET(csocket.fd, &tmp_read))
-                    DoClient(&csocket);
+*/
+				DoClient(&csocket);
                 request_face(0, 1); /* flush face request buffer */
             }
         }

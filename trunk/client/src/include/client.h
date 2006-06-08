@@ -136,7 +136,8 @@ extern Animations   animations[MAXANIM];
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList
 {
-    int             len;
+	int             len;
+	int             pos;
     unsigned char  *buf;
 } SockList;
 
@@ -148,6 +149,7 @@ typedef struct ClientSocket
 {
     SOCKET              fd;                     /* typedef your socket type to SOCKET */
     SockList            inbuf;
+	SockList			outbuf;
     int                 cs_version, sc_version; /* Server versions of these */
     /* These are used for the newer 'windowing' method of commands -
      * number of last command sent, number of received confirmation
@@ -533,7 +535,6 @@ extern void     SockList_AddShort(SockList *sl, uint16 data);
 extern void     SockList_AddInt(SockList *sl, uint32 data);
 extern int      GetInt_String(unsigned char *data);
 extern short    GetShort_String(unsigned char *data);
-extern int      send_socklist(int fd, SockList msg);
 extern int      cs_write_string(int fd, char *buf, int len);
 extern void     finish_face_cmd(int pnum, uint32 checksum, char *face);
 extern int      request_face(int num, int mode);

@@ -141,10 +141,10 @@ static _gui_book_line *get_name_tag(char *data, int len, int *pos)
 	return NULL;
 }
 
-static _gui_book_line *get_icon_tag(char *data, int len, int *pos)
-{
-	return NULL;
-}
+//static _gui_book_line *get_icon_tag(char *data, int len, int *pos)
+//{
+//	return NULL;
+//}
 
 static _gui_book_line *check_book_tag(char *data, int len, int *pos)
 {

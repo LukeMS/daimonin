@@ -317,6 +317,7 @@ int add_button(int x, int y, int id, int gfxNr, char *text, char *text_h)
     info for keyboard user. You can give them here a highlighted char
     to identify the key for this button. if not needed set it to NULL.
 ******************************************************************/
+/*
 static int add_gfx_button(int x, int y, int id, int gfxNr, int gfx_inner, char *text, char *text_h)
 {
     char   *text_sel;
@@ -351,6 +352,7 @@ static int add_gfx_button(int x, int y, int id, int gfxNr, int gfx_inner, char *
     StringBlt(ScreenSurface, &SystemFont, text_sel, x, y, color, NULL, NULL);
     return ret;
 }
+*/
 
 /******************************************************************
  add a group-button and handle mouse events on it.

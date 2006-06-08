@@ -698,7 +698,7 @@ void print_inventory(item *op)
     if (l == 0)
     {
         sprintf(buf, "AA %s's inventory (%d):", op->d_name, op->tag);
-        sprintf(buf2, "BB %s%6.1f kg", buf, op->weight);
+        sprintf(buf2, "BB %s%6.1f kg", buf, (float)op->weight);
 
 
         draw_info(buf2, COLOR_DEFAULT);

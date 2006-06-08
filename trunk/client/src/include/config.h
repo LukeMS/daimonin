@@ -68,6 +68,7 @@
  */
 #define MAXSOCKBUF (128*1024)
 
+
 /* The numbers of our dark levels */
 /* for each level-1 we store a own bitmap copy, so be careful */
 #define DARK_LEVELS 7

@@ -165,16 +165,6 @@ int send_command(const char *command, int repeat, int must_send)
     static char last_command[MAX_BUF]   = "";
     SockList    sl;
 
-    /*
-    if (cpl.input_state==Reply_One)
-    {
-            fprintf(stderr,"Wont send command '%s' - since in reply mode!\n ",
-                    command);
-            cpl.count=0;
-            return 0;
-    }
-    */
-
     /* Does the server understand 'ncom'? If so, special code */
     if (csocket.cs_version >= 1021)
     {

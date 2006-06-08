@@ -63,6 +63,8 @@
 #include <SDL.h>
 #include <SDL_main.h>
 #include <SDL_image.h>
+#include <SDL_thread.h>
+#include <SDL_mutex.h>
 
 #define _malloc(__d,__s) malloc(__d)
 

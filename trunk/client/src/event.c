@@ -2197,6 +2197,13 @@ static void move_keys(int num)
     if(cpl.menustatus != MENU_NO)
         reset_menu_status();
 
+
+	if(num == 5)
+	{
+		send_command_binary(CLIENT_CMD_STOP, NULL, 0);
+		return;
+	}
+
     /* move will overruled from fire */
     /* because real toggle mode don't work, this works a bit different */
     /* pressing alt will not set move mode until unpressed when firemode is on */

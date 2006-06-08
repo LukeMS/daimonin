@@ -1,8 +1,7 @@
 /*
     Daimonin SDL client, a client program for the Daimonin MMORPG.
 
-
-  Copyright (C) 2003 Michael Toennies
+    Copyright (C) 2003 Michael Toennies
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +22,341 @@
 
 #include <include.h>
 
+static int thread_flag = FALSE;
+static SDL_Thread *socket_thread;
+static SDL_mutex *read_lock;
+static SDL_mutex *write_lock;
+static SDL_mutex *socket_lock;
+
+static _command_buffer_read *read_cmd_end=NULL;
+_command_buffer_read *read_cmd_start=NULL;
+
+void send_command_binary(int cmd, const char *body, int len)
+{
+	SDL_mutexP(write_lock);
+
+	if(csocket.outbuf.len + 3 > MAXSOCKBUF)
+	{
+		SOCKET_CloseSocket(csocket.fd);
+		return;
+	}
+
+	/* adjust the buffer */
+	if(csocket.outbuf.pos)
+		memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
+
+	csocket.outbuf.pos=0;
+
+	if(!body)
+	{
+		len = 0x8001;
+
+		csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (len) >> 8) & 0xFF;
+		csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (len)) & 0xFF;
+		csocket.outbuf.buf[csocket.outbuf.len++] = (unsigned char) cmd;;
+	}
+
+	SDL_mutexV(write_lock);
+}
+
+/* move a command/buffer to the out buffer so it can be written to the socket */
+int send_socklist(int fd, SockList  msg)
+{
+	SDL_mutexP(write_lock);
+
+	if(csocket.outbuf.len + msg.len > MAXSOCKBUF)
+	{
+		SOCKET_CloseSocket(fd);
+		return -1;
+	}
+
+	/* adjust the buffer */
+	if(csocket.outbuf.pos && csocket.outbuf.len)
+		memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
+
+	csocket.outbuf.pos=0;
+
+	csocket.outbuf.buf[csocket.outbuf.len++] = (uint8) ((msg.len >> 8) & 0xFF);
+	csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (msg.len)) & 0xFF;
+
+	memcpy(csocket.outbuf.buf+csocket.outbuf.len, msg.buf, msg.len);
+	csocket.outbuf.len += msg.len;
+
+	SDL_mutexV(write_lock);
+
+	return 0;
+}
+
+
+/* get a read command from the queue.
+ * remove it from queue and return a pointer to it.
+ * return NULL if there is no command
+ */
+_command_buffer_read *get_read_cmd(void)
+{
+	_command_buffer_read *tmp;
+
+	/*LOG(-1,"GET-READ-CMD: %d %d - %d\n", csocket.inbuf.len, csocket.inbuf.pos,read_cmd_start );*/
+	//return NULL;
+	SDL_mutexP(read_lock);
+
+	if(!read_cmd_start)
+		return NULL;
+
+	tmp = read_cmd_start;
+	read_cmd_start = tmp->next;
+	if(read_cmd_end == tmp)
+		read_cmd_end = NULL;
+
+	SDL_mutexV(read_lock);
+
+	return tmp;
+}
+
+/* free a read cmd buffer struct and its data tail */
+void free_read_cmd(_command_buffer_read *cmd)
+{
+	free(cmd->data);
+	free(cmd);
+}
+
+/* clear & free the whole read cmd queue */
+void clear_read_cmd_queue(void)
+{
+	SDL_mutexP(read_lock);
+
+	while(read_cmd_start)
+		free_read_cmd(get_read_cmd());
+
+	SDL_mutexV(read_lock);
+}
+
+/* write stuff to the socket */
+static inline void write_socket_buffer(int fd, SockList *sl)
+{
+	int amt;
+
+
+	if (sl->len == 0)
+		return;
+
+	SDL_mutexP(write_lock);
+	amt = send(fd, sl->buf + sl->pos, sl->len, MSG_DONTWAIT);
+	/*LOG(-1,"WRITE(%d) written: %d bytes\n", sl->len, amt);*/
+
+	/* following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
+	* send() with MSG_DONTWAIT under linux can return 0 which means the data 
+	* is "queued for transmission". I was not able to find that in the send() man pages...
+	* In my testings it never happend, so i put it here in to have it perhaps triggered in
+	* some server runs (but we should trust perhaps ibm developer infos...).
+	*/
+	if(!amt)
+		amt = sl->len; /* as i understand, the data is now internal buffered? So remove it from our write buffer */
+		
+	if (amt > 0)
+	{
+		sl->pos += amt;
+		sl->len -= amt;
+	}
+	SDL_mutexV(write_lock);
+
+	if (amt < 0) /* error */
+	{
+#ifdef WIN32 /* ***win32 write_socket_buffer: change error handling */
+		if (WSAGetLastError() == WSAEWOULDBLOCK)
+			return;
+
+		LOG(LOG_DEBUG, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
+		SOCKET_CloseSocket(fd);
+#else
+		if (errno == EWOULDBLOCK || errno == EINTR)
+			return;
+		LOG(LOG_DEBUG, "New socket write failed (wsb %d) (%d).\n", EAGAIN, errno);
+		SOCKET_CloseSocket(fd);
+#endif
+		return;
+	}
+
+}
+
+/* read stuff from socket */
+static inline int read_socket_buffer(int fd, SockList *sl)
+{
+	int         stat_ret, read_bytes, tmp;
+
+	/* calculate how many bytes can be read in one row in our round robin buffer */
+	tmp = sl->pos+sl->len;
+
+	/* we have still some bytes until we hit our buffer border ?*/
+	if(tmp >= MAXSOCKBUF)
+	{
+		tmp = tmp-MAXSOCKBUF; /* thats our start offset */
+		read_bytes = sl->pos - tmp; /* thats our free buffer until ->pos*/
+	}
+	else		
+		read_bytes = MAXSOCKBUF-tmp; /* tmp is our offset and there is still a bit to read in */
+
+#ifdef WIN32
+	stat_ret = recv(fd, sl->buf + tmp, read_bytes, 0);
+#else
+	stat_ret = read(fd, sl->buf + tmp, read_bytes);
+#endif
+
+	/*LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, fd, stat_ret);*/
+
+	if (stat_ret > 0)
+		sl->len += stat_ret;
+	else if (stat_ret < 0) /* lets check its a real problem */
+	{
+#ifdef WIN32
+		if (WSAGetLastError() == WSAEWOULDBLOCK)
+			return 1;
+
+		if (WSAGetLastError() == WSAECONNRESET)
+			LOG(LOG_DEBUG, "Connection closed by server\n");
+		else
+			LOG(LOG_DEBUG, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
+		SOCKET_CloseSocket(fd);
+#else
+		if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+			return 1;
+
+		LOG(LOG_DEBUG, "ReadPacket got error %d, returning 0\n", errno);
+		SOCKET_CloseSocket(fd);
+#endif
+	}
+	else
+		SOCKET_CloseSocket(fd);
+
+	return stat_ret;
+}
+
+static int socket_thread_loop(void *nix)
+{
+	while(thread_flag)
+	{
+		if(csocket.fd == SOCKET_NO && GameStatus >= GAME_STATUS_STARTCONNECT)
+		{
+			SDL_Delay(150);
+			continue;
+		}
+
+		if(csocket.fd != SOCKET_NO && GameStatus >= GAME_STATUS_STARTCONNECT)
+			read_socket_buffer(csocket.fd, &csocket.inbuf);
+
+		/* lets check we have a valid command */
+		while(csocket.inbuf.len >= 2)
+		{
+			_command_buffer_read *tmp;
+			int head_off=2, toread = -1, pos = csocket.inbuf.pos;
+
+			/*LOG(-1,"READ COMMAND-A: %d %d\n", csocket.inbuf.len, csocket.inbuf.pos ); */
+			if(csocket.inbuf.buf[pos] & 0x80) /* 3 byte length heasder? */
+			{
+				if(csocket.inbuf.len > 2)
+				{
+					head_off = 3;
+
+					toread = ((csocket.inbuf.buf[pos]&0x7f) << 16);
+					if(++pos >= MAXSOCKBUF)
+						pos -= MAXSOCKBUF;
+					toread += (csocket.inbuf.buf[pos] << 8);
+					if(++pos >= MAXSOCKBUF)
+						pos -= MAXSOCKBUF;
+					toread += csocket.inbuf.buf[pos];
+				}
+
+			}
+			else /* 2 size length header */
+			{
+				toread = (csocket.inbuf.buf[pos] << 8);
+				if(++pos >= MAXSOCKBUF)
+					pos -= MAXSOCKBUF;
+				toread += csocket.inbuf.buf[pos];
+			}
+
+			/* adjust pos to data start */
+			if(++pos >= MAXSOCKBUF)
+				pos -= MAXSOCKBUF;
+			/*LOG(-1,"READ COMMAND-B: %d %d %d %d\n", csocket.inbuf.len, csocket.inbuf.pos,head_off, toread); */
+
+			/* leave collecting commands when we hit an incomplete one */
+			if(toread == -1 || csocket.inbuf.len < toread+head_off)
+				break; 
+
+			tmp = (_command_buffer_read *) malloc(sizeof(_command_buffer_read));
+			tmp->data = (uint8 *) malloc(toread + 1);
+			tmp->len = toread;
+			tmp->next = NULL;
+
+			if(pos + toread > MAXSOCKBUF) /* splitted data tail? */
+			{
+				int tmp_read, read_part;
+
+				read_part = (pos + toread) - MAXSOCKBUF;
+				tmp_read = toread - read_part;
+				memcpy(tmp->data, csocket.inbuf.buf+pos, tmp_read);
+				memcpy(tmp->data+tmp_read, csocket.inbuf.buf, read_part);
+				csocket.inbuf.pos = read_part;
+			}
+			else
+			{
+				memcpy(tmp->data, csocket.inbuf.buf+pos, toread);
+				csocket.inbuf.pos = pos + toread;
+			}
+			tmp->data[tmp->len] = 0; /* ensure we have a zero at the end - simple buffer overflow proection */
+			csocket.inbuf.len -= toread + head_off;
+			/*LOG(-1,"READ COMMAND-C: %d %d\n", csocket.inbuf.len, csocket.inbuf.pos );*/
+
+			SDL_mutexP(read_lock);
+			/* put tmp to the end of our read cmd queue */
+			if(!read_cmd_start)
+				read_cmd_start = tmp;
+			else
+				read_cmd_end->next = tmp;
+			read_cmd_end = tmp;
+			SDL_mutexV(read_lock);
+		}
+
+		if(csocket.fd != SOCKET_NO && GameStatus >= GAME_STATUS_STARTCONNECT)
+			write_socket_buffer(csocket.fd, &csocket.outbuf);
+
+		/*LOG(-1,"SOCKET LOOP: %d %d\n", csocket.inbuf.len, csocket.inbuf.pos ); */
+	}
+
+	return 0;
+}
+
+void socket_thread_start(void)
+{
+	LOG(-1,"START THREAD\n"); 
+	thread_flag = TRUE;
+
+	socket_thread = SDL_CreateThread(socket_thread_loop, NULL);
+	if ( socket_thread == NULL ) 
+		LOG(LOG_ERROR, "Unable to start socket thread: %s\n", SDL_GetError());
+
+	socket_lock = SDL_CreateMutex();
+	read_lock = SDL_CreateMutex();
+	write_lock = SDL_CreateMutex();
+}
+
+
+void socket_thread_stop(void)
+{
+	LOG(-1,"STOP THREAD\n"); 
+
+	if(thread_flag)
+	{
+		thread_flag = FALSE;
+		SDL_WaitThread(socket_thread, NULL);
+		SDL_DestroyMutex(socket_lock);
+		SDL_DestroyMutex(read_lock);
+		SDL_DestroyMutex(write_lock);
+	}
+}
+
+
 int SOCKET_GetError()
 {
 #ifdef __WIN_32
@@ -32,156 +366,47 @@ int SOCKET_GetError()
 #endif
 }
 
-#ifdef __WIN_32
-/* this readsfrom fd and puts the data in sl.  We return true if we think
- * we have a full packet, 0 if we have a partial packet.  The only processing
- * we do is remove the intial size value.  len (As passed) is the size of the
- * buffer allocated in the socklist.  We make the assumption the buffer is
- * at least 2 bytes long. Because there must be at last 1 byte command, its
- * 3 bytes.
- */
-int read_socket(int fd, SockList *sl, int len)
+Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 {
-    int stat, toread, readsome = 0;
-    extern int          errno;
+	void   *tmp_free;
 
-    /* We already have a partial packet */
-    if (sl->len < 3)
-    {
-        stat = recv(fd, sl->buf + sl->len, 3 - sl->len, 0);
+	if (socket_temp == SOCKET_NO)
+		return(TRUE);
 
-        if (stat < 0)
-        {
-            if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-            {
-                LOG(LOG_ERROR, "ReadPacket got error %d, returning -1\n", WSAGetLastError());
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
-                return -1;
-            }
-            return 0;
-        }
-        if (stat == 0)
-        {
-            draw_info("WARNING: Server read package error.", COLOR_RED);
-            return -1;
-        }
-        sl->len += stat;
-        if (sl->len < 3)
-            return 0;   /* Still don't have a full packet */
-        readsome = 1;
-    }
-
-    /* Figure out how much more data we need to read.  Add 2 from the
-     * end of this - size header information is not included.
-     */
-	if(sl->buf[0] & 0x80) /* high bit set = 3 bytes size header */
-	{
-	    toread = 3 + ((sl->buf[0]&0x7f)<< 16) + (sl->buf[1] << 8) + sl->buf[2] - sl->len;
-	}
-	else
-	{
-		toread = 2 + (sl->buf[0] << 8) + sl->buf[1] - sl->len;
-	}
-
-	if (toread == 0)
-		return 1;
-
-    if ((toread + sl->len) > len)
-    {
-        draw_info("WARNING: Server read package error.", COLOR_RED);
-        LOG(LOG_ERROR, "SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
-        /* return error so the socket is closed */
-        return -1;
-    }
-    do
-    {
-        stat = recv(fd, sl->buf + sl->len, toread, 0);
-
-        if (stat < 0)
-        {
-            if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-            {
-                LOG(LOG_ERROR, "ReadPacket got error %d, returning 0", WSAGetLastError());
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
-                return -1;
-            }
-            return 0;
-        }
-        if (stat == 0)
-        {
-            draw_info("WARNING: Server read package error.", COLOR_RED);
-            return -1;
-        }
-        sl->len += stat;
-        toread -= stat;
-        if (toread == 0)
-            return 1;
-        if (toread < 0)
-        {
-            LOG(LOG_ERROR, "SockList_ReadPacket: Read more bytes than desired.");
-            draw_info("WARNING: Server read package error.", COLOR_RED);
-            return -1;
-        }
-    }
-    while (toread > 0);
-
-    return 0;
-}
-
-/* This writes data to the socket.  we precede the len information on the
- * packet.  Len needs to be passed here because buf could be binary
- * data
- */
-int write_socket(int fd, unsigned char *buf, int len)
-{
-    int amt = 0;
-    unsigned char * pos = buf;
-
-    /* If we manage to write more than we wanted, take it as a bonus */
-    while (len > 0)
-    {
-        amt = send(fd, pos, len, 0);
-
-        if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
-        {
-            LOG(LOG_ERROR, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
-            draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
-	        SOCKET_CloseSocket(csocket.fd);
-			if(GameStatus != GAME_STATUS_START)
-				SDL_Delay(3250);
-			GameStatus = GAME_STATUS_START;
-            return -1;
-        }
-        if (amt == 0)
-        {
-            LOG(LOG_ERROR, "Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
-            draw_info("SOCKET ERROR: No data written out", COLOR_RED);
-	        SOCKET_CloseSocket(csocket.fd);
-			if(GameStatus != GAME_STATUS_START)
-				SDL_Delay(3250);
-			GameStatus = GAME_STATUS_START;
-            return -1;
-        }
-        len -= amt;
-        pos += amt;
-    }
-    return 0;
+	SDL_mutexP(socket_lock);
+#ifdef __LINUX
+	close(socket_temp);
+#else
+	closesocket(socket_temp);
+#endif
+	tmp_free = &csocket.inbuf.buf;
+	FreeMemory(tmp_free);
+	tmp_free = &csocket.outbuf.buf;
+	FreeMemory(tmp_free);
+	csocket.inbuf.len = 0;
+	csocket.outbuf.len = 0;
+	csocket.inbuf.pos = 0;
+	csocket.outbuf.pos = 0;
+	csocket.fd = SOCKET_NO;
+	SDL_mutexV(socket_lock);
+	return(TRUE);
 }
 
 
 Boolean SOCKET_InitSocket(void)
 {
-    WSADATA w;
+#ifdef WIN32
+	WSADATA w;
 	WORD	wVersionRequested = MAKEWORD( 2, 2 );
-    int     error;
+	int     error;
 
-    csocket.fd = SOCKET_NO;
-    csocket.cs_version = 0;
+	csocket.fd = SOCKET_NO;
+	csocket.cs_version = 0;
 
-    SocketStatusErrorNr = 0;
-    error = WSAStartup(wVersionRequested, &w);
-    if (error)
-    {
+	SocketStatusErrorNr = 0;
+	error = WSAStartup(wVersionRequested, &w);
+	if (error)
+	{
 		wVersionRequested = MAKEWORD( 2, 0 );
 		error = WSAStartup(wVersionRequested, &w);
 		if (error)
@@ -190,32 +415,40 @@ Boolean SOCKET_InitSocket(void)
 			error = WSAStartup(wVersionRequested, &w);
 			if (error)
 			{
-		        LOG(LOG_ERROR, "Error:  Error init starting Winsock: %d!\n", error);
-			    return(FALSE);
+				LOG(LOG_ERROR, "Error:  Error init starting Winsock: %d!\n", error);
+				return(FALSE);
 			}
 		}
-    }
+	}
 
 	LOG(LOG_MSG, "Using socket version %x!\n", w.wVersion);
-
-    return(TRUE);
+#endif
+	return(TRUE);
 }
 
 
 Boolean SOCKET_DeinitSocket(void)
 {
-    WSACleanup();               /* drop socket */
-    return(TRUE);
+	if(csocket.fd != SOCKET_NO)
+		SOCKET_CloseSocket(csocket.fd);
+#ifdef WIN32
+	WSACleanup();
+#endif
+
+	return(TRUE);
 }
 
+
+#ifdef __WIN_32
 Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port)
 {
-    int             error;
+    int             error, tmp=1;
     long            temp;
     struct hostent *hostbn;
     int             oldbufsize;
     int             newbufsize = 65535, buflen = sizeof(int);
     uint32          start_timer;
+	struct linger       linger_opt;
 
     /* The way to make the sockets work on XP Home - The 'unix' style socket
         * seems to fail inder xp home.
@@ -223,16 +456,14 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     *socket_temp = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
     csocket.inbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
-    csocket.inbuf.len = 0;
-    insock.sin_family = AF_INET;
-    insock.sin_port = htons((unsigned short) port);
+	csocket.inbuf.len = 0;
+	csocket.inbuf.pos = 0;
+	csocket.outbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
+	csocket.outbuf.len = 0;
+	csocket.outbuf.pos = 0;
 
-    if (ioctlsocket(*socket_temp, FIONBIO, &temp) == -1)
-    {
-        LOG(LOG_ERROR, "ERROR!!!: ioctlsocket(*socket_temp, FIONBIO , &temp)\n");
-        *socket_temp = SOCKET_NO;
-        return(FALSE);
-    }
+	insock.sin_family = AF_INET;
+    insock.sin_port = htons((unsigned short) port);
 
     if (isdigit(*host))
         insock.sin_addr.s_addr = inet_addr(host);
@@ -254,14 +485,21 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
 
     temp = 1;   /* non-block */
 
-    if (ioctlsocket(*socket_temp, FIONBIO, &temp) == -1)
-    {
-        LOG(LOG_ERROR, "ERROR: ioctlsocket(*socket_temp, FIONBIO , &temp)\n");
-        *socket_temp = SOCKET_NO;
-        return(FALSE);
-    }
+	if (ioctlsocket(*socket_temp, FIONBIO, &temp) == -1)
+	{
+		LOG(LOG_ERROR, "ERROR: ioctlsocket(*socket_temp, FIONBIO , &temp)\n");
+		*socket_temp = SOCKET_NO;
+		return(FALSE);
+	}
 
-    error = 0;
+	linger_opt.l_onoff = 1;
+	linger_opt.l_linger = 5;
+	if (setsockopt(*socket_temp, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+		LOG(LOG_ERROR, "BUG: Error on setsockopt LINGER\n");
+
+	setsockopt(*socket_temp, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp));
+
+	error = 0;
 
     start_timer = SDL_GetTicks();
     while (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
@@ -293,7 +531,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     }
     /* we got a connect here! */
 
-    if (getsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+	if (getsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
         oldbufsize = 0;
 
     if (oldbufsize < newbufsize)
@@ -356,37 +594,19 @@ void read_metaserver_data(void)
     FreeMemory(tmp_free);
 }
 
-Boolean SOCKET_CloseSocket(SOCKET socket_temp)
-{
-    void   *tmp_free;
-	int count=0;
-    /* seems differents sockets have different way to shutdown connects??
-     * win32 needs this
-     * hard way, normally you should wait for a read() == 0...
-        */
-    if (socket_temp == SOCKET_NO)
-        return(TRUE);
-
-	WSAAsyncSelect(socket_temp, NULL, 0, FD_CLOSE);
-    shutdown(socket_temp, SD_SEND);
-    closesocket(socket_temp);
-    tmp_free = &csocket.inbuf.buf;
-    FreeMemory(tmp_free);
-    csocket.fd = SOCKET_NO;
-    return(TRUE);
-}
 
 #elif __LINUX
 Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port)
 {
-    unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int), temp;
+    unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
+    struct linger       linger_opt;
 
 /* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
 #ifndef HAVE_GETADDRINFO
     struct protoent *protox;
     struct sockaddr_in  insock;
 
-    printf("Opening to %s %i\n", host, port);
+	printf("Opening to %s %i\n", host, port);
     protox = getprotobyname("tcp");
 
     if (protox == (struct protoent *) NULL)
@@ -468,50 +688,41 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     csock->command_received=0;
     csock->command_time=0;
 
-    csocket.inbuf.buf=(unsigned char *)_malloc(MAXSOCKBUF,"SOCKET_OpenSocket(): MAXSOCKBUF");
-    csocket.inbuf.len=0;
+    csocket.inbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
+    csocket.inbuf.len = 0;
+    csocket.inbuf.pos = 0;
+    csocket.outbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
+    csocket.outbuf.len = 0;
+    csocket.outbuf.pos = 0;
 
-    if (fcntl(*socket_temp, F_SETFL, O_NDELAY) == -1)
-    {
-        fprintf(stderr, "InitConnection:  Error on fcntl.\n");
-    }
-    if (getsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+	LOG(LOG_DEBUG, "socket: fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(*socket_temp, F_GETFL));
+	if (fcntl(*socket_temp, F_SETFL, fcntl(*socket_temp, F_GETFL) | O_NDELAY | O_NONBLOCK ) == -1)
+	{
+		LOG(LOG_ERROR, "socket:  Error on fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+		*socket_temp = SOCKET_NO;
+		return(FALSE);
+	}
+	LOG(LOG_DEBUG, "socket:  fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+
+	linger_opt.l_onoff = 1;
+	linger_opt.l_linger = 5;
+	if (setsockopt(*socket_temp, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+		LOG(LOG_ERROR, "BUG: Error on setsockopt LINGER\n");
+
+	if (getsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
         oldbufsize = 0;
 
     if (oldbufsize < newbufsize)
     {
         if (setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
         {
-            LOG(1, "InitConnection: setsockopt unable to set output buf size to %d\n", newbufsize);
+            LOG(LOG_DEBUG, "socket: setsockopt unable to set output buf size to %d\n", newbufsize);
             setsockopt(*socket_temp, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
         }
     }
     return TRUE;
 }
 
-Boolean SOCKET_InitSocket(void)
-{
-    return TRUE;
-}
-
-Boolean SOCKET_DeinitSocket(void)
-{
-    return TRUE;
-}
-
-Boolean SOCKET_CloseSocket(SOCKET socket_temp)
-{
-    void   *tmp_free;
-
-    if (socket_temp == SOCKET_NO)
-        return(TRUE);
-
-    close(socket_temp);
-    tmp_free = &csocket.inbuf.buf;
-    FreeMemory(tmp_free);
-    csocket.fd = SOCKET_NO;
-    return(TRUE);
-}
 
 void read_metaserver_data(void)
 {
@@ -530,7 +741,6 @@ void read_metaserver_data(void)
         }
         while (stat == -1);
 
-        /*if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)*/
         if (stat == -1)
         {
             LOG(LOG_ERROR, "Error reading metaserver data!\n");
@@ -559,136 +769,6 @@ void read_metaserver_data(void)
     FreeMemory(tmp_free);
     tmp_free = &ptr;
     FreeMemory(tmp_free);
-}
-
-
-int read_socket(int fd, SockList *sl, int len)
-{
-    int stat, toread, readsome = 0;
-    extern int          errno;
-
-    /* We already have a partial packet */
-    if (sl->len < 3)
-    {
-        do
-        {
-            stat = read(fd, sl->buf + sl->len, 3 - sl->len);
-        }
-        while ((stat == -1) && (errno == EINTR));
-        if (stat < 0)
-        {
-            /* In non blocking mode, EAGAIN is set when there is no
-            * data available.
-            */
-            if (errno != EAGAIN && errno != EWOULDBLOCK)
-            {
-                LOG(LOG_DEBUG, "ReadPacket got error %d, returning 0", errno);
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
-                return -1;
-            }
-            return 0;
-        }
-        if (stat == 0)
-        {
-            draw_info("WARNING: Server read package error.", COLOR_RED);
-            return -1;
-        }
-        sl->len += stat;
-        if (sl->len < 3)
-            return 0;   /* Still don't have a full packet */
-        readsome = 1;
-    }
-    /* Figure out how much more data we need to read.  Add 2 from the
-    * end of this - size header information is not included.
-    */
-    toread = 3 + (sl->buf[0] << 16) + (sl->buf[1] << 8) + sl->buf[2] - sl->len;
-    if ((toread + sl->len) > len)
-    {
-        draw_info("WARNING: Server read package error.", COLOR_RED);
-        LOG(LOG_ERROR, "SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
-        /* return error so the socket is closed */
-        return -1;
-    }
-    do
-    {
-        do
-        {
-            stat = read(fd, sl->buf + sl->len, toread);
-        }
-        while ((stat < 0) && (errno == EINTR));
-        if (stat < 0)
-        {
-            if (errno != EAGAIN && errno != EWOULDBLOCK)
-            {
-                LOG(LOG_DEBUG, "ReadPacket got error %d, returning 0", errno);
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
-                return -1;
-            }
-            return 0;
-        }
-        if (stat == 0)
-        {
-            draw_info("WARNING: Server read package error.", COLOR_RED);
-            return -1;
-        }
-        sl->len += stat;
-        toread -= stat;
-        if (toread == 0)
-            return 1;
-        if (toread < 0)
-        {
-            LOG(LOG_ERROR, "SockList_ReadPacket: Read more bytes than desired.");
-            draw_info("WARNING: Server read package error.", COLOR_RED);
-            return -1;
-        }
-    }
-    while (toread > 0);
-    return 0;
-}
-
-/* This writes data to the socket.  we precede the len information on the
- * packet.  Len needs to be passed here because buf could be binary
- * data
- */
-int write_socket(int fd, unsigned char *buf, int len)
-{
-    int amt = 0;
-    unsigned char * pos = buf;
-
-    /* If we manage to write more than we wanted, take it as a bonus */
-    while (len > 0)
-    {
-        do
-        {
-            amt = write(fd, pos, len);
-        }
-        while ((amt < 0) && (errno == EINTR));
-
-        if (amt < 0)
-        {
-            /* We got an error */
-            LOG(LOG_ERROR, "New socket (fd=%d) write failed.\n", fd);
-            draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
-	        SOCKET_CloseSocket(csocket.fd);
-			if(GameStatus != GAME_STATUS_START)
-				SDL_Delay(3250);
-			GameStatus = GAME_STATUS_START;
-            return -1;
-        }
-        if (amt == 0)
-        {
-            LOG(LOG_ERROR, "Write_To_Socket: No data written out.\n");
-            draw_info("SOCKET ERROR: No data written out", COLOR_RED);
-	        SOCKET_CloseSocket(csocket.fd);
-			if(GameStatus != GAME_STATUS_START)
-				SDL_Delay(3250);
-			GameStatus = GAME_STATUS_START;
-            return -1;
-        }
-        len -= amt;
-        pos += amt;
-    }
-    return 0;
 }
 
 #endif
