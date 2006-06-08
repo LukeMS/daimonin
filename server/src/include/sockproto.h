@@ -49,6 +49,7 @@ void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 void			command_talk_ex(char *data, int len, player *pl);
 void            remove_ns_dead_player(player *pl);
 void            RequestInfo(char *buf, int len, NewSocket *ns);
+void			clear_read_buffer_queue(NewSocket *ns);
 int             fill_command_buffer(NewSocket *ns, int len);
 void            HandleClient(NewSocket *ns, player *pl);
 void            doeric_server(int update, struct timeval *timeout);

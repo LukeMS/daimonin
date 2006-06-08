@@ -166,6 +166,13 @@ int command_kick(object *ob, char *params)
         return 0;
     }
 
+	if(!ob)
+	{
+		for(pl=first_player;pl!=NULL;pl=pl->next)
+			save_player(pl->ob, 1);
+	}
+	else
+		save_player(ob,1);
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
@@ -183,7 +190,6 @@ int command_kick(object *ob, char *params)
             CONTR(op)->killer[0] = '\0';
             check_score(op); /* Always check score */
             container_unlink(CONTR(op), NULL);
-            save_player(op, 1);
             CONTR(op)->socket.status = Ns_Dead;
         }
     }
