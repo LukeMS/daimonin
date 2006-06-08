@@ -210,16 +210,16 @@
 /* these are special flags to control how and what the update_position()
  * functions updates the map space.
  */
-#define P_FLAGS_ONLY    0x8000000   /* skip the layer update, do flags only */
+#define P_FLAGS_ONLY    0x08000000  /* skip the layer update, do flags only */
 #define P_FLAGS_UPDATE  0x10000000  /* if set, update the flags by looping the map objects */
 #define P_NEED_UPDATE   0x20000000  /* resort the layer when updating */
 #define P_NO_ERROR      0x40000000  /* Purely temporary - if set, update_position
-                                    * does not complain if the flags are different.
-                                    */
+                                     * does not complain if the flags are different.
+                                     */
 
-#define P_NO_TERRAIN    0x80000000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for return
-                                   * values of blocked...
-                                   */
+#define P_NO_TERRAIN    0x80000000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for 
+                                    * return values of blocked()...
+                                    */
 
 /* for server->client map protocol. Tell client how to handle its local map cache */
 #define MAP_UPDATE_CMD_SAME 0

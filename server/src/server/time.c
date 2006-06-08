@@ -403,11 +403,18 @@ void poison_more(object *op)
  * also, i included sounds for open & close gates! we need to add a tracker the
  * get is going up or down.
  */
+/*
+ * wc:           animation frame (first=fully open, last=fully closed - independent on last_heal)
+ * weight_limit: 1=opening, 0=closing (standard trigger attribute)
+ * ac:           1=never blocks view, 0=blocks view when closed
+ * food:         1=gate is temporary going down after crushing something
+ * maxsp:        1=gate is reversed, 0=gate is normal
+ */
 void move_gate(object *op)
 {
-    /* 1 = going down, 0 = goind up */
-    object *tmp;
     int     update  = UP_OBJ_FACE; /* default update is only face */
+    int     reached_end = 0;
+    int     blocked = 0;
 
     if (op->stats.wc < 0 || (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)))
     {
@@ -416,65 +423,138 @@ void move_gate(object *op)
             (NUM_ANIMATIONS(op) / NUM_FACINGS(op)), errmsg);
         op->stats.wc = 0;
     }
-
-    /* We're going down (or reverse up) */
-    if (op->weight_limit)
+    
+    /* Check for crushing when closing the gate */
+    if(op->weight_limit == 0 && (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2)
     {
-        if (--op->stats.wc <= 0)  /* Reached bottom, let's stop */
+        object *tmp = op;
+        for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+        {            
+            if (IS_LIVE(tmp))
+            {
+                hit_player(tmp, 4, op); 
+                if (tmp->type == PLAYER)
+                    new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
+            }
+            
+            /* If the object is alive, or the object either can
+             * be picked up or the object rolls, move the object
+             * off the gate. */
+            if (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
+            {
+                /* If it has speed, it should move itself, otherwise: */
+                int i   = find_free_spot(tmp->arch, op->map, op->x, op->y, 1, 9);
+
+                /* If there is a free spot, move the object someplace */
+                if (i != -1)
+                {
+                    remove_ob(tmp);
+                    check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
+                    tmp->x += freearr_x[i],tmp->y += freearr_y[i];
+                    insert_ob_in_map(tmp, op->map, op, 0);
+                }
+
+                break; /* Only remove one object for now... */
+            }
+        }
+        
+        /* Still anything blocking? */
+        for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+        {
+            if (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
+            {
+                op->stats.food = 1;
+                break;
+            }
+        }
+    }
+ 
+    /* Do the actual moving */
+    if (op->stats.food)
+    {
+        /* Lower gate and retry if it was blocked */
+        if (--op->stats.wc <= 0)
         {
             op->stats.wc = 0;
-            if (op->arch->clone.speed)
-                op->weight_limit = 0;
-            else
-            {
-                op->speed = 0;
-                update_ob_speed(op);
-            }
+            op->stats.food = 0;
         }
-
-        if ((int) op->stats.wc < ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2 + 1))
+    }
+    else if (op->weight_limit)
+    {
+        if (--op->stats.wc <= 0)
         {
-            /* we do the QUERY_FLAG() here to check we must rebuild the tile flags or not,
-                     * if we don't change the object settings here, just change the face but
-                     * don't rebuild the flag tiles.
-                     */
-            if (op->last_heal) /* if != 0, we have a reversed timed gate, which starts open */
-            {
-                if (!QUERY_FLAG(op, FLAG_NO_PASS))
-                    update = UP_OBJ_FLAGFACE;
-                SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
-                if (!op->arch->clone.stats.ac)
-                {
-                    if (!QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                        update = UP_OBJ_FLAGFACE;
-                    SET_FLAG(op, FLAG_BLOCKSVIEW);
-                }
-            }
-            else
-            {
-                if (QUERY_FLAG(op, FLAG_NO_PASS))
-                    update = UP_OBJ_FLAGFACE;
-                CLEAR_FLAG(op, FLAG_NO_PASS);
-                if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                    update = UP_OBJ_FLAGFACE;
-                CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-            }
+            op->stats.wc = 0;
+            reached_end = 1;
         }
-
-        op->state = (uint8) op->stats.wc;
-        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
-        update_object(op, update);
-        return;
+    } 
+    else
+    {
+        if ((int)++op->stats.wc >= ((NUM_ANIMATIONS(op) / NUM_FACINGS(op))))
+        {
+            op->stats.wc = (signed char) (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) - 1;
+            reached_end = 1;
+        }
     }
 
+    /* we do the QUERY_FLAG() here to check we must rebuild the tile flags or not,
+     * if we don't change the object settings here, just change the face but
+     * don't rebuild the flag tiles.
+     */
+    if ((int) op->stats.wc < ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2 + 1))
+    {
+        /* Less than half open. Always make passable + non-block view */
+        if (QUERY_FLAG(op, FLAG_NO_PASS))
+        {
+            update = UP_OBJ_FLAGFACE;
+            CLEAR_FLAG(op, FLAG_NO_PASS);
+        }
+        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
+        {
+            update = UP_OBJ_FLAGFACE;
+            CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
+        }
+    }
+    else
+    {
+        /* half closed or more. Make sure no pass and possibly block view */
+        if (!QUERY_FLAG(op, FLAG_NO_PASS))
+        {
+            update = UP_OBJ_FLAGFACE;
+            SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
+        }
+        if (!op->stats.ac) 
+        {
+            if (!QUERY_FLAG(op, FLAG_BLOCKSVIEW))
+            {
+                update = UP_OBJ_FLAGFACE;
+                SET_FLAG(op, FLAG_BLOCKSVIEW);
+            }
+        }
+    }
+
+    if(reached_end)
+    {
+        if(op->type == TIMED_GATE)
+            op->weight_limit = !op->weight_limit;
+        else
+        {
+            op->speed = 0;
+            update_ob_speed(op); /* Reached top, let's stop */
+        }
+    }
+    op->state = (uint8) op->stats.wc;
+    SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+    update_object(op, update);
+    
+#if 0    
     /* First, lets see if we are already at the top */
     if ((unsigned char) op->stats.wc == ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) - 1))
     {
         /* Check to make sure that only non pickable and non rollable
-             * objects are above the gate.  If so, we finish closing the gate,
-             * otherwise, we fall through to the code below which should lower
-             * the gate slightly.
-             */
+         * objects are above the gate.  If so, we finish closing the gate,
+         * otherwise, we fall through to the code below which should lower
+         * the gate slightly.
+         */
 
         for (tmp = op->above; tmp != NULL; tmp = tmp->above)
         {
@@ -532,10 +612,10 @@ void move_gate(object *op)
                         new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
                 }
                 /* If the object is not alive, and the object either can
-                     * be picked up or the object rolls, move the object
-                     * off the gate.
-                     */
-                /* lets try to move linving objects too */
+                 * be picked up or the object rolls, move the object
+                 * off the gate.
+                 */
+                /* lets try to move living objects too */
                 if (IS_LIVE(tmp) || (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL)))
                 {
                     /* If it has speed, it should move itself, otherwise: */
@@ -592,11 +672,13 @@ void move_gate(object *op)
         SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
         update_object(op, update); /* takes care about map tile and player los update! */
     } /* gate is going up */
+#endif
 }
 
-/*  hp      : how long door is open/closed
+/* Attributes are the same as for normal gates plus the following:
+ *  hp      : how long door is open/closed
  *  maxhp   : initial value for hp
- *  sp      : 1 = open, 0 = close
+ *  sp      : 1 = triggered, 0 = sleeping or resetting
  */
 void move_timed_gate(object *op)
 {
@@ -609,6 +691,8 @@ void move_timed_gate(object *op)
             op->stats.sp = 0;
         return;
     }
+
+    /* Countdown activation timer */
     if (--op->stats.hp <= 0)
     {
         /* keep gate down */
