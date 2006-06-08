@@ -147,6 +147,40 @@ START_TEST (object_type_beacon)
 }
 END_TEST
 
+/*
+ * Tests for memleak in merge_ob/insert_ob_in_ob()
+ */
+
+START_TEST (object_merge_memleak)
+{
+    int nrof_objs = pool_object->nrof_allocated[0] - pool_object->nrof_free[0];
+    object *container = arch_to_object(find_archetype("chest"));
+    object *coin1 = arch_to_object(find_archetype("goldcoin"));
+    object *coin2 = arch_to_object(find_archetype("goldcoin"));
+
+    fail_unless(container != NULL, "No container object");
+    fail_if(container->inv, "Container not empty before test");
+    fail_unless(coin1 || coin2, "No coin objects");
+
+    coin1->nrof = 10;
+    coin2->nrof = 20;
+
+    insert_ob_in_ob(coin1, container);
+    fail_unless(coin1->env == container, "Container not containing coin");
+    fail_unless(container->inv == coin1, "Coin1 not in container");
+
+    insert_ob_in_ob(coin2, container);
+    fail_unless(container->inv != NULL, "Container emptied?");
+    fail_if(container->inv->above || container->inv->below, "Coins didn't merge");
+    
+    fail_unless(container->inv->nrof == 30, "Coins doesn't add up correctly");
+
+    fail_unless(QUERY_FLAG(coin1, FLAG_REMOVED) || QUERY_FLAG(coin2, FLAG_REMOVED), "Both coins non-removed");
+
+    object_gc();
+    fail_unless(nrof_objs == pool_object->nrof_allocated[0] - pool_object->nrof_free[0], "Some objects not returned after gc (diff = %d)", (pool_object->nrof_allocated[0] - pool_object->nrof_free[0]) - nrof_objs);
+}
+END_TEST
 
 Suite *object_suite(void)
 {
@@ -159,6 +193,7 @@ Suite *object_suite(void)
   tcase_add_test(tc_core, object_creation);
   tcase_add_test(tc_core, arch_creation);
   tcase_add_test(tc_core, object_strings);
+  tcase_add_test(tc_core, object_merge_memleak);
   tcase_add_test(tc_core, object_type_beacon);
 
   return s;
