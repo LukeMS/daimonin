@@ -286,6 +286,7 @@ typedef struct obj
 #define WP_ACCEPTDIST(wp) (wp)->stats.grace
 #define WP_DELAYTIME(wp) (wp)->stats.wc
 #define WP_NEXTWP(wp) (wp)->title
+#define WP_BEACON(wp) (wp)->race
 
 #define STRING_WP_MAP(wp) STRING_OBJ_SLAYING(wp)
 #define STRING_WP_NEXTWP(wp) STRING_OBJ_RACE(wp)

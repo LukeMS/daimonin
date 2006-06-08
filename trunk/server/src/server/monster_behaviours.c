@@ -1194,11 +1194,40 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     object     *wp;
     rv_vector   rv;
     int         try_next_wp = 0;
+    object     *target = NULL;
 
     wp = get_active_waypoint(op);
     if (wp)
     {
-        mapstruct  *destmap = normalize_and_ready_map(op->map, &WP_MAP(wp));
+        mapstruct  *destmap = NULL;
+        int wp_x, wp_y;
+
+        if(WP_BEACON(wp))
+        {
+            target = locate_beacon(WP_BEACON(wp));
+            if(target) 
+            {
+                while(target->env)
+                    target = target->env;
+                wp_x = target->x;
+                wp_y = target->y;
+                destmap = target->map;
+            }
+            else
+            {
+                LOG(llevDebug, "ai_move_towards_waypoint(): Couldn't find beacon '%s' for waypoint '%s' used by '%s'\n",
+                        WP_BEACON(wp), STRING_OBJ_NAME(wp), STRING_OBJ_NAME(op));
+                CLEAR_FLAG(wp, WP_FLAG_ACTIVE); /* disable this waypoint */
+                try_next_wp = 1;
+            }
+        }
+        else 
+        {
+            wp_x = WP_X(wp);
+            wp_y = WP_Y(wp);
+            destmap = normalize_and_ready_map(op->map, &WP_MAP(wp));
+        }
+        
 #ifdef DEBUG_AI_WAYPOINT
         LOG(llevDebug, "FOUND waypoint(): '%s' has active waypoint '%s'\n",
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
@@ -1210,7 +1239,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
 
             if (!get_rangevector_full(
                         op, op->map, op->x, op->y,
-                        NULL, destmap, WP_X(wp), WP_Y(wp), &rv,
+                        target, destmap, wp_x, wp_y, &rv,
                         RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
             {
                 /* Problem: we couldn't find a relative direction between the
