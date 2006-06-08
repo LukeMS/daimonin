@@ -965,134 +965,129 @@ void update_object(object *op, int action)
     newflags = msp->flags;
     flags = newflags & ~P_NEED_UPDATE;
 
-    if (action == UP_OBJ_INSERT) /* always resort layer - but not always flags */
+    switch(action)
     {
+        case UP_OBJ_INSERT: /* always resort layer - but not always flags */
 #ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_INS - %s\n", query_name(op));
+            LOG(llevDebug, "UO_INS - %s\n", query_name(op));
 #endif
-        newflags |= P_NEED_UPDATE; /* force layer rebuild */
-        msp->update_tile++;
+            newflags |= P_NEED_UPDATE; /* force layer rebuild */
+            msp->update_tile++;
 
-        /* handle lightning system */
-        if (op->glow_radius)
-            adjust_light_source(op->map, op->x, op->y, op->glow_radius);
+            /* handle lightning system */
+            if (op->glow_radius)
+                adjust_light_source(op->map, op->x, op->y, op->glow_radius);
 
-        /* this is handled a bit more complex, we must always loop the flags! */
-        if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
-            newflags |= P_FLAGS_UPDATE;
-        else /* ok, we don't must use flag loop - we can set it by hand! */
-        {
-            if (op->type == CHECK_INV)
-                newflags |= P_CHECK_INV;
-            else if (op->type == MAGIC_EAR)
-                newflags |= P_MAGIC_EAR;
-
-            if (QUERY_FLAG(op, FLAG_ALIVE)) 
+            /* this is handled a bit more complex, we must always loop the flags! */
+            if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
+                newflags |= P_FLAGS_UPDATE;
+            else /* ok, we don't must use flag loop - we can set it by hand! */
             {
-                newflags |= P_IS_ALIVE;
-                if(op->type==MONSTER && OBJECT_VALID(op->owner, op->owner_count)
-                        && op->owner->type == PLAYER)
-                    newflags |= P_IS_PLAYER_PET;
-            }
-            if (QUERY_FLAG(op, FLAG_IS_PLAYER))
-                newflags |= P_IS_PLAYER;
-            if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))
-                newflags |= P_PLAYER_ONLY;
-            if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                newflags |= P_BLOCKSVIEW;
-            if (QUERY_FLAG(op, FLAG_NO_MAGIC))
-                newflags |= P_NO_MAGIC;
-            if (QUERY_FLAG(op, FLAG_NO_CLERIC))
-                newflags |= P_NO_CLERIC;
-            if (QUERY_FLAG(op, FLAG_WALK_ON))
-                newflags |= P_WALK_ON;
-            if (QUERY_FLAG(op, FLAG_FLY_ON))
-                newflags |= P_FLY_ON;
-            if (QUERY_FLAG(op, FLAG_WALK_OFF))
-                newflags |= P_WALK_OFF;
-            if (QUERY_FLAG(op, FLAG_FLY_OFF))
-                newflags |= P_FLY_OFF;
-            if (QUERY_FLAG(op, FLAG_DOOR_CLOSED))
-                newflags |= P_DOOR_CLOSED;
-            if (QUERY_FLAG(op, FLAG_CAN_REFL_SPELL))
-                newflags |= P_REFL_SPELLS;
-            if (QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE))
-                newflags |= P_REFL_MISSILE;
-        }
-    }
-    else if (action == UP_OBJ_REMOVE)
-    {
-#ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_REM - %s\n", query_name(op));
-#endif
-        newflags |= P_NEED_UPDATE; /* force layer rebuild */
-        msp->update_tile++;
+                if (op->type == CHECK_INV)
+                    newflags |= P_CHECK_INV;
+                else if (op->type == MAGIC_EAR)
+                    newflags |= P_MAGIC_EAR;
 
-        /* we don't handle floor tile light/darkness setting here -
+                if (QUERY_FLAG(op, FLAG_ALIVE)) 
+                {
+                    newflags |= P_IS_ALIVE;
+                    if(op->type==MONSTER && OBJECT_VALID(op->owner, op->owner_count)
+                            && op->owner->type == PLAYER)
+                        newflags |= P_IS_PLAYER_PET;
+                }
+                if (QUERY_FLAG(op, FLAG_IS_PLAYER))
+                    newflags |= P_IS_PLAYER;
+                if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))
+                    newflags |= P_PLAYER_ONLY;
+                if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
+                    newflags |= P_BLOCKSVIEW;
+                if (QUERY_FLAG(op, FLAG_NO_MAGIC))
+                    newflags |= P_NO_MAGIC;
+                if (QUERY_FLAG(op, FLAG_NO_CLERIC))
+                    newflags |= P_NO_CLERIC;
+                if (QUERY_FLAG(op, FLAG_WALK_ON))
+                    newflags |= P_WALK_ON;
+                if (QUERY_FLAG(op, FLAG_FLY_ON))
+                    newflags |= P_FLY_ON;
+                if (QUERY_FLAG(op, FLAG_WALK_OFF))
+                    newflags |= P_WALK_OFF;
+                if (QUERY_FLAG(op, FLAG_FLY_OFF))
+                    newflags |= P_FLY_OFF;
+                if (QUERY_FLAG(op, FLAG_DOOR_CLOSED))
+                    newflags |= P_DOOR_CLOSED;
+                if (QUERY_FLAG(op, FLAG_CAN_REFL_SPELL))
+                    newflags |= P_REFL_SPELLS;
+                if (QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE))
+                    newflags |= P_REFL_MISSILE;
+            }
+            break;
+        case UP_OBJ_REMOVE:
+#ifdef DEBUG_CORE
+            LOG(llevDebug, "UO_REM - %s\n", query_name(op));
+#endif
+            newflags |= P_NEED_UPDATE; /* force layer rebuild */
+            msp->update_tile++;
+
+            /* we don't handle floor tile light/darkness setting here -
              * we assume we don't remove a floor tile ever before dropping
              * the map.
              */
 
-        /* handle lightning system */
-        if (op->glow_radius)
-            adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
+            /* handle lightning system */
+            if (op->glow_radius)
+                adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
 
-        /* we must rebuild the flags when one of this flags is touched from our object */
-        if (QUERY_FLAG(op, FLAG_ALIVE)
-         || QUERY_FLAG(op, FLAG_IS_PLAYER)
-         || QUERY_FLAG(op, FLAG_BLOCKSVIEW)
-         || QUERY_FLAG(op, FLAG_DOOR_CLOSED)
-         || QUERY_FLAG(op, FLAG_PASS_THRU)
-         || QUERY_FLAG(op, FLAG_PASS_ETHEREAL)
-         || QUERY_FLAG(op, FLAG_NO_PASS)
-         || QUERY_FLAG(op, FLAG_PLAYER_ONLY)
-         || QUERY_FLAG(op, FLAG_NO_MAGIC)
-         || QUERY_FLAG(op, FLAG_NO_CLERIC)
-         || QUERY_FLAG(op, FLAG_WALK_ON)
-         || QUERY_FLAG(op, FLAG_FLY_ON)
-         || QUERY_FLAG(op, FLAG_WALK_OFF)
-         || QUERY_FLAG(op, FLAG_FLY_OFF)
-         || QUERY_FLAG(op, FLAG_CAN_REFL_SPELL)
-         || QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE)
-         || op->type == CHECK_INV
-         || op->type == MAGIC_EAR)
+            /* we must rebuild the flags when one of this flags is touched from our object */
+            if (QUERY_FLAG(op, FLAG_ALIVE)
+             || QUERY_FLAG(op, FLAG_IS_PLAYER)
+             || QUERY_FLAG(op, FLAG_BLOCKSVIEW)
+             || QUERY_FLAG(op, FLAG_DOOR_CLOSED)
+             || QUERY_FLAG(op, FLAG_PASS_THRU)
+             || QUERY_FLAG(op, FLAG_PASS_ETHEREAL)
+             || QUERY_FLAG(op, FLAG_NO_PASS)
+             || QUERY_FLAG(op, FLAG_PLAYER_ONLY)
+             || QUERY_FLAG(op, FLAG_NO_MAGIC)
+             || QUERY_FLAG(op, FLAG_NO_CLERIC)
+             || QUERY_FLAG(op, FLAG_WALK_ON)
+             || QUERY_FLAG(op, FLAG_FLY_ON)
+             || QUERY_FLAG(op, FLAG_WALK_OFF)
+             || QUERY_FLAG(op, FLAG_FLY_OFF)
+             || QUERY_FLAG(op, FLAG_CAN_REFL_SPELL)
+             || QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE)
+             || op->type == CHECK_INV
+             || op->type == MAGIC_EAR)
+                newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
+            break;
+        case UP_OBJ_FLAGS:
+#ifdef DEBUG_CORE
+            LOG(llevDebug, "UO_FLAGS - %s\n", query_name(op));
+#endif
+            newflags |= P_FLAGS_UPDATE; /* force flags rebuild but no tile counter*/
+            break;
+        case UP_OBJ_FLAGFACE:
+#ifdef DEBUG_CORE
+            LOG(llevDebug, "UO_FLAGFACE - %s\n", query_name(op));
+#endif
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-    }
-    else if (action == UP_OBJ_FLAGS)
-    {
+            msp->update_tile++;
+            break;
+        case UP_OBJ_LAYER:
 #ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_FLAGS - %s\n", query_name(op));
+            LOG(llevDebug, "UO_LAYER - %s\n", query_name(op));
 #endif
-        newflags |= P_FLAGS_UPDATE; /* force flags rebuild but no tile counter*/
-    }
-    else if (action == UP_OBJ_FLAGFACE)
-    {
+            newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
+            msp->update_tile++;
+            break;
+        case UP_OBJ_ALL:
 #ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_FLAGFACE - %s\n", query_name(op));
+            LOG(llevDebug, "UO_ALL - %s\n", query_name(op));
 #endif
-        newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
-        msp->update_tile++;
-    }
-    else if (action == UP_OBJ_LAYER)
-    {
-#ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_LAYER - %s\n", query_name(op));
-#endif
-        newflags |= P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
-        msp->update_tile++;
-    }
-    else if (action == UP_OBJ_ALL)
-    {
-#ifdef DEBUG_CORE
-        LOG(llevDebug, "UO_ALL - %s\n", query_name(op));
-#endif
-        newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
-        msp->update_tile++;
-    }
-    else
-    {
-        LOG(llevError, "ERROR: update_object called with invalid action: %d\n", action);
-        return;
+            newflags |= (P_FLAGS_UPDATE | P_NEED_UPDATE); /* force full tile update */
+            msp->update_tile++;
+            break;
+        default:
+            LOG(llevError, "ERROR: update_object called with invalid action: %d\n", action);
+            return;
     }
 
     if (flags != newflags)

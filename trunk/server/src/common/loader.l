@@ -160,13 +160,13 @@ WS	[ \t]*{NL}?
 					/* first adjust speed */
 					/* ok - ONLY change something when we
 					 * a.) don't have fix set speed_left in the loading
-					* b.) we have negative speed
-					*/
+					 * b.) we have negative speed
+					 */
 					if(old_sleft==tmp->speed_left && tmp->speed<0.0f)
 					{
 						/* if we have now a negative speed - use default arch
-						* speed left for new random set
-						*/
+						 * speed left for new random set
+						 */
 						if(tmp->speed<0.0f)
 							tmp->speed_left=tmp->arch->clone.speed_left+(float)(RANDOM()%90)/100.0f;
 					}

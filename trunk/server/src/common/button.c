@@ -26,7 +26,7 @@
 #include <global.h>
 
 /* When a map is loaded, its buttons are synced. We don't want
- * to trigger scripts then so we use this global to intdicate it */
+ * to trigger scripts then so we use this global to indicate it */
 static int ignore_trigger_events = 0;
 
 /* Send signal from op to connection ol */
@@ -102,9 +102,12 @@ void signal_connection(object *op, oblinkpt *olp)
               do_mood_floor(tmp, op);
               break;
             case TIMED_GATE:
-              tmp->speed = tmp->arch->clone.speed;
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
+              tmp->speed = 0.5;
               update_ob_speed(tmp);  /* original values */
-              tmp->weight_limit = tmp->arch->clone.weight_limit;
+              tmp->weight_limit = !tmp->stats.maxsp;
               tmp->stats.sp = 1;
               tmp->stats.hp = tmp->stats.maxhp;
               break;

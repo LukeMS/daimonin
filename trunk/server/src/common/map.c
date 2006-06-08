@@ -2562,7 +2562,7 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
 		mp = &m->spaces[x + m->width * y];
 	    flags = oldflags & P_NEED_UPDATE; /* save our update flag */
 	}
-
+		    
 
     /* update our flags */
     if (oldflags & P_FLAGS_UPDATE)
@@ -2735,8 +2735,8 @@ void update_position(mapstruct *m, MapSpace *mspace, int x, int y)
         }
     }
 
-    /* clear out need update flag */
-    SET_MAP_FLAGS(m, x, y, GET_MAP_FLAGS(m, x, y) & ~P_NEED_UPDATE);
+    /* clear out all need update flags */
+    SET_MAP_FLAGS(m, x, y, GET_MAP_FLAGS(m, x, y) & ~(P_NEED_UPDATE | P_FLAGS_UPDATE)); 
 }
 
 void set_map_reset_time(mapstruct *map)
