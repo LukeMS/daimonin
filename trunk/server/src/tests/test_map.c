@@ -44,7 +44,7 @@ static void teardown()
  * everything is freed after the swapping */
 START_TEST (map_loading)
 {
-    const char *path = add_string("/stoneglow/stoneglow_0001");
+    const char *path = add_string("/dev/unit_tests/test_maploader");
     mapstruct *map;
     
     int entries1, refs1, links1;
@@ -58,7 +58,7 @@ START_TEST (map_loading)
     fail_unless(has_been_loaded_sh(path) != NULL, "Map not loaded");
     fail_unless(map != NULL, "Couldn't load %s", path);
     fail_unless(strcmp(map->path, path) == 0, "Wierd path");
-    fail_if(strstr(map->name, "Stoneglow") == 0, "Not stoneglow");
+    fail_if(strcmp(map->name, "Testmap") != 0, "Not the testmap");
     
     delete_map(map);
     fail_unless(has_been_loaded_sh(path) == NULL, "Map still loaded");
@@ -67,8 +67,8 @@ START_TEST (map_loading)
     
     ss_get_totals(&entries2, &refs2, &links2);
     fail_unless(entries2 == entries1, "Some string(s) not freed");
-    fail_unless(refs2 == refs1, "Some string(s) not dereferenced");
-    fail_unless(nrof_objs == pool_object->nrof_allocated[0] - pool_object->nrof_free[0], "Some objects not returned");
+    fail_unless(refs2 == refs1, "Some string(s) not dereferenced (diff = %d)", (refs2 - refs1));
+    fail_unless(nrof_objs == pool_object->nrof_allocated[0] - pool_object->nrof_free[0], "Some objects not returned (diff = %d)", (pool_object->nrof_allocated[0] - pool_object->nrof_free[0]) - nrof_objs);
 }
 END_TEST
 
