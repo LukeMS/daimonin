@@ -39,10 +39,6 @@
 
 #include <global.h>
 
-/* disabled inline for debugging */
-#undef inline
-#define inline
-
 static uint32 exp_calc_tag=1; /* used to tag the player/group */
 
 /*

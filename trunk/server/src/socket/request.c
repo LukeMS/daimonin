@@ -367,13 +367,14 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 		/* lets preset our old socket so it can be given back */
 		ns->addme = 1;
 		ns = &pl->socket; /* map us to our copied socket - command queue was copied too! */
+
 		/* remove now the FIRST command in the command queue - that MUST be our addme.
-		 * don't remove our poolchunk, thats done in the caller function
-		 */
+		 * don't remove the poolchunk, thats done in the caller functio´n */
 		ns->cmd_start = ns->cmd_start->next;
 		if(!ns->cmd_start)
 			ns->cmd_end = NULL;
-        Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
+
+		Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
         LOG(llevDebug, "addme_cmd(): socket %d\n", ns->fd);
     }
 }

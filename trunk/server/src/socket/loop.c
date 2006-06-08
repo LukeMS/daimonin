@@ -143,11 +143,8 @@ static inline int read_socket_buffer(NewSocket *ns)
 		tmp = tmp-MAXSOCKBUF_IN; /* thats our start offset */
 		read_bytes = sl->pos - tmp; /* thats our free buffer until ->pos*/
 	}
-	else
-	{
-		/* tmp is our offset and there is still a bit to read in */
-		read_bytes = MAXSOCKBUF_IN-tmp;
-	}
+	else		
+		read_bytes = MAXSOCKBUF_IN-tmp; /* tmp is our offset and there is still a bit to read in */
 
 	/* with this settings we can adjust in a hard way the maximum bytes read per round per socket */
 	/*
@@ -195,13 +192,14 @@ static inline void write_socket_buffer(NewSocket *ns)
 {
 	int amt, max;
 
-	if (ns->outputbuffer.len == 0)
-		return;
 
 	max = MAXSOCKBUF - ns->outputbuffer.start;
 	if (ns->outputbuffer.len < max)
 		max = ns->outputbuffer.len;
 
+	/*LOG(-1,"WRITE-LEN(%d)(%d)(%d)\n", ns->outputbuffer.len,ns->outputbuffer.start,max);*/
+	if (ns->outputbuffer.len == 0)
+		return;
 	/* with this settings we can adjust in a hard way the maximum bytes written per round per socket */
 	/*
 	if(max >256)
@@ -223,7 +221,8 @@ static inline void write_socket_buffer(NewSocket *ns)
 	{
 		LOG(llevDebug,"IMPORTANT: send() in write_socket_buffer() returned ZERO! check the comment text in loop.c around line 200. (max: %d)\n", max);
 		amt = max; /* as i understand, the data is now internal buffered? So remove it from our write buffer */
-	}
+	} 
+	else
 #endif
 
 	if (amt < 0) /* error */
@@ -333,7 +332,7 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
 //static inline int socket_prepare_commands(NewSocket *ns)
 static int socket_prepare_commands(NewSocket *ns)
 {
-	int toread;
+	int toread, flag=FALSE;
 	SockList *rb = &ns->readbuf;
 	command_struct *cmdptr;
 
@@ -343,6 +342,15 @@ static int socket_prepare_commands(NewSocket *ns)
 			toread = (rb->buf[MAXSOCKBUF_IN-1] << 8) + rb->buf[0];
 		else
 			toread = (rb->buf[rb->pos] << 8) + rb->buf[rb->pos+1];
+
+		/* don't have the time for a 100% binary client->server interface.
+		 * This flag will tell us its a binary command
+		 */
+		if(toread&0x8000)
+		{
+			toread&=~0x8000;
+			flag = TRUE;
+		}
 
 		/* lets check our "toread" value is senseful! */
 		if(toread <= 0 || toread > MAXSOCKBUF_IN)
@@ -360,7 +368,9 @@ static int socket_prepare_commands(NewSocket *ns)
 		if(rb->pos >= MAXSOCKBUF_IN)
 			rb->pos -= MAXSOCKBUF_IN;
 
-		/* lets get a command chunk which is big enough */
+		/* lets get a command chunk which is big enough - this is still for testing,
+		 * i am sure we don't need so much different buffers.
+		 */
 		if(toread < 16)
 		{
 			cmdptr = get_poolchunk(pool_cmd_buf16);
@@ -416,10 +426,70 @@ static int socket_prepare_commands(NewSocket *ns)
 		}
 
 		cmdptr->buf[toread] = 0; /* it ensures we are null terminated. nice */
+
 		/*LOG(-1,"READCMD(%d): >%s<\n", cmdptr->len, cmdptr->buf);*/
 		if(rb->pos == MAXSOCKBUF_IN)
 			rb->pos = 0;
 		rb->len -= (toread+2);
+
+		/* lets pre-process "instant" commands. 
+		 * in theorie we can grap them direct out of the readbuffer if 
+		 * they are not splitted... but this is alot cleaner code.
+		 */
+		if(flag)
+		{
+			/* TEST: we test here our binary commands. */
+			if(cmdptr->buf[0] == CLIENT_CMD_STOP)
+			{
+				command_struct *cmdold=NULL, *cmdtmp = ns->cmd_start;
+				int i;
+
+				while (cmdtmp)
+				{
+					/* lets check its a non-system command.
+					 * With binary commands, this will ALOT easier.
+				     */
+					for (i = 0; nscommands[i].cmdname != NULL; i++)
+					{
+						if ((int) strlen(nscommands[i].cmdname) <= ns->cmd_start->len && 
+							!strncmp(ns->cmd_start->buf, nscommands[i].cmdname, strlen(nscommands[i].cmdname)))
+						{
+							i = -1;
+							break;
+						}
+					}
+
+					if(i == -1) /* its a system command */
+					{
+						cmdold = cmdtmp;
+						cmdtmp = cmdtmp->next;
+
+					}
+					else /* a command we must skip! */
+					{
+						command_struct *cmdnext=cmdtmp->next;
+
+						if(cmdold)
+							cmdold->next = cmdnext;
+
+						if(ns->cmd_start == cmdtmp)
+							ns->cmd_start = cmdnext;
+
+						if(ns->cmd_end == cmdtmp)
+							ns->cmd_end = cmdnext;
+
+						return_poolchunk(cmdtmp, cmdtmp->pool);
+						cmdtmp = cmdnext;
+					}
+
+				};
+			}
+			else
+				LOG(llevError,"ERROR: Wrong binary client command: %d\n", cmdptr->buf[0]);
+
+			return_poolchunk(cmdptr, cmdptr->pool);
+			continue;
+		}
 
 		/* attach command buffer to command list of this ns socket */
 		if(ns->cmd_start)
@@ -439,6 +509,23 @@ static int socket_prepare_commands(NewSocket *ns)
 	return FALSE;
 }
 
+static inline void clear_read_buffer(NewSocket *ns)
+{
+	command_struct *cmdtmp;
+
+	cmdtmp = ns->cmd_start;
+	ns->cmd_start = ns->cmd_start->next;
+	if(!ns->cmd_start)
+		ns->cmd_end = NULL;
+	return_poolchunk(cmdtmp, cmdtmp->pool);
+}
+
+void clear_read_buffer_queue(NewSocket *ns)
+{
+	while (ns->cmd_start)
+		clear_read_buffer(ns);
+}
+
 /* We have now a buffer we read in from the socket.
  * In that buffer are 0-x commands (and/or perhaps *one* last, incomplete one).
  * We read now in fifo way the commands from that buffer.
@@ -447,7 +534,6 @@ static int socket_prepare_commands(NewSocket *ns)
  */
 int fill_command_buffer(NewSocket *ns, int len)
 {
-	command_struct *cmdtmp;
     char * data;
     int i, data_len;
 
@@ -505,13 +591,8 @@ int fill_command_buffer(NewSocket *ns, int len)
                         data_len = 0;
                     nscommands[i].cmdproc(data, data_len, ns); /* and process cmd */
 
-
 					/* remove command & buffer */
-					cmdtmp = ns->cmd_start;
-					ns->cmd_start = ns->cmd_start->next;
-					if(!ns->cmd_start)
-						ns->cmd_end = NULL;
-					return_poolchunk(cmdtmp, cmdtmp->pool);
+					clear_read_buffer(ns);
 
 					if (ns->addme) /* we have successful added this connect! */
 					{
@@ -545,7 +626,6 @@ void HandleClient(NewSocket *ns, player *pl)
 {
     int len = 0, i, cmd_count = 0;
     char * data;
-	command_struct *cmdtmp;
 
     /* Loop through this - maybe we have several complete packets here. */
 	while (ns->cmd_start)
@@ -623,11 +703,7 @@ void HandleClient(NewSocket *ns, player *pl)
 
         next_command:
 		/* remove command & buffer */
-		cmdtmp = ns->cmd_start;
-		ns->cmd_start = ns->cmd_start->next;
-		if(!ns->cmd_start)
-			ns->cmd_end = NULL;
-		return_poolchunk(cmdtmp, cmdtmp->pool);
+		clear_read_buffer(ns);
 
 		if (cmd_count++ <= 8 && ns->status != Ns_Dead)
         {
@@ -1140,7 +1216,7 @@ NewSocket *socket_get_available()
         {
             newsocknum = socket_info.allocated_sockets;
             socket_info.allocated_sockets++;
-		memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
+			memset(&init_sockets[newsocknum],0, sizeof(NewSocket));
             init_sockets[newsocknum].status = Ns_Avail;
         }
         while (socket_info.allocated_sockets <= socket_info.nconns + 1);

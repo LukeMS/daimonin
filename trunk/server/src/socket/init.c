@@ -408,7 +408,8 @@ void    free_newsocket  (NewSocket *ns)
 	/* clearout the socket but don't restore the buffers.
      * no need to malloc them again & again.
      */
-    memset(ns, 0, sizeof(ns));
+	clear_read_buffer_queue(ns); /* give back the blocks to the mempools */
+	memset(ns, 0, sizeof(ns));
 	ns->readbuf.buf = tmp_read; 
 }
 

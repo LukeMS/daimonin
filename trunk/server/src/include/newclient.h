@@ -248,6 +248,13 @@ enum
     DATA_CMD_BMAP_LIST
 };
 
+typedef enum client_cmd {
+	CLIENT_CMD_GENERIC,
+	CLIENT_CMD_STOP,
+
+	CLIENT_CMD_MAX_NROF
+} _client_cmd;
+
 #define SOCKET_SET_BINARY_CMD(__s__, __bc__) (__s__)->buf[0]=__bc__;(__s__)->len=1
 
 enum
