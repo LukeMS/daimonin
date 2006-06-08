@@ -83,6 +83,7 @@ Boolean SYSTEM_Start(void)
 Boolean SYSTEM_End(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
+	socket_thread_stop();
     return(TRUE);
 #endif
 }

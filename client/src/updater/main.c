@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
     char version[256], buf[256], *string_pos;
     char file_name[256], md5[64]; 
 #ifndef WIN32
-    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };
+/*    struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };*/
 #endif
 
     printf("Daimonin AutoUpdater 1.0a\n\n");
@@ -591,7 +591,7 @@ void copy_patch_files(char* start_dir)
         }
         else
         {
-            int l = strlen(entry->d_name);
+        /*    int l = strlen(entry->d_name);*/
 
             sprintf(buf,"%s/%s/%s", base,cwd+patch_dir_len,entry->d_name);
             printf(".");

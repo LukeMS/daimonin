@@ -24,6 +24,15 @@
 #if !defined(__COMMANDS_H)
 #define __COMMANDS_H
 
+#define MAXSOCKBUF_IN (3*1024)
+
+typedef enum client_cmd {
+	CLIENT_CMD_GENERIC,
+	CLIENT_CMD_STOP,
+
+	CLIENT_CMD_MAX_NROF
+} _client_cmd;
+
 #define DATA_PACKED_CMD 0x80
 enum
 {

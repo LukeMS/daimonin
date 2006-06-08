@@ -54,6 +54,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_main.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_thread.h>
+#include <SDL/SDL_mutex.h>
 
 /* Many defines to redirect unix functions or fake standard unix values */
 #define inline __inline
@@ -80,6 +82,8 @@
 
 #define HAVE_STRICMP
 #define HAVE_STRNICMP
+
+#define MSG_DONTWAIT 0
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "info@daimonin.net"

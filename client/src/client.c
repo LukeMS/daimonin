@@ -122,46 +122,27 @@ static void face_flag_extension(int pnum, char *buf);
 
 void DoClient(ClientSocket *csocket)
 {
-    int     i, len;
-    uint8   cmd_id;
-    unsigned char * data;
+	_command_buffer_read *cmd;
 
     while (1)
     {
-        i = read_socket(csocket->fd, &csocket->inbuf, MAXSOCKBUF - 1);
-        if (i == -1)
-        {
-            /* Need to add some better logic here */
-            LOG(LOG_MSG, "Got error on read (error %d)\n", SOCKET_GetError());
-            SOCKET_CloseSocket(csocket->fd);
-            return;
-        }
-        if (i == 0)
-            return;   /* Don't have a full packet */
-        csocket->inbuf.buf[csocket->inbuf.len] = '\0';
+		if(!read_cmd_start) /* we have a filled command? */
+			break;
 
-		if(csocket->inbuf.buf[0] & 0x80) /* 3 byte header */
-		{
-			cmd_id = (uint8) csocket->inbuf.buf[3];
-			data = csocket->inbuf.buf + 4;
-			len = csocket->inbuf.len - 4; /* 3 byte package len + 1 byte binary cmd */
-		}
-		else
-		{
-			cmd_id = (uint8) csocket->inbuf.buf[2];
-			data = csocket->inbuf.buf + 3;
-			len = csocket->inbuf.len - 3; /* 2 byte package len + 1 byte binary cmd */
-		}
+		cmd = get_read_cmd(); /* function has mutex included */
 
-        /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
-        if (!cmd_id || cmd_id >= BINAR_CMD)
-            LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd_id);
+		if(!cmd)
+			break;
+
+        /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd->data[0], LastTick, cmd->len);*/
+        if (!cmd->data[0] || cmd->data[0] >= BINAR_CMD)
+            LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
         else
         {
-            /*                  LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd_id-1].cmdname,data);*/
-            commands[cmd_id - 1].cmdproc(data, len);
+			/*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd->data[0]-1].cmdname, cmd->data+1);*/
+            commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
         }
-        csocket->inbuf.len = 0;
+		free_read_cmd(cmd);
     }
 }
 
@@ -204,20 +185,6 @@ short GetShort_String(unsigned char *data)
     return ((data[0] << 8) + data[1]);
 }
 
-
-/* Send With Handling - cnum is the client number, msg is what we want
- * to send.
- */
-int send_socklist(int fd, SockList  msg)
-{
-    unsigned char sbuf[2];
-
-    sbuf[0] = ((uint32) (msg.len) >> 8) & 0xFF;
-    sbuf[1] = ((uint32) (msg.len)) & 0xFF;
-
-    write_socket(fd, sbuf, 2);
-    return write_socket(fd, msg.buf, msg.len);
-}
 
 /* Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.

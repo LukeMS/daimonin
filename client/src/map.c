@@ -50,7 +50,7 @@ void adjust_map_cache(int xpos, int ypos)
 {
     int x, y /*, i*/;
 //    register struct MapCell                    *map;
-    int             xreal, yreal;
+    int             xreal=0, yreal=0;
 
     memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
     for (y = 0; y < MapStatusY; y++)
