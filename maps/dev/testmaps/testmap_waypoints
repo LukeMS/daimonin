@@ -1341,6 +1341,14 @@ arch floor_ostone1
 x 10
 y 22
 end
+arch food_generic
+name dog bait
+x 10
+y 22
+arch beacon
+name testmap_dogbeacon_1
+end
+end
 arch floor_ostone1
 x 10
 y 23
@@ -1390,6 +1398,32 @@ end
 arch floor_ostone1
 x 11
 y 9
+end
+arch beacon
+name testmap_dogbeacon_2
+x 11
+y 9
+end
+arch dog_brown
+speed 0.3
+unaggressive 1
+x 11
+y 9
+arch waypoint
+name waypoint1
+title waypoint2
+race testmap_dogbeacon_1
+end
+arch waypoint
+name waypoint2
+race testmap_dogbeacon_2
+end
+arch event_obj
+sub_type 6
+race /dev/testmaps/waypoint_activate.lua
+end
+arch ai_generic
+end
 end
 arch floor_ostone1
 x 11
