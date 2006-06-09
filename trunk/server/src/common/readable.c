@@ -1138,7 +1138,7 @@ char * artifact_msg(int level, int booksize)
 {
     artifactlist   *al              = NULL;
     artifact       *art;
-    int             count=0,chance, i, type, index;
+    int             chance, i, type, index;
     sint64            val;
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
     char           *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
@@ -1149,7 +1149,7 @@ char * artifact_msg(int level, int booksize)
     if (book_entries > 5)
         book_entries = 5;
 
-        /* lets determine what kind of artifact type randomly.
+    /* lets determine what kind of artifact type randomly.
      * Right now legal artifacts only come from those listed
      * in art_name_array. Also, we check to be sure an artifactlist
      * for that type exists!
@@ -1504,7 +1504,7 @@ char * god_info_msg(int level, int booksize)
     object     *god     = pntr_to_god_obj(get_rand_god());
 
     if (!god)
-        return (char *) NULL;   /* oops, problems... */
+        return "\n *undecipherable text*"; /* Problem. but avoid returning NULL */
     name = god->name;
 
     /* preamble.. */

@@ -7,6 +7,10 @@ extern char *words[];
 extern int num_words;
 extern int word_lengths[];
 extern void read_words(void); /* Can be used as a text fixture */
+
+/* Debug helpers */
+void dump_inventory(object *op);
+void dump_objects();
     
 static void dummy_teardown() /* Usable as a fixture teardown */
 {

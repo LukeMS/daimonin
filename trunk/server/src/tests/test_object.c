@@ -30,6 +30,7 @@
 #include <global.h>
 #if defined HAVE_CHECK && defined BUILD_UNIT_TESTS
 #include <check.h>
+#include "common_support.h"
 
 static void setup()
 {
@@ -157,6 +158,7 @@ START_TEST (object_merge_memleak)
     object *container = arch_to_object(find_archetype("chest"));
     object *coin1 = arch_to_object(find_archetype("goldcoin"));
     object *coin2 = arch_to_object(find_archetype("goldcoin"));
+    object *coin3;
 
     fail_unless(container != NULL, "No container object");
     fail_if(container->inv, "Container not empty before test");
@@ -169,11 +171,12 @@ START_TEST (object_merge_memleak)
     fail_unless(coin1->env == container, "Container not containing coin");
     fail_unless(container->inv == coin1, "Coin1 not in container");
 
-    insert_ob_in_ob(coin2, container);
+    coin3 = insert_ob_in_ob(coin2, container);
     fail_unless(container->inv != NULL, "Container emptied?");
     fail_if(container->inv->above || container->inv->below, "Coins didn't merge");
     
-    fail_unless(container->inv->nrof == 30, "Coins doesn't add up correctly");
+    fail_unless(coin3 == container->inv, "insert_ob_in_ob didn't return correct object");
+    fail_unless(coin3->nrof == 30, "Coins doesn't add up correctly");
 
     fail_unless(QUERY_FLAG(coin1, FLAG_REMOVED) || QUERY_FLAG(coin2, FLAG_REMOVED), "Both coins non-removed");
 
@@ -181,6 +184,34 @@ START_TEST (object_merge_memleak)
     fail_unless(nrof_objs == pool_object->nrof_allocated[0] - pool_object->nrof_free[0], "Some objects not returned after gc (diff = %d)", (pool_object->nrof_allocated[0] - pool_object->nrof_free[0]) - nrof_objs);
 }
 END_TEST
+
+/* 
+ * More tests for object insertion. Make sure the inserted object
+ * is removed from its original place in case of a merge.
+ */
+START_TEST (object_insert_ob_in_ob)
+{
+    object *container1 = arch_to_object(find_archetype("chest"));
+    object *container2 = arch_to_object(find_archetype("chest"));
+    object *coin1 = arch_to_object(find_archetype("goldcoin"));
+    object *coin2 = arch_to_object(find_archetype("goldcoin"));
+    object *coin3;
+
+    coin1->nrof = 10;
+    coin2->nrof = 20;
+
+    insert_ob_in_ob(coin1, container1);
+    insert_ob_in_ob(coin2, container2);
+    remove_ob(coin2);
+    coin3 = insert_ob_in_ob(coin2, container1);
+
+    fail_unless(coin3 == container1->inv, "insert_ob_in_ob didn't return correct object");
+    fail_unless(coin3->nrof == 30, "Coins doesn't add up correctly");
+
+    fail_unless(QUERY_FLAG(coin1, FLAG_REMOVED) || QUERY_FLAG(coin2, FLAG_REMOVED), "Both coins non-removed");
+    fail_unless(container2->inv == NULL, "Coin2 not removed from original container");
+}
+END_TEST;
 
 Suite *object_suite(void)
 {
@@ -194,6 +225,7 @@ Suite *object_suite(void)
   tcase_add_test(tc_core, arch_creation);
   tcase_add_test(tc_core, object_strings);
   tcase_add_test(tc_core, object_merge_memleak);
+  tcase_add_test(tc_core, object_insert_ob_in_ob);
   tcase_add_test(tc_core, object_type_beacon);
 
   return s;

@@ -40,41 +40,6 @@ static void teardown()
 {
 }
 
-/* Dump all non-free objects in memory */
-static void dump_objects()
-{
-#ifdef MEMPOOL_TRACKING    
-    struct puddle_info *puddle = pool_object->first_puddle_info;
-    int i;
-    object *obj;
-    while(puddle)
-    {
-        for(i=0; i<pool_object->expand_size; i++)
-        {
-            obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
-            if(! OBJECT_FREE(obj))
-                LOG(llevDebug, "obj '%s'(%d)(%s) #=%d\n", STRING_OBJ_NAME(obj),  obj->count, 
-                        QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
-                        obj->nrof);
-        }
-        puddle = puddle->next;
-    }
-#endif    
-}
-
-/* Shallowly dump the inventory of an object */
-static void dump_inventory(object *op)
-{
-    object *tmp;
-    LOG(llevDebug, "inventory of %s:\n", STRING_OBJ_NAME(op));
-    for(tmp = op->inv; tmp; tmp = tmp->below)
-    {
-        LOG(llevDebug, "    '%s'(%d)(%s) #=%d\n", STRING_OBJ_NAME(tmp),  tmp->count, 
-                QUERY_FLAG(tmp, FLAG_REMOVED) ? "removed" : "in use",
-                tmp->nrof);
-    }
-}
-
 /* Test map loading and swapping out, and make sure
  * everything is freed after the swapping */
 START_TEST (treasurelist_memleak)
