@@ -68,7 +68,7 @@ void LOG(LogLevel logLevel, char *format, ...)
     }
 
     va_end(ap);
-
+    
     if (logLevel == llevBug)
         ++nroferrors;
 

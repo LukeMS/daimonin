@@ -57,6 +57,8 @@ extern Suite *object_suite(void);
 extern Suite *map_suite(void);
 extern Suite *hashtable_suite(void);
 extern Suite *treasurelists_suite(void);
+extern Suite *readable_suite(void);
+extern Suite *holy_suite(void);
     
 void run_unit_tests(void)
 {
@@ -67,6 +69,8 @@ void run_unit_tests(void)
     srunner_add_suite(sr, map_suite());
     srunner_add_suite(sr, hashtable_suite());
     srunner_add_suite(sr, treasurelists_suite());
+    srunner_add_suite(sr, readable_suite());
+    srunner_add_suite(sr, holy_suite());
     
     fprintf(stderr, "Running Daimonin Test Suites\n");
     

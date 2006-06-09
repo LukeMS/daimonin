@@ -31,6 +31,8 @@ SRCS = \
 	test_object.c \
 	test_map.c \
 	test_treasurelists.c \
+	test_holy.c \
+	test_readable.c \
 	benchmark_hashtable.c \
 	benchmark_shstr.c \
 	benchmark_main.c \

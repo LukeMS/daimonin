@@ -1028,8 +1028,8 @@ struct Command_Line_Options options[]   =
     {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false}, 
     {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
     {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
-    {"-test", 0, 3, run_unit_tests},
-    {"-benchmark", 0, 3, run_benchmarks}
+    {"-test", 0, 4, run_unit_tests},
+    {"-benchmark", 0, 4, run_benchmarks}
 };
 
 /* Note since this may be called before the library has been set up,
@@ -1181,6 +1181,7 @@ void init(int argc, char **argv)
     load_ban_file();
     load_gmaster_file();
     init_done = 1;
+    parse_args(argc, argv, 4);
 }
 
 
