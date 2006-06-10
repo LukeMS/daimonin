@@ -799,9 +799,12 @@ void do_mood_floor(object *op, object *op2)
 
 /* this function returns the object it matches, or NULL if non.
  * It will descend through containers to find the object.
- *      slaying = match object slaying field
+ *
+ * trig object attributes used:
+ *      slaying = match object slaying (if sp != 0) or name field
  *      race = match object archetype name field
  *      if hp != 0, hp = match object type
+ *      if last_heal != 0, require all non-empty fields to match
  */
 
 object * check_inv_recursive(object *op, object *trig)
@@ -810,20 +813,36 @@ object * check_inv_recursive(object *op, object *trig)
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
+        int match_type = 0;
+        int match_slaying = 0;
+        int match_arch = 0;
+        
         if (tmp->inv)
-        {
-            ret = check_inv_recursive(tmp, trig);
-            if (ret)
+            if((ret = check_inv_recursive(tmp, trig)))
                 return ret;
+        
+        /* compare type */
+        if (trig->stats.hp && tmp->type == trig->stats.hp)
+            match_type = 1;
+
+        /* compare slaying with name or slaying */
+        if (trig->slaying && 
+            trig->slaying == (trig->stats.sp ? tmp->slaying : tmp->name))
+                match_slaying = 1;
+
+        /* compare arch name */
+        if (trig->race && tmp->arch->name == trig->race)
+                match_arch = 1;
+
+        /* AND or OR logic? */
+        if (trig->last_heal)
+        {
+            if((trig->stats.hp == 0 || match_type) &&
+                    (trig->slaying == NULL || match_slaying) &&
+                    (trig->race == NULL || match_arch))
+                return tmp;
         }
-        else if ((trig->stats.hp && tmp->type == trig->stats.hp)
-             ||  /* compare type */
-                 (trig->slaying
-               && trig->stats.sp
-               ?  /* compare slaying with name or slaying */
-                (tmp->slaying && trig->slaying == tmp->slaying)
-                : (tmp->name && trig->slaying == tmp->name))
-              || (trig->race && tmp->arch->name == trig->race)) /* compare arch name */
+        else if(match_arch || match_slaying || match_arch)
             return tmp;
     }
     return NULL;
