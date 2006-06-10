@@ -159,10 +159,12 @@ Suite *hashtable_suite(void)
   tcase_add_unchecked_fixture(tc_core, read_words, dummy_teardown);
 
   suite_add_tcase (s, tc_core);
+
   tcase_add_test(tc_core, hashtable_basic_operations);
   tcase_add_test(tc_core, hashtable_shrinkage);
-  tcase_add_test(tc_core, hashtable_iterators);
   tcase_add_test(tc_core, hashtable_efficiency);
+  tcase_set_timeout(tc_core, 10); /* This test might need some time on slow machines */
+  tcase_add_test(tc_core, hashtable_iterators);
 
   return s;
 }
