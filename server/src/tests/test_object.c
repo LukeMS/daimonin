@@ -148,6 +148,40 @@ START_TEST (object_type_beacon)
 }
 END_TEST
 
+START_TEST (object_type_check_inv)
+{
+    mapstruct *map = ready_map_name(add_string("/dev/unit_tests/test_check_inv"), 0);
+
+    object *check1 = locate_beacon(find_string("check1"))->env;
+    object *check2 = locate_beacon(find_string("check2"))->env;
+    object *key1 = locate_beacon(find_string("key1"))->env;
+    object *cont1 = arch_to_object(find_archetype("chest"));
+    object *cont2 = arch_to_object(find_archetype("chest"));
+
+    remove_ob(key1);
+    key1=insert_ob_in_ob(key1, cont1);
+
+    fail_if(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't allow pass through");
+    fail_unless(blocked_tile(cont1, map, check2->x, check2->y), "inv_check doesn't block pass through");
+    fail_unless(blocked_tile(cont2, map, check1->x, check1->y), "inv_check doesn't block pass through");
+ 
+    /* Test inversed match */
+    check1->last_sp = 0;
+    check2->last_sp = 0;
+    
+    fail_unless(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't block pass through");
+    fail_if(blocked_tile(cont1, map, check2->x, check2->y), "inv_check doesn't allow pass through");
+    fail_if(blocked_tile(cont2, map, check1->x, check1->y), "inv_check doesn't allow pass through");
+    
+    /* Turn off blockage (need to update map flags) */
+    check1->last_grace = 0;
+    update_object(check1, UP_OBJ_ALL);
+    fail_if(blocked_tile(cont1, map, check1->x, check1->y), "inv_check doesn't allow pass through");
+    
+    /* TODO: test script triggering */
+}
+END_TEST
+
 /*
  * Tests for memleak in merge_ob/insert_ob_in_ob()
  */
@@ -227,6 +261,7 @@ Suite *object_suite(void)
   tcase_add_test(tc_core, object_merge_memleak);
   tcase_add_test(tc_core, object_insert_ob_in_ob);
   tcase_add_test(tc_core, object_type_beacon);
+  tcase_add_test(tc_core, object_type_check_inv);
 
   return s;
 }
