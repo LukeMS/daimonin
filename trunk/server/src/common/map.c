@@ -708,15 +708,15 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
             return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV|P_PLAYER_ONLY)); /* tell them: no pass and possible checker here */
 
         /* and here is our CHECK_INV ...
-             * blocked_tile() is now only and exclusive called from here.
-             * lets skip it, when op is NULL - so we can turn the check from outside
-            * on/off (for example if we only want test size stuff)
-            */
+         * blocked_tile() is now only and exclusive called from here.
+         * lets skip it, when op is NULL - so we can turn the check from outside
+         * on/off (for example if we only want test size stuff)
+         */
         if (flags & P_CHECK_INV)
         {
             /* we fake a NO_PASS when the checker kick us out - in fact thats
-                     * how it should be.
-                     */
+             * how it should be.
+             */
             if (blocked_tile(op, m, x, y))
                 return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV)); /* tell them: no pass and checker here */
         }
@@ -832,30 +832,28 @@ int blocked_tile(object *op, mapstruct *m, int x, int y)
     {
         /* This must be before the checks below.  Code for inventory checkers. */
         /* Note: we only do this check here because the last_grace cause the
-             * CHECK_INV to block the space. The check_inv is called again in
-             * move_apply() - there it will do the trigger and so on. This here is only
-             * for testing the tile - not for invoking the check_inv power!
-             */
+         * CHECK_INV to block the space. The check_inv is called again in
+         * move_apply() - there it will do the trigger and so on. This here is only
+         * for testing the tile - not for invoking the check_inv power!
+         */
         if (tmp->type == CHECK_INV && tmp->last_grace)
         {
             /* If last_sp is set, the player/monster needs an object,
-                    * so we check for it.  If they don't have it, they can't
-                    * pass through this space.
-                    */
+             * so we check for it.  If they don't have it, they can't
+             * pass through this space.
+             */
             if (tmp->last_sp)
             {
                 if (check_inv_recursive(op, tmp) == NULL)
                     return 1;
-                continue;
             }
             else
             {
                 /* In this case, the player must not have the object -
-                        * if they do, they can't pass through.
-                        */
+                 * if they do, they can't pass through.
+                 */
                 if (check_inv_recursive(op, tmp) != NULL) /* player has object */
                     return 1;
-                continue;
             }
         } /* if check_inv */
     }
@@ -1339,10 +1337,10 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                 else if (op->type == SPAWN_POINT)
                 {
                     /* Handling of the spawn points is much easier as handling the mob.
-                                 * if the spawn point still control some mobs, we delete the mob  - where ever
-                                 * it is. Also, set pre spawn value to last mob - so we restore our creature
-                                 * when we reload this map.
-                                 */
+                     * if the spawn point still control some mobs, we delete the mob  - where ever
+                     * it is. Also, set pre spawn value to last mob - so we restore our creature
+                     * when we reload this map.
+                     */
                     if (op->enemy)
                     {
                         if (op->enemy_count == op->enemy->count &&  /* we have a legal spawn? */
@@ -1373,27 +1371,27 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                 }
 
                 /* we will delete here all temporary owner objects.
-                        * We talk here about spell effects, pets, golems and
-                        * other "dynamic" objects.
-                        * What NOT should be deleted are throw objects and other
-                        * permanent items which has a owner setting! (if they have)
-                        */
+                 * We talk here about spell effects, pets, golems and
+                 * other "dynamic" objects.
+                 * What NOT should be deleted are throw objects and other
+                 * permanent items which has a owner setting! (if they have)
+                 */
                 if (head->owner)
                 {
                     /* perhaps we should add here a flag for pets...
-                                 * But the pet code needs a rework so or so.
-                                 * ATM we simply delete GOLEMS and clearing
-                                 * from all other spells/stuff the owner tags.
-                                 * SPAWN MOBS are not here so we only speak about
-                                 * spell effects
-                                 * we *can* delete them here too - but then i would
-                                 * prefer a no_save flag. Only reason to save them is
-                                 * to reset for example buttons or avoiding side effects
-                                 * like a fireball saved with neutral owner which does then
-                                 * something evil - but that CAN always catched in the code
-                                 * and scripts so lets go the easy way here - as less we
-                                 * manipulate the map here as more secure we are!
-                                 */
+                     * But the pet code needs a rework so or so.
+                     * ATM we simply delete GOLEMS and clearing
+                     * from all other spells/stuff the owner tags.
+                     * SPAWN MOBS are not here so we only speak about
+                     * spell effects
+                     * we *can* delete them here too - but then i would
+                     * prefer a no_save flag. Only reason to save them is
+                     * to reset for example buttons or avoiding side effects
+                     * like a fireball saved with neutral owner which does then
+                     * something evil - but that CAN always catched in the code
+                     * and scripts so lets go the easy way here - as less we
+                     * manipulate the map here as more secure we are!
+                     */
                     if (head->type == GOLEM) /* a golem needs a valid release from the player... */
                     {
                         send_golem_control(head, GOLEM_CTR_RELEASE);
@@ -1487,16 +1485,16 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     int xt, yt;
 
                     /* the magic is, that we have a tail here, but we
-                                 * save the head now and give it the x/y
-                                 * position basing on this tail position and its
-                                 * x/y clone arch default multi tile offsets!
-                                 * With this trick, we even can generate negative
-                                 * map positions - and thats exactly what we want
-                                 * when our head is on a different map as this tail!
-                                 * insert_ob() and the map loader will readjust map and
-                                 * positions and load the other map when needed!
-                                 * we must save x/y or remove_ob() will fail.
-                                 */
+                     * save the head now and give it the x/y
+                     * position basing on this tail position and its
+                     * x/y clone arch default multi tile offsets!
+                     * With this trick, we even can generate negative
+                     * map positions - and thats exactly what we want
+                     * when our head is on a different map as this tail!
+                     * insert_ob() and the map loader will readjust map and
+                     * positions and load the other map when needed!
+                     * we must save x/y or remove_ob() will fail.
+                     */
                     tmp = op->head;
                     xt = tmp->x;
                     yt = tmp->y;
@@ -1515,9 +1513,9 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
                     {
                         /* remember: if we have remove for example 2 or more objects above, the
-                                         * op->above WILL be still valid - remove_ob() will handle it right.
-                                         * IF we get here a valid ptr, ->above WILL be valid too. Always.
-                                         */
+                         * op->above WILL be still valid - remove_ob() will handle it right.
+                         * IF we get here a valid ptr, ->above WILL be valid too. Always.
+                         */
                         if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))
                             otmp = op->above;
                         else if (last_valid)
