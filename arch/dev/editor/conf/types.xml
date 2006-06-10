@@ -2682,6 +2682,16 @@
     kind of melee weapon. To pass, a player is forced to leave behind all
     his weaponry... bad news for a warrior. ;)
   </attribute>
+  <attribute arch="last_heal" editor="match all fields" type="bool">
+    Normally matching any of the above fields ("match key string", "match 
+    arch name", "match type") is enough to accept an object. 
+    If &lt;match all fields&gt; is checked, all non-empty fields are 
+    required to be matching to accept the object. 
+
+    This basically selects an "OR" combination (when unchecked) or an 
+    "AND" combination (when checked) of the fields.  (e.g. 
+    "if arch_name=key_blue AND slaying=secret_passage_key").
+  </attribute>
   <attribute arch="last_sp" editor="match = having" type="bool">
     Enabled means having that object is a match.
     Disabled means not having that object is a match.
