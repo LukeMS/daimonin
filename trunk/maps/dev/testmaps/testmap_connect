@@ -433,6 +433,7 @@ x 3
 y 2
 end
 arch handle_lever
+name big lever 101
 connected 101
 x 3
 y 2
@@ -512,6 +513,7 @@ x 3
 y 13
 end
 arch handle_lever
+name big lever 501
 connected 501
 x 3
 y 13
@@ -678,9 +680,9 @@ x 5
 y 6
 end
 arch boulder
+no_pick 0
 x 5
 y 6
-no_pick 0
 end
 arch floor_ostone2
 x 5
@@ -870,6 +872,7 @@ x 7
 y 2
 end
 arch handle_lever
+name big lever 102
 face lever.131
 direction 3
 connected 102
@@ -1473,6 +1476,7 @@ x 12
 y 2
 end
 arch handle_lever
+name big lever 103
 face lever.131
 direction 3
 connected 103
@@ -2085,6 +2089,7 @@ x 17
 y 12
 end
 arch handle_lever
+name big lever 300
 connected 300
 x 17
 y 12
@@ -2094,6 +2099,7 @@ x 17
 y 13
 end
 arch handle_lever
+name big lever 301
 connected 301
 x 17
 y 13
@@ -2103,9 +2109,10 @@ x 17
 y 14
 end
 arch connection_sensor
-last_grace 302
+sub_type 0
 connected 300,301,302
 sub_type 0
+last_grace 302
 x 17
 y 14
 end
@@ -2188,6 +2195,7 @@ x 18
 y 12
 end
 arch handle_lever
+name big lever 310
 connected 310
 x 18
 y 12
@@ -2197,6 +2205,7 @@ x 18
 y 13
 end
 arch handle_lever
+name big lever 311
 connected 311
 x 18
 y 13
@@ -2206,8 +2215,8 @@ x 18
 y 14
 end
 arch connection_sensor
-last_grace 312
 connected 310,311,312
+last_grace 312
 x 18
 y 14
 end
@@ -2309,6 +2318,7 @@ x 19
 y 12
 end
 arch handle_lever
+name big lever 320
 connected 320
 x 19
 y 12
@@ -2318,6 +2328,7 @@ x 19
 y 13
 end
 arch handle_lever
+name big lever 321
 connected 321
 x 19
 y 13
@@ -2327,9 +2338,10 @@ x 19
 y 14
 end
 arch connection_sensor
-last_grace 322
+sub_type 2
 connected 320,321,322
 sub_type 2
+last_grace 322
 x 19
 y 14
 end
@@ -2384,6 +2396,13 @@ arch floor_ostone2
 x 20
 y 7
 end
+arch sign
+msg
+This (trigger) button is connected to a spawn point, which will spawn when the button is pressed.
+endmsg
+x 20
+y 7
+end
 arch floor_ostone2
 x 20
 y 8
@@ -2412,6 +2431,7 @@ x 20
 y 12
 end
 arch handle_lever
+name big lever 330
 connected 330
 x 20
 y 12
@@ -2421,6 +2441,7 @@ x 20
 y 13
 end
 arch handle_lever
+name big lever 331
 connected 331
 x 20
 y 13
@@ -2430,9 +2451,10 @@ x 20
 y 14
 end
 arch connection_sensor
-last_grace 332
+sub_type 3
 connected 330,331,332
 sub_type 3
+last_grace 332
 x 20
 y 14
 end
@@ -2506,9 +2528,29 @@ arch floor_ostone2
 x 21
 y 7
 end
+arch button_trigger
+connected 400
+x 21
+y 7
+end
 arch floor_ostone2
 x 21
 y 8
+end
+arch spawn_point
+last_grace 0
+sp -1
+connected 400
+speed 0
+x 21
+y 8
+arch dog_brown
+name Rabid dog
+type 83
+maxhp 1
+Wis 5
+friendly 0
+end
 end
 arch floor_ostone2
 x 21
@@ -2538,6 +2580,7 @@ x 21
 y 13
 end
 arch handle_lever
+name big lever 399
 connected 399
 x 21
 y 13
