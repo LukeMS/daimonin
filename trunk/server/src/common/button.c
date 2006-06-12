@@ -41,11 +41,13 @@ void signal_connection(object *op, oblinkpt *olp)
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
     {
-        if (!ol->objlink.ob || ol->objlink.ob->count != ol->id)
+        tmp = ol->objlink.ob;
+        if (!tmp || tmp->count != ol->id)
         {
-            LOG(llevBug, "BUG: Internal error in push_button (%s).\n", op->name);
+            LOG(llevBug, "BUG: Internal error in push_button (%s).\n", STRING_OBJ_NAME(op));
             continue;
         }
+
         /* a button link object can become freed when the map is saving.  As
          * a map is saved, objects are removed and freed, and if an object is
          * on top of a button, this function is eventually called.  If a map
@@ -53,13 +55,13 @@ void signal_connection(object *op, oblinkpt *olp)
          * probably isn't important - it will get sorted out when the map is
          * re-loaded.  As such, just exit this function if that is the case.
          */
-        if (!OBJECT_ACTIVE(ol->objlink.ob))
+        if (!OBJECT_ACTIVE(tmp))
         {
-            LOG(llevDebug, "DEBUG: push_button: button link with invalid object! (%x - %x)",
-                QUERY_FLAG(ol->objlink.ob, FLAG_REMOVED), ol->objlink.ob->count);
+            LOG(llevDebug, "DEBUG: push_button: button link with invalid object! (%x - %p). Button '%s' => object '%s'\n",
+                QUERY_FLAG(tmp, FLAG_REMOVED), tmp,
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp));
             return;
         }
-        tmp = ol->objlink.ob;
 
         if(! ignore_trigger_events)
             trigger_object_plugin_event(EVENT_TRIGGER,
@@ -162,6 +164,14 @@ void signal_connection(object *op, oblinkpt *olp)
                   turn_off_light(tmp);
               else if(op->weight_limit != 0 && tmp->glow_radius == 0)
                   turn_on_light(tmp);
+              break;
+
+            case SPAWN_POINT:
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
+              if(op->weight_limit) /* Only trigger on positive edge */
+                  spawn_point(tmp);             
               break;
         }
     }

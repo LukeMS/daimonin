@@ -211,6 +211,7 @@ void spawn_point(object *op)
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
         return;
     }
+    
     /* now we move through the spawn point inventory and
      * get the mob with a number under this value AND nearest.
      */
