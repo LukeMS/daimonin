@@ -3468,13 +3468,13 @@
   </description>
   <attribute arch="speed" editor="speed" type="float">
     The &lt;speed&gt; determines how often a spawn point will
-    control himself and/or the mob. If there is no mob, the
+    check itself and/or the mob. If there is no mob, the
     spawn point will try to spawn a mob.
   </attribute>
   <attribute arch="last_grace" editor="spawn chance" type="int">
-  Defines the base spawn chance. Value 0 means spawn
-  try every actice phase. -1 means no spawn try.
-  Values >0 means spawn chance is 1/value+1.
+  Defines the base spawn chance. Value 0 means to try spawning
+  every active tick. -1 means no spawn try.
+  Value >0 means spawn probability is 1/value+1 per active tick.
   </attribute>
   <attribute arch="sp" editor="forced spawn" type="int">
     If -1 at start, the spawn point will do a normal spawn.
@@ -3498,6 +3498,13 @@
   <attribute arch="slaying" editor="link tag" type="string">
     All spawn points of the map with the same link tag will
     linked together and work as 'linked spawns (mobs)'.
+  </attribute>
+</section>
+<section name="connection">  
+  <attribute arch="connected" editor="connection" type="int">
+    If a connection value is set, the spawn point will try to spawn
+    whenever the connection is triggered. If you use this, you will probably
+    want to set spawn chance to 0, and spawn speed to 0.
   </attribute>
 </section>
 </type>
