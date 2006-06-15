@@ -92,6 +92,15 @@ public:
     };
 
     /**
+     ** Logs an list entry.
+     ** @see LogEntry::LogEntry()
+     *****************************************************************************/
+    LogEntry list()
+    {
+        return LogEntry("List");
+    }
+
+    /**
      ** Logs an information.
      ** @see LogEntry::LogEntry()
      *****************************************************************************/
@@ -156,6 +165,7 @@ private:
     const char* now();
 
     static bool mTable;
+    static bool mList;
     static const char *mFilename;
 };
 

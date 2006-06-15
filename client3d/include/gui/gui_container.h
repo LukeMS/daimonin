@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_CONTAINER_H
 #define GUI_CONTAINER_H
 
+#include <tinyxml.h>
 // Slots for weapons, potions, etc
 // in a gui_window.
 

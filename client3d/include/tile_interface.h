@@ -22,7 +22,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define TILE_INTERFACE_H
 
 #include "Ogre.h"
-#include "logger.h"
 
 using namespace Ogre;
 

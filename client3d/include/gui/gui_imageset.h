@@ -27,15 +27,9 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_IMAGESET_H
 #define GUI_IMAGESET_H
 
-#include <string>
 #include <vector>
-#include <Ogre.h>
 #include <tinyxml.h>
-
-//#include "gui_window.h"
-//#include "gui_cursor.h"
-//#include "gui_manager.h"
-#include "logger.h"
+#include <Ogre.h>
 
 using namespace Ogre;
 
@@ -79,14 +73,14 @@ enum {
 
 typedef struct
 {
-    std::string name;
+    String name;
     short x, y;
 }
 GuiElementState;
 
 typedef struct
 {
-    std::string name;
+    String name;
     int width, height;
     std::vector<GuiElementState*>state;
 }
@@ -129,7 +123,7 @@ private:
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
     std::vector<GuiSrcEntry*>mvSrcEntry; // TODO: delete vector in destructor.
-    std::string mStrImageSetGfxFile;
+    String mStrImageSetGfxFile;
     Image mImageSetImg;
     PixelBox mSrcPixelBox;
     static GuiElementNames mGuiElementNames[GUI_ELEMENTS_SUM];

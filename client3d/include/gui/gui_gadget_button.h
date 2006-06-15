@@ -31,6 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 #include "gui_gadget.h"
+
 using namespace Ogre;
 
 class GuiGadgetButton: public GuiGadget

@@ -1,0 +1,15 @@
+material Tentacle
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture tentacle.png
+            }
+        }
+    }
+}
+

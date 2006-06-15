@@ -27,7 +27,6 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_LISTBOX_H
 #define GUI_LISTBOX_H
 
-#include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
@@ -79,7 +78,7 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     struct _row
     {
-        std::string str;
+        String str;
         //    ColourValue colorTop;
         //    ColourValue colorBottom;
     }

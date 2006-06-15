@@ -101,7 +101,7 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     bool isInit;
     static int msInstanceNr, mMouseDragging;
-    static std::string mStrTooltip;
+    static String mStrTooltip;
     int mWindowNr;
     int mMousePressed, mMouseOver;
     Image mTileImage;
@@ -114,8 +114,8 @@ private:
     PixelBox mSrcPixelBox;
     SceneManager *mSceneMgr;
     SceneNode *mSceneNode;
-    std::string mStrName;
-    std::string mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
+    String mStrName;
+    String mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
     std::vector<GuiGadget *>mvGadget;
     std::vector<GuiGadgetCombobox*>mvCombobox;
     std::vector<GuiGadgetButton *>mvButton;

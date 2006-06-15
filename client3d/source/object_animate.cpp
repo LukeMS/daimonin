@@ -33,7 +33,7 @@ http://www.gnu.org/licenses/licenses.html
 ///=================================================================================================
 /// Init all static Elemnts.
 ///=================================================================================================
-const char *ObjectAnimate::StateNames[SUM_ANIM_GROUP]=
+const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
     {
         "Idle", "Idle_Fun",
         "Walk",
@@ -53,48 +53,46 @@ const char *ObjectAnimate::StateNames[SUM_ANIM_GROUP]=
 ObjectAnimate::ObjectAnimate(Entity *entity)
 {
     mAnimSpeed = 2;
-    mIsAnimated = false;
-    std::string strTmp, strGroup;
-    AnimationState *AnimState;
+    mAnimGroup =-1;
+    String strTmp, strGroup;
 
     // fill the animation states.
     int j;
     int sum =0;
 
-    for (int i=0; i < SUM_ANIM_GROUP; ++i)
+    AnimationStateSet *animSet = entity->getAllAnimationStates();
+    for (int i=0; i < ANIM_GROUP_SUM; ++i)
     {
         mAnimGroupEntries[i] =0;
         strGroup = StateNames[i];
-        try
+        j =0;
+        while(1)
         {
-            j =0;
-            while(1)
-            {
-                strTmp = strGroup + StringConverter::toString(++j);
-                AnimState = entity->getAnimationState(strTmp.c_str());
-                mAnimState.push_back(AnimState);
-                mAnimGroupEntries[i]= j;
-                ++sum;
-            }
-        }
-        catch (Exception& )
-        {
-            // No animation with this name found.
+            strTmp = strGroup + StringConverter::toString(++j);
+            if (!animSet->hasAnimationState(strTmp)) break;
+            mAnimState.push_back(animSet->getAnimationState(strTmp));
+            mAnimGroupEntries[i]= j;
+            ++sum;
         }
     }
     if (sum)
     {
         mIsAnimated = true;
-        Logger::log().info() << "- Model has " << sum << " valid animations.";
+        if (sum!=entity->getSkeleton()->getNumAnimations())
+            Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations. "
+            << entity->getSkeleton()->getNumAnimations()-sum << " have invalid names and will be ignored.";
+        else
+            Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
     }
     else
     {
-        Logger::log().info() << "- Model is not animated.";
+        mIsAnimated = false;
+        Logger::log().list() << "Object is not animated.";
         return;
     }
     /// Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];
-    toggleAnimation(ANIM_GROUP_IDLE, 0, true, true);
+    toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
 }
 
 ///=================================================================================================
@@ -115,14 +113,14 @@ void ObjectAnimate::update(const FrameEvent& event)
     /// if an animation ends -> force the idle animation.
     if (mActState->getTimePosition() >= mActState->getLength())
     {
-        toggleAnimation(ANIM_GROUP_IDLE, 0, true, true);
+        toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
 }
 
 ///=================================================================================================
 /// Toggle the animation.
 ///=================================================================================================
-void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force)
+void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random)
 {
     if (!mIsAnimated) return;
     /// Is the selected animation already running?
@@ -133,7 +131,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
         return;
 
     /// On invalid animGroup choose Idle.
-    if (animGroup >= SUM_ANIM_GROUP || !mAnimGroupEntries[animGroup])
+    if (animGroup >= ANIM_GROUP_SUM || !mAnimGroupEntries[animGroup])
         animGroup = ANIM_GROUP_IDLE;
     /// On invalid animNr choose 0.
     if (animNr >= mAnimGroupEntries[animGroup])
@@ -149,7 +147,12 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     }
     /// Set the Animation.
     mActState= mAnimState[animGroup+ animNr];
-    mActState->setTimePosition(0);
+
+    /// Set a random offest for the animation start (prevent synchronous "dancing").
+    if (random)
+        mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
+    else
+        mActState->setTimePosition(0.0);
     mActState->setEnabled(true);
     mActState->setLoop(loop);
 }

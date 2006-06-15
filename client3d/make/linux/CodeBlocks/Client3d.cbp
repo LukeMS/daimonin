@@ -234,6 +234,13 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../include/dialog_manager.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../include/events.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -381,6 +388,13 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../include/object_equipment.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../include/object_manager.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -389,6 +403,13 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../include/object_npc.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../include/object_player.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -486,6 +507,11 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../source/dialog_manager.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../source/events.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
@@ -493,6 +519,13 @@
 		</Unit>
 		<Unit filename="../../../source/events_user.cpp">
 			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/fileformat.sh">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
@@ -601,12 +634,22 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../source/object_equipment.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../source/object_manager.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/object_npc.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/object_player.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />

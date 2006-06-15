@@ -56,22 +56,22 @@ void CEvent::keyPressed(KeyEvent *e)
         /// Player Movemment.
         /// ////////////////////////////////////////////////////////////////////
         case KC_UP:
-        //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 1);
+        //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0, 1);
         //mCamera->  moveRelative (Vector3(0,100,0));
         break;
 
         case KC_DOWN:
-        //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, -1);
+        //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, 9, OBJ_WALK,0, -1);
         //mCamera->  moveRelative (Vector3(0,-100,0));
         break;
 
         case KC_RIGHT:
         //mCamera->  moveRelative (Vector3(100,0,0));
-        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TURN, -1);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TURN, 0, -1);
         break;
 
         case KC_LEFT:
-        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TURN,  1);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TURN, 0,  1);
         //mCamera->  moveRelative (Vector3(-100,0,0));
         break;
 
@@ -85,7 +85,7 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_A:
         {
             static int animNr= 0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
             if (++animNr >= 16) animNr= 0;
         }
         break;
@@ -93,33 +93,33 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_B:
         {
             static int animNr= 0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
             if (++animNr >= 16) animNr= 0;
         }
 
         break;
 
         case KC_C:
-        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, ObjectAnimate::STATE_CAST1);
+        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
         break;
 
         case KC_S:
-        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, ObjectAnimate::STATE_SLUMP1);
+        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_SLUMP1);
         break;
 
         case KC_D:
-        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, ObjectAnimate::STATE_DEATH1);
+        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_DEATH1);
         break;
 
         case KC_H:
-        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, ObjectAnimate::STATE_HIT1);
+        //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
         break;
 
         case KC_1:
         //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_SKIN, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0, ObjectPlayer::TEXTURE_POS_SKIN, color++);
         }
         break;
 
@@ -127,7 +127,7 @@ void CEvent::keyPressed(KeyEvent *e)
         //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_FACE, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_FACE, color++);
         }
         break;
 
@@ -135,41 +135,41 @@ void CEvent::keyPressed(KeyEvent *e)
         //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_HAIR, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_HAIR, color++);
         }
         break;
 
         case KC_4:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_BODY, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_BODY, color++);
         }
         break;
 
         case KC_5:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_LEGS, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_LEGS, color++);
         }
         break;
         case KC_6:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_BELT, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_BELT, color++);
         }
         break;
 
         case KC_7:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_SHOES, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_SHOES, color++);
         }
         break;
 
         case KC_8:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TEXTURE, ObjectNPC::TEXTURE_POS_HANDS, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_HANDS, color++);
         }
         //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
         break;
@@ -183,7 +183,14 @@ void CEvent::keyPressed(KeyEvent *e)
         //mCamera->yaw(Degree(10));
         {
             Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
-            ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree1.mesh", (int)pos.x, (int)pos.z, 0);
+            sObject obj;
+            obj.meshName = "tree1.mesh";
+            obj.nickName = "tree";
+            obj.type = ObjectManager::OBJECT_STATIC;
+            obj.posX = (int)pos.x;
+            obj.posY = (int)pos.z;
+            obj.facing = 0;
+            ObjectManager::getSingleton().addMobileObject(obj);
         }
         break;
 
@@ -195,19 +202,23 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_I:
-        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
+        ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_HEAD, 1);
         break;
 
         case KC_O:
-        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
+        ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_SHIELD_HAND, 1);
         break;
 
         case KC_P:
-        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, ObjectNPC::BONE_WEAPON_HAND, 1);
+        {
+            static int weaponNr = ObjectManager::getSingleton().getSumWeapon()-1;
+            ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_WEAPON_HAND, weaponNr--);
+            if (weaponNr < 0) weaponNr = ObjectManager::getSingleton().getSumWeapon();
+        }
         break;
 
         case KC_Q:
-        ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
         break;
 
         /// ////////////////////////////////////////////////////////////////////
@@ -268,7 +279,7 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_L:
-          Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
+        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
         break;
 
         case KC_W:
@@ -360,21 +371,21 @@ void CEvent::keyReleased(KeyEvent* e)
         /// ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
-        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_WALK, 0);
         break;
 
         case KC_RIGHT:
         case KC_LEFT:
-        ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_TURN, 0);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TURN, 0);
         break;
 
         case KC_J:
         case KC_K:
-        ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_TURN,  0);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TURN,  0);
         break;
 
         case KC_G:
-        ObjectManager::getSingleton().Event(OBJECT_NPC, OBJ_WALK,  0);
+        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
         break;
 
         default:
@@ -420,10 +431,8 @@ void CEvent::mousePressed (MouseEvent *e)
             {
                 RaySceneQueryResult::iterator itr = result.begin();
                 ObjectManager::getSingleton().selectNPC(itr->movable);
-                String tt = itr->movable->getName();
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)tt.c_str());
             }
-			mSceneManager->destroyQuery(mRaySceneQuery);
+            mSceneManager->destroyQuery(mRaySceneQuery);
         }
     }
 #ifdef WIN32
@@ -445,7 +454,7 @@ void CEvent::mousePressed (MouseEvent *e)
             }
             /// Move the player.
             Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
-            ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_GOTO, (int)pos.x, (int) pos.z);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int)pos.x, (int) pos.z);
         }
     }
     e->consume();

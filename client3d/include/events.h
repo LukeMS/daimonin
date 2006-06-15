@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #ifndef EVENTS_H
 #define EVENTS_H
+
 #include <Ogre.h>
 #include <OgreEventListeners.h>
 #include "tile_manager.h"

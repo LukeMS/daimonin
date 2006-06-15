@@ -28,7 +28,6 @@ http://www.gnu.org/licenses/licenses.html
 #define GUI_TEXTOUT_H
 
 #include <Ogre.h>
-#include <string>
 
 using namespace Ogre;
 
@@ -50,7 +49,7 @@ typedef struct TextLine
     int font;
     int index;
     bool clipped;
-    std::string text;
+    String text;
     uint32 *BG_Backup;
 }
 TextLine;

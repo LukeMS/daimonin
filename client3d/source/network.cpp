@@ -612,7 +612,7 @@ void Network::Update()
         else  if (GuiManager::getSingleton().finishedTextInput())
         {
             const char *InputString = GuiManager::getSingleton().getTextInput();
-            int strLen = strlen(InputString);
+            int strLen = (int) strlen(InputString);
             if (!GameStatusLogin && (strLen < 6 || strLen > 17))
             {
                 dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
@@ -658,6 +658,8 @@ void Network::Update()
             else  if (GuiManager::getSingleton().finishedTextInput())
             {
                 Logger::log().info() << "Login: send verify password <*****>";
+
+                Logger::log().info() << InputString;
                 send_reply(InputString);
                 Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_WAIT);
                 // now wait again for next server question

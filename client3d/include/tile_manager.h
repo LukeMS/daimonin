@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef TILE_MANAGER_H
 #define TILE_MANAGER_H
 
-#include "Ogre.h"
+#include <Ogre.h>
 #include "define.h"
 #include "tile_chunk.h"
 #include "tile_interface.h"
@@ -136,7 +136,7 @@ private:
         /** Row of the texture in the terrain-texture. **/
         unsigned char terrain_row;
     }
-    mMap[CHUNK_SIZE_X][CHUNK_SIZE_Z];
+    mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
 
     SceneManager *mSceneManager;
     TileChunk mMapchunk;

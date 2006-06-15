@@ -30,6 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 
 const char *Logger::mFilename = FILE_LOGGING;
 bool Logger::mTable = false;
+bool Logger::mList = false;
 
 ///================================================================================================
 /// .
@@ -42,6 +43,7 @@ Logger::Logger()
     << "<html><head><title>" << PRG_NAME << " - Logfile</title></head>" <<
     "<style>\n" <<
     "td.Info {color:black;  }\n" <<
+    "td.List {color:black;  }\n" <<
     "td.Warn {color:orange; }\n" <<
     "td.Error{color:red;    }\n" <<
     "td.Ok   {color:#00ff00;}\n" <<
@@ -76,7 +78,7 @@ void Logger::headline(const char *text)
     if(!log_stream.is_open()) throw std::bad_exception();
     if (mTable)
     {
-        log_stream << "</table>\n";
+        log_stream << "\n</table>\n";
         mTable = false;
     }
     log_stream << "\n<hr><h2>" << text << "</h2>\n";
@@ -89,11 +91,11 @@ void Logger::success(bool status)
 {
     std::ofstream log_stream(mFilename, std::ios::out | std::ios::in| std::ios::binary);
     if(!log_stream.is_open()) throw std::bad_exception();
-    log_stream.seekp(-10, std::ios::end);
+    log_stream.seekp(-5, std::ios::end);
     if (status)
-        log_stream << "<tr><td class=\"Ok\"> ok </td></tr>\n";
+        log_stream << "<td width=\"5%\" class=\"Ok\"> ok </td></tr>";
     else
-        log_stream << "<tr><td class=\"Error\"> failed </td></tr>\n";
+        log_stream << "<td width=\"5%\" class=\"Error\"> failed </td></tr>";
 }
 
 ///================================================================================================
@@ -126,10 +128,16 @@ Logger::LogEntry::LogEntry(const char *type)
     if(!out.is_open())  throw std::bad_exception();
     if (!mTable)
     {
-        out << "<table>\n";
+        out << "<table  width=\"100%\">";
         mTable = true;
     }
-    out << "  <tr><td class=\"" << type << "\">";
+    out << "\n<tr><td width= \"95%\" class=\"" << type << "\">";
+    if (!mList && type && type[0]=='L') //"List"
+    {
+        out << "<li>";
+        mList = true;
+        return;
+    }
 }
 
 ///================================================================================================
@@ -138,5 +146,10 @@ Logger::LogEntry::LogEntry(const char *type)
 Logger::LogEntry::~LogEntry()
 {
     if(!out.is_open())  throw std::bad_exception();
-    out << "  </td></tr>\n";
+    if (mList)
+    {
+        out << "</li>";
+        mList = false;
+    }
+    out << "</td></tr>";
 }

@@ -29,7 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "gui_gadget_combobox.h"
 #include "gui_textout.h"
-#include "gui_manager.h"
+#include "gui_window.h"
 #include "logger.h"
 
 GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY) : GuiGadget(xmlElement, w, h, maxX, maxY)

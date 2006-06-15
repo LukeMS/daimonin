@@ -27,7 +27,6 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_ELEMENT_H
 #define GUI_ELEMENT_H
 
-#include <string>
 #include <tinyxml.h>
 #include <Ogre.h>
 
@@ -97,10 +96,10 @@ protected:
     int mX, mY, mWidth, mHeight, mSrcWidth, mSrcHeight;
     int mFontNr;
     int mState;
-    std::string mStrType, mStrName, mStrImageName;
+    String mStrType, mStrName, mStrImageName;
     uint32 mFillColor;
     int mIndex;
-    std::string mStrLabel, mStrBgLabel, mStrTooltip;
+    String mStrLabel, mStrBgLabel, mStrTooltip;
     unsigned char mLabelColor[3];
     int mLabelFont;
     int mLabelXPos, mLabelYPos;

@@ -32,9 +32,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "network.h"
 #include "tile_manager.h"
-#include "gui_textout.h"
 #include "gui_manager.h"
-#include "gui_imageset.h"
 #include "object_manager.h"
 #include "particle_manager.h"
 #include "spell_manager.h"
@@ -310,7 +308,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"once, so movement is limited in this");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"demo to a distance of 2 tiles.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~4 ... 8~ to change cloth.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~a~ to change Idle animation.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~b~ to change Attack animation.");
@@ -330,7 +328,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         default:
         {
-            ObjectManager::getSingleton().update(OBJECT_NPC, evt);
+            ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
             ParticleManager::getSingleton().moveNodeObject(evt);
             mIdleTime += evt.timeSinceLastFrame;
             if (mIdleTime > 30.0)
