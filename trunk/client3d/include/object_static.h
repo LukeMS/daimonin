@@ -29,10 +29,26 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <Ogre.h>
 #include "define.h"
-#include "object_static.h"
 #include "object_animate.h"
 
 using namespace Ogre;
+
+typedef struct
+{
+    int type;
+    String nickName;
+    String meshName;
+    String particleName;
+    int posX, posY;
+    unsigned int index;
+    Real facing;
+    int attack;
+    int defend;
+    int maxHP;
+    int maxMana;
+    int maxGrace;
+}
+sObject;
 
 class ObjectStatic
 {
@@ -40,12 +56,11 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjectStatic(const char *filename, int posX, int posY, float Facing);
-    ~ObjectStatic()
-    {}
-    void freeRecources();
-    void moveToTile(int x, int z);
-    void faceToTile(int x, int z);
+    ObjectStatic(sObject &obj);
+    virtual ~ObjectStatic();
+    virtual void freeRecources();
+    virtual void update(const FrameEvent& event);
+
     void move(Vector3 &pos);
     const Vector3 &getPos()
     {
@@ -59,31 +74,32 @@ public:
     {
         return mNode;
     }
-    void update(const FrameEvent& event);
-    void setTexture(int pos, int color, int textureNr);
-    void toggleMesh   (int pos, int WeaponNr);
     Real getFacing()
     {
         return mFacing.valueRadians();
     }
-
-
+    void toggleAnimation(int animGroup, int animNr)
+    {
+        mAnim->toggleAnimation(animGroup, animNr);
+    }
+    const String &getNickName()
+    {
+        return mNickName;
+    }
+protected:
+    static SceneManager *mSceneMgr;
+    Vector3 mTranslateVector, mBoundingBox;
+    ObjectAnimate *mAnim;
+    Degree mFacing, mNewFacing;
+    unsigned int mIndex;
+    SceneNode *mNode;
+    Entity *mEntity;
+    Pos2D mActPos;   /**< the actual pos in the map. **/
+    String mNickName;
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    static unsigned int mInstanceNr; /// mInstanceNr = 0 -> Player's Hero
-    static SceneManager *mSceneMgr;
-
-    unsigned int thisStatic;
-    TexturePtr mTexture;
-    Degree mFacing, mNewFacing;
-    int mPosX, mPosZ;   /// the actual tile-pos of the NPC.
-    SceneNode *mNode;
-    Entity *mEntity;
-    Vector3 mTranslateVector, mBoundingBox;
-    ObjectAnimate *mAnim;
-    Real animOffset; /// every npc gets a random animation offset. preventing of  synchronous "dancing"
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.

@@ -30,7 +30,9 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include "Ogre.h"
 #include "object_npc.h"
+#include "object_player.h"
 #include "object_static.h"
+#include "object_equipment.h"
 
 using namespace Ogre;
 
@@ -42,16 +44,28 @@ using namespace Ogre;
 
 enum
 {
-    OBJECT_PLAYER, OBJECT_NPC, OBJECT_STATIC, OBJECT_SUM
-};
-enum
-{
     OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
 };
 
 class ObjectManager
 {
 public:
+    // Independant objects
+    enum
+    {
+        OBJECT_PLAYER,
+        OBJECT_NPC,
+        OBJECT_STATIC,
+        OBJECT_SUM,
+    };
+    // Attached objects
+    enum
+    {
+        ATTACHED_OBJECT_WEAPON,
+        ATTACHED_OBJECT_ARMOR,
+        ATTACHED_OBJECT_SUM,
+    };
+
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
@@ -61,18 +75,26 @@ public:
     }
     void freeRecources();
     bool init();
-    bool addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing);
+    void addMobileObject(sObject &obj);
+    void addBoneObject(unsigned int type, const char *meshName, const char *particleName);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
+    const Entity *getWeaponEntity(unsigned int WeaponNr);
+    unsigned int getSumWeapon()
+    {
+        return (unsigned int) mvObject_weapon.size();
+    }
+    unsigned int getSumArmor()
+    {
+        return (unsigned int) mvObject_armor.size();
+    }
+
     void castSpell(int npc, int spell)
     {
         mvObject_npc[npc]->castSpell(spell);
     }
-    void toggleMesh(int npc, int pos, int WeaponNr)
-    {
-        mvObject_npc[npc]->toggleMesh(pos, WeaponNr);
-    }
+    void setPlayerEquipment(int player, int pos, int WeaponNr);
     const Vector3& getPos(int npc)
     {
         return mvObject_npc[npc]->getPos();
@@ -85,16 +107,19 @@ public:
     {
         return mvObject_npc[npc]->getNode();
     }
-    void ObjectManager::synchToWorldPos(Vector3 pos);
+    void synchToWorldPos(Vector3 pos);
     void selectNPC(MovableObject *mob);
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
     std::string mDescFile;
-    std::vector<ObjectStatic*>mvObject_static;
-    std::vector<ObjectNPC*   >mvObject_npc;
-
+    std::vector<ObjectStatic*   >mvObject_static;
+    std::vector<ObjectPlayer*   >mvObject_player;
+    std::vector<ObjectNPC*      >mvObject_npc;
+    std::vector<ObjectEquipment*>mvObject_weapon;
+    std::vector<ObjectEquipment*>mvObject_armor;
+    int mSelectedType, mSelectedObject;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

@@ -24,75 +24,62 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "object_static.h"
+#include "object_equipment.h"
+#include "object_manager.h"
 #include "sound.h"
 #include "events.h"
+#include "option.h"
 #include "logger.h"
 
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
-SceneManager *ObjectStatic::mSceneMgr =0;
+unsigned int ObjectEquipment::mWeaponID =0;
+unsigned int ObjectEquipment::mArmorID  =0;
+
+///================================================================================================
+/// .
+///================================================================================================
+ObjectEquipment::~ObjectEquipment()
+{}
 
 ///================================================================================================
 /// Free all recources.
 ///================================================================================================
-void ObjectStatic::freeRecources()
-{
-    if (mAnim) delete mAnim;
-}
-
-///================================================================================================
-/// Destructor.
-///================================================================================================
-ObjectStatic::~ObjectStatic()
+void ObjectEquipment::freeRecources()
 {}
 
 ///================================================================================================
-/// Init the object.
+/// Init the model from the description file.
 ///================================================================================================
-ObjectStatic::ObjectStatic(sObject &obj)
+ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, const char *particleName)
 {
-    if (!mSceneMgr)
+    Logger::log().info()  << "Adding object: " << meshName << ".";
+    switch (type)
     {
-        mSceneMgr = Event->GetSceneManager();
-        Logger::log().headline("Init Actor Models");
+        case ObjectManager::ATTACHED_OBJECT_WEAPON:
+        {
+            String tmpName = "Weapon_" + StringConverter::toString(mWeaponID++, 4, '0');
+            mEntity= Event->GetSceneManager()->createEntity(tmpName, meshName);
+            mEntity->setQueryFlags(QUERY_EQUIPMENT_MASK);
+            if (particleName) mStrParticleName = particleName;
+            break;
+        }
+        case ObjectManager::ATTACHED_OBJECT_ARMOR:
+        {
+            String tmpName = "Armor_" + StringConverter::toString(mWeaponID++, 4, '0');
+            mEntity= Event->GetSceneManager()->createEntity(tmpName, meshName);
+            mEntity->setQueryFlags(QUERY_EQUIPMENT_MASK);
+            if (particleName) mStrParticleName = particleName;
+            break;
+        }
     }
-    mIndex    = obj.index;
-    mActPos.x = obj.posX;
-    mActPos.z = obj.posY;
-    mNickName = obj.nickName;
-    mFacing   = Degree(obj.facing);
-    Logger::log().info()  << "Adding object: " << obj.meshName << ".";
-    mEntity =mSceneMgr->createEntity("Obj_"+StringConverter::toString(obj.type, 2, '0')+"_" + StringConverter::toString(mIndex, 5, '0'), obj.meshName);
-    mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
-    Vector3 pos;
-    const AxisAlignedBox &AABB = mEntity->getBoundingBox();
-    mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
-    mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
-    mBoundingBox.y = AABB.getMinimum().y;
-    pos.x = mActPos.x * TILE_SIZE_X + mBoundingBox.x;
-    pos.z = mActPos.z * TILE_SIZE_Z + mBoundingBox.z;
-    pos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mActPos.x, mActPos.z)) - mBoundingBox.y;
-    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
-    mNode->attachObject(mEntity);
-    mNode->yaw(mFacing);
-    /// Create the animations.
-    mAnim = new ObjectAnimate(mEntity);
 }
 
 ///================================================================================================
-/// Update object.
+/// .
 ///================================================================================================
-void ObjectStatic::update(const FrameEvent& event)
+const Entity *ObjectEquipment::getEntity()
 {
-    mAnim->update(event);
-}
-
-///================================================================================================
-/// Move the object to the given position.
-///================================================================================================
-void ObjectStatic::move(Vector3 &pos)
-{
-    mNode->setPosition(mNode->getPosition() + pos);
+    return mEntity;
 }

@@ -20,6 +20,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "tile_interface.h"
 #include "tile_manager.h"
+#include "logger.h"
 
 ///================================================================================================
 ///

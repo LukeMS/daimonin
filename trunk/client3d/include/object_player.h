@@ -24,77 +24,69 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef OBJECT_ANIMATE_H
-#define OBJECT_ANIMATE_H
+#ifndef ObjectPlayer_H
+#define ObjectPlayer_H
 
-#include <Ogre.h>
+#include "define.h"
+#include "object_npc.h"
+#include "object_equipment.h"
 
 using namespace Ogre;
 
-/// ////////////////////////////////////////////////////////////////////
-/// Defines.
-/// ////////////////////////////////////////////////////////////////////
+const int MAX_MODEL_TEXTURE_SIZE = 512;
 
-///================================================================================================
-/// Class.
-///================================================================================================
-class ObjectAnimate
+class ObjectPlayer: public ObjectNPC
 {
 public:
+    typedef struct
+    {
+        short w, h;             /// width and height of the image.
+        short dstX, dstY;       /// pos of the image in the model-texture.
+        short srcX, srcY;       /// pos of the image in the race-template-texture.
+        short offsetX, offsetY; /// offset for the next source image.
+    }
+    sPicture;
+    enum
+    {
+        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY
+    };
+    enum
+    {
+        TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
+        TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
+        TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
+    };
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjectAnimate(Entity *entity);
-    ~ObjectAnimate();
-    bool isMovement()
-    {
-        return (mAnimGroup <= ANIM_GROUP_RUN);
-    }
-    int getSumAnimsInGroup(int animGroup)
-    {
-        return mAnimGroupEntries[animGroup];
-    }
-    void update(const FrameEvent& event);
-    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
-    Real getAnimSpeed()
-    {
-        return mAnimSpeed;
-    }
-    enum AnimGroup
-    {
-        /// Movement.
-        ANIM_GROUP_IDLE,
-        ANIM_GROUP_IDLE_FUN,
-        ANIM_GROUP_WALK,
-        ANIM_GROUP_RUN,
-        /// Non-movement.
-        ANIM_GROUP_ABILITY,
-        ANIM_GROUP_ATTACK,
-        ANIM_GROUP_ATTACK_FUN,
-        ANIM_GROUP_BLOCK,
-        ANIM_GROUP_HIT,
-        ANIM_GROUP_SLUMP,
-        ANIM_GROUP_DEATH,
-        ANIM_GROUP_CAST,
-        ANIM_GROUP_CAST_FUN,
-        ANIM_GROUP_SUM
-    };
+    ObjectPlayer(sObject &obj);
+    virtual ~ObjectPlayer();
+    virtual void freeRecources();
+    virtual void update(const FrameEvent& event);
+    void moveToTile(int x, int z);
+    void faceToTile(int x, int z);
+    void castSpell(int spell);
+    void setTexture(int pos, int color, int textureNr);
+    void toggleMesh   (int pos, int WeaponNr);
+    void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
 
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    int mAnimGroup, mAnimNr;
-    bool mPause;
-    bool mIsAnimated;
-    Real mAnimSpeed;
-    AnimationState *mActState;
-    std::vector<AnimationState*>mAnimState;
-    unsigned char mAnimGroupEntries[ANIM_GROUP_SUM];
-    static const char *StateNames[ANIM_GROUP_SUM];
+    static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
+    static uchar *texImageBuf;
+    enum
+    {
+        SIDE_BACK,
+        SIDE_FRONT
+    };
+    TexturePtr mTexture;
+    Entity *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
+
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
+    ObjectPlayer(const ObjectPlayer&); // disable copy-constructor.
 };
-
 #endif

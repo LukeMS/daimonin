@@ -27,14 +27,12 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_MANAGER_H
 #define GUI_MANAGER_H
 
-#include <string>
 #include <vector>
-#include <Ogre.h>
 #include <tinyxml.h>
+#include <Ogre.h>
 #include "gui_window.h"
-#include "gui_imageset.h"
 #include "gui_cursor.h"
-#include "logger.h"
+#include "gui_imageset.h"
 
 using namespace Ogre;
 
@@ -118,7 +116,7 @@ private:
     bool mTooltipRefresh;
     bool mIsDragging;
     bool mProcessingTextInput;
-    std::string  mStrTooltip, mBackupTextInputString;
+    String  mStrTooltip, mBackupTextInputString;
     class GuiWindow *guiWindow;
     unsigned int mScreenWidth, mScreenHeight;
     clock_t mTooltipDelay;

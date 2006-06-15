@@ -23,10 +23,10 @@
   <!--#############################################-->
   <!--WINDOW: Engine Statistics                    -->
   <!--#############################################-->
-  <Window name= "Statistics" relativeCoords= "false">
-    <Pos      x= "15" y= "15" zOrder = "50" />
-    <Size     width= "150" height= "88" />
-    <DragArea x= "0" y= "0" width= "150" height= "17" />
+  <Window name= "Statistics">
+    <Size      width= "150" height= "88" />
+    <Pos       x= "5" y= "5" zOrder = "50" />
+    <DragArea  x= "0" y= "0" width= "150" height= "17" />
     <Tooltip  text= "This is the Player Info Window." />
     <!--=============================================-->
     <!-- Borderlines                                 -->
@@ -71,226 +71,57 @@
     <TextBox x= "100" y= "70" font="02" text= "0000"  width = "40" name= "Engine_SumTris" />
   </Window>
 
+
+
   <!--#############################################-->
-  <!--WINDOW: Test 001                             -->
+  <!--WINDOW: Player Statistics                    -->
   <!--#############################################-->
-  <Window name= "PlayerInfo" relativeCoords= "false">
-    <Pos      x= "15" y= "150" zOrder = "250" />
-    <Size     width= "340" height= "440" />
-    <DragArea x= "0" y= "0" width= "320" height= "29" />
+  <Window name= "PlayerInfo">
+    <!--  values > 0: left/top     alignment  -->
+    <!--  values < 0: right/bottom alignment  -->
+    <!--  entry completly missing : centered  -->
+    <Size     width= "800" height= "106" />
+    <Pos      y= "-106" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "0" height= "0" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
-
-    <!--=============================================-->
-    <!-- Seamless Background                         -->
-    <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
-      <Pos x= "0" y= "0" />
-      <Range width= "340" height= "440" />
-    </Graphic>
-
-    <!--=============================================-->
-    <!-- Window Title                                -->
-    <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
-      <Pos x= "0" y= "0" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "10" y= "0" />
-      <Range width= "330" height= "5" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
-      <Pos x= "331" y= "0" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Label x=  "100" y= "8" font="02" text= "Titlebar ygW" />
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "5" y= "30" />
-      <Range width= "335" height= "5" />
-    </Graphic>
 
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
-      <Pos x= "0" y= "431" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "10" y= "435" />
-      <Range width= "330" height= "5" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
-      <Pos x= "331" y= "431" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "0" y= "10" />
-      <Range width= "5" height= "422" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "335" y= "10" />
-      <Range width= "5" height= "422" />
-    </Graphic>
-
-
-    <!--=============================================-->
-    <!-- Layer 1                                     -->
-    <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
-      <Pos x= "30" y= "50" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "41" y= "50" />
-      <Range width= "261" height= "5" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
-      <Pos x= "300" y= "50" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
-      <Pos x= "30" y= "396" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "40" y= "400" />
-      <Range width= "261" height= "5" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
-      <Pos x= "300" y= "396" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "30" y= "59" />
-      <Range width= "5" height= "337" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "304" y= "59" />
-      <Range width= "5" height= "337" />
-    </Graphic>
-
-    <!--=============================================-->
-    <!-- Layer 2                                     -->
-    <!--=============================================-->
-    <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
-      <Pos x= "325" y= "0" />
-      <Tooltip  text= "I am the close button." />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "But_Min" image_name = "Button_01_Close">
+    <Graphic type= "GFX_FILL"  image_name = "PlayerStatusBG">
       <Pos x= "0" y= "0" />
-      <Tooltip  text= "I am the close button." />
-    </Gadget>
+      <Range width= "800" height= "106" />
+    </Graphic>
 
-    <Gadget type= "BUTTON"  name = "But_Max" image_name = "Button_01_Close">
-      <Pos x= "15" y= "0" />
-      <Tooltip  text= "I am the close button." />
-    </Gadget>
-
-<!--
-    <Gadget type= "COMBOBOX"  name = "ComboBoxTest" image_name = "Blue_Background">
-      <Pos x= "40" y= "380" />
-      <Range width= "148" height= "17" />
-      <Label xPos= "40" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "CBox"/>
-      <Tooltip  text= "I am suposed to be a combobox." />
-      <Button image_name="Button_01_Down" />
-      <Option text="Monkey With a Long tail"/>
-      <Option text="PigMMMMMMMMMMMMMMMMMMMMMMMMM"/>
-      <Option text="1"/>
-      <Option text="2"/>
-      <Option text="3"/>
-      <Scroll>
-        <Down image_name="ScrollButton_01_Down" />
-        <Up image_name="ScrollButton_01_Up" />
-      </Scroll>
-     </Gadget>
--->
-
-
-    <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
-      <Pos x= "30" y= "410" />
-      <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
-      <Tooltip  text= "Press here to ACCEPT." />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "But_Cancel" image_name = "Button_01_Std">
-      <Pos x= "255" y= "410" />
-      <Label xPos= "6" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
-      <Tooltip  text= "Press here to CANCEL." />
-    </Gadget>
-
-    <Statusbar type="COLOR_FILL" name = "Bar_Health">
-      <Pos  x= "150" y= "120" />
-      <Range width= "17" height= "80" />
-      <Color red= "128" green= "0" blue= "0" alpha = "255" />
+    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "PlayerStatusBar">
+      <Pos x= "347" y= "0" />
+      <Range width= "35" height= "106" />
+      <Label xPos= "0" yPos= "16" red= "255" green= "0" blue= "0" alpha = "255" />
     </Statusbar>
 
-    <Statusbar type="COLOR_FILL" name = "Bar_Grace">
-      <Pos  x= "170" y= "120" />
-      <Range width= "17" height= "80" />
-      <Color red= "128" green= "128" blue= "0" alpha = "255" />
+    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerStatusBar">
+      <Pos x= "382" y= "0" />
+      <Range width= "35" height= "106" />
+      <Label xPos= "0" yPos= "16" red= "0" green= "255" blue= "0" alpha = "255" />
     </Statusbar>
 
-    <Statusbar type="COLOR_FILL" name = "Bar_Mana">
-      <Pos  x= "190" y= "120" />
-      <Range width= "17" height= "80" />
-      <Color red= "0" green= "50" blue= "128" alpha = "255" />
+    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerStatusBar">
+      <Pos x= "417" y= "0" />
+      <Range width= "35" height= "106" />
+      <Label xPos= "0" yPos= "16" red= "255" green= "255" blue= "0" alpha = "255" />
     </Statusbar>
-
-    <Label x=  "60" y= "210" font="03" text= "Text@00 using system font" />
-    <Label x=  "60" y= "222" font="03" text= "Text@03 using font #3" />
-    <Label x=  "60" y= "235" font="03" text= "Text@04 using font #4" />
-
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "PlayerHealthbar">
-      <Pos x= "65" y= "65" />
-      <Range width= "50" height= "136" />
-      <Label xPos= "0" yPos= "20" red= "128" green= "11" blue= "11" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerHealthbar">
-      <Pos x= "120" y= "65" />
-      <Range width= "50" height= "136" />
-      <Label xPos= "0" yPos= "20" red= "11" green= "128" blue= "11" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerHealthbar">
-      <Pos x= "175" y= "65" />
-      <Range width= "50" height= "136" />
-      <Label xPos= "0" yPos= "20" red= "128" green= "128" blue= "11" alpha = "255" />
-    </Statusbar>
-
-
-<!--
-    <NPC_Head x= "95" y= "170" mesh= "facial.mesh" name="Trader" />
--->
   </Window>
+
+
 
   <!--#############################################-->
   <!--WINDOW: Message Window                       -->
   <!--#############################################-->
-  <Window name= "TextWindow" relativeCoords= "false">
-    <Pos      x= "600" y= "100" zOrder = "400" />
+  <Window name= "TextWindow">
     <Size     width= "280" height= "250" />
+    <Pos      x= "-280" y= "0" zOrder = "400" />
     <DragArea x= "0" y= "0" width= "280" height= "18" />
-    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
+    <Tooltip  text= "Message Window." />
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Background">
       <Pos x= "0" y= "0" />
@@ -331,34 +162,19 @@
 
     <Listbox type= "" name= "List_Msg" font="03">
       <Pos x= "1" y= "18" />
-      <Range width= "280" height= "200" />
+      <Range width= "280" height= "250" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
     </Listbox>
 
-
-
-
-
-
-
-
   </Window>
-
-
-
-
-
-
-
-
 
 
   <!--#############################################-->
   <!--WINDOW: Login Window                         -->
   <!--#############################################-->
-  <Window name= "Login" relativeCoords= "false">
-    <Pos      x= "200" y= "200" zOrder = "250" />
+  <Window name= "Login">
     <Size     width= "300" height= "400" />
+    <Pos      x= "200" y= "200" zOrder = "250" />
     <DragArea x= "0" y= "0" width= "200" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 

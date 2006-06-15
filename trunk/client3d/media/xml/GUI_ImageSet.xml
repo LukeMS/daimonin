@@ -61,8 +61,12 @@
       <!--=============================================-->
       <!-- StatusBars                                  -->
       <!--=============================================-->
-      <Image name= "PlayerHealthbar" width= " 51" height="136">
-          <State name= "Standard" posX= "135" posY=  "359" />
+      <Image name= "PlayerStatusBG" width= "800" height="106">
+          <State name= "Standard" posX= "0" posY=  "393" />
+      </Image>
+
+      <Image name= "PlayerStatusBar" width= "35" height="106">
+          <State name= "Standard" posX= "382" posY=  "393" />
       </Image>
 
       <!--=============================================-->

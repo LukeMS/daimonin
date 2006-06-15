@@ -27,8 +27,8 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef PARTICLE_MANAGER_H
 #define PARTICLE_MANAGER_H
 
-#include <Ogre.h>
 #include <vector>
+#include <Ogre.h>
 #include "particle.h"
 
 using namespace Ogre;

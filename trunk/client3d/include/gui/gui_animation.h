@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_ANIMATION_H
 #define GUI_ANIMATION_H
 
+#include <tinyxml.h>
 // an animated 2d-gfx
 // in a gui_window.
 ///================================================================================================

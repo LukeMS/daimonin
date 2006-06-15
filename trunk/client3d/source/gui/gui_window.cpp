@@ -142,19 +142,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             mSizeRelative = true;
     }
     /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Position entries.
-    /// ////////////////////////////////////////////////////////////////////
-    mPosX = mPosY = mPosZ = 100;
-    if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
-    {
-        if ((strTmp = xmlElem->Attribute("x")))
-            mPosX = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("y")))
-            mPosY = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("zOrder")))
-            mPosZ = atoi(strTmp);
-    }
-    /// ////////////////////////////////////////////////////////////////////
     /// Parse the Size entries.
     /// ////////////////////////////////////////////////////////////////////
     if ((xmlElem = xmlRoot->FirstChildElement("Size")))
@@ -168,6 +155,35 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         mWidth  = MIN_GFX_SIZE;
     if (mHeight < MIN_GFX_SIZE)
         mHeight = MIN_GFX_SIZE;
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Parse the Position entries.
+    /// ////////////////////////////////////////////////////////////////////
+    mPosX = mPosY = mPosZ = 100;
+    if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
+    {
+        if ((strTmp = xmlElem->Attribute("x")))
+        {
+            mPosX = atoi(strTmp);
+            if (mPosX <0) mPosX += GuiManager::getSingleton().getScreenWidth()+1;
+        }
+        else // centred.
+        {
+           mPosX = (GuiManager::getSingleton().getScreenWidth() - mWidth)/2;
+        }
+        if ((strTmp = xmlElem->Attribute("y")))
+        {
+            mPosY = atoi(strTmp);
+            if (mPosY <0) mPosY += GuiManager::getSingleton().getScreenHeight()+1;
+        }
+        else // centred.
+        {
+           mPosY = (GuiManager::getSingleton().getScreenHeight() - mHeight)/2;
+        }
+        if ((strTmp = xmlElem->Attribute("zOrder")))
+            mPosZ = atoi(strTmp);
+    }
+
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Dragging entries.
     /// ////////////////////////////////////////////////////////////////////
@@ -298,13 +314,11 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         {
             for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
             {
-Logger::log().error() << "1";
                 if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
                 {
                     textline->index = GuiImageset::getSingleton().getElementIndex(i);
                     break;
                 }
-Logger::log().error() << "2";
             }
         }
         else /// Error: No name found. Fallback to label.
@@ -312,7 +326,6 @@ Logger::log().error() << "2";
             Logger::log().error() << "A Textbox without a name was found.";
             textline->index = -1;
         }
-Logger::log().error() << "3";
         textline->BG_Backup = 0;
         if ((strTmp = xmlElem->Attribute("font")))
             textline->font = atoi(strTmp);

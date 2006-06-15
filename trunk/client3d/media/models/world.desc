@@ -1,37 +1,81 @@
 #####################################################################################
-# This is a client3d description file for the world description.
-# This file is part of Daimonin (http://daimonin.sourceforge.net)
-#####################################################################################
 # IMPORTANT:
 # Whole file is CASE SENSITIVE !!!
-#
-# Post all comments to the daimonin devel-list.
-# <polyveg>
 #####################################################################################
 
-TileBlending : "0" # blending offset isn't used for movement atm (=very ugly walking)
-
-# First "NPC" is our Hero
-Type     : "npc"
-MeshName : "Human_M_Fighter.desc"
-PosX     : "7"
-PosY     : "7"
+#####################################################################################
+# Creatures:
+#####################################################################################
+Type     : "player"                       # First "player" is our Hero
+MeshName : "Human_M_Fighter.mesh"
+NickName : "Polyveg"
+Attack   : "10"
+Defend   : "10"   
+MaxHP    : "100"
+MaxMana  : "100"   
+MaxGrace : "100"
+PosX     : "7"                            # Ignored on Hero.  
+PosY     : "7"                            # Ignored on Hero.  
 Facing   : "0" # [degrees]
 
-#Type     : "npc"
-#MeshName : "Human_M_Fighter.desc"
-#PosX     : "2"
-#PosY     : "2"
-#Facing   : "15" # [degrees]
+Type     : "npc"
+MeshName : "Tentacle_N_Small.mesh"
+NickName : "Friendly Tentacle"
+Attack   : "5"
+Defend   : "2"   
+MaxHP    : "10"
+MaxMana  : "0"   
+MaxGrace : "0"
+PosX     : "6"
+PosY     : "6"
+Facing   : "0"
 
+Type     : "npc"
+MeshName : "Tentacle_N_Small.mesh"
+NickName : "Neutral Tentacle"
+Attack   : "5"
+Defend   : "2"   
+MaxHP    : "20"
+MaxMana  : "0"   
+MaxGrace : "0"
+PosX     : "6"
+PosY     : "7"
+Facing   : "45"
+
+Type     : "npc"
+MeshName : "Tentacle_N_Small.mesh"
+NickName : "Evil Tentacle"
+Attack   : "5"
+Defend   : "2"   
+MaxHP    : "50"
+MaxMana  : "0"   
+MaxGrace : "0"
+PosX     : "6"
+PosY     : "8"
+Facing   : "10"
+
+#####################################################################################
+# Environment:
+#####################################################################################
 Type     : "static"
 MeshName : "Tree.mesh"
-PosX     : "3"
+NickName : "Tee"
+PosX     : "4"
 PosY     : "12"
-Facing   : "90"   # Not used in static meshes.
+Facing   : "0"
 
-Type     : "static"
-MeshName : "Bush.mesh"
-PosX     : "3"
-PosY     : "15"
-Facing   : "90"   # Not used in static meshes.
+#####################################################################################
+# Equipment:
+#####################################################################################
+Type     : "weapon"
+MeshName : "Sword_Short_01.mesh"
+Particles: "Particle/SwordGlow"
+
+Type     : "weapon"
+MeshName : "Mace_Small_01.mesh"
+
+Type     : "armor"
+MeshName : "Shield_Round_01.mesh"
+
+Type     : "armor"
+MeshName : "Shield_Round_02.mesh"

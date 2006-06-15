@@ -116,23 +116,16 @@ void TileManager::loadMap(const std::string &png_filename)
     size_t dimx = image.getWidth();
     size_t dimy = image.getHeight();
     unsigned int posX = 0, posY;
-    short Map[CHUNK_SIZE_X+2][CHUNK_SIZE_Z+2];
+    short Map[CHUNK_SIZE_X+3][CHUNK_SIZE_Z+3];
     /// ////////////////////////////////////////////////////////////////////
     /// Fill the heightdata buffer with the image-color.
     /// ////////////////////////////////////////////////////////////////////
-    for(int x = 0; x < CHUNK_SIZE_X+2; ++x)
+    for(int x = 0; x < CHUNK_SIZE_X+3; ++x)
     {
         posY =0;
-        for(int y = 0; y < CHUNK_SIZE_Z+2; ++y)
+        for(int y = 0; y < CHUNK_SIZE_Z+3; ++y)
         {
-            if ( x && x != CHUNK_SIZE_X && y && y != CHUNK_SIZE_Z)
-            {
-                Map[x][y] = heightdata_temp[posY * dimx + posX];
-            }
-            else
-            {
-                Map[x][y] = 0;
-            }
+            Map[x][y] = heightdata_temp[posY * dimx + posX];
             if (++posY >= dimy)
                 posY =0; // if necessary, repeat the image.
         }
@@ -140,9 +133,9 @@ void TileManager::loadMap(const std::string &png_filename)
             posX =0; // if necessary, repeat the image.
     }
 
-    for (int x = 0; x < CHUNK_SIZE_X; ++x)
+    for (int x = 0; x < CHUNK_SIZE_X+1; ++x)
     {
-        for (int y = 0; y < CHUNK_SIZE_Z; ++y)
+        for (int y = 0; y < CHUNK_SIZE_Z+1; ++y)
         {
             mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
             //if (mMap[x][y].height > 60) mMap[x][y].height =60;

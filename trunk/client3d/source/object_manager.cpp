@@ -28,12 +28,20 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include "events.h"
-#include "object_npc.h"
 #include "particle.h"
 #include "sound.h"
 #include "spell_manager.h"
 #include "object_manager.h"
 #include "object_visuals.h"
+#include "gui_manager.h"
+
+///================================================================================================
+/// Defines:
+/// * static: fixed to a single pos, does not have ai (stones, walls, trees, ...)
+/// * npc:    controlled by ai.
+/// * player: controlled by a human player.
+///================================================================================================
+
 
 ///================================================================================================
 /// Init all static Elemnts.
@@ -45,7 +53,9 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 bool ObjectManager::init()
 {
-    string strType, strTemp, strMesh;
+    string strType, strTemp, strMesh, strNick;
+    mSelectedType  =-1;
+    mSelectedObject=-1;
     int i=0;
     while(1)
     {
@@ -54,60 +64,154 @@ bool ObjectManager::init()
             Logger::log().info() << "Parse description file " << FILE_WORLD_DESC << ".";
             return false;
         }
+
         if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) break;
-        Option::getSingleton().getDescStr("MeshName", strMesh,i);
+        sObject obj;
+        Option::getSingleton().getDescStr("MeshName", obj.meshName,i);
+        Option::getSingleton().getDescStr("NickName", obj.nickName,i);
+
+        Option::getSingleton().getDescStr("Attack", strTemp,i);
+        obj.attack  = StringConverter::parseInt(strTemp);
+
+        Option::getSingleton().getDescStr("Defend", strTemp,i);
+        obj.defend  = StringConverter::parseInt(strTemp);
+
+        Option::getSingleton().getDescStr("MaxHP", strTemp,i);
+        obj.maxHP  = StringConverter::parseInt(strTemp);
+
+        Option::getSingleton().getDescStr("MaxMana", strTemp,i);
+        obj.maxMana  = StringConverter::parseInt(strTemp);
+
+        Option::getSingleton().getDescStr("MaxGrace", strTemp,i);
+        obj.maxGrace  = StringConverter::parseInt(strTemp);
+
+
         Option::getSingleton().getDescStr("PosX", strTemp,i);
-        int posX = atoi(strTemp.c_str());
+        obj.posX  = StringConverter::parseInt(strTemp);
         Option::getSingleton().getDescStr("PosY", strTemp,i);
-        int posY = atoi(strTemp.c_str());
-        Option::getSingleton().getDescStr("Facing", strTemp);
-        float facing = atof(strTemp.c_str());
-        if (strType == "npc")
+        obj.posY  = StringConverter::parseInt(strTemp);
+        Option::getSingleton().getDescStr("Facing", strTemp,i);
+        obj.facing= StringConverter::parseReal(strTemp);
+        Option::getSingleton().getDescStr("Particles", obj.particleName,i);
+
+        if (strType == "player")
         {
-            addObject(OBJECT_NPC, strMesh.c_str(), posX, posY, facing);
+            static unsigned int index=0;
+            obj.index = index++;
+            /// First player object is our hero.
+            if (obj.index)
+            {
+                obj.posX = CHUNK_SIZE_X /2;
+                obj.posY = CHUNK_SIZE_Z /2;
+            }
+            obj.type = OBJECT_PLAYER;
+            addMobileObject(obj);
         }
-        else
+        else if (strType == "npc")
         {
-            addObject(OBJECT_STATIC, strMesh.c_str(), posX, posY, facing);
+            static unsigned int index=0;
+            obj.index = index++;
+            obj.type = OBJECT_NPC;
+            addMobileObject(obj);
+        }
+        else if (strType == "static")
+        {
+            static unsigned int index=0;
+            obj.index = index++;
+            obj.type = OBJECT_STATIC;
+            addMobileObject(obj);
+        }
+        else if (strType == "weapon")
+        {
+            obj.type = ATTACHED_OBJECT_WEAPON;
+            addBoneObject(ATTACHED_OBJECT_WEAPON, obj.meshName.c_str(), obj.particleName.c_str());
+        }
+        else if (strType == "armor")
+        {
+            obj.type = ATTACHED_OBJECT_ARMOR;
+            addBoneObject(ATTACHED_OBJECT_ARMOR, obj.meshName.c_str(), obj.particleName.c_str());
         }
     }
     return true;
 }
 
 ///================================================================================================
-///
+/// Adds a independant object.
 ///================================================================================================
-bool ObjectManager::addObject(unsigned int type, const char *desc_filename, int posX, int posY, float facing)
+void ObjectManager::addMobileObject(sObject &obj)
 {
-    string strTemp;
-    switch (type)
+    switch (obj.type)
     {
-        case OBJECT_STATIC:
+        case OBJECT_STATIC:  // todo: branch this out.
         {
-            /// For static objects we don't use *.desc files.
-            ObjectStatic *obj_static = new ObjectStatic(desc_filename, posX, posY, facing);
-            if (!obj_static) return false;
+            ObjectStatic *obj_static = new ObjectStatic(obj);
+            if (!obj_static) return;
             mvObject_static.push_back(obj_static);
             break;
         }
         case OBJECT_NPC:
         {
-            mDescFile = PATH_MODEL_DESCRIPTION;
-            mDescFile += desc_filename;
-            if(!Option::getSingleton().openDescFile(mDescFile.c_str()))
-            {
-                Logger::log().error() << "Description file " << mDescFile << " (used in ObjectManager::addObject) was not found.";
-                return false;
-            }
-            ObjectNPC *obj_player = new ObjectNPC(desc_filename, posX, posY, facing);
-            if (!obj_player) return false;
-            mvObject_npc.push_back(obj_player);
+            ObjectNPC *obj_npc = new ObjectNPC(obj);
+            if (!obj_npc) return;
+            mvObject_npc.push_back(obj_npc);
+            break;
+        }
+        case OBJECT_PLAYER:
+        {
+            ObjectPlayer *obj_player = new ObjectPlayer(obj);
+            if (!obj_player) return;
+            mvObject_player.push_back(obj_player);
             break;
         }
         default:
-        break;
+        {
+            Logger::log().error() << "Unknow mobile object-type in mesh " << obj.meshName;
+            return;
+        }
     }
-    return true;
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void ObjectManager::setPlayerEquipment(int player, int bone, int WeaponNr)
+{
+    mvObject_player[player]->toggleMesh(bone, WeaponNr);
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+const Entity *ObjectManager::getWeaponEntity(unsigned int WeaponNr)
+{
+    if (WeaponNr >= mvObject_weapon.size())
+        return 0;
+    return mvObject_weapon[WeaponNr]->getEntity();
+}
+
+///================================================================================================
+/// Adds an equipment object.
+///================================================================================================
+void ObjectManager::addBoneObject(unsigned int type, const char *meshName, const char *particleName)
+{
+    switch (type)
+    {
+        case ATTACHED_OBJECT_WEAPON:
+        {
+            ObjectEquipment *obj_weapon = new ObjectEquipment(ATTACHED_OBJECT_WEAPON, meshName, particleName);
+            if (!obj_weapon) return;
+            //obj_weapon->setStats(int va11, int va12, int va13, int va14, int va15);
+            mvObject_weapon.push_back(obj_weapon);
+            break;
+        }
+        case ATTACHED_OBJECT_ARMOR:
+        {
+            ObjectEquipment *obj_armor = new ObjectEquipment(ATTACHED_OBJECT_ARMOR, meshName, particleName);
+            if (!obj_armor) return;
+            mvObject_armor.push_back(obj_armor);
+            break;
+        }
+    }
 }
 
 ///================================================================================================
@@ -123,6 +227,11 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
     {
         mvObject_npc[i]->update(evt);
     }
+    for (unsigned int i = 0; i < mvObject_player.size(); ++i)
+    {
+        mvObject_player[i]->update(evt);
+    }
+
 
 
     /*
@@ -160,46 +269,52 @@ void ObjectManager::synchToWorldPos(Vector3 pos)
     {
         mvObject_static[i]->move(pos);
     }
-    // mvObject_npc[0] is the player.
-    for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
+    for(unsigned int i = 0; i < mvObject_npc.size(); ++i)
     {
         mvObject_npc[i]->move(pos);
     }
+    for(unsigned int i = 1; i < mvObject_player.size(); ++i)
+    {
+        mvObject_player[i]->move(pos);
+    }
+
 }
 
 ///================================================================================================
-/// JUST FOR TESTING.
+/// Event handling.
 ///================================================================================================
-void ObjectManager::Event(int obj_type, int action, int val1, int val2, int val3)
+void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 {
     switch (obj_type)
     {
         case OBJECT_STATIC:
-        break;
-
-        case OBJECT_PLAYER:
         {
-            if (action == OBJ_WALK     ) mvObject_npc[0]->walking(val1);
-            if (action == OBJ_TURN     ) mvObject_npc[0]->turning(val1);
-            if (action == OBJ_TEXTURE  ) mvObject_npc[0]->setTexture(val1, val2, val3);
-            if (action == OBJ_ANIMATION) mvObject_npc[0]->toggleAnimation(val1, val2);
-            if (action == OBJ_GOTO     ) mvObject_npc[0]->moveToTile(val1, val2);
+            break;
         }
-        break;
 
         case OBJECT_NPC:
         {
-            for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
-            {
-                if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
-                if (action == OBJ_TURN     ) mvObject_npc[i]->turning(val1);
-                if (action == OBJ_TEXTURE  ) mvObject_npc[i]->setTexture(val1, val2, val3);
-                if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1, val2);
-            }
+            if (id >= (int) mvObject_npc.size()) break;
+            if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
+            if (action == OBJ_TURN     ) mvObject_npc[id]->turning(val1);
+            if (action == OBJ_ANIMATION) mvObject_npc[id]->toggleAnimation(val1, val2);
+            break;
         }
-        break;
+
+        case OBJECT_PLAYER:
+        {
+            if (id >= (int) mvObject_player.size()) break;
+            if (action == OBJ_GOTO     ) mvObject_player[id]->moveToTile(val1, val2);
+            if (action == OBJ_TURN     ) mvObject_player[id]->turning(val1);
+            if (action == OBJ_WALK     ) mvObject_player[id]->walking(val1);
+            if (action == OBJ_ANIMATION) mvObject_player[id]->toggleAnimation(val1, val2);
+            if (action == OBJ_TEXTURE  ) mvObject_player[id]->setTexture(val1, val2, 0);
+
+            break;
+        }
 
         default:
+        Logger::log().error() << "The requested objectType does not exist.";
         break;
     }
 }
@@ -215,6 +330,13 @@ void ObjectManager::delObject(int )
 ///================================================================================================
 void ObjectManager::freeRecources()
 {
+    for (std::vector<ObjectPlayer*>::iterator i = mvObject_player.begin(); i < mvObject_player.end(); ++i)
+    {
+        (*i)->freeRecources();
+        delete (*i);
+    }
+    mvObject_player.clear();
+
     for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
     {
         (*i)->freeRecources();
@@ -228,14 +350,58 @@ void ObjectManager::freeRecources()
         delete (*i);
     }
     mvObject_static.clear();
+
+    for (std::vector<ObjectEquipment*>::iterator i = mvObject_weapon.begin(); i < mvObject_weapon.end(); ++i)
+    {
+        (*i)->freeRecources();
+        delete (*i);
+    }
+    mvObject_weapon.clear();
+
+	for (std::vector<ObjectEquipment*>::iterator i = mvObject_armor.begin(); i < mvObject_armor.end(); ++i)
+    {
+        (*i)->freeRecources();
+        delete (*i);
+    }
+    mvObject_armor.clear();
+
+
 }
 
 ///================================================================================================
-///
+/// Select the (mouse clicked) object.
 ///================================================================================================
 void ObjectManager::selectNPC(MovableObject *mob)
 {
     ObjectVisuals::getSingleton().selectNPC(mob);
+    String strObject = mob->getName();
+    /// Cut the "Obj_" substring from the entity name.
+    strObject.replace(0, strObject.find("_")+1,"");
+
+    int id = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
+    int type = StringConverter::parseInt(strObject.substr(0,strObject.find("_")));
+    switch (type)
+    {
+        case OBJECT_STATIC:
+        {
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_static[id]->getNickName()).c_str());
+            break;
+        }
+
+        case OBJECT_NPC:
+        {
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[id]->getNickName()).c_str());
+            break;
+        }
+
+        case OBJECT_PLAYER:
+        {
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_player[id]->getNickName()).c_str());
+            break;
+        }
+        default:
+        break;
+    }
 }
 
 ///================================================================================================
