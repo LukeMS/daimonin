@@ -7,4 +7,4 @@ Install a Code::Blocks Version > 1.0rc2 (with MinGW compiler)
 ----
 1) Start the Setup.bat
 2) Dblclk on the Code::Blocks project file
-3) Compile and Run
+3) Build and run
