@@ -196,6 +196,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
+				RelativePath="..\..\..\source\dialog_manager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\events.cpp"
 				>
 			</File>
@@ -232,11 +236,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\object_equipment.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\object_manager.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\object_npc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\object_player.cpp"
 				>
 			</File>
 			<File
@@ -609,6 +621,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\dialog_manager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\events.h"
 				>
 			</File>
@@ -633,11 +649,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\object_equipment.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\object_manager.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\include\object_npc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\object_player.h"
 				>
 			</File>
 			<File
