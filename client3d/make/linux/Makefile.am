@@ -47,15 +47,18 @@ client3d_SOURCES = \
 	../../source/events.cpp \
 	../../source/events_user.cpp \
 	../../source/light_manager.cpp \
+	../../source/dialog_manager.cpp \
 	../../source/logger.cpp \
 	../../source/main.cpp \
 	../../source/network.cpp \
 	../../source/network_cmd.cpp \
 	../../source/network_serverfile.cpp \
+	../../source/object_equipment.cpp \
 	../../source/object_animate.cpp \
 	../../source/object_visuals.cpp \
 	../../source/object_manager.cpp \
 	../../source/object_npc.cpp \
+	../../source/object_player.cpp \	
 	../../source/object_static.cpp \
 	../../source/option.cpp \
 	../../source/option_init.cpp \
