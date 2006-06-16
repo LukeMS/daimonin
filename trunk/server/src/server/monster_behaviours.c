@@ -1666,6 +1666,7 @@ void ai_attraction(object *op, struct mob_behaviour_param *params)
 
 /* TODO: parameterize MAX_IDLE_TIME */
 #define MAX_IDLE_TIME 5
+#define ANTILURE_TIMER_MAX 5
 void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 {
     object                 *oldenemy    = op->enemy;
@@ -1727,12 +1728,17 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                     {
                         if((int)base_rv.distance > antilure_dist_2)
                         {
+							MOB_DATA(op)->antiluring_timer--;
+							if(MOB_DATA(op)->antiluring_timer <= 0)
+							{
 #ifdef DEBUG_AI                            
-                            LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
-                                    query_name(op), query_name(tmp->obj));
+                                LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
+                                        query_name(op), query_name(tmp->obj));
 #endif
-                            continue;
-                        }
+                                continue;
+                            }
+                        } else
+                            MOB_DATA(op)->antiluring_timer = ANTILURE_TIMER_MAX;
                     }
                 }
 
@@ -1741,7 +1747,6 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             }
         }
     }
-
     /* Did we find an enemy? */
     if (worst_enemy)
     {

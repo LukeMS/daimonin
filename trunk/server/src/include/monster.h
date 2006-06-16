@@ -172,6 +172,9 @@ struct mobdata
     struct mob_behaviourset    *behaviours;    /**< This mob's behaviours */
 
     object                     *spawn_info;    /**< quick pointer to spawn info (and so to its spawn point - if one) */
+ 
+    /** Antilure timer */
+    int antiluring_timer; 
 
     /** Self-estimated combat strength */
     int combat_strength; 
