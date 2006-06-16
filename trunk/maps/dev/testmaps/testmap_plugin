@@ -470,9 +470,14 @@ arch sign
 msg
 Testing a simple connection trigger script (on the door)
 Also checking apply on the lever.
+Finally, it tests using a script to trigger a connection by applying a trigger on the connection. (Say 'trigger' to the lever)
 endmsg
 x 2
 y 17
+arch event_obj
+sub_type 1
+race /dev/testmaps/Trigger_Connection.lua
+end
 end
 arch floor_ostone1
 x 2
@@ -486,6 +491,9 @@ arch event_obj
 name lua
 race /dev/testmaps/Event_Apply.lua
 sub_type 1
+end
+arch beacon
+name lever_beacon
 end
 end
 arch floor_ostone1
