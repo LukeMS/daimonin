@@ -580,65 +580,65 @@ int get_npc_attitude(object *op, object *other)
 */
 int get_friendship(object *op, object *other)
 {
-	if(op == NULL || other == NULL)
-	{
-		LOG(llevBug, "BUG: get_friendship('%s', '%s') with NULL parameter\n",
-			STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-		return 0;
-	}
+    if(op == NULL || other == NULL)
+    {
+        LOG(llevBug, "BUG: get_friendship('%s', '%s') with NULL parameter\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+        return 0;
+    }
 
-	if(op->head)
-		op = op->head;
-	if(other->head)
-		other = other->head;    
+    if(op->head)
+        op = op->head;
+    if(other->head)
+        other = other->head;    
 
-	if(op->type == MONSTER)
-	{
-		struct mob_known_obj *known;
+    if(op->type == MONSTER)
+    {
+        struct mob_known_obj *known;
 
-		/* Do we know anything? */
-		if(MOB_DATA(op) == NULL) 
-		{
-			LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
-				STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-			return 0;
-		}
+        /* Do we know anything? */
+        if(MOB_DATA(op) == NULL) 
+        {
+            LOG(llevDebug, "Warning: AI not initialized when requesting friendship of monster '%s' towards '%s'.\n",
+                    STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+            return 0;
+        }
 
-		/* Do we already know this other? */
-		for(known = MOB_DATA(op)->known_mobs; known; known = known->next)
-			if(known->obj == other && known->obj_count == other->count)
-				return known->friendship;
+        /* Do we already know this other? */
+        for(known = MOB_DATA(op)->known_mobs; known; known = known->next)
+            if(known->obj == other && known->obj_count == other->count)
+                return known->friendship;
 
-		/* Calculate it then */
-		return get_npc_attitude(op, other);
-	} 
-	else if (op->type == PLAYER)
-	{
-		/* Try reverse lookup */
-		if(other->type == MONSTER)
-			return get_friendship(other, op);
-		else if (other->type == PLAYER)
-		{
-			/* Check for PvP. TODO: group PvP */
-			if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
-				&& ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
-				return FRIENDSHIP_NEUTRAL;
-			else
-				return FRIENDSHIP_HELP;
-		} 
+        /* Calculate it then */
+        return get_npc_attitude(op, other);
+    } 
+    else if (op->type == PLAYER)
+    {
+        /* Try reverse lookup */
+        if(other->type == MONSTER)
+            return get_friendship(other, op);
+        else if (other->type == PLAYER)
+        {
+            /* Check for PvP. TODO: group PvP */
+            if ((GET_MAP_FLAGS(op->map, op->x, op->y) & P_IS_PVP || op->map->map_flags & MAP_FLAG_PVP) 
+                    && ((GET_MAP_FLAGS(other->map, other->x, other->y) & P_IS_PVP) || (other->map->map_flags & MAP_FLAG_PVP)))
+                return FRIENDSHIP_NEUTRAL;
+            else
+                return FRIENDSHIP_HELP;
+        } 
         else 
         {
-#ifdef DEBUG_FRIENDSHIP_WARNING		
-			LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
+#ifdef DEBUG_FRIENDSHIP_WARNING
+            LOG(llevDebug, "Warning: get_friendship('%s':player, '%s') with non-player/monster other.\n",
                     STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
 #endif
             return 0;
         }
-	}
+    }
     
     /* Unhandled op types are for example POISON, DISEASE */
 
-	return 0; 
+    return 0; 
 }
 
 
@@ -840,7 +840,7 @@ void ai_investigate_attraction(object *op, struct mob_behaviour_param *params, m
 
     if(max_attractor)
     {
-		rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
+        rv_vector  *rv  = get_known_obj_rv(op, max_attractor, MAX_KNOWN_OBJ_RV_AGE);
         LOG(llevDebug, "  %s investigating %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(max_attractor->obj));
         
         if(rv)
@@ -1676,7 +1676,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     mapstruct *base_map = NULL;
 
     /* We won't look for enemies if we are unaggressive */
-    if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
+    if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE) || QUERY_FLAG(op, FLAG_SURRENDERED))
     {
         if(op->enemy)
             op->enemy = NULL;
@@ -1689,19 +1689,19 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         /* Try to find a legal home map */
         base = find_base_info_object(op);
 
-		/* crashed on testserver - give log mesg */ 
-		if(!base)
-			LOG(llevDebug, "BUG: ai_choose_enemy(%s)> no base info object!\n", query_name(op));
-		else
-		{
-			if(base->slaying)
-				if ((base_map = has_been_loaded_sh(base->slaying))) 
-					if (base_map->in_memory != MAP_IN_MEMORY)
-						base_map = NULL;
+        /* crashed on testserver - give log mesg */ 
+        if(!base)
+            LOG(llevDebug, "BUG: ai_choose_enemy(%s)> no base info object!\n", query_name(op));
+        else
+        {
+            if(base->slaying)
+                if ((base_map = has_been_loaded_sh(base->slaying))) 
+                    if (base_map->in_memory != MAP_IN_MEMORY)
+                        base_map = NULL;
 
-			/* square distance for fast euclidian distance comparisons */
-			antilure_dist_2 = antilure_dist_2 * antilure_dist_2;
-		}
+            /* square distance for fast euclidian distance comparisons */
+            antilure_dist_2 = antilure_dist_2 * antilure_dist_2;
+        }
     }
         
     /* Go through list of known mobs and choose the most hated
@@ -1728,9 +1728,9 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                     {
                         if((int)base_rv.distance > antilure_dist_2)
                         {
-							MOB_DATA(op)->antiluring_timer--;
-							if(MOB_DATA(op)->antiluring_timer <= 0)
-							{
+                            MOB_DATA(op)->antiluring_timer--;
+                            if(MOB_DATA(op)->antiluring_timer <= 0)
+                            {
 #ifdef DEBUG_AI                            
                                 LOG(llevDebug, "ai_choose_enemy() '%s' ignoring '%s' - too far from home\n",
                                         query_name(op), query_name(tmp->obj));

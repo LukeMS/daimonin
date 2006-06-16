@@ -374,18 +374,18 @@ static inline void regenerate_stats(object *op)
     /*  generate hp, if applicable */
     if (op->stats.Con && op->stats.hp < op->stats.maxhp)
     {
-		/* only reg when mob has no ememy or hp reg in fight is set */
-		if(QUERY_FLAG(op, FLAG_FIGHT_HPREG) || 
-			(!op->enemy && !QUERY_FLAG(op, FLAG_NO_ATTACK) && !QUERY_FLAG(op, FLAG_SURRENDERED)))
-		{
-			if (++op->last_heal > 5)
-			{
-				op->last_heal = 0;
-				op->stats.hp += op->stats.Con;
+        /* only reg when mob has no ememy or hp reg in fight is set */
+        if(QUERY_FLAG(op, FLAG_FIGHT_HPREG) || 
+                (!op->enemy && !QUERY_FLAG(op, FLAG_NO_ATTACK) && !QUERY_FLAG(op, FLAG_SURRENDERED)))
+        {
+            if (++op->last_heal > 5)
+            {
+                op->last_heal = 0;
+                op->stats.hp += op->stats.Con;
 
-				if (op->stats.hp > op->stats.maxhp)
-					op->stats.hp = op->stats.maxhp;
-			}
+                if (op->stats.hp > op->stats.maxhp)
+                    op->stats.hp = op->stats.maxhp;
+            }
         }
 
         /* So if the monster has gained enough HP that they are no longer afraid */
@@ -482,12 +482,12 @@ int move_monster(object *op, int mode)
 
     if (op == NULL || op->type != MONSTER)
     {
-		LOG(llevBug, "BUG: move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
-		if(op->type == SPAWN_POINT_MOB)
-		{
-	        LOG(llevBug, "BUG: move_monster(): Found Spawn Point Mob on map! Removing '%s'\n", STRING_OBJ_NAME(op));
-			remove_ob(op);
-		}
+        LOG(llevBug, "BUG: move_monster(): Called for non-monster object '%s'\n", STRING_OBJ_NAME(op));
+        if(op->type == SPAWN_POINT_MOB)
+        {
+            LOG(llevBug, "BUG: move_monster(): Found Spawn Point Mob on map! Removing '%s'\n", STRING_OBJ_NAME(op));
+            remove_ob(op);
+        }
         return 0;
     }
 
