@@ -7,6 +7,11 @@
         <title>
             Logging in
         </title>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> If you are experiencing  problems logging in despite following the instructions here, please read <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=1466">this more detailed information</a> before complaining.
+            </p>
+        </div>
         <section id="server">
             <title>
                 Choose a server
@@ -53,72 +58,121 @@
                 Login
             </title>
             <p>
-                The next dialog prompts you to login to the chosen server.
+                The next dialog prompts you to choose  whether you want to <a href="#createcharacter">create a new character</a> or <a href="#restorecharacter">login to a saved character</a> on the chosen server.
             </p>
             <div class="dialog">
                 <p>
-                    <img alt="[Login dialog]" src="./dialog_login.png"/>
+                    <img alt="[Login dialog]" src="./dialog_login1.png"/>
                 </p>
                 <table>
                     <tr>
                         <th>
-                            NAME
+                            UP/DOWN
                         </th>
                         <td>
-                            the name must be between two and 12 characters long. Letters, dash ('-'), and underscore ('_') are accepted but no numbers, spaces, or other characters. It is case insensitive.
+                            highlight an option.
                         </td>
                     </tr>
                     <tr>
                         <th>
-                            PASSWORD
+                            RETURN
                         </th>
                         <td>
-                            the password must be between one and 12 characters long. All characters are accepted, though only asterisks ('*') will be displayed. It is case sensitive.
+                            choose the highlighted option.
                         </td>
                     </tr>
                  </table>
                 <p/>
             </div>
-            <p>
-                You will need to enter a character name and associated password, pressing RETURN after each.
-            </p>
-            <div class="advice">
-                <p>
-                    <img alt="[ADVICE]" src="../advice.png"/> Once you have created a character neither name nor password can be changed so make sure you're happy with both.
-                </p>
-            </div>
-            <div class="note">
-                <p>
-                    <img alt="[NOTE]" src="../note.png"/> Your in-game login name/password and your website login name/password are entirely separate. That said, for convenience and clarity it is quite a good idea to have the same name for both. But the choice is yours. Indeed, you don't even need to register with the one to have an account with the other.
-                </p>
-            </div>
-            <section id="restorecharacter">
-                <title>
-                    Restore an existing character
-                </title>
-                <p>
-                    To restore an existing character you should enter the name and password for a previously saved character, remembering the case sensitivity rules mentioned above.
-                </p>
-            </section>
             <section id="createcharacter">
                 <title>
-                    Create a new character
+                    Create character
                 </title>
+                <div class="dialog">
+                    <p>
+                        <img alt="[Login dialog]" src="./dialog_login2.png"/>
+                    </p>
+                    <table>
+                        <tr>
+                            <th>
+                                NAME
+                            </th>
+                            <td>
+                                the name must be between two and 12 characters long. Letters, dash ('-'), and underscore ('_') are accepted but no numbers, spaces, or other characters. It is case insensitive.
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                PASSWORD
+                            </th>
+                            <td>
+                                the password must be between six and 12 characters long. All characters are accepted, though only asterisks ('*') will be displayed. It is case sensitive.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="note">
+                                    <p>
+                                        <img alt="[NOTE]" src="../note.png"/> Press RETURN when you have entered a name. If the name is not already taken a second field will appear. Here you should enter a valid password, followed by RETURN. A third field will appear, prompting you to confirm the password. Simply type it a second time and press RETURN.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <p/>
+                </div>
+                <div class="advice">
+                    <p>
+                        <img alt="[ADVICE]" src="../advice.png"/> Once you have created a character the name cannot be changed and the password can only be changed under certain circumstances. So make sure you're happy with both to begin with.
+                    </p>
+                </div>
+                <div class="note">
+                    <p>
+                        <img alt="[NOTE]" src="../note.png"/> Your ingame login name/password and your daimonin.net login name/password are entirely separate. That said, for convenience and clarity it is quite a good idea to have the same name for both. But the choice is yours. Indeed, you don't even need to register with the one to have an account with the other.
+                    </p>
+                </div>
                 <p>
-                    When you have entered both name and password and the server does not recognise a character by that name a third field will appear prompting you to verify the password; just type it again. This will create a new character of that name.
-                </p>
-                <p>
-                    If the third field does not appear this means someone else already has a character of that name on that server. The fields will be cleared and you will need to login again.
-                </p>
-                <p>
-                    Otherwise continue with <a href="../character/secn_1.dai">"Smacky's Guide To The Character, Section 1: Character creation"</a>.
+                    Continue with <a href="../character/secn_1.dai">"Smacky's Guide To The Character, Section 1: Character creation"</a>.
                 </p>
             </section>
-            <div class="note">
-                <p>
-                    <img alt="[NOTE]" src="../note.png"/> If you are experiencing  problems logging in despite following the instructions here, please read <a href="http://www.daimonin.net/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=1466">this more detailed information</a> before complaining.
-                </p>
-            </div>
+            <section id="restorecharacter">
+                <title>
+                    Login (restore an existing character)
+                </title>
+                <div class="dialog">
+                    <p>
+                        <img alt="[Login dialog]" src="./dialog_login3.png"/>
+                    </p>
+                    <table>
+                        <tr>
+                            <th>
+                                NAME
+                            </th>
+                            <td>
+                                the name must be a valid name of an existing character. It is case insensitive.
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                PASSWORD
+                            </th>
+                            <td>
+                                the password must be the valid password of the specified character. It is case sensitive.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="note">
+                                    <p>
+                                        <img alt="[NOTE]" src="../note.png"/> Press RETURN when you have entered a name. If the name is recognised a second field will appear. Here you should enter a valid password, followed by RETURN.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <p/>
+                </div>
+            </section>
         </section>
     </section>
     <section id="loggingout">
