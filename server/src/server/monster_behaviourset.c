@@ -74,13 +74,35 @@ static inline void cleanup_behaviour_parameters(struct mob_behaviour *behaviour)
     }
 }
 
-void cleanup_behaviourset(struct mob_behaviourset *data)
+void cleanup_behaviourset(struct mob_behaviourset *set)
 {
     int                     i;
     struct mob_behaviour   *tmp;
+        
+    /* Remove from list */
+    if (set->next)
+        set->next->prev = set->prev;
+    if (set->prev)
+        set->prev->next = set->next;
+    if (set->definition)
+    {
+        /* Parsed */
+        //            LOG(llevDebug, "Parsed behaviourset with refcount==0 being freed...\n");
+        if (set == parsed_behavioursets)
+            parsed_behavioursets = set->next;
+        FREE_ONLY_HASH(set->definition);
+    }
+    else
+    {
+        /* Generated */
+        //            LOG(llevDebug, "Generated behaviourset with refcount==0 being freed...\n");
+        if (set == generated_behavioursets)
+            generated_behavioursets = set->next;
+    }
+
     for (i = 0; i < NROF_BEHAVIOURCLASSES; i++)
     {
-        for (tmp = data->behaviours[i]; tmp; tmp = tmp->next)
+        for (tmp = set->behaviours[i]; tmp; tmp = tmp->next)
         {
             cleanup_behaviour_parameters(tmp);
             return_poolchunk(tmp, pool_mob_behaviour);
@@ -108,29 +130,7 @@ void cleanup_mob_data(struct mobdata *data)
     set = data->behaviours;
     set->refcount--;
     if (set->refcount == 0)
-    {
-        /* Remove from list */
-        if (set->next)
-            set->next->prev = set->prev;
-        if (set->prev)
-            set->prev->next = set->next;
-        if (set->definition)
-        {
-            /* Parsed */
-            //            LOG(llevDebug, "Parsed behaviourset with refcount==0 being freed...\n");
-            if (set == parsed_behavioursets)
-                parsed_behavioursets = set->next;
-            FREE_ONLY_HASH(set->definition);
-        }
-        else
-        {
-            /* Generated */
-            //            LOG(llevDebug, "Generated behaviourset with refcount==0 being freed...\n");
-            if (set == generated_behavioursets)
-                generated_behavioursets = set->next;
-        }
         return_poolchunk(set, pool_mob_behaviourset);
-    }
 }
 
 /* Initializator for the mm system */
@@ -161,6 +161,18 @@ void initialize_mob_data(struct mobdata *data)
     
     /* Intitialize this to something valid so we don't have to worry about it */
     data->last_movement_behaviour = &behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_FRIENDSHIP];
+}
+
+/*
+ *  General cleanup function
+ */
+void cleanup_all_behavioursets()
+{
+    struct mob_behaviourset *set;
+    for(set = generated_behavioursets; set; set = set->next)
+        return_poolchunk(set, pool_mob_behaviourset);
+    for(set = parsed_behavioursets; set; set = set->next)
+        return_poolchunk(set, pool_mob_behaviourset);
 }
 
 /*

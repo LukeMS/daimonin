@@ -373,6 +373,40 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
     }
 }
 
+/** Gather mempool statistics and write details to the log and the give player. 
+ * @param player to send detailed info to (optional)
+ * @param sum_used total number of bytes actively in use from mempools (OUTPUT)
+ * @param sum_alloc total number of bytes allocated by the mempool system (OUTPUT)
+ */
+void dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc)
+{
+    int j, k;
+    
+    for (j = 0; j < nrof_mempools; j++)
+    {
+        for (k = 0; k < MEMPOOL_NROF_FREELISTS; k++)
+        {
+            if (mempools[j]->nrof_allocated[k] > 0)
+            {
+                int ob_used = mempools[j]->nrof_allocated[k] - mempools[j]->  nrof_free[k],
+                    ob_free = mempools[j]->nrof_free[k];
+                int mem_used = ob_used*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
+                int mem_free = ob_free*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
+
+                sprintf(errmsg, "%4d used (%4d free) %s[%3d]: %d (%d)", ob_used, ob_free, mempools[j]->chunk_description,
+                        1 << k, mem_used, mem_free);
+                if(op)
+                    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+                LOG(llevSystem, "%s\n", errmsg);
+                if(sum_used)
+                    *sum_used += mem_used;  
+                if(sum_alloc)
+                    *sum_alloc += mem_used + mem_free;
+            }
+        }
+    }
+}
+
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
 
 /* this is time consuming DEBUG only

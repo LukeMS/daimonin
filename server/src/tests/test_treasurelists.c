@@ -30,10 +30,11 @@
 #include <global.h>
 #if defined HAVE_CHECK && defined BUILD_UNIT_TESTS
 #include <check.h>
+#include "common_support.h"
 
 static void setup()
 {
-    object_gc(); // Collect garbage
+    prepare_memleak_detection();
 }
 
 static void teardown()
@@ -47,11 +48,6 @@ START_TEST (treasurelist_memleak)
     const char *path = add_string("/dev/unit_tests/test_treasurelists");
     mapstruct *map;
     
-    int entries1, refs1, links1;
-    int entries2, refs2, links2;
-    int nrof_objs = pool_object->nrof_allocated[0] - pool_object->nrof_free[0];
-    ss_get_totals(&entries1, &refs1, &links1);
-
     map = ready_map_name(path, 0);
 
 /*    
@@ -65,17 +61,9 @@ START_TEST (treasurelist_memleak)
     dump_inventory(locate_beacon(find_string("beacon8"))->env);
 */    
     delete_map(map);
+    FREE_ONLY_HASH(path);
     
-    object_gc();
-
-    
-    
-    ss_get_totals(&entries2, &refs2, &links2);
-//    ss_dump_table(SS_DUMP_TOTALS);
-//    dump_objects();
-    fail_unless(nrof_objs == pool_object->nrof_allocated[0] - pool_object->nrof_free[0], "Some objects not returned (diff = %d)", (pool_object->nrof_allocated[0] - pool_object->nrof_free[0]) - nrof_objs);
-    fail_unless(entries2 == entries1, "Some string(s) not freed (diff = %d)", (entries2 - entries1));
-    fail_unless(refs2 == refs1, "Some string(s) not dereferenced (diff = %d)", (refs2 - refs1));
+    fail_if(memleak_detected(), "Memory leak detected");
 }
 END_TEST
 

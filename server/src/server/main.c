@@ -1157,8 +1157,7 @@ void clean_tmp_files()
     }
 }
 
-/* clean up everything before exiting */
-void cleanup(int ret)
+void cleanup_without_exit()
 {
     LOG(llevDebug, "Cleanup called.  freeing data.\n");
     clean_tmp_files();
@@ -1169,20 +1168,29 @@ void cleanup(int ret)
     free(global_sl.buf);
 
     /* that must be redone: clear cleanup so we know 100% all memory is freed */
-    /*
-        free_all_maps();
-        free_style_maps();
-        free_all_object_data();
-        free_all_archs();
-        free_all_treasures();
-        free_all_images();
-        free_all_newserver();
-        free_all_recipes();
-        free_all_readable();
-        free_all_god();
-        free_all_anim();
-        free_all_srv_files();
-    */
+    free_all_maps();
+    free_style_maps();
+    free_all_object_data();
+    free_all_archs();
+    free_all_treasures();
+    free_all_images();
+    free_all_newserver();
+    free_all_recipes();
+    free_all_readable();
+    free_all_god();
+    free_all_anim();
+    free_strings();
+    free_lists_and_tables();
+    cleanup_all_behavioursets();
+    free_gmaster_list();
+
+    /* free_all_srv_files(); */
+}
+
+/* clean up everything before exiting */
+void cleanup(int ret)
+{
+    cleanup_without_exit();
     exit(ret);
 }
 

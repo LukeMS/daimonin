@@ -30,14 +30,11 @@
 #include <global.h>
 #if defined HAVE_CHECK && defined BUILD_UNIT_TESTS
 #include <check.h>
+#include "common_support.h"
 
 static void setup()
 {
-    object_gc(); // Collect garbage
-}
-
-static void teardown()
-{
+    prepare_memleak_detection();
 }
 
 /* This used to return NULL if get_rand_god() failed. Lets try it a few times */
@@ -53,15 +50,47 @@ START_TEST (readable_god_info_msg)
 }
 END_TEST
 
+/* Track down and test for memleaks in tailor_readable_book() */
+START_TEST (readable_memleak)
+{
+    object * book = arch_to_object(find_archetype("book"));
+    tailor_readable_ob(book, 5);
+
+    fail_if(memleak_detected(), "_possible_ memory leak detected");
+}
+END_TEST
+
+/* Track down and test for memleaks in god_info_msg() */
+START_TEST (readable_god_info_msg_memleak)
+{
+    char *foo = god_info_msg(1, 4095);
+    fail_if(memleak_detected(), "_possible_ memory leak detected");
+}
+END_TEST
+
+/* Track down and test for memleaks in change_book() */
+START_TEST (readable_change_book_memleak)
+{
+    object * book = arch_to_object(find_archetype("book"));
+    FREE_AND_COPY_HASH(book->msg, "I am a book message");
+    change_book(book, 5);
+
+    fail_if(memleak_detected(), "_possible_ memory leak detected");
+}
+END_TEST
+
 Suite *readable_suite(void)
 {
   Suite *s = suite_create("Readable");
   TCase *tc_core = tcase_create("Core");
 
-  tcase_add_checked_fixture(tc_core, setup, teardown);
+  tcase_add_checked_fixture(tc_core, setup, dummy_teardown);
   
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, readable_god_info_msg);
+  tcase_add_test(tc_core, readable_god_info_msg_memleak);
+  tcase_add_test(tc_core, readable_change_book_memleak);
+  tcase_add_test(tc_core, readable_memleak);
 
   return s;
 }
