@@ -58,25 +58,6 @@ static artifact * get_empty_artifact(void)
 	return t;
 }
 
-/*
-* Hash-function used by the arch-hashtable.
-*/
-static inline unsigned long hashartifact(const char *str, int tablesize)
-{
-	unsigned long hash = 0;
-	int         i = 0, rot = 0;
-	const char *p;
-
-	for (p = str; i < MAXSTRING && *p; p++, i++)
-	{
-		hash ^= (unsigned long) * p << rot;
-		rot += 2;
-		if (rot >= (sizeof(long) - sizeof(char)) * 8)
-			rot = 0;
-	}
-	return (hash % tablesize);
-}
-
 /* fill the artifacts table */
 static void fill_artifact_table(void)
 {
@@ -128,7 +109,7 @@ static void init_artifacts(FILE *fp)
 			--cp;
 		cp[1] = '\0';
 		cp = buf;
-		while (*cp == ' ') /* Skip blanks */
+		while (isspace(*cp)) /* Skip blanks */
 			cp++;
 
 		/* we have a single artifact */
@@ -138,8 +119,8 @@ static void init_artifacts(FILE *fp)
 			editor_flag = FALSE;
 			nrofartifacts++;
 			none_flag = FALSE;
-			cp = strchr(cp, ' ') + 1;
-			if (!strcmp(cp, "all"))
+            cp+=7;
+			if (!strcasecmp(cp, "all"))
 				continue;
 			if (!strcasecmp(cp, "none"))
 			{
@@ -148,6 +129,8 @@ static void init_artifacts(FILE *fp)
 			}
 			do
 			{
+                while (isspace(*cp)) /* Skip blanks */
+                    cp++;
 				nrofallowedstr++;
 				if ((next = strchr(cp, ',')) != NULL)
 					*(next++) = '\0';
@@ -276,7 +259,7 @@ static void init_artifacts(FILE *fp)
 
 			editor_flag = TRUE;
 			if(!strncmp(cp+7,"2:",2)) /* mask only */
-				continue;
+				/* Do nothing */;
 			else if(!strcmp(cp+7,"0") || !strncmp(cp+7,"1:",2) || !strncmp(cp+7,"3:",2)) /* use def arch def_at */
 				art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH;
 			else
@@ -711,6 +694,7 @@ static void free_charlinks(linked_char *lc)
 static void free_artifact(artifact *at)
 {
 	FREE_AND_CLEAR_HASH2(at->name);
+    FREE_AND_CLEAR_HASH2(at->def_at.name);
 	if (at->next)
 		free_artifact(at->next);
 	if (at->allowed)
