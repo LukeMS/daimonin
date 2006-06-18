@@ -2228,6 +2228,8 @@ void free_all_treasures()
             free_treasurestruct(tl->items);
         free(tl);
     }
+    first_treasurelist = NULL;
+
     free_artifactlist(first_artifactlist);
 }
 

@@ -883,10 +883,10 @@ void change_book(object *book, int msgtype)
               title        *t       = NULL;
               int           tries   = 0;
               /* look to see if our msg already been archived. If so, alter
-                 * the book to match the archival text. If we fail to match,
-                 * then we archive the new title/name/msg combo if there is
-                 * room on the titlelist.
-                 */
+               * the book to match the archival text. If we fail to match,
+               * then we archive the new title/name/msg combo if there is
+               * room on the titlelist.
+               */
 
               if ((strlen(book->msg) > 5) && (t = find_title(book, msgtype)))
               {
@@ -914,8 +914,8 @@ void change_book(object *book, int msgtype)
                   strcpy(old_name, book->name);
 
                   /* some pre-generated books have title already set (from
-                       * maps), also don't bother looking for unique title if
-                       * we already used up all the available names! */
+                   * maps), also don't bother looking for unique title if
+                   * we already used up all the available names! */
 
                   if (!tl)
                   {
@@ -934,6 +934,7 @@ void change_book(object *book, int msgtype)
                   }
                   /* shouldnt change map-maker books */
                   else if (!book->title)
+                  {
                       do
                       {
                           /* random book name */
@@ -942,15 +943,16 @@ void change_book(object *book, int msgtype)
                           tries++;
                       }
                       while (!unique_book(book, msgtype) && tries < MAX_TITLE_CHECK);
+                  }
 
-                      /* Now deal with 2 cases.
-                           * 1)If no space for a new title exists lets just restore
-                           * the old book properties. Remember, if the book had
-                           * matchd an older entry on the titlelist, we shouldnt
-                           * have called this routine in the first place!
-                           * 2) If we got a unique title, we need to add it to
-                           * the list.
-                           */
+                  /* Now deal with 2 cases.
+                   * 1)If no space for a new title exists lets just restore
+                   * the old book properties. Remember, if the book had
+                   * matchd an older entry on the titlelist, we shouldnt
+                   * have called this routine in the first place!
+                   * 2) If we got a unique title, we need to add it to
+                   * the list.
+                   */
 
                   if (tries == MAX_TITLE_CHECK || numb == maxnames)
                   {
@@ -969,8 +971,12 @@ void change_book(object *book, int msgtype)
                           sprintf(old_name, "%s %s", book_descrpt[RANDOM() % nbr], old_name);
                       FREE_AND_COPY_HASH(book->name, old_name);
                   }
-                  else if (book->title && strlen(book->msg) > 5)    /* archive if long msg texts */
+                  else if (book->title && strlen(book->msg) > 5)
+                  {
+                      /* archive if long msg texts */
+                      /* got to check maxnames again */
                       add_book_to_list(book, msgtype);
+                  }
               }
               break;
           }
@@ -1827,6 +1833,17 @@ void free_all_readable()
     }
 }
 
+int nrof_readable_titles()
+{
+    titlelist      *tlist;
+    title          *title1;
+
+    int nr = 0; 
+    for (tlist = booklist; tlist != NULL; tlist = tlist->next)
+        for (title1 = tlist->first_book; title1; title1 = title1->next)
+            nr++;
+    return nr;
+}
 
 /*****************************************************************************
  *

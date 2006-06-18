@@ -329,11 +329,11 @@ void free_all_archs()
         else
             next = at->next;
         FREE_AND_CLEAR_HASH(at->name);
-        FREE_AND_CLEAR_HASH(at->clone.name);
-        FREE_AND_CLEAR_HASH(at->clone.title);
-        FREE_AND_CLEAR_HASH(at->clone.race);
-        FREE_AND_CLEAR_HASH(at->clone.slaying);
-        FREE_AND_CLEAR_HASH(at->clone.msg);
+
+        if(at->clone.inv)
+            LOG(llevDebug, "free_all_archs(): archetype clone %s has inv %s\n", STRING_OBJ_NAME(&at->clone), STRING_OBJ_NAME(at->clone.inv));
+        free_object_data(&at->clone, TRUE);        
+
         free(at);
         i++;
     }
@@ -422,6 +422,7 @@ void first_arch_pass(FILE *fp)
         }
         /*CLEAR_FLAG((&at->clone), FLAG_CLIENT_SENT);*/ /* we using this flag for debugging - ignore */
         at = get_archetype_struct();
+        free_object_data(op, TRUE);
         initialize_object(op); /* clear - op is only temp. buffer for at->clone */
         op->arch = at;
     }

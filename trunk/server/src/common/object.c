@@ -1279,29 +1279,11 @@ void drop_ob_inv(object *ob)
     }
 }
 
-/*
- * destroy_object() frees everything allocated by an object, removes
- * it from the list of used objects, and puts it on the list of
- * free objects. This function is called automatically to free unused objects
- * (it is called from return_poolchunk() during garbage collection in object_gc() ).
- * The object must have been removed by remove_ob() first for
- * this function to succeed.
- */
-void destroy_object(object *ob)
+/** Frees all data belonging to an object, but doesn't
+ * care about the object itself. This can be used for 
+ * non-GC objects like archetype clone objects */
+void free_object_data(object *ob, int free_static_data)
 {
-    if (OBJECT_FREE(ob))
-    {
-        dump_object(ob);
-        LOG(llevBug, "BUG: Trying to destroy freed object.\n%s\n", errmsg);
-        return;
-    }
-
-    if (!QUERY_FLAG(ob, FLAG_REMOVED))
-    {
-        dump_object(ob);
-        LOG(llevBug, "BUG: Destroy object called with non removed object\n:%s\n", errmsg);
-    }
-
     /* This should be very rare... */
     if (QUERY_FLAG(ob, FLAG_IS_LINKED))
         remove_button_link(ob);
@@ -1313,12 +1295,8 @@ void destroy_object(object *ob)
 
     /* unlink old treasurelist if needed */
     if (ob->randomitems)
-        unlink_treasurelists(ob->randomitems, 0);
+        unlink_treasurelists(ob->randomitems, free_static_data ? OBJLNK_FLAG_STATIC : 0);
     ob->randomitems = NULL;
-
-    /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
-    /* TODO: maybe destroy() it here too? */
-    remove_ob_inv(ob);
 
     /* Remove object from the active list */
 //    ob->speed = 0;
@@ -1367,6 +1345,36 @@ void destroy_object(object *ob)
     FREE_AND_CLEAR_HASH2(ob->race);
     FREE_AND_CLEAR_HASH2(ob->slaying);
     FREE_AND_CLEAR_HASH2(ob->msg);
+}
+
+/*
+ * destroy_object() frees everything allocated by an object, removes
+ * it from the list of used objects, and puts it on the list of
+ * free objects. This function is called automatically to free unused objects
+ * (it is called from return_poolchunk() during garbage collection in object_gc() ).
+ * The object must have been removed by remove_ob() first for
+ * this function to succeed.
+ */
+void destroy_object(object *ob)
+{
+    if (OBJECT_FREE(ob))
+    {
+        dump_object(ob);
+        LOG(llevBug, "BUG: Trying to destroy freed object.\n%s\n", errmsg);
+        return;
+    }
+
+    if (!QUERY_FLAG(ob, FLAG_REMOVED))
+    {
+        dump_object(ob);
+        LOG(llevBug, "BUG: Destroy object called with non removed object\n:%s\n", errmsg);
+    }
+
+    /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
+    /* TODO: maybe destroy() it here too? */
+    remove_ob_inv(ob); 
+
+    free_object_data(ob, 0);
 
     ob->map = NULL;
 
