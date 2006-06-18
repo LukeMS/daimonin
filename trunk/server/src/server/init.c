@@ -98,7 +98,7 @@ static void init_strings()
     shstr_cons.grace_limit = add_string("grace limit");
     shstr_cons.restore_grace = add_string("restore grace");
     shstr_cons.restore_hitpoints = add_string("restore hitpoints");
-    shstr_cons.restore_hitpoints = add_string("restore spellpoints");
+    shstr_cons.restore_spellpoints = add_string("restore spellpoints");
     shstr_cons.heal_spell = add_string("heal spell");
     shstr_cons.remove_curse = add_string("remove curse");
     shstr_cons.remove_damnation = add_string("remove damnation");
@@ -108,6 +108,15 @@ static void init_strings()
 
     shstr_cons.Eldath = add_string("Eldath"); /* old and incorrect god */
     shstr_cons.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
+}
+
+void free_strings()
+{
+    int nrof_strings = sizeof(shstr_cons) / sizeof(shstr *);
+    shstr **ptr = (shstr **)&shstr_cons;
+    int i=0;
+    for(i=0; i<nrof_strings; i++)
+        FREE_ONLY_HASH(ptr[i]);
 }
 
 /*
@@ -758,16 +767,20 @@ static racelink * get_racelist()
 
 /* free race list
  */
-static void free_racelist()
+void free_racelists()
 {
     racelink   *list, *next;
-    for (list = first_race; list;)
+    objectlink *tmp;
+    for (list = first_race; list; list = next)
     {
         next = list->next;
+        FREE_ONLY_HASH(list->name);
+        for (tmp = list->member; tmp; tmp = tmp->next)
+            free_objectlink(tmp);
         free(list);
-        list = next;
     }
 }
+
 static void add_to_racelist(const char *race_name, object *op)
 {
     racelink   *race;
@@ -1184,11 +1197,19 @@ void init(int argc, char **argv)
     parse_args(argc, argv, 4);
 }
 
+void free_lists_and_tables()
+{
+    remove_ob(active_objects);
+    free_racelists();
+    object_gc();
+}
+
 
 void init_lists_and_tables()
 {
     /* Add sentinels to the global activelist */
     active_objects = get_object();
+    FREE_AND_COPY_HASH(active_objects->name, "<activelist sentinel>");
     insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object */
 
     /* Set up object initializers */

@@ -217,6 +217,16 @@ int check_gmaster_list(player *pl, int mode)
     return FALSE;
 }
 
+/* Free the whole gmaster list
+ */
+void free_gmaster_list()
+{
+    objectlink *ol;
+
+    for(ol = gmaster_list; ol; ol=ol->next)
+        free_gmaster_node(ol);
+}
+
 /* set a gmaster mode to a player: DM, GM or VOL
  */
 void set_gmaster_mode(player *pl, int mode)

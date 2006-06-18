@@ -97,10 +97,11 @@ extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
 extern void             free_objectlink_recursive(objectlink *ol);
 extern void             free_objectlinkpt(oblinkpt *obp);
-objectlink               *objectlink_link(objectlink **startptr, objectlink **endptr,
+extern void             free_objectlink(objectlink *ol);
+extern objectlink      *objectlink_link(objectlink **startptr, objectlink **endptr,
                                         objectlink *afterptr, objectlink *beforeptr, objectlink *objptr);
 
-objectlink               *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
+extern objectlink      *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
 /* living.c */
 extern void             set_attr_value(living *stats, int attr, signed char value);
 extern void             change_attr_value(living *stats, int attr, signed char value);
@@ -209,6 +210,7 @@ extern struct mempool * (create_mempool)(const char *description, uint32 expand,
 extern void             free_empty_puddles(struct mempool *pool);
 extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool);
 extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);
+extern void             dump_mempool_statistics(object *op, int *sum_used, int *sum_alloc);
 /* object.c */
 extern void             mark_object_removed(object *ob);
 extern int              CAN_MERGE(object *ob1, object *ob2);
@@ -234,6 +236,7 @@ extern void             activelist_remove(object *op);
 extern void             update_ob_speed(object *op);
 extern void             update_object(object *op, int action);
 extern void             destroy_object(object *ob);
+extern void             free_object_data(object *ob, int free_static_data);
 extern int              count_free(void);
 extern int              count_used(void);
 extern void             remove_ob(object *op);

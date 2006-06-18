@@ -35,6 +35,7 @@
 static void setup()
 {
     object_gc(); // Collect garbage
+    prepare_memleak_detection();
 }
 
 static void teardown()

@@ -30,14 +30,12 @@
 #include <global.h>
 #if defined HAVE_CHECK && defined BUILD_UNIT_TESTS
 #include <check.h>
+#include "common_support.h"
 
 static void setup()
 {
     object_gc(); // Collect garbage
-}
-
-static void teardown()
-{
+    prepare_memleak_detection();
 }
 
 /* Test map loading and swapping out, and make sure
@@ -47,28 +45,21 @@ START_TEST (map_loading)
     const char *path = add_string("/dev/unit_tests/test_maploader");
     mapstruct *map;
     
-    int entries1, refs1, links1;
-    int entries2, refs2, links2;
-    int nrof_objs = pool_object->nrof_allocated[0] - pool_object->nrof_free[0];
-    ss_get_totals(&entries1, &refs1, &links1);
-    
+
     fail_unless(has_been_loaded_sh(path) == NULL, "Map already loaded");
     
     map = ready_map_name(path, 0);
     fail_unless(has_been_loaded_sh(path) != NULL, "Map not loaded");
     fail_unless(map != NULL, "Couldn't load %s", path);
     fail_unless(strcmp(map->path, path) == 0, "Wierd path");
+    fail_unless(map->path == path, "non-shared path");
     fail_if(strcmp(map->name, "Testmap") != 0, "Not the testmap");
     
     delete_map(map);
     fail_unless(has_been_loaded_sh(path) == NULL, "Map still loaded");
+    FREE_ONLY_HASH(path);
     
-    object_gc();
-    
-    ss_get_totals(&entries2, &refs2, &links2);
-    fail_unless(entries2 == entries1, "Some string(s) not freed");
-    fail_unless(refs2 == refs1, "Some string(s) not dereferenced (diff = %d)", (refs2 - refs1));
-    fail_unless(nrof_objs == pool_object->nrof_allocated[0] - pool_object->nrof_free[0], "Some objects not returned (diff = %d)", (pool_object->nrof_allocated[0] - pool_object->nrof_free[0]) - nrof_objs);
+    fail_if(memleak_detected(), "Memory leak detected");
 }
 END_TEST
 
@@ -77,7 +68,7 @@ Suite *map_suite(void)
   Suite *s = suite_create("Maps");
   TCase *tc_core = tcase_create("Core");
 
-  tcase_add_checked_fixture(tc_core, setup, teardown);
+  tcase_add_checked_fixture(tc_core, setup, dummy_teardown);
   
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, map_loading);

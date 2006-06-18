@@ -2393,9 +2393,9 @@ void delete_map(mapstruct *m)
         if (m == first_map)
             first_map = m->next;
         else
-                /* m->path is freed below, so should hopefully still have
-                 * some useful data in it.
-                 */
+            /* m->path is freed below, so should hopefully still have
+             * some useful data in it.
+             */
             LOG(llevBug, "BUG: delete_map: Unable to find map %s in list\n", m->path);
     }
     else

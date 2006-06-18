@@ -124,11 +124,10 @@ static int count_active()
     return i;
 }
 
-
 void malloc_info(object *op)
 {
     int             nrofmaps, fd;
-    int             nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, j, tlnr, alnr;
+    int             nrm = 0, mapmem = 0, anr, anims, sum_alloc = 0, sum_used = 0, i, tlnr, alnr;
     treasurelist   *tl;
     mapstruct      *m;
     archetype      *at;
@@ -154,25 +153,7 @@ void malloc_info(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     LOG(llevSystem, "%s\n", errmsg);
 
-    for (j = 0; j < nrof_mempools; j++)
-    {
-        int k;
-        for (k = 0; k < MEMPOOL_NROF_FREELISTS; k++)
-        {
-            if (mempools[j]->nrof_allocated[k] > 0)
-            {
-                int ob_used = mempools[j]->nrof_allocated[k] - mempools[j]->  nrof_free[k],
-                    ob_free = mempools[j]->nrof_free[k];
-                int mem_used = ob_used*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
-                int mem_free = ob_free*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
-                sprintf(errmsg, "%4d used (%4d free) %s[%3d]: %d (%d)", ob_used, ob_free, mempools[j]->chunk_description,
-                        1 << k, mem_used, mem_free);
-                new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-                LOG(llevSystem, "%s\n", errmsg);
-                sum_used += mem_used;  sum_alloc += mem_used + mem_free;
-            }
-        }
-    }
+    dump_mempool_statistics(op, &sum_used, &sum_alloc);
 
     sprintf(errmsg, "%4d active objects", count_active());
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);

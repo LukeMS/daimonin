@@ -686,9 +686,13 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
 
 static void free_charlinks(linked_char *lc)
 {
-	if (lc->next)
-		free_charlinks(lc->next);
-	free(lc);
+    linked_char *tmp, *next;
+    for(tmp = lc; tmp; tmp = next)
+    {
+        next = tmp->next;
+        FREE_AND_CLEAR_HASH(tmp->name);;
+        free(tmp);
+    }
 }
 
 static void free_artifact(artifact *at)

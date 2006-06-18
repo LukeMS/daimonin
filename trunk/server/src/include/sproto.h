@@ -331,6 +331,7 @@ void                        set_gmaster_mode(player *pl, int mode);
 void                        remove_gmaster_mode(player *pl);
 void                        write_gmaster_file(void);
 void                        update_gmaster_file(void);
+void                        free_gmaster_list(void);
 /* hiscore.c */
 char                       *spool(char *bp, char *error);
 void                        check_score(object *op);
@@ -356,6 +357,8 @@ void                        init(int argc, char **argv);
 void                        compile_info(void);
 void                        fatal_signal(int make_core, int close_sockets);
 void                        init_library();
+void                        free_strings();
+void                        free_lists_and_tables();
 /* login.c */
 void                        emergency_save(int flag);
 void                        delete_character(const char *name);
@@ -380,6 +383,7 @@ void                        process_players1(mapstruct *map);
 void                        process_players2(mapstruct *map);
 void                        clean_tmp_files(void);
 void                        cleanup(int exit);
+void                        cleanup_without_exit();
 void                        leave(player *pl, int draw_exit);
 void                        dequeue_path_requests(void);
 void                        do_specials(void);
@@ -410,6 +414,7 @@ struct mob_behaviourset    *setup_behaviours(object *op);
 void                        cleanup_behaviourset(struct mob_behaviourset *data);
 void                        cleanup_mob_known_obj(struct mob_known_obj *data);
 int                         can_hit(object *ob1, object *ob2, rv_vector *rv);
+void                        cleanup_all_behavioursets();
 /* monster_behaviours.c */
 int                         get_friendship(object *op, object *obj);
 int                         get_attitude(object *op, object *obj);
