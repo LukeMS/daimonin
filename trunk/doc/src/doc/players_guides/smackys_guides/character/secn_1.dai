@@ -45,14 +45,19 @@
             Choose your race &amp; gender
         </title>
         <p>
-            First choose a <a href="./secn_2.dai#race">race</a>. <a href="./secn_2.dai#race">Race</a> determines the <a href="#stats">base values of your primary stats</a>.
+            First choose a <a href="./secn_2.dai#race">race</a> and <a href="./secn_2.dai#gender">gender</a>. <a href="./secn_2.dai#race">Race</a> determines the <a href="#stats">base values of your primary stats</a>, while <a href="./secn_2.dai#gender">gender</a> on its own has no effect on gameplay.
         </p>
         <p>
-            Also choose a <a href="./secn_2.dai#gender">gender</a>.
+            Your combination of <a href="./secn_2.dai#race">race</a> and <a href="./secn_2.dai#gender">gender</a> will determine the graphics used to represent your character.
         </p>
+    </section>
+    <section id="weaponskill">
+        <title>
+            Choose your weapon skill
+        </title>
         <p>
-            Your combination of <a href="./secn_2.dai#race">race</a> and <a href="./secn_2.dai#gender">gender</a> will determine the graphics used to represent your character. They have no further effects on gameplay.
-        </p>
+            Next choose your <a href="./secn_4.dai#meleeweapons">weapon skill</a> which will determine the range of weapons you are able to use (and therefore the even wider range of weapons you are unable to use). Currently there is no way to learn a new <a href="./secn_4.dai#meleeweapons">weapon skill</a> after you have created your character.
+        </p>  
     </section>
     <section id="stats">
         <title>
