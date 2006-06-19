@@ -19,7 +19,7 @@
             Armour protections
         </title>
         <p>
-            <img alt="[Armour protection table]" src="./armourprotectiontable.png"/>
+            <img alt="[Resistances]" src="./resistances.png"/>
         </p>
         <p>
             Armour protections are expressed in percentages. If you have 0% <a href="#electricity">electricity</a> protection you will take maximum damage from an <a href="#electricity">electrical attack</a>, while if you have 50% <a href="cleave">cleave</a> protection you will take only half damage from a <a href="#cleave">blow from an axe</a>.
