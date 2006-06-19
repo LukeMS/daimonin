@@ -177,7 +177,7 @@ int main(int argc, char **argv)
         /// ////////////////////////////////////////////////////////////////////
         /// Get the SceneManager, in this case a generic one
         /// ////////////////////////////////////////////////////////////////////
-        window   = root->initialise(true, "Daimonon - Client3d");
+        window   = root->initialise(true, PRG_NAME);
     }
     catch(Exception& e)
     {

@@ -182,6 +182,7 @@ void CEvent::keyPressed(KeyEvent *e)
         // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
         //mCamera->yaw(Degree(10));
         {
+/*
             Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
             sObject obj;
             obj.meshName = "tree1.mesh";
@@ -191,6 +192,7 @@ void CEvent::keyPressed(KeyEvent *e)
             obj.posY = (int)pos.z;
             obj.facing = 0;
             ObjectManager::getSingleton().addMobileObject(obj);
+*/
         }
         break;
 
@@ -445,15 +447,13 @@ void CEvent::mousePressed (MouseEvent *e)
         if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
         {
             /// activate mouse picking of tiles
-            TileManager::getSingleton().getTileInterface()->pick_Tile(mMouseX, mMouseY);
+            TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
             {
-                Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
-                pos.x = (pos.x +0.5) * TILE_SIZE_X;
-                pos.z = (pos.z +0.5) * TILE_SIZE_Z;
+                Vector3 pos = TileManager::getSingleton().getTileInterface()->getSelectedPos();
                 ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
             }
             /// Move the player.
-            Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
+            Vector3 pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int)pos.x, (int) pos.z);
         }
     }

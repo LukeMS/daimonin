@@ -64,6 +64,23 @@ PosX     : "4"
 PosY     : "12"
 Facing   : "0"
 
+
+Type     : "static"
+MeshName : "wall.mesh"
+NickName : "Wall"
+PosX     : "8"
+PosY     : "6"
+Facing   : "-63.5"
+
+
+Type     : "static"
+MeshName : "wall.mesh"
+NickName : "Wall"
+PosX     : "9"
+PosY     : "7"
+Facing   : "-63.5"
+
+
 #####################################################################################
 # Equipment:
 #####################################################################################

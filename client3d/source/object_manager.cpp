@@ -85,7 +85,6 @@ bool ObjectManager::init()
         Option::getSingleton().getDescStr("MaxGrace", strTemp,i);
         obj.maxGrace  = StringConverter::parseInt(strTemp);
 
-
         Option::getSingleton().getDescStr("PosX", strTemp,i);
         obj.posX  = StringConverter::parseInt(strTemp);
         Option::getSingleton().getDescStr("PosY", strTemp,i);

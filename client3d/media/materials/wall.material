@@ -8,14 +8,8 @@ material Wall_Stone
 //	    scene_blend alpha_blend
 	    texture_unit
 	    {
-                // Give me alpha.
-	        //texture wall3big.png	      
-		//texture Wall_Stone.png
-		
-		texture wall1.1.png		
-		
-		//texture Wall_Stone.png
-                //alpha_op_ex modulate src_texture src_manual 0.01 
+		texture Wall_Stone.png
+              //alpha_op_ex modulate src_texture src_manual 0.01 
             }
         }
     }

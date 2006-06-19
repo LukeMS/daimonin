@@ -217,7 +217,6 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
     MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
     mEntity->getSubEntity(0)->setMaterialName(tmpName);
-
     /// Create a texture for the material.
     Image image;
     image.loadDynamicImage(texImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);

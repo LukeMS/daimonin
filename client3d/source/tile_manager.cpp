@@ -140,6 +140,7 @@ void TileManager::loadMap(const std::string &png_filename)
             mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
             //if (mMap[x][y].height > 60) mMap[x][y].height =60;
             mMap[x][y].height/=2;
+//            mMap[x][y].height=40;
         }
     }
     setMapTextures();
@@ -325,8 +326,8 @@ void TileManager::createChunks()
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
     TileChunk::mBounds = new AxisAlignedBox(
-                             -TILE_SIZE_X * CHUNK_SIZE_X, 0  , -TILE_SIZE_Z * CHUNK_SIZE_Z,
-                             +TILE_SIZE_X * CHUNK_SIZE_X, 100,  TILE_SIZE_Z * CHUNK_SIZE_Z);
+                             0, 0, 0,
+                             TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
     mMapchunk.create(mTileTextureSize);
     delete TileChunk::mBounds;
 #ifdef LOG_TIMING
@@ -343,9 +344,11 @@ void TileManager::changeChunks()
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
+/*
     TileChunk::mBounds = new AxisAlignedBox(
-                             -TILE_SIZE_X * CHUNK_SIZE_X, 0 , -TILE_SIZE_Z * CHUNK_SIZE_Z,
-                             TILE_SIZE_X * CHUNK_SIZE_X, 100,  TILE_SIZE_Z * CHUNK_SIZE_Z);
+                             0, 0, 0,
+                             TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
+*/
     /*
         // Test start
         unsigned char value;
@@ -363,7 +366,7 @@ void TileManager::changeChunks()
     */
     setMapTextures();
     mMapchunk.change();
-    delete TileChunk::mBounds;
+//    delete TileChunk::mBounds;
 
 #ifdef LOG_TIMING
     Logger::log().info() << "Time to change Chunks: "
