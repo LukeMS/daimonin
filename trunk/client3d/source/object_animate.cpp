@@ -52,14 +52,19 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
 ///=================================================================================================
 ObjectAnimate::ObjectAnimate(Entity *entity)
 {
+    if (!entity->hasSkeleton())
+    {
+        mIsAnimated = false;
+        Logger::log().list() << "Object has no Skeleton. It is not animated.";
+        return;
+    }
     mAnimSpeed = 2;
     mAnimGroup =-1;
     String strTmp, strGroup;
 
-    // fill the animation states.
+    /// fill the animation states.
     int j;
     int sum =0;
-
     AnimationStateSet *animSet = entity->getAllAnimationStates();
     for (int i=0; i < ANIM_GROUP_SUM; ++i)
     {
@@ -69,27 +74,38 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
         while(1)
         {
             strTmp = strGroup + StringConverter::toString(++j);
-            if (!animSet->hasAnimationState(strTmp)) break;
+            if (!animSet->hasAnimationState(strTmp))
+                break;
             mAnimState.push_back(animSet->getAnimationState(strTmp));
             mAnimGroupEntries[i]= j;
             ++sum;
         }
     }
-    if (sum)
+
+    /// We have a animated mesh, but it has not a single valid name.
+    int invalidAnims = entity->getSkeleton()->getNumAnimations()-sum;
+    if (invalidAnims && !sum)
     {
-        mIsAnimated = true;
-        if (sum!=entity->getSkeleton()->getNumAnimations())
-            Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations. "
-            << entity->getSkeleton()->getNumAnimations()-sum << " have invalid names and will be ignored.";
-        else
-            Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
-    }
-    else
-    {
+        Logger::log().list() << "Object has no valid animation";
         mIsAnimated = false;
-        Logger::log().list() << "Object is not animated.";
         return;
     }
+
+    /// Every skeleton MUST have the Idle1 animation.
+    if (!animSet->hasAnimationState("Idle1"))
+    {
+        Logger::log().error() << "The animation 'Idle1' is missing. No animation will be available.";
+        mIsAnimated = false;
+        return;
+    }
+
+    mIsAnimated = true;
+    Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
+    if (invalidAnims)
+    {
+      Logger::log().warning() << invalidAnims << " of the animations are invalid.";
+    }
+
     /// Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];
     toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
@@ -108,7 +124,8 @@ ObjectAnimate::~ObjectAnimate()
 ///=================================================================================================
 void ObjectAnimate::update(const FrameEvent& event)
 {
-    if (!mIsAnimated) return;
+    if (!mIsAnimated)
+        return;
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     /// if an animation ends -> force the idle animation.
     if (mActState->getTimePosition() >= mActState->getLength())
@@ -122,7 +139,8 @@ void ObjectAnimate::update(const FrameEvent& event)
 ///=================================================================================================
 void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random)
 {
-    if (!mIsAnimated) return;
+    if (!mIsAnimated)
+        return;
     /// Is the selected animation already running?
     if (animGroup == mAnimGroup && animNr == mAnimNr)
         return;

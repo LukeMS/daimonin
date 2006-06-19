@@ -74,13 +74,14 @@ void TileChunk::setMaterial(String matLand, String matWater)
 void TileChunk::create(int tileTextureSize)
 {
     createLand(tileTextureSize);
-    createWater();
-    mNodeLand  = TileManager::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
-    mNodeLand ->setPosition(0, 0, 0);
+    mNodeLand= TileManager::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    mNodeLand->setPosition(0, 0, 0);
     mNodeLand->attachObject(mEntityLand);
-    mNodeWater = TileManager::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
+    createWater();
+    mNodeWater= TileManager::getSingleton().getSceneManager()->getRootSceneNode()->createChildSceneNode();
     mNodeWater->setPosition(0, 0, 0);
     mNodeWater->attachObject(mEntityWater);
+    // mNodeWater->showBoundingBox(true);
 }
 
 ///================================================================================================
@@ -112,6 +113,7 @@ void TileChunk::createWater()
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
     mEntityWater->setQueryFlags(QUERY_TILES_WATER_MASK);
+
 }
 
 ///================================================================================================
@@ -723,15 +725,15 @@ void TileChunk::createDummy(SubMesh* submesh)
     Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_NO_OVERWRITE))
                   ;
     // Triangle 1
-    pReal[ 0] =-1;
-    pReal[ 1] =-100;
-    pReal[ 2] =-1;
-    pReal[ 8] =-1;
-    pReal[ 9] =-100;
-    pReal[10] = 0;
-    pReal[16] = 0;
-    pReal[17] =-100;
-    pReal[18] =-1;
+    pReal[0] = 0;
+    pReal[1] = 0;
+    pReal[2] = 0;
+    pReal[3] = 0;
+    pReal[4] = 0;
+    pReal[5] = 0;
+    pReal[6] = 0;
+    pReal[7] = 0;
+    pReal[8] = 0;
     vbuf0->unlock();
 
     HardwareIndexBufferSharedPtr ibuf;
@@ -755,4 +757,3 @@ void TileChunk::createDummy(SubMesh* submesh)
     submesh->useSharedVertices = false;
     submesh->vertexData = vdata;
 }
-
