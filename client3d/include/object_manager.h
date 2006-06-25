@@ -109,17 +109,20 @@ public:
     }
     void synchToWorldPos(Vector3 pos);
     void selectNPC(MovableObject *mob);
+
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
     std::string mDescFile;
-    std::vector<ObjectStatic*   >mvObject_static;
-    std::vector<ObjectPlayer*   >mvObject_player;
-    std::vector<ObjectNPC*      >mvObject_npc;
+    std::vector<ObjectStatic*> mvObject_static;
+    std::vector<ObjectPlayer*> mvObject_player;
+    std::vector<ObjectNPC*   > mvObject_npc;
     std::vector<ObjectEquipment*>mvObject_weapon;
     std::vector<ObjectEquipment*>mvObject_armor;
     int mSelectedType, mSelectedObject;
+    int mSelectedPosX, mSelectedPosZ;
+    int mSelectedFriendly;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

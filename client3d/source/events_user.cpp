@@ -440,20 +440,18 @@ void CEvent::mousePressed (MouseEvent *e)
 #ifdef WIN32
     else if (button & MouseEvent::BUTTON1_MASK )
 #else
-
     else if (button & MouseEvent::BUTTON2_MASK )
 #endif
     {
         if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
         {
+            Vector3 pos;
             /// activate mouse picking of tiles
             TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
-            {
-                Vector3 pos = TileManager::getSingleton().getTileInterface()->getSelectedPos();
-                ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
-            }
+            pos = TileManager::getSingleton().getTileInterface()->getSelectedPos();
+            ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
             /// Move the player.
-            Vector3 pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
+            pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int)pos.x, (int) pos.z);
         }
     }

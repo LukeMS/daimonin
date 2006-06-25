@@ -61,20 +61,15 @@ ParticleManager::~ParticleManager()
 ///================================================================================================
 ///
 ///================================================================================================
-ParticleSystem *ParticleManager::addNodeObject(const SceneNode *parentNode, const char* particleFX)
+ParticleSystem *ParticleManager::addNodeObject(Vector3 pos, const SceneNode *node, const char* pScript, Real lifeTime)
 {
-    /*
-        sParticleObj *obj = new sParticleObj;
-        mvObject_Node.push_back(obj);
-        Vector3 posOffset = Vector3(0,15,-10);
-        obj->particleSys = mSceneMgr->createParticleSystem("Node"+StringConverter::toString(mNodeCounter), particleFX);
-        obj->node = mNode->createChildSceneNode(parentNode->getPosition()+ posOffset, parentNode->getOrientation());
-        obj->node->attachObject(obj->particleSys);
-        obj->direction = parentNode->getOrientation().zAxis();
-        obj->speed = 180;
-        ++mNodeCounter;
-    */
-    return 0; // switch off compiler warning.
+    sParticles *obj = new sParticles;
+    mvParticle.push_back(obj);
+    obj->lifeTime = lifeTime;
+    obj->pSystem  = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->entity = 0;
+    obj->sceneNode= (SceneNode*) node;
+    return obj->pSystem;
 }
 
 ///================================================================================================
@@ -86,7 +81,7 @@ ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone,
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
     obj->pSystem = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
-    obj->sceneNode=0;
+    obj->sceneNode = 0;
     obj->entity = ent;
     obj->entity->attachObjectToBone(strBone, obj->pSystem);
     return obj->pSystem;
@@ -101,8 +96,8 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
     obj->pSystem  = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
-    obj->entity = 0;
     obj->sceneNode= Event->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
+    obj->entity = 0;
     obj->sceneNode->attachObject(obj->pSystem);
     obj->sceneNode->setPosition(pos);
     return obj->pSystem;
@@ -113,14 +108,14 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
 ///================================================================================================
 void ParticleManager::update(Real dTime)
 {
-	for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
+    for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); )
     {
         if ((*i)->lifeTime <0  // Infinite lifeTime.
-		|| ((*i)->lifeTime-= dTime) >=0) // Lifeteme not expired.
-		{
-			++i;
-		}
-		else
+                || ((*i)->lifeTime-= dTime) >=0) // Lifeteme not expired.
+        {
+            ++i;
+        }
+        else
         {
             if ((*i)->entity)
                 (*i)->entity->detachObjectFromBone((*i)->pSystem);
@@ -181,12 +176,12 @@ void ParticleManager::synchToWorldPos(const Vector3 &pos)
         {
             p = (*i)->pSystem->getParticle(sum);
             p->position += pos;
-//            Logger::log().error() << ": " << p->position.x << " ......  " << p->position.z;
+            //            Logger::log().error() << ": " << p->position.x << " ......  " << p->position.z;
 
         }
-//        Logger::log().error() << "emitters: " << (*i)->pSystem->getNumEmitters();
+        //        Logger::log().error() << "emitters: " << (*i)->pSystem->getNumEmitters();
     }
-//    Logger::log().error() << "-------------- " << (*i)->pSystem->getNumParticles();;
+    //    Logger::log().error() << "-------------- " << (*i)->pSystem->getNumParticles();;
 }
 
 ///================================================================================================

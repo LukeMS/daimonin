@@ -67,9 +67,12 @@ public:
     void faceToTile(int x, int z);
     void castSpell(int spell);
     void setTexture(int pos, int color, int textureNr);
-    void toggleMesh   (int pos, int WeaponNr);
+    void toggleMesh(int pos, int WeaponNr);
+    void stopMovement();
+    bool isMoving();
+    void raiseWeapon(bool raise);
     void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
-
+    void attackShortRange();
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.

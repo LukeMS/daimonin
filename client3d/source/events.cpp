@@ -141,9 +141,11 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
             //mCamera->setPosition(); // Its done in setWorldPos();
             mCamera->pitch(Degree(-25));
+/*
             const Vector3 *corner = mCamera->getWorldSpaceCorners();
             mCamCornerX =  (corner[0].x - corner[1].x)/2;
             mCamCornerY = -(corner[0].y - corner[2].y)/2 -13.57;  // Todo: clean up.
+*/
             /*
                     // rotating map.
                     mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2));

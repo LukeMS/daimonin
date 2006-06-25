@@ -51,9 +51,9 @@ bool SpellManager::init(SceneManager *SceneMgr)
 bool SpellManager::addObject(unsigned int , unsigned int )
 {
     // Player cast Fireball.
-    const SceneNode *node = ObjectManager::getSingleton().getNpcNode(0);
+    SceneNode *node = (SceneNode*) ObjectManager::getSingleton().getNpcNode(0);
     //ParticleManager::getSingleton().addNodeObject(node, "Particle/GreenyNimbus");
-    ParticleManager::getSingleton().addNodeObject(node, "Particle/FireBall");
+//    ParticleManager::getSingleton().addNodeObject(Vector3(0,0,0), node, "Particle/FireBall",-1);
     return true;
 }
 

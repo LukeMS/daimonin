@@ -245,12 +245,12 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
 ///================================================================================================
 void ObjectPlayer::toggleMesh(int Bone, int WeaponNr)
 {
-/*
-Bone_Right_Hand: "RFingers"
-Bone_Left_Hand : "LFingers"
-Bone_Head      : "Head"
-Bone_Body      : "Spline1"
-*/
+    /*
+    Bone_Right_Hand: "RFingers"
+    Bone_Left_Hand : "LFingers"
+    Bone_Head      : "Head"
+    Bone_Body      : "Spline1"
+    */
 
     switch (Bone)
     {
@@ -268,6 +268,25 @@ Bone_Body      : "Spline1"
         }
     }
 }
+
+///================================================================================================
+/// .
+///================================================================================================
+void ObjectPlayer::raiseWeapon(bool raise)
+{
+    if (!raise)
+    {
+        mEntity->detachObjectFromBone(mEntityWeapon);
+        mEntityWeapon =0;
+        return;
+    }
+    if (!mEntityWeapon)
+    {
+        mEntityWeapon = (Entity*) ObjectManager::getSingleton().getWeaponEntity(0);
+        mEntity->attachObjectToBone("RFingers", mEntityWeapon);
+    }
+}
+
 
 ///================================================================================================
 /// Update object.
@@ -383,6 +402,36 @@ void ObjectPlayer::moveToTile(int x, int z)
     mDstPos.x = x;
     mDstPos.z = z;
     mAutoMoving = true;
+}
+
+///================================================================================================
+/// Stop movement instantly.
+///================================================================================================
+void ObjectPlayer::stopMovement()
+{
+    mNewFacing = mFacing;
+    mWalkToPos = mNode->getPosition();
+    mAutoTurning = false;
+    mAutoMoving = false;
+}
+
+///================================================================================================
+/// Attack an enemy.
+///================================================================================================
+void ObjectPlayer::attackShortRange()
+{
+    if (mAttacking) return;
+    mAttacking = true;
+    int x, z;
+//    Vector3 pos = ObjectManager::getSingleton().getEnemyPos();
+}
+
+///================================================================================================
+/// Is player currently moving?
+///================================================================================================
+bool ObjectPlayer::isMoving()
+{
+    return mAutoMoving;
 }
 
 ///================================================================================================

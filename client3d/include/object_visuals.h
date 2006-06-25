@@ -39,11 +39,22 @@ class ObjectVisuals
 public:
     enum
     {
-        NPC_SELECTION,
         NPC_LIFEBAR_L,
         NPC_LIFEBAR_R,
         NPC_LIFEBAR_M,
+        NPC_SELECTION,
         NPC_SUM
+    };
+
+    enum
+    {
+        PARTICLE_COLOR_FRIEND_STRT,
+        PARTICLE_COLOR_FRIEND_STOP,
+        PARTICLE_COLOR_ENEMY_STRT,
+        PARTICLE_COLOR_ENEMY_STOP,
+        PARTICLE_COLOR_NEUTRAL_STRT,
+        PARTICLE_COLOR_NEUTRAL_STOP,
+        PARTICLE_COLOR_SUM
     };
 
     /// ////////////////////////////////////////////////////////////////////
@@ -57,7 +68,7 @@ public:
     void showLifebar(bool visible)
     {
     }
-    void selectNPC(MovableObject *mob);
+    void selectNPC(MovableObject *mob, int friendly);
     void setPosLifebar(Vector3 pos);
     void updateSelection(Real facing);
     void setLengthLifebar(int maxLength, int currentLength);
@@ -66,9 +77,11 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    Real mWidthLifebarGFX; /**< Lifebar has the same width like the NPC. **/
+    Real mWidthLifebarGFX;    /**< Lifebar has the same width like the NPC. **/
+    ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
     Entity *mEntity[NPC_SUM];
     SceneNode *mNode[NPC_SUM];
+    ColourValue particleColor[PARTICLE_COLOR_SUM];
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

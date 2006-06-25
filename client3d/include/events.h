@@ -34,7 +34,7 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 const Real MIN_CAMERA_ZOOM =  20.0;
-const Real MAX_CAMERA_ZOOM =  95.0;
+const Real MAX_CAMERA_ZOOM =  110.0;
 
 ///================================================================================================
 /// Class.

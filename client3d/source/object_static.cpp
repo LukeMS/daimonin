@@ -62,6 +62,9 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mActPos.x = obj.posX;
     mActPos.z = obj.posY;
     mNickName = obj.nickName;
+    mFloor    = obj.level;
+    mCentred  = obj.centred;
+
     mFacing   = Degree(obj.facing);
     Logger::log().info()  << "Adding object: " << obj.meshName << ".";
     mEntity =mSceneMgr->createEntity("Obj_"+StringConverter::toString(obj.type, 2, '0')+"_" + StringConverter::toString(mIndex, 5, '0'), obj.meshName);
@@ -71,9 +74,23 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
     mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
     mBoundingBox.y = AABB.getMinimum().y;
-    pos.x = mActPos.x * TILE_SIZE_X + mBoundingBox.x;
-    pos.z = mActPos.z * TILE_SIZE_Z + mBoundingBox.z;
+
+    if (mCentred)
+    {
+        pos.x = mActPos.x * TILE_SIZE_X + mBoundingBox.x;
+        pos.z = mActPos.z * TILE_SIZE_Z + mBoundingBox.z;
+    }
+    else
+    {
+        pos.x = mActPos.x * TILE_SIZE_X;
+        pos.z = mActPos.z * TILE_SIZE_Z;
+    }
     pos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mActPos.x, mActPos.z)) - mBoundingBox.y;
+    if (mFloor)
+    {
+        pos.y+= AABB.getMaximum().y * mFloor;
+    }
+
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
     mNode->attachObject(mEntity);
     mNode->yaw(mFacing);

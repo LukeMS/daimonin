@@ -56,7 +56,10 @@ bool ObjectManager::init()
     string strType, strTemp, strMesh, strNick;
     mSelectedType  =-1;
     mSelectedObject=-1;
+    //    mSelectedEnemy = false;
     int i=0;
+    /// Default values.
+
     while(1)
     {
         if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC)))
@@ -69,6 +72,9 @@ bool ObjectManager::init()
         sObject obj;
         Option::getSingleton().getDescStr("MeshName", obj.meshName,i);
         Option::getSingleton().getDescStr("NickName", obj.nickName,i);
+
+        Option::getSingleton().getDescStr("Friendly", strTemp,i);
+        obj.friendly= StringConverter::parseInt(strTemp);
 
         Option::getSingleton().getDescStr("Attack", strTemp,i);
         obj.attack  = StringConverter::parseInt(strTemp);
@@ -89,6 +95,17 @@ bool ObjectManager::init()
         obj.posX  = StringConverter::parseInt(strTemp);
         Option::getSingleton().getDescStr("PosY", strTemp,i);
         obj.posY  = StringConverter::parseInt(strTemp);
+
+        if (Option::getSingleton().getDescStr("Level", strTemp,i))
+            obj.level= StringConverter::parseInt(strTemp);
+        else
+            obj.level= 0;
+
+        if (Option::getSingleton().getDescStr("Centred", strTemp,i))
+            obj.centred= StringConverter::parseInt(strTemp);
+        else
+            obj.centred= 1;
+
         Option::getSingleton().getDescStr("Facing", strTemp,i);
         obj.facing= StringConverter::parseReal(strTemp);
         Option::getSingleton().getDescStr("Particles", obj.particleName,i);
@@ -276,7 +293,6 @@ void ObjectManager::synchToWorldPos(Vector3 pos)
     {
         mvObject_player[i]->move(pos);
     }
-
 }
 
 ///================================================================================================
@@ -303,12 +319,11 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         case OBJECT_PLAYER:
         {
             if (id >= (int) mvObject_player.size()) break;
-            if (action == OBJ_GOTO     ) mvObject_player[id]->moveToTile(val1, val2);
+            if (action == OBJ_GOTO     ) mvObject_player[0]->moveToTile(val1, val2);
             if (action == OBJ_TURN     ) mvObject_player[id]->turning(val1);
             if (action == OBJ_WALK     ) mvObject_player[id]->walking(val1);
             if (action == OBJ_ANIMATION) mvObject_player[id]->toggleAnimation(val1, val2);
             if (action == OBJ_TEXTURE  ) mvObject_player[id]->setTexture(val1, val2, 0);
-
             break;
         }
 
@@ -357,7 +372,7 @@ void ObjectManager::freeRecources()
     }
     mvObject_weapon.clear();
 
-	for (std::vector<ObjectEquipment*>::iterator i = mvObject_armor.begin(); i < mvObject_armor.end(); ++i)
+    for (std::vector<ObjectEquipment*>::iterator i = mvObject_armor.begin(); i < mvObject_armor.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);
@@ -372,35 +387,66 @@ void ObjectManager::freeRecources()
 ///================================================================================================
 void ObjectManager::selectNPC(MovableObject *mob)
 {
-    ObjectVisuals::getSingleton().selectNPC(mob);
+    if (mvObject_player[0]->isMoving()) return;
+
     String strObject = mob->getName();
     /// Cut the "Obj_" substring from the entity name.
     strObject.replace(0, strObject.find("_")+1,"");
+    int selectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
+    int selectedType   = StringConverter::parseInt(strObject.substr(0,strObject.find("_")));
 
-    int id = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
-    int type = StringConverter::parseInt(strObject.substr(0,strObject.find("_")));
-    switch (type)
+    switch (selectedType)
     {
         case OBJECT_STATIC:
         {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_static[id]->getNickName()).c_str());
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_static[selectedObject]->getNickName()).c_str());
             break;
         }
 
         case OBJECT_NPC:
         {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[id]->getNickName()).c_str());
+            /// Was already selected before (= do some action on the selected NPC).
+            if ((selectedObject == mSelectedObject) && (selectedType == mSelectedType))
+            {
+                //mvObject_player[0]->faceToTile(mSelectedPosX, mSelectedPosZ);
+                if (mSelectedFriendly < 0)
+                {
+                    mvObject_player[0]->attackObjectOnTile(mSelectedPosX, mSelectedPosZ);
+                    mvObject_player[0]->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+                }
+            }
+            /// A new NPC was selected.
+            else
+            {
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
+                mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
+                ObjectVisuals::getSingleton().selectNPC(mob, mSelectedFriendly);
+                mvObject_npc[selectedObject]->getTilePos(mSelectedPosX, mSelectedPosZ);
+                mvObject_player[0]->faceToTile(mSelectedPosX, mSelectedPosZ);
+                if (mSelectedFriendly < 0)
+                {
+                    mvObject_player[0]->raiseWeapon(true);
+                }
+                else
+                {
+                    mvObject_player[0]->raiseWeapon(false);
+                }
+            }
+            //mvObject_player[0]->stopMovement();
             break;
         }
 
         case OBJECT_PLAYER:
         {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_player[id]->getNickName()).c_str());
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_player[selectedObject]->getNickName()).c_str());
+            ObjectVisuals::getSingleton().selectNPC(mob, mvObject_player[selectedObject]->getFriendly());
             break;
         }
         default:
         break;
     }
+    mSelectedType = selectedType;
+    mSelectedObject = selectedObject;
 }
 
 ///================================================================================================

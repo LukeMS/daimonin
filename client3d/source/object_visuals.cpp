@@ -24,12 +24,13 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
+#include <tinyxml.h>
 #include "define.h"
 #include "option.h"
 #include "logger.h"
 #include "events.h"
 #include "object_visuals.h"
-#include <tinyxml.h>
+#include "particle_manager.h"
 
 ///===================================================
 /// Init all static Elemnts.
@@ -68,7 +69,7 @@ ObjectVisuals::ObjectVisuals()
     /// ////////////////////////////////////////////////////////////////////
     /// Check for a working description file.
     /// ////////////////////////////////////////////////////////////////////
-    TiXmlElement *xmlRoot, *xmlElem;
+    TiXmlElement *xmlRoot, *xmlElem, *xmlColor;
     TiXmlDocument doc(FILE_NPC_VISUALS);
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()))
@@ -81,6 +82,25 @@ ObjectVisuals::ObjectVisuals()
     /// Parse the gfx coordinates.
     /// ////////////////////////////////////////////////////////////////////
     int index =-1;
+    float color[3];
+    mPSystem = 0;
+    if ((xmlElem = xmlRoot->FirstChildElement("Particle")) && ((strTemp = xmlElem->Attribute("name"))))
+    {
+        int i=-1;
+        mPSystem = ParticleManager::getSingleton().addNodeObject(Vector3(0,0,0), 0, strTemp, -1);
+        for (xmlColor = xmlElem->FirstChildElement("color"); xmlColor; xmlColor = xmlColor->NextSiblingElement("color"))
+        {
+            if (++i >= PARTICLE_COLOR_SUM)
+            {
+                Logger::log().error() << "XML-File '" << FILE_NPC_VISUALS << " Particle entries are broken.";
+                break;
+            }
+            if ((strTemp = xmlColor->Attribute("red"  ))) color[0] = atof(strTemp);
+            if ((strTemp = xmlColor->Attribute("green"))) color[1] = atof(strTemp);
+            if ((strTemp = xmlColor->Attribute("blue" ))) color[2] = atof(strTemp);
+            particleColor[i] = ColourValue(color[0], color[1], color[2], 1.0f);
+        }
+    }
     for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
     {
         if (!(strTemp = xmlElem->Attribute("name"))) continue;
@@ -90,13 +110,13 @@ ObjectVisuals::ObjectVisuals()
         if ((strTemp = xmlElem->Attribute("posY"     ))) GfxEntry[index].z1    = atof(strTemp)/ TEXTURE_SIZE;
         if ((strTemp = xmlElem->Attribute("width"    ))) GfxEntry[index].x2    = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].x1;
         if ((strTemp = xmlElem->Attribute("height"   ))) GfxEntry[index].z2    = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].z1;
-        if ((strTemp = xmlElem->Attribute("meshSizeX" ))) GfxEntry[index].sizeX  = atof(strTemp);
-        if ((strTemp = xmlElem->Attribute("meshSizeY" ))) GfxEntry[index].sizeY  = atof(strTemp);
-        if ((strTemp = xmlElem->Attribute("meshSizeZ" ))) GfxEntry[index].sizeZ  = atof(strTemp);
-     }
-    buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
-    buildEntity(NPC_LIFEBAR_L, "MeshLifebarL",  "EntityLifebarL");
-//    buildEntity(NPC_LIFEBAR_R, "MeshLifebarR",  "EntityLifebarR");
+        if ((strTemp = xmlElem->Attribute("meshSizeX"))) GfxEntry[index].sizeX  = atof(strTemp);
+        if ((strTemp = xmlElem->Attribute("meshSizeY"))) GfxEntry[index].sizeY  = atof(strTemp);
+        if ((strTemp = xmlElem->Attribute("meshSizeZ"))) GfxEntry[index].sizeZ  = atof(strTemp);
+    }
+    //    buildEntity(NPC_LIFEBAR_L, "MeshLifebarL",  "EntityLifebarL");
+    //    buildEntity(NPC_LIFEBAR_R, "MeshLifebarR",  "EntityLifebarR");
+    if (!mPSystem) buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
 }
 
 ///===================================================
@@ -152,37 +172,69 @@ void ObjectVisuals::setLengthLifebar(int maxLength, int currentLength)
 ///===================================================
 /// Select a NPC.
 ///===================================================
-void ObjectVisuals::selectNPC(MovableObject *mob)
+void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
 {
     const AxisAlignedBox &AABB = mob->getBoundingBox();
     Vector3 pos;
-    String strNode;
+    String strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_SELECTION, 3, '0');
+    if (mPSystem)
+    {
+        if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(strNode);
+        mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+        mNode[NPC_SELECTION]->attachObject(mPSystem);
+        int index;
+             if (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
+        else if (friendly <0) index = PARTICLE_COLOR_ENEMY_STRT;
+        else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
+        for (int i=0; i < mPSystem->getNumEmitters(); ++i)
+        {
+            mPSystem->getEmitter(i)->setColourRangeStart(particleColor[index]);
+            mPSystem->getEmitter(i)->setColourRangeEnd  (particleColor[index+1]);
+        }
+    }
+    else
+    {
+        if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(strNode);
+        mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+        mNode[NPC_SELECTION]->attachObject(mEntity[NPC_SELECTION]);
+        pos = mNode[NPC_SELECTION]->getPosition();
+        mNode[NPC_SELECTION]->setPosition(pos.x, AABB.getMinimum().y +3, pos.z);
 
-    // Selection ring.
-    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_SELECTION, 3, '0');
-    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(strNode);
-    mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
-    mNode[NPC_SELECTION]->attachObject(mEntity[NPC_SELECTION]);
-    pos = mNode[NPC_SELECTION]->getPosition();
-    mNode[NPC_SELECTION]->setPosition(pos.x, AABB.getMinimum().y +3, pos.z);
+        MaterialPtr mMaterial = MaterialManager::getSingleton().getByName(mEntity[NPC_SELECTION]->getMesh()->getSubMesh(0)->getMaterialName());
+        TextureUnitState *tu = mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0);
+        if (friendly >0)
+        {
+            tu->setTextureUScroll(0);
+            tu->setTextureVScroll(0);
+        }
+        else if (friendly <0)
+        {
+            tu->setTextureUScroll(0);
+            tu->setTextureVScroll(.46875);
+        }
+        else
+        {
+            tu->setTextureUScroll(.46875);
+            tu->setTextureVScroll(.46875);
+        }
+    }
+    /*
+        // Lifebar left bracket.
+        strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_L, 3, '0');
+        if (mNode[NPC_LIFEBAR_L]) mNode[NPC_LIFEBAR_L]->getParentSceneNode()->removeAndDestroyChild(strNode);
+        mNode[NPC_LIFEBAR_L] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+        mNode[NPC_LIFEBAR_L]->attachObject(mEntity[NPC_LIFEBAR_L]);
+        pos = mNode[NPC_LIFEBAR_L]->getPosition();
+        mNode[NPC_LIFEBAR_L]->setPosition(AABB.getMinimum().x, AABB.getMaximum().y +5, pos.z);
 
-/*
-    // Lifebar left bracket.
-    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_L, 3, '0');
-    if (mNode[NPC_LIFEBAR_L]) mNode[NPC_LIFEBAR_L]->getParentSceneNode()->removeAndDestroyChild(strNode);
-    mNode[NPC_LIFEBAR_L] = mob->getParentSceneNode()->createChildSceneNode(strNode);
-    mNode[NPC_LIFEBAR_L]->attachObject(mEntity[NPC_LIFEBAR_L]);
-    pos = mNode[NPC_LIFEBAR_L]->getPosition();
-    mNode[NPC_LIFEBAR_L]->setPosition(AABB.getMinimum().x, AABB.getMaximum().y +5, pos.z);
-
-    // Lifebar right bracket.
-    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_R, 3, '0');
-    if (mNode[NPC_LIFEBAR_R]) mNode[NPC_LIFEBAR_R]->getParentSceneNode()->removeAndDestroyChild(strNode);
-    mNode[NPC_LIFEBAR_R] = mob->getParentSceneNode()->createChildSceneNode(strNode);
-    mNode[NPC_LIFEBAR_R]->attachObject(mEntity[NPC_LIFEBAR_R]);
-    pos = mNode[NPC_LIFEBAR_R]->getPosition();
-    mNode[NPC_LIFEBAR_R]->setPosition(AABB.getMaximum().x, AABB.getMaximum().y +5, pos.z);
-*/
+        // Lifebar right bracket.
+        strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_R, 3, '0');
+        if (mNode[NPC_LIFEBAR_R]) mNode[NPC_LIFEBAR_R]->getParentSceneNode()->removeAndDestroyChild(strNode);
+        mNode[NPC_LIFEBAR_R] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+        mNode[NPC_LIFEBAR_R]->attachObject(mEntity[NPC_LIFEBAR_R]);
+        pos = mNode[NPC_LIFEBAR_R]->getPosition();
+        mNode[NPC_LIFEBAR_R]->setPosition(AABB.getMaximum().x, AABB.getMaximum().y +5, pos.z);
+    */
 }
 
 ///===================================================

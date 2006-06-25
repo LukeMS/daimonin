@@ -9,18 +9,22 @@
 Type     : "player"                       # First "player" is our Hero
 MeshName : "Human_M_Fighter.mesh"
 NickName : "Polyveg"
+Friendly : "100"
 Attack   : "10"
 Defend   : "10"   
 MaxHP    : "100"
 MaxMana  : "100"   
 MaxGrace : "100"
-PosX     : "7"                            # Ignored on Hero.  
-PosY     : "7"                            # Ignored on Hero.  
+PosX     : "5"
+PosY     : "11"                      
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "0" # [degrees]
 
 Type     : "npc"
 MeshName : "Tentacle_N_Small.mesh"
 NickName : "Friendly Tentacle"
+Friendly : "100"
 Attack   : "5"
 Defend   : "2"   
 MaxHP    : "10"
@@ -28,11 +32,14 @@ MaxMana  : "0"
 MaxGrace : "0"
 PosX     : "6"
 PosY     : "6"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
 
 Type     : "npc"
 MeshName : "Tentacle_N_Small.mesh"
 NickName : "Neutral Tentacle"
+Friendly : "0"
 Attack   : "5"
 Defend   : "2"   
 MaxHP    : "20"
@@ -40,11 +47,14 @@ MaxMana  : "0"
 MaxGrace : "0"
 PosX     : "6"
 PosY     : "7"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "45"
 
 Type     : "npc"
 MeshName : "Tentacle_N_Small.mesh"
 NickName : "Evil Tentacle"
+Friendly : "-100"
 Attack   : "5"
 Defend   : "2"   
 MaxHP    : "50"
@@ -52,6 +62,8 @@ MaxMana  : "0"
 MaxGrace : "0"
 PosX     : "6"
 PosY     : "8"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "10"
 
 #####################################################################################
@@ -62,25 +74,158 @@ MeshName : "Tree.mesh"
 NickName : "Tee"
 PosX     : "4"
 PosY     : "12"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+
+
+Type     : "static"
+MeshName : "wall.mesh"
+NickName : "Wall1"
+PosX     : "7"
+PosY     : "5"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
+Facing   : "-45.0"
+
+Type     : "static"
+MeshName : "wall.mesh"
+NickName : "Wall"
+PosX     : "6"
+PosY     : "4"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
+Facing   : "-45.0"
+
+Type     : "static"
+MeshName : "Wall_H_Door.mesh"
+NickName : "Wall"
+PosX     : "4"
+PosY     : "5"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
+Facing   : "45.0"
+
+Type     : "static"
+MeshName : "Wall_H.mesh"
+NickName : "Wall"
+PosX     : "5"
+PosY     : "4"
+Level    : "0"
+Centred  : "1"                            # 1 = Drawn in tile-middle.
+Facing   : "45.0"
+
+
+
+Type     : "static"
+MeshName : "Floor1st.mesh"
+NickName : "Floor1st"
+PosX     : "6"
+PosY     : "6"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "Floor1st.mesh"
+NickName : "Floor1st"
+PosX     : "6"
+PosY     : "5"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
 
 
 Type     : "static"
-MeshName : "wall.mesh"
-NickName : "Wall"
-PosX     : "8"
-PosY     : "6"
-Facing   : "-63.5"
-
+MeshName : "Floor1st.mesh"
+NickName : "Floor1st"
+PosX     : "5"
+PosY     : "5"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
 
 Type     : "static"
-MeshName : "wall.mesh"
-NickName : "Wall"
-PosX     : "9"
+MeshName : "Floor1st.mesh"
+NickName : "Floor1st"
+PosX     : "5"
+PosY     : "6"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "FloorCorner1.mesh"
+NickName : "Floorcorner"
+PosX     : "5"
+PosY     : "4"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "FloorCorner1.mesh"
+NickName : "Floorcorner"
+PosX     : "4"
+PosY     : "5"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "FloorCorner2.mesh"
+NickName : "Floorcorner"
+PosX     : "6"
+PosY     : "4"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "FloorCorner2.mesh"
+NickName : "Floorcorner"
+PosX     : "7"
+PosY     : "5"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "FloorCorner3.mesh"
+NickName : "Floorcorner"
+PosX     : "4"
+PosY     : "6"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
+
+Type     : "static"
+MeshName : "FloorCorner3.mesh"
+NickName : "Floorcorner"
+PosX     : "5"
 PosY     : "7"
-Facing   : "-63.5"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
 
+Type     : "static"
+MeshName : "FloorCorner4.mesh"
+NickName : "Floorcorner"
+PosX     : "6"
+PosY     : "7"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
 
+Type     : "static"
+MeshName : "FloorCorner4.mesh"
+NickName : "Floorcorner"
+PosX     : "7"
+PosY     : "6"
+Level    : "1"
+Centred  : "0"                            # 1 = Drawn in tile-middle.
+Facing   : "0"
 #####################################################################################
 # Equipment:
 #####################################################################################

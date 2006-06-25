@@ -1,0 +1,15 @@
+material Floor
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture Floor.jpg 
+            }
+        }
+    }
+}
+

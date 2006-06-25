@@ -49,6 +49,7 @@ public:
 
     void moveToTile(int x, int z);
     void faceToTile(int x, int z);
+    void attackObjectOnTile(int posX, int posZ);
     void walking(Real walk)
     {
         mWalking = walk;
@@ -66,7 +67,7 @@ public:
 
 protected:
     Real mWalking, mTurning;
-    bool mAutoTurning, mAutoMoving;
+    bool mAutoTurning, mAutoMoving, mAttacking;
     Pos2D mDstPos;   /**< the destination pos in the map. **/
     int maxHealth, actHealth;
     int maxMana  , actMana;
