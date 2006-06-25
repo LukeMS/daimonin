@@ -68,7 +68,6 @@ const Vector3 TileInterface::getSelectedPos()
         {
             tmp.x = (mX +0.5) * TILE_SIZE_X;
             tmp.z = (mZ +0.5) * TILE_SIZE_Z;
-              Logger::log().error() << "hewre";
         }
         else
         {
@@ -128,6 +127,7 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     /// Find the tile that was selected.
     /// ////////////////////////////////////////////////////////////////////
     Real height[4], avgHeight;
+    Real offsetX, offsetY;
     std::pair<bool, Real> Test;
     for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
@@ -136,79 +136,69 @@ void TileInterface::pickTile(float mouseX, float mouseY)
             /// ////////////////////////////////////////////////////////////////////
             /// we have to build a bounding box for each tile and check if the ray
             /// intersects this box.
-            /// To do this, we need the height of the tile vertices.
+            /// To do this, we need the height of the tile  vertices.
             /// ////////////////////////////////////////////////////////////////////
             height[0] = TileManager::getSingleton().getMapHeight(x    , y    );
             height[1] = TileManager::getSingleton().getMapHeight(x + 1, y    );
             height[2] = TileManager::getSingleton().getMapHeight(x    , y + 1);
             height[3] = TileManager::getSingleton().getMapHeight(x + 1, y + 1);
             avgHeight = (height[0]+height[1]+height[2]+height[3]) /4.0;
-            Test = mouseRay.intersects(
-                       AxisAlignedBox((x       )* TILE_SIZE_X, avgHeight,
-                                      (y       )* TILE_SIZE_Z,
-                                      (x  + 1.0)* TILE_SIZE_X, avgHeight,
-                                      (y  + 1.0)* TILE_SIZE_Z));
-            if (!Test.first || Test.second > mDistance)
-                continue;
-            mDistance = Test.second;
-            mX  = x;
-            mZ  = y;
+            /// ////////////////////////////////////////////////////////////////////
+            /// now we build 4 bounding boxes per tile to increase picking accuracy
+            /// Note: Ogre only allows bounding boxes with the first vector having
+            /// got the lower value in every(!) component. so we have to check
+            /// which height value is greater
+            /// ////////////////////////////////////////////////////////////////////
+            offsetX =0, offsetY=0;
+            for (int edge=0; edge < 4; ++edge)
+            {
+                if (height[edge] > avgHeight)
+                    Test = mouseRay.intersects(
+                               AxisAlignedBox((x + offsetX      )* TILE_SIZE_X, avgHeight,
+                                              (y + offsetY      )* TILE_SIZE_Z,
+                                              (x + offsetX + 0.5)* TILE_SIZE_X, height[edge],
+                                              (y + offsetY + 0.5)* TILE_SIZE_Z));
+                else
+                    Test = mouseRay.intersects(
+                               AxisAlignedBox((x + offsetX      )* TILE_SIZE_X, height[edge],
+                                              (y + offsetY      )* TILE_SIZE_Z,
+                                              (x + offsetX + 0.5)* TILE_SIZE_X, avgHeight,
+                                              (y + offsetY + 0.5)* TILE_SIZE_Z));
+                offsetX+= 0.5;
+                if (offsetX > 0.5)
+                {
+                    offsetX = 0.0;
+                    offsetY+= 0.5;
+                }
+                if (Test.first == true)
+                { /// intersection! Find the closest intersection to the camera.
+                    if (Test.second < mDistance)
+                    {
+                        mDistance = Test.second;
+                        mX  = x;
+                        mZ  = y;
+                        mSubtile = edge;
+                    }
+                }
+            }
         }
     }
-
     /// ////////////////////////////////////////////////////////////////////
-    /// now we build 5 bounding boxes for the tile to increase picking accuracy
-    /// Note: Ogre only allows bounding boxes with the first vector having
-    /// got the lower value in every(!) component. so we have to check
-    /// which height value is greater
+    /// Check the middle of the tile.
     /// ////////////////////////////////////////////////////////////////////
-    Real offsetX =0, offsetY=0;
-
-    mDistance = 100000;
     height[0] = TileManager::getSingleton().getMapHeight(mX    , mZ    );
     height[1] = TileManager::getSingleton().getMapHeight(mX + 1, mZ    );
     height[2] = TileManager::getSingleton().getMapHeight(mX    , mZ + 1);
     height[3] = TileManager::getSingleton().getMapHeight(mX + 1, mZ + 1);
     avgHeight = (height[0]+height[1]+height[2]+height[3]) /4.0;
-    // 4 edges.
-    for (int edge=0; edge < 4; ++edge)
-    {
-        if (height[edge] > avgHeight)
-            Test = mouseRay.intersects(
-                       AxisAlignedBox((mX + offsetX      )* TILE_SIZE_X, avgHeight,
-                                      (mZ + offsetY      )* TILE_SIZE_Z,
-                                      (mX + offsetX + 0.5)* TILE_SIZE_X, height[edge],
-                                      (mZ + offsetY + 0.5)* TILE_SIZE_Z));
-        else
-            Test = mouseRay.intersects(
-                       AxisAlignedBox((mX + offsetX      )* TILE_SIZE_X, height[edge],
-                                      (mZ + offsetY      )* TILE_SIZE_Z,
-                                      (mX + offsetX + 0.5)* TILE_SIZE_X, avgHeight,
-                                      (mZ + offsetY + 0.5)* TILE_SIZE_Z));
-        offsetX+= 0.5;
-        if (offsetX > 0.5)
-        {
-            offsetX = 0.0;
-            offsetY+= 0.5;
-        }
-        if (!Test.first || Test.second > mDistance)
-            continue;
-        mDistance = Test.second;
-        mSubtile = edge;
-    }
-/*
-    // middle of the tile.
     Test = mouseRay.intersects(
-               AxisAlignedBox((mX  + 0.1)* TILE_SIZE_X, avgHeight,
-                              (mZ  + 0.1)* TILE_SIZE_Z,
-                              (mX  + 0.9)* TILE_SIZE_X, avgHeight,
-                              (mZ  + 0.9)* TILE_SIZE_Z));
-    if (Test.first && Test.second < mDistance)
+               AxisAlignedBox((mX  + 0.3)* TILE_SIZE_X, avgHeight,
+                              (mZ  + 0.3)* TILE_SIZE_Z,
+                              (mX  + 0.6)* TILE_SIZE_X, avgHeight,
+                              (mZ  + 0.6)* TILE_SIZE_Z));
+    if (Test.first && Test.second <= mDistance)
     {
         mDistance = Test.second;
         mSubtile  = -1;
-Logger::log().error() << "hier2";
     }
-*/
 }
-

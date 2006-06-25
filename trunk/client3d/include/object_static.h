@@ -35,13 +35,16 @@ using namespace Ogre;
 
 typedef struct
 {
-    int type;
-    String nickName;
+    int type;               /**< Type: e.g. static, npc, ... **/
+    String nickName;        /**< Ingame-Name **/
     String meshName;
     String particleName;
-    int posX, posY;
     unsigned int index;
+    int posX, posY;         /**< Tile-pos. **/
+    int level;              /**< Floor-level. **/
+    int centred;            /**< Is the object centred on the tile? **/
     Real facing;
+    int friendly;
     int attack;
     int defend;
     int maxHP;
@@ -86,16 +89,30 @@ public:
     {
         return mNickName;
     }
+    const int getFriendly()
+    {
+        return mFriendly;
+    }
+    void getTilePos(int &posX, int &posZ)
+    {
+        posX = mActPos.x;
+        posZ = mActPos.z;
+    }
+
 protected:
     static SceneManager *mSceneMgr;
     Vector3 mTranslateVector, mBoundingBox;
     ObjectAnimate *mAnim;
     Degree mFacing, mNewFacing;
+    int mFriendly;
     unsigned int mIndex;
     SceneNode *mNode;
     Entity *mEntity;
     Pos2D mActPos;   /**< the actual pos in the map. **/
     String mNickName;
+    int mFloor;
+    int mCentred;
+
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.

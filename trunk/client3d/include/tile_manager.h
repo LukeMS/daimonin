@@ -39,17 +39,17 @@ using namespace Ogre;
  *****************************************************************************/
 
 /** Number of tiles in the worldmap (on x-axis). */
-const int CHUNK_SIZE_X  = 16;
+const int CHUNK_SIZE_X  = 11;
 
 /** Number of tiles in the worldmap (on z-axis). */
-const int CHUNK_SIZE_Z  = 16;
+const int CHUNK_SIZE_Z  = 23;
 
 /** Minimal size of tile in the shrinked terrain texture. */
 const int MIN_TEXTURE_PIXEL = 16;
 
 /** Size of a tile. */
-const int TILE_SIZE_X = 32;
-const int TILE_SIZE_Z = 64;
+const int TILE_SIZE_X = 48;
+const int TILE_SIZE_Z = 48;
 
 class TileManager
 {

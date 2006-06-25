@@ -44,9 +44,9 @@ public:
         static ParticleManager Singleton; return Singleton;
     }
     bool init(SceneManager *SceneMgr);
-    ParticleSystem *addFreeObject(Vector3 pos, const char *name, Real time);
+    ParticleSystem *addFreeObject(Vector3 pos, const char *particleScript, Real lifeTime);
     ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
-    ParticleSystem *addNodeObject(const SceneNode *node, const char* particleFX);
+    ParticleSystem *addNodeObject(Vector3 pos, const SceneNode *node, const char* particleScript, Real lifeTime);
     void delNodeObject(int nr);
     void delObject(ParticleSystem *pSystem);
     void synchToWorldPos(const Vector3 &pos);

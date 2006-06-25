@@ -1,0 +1,15 @@
+material Floorcorner
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture Floor.jpg 
+            }
+        }
+    }
+}
+

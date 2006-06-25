@@ -65,11 +65,21 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mAutoMoving = false;
     mTurning =0;
     mWalking =0;
+    mFriendly= obj.friendly;
     mAttack  = obj.attack;
     mDefend  = obj.defend;
     mMaxHP   = obj.maxHP;
     mMaxMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
+
+    //mNode->showBoundingBox(true); // Remove Me!!!!
+}
+
+///================================================================================================
+/// Move to the currently selected object.
+///================================================================================================
+void ObjectNPC::attackObjectOnTile(int posX, int posZ)
+{
 }
 
 ///================================================================================================
