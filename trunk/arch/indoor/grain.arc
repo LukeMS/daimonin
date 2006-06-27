@@ -33,3 +33,10 @@ no_pick 1
 type 79
 layer 4
 end
+Object grain5_r
+name grain
+face grain5_rain.101
+no_pick 1
+type 79
+layer 4
+end

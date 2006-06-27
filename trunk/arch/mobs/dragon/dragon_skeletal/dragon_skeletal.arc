@@ -4,7 +4,6 @@ face dragon_skeletal.131
 race dragon
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
-mpart_id 3
 layer 6
 direction 5
 item_race 255
@@ -104,42 +103,5 @@ dragon_skeletal.152
 mina
 is_animated 1
 anim_speed 5
-no_pick 1
-end
-More
-Object dragon_skeletal_b
-name skeletal dragon
-layer 6
-terrain_flag 1
-mpart_id 3
-mpart_nr 1
-x 1
-monster 1
-alive 1
-no_pick 1
-end
-More
-Object dragon_skeletal_c
-name skeletal dragon
-layer 6
-terrain_flag 1
-mpart_id 3
-mpart_nr 2
-y 1
-monster 1
-alive 1
-no_pick 1
-end
-More
-Object dragon_skeletal_d
-name skeletal dragon
-layer 6
-terrain_flag 1
-mpart_id 3
-mpart_nr 3
-y 1
-x 1
-monster 1
-alive 1
 no_pick 1
 end

@@ -142,3 +142,21 @@ terrain_type 1
 type 71
 no_pick 1
 end
+Object floor_farm2a
+name field
+face floor_farm2a.101
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+end
+Object floor_farm2b
+name field
+face floor_farm2b.101
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+end
