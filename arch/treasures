@@ -246,6 +246,96 @@ arch age_force_half_elf
 more
 arch guild_force
 end
+treasure player_dwarf_male
+arch padded_armour
+magic_chance 0
+artifact_chance 0
+more
+arch sandals
+magic_chance 0
+artifact_chance 0
+more
+arch food_generic
+magic_chance 0
+artifact_chance 0
+nrof 4
+more
+arch torch
+magic_chance 0
+artifact_chance 0
+more
+arch torch
+magic_chance 0
+artifact_chance 0
+more
+list player_starting_wealth
+magic_chance 0
+artifact_chance 0
+more
+arch skill_praying
+more
+arch skill_use_magic_item
+more
+arch skill_literacy
+more
+arch skill_throwing
+more
+arch skill_punching
+more
+arch rank_force
+more
+arch alignment_force
+title true neutral
+more
+arch age_force_dwarf
+more
+arch guild_force
+end
+treasure player_dwarf_female
+arch padded_armour
+magic_chance 0
+artifact_chance 0
+more
+arch sandals
+magic_chance 0
+artifact_chance 0
+more
+arch food_generic
+magic_chance 0
+artifact_chance 0
+nrof 4
+more
+arch torch
+magic_chance 0
+artifact_chance 0
+more
+arch torch
+magic_chance 0
+artifact_chance 0
+more
+list player_starting_wealth
+magic_chance 0
+artifact_chance 0
+more
+arch skill_praying
+more
+arch skill_use_magic_item
+more
+arch skill_punching
+more
+arch skill_literacy
+more
+arch skill_throwing
+more
+arch rank_force
+more
+arch alignment_force
+title true neutral
+more
+arch age_force_dwarf
+more
+arch guild_force
+end
 treasureone player_starting_wealth
 arch coppercoin
 magic_chance 0
@@ -785,6 +875,10 @@ arch hammer_battle
 difficulty 6
 chance 20
 more
+arch manrikigusari
+difficulty 6
+chance 20
+more
 arch hammer_military
 difficulty 3
 chance 20
@@ -927,6 +1021,10 @@ more
 arch tanto
 difficulty 3
 chance 14
+more
+arch sai
+difficulty 3
+chance 14
 end
 treasureone weapon_pierce_2h
 arch forc
@@ -1019,6 +1117,10 @@ arch dagger_small
 chance 8
 more
 arch tanto
+difficulty 2
+chance 14
+more
+arch sai
 difficulty 2
 chance 14
 more
@@ -1340,6 +1442,10 @@ arch high_boots
 chance 20
 difficulty 2
 more
+arch spiked_boots
+chance 20
+difficulty 2
+more
 arch fencing_boots
 chance 15
 difficulty 3
@@ -1500,6 +1606,9 @@ more
 arch gauntlets_leather
 chance 25
 more
+arch gauntlets_spiked
+chance 25
+more
 arch gauntlets_plate
 difficulty 9
 chance 10
@@ -1522,6 +1631,10 @@ difficulty 9
 chance 10
 more
 arch helm_war
+difficulty 9
+chance 12
+more
+arch helm_bronze
 difficulty 9
 chance 12
 more

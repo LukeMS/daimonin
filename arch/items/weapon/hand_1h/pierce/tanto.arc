@@ -1,7 +1,7 @@
-Object tanto
-name tanto
+Object sai
+name sai
 layer 3
-face tanto.101
+face sai.101
 weapon_speed 3.25
 attack_pierce 100
 item_level 3

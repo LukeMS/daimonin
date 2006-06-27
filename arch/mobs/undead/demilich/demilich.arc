@@ -39,6 +39,7 @@ thac0 18
 thacm 1
 dam 66
 weapon_speed 3.5
+resist_cold 95
 resist_fear 100
 resist_paralyze 100
 resist_confusion 100

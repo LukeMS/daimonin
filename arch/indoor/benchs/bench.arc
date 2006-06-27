@@ -94,6 +94,54 @@ no_pass 1
 type 79
 layer 4
 end
+Object bench4.111
+name outdoor bench
+face bench4.111
+anim
+facings 9
+dummy.111
+bench4.111
+bench4.111
+bench4.111
+bench4.171
+bench4.171
+bench4.171
+bench4.171
+bench4.111
+mina
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+no_pass 1
+type 79
+layer 4
+end
+Object bench5.111
+name outdoor bench
+face bench5.111
+anim
+facings 9
+dummy.111
+bench5.111
+bench5.111
+bench5.111
+bench5.171
+bench5.171
+bench5.171
+bench5.171
+bench5.111
+mina
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+no_pass 1
+type 79
+layer 4
+end
 Object kiddy_bench.111
 name kiddy bench
 face kiddy_bench.111
