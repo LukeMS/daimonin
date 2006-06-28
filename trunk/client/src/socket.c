@@ -31,6 +31,17 @@ static SDL_mutex *socket_lock;
 static _command_buffer_read *read_cmd_end=NULL;
 _command_buffer_read *read_cmd_start=NULL;
 
+#ifdef __LINUX
+static char *strerror_local(int errnum)
+{
+#if defined(HAVE_STRERROR)
+    return(strerror(errnum));
+#else
+    return("strerror not implemented");
+#endif
+}
+#endif
+
 void send_command_binary(int cmd, const char *body, int len)
 {
 	SDL_mutexP(write_lock);
@@ -171,7 +182,7 @@ static inline void write_socket_buffer(int fd, SockList *sl)
 #else
 		if (errno == EWOULDBLOCK || errno == EINTR)
 			return;
-		LOG(LOG_DEBUG, "New socket write failed (wsb %d) (%d).\n", EAGAIN, errno);
+		LOG(LOG_DEBUG, "New socket write failed (wsb %d) (%d: %s).\n", EAGAIN, errno, strerror_local(errno));
 		SOCKET_CloseSocket(fd);
 #endif
 		return;
@@ -199,7 +210,7 @@ static inline int read_socket_buffer(int fd, SockList *sl)
 #ifdef WIN32
 	stat_ret = recv(fd, sl->buf + tmp, read_bytes, 0);
 #else
-	stat_ret = read(fd, sl->buf + tmp, read_bytes);
+	stat_ret = recv(fd, sl->buf + tmp, read_bytes, MSG_DONTWAIT);
 #endif
 
 	/*LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, fd, stat_ret);*/
@@ -221,7 +232,7 @@ static inline int read_socket_buffer(int fd, SockList *sl)
 		if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
 			return 1;
 
-		LOG(LOG_DEBUG, "ReadPacket got error %d, returning 0\n", errno);
+		LOG(LOG_DEBUG, "ReadPacket got error %d (%s), returning 0\n", errno, strerror_local(errno));
 		SOCKET_CloseSocket(fd);
 #endif
 	}
@@ -450,6 +461,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     uint32          start_timer;
 	struct linger       linger_opt;
 
+	LOG(LOG_DEBUG, "OpenSocket: %s\n", host);
     /* The way to make the sockets work on XP Home - The 'unix' style socket
         * seems to fail inder xp home.
         */
@@ -601,7 +613,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
     struct linger       linger_opt;
 
-/* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
+	/* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
 #ifndef HAVE_GETADDRINFO
     struct protoent *protox;
     struct sockaddr_in  insock;
