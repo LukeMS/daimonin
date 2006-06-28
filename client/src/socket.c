@@ -654,6 +654,9 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
+    /* Workaround for issue #425 on OSs with broken NIS+ like FC5. 
+     * This should disable any service lookup */
+    hints.ai_flags = AI_NUMERICSERV; 
 
     if (getaddrinfo(host, port_str, &hints, &res) != 0)
         return FALSE;
