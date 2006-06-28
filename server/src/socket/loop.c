@@ -48,6 +48,12 @@
 
 #include <newserver.h>
 
+#ifdef NO_ERRNO_H
+extern int  errno;
+#else
+#   include <errno.h>
+#endif
+
 char            _idle_warn_text[]    = "X4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";
 char            _idle_warn_text2[]    = "X3 Max idle time reached! Server is closing connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
@@ -176,7 +182,7 @@ static inline int read_socket_buffer(NewSocket *ns)
 		if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
 			return 1;
 			
-		LOG(llevDebug, "ReadPacket got error %d, returning 0\n", errno);
+		LOG(llevDebug, "ReadPacket got error %d (%s), returning 0\n", errno, strerror_local(errno));
 #endif
 	}
 	else
