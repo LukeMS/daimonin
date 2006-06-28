@@ -136,8 +136,8 @@ extern Animations   animations[MAXANIM];
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList
 {
-	int             len;
-	int             pos;
+	int             len; /**< How much data in buf */
+	int             pos; /**< Start of data in buf */
     unsigned char  *buf;
 } SockList;
 

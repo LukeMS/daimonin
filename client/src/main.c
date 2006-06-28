@@ -493,13 +493,15 @@ Boolean game_status_chain(void)
         }
         else
         {
+            SOCKET fd = SOCKET_NO;
+            
             draw_info("query metaserver...", COLOR_GREEN);
             sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port);
             draw_info(buf, COLOR_GREEN);
-            if (SOCKET_OpenSocket(&csocket.fd, &csocket, options.metaserver, options.metaserver_port))
+            if (SOCKET_OpenSocket(&fd, options.metaserver, options.metaserver_port))
             {
-                read_metaserver_data();
-                SOCKET_CloseSocket(csocket.fd);
+                read_metaserver_data(fd);
+                SOCKET_CloseSocket(fd);
                 draw_info("done.", COLOR_GREEN);
             }
             else
@@ -518,7 +520,7 @@ Boolean game_status_chain(void)
         clear_group();
         map_udate_flag = 2;
         if (csocket.fd != SOCKET_NO)
-            SOCKET_CloseSocket(csocket.fd);
+            SOCKET_CloseClientSocket(&csocket);
         clear_map();
         clear_player();
         reset_keys();
@@ -541,7 +543,7 @@ Boolean game_status_chain(void)
     {
         clear_group();
         GameStatusVersionFlag = FALSE;
-        if (!SOCKET_OpenSocket(&csocket.fd, &csocket, ServerName, ServerPort))
+        if (!SOCKET_OpenClientSocket(&csocket, ServerName, ServerPort))
         {
             sprintf(buf, "connection failed!");
             draw_info(buf, COLOR_RED);
