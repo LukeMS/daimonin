@@ -44,10 +44,12 @@ extern void socket_thread_stop(void);
 
 extern Boolean  SOCKET_InitSocket(void);
 extern Boolean  SOCKET_DeinitSocket(void);
-extern Boolean  SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port);
+extern Boolean  SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port);
+extern Boolean  SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port);
 extern Boolean  SOCKET_CloseSocket(SOCKET socket);
+extern Boolean  SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int      SOCKET_GetError(void);  /* returns socket error */
 
-void            read_metaserver_data(void);
+void            read_metaserver_data(SOCKET fd);
 
 #endif
