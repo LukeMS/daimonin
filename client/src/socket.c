@@ -208,7 +208,7 @@ static inline int read_socket_buffer(int fd, SockList *sl)
 	else		
 		read_bytes = MAXSOCKBUF-tmp; /* tmp is our offset and there is still a bit to read in */
 
-	stat_ret = recv(fd, sl->buf + tmp, read_bytes, 0);
+	stat_ret = recv(fd, sl->buf + tmp, read_bytes, MSG_DONTWAIT);
 
 	/*LOG(-1,"READ(%d)(%d): %d\n", ROUND_TAG, fd, stat_ret);*/
 
@@ -514,7 +514,7 @@ Boolean SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port
 }
 
 #ifdef __WIN_32
-Boolean SOCKET_OpenSocket(SOCKET *socket_temp, *csock, char *host, int port)
+Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
     int             error, tmp=1;
     long            temp;
