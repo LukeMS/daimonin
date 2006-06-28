@@ -188,6 +188,7 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
         else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
         for (int i=0; i < mPSystem->getNumEmitters(); ++i)
         {
+            mPSystem->clear();
             mPSystem->getEmitter(i)->setColourRangeStart(particleColor[index]);
             mPSystem->getEmitter(i)->setColourRangeEnd  (particleColor[index+1]);
         }

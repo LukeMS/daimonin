@@ -1,9 +1,9 @@
-Particle/SelectionNPC
+Particle/SwordGlow
 {
-	quota	300
+	quota	10000
 	material	Particle/Flare
-	particle_width	2
-	particle_height	2
+	particle_width	7
+	particle_height	5
 	cull_each	false
 	renderer	billboard
 	sorted	false
@@ -17,15 +17,76 @@ Particle/SelectionNPC
 	point_rendering	false
 	accurate_facing	false
 
+	emitter Cylinder
+	{
+		angle	30
+		colour	1 0.5 0 1
+		colour_range_start	1 0.5 0 1
+		colour_range_end	1 0.1 0.1 1
+		direction	0 1 0
+		emission_rate	50
+		position	0 0 7
+		velocity	0
+		velocity_min	0
+		velocity_max	0
+		time_to_live	0.3
+		time_to_live_min	0.3
+		time_to_live_max	0.3
+		duration	0
+		duration_min	0
+		duration_max	0
+		repeat_delay	0
+		repeat_delay_min	0
+		repeat_delay_max	0
+		width	7
+		height	5
+		depth	0
+	}
+
+	affector LinearForce
+	{
+		force_vector	0 100 0
+		force_application	add
+	}
+
+	affector ColourFader
+	{
+		red	1
+		green	-0.4858
+		blue	-0.5201
+		alpha	0.4457
+	}
+}
+
+
+Particle/SelectionNPC
+{
+	quota	300
+	material	Particle/Flare
+	particle_width	2
+	particle_height	2
+	cull_each	false
+	renderer	billboard
+	sorted	false
+	local_space	true
+	iteration_interval	0
+	nonvisible_update_timeout	0
+	billboard_type	oriented_self
+	billboard_origin	bottom_center
+	billboard_rotation_type	texcoord
+	common_up_vector	0 1 0
+	point_rendering	false
+	accurate_facing	true
+
 	emitter Ring
 	{
 		angle	0
-		colour	0.643478 1 0.634783 1
-		colour_range_start	0.643478 1 0.634783 1
-		colour_range_end	0.104348 1 0.0956522 1
+		colour	0 1 0 1
+		colour_range_start	0 1 0 1
+		colour_range_end	0 0.582609 0 1
 		direction	0 1 0
 		emission_rate	1436
-		position	0 2 0
+		position	0 3 0
 		velocity	0
 		velocity_min	0
 		velocity_max	4
@@ -44,54 +105,7 @@ Particle/SelectionNPC
 		inner_width	0.9
 		inner_height	0.9
 	}
-
-	emitter Point
-	{
-		angle	0
-		colour	0.6 1 0.6 1
-		colour_range_start	0.6 1 0.6 1
-		colour_range_end	0.09 1 0.09 1
-		direction	0 0 -1
-		emission_rate	50
-		position	0 2 7
-		velocity	35
-		velocity_min	35
-		velocity_max	35
-		time_to_live	0.4
-		time_to_live_min	0.4
-		time_to_live_max	0.4
-		duration	0
-		duration_min	0
-		duration_max	0
-		repeat_delay	0
-		repeat_delay_min	0
-		repeat_delay_max	0
-	}
-
-	emitter Point
-	{
-		angle	0
-		colour	0.6 1 0.6 1
-		colour_range_start	0.6 1 0.6 1
-		colour_range_end	0.09 1 0.09 1
-		direction	-1 0 0
-		emission_rate	50
-		position	7 2 0
-		velocity	35
-		velocity_min	35
-		velocity_max	35
-		time_to_live	0.4
-		time_to_live_min	0.4
-		time_to_live_max	0.4
-		duration	0
-		duration_min	0
-		duration_max	0
-		repeat_delay	0
-		repeat_delay_min	0
-		repeat_delay_max	0
-	}
 }
-
 
 
 
@@ -215,7 +229,7 @@ Particle/SelectionDust
 	cull_each	false
 	renderer	billboard
 	sorted	false
-	local_space	false
+	local_space	true
 	iteration_interval	0
 	nonvisible_update_timeout	0
 	billboard_type	point
@@ -255,62 +269,3 @@ Particle/SelectionDust
 	}
 }
 
-Particle/SwordGlow
-{
-	quota	10000
-	material	Particle/Flare
-	particle_width	7
-	particle_height	5
-	cull_each	false
-	renderer	billboard
-	sorted	false
-	local_space	false
-	iteration_interval	0
-	nonvisible_update_timeout	0
-	billboard_type	point
-	billboard_origin	center
-	billboard_rotation_type	texcoord
-	common_up_vector	0 1 0
-	point_rendering	false
-	accurate_facing	false
-
-	emitter Cylinder
-	{
-		angle	30
-		colour	1 0.5 0 1
-		colour_range_start	1 0.5 0 1
-		colour_range_end	1 0.1 0.1 1
-		direction	0 1 0
-		emission_rate	50
-		position	0 0 7
-		velocity	0
-		velocity_min	0
-		velocity_max	0
-		time_to_live	0.3
-		time_to_live_min	0.3
-		time_to_live_max	0.3
-		duration	0
-		duration_min	0
-		duration_max	0
-		repeat_delay	0
-		repeat_delay_min	0
-		repeat_delay_max	0
-		width	7
-		height	5
-		depth	0
-	}
-
-	affector LinearForce
-	{
-		force_vector	0 100 0
-		force_application	add
-	}
-
-	affector ColourFader
-	{
-		red	1
-		green	-0.4858
-		blue	-0.5201
-		alpha	0.4457
-	}
-}

@@ -145,7 +145,7 @@ private:
     MaterialPtr mKartentextur;
     int mTileTextureSize;
     bool mGrid;
-    unsigned int mapScrollX, mapScrollZ;
+    unsigned int mMapScrollX, mMapScrollZ;
 
     TileManager();
     ~TileManager();

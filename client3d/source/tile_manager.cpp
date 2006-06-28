@@ -48,8 +48,8 @@ const int TEXTURES_PER_ROW = 7;
 TileManager::TileManager()
 {
     mInterface = 0;
-    mapScrollX = 1000;
-    mapScrollZ = 1000;
+    mMapScrollX = 0;
+    mMapScrollZ = 0;
 }
 
 ///================================================================================================
@@ -236,8 +236,8 @@ void TileManager::scrollMap(int dx, int dz)
             }
         }
     }
-    mapScrollX+= dx;
-    mapScrollZ+= dz;
+    mMapScrollX+= dx;
+    mMapScrollZ+= dz;
     changeChunks();
 }
 
@@ -246,8 +246,8 @@ void TileManager::scrollMap(int dx, int dz)
 ///================================================================================================
 void TileManager::getMapScroll(int &x, int &z)
 {
-    x = mapScrollX;
-    z = mapScrollZ;
+    x = mMapScrollX;
+    z = mMapScrollZ;
 }
 
 ///================================================================================================

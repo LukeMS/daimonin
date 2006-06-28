@@ -113,7 +113,6 @@ void TileChunk::createWater()
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
     mEntityWater->setQueryFlags(QUERY_TILES_WATER_MASK);
-
 }
 
 ///================================================================================================
@@ -310,8 +309,7 @@ void TileChunk::createWater_Buffers()
     idata->indexBuffer = ibuf;
     idata->indexStart = 0;
     idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD))
-                           ;
+    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
     for (unsigned short p=0; numVertices; ++p)
         pIdx[--numVertices] = p;
     ibuf->unlock();
@@ -681,8 +679,7 @@ void TileChunk::createLand_Buffers()
     idata->indexBuffer = ibuf;
     idata->indexStart = 0;
     idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD))
-                           ;
+    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
     for (unsigned short p=0; numVertices; ++p)
         pIdx[--numVertices] = p;
     ibuf->unlock();
@@ -711,8 +708,7 @@ void TileChunk::createDummy(SubMesh* submesh)
                 HardwareBuffer::HBU_STATIC_WRITE_ONLY, // usage
                 false); // no shadow buffer
     vdata->vertexBufferBinding->setBinding(0, vbuf0);
-    Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_DISCARD))
-                  ;
+    Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_DISCARD));
     // Triangle 1
     pReal[0] = 0;
     pReal[1] = 0;
@@ -735,8 +731,7 @@ void TileChunk::createDummy(SubMesh* submesh)
     idata->indexBuffer= ibuf;
     idata->indexStart = 0;
     idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD))
-                           ;
+    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
     pIdx[0] = 2;
     pIdx[1] = 1;
     pIdx[2] = 0;

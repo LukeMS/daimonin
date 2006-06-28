@@ -108,7 +108,9 @@ bool ObjectManager::init()
 
         Option::getSingleton().getDescStr("Facing", strTemp,i);
         obj.facing= StringConverter::parseReal(strTemp);
-        Option::getSingleton().getDescStr("Particles", obj.particleName,i);
+
+        Option::getSingleton().getDescStr("Particles", strTemp,i);
+        obj.particleNr  = StringConverter::parseInt(strTemp);
 
         if (strType == "player")
         {
@@ -140,12 +142,12 @@ bool ObjectManager::init()
         else if (strType == "weapon")
         {
             obj.type = ATTACHED_OBJECT_WEAPON;
-            addBoneObject(ATTACHED_OBJECT_WEAPON, obj.meshName.c_str(), obj.particleName.c_str());
+            addBoneObject(ATTACHED_OBJECT_WEAPON, obj.meshName.c_str(), obj.particleNr);
         }
         else if (strType == "armor")
         {
             obj.type = ATTACHED_OBJECT_ARMOR;
-            addBoneObject(ATTACHED_OBJECT_ARMOR, obj.meshName.c_str(), obj.particleName.c_str());
+            addBoneObject(ATTACHED_OBJECT_ARMOR, obj.meshName.c_str(), obj.particleNr);
         }
     }
     return true;
@@ -205,16 +207,29 @@ const Entity *ObjectManager::getWeaponEntity(unsigned int WeaponNr)
     return mvObject_weapon[WeaponNr]->getEntity();
 }
 
+
+///================================================================================================
+/// .
+///================================================================================================
+ParticleSystem *ObjectManager::getParticleSystem(unsigned int WeaponNr)
+{
+    if (WeaponNr >= mvObject_weapon.size())
+        return 0;
+    return mvObject_weapon[WeaponNr]->getParticleSystem();
+}
+
 ///================================================================================================
 /// Adds an equipment object.
 ///================================================================================================
-void ObjectManager::addBoneObject(unsigned int type, const char *meshName, const char *particleName)
+void ObjectManager::addBoneObject(unsigned int type, const char *meshName, int particleNr)
 {
+
+
     switch (type)
     {
         case ATTACHED_OBJECT_WEAPON:
         {
-            ObjectEquipment *obj_weapon = new ObjectEquipment(ATTACHED_OBJECT_WEAPON, meshName, particleName);
+            ObjectEquipment *obj_weapon = new ObjectEquipment(ATTACHED_OBJECT_WEAPON, meshName, particleNr);
             if (!obj_weapon) return;
             //obj_weapon->setStats(int va11, int va12, int va13, int va14, int va15);
             mvObject_weapon.push_back(obj_weapon);
@@ -222,7 +237,7 @@ void ObjectManager::addBoneObject(unsigned int type, const char *meshName, const
         }
         case ATTACHED_OBJECT_ARMOR:
         {
-            ObjectEquipment *obj_armor = new ObjectEquipment(ATTACHED_OBJECT_ARMOR, meshName, particleName);
+            ObjectEquipment *obj_armor = new ObjectEquipment(ATTACHED_OBJECT_ARMOR, meshName, particleNr);
             if (!obj_armor) return;
             mvObject_armor.push_back(obj_armor);
             break;
@@ -231,7 +246,7 @@ void ObjectManager::addBoneObject(unsigned int type, const char *meshName, const
 }
 
 ///================================================================================================
-///
+/// Update all objects.
 ///================================================================================================
 void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
@@ -277,7 +292,7 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 }
 
 ///================================================================================================
-/// JUST FOR TESTING.
+/// Update all object positions after a map scroll.
 ///================================================================================================
 void ObjectManager::synchToWorldPos(Vector3 pos)
 {
@@ -319,7 +334,14 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         case OBJECT_PLAYER:
         {
             if (id >= (int) mvObject_player.size()) break;
-            if (action == OBJ_GOTO     ) mvObject_player[0]->moveToTile(val1, val2);
+            if (action == OBJ_GOTO     )
+            {
+                SubPos2D pos;
+                pos.x = val1;
+                pos.z = val2;
+                pos.subPos =0;
+                mvObject_player[0]->moveToTile(pos);
+            }
             if (action == OBJ_TURN     ) mvObject_player[id]->turning(val1);
             if (action == OBJ_WALK     ) mvObject_player[id]->walking(val1);
             if (action == OBJ_ANIMATION) mvObject_player[id]->toggleAnimation(val1, val2);
@@ -411,7 +433,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 //mvObject_player[0]->faceToTile(mSelectedPosX, mSelectedPosZ);
                 if (mSelectedFriendly < 0)
                 {
-                    mvObject_player[0]->attackObjectOnTile(mSelectedPosX, mSelectedPosZ);
+                    mvObject_player[0]->attackObjectOnTile(mSelectedPos);
                     mvObject_player[0]->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 1);
                 }
             }
@@ -421,8 +443,8 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
                 mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
                 ObjectVisuals::getSingleton().selectNPC(mob, mSelectedFriendly);
-                mvObject_npc[selectedObject]->getTilePos(mSelectedPosX, mSelectedPosZ);
-                mvObject_player[0]->faceToTile(mSelectedPosX, mSelectedPosZ);
+                mSelectedPos = mvObject_npc[selectedObject]->getTilePos();
+                mvObject_player[0]->faceToTile(mSelectedPos);
                 if (mSelectedFriendly < 0)
                 {
                     mvObject_player[0]->raiseWeapon(true);

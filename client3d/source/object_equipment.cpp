@@ -26,10 +26,16 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "object_equipment.h"
 #include "object_manager.h"
+#include "particle_manager.h"
 #include "sound.h"
 #include "events.h"
 #include "option.h"
 #include "logger.h"
+
+String particleName[ObjectEquipment::PARTICLE_FX_SUM]=
+{
+    "Particle/SwordGlow"
+};
 
 ///================================================================================================
 /// Init all static Elemnts.
@@ -52,9 +58,19 @@ void ObjectEquipment::freeRecources()
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
-ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, const char *particleName)
+ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, int particleNr)
 {
     Logger::log().info()  << "Adding object: " << meshName << ".";
+
+    if (particleNr >=0 && particleNr < PARTICLE_FX_SUM)
+    {
+        mPSystem = ParticleManager::getSingleton().addNodeObject(Vector3(0,0,0), 0, particleName[particleNr].c_str(), -1);
+    }
+    else
+    {
+        mPSystem = 0;
+    }
+
     switch (type)
     {
         case ObjectManager::ATTACHED_OBJECT_WEAPON:
@@ -62,7 +78,6 @@ ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, const 
             String tmpName = "Weapon_" + StringConverter::toString(mWeaponID++, 4, '0');
             mEntity= Event->GetSceneManager()->createEntity(tmpName, meshName);
             mEntity->setQueryFlags(QUERY_EQUIPMENT_MASK);
-            if (particleName) mStrParticleName = particleName;
             break;
         }
         case ObjectManager::ATTACHED_OBJECT_ARMOR:
@@ -70,7 +85,6 @@ ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, const 
             String tmpName = "Armor_" + StringConverter::toString(mWeaponID++, 4, '0');
             mEntity= Event->GetSceneManager()->createEntity(tmpName, meshName);
             mEntity->setQueryFlags(QUERY_EQUIPMENT_MASK);
-            if (particleName) mStrParticleName = particleName;
             break;
         }
     }
@@ -82,4 +96,12 @@ ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, const 
 const Entity *ObjectEquipment::getEntity()
 {
     return mEntity;
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+ParticleSystem *ObjectEquipment::getParticleSystem()
+{
+    return mPSystem;
 }
