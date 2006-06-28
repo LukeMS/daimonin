@@ -74,7 +74,7 @@ void metaserver_init()
 #endif
     if ((metafd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
     {
-        LOG(llevDebug, "metaserver_init: Unable to create socket, err %d\n", errno);
+        LOG(llevDebug, "metaserver_init: Unable to create socket, err %d (%s)\n", errno, strerror_local(errno));
         return;
     }
     sock.sin_family = AF_INET;
@@ -85,7 +85,7 @@ void metaserver_init()
      * Solaris has the same problem, so for now just disable this.
      */
     if (connect(metafd, &sock, sizeof(sock))<0) {
-    LOG(llevDebug,"metaserver_init: Unable to connect to metaserver, err %d\n", errno);
+    LOG(llevDebug,"metaserver_init: Unable to connect to metaserver, err %d (%s)\n", errno, strerror_local(errno));
     }
 #endif
     /* No hostname specified, so lets try to figure one out */
@@ -132,7 +132,7 @@ void    metaserver_update   ()
     sprintf(data, "%s|%d|%s|%s|0|0|0", settings.meta_host, player_active_meta, VERSION, settings.meta_comment);
 	player_active_meta = player_active;
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *) &sock, sizeof(sock)) < 0)
-        LOG(llevDebug, "metaserver_update: sendto failed, err = %d\n", errno);
+        LOG(llevDebug, "metaserver_update: sendto failed, err = %d (%s)\n", errno, strerror_local(errno));
 
     LOG(llevInfo, "metaserver_update: Send data.\n");
 }
