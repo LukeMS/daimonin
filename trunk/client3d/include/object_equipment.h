@@ -35,13 +35,19 @@ using namespace Ogre;
 class ObjectEquipment
 {
 public:
+    enum
+    {
+        PARTICLE_FX_FIRE,
+        PARTICLE_FX_SUM
+    };
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(unsigned int type, const char *meshName, const char *particleName);
+    ObjectEquipment(unsigned int type, const char *meshName, int particleNr);
     ~ObjectEquipment();
     void freeRecources();
     const Entity *getEntity();
+    ParticleSystem *getParticleSystem();
 
 private:
     /// ////////////////////////////////////////////////////////////////////
@@ -49,7 +55,7 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     ObjectEquipment(const ObjectEquipment&); // disable copy-constructor.
 
-    String mStrParticleName;
+    ParticleSystem *mPSystem;
     Entity *mEntity;
     static unsigned int mWeaponID;
     static unsigned int mArmorID;

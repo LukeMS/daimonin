@@ -38,7 +38,7 @@ typedef struct
     int type;               /**< Type: e.g. static, npc, ... **/
     String nickName;        /**< Ingame-Name **/
     String meshName;
-    String particleName;
+    int particleNr;
     unsigned int index;
     int posX, posY;         /**< Tile-pos. **/
     int level;              /**< Floor-level. **/
@@ -93,11 +93,7 @@ public:
     {
         return mFriendly;
     }
-    void getTilePos(int &posX, int &posZ)
-    {
-        posX = mActPos.x;
-        posZ = mActPos.z;
-    }
+    SubPos2D getTilePos();
 
 protected:
     static SceneManager *mSceneMgr;
@@ -108,7 +104,7 @@ protected:
     unsigned int mIndex;
     SceneNode *mNode;
     Entity *mEntity;
-    Pos2D mActPos;   /**< the actual pos in the map. **/
+    SubPos2D mActPos;   /**< the actual pos in the map. **/
     String mNickName;
     int mFloor;
     int mCentred;

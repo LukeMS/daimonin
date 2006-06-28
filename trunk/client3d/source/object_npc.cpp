@@ -34,18 +34,18 @@ http://www.gnu.org/licenses/licenses.html
 
 // #define WRITE_MODELTEXTURE_TO_FILE
 
+const Real WALK_PRECISON = 1.0;
+const int TURN_SPEED    = 200;
+
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
-const Real WALK_PRECISON = 1.0;
-const int TURN_SPEED    = 200;
 
 ///================================================================================================
 /// Destructor.
 ///================================================================================================
 ObjectNPC::~ObjectNPC()
-{
-}
+{}
 
 ///================================================================================================
 /// Free all recources.
@@ -78,143 +78,142 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
 ///================================================================================================
 /// Move to the currently selected object.
 ///================================================================================================
-void ObjectNPC::attackObjectOnTile(int posX, int posZ)
-{
-}
+void ObjectNPC::attackObjectOnTile(SubPos2D pos)
+{}
 
 ///================================================================================================
 /// Toggle ObjectNPC equipment.
 ///================================================================================================
 void  ObjectNPC::toggleMesh(int Bone, int WeaponNr)
 {
-/*
-    if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-    {
-        Logger::log().error()  << "CRITICAL: description file: '" << mDescFile << "' was not found!\n";
-        return;
-    }
-    static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
-    string mStrTemp;
-
-    switch (Bone)
-    {
-        case BONE_WEAPON_HAND:
-        WeaponNr = ++mWeapon; // testing -> delete me!
-        if (mEntityWeapon)
+    /*
+        if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
         {
-            mEntityNPC->detachObjectFromBone("weapon");
-            mSceneMgr->destroyEntity(mEntityWeapon);
-            mEntityWeapon =0;
+            Logger::log().error()  << "CRITICAL: description file: '" << mDescFile << "' was not found!\n";
+            return;
         }
-        if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
+        static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
+        string mStrTemp;
+
+        switch (Bone)
         {
-            mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
-            mEntityWeapon->setQueryFlags(QUERY_EQUIPMENT_MASK);
-            Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
-//                    const AxisAlignedBox &AABB = mEntityWeapon->getBoundingBox();
-//                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-//                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
-            mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon);
-            static ParticleSystem *pSystem;
-            if (WeaponNr==1)
+            case BONE_WEAPON_HAND:
+            WeaponNr = ++mWeapon; // testing -> delete me!
+            if (mEntityWeapon)
             {
-                pSystem = ParticleManager::getSingleton().addBoneObject(mEntityNPC, mStrTemp.c_str(), "Particle/SwordGlow", -1);
+                mEntityNPC->detachObjectFromBone("weapon");
+                mSceneMgr->destroyEntity(mEntityWeapon);
+                mEntityWeapon =0;
             }
-            if (WeaponNr==2)
+            if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
             {
-                ParticleManager::getSingleton().delObject(pSystem);
+                mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
+                mEntityWeapon->setQueryFlags(QUERY_EQUIPMENT_MASK);
+                Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
+    //                    const AxisAlignedBox &AABB = mEntityWeapon->getBoundingBox();
+    //                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+    //                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
+                mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon);
+                static ParticleSystem *pSystem;
+                if (WeaponNr==1)
+                {
+                    pSystem = ParticleManager::getSingleton().addBoneObject(mEntityNPC, mStrTemp.c_str(), "Particle/SwordGlow", -1);
+                }
+                if (WeaponNr==2)
+                {
+                    ParticleManager::getSingleton().delObject(pSystem);
+                }
             }
+            else mWeapon =0;  // testing -> delete me!
+            break;
+
+            case BONE_SHIELD_HAND:
+            {
+                WeaponNr = ++mShield; // testing -> delete me!
+                if (mEntityShield)
+                {
+                    mEntityNPC->detachObjectFromBone("shield");
+                    mSceneMgr->destroyEntity(mEntityShield);
+                    mEntityShield =0;
+                }
+                if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
+                {
+                    mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);
+                    mEntityShield->setQueryFlags(QUERY_EQUIPMENT_MASK);
+                    const AxisAlignedBox &AABB = mEntityShield->getBoundingBox();
+                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+                    Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
+                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
+                }
+                else mShield =0;  // testing -> delete me!
+            }
+            break;
+
+            case BONE_HEAD:
+            {
+    //                    { // delete me!
+    //                      if (WeaponNr) mNode->scale(1.1, 1.1, 1.1);
+    //                      else          mNode->scale(0.9, 0.9, 0.9);
+    //                      Vector3 sc = mNode->getScale();
+    //                      std::string scale= "model size: " + StringConverter::toString(sc.x);
+    //                      GuiManager::getSingleton().sendMessage(
+    //                        GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*) scale.c_str());
+    //                      return;
+    //                    }
+
+                WeaponNr = ++mHelmet; // testing -> delete me!
+                if (mEntityHelmet)
+                {
+                    mEntityNPC->detachObjectFromBone("helmet");
+                    mSceneMgr->destroyEntity(mEntityHelmet);
+                    mEntityHelmet =0;
+                }
+                if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
+                {
+                    mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
+                    mEntityHelmet->setQueryFlags(QUERY_EQUIPMENT_MASK);
+                    Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
+    //                          const AxisAlignedBox &AABB = mEntityHelmet->getBoundingBox();
+    //                          Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+    //                          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
+                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet);
+                }
+                else mHelmet =0;  // testing -> delete me!
+            }
+            break;
+
+            case BONE_BODY:
+            {
+                WeaponNr = ++mArmor; // testing -> delete me!
+                if (mEntityArmor)
+                {
+                    mEntityNPC->detachObjectFromBone("armor");
+                    mSceneMgr->destroyEntity(mEntityArmor);
+                    mEntityArmor =0;
+                }
+                if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
+                {
+                    mEntityArmor =mSceneMgr->createEntity("armor", mStrTemp);
+                    mEntityArmor->setQueryFlags(QUERY_EQUIPMENT_MASK);
+                    const AxisAlignedBox &AABB = mEntityArmor->getBoundingBox();
+                    Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
+
+                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
+
+    //                        Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
+    //                        Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
+    //                        Real posX = atof(mStrTemp.c_str());
+    //                        Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
+    //                        Real posY = atof(mStrTemp.c_str());
+    //                        Option::getSingleton().getDescStr("StartZ_Armor", mStrTemp, WeaponNr);
+    //                        Real posZ = atof(mStrTemp.c_str());
+                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion::IDENTITY, pos);
+                }
+                else mArmor =0;  // testing -> delete me!
+            }
+            break;
         }
-        else mWeapon =0;  // testing -> delete me!
-        break;
-
-        case BONE_SHIELD_HAND:
-        {
-            WeaponNr = ++mShield; // testing -> delete me!
-            if (mEntityShield)
-            {
-                mEntityNPC->detachObjectFromBone("shield");
-                mSceneMgr->destroyEntity(mEntityShield);
-                mEntityShield =0;
-            }
-            if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
-            {
-                mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);
-                mEntityShield->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                const AxisAlignedBox &AABB = mEntityShield->getBoundingBox();
-                Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-                Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
-                mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
-            }
-            else mShield =0;  // testing -> delete me!
-        }
-        break;
-
-        case BONE_HEAD:
-        {
-//                    { // delete me!
-//                      if (WeaponNr) mNode->scale(1.1, 1.1, 1.1);
-//                      else          mNode->scale(0.9, 0.9, 0.9);
-//                      Vector3 sc = mNode->getScale();
-//                      std::string scale= "model size: " + StringConverter::toString(sc.x);
-//                      GuiManager::getSingleton().sendMessage(
-//                        GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*) scale.c_str());
-//                      return;
-//                    }
-
-            WeaponNr = ++mHelmet; // testing -> delete me!
-            if (mEntityHelmet)
-            {
-                mEntityNPC->detachObjectFromBone("helmet");
-                mSceneMgr->destroyEntity(mEntityHelmet);
-                mEntityHelmet =0;
-            }
-            if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
-            {
-                mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
-                mEntityHelmet->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
-//                          const AxisAlignedBox &AABB = mEntityHelmet->getBoundingBox();
-//                          Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-//                          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
-                mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet);
-            }
-            else mHelmet =0;  // testing -> delete me!
-        }
-        break;
-
-        case BONE_BODY:
-        {
-            WeaponNr = ++mArmor; // testing -> delete me!
-            if (mEntityArmor)
-            {
-                mEntityNPC->detachObjectFromBone("armor");
-                mSceneMgr->destroyEntity(mEntityArmor);
-                mEntityArmor =0;
-            }
-            if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
-            {
-                mEntityArmor =mSceneMgr->createEntity("armor", mStrTemp);
-                mEntityArmor->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                const AxisAlignedBox &AABB = mEntityArmor->getBoundingBox();
-                Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
-
-                Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-
-//                        Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
-//                        Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
-//                        Real posX = atof(mStrTemp.c_str());
-//                        Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
-//                        Real posY = atof(mStrTemp.c_str());
-//                        Option::getSingleton().getDescStr("StartZ_Armor", mStrTemp, WeaponNr);
-//                        Real posZ = atof(mStrTemp.c_str());
-                mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion::IDENTITY, pos);
-            }
-            else mArmor =0;  // testing -> delete me!
-        }
-        break;
-    }
-*/
+    */
 }
 
 ///================================================================================================

@@ -101,11 +101,13 @@ void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
     /// Server::getSingleton.getTiles(posX, posZ);
     if (func == WSYNC_MOVE)
     {
-        TileManager::getSingleton().scrollMap(posX, posZ); // server has to do this!
+//ParticleManager::getSingleton().pauseAll(true);
         distance.y =0;
-        ObjectManager::getSingleton().synchToWorldPos(distance);
         ParticleManager::getSingleton().synchToWorldPos(distance);
+        TileManager::getSingleton().scrollMap(posX, posZ); // server has to do this!
+        ObjectManager::getSingleton().synchToWorldPos(distance);
         mCamera->setPosition(pos + Vector3(0, 420, 900));
+//ParticleManager::getSingleton().pauseAll(false);
         return;
     }
     /// ////////////////////////////////////////////////////////////////////

@@ -73,7 +73,12 @@ ObjectStatic::ObjectStatic(sObject &obj)
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
     mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
     mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
-    mBoundingBox.y = AABB.getMinimum().y;
+
+    /// If this is a plane - make sure it has higher y than the ground (avoid flickering):
+    if (!AABB.getMaximum().y  && !AABB.getMinimum().y)
+        mBoundingBox.y = -.1;
+    else
+        mBoundingBox.y = AABB.getMinimum().y;
 
     if (mCentred)
     {
@@ -112,4 +117,17 @@ void ObjectStatic::update(const FrameEvent& event)
 void ObjectStatic::move(Vector3 &pos)
 {
     mNode->setPosition(mNode->getPosition() + pos);
+}
+
+///================================================================================================
+/// Move the object to the given position.
+///================================================================================================
+SubPos2D ObjectStatic::getTilePos()
+{
+    static SubPos2D pos;
+    TileManager::getSingleton().getMapScroll(pos.x, pos.z);
+    pos.x+= mActPos.x;
+    pos.z+= mActPos.z;
+    pos.subPos = 0;
+    return pos;
 }

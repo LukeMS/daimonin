@@ -153,35 +153,38 @@ void ParticleManager::pauseAll(bool pause)
         if (pause)
         {
             (*i)->pSystem->setSpeedFactor(0.0f);
-            (*i)->pSystem->getEmitter(0)->setEnabled(false);
+            for (size_t sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
+                (*i)->pSystem->getEmitter(sum)->setEnabled(false);
         }
         else
         {
             (*i)->pSystem->setSpeedFactor(1.0f);
-            (*i)->pSystem->getEmitter(0)->setEnabled(true);
+            for (size_t sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
+                (*i)->pSystem->getEmitter(sum)->setEnabled(true);
         }
     }
 }
 
 ///================================================================================================
-///
+/// Workaround for a ogre bug (Attached particles wont get updeted after a position change).
 ///================================================================================================
 void ParticleManager::synchToWorldPos(const Vector3 &pos)
 {
     Particle* p;
-    //ParticleEmitter *pe;
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
-        for (size_t sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
+        if (!(*i)->pSystem->isAttached()) continue;
+        if (!(*i)->pSystem->getKeepParticlesInLocalSpace())
         {
-            p = (*i)->pSystem->getParticle(sum);
-            p->position += pos;
-            //            Logger::log().error() << ": " << p->position.x << " ......  " << p->position.z;
+            for (size_t sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
+            {
+                p = (*i)->pSystem->getParticle(sum);
+                p->position+= pos;
+            }
 
         }
-        //        Logger::log().error() << "emitters: " << (*i)->pSystem->getNumEmitters();
+        (*i)->pSystem->_update(0);
     }
-    //    Logger::log().error() << "-------------- " << (*i)->pSystem->getNumParticles();;
 }
 
 ///================================================================================================

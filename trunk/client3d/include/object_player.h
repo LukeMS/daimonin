@@ -48,7 +48,7 @@ public:
     sPicture;
     enum
     {
-        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY
+        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY, BONE_SUM
     };
     enum
     {
@@ -63,8 +63,8 @@ public:
     virtual ~ObjectPlayer();
     virtual void freeRecources();
     virtual void update(const FrameEvent& event);
-    void moveToTile(int x, int z);
-    void faceToTile(int x, int z);
+    void moveToTile(SubPos2D pos);
+    void faceToTile(SubPos2D pos);
     void castSpell(int spell);
     void setTexture(int pos, int color, int textureNr);
     void toggleMesh(int pos, int WeaponNr);
@@ -73,6 +73,8 @@ public:
     void raiseWeapon(bool raise);
     void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
     void attackShortRange();
+    void talkToNpc();
+
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
@@ -85,8 +87,8 @@ private:
         SIDE_FRONT
     };
     TexturePtr mTexture;
-    Entity *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
-
+    Entity *mEntityEquip[BONE_SUM];
+    ParticleSystem *mPSystem[BONE_SUM];
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

@@ -49,7 +49,7 @@ public:
 
     void moveToTile(int x, int z);
     void faceToTile(int x, int z);
-    void attackObjectOnTile(int posX, int posZ);
+    void attackObjectOnTile(SubPos2D pos);
     void walking(Real walk)
     {
         mWalking = walk;
@@ -58,20 +58,21 @@ public:
     {
         mTurning = turn;
     }
-    const Pos2D &getDestMapPos()
+    const SubPos2D &getDestMapPos()
     {
-        return mActPos;
+        return mDstPos;
     }
     void castSpell(int spell);
     void toggleMesh(int pos, int WeaponNr);
 
 protected:
     Real mWalking, mTurning;
-    bool mAutoTurning, mAutoMoving, mAttacking;
-    Pos2D mDstPos;   /**< the destination pos in the map. **/
+    bool mAutoTurning, mAutoMoving, mAttacking, mTalking;
+    SubPos2D mDstPos;   /**< the destination pos in the map. **/
     int maxHealth, actHealth;
     int maxMana  , actMana;
     Vector3 mWalkToPos, mDeltaPos;
+
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.

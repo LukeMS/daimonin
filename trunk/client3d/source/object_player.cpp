@@ -35,6 +35,14 @@ http://www.gnu.org/licenses/licenses.html
 
 // #define WRITE_MODELTEXTURE_TO_FILE
 
+String boneName[ObjectPlayer::BONE_SUM]=
+{
+    "RFingers",
+    "LFingers",
+    "Head",
+    "Spline1"
+};
+
 ///================================================================================================
 /// Init all static Elemnts.
 ///================================================================================================
@@ -209,6 +217,7 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
         Vector3 pos = mNode->getPosition();
         Event->setWorldPos(pos, 0, 0, CEvent::WSYNC_MOVE);
     }
+    for (int i=0; i < BONE_SUM; ++i) mPSystem[i] =0;
     /// ////////////////////////////////////////////////////////////////////
     /// We ignore the material of the mesh and create an own material.
     /// ////////////////////////////////////////////////////////////////////
@@ -234,10 +243,7 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
     setTexture(6, 5, 0);
     setTexture(7, 6, 0);
 
-    mEntityWeapon =0;
-    mEntityShield =0;
-    mEntityArmor  =0;
-    mEntityHelmet =0;
+    for (int i=0; i < BONE_SUM; ++i) mEntityEquip[i] = 0;
 }
 
 ///================================================================================================
@@ -245,28 +251,22 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
 ///================================================================================================
 void ObjectPlayer::toggleMesh(int Bone, int WeaponNr)
 {
-    /*
-    Bone_Right_Hand: "RFingers"
-    Bone_Left_Hand : "LFingers"
-    Bone_Head      : "Head"
-    Bone_Body      : "Spline1"
-    */
-
-    switch (Bone)
+    if (mEntityEquip[Bone])
     {
-        case BONE_WEAPON_HAND:
+        mEntity->detachObjectFromBone(mEntityEquip[Bone]);
+        if (mPSystem[Bone])
         {
-            if (mEntityWeapon)
-            {
-                mEntity->detachObjectFromBone(mEntityWeapon);
-                mEntityWeapon =0;
-            }
-            mEntityWeapon = (Entity*) ObjectManager::getSingleton().getWeaponEntity(WeaponNr);
-            if (!mEntityWeapon) break;
-            mEntity->attachObjectToBone("RFingers", mEntityWeapon);
-            break;
+            mEntity->detachObjectFromBone(mPSystem[Bone]);
+            mPSystem[Bone] =0;
         }
+        mEntityEquip[Bone] =0;
     }
+    mEntityEquip[Bone] = (Entity*) ObjectManager::getSingleton().getWeaponEntity(WeaponNr);
+    if (!mEntityEquip[Bone]) return;
+    mEntity->attachObjectToBone(boneName[Bone], mEntityEquip[Bone]);
+    mPSystem[Bone] =  ObjectManager::getSingleton().getParticleSystem(WeaponNr);
+    if (mPSystem[Bone])
+        mEntity->attachObjectToBone(boneName[Bone], mPSystem[Bone]);
 }
 
 ///================================================================================================
@@ -276,14 +276,14 @@ void ObjectPlayer::raiseWeapon(bool raise)
 {
     if (!raise)
     {
-        mEntity->detachObjectFromBone(mEntityWeapon);
-        mEntityWeapon =0;
+        mEntity->detachObjectFromBone(mEntityEquip[BONE_WEAPON_HAND]);
+        mEntityEquip[BONE_WEAPON_HAND] =0;
         return;
     }
-    if (!mEntityWeapon)
+    if (!mEntityEquip[BONE_WEAPON_HAND])
     {
-        mEntityWeapon = (Entity*) ObjectManager::getSingleton().getWeaponEntity(0);
-        mEntity->attachObjectToBone("RFingers", mEntityWeapon);
+        mEntityEquip[BONE_WEAPON_HAND] = (Entity*) ObjectManager::getSingleton().getWeaponEntity(0);
+        mEntity->attachObjectToBone(boneName[BONE_WEAPON_HAND], mEntityEquip[BONE_WEAPON_HAND]);
     }
 }
 
@@ -361,10 +361,10 @@ void ObjectPlayer::castSpell(int spell)
 ///================================================================================================
 /// Turn the player until it faces the given tile.
 ///================================================================================================
-void ObjectPlayer::faceToTile(int x, int z)
+void ObjectPlayer::faceToTile(SubPos2D pos)
 {
-    float deltaX = x - mActPos.x;
-    float deltaZ = z - mActPos.z;
+    float deltaX = pos.x - mActPos.x;
+    float deltaZ = pos.z - mActPos.z;
 
     /// This is the position of the player.
     if (deltaX ==0 && deltaZ ==0) return;
@@ -378,29 +378,29 @@ void ObjectPlayer::faceToTile(int x, int z)
 ///================================================================================================
 /// Move the player to the given tile.
 ///================================================================================================
-void ObjectPlayer::moveToTile(int x, int z)
+void ObjectPlayer::moveToTile(SubPos2D pos)
 {
-    if(mActPos.x == x && mActPos.z == z || mAutoTurning || mAutoMoving) return;
+    if(mActPos.x == pos.x && mActPos.z == pos.z || mAutoTurning || mAutoMoving) return;
 
     /// Split into waypoints (distance = 1 tile)
     // todo
 
     // testing: limit the moving distance.
-    if (x > mActPos.x+1) x = mActPos.x+1;
-    if (x < mActPos.x-1) x = mActPos.x-1;
-    if (z > mActPos.z+1) z = mActPos.z+1;
-    if (z < mActPos.z-1) z = mActPos.z-1;
+    if (pos.x > mActPos.x+1) pos.x = mActPos.x+1;
+    if (pos.x < mActPos.x-1) pos.x = mActPos.x-1;
+    if (pos.z > mActPos.z+1) pos.z = mActPos.z+1;
+    if (pos.z < mActPos.z-1) pos.z = mActPos.z-1;
 
     /// Turn the head into the moving direction.
-    faceToTile(x, z);
+    faceToTile(pos);
     /// Move it.
-    mWalkToPos.x = x * TILE_SIZE_X + mBoundingBox.x;
-    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(x, z) - mBoundingBox.y);
-    mWalkToPos.z = z * TILE_SIZE_Z + mBoundingBox.z;
+    mWalkToPos.x = pos.x * TILE_SIZE_X + mBoundingBox.x;
+    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(pos.x, pos.z) - mBoundingBox.y);
+    mWalkToPos.z = pos.z * TILE_SIZE_Z + mBoundingBox.z;
     mDeltaPos = mNode->getPosition() - mWalkToPos;
     if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
-    mDstPos.x = x;
-    mDstPos.z = z;
+    mDstPos.x = pos.x;
+    mDstPos.z = pos.z;
     mAutoMoving = true;
 }
 
@@ -422,9 +422,21 @@ void ObjectPlayer::attackShortRange()
 {
     if (mAttacking) return;
     mAttacking = true;
-    int x, z;
-//    Vector3 pos = ObjectManager::getSingleton().getEnemyPos();
+//    int x, z;
+//    Vector3 pos = ObjectManager::getSingleton().getTargetedPos();
 }
+
+///================================================================================================
+/// Talk to NPC.
+///================================================================================================
+void ObjectPlayer::talkToNpc()
+{
+    if (mTalking) return;
+    mTalking = true;
+//    int x, z;
+//    Vector3 pos = ObjectManager::getSingleton().getTargetedPos();
+}
+
 
 ///================================================================================================
 /// Is player currently moving?
@@ -514,56 +526,56 @@ void ObjectPlayer::setTexture(int pos, int textureColor, int textureNr)
     image.load("shadow.png", "General");
     switch (pos)
     {
-        case TEXTURE_POS_SKIN:
+    case TEXTURE_POS_SKIN:
         {
             drawBopyPart(picFace, image, textureNr, textureColor);
             for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], image,  textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_FACE:
+    case TEXTURE_POS_FACE:
         {
             drawBopyPart(picFace, image, textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_HAIR:
+    case TEXTURE_POS_HAIR:
         {
             drawBopyPart(picHair, image, textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_BODY:
+    case TEXTURE_POS_BODY:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], image,  textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_LEGS:
+    case TEXTURE_POS_LEGS:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], image,  textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_BELT:
+    case TEXTURE_POS_BELT:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], image, textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_SHOES:
+    case TEXTURE_POS_SHOES:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], image,  textureNr, textureColor);
             break;
         }
 
-        case TEXTURE_POS_HANDS:
+    case TEXTURE_POS_HANDS:
         {
             for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], image,  textureNr, textureColor);
             break;
         }
 
-        default:
+    default:
         Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for ObjectNPC.";
         break;
     }

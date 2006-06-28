@@ -76,11 +76,12 @@ public:
     void freeRecources();
     bool init();
     void addMobileObject(sObject &obj);
-    void addBoneObject(unsigned int type, const char *meshName, const char *particleName);
+    void addBoneObject(unsigned int type, const char *meshName, int particleNr);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     const Entity *getWeaponEntity(unsigned int WeaponNr);
+    ParticleSystem *getParticleSystem(unsigned int WeaponNr);
     unsigned int getSumWeapon()
     {
         return (unsigned int) mvObject_weapon.size();
@@ -109,6 +110,10 @@ public:
     }
     void synchToWorldPos(Vector3 pos);
     void selectNPC(MovableObject *mob);
+    const SubPos2D getTargetedPos()
+    {
+        return mSelectedPos;
+    }
 
 private:
     /// ////////////////////////////////////////////////////////////////////
@@ -121,8 +126,8 @@ private:
     std::vector<ObjectEquipment*>mvObject_weapon;
     std::vector<ObjectEquipment*>mvObject_armor;
     int mSelectedType, mSelectedObject;
-    int mSelectedPosX, mSelectedPosZ;
     int mSelectedFriendly;
+    SubPos2D mSelectedPos;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
