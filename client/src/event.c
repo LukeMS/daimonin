@@ -626,8 +626,10 @@ int Event_PollInputDevice(void)
                       check_menu_macros("?M_SPELL_LIST");
                   else if (y >= 26 && y <= 49) /* skill list */
                       check_menu_macros("?M_SKILL_LIST");
-                  else if (y >= 51 && y <= 74) /* online help */
-                      process_macro_keys(KEYFUNC_HELP, 0);
+				  else if (y >= 51 && y <= 74) /* quest list */
+					  send_command("/qlist", -1, SC_NORMAL);
+				  else if (y >= 76 && y <= 99) /* online help */
+					  process_macro_keys(KEYFUNC_HELP, 0);
               }
 
               if (cpl.menustatus != MENU_NO)
@@ -2538,6 +2540,9 @@ void check_menu_keys(int menu, int key)
 	                break;
 				}
 				
+				/* disable quest tag (ugly code...) */
+				if(gui_interface_npc->who.body[0] == 'Q')
+					break;
 
                 reset_keys();
 				reset_input_mode();

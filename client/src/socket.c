@@ -47,12 +47,15 @@ void send_command_binary(int cmd, const char *body, int len)
 {
 	SDL_LockMutex(write_lock);
 
-	if(csocket.outbuf.len + 3 > MAXSOCKBUF)
+	if(csocket.fd == SOCKET_NO || csocket.outbuf.len + 3 > MAXSOCKBUF)
 	{
-		SOCKET_CloseClientSocket(&csocket);
+		if(csocket.fd != SOCKET_NO)
+			SOCKET_CloseClientSocket(&csocket);
+		SDL_UnlockMutex(write_lock);
 		return;
 	}
 
+	/*LOG(0,"SEND: %d %d >> %d %d\n", csocket.outbuf.pos, csocket.outbuf.len, len, cmd);*/
 	/* adjust the buffer */
 	if(csocket.outbuf.pos)
 		memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
@@ -76,9 +79,12 @@ int send_socklist(int fd, SockList  msg)
 {
 	SDL_LockMutex(write_lock);
 
-	if(csocket.outbuf.len + msg.len > MAXSOCKBUF)
+
+	if(csocket.fd == SOCKET_NO || csocket.outbuf.len + msg.len > MAXSOCKBUF)
 	{
-		SOCKET_CloseClientSocket(&csocket);
+		if(csocket.fd != SOCKET_NO)
+			SOCKET_CloseClientSocket(&csocket);
+		SDL_UnlockMutex(write_lock);
 		return -1;
 	}
 
@@ -109,11 +115,13 @@ _command_buffer_read *get_read_cmd(void)
 	_command_buffer_read *tmp;
 
 	/*LOG(-1,"GET-READ-CMD: %d %d - %d\n", csocket.inbuf.len, csocket.inbuf.pos,read_cmd_start );*/
-	//return NULL;
 	SDL_LockMutex(read_lock);
 
 	if(!read_cmd_start)
+	{
+		SDL_UnlockMutex(read_lock);
 		return NULL;
+	}
 
 	tmp = read_cmd_start;
 	read_cmd_start = tmp->next;
@@ -664,7 +672,8 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     struct linger       linger_opt;
 
 	/* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
-#ifndef HAVE_GETADDRINFO
+#if 1 /* small hack until we make it configurable to fix mantis 0000425 */
+/*#ifndef HAVE_GETADDRINFO*/
     struct protoent *protox;
     struct sockaddr_in  insock;
 

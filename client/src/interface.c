@@ -1730,27 +1730,27 @@ void gui_interface_send_command(int mode, char *cmd)
                } 
            } 
        } 
+
+		if(gui_interface_npc->who.body[0] != 'Q')
+	    {
+			box.x = x + 95; 
+			box.y = y+449; 
+			box.h = 12; 
+			box.w = 180; 
+			if(gui_interface_npc->input_flag) 
+			{ 
+				SDL_FillRect(ScreenSurface, &box, 0); 
+				StringBlt(ScreenSurface, &MediumFont, show_input_string(InputString, &MediumFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL); 
+			} 
+			else 
+			{ 
+				StringBlt(ScreenSurface, &SystemFont, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL); 
+				SDL_FillRect(ScreenSurface, &box, COLOR_GREY); 
     
-       box.x = x + 95; 
-       box.y = y+449; 
-       box.h = 12; 
-       box.w = 180; 
-       if(gui_interface_npc->input_flag) 
-       { 
-           SDL_FillRect(ScreenSurface, &box, 0); 
-           StringBlt(ScreenSurface, &MediumFont, show_input_string(InputString, &MediumFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL); 
-       } 
-       else 
-       { 
-           StringBlt(ScreenSurface, &SystemFont, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL); 
-           SDL_FillRect(ScreenSurface, &box, COLOR_GREY); 
-    
-                   if(gui_interface_npc->link_selected) 
-                   { 
-                           StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[gui_interface_npc->link_selected-1].link, box.x+5, box.y-1, COLOR_DK_NAVY, NULL, NULL); 
-                   } 
-    
-       } 
+				if(gui_interface_npc->link_selected) 
+					StringBlt(ScreenSurface, &MediumFont, gui_interface_npc->link[gui_interface_npc->link_selected-1].link, box.x+5, box.y-1, COLOR_DK_NAVY, NULL, NULL); 
+			}
+	   }
    } 
     
     
