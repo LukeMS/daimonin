@@ -1262,7 +1262,7 @@ void delete_bmap_tmp(void)
     int i;
 
     bmaptype_table_size = 0;
-    for (i = 0; i < MAX_BMAPTYPE_TABLE; i++)
+    for (i = 0; i < BMAPTABLE; i++)
     {
         if (bmaptype_table[i].name)
             free(bmaptype_table[i].name);
