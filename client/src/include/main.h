@@ -97,8 +97,6 @@ typedef struct _server
     int             port;
 } _server;
 
-#define MAX_BMAPTYPE_TABLE 5000
-
 typedef struct  _bmaptype_table
 {
     char           *name;
@@ -107,7 +105,7 @@ typedef struct  _bmaptype_table
     unsigned int    crc;
 }_bmaptype_table;
 
-_bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
+_bmaptype_table bmaptype_table[BMAPTABLE];
 
 extern int              bmaptype_table_size;
 
