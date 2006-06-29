@@ -338,12 +338,13 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
 //static inline int socket_prepare_commands(NewSocket *ns)
 static int socket_prepare_commands(NewSocket *ns)
 {
-	int toread, flag=FALSE;
+	int toread, flag;
 	SockList *rb = &ns->readbuf;
 	command_struct *cmdptr;
 
 	while(rb->len >= 2)/* there is something in our in buffer amd its at last a valid length value */
 	{
+		flag = FALSE;
 		if(rb->pos+1 >= MAXSOCKBUF_IN) /* our command length is splitted! */
 			toread = (rb->buf[MAXSOCKBUF_IN-1] << 8) + rb->buf[0];
 		else
@@ -431,9 +432,9 @@ static int socket_prepare_commands(NewSocket *ns)
 			rb->pos = read_part;
 		}
 
+		/*LOG(-1,"READCMD(%d)(%d)(%d)(%d): >%s<\n", cmdptr->len, flag, toread, cmdptr->buf[0],cmdptr->buf);*/
 		cmdptr->buf[toread] = 0; /* it ensures we are null terminated. nice */
 
-		/*LOG(-1,"READCMD(%d): >%s<\n", cmdptr->len, cmdptr->buf);*/
 		if(rb->pos == MAXSOCKBUF_IN)
 			rb->pos = 0;
 		rb->len -= (toread+2);
@@ -490,8 +491,14 @@ static int socket_prepare_commands(NewSocket *ns)
 
 				};
 			}
-			else
-				LOG(llevError,"ERROR: Wrong binary client command: %d\n", cmdptr->buf[0]);
+			else /* something illegal from the client. Kill it! */
+			{
+				LOG(llevInfo,"HACKBUG: Wrong binary client command: %d from %s\n", 
+					cmdptr->buf[0], STRING_SAFE(ns->ip_host));
+				return_poolchunk(cmdptr, cmdptr->pool);
+				ns->status = Ns_Dead;
+				return TRUE;
+			}
 
 			return_poolchunk(cmdptr, cmdptr->pool);
 			continue;
