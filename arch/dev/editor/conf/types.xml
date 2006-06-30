@@ -1039,10 +1039,8 @@
     values are better. It should usually be set only for armour-like equipment.
   </attribute>
   <attribute arch="wc" editor="weapon class" type="int">
-    The &lt;weapon class&gt; value adds to the overall weapon class of the wielder's
+    The weapon class value adds to the overall weapon class of the player's
     melee attacks. Weapon class improves the chance of hitting the opponent.
-    Weapon class is the "counterpiece" of &lt;armour class&gt;. It should usually
-    be set only for weapon-like items. Higher values are better.
   </attribute>
   <attribute arch="item_level" editor="required level" type="int">
     If &lt;required level&gt; is set to a value greater zero, players cannot
@@ -5410,41 +5408,10 @@
     The weapon speed determines how often the wielder can swing the weapon
     during a certain period of time. The lower the faster.
   </attribute>
-  <attribute arch="wc" editor="weapon class" type="int">
-    The weapon class value adds to the overall weapon class of the wielder's
-    melee attacks. Weapon class improves the chance of hitting the opponent.
-  </attribute>
   <attribute arch="magic" editor="magic bonus" type="int">
     For a weapon, magic bonus works just like weapon class, except that
     magic bonus can be improved by the gods or reduced by acid. Hence, it is
     less useful than direct weapon class value on a weapon.
-  </attribute>
-  <attribute arch="item_level" editor="required level" type="int">
-    If &lt;required level&gt; is set to a value greater zero, players cannot
-    use the weapon unless they meet this level in the skill cathegory
-    specified by &lt;level required in&gt;.
-
-    For example: &lt;required level&gt; = 15, &lt;level required in&gt; = physical
-    means the player cannot use the weapon unless he is equal or greater
-    level 15 in the physical skill cathegory.
-  </attribute>
-  <attribute arch="item_skill" editor="level required in" type="list_item_skill">
-    This attribute specifies in which skill cathegory the player
-    must meet the &lt;required level&gt; in order to use the weapon.
-    It is meaningless when &lt;required level&gt; is zero/unset.
-
-    For example: &lt;required level&gt; = 15, &lt;level required in&gt; = physical
-    means the player cannot use the weapon unless he is equal or greater
-    level 15 in the physical skill cathegory.
-  </attribute>
-  <attribute arch="lifesave" editor="save life" type="bool">
-    An item with this flag enabled will save the players life
-    for one time: When the player is wearing this item and his
-    healthpoints reach zero, the item dissapears, replenishing
-    half of the player's health.
-
-    An item with &lt;save life&gt; should not have
-    any decent additional bonuses!
   </attribute>
   <attribute arch="make_invisible" editor="make invisible" type="bool">
    When applied the user gets invisible. He can't be seen from player 
@@ -5454,129 +5421,6 @@
    When applied the user gets ethereal. He can't still be seen but
    transparent. He can move through walls and doors which has the
    PASS_THRU flag set (like ghosts and other non physical monsters).
-  </attribute>
-<section name="stats">
-  <attribute arch="Str" editor="strength" type="int">
-    The player's strength will rise/fall by the given value
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
-    The player's dexterity will rise/fall by the given value
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
-    The player's constitution will rise/fall by the given value
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
-    The player's intelligence will rise/fall by the given value
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="Pow" editor="power" type="int">
-    The player's power will rise/fall by the given value
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
-    The player's wisdom will rise/fall by the given value while
-    wearing this weapon.
-  </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
-    The player's charisma will rise/fall by the given value
-    while wearing this weapon.
-  </attribute>
-</section>
-<section name="misc">
-  <attribute arch="luck" editor="luck bonus" type="int">
-    With positive luck bonus, the player is more likely to
-    succeed in all sorts of things (spellcasting, praying,...).
-    Unless the &lt;luck bonus&gt; is very high, the effect will be
-    barely visible in-game. Luck bonus on one piece of equipment
-    should never exceed 3, and such bonus should not be too
-    frequently available.
-  </attribute>
-  <attribute arch="hp" editor="health regen." type="int">
-    Positive &lt;health regen.&gt; bonus speeds up the
-    player's healing process. Negative values slow it down.
-  </attribute>
-  <attribute arch="sp" editor="mana regen." type="int">
-    Positive &lt;mana regen.&gt; bonus speeds up the
-    player's mana regeneration. Negative values slow it down.
-  </attribute>
-  <attribute arch="grace" editor="grace regen." type="int">
-    Positive &lt;grace regen.&gt; bonus speeds up the
-    player's grace regeneration. Negative values slow it down.
-    Since grace can be regenerated rather easy with praying,
-    additional &lt;grace regen.&gt; bonus should be VERY RARE!!
-  </attribute>
-  <attribute arch="food" editor="food bonus" type="int">
-    Positive &lt;food bonus&gt; slows down the player's digestion,
-    thus he consumes less food. Negative values speed it up.
-
-    Note that food is consumed not only for "being alive", but
-    also for healing and mana-regeneration.
-    &lt;food bonus&gt; only affects the amount of food consumed
-    for "being alive". Hence, even with high &lt;food bonus&gt;,
-    during a fight a player can run out of food quickly.
-  </attribute>
-  <attribute arch="xrays" editor="xray vision" type="bool">
-    Xray vision allows the player to see through obstacles
-    in a two-square-wide radius. This is extremely helpful and
-    desireable, so don't give it away for cheap on equipment.
-  </attribute>
-  <attribute arch="stealth" editor="stealth" type="bool">
-    Stealth allows the player to move silently.
-    This comes to effect if a player turns himself
-    invisible and tries to sneak around monsters.
-    (At least that was the idea behind it)
-  </attribute>
-  <attribute arch="reflect_spell" editor="give reflect spells" type="bool">
-    If a player is wearing any piece of equipment with
-    the ability to &lt;reflect spells&gt;, all kinds of
-    spell-bullets and -beams will bounce off him.
-    This works only about 90% of all times, to
-    avoid players being completely immune to certain
-    types of attacks.
-
-    This is a very powerful ability and it
-    shouldn't be handed out cheap!
-  </attribute>
-  <attribute arch="reflect_missile" editor="give reflect missiles" type="bool">
-    If a player is wearing any piece of equipment with
-    the ability to &lt;reflect missiles&gt;, all kinds of
-    projectiles (e.g. arrows, bolts, boulders) will
-    bounce off him. This works only about 90% of all
-    times, to avoid players being completely immune to
-    certain types of attacks.
-  </attribute>
-  <attribute arch="terrain_type" editor="support terrain" type="bitmask_terrain">
-    The bearer of this item can move in every terrain that
-    is set by &lt;support terrain&gt;. Such abilities like
-    "water walking", "fire walking" etc are almost priceless
-    as they open access to an entire new plane of the daimonin
-    world.
-
-    Artifacts with &lt;support terrain&gt; attributes are VERY
-    SPECIAL and they must be well-balanced!!!
-  </attribute>
-  <attribute arch="path_attuned" editor="attuned paths" type="bitmask_spellpath">
-    Click on the &lt;attuned paths&gt; button to select spellpaths.
-    The player will get attuned to the specified spellpaths
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="path_repelled" editor="repelled paths" type="bitmask_spellpath">
-    Click on the &lt;repelled paths&gt; button to select spellpaths.
-    The player will get repelled to the specified spellpaths
-    while wearing this weapon.
-  </attribute>
-  <attribute arch="path_denied" editor="denied paths" type="bitmask_spellpath">
-    Click on the &lt;denied paths&gt; button to select spellpaths.
-    The specified spellpaths will be denied to the player
-    while wearing this weapon.
-  </attribute>
-</section>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
-    This text describes the weapons's "story". Every decent artifact weapon
-    should have such a description.
   </attribute>
 </type>
 
