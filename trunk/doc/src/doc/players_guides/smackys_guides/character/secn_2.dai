@@ -169,6 +169,72 @@
                 </tr>
             </table>
         </section>
+        <section id="dwarf">
+            <title>
+                Dwarf
+            </title>
+            <p>
+                <img alt="[Male dwarf]" src="./dwarfmale.png"/>
+                <img alt="[Female dwarf]" src="./dwarffemale.png"/>
+            </p>
+            <p>
+                "Some dwarves have joined the human fight against Moroch and their skills was very valuable. Some has traveled to the human realms but there are also rumors from hidden dwarf citiess in the deeps. The dwarves itself don't talk much about it..."
+            </p>
+            <table>
+                <tr>
+                    <th>
+                        Primary stat
+                    </th>
+                    <td>
+                        Str
+                    </td>
+                    <td>
+                        Dex
+                    </td>
+                    <td>
+                        Con
+                    </td>
+                    <td>
+                        Int
+                    </td>
+                    <td>
+                        Wis
+                    </td>
+                    <td>
+                        Pow
+                    </td>
+                    <td>
+                        Cha
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Base value
+                    </th>
+                    <td>
+                        13
+                    </td>
+                    <td>
+                        11
+                    </td>
+                    <td>
+                        13
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        12
+                    </td>
+                    <td>
+                        11
+                    </td>
+                    <td>
+                        12
+                    </td>
+                </tr>
+            </table>
+        </section>
     </section>
     <section id="profession">
         <title>
