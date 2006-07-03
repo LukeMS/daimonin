@@ -4,15 +4,15 @@ require("interface_builder")
 local pl = event.activator
 local me = event.me
 
-sglow_app_tag = "SGLOW_APP_INFO"
+sglow_app_tag = "APARTMENT_INFO"
 appid_cheap ="cheap"
 appid_normal ="normal"
 appid_expensive ="expensive"
 appid_luxurious ="luxurious"
-ap_1 = "/stoneglow/appartment_1"
-ap_2 = "/stoneglow/appartment_2"
-ap_3 = "/stoneglow/appartment_3"
-ap_4 = "/stoneglow/appartment_4"
+ap_1 = "/special/appartment_1"
+ap_2 = "/special/appartment_2"
+ap_3 = "/special/appartment_3"
+ap_4 = "/special/appartment_4"
 
 pinfo = pl:GetPlayerInfo(sglow_app_tag)
 
@@ -27,21 +27,32 @@ ib:AddMsg("I have ^cheap^, ^normal^, ^expensive^ or ^luxurious^ ones.")
 pl:Interface(1, ib:Build())
 end
 
+function create_info(id, path, x, y)
+if pinfo == nil then
+	pinfo = pl:CreatePlayerInfo(sglow_app_tag)
+end
+   	pinfo.race = "/relic/castle/castle_030a"
+	pinfo.last_sp = 18
+	pinfo.last_grace = 1 
+	pinfo.slaying = id
+	pinfo.title = path
+	pinfo.item_level = x
+	pinfo.item_quality = y
+end
+
 function updateAp(ap_old, ap_new, pid, x, y)
 ib:SetTitle("Upgrading finished")
 ib:AddMsg("You pay the money.\n", 0)
 ib:AddMsg("~Darlin is casting some strange magic.~\n")
-map_old = game:ReadyMap(ap_old, 2, pl)
-map_new = game:ReadyMap(ap_new, 6, pl)
+map_old = game:ReadyMap(ap_old, game.MAP_STATUS_LOAD_UNIQUE, pl)
+map_new = game:ReadyMap(ap_new, game.MAP_STATUS_ORIGINAL, pl)
 if map_old == nil or map_new == nil then
 ib:AddMsg("Something is wrong... Call a DM!\n");
 else
-game:TransferMapItems(map_old, map_new, x, y)
+game:UpgradeApartment(map_old, map_new, x, y)
+map_new:SetUniqueMap(0, pl)
 map_new:Save()
-pinfo.slaying = pid
---TODO: get a safer version to delete apts
---game:FileUnlink(map_old.path)
-map_old:Delete(1)
+create_info(pid, ap_new, x, y)
 ib:AddMsg("\nDone! Your new apartment is ready.\n")
 end
 pl:Interface(1, ib:Build())
@@ -269,8 +280,7 @@ ib:SetTitle("Apartment sale results")
 if pinfo == nil then -- no app - all ok
 if pl:PayAmount(3000) == 1 then
 ib:AddMsg("You pay the money.\n")
-pinfo = pl:CreatePlayerInfo(sglow_app_tag)
-pinfo.slaying = appid_cheap -- thats the apartment type info
+create_info(appid_cheap, ap_1, 1, 2)
 ib:AddMsg("Darlin is casting some strange magic.\n")
 ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
@@ -293,8 +303,7 @@ ib:SetTitle("Apartment sale results")
 if pinfo == nil then -- no app - all ok
 if pl:PayAmount(25000) == 1 then
 ib:AddMsg("You pay the money.\n")
-pinfo = pl:CreatePlayerInfo(sglow_app_tag)
-pinfo.slaying = appid_normal -- thats the apartment type info
+create_info(appid_normal, ap_2, 1, 2)
 ib:AddMsg("Darlin is casting some strange magic.\n")
 ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
@@ -317,8 +326,7 @@ ib:SetTitle("Apartment sale results")
 if pinfo == nil then -- no app - all ok
 if pl:PayAmount(150000) == 1 then
 ib:AddMsg("You pay the money.\n")
-pinfo = pl:CreatePlayerInfo(sglow_app_tag)
-pinfo.slaying = appid_expensive -- thats the apartment type info
+create_info(appid_expensive, ap_3, 1, 2)
 ib:AddMsg("Darlin is casting some strange magic.\n")
 ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
@@ -341,8 +349,7 @@ ib:SetTitle("Apartment sale results")
 if pinfo == nil then -- no app - all ok
 if pl:PayAmount(2000000) == 1 then
 ib:AddMsg("You pay the money.\n")
-pinfo = pl:CreatePlayerInfo(sglow_app_tag)
-pinfo.slaying = appid_luxurious -- thats the apartment type info
+create_info(appid_luxurious, ap_4, 2, 1)
 ib:AddMsg("Darlin is casting some strange magic.\n")
 ib:AddMsg("Congratulations! That was all!\n");
 ib:AddMsg("I have summoned your apartment right now.\n")
