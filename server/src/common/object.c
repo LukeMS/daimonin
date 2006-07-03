@@ -1347,6 +1347,20 @@ void free_object_data(object *ob, int free_static_data)
     FREE_AND_CLEAR_HASH2(ob->msg);
 }
 
+/* destroy and delete recursive the inventory of an destroyed object. */
+static void destroy_ob_inv(object *op)
+{
+	object *tmp, *tmp2;
+
+	for (tmp = op->inv; tmp; tmp = tmp2)
+	{
+		tmp2 = tmp->below;
+		if (tmp->inv)
+			destroy_ob_inv(tmp);
+		destroy_object(tmp); 
+	}
+}
+
 /*
  * destroy_object() frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
@@ -1372,7 +1386,7 @@ void destroy_object(object *ob)
 
     /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
     /* TODO: maybe destroy() it here too? */
-    remove_ob_inv(ob); 
+    destroy_ob_inv(ob); 
 
     free_object_data(ob, 0);
 
