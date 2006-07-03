@@ -48,7 +48,7 @@ START_TEST (treasurelist_memleak)
     const char *path = add_string("/dev/unit_tests/test_treasurelists");
     mapstruct *map;
     
-    map = ready_map_name(path, 0);
+    map = ready_map_name(path, 0, NULL);
 
 /*    
     dump_inventory(locate_beacon(find_string("beacon1"))->env);
