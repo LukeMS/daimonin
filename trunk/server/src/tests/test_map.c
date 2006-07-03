@@ -48,7 +48,7 @@ START_TEST (map_loading)
 
     fail_unless(has_been_loaded_sh(path) == NULL, "Map already loaded");
     
-    map = ready_map_name(path, 0);
+    map = ready_map_name(path, 0, NULL);
     fail_unless(has_been_loaded_sh(path) != NULL, "Map not loaded");
     fail_unless(map != NULL, "Couldn't load %s", path);
     fail_unless(strcmp(map->path, path) == 0, "Wierd path");
