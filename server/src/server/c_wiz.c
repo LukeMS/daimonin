@@ -181,6 +181,7 @@ int command_kick(object *ob, char *params)
             object *op;
             op = pl->ob;
             ret=1;
+			activelist_remove(op);
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             op->direction = 0;

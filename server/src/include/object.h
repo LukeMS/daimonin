@@ -114,17 +114,17 @@ typedef struct obj
      */
     struct obj     *chosen_skill;   /* the skill chosen to use */
     struct obj     *exp_obj;        /* the exp. obj (category) assoc. w/ this object */
-    uint32          event_flags;    /* flags matching events of event objects inside object ->inv */
 
     /* now "real" object releated data */
     struct archt   *other_arch; /* Pointer used for various things */
     New_Face       *face;               /* struct ptr to the 'face' - the picture(s) */
     New_Face       *inv_face;           /* struct ptr to the inventory 'face' - the picture(s) */
 
+    sint64          value;              /* How much money it is worth (or contains) */
+    uint32          event_flags;    /* flags matching events of event objects inside object ->inv */
     sint32          weight;             /* Attributes of the object - the weight */
     sint32          weight_limit;       /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
     sint32          carrying;           /* How much weight this object contains (of objects in inv) */
-    sint64          value;              /* How much money it is worth (or contains) */
     uint32          nrof;               /* How many of the objects */
     uint32          damage_round_tag;   /* needed for the damage info for client in map2 */
     uint32          update_tag;         /* this is used from map2 update! */
