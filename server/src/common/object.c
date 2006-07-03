@@ -1357,6 +1357,7 @@ static void destroy_ob_inv(object *op)
 		tmp2 = tmp->below;
 		if (tmp->inv)
 			destroy_ob_inv(tmp);
+		SET_FLAG(tmp, FLAG_REMOVED);
 		destroy_object(tmp); 
 	}
 }
