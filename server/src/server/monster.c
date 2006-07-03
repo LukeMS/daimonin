@@ -388,7 +388,7 @@ static inline void regenerate_stats(object *op)
             }
         }
 
-        /* So if the monster has gained enough HP that they are no longer afraid */
+        /* if the monster has gained enough HP that they are no longer afraid */
         /* TODO: should be handled elsewhere */
         if (QUERY_FLAG(op, FLAG_RUN_AWAY)
          && op->stats.hp >= (signed short) (((float) op->run_away / (float) 100) * (float) op->stats.maxhp))
@@ -405,7 +405,7 @@ static inline void regenerate_stats(object *op)
             op->stats.sp = op->stats.maxsp;
     }
 
-    /* I think this is spell casting delay... */
+    /* Count down spell casting delay */
     if (op->last_grace)
         op->last_grace--;
 }
@@ -607,7 +607,6 @@ int move_monster(object *op, int mode)
      * TODO: either shuffle these randomly or use some sort of priority system
      * TODO: maybe separate into two parts: decision (gives an action and a priority) and
      *       execution (which done on the highest-prioritized action after all decisions are finished)
-     * TODO: in original rules DEX has influence over whether to try any of these or not
      */
 jump_move_monster_action:
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_ACTIONS];
@@ -627,7 +626,8 @@ jump_move_monster_action:
     else
         MOB_DATA(op)->idle_time++;
 
-    if(!did_action)
+    /* Enable/disable attack animation */
+    if(MOB_DATA(op)->enemy == NULL)
         op->anim_enemy_dir = -1;  
 
     /* Change gears? */

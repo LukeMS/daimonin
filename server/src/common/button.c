@@ -57,7 +57,7 @@ void signal_connection(object *op, oblinkpt *olp)
          */
         if (!OBJECT_ACTIVE(tmp))
         {
-            LOG(llevDebug, "DEBUG: push_button: button link with invalid object! (%x - %p). Button '%s' => object '%s'\n",
+            LOG(llevDebug, "DEBUG: signal_connection(): button link with invalid object! (%x - %p). Button '%s' => object '%s'\n",
                 QUERY_FLAG(tmp, FLAG_REMOVED), tmp,
                 STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp));
             return;
