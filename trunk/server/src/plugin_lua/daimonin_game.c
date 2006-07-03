@@ -33,7 +33,7 @@
 
 static struct method_decl       Game_methods[]      =
 {
-    {"TransferMapItems", Game_TransferMapItems},
+    {"UpgradeApartment", Game_UpgradeApartment},
     {"LoadObject", Game_LoadObject},
     {"ReadyMap", Game_ReadyMap},
     {"CheckMap", Game_CheckMap},
@@ -99,6 +99,9 @@ static struct constant_decl     Game_constants[]    =
 	{"SKILLGROUP_MAGIC", 4},
 	{"SKILLGROUP_WISDOM", 5},
 
+	{"MAP_STATUS_ORIGINAL", MAP_STATUS_ORIGINAL},
+	{"MAP_STATUS_UNIQUE", MAP_STATUS_UNIQUE},
+	{"MAP_STATUS_LOAD_UNIQUE", MAP_STATUS_LOAD_UNIQUE},
 
 	/* quest type */
 	{"QUEST_NORMAL", ST1_QUEST_TRIGGER_NORMAL},
@@ -258,25 +261,30 @@ lua_class Game =
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 
 /*****************************************************************************/
-/* Name   : Game_TransferMapItems                                            */
-/* Lua    : game:TransferMapItems(map_old, map_new, x, y)                     */
+/* Name   : Game_UpgradeApartment                                            */
+/* Lua    : game:UpgradeApartment(map_old, map_new, x, y)                    */
 /* Info   : Transfer all items with "no_pick 0" setting from map_old         */
 /*          to position x,y on map new.                                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int Game_TransferMapItems(lua_State *L)
+static int Game_UpgradeApartment(lua_State *L)
 {
     lua_object *map_new, *map_old, *self;
     int         x, y;
 
     get_lua_args(L, "GMMii", &self, &map_old, &map_new, &x, &y);
 
-    GCFP.Value[0] = (void *) (map_old->data.map);
-    GCFP.Value[1] = (void *) (map_new->data.map);
-    GCFP.Value[2] = (void *) (&x);
-    GCFP.Value[3] = (void *) (&y);
+	if( !map_new->data.map || !map_old->data.map || x<= 0 || y<=0 
+		|| x>=map_new->data.map->width || y>=map_new->data.map->height)
+		return 0;
 
-    (PlugHooks[HOOK_MAPTRANSERITEMS]) (&GCFP);
+	/* transfer the items */
+	hooks->map_transfer_apartment_items(map_old->data.map, map_new->data.map, x, y);
+
+	/* now we remove the old apartment from memory and player folder */
+	unlink(map_old->data.map->path);
+	hooks->free_map(map_old->data.map, 1);
+	hooks->delete_map(map_old->data.map);
 
     return 0;
 }
@@ -329,38 +337,20 @@ static int Game_MatchString(lua_State *L)
 /* Name   : Game_ReadyMap                                                    */
 /* Lua    : game:ReadyMap(name, flags, player)                               */
 /* Info   : Make sure the named map is loaded into memory. unique _must_ be  */
-/*          1 if the map is unique (f_unique = 1).                           */
-/*          IF flags | 1, the map path is already the right unique one.      */
-/*          If flags | 2, the map path is original and must be changed .     */
-/*          If flags | 4  *unique maps only* unique map gets DELETED  and    */
-/*                        fresh reloaded!                                    */
-/*          Default value for unique is 0                                    */
-/*          For unique maps, also supply the player who owns the map         */
+/*        :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 
 static int Game_ReadyMap(lua_State *L)
 {
     char       *mapname;
-    mapstruct  *mymap;
     lua_object *obptr   = NULL;
     int         flags   = 0;
-    CFParm     *CFR;
     lua_object *self;
 
     get_lua_args(L, "Gsi|O", &self, &mapname, &flags, &obptr);
 
-    GCFP.Value[0] = (void *) (mapname);
-    GCFP.Value[1] = (void *) (&flags);
-    GCFP.Value[2] = NULL;
-    if (obptr)
-        GCFP.Value[2] = (void *) (obptr->data.object);
-
-    CFR = (PlugHooks[HOOK_READYMAPNAME]) (&GCFP);
-    mymap = (mapstruct *) (CFR->Value[0]);
-    free(CFR);
-
-    return push_object(L, &Map, mymap);
+    return push_object(L, &Map, hooks->ready_map_name(mapname, flags, obptr->data.object));
 }
 
 /*****************************************************************************/

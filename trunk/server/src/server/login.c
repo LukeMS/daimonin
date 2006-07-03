@@ -413,13 +413,15 @@ static void reorder_inventory(object *op)
 }
 
 /* QUICKHACK: traverse b3 player inv. and apply changes */
-static void traverse_b3_player_inv(object *op)
+static void traverse_b3_player_inv(object *pl, object *op)
 {
 	object *next_obj, *tmp;
-	static const char *g_info = NULL;
+	static const char *g_info = NULL, *a_info = NULL;
 
 	if(!g_info)
 		g_info = find_string("GUILD_INFO");
+	if(!a_info)
+		a_info = find_string("SGLOW_APP_INFO");
 
 	/* lets check we have the quest/one drop container - we will handle it special */
 	if(op->type == TYPE_QUEST_CONTAINER)
@@ -465,9 +467,73 @@ static void traverse_b3_player_inv(object *op)
 			CLEAR_FLAG(tmp,FLAG_ONE_DROP); 
 			SET_FLAG(tmp,FLAG_STARTEQUIP); /* means "NO-DROP item" */
 		}
+		/* let adjust the apartment info */
+		else if(shstr_cons.player_info == tmp->arch->name && tmp->name == a_info)
+		{
+			mapstruct *old_ptr, *new_ptr;
+			char *old_map = NULL;
+
+			if(!strcmp(tmp->slaying, "cheap"))
+			{
+				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_1");
+				old_map = "/stoneglow/appartment_1";
+				tmp->item_level = 1;
+				tmp->item_quality = 2;
+			}
+			else if(!strcmp(tmp->slaying, "normal"))
+			{
+				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_2");
+				old_map = "/stoneglow/appartment_2";
+				tmp->item_level = 1;
+				tmp->item_quality = 2;
+			}
+			else if(!strcmp(tmp->slaying, "expensive"))
+			{
+				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_3");
+				old_map = "/stoneglow/appartment_3";
+				tmp->item_level = 1;
+				tmp->item_quality = 2;
+			}
+			else if(!strcmp(tmp->slaying, "luxurious"))
+			{
+				FREE_AND_COPY_HASH(tmp->title, "/special/appartment_4");
+				old_map = "/stoneglow/appartment_4";
+				tmp->item_level = 2;
+				tmp->item_quality = 1;
+			}
+			else /* donation */
+			{
+				FREE_AND_COPY_HASH(tmp->title, "/nonpub/donation/ap_dona1");
+				old_map = "/nonpub/donation/ap_dona1";
+				tmp->item_level = 2;
+				tmp->item_quality = 1;
+			}
+
+			/* as default entry we use newbie town start.*/
+			FREE_AND_COPY_HASH(tmp->race, "/relic/castle/castle_030a");
+			tmp->last_sp = 18;
+			tmp->last_grace = 1;
+			FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
+
+			/* update the apartments and transfer the items */
+			old_ptr = ready_map_name(old_map, MAP_STATUS_LOAD_UNIQUE, pl);
+			new_ptr = ready_map_name(tmp->title, MAP_STATUS_ORIGINAL, pl);
+
+			map_transfer_apartment_items(old_ptr, new_ptr, tmp->item_level, tmp->item_quality);
+
+			/* now we remove the old apartment from memory and player folder */
+			unlink(old_ptr->path);
+			free_map(old_ptr, 1);
+			delete_map(old_ptr);
+
+			FREE_AND_COPY_HASH(new_ptr->path, create_unique_path(tmp->title, pl));
+			new_ptr->map_flags |= MAP_FLAG_UNIQUE;
+
+			new_save_map(new_ptr, 1);
+		}
 
 		if(tmp->inv)
-			traverse_b3_player_inv(tmp);
+			traverse_b3_player_inv(pl, tmp);
 	}
 
 }
@@ -859,7 +925,7 @@ void check_login(object *op)
 	/* beta 3-> b4 playerfile hacks */
 	if(pl->p_ver == PLAYER_FILE_VERSION_BETA3)
 	{
-		traverse_b3_player_inv(op);
+		traverse_b3_player_inv(op, op);
 
 		/* force guildhall as beta 4 start login for all players */
 		strcpy(pl->maplevel, EXIT_PATH(&map_archeytpe->clone));

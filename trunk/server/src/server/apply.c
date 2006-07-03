@@ -2506,9 +2506,9 @@ int is_legal_2ways_exit(object *op, object *exit)
      * all the exits in destination and try to find one with same path as
      * the current exit's position */
     if (!strncmp(EXIT_PATH(exit), settings.localdir, strlen(settings.localdir)))
-        exitmap = ready_map_name(EXIT_PATH(exit), MAP_NAME_SHARED | MAP_PLAYER_UNIQUE);
+        exitmap = ready_map_name(EXIT_PATH(exit), MAP_STATUS_NAME_SHARED | MAP_STATUS_UNIQUE, NULL);
     else
-        exitmap = ready_map_name(EXIT_PATH(exit), MAP_NAME_SHARED);
+        exitmap = ready_map_name(EXIT_PATH(exit), MAP_STATUS_NAME_SHARED, NULL);
     if (exitmap)
     {
         tmp = get_map_ob(exitmap, EXIT_X(exit), EXIT_Y(exit));

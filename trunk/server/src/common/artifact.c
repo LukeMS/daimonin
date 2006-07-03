@@ -195,7 +195,7 @@ static void init_artifacts(FILE *fp)
 			}
 
 			/* parse the new fake arch clone with the artifact values */
-			if (!load_object(fp, parse_obj, NULL, LO_LINEMODE, MAP_STYLE))
+			if (!load_object(fp, parse_obj, NULL, LO_LINEMODE, MAP_STATUS_STYLE))
 				LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
 
 			/* ok, now lets catch & copy the commands to our artifacts buffer.
@@ -538,7 +538,7 @@ void give_artifact_abilities(object *op, artifact *art)
 	sint64 tmp_value   = op->value;
 
 	op->value = 0;
-	if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_ARTIFACT))
+	if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_STATUS_ARTIFACT))
 		LOG(llevError, "ERROR: give_artifact_abilities(): load_object() error (ob: %s art: %s).\n", op->name, art->name);
 
 	/* this will solve the problem to adjust the value for different items

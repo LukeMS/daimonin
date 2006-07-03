@@ -338,7 +338,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
         /* TODO: I can't remember why this was disabled. Gecko 2006-05-07 */
         /*
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
-            mapstruct *map = ready_map_name(known_obj->last_map, MAP_NAME_SHARED);
+            mapstruct *map = ready_map_name(known_obj->last_map, MAP_NAME_SHARED, NULL);
             if(get_rangevector_full(op, op->map, op->x, op->y,
                         known_obj->obj, map, known_obj->last_x, known_obj->last_y,
                         &known_obj->rv, RV_EUCLIDIAN_DISTANCE))

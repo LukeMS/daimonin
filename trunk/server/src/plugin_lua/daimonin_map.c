@@ -29,6 +29,7 @@
 
 static struct method_decl       Map_methods[]       =
 {
+	{"SetUniqueMap", Map_SetUniqueMap},
     {"Save", Map_Save}, {"Delete", Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare", Map_GetBrightnessOnSquare},
@@ -62,6 +63,36 @@ static const char              *Map_flags[]         =
 /****************************************************************************/
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
+
+/*****************************************************************************/
+/* Name   : Map_SetUniqueMap                                                 */
+/* Lua    : map:SetUniqueMap(0, object)                                      */
+/* Status : Stable                                                           */
+/* Info   : Make a map unique - This is used to transfer apartments between  */
+/*        : players or change normal loaded maps                             */ 
+/*****************************************************************************/
+static int Map_SetUniqueMap(lua_State *L)
+{
+	const char *tmp_string;
+	int         flags;
+	lua_object *obptr   = NULL;
+	lua_object *map;
+
+	get_lua_args(L, "MiO", &map, &flags, &obptr);
+
+	if (!map->data.map || map->data.map->in_memory != MAP_IN_MEMORY)
+		return 0;
+
+	/* we ignore flags ATM - 0 is default and means player apartment */
+	if(!obptr || !obptr->data.object)
+		return 0;
+
+	tmp_string = hooks->create_unique_path(map->data.map->path, obptr->data.object);
+	FREE_AND_COPY_HASH(map->data.map->path, tmp_string);
+	map->data.map->map_flags |= MAP_FLAG_UNIQUE;
+
+	return 0;
+}
 
 /*****************************************************************************/
 /* Name   : Map_GetFirstObjectOnSquare                                       */
@@ -177,14 +208,19 @@ static int Map_MapTileAt(lua_State *L)
 /*****************************************************************************/
 static int Map_Save(lua_State *L)
 {
-    int         x;
+    int         flags = 0;
     lua_object *map;
 
-    get_lua_args(L, "M|i", &map, &x);
+    get_lua_args(L, "M|i", &map, &flags);
 
-    GCFP.Value[0] = map->data.map;
-    GCFP.Value[1] = (void *) (&x);
-    (PlugHooks[HOOK_MAPSAVE]) (&GCFP);
+	if (!map->data.map || map->data.map->in_memory != MAP_IN_MEMORY)
+		return 0;
+
+	if (hooks->new_save_map(map->data.map, 0) == -1)
+		LOG(llevDebug, "MapSave(): failed to save map %s\n", STRING_SAFE(map->data.map->path));
+
+	if (flags)
+		map->data.map->in_memory = MAP_IN_MEMORY;
 
     return 0;
 }
@@ -197,14 +233,21 @@ static int Map_Save(lua_State *L)
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {
-    int         x;
+    int         flags = 0;
     lua_object *map;
 
-    get_lua_args(L, "M|i", &map, &x);
+    get_lua_args(L, "M|i", &map, &flags);
 
-    GCFP.Value[0] = map->data.map;
-    GCFP.Value[1] = (void *) (&x);
-    (PlugHooks[HOOK_MAPDELETE]) (&GCFP);
+	if (!map->data.map || !map->data.map->in_memory)
+		return 0;
+
+	if (flags) /* really delete the map */
+	{
+		hooks->free_map(map->data.map, 1);
+		hooks->delete_map(map->data.map);
+	}
+	else /* just swap it out */
+		hooks->free_map(map->data.map, 1);
 
     return 0;
 }

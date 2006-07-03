@@ -153,7 +153,7 @@
 #define HOOK_NONE               0
 
 #define HOOK_SENDCUSTOMCOMMAND   1
-#define HOOK_MAPDELETE           2
+#define HOOK_REMOVEOBJECT        2
 #define HOOK_CREATEOBJECT        3
 
 #define HOOK_OUTOFMAP            4
@@ -178,25 +178,21 @@
 #define HOOK_CHECKFORSPELL      19
 #define HOOK_DESTRUCTOBJECT     20
 #define HOOK_CLONEOBJECT        21
-#define HOOK_MAPSAVE            22
+#define HOOK_LOADOBJECT         22
 #define HOOK_UPDATESPEED        23
 #define HOOK_UPDATEOBJECT       24
 #define HOOK_FINDANIMATION      25
 #define HOOK_TELEPORTOBJECT      26
 #define HOOK_LEARNSKILL          27
 
-#define HOOK_READYMAPNAME       28
+#define HOOK_DUMPOBJECT         28
 #define HOOK_ADDEXP             29
 #define HOOK_DETERMINEGOD       30
 #define HOOK_FINDGOD            31
 #define HOOK_REGISTEREVENT      32
 #define HOOK_UNREGISTEREVENT    33
-#define HOOK_DUMPOBJECT         34
-#define HOOK_LOADOBJECT         35
-#define HOOK_REMOVEOBJECT       36
-#define HOOK_MAPTRANSERITEMS     37
 
-#define NR_OF_HOOKS              38
+#define NR_OF_HOOKS              34
 
 
 /*****************************************************************************/
@@ -330,7 +326,13 @@ struct plugin_hooklist
 	object * (*guild_join)(player *, char *, int, int, int, int, int, int);
 	void (*guild_leave)(player *);
     object *(*locate_beacon)(shstr *);
-	
+	void (*free_map)(mapstruct *m, int flag);
+	void (*delete_map)(mapstruct *m);
+	void (*map_transfer_apartment_items)(mapstruct *map_old, mapstruct * map_new, int x, int y);
+	int (*new_save_map)(mapstruct *m, int flag);
+	mapstruct* (*ready_map_name)(const char *name_path, int flags, object *op);
+	char* (*create_unique_path)(const char *name, const object *op);
+
     /* Global variables */
     Animations **animations;
     New_Face **new_faces;

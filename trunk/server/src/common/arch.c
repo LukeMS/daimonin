@@ -371,7 +371,7 @@ void first_arch_pass(FILE *fp)
     op = get_object();
     op->arch = first_archetype = at = get_archetype_struct();
     mybuffer = create_loader_buffer(fp);
-    while ((i = load_object(fp, op, mybuffer, LO_REPEAT, MAP_STYLE)))
+    while ((i = load_object(fp, op, mybuffer, LO_REPEAT, MAP_STATUS_STYLE)))
     {
         /* use copy_object_data() - we don't want adjust any speed_left here! */
         copy_object_data(op, &at->clone);

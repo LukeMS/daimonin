@@ -182,7 +182,8 @@ extern int              new_save_map(mapstruct *m, int flag);
 extern void             free_all_objects(mapstruct *m);
 extern void             free_map(mapstruct *m, int flag);
 extern void             delete_map(mapstruct *m);
-extern mapstruct       *ready_map_name(const char *name, int flags);
+extern char			   *create_unique_path(const char *name, const object *op);
+extern mapstruct       *ready_map_name(const char *name, int flags, object *op);
 extern void             clean_tmp_map(mapstruct *m);
 extern void             free_all_maps(void);
 extern void             update_position(mapstruct *m, MapSpace *mspace,int x, int y);
@@ -196,6 +197,7 @@ extern int              get_rangevector_full(object *op1, mapstruct *map1, int x
                                 rv_vector *retval, int flags);
 extern int              on_same_map(object *op1, object *op2);
 extern int              on_same_tileset(object *op1, object *op2);
+extern void				map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x, int y);
 /* material.c */
 extern void             material_attack_damage(object *op, int num, int chance, int base);
 extern sint64           material_repair_cost(object *item, object *owner);
