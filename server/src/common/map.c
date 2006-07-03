@@ -2,7 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
+    Copyright (C) 2001-2006 Michael Toennies
 
     A split from Crossfire, a Multiplayer game for X-windows.
 
@@ -20,7 +20,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include <global.h>
@@ -39,50 +39,7 @@ int map_tiled_reverse[TILED_MAPS]           =
     2, 3, 0, 1, 6, 7, 4, 5
 };
 
-#if 0
-/* If 0 this block because I don't know if it is still needed.
- * if it is, it really should be done via autoconf now days
- * and not by specific machine checks.
- */
-
-#if defined(sgi)
-/* popen_local is defined in porting.c */
-#define popen popen_local
-#endif
-
-#if defined (MACH) || defined (NeXT) || defined (__MACH__)
-#ifndef S_ISGID
-#define S_ISGID 0002000
-#endif
-#ifndef S_IWOTH
-#define S_IWOTH 0000200
-#endif
-#ifndef S_IWGRP
-#define S_IWGRP 0000020
-#endif
-#ifndef S_IWUSR
-#define S_IWUSR 0000002
-#endif
-#ifndef S_IROTH
-#define S_IROTH 0000400
-#endif
-#ifndef S_IRGRP
-#define S_IRGRP 0000040
-#endif
-#ifndef S_IRUSR
-#define S_IRUSR 0000004
-#endif
-#endif
-#if defined(MACH) || defined(vax) || defined(ibm032) || defined(NeXT) || defined(__MACH__)
-#ifndef S_ISDIR
-#define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
-#endif
-#ifndef S_ISREG
-#define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
-#endif
-#endif
-#endif
-
+static mapstruct * load_temporary_map(mapstruct *m);
 
 /* this updates the orig_map->tile_map[tile_num] value after loading
  * the map.  It also takes care of linking back the freshly loaded
@@ -95,8 +52,8 @@ static mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile   = map_tiled_reverse[tile_num];
 
-    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num],
-                                                  MAP_NAME_SHARED | (MAP_UNIQUE(orig_map) ? 1 : 0));
+    orig_map->tile_map[tile_num] = 
+		ready_map_name(orig_map->tile_path[tile_num], MAP_STATUS_NAME_SHARED|(MAP_UNIQUE(orig_map) ? 1 : 0), NULL);
 
     if (orig_map->tile_map[tile_num]->tile_path[dest_tile])
     {
@@ -331,19 +288,16 @@ mapstruct * has_been_loaded_sh(const char *name)
  * and returns the pointer to a static array containing the result.
  * it really should be called create_mapname
  */
-
 char * create_pathname(const char *name)
 {
-    static char buf[MAX_BUF];
+	static char buf[MAX_BUF];
 
-    /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
-     * someplace else in the code? msw 2-17-97
-     */
-    if (*name == '/')
-        sprintf(buf, "%s%s", settings.mapdir, name);
-    else
-        sprintf(buf, "%s/%s", settings.mapdir, name);
-    return (buf);
+	/* double "//" would be a problem for comparing path strings */
+	if (*name == '/')
+		sprintf(buf, "%s%s", settings.mapdir, name);
+	else
+		sprintf(buf, "%s/%s", settings.mapdir, name);
+	return (buf);
 }
 
 /*
@@ -476,7 +430,7 @@ mapstruct *normalize_and_ready_map(mapstruct *defmap, const char **path)
     if (*path == defmap->path)
         return defmap;
     else
-        return ready_map_name(*path, MAP_NAME_SHARED);
+        return ready_map_name(*path, MAP_STATUS_NAME_SHARED, NULL);
 }
 
 /*
@@ -938,15 +892,6 @@ static inline void update_map_tiles(mapstruct *m)
 	}
 }
 
-/*
- * Loads (ands parses) the objects into a given map from the specified
- * file pointer.
- * mapflags is the same as we get with load_original_map
- */
-/* i optimized this function now - i remove ALOT senseless stuff,
- * processing the load & expanding of objects here in one loop.
- * MT - 05.02.2004
- */
 /* now, this function is the very deep core of the whole server map &
  * object handling. To understand the tiled map handling, you have to
  * understand the flow of this function. It can now called recursive
@@ -1139,7 +1084,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         /* this is from fix_auto_apply() which is removed now */
         if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
             auto_apply(op); /* auto_apply() will remove the flag_auto_apply after first use */
-        else if ((mapflags & MAP_ORIGINAL) && op->randomitems) /* for fresh maps, create treasures */
+        else if ((mapflags & MAP_STATUS_ORIGINAL) && op->randomitems) /* for fresh maps, create treasures */
         {
             if (op->type == MONSTER)
                 create_treasure_list( op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
@@ -1940,151 +1885,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
     return 0;
 }
 
-/*
- * Opens the file "filename" and reads information about the map
- * from the given file, and stores it in a newly allocated
- * mapstruct.  A pointer to this structure is returned, or NULL on failure.
- * flags correspond to those in map.h.  Main ones used are
- * MAP_PLAYER_UNIQUE, in which case we don't do any name changes, and
- * MAP_BLOCK, in which case we block on this load.  This happens in all
- *   cases, no matter if this flag is set or not.
- * MAP_STYLE: style map - don't add active objects, don't add to server
- *      managed map list.
- */
-
-mapstruct * load_original_map(const char *filename, int flags)
-{
-    FILE       *fp;
-    mapstruct  *m;
-    char        pathname[MAX_BUF];
-    char        tmp_fname[MAX_BUF];
-
-    /* this IS a bug - because the missing '/' strcpy will fail when it
-     * search the loaded maps - this can lead in a double load and break
-     * the server!
-     * '.' sign unique maps in fixed folders.
-     */
-    if (*filename != '/' && *filename != '.')
-    {
-        LOG(llevDebug, "DEBUG: load_original_map: filename without start '/' - overruled. %s\n", filename);
-        tmp_fname[0] = '/';
-        strcpy(tmp_fname + 1, filename);
-        filename = tmp_fname;
-    }
-    global_map_tag++; /* be sure we have always a unique map_tag */
-    if (flags & MAP_PLAYER_UNIQUE)
-    {
-        LOG(llevDebug, "load_original_map unique: %s (%x)\n", filename, flags);
-        strcpy(pathname, filename);
-    }
-    else
-    {
-        LOG(llevDebug, "load_original_map: %s (%x) ", filename, flags);
-        strcpy(pathname, create_pathname(filename));
-    }
-
-    if ((fp = fopen(pathname, "r")) == NULL)
-    {
-        if (!(flags & MAP_PLAYER_UNIQUE))
-            LOG(llevBug, "BUG: Can't open map file %s\n", pathname);
-        return (NULL);
-    }
-
-
-    LOG(llevDebug, "link map. ");
-    m = get_linked_map();
-
-    LOG(llevDebug, "header: ");
-    FREE_AND_COPY_HASH(m->path, filename);
-    m->map_tag = global_map_tag;    /* pre init the map tag */
-    if (load_map_header(fp, m))
-    {
-        LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
-        delete_map(m);
-        fclose(fp);
-        return NULL;
-    }
-
-    LOG(llevDebug, "alloc. ");
-    allocate_map(m);
-
-    m->in_memory = MAP_LOADING;
-
-    LOG(llevDebug, "load objs:");
-    load_objects(m, fp, (flags & (MAP_BLOCK | MAP_STYLE)) | MAP_ORIGINAL);
-    LOG(llevDebug, "close. ");
-    fclose(fp);
-    LOG(llevDebug, "post set. ");
-    if (!MAP_DIFFICULTY(m))
-    {
-        /*LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);*/
-        MAP_DIFFICULTY(m) = 1;
-    }
-    /* MAP_DIFFICULTY(m)=calculate_difficulty(m); */
-    set_map_reset_time(m);
-    LOG(llevDebug, "done!\n");
-    return (m);
-}
-
-/*
- * Loads a map, which has been loaded earlier, from file.
- * Return the map object we load into (this can change from the passed
- * option if we can't find the original map)
- */
-
-static mapstruct * load_temporary_map(mapstruct *m)
-{
-    FILE   *fp;
-    char    buf[MAX_BUF];
-
-    if (!m->tmpname)
-    {
-        LOG(llevBug, "BUG: No temporary filename for map %s! fallback to original!\n", m->path);
-        strcpy(buf, m->path);
-        delete_map(m);
-        m = load_original_map(buf, 0);
-        if (m == NULL)
-            return NULL;
-        return m;
-    }
-
-    LOG(llevDebug, "load_temporary_map: %s (%s) ", m->tmpname, m->path);
-    if ((fp = fopen(m->tmpname,"r")) == NULL)
-    {
-        LOG(llevBug, "BUG: Can't open temporary map %s! fallback to original!\n", m->tmpname);
-        /*perror("Can't read map file");*/
-        strcpy(buf, m->path);
-        delete_map(m);
-        m = load_original_map(buf, 0);
-        if (m == NULL)
-            return NULL;
-        return m;
-    }
-
-
-    LOG(llevDebug, "header: ");
-    if (load_map_header(fp, m))
-    {
-        LOG(llevBug, "BUG: Error loading map header for %s (%s)! fallback to original!\n", m->path, m->tmpname);
-        fclose(fp);
-        delete_map(m);
-        m = load_original_map(m->path, 0);
-        if (m == NULL)
-            return NULL;
-        return m;
-    }
-    LOG(llevDebug, "alloc. ");
-    allocate_map(m);
-
-    m->in_memory = MAP_LOADING;
-    LOG(llevDebug, "load objs:");
-    load_objects(m, fp, 0);
-    LOG(llevDebug, "close. ");
-    fclose(fp);
-    LOG(llevDebug, "done!\n");
-    return m;
-}
-
 
 /*
  * Saves a map to file.  If flag is set, it is saved into the same
@@ -2409,106 +2209,6 @@ void delete_map(mapstruct *m)
     
     free(m);
 }
-
-
-
-/*
- * Makes sure the given map is loaded and swapped in.
- * name is path name of the map.
- * flags meaning:
- * 0x1 (MAP_FLUSH): flush the map - always load from the map directory,
- *   and don't do unique items or the like.
- * 0x2 (MAP_PLAYER_UNIQUE) - this is a unique map for each player.
- *   dont do any more name translation on it.
- * 0x? (MAP_NAME_SHARED) - name is a shared string
- *
- * Returns a pointer to the given map.
- */
-
-mapstruct * ready_map_name(const char *name, int flags)
-{
-    mapstruct  *m;
-    const char *name_sh;
-
-    if (!name)
-        return (NULL);
-
-    /* Have we been at this level before? */
-    if (flags & MAP_NAME_SHARED)
-        m = has_been_loaded_sh(name);
-    else
-    {
-        /* Create a temporary shared string for the name if not explicitly given */
-        name_sh = add_string(name);
-        m = has_been_loaded_sh(name_sh);
-        free_string_shared(name_sh);
-    }
-
-    /* Map is good to go, so just return it */
-    if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
-        return m;
-
-    /* unique maps always get loaded from their original location, and never
-     * a temp location.  Likewise, if map_flush is set, or we have never loaded
-     * this map, load it now.  I removed the reset checking from here -
-     * it seems the probability of a player trying to enter a map that should
-     * reset but hasn't yet is quite low, and removing that makes this function
-     * a bit cleaner (and players probably shouldn't rely on exact timing for
-     * resets in any case - if they really care, they should use the 'maps command.
-     */
-    if ((flags & (MAP_FLUSH | MAP_PLAYER_UNIQUE)) || !m)
-    {
-        /* first visit or time to reset */
-		/* instanced maps should NEVER be saved as tmp maps!! 
-         * this must be fixed
-         */
-        if (m)
-        {
-            clean_tmp_map(m);   /* Doesn't make much difference */
-            delete_map(m);
-        }
-
-        /* create and load a map */
-        if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
-            return NULL;
-    }
-    else
-    {
-        /* If in this loop, we found a temporary map, so load it up. */
-        m = load_temporary_map(m);
-        if (m == NULL)
-            return NULL;
-
-        LOG(llevDebug, "clean. ");
-        clean_tmp_map(m);
-        m->in_memory = MAP_IN_MEMORY;
-
-        /* tempnam() on sun systems (probably others) uses malloc
-            * to allocated space for the string.  Free it here.
-            * In some cases, load_temporary_map above won't find the
-            * temporary map, and so has reloaded a new map.  If that
-            * is the case, tmpname is now null
-            */
-        FREE_AND_NULL_PTR(m->tmpname);
-        /* It's going to be saved anew anyway */
-    }
-
-    /* Below here is stuff common to both first time loaded maps and
-     * temp maps.
-     */
-
-    /* In case other objects press some buttons down.
-    * We handle here all kind of "triggers" which are triggered
-    * permanent by objects like buttons or inventory checkers.
-    * We don't check here instant stuff like sacrificing altars.
-    * Because this should be handled on map making side.
-    */
-    LOG(llevDebug, "buttons. ");
-    update_buttons(m);
-    LOG(llevDebug, "end ready_map_name(%s)\n", m->path ? m->path : "<nopath>");
-    return m;
-}
-
 
 void clean_tmp_map(mapstruct *m)
 {
@@ -3248,3 +2948,342 @@ int on_same_map(object *op1, object *op2)
 
     return FALSE;
 }
+
+/* transfer all items from one instance apartment to another.
+ * put them on spot x,y 
+ */
+void map_transfer_apartment_items(mapstruct *map_old, mapstruct * map_new, int x, int y)
+{
+	int        i, j;
+	object     *op, *tmp, *tmp2, *tmp3;
+
+	for (i = 0; i < MAP_WIDTH(map_old); i++)
+	{
+		for (j = 0; j < MAP_HEIGHT(map_old); j++)
+		{
+			for (op = get_map_ob(map_old, i, j); op; op = tmp2)
+			{
+				tmp2 = op->above;
+				/* if thats true, the player can't get it - no sense to transfer it! */
+				if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
+					continue;
+
+				if (!QUERY_FLAG(op, FLAG_NO_PICK))
+				{
+					remove_ob(op);
+					op->x = x;
+					op->y = y;
+					insert_ob_in_map(op, map_new, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+				}
+				else /* this is a fixed part of the map */
+				{
+					/* now we test we have a container type object.
+					* The player can have items stored in it.
+					* If so, we remove them too.
+					* we don't check inv of non container object.
+					* The player can't store in normal sense items
+					* in them, so the items in them (perhaps special
+					* marker of forces) should not be transfered.
+					*/
+
+					for (tmp = op->inv; tmp; tmp = tmp3)
+					{
+						tmp3 = tmp->below;
+						/* well, non pickup container in non pickup container? no no... */
+						if (QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp, FLAG_NO_PICK))
+							continue;
+						remove_ob(tmp);
+						tmp->x = x;
+						tmp->y = y;
+						insert_ob_in_map(tmp, map_new, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+					}
+				}
+			}
+		}
+	}
+}
+
+/* helper function to create from a normal map a unique (apartment) like map inside the player directory */
+char *create_unique_path(const char *name, const object *op)
+{
+	static char path[1024];
+
+	sprintf(path, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, clean_path(name));
+
+	return path;
+}
+
+/* This will be our new, shiny "load a map wich name x in status y"
+* Use this function to clean up all the enter_exit and other functions.
+* We assume this: we have a map name, a flag set which defines how the map
+* should be loaded & handled and a optional object which can be a player object
+* or for example a "group" or "clan" object to create and bind unique
+* or instanced maps to its owners.
+*
+* The flow should be this:
+* ready_map_name() will ensure a map is loaded, not swaped out and ready
+* It will create the needed pathes depending on its calling parameters.
+*
+* load_original_map() and load_temporary_map() will load the special maps
+* we should add a load_unique_map() too and later a load_instanced_map()
+*
+* TODO MT 07/2006: check all calling functions for ready_map_name() and change
+* them to use the new flags (original/unique) and path creating powers with *op.
+* the several old enter_map() and enter_exit() functions are very confusing.
+* ONE enter_a_map function should be enough - perhaps one for players and one
+* for non players.
+*/
+mapstruct * ready_map_name(const char *name_path, int flags, object *op)
+{
+	const char *name_sh, *path = NULL, *name = name_path;
+	mapstruct  *m;
+
+	if (!name)
+		return (NULL);
+
+	/* its a unique map but we have a normalized path */
+	if (flags & MAP_STATUS_LOAD_UNIQUE)
+	{
+		FREE_AND_COPY_HASH(path, create_unique_path(name, op));
+		flags |= MAP_STATUS_NAME_SHARED; 
+		name = path; /* lets check we have perhaps the map loaded */
+	}
+		
+	/* Have we been at this level before? */
+	if (flags & MAP_STATUS_NAME_SHARED)
+		m = has_been_loaded_sh(name);
+	else
+	{
+		/* Create a temporary shared string for the name if not explicitly given */
+		name_sh = add_string(name);
+		m = has_been_loaded_sh(name_sh);
+		free_string_shared(name_sh);
+	}
+
+	/* Map is good to go? so just return it */
+	if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
+	{
+		FREE_ONLY_HASH(path);
+		return m;
+	}
+
+	/* unique maps always get loaded from their original location, and never from a temp location. */
+	if (!m || (flags & MAP_STATUS_UNIQUE) || (flags & MAP_STATUS_LOAD_UNIQUE))
+	{
+		/* first visit or time to reset */
+		if (m)
+		{
+			clean_tmp_map(m);
+			delete_map(m);
+			m = NULL;
+		}
+
+		/* the unique map was not loaded - try to load it now! */
+		if (flags & MAP_STATUS_LOAD_UNIQUE)
+		{
+			m = load_original_map(name, MAP_STATUS_UNIQUE);
+			name = name_path;
+		}
+
+		if(!m)
+		{
+			/* create and load the (normalizedm original) map */
+			if (!(m = load_original_map(name, (flags & MAP_STATUS_UNIQUE))))
+			{
+				/* if we are here, the map path is invalid the map don't exists! */
+				FREE_ONLY_HASH(path);
+				return NULL;
+			}
+
+			/* here we convert a loaded default template apartment to a player folder based one */
+			if (flags & MAP_STATUS_LOAD_UNIQUE)
+			{
+				/* just move the string ref we have created above */
+				FREE_ONLY_HASH(m->path);
+				m->path = path;
+				path = NULL;
+				m->map_flags |= MAP_FLAG_UNIQUE;
+			}
+		}
+	}
+	else
+	{
+		/* If in this loop, we found a temporary map, so load it up. */
+		m = load_temporary_map(m);
+		if (m == NULL)
+			return NULL;
+
+		LOG(llevDebug, "clean. ");
+		clean_tmp_map(m);
+		m->in_memory = MAP_IN_MEMORY;
+
+		/* tempnam() on sun systems (probably others) uses malloc
+		* to allocated space for the string.  Free it here.
+		* In some cases, load_temporary_map above won't find the
+		* temporary map, and so has reloaded a new map.  If that
+		* is the case, tmpname is now null
+		*/
+		FREE_AND_NULL_PTR(m->tmpname);
+		/* It's going to be saved anew anyway */
+	}
+
+	/* Below here is stuff common to both first time loaded maps and
+	* temp maps.
+	*/
+	FREE_ONLY_HASH(path);
+
+	/* In case other objects press some buttons down.
+	* We handle here all kind of "triggers" which are triggered
+	* permanent by objects like buttons or inventory checkers.
+	* We don't check here instant stuff like sacrificing altars.
+	* Because this should be handled on map making side.
+	*/
+	LOG(llevDebug, "buttons. ");
+	update_buttons(m);
+	LOG(llevDebug, "end ready_map_name(%s)\n", m->path ? m->path : "<nopath>");
+	return m;
+}
+
+
+/*
+* Loads a map, which has been loaded earlier, from file.
+* Return the map object we load into (this can change from the passed
+* option if we can't find the original map)
+*/
+static mapstruct * load_temporary_map(mapstruct *m)
+{
+	FILE   *fp;
+	char    buf[MAX_BUF];
+
+	if (!m->tmpname)
+	{
+		LOG(llevBug, "BUG: No temporary filename for map %s! fallback to original!\n", m->path);
+		strcpy(buf, m->path);
+		delete_map(m);
+		m = load_original_map(buf, 0);
+		if (m == NULL)
+			return NULL;
+		return m;
+	}
+
+	LOG(llevDebug, "load_temporary_map: %s (%s) ", m->tmpname, m->path);
+	if ((fp = fopen(m->tmpname,"r")) == NULL)
+	{
+		LOG(llevBug, "BUG: Can't open temporary map %s! fallback to original!\n", m->tmpname);
+		/*perror("Can't read map file");*/
+		strcpy(buf, m->path);
+		delete_map(m);
+		m = load_original_map(buf, 0);
+		if (m == NULL)
+			return NULL;
+		return m;
+	}
+
+
+	LOG(llevDebug, "header: ");
+	if (load_map_header(fp, m))
+	{
+		LOG(llevBug, "BUG: Error loading map header for %s (%s)! fallback to original!\n", m->path, m->tmpname);
+		fclose(fp);
+		delete_map(m);
+		m = load_original_map(m->path, 0);
+		if (m == NULL)
+			return NULL;
+		return m;
+	}
+	LOG(llevDebug, "alloc. ");
+	allocate_map(m);
+
+	m->in_memory = MAP_LOADING;
+	LOG(llevDebug, "load objs:");
+	load_objects(m, fp, 0);
+	LOG(llevDebug, "close. ");
+	fclose(fp);
+	LOG(llevDebug, "done!\n");
+	return m;
+}
+
+/*
+* Opens the file "filename" and reads information about the map
+* from the given file, and stores it in a newly allocated
+* mapstruct.  A pointer to this structure is returned, or NULL on failure.
+* flags correspond to those in map.h.  Main ones used are
+* MAP_PLAYER_UNIQUE, in which case we don't do any name changes, and
+* MAP_STYLE: style map - don't add active objects, don't add to server
+*      managed map list.
+*/
+mapstruct * load_original_map(const char *filename, int flags)
+{
+	FILE       *fp;
+	mapstruct  *m;
+	char        pathname[MAX_BUF];
+	char        tmp_fname[MAX_BUF];
+
+	/* this IS a bug - because the missing '/' strcpy will fail when it
+	* search the loaded maps - this can lead in a double load and break
+	* the server!
+	* '.' sign unique maps in fixed folders.
+	*/
+	if (*filename != '/' && *filename != '.')
+	{
+		LOG(llevDebug, "DEBUG: load_original_map: filename without start '/' - overruled. %s\n", filename);
+		tmp_fname[0] = '/';
+		strcpy(tmp_fname + 1, filename);
+		filename = tmp_fname;
+	}
+	global_map_tag++; /* be sure we have always a unique map_tag */
+	if (flags & MAP_STATUS_UNIQUE)
+	{
+		LOG(llevDebug, "load_original_map unique: %s (%x)\n", filename, flags);
+		strcpy(pathname, filename);
+	}
+	else
+	{
+		LOG(llevDebug, "load_original_map: %s (%x) ", filename, flags);
+		strcpy(pathname, create_pathname(filename));
+	}
+
+	if ((fp = fopen(pathname, "r")) == NULL)
+	{
+		if (!(flags & MAP_STATUS_UNIQUE))
+			LOG(llevBug, "BUG: Can't open map file %s\n", pathname);
+		return (NULL);
+	}
+
+
+	LOG(llevDebug, "link map. ");
+	m = get_linked_map();
+
+	LOG(llevDebug, "header: ");
+	FREE_AND_COPY_HASH(m->path, filename);
+	m->map_tag = global_map_tag;    /* pre init the map tag */
+	if (load_map_header(fp, m))
+	{
+		LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
+		delete_map(m);
+		fclose(fp);
+		return NULL;
+	}
+
+	LOG(llevDebug, "alloc. ");
+	allocate_map(m);
+
+	m->in_memory = MAP_LOADING;
+
+	LOG(llevDebug, "load objs:");
+	load_objects(m, fp, (flags & MAP_STATUS_STYLE) | MAP_STATUS_ORIGINAL);
+	LOG(llevDebug, "close. ");
+	fclose(fp);
+	LOG(llevDebug, "post set. ");
+	if (!MAP_DIFFICULTY(m))
+	{
+		/*LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);*/
+		MAP_DIFFICULTY(m) = 1;
+	}
+	/* MAP_DIFFICULTY(m)=calculate_difficulty(m); */
+	set_map_reset_time(m);
+	LOG(llevDebug, "done!\n");
+	return (m);
+}
+
+

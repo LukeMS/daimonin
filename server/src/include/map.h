@@ -31,7 +31,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define MAP_PLAYER_MAP  1    /* for exit objects: this is a player unique map */
 #define MAX_ARCH_LAYERS 7   /* thats our 7 logical layers.
                                * ! for first and last object, we will use 2 more fake layers!
                                */
@@ -77,13 +76,13 @@
 #define MAP_ENTER_Y(m)      (m)->enter_y
 
 /* options passed to ready_map_name and load_original_map */
-#define MAP_FLUSH       0x1
-#define MAP_PLAYER_UNIQUE   0x2
-#define MAP_BLOCK       0x4
-#define MAP_STYLE       0x8
-#define MAP_ARTIFACT    0x20
-#define MAP_NAME_SHARED 0x40 /* indicates that the name string is a shared string */
-#define MAP_ORIGINAL    0x80 /* original map. generate treasures */
+#define MAP_STATUS_ORIGINAL		0x01 /* original map. generate treasures */
+#define MAP_STATUS_UNIQUE		0x02 /* like apartment - map is inside player folder and path points to it*/
+#define MAP_STATUS_LOAD_UNIQUE  0x04 /* like apartment - map is inside player folder but path is normalized*/
+#define MAP_STATUS_NAME_SHARED	0x08 /* indicates that the name string is a shared string */
+#define MAP_STATUS_STYLE		0x10 /* we load a special random map style map - we don't set speed for objects inside! */
+#define MAP_STATUS_ARTIFACT		0x20 /* unusued: tells load_object we load a artifact object/block */
+
 /* Values for in_memory below.  Should probably be an enumerations */
 #define MAP_IN_MEMORY 1
 #define MAP_SWAPPED 2

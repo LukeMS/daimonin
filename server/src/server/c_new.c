@@ -544,7 +544,7 @@ static void set_first_map(object *op)
         FREE_AND_COPY_HASH(EXIT_PATH(current), EXIT_PATH(&map_archeytpe->clone));
         EXIT_X(current) = map_archeytpe->clone.stats.hp;
         EXIT_Y(current) = map_archeytpe->clone.stats.sp;
-        current->last_eat = MAP_PLAYER_MAP;
+        current->last_eat = MAP_STATUS_UNIQUE; /* we have a unique map */
         enter_exit(op, current);
     }
     else

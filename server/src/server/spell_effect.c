@@ -600,9 +600,9 @@ int cast_create_town_portal(object *op, object *caster, int dir)
         exity = EXIT_Y(old_force);
         LOG(llevDebug, "Trying to kill a portal in %s (%d,%d)\n", exitpath, exitx, exity);
         if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir)))
-            exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
+            exitmap = ready_map_name(exitpath, MAP_STATUS_UNIQUE, NULL);
         else
-            exitmap = ready_map_name(exitpath, 0);
+            exitmap = ready_map_name(exitpath, 0, NULL);
         if (exitmap)
         {
             current_obj = present_arch(perm_portal, exitmap, exitx, exity);
@@ -649,9 +649,9 @@ int cast_create_town_portal(object *op, object *caster, int dir)
     exity = EXIT_Y(force);
     remove_ob(force); /*Delete the force inside the player*/
     if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir))) /*Ensure exit map is loaded*/
-        exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
+        exitmap = ready_map_name(exitpath, MAP_STATUS_UNIQUE, NULL);
     else
-        exitmap = ready_map_name(exitpath, 0);
+        exitmap = ready_map_name(exitpath, 0, NULL);
     if (exitmap == NULL) /*If we were unable to load (ex. random map deleted), warn player*/
     {
         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, "Something strange happens.\nYou can't remember where to go!?");

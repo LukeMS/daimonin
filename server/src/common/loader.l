@@ -155,7 +155,7 @@ WS	[ \t]*{NL}?
 			    insert_ob_in_ob(tmp,op);
 				amask_art = tmp_art;
 
-				if (!(map_flags & MAP_STYLE))
+				if (!(map_flags & MAP_STATUS_STYLE))
 				{
 					/* first adjust speed */
 					/* ok - ONLY change something when we
@@ -191,7 +191,7 @@ WS	[ \t]*{NL}?
 					 /* i excluded here only objects inside spawn_points. Add here more
 					  * what you need to exclude at object/map loading time.
 					  */
-					else if(tmp->randomitems && (map_flags & MAP_ORIGINAL) &&(op->type != SPAWN_POINT ))
+					else if(tmp->randomitems && (map_flags & MAP_STATUS_ORIGINAL) &&(op->type != SPAWN_POINT ))
 						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),ART_CHANCE_UNSET,0);
                     
                     if(object_initializers[tmp->type] != NULL)
@@ -847,7 +847,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 
 	/* ok... now we have our old speed values and our new ones.
 	 */
-	if (!(map_flags & MAP_STYLE))
+	if (!(map_flags & MAP_STATUS_STYLE))
 	{
 	  /* if set, our old speed values comes from a valid source (arches?) outside. */
 	  if(object_load_flag)

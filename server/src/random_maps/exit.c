@@ -313,7 +313,7 @@ void place_exits(mapstruct *map, char **maze, char *exitstyle, int orientation, 
         /* set the exit down. */
 #endif
                 /* load it */
-                if ((new_map = ready_map_name(RP->final_map, MAP_UNIQUE(map) ? 1 : 0)) == NULL)
+                if ((new_map = ready_map_name(RP->final_map, MAP_UNIQUE(map) ? 1 : 0, NULL)) == NULL)
                     return;
 
                 FREE_AND_COPY_HASH(the_exit_down->slaying, RP->final_map);

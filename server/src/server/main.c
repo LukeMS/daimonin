@@ -527,9 +527,9 @@ static void enter_unique_map(object *op, object *exit_ob)
     {
         sprintf(apartment, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name,
                 clean_path(EXIT_PATH(exit_ob)));
-        newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+        newmap = ready_map_name(apartment, MAP_STATUS_UNIQUE, NULL);
         if (!newmap)
-            newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_PLAYER_UNIQUE);
+            newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_STATUS_UNIQUE);
     }
     else
     {
@@ -549,10 +549,10 @@ static void enter_unique_map(object *op, object *exit_ob)
             sprintf(apartment, "%s/%s/%s/%s/%s_%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, tmpc,
                     clean_path(EXIT_PATH(exit_ob)));
 
-            newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+            newmap = ready_map_name(apartment, MAP_STATUS_UNIQUE, NULL);
             if (!newmap)
                 newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob), tmp_path)),
-                                           MAP_PLAYER_UNIQUE);
+                                           MAP_STATUS_UNIQUE);
         }
         else
         {
@@ -561,9 +561,9 @@ static void enter_unique_map(object *op, object *exit_ob)
                */
             sprintf(apartment, "%s/%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name,
                     clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path)));
-            newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
+            newmap = ready_map_name(apartment, MAP_STATUS_UNIQUE, NULL);
             if (!newmap)
-                newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0);
+                newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0, NULL);
         }
     }
 
@@ -618,7 +618,7 @@ void enter_exit(object *op, object *exit_ob)
                 play_sound_map(exit_ob->map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
             enter_random_map(op, exit_ob);
         }
-        else if (exit_ob->last_eat == MAP_PLAYER_MAP)
+        else if (exit_ob->last_eat == MAP_STATUS_UNIQUE) /* unique map */
         {
             if (op->type != PLAYER)
                 return;
@@ -642,9 +642,9 @@ void enter_exit(object *op, object *exit_ob)
                          * ready_map_name in a more clever way!
                          */
                 if (strncmp(exit_ob->map->path, settings.localdir, strlen(settings.localdir)))
-                    newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0);
+                    newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0, NULL);
                 else
-                    newmap = ready_map_name(normalize_path("", EXIT_PATH(exit_ob), tmp_path), 0);
+                    newmap = ready_map_name(normalize_path("", EXIT_PATH(exit_ob), tmp_path), 0, NULL);
                 /* Random map was previously generated, but is no longer about.  Lets generate a new
                         * map.
                         */
@@ -671,9 +671,9 @@ void enter_exit(object *op, object *exit_ob)
                         * But we do need to see if it is unique or not
                         */
                 if (!strncmp(EXIT_PATH(exit_ob), settings.localdir, strlen(settings.localdir)))
-                    newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_NAME_SHARED | MAP_PLAYER_UNIQUE);
+                    newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_STATUS_NAME_SHARED | MAP_STATUS_UNIQUE, NULL);
                 else
-                    newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_NAME_SHARED);
+                    newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_STATUS_NAME_SHARED, NULL);
             }
 
             if (!newmap)
@@ -732,12 +732,12 @@ void enter_exit(object *op, object *exit_ob)
             * unique or not.
             */
         if (!strncmp(CONTR(op)->maplevel, settings.localdir, strlen(settings.localdir)))
-            flags = MAP_PLAYER_UNIQUE;
+            flags = MAP_STATUS_UNIQUE;
 
         /* newmap returns the map (if already loaded), or loads it for
             * us.
             */
-        newmap = ready_map_name(CONTR(op)->maplevel, flags);
+        newmap = ready_map_name(CONTR(op)->maplevel, flags, NULL);
         if (!newmap)
         {
             /* HOTFIX; for beta 1 stoneglow apartments */
@@ -748,7 +748,7 @@ void enter_exit(object *op, object *exit_ob)
                 tmp_str[0] = '$';
                 tmp_str[10] = '$';
 
-                newmap = ready_map_name(CONTR(op)->maplevel, flags);
+                newmap = ready_map_name(CONTR(op)->maplevel, flags, NULL);
 
                 LOG(llevDebug, "HOTFIX (%s): ready map %x.\n", query_name(op), newmap);
             }
@@ -758,7 +758,7 @@ void enter_exit(object *op, object *exit_ob)
             {
                 LOG(llevBug, "BUG: enter_exit(): Pathname to map does not exist! player: %s (%s)\n", op->name,
                     CONTR(op)->maplevel);
-                newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
+                newmap = ready_map_name(EMERGENCY_MAPPATH, 0, NULL);
                 op->x = EMERGENCY_X;
                 op->y = EMERGENCY_Y;
             }
