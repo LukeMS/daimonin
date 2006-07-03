@@ -87,3 +87,31 @@ The following DOES work:
  *****************************************************************************/
 
 Perhaps we should use it? This is a point to discuss first.
+
+Documenting Structure Members
+-----------------------------
+Some struct members are documented like this today:
+
+typedef struct _money_block
+{
+    int     mode; /* 0, 1, or -1: see get_money_from_string() */
+    long    mithril;
+    long    gold;
+    long    silver;
+    long    copper;
+}_money_block;
+
+To make this work with Doxygen, it would need to be changed to:
+
+typedef struct _money_block
+{ 
+    /** 0, 1, or -1: see get_money_from_string() */
+    int     mode;
+    long    mithril;
+    long    gold;
+    long    silver;
+    long    copper;
+}_money_block;
+
+i.e. the comment must be before the member. This increases the number of
+lines a lot, but the better documentation is probably worth it.

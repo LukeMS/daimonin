@@ -1747,6 +1747,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
             }
         }
     }
+
     /* Did we find an enemy? */
     if (worst_enemy)
     {
@@ -2052,7 +2053,6 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
      * or even more. mob->magic is the default mob speed delay, spell->last_grace the
      * delay for this spell.
      * the last_grace counter is decreased in regenerate_stats().
-     *
      */
     op->last_grace += (op->magic + spell_item->last_grace);
 
