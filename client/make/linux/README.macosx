@@ -2,10 +2,11 @@
 #  Daimonin MacOSX Readme
 #
 
-******* WARNING: This macosx make is not tested with the latest source ******
-******* We have no access to a mac to test it                          ******
-******* However, using the linux make as template it should easy to    ******
-******* adjust this make files. If you fix it, please send it to us!!  ******
+******* WARNING: The latest source is not tested on MacOS X, ******
+******* we don't have access to a mac to test it.            ******
+
+Prerequisites
+-------------
 
 Before you can compile the client, you need 3 SDL libraries.
 
@@ -15,7 +16,7 @@ The best way to get these libraries, is through the fink project.  The fink
 project  is a package management system, that enables popular unix programs
 and libraries work on Darwin and MacOS X. 
 
-You will almost certaintly need to install the Apple Developer Tools before 
+You will almost certainly need to install the Apple Developer Tools before
 attempting to install fink.  The developer tools should have shipped with 
 OSX, however you should be able to download them, after registration, from
 http://developer.apple.com/.
@@ -23,7 +24,6 @@ http://developer.apple.com/.
 Please note that if you use Virex version 7.2, then you should not attempt to
 install fink, due to an incompatibility.  Indications are that Virex 7.2.1 
 fixes this problem. 
-
 
 Download and Install the Fink Application
 
@@ -49,19 +49,23 @@ Install the SDL libs.
 
     4)  Select Install from the Source menu. Fink will fetch and install sdl. 
 
+Compile and install Daimonin
+----------------------------
+
 After you have installed these SDL libs, you can compile the source.
 
 Follow this steps:
 
-1)  cd daimonin/client/make/macosx
+1.) cd daimonin/client/make/linux
 
 2.) make distclean
 	Type 'make distclean' to be sure you have a clean source.
-	This will uninstall old installations too!
+	This will uninstall an old installations too!
+    (Don't worry about error messages at this point)
 
-3.) configure
-	Type './configure' to generate your makefiles. This will
-	set the installation folder to 'client_VERSION'. To force
+3.) sh ./configure
+	Type 'sh ./configure' to generate your makefiles. This will
+	set the installation folder to '$HOME/daimonin-<VERSION>'. To force
 	a different folder type './configure --prefix="<path>/<folder>".
 
 4.) make all
@@ -72,13 +76,15 @@ Follow this steps:
 	
 Thats all.
 
-You can compile the client without SDL_mixer (wave and ogg support). Follow
-the comments in the Makefile to remove the libs from linking.
+Disabling sound
+---------------
+
+You can compile the client without SDL_mixer (wave and ogg support). Run 
+configure with the "--without-sound" parameter to remove the libs from linking.
 
 Note, that even with linked SDL_mixer the client will run fine on systems
 without soundcard. The client will disable the sound automatically. Compiling 
 it native without sound on a system without sound is just a clean option.
 
-You have ALWAYS to install the SDL and SDL_image libs on your system. 
+You must ALWAYS install the SDL and SDL_image libs on your system. 
 The client can't run without it!
-
