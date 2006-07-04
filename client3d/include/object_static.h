@@ -93,8 +93,11 @@ public:
     {
         return mFriendly;
     }
-    SubPos2D getTilePos();
-
+    SubPos2D getTilePos()
+    {
+        return mActPos;
+    }
+    SubPos2D getTileScrollPos();
 protected:
     static SceneManager *mSceneMgr;
     Vector3 mTranslateVector, mBoundingBox;

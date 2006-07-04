@@ -56,13 +56,14 @@ std::string Option::optValue[SUM_OPTIONS - SEPARATOR-1] =
         "0", // SEL_META_SEVER
         "0", // HIGH_TEXTURE_DETAILS
         "0", // HIGH_TILES_DETAILS
-        "0", // LOG_GUI_ELEMENTS
-        "0", // CREATE_RAW_FONTS
-        "0", // CREATE_TILE_TEXTURES
         "0", // UPDATE_NETWORK
+        "0", // CMDLINE_LOG_GUI_ELEMENTS
+        "0", // CMDLINE_CREATE_RAW_FONTS
+        "0", // CMDLINE_CREATE_TILE_TEXTURES
         "0", // CMDLINE_SERVER_NAME
         "0", // CMDLINE_SERVER_PORT
         "0", // CMDLINE_FALLBACK
         "0", // CMDLINE_OFF_SOUND
+        "0", // CMDLINE_SHOW_BOUNDING_BOX
     };
 

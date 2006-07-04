@@ -25,6 +25,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "object_static.h"
+#include "option.h"
 #include "sound.h"
 #include "events.h"
 #include "logger.h"
@@ -76,7 +77,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
 
     /// If this is a plane - make sure it has higher y than the ground (avoid flickering):
     if (!AABB.getMaximum().y  && !AABB.getMinimum().y)
-        mBoundingBox.y = -.1;
+        mBoundingBox.y = -0.01;
     else
         mBoundingBox.y = AABB.getMinimum().y;
 
@@ -99,6 +100,13 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
     mNode->attachObject(mEntity);
     mNode->yaw(mFacing);
+
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_SHOW_BOUNDING_BOX))
+    {
+        mNode->showBoundingBox(true);
+    }
+
+
     /// Create the animations.
     mAnim = new ObjectAnimate(mEntity);
 }
@@ -122,7 +130,7 @@ void ObjectStatic::move(Vector3 &pos)
 ///================================================================================================
 /// Move the object to the given position.
 ///================================================================================================
-SubPos2D ObjectStatic::getTilePos()
+SubPos2D ObjectStatic::getTileScrollPos()
 {
     static SubPos2D pos;
     TileManager::getSingleton().getMapScroll(pos.x, pos.z);

@@ -63,7 +63,7 @@ public:
     virtual ~ObjectPlayer();
     virtual void freeRecources();
     virtual void update(const FrameEvent& event);
-    void moveToTile(SubPos2D pos);
+    void moveToDistantTile(SubPos2D pos);
     void faceToTile(SubPos2D pos);
     void castSpell(int spell);
     void setTexture(int pos, int color, int textureNr);
@@ -72,7 +72,7 @@ public:
     bool isMoving();
     void raiseWeapon(bool raise);
     void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
-    void attackShortRange();
+    void attackShortRange(const SceneNode *node);
     void talkToNpc();
 
 private:
@@ -81,6 +81,8 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
     static uchar *texImageBuf;
+    SubPos2D mDestWalkPos;
+    SceneNode *mEnemyNode;
     enum
     {
         SIDE_BACK,
@@ -93,5 +95,6 @@ private:
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
     ObjectPlayer(const ObjectPlayer&); // disable copy-constructor.
+    void moveToNeighbourTile();
 };
 #endif

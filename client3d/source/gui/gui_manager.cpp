@@ -72,7 +72,7 @@ void GuiManager::Init(int w, int h)
     Logger::log().info() << "Creating Overlay for System-Messages...";
     mTooltipRefresh = false;
     mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
-               TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+               TEX_TYPE_2D, TOOLTIP_SIZE_X, TOOLTIP_SIZE_Y, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Tooltip_Overlay");
     mOverlay->setZOrder(500);
     mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Tooltip_Frame");
@@ -345,7 +345,8 @@ const char *GuiManager::getTextInput()
 ///================================================================================================
 void GuiManager::showWindow(int window, bool visible)
 {
-    guiWindow[window].setVisible(visible);
+      guiWindow[window].setVisible(visible);
+        guiWindow[window].setVisible(true);
 }
 
 ///================================================================================================

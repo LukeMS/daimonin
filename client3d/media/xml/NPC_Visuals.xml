@@ -22,7 +22,7 @@
      <color name= "Stop"   red= "0.3" green= "0.3" blue= "0.5" />
    </Particle>
 
-   <Image name= "Lifebar_L"   posX= "66" posY=   "0" width= "13" height= "21" meshSizeX=  "2.0" meshSizeY=  "5.0" meshSizeZ=   "0.0"/>
+   <Image name= "Lifebar_L"   posX= "60" posY=   "0" width= "68"height=  "6" meshSizeX=  "8.0" meshSizeY=  "3.0" meshSizeZ=   "0.0"/>
    <Image name= "Lifebar_R"   posX= "82" posY=   "0" width= "13" height= "21" meshSizeX=  "2.0" meshSizeY=  "5.0" meshSizeZ=   "0.0"/>
    <Image name= "Lifebar_Bar" posX= "97" posY=   "0" width= "13" height= "15" meshSizeX=  "2.0" meshSizeY=  "2.8" meshSizeZ=   "0.0"/>
 

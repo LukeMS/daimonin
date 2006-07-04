@@ -39,22 +39,22 @@ bool parseCmdLine(const char *cmd, const char *value)
     int options =0;
     if (cmd[0] == '-')
     {
-        if ((cmd[1] == 'l' || !stricmp(cmd, "--list"  )) && !stricmp(value, "gui"))
+        if ((cmd[1] == 'l' || !stricmp(cmd, "--list")) && !stricmp(value, "gui"))
         {
             Logger::log().info() << "You told me to list all interactive gui-elements.";
-            Option::getSingleton().setIntValue(Option::LOG_GUI_ELEMENTS, true);
+            Option::getSingleton().setIntValue(Option::CMDLINE_LOG_GUI_ELEMENTS, true);
             ++options;
         }
         if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "rawfonts"))
         {
             Logger::log().info() << "You told me to create a raw-font from every ttf." << FILE_GUI_WINDOWS;
-            Option::getSingleton().setIntValue(Option::CREATE_RAW_FONTS, true);
+            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_RAW_FONTS, true);
             ++options;
         }
         if ((cmd[1] == 'c' || !stricmp(cmd, "--create")) && !stricmp(value, "tileTextures"))
         {
             Logger::log().info() << "You told me to create all textures for the TileEngine.";
-            Option::getSingleton().setIntValue(Option::CREATE_TILE_TEXTURES, true);
+            Option::getSingleton().setIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES, true);
             ++options;
         }
         if ((cmd[1] == 's' || !stricmp(cmd, "--server")))
@@ -63,22 +63,28 @@ bool parseCmdLine(const char *cmd, const char *value)
             Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_NAME, value);
             ++options;
         }
-        if ((cmd[1] == 'p' || !stricmp(cmd, "--port"  )))
+        if ((cmd[1] == 'p' || !stricmp(cmd, "--port")))
         {
             Logger::log().info() << "You told me to connect on port " << value;
             Option::getSingleton().setStrValue(Option::CMDLINE_SERVER_PORT, value);
             ++options;
         }
-        if ((cmd[1] == 'f' || !stricmp(cmd, "--fallback"  )))
+        if ((cmd[1] == 'f' || !stricmp(cmd, "--fallback")))
         {
             Logger::log().info() << "You told me to disable the TileEngine.";
             Option::getSingleton().setIntValue(Option::CMDLINE_FALLBACK, true);
             ++options;
         }
-        if ((cmd[1] == 'x' || !stricmp(cmd, "--sound off"  )))
+        if ((cmd[1] == 'x' || !stricmp(cmd, "--sound off")))
         {
             Logger::log().info() << "You told me to disable the Sound.";
             Option::getSingleton().setIntValue(Option::CMDLINE_OFF_SOUND, true);
+            ++options;
+        }
+        if (!stricmp(cmd, "--bbox"))
+        {
+            Logger::log().info() << "You told me to display bounding-boxes.";
+            Option::getSingleton().setIntValue(Option::CMDLINE_SHOW_BOUNDING_BOX, true);
             ++options;
         }
     }
@@ -91,7 +97,8 @@ bool parseCmdLine(const char *cmd, const char *value)
         << "--server <name>         -s  <name>\n"
         << "--port   <num>          -p  <num>\n"
         << "--fallback              -f  disable TileEngine\n"
-        << "--sound off             -x  disable Sound\n";
+        << "--sound off             -x  disable Sound\n"
+        << "--bbox                      show bounding-boxes\n";
         return false;
     }
     return true;

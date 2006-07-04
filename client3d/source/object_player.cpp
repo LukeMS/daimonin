@@ -36,12 +36,12 @@ http://www.gnu.org/licenses/licenses.html
 // #define WRITE_MODELTEXTURE_TO_FILE
 
 String boneName[ObjectPlayer::BONE_SUM]=
-{
-    "RFingers",
-    "LFingers",
-    "Head",
-    "Spline1"
-};
+    {
+        "RFingers",
+        "LFingers",
+        "Head",
+        "Spline1"
+    };
 
 ///================================================================================================
 /// Init all static Elemnts.
@@ -232,6 +232,9 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
     tmpName +="_Texture";
     mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
     mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
+
+    mEnemyNode = 0;
+    mAttacking = false;
     //mNode->showBoundingBox(true); // Remove Me!!!!
 
     /// Set the default Colors of the model.
@@ -249,22 +252,28 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
 ///================================================================================================
 /// Toggle ObjectNPC equipment.
 ///================================================================================================
-void ObjectPlayer::toggleMesh(int Bone, int WeaponNr)
+void ObjectPlayer::toggleMesh(int Bone, int EquipmentNr)
 {
+    /// Put down equipment from Bone.
     if (mEntityEquip[Bone])
     {
         mEntity->detachObjectFromBone(mEntityEquip[Bone]);
         if (mPSystem[Bone])
         {
             mEntity->detachObjectFromBone(mPSystem[Bone]);
+            mEntityEquip[Bone] =0;
             mPSystem[Bone] =0;
         }
         mEntityEquip[Bone] =0;
     }
-    mEntityEquip[Bone] = (Entity*) ObjectManager::getSingleton().getWeaponEntity(WeaponNr);
+    if (EquipmentNr <0) return;
+
+    /// Put equipment into Bone.
+    mEntityEquip[Bone] = (Entity*) ObjectManager::getSingleton().getWeaponEntity(EquipmentNr);
     if (!mEntityEquip[Bone]) return;
+    mEntityEquip[Bone]->setQueryFlags(QUERY_NPC_SELECT_MASK);
     mEntity->attachObjectToBone(boneName[Bone], mEntityEquip[Bone]);
-    mPSystem[Bone] =  ObjectManager::getSingleton().getParticleSystem(WeaponNr);
+    mPSystem[Bone] =  ObjectManager::getSingleton().getParticleSystem(EquipmentNr);
     if (mPSystem[Bone])
         mEntity->attachObjectToBone(boneName[Bone], mPSystem[Bone]);
 }
@@ -276,17 +285,14 @@ void ObjectPlayer::raiseWeapon(bool raise)
 {
     if (!raise)
     {
-        mEntity->detachObjectFromBone(mEntityEquip[BONE_WEAPON_HAND]);
-        mEntityEquip[BONE_WEAPON_HAND] =0;
+        toggleMesh(BONE_WEAPON_HAND, -1);
         return;
     }
     if (!mEntityEquip[BONE_WEAPON_HAND])
     {
-        mEntityEquip[BONE_WEAPON_HAND] = (Entity*) ObjectManager::getSingleton().getWeaponEntity(0);
-        mEntity->attachObjectToBone(boneName[BONE_WEAPON_HAND], mEntityEquip[BONE_WEAPON_HAND]);
+        toggleMesh(BONE_WEAPON_HAND, 0);
     }
 }
-
 
 ///================================================================================================
 /// Update object.
@@ -327,35 +333,43 @@ void ObjectPlayer::update(const FrameEvent& event)
             mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
             mNode->setPosition(mWalkToPos);
             if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
-            mAutoMoving = false;
+            mDestWalkPos.x+= mActPos.x - mDstPos.x;
+            mDestWalkPos.z+= mActPos.z - mDstPos.z;
+            moveToNeighbourTile();
             mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
         }
         else
         {
             /// We have to move on.
             Vector3 NewTmpPosition = - event.timeSinceLastFrame * mDeltaPos;;
-            //ParticleManager::getSingleton().pauseAll(true);
-
             mNode->setPosition(mNode->getPosition() + NewTmpPosition);
             if (!mIndex) Event->setWorldPos(NewTmpPosition, 0, 0, CEvent::WSYNC_OFFSET);
-            //ParticleManager::getSingleton().pauseAll(false);
+            if (mEnemyNode)
+            {
+                AxisAlignedBox aabb = mNode->_getWorldAABB().intersection(mEnemyNode->_getWorldAABB());
+                if (!aabb.isNull())
+                {
+                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+                    mAutoMoving = false;
+                }
+            }
         }
         return;
     }
+    else if (mAttacking)
+    {
+        toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+//        Vector3 pos = ObjectManager::getSingleton().getTargetedWorldPos();
+//        pos.y +=12;
+//        ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
+        mAttacking = false;
+    }
     if (mAnim->isMovement() && mTurning)
     {
+        mEnemyNode = 0; /// We are no longer looking at the enemy.
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning);
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning));
     }
-}
-
-///================================================================================================
-/// Cast a spell.
-///================================================================================================
-void ObjectPlayer::castSpell(int spell)
-{
-    //  if (!askServer.AllowedToCast(spell)) return;
-    SpellManager::getSingleton().addObject(spell, mIndex);
 }
 
 ///================================================================================================
@@ -376,32 +390,48 @@ void ObjectPlayer::faceToTile(SubPos2D pos)
 }
 
 ///================================================================================================
-/// Move the player to the given tile.
+/// Move the player to a neighbour tile.
 ///================================================================================================
-void ObjectPlayer::moveToTile(SubPos2D pos)
+void ObjectPlayer::moveToNeighbourTile()
 {
-    if(mActPos.x == pos.x && mActPos.z == pos.z || mAutoTurning || mAutoMoving) return;
-
-    /// Split into waypoints (distance = 1 tile)
-    // todo
-
-    // testing: limit the moving distance.
-    if (pos.x > mActPos.x+1) pos.x = mActPos.x+1;
-    if (pos.x < mActPos.x-1) pos.x = mActPos.x-1;
-    if (pos.z > mActPos.z+1) pos.z = mActPos.z+1;
-    if (pos.z < mActPos.z-1) pos.z = mActPos.z-1;
-
+    if ((mActPos.x == mDestWalkPos.x) && (mActPos.z == mDestWalkPos.z))
+    {
+        mAutoMoving = false;
+        return;
+    }
+    mDstPos = mDestWalkPos;
+    if (mDstPos.x > mActPos.x+1) mDstPos.x = mActPos.x+1;
+    if (mDstPos.x < mActPos.x-1) mDstPos.x = mActPos.x-1;
+    if (mDstPos.z > mActPos.z+1) mDstPos.z = mActPos.z+1;
+    if (mDstPos.z < mActPos.z-1) mDstPos.z = mActPos.z-1;
     /// Turn the head into the moving direction.
-    faceToTile(pos);
-    /// Move it.
-    mWalkToPos.x = pos.x * TILE_SIZE_X + mBoundingBox.x;
-    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(pos.x, pos.z) - mBoundingBox.y);
-    mWalkToPos.z = pos.z * TILE_SIZE_Z + mBoundingBox.z;
+    faceToTile(mDstPos);
+    /// Walk 1 tile.
+    mWalkToPos.x = mDstPos.x * TILE_SIZE_X + mBoundingBox.x;
+    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y);
+    mWalkToPos.z = mDstPos.z * TILE_SIZE_Z + mBoundingBox.z;
     mDeltaPos = mNode->getPosition() - mWalkToPos;
     if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
-    mDstPos.x = pos.x;
-    mDstPos.z = pos.z;
+}
+
+///================================================================================================
+/// Move the player to the given tile.
+///================================================================================================
+void ObjectPlayer::moveToDistantTile(SubPos2D pos)
+{
+    if(mActPos.x == pos.x && mActPos.z == pos.z || mAutoTurning || mAutoMoving) return;
+    if (mEnemyNode)
+    {
+        mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
+        mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
+        mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
+        mNode->setPosition(mWalkToPos);
+        if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
+        mEnemyNode = 0;
+    }
+    mDestWalkPos = pos;
     mAutoMoving = true;
+    moveToNeighbourTile();
 }
 
 ///================================================================================================
@@ -416,14 +446,23 @@ void ObjectPlayer::stopMovement()
 }
 
 ///================================================================================================
+/// Cast a spell.
+///================================================================================================
+void ObjectPlayer::castSpell(int spell)
+{
+    //  if (!askServer.AllowedToCast(spell)) return;
+    SpellManager::getSingleton().addObject(spell, mIndex);
+}
+
+///================================================================================================
 /// Attack an enemy.
 ///================================================================================================
-void ObjectPlayer::attackShortRange()
+void ObjectPlayer::attackShortRange(const SceneNode *node)
 {
-    if (mAttacking) return;
+    /// Move in front of the enemy.
+    if (!mEnemyNode) moveToDistantTile(ObjectManager::getSingleton().getTargetedPos());
+    mEnemyNode = (SceneNode*) node;
     mAttacking = true;
-//    int x, z;
-//    Vector3 pos = ObjectManager::getSingleton().getTargetedPos();
 }
 
 ///================================================================================================
@@ -433,8 +472,8 @@ void ObjectPlayer::talkToNpc()
 {
     if (mTalking) return;
     mTalking = true;
-//    int x, z;
-//    Vector3 pos = ObjectManager::getSingleton().getTargetedPos();
+    //    int x, z;
+    //    Vector3 pos = ObjectManager::getSingleton().getTargetedPos();
 }
 
 
@@ -526,57 +565,57 @@ void ObjectPlayer::setTexture(int pos, int textureColor, int textureNr)
     image.load("shadow.png", "General");
     switch (pos)
     {
-    case TEXTURE_POS_SKIN:
+        case TEXTURE_POS_SKIN:
         {
             drawBopyPart(picFace, image, textureNr, textureColor);
             for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], image,  textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_FACE:
+        case TEXTURE_POS_FACE:
         {
             drawBopyPart(picFace, image, textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_HAIR:
+        case TEXTURE_POS_HAIR:
         {
             drawBopyPart(picHair, image, textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_BODY:
+        case TEXTURE_POS_BODY:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], image,  textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_LEGS:
+        case TEXTURE_POS_LEGS:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], image,  textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_BELT:
+        case TEXTURE_POS_BELT:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], image, textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_SHOES:
+        case TEXTURE_POS_SHOES:
         {
             for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], image,  textureNr, textureColor);
             break;
         }
 
-    case TEXTURE_POS_HANDS:
+        case TEXTURE_POS_HANDS:
         {
             for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], image,  textureNr, textureColor);
             break;
         }
 
-    default:
-        Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for ObjectNPC.";
-        break;
+        default:
+            Logger::log().warning() << "Unknown Texuture-pos (" << pos << ") for ObjectNPC.";
+            break;
     }
 }

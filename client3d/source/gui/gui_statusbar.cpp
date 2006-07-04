@@ -52,7 +52,7 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
         mGfxBuffer = new uint32[mWidth * mHeight];
         texture->getBuffer()->blitToMemory(
             Box(mX, mY, mX + mWidth, mY + mHeight),
-            PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer));
+            PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, mGfxBuffer));
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Restore background into a tmp buffer.
@@ -75,13 +75,15 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
             {
                 color = src[(y+gfxSrcPos[0].y) * pb.getWidth() + x+gfxSrcPos[0].x];
                 if (color & 0xff000000)
+                {
                     mGfxBuffer[y*mWidth + x] = color;
+                }
             }
         }
         /// ////////////////////////////////////////////////////////////////////
         /// The dynamic part.
         /// ////////////////////////////////////////////////////////////////////
-        uint32 barColor=  0xff000000+ (mLabelColor[0] << 16) + (mLabelColor[1] << 8) +mLabelColor[2];
+        uint32 barColor=  0xff000000+ (mLabelColor[2] << 16) + (mLabelColor[1] << 8) +mLabelColor[0];
         for (int y = mLabelYPos + mValue; y < mHeight-mLabelYPos; ++y)
         {
             for (int x= mLabelXPos; x < mWidth-mLabelXPos; ++x)
@@ -137,7 +139,7 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
     /// Blit buffer into the window-texture.
     /// ////////////////////////////////////////////////////////////////////
     texture->getBuffer()->blitFromMemory(
-        PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
+        PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, mGfxBuffer),
         Box(mX, mY, mX + mWidth, mY + mHeight));
 }
 
@@ -146,11 +148,11 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
 ///================================================================================================
 void GuiStatusbar::setValue(Real value)
 {
-/*
-    mValue = (int) (mHeight * (1-value));
-    if (mValue > mHeight) mValue = mHeight;
-    if (mValue < 5) mValue = 5;
-*/
+    /*
+        mValue = (int) (mHeight * (1-value));
+        if (mValue > mHeight) mValue = mHeight;
+        if (mValue < 5) mValue = 5;
+    */
     mValue = (int) ((mHeight-2*mLabelYPos) * (1-value));
     if (mValue > mHeight) mValue = mHeight;
     if (mValue < 0) mValue = 0;

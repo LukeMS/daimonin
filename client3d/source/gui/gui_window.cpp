@@ -423,7 +423,7 @@ void GuiWindow::createWindow()
     mWindowNr = ++msInstanceNr;
     std::string strNum = StringConverter::toString(msInstanceNr);
     mTexture = TextureManager::getSingleton().createManual("GUI_Texture_" + strNum, "General",
-               TEX_TYPE_2D, mWidth, mHeight, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
+               TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     mOverlay = OverlayManager::getSingleton().create("GUI_Overlay_"+strNum);
     mOverlay->setZOrder(msInstanceNr);
     mElement = OverlayManager::getSingleton().createOverlayElement (OVERLAY_TYPE_NAME, "GUI_Frame_" + strNum);
