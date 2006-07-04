@@ -10,6 +10,9 @@ AM_INIT_AUTOMAKE(daimonin_client, BETA4-0.970p2)
 
 AC_CONFIG_SRCDIR(../../src/client.c)
 
+# Enforce explicit use of maintainer tools (=bootstrap)
+AM_MAINTAINER_MODE
+
 AM_PROG_CC_C_O
 
 AC_PROG_CC
