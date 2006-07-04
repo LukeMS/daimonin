@@ -1447,7 +1447,7 @@ static int GameObject_FindSkill(lua_State *L)
 /* Lua    : object:AcquireSkill(skillno, mode)                               */
 /* Info   : object will learn or unlearn skill.                              */
 /*          mode should be game.LEARN or game.UNLEARN                        */
-/*          Get skill number with game.GetSkillNr()                          */
+/*          Get skill number with game:GetSkillNr()                          */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_AcquireSkill(lua_State *L)
