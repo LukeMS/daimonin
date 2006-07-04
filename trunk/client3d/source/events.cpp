@@ -143,6 +143,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
             //mCamera->setPosition(); // Its done in setWorldPos();
             mCamera->pitch(Degree(-25));
+           // mCamera->setNearClipDistance(40);
 /*
             const Vector3 *corner = mCamera->getWorldSpaceCorners();
             mCamCornerX =  (corner[0].x - corner[1].x)/2;
@@ -307,11 +308,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#00880000Remember:~");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#001b1b88Server~ will send us~#00880088 one Step~ at");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"once, so movement is limited in this");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"demo to a distance of 2 tiles.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~a~ to change Idle animation.");

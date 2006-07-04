@@ -36,7 +36,7 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 
 ///================================================================================================
-///
+/// Init the ParticleSystem.
 ///================================================================================================
 bool ParticleManager::init(SceneManager *SceneMgr)
 {
@@ -59,7 +59,7 @@ ParticleManager::~ParticleManager()
 }
 
 ///================================================================================================
-///
+/// Add a ParticleSystem to a node.
 ///================================================================================================
 ParticleSystem *ParticleManager::addNodeObject(Vector3 pos, const SceneNode *node, const char* pScript, Real lifeTime)
 {
@@ -67,6 +67,7 @@ ParticleSystem *ParticleManager::addNodeObject(Vector3 pos, const SceneNode *nod
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
     obj->pSystem  = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem->setBoundsAutoUpdated(false);
     obj->entity = 0;
     obj->sceneNode= (SceneNode*) node;
     return obj->pSystem;
@@ -81,8 +82,10 @@ ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone,
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
     obj->pSystem = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem->setBoundsAutoUpdated(false);
     obj->sceneNode = 0;
     obj->entity = ent;
+    //obj->entity->setQueryFlags(QUERY_NPC_SELECT_MASK);
     obj->entity->attachObjectToBone(strBone, obj->pSystem);
     return obj->pSystem;
 }
@@ -95,7 +98,8 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
     sParticles *obj = new sParticles;
     mvParticle.push_back(obj);
     obj->lifeTime = lifeTime;
-    obj->pSystem  = Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem= Event->GetSceneManager()->createParticleSystem("pS_"+StringConverter::toString(mCounter++), pScript);
+    obj->pSystem->setBoundsAutoUpdated(false);
     obj->sceneNode= Event->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
     obj->entity = 0;
     obj->sceneNode->attachObject(obj->pSystem);
@@ -144,7 +148,7 @@ void ParticleManager::delObject(ParticleSystem *pSystem)
 }
 
 ///================================================================================================
-///
+/// Pause the ParticleSystem.
 ///================================================================================================
 void ParticleManager::pauseAll(bool pause)
 {
@@ -153,13 +157,13 @@ void ParticleManager::pauseAll(bool pause)
         if (pause)
         {
             (*i)->pSystem->setSpeedFactor(0.0f);
-            for (size_t sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
+            for (unsigned short sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
                 (*i)->pSystem->getEmitter(sum)->setEnabled(false);
         }
         else
         {
             (*i)->pSystem->setSpeedFactor(1.0f);
-            for (size_t sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
+            for (unsigned short sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
                 (*i)->pSystem->getEmitter(sum)->setEnabled(true);
         }
     }

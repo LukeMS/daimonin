@@ -110,6 +110,11 @@ public:
     }
     void synchToWorldPos(Vector3 pos);
     void selectNPC(MovableObject *mob);
+
+    Vector3 getTargetedWorldPos()
+    {
+        return mvObject_npc[mSelectedObject]->getNode()->getPosition();
+    }
     const SubPos2D getTargetedPos()
     {
         return mSelectedPos;

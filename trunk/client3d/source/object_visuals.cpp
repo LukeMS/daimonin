@@ -114,8 +114,8 @@ ObjectVisuals::ObjectVisuals()
         if ((strTemp = xmlElem->Attribute("meshSizeY"))) GfxEntry[index].sizeY  = atof(strTemp);
         if ((strTemp = xmlElem->Attribute("meshSizeZ"))) GfxEntry[index].sizeZ  = atof(strTemp);
     }
-    //    buildEntity(NPC_LIFEBAR_L, "MeshLifebarL",  "EntityLifebarL");
-    //    buildEntity(NPC_LIFEBAR_R, "MeshLifebarR",  "EntityLifebarR");
+    buildEntity(NPC_LIFEBAR_L, "MeshLifebarL",  "EntityLifebarL");
+//    buildEntity(NPC_LIFEBAR_R, "MeshLifebarR",  "EntityLifebarR");
     if (!mPSystem) buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
 }
 
@@ -152,7 +152,6 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     mEntity[index]->setQueryFlags(QUERY_NPC_SELECT_MASK);
 }
 
-
 ///===================================================
 /// .
 ///===================================================
@@ -183,7 +182,7 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
         mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
         mNode[NPC_SELECTION]->attachObject(mPSystem);
         int index;
-             if (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
+        if (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
         else if (friendly <0) index = PARTICLE_COLOR_ENEMY_STRT;
         else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
         for (int i=0; i < mPSystem->getNumEmitters(); ++i)
@@ -219,23 +218,25 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
             tu->setTextureVScroll(.46875);
         }
     }
-    /*
-        // Lifebar left bracket.
-        strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_L, 3, '0');
-        if (mNode[NPC_LIFEBAR_L]) mNode[NPC_LIFEBAR_L]->getParentSceneNode()->removeAndDestroyChild(strNode);
-        mNode[NPC_LIFEBAR_L] = mob->getParentSceneNode()->createChildSceneNode(strNode);
-        mNode[NPC_LIFEBAR_L]->attachObject(mEntity[NPC_LIFEBAR_L]);
-        pos = mNode[NPC_LIFEBAR_L]->getPosition();
-        mNode[NPC_LIFEBAR_L]->setPosition(AABB.getMinimum().x, AABB.getMaximum().y +5, pos.z);
 
-        // Lifebar right bracket.
-        strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_R, 3, '0');
-        if (mNode[NPC_LIFEBAR_R]) mNode[NPC_LIFEBAR_R]->getParentSceneNode()->removeAndDestroyChild(strNode);
-        mNode[NPC_LIFEBAR_R] = mob->getParentSceneNode()->createChildSceneNode(strNode);
-        mNode[NPC_LIFEBAR_R]->attachObject(mEntity[NPC_LIFEBAR_R]);
-        pos = mNode[NPC_LIFEBAR_R]->getPosition();
-        mNode[NPC_LIFEBAR_R]->setPosition(AABB.getMaximum().x, AABB.getMaximum().y +5, pos.z);
-    */
+    // Lifebar left bracket.
+    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_L, 3, '0');
+    if (mNode[NPC_LIFEBAR_L]) mNode[NPC_LIFEBAR_L]->getParentSceneNode()->removeAndDestroyChild(strNode);
+    mNode[NPC_LIFEBAR_L] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    mNode[NPC_LIFEBAR_L]->attachObject(mEntity[NPC_LIFEBAR_L]);
+    pos = mNode[NPC_LIFEBAR_L]->getPosition();
+    mNode[NPC_LIFEBAR_L]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +5, pos.z);
+    mNode[NPC_LIFEBAR_L]->setInheritOrientation(false);
+    // Lifebar right bracket.
+/*
+    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR_R, 3, '0');
+    if (mNode[NPC_LIFEBAR_R]) mNode[NPC_LIFEBAR_R]->getParentSceneNode()->removeAndDestroyChild(strNode);
+    mNode[NPC_LIFEBAR_R] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    mNode[NPC_LIFEBAR_R]->attachObject(mEntity[NPC_LIFEBAR_R]);
+    pos = mNode[NPC_LIFEBAR_R]->getPosition();
+    mNode[NPC_LIFEBAR_R]->setPosition(AABB.getMaximum().x, AABB.getMaximum().y +5, pos.z);
+    mNode[NPC_LIFEBAR_R]->setInheritOrientation(false);
+*/
 }
 
 ///===================================================

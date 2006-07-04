@@ -71,8 +71,6 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mMaxHP   = obj.maxHP;
     mMaxMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
-
-    //mNode->showBoundingBox(true); // Remove Me!!!!
 }
 
 ///================================================================================================
@@ -243,29 +241,6 @@ void ObjectNPC::update(const FrameEvent& event)
     }
     else if (mAutoMoving)
     {
-        /// We are very close to destination.
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0);
-        Vector3 dist = mWalkToPos - mNode->getPosition();
-        dist.y =0;
-        if(dist.squaredLength() < WALK_PRECISON)
-        {
-            /// Set the exact destination pos.
-            mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
-            mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
-            mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
-            mNode->setPosition(mWalkToPos);
-            mAutoMoving = false;
-            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
-        }
-        else
-        {
-            /// We have to move on.
-            Vector3 NewTmpPosition = - event.timeSinceLastFrame * mDeltaPos;;
-            //ParticleManager::getSingleton().pauseAll(true);
-            mNode->setPosition(mNode->getPosition() + NewTmpPosition);
-            //ParticleManager::getSingleton().pauseAll(false);
-        }
-        return;
     }
     if (mAnim->isMovement() && mTurning)
     {
@@ -305,25 +280,4 @@ void ObjectNPC::faceToTile(int x, int z)
 ///================================================================================================
 void ObjectNPC::moveToTile(int x, int z)
 {
-    if(mActPos.x == x && mActPos.z == z || mAutoTurning || mAutoMoving) return;
-
-    /// Split into waypoints (distance = 1 tile)
-    // todo
-
-    // testing: limit the moving distance.
-    if (x > mActPos.x+1) x = mActPos.x+1;
-    if (x < mActPos.x-1) x = mActPos.x-1;
-    if (z > mActPos.z+1) z = mActPos.z+1;
-    if (z < mActPos.z-1) z = mActPos.z-1;
-
-    /// Turn the head into the moving direction.
-    faceToTile(x, z);
-    /// Move it.
-    mWalkToPos.x = x * TILE_SIZE_X + mBoundingBox.x;
-    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(x, z) - mBoundingBox.y);
-    mWalkToPos.z = z * TILE_SIZE_Z + mBoundingBox.z;
-    mDeltaPos = mNode->getPosition() - mWalkToPos;
-    mDstPos.x = x;
-    mDstPos.z = z;
-    mAutoMoving = true;
 }

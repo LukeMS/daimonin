@@ -85,7 +85,7 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
     /// ////////////////////////////////////////////////////////////////////
     std::string strTextureGroup = "terrain";
     Logger::log().info() << "Creating texture group " << strTextureGroup;
-    if (Option::getSingleton().getIntValue(Option::CREATE_TILE_TEXTURES))
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_TILE_TEXTURES))
     { /// only needed after a tile-texture has changed.
         createTextureGroup(strTextureGroup);
     }
@@ -141,7 +141,7 @@ void TileManager::loadMap(const std::string &png_filename)
         {
             mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
             // Building ground.
-           if (x>3 && x < 9 && y>1 && y<11) mMap[x][y].height=20;
+           if (x>3 && x < 9 && y>1 && y<11) mMap[x][y].height=60;
          //mMap[x][y].height=20;
         }
     }
@@ -456,7 +456,6 @@ bool TileManager::createTextureGroup(const std::string &terrain_type)
     /// ////////////////////////////////////////////////////////////////////
     /// Create group-texture in various sizes.
     /// ////////////////////////////////////////////////////////////////////
-    Logger::log().error() << "1";
     int i, tx, ty;
     int pix = PIXEL_PER_TILE;
     uchar* TextureGroup_data;
