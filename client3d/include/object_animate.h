@@ -50,6 +50,22 @@ public:
     {
         return (mAnimGroup <= ANIM_GROUP_RUN);
     }
+    bool isIdle()
+    {
+        return (mAnimGroup <= ANIM_GROUP_IDLE_FUN);
+    }
+    bool isAttack()
+    {
+        return (mAnimGroup == ANIM_GROUP_ATTACK) || (mAnimGroup == ANIM_GROUP_ATTACK_FUN);
+    }
+    const char *getActiceStateName()
+    {
+        return StateNames[mAnimGroup];
+    }
+    Real getTimeLeft()
+    {
+        return mTimeLeft;
+    }
     int getSumAnimsInGroup(int animGroup)
     {
         return mAnimGroupEntries[animGroup];
@@ -87,6 +103,7 @@ private:
     int mAnimGroup, mAnimNr;
     bool mPause;
     bool mIsAnimated;
+    Real mTimeLeft;
     Real mAnimSpeed;
     AnimationState *mActState;
     std::vector<AnimationState*>mAnimState;

@@ -234,7 +234,7 @@ ObjectPlayer::ObjectPlayer(sObject &obj):ObjectNPC(obj)
     mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
 
     mEnemyNode = 0;
-    mAttacking = false;
+    mAttacking = ATTACK_NONE;
     //mNode->showBoundingBox(true); // Remove Me!!!!
 
     /// Set the default Colors of the model.
@@ -301,7 +301,7 @@ void ObjectPlayer::update(const FrameEvent& event)
 {
     mAnim->update(event);
     ///  Finish the current (non movement) anim first.
-    if (!mAnim->isMovement()) return;
+    //if (!mAnim->isMovement()) return;
 
     mTranslateVector = Vector3(0,0,0);
     if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
@@ -336,7 +336,7 @@ void ObjectPlayer::update(const FrameEvent& event)
             mDestWalkPos.x+= mActPos.x - mDstPos.x;
             mDestWalkPos.z+= mActPos.z - mDstPos.z;
             moveToNeighbourTile();
-            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+            if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
         }
         else
         {
@@ -349,6 +349,7 @@ void ObjectPlayer::update(const FrameEvent& event)
                 AxisAlignedBox aabb = mNode->_getWorldAABB().intersection(mEnemyNode->_getWorldAABB());
                 if (!aabb.isNull())
                 {
+                    if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
                     mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
                     mAutoMoving = false;
                 }
@@ -356,13 +357,28 @@ void ObjectPlayer::update(const FrameEvent& event)
         }
         return;
     }
-    else if (mAttacking)
+    else if (mAttacking != ATTACK_NONE)
     {
-        toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 1);
-//        Vector3 pos = ObjectManager::getSingleton().getTargetedWorldPos();
-//        pos.y +=12;
-//        ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
-        mAttacking = false;
+        switch (mAttacking)
+        {
+            case ATTACK_ANIM_START:
+                mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+                mAttacking = ATTACK_ANIM_RUNNUNG;
+                break;
+
+            case ATTACK_ANIM_RUNNUNG:
+                if (mAnim->getTimeLeft() < 0.5 || mAnim->isIdle())
+                {
+                    Vector3 pos = ObjectManager::getSingleton().getTargetedWorldPos();
+                    Sound::getSingleton().playStream(Sound::PLAYER_HIT);
+                    ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
+                    mAttacking = ATTACK_NONE;
+                }
+                break;
+
+            default:
+                break;
+        }
     }
     if (mAnim->isMovement() && mTurning)
     {
@@ -396,6 +412,7 @@ void ObjectPlayer::moveToNeighbourTile()
 {
     if ((mActPos.x == mDestWalkPos.x) && (mActPos.z == mDestWalkPos.z))
     {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
         mAutoMoving = false;
         return;
     }
@@ -460,9 +477,16 @@ void ObjectPlayer::castSpell(int spell)
 void ObjectPlayer::attackShortRange(const SceneNode *node)
 {
     /// Move in front of the enemy.
-    if (!mEnemyNode) moveToDistantTile(ObjectManager::getSingleton().getTargetedPos());
+    if (!mEnemyNode)
+    {
+        moveToDistantTile(ObjectManager::getSingleton().getTargetedPos());
+        mAttacking = ATTACK_APPROACH;
+    }
+    else
+    {
+        mAttacking = ATTACK_ANIM_START;
+    }
     mEnemyNode = (SceneNode*) node;
-    mAttacking = true;
 }
 
 ///================================================================================================

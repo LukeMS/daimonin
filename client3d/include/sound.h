@@ -39,6 +39,7 @@ public:
         DUMMY,
         BUTTON_CLICK,
         PLAYER_IDLE,
+        PLAYER_HIT,
         SAMPLE_SUM
     };
 

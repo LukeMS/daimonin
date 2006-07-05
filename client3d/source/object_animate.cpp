@@ -127,6 +127,7 @@ void ObjectAnimate::update(const FrameEvent& event)
     if (!mIsAnimated)
         return;
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
+    mTimeLeft = mActState->getLength() - mActState->getTimePosition();
     /// if an animation ends -> force the idle animation.
     if (mActState->getTimePosition() >= mActState->getLength())
     {
@@ -165,10 +166,10 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     }
     /// Set the Animation.
     mActState= mAnimState[animGroup+ animNr];
-
+    mTimeLeft = mActState->getLength();
     /// Set a random offest for the animation start (prevent synchronous "dancing").
     if (random)
-        mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
+        mActState->setTimePosition(Math::RangeRandom(0.0, mTimeLeft));
     else
         mActState->setTimePosition(0.0);
     mActState->setEnabled(true);

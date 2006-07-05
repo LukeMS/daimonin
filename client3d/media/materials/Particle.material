@@ -14,3 +14,21 @@ material Particle/Flare
 		}
 	}
 }
+
+material Particle/Flaretrail
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend add
+			depth_write off
+			texture_unit
+			{
+				texture flaretrail.png
+			}
+		}
+	}
+}
+
