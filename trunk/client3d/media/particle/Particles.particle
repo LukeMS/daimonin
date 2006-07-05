@@ -1,16 +1,16 @@
-Particle/Hit
+Particle/JoinGame
 {
 	quota	50
 	material	Particle/Flare
 	particle_width	5
-	particle_height	5
+	particle_height	15
 	cull_each	false
 	renderer	billboard
 	sorted	false
-	local_space	false
+	local_space	true
 	iteration_interval	0
 	nonvisible_update_timeout	0
-	billboard_type	point
+	billboard_type	oriented_self
 	billboard_origin	center
 	billboard_rotation_type	texcoord
 	common_up_vector	0 1 0
@@ -19,30 +19,79 @@ Particle/Hit
 
 	emitter Cylinder
 	{
-		angle	0
-		colour	1 0.104348 0.0173913 1
-		colour_range_start	1 0.104348 0.0173913 1
-		colour_range_end	1 0 0.00869565 1
+		angle	122.3
+		colour	0.782609 0.678261 0.0521739 1
+		colour_range_start	0.782609 0.678261 0.0521739 1
+		colour_range_end	0 1 1 1
 		direction	0 1 0
-		emission_rate	200
+		emission_rate	500
 		position	0 0 0
-		velocity	50
-		velocity_min	50
-		velocity_max	50
-		time_to_live	0.01
-		time_to_live_min	0.01
+		velocity	20
+		velocity_min	20
+		velocity_max	20
+		time_to_live	0.1
+		time_to_live_min	0.1
 		time_to_live_max	0.2
 		duration	1
 		duration_min	1
-		duration_max	2
+		duration_max	1
+		repeat_delay	0
+		repeat_delay_min	0
+		repeat_delay_max	0
+		width	20
+		height	20
+		depth	30
+	}
+}
+
+Particle/Hit
+{
+	quota	50
+	material	Particle/Flaretrail
+	particle_width	20
+	particle_height	20
+	cull_each	false
+	renderer	billboard
+	sorted	false
+	local_space	false
+	iteration_interval	0
+	nonvisible_update_timeout	0
+	billboard_type	oriented_self
+	billboard_origin	center
+	billboard_rotation_type	texcoord
+	common_up_vector	0 1 0
+	point_rendering	false
+	accurate_facing	true
+
+	emitter Point
+	{
+		angle	180
+		//colour	1 0.104348 0.0173913 1
+		//colour_range_start	1 0.104348 0.0173913 1
+		//colour_range_end	1 0 0.00869565 1
+		colour	0.782609 0.678261 0.0521739 1
+		colour_range_start	0.782609 0.678261 0.0521739 1
+		colour_range_end	0 1 1 1
+
+		direction	0 0 -1
+		emission_rate	1179
+		position	0 0 0
+		velocity	8
+		velocity_min	8
+		velocity_max	44
+		time_to_live	0.05
+		time_to_live_min	0.05
+		time_to_live_max	0.1
+		duration	0.1
+		duration_min	0.1
+		duration_max	0.1
 		repeat_delay	1
 		repeat_delay_min	1
 		repeat_delay_max	1
-		width	3
-		height	1
-		depth	1
 	}
 }
+
+
 
 Particle/SwordGlow
 {

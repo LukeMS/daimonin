@@ -61,6 +61,7 @@ void ObjectNPC::freeRecources()
 ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
 {
     mEntity->setQueryFlags(QUERY_NPC_MASK);
+    mAttacking = ATTACK_NONE;
     mAutoTurning= false;
     mAutoMoving = false;
     mTurning =0;

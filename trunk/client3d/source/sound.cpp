@@ -62,6 +62,9 @@ SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
         },
         { "Player_Idle.ogg", 0, 0, false, false
         },
+        { "Player_Hit1.wav", 0, 0, false, true
+        },
+
     };
 
 const float DISTANCEFACTOR = 1.0f; /// Units per meter. (feet = 3.28.  cm = 100).

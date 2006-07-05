@@ -66,8 +66,20 @@ public:
     void toggleMesh(int pos, int WeaponNr);
 
 protected:
+    enum
+    {
+        ATTACK_NONE,
+        ATTACK_APPROACH,
+        ATTACK_ANIM_START,
+        ATTACK_ANIM_RUNNUNG,
+        ATTACK_ANIM_STOP,
+        ATTACK_CALC_DAMAGE,
+        ATTACK_SUM
+    }mAttacking;
+
     Real mWalking, mTurning;
-    bool mAutoTurning, mAutoMoving, mAttacking, mTalking;
+    bool mAutoTurning, mAutoMoving, mTalking;
+
     SubPos2D mDstPos;   /**< the destination pos in the map. **/
     int maxHealth, actHealth;
     int maxMana  , actMana;
