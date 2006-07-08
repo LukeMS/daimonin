@@ -187,6 +187,14 @@
             <img alt="[Regeneration]" src="./regeneration.png"/>
         </p>
         <p>
+            The number indicates the number of points you regenerate in one second. For instance you regenerate 0.2 <a href="#hitpoints">hit points</a> per second. By performing some basic maths you can work out that therefore it takes five seconds to regenerate one <a href="#hitpoints">hit point</a>.
+        </p>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> Regeneration speeds are actually calculated with greater accuracy internally than they are recorded on screen. So a displayed speed of 0.2 may actually be 0.25 which of course means you will regenerate one point a whole second faster.
+            </p>
+        </div>
+        <p>
             <a href="#hitpoints">Hit points</a> and <a href="mana">mana</a> regenerate naturally over time; but <a href="#grace">grace</a> requires a bit of extra effort, in the form of praying.
         </p>
         <p>
@@ -223,7 +231,7 @@
                 Mana is needed to cast spells: the more mana you have, the more spells you can cast and the more powerful they are.
             </p>
             <p>
-                Maximum mana is determined by your skill level in wizardry spells, your <a href="#power">power</a>, magic currently in effect, and an element of chance.
+                Maximum mana is determined by your highest skill level in the <a href="./secn_4.dai#magic">Magic skill group</a>, your <a href="#power">power</a>, magic currently in effect, and an element of chance.
             </p>
             <p>
                 Mana decreases each time you cast a spell.
@@ -237,7 +245,7 @@
                 Grace is needed to recite prayers: the more grace you have, the more prayers you can recite and the more powerful they are.
             </p>
             <p>
-                Maximum grace is determined by your skill level in divine prayers, your <a href="#wisdom">wisdom</a>, magic currently in effect, and an element of chance.
+                Maximum grace is determined by your highest skill level in the <a href="./secn_4.dai#wisdom">Wisdom skill group</a>, your <a href="#wisdom">wisdom</a>, magic currently in effect, and an element of chance.
             </p>
             <p>
                 Grace decreases each time you recite a prayer.
