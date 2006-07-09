@@ -69,7 +69,7 @@ bool ObjectManager::init()
         }
 
         if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) break;
-        sObject obj;
+        ObjectStatic::sObject obj;
         Option::getSingleton().getDescStr("MeshName", obj.meshName,i);
         Option::getSingleton().getDescStr("NickName", obj.nickName,i);
 
@@ -144,7 +144,7 @@ bool ObjectManager::init()
 ///================================================================================================
 /// Adds a independant object.
 ///================================================================================================
-void ObjectManager::addMobileObject(sObject &obj)
+void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 {
     switch (obj.type)
     {
@@ -487,8 +487,9 @@ void ObjectManager::targetObjectFacingPlayer()
 ///================================================================================================
 void ObjectManager::targetObjectAttackPlayer()
 {
-    targetObjectFacingPlayer();
+    //mvObject_npc[mSelectedObject]->attackShortRange(mvObject_player[ObjectPlayer::ME]->getNode());
     mvObject_npc[mSelectedObject]->attack();
+    targetObjectFacingPlayer();
 }
 
 

@@ -199,41 +199,6 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_K:
         {
-            sObject obj;
-            obj.meshName  = "Tentacle_N_Small.mesh";
-            obj.nickName  = "michtoen";
-            obj.type      = ObjectManager::OBJECT_NPC;
-            obj.friendly  = -1;
-            obj.attack    = 50;
-            obj.defend    = 50;
-            obj.maxHP     = 50;
-            obj.maxMana   = 50;
-            obj.maxGrace  = 50;
-            obj.posX      = 7;
-            obj.posY      = 11;
-            obj.level     = 0;
-            obj.centred   = 1;
-            obj.facing    = 0;
-            obj.particleNr=-1;
-            ObjectManager::getSingleton().addMobileObject(obj);
-/*
-            obj.meshName  = "Tentacle_N_Small.mesh";
-            obj.nickName  = "geck0";
-            obj.type      = ObjectManager::OBJECT_NPC;
-            obj.friendly  = -1;
-            obj.attack    = 50;
-            obj.defend    = 50;
-            obj.maxHP     = 50;
-            obj.maxMana   = 50;
-            obj.maxGrace  = 50;
-            obj.posX      = 6;
-            obj.posY      = 11;
-            obj.level     = 0;
-            obj.centred   = 1;
-            obj.facing    = 0;
-            obj.particleNr=-1;
-            ObjectManager::getSingleton().addMobileObject(obj);
-*/
             break;
         }
 
@@ -421,11 +386,11 @@ void CEvent::keyReleased(KeyEvent* e)
 
         case KC_J:
         case KC_K:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TURN,  0);
+           // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TURN,  0);
             break;
 
         case KC_G:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
+           // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
             break;
 
         default:
@@ -480,6 +445,7 @@ void CEvent::mousePressed (MouseEvent *e)
                 ObjectManager::getSingleton().selectNPC(0);
             }
             mSceneManager->destroyQuery(mRaySceneQuery);
+            mIdleTime =0;
         }
     }
 #ifdef WIN32
@@ -498,6 +464,7 @@ void CEvent::mousePressed (MouseEvent *e)
             /// Move the player.
             pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) pos.x, (int) pos.z);
+            mIdleTime =0;
         }
     }
     e->consume();

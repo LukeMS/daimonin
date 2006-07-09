@@ -194,6 +194,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_INIT_SOUND:
         {
             Sound::getSingleton().Init();
+            //Sound::getSingleton().playStream(Sound::BG_MUSIC); // This sound is getting on my nerves...
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_LIGHT);
             GuiManager::getSingleton().displaySystemMessage("Starting lights...");
@@ -332,13 +333,39 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         default:
         {
+            static bool once = false;
             ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
             ParticleManager::getSingleton().moveNodeObject(evt);
             mIdleTime += evt.timeSinceLastFrame;
-            if (mIdleTime > 30.0)
+            if (mIdleTime > 1.0)
             {
-                Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
                 mIdleTime = 0;
+                if (!once)
+                {
+                    Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
+                    ObjectStatic::sObject obj;
+                    obj.meshName  = "Tentacle_N_Small.mesh";
+                    obj.nickName  = "michtoen";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.friendly  = -1;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.posX      = 7;
+                    obj.posY      = 11;
+                    obj.level     = 0;
+                    obj.centred   = 1;
+                    obj.facing    = 0;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+                    once = true;
+                }
+                else
+                {
+                  //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
+                }
             }
             /*
              if (!mUseBufferedInputKeys)

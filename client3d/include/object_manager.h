@@ -75,7 +75,7 @@ public:
     }
     void freeRecources();
     bool init();
-    void addMobileObject(sObject &obj);
+    void addMobileObject(ObjectStatic::sObject &obj);
     void addBoneObject(unsigned int type, const char *meshName, int particleNr);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);

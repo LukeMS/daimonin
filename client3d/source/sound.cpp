@@ -54,17 +54,22 @@ SoundFiles;
 
 SoundFiles mSoundFiles[Sound::SAMPLE_SUM] =
     {
-        { "invtro94.s3m"   , 0, 0, true , true
-        },
-        { "dummy.wav"      , 0, 0, false, true
-        },
-        { "console.wav"    , 0, 0, false, true
-        },
-        { "Player_Idle.ogg", 0, 0, false, false
-        },
-        { "Player_Hit1.wav", 0, 0, false, true
-        },
-
+        /// Background musics.
+        { "invtro94.s3m",        0, 0, true , true },
+        /// Long sound e.g. spoken text (ogg).
+        { "Player_Idle.ogg",     0, 0, false, true },
+        { "Wizard_Visitor.ogg",  0, 0, false, true },
+        { "male_bounty_01.ogg",  0, 0, false, true },
+        /// Short sounds (wav)
+        { "console.wav",         0, 0, false, true },
+        { "male_hit_01.wav",     0, 0, false, true },
+        { "female_hit_01.wav",   0, 0, false, true },
+        { "female_hit_02.wav",   0, 0, false, true },
+        { "tentacle_hit_01.wav", 0, 0, false, true },
+        { "golem_hit_01.wav",    0, 0, false, true },
+        { "attack_01.wav",       0, 0, false, true },
+        /// Dummy sound (for error handling).
+        { "dummy.wav",           0, 0, false, true },
     };
 
 const float DISTANCEFACTOR = 1.0f; /// Units per meter. (feet = 3.28.  cm = 100).
@@ -113,7 +118,6 @@ bool Sound::Init()
     {
         createStream(i);
     }
-    playStream(BG_MUSIC);
     return true;
 }
 

@@ -35,11 +35,22 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     enum SampleName
     {
+        /// Background musics.
         BG_MUSIC,
-        DUMMY,
-        BUTTON_CLICK,
+        /// Long sound e.g. spoken text (ogg).
         PLAYER_IDLE,
-        PLAYER_HIT,
+        GREETS_VISITOR,
+        MALE_BOUNTY_01,
+        /// Short sounds (wav)
+        BUTTON_CLICK,
+        MALE_HIT_01,
+        FEMALE_HIT_01,
+        FEMALE_HIT_02,
+        TENTACLE_HIT,
+        GOLEM_HIT,
+        ATTACK_01,
+        /// Dummy sound (for error handling).
+        DUMMY,
         SAMPLE_SUM
     };
 
