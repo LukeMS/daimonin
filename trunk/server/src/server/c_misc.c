@@ -491,8 +491,24 @@ int command_wizpass(object *op, char *params)
 
 int command_dumpallobjects(object *op, char *params)
 {
-    /* Gecko: this is no longer possible */
-    /*       dump_all_objects(); */
+#ifdef MEMPOOL_TRACKING    
+	struct puddle_info *puddle = pool_object->first_puddle_info;
+	unsigned int i;
+	object *obj;
+	while(puddle)
+	{
+		for(i=0; i<pool_object->expand_size; i++)
+		{
+			obj = MEM_USERDATA((char *)puddle->first_chunk + i * (sizeof(struct mempool_chunk) + pool_object->chunksize));
+			if(! OBJECT_FREE(obj))
+				LOG(llevDebug, "obj '%s'-(%s) %x (%d)(%s) #=%d\n", STRING_OBJ_NAME(obj), 
+				STRING_OBJ_ARCH_NAME(obj), obj, obj->count, 
+				QUERY_FLAG(obj, FLAG_REMOVED) ? "removed" : "in use",
+				obj->nrof);
+		}
+		puddle = puddle->next;
+	}
+#endif     
     return 0;
 }
 

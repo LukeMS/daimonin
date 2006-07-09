@@ -231,7 +231,7 @@ static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
     }
 
     chunksize_real = sizeof(struct mempool_chunk) + (pool->chunksize << arraysize_exp);
-    first = (struct mempool_chunk *) malloc(nrof_arrays * chunksize_real);
+    first = (struct mempool_chunk *) calloc(1,nrof_arrays * chunksize_real);
 
     if (first == NULL)
         LOG(llevError, "ERROR: expand_mempool(): Out Of Memory.\n");
@@ -285,7 +285,7 @@ void * get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp)
 
     if (pool->flags & MEMPOOL_BYPASS_POOLS)
     {
-        new_obj = malloc(sizeof(struct mempool_chunk) + (pool->chunksize << arraysize_exp));
+        new_obj = calloc(1, sizeof(struct mempool_chunk) + (pool->chunksize << arraysize_exp));
         pool->nrof_allocated[arraysize_exp]++;
     }
     else
