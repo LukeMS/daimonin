@@ -103,7 +103,7 @@ int check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode)
 {
     int mode_id = GMASTER_MODE_NO;
 
-    if(strlen(name) >= MAX_PLAYER_NAME)
+    if(strlen(name) >= MAX_PLAYER_NAME*2)
     {
         LOG(llevBug, "BUG: load_gmaster_file): name %s to long: %d\n", name, strlen(name));
         return mode_id;
