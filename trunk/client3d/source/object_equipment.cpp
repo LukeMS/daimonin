@@ -64,7 +64,7 @@ ObjectEquipment::ObjectEquipment(unsigned int type, const char *meshName, int pa
 
     if (particleNr >=0 && particleNr < PARTICLE_FX_SUM)
     {
-        mPSystem = ParticleManager::getSingleton().addNodeObject(Vector3(0,0,0), 0, particleName[particleNr].c_str(), -1);
+        mPSystem = ParticleManager::getSingleton().addNodeObject(0, particleName[particleNr].c_str(), -1);
     }
     else
     {

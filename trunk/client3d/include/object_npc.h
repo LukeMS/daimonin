@@ -46,24 +46,23 @@ public:
     virtual ~ObjectNPC();
     virtual void freeRecources();
     virtual void update(const FrameEvent& event);
-
-    void moveToTile(int x, int z);
-    void faceToTile(int x, int z);
+    void moveToDistantTile(SubPos2D pos);
+    void faceToTile(SubPos2D pos);
+    void turning(Real turn);
     void attackObjectOnTile(SubPos2D pos);
-    void walking(Real walk)
+    void addToMap();
+    void setEnemy();
+    void attackShortRange(const SceneNode *node);
+    void attack()
     {
-        mWalking = walk;
+        mAttacking = ATTACK_APPROACH;
     }
-    void turning(Real turn)
-    {
-        mTurning = turn;
-    }
+
     const SubPos2D &getDestMapPos()
     {
         return mDstPos;
     }
     void castSpell(int spell);
-    void toggleMesh(int pos, int WeaponNr);
 
 protected:
     enum
@@ -77,13 +76,20 @@ protected:
         ATTACK_SUM
     }mAttacking;
 
-    Real mWalking, mTurning;
-    bool mAutoTurning, mAutoMoving, mTalking;
-
-    SubPos2D mDstPos;   /**< the destination pos in the map. **/
+    SubPos2D mDestWalkPos;
+    SceneNode *mEnemyNode;
+    bool mAutoTurning;
+    bool mAutoMoving;
+    bool mTalking;
     int maxHealth, actHealth;
     int maxMana  , actMana;
+    SubPos2D mDstPos;   /**< the destination pos in the map. **/
     Vector3 mWalkToPos, mDeltaPos;
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    void moveToNeighbourTile();
 
 private:
     /// ////////////////////////////////////////////////////////////////////

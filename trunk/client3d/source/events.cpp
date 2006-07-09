@@ -143,12 +143,12 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
             //mCamera->setPosition(); // Its done in setWorldPos();
             mCamera->pitch(Degree(-25));
-           // mCamera->setNearClipDistance(40);
-/*
-            const Vector3 *corner = mCamera->getWorldSpaceCorners();
-            mCamCornerX =  (corner[0].x - corner[1].x)/2;
-            mCamCornerY = -(corner[0].y - corner[2].y)/2 -13.57;  // Todo: clean up.
-*/
+            // mCamera->setNearClipDistance(40);
+            /*
+                        const Vector3 *corner = mCamera->getWorldSpaceCorners();
+                        mCamCornerX =  (corner[0].x - corner[1].x)/2;
+                        mCamCornerY = -(corner[0].y - corner[2].y)/2 -13.57;  // Todo: clean up.
+            */
             /*
                     // rotating map.
                     mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2));
@@ -242,18 +242,20 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_PARTICLE);
             GuiManager::getSingleton().displaySystemMessage("Starting the particles...");
+            break;
         }
-        break;
+
 
         case GAME_STATUS_INIT_PARTICLE:
         {
-            ParticleManager::getSingleton().init(mSceneManager);
+            ParticleManager::getSingleton().update(0);
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI_IMAGESET);
             GuiManager::getSingleton().displaySystemMessage("Starting the gui...");
             GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset");
+            break;
         }
-        break;
+
 
         case GAME_STATUS_INIT_GUI_IMAGESET:
         {
@@ -261,8 +263,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI_WINDOWS);
             GuiManager::getSingleton().displaySystemMessage(" - Parsing windows");
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_GUI_WINDOWS:
         {
@@ -271,8 +273,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_TILE);
             GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_TILE:
         {
@@ -299,8 +301,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             /// Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
             GuiManager::getSingleton().displaySystemMessage("Starting the network...");
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_NET:
         {
@@ -323,8 +325,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
+
+            mWindow->resetStatistics();
+            break;
         }
-        break;
 
         default:
         {
@@ -381,8 +385,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
             if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
                 Network::getSingleton().Update();
+            break;
         }
-        break;
+
     }
     return true;
 }
@@ -390,15 +395,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 ///================================================================================================
 /// Frame End event.
 ///================================================================================================
-bool CEvent::frameEnded(const FrameEvent& )
+bool CEvent::frameEnded(const FrameEvent&)
 {
-    if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET)
-        return true;
+    if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET) return true;
     const RenderTarget::FrameStats& stats = mWindow->getStatistics();
     static int skipFrames = 0;
-    static Real health=0;
 
-    if (--skipFrames <= 0 )
+    if (--skipFrames <= 0)
     {
         static char buffer[16];
         skipFrames = 10;
@@ -410,10 +413,6 @@ bool CEvent::frameEnded(const FrameEvent& )
         GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
         sprintf(buffer, "%d", stats.triangleCount);
         GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
-
-        GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERINFO, GUI_MSG_BAR_CHANGED, GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
-        health+=.01;
-        if (health>1.0) health=0.0;
     }
     return true;
 }

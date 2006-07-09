@@ -43,10 +43,9 @@ public:
     {
         static ParticleManager Singleton; return Singleton;
     }
-    bool init(SceneManager *SceneMgr);
     ParticleSystem *addFreeObject(Vector3 pos, const char *particleScript, Real lifeTime);
     ParticleSystem *addBoneObject(Entity *ent, const char *boneName, const char* particleScript, Real lifeTime);
-    ParticleSystem *addNodeObject(Vector3 pos, const SceneNode *node, const char* particleScript, Real lifeTime);
+    ParticleSystem *addNodeObject(SceneNode *node, const char* particleScript, Real lifeTime);
     void delNodeObject(int nr);
     void delObject(ParticleSystem *pSystem);
     void synchToWorldPos(const Vector3 &pos);
@@ -58,16 +57,14 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    SceneManager *mSceneMgr;
-    SceneNode    *mSceneNode;
     unsigned int mCounter;
 
     struct sParticles
     {
         Real speed;      //  0: Object has a static position.
         Real lifeTime;   // -1: Infinity lifetime.
-        Vector3 mDir;
         SceneNode *sceneNode;
+        bool delNodeOnCleanup;
         ParticleSystem *pSystem;
         Entity *entity;
     };
@@ -76,8 +73,7 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ParticleManager()
-    {}
+    ParticleManager();
     ~ParticleManager();
     ParticleManager(const ParticleManager&); // disable copy-constructor.
 };

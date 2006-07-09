@@ -40,12 +40,16 @@ class ObjectPlayer: public ObjectNPC
 public:
     typedef struct
     {
-        short w, h;             /// width and height of the image.
-        short dstX, dstY;       /// pos of the image in the model-texture.
-        short srcX, srcY;       /// pos of the image in the race-template-texture.
-        short offsetX, offsetY; /// offset for the next source image.
+        short w, h;             /**< width and height of the image. **/
+        short dstX, dstY;       /**< pos of the image in the model-texture. **/
+        short srcX, srcY;       /**< pos of the image in the race-template-texture. **/
+        short offsetX, offsetY; /**< offset for the next source image. **/
     }
     sPicture;
+    enum
+    {
+        ME /**< ME (mIndex == 0) is our Hero. **/
+    };
     enum
     {
         BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY, BONE_SUM
@@ -63,8 +67,6 @@ public:
     virtual ~ObjectPlayer();
     virtual void freeRecources();
     virtual void update(const FrameEvent& event);
-    void moveToDistantTile(SubPos2D pos);
-    void faceToTile(SubPos2D pos);
     void castSpell(int spell);
     void setTexture(int pos, int color, int textureNr);
     void toggleMesh(int pos, int WeaponNr);
@@ -72,7 +74,6 @@ public:
     bool isMoving();
     void raiseWeapon(bool raise);
     void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
-    void attackShortRange(const SceneNode *node);
     void talkToNpc();
 
 private:
@@ -81,8 +82,6 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
     static uchar *texImageBuf;
-    SubPos2D mDestWalkPos;
-    SceneNode *mEnemyNode;
     enum
     {
         SIDE_BACK,
@@ -95,6 +94,5 @@ private:
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
     ObjectPlayer(const ObjectPlayer&); // disable copy-constructor.
-    void moveToNeighbourTile();
 };
 #endif

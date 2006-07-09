@@ -119,6 +119,8 @@ public:
     {
         return mSelectedPos;
     }
+    void targetObjectFacingPlayer(); // just a hack. Server will handle all movement stuff.
+    void targetObjectAttackPlayer(); // just a hack.
 
 private:
     /// ////////////////////////////////////////////////////////////////////

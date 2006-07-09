@@ -373,6 +373,13 @@ void ObjectPlayer::update(const FrameEvent& event)
                     Sound::getSingleton().playStream(Sound::PLAYER_HIT);
                     ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
                     mAttacking = ATTACK_NONE;
+                    ObjectManager::getSingleton().targetObjectAttackPlayer();
+/*
+                    static Real health=0;
+                    GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERINFO, GUI_MSG_BAR_CHANGED, GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
+                    health+=.01;
+                    if (health>1.0) health=0.0;
+*/
                 }
                 break;
 
@@ -380,75 +387,15 @@ void ObjectPlayer::update(const FrameEvent& event)
                 break;
         }
     }
+/*
+    // Turning by cursor keys.
     if (mAnim->isMovement() && mTurning)
     {
         mEnemyNode = 0; /// We are no longer looking at the enemy.
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning);
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning));
     }
-}
-
-///================================================================================================
-/// Turn the player until it faces the given tile.
-///================================================================================================
-void ObjectPlayer::faceToTile(SubPos2D pos)
-{
-    float deltaX = pos.x - mActPos.x;
-    float deltaZ = pos.z - mActPos.z;
-
-    /// This is the position of the player.
-    if (deltaX ==0 && deltaZ ==0) return;
-
-    mNewFacing = Radian(Math::ATan(deltaX/deltaZ));
-    if      (deltaZ <0) mNewFacing+=Degree(180);
-    else if (deltaX <0) mNewFacing+=Degree(360);
-    mAutoTurning = true;
-}
-
-///================================================================================================
-/// Move the player to a neighbour tile.
-///================================================================================================
-void ObjectPlayer::moveToNeighbourTile()
-{
-    if ((mActPos.x == mDestWalkPos.x) && (mActPos.z == mDestWalkPos.z))
-    {
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
-        mAutoMoving = false;
-        return;
-    }
-    mDstPos = mDestWalkPos;
-    if (mDstPos.x > mActPos.x+1) mDstPos.x = mActPos.x+1;
-    if (mDstPos.x < mActPos.x-1) mDstPos.x = mActPos.x-1;
-    if (mDstPos.z > mActPos.z+1) mDstPos.z = mActPos.z+1;
-    if (mDstPos.z < mActPos.z-1) mDstPos.z = mActPos.z-1;
-    /// Turn the head into the moving direction.
-    faceToTile(mDstPos);
-    /// Walk 1 tile.
-    mWalkToPos.x = mDstPos.x * TILE_SIZE_X + mBoundingBox.x;
-    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y);
-    mWalkToPos.z = mDstPos.z * TILE_SIZE_Z + mBoundingBox.z;
-    mDeltaPos = mNode->getPosition() - mWalkToPos;
-    if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
-}
-
-///================================================================================================
-/// Move the player to the given tile.
-///================================================================================================
-void ObjectPlayer::moveToDistantTile(SubPos2D pos)
-{
-    if(mActPos.x == pos.x && mActPos.z == pos.z || mAutoTurning || mAutoMoving) return;
-    if (mEnemyNode)
-    {
-        mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
-        mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
-        mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
-        mNode->setPosition(mWalkToPos);
-        if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
-        mEnemyNode = 0;
-    }
-    mDestWalkPos = pos;
-    mAutoMoving = true;
-    moveToNeighbourTile();
+*/
 }
 
 ///================================================================================================
@@ -469,24 +416,6 @@ void ObjectPlayer::castSpell(int spell)
 {
     //  if (!askServer.AllowedToCast(spell)) return;
     SpellManager::getSingleton().addObject(spell, mIndex);
-}
-
-///================================================================================================
-/// Attack an enemy.
-///================================================================================================
-void ObjectPlayer::attackShortRange(const SceneNode *node)
-{
-    /// Move in front of the enemy.
-    if (!mEnemyNode)
-    {
-        moveToDistantTile(ObjectManager::getSingleton().getTargetedPos());
-        mAttacking = ATTACK_APPROACH;
-    }
-    else
-    {
-        mAttacking = ATTACK_ANIM_START;
-    }
-    mEnemyNode = (SceneNode*) node;
 }
 
 ///================================================================================================
