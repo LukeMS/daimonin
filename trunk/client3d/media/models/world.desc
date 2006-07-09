@@ -20,55 +20,8 @@ PosY     : "11"
 Level    : "0"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "0" # [degrees]
-Particles: "-1"
+Particles: "-1" 
 
-Type     : "npc"
-MeshName : "Tentacle_N_Small.mesh"
-NickName : "Friendly Tentacle"
-Friendly : "100"
-Attack   : "5"
-Defend   : "2"   
-MaxHP    : "10"
-MaxMana  : "0"   
-MaxGrace : "0"
-PosX     : "6"
-PosY     : "6"
-Level    : "0"
-Centred  : "1"                            # 1 = Drawn in tile-middle.
-Facing   : "0"
-Particles: "-1"
-
-Type     : "npc"
-MeshName : "Tentacle_N_Small.mesh"
-NickName : "Neutral Tentacle"
-Friendly : "0"
-Attack   : "5"
-Defend   : "2"   
-MaxHP    : "20"
-MaxMana  : "0"   
-MaxGrace : "0"
-PosX     : "6"
-PosY     : "7"
-Level    : "0"
-Centred  : "1"                            # 1 = Drawn in tile-middle.
-Facing   : "45"
-Particles: "-1"
-
-Type     : "npc"
-MeshName : "Tentacle_N_Small.mesh"
-NickName : "Evil Tentacle"
-Friendly : "-100"
-Attack   : "5"
-Defend   : "2"   
-MaxHP    : "50"
-MaxMana  : "0"   
-MaxGrace : "0"
-PosX     : "6"
-PosY     : "8"
-Level    : "0"
-Centred  : "1"                            # 1 = Drawn in tile-middle.
-Facing   : "10"
-Particles: "-1"
 
 #####################################################################################
 # Environment:
@@ -81,7 +34,8 @@ PosY     : "12"
 Level    : "0"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
+
 
 Type     : "static"
 MeshName : "wall_horizontal_botom.mesh"
@@ -91,7 +45,7 @@ PosY     : "4"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_horizontal_botom.mesh"
@@ -101,7 +55,7 @@ PosY     : "4"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_horizontal_top.mesh"
@@ -111,7 +65,7 @@ PosY     : "4"
 Level    : "1"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_horizontal_top.mesh"
@@ -121,7 +75,7 @@ PosY     : "4"
 Level    : "1"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "pilar.mesh"
@@ -131,7 +85,7 @@ PosY     : "4"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "pilar.mesh"
@@ -141,7 +95,7 @@ PosY     : "4"
 Level    : "1"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_diagonaal_botom.mesh"
@@ -151,7 +105,7 @@ PosY     : "5"
 Level    : "0"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "45.0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_diagonaal_botom.mesh"
@@ -161,7 +115,7 @@ PosY     : "4"
 Level    : "0"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "45.0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_diagonaal_top.mesh"
@@ -171,7 +125,7 @@ PosY     : "4"
 Level    : "1"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "45.0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "wall_diagonaal_top.mesh"
@@ -181,7 +135,7 @@ PosY     : "5"
 Level    : "1"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "45.0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "Floor1st.mesh"
@@ -191,7 +145,7 @@ PosY     : "6"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "Floor1st.mesh"
@@ -201,7 +155,7 @@ PosY     : "5"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "Floor1st.mesh"
@@ -211,7 +165,7 @@ PosY     : "5"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "Floor1st.mesh"
@@ -221,7 +175,7 @@ PosY     : "6"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner1.mesh"
@@ -231,7 +185,7 @@ PosY     : "4"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner1.mesh"
@@ -241,7 +195,7 @@ PosY     : "5"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner2.mesh"
@@ -251,7 +205,7 @@ PosY     : "4"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner2.mesh"
@@ -261,7 +215,7 @@ PosY     : "5"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner3.mesh"
@@ -271,7 +225,7 @@ PosY     : "6"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner3.mesh"
@@ -281,7 +235,7 @@ PosY     : "7"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner4.mesh"
@@ -291,7 +245,7 @@ PosY     : "7"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "static"
 MeshName : "FloorCorner4.mesh"
@@ -301,23 +255,23 @@ PosY     : "6"
 Level    : "0"
 Centred  : "0"                            # 1 = Drawn in tile-middle.
 Facing   : "0"
-Particles: "-1"
+Particles: "-1" 
 
 #####################################################################################
 # Equipment:
 #####################################################################################
 Type     : "weapon"
 MeshName : "Sword_Short_01.mesh"
-Particles: "0"                           # -1 = None  0 = Fire.
+Particles: "0"
 
 Type     : "weapon"
 MeshName : "Mace_Small_01.mesh"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "armor"
 MeshName : "Shield_Round_01.mesh"
-Particles: "-1"
+Particles: "-1" 
 
 Type     : "armor"
 MeshName : "Shield_Round_02.mesh"
-Particles: "-1"
+Particles: "-1" 

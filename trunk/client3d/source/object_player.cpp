@@ -369,9 +369,7 @@ void ObjectPlayer::update(const FrameEvent& event)
             case ATTACK_ANIM_RUNNUNG:
                 if (mAnim->getTimeLeft() < 0.5 || mAnim->isIdle())
                 {
-                    Vector3 pos = ObjectManager::getSingleton().getTargetedWorldPos();
-                    Sound::getSingleton().playStream(Sound::PLAYER_HIT);
-                    ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
+                    //Sound::getSingleton().playStream(Sound::MALE_HIT_01);
                     mAttacking = ATTACK_NONE;
                     ObjectManager::getSingleton().targetObjectAttackPlayer();
 /*

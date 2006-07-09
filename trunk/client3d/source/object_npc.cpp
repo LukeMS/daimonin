@@ -69,8 +69,11 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mAttack  = obj.attack;
     mDefend  = obj.defend;
     mMaxHP   = obj.maxHP;
+    mActHP   = obj.maxHP;
     mMaxMana = obj.maxMana;
+    mActMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
+    mActGrace=obj.maxGrace;
     ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8);
 }
 
@@ -87,7 +90,7 @@ void ObjectNPC::update(const FrameEvent& event)
 {
     mAnim->update(event);
     ///  Finish the current (non movement) anim first.
-    if (!mAnim->isMovement()) return;
+    //  if (!mAnim->isMovement()) return;
 
     mTranslateVector = Vector3(0,0,0);
     if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
@@ -103,7 +106,8 @@ void ObjectNPC::update(const FrameEvent& event)
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection);
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection));
         /// Are we facing into the right direction (+/- 1 degree)?
-        if (deltaDegree <= .5)
+        Logger::log().warning() << "deltaDegree: " << deltaDegree;
+        if (deltaDegree <= 1 || deltaDegree >= 360)
         {
             mAutoTurning = false;
             if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
@@ -111,13 +115,14 @@ void ObjectNPC::update(const FrameEvent& event)
     }
     else if (mAutoMoving)
     {
-        ;
+        if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
     }
     else if (mAttacking != ATTACK_NONE)
     {
         switch (mAttacking)
         {
             case ATTACK_ANIM_START:
+                setDamage(20);
                 mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 0);
                 mAttacking = ATTACK_ANIM_RUNNUNG;
                 break;
@@ -125,11 +130,15 @@ void ObjectNPC::update(const FrameEvent& event)
             case ATTACK_ANIM_RUNNUNG:
                 if (mAnim->getTimeLeft() < 0.5 || mAnim->isIdle())
                 {
-                    Vector3 pos = ObjectManager::getSingleton().getTargetedWorldPos();
-                    Sound::getSingleton().playStream(Sound::PLAYER_HIT);
+                    // Just a test...
+                    if (mAnim->isAttack())
+                    {
+                        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_HIT, 0);
+                        Sound::getSingleton().playStream(Sound::MALE_HIT_01);
+                    }
                     //ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
+                    //ObjectManager::getSingleton().targetObjectAttackPlayer();
                     mAttacking = ATTACK_NONE;
-                    ObjectManager::getSingleton().targetObjectAttackPlayer();
                 }
                 break;
 
@@ -146,6 +155,24 @@ void ObjectNPC::castSpell(int spell)
 {
     //  if (!askServer.AllowedToCast(spell)) return;
     SpellManager::getSingleton().addObject(spell, mIndex);
+}
+
+///================================================================================================
+/// Decrease HitPoints.
+///================================================================================================
+void ObjectNPC::setDamage(int damage)
+{
+    if (mActHP <0) return;
+    mActHP-= damage;
+    //switch (
+    Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
+    ParticleManager::getSingleton().addFreeObject(mNode->getPosition(), "Particle/Hit", 0.8);
+    if (mActHP < 0)
+    {
+        mAttacking = ATTACK_NONE;
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_DEATH, 0);
+        Sound::getSingleton().playStream(Sound::MALE_BOUNTY_01);
+    }
 }
 
 ///================================================================================================

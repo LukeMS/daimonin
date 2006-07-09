@@ -52,12 +52,12 @@ public:
     void attackObjectOnTile(SubPos2D pos);
     void addToMap();
     void setEnemy();
+    void setDamage(int hp);
     void attackShortRange(const SceneNode *node);
     void attack()
     {
         mAttacking = ATTACK_APPROACH;
     }
-
     const SubPos2D &getDestMapPos()
     {
         return mDstPos;

@@ -124,14 +124,14 @@ ObjectAnimate::~ObjectAnimate()
 ///=================================================================================================
 void ObjectAnimate::update(const FrameEvent& event)
 {
-    if (!mIsAnimated)
-        return;
+    if (!mIsAnimated) return;
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     mTimeLeft = mActState->getLength() - mActState->getTimePosition();
     /// if an animation ends -> force the idle animation.
     if (mActState->getTimePosition() >= mActState->getLength())
     {
-        toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
+        if (mAnimGroup != ANIM_GROUP_DEATH)
+            toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
 }
 
