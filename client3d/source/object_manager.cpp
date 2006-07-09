@@ -28,10 +28,10 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include "events.h"
-#include "particle.h"
 #include "sound.h"
 #include "spell_manager.h"
 #include "object_manager.h"
+#include "particle_manager.h"
 #include "object_visuals.h"
 #include "gui_manager.h"
 
@@ -114,28 +114,16 @@ bool ObjectManager::init()
 
         if (strType == "player")
         {
-            static unsigned int index=0;
-            obj.index = index++;
-            /// First player object is our hero.
-            if (obj.index)
-            {
-                obj.posX = CHUNK_SIZE_X /2;
-                obj.posY = CHUNK_SIZE_Z /2;
-            }
             obj.type = OBJECT_PLAYER;
             addMobileObject(obj);
         }
         else if (strType == "npc")
         {
-            static unsigned int index=0;
-            obj.index = index++;
             obj.type = OBJECT_NPC;
             addMobileObject(obj);
         }
         else if (strType == "static")
         {
-            static unsigned int index=0;
-            obj.index = index++;
             obj.type = OBJECT_STATIC;
             addMobileObject(obj);
         }
@@ -162,6 +150,8 @@ void ObjectManager::addMobileObject(sObject &obj)
     {
         case OBJECT_STATIC:  // todo: branch this out.
         {
+            static unsigned int index=0;
+            obj.index = index++;
             ObjectStatic *obj_static = new ObjectStatic(obj);
             if (!obj_static) return;
             mvObject_static.push_back(obj_static);
@@ -169,6 +159,8 @@ void ObjectManager::addMobileObject(sObject &obj)
         }
         case OBJECT_NPC:
         {
+            static unsigned int index=0;
+            obj.index = index++;
             ObjectNPC *obj_npc = new ObjectNPC(obj);
             if (!obj_npc) return;
             mvObject_npc.push_back(obj_npc);
@@ -176,6 +168,8 @@ void ObjectManager::addMobileObject(sObject &obj)
         }
         case OBJECT_PLAYER:
         {
+            static unsigned int index=0;
+            obj.index = index++;
             ObjectPlayer *obj_player = new ObjectPlayer(obj);
             if (!obj_player) return;
             mvObject_player.push_back(obj_player);
@@ -323,7 +317,7 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         case OBJECT_NPC:
         {
             if (id >= (int) mvObject_npc.size()) break;
-            if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
+//            if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
             if (action == OBJ_TURN     ) mvObject_npc[id]->turning(val1);
             if (action == OBJ_ANIMATION) mvObject_npc[id]->toggleAnimation(val1, val2);
             break;
@@ -332,16 +326,16 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         case OBJECT_PLAYER:
         {
             if (id >= (int) mvObject_player.size()) break;
-            if (action == OBJ_GOTO     )
+            if (action == OBJ_GOTO)
             {
                 SubPos2D pos;
                 pos.x = val1;
                 pos.z = val2;
                 pos.subPos =0;
-                mvObject_player[0]->moveToDistantTile(pos);
+                mvObject_player[ObjectPlayer::ME]->moveToDistantTile(pos);
             }
             if (action == OBJ_TURN     ) mvObject_player[id]->turning(val1);
-            if (action == OBJ_WALK     ) mvObject_player[id]->walking(val1);
+//            if (action == OBJ_WALK     ) mvObject_player[id]->walking(val1);
             if (action == OBJ_ANIMATION) mvObject_player[id]->toggleAnimation(val1, val2);
             if (action == OBJ_TEXTURE  ) mvObject_player[id]->setTexture(val1, val2, 0);
             break;
@@ -398,8 +392,6 @@ void ObjectManager::freeRecources()
         delete (*i);
     }
     mvObject_armor.clear();
-
-
 }
 
 ///================================================================================================
@@ -407,24 +399,22 @@ void ObjectManager::freeRecources()
 ///================================================================================================
 void ObjectManager::selectNPC(MovableObject *mob)
 {
-    if (mvObject_player[0]->isMoving()) return;
+    if (mvObject_player[ObjectPlayer::ME]->isMoving()) return;
     if (!mob)
     {   /// No npc was selected.
         if  (mSelectedFriendly < 0)
         {
             mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
-            mvObject_player[0]->attackShortRange(mvObject_npc[mSelectedObject]->getNode());
+            mvObject_player[ObjectPlayer::ME]->attackShortRange(mvObject_npc[mSelectedObject]->getNode());
         }
         return;
     }
-
 
     /// Cut the "Obj_" substring from the entity name.
     String strObject = mob->getName();
     strObject.replace(0, strObject.find("_")+1,"");
     int selectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
     int selectedType   = StringConverter::parseInt(strObject.substr(0,strObject.find("_")));
-
     switch (selectedType)
     {
         case OBJECT_STATIC:
@@ -441,7 +431,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 if (mSelectedFriendly < 0)
                 {
                     mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
-                    mvObject_player[0]->attackShortRange(mvObject_npc[selectedObject]->getNode());
+                    mvObject_player[ObjectPlayer::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
                 }
             }
             /// A new NPC was selected.
@@ -451,18 +441,17 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
                 ObjectVisuals::getSingleton().selectNPC(mob, mSelectedFriendly);
                 mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
-                //mvObject_player[0]->faceToTile(mSelectedPos);
                 if (mSelectedFriendly < 0)
                 {
-                    mvObject_player[0]->raiseWeapon(true);
-                    mvObject_player[0]->attackShortRange(mvObject_npc[selectedObject]->getNode());
+                    mvObject_player[ObjectPlayer::ME]->raiseWeapon(true);
+                    mvObject_player[ObjectPlayer::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
                 }
                 else
                 {
-                    mvObject_player[0]->raiseWeapon(false);
+                    mvObject_player[ObjectPlayer::ME]->raiseWeapon(false);
                 }
             }
-            //mvObject_player[0]->stopMovement();
+            //mvObject_player[ObjectPlayer::ME]->stopMovement();
             break;
         }
 
@@ -475,13 +464,33 @@ void ObjectManager::selectNPC(MovableObject *mob)
             }
             break;
         }
+
         default:
-    {}
-        break;
+            break;
     }
     mSelectedType = selectedType;
     mSelectedObject = selectedObject;
 }
+
+///================================================================================================
+///
+///================================================================================================
+void ObjectManager::targetObjectFacingPlayer()
+{
+//    SubPos2D pos = mvObject_player[ObjectPlayer::ME]->getTileScrollPos();
+//    mvObject_npc[mSelectedObject]->faceToTile(pos.x, pos.z);
+    mvObject_npc[mSelectedObject]->turning(mvObject_player[ObjectPlayer::ME]->getFacing());
+}
+
+///================================================================================================
+///
+///================================================================================================
+void ObjectManager::targetObjectAttackPlayer()
+{
+    targetObjectFacingPlayer();
+    mvObject_npc[mSelectedObject]->attack();
+}
+
 
 ///================================================================================================
 ///

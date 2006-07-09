@@ -139,3 +139,6 @@ SubPos2D ObjectStatic::getTileScrollPos()
     pos.subPos = 0;
     return pos;
 }
+
+
+

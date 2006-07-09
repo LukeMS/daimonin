@@ -24,12 +24,13 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "particle_manager.h"
 #include "object_npc.h"
 #include "sound.h"
 #include "option.h"
 #include "logger.h"
 #include "spell_manager.h"
+#include "object_manager.h"
+#include "particle_manager.h"
 #include "events.h"
 
 // #define WRITE_MODELTEXTURE_TO_FILE
@@ -64,14 +65,13 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mAttacking = ATTACK_NONE;
     mAutoTurning= false;
     mAutoMoving = false;
-    mTurning =0;
-    mWalking =0;
     mFriendly= obj.friendly;
     mAttack  = obj.attack;
     mDefend  = obj.defend;
     mMaxHP   = obj.maxHP;
     mMaxMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
+    ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8);
 }
 
 ///================================================================================================
@@ -79,141 +79,6 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
 ///================================================================================================
 void ObjectNPC::attackObjectOnTile(SubPos2D pos)
 {}
-
-///================================================================================================
-/// Toggle ObjectNPC equipment.
-///================================================================================================
-void  ObjectNPC::toggleMesh(int Bone, int WeaponNr)
-{
-    /*
-        if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
-        {
-            Logger::log().error()  << "CRITICAL: description file: '" << mDescFile << "' was not found!\n";
-            return;
-        }
-        static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
-        string mStrTemp;
-
-        switch (Bone)
-        {
-            case BONE_WEAPON_HAND:
-            WeaponNr = ++mWeapon; // testing -> delete me!
-            if (mEntityWeapon)
-            {
-                mEntityNPC->detachObjectFromBone("weapon");
-                mSceneMgr->destroyEntity(mEntityWeapon);
-                mEntityWeapon =0;
-            }
-            if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
-            {
-                mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
-                mEntityWeapon->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
-    //                    const AxisAlignedBox &AABB = mEntityWeapon->getBoundingBox();
-    //                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-    //                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
-                mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon);
-                static ParticleSystem *pSystem;
-                if (WeaponNr==1)
-                {
-                    pSystem = ParticleManager::getSingleton().addBoneObject(mEntityNPC, mStrTemp.c_str(), "Particle/SwordGlow", -1);
-                }
-                if (WeaponNr==2)
-                {
-                    ParticleManager::getSingleton().delObject(pSystem);
-                }
-            }
-            else mWeapon =0;  // testing -> delete me!
-            break;
-
-            case BONE_SHIELD_HAND:
-            {
-                WeaponNr = ++mShield; // testing -> delete me!
-                if (mEntityShield)
-                {
-                    mEntityNPC->detachObjectFromBone("shield");
-                    mSceneMgr->destroyEntity(mEntityShield);
-                    mEntityShield =0;
-                }
-                if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
-                {
-                    mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);
-                    mEntityShield->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                    const AxisAlignedBox &AABB = mEntityShield->getBoundingBox();
-                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-                    Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
-                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
-                }
-                else mShield =0;  // testing -> delete me!
-            }
-            break;
-
-            case BONE_HEAD:
-            {
-    //                    { // delete me!
-    //                      if (WeaponNr) mNode->scale(1.1, 1.1, 1.1);
-    //                      else          mNode->scale(0.9, 0.9, 0.9);
-    //                      Vector3 sc = mNode->getScale();
-    //                      std::string scale= "model size: " + StringConverter::toString(sc.x);
-    //                      GuiManager::getSingleton().sendMessage(
-    //                        GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*) scale.c_str());
-    //                      return;
-    //                    }
-
-                WeaponNr = ++mHelmet; // testing -> delete me!
-                if (mEntityHelmet)
-                {
-                    mEntityNPC->detachObjectFromBone("helmet");
-                    mSceneMgr->destroyEntity(mEntityHelmet);
-                    mEntityHelmet =0;
-                }
-                if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
-                {
-                    mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
-                    mEntityHelmet->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                    Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
-    //                          const AxisAlignedBox &AABB = mEntityHelmet->getBoundingBox();
-    //                          Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-    //                          mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), pos);
-                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet);
-                }
-                else mHelmet =0;  // testing -> delete me!
-            }
-            break;
-
-            case BONE_BODY:
-            {
-                WeaponNr = ++mArmor; // testing -> delete me!
-                if (mEntityArmor)
-                {
-                    mEntityNPC->detachObjectFromBone("armor");
-                    mSceneMgr->destroyEntity(mEntityArmor);
-                    mEntityArmor =0;
-                }
-                if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
-                {
-                    mEntityArmor =mSceneMgr->createEntity("armor", mStrTemp);
-                    mEntityArmor->setQueryFlags(QUERY_EQUIPMENT_MASK);
-                    const AxisAlignedBox &AABB = mEntityArmor->getBoundingBox();
-                    Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
-
-                    Vector3 pos = -(AABB.getMaximum() + AABB.getMinimum())/2;
-
-    //                        Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
-    //                        Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
-    //                        Real posX = atof(mStrTemp.c_str());
-    //                        Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
-    //                        Real posY = atof(mStrTemp.c_str());
-    //                        Option::getSingleton().getDescStr("StartZ_Armor", mStrTemp, WeaponNr);
-    //                        Real posZ = atof(mStrTemp.c_str());
-                    mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion::IDENTITY, pos);
-                }
-                else mArmor =0;  // testing -> delete me!
-            }
-            break;
-        }
-    */
-}
 
 ///================================================================================================
 /// Update ObjectNPC.
@@ -238,15 +103,39 @@ void ObjectNPC::update(const FrameEvent& event)
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection);
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection));
         /// Are we facing into the right direction (+/- 1 degree)?
-        if (deltaDegree <= .5) mAutoTurning = false;
+        if (deltaDegree <= .5)
+        {
+            mAutoTurning = false;
+            if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
+        }
     }
     else if (mAutoMoving)
     {
+        ;
     }
-    if (mAnim->isMovement() && mTurning)
+    else if (mAttacking != ATTACK_NONE)
     {
-        mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning);
-        mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mTurning));
+        switch (mAttacking)
+        {
+            case ATTACK_ANIM_START:
+                mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 0);
+                mAttacking = ATTACK_ANIM_RUNNUNG;
+                break;
+
+            case ATTACK_ANIM_RUNNUNG:
+                if (mAnim->getTimeLeft() < 0.5 || mAnim->isIdle())
+                {
+                    Vector3 pos = ObjectManager::getSingleton().getTargetedWorldPos();
+                    Sound::getSingleton().playStream(Sound::PLAYER_HIT);
+                    //ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
+                    mAttacking = ATTACK_NONE;
+                    ObjectManager::getSingleton().targetObjectAttackPlayer();
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
@@ -260,12 +149,21 @@ void ObjectNPC::castSpell(int spell)
 }
 
 ///================================================================================================
-/// Turn the player until it faces the given tile.
+/// Turn the Object.
 ///================================================================================================
-void ObjectNPC::faceToTile(int x, int z)
+void ObjectNPC::turning(Real facing)
 {
-    float deltaX = x - mActPos.x;
-    float deltaZ = z - mActPos.z;
+    mNewFacing = Radian(facing) - Degree(90);
+    mAutoTurning = true;
+}
+
+///================================================================================================
+/// Turn the Object until it faces the given tile.
+///================================================================================================
+void ObjectNPC::faceToTile(SubPos2D pos)
+{
+    float deltaX = pos.x - mActPos.x;
+    float deltaZ = pos.z - mActPos.z;
 
     /// This is the position of the player.
     if (deltaX ==0 && deltaZ ==0) return;
@@ -277,8 +175,73 @@ void ObjectNPC::faceToTile(int x, int z)
 }
 
 ///================================================================================================
-/// Move the player to the given tile.
+/// Move the Object to a neighbour tile.
 ///================================================================================================
-void ObjectNPC::moveToTile(int x, int z)
+void ObjectNPC::moveToNeighbourTile()
 {
+    if ((mActPos.x == mDestWalkPos.x) && (mActPos.z == mDestWalkPos.z))
+    {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+        mAutoMoving = false;
+        return;
+    }
+    mDstPos = mDestWalkPos;
+    if (mDstPos.x > mActPos.x+1) mDstPos.x = mActPos.x+1;
+    if (mDstPos.x < mActPos.x-1) mDstPos.x = mActPos.x-1;
+    if (mDstPos.z > mActPos.z+1) mDstPos.z = mActPos.z+1;
+    if (mDstPos.z < mActPos.z-1) mDstPos.z = mActPos.z-1;
+    /// Turn the head into the moving direction.
+    faceToTile(mDstPos);
+    /// Walk 1 tile.
+    mWalkToPos.x = mDstPos.x * TILE_SIZE_X + mBoundingBox.x;
+    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y);
+    mWalkToPos.z = mDstPos.z * TILE_SIZE_Z + mBoundingBox.z;
+    mDeltaPos = mNode->getPosition() - mWalkToPos;
+    if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
 }
+
+///================================================================================================
+/// Move the Object to the given tile.
+///================================================================================================
+void ObjectNPC::moveToDistantTile(SubPos2D pos)
+{
+    if(mActPos.x == pos.x && mActPos.z == pos.z || mAutoTurning || mAutoMoving) return;
+    if (mEnemyNode)
+    {
+        mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
+        mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
+        mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
+        mNode->setPosition(mWalkToPos);
+        if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
+        mEnemyNode = 0;
+    }
+    mDestWalkPos = pos;
+    mAutoMoving = true;
+    moveToNeighbourTile();
+}
+
+///================================================================================================
+/// Attack an enemy.
+///================================================================================================
+void ObjectNPC::attackShortRange(const SceneNode *node)
+{
+    if (mAnim->isAttack()) return; /// Finish the attack before starting a new one.
+    /// Move in front of the enemy.
+    if (mEnemyNode != node)
+    {
+        moveToDistantTile(ObjectManager::getSingleton().getTargetedPos());
+        mAttacking = ATTACK_APPROACH;
+    }
+    else
+    {
+        mAttacking = ATTACK_ANIM_START;
+    }
+    mEnemyNode = (SceneNode*) node;
+}
+
+///================================================================================================
+/// Add a new npc to the map.
+///================================================================================================
+void ObjectNPC::addToMap()
+{}
+

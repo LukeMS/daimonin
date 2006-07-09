@@ -88,17 +88,16 @@ void CEvent::keyPressed(KeyEvent *e)
             static int animNr= 0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
             if (++animNr >= 16) animNr= 0;
+            break;
         }
-        break;
 
         case KC_B:
         {
             static int animNr= 0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
             if (++animNr >= 16) animNr= 0;
+            break;
         }
-
-        break;
 
         case KC_C:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
@@ -121,59 +120,60 @@ void CEvent::keyPressed(KeyEvent *e)
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0, ObjectPlayer::TEXTURE_POS_SKIN, color++);
+            break;
         }
-        break;
 
         case KC_2:
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_FACE, color++);
+            break;
         }
-        break;
 
         case KC_3:
             //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_HAIR, color++);
+            break;
         }
-        break;
 
         case KC_4:
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_BODY, color++);
+            break;
         }
-        break;
 
         case KC_5:
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_LEGS, color++);
+            break;
         }
-        break;
+
         case KC_6:
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_BELT, color++);
+            break;
         }
-        break;
 
         case KC_7:
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_SHOES, color++);
+            break;
         }
-        break;
 
         case KC_8:
         {
             static int color =0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_HANDS, color++);
+            //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
+            break;
         }
-        //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
-        break;
 
         case KC_9:
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
@@ -198,7 +198,44 @@ void CEvent::keyPressed(KeyEvent *e)
         break;
 
         case KC_K:
+        {
+            sObject obj;
+            obj.meshName  = "Tentacle_N_Small.mesh";
+            obj.nickName  = "michtoen";
+            obj.type      = ObjectManager::OBJECT_NPC;
+            obj.friendly  = -1;
+            obj.attack    = 50;
+            obj.defend    = 50;
+            obj.maxHP     = 50;
+            obj.maxMana   = 50;
+            obj.maxGrace  = 50;
+            obj.posX      = 7;
+            obj.posY      = 11;
+            obj.level     = 0;
+            obj.centred   = 1;
+            obj.facing    = 0;
+            obj.particleNr=-1;
+            ObjectManager::getSingleton().addMobileObject(obj);
+/*
+            obj.meshName  = "Tentacle_N_Small.mesh";
+            obj.nickName  = "geck0";
+            obj.type      = ObjectManager::OBJECT_NPC;
+            obj.friendly  = -1;
+            obj.attack    = 50;
+            obj.defend    = 50;
+            obj.maxHP     = 50;
+            obj.maxMana   = 50;
+            obj.maxGrace  = 50;
+            obj.posX      = 6;
+            obj.posY      = 11;
+            obj.level     = 0;
+            obj.centred   = 1;
+            obj.facing    = 0;
+            obj.particleNr=-1;
+            ObjectManager::getSingleton().addMobileObject(obj);
+*/
             break;
+        }
 
         case KC_G:
             TileManager::getSingleton().toggleGrid();
@@ -217,8 +254,8 @@ void CEvent::keyPressed(KeyEvent *e)
             static int weaponNr = ObjectManager::getSingleton().getSumWeapon()-1;
             ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_WEAPON_HAND, weaponNr--);
             if (weaponNr < 0) weaponNr = ObjectManager::getSingleton().getSumWeapon();
+            break;
         }
-        break;
 
         case KC_Q:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
@@ -252,8 +289,8 @@ void CEvent::keyPressed(KeyEvent *e)
                 pixel = 128; // if value is too low resize to maximum
             TileManager::getSingleton().setMaterialLOD(pixel);
             mTimeUntilNextToggle = .5;
+            break;
         }
-        break;
 
         case KC_F:
         {
@@ -278,8 +315,8 @@ void CEvent::keyPressed(KeyEvent *e)
             }
             MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
             MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
+            break;
         }
-        break;
 
         case KC_L:
             Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
@@ -307,8 +344,8 @@ void CEvent::keyPressed(KeyEvent *e)
             Vector3 pos = mCamera->getPosition();
             pos.y += 30;
             mCamera->setPosition(pos);
+            break;
         }
-        break;
 
         case KC_PGDOWN:
         {
@@ -317,24 +354,24 @@ void CEvent::keyPressed(KeyEvent *e)
             Vector3 pos = mCamera->getPosition();
             pos.y -= 30;
             mCamera->setPosition(pos);
+            break;
         }
-        break;
 
         case KC_SUBTRACT:
         {
             //if (mCameraZoom < MAX_CAMERA_ZOOM)
             mCameraZoom += 5;
             mCamera->setFOVy(Degree(mCameraZoom));
+            break;
         }
-        break;
 
         case KC_ADD:
         {
             if (mCameraZoom > MIN_CAMERA_ZOOM)
                 mCameraZoom -= 5;
             mCamera->setFOVy(Degree(mCameraZoom));
+            break;
         }
-        break;
 
         /// ////////////////////////////////////////////////////////////////////
         /// Screenshot.
@@ -346,8 +383,8 @@ void CEvent::keyPressed(KeyEvent *e)
             sprintf(tmp, "screenshot_%d.png", ++mNumScreenShots);
             mWindow->writeContentsToFile(tmp);
             mTimeUntilNextToggle = 0.5;
+            break;
         }
-        break;
 
         /// ////////////////////////////////////////////////////////////////////
         /// Exit game.
@@ -432,8 +469,8 @@ void CEvent::mousePressed (MouseEvent *e)
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (!result.empty())
             {
-                Logger::log().info() << result.size();
-
+                //Logger::log().info() << result.size();
+                // Todo: choose a behaviour for more than 1 results.
                 RaySceneQueryResult::iterator itr = result.begin();
                 ObjectManager::getSingleton().selectNPC(itr->movable);
             }

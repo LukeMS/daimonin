@@ -87,7 +87,7 @@ ObjectVisuals::ObjectVisuals()
     if ((xmlElem = xmlRoot->FirstChildElement("Particle")) && ((strTemp = xmlElem->Attribute("name"))))
     {
         int i=-1;
-        mPSystem = ParticleManager::getSingleton().addNodeObject(Vector3(0,0,0), 0, strTemp, -1);
+        mPSystem = ParticleManager::getSingleton().addNodeObject(0, strTemp, -1);
         for (xmlColor = xmlElem->FirstChildElement("color"); xmlColor; xmlColor = xmlColor->NextSiblingElement("color"))
         {
             if (++i >= PARTICLE_COLOR_SUM)
