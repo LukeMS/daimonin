@@ -594,11 +594,11 @@ void check_login(object *op)
     {
         player *ptmp;
         /* this is a virgin player name.
-             * BUT perhaps someone else had the same name idea?
-             * Perhaps he is just do the confirm stuff or has entered the game -
-             * So, lets check for the name here too
-             * and check for confirm_password state
-             */
+         * BUT perhaps someone else had the same name idea?
+         * Perhaps he is just do the confirm stuff or has entered the game -
+         * So, lets check for the name here too
+         * and check for confirm_password state
+         */
 		/* The new login procedure should be able to avoid this conflict.
          * But i let it in for security reasons. MT 11.2005 
          */         
@@ -647,13 +647,13 @@ void check_login(object *op)
             correct = check_password(pl->password, buf);
 
             /* password is good and player exists.
-                     * We have 2 choices left:
-                     * a.) this name is not loged in bfore
-                     * b.) or it is.
-                     * If it is, we kick the previous loged
-                     * in player now.
-                     * That will allow us to kill link dead players!
-                     */
+             * We have 2 choices left:
+             * a.) this name is not loged in bfore
+             * b.) or it is.
+             * If it is, we kick the previous loged
+             * in player now.
+             * That will allow us to kill link dead players!
+             */
             if (correct)
             {
                 player *ptmp;
