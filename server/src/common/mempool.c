@@ -202,6 +202,13 @@ void init_mempools()
     /* Set up container for "loose" objects */
     initialize_object(&void_container);
     void_container.type = TYPE_VOID_CONTAINER;
+    FREE_AND_COPY_HASH(void_container.name, "<void container>");
+}
+
+void cleanup_mempools()
+{
+    LOG(llevDebug, "Freeing global mempool data\n");
+    FREE_AND_CLEAR_HASH(void_container.name);
 }
 
 /*

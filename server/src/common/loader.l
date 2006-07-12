@@ -148,7 +148,11 @@ WS	[ \t]*{NL}?
 
 			    if(QUERY_FLAG(op, FLAG_NO_INVENTORY) )
 			    {
-					destroy_object(tmp);
+                    /* destroy_object(tmp);
+                       Don't call destroy_object(). tmp will be 
+                       garbage collected automatically!
+                       Gecko 2006-07-12
+                     */
 				}
 				else
 				{

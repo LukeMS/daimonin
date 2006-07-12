@@ -899,7 +899,7 @@ void check_login(object *op)
     op->custom_attrset = NULL; /* We transfer it to a new object */
 
     LOG(llevDebug, "load obj for player: %s\n", op->name);
-    destroy_object(op);
+    /* destroy_object(op); -- No need to destroy. It will be gc:ed */
 
     op = get_object(); /* Create a new object for the real player data */
 

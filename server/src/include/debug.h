@@ -69,6 +69,9 @@
                                             * only be done in real debug runs
                                             */
 
+/* Track object garbage collection */
+/* #define DEBUG_GC */
+
 /* This turns the "probe" spell into a powerful charm spell as
  * an easy way to aquire pets for testing of the pets code */
 /* #define DEBUG_PROBE_IS_CHARM */

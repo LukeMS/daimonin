@@ -205,6 +205,7 @@ extern void             material_repair_item(object *item, int skill_value);
 /* mempool.c */
 extern uint32           nearest_pow_two_exp(uint32 n);
 extern void             init_mempools();
+extern void             cleanup_mempools();
 extern void             free_mempool(struct mempool *pool);
 extern struct mempool * (create_mempool)(const char *description, uint32 expand, uint32 size,
 						uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,

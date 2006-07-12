@@ -169,6 +169,7 @@ void initialize_mob_data(struct mobdata *data)
 void cleanup_all_behavioursets()
 {
     struct mob_behaviourset *set;
+    LOG(llevDebug, "Freeing all behaviour sets\n");
     for(set = generated_behavioursets; set; set = set->next)
         return_poolchunk(set, pool_mob_behaviourset);
     for(set = parsed_behavioursets; set; set = set->next)

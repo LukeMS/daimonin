@@ -1183,6 +1183,7 @@ void cleanup_without_exit()
     free_lists_and_tables();
     cleanup_all_behavioursets();
     free_gmaster_list();
+    cleanup_mempools();
 
     /* free_all_srv_files(); */
 }

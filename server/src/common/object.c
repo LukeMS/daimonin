@@ -69,7 +69,7 @@ static inline void activelist_remove_inline(object *op)
 
 #ifdef DEBUG_ACTIVELIST_LOG
     LOG(llevDebug,"ACTIVE_rem: %s (%d) @%s (%x - %x - %x)\n", query_name(op), op->count, STRING_MAP_PATH(op->map),
-                                                            op, op->active_prev, op->active_next);
+            op, op->active_prev, op->active_next);
 #endif
 
     /* If this happens to be the object we will process next,
@@ -143,6 +143,8 @@ void mark_object_removed(object *ob)
     if (mem->next != NULL)
         return;
 
+    /* We abuse the mempool freelist here. Need to zero mem->next out
+     * before calling return_poolchunk() on the object */
     mem->next = removed_objects;
     removed_objects = mem;
 }
@@ -152,10 +154,19 @@ void object_gc()
 {
     struct mempool_chunk   *current, *next;
     object                 *ob;
+    
+#if defined DEBUG_GC    
+    if(removed_objects != &end_marker)
+        LOG(llevDebug, "object_gc():\n");
+#endif    
 
     while ((next = removed_objects) != &end_marker)
     {
         removed_objects = &end_marker; /* destroy_object() may free some more objects (inventory items) */
+#if defined DEBUG_GC    
+        LOG(llevDebug, " sweep\n");
+#endif        
+        
         while (next != &end_marker)
         {
             current = next;
@@ -165,10 +176,15 @@ void object_gc()
             ob = (object *) MEM_USERDATA(current);
             if (QUERY_FLAG(ob, FLAG_REMOVED))
             {
+#if defined DEBUG_GC    
+                LOG(llevDebug, "  collect obj %s (%d)\n", STRING_OBJ_NAME(ob), ob->count);
+#endif                
                 if (OBJECT_FREE(ob))
                     LOG(llevBug, "BUG: Freed object in remove list: %s\n", STRING_OBJ_NAME(ob));
                 else
+                {
                     return_poolchunk(ob, pool_object);
+                }
             }
         }
     }
@@ -1352,26 +1368,32 @@ static void destroy_ob_inv(object *op)
 {
     object *tmp, *tmp2;
 
+#if defined DEBUG_GC    
+    if(op->inv)
+        LOG(llevDebug, "  destroy_ob_inv(%s (%d))\n", STRING_OBJ_NAME(op), op->count);
+#endif    
+    
     for (tmp = op->inv; tmp; tmp = tmp2)
     {
         tmp2 = tmp->below;
+#if defined DEBUG_GC    
+        LOG(llevDebug, "    removing %s (%d)\n", STRING_OBJ_NAME(tmp), tmp->count);
+#endif    
         if (tmp->inv)
             destroy_ob_inv(tmp);
-        mark_object_removed(tmp);
-        tmp->above = tmp->below = NULL;
-        tmp->map = NULL;
-        tmp->env = NULL;
-        destroy_object(tmp); 
+
+        mark_object_removed(tmp); /* Enqueue for gc */
     }
 }
 
-/*
- * destroy_object() frees everything allocated by an object, removes
+/** frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
- * free objects. This function is called automatically to free unused objects
+ * free objects. 
+ *
+ * This function is called automatically to free unused objects
  * (it is called from return_poolchunk() during garbage collection in object_gc() ).
- * The object must have been removed by remove_ob() first for
- * this function to succeed.
+ * The object must have been removed by remove_ob() first for this function to succeed.
+ * @note Due to the tricky free/active/remove-list handling of objects, don't ever call this manually.
  */
 void destroy_object(object *ob)
 {
@@ -1387,8 +1409,12 @@ void destroy_object(object *ob)
         dump_object(ob);
         LOG(llevBug, "BUG: Destroy object called with non removed object\n:%s\n", errmsg);
     }
+    
+#if defined DEBUG_GC    
+    LOG(llevDebug, "  destroy_object(%s)\n", STRING_OBJ_NAME(ob));
+#endif    
 
-    /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
+    /* Make sure to get rid of the inventory, too. */
     destroy_ob_inv(ob); 
 
     free_object_data(ob, 0);
@@ -1453,7 +1479,7 @@ void remove_ob(object *op)
 {
     MapSpace   *msp;
     object     *otmp;
-
+    
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
         /*dump_object(op)*/;

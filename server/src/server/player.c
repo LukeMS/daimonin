@@ -286,7 +286,13 @@ void free_player(player *pl)
     
     free_newsocket(&pl->socket);
     if (pl->ob)
-        destroy_object(pl->ob);
+    {
+        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
+            remove_ob(pl->ob);
+     
+        /* Force an out-of-loop gc to delete the player object NOW */
+        object_gc();
+    }
 }
 
 /* Tries to add player on the connection passwd in ns.

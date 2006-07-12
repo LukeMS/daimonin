@@ -115,6 +115,7 @@ void free_strings()
     int nrof_strings = sizeof(shstr_cons) / sizeof(shstr *);
     shstr **ptr = (shstr **)&shstr_cons;
     int i=0;
+    LOG(llevDebug, "Freeing all string constants\n");
     for(i=0; i<nrof_strings; i++)
         FREE_ONLY_HASH(ptr[i]);
 }
@@ -1199,8 +1200,11 @@ void init(int argc, char **argv)
 
 void free_lists_and_tables()
 {
+    LOG(llevDebug, "Removing activelist sentinel\n");
     remove_ob(active_objects);
+    LOG(llevDebug, "Freeing all racelists\n");
     free_racelists();
+    LOG(llevDebug, "Performing final object gc\n");
     object_gc();
 }
 
@@ -1209,7 +1213,7 @@ void init_lists_and_tables()
 {
     /* Add sentinels to the global activelist */
     active_objects = get_object();
-    FREE_AND_COPY_HASH(active_objects->name, "<activelist sentinel>");
+    FREE_AND_COPY_HASH(active_objects->name, "<global activelist sentinel>");
     insert_ob_in_ob(active_objects, &void_container); /* Avoid gc of the object */
 
     /* Set up object initializers */

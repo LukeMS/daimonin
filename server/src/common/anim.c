@@ -31,6 +31,7 @@ void free_all_anim()
 {
     int i;
 
+    LOG(llevDebug, "Freeing all animations\n");
     for (i = 0; i <= num_animations; i++)
     {
         FREE_AND_CLEAR_HASH(animations[i].name);
