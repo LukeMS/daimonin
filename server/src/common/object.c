@@ -1357,7 +1357,10 @@ static void destroy_ob_inv(object *op)
 		tmp2 = tmp->below;
 		if (tmp->inv)
 			destroy_ob_inv(tmp);
-		SET_FLAG(tmp, FLAG_REMOVED);
+        mark_object_removed(tmp);
+        tmp->above = tmp->below = NULL;
+        tmp->map = NULL;
+        tmp->env = NULL;
 		destroy_object(tmp); 
 	}
 }
@@ -1386,7 +1389,6 @@ void destroy_object(object *ob)
     }
 
     /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
-    /* TODO: maybe destroy() it here too? */
     destroy_ob_inv(ob); 
 
     free_object_data(ob, 0);
@@ -1495,19 +1497,6 @@ void remove_ob(object *op)
 
         if (op->below != NULL)
             op->below->above = op->above;
-
-        /* we set up values so that it could be inserted into
-            * the map, but we don't actually do that - it is up
-            * to the caller to decide what we want to do.
-            */
-        /* BUG: if we do this, active list for maps will fail!!
-         * op->map set with a valid ptr will tell the server that this
-         * object is on a map!! This is even without it a bug!
-         */
-        /*
-        op->map = op->env->map;
-        op->x = op->env->x,op->y = op->env->y;
-        */
 
 #ifdef POSITION_DEBUG
         op->ox = op->x,op->oy = op->y;
