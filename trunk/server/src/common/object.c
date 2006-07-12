@@ -69,14 +69,14 @@ static inline void activelist_remove_inline(object *op)
 
 #ifdef DEBUG_ACTIVELIST_LOG
     LOG(llevDebug,"ACTIVE_rem: %s (%d) @%s (%x - %x - %x)\n", query_name(op), op->count, STRING_MAP_PATH(op->map),
-															op, op->active_prev, op->active_next);
+                                                            op, op->active_prev, op->active_next);
 #endif
 
     /* If this happens to be the object we will process next,
      * update the next_active_object pointer */
     if(op == next_active_object)
         next_active_object = op->active_next;
-	else if(op == inserted_active_objects)
+    else if(op == inserted_active_objects)
         inserted_active_objects = op->active_next;
 
     if (op->active_prev)
@@ -217,16 +217,16 @@ int CAN_MERGE(object *ob1, object *ob2)
         return 0;
 
 
-	/* Gecko: Moved out special handling of event object nrof */
-	/* important: don't merge objects with glow_radius set - or we come
-	* in heavy side effect situations. Because we really not know what
-	* our calling function will do after this merge (and the calling function
-	* then must first find out a merge has happen or not). The sense of stacks
-	* are to store inactive items. Because glow_radius items can be active even
-	* when not apllied, merging is simply wrong here. MT.
-	*/
-	if (((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT) || ob1->glow_radius || ob2->glow_radius)
-		return 0;
+    /* Gecko: Moved out special handling of event object nrof */
+    /* important: don't merge objects with glow_radius set - or we come
+    * in heavy side effect situations. Because we really not know what
+    * our calling function will do after this merge (and the calling function
+    * then must first find out a merge has happen or not). The sense of stacks
+    * are to store inactive items. Because glow_radius items can be active even
+    * when not apllied, merging is simply wrong here. MT.
+    */
+    if (((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT) || ob1->glow_radius || ob2->glow_radius)
+        return 0;
 
     /* Gecko: added bad special check for event objects
      * Idea is: if inv is identical events only then go ahead and merge)
@@ -364,15 +364,15 @@ sint32 sum_weight(object *op)
         if (QUERY_FLAG(inv, FLAG_SYS_OBJECT))
             continue;
 
-		if(inv->type == CONTAINER && inv->weapon_speed != 1.0f)
-			sum += inv->damage_round_tag + inv->weight; /* thats the precalculated, modified weight + container weight */
-		else
-	        sum += WEIGHT(inv);
+        if(inv->type == CONTAINER && inv->weapon_speed != 1.0f)
+            sum += inv->damage_round_tag + inv->weight; /* thats the precalculated, modified weight + container weight */
+        else
+            sum += WEIGHT(inv);
     }
 
-	/* we have a magical container? then precalculate the modified weight */
-	if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-		op->damage_round_tag = (uint32)((float)sum * op->weapon_speed);
+    /* we have a magical container? then precalculate the modified weight */
+    if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+        op->damage_round_tag = (uint32)((float)sum * op->weapon_speed);
 
     return sum;
 }
@@ -384,47 +384,47 @@ sint32 sum_weight(object *op)
  */
 static inline void add_weight(const object *item, const uint32 nrof)
 {
-	object *op;
-	sint32 weight;
+    object *op;
+    sint32 weight;
 
-	if(!(op = item->env))
-		return;
+    if(!(op = item->env))
+        return;
 
-	if(item->type == CONTAINER && item->weapon_speed != 1.0f)
-		weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
-	else
-		weight = WEIGHT_NROF(item, nrof);
-	if(!weight)
-		return;
+    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
+        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
+    else
+        weight = WEIGHT_NROF(item, nrof);
+    if(!weight)
+        return;
 
-	do
-	{
-		if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
-			return;
+    do
+    {
+        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            return;
 
-		/* we have a magical container modifying the weight by its magic? */
-		if(op->type == CONTAINER)
-		{
-			op->carrying += weight;
-			/* we modify weight to what the magical container has changed it */
-			if(op->weapon_speed != 1.0f)
-			{
-				weight = op->damage_round_tag;
-				op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
-				weight = (op->damage_round_tag - weight); /* modified inventory weight */
-			}
-		}
-		else
-			op->carrying += weight;
-		
-		/* we have to update the view for clients. If this object is in a player inventory or
-		* an player viewed open container which is INSIDE a player then update the view.
-		*/
-		if(op->env && (op->env->type == PLAYER || 
-			(op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
-			esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
-	}
-	while((op = op->env));
+        /* we have a magical container modifying the weight by its magic? */
+        if(op->type == CONTAINER)
+        {
+            op->carrying += weight;
+            /* we modify weight to what the magical container has changed it */
+            if(op->weapon_speed != 1.0f)
+            {
+                weight = op->damage_round_tag;
+                op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
+                weight = (op->damage_round_tag - weight); /* modified inventory weight */
+            }
+        }
+        else
+            op->carrying += weight;
+        
+        /* we have to update the view for clients. If this object is in a player inventory or
+        * an player viewed open container which is INSIDE a player then update the view.
+        */
+        if(op->env && (op->env->type == PLAYER || 
+            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
+            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
+    }
+    while((op = op->env));
 }
 
 /*
@@ -433,41 +433,41 @@ static inline void add_weight(const object *item, const uint32 nrof)
  */
 static inline void sub_weight(object *item, sint32 nrof)
 {
-	object *op;
-	sint32 weight;
+    object *op;
+    sint32 weight;
 
-	if(!(op = item->env))
-		return;
+    if(!(op = item->env))
+        return;
 
-	if(item->type == CONTAINER && item->weapon_speed != 1.0f)
-		weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
-	else
-		weight = WEIGHT_NROF(item, nrof);
-	if(!weight)
-		return;
+    if(item->type == CONTAINER && item->weapon_speed != 1.0f)
+        weight = item->damage_round_tag + item->weight; /* no stacking container, ignore nrof */
+    else
+        weight = WEIGHT_NROF(item, nrof);
+    if(!weight)
+        return;
 
-	do
-	{
-		if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
-			return;
+    do
+    {
+        if(QUERY_FLAG(op, FLAG_SYS_OBJECT))
+            return;
 
-		/* we have a magical container modifying the weight by its magic? */
-		if(op->type == CONTAINER && op->weapon_speed != 1.0f)
-		{
-			op->carrying -= weight;
-			/* we modify weight to what the magical container has changed it */
-			weight = op->damage_round_tag;
-			op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
-			weight -= op->damage_round_tag;
-		}
-		else
-			op->carrying -= weight;
+        /* we have a magical container modifying the weight by its magic? */
+        if(op->type == CONTAINER && op->weapon_speed != 1.0f)
+        {
+            op->carrying -= weight;
+            /* we modify weight to what the magical container has changed it */
+            weight = op->damage_round_tag;
+            op->damage_round_tag = (uint32)((float)op->carrying * op->weapon_speed);
+            weight -= op->damage_round_tag;
+        }
+        else
+            op->carrying -= weight;
 
-		if(op->env && (op->env->type == PLAYER || 
-			(op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
-			esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
-	}
-	while((op = op->env));
+        if(op->env && (op->env->type == PLAYER || 
+            (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
+            esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
+    }
+    while((op = op->env));
 }
 
 /*
@@ -746,9 +746,9 @@ void copy_object(object *op2, object *op)
 {
     int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
 
-	/* remove because perhaps speed will change when we copy */
+    /* remove because perhaps speed will change when we copy */
     if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
-	    activelist_remove_inline(op);
+        activelist_remove_inline(op);
 
     FREE_ONLY_HASH(op->name);
     FREE_ONLY_HASH(op->title);
@@ -794,7 +794,7 @@ void copy_object(object *op2, object *op)
     if (op->speed < 0 && op->speed_left == op->arch->clone.speed_left)
         op->speed_left += (RANDOM() % 90) / 100.0f;
 
-	CLEAR_FLAG(op, FLAG_IN_ACTIVELIST); /* perhaps our source is on active list - ignore! */
+    CLEAR_FLAG(op, FLAG_IN_ACTIVELIST); /* perhaps our source is on active list - ignore! */
     update_ob_speed(op);
 }
 
@@ -1350,19 +1350,19 @@ void free_object_data(object *ob, int free_static_data)
 /* destroy and delete recursive the inventory of an destroyed object. */
 static void destroy_ob_inv(object *op)
 {
-	object *tmp, *tmp2;
+    object *tmp, *tmp2;
 
-	for (tmp = op->inv; tmp; tmp = tmp2)
-	{
-		tmp2 = tmp->below;
-		if (tmp->inv)
-			destroy_ob_inv(tmp);
+    for (tmp = op->inv; tmp; tmp = tmp2)
+    {
+        tmp2 = tmp->below;
+        if (tmp->inv)
+            destroy_ob_inv(tmp);
         mark_object_removed(tmp);
         tmp->above = tmp->below = NULL;
         tmp->map = NULL;
         tmp->env = NULL;
-		destroy_object(tmp); 
-	}
+        destroy_object(tmp); 
+    }
 }
 
 /*
@@ -1458,8 +1458,8 @@ void remove_ob(object *op)
     {
         /*dump_object(op)*/;
         LOG(llevBug, "BUG: Trying to remove removed object.:<%s> (<%d> %d %x) map:%s (%d,%d)\n", query_name(op),
-				op->arch?STRING_SAFE(op->arch->name):"NOARCH", op->type, op->count, 
-				op->map ? (op->map->path ? op->map->path : "op->map->path == NULL") : "op->map==NULL", op->x, op->y);
+                op->arch?STRING_SAFE(op->arch->name):"NOARCH", op->type, op->count, 
+                op->map ? (op->map->path ? op->map->path : "op->map->path == NULL") : "op->map==NULL", op->x, op->y);
         return;
     }
 
@@ -1488,7 +1488,7 @@ void remove_ob(object *op)
          * the flag is set from outside... perhaps from a drop_all() function.
          */
         if ((otmp = is_player_inv(op->env)) != NULL && CONTR(otmp) && !QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
-			FIX_PLAYER(otmp,"remove_ob: env remove");
+            FIX_PLAYER(otmp,"remove_ob: env remove");
 
         if (op->above != NULL)
             op->above->below = op->below;
@@ -1927,12 +1927,12 @@ object * insert_ob_in_map(object *const op, mapstruct *m, object *const originat
         }
     }
 
-	if(!(op->map->map_flags & MAP_FLAG_NO_UPDATE))
-	{
-	    mc->update_tile++; /* we updated something here - mark this tile as changed! */
-		/* updates flags (blocked, alive, no magic, etc) for this map space */
-		update_object(op, UP_OBJ_INSERT);
-	}
+    if(!(op->map->map_flags & MAP_FLAG_NO_UPDATE))
+    {
+        mc->update_tile++; /* we updated something here - mark this tile as changed! */
+        /* updates flags (blocked, alive, no magic, etc) for this map space */
+        update_object(op, UP_OBJ_INSERT);
+    }
 
     /* See if op moved between maps */
     if(op->speed)
@@ -2237,15 +2237,15 @@ object * insert_ob_in_ob(object *op, object *where)
     if (op->nrof)
     {
         for (tmp = where->inv; tmp != NULL; tmp = tmp->below)
-		{
+        {
             if (CAN_MERGE(tmp, op))
             {
                 remove_ob(tmp); /* and fix old object's links (we will insert it further down)*/
-				tmp->nrof += op->nrof;
-				op = tmp;
+                tmp->nrof += op->nrof;
+                op = tmp;
                 break;
             }
-		}
+        }
     }
     
     CLEAR_FLAG(op, FLAG_REMOVED);    
@@ -2279,8 +2279,8 @@ object * insert_ob_in_ob(object *op, object *where)
         where->inv = op;
     }
 
-	if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
-		add_weight(op, op->nrof);
+    if(! QUERY_FLAG(op, FLAG_SYS_OBJECT))
+        add_weight(op, op->nrof);
 
     /* check for event object and set the owner object
      * event flags.
@@ -2288,8 +2288,8 @@ object * insert_ob_in_ob(object *op, object *where)
     if (op->type == TYPE_EVENT_OBJECT && op->sub_type1)
         where->event_flags |= (1U << (op->sub_type1 - 1));
     else if( op->type == TYPE_QUEST_TRIGGER
-			&& (op->sub_type1 == ST1_QUEST_TRIGGER_NORMAL || op->sub_type1 == ST1_QUEST_TRIGGER_ITEM)
-			&& where->type == CONTAINER)
+            && (op->sub_type1 == ST1_QUEST_TRIGGER_NORMAL || op->sub_type1 == ST1_QUEST_TRIGGER_ITEM)
+            && where->type == CONTAINER)
         where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
 
     /* if player, adjust one drop items and fix player if not
