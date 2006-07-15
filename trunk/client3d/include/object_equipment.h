@@ -35,19 +35,54 @@ using namespace Ogre;
 class ObjectEquipment
 {
 public:
+    typedef struct
+    {
+        short w, h;             /**< width and height of the image. **/
+        short dstX, dstY;       /**< pos of the image in the model-texture. **/
+        short srcX, srcY;       /**< pos of the image in the race-template-texture. **/
+        short offsetX, offsetY; /**< offset for the next source image. **/
+    }
+    sPicture;
     enum
     {
         PARTICLE_FX_FIRE,
         PARTICLE_FX_SUM
     };
+    enum
+    {
+        ITEM_WEAPON,
+        ITEM_ARMOR_SHIELD,
+        ITEM_ARMOR_HEAD,
+        ITEM_ARMOR_BODY,
+        ITEM_ARMOR_LEGS,
+        ITEM_SUM
+    };
+    enum
+    {
+        ME /**< ME (mIndex == 0) is our Hero. **/
+    };
+    enum
+    {
+        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY, BONE_SUM
+    };
+    enum
+    {
+        TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
+        TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
+        TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
+    };
+
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(unsigned int type, const char *meshName, int particleNr);
+    ObjectEquipment(Entity *parent);
     ~ObjectEquipment();
     void freeRecources();
-    const Entity *getEntity();
-    ParticleSystem *getParticleSystem();
+    void setTexture(int pos, int textureColor, int textureNr);
+    void drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber, uint32 texColor);
+    void equipItem(int bone, int type, int itemID, int particleID =-1);
+    void dropItem(int bone);
+    void raiseWeapon(bool raise);
 
 private:
     /// ////////////////////////////////////////////////////////////////////
@@ -55,9 +90,16 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     ObjectEquipment(const ObjectEquipment&); // disable copy-constructor.
 
-    ParticleSystem *mPSystem;
-    Entity *mEntity;
-    static unsigned int mWeaponID;
-    static unsigned int mArmorID;
+    static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
+    static uchar *texImageBuf;
+    enum
+    {
+        SIDE_BACK,
+        SIDE_FRONT
+    };
+    TexturePtr mTexture;
+    Entity *mParentEntity, *mEntity[BONE_SUM];
+    ParticleSystem *mPSystem[BONE_SUM];
+    static unsigned long mIndex;
 };
 #endif

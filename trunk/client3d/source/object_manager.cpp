@@ -69,7 +69,7 @@ bool ObjectManager::init()
         }
 
         if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) break;
-        ObjectStatic::sObject obj;
+        sObject obj;
         Option::getSingleton().getDescStr("MeshName", obj.meshName,i);
         Option::getSingleton().getDescStr("NickName", obj.nickName,i);
 
@@ -127,16 +127,6 @@ bool ObjectManager::init()
             obj.type = OBJECT_STATIC;
             addMobileObject(obj);
         }
-        else if (strType == "weapon")
-        {
-            obj.type = ATTACHED_OBJECT_WEAPON;
-            addBoneObject(ATTACHED_OBJECT_WEAPON, obj.meshName.c_str(), obj.particleNr);
-        }
-        else if (strType == "armor")
-        {
-            obj.type = ATTACHED_OBJECT_ARMOR;
-            addBoneObject(ATTACHED_OBJECT_ARMOR, obj.meshName.c_str(), obj.particleNr);
-        }
     }
     return true;
 }
@@ -144,7 +134,7 @@ bool ObjectManager::init()
 ///================================================================================================
 /// Adds a independant object.
 ///================================================================================================
-void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
+void ObjectManager::addMobileObject(sObject &obj)
 {
     switch (obj.type)
     {
@@ -157,6 +147,7 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
             mvObject_static.push_back(obj_static);
             break;
         }
+        case OBJECT_PLAYER:
         case OBJECT_NPC:
         {
             static unsigned int index=0;
@@ -166,73 +157,11 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
             mvObject_npc.push_back(obj_npc);
             break;
         }
-        case OBJECT_PLAYER:
-        {
-            static unsigned int index=0;
-            obj.index = index++;
-            ObjectPlayer *obj_player = new ObjectPlayer(obj);
-            if (!obj_player) return;
-            mvObject_player.push_back(obj_player);
-            break;
-        }
+
         default:
         {
             Logger::log().error() << "Unknow mobile object-type in mesh " << obj.meshName;
             return;
-        }
-    }
-}
-
-///================================================================================================
-/// .
-///================================================================================================
-void ObjectManager::setPlayerEquipment(int player, int bone, int WeaponNr)
-{
-    mvObject_player[player]->toggleMesh(bone, WeaponNr);
-}
-
-///================================================================================================
-/// .
-///================================================================================================
-const Entity *ObjectManager::getWeaponEntity(unsigned int WeaponNr)
-{
-    if (WeaponNr >= mvObject_weapon.size())
-        return 0;
-    return mvObject_weapon[WeaponNr]->getEntity();
-}
-
-
-///================================================================================================
-/// .
-///================================================================================================
-ParticleSystem *ObjectManager::getParticleSystem(unsigned int WeaponNr)
-{
-    if (WeaponNr >= mvObject_weapon.size())
-        return 0;
-    return mvObject_weapon[WeaponNr]->getParticleSystem();
-}
-
-///================================================================================================
-/// Adds an equipment object.
-///================================================================================================
-void ObjectManager::addBoneObject(unsigned int type, const char *meshName, int particleNr)
-{
-    switch (type)
-    {
-        case ATTACHED_OBJECT_WEAPON:
-        {
-            ObjectEquipment *obj_weapon = new ObjectEquipment(ATTACHED_OBJECT_WEAPON, meshName, particleNr);
-            if (!obj_weapon) return;
-            //obj_weapon->setStats(int va11, int va12, int va13, int va14, int va15);
-            mvObject_weapon.push_back(obj_weapon);
-            break;
-        }
-        case ATTACHED_OBJECT_ARMOR:
-        {
-            ObjectEquipment *obj_armor = new ObjectEquipment(ATTACHED_OBJECT_ARMOR, meshName, particleNr);
-            if (!obj_armor) return;
-            mvObject_armor.push_back(obj_armor);
-            break;
         }
     }
 }
@@ -250,12 +179,6 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
     {
         mvObject_npc[i]->update(evt);
     }
-    for (unsigned int i = 0; i < mvObject_player.size(); ++i)
-    {
-        mvObject_player[i]->update(evt);
-    }
-
-
 
     /*
       switch (obj_type)
@@ -292,13 +215,9 @@ void ObjectManager::synchToWorldPos(Vector3 pos)
     {
         mvObject_static[i]->move(pos);
     }
-    for(unsigned int i = 0; i < mvObject_npc.size(); ++i)
+    for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
     {
         mvObject_npc[i]->move(pos);
-    }
-    for(unsigned int i = 1; i < mvObject_player.size(); ++i)
-    {
-        mvObject_player[i]->move(pos);
     }
 }
 
@@ -313,31 +232,23 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         {
             break;
         }
-
+        case OBJECT_PLAYER:
         case OBJECT_NPC:
         {
             if (id >= (int) mvObject_npc.size()) break;
 //            if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
-            if (action == OBJ_TURN     ) mvObject_npc[id]->turning(val1);
-            if (action == OBJ_ANIMATION) mvObject_npc[id]->toggleAnimation(val1, val2);
-            break;
-        }
-
-        case OBJECT_PLAYER:
-        {
-            if (id >= (int) mvObject_player.size()) break;
             if (action == OBJ_GOTO)
             {
                 SubPos2D pos;
                 pos.x = val1;
                 pos.z = val2;
                 pos.subPos =0;
-                mvObject_player[ObjectPlayer::ME]->moveToDistantTile(pos);
+                mvObject_npc[ObjectNPC::ME]->moveToDistantTile(pos);
             }
-            if (action == OBJ_TURN     ) mvObject_player[id]->turning(val1);
-//            if (action == OBJ_WALK     ) mvObject_player[id]->walking(val1);
-            if (action == OBJ_ANIMATION) mvObject_player[id]->toggleAnimation(val1, val2);
-            if (action == OBJ_TEXTURE  ) mvObject_player[id]->setTexture(val1, val2, 0);
+//            if (action == OBJ_TEXTURE  ) mvObject_npc[id]->setTexture(val1, val2, 0);
+//            if (action == OBJ_HIT      ) mvObject_npc[id]->setDamage(val1);
+            if (action == OBJ_TURN     ) mvObject_npc[id]->turning(val1);
+            if (action == OBJ_ANIMATION) mvObject_npc[id]->toggleAnimation(val1, val2);
             break;
         }
 
@@ -358,13 +269,6 @@ void ObjectManager::delObject(int )
 ///================================================================================================
 void ObjectManager::freeRecources()
 {
-    for (std::vector<ObjectPlayer*>::iterator i = mvObject_player.begin(); i < mvObject_player.end(); ++i)
-    {
-        (*i)->freeRecources();
-        delete (*i);
-    }
-    mvObject_player.clear();
-
     for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
     {
         (*i)->freeRecources();
@@ -378,20 +282,6 @@ void ObjectManager::freeRecources()
         delete (*i);
     }
     mvObject_static.clear();
-
-    for (std::vector<ObjectEquipment*>::iterator i = mvObject_weapon.begin(); i < mvObject_weapon.end(); ++i)
-    {
-        (*i)->freeRecources();
-        delete (*i);
-    }
-    mvObject_weapon.clear();
-
-    for (std::vector<ObjectEquipment*>::iterator i = mvObject_armor.begin(); i < mvObject_armor.end(); ++i)
-    {
-        (*i)->freeRecources();
-        delete (*i);
-    }
-    mvObject_armor.clear();
 }
 
 ///================================================================================================
@@ -399,13 +289,13 @@ void ObjectManager::freeRecources()
 ///================================================================================================
 void ObjectManager::selectNPC(MovableObject *mob)
 {
-    if (mvObject_player[ObjectPlayer::ME]->isMoving()) return;
+    if (mvObject_npc[ObjectNPC::ME]->isMoving()) return;
     if (!mob)
     {   /// No npc was selected.
         if  (mSelectedFriendly < 0)
         {
             mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
-            mvObject_player[ObjectPlayer::ME]->attackShortRange(mvObject_npc[mSelectedObject]->getNode());
+            mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[mSelectedObject]->getNode());
         }
         return;
     }
@@ -431,7 +321,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 if (mSelectedFriendly < 0)
                 {
                     mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
-                    mvObject_player[ObjectPlayer::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
+                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
                 }
             }
             /// A new NPC was selected.
@@ -439,16 +329,17 @@ void ObjectManager::selectNPC(MovableObject *mob)
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
                 mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
+                mSelectedObject = selectedObject; // must be set befor ::selectNPC
                 ObjectVisuals::getSingleton().selectNPC(mob, mSelectedFriendly);
                 mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
                 if (mSelectedFriendly < 0)
                 {
-                    mvObject_player[ObjectPlayer::ME]->raiseWeapon(true);
-                    mvObject_player[ObjectPlayer::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
+                   // mvObject_npc[ObjectNPC::ME]->raiseWeapon(true);
+                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
                 }
                 else
                 {
-                    mvObject_player[ObjectPlayer::ME]->raiseWeapon(false);
+                    // mvObject_npc[ObjectNPC::ME]->raiseWeapon(false);
                 }
             }
             //mvObject_player[ObjectPlayer::ME]->stopMovement();
@@ -459,8 +350,8 @@ void ObjectManager::selectNPC(MovableObject *mob)
         {
             if (selectedType != mSelectedType)
             {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_player[selectedObject]->getNickName()).c_str());
-                ObjectVisuals::getSingleton().selectNPC(mob, mvObject_player[selectedObject]->getFriendly());
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
+                ObjectVisuals::getSingleton().selectNPC(mob, mvObject_npc[selectedObject]->getFriendly());
             }
             break;
         }
@@ -479,7 +370,7 @@ void ObjectManager::targetObjectFacingPlayer()
 {
 //    SubPos2D pos = mvObject_player[ObjectPlayer::ME]->getTileScrollPos();
 //    mvObject_npc[mSelectedObject]->faceToTile(pos.x, pos.z);
-    mvObject_npc[mSelectedObject]->turning(mvObject_player[ObjectPlayer::ME]->getFacing());
+    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::ME]->getFacing());
 }
 
 ///================================================================================================
@@ -492,6 +383,14 @@ void ObjectManager::targetObjectAttackPlayer()
     targetObjectFacingPlayer();
 }
 
+///================================================================================================
+///
+///================================================================================================
+void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
+{
+    if (mvObject_npc[npcID]->Equip)
+        mvObject_npc[npcID]->Equip->equipItem(bone, type, itemID);
+}
 
 ///================================================================================================
 ///

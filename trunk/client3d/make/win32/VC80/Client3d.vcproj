@@ -248,10 +248,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\object_player.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\object_static.cpp"
 				>
 			</File>
@@ -265,10 +261,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\option_init.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\particle.cpp"
 				>
 			</File>
 			<File
@@ -661,10 +653,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\object_player.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\object_static.h"
 				>
 			</File>
@@ -674,10 +662,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\option.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\particle.h"
 				>
 			</File>
 			<File

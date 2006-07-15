@@ -29,7 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <vector>
 #include <Ogre.h>
-#include "particle.h"
 
 using namespace Ogre;
 

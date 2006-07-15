@@ -30,9 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include "Ogre.h"
 #include "object_npc.h"
-#include "object_player.h"
 #include "object_static.h"
-#include "object_equipment.h"
 
 using namespace Ogre;
 
@@ -44,7 +42,12 @@ using namespace Ogre;
 
 enum
 {
-    OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_GOTO, OBJ_SUM
+    OBJ_WALK, OBJ_TURN,
+    OBJ_TEXTURE,
+    OBJ_ANIMATION,
+    OBJ_GOTO,
+    OBJ_HIT,
+    OBJ_SUM
 };
 
 class ObjectManager
@@ -75,27 +78,16 @@ public:
     }
     void freeRecources();
     bool init();
-    void addMobileObject(ObjectStatic::sObject &obj);
-    void addBoneObject(unsigned int type, const char *meshName, int particleNr);
+    void addMobileObject(sObject &obj);
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
-    const Entity *getWeaponEntity(unsigned int WeaponNr);
-    ParticleSystem *getParticleSystem(unsigned int WeaponNr);
-    unsigned int getSumWeapon()
-    {
-        return (unsigned int) mvObject_weapon.size();
-    }
-    unsigned int getSumArmor()
-    {
-        return (unsigned int) mvObject_armor.size();
-    }
+    void setEquipment(int npcID, int bone, int type, int itemID);
 
     void castSpell(int npc, int spell)
     {
         mvObject_npc[npc]->castSpell(spell);
     }
-    void setPlayerEquipment(int player, int pos, int WeaponNr);
     const Vector3& getPos(int npc)
     {
         return mvObject_npc[npc]->getPos();
@@ -115,6 +107,14 @@ public:
     {
         return mvObject_npc[mSelectedObject]->getNode()->getPosition();
     }
+    ObjectNPC *getObjectNPC(int index)
+    {
+        return mvObject_npc[index];
+    }
+    ObjectNPC *getSelectedNPC()
+    {
+        return mvObject_npc[mSelectedObject];
+    }
     const SubPos2D getTargetedPos()
     {
         return mSelectedPos;
@@ -128,10 +128,7 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     std::string mDescFile;
     std::vector<ObjectStatic*> mvObject_static;
-    std::vector<ObjectPlayer*> mvObject_player;
     std::vector<ObjectNPC*   > mvObject_npc;
-    std::vector<ObjectEquipment*>mvObject_weapon;
-    std::vector<ObjectEquipment*>mvObject_armor;
     int mSelectedType, mSelectedObject;
     int mSelectedFriendly;
     SubPos2D mSelectedPos;

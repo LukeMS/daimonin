@@ -30,15 +30,57 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "object_static.h"
 #include "object_animate.h"
+#include "object_equipment.h"
 
-using namespace Ogre;
+const int MAX_MODEL_TEXTURE_SIZE = 512;
 
-/// Defines:
-/// Mob => (M)oveable (Ob)ject.
+/*
+    void toggleMesh(int pos, int WeaponNr);
+    void setTexture(int pos, int color, int textureNr);
+    void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
+
+private:
+    static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
+    static uchar *texImageBuf;
+    enum
+    {
+        SIDE_BACK,
+        SIDE_FRONT
+    };
+    TexturePtr mTexture;
+    Entity *mEntityEquip[BONE_SUM];
+    ParticleSystem *mPSystem[BONE_SUM];
+*/
+
+
 
 class ObjectNPC : public ObjectStatic
 {
 public:
+    typedef struct
+    {
+        short w, h;             /**< width and height of the image. **/
+        short dstX, dstY;       /**< pos of the image in the model-texture. **/
+        short srcX, srcY;       /**< pos of the image in the race-template-texture. **/
+        short offsetX, offsetY; /**< offset for the next source image. **/
+    }
+    sPicture;
+    enum
+    {
+        ME /**< ME (mIndex == 0) is our Hero. **/
+    };
+    enum
+    {
+        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY, BONE_SUM
+    };
+    enum
+    {
+        TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
+        TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
+        TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
+    };
+
+    class ObjectEquipment *Equip;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
@@ -52,8 +94,18 @@ public:
     void attackObjectOnTile(SubPos2D pos);
     void addToMap();
     void setEnemy();
+    int  getHealth()
+    {
+        return mActHP;
+    }
     void setDamage(int hp);
     void attackShortRange(const SceneNode *node);
+    void castSpell(int spell);
+    void stopMovement();
+    bool isMoving();
+    void raiseWeapon(bool raise);
+    void talkToNpc();
+
     void attack()
     {
         mAttacking = ATTACK_APPROACH;
@@ -62,9 +114,16 @@ public:
     {
         return mDstPos;
     }
-    void castSpell(int spell);
 
-protected:
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    void moveToNeighbourTile();
+
+private:
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
     enum
     {
         ATTACK_NONE,
@@ -76,30 +135,20 @@ protected:
         ATTACK_SUM
     }mAttacking;
 
-    SubPos2D mDestWalkPos;
-    SceneNode *mEnemyNode;
     bool mAutoTurning;
     bool mAutoMoving;
     bool mTalking;
-    int maxHealth, actHealth;
-    int maxMana  , actMana;
-    SubPos2D mDstPos;   /**< the destination pos in the map. **/
-    Vector3 mWalkToPos, mDeltaPos;
-
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
-    void moveToNeighbourTile();
-
-private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    Real mSpawnSize;
+    int mType;
     int mAttack;
     int mDefend;
     int mMaxHP,    mActHP;
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
+    SubPos2D mDstPos;   /**< the destination pos in the map. **/
+    SubPos2D mDestWalkPos;
+    SceneNode *mEnemyNode;
+    Vector3 mWalkToPos, mDeltaPos;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

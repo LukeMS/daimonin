@@ -27,25 +27,19 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef OBJECT_VISUALS_H
 #define OBJECT_VISUALS_H
 
-#include <vector>
 #include "Ogre.h"
-#include "object_manager.h"
 
 using namespace Ogre;
-
 
 class ObjectVisuals
 {
 public:
     enum
     {
-        NPC_LIFEBAR_L,
-        NPC_LIFEBAR_R,
-        NPC_LIFEBAR_M,
+        NPC_LIFEBAR,
         NPC_SELECTION,
         NPC_SUM
     };
-
     enum
     {
         PARTICLE_COLOR_FRIEND_STRT,
@@ -65,23 +59,24 @@ public:
         static ObjectVisuals Singleton; return Singleton;
     }
     void freeRecources();
-    void showLifebar(bool visible)
-    {
-    }
     void selectNPC(MovableObject *mob, int friendly);
     void setPosLifebar(Vector3 pos);
-    void updateSelection(Real facing);
-    void setLengthLifebar(int maxLength, int currentLength);
+    void setLifebar(Real percent, int barWidth = 100);
+    void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);
 
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    Real mWidthLifebarGFX;    /**< Lifebar has the same width like the NPC. **/
     ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
     Entity *mEntity[NPC_SUM];
     SceneNode *mNode[NPC_SUM];
     ColourValue particleColor[PARTICLE_COLOR_SUM];
+    HardwarePixelBufferSharedPtr mHardwarePB;
+    Image mImage;
+    PixelBox mSrcPixelBox;
+    uchar *mTexBuffer;
+
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

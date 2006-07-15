@@ -33,42 +33,29 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+typedef struct
+{
+    int type;               /**< Type: e.g. static, npc, ... **/
+    String nickName;        /**< Ingame-Name **/
+    String meshName;
+    int particleNr;
+    unsigned int index;
+    int posX, posY;         /**< Tile-pos. **/
+    int level;              /**< Floor-level. **/
+    int centred;            /**< Is the object centred on the tile? **/
+    Real facing;
+    int friendly;
+    int attack;
+    int defend;
+    int maxHP;
+    int maxMana;
+    int maxGrace;
+}
+sObject;
+
 class ObjectStatic
 {
 public:
-    enum
-    {
-        RACE_HUMAN_MALE,
-        RACE_HUMAN_FEMALE,
-        RACE_ELF_MALE,
-        RACE_ELF_FEMALE,
-        RACE_DWARF_MALE,
-        RACE_DWARF_FEMALE,
-        RACE_TENTACLE,
-        RACE_SUM
-    }Race;
-
-    typedef struct
-    {
-        int type;               /**< Type: e.g. static, npc, ... **/
-        int Race;
-        String nickName;        /**< Ingame-Name **/
-        String meshName;
-        int particleNr;
-        unsigned int index;
-        int posX, posY;         /**< Tile-pos. **/
-        int level;              /**< Floor-level. **/
-        int centred;            /**< Is the object centred on the tile? **/
-        Real facing;
-        int friendly;
-        int attack;
-        int defend;
-        int maxHP;
-        int maxMana;
-        int maxGrace;
-    }
-    sObject;
-
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

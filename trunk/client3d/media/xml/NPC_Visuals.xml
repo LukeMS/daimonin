@@ -1,13 +1,6 @@
 <?xml version= "1.0" encoding= "us-ascii"?>
- <!--=============================================-->
- <!-- Texture size must be 128x128pix             -->
- <!--=============================================-->
  <XML name= "NPC">
-   <!--==============================================-->
-   <!-- Particle has higher priority than Image.     -->
-   <!-- If you want selection images comment out the -->
-   <!-- selection entry.                             -->
-   <!--==============================================-->
+
    <Particle name= "Particle/SelectionNPC">
      <!-- Selection Friend. -->
      <color name= "Start"  red= "0.0" green= "0.77" blue= "0.22" />
@@ -22,12 +15,10 @@
      <color name= "Stop"   red= "0.3" green= "0.3" blue= "0.5" />
    </Particle>
 
-   <Image name= "Lifebar_L"   posX= "60" posY=   "0" width= "68"height=  "6" meshSizeX=  "8.0" meshSizeY=  "3.0" meshSizeZ=   "0.0"/>
-   <Image name= "Lifebar_R"   posX= "82" posY=   "0" width= "13" height= "21" meshSizeX=  "2.0" meshSizeY=  "5.0" meshSizeZ=   "0.0"/>
-   <Image name= "Lifebar_Bar" posX= "97" posY=   "0" width= "13" height= "15" meshSizeX=  "2.0" meshSizeY=  "2.8" meshSizeZ=   "0.0"/>
+   <!--=============================================-->
+   <!-- Texture size must be 128x128pix             -->
+   <!--=============================================-->
+   <Image name= "Lifebar" posX= "0" posY= "0" width= "128" height= "128" meshSizeX= "22" meshSizeY= "44" meshSizeZ= "0.0"/>
 
-   <Image name= "SelectionF"  posX=  "0" posY=   "0" width= "60" height= "60" meshSizeX= "10.0" meshSizeY=  "0.0" meshSizeZ=  "10.0"/>
-   <Image name= "SelectionE"  posX=  "0" posY=  "60" width= "60" height= "60" meshSizeX= "10.0" meshSizeY=  "0.0" meshSizeZ=  "10.0"/>
-   <Image name= "SelectionN"  posX= "60" posY=  "60" width= "60" height= "60" meshSizeX= "10.0" meshSizeY=  "0.0" meshSizeZ=  "10.0"/>
 </XML>
 

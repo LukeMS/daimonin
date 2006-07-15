@@ -34,6 +34,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_manager.h"
 #include "gui_manager.h"
 #include "object_manager.h"
+#include "object_visuals.h"
 #include "particle_manager.h"
 #include "spell_manager.h"
 
@@ -78,6 +79,7 @@ CEvent::~CEvent()
     ObjectManager::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
     Sound        ::getSingleton().freeRecources();
+    ObjectVisuals::getSingleton().freeRecources();
 }
 
 ///================================================================================================
@@ -343,7 +345,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 if (!once)
                 {
                     Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
-                    ObjectStatic::sObject obj;
+                    sObject obj;
                     obj.meshName  = "Tentacle_N_Small.mesh";
                     obj.nickName  = "michtoen";
                     obj.type      = ObjectManager::OBJECT_NPC;

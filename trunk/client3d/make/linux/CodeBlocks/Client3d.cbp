@@ -409,13 +409,6 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
-		<Unit filename="../../../include/object_player.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
 		<Unit filename="../../../include/object_static.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -431,13 +424,6 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../include/option.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
-		<Unit filename="../../../include/particle.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -649,11 +635,6 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
-		<Unit filename="../../../source/object_player.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
 		<Unit filename="../../../source/object_static.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
@@ -670,11 +651,6 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/option_init.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
-		<Unit filename="../../../source/particle.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />
