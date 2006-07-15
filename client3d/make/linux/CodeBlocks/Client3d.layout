@@ -4,7 +4,31 @@
 	<File name="../../CodingStyle.txt" open="1" top="0" tabpos="1">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="ReadMe.txt" open="1" top="1" tabpos="2">
+	<File name="ReadMe.txt" open="1" top="0" tabpos="2">
 		<Cursor position="277" topLine="0" />
+	</File>
+	<File name="../../../source/events.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="4208" topLine="77" />
+	</File>
+	<File name="../../../source/gui/gui_listbox.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="8360" topLine="173" />
+	</File>
+	<File name="../../../source/main.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="7938" topLine="78" />
+	</File>
+	<File name="../../../source/network.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="8973" topLine="231" />
+	</File>
+	<File name="../../../source/object_manager.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="0" topLine="314" />
+	</File>
+	<File name="../../../source/object_npc.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="4849" topLine="87" />
+	</File>
+	<File name="../../../source/object_visuals.cpp" open="1" top="1" tabpos="3">
+		<Cursor position="10909" topLine="229" />
+	</File>
+	<File name="../../../source/particle_manager.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="3792" topLine="51" />
 	</File>
 </CodeBlocks_layout_file>

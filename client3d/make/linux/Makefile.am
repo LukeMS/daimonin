@@ -58,11 +58,9 @@ client3d_SOURCES = \
 	../../source/object_visuals.cpp \
 	../../source/object_manager.cpp \
 	../../source/object_npc.cpp \
-	../../source/object_player.cpp \	
 	../../source/object_static.cpp \
 	../../source/option.cpp \
 	../../source/option_init.cpp \
-	../../source/particle.cpp \
 	../../source/particle_manager.cpp \
 	../../source/sound.cpp \
 	../../source/spell_manager.cpp \

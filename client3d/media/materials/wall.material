@@ -8,6 +8,7 @@ material Wall_Stone
 //	    scene_blend alpha_blend
 	    texture_unit
 	    {
+filtering linear linear point 
 		texture Wall_Stone.png
               //alpha_op_ex modulate src_texture src_manual 0.01 
             }
@@ -22,9 +23,10 @@ material wall
         pass
         {
 	    alpha_rejection greater_equal 128
-	    scene_blend alpha_blend
+//	    scene_blend alpha_blend
 	    texture_unit
 	    {
+filtering linear linear point 
                 // Give me alpha.
 	        //texture wall3big.png	      
 		texture wall1.1.png
