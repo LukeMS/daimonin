@@ -85,7 +85,7 @@ public:
 
     void getClippingPos(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
     void Print(TextLine *line, Texture *texture, const char *text);
-    void PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
+    void PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
     int CalcTextWidth(const char *text, unsigned int fontNr = 1);
     int getFontHeight(int fontNr)
     {

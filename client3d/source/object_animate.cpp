@@ -44,6 +44,7 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
         "Hit",
         "Slump",
         "Death",
+        "Spawn",
         "Cast", "Cast_Fun",
     };
 
@@ -156,6 +157,8 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     if (animNr >= mAnimGroupEntries[animGroup])
         animNr = 0;
     mAnimNr = animNr;
+    /// If the previous anim was spawn, we cant use random offsets (because of seamless animations).
+    if (mAnimGroup == ANIM_GROUP_SPAWN) random = false;
     mAnimGroup = animGroup;
     mActState->setEnabled(false);
     /// Find the anim pos in the anim-vector.

@@ -151,7 +151,7 @@ void GuiListbox::draw(PixelBox &, Texture *texture)
         {
           if (top - mParent->mContainerFrame->getTop()  >= mMinHeight)
           {
-            top = mParent->mContainerFrame->getTop()+mMinHeight;;
+            top = mParent->mContainerFrame->getTop()+mMinHeight;
             mIsClosing = false;
           }
         }
@@ -191,7 +191,7 @@ void GuiListbox::draw(PixelBox &, Texture *texture)
     if (!mScroll)
     {
         /// Print it to the (invisible) last line of the listbox.
-        GuiTextout::getSingleton().PrintToBuffer(mWidth, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, mFillColor);
+        GuiTextout::getSingleton().PrintToBuffer(mWidth, mHeight, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, mFillColor);
     }
     texture->getBuffer()->blitFromMemory(
         PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
@@ -205,7 +205,6 @@ void GuiListbox::draw(PixelBox &, Texture *texture)
         memcpy(mGfxBuffer, mGfxBuffer + mWidth *mFontHeight, mWidth * mHeight * sizeof(uint32));
     }
 }
-
 
 
 

@@ -312,14 +312,15 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
 ///================================================================================================
 /// Print to a buffer.
 ///================================================================================================
-void GuiTextout::PrintToBuffer(int width, uint32 *dest_data, const char*text, unsigned int fontNr, uint32 bgColor)
+void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr, uint32 bgColor)
 {
     if (fontNr > mvFont.size()) fontNr = 0;
-    int height = mvFont[fontNr]->height;
+    int h = mvFont[fontNr]->height;
+    if (h > height) h = height;
     /// Clear the textline.
-    for (unsigned int i =0; i < width * mvFont[fontNr]->height; ++i) dest_data[i] = bgColor;
+    for (unsigned int i =0; i < width * h; ++i) dest_data[i] = bgColor;
     if (!text || text[0] == 0) return;
-    drawText(width, height, dest_data, text, fontNr);
+    drawText(width, h, dest_data, text, fontNr);
 }
 
 ///================================================================================================

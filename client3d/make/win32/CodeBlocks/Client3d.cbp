@@ -441,13 +441,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\include\object_player.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\include\object_static.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -463,13 +456,6 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\include\option.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\include\particle.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -695,11 +681,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\source\object_player.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\source\object_static.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
@@ -716,11 +697,6 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\option_init.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
-		<Unit filename="..\..\..\source\particle.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -760,5 +736,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

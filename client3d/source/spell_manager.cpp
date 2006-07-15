@@ -41,7 +41,7 @@ http://www.gnu.org/licenses/licenses.html
 bool SpellManager::init(SceneManager *SceneMgr)
 {
     mSceneMgr = SceneMgr;
-    mNode = mSceneMgr->getRootSceneNode();;
+    mNode = mSceneMgr->getRootSceneNode();
     return true;
 }
 

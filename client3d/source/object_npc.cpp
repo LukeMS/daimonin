@@ -29,7 +29,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include "spell_manager.h"
+#include "gui_manager.h"
 #include "object_manager.h"
+#include "object_visuals.h"
 #include "particle_manager.h"
 #include "events.h"
 
@@ -54,6 +56,11 @@ ObjectNPC::~ObjectNPC()
 void ObjectNPC::freeRecources()
 {
     if (mAnim) delete mAnim;
+    if (mType == ObjectManager::OBJECT_PLAYER)
+    {
+		Equip->freeRecources();
+		delete Equip;
+	}
 }
 
 ///================================================================================================
@@ -61,10 +68,7 @@ void ObjectNPC::freeRecources()
 ///================================================================================================
 ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
 {
-    mEntity->setQueryFlags(QUERY_NPC_MASK);
-    mAttacking = ATTACK_NONE;
-    mAutoTurning= false;
-    mAutoMoving = false;
+    mType    = obj.type;
     mFriendly= obj.friendly;
     mAttack  = obj.attack;
     mDefend  = obj.defend;
@@ -74,7 +78,39 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mActMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
     mActGrace=obj.maxGrace;
-    ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8);
+    mEntity->setQueryFlags(QUERY_NPC_MASK);
+    mSpawnSize = 0.0;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Only players can change equipment.
+    /// ////////////////////////////////////////////////////////////////////
+    if (mType == ObjectManager::OBJECT_PLAYER)
+    {
+        Equip = new ObjectEquipment(mEntity);
+        Equip->equipItem(0, 0, 0, -1);  // Just for test
+    }
+    /// ////////////////////////////////////////////////////////////////////
+    /// The first Object is our Hero.
+    /// ////////////////////////////////////////////////////////////////////
+    if (!mIndex)
+    {
+        Vector3 pos = mNode->getPosition();
+        Event->setWorldPos(pos, 0, 0, CEvent::WSYNC_MOVE);
+    }
+
+    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+    mAutoTurning= false;
+    mAutoMoving = false;
+    mEnemyNode = 0;
+    mAttacking = ATTACK_NONE;
+    //mNode->showBoundingBox(true); // Remove Me!!!!
+}
+
+///================================================================================================
+/// Is player currently moving?
+///================================================================================================
+bool ObjectNPC::isMoving()
+{
+    return mAutoMoving;
 }
 
 ///================================================================================================
@@ -89,8 +125,21 @@ void ObjectNPC::attackObjectOnTile(SubPos2D pos)
 void ObjectNPC::update(const FrameEvent& event)
 {
     mAnim->update(event);
+    if (mActHP <0) return;
     ///  Finish the current (non movement) anim first.
     //  if (!mAnim->isMovement()) return;
+
+    if (mSpawnSize != 1.0)
+    {
+        if (mSpawnSize == 0.0)
+        {
+            ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8);
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_SPAWN, 0, false, true);
+        }
+        mSpawnSize+= event.timeSinceLastFrame;
+        if (mSpawnSize > 1.0) mSpawnSize =1.0;
+        mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
+    }
 
     mTranslateVector = Vector3(0,0,0);
     if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
@@ -106,7 +155,7 @@ void ObjectNPC::update(const FrameEvent& event)
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection);
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * turningDirection));
         /// Are we facing into the right direction (+/- 1 degree)?
-        Logger::log().warning() << "deltaDegree: " << deltaDegree;
+        //Logger::log().warning() << "deltaDegree: " << deltaDegree;
         if (deltaDegree <= 1 || deltaDegree >= 360)
         {
             mAutoTurning = false;
@@ -115,14 +164,47 @@ void ObjectNPC::update(const FrameEvent& event)
     }
     else if (mAutoMoving)
     {
-        if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
+        /// We are very close to destination.
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0);
+        Vector3 dist = mWalkToPos - mNode->getPosition();
+        dist.y =0;
+        if(dist.squaredLength() < WALK_PRECISON)
+        {
+            /// Set the exact destination pos.
+            mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
+            mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
+            mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
+            mNode->setPosition(mWalkToPos);
+            if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
+            mDestWalkPos.x+= mActPos.x - mDstPos.x;
+            mDestWalkPos.z+= mActPos.z - mDstPos.z;
+            moveToNeighbourTile();
+            if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
+        }
+        else
+        {
+            /// We have to move on.
+            Vector3 NewTmpPosition = - event.timeSinceLastFrame * mDeltaPos;
+            mNode->setPosition(mNode->getPosition() + NewTmpPosition);
+            if (!mIndex) Event->setWorldPos(NewTmpPosition, 0, 0, CEvent::WSYNC_OFFSET);
+            if (mEnemyNode)
+            {
+                AxisAlignedBox aabb = mNode->_getWorldAABB().intersection(mEnemyNode->_getWorldAABB());
+                if (!aabb.isNull())
+                {
+                    if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
+                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+                    mAutoMoving = false;
+                }
+            }
+        }
+        return;
     }
     else if (mAttacking != ATTACK_NONE)
     {
         switch (mAttacking)
         {
             case ATTACK_ANIM_START:
-                setDamage(20);
                 mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 0);
                 mAttacking = ATTACK_ANIM_RUNNUNG;
                 break;
@@ -133,12 +215,30 @@ void ObjectNPC::update(const FrameEvent& event)
                     // Just a test...
                     if (mAnim->isAttack())
                     {
-                        ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_HIT, 0);
-                        Sound::getSingleton().playStream(Sound::MALE_HIT_01);
+                        if (mIndex)
+                        {
+                            ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(0);
+                            static int oo =0;
+                            if (++oo <=3)
+                            {
+                                mob->setDamage(3);
+                                mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
+                                Sound::getSingleton().playStream(Sound::MALE_HIT_01);
+                            }
+                            if (++oo > 5) oo =0;
+                        }
+                        else
+                        {
+                            ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(1);
+                            mob->setDamage(10);
+                            if (mob->getHealth() <= 0) break;
+                            //mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
+                            Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
+                            ParticleManager::getSingleton().addFreeObject(mob->getNode()->getPosition(), "Particle/Hit", 0.8);
+                        }
                     }
-                    //ParticleManager::getSingleton().addFreeObject(pos, "Particle/Hit", 0.8);
-                    //ObjectManager::getSingleton().targetObjectAttackPlayer();
                     mAttacking = ATTACK_NONE;
+                    if (!mIndex) ObjectManager::getSingleton().targetObjectAttackPlayer();
                 }
                 break;
 
@@ -149,30 +249,38 @@ void ObjectNPC::update(const FrameEvent& event)
 }
 
 ///================================================================================================
-/// Cast a spell.
-///================================================================================================
-void ObjectNPC::castSpell(int spell)
-{
-    //  if (!askServer.AllowedToCast(spell)) return;
-    SpellManager::getSingleton().addObject(spell, mIndex);
-}
-
-///================================================================================================
-/// Decrease HitPoints.
+/// Add damage to an object.
 ///================================================================================================
 void ObjectNPC::setDamage(int damage)
 {
     if (mActHP <0) return;
     mActHP-= damage;
-    //switch (
-    Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
-    ParticleManager::getSingleton().addFreeObject(mNode->getPosition(), "Particle/Hit", 0.8);
+    Real health = (Real)(mActHP) / Real(mMaxHP);
+    if (!mIndex)
+    {
+        GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERINFO, GUI_MSG_BAR_CHANGED,
+                                               GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
+    }
+   else
+    {
+        ObjectVisuals::getSingleton().setLifebar(health);
+    }
     if (mActHP < 0)
     {
         mAttacking = ATTACK_NONE;
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_DEATH, 0);
         Sound::getSingleton().playStream(Sound::MALE_BOUNTY_01);
     }
+}
+
+
+///================================================================================================
+/// Cast a spell.
+///================================================================================================
+void ObjectNPC::castSpell(int spell)
+{
+    //  if (!askServer.AllowedToCast(spell)) return;
+    SpellManager::getSingleton().addObject(spell, mIndex);
 }
 
 ///================================================================================================

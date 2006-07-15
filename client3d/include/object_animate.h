@@ -58,6 +58,10 @@ public:
     {
         return (mAnimGroup == ANIM_GROUP_ATTACK) || (mAnimGroup == ANIM_GROUP_ATTACK_FUN);
     }
+    bool isHit()
+    {
+        return (mAnimGroup == ANIM_GROUP_HIT);
+    }
     const char *getActiceStateName()
     {
         return StateNames[mAnimGroup];
@@ -91,6 +95,7 @@ public:
         ANIM_GROUP_HIT,
         ANIM_GROUP_SLUMP,
         ANIM_GROUP_DEATH,
+        ANIM_GROUP_SPAWN,
         ANIM_GROUP_CAST,
         ANIM_GROUP_CAST_FUN,
         ANIM_GROUP_SUM

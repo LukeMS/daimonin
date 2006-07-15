@@ -119,7 +119,7 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0, ObjectPlayer::TEXTURE_POS_SKIN, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
             break;
         }
 
@@ -127,7 +127,7 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_FACE, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
             break;
         }
 
@@ -135,42 +135,42 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_HAIR, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
             break;
         }
 
         case KC_4:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_BODY, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
             break;
         }
 
         case KC_5:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_LEGS, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_LEGS, color++);
             break;
         }
 
         case KC_6:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_BELT, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BELT, color++);
             break;
         }
 
         case KC_7:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectPlayer::TEXTURE_POS_SHOES, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_SHOES, color++);
             break;
         }
 
         case KC_8:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectPlayer::TEXTURE_POS_HANDS, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HANDS, color++);
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
             break;
         }
@@ -207,23 +207,23 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
 
         case KC_I:
-            ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_HEAD, 1);
+           // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
 
         case KC_O:
-            ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_SHIELD_HAND, 1);
+           // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
 
         case KC_P:
         {
-            static int weaponNr = ObjectManager::getSingleton().getSumWeapon()-1;
-            ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectPlayer::BONE_WEAPON_HAND, weaponNr--);
-            if (weaponNr < 0) weaponNr = ObjectManager::getSingleton().getSumWeapon();
+            static int weaponNr = 0;
+            ObjectManager::getSingleton().setEquipment(0, ObjectNPC::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, weaponNr++);
+            if (weaponNr == 2) weaponNr =0;
             break;
         }
 
         case KC_Q:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+//            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
             break;
 
             /// ////////////////////////////////////////////////////////////////////
