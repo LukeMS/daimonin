@@ -34,14 +34,16 @@ material NPC_Visuals
   {
     pass
     {
-      //depth_check off
-      depth_write off
-      scene_blend alpha_blend
-      // alpha_rejection greater_equal 128
-      texture_unit
-      {
-         texture NPC_Visuals.png
-      }
+         lighting off
+         scene_blend alpha_blend
+	 alpha_rejection greater_equal 128
+         depth_check off
+	 depth_write on
+         texture_unit
+         {
+	    filtering none
+
+         }
     }
   }
 }
