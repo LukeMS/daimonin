@@ -72,7 +72,9 @@
 #define access(__a, __b) _access(__a, __b)
 #define chmod(__a, __b) _chmod(__a, __b)
 #define hypot(__a, __b) _hypot(__a, __b)
+#ifndef MINGW
 #define fileno(__a) _fileno(__a)
+#endif
 #define umask(__a) _umask(__a)
 #define lseek(__a, __b, __c) _lseek(__a, __b, __c)
 
