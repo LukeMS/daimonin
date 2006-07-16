@@ -66,7 +66,7 @@ void ObjectNPC::freeRecources()
 ///================================================================================================
 /// Init the model from the description file.
 ///================================================================================================
-ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
+ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 {
     mType    = obj.type;
     mFriendly= obj.friendly;
@@ -79,7 +79,11 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mMaxGrace=obj.maxGrace;
     mActGrace=obj.maxGrace;
     mEntity->setQueryFlags(QUERY_NPC_MASK);
-    mSpawnSize = 0.0;
+    if (spawn)
+        mSpawnSize = 0.0;
+    else
+        mSpawnSize = 1.0;
+    mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
     /// ////////////////////////////////////////////////////////////////////
     /// Only players can change equipment.
     /// ////////////////////////////////////////////////////////////////////
@@ -102,7 +106,10 @@ ObjectNPC::ObjectNPC(sObject &obj):ObjectStatic(obj)
     mAutoMoving = false;
     mEnemyNode = 0;
     mAttacking = ATTACK_NONE;
-    //mNode->showBoundingBox(true); // Remove Me!!!!
+
+
+
+   // mNode->showBoundingBox(true); // Remove Me!!!!
 }
 
 ///================================================================================================

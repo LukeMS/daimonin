@@ -61,9 +61,12 @@ public:
     void freeRecources();
     void selectNPC(MovableObject *mob, int friendly);
     void setPosLifebar(Vector3 pos);
-    void setLifebar(Real percent, int barWidth = 100);
+    void setLifebar(Real percent, int barWidth = 128);
     void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);
-
+    const AxisAlignedBox &getBoundingBox()
+    {
+        return mAABB;
+    }
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
@@ -76,6 +79,7 @@ private:
     Image mImage;
     PixelBox mSrcPixelBox;
     uchar *mTexBuffer;
+    AxisAlignedBox mAABB;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.

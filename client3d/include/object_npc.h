@@ -34,26 +34,6 @@ http://www.gnu.org/licenses/licenses.html
 
 const int MAX_MODEL_TEXTURE_SIZE = 512;
 
-/*
-    void toggleMesh(int pos, int WeaponNr);
-    void setTexture(int pos, int color, int textureNr);
-    void drawBopyPart(sPicture &part, Image &image, uint32 number, uint32 color);
-
-private:
-    static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
-    static uchar *texImageBuf;
-    enum
-    {
-        SIDE_BACK,
-        SIDE_FRONT
-    };
-    TexturePtr mTexture;
-    Entity *mEntityEquip[BONE_SUM];
-    ParticleSystem *mPSystem[BONE_SUM];
-*/
-
-
-
 class ObjectNPC : public ObjectStatic
 {
 public:
@@ -84,7 +64,7 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    ObjectNPC(sObject &obj);
+    ObjectNPC(sObject &obj, bool spawn);
     virtual ~ObjectNPC();
     virtual void freeRecources();
     virtual void update(const FrameEvent& event);

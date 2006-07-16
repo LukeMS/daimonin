@@ -152,7 +152,7 @@ void ObjectManager::addMobileObject(sObject &obj)
         {
             static unsigned int index=0;
             obj.index = index++;
-            ObjectNPC *obj_npc = new ObjectNPC(obj);
+            ObjectNPC *obj_npc = new ObjectNPC(obj, true);
             if (!obj_npc) return;
             mvObject_npc.push_back(obj_npc);
             break;
