@@ -94,6 +94,7 @@ void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
     /// ////////////////////////////////////////////////////////////////////
     if (func == WSYNC_OFFSET)
     {
+//        long i = Root::getSingleton().getTimer()->getMilliseconds()
         mCamera->move(pos);
         return;
     }

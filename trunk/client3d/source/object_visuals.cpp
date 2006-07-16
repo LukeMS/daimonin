@@ -38,14 +38,6 @@ http://www.gnu.org/licenses/licenses.html
 /// Init all static Elemnts.
 ///===================================================
 
-struct
-{
-    std::string name;
-    Real x1, x2, z1, z2;
-    Real sizeX, sizeY, sizeZ;
-}
-GfxEntry[ObjectVisuals::NPC_SUM];
-
 const int TEXTURE_SIZE = 128;
 const char MATERIAL_NAME[] = "NPC_Visuals";
 const char TEXTURE_NAME[] = "TexVisuals";
@@ -87,7 +79,6 @@ ObjectVisuals::ObjectVisuals()
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the gfx coordinates.
     /// ////////////////////////////////////////////////////////////////////
-    int index =-1;
     float color[3];
     mPSystem = 0;
     if ((xmlElem = xmlRoot->FirstChildElement("Particle")) && ((strTemp = xmlElem->Attribute("name"))))
@@ -107,23 +98,20 @@ ObjectVisuals::ObjectVisuals()
             particleColor[i] = ColourValue(color[0], color[1], color[2], 1.0f);
         }
     }
-    for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
-    {
-        if (!(strTemp = xmlElem->Attribute("name"))) continue;
-        if (++index >= NPC_SUM) break;
-        GfxEntry[index].name = strTemp;
-        if ((strTemp = xmlElem->Attribute("posX"     ))) GfxEntry[index].x1    = atof(strTemp)/ TEXTURE_SIZE;
-        if ((strTemp = xmlElem->Attribute("posY"     ))) GfxEntry[index].z1    = atof(strTemp)/ TEXTURE_SIZE;
-        if ((strTemp = xmlElem->Attribute("width"    ))) GfxEntry[index].x2    = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].x1;
-        if ((strTemp = xmlElem->Attribute("height"   ))) GfxEntry[index].z2    = atof(strTemp)/ TEXTURE_SIZE + GfxEntry[index].z1;
-        if ((strTemp = xmlElem->Attribute("meshSizeX"))) GfxEntry[index].sizeX  = atof(strTemp);
-        if ((strTemp = xmlElem->Attribute("meshSizeY"))) GfxEntry[index].sizeY  = atof(strTemp);
-        if ((strTemp = xmlElem->Attribute("meshSizeZ"))) GfxEntry[index].sizeZ  = atof(strTemp);
-    }
+
     buildEntity(NPC_LIFEBAR, "MeshLifebar",  "EntityLifebar");
     if (!mPSystem) buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
 
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_NAME);
+/*
+    tmpMaterial->setDepthBias(true);
+    tmpMaterial->setDepthCheckEnabled(false);
+    tmpMaterial->setDepthWriteEnabled(false);
+*/
+    tmpMaterial->setDepthBias(false);
+    tmpMaterial->setDepthCheckEnabled(true);
+    tmpMaterial->setDepthWriteEnabled(true);
+
     mTexBuffer = new uchar[TEXTURE_SIZE * TEXTURE_SIZE * sizeof(uint32)];
     Image image;
     image.loadDynamicImage(mTexBuffer, TEXTURE_SIZE, TEXTURE_SIZE, PF_A8B8G8R8);
@@ -141,26 +129,27 @@ ObjectVisuals::ObjectVisuals()
 ///===================================================
 void ObjectVisuals::buildEntity(int index, const char *meshName, const char *entityName)
 {
+    Real h = 20.0, w = 10.0;
     String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
     ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
 
     mob->begin(MATERIAL_NAME);
 
-    mob->position(-GfxEntry[index].sizeX, 0.0, -GfxEntry[index].sizeZ);
+    mob->position(-w, h, 0.0);
     mob->normal(0,0,1);
-    mob->textureCoord(GfxEntry[index].x1, GfxEntry[index].z1);
+    mob->textureCoord(0.0, 0.0);
 
-    mob->position(-GfxEntry[index].sizeX, -GfxEntry[index].sizeY, GfxEntry[index].sizeZ);
+    mob->position(-w, -h, 0.0);
     mob->normal(0,0,1);
-    mob->textureCoord(GfxEntry[index].x1, GfxEntry[index].z2);
+    mob->textureCoord(0.0, 1.0);
 
-    mob->position(GfxEntry[index].sizeX, 0.0, -GfxEntry[index].sizeZ);
+    mob->position( w,  h, 0.0);
     mob->normal(0,0,1);
-    mob->textureCoord(GfxEntry[index].x2, GfxEntry[index].z1);
+    mob->textureCoord(1.0, 0.0);
 
-    mob->position(GfxEntry[index].sizeX, -GfxEntry[index].sizeY, GfxEntry[index].sizeZ);
+    mob->position( w, -h, 0.0);
     mob->normal(0,0,1);
-    mob->textureCoord(GfxEntry[index].x2, GfxEntry[index].z2);
+    mob->textureCoord(1.0, 1.0);
 
     mob->triangle(0, 1, 2);
     mob->triangle(3, 2, 1);
@@ -182,6 +171,7 @@ void ObjectVisuals::setPosLifebar(Vector3 pos)
 void ObjectVisuals::setLifebar(Real percent, int barWidth)
 {
     if (percent <0.0) percent =0.0;
+    if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
     if (percent > 0.5)
     {   /// (green bar)
@@ -198,17 +188,16 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
         color = 0xff5f0000;
         dColor= 0x00160000;
     }
-    int x1 = (TEXTURE_SIZE - barWidth)/2;
-    int x2 = x1 + barWidth;
-    int xfill = x2 - (int)(percent * barWidth);
 
-    PixelBox pb = mHardwarePB->lock(Box(0, 127-10, TEXTURE_SIZE, 127), HardwareBuffer::HBL_NORMAL);
+    int x1 = (TEXTURE_SIZE - barWidth)/2;
+    int xfill = barWidth - (int)(percent * barWidth);
+    PixelBox pb = mHardwarePB->lock(Box(x1, TEXTURE_SIZE-11, x1 + barWidth, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     uint32 * dest_data = (uint32*)pb.data;
-    for (int x = x1; x < x2; ++x) dest_data[x] = 0xff000000;
+    for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     dest_data+= TEXTURE_SIZE;
     for (int y = 0; y < 9; ++y)
     {
-        for (int x = x1; x < x2; ++x)
+        for (int x = 0; x < barWidth; ++x)
         {
             if (x <= xfill) dest_data[x] = 0xff000000;
             else            dest_data[x] = color;
@@ -217,7 +206,7 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
         else       color-= dColor;
         dest_data+= TEXTURE_SIZE;
     }
-    for (int x = x1; x < x2; ++x) dest_data[x] = 0xff000000;
+    for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     mHardwarePB->unlock();
 }
 
@@ -249,22 +238,22 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
     mNode[NPC_LIFEBAR] = mob->getParentSceneNode()->createChildSceneNode(strNode);
     mNode[NPC_LIFEBAR]->attachObject(mEntity[NPC_LIFEBAR]);
     pos = mNode[NPC_LIFEBAR]->getPosition();
-    mNode[NPC_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +40, pos.z);
+    mNode[NPC_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
     mNode[NPC_LIFEBAR]->setInheritOrientation(false);
 
-    const int fontNr = 4;
+    const int fontNr = 3;
     const char *name = ObjectManager::getSingleton().getSelectedNPC()->getNickName().c_str();
     int len = GuiTextout::getSingleton().CalcTextWidth(name, fontNr);
-    if (len >128) len = 128;
+    if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
 
-    PixelBox pb = mHardwarePB->lock(Box(0, 0, 127, 127), HardwareBuffer::HBL_NORMAL);
+    PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     /// Clear the whole texture.
     uint32 *dest_data = (uint32*)pb.data;
-    for (int i=0; i < 128*128; ++i) *dest_data++ = 0x0;
+    for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
     /// Print NPC name.
-    dest_data = (uint32*)pb.data + (127-28) * TEXTURE_SIZE + len;
-    GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, fontNr,  0x00000000);
+    dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
+  //  GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, fontNr,  0x00000000);
     mHardwarePB->unlock();
     setLifebar(1.0);
 }
