@@ -39,7 +39,7 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    GuiAnimation(TiXmlElement *xmlElem, int maxX, int maxY);
+    GuiAnimation(TiXmlElement *xmlElem, int maxX, int maxY, void *parent);
     ~GuiAnimation()
     {}
 private:

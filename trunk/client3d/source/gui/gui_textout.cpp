@@ -273,9 +273,10 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
 }
 
 ///================================================================================================
-/// .
+/// To prevent border checking on every print:
+/// You MUST do a getClippingPos(...) on your Textline before comming here!
 ///================================================================================================
-void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
+void GuiTextout::Print(TextLine *line, Texture *texture)
 {
     /// Restore background.
     if (line->index >= 0)
@@ -297,12 +298,9 @@ void GuiTextout::Print(TextLine *line, Texture *texture, const char *text)
             PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer)
         );
     }
-    if (!text) return;
     /// draw the text into buffer.
-    if (!text[0])
-        drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, " " , line->font);
-    else
-        drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, text, line->font);
+    if (!line->text.size()) line->text = " ";
+    drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, line->text.c_str(), line->font);
     /// Blit it into the window.
     texture->getBuffer()->blitFromMemory(
         PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer),
@@ -318,7 +316,7 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
     int h = mvFont[fontNr]->height;
     if (h > height) h = height;
     /// Clear the textline.
-    for (unsigned int i =0; i < width * h; ++i) dest_data[i] = bgColor;
+    for (int i =0; i < width * h; ++i) dest_data[i] = bgColor;
     if (!text || text[0] == 0) return;
     drawText(width, h, dest_data, text, fontNr);
 }
@@ -407,12 +405,17 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 }
 
 ///================================================================================================
-/// .
+/// Puts the end pos oft the text in line.x2 / line.y2.
+/// Returns false if the text is not within the window.
 ///================================================================================================
-void GuiTextout::getClippingPos(unsigned int &x, unsigned int &y, int maxWidth, int maxHeight, const char *text, unsigned int fontNr)
+bool GuiTextout::getClippingPos(TextLine &line, int maxWidth, int maxHeight)
 {
-    if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
-    //  int h = mvFont[fontNr]->height;
+    if (line.x1 >= (unsigned int)maxWidth || line.y1 >= (unsigned int)maxHeight) return false;
+    if (line.font >= (int)mvFont.size()) line.font = (int)mvFont.size()-1;
+
+    const char *text = line.text.c_str();
+    line.x2 = line.x1 +1;
+    line.y2 = line.y1 +1;
     while(*text)
     {
         if ((unsigned char) *text < 32 || (unsigned char)*text >= CHARS_IN_FONT + 32) continue;
@@ -429,16 +432,17 @@ void GuiTextout::getClippingPos(unsigned int &x, unsigned int &y, int maxWidth, 
             break;
 
             default:
-            if (x + mvFont[fontNr]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
+            if (line.x2 + mvFont[line.font]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
             {
-                x+= mvFont[fontNr]->charWidth[*text - 32] +1;
+                line.x2+= mvFont[line.font]->charWidth[*text - 32] +1;
             }
             ++text;
             break;
         }
     }
-    y+= mvFont[fontNr]->height;
-    if (y > (unsigned int)maxHeight) y = (unsigned int)maxHeight;
+    line.y2+= mvFont[line.font]->height;
+    if (line.y2 > (unsigned int)maxHeight) line.y2 = (unsigned int)maxHeight;
+    return true;
 }
 
 ///================================================================================================

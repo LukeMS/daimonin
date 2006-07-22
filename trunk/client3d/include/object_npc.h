@@ -70,7 +70,7 @@ public:
     virtual void update(const FrameEvent& event);
     void moveToDistantTile(SubPos2D pos);
     void faceToTile(SubPos2D pos);
-    void turning(Real turn);
+    void turning(Real turn, bool cursorTurn);
     void attackObjectOnTile(SubPos2D pos);
     void addToMap();
     void setEnemy();
@@ -115,6 +115,7 @@ private:
         ATTACK_SUM
     }mAttacking;
 
+    Real mCursorTurning;
     bool mAutoTurning;
     bool mAutoMoving;
     bool mTalking;

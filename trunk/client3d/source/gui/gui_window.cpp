@@ -24,12 +24,13 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
+#include <Ogre.h>
+#include <tinyxml.h>
 #include "define.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
 #include "gui_textout.h"
 #include "gui_manager.h"
-#include "gui_gadget.h"
 #include "gui_imageset.h"
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
@@ -37,9 +38,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "sound.h"
 #include "events.h"
 #include "logger.h"
-#include <Ogre.h>
-#include <OgreHardwarePixelBuffer.h>
-#include <tinyxml.h>
 
 using namespace Ogre;
 
@@ -59,6 +57,7 @@ std::string GuiWindow::mStrTooltip ="";
 GuiWindow::GuiWindow()
 {
     isInit = false;
+    mGadgetDrag = false;
 }
 
 ///================================================================================================
@@ -66,41 +65,39 @@ GuiWindow::GuiWindow()
 ///================================================================================================
 void GuiWindow::freeRecources()
 {
-    // Delete the gadgets.
-    for (vector<GuiGadget*>::iterator i = mvGadget.begin(); i < mvGadget.end(); ++i)
-    {
-        delete (*i)
-        ;
-    }
-    mvGadget.clear();
+    // Delete the buttons.
+    for (vector<GuiGadgetButton*>::iterator i = mvGadgetButton.begin(); i < mvGadgetButton.end(); ++i)
+        delete (*i);
+    mvGadgetButton.clear();
+
+    // Delete the comboboxes.
+    for (vector<GuiGadgetCombobox*>::iterator i = mvGadgetCombobox.begin(); i < mvGadgetCombobox.end(); ++i)
+        delete (*i);
+    mvGadgetCombobox.clear();
+
     // Delete the listboxes.
     for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
-    {
-        delete (*i)
-        ;
-    }
+        delete (*i);
     mvListbox.clear();
+
     // Delete the graphics.
     for (vector<GuiGraphic*>::iterator i = mvGraphic.begin(); i < mvGraphic.end(); ++i)
-    {
-        delete (*i)
-        ;
-    }
+        delete (*i);
     mvGraphic.clear();
+
     // Delete the textlines.
     for (vector<TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
     {
-        if ((*i)->
-                index >= 0) delete[] (*i)->BG_Backup;
+        if ((*i)->index >= 0) delete[] (*i)->BG_Backup;
         delete (*i);
     }
     mvTextline.clear();
+
     // Delete the statusbars.
     for (vector<GuiStatusbar*>::iterator i = mvStatusbar.begin(); i < mvStatusbar.end(); ++i)
-    {
         delete (*i);
-    }
     mvStatusbar.clear();
+
     // Set all shared pointer to null.
     mMaterial.setNull();
     mTexture.setNull();
@@ -111,13 +108,11 @@ void GuiWindow::freeRecources()
 ///================================================================================================
 void GuiWindow::Init(TiXmlElement *xmlElem)
 {
-    mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
-    mMousePressed  = -1;
-    mMouseOver     = -1;
+    mMousePressed  =-1;
+    mMouseOver     =-1;
     mSpeakAnimState= 0;
+    mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
     parseWindowData(xmlElem);
-    createWindow();
-    drawAll();
     isInit = true;
 }
 
@@ -129,8 +124,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     TiXmlElement *xmlElem;
     const char *strTmp;
 
-    if ((strTmp = xmlRoot->Attribute("name")))
-        mStrName = strTmp;
+    if ((strTmp = xmlRoot->Attribute("name"))) mStrName = strTmp;
     Logger::log().info () << "Parsing window: " << mStrName;
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Coordinates type.
@@ -138,8 +132,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     mSizeRelative = false;
     if ((strTmp = xmlRoot->Attribute("relativeCoords")))
     {
-        if (!stricmp(strTmp, "true"))
-            mSizeRelative = true;
+        if (!stricmp(strTmp, "true")) mSizeRelative = true;
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Size entries.
@@ -151,10 +144,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if ((strTmp = xmlElem->Attribute("height")))
             mHeight = atoi(strTmp);
     }
-    if (mWidth  < MIN_GFX_SIZE)
-        mWidth  = MIN_GFX_SIZE;
-    if (mHeight < MIN_GFX_SIZE)
-        mHeight = MIN_GFX_SIZE;
+    if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
+    if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Position entries.
@@ -169,7 +160,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         else // centred.
         {
-           mPosX = (GuiManager::getSingleton().getScreenWidth() - mWidth)/2;
+            mPosX = (GuiManager::getSingleton().getScreenWidth() - mWidth)/2;
         }
         if ((strTmp = xmlElem->Attribute("y")))
         {
@@ -178,7 +169,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         else // centred.
         {
-           mPosY = (GuiManager::getSingleton().getScreenHeight() - mHeight)/2;
+            mPosY = (GuiManager::getSingleton().getScreenHeight() - mHeight)/2;
         }
         if ((strTmp = xmlElem->Attribute("zOrder")))
             mPosZ = atoi(strTmp);
@@ -207,155 +198,122 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if ((strTmp = xmlElem->Attribute("text")))
             mStrTooltip = strTmp;
     }
+
     /// ////////////////////////////////////////////////////////////////////
-    /// Parse the gadgets.
+    /// Now we have all datas to create the window..
     /// ////////////////////////////////////////////////////////////////////
-    GuiSrcEntry *srcEntry;
-    for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
-    {
-        int w = 0;
-        int h = 0;
+    createWindow();
 
-
-        if ((strTmp = xmlElem->Attribute("image_name")))
-        {
-            if (( srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp)))
-            {
-                w = srcEntry->width;
-                h = srcEntry->height;
-            }
-        }
-
-        if ( !strcmp(xmlElem->Attribute("type"), "BUTTON"))
-        {
-            GuiGadgetButton *button = new GuiGadgetButton(xmlElem, w, h, mWidth, mHeight);
-            mvGadget.push_back(button);
-            mvButton.push_back(button);
-        }
-        else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
-        {
-            GuiGadgetCombobox *combobox = new GuiGadgetCombobox(xmlElem, w, h, mWidth, mHeight);
-            mvCombobox.push_back(combobox);
-            mvGadget.push_back(combobox);
-        }
-        else
-            Logger::log().warning() << xmlElem->Attribute("type") << " is not a defined gadget type.";
-
-    }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the graphics.
     /// ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
     {
-        if (!(strTmp = xmlElem->Attribute("type")))
-            continue;
+        if (!(strTmp = xmlElem->Attribute("type"))) continue;
         if (!stricmp(strTmp, "COLOR_FILL"))
-        { /// This is a COLOR_FILL.
-            GuiGraphic *graphic = new GuiGraphic(xmlElem, 0, 0, mWidth, mHeight);
-            mvGraphic.push_back(graphic);
-        }
-        else
-        { /// This is a GFX_FILL.
-            /// Find the gfx data in the tileset.
-            if (!(strTmp = xmlElem->Attribute("image_name")))
-                continue;
-            srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
-            if (srcEntry)
-            {
-                GuiGraphic *graphic = new GuiGraphic(xmlElem, srcEntry->width, srcEntry->height, mWidth, mHeight);
-                for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
-                {
-                    graphic->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
-                }
-                mvGraphic.push_back(graphic);
-            }
-            else
-            {
-                Logger::log().warning() << strTmp << " was defined in '" << FILE_GUI_WINDOWS
-                << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
-            }
-        }
-    }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the listboxes.
-    /// ////////////////////////////////////////////////////////////////////
-    for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
-    {
-        if (!(strTmp = xmlElem->Attribute("name")))
-            continue;
-        GuiListbox *listbox = new GuiListbox(xmlElem, 0, 0, mWidth, mHeight);
-        mvListbox.push_back(listbox);
+            mvGraphic.push_back(new GuiGraphic(xmlElem, this));
+        else /// This is a GFX_FILL.
+            mvGraphic.push_back(new GuiGraphic(xmlElem, this));
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Label.
     /// ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Label"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Label"))
     {
-        TextLine *textline = new TextLine;
-        textline->index = -1; /// Value < 0 => Can be deleted after drawing.
-        textline->BG_Backup = 0;
-        if ((strTmp = xmlElem->Attribute("x")))
-            textline->x1   = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("y")))
-            textline->y1   = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("font")))
-            textline->font = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("text")))
-            textline->text = strTmp;
-        mvTextline.push_back(textline);
+        printParsedTextline(xmlElem);
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Textbox.
     /// ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("TextBox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextBox"))
     {
-        TextLine *textline = new TextLine;
-        if ((strTmp = xmlElem->Attribute("name")))
+        // Error: No name found. Fallback to label.
+        if (!(strTmp = xmlElem->Attribute("name")))
         {
-            for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+            Logger::log().warning() << "A Textbox without a name was found. Will be handled as static text.";
+            printParsedTextline(xmlElem);
+            continue;
+        }
+        int index = -1;
+        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+        {
+            if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
             {
-                if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
-                {
-                    textline->index = GuiImageset::getSingleton().getElementIndex(i);
-                    break;
-                }
+                index = GuiImageset::getSingleton().getElementIndex(i);
+                break;
             }
         }
-        else /// Error: No name found. Fallback to label.
+        if (index <0)
         {
-            Logger::log().error() << "A Textbox without a name was found.";
-            textline->index = -1;
+            Logger::log().warning() << "TextBox mame " << strTmp << " is unknown. Will be handled as static text.";
+            printParsedTextline(xmlElem);
+            continue;
         }
-        textline->BG_Backup = 0;
-        if ((strTmp = xmlElem->Attribute("font")))
-            textline->font = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("x")))
-            textline->x1   = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("y")))
-            textline->y1   = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("width")))
-            textline->width= atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("text")))
-            textline->text = strTmp;
+        TextLine *textline = new TextLine;
+        textline->index = index;
+        if ((strTmp = xmlElem->Attribute("font")))   textline->font = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("x")))      textline->x1   = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("y")))      textline->y1   = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("width")))  textline->width= atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("text")))   textline->text = strTmp;
+
+        /// Calculate the needed gfx-buffer size for the text.
+        if (GuiTextout::getSingleton().getClippingPos(*textline, mWidth, mHeight) == false)
+        {
+            delete textline;
+            continue;
+        }
+
+        /// Fill the BG_Backup buffer with Window background, before printing.
         mvTextline.push_back(textline);
+        textline->x2 = textline->x1 + textline->width;
+        if (textline->x2 >= (unsigned int) mWidth) textline->x2 = mWidth-1;
+        textline->BG_Backup = new uint32[(textline->x2- textline->x1) * (textline->y2- textline->y1)];
+        mTexture.getPointer()->getBuffer()->blitToMemory(Box(
+                    textline->x1, textline->y1,
+                    textline->x2, textline->y2),
+                PixelBox(
+                    textline->x2- textline->x1,
+                    textline->y2- textline->y1,
+                    1, PF_A8R8G8B8, textline->BG_Backup));
+        GuiTextout::getSingleton().Print(textline, mTexture.getPointer());
+    }
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Parse the listboxes.
+    /// ////////////////////////////////////////////////////////////////////
+    for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
+    {
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvListbox.push_back(new GuiListbox(xmlElem, this));
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the Statusbars.
     /// ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
     {
-        GuiStatusbar *statusbar = new GuiStatusbar(xmlElem, 0,0, mWidth, mHeight);
-        if (!(strTmp = xmlElem->Attribute("image_name")))
-            continue;
-        srcEntry = GuiImageset::getSingleton().getStateGfxPositions(strTmp);
-        if (srcEntry)
+        if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
+        mvStatusbar.push_back(new GuiStatusbar(xmlElem, this));
+    }
+
+    /// ////////////////////////////////////////////////////////////////////
+    /// Parse the gadgets.
+    /// ////////////////////////////////////////////////////////////////////
+    for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
+    {
+        if ( !strcmp(xmlElem->Attribute("type"), "BUTTON"))
         {
-            for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
-            {
-                statusbar->setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
-            }
+            GuiGadgetButton *button = new GuiGadgetButton(xmlElem, this);
+            button->setFunction(this->buttonPressed);
+            mvGadgetButton.push_back(button);
         }
-        mvStatusbar.push_back(statusbar);
+        else if ( !strcmp(xmlElem->Attribute("type"), "COMBOBOX"))
+        {
+            GuiGadgetCombobox *combobox = new GuiGadgetCombobox(xmlElem, this);
+            mvGadgetCombobox.push_back(combobox);
+        }
+        else
+            Logger::log().warning() << xmlElem->Attribute("type") << " is not a defined gadget type.";
     }
 
     /// ////////////////////////////////////////////////////////////////////
@@ -395,30 +353,47 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         mSceneNode = new SceneNode(0);
         mSceneNode->attachObject(head);
 
-
         Real px, py;
         px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
              *(mPosX+ mHeadPosX) - Event->getCamCornerX();
         py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
              *(mPosY+ mHeadPosY) - Event->getCamCornerY();
         mSceneNode->setPosition(px, py, -200);
-
-
         mSceneNode->scale(.5, .5, .5); // testing
-
         mSpeakAnimState = head->getAnimationState("Speak");
         mSpeakAnimState->setEnabled(true);
         mManualAnimState = head->getAnimationState("manual");
         mManualAnimState->setTimePosition(0);
+        mNPC_HeadOverlay = OverlayManager::getSingleton().create("GUI_Overlay_Head");
+        mNPC_HeadOverlay->setZOrder(500);
+        mNPC_HeadOverlay->add3D(mSceneNode);
+        mNPC_HeadOverlay->show();
     }
+}
 
-
+///================================================================================================
+/// Parse and print a textline.
+///================================================================================================
+inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
+{
+    const char *strTmp;
+    TextLine textline;
+    textline.index = -1;
+    textline.BG_Backup = 0;
+    if ((strTmp = xmlElem->Attribute("x")))    textline.x1   = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("y")))    textline.y1   = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("font"))) textline.font = atoi(strTmp);
+    if ((strTmp = xmlElem->Attribute("text"))) textline.text = strTmp;
+    if (GuiTextout::getSingleton().getClippingPos(textline, mWidth, mHeight))
+    {
+        GuiTextout::getSingleton().Print(&textline, mTexture.getPointer());
+    }
 }
 
 ///================================================================================================
 /// Create the window.
 ///================================================================================================
-void GuiWindow::createWindow()
+inline void GuiWindow::createWindow()
 {
     mWindowNr = ++msInstanceNr;
     std::string strNum = StringConverter::toString(msInstanceNr);
@@ -437,115 +412,12 @@ void GuiWindow::createWindow()
     mMaterial->load();
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
-    //mOverlay->show();
-    ///
-    if (mSceneNode)
-    {
-        mNPC_HeadOverlay = OverlayManager::getSingleton().create("GUI_Overlay_Head");
-        mNPC_HeadOverlay->setZOrder(500);
-        mNPC_HeadOverlay->add3D(mSceneNode);
-        mNPC_HeadOverlay->show();
-    }
-
     // If the window is smaller then the texture - we have to set the delta-size to transparent.
-    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY )
-                  ;
+    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
     uint32 *dest_data = (uint32*)pb.data;
     for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)
         *dest_data++ = 0;
     mTexture->getBuffer()->unlock();
-}
-
-///================================================================================================
-/// Returns the gadget under the mousepointer.
-///================================================================================================
-int GuiWindow::getGadgetMouseIsOver(int x, int y)
-{
-    for (unsigned int i = 0; i < mvGadget.size(); ++i)
-    {
-        if (mvGadget[i]->mouseOver(x, y))
-            return i;
-    }
-    return -1;
-}
-
-///================================================================================================
-/// Draw all window elements.
-///================================================================================================
-void GuiWindow::drawAll()
-{
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw the background.
-    /// ////////////////////////////////////////////////////////////////////
-    for (unsigned int i = 0; i < mvGraphic.size(); ++i)
-    {
-        mvGraphic[i]->draw(mSrcPixelBox, mTexture.getPointer());
-    }
-
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw text.
-    /// ////////////////////////////////////////////////////////////////////
-    for (unsigned int i = 0; i < mvTextline.size() ; ++i)
-    {
-        /// ////////////////////////////////////////////////////////////////////
-        /// Clipping.
-        /// ////////////////////////////////////////////////////////////////////
-        if (mvTextline[i]->x1 >= (unsigned int) mWidth || mvTextline[i]->y1 >= (unsigned int) mHeight)
-        {
-            mvTextline[i]->clipped = true;
-            continue;
-        }
-        mvTextline[i]->clipped = false;
-        /// Calculate the needed gfx-buffer size for the text.
-        mvTextline[i]->x2 = mvTextline[i]->x1 +1;
-        mvTextline[i]->y2 = mvTextline[i]->y1 +1;
-        GuiTextout::getSingleton().getClippingPos(
-            mvTextline[i]->x2,
-            mvTextline[i]->y2,
-            mWidth,
-            mHeight,
-            mvTextline[i]->text.c_str(),
-            mvTextline[i]->font);
-        /// Fill the BG_Backup buffer with Window background, before printing.
-        if (mvTextline[i]->index >= 0)  // Dynamic text.
-        {
-            mvTextline[i]->x2 = mvTextline[i]->x1 + mvTextline[i]->width;
-            if (mvTextline[i]->BG_Backup)
-                delete[] mvTextline[i]->BG_Backup;
-            mvTextline[i]->BG_Backup = new uint32[(mvTextline[i]->x2- mvTextline[i]->x1) * (mvTextline[i]->y2- mvTextline[i]->y1)];
-            mTexture.getPointer()->getBuffer()->blitToMemory(Box(
-                        mvTextline[i]->x1, mvTextline[i]->y1,
-                        mvTextline[i]->x2, mvTextline[i]->y2),
-                    PixelBox(
-                        mvTextline[i]->x2- mvTextline[i]->x1,
-                        mvTextline[i]->y2- mvTextline[i]->y1,
-                        1, PF_A8R8G8B8, mvTextline[i]->BG_Backup));
-        }
-        /// Print.
-        GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), mvTextline[i]->text.c_str());
-    }
-    /// Now delete all TextLines with index < 0.
-    for (vector<TextLine*>::iterator i = mvTextline.end(); i< mvTextline.begin(); --i)
-    {
-        if ((*i)->index < 0) mvTextline.erase(i);
-        if (mvTextline.empty()) break;
-    }
-
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw gadget.
-    /// ////////////////////////////////////////////////////////////////////
-    for (unsigned int i = 0; i < mvGadget.size() ; ++i)
-        mvGadget [i]->draw(mSrcPixelBox, mTexture.getPointer());
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw statusbar.
-    /// ////////////////////////////////////////////////////////////////////
-    for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
-        mvStatusbar [i]->draw(mSrcPixelBox, mTexture.getPointer());
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw listbox.
-    /// ////////////////////////////////////////////////////////////////////
-    // not needed for text-listbox.
-
 }
 
 ///================================================================================================
@@ -554,18 +426,22 @@ void GuiWindow::drawAll()
 const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 {
     if (!mOverlay->isVisible()) return 0;
+    // No gadget dragging && not within this window. No need for further checks.
+    if (!mGadgetDrag && (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)) return 0;
 
     int x = rx - mPosX;
     int y = ry - mPosY;
-    int gadget;
+
+    for (unsigned int i = 0; i < mvGadgetButton.size(); ++i)
+    {
+        if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y))
+            return "";
+    }
+
     const char *actGadgetName = 0;
 
-    // Dont pass the action throw this window
-    if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
-        actGadgetName = "";
     switch (MouseAction)
     {
-        //case M_RESIZE:
         case BUTTON_PRESSED:
         {
             GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_BUTTON_DOWN);
@@ -574,145 +450,206 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             {
                 actGadgetName = mStrName.c_str();
             }
-            // Mouse over a gaget?
-            if (mMouseOver >= 0)
-            {
-                mMousePressed = mMouseOver;
-                mvGadget[mMousePressed]->setState(GuiElement::STATE_PUSHED);
-                mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
-                return mvGadget[mMousePressed]->getName();
-            }
-            else if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
+            if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
             {
                 mDragOldMousePosX = rx;
                 mDragOldMousePosY = ry;
                 mMouseDragging = mWindowNr;
             }
         }
-        break;
+        case MOUSE_MOVEMENT:
+            if (mMouseDragging == mWindowNr)
+            {
+                mPosX-= mDragOldMousePosX - rx;
+                mPosY-= mDragOldMousePosY - ry;
+                mDragOldMousePosX = rx;
+                mDragOldMousePosY = ry;
+                mElement->setPosition(mPosX, mPosY);
+                // Animated head.
+                if (mSceneNode)
+                {
+                    Real px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
+                              *(mPosX+ mHeadPosX) - Event->getCamCornerX();
+                    Real py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
+                              *(mPosY+ mHeadPosY) - Event->getCamCornerY();
+                    mSceneNode->setPosition(px, py, -200);
+                }
+            }
+            break;
 
         case BUTTON_RELEASED:
         {
             GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_STANDARD);
-            /// ////////////////////////////////////////////////////////////////////
-            /// Gadget pressed?
-            /// ////////////////////////////////////////////////////////////////////
-            if (mMousePressed >= 0)
-            {
-                gadget = getGadgetMouseIsOver(x, y);
-                if (gadget >=0 && gadget == mMousePressed)
-                {
-                    //actGadgetName = mvSrcEntry[mvGadget[gadget]->getTilsetPos()]->name.c_str();
-                    mvGadget[mMousePressed]->setState(GuiElement::STATE_STANDARD);
-                    mvGadget[mMousePressed]->draw(mSrcPixelBox, mTexture.getPointer());
-                    actGadgetName = mvGadget[mMousePressed]->getName();
-
-                    if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_CLOSE), actGadgetName))
-                    {
-                        GuiManager::getSingleton().setTooltip(0);
-                        Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
-                        mOverlay->hide();
-                        if (mSceneNode) mNPC_HeadOverlay->hide();
-                    }
-                    else if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_MAXIMIZE), actGadgetName))
-                    {}
-                    else if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_MINIMIZE), actGadgetName))
-                    {
-                        mDefaultHeight = mHeight;
-                        setHeight(0);
-                    }
-                    else if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_RESIZE), actGadgetName))
-                    {
-                        setHeight(mDefaultHeight);
-                    }
-                }
-            }
             mMousePressed = -1;
             mMouseDragging= -1;
+            break;
         }
-        break;
 
-        case MOUSE_MOVEMENT:
-        /// ////////////////////////////////////////////////////////////////////
-        /// Dragging.
-        /// ////////////////////////////////////////////////////////////////////
-        if (mMouseDragging == mWindowNr)
+        default:
+            break;
+    }
+
+    /*
+        int gadget;
+        const char *actGadgetName = 0;
+
+        // Dont pass the action throw this window
+        if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
+            actGadgetName = "";
+        switch (MouseAction)
         {
-            mPosX-= mDragOldMousePosX - rx;
-            mPosY-= mDragOldMousePosY - ry;
-            mDragOldMousePosX = rx;
-            mDragOldMousePosY = ry;
-            mElement->setPosition(mPosX, mPosY);
-            if (mSceneNode)
+                //case M_RESIZE:
+            case BUTTON_PRESSED:
             {
-                Real px, py;
-                px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
-                     *(mPosX+ mHeadPosX) - Event->getCamCornerX();
-                py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
-                     *(mPosY+ mHeadPosY) - Event->getCamCornerY();
-                mSceneNode->setPosition(px, py, -200);
-            }
-        }
-        else if (mMouseDragging < 0)
-        {
-            /// ////////////////////////////////////////////////////////////////////
-            /// Is the mouse still over this gadget?
-            /// ////////////////////////////////////////////////////////////////////
-            if (mMouseOver >= 0 && mvGadget[mMouseOver]->mouseOver(x, y) == false)
-            {
-                if (mvGadget[mMouseOver]->setState(GuiElement::STATE_STANDARD))
+                GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_BUTTON_DOWN);
+                // Mouse over this window?
+                if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
                 {
-                    mvGadget[mMouseOver]->draw(mSrcPixelBox, mTexture.getPointer());
-                    mMouseOver = -1;
-                    GuiManager::getSingleton().setTooltip(0);
+                    actGadgetName = mStrName.c_str();
                 }
-            }
-            /// ////////////////////////////////////////////////////////////////////
-            /// Is mouse over a gadget?
-            /// ////////////////////////////////////////////////////////////////////
-            if (mMousePressed < 0)
-            {
-                gadget = getGadgetMouseIsOver(x, y);
-                if (gadget >=0)
+                // Mouse over a gaget?
+                if (mMouseOver >= 0)
                 {
-                    if ( mvGadget[gadget]->setState(GuiElement::STATE_M_OVER))
-                    {  // (If not already done) change the gadget state to mouseover.
-                        mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
-                        mMouseOver = gadget;
-                        GuiManager::getSingleton().setTooltip(mvGadget[gadget]->getTooltip());
-                    }
+                    mMousePressed = mMouseOver;
+                    mvGadgetButton[mMousePressed]->setState(GuiElement::STATE_PUSHED);
+                    mvGadgetButton[mMousePressed]->draw();
+                    return mvGadgetButton[mMousePressed]->getName();
                 }
-            }
-            else
-            {
-                gadget = getGadgetMouseIsOver(x, y);
-                if (gadget >=0 && mvGadget[gadget]->setState(GuiElement::STATE_PUSHED))
-                { // (If not already done) change the gadget state to mouseover.
-                    mvGadget[gadget]->draw(mSrcPixelBox, mTexture.getPointer());
-                    mMouseOver = gadget;
+                else if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
+                {
+                    mDragOldMousePosX = rx;
+                    mDragOldMousePosY = ry;
+                    mMouseDragging = mWindowNr;
                 }
             }
             break;
-        }
-    }
 
-    PreformActions();
-    return actGadgetName;
+            case BUTTON_RELEASED:
+            {
+                GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_STANDARD);
+                /// ////////////////////////////////////////////////////////////////////
+                /// Gadget pressed?
+                /// ////////////////////////////////////////////////////////////////////
+                if (mMousePressed >= 0)
+                {
+                    gadget = getGadgetMouseIsOver(x, y);
+                    if (gadget >=0 && gadget == mMousePressed)
+                    {
+                        //actGadgetName = mvSrcEntry[mvGadget[gadget]->getTilsetPos()]->name.c_str();
+                        mvGadgetButton[mMousePressed]->setState(GuiElement::STATE_STANDARD);
+                        mvGadgetButton[mMousePressed]->draw();
+                        actGadgetName = mvGadgetButton[mMousePressed]->getName();
+
+                        if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_CLOSE), actGadgetName))
+                        {
+                            GuiManager::getSingleton().setTooltip(0);
+
+                            mOverlay->hide();
+                            if (mSceneNode) mNPC_HeadOverlay->hide();
+                        }
+                        else if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_MAXIMIZE), actGadgetName))
+                        {}
+                        else if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_MINIMIZE), actGadgetName))
+                        {
+                            mDefaultHeight = mHeight;
+                            setHeight(0);
+                        }
+                        else if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_RESIZE), actGadgetName))
+                        {
+                            setHeight(mDefaultHeight);
+                        }
+                    }
+                }
+                mMousePressed = -1;
+                mMouseDragging= -1;
+            }
+            break;
+
+            case MOUSE_MOVEMENT:
+                /// ////////////////////////////////////////////////////////////////////
+                /// Dragging.
+                /// ////////////////////////////////////////////////////////////////////
+                if (mMouseDragging == mWindowNr)
+                {
+                    mPosX-= mDragOldMousePosX - rx;
+                    mPosY-= mDragOldMousePosY - ry;
+                    mDragOldMousePosX = rx;
+                    mDragOldMousePosY = ry;
+                    mElement->setPosition(mPosX, mPosY);
+                    if (mSceneNode)
+                    {
+                        Real px, py;
+                        px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
+                             *(mPosX+ mHeadPosX) - Event->getCamCornerX();
+                        py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
+                             *(mPosY+ mHeadPosY) - Event->getCamCornerY();
+                        mSceneNode->setPosition(px, py, -200);
+                    }
+                }
+                else if (mMouseDragging < 0)
+                {
+                    /// ////////////////////////////////////////////////////////////////////
+                    /// Is the mouse still over this gadget?
+                    /// ////////////////////////////////////////////////////////////////////
+                    if (mMouseOver >= 0 && mvGadgetButton[mMouseOver]->mouseOver(x, y) == false)
+                    {
+                        if (mvGadgetButton[mMouseOver]->setState(GuiElement::STATE_STANDARD))
+                        {
+                            mvGadgetButton[mMouseOver]->draw();
+                            mMouseOver = -1;
+                            GuiManager::getSingleton().setTooltip(0);
+                        }
+                    }
+                    /// ////////////////////////////////////////////////////////////////////
+                    /// Is mouse over a gadget?
+                    /// ////////////////////////////////////////////////////////////////////
+                    if (mMousePressed < 0)
+                    {
+                        gadget = getGadgetMouseIsOver(x, y);
+                        if (gadget >=0)
+                        {
+                            if ( mvGadgetButton[gadget]->setState(GuiElement::STATE_M_OVER))
+                            {  // (If not already done) change the gadget state to mouseover.
+                                mvGadgetButton[gadget]->draw();
+                                mMouseOver = gadget;
+                                GuiManager::getSingleton().setTooltip(mvGadgetButton[gadget]->getTooltip());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        gadget = getGadgetMouseIsOver(x, y);
+                        if (gadget >=0 && mvGadgetButton[gadget]->setState(GuiElement::STATE_PUSHED))
+                        { // (If not already done) change the gadget state to mouseover.
+                            mvGadgetButton[gadget]->draw();
+                            mMouseOver = gadget;
+                        }
+                    }
+                    break;
+                }
+        }
+
+        PreformActions();
+        return actGadgetName;
+        */
+
+    return 0;  /// DELETE ME !!!!!!!
 }
 
 void GuiWindow::PreformActions()
 {
-    for( unsigned int i = 0 ; i < mvGadget.size() ; i++ )
-    {
-        switch( mvGadget[i]->getAction() )
+    /*
+        for( unsigned int i = 0 ; i < mvGadgetButton.size() ; i++ )
         {
-            case GUI_ACTION_START_TEXT_INPUT:
-            GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->getIndex(), 20, true, true);
-            mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
-            break;
+            switch( mvGadgetButton[i]->getAction() )
+            {
+                case GUI_ACTION_START_TEXT_INPUT:
+                    GuiManager::getSingleton().startTextInput(mWindowNr, mvGadget[i]->getIndex(), 20, true, true);
+                    mvGadgetButton[i]->draw();
+                    break;
+            }
         }
-    }
-
+    */
 }
 
 ///================================================================================================
@@ -723,62 +660,62 @@ const char *GuiWindow::Message(int message, int element, void *value)
     switch (message)
     {
         case GUI_MSG_ADD_TEXTLINE:
-        for (unsigned int i = 0; i < mvListbox.size() ; ++i)
-        {
-            if (mvListbox[i]->getIndex() != element)
-                continue;
-            mvListbox[i]->addTextline((const char *)value);
+            for (unsigned int i = 0; i < mvListbox.size() ; ++i)
+            {
+                if (mvListbox[i]->getIndex() != element)
+                    continue;
+                mvListbox[i]->addTextline((const char *)value);
+                break;
+            }
             break;
-        }
-        break;
 
         case GUI_MSG_BAR_CHANGED:
-        for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
-        {
-            if (mvStatusbar[i]->getIndex() != element)
-                continue;
-            mvStatusbar[i]->setValue(*((Real*)(value)));
-            mvStatusbar[i]->draw(mSrcPixelBox, mTexture.getPointer());
-            return 0;
-        }
-        break;
+            for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
+            {
+                if (mvStatusbar[i]->getIndex() != element)
+                    continue;
+                mvStatusbar[i]->setValue(*((Real*)(value)));
+                mvStatusbar[i]->draw();
+                return 0;
+            }
+            break;
 
         case GUI_MSG_TXT_CHANGED:
-        for (unsigned int i = 0; i < mvTextline.size() ; ++i)
-        {
-            if (mvTextline[i]->index != element || mvTextline[i]->clipped)
-                continue;
-            mvTextline[i]->text = (const char*)value;
-            GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer(), (const char *)value);
-            return 0;
-        }
-        for (unsigned int i = 0; i < mvGadget.size() ; ++i)
-        {
-            if (mvGadget[i]->getIndex() != element)
-                continue;
-            mvGadget[i]->setText((const char *)value);
-            mvGadget[i]->draw(mSrcPixelBox, mTexture.getPointer());
-            return 0;
-        }
-        break;
+            for (unsigned int i = 0; i < mvTextline.size() ; ++i)
+            {
+                if (mvTextline[i]->index != element)
+                    continue;
+                mvTextline[i]->text = (const char*)value;
+                GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer());
+                return 0;
+            }
+            for (unsigned int i = 0; i < mvGadgetCombobox.size() ; ++i)
+            {
+                if (mvGadgetCombobox[i]->getIndex() != element)
+                    continue;
+                mvGadgetCombobox[i]->setText((const char *)value);
+                mvGadgetCombobox[i]->draw();
+                return 0;
+            }
+            break;
 
         case GUI_MSG_TXT_GET:
-        for (unsigned int i = 0; i < mvTextline.size() ; ++i)
-        {
-            if (mvTextline[i]->index != element || mvTextline[i]->clipped)
-                continue;
-            return mvTextline[i]->text.c_str();
-        }
-        for (unsigned int i = 0; i < mvGadget.size() ; ++i)
-        {
-            if (mvGadget[i]->getIndex() != element)
-                continue;
-            return mvGadget[i]->getText();
-        }
-        break;
+            for (unsigned int i = 0; i < mvTextline.size() ; ++i)
+            {
+                if (mvTextline[i]->index != element)
+                    continue;
+                return mvTextline[i]->text.c_str();
+            }
+            for (unsigned int i = 0; i < mvGadgetCombobox.size() ; ++i)
+            {
+                if (mvGadgetCombobox[i]->getIndex() != element)
+                    continue;
+                return mvGadgetCombobox[i]->getText();
+            }
+            break;
 
         default:
-        break;
+            break;
     }
     return 0;
 }
@@ -788,8 +725,7 @@ const char *GuiWindow::Message(int message, int element, void *value)
 ///================================================================================================
 void GuiWindow::setHeight(int newHeight)
 {
-    if (mHeight == newHeight)
-        return;
+    if (mHeight == newHeight) return;
     if (newHeight < mDragPosY2)
         newHeight = mDragPosY2;
     if (newHeight > (int)mTexture->getHeight())
@@ -828,7 +764,17 @@ void GuiWindow::updateListbox()
 {
     for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
     {
-        (*i)->draw(mSrcPixelBox /* just a dummy */, mTexture.getPointer());
+        (*i)->draw();
     }
 }
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiWindow::buttonPressed(GuiWindow *me, int index)
+{
+    Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"button event... ");
+}
+
 

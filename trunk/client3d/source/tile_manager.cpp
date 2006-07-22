@@ -140,11 +140,82 @@ void TileManager::loadMap(const std::string &png_filename)
         for (int y = 0; y < CHUNK_SIZE_Z+1; ++y)
         {
             mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
+            mMap[x][y].indoorTris =0;
+            /*
             // Building ground.
-           if (x>3 && x < 9 && y>1 && y<11) mMap[x][y].height=60;
-         //mMap[x][y].height=20;
+            if (x>3 && x < 9 && y>1 && y<11)
+            {
+                mMap[x][y].height = 60;
+                mMap[x][y].indoor = true;
+            }
+            */
+            //   mMap[x][y].height=60;
         }
     }
+
+    /*
+         if (WallType = INNER_TOP_LEFT)  WallType = TRIANGLE_LEFT + TRIANGLE_TOP;
+    else if (WallType = INNER_BOT_LEFT)  WallType = TRIANGLE_LEFT + TRIANGLE_BOTTOM;
+    else if (WallType = INNER_TOP_RIGHT) WallType = TRIANGLE_RIGHT+ TRIANGLE_TOP;
+    else if (WallType = INNER_BOT_RIGHT) WallType = TRIANGLE_RIGHT+ TRIANGLE_BOTTOM;
+    else if (WallType = INNER_ALL)       WallType = TRIANGLE_RIGHT+ TRIANGLE_LEFT + TRIANGLE_TOP + TRIANGLE_BOTTOM;
+    else logger << "Wrong wall type!"
+    */
+
+    // Building ground 2x2.
+    //   x  z
+    mMap[4][5].height = 60;
+    mMap[4][5].indoor_col = 2;
+    mMap[4][5].indoor_row = 4;
+    mMap[4][5].indoorTris = TRIANGLE_RIGHT + TRIANGLE_BOTTOM;
+
+    mMap[4][6].height = 60;
+    mMap[4][6].indoor_col = 2;
+    mMap[4][6].indoor_row = 4;
+    mMap[4][6].indoorTris = TRIANGLE_RIGHT + TRIANGLE_TOP;
+    //-----------------------//
+    mMap[5][4].height = 60;
+    mMap[5][4].indoor_col = 2;
+    mMap[5][4].indoor_row = 4;
+    mMap[5][4].indoorTris = TRIANGLE_RIGHT + TRIANGLE_BOTTOM;
+
+    mMap[5][5].height = 60;
+    mMap[5][5].indoor_col = 2;
+    mMap[5][5].indoor_row = 4;
+    mMap[5][5].indoorTris = TRIANGLE_LEFT + TRIANGLE_RIGHT + TRIANGLE_TOP + TRIANGLE_BOTTOM;
+
+    mMap[5][6].height = 60;
+    mMap[5][6].indoor_col = 2;
+    mMap[5][6].indoor_row = 4;
+    mMap[5][6].indoorTris = TRIANGLE_LEFT + TRIANGLE_TOP;
+
+    //-----------------------//
+    mMap[6][4].height = 60;
+    mMap[6][4].indoor_col = 2;
+    mMap[6][4].indoor_row = 4;
+    mMap[6][4].indoorTris = TRIANGLE_LEFT + TRIANGLE_BOTTOM;
+
+    mMap[6][5].height = 60;
+    mMap[6][5].indoor_col = 2;
+    mMap[6][5].indoor_row = 4;
+    mMap[6][5].indoorTris = TRIANGLE_LEFT + TRIANGLE_RIGHT + TRIANGLE_TOP + TRIANGLE_BOTTOM;
+
+    mMap[6][6].height = 60;
+    mMap[6][6].indoor_col = 2;
+    mMap[6][6].indoor_row = 4;
+    mMap[6][6].indoorTris = TRIANGLE_RIGHT + TRIANGLE_TOP;
+
+    //-----------------------//
+    mMap[7][5].height = 60;
+    mMap[7][5].indoor_col = 2;
+    mMap[7][5].indoor_row = 4;
+    mMap[7][5].indoorTris = TRIANGLE_LEFT + TRIANGLE_BOTTOM;
+
+    mMap[7][6].height = 60;
+    mMap[7][6].indoor_col = 2;
+    mMap[7][6].indoor_row = 4;
+    mMap[7][6].indoorTris = TRIANGLE_LEFT + TRIANGLE_TOP;
+
     setMapTextures();
 }
 
@@ -156,83 +227,83 @@ void TileManager::scrollMap(int dx, int dz)
     // Quick hack. server will send us the map later.
     if (dx)
     {
-        char bufferH[CHUNK_SIZE_Z];
+        struct WorldMap bufferH[CHUNK_SIZE_Z];
         if (dx <0)
         {
             for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                bufferH[y] = mMap[0][y].height ;
+                bufferH[y] = mMap[0][y];
             }
             for(int x = 0; x < CHUNK_SIZE_X-1; ++x)
             {
                 for(int y = 0; y < CHUNK_SIZE_Z; ++y)
                 {
-                    mMap[x][y].height      = mMap[x+1][y].height;
+                    mMap[x][y] = mMap[x+1][y];
                 }
             }
             for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                mMap[CHUNK_SIZE_X-1][y].height = bufferH[y] ;
+                mMap[CHUNK_SIZE_X-1][y] = bufferH[y] ;
             }
         }
         else
         {
             for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                bufferH[y] = mMap[CHUNK_SIZE_X-1][y].height ;
+                bufferH[y] = mMap[CHUNK_SIZE_X-1][y];
             }
             for(int x = CHUNK_SIZE_X-1; x >0; --x)
             {
                 for(int y = 0; y < CHUNK_SIZE_Z; ++y)
                 {
-                    mMap[x][y].height      = mMap[x-1][y].height;
+                    mMap[x][y] = mMap[x-1][y];
                 }
             }
             for(int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
-                mMap[0][y].height      = bufferH[y] ;
+                mMap[0][y] = bufferH[y];
             }
         }
     }
     if (dz)
     {
-        char bufferH[CHUNK_SIZE_X];
+        struct WorldMap bufferH[CHUNK_SIZE_Z];
         if (dz <0)
         {
             for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                bufferH[x] = mMap[x][0].height ;
+                bufferH[x] = mMap[x][0] ;
             }
 
             for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
                 for(int y = 0; y < CHUNK_SIZE_Z-1; ++y)
                 {
-                    mMap[x][y].height = mMap[x][y+1].height;
+                    mMap[x][y] = mMap[x][y+1];
                 }
             }
 
             for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                mMap[x][CHUNK_SIZE_Z-1].height = bufferH[x] ;
+                mMap[x][CHUNK_SIZE_Z-1] = bufferH[x] ;
             }
         }
         else
         {
             for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                bufferH[x] = mMap[x][CHUNK_SIZE_Z-1].height ;
+                bufferH[x] = mMap[x][CHUNK_SIZE_Z-1] ;
             }
             for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
                 for(int y = CHUNK_SIZE_Z-1; y > 0; --y)
                 {
-                    mMap[x][y].height = mMap[x][y-1].height;
+                    mMap[x][y] = mMap[x][y-1];
                 }
             }
             for(int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                mMap[x][0].height  = bufferH[x] ;
+                mMap[x][0]  = bufferH[x] ;
             }
         }
     }
@@ -262,8 +333,16 @@ void TileManager::setMapTextures()
         {
             height = mMap[x][y].height;
             /// ////////////////////////////////////////////////////////////////////
-            // Highland.
+            /// Highland.
             /// ////////////////////////////////////////////////////////////////////
+            /*
+                        if (mMap[x][y].indoor)
+                        {
+                            mMap[x][y].terrain_col = INDOOR_COL;
+                            mMap[x][y].terrain_row = INDOOR_ROW;
+                        }
+                        else
+            */
             if (height > TileChunk::LEVEL_MOUNTAIN_TOP)
             {
                 mMap[x][y].terrain_col = 0;

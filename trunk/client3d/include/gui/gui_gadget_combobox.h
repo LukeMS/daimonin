@@ -27,12 +27,10 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_GADGET_COMBOBOX_H
 #define GUI_GADGET_COMBOBOX_H
 
-class GuiGadgetCombobox;
-
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_imageset.h"
-#include "gui_gadget.h"
+#include "gui_element.h"
 #include "gui_textout.h"
 
 using namespace Ogre;
@@ -47,13 +45,13 @@ enum
     GUI_GADGET_COMBOBOX_SUM
 };
 
-class GuiGadgetCombobox : public GuiGadget
+class GuiGadgetCombobox : public GuiElement
 {
 public:
-    GuiGadgetCombobox(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
+    GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent);
     ~GuiGadgetCombobox();
 
-    void draw(PixelBox &mSrcPixelBox, Texture *texture);
+    void draw();
     void setText(const char *value);
     bool setState(int state);
     bool mouseOver(int x, int y);
@@ -64,6 +62,7 @@ private:
     GuiSrcEntry *srcScrollbarUp;
     GuiSrcEntry *srcScrollbarDown;
     uint32 *mGfxBuffer;
+	int mAction;
     int mFontHeight;
     int mMaxChars;
     int mEntryHeight;

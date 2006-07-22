@@ -18,28 +18,48 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
+#include <Ogre.h>
+#include "logger.h"
 #include "gui_element.h"
 #include "gui_imageset.h"
-#include "logger.h"
-#include <Ogre.h>
+#include "gui_window.h"
 
 ///================================================================================================
 /// Parse a gui element.
 ///================================================================================================
-GuiElement::GuiElement(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
+GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
 {
     TiXmlElement *xmlGadget;
     std::string strValue;
     const char *tmp;
     // Set default values.
     mState = 0;
-    mFontNr = 0;
-    mWidth = w;
-    mHeight= h;
-
+    mFontNr= 0;
+    mWidth = 0;
+    mHeight= 0;
+    mParent= parent;
+    GuiSrcEntry *srcEntry;
+    ((GuiWindow*)mParent)->getTexturseSize(mMaxX, mMaxY);
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the element.
     /// ////////////////////////////////////////////////////////////////////
+    if ((tmp = xmlElem->Attribute("image_name")))
+    {
+        if ((srcEntry = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
+        {
+            mWidth = srcEntry->width;
+            mHeight = srcEntry->height;
+            for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
+                setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+        }
+        else
+        {
+            Logger::log().warning() << tmp << " was defined in '" << FILE_GUI_WINDOWS
+            << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
+
+        }
+    }
+
     if ((tmp = xmlElem->Attribute("type"))) mStrType = tmp;
     if ((tmp = xmlElem->Attribute("name")))
     {
@@ -63,20 +83,26 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, int w, int h, int maxX, int maxY)
         if ((tmp = xmlGadget->Attribute("x"))) mX = atoi(tmp);
         if ((tmp = xmlGadget->Attribute("y"))) mY = atoi(tmp);
     }
-    if (mX > maxX-2) mX = maxX-2;
-    if (mY > maxY-2) mY = maxY-2;
+    if (mX > mMaxX-2) mX = mMaxX-2;
+    if (mY > mMaxY-2) mY = mMaxY-2;
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the size (if given).
     /// ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Range")))
     {
-        if ((tmp = xmlGadget->Attribute("width")))  mWidth = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("height"))) mHeight= atoi(tmp);
-        mSrcWidth = w;
-        mSrcHeight= h;
+        if ((tmp = xmlGadget->Attribute("width")))
+        {
+            mSrcWidth = mWidth;
+            mWidth = atoi(tmp);
+        }
+        if ((tmp = xmlGadget->Attribute("height")))
+        {
+            mSrcHeight= mHeight;
+            mHeight= atoi(tmp);
+        }
     }
-    if (mX + mWidth > maxX) mWidth = maxX-mX-1;
-    if (mY + mHeight >maxY) mHeight= maxY-mY-1;
+    if (mX + mWidth > mMaxX) mWidth = mMaxX-mX-1;
+    if (mY + mHeight >mMaxY) mHeight= mMaxY-mY-1;
     /// ////////////////////////////////////////////////////////////////////
     /// Parse the color (if given).
     /// ////////////////////////////////////////////////////////////////////
@@ -122,7 +148,7 @@ void GuiElement::setStateImagePos(std::string name, int x, int y)
     else if (name == "M_Over"  ) state = STATE_M_OVER;
     if (state < 0)
     {
-        Logger::log().error() << "Gadget '" << mStrName << "' has no State '" << "' " << name;
+        Logger::log().error() << "Gui-Element '" << mStrName << "' has no State '" << "' " << name;
         return;
     }
     gfxSrcPos[state].x = x;

@@ -30,10 +30,36 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_listbox.h"
 #include "gui_textout.h"
 #include "logger.h"
+#include "gui_window.h"
 
 const clock_t SCROLL_SPEED = 12;
 static const Real CLOSING_SPEED  =  10.0f;  // default: 10.0f
 static const int  MAX_TEXT_LINES =  20;
+
+///================================================================================================
+/// Constructor.
+///================================================================================================
+GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+{
+    /// ////////////////////////////////////////////////////////////////////
+    /// Create buffer to hold the pixel information of the listbox.
+    /// ////////////////////////////////////////////////////////////////////
+    mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
+    int size = mWidth * mHeight + mWidth * (mFontHeight+1);
+    mGfxBuffer = new uint32[size];
+    for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Set defaults.
+    /// ////////////////////////////////////////////////////////////////////
+    mIsClosing    = false;
+    mIsOpening    = false;
+    mDragging     = false;
+    mBufferPos    = 0;
+    mPrintPos     = 0;
+    mRowsToScroll = 0;
+    mRowsToPrint  = mHeight / mFontHeight;
+    mScroll       = 0;
+}
 
 ///================================================================================================
 /// Destructor.
@@ -130,7 +156,7 @@ void GuiListbox::addTextline(const char *text)
 ///================================================================================================
 /// .
 ///================================================================================================
-void GuiListbox::draw(PixelBox &, Texture *texture)
+void GuiListbox::draw()
 {
     /// ////////////////////////////////////////////////////////////////////
     /// User pressed the down-button.
@@ -183,6 +209,8 @@ void GuiListbox::draw(PixelBox &, Texture *texture)
     /// ////////////////////////////////////////////////////////////////////
     /// Scroll the text.
     /// ////////////////////////////////////////////////////////////////////
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+
     static clock_t time = clock();
     if (!mRowsToScroll || mDragging) return;
     if (clock() - time < SCROLL_SPEED) return;
