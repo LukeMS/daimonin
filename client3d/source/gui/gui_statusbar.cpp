@@ -29,7 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "gui_statusbar.h"
 #include "logger.h"
-
+#include "gui_window.h"
 
 // TODO
 // 3d    type hor/vert
@@ -41,8 +41,20 @@ const int  BAR_WIDTH = 16;
 ///================================================================================================
 /// .
 ///================================================================================================
-void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
+GuiStatusbar::GuiStatusbar(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
+    mGfxBuffer = 0;
+    setValue(1.0); // default: 100%
+    draw();
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiStatusbar::draw()
+{
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    PixelBox *pb = ((GuiWindow*) mParent)->getPixelBox();
     /// ////////////////////////////////////////////////////////////////////
     /// Save the original background.
     /// ////////////////////////////////////////////////////////////////////
@@ -67,13 +79,13 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
         /// ////////////////////////////////////////////////////////////////////
         /// Background part.
         /// ////////////////////////////////////////////////////////////////////
-        uint32 *src = (uint32*)pb.data;
+        uint32 *src = (uint32*)pb->data;
         uint32 color, pixColor;
         for (int y = 0; y < mHeight; ++y)
         {
             for (int x= 0; x < mWidth; ++x)
             {
-                color = src[(y+gfxSrcPos[0].y) * pb.getWidth() + x+gfxSrcPos[0].x];
+                color = src[(y+gfxSrcPos[0].y) * pb->getWidth() + x+gfxSrcPos[0].x];
                 if (color & 0xff000000)
                 {
                     mGfxBuffer[y*mWidth + x] = color;
@@ -88,7 +100,7 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
         {
             for (int x= mLabelXPos; x < mWidth-mLabelXPos; ++x)
             {
-                color = src[(y+gfxSrcPos[0].y) * pb.getWidth() + x+gfxSrcPos[0].x];
+                color = src[(y+gfxSrcPos[0].y) * pb->getWidth() + x+gfxSrcPos[0].x];
                 if (color & 0xff000000)
                 {
                     pixColor = color & 0xff000000;
@@ -148,11 +160,6 @@ void GuiStatusbar::draw(PixelBox &pb, Texture *texture)
 ///================================================================================================
 void GuiStatusbar::setValue(Real value)
 {
-    /*
-        mValue = (int) (mHeight * (1-value));
-        if (mValue > mHeight) mValue = mHeight;
-        if (mValue < 5) mValue = 5;
-    */
     mValue = (int) ((mHeight-2*mLabelYPos) * (1-value));
     if (mValue > mHeight) mValue = mHeight;
     if (mValue < 0) mValue = 0;

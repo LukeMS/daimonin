@@ -24,29 +24,77 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include <OgreHardwarePixelBuffer.h>
+#include "logger.h"
 #include "gui_gadget_button.h"
 #include "gui_textout.h"
-#include "logger.h"
-
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY) : GuiGadget(xmlElement, w, h, maxX, maxY)
-{
-}
-
-GuiGadgetButton::~GuiGadgetButton()
-{
-}
+#include "gui_window.h"
+#include "gui_manager.h"
 
 ///================================================================================================
 /// .
 ///================================================================================================
-void GuiGadgetButton::draw(PixelBox &mSrcPixelBox, Texture *texture)
+GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+{
+    mCallFunc = 0;
+    mMouseOver = false;
+    mMouseButDown = false;
+    draw();
+}
+
+///================================================================================================
+/// Draw the guiElement.
+///================================================================================================
+bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
+{
+    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight)
+    {
+        if (!mMouseOver)
+        {
+            mMouseOver = true;
+            setState(GuiElement::STATE_M_OVER);
+            draw();
+            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+        }
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
+        {
+            mMouseButDown = true;
+            setState(GuiElement::STATE_PUSHED);
+            draw();
+        }
+        if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
+        {
+            mMouseButDown = false;
+            setState(GuiElement::STATE_STANDARD);
+            draw();
+            activated();
+        }
+        return true; // No need to check other gadgets.
+    }
+    else  // Mouse is no longer over the the gadget.
+    {
+        if (mMouseOver)
+        {
+            mMouseOver = false;
+            mMouseButDown = false;
+            setState(GuiElement::STATE_STANDARD);
+            draw();
+            GuiManager::getSingleton().setTooltip("");
+            return true; // No need to check other gadgets.
+        }
+    }
+    return false; // No action here, check the other gadgets.
+}
+
+///================================================================================================
+/// Draw the guiElement.
+///================================================================================================
+void GuiGadgetButton::draw()
 {
     /// ////////////////////////////////////////////////////////////////////
     /// Draw gaget.
     /// ////////////////////////////////////////////////////////////////////
-
-    PixelBox src = mSrcPixelBox.getSubVolume(Box(
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    PixelBox src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
                        gfxSrcPos[mState].x,
                        gfxSrcPos[mState].y,
                        gfxSrcPos[mState].x + mWidth,
@@ -61,24 +109,20 @@ void GuiGadgetButton::draw(PixelBox &mSrcPixelBox, Texture *texture)
         TextLine label;
         label.index= -1;
         label.font = mLabelFont;
-        label.clipped = false;
+        label.x1 = mX+ mLabelXPos;
+        label.y1 = mY+ mLabelYPos;
+        label.x2 = label.x1 + mWidth;
+        label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
         if (mState == STATE_PUSHED)
         {
-            label.x1 = mX+ mLabelXPos+1;
-            label.x2 = label.x1 + mWidth;
-            label.y1 = mY+ mLabelYPos+1;
-            label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
+            ++label.x1;
+            ++label.y1;
         }
-        else
-        {
-            label.x1 = mX+ mLabelXPos;
-            label.x2 = label.x1 + mWidth;
-            label.y1 = mY+ mLabelYPos;
-            label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-        }
-        GuiTextout::getSingleton().Print(&label, texture, mStrBgLabel.c_str());
+        label.text = mStrBgLabel;
+        GuiTextout::getSingleton().Print(&label, texture);
         --label.x1;
         --label.y1;
-        GuiTextout::getSingleton().Print(&label, texture, mStrLabel.c_str());
+        label.text = mStrLabel;
+        GuiTextout::getSingleton().Print(&label, texture);
     }
 }

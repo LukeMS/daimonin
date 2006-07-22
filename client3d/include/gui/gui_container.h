@@ -37,7 +37,7 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    GuiContainer(TiXmlElement *xmlElem, int maxX, int maxY);
+    GuiContainer(TiXmlElement *xmlElem, int maxX, int maxY, void *parent);
     ~GuiContainer()
     {}
 private:

@@ -27,14 +27,12 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "gui_manager.h"
 #include "gui_window.h"
-#include "gui_gadget.h"
 #include "gui_cursor.h"
 #include "gui_textinput.h"
 #include "option.h"
 #include "logger.h"
 #include <Ogre.h>
 #include <OgreFontManager.h>
-#include <OgreHardwarePixelBuffer.h>
 #include <tinyxml.h>
 
 using namespace Ogre;
@@ -45,16 +43,10 @@ const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
 
 GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
     {
-        { "Statistics",  GUI_WIN_STATISTICS
-        },
-        { "PlayerInfo",  GUI_WIN_PLAYERINFO
-        },
-        { "TextWindow",  GUI_WIN_TEXTWINDOW
-        },
-        { "Login",       GUI_WIN_LOGIN
-        },
-
-
+        { "Statistics",  GUI_WIN_STATISTICS  },
+        { "PlayerInfo",  GUI_WIN_PLAYERINFO  },
+        { "TextWindow",  GUI_WIN_TEXTWINDOW  },
+        { "Login",       GUI_WIN_LOGIN       },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
     };
 
@@ -376,12 +368,12 @@ void GuiManager::update(Real timeSinceLastFrame)
             TextLine label;
             label.index= -1;
             label.font = 2;
-            label.clipped = false;
             label.x1 = label.y1 = 2;
             label.x2 = TOOLTIP_SIZE_X;
             label.y2 = GuiTextout::getSingleton().getFontHeight(label.font);
+            label.text = mStrTooltip;
             clearTooltip();
-            GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), mStrTooltip.c_str());
+            GuiTextout::getSingleton().Print(&label, mTexture.getPointer());
             mElement->setPosition(mMouseX+33, mMouseY+38); // TODO:
             mOverlay->show();
             mTooltipRefresh = false;
@@ -410,8 +402,9 @@ void GuiManager::displaySystemMessage(const char *text)
     label.y1 = fontH * row;
     label.x2 = mTexture->getWidth()-1;
     label.y2 = fontH * row + GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
+    label.text = text;
     //  clearTooltip();
-    GuiTextout::getSingleton().Print(&label, mTexture.getPointer(), text);
+    GuiTextout::getSingleton().Print(&label, mTexture.getPointer());
     mTooltipRefresh = false;
     //  mElement->setPosition(300, 100);
     mOverlay->show();

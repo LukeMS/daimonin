@@ -30,7 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 #include "gui_textout.h"
-#include "gui_gadget.h"
 #include "gui_gadget_button.h"
 #include "gui_gadget_combobox.h"
 #include "gui_graphic.h"
@@ -39,6 +38,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_statusbar.h"
 
 using namespace Ogre;
+
+class GuiGadgetButton;
 
 class GuiWindow
 {
@@ -84,6 +85,11 @@ public:
     void updateAnimaton(Real timeSinceLastFrame);
     void updateListbox();
     void PreformActions();
+    void getTexturseSize(int &w, int &h)
+    {
+        w = mWidth;
+        h = mHeight;
+    }
     const char *getName()
     {
         return mStrName.c_str();
@@ -93,6 +99,14 @@ public:
     const char *getTooltip()
     {
         return mStrTooltip.c_str();
+    }
+    Texture *getTexture()
+    {
+        return mTexture.getPointer();
+    }
+    PixelBox *getPixelBox()
+    {
+        return &mSrcPixelBox;
     }
 
 private:
@@ -104,10 +118,10 @@ private:
     static String mStrTooltip;
     int mWindowNr;
     int mMousePressed, mMouseOver;
+    bool mGadgetDrag;
     Image mTileImage;
     int mPosX, mPosY, mPosZ, mWidth, mHeight;
     int mHeadPosX, mHeadPosY;
-
     int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
     int mMinimized, mDefaultHeight;
     bool mSizeRelative;
@@ -116,9 +130,8 @@ private:
     SceneNode *mSceneNode;
     String mStrName;
     String mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
-    std::vector<GuiGadget *>mvGadget;
-    std::vector<GuiGadgetCombobox*>mvCombobox;
-    std::vector<GuiGadgetButton *>mvButton;
+    std::vector<GuiGadgetCombobox*>mvGadgetCombobox;
+    std::vector<GuiGadgetButton *>mvGadgetButton;
     std::vector<GuiGraphic*>mvGraphic;
     std::vector<GuiListbox*>mvListbox;
     std::vector<TextLine*>mvTextline;
@@ -131,12 +144,12 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    int getGadgetMouseIsOver(int x, int y);
+    static void buttonPressed(GuiWindow *me, int index);
     void createWindow();
     void setHeight(int h);
     void delGadget(int number);
-    void drawAll();
     void parseWindowData(TiXmlElement *xmlElem);
+    void printParsedTextline(TiXmlElement *xmlElem);
 };
 
 #endif

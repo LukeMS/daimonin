@@ -325,11 +325,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             Option::getSingleton().setGameStatus(GAME_STATUS_META);
             GuiManager::getSingleton().displaySystemMessage("");
             OverlayManager::getSingleton().destroy(mOverlay);
-
             GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
+            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
-
             mWindow->resetStatistics();
             break;
         }
@@ -430,7 +429,6 @@ bool CEvent::frameEnded(const FrameEvent&)
     if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET) return true;
     const RenderTarget::FrameStats& stats = mWindow->getStatistics();
     static int skipFrames = 0;
-
     if (--skipFrames <= 0)
     {
         static char buffer[16];

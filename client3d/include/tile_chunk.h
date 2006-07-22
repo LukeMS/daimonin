@@ -53,11 +53,6 @@ public:
         LEVEL_WATER_TOP = LEVEL_WATER_CLP -1,
     };
 
-    // Outdoor
-    //enum {TERRAIN_MOUNTAIN, TERRAIN_JUNGLE, TERRAIN_PLAINS, TERRAIN_SWAMP, TERRAIN_RIFT,TERRAIN_DESERT,
-    //    TERRAIN_BEACH,  TERRAIN_WATER};
-    // Spezical Effects: Snopw, Rain, Lava,
-
     static AxisAlignedBox *mBounds;
 
     TileChunk();

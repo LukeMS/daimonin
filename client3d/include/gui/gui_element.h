@@ -38,14 +38,9 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    GuiElement(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
+    GuiElement(TiXmlElement *xmlElement, void *parent);
     virtual ~GuiElement()
     {}
-    bool mouseOver(int x, int y)
-    {
-        if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight) return true;
-        return false;
-    }
     bool setState(int state)
     {
         if (mState == state) return false;
@@ -65,22 +60,34 @@ public:
         return mIndex;
     }
     void setStateImagePos(std::string state, int x, int y);
-    virtual void draw(PixelBox &mSrcPixelbox, Texture *texture) =0;
+    virtual void draw() =0;
     const char *getTooltip()
     {
         return mStrTooltip.c_str();
     }
     enum
     {
-        STATE_STANDARD, STATE_PUSHED, STATE_M_OVER, STATE_PASSIVE, STATE_SUM
+        STATE_STANDARD,
+        STATE_PUSHED,
+        STATE_M_OVER,
+        STATE_PASSIVE,
+        STATE_SUM
     };
     enum
     {
-        FILL_GFX, FILL_COLOR, FILL_NONE, FILL_SUM
+        FILL_GFX,
+        FILL_COLOR,
+        FILL_NONE,
+        FILL_SUM
     };
     enum
     {
-        TYPE_GFX, TYPE_BUTTON, TYPE_BUTTON_CHECK, TYPE_BUTTON_RADIO, TYPE_SLIDER, TYPE_SUM
+        TYPE_GFX,
+        TYPE_BUTTON,
+        TYPE_BUTTON_CHECK,
+        TYPE_BUTTON_RADIO,
+        TYPE_SLIDER,
+        TYPE_SUM
     };
 
 protected:
@@ -93,16 +100,19 @@ protected:
     }
     gfxSrcPos[STATE_SUM];
 
-    int mX, mY, mWidth, mHeight, mSrcWidth, mSrcHeight;
+    int mX, mY, mMaxX, mMaxY;
+    int mWidth, mHeight, mSrcWidth, mSrcHeight;
     int mFontNr;
     int mState;
     String mStrType, mStrName, mStrImageName;
     uint32 mFillColor;
+    int id;
     int mIndex;
     String mStrLabel, mStrBgLabel, mStrTooltip;
     unsigned char mLabelColor[3];
     int mLabelFont;
     int mLabelXPos, mLabelYPos;
+    void *mParent;
 
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.

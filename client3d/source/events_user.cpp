@@ -68,11 +68,11 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_RIGHT:
             //mCamera->  moveRelative (Vector3(100,0,0));
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TURN, 0, -1);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0, -1);
             break;
 
         case KC_LEFT:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TURN, 0,  1);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0,  1);
             //mCamera->  moveRelative (Vector3(-100,0,0));
             break;
 
@@ -381,7 +381,7 @@ void CEvent::keyReleased(KeyEvent* e)
 
         case KC_RIGHT:
         case KC_LEFT:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TURN, 0);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0);
             break;
 
         case KC_J:

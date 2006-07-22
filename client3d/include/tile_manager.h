@@ -38,14 +38,11 @@ using namespace Ogre;
  * TileEngine class which manages all tiles related stuff in the worldmap.
  *****************************************************************************/
 
-/** Number of tiles in the worldmap (on x-axis). */
-const int CHUNK_SIZE_X  = 11;
 
-/** Number of tiles in the worldmap (on z-axis). */
-const int CHUNK_SIZE_Z  = 23;
+const int CHUNK_SIZE_X  = 11; /**< Number of tiles in the worldmap (on x-axis). */
+const int CHUNK_SIZE_Z  = 23; /**< Number of tiles in the worldmap (on z-axis). */
 
-/** Minimal size of tile in the shrinked terrain texture. */
-const int MIN_TEXTURE_PIXEL = 16;
+const int MIN_TEXTURE_PIXEL = 16; /**< Minimal size of tile in the terrain texture. */
 
 /** Size of a tile. */
 const int TILE_SIZE_X = 48;
@@ -55,6 +52,23 @@ class TileManager
 {
 
 public:
+    enum
+    {
+        TRIANGLE_LEFT  = 1 << 0,
+        TRIANGLE_TOP   = 1 << 1,
+        TRIANGLE_RIGHT = 1 << 2,
+        TRIANGLE_BOTTOM= 1 << 3
+    };
+
+    enum
+    { // Which triangles of the tile are indoor.
+        INNER_TOP_LEFT,
+        INNER_BOT_LEFT,
+        INNER_TOP_RIGHT,
+        INNER_BOT_RIGHT,
+        INNER_ALL
+    };
+
     void freeRecources();
     static TileManager &getSingleton()
     {
@@ -72,23 +86,60 @@ public:
     {
         return mMap[x][y].height;
     }
+
     float getAvgMapHeight(short x, short y)
     {
         return ((mMap[x  ][y].height + mMap[x  ][y+1].height +
                  mMap[x+1][y].height + mMap[x+1][y+1].height) /4);
     }
-    unsigned char getMapTextureRow(short x, short y)
+    char getMapTextureRow(short x, short z)
     {
-        return mMap[x][y].terrain_row;
+        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        else  if (x <0) x =0;
+        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
+        else if (z <0) z =0;
+        return mMap[x][z].terrain_row;
     }
-    unsigned char getMapTextureCol(short x, short y)
+    char getMapTextureCol(short x, short z)
     {
-        return mMap[x][y].terrain_col;
+        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        else  if (x <0) x =0;
+        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
+        else if (z <0) z =0;
+        return mMap[x][z].terrain_col;
     }
+
+    char getMapIndoorRow(short x, short z)
+    {
+        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        else  if (x <0) x =0;
+        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
+        else if (z <0) z =0;
+        return mMap[x][z].indoor_row;
+    }
+    char getMapIndoorCol(short x, short z)
+    {
+        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        else  if (x <0) x =0;
+        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
+        else if (z <0) z =0;
+        return mMap[x][z].indoor_col;
+    }
+
+    char getIndoorTris(short x, short z)
+    {
+        if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
+        else  if (x <0) x =0;
+        if (z > CHUNK_SIZE_Z) z = CHUNK_SIZE_Z;
+        else if (z <0) z =0;
+        return mMap[x][z].indoorTris;
+    }
+
     TileInterface* getTileInterface()
     {
         return mInterface;
     }
+
     void setMapHeight(short x, short y, short value)
     {
         mMap[x][y].height = value;
@@ -129,19 +180,19 @@ private:
     /**  TileEngine struct which holds the worldmap. **/
     struct WorldMap
     {
-        /** Average height. **/
-        unsigned char height;
-        /** Column of the texture in the terrain-texture. **/
-        unsigned char terrain_col;
-        /** Row of the texture in the terrain-texture. **/
-        unsigned char terrain_row;
+        unsigned char height; /**< Average height. **/
+        char terrain_col;     /**< Column of the tile-texture in the terrain-texture. **/
+        char terrain_row;     /**< Row    of the tile-texture in the terrain-texture. **/
+        char indoor_col;      /**< Column of the tile-texture in the terrain-texture. **/
+        char indoor_row;      /**< Row    of the tile-texture in the terrain-texture. **/
+        char indoorTris;      /**< Which triangles of the tile do have indoor gfx.    **/
     }
     mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
 
     SceneManager *mSceneManager;
     TileChunk mMapchunk;
     TileInterface *mInterface;
-    AxisAlignedBox *mBounds;
+
     MaterialPtr mKartentextur;
     int mTileTextureSize;
     bool mGrid;

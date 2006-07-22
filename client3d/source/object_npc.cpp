@@ -102,12 +102,11 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     }
 
     mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+    mCursorTurning =0;
     mAutoTurning= false;
     mAutoMoving = false;
     mEnemyNode = 0;
     mAttacking = ATTACK_NONE;
-
-
 
    // mNode->showBoundingBox(true); // Remove Me!!!!
 }
@@ -253,6 +252,13 @@ void ObjectNPC::update(const FrameEvent& event)
                 break;
         }
     }
+    // Turning by cursor keys.
+    if (mAnim->isIdle() && mCursorTurning)
+    {
+        mEnemyNode = 0; /// We are no longer looking at the enemy.
+        mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning);
+        mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning));
+    }
 }
 
 ///================================================================================================
@@ -293,10 +299,17 @@ void ObjectNPC::castSpell(int spell)
 ///================================================================================================
 /// Turn the Object.
 ///================================================================================================
-void ObjectNPC::turning(Real facing)
+void ObjectNPC::turning(Real facing, bool cursorTurn)
 {
-    mNewFacing = Radian(facing) - Degree(90);
-    mAutoTurning = true;
+    if (cursorTurn)
+    {
+        mCursorTurning = facing;
+    }
+    else
+    {
+        mNewFacing = Radian(facing) - Degree(90);
+        mAutoTurning = true;
+    }
 }
 
 ///================================================================================================

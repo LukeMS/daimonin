@@ -48,7 +48,6 @@ typedef struct TextLine
     unsigned int width;
     int font;
     int index;
-    bool clipped;
     String text;
     uint32 *BG_Backup;
 }
@@ -82,9 +81,8 @@ public:
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
     void createBuffer(int width = MAX_TEXTLINE_LEN);
-
-    void getClippingPos(unsigned int &x1, unsigned int &y1, int maxWidth, int maxHeight, const char *text, unsigned int fontNr = 1);
-    void Print(TextLine *line, Texture *texture, const char *text);
+    bool getClippingPos(TextLine &textline, int maxWidth, int maxHeight);
+    void Print(TextLine *line, Texture *texture);
     void PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
     int CalcTextWidth(const char *text, unsigned int fontNr = 1);
     int getFontHeight(int fontNr)

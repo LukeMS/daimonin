@@ -42,7 +42,7 @@ using namespace Ogre;
 
 enum
 {
-    OBJ_WALK, OBJ_TURN,
+    OBJ_WALK, OBJ_TURN, OBJ_CURSOR_TURN,
     OBJ_TEXTURE,
     OBJ_ANIMATION,
     OBJ_GOTO,

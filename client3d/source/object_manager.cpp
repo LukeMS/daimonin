@@ -247,8 +247,9 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
             }
 //            if (action == OBJ_TEXTURE  ) mvObject_npc[id]->setTexture(val1, val2, 0);
 //            if (action == OBJ_HIT      ) mvObject_npc[id]->setDamage(val1);
-            if (action == OBJ_TURN     ) mvObject_npc[id]->turning(val1);
-            if (action == OBJ_ANIMATION) mvObject_npc[id]->toggleAnimation(val1, val2);
+            if (action == OBJ_TURN       ) mvObject_npc[id]->turning(val1, false);
+            if (action == OBJ_CURSOR_TURN) mvObject_npc[id]->turning(val1, true);
+            if (action == OBJ_ANIMATION  ) mvObject_npc[id]->toggleAnimation(val1, val2);
             break;
         }
 
@@ -370,7 +371,7 @@ void ObjectManager::targetObjectFacingPlayer()
 {
 //    SubPos2D pos = mvObject_player[ObjectPlayer::ME]->getTileScrollPos();
 //    mvObject_npc[mSelectedObject]->faceToTile(pos.x, pos.z);
-    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::ME]->getFacing());
+    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::ME]->getFacing(), false);
 }
 
 ///================================================================================================

@@ -24,15 +24,32 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include <OgreHardwarePixelBuffer.h>
-#include "gui_graphic.h"
 #include "logger.h"
+#include "gui_graphic.h"
+#include "gui_window.h"
 
 ///================================================================================================
 /// .
 ///================================================================================================
-void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
+GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
+    draw();
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+GuiGraphic::~GuiGraphic()
+{
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiGraphic::draw()
+{
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    PixelBox *mSrcPixelBox = ((GuiWindow*) mParent)->getPixelBox();
     /// ////////////////////////////////////////////////////////////////////
     /// Fill background rect with a gfx.
     /// ////////////////////////////////////////////////////////////////////
@@ -49,11 +66,11 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
         {
             if (dirty)
             {
-                src = mSrcPixelBox.getSubVolume(Box(
-                                                    gfxSrcPos[mState].x,
-                                                    gfxSrcPos[mState].y,
-                                                    gfxSrcPos[mState].x + mSrcWidth,
-                                                    gfxSrcPos[mState].y + mSrcHeight));
+                src = mSrcPixelBox->getSubVolume(Box(
+                                                     gfxSrcPos[mState].x,
+                                                     gfxSrcPos[mState].y,
+                                                     gfxSrcPos[mState].x + mSrcWidth,
+                                                     gfxSrcPos[mState].y + mSrcHeight));
                 dirty = false;
             }
             if (y2 > mHeight)
@@ -73,11 +90,11 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
                 }
                 if (dirty)
                 {
-                    src = mSrcPixelBox.getSubVolume(Box(
-                                                        gfxSrcPos[mState].x,
-                                                        gfxSrcPos[mState].y,
-                                                        gfxSrcPos[mState].x + x2-x1,
-                                                        gfxSrcPos[mState].y + y2-y1));
+                    src = mSrcPixelBox->getSubVolume(Box(
+                                                         gfxSrcPos[mState].x,
+                                                         gfxSrcPos[mState].y,
+                                                         gfxSrcPos[mState].x + x2-x1,
+                                                         gfxSrcPos[mState].y + y2-y1));
                 }
                 texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
                 x1 = x2;
@@ -92,8 +109,7 @@ void GuiGraphic::draw(PixelBox &mSrcPixelBox, Texture *texture)
     /// Fill background rect without destroying the previrious layer.
     /// ////////////////////////////////////////////////////////////////////
     else if (mStrType == "GFX_ALPHA_FILL")
-    {
-    }
+    {}
     /// ////////////////////////////////////////////////////////////////////
     /// Fill background rect with a color.
     /// ////////////////////////////////////////////////////////////////////

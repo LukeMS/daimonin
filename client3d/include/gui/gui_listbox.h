@@ -34,7 +34,7 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-static const int  SIZE_STRING_BUFFER = 128; // MUST be 2^X.
+static const int SIZE_STRING_BUFFER = 128; // MUST be 2^X.
 
 class GuiListbox : public GuiElement
 {
@@ -42,29 +42,9 @@ public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    GuiListbox(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY):GuiElement(xmlElement, w, h, maxX, maxY)
-    {
-        /// ////////////////////////////////////////////////////////////////////
-        /// Create buffer to hold the pixel information of the listbox.
-        /// ////////////////////////////////////////////////////////////////////
-        mFontHeight = GuiTextout::getSingleton().getFontHeight(mFontNr);
-        int size = mWidth * mHeight + mWidth * (mFontHeight+1);
-        mGfxBuffer = new uint32[size];
-        for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
-        /// ////////////////////////////////////////////////////////////////////
-        /// Set defaults.
-        /// ////////////////////////////////////////////////////////////////////
-        mIsClosing    = false;
-        mIsOpening    = false;
-        mDragging     = false;
-        mBufferPos    = 0;
-        mPrintPos     = 0;
-        mRowsToScroll = 0;
-        mRowsToPrint  = mHeight / mFontHeight;
-        mScroll       = 0;
-    }
+    GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
-    void draw(PixelBox &, Texture *texture);
+    void draw();
     const char *extractFirstLineOfText(const char &text);
     void addTextline(const char *text);
     void setIndex(int index)

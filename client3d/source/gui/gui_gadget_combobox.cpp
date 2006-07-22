@@ -32,7 +32,12 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "logger.h"
 
-GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY) : GuiGadget(xmlElement, w, h, maxX, maxY)
+
+// hi nedo, i made some changes to the gui stuff, so you have to start it all over...
+// i think the gui code is now more readable.
+// (polyveg)
+
+GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :GuiElement(xmlElement, parent)
 {
     /// ////////////////////////////////////////////////////////////////////
     /// .
@@ -56,14 +61,14 @@ GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, int w, int h, int
     mDispDropdown = false;
     mGfxBuffer = NULL;
     mEntryHeight = mHeight;
-    mVirtualHeight = GuiTextout::getSingleton().getFontHeight(mLabelFont) * (mvOption.size()-1);
+    mVirtualHeight = GuiTextout::getSingleton().getFontHeight(mLabelFont) * ((int)mvOption.size()-1);
     mScrollPos = 0;
 
-    if ( mY + mEntryHeight + mVirtualHeight > maxY )
+    if ( mY + mEntryHeight + mVirtualHeight > mMaxY )
     {
         printf("The dropdown needs a scroll\n");
         mNeedsScroll = true;
-        mViewport = maxY - mY - mEntryHeight;
+        mViewport = mMaxY - mY - mEntryHeight;
         mScrollPos = mVirtualHeight - mViewport;
     }
     else
@@ -79,11 +84,13 @@ GuiGadgetCombobox::~GuiGadgetCombobox()
         delete[] mGfxBuffer;
 }
 
-void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
+void GuiGadgetCombobox::draw()
 {
     /// ////////////////////////////////////////////////////////////////////
     /// Save background if needed.
     /// ////////////////////////////////////////////////////////////////////
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    PixelBox *mSrcPixelBox = ((GuiWindow*) mParent)->getPixelBox();
 
     if ( mDispDropdown )
     {
@@ -107,9 +114,7 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
     /// ////////////////////////////////////////////////////////////////////
     /// Draw gaget background.
     /// ////////////////////////////////////////////////////////////////////
-
-
-    PixelBox src = mSrcPixelBox.getSubVolume(Box(
+    PixelBox src = mSrcPixelBox->getSubVolume(Box(
                        gfxSrcPos[0].x,
                        gfxSrcPos[0].y,
                        gfxSrcPos[0].x + mWidth,
@@ -119,10 +124,9 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
     /// ////////////////////////////////////////////////////////////////////
     /// Draw the down button is it is given ( else this will turn into an entry box
     /// ////////////////////////////////////////////////////////////////////
-
     if (srcButton)
     {
-        PixelBox srcbtn = mSrcPixelBox.getSubVolume(Box(
+        PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
                               srcButton->state[0]->x,
                               srcButton->state[0]->y,
                               srcButton->state[0]->x + srcButton->width,
@@ -133,12 +137,9 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
     /// ////////////////////////////////////////////////////////////////////
     /// Draw the current line of text
     /// ////////////////////////////////////////////////////////////////////
-
     TextLine label;
     label.index= -1;
     label.font = mLabelFont;
-    label.clipped = false;
-
     label.x1 = mX + mLabelXPos;
     if ( srcButton )
         label.x2 = label.x1 + mWidth - srcButton->width - mLabelXPos;
@@ -146,8 +147,8 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
         label.x2 = label.x1 + mWidth - mLabelXPos;
     label.y1 = mY+ mLabelYPos;
     label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font) - mLabelYPos;
-
-    GuiTextout::getSingleton().Print(&label, texture, mvOption[0].c_str());
+    label.text = mvOption[0];
+    GuiTextout::getSingleton().Print(&label, texture);
 
     /// ////////////////////////////////////////////////////////////////////
     /// Draw the dropdown lines, each line will only be the height of the
@@ -162,7 +163,7 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
             /// The up button is deciding the width of the bar at the moment
             if (srcScrollbarUp)
             {
-                PixelBox srcbtn = mSrcPixelBox.getSubVolume(Box(
+                PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
                                       srcScrollbarUp->state[0]->x,
                                       srcScrollbarUp->state[0]->y,
                                       srcScrollbarUp->state[0]->x + srcScrollbarUp->width,
@@ -173,7 +174,7 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
             }
             if (srcScrollbarDown)
             {
-                PixelBox srcbtn = mSrcPixelBox.getSubVolume(Box(
+                PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
                                       srcScrollbarDown->state[0]->x,
                                       srcScrollbarDown->state[0]->y,
                                       srcScrollbarDown->state[0]->x + srcScrollbarDown->width,
@@ -185,20 +186,20 @@ void GuiGadgetCombobox::draw(PixelBox &mSrcPixelBox, Texture *texture)
         {
             label.y1 = mY + mEntryHeight + GuiTextout::getSingleton().getFontHeight(label.font) * (i-1) - mScrollPos;
             label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-
-            if ( label.y2 < mY + mEntryHeight )
+            label.text = mvOption[i];
+            if ( label.y2 < (unsigned int) mY + mEntryHeight )
                 continue;
-            if ( label.y1 < mY + mEntryHeight )
+            if ( label.y1 < (unsigned int) mY + mEntryHeight )
                 label.y1 = mY + mEntryHeight;
             // If the text need clipping and if so dont continue throw the list
             if ( label.y2 > texture->getSrcHeight())
             {
                 label.y2 = texture->getSrcHeight();
-                GuiTextout::getSingleton().Print(&label, texture, mvOption[i].c_str());
+                GuiTextout::getSingleton().Print(&label, texture);
                 break;
             }
 
-            GuiTextout::getSingleton().Print(&label, texture, mvOption[i].c_str());
+            GuiTextout::getSingleton().Print(&label, texture);
         }
 
     }
@@ -229,20 +230,20 @@ bool GuiGadgetCombobox::setState(int state)
             switch ( mButton )
             {
                 case GUI_GADGET_COMBOBOX_DDBUTTON:
-                mDispDropdown = true;
-                break;
+                    mDispDropdown = true;
+                    break;
                 case GUI_GADGET_COMBOBOX_SCROLL_DOWN:
-                mScrollPos += 5;
-                if ( mScrollPos > mVirtualHeight - mViewport )
-                    mScrollPos = mVirtualHeight - mViewport;
-                break;
+                    mScrollPos += 5;
+                    if ( mScrollPos > mVirtualHeight - mViewport )
+                        mScrollPos = mVirtualHeight - mViewport;
+                    break;
                 case GUI_GADGET_COMBOBOX_SCROLL_UP:
-                mScrollPos -= 5;
-                if ( mScrollPos < 0 )
-                    mScrollPos = 0;
-                break;
+                    mScrollPos -= 5;
+                    if ( mScrollPos < 0 )
+                        mScrollPos = 0;
+                    break;
                 default:
-                mAction = GuiWindow::GUI_ACTION_START_TEXT_INPUT;
+                    mAction = GuiWindow::GUI_ACTION_START_TEXT_INPUT;
             }
         }
     }
@@ -260,6 +261,7 @@ const char *GuiGadgetCombobox::getText()
     return mvOption[0].c_str();
 }
 
+/*
 bool GuiGadgetCombobox::mouseOver(int x, int y)
 {
     if ( GuiElement::mouseOver(x,y) )
@@ -303,3 +305,4 @@ bool GuiGadgetCombobox::mouseOver(int x, int y)
         mDispDropdown = false;
     return false;
 }
+*/

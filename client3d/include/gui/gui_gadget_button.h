@@ -30,22 +30,39 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
-#include "gui_gadget.h"
+#include "gui_window.h"
 
+#include "logger.h"
 using namespace Ogre;
 
-class GuiGadgetButton: public GuiGadget
+typedef void (Callback) (class GuiWindow *parent, int index);
+
+class GuiGadgetButton: public GuiElement
 {
 
 public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
+    bool mouseEvent(int MouseAction, int x, int y);
 
-    GuiGadgetButton(TiXmlElement *xmlElement, int w, int h, int maxX, int maxY);
-    ~GuiGadgetButton();
-
-    void draw(PixelBox &mSrcPixelBox, Texture *texture);
+    GuiGadgetButton(TiXmlElement *xmlElement, void *parent);
+    void setFunction(Callback *c)
+    {
+        mCallFunc = c;
+    }
+    void activated()
+    {
+        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
+    }
+    ~GuiGadgetButton()
+    {
+        ;
+    }
+    void draw();
+private:
+    Callback *mCallFunc;
+    bool mMouseOver, mMouseButDown;
 };
 
 
