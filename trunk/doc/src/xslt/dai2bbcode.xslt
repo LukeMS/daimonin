@@ -44,30 +44,44 @@
         </xsl:choose>
     </xsl:template>
 
-<!-- Level 1 section header -->
+<!-- Level 1 section -->
+    <xsl:template match="/daiml/section">
+        <xsl:text>&#xA;&#xA;&#xA;[list]</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>[/list]&#xA;</xsl:text>
+    </xsl:template>
+
+<!-- Level 1 section/title -->
     <xsl:template match="/daiml/section/title">
-        <xsl:text>&#xA;&#xA;&#xA;[size=20][b]</xsl:text>
+        <xsl:text>[size=20][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
 
-<!-- Level 2 section header -->
+<!-- Level 2+ section -->
+    <xsl:template match="section/section">
+        <xsl:text>&#xA;[list]</xsl:text>
+        <xsl:apply-templates/>
+        <xsl:text>[/list]&#xA;</xsl:text>
+    </xsl:template>
+
+<!-- Level 2 section/title -->
     <xsl:template match="/daiml/section/section/title">
-        <xsl:text>&#xA;[size=18][b]</xsl:text>
+        <xsl:text>[size=18][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
 
-<!-- Level 3 section header -->
+<!-- Level 3 section/title -->
     <xsl:template match="/daiml/section/section/section/title">
-        <xsl:text>&#xA;[size=16][b]</xsl:text>
+        <xsl:text>[size=16][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
 
-<!-- Level 4+ section header -->
+<!-- Level 4+ section/title -->
     <xsl:template match="section/section/section/section/title">
-        <xsl:text>&#xA;[size=14][b]</xsl:text>
+        <xsl:text>[size=14][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
