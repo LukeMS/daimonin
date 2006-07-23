@@ -31,7 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 #include "gui_textout.h"
-#include "gui_gadget_button.h"
+#include "gui_gadget_scrollbar.h"
 
 using namespace Ogre;
 
@@ -77,7 +77,7 @@ private:
     int  mPrintPos;
     int  mBufferPos;
     int  mFontHeight;
-    class GuiGadgetButton *mButScrollUp, *mButScrollDown;
+    class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////

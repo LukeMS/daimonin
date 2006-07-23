@@ -35,6 +35,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // Set default values.
     mState = 0;
     mFontNr= 0;
+    mX     = 0;
+    mY     = 0;
     mWidth = 0;
     mHeight= 0;
     mParent= parent;

@@ -33,12 +33,12 @@ http://www.gnu.org/licenses/licenses.html
 ///================================================================================================
 /// .
 ///================================================================================================
-GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
+GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
     mCallFunc = 0;
     mMouseOver = false;
     mMouseButDown = false;
-    draw();
+    if (drawOnInit) draw();
 }
 
 ///================================================================================================

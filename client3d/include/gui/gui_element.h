@@ -59,6 +59,11 @@ public:
     {
         return mIndex;
     }
+    void setPosition(int x, int y)
+    {
+        mX = x;
+        mY = y;
+    }
     int getWidth()
     {
         return mWidth;

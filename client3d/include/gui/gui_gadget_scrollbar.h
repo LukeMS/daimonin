@@ -24,46 +24,42 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifndef GUI_GADGET_BUTTON_H
-#define GUI_GADGET_BUTTON_H
+#ifndef GUI_GADGET_SCROLLBAR_H
+#define GUI_GADGET_SCROLLBAR_H
 
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
-#include "gui_window.h"
+#include "gui_textout.h"
+#include "gui_gadget_button.h"
 
-#include "logger.h"
 using namespace Ogre;
 
-typedef void (Callback) (class GuiWindow *parent, int index);
-
-class GuiGadgetButton: public GuiElement
+class GuiGadgetScrollbar : public GuiElement
 {
-
 public:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
+    GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent);
+    ~GuiGadgetScrollbar();
+    void draw();
     bool mouseEvent(int MouseAction, int x, int y);
 
-    GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
-    void setFunction(Callback *c)
-    {
-        mCallFunc = c;
-    }
-    void activated()
-    {
-        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
-    }
-    ~GuiGadgetButton()
-    {
-        ;
-    }
-    void draw();
 private:
-    Callback *mCallFunc;
-    bool mMouseOver, mMouseButDown;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Variables.
+    /// ////////////////////////////////////////////////////////////////////
+    int  mScroll;
+    bool mHorizontal;
+    int mStartX, mStopX, mStartY, mStopY;
+    uint32 *mGfxBuffer;
+    uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
+    class GuiGadgetButton *mButScrollUp, *mButScrollDown;
+    /// ////////////////////////////////////////////////////////////////////
+    /// Functions.
+    /// ////////////////////////////////////////////////////////////////////
+    void drawScrollbar();
 };
 
-
-#endif // GUI_GADGET_H
+#endif
