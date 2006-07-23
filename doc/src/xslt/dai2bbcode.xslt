@@ -53,7 +53,7 @@
 
 <!-- Level 1 section/title -->
     <xsl:template match="/daiml/section/title">
-        <xsl:text>[size=20][b]</xsl:text>
+        <xsl:text>[size=24][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
@@ -67,7 +67,7 @@
 
 <!-- Level 2 section/title -->
     <xsl:template match="/daiml/section/section/title">
-        <xsl:text>[size=18][b]</xsl:text>
+        <xsl:text>[size=20][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
@@ -81,7 +81,7 @@
 
 <!-- Level 4+ section/title -->
     <xsl:template match="section/section/section/section/title">
-        <xsl:text>[size=14][b]</xsl:text>
+        <xsl:text>[size=12][b]</xsl:text>
         <xsl:apply-templates/>
         <xsl:text>[/b][/size]&#xA;</xsl:text>
     </xsl:template>
