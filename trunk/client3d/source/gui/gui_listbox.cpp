@@ -59,31 +59,21 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mRowsToScroll = 0;
     mRowsToPrint  = mHeight / mFontHeight;
     mScroll       = 0;
-    mButScrollUp  = 0;
-    mButScrollDown= 0;
-    mButScrollWidth = 0;
-    mButScrollHeight= 0;
-
-
-// Todo: Scrollbar (=> 2 gadgets + scroller) will be a own element.
-//       You can choose then horizontal or vertical type.
-
+    mScrollBarV   = 0;
+    mScrollBarH   = 0;
 
     TiXmlElement *xmlOpt;
     for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
     {
-        if (!strcmp(xmlOpt->Attribute("type"), "BUTTON"))
+        if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER"))
         {
-            if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
+            if (!strcmp(xmlOpt->Attribute("name"), "Scroller_Vertical"))
             {
-                mButScrollUp = new GuiGadgetButton(xmlOpt, parent);
-                mButScrollWidth = mButScrollUp->getWidth();
-                mButScrollHeight= mButScrollUp->getHeight();
-//              mButScrollUp->setFunction(this->buttonPressed);
+                mScrollBarV = new GuiGadgetScrollbar(xmlOpt, parent);
             }
-            else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
+            else if (!strcmp(xmlOpt->Attribute("name"), "Scroller_Horizontal"))
             {
-                mButScrollDown = new GuiGadgetButton(xmlOpt, parent);
+                mScrollBarH = new GuiGadgetScrollbar(xmlOpt, parent);
             }
         }
     }
@@ -95,8 +85,8 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
 GuiListbox::~GuiListbox()
 {
     delete[] mGfxBuffer;
-    if (mButScrollUp)   delete mButScrollUp;
-    if (mButScrollDown) delete mButScrollDown;
+    if (mScrollBarV) delete mScrollBarV;
+    if (mScrollBarH) delete mScrollBarH;
 }
 
 ///================================================================================================
@@ -119,8 +109,8 @@ void GuiListbox::addTextline(const char *text)
 ///================================================================================================
 bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
 {
-    if (mButScrollUp->mouseEvent(MouseAction, x, y))  return true;
-    if (mButScrollDown->mouseEvent(MouseAction, x, y)) return true;
+    if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y)) return true;
+    if (mScrollBarH && mScrollBarH->mouseEvent(MouseAction, x, y)) return true;
     return false;
 }
 
@@ -129,9 +119,8 @@ bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
 ///================================================================================================
 void GuiListbox::drawScrollbar()
 {
-    mButScrollUp->draw();
-    // draw the scroller
-    mButScrollDown->draw();
+    if (mScrollBarV) mScrollBarV->draw();
+    if (mScrollBarH) mScrollBarH->draw();
 }
 
 ///================================================================================================

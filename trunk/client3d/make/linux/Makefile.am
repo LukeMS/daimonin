@@ -34,6 +34,7 @@ client3d_SOURCES = \
 	../../source/gui/gui_gadget.cpp \
 	../../source/gui/gui_gadget_combobox.cpp \
 	../../source/gui/gui_gadget_button.cpp \
+	../../source/gui/gui_gadget_scrollbar.cpp \
 	../../source/gui/gui_graphic.cpp \
 	../../source/gui/gui_imageset.cpp \
 	../../source/gui/gui_listbox.cpp \

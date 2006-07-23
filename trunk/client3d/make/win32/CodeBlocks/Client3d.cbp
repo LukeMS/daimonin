@@ -266,13 +266,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\include\dialog_manager.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\include\events.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -308,13 +301,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\include\gui\gui_gadget.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\include\gui\gui_gadget_button.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -323,6 +309,13 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\include\gui\gui_gadget_combobox.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\include\gui\gui_gadget_scrollbar.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -379,6 +372,13 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\include\gui\gui_window.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\include\gui\gui_window_dialog.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -546,11 +546,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\source\dialog_manager.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\source\events.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
@@ -581,17 +576,17 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\source\gui\gui_gadget.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\source\gui\gui_gadget_button.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\gui\gui_gadget_combobox.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\gui\gui_gadget_scrollbar.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -627,6 +622,11 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\gui\gui_window.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\gui\gui_window_dialog.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />

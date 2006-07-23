@@ -32,10 +32,12 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_textout.h"
 #include "gui_gadget_button.h"
 #include "gui_gadget_combobox.h"
+#include "gui_gadget_scrollbar.h"
 #include "gui_graphic.h"
-#include "gui_window.h"
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
+
+/// Define: Gadget elements are interactive.
 
 using namespace Ogre;
 
@@ -131,6 +133,7 @@ private:
     std::vector<class GuiStatusbar*>mvStatusbar;
     std::vector<class GuiGadgetButton *>mvGadgetButton;
     std::vector<class GuiGadgetCombobox*>mvGadgetCombobox;
+    std::vector<class GuiGadgetScrollbar*>mvGadgetScrollbar;
     std::vector<TextLine*>mvTextline;
     Overlay *mOverlay, *mNPC_HeadOverlay;
     OverlayElement *mElement;

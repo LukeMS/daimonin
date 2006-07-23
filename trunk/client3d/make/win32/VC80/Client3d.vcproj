@@ -196,10 +196,6 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath="..\..\..\source\dialog_manager.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\events.cpp"
 				>
 			</File>
@@ -449,6 +445,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\source\gui\gui_gadget_scrollbar.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\gui\gui_graphic.cpp"
 					>
 					<FileConfiguration
@@ -602,6 +602,10 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\..\..\source\gui\gui_window_dialog.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -613,11 +617,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\dialog_manager.h"
+				RelativePath="..\..\..\include\events.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\events.h"
+				RelativePath="..\..\..\include\gui\gui_gadget_scrollbar.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\gui\gui_window_dialog.h"
 				>
 			</File>
 			<File
