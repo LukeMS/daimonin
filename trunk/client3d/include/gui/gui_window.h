@@ -39,8 +39,6 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-class GuiGadgetButton;
-
 class GuiWindow
 {
 public:
@@ -81,9 +79,7 @@ public:
     }
     void Init(TiXmlElement *xmlElem);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
-    void updateDragAnimation();
-    void updateAnimaton(Real timeSinceLastFrame);
-    void updateListbox();
+    void update(Real timeSinceLastFrame);
     void PreformActions();
     void getTexturseSize(int &w, int &h)
     {
@@ -130,12 +126,12 @@ private:
     SceneNode *mSceneNode;
     String mStrName;
     String mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
-    std::vector<GuiGadgetCombobox*>mvGadgetCombobox;
-    std::vector<GuiGadgetButton *>mvGadgetButton;
-    std::vector<GuiGraphic*>mvGraphic;
-    std::vector<GuiListbox*>mvListbox;
+    std::vector<class GuiGraphic*>mvGraphic;
+    std::vector<class GuiListbox*>mvListbox;
+    std::vector<class GuiStatusbar*>mvStatusbar;
+    std::vector<class GuiGadgetButton *>mvGadgetButton;
+    std::vector<class GuiGadgetCombobox*>mvGadgetCombobox;
     std::vector<TextLine*>mvTextline;
-    std::vector<GuiStatusbar*>mvStatusbar;
     Overlay *mOverlay, *mNPC_HeadOverlay;
     OverlayElement *mElement;
     AnimationState *mSpeakAnimState, *mManualAnimState;

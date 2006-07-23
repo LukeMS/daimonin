@@ -31,10 +31,9 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 #include "gui_textout.h"
+#include "gui_gadget_button.h"
 
 using namespace Ogre;
-
-static const int SIZE_STRING_BUFFER = 128; // MUST be 2^X.
 
 class GuiListbox : public GuiElement
 {
@@ -45,17 +44,16 @@ public:
     GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
     void draw();
+    bool mouseEvent(int MouseAction, int x, int y);
     const char *extractFirstLineOfText(const char &text);
     void addTextline(const char *text);
-    void setIndex(int index)
-    {
-        mIndex = index;
-    }
-private:
 
+private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
+    enum { SIZE_STRING_BUFFER = 128 }; // MUST be 2^X.
+
     struct _row
     {
         String str;
@@ -72,15 +70,18 @@ private:
     bool mVisible;
     bool mDragging;
     int  mScroll;
+    int mButScrollWidth, mButScrollHeight;
     uint32 *mGfxBuffer;
     int  mRowsToScroll, mRowsToPrint;
     int  mSumRows;
     int  mPrintPos;
     int  mBufferPos;
     int  mFontHeight;
+    class GuiGadgetButton *mButScrollUp, *mButScrollDown;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
+    void drawScrollbar();
 };
 
 #endif

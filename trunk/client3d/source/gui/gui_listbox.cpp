@@ -59,6 +59,34 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mRowsToScroll = 0;
     mRowsToPrint  = mHeight / mFontHeight;
     mScroll       = 0;
+    mButScrollUp  = 0;
+    mButScrollDown= 0;
+    mButScrollWidth = 0;
+    mButScrollHeight= 0;
+
+
+// Todo: Scrollbar (=> 2 gadgets + scroller) will be a own element.
+//       You can choose then horizontal or vertical type.
+
+
+    TiXmlElement *xmlOpt;
+    for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
+    {
+        if (!strcmp(xmlOpt->Attribute("type"), "BUTTON"))
+        {
+            if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
+            {
+                mButScrollUp = new GuiGadgetButton(xmlOpt, parent);
+                mButScrollWidth = mButScrollUp->getWidth();
+                mButScrollHeight= mButScrollUp->getHeight();
+//              mButScrollUp->setFunction(this->buttonPressed);
+            }
+            else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
+            {
+                mButScrollDown = new GuiGadgetButton(xmlOpt, parent);
+            }
+        }
+    }
 }
 
 ///================================================================================================
@@ -67,90 +95,43 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
 GuiListbox::~GuiListbox()
 {
     delete[] mGfxBuffer;
+    if (mButScrollUp)   delete mButScrollUp;
+    if (mButScrollDown) delete mButScrollDown;
 }
-/*
-///================================================================================================
-/// Parse a Listbox entry.
-///================================================================================================
-GuiListbox::GuiListbox(TiXmlElement *xmlElem, int maxX, int maxY)
-{
-  TiXmlElement *xmlGadget;
-  std::string strValue;
-  mState = 0;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Parse the gadget.
-  /// ////////////////////////////////////////////////////////////////////
-  mBehavior= xmlElem->Attribute("type");
-  mStrName = xmlElem->Attribute("name");
-  mFont    = atoi(xmlElem->Attribute("font"));
-  mFontHeight = GuiTextout::getSingleton().getFontHeight(mFont);
-  /// ////////////////////////////////////////////////////////////////////
-  /// Parse the position.
-  /// ////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
-  {
-    mPosX = atoi(xmlGadget->Attribute("x"));
-    mPosY = atoi(xmlGadget->Attribute("y"));
-  }
-  if (mPosX > maxX-2) mPosX = maxX-2;
-  if (mPosY > maxY-2) mPosY = maxY-2;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Parse the size.
-  /// ////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Range")))
-  {
-    mWidth = atoi(xmlGadget->Attribute("width"));
-    mHeight= atoi(xmlGadget->Attribute("height"));
-  }
-  if (mPosX + mWidth > maxX) mWidth = maxX-mPosX-1;
-  if (mPosY + mHeight >maxY) mHeight= maxY-mPosY-1;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Parse the fill color.
-  /// ////////////////////////////////////////////////////////////////////
-  if ((xmlGadget = xmlElem->FirstChildElement("Color")))
-  {
-    // PixelFormat: ARGB.
-    mFillColor = atoi(xmlGadget->Attribute("blue" ));
-    mFillColor+= atoi(xmlGadget->Attribute("green")) << 8;
-    mFillColor+= atoi(xmlGadget->Attribute("red"  )) << 16;
-    mFillColor+= atoi(xmlGadget->Attribute("alpha")) << 24;
-  }
-  /// ////////////////////////////////////////////////////////////////////
-  /// Create buffer to hold the pixel information of the listbox.
-  /// ////////////////////////////////////////////////////////////////////
-  int size = mWidth * mHeight + mWidth * (mFontHeight+1);
-  mGfxBuffer = new uint32[size];
-  for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
-  /// ////////////////////////////////////////////////////////////////////
-  /// Set defaults.
-  /// ////////////////////////////////////////////////////////////////////
-  mIsClosing    = false;
-  mIsOpening    = false;
-  mDragging     = false;
-  mBufferPos    = 0;
-  mPrintPos     = 0;
-  mRowsToScroll = 0;
-  mRowsToPrint  = mHeight / mFontHeight;
-  mScroll       = 0;
-}
-*/
+
 ///================================================================================================
 /// Add a line of text to the ring-buffer.
 ///================================================================================================
 void GuiListbox::addTextline(const char *text)
 {
-    const char *actTextLine;
-    while (GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) > mWidth)
-    {
-        /// Text needs a linebreak.
-        actTextLine = text;
-        break; // delete me!
-        // ToDo.
-    }
+    // Todo: Here we must split a string to fit into the window.
+    //       OR we cut it (done by textout) and show the line in the tooltip when
+    //       mouse is over this line.
+
     //Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
     ++mBufferPos;
     ++mRowsToScroll;
+}
+
+///=============================================================================================
+/// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
+///================================================================================================
+bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
+{
+    if (mButScrollUp->mouseEvent(MouseAction, x, y))  return true;
+    if (mButScrollDown->mouseEvent(MouseAction, x, y)) return true;
+    return false;
+}
+
+///================================================================================================
+/// .
+///================================================================================================
+void GuiListbox::drawScrollbar()
+{
+    mButScrollUp->draw();
+    // draw the scroller
+    mButScrollDown->draw();
 }
 
 ///================================================================================================
@@ -210,7 +191,6 @@ void GuiListbox::draw()
     /// Scroll the text.
     /// ////////////////////////////////////////////////////////////////////
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
-
     static clock_t time = clock();
     if (!mRowsToScroll || mDragging) return;
     if (clock() - time < SCROLL_SPEED) return;
@@ -221,6 +201,7 @@ void GuiListbox::draw()
         /// Print it to the (invisible) last line of the listbox.
         GuiTextout::getSingleton().PrintToBuffer(mWidth, mHeight, mGfxBuffer + mWidth * mHeight, row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str.c_str(), mFontNr, mFillColor);
     }
+
     texture->getBuffer()->blitFromMemory(
         PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
         Box(mX, mY, mX + mWidth, mY + mHeight));

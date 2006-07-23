@@ -95,4 +95,17 @@
       <Image name= "ScrollButton_01_Up" width= "10" height= "7">
           <State name= "Standard"   posX= "166" posY= "34" />
       </Image>
+
+      <Image name= "ScrollButton_02_Down" width= "16" height= "16">
+          <State name= "Standard" posX= "124" posY= "52" />
+          <State name= "Pushed"   posX= "124" posY= "69" />
+          <State name= "M_Over"   posX= "124" posY= "86" />
+      </Image>
+
+      <Image name= "ScrollButton_02_Up" width= "16" height= "16">
+          <State name= "Standard" posX= "141" posY= "52" />
+          <State name= "Pushed"   posX= "141" posY= "69" />
+          <State name= "M_Over"   posX= "141" posY= "86" />
+      </Image>
+
 </ImageSet>

@@ -59,6 +59,14 @@ public:
     {
         return mIndex;
     }
+    int getWidth()
+    {
+        return mWidth;
+    }
+    int getHeight()
+    {
+        return mHeight;
+    }
     void setStateImagePos(std::string state, int x, int y);
     virtual void draw() =0;
     const char *getTooltip()
