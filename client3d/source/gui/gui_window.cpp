@@ -245,7 +245,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         if (index <0)
         {
-            Logger::log().warning() << "TextBox mame " << strTmp << " is unknown. Will be handled as static text.";
+            Logger::log().warning() << "TextBox name " << strTmp << " is unknown. Will be handled as static text.";
             printParsedTextline(xmlElem);
             continue;
         }
@@ -372,7 +372,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 }
 
 ///================================================================================================
-/// Parse and print a textline.
+/// Parse and print a text (label element).
 ///================================================================================================
 inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
 {
@@ -437,6 +437,17 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y))
             return "";
     }
+    for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
+    {
+//        if (mvGadgetCombobox[i]->mouseEvent(MouseAction, x, y))
+//            return "";
+    }
+    for (unsigned int i = 0; i < mvListbox.size(); ++i)
+    {
+        if (mvListbox[i]->mouseEvent(MouseAction, x, y))
+            return "";
+    }
+
 
     const char *actGadgetName = 0;
 
@@ -736,32 +747,15 @@ void GuiWindow::setHeight(int newHeight)
 ///================================================================================================
 /// .
 ///================================================================================================
-void GuiWindow::updateDragAnimation()
+void GuiWindow::update(Real timeSinceLastFrame)
 {
-    ;// move back on wrong drag
-}
-
-///================================================================================================
-/// Update all animation stuff.
-///================================================================================================
-void GuiWindow::updateAnimaton(Real timeSinceLastFrame)
-{
-    /// ////////////////////////////////////////////////////////////////////
+    /// Update drag animation (move back on wrong drag).
+    ;
     /// Speak Animation.
-    /// ////////////////////////////////////////////////////////////////////
     if (mSpeakAnimState)
         mSpeakAnimState->addTime(timeSinceLastFrame);
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// xyz Animations
-    /// ////////////////////////////////////////////////////////////////////
-}
-
-///================================================================================================
-/// .
-///================================================================================================
-void GuiWindow::updateListbox()
-{
+    /// Update listboxes.
     for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
     {
         (*i)->draw();
@@ -769,12 +763,12 @@ void GuiWindow::updateListbox()
 }
 
 ///================================================================================================
-/// .
+/// Button was pressed.
 ///================================================================================================
 void GuiWindow::buttonPressed(GuiWindow *me, int index)
 {
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
+    if (index == GUI_BUTTON_CLOSE)
+        me->setVisible(false);
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"button event... ");
 }
-
-

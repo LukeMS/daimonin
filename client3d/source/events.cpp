@@ -327,7 +327,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             OverlayManager::getSingleton().destroy(mOverlay);
             GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
-            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
             mWindow->resetStatistics();
             break;

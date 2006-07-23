@@ -42,7 +42,7 @@ GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent):GuiElem
 }
 
 ///================================================================================================
-/// Draw the guiElement.
+/// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 ///================================================================================================
 bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 {

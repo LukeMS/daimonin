@@ -59,7 +59,7 @@
     </Graphic>
 
     <Label   x=  "05" y= "25" font="02" text= "Current FPS:" />
-    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "40" name= "Engine_CurrentFPS" />
+    <TextBox x= "100" y= "25" font="02" text= "---.-" width = "40" name= "Engine_CurrentFPS" />
 
     <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
     <TextBox x= "100" y= "40" font="02" text= "000.0" width = "40" name= "Engine_BestFPS" />
@@ -160,11 +160,36 @@
     </Graphic>
 
 
+
+
+
     <Listbox type= "" name= "List_Msg" font="03">
       <Pos x= "1" y= "18" />
-      <Range width= "280" height= "250" />
+      <Range width= "262" height= "250" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
+
+      <Gadget type= "BUTTON" name = "But_ScrollUp" image_name = "ScrollButton_02_Up">
+        <Pos x= "263" y= "18" />
+      </Gadget>
+
+      <Gadget type= "SCROLLER" name = "Scrollbar">
+        <Pos x= "263" y= "34" />
+        <Range width= "16" height= "200" />
+	<Color type= "Bar"     red= "80" green= "100" blue= "60" alpha = "255" />
+	<Color type= "Bar_MO"  red= "80" green= "100" blue= "60" alpha = "255" />   <!--  BorderColor of the bar for MouseOver  -->
+	<Color type= "Bar_ACT" red= "80" green= "100" blue= "60" alpha = "255" />   <!--  Color for active bar  -->
+	<Color type= "Back"    red= "80" green= "100" blue= "60" alpha = "255" />
+	<Color type= "Border"  red= "80" green= "100" blue= "60" alpha = "255" />
+      </Gadget>
+
+      <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down">
+        <Pos x= "263" y= "233" />
+      </Gadget>
+
     </Listbox>
+
+
+
 
   </Window>
 
@@ -240,6 +265,36 @@
     </Graphic>
 
 
+    <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
+      <Pos x= "30" y= "40" />
+      <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
+      <Tooltip  text= "Press here to ACCEPT." />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "But_Cancel" image_name = "Button_01_Std">
+      <Pos x= "130" y= "40" />
+      <Label xPos= "6" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
+      <Tooltip  text= "Press here to CANCEL." />
+    </Gadget>
+
+    <Gadget type= "COMBOBOX"  name = "ComboBoxTest" image_name = "Blue_Background">
+      <Pos x= "40" y= "300" />
+      <Range width= "148" height= "17" />
+      <Label xPos= "40" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "CBox"/>
+      <Tooltip  text= "I am suposed to be a combobox." />
+      <Button image_name="Button_01_Down" />
+      <Option text="Monkey With a Long tail"/>
+      <Option text="PigMMMMMMMMMMMMMMMMMMMMMMMMM"/>
+      <Option text="1"/>
+      <Option text="2"/>
+      <Option text="3"/>
+      <Scroll>
+        <Down image_name="ScrollButton_01_Down" />
+        <Up image_name="ScrollButton_01_Up" />
+      </Scroll>
+     </Gadget>
+
+
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
@@ -303,7 +358,43 @@
   </Window>
 
 
+ <!--#############################################-->
+  <!--WINDOW: Player Statistics                    -->
+  <!--#############################################-->
+  <Window name= "PlayerInfo">
+    <!--  values > 0: left/top     alignment  -->
+    <!--  values < 0: right/bottom alignment  -->
+    <!--  entry completly missing : centered  -->
+    <Size     width= "800" height= "106" />
+    <Pos      y= "-106" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "0" height= "0" />
+    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "PlayerStatusBG">
+      <Pos x= "0" y= "0" />
+      <Range width= "800" height= "106" />
+    </Graphic>
 
+    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "PlayerStatusBar">
+      <Pos x= "347" y= "0" />
+      <Range width= "35" height= "106" />
+      <Label xPos= "0" yPos= "16" red= "255" green= "0" blue= "0" alpha = "255" />
+    </Statusbar>
 
+    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerStatusBar">
+      <Pos x= "382" y= "0" />
+      <Range width= "35" height= "106" />
+      <Label xPos= "0" yPos= "16" red= "0" green= "255" blue= "0" alpha = "255" />
+    </Statusbar>
+
+    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerStatusBar">
+      <Pos x= "417" y= "0" />
+      <Range width= "35" height= "106" />
+      <Label xPos= "0" yPos= "16" red= "255" green= "255" blue= "0" alpha = "255" />
+    </Statusbar>
+
+  </Window>
 </XML>

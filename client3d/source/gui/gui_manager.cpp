@@ -337,8 +337,7 @@ const char *GuiManager::getTextInput()
 ///================================================================================================
 void GuiManager::showWindow(int window, bool visible)
 {
-      guiWindow[window].setVisible(visible);
-        guiWindow[window].setVisible(true);
+    guiWindow[window].setVisible(visible);
 }
 
 ///================================================================================================
@@ -348,14 +347,11 @@ void GuiManager::update(Real timeSinceLastFrame)
 {
     if (mProcessingTextInput)
     {
-        //Logger::log().info() << GuiTextinput::getSingleton().getText(false);
         sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)GuiTextinput::getSingleton().getText());
     }
     for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
     {
-        guiWindow[i].updateDragAnimation();  // move back on wrong drag.
-        guiWindow[i].updateAnimaton(timeSinceLastFrame);
-        guiWindow[i].updateListbox();
+        guiWindow[i].update(timeSinceLastFrame);
     }
     /// ////////////////////////////////////////////////////////////////////
     /// Check for Tooltips.
