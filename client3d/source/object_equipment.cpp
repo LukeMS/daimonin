@@ -265,10 +265,8 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 ///================================================================================================
 /// Draw a part of the texture.
 ///================================================================================================
-inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber, uint32 texColor)
+inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber)
 {
-    texNumber = 0; // delete me!
-
     uint32 srcColor, dstColor;
     uint32 *texRace = (uint32*)image.getData();
     uint32 *buffer  = new uint32[picPart.w * picPart.h];
@@ -332,7 +330,6 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
 
 }
 
-
 ///================================================================================================
 /// Select a new texture.
 ///================================================================================================
@@ -345,50 +342,50 @@ void ObjectEquipment::setTexture(int pos, int textureColor, int textureNr)
     {
         case TEXTURE_POS_SKIN:
         {
-            drawBopyPart(picFace, image, textureNr, textureColor);
-            for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], image,  textureNr, textureColor);
+            drawBopyPart(picFace, image, textureColor, textureNr);
+            for (int side = 0; side < 4; ++side) drawBopyPart(picArms[side], image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_FACE:
         {
-            drawBopyPart(picFace, image, textureNr, textureColor);
+            drawBopyPart(picFace, image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_HAIR:
         {
-            drawBopyPart(picHair, image, textureNr, textureColor);
+            drawBopyPart(picHair, image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_BODY:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], image,  textureNr, textureColor);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picBody[side], image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_LEGS:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], image,  textureNr, textureColor);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picLegs[side], image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_BELT:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], image, textureNr, textureColor);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picBelt[side], image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_SHOES:
         {
-            for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], image,  textureNr, textureColor);
+            for (int side = 0; side < 2; ++side) drawBopyPart(picShoes[side], image, textureColor, textureNr);
             break;
         }
 
         case TEXTURE_POS_HANDS:
         {
-            for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], image,  textureNr, textureColor);
+            for (int side = 0; side < 4; ++side) drawBopyPart(picHands[side], image, textureColor, textureNr);
             break;
         }
 

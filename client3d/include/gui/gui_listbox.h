@@ -35,6 +35,11 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+/**
+ ** Scrollbar class
+ ** which manages the display of scrollable text and/or graphics in a window.
+ ** The type can be GFX_FILL or COLOR_FILL.
+ *****************************************************************************/
 class GuiListbox : public GuiElement
 {
 public:
@@ -77,6 +82,8 @@ private:
     int  mPrintPos;
     int  mBufferPos;
     int  mFontHeight;
+    int  mActLines;
+    int  mScrollbarOffsetV, mScrollbarOffsetH; // Lines scrolled by the Scrollbar.
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
