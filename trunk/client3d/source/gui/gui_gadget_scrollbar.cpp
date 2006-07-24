@@ -31,7 +31,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "gui_window.h"
 
-const clock_t SCROLL_SPEED = 12;
+//long i = Root::getSingleton().getTimer()->getMilliseconds()
+
+const int MIN_SLIDER_SIZE = 6;
 
 ///================================================================================================
 /// Constructor.
@@ -41,21 +43,15 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):G
     /// ////////////////////////////////////////////////////////////////////
     /// Create buffer to hold the pixel information of the listbox.
     /// ////////////////////////////////////////////////////////////////////
-
-    //for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
     mButScrollUp  = 0;
     mButScrollDown= 0;
-
 
     if (mWidth > mHeight) mHorizontal = true;
     else                  mHorizontal = false;
 
-    TiXmlElement *xmlOpt;
     uint32 *color = 0;
     const char *tmp;
-
-
-
+    TiXmlElement *xmlOpt;
     for (xmlOpt = xmlElement->FirstChildElement("Color"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Color"))
     {
         if      (!strcmp(xmlOpt->Attribute("type"), "BACKGROUND"))  color = &mColorBackground;
@@ -75,34 +71,15 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):G
         if (!strcmp(xmlOpt->Attribute("type"), "BUTTON"))
         {
             if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollUp"))
-            {
                 mButScrollUp = new GuiGadgetButton(xmlOpt, parent, false);
-                mButScrollUp->setPosition(mX, mY);
-            }
             else if (!strcmp(xmlOpt->Attribute("name"), "But_ScrollDown"))
-            {
                 mButScrollDown = new GuiGadgetButton(xmlOpt, parent, false);
-                if (mHorizontal)
-                {
-                    mStartX = mX + mButScrollDown->getWidth();
-                    mStartY = mY;
-                    mStopX  = mX + mWidth - mButScrollDown->getWidth();
-                    mStopY  = mY + mHeight;
-                    mButScrollDown->setPosition(mStopX, mY);
-                }
-                else
-                {
-                    mStartX = mX;
-                    mStartY = mY + mButScrollDown->getHeight();
-                    mStopX  = mX + mWidth;
-                    mStopY  = mY + mHeight - mButScrollDown->getHeight();
-                    mButScrollDown->setPosition(mStartX, mStopY);
-                }
-            }
         }
     }
-    mGfxBuffer = new uint32[(mStopX-mStartX) * (mStopY-mStartY)];
-    draw();
+    mGfxBuffer = 0;
+    mSliderPos = 0;
+    mSliderSize = mHeight - 2* mButScrollDown->getHeight()-6;
+    resize(mWidth, mHeight);
 }
 
 ///================================================================================================
@@ -116,36 +93,120 @@ GuiGadgetScrollbar::~GuiGadgetScrollbar()
 }
 
 ///================================================================================================
-/// .
+/// Mouse action in parent window.
 ///================================================================================================
 bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
 {
-//    if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y)) return true;
-//    if (mScrollBarH && mScrollBarH->mouseEvent(MouseAction, x, y)) return true;
+    // Test the buttons.
+    if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y)) return true;
+    if (mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y)) return true;
+    // Test the sliders.
+
+
     return false;
 }
 
 ///================================================================================================
-/// .
+/// Update the slider size.
+///================================================================================================
+void GuiGadgetScrollbar::updateSlider(int actLines, int maxVisibleLines)
+{
+    if (actLines <= maxVisibleLines) return;
+    mSliderSize = ((mStopY-mStartY-6) * maxVisibleLines) / actLines;
+    if (mSliderSize < MIN_SLIDER_SIZE) mSliderSize = MIN_SLIDER_SIZE;
+    draw();
+}
+
+///================================================================================================
+/// Draw the slider.
 ///================================================================================================
 void GuiGadgetScrollbar::draw()
 {
-    if (mButScrollUp)   mButScrollUp->draw();
-    if (mButScrollDown) mButScrollDown->draw();
+    int y1 = 3 + mSliderPos;
+    int y2 = y1 + mSliderSize;
     int w = mStopX-mStartX;
 
-    for (int x = 0; x < w; ++x)
+    uint32 color;
+    if (mState == STATE_PUSHED)
+        color = mColorBarActive;
+    else
+        color = mColorBorderline;
+
+    for (int x = 4; x < mWidth-4; ++x)
     {
-        for (int y = 0; y < mStopY-mStartY; ++y)
+        for (int y = y1; y < y2; ++y)
         {
-            if (x ==1 || x == w-2)
-                mGfxBuffer[y * w + x] = mColorBorderline;
+            if (mState == STATE_M_OVER && (x= 3 || x == mWidth-4 || y == y1 || y == y2-1))
+                mGfxBuffer[y * w + x] = mColorBarM_Over;
             else
-                mGfxBuffer[y * w + x] = mColorBackground;
+            {
+                mGfxBuffer[y * w + x] = color;
+            }
         }
     }
 
+    // Dark borders.
+    --y2;
+    for (int y = y1; y < y2; ++y)      mGfxBuffer[y * w + mWidth-4] = 0xff000000;
+    for (int x = 3; x < mWidth-3; ++x) mGfxBuffer[y2 * w + x ]      = 0xff000000;
+    // Light borders.
+    color+= ((color&0x0000ff)+ 0x000011) > 0x0000ff ? 0 : 0x000011;
+    color+= ((color&0x00ff00)+ 0x001100) > 0x00ff00 ? 0 : 0x001100;
+    color+= ((color&0xff0000)+ 0x110000) > 0xff0000 ? 0 : 0x110000;
+    for (int y = y1; y < y2; ++y)      mGfxBuffer[y * w + 3 ] = color;
+    for (int x = 4; x < mWidth-3; ++x) mGfxBuffer[y1 * w + x] = color;
+    // Blit.
     ((GuiWindow*)mParent)->getTexture()->getBuffer()->blitFromMemory(
-        PixelBox(w, mStopY-mStartY, 1, PF_A8B8G8R8, mGfxBuffer),
+        PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, mGfxBuffer),
         Box(mStartX, mStartY, mStopX, mStopY));
+}
+
+///================================================================================================
+/// Resize the complete scrollbar.
+///================================================================================================
+void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
+{
+    if (newWidth == mWidth && newHeight == mHeight && mGfxBuffer) return;
+    if (mHorizontal)
+    {
+        mStartX = mX + mButScrollDown->getWidth();
+        mStartY = mY;
+        mStopX  = mX + mWidth - mButScrollDown->getWidth();
+        mStopY  = mY + mHeight;
+        mButScrollDown->setPosition(mStopX, mY);
+        mButScrollUp->setPosition(mX, mY);
+    }
+    else
+    {
+        mStartX = mX;
+        mStartY = mY + mButScrollDown->getHeight();
+        mStopX  = mX + mButScrollDown->getWidth();
+        mStopY  = mY + mHeight - mButScrollDown->getHeight();
+        mButScrollDown->setPosition(mStartX, mStopY);
+        mButScrollUp->setPosition(mX, mY);
+    }
+
+    int w = mStopX-mStartX;
+    int h = mStopY-mStartY;
+    delete[] mGfxBuffer; // delete a NULL-Pointer is save in c++.
+    mGfxBuffer = new uint32[w*h];
+
+    // Background.
+    for (int xy = 0; xy < w*h; ++xy) mGfxBuffer[xy] = mColorBackground;
+    // Horizontal borderlines.
+    for (int x = 1; x < w-1; ++x)
+    {
+        mGfxBuffer[   1 *w +x] = mColorBorderline;
+        mGfxBuffer[(h-2)*w +x] = mColorBorderline;
+    }
+    // Vertical borderlines.
+    for (int y = 2; y < h-2; ++y)
+    {
+        mGfxBuffer[y*w +  1] = mColorBorderline;
+        mGfxBuffer[y*w +w-2] = mColorBorderline;
+    }
+
+    if (mButScrollUp)   mButScrollUp->draw();
+    if (mButScrollDown) mButScrollDown->draw();
+    draw();
 }

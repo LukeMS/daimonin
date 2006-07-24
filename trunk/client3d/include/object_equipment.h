@@ -78,8 +78,8 @@ public:
     ObjectEquipment(Entity *parent);
     ~ObjectEquipment();
     void freeRecources();
-    void setTexture(int pos, int textureColor, int textureNr);
-    void drawBopyPart(sPicture &picPart, Image &image, uint32 texNumber, uint32 texColor);
+    void setTexture(int pos, int textureColor, int textureNr =0);
+    void drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber);
     void equipItem(int bone, int type, int itemID, int particleID =-1);
     void dropItem(int bone);
     void raiseWeapon(bool raise);

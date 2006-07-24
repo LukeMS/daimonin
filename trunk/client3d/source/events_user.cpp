@@ -199,6 +199,7 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_K:
         {
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_HIT,0, 5);
             break;
         }
 

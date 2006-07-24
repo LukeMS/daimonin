@@ -163,32 +163,25 @@
 
 
 
-    <Listbox type= "" name= "List_Msg" font="03">
+    <Listbox type= "COLOR_FILL" name= "List_Msg" font="03">
       <Pos x= "1" y= "18" />
       <Range width= "262" height= "250" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
 
-      <Gadget type= "BUTTON" name = "But_ScrollUp" image_name = "ScrollButton_02_Up">
-        <Pos x= "263" y= "18" />
-      </Gadget>
-
-      <Gadget type= "SCROLLER" name = "Scrollbar">
-        <Pos x= "263" y= "34" />
-        <Range width= "16" height= "200" />
-	<Color type= "Bar"     red= "80" green= "100" blue= "60" alpha = "255" />
-	<Color type= "Bar_MO"  red= "80" green= "100" blue= "60" alpha = "255" />   <!--  BorderColor of the bar for MouseOver  -->
-	<Color type= "Bar_ACT" red= "80" green= "100" blue= "60" alpha = "255" />   <!--  Color for active bar  -->
-	<Color type= "Back"    red= "80" green= "100" blue= "60" alpha = "255" />
-	<Color type= "Border"  red= "80" green= "100" blue= "60" alpha = "255" />
-      </Gadget>
-
-      <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down">
-        <Pos x= "263" y= "233" />
+      <Gadget type= "SCROLLER" name = "Scroller_Vertical">
+         <Pos x= "263" y= "18" />
+         <Range width= "16" height= "250" />
+	 <Color type= "BACKGROUND"  red= "56" green= "60" blue= "49" alpha = "255" />
+	 <Color type= "BORDERLINE"  red= "89" green= "95" blue= "87" alpha = "255" />
+	 <Color type= "BAR_PASSIVE" red= "80" green= "100" blue= "60" alpha = "255" />
+	 <Color type= "BAR_M_OVER"  red= "80" green= "100" blue= "60" alpha = "255" />
+	 <Color type= "BAR_ACTIVE"  red= "80" green= "100" blue= "60" alpha = "255" />
+	
+	 <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
+         <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
       </Gadget>
 
     </Listbox>
-
-
 
 
   </Window>

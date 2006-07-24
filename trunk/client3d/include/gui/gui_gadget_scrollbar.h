@@ -35,6 +35,11 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+
+/**
+ ** Scrollbar class
+ ** which manages the scrolling of text and/or graphics in a window.
+ *****************************************************************************/
 class GuiGadgetScrollbar : public GuiElement
 {
 public:
@@ -45,12 +50,14 @@ public:
     ~GuiGadgetScrollbar();
     void draw();
     bool mouseEvent(int MouseAction, int x, int y);
+    void resize(int newWidth, int newHeight);
+    void updateSlider(int actLines, int maxVisibleLines);
 
 private:
     /// ////////////////////////////////////////////////////////////////////
     /// Variables.
     /// ////////////////////////////////////////////////////////////////////
-    int  mScroll;
+    int  mSliderPos, mSliderSize;
     bool mHorizontal;
     int mStartX, mStopX, mStartY, mStopY;
     uint32 *mGfxBuffer;
@@ -59,7 +66,8 @@ private:
     /// ////////////////////////////////////////////////////////////////////
     /// Functions.
     /// ////////////////////////////////////////////////////////////////////
-    void drawScrollbar();
+
+
 };
 
 #endif

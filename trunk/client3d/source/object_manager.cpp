@@ -122,6 +122,19 @@ bool ObjectManager::init()
             obj.type = OBJECT_NPC;
             addMobileObject(obj);
         }
+/*
+        // just for testing.
+        else if (strType == "static")
+        {
+
+            for (obj.posX =0; obj.posX < 11; ++obj.posX)
+                for (obj.posY =0; obj.posY < 23; ++obj.posY)
+                {
+                    obj.type = OBJECT_STATIC;
+                    addMobileObject(obj);
+                }
+        }
+*/
         else if (strType == "static")
         {
             obj.type = OBJECT_STATIC;
@@ -245,8 +258,8 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
                 pos.subPos =0;
                 mvObject_npc[ObjectNPC::ME]->moveToDistantTile(pos);
             }
-//            if (action == OBJ_TEXTURE  ) mvObject_npc[id]->setTexture(val1, val2, 0);
-//            if (action == OBJ_HIT      ) mvObject_npc[id]->setDamage(val1);
+            if (action == OBJ_TEXTURE    ) mvObject_npc[id]->Equip->setTexture(val1, val2);
+            if (action == OBJ_HIT        ) mvObject_npc[id]->setDamage(val1);
             if (action == OBJ_TURN       ) mvObject_npc[id]->turning(val1, false);
             if (action == OBJ_CURSOR_TURN) mvObject_npc[id]->turning(val1, true);
             if (action == OBJ_ANIMATION  ) mvObject_npc[id]->toggleAnimation(val1, val2);

@@ -61,6 +61,9 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mScroll       = 0;
     mScrollBarV   = 0;
     mScrollBarH   = 0;
+    mActLines     = 0;
+    mScrollbarOffsetH = 0;
+    mScrollbarOffsetV = 0;
 
     TiXmlElement *xmlOpt;
     for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
@@ -102,6 +105,11 @@ void GuiListbox::addTextline(const char *text)
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
     ++mBufferPos;
     ++mRowsToScroll;
+    if (mScrollBarV)
+    {
+       if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
+       mScrollBarV->updateSlider(mActLines, mRowsToPrint);
+    }
 }
 
 ///=============================================================================================

@@ -88,6 +88,14 @@ public:
         w = mWidth;
         h = mHeight;
     }
+    int getWidth()
+    {
+        return mWidth;
+    }
+    int getHeight()
+    {
+        return mHeight;
+    }
     const char *getName()
     {
         return mStrName.c_str();
