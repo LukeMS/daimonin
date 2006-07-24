@@ -129,7 +129,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".\ogre_inc;..\..\..\source\include;..\..\..\source\3rdParty\fmod;..\..\..\source\3rdParty\zlib;..\..\..\source\3rdParty\tinyxml"
+				AdditionalIncludeDirectories=".\ogre_inc;..\..\..\include;..\..\..\include\gui;..\..\..\source;..\..\..\source\gui;..\..\..\3rdParty\fmod;..\..\..\3rdParty\zlib;..\..\..\3rdParty\tinyxml"
 				PreprocessorDefinitions="WIN32;TIXML_USE_STL;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
