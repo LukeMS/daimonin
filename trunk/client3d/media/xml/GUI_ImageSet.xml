@@ -4,8 +4,8 @@
     <!-- Mouse                                       -->
     <!--#############################################-->
     <Image name= "MouseCursor" width= "37" height= "40">
-        <State name= "Standard"   posX= "01" posY= "61" />
-        <State name= "ButtonDown" posX= "42" posY= "61" />
+        <State name= "Standard" posX= "01" posY= "61" />
+        <State name= "Pressed"  posX= "42" posY= "61" />
     </Image>
 
     <!--#############################################-->

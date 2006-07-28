@@ -31,6 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+
 class ObjectVisuals
 {
 public:
@@ -51,15 +52,15 @@ public:
         PARTICLE_COLOR_SUM
     };
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     static ObjectVisuals &getSingleton()
     {
         static ObjectVisuals Singleton; return Singleton;
     }
     void freeRecources();
-    void selectNPC(MovableObject *mob, int friendly);
+    void selectNPC(MovableObject *mob, int friendly, bool drawLifebar = true);
     void setPosLifebar(Vector3 pos);
     void setLifebar(Real percent, int barWidth = 128);
     void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);
@@ -68,9 +69,9 @@ public:
         return mAABB;
     }
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
     Entity *mEntity[NPC_SUM];
     SceneNode *mNode[NPC_SUM];
@@ -81,9 +82,9 @@ private:
     uchar *mTexBuffer;
     AxisAlignedBox mAABB;
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     ObjectVisuals();
     ~ObjectVisuals();
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.

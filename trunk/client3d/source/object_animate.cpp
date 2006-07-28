@@ -30,9 +30,9 @@ http://www.gnu.org/licenses/licenses.html
 
 /** IMPORTANT: Every animated model MUST have at least the Idle1 animation. **/
 
-///=================================================================================================
-/// Init all static Elemnts.
-///=================================================================================================
+//=================================================================================================
+// Init all static Elemnts.
+//=================================================================================================
 const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
     {
         "Idle", "Idle_Fun",
@@ -48,9 +48,9 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
         "Cast", "Cast_Fun",
     };
 
-///=================================================================================================
-/// Constructor.
-///=================================================================================================
+//=================================================================================================
+// Constructor.
+//=================================================================================================
 ObjectAnimate::ObjectAnimate(Entity *entity)
 {
     if (!entity->hasSkeleton())
@@ -63,7 +63,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
     mAnimGroup =-1;
     String strTmp, strGroup;
 
-    /// fill the animation states.
+    // fill the animation states.
     int j;
     int sum =0;
     AnimationStateSet *animSet = entity->getAllAnimationStates();
@@ -83,7 +83,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
         }
     }
 
-    /// We have a animated mesh, but it has not a single valid name.
+    // We have a animated mesh, but it has not a single valid name.
     int invalidAnims = entity->getSkeleton()->getNumAnimations()-sum;
     if (invalidAnims && !sum)
     {
@@ -92,7 +92,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
         return;
     }
 
-    /// Every skeleton MUST have the Idle1 animation.
+    // Every skeleton MUST have the Idle1 animation.
     if (!animSet->hasAnimationState("Idle1"))
     {
         Logger::log().error() << "The animation 'Idle1' is missing. No animation will be available.";
@@ -107,28 +107,28 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
       Logger::log().warning() << invalidAnims << " of the animations are invalid.";
     }
 
-    /// Set the init-anim to Idle1.
+    // Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];
     toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
 }
 
-///=================================================================================================
-/// Constructor.
-///=================================================================================================
+//=================================================================================================
+// Constructor.
+//=================================================================================================
 ObjectAnimate::~ObjectAnimate()
 {
     mAnimState.clear();
 }
 
-///=================================================================================================
-/// Update the animation.
-///=================================================================================================
+//=================================================================================================
+// Update the animation.
+//=================================================================================================
 void ObjectAnimate::update(const FrameEvent& event)
 {
     if (!mIsAnimated) return;
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     mTimeLeft = mActState->getLength() - mActState->getTimePosition();
-    /// if an animation ends -> force the idle animation.
+    // if an animation ends -> force the idle animation.
     if (mActState->getTimePosition() >= mActState->getLength())
     {
         if (mAnimGroup != ANIM_GROUP_DEATH)
@@ -136,41 +136,41 @@ void ObjectAnimate::update(const FrameEvent& event)
     }
 }
 
-///=================================================================================================
-/// Toggle the animation.
-///=================================================================================================
+//=================================================================================================
+// Toggle the animation.
+//=================================================================================================
 void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random)
 {
     if (!mIsAnimated)
         return;
-    /// Is the selected animation already running?
+    // Is the selected animation already running?
     if (animGroup == mAnimGroup && animNr == mAnimNr)
         return;
-    /// Dont change a running (none-movement) anim without the force-switch.
+    // Dont change a running (none-movement) anim without the force-switch.
     if (!force && !isMovement())
         return;
 
-    /// On invalid animGroup choose Idle.
+    // On invalid animGroup choose Idle.
     if (animGroup >= ANIM_GROUP_SUM || !mAnimGroupEntries[animGroup])
         animGroup = ANIM_GROUP_IDLE;
-    /// On invalid animNr choose 0.
+    // On invalid animNr choose 0.
     if (animNr >= mAnimGroupEntries[animGroup])
         animNr = 0;
     mAnimNr = animNr;
-    /// If the previous anim was spawn, we cant use random offsets (because of seamless animations).
+    // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
     if (mAnimGroup == ANIM_GROUP_SPAWN) random = false;
     mAnimGroup = animGroup;
     mActState->setEnabled(false);
-    /// Find the anim pos in the anim-vector.
+    // Find the anim pos in the anim-vector.
     animGroup =0;
     for (int i=0; i< mAnimGroup; ++i)
     {
         animGroup+= mAnimGroupEntries[i];
     }
-    /// Set the Animation.
+    // Set the Animation.
     mActState= mAnimState[animGroup+ animNr];
     mTimeLeft = mActState->getLength();
-    /// Set a random offest for the animation start (prevent synchronous "dancing").
+    // Set a random offest for the animation start (prevent synchronous "dancing").
     if (random)
         mActState->setTimePosition(Math::RangeRandom(0.0, mTimeLeft));
     else

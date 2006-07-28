@@ -33,6 +33,9 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+/**
+ ** This class provides a graphical element, drawn into a gui element.
+ *****************************************************************************/
 class GuiGraphic : public GuiElement
 {
 public:

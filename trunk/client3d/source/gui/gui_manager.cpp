@@ -37,11 +37,11 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-const int TOOLTIP_SIZE_X = 256;
-const int TOOLTIP_SIZE_Y = 128;
-const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
+static const int TOOLTIP_SIZE_X = 256;
+static const int TOOLTIP_SIZE_Y = 128;
+static const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
 
-GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
+GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
     {
         { "Statistics",  GUI_WIN_STATISTICS  },
         { "PlayerInfo",  GUI_WIN_PLAYERINFO  },
@@ -50,17 +50,17 @@ GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         //    { "Creation"  ,  GUI_WIN_CREATION   },
     };
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::Init(int w, int h)
 {
     Logger::log().headline("Init GUI");
     mScreenWidth   = w;
     mScreenHeight  = h;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Create the tooltip overlay.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Create the tooltip overlay.
+    // ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "Creating Overlay for System-Messages...";
     mTooltipRefresh = false;
     mTexture = TextureManager::getSingleton().createManual("GUI_ToolTip_Texture", "General",
@@ -88,29 +88,29 @@ void GuiManager::Init(int w, int h)
     Logger::log().success(true);
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::parseWindows(const char *XML_windows_file)
 {
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the windows datas.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the windows datas.
+    // ////////////////////////////////////////////////////////////////////
     guiWindow = new GuiWindow[GUI_WIN_SUM];
     if (!parseWindowsData( XML_windows_file)) return;
 }
 
-///================================================================================================
-/// Parse the cursor and windows data.
-///================================================================================================
+//================================================================================================
+// Parse the cursor and windows data.
+//================================================================================================
 bool GuiManager::parseWindowsData(const char *fileWindows)
 {
     TiXmlElement *xmlRoot, *xmlElem;
     TiXmlDocument doc(fileWindows);
     const char *valString;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Check for a working window description.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Check for a working window description.
+    // ////////////////////////////////////////////////////////////////////
     if ( !doc.LoadFile(fileWindows) || !(xmlRoot = doc.RootElement()) )
     {
         Logger::log().error() << "XML-File '" << fileWindows << "' is missing or broken.";
@@ -124,9 +124,9 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     {
         Logger::log().error() << "File '" << fileWindows << "' has no name entry.";
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the fonts.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the fonts.
+    // ////////////////////////////////////////////////////////////////////
     int sumEntries =0;
     if ((xmlElem = xmlRoot->FirstChildElement("Fonts")))
     {
@@ -153,9 +153,9 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     {
         Logger::log().error() << "CRITICAL: No fonts found in " << fileWindows;
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the mouse-cursor.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the mouse-cursor.
+    // ////////////////////////////////////////////////////////////////////
     GuiSrcEntry *srcEntry = 0;
     if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("name"))))
     {
@@ -168,12 +168,13 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
                 if ((valString = xmlElem->Attribute("x"))) mHotSpotX = atoi(valString);
                 if ((valString = xmlElem->Attribute("y"))) mHotSpotY = atoi(valString);
             }
-            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
+            int scale = 8;
+            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight, scale);
             for (unsigned int i=0; i < srcEntry->state.size(); ++i)
             {
                 GuiCursor::getSingleton().setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
             }
-            GuiCursor::getSingleton().draw(GuiImageset::getSingleton().getPixelBox());
+            GuiCursor::getSingleton().draw();
         }
         else
         {
@@ -186,13 +187,13 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     }
     if (!srcEntry)
     { // Create a dummy mouse-cursor.
-        GuiCursor::getSingleton().Init(32, 32, mScreenWidth, mScreenHeight);
+        GuiCursor::getSingleton().Init(32, 32, mScreenWidth, mScreenHeight,3);
         GuiCursor::getSingleton().setStateImagePos("Standard", 128, 128);
-        GuiCursor::getSingleton().draw(GuiImageset::getSingleton().getPixelBox());
+        GuiCursor::getSingleton().draw();
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Init the windows.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Init the windows.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Window"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Window"))
     {
         if (!(valString = xmlElem->Attribute("name"))) continue;
@@ -208,9 +209,9 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     return true;
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::freeRecources()
 {
     if (guiWindow)
@@ -223,9 +224,9 @@ void GuiManager::freeRecources()
     mTexture.setNull();
 }
 
-///================================================================================================
-/// KeyEvent was reported.
-///================================================================================================
+//================================================================================================
+// KeyEvent was reported.
+//================================================================================================
 bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 {
     if (!mProcessingTextInput) return false;
@@ -247,9 +248,9 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
     return true;
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 {
     GuiCursor::getSingleton().setPos(rx, ry);
@@ -269,18 +270,18 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
     return false;
 }
 
-///================================================================================================
-/// Send a message to a GuiWindow.
-///================================================================================================
+//================================================================================================
+// Send a message to a GuiWindow.
+//================================================================================================
 const char *GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
 {
     value2 = 0; // no need for value2 atm.
     return guiWindow[window].Message(message, element, (void*)value1);
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces)
 {
     if (mProcessingTextInput || !guiWindow[window].isVisible()) return;
@@ -297,52 +298,52 @@ void GuiManager::startTextInput(int window, int winElement, int maxChars, bool u
 }
 
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::cancelTextInput()
 {
     GuiTextinput::getSingleton().canceled();
 }
 
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 bool GuiManager::brokenTextInput()
 {
     return GuiTextinput::getSingleton().wasCanceled();
 }
 
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 bool GuiManager::finishedTextInput()
 {
     return GuiTextinput::getSingleton().wasFinished();
 }
 
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 const char *GuiManager::getTextInput()
 {
     return mStrTextInput.c_str();
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::showWindow(int window, bool visible)
 {
     guiWindow[window].setVisible(visible);
 }
 
-///================================================================================================
-/// Update all windows.
-///================================================================================================
+//================================================================================================
+// Update all windows.
+//================================================================================================
 void GuiManager::update(Real timeSinceLastFrame)
 {
     if (mProcessingTextInput)
@@ -353,9 +354,9 @@ void GuiManager::update(Real timeSinceLastFrame)
     {
         guiWindow[i].update(timeSinceLastFrame);
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Check for Tooltips.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Check for Tooltips.
+    // ////////////////////////////////////////////////////////////////////
     if (mTooltipRefresh)
     {
         if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
@@ -377,9 +378,9 @@ void GuiManager::update(Real timeSinceLastFrame)
     }
 }
 
-///================================================================================================
-/// CAUTION: no bounds check !!!.
-///================================================================================================
+//================================================================================================
+// CAUTION: no bounds check !!!.
+//================================================================================================
 void GuiManager::displaySystemMessage(const char *text)
 {
     static int row =0;
@@ -407,9 +408,9 @@ void GuiManager::displaySystemMessage(const char *text)
     ++row;
 }
 
-///================================================================================================
-/// Set a tooltip text. 0 hides the tooltip.
-///================================================================================================
+//================================================================================================
+// Set a tooltip text. 0 hides the tooltip.
+//================================================================================================
 void GuiManager::setTooltip(const char *text)
 {
     if (!text || !(*text))
@@ -425,9 +426,9 @@ void GuiManager::setTooltip(const char *text)
     }
 }
 
-///================================================================================================
-/// Fill the tooltip overlay with the default color (overwrite the old text).
-///================================================================================================
+//================================================================================================
+// Fill the tooltip overlay with the default color (overwrite the old text).
+//================================================================================================
 void GuiManager::clearTooltip()
 {
     PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );

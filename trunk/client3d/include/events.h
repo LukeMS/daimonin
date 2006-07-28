@@ -36,9 +36,9 @@ using namespace Ogre;
 const Real MIN_CAMERA_ZOOM =  20.0;
 const Real MAX_CAMERA_ZOOM =  110.0;
 
-///================================================================================================
-/// Class.
-///================================================================================================
+//================================================================================================
+// Class.
+//================================================================================================
 class CEvent: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
 public:
@@ -48,14 +48,14 @@ public:
     };
     enum
     {
-         WSYNC_INIT,   /// Set the distance of the destination tile.
-         WSYNC_OFFSET, /// Move the camera for moving within a tile.
-         WSYNC_MOVE    /// Sync all objects to the new player pos..
+         WSYNC_INIT,   // Set the distance of the destination tile.
+         WSYNC_OFFSET, // Move the camera for moving within a tile.
+         WSYNC_MOVE    // Sync all objects to the new player pos..
     };
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     CEvent(RenderWindow* win, SceneManager *mSceneMgr);
     ~CEvent();
     SceneManager *GetSceneManager()
@@ -89,9 +89,9 @@ public:
     }
 
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     bool mQuitGame;
     int mDayTime;
     int mSceneDetailIndex;
@@ -110,9 +110,9 @@ private:
     Light *mLight[2];
     Light *mSpotLight, *mVolLight;
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     bool frameStarted(const FrameEvent& evt);
     bool frameEnded  (const FrameEvent& evt);
     void keyClicked (KeyEvent *e);

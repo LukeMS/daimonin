@@ -33,18 +33,24 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+/**
+ ** This class provides a statusbar.
+ *****************************************************************************/
 class GuiStatusbar : public GuiElement
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiStatusbar(TiXmlElement *xmlElement, void *parent);
-    ~GuiStatusbar()
-    {
-        delete[] mGfxBuffer;
-    }
+    ~GuiStatusbar();
     void draw();
     void setValue(Real value);
 
 private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     bool mHorizontal;
     int mValue;
     uint32 *mGfxBuffer;

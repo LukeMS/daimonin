@@ -54,9 +54,9 @@ char playerPassword[80];
 
 
 
-///================================================================================================
-/// Compare server and client version number.
-///================================================================================================
+//================================================================================================
+// Compare server and client version number.
+//================================================================================================
 void Network::NewCharCmd(char *, int )
 {
     //dialog_new_char_warn = 0;
@@ -64,9 +64,9 @@ void Network::NewCharCmd(char *, int )
     Logger::log().error() << "set GAME_STATUS_NEW_CHAR";
 }
 
-///================================================================================================
-/// Compare server and client version number.
-///================================================================================================
+//================================================================================================
+// Compare server and client version number.
+//================================================================================================
 void Network::VersionCmd(char *data, int )
 {
     char *cp;
@@ -75,9 +75,9 @@ void Network::VersionCmd(char *data, int )
     mGameStatusVersionFlag   = true;
     mCs_version = atoi(data);
 
-    /// The first version is the client to server version the server wants
-    /// ATM, we just do for "must match".
-    /// Later it will be smart to define range where the differences are ok
+    // The first version is the client to server version the server wants
+    // ATM, we just do for "must match".
+    // Later it will be smart to define range where the differences are ok
     if (VERSION_CS != mCs_version)
     {
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Server/Client versions dont match!");
@@ -87,7 +87,7 @@ void Network::VersionCmd(char *data, int )
         {
             Logger::log().error() << "Your client is outdated!\nUpdate your client!";
         }
-        /// Switch off the network.
+        // Switch off the network.
         Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
         return;
     }
@@ -123,9 +123,9 @@ void Network::VersionCmd(char *data, int )
     mGameStatusVersionOKFlag = true;
 }
 
-///================================================================================================
-/// Server has send the setup command..
-///================================================================================================
+//================================================================================================
+// Server has send the setup command..
+//================================================================================================
 void Network::SetupCmd(char *buf, int len)
 {
     const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
@@ -214,15 +214,15 @@ void Network::SetupCmd(char *buf, int len)
     Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
 }
 
-///================================================================================================
-/// Server has send us a file: uncompress and save it.
-///================================================================================================
+//================================================================================================
+// Server has send us a file: uncompress and save it.
+//================================================================================================
 void Network::DataCmd(char *data, int len)
 {
-    /// ////////////////////////////////////////////////////////////////////
-    /// check for valid command:
-    /// 0 = NC, 1 = SERVER_FILE_SKILLS, 2 = SERVER_FILE_SPELLS, (...)
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // check for valid command:
+    // 0 = NC, 1 = SERVER_FILE_SKILLS, 2 = SERVER_FILE_SPELLS, (...)
+    // ////////////////////////////////////////////////////////////////////
     unsigned char data_type = data[0];
     unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
     if (data_cmd > SERVER_FILE_SUM)
@@ -233,9 +233,9 @@ void Network::DataCmd(char *data, int len)
     --len;
     ++data;
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Uncompress if needed.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Uncompress if needed.
+    // ////////////////////////////////////////////////////////////////////
     char *dest =0;
     if (data_type & DATA_PACKED_CMD)
     {
@@ -250,9 +250,9 @@ void Network::DataCmd(char *data, int len)
     }
     ++mRequest_file_chain;
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Save the file.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Save the file.
+    // ////////////////////////////////////////////////////////////////////
     ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
     if (!out)
         Logger::log().error()  << "save data cmd file : write() of "
@@ -266,17 +266,17 @@ void Network::DataCmd(char *data, int len)
         delete[] dest;
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Reload the new file.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Reload the new file.
+    // ////////////////////////////////////////////////////////////////////
     //    if (data_command-1 == SERVER_FILE_SKILLS) { read_skills(); }
     //    if (data_command-1 == SERVER_FILE_SPELLS) { read_spells(); }
 }
 
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void Network::PreParseInfoStat(char *cmd)
 {
     // Find input name
@@ -336,9 +336,9 @@ void Network::PreParseInfoStat(char *cmd)
     }
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void Network::HandleQuery(char *data, int)
 {
     char *buf;
@@ -348,9 +348,9 @@ void Network::HandleQuery(char *data, int)
     PreParseInfoStat(buf);
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void Network::PlayerCmd(char *, int)
 {
     Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
@@ -387,9 +387,9 @@ void Network::PlayerCmd(char *, int)
 
 static int scrolldx, scrolldy;
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void Network::Map2Cmd(char *data, int len)
 {
     int mask, x, y, pos = 0, ext_flag, xdata;
@@ -588,20 +588,20 @@ void Network::Map2Cmd(char *data, int len)
     //    TileMap::getSingleton().map_udate_flag = 2;
 }
 
-///================================================================================================
-/// we got a face - test we have it loaded. If not, say server "send us face cmd "
-/// Return: 0 - face not there, requested.  1: face requested or loaded
-/// This command collect all new faces and then flush it at once.
-/// I insert the flush command after the socket call.
-///================================================================================================
+//================================================================================================
+// we got a face - test we have it loaded. If not, say server "send us face cmd "
+// Return: 0 - face not there, requested.  1: face requested or loaded
+// This command collect all new faces and then flush it at once.
+// I insert the flush command after the socket call.
+//================================================================================================
 int Network::request_face(int , int)
 {
     return 1;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void Network::CreatePlayerAccount()
 {
     char    buf[MAX_BUF];

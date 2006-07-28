@@ -380,7 +380,7 @@
     <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerStatusBar">
       <Pos x= "382" y= "0" />
       <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "0" green= "255" blue= "0" alpha = "255" />
+      <Label xPos= "0" yPos= "16" red= "0" green= "84" blue= "205" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerStatusBar">

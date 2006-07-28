@@ -35,22 +35,22 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_visuals.h"
 #include "gui_manager.h"
 
-///================================================================================================
-/// Defines:
-/// * static: fixed to a single pos, does not have ai (stones, walls, trees, ...)
-/// * npc:    controlled by ai.
-/// * player: controlled by a human player.
-///================================================================================================
+//================================================================================================
+// Defines:
+// * static: fixed to a single pos, does not have ai (stones, walls, trees, ...)
+// * npc:    controlled by ai.
+// * player: controlled by a human player.
+//================================================================================================
 
 
-///================================================================================================
-/// Init all static Elemnts.
-///================================================================================================
+//================================================================================================
+// Init all static Elemnts.
+//================================================================================================
 
 
-///================================================================================================
-/// Init the model from the description file.
-///================================================================================================
+//================================================================================================
+// Init the model from the description file.
+//================================================================================================
 bool ObjectManager::init()
 {
     string strType, strTemp, strMesh, strNick;
@@ -58,7 +58,7 @@ bool ObjectManager::init()
     mSelectedObject=-1;
     //    mSelectedEnemy = false;
     int i=0;
-    /// Default values.
+    // Default values.
 
     while(1)
     {
@@ -144,9 +144,9 @@ bool ObjectManager::init()
     return true;
 }
 
-///================================================================================================
-/// Adds a independant object.
-///================================================================================================
+//================================================================================================
+// Adds a independant object.
+//================================================================================================
 void ObjectManager::addMobileObject(sObject &obj)
 {
     switch (obj.type)
@@ -179,9 +179,9 @@ void ObjectManager::addMobileObject(sObject &obj)
     }
 }
 
-///================================================================================================
-/// Update all objects.
-///================================================================================================
+//================================================================================================
+// Update all objects.
+//================================================================================================
 void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
     for (unsigned int i = 0; i < mvObject_static.size(); ++i)
@@ -219,9 +219,9 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
     */
 }
 
-///================================================================================================
-/// Update all object positions after a map scroll.
-///================================================================================================
+//================================================================================================
+// Update all object positions after a map scroll.
+//================================================================================================
 void ObjectManager::synchToWorldPos(Vector3 pos)
 {
     for(unsigned int i = 0; i < mvObject_static.size(); ++i)
@@ -234,9 +234,9 @@ void ObjectManager::synchToWorldPos(Vector3 pos)
     }
 }
 
-///================================================================================================
-/// Event handling.
-///================================================================================================
+//================================================================================================
+// Event handling.
+//================================================================================================
 void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 {
     switch (obj_type)
@@ -272,15 +272,15 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
     }
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void ObjectManager::delObject(int )
 {}
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void ObjectManager::freeRecources()
 {
     for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
@@ -298,14 +298,14 @@ void ObjectManager::freeRecources()
     mvObject_static.clear();
 }
 
-///================================================================================================
-/// Select the (mouse clicked) object.
-///================================================================================================
+//================================================================================================
+// Select the (mouse clicked) object.
+//================================================================================================
 void ObjectManager::selectNPC(MovableObject *mob)
 {
     if (mvObject_npc[ObjectNPC::ME]->isMoving()) return;
     if (!mob)
-    {   /// No npc was selected.
+    {   // No npc was selected.
         if  (mSelectedFriendly < 0)
         {
             mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
@@ -314,7 +314,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
         return;
     }
 
-    /// Cut the "Obj_" substring from the entity name.
+    // Cut the "Obj_" substring from the entity name.
     String strObject = mob->getName();
     strObject.replace(0, strObject.find("_")+1,"");
     int selectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
@@ -329,7 +329,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
 
         case OBJECT_NPC:
         {
-            /// Was already selected before (= do some action on the selected NPC).
+            // Was already selected before (= do some action on the selected NPC).
             if (selectedObject == mSelectedObject)
             {
                 if (mSelectedFriendly < 0)
@@ -338,7 +338,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
                     mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
                 }
             }
-            /// A new NPC was selected.
+            // A new NPC was selected.
             else
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
@@ -365,7 +365,10 @@ void ObjectManager::selectNPC(MovableObject *mob)
             if (selectedType != mSelectedType)
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
-                ObjectVisuals::getSingleton().selectNPC(mob, mvObject_npc[selectedObject]->getFriendly());
+                if (selectedObject == ObjectNPC::ME)
+                    ObjectVisuals::getSingleton().selectNPC(mob, mvObject_npc[ObjectNPC::ME]->getFriendly(), false);
+                else
+                    ObjectVisuals::getSingleton().selectNPC(mob, mvObject_npc[selectedObject]->getFriendly());
             }
             break;
         }
@@ -377,19 +380,19 @@ void ObjectManager::selectNPC(MovableObject *mob)
     mSelectedObject = selectedObject;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void ObjectManager::targetObjectFacingPlayer()
 {
 //    SubPos2D pos = mvObject_player[ObjectPlayer::ME]->getTileScrollPos();
 //    mvObject_npc[mSelectedObject]->faceToTile(pos.x, pos.z);
-    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::ME]->getFacing(), false);
+    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::ME]->getFacing() -180, false);
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void ObjectManager::targetObjectAttackPlayer()
 {
     //mvObject_npc[mSelectedObject]->attackShortRange(mvObject_player[ObjectPlayer::ME]->getNode());
@@ -397,17 +400,17 @@ void ObjectManager::targetObjectAttackPlayer()
     targetObjectFacingPlayer();
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
 {
     if (mvObject_npc[npcID]->Equip)
         mvObject_npc[npcID]->Equip->equipItem(bone, type, itemID);
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 ObjectManager::~ObjectManager()
 {}

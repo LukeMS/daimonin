@@ -31,9 +31,9 @@ http://www.gnu.org/licenses/licenses.html
 
 const int SUM_MIPMAPS = 0;
 
-///================================================================================================
-/// Parse the command line.
-///================================================================================================
+//================================================================================================
+// Parse the command line.
+//================================================================================================
 bool parseCmdLine(const char *cmd, const char *value)
 {
     int options =0;
@@ -104,15 +104,15 @@ bool parseCmdLine(const char *cmd, const char *value)
     return true;
 }
 
-///================================================================================================
-/// Define the source of resources (other than current folder)
-///================================================================================================
+//================================================================================================
+// Define the source of resources (other than current folder)
+//================================================================================================
 void setupResources(void)
 {
-    /// Load resource paths from config file
+    // Load resource paths from config file
     ConfigFile cf;
     cf.load("resources.cfg");
-    /// Go through all sections & settings in the file
+    // Go through all sections & settings in the file
     ConfigFile::SectionIterator seci = cf.getSectionIterator();
     String secName, typeName, archName;
     while (seci.hasMoreElements())
@@ -129,9 +129,9 @@ void setupResources(void)
     }
 }
 
-///================================================================================================
-/// Write the excepition into the logfile.
-///================================================================================================
+//================================================================================================
+// Write the excepition into the logfile.
+//================================================================================================
 void LogException(Exception& e)
 {
     std::string s = e.getFullDescription();
@@ -144,9 +144,9 @@ void LogException(Exception& e)
     Logger::log().error() << s;
 }
 
-///================================================================================================
-/// Entry point.
-///================================================================================================
+//================================================================================================
+// Entry point.
+//================================================================================================
 int main(int argc, char **argv)
 {
     Logger::log().headline("Init Logfile");
@@ -171,19 +171,19 @@ int main(int argc, char **argv)
     {
         root = new Root();
         setupResources();
-        /// ////////////////////////////////////////////////////////////////////
-        /// Show the configuration dialog and initialise the system
-        /// You can skip this and use root.restoreConfig() to load configuration
-        /// settings if you were sure there are valid ones saved in ogre.cfg
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Show the configuration dialog and initialise the system
+        // You can skip this and use root.restoreConfig() to load configuration
+        // settings if you were sure there are valid ones saved in ogre.cfg
+        // ////////////////////////////////////////////////////////////////////
         if(!root->showConfigDialog())
         {
             delete root;
             return 0;
         }
-        /// ////////////////////////////////////////////////////////////////////
-        /// Get the SceneManager, in this case a generic one
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Get the SceneManager, in this case a generic one
+        // ////////////////////////////////////////////////////////////////////
         window   = root->initialise(true, PRG_NAME);
     }
     catch(Exception& e)
@@ -192,9 +192,9 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Check for GFX-Hardware.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Check for GFX-Hardware.
+    // ////////////////////////////////////////////////////////////////////
     if (!root->getRenderSystem()->getCapabilities()->hasCapability(RSC_VBO))
         Logger::log().error() << "Your gfx-card doesn't support hardware vertex/index buffer!";
     TexturePtr mTexture, mTextur2;
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
     Option::getSingleton().setIntValue(Option::HIGH_TILES_DETAILS, true);
 /*
     try
-    { /// try to create a 64MB texture in Video Ram.
+    { // try to create a 64MB texture in Video Ram.
         mTexture = TextureManager::getSingleton().createManual("64 MB", "General",  TEX_TYPE_2D, 4096, 4096, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
         mTexture.getPointer()->unload();
         mTexture.setNull();
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
     {
         mTexture.setNull();
         try
-        { /// try to create a 32MB texture in Video Ram.
+        { // try to create a 32MB texture in Video Ram.
             mTexture = TextureManager::getSingleton().createManual("16MB nr. 1", "General",  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
             mTextur2 = TextureManager::getSingleton().createManual("16MB nr. 2", "General",  TEX_TYPE_2D, 2048, 2048, 0, PF_R8G8B8A8, TU_STATIC_WRITE_ONLY);
             mTexture.getPointer()->unload();
@@ -236,22 +236,22 @@ int main(int argc, char **argv)
 */
     try
     {
-        /// ////////////////////////////////////////////////////////////////////
-        /// Set default mipmap level (NB some APIs ignore this)
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Set default mipmap level (NB some APIs ignore this)
+        // ////////////////////////////////////////////////////////////////////
         //TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
 
-        /// ////////////////////////////////////////////////////////////////////
-        /// Optional override method where you can perform resource group loading
-        /// Must at least do initialiseAllResourceGroups();
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Optional override method where you can perform resource group loading
+        // Must at least do initialiseAllResourceGroups();
+        // ////////////////////////////////////////////////////////////////////
         ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
         Event= new CEvent(window, root->createSceneManager(ST_GENERIC, "RefAppSMInstance"));
         root->addFrameListener(Event);
         root->startRendering();
-        /// ////////////////////////////////////////////////////////////////////
-        /// End of mainloop -> Clean up.
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // End of mainloop -> Clean up.
+        // ////////////////////////////////////////////////////////////////////
         if (Event)
             delete Event;
         if (root)

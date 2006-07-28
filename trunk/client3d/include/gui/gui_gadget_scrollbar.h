@@ -30,22 +30,20 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
-#include "gui_textout.h"
 #include "gui_gadget_button.h"
 
 using namespace Ogre;
 
-
 /**
- ** Scrollbar class
- ** which manages the scrolling of text and/or graphics in a window.
+ ** This class provides an interactive scrollbar.
+ ** Its a helper class for scrolling graphical stuff within gui elements.
  *****************************************************************************/
 class GuiGadgetScrollbar : public GuiElement
 {
 public:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent);
     ~GuiGadgetScrollbar();
     void draw();
@@ -54,20 +52,15 @@ public:
     void updateSlider(int actLines, int maxVisibleLines);
 
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     int  mSliderPos, mSliderSize;
     bool mHorizontal;
     int mStartX, mStopX, mStartY, mStopY;
     uint32 *mGfxBuffer;
     uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
     class GuiGadgetButton *mButScrollUp, *mButScrollDown;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
-
-
 };
 
 #endif

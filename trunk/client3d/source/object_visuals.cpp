@@ -35,38 +35,38 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_textout.h"
 
 ///===================================================
-/// Init all static Elemnts.
+// Init all static Elemnts.
 ///===================================================
 
 const int TEXTURE_SIZE = 128;
 const char MATERIAL_NAME[] = "NPC_Visuals";
 const char TEXTURE_NAME[] = "TexVisuals";
 
-///===================================================
-/// Free all recources.
-///===================================================
+//===================================================
+// Free all recources.
+//===================================================
 void ObjectVisuals::freeRecources()
 {
     mHardwarePB.setNull();
     delete[] mTexBuffer;
 }
 
-///===================================================
-/// .
-///===================================================
+//===================================================
+// .
+//===================================================
 ObjectVisuals::~ObjectVisuals()
 {}
 
-///===================================================
-/// .
-///===================================================
+//===================================================
+// .
+//===================================================
 ObjectVisuals::ObjectVisuals()
 {
     Logger::log().headline("Creating Object Visuals.");
     for (int i=0; i < NPC_SUM; ++i) mNode[i] = 0;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Check for a working description file.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Check for a working description file.
+    // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem, *xmlColor;
     TiXmlDocument doc(FILE_NPC_VISUALS);
     const char *strTemp;
@@ -76,9 +76,9 @@ ObjectVisuals::ObjectVisuals()
         return;
     }
     Logger::log().info() << "Parsing the ImageSet file '" << FILE_NPC_VISUALS << "'.";
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the gfx coordinates.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the gfx coordinates.
+    // ////////////////////////////////////////////////////////////////////
     float color[3];
     mPSystem = 0;
     if ((xmlElem = xmlRoot->FirstChildElement("Particle")) && ((strTemp = xmlElem->Attribute("name"))))
@@ -124,9 +124,9 @@ ObjectVisuals::ObjectVisuals()
     */
 }
 
-///===================================================
-/// Create selection entity.
-///===================================================
+//===================================================
+// Create selection entity.
+//===================================================
 void ObjectVisuals::buildEntity(int index, const char *meshName, const char *entityName)
 {
     Real h = 20.0, w = 10.0;
@@ -159,32 +159,32 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     mEntity[index]->setQueryFlags(QUERY_NPC_SELECT_MASK);
 }
 
-///===================================================
-/// .
-///===================================================
+//===================================================
+// .
+//===================================================
 void ObjectVisuals::setPosLifebar(Vector3 pos)
 {}
 
-///===================================================
-/// Draw the Lifebar for a NPC.
-///===================================================
+//===================================================
+// Draw the Lifebar for a NPC.
+//===================================================
 void ObjectVisuals::setLifebar(Real percent, int barWidth)
 {
     if (percent <0.0) percent =0.0;
     if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
     if (percent > 0.5)
-    {   /// (green bar)
+    {   // (green bar)
         color = 0xff005f00;
         dColor= 0x00001600;
     }
     else if (percent > 0.3)
-    {   /// (yellow bar)
+    {   // (yellow bar)
         color = 0xff5f5f00;
         dColor= 0x00161600;
     }
     else
-    {   /// (red bar)
+    {   // (red bar)
         color = 0xff5f0000;
         dColor= 0x00160000;
     }
@@ -210,10 +210,10 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
     mHardwarePB->unlock();
 }
 
-///===================================================
-/// Select a NPC.
-///===================================================
-void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
+//===================================================
+// Select a NPC.
+//===================================================
+void ObjectVisuals::selectNPC(MovableObject *mob, int friendly, bool drawLifebar)
 {
     const AxisAlignedBox &AABB = mob->getBoundingBox();
     Vector3 pos;
@@ -222,7 +222,7 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
     mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
     mNode[NPC_SELECTION]->attachObject(mPSystem);
     int index;
-    if (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
+    if      (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
     else if (friendly <0) index = PARTICLE_COLOR_ENEMY_STRT;
     else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
     for (int i=0; i < mPSystem->getNumEmitters(); ++i)
@@ -231,8 +231,9 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
         mPSystem->getEmitter(i)->setColourRangeStart(particleColor[index]);
         mPSystem->getEmitter(i)->setColourRangeEnd  (particleColor[index+1]);
     }
+    if (!drawLifebar) return;
 
-    /// Lifebar.
+    // Lifebar.
     strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR, 3, '0');
     if (mNode[NPC_LIFEBAR]) mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(strNode);
     mNode[NPC_LIFEBAR] = mob->getParentSceneNode()->createChildSceneNode(strNode);
@@ -246,12 +247,11 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly)
     int len = GuiTextout::getSingleton().CalcTextWidth(name, fontNr);
     if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
-
     PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
-    /// Clear the whole texture.
+    // Clear the whole texture.
     uint32 *dest_data = (uint32*)pb.data;
     for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
-    /// Print NPC name.
+    // Print NPC name.
     dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
   //  GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, fontNr,  0x00000000);
     mHardwarePB->unlock();

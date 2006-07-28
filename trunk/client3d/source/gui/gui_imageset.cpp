@@ -70,15 +70,38 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "ComboBoxTest"      , GUI_COMBOBOX_TEST  },
     };
 
-///================================================================================================
-/// Parse the gfx datas from the imageset.
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
+GuiImageset::GuiImageset()
+{}
+
+//================================================================================================
+// .
+//================================================================================================
+GuiImageset::~GuiImageset()
+{
+    for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
+    {
+        for (std::vector<GuiElementState*>::iterator j = (*i)->state.begin(); j < (*i)->state.end(); ++j)
+        {
+            delete (*j);
+        }
+        (*i)->state.clear();
+        delete (*i);
+    }
+    mvSrcEntry.clear();
+}
+
+//================================================================================================
+// Parse the gfx datas from the imageset.
+//================================================================================================
 void GuiImageset::parseXML(const char *fileImageSet)
 {
     Logger::log().headline("Parsing the imageset");
-    /// ////////////////////////////////////////////////////////////////////
-    /// Check for a working description file.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Check for a working description file.
+    // ////////////////////////////////////////////////////////////////////
     TiXmlElement *xmlRoot, *xmlElem, *xmlState;
     TiXmlDocument doc(fileImageSet);
     const char *strTemp;
@@ -89,9 +112,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
     }
     mStrImageSetGfxFile = strTemp;
     Logger::log().info() << "Parsing the ImageSet file '" << mStrImageSetGfxFile << "'.";
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the gfx coordinates.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the gfx coordinates.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
     {
         if (!(strTemp = xmlElem->Attribute("name"))) continue;
@@ -99,9 +122,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
         Entry->name   = strTemp;
         if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
         if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
-        /// ////////////////////////////////////////////////////////////////////
-        /// Parse the Position entries.
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Parse the Position entries.
+        // ////////////////////////////////////////////////////////////////////
         for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
         {
             if (!(strTemp= xmlState->Attribute("name")))  continue;
@@ -125,9 +148,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
     mSrcPixelBox = mImageSetImg.getPixelBox();
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 {
     if (guiImage)
@@ -140,26 +163,9 @@ GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
     return 0;
 }
 
-///================================================================================================
-/// .
-///================================================================================================
-GuiImageset::~GuiImageset()
-{
-    for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
-    {
-        for (std::vector<GuiElementState*>::iterator j = (*i)->state.begin(); j < (*i)->state.end(); ++j)
-        {
-            delete (*j);
-        }
-        (*i)->state.clear();
-        delete (*i);
-    }
-    mvSrcEntry.clear();
-}
-
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 const char *GuiImageset::getElementName(int i)
 {
     if (i < GUI_ELEMENTS_SUM && mGuiElementNames[i].name)
@@ -168,9 +174,9 @@ const char *GuiImageset::getElementName(int i)
         return "ERROR";
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 int GuiImageset::getElementIndex(int i)
 {
     if (i < GUI_ELEMENTS_SUM)

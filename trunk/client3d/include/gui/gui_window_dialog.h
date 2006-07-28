@@ -40,35 +40,35 @@ const int MAX_INTERFACE_ICON = 15;
 const int MAX_INTERFACE_LINKS = 25;
 
 
-typedef struct gui_interface_head
+typedef struct
 {
     int face;
-    char name[128];          /* face (picture name) */
-    //    _Sprite *picture;      /* the real picture */
-    char body_text[128]; /* head title */
+    char name[128];          // face (picture name)
+    //    _Sprite *picture;      // the real picture
+    char body_text[128]; // head title
 }
 _gui_interface_head;
 
-typedef struct gui_interface_link
+typedef struct
 {
     char link[128];
     char cmd[128];
 }
 _gui_interface_link;
 
-typedef struct gui_interface_who
+typedef struct
 {
     char body[128];
 }
 _gui_interface_who;
 
-typedef struct gui_interface_textfield
+typedef struct
 {
     char text[128];
 }
 _gui_interface_textfield;
 
-typedef struct gui_interface_message
+typedef struct
 {
     char title[128];
     char body_text[4096];
@@ -77,7 +77,7 @@ typedef struct gui_interface_message
 }
 _gui_interface_message;
 
-typedef struct gui_interface_xtended
+typedef struct
 {
     char title[128];
     char body_text[4096];
@@ -85,7 +85,7 @@ typedef struct gui_interface_xtended
 }
 _gui_interface_xtended;
 
-typedef struct gui_interface_reward
+typedef struct
 {
     int copper;
     int silver;
@@ -98,20 +98,20 @@ typedef struct gui_interface_reward
 }
 _gui_interface_reward;
 
-typedef struct gui_interface_icon
+typedef struct
 {
     char mode;
-    int num;                /* real bmap number of the incon */
+    int num;                // real bmap number of the incon
     char title[128];
-    char name[128];          /* face (picture name) */
+    char name[128];          // face (picture name)
     //    item element;
-    //    _Sprite *picture;      /* the real picture */
+    //    _Sprite *picture;      // the real picture
     char *second_line;
-    char body_text[128]; /* head title */
+    char body_text[128]; // head title
 }
 _gui_interface_icon;
 
-typedef struct gui_interface_button
+typedef struct
 {
     char title[64];
     char title2[64];
@@ -120,7 +120,7 @@ typedef struct gui_interface_button
 _gui_interface_button;
 
 
-typedef struct gui_interface_struct
+typedef struct
 {
     int mode;
     int status;
@@ -150,13 +150,15 @@ typedef struct gui_interface_struct
 _gui_interface_struct;
 
 
-
+/**
+ ** This class provides a graphical dialog window.
+ *****************************************************************************/
 class GuiDialog
 {
 public:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     // which area of the interface used
     enum
     {
@@ -200,9 +202,9 @@ public:
     char *get_parameter_string(char *data, int *pos);
 
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     enum
     {
         INTERFACE_CMD_NO       = 1 << 0,
@@ -221,9 +223,9 @@ private:
 
     int mInterfaceMode;
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiDialog();
     ~GuiDialog();
     GuiDialog(const GuiDialog&); // disable copy-constructor.
@@ -237,7 +239,6 @@ private:
     int interface_cmd_button(_gui_interface_button *head, char *data, int *pos);
     int interface_cmd_textfield(_gui_interface_textfield *textfield, char *data, int *pos);
     void format_gui_interface(_gui_interface_struct *gui_int);
-
 };
 
 

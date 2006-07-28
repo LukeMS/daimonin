@@ -28,9 +28,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_manager.h"
 #include "logger.h"
 
-///================================================================================================
-/// Returns the selected position of a tile (Including the subposition within the tile).
-///================================================================================================
+//================================================================================================
+// Returns the selected position of a tile (Including the subposition within the tile).
+//================================================================================================
 const Vector3 TileInterface::getSelectedTile()
 {
     Vector3 tmp;
@@ -49,9 +49,9 @@ const Vector3 TileInterface::getSelectedTile()
     return tmp;
 }
 
-///================================================================================================
-/// Returns the selected map pos. (Including the subposition within the map).
-///================================================================================================
+//================================================================================================
+// Returns the selected map pos. (Including the subposition within the map).
+//================================================================================================
 const Vector3 TileInterface::getSelectedPos()
 {
     Vector3 tmp;
@@ -84,29 +84,29 @@ const Vector3 TileInterface::getSelectedPos()
     return tmp;
 }
 
-///================================================================================================
-/// Constructor.
-///================================================================================================
+//================================================================================================
+// Constructor.
+//================================================================================================
 TileInterface::TileInterface(SceneManager* sceneManager)
 {
     mSceneManager = sceneManager;
     mRaySceneQuery = mSceneManager->createRayQuery(Ray());
 }
 
-///================================================================================================
-/// Destructor.
-///================================================================================================
+//================================================================================================
+// Destructor.
+//================================================================================================
 TileInterface::~TileInterface()
 {
     mSceneManager->destroyQuery(mRaySceneQuery);
 }
 
-///================================================================================================
-/// Mouse picking.
-///================================================================================================
+//================================================================================================
+// Mouse picking.
+//================================================================================================
 void TileInterface::pickTile(float mouseX, float mouseY)
 {
-    /// save old selection to compare to new selection later
+    // save old selection to compare to new selection later
     mDistance = 1000000; // something big
     mX = -1;
     mZ = -1;
@@ -115,7 +115,7 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     mRaySceneQuery->setRay(mouseRay);
     mRaySceneQuery->setQueryMask(QUERY_TILES_LAND_MASK);
 
-    /// Perform the scene query.
+    // Perform the scene query.
     RaySceneQueryResult &result = mRaySceneQuery->execute();
     if (result.size() >1)
     {
@@ -123,9 +123,9 @@ void TileInterface::pickTile(float mouseX, float mouseY)
         Logger::log().error() << "(You created Entities without setting a setQueryFlags(...) on them)";
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Find the tile that was selected.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Find the tile that was selected.
+    // ////////////////////////////////////////////////////////////////////
     Real height[4], avgHeight;
     Real offsetX, offsetY;
     std::pair<bool, Real> Test;
@@ -133,22 +133,22 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     {
         for (int y = 0; y < CHUNK_SIZE_Z; ++y)
         {
-            /// ////////////////////////////////////////////////////////////////////
-            /// we have to build a bounding box for each tile and check if the ray
-            /// intersects this box.
-            /// To do this, we need the height of the tile  vertices.
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // we have to build a bounding box for each tile and check if the ray
+            // intersects this box.
+            // To do this, we need the height of the tile  vertices.
+            // ////////////////////////////////////////////////////////////////////
             height[0] = TileManager::getSingleton().getMapHeight(x    , y    );
             height[1] = TileManager::getSingleton().getMapHeight(x + 1, y    );
             height[2] = TileManager::getSingleton().getMapHeight(x    , y + 1);
             height[3] = TileManager::getSingleton().getMapHeight(x + 1, y + 1);
             avgHeight = (height[0]+height[1]+height[2]+height[3]) /4.0;
-            /// ////////////////////////////////////////////////////////////////////
-            /// now we build 4 bounding boxes per tile to increase picking accuracy
-            /// Note: Ogre only allows bounding boxes with the first vector having
-            /// got the lower value in every(!) component. so we have to check
-            /// which height value is greater
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // now we build 4 bounding boxes per tile to increase picking accuracy
+            // Note: Ogre only allows bounding boxes with the first vector having
+            // got the lower value in every(!) component. so we have to check
+            // which height value is greater
+            // ////////////////////////////////////////////////////////////////////
             offsetX =0, offsetY=0;
             for (int edge=0; edge < 4; ++edge)
             {
@@ -171,7 +171,7 @@ void TileInterface::pickTile(float mouseX, float mouseY)
                     offsetY+= 0.5;
                 }
                 if (Test.first == true)
-                { /// intersection! Find the closest intersection to the camera.
+                { // intersection! Find the closest intersection to the camera.
                     if (Test.second < mDistance)
                     {
                         mDistance = Test.second;
@@ -183,9 +183,9 @@ void TileInterface::pickTile(float mouseX, float mouseY)
             }
         }
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Check the middle of the tile.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Check the middle of the tile.
+    // ////////////////////////////////////////////////////////////////////
     height[0] = TileManager::getSingleton().getMapHeight(mX    , mZ    );
     height[1] = TileManager::getSingleton().getMapHeight(mX + 1, mZ    );
     height[2] = TileManager::getSingleton().getMapHeight(mX    , mZ + 1);
