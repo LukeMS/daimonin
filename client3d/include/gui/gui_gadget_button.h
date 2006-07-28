@@ -23,10 +23,8 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
 #ifndef GUI_GADGET_BUTTON_H
 #define GUI_GADGET_BUTTON_H
-
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
@@ -37,16 +35,20 @@ using namespace Ogre;
 
 typedef void (Callback) (class GuiWindow *parent, int index);
 
+
+/**
+ ** This class provides an interactive button.
+ *****************************************************************************/
 class GuiGadgetButton: public GuiElement
 {
 
 public:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
-    bool mouseEvent(int MouseAction, int x, int y);
-
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit = true);
+    ~GuiGadgetButton();
+    bool mouseEvent(int MouseAction, int x, int y);
     void setFunction(Callback *c)
     {
         mCallFunc = c;
@@ -55,15 +57,14 @@ public:
     {
         if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
     }
-    ~GuiGadgetButton()
-    {
-        ;
-    }
     void draw();
+
 private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     Callback *mCallFunc;
     bool mMouseOver, mMouseButDown;
 };
 
-
-#endif // GUI_GADGET_H
+#endif

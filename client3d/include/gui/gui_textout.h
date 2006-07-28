@@ -44,21 +44,14 @@ const int MAX_TEXTLINE_LEN = 1024;
 
 typedef struct TextLine
 {
-    unsigned int x1, y1, x2, y2;
-    unsigned int width;
+    unsigned int x1, y1, x2, y2; /**< Area for printing the text. **/
+    unsigned int width;          /**< Width of the parent window. **/
     int font;
-    int index;
+    int index;                   /**< Unique number. **/
     String text;
-    uint32 *BG_Backup;
+    uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
 }
 TextLine;
-
-typedef struct Gui_GfxBuffer
-{
-    int width, height;
-    uint32 *buffer;
-}
-Gui_GfxBuffer;
 
 enum
 {
@@ -67,12 +60,15 @@ enum
 
 const unsigned int CHARS_IN_FONT =96;
 
+/**
+ ** This class provides a text printing on gui elements.
+ *****************************************************************************/
 class GuiTextout
 {
 public:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     static GuiTextout &getSingleton()
     {
         static GuiTextout Singleton;
@@ -94,9 +90,9 @@ public:
         return maxFontHeight;
     }
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     struct mFont
     {
         uint32 *data;
@@ -110,9 +106,9 @@ private:
     uint32 *mTextGfxBuffer;
     PixelBox *mPb;
     unsigned int maxFontHeight;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.

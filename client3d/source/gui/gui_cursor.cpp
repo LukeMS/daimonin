@@ -28,25 +28,46 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 #include "define.h"
 #include "gui_cursor.h"
+#include "gui_imageset.h"
 #include "logger.h"
 
-///================================================================================================
-/// .
-///================================================================================================
-void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
+const int MAX_CURSOR_SIZE = 128;
+
+//================================================================================================
+// .
+//================================================================================================
+GuiCursor::GuiCursor()
+{
+}
+
+//================================================================================================
+// .
+//================================================================================================
+GuiCursor::~GuiCursor()
+{
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight, int scale)
 {
     mState = STATE_STANDARD;
     mWidth = w;
     mHeight= h;
+    mScale = scale;
     if (mWidth <   4) mWidth =   4;
     if (mHeight<   4) mHeight=   4;
-    if (mWidth > 128) mWidth = 128;
-    if (mHeight> 128) mHeight= 128;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Create the overlay element.
-    /// ////////////////////////////////////////////////////////////////////
+    if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
+    if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
+    // ////////////////////////////////////////////////////////////////////
+    // Create the overlay element.
+    // ////////////////////////////////////////////////////////////////////
     mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
-               TEX_TYPE_2D, mWidth, mHeight, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
+               TEX_TYPE_2D, MAX_CURSOR_SIZE, MAX_CURSOR_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
+    uint32 *dest = (uint32*)mTexture->getBuffer()->lock(0,MAX_CURSOR_SIZE * MAX_CURSOR_SIZE *sizeof(uint32), HardwareBuffer::HBL_DISCARD);
+    for (int y = 0; y < MAX_CURSOR_SIZE * MAX_CURSOR_SIZE; ++y)  *dest++ = 0;
+    mTexture->getBuffer()->unlock();
     mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
     mOverlay->setZOrder(550);
     mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
@@ -62,51 +83,45 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
     mElement->setMaterialName("GUI_Cursor_Material");
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
     mOverlay->show();
-
-    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth()-1, mTexture->getHeight()-1), HardwareBuffer::HBL_READ_ONLY );
-    uint32 *dest_data = (uint32*)pb.data;
-    for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)  *dest_data++ = 0;
-    mTexture->getBuffer()->unlock();
-
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiCursor::freeRecources()
 {
     mMaterial.setNull();
     mTexture.setNull();
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiCursor::setPos(Real x, Real y)
 {
     mElement->setTop (y);
     mElement->setLeft(x);
 }
-///================================================================================================
-/// .
-///================================================================================================
-void GuiCursor::setState(PixelBox &srcPixelBox, int state)
+//================================================================================================
+// .
+//================================================================================================
+void GuiCursor::setState(int state)
 {
     if (state < STATE_SUM)
     {
         mState = state;
-        draw(srcPixelBox);
+        draw();
     }
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiCursor::setStateImagePos(std::string name, int x, int y)
 {
     int state = -1;
     if      (name == "Standard")   state = STATE_STANDARD;
-    else if (name == "ButtonDown") state = STATE_BUTTON_DOWN;
+    else if (name == "Pressed")    state = STATE_PRESSED;
     else if (name == "Dragging")   state = STATE_DRAGGING;
     else if (name == "Resizing")   state = STATE_RESIZING;
     if (state < 0)
@@ -116,18 +131,26 @@ void GuiCursor::setStateImagePos(std::string name, int x, int y)
     }
     gfxSrcPos[state].x = x;
     gfxSrcPos[state].y = y;
-    //  Logger::log().info() << "2: " << gfxSrcPos[state].x << " "<< gfxSrcPos[state].y << " "<<mWidth << " "<< mHeight;
 }
 
-///================================================================================================
-/// .
-///================================================================================================
-void GuiCursor::draw(PixelBox &SrcPixelBox)
+//================================================================================================
+// .
+//================================================================================================
+void GuiCursor::draw()
 {
-    PixelBox src = SrcPixelBox.getSubVolume(Box(
+    // Scaling, done by blitFromMemory, seems to fail under OpenGL sometimes. (Ogre3D 1.2.2)
+    // So we need to do it by hand.
+    PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(
                                                 gfxSrcPos[mState].x,
                                                 gfxSrcPos[mState].y,
                                                 gfxSrcPos[mState].x + mWidth,
-                                                gfxSrcPos[mState].y + mHeight ));
-    mTexture->getBuffer()->blitFromMemory(src);
+                                                gfxSrcPos[mState].y + mHeight));
+    uint32 buffer[MAX_CURSOR_SIZE * MAX_CURSOR_SIZE];
+    int w = mWidth* mScale;
+    int h = mHeight* mScale;
+    if (w > MAX_CURSOR_SIZE) w = MAX_CURSOR_SIZE;
+    if (h > MAX_CURSOR_SIZE) h = MAX_CURSOR_SIZE;
+    PixelBox scaled = PixelBox(w, h, src.getDepth(), src.format, buffer);
+    Image::scale(src, scaled);
+    mTexture->getBuffer()->blitFromMemory(scaled, Box(0, 0, w, h));
 }

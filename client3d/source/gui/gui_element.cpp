@@ -24,9 +24,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_imageset.h"
 #include "gui_window.h"
 
-///================================================================================================
-/// Parse a gui element.
-///================================================================================================
+//================================================================================================
+// Parse a gui element.
+//================================================================================================
 GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
 {
     TiXmlElement *xmlGadget;
@@ -42,9 +42,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     mParent= parent;
     GuiSrcEntry *srcEntry;
     ((GuiWindow*)mParent)->getTexturseSize(mMaxX, mMaxY);
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the element.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the element.
+    // ////////////////////////////////////////////////////////////////////
     if ((tmp = xmlElem->Attribute("image_name")))
     {
         if ((srcEntry = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
@@ -77,9 +77,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     }
     if ((tmp = xmlElem->Attribute("image_name"))) mStrImageName = tmp;
     if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the position.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the position.
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
     {
         if ((tmp = xmlGadget->Attribute("x"))) mX = atoi(tmp);
@@ -87,9 +87,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     }
     if (mX > mMaxX-2) mX = mMaxX-2;
     if (mY > mMaxY-2) mY = mMaxY-2;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the size (if given).
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the size (if given).
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Range")))
     {
         if ((tmp = xmlGadget->Attribute("width")))
@@ -105,20 +105,20 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     }
     if (mX + mWidth > mMaxX) mWidth = mMaxX-mX-1;
     if (mY + mHeight >mMaxY) mHeight= mMaxY-mY-1;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the color (if given).
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the color (if given).
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Color")))
     {
-        /// PixelFormat: ARGB.
+        // PixelFormat: ARGB.
         if ((tmp = xmlGadget->Attribute("red"  ))) mFillColor = atoi(tmp) << 16;
         if ((tmp = xmlGadget->Attribute("green"))) mFillColor+= atoi(tmp) <<  8;
         if ((tmp = xmlGadget->Attribute("blue" ))) mFillColor+= atoi(tmp);
         if ((tmp = xmlGadget->Attribute("alpha"))) mFillColor+= atoi(tmp) << 24;
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the label  (if given).
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the label  (if given).
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Label")))
     {
         if ((tmp = xmlGadget->Attribute("xPos")))  mLabelXPos = atoi(tmp);
@@ -129,18 +129,18 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((tmp = xmlGadget->Attribute("blue")))  mLabelColor[2]= (unsigned char) atoi(tmp);
         if ((tmp = xmlGadget->Attribute("text")))  mStrLabel = tmp;
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Tooltip entry.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Tooltip entry.
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Tooltip")))
     {
         if ((tmp = xmlGadget->Attribute("text"))) mStrTooltip = tmp;
     }
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiElement::setStateImagePos(std::string name, int x, int y)
 {
     int state = -1;

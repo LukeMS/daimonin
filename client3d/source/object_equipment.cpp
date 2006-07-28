@@ -73,7 +73,9 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
 unsigned long ObjectEquipment::mIndex =0;
 uchar *ObjectEquipment::texImageBuf = 0;
 
-const uint32 MASK_COLOR = 0xffc638db; /// This is our mask. Pixel with this color will not be drawn.
+const uint32 MASK_COLOR = 0xffc638db; // This is our mask. Pixel with this color will not be drawn.
+
+const int MAX_MODEL_TEXTURE_SIZE = 512;
 
 ObjectEquipment::sPicture ObjectEquipment::picFace =
     {
@@ -204,25 +206,25 @@ ObjectEquipment::sPicture ObjectEquipment::picShoes[2] =
         }
     };
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 ObjectEquipment::~ObjectEquipment()
 {
 }
 
-///================================================================================================
-/// Free all recources.
-///================================================================================================
+//================================================================================================
+// Free all recources.
+//================================================================================================
 void ObjectEquipment::freeRecources()
 {
 	mTexture.setNull();
 	delete[] texImageBuf;
 }
 
-///================================================================================================
-/// Init the model from the description file.
-///================================================================================================
+//================================================================================================
+// Init the model from the description file.
+//================================================================================================
 ObjectEquipment::ObjectEquipment(Entity *parentEntity)
 {
     Logger::log().list()  << "Adding Equipment.";
@@ -237,22 +239,22 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
         mPSystem[bone]= 0;
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// We ignore the material of the mesh and create an own material.
-    /// ////////////////////////////////////////////////////////////////////
-    /// Clone the ObjectNPC-Material.
+    // ////////////////////////////////////////////////////////////////////
+    // We ignore the material of the mesh and create an own material.
+    // ////////////////////////////////////////////////////////////////////
+    // Clone the ObjectNPC-Material.
     String tmpName = "EQ_" + StringConverter::toString(mIndex, 6, '0');
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("NPC");
     MaterialPtr mMaterial = tmpMaterial->clone(tmpName);
     mParentEntity->getSubEntity(0)->setMaterialName(tmpName);
-    /// Create a texture for the material.
+    // Create a texture for the material.
     Image image;
     image.loadDynamicImage(texImageBuf, MAX_MODEL_TEXTURE_SIZE, MAX_MODEL_TEXTURE_SIZE, PF_A8R8G8B8);
     tmpName +="_Texture";
     mTexture = TextureManager::getSingleton().loadImage(tmpName, "General", image, TEX_TYPE_2D, 3, 1.0f);
     mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(tmpName);
 
-    /// Set the default Colors of the model.
+    // Set the default Colors of the model.
     setTexture(0, 0, 0);
     setTexture(2, 1, 0);
     setTexture(3, 2, 0);
@@ -262,9 +264,9 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     setTexture(7, 6, 0);
 }
 
-///================================================================================================
-/// Draw a part of the texture.
-///================================================================================================
+//================================================================================================
+// Draw a part of the texture.
+//================================================================================================
 inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber)
 {
     uint32 srcColor, dstColor;
@@ -272,13 +274,13 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
     uint32 *buffer  = new uint32[picPart.w * picPart.h];
     uint32 *buf = buffer;
     int width = (int)image.getWidth();
-    /// Get the color information from the top line of the texture-shadow picture.
-    /// We have to swap R and B Color information (default texture format is A8R8G8B8).
+    // Get the color information from the top line of the texture-shadow picture.
+    // We have to swap R and B Color information (default texture format is A8R8G8B8).
     srcColor = texRace[texColor & 0xff];
     texColor = (srcColor & 0xff00ff00);
     texColor+= (srcColor & 0x000000ff) << 16;
     texColor+= (srcColor & 0x00ff0000) >> 16;
-    /// Get the current model-texture fragment.
+    // Get the current model-texture fragment.
     PixelBox pb(picPart.w, picPart.h, 1, PF_A8R8G8B8 , buffer);
     mTexture->getBuffer()->blitToMemory(
         Box(picPart.dstX,
@@ -286,7 +288,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
             picPart.dstX + picPart.w,
             picPart.dstY + picPart.h),
         pb);
-    /// Fill the buffer with the selected color (darkened by the shadow texture).
+    // Fill the buffer with the selected color (darkened by the shadow texture).
     for (int y=0; y < picPart.h; ++y)
     {
         for (int x=0; x < picPart.w; ++x)
@@ -295,7 +297,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
             if (srcColor != MASK_COLOR)
             {
                 dstColor = texColor;
-                if (srcColor != 0xffffffff) /// darkening.
+                if (srcColor != 0xffffffff) // darkening.
                 {
                     srcColor = 0xff - (srcColor & 0xff);
                     if ((dstColor & 0x0000ff) >= srcColor ) dstColor-= srcColor; else dstColor-= dstColor & 0x0000ff;
@@ -309,7 +311,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
             ++buffer;
         }
     }
-    /// Copy the buffer back into the model-texture.
+    // Copy the buffer back into the model-texture.
     mTexture->getBuffer()->blitFromMemory(
         pb, Box(picPart.dstX,
                 picPart.dstY,
@@ -318,7 +320,7 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
 
     delete[] buf;
 #ifdef WRITE_MODELTEXTURE_TO_FILE
-    /// Writes the just blitted model-texture as png to disk.
+    // Writes the just blitted model-texture as png to disk.
     {
         Image img;
         uint32 *sysFontBuf = new uint32[mTexture->getWidth()*mTexture->getHeight()];
@@ -330,12 +332,12 @@ inline void ObjectEquipment::drawBopyPart(sPicture &picPart, Image &image, uint3
 
 }
 
-///================================================================================================
-/// Select a new texture.
-///================================================================================================
+//================================================================================================
+// Select a new texture.
+//================================================================================================
 void ObjectEquipment::setTexture(int pos, int textureColor, int textureNr)
 {
-    /// Load the shadow texture.
+    // Load the shadow texture.
     Image image;
     image.load("shadow.png", "General");
     switch (pos)
@@ -395,15 +397,15 @@ void ObjectEquipment::setTexture(int pos, int textureColor, int textureNr)
     }
 }
 
-///================================================================================================
-/// Create and attach an equipment item to bone.
-///================================================================================================
+//================================================================================================
+// Create and attach an equipment item to bone.
+//================================================================================================
 void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
 {
     if (bone < 0 || bone >= BONE_SUM) return;
     dropItem(bone);
 
-    /// Add a particle system.
+    // Add a particle system.
     if (particleID < 0 || particleID >= PARTICLE_FX_SUM)
     {
         mPSystem[bone] = 0;
@@ -414,7 +416,7 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
         if (mPSystem[bone]) mParentEntity->attachObjectToBone(boneName[bone], mPSystem[bone]);
     }
 
-    /// Add a entity.
+    // Add a entity.
     if (itemID < 0 || itemID >= ITEM_SUM)
     {
         mEntity[bone] = 0;
@@ -430,9 +432,9 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
     }
 }
 
-///================================================================================================
-/// Detach and destroy an equipment item from bone.
-///================================================================================================
+//================================================================================================
+// Detach and destroy an equipment item from bone.
+//================================================================================================
 void ObjectEquipment::dropItem(int bone)
 {
     if (mEntity[bone])
@@ -449,9 +451,9 @@ void ObjectEquipment::dropItem(int bone)
     }
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void ObjectEquipment::raiseWeapon(bool raise)
 {
     /*

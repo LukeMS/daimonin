@@ -30,21 +30,29 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+/**
+ ** This singleton class provides the mouse cursor.
+ *****************************************************************************/
 class GuiCursor
 {
 public:
+    /** Actual state of the mouse cursor: **/
     enum
     {
-        STATE_STANDARD, STATE_BUTTON_DOWN, STATE_DRAGGING, STATE_RESIZING, STATE_SUM
+        STATE_STANDARD,  /**< Standard. **/
+        STATE_PRESSED,   /**< Any button down. **/
+        STATE_DRAGGING,  /**< Dragging in action. **/
+        STATE_RESIZING,  /**< Resizing a window. **/
+        STATE_SUM
     };
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     void setPos(Real x, Real y);
     void setStateImagePos(std::string state, int x, int y);
-    void setState(PixelBox &SrcPixelBox, int state);
-    void draw(PixelBox &SrcPixelBox);
-    void Init(int w, int h, int screenHeight, int screenWidth);
+    void setState(int state);
+    void draw();
+    void Init(int w, int h, int screenHeight, int screenWidth, int scale);
     void freeRecources();
     static GuiCursor &getSingleton()
     {
@@ -52,11 +60,11 @@ public:
     }
 
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     unsigned int mScreenWidth, mScreenHeight;
-    struct _pos
+    struct
     {
         int x, y;
     }
@@ -67,13 +75,12 @@ private:
     OverlayElement *mElement;
     TexturePtr mTexture;
     MaterialPtr mMaterial;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
-    GuiCursor()
-    {}
-    ~GuiCursor()
-    {}
+    int mScale;
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    GuiCursor();
+    ~GuiCursor();
     GuiCursor(const GuiCursor&); // disable copy-constructor.
 };
 

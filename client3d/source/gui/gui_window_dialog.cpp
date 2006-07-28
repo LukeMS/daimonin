@@ -27,24 +27,24 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "gui_window_dialog.h"
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 GuiDialog::GuiDialog()
 {
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 GuiDialog::~GuiDialog()
 {
 }
 
-///================================================================================================
-/// this function gets a ="xxxxxxx" string from a line.
-/// It removes the =" and the last " and returns the string in a static buffer.
-///================================================================================================
+//================================================================================================
+// this function gets a ="xxxxxxx" string from a line.
+// It removes the =" and the last " and returns the string in a static buffer.
+//================================================================================================
 char *GuiDialog::get_parameter_string(char *data, int *pos)
 {
     char *start_ptr, *end_ptr;
@@ -68,9 +68,9 @@ char *GuiDialog::get_parameter_string(char *data, int *pos)
     return buf;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_head(_gui_interface_head *head, char *data, int *pos)
 {
     char *buf, c;
@@ -115,9 +115,9 @@ int GuiDialog::interface_cmd_head(_gui_interface_head *head, char *data, int *po
     return -1;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_link(_gui_interface_link *head, char *data, int *pos)
 {
     char *buf, c;
@@ -166,9 +166,9 @@ int GuiDialog::interface_cmd_link(_gui_interface_link *head, char *data, int *po
 }
 
 
-///================================================================================================
-/// internal server string - the client use it as hint to use /tx instead of /talk
-///================================================================================================
+//================================================================================================
+// internal server string - the client use it as hint to use /tx instead of /talk
+//================================================================================================
 int GuiDialog::interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
 {
     char *buf, c;
@@ -194,7 +194,7 @@ int GuiDialog::interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
         // It must be a command. If it is unknown, return NULL
         switch(c)
         {
-            case 'b': /// link title/text
+            case 'b': // link title/text
                 if(!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->body, buf);
@@ -208,9 +208,9 @@ int GuiDialog::interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
 }
 
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_reward(_gui_interface_reward *head, char *data, int *pos)
 {
     char *buf, c;
@@ -279,9 +279,9 @@ int GuiDialog::interface_cmd_reward(_gui_interface_reward *head, char *data, int
     return -1;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_message(_gui_interface_message *msg, char *data, int *pos)
 {
     char *buf, c;
@@ -324,9 +324,9 @@ int GuiDialog::interface_cmd_message(_gui_interface_message *msg, char *data, in
     return -1;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_xtended(_gui_interface_xtended *msg, char *data, int *pos)
 {
     char *buf, c;
@@ -370,9 +370,9 @@ int GuiDialog::interface_cmd_xtended(_gui_interface_xtended *msg, char *data, in
     return -1;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos)
 {
     char *buf, c;
@@ -427,9 +427,9 @@ int GuiDialog::interface_cmd_icon(_gui_interface_icon *head, char *data, int *po
     return -1;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::interface_cmd_button(_gui_interface_button *head, char *data, int *pos)
 {
     char *buf, c;
@@ -480,9 +480,9 @@ int GuiDialog::interface_cmd_button(_gui_interface_button *head, char *data, int
     return -1;
 }
 
-///================================================================================================
-/// Parse a <t b=""> textfield command
-///================================================================================================
+//================================================================================================
+// Parse a <t b=""> textfield command
+//================================================================================================
 int GuiDialog::interface_cmd_textfield(_gui_interface_textfield *textfield, char *data, int *pos)
 {
     char *buf, c;
@@ -523,9 +523,9 @@ int GuiDialog::interface_cmd_textfield(_gui_interface_textfield *textfield, char
     return -1;
 }
 
-///================================================================================================
+//================================================================================================
 // clear & reset the gui interface
-///================================================================================================
+//================================================================================================
 void GuiDialog::reset_gui_interface(void)
 {
     /*
@@ -546,9 +546,9 @@ void GuiDialog::reset_gui_interface(void)
     */
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 {
     mInterfaceMode= INTERFACE_MODE_NPC;
@@ -812,9 +812,9 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
     }
 }
 
-///================================================================================================
-/// called from commands.c after we got a interface command
-///================================================================================================
+//================================================================================================
+// called from commands.c after we got a interface command
+//================================================================================================
 void GuiDialog::load_gui_interface(int mode, char *data, int len, int pos)
 {
     /*
@@ -1058,12 +1058,12 @@ void GuiDialog::load_gui_interface(int mode, char *data, int len, int pos)
 //     return gui_int;
 }
 
-///================================================================================================
-/// send a command from the gui to server.
-/// if mode is 1, its a real command.
-/// mode 0 or 2 means to add /talk first.
-/// mode 2 means manual input / add to history
-///================================================================================================
+//================================================================================================
+// send a command from the gui to server.
+// if mode is 1, its a real command.
+// mode 0 or 2 means to add /talk first.
+// mode 2 means manual input / add to history
+//================================================================================================
 void GuiDialog::gui_interface_send_command(int mode, char *cmd)
 {
     /*
@@ -1104,15 +1104,15 @@ void GuiDialog::gui_interface_send_command(int mode, char *cmd)
     */
 }
 
-///================================================================================================
-/// if we click on something in a gui interface, this functions
-/// * returns us the element and/or keyword.
-/// * we return in *element the gui element (message, body, icon)
-/// * and in *index what element. If there is a keyword or command,
-/// * we have a pointer to it in keyword. The pointer is to a static
-/// * buffer here in get_interface_line or to a buffer in gui_interface.
-/// * return: TRUE = we hit something.
-///================================================================================================
+//================================================================================================
+// if we click on something in a gui interface, this functions
+// * returns us the element and/or keyword.
+// * we return in *element the gui element (message, body, icon)
+// * and in *index what element. If there is a keyword or command,
+// * we have a pointer to it in keyword. The pointer is to a static
+// * buffer here in get_interface_line or to a buffer in gui_interface.
+// * return: TRUE = we hit something.
+//================================================================================================
 int GuiDialog::get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my)
 {
     /*
@@ -1262,9 +1262,9 @@ int GuiDialog::get_interface_line(int *element, int *index, char **keyword, int 
     return false;
 }
 
-///================================================================================================
+//================================================================================================
 ///
-///================================================================================================
+//================================================================================================
 int GuiDialog::precalc_interface_npc(void)
 {
       int yoff = 5;
@@ -1342,10 +1342,10 @@ int GuiDialog::precalc_interface_npc(void)
 	  return yoff;
 }
 
-///================================================================================================
-/// show npc interface. ATM its included in the menu system, but
-/// we need to crate a lower layer level for it.
-///================================================================================================
+//================================================================================================
+// show npc interface. ATM its included in the menu system, but
+// we need to crate a lower layer level for it.
+//================================================================================================
 void GuiDialog::show_interface_npc(int mark)
 {
     /*
@@ -1821,9 +1821,9 @@ void GuiDialog::show_interface_npc(int mark)
 }
 
 
-///================================================================================================
-/// we have a left click inside the interface -> check it
-///================================================================================================
+//================================================================================================
+// we have a left click inside the interface -> check it
+//================================================================================================
 void GuiDialog::gui_interface_mouse(int mouseAction, int mX, int mY)
 {
 /*

@@ -28,29 +28,23 @@ http://www.gnu.org/licenses/licenses.html
 #define GUI_ANIMATION_H
 
 #include <tinyxml.h>
-// an animated 2d-gfx
-// in a gui_window.
-///================================================================================================
-///
-///================================================================================================
+
+/**
+ ** This class provides 2d animations within a gui window.
+ *****************************************************************************/
 class GuiAnimation
 {
 public:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Functions.
-    /// ////////////////////////////////////////////////////////////////////
-    GuiAnimation(TiXmlElement *xmlElem, int maxX, int maxY, void *parent);
-    ~GuiAnimation()
-    {}
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    GuiAnimation(TiXmlElement *xmlElem, void *parent);
+    ~GuiAnimation();
+
 private:
-    /// ////////////////////////////////////////////////////////////////////
-    /// Variables.
-    /// ////////////////////////////////////////////////////////////////////
-    int mPosX, mPosY, mWidth, mHeight;
-    int mFrameWidth; // width of a single frame.
-    Real mFrameTime;
-    bool mReplay;
-    bool mFinished;
-}
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
+};
 
 #endif

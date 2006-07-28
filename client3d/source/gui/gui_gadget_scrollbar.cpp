@@ -35,14 +35,14 @@ http://www.gnu.org/licenses/licenses.html
 
 const int MIN_SLIDER_SIZE = 6;
 
-///================================================================================================
-/// Constructor.
-///================================================================================================
+//================================================================================================
+// Constructor.
+//================================================================================================
 GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement, parent)
 {
-    /// ////////////////////////////////////////////////////////////////////
-    /// Create buffer to hold the pixel information of the listbox.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Create buffer to hold the pixel information of the listbox.
+    // ////////////////////////////////////////////////////////////////////
     mButScrollUp  = 0;
     mButScrollDown= 0;
 
@@ -59,7 +59,7 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):G
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_PASSIVE")) color = &mColorBarPassive;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_M_OVER"))  color = &mColorBarM_Over;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_ACTIVE"))  color = &mColorBarActive;
-        /// PixelFormat: ARGB.
+        // PixelFormat: ARGB.
         if ((tmp = xmlOpt->Attribute("red"  ))) *color = atoi(tmp) << 16;
         if ((tmp = xmlOpt->Attribute("green"))) *color+= atoi(tmp) <<  8;
         if ((tmp = xmlOpt->Attribute("blue" ))) *color+= atoi(tmp);
@@ -82,9 +82,9 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):G
     resize(mWidth, mHeight);
 }
 
-///================================================================================================
-/// Destructor.
-///================================================================================================
+//================================================================================================
+// Destructor.
+//================================================================================================
 GuiGadgetScrollbar::~GuiGadgetScrollbar()
 {
     delete[] mGfxBuffer;
@@ -92,9 +92,9 @@ GuiGadgetScrollbar::~GuiGadgetScrollbar()
     if (mButScrollDown) delete mButScrollDown;
 }
 
-///================================================================================================
-/// Mouse action in parent window.
-///================================================================================================
+//================================================================================================
+// Mouse action in parent window.
+//================================================================================================
 bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
 {
     // Test the buttons.
@@ -106,9 +106,9 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
     return false;
 }
 
-///================================================================================================
-/// Update the slider size.
-///================================================================================================
+//================================================================================================
+// Update the slider size.
+//================================================================================================
 void GuiGadgetScrollbar::updateSlider(int actLines, int maxVisibleLines)
 {
     if (actLines <= maxVisibleLines) return;
@@ -117,9 +117,9 @@ void GuiGadgetScrollbar::updateSlider(int actLines, int maxVisibleLines)
     draw();
 }
 
-///================================================================================================
-/// Draw the slider.
-///================================================================================================
+//================================================================================================
+// Draw the slider.
+//================================================================================================
 void GuiGadgetScrollbar::draw()
 {
     int y1 = 3 + mSliderPos;
@@ -161,9 +161,9 @@ void GuiGadgetScrollbar::draw()
         Box(mStartX, mStartY, mStopX, mStopY));
 }
 
-///================================================================================================
-/// Resize the complete scrollbar.
-///================================================================================================
+//================================================================================================
+// Resize the complete scrollbar.
+//================================================================================================
 void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
 {
     if (newWidth == mWidth && newHeight == mHeight && mGfxBuffer) return;

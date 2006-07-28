@@ -44,25 +44,25 @@ using namespace Ogre;
 const int MIN_GFX_SIZE = 4;
 const char XML_BACKGROUND[] = "Background";
 
-///================================================================================================
-/// Init all static Elemnts.
-///================================================================================================
+//================================================================================================
+// Init all static Elemnts.
+//================================================================================================
 int GuiWindow::msInstanceNr = -1;
 int GuiWindow::mMouseDragging = -1;
 std::string GuiWindow::mStrTooltip ="";
 
-///================================================================================================
-/// Constructor.
-///================================================================================================
+//================================================================================================
+// Constructor.
+//================================================================================================
 GuiWindow::GuiWindow()
 {
     isInit = false;
     mGadgetDrag = false;
 }
 
-///================================================================================================
-/// Destructor.
-///================================================================================================
+//================================================================================================
+// Destructor.
+//================================================================================================
 void GuiWindow::freeRecources()
 {
     // Delete the buttons.
@@ -103,9 +103,9 @@ void GuiWindow::freeRecources()
     mTexture.setNull();
 }
 
-///================================================================================================
-/// Build a window out of a xml description file.
-///================================================================================================
+//================================================================================================
+// Build a window out of a xml description file.
+//================================================================================================
 void GuiWindow::Init(TiXmlElement *xmlElem)
 {
     mMousePressed  =-1;
@@ -116,9 +116,9 @@ void GuiWindow::Init(TiXmlElement *xmlElem)
     isInit = true;
 }
 
-///================================================================================================
-/// Parse the xml window data..
-///================================================================================================
+//================================================================================================
+// Parse the xml window data..
+//================================================================================================
 void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 {
     TiXmlElement *xmlElem;
@@ -126,17 +126,17 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 
     if ((strTmp = xmlRoot->Attribute("name"))) mStrName = strTmp;
     Logger::log().info () << "Parsing window: " << mStrName;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Coordinates type.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Coordinates type.
+    // ////////////////////////////////////////////////////////////////////
     mSizeRelative = false;
     if ((strTmp = xmlRoot->Attribute("relativeCoords")))
     {
         if (!stricmp(strTmp, "true")) mSizeRelative = true;
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Size entries.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Size entries.
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlElem = xmlRoot->FirstChildElement("Size")))
     {
         if ((strTmp = xmlElem->Attribute("width")))
@@ -147,9 +147,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
     if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Position entries.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Position entries.
+    // ////////////////////////////////////////////////////////////////////
     mPosX = mPosY = mPosZ = 100;
     if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
     {
@@ -175,9 +175,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             mPosZ = atoi(strTmp);
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Dragging entries.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Dragging entries.
+    // ////////////////////////////////////////////////////////////////////
     mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
     if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
     {
@@ -190,41 +190,41 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if ((strTmp = xmlElem->Attribute("height")))
             mDragPosY2 = atoi(strTmp);
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Tooltip entries.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Tooltip entries.
+    // ////////////////////////////////////////////////////////////////////
     if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
-    { /// We will show tooltip only if mouse is over the moving area.
+    { // We will show tooltip only if mouse is over the moving area.
         if ((strTmp = xmlElem->Attribute("text")))
             mStrTooltip = strTmp;
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Now we have all datas to create the window..
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Now we have all datas to create the window..
+    // ////////////////////////////////////////////////////////////////////
     createWindow();
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the graphics.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the graphics.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
     {
         if (!(strTmp = xmlElem->Attribute("type"))) continue;
         if (!stricmp(strTmp, "COLOR_FILL"))
             mvGraphic.push_back(new GuiGraphic(xmlElem, this));
-        else /// This is a GFX_FILL.
+        else // This is a GFX_FILL.
             mvGraphic.push_back(new GuiGraphic(xmlElem, this));
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Label.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Label.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Label"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Label"))
     {
         printParsedTextline(xmlElem);
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Textbox.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Textbox.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("TextBox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("TextBox"))
     {
         // Error: No name found. Fallback to label.
@@ -257,14 +257,14 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if ((strTmp = xmlElem->Attribute("width")))  textline->width= atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("text")))   textline->text = strTmp;
 
-        /// Calculate the needed gfx-buffer size for the text.
+        // Calculate the needed gfx-buffer size for the text.
         if (GuiTextout::getSingleton().getClippingPos(*textline, mWidth, mHeight) == false)
         {
             delete textline;
             continue;
         }
 
-        /// Fill the BG_Backup buffer with Window background, before printing.
+        // Fill the BG_Backup buffer with Window background, before printing.
         mvTextline.push_back(textline);
         textline->x2 = textline->x1 + textline->width;
         if (textline->x2 >= (unsigned int) mWidth) textline->x2 = mWidth-1;
@@ -279,26 +279,26 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         GuiTextout::getSingleton().Print(textline, mTexture.getPointer());
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the listboxes.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the listboxes.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
     {
         if (!(strTmp = xmlElem->Attribute("name"))) continue;
         mvListbox.push_back(new GuiListbox(xmlElem, this));
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the Statusbars.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Statusbars.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Statusbar"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Statusbar"))
     {
         if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
         mvStatusbar.push_back(new GuiStatusbar(xmlElem, this));
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the gadgets.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the gadgets.
+    // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Gadget"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Gadget"))
     {
         if ( !strcmp(xmlElem->Attribute("type"), "BUTTON"))
@@ -316,11 +316,11 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             Logger::log().warning() << xmlElem->Attribute("type") << " is not a defined gadget type.";
     }
 
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the "Talking Head".
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the "Talking Head".
+    // ////////////////////////////////////////////////////////////////////
     mSceneNode = 0;
-    /// Currently we are using only 1 head !
+    // Currently we are using only 1 head !
     for (xmlElem = xmlRoot->FirstChildElement("NPC_Head"); xmlElem; xmlElem = xmlElem->NextSiblingElement("NPC_Head"))
     {
         if ((strTmp = xmlElem->Attribute("x")))
@@ -371,9 +371,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     }
 }
 
-///================================================================================================
-/// Parse and print a text (label element).
-///================================================================================================
+//================================================================================================
+// Parse and print a text (label element).
+//================================================================================================
 inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
 {
     const char *strTmp;
@@ -390,9 +390,9 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     }
 }
 
-///================================================================================================
-/// Create the window.
-///================================================================================================
+//================================================================================================
+// Create the window.
+//================================================================================================
 inline void GuiWindow::createWindow()
 {
     mWindowNr = ++msInstanceNr;
@@ -420,9 +420,9 @@ inline void GuiWindow::createWindow()
     mTexture->getBuffer()->unlock();
 }
 
-///================================================================================================
-/// Mouse Event.
-///================================================================================================
+//================================================================================================
+// Mouse Event.
+//================================================================================================
 const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 {
     if (!mOverlay->isVisible()) return 0;
@@ -455,7 +455,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     {
         case BUTTON_PRESSED:
         {
-            GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_BUTTON_DOWN);
+            GuiCursor::getSingleton().setState(GuiCursor::STATE_PRESSED);
             // Mouse over this window?
             if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
             {
@@ -490,7 +490,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 
         case BUTTON_RELEASED:
         {
-            GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_STANDARD);
+            GuiCursor::getSingleton().setState(GuiCursor::STATE_STANDARD);
             mMousePressed = -1;
             mMouseDragging= -1;
             break;
@@ -538,9 +538,9 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             case BUTTON_RELEASED:
             {
                 GuiCursor::getSingleton().setState(mSrcPixelBox, GuiCursor::STATE_STANDARD);
-                /// ////////////////////////////////////////////////////////////////////
-                /// Gadget pressed?
-                /// ////////////////////////////////////////////////////////////////////
+                // ////////////////////////////////////////////////////////////////////
+                // Gadget pressed?
+                // ////////////////////////////////////////////////////////////////////
                 if (mMousePressed >= 0)
                 {
                     gadget = getGadgetMouseIsOver(x, y);
@@ -577,9 +577,9 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             break;
 
             case MOUSE_MOVEMENT:
-                /// ////////////////////////////////////////////////////////////////////
-                /// Dragging.
-                /// ////////////////////////////////////////////////////////////////////
+                // ////////////////////////////////////////////////////////////////////
+                // Dragging.
+                // ////////////////////////////////////////////////////////////////////
                 if (mMouseDragging == mWindowNr)
                 {
                     mPosX-= mDragOldMousePosX - rx;
@@ -599,9 +599,9 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                 }
                 else if (mMouseDragging < 0)
                 {
-                    /// ////////////////////////////////////////////////////////////////////
-                    /// Is the mouse still over this gadget?
-                    /// ////////////////////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////////////////////
+                    // Is the mouse still over this gadget?
+                    // ////////////////////////////////////////////////////////////////////
                     if (mMouseOver >= 0 && mvGadgetButton[mMouseOver]->mouseOver(x, y) == false)
                     {
                         if (mvGadgetButton[mMouseOver]->setState(GuiElement::STATE_STANDARD))
@@ -611,9 +611,9 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                             GuiManager::getSingleton().setTooltip(0);
                         }
                     }
-                    /// ////////////////////////////////////////////////////////////////////
-                    /// Is mouse over a gadget?
-                    /// ////////////////////////////////////////////////////////////////////
+                    // ////////////////////////////////////////////////////////////////////
+                    // Is mouse over a gadget?
+                    // ////////////////////////////////////////////////////////////////////
                     if (mMousePressed < 0)
                     {
                         gadget = getGadgetMouseIsOver(x, y);
@@ -644,7 +644,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         return actGadgetName;
         */
 
-    return 0;  /// DELETE ME !!!!!!!
+    return 0;  // DELETE ME !!!!!!!
 }
 
 void GuiWindow::PreformActions()
@@ -663,9 +663,9 @@ void GuiWindow::PreformActions()
     */
 }
 
-///================================================================================================
-/// Parse a message.
-///================================================================================================
+//================================================================================================
+// Parse a message.
+//================================================================================================
 const char *GuiWindow::Message(int message, int element, void *value)
 {
     switch (message)
@@ -731,9 +731,9 @@ const char *GuiWindow::Message(int message, int element, void *value)
     return 0;
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiWindow::setHeight(int newHeight)
 {
     if (mHeight == newHeight) return;
@@ -744,27 +744,27 @@ void GuiWindow::setHeight(int newHeight)
     mElement->setHeight(newHeight);
 }
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 void GuiWindow::update(Real timeSinceLastFrame)
 {
-    /// Update drag animation (move back on wrong drag).
+    // Update drag animation (move back on wrong drag).
     ;
-    /// Speak Animation.
+    // Speak Animation.
     if (mSpeakAnimState)
         mSpeakAnimState->addTime(timeSinceLastFrame);
 
-    /// Update listboxes.
+    // Update listboxes.
     for (vector<GuiListbox*>::iterator i = mvListbox.begin(); i < mvListbox.end(); ++i)
     {
         (*i)->draw();
     }
 }
 
-///================================================================================================
-/// Button was pressed.
-///================================================================================================
+//================================================================================================
+// Button was pressed.
+//================================================================================================
 void GuiWindow::buttonPressed(GuiWindow *me, int index)
 {
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);

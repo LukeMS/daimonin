@@ -40,19 +40,19 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-///================================================================================================
-/// Global variables.
-///================================================================================================
+//================================================================================================
+// Global variables.
+//================================================================================================
 CEvent *Event=0;
 
-///================================================================================================
-/// Constructor.
-///================================================================================================
+//================================================================================================
+// Constructor.
+//================================================================================================
 CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
 {
-    /// ////////////////////////////////////////////////////////////////////
-    /// Create unbuffered key & mouse input.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Create unbuffered key & mouse input.
+    // ////////////////////////////////////////////////////////////////////
     mSceneManager = SceneMgr;
     mWindow = win;
     mEventProcessor = new EventProcessor();
@@ -69,9 +69,9 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
     Option::getSingleton().setGameStatus(GAME_STATUS_INIT_VIEWPORT);
 }
 
-///================================================================================================
-/// Destructor.
-///================================================================================================
+//================================================================================================
+// Destructor.
+//================================================================================================
 CEvent::~CEvent()
 {
     if (mEventProcessor)  delete mEventProcessor;
@@ -82,26 +82,26 @@ CEvent::~CEvent()
     ObjectVisuals::getSingleton().freeRecources();
 }
 
-///================================================================================================
-/// Player has moved, update the world position.
-///================================================================================================
+//================================================================================================
+// Player has moved, update the world position.
+//================================================================================================
 void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
 {
     static Vector3 distance;
-    /// ////////////////////////////////////////////////////////////////////
-    /// Moving within a tile, just move the camera.
-    /// Todo: here is time for pre calculating the new pos.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Moving within a tile, just move the camera.
+    // Todo: here is time for pre calculating the new pos.
+    // ////////////////////////////////////////////////////////////////////
     if (func == WSYNC_OFFSET)
     {
 //        long i = Root::getSingleton().getTimer()->getMilliseconds()
         mCamera->move(pos);
         return;
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Moved a whole tile.
-    /// ////////////////////////////////////////////////////////////////////
-    /// Server::getSingleton.getTiles(posX, posZ);
+    // ////////////////////////////////////////////////////////////////////
+    // Moved a whole tile.
+    // ////////////////////////////////////////////////////////////////////
+    // Server::getSingleton.getTiles(posX, posZ);
     if (func == WSYNC_MOVE)
     {
 //ParticleManager::getSingleton().pauseAll(true);
@@ -113,15 +113,15 @@ void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
 //ParticleManager::getSingleton().pauseAll(false);
         return;
     }
-    /// ////////////////////////////////////////////////////////////////////
-    /// Set the distance.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Set the distance.
+    // ////////////////////////////////////////////////////////////////////
     distance = pos;
 }
 
-///================================================================================================
-/// Frame Start event.
-///================================================================================================
+//================================================================================================
+// Frame Start event.
+//================================================================================================
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
     static Overlay *mOverlay;
@@ -132,13 +132,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
     {
         case GAME_STATUS_INIT_VIEWPORT:
         {
-            /// ////////////////////////////////////////////////////////////////////
-            /// Create one viewport, entire window
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Create one viewport, entire window
+            // ////////////////////////////////////////////////////////////////////
             mCamera = mSceneManager->createCamera("PlayerCam");
             Viewport *VP = mWindow->addViewport(mCamera);
             VP->setBackgroundColour(ColourValue(0,0,0));
-            /// Alter the camera aspect ratio to match the viewport
+            // Alter the camera aspect ratio to match the viewport
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
             mCamera->setProjectionType(PT_ORTHOGRAPHIC);
 
@@ -158,18 +158,18 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     mCamera->lookAt(0,-1,0);
                     mCamera->pitch(Degree(5));
             */
-            /// ////////////////////////////////////////////////////////////////////
-            /// Create the world.
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Create the world.
+            // ////////////////////////////////////////////////////////////////////
             mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
-            /// ////////////////////////////////////////////////////////////////////
-            /// Create a minimal gui for some loading infos..
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Create a minimal gui for some loading infos..
+            // ////////////////////////////////////////////////////////////////////
             GuiManager::getSingleton().Init(mWindow->getWidth(), mWindow->getHeight());
             GuiTextout::getSingleton().loadRawFont(FILE_SYSTEM_FONT);
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SOUND);
-            /// Show the loading-gfx.
+            // Show the loading-gfx.
             mOverlay = OverlayManager::getSingleton().getByName ("Overlay/Loading");
             mOverlay->show();
             if (Root::getSingleton().getTimer()->getMilliseconds() & 1)
@@ -198,7 +198,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         {
             Sound::getSingleton().Init();
             //Sound::getSingleton().playStream(Sound::BG_MUSIC); // This sound is getting on my nerves...
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_LIGHT);
             GuiManager::getSingleton().displaySystemMessage("Starting lights...");
         }
@@ -207,7 +207,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_INIT_LIGHT:
         {
             /*
-            /// Todo: lightmanager
+            // Todo: lightmanager
             Light *light;
             light = mSceneManager->createLight("Light_Vol");
             light->setType(Light::LT_POINT );
@@ -234,7 +234,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             // mSceneMgr->setFog(FOG_LINEAR , ColourValue(1,1,1), 0.005, 450, 800);
 
             */
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SPELL);
             GuiManager::getSingleton().displaySystemMessage("Starting the spells...");
         }
@@ -243,7 +243,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_INIT_SPELL:
         {
             SpellManager::getSingleton().init(mSceneManager);
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_PARTICLE);
             GuiManager::getSingleton().displaySystemMessage("Starting the particles...");
             break;
@@ -253,7 +253,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_INIT_PARTICLE:
         {
             ParticleManager::getSingleton().update(0);
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI_IMAGESET);
             GuiManager::getSingleton().displaySystemMessage("Starting the gui...");
             GuiManager::getSingleton().displaySystemMessage(" - Parsing Imageset");
@@ -264,7 +264,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_INIT_GUI_IMAGESET:
         {
             GuiImageset::getSingleton().parseXML(FILE_GUI_IMAGESET);
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_GUI_WINDOWS);
             GuiManager::getSingleton().displaySystemMessage(" - Parsing windows");
             break;
@@ -274,7 +274,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         {
             Logger::log().headline("Starting GUI");
             GuiManager::getSingleton().parseWindows(FILE_GUI_WINDOWS);
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_TILE);
             GuiManager::getSingleton().displaySystemMessage("Starting the tile-engine...");
             break;
@@ -282,8 +282,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_INIT_TILE:
         {
-            /// As events are handled in the gui.
-            /// The Listeners must be added after gui was init.
+            // As events are handled in the gui.
+            // The Listeners must be added after gui was init.
             mEventProcessor->addKeyListener(this);
             mEventProcessor->addMouseMotionListener(this);
             mEventProcessor->addMouseListener(this);
@@ -291,7 +291,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 TileManager::getSingleton().Init(mSceneManager, 128);
             else
                 TileManager::getSingleton().Init(mSceneManager, 16);
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_OBJECT);
             GuiManager::getSingleton().displaySystemMessage("Starting the objects...");
             //Vector3 pos = Vector3::ZERO;
@@ -302,7 +302,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_INIT_OBJECT:
         {
             ObjectManager::getSingleton().init();
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
             GuiManager::getSingleton().displaySystemMessage("Starting the network...");
             break;
@@ -321,7 +321,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
 
-            /// Set next state.
+            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_META);
             GuiManager::getSingleton().displaySystemMessage("");
             OverlayManager::getSingleton().destroy(mOverlay);
@@ -347,6 +347,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
                     sObject obj;
                     obj.meshName  = "Tentacle_N_Small.mesh";
+                    //obj.meshName  = "Ogre_Big.mesh";
                     obj.nickName  = "michtoen";
                     obj.type      = ObjectManager::OBJECT_NPC;
                     obj.friendly  = -1;
@@ -421,9 +422,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
     return true;
 }
 
-///================================================================================================
-/// Frame End event.
-///================================================================================================
+//================================================================================================
+// Frame End event.
+//================================================================================================
 bool CEvent::frameEnded(const FrameEvent&)
 {
     if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET) return true;

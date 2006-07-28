@@ -30,9 +30,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window.h"
 #include "gui_manager.h"
 
-///================================================================================================
-/// .
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
 GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool drawOnInit):GuiElement(xmlElement, parent)
 {
     mCallFunc = 0;
@@ -41,9 +41,16 @@ GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool dr
     if (drawOnInit) draw();
 }
 
-///================================================================================================
-/// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
-///================================================================================================
+//================================================================================================
+// .
+//================================================================================================
+GuiGadgetButton::~GuiGadgetButton()
+{
+}
+
+//================================================================================================
+// Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
+//================================================================================================
 bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 {
     if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight)
@@ -85,14 +92,14 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
     return false; // No action here, check the other gadgets.
 }
 
-///================================================================================================
-/// Draw the guiElement.
-///================================================================================================
+//================================================================================================
+// Draw the guiElement.
+//================================================================================================
 void GuiGadgetButton::draw()
 {
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw gaget.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Draw gaget.
+    // ////////////////////////////////////////////////////////////////////
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     PixelBox src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
                        gfxSrcPos[mState].x,
@@ -100,9 +107,9 @@ void GuiGadgetButton::draw()
                        gfxSrcPos[mState].x + mWidth,
                        gfxSrcPos[mState].y + mHeight));
     texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
-    /// ////////////////////////////////////////////////////////////////////
-    /// Draw label.
-    /// ////////////////////////////////////////////////////////////////////
+    // ////////////////////////////////////////////////////////////////////
+    // Draw label.
+    // ////////////////////////////////////////////////////////////////////
     if (mStrLabel != "")
     {
         std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.

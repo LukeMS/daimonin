@@ -35,27 +35,27 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-///================================================================================================
-/// Buffered Key Events.
-///================================================================================================
+//================================================================================================
+// Buffered Key Events.
+//================================================================================================
 void CEvent::keyPressed(KeyEvent *e)
 {
     mIdleTime =0;
     static Real g_pitch = 0.2;
 
-    /// Is this keyEvent related to gui?
+    // Is this keyEvent related to gui?
     if (GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey()))
     {
         e->consume();
         return;
     }
 
-    /// InGame keyEvent.
+    // InGame keyEvent.
     switch (e->getKey())
     {
-            /// ////////////////////////////////////////////////////////////////////
-            /// Player Movemment.
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Player Movemment.
+            // ////////////////////////////////////////////////////////////////////
         case KC_UP:
             //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0, 1);
             //mCamera->  moveRelative (Vector3(0,100,0));
@@ -227,9 +227,9 @@ void CEvent::keyPressed(KeyEvent *e)
 //            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
             break;
 
-            /// ////////////////////////////////////////////////////////////////////
-            /// Engine settings.
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Engine settings.
+            // ////////////////////////////////////////////////////////////////////
         case KC_Y:
             mSceneDetailIndex = (mSceneDetailIndex+1)%3;
             switch(mSceneDetailIndex)
@@ -339,9 +339,9 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
         }
 
-        /// ////////////////////////////////////////////////////////////////////
-        /// Screenshot.
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Screenshot.
+        // ////////////////////////////////////////////////////////////////////
         case KC_SYSRQ:
         {
             static int mNumScreenShots=0;
@@ -352,9 +352,9 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
         }
 
-        /// ////////////////////////////////////////////////////////////////////
-        /// Exit game.
-        /// ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Exit game.
+        // ////////////////////////////////////////////////////////////////////
         case KC_ESCAPE:
             mQuitGame = true;
             break;
@@ -372,9 +372,9 @@ void CEvent::keyReleased(KeyEvent* e)
 {
     switch (e->getKey())
     {
-            /// ////////////////////////////////////////////////////////////////////
-            /// Player Movemment.
-            /// ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Player Movemment.
+            // ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_WALK, 0);
@@ -399,9 +399,9 @@ void CEvent::keyReleased(KeyEvent* e)
     }
 }
 
-///================================================================================================
-/// Buffered Mouse Events.
-///================================================================================================
+//================================================================================================
+// Buffered Mouse Events.
+//================================================================================================
 void CEvent::mouseMoved (MouseEvent *e)
 {
     mMouseX = e->getX();
@@ -442,7 +442,7 @@ void CEvent::mousePressed (MouseEvent *e)
             }
             else
             {
-                /// nothing selected, but if we are in attack mode -> attack selected enemy.
+                // nothing selected, but if we are in attack mode -> attack selected enemy.
                 ObjectManager::getSingleton().selectNPC(0);
             }
             mSceneManager->destroyQuery(mRaySceneQuery);
@@ -458,11 +458,11 @@ void CEvent::mousePressed (MouseEvent *e)
         if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
         {
             Vector3 pos;
-            /// activate mouse picking of tiles
+            // activate mouse picking of tiles
             TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
             pos = TileManager::getSingleton().getTileInterface()->getSelectedPos();
             ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
-            /// Move the player.
+            // Move the player.
             pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) pos.x, (int) pos.z);
             mIdleTime =0;

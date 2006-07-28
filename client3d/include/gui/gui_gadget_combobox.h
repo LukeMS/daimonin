@@ -45,6 +45,9 @@ enum
     GUI_GADGET_COMBOBOX_SUM
 };
 
+/**
+ ** This class provides an interactive combobox.
+ *****************************************************************************/
 class GuiGadgetCombobox : public GuiElement
 {
 public:
