@@ -16,7 +16,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\..\"
+			OutputDirectory="..\..\..\debug\"
 			IntermediateDirectory=".\obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -97,7 +97,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=".\..\..\_Tools_\cp.exe plugins_debug.cfg ..\..\..\plugins.cfg&quot;"
+				CommandLine=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\debug\plugins.cfg&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -184,7 +184,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine=".\..\..\_Tools_\cp.exe plugins_release.cfg ..\..\..\plugins.cfg&quot;"
+				CommandLine=".\..\..\_Tools_\cp.exe plugins.cfg ..\..\..\plugins.cfg&quot;"
 			/>
 		</Configuration>
 	</Configurations>

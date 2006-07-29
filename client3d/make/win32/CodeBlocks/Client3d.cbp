@@ -6,8 +6,8 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\client3d_d.exe" />
-				<Option working_dir="..\..\..\..\client3d" />
+				<Option output="..\..\..\debug\client3d.exe" />
+				<Option working_dir="..\..\..\debug" />
 				<Option object_output=".\obj\Debug" />
 				<Option type="0" />
 				<Option compiler="gcc" />
@@ -24,10 +24,10 @@
 				<Linker>
 					<Add library="OgreMain_d" />
 					<Add library="stlportstlg.5.0" />
-					<Add directory="ogre_dll\debug" />
+					<Add directory="..\..\..\debug\" />
 				</Linker>
 				<ExtraCommands>
-					<Add after=".\..\..\_Tools_\cp.exe plugins_debug.cfg ..\..\..\plugins.cfg" />
+					<Add after=".\..\..\_Tools_\cp.exe plugins_d.cfg ..\..\..\debug\plugins.cfg" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -48,12 +48,12 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="stlport.5.0" />
 					<Add library="OgreMain" />
-					<Add directory="ogre_dll\release" />
+					<Add library="stlport.5.0" />
+					<Add directory="..\..\..\" />
 				</Linker>
 				<ExtraCommands>
-					<Add after=".\..\..\_Tools_\cp.exe plugins_release.cfg  ..\..\..\plugins.cfg" />
+					<Add after=".\..\..\_Tools_\cp.exe plugins.cfg  ..\..\..\plugins.cfg" />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -82,8 +82,6 @@
 			<Add library="ws2_32" />
 			<Add library="fmodex" />
 			<Add directory="fmod_lib" />
-			<Add directory="stlport\lib" />
-			<Add directory="..\..\..\..\client3d" />
 		</Linker>
 		<Unit filename="..\..\..\3rdParty\fmod\fmod.h">
 			<Option compilerVar="CPP" />
