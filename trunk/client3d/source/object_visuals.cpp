@@ -34,9 +34,9 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_manager.h"
 #include "gui_textout.h"
 
-///===================================================
+//===================================================
 // Init all static Elemnts.
-///===================================================
+//===================================================
 
 const int TEXTURE_SIZE = 128;
 const char MATERIAL_NAME[] = "NPC_Visuals";
@@ -216,6 +216,8 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 void ObjectVisuals::selectNPC(MovableObject *mob, int friendly, bool drawLifebar)
 {
     const AxisAlignedBox &AABB = mob->getBoundingBox();
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.3;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.3;
     Vector3 pos;
     String strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_SELECTION, 3, '0');
     if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(strNode);
@@ -225,11 +227,15 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly, bool drawLifebar
     if      (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
     else if (friendly <0) index = PARTICLE_COLOR_ENEMY_STRT;
     else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
+
+    mPSystem->clear();
     for (int i=0; i < mPSystem->getNumEmitters(); ++i)
     {
-        mPSystem->clear();
         mPSystem->getEmitter(i)->setColourRangeStart(particleColor[index]);
         mPSystem->getEmitter(i)->setColourRangeEnd  (particleColor[index+1]);
+        mPSystem->getEmitter(i)->setEmissionRate(sizeX *sizeZ * 3.0);
+        mPSystem->getEmitter(i)->setParameter("height", StringConverter::toString(sizeZ));
+        mPSystem->getEmitter(i)->setParameter("width" , StringConverter::toString(sizeX));
     }
     if (!drawLifebar) return;
 

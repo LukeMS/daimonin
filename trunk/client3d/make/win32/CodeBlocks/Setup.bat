@@ -20,8 +20,11 @@ rem ====================================
 rem ====================================
 rem Copy the dll's to main folder.
 rem ====================================
+move ogre_dll\debug\*.* ..\..\..\debug
+copy fmod_dll\*.* ..\..\..\debug
 move ogre_dll\*.* ..\..\..\
 move fmod_dll\*.* ..\..\..\
+rmdir ogre_dll\debug
 rmdir ogre_dll
 rmdir fmod_dll
 
