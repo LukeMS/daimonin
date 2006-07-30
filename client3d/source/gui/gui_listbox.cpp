@@ -58,6 +58,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mPrintPos     = 0;
     mRowsToScroll = 0;
     mRowsToPrint  = mHeight / mFontHeight;
+    if (mRowsToPrint < 1) mRowsToPrint =1;
     mScroll       = 0;
     mScrollBarV   = 0;
     mScrollBarH   = 0;
@@ -70,11 +71,11 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     {
         if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER"))
         {
-            if (!strcmp(xmlOpt->Attribute("name"), "Scroller_Vertical"))
+            if (!strcmp(xmlOpt->Attribute("name"), "List_Msg_VScroll"))
             {
                 mScrollBarV = new GuiGadgetScrollbar(xmlOpt, parent);
             }
-            else if (!strcmp(xmlOpt->Attribute("name"), "Scroller_Horizontal"))
+            else if (!strcmp(xmlOpt->Attribute("name"), "List_Msg_HScroll"))
             {
                 mScrollBarH = new GuiGadgetScrollbar(xmlOpt, parent);
             }
@@ -105,11 +106,6 @@ void GuiListbox::addTextline(const char *text)
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
     ++mBufferPos;
     ++mRowsToScroll;
-    if (mScrollBarV)
-    {
-       if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
-       mScrollBarV->updateSlider(mActLines, mRowsToPrint);
-    }
 }
 
 ///=============================================================================================
@@ -209,6 +205,11 @@ void GuiListbox::draw()
         ++mPrintPos;
         mScroll =0;
         memcpy(mGfxBuffer, mGfxBuffer + mWidth *mFontHeight, mWidth * mHeight * sizeof(uint32));
+        if (mScrollBarV)
+        {
+            if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
+            mScrollBarV->updateSlider((float)mRowsToPrint / (float)mActLines);
+        }
     }
 }
 

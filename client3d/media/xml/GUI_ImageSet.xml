@@ -108,4 +108,16 @@
           <State name= "M_Over"   posX= "141" posY= "86" />
       </Image>
 
+      <Image name= "ScrollButton_02_Left" width= "16" height= "16">
+          <State name= "Standard" posX= "158" posY= "52" />
+          <State name= "Pushed"   posX= "158" posY= "69" />
+          <State name= "M_Over"   posX= "158" posY= "86" />
+      </Image>
+
+      <Image name= "ScrollButton_02_Right" width= "16" height= "16">
+          <State name= "Standard" posX= "175" posY= "52" />
+          <State name= "Pushed"   posX= "175" posY= "69" />
+          <State name= "M_Over"   posX= "175" posY= "86" />
+      </Image>
+
 </ImageSet>

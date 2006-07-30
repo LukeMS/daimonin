@@ -66,7 +66,7 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight, int scale)
     mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
                TEX_TYPE_2D, MAX_CURSOR_SIZE, MAX_CURSOR_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
     uint32 *dest = (uint32*)mTexture->getBuffer()->lock(0,MAX_CURSOR_SIZE * MAX_CURSOR_SIZE *sizeof(uint32), HardwareBuffer::HBL_DISCARD);
-    for (int y = 0; y < MAX_CURSOR_SIZE * MAX_CURSOR_SIZE; ++y)  *dest++ = 0;
+    for (int y = MAX_CURSOR_SIZE * MAX_CURSOR_SIZE; y; --y)  *dest++ = 0;
     mTexture->getBuffer()->unlock();
     mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
     mOverlay->setZOrder(550);

@@ -83,7 +83,6 @@ void GuiManager::Init(int w, int h)
     mElement->setMaterialName("GUI_Tooltip_Material");
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
     mOverlay->show();
-
     mProcessingTextInput = false;
     Logger::log().success(true);
 }
@@ -431,9 +430,9 @@ void GuiManager::setTooltip(const char *text)
 //================================================================================================
 void GuiManager::clearTooltip()
 {
-    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
+    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
-    for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight() -1; ++y)
+    for (int y = mTexture->getWidth() * mTexture->getHeight(); y; --y)
     {
         *dest_data++ = 0x884444ff;
     }

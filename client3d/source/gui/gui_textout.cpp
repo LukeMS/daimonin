@@ -326,80 +326,82 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
 //================================================================================================
 void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr)
 {
-    int fontPosX, fontPosY=0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
     uint32 pixFont, pixColor;
     uint32 color = TXT_COLOR_DEFAULT;
 
     //  uint32 *strtX = dest_data;
     uint32 *stopX = dest_data + width;
-
+    int fontPosY, dstY;
+    unsigned char chr;
     while (*text)
     {
         // Parse format commands.
         switch (*text)
         {
-            /*
-              // atm we draw only 1 line of text in this function!
-                  case '\n':
-                    strtX += mvFont[fontNr]->height * width;
-                    dest_data = strtX;
-                    stopX = strtX + width;
-                    ++text;
-                  break;
-            */
+                /*
+                  // atm we draw only 1 line of text in this function!
+                      case '\n':
+                        strtX += mvFont[fontNr]->height * width;
+                        dest_data = strtX;
+                        stopX = strtX + width;
+                        ++text;
+                      break;
+                */
             case TXT_CMD_HIGHLIGHT:
-            if (!*(++text)) return;
-            if (color == TXT_COLOR_DEFAULT)
-            {
-                // Parse the highlight color (8 byte hex string to uint32).
-                if (*text == TXT_SUB_CMD_COLOR)
+                if (!*(++text)) return;
+                if (color == TXT_COLOR_DEFAULT)
                 {
-                    color =0;
-                    for (int i = 28; i>=0; i-=4)
+                    // Parse the highlight color (8 byte hex string to uint32).
+                    if (*text == TXT_SUB_CMD_COLOR)
                     {
-                        color += (*(++text) >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
+                        color =0;
+                        for (int i = 28; i>=0; i-=4)
+                        {
+                            color += (*(++text) >='a') ? (*text - 87) <<i : (*text >='A') ? (*text - 55) <<i :(*text -'0') <<i;
+                        }
+                        ++text;
                     }
-                    ++text;
+                    // Use standard highlight color.
+                    else color = TXT_COLOR_HIGHLIGHT;
                 }
-                // Use standard highlight color.
-                else color = TXT_COLOR_HIGHLIGHT;
-            }
-            else color = TXT_COLOR_DEFAULT;
-            break;
+                else color = TXT_COLOR_DEFAULT;
+                break;
 
             case TXT_CMD_CHANGE_FONT:
-            if (!*(++text)) return;
-            //int base= mvFont[fontNr]->baseline;
-            fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-            ++text;
-            fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
-            ++text;
-            if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
-            break;
+                if (!*(++text)) return;
+                //int base= mvFont[fontNr]->baseline;
+                fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
+                ++text;
+                fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
+                ++text;
+                if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
+                break;
 
             default:
-            unsigned char chr = (*text - 32);
-            if (chr > CHARS_IN_FONT) chr = 0;
-            fontPosX = chr * mvFont[fontNr]->width;
-            for (int y =0; y < (int)mvFont[fontNr]->height && y < height; ++y)
-            {
-                for (int x=0; x < mvFont[fontNr]->charWidth[chr]; ++x)
-                { // PixelFormat: A8 R8 G8 B8.
-                    pixFont = mvFont[fontNr]->data[y * mvFont[fontNr]->textureWidth + fontPosX + x];
-                    if (pixFont <= 0xffffff) continue;
-                    pixColor = pixFont & 0xff000000;
-                    pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
-                    pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
-                    pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
-                    dest_data[(y+fontPosY)*width + x] = pixColor;
+                chr = (*text - 32);
+                if (chr > CHARS_IN_FONT) chr = 0;
+                fontPosY = chr * mvFont[fontNr]->width;
+                dstY = 0;
+                for (int y =(int)mvFont[fontNr]->height < height?(int)mvFont[fontNr]->height:height; y; --y)
+                {
+                    for (int x = mvFont[fontNr]->charWidth[chr]; x;)
+                    { // PixelFormat: A8 R8 G8 B8.
+                        pixFont = mvFont[fontNr]->data[fontPosY + --x];
+                        if (pixFont <= 0xffffff) continue;
+                        pixColor = pixFont & 0xff000000;
+                        pixColor+= ((color&0x0000ff) < (pixFont& 0x0000ff))? color & 0x0000ff : pixFont & 0x0000ff;
+                        pixColor+= ((color&0x00ff00) < (pixFont& 0x00ff00))? color & 0x00ff00 : pixFont & 0x00ff00;
+                        pixColor+= ((color&0xff0000) < (pixFont& 0xff0000))? color & 0xff0000 : pixFont & 0xff0000;
+                        dest_data[dstY + x] = pixColor;
+                    }
+                    fontPosY+= mvFont[fontNr]->textureWidth;
+                    dstY+= width;
                 }
-            }
-            dest_data += mvFont[fontNr]->charWidth[chr] +1;
-            if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
-            ++text;
-            break;
-
+                dest_data += mvFont[fontNr]->charWidth[chr] +1;
+                if (dest_data + mvFont[fontNr]->charWidth[chr] +1 > stopX) return;
+                ++text;
+                break;
         }
     }
 }
@@ -422,22 +424,22 @@ bool GuiTextout::getClippingPos(TextLine &line, int maxWidth, int maxHeight)
         switch (*text)
         {
             case TXT_CMD_HIGHLIGHT:
-            if (!*(++text)) break;
-            if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
-            break;
+                if (!*(++text)) break;
+                if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
+                break;
 
             case TXT_CMD_CHANGE_FONT:
-            if (!*(++text)) break;
-            text+= 2;  // format: "xx".
-            break;
+                if (!*(++text)) break;
+                text+= 2;  // format: "xx".
+                break;
 
             default:
-            if (line.x2 + mvFont[line.font]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
-            {
-                line.x2+= mvFont[line.font]->charWidth[*text - 32] +1;
-            }
-            ++text;
-            break;
+                if (line.x2 + mvFont[line.font]->charWidth[*text - 32] +1  < (unsigned int)maxWidth)
+                {
+                    line.x2+= mvFont[line.font]->charWidth[*text - 32] +1;
+                }
+                ++text;
+                break;
         }
     }
     line.y2+= mvFont[line.font]->height;
@@ -458,23 +460,23 @@ int GuiTextout::CalcTextWidth(const char *text, unsigned int fontNr)
         switch (*text)
         {
             case TXT_CMD_HIGHLIGHT:
-            if (!*(++text)) break;
-            if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
-            break;
+                if (!*(++text)) break;
+                if (*text == TXT_SUB_CMD_COLOR) text+= 8; // format: "#xxxxxxxx".
+                break;
 
             case TXT_CMD_CHANGE_FONT:
-            if (!*(++text)) break;
-            fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
-            ++text;
-            fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
-            ++text;
-            if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
-            break;
+                if (!*(++text)) break;
+                fontNr = (*text >='a') ? (*text - 87) <<4 : (*text >='A') ? (*text - 55) <<4 :(*text -'0') <<4;
+                ++text;
+                fontNr+= (*text >='a') ? (*text - 87)     : (*text >='A') ? (*text - 55)     :(*text -'0');
+                ++text;
+                if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
+                break;
 
             default:
-            x+= mvFont[fontNr]->charWidth[*text - 32] +1;
-            ++text;
-            break;
+                x+= mvFont[fontNr]->charWidth[*text - 32] +1;
+                ++text;
+                break;
         }
     }
     return x;

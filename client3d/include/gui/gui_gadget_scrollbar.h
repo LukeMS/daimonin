@@ -49,7 +49,7 @@ public:
     void draw();
     bool mouseEvent(int MouseAction, int x, int y);
     void resize(int newWidth, int newHeight);
-    void updateSlider(int actLines, int maxVisibleLines);
+    void updateSlider(float size);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -57,6 +57,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     int  mSliderPos, mSliderSize;
     bool mHorizontal;
+    bool mMouseOver, mMouseButDown;
     int mStartX, mStopX, mStartY, mStopY;
     uint32 *mGfxBuffer;
     uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;

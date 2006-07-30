@@ -40,31 +40,31 @@ using namespace Ogre;
 
 GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     {
-        { "But_Close",      GUI_BUTTON_CLOSE    },
-        { "But_OK",         GUI_BUTTON_OK       },
-        { "But_Cancel",     GUI_BUTTON_CANCEL   },
-        { "But_Min",        GUI_BUTTON_MINIMIZE },
-        { "But_Max",        GUI_BUTTON_MAXIMIZE },
-        { "But_Resize",     GUI_BUTTON_RESIZE   },
+        { "But_Close",          GUI_BUTTON_CLOSE    },
+        { "But_OK",             GUI_BUTTON_OK       },
+        { "But_Cancel",         GUI_BUTTON_CANCEL   },
+        { "But_Min",            GUI_BUTTON_MINIMIZE },
+        { "But_Max",            GUI_BUTTON_MAXIMIZE },
+        { "But_Resize",         GUI_BUTTON_RESIZE   },
         // Listboxes.
-        { "List_Msg",       GUI_LIST_MSGWIN     },
-        { "List_Chat",      GUI_LIST_CHATWIN    },
+        { "List_Msg",           GUI_LIST_MSGWIN    },
+        { "List_Chat",          GUI_LIST_CHATWIN   },
         // Statusbar.
-        { "Bar_Health",     GUI_STATUSBAR_NPC_HEALTH     },
-        { "Bar_Mana",       GUI_STATUSBAR_PLAYER_MANA    },
-        { "Bar_Grace",      GUI_STATUSBAR_PLAYER_GRACE   },
-        { "Bar_PlayerHealth",GUI_STATUSBAR_PLAYER_HEALTH },
-        { "Bar_PlayerMana",GUI_STATUSBAR_NPC_MANA        },
-        { "Bar_PlayerGrace",GUI_STATUSBAR_NPC_GRACE      },
+        { "Bar_Health",         GUI_STATUSBAR_NPC_HEALTH    },
+        { "Bar_Mana",           GUI_STATUSBAR_PLAYER_MANA   },
+        { "Bar_Grace",          GUI_STATUSBAR_PLAYER_GRACE  },
+        { "Bar_PlayerHealth",   GUI_STATUSBAR_PLAYER_HEALTH },
+        { "Bar_PlayerMana",     GUI_STATUSBAR_NPC_MANA      },
+        { "Bar_PlayerGrace",    GUI_STATUSBAR_NPC_GRACE     },
         // TextValues.
-        { "Engine_CurrentFPS", GUI_TEXTVALUE_STAT_CUR_FPS   },
-        { "Engine_BestFPS",    GUI_TEXTVALUE_STAT_BEST_FPS  },
-        { "Engine_WorstFPS",   GUI_TEXTVALUE_STAT_WORST_FPS },
-        { "Engine_SumTris",    GUI_TEXTVALUE_STAT_SUM_TRIS  },
+        { "Engine_CurrentFPS",  GUI_TEXTVALUE_STAT_CUR_FPS   },
+        { "Engine_BestFPS",     GUI_TEXTVALUE_STAT_BEST_FPS  },
+        { "Engine_WorstFPS",    GUI_TEXTVALUE_STAT_WORST_FPS },
+        { "Engine_SumTris",     GUI_TEXTVALUE_STAT_SUM_TRIS  },
         // TextInput.
-        { "Input_Login_Name",  GUI_TEXTINPUT_LOGIN_NAME     },
-        { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD  },
-        { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY  },
+        { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
+        { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
+        { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
 
         // Combobox.
         { "ComboBoxTest"      , GUI_COMBOBOX_TEST  },

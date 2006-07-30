@@ -413,7 +413,7 @@ inline void GuiWindow::createWindow()
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
     // If the window is smaller then the texture - we have to set the delta-size to transparent.
-    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_READ_ONLY );
+    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
     for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)
         *dest_data++ = 0;
