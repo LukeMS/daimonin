@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <tinyxml.h>
 #include "define.h"
+#include "gui_manager.h"
 #include "gui_gadget_scrollbar.h"
 #include "logger.h"
 #include "gui_window.h"
@@ -34,6 +35,7 @@ http://www.gnu.org/licenses/licenses.html
 //long i = Root::getSingleton().getTimer()->getMilliseconds()
 
 const int MIN_SLIDER_SIZE = 6;
+const int SLIDER_INNER_OFFSET = 3;
 
 //================================================================================================
 // Constructor.
@@ -59,10 +61,9 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):G
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_PASSIVE")) color = &mColorBarPassive;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_M_OVER"))  color = &mColorBarM_Over;
         else if (!strcmp(xmlOpt->Attribute("type"), "BAR_ACTIVE"))  color = &mColorBarActive;
-        // PixelFormat: ARGB.
-        if ((tmp = xmlOpt->Attribute("red"  ))) *color = atoi(tmp) << 16;
+        if ((tmp = xmlOpt->Attribute("red"  ))) *color = atoi(tmp);
         if ((tmp = xmlOpt->Attribute("green"))) *color+= atoi(tmp) <<  8;
-        if ((tmp = xmlOpt->Attribute("blue" ))) *color+= atoi(tmp);
+        if ((tmp = xmlOpt->Attribute("blue" ))) *color+= atoi(tmp) << 16;
         if ((tmp = xmlOpt->Attribute("alpha"))) *color+= atoi(tmp) << 24;
     }
 
@@ -76,9 +77,10 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent):G
                 mButScrollDown = new GuiGadgetButton(xmlOpt, parent, false);
         }
     }
+    mMouseOver = false;
+    mMouseButDown = false;
     mGfxBuffer = 0;
-    mSliderPos = 0;
-    mSliderSize = mHeight - 2* mButScrollDown->getHeight()-6;
+    mSliderPos = SLIDER_INNER_OFFSET +1;
     resize(mWidth, mHeight);
 }
 
@@ -97,24 +99,47 @@ GuiGadgetScrollbar::~GuiGadgetScrollbar()
 //================================================================================================
 bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
 {
-    // Test the buttons.
     if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y)) return true;
+    // Test the slider.
+    if (x > mStartX + SLIDER_INNER_OFFSET && x < mStopX - 2* SLIDER_INNER_OFFSET &&
+            y > mStartY+SLIDER_INNER_OFFSET && y < mStopY- 2* SLIDER_INNER_OFFSET )
+    {
+        if (!mMouseOver)
+        {
+            mMouseOver = true;
+            setState(GuiElement::STATE_M_OVER);
+            draw();
+            GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
+        }
+        if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
+        {
+            mMouseButDown = true;
+            setState(GuiElement::STATE_PUSHED);
+            draw();
+        }
+        if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
+        {
+            mMouseButDown = false;
+            setState(GuiElement::STATE_STANDARD);
+            draw();
+            //activated();
+        }
+        return true; // No need to check other gadgets.
+    }
+    else  // Mouse is no longer over the the gadget.
+    {
+        if (mMouseOver)
+        {
+            mMouseOver = false;
+            mMouseButDown = false;
+            setState(GuiElement::STATE_STANDARD);
+            draw();
+            GuiManager::getSingleton().setTooltip("");
+            return true; // No need to check other gadgets.
+        }
+    }
     if (mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y)) return true;
-    // Test the sliders.
-
-
-    return false;
-}
-
-//================================================================================================
-// Update the slider size.
-//================================================================================================
-void GuiGadgetScrollbar::updateSlider(int actLines, int maxVisibleLines)
-{
-    if (actLines <= maxVisibleLines) return;
-    mSliderSize = ((mStopY-mStartY-6) * maxVisibleLines) / actLines;
-    if (mSliderSize < MIN_SLIDER_SIZE) mSliderSize = MIN_SLIDER_SIZE;
-    draw();
+    return false; // No action here, check the other gadgets.
 }
 
 //================================================================================================
@@ -122,43 +147,105 @@ void GuiGadgetScrollbar::updateSlider(int actLines, int maxVisibleLines)
 //================================================================================================
 void GuiGadgetScrollbar::draw()
 {
-    int y1 = 3 + mSliderPos;
-    int y2 = y1 + mSliderSize;
-    int w = mStopX-mStartX;
+    int x1, x2, y1, y2, w;
+    w = mStopX-mStartX;
 
     uint32 color;
-    if (mState == STATE_PUSHED)
-        color = mColorBarActive;
-    else
-        color = mColorBorderline;
-
-    for (int x = 4; x < mWidth-4; ++x)
+    switch(mState)
     {
+        case STATE_PUSHED:
+            color = mColorBarActive;
+            break;
+
+        case STATE_PASSIVE:
+            color = mColorBarPassive;
+            break;
+
+        case STATE_M_OVER:
+            color = mColorBarM_Over;
+            break;
+
+        default:
+            color = mColorBorderline;
+            break;
+
+    }
+
+    if (mHorizontal)
+    {
+        x1 = mSliderPos;
+        x2 = mSliderPos + mSliderSize;
+        y1 = SLIDER_INNER_OFFSET + 1;
+        y2 = mStopY-mStartY - SLIDER_INNER_OFFSET-1;
         for (int y = y1; y < y2; ++y)
         {
-            if (mState == STATE_M_OVER && (x= 3 || x == mWidth-4 || y == y1 || y == y2-1))
-                mGfxBuffer[y * w + x] = mColorBarM_Over;
-            else
+            for (int x = SLIDER_INNER_OFFSET; x < (mStopX-mStartX - SLIDER_INNER_OFFSET-1); ++x)
             {
-                mGfxBuffer[y * w + x] = color;
+                if (x > x1 && x < x2)
+                    mGfxBuffer[y * w + x] = color;
+                else
+                    mGfxBuffer[y * w + x] = mColorBackground;
             }
         }
     }
-
+    else
+    {
+        x1 = SLIDER_INNER_OFFSET +1;
+        x2 = w - SLIDER_INNER_OFFSET -1;
+        y1 = mSliderPos;
+        y2 = mSliderPos + mSliderSize;
+        for (int y = SLIDER_INNER_OFFSET; y < (mStopY-mStartY - SLIDER_INNER_OFFSET-1); ++y)
+        {
+            for (int x = x1; x < x2; ++x)
+            {
+                if (y > y1 && y < y2)
+                    mGfxBuffer[y * w + x] = color;
+                else
+                    mGfxBuffer[y * w + x] = mColorBackground;
+            }
+        }
+    }
+    /*
     // Dark borders.
     --y2;
-    for (int y = y1; y < y2; ++y)      mGfxBuffer[y * w + mWidth-4] = 0xff000000;
-    for (int x = 3; x < mWidth-3; ++x) mGfxBuffer[y2 * w + x ]      = 0xff000000;
+    posY = y2 *mWidth;
+    for (int y = y1*mWidth + mWidth -4; y < posY; ++y)
+    {
+        mGfxBuffer[y] = 0xff000000;
+        y+= mWidth-1;
+    }
+    posY = y2 *w;
+    for (int x = 3; x < mWidth-3; ++x) mGfxBuffer[posY + x] = 0xff000000;
     // Light borders.
     color+= ((color&0x0000ff)+ 0x000011) > 0x0000ff ? 0 : 0x000011;
     color+= ((color&0x00ff00)+ 0x001100) > 0x00ff00 ? 0 : 0x001100;
     color+= ((color&0xff0000)+ 0x110000) > 0xff0000 ? 0 : 0x110000;
-    for (int y = y1; y < y2; ++y)      mGfxBuffer[y * w + 3 ] = color;
-    for (int x = 4; x < mWidth-3; ++x) mGfxBuffer[y1 * w + x] = color;
+    posY = y2*mWidth;
+    for (int y = y1*mWidth + 3; y < posY; ++y)
+    {
+        mGfxBuffer[y] = color;
+        y+= mWidth-1;
+    }
+    for (int x = 4; x < mWidth-3; ++x) mGfxBuffer[y1 * mWidth + x] = color;
+    */
     // Blit.
     ((GuiWindow*)mParent)->getTexture()->getBuffer()->blitFromMemory(
         PixelBox(mStopX- mStartX, mStopY-mStartY, 1, PF_A8B8G8R8, mGfxBuffer),
         Box(mStartX, mStartY, mStopX, mStopY));
+}
+
+//================================================================================================
+// Update the slider size.
+//================================================================================================
+void GuiGadgetScrollbar::updateSlider(float size)
+{
+    if (size > 1.0f) size = 1.0f;
+    if (mHorizontal)
+        mSliderSize = (int)((mStopX-mStartX+1 - 3*SLIDER_INNER_OFFSET) * size);
+    else
+        mSliderSize = (int)((mStopY-mStartY+1 - 3*SLIDER_INNER_OFFSET) * size);
+    if (mSliderSize < MIN_SLIDER_SIZE) mSliderSize = MIN_SLIDER_SIZE;
+    draw();
 }
 
 //================================================================================================
@@ -167,6 +254,7 @@ void GuiGadgetScrollbar::draw()
 void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
 {
     if (newWidth == mWidth && newHeight == mHeight && mGfxBuffer) return;
+    float newSliderSize = 1.0;
     if (mHorizontal)
     {
         mStartX = mX + mButScrollDown->getWidth();
@@ -175,6 +263,7 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
         mStopY  = mY + mHeight;
         mButScrollDown->setPosition(mStopX, mY);
         mButScrollUp->setPosition(mX, mY);
+        newSliderSize = (float)newWidth / (float)mWidth;
     }
     else
     {
@@ -184,6 +273,7 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
         mStopY  = mY + mHeight - mButScrollDown->getHeight();
         mButScrollDown->setPosition(mStartX, mStopY);
         mButScrollUp->setPosition(mX, mY);
+        newSliderSize = (float)newHeight / (float)mHeight;
     }
 
     int w = mStopX-mStartX;
@@ -205,8 +295,7 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
         mGfxBuffer[y*w +  1] = mColorBorderline;
         mGfxBuffer[y*w +w-2] = mColorBorderline;
     }
-
     if (mButScrollUp)   mButScrollUp->draw();
     if (mButScrollDown) mButScrollDown->draw();
-    draw();
+    updateSlider(newSliderSize);
 }

@@ -114,15 +114,16 @@ void GuiGraphic::draw()
     // Fill background rect with a color.
     // ////////////////////////////////////////////////////////////////////
     else if (mStrType == "COLOR_FILL")
-    {
-        PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_READ_ONLY );
+    {        PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_DISCARD);
         uint32 *dest_data = (uint32*)pb.data;
-        for (int y = 0; y < mHeight; ++y)
+        int  posY=0;
+        for (int y = mHeight; y; --y)
         {
             for (int x= 0; x < mWidth; ++x)
             {
-                dest_data[x+y*texture->getWidth()] = mFillColor;
+                dest_data[posY+x] = mFillColor;
             }
+            posY+=texture->getWidth();
         }
         texture->getBuffer()->unlock();
     }
