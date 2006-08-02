@@ -1183,6 +1183,9 @@ int command_mute(object *op, char *params)
     if (!params)
         return 0;
 
+    if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
+        return 0;
+
     sscanf(params, "%s %d", name, &seconds);
     pl= find_player(name);
 
