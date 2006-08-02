@@ -27,6 +27,14 @@
 #ifndef ATTACK_H
 #define ATTACK_H
 
+/* status for attack function to decide kind of attack */
+typedef enum _env_attack
+{
+    ENV_ATTACK_CHECK = -1,
+    ENV_ATTACK_YES,
+    ENV_ATTACK_NO
+}_env_attack;
+
 /* Note that the last ATNR_ should be one less than NROFATTACKS above
  * since the ATNR starts counting at zero.
  * For compatible loading, these MUST correspond to the same value

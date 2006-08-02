@@ -46,8 +46,8 @@ void                        apply_lighter(object *who, object *lighter);
 void                        scroll_failure(object *op, int failure, int power);
 int                         apply_power_crystal(object *op, object *crystal);
 /* attack.c */
-int                         attack_ob(object *op, object *hitter);
-int                         hit_player(object *op, int dam, object *hitter);
+int                         attack_ob(object *op, object *hitter, object *hit_obj);
+int                         damage_ob(object *op, int dam, object *hitter, int env_attack);
 int                         hit_map(object *op, int dir);
 int                         kill_object(object *op, int dam, object *hitter, int type);
 object                     *hit_with_arrow(object *op, object *victim);
