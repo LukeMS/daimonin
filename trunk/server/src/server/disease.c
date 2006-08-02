@@ -519,10 +519,10 @@ int move_symptom(object *symptom)
         return 0;
     }
     if (symptom->stats.dam > 0)
-        hit_player(victim, symptom->stats.dam, symptom);
+        damage_ob(victim, symptom->stats.dam, symptom, ENV_ATTACK_CHECK);
     else
-        hit_player(victim, (int) MAX((float) 1, 
-                    (float) - victim->stats.maxhp * (float) symptom->stats.dam / (float) 100.0), symptom);
+        damage_ob(victim, (int) MAX((float) 1, 
+                    (float) - victim->stats.maxhp * (float) symptom->stats.dam / (float) 100.0), symptom, ENV_ATTACK_CHECK);
     if (symptom->stats.maxsp > 0)
         sp_reduce = symptom->stats.maxsp;
     else

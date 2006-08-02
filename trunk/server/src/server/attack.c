@@ -73,9 +73,9 @@ static int get_attack_mode(object **target, object **hitter, int *env_attack)
     return 0;
 }
 
-/* compare the attacker and defender and adjust the attack roll.
+/* compare the attacker and target and adjust the attack roll.
  * Like the attacker is invisible - adjust the roll depending on the
- * fact the defender can see invisible or not - just as a example.
+ * fact the target can see invisible or not - just as a example.
  */
 static int adj_attackroll(object *hitter, object *target)
 {
@@ -113,19 +113,21 @@ static int adj_attackroll(object *hitter, object *target)
 /* here we decide a attack will happen and how. blocking, parry, missing is handled
  * here inclusive the sounds. All whats needed before we count damage and say "hit you".
  */
-int attack_ob(object *defender, object *hitter, object *hit_obj)
+int attack_ob(object *target, object *hitter, object *hit_obj)
 {
     int     env_attack, roll, dam = 0, base_dam, base_wc;
     tag_t   op_tag, hitter_tag;
 
+///int target_ac, hitter_wc;
+
     /* get_attack_mode will pre-check and adjust *ANY* topic.
      * Including setting ->head objects and checking maps
      */
-    if (get_attack_mode(&defender, &hitter, &env_attack))
+    if (get_attack_mode(&target, &hitter, &env_attack))
         goto error;
 
     if(trigger_object_plugin_event(EVENT_ATTACK,
-            defender, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+            target, hitter, hitter, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         goto error;
 
     if(!hit_obj)
@@ -133,20 +135,20 @@ int attack_ob(object *defender, object *hitter, object *hit_obj)
 
     base_dam = hit_obj->stats.dam;
     base_wc =  hit_obj->stats.wc;
-    op_tag = defender->count;
+    op_tag = target->count;
     hitter_tag = hitter->count;
 
     roll = random_roll(0, 20, hitter, PREFER_HIGH);
 
     /* Adjust roll for various situations. */
     if (env_attack == ENV_ATTACK_NO)
-        roll += adj_attackroll(hitter, defender);
+        roll += adj_attackroll(hitter, target);
 
 /*
 	if (hitter->type == PLAYER)
-		new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d thac0/m: %d - %d (%d - %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, defender->stats.ac, base_wc);
-	if (defender->type == PLAYER)
-		new_draw_info_format(NDI_PURPLE, 0, defender, "Hitter roll: %d - %d thac0/m: %d - %d (%d %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, defender->stats.ac, base_wc);
+		new_draw_info_format(NDI_ORANGE, 0, hitter, "You roll: %d - %d thac0/m: %d - %d (%d - %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, target->stats.ac, base_wc);
+	if (target->type == PLAYER)
+		new_draw_info_format(NDI_PURPLE, 0, target, "Hitter roll: %d - %d thac0/m: %d - %d (%d %d)!", xxx, roll,hitter->stats.thac0,hitter->stats.thacm, target->stats.ac, base_wc);
 */
     if (hitter->type == PLAYER)
         CONTR(hitter)->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
@@ -155,7 +157,7 @@ int attack_ob(object *defender, object *hitter, object *hit_obj)
     if (hitter->type == PLAYER)
     {
         rv_vector   dir;
-        if(get_rangevector(hitter, defender, &dir, RV_NO_DISTANCE))
+        if(get_rangevector(hitter, target, &dir, RV_NO_DISTANCE))
         {
             if (hitter->head)
             {
@@ -171,15 +173,15 @@ int attack_ob(object *defender, object *hitter, object *hit_obj)
     }
 
 	/* don't get in hp recovery mode when something is hitting you */
-	if(defender->type == PLAYER)
-		CONTR(defender)->damage_timer = PLAYER_HPGEN_DELAY;
+	if(target->type == PLAYER)
+		CONTR(target)->damage_timer = PLAYER_HPGEN_DELAY;
 
     /* See if we hit the creature. Roll must be >= thacm(alus) and crit or AC hit */
-    if (roll >= hitter->stats.thacm && (roll>=hitter->stats.thac0 || defender->stats.ac <= base_wc + roll))
+    if (roll >= hitter->stats.thacm && (roll>=hitter->stats.thac0 || target->stats.ac <= base_wc + roll))
     {
         int hitdam  = base_dam;
 
-        CLEAR_FLAG(defender, FLAG_SLEEP); /* at this point NO ONE will still sleep */
+        CLEAR_FLAG(target, FLAG_SLEEP); /* at this point NO ONE will still sleep */
 
         /* i don't use sub_type atm - using it should be smarter i the future */
         if (hitter->type == ARROW)
@@ -203,8 +205,8 @@ int attack_ob(object *defender, object *hitter, object *hit_obj)
                 cast_spell(hitter, hitter, hitter->direction, hitter->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
             decrease_ob(hitter);
 
-            if (was_destroyed(hitter, hitter_tag) || was_destroyed(defender, op_tag)
-                || abort_attack(defender, hitter, env_attack))
+            if (was_destroyed(hitter, hitter_tag) || was_destroyed(target, op_tag)
+                || abort_attack(target, hitter, env_attack))
                 goto leave;
 
             /* from old thrown_item_effect() - pretty sure thats not needed 
@@ -222,25 +224,25 @@ int attack_ob(object *defender, object *hitter, object *hit_obj)
             hitdam = 1;
 
         /* Handle monsters that hit back */
-        if (env_attack  == ENV_ATTACK_NO && QUERY_FLAG(defender, FLAG_HITBACK) && IS_LIVE(hitter))
+        if (env_attack  == ENV_ATTACK_NO && QUERY_FLAG(target, FLAG_HITBACK) && IS_LIVE(hitter))
         {
-            damage_ob(hitter, random_roll(0, (defender->stats.dam), hitter, PREFER_LOW), defender, env_attack);
+            damage_ob(hitter, random_roll(0, (target->stats.dam), hitter, PREFER_LOW), target, env_attack);
 
-            if (was_destroyed(defender, op_tag) || was_destroyed(hitter, hitter_tag)
-                || abort_attack(defender, hitter, env_attack))
+            if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag)
+                || abort_attack(target, hitter, env_attack))
                 goto leave;
         }
 
-        dam = damage_ob(defender, random_roll(hitdam / 2 + 1, hitdam, hitter, PREFER_HIGH), hitter, env_attack);
-        if (was_destroyed(defender, op_tag) || was_destroyed(hitter, hitter_tag) || abort_attack(defender, hitter, env_attack))
+        dam = damage_ob(target, random_roll(hitdam / 2 + 1, hitdam, hitter, PREFER_HIGH), hitter, env_attack);
+        if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag) || abort_attack(target, hitter, env_attack))
             goto leave;
     }    
     else /* we missed, dam=0 */
     {
         if (hitter->type != ARROW)
         {
-			if (defender->type == PLAYER)
-				new_draw_info_format(NDI_PURPLE, 0, defender, "%s misses you!", hitter->name);
+			if (target->type == PLAYER)
+				new_draw_info_format(NDI_PURPLE, 0, target, "%s misses you!", hitter->name);
 
             if (hitter->type == PLAYER)
                 play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_MISS_PLAYER, SOUND_NORMAL);
@@ -386,30 +388,6 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
         else
             dmg_obj = aggro_insert_damage(op, hitter);
     }
-
-    /* slaying door ... when i think about it, its broken,,,
-     * and iam more and more sure we don't need it.
-     * because: IF there is a closed door - then seek key.
-     * Or get a spell. Knock spell is pure senseless when you can
-     * crush the door. And because we have hybrid chars (can cast too)
-     * we don't need to handle both for balancing.
-     */
-    /*
-    if ( ! simple_attack && op->type == DOOR)
-    {
-           object *tmp;
-           for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
-               if (tmp->type == RUNE)
-           {
-                   spring_trap (tmp, hitter);
-                   if (was_destroyed (hitter, hitter_tag)
-                       || was_destroyed (op, op_tag)
-                       || abort_attack (op, hitter, simple_attack))
-                       return 0;
-                   break;
-          }
-    }
-    */
 
     flags = 0; /* important flags to track actions BETWEEN single effect hits of ONE attack */
 
@@ -603,18 +581,6 @@ int hit_map(object *op, int dir)
         return 0;
 
     mflags = GET_MAP_FLAGS(map, x, y);
-
-    /* peterm:  a few special cases for special attacktypes --counterspell
-          must be out here because it strikes things which are not alive*/
-    /* this will be handled different elsewhere!
-     if(type&AT_COUNTERSPELL) {
-       counterspell(op,dir);
-       if(!(type & ~(AT_COUNTERSPELL|AT_MAGIC))){
-    return 0;
-       }
-       type &= ~AT_COUNTERSPELL;
-     }
-    */
 
     next = get_map_ob(map, x, y);
     if (next)

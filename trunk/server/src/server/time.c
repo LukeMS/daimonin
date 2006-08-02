@@ -395,7 +395,7 @@ void poison_more(object *op)
         op->env->stats.food--;
         new_draw_info(NDI_UNIQUE, 0, op->env, "You feel very sick...");
     }
-    hit_player(op->env, op->stats.dam, op);
+    damage_ob(op->env, op->stats.dam, op, ENV_ATTACK_CHECK);
 }
 
 /* TODO: i have not included damage to mobs/player on reverse up going gates!
@@ -432,7 +432,7 @@ void move_gate(object *op)
         {            
             if (IS_LIVE(tmp))
             {
-                hit_player(tmp, 4, op); 
+                damage_ob(tmp, 4, op, ENV_ATTACK_CHECK); 
                 if (tmp->type == PLAYER)
                     new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
             }
@@ -607,7 +607,7 @@ void move_gate(object *op)
             {
                 if (IS_LIVE(tmp))
                 {
-                    hit_player(tmp, 4, op);
+                    damage_ob(tmp, 4, op, ENV_ATTACK_CHECK);
                     if (tmp->type == PLAYER)
                         new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
                 }
@@ -1986,7 +1986,7 @@ int process_object(object *op)
           return 0;
           /*
         case EARTHWALL:
-          hit_player(op, 2, op);
+          damage_ob(op, 2, op, ENV_ATTACK_CHECK);
           return 0;
           */
         case FIREWALL:

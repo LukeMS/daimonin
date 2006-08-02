@@ -1822,7 +1822,7 @@ void move_golem(object *op)
                      * appropriate.
                      */
 
-                attack_ob(victim, op);
+                attack_ob(victim, op, NULL);
                 /*      hit_map(tmp,op->direction,op->attacktype);*/
                 made_attack = 1;
             }
@@ -2059,7 +2059,7 @@ void check_fired_arch(object *op)
             continue;
 
         tmp_tag = tmp->count;
-        dam = hit_player(tmp, op->stats.dam, op);
+        dam = damage_ob(tmp, op->stats.dam, op, ENV_ATTACK_CHECK);
 
         if (was_destroyed(op, op_tag) || !was_destroyed(tmp, tmp_tag) || (op->stats.dam -= dam) < 0)
         {

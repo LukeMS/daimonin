@@ -1012,7 +1012,7 @@ int do_skill_attack(object *tmp, object *op, char *string)
         change_skill(op, CONTR(op)->set_skill_weapon);
     }
 
-    success = attack_ob(tmp, op);
+    success = attack_ob(tmp, op, NULL);
 
     /* print appropriate  messages to the player */
 
