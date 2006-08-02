@@ -1353,7 +1353,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
           {
               tag_t     trap_tag    = trap->count;
-              hit_player(victim, trap->stats.dam, trap);
+              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
               if (!was_destroyed(trap, trap_tag))
                   remove_ob(trap);
               check_walk_off(trap, NULL, MOVE_APPLY_VANISHED);
@@ -1377,7 +1377,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
         case CANCELLATION:
         case BALL_LIGHTNING:
           if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
-              hit_player(victim, trap->stats.dam, trap);
+              damage_ob(victim, trap->stats.dam, trap, ENV_ATTACK_CHECK);
           goto leave;
 
         case CONE:
@@ -1385,7 +1385,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
            if(IS_LIVE(victim)&&trap->speed) {
              uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
              if (attacktype)
-               hit_player(victim,trap->stats.dam);
+               damage_ob(victim,trap->stats.dam, ENV_ATTACK_CHECK);
            }
           */
           goto leave;
@@ -1969,7 +1969,7 @@ void apply_poison(object *op, object *tmp)
     {
         LOG(llevDebug, "Trying to poison player/monster for %d hp\n", tmp->stats.hp);
         /* internal damage part will take care about our poison */
-        hit_player(op, tmp->stats.dam, tmp);
+        damage_ob(op, tmp->stats.dam, tmp, ENV_ATTACK_CHECK);
     }
     op->stats.food -= op->stats.food / 4;
     decrease_ob(tmp);

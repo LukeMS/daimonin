@@ -207,7 +207,7 @@ void rune_attack(object *op, object *victim)
         tag_t   tag = victim->count;
         if (!op->inv || op->inv->type != DISEASE)
         {
-            hit_player(victim, op->stats.dam, op);
+            damage_ob(victim, op->stats.dam, op, ENV_ATTACK_CHECK);
             if (was_destroyed(victim, tag))
             {
                 op->stats.dam = dam;

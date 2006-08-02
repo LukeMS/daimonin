@@ -57,7 +57,7 @@ void spell_failure(object *op, int failure, int power)
         if (blocks_magic(op->map, op->x, op->y))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "The magic warps and you are turned inside out!");
-            hit_player(tmp, 9998, op);
+            damage_ob(tmp, 9998, op, ENV_ATTACK_CHECK);
         }
         else
         {
@@ -382,7 +382,7 @@ int cast_earth2dust(object *op, object *caster)
             {
                 next = tmp->above;
                 if (tmp && QUERY_FLAG(tmp, FLAG_TEAR_DOWN))
-                    hit_player(tmp, 9998, op);
+                    damage_ob(tmp, 9998, op, ENV_ATTACK_CHECK);
             }
         }
     return 1;
@@ -769,7 +769,7 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype)
                 tmp = tmp->above;
             if (tmp == NULL)
                 continue;
-            hit_player(tmp, dam, op);
+            damage_ob(tmp, dam, op, ENV_ATTACK_CHECK);
         }
     return 1;
 }
@@ -950,7 +950,7 @@ int cast_light(object *op, object *caster, int dir)
                 /* coky doky. got a target monster. Lets make a blinding attack */
                 if (target->head)
                     target = target->head;
-                hit_player(target, dam, op);
+                damage_ob(target, dam, op, ENV_ATTACK_CHECK);
                 return 1; /* one success only! */
             }
     }
@@ -3074,7 +3074,7 @@ int cast_transfer(object *op, int dir)
             new_draw_info(NDI_UNIQUE, 0, plyr, "Your head explodes!");
             fire_arch(op, plyr, 0, spellarch[SP_L_FIREBALL], SP_L_FIREBALL, 0);
             /* Explodes a large fireball centered at player */
-            /*            hit_player(plyr, 9998, op);*/
+            /* damage_ob(plyr, 9998, op, ENV_ATTACK_CHECK);*/
             plyr->stats.sp = 2 * maxsp;
         }
         else if (sp >= maxsp * 1.88)
