@@ -317,9 +317,7 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
 
     if (hit_level > target_obj->level && hit_obj->type == MONSTER) /* i turned it now off for players! */
     {
-        dam += (int)
-               ((float)
-                (dam / 2) * ((float) (hit_level - target_obj->level)
+        dam += (int) ((float) (dam / 2) * ((float) (hit_level - target_obj->level)
                            / (target_obj->level > 25 ? 25.0f : (float) target_obj->level)));
         /*LOG(llevDebug,"DMG-ADD: hl:%d tl_%d -> d:%d \n", hit_level,target_obj->level, dam);*/
     }
@@ -336,9 +334,9 @@ int damage_ob(object *op, int dam, object *hitter, int env_attack)
      * on the other side, running in safe areas will help you when hunted - and thats always a great fun.
      */
 
-    if (op->type == PLAYER || (target_obj && op->owner->type == PLAYER))
+    if (op->type == PLAYER || (target_obj!=op && op->owner->type == PLAYER))
     {
-        if (hitter->type == PLAYER || (hit_obj && hitter->owner->type == PLAYER))
+        if (hitter->type == PLAYER || (hit_obj!=hitter && hitter->owner->type == PLAYER))
         {
             /* now we are sure player are involved. Get the real player object now and test! */
             if (!pvp_area(op->type == PLAYER ? op : target_obj, hitter->type == PLAYER ? hitter : hit_obj))
