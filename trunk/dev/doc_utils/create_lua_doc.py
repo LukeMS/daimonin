@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import htmlentitydefs, os, os.path, re, sys, urllib
+import htmlentitydefs, os, os.path, re, sys, urllib, time
 
 length = len(sys.argv)
 if length != 2 and length != 3:
@@ -20,7 +20,8 @@ if not os.path.isdir(dest):
 index_items_per_line = 6
 
 amp_re_obj = re.compile('&')
-attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_(.*?),\s*offsetof\(.*?\),\s*(.*?)\s*[\},]')
+attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_([^ ,]+),\s*offsetof\(.*?\),\s*(.*?)\s*[\},]')
+attributes_block_re_obj = re.compile('struct\s+attribute_decl\s+(.*?)_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 block_re_obj = re.compile('FUNCTIONSTART.*?FUNCTIONEND', re.S)
 field_start_re_obj = re.compile('(Lua|Info|Status|TODO|Warning|Remark)\s*:\s*(.*)')
 colon_re_obj = re.compile('\s*:\s*')
@@ -32,19 +33,15 @@ comment_suffix_re_obj = re.compile('\s*\*/[\n\r]*')
 constants_re_obj = re.compile('"(.+?)"')
 dot_re_obj = re.compile('\.')
 flags_re_obj = re.compile('"(.+?)"')
+flags_block_re_obj = re.compile('const\s+char\s*\*\s*(.*?)_flags\[.*?\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 func_re_obj = re.compile('/\*.*?[\n\r]+\}', re.S)
 func_body_re_obj = re.compile('\s*static\s+int\s+.+?\(lua_State\s*\*\s*L\).*?\{(.+)\}', re.S)
 game_constants_block_re_obj = re.compile('\s*static\s+struct\s+constant_decl\s+Game_constants\[\]\s+=[\n\r]+\{(.*?)[\n\r]+\};', re.S)
 gt_re_obj = re.compile('>')
 lt_re_obj = re.compile('<')
-event_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+Event_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
-map_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+Map_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
-map_flags_block_re_obj = re.compile('\s*static\s+const\s+char\s*\*\s*Map_flags\[\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 name_prefix_re_obj = re.compile('([A-Za-z_]*):.+')
 name_re_obj = re.compile('[A-Za-z_]*[\.:](.*)\(')
 newline_re_obj = re.compile('\n')
-object_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+GameObject_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
-object_flags_block_re_obj = re.compile('\s*static\s+const\s+char\s*\*\s*GameObject_flags\[.*?\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 parameter_names_re_obj = re.compile('.*\((.*)\)')
 parameter_types_re_obj = re.compile('get_lua_args\(L,\s*"([GMAOdfiIs\|?]+)"')
 quot_re_obj = re.compile('"')
@@ -84,12 +81,74 @@ def start(filename, title):
 	f = file(os.path.join(dest, filename + '.html'), 'w')
 	f.write('''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/dtd/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head><title>Daimonin Lua Core reference - ''' + title + '</title></head><body><h1>Daimonin Lua Core reference - ' + title + '</h1>')
+	f.write("<i>Automatically generated " + time.strftime("%Y-%m-%d %H:%M:%S") + "</i>")
 	return f
 
-doc = {}
-map_attributes = {}
+def extract_class_attributes(classes, doc, code):
+	result = {}
+	block = attributes_block_re_obj.findall(code)
+	if block:
+		klass = classes[block[0][0]]
+		attributes = attributes_re_obj.findall(block[0][1])
+		if attributes:
+			for attribute in attributes:
+				special = ''
+				tp = ''
+				if attribute[1] == 'CSTR' or attribute[1] == 'SHSTR':
+					tp = 'string'
+				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'SINT64' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32' or attribute[1] == 'UINT64':
+					tp = 'integer'
+				elif attribute[1] == 'FLOAT':
+					tp = 'float'
+				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
+					tp = 'object'
+				elif attribute[1] == 'MAP':
+					tp = 'map'
+				else:
+					print "unknown fieldtype '" + attribute[1] + "'"
+					
+				if attribute[2] == 'FIELDFLAG_READONLY':
+					special = 'readonly'
+				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
+					special = 'readonly if object is a player'
+				elif attribute[2] == 'FIELDFLAG_PLAYER_FIX':
+					special = 'fix the player or mob after change'
+				elif attribute[2] != '0':
+					print "unknown attribute " + attribute[2]
+					
+				if tp:
+						doc[klass]['attributes'][attribute[0]] = (tp, special)
+						
+	return result
+	
+def extract_class_flags(classes, doc, code):
+	block = flags_block_re_obj.findall(code)
+	if block:
+		klass = classes[block[0][0]]
+		flags = flags_re_obj.findall(block[0][1])
+		if flags:
+			for flag in flags:
+				if flag.startswith('?'):
+					doc[klass]['flags'][flag.strip('?')] = {'readonly': 1}
+				else:
+					doc[klass]['flags'][flag] = {}
+
+classes = {
+		'GameObject': 'object',
+		'Event': 'event',
+		'Map': 'map',
+		'Game': 'game',
+		'AI': 'ai'
+}
+
+doc = {
+		'game': {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}},
+		'event': {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}},
+		'map': {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}},
+		'object': {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}},
+		'ai': {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
+}
 map_flags = []
-object_attributes = {}
 object_flags = []
 for filename in listCFiles(sys.argv[1]):
 	f = file(filename, 'r')
@@ -219,14 +278,13 @@ for filename in listCFiles(sys.argv[1]):
 							fields['return'] = last
 
 					if not prefix in doc:
+						print "Unknown function prefix: '" + prefix + "'"
 						doc[prefix] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 
 					key = name_re_obj.findall(fields['Lua'])
 					key = key[0]
 					doc[prefix]['functions'][key] = fields
 
-	if not 'game' in doc:
-		doc['game'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 	block = game_constants_block_re_obj.findall(code)
 	if block:
 		constants = constants_re_obj.findall(block[0])
@@ -234,111 +292,16 @@ for filename in listCFiles(sys.argv[1]):
 			for constant in constants:
 				doc['game']['constants'].append(constant)
 
-	if not 'event' in doc:
-		doc['event'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
-	block = event_attributes_block_re_obj.findall(code)
-	if block:
-		attributes = attributes_re_obj.findall(code)
-		if attributes:
-			for attribute in attributes:
-				special = ''
-				tp = ''
-				if attribute[1] == 'CSTR' or attribute[1] == 'SHSTR':							tp = 'string'
-				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32':
-					tp = 'integer'
-				elif attribute[1] == 'FLOAT':
-					tp = 'float'
-				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
-					tp = 'object'
-				if attribute[2] == 'FIELDFLAG_READONLY':
-					special = 'readonly'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
-					special = 'readonly if object is a player'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_FIX':
-					special = 'fix the player or mob after change'
-				if tp:
-					doc['event']['attributes'][attribute[0]] = (tp, special)
 
-	if not 'map' in doc:
-		doc['map'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
-	block = map_attributes_block_re_obj.findall(code)
-	if block:
-		attributes = attributes_re_obj.findall(code)
-		if attributes:
-			for attribute in attributes:
-				special = ''
-				tp = ''
-				if attribute[1] == 'CSTR' or attribute[1] == 'SHSTR':
-					tp = 'string'
-				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32':
-					tp = 'integer'
-				elif attribute[1] == 'FLOAT':
-					tp = 'float'
-				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
-					tp = 'object'
-				if attribute[2] == 'FIELDFLAG_READONLY':
-					special = 'readonly'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
-					special = 'readonly if object is a player'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_FIX':
-					special = 'fix the player or mob after change'
-				if tp:
-					doc['map']['attributes'][attribute[0]] = (tp, special)
-
-	block = map_flags_block_re_obj.findall(code)
-	if block:
-		flags = flags_re_obj.findall(block[0])
-		if flags:
-			for flag in flags:
-				if flag.startswith('?'):
-					doc['map']['flags'][flag.strip('?')] = {'readonly': 1}
-				else:
-					doc['map']['flags'][flag] = {}
-
-	if not 'object' in doc:
-		doc['object'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
-	block = object_attributes_block_re_obj.findall(code)
-	if block:
-		attributes = attributes_re_obj.findall(code)
-		if attributes:
-			for attribute in attributes:
-				special = ''
-				tp = ''
-				if attribute[1] == 'CSTR' or attribute[1] == 'SHSTR':
-					tp = 'string'
-				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32' or attribute[1] == 'SINT64':
-					tp = 'integer'
-				elif attribute[1] == 'FLOAT':
-					tp = 'float'
-				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
-					tp = 'object'
-				if attribute[2] == 'FIELDFLAG_READONLY':
-					special = 'readonly'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
-					special = 'readonly if object is a player'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_FIX':
-					special = 'fix the player or mob after change'
-				if tp:
-					doc['object']['attributes'][attribute[0]] = (tp, special)
-
-	block = object_flags_block_re_obj.findall(code)
-	if block:
-		flags = flags_re_obj.findall(block[0])
-		if flags:
-			for flag in flags:
-				if flag.startswith('?'):
-					doc['object']['flags'][flag.strip('?')] = {'readonly': 1}
-				else:
-					doc['object']['flags'][flag] = {}
-
-	if not 'ai' in doc:
-		doc['ai'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
+	extract_class_flags(classes, doc, code)
+	extract_class_attributes(classes, doc, code)
 
 index = start('index', 'Index')
 doc_keys = doc.keys()
 doc_keys.sort()
 first = 1
 for key in doc_keys:
+	# Class
 	if doc[key]['attributes'] or doc[key]['constants'] or doc[key]['flags'] or doc[key]['functions']:
 		quoted = urllib.quote(key)
 		if not first:
@@ -365,6 +328,8 @@ for key in doc_keys:
 				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + constant) + '</a></b><br />')
 			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
+
+		# Attributes
 		if doc[key]['attributes']:
 			index.write('<h3><a href="' + quoted + '.html#attributes">Attributes</a></h3><p><code>')
 			f.write('<hr /><h2><a id="attributes">Attributes</a></h2><p><code>')
@@ -387,6 +352,8 @@ for key in doc_keys:
 				f.write('<br />')
 			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
+	
+	  # Flags
 		if doc[key]['flags']:
 			index.write('<h3><a href="' + quoted + '.html#flags">Flags</a></h3><p><code>')
 			f.write('<hr /><h2><a id="flags">Flags</a></h2><p><code>')
@@ -405,10 +372,12 @@ for key in doc_keys:
 					index.write(' | ')
 				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
 				if "readonly" in flag:
-					f.write(' (' + entities(attribute[1]) + ')')
+					f.write(' (' + entities("readonly") + ')')
 				f.write('<br />')
 			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
+
+		# functions
 		if doc[key]['functions']:
 			first2 = 1
 			index.write('<h3><a href="' + quoted + '.html#functions">Functions</a></h3><p><code>')
@@ -454,6 +423,7 @@ for key in doc_keys:
 						f.write('<b>TODO:</b> ' + entities(fields['TODO']) + '</p><p>')
 					f.write('<a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
+
 		end(f)
 
 end(index)
