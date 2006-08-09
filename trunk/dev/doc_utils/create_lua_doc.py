@@ -20,7 +20,7 @@ if not os.path.isdir(dest):
 index_items_per_line = 6
 
 amp_re_obj = re.compile('&')
-attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_([^ ,]+),\s*offsetof\(.*?\),\s*(.*?)\s*[\},]')
+attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_([^ ,]+)\s*,\s*offsetof\(.*?,\s*(.*?)\s*\),\s*(.*?)\s*[\},]')
 attributes_block_re_obj = re.compile('struct\s+attribute_decl\s+(.*?)_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 block_re_obj = re.compile('FUNCTIONSTART.*?FUNCTIONEND', re.S)
 field_start_re_obj = re.compile('(Lua|Info|Status|TODO|Warning|Remark)\s*:\s*(.*)')
@@ -94,17 +94,18 @@ def extract_class_attributes(classes, doc, code):
 				else:
 					print "unknown fieldtype '" + attribute[1] + "'"
 					
-				if attribute[2] == 'FIELDFLAG_READONLY':
+				spec = attribute[3]
+				if spec == 'FIELDFLAG_READONLY':
 					special = 'readonly'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
+				elif spec == 'FIELDFLAG_PLAYER_READONLY':
 					special = 'readonly if object is a player'
-				elif attribute[2] == 'FIELDFLAG_PLAYER_FIX':
+				elif spec == 'FIELDFLAG_PLAYER_FIX':
 					special = 'fix the player or mob after change'
-				elif attribute[2] != '0':
-					print "unknown attribute " + attribute[2]
+				elif spec != '0':
+					print "unknown attribute " + spec
 					
 				if tp:
-						doc[klass]['attributes'][attribute[0]] = (tp, special)
+						doc[klass]['attributes'][attribute[0]] = (tp, special, attribute[2])
 						
 	return result
 	
@@ -427,5 +428,25 @@ def output_html(doc):
 			end_html(f)
 	end_html(index)
 
-output_html(doc)
+def start_xml(filename):
+	f = file(os.path.join(dest, filename + '.xml'), 'w')
+	f.write("<xml></xml>\n")
+	return f
 
+def end_html(f):
+	f.close()
+	
+def output_xml(doc):
+	# Write out lua <-> C attribute symbol mapping
+	f = start_xml("lua_c_mappings")
+	for key in doc.keys():
+		if doc[key]['attributes']:
+			f.write("<map_c_to_lua class=\""+key+"\">\n")
+			attributes = doc[key]['attributes']
+			for attribute in attributes.keys():
+				f.write("  <attribute c=\"" + attributes[attribute][2] + "\" lua=\"" + attribute + "\" />\n")
+			f.write("</map_c_to_lua>\n")
+	f.close()
+
+output_html(doc)
+output_xml(doc)
