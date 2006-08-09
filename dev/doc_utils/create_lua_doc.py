@@ -56,12 +56,6 @@ return_ai_re_obj = re.compile('.*return\s*push_object\(L,\s*&AI,', re.S)
 return_array_re_obj = re.compile('.*lua_newtable\(L\).*lua_rawseti\(L.*.*return\s+1', re.S)
 return_table_re_obj = re.compile('.*lua_newtable\(L\).*lua_rawset\(L.*.*return\s+1', re.S)
 
-def end(f):
-	f.write('</body></html>')
-	f.close()
-
-def entities(string):
-	return newline_re_obj.sub('<br />', gt_re_obj.sub('&gt;', lt_re_obj.sub('&lt;', quot_re_obj.sub('&quot;', amp_re_obj.sub('&amp;', string)))))
 
 def listCFiles(directory):
 	if not os.path.isdir(directory):
@@ -76,13 +70,6 @@ def listCFiles(directory):
 		elif p.endswith('.c') and not os.path.basename(p).startswith('.'):
 			r.append(p)
 	return r
-
-def start(filename, title):
-	f = file(os.path.join(dest, filename + '.html'), 'w')
-	f.write('''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/dtd/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Daimonin Lua Core reference - ''' + title + '</title></head><body><h1>Daimonin Lua Core reference - ' + title + '</h1>')
-	f.write("<i>Automatically generated " + time.strftime("%Y-%m-%d %H:%M:%S") + "</i>")
-	return f
 
 def extract_class_attributes(classes, doc, code):
 	result = {}
@@ -292,102 +279,66 @@ for filename in listCFiles(sys.argv[1]):
 			for constant in constants:
 				doc['game']['constants'].append(constant)
 
-
 	extract_class_flags(classes, doc, code)
 	extract_class_attributes(classes, doc, code)
 
-index = start('index', 'Index')
-doc_keys = doc.keys()
-doc_keys.sort()
-first = 1
-for key in doc_keys:
-	# Class
-	if doc[key]['attributes'] or doc[key]['constants'] or doc[key]['flags'] or doc[key]['functions']:
-		quoted = urllib.quote(key)
-		if not first:
-			index.write('<hr />')
-		else:
-			first = 0
-		index.write('<h2>Class: <code><a href="' + quoted + '.html">' + entities(key) + '</a></code></h2>')
-		f = start(key, key)
-		if doc[key]['constants']:
-			index.write('<h3><a href="' + quoted + '.html#constants">Constants</a></h3><p><code>')
-			f.write('<hr /><h2><a id="constants">Constants</a></h2><p><code>')
-			constants = doc[key]['constants']
-			constants.sort()
-			count = 0
-			for constant in constants:
-				quoted2 = urllib.quote(constant)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(constant) + '</a>')
-				count = count + 1
-				if count == index_items_per_line:
-					count = 0
-					index.write('<br />')
-				else:
-					index.write(' | ')
-				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + constant) + '</a></b><br />')
-			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
-			index.write('</code></p>')
+def start_html(filename, title):
+	f = file(os.path.join(dest, filename + '.html'), 'w')
+	f.write('''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/dtd/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Daimonin Lua Core reference - ''' + title + '</title></head><body><h1>Daimonin Lua Core reference - ' + title + '</h1>')
+	f.write("<i>Automatically generated " + time.strftime("%Y-%m-%d %H:%M:%S") + "</i>")
+	return f
 
-		# Attributes
-		if doc[key]['attributes']:
-			index.write('<h3><a href="' + quoted + '.html#attributes">Attributes</a></h3><p><code>')
-			f.write('<hr /><h2><a id="attributes">Attributes</a></h2><p><code>')
-			keys = doc[key]['attributes'].keys()
-			keys.sort()
-			count = 0
-			for key2 in keys:
-				attribute = doc[key]['attributes'][key2]
-				quoted2 = urllib.quote(key2)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
-				count = count + 1
-				if count == index_items_per_line:
-					count = 0
-					index.write('<br />')
-				else:
-					index.write(' | ')
-				f.write(entities(attribute[0]) + ' <b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
-				if attribute[1]:
-					f.write(' (' + entities(attribute[1]) + ')')
-				f.write('<br />')
-			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
-			index.write('</code></p>')
-	
-	  # Flags
-		if doc[key]['flags']:
-			index.write('<h3><a href="' + quoted + '.html#flags">Flags</a></h3><p><code>')
-			f.write('<hr /><h2><a id="flags">Flags</a></h2><p><code>')
-			keys = doc[key]['flags'].keys()
-			keys.sort()
-			count = 0
-			for key2 in keys:
-				flag = doc[key]['flags'][key2]
-				quoted2 = urllib.quote(key2)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
-				count = count + 1
-				if count == index_items_per_line:
-					count = 0
-					index.write('<br />')
-				else:
-					index.write(' | ')
-				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
-				if "readonly" in flag:
-					f.write(' (' + entities("readonly") + ')')
-				f.write('<br />')
-			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
-			index.write('</code></p>')
+def end_html(f):
+	f.write('</body></html>')
+	f.close()
 
-		# functions
-		if doc[key]['functions']:
-			first2 = 1
-			index.write('<h3><a href="' + quoted + '.html#functions">Functions</a></h3><p><code>')
-			f.write('<hr /><h2><a id="functions">Functions</a></h2>')
-			keys = doc[key]['functions'].keys()
-			keys.sort()
-			count = 0
-			for key2 in keys:
-				fields = doc[key]['functions'][key2]
-				if 'Lua' in fields and 'Status' in fields:
+def entities(string):
+	return newline_re_obj.sub('<br />', gt_re_obj.sub('&gt;', lt_re_obj.sub('&lt;', quot_re_obj.sub('&quot;', amp_re_obj.sub('&amp;', string)))))
+
+def output_html(doc):
+	index = start_html('index', 'Index')
+	doc_keys = doc.keys()
+	doc_keys.sort()
+	first = 1
+	for key in doc_keys:
+		# Class
+		if doc[key]['attributes'] or doc[key]['constants'] or doc[key]['flags'] or doc[key]['functions']:
+			quoted = urllib.quote(key)
+			if not first:
+				index.write('<hr />')
+			else:
+				first = 0
+			index.write('<h2>Class: <code><a href="' + quoted + '.html">' + entities(key) + '</a></code></h2>')
+			f = start_html(key, key)
+			if doc[key]['constants']:
+				index.write('<h3><a href="' + quoted + '.html#constants">Constants</a></h3><p><code>')
+				f.write('<hr /><h2><a id="constants">Constants</a></h2><p><code>')
+				constants = doc[key]['constants']
+				constants.sort()
+				count = 0
+				for constant in constants:
+					quoted2 = urllib.quote(constant)
+					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(constant) + '</a>')
+					count = count + 1
+					if count == index_items_per_line:
+						count = 0
+						index.write('<br />')
+					else:
+						index.write(' | ')
+					f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + constant) + '</a></b><br />')
+				f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
+				index.write('</code></p>')
+
+			# Attributes
+			if doc[key]['attributes']:
+				index.write('<h3><a href="' + quoted + '.html#attributes">Attributes</a></h3><p><code>')
+				f.write('<hr /><h2><a id="attributes">Attributes</a></h2><p><code>')
+				keys = doc[key]['attributes'].keys()
+				keys.sort()
+				count = 0
+				for key2 in keys:
+					attribute = doc[key]['attributes'][key2]
 					quoted2 = urllib.quote(key2)
 					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
 					count = count + 1
@@ -396,34 +347,85 @@ for key in doc_keys:
 						index.write('<br />')
 					else:
 						index.write(' | ')
-					if not first2:
-						f.write('<hr />')
+					f.write(entities(attribute[0]) + ' <b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
+					if attribute[1]:
+						f.write(' (' + entities(attribute[1]) + ')')
+					f.write('<br />')
+				f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
+				index.write('</code></p>')
+		
+			# Flags
+			if doc[key]['flags']:
+				index.write('<h3><a href="' + quoted + '.html#flags">Flags</a></h3><p><code>')
+				f.write('<hr /><h2><a id="flags">Flags</a></h2><p><code>')
+				keys = doc[key]['flags'].keys()
+				keys.sort()
+				count = 0
+				for key2 in keys:
+					flag = doc[key]['flags'][key2]
+					quoted2 = urllib.quote(key2)
+					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
+					count = count + 1
+					if count == index_items_per_line:
+						count = 0
+						index.write('<br />')
 					else:
-						first2 = 0
-					f.write('<h3><code><a id="' + quoted2 + '">' + entities(fields['Lua']) + '</a></code></h3><p>');
-					if 'parameters' in fields and (fields['parameters'][0] or fields['parameters'][1]):
-						f.write('Parameter types:<br />')
-						if fields['parameters'][0]:
-							for parameter in fields['parameters'][0]:
-								f.write('<i>' + entities(parameter[0]) + ':</i> ' + entities(parameter[1]) + ' (required)<br />')
-						if fields['parameters'][1]:
-							for parameter in fields['parameters'][1]:
-								f.write('<i>' + entities(parameter[0]) + ':</i> ' + entities(parameter[1]) + ' (optional)<br />')
-						f.write('</p><p>')
-					if 'return' in fields and fields['return']:
-						f.write('Return type: ' + entities(fields['return']) + '</p><p>')
-					if 'Info' in fields and fields['Info']:
-						f.write(entities(fields['Info']) + '</p><p>')
-					f.write('Status: <b>' + entities(fields['Status']) + '</b></p><p>')
-					if 'Warning' in fields and fields['Warning']:
-						f.write('<b>Warning:</b> ' + entities(fields['Warning']) + '</p><p>')
-					if 'Remark' in fields and fields['Remark']:
-						f.write('<b>Remark:</b> ' + entities(fields['Remark']) + '</p><p>')
-					if 'TODO' in fields and fields['TODO']:
-						f.write('<b>TODO:</b> ' + entities(fields['TODO']) + '</p><p>')
-					f.write('<a href="index.html">Back to the index</a></p>')
-			index.write('</code></p>')
+						index.write(' | ')
+					f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
+					if "readonly" in flag:
+						f.write(' (' + entities("readonly") + ')')
+					f.write('<br />')
+				f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
+				index.write('</code></p>')
 
-		end(f)
+			# functions
+			if doc[key]['functions']:
+				first2 = 1
+				index.write('<h3><a href="' + quoted + '.html#functions">Functions</a></h3><p><code>')
+				f.write('<hr /><h2><a id="functions">Functions</a></h2>')
+				keys = doc[key]['functions'].keys()
+				keys.sort()
+				count = 0
+				for key2 in keys:
+					fields = doc[key]['functions'][key2]
+					if 'Lua' in fields and 'Status' in fields:
+						quoted2 = urllib.quote(key2)
+						index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
+						count = count + 1
+						if count == index_items_per_line:
+							count = 0
+							index.write('<br />')
+						else:
+							index.write(' | ')
+						if not first2:
+							f.write('<hr />')
+						else:
+							first2 = 0
+						f.write('<h3><code><a id="' + quoted2 + '">' + entities(fields['Lua']) + '</a></code></h3><p>');
+						if 'parameters' in fields and (fields['parameters'][0] or fields['parameters'][1]):
+							f.write('Parameter types:<br />')
+							if fields['parameters'][0]:
+								for parameter in fields['parameters'][0]:
+									f.write('<i>' + entities(parameter[0]) + ':</i> ' + entities(parameter[1]) + ' (required)<br />')
+							if fields['parameters'][1]:
+								for parameter in fields['parameters'][1]:
+									f.write('<i>' + entities(parameter[0]) + ':</i> ' + entities(parameter[1]) + ' (optional)<br />')
+							f.write('</p><p>')
+						if 'return' in fields and fields['return']:
+							f.write('Return type: ' + entities(fields['return']) + '</p><p>')
+						if 'Info' in fields and fields['Info']:
+							f.write(entities(fields['Info']) + '</p><p>')
+						f.write('Status: <b>' + entities(fields['Status']) + '</b></p><p>')
+						if 'Warning' in fields and fields['Warning']:
+							f.write('<b>Warning:</b> ' + entities(fields['Warning']) + '</p><p>')
+						if 'Remark' in fields and fields['Remark']:
+							f.write('<b>Remark:</b> ' + entities(fields['Remark']) + '</p><p>')
+						if 'TODO' in fields and fields['TODO']:
+							f.write('<b>TODO:</b> ' + entities(fields['TODO']) + '</p><p>')
+						f.write('<a href="index.html">Back to the index</a></p>')
+				index.write('</code></p>')
+			end_html(f)
+	end_html(index)
 
-end(index)
+output_html(doc)
+
