@@ -62,5 +62,43 @@ else
    AC_DEFINE_UNQUOTED(PREFIX, "${ac_default_prefix}", [Installation prefix])
 fi
 
+#
+# SDL_CONFIG ("borrowed" from Wesnoth 0.7.3)
+#
+
+AC_PATH_PROGS([SDL_CONFIG], [sdl-config sdl11-config], [none])
+if test "x$SDL_CONFIG" = "xnone"; then
+	AC_MSG_ERROR([*** SDL not found! Get SDL from www.libsdl.org.
+If you already installed it, check it's in the path. If problem remains,
+please send a mail to the address that appears in ./configure --version
+indicating your platform, the version of configure script and the problem.])
+fi
+
+# SDL Libs
+
+SDL_LIBS=`$SDL_CONFIG --libs`
+AC_SUBST([SDL_LIBS])
+
+# Check for SDL headers
+
+OLD_CPPFLAGS=$CPPFLAGS
+OLD_CXXFLAGS=$CXXFLAGS
+
+SDL_CFLAGS=`$SDL_CONFIG --cflags`
+SDL_CFLAGS="$SDL_CFLAGS"
+CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
+CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
+
+AC_CHECK_HEADER([SDL.h],
+		[],
+		[AC_MSG_ERROR([*** SDL include files not found!
+You should install SDL development package.])])
+
+CPPFLAGS=$OLD_CPPFLAGS
+CXXFLAGS=$OLD_CXXFLAGS
+
+AC_SUBST([SDL_CFLAGS])
+
+
 AC_OUTPUT(Makefile ../../plugins.cfg)
 #AC_OUTPUT(Makefile ../../source/Makefile ../../include/Makefile ../../3rdParty/fmod/Makefile ../../3rdParty/tinyxml/Makefile ../../3rdParty/zlib/Makefile)
