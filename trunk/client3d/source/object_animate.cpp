@@ -129,7 +129,7 @@ void ObjectAnimate::update(const FrameEvent& event)
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     mTimeLeft = mActState->getLength() - mActState->getTimePosition();
     // if an animation ends -> force the idle animation.
-    if (mActState->getTimePosition() >= mActState->getLength())
+    if (mActState->getTimePosition() >= mActState->getLength() && !mActState->getLoop())
     {
         if (mAnimGroup != ANIM_GROUP_DEATH)
             toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
@@ -160,7 +160,6 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
     if (mAnimGroup == ANIM_GROUP_SPAWN) random = false;
     mAnimGroup = animGroup;
-    mActState->setEnabled(false);
     // Find the anim pos in the anim-vector.
     animGroup =0;
     for (int i=0; i< mAnimGroup; ++i)
@@ -168,6 +167,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
         animGroup+= mAnimGroupEntries[i];
     }
     // Set the Animation.
+    mActState->setEnabled(false);
     mActState= mAnimState[animGroup+ animNr];
     mTimeLeft = mActState->getLength();
     // Set a random offest for the animation start (prevent synchronous "dancing").

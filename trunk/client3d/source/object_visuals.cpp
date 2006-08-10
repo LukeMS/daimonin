@@ -61,8 +61,14 @@ ObjectVisuals::~ObjectVisuals()
 // .
 //===================================================
 ObjectVisuals::ObjectVisuals()
+{}
+
+//===================================================
+// .
+//===================================================
+void ObjectVisuals::Init()
 {
-    Logger::log().headline("Creating Object Visuals.");
+    Logger::log().headline("Creating Object Visuals");
     for (int i=0; i < NPC_SUM; ++i) mNode[i] = 0;
     // ////////////////////////////////////////////////////////////////////
     // Check for a working description file.

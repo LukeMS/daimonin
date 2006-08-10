@@ -146,7 +146,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     }
     if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
     if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the Position entries.
     // ////////////////////////////////////////////////////////////////////
@@ -174,7 +173,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if ((strTmp = xmlElem->Attribute("zOrder")))
             mPosZ = atoi(strTmp);
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the Dragging entries.
     // ////////////////////////////////////////////////////////////////////
@@ -198,12 +196,10 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if ((strTmp = xmlElem->Attribute("text")))
             mStrTooltip = strTmp;
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Now we have all datas to create the window..
     // ////////////////////////////////////////////////////////////////////
     createWindow();
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the graphics.
     // ////////////////////////////////////////////////////////////////////
@@ -278,7 +274,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
                     1, PF_A8R8G8B8, textline->BG_Backup));
         GuiTextout::getSingleton().Print(textline, mTexture.getPointer());
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the listboxes.
     // ////////////////////////////////////////////////////////////////////
@@ -295,7 +290,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         if (!(strTmp = xmlElem->Attribute("image_name"))) continue;
         mvStatusbar.push_back(new GuiStatusbar(xmlElem, this));
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the gadgets.
     // ////////////////////////////////////////////////////////////////////
@@ -315,7 +309,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         else
             Logger::log().warning() << xmlElem->Attribute("type") << " is not a defined gadget type.";
     }
-
     // ////////////////////////////////////////////////////////////////////
     // Parse the "Talking Head".
     // ////////////////////////////////////////////////////////////////////
@@ -455,7 +448,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     {
         case BUTTON_PRESSED:
         {
-            GuiCursor::getSingleton().setState(GuiCursor::STATE_PRESSED);
+            GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_PUSHED);
             // Mouse over this window?
             if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
             {
@@ -490,7 +483,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 
         case BUTTON_RELEASED:
         {
-            GuiCursor::getSingleton().setState(GuiCursor::STATE_STANDARD);
+            GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_DEFAULT);
             mMousePressed = -1;
             mMouseDragging= -1;
             break;
@@ -523,7 +516,6 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                 {
                     mMousePressed = mMouseOver;
                     mvGadgetButton[mMousePressed]->setState(GuiElement::STATE_PUSHED);
-                    mvGadgetButton[mMousePressed]->draw();
                     return mvGadgetButton[mMousePressed]->getName();
                 }
                 else if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
@@ -548,7 +540,6 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                     {
                         //actGadgetName = mvSrcEntry[mvGadget[gadget]->getTilsetPos()]->name.c_str();
                         mvGadgetButton[mMousePressed]->setState(GuiElement::STATE_STANDARD);
-                        mvGadgetButton[mMousePressed]->draw();
                         actGadgetName = mvGadgetButton[mMousePressed]->getName();
 
                         if (!stricmp(GuiImageset::getSingleton().getElementName(GUI_BUTTON_CLOSE), actGadgetName))
@@ -606,7 +597,6 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                     {
                         if (mvGadgetButton[mMouseOver]->setState(GuiElement::STATE_STANDARD))
                         {
-                            mvGadgetButton[mMouseOver]->draw();
                             mMouseOver = -1;
                             GuiManager::getSingleton().setTooltip(0);
                         }
@@ -620,8 +610,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                         if (gadget >=0)
                         {
                             if ( mvGadgetButton[gadget]->setState(GuiElement::STATE_M_OVER))
-                            {  // (If not already done) change the gadget state to mouseover.
-                                mvGadgetButton[gadget]->draw();
+                            {  
                                 mMouseOver = gadget;
                                 GuiManager::getSingleton().setTooltip(mvGadgetButton[gadget]->getTooltip());
                             }
@@ -631,8 +620,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                     {
                         gadget = getGadgetMouseIsOver(x, y);
                         if (gadget >=0 && mvGadgetButton[gadget]->setState(GuiElement::STATE_PUSHED))
-                        { // (If not already done) change the gadget state to mouseover.
-                            mvGadgetButton[gadget]->draw();
+                        { 
                             mMouseOver = gadget;
                         }
                     }

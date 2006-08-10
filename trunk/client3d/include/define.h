@@ -119,7 +119,7 @@ Pos2D;
 typedef struct
 {
     int x, z;
-    int subPos;
+    int subX, subZ;
 }
 SubPos2D;
 

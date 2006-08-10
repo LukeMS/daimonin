@@ -29,12 +29,9 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 #include "gui_window.h"
-
 #include "logger.h"
+
 using namespace Ogre;
-
-typedef void (Callback) (class GuiWindow *parent, int index);
-
 
 /**
  ** This class provides an interactive button.
@@ -43,6 +40,7 @@ class GuiGadgetButton: public GuiElement
 {
 
 public:
+    typedef void (Callback) (class GuiWindow *parent, int index);
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

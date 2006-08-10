@@ -59,6 +59,7 @@ public:
     {
         static ObjectVisuals Singleton; return Singleton;
     }
+    void Init();
     void freeRecources();
     void selectNPC(MovableObject *mob, int friendly, bool drawLifebar = true);
     void setPosLifebar(Vector3 pos);

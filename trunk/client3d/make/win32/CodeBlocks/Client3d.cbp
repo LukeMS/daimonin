@@ -16,9 +16,8 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-DWIN32" />
+					<Add option="-DDEBUG" />
 					<Add option="-D_DEBUG" />
-					<Add option="-D_WINDOWS" />
 					<Add option="-D_STLP_DEBUG" />
 				</Compiler>
 				<Linker>
@@ -42,14 +41,13 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-Wall" />
-					<Add option="-DWIN32" />
 					<Add option="-DNDEBUG" />
-					<Add option="-D_WINDOWS" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add library="OgreMain" />
 					<Add library="stlport.5.0" />
+					<Add library="SDL" />
 					<Add directory="..\..\..\" />
 				</Linker>
 				<ExtraCommands>
@@ -65,7 +63,9 @@
 			<Add option="-fident" />
 			<Add option="-D_STLP_NO_CUSTOM_IO" />
 			<Add option="-D_STLP_USE_DYNAMIC_LIB" />
+			<Add option="-D_WINDOWS" />
 			<Add option="-DMINGW" />
+			<Add option="-DWIN32" />
 			<Add directory="ogre_inc" />
 			<Add directory="stlport\stlport" />
 			<Add directory="..\..\..\source" />
@@ -75,12 +75,14 @@
 			<Add directory="..\..\..\3rdParty\tinyxml" />
 			<Add directory="..\..\..\3rdParty\zlib" />
 			<Add directory="..\..\..\3rdParty\fmod" />
+			<Add directory="..\..\..\3rdParty\sdl" />
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--enable-auto-image-base" />
 			<Add option="-Wl,--add-stdcall-alias" />
 			<Add library="ws2_32" />
 			<Add library="fmodex" />
+			<Add library="SDL" />
 			<Add directory="fmod_lib" />
 		</Linker>
 		<Unit filename="..\..\..\3rdParty\fmod\fmod.h">

@@ -37,6 +37,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_visuals.h"
 #include "particle_manager.h"
 #include "spell_manager.h"
+#include "network_serverfile.h"
 
 using namespace Ogre;
 
@@ -304,14 +305,17 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             ObjectManager::getSingleton().init();
             // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-            GuiManager::getSingleton().displaySystemMessage("Starting the network...");
-            break;
-        }
+            ObjectVisuals::getSingleton().Init();
+            GuiManager::getSingleton().displaySystemMessage("");
+            OverlayManager::getSingleton().destroy(mOverlay);
+            GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
+            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
 
-        case GAME_STATUS_INIT_NET:
-        {
-            Network::getSingleton().Init();
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
+/*
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
@@ -320,16 +324,119 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~b~ to change Attack animation.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
-
-            // Set next state.
-            Option::getSingleton().setGameStatus(GAME_STATUS_META);
-            GuiManager::getSingleton().displaySystemMessage("");
-            OverlayManager::getSingleton().destroy(mOverlay);
-            GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
-            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
-            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
-            GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
+*/
             mWindow->resetStatistics();
+            Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+            break;
+         }
+
+        case GAME_STATUS_INIT_NET:
+        {
+            if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
+            {
+                Network::getSingleton().Init();
+                Option::getSingleton().setGameStatus(GAME_STATUS_META);
+                break;
+            }
+            //clear_metaserver_data();
+            Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+            break;
+        }
+
+        case GAME_STATUS_META:
+        {
+            Network::getSingleton().contactMetaserver();
+            Option::getSingleton().setGameStatus(GAME_STATUS_START);
+            break;
+        }
+
+        case GAME_STATUS_START:
+        {
+            Network::getSingleton().SOCKET_CloseClientSocket();
+            Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
+            break;
+        }
+
+        case GAME_STATUS_WAITLOOP:
+        {
+            // Wait for user to select a server.
+
+            // User has select a server.
+            Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
+            break;
+        }
+
+        case GAME_STATUS_STARTCONNECT:
+        {
+            Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
+            break;
+        }
+
+        case GAME_STATUS_CONNECT:
+        {
+            Network::GameStatusVersionFlag = false;
+            if (!Network::getSingleton().SOCKET_OpenClientSocket("127.0.0.1", 13327))
+            {
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connection failed!");
+                Option::getSingleton().setGameStatus(GAME_STATUS_START);
+            }
+            Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connected. exchange version.");
+            break;
+        }
+
+        case GAME_STATUS_VERSION:
+        {
+            Network::getSingleton().SendVersion();
+            Option::getSingleton().setGameStatus(GAME_STATUS_WAITVERSION);
+            break;
+        }
+
+        case GAME_STATUS_WAITVERSION:
+        {
+            // perhaps here should be a timer ???
+            // remember, the version exchange server<->client is asynchron
+            // so perhaps the server send his version faster
+            // as the client send it to server
+            if (Network::GameStatusVersionFlag) // wait for version answer when needed
+            {
+                if (!Network::GameStatusVersionOKFlag)
+                {
+                    Option::getSingleton().setGameStatus(GAME_STATUS_START);
+                }
+                else
+                {
+                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"version confirmed.");
+                    Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
+                }
+            }
+            break;
+        }
+
+        case GAME_STATUS_SETUP:
+        {
+            static char buf[1024];
+            ServerFile::getSingleton().checkFiles();
+            sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
+                    " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+                    //   SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
+                    1, 17,17,
+                    ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
+                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
+                    ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),
+                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SPELLS),
+                    ServerFile::getSingleton().getLength(SERVER_FILE_BMAPS),
+                    ServerFile::getSingleton().getCRC   (SERVER_FILE_BMAPS),
+                    ServerFile::getSingleton().getLength(SERVER_FILE_SETTINGS),
+                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SETTINGS),
+                    ServerFile::getSingleton().getLength(SERVER_FILE_ANIMS),
+                    ServerFile::getSingleton().getCRC   (SERVER_FILE_ANIMS));
+            Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
+            buf[strlen(buf)] =0;
+            Logger::log().info() << "Send: setup " << buf;
+            //mRequest_file_chain = 0;
+            //mRequest_file_flags = 0;
+            Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
             break;
         }
 
@@ -363,37 +470,32 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     obj.facing    = 0;
                     obj.particleNr=-1;
                     ObjectManager::getSingleton().addMobileObject(obj);
+/*
+                    obj.meshName  = "Ogre_Big.mesh";
+                    obj.nickName  = "son of michtoen";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.friendly  = -1;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.posX      = 9;
+                    obj.posY      = 12;
+                    obj.level     = 0;
+                    obj.centred   = 1;
+                    obj.facing    = 0;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+*/
                     once = true;
                 }
                 else
                 {
-                  //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
+                    //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
                 }
             }
-            /*
-             if (!mUseBufferedInputKeys)
-             {
-              // one of the input modes is immediate, so setup what is needed for immediate mouse/key movement
-              if (mTimeUntilNextToggle >= 0)
-               mTimeUntilNextToggle -= evt.timeSinceLastFrame;
-              // If this is the first frame, pick a speed
-              if (evt.timeSinceLastFrame == 0)
-              {
-               mMoveScale = 1;
-               mRotScale = 0.1;
-              }
-              // Otherwise scale movement units by time passed since last frame
-              else
-              {
-               // Move about 100 units per second,
-               mMoveScale = mMoveSpeed * evt.timeSinceLastFrame;
-               // Take about 10 seconds for full rotation
-               mRotScale = mRotateSpeed * evt.timeSinceLastFrame;
-              }
-                 mTranslateVector = Vector3(0,0,0);
-                    if (processUnbufferedKeyInput(evt) == false) { return false; }
-             }
-            */
+
             GuiManager::getSingleton().update(evt.timeSinceLastFrame);
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 80.0)
@@ -413,11 +515,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             */
 
             ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
-            if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
-                Network::getSingleton().Update();
             break;
         }
-
     }
     return true;
 }
@@ -428,6 +527,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 bool CEvent::frameEnded(const FrameEvent&)
 {
     if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET) return true;
+    Network::getSingleton().update();
     const RenderTarget::FrameStats& stats = mWindow->getStatistics();
     static int skipFrames = 0;
     if (--skipFrames <= 0)

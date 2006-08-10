@@ -30,17 +30,17 @@ http://www.gnu.org/licenses/licenses.html
 GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
 {
     TiXmlElement *xmlGadget;
-    std::string strValue;
+    String strValue;
     const char *tmp;
     // Set default values.
-    mState = 0;
+    mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mFontNr= 0;
     mX     = 0;
     mY     = 0;
     mWidth = 0;
     mHeight= 0;
     mParent= parent;
-    GuiSrcEntry *srcEntry;
+    GuiImageset::GuiSrcEntry *srcEntry;
     ((GuiWindow*)mParent)->getTexturseSize(mMaxX, mMaxY);
     // ////////////////////////////////////////////////////////////////////
     // Parse the element.
@@ -50,15 +50,15 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         if ((srcEntry = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
         {
             mWidth = srcEntry->width;
-            mHeight = srcEntry->height;
-            for (unsigned int i = 0; i < srcEntry->state.size(); ++i)
-                setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
+            mHeight= srcEntry->height;
+            mHasAlpha = srcEntry->alpha;
+            memcpy(gfxSrcPos, srcEntry->state, sizeof(gfxSrcPos));
+            GuiImageset::getSingleton().deleteStateGfxPositions(tmp);
         }
         else
         {
             Logger::log().warning() << tmp << " was defined in '" << FILE_GUI_WINDOWS
             << "' but the gfx-data in '" << FILE_GUI_IMAGESET << "' is missing.";
-
         }
     }
 
@@ -136,23 +136,38 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     {
         if ((tmp = xmlGadget->Attribute("text"))) mStrTooltip = tmp;
     }
+    // ////////////////////////////////////////////////////////////////////
+    // Make a copy of the Window background.
+    // ////////////////////////////////////////////////////////////////////
+    if (mHasAlpha)
+    {
+        Texture *texture = ((GuiWindow*) mParent)->getTexture();
+        BG_Backup = new uint32[mWidth*mHeight];
+        texture->getBuffer()->blitToMemory(
+            Box(mX, mY, mX+mWidth, mY+mHeight),
+            PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup));
+    }
+    else BG_Backup = 0;
 }
 
 //================================================================================================
-// .
+// Set the state.
 //================================================================================================
-void GuiElement::setStateImagePos(std::string name, int x, int y)
+bool GuiElement::setState(int state)
 {
-    int state = -1;
-    if      (name == "Standard") state = STATE_STANDARD;
-    else if (name == "Passive" ) state = STATE_PASSIVE;
-    else if (name == "Pushed"  ) state = STATE_PUSHED;
-    else if (name == "M_Over"  ) state = STATE_M_OVER;
-    if (state < 0)
+    if (state < GuiImageset::STATE_ELEMENT_SUM && mState != state)
     {
-        Logger::log().error() << "Gui-Element '" << mStrName << "' has no State '" << "' " << name;
-        return;
+        mState = state;
+        draw();
+        return true;
     }
-    gfxSrcPos[state].x = x;
-    gfxSrcPos[state].y = y;
+    return false;
+}
+
+//================================================================================================
+// Destructor.
+//================================================================================================
+GuiElement::~GuiElement()
+{
+    delete[] BG_Backup;
 }

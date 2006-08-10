@@ -43,10 +43,11 @@ static const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the toolti
 
 GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
     {
-        { "Statistics",  GUI_WIN_STATISTICS  },
-        { "PlayerInfo",  GUI_WIN_PLAYERINFO  },
-        { "TextWindow",  GUI_WIN_TEXTWINDOW  },
-        { "Login",       GUI_WIN_LOGIN       },
+        { "Statistics",    GUI_WIN_STATISTICS    },
+        { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
+        { "PlayerConsole", GUI_WIN_PLAYERCONSOLE },
+        { "TextWindow",    GUI_WIN_TEXTWINDOW    },
+        { "Login",         GUI_WIN_LOGIN         },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
     };
 
@@ -155,10 +156,10 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     // ////////////////////////////////////////////////////////////////////
     // Parse the mouse-cursor.
     // ////////////////////////////////////////////////////////////////////
-    GuiSrcEntry *srcEntry = 0;
+    GuiImageset::GuiSrcEntryMouse *srcEntry;
     if ((xmlElem = xmlRoot->FirstChildElement("Cursor")) && ((valString = xmlElem->Attribute("name"))))
     {
-        srcEntry = GuiImageset::getSingleton().getStateGfxPositions(valString);
+        srcEntry = GuiImageset::getSingleton().getStateGfxPosMouse();
         if (srcEntry)
         {
             mHotSpotX = mHotSpotY =0;
@@ -169,10 +170,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
             }
             int scale = 8;
             GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight, scale);
-            for (unsigned int i=0; i < srcEntry->state.size(); ++i)
-            {
-                GuiCursor::getSingleton().setStateImagePos(srcEntry->state[i]->name, srcEntry->state[i]->x, srcEntry->state[i]->y);
-            }
+            GuiCursor::getSingleton().setStateImagePos(srcEntry->state);
             GuiCursor::getSingleton().draw();
         }
         else
@@ -183,12 +181,6 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
     else
     {
         Logger::log().error() << "File '" << fileWindows << "' has no mouse-cursor defined.";
-    }
-    if (!srcEntry)
-    { // Create a dummy mouse-cursor.
-        GuiCursor::getSingleton().Init(32, 32, mScreenWidth, mScreenHeight,3);
-        GuiCursor::getSingleton().setStateImagePos("Standard", 128, 128);
-        GuiCursor::getSingleton().draw();
     }
     // ////////////////////////////////////////////////////////////////////
     // Init the windows.

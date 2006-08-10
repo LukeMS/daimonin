@@ -4,19 +4,19 @@
     <!-- Mouse                                       -->
     <!--#############################################-->
     <Image name= "MouseCursor" width= "37" height= "40">
-        <State name= "Standard" posX= "01" posY= "61" />
-        <State name= "Pressed"  posX= "42" posY= "61" />
+        <State name= "Default" posX= "01" posY= "61" />
+        <State name= "Pushed"   posX= "42" posY= "61" />
     </Image>
 
     <!--#############################################-->
     <!-- Dialog Style Clean                          -->
     <!--#############################################-->
     <Image name= "Background" width= "63" height= "63">
-        <State name= "Standard" posX= "0" posY= "0" />
+        <State name= "Default" posX= "0" posY= "0" />
     </Image>
 
     <Image name= "TextWinHead" width= "150" height= "18">
-        <State name= "Standard" posX= "0" posY= "90" />
+        <State name= "Default" posX= "0" posY= "90" />
     </Image>
 
     <!--#############################################-->
@@ -26,98 +26,170 @@
       <!-- Backgrounds                                 -->
       <!--=============================================-->
       <Image name= "Red_Background" width= "250" height= "250">
-          <State name= "Standard" posX= "0" posY= "108" />
+          <State name= "Default" posX= "0" posY= "108" />
       </Image>
       <Image name= "Blue_Background" width= "250" height= "250">
-          <State name= "Standard" posX= "250" posY= "108" />
+          <State name= "Default" posX= "250" posY= "108" />
       </Image>
       <!--=============================================-->
       <!-- Ornaments                                   -->
       <!--=============================================-->
       <Image name= "Red_TL_Edge" width= "9" height= "9">
-          <State name= "Standard" posX= "1" posY= "1" />
+          <State name= "Default" posX= "1" posY= "1" />
       </Image>
 
       <Image name= "Red_TR_Edge" width= "9" height= "9">
-          <State name= "Standard" posX= "1" posY= "1" />
+          <State name= "Default" posX= "1" posY= "1" />
       </Image>
 
       <Image name= "Red_BL_Edge" width= "9" height= "9">
-          <State name= "Standard" posX= "1" posY= "1" />
+          <State name= "Default" posX= "1" posY= "1" />
       </Image>
 
       <Image name= "Red_BR_Edge" width= "9" height= "9">
-          <State name= "Standard" posX= "1" posY= "1" />
+          <State name= "Default" posX= "1" posY= "1" />
       </Image>
 
       <Image name= "Red_Line_H" width= "24" height= "5">
-          <State name= "Standard" posX= "171" posY= "16" />
+          <State name= "Default" posX= "171" posY= "16" />
       </Image>
 
       <Image name= "Red_Line_V" width= "5" height= "24">
-          <State name= "Standard" posX= "197" posY= "1" />
+          <State name= "Default" posX= "197" posY= "1" />
       </Image>
 
+      <Image name= "Health_Pilar" width= "12" height= "72">
+          <State name= "Default" posX= "484" posY= "363" />
+      </Image>
+
+      <Image name= "Grace_Pilar " width= "12" height= "62">
+          <State name= "Default" posX= "481" posY= "431" />
+      </Image>
+
+      <Image name= "Mana_Pilar" width= "13" height= "55">
+          <State name= "Default" posX= "494" posY= "432" />
+      </Image>
+
+      <Image name= "Food_Pilar" width= "12" height= "52">
+          <State name= "Default" posX= "494" posY= "379" />
+      </Image>
+
+      <Image name= "Status_Player_Face" width= "72" height= "72">
+          <State name= "Default" posX= "435" posY= "587" />
+      </Image>
       <!--=============================================-->
       <!-- StatusBars                                  -->
       <!--=============================================-->
-      <Image name= "PlayerStatusBG" width= "800" height="106">
-          <State name= "Standard" posX= "0" posY=  "393" />
+      <Image name= "Lines_Botom_Left" width= "435" height="146">
+          <State name= "Default" posX= "0" posY=  "358 " />
       </Image>
 
-      <Image name= "PlayerStatusBar" width= "35" height="106">
-          <State name= "Standard" posX= "382" posY=  "393" />
+      <Image name= "Lines_Botom_Right" width= "435" height="146">
+          <State name= "Default" posX= "0" posY=  "505" />
+      </Image>
+
+      <Image name= "Pilar" width= "44" height="139">
+          <State name= "Default" posX= "436" posY=  "358" />
+      </Image>
+
+      <Image name= "Status_Player" width= "348" height="88">
+          <State name= "Default" posX= "436" posY=  "498" />
       </Image>
 
       <!--=============================================-->
       <!-- Buttons                                     -->
       <!--=============================================-->
       <Image name= "Button_01_Std" width= "55" height= "19">
-          <State name= "Standard" posX= "1" posY= "1" />
-          <State name= "Pushed"   posX= "1" posY= "21" />
-          <State name= "M_Over"   posX= "1" posY= "41" />
+          <State name= "Default" posX= "1" posY= "1" />
+          <State name= "Pushed"  posX= "1" posY= "21" />
+          <State name= "M_Over"  posX= "1" posY= "41" />
       </Image>
 
       <Image name= "Button_01_Close" width= "15" height= "15">
-          <State name= "Standard" posX= "115" posY= "1" />
-          <State name= "Pushed"   posX= "115" posY= "18" />
-          <State name= "M_Over"   posX= "115" posY= "35" />
+          <State name= "Default" posX= "115" posY= "1" />
+          <State name= "Pushed"  posX= "115" posY= "18" />
+          <State name= "M_Over"  posX= "115" posY= "35" />
       </Image>
 
       <Image name= "Button_01_Down" width= "15" height= "15">
-          <State name= "Standard"   posX= "149" posY= "35" />
+          <State name= "Default" posX= "149" posY= "35" />
       </Image>
 
       <Image name= "ScrollButton_01_Down" width= "10" height= "7">
-          <State name= "Standard"   posX= "166" posY= "101" />
+          <State name= "Default" posX= "166" posY= "101" />
       </Image>
 
       <Image name= "ScrollButton_01_Up" width= "10" height= "7">
-          <State name= "Standard"   posX= "166" posY= "34" />
+          <State name= "Default" posX= "166" posY= "34" />
       </Image>
 
       <Image name= "ScrollButton_02_Down" width= "16" height= "16">
-          <State name= "Standard" posX= "124" posY= "52" />
-          <State name= "Pushed"   posX= "124" posY= "69" />
-          <State name= "M_Over"   posX= "124" posY= "86" />
+          <State name= "Default" posX= "124" posY= "52" />
+          <State name= "Pushed"  posX= "124" posY= "69" />
+          <State name= "M_Over"  posX= "124" posY= "86" />
       </Image>
 
       <Image name= "ScrollButton_02_Up" width= "16" height= "16">
-          <State name= "Standard" posX= "141" posY= "52" />
-          <State name= "Pushed"   posX= "141" posY= "69" />
-          <State name= "M_Over"   posX= "141" posY= "86" />
+          <State name= "Default" posX= "141" posY= "52" />
+          <State name= "Pushed"  posX= "141" posY= "69" />
+          <State name= "M_Over"  posX= "141" posY= "86" />
       </Image>
 
       <Image name= "ScrollButton_02_Left" width= "16" height= "16">
-          <State name= "Standard" posX= "158" posY= "52" />
-          <State name= "Pushed"   posX= "158" posY= "69" />
-          <State name= "M_Over"   posX= "158" posY= "86" />
+          <State name= "Default" posX= "158" posY= "52" />
+          <State name= "Pushed"  posX= "158" posY= "69" />
+          <State name= "M_Over"  posX= "158" posY= "86" />
       </Image>
 
       <Image name= "ScrollButton_02_Right" width= "16" height= "16">
-          <State name= "Standard" posX= "175" posY= "52" />
-          <State name= "Pushed"   posX= "175" posY= "69" />
-          <State name= "M_Over"   posX= "175" posY= "86" />
+          <State name= "Default" posX= "175" posY= "52" />
+          <State name= "Pushed"  posX= "175" posY= "69" />
+          <State name= "M_Over"  posX= "175" posY= "86" />
+      </Image>
+
+      <Image name= "Lines_Button_01" width= "66" height= "48" alpha= "1">
+          <State name= "Default" posX= "204" posY= "1" />
+          <State name= "Pushed"  posX= "204" posY= "50" />
+      </Image>
+
+      <Image name= "Lines_Button_02" width= "66" height= "48" alpha= "1">
+          <State name= "Default" posX= "271" posY= "1" />
+          <State name= "Pushed"  posX= "271" posY= "50" />
+      </Image>
+
+      <Image name= "Lines_Button_03" width= "75" height= "38" alpha= "1">
+          <State name= "Default" posX= "339" posY= "1" />
+          <State name= "Pushed"  posX= "339" posY= "42" />
+      </Image>
+
+      <Image name= "Lines_Button_04" width= "75" height= "39" alpha= "1">
+          <State name= "Default" posX= "415" posY= "1" />
+          <State name= "Pushed"  posX= "415" posY= "41" />
+      </Image>
+
+      <Image name= "Lines_Button_05" width= "52" height= "62" alpha= "1">
+          <State name= "Default" posX= "501" posY= "107" />
+          <State name= "Pushed"  posX= "501" posY= "170" />
+      </Image>
+
+      <Image name= "Lines_Button_06" width= "52" height= "62" alpha= "1">
+          <State name= "Default" posX= "554" posY= "107" />
+          <State name= "Pushed"  posX= "554" posY= "170" />
+      </Image>
+
+      <Image name= "Lines_Button_07" width= "42" height= "72" alpha= "1">
+          <State name= "Default" posX= "501" posY= "233" />
+          <State name= "Pushed"  posX= "501" posY= "306" />
+      </Image>
+
+      <Image name= "Lines_Button_08" width= "42" height= "72" alpha= "1">
+          <State name= "Default" posX= "544" posY= "233" />
+          <State name= "Pushed"  posX= "544" posY= "306" />
+      </Image>
+
+      <Image name= "Status_Player_Buton" width= "209" height= "52" alpha= "1">
+          <State name= "Default" posX= "491" posY= "1" />
+          <State name= "Pushed"  posX= "491" posY= "54" />
       </Image>
 
 </ImageSet>

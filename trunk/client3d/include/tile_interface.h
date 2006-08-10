@@ -19,7 +19,7 @@ You may copy and distribute such a system following the terms of the GNU GPL
 for client3d and the licenses of the other code concerned.
 
 You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+this program; if not, write to the Free Sftware Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
@@ -27,24 +27,36 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef TILE_INTERFACE_H
 #define TILE_INTERFACE_H
 
+#include "define.h"
 #include "Ogre.h"
 
 using namespace Ogre;
 
 class TileInterface
 {
-private:
-    RaySceneQuery* mRaySceneQuery;
-    SceneManager* mSceneManager;
-    Real mDistance;
-    int mX, mZ, mSubtile;
-
 public:
     TileInterface(SceneManager* sceneManager);
     ~TileInterface();
     const Vector3 getSelectedPos();
-    const Vector3 getSelectedTile();
+    const SubPos2D getSelectedTile();
     void pickTile(float mMouseX, float mMouseY);
+
+private:
+    enum
+    {
+        QUADRANT_LEFT,  QUADRANT_TOP,
+        QUADRANT_RIGHT, QUADRANT_BOTTOM,
+    }quadrant;
+    static const unsigned char mSubPosTable[][32];
+    static const unsigned char mWorldPosTable[4][8];
+    RaySceneQuery* mRaySceneQuery;
+    SubPos2D mPos;
+    Vector3 mPosVector;
+    Vector3 mTris[4];
+
+    bool getPickPos(Ray *mouseRay, int quadrant);
+    void fillVectors(int quadrant);
+    Vector3 tileToWorldPos(SubPos2D tile);
 };
 
 #endif

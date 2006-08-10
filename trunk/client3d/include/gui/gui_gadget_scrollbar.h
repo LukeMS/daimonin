@@ -31,6 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include "gui_element.h"
 #include "gui_gadget_button.h"
+#include "gui_listbox.h"
 
 using namespace Ogre;
 
@@ -41,27 +42,48 @@ using namespace Ogre;
 class GuiGadgetScrollbar : public GuiElement
 {
 public:
+    typedef void (Callback) (class GuiListbox *parentElement, int index, float value);
+    enum
+    {
+        BUTTON_H_ADD,
+        BUTTON_H_SUB,
+        SLIDER_H,
+        BUTTON_V_ADD,
+        BUTTON_V_SUB,
+        SLIDER_V
+    };
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent);
+    GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
     ~GuiGadgetScrollbar();
     void draw();
     bool mouseEvent(int MouseAction, int x, int y);
     void resize(int newWidth, int newHeight);
-    void updateSlider(float size);
+    void updateSliderSize(float size);
+    void updateSliderPos(int pos);
+    void setFunction(Callback *c)
+    {
+        mCallFunc = c;
+    }
+    void activated(int index, float value)
+    {
+        if (mCallFunc) mCallFunc((GuiListbox *)mParentElement, index, value);
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    int  mSliderPos, mSliderSize;
+    int  mSliderPos, mSliderSize, mMaxSliderSize, mMaxSliderPos;
     bool mHorizontal;
     bool mMouseOver, mMouseButDown;
     int mStartX, mStopX, mStartY, mStopY;
     uint32 *mGfxBuffer;
     uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
     class GuiGadgetButton *mButScrollUp, *mButScrollDown;
+    void *mParent, *mParentElement;
+    Callback *mCallFunc;
 };
 
 #endif

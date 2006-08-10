@@ -64,55 +64,122 @@
     <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
     <TextBox x= "100" y= "40" font="02" text= "000.0" width = "40" name= "Engine_BestFPS" />
 
-    <Label   x=  "05" y= "55" font="02" text= "Worst FPS:" />
-    <TextBox x= "100" y= "55" font="02" text= "000.0" width = "40" name= "Engine_WorstFPS" />
+    <Label   x=  "05" y= "55" font="00" text= "Worst FPS:" />
+    <TextBox x= "100" y= "55" font="00" text= "000.0" width = "40" name= "Engine_WorstFPS" />
 
     <Label   x=  "05" y= "70" font="02" text= "Triangles:" />
     <TextBox x= "100" y= "70" font="02" text= "0000"  width = "40" name= "Engine_SumTris" />
   </Window>
 
-
-
   <!--#############################################-->
-  <!--WINDOW: Player Statistics                    -->
+  <!--WINDOW: Player info                          -->
   <!--#############################################-->
   <Window name= "PlayerInfo">
+    <Size      width= "348" height= "88" />
+    <Pos       y= "0" zOrder = "50" />
+    <Tooltip  text= "This is the Player Info Window." />
+    <!--=============================================-->
+    <!-- Window Body                                 -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Status_Player">
+      <Pos x= "0" y= "0" />
+      <Range width= "348" height= "88" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Window Tiltle                               -->
+    <!--=============================================-->
+    <Gadget type= "BUTTON"  name = "Buton_info" image_name = "Status_Player_Buton">
+      <Pos x= "70" y= "8" />
+    </Gadget>
+  </Window>
+
+  <!--#############################################-->
+  <!--WINDOW: Player Console                       -->
+  <!--#############################################-->
+  <Window name= "PlayerConsole">
     <!--  values > 0: left/top     alignment  -->
     <!--  values < 0: right/bottom alignment  -->
     <!--  entry completly missing : centered  -->
-    <Size     width= "800" height= "106" />
-    <Pos      y= "-106" zOrder = "250" />
+    <Size     width= "1024" height= "146" />
+    <Pos      x= "0" y= "622" zOrder = "250" />
     <DragArea x= "0" y= "0" width= "0" height= "0" />
-    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
+    <Tooltip  text= "Player console" />
 
     <!--=============================================-->
     <!-- Layer 0                                     -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "PlayerStatusBG">
+    <Graphic type= "GFX_FILL"  image_name = "Lines_Botom_Left">
       <Pos x= "0" y= "0" />
-      <Range width= "800" height= "106" />
+      <Range width= "435" height= "146" />
     </Graphic>
 
-    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "PlayerStatusBar">
-      <Pos x= "347" y= "0" />
-      <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "255" green= "0" blue= "0" alpha = "255" />
+    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "Pilar">
+      <Pos x= "419" y= "7" />
+      <Range width= "44" height= "139" />
+      <!-- Labe xPos/yPos is the offset for the colorfill.                     -->
+      <Label xPos= "0" yPos= "22" red= "255" green= "0" blue= "0" alpha = "255" />
     </Statusbar>
 
-    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerStatusBar">
-      <Pos x= "382" y= "0" />
-      <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "0" green= "255" blue= "0" alpha = "255" />
+    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "Pilar">
+      <Pos x= "470" y= "7" />
+      <Range width= "44" height= "139" />
+      <!-- Labe xPos/yPos is the offset for the colorfill.                       -->
+      <Label xPos= "0" yPos= "22" red= "30" green= "30" blue= "255" alpha = "255" />
     </Statusbar>
 
-    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerStatusBar">
-      <Pos x= "417" y= "0" />
-      <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "255" green= "255" blue= "0" alpha = "255" />
+    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "Pilar">
+      <Pos x= "521" y= "7" />
+      <Range width= "44" height= "139" />
+      <!-- Labe xPos/yPos is the offset for the colorfill.                     -->
+      <Label xPos= "0" yPos= "22" red= "0" green= "255" blue= "0" alpha = "255" />
     </Statusbar>
+
+    <Statusbar type="GFX_FILL" name="Bar_PlayerFood" image_name = "Pilar">
+      <Pos x= "573" y= "7" />
+      <Range width= "44" height= "139" />
+      <!-- Labe xPos/yPos is the offset for the colorfill.                       -->
+      <Label xPos= "0" yPos= "22" red= "255" green= "150" blue= "0" alpha = "255" />
+    </Statusbar>
+
+    <Graphic type= "GFX_FILL"  image_name = "Lines_Botom_Right">
+      <Pos x= "603" y= "0" />
+      <Range width= "435" height= "146" />
+    </Graphic>
+    <!--=============================================-->
+    <!-- Buttons                                     -->
+    <!--=============================================-->
+    <Gadget type= "BUTTON"  name = "Lines_Button_07" image_name = "Lines_Button_07">
+      <Pos x= "51" y= "49" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_05" image_name = "Lines_Button_05">
+      <Pos x= "134" y= "37" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_03" image_name = "Lines_Button_03">
+      <Pos x= "191" y= "31" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_01" image_name = "Lines_Button_01">
+      <Pos x= "271" y= "11" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_02" image_name = "Lines_Button_02">
+      <Pos x= "701" y= "11" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_04" image_name = "Lines_Button_04">
+      <Pos x= "772" y= "31" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_06" image_name = "Lines_Button_06">
+      <Pos x= "852 " y= "37" />
+    </Gadget>
+
+    <Gadget type= "BUTTON"  name = "Lines_Button_08" image_name = "Lines_Button_08">
+      <Pos x= "945" y= "49" />
+    </Gadget>
   </Window>
-
-
 
   <!--#############################################-->
   <!--WINDOW: Message Window                       -->
@@ -172,7 +239,7 @@
 	 <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
 	 <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
 	 <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-	
+
 	 <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
          <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
       </Gadget>
@@ -185,7 +252,7 @@
 	 <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
 	 <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
 	 <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-	
+
 	 <Gadget type= "BUTTON" name = "But_ScrollUp"  image_name = "ScrollButton_02_Left" />
          <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Right"/>
       </Gadget>
@@ -264,7 +331,6 @@
       <Range width= "5" height= "422" />
     </Graphic>
 
-
     <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
       <Pos x= "30" y= "40" />
       <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
@@ -293,7 +359,6 @@
         <Up image_name="ScrollButton_01_Up" />
       </Scroll>
      </Gadget>
-
 
     <!--=============================================-->
     <!-- Layer 1                                     -->
@@ -342,8 +407,6 @@
     <!--=============================================-->
     <!-- Layer 2                                     -->
     <!--=============================================-->
-
-
     <Label   x= "100" y=  "65" font="02" red= "32" green= "64" blue= "128" text= "Enter your Name:" />
     <TextBox x= "100" y=  "85" font="02" text= "" width = "100" name= "Input_Login_Name" />
 
@@ -353,48 +416,5 @@
     <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Verify" />
 
     <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Very" />
-
-
-  </Window>
-
-
- <!--#############################################-->
-  <!--WINDOW: Player Statistics                    -->
-  <!--#############################################-->
-  <Window name= "PlayerInfo">
-    <!--  values > 0: left/top     alignment  -->
-    <!--  values < 0: right/bottom alignment  -->
-    <!--  entry completly missing : centered  -->
-    <Size     width= "800" height= "106" />
-    <Pos      y= "-106" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "0" height= "0" />
-    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
-
-    <!--=============================================-->
-    <!-- Layer 0                                     -->
-    <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "PlayerStatusBG">
-      <Pos x= "0" y= "0" />
-      <Range width= "800" height= "106" />
-    </Graphic>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "PlayerStatusBar">
-      <Pos x= "347" y= "0" />
-      <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "255" green= "0" blue= "0" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "PlayerStatusBar">
-      <Pos x= "382" y= "0" />
-      <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "0" green= "84" blue= "205" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "PlayerStatusBar">
-      <Pos x= "417" y= "0" />
-      <Range width= "35" height= "106" />
-      <Label xPos= "0" yPos= "16" red= "255" green= "255" blue= "0" alpha = "255" />
-    </Statusbar>
-
   </Window>
 </XML>

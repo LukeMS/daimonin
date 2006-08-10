@@ -58,21 +58,20 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         if (!mMouseOver)
         {
             mMouseOver = true;
-            setState(GuiElement::STATE_M_OVER);
+            setState(GuiImageset::STATE_ELEMENT_M_OVER);
             draw();
             GuiManager::getSingleton().setTooltip(mStrTooltip.c_str());
         }
         if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
         {
             mMouseButDown = true;
-            setState(GuiElement::STATE_PUSHED);
+            setState(GuiImageset::STATE_ELEMENT_PUSHED);
             draw();
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
         {
             mMouseButDown = false;
-            setState(GuiElement::STATE_STANDARD);
-            draw();
+            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
             activated();
         }
         return true; // No need to check other gadgets.
@@ -83,8 +82,7 @@ bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
         {
             mMouseOver = false;
             mMouseButDown = false;
-            setState(GuiElement::STATE_STANDARD);
-            draw();
+            setState(GuiImageset::STATE_ELEMENT_DEFAULT);
             GuiManager::getSingleton().setTooltip("");
             return true; // No need to check other gadgets.
         }
@@ -100,13 +98,43 @@ void GuiGadgetButton::draw()
     // ////////////////////////////////////////////////////////////////////
     // Draw gaget.
     // ////////////////////////////////////////////////////////////////////
+    PixelBox src;
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    PixelBox src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
-                       gfxSrcPos[mState].x,
-                       gfxSrcPos[mState].y,
-                       gfxSrcPos[mState].x + mWidth,
-                       gfxSrcPos[mState].y + mHeight));
-    texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+    if (mHasAlpha)
+    {
+        src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                    gfxSrcPos[mState].x,
+                    gfxSrcPos[mState].y,
+                    gfxSrcPos[mState].x + mWidth,
+                    gfxSrcPos[mState].y + mHeight));
+        uint32 *srcData = static_cast<uint32*>(src.data);
+        size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
+        int dSrcY = 0, dDstY =0;
+        for (int y =0; y < mHeight; ++y)
+        {
+            for (int x =0; x < mWidth; ++x)
+            {
+                if (srcData[dSrcY + x] <= 0xffffff) continue;
+                BG_Backup[dDstY + x] = srcData[dSrcY + x];
+            }
+            dSrcY+= (int)rowSkip;
+            dDstY+= mWidth;
+        }
+
+
+        src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+        texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+    }
+    else
+    {
+        src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                    gfxSrcPos[mState].x,
+                    gfxSrcPos[mState].y,
+                    gfxSrcPos[mState].x + mWidth,
+                    gfxSrcPos[mState].y + mHeight));
+        texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+    }
+
     // ////////////////////////////////////////////////////////////////////
     // Draw label.
     // ////////////////////////////////////////////////////////////////////
@@ -120,7 +148,7 @@ void GuiGadgetButton::draw()
         label.y1 = mY+ mLabelYPos;
         label.x2 = label.x1 + mWidth;
         label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
-        if (mState == STATE_PUSHED)
+        if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
         {
             ++label.x1;
             ++label.y1;

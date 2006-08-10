@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "events.h"
 #include "logger.h"
 #include "gui_manager.h"
+#include "network.h"
 #include "object_manager.h"
 #include "object_visuals.h"
 #include "particle_manager.h"
@@ -286,6 +287,7 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_L:
             Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
+            Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
             break;
 
         case KC_W:
@@ -463,8 +465,8 @@ void CEvent::mousePressed (MouseEvent *e)
             pos = TileManager::getSingleton().getTileInterface()->getSelectedPos();
             ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
             // Move the player.
-            pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) pos.x, (int) pos.z);
+            SubPos2D vpos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) vpos.x, (int) vpos.z);
             mIdleTime =0;
         }
     }

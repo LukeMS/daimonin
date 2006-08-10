@@ -38,7 +38,7 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
+GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     {
         { "But_Close",          GUI_BUTTON_CLOSE    },
         { "But_OK",             GUI_BUTTON_OK       },
@@ -65,10 +65,31 @@ GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
         { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
         { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
-
         // Combobox.
         { "ComboBoxTest"      , GUI_COMBOBOX_TEST  },
     };
+
+// Mouse states.
+GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
+{
+    { "Default",  STATE_MOUSE_DEFAULT  },
+    { "Pushed",   STATE_MOUSE_PUSHED   },
+    { "Dragging", STATE_MOUSE_DRAGGING },
+    { "Resizing", STATE_MOUSE_RESIZING },
+    { "PickUp",   STATE_MOUSE_PICKUP   },
+    { "Talk",     STATE_MOUSE_TALK     },
+    { "Attack",   STATE_MOUSE_ATTACK   },
+    { "Cast",     STATE_MOUSE_CAST     },
+};
+
+// GuiElement states.
+GuiImageset::GuiElementNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
+{
+    { "Default",  STATE_ELEMENT_DEFAULT },
+    { "Pushed",   STATE_ELEMENT_PUSHED  },
+    { "M_Over",   STATE_ELEMENT_M_OVER  },
+    { "Passive",  STATE_ELEMENT_PASSIVE },
+};
 
 //================================================================================================
 // .
@@ -83,14 +104,10 @@ GuiImageset::~GuiImageset()
 {
     for (std::vector<GuiSrcEntry*>::iterator i = mvSrcEntry.begin(); i < mvSrcEntry.end(); ++i)
     {
-        for (std::vector<GuiElementState*>::iterator j = (*i)->state.begin(); j < (*i)->state.end(); ++j)
-        {
-            delete (*j);
-        }
-        (*i)->state.clear();
         delete (*i);
     }
     mvSrcEntry.clear();
+	delete mSrcEntryMouse;
 }
 
 //================================================================================================
@@ -102,7 +119,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
     // ////////////////////////////////////////////////////////////////////
     // Check for a working description file.
     // ////////////////////////////////////////////////////////////////////
-    TiXmlElement *xmlRoot, *xmlElem, *xmlState;
+    TiXmlElement *xmlRoot, *xmlElem;
     TiXmlDocument doc(fileImageSet);
     const char *strTemp;
     if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
@@ -118,49 +135,129 @@ void GuiImageset::parseXML(const char *fileImageSet)
     for (xmlElem = xmlRoot->FirstChildElement("Image"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Image"))
     {
         if (!(strTemp = xmlElem->Attribute("name"))) continue;
-        GuiSrcEntry *Entry = new GuiSrcEntry;
-        Entry->name   = strTemp;
-        if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
-        if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
-        // ////////////////////////////////////////////////////////////////////
-        // Parse the Position entries.
-        // ////////////////////////////////////////////////////////////////////
-        for (xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
+        if (!stricmp(strTemp, "MouseCursor"))
         {
-            if (!(strTemp= xmlState->Attribute("name")))  continue;
-            GuiElementState *s = new GuiElementState;
-            s->name = strTemp;
-            s->x = s->y = 0;
-            if ((strTemp= xmlState->Attribute("posX"))) s->x = atoi(strTemp);
-            if ((strTemp= xmlState->Attribute("posY"))) s->y = atoi(strTemp);
-            Entry->state.push_back(s);
+            GuiSrcEntryMouse *Entry = new GuiSrcEntryMouse;
+            if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
+            if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
+            if (parseStates(xmlElem, Entry->state, STATE_MOUSE_SUM))
+                mSrcEntryMouse = Entry;
+            else
+            {
+                mSrcEntryMouse =0;
+                Logger::log().error() << "MouseCursor has no default state and will be ignored.";
+                delete Entry;
+            }
         }
-        mvSrcEntry.push_back(Entry);
+        else // A gui Element.
+        {
+            GuiSrcEntry *Entry = new GuiSrcEntry;
+            Entry->name = strTemp;
+            Entry->alpha =false;
+            if ((strTemp = xmlElem->Attribute("alpha" ))) if (atoi(strTemp)) Entry->alpha =true;
+            if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
+            if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
+            if (parseStates(xmlElem, Entry->state, STATE_ELEMENT_SUM))
+                mvSrcEntry.push_back(Entry);
+            else
+            {
+                Logger::log().warning() << "Element '" << Entry->name << "' has no default state and will be ignored.";
+                delete Entry;
+            }
+        }
     }
-    Logger::log().info() << (int) mvSrcEntry.size() << " Entries were parsed.";
+    Logger::log().info() << (int) mvSrcEntry.size() +1 << " Image Entries were parsed."; // +1 because of mouseCursor.
+    mImageSetImg.load(mStrImageSetGfxFile, "General");
+    mSrcPixelBox = mImageSetImg.getPixelBox();
+
+    // ////////////////////////////////////////////////////////////////////
+    // If requested (by cmd-line) print all element names.
+    // ////////////////////////////////////////////////////////////////////
     if (Option::getSingleton().getIntValue(Option::CMDLINE_LOG_GUI_ELEMENTS))
     {
         Logger::log().info() << "These elements are currently known and can be used in " << FILE_GUI_WINDOWS<< ":";
-        for (int i =0; i < GUI_ELEMENTS_SUM; ++i)
-            Logger::log().warning() << mGuiElementNames[i].name;
+        for (int i =0; i < GUI_ELEMENTS_SUM; ++i) Logger::log().warning() << mGuiElementNames[i].name;
     }
-    mImageSetImg.load(mStrImageSetGfxFile, "General");
-    mSrcPixelBox = mImageSetImg.getPixelBox();
 }
 
 //================================================================================================
-// .
+// Parse the Position entries.
 //================================================================================================
-GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
+bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_state)
+{
+    // By setting the xpos to -1 we declare this state to empty.
+    for (int i=0; i < sum_state; ++i) stateNr[i].x = -1;
+    // Read in the positions for all the states.
+    const char *strTemp;
+    int state;
+    for (TiXmlElement *xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
+    {
+        if (!(strTemp= xmlState->Attribute("name"))) continue;
+        // Compare the found state with the names of all supported states.
+        state = -1;
+        for (int i=0; i < sum_state; ++i)
+        {
+            if (!stricmp(strTemp, mElementState[i].name))
+            {
+                state = i;
+                break;
+             }
+         }
+         if (state < 0)
+         {
+            Logger::log().error() << "Unknown state: " << strTemp;
+            continue;
+         }
+         if ((strTemp= xmlState->Attribute("posX"))) stateNr[state].x = atoi(strTemp);
+         if ((strTemp= xmlState->Attribute("posY"))) stateNr[state].y = atoi(strTemp);
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Every element MUST have at least the default state.
+    // ////////////////////////////////////////////////////////////////////
+    if (stateNr[STATE_ELEMENT_DEFAULT].x < 0) return false;
+    // Set all empty states to the default state.
+    for (int i=1; i < sum_state; ++i)
+    {
+        if (stateNr[i].x  < 0)
+        {
+            stateNr[i].x = stateNr[STATE_ELEMENT_DEFAULT].x;
+            stateNr[i].y = stateNr[STATE_ELEMENT_DEFAULT].y;
+        }
+    }
+    return true;
+}
+
+//================================================================================================
+// Returns the array of the gfx positions for an element.
+//================================================================================================
+GuiImageset::GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage)
 {
     if (guiImage)
     {
         for (unsigned int j = 0; j < mvSrcEntry.size(); ++j)
         {
-            if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str())) return mvSrcEntry[j];
+            if (!stricmp(guiImage, mvSrcEntry[j]->name.c_str()))
+                return mvSrcEntry[j];
         }
     }
     return 0;
+}
+
+
+//================================================================================================
+// After the srcEntry was copied to the guiElement, we dont need it anymore. 
+//================================================================================================
+void GuiImageset::deleteStateGfxPositions(const char* guiImage)
+{
+    // Todo.
+}
+
+//================================================================================================
+// Returns the array of the gfx positions for the mouse-cursor.
+//================================================================================================
+GuiImageset::GuiSrcEntryMouse *GuiImageset::getStateGfxPosMouse()
+{
+    return mSrcEntryMouse;
 }
 
 //================================================================================================

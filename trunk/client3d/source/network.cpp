@@ -24,19 +24,6 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#ifdef WIN32
- #define STRICT
- #include <winsock2.h>
-#else
- #include <sys/socket.h>
- #include <sys/types.h>
- #include <netinet/in.h>
- #include <arpa/inet.h>
- #include <netdb.h>
- #include <errno.h>
- #include <fcntl.h>
-const int SOCKET_ERROR =-1;
-#endif
 #include <string>
 #include "network.h"
 #include "logger.h"
@@ -46,878 +33,135 @@ const int SOCKET_ERROR =-1;
 
 #include "tile_manager.h"
 #include "gui_manager.h"
-
+#include "option.h"
 #define DEBUG_ON
 
+#define DEFAULT_SERVER_PORT 13327
+#define DEFAULT_METASERVER_PORT 13326
+#define DEFAULT_METASERVER "damn.informatik.uni-bremen.de"
+#define PACKAGE_NAME "Daimonin SDL Client"
 int SoundStatus=1;
 
 enum
 {
-    CMD_COMPLETE=1,
-    CMD_VERSION,
-    CMD_DRAW_INFO,
-    CMD_ADD_ME_FAIL,
-    CMD_MAP2,
-    CMD_DRAW_INFO2,
-    CMD_ITEM_X,
-    CMD_SOUND,
-    CMD_TARGET_OBJECT,
-    CMD_UPDATE_ITEM,
-    CMD_DELETE_ITEM,
-    CMD_STATS,
-    CMD_IMAGE,
-    CMD_FACE1,
-    CMD_ANIM,
-    CMD_SKILL_RDY,
-    CMD_SKILL_RDY_PLAYER,
-    CMD_SPELL_LIST,
-    CMD_SKILL_LIST,
-    CMD_GOLEM,
-    CMD_ADD_ME_SUCCSESS,
-    CMD_GOOD_BYE,
-    CMD_SETUP,
-    CMD_HANDLE_QUERY,
-    CMD_DATA,
-
-    CMD_NEW_CHAR,
-    CMD_ITEM_Y,
-    CMD_GROUP,
-    CMD_GROUP_UPDATE,
-    CMD_INTERFACE,
-    CMD_BOOK,
-    CMD_MARK,
-    CMD_SUM
+    BINARY_CMD_COMC = 1,
+    BINARY_CMD_VERSION,
+    BINARY_CMD_DRAWINFO,
+    BINARY_CMD_ADDME_FAIL,
+    BINARY_CMD_MAP2,
+    BINARY_CMD_DRAWINFO2,
+    BINARY_CMD_ITEMX,
+    BINARY_CMD_SOUND,
+    BINARY_CMD_TARGET,
+    BINARY_CMD_UPITEM,
+    BINARY_CMD_DELITEM,
+    BINARY_CMD_STATS,
+    BINARY_CMD_IMAGE,
+    BINARY_CMD_FACE1,
+    BINARY_CMD_ANIM,
+    BINARY_CMD_SKILLRDY,
+    BINARY_CMD_PLAYER,
+    BINARY_CMD_SPELL_LIST,
+    BINARY_CMD_SKILL_LIST,
+    BINARY_CMD_GOLEMCMD,
+    BINARY_CMD_ADDME_SUC,
+    BINARY_CMD_BYE,
+    BINARY_CMD_SETUP,
+    BINARY_CMD_QUERY,
+    BINARY_CMD_DATA,
+    BINARY_CMD_NEW_CHAR,
+    BINARY_CMD_ITEMY,
+    BINARY_CMD_GROUP,
+    BINARY_CMD_INVITE,
+    BINARY_CMD_GROUP_UPDATE,
+    BINARY_CMD_INTERFACE,
+    BINARY_CMD_BOOK,
+    BINARY_CMD_MARK,
+    BINARY_CMD_SUM
 };
-/*
- { "comc", CompleteCmd},
- { "version", (CmdProc) VersionCmd },
- { "drawinfo", (CmdProc) DrawInfoCmd },
- { "addme_failed", (CmdProc) AddMeFail },
- { "map2", Map2Cmd },
-    { "drawinfo2", (CmdProc) DrawInfoCmd2 },
-    { "itemx", ItemXCmd },
-    { "sound", SoundCmd},
-    { "to", TargetObject },
-    { "upditem", UpdateItemCmd },
-    { "delitem", DeleteItem },
-    { "stats", StatsCmd },
-    { "image", ImageCmd },
-    { "face1", Face1Cmd},
-    { "anim", AnimCmd},
-    { "skill_rdy", (CmdProc) SkillRdyCmd },
-    { "player", PlayerCmd },
-    { "splist", SpelllistCmd },
-    { "sklist", SkilllistCmd },
-    { "gc", GolemCmd },
-    { "addme_success", (CmdProc) AddMeSuccess },
-    { "goodbye", (CmdProc) GoodbyeCmd },
-    { "setup", (CmdProc) SetupCmd},
-    { "query", (CmdProc) handle_query},
-    { "data", (CmdProc) DataCmd},
-    { "new_char", (CmdProc) NewCharCmd},
-    { "itemy", ItemYCmd },
-    { "group", GroupCmd },
-    { "group_invite", GroupInviteCmd },
-    { "group_update", GroupUpdateCmd },
-    { "interface", InterfaceCmd },
-    { "book", BookCmd },
-    { "mark", MarkCmd },
-*/
 
-//================================================================================================
-// Check if the username contains any invalid character.
-//================================================================================================
-inline bool is_username_valid(const char *name)
+
+bool Network::GameStatusVersionOKFlag = false;
+bool Network::GameStatusVersionFlag = false;
+bool Network::mInitDone = false;
+int Network::mRequest_file_chain =0;
+
+typedef void (*CmdProc)(unsigned char *, int len);
+
+struct CmdMapping
 {
-    for(int i=0; i< (int)strlen(name); ++i)
-    {
-        if (name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
-            return false;
-    }
-    return true;
-}
+    char  *cmdname;
+    void (*cmdproc)(unsigned char *, int);
+};
 
-//================================================================================================
-// Clear the MeatServer list.
-//================================================================================================
-void Network::clear_metaserver_data(void)
+struct CmdMapping commands[]  =
+    {
+        // Order of this table doesn't make a difference.
+        // I tried to sort of cluster the related stuff together.
+        { "comc",                       Network::CompleteCmd},
+        { "version",          (CmdProc) Network::VersionCmd },
+        { "drawinfo",         (CmdProc) Network::DrawInfoCmd },
+        { "addme_failed",     (CmdProc) Network::AddMeFail },
+        { "map2",                       Network::Map2Cmd },
+        { "drawinfo2",        (CmdProc) Network::DrawInfoCmd2 },
+        { "itemx",                      Network::ItemXCmd },
+        { "sound",                      Network::SoundCmd},
+        { "to",                         Network::TargetObject },
+        { "upditem",                    Network::UpdateItemCmd },
+        { "delitem",                    Network::DeleteItem },
+        { "stats",                      Network::StatsCmd },
+        { "image",                      Network::ImageCmd },
+        { "face1",                      Network::Face1Cmd},
+        { "anim",                       Network::AnimCmd},
+        { "skill_rdy",        (CmdProc) Network::SkillRdyCmd },
+        { "player",                     Network::PlayerCmd },
+        { "splist",                     Network::SpelllistCmd },
+        { "sklist",                     Network::SkilllistCmd },
+        { "gc",                         Network::GolemCmd },
+        { "addme_success",    (CmdProc) Network::AddMeSuccess },
+        { "goodbye",          (CmdProc) Network::GoodbyeCmd },
+        { "setup",            (CmdProc) Network::SetupCmd},
+        { "query",            (CmdProc) Network::handle_query},
+        { "data",             (CmdProc) Network::DataCmd},
+        { "new_char",         (CmdProc) Network::NewCharCmd},
+        { "itemy",                      Network::ItemYCmd },
+        { "group",                      Network::GroupCmd },
+        { "group_invite",               Network::GroupInviteCmd },
+        { "group_update",               Network::GroupUpdateCmd },
+        { "interface",                  Network::InterfaceCmd },
+        { "book",                       Network::BookCmd },
+        { "mark",                       Network::MarkCmd },
+        // unused!
+        { "magicmap",                   Network::MagicMapCmd},
+        { "delinv",                     Network::DeleteInventory }
+    };
+
+
+#define SOCKET_NO -1
+
+bool Network::thread_flag = false;
+//int  Network::mSocket = SOCKET_NO;
+ClientSocket Network::csocket;
+SDL_Thread *Network::socket_thread =0;
+SDL_mutex *Network::read_lock =0;
+SDL_mutex *Network::write_lock =0;
+SDL_mutex *Network::socket_lock =0;
+SDL_cond *Network::socket_cond =0;
+Network::_command_buffer_read *Network::read_cmd_end=NULL;
+Network::_command_buffer_read *Network::read_cmd_start=NULL;
+
+//SockList Network::mInbuf;
+//SockList Network::mOutbuf;
+
+//sockaddr_in mInsock;
+
+// This is really, really a bad implementation.
+//This is still weird test code and need a real code solution.
+void parse_metaserver_data(string strMetaData)
 {
-    while (mServerList.size())
-    {
-        mStructServer *node = mServerList.front();
-        if (node) delete node;
-        mServerList.pop_front();
-    }
-}
-
-//================================================================================================
-// Add a MetaServer to the list.
-//================================================================================================
-void Network::add_metaserver_data(const char *server, int port, int player, const char *ver,
-                                  const char *desc1, const char *desc2, const char *desc3, const char *desc4)
-{
-    mStructServer *node = new mStructServer;
-    mServerList.push_back (node);
-    node->player = player;
-    node->port  = port;
-    node->nameip = server;
-    node->version = ver;
-    node->desc1  = desc1;
-    node->desc2  = desc2;
-    node->desc3  = desc3;
-    node->desc4  = desc4;
-}
-
-//================================================================================================
-// Get ServerName and ServerPort.
-//================================================================================================
-void Network::get_meta_server_data(int num, char *server, int *port)
-{
-    list<mStructServer*>::const_iterator iter;
-    for (iter=mServerList.begin(); num > 0; iter++)
-    {
-        if (iter != mServerList.end()) return;
-        --num;
-    }
-    strcpy(server, (*iter)->nameip.c_str());
-    *port = (*iter)->port;
-}
-
-//================================================================================================
-// Constructor.
-//================================================================================================
-Network::Network()
-{
-    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-}
-
-//================================================================================================
-// Destructor.
-//================================================================================================
-Network::~Network()
-{
-    delete[] mInbuf.buf;
-}
-
-//================================================================================================
-// Sends a reply to the server.  text contains the null terminated string
-// of text to send.  This function basically just packs the stuff up.
-//================================================================================================
-void Network::send_reply(const char *text)
-{
-    char buf[MAXSOCKBUF];
-    sprintf(buf, "reply %s", text);
-    cs_write_string(buf, (int) strlen(buf));
-}
-
-//================================================================================================
-///
-//================================================================================================
-void Network::Update()
-{
-    static char buf[1024];
-    // ////////////////////////////////////////////////////////////////////
-    // Connected:
-    // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() > GAME_STATUS_CONNECT)
-    {
-        if (mSocket == SOCKET_NO)
-        {
-            // connection closed, so we go back to GAME_STATUS_INIT_NET here.
-            if (Option::getSingleton().getGameStatus() == GAME_STATUS_PLAY)
-            {
-                Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-                Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-                mPasswordAlreadyAsked = 0;
-            }
-            else
-            {
-                Option::getSingleton().setGameStatus(GAME_STATUS_START);
-            }
-        }
-        else
-        {
-            DoClient();
-            //request_face(0, 1); // flush face request buffer
-        }
-    }
-
-    if (Option::getSingleton().getGameStatus() == GAME_STATUS_PLAY)
-        return;
-
-    // ////////////////////////////////////////////////////////////////////
-    // Not connected: walk through connection chain and/or wait for action
-    // ////////////////////////////////////////////////////////////////////
-    switch (Option::getSingleton().getGameStatus())
-    {
-        // ////////////////////////////////////////////////////////////////////
-        // Autoinit or reset prg data.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_INIT_NET:
-        clear_metaserver_data();
-        Logger::log().info() << "GAME_STATUS_INIT_NET";
-        Option::getSingleton().setGameStatus(GAME_STATUS_META);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // connect to meta and get server data
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_META:
-        Logger::log().info() << "GAME_STATUS_META";
-        if (!Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME))
-        {
-            add_metaserver_data(
-                Option::getSingleton().getStrValue(Option::CMDLINE_SERVER_NAME),
-                Option::getSingleton().getIntValue(Option::CMDLINE_SERVER_PORT),
-                -1, "user server", "Server from -server '...' command line.", "", "", "");
-        }
-        /*
-              // skip of -nometa in command line or no metaserver set in options
-              if (options.no_meta || !options.metaserver[0])
-              {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Option '-nometa'.metaserver ignored.");
-              }
-              else
-        */
-        {
-            Logger::log().info()
-            << "Query Metaserver " << Option::getSingleton().getIntValue(Option::META_SERVER_NAME)
-            << " on port "         << Option::getSingleton().getIntValue(Option::META_SERVER_PORT);
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"query metaserver...");
-            sprintf(buf, "trying %s:%d", Option::getSingleton().getStrValue(Option::META_SERVER_NAME), Option::getSingleton().getIntValue(Option::META_SERVER_PORT));
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf);
-            if (OpenSocket(Option::getSingleton().getStrValue(Option::META_SERVER_NAME),Option::getSingleton().getIntValue(Option::META_SERVER_PORT)))
-            {
-                read_metaserver_data();
-                CloseSocket();
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"done.");
-            }
-            else
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"metaserver failed! using default list.");
-        }
-        add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"select a server.");
-        Option::getSingleton().setGameStatus(GAME_STATUS_START);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Go into standby.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_START:
-        if (mSocket != SOCKET_NO) CloseSocket();
-        Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Wait for user to select a server.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_WAITLOOP:
-        /*
-               Dialog::getSingleton().setVisible(true);
-              if (TextInput::getSingleton().startCursorSelection(mServerList.size()))
-              {
-                list<mStructServer*>::const_iterator iter = mServerList.begin();
-                for (unsigned int i=0 ; iter != mServerList.end(); ++iter)
-                {
-                  Dialog::getSingleton().setSelText(i++, (*iter)->nameip.c_str());
-                  // Fill the dialog-Info field.
-                  if (i == TextInput::getSingleton().getSelCursorPos())
-                  {
-                    Dialog::getSingleton().setInfoText(0, (*iter)->desc1.c_str());
-                    Dialog::getSingleton().setInfoText(1, (*iter)->desc2.c_str());
-                  }
-                }
-                Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
-              }
-              if (TextInput::getSingleton().wasCanceled())
-              {
-                TextInput::getSingleton().stop();
-                Dialog::getSingleton().setVisible(false);
-                Option::getSingleton().mStartNetwork = false;
-                Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-              }
-              else if (TextInput::getSingleton().wasFinished())
-              {
-                TextInput::getSingleton().stop();
-                Option::getSingleton().mSelectedMetaServer = TextInput::getSingleton().getSelCursorPos();
-                Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
-              }
-              if (TextInput::getSingleton().hasChanged())
-              {
-                list<mStructServer*>::const_iterator iter = mServerList.begin();
-                for (unsigned int i=0 ; i < TextInput::getSingleton().getSelCursorPos(); ++i)
-                {
-                  ++iter;
-                }
-                Dialog::getSingleton().setInfoText(0, (*iter)->version.c_str(), TXT_WHITE);
-                Dialog::getSingleton().setInfoText(1, (*iter)->desc1.c_str());
-                Dialog::getSingleton().setInfoText(2, "");
-                Dialog::getSingleton().setInfoText(3, "");
-                Dialog::getSingleton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
-              }
-        */
-        // Testing: delete me.
-        Option::getSingleton().setIntValue(Option::SEL_META_SEVER, 0);
-        Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Try the selected server.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_STARTCONNECT:
-        Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // This Server was selected in the dialog-window.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_CONNECT:
-        {
-            mGameStatusVersionFlag = false;
-            //      Dialog::getSingleton().clearInfoText();
-            list<mStructServer*>::const_iterator iter = mServerList.begin();
-            for (int i=0 ; i < Option::getSingleton().getIntValue(Option::SEL_META_SEVER); ++i)
-            {
-                ++iter;
-            }
-            if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))
-            {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"connection failed!");
-                Option::getSingleton().setGameStatus(GAME_STATUS_START);
-            }
-            else
-            {
-                Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Connected. exchange version.");
-            }
-        }
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_VERSION:
-        Logger::log().info() << "Send Version";
-        sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
-        cs_write_string(buf, (int)strlen(buf));
-        Option::getSingleton().setGameStatus(GAME_STATUS_WAITVERSION);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_WAITVERSION:
-        Logger::log().info() << "GAME_STATUS_WAITVERSION";
-        // perhaps here should be a timer ???
-        // remember, the version exchange server<->client is asynchron so perhaps
-        // the server send his version faster as the client send it to server.
-        if (mGameStatusVersionFlag) // wait for version answer when needed
-        {
-            // false version!
-            if (!mGameStatusVersionOKFlag)
-            {
-                Option::getSingleton().setGameStatus(GAME_STATUS_START);
-                Logger::log().info() << "GAME_STATUS_START";
-            }
-            else
-            {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"version confirmed.");
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"starting login procedure...");
-                Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
-                Logger::log().info() << "GAME_STATUS_SETUP";
-            }
-        }
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_SETUP:
-        ServerFile::getSingleton().checkFiles();
-        sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
-                " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-                //   SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
-                11, 16,16,
-                ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
-                ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
-                ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),
-                ServerFile::getSingleton().getCRC   (SERVER_FILE_SPELLS),
-                ServerFile::getSingleton().getLength(SERVER_FILE_BMAPS),
-                ServerFile::getSingleton().getCRC   (SERVER_FILE_BMAPS),
-                ServerFile::getSingleton().getLength(SERVER_FILE_SETTINGS),
-                ServerFile::getSingleton().getCRC   (SERVER_FILE_SETTINGS),
-                ServerFile::getSingleton().getLength(SERVER_FILE_ANIMS),
-                ServerFile::getSingleton().getCRC   (SERVER_FILE_ANIMS));
-        cs_write_string(buf, (int)strlen(buf));
-        buf[strlen(buf)] =0;
-        Logger::log().info() << "Send: setup " << buf;
-        mRequest_file_chain = 0;
-        mRequest_file_flags = 0;
-        Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_REQUEST_FILES:
-        Logger::log().info()  << "GAME_STATUS_REQUEST FILES (" << mRequest_file_chain << ")";
-        if (mRequest_file_chain == 0) // check setting list
-        {
-            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SETTINGS)
-                    == SERVER_FILE_STATUS_UPDATE)
-            {
-                mRequest_file_chain = 1;
-                RequestFile(SERVER_FILE_SETTINGS);
-            }
-            else mRequest_file_chain = 2;
-        }
-        else if (mRequest_file_chain == 2) // check spell list
-        {
-            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
-            {
-                mRequest_file_chain = 3;
-                RequestFile(SERVER_FILE_SPELLS);
-            }
-            else
-                mRequest_file_chain = 4;
-        }
-        else if (mRequest_file_chain == 4) // check skill list
-        {
-            if (ServerFile::getSingleton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
-            {
-                mRequest_file_chain = 5;
-                RequestFile(SERVER_FILE_SKILLS);
-            }
-            else
-                mRequest_file_chain = 6;
-        }
-        else if (mRequest_file_chain == 6)
-        {
-            if (ServerFile::getSingleton().getStatus(SERVER_FILE_BMAPS) == SERVER_FILE_STATUS_UPDATE)
-            {
-                mRequest_file_chain = 7;
-                RequestFile(SERVER_FILE_BMAPS);
-            }
-            else
-                mRequest_file_chain = 8;
-        }
-        else if (mRequest_file_chain == 8)
-        {
-            if (ServerFile::getSingleton().getStatus(SERVER_FILE_ANIMS) == SERVER_FILE_STATUS_UPDATE)
-            {
-                mRequest_file_chain = 9;
-                RequestFile(SERVER_FILE_ANIMS);
-            }
-            else
-                mRequest_file_chain = 10;
-        }
-        else if (mRequest_file_chain == 10) // we have all files - start check
-        {
-            mRequest_file_chain++; // this ensure one loop tick and updating the messages
-        }
-        else if (mRequest_file_chain == 11)
-        {
-            // ok... now we check for bmap & anims processing...
-            // TileGfx::getSingleton().read_bmap_tmp();
-            // TileGfx::getSingleton().read_anim_tmp();
-            // load_settings();
-            mRequest_file_chain++;
-        }
-        else if (mRequest_file_chain == 12)
-        {
-            mRequest_file_chain++; // this ensure one loop tick and updating the messages
-        }
-        else if (mRequest_file_chain == 13)
-            Option::getSingleton().setGameStatus(GAME_STATUS_ADDME);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_ADDME:
-        cs_write_string("addme", 5);  // SendAddMe
-        /*
-           map_transfer_flag = 0;
-           cpl.name[0] = 0;
-           cpl.password[0] = 0;
-        */
-        Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
-        // now wait for login request of the server
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Server wants Player name.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_NAME_INIT:
-        // map_transfer_flag = 0;
-        GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
-        GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_NAME, 20, true, true);
-        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_LOOP);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_NAME_LOOP:
-        if (GuiManager::getSingleton().brokenTextInput())
-        {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Break Login.");
-            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, false);
-            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-            Option::getSingleton().setGameStatus(GAME_STATUS_START);
-        }
-        else  if (GuiManager::getSingleton().finishedTextInput())
-        {
-            if (is_username_valid(GuiManager::getSingleton().getTextInput()))
-            {
-                char name_tmp[256];
-
-                //strcpy(cpl.name, InputString);
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                sprintf(name_tmp,"%c%s", GameStatusLogin?'L':'C', GuiManager::getSingleton().getTextInput());
-                Logger::log().info() << "Login: send name" << name_tmp;
-                send_reply(name_tmp);
-                Option::getSingleton().setGameStatus(GAME_STATUS_NAME_WAIT);
-                // now wait again for next server question
-            }
-            else
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-                GuiManager::getSingleton().cancelTextInput();
-                Option::getSingleton().setGameStatus(GAME_STATUS_NAME_INIT);
-            }
-        }
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Server wants Player password.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_PSWD_INIT:
-        GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_PASSWD, 20, true, true);
-        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_LOOP);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_PSWD_LOOP:
-        //map_transfer_flag = 0;
-        if (GuiManager::getSingleton().brokenTextInput())
-        {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"Break Login.");
-            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, false);
-            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-            Option::getSingleton().setGameStatus(GAME_STATUS_START);
-        }
-        else  if (GuiManager::getSingleton().finishedTextInput())
-        {
-            const char *InputString = GuiManager::getSingleton().getTextInput();
-            int strLen = (int) strlen(InputString);
-            if (!GameStatusLogin && (strLen < 6 || strLen > 17))
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
-            }
-            /*
-                            else if (!GameStatusLogin && !strcmp(cpl.name, InputString))
-                            {
-                                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
-                            }
-            */
-            else
-            {
-                Logger::log().info() << "Login: send password <*****>";
-                send_reply(InputString);
-                Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_WAIT);
-            }
-            // now wait again for next server question
-        }
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Server wants Player password AGAIN.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_VRFY_INIT:
-        GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_VERIFY, 20, true, true);
-        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_LOOP);
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_VRFY_LOOP:
-        {
-            //map_transfer_flag = 0;
-            char *InputString = (char*)GuiManager::getSingleton().getTextInput();
-            if (GuiManager::getSingleton().brokenTextInput())
-            {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"Break Login.");
-                GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, false);
-                Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-                Option::getSingleton().setGameStatus(GAME_STATUS_START);
-            }
-            else  if (GuiManager::getSingleton().finishedTextInput())
-            {
-                Logger::log().info() << "Login: send verify password <*****>";
-
-                Logger::log().info() << InputString;
-                send_reply(InputString);
-                Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_WAIT);
-                // now wait again for next server question
-            }
-        }
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // Create a new character.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_NEW_CHAR:
-        Option::getSingleton().setGameStatus(GAME_STATUS_WAITFORPLAY);
-        /*
-               if (Dialog::getSingleton().UpdateNewChar())
-              {
-                CreatePlayerAccount();
-                Option::getSingleton().setGameStatus(GAME_STATUS_WAITFORPLAY);
-              }
-        */
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // .
-        // ////////////////////////////////////////////////////////////////////
-        case  GAME_STATUS_WAITFORPLAY:
-        /*
-              clear_map();
-              map_draw_map_clear();
-              map_udate_flag = 2;
-              map_transfer_flag = 1;
-        */
-        break;
-
-        // ////////////////////////////////////////////////////////////////////
-        // User quits the game.
-        // ////////////////////////////////////////////////////////////////////
-        case GAME_STATUS_QUIT:
-        // map_transfer_flag = 0;
-        break;
-    }
-}
-
-
-
-//================================================================================================
-// Init the network.
-//================================================================================================
-bool Network::Init()
-{
-    Logger::log().headline("Init Network");
-    mSocket = SOCKET_NO;
-    mInbuf.buf = new unsigned char[MAXSOCKBUF+1];
-    mInbuf.buf[0] =0;
-    mInbuf.buf[1] =0;
-    mGameStatusVersionFlag  = false;
-    mGameStatusVersionOKFlag= true;
-    Logger::log().info() << "init socket...";
-    bool status = InitSocket();
-    Logger::log().success(status);
-    return status;
-}
-
-//================================================================================================
-// Check for Winsock.
-//================================================================================================
-inline bool Network::InitSocket()
-{
-#ifdef WIN32
-    mCs_version = 0;
-    mSocketStatusErrorNr = 0;
-    WSADATA w;
-    int error = WSAStartup(0x0101, &w);
-    if (error)
-    {
-        Logger::log().error() << "Init Winsock failed: " << error;
-        return false;
-    }
-    if (w.wVersion != 0x0101)
-    {
-        Logger::log().error() << "Wrong WinSock version!";
-        return false;
-    }
-#endif
-    return true;
-}
-
-//================================================================================================
-// Open a scoket to "host" on "port"
-//================================================================================================
-bool Network::OpenSocket(const char *host, int port)
-{
-    mOpenPort = port;
-    mInbuf.len = 0;
-    sockaddr_in mInsock;
-    mInsock.sin_family = AF_INET;
-    mInsock.sin_port = htons((unsigned short) port);
-    if (isdigit(*host))
-    {
-        mInsock.sin_addr.s_addr = inet_addr(host);
-    }
-    else
-    {
-        struct hostent *mHostbn = gethostbyname(host);
-        if (mHostbn == (struct hostent *) 0)
-        {
-            Logger::log().warning() << "Unknown host: " << host;
-            mSocket = SOCKET_NO;
-            return false;
-        }
-        memcpy(&mInsock.sin_addr, mHostbn->h_addr, mHostbn->h_length);
-    }
-    mCommand_time = 0;
-    mCommand_sent = 0;
-    mCommand_received = 0;
-
-#ifdef WIN32
-    // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail inder xp home.
-    unsigned long temp = 1; // non-block.
-    mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (ioctlsocket(mSocket, FIONBIO, &temp) == -1)
-    {
-        Logger::log().error() << "Error in ioctlsocket(*socket_temp, FIONBIO , &temp)";
-        mSocket = SOCKET_NO;
-        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-        return false;
-    }
-    int error = 0;
-    int retries = 15;
-    while (connect(mSocket, (struct sockaddr *) &mInsock, sizeof(mInsock)) == SOCKET_ERROR)
-    {
-        Sleep(3);
-        if (--retries == 0)
-        {
-            Logger::log().error() << "Connect Error: " << mSocketStatusErrorNr;
-            mSocket = SOCKET_NO;
-            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-            return false;
-        }
-        mSocketStatusErrorNr = WSAGetLastError();
-        if (mSocketStatusErrorNr == WSAEISCONN)  // we have a connect!
-            break;
-        if (mSocketStatusErrorNr == WSAEWOULDBLOCK
-                || mSocketStatusErrorNr == WSAEALREADY
-                ||(mSocketStatusErrorNr == WSAEINVAL && error)) // loop until we finished
-        {
-            error = 1;
-        }
-    }
-#else
-    struct protoent *protox;
-    protox = getprotobyname("tcp");
-    if (!protox)
-    {
-        Logger::log().error() << "Error an getting ProtoByName (tcp)";
-        return false;
-    }
-    mSocket = socket(PF_INET, SOCK_STREAM, protox->p_proto);
-    if (mSocket == -1)
-    {
-        Logger::log().error() << "Init connection: Error on socket command.";
-        mSocket = SOCKET_NO;
-        Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, false);
-        return false;
-    }
-    if (connect(mSocket,(struct sockaddr *)&mInsock,sizeof(mInsock)) ==  SOCKET_ERROR)
-    {
-        Logger::log().error() << "Can't connect to server";
-        return false;
-    }
-    if (fcntl(mSocket, F_SETFL, O_NDELAY) == SOCKET_ERROR)
-    {
-        Logger::log().error() << "InitConnection:  Error on fcntl.\n";
-    }
-#endif
-
-    // ////////////////////////////////////////////////////////////////////
-    // we got a connect here!
-    // ////////////////////////////////////////////////////////////////////
-    int oldbufsize, newbufsize = 65535;
-#ifdef WIN32
-    int buflen = sizeof(int);
-#else
-    socklen_t buflen = sizeof(int);
-#endif
-    if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
-    {
-        oldbufsize = 0;
-    }
-    if (oldbufsize < newbufsize)
-    {
-        if (setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
-        {
-            Logger::log().error() << "InitConnection: setsockopt unable to set output buf size to " << newbufsize;
-            setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
-        }
-    }
-    Logger::log().info() << "Connected to " << host << ":" << port;
-    return true;
-}
-
-//================================================================================================
-// Close a socket.
-//================================================================================================
-bool Network::CloseSocket()
-{
-    if (mSocket == SOCKET_NO)
-    {
-        return true;
-    }
-#ifdef WIN32
-    // seems differents sockets have different way to shutdown connects??
-    // win32 needs this hard way, normally you should wait for a read() == 0...
-    shutdown(mSocket, SD_BOTH);
-    closesocket(mSocket);
-#else
-    close(mSocket);
-#endif
-    mSocket = SOCKET_NO;
-    return true;
-}
-
-//================================================================================================
-// Read data from the metaserver.
-//================================================================================================
-void Network::read_metaserver_data()
-{
-    int stat;
-    char buffer[MAX_METASTRING_BUFFER];
-    string strMetaData ="";
-    while(1)
-    {
-#ifdef WIN32
-        stat = recv (mSocket, buffer, MAX_METASTRING_BUFFER, 0);
-        if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
-        {
-            Logger::log().error()  << "Error reading metaserver data!: " << WSAGetLastError();
-            break;
-        }
-#else
-        do
-        {
-            stat = recv (mSocket, buffer, MAX_METASTRING_BUFFER, 0);
-        }
-        while (stat == -1);
-#endif
-        if(stat == 0)
-        {
-            break;
-        } // connect closed by meta
-        if(stat >  0)
-        {
-            strMetaData += buffer;
-        }
-    }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Parse the metadata.
-    // ////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////
+    /// Parse the metadata.
+    /// ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "GET: " << strMetaData;
     unsigned int startPos=0, endPos;
     string strIP, str1, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
@@ -956,448 +200,807 @@ void Network::read_metaserver_data()
     // Description4.
     strDesc4 = strMetaData.substr(startPos, strMetaData.size()-startPos);
 
-    add_metaserver_data(strName.c_str(), mOpenPort, atoi(strPlayer.c_str()), strVersion.c_str(),
-                        strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
+//    add_metaserver_data(strName.c_str(), mOpenPort, atoi(strPlayer.c_str()), strVersion.c_str(), strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
+
 }
 
-//================================================================================================
-// Takes a string of data, and writes it out to the socket. A very handy
-// shortcut function.
-//================================================================================================
-int Network::cs_write_string(const char *buf, int len)
+
+
+
+#ifndef WIN32
+inline static char *strerror_local(int errnum)
 {
-    static SockList sl;
+#if defined(HAVE_STRERROR)
+    return(strerror(errnum));
+#else
+    return("strerror not implemented");
+#endif
+}
+#endif
+
+Network::Network()
+{}
+
+Network::~Network()
+{}
+
+
+void Network::update()
+{
+   if (!mInitDone) return;
+    _command_buffer_read *cmd;
+    while (1)
+    {
+        if(!read_cmd_start) // we have a filled command?
+            break;
+        cmd = get_read_cmd(); // function has mutex included
+        if(!cmd) break;
+
+        if (!cmd->data[0] || cmd->data[0] >= BINARY_CMD_SUM)
+            Logger::log().error() << "Bad command from server " << cmd->data[0];
+        else
+        {
+            Logger::log().error() << "command #" << commands[cmd->data[0]-1].cmdname << " >" << cmd->data+1 << "<";
+            commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
+        }
+        free_read_cmd(cmd);
+    }
+}
+
+
+void Network::send_command_binary(int cmd, const char *body, int len)
+{
+    SDL_LockMutex(write_lock);
+
+    if(csocket.fd == SOCKET_NO || csocket.outbuf.len + 3 > MAXSOCKBUF)
+    {
+        if(csocket.fd != SOCKET_NO)
+            SOCKET_CloseClientSocket();
+        SDL_UnlockMutex(write_lock);
+        return;
+    }
+    // adjust the buffer
+    if(csocket.outbuf.pos)
+        memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
+
+    csocket.outbuf.pos=0;
+    if(!body)
+    {
+        len = 0x8001;
+
+        csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (len) >> 8) & 0xFF;
+        csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (len)) & 0xFF;
+        csocket.outbuf.buf[csocket.outbuf.len++] = (unsigned char) cmd;
+    }
+    SDL_UnlockMutex(write_lock);
+}
+
+// move a command/buffer to the out buffer so it can be written to the socket
+int Network::send_socklist(SockList msg)
+{
+    SDL_LockMutex(write_lock);
+    if(csocket.fd == SOCKET_NO || csocket.outbuf.len + msg.len > MAXSOCKBUF)
+    {
+        if(csocket.fd != SOCKET_NO)
+            SOCKET_CloseClientSocket();
+        SDL_UnlockMutex(write_lock);
+        return -1;
+    }
+    // adjust the buffer
+    if(csocket.outbuf.pos && csocket.outbuf.len)
+        memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
+
+    csocket.outbuf.pos=0;
+    csocket.outbuf.buf[csocket.outbuf.len++] = (uint8) ((msg.len >> 8) & 0xFF);
+    csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (msg.len)) & 0xFF;
+    memcpy(csocket.outbuf.buf+csocket.outbuf.len, msg.buf, msg.len);
+    csocket.outbuf.len += msg.len;
+    SDL_UnlockMutex(write_lock);
+    return 0;
+}
+
+
+// get a read command from the queue.
+// remove it from queue and return a pointer to it.
+// return NULL if there is no command
+Network::_command_buffer_read *Network::get_read_cmd(void)
+{
+    _command_buffer_read *tmp;
+
+    SDL_LockMutex(read_lock);
+
+    if(!read_cmd_start)
+    {
+        SDL_UnlockMutex(read_lock);
+        return NULL;
+    }
+
+    tmp = read_cmd_start;
+    read_cmd_start = tmp->next;
+    if(read_cmd_end == tmp)
+        read_cmd_end = NULL;
+
+    SDL_UnlockMutex(read_lock);
+
+    return tmp;
+}
+
+// free a read cmd buffer struct and its data tail
+void Network::free_read_cmd(_command_buffer_read *cmd)
+{
+    delete[] cmd->data;
+    delete cmd;
+}
+
+// clear & free the whole read cmd queue
+void Network::clear_read_cmd_queue(void)
+{
+    SDL_LockMutex(read_lock);
+
+    while(read_cmd_start)
+        free_read_cmd(get_read_cmd());
+
+    SDL_UnlockMutex(read_lock);
+}
+
+// write stuff to the socket
+inline void Network::write_socket_buffer(int fd, SockList *sl)
+{
+    if (sl->len == 0)
+        return;
+    int amt;
+    SDL_LockMutex(write_lock);
+    amt = send(fd, (const char*)sl->buf + sl->pos, sl->len, MSG_DONTWAIT);
+
+    // following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
+    // send() with MSG_DONTWAIT under linux can return 0 which means the data
+    // is "queued for transmission". I was not able to find that in the send() man pages...
+    // In my testings it never happend, so i put it here in to have it perhaps triggered in
+    // some server runs (but we should trust perhaps ibm developer infos...).
+
+    if(!amt)
+        amt = sl->len; // as i understand, the data is now internal buffered? So remove it from our write buffer
+
+    if (amt > 0)
+    {
+        sl->pos += amt;
+        sl->len -= amt;
+    }
+    SDL_UnlockMutex(write_lock);
+
+    if (amt < 0) // error
+    {
+#ifdef WIN32 // ***win32 write_socket_buffer: change error handling
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+            return;
+        Logger::log().error() << "New socket write failed (wsb) " << WSAGetLastError();
+        SOCKET_CloseClientSocket();
+#else
+        if (errno == EWOULDBLOCK || errno == EINTR)
+            return;
+        Logger::log().error() << "New socket write failed (wsb " << EAGAIN << ") (" << errno << ": " << strerror_local(errno) << ")";
+        SOCKET_CloseClientSocket();
+#endif
+        return;
+    }
+
+}
+
+// read stuff from socket
+inline int Network::read_socket_buffer(int fd, SockList *sl)
+{
+    int         stat_ret, read_bytes, tmp;
+
+    // calculate how many bytes can be read in one row in our round robin buffer
+    tmp = sl->pos+sl->len;
+
+    // we have still some bytes until we hit our buffer border ?
+    if(tmp >= MAXSOCKBUF)
+    {
+        tmp = tmp-MAXSOCKBUF; // thats our start offset
+        read_bytes = sl->pos - tmp; // thats our free buffer until ->pos
+    }
+    else
+        read_bytes = MAXSOCKBUF-tmp; // tmp is our offset and there is still a bit to read in
+
+    stat_ret = recv(fd, (char*)sl->buf + tmp, read_bytes, MSG_DONTWAIT);
+
+    if (stat_ret > 0)
+        sl->len += stat_ret;
+    else if (stat_ret < 0) // lets check its a real problem
+    {
+#ifdef WIN32
+        if (WSAGetLastError() == WSAEWOULDBLOCK)
+            return 1;
+
+        if (WSAGetLastError() == WSAECONNRESET)
+            Logger::log().error() << "Connection closed by server\n";
+        else
+            Logger::log().error() << "ReadPacket got error " << WSAGetLastError() << " returning 0";
+#else
+        if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+            return 1;
+
+        Logger::log().error() << "ReadPacket got error " << errno << ": " << strerror_local(errno) << "returning 0";
+#endif
+        SOCKET_CloseClientSocket();
+    }
+    else
+        SOCKET_CloseClientSocket();
+
+    return stat_ret;
+}
+
+int Network::socket_thread_loop(void *)
+{
+    while(thread_flag)
+    {
+        // Want a valid socket for the IO loop
+        SDL_LockMutex(socket_lock);
+        if(csocket.fd == SOCKET_NO)
+        {
+            SDL_CondWait(socket_cond, socket_lock);
+            if(!thread_flag)
+            {
+                SDL_UnlockMutex(socket_lock);
+                break;
+            }
+        }
+
+        if(csocket.fd == SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
+        {
+            SDL_Delay(150);
+            SDL_UnlockMutex(socket_lock);
+            continue;
+        }
+
+        if(csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
+            read_socket_buffer(csocket.fd, &csocket.inbuf);
+
+        // lets check we have a valid command
+        while(csocket.inbuf.len >= 2)
+        {
+            _command_buffer_read *tmp;
+            int head_off=2, toread = -1, pos = csocket.inbuf.pos;
+
+            if(csocket.inbuf.buf[pos] & 0x80) // 3 byte length heasder?
+            {
+                if(csocket.inbuf.len > 2)
+                {
+                    head_off = 3;
+
+                    toread = ((csocket.inbuf.buf[pos]&0x7f) << 16);
+                    if(++pos >= MAXSOCKBUF)
+                        pos -= MAXSOCKBUF;
+                    toread += (csocket.inbuf.buf[pos] << 8);
+                    if(++pos >= MAXSOCKBUF)
+                        pos -= MAXSOCKBUF;
+                    toread += csocket.inbuf.buf[pos];
+                }
+
+            }
+            else // 2 size length header
+            {
+                toread = (csocket.inbuf.buf[pos] << 8);
+                if(++pos >= MAXSOCKBUF)
+                    pos -= MAXSOCKBUF;
+                toread += csocket.inbuf.buf[pos];
+            }
+
+            // adjust pos to data start
+            if(++pos >= MAXSOCKBUF)
+                pos -= MAXSOCKBUF;
+
+            // leave collecting commands when we hit an incomplete one
+            if(toread == -1 || csocket.inbuf.len < toread+head_off)
+            {
+                SDL_UnlockMutex(socket_lock);
+                break;
+            }
+
+            tmp = new _command_buffer_read;
+            tmp->data = new uint8[toread + 1];
+            tmp->len = toread;
+            tmp->next = NULL;
+
+            if(pos + toread > MAXSOCKBUF) // splitted data tail?
+            {
+                int tmp_read, read_part;
+
+                read_part = (pos + toread) - MAXSOCKBUF;
+                tmp_read = toread - read_part;
+                memcpy(tmp->data, csocket.inbuf.buf+pos, tmp_read);
+                memcpy(tmp->data+tmp_read, csocket.inbuf.buf, read_part);
+                csocket.inbuf.pos = read_part;
+            }
+            else
+            {
+                memcpy(tmp->data, csocket.inbuf.buf+pos, toread);
+                csocket.inbuf.pos = pos + toread;
+            }
+            tmp->data[tmp->len] = 0; // ensure we have a zero at the end - simple buffer overflow proection
+            csocket.inbuf.len -= toread + head_off;
+
+            SDL_LockMutex(read_lock);
+            // put tmp to the end of our read cmd queue
+            if(!read_cmd_start)
+                read_cmd_start = tmp;
+            else
+                read_cmd_end->next = tmp;
+            read_cmd_end = tmp;
+            SDL_UnlockMutex(read_lock);
+        }
+
+        if(csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
+            write_socket_buffer(csocket.fd, &csocket.outbuf);
+
+        SDL_UnlockMutex(socket_lock);
+
+    }
+
+    return 0;
+}
+
+void Network::socket_thread_start()
+{
+    Logger::log().info() << "START THREAD";
+    thread_flag = true;
+
+    socket_cond = SDL_CreateCond();
+    socket_lock = SDL_CreateMutex();
+    read_lock = SDL_CreateMutex();
+    write_lock = SDL_CreateMutex();
+
+    socket_thread = SDL_CreateThread(socket_thread_loop, NULL);
+    if ( socket_thread == NULL )
+        Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
+}
+
+
+void Network::socket_thread_stop(void)
+{
+    Logger::log().info() << "STOP THREAD";
+
+    if(thread_flag)
+    {
+        thread_flag = false;
+        SDL_CondSignal(socket_cond);
+        SDL_WaitThread(socket_thread, NULL);
+
+        SDL_DestroyCond(socket_cond);
+        SDL_DestroyMutex(socket_lock);
+        SDL_DestroyMutex(read_lock);
+        SDL_DestroyMutex(write_lock);
+    }
+}
+
+
+int Network::SOCKET_GetError()
+{
+#ifdef WIN32
+    return(WSAGetLastError());
+#else
+    return errno;
+#endif
+}
+
+bool Network::SOCKET_CloseSocket()
+{
+    if (csocket.fd == SOCKET_NO)
+        return(true);
+#ifdef WIN32
+    closesocket(csocket.fd);
+#else
+    close(csocket.fd);
+#endif
+    return(true);
+}
+
+bool Network::SOCKET_CloseClientSocket()
+{
+    if (csocket.fd == SOCKET_NO)
+        return true;
+
+    Logger::log().info() << "CloseClientSocket()";
+
+    // No more socket for the IO thread
+    SDL_LockMutex(socket_lock);
+
+    delete[] csocket.inbuf.buf;
+    delete[] csocket.outbuf.buf;
+    csocket.inbuf.buf = csocket.outbuf.buf = NULL;
+    csocket.inbuf.len = 0;
+    csocket.outbuf.len = 0;
+    csocket.inbuf.pos = 0;
+    csocket.outbuf.pos = 0;
+    csocket.fd = SOCKET_NO;
+
+    SDL_CondSignal(socket_cond);
+    SDL_UnlockMutex(socket_lock);
+    return(true);
+}
+
+
+bool Network::Init()
+{
+    if (mInitDone) return true;
+#ifdef WIN32
+    WSADATA w;
+    WORD wVersionRequested = MAKEWORD( 2, 2 );
+    int     error;
+
+    csocket.fd = SOCKET_NO;
+    csocket.cs_version = 0;
+
+    SocketStatusErrorNr = 0;
+    error = WSAStartup(wVersionRequested, &w);
+    if (error)
+    {
+        wVersionRequested = MAKEWORD( 2, 0 );
+        error = WSAStartup(wVersionRequested, &w);
+        if (error)
+        {
+            wVersionRequested = MAKEWORD( 1, 1 );
+            error = WSAStartup(wVersionRequested, &w);
+            if (error)
+            {
+                Logger::log().error() << "Error init starting Winsock: "<< error;
+                return(false);
+            }
+        }
+    }
+    Logger::log().info() <<  "Using socket version " << w.wVersion;
+#endif
+    mInitDone = true;
+    socket_thread_start();
+    return true;
+}
+
+
+bool Network::SOCKET_DeinitSocket()
+{
+    if(csocket.fd != SOCKET_NO)
+        SOCKET_CloseClientSocket();
+
+#ifdef WIN32
+    WSACleanup();
+#endif
+
+    return(true);
+}
+
+bool Network::SOCKET_OpenClientSocket(char *host, int port)
+{
+    int tmp = 1;
+
+    // No more socket for the IO thread
+    SDL_LockMutex(socket_lock);
+
+    if(! SOCKET_OpenSocket(host, port))
+        return false;
+
+    csocket.inbuf.buf = new unsigned char[MAXSOCKBUF];
+    csocket.inbuf.len = 0;
+    csocket.inbuf.pos = 0;
+    csocket.outbuf.buf = new unsigned char[MAXSOCKBUF];
+    csocket.outbuf.len = 0;
+    csocket.outbuf.pos = 0;
+
+    csocket.command_sent = 0;
+    csocket.command_received = 0;
+    csocket.command_time = 0;
+
+    if (setsockopt(csocket.fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
+    {
+        Logger::log().error() << "setsockopt(TCP_NODELAY) failed";
+    }
+
+    // socket available for socket thread
+    SDL_CondSignal(socket_cond);
+    SDL_UnlockMutex(socket_lock);
+
+    return true;
+}
+
+// we used our core connect routine to connect to metaserver, this is the special read one.
+void Network::read_metaserver_data(SOCKET fd)
+{
+    int     stat, temp;
+    char *ptr = new char[MAX_METASTRING_BUFFER];
+    char *buf = new char[MAX_METASTRING_BUFFER];
+    temp = 0;
+    for (; ;)
+    {
+#ifdef WIN32
+        stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
+        {
+            Logger::log().error() << "Error reading metaserver data!: "<< WSAGetLastError();
+            break;
+        }
+        else
+#else
+        do
+        {
+            stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        }
+        while (stat == -1);
+#endif
+        if (stat > 0)
+        {
+            if (temp + stat >= MAX_METASTRING_BUFFER)
+            {
+                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
+                temp += stat;
+                break;
+            }
+            memcpy(buf + temp, ptr, stat);
+            temp += stat;
+        }
+        else if (stat == 0)
+        {
+            // connect closed by meta
+            break;
+        }
+    }
+    buf[temp] = 0;
+    parse_metaserver_data(buf);
+    delete[] ptr;
+    delete[] buf;
+}
+
+#ifdef WIN32
+bool Network::SOCKET_OpenSocket(char *host, int port)
+{
+    int             error;
+    long            temp;
+    struct hostent *hostbn;
+    int             oldbufsize;
+    int             newbufsize = 65535, buflen = sizeof(int);
+    uint32          start_timer;
+    struct linger   linger_opt;
+
+    Logger::log().info() <<  "OpenSocket: "<< host;
+    // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail under xp home.
+
+    csocket.fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    insock.sin_family = AF_INET;
+    insock.sin_port = htons((unsigned short) port);
+
+    if (isdigit(*host))
+        insock.sin_addr.s_addr = inet_addr(host);
+    else
+    {
+        hostbn = gethostbyname(host);
+        if (hostbn == (struct hostent *) NULL)
+        {
+            Logger::log().warning() <<  "Unknown host: "<< host;
+            csocket.fd = SOCKET_NO;
+            return(false);
+        }
+        memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
+    }
+
+    temp = 1;   // non-block
+
+    if (ioctlsocket(csocket.fd, FIONBIO, (u_long*)&temp) == -1)
+    {
+        Logger::log().error() << "ioctlsocket(*socket_temp, FIONBIO , &temp)";
+        csocket.fd = SOCKET_NO;
+        return(false);
+    }
+
+    linger_opt.l_onoff = 1;
+    linger_opt.l_linger = 5;
+    if (setsockopt(csocket.fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+        Logger::log().error() << "BUG: Error on setsockopt LINGER";
+
+    error = 0;
+
+    start_timer = SDL_GetTicks();
+    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
+    {
+        SDL_Delay(3);
+
+        // timeout.... without connect will REALLY hang a long time
+        if (start_timer + SOCKET_TIMEOUT_SEC * 1000 < SDL_GetTicks())
+        {
+            csocket.fd = SOCKET_NO;
+            return(false);
+        }
+
+        SocketStatusErrorNr = WSAGetLastError();
+        if (SocketStatusErrorNr == WSAEISCONN)  // we have a connect!
+            break;
+
+        if (SocketStatusErrorNr == WSAEWOULDBLOCK
+                || SocketStatusErrorNr == WSAEALREADY
+                || (SocketStatusErrorNr == WSAEINVAL && error)) // loop until we finished
+        {
+            error = 1;
+            continue;
+        }
+
+        Logger::log().warning() <<  "Connect Error: " << SocketStatusErrorNr;
+        csocket.fd = SOCKET_NO;
+        return(false);
+    }
+    // we got a connect here!
+
+    if (getsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+        oldbufsize = 0;
+
+    if (oldbufsize < newbufsize)
+    {
+        if (setsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
+        {
+            setsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
+        }
+    }
+
+    Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
+    return(true);
+}
+
+#else
+bool Network::SOCKET_OpenSocket(char *host, int port)
+{
+    unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
+    struct linger       linger_opt;
+
+    // Use new (getaddrinfo()) or old (gethostbyname()) socket API
+#if 1 // small hack until we make it configurable to fix mantis 0000425
+    //#ifndef HAVE_GETADDRINFO
+    struct protoent *protox;
+    struct sockaddr_in  insock;
+
+    Logger::log().info() << "Opening to " << host << " " << port;
+    protox = getprotobyname("tcp");
+
+    if (protox == (struct protoent *) NULL)
+    {
+        Logger::log().error() << "Error on getting prorobyname (tcp)";
+        return false;
+    }
+    csocket.fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
+
+    if (csocket.fd == -1)
+    {
+        Logger::log().error() << "init_connection:  Error on socket command.";
+        csocket.fd = SOCKET_NO;
+        return false;
+    }
+    insock.sin_family = AF_INET;
+    insock.sin_port = htons((unsigned short) port);
+    if (isdigit(*host))
+        insock.sin_addr.s_addr = inet_addr(host);
+    else
+    {
+        struct hostent *hostbn  = gethostbyname(host);
+        if (hostbn == (struct hostent *) NULL)
+        {
+            Logger::log().error() << "Unknown host: " << host;
+            return false;
+        }
+        memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
+    }
+
+    if (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == (-1))
+    {
+        perror("Can't connect to server");
+        return false;
+    }
+#else
+struct addrinfo hints;
+struct addrinfo *res = NULL, *ai;
+char port_str[6], hostaddr[40];
+
+Logger::log().info() << "Opening to "<< host << " " << port;
+snprintf(port_str, sizeof(port_str), "%d", port);
+memset(&hints, 0, sizeof(hints));
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+// Workaround for issue #425 on OSs with broken NIS+ like FC5.
+// This should disable any service lookup
+hints.ai_flags = AI_NUMERICSERV;
+
+if (getaddrinfo(host, port_str, &hints, &res) != 0)
+    return false;
+
+for (ai = res; ai != NULL; ai = ai->ai_next)
+{
+    getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
+    Logger::log().info() << "  trying " << hostaddr;
+
+    csocket.fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+    if (csocket.fd == -1)
+    {
+        csocket.fd = SOCKET_NO;
+        continue;
+    }
+
+    if (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
+    {
+        close(*socket_temp);
+        csocket.fd = SOCKET_NO;
+        continue;
+    }
+
+    break;
+}
+
+freeaddrinfo(res);
+if (csocket.fd == SOCKET_NO)
+{
+    Logger::log().error() << "Can't connect to server";
+    return false;
+}
+#endif
+
+    if (fcntl(csocket.fd, F_SETFL, fcntl(csocket.fd, F_GETFL) | O_NONBLOCK ) == -1)
+    {
+        Logger::log().error() << "socket:  Error on fcntl " << fcntl(csocket.fd, F_GETFL);
+        csocket.fd = SOCKET_NO;
+        return(false);
+    }
+
+    linger_opt.l_onoff = 1;
+    linger_opt.l_linger = 5;
+    if (setsockopt(csocket.fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
+        Logger::log().error() <<  "BUG: Error on setsockopt LINGER";
+
+    if (getsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+        oldbufsize = 0;
+
+    if (oldbufsize < newbufsize)
+    {
+        if (setsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
+        {
+            Logger::log().error() << "socket: setsockopt unable to set output buf size to " << newbufsize;
+            setsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
+        }
+    }
+    return true;
+}
+
+#endif
+
+
+void Network::contactMetaserver()
+{
+    csocket.fd = SOCKET_NO;
+    char buf[256];
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"query metaserver...");
+    sprintf(buf, "trying %s:%d", DEFAULT_METASERVER, DEFAULT_METASERVER_PORT);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
+    if (SOCKET_OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
+    {
+        read_metaserver_data(csocket.fd);
+        SOCKET_CloseSocket();
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"done.");
+    }
+    else
+        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"metaserver failed! using default list.");
+
+//    add_metaserver_data("127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
+//    count_meta_server();
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"select a server.");
+
+}
+
+void Network::SendVersion()
+{
+    char buf[MAX_BUF];
+    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
+    Logger::log().error() << "Send version command: " << buf;
+    cs_write_string(buf, (int)strlen(buf));
+}
+
+int Network::cs_write_string(char *buf, int len)
+{
+    SockList sl;
     sl.len = len;
     sl.buf = (unsigned char *) buf;
     return send_socklist(sl);
-}
-
-//================================================================================================
-///
-//================================================================================================
-int Network::send_socklist(SockList &msg)
-{
-    unsigned char sbuf[2];
-    sbuf[0] = ((unsigned int) (msg.len) >> 8) & 0xFF;
-    sbuf[1] = ((unsigned int) (msg.len)     ) & 0xFF;
-    write_socket(sbuf, 2);
-    return write_socket(msg.buf, msg.len);
-}
-
-//================================================================================================
-// Write socket.
-//================================================================================================
-int Network::write_socket(unsigned char *buf, int len)
-{
-    int amt = 0;
-    unsigned char *pos = buf;
-
-    //LogFile::getSingleton().Error("write socket befehl: %s %d\n",  buf, len);
-    // If we manage to write more than we wanted, take it as a bonus
-    while (len > 0)
-    {
-#ifdef WIN32
-        amt = send(mSocket, (char*)pos, len, 0);
-        if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
-        {
-            Logger::log().error()  << "New socket write failed (wsb) ("  << WSAGetLastError() << ").";
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"SOCKET ERROR: Server write failed.");
-            return -1;
-        }
-        if (amt == 0)
-        {
-            Logger::log().error()  << "Write_To_Socket: No data written out (" << WSAGetLastError() << ").";
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"SOCKET ERROR: No data written out");
-            return -1;
-        }
-#else
-        amt = write(mSocket, pos, len);
-        if (amt < 0)
-        {
-            if (errno==EINTR)
-            {
-                continue;
-            }
-            Logger::log().error() << "New socket (fd=" << mSocket << ") write failed.";
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"SOCKET ERROR: Server write failed.");
-            return -1;
-        }
-#endif
-        len -= amt;
-        pos += amt;
-    }
-    return 0;
-}
-
-//================================================================================================
-///
-//================================================================================================
-void Network::DoClient()
-{
-    const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
-    int             pollret;
-    struct timeval  timeout;
-    fd_set tmp_read, tmp_write, tmp_exceptions;
-
-    FD_ZERO(&tmp_read);
-    FD_ZERO(&tmp_write);
-    FD_ZERO(&tmp_exceptions);
-    FD_SET((unsigned int) mSocket, &tmp_exceptions);
-    FD_SET((unsigned int) mSocket, &tmp_read);
-    FD_SET((unsigned int) mSocket, &tmp_write);
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
-
-    if ((pollret = select(mSocket+ 1, &tmp_read, &tmp_write, &tmp_exceptions, &timeout)) == -1)
-    {
-        Logger::log().error() << "Got on selectcall.";
-        return;
-    }
-    if (!FD_ISSET(mSocket, &tmp_read)) return;
-    int i = read_socket();
-    if (i <= 0)
-    {   // Need to add some better logic here
-        if (i < 0)
-        {
-            Logger::log().error() << "Got error on read socket.";
-            CloseSocket();
-        }
-        return; // Still don't have a full packet
-    }
-
-
-    switch (mInbuf.buf[2])
-    {
-
-        case  CMD_SKILL_RDY_PLAYER:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_RDY_PLAYER (" << (int) mInbuf.buf[2] << ")";
-#endif
-        PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-
-        case  CMD_COMPLETE:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_COMPLETE (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // CompleteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_MAP2:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_MAP2 (" << (int) mInbuf.buf[2] << ")";
-#endif
-        Map2Cmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case  CMD_DRAW_INFO:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DRAWINFO (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // DrawInfoCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case  CMD_DRAW_INFO2:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DRAWINFO2 (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // DrawInfoCmd2(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        /*
-                case  5: // BINARY_CMD_MAP_SCROLL
-        #ifdef DEBUG_ON
-                Logger::log().info() << "command: BINARY_CMD_MAP_SCROLL (" << (int) mInbuf.buf[2] << ")";
-        #endif
-                // map_scrollCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-                break;
-        */
-        case  CMD_ITEM_X:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ITEMX (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // ItemXCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case  CMD_SOUND:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SOUND (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // SoundCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case  CMD_TARGET_OBJECT:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_TARGET (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // TargetObject(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case  CMD_UPDATE_ITEM:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_UPITEM (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // UpdateItemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_DELETE_ITEM:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DELITEM (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // DeleteItem(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_STATS:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_STATS (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // StatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_IMAGE:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_IMAGE (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // ImageCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_FACE1:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_FACE1 (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // Face1Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_ANIM:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ANIM (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // AnimCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_SKILL_RDY:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SKILLRDY (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // SkillRdyCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        /*
-                case 16: // BINARY_CMD_PLAYER
-        #ifdef DEBUG_ON
-                Logger::log().info() << "command: BINARY_CMD_PLAYER (" << (int) mInbuf.buf[2] << ")";
-        #endif
-                //Dialog::getSingleton().setVisible(false);
-                PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-                break;
-                case 17: // BINARY_CMD_MAPSTATS
-        #ifdef DEBUG_ON
-                Logger::log().info() << "command: BINARY_CMD_MAPSTATS (" << (int) mInbuf.buf[2] << ")";
-        #endif
-                // MapstatsCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-                break;
-        */
-        case CMD_SPELL_LIST:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SPELL_LIST (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // SpelllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_SKILL_LIST:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SKILL_LIST (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // SkilllistCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_GOLEM:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_GOLEMCMD (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // GolemCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_ADD_ME_SUCCSESS:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ADDME_SUC (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // AddMeSuccess(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_ADD_ME_FAIL:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ADDME_FAIL (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // AddMeFail(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_VERSION:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_VERSION (" << (int) mInbuf.buf[2] << ")";
-#endif
-        VersionCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_GOOD_BYE:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_BYE (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // GoodbyeCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_SETUP:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_SETUP (" << (int) mInbuf.buf[2] << ")";
-#endif
-        SetupCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_HANDLE_QUERY: // BINARY_CMD_QUERY
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_QUERY (" << (int) mInbuf.buf[2] << ")";
-#endif
-        HandleQuery((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_DATA:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_DATA (" << (int) mInbuf.buf[2] << ")";
-#endif
-        DataCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_NEW_CHAR:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_NEW_CHAR (" << (int) mInbuf.buf[2] << ")";
-#endif
-        NewCharCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_ITEM_Y:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_ITEMY (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // ItemYCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_GROUP:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_GROUP (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // GroupCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        case CMD_GROUP_UPDATE:
-#ifdef DEBUG_ON
-        Logger::log().info() << "command: BINARY_CMD_INVITE (" << (int) mInbuf.buf[2] << ")";
-#endif
-        // GroupInviteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-        break;
-        /*
-                case 32: // BINARY_CMD_GROUP_UPDATE
-        #ifdef DEBUG_ON
-                Logger::log().info() << "command: BINARY_CMD_GROUP_UPDATE (" << (int) mInbuf.buf[2] << ")";
-        #endif
-                // GroupUpdateCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
-                break;
-        */
-        default: // ERROR
-        Logger::log().info() << "command: <UNKNOWN> (" << (int) mInbuf.buf[2] << ")";
-        break;
-    }
-    mInbuf.len =0;
-}
-
-//================================================================================================
-// read socket.
-// We make the assumption the buffer is at least 2 bytes long.
-//================================================================================================
-int Network::read_socket()
-{
-    int stat, toread, readsome = 0;
-    // We already have a partial packet
-    if (mInbuf.len < 2)
-    {
-#ifdef WIN32
-        stat=recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0);
-        if (stat<0)
-        {
-            if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
-            {
-                Logger::log().error()  << "ReadPacket got error " << WSAGetLastError() << ", returning -1\n";
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Lost or bad server connection.");
-                return -1;
-            }
-            return 0;
-        }
-#else
-        do
-        {
-            stat=recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0);
-        }
-        while ((stat==-1) && (errno==EINTR));
-        if (stat<0)
-        {
-            // In non blocking mode, EAGAIN is set when there is no data available.
-            if (errno!=EAGAIN && errno!=EWOULDBLOCK)
-            {
-                Logger::log().error()  << "ReadPacket got error " << errno
-                << "%d, returning 0";
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Lost or bad server connection.");
-                return -1;
-            }
-            return 0;
-        }
-#endif
-        if (stat==0)
-        {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
-            return -1;
-        }
-        mInbuf.len += stat;
-        if (stat < 2)
-        {
-            return 0;
-        } // Still don't have a full packet
-        readsome = 1;
-    }
-    // Figure out how much more data we need to read.  Add 2 from the
-    // end of this - size header information is not included.
-    toread = 2 + (mInbuf.buf[0] << 8) + mInbuf.buf[1] - mInbuf.len;
-    if ((toread + mInbuf.len) > MAXSOCKBUF)
-    {
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
-        Logger::log().error() << "SockList_ReadPacket: Want to read more bytes than will fit in buffer.";
-        // return error so the socket is closed
-        return -1;
-    }
-    do
-    {
-#ifdef WIN32
-        stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0);
-        if (stat<0)
-        {
-            if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
-            {
-#else
-        do
-        {
-            stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0);
-        }
-        while ((stat<0) && (errno==EINTR));
-        if (stat<0)
-        {
-            if (errno!=EAGAIN && errno!=EWOULDBLOCK)
-            {
-#endif
-                Logger::log().error()   << "ReadPacket got error " << errno  << ", returning 0";
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Lost or bad server connection.");
-                return -1;
-            }
-            return 0;
-        }
-        if (stat==0)
-        {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
-            return -1;
-        }
-        mInbuf.len += stat;
-        toread -= stat;
-        if (toread == 0)
-        {
-            return 1;
-        }
-        if (toread < 0)
-        {
-            Logger::log().error() << "SockList_ReadPacket: Read more bytes than desired.";
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"WARNING: Server read package error.");
-            return -1;
-        }
-    }
-    while (toread > 0);
-    return 0;
-}
-
-//================================================================================================
-// Request a file from server.
-//================================================================================================
-void Network::RequestFile(int index)
-{
-    char buf[MAX_BUF];
-    sprintf(buf, "rf %d", index);
-    cs_write_string(buf, (int)strlen(buf));
 }

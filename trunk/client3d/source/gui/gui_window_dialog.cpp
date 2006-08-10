@@ -644,7 +644,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
                     // better to live with this little glitch as to destroy perhaps the text format.
 
                     strcpy(gui_int->message.lines[++gui_int->message.line_count], &tmp_line[ii+1]);
-                    c = strlen(gui_int->message.lines[gui_int->message.line_count]);
+                    c = (int) strlen(gui_int->message.lines[gui_int->message.line_count]);
                 }
 //    else
                 {
@@ -703,7 +703,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
                     // better to live with this little glitch as to destroy perhaps the text format.
 
                     strcpy(gui_int->reward.lines[++gui_int->reward.line_count], &tmp_line[ii+1]);
-                    c = strlen(gui_int->reward.lines[gui_int->reward.line_count]);
+                    c = (int) strlen(gui_int->reward.lines[gui_int->reward.line_count]);
                 }
 //                else
                 {
