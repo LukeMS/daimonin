@@ -73,11 +73,13 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
         {
             if (!strcmp(xmlOpt->Attribute("name"), "List_Msg_VScroll"))
             {
-                mScrollBarV = new GuiGadgetScrollbar(xmlOpt, parent);
-            }
+                mScrollBarV= new GuiGadgetScrollbar(xmlOpt, mParent, this);
+                mScrollBarV->setFunction(this->scrollbarAction);
+	    }
             else if (!strcmp(xmlOpt->Attribute("name"), "List_Msg_HScroll"))
             {
-                mScrollBarH = new GuiGadgetScrollbar(xmlOpt, parent);
+                mScrollBarH= new GuiGadgetScrollbar(xmlOpt, mParent, this);
+                mScrollBarH->setFunction(this->scrollbarAction);
             }
         }
     }
@@ -92,6 +94,15 @@ GuiListbox::~GuiListbox()
     if (mScrollBarV) delete mScrollBarV;
     if (mScrollBarH) delete mScrollBarH;
 }
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiListbox::scrollbarAction(GuiListbox *me, int index, float scroll)
+{
+    Logger::log().error() << "Scroll reported:  " << index << "  " << scroll;
+}
+
 
 //================================================================================================
 // Add a line of text to the ring-buffer.
@@ -208,7 +219,7 @@ void GuiListbox::draw()
         if (mScrollBarV)
         {
             if (mActLines < SIZE_STRING_BUFFER) ++mActLines;
-            mScrollBarV->updateSlider((float)mRowsToPrint / (float)mActLines);
+            mScrollBarV->updateSliderSize((float)mRowsToPrint / (float)mActLines);
         }
     }
 }

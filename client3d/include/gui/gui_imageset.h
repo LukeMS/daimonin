@@ -27,9 +27,9 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_IMAGESET_H
 #define GUI_IMAGESET_H
 
-#include <vector>
 #include <tinyxml.h>
 #include <Ogre.h>
+#include <vector>
 
 using namespace Ogre;
 
@@ -71,28 +71,6 @@ enum {
     GUI_ELEMENTS_SUM
 };
 
-typedef struct
-{
-    String name;
-    short x, y;
-}
-GuiElementState;
-
-typedef struct
-{
-    String name;
-    int width, height;
-    std::vector<GuiElementState*>state;
-}
-GuiSrcEntry;
-
-typedef struct
-{
-    const char *name;
-    unsigned int index;
-}
-GuiElementNames;
-
 /**
  ** This singleton class stores the graphic positions of all gui elements.
  ** All graphics are stored in a single gfx-file.
@@ -101,6 +79,61 @@ GuiElementNames;
 class GuiImageset
 {
 public:
+    typedef struct
+    {
+        const char *name;
+        unsigned int index;
+    }
+    GuiElementNames;
+
+    /** Actual state of the mouse cursor: **/
+    enum
+    {
+        STATE_MOUSE_DEFAULT,  /**< Default. **/
+        STATE_MOUSE_PUSHED,   /**< Any button down. **/
+        STATE_MOUSE_DRAGGING, /**< Dragging in action. **/
+        STATE_MOUSE_RESIZING, /**< Resizing a window. **/
+        STATE_MOUSE_PICKUP,
+        STATE_MOUSE_TALK,
+        STATE_MOUSE_ATTACK,
+        STATE_MOUSE_CAST,
+        STATE_MOUSE_SUM
+    };
+    static GuiElementNames mMouseState[STATE_MOUSE_SUM];
+
+    /** Actual state of an GuiElement: **/
+    enum
+    {
+        STATE_ELEMENT_DEFAULT,
+        STATE_ELEMENT_PUSHED,
+        STATE_ELEMENT_M_OVER,  /**< Mouse over. **/
+        STATE_ELEMENT_PASSIVE, /**< Disabled. **/
+        STATE_ELEMENT_SUM
+    };
+    static GuiElementNames mElementState[STATE_ELEMENT_SUM];
+
+    typedef struct
+    {
+        short x, y;
+    }gfxPos;
+
+    typedef struct
+    {
+        String name;
+        int width, height;
+        bool alpha;
+        gfxPos state[STATE_ELEMENT_SUM];
+    }
+    GuiSrcEntry;
+
+    typedef struct
+    {
+        int width, height;
+        bool alpha;
+        gfxPos state[STATE_MOUSE_SUM];
+    }
+    GuiSrcEntryMouse;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -110,6 +143,8 @@ public:
     }
     void parseXML(const char *XML_imageset_file);
     GuiSrcEntry *getStateGfxPositions(const char* guiImage);
+    void deleteStateGfxPositions(const char* guiImage);
+    GuiSrcEntryMouse *getStateGfxPosMouse();
     PixelBox &getPixelBox()
     {
         return mSrcPixelBox;
@@ -121,6 +156,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
+    GuiSrcEntryMouse *mSrcEntryMouse;
     std::vector<GuiSrcEntry*>mvSrcEntry;
     String mStrImageSetGfxFile;
     Image mImageSetImg;
@@ -132,7 +168,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     GuiImageset();
     ~GuiImageset();
-    GuiImageset(const GuiImageset&); // disable copy-constructor.
+    GuiImageset(const GuiImageset&); // disable copy-constructor
+    bool parseStates(TiXmlElement *xmlElem, gfxPos *Entry, int sum_state);
 };
 
 #endif

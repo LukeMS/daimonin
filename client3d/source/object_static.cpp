@@ -40,14 +40,15 @@ SceneManager *ObjectStatic::mSceneMgr =0;
 //================================================================================================
 void ObjectStatic::freeRecources()
 {
-    if (mAnim) delete mAnim;
 }
 
 //================================================================================================
 // Destructor.
 //================================================================================================
 ObjectStatic::~ObjectStatic()
-{}
+{
+    delete mAnim;
+}
 
 //================================================================================================
 // Init the object.
@@ -106,7 +107,6 @@ ObjectStatic::ObjectStatic(sObject &obj)
         mNode->showBoundingBox(true);
     }
 
-
     // Create the animations.
     mAnim = new ObjectAnimate(mEntity);
 }
@@ -136,7 +136,8 @@ SubPos2D ObjectStatic::getTileScrollPos()
     TileManager::getSingleton().getMapScroll(pos.x, pos.z);
     pos.x+= mActPos.x;
     pos.z+= mActPos.z;
-    pos.subPos = 0;
+    pos.subX =0;
+    pos.subZ =0;
     return pos;
 }
 

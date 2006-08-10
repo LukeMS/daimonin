@@ -61,9 +61,9 @@ public:
 
     const char *getText();
 private:
-    GuiSrcEntry *srcButton;
-    GuiSrcEntry *srcScrollbarUp;
-    GuiSrcEntry *srcScrollbarDown;
+    GuiImageset::GuiSrcEntry *srcButton;
+    GuiImageset::GuiSrcEntry *srcScrollbarUp;
+    GuiImageset::GuiSrcEntry *srcScrollbarDown;
     uint32 *mGfxBuffer;
 	int mAction;
     int mFontHeight;

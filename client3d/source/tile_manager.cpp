@@ -72,7 +72,7 @@ void TileManager::freeRecources()
 //================================================================================================
 void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
 {
-    Logger::log().headline("Init TileEngine:");
+    Logger::log().headline("Init TileEngine");
     mSceneManager = SceneMgr;
     mTileTextureSize = tileTextureSize;
     mGrid = false;
@@ -100,7 +100,7 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
     // Init is done.
     // ////////////////////////////////////////////////////////////////////
     Logger::log().info() << "Init done.";
-    Logger::log().headline("Starting TileEngine:");
+    Logger::log().headline("Starting TileEngine");
 }
 
 //================================================================================================

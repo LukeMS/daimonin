@@ -127,10 +127,10 @@ void GuiGadgetCombobox::draw()
     if (srcButton)
     {
         PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
-                              srcButton->state[0]->x,
-                              srcButton->state[0]->y,
-                              srcButton->state[0]->x + srcButton->width,
-                              srcButton->state[0]->y + srcButton->height));
+                              srcButton->state[0].x,
+                              srcButton->state[0].y,
+                              srcButton->state[0].x + srcButton->width,
+                              srcButton->state[0].y + srcButton->height));
         texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcButton->width, mY, mX + mWidth, mY + mEntryHeight));
     }
 
@@ -164,10 +164,10 @@ void GuiGadgetCombobox::draw()
             if (srcScrollbarUp)
             {
                 PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
-                                      srcScrollbarUp->state[0]->x,
-                                      srcScrollbarUp->state[0]->y,
-                                      srcScrollbarUp->state[0]->x + srcScrollbarUp->width,
-                                      srcScrollbarUp->state[0]->y + srcScrollbarUp->height));
+                                      srcScrollbarUp->state[0].x,
+                                      srcScrollbarUp->state[0].y,
+                                      srcScrollbarUp->state[0].x + srcScrollbarUp->width,
+                                      srcScrollbarUp->state[0].y + srcScrollbarUp->height));
                 texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcScrollbarUp->width, mY + mEntryHeight, mX + mWidth, mY + mEntryHeight + srcScrollbarUp->height));
 
                 label.x2 -= srcScrollbarUp->width;
@@ -175,10 +175,10 @@ void GuiGadgetCombobox::draw()
             if (srcScrollbarDown)
             {
                 PixelBox srcbtn = mSrcPixelBox->getSubVolume(Box(
-                                      srcScrollbarDown->state[0]->x,
-                                      srcScrollbarDown->state[0]->y,
-                                      srcScrollbarDown->state[0]->x + srcScrollbarDown->width,
-                                      srcScrollbarDown->state[0]->y + srcScrollbarDown->height));
+                                      srcScrollbarDown->state[0].x,
+                                      srcScrollbarDown->state[0].y,
+                                      srcScrollbarDown->state[0].x + srcScrollbarDown->width,
+                                      srcScrollbarDown->state[0].y + srcScrollbarDown->height));
                 texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcScrollbarDown->width, mY + mEntryHeight + mViewport - srcScrollbarDown->height, mX + mWidth, mY + mEntryHeight + mViewport));
             }
         }
@@ -217,7 +217,7 @@ void GuiGadgetCombobox::draw()
 
 bool GuiGadgetCombobox::setState(int state)
 {
-    if ( mState != state && mState == STATE_PUSHED)
+    if ( mState != state && mState == GuiImageset::STATE_ELEMENT_PUSHED)
     {
         if ( mActiveDropdownOption != -1 )
         {

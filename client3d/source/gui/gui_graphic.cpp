@@ -55,61 +55,93 @@ void GuiGraphic::draw()
     // ////////////////////////////////////////////////////////////////////
     if (mStrType == "GFX_FILL")
     {
-        int x1, y1, x2, y2;
-        PixelBox src;
-        bool dirty = true;
-        int sumX = (mWidth-1)  / mSrcWidth  + 1;
-        int sumY = (mHeight-1) / mSrcHeight + 1;
-        y1 = 0; y2 = mSrcHeight;
-
-        for (int y = 0; y < sumY; ++y)
+        // ////////////////////////////////////////////////////////////////////
+        // The gfx has alpha.
+        // TODO: Repeat the gfx, if the gfx is bigger than the src gfx.
+        //       Remember: BG_Backup has the size of the src image.
+        // ////////////////////////////////////////////////////////////////////
+        if (mHasAlpha)
         {
-            if (dirty)
+/*
+            src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
+                        gfxSrcPos[mState].x,
+                        gfxSrcPos[mState].y,
+                        gfxSrcPos[mState].x + mSrcWidth,
+                        gfxSrcPos[mState].y + mSrcHeight));
+            uint32 *srcData = static_cast<uint32*>(src.data);
+            size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
+            int dSrcY = 0, dDstY =0;
+            for (int y =0; y < mSrcHeight; ++y)
             {
-                src = mSrcPixelBox->getSubVolume(Box(
+                for (int x =0; x < mSrcWidth; ++x)
+                {
+                    if (srcData[dSrcY + x] <= 0xffffff) continue;
+                    BG_Backup[dDstY + x] = srcData[dSrcY + x];
+                }
+                dSrcY+= rowSkip;
+                dDstY+= mSrcWidth;
+            }
+            src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
+            texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mSrcWidth, mY + mSrcHeight));
+*/
+        }
+        // ////////////////////////////////////////////////////////////////////
+        // The gfx has no alpha.
+        // If the gfx is bigger than the source image, just repeat the gfx.
+        // TODO: This needs a cleanup & speedup.
+        // ////////////////////////////////////////////////////////////////////
+        else
+        {
+            int x1, y1, x2, y2;
+            PixelBox src;
+            bool dirty = true;
+            int sumX = (mWidth-1)  / mSrcWidth  + 1;
+            int sumY = (mHeight-1) / mSrcHeight + 1;
+            y1 = 0; y2 = mSrcHeight;
+
+            for (int y = 0; y < sumY; ++y)
+            {
+                if (dirty)
+                {
+                    src = mSrcPixelBox->getSubVolume(Box(
                                                      gfxSrcPos[mState].x,
                                                      gfxSrcPos[mState].y,
                                                      gfxSrcPos[mState].x + mSrcWidth,
                                                      gfxSrcPos[mState].y + mSrcHeight));
-                dirty = false;
-            }
-            if (y2 > mHeight)
-            {
-                y2 = mHeight;
-                if (y1 > mHeight) y1 = mHeight-1;
-                dirty = true;
-            }
-            x1 = 0; x2 = mSrcWidth;
-            for (int x = 0; x < sumX; ++x)
-            {
-                if (x2 > mWidth)
+                    dirty = false;
+                }
+                if (y2 > mHeight)
                 {
-                    x2 = mWidth;
-                    if (x1 >= x2) x1 = x2-1;
+                    y2 = mHeight;
+                    if (y1 > mHeight) y1 = mHeight-1;
                     dirty = true;
                 }
-                if (dirty)
+                x1 = 0; x2 = mSrcWidth;
+                for (int x = 0; x < sumX; ++x)
                 {
-                    src = mSrcPixelBox->getSubVolume(Box(
+                    if (x2 > mWidth)
+                    {
+                        x2 = mWidth;
+                        if (x1 >= x2) x1 = x2-1;
+                        dirty = true;
+                    }
+                    if (dirty)
+                    {
+                        src = mSrcPixelBox->getSubVolume(Box(
                                                          gfxSrcPos[mState].x,
                                                          gfxSrcPos[mState].y,
                                                          gfxSrcPos[mState].x + x2-x1,
                                                          gfxSrcPos[mState].y + y2-y1));
+                    }
+                    texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
+                    x1 = x2;
+                    x2+= mSrcWidth;
                 }
-                texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
-                x1 = x2;
-                x2+= mSrcWidth;
+                y1 = y2;
+                y2+= mSrcHeight;
             }
-            y1 = y2;
-            y2+= mSrcHeight;
         }
     }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Fill background rect without destroying the previrious layer.
-    // ////////////////////////////////////////////////////////////////////
-    else if (mStrType == "GFX_ALPHA_FILL")
-    {}
     // ////////////////////////////////////////////////////////////////////
     // Fill background rect with a color.
     // ////////////////////////////////////////////////////////////////////

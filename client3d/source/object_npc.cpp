@@ -97,13 +97,12 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
         Vector3 pos = mNode->getPosition();
         Event->setWorldPos(pos, 0, 0, CEvent::WSYNC_MOVE);
     }
-    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
     mCursorTurning =0;
     mAutoTurning = TURN_NONE;
     mAutoMoving = false;
     mEnemyNode = 0;
     mAttacking = ATTACK_NONE;
-
     // mNode->showBoundingBox(true); // Remove Me!!!!
 }
 
@@ -194,7 +193,7 @@ void ObjectNPC::update(const FrameEvent& event)
 
     if (mAutoTurning)
     {
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
         Real delta = event.timeSinceLastFrame * TURN_SPEED;
         if (mAutoTurning == TURN_RIGHT)
         {
@@ -227,7 +226,7 @@ void ObjectNPC::update(const FrameEvent& event)
     else if (mAutoMoving)
     {
         // We are very close to destination.
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0);
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true);
         Vector3 dist = mWalkToPos - mNode->getPosition();
         dist.y =0;
         if(dist.squaredLength() < WALK_PRECISON)
@@ -255,7 +254,7 @@ void ObjectNPC::update(const FrameEvent& event)
                 if (!aabb.isNull())
                 {
                     if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
-                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
                     mAutoMoving = false;
                 }
             }
@@ -362,7 +361,7 @@ void ObjectNPC::moveToNeighbourTile()
 {
     if ((mActPos.x == mDestWalkPos.x) && (mActPos.z == mDestWalkPos.z))
     {
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0);
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
         mAutoMoving = false;
         return;
     }

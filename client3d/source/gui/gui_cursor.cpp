@@ -52,7 +52,7 @@ GuiCursor::~GuiCursor()
 //================================================================================================
 void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight, int scale)
 {
-    mState = STATE_STANDARD;
+    mState = GuiImageset::STATE_MOUSE_DEFAULT;
     mWidth = w;
     mHeight= h;
     mScale = scale;
@@ -102,12 +102,13 @@ void GuiCursor::setPos(Real x, Real y)
     mElement->setTop (y);
     mElement->setLeft(x);
 }
+
 //================================================================================================
 // .
 //================================================================================================
-void GuiCursor::setState(int state)
+void GuiCursor::setState(unsigned int state)
 {
-    if (state < STATE_SUM)
+    if (state < GuiImageset::STATE_MOUSE_SUM && mState != state)
     {
         mState = state;
         draw();
@@ -117,20 +118,9 @@ void GuiCursor::setState(int state)
 //================================================================================================
 // .
 //================================================================================================
-void GuiCursor::setStateImagePos(std::string name, int x, int y)
+void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
 {
-    int state = -1;
-    if      (name == "Standard")   state = STATE_STANDARD;
-    else if (name == "Pressed")    state = STATE_PRESSED;
-    else if (name == "Dragging")   state = STATE_DRAGGING;
-    else if (name == "Resizing")   state = STATE_RESIZING;
-    if (state < 0)
-    {
-        Logger::log().error() << "MouseCursor has no State '" << name << "!";
-        return;
-    }
-    gfxSrcPos[state].x = x;
-    gfxSrcPos[state].y = y;
+    memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
 }
 
 //================================================================================================
@@ -154,3 +144,4 @@ void GuiCursor::draw()
     Image::scale(src, scaled);
     mTexture->getBuffer()->blitFromMemory(scaled, Box(0, 0, w, h));
 }
+

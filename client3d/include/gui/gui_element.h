@@ -29,6 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <tinyxml.h>
 #include <Ogre.h>
+#include "gui_imageset.h"
 
 using namespace Ogre;
 
@@ -42,14 +43,8 @@ public:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiElement(TiXmlElement *xmlElement, void *parent);
-    virtual ~GuiElement()
-    {}
-    bool setState(int state)
-    {
-        if (mState == state) return false;
-        mState = state;
-        return true;
-    }
+    virtual ~GuiElement();
+    bool setState(int state);
     int getState()
     {
         return mState;
@@ -75,7 +70,6 @@ public:
     {
         return mHeight;
     }
-    void setStateImagePos(std::string state, int x, int y);
     virtual void draw() =0;
     const char *getTooltip()
     {
@@ -85,14 +79,6 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    enum
-    {
-        STATE_STANDARD,
-        STATE_PUSHED,
-        STATE_M_OVER,
-        STATE_PASSIVE,
-        STATE_SUM
-    };
     enum
     {
         FILL_GFX,
@@ -114,18 +100,15 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    struct
-    {
-        int x, y;
-    }
-    gfxSrcPos[STATE_SUM];
-
+    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_ELEMENT_SUM];
     int mX, mY, mMaxX, mMaxY;
     int mWidth, mHeight, mSrcWidth, mSrcHeight;
     int mFontNr;
+    int mHasAlpha;
     int mState;
     String mStrType, mStrName, mStrImageName;
     uint32 mFillColor;
+    uint32 *BG_Backup;    /**< Backup buffer for alpha blit. **/
     int id;
     int mIndex;
     String mStrLabel, mStrBgLabel, mStrTooltip;

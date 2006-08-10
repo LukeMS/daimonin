@@ -28,15 +28,32 @@ http://www.gnu.org/licenses/licenses.html
 #define NETWORK_H
 
 #include <list>
+#include <SDL.h>
+#include <SDL_thread.h>
+#include <SDL_mutex.h>
+#ifdef WIN32
+#include <winsock.h>
+#else
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <errno.h>
+#include <fcntl.h>
+#endif
+
+const int SOCKET_NO = -1;
 
 using namespace std;
 
-// Maximum size of any packet we expect.  Using this makes it so we don't need to
-// allocated and deallocated the same buffer over and over again and the price
-// of using a bit of extra memory. IT also makes the code simpler.
+/// Maximum size of any packet we expect.  Using this makes it so we don't need to
+/// allocated and deallocated the same buffer over and over again and the price
+/// of using a bit of extra memory. IT also makes the code simpler.
 const int  MAXSOCKBUF            =  64*1024;
 const int  MAX_METASTRING_BUFFER = 128*2013;
-const int  SOCKET_NO = -1;
+
 const int  MAX_BUF =  256;
 const int  BIG_BUF = 1024;
 const int  STRINGCOMMAND = 0;
@@ -47,15 +64,18 @@ const int  SRV_CLIENT_FLAG_SETTING = 4;
 const int  SRV_CLIENT_FLAG_SKILL   = 8;
 const int  SRV_CLIENT_FLAG_SPELL   =16;
 const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
-const int  VERSION_CS = 991021;
-const int  VERSION_SC = 991021;
+const int  VERSION_CS = 991022;
+const int  VERSION_SC = 991022;
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
-struct SockList
+// Contains the base information we use to make up a packet we want to send.
+typedef struct SockList
 {
-    int            len;
-    unsigned char *buf;
-};
+    int             len; /**< How much data in buf */
+    int             pos; /**< Start of data in buf */
+    unsigned char  *buf;
+}
+SockList;
 
 typedef struct mStructServer
 {
@@ -70,96 +90,139 @@ typedef struct mStructServer
 }
 mStructServer;
 
+
+
+
+// ClientSocket could probably hold more of the global values - it could
+// probably hold most all socket/communication related values instead
+// of globals.
+typedef struct ClientSocket
+{
+    int fd;        // typedef your socket type to SOCKET
+    SockList  inbuf;
+    SockList  outbuf;
+    int       cs_version, sc_version; // Server versions of these
+    // These are used for the newer 'windowing' method of commands -
+    // number of last command sent, number of received confirmation
+    int       command_sent, command_received;
+    // Time (in ms) players commands currently take to execute
+    int       command_time;
+}
+ClientSocket;
+
+// Maximum size of any packet we expect.  Using this makes it so we don't need to
+// allocated and deallocated teh same buffer over and over again and the price
+// of using a bit of extra memory. It also makes the code simpler.
+
+#ifdef WIN32
+const int MSG_DONTWAIT = 0;
+#else
+typedef int SOCKET;
+#endif
+const int SOCKET_TIMEOUT_SEC = 8;
 class Network
 {
 public:
-    // ////////////////////////////////////////////////////////////////////
-    // Variables.
-    // ////////////////////////////////////////////////////////////////////
-    enum
-    {
-        DIALOG_LOGIN_WARNING_NONE,
-        DIALOG_LOGIN_WARNING_NAME_NO,
-        DIALOG_LOGIN_WARNING_NAME_BLOCKED,
-        DIALOG_LOGIN_WARNING_NAME_PLAYING,
-        DIALOG_LOGIN_WARNING_NAME_TAKEN,
-        DIALOG_LOGIN_WARNING_NAME_BANNED,
-        DIALOG_LOGIN_WARNING_NAME_WRONG,
-        DIALOG_LOGIN_WARNING_PWD_WRONG,
-        DIALOG_LOGIN_WARNING_PWD_SHORT,
-        DIALOG_LOGIN_WARNING_PWD_NAME
-    };
-
-    int  mRequest_file_chain;
-    int  mRequest_file_flags;
-    int  mPasswordAlreadyAsked;
-    bool mGameStatusVersionOKFlag;
-    bool mGameStatusVersionFlag;
-
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
     static Network &getSingleton()
     {
         static Network Singleton; return Singleton;
     }
+
+    typedef struct command_buffer_read
+    {
+        struct command_buffer_read *next;
+        int len;
+        Uint8 *data;
+    }
+    _command_buffer_read;
     bool Init();
-    void RequestShutdown();
-    void Shutdown();
-    bool GetServerData();
-    bool OpenSocket(const char *host, int port);
-    bool CloseSocket();
-    void Update();
-    int  request_face(int pnum, int mode);
-    void send_reply(const char *text);
-    void read_metaserver_data();
-    int  cs_write_string(const char *buf, int len);
-    int  send_socklist(SockList &msg);
-    int  read_socket();
-    int  write_socket(unsigned char *buf, int len);
-    void DoClient();
+    static _command_buffer_read *read_cmd_start, *read_cmd_end;
 
-    // Server commands..
-    void VersionCmd      (char *data, int len);
-    void SetupCmd        (char *data, int len);
-    void DataCmd         (char *data, int len);
-    void PlayerCmd       (char *data, int len);
-    void Map2Cmd         (char *data, int len);
-    void NewCharCmd      (char *data, int len);
-    void HandleQuery     (char *data, int len);
-    void PreParseInfoStat(char *cmd);
-    void RequestFile(int index);
+    _command_buffer_read *get_read_cmd(void);
+    void send_command_binary(int cmd, const char *body, int len);
+    static int  send_socklist(SockList msg);
+    void free_read_cmd(_command_buffer_read *cmd);
+    void clear_read_cmd_queue(void);
+    void socket_thread_start(void);
+    void socket_thread_stop(void);
+    bool SOCKET_InitSocket(void);
+    bool SOCKET_DeinitSocket(void);
+    bool SOCKET_OpenSocket(char *host, int port);
+    bool SOCKET_OpenClientSocket(char *host, int port);
+    static bool SOCKET_CloseSocket();
+    int  SOCKET_GetError(void);  // returns socket error
+    void read_metaserver_data(SOCKET fd);
+    void update();
+    void contactMetaserver();
+    static bool SOCKET_CloseClientSocket();
+    static int socket_thread_loop(void *);
+    static void write_socket_buffer(int fd, SockList *sl);
+    static int read_socket_buffer(int fd, SockList *sl);
+    static int cs_write_string(char *buf, int len);
+    void SendVersion();
 
-    void CreatePlayerAccount();
+
+    static bool GameStatusVersionOKFlag;
+    static bool GameStatusVersionFlag;
+
+    // Commands
+    static void CompleteCmd(unsigned char *data, int len);
+    static void VersionCmd(char *data, int len);
+    static void DrawInfoCmd(char *data, int len);
+    static void AddMeFail(char *data, int len);
+    static void Map2Cmd(unsigned char *data, int len);
+    static void DrawInfoCmd2(char *data, int len);
+    static void ItemXCmd(unsigned char *data, int len);
+    static void SoundCmd(unsigned char *data, int len);
+    static void TargetObject(unsigned char *data, int len);
+    static void UpdateItemCmd(unsigned char *data, int len);
+    static void DeleteItem(unsigned char *data, int len);
+    static void StatsCmd(unsigned char *data, int len);
+    static void ImageCmd(unsigned char *data, int len);
+    static void Face1Cmd(unsigned char *data, int len);
+    static void AnimCmd(unsigned char *data, int len);
+    static void SkillRdyCmd(char *data, int len);
+    static void PlayerCmd(unsigned char *data, int len);
+    static void SpelllistCmd(unsigned char *data, int len);
+    static void SkilllistCmd(unsigned char *data, int len);
+    static void GolemCmd(unsigned char *data, int len);
+    static void AddMeSuccess(char *data, int len);
+    static void GoodbyeCmd(char *data, int len);
+    static void SetupCmd(char *data, int len);
+    static void handle_query(char *data, int len);
+    static void DataCmd(char *data, int len);
+    static void NewCharCmd(char *data, int len);
+    static void ItemYCmd(unsigned char *data, int len);
+    static void GroupCmd(unsigned char *data, int len);
+    static void GroupInviteCmd(unsigned char *data, int len);
+    static void GroupUpdateCmd(unsigned char *data, int len);
+    static void InterfaceCmd(unsigned char *data, int len);
+    static void BookCmd(unsigned char *data, int len);
+    static void MarkCmd(unsigned char *data, int len);
+    static void MagicMapCmd(unsigned char *data, int len);
+    static void DeleteInventory(unsigned char *data, int len);
+    // Commands helper.
+    static int  request_face(int, int);
+    static void CreatePlayerAccount();
+    static void PreParseInfoStat(char *cmd);
+
 private:
-    // ////////////////////////////////////////////////////////////////////
-    // Variables.
-    // ////////////////////////////////////////////////////////////////////
-    // Contains the base information we use to make up a packet we want to send.
-    int  mCs_version, mSc_version; // Server versions of these
-    // These are used for the newer 'windowing' method of commands -
-    // number of last command sent, number of received confirmation
-    int mCommand_sent, mCommand_received;
-    int mCommand_time; // Time (in ms) players commands currently take to execute
-    int mSocketStatusErrorNr;
-    int mOpenPort;
-    SockList  mInbuf;
-    int mSocket;
-    bool GameStatusLogin;
-    list<mStructServer*> mServerList;
-    int dialog_login_warning_level;
+    static bool thread_flag;
+    static SDL_Thread *socket_thread;
+    static SDL_mutex  *read_lock;
+    static SDL_mutex  *write_lock;
+    static SDL_mutex  *socket_lock;
+    static SDL_cond   *socket_cond;
+    static ClientSocket csocket;
+    static int mRequest_file_chain;
+    int SocketStatusErrorNr;
+    struct sockaddr_in  insock;       // Server's attributes
 
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
+    static bool mInitDone;
+
     Network();
     ~Network();
-    Network(const Network&);  // disable copy-constructor.
-    bool InitSocket();
-    void clear_metaserver_data(void);
-    void get_meta_server_data(int num, char *server, int *port);
-    void add_metaserver_data(const char *server, int port, int player, const char *ver,
-                             const char *desc1, const char *desc2, const char *desc3, const char *desc4);
+    Network(const Network&); // disable copy-constructor.
 };
 
 #endif

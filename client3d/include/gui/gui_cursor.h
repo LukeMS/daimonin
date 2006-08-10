@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef GUI_CURSOR_H
 #define GUI_CURSOR_H
 #include <Ogre.h>
+#include "gui_imageset.h"
 
 using namespace Ogre;
 
@@ -36,21 +37,11 @@ using namespace Ogre;
 class GuiCursor
 {
 public:
-    /** Actual state of the mouse cursor: **/
-    enum
-    {
-        STATE_STANDARD,  /**< Standard. **/
-        STATE_PRESSED,   /**< Any button down. **/
-        STATE_DRAGGING,  /**< Dragging in action. **/
-        STATE_RESIZING,  /**< Resizing a window. **/
-        STATE_SUM
-    };
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     void setPos(Real x, Real y);
-    void setStateImagePos(std::string state, int x, int y);
-    void setState(int state);
+    void setState(unsigned int state);
     void draw();
     void Init(int w, int h, int screenHeight, int screenWidth, int scale);
     void freeRecources();
@@ -58,17 +49,14 @@ public:
     {
         static GuiCursor Singleton; return Singleton;
     }
+    void setStateImagePos(GuiImageset::gfxPos *Entry);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mScreenWidth, mScreenHeight;
-    struct
-    {
-        int x, y;
-    }
-    gfxSrcPos[STATE_SUM];
+    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_MOUSE_SUM];
     unsigned int mState;
     int mWidth, mHeight;
     Overlay *mOverlay;

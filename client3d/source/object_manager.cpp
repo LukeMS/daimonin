@@ -255,7 +255,8 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
                 SubPos2D pos;
                 pos.x = val1;
                 pos.z = val2;
-                pos.subPos =0;
+                pos.subX =0;
+                pos.subZ =0;
                 mvObject_npc[ObjectNPC::ME]->moveToDistantTile(pos);
             }
             if (action == OBJ_TEXTURE    ) mvObject_npc[id]->Equip->setTexture(val1, val2);
