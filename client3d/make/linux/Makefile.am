@@ -8,6 +8,7 @@ INCLUDES = \
 	-I../../3rdParty/fmod
 
 AM_CXXFLAGS =\
+	@SDL_CFLAGS@ \
 	${OGRE_CFLAGS} \
 	-Wall \
 	-g
@@ -72,7 +73,8 @@ client3d_LDFLAGS = \
 	${OGRE_LIBS}
 
 client3d_LDADD = \
-	${FMOD_LIBS}	
+	${FMOD_LIBS} \
+	@SDL_LIBS@
 
 AUTOMAKE_OPTIONS = \
 	subdir-objects
