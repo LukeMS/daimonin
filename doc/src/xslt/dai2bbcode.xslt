@@ -4,9 +4,6 @@
   -->
 <xsl:transform version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xsl">
 
-    <xsl:strip-space elements="*"/>
-    <xsl:preserve-space elements="blockcode"/>
-
     <xsl:output method="text" encoding="utf-8" indent="no"/>
 
 <!-- Use daiml/@title as a header and a note about DaiML/modification time as a footer -->

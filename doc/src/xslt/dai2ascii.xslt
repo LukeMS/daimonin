@@ -9,9 +9,6 @@
     exclude-result-prefixes="xsl"
 >
 
-    <xsl:strip-space elements="*" />
-    <xsl:preserve-space elements="blockcode" />
-
     <xsl:output
         method="xml"
         doctype-public="-//W3C//DTD HTML 4.01//EN"
