@@ -9,9 +9,6 @@
     exclude-result-prefixes="xsl"
 >
 
-    <xsl:strip-space elements="*" />
-    <xsl:preserve-space elements="blockcode" />
-
     <xsl:output
         method="text"
         encoding="us-ascii"
