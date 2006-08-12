@@ -23,67 +23,8 @@
                 Game commands tend to specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>).
             </p>
             <p>
-                All game commands start with forward slash and are lowercase. Game commands are entered at the console or may be <a href="#boundkeys">bound to a key</a>. To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai#textwindows">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
+                All game commands start with forward slash and are lowercase. Game commands are entered at the <a href="#console">console</a> or may be <a href="#boundkeys">bound to a key</a>.
             </p>
-            <p>
-                You will now see a cursor in the lower textwindow. This means you can start typing (<a href="#boundkeys">key bindings</a> are ignored).
-            </p>
-            <p>
-                The rules in the console are simple. If the text you enter begins with a backslash ('/') it is taken as a <a href="#gamecommands">game command</a>. Otherwise the text will be echoed to other players (and NPCs) nearby.
-            </p>
-            <p>
-                In the console, a number of editing keys are available:
-            </p>
-            <table>
-                <tr>
-                    <th>
-                        LEFT/RIGHT
-                    </th>
-                    <td>
-                        move the cursor within the text you have typed
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        HOME/END
-                    </th>
-                    <td>
-                        move to the beginning/end of the string
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        UP/DOWN
-                    </th>
-                    <td>
-                        cycle through the history
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        DELETE/BACKSPACE
-                    </th>
-                    <td>
-                        delete the next/previous character from the cursor
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        RETURN/KPENTER
-                    </th>
-                    <td>
-                        enter any text you have typed and return to the game
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        ESCAPE
-                    </th>
-                    <td>
-                        return to the game
-                    </td>
-                </tr>
-            </table>
             <p>
                 See <a href="./appx_a.dai">"Appendix A: Game commands"</a> for a complete list of game commands.
             </p>
@@ -102,6 +43,73 @@
                 See <a href="./appx_b.dai">"Appendix B: Meta commands"</a> for a complete list of meta commands.
             </p>
         </section>
+    </section>
+    <section id="console">
+        <title>
+            Console
+        </title>
+        <p>
+            To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai#textwindows">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
+        </p>
+        <p>
+            You will now see a cursor in the lower textwindow. This means you can start typing (<a href="#boundkeys">key bindings</a> are ignored).
+        </p>
+        <p>
+            The rules in the console are simple. If the text you enter begins with a backslash ('/') it is taken as a <a href="#gamecommands">game command</a>. Otherwise the text will be echoed to other players (and NPCs) nearby.
+        </p>
+        <p>
+            In the console, a number of editing keys are available:
+        </p>
+        <table>
+            <tr>
+                <th>
+                    LEFT/RIGHT
+                </th>
+                <td>
+                    move the cursor within the text you have typed
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    HOME/END
+                </th>
+                <td>
+                    move to the beginning/end of the string
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    UP/DOWN
+                </th>
+                <td>
+                    cycle through the history
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    DELETE/BACKSPACE
+                </th>
+                <td>
+                    delete the next/previous character from the cursor
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    RETURN/KPENTER
+                </th>
+                <td>
+                    enter any text you have typed and return to the game
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    ESCAPE
+                </th>
+                <td>
+                    return to the game
+                </td>
+            </tr>
+        </table>
     </section>
     <section id="boundkeys">
         <title>
