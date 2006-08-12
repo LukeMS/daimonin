@@ -37,6 +37,22 @@
                 </p>
             </div>
         </section>
+        <section id="ignoring">
+            <title>
+                Ignoring specific players
+            </title>
+            <p>
+                You can choose to ignore <em>all</em> communication from a specific player if you like. The ignored players utterances and emotes will not appear on your screen.
+            </p>
+            <p>
+                To ignore a player use the <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> <code>/ignore &lt;player&gt;</code>. This will add the specified player to your ignore list. Entering the command again will remove the player from your list. To review your current list use <code>/ignore</code> without any parameters.
+            </p>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> This will not ignore <a href="#cherbot">Cherbot mail and clan chat</a> from that player. The only way to achieve this is to also <code>/ignore cherbot</code> but this is not recommended.
+                </p>
+            </div>
+        </section>
     </section>
     <section id="saying">
         <title>

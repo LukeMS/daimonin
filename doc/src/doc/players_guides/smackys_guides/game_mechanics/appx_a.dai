@@ -243,6 +243,14 @@
                     Send private &lt;message&gt; to &lt;player&gt;
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <code>/ignore (&lt;player&gt;)</code>
+                </td>
+                <td>
+                    Manages your ignore list
+                </td>
+            </tr>
         </table>
     </section>
     <section id="misc">
