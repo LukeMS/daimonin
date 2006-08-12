@@ -52,7 +52,7 @@
                     <code>/ready_skill &lt;skill&gt;</code>
                 </td>
                 <td>
-                    Ready &lt;skill&gt; for future use
+                    <a href="../character/secn_4.dai#skills">Ready &lt;skill&gt; for future use</a>
                 </td>
             </tr>
             <tr>
@@ -60,7 +60,7 @@
                     <code>/use_skill &lt;skill&gt;</code>
                 </td>
                 <td>
-                    Use &lt;skill&gt; immediately
+                    <a href="../character/secn_4.dai#skills">Use &lt;skill&gt; immediately</a>
                 </td>
             </tr>
         </table>
@@ -200,7 +200,7 @@
                     <code>/think</code>, <code>/twiddle</code>, <code>/wave</code>, <code>/whistle</code>, <code>/wink</code>, <code>/yawn</code>
                 </td>
                 <td>
-                    These pre-defined emotes do what they say on the tin
+                    <a href="../communication/secn_3.dai#predefined">These pre-defined emotes do what they say on the tin</a>
                 </td>
             </tr>
             <tr>
@@ -208,7 +208,7 @@
                     <code>/me &lt;message&gt;</code>
                 </td>
                 <td>
-                    Emote &lt;message&gt;
+                    <a href="../communication/secn_3.dai#freeform">Emote &lt;message&gt;</a>
                 </td>
             </tr>
             <tr>
@@ -216,7 +216,7 @@
                     <code>/reply &lt;message&gt;</code>
                 </td>
                 <td>
-                    Send private &lt;message&gt; to last player to <code>/tell</code> you
+                    <a href="../communication/secn_5.dai#replying">Send private &lt;message&gt; to last player to tell you</a>
                 </td>
             </tr>
             <tr>
@@ -224,7 +224,7 @@
                     <code>/say &lt;message&gt;</code>
                 </td>
                 <td>
-                    Say &lt;message&gt; to all within hearing
+                    <a href="../communication/secn_1.dai">Say &lt;message&gt; to all within hearing</a>
                 </td>
             </tr>
             <tr>
@@ -232,7 +232,7 @@
                     <code>/shout &lt;message&gt;</code>
                 </td>
                 <td>
-                    Broadcast public &lt;message&gt; to all players
+                    <a href="../communication/secn_4.dai">Broadcast public &lt;message&gt; to all players</a>
                 </td>
             </tr>
             <tr>
@@ -240,7 +240,7 @@
                     <code>/tell &lt;player&gt; &lt;message&gt;</code>
                 </td>
                 <td>
-                    Send private &lt;message&gt; to &lt;player&gt;
+                    <a href="../communication/secn_5.dai#telling">Send private &lt;message&gt; to &lt;player&gt;</a>
                 </td>
             </tr>
             <tr>
@@ -248,7 +248,7 @@
                     <code>/ignore (&lt;player&gt;)</code>
                 </td>
                 <td>
-                    Manages your ignore list
+                    <a href="../communication/overview.dai#ignoring">Manage your ignore list</a>
                 </td>
             </tr>
         </table>
@@ -287,7 +287,7 @@
                     <code>/save</code>
                 </td>
                 <td>
-                    Save game
+                    <a href="../game_mechanics/secn_1.dai#saving">Save game</a>
                 </td>
             </tr>
             <tr>
