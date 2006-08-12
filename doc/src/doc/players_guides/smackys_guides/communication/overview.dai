@@ -11,32 +11,14 @@
             <img alt="[Textwindows]" src="./textwindows.png"/>
         </p>
         <p>
-            Communication takes place in the two text windows. In fact, these windows report more than just what has been said, but that is dealt with elsewhere in <strong><em>Smacky's Guides</em></strong>.
+            Communication takes place in the two <a href="../game_mechanics/secn_2-1.dai#textwindows">textwindows</a>.
         </p>
         <p>
-            Here, suffice to say, the top window is for <em>global</em> messages and communication between players, and the bottom window is for <em>local</em> messages and communication between players and with NPCs.
+            The <a href="../game_mechanics/secn_2-1.dai#uppertextwindow">upper textwindow</a> shows <em>global</em> messages and communication between players, and the <a href="../game_mechanics/secn_2-1.dai#lowertextwindow">lower textwindow</a> shows <em>local</em> messages and communication between players and with NPCs.
         </p>
-        <div class="note">
-            <p>
-                <img alt="[NOTE]" src="../note.png"/> You can scroll either textwindow with the <a href="../game_mechanics/secn_2-1.dai#metacommands">meta commands</a> <code>"?M_PAGEUP_TOP"</code> / <code>"?M_PAGEDOWN_TOP"</code> for the top window and <code>"?M_PAGEUP"</code> / <code>"?M_PAGEDOWN"</code> for the bottom window (INSERT / DELETE and PAGEUP / PAGEDOWN by <a href="../game_mechanics/appx_c.dai#textwindows">default</a>).
-            </p>
-        </div>
-        <section id="mcon">
-            <title>
-                Speakingmorequickly
-            </title>
-            <p>
-                The <a href="../game_mechanics/secn_2-1.dai#metacommands">meta command</a> <code>"?M_MCON"</code> can be used to send a partial <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> to the console, leaving the console active so you can complete the text.
-            </p>
-            <p>
-                An example should make it clear: <a href="../game_mechanics/secn_3-1.dai">bind a key</a> to the macro <code>"?M_MCON/shout "</code>. Now when you press that key you will enter the console and the text <code>"/shout "</code> appears automatically. The console remains open so you can type in the message.
-            </p>
-            <div class="note">
-                <p>
-                    <img alt="[NOTE]" src="../note.png"/> You can do this with any <a href="../game_mechanics/secn_2-1.dai#gamecommands">game command</a> but it makes most sense to do it with the communication commands.
-                </p>
-            </div>
-        </section>
+        <p>
+            All forms of communication are entered as <a href="../game_mechanics/secn_2-1.dai#gamecommands">game commands</a> and so are either typed at the <a href="../game_mechanics/secn_2-1.dai#lowertextwindow">console</a> or <a href="../game_mechanics/secn_2-1.dai#boundkeys">bound to a key</a>.
+        </p>
         <section id="ignoring">
             <title>
                 Ignoring specific players

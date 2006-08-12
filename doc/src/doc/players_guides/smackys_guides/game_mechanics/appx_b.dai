@@ -38,7 +38,7 @@
                     <code>?M_UP</code>, <code>?M_DOWN</code>, <code>?M_LEFT</code>, <code>?M_RIGHT</code>
                 </td>
                 <td>
-                    Change selection/Edit text (in console)
+                    Change selection
                 </td>
             </tr>
         </table>
@@ -58,26 +58,18 @@
             </tr>
             <tr>
                 <td>
+                    <code>?M_PAGEUP_TOP</code>, <code>?M_PAGEDOWN_TOP</code>
+                </td>
+                <td>
+                    <a href="./secn_2-1.dai#uppertextwindow">Scroll upper textwindow</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <code>?M_PAGEUP</code>, <code>?M_PAGEDOWN</code>
                 </td>
                 <td>
-                    Scroll bottom textwindow
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <code>?M_PAGEDUP_TOP</code>, <code>?M_PAGEDOWN_TOP</code>
-                </td>
-                <td>
-                    Scroll top textwindow
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <code>?M_CONSOLE</code>
-                </td>
-                <td>
-                    Enter console (bottom textwindow)
+                    <a href="./secn_2-1.dai#lowertextwindow">Scroll lower textwindow</a>
                 </td>
             </tr>
             <tr>
@@ -85,7 +77,15 @@
                     <code>?M_MCON</code>
                 </td>
                 <td>
-                    Send partial game command to console
+                    <a href="./secn_2-1.dai#lowertextwindow">Send partial game command to console</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <code>?M_CONSOLE</code>
+                </td>
+                <td>
+                    <a href="./secn_2-1.dai#lowertextwindow">Enter console (bottom textwindow)</a>
                 </td>
             </tr>
         </table>

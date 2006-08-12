@@ -23,7 +23,7 @@
                 Game commands tend to specify an action for your character to perform (eg, <code>"/pray"</code> to, errm, pray) or are used to chat with other players (eg, <code>"/shout"</code>).
             </p>
             <p>
-                All game commands start with forward slash and are lowercase. Game commands are entered at the <a href="#console">console</a> or may be <a href="#boundkeys">bound to a key</a>.
+                All game commands start with forward slash and are lowercase. Game commands are entered at the <a href="#lowertextwindow">console</a> or may be <a href="#boundkeys">bound to a key</a>.
             </p>
             <p>
                 See <a href="./appx_a.dai">"Appendix A: Game commands"</a> for a complete list of game commands.
@@ -44,72 +44,96 @@
             </p>
         </section>
     </section>
-    <section id="console">
+    <section id="textwindows">
         <title>
-            Console
+            Textwindows
         </title>
-        <p>
-            To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai#textwindows">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
-        </p>
-        <p>
-            You will now see a cursor in the lower textwindow. This means you can start typing (<a href="#boundkeys">key bindings</a> are ignored).
-        </p>
-        <p>
-            The rules in the console are simple. If the text you enter begins with a backslash ('/') it is taken as a <a href="#gamecommands">game command</a>. Otherwise the text will be echoed to other players (and NPCs) nearby.
-        </p>
-        <p>
-            In the console, a number of editing keys are available:
-        </p>
-        <table>
-            <tr>
-                <th>
-                    LEFT/RIGHT
-                </th>
-                <td>
-                    move the cursor within the text you have typed
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    HOME/END
-                </th>
-                <td>
-                    move to the beginning/end of the string
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    UP/DOWN
-                </th>
-                <td>
-                    cycle through the history
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    DELETE/BACKSPACE
-                </th>
-                <td>
-                    delete the next/previous character from the cursor
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    RETURN/KPENTER
-                </th>
-                <td>
-                    enter any text you have typed and return to the game
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    ESCAPE
-                </th>
-                <td>
-                    return to the game
-                </td>
-            </tr>
-        </table>
+        <div class="note">
+            <p>
+                <img alt="[NOTE]" src="../note.png"/> You can scroll either textwindow with the <a href="../game_mechanics/secn_2-1.dai#metacommands">meta commands</a> <code>"?M_PAGEUP_TOP"</code> / <code>"?M_PAGEDOWN_TOP"</code> for the top window and <code>"?M_PAGEUP"</code> / <code>"?M_PAGEDOWN"</code> for the bottom window (INSERT / DELETE and PAGEUP / PAGEDOWN by <a href="../game_mechanics/appx_c.dai#textwindows">default</a>).
+            </p>
+        </div>
+        <section id="uppertextwindow">
+            <title>
+                Upper textwindow (the shoutbox)
+            </title>
+            <p/>
+        </section>
+        <section id="lowertextwindow">
+            <title>
+                Lower textwindow (the console)
+            </title>
+            <p>
+                To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai#textwindows">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
+            </p>
+            <p>
+                You will now see a cursor in the lower textwindow. This means you can start typing (<a href="#boundkeys">key bindings</a> are ignored).
+            </p>
+            <p>
+                The rules in the console are simple. If the text you enter begins with a backslash ('/') it is taken as a <a href="#gamecommands">game command</a>. Otherwise the text will be echoed to other players (and NPCs) nearby.
+            </p>
+            <p>
+                In the console, a number of editing keys are available:
+            </p>
+            <table>
+                <tr>
+                    <th>
+                        LEFT/RIGHT
+                    </th>
+                    <td>
+                        move the cursor within the text you have typed
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        HOME/END
+                    </th>
+                    <td>
+                        move to the beginning/end of the string
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        UP/DOWN
+                    </th>
+                    <td>
+                        cycle through the history
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        DELETE/BACKSPACE
+                    </th>
+                    <td>
+                        delete the next/previous character from the cursor
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        RETURN/KPENTER
+                    </th>
+                    <td>
+                        enter any text you have typed and return to the game
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        ESCAPE
+                    </th>
+                    <td>
+                        return to the game
+                    </td>
+                </tr>
+            </table>
+            <div class="note">
+                <p>
+                    <img alt="[NOTE]" src="../note.png"/> The <a href="#metacommands">meta command</a> <code>"?M_MCON"</code> can be used to send a partial <a href="#gamecommands">game command</a> to the console, leaving the console active so you can complete the text.
+                </p>
+                <p>
+                    An example should make it clear: <a href="./secn_3-1.dai">bind a key</a> to the macro <code>"?M_MCON/shout "</code>. Now when you press that key you will enter the console and the text <code>"/shout "</code> appears automatically. The console remains open so you can type in the message.
+                </p>
+            </div>
+        </section>
     </section>
     <section id="boundkeys">
         <title>
