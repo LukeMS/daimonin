@@ -10,15 +10,15 @@
     <p>
         You somehow need to interact with Daimonin, to tell the program how to behave and your character what to do.
     </p>
-    <section id="commandsandboundkeys">
+    <section id="commandstextwindowsandboundkeys">
         <title>
-            Commands &amp; bound keys
+            Commands, textwindows, &amp; bound keys
         </title>
         <p>
             For the most part you issue textual commands, either in the console or by pressing an appropriately bound key.
         </p>
         <p>
-            Commands and bound keys are detailed in <a href="./secn_2-1.dai">"Section 2-1: Commands &amp; bound keys"</a>.
+            Commands, textwindows, and bound keys are detailed in <a href="./secn_2-1.dai">"Section 2-1: Commands, textwindows, &amp; bound keys"</a>.
         </p>
     </section>
     <section id="rangesystem">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
-<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-1: Commands &amp; bound keys">
+<daiml autotoc="On this page" title="Smacky's Guide To Game Mechanics, Section 2-1: Commands, textwindows, &amp; bound keys">
     <stylesheet href="../screen.css" media="screen" title="Default"/>
     <stylesheet href="../print.css" media="print" title="Default"/>
     <section id="commands">
