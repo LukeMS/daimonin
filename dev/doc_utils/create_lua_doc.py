@@ -428,25 +428,28 @@ def output_html(doc):
 			end_html(f)
 	end_html(index)
 
-def start_xml(filename):
-	f = file(os.path.join(dest, filename + '.xml'), 'w')
-	f.write("<xml></xml>\n")
-	return f
+def start_xml(filename, root_tag):
+    f = file(os.path.join(dest, filename + '.xml'), 'w')
+    f.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+    f.write("<!-- This is an auto-generated file. Do not modify -->\n");
+    f.write("<" + root_tag + ">\n");
+    return f
 
-def end_html(f):
-	f.close()
+def end_xml(f, root_tag):
+    f.write("</" + root_tag + ">\n");
+    f.close()
 	
+# Write out lua <-> C attribute symbol mapping
 def output_xml(doc):
-	# Write out lua <-> C attribute symbol mapping
-	f = start_xml("lua_c_mappings")
+	f = start_xml("lua_c_mappings", "map_c_to_lua")
 	for key in doc.keys():
 		if doc[key]['attributes']:
-			f.write("<map_c_to_lua class=\""+key+"\">\n")
+			f.write("<class name=\""+key+"\">\n")
 			attributes = doc[key]['attributes']
 			for attribute in attributes.keys():
 				f.write("  <attribute c=\"" + attributes[attribute][2] + "\" lua=\"" + attribute + "\" />\n")
-			f.write("</map_c_to_lua>\n")
-	f.close()
+			f.write("</class>\n")
+	end_xml(f, "map_c_to_lua")
 
 output_html(doc)
 output_xml(doc)
