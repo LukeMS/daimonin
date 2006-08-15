@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
+<daiml autotoc="On this page" title="Smacky's Guide To Economics, Section 1-1: Looking after your savings">
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="Introduction">
+        <title>
+            Introduction
+        </title>
+        <p>
+            You have two options:
+        </p>
+        <dl>
+            <dt>
+                <strong>Open an account</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="[Depositbox]" src="./depositbox.png"/>
+                </p>
+                <p>
+                    There is a simple bank in Stoneglow in which you can store your money. You can deposit money you have on your person, withdraw money in your account, and check your balance.
+                </p>
+                <p>
+                    The bank will change any coins to their equivalents, either up or down. Money in your account will automatically be changed to its highest value denomination (so if you deposit 1,000 silver your balance will show 10 gold and you can withdraw it as 100,000 copper).
+                </p>
+                <p>
+                    Banking is entirely safe -- only you can access your account and there are no robberies -- if not entirely confidential -- after each transaction your balance is bellowed to anyone with ears.
+                </p>
+            </dd>
+            <dt>
+                <strong>Hide it under your bed</strong>
+            </dt>
+            <dd>
+                <p>
+                    <img alt="[Bed]" src="./bed.png"/>
+                </p>
+                <p>
+                    If you have an apartment you can always keep your cash under your bed (alright, technically you can't do this, but you put it somewhere in your apartment).
+                </p>
+                <p>
+                    This is also entirely safe, as only you can enter your apartment.
+                </p>
+            </dd>
+        </dl>
+    </section>
+</daiml>
