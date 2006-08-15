@@ -1,27 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
 <daiml title="Smacky's Guide To Economics, Index">
-<section>
-    <title>
-        SMACKY'S GUIDE TO ECONOMICS
-    </title>
-    <ul>
-        <li>
-            <a href="./secn_1.dai">Section 1: Currency</a>
-            <p/>
-        </li>
-        <li>
-            <a href="./secn_2.dai">Section 2: Trade</a>
-            <ul>
-                <li>
-                    <a href="./secn_2-1.dai">Section 2-1: Transactions With NPCs</a>
-                </li>
-                <li>
-                    <a href="./secn_2-2.dai">Section 2-2: Transactions With Players</a>
-                </li>
-            </ul>
-            <p/>
-        </li>
-    </ul>
-</section>
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="section1">
+        <title>
+            <a href="./secn_1.dai">Section 1: Money</a>
+        </title>
+        <p>
+            ???
+        </p>
+        <section id="section1-1">
+            <title>
+                <a href="./secn_1-1.dai">Section 1-1: Looking after your savings</a>
+            </title>
+            <p>
+                ???
+            </p>
+        </section>
+    </section>
+    <section id="section2">
+        <title>
+            <a href="./secn_2.dai">Section 2: Goods</a>
+        </title>
+        <p>
+            ???
+        </p>
+        <section id="section2-1">
+            <title>
+                <a href="./secn_2-1.dai">Section 2-1: Trading with NPCs</a>
+            </title>
+            <p>
+                ???
+            </p>
+        </section>
+        <section id="section2-2">
+            <title>
+                <a href="./secn_2-2.dai">Section 2-2: Trading with players</a>
+            </title>
+            <p>
+                ???
+            </p>
+        </section>
+    </section>
+    <section id="section3">
+        <title>
+            <a href="./secn_3.dai">Section 3: Services</a>
+        </title>
+        <p>
+            ???
+        </p>
+        <section id="section3-1">
+            <title>
+                <a href="./secn_3-1.dai">Section 3-1: Services offered by NPCs</a>
+            </title>
+            <p>
+                ???
+            </p>
+        </section>
+        <section id="section3-2">
+            <title>
+                <a href="./secn_3-2.dai">Section 3-2: Services offered by players</a>
+            </title>
+            <p>
+                ???
+            </p>
+        </section>
+    </section>
+    <section id="section4">
+        <title>
+            <a href="./secn_4.dai">Section 4: Property</a>
+        </title>
+        <p>
+            ???
+        </p>
+    </section>
+    <section id="appendixa">
+        <title>
+            <a href="./appx_a.dai">Appendix A: Donations</a>
+        </title>
+        <p>
+            ???
+        </p>
+    </section>
 </daiml>
