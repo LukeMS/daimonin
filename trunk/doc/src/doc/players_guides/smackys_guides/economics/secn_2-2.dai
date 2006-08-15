@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE daiml SYSTEM "../../../../dtd/daiml.dtd">
-<daiml autotoc="On this page" title="Smacky's Guide To Economics, Section 2-2: Transactions with players"> 
-<section>
-    <title>
-        SECTION 2-2: TRANSACTIONS WITH PLAYERS
-    </title>
-    <section id="overview">
+<daiml autotoc="On this page" title="Smacky's Guide To Economics, Section 2-2: Trading with players"> 
+    <stylesheet href="../screen.css" media="screen" title="Default"/>
+    <stylesheet href="../print.css" media="print" title="Default"/>
+    <section id="introduction">
         <title>
-            Overview
+            Introduction
         </title>
         <p>
             There are many good reasons to trade with other players rather than NPCs. From a game mechanics perspective these include:
@@ -39,29 +37,21 @@
             </dd>
         </dl>
         <p>
-            Keep an eye on the shoutbox. Players will often announce that they are buying or selling items by <a href="../communication/secn_1-2.dai#publicdeta">public announcement</a>. Some people prefer to subsequently conduct business <a href="../communication/secn_1-2.dai#privatedeta">privately</a> and some through <a href="../communication/secn_1-2.dai#publicdeta">public</a> auction.
+            Keep an eye on the <a href="../game_mechanics/secn_2-1#uppertextwindow">shoutbox</a>. Players will often announce that they are buying or selling items by <a href="../communication/secn_4.dai">shout</a>. Some people prefer to subsequently conduct business over <a href="../communication/secn_5.dai#telling">tell</a> and some to continue over <a href="../communication/secn_4.dai">shout</a> in a public auction.
         </p>
         <p>
-            Whichever preference is specified you should respond accordingly. It is widely accepted that the default is <a href="../communication/secn_1-2.dai#publicdeta">public</a> auction.
+            Whichever preference is specified you should respond accordingly. It is widely accepted that the default is a public auction.
         </p>
         <p>
-            Following negotiations over price you must obviously physically exchange cash for item. This is a perennially controversial issue. Currently the only way to exchange money for goods is for either party to drop the one and get the other.
+            Following negotiations over price you must obviously physically exchange cash and/or item(s). This is a perennially controversial issue. Currently the only way to exchange money for goods is for either party to drop the one and get the other.
         </p>
-        <p>
-            As in the real world, there is dishonesty in Daimonin and a player-player transaction may go awry in many ways: for example, the trader may grab the money and run, the customer may grab the item and run, or a third party may take the opportunity to grab anything and run.
-        </p>
-        <p>
-            Suffice to say <a href="#advicedeta">there are several ways to improve the chances that everyone goes home happy</a> from a player-player transaction.
-        </p>
-    </section>
-    <section id="details">
-        <title>
-            Details
-        </title>
-        <section id="advicedeta">
-            <title>
-                Advice on safe trading
-            </title>
+        <div class="advice">
+            <p>
+                <img alt="[ADVICE]" src="../advice.png"/> As in the real world, there is dishonesty in Daimonin and a player-player transaction may go awry in many ways: for example, the trader may grab the money and run, the customer may grab the item and run, or a third party may take the opportunity to grab anything and run.
+            </p>
+            <p>
+                 There are several ways to improve the chances that everyone goes home happy from a player-player transaction. These include:
+            </p>
             <dl>
                 <dt>
                     <strong>Before you make an offer, ask the trader for the item's stats</strong>
@@ -89,7 +79,7 @@
                 </dt>
                 <dd>
                     <p>
-                        Trader and customer should agree a point of sale <a href="../communication/secn_1-2.dai#privatedeta">privately</a>.
+                        Trader and customer should agree a point of sale over <a href="../communication/secn_5.dai#telling">tell</a>.
                     </p>
                 </dd>
                 <dt>
@@ -107,7 +97,6 @@
                     </p>
                 </dd>
             </dl>
-        </section>
+        </div>
     </section>
-</section>
 </daiml>
