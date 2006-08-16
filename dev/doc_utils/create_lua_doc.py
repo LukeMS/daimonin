@@ -112,14 +112,16 @@ def extract_class_attributes(classes, doc, code):
 def extract_class_flags(classes, doc, code):
 	block = flags_block_re_obj.findall(code)
 	if block:
+		index = 0
 		klass = classes[block[0][0]]
 		flags = flags_re_obj.findall(block[0][1])
 		if flags:
 			for flag in flags:
 				if flag.startswith('?'):
-					doc[klass]['flags'][flag.strip('?')] = {'readonly': 1}
+					doc[klass]['flags'][flag.strip('?')] = {'readonly': 1, 'index': index}
 				else:
-					doc[klass]['flags'][flag] = {}
+					doc[klass]['flags'][flag] = {'index': index}
+				index = index + 1
 
 classes = {
 		'GameObject': 'object',
@@ -443,12 +445,28 @@ def end_xml(f, root_tag):
 def output_xml(doc):
 	f = start_xml("lua_c_mappings", "map_c_to_lua")
 	for key in doc.keys():
+		f.write("<class name=\""+key+"\">\n")
 		if doc[key]['attributes']:
-			f.write("<class name=\""+key+"\">\n")
 			attributes = doc[key]['attributes']
 			for attribute in attributes.keys():
-				f.write("  <attribute c=\"" + attributes[attribute][2] + "\" lua=\"" + attribute + "\" />\n")
-			f.write("</class>\n")
+				f.write("  <attribute" +
+                        "   c=\"" + attributes[attribute][2] +
+                        "\" lua=\"" + attribute + 
+                        "\" lua_type=\"" + entities(attributes[attribute][0]) + 
+                        "\" lua_comment=\"" + entities(attributes[attribute][1]) + "\"/>\n")
+		if doc[key]['flags']:
+			flags = doc[key]['flags']
+			for flag in flags.keys():
+				if "readonly" in flags[flag]:
+					comment = "readonly"
+				else:
+					comment = "";
+				f.write("  <attribute" +
+                        " flag_index=\"" + str(flags[flag]['index']) +
+                        "\" lua=\"" + flag + 
+                        "\" lua_type=\"flag\"" +
+                        "   lua_comment=\"" + comment + "\"/>\n")
+		f.write("</class>\n")
 	end_xml(f, "map_c_to_lua")
 
 output_html(doc)
