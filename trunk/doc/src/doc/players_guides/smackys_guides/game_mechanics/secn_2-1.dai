@@ -48,31 +48,29 @@
         <title>
             Textwindows
         </title>
-        <div class="note">
-            <p>
-                <img alt="[NOTE]" src="../note.png"/> You can scroll either textwindow with the <a href="../game_mechanics/secn_2-1.dai#metacommands">meta commands</a> <code>"?M_PAGEUP_TOP"</code> / <code>"?M_PAGEDOWN_TOP"</code> for the upper textwindow and <code>"?M_PAGEUP"</code> / <code>"?M_PAGEDOWN"</code> for the lower textwindow (INSERT / DELETE and PAGEUP / PAGEDOWN by <a href="../game_mechanics/appx_c.dai#textwindows">default</a>).
-            </p>
-        </div>
         <section id="uppertextwindow">
             <title>
-                Upper textwindow (the shoutbox)
+                Upper textwindow (the chat window or shoutbox)
             </title>
             <p>
                 The upper textwindow is often called the shoutbox because that is where <a href="../communication/secn_4.dai">shouts</a> (orange text) are shown.
             </p>
             <p>
-                But <a href="../communication/secn_5.dai#telling">tells</a> and <a href="../communication/secn_4.dai#replying">replies</a> (blue text for those you receive and white text for those you send), and informational and server messages (green text) are also shown here.
-           </p>
+                But <a href="../communication/secn_1.dai">says</a> (white text), <a href="../communication/secn_5.dai#telling">tells</a> and <a href="../communication/secn_4.dai#replying">replies</a> (blue text for those you receive and white text for those you send), <a href="../communication/secn_5.dai">groups says</a> (yellow text), and informational and server messages (green text) are also shown here.
+            </p>
+            <p>
+                The upper textwindow can be scrolled with the <a href="../game_mechanics/secn_2-1.dai#metacommands">meta commands</a> <code>"?M_PAGEUP_TOP"</code> / <code>"?M_PAGEDOWN_TOP"</code> (INSERT / DELETE by <a href="../game_mechanics/appx_c.dai#textwindows">default</a>).
+            </p>
         </section>
         <section id="lowertextwindow">
             <title>
-                Lower textwindow (the console)
+                Lower textwindow (the message window and console)
             </title>
             <p>
                 The lower textwindow serves two functions: output and input.
             </p>
             <p>
-                Output takes the form of <a href="../communication/secn_1.dai">says</a> (white text), command confirmations (dark gold text) and effects (also white text), and many informational messages (green, blue, orange, purple, or yet more white text). Occasionally you may also uncover a server error (red text) which should be reported.
+                Output takes the form of <a href="../communication/secn_3.dai">emotes</a> (yellow text for those you receive and white text for those you send), command confirmations (dark gold text) and effects (white text), and many informational messages (green, blue, orange, purple, red, or white text).
             </p>
             <p>
                 <a href="#gamecommands">Game commands</a> may be input in the console. To open the console enter the <a href="#metacommands">meta command</a> <code>"?M_CONSOLE"</code>. By <a href="./appx_c.dai#textwindows">default</a> this is <a href="#boundkeys">bound to the key</a> KPENTER, so press that.
@@ -144,6 +142,9 @@
                     An example should make it clear: <a href="./secn_3-1.dai">bind a key</a> to the macro <code>"?M_MCON/shout "</code>. Now when you press that key you will enter the console and the text <code>"/shout "</code> appears automatically. The console remains open so you can type in the message.
                 </p>
             </div>
+            <p>
+                The lower textwindow can be scrolled with the <a href="#metacommands">meta commands</a> <code>"?M_PAGEUP"</code> / <code>"?M_PAGEDOWN"</code> (PAGEUP / PAGEDOWN by <a href="../game_mechanics/appx_c.dai#textwindows">default</a>).
+            </p>
         </section>
     </section>
     <section id="boundkeys">
