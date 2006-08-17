@@ -95,8 +95,8 @@
   </attribute>
   <attribute arch="amask" editor="artifact mask" type="string">
 	This is the name of a artifact mask which alters the original arch with the
-    values defined for that artifact in the artifacts file. The item is patched 
-    AFTER all commands, even following behind the artifact mask, are loaded in.
+    values defined for that artifact in the artifacts file. The item is altered 
+    AFTER all other attributes, even those following behind the artifact mask, are loaded.
   </attribute>
   <attribute arch="sub_type" editor="sub type" type="int">
     This important value is used to define "sub types" for objects of the same object
@@ -110,7 +110,7 @@
     how this object is shown on client side. Layer 0 is reserved for sys_object type objects
     and will NEVER be shown on client side.
     Layer 3 and 4 are for items on the ground. Layer 5 is for walls, layer 
-    6 is reversed for players and layer 7 is for spell effects and high flying/visible
+    6 is reserved for players and layer 7 is for spell effects and high flying/visible
     objects like arrows.
   </attribute>
   <attribute arch="face" editor="image" type="facename">
@@ -289,7 +289,7 @@
   <attribute arch="is_named" editor="named item" type="bool">
     Item is named and prefix like race or material is not shown.
   </attribute>
-  <attribute arch="inv_locked" editor="iventory lock" type="bool">
+  <attribute arch="inv_locked" editor="inventory lock" type="bool">
     Item is locked when in player inventory (can't be dropped).
   </attribute>
   <attribute arch="is_magical" editor="magical" type="bool">
@@ -575,7 +575,7 @@
     you are interested in implementing it.
     ]]>
   </description>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="Behaviour list" type="text">
+  <attribute arch_begin="msg" arch_end="endmsg" editor="behaviour list" type="text">
     This is where behaviours are defined. A behaviour belongs to one of the predefined classes,
     and may take parameters. 
   </attribute>
@@ -1077,31 +1077,31 @@
     is NOT in a monster's inventory.
   </attribute>
 <section name="stats">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise/fall by the given value while
     wearing this piece of equipment.
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
@@ -1334,7 +1334,7 @@
 </type>
 
 <!--####################################################################-->
-<type number="16" name="Brestplate Armour">
+<type number="16" name="Breastplate Armour">
   <import_type name="Amulet" />
   <ignore>
     <attribute arch="material" />
@@ -1838,8 +1838,8 @@
     (recharging mana for example).
     Infection with a "positive disease" could even be a quest reward. ]]>
   </use>
-  <attribute arch="level" editor="plaque level" type="int">
-    The &lt;plaque level&gt; is proportional to the disease's deadliness.
+  <attribute arch="level" editor="plague level" type="int">
+    The &lt;plague level&gt; is proportional to the disease's deadliness.
     This mainly reflects in the &lt;damage&gt;. It has no effect on
     most other symptoms. Neverthless, it is a very important value for
     all damage-inflicting diseases.
@@ -1941,31 +1941,31 @@
   </attribute>
 </section>
 <section name="disability">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise by the given value
     while being infected. (Negative values make strength fall)
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise by the given value
     while being infected. (Negative values make dexterity fall)
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise by the given value
     while being infected. (Negative values make constitution fall)
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise by the given value
     while being infected. (Negative values make intelligence fall)
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise by the given value
     while being infected. (Negative values make power fall)
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise by the given value
     while being infected. (Negative values make wisdom fall)
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise by the given value
     while being infected. (Negative values make charisma fall)
   </attribute>
@@ -2103,7 +2103,7 @@
   <attribute arch="terrain_type" editor="terrain type" type="bitmask_terrain">
     The &lt;terrain type&gt; defines what kind of environment exists on
     this tile. This can be anything from normal land (= "none")
-    to water, fire etc. Only creatures whith appropriate terrain-
+    to water, fire etc. Only creatures with appropriate terrain-
     abilities can pass over this square.
   </attribute>
   <attribute arch="is_wooded" editor="wooded terrain" type="bool">
@@ -2191,31 +2191,31 @@
     and then copied to force speed.
   </attribute>
 <section name="Force Effects">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise/fall by the given value while
     wearing this piece of equipment.
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
@@ -2268,31 +2268,31 @@
     has effects which gets copied to a force.
   </attribute>
 <section name="Force Effects">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise/fall by the given value while
     wearing this piece of equipment.
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
@@ -3260,7 +3260,7 @@
     Note that the monster's level further improves armour class:
     "real armour class" = &lt;armour class&gt; - &lt;level&gt;
   </attribute>
-  <attribute arch="Con" editor="healing (reg.) rate" type="int">
+  <attribute arch="con" editor="healing (reg.) rate" type="int">
     Monsters regenerate this many hit points each move. Each time the
     monster has a move, it gets &lt;healing rate&gt; health points back.
     Hence, &lt;movement speed&gt; has great effect on the monster's healing
@@ -3304,7 +3304,7 @@
     The in-game value is calculated as follows:
     "real max spellpoints" = &lt;max spellpoints&gt; * (&lt;level&gt; + 1)
   </attribute>
-  <attribute arch="Pow" editor="spellpoint regen." type="int">
+  <attribute arch="pow" editor="spellpoint regen." type="int">
     Monsters regenerate this many spellpoints each move. Each time the
     monster has a move, it gets &lt;spellpoint regen.&gt; spellpoints back.
     Hence, &lt;movement speed&gt; has great effect on the monster's
@@ -3343,18 +3343,18 @@
     This entry defines which kinds of environment actions the
     creature is able to perform.
   </attribute>
-  <attribute arch="Dex" editor="use ability 1/" type="int">
+  <attribute arch="dex" editor="use ability 1/" type="int">
     The &lt;use ability&gt; value is a 1/x chance that the monster
     *try* to use per active tick a special ability like spellcasting,
     throwing, etc.
   </attribute>
-  <attribute arch="Int" editor="detect hidden" type="int">
+  <attribute arch="int" editor="detect hidden" type="int">
     The &lt;detect hidden&gt; value gives monsters the abiltity to find
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
   </attribute>
-  <attribute arch="Wis" editor="sensing range" type="int">
+  <attribute arch="wis" editor="sensing range" type="int">
     &lt;sensing range&gt; determines how close a player needs to be before
     the creature wakes up. This is done as a square, for reasons of speed.
     Thus, if the &lt;sensing range&gt; is 11, any player that moves within the
@@ -3736,7 +3736,7 @@
     Note that the monster's level further improves armour class:
     "real armour class" = &lt;armour class&gt; - &lt;level&gt;
   </attribute>
-  <attribute arch="Con" editor="healing (reg.) rate" type="int">
+  <attribute arch="con" editor="healing (reg.) rate" type="int">
     Monsters regenerate this many hit points each move. Each time the
     monster has a move, it gets &lt;healing rate&gt; health points back.
     Hence, &lt;movement speed&gt; has great effect on the monster's healing
@@ -3779,7 +3779,7 @@
     The in-game value is calculated as follows:
     "real max spellpoints" = &lt;max spellpoints&gt; * (&lt;level&gt; + 1)
   </attribute>
-  <attribute arch="Pow" editor="spellpoint regen." type="int">
+  <attribute arch="pow" editor="spellpoint regen." type="int">
     Monsters regenerate this many spellpoints each move. Each time the
     monster has a move, it gets &lt;spellpoint regen.&gt; spellpoints back.
     Hence, &lt;movement speed&gt; has great effect on the monster's
@@ -3818,18 +3818,18 @@
     This entry defines which kinds of environment actions the
     creature is able to perform.
   </attribute>
-  <attribute arch="Dex" editor="use ability 1/" type="int">
+  <attribute arch="dex" editor="use ability 1/" type="int">
     The &lt;use ability&gt; value is a 1/x chance that the monster
     *try* to use per active tick a special ability like spellcasting,
     throwing, etc.
   </attribute>
-  <attribute arch="Int" editor="detect hidden" type="int">
+  <attribute arch="int" editor="detect hidden" type="int">
     The &lt;detect hidden&gt; value gives monsters the ablitity to find
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
   </attribute>
-  <attribute arch="Wis" editor="sensing range" type="int">
+  <attribute arch="wis" editor="sensing range" type="int">
     &lt;sensing range&gt; determines how close a player needs to be before
     the creature wakes up. This is done as a square, for reasons of speed.
     Thus, if the &lt;sensing range&gt; is 11, any player that moves within the
@@ -4266,31 +4266,31 @@
     negative effects.
   </attribute>
   <section name="Force Effects">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise/fall by the given value while
     wearing this piece of equipment.
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this piece of equipment.
   </attribute>
@@ -4345,43 +4345,43 @@
     The value is only valid for potions who can be thrown.
   </attribute>
 <section name="stats">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value for permanent
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
@@ -4657,7 +4657,7 @@
     runes can be quite a cheap source of experience! So either make them
     tough, or keep the level low.
   </attribute>
-  <attribute arch="Cha" editor="visibility" type="int">
+  <attribute arch="cha" editor="visibility" type="int">
     This value determines what fraction of the time the rune is visible:
     It'll be randomly visible 1/&lt;visibility&gt; of the time. Also effects
     how easily the trap may be found.
@@ -4829,31 +4829,31 @@
    PASS_THRU flag set (like ghosts and other non physical monsters).
   </attribute>
 <section name="stats">
-  <attribute arch="Str" editor="strength" type="int">
+  <attribute arch="str" editor="strength" type="int">
     The player's strength will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
-  <attribute arch="Dex" editor="dexterity" type="int">
+  <attribute arch="dex" editor="dexterity" type="int">
     The player's dexterity will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
-  <attribute arch="Con" editor="constitution" type="int">
+  <attribute arch="con" editor="constitution" type="int">
     The player's constitution will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
-  <attribute arch="Int" editor="intelligence" type="int">
+  <attribute arch="int" editor="intelligence" type="int">
     The player's intelligence will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
-  <attribute arch="Pow" editor="power" type="int">
+  <attribute arch="pow" editor="power" type="int">
     The player's power will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
-  <attribute arch="Wis" editor="wisdom" type="int">
+  <attribute arch="wis" editor="wisdom" type="int">
     The player's wisdom will rise/fall by the given value while
     wearing this shooting weapon.
   </attribute>
-  <attribute arch="Cha" editor="charisma" type="int">
+  <attribute arch="cha" editor="charisma" type="int">
     The player's charisma will rise/fall by the given value
     while wearing this shooting weapon.
   </attribute>
