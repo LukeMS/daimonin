@@ -32,7 +32,7 @@ comment_prefix_re_obj = re.compile('/\*\s*')
 comment_suffix_re_obj = re.compile('\s*\*/[\n\r]*')
 constants_re_obj = re.compile('"(.+?)"')
 dot_re_obj = re.compile('\.')
-flags_re_obj = re.compile('"(.+?)"')
+flags_re_obj = re.compile('"(.+?)"|(NULL)')
 flags_block_re_obj = re.compile('const\s+char\s*\*\s*(.*?)_flags\[.*?\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 func_re_obj = re.compile('/\*.*?[\n\r]+\}', re.S)
 func_body_re_obj = re.compile('\s*static\s+int\s+.+?\(lua_State\s*\*\s*L\).*?\{(.+)\}', re.S)
@@ -117,10 +117,12 @@ def extract_class_flags(classes, doc, code):
 		flags = flags_re_obj.findall(block[0][1])
 		if flags:
 			for flag in flags:
-				if flag.startswith('?'):
-					doc[klass]['flags'][flag.strip('?')] = {'readonly': 1, 'index': index}
+				if not flag[0]:
+					nop = 1
+				elif flag[0].startswith('?'):
+					doc[klass]['flags'][flag[0].strip('?')] = {'readonly': 1, 'index': index}
 				else:
-					doc[klass]['flags'][flag] = {'index': index}
+					doc[klass]['flags'][flag[0]] = {'index': index}
 				index = index + 1
 
 classes = {
