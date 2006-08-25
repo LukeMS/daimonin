@@ -6,7 +6,7 @@
 -- Please use local variables for anything done in here...
 --
 -- Also note that this script is _only_ loaded at server startup
-]]
+--]]
 
 require("security")
 require("data_store")
@@ -16,28 +16,28 @@ require("data_store")
 --
 
 function string.capitalize(s, b_keep)
-local s1, s2 = string.sub(s,1,1), string.sub(s,2)
-if s2 then
-if not b_keep then
-s2 = string.lower(s2)
-end
-return string.upper(s1) .. s2
-else
-return string.upper(s1)
-end
+    local s1, s2 = string.sub(s,1,1), string.sub(s,2)
+    if s2 then
+        if not b_keep then
+            s2 = string.lower(s2)
+        end
+        return string.upper(s1) .. s2
+    else
+        return string.upper(s1)
+    end
 end
 
 -- string.split() function
 function string.split(s, sep)
-if s == nil then return nil end
-if sep == nil or sep == "" then
-sep = "%s"
-end
-local t={}, n
-for n in string.gfind(s, "[^" .. sep .. "]+") do
-table.insert(t, n)
-end
-return t
+    if s == nil then return nil end
+    if sep == nil or sep == "" then
+        sep = "%s"
+    end
+    local t={}, n
+    for n in string.gfind(s, "[^" .. sep .. "]+") do
+        table.insert(t, n)
+    end
+    return t
 end
 
 --
@@ -50,41 +50,41 @@ end
 -- but this will do for now. I hope people will use them
 
 function obj_inventory(obj)
-local iterator = function(_, last) return last.below end
-return iterator, nil, obj.inventory
+    local iterator = function(_, last) return last.below end
+    return iterator, nil, obj.inventory
 end
 
 function map_objects(map, x, y)
-local iterator = function(_, last) return last.above end
-return iterator, nil, map.GetFirstObjectOnSquare(x,y)
+    local iterator = function(_, last) return last.above end
+    return iterator, nil, map.GetFirstObjectOnSquare(x,y)
 end
 
 -- Magic errorhandler, sends script errors to involved DM:s
 -- TODO: possibility to turn on/off either via a script or custom commands
 -- TODO: possibility to register DM's that should get messages even if not involved
 function _error(msg)
-msg = debug.traceback(msg)
+    msg = debug.traceback(msg)
 
-local function msg_wiz_obj(obj)
-if obj and game:IsValid(obj) and obj.f_wiz then
-obj.Write(obj, "LUA: "..tostring(msg))
-return true
-end
-return false
-end
+    local function msg_wiz_obj(obj)
+        if obj and game:IsValid(obj) and obj.f_wiz then
+            obj.Write(obj, "LUA: "..tostring(msg))
+            return true
+        end
+        return false
+    end
 
-if event and game:IsValid(event) then
-msg_wiz_obj(event.activator)
-msg_wiz_obj(event.me)
-msg_wiz_obj(event.other)
-end
+    if event and game:IsValid(event) then
+        msg_wiz_obj(event.activator)
+        msg_wiz_obj(event.me)
+        msg_wiz_obj(event.other)
+    end
 
-return msg
+    return msg
 end
 
 -- Shutdown hook called when server unloads the plugin
 function _shutdown()
-_data_store.save(true)
+    _data_store.save(true)
 end
 
 -- Finished with the initialization

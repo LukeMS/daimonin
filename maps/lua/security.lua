@@ -5,31 +5,31 @@
 
 -- security wrappers
 function wrap_loadfile()
-local orig_loadfile = loadfile
-return function(filename)
--- Don't allow null chars in filename
-assert(not string.find(filename, "%z"), "Filename contains null char")
+    local orig_loadfile = loadfile
+    return function(filename)
+        -- Don't allow null chars in filename
+        assert(not string.find(filename, "%z"), "Filename contains null char")
 
--- only allow loading of datastore lua files:
-assert(string.find(filename, "\.dsl$"), "Can only load datastore files")
+        -- only allow loading of datastore lua files:
+        assert(string.find(filename, "\.dsl$"), "Can only load datastore files")
 
--- Call the original loadfile
-return orig_loadfile(filename)
-end
+        -- Call the original loadfile
+        return orig_loadfile(filename)
+    end
 end
 
 function wrap_io_open()
-local orig_io_open = io.open
-return function(filename, mode)
--- Don't allow null chars in filename
-assert(not string.find(filename, "%z"), "Filename contains null char")
+    local orig_io_open = io.open
+    return function(filename, mode)
+        -- Don't allow null chars in filename
+        assert(not string.find(filename, "%z"), "Filename contains null char")
 
--- only allow loading of datastore lua files:
-assert(string.find(filename, "\.dsl$"), "Can only open datastore files")
+        -- only allow loading of datastore lua files:
+        assert(string.find(filename, "\.dsl$"), "Can only open datastore files")
 
--- Call the original loadfile
-return orig_io_open(filename, mode)
-end
+        -- Call the original loadfile
+        return orig_io_open(filename, mode)
+    end
 end
 
 -- Potentially dangerous functions in the base lib:
