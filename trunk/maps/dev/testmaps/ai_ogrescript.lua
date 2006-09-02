@@ -5,17 +5,17 @@
 require("topic_list");
 
 function modify_friendship(op, friend, change)
-local ai = op:GetAI()
-ai:Register(friend, change, 0)
-op:Say("My new friendship towards " .. friend.name .. ": " .. ai:GetFriendship(friend))
+    local ai = op:GetAI()
+    ai:Register(friend, change, 0)
+    op:Say("My new friendship towards " .. friend.name .. ": " .. ai:GetFriendship(friend))
 end
 
 function insult_func()
-modify_friendship(event.me, event.activator, -200)
+    modify_friendship(event.me, event.activator, -200)
 end
 
 function compliment_func()
-modify_friendship(event.me, event.activator, 200)
+    modify_friendship(event.me, event.activator, 200)
 end
 
 tl = TopicList()
