@@ -2200,17 +2200,14 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
         }
         else /* we have a target and its not self */
         {
-            /* Friendly and self spells are always allowed */
+            /* Friend spells are allowed on friends, neutrals and other players */
             if (flags & SPELL_DESC_FRIENDLY)
             {
-                *target = tmp;
-                return TRUE;
-            }
-
-            if (flags & SPELL_DESC_SELF)
-            {
-                *target = op;
-                return TRUE;
+                if (tmp->type == PLAYER || get_friendship(op, tmp) > FRIENDSHIP_ATTACK)
+                {
+                    *target = tmp;
+                    return TRUE;
+                }
             }
 
             /* enemy spells only allowed on enemies or neutrals */
@@ -2221,6 +2218,13 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
                     *target = tmp; 
                     return TRUE;
                 }
+            }
+            
+            /* Self spells are always allowed */
+            if (flags & SPELL_DESC_SELF)
+            {
+                *target = op;
+                return TRUE;
             }
         }
     }
