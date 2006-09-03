@@ -48,11 +48,10 @@ static struct method_decl   AI_methods[]            =
     {"GetAttraction",          (lua_CFunction) AI_GetAttraction},
     {"LastSeen",               (lua_CFunction) AI_LastSeen},
     {"GetKnownMobs",           (lua_CFunction) AI_GetKnownMobs},
+    {"GetKnownObjects",        (lua_CFunction) AI_GetKnownObjects},
 
     {NULL, NULL}
 };
-
-/* TODO: support for knownObjects */
 
 /* GameObject attributes */
 struct attribute_decl       AI_attributes[]         =
@@ -426,6 +425,31 @@ static int AI_GetKnownMobs(lua_State *L)
     lua_newtable(L);
 
     for (tmp = MOB_DATA(self->data.object)->known_mobs; tmp; tmp = tmp->next)
+    {
+        push_object(L, &GameObject, tmp->obj);
+        lua_rawseti(L, -2, i++);
+    }
+
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : AI_GetKnownObjects                                               */
+/* Lua    : ai:GetKnownObjects()                                             */
+/* Info   : Returns an array with all objects known by the AI                */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int AI_GetKnownObjects(lua_State *L)
+{
+    struct mob_known_obj *tmp;
+    lua_object *self;
+    int i = 0;
+
+    get_lua_args(L, "A", &self);
+
+    lua_newtable(L);
+
+    for (tmp = MOB_DATA(self->data.object)->known_objs; tmp; tmp = tmp->next)
     {
         push_object(L, &GameObject, tmp->obj);
         lua_rawseti(L, -2, i++);
