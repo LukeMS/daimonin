@@ -460,7 +460,8 @@ int get_npc_attitude(object *op, object *other)
     
     attitudes = MOB_DATA(op)->behaviours->attitudes;
 
-    if(attitudes == NULL) {
+    if(attitudes == NULL) 
+    {
         /* Default alignment handling */
         if (QUERY_FLAG(op, FLAG_FRIENDLY) == QUERY_FLAG(other, FLAG_FRIENDLY))
             friendship += FRIENDSHIP_HELP;
