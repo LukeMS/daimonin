@@ -44,6 +44,7 @@ static int AI_GetFriendship(lua_State *L);
 static int AI_GetAttraction(lua_State *L);
 static int AI_LastSeen(lua_State *L);
 static int AI_GetKnownMobs(lua_State *L);
+static int AI_GetKnownObjects(lua_State *L);
 
 
 #endif /*AI_OBJECT_H*/
