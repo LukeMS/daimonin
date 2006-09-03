@@ -1441,6 +1441,7 @@ void draw_client_map2(object *pl)
                 else
                     tmp = GET_MAP_SPACE_CL_INV(msp, 1);
 */
+                flag_tmp = 0;
                 probe_tmp = 0;
 				tmp = tmph = NULL;
                 quick_pos_1 = 0;
@@ -1506,11 +1507,11 @@ void draw_client_map2(object *pl)
                 if (tmp)
                 {
                     /* Well, i have no idea how to send for each player his own face without this.
-                            * The way we can avoid this is to lets draw the player by the client
-                            * only and just to tell the client what direction and animation the player now
-                            * has... but Daimonin/CF can't handle client map animation atm... Even it should
-                            * not hard to be done. MT
-                            */
+                     * The way we can avoid this is to lets draw the player by the client
+                     * only and just to tell the client what direction and animation the player now
+                     * has... but Daimonin/CF can't handle client map animation atm... Even it should
+                     * not hard to be done. MT
+                     */
 /*
                     if (pl->x == nx && pl->y == ny && tmp->layer == 6)
                         tmp = pl;
