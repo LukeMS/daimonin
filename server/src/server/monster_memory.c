@@ -180,7 +180,6 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
     known->friendship = 0;
     known->attraction = 0;
 
-    /* Initial friendship and attitude */
     for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
         known->flags[i] = 0;
 
@@ -192,6 +191,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other, int fri
         known->rv = rv;
     }
 
+    /* Initial friendship and attitude */
     update_npc_known_obj(known, friendship, attraction);
     
     /* Add to list and possibly hashtable */
