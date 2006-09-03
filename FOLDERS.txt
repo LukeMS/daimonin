@@ -13,7 +13,7 @@ Daimonin/
 	client/			<- The SDL client
 	doc/			<- The whole project docs
 	dev/			<- OS specific dev tools (DEV team only)
-	editor/			<- The default editor - The DaimoninEditor
+	editor/			<- unused (goto http://gridarta.sourceforge.net/)
 	maps/			<- The map files (for use with editor or server)
 	server/			<- The Daimonin server
 
