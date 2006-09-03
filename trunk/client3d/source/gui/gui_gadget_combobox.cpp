@@ -182,7 +182,7 @@ void GuiGadgetCombobox::draw()
                 texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcScrollbarDown->width, mY + mEntryHeight + mViewport - srcScrollbarDown->height, mX + mWidth, mY + mEntryHeight + mViewport));
             }
         }
-        for( unsigned int i = 1 ; i < mvOption.size() ; i++ )
+        for ( unsigned int i = 1 ; i < mvOption.size() ; i++ )
         {
             label.y1 = mY + mEntryHeight + GuiTextout::getSingleton().getFontHeight(label.font) * (i-1) - mScrollPos;
             label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);

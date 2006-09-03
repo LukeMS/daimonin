@@ -2,34 +2,27 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
-
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
-
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
 In addition, as a special exception, the copyright holders of client3d give
 you permission to combine the client3d program with lgpl libraries of your
 choice and/or with the fmod libraries.
 You may copy and distribute such a system following the terms of the GNU GPL
 for client3d and the licenses of the other code concerned.
-
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
 #include "option.h"
 #include "logger.h"
 #include "object_animate.h"
-
 /** IMPORTANT: Every animated model MUST have at least the Idle1 animation. **/
-
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
@@ -47,7 +40,6 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
         "Spawn",
         "Cast", "Cast_Fun",
     };
-
 //=================================================================================================
 // Constructor.
 //=================================================================================================
@@ -62,7 +54,6 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
     mAnimSpeed = 2;
     mAnimGroup =-1;
     String strTmp, strGroup;
-
     // fill the animation states.
     int j;
     int sum =0;
@@ -72,7 +63,7 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
         mAnimGroupEntries[i] =0;
         strGroup = StateNames[i];
         j =0;
-        while(1)
+        while (1)
         {
             strTmp = strGroup + StringConverter::toString(++j);
             if (!animSet->hasAnimationState(strTmp))
@@ -82,7 +73,6 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
             ++sum;
         }
     }
-
     // We have a animated mesh, but it has not a single valid name.
     int invalidAnims = entity->getSkeleton()->getNumAnimations()-sum;
     if (invalidAnims && !sum)
@@ -91,7 +81,6 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
         mIsAnimated = false;
         return;
     }
-
     // Every skeleton MUST have the Idle1 animation.
     if (!animSet->hasAnimationState("Idle1"))
     {
@@ -99,19 +88,16 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
         mIsAnimated = false;
         return;
     }
-
     mIsAnimated = true;
     Logger::log().list() << "Object has " << entity->getSkeleton()->getNumAnimations() << " animations.";
     if (invalidAnims)
     {
-      Logger::log().warning() << invalidAnims << " of the animations are invalid.";
+        Logger::log().warning() << invalidAnims << " of the animations are invalid.";
     }
-
     // Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];
     toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
 }
-
 //=================================================================================================
 // Constructor.
 //=================================================================================================
@@ -119,7 +105,6 @@ ObjectAnimate::~ObjectAnimate()
 {
     mAnimState.clear();
 }
-
 //=================================================================================================
 // Update the animation.
 //=================================================================================================
@@ -135,7 +120,6 @@ void ObjectAnimate::update(const FrameEvent& event)
             toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
 }
-
 //=================================================================================================
 // Toggle the animation.
 //=================================================================================================
@@ -149,17 +133,20 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     // Dont change a running (none-movement) anim without the force-switch.
     if (!force && !isMovement())
         return;
-
     // On invalid animGroup choose Idle.
     if (animGroup >= ANIM_GROUP_SUM || !mAnimGroupEntries[animGroup])
+    {
         animGroup = ANIM_GROUP_IDLE;
+        loop = true;
+    }
     // On invalid animNr choose 0.
     if (animNr >= mAnimGroupEntries[animGroup])
         animNr = 0;
     mAnimNr = animNr;
     // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
-    if (mAnimGroup == ANIM_GROUP_SPAWN) random = false;
-    mAnimGroup = animGroup;
+
+	if (animGroup == ANIM_GROUP_SPAWN) random = false;
+	mAnimGroup = animGroup;
     // Find the anim pos in the anim-vector.
     animGroup =0;
     for (int i=0; i< mAnimGroup; ++i)
@@ -169,12 +156,12 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     // Set the Animation.
     mActState->setEnabled(false);
     mActState= mAnimState[animGroup+ animNr];
-    mTimeLeft = mActState->getLength();
+
     // Set a random offest for the animation start (prevent synchronous "dancing").
     if (random)
-        mActState->setTimePosition(Math::RangeRandom(0.0, mTimeLeft));
+        mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
     else
-        mActState->setTimePosition(0.0);
+		mActState->setTimePosition(0.0);
     mActState->setEnabled(true);
     mActState->setLoop(loop);
 }

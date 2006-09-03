@@ -181,7 +181,7 @@ void TileChunk::createWater_Buffers()
     WaveHigh+= offsetWave;
     if (WaveHigh >1.5 || WaveHigh < -1.5) offsetWave*=-1;
 
-    Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_DISCARD));
+    Real* pReal = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     Real q1, q2;
     for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
@@ -306,7 +306,7 @@ void TileChunk::createWater_Buffers()
     idata->indexBuffer = ibuf;
     idata->indexStart = 0;
     idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock (HardwareBuffer::HBL_DISCARD));
     for (unsigned short p=0; numVertices; ++p)
         pIdx[--numVertices] = p;
     ibuf->unlock();
@@ -390,7 +390,7 @@ void TileChunk::createLand_Buffers()
     long o = 0;
     Real g, h, d, f, row, col, rowIndoor =0, colIndoor=0;
     Real average;
-    Real* pReal1 = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_DISCARD));
+    Real* pReal1 = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     const Real MIPMAP_SPACE = 4;
     // We divide a tile into 4 (2x2) subtiles.
     // On odd x positions a subtile from right half (even -> left half) of the tile is drawn.
@@ -718,7 +718,7 @@ void TileChunk::createLand_Buffers()
     idata->indexBuffer = ibuf;
     idata->indexStart = 0;
     idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock (HardwareBuffer::HBL_DISCARD));
     for (unsigned short p=0; numVertices; ++p)
         pIdx[--numVertices] = p;
     ibuf->unlock();
@@ -747,7 +747,7 @@ void TileChunk::createDummy(SubMesh* submesh)
                 HardwareBuffer::HBU_STATIC_WRITE_ONLY, // usage
                 false); // no shadow buffer
     vdata->vertexBufferBinding->setBinding(0, vbuf0);
-    Real* pReal = static_cast<Real*>(vbuf0->lock(HardwareBuffer::HBL_DISCARD));
+    Real* pReal = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     // Triangle 1
     pReal[0] = 0;
     pReal[1] = 0;
@@ -770,7 +770,7 @@ void TileChunk::createDummy(SubMesh* submesh)
     idata->indexBuffer= ibuf;
     idata->indexStart = 0;
     idata->indexCount = numVertices;
-    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock(HardwareBuffer::HBL_DISCARD));
+    unsigned short* pIdx = static_cast<unsigned short*>(ibuf->lock (HardwareBuffer::HBL_DISCARD));
     pIdx[0] = 2;
     pIdx[1] = 1;
     pIdx[2] = 0;

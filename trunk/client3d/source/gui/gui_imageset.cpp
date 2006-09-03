@@ -71,25 +71,25 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
 
 // Mouse states.
 GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
-{
-    { "Default",  STATE_MOUSE_DEFAULT  },
-    { "Pushed",   STATE_MOUSE_PUSHED   },
-    { "Dragging", STATE_MOUSE_DRAGGING },
-    { "Resizing", STATE_MOUSE_RESIZING },
-    { "PickUp",   STATE_MOUSE_PICKUP   },
-    { "Talk",     STATE_MOUSE_TALK     },
-    { "Attack",   STATE_MOUSE_ATTACK   },
-    { "Cast",     STATE_MOUSE_CAST     },
-};
+    {
+        { "Default",  STATE_MOUSE_DEFAULT  },
+        { "Pushed",   STATE_MOUSE_PUSHED   },
+        { "Dragging", STATE_MOUSE_DRAGGING },
+        { "Resizing", STATE_MOUSE_RESIZING },
+        { "PickUp",   STATE_MOUSE_PICKUP   },
+        { "Talk",     STATE_MOUSE_TALK     },
+        { "Attack",   STATE_MOUSE_ATTACK   },
+        { "Cast",     STATE_MOUSE_CAST     },
+    };
 
 // GuiElement states.
 GuiImageset::GuiElementNames GuiImageset::mElementState[STATE_ELEMENT_SUM]=
-{
-    { "Default",  STATE_ELEMENT_DEFAULT },
-    { "Pushed",   STATE_ELEMENT_PUSHED  },
-    { "M_Over",   STATE_ELEMENT_M_OVER  },
-    { "Passive",  STATE_ELEMENT_PASSIVE },
-};
+    {
+        { "Default",  STATE_ELEMENT_DEFAULT },
+        { "Pushed",   STATE_ELEMENT_PUSHED  },
+        { "M_Over",   STATE_ELEMENT_M_OVER  },
+        { "Passive",  STATE_ELEMENT_PASSIVE },
+    };
 
 //================================================================================================
 // .
@@ -107,7 +107,7 @@ GuiImageset::~GuiImageset()
         delete (*i);
     }
     mvSrcEntry.clear();
-	delete mSrcEntryMouse;
+    delete mSrcEntryMouse;
 }
 
 //================================================================================================
@@ -201,15 +201,15 @@ bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_st
             {
                 state = i;
                 break;
-             }
-         }
-         if (state < 0)
-         {
+            }
+        }
+        if (state < 0)
+        {
             Logger::log().error() << "Unknown state: " << strTemp;
             continue;
-         }
-         if ((strTemp= xmlState->Attribute("posX"))) stateNr[state].x = atoi(strTemp);
-         if ((strTemp= xmlState->Attribute("posY"))) stateNr[state].y = atoi(strTemp);
+        }
+        if ((strTemp= xmlState->Attribute("posX"))) stateNr[state].x = atoi(strTemp);
+        if ((strTemp= xmlState->Attribute("posY"))) stateNr[state].y = atoi(strTemp);
     }
     // ////////////////////////////////////////////////////////////////////
     // Every element MUST have at least the default state.
@@ -245,7 +245,7 @@ GuiImageset::GuiSrcEntry *GuiImageset::getStateGfxPositions(const char* guiImage
 
 
 //================================================================================================
-// After the srcEntry was copied to the guiElement, we dont need it anymore. 
+// After the srcEntry was copied to the guiElement, we dont need it anymore.
 //================================================================================================
 void GuiImageset::deleteStateGfxPositions(const char* guiImage)
 {

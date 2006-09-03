@@ -45,8 +45,9 @@ const int CHUNK_SIZE_Z  = 23; /**< Number of tiles in the worldmap (on z-axis). 
 const int MIN_TEXTURE_PIXEL = 16; /**< Minimal size of tile in the terrain texture. */
 
 /** Size of a tile. */
-const int TILE_SIZE_X = 48;
-const int TILE_SIZE_Z = 48;
+const int TILE_SIZE_X  = 48;
+const int TILE_SIZE_Z  = 48;
+const int SUM_SUBTILES =  8;
 
 class TileManager
 {
@@ -175,20 +176,23 @@ public:
     void setMaterialLOD(int pix);
     void toggleGrid();
     void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short x, short y);
+    void setWalkablePos(const SubPos2D &pos, int row, unsigned char walkables);
+    bool getWalkablePos(int x, int y);
 
 private:
     /**  TileEngine struct which holds the worldmap. **/
     struct WorldMap
     {
-        unsigned char height; /**< Average height. **/
-        char terrain_col;     /**< Column of the tile-texture in the terrain-texture. **/
-        char terrain_row;     /**< Row    of the tile-texture in the terrain-texture. **/
-        char indoor_col;      /**< Column of the tile-texture in the terrain-texture. **/
-        char indoor_row;      /**< Row    of the tile-texture in the terrain-texture. **/
-        char indoorTris;      /**< Which triangles of the tile do have indoor gfx.    **/
+        unsigned char height;                 /**< Average height. **/
+        unsigned char walkable[SUM_SUBTILES]; /**< Walkable status for each subtile (8 bit * 8 rows)  **/
+        char terrain_col;                     /**< Column of the tile-texture in the terrain-texture. **/
+        char terrain_row;                     /**< Row    of the tile-texture in the terrain-texture. **/
+        char indoor_col;                      /**< Column of the tile-texture in the terrain-texture. **/
+        char indoor_row;                      /**< Row    of the tile-texture in the terrain-texture. **/
+        char indoorTris;                      /**< Which triangles of the tile do have indoor gfx.    **/
+
     }
     mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
-
     SceneManager *mSceneManager;
     TileChunk mMapchunk;
     TileInterface *mInterface;

@@ -100,7 +100,7 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
 {
     if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y))
     {
-       if (MouseAction == GuiWindow::BUTTON_RELEASED)
+        if (MouseAction == GuiWindow::BUTTON_RELEASED)
         {
             updateSliderPos(-1);
             activated(mHorizontal?BUTTON_H_ADD:BUTTON_V_ADD, -1.0);
@@ -162,7 +162,7 @@ void GuiGadgetScrollbar::draw()
     w = mStopX-mStartX;
 
     uint32 color;
-    switch(mState)
+    switch (mState)
     {
         case GuiImageset::STATE_ELEMENT_PUSHED:
             color = mColorBarActive;

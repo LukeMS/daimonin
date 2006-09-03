@@ -115,7 +115,8 @@ public:
     typedef struct
     {
         short x, y;
-    }gfxPos;
+    }
+    gfxPos;
 
     typedef struct
     {

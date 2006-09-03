@@ -66,21 +66,28 @@ public:
     virtual ~ObjectNPC();
     virtual void freeRecources();
     virtual void update(const FrameEvent& event);
-    void moveToDistantTile(SubPos2D pos);
+    void moveToDistantTile(SubPos2D pos, int precision =0);
     void faceToTile(SubPos2D pos);
     void turning(Real turn, bool cursorTurn);
     void attackObjectOnTile(SubPos2D pos);
     void addToMap();
     void setEnemy();
+    const unsigned char getBoundingRadius() const
+    {
+        return mBoundingRadius;
+    }
     int  getHealth()
     {
         return mActHP;
     }
+    bool isMoving()
+    {
+        return mAutoMoving;
+    }
     void setDamage(int hp);
-    void attackShortRange(const SceneNode *node);
+    void attackShortRange(ObjectNPC *mEnemyObject);
     void castSpell(int spell);
     void stopMovement();
-    bool isMoving();
     void raiseWeapon(bool raise);
     void talkToNpc();
 
@@ -88,15 +95,15 @@ public:
     {
         mAttacking = ATTACK_APPROACH;
     }
-    const SubPos2D &getDestMapPos()
+    const SubPos2D &getDestMapPos() const
     {
-        return mDstPos;
+        return mDestStepPos;
     }
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void moveToNeighbourTile();
+    void moveToNeighbourTile(int precision =0);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -111,7 +118,8 @@ private:
         ATTACK_ANIM_STOP,
         ATTACK_CALC_DAMAGE,
         ATTACK_SUM
-    }mAttacking;
+    }
+    mAttacking;
     enum
     {
         TURN_NONE,
@@ -119,6 +127,7 @@ private:
         TURN_LEFT
     }mAutoTurning;
 
+    unsigned char mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
     Real mCursorTurning;
     bool mAutoMoving;
     bool mTalking;
@@ -129,11 +138,13 @@ private:
     int mMaxHP,    mActHP;
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
-    SubPos2D mDstPos;   /**< the destination pos in the map. **/
-    SubPos2D mDestWalkPos;
-    SceneNode *mEnemyNode;
-    Vector3 mWalkToPos, mDeltaPos;
-    Real mDeltaDegree;
+    SubPos2D mDestStepPos;  /**< The next tile pos of a multi tile walk. **/
+    SubPos2D mDestWalkPos;  /**< The destination pos (as tile).   **/
+    Vector3  mDestWalkVec;  /**< The destination pos (as vector). **/
+    Vector3  mWalkSpeed;
+    int mOffX, mOffZ;
+    ObjectNPC *mEnemyObject;
+    Real mDeltaDegree, mDistance;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

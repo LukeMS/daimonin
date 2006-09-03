@@ -134,7 +134,7 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
     int deep, upper = 0;
     std::pair<bool, Real> Test;
 
-    fillVectors(quadrant);
+    fillVectors(mPos, quadrant);
     Test = Math::intersects(*mouseRay, mTris[0], mTris[1], mTris[2]);
     if (!Test.first) return false;  // This tile quadrant was not clicked.
     // A deep of 5 gives us a 8x8 Matrix for the sub positions.
@@ -175,7 +175,6 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
         mPos.subZ = (mSubPosTable[quadrant>>1][upper] >> 4) & 0x0f;
         mPos.subX = (mSubPosTable[quadrant>>1][upper]     ) & 0x0f;
     }
-
     tileToWorldPos(mPos);
     return true;
 }
@@ -186,19 +185,19 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
 Vector3 TileInterface::tileToWorldPos(SubPos2D tile)
 {
     int upper;
-    if (mPos.subZ <=3)
+    if (tile.subZ <=3)
     {
-        upper = mWorldPosTable[mPos.subZ][mPos.subX];
-        if      (upper & (1 << 7)) fillVectors(QUADRANT_RIGHT);
-        else if (upper & (1 << 6)) fillVectors(QUADRANT_TOP);
-        else                       fillVectors(QUADRANT_LEFT);
+        upper = mWorldPosTable[tile.subZ][tile.subX];
+        if      (upper & (1 << 7)) fillVectors(tile, QUADRANT_RIGHT);
+        else if (upper & (1 << 6)) fillVectors(tile, QUADRANT_TOP);
+        else                       fillVectors(tile, QUADRANT_LEFT);
     }
     else
     {
-        upper = mWorldPosTable[3-(mPos.subZ-4)][7-mPos.subX];
-        if      (upper & (1 << 7)) fillVectors(QUADRANT_LEFT);
-        else if (upper & (1 << 6)) fillVectors(QUADRANT_BOTTOM);
-        else                       fillVectors(QUADRANT_RIGHT);
+        upper = mWorldPosTable[3-(tile.subZ-4)][7-tile.subX];
+        if      (upper & (1 << 7)) fillVectors(tile, QUADRANT_LEFT);
+        else if (upper & (1 << 6)) fillVectors(tile, QUADRANT_BOTTOM);
+        else                       fillVectors(tile, QUADRANT_RIGHT);
     }
     for (int deep =0; deep < 5; ++deep)
     {
@@ -214,51 +213,62 @@ Vector3 TileInterface::tileToWorldPos(SubPos2D tile)
             mTris[2] = mTris[3];
         }
     }
-    return (mTris[0] + mTris[1]) /2;
+    mTris[3]= (mTris[0] + mTris[1]) /2;
+    return mTris[3];
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void TileInterface::fillVectors(int quad)
+void TileInterface::fillVectors(SubPos2D &tile, int quad)
 {
     if (quad == QUADRANT_LEFT)
     {
-        mTris[0].x = (mPos.x+0.0)*TILE_SIZE_X;
-        mTris[0].y = TileManager::getSingleton().getMapHeight(mPos.x, mPos.z);
-        mTris[0].z = (mPos.z+0.0)*TILE_SIZE_Z;
-        mTris[1].x = (mPos.x+0.0)*TILE_SIZE_X;
-        mTris[1].y = TileManager::getSingleton().getMapHeight(mPos.x, mPos.z+1);
-        mTris[1].z = (mPos.z+1.0)*TILE_SIZE_Z;
+        mTris[0].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x,tile.z);
+        mTris[0].z = (tile.z+0.0)*TILE_SIZE_Z;
+        mTris[1].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z+1);
+        mTris[1].z = (tile.z+1.0)*TILE_SIZE_Z;
     }
     else if (quad == QUADRANT_RIGHT)
     {
-        mTris[0].x = (mPos.x+1.0)*TILE_SIZE_X;
-        mTris[0].y = TileManager::getSingleton().getMapHeight(mPos.x+1, mPos.z+1);
-        mTris[0].z = (mPos.z+1.0)*TILE_SIZE_Z;
-        mTris[1].x = (mPos.x+1.0)*TILE_SIZE_X;
-        mTris[1].y = TileManager::getSingleton().getMapHeight(mPos.x+1, mPos.z);
-        mTris[1].z = (mPos.z+0.0)*TILE_SIZE_Z;
+        mTris[0].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z+1);
+        mTris[0].z = (tile.z+1.0)*TILE_SIZE_Z;
+        mTris[1].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z);
+        mTris[1].z = (tile.z+0.0)*TILE_SIZE_Z;
     }
     else if (quad == QUADRANT_TOP)
     {
-        mTris[0].x = (mPos.x+1.0)*TILE_SIZE_X;
-        mTris[0].y = TileManager::getSingleton().getMapHeight(mPos.x+1, mPos.z);
-        mTris[0].z = (mPos.z+0.0)*TILE_SIZE_Z;
-        mTris[1].x = (mPos.x+0.0)*TILE_SIZE_X;
-        mTris[1].y = TileManager::getSingleton().getMapHeight(mPos.x, mPos.z);
-        mTris[1].z = (mPos.z+0.0)*TILE_SIZE_Z;
+        mTris[0].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z);
+        mTris[0].z = (tile.z+0.0)*TILE_SIZE_Z;
+        mTris[1].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z);
+        mTris[1].z = (tile.z+0.0)*TILE_SIZE_Z;
     }
     else
     {
-        mTris[0].x = (mPos.x+0.0)*TILE_SIZE_X;
-        mTris[0].y = TileManager::getSingleton().getMapHeight(mPos.x, mPos.z+1);
-        mTris[0].z = (mPos.z+1.0)*TILE_SIZE_Z;
-        mTris[1].x = (mPos.x+1.0)*TILE_SIZE_X;
-        mTris[1].y = TileManager::getSingleton().getMapHeight(mPos.x+1, mPos.z+1);
-        mTris[1].z = (mPos.z+1.0)*TILE_SIZE_Z;
+        mTris[0].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z+1);
+        mTris[0].z = (tile.z+1.0)*TILE_SIZE_Z;
+        mTris[1].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z+1);
+        mTris[1].z = (tile.z+1.0)*TILE_SIZE_Z;
     }
-    mTris[2].x = (mPos.x+0.5)*TILE_SIZE_X;
-    mTris[2].y = TileManager::getSingleton().getAvgMapHeight(mPos.x, mPos.z);
-    mTris[2].z = (mPos.z+0.5)*TILE_SIZE_Z;
+    mTris[2].x = (tile.x+0.5)*TILE_SIZE_X;
+    mTris[2].y = TileManager::getSingleton().getAvgMapHeight(tile.x, tile.z);
+    mTris[2].z = (tile.z+0.5)*TILE_SIZE_Z;
+}
+
+//================================================================================================
+// Returns the distance of 2 subtile positions..
+//================================================================================================
+int TileInterface::calcTileDistance(const SubPos2D &pos1, const SubPos2D &pos2)
+{
+    int deltaZ = Math::IAbs((pos1.z * SUM_SUBTILES + pos1.subZ) - (pos2.z * SUM_SUBTILES + pos2.subZ));
+    int deltaX = Math::IAbs((pos1.x * SUM_SUBTILES + pos1.subX) - (pos2.x * SUM_SUBTILES + pos2.subX));
+    return (deltaZ > deltaX)?deltaZ:deltaX;
 }

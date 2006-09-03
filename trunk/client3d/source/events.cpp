@@ -86,38 +86,13 @@ CEvent::~CEvent()
 //================================================================================================
 // Player has moved, update the world position.
 //================================================================================================
-void CEvent::setWorldPos(Vector3 &pos, int posX, int posZ, int func)
+void CEvent::setWorldPos(int deltaX, int deltaZ)
 {
-    static Vector3 distance;
-    // ////////////////////////////////////////////////////////////////////
-    // Moving within a tile, just move the camera.
-    // Todo: here is time for pre calculating the new pos.
-    // ////////////////////////////////////////////////////////////////////
-    if (func == WSYNC_OFFSET)
-    {
-//        long i = Root::getSingleton().getTimer()->getMilliseconds()
-        mCamera->move(pos);
-        return;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Moved a whole tile.
-    // ////////////////////////////////////////////////////////////////////
-    // Server::getSingleton.getTiles(posX, posZ);
-    if (func == WSYNC_MOVE)
-    {
-//ParticleManager::getSingleton().pauseAll(true);
-        distance.y =0;
-        ParticleManager::getSingleton().synchToWorldPos(distance);
-        TileManager::getSingleton().scrollMap(posX, posZ); // server has to do this!
-        ObjectManager::getSingleton().synchToWorldPos(distance);
-        mCamera->setPosition(pos + Vector3(0, 420, 900));
-//ParticleManager::getSingleton().pauseAll(false);
-        return;
-    }
-    // ////////////////////////////////////////////////////////////////////
-    // Set the distance.
-    // ////////////////////////////////////////////////////////////////////
-    distance = pos;
+    //ParticleManager::getSingleton().pauseAll(true);
+    //ParticleManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
+    TileManager::getSingleton().scrollMap(deltaX, deltaZ); // server has to do this!
+    ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
+    //ParticleManager::getSingleton().pauseAll(false);
 }
 
 //================================================================================================
@@ -138,27 +113,12 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             // ////////////////////////////////////////////////////////////////////
             mCamera = mSceneManager->createCamera("PlayerCam");
             Viewport *VP = mWindow->addViewport(mCamera);
-            VP->setBackgroundColour(ColourValue(0,0,0));
             // Alter the camera aspect ratio to match the viewport
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
             mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-
-            // rigidly map.
             mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
-            //mCamera->setPosition(); // Its done in setWorldPos();
+            mCamera->setPosition(Vector3(0, 450, 900));
             mCamera->pitch(Degree(-25));
-            // mCamera->setNearClipDistance(40);
-            /*
-                        const Vector3 *corner = mCamera->getWorldSpaceCorners();
-                        mCamCornerX =  (corner[0].x - corner[1].x)/2;
-                        mCamCornerY = -(corner[0].y - corner[2].y)/2 -13.57;  // Todo: clean up.
-            */
-            /*
-                    // rotating map.
-                    mCamera->setPosition(Vector3(CHUNK_SIZE_X *TILE_SIZE/2 , 450, CHUNK_SIZE_Z * TILE_SIZE/2));
-                    mCamera->lookAt(0,-1,0);
-                    mCamera->pitch(Degree(5));
-            */
             // ////////////////////////////////////////////////////////////////////
             // Create the world.
             // ////////////////////////////////////////////////////////////////////
@@ -177,19 +137,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 mOverlay->getChild("OverlayElement/Screen1")->hide();
             else
                 mOverlay->getChild("OverlayElement/Screen2")->hide();
-
-            /*
-                      mCamera->setFOVy(Degree(55));
-                      mCamera->setPosition(Vector3(0 , 60, 80));
-                      mCamera->lookAt(0, 0, 0);
-                      SceneNode *n = mSceneManager->getRootSceneNode()->createChildSceneNode("node_loading");
-                      BillboardSet* set = mSceneManager->createBillboardSet("loading", 1);
-                      set->setMaterialName("LoadScreen");
-                      set->setVisible(true);
-                      n->attachObject(set);
-                      Billboard* a = set->createBillboard(0, 0, 0);
-              */
-
             GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
             GuiManager::getSingleton().displaySystemMessage("Starting the sound-system...");
         }
@@ -315,20 +262,20 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
 
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
-/*
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~a~ to change Idle animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~b~ to change Attack animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
-*/
+            /*
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~a~ to change Idle animation.");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~b~ to change Attack animation.");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
+                        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
+            */
             mWindow->resetStatistics();
             Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
             break;
-         }
+        }
 
         case GAME_STATUS_INIT_NET:
         {
@@ -457,37 +404,40 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     //obj.meshName  = "Ogre_Big.mesh";
                     obj.nickName  = "michtoen";
                     obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.boundingRadius = 2;
                     obj.friendly  = -1;
                     obj.attack    = 50;
                     obj.defend    = 50;
                     obj.maxHP     = 50;
                     obj.maxMana   = 50;
                     obj.maxGrace  = 50;
-                    obj.posX      = 7;
-                    obj.posY      = 11;
+                    obj.pos.x     = 7;
+                    obj.pos.z     = 12;
+                    obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
                     obj.level     = 0;
-                    obj.centred   = 1;
-                    obj.facing    = 0;
+                    obj.facing    = -90;
                     obj.particleNr=-1;
                     ObjectManager::getSingleton().addMobileObject(obj);
-/*
-                    obj.meshName  = "Ogre_Big.mesh";
-                    obj.nickName  = "son of michtoen";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.friendly  = -1;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.posX      = 9;
-                    obj.posY      = 12;
-                    obj.level     = 0;
-                    obj.centred   = 1;
-                    obj.facing    = 0;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-*/
+                    /*
+                                        obj.meshName  = "Ogre_Big.mesh";
+                                        obj.nickName  = "son of michtoen";
+                                        obj.type      = ObjectManager::OBJECT_NPC;
+                                        obj.friendly  = -1;
+                                        obj.attack    = 50;
+                                        obj.defend    = 50;
+                                        obj.maxHP     = 50;
+                                        obj.maxMana   = 50;
+                                        obj.maxGrace  = 50;
+                                        obj.pos.x     = 9;
+                                        obj.pos.z     = 12;
+                                        obj.pos.subX  = 4;
+                                        obj.pos.subZ  = 4;
+                                        obj.level     = 0;
+                                        obj.facing    = 0;
+                                        obj.particleNr=-1;
+                                        ObjectManager::getSingleton().addMobileObject(obj);
+                    */
                     once = true;
                 }
                 else

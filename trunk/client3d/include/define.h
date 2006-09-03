@@ -36,65 +36,65 @@ const char FILE_HEIGHT_MAP[]   = "Hoehenkarte.png";
 // All pathes MUST be placed here!
 //================================================================================================
 #ifndef _DEBUG
-    const char FILE_GUI_IMAGESET[]          = "./media/xml/GUI_ImageSet.xml";
-    const char FILE_GUI_WINDOWS[]           = "./media/xml/GUI_Windows.xml";
-    const char FILE_NPC_VISUALS[]           = "./media/xml/NPC_Visuals.xml";
+const char FILE_GUI_IMAGESET[]          = "./media/xml/GUI_ImageSet.xml";
+const char FILE_GUI_WINDOWS[]           = "./media/xml/GUI_Windows.xml";
+const char FILE_NPC_VISUALS[]           = "./media/xml/NPC_Visuals.xml";
 
-    const char PATH_TEXTURES[]              = "./media/textures/";
-    const char FILE_SYSTEM_FONT[]           = "SystemFont.png";
+const char PATH_TEXTURES[]              = "./media/textures/";
+const char FILE_SYSTEM_FONT[]           = "SystemFont.png";
 
-    const char PATH_TILE_TEXTURES[]         = "./media/textures/tiles/";
+const char PATH_TILE_TEXTURES[]         = "./media/textures/tiles/";
 
-    const char FILE_CLIENT_SPELLS[]         = "./srv_files/client_spells";
-    const char FILE_CLIENT_SKILLS[]         = "./srv_files/client_skills";
-    const char FILE_CLIENT_SETTINGS[]       = "./srv_files/client_settings";
-    const char FILE_CLIENT_BMAPS[]          = "./srv_files/client_bmap";
-    const char FILE_CLIENT_ANIMS[]          = "./srv_files/client_anims";
+const char FILE_CLIENT_SPELLS[]         = "./srv_files/client_spells";
+const char FILE_CLIENT_SKILLS[]         = "./srv_files/client_skills";
+const char FILE_CLIENT_SETTINGS[]       = "./srv_files/client_settings";
+const char FILE_CLIENT_BMAPS[]          = "./srv_files/client_bmap";
+const char FILE_CLIENT_ANIMS[]          = "./srv_files/client_anims";
 
-    const char FILE_BMAPS_TMP[]             = "./srv_files/bmaps.tmp";
-    const char FILE_ANIMS_TMP[]             = "./srv_files/anims.tmp";
-    const char FILE_DAIMONIN_P0[]           = "./daimonin.p0";
-    const char FILE_BMAPS_P0[]              = "./bmaps.p0";
-    const char FILE_ARCHDEF[]               = "./archdef.dat";
+const char FILE_BMAPS_TMP[]             = "./srv_files/bmaps.tmp";
+const char FILE_ANIMS_TMP[]             = "./srv_files/anims.tmp";
+const char FILE_DAIMONIN_P0[]           = "./daimonin.p0";
+const char FILE_BMAPS_P0[]              = "./bmaps.p0";
+const char FILE_ARCHDEF[]               = "./archdef.dat";
 
-    const char FILE_LOGGING[]               = "./client_log.html";
-    const char FILE_OPTIONS[]               = "./options.dat";
+const char FILE_LOGGING[]               = "./client_log.html";
+const char FILE_OPTIONS[]               = "./options.dat";
 
-    const char PATH_MODEL_DESCRIPTION[]     = "./media/models/";
-    const char FILE_PLAYER_DESC[]           = "./media/models/player.desc";
-    const char FILE_WORLD_DESC[]            = "./media/models/world.desc";
+const char PATH_MODEL_DESCRIPTION[]     = "./media/models/";
+const char FILE_PLAYER_DESC[]           = "./media/models/player.desc";
+const char FILE_WORLD_DESC[]            = "./media/models/world.desc";
 
-    const char PATH_SAMPLES[]               = "./media/sound/";
+const char PATH_SAMPLES[]               = "./media/sound/";
 #else
-    const char FILE_GUI_IMAGESET[]          = "../media/xml/GUI_ImageSet.xml";
-    const char FILE_GUI_WINDOWS[]           = "../media/xml/GUI_Windows.xml";
-    const char FILE_NPC_VISUALS[]           = "../media/xml/NPC_Visuals.xml";
+const char FILE_GUI_IMAGESET[]          = "../media/xml/GUI_ImageSet.xml";
+const char FILE_GUI_WINDOWS[]           = "../media/xml/GUI_Windows.xml";
+const char FILE_NPC_VISUALS[]           = "../media/xml/NPC_Visuals.xml";
 
-    const char PATH_TEXTURES[]              = "../media/textures/";
-    const char FILE_SYSTEM_FONT[]           = "SystemFont.png";
+const char PATH_TEXTURES[]              = "../media/textures/";
+const char FILE_SYSTEM_FONT[]           = "SystemFont.png";
 
-    const char PATH_TILE_TEXTURES[]         = "../media/textures/tiles/";
+const char PATH_TILE_TEXTURES[]         = "../media/textures/tiles/";
 
-    const char FILE_CLIENT_SPELLS[]         = "../srv_files/client_spells";
-    const char FILE_CLIENT_SKILLS[]         = "../srv_files/client_skills";
-    const char FILE_CLIENT_SETTINGS[]       = "../srv_files/client_settings";
-    const char FILE_CLIENT_BMAPS[]          = "../srv_files/client_bmap";
-    const char FILE_CLIENT_ANIMS[]          = "../srv_files/client_anims";
+const char FILE_CLIENT_SPELLS[]         = "../srv_files/client_spells";
+const char FILE_CLIENT_SKILLS[]         = "../srv_files/client_skills";
+const char FILE_CLIENT_SETTINGS[]       = "../srv_files/client_settings";
+const char FILE_CLIENT_BMAPS[]          = "../srv_files/client_bmap";
+const char FILE_CLIENT_ANIMS[]          = "../srv_files/client_anims";
 
-    const char FILE_BMAPS_TMP[]             = "../srv_files/bmaps.tmp";
-    const char FILE_ANIMS_TMP[]             = "../srv_files/anims.tmp";
-    const char FILE_DAIMONIN_P0[]           = "../daimonin.p0";
-    const char FILE_BMAPS_P0[]              = "../bmaps.p0";
-    const char FILE_ARCHDEF[]               = "../archdef.dat";
+const char FILE_BMAPS_TMP[]             = "../srv_files/bmaps.tmp";
+const char FILE_ANIMS_TMP[]             = "../srv_files/anims.tmp";
+const char FILE_DAIMONIN_P0[]           = "../daimonin.p0";
+const char FILE_BMAPS_P0[]              = "../bmaps.p0";
+const char FILE_ARCHDEF[]               = "../archdef.dat";
 
-    const char FILE_LOGGING[]               = "../client_log.html";
-    const char FILE_OPTIONS[]               = "../options.dat";
+const char FILE_LOGGING[]               = "../client_log.html";
+const char FILE_OPTIONS[]               = "../options.dat";
 
-    const char PATH_MODEL_DESCRIPTION[]     = "../media/models/";
-    const char FILE_PLAYER_DESC[]           = "../media/models/player.desc";
-    const char FILE_WORLD_DESC[]            = "../media/models/world.desc";
+const char PATH_MODEL_DESCRIPTION[]     = "../media/models/";
+const char FILE_PLAYER_DESC[]           = "../media/models/player.desc";
+const char FILE_WORLD_DESC[]            = "../media/models/world.desc";
 
-    const char PATH_SAMPLES[]               = "../media/sound/";
+const char PATH_SAMPLES[]               = "../media/sound/";
 #endif
 //================================================================================================
 ///
@@ -110,16 +110,67 @@ enum
     QUERY_NPC_SELECT_MASK =1 << 6,
 };
 
+
 typedef struct
 {
     int x, z;
 }
 Pos2D;
 
-typedef struct
+
+typedef class SubPos2D
 {
-    int x, z;
-    int subX, subZ;
+public:
+    SubPos2D()
+    {}
+    SubPos2D(const int fX, const int fZ, const int fsubX, const int fsubZ)
+            : x(fX), z(fZ), subX(fsubX), subZ(fsubZ)
+    {}
+
+    ~SubPos2D()
+    {}
+    bool operator == (const SubPos2D& tst) const
+    {
+        return (x == tst.x && z == tst.z && subX == tst.subX && subZ == tst.subZ);
+    }
+
+    bool operator != (const SubPos2D& tst) const
+    {
+        return (x != tst.x || z != tst.z || subX != tst.subX || subZ != tst.subZ);
+    }
+    void operator += (const SubPos2D& add)
+    {
+        x += add.x;
+        z += add.z;
+        subX += add.subX;
+        subZ += add.subZ;
+    }
+    void operator -= (const SubPos2D& sub)
+    {
+        x -= sub.x;
+        z -= sub.z;
+        subX -= sub.subX;
+        subZ -= sub.subZ;
+    }
+    SubPos2D operator + (const SubPos2D& add)
+    {
+        return SubPos2D(
+                   x + add.x,
+                   z + add.z,
+                   subX + add.subX,
+                   subZ + add.subZ);
+    }
+    SubPos2D operator - (const SubPos2D& sub)
+    {
+        return SubPos2D(
+                   x - sub.x,
+                   z - sub.z,
+                   subX - sub.subX,
+                   subZ - sub.subZ);
+    }
+
+    int x, z;       /**< Position of the tile. **/
+    int subX, subZ; /**< Position within the tile. **/
 }
 SubPos2D;
 

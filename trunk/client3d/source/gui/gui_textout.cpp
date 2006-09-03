@@ -418,7 +418,7 @@ bool GuiTextout::getClippingPos(TextLine &line, int maxWidth, int maxHeight)
     const char *text = line.text.c_str();
     line.x2 = line.x1 +1;
     line.y2 = line.y1 +1;
-    while(*text)
+    while (*text)
     {
         if ((unsigned char) *text < 32 || (unsigned char)*text >= CHARS_IN_FONT + 32) continue;
         switch (*text)
@@ -454,7 +454,7 @@ int GuiTextout::CalcTextWidth(const char *text, unsigned int fontNr)
 {
     int x =0;
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
-    while(*text)
+    while (*text)
     {
         if ((unsigned char) *text < 32 || (unsigned char)*text >= CHARS_IN_FONT + 32) continue;
         switch (*text)

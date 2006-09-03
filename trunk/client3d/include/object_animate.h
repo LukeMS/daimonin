@@ -78,8 +78,13 @@ public:
     void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
     Real getAnimSpeed()
     {
-        return mAnimSpeed;
+    
+		return mAnimSpeed;
     }
+	void pause(bool p)
+	{
+		mActState->setEnabled(!p);
+	}
     enum AnimGroup
     {
         // Movement.
@@ -108,8 +113,8 @@ private:
     int mAnimGroup, mAnimNr;
     bool mPause;
     bool mIsAnimated;
-    Real mTimeLeft;
     Real mAnimSpeed;
+	Real mTimeLeft;
     AnimationState *mActState;
     std::vector<AnimationState*>mAnimState;
     unsigned char mAnimGroupEntries[ANIM_GROUP_SUM];

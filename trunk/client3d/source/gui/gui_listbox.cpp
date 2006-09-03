@@ -75,7 +75,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
             {
                 mScrollBarV= new GuiGadgetScrollbar(xmlOpt, mParent, this);
                 mScrollBarV->setFunction(this->scrollbarAction);
-	    }
+            }
             else if (!strcmp(xmlOpt->Attribute("name"), "List_Msg_HScroll"))
             {
                 mScrollBarH= new GuiGadgetScrollbar(xmlOpt, mParent, this);

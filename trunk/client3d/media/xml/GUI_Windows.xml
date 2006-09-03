@@ -85,12 +85,19 @@
       <Pos x= "0" y= "0" />
       <Range width= "348" height= "88" />
     </Graphic>
+
     <!--=============================================-->
     <!-- Window Tiltle                               -->
     <!--=============================================-->
     <Gadget type= "BUTTON"  name = "Buton_info" image_name = "Status_Player_Buton">
       <Pos x= "70" y= "8" />
     </Gadget>
+
+    <Graphic type= "GFX_FILL"  image_name = "Player_Pic">
+      <Pos x= "8" y= "9" />
+      <Range width= "71" height= "71" />
+    </Graphic>
+
   </Window>
 
   <!--#############################################-->
@@ -331,6 +338,7 @@
       <Range width= "5" height= "422" />
     </Graphic>
 
+
     <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
       <Pos x= "30" y= "40" />
       <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
@@ -359,6 +367,7 @@
         <Up image_name="ScrollButton_01_Up" />
       </Scroll>
      </Gadget>
+
 
     <!--=============================================-->
     <!-- Layer 1                                     -->
@@ -407,6 +416,8 @@
     <!--=============================================-->
     <!-- Layer 2                                     -->
     <!--=============================================-->
+
+
     <Label   x= "100" y=  "65" font="02" red= "32" green= "64" blue= "128" text= "Enter your Name:" />
     <TextBox x= "100" y=  "85" font="02" text= "" width = "100" name= "Input_Login_Name" />
 
@@ -416,5 +427,8 @@
     <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Verify" />
 
     <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Very" />
+
+
   </Window>
+
 </XML>

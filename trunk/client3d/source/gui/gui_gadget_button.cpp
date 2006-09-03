@@ -45,8 +45,7 @@ GuiGadgetButton::GuiGadgetButton(TiXmlElement *xmlElement, void *parent, bool dr
 // .
 //================================================================================================
 GuiGadgetButton::~GuiGadgetButton()
-{
-}
+{}
 
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).

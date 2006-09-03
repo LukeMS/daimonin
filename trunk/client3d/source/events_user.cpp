@@ -209,11 +209,11 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
 
         case KC_I:
-           // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
+            // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
             break;
 
         case KC_O:
-           // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
+            // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
 
         case KC_P:
@@ -233,7 +233,7 @@ void CEvent::keyPressed(KeyEvent *e)
             // ////////////////////////////////////////////////////////////////////
         case KC_Y:
             mSceneDetailIndex = (mSceneDetailIndex+1)%3;
-            switch(mSceneDetailIndex)
+            switch (mSceneDetailIndex)
             {
                 case 0 :
                     mCamera->setPolygonMode(PM_SOLID);
@@ -263,7 +263,7 @@ void CEvent::keyPressed(KeyEvent *e)
         {
             static TextureFilterOptions mFiltering = TFO_BILINEAR;
             static int mAniso = 1;
-            switch(mFiltering)
+            switch (mFiltering)
             {
                 case TFO_BILINEAR:
                     mFiltering = TFO_TRILINEAR;
@@ -389,11 +389,11 @@ void CEvent::keyReleased(KeyEvent* e)
 
         case KC_J:
         case KC_K:
-           // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TURN,  0);
+            // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TURN,  0);
             break;
 
         case KC_G:
-           // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
+            // ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_WALK,  0);
             break;
 
         default:
@@ -459,14 +459,16 @@ void CEvent::mousePressed (MouseEvent *e)
     {
         if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
         {
-            Vector3 pos;
+            Vector3 posV;
             // activate mouse picking of tiles
             TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
-            pos = TileManager::getSingleton().getTileInterface()->getSelectedPos();
-            ParticleManager::getSingleton().addFreeObject(pos, "Particle/SelectionDust", 0.8);
+            posV = TileManager::getSingleton().getTileInterface()->getSelectedPos();
+            ParticleManager::getSingleton().addFreeObject(posV, "Particle/SelectionDust", 0.8);
             // Move the player.
-            SubPos2D vpos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) vpos.x, (int) vpos.z);
+            SubPos2D pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
+            pos.x += pos.z << 8;
+            pos.subX += pos.subZ << 8;
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) pos.x, (int) pos.subX);
             mIdleTime =0;
         }
     }

@@ -422,7 +422,7 @@ void GuiManager::setTooltip(const char *text)
 //================================================================================================
 void GuiManager::clearTooltip()
 {
-    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mTexture->getBuffer()->lock (Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
     for (int y = mTexture->getWidth() * mTexture->getHeight(); y; --y)
     {
