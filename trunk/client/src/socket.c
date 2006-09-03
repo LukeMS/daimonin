@@ -800,9 +800,10 @@ void read_metaserver_data(SOCKET fd)
     {
         do
         {
+            /* FIXME: should select on fd instead of this never-ending (in case of error) busy-loop */
             stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
         }
-        while (stat == -1);
+        while (stat == -1); 
 
         if (stat == -1)
         {

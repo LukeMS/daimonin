@@ -156,7 +156,7 @@ int client_command_check(char *cmd)
 
 	else if (!strnicmp(cmd, "/ignore", strlen("/ignore")))
 	{
-		ignore_command(cmd+8);
+		ignore_command(cmd+7);
 		return TRUE;
 	}
 
