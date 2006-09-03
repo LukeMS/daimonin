@@ -38,7 +38,7 @@ bool Logger::mList = false;
 Logger::Logger()
 {
     std::ofstream log_stream(mFilename, std::ios::out);
-    if(!log_stream.is_open()) throw std::bad_exception();
+    if (!log_stream.is_open()) throw std::bad_exception();
     log_stream
     << "<html><head><title>" << PRG_NAME << " - Logfile</title></head>" <<
     "<style>\n" <<
@@ -58,7 +58,7 @@ Logger::Logger()
 Logger::~Logger()
 {
     std::ofstream log_stream(mFilename, std::ios::out | std::ios::app);
-    if(log_stream.is_open())
+    if (log_stream.is_open())
     {
         if (mTable)
         {
@@ -75,7 +75,7 @@ Logger::~Logger()
 void Logger::headline(const char *text)
 {
     std::ofstream log_stream(mFilename, std::ios::out | std::ios::app);
-    if(!log_stream.is_open()) throw std::bad_exception();
+    if (!log_stream.is_open()) throw std::bad_exception();
     if (mTable)
     {
         log_stream << "\n</table>\n";
@@ -90,7 +90,7 @@ void Logger::headline(const char *text)
 void Logger::success(bool status)
 {
     std::ofstream log_stream(mFilename, std::ios::out | std::ios::in| std::ios::binary);
-    if(!log_stream.is_open()) throw std::bad_exception();
+    if (!log_stream.is_open()) throw std::bad_exception();
     log_stream.seekp(-5, std::ios::end);
     if (status)
         log_stream << "<td width=\"5%\" class=\"Ok\"> ok </td></tr>";
@@ -125,7 +125,7 @@ const char* Logger::now()
 Logger::LogEntry::LogEntry(const char *type)
 {
     out.open(mFilename, std::ios::out | std::ios::app);
-    if(!out.is_open())  throw std::bad_exception();
+    if (!out.is_open())  throw std::bad_exception();
     if (!mTable)
     {
         out << "<table  width=\"100%\">";
@@ -145,7 +145,7 @@ Logger::LogEntry::LogEntry(const char *type)
 //================================================================================================
 Logger::LogEntry::~LogEntry()
 {
-    if(!out.is_open())  throw std::bad_exception();
+    if (!out.is_open())  throw std::bad_exception();
     if (mList)
     {
         out << "</li>";

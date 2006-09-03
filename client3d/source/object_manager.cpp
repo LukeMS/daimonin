@@ -60,7 +60,7 @@ bool ObjectManager::init()
     int i=0;
     // Default values.
 
-    while(1)
+    while (1)
     {
         if (!(Option::getSingleton().openDescFile(FILE_WORLD_DESC)))
         {
@@ -72,6 +72,34 @@ bool ObjectManager::init()
         sObject obj;
         Option::getSingleton().getDescStr("MeshName", obj.meshName,i);
         Option::getSingleton().getDescStr("NickName", obj.nickName,i);
+
+        Option::getSingleton().getDescStr("BoundingRadius", strTemp,i);
+        obj.boundingRadius = (unsigned char) StringConverter::parseInt(strTemp);
+
+        if (Option::getSingleton().getDescStr("WalkableRow0", strTemp,i))
+            obj.walkable[0] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[0] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow1", strTemp,i))
+            obj.walkable[1] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[1] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow2", strTemp,i))
+            obj.walkable[2] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[2] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow3", strTemp,i))
+            obj.walkable[3] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[3] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow4", strTemp,i))
+            obj.walkable[4] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[4] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow5", strTemp,i))
+            obj.walkable[5] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[5] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow6", strTemp,i))
+            obj.walkable[6] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[6] = 0;
+        if (Option::getSingleton().getDescStr("WalkableRow7", strTemp,i))
+            obj.walkable[7] = (unsigned char) StringConverter::parseInt(strTemp);
+        else obj.walkable[7] = 0;
 
         Option::getSingleton().getDescStr("Friendly", strTemp,i);
         obj.friendly= StringConverter::parseInt(strTemp);
@@ -92,19 +120,22 @@ bool ObjectManager::init()
         obj.maxGrace  = StringConverter::parseInt(strTemp);
 
         Option::getSingleton().getDescStr("PosX", strTemp,i);
-        obj.posX  = StringConverter::parseInt(strTemp);
+        obj.pos.x  = StringConverter::parseInt(strTemp);
         Option::getSingleton().getDescStr("PosY", strTemp,i);
-        obj.posY  = StringConverter::parseInt(strTemp);
+        obj.pos.z  = StringConverter::parseInt(strTemp);
+        if (Option::getSingleton().getDescStr("PosSubX", strTemp,i))
+            obj.pos.subX  = StringConverter::parseInt(strTemp);
+        else
+            obj.pos.subX  = 3;
+        if (Option::getSingleton().getDescStr("PosSubY", strTemp,i))
+            obj.pos.subZ  = StringConverter::parseInt(strTemp);
+        else
+            obj.pos.subZ  = 3;
 
         if (Option::getSingleton().getDescStr("Level", strTemp,i))
             obj.level= StringConverter::parseInt(strTemp);
         else
             obj.level= 0;
-
-        if (Option::getSingleton().getDescStr("Centred", strTemp,i))
-            obj.centred= StringConverter::parseInt(strTemp);
-        else
-            obj.centred= 1;
 
         Option::getSingleton().getDescStr("Facing", strTemp,i);
         obj.facing= StringConverter::parseReal(strTemp);
@@ -122,19 +153,19 @@ bool ObjectManager::init()
             obj.type = OBJECT_NPC;
             addMobileObject(obj);
         }
-/*
-        // just for testing.
-        else if (strType == "static")
-        {
-
-            for (obj.posX =0; obj.posX < 11; ++obj.posX)
-                for (obj.posY =0; obj.posY < 23; ++obj.posY)
+        /*
+                // just for testing.
+                else if (strType == "static")
                 {
-                    obj.type = OBJECT_STATIC;
-                    addMobileObject(obj);
+
+                    for (obj.posX =0; obj.posX < 11; ++obj.posX)
+                        for (obj.posY =0; obj.posY < 23; ++obj.posY)
+                        {
+                            obj.type = OBJECT_STATIC;
+                            addMobileObject(obj);
+                        }
                 }
-        }
-*/
+        */
         else if (strType == "static")
         {
             obj.type = OBJECT_STATIC;
@@ -222,15 +253,16 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 //================================================================================================
 // Update all object positions after a map scroll.
 //================================================================================================
-void ObjectManager::synchToWorldPos(Vector3 pos)
+void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 {
-    for(unsigned int i = 0; i < mvObject_static.size(); ++i)
+    for (unsigned int i = 0; i < mvObject_static.size(); ++i)
     {
-        mvObject_static[i]->move(pos);
+        mvObject_static[i]->movePosition(deltaX, deltaZ);
     }
-    for(unsigned int i = 1; i < mvObject_npc.size(); ++i)
+    for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
     {
-        mvObject_npc[i]->move(pos);
+        // Sync the actual position.
+        mvObject_npc[i]->movePosition(deltaX, deltaZ);
     }
 }
 
@@ -249,14 +281,14 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         case OBJECT_NPC:
         {
             if (id >= (int) mvObject_npc.size()) break;
-//            if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
+//          if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
             if (action == OBJ_GOTO)
             {
                 SubPos2D pos;
-                pos.x = val1;
-                pos.z = val2;
-                pos.subX =0;
-                pos.subZ =0;
+                pos.x = val1 & 0xff;
+                pos.z = val1 >> 8;
+                pos.subX = val2 & 0xff;
+                pos.subZ = val2 >> 8;
                 mvObject_npc[ObjectNPC::ME]->moveToDistantTile(pos);
             }
             if (action == OBJ_TEXTURE    ) mvObject_npc[id]->Equip->setTexture(val1, val2);
@@ -310,7 +342,7 @@ void ObjectManager::selectNPC(MovableObject *mob)
         if  (mSelectedFriendly < 0)
         {
             mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
-            mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[mSelectedObject]->getNode());
+            mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[mSelectedObject]);
         }
         return;
     }
@@ -336,21 +368,22 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 if (mSelectedFriendly < 0)
                 {
                     mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
-                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
+                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]);
                 }
             }
             // A new NPC was selected.
             else
             {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
+                char buffer[100];
+                sprintf(buffer, "Enemy: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
+                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(buffer));
                 mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
-                mSelectedObject = selectedObject; // must be set befor ::selectNPC
+                mSelectedObject = selectedObject; // must be set before ::selectNPC
                 ObjectVisuals::getSingleton().selectNPC(mob, mSelectedFriendly);
-                mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
                 if (mSelectedFriendly < 0)
                 {
-                   // mvObject_npc[ObjectNPC::ME]->raiseWeapon(true);
-                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]->getNode());
+                    // mvObject_npc[ObjectNPC::ME]->raiseWeapon(true);
+                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]);
                 }
                 else
                 {

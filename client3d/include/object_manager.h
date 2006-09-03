@@ -96,7 +96,7 @@ public:
     {
         return mvObject_npc[npc]->getNode();
     }
-    void synchToWorldPos(Vector3 pos);
+    void synchToWorldPos(int deltaX, int deltaZ);
     void selectNPC(MovableObject *mob);
 
     Vector3 getTargetedWorldPos()

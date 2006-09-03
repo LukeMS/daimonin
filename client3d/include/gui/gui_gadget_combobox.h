@@ -65,7 +65,7 @@ private:
     GuiImageset::GuiSrcEntry *srcScrollbarUp;
     GuiImageset::GuiSrcEntry *srcScrollbarDown;
     uint32 *mGfxBuffer;
-	int mAction;
+    int mAction;
     int mFontHeight;
     int mMaxChars;
     int mEntryHeight;
@@ -80,7 +80,7 @@ private:
     bool mUseNumbers;
     bool mUseWhitespaces;
     bool mDispDropdown;
-	bool mDDButton;
+    bool mDDButton;
     std::vector<String> mvOption;
     std::vector<int> mvValue;
 };

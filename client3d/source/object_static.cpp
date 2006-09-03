@@ -25,6 +25,7 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include "object_static.h"
+#include "object_manager.h"
 #include "option.h"
 #include "sound.h"
 #include "events.h"
@@ -39,8 +40,7 @@ SceneManager *ObjectStatic::mSceneMgr =0;
 // Free all recources.
 //================================================================================================
 void ObjectStatic::freeRecources()
-{
-}
+{}
 
 //================================================================================================
 // Destructor.
@@ -61,46 +61,22 @@ ObjectStatic::ObjectStatic(sObject &obj)
         Logger::log().headline("Init Actor Models");
     }
     mIndex    = obj.index;
-    mActPos.x = obj.posX;
-    mActPos.z = obj.posY;
+    mActPos   = obj.pos;
     mNickName = obj.nickName;
     mFloor    = obj.level;
-    mCentred  = obj.centred;
-
     mFacing   = Degree(obj.facing);
     Logger::log().info()  << "Adding object: " << obj.meshName << ".";
     mEntity =mSceneMgr->createEntity("Obj_"+StringConverter::toString(obj.type, 2, '0')+"_" + StringConverter::toString(mIndex, 5, '0'), obj.meshName);
     mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
-    Vector3 pos;
+
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
-    mBoundingBox.x = TILE_SIZE_X/2 - (AABB.getMaximum().x + AABB.getMinimum().x)/2;
-    mBoundingBox.z = TILE_SIZE_Z/2 - (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+    mBoundingBox.x = (AABB.getMaximum().x + AABB.getMinimum().x)/2;
+    mBoundingBox.z = (AABB.getMaximum().z + AABB.getMinimum().z)/2;
 
-    // If this is a plane - make sure it has higher y than the ground (avoid flickering):
-    if (!AABB.getMaximum().y  && !AABB.getMinimum().y)
-        mBoundingBox.y = -0.01;
-    else
-        mBoundingBox.y = AABB.getMinimum().y;
-
-    if (mCentred)
-    {
-        pos.x = mActPos.x * TILE_SIZE_X + mBoundingBox.x;
-        pos.z = mActPos.z * TILE_SIZE_Z + mBoundingBox.z;
-    }
-    else
-    {
-        pos.x = mActPos.x * TILE_SIZE_X;
-        pos.z = mActPos.z * TILE_SIZE_Z;
-    }
-    pos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mActPos.x, mActPos.z)) - mBoundingBox.y;
-    if (mFloor)
-    {
-        pos.y+= AABB.getMaximum().y * mFloor;
-    }
-
-    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(pos);
+    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mNode->attachObject(mEntity);
     mNode->yaw(mFacing);
+    setPosition(mActPos);
 
     if (Option::getSingleton().getIntValue(Option::CMDLINE_SHOW_BOUNDING_BOX))
     {
@@ -109,6 +85,38 @@ ObjectStatic::ObjectStatic(sObject &obj)
 
     // Create the animations.
     mAnim = new ObjectAnimate(mEntity);
+
+    // Set the walkable bits for the tile on which this object is placed.
+    if (obj.type == ObjectManager::OBJECT_STATIC)
+    {
+        for (int row =0; row< 8; ++row)
+        {
+            TileManager::getSingleton().setWalkablePos(mActPos, row, obj.walkable[row]);
+        }
+    }
+}
+
+//================================================================================================
+// Moves the object (instantly) onto a new positon.
+//================================================================================================
+void ObjectStatic::movePosition(int deltaX, int deltaZ)
+{
+    mActPos.x += deltaX;
+    mActPos.z += deltaZ;
+    setPosition(mActPos);
+}
+
+//================================================================================================
+// Put the object onto a new position.
+//================================================================================================
+void ObjectStatic::setPosition(SubPos2D pos)
+{
+    Vector3 posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
+    if (mFloor)
+    {
+        posV.y += mBoundingBox.y * mFloor;
+    }
+    mNode->setPosition(posV);
 }
 
 //================================================================================================
@@ -136,10 +144,7 @@ SubPos2D ObjectStatic::getTileScrollPos()
     TileManager::getSingleton().getMapScroll(pos.x, pos.z);
     pos.x+= mActPos.x;
     pos.z+= mActPos.z;
-    pos.subX =0;
-    pos.subZ =0;
+    pos.subX = mActPos.subX;
+    pos.subZ = mActPos.subZ;
     return pos;
 }
-
-
-

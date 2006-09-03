@@ -40,8 +40,7 @@ GuiGraphic::GuiGraphic(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
 // .
 //================================================================================================
 GuiGraphic::~GuiGraphic()
-{
-}
+{}
 
 //================================================================================================
 // .
@@ -49,7 +48,7 @@ GuiGraphic::~GuiGraphic()
 void GuiGraphic::draw()
 {
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    PixelBox *mSrcPixelBox = ((GuiWindow*) mParent)->getPixelBox();
+    PixelBox src;
     // ////////////////////////////////////////////////////////////////////
     // Fill background rect with a gfx.
     // ////////////////////////////////////////////////////////////////////
@@ -62,14 +61,13 @@ void GuiGraphic::draw()
         // ////////////////////////////////////////////////////////////////////
         if (mHasAlpha)
         {
-/*
             src = ((GuiWindow*) mParent)->getPixelBox()->getSubVolume(Box(
                         gfxSrcPos[mState].x,
                         gfxSrcPos[mState].y,
                         gfxSrcPos[mState].x + mSrcWidth,
                         gfxSrcPos[mState].y + mSrcHeight));
             uint32 *srcData = static_cast<uint32*>(src.data);
-            size_t rowSkip = ((GuiWindow*) mParent)->getPixelBox()->getWidth();
+            int rowSkip = (int) ((GuiWindow*) mParent)->getPixelBox()->getWidth();
             int dSrcY = 0, dDstY =0;
             for (int y =0; y < mSrcHeight; ++y)
             {
@@ -83,7 +81,6 @@ void GuiGraphic::draw()
             }
             src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
             texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mSrcWidth, mY + mSrcHeight));
-*/
         }
         // ////////////////////////////////////////////////////////////////////
         // The gfx has no alpha.
@@ -93,21 +90,20 @@ void GuiGraphic::draw()
         else
         {
             int x1, y1, x2, y2;
-            PixelBox src;
             bool dirty = true;
             int sumX = (mWidth-1)  / mSrcWidth  + 1;
             int sumY = (mHeight-1) / mSrcHeight + 1;
             y1 = 0; y2 = mSrcHeight;
-
+            PixelBox *mSrcPixelBox = ((GuiWindow*) mParent)->getPixelBox();
             for (int y = 0; y < sumY; ++y)
             {
                 if (dirty)
                 {
                     src = mSrcPixelBox->getSubVolume(Box(
-                                                     gfxSrcPos[mState].x,
-                                                     gfxSrcPos[mState].y,
-                                                     gfxSrcPos[mState].x + mSrcWidth,
-                                                     gfxSrcPos[mState].y + mSrcHeight));
+                                                         gfxSrcPos[mState].x,
+                                                         gfxSrcPos[mState].y,
+                                                         gfxSrcPos[mState].x + mSrcWidth,
+                                                         gfxSrcPos[mState].y + mSrcHeight));
                     dirty = false;
                 }
                 if (y2 > mHeight)
@@ -128,10 +124,10 @@ void GuiGraphic::draw()
                     if (dirty)
                     {
                         src = mSrcPixelBox->getSubVolume(Box(
-                                                         gfxSrcPos[mState].x,
-                                                         gfxSrcPos[mState].y,
-                                                         gfxSrcPos[mState].x + x2-x1,
-                                                         gfxSrcPos[mState].y + y2-y1));
+                                                             gfxSrcPos[mState].x,
+                                                             gfxSrcPos[mState].y,
+                                                             gfxSrcPos[mState].x + x2-x1,
+                                                             gfxSrcPos[mState].y + y2-y1));
                     }
                     texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
                     x1 = x2;
@@ -146,7 +142,8 @@ void GuiGraphic::draw()
     // Fill background rect with a color.
     // ////////////////////////////////////////////////////////////////////
     else if (mStrType == "COLOR_FILL")
-    {        PixelBox pb = texture->getBuffer()->lock(Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_DISCARD);
+    {
+        PixelBox pb = texture->getBuffer()->lock (Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_DISCARD);
         uint32 *dest_data = (uint32*)pb.data;
         int  posY=0;
         for (int y = mHeight; y; --y)

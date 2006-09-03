@@ -227,14 +227,14 @@ Network::~Network()
 
 void Network::update()
 {
-   if (!mInitDone) return;
+    if (!mInitDone) return;
     _command_buffer_read *cmd;
     while (1)
     {
-        if(!read_cmd_start) // we have a filled command?
+        if (!read_cmd_start) // we have a filled command?
             break;
         cmd = get_read_cmd(); // function has mutex included
-        if(!cmd) break;
+        if (!cmd) break;
 
         if (!cmd->data[0] || cmd->data[0] >= BINARY_CMD_SUM)
             Logger::log().error() << "Bad command from server " << cmd->data[0];
@@ -252,19 +252,19 @@ void Network::send_command_binary(int cmd, const char *body, int len)
 {
     SDL_LockMutex(write_lock);
 
-    if(csocket.fd == SOCKET_NO || csocket.outbuf.len + 3 > MAXSOCKBUF)
+    if (csocket.fd == SOCKET_NO || csocket.outbuf.len + 3 > MAXSOCKBUF)
     {
-        if(csocket.fd != SOCKET_NO)
+        if (csocket.fd != SOCKET_NO)
             SOCKET_CloseClientSocket();
         SDL_UnlockMutex(write_lock);
         return;
     }
     // adjust the buffer
-    if(csocket.outbuf.pos)
+    if (csocket.outbuf.pos)
         memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
 
     csocket.outbuf.pos=0;
-    if(!body)
+    if (!body)
     {
         len = 0x8001;
 
@@ -279,15 +279,15 @@ void Network::send_command_binary(int cmd, const char *body, int len)
 int Network::send_socklist(SockList msg)
 {
     SDL_LockMutex(write_lock);
-    if(csocket.fd == SOCKET_NO || csocket.outbuf.len + msg.len > MAXSOCKBUF)
+    if (csocket.fd == SOCKET_NO || csocket.outbuf.len + msg.len > MAXSOCKBUF)
     {
-        if(csocket.fd != SOCKET_NO)
+        if (csocket.fd != SOCKET_NO)
             SOCKET_CloseClientSocket();
         SDL_UnlockMutex(write_lock);
         return -1;
     }
     // adjust the buffer
-    if(csocket.outbuf.pos && csocket.outbuf.len)
+    if (csocket.outbuf.pos && csocket.outbuf.len)
         memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
 
     csocket.outbuf.pos=0;
@@ -309,7 +309,7 @@ Network::_command_buffer_read *Network::get_read_cmd(void)
 
     SDL_LockMutex(read_lock);
 
-    if(!read_cmd_start)
+    if (!read_cmd_start)
     {
         SDL_UnlockMutex(read_lock);
         return NULL;
@@ -317,7 +317,7 @@ Network::_command_buffer_read *Network::get_read_cmd(void)
 
     tmp = read_cmd_start;
     read_cmd_start = tmp->next;
-    if(read_cmd_end == tmp)
+    if (read_cmd_end == tmp)
         read_cmd_end = NULL;
 
     SDL_UnlockMutex(read_lock);
@@ -337,7 +337,7 @@ void Network::clear_read_cmd_queue(void)
 {
     SDL_LockMutex(read_lock);
 
-    while(read_cmd_start)
+    while (read_cmd_start)
         free_read_cmd(get_read_cmd());
 
     SDL_UnlockMutex(read_lock);
@@ -358,7 +358,7 @@ inline void Network::write_socket_buffer(int fd, SockList *sl)
     // In my testings it never happend, so i put it here in to have it perhaps triggered in
     // some server runs (but we should trust perhaps ibm developer infos...).
 
-    if(!amt)
+    if (!amt)
         amt = sl->len; // as i understand, the data is now internal buffered? So remove it from our write buffer
 
     if (amt > 0)
@@ -395,7 +395,7 @@ inline int Network::read_socket_buffer(int fd, SockList *sl)
     tmp = sl->pos+sl->len;
 
     // we have still some bytes until we hit our buffer border ?
-    if(tmp >= MAXSOCKBUF)
+    if (tmp >= MAXSOCKBUF)
     {
         tmp = tmp-MAXSOCKBUF; // thats our start offset
         read_bytes = sl->pos - tmp; // thats our free buffer until ->pos
@@ -433,47 +433,47 @@ inline int Network::read_socket_buffer(int fd, SockList *sl)
 
 int Network::socket_thread_loop(void *)
 {
-    while(thread_flag)
+    while (thread_flag)
     {
         // Want a valid socket for the IO loop
         SDL_LockMutex(socket_lock);
-        if(csocket.fd == SOCKET_NO)
+        if (csocket.fd == SOCKET_NO)
         {
             SDL_CondWait(socket_cond, socket_lock);
-            if(!thread_flag)
+            if (!thread_flag)
             {
                 SDL_UnlockMutex(socket_lock);
                 break;
             }
         }
 
-        if(csocket.fd == SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
+        if (csocket.fd == SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
         {
             SDL_Delay(150);
             SDL_UnlockMutex(socket_lock);
             continue;
         }
 
-        if(csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
+        if (csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
             read_socket_buffer(csocket.fd, &csocket.inbuf);
 
         // lets check we have a valid command
-        while(csocket.inbuf.len >= 2)
+        while (csocket.inbuf.len >= 2)
         {
             _command_buffer_read *tmp;
             int head_off=2, toread = -1, pos = csocket.inbuf.pos;
 
-            if(csocket.inbuf.buf[pos] & 0x80) // 3 byte length heasder?
+            if (csocket.inbuf.buf[pos] & 0x80) // 3 byte length heasder?
             {
-                if(csocket.inbuf.len > 2)
+                if (csocket.inbuf.len > 2)
                 {
                     head_off = 3;
 
                     toread = ((csocket.inbuf.buf[pos]&0x7f) << 16);
-                    if(++pos >= MAXSOCKBUF)
+                    if (++pos >= MAXSOCKBUF)
                         pos -= MAXSOCKBUF;
                     toread += (csocket.inbuf.buf[pos] << 8);
-                    if(++pos >= MAXSOCKBUF)
+                    if (++pos >= MAXSOCKBUF)
                         pos -= MAXSOCKBUF;
                     toread += csocket.inbuf.buf[pos];
                 }
@@ -482,17 +482,17 @@ int Network::socket_thread_loop(void *)
             else // 2 size length header
             {
                 toread = (csocket.inbuf.buf[pos] << 8);
-                if(++pos >= MAXSOCKBUF)
+                if (++pos >= MAXSOCKBUF)
                     pos -= MAXSOCKBUF;
                 toread += csocket.inbuf.buf[pos];
             }
 
             // adjust pos to data start
-            if(++pos >= MAXSOCKBUF)
+            if (++pos >= MAXSOCKBUF)
                 pos -= MAXSOCKBUF;
 
             // leave collecting commands when we hit an incomplete one
-            if(toread == -1 || csocket.inbuf.len < toread+head_off)
+            if (toread == -1 || csocket.inbuf.len < toread+head_off)
             {
                 SDL_UnlockMutex(socket_lock);
                 break;
@@ -503,7 +503,7 @@ int Network::socket_thread_loop(void *)
             tmp->len = toread;
             tmp->next = NULL;
 
-            if(pos + toread > MAXSOCKBUF) // splitted data tail?
+            if (pos + toread > MAXSOCKBUF) // splitted data tail?
             {
                 int tmp_read, read_part;
 
@@ -523,7 +523,7 @@ int Network::socket_thread_loop(void *)
 
             SDL_LockMutex(read_lock);
             // put tmp to the end of our read cmd queue
-            if(!read_cmd_start)
+            if (!read_cmd_start)
                 read_cmd_start = tmp;
             else
                 read_cmd_end->next = tmp;
@@ -531,7 +531,7 @@ int Network::socket_thread_loop(void *)
             SDL_UnlockMutex(read_lock);
         }
 
-        if(csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
+        if (csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
             write_socket_buffer(csocket.fd, &csocket.outbuf);
 
         SDL_UnlockMutex(socket_lock);
@@ -561,7 +561,7 @@ void Network::socket_thread_stop(void)
 {
     Logger::log().info() << "STOP THREAD";
 
-    if(thread_flag)
+    if (thread_flag)
     {
         thread_flag = false;
         SDL_CondSignal(socket_cond);
@@ -659,7 +659,7 @@ bool Network::Init()
 
 bool Network::SOCKET_DeinitSocket()
 {
-    if(csocket.fd != SOCKET_NO)
+    if (csocket.fd != SOCKET_NO)
         SOCKET_CloseClientSocket();
 
 #ifdef WIN32
@@ -676,7 +676,7 @@ bool Network::SOCKET_OpenClientSocket(char *host, int port)
     // No more socket for the IO thread
     SDL_LockMutex(socket_lock);
 
-    if(! SOCKET_OpenSocket(host, port))
+    if (! SOCKET_OpenSocket(host, port))
         return false;
 
     csocket.inbuf.buf = new unsigned char[MAXSOCKBUF];
@@ -726,22 +726,22 @@ void Network::read_metaserver_data(SOCKET fd)
         }
         while (stat == -1);
 #endif
-        if (stat > 0)
-        {
-            if (temp + stat >= MAX_METASTRING_BUFFER)
+            if (stat > 0)
             {
-                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
+                if (temp + stat >= MAX_METASTRING_BUFFER)
+                {
+                    memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
+                    temp += stat;
+                    break;
+                }
+                memcpy(buf + temp, ptr, stat);
                 temp += stat;
+            }
+            else if (stat == 0)
+            {
+                // connect closed by meta
                 break;
             }
-            memcpy(buf + temp, ptr, stat);
-            temp += stat;
-        }
-        else if (stat == 0)
-        {
-            // connect closed by meta
-            break;
-        }
     }
     buf[temp] = 0;
     parse_metaserver_data(buf);

@@ -37,15 +37,13 @@ const int MAX_CURSOR_SIZE = 128;
 // .
 //================================================================================================
 GuiCursor::GuiCursor()
-{
-}
+{}
 
 //================================================================================================
 // .
 //================================================================================================
 GuiCursor::~GuiCursor()
-{
-}
+{}
 
 //================================================================================================
 // .
@@ -65,7 +63,7 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight, int scale)
     // ////////////////////////////////////////////////////////////////////
     mTexture = TextureManager::getSingleton().createManual("GUI_Cursor_Texture", "General",
                TEX_TYPE_2D, MAX_CURSOR_SIZE, MAX_CURSOR_SIZE, 0, PF_A8R8G8B8, TU_STATIC_WRITE_ONLY);
-    uint32 *dest = (uint32*)mTexture->getBuffer()->lock(0,MAX_CURSOR_SIZE * MAX_CURSOR_SIZE *sizeof(uint32), HardwareBuffer::HBL_DISCARD);
+    uint32 *dest = (uint32*)mTexture->getBuffer()->lock (0,MAX_CURSOR_SIZE * MAX_CURSOR_SIZE *sizeof(uint32), HardwareBuffer::HBL_DISCARD);
     for (int y = MAX_CURSOR_SIZE * MAX_CURSOR_SIZE; y; --y)  *dest++ = 0;
     mTexture->getBuffer()->unlock();
     mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
@@ -131,10 +129,10 @@ void GuiCursor::draw()
     // Scaling, done by blitFromMemory, seems to fail under OpenGL sometimes. (Ogre3D 1.2.2)
     // So we need to do it by hand.
     PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(
-                                                gfxSrcPos[mState].x,
-                                                gfxSrcPos[mState].y,
-                                                gfxSrcPos[mState].x + mWidth,
-                                                gfxSrcPos[mState].y + mHeight));
+                       gfxSrcPos[mState].x,
+                       gfxSrcPos[mState].y,
+                       gfxSrcPos[mState].x + mWidth,
+                       gfxSrcPos[mState].y + mHeight));
     uint32 buffer[MAX_CURSOR_SIZE * MAX_CURSOR_SIZE];
     int w = mWidth* mScale;
     int h = mHeight* mScale;

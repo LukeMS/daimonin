@@ -109,11 +109,11 @@ void ObjectVisuals::Init()
     if (!mPSystem) buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
 
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_NAME);
-/*
-    tmpMaterial->setDepthBias(true);
-    tmpMaterial->setDepthCheckEnabled(false);
-    tmpMaterial->setDepthWriteEnabled(false);
-*/
+    /*
+        tmpMaterial->setDepthBias(true);
+        tmpMaterial->setDepthCheckEnabled(false);
+        tmpMaterial->setDepthWriteEnabled(false);
+    */
     tmpMaterial->setDepthBias(false);
     tmpMaterial->setDepthCheckEnabled(true);
     tmpMaterial->setDepthWriteEnabled(true);
@@ -197,7 +197,7 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 
     int x1 = (TEXTURE_SIZE - barWidth)/2;
     int xfill = barWidth - (int)(percent * barWidth);
-    PixelBox pb = mHardwarePB->lock(Box(x1, TEXTURE_SIZE-11, x1 + barWidth, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mHardwarePB->lock (Box(x1, TEXTURE_SIZE-11, x1 + barWidth, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     uint32 * dest_data = (uint32*)pb.data;
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     dest_data+= TEXTURE_SIZE;
@@ -259,13 +259,13 @@ void ObjectVisuals::selectNPC(MovableObject *mob, int friendly, bool drawLifebar
     int len = GuiTextout::getSingleton().CalcTextWidth(name, fontNr);
     if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
-    PixelBox pb = mHardwarePB->lock(Box(0, 0, TEXTURE_SIZE-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mHardwarePB->lock (Box(0, 0, TEXTURE_SIZE-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     // Clear the whole texture.
     uint32 *dest_data = (uint32*)pb.data;
     for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
     // Print NPC name.
     dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
-  //  GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, fontNr,  0x00000000);
+    //  GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, fontNr,  0x00000000);
     mHardwarePB->unlock();
     setLifebar(1.0);
 }

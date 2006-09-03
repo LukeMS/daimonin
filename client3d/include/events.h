@@ -46,12 +46,6 @@ public:
     {
         LIGHT_VOL, LIGHT_SPOT
     };
-    enum
-    {
-         WSYNC_INIT,   // Set the distance of the destination tile.
-         WSYNC_OFFSET, // Move the camera for moving within a tile.
-         WSYNC_MOVE    // Sync all objects to the new player pos..
-    };
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -70,7 +64,7 @@ public:
     {
         return mWorld->getPosition();
     }
-    void setWorldPos(Vector3 &pos, int posX, int posZ, int func);
+    void setWorldPos(int posX, int posZ);
     void setLightMember(Light *light, int nr)
     {
         mLight[nr] = light;
@@ -130,8 +124,7 @@ private:
     void mouseDragExited(MouseEvent* )
     {}
     void mouseDragDropped(MouseEvent* )
-    {}
-}
+{}}
 ;
 
 extern  CEvent *Event;

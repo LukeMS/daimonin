@@ -122,10 +122,10 @@ void TileManager::loadMap(const std::string &png_filename)
     // ////////////////////////////////////////////////////////////////////
     // Fill the heightdata buffer with the image-color.
     // ////////////////////////////////////////////////////////////////////
-    for(int x = 0; x < CHUNK_SIZE_X+3; ++x)
+    for (int x = 0; x < CHUNK_SIZE_X+3; ++x)
     {
         posY =0;
-        for(int y = 0; y < CHUNK_SIZE_Z+3; ++y)
+        for (int y = 0; y < CHUNK_SIZE_Z+3; ++y)
         {
             Map[x][y] = heightdata_temp[posY * dimx + posX];
             if (++posY >= dimy)
@@ -141,6 +141,7 @@ void TileManager::loadMap(const std::string &png_filename)
         {
             mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
             mMap[x][y].indoorTris =0;
+            for (int i =0; i< SUM_SUBTILES; ++i) mMap[x][y].walkable[i] =0;
             /*
             // Building ground.
             if (x>3 && x < 9 && y>1 && y<11)
@@ -230,36 +231,36 @@ void TileManager::scrollMap(int dx, int dz)
         struct WorldMap bufferH[CHUNK_SIZE_Z];
         if (dx <0)
         {
-            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
+            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
                 bufferH[y] = mMap[0][y];
             }
-            for(int x = 0; x < CHUNK_SIZE_X-1; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X-1; ++x)
             {
-                for(int y = 0; y < CHUNK_SIZE_Z; ++y)
+                for (int y = 0; y < CHUNK_SIZE_Z; ++y)
                 {
                     mMap[x][y] = mMap[x+1][y];
                 }
             }
-            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
+            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
                 mMap[CHUNK_SIZE_X-1][y] = bufferH[y] ;
             }
         }
         else
         {
-            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
+            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
                 bufferH[y] = mMap[CHUNK_SIZE_X-1][y];
             }
-            for(int x = CHUNK_SIZE_X-1; x >0; --x)
+            for (int x = CHUNK_SIZE_X-1; x >0; --x)
             {
-                for(int y = 0; y < CHUNK_SIZE_Z; ++y)
+                for (int y = 0; y < CHUNK_SIZE_Z; ++y)
                 {
                     mMap[x][y] = mMap[x-1][y];
                 }
             }
-            for(int y = 0; y < CHUNK_SIZE_Z; ++y)
+            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
             {
                 mMap[0][y] = bufferH[y];
             }
@@ -270,38 +271,38 @@ void TileManager::scrollMap(int dx, int dz)
         struct WorldMap bufferH[CHUNK_SIZE_Z];
         if (dz <0)
         {
-            for(int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
             {
                 bufferH[x] = mMap[x][0] ;
             }
 
-            for(int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                for(int y = 0; y < CHUNK_SIZE_Z-1; ++y)
+                for (int y = 0; y < CHUNK_SIZE_Z-1; ++y)
                 {
                     mMap[x][y] = mMap[x][y+1];
                 }
             }
 
-            for(int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
             {
                 mMap[x][CHUNK_SIZE_Z-1] = bufferH[x] ;
             }
         }
         else
         {
-            for(int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
             {
                 bufferH[x] = mMap[x][CHUNK_SIZE_Z-1] ;
             }
-            for(int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
             {
-                for(int y = CHUNK_SIZE_Z-1; y > 0; --y)
+                for (int y = CHUNK_SIZE_Z-1; y > 0; --y)
                 {
                     mMap[x][y] = mMap[x][y-1];
                 }
             }
-            for(int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
             {
                 mMap[x][0]  = bufferH[x] ;
             }
@@ -311,6 +312,23 @@ void TileManager::scrollMap(int dx, int dz)
     mMapScrollZ+= dz;
     changeChunks();
 }
+
+//================================================================================================
+// Set the walkable status for a COMPLETE row of subtiles.
+//================================================================================================
+void TileManager::setWalkablePos(const SubPos2D &pos, int row, unsigned char walkables)
+{
+    mMap[pos.x][pos.z].walkable[row] |= walkables;
+}
+
+//================================================================================================
+// Get the walkable status of a SINGLE subtile.
+//================================================================================================
+bool TileManager::getWalkablePos(int x, int y)
+{
+    return (mMap[x >> 3][y >> 3].walkable[y&7] & (1 << (x&7))) ==0;
+}
+
 
 //================================================================================================
 // .
@@ -553,7 +571,7 @@ bool TileManager::createTextureGroup(const std::string &terrain_type)
         i =-1;
         tx = 0;
         ty = 0;
-        while(1)
+        while (1)
         {
             strFilename = terrain_type;
             strFilename+= "_"+ StringConverter::toString(++i, 2, '0');
@@ -591,7 +609,7 @@ void TileManager::shrinkTexture(const std::string &terrain_type)
     while (pix >= MIN_TEXTURE_PIXEL)
     {
         sum =0;
-        while(1)
+        while (1)
         {
             // Load the Image.
             strFilename = terrain_type;

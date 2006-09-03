@@ -34,9 +34,11 @@ http://www.gnu.org/licenses/licenses.html
 #include "object_visuals.h"
 #include "particle_manager.h"
 #include "events.h"
+#include "tile_manager.h"
+#include "tile_path.h"
 
 const Real WALK_PRECISON = 1.0;
-const int TURN_SPEED    = 200;
+const int TURN_SPEED   = 200;
 
 //================================================================================================
 // Init all static Elemnts.
@@ -75,6 +77,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mActMana = obj.maxMana;
     mMaxGrace=obj.maxGrace;
     mActGrace=obj.maxGrace;
+    mBoundingRadius = obj.boundingRadius;
     mEntity->setQueryFlags(QUERY_NPC_MASK);
     if (spawn)
         mSpawnSize = 0.0;
@@ -94,24 +97,21 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // ////////////////////////////////////////////////////////////////////
     if (!mIndex)
     {
-        Vector3 pos = mNode->getPosition();
-        Event->setWorldPos(pos, 0, 0, CEvent::WSYNC_MOVE);
+        // Attach camera to players node.
+        // (Players Bounding box is increased by that and cant be used for collision detection anymore)
+        SceneNode *cNode = mNode->createChildSceneNode();
+        cNode->attachObject(Event->getCamera());
+        cNode->setInheritOrientation(false);
     }
-    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
     mCursorTurning =0;
     mAutoTurning = TURN_NONE;
     mAutoMoving = false;
-    mEnemyNode = 0;
+    mEnemyObject = 0;
     mAttacking = ATTACK_NONE;
     // mNode->showBoundingBox(true); // Remove Me!!!!
-}
 
-//================================================================================================
-// Is player currently moving?
-//================================================================================================
-bool ObjectNPC::isMoving()
-{
-    return mAutoMoving;
+    mOffX =0;
+    mOffZ =0;
 }
 
 //================================================================================================
@@ -119,55 +119,6 @@ bool ObjectNPC::isMoving()
 //================================================================================================
 void ObjectNPC::attackObjectOnTile(SubPos2D pos)
 {}
-
-//================================================================================================
-// Turn the Object.
-//================================================================================================
-void ObjectNPC::turning(Real facing, bool cursorTurn)
-{
-    if (cursorTurn)
-    {
-        mCursorTurning = facing;
-    }
-    else
-    {
-        mDeltaDegree = mFacing.valueDegrees() - facing;
-        // We want a range from 0...359°.
-        if      (mDeltaDegree <   0) mDeltaDegree += 360;
-        else if (mDeltaDegree >=360) mDeltaDegree -= 360;
-        if (mDeltaDegree < 180)
-            mAutoTurning = TURN_RIGHT;
-        else
-            mAutoTurning = TURN_LEFT;
-    }
-}
-
-//================================================================================================
-// Turn the Object until it faces the given tile.
-//================================================================================================
-void ObjectNPC::faceToTile(SubPos2D pos)
-{
-    float deltaZ = pos.z - mActPos.z;
-    float deltaX = pos.x - mActPos.x;
-    if (!deltaZ)
-    {
-        if (!deltaX) return; // Already facing this direction.
-        if      (deltaX >0) mDeltaDegree = mFacing.valueDegrees() - 90;
-        else if (deltaX <0) mDeltaDegree = mFacing.valueDegrees() -270;
-    }
-    else
-    {
-        mDeltaDegree = mFacing.valueDegrees() - (Math::ATan(deltaX/deltaZ)).valueDegrees();
-    }
-    if (deltaZ <0) mDeltaDegree -= 180;
-    // We want a range from 0...359°.
-    if      (mDeltaDegree <   0) mDeltaDegree += 360;
-    else if (mDeltaDegree >=360) mDeltaDegree -= 360;
-    if (mDeltaDegree < 180)
-        mAutoTurning = TURN_RIGHT;
-    else
-        mAutoTurning = TURN_LEFT;
-}
 
 //================================================================================================
 // Update ObjectNPC.
@@ -184,21 +135,21 @@ void ObjectNPC::update(const FrameEvent& event)
         if (mSpawnSize == 0.0)
         {
             ParticleManager::getSingleton().addNodeObject(mNode, "Particle/JoinGame", 4.8);
-            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_SPAWN, 0, false, true);
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_SPAWN, 0, false, true, false);
         }
         mSpawnSize+= event.timeSinceLastFrame;
         if (mSpawnSize > 1.0) mSpawnSize =1.0;
         mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
     }
 
-    if (mAutoTurning)
+    if (mAutoTurning != TURN_NONE)
     {
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
+		mAnim->pause(true);
         Real delta = event.timeSinceLastFrame * TURN_SPEED;
         if (mAutoTurning == TURN_RIGHT)
         {
             mDeltaDegree -= delta;
-            if (mDeltaDegree <=0)
+			if (mDeltaDegree <=0)
             {
                 delta = mDeltaDegree*-1;
                 mAutoTurning = TURN_NONE;
@@ -214,50 +165,50 @@ void ObjectNPC::update(const FrameEvent& event)
             {
                 delta = mDeltaDegree *-1;
                 mAutoTurning = TURN_NONE;
+				
             }
             mFacing += Degree(delta);
             if (mFacing.valueDegrees() <= 360) mFacing += Degree(360);
             mNode->yaw(Degree(delta));
         }
-        // After the turning is complete, we can attack.
-        if (!mAutoTurning && mAttacking == ATTACK_APPROACH)
-            mAttacking = ATTACK_ANIM_START;
+        
+        if (mAutoTurning == TURN_NONE)
+		{	
+			mAnim->pause(false);
+			// After the turning is complete, we can attack.
+			if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
+
+		}
     }
     else if (mAutoMoving)
     {
+		mAnim->pause(false);
         // We are very close to destination.
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true);
-        Vector3 dist = mWalkToPos - mNode->getPosition();
-        dist.y =0;
-        if(dist.squaredLength() < WALK_PRECISON)
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
+        // We have reached a waypoint.
+        Vector3 dist = mDestWalkVec - mNode->getPosition();
+        if (dist.squaredLength() < WALK_PRECISON)
         {
-            // Set the exact destination pos.
-            mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
-            mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
-            mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
-            mNode->setPosition(mWalkToPos);
-            if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
-            mDestWalkPos.x+= mActPos.x - mDstPos.x;
-            mDestWalkPos.z+= mActPos.z - mDstPos.z;
-            moveToNeighbourTile();
+            int dx = mActPos.x - mDestStepPos.x;
+            int dz = mActPos.z - mDestStepPos.z;
+            mActPos = mDestStepPos;
+            // If the player has moved over the tile border, we have to sync the world.
+            if (!mIndex && (dx || dz))
+            {
+                Event->setWorldPos(dx, dz);
+                // Sync the destination of the walk.
+                mDestWalkPos.x += dx;
+                mDestWalkPos.z += dz;
+                mOffX += dx;
+                mOffZ += dz;
+            }
+            moveToNeighbourTile(0);
             if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
         }
         else
         {
             // We have to move on.
-            Vector3 NewTmpPosition = - event.timeSinceLastFrame * mDeltaPos;
-            mNode->setPosition(mNode->getPosition() + NewTmpPosition);
-            if (!mIndex) Event->setWorldPos(NewTmpPosition, 0, 0, CEvent::WSYNC_OFFSET);
-            if (mEnemyNode)
-            {
-                AxisAlignedBox aabb = mNode->_getWorldAABB().intersection(mEnemyNode->_getWorldAABB());
-                if (!aabb.isNull())
-                {
-                    if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
-                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
-                    mAutoMoving = false;
-                }
-            }
+            mNode->translate(event.timeSinceLastFrame * mWalkSpeed);
         }
         return;
     }
@@ -280,7 +231,7 @@ void ObjectNPC::update(const FrameEvent& event)
                         {
                             ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(0);
                             static int oo =0;
-                            if (++oo <=3)
+                            if (++oo <= 3)
                             {
                                 mob->setDamage(3);
                                 mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
@@ -310,7 +261,7 @@ void ObjectNPC::update(const FrameEvent& event)
     // Turning by cursor keys.
     if (mAnim->isIdle() && mCursorTurning)
     {
-        mEnemyNode = 0; // We are no longer looking at the enemy.
+        mEnemyObject = 0; // We are no longer looking at the enemy.
         mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning));
         mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning);
         if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
@@ -353,70 +304,152 @@ void ObjectNPC::castSpell(int spell)
     SpellManager::getSingleton().addObject(spell, mIndex);
 }
 
+//================================================================================================
+// Turn the Object.
+//================================================================================================
+void ObjectNPC::turning(Real facing, bool cursorTurn)
+{
+    if (cursorTurn)
+    {
+        mCursorTurning = facing;
+    }
+    else
+    {
+        mDeltaDegree = mFacing.valueDegrees() - facing;
+        // We want a range from 0...359°.
+        if      (mDeltaDegree <   0) mDeltaDegree += 360;
+        else if (mDeltaDegree >=360) mDeltaDegree -= 360;
+        if (mDeltaDegree < 180)
+            mAutoTurning = TURN_RIGHT;
+        else
+            mAutoTurning = TURN_LEFT;
+    }
+}
+
+//================================================================================================
+// Turn the Object until it faces the given tile.
+//================================================================================================
+void ObjectNPC::faceToTile(SubPos2D pos)
+{
+    float deltaZ = (pos.z - mActPos.z) * SUM_SUBTILES  +  (pos.subZ - mActPos.subZ);
+    float deltaX = (pos.x - mActPos.x) * SUM_SUBTILES  +  (pos.subX - mActPos.subX);
+
+    // We need the Distance (in sub-Tiles) for a constant walk speed.
+    mDistance = Math::Abs(deltaZ) > Math::Abs(deltaX)?Math::Abs(deltaZ)/8:Math::Abs(deltaX)/8;
+
+    if (!deltaZ)
+    {
+        if (!deltaX) return; // Already standing on this position.
+        if      (deltaX >0) mDeltaDegree = mFacing.valueDegrees() - 90;
+        else if (deltaX <0) mDeltaDegree = mFacing.valueDegrees() -270;
+    }
+    else
+    {
+        mDeltaDegree = mFacing.valueDegrees() - (Math::ATan(deltaX/deltaZ)).valueDegrees();
+    }
+    if (deltaZ <0) mDeltaDegree -= 180;
+
+    // We want a range from 0...359°.
+    while (mDeltaDegree <   0) mDeltaDegree += 360;
+    while (mDeltaDegree >=360) mDeltaDegree -= 360;
+
+    // Do we need to turn ?
+    if (mDeltaDegree >= 1 && mDeltaDegree <= 359)
+    {
+        if (mDeltaDegree < 180)
+            mAutoTurning = TURN_RIGHT;
+        else
+            mAutoTurning = TURN_LEFT;
+       // mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
+    }
+}
 
 //================================================================================================
 // Move the Object to a neighbour tile.
+// TODO: If we walk from subtile to subtile we get a more acurate walk (mainly y-pos).
 //================================================================================================
-void ObjectNPC::moveToNeighbourTile()
+void ObjectNPC::moveToNeighbourTile(int precision)
 {
-    if ((mActPos.x == mDestWalkPos.x) && (mActPos.z == mDestWalkPos.z))
+    static TilePath tp;
+    static int step = 0;
+
+    if (!step++)
+    {
+        mOffX = 0;
+        mOffZ = 0;
+        tp.FindPath(mActPos, mDestWalkPos, precision);
+    }
+
+    // We reached the destination pos.
+    if (!tp.ReadPath())
     {
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
         mAutoMoving = false;
+        step = 0;
+        // For attack we dont move on the destination tile, but some subtiles before.
+        // So we have to do another faceToTile().
+        if (mActPos != mDestWalkPos) faceToTile(mDestWalkPos);
         return;
     }
-    mDstPos = mDestWalkPos;
-    if (mDstPos.x > mActPos.x+1) mDstPos.x = mActPos.x+1;
-    if (mDstPos.x < mActPos.x-1) mDstPos.x = mActPos.x-1;
-    if (mDstPos.z > mActPos.z+1) mDstPos.z = mActPos.z+1;
-    if (mDstPos.z < mActPos.z-1) mDstPos.z = mActPos.z-1;
+
+    mDestStepPos.x = tp.xPath;
+    mDestStepPos.z = tp.yPath;
+    mDestStepPos.subX = mDestStepPos.x &7;
+    mDestStepPos.subZ = mDestStepPos.z &7;
+    mDestStepPos.x /=8;
+    mDestStepPos.z /=8;
+
+    mDestStepPos.x += mOffX;
+    mDestStepPos.z += mOffZ;
+
     // Turn the head into the moving direction.
-    faceToTile(mDstPos);
+    faceToTile(mDestStepPos);
     // Walk 1 tile.
-    mWalkToPos.x = mDstPos.x * TILE_SIZE_X + mBoundingBox.x;
-    mWalkToPos.y = (Real) (TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y);
-    mWalkToPos.z = mDstPos.z * TILE_SIZE_Z + mBoundingBox.z;
-    mDeltaPos = mNode->getPosition() - mWalkToPos;
-    if (!mIndex) Event->setWorldPos(mDeltaPos, 0, 0, CEvent::WSYNC_INIT);
+    mDestWalkVec = TileManager::getSingleton().getTileInterface()->tileToWorldPos(mDestStepPos);
+    mWalkSpeed = (mDestWalkVec - mNode->getPosition()) / mDistance;
 }
 
 //================================================================================================
 // Move the Object to the given tile.
 //================================================================================================
-void ObjectNPC::moveToDistantTile(SubPos2D pos)
+void ObjectNPC::moveToDistantTile(SubPos2D pos, int precision)
 {
-    if(mActPos.x == pos.x && mActPos.z == pos.z || mAutoTurning || mAutoMoving) return;
-    if (mEnemyNode)
+    if (mActPos == pos || mAutoTurning || mAutoMoving) return;
+    if (mEnemyObject)
     {
-        mWalkToPos.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
-        mWalkToPos.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
-        mWalkToPos.y = TileManager::getSingleton().getAvgMapHeight(mDstPos.x, mDstPos.z) - mBoundingBox.y;
-        mNode->setPosition(mWalkToPos);
-        if (!mIndex) Event->setWorldPos(mWalkToPos, mActPos.x - mDstPos.x, mActPos.z - mDstPos.z, CEvent::WSYNC_MOVE);
-        mEnemyNode = 0;
+        /*
+                mDestWalkVec.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
+                mDestWalkVec.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
+                mDestWalkVec.y = TileManager::getSingleton().getAvgMapHeight(mDestStepPos.x, mDestStepPos.z) - mBoundingBox.y;
+                mNode->setPosition(mDestWalkVec);
+        */
+//        Vector3 posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
+//        mNode->setPosition(posV);
+        mEnemyObject = 0;
     }
     mDestWalkPos = pos;
     mAutoMoving = true;
-    moveToNeighbourTile();
+    moveToNeighbourTile(precision);
 }
 
 //================================================================================================
 // Attack an enemy.
 //================================================================================================
-void ObjectNPC::attackShortRange(const SceneNode *node)
+void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 {
     if (mAnim->isAttack()) return; // Finish the attack before starting a new one.
     // Move in front of the enemy.
-    if (mEnemyNode != node)
+    if (mEnemyObject != EnemyObject)
     {
-        moveToDistantTile(ObjectManager::getSingleton().getTargetedPos());
+        mEnemyObject = EnemyObject;
+        moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
         mAttacking = ATTACK_APPROACH;
     }
     else
     {
         mAttacking = ATTACK_ANIM_START;
     }
-    mEnemyNode = (SceneNode*) node;
+    mEnemyObject = EnemyObject;
 }
 
 //================================================================================================

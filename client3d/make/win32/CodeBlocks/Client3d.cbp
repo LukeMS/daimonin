@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="4" />
+	<FileVersion major="1" minor="5" />
 	<Project>
 		<Option title="client3d" />
+		<Option default_target="" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug">
 				<Option output="..\..\..\debug\client3d.exe" />
@@ -11,7 +13,6 @@
 				<Option object_output=".\obj\Debug" />
 				<Option type="0" />
 				<Option compiler="gcc" />
-				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -36,7 +37,6 @@
 				<Option object_output=".\obj\Release" />
 				<Option type="0" />
 				<Option compiler="gcc" />
-				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
 					<Add option="-O3" />
@@ -56,6 +56,9 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;Release;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add option="-mthreads" />
 			<Add option="-fmessage-length=0" />
@@ -511,6 +514,13 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\include\tile_path.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\CodingStyle.txt">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -732,6 +742,11 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\tile_manager.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\tile_path.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />

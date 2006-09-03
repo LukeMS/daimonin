@@ -31,15 +31,13 @@ http://www.gnu.org/licenses/licenses.html
 ///
 //================================================================================================
 GuiDialog::GuiDialog()
-{
-}
+{}
 
 //================================================================================================
 ///
 //================================================================================================
 GuiDialog::~GuiDialog()
-{
-}
+{}
 
 //================================================================================================
 // this function gets a ="xxxxxxx" string from a line.
@@ -52,11 +50,11 @@ char *GuiDialog::get_parameter_string(char *data, int *pos)
 
     // we assume a " after the =... don't be to shy, we search for a '"'
     start_ptr = strchr(data+*pos,'"');
-    if(!start_ptr)
+    if (!start_ptr)
         return ""; // error
 
     end_ptr = strchr(++start_ptr,'"');
-    if(!end_ptr)
+    if (!end_ptr)
         return ""; // error
 
     strncpy(buf, start_ptr, end_ptr-start_ptr);
@@ -77,12 +75,12 @@ int GuiDialog::interface_cmd_head(_gui_interface_head *head, char *data, int *po
     memset(head, 0, sizeof(_gui_interface_head));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -94,16 +92,16 @@ int GuiDialog::interface_cmd_head(_gui_interface_head *head, char *data, int *po
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
-        switch(c)
+        switch (c)
         {
             case 'f': // face for this head
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->name, buf);
                 break;
 
             case 'b': // test body
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->body_text, buf);
                 break;
@@ -124,12 +122,12 @@ int GuiDialog::interface_cmd_link(_gui_interface_link *head, char *data, int *po
     memset(head, 0, sizeof(_gui_interface_link));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -137,23 +135,23 @@ int GuiDialog::interface_cmd_link(_gui_interface_link *head, char *data, int *po
         }
 
         ++(*pos);
-        if(c<=' ') continue;
+        if (c<=' ') continue;
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
-        switch(c)
+        switch (c)
         {
             case 't': // link title/text
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->link, buf);
                 break;
 
             case 'c': // link command
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 head->cmd[0]=0;
-                if(buf[0] != '/')
+                if (buf[0] != '/')
                     strcpy(head->cmd, "/talk ");
                 strcat(head->cmd, buf);
                 break;
@@ -175,12 +173,12 @@ int GuiDialog::interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
     memset(head, 0, sizeof(_gui_interface_who));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -188,14 +186,14 @@ int GuiDialog::interface_cmd_who(_gui_interface_who *head, char *data, int *pos)
         }
 
         ++(*pos);
-        if(c<=' ') continue;
+        if (c<=' ') continue;
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
-        switch(c)
+        switch (c)
         {
             case 'b': // link title/text
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->body, buf);
                 break;
@@ -218,12 +216,12 @@ int GuiDialog::interface_cmd_reward(_gui_interface_reward *head, char *data, int
     strcpy(head->title, "Description"); // default title
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -231,43 +229,43 @@ int GuiDialog::interface_cmd_reward(_gui_interface_reward *head, char *data, int
         }
 
         ++(*pos);
-        if(c<=' ') continue;
+        if (c<=' ') continue;
 
-        switch(c)
+        switch (c)
         {
 
             case 't': // title of the reward
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->title, buf);
                 break;
 
             case 'b': // reward body
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->body_text, buf);
                 break;
 
             case 'c': // copper cash
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 head->copper =atoi(buf);
                 break;
 
             case 's': // silver cash
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 head->silver =atoi(buf);
                 break;
 
             case 'g': // gold cash
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 head->gold =atoi(buf);
                 break;
 
             case 'm': // mithril cash
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 head->mithril =atoi(buf);
                 break;
@@ -288,12 +286,12 @@ int GuiDialog::interface_cmd_message(_gui_interface_message *msg, char *data, in
     memset(msg, 0, sizeof(_gui_interface_message));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -301,18 +299,18 @@ int GuiDialog::interface_cmd_message(_gui_interface_message *msg, char *data, in
         }
 
         ++(*pos);
-        if(c<=' ') continue;
+        if (c<=' ') continue;
 
-        switch(c)
+        switch (c)
         {
             case 't': // title of the message
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(msg->title, buf);
                 break;
 
             case 'b': // message body
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(msg->body_text, buf);
                 break;
@@ -333,12 +331,12 @@ int GuiDialog::interface_cmd_xtended(_gui_interface_xtended *msg, char *data, in
     memset(msg, 0, sizeof(_gui_interface_xtended));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -346,19 +344,19 @@ int GuiDialog::interface_cmd_xtended(_gui_interface_xtended *msg, char *data, in
         }
 
         ++(*pos);
-        if(c<=' ')
+        if (c<=' ')
             continue;
 
-        switch(c)
+        switch (c)
         {
             case 't': // title of the message
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(msg->title, buf);
                 break;
 
             case 'b': // message body
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(msg->body_text, buf);
                 break;
@@ -379,12 +377,12 @@ int GuiDialog::interface_cmd_icon(_gui_interface_icon *head, char *data, int *po
     memset(head, 0, sizeof(_gui_interface_icon));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -392,30 +390,30 @@ int GuiDialog::interface_cmd_icon(_gui_interface_icon *head, char *data, int *po
         }
 
         ++(*pos);
-        if(c<=' ')
+        if (c<=' ')
             continue;
-        switch(c)
+        switch (c)
         {
             case 'f': // face for this icon
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->name, buf);
                 break;
 
             case 't': // title of the icon
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->title, buf);
                 break;
 
             case 'm': // mode for this icon
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 head->mode = buf[0];
                 break;
 
             case 'b': // test body
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->body_text, buf);
                 break;
@@ -436,12 +434,12 @@ int GuiDialog::interface_cmd_button(_gui_interface_button *head, char *data, int
     memset(head, 0, sizeof(_gui_interface_button));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -449,26 +447,26 @@ int GuiDialog::interface_cmd_button(_gui_interface_button *head, char *data, int
         }
 
         ++(*pos);
-        if(c<=' ')
+        if (c<=' ')
             continue;
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
 
-        switch(c)
+        switch (c)
         {
             case 't': // button title
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(head->title, buf);
                 break;
 
             case 'c': // button command
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
 
                 head->command[0]=0;
-                if(buf[0] != '/')
+                if (buf[0] != '/')
                     strcpy(head->command, "/talk ");
                 strcat(head->command, buf);
                 break;
@@ -489,12 +487,12 @@ int GuiDialog::interface_cmd_textfield(_gui_interface_textfield *textfield, char
     memset(textfield, 0, sizeof(_gui_interface_textfield));
 
     ++(*pos);
-    while((c= *(data+*pos)) != '\0' && c  != 0)
+    while ((c= *(data+*pos)) != '\0' && c  != 0)
     {
         // c is legal string part - check it is '<'
-        if(c == '>')
+        if (c == '>')
         {
-            if(*(data+(*pos)+1) != '>') // no double >>? then we return
+            if (*(data+(*pos)+1) != '>') // no double >>? then we return
             {
                 --(*pos);
                 return 0;
@@ -502,16 +500,16 @@ int GuiDialog::interface_cmd_textfield(_gui_interface_textfield *textfield, char
         }
 
         ++(*pos);
-        if(c<=' ')
+        if (c<=' ')
             continue;
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
 
-        switch(c)
+        switch (c)
         {
             case 'b': // Textfield text
-                if(!(buf = get_parameter_string(data, pos)))
+                if (!(buf = get_parameter_string(data, pos)))
                     return -1;
                 strcpy(textfield->text, buf);
                 break;
@@ -552,20 +550,20 @@ void GuiDialog::reset_gui_interface(void)
 void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 {
     mInterfaceMode= INTERFACE_MODE_NPC;
-    if(gui_int->used_flag & GUI_INTERFACE_WHO)
+    if (gui_int->used_flag & GUI_INTERFACE_WHO)
     {
-        if(*gui_int->who.body == 'Q')
+        if (*gui_int->who.body == 'Q')
             mInterfaceMode= INTERFACE_MODE_QLIST;
     }
 
-    if(gui_int->used_flag & GUI_INTERFACE_ICON)
+    if (gui_int->used_flag & GUI_INTERFACE_ICON)
     {
         char *tmp;
-        for(int s=0;s<gui_int->icon_count; ++s)
+        for (int s=0;s<gui_int->icon_count; ++s)
         {
             gui_int->icon[s].second_line = NULL;
             tmp = strchr(gui_int->icon[s].body_text, '\n');
-            if(tmp)
+            if (tmp)
             {
                 gui_int->icon[s].second_line = tmp+1;
                 *tmp = 0;
@@ -573,10 +571,10 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
         }
     }
 
-    if(gui_int->used_flag & GUI_INTERFACE_HEAD)
+    if (gui_int->used_flag & GUI_INTERFACE_HEAD)
     {
 //     gui_int->head.face = get_bmap_id(gui_int->head.name);
-        if(gui_int->head.face==-1)
+        if (gui_int->head.face==-1)
         {
             /*
                    char line[256];
@@ -584,14 +582,14 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
                    gui_int->head.picture = sprite_load_file(line, 0);
             */
         }
-        if(gui_int->head.body_text[0]=='\0')
+        if (gui_int->head.body_text[0]=='\0')
         {
 //        strcpy(gui_int->head.body_text, cpl.target_name?cpl.target_name:"");
         }
     }
 
     // overrule/extend the message block
-    if(gui_int->used_flag & GUI_INTERFACE_XTENDED)
+    if (gui_int->used_flag & GUI_INTERFACE_XTENDED)
     {
         strcpy(gui_int->message.title, gui_int->xtended.title);
         strcat(gui_int->message.body_text, gui_int->xtended.body_text);
@@ -599,21 +597,21 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
     }
 
     // sort out the message text body to single lines
-    if(gui_int->used_flag & GUI_INTERFACE_MESSAGE)
+    if (gui_int->used_flag & GUI_INTERFACE_MESSAGE)
     {
         int i, len, c=0;
 
         gui_int->message.line_count=0;
-        for(i=0;;i++)
+        for (i=0;;i++)
         {
-            if(gui_int->message.body_text[i]==0x0d)
+            if (gui_int->message.body_text[i]==0x0d)
                 continue;
-            if(gui_int->message.body_text[i]==0x0a || gui_int->message.body_text[i]=='\0')
+            if (gui_int->message.body_text[i]==0x0a || gui_int->message.body_text[i]=='\0')
             {
                 gui_int->message.lines[gui_int->message.line_count][c]='\0';
                 // draw_info(gui_int->message.lines[gui_int->message.line_count], COLOR_YELLOW);
                 ++gui_int->message.line_count;
-                if(gui_int->message.body_text[i]=='\0')
+                if (gui_int->message.body_text[i]=='\0')
                     break;
                 c=0;
             }
@@ -629,15 +627,15 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 
                     strcpy(tmp_line, gui_int->message.lines[gui_int->message.line_count]); // safe the line
                     gui_int->message.lines[gui_int->message.line_count][len]=0;
-                    for(ii=len;ii>=0;ii--)
+                    for (ii=len;ii>=0;ii--)
                     {
-                        if(gui_int->message.lines[gui_int->message.line_count][ii] == ' ')
+                        if (gui_int->message.lines[gui_int->message.line_count][ii] == ' ')
                         {
                             gui_int->message.lines[gui_int->message.line_count][ii]=0;
                             break;
                         }
                     }
-                    if(ii<0) // we have not find any usable whitespace
+                    if (ii<0) // we have not find any usable whitespace
                         ii = len;
 
                     // we don't eliminate leading whitespaces because we can't know its a format issue or not
@@ -651,7 +649,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
                     ++c;
                 }
             }
-            if(gui_int->message.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
+            if (gui_int->message.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
             {
                 Logger::log().error() << "Interface call out of borders: " << gui_int->message.body_text;
                 break;
@@ -659,21 +657,21 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
         }
     }
 
-    if(gui_int->used_flag&GUI_INTERFACE_REWARD)
+    if (gui_int->used_flag&GUI_INTERFACE_REWARD)
     {
         int i, len, c=0;
 
         gui_int->reward.line_count=0;
-        for(i=0;;i++)
+        for (i=0;;i++)
         {
-            if(gui_int->reward.body_text[i]==0x0d)
+            if (gui_int->reward.body_text[i]==0x0d)
                 continue;
-            if(gui_int->reward.body_text[i]==0x0a || gui_int->reward.body_text[i]=='\0')
+            if (gui_int->reward.body_text[i]==0x0a || gui_int->reward.body_text[i]=='\0')
             {
                 gui_int->reward.lines[gui_int->reward.line_count][c]='\0';
                 // draw_info(gui_int->reward.lines[gui_int->message.line_count], COLOR_YELLOW);
                 ++gui_int->reward.line_count;
-                if(gui_int->reward.body_text[i]=='\0') break;
+                if (gui_int->reward.body_text[i]=='\0') break;
                 c=0;
             }
             else
@@ -688,15 +686,15 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 
                     strcpy(tmp_line, gui_int->reward.lines[gui_int->reward.line_count]); // safe the line
                     gui_int->reward.lines[gui_int->reward.line_count][len]=0;
-                    for(ii=len;ii>=0;ii--)
+                    for (ii=len;ii>=0;ii--)
                     {
-                        if(gui_int->reward.lines[gui_int->reward.line_count][ii] == ' ')
+                        if (gui_int->reward.lines[gui_int->reward.line_count][ii] == ' ')
                         {
                             gui_int->reward.lines[gui_int->reward.line_count][ii]=0;
                             break;
                         }
                     }
-                    if(ii<0) // we have not find any usable whitespace
+                    if (ii<0) // we have not find any usable whitespace
                         ii = len;
 
                     // we don't eliminate leading whitespaces because we can't know its a format issue or not
@@ -712,7 +710,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 
             }
 
-            if(gui_int->reward.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
+            if (gui_int->reward.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
             {
                 Logger::log().error() << "Interface call out of borders: %s\n" << gui_int->reward.body_text;
                 break;
@@ -722,10 +720,10 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 
     // icons
     // search for the bmap num id's and load/request them if possible
-    for(int s=0; s<gui_int->icon_count; ++s)
+    for (int s=0; s<gui_int->icon_count; ++s)
     {
 
-        if(gui_int->icon[s].mode == 'S')
+        if (gui_int->icon[s].mode == 'S')
             gui_int->icon_select = true;
 //      gui_int->icon[s].element.face = get_bmap_id(gui_int->icon[s].name);
 //        if(gui_int->icon[s].element.face==-1)
@@ -736,9 +734,9 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
         }
     }
 
-    if(gui_int->used_flag&GUI_INTERFACE_DECLINE && !(gui_int->used_flag&GUI_INTERFACE_ACCEPT))
+    if (gui_int->used_flag&GUI_INTERFACE_DECLINE && !(gui_int->used_flag&GUI_INTERFACE_ACCEPT))
     {
-        if(gui_int->decline.title[0] != '\0')
+        if (gui_int->decline.title[0] != '\0')
         {
             gui_int->decline.title[0] = toupper(gui_int->decline.title[0]);
             sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
@@ -754,9 +752,9 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
         strcpy(gui_int->accept.title,"Accept");
         strcpy(gui_int->accept.title2,"~A~ccept");
     }
-    else if(gui_int->used_flag&GUI_INTERFACE_ACCEPT)
+    else if (gui_int->used_flag&GUI_INTERFACE_ACCEPT)
     {
-        if(gui_int->accept.title[0] != '\0')
+        if (gui_int->accept.title[0] != '\0')
         {
             gui_int->accept.title[0] = toupper(gui_int->accept.title[0]);
             sprintf(gui_int->accept.title2,"~%c~%s", gui_int->accept.title[0],gui_int->accept.title+1);
@@ -768,9 +766,9 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
         }
 
         // prepare the buttons (titles)
-        if(gui_int->used_flag&GUI_INTERFACE_DECLINE)
+        if (gui_int->used_flag&GUI_INTERFACE_DECLINE)
         {
-            if(gui_int->decline.title[0] != '\0')
+            if (gui_int->decline.title[0] != '\0')
             {
                 gui_int->decline.title[0] = toupper(gui_int->decline.title[0]);
                 sprintf(gui_int->decline.title2,"~%c~%s", gui_int->decline.title[0],gui_int->decline.title+1);
@@ -789,10 +787,10 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
             strcpy(gui_int->decline.title2,"~D~ecline");
         }
     }
-    else if(gui_int->used_flag&GUI_INTERFACE_BUTTON) // means: single button
+    else if (gui_int->used_flag&GUI_INTERFACE_BUTTON) // means: single button
     {
         gui_int->used_flag |=GUI_INTERFACE_ACCEPT; // yes, thats right! we fake the accept button
-        if(gui_int->accept.title[0] != '\0')
+        if (gui_int->accept.title[0] != '\0')
         {
             gui_int->accept.title[0] = toupper(gui_int->accept.title[0]);
             sprintf(gui_int->accept.title2,"~%c~%s", gui_int->accept.title[0],gui_int->accept.title+1);
@@ -1267,79 +1265,79 @@ int GuiDialog::get_interface_line(int *element, int *index, char **keyword, int 
 //================================================================================================
 int GuiDialog::precalc_interface_npc(void)
 {
-      int yoff = 5;
-	  /*
-      if(gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
-      {
-        yoff+=26;
+    int yoff = 5;
+    /*
+       if(gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
+       {
+         yoff+=26;
 
-        for(int i=0;i<gui_interface_npc->message.line_count;i++)
-          yoff+=15;
-      }
+         for(int i=0;i<gui_interface_npc->message.line_count;i++)
+           yoff+=15;
+       }
 
-      if(gui_interface_npc->link_count)
-      {
-        yoff+=15;
-        for(int i=0;i<gui_interface_npc->link_count;i++)
-          yoff+=15;
-      }
+       if(gui_interface_npc->link_count)
+       {
+         yoff+=15;
+         for(int i=0;i<gui_interface_npc->link_count;i++)
+           yoff+=15;
+       }
 
-      // reward is also used as "objective"
-      if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
-      {
-        yoff +=51;
+       // reward is also used as "objective"
+       if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
+       {
+         yoff +=51;
 
-        for(int i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
-          ;
+         for(int i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
+           ;
 
-        yoff+=15;
+         yoff+=15;
 
-        if(gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
-            gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
-            gui_interface_npc->icon_count)
-        {
-          if(gui_interface_npc->reward.line_count)
-            yoff+=15;
-          yoff+=15;
-        }
-      }
+         if(gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
+             gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
+             gui_interface_npc->icon_count)
+         {
+           if(gui_interface_npc->reward.line_count)
+             yoff+=15;
+           yoff+=15;
+         }
+       }
 
-      yoff+=5;
-      if(gui_interface_npc->icon_count)
-      {
-        int flag_s=FALSE;
-        yoff+=25;
-        for(int i=0;i<gui_interface_npc->icon_count;i++)
-        {
-          if(gui_interface_npc->icon[i].mode == 's' )
-            flag_s=TRUE;
-          else if(gui_interface_npc->icon[i].mode == 'G' )
-            yoff+=44;
-        }
+       yoff+=5;
+       if(gui_interface_npc->icon_count)
+       {
+         int flag_s=FALSE;
+         yoff+=25;
+         for(int i=0;i<gui_interface_npc->icon_count;i++)
+         {
+           if(gui_interface_npc->icon[i].mode == 's' )
+             flag_s=TRUE;
+           else if(gui_interface_npc->icon[i].mode == 'G' )
+             yoff+=44;
+         }
 
-        if(flag_s)
-        {
-          yoff+=20;
-          for(int i=0;i<gui_interface_npc->icon_count;i++)
-          {
-            if(gui_interface_npc->icon[i].mode == 's' )
-              yoff+=44;
-          }
-        }
-      }
+         if(flag_s)
+         {
+           yoff+=20;
+           for(int i=0;i<gui_interface_npc->icon_count;i++)
+           {
+             if(gui_interface_npc->icon[i].mode == 's' )
+               yoff+=44;
+           }
+         }
+       }
 
-      if(gui_interface_npc->icon_select)
-      {
-        yoff+=20;
-        for(int i=0;i<gui_interface_npc->icon_count;i++)
-        {
+       if(gui_interface_npc->icon_select)
+       {
+         yoff+=20;
+         for(int i=0;i<gui_interface_npc->icon_count;i++)
+         {
 
-          if(gui_interface_npc->icon[i].mode == 'S' )
-            yoff+=44;
-        }
-      }
-    */
-	  return yoff;
+           if(gui_interface_npc->icon[i].mode == 'S' )
+             yoff+=44;
+         }
+       }
+     */
+    return yoff;
 }
 
 //================================================================================================
@@ -1826,95 +1824,95 @@ void GuiDialog::show_interface_npc(int mark)
 //================================================================================================
 void GuiDialog::gui_interface_mouse(int mouseAction, int mX, int mY)
 {
-/*
-  int mx, my, mxr=e->motion.x,myr=e->motion.y;
+    /*
+      int mx, my, mxr=e->motion.x,myr=e->motion.y;
 
-  if(!gui_interface_npc)
-    return;
+      if(!gui_interface_npc)
+        return;
 
-  if (e->button.button == 4 || e->button.button == 5) // mousewheel up/down
-  {
-    if (e->button.button == 4)
-      gui_interface_npc->yoff +=6;
-    else
-      gui_interface_npc->yoff -=6;
-
-    if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-    {
-      gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-    }
-    if(gui_interface_npc->yoff >0)
-    {
-      gui_interface_npc->yoff=0;
-    }
-
-    return;
-  }
-
-  mx = mxr-gui_interface_npc->startx;
-  my = myr-gui_interface_npc->starty;
-
-  if(mx >= 345 && mx <= 354 && my >=32 && my <= 41)
-  {
-    sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-    reset_gui_interface();
-  }
-  else if(mx >= 339 && mx <= 350)
-  {
-    if(my >=73 && my <= 84)
-    {
-      gui_interface_npc->yoff +=12;
-      if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+      if (e->button.button == 4 || e->button.button == 5) // mousewheel up/down
       {
-        gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-      }
-      if(gui_interface_npc->yoff >0)
-      {
-        gui_interface_npc->yoff=0;
-      }
-    }
-    else if(my >=428 && my <= 437)
-    {
-      gui_interface_npc->yoff -=12;
-      if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
-      {
-        gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
-      }
-      if(gui_interface_npc->yoff >0)
-      {
-        gui_interface_npc->yoff=0;
-      }
-    }
-    return;
-  }
-  else
-  {
-    int element, index;
-    char *keyword=NULL;
-
-    if(get_interface_line(&element, &index, &keyword, gui_interface_npc->startx, gui_interface_npc->starty, mxr, myr))
-    {
-      LOG(-1,"%s\n",keyword);
-      if(element == GUI_INTERFACE_ICON)
-      {
-        sound_play_effect(SOUND_GET, 0, 0, 100);
-        gui_interface_npc->selected = index;
-      }
-      else if(element == GUI_INTERFACE_MESSAGE)
-      {
-        sound_play_effect(SOUND_GET, 0, 0, 100);
-        gui_interface_send_command(0, keyword);
-      }
-      else if(element == GUI_INTERFACE_LINK)
-      {
-        sound_play_effect(SOUND_GET, 0, 0, 100);
-        if(keyword[0]!='/')
-          gui_interface_send_command(0, keyword);
+        if (e->button.button == 4)
+          gui_interface_npc->yoff +=6;
         else
-          gui_interface_send_command(1, keyword);
+          gui_interface_npc->yoff -=6;
+
+        if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+        {
+          gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+        }
+        if(gui_interface_npc->yoff >0)
+        {
+          gui_interface_npc->yoff=0;
+        }
+
+        return;
       }
-    }
-  }
-*/
+
+      mx = mxr-gui_interface_npc->startx;
+      my = myr-gui_interface_npc->starty;
+
+      if(mx >= 345 && mx <= 354 && my >=32 && my <= 41)
+      {
+        sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+        reset_gui_interface();
+      }
+      else if(mx >= 339 && mx <= 350)
+      {
+        if(my >=73 && my <= 84)
+        {
+          gui_interface_npc->yoff +=12;
+          if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+          {
+            gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+          }
+          if(gui_interface_npc->yoff >0)
+          {
+            gui_interface_npc->yoff=0;
+          }
+        }
+        else if(my >=428 && my <= 437)
+        {
+          gui_interface_npc->yoff -=12;
+          if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+          {
+            gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+          }
+          if(gui_interface_npc->yoff >0)
+          {
+            gui_interface_npc->yoff=0;
+          }
+        }
+        return;
+      }
+      else
+      {
+        int element, index;
+        char *keyword=NULL;
+
+        if(get_interface_line(&element, &index, &keyword, gui_interface_npc->startx, gui_interface_npc->starty, mxr, myr))
+        {
+          LOG(-1,"%s\n",keyword);
+          if(element == GUI_INTERFACE_ICON)
+          {
+            sound_play_effect(SOUND_GET, 0, 0, 100);
+            gui_interface_npc->selected = index;
+          }
+          else if(element == GUI_INTERFACE_MESSAGE)
+          {
+            sound_play_effect(SOUND_GET, 0, 0, 100);
+            gui_interface_send_command(0, keyword);
+          }
+          else if(element == GUI_INTERFACE_LINK)
+          {
+            sound_play_effect(SOUND_GET, 0, 0, 100);
+            if(keyword[0]!='/')
+              gui_interface_send_command(0, keyword);
+            else
+              gui_interface_send_command(1, keyword);
+          }
+        }
+      }
+    */
 }
 

@@ -35,14 +35,15 @@ using namespace Ogre;
 
 typedef struct
 {
-    int type;               /**< Type: e.g. static, npc, ... **/
-    String nickName;        /**< Ingame-Name **/
-    String meshName;
-    int particleNr;
-    unsigned int index;
-    int posX, posY;         /**< Tile-pos. **/
-    int level;              /**< Floor-level. **/
-    int centred;            /**< Is the object centred on the tile? **/
+    int type;                     /**< Type: e.g. static, npc, ... **/
+    String nickName;              /**< Ingame-Name. **/
+    String meshName;              /**< Name of the ogre3d mesh. **/
+    int particleNr;               /**< Number of the particle effect. **/
+    unsigned int index;           /**< Unique number for this object. **/
+    SubPos2D pos;                 /**< Tile-pos. **/
+    unsigned char boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
+    int level;                    /**< Floor-level. **/
+    char walkable[8];             /**< 8x8 bit for the walkable status of a tile. **/
     Real facing;
     int friendly;
     int attack;
@@ -94,6 +95,8 @@ public:
         return mActPos;
     }
     SubPos2D getTileScrollPos();
+    void setPosition(SubPos2D pos);
+    void movePosition(int dx, int dz);
 
 protected:
     static SceneManager *mSceneMgr;
@@ -107,7 +110,6 @@ protected:
     SubPos2D mActPos;   /**< the actual pos in the map. **/
     String mNickName;
     int mFloor;
-    int mCentred;
 
 private:
     // ////////////////////////////////////////////////////////////////////

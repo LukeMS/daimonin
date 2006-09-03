@@ -46,6 +46,7 @@ client3d_SOURCES = \
 	../../source/tile_chunk.cpp \
 	../../source/tile_interface.cpp \
 	../../source/tile_manager.cpp \
+	../../source/tile_path.cpp \
 	../../source/events.cpp \
 	../../source/events_user.cpp \
 	../../source/light_manager.cpp \

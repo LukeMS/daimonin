@@ -406,7 +406,7 @@ inline void GuiWindow::createWindow()
     mElement->setMaterialName("GUI_Material_"+ strNum);
     mOverlay->add2D(static_cast<OverlayContainer*>(mElement));
     // If the window is smaller then the texture - we have to set the delta-size to transparent.
-    PixelBox pb = mTexture->getBuffer()->lock(Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mTexture->getBuffer()->lock (Box(0,0, mTexture->getWidth(), mTexture->getHeight()), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
     for (unsigned int y = 0; y < mTexture->getWidth() * mTexture->getHeight(); ++y)
         *dest_data++ = 0;
@@ -610,7 +610,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                         if (gadget >=0)
                         {
                             if ( mvGadgetButton[gadget]->setState(GuiElement::STATE_M_OVER))
-                            {  
+                            {
                                 mMouseOver = gadget;
                                 GuiManager::getSingleton().setTooltip(mvGadgetButton[gadget]->getTooltip());
                             }
@@ -620,7 +620,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                     {
                         gadget = getGadgetMouseIsOver(x, y);
                         if (gadget >=0 && mvGadgetButton[gadget]->setState(GuiElement::STATE_PUSHED))
-                        { 
+                        {
                             mMouseOver = gadget;
                         }
                     }
