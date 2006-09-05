@@ -76,7 +76,8 @@
   <!--#############################################-->
   <Window name= "PlayerInfo">
     <Size      width= "348" height= "88" />
-    <Pos       y= "0" zOrder = "50" />
+    <Alignment x= "center" />
+    <Pos       x ="0" y= "0" zOrder = "50" />
     <Tooltip  text= "This is the Player Info Window." />
     <!--=============================================-->
     <!-- Window Body                                 -->
@@ -104,12 +105,10 @@
   <!--WINDOW: Player Console                       -->
   <!--#############################################-->
   <Window name= "PlayerConsole">
-    <!--  values > 0: left/top     alignment  -->
-    <!--  values < 0: right/bottom alignment  -->
-    <!--  entry completly missing : centered  -->
     <Size     width= "1024" height= "146" />
-    <Pos      x= "0" y= "622" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "0" height= "0" />
+    <Alignment x= "center" y= "bottom"/>
+    <Pos       x= "0" y= "146" zOrder = "250" />
+    <DragArea  x= "0" y= "0" width= "0" height= "0" />
     <Tooltip  text= "Player console" />
 
     <!--=============================================-->
@@ -123,28 +122,28 @@
     <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "Pilar">
       <Pos x= "419" y= "7" />
       <Range width= "44" height= "139" />
-      <!-- Labe xPos/yPos is the offset for the colorfill.                     -->
+      <!-- Label xPos/yPos is the offset for the colorfill.                     -->
       <Label xPos= "0" yPos= "22" red= "255" green= "0" blue= "0" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "Pilar">
       <Pos x= "470" y= "7" />
       <Range width= "44" height= "139" />
-      <!-- Labe xPos/yPos is the offset for the colorfill.                       -->
+      <!-- Label xPos/yPos is the offset for the colorfill.                       -->
       <Label xPos= "0" yPos= "22" red= "30" green= "30" blue= "255" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "Pilar">
       <Pos x= "521" y= "7" />
       <Range width= "44" height= "139" />
-      <!-- Labe xPos/yPos is the offset for the colorfill.                     -->
+      <!-- Label xPos/yPos is the offset for the colorfill.                     -->
       <Label xPos= "0" yPos= "22" red= "0" green= "255" blue= "0" alpha = "255" />
     </Statusbar>
 
     <Statusbar type="GFX_FILL" name="Bar_PlayerFood" image_name = "Pilar">
       <Pos x= "573" y= "7" />
       <Range width= "44" height= "139" />
-      <!-- Labe xPos/yPos is the offset for the colorfill.                       -->
+      <!-- Label xPos/yPos is the offset for the colorfill.                       -->
       <Label xPos= "0" yPos= "22" red= "255" green= "150" blue= "0" alpha = "255" />
     </Statusbar>
 
@@ -193,8 +192,9 @@
   <!--#############################################-->
   <Window name= "TextWindow">
     <Size     width= "280" height= "269" />
-    <Pos      x= "-280" y= "0" zOrder = "400" />
-    <DragArea x= "0" y= "0" width= "280" height= "18" />
+    <Alignment x="right" />
+    <Pos       x= "280"  y= "0" zOrder = "400" />
+    <DragArea  x= "0"    y= "0" width= "280" height= "18" />
     <Tooltip  text= "Message Window." />
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Background">
@@ -338,7 +338,6 @@
       <Range width= "5" height= "422" />
     </Graphic>
 
-
     <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
       <Pos x= "30" y= "40" />
       <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
@@ -367,8 +366,6 @@
         <Up image_name="ScrollButton_01_Up" />
       </Scroll>
      </Gadget>
-
-
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
@@ -402,7 +399,6 @@
       <Range width= "9" height= "9" />
     </Graphic>
 
-
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
       <Pos x= "30" y= "59" />
       <Range width= "5" height= "297" />
@@ -412,12 +408,9 @@
       <Pos x= "264" y= "59" />
       <Range width= "5" height= "297" />
     </Graphic>
-
     <!--=============================================-->
     <!-- Layer 2                                     -->
     <!--=============================================-->
-
-
     <Label   x= "100" y=  "65" font="02" red= "32" green= "64" blue= "128" text= "Enter your Name:" />
     <TextBox x= "100" y=  "85" font="02" text= "" width = "100" name= "Input_Login_Name" />
 

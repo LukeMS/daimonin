@@ -247,14 +247,11 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
     GuiCursor::getSingleton().setPos(rx, ry);
     mMouseX = (int) (rx * mScreenWidth);
     mMouseY = (int) (ry * mScreenHeight);
-    const char *actGadgetName;
     for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
     {
-        actGadgetName = guiWindow[i].mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY);
-        if (actGadgetName)
+        if (guiWindow[i].mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY))
         {
             mActiveWindow = i;
-            //mFocusedGadget = actGadgetName;
             return true;
         }
     }

@@ -701,18 +701,17 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
 
         for (int i = 0; i < pix+2*SPACE; ++i)
         {
-            TextureGroup_data[  index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
-            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
-
-            TextureGroup_data[++index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
-            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
-
-            TextureGroup_data[++index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
-            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
-
-            TextureGroup_data[++index1]                    = 255;
-            TextureGroup_data[  index1+RGBA*8*pix*(pix+1)] = 255;
-
+            TextureGroup_data[index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
+            TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
+	    ++index1;
+            TextureGroup_data[index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
+            TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
+	    ++index1;
+            TextureGroup_data[index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
+            TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
+	    ++index1;
+            TextureGroup_data[index1]                    = 255;
+            TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = 255;
             ++index1;
         }
         return;

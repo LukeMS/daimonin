@@ -85,7 +85,6 @@ public:
     void Init(TiXmlElement *xmlElem);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
     void update(Real timeSinceLastFrame);
-    void PreformActions();
     void getTexturseSize(int &w, int &h)
     {
         w = mWidth;
@@ -104,7 +103,7 @@ public:
         return mStrName.c_str();
     }
     const char *Message(int message, int element, void *value);
-    const char *mouseEvent(int MouseAction, int x, int y);
+    bool mouseEvent(int MouseAction, int mouseX, int mouseY);
     const char *getTooltip()
     {
         return mStrTooltip.c_str();

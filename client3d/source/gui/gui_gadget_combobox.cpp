@@ -61,14 +61,14 @@ GuiGadgetCombobox::GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent) :Gu
     mDispDropdown = false;
     mGfxBuffer = NULL;
     mEntryHeight = mHeight;
-    mVirtualHeight = GuiTextout::getSingleton().getFontHeight(mLabelFont) * ((int)mvOption.size()-1);
+    mVirtualHeight = GuiTextout::getSingleton().getFontHeight(mLabelFontNr) * ((int)mvOption.size()-1);
     mScrollPos = 0;
 
-    if ( mY + mEntryHeight + mVirtualHeight > mMaxY )
+    if ( mPosY + mEntryHeight + mVirtualHeight > mMaxY )
     {
         printf("The dropdown needs a scroll\n");
         mNeedsScroll = true;
-        mViewport = mMaxY - mY - mEntryHeight;
+        mViewport = mMaxY - mPosY - mEntryHeight;
         mScrollPos = mVirtualHeight - mViewport;
     }
     else
@@ -106,7 +106,7 @@ void GuiGadgetCombobox::draw()
 
             mGfxBuffer = new uint32[bw * (mHeight-mEntryHeight)];
             texture->getBuffer()->blitToMemory(
-                Box(mX, mY+ mEntryHeight, mX + bw, mY+ mHeight),
+                Box(mPosX, mPosY+ mEntryHeight, mPosX + bw, mPosY+ mHeight),
                 PixelBox(bw, mHeight - mEntryHeight, 1, PF_A8R8G8B8 , mGfxBuffer));
         }
     }
@@ -119,7 +119,7 @@ void GuiGadgetCombobox::draw()
                        gfxSrcPos[0].y,
                        gfxSrcPos[0].x + mWidth,
                        gfxSrcPos[0].y + mHeight));
-    texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+    texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
 
     // ////////////////////////////////////////////////////////////////////
     // Draw the down button is it is given ( else this will turn into an entry box
@@ -131,7 +131,7 @@ void GuiGadgetCombobox::draw()
                               srcButton->state[0].y,
                               srcButton->state[0].x + srcButton->width,
                               srcButton->state[0].y + srcButton->height));
-        texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcButton->width, mY, mX + mWidth, mY + mEntryHeight));
+        texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcButton->width, mPosY, mPosX + mWidth, mPosY + mEntryHeight));
     }
 
     // ////////////////////////////////////////////////////////////////////
@@ -139,14 +139,14 @@ void GuiGadgetCombobox::draw()
     // ////////////////////////////////////////////////////////////////////
     TextLine label;
     label.index= -1;
-    label.font = mLabelFont;
-    label.x1 = mX + mLabelXPos;
+    label.font = mLabelFontNr;
+    label.x1 = mPosX + mLabelPosX;
     if ( srcButton )
-        label.x2 = label.x1 + mWidth - srcButton->width - mLabelXPos;
+        label.x2 = label.x1 + mWidth - srcButton->width - mLabelPosX;
     else
-        label.x2 = label.x1 + mWidth - mLabelXPos;
-    label.y1 = mY+ mLabelYPos;
-    label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font) - mLabelYPos;
+        label.x2 = label.x1 + mWidth - mLabelPosX;
+    label.y1 = mPosY+ mLabelPosY;
+    label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font) - mLabelPosY;
     label.text = mvOption[0];
     GuiTextout::getSingleton().Print(&label, texture);
 
@@ -156,8 +156,8 @@ void GuiGadgetCombobox::draw()
     // ////////////////////////////////////////////////////////////////////
     if ( mDispDropdown )
     {
-        label.x1 = mX+ mLabelXPos;
-        label.x2 = label.x1 + mWidth - mLabelXPos;
+        label.x1 = mPosX+ mLabelPosX;
+        label.x2 = label.x1 + mWidth - mLabelPosX;
         if ( mNeedsScroll )
         {
             // The up button is deciding the width of the bar at the moment
@@ -168,7 +168,7 @@ void GuiGadgetCombobox::draw()
                                       srcScrollbarUp->state[0].y,
                                       srcScrollbarUp->state[0].x + srcScrollbarUp->width,
                                       srcScrollbarUp->state[0].y + srcScrollbarUp->height));
-                texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcScrollbarUp->width, mY + mEntryHeight, mX + mWidth, mY + mEntryHeight + srcScrollbarUp->height));
+                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarUp->width, mPosY + mEntryHeight, mPosX + mWidth, mPosY + mEntryHeight + srcScrollbarUp->height));
 
                 label.x2 -= srcScrollbarUp->width;
             }
@@ -179,18 +179,18 @@ void GuiGadgetCombobox::draw()
                                       srcScrollbarDown->state[0].y,
                                       srcScrollbarDown->state[0].x + srcScrollbarDown->width,
                                       srcScrollbarDown->state[0].y + srcScrollbarDown->height));
-                texture->getBuffer()->blitFromMemory(srcbtn, Box(mX + mWidth - srcScrollbarDown->width, mY + mEntryHeight + mViewport - srcScrollbarDown->height, mX + mWidth, mY + mEntryHeight + mViewport));
+                texture->getBuffer()->blitFromMemory(srcbtn, Box(mPosX + mWidth - srcScrollbarDown->width, mPosY + mEntryHeight + mViewport - srcScrollbarDown->height, mPosX + mWidth, mPosY + mEntryHeight + mViewport));
             }
         }
         for ( unsigned int i = 1 ; i < mvOption.size() ; i++ )
         {
-            label.y1 = mY + mEntryHeight + GuiTextout::getSingleton().getFontHeight(label.font) * (i-1) - mScrollPos;
+            label.y1 = mPosY + mEntryHeight + GuiTextout::getSingleton().getFontHeight(label.font) * (i-1) - mScrollPos;
             label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
             label.text = mvOption[i];
-            if ( label.y2 < (unsigned int) mY + mEntryHeight )
+            if ( label.y2 < (unsigned int) mPosY + mEntryHeight )
                 continue;
-            if ( label.y1 < (unsigned int) mY + mEntryHeight )
-                label.y1 = mY + mEntryHeight;
+            if ( label.y1 < (unsigned int) mPosY + mEntryHeight )
+                label.y1 = mPosY + mEntryHeight;
             // If the text need clipping and if so dont continue throw the list
             if ( label.y2 > texture->getSrcHeight())
             {
@@ -207,7 +207,7 @@ void GuiGadgetCombobox::draw()
     {
         texture->getBuffer()->blitFromMemory(
             PixelBox(bw, mHeight - mEntryHeight, 1, PF_A8R8G8B8 , mGfxBuffer),
-            Box(mX, mY+ mEntryHeight, mX + bw, mY+ mHeight));
+            Box(mPosX, mPosY+ mEntryHeight, mPosX + bw, mPosY+ mHeight));
 
         delete[] mGfxBuffer;
         mGfxBuffer = NULL;
@@ -268,23 +268,23 @@ bool GuiGadgetCombobox::mouseOver(int x, int y)
     {
         if ( mDispDropdown )
         {
-            if ( y - mY < mEntryHeight )
+            if ( y - mPosY < mEntryHeight )
                 mActiveDropdownOption = 0;
-            else if ( !srcScrollbarUp || x - mX < mWidth - srcScrollbarUp->width )
+            else if ( !srcScrollbarUp || x - mPosX < mWidth - srcScrollbarUp->width )
             {
-                if ( y - mY < mEntryHeight )
+                if ( y - mPosY < mEntryHeight )
                     mActiveDropdownOption = 0;
                 else
-                    mActiveDropdownOption = (y - mY - mEntryHeight + mScrollPos) / GuiTextout::getSingleton().getFontHeight(mLabelFont) + 1;
+                    mActiveDropdownOption = (y - mPosY - mEntryHeight + mScrollPos) / GuiTextout::getSingleton().getFontHeight(mLabelFontNr) + 1;
                 if ( (unsigned int)mActiveDropdownOption > mvOption.size() )
                     mActiveDropdownOption = mvOption.size()-1;
             }
             else
             {
                 mActiveDropdownOption = -1;
-                if ( y - mY - mEntryHeight < srcScrollbarUp->height )
+                if ( y - mPosY - mEntryHeight < srcScrollbarUp->height )
                     mButton = GUI_GADGET_COMBOBOX_SCROLL_UP;
-                else if ( y - mY - mEntryHeight > mViewport - srcScrollbarUp->height )
+                else if ( y - mPosY - mEntryHeight > mViewport - srcScrollbarUp->height )
                     mButton = GUI_GADGET_COMBOBOX_SCROLL_DOWN;
                 else
                     mButton = GUI_GADGET_COMBOBOX_SCROLL_BAR;
@@ -293,7 +293,7 @@ bool GuiGadgetCombobox::mouseOver(int x, int y)
         else
         {
             mActiveDropdownOption = -1;
-            if( srcButton && x > mX + mWidth - srcButton->width )
+            if( srcButton && x > mPosX + mWidth - srcButton->width )
                 mButton = GUI_GADGET_COMBOBOX_DDBUTTON;
             else
                 mButton = GUI_GADGET_COMBOBOX_NONE;

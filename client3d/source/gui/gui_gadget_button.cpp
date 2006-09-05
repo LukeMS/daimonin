@@ -52,7 +52,7 @@ GuiGadgetButton::~GuiGadgetButton()
 //================================================================================================
 bool GuiGadgetButton::mouseEvent(int MouseAction, int x, int y)
 {
-    if (x >= mX && x <= mX + mWidth && y >= mY && y <= mY + mHeight)
+    if (x >= mPosX && x <= mPosX + mWidth && y >= mPosY && y <= mPosY + mHeight)
     {
         if (!mMouseOver)
         {
@@ -122,7 +122,7 @@ void GuiGadgetButton::draw()
 
 
         src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-        texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+        texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
     }
     else
     {
@@ -131,7 +131,7 @@ void GuiGadgetButton::draw()
                     gfxSrcPos[mState].y,
                     gfxSrcPos[mState].x + mWidth,
                     gfxSrcPos[mState].y + mHeight));
-        texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mWidth, mY + mHeight));
+        texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
     }
 
     // ////////////////////////////////////////////////////////////////////
@@ -139,12 +139,12 @@ void GuiGadgetButton::draw()
     // ////////////////////////////////////////////////////////////////////
     if (mStrLabel != "")
     {
-        std::string mStrBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
+        std::string strBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
         TextLine label;
         label.index= -1;
-        label.font = mLabelFont;
-        label.x1 = mX+ mLabelXPos;
-        label.y1 = mY+ mLabelYPos;
+        label.font = mLabelFontNr;
+        label.x1 = mPosX+ mLabelPosX;
+        label.y1 = mPosY+ mLabelPosY;
         label.x2 = label.x1 + mWidth;
         label.y2 = label.y1 + GuiTextout::getSingleton().getFontHeight(label.font);
         if (mState == GuiImageset::STATE_ELEMENT_PUSHED)
@@ -152,7 +152,7 @@ void GuiGadgetButton::draw()
             ++label.x1;
             ++label.y1;
         }
-        label.text = mStrBgLabel;
+        label.text = strBgLabel;
         GuiTextout::getSingleton().Print(&label, texture);
         --label.x1;
         --label.y1;

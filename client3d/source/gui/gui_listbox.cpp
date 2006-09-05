@@ -208,7 +208,7 @@ void GuiListbox::draw()
 
     texture->getBuffer()->blitFromMemory(
         PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
-        Box(mX, mY, mX + mWidth, mY + mHeight));
+        Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
     // The complete row was scrolled.
     if (++mScroll >= mFontHeight)
     {

@@ -42,7 +42,7 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 const int MIN_GFX_SIZE = 4;
-const char XML_BACKGROUND[] = "Background";
+//const char XML_BACKGROUND[] = "Background";
 
 //================================================================================================
 // Init all static Elemnts.
@@ -111,6 +111,8 @@ void GuiWindow::Init(TiXmlElement *xmlElem)
     mMousePressed  =-1;
     mMouseOver     =-1;
     mSpeakAnimState= 0;
+    mHeight = MIN_GFX_SIZE;
+    mWidth  = MIN_GFX_SIZE;
     mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
     parseWindowData(xmlElem);
     isInit = true;
@@ -123,6 +125,8 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 {
     TiXmlElement *xmlElem;
     const char *strTmp;
+    int screenH = GuiManager::getSingleton().getScreenHeight();
+    int screenW = GuiManager::getSingleton().getScreenWidth();
 
     if ((strTmp = xmlRoot->Attribute("name"))) mStrName = strTmp;
     Logger::log().info () << "Parsing window: " << mStrName;
@@ -139,36 +143,47 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     // ////////////////////////////////////////////////////////////////////
     if ((xmlElem = xmlRoot->FirstChildElement("Size")))
     {
-        if ((strTmp = xmlElem->Attribute("width")))
-            mWidth = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("height")))
-            mHeight = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("width")))  mWidth = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("height"))) mHeight= atoi(strTmp);
+        if (mWidth < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
+        if (mWidth > screenW) mWidth = screenW;
+        if (mHeight< MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
+        if (mHeight > screenH) mHeight = screenH;
     }
-    if (mWidth  < MIN_GFX_SIZE) mWidth  = MIN_GFX_SIZE;
-    if (mHeight < MIN_GFX_SIZE) mHeight = MIN_GFX_SIZE;
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the Alignment entries.
+    // ////////////////////////////////////////////////////////////////////
+    int aX =1, aY =1;
+    if ((xmlElem = xmlRoot->FirstChildElement("Alignment")))
+    {
+        if ((strTmp = xmlElem->Attribute("x")))
+        {
+                 if (!stricmp(strTmp, "center")) aX = 0;
+            else if (!stricmp(strTmp, "right"))  aX =-1;
+        }
+        if ((strTmp = xmlElem->Attribute("y")))
+        {
+                 if (!stricmp(strTmp, "center")) aY = 0;
+            else if (!stricmp(strTmp, "bottom")) aY =-1;
+        }
+    }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Position entries.
     // ////////////////////////////////////////////////////////////////////
-    mPosX = mPosY = mPosZ = 100;
+    mPosX = mPosY = mPosZ = 0;
     if ((xmlElem = xmlRoot->FirstChildElement("Pos")))
     {
         if ((strTmp = xmlElem->Attribute("x")))
         {
-            mPosX = atoi(strTmp);
-            if (mPosX <0) mPosX += GuiManager::getSingleton().getScreenWidth()+1;
-        }
-        else // centred.
-        {
-            mPosX = (GuiManager::getSingleton().getScreenWidth() - mWidth)/2;
+                 if (aX <0) mPosX = screenW+1 - atoi(strTmp);
+            else if (aX==0) mPosX =(screenW- mWidth) /2 + atoi(strTmp);
+            else mPosX = atoi(strTmp);
         }
         if ((strTmp = xmlElem->Attribute("y")))
         {
-            mPosY = atoi(strTmp);
-            if (mPosY <0) mPosY += GuiManager::getSingleton().getScreenHeight()+1;
-        }
-        else // centred.
-        {
-            mPosY = (GuiManager::getSingleton().getScreenHeight() - mHeight)/2;
+                 if (aY <0) mPosY = screenH+1 - atoi(strTmp);
+            else if (aY==0) mPosY =(screenH- mHeight) /2 + atoi(strTmp);
+            else mPosY = atoi(strTmp);
         }
         if ((strTmp = xmlElem->Attribute("zOrder")))
             mPosZ = atoi(strTmp);
@@ -179,22 +194,17 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     mDragPosX1 = mDragPosX2 = mDragPosY1 = mDragPosY2 = -100;
     if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
     {
-        if ((strTmp = xmlElem->Attribute("x")))
-            mDragPosX1 = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("y")))
-            mDragPosY1 = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("width")))
-            mDragPosX2 = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("height")))
-            mDragPosY2 = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("x")))      mDragPosX1 = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("y")))      mDragPosY1 = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("width")))  mDragPosX2 = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("height"))) mDragPosY2 = atoi(strTmp);
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Tooltip entries.
     // ////////////////////////////////////////////////////////////////////
     if ((xmlElem = xmlRoot->FirstChildElement("Tooltip")))
     { // We will show tooltip only if mouse is over the moving area.
-        if ((strTmp = xmlElem->Attribute("text")))
-            mStrTooltip = strTmp;
+        if ((strTmp = xmlElem->Attribute("text"))) mStrTooltip = strTmp;
     }
     // ////////////////////////////////////////////////////////////////////
     // Now we have all datas to create the window..
@@ -205,12 +215,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     // ////////////////////////////////////////////////////////////////////
     for (xmlElem = xmlRoot->FirstChildElement("Graphic"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Graphic"))
     {
-        if (!(strTmp = xmlElem->Attribute("type"))) continue;
-        if (!stricmp(strTmp, "COLOR_FILL"))
-            mvGraphic.push_back(new GuiGraphic(xmlElem, this));
-        else // This is a GFX_FILL.
-            mvGraphic.push_back(new GuiGraphic(xmlElem, this));
+        mvGraphic.push_back(new GuiGraphic(xmlElem, this));
     }
+
     // ////////////////////////////////////////////////////////////////////
     // Parse the Label.
     // ////////////////////////////////////////////////////////////////////
@@ -347,9 +354,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         mSceneNode->attachObject(head);
 
         Real px, py;
-        px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
+        px = (Event->getCamCornerX()/ screenW )*2
              *(mPosX+ mHeadPosX) - Event->getCamCornerX();
-        py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
+        py = (Event->getCamCornerY()/ screenH)*2
              *(mPosY+ mHeadPosY) - Event->getCamCornerY();
         mSceneNode->setPosition(px, py, -200);
         mSceneNode->scale(.5, .5, .5); // testing
@@ -416,7 +423,7 @@ inline void GuiWindow::createWindow()
 //================================================================================================
 // Mouse Event.
 //================================================================================================
-const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
+bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 {
     if (!mOverlay->isVisible()) return 0;
     // No gadget dragging && not within this window. No need for further checks.
@@ -428,21 +435,18 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     for (unsigned int i = 0; i < mvGadgetButton.size(); ++i)
     {
         if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y))
-            return "";
+            return true;
     }
     for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
     {
 //        if (mvGadgetCombobox[i]->mouseEvent(MouseAction, x, y))
-//            return "";
+//            return true;
     }
     for (unsigned int i = 0; i < mvListbox.size(); ++i)
     {
         if (mvListbox[i]->mouseEvent(MouseAction, x, y))
-            return "";
+            return true;
     }
-
-
-    const char *actGadgetName = 0;
 
     switch (MouseAction)
     {
@@ -452,7 +456,7 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
             // Mouse over this window?
             if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
             {
-                actGadgetName = mStrName.c_str();
+                ;
             }
             if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
             {
@@ -628,16 +632,6 @@ const char *GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
                 }
         }
 
-        PreformActions();
-        return actGadgetName;
-        */
-
-    return 0;  // DELETE ME !!!!!!!
-}
-
-void GuiWindow::PreformActions()
-{
-    /*
         for( unsigned int i = 0 ; i < mvGadgetButton.size() ; i++ )
         {
             switch( mvGadgetButton[i]->getAction() )
@@ -648,7 +642,11 @@ void GuiWindow::PreformActions()
                     break;
             }
         }
-    */
+
+        return actGadgetName;
+        */
+
+    return false;
 }
 
 //================================================================================================

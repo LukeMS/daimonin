@@ -52,7 +52,7 @@ void GuiGraphic::draw()
     // ////////////////////////////////////////////////////////////////////
     // Fill background rect with a gfx.
     // ////////////////////////////////////////////////////////////////////
-    if (mStrType == "GFX_FILL")
+    if (mFillType == GuiElement::FILL_GFX)
     {
         // ////////////////////////////////////////////////////////////////////
         // The gfx has alpha.
@@ -80,7 +80,7 @@ void GuiGraphic::draw()
                 dDstY+= mSrcWidth;
             }
             src = PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup);
-            texture->getBuffer()->blitFromMemory(src, Box(mX, mY, mX + mSrcWidth, mY + mSrcHeight));
+            texture->getBuffer()->blitFromMemory(src, Box(mPosX, mPosY, mPosX + mSrcWidth, mPosY + mSrcHeight));
         }
         // ////////////////////////////////////////////////////////////////////
         // The gfx has no alpha.
@@ -129,7 +129,7 @@ void GuiGraphic::draw()
                                                              gfxSrcPos[mState].x + x2-x1,
                                                              gfxSrcPos[mState].y + y2-y1));
                     }
-                    texture->getBuffer()->blitFromMemory(src, Box(x1 + mX, y1 + mY, x2 + mX, y2 + mY));
+                    texture->getBuffer()->blitFromMemory(src, Box(x1 + mPosX, y1 + mPosY, x2 + mPosX, y2 + mPosY));
                     x1 = x2;
                     x2+= mSrcWidth;
                 }
@@ -141,9 +141,9 @@ void GuiGraphic::draw()
     // ////////////////////////////////////////////////////////////////////
     // Fill background rect with a color.
     // ////////////////////////////////////////////////////////////////////
-    else if (mStrType == "COLOR_FILL")
+    else if (mFillType == GuiElement::FILL_COLOR)
     {
-        PixelBox pb = texture->getBuffer()->lock (Box(mX, mY, mX+mWidth, mY+mHeight), HardwareBuffer::HBL_DISCARD);
+        PixelBox pb = texture->getBuffer()->lock (Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight), HardwareBuffer::HBL_DISCARD);
         uint32 *dest_data = (uint32*)pb.data;
         int  posY=0;
         for (int y = mHeight; y; --y)
