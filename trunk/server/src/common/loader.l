@@ -923,29 +923,29 @@ int set_variable(object *op,char *buf) {
 static const char *flag_names[NUM_FLAGS+1] = {
 "sleep", "confused", "paralyzed", "scared", "is_blind","is_invisible" , "is_ethereal" ,
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
-"is_animated", NULL, "flying", "monster", "friendly",
+"is_animated", NULL /*free*/, "flying", "monster", "friendly",
 NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 20 */
 "see_invisible", "can_roll", "generator", "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
 "changing", "splitting", "hitback", "startequip",
-"blocksview", "undead", NULL, "unaggressive",
+"blocksview", "undead", NULL /*fix_player*/, "unaggressive",
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "feared", NULL, "no_drop",	/* 50 */
+"pass_thru", "can_pass_thru", "feared", NULL /**/, "no_drop",	/* 50 */
  "reg_f", "has_ready_spell", "surrendered", "rooted",
  "slowed", "can_use_armour", "can_use_weapon",
-"can_use_ring", NULL, "has_ready_bow",		/* 60 */
-"xrays", NULL, NULL, "lifesave", "is_magical", "alive",
+"can_use_ring", NULL /* in_activlist*/, "has_ready_bow",		/* 60 */
+"xrays", NULL /*no_apply*/, NULL /**/, "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
- "stealth", NULL, NULL, "cursed", "damned",
+ "stealth", NULL /*wizpass*/, NULL /*linked*/, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
-NULL, NULL, "is_male",
+NULL /*free*/, NULL /*free*/, "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
 "is_hilly", "levitate", "has_ready_weapon",		/* 90 */
 "no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
-"is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
+"is_dust", "no_steal", "one_hit", NULL /*client_sent*/, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
-"proof_mag", "proof_sph", "no_inv", NULL, "sys_object", /* 110 */
+"proof_mag", "proof_sph", "no_inv", NULL /*free*/, "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
