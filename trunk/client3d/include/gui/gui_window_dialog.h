@@ -195,10 +195,10 @@ public:
     void reset_gui_interface();
     void load_gui_interface(int mode, char *data, int len, int pos);
     void gui_interface_send_command(int mode, char *cmd);
-    int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my);
+    int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mouseX, int mouseY);
     int precalc_interface_npc(void);
     void show_interface_npc(int mark);
-    void gui_interface_mouse(int mouseAction, int mX, int mY);
+    void gui_interface_mouse(int mouseAction, int mouseX, int mouseY);
     char *get_parameter_string(char *data, int *pos);
 
 private:

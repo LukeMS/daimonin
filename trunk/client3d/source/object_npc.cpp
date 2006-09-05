@@ -165,15 +165,15 @@ void ObjectNPC::update(const FrameEvent& event)
             {
                 delta = mDeltaDegree *-1;
                 mAutoTurning = TURN_NONE;
-				
+
             }
             mFacing += Degree(delta);
             if (mFacing.valueDegrees() <= 360) mFacing += Degree(360);
             mNode->yaw(Degree(delta));
         }
-        
+
         if (mAutoTurning == TURN_NONE)
-		{	
+		{
 			mAnim->pause(false);
 			// After the turning is complete, we can attack.
 			if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
@@ -275,11 +275,12 @@ void ObjectNPC::update(const FrameEvent& event)
 void ObjectNPC::setDamage(int damage)
 {
     if (mActHP <0) return;
+
     mActHP-= damage;
     Real health = (Real)(mActHP) / Real(mMaxHP);
     if (!mIndex)
     {
-        GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERINFO, GUI_MSG_BAR_CHANGED,
+        GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERCONSOLE, GUI_MSG_BAR_CHANGED,
                                                GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
     }
     else

@@ -35,8 +35,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // Set default values.
     mState = GuiImageset::STATE_ELEMENT_DEFAULT;
     mFontNr= 0;
-    mX     = 0;
-    mY     = 0;
+    mPosX  = 0;
+    mPosY  = 0;
     mWidth = 0;
     mHeight= 0;
     mParent= parent;
@@ -49,8 +49,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     {
         if ((srcEntry = GuiImageset::getSingleton().getStateGfxPositions(tmp)))
         {
-            mWidth = srcEntry->width;
-            mHeight= srcEntry->height;
+            mSrcWidth = mWidth = srcEntry->width;
+            mSrcHeight= mHeight= srcEntry->height;
             mHasAlpha = srcEntry->alpha;
             memcpy(gfxSrcPos, srcEntry->state, sizeof(gfxSrcPos));
             GuiImageset::getSingleton().deleteStateGfxPositions(tmp);
@@ -62,10 +62,14 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         }
     }
 
-    if ((tmp = xmlElem->Attribute("type"))) mStrType = tmp;
+    if ((tmp = xmlElem->Attribute("type")))
+    {
+             if (!stricmp(tmp, "GFX_FILL"))   mFillType = FILL_GFX;
+        else if (!stricmp(tmp, "COLOR_FILL")) mFillType = FILL_COLOR;
+        else                                  mFillType = FILL_NONE;
+    }
     if ((tmp = xmlElem->Attribute("name")))
     {
-        mStrName = tmp;
         for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
         {
             if (!stricmp(GuiImageset::getSingleton().getElementName(i), tmp))
@@ -75,18 +79,18 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
             }
         }
     }
-    if ((tmp = xmlElem->Attribute("image_name"))) mStrImageName = tmp;
+    //if ((tmp = xmlElem->Attribute("image_name"))) mStrImageName = tmp;
     if ((tmp = xmlElem->Attribute("font"))) mFontNr  = atoi(tmp);
     // ////////////////////////////////////////////////////////////////////
     // Parse the position.
     // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Pos")))
     {
-        if ((tmp = xmlGadget->Attribute("x"))) mX = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("y"))) mY = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("x"))) mPosX = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("y"))) mPosY = atoi(tmp);
     }
-    if (mX > mMaxX-2) mX = mMaxX-2;
-    if (mY > mMaxY-2) mY = mMaxY-2;
+    if (mPosX > mMaxX-2) mPosX = mMaxX-2;
+    if (mPosY > mMaxY-2) mPosY = mMaxY-2;
     // ////////////////////////////////////////////////////////////////////
     // Parse the size (if given).
     // ////////////////////////////////////////////////////////////////////
@@ -94,17 +98,15 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     {
         if ((tmp = xmlGadget->Attribute("width")))
         {
-            mSrcWidth = mWidth;
             mWidth = atoi(tmp);
         }
         if ((tmp = xmlGadget->Attribute("height")))
         {
-            mSrcHeight= mHeight;
             mHeight= atoi(tmp);
         }
     }
-    if (mX + mWidth > mMaxX) mWidth = mMaxX-mX-1;
-    if (mY + mHeight >mMaxY) mHeight= mMaxY-mY-1;
+    if (mPosX + mWidth > mMaxX) mWidth = mMaxX-mPosX-1;
+    if (mPosY + mHeight >mMaxY) mHeight= mMaxY-mPosY-1;
     // ////////////////////////////////////////////////////////////////////
     // Parse the color (if given).
     // ////////////////////////////////////////////////////////////////////
@@ -121,9 +123,9 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Label")))
     {
-        if ((tmp = xmlGadget->Attribute("xPos")))  mLabelXPos = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("yPos")))  mLabelYPos = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("font")))  mLabelFont = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("xPos")))  mLabelPosX  = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("yPos")))  mLabelPosY  = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("font")))  mLabelFontNr= atoi(tmp);
         if ((tmp = xmlGadget->Attribute("red")))   mLabelColor[0]= (unsigned char) atoi(tmp);
         if ((tmp = xmlGadget->Attribute("green"))) mLabelColor[1]= (unsigned char) atoi(tmp);
         if ((tmp = xmlGadget->Attribute("blue")))  mLabelColor[2]= (unsigned char) atoi(tmp);
@@ -144,7 +146,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
         Texture *texture = ((GuiWindow*) mParent)->getTexture();
         BG_Backup = new uint32[mWidth*mHeight];
         texture->getBuffer()->blitToMemory(
-            Box(mX, mY, mX+mWidth, mY+mHeight),
+            Box(mPosX, mPosY, mPosX+mWidth, mPosY+mHeight),
             PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, BG_Backup));
     }
     else BG_Backup = 0;

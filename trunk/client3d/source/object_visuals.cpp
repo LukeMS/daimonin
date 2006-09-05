@@ -85,11 +85,11 @@ void ObjectVisuals::Init()
     // ////////////////////////////////////////////////////////////////////
     // Parse the gfx coordinates.
     // ////////////////////////////////////////////////////////////////////
-    float color[3];
     mPSystem = 0;
     if ((xmlElem = xmlRoot->FirstChildElement("Particle")) && ((strTemp = xmlElem->Attribute("name"))))
     {
         int i=-1;
+        float color[3] = {0.0, 0.0, 0.0};
         mPSystem = ParticleManager::getSingleton().addNodeObject(0, strTemp, -1);
         for (xmlColor = xmlElem->FirstChildElement("color"); xmlColor; xmlColor = xmlColor->NextSiblingElement("color"))
         {

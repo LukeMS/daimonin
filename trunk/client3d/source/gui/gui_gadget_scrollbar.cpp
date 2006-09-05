@@ -282,23 +282,23 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
     float newSliderSize = 1.0;
     if (mHorizontal)
     {
-        mStartX = mX + mButScrollDown->getWidth();
-        mStartY = mY;
-        mStopX  = mX + mWidth - mButScrollDown->getWidth();
-        mStopY  = mY + mHeight;
-        mButScrollDown->setPosition(mStopX, mY);
-        mButScrollUp->setPosition(mX, mY);
+        mStartX = mPosX + mButScrollDown->getWidth();
+        mStartY = mPosY;
+        mStopX  = mPosX + mWidth - mButScrollDown->getWidth();
+        mStopY  = mPosY + mHeight;
+        mButScrollDown->setPosition(mStopX, mPosY);
+        mButScrollUp->setPosition(mPosX, mPosY);
         newSliderSize = (float)newWidth / (float)mWidth;
         mMaxSliderSize = (mStopX -mStartX - SLIDER_INNER_OFFSET-1);
     }
     else
     {
-        mStartX = mX;
-        mStartY = mY + mButScrollDown->getHeight();
-        mStopX  = mX + mButScrollDown->getWidth();
-        mStopY  = mY + mHeight - mButScrollDown->getHeight();
+        mStartX = mPosX;
+        mStartY = mPosY + mButScrollDown->getHeight();
+        mStopX  = mPosX + mButScrollDown->getWidth();
+        mStopY  = mPosY + mHeight - mButScrollDown->getHeight();
         mButScrollDown->setPosition(mStartX, mStopY);
-        mButScrollUp->setPosition(mX, mY);
+        mButScrollUp->setPosition(mPosX, mPosY);
         newSliderSize = (float)newHeight / (float)mHeight;
         mMaxSliderSize = (mStopY -mStartY - SLIDER_INNER_OFFSET-1);
     }

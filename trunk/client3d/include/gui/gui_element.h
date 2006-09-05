@@ -49,18 +49,14 @@ public:
     {
         return mState;
     }
-    const char *getName()
-    {
-        return mStrName.c_str();
-    }
     int getIndex()
     {
         return mIndex;
     }
     void setPosition(int x, int y)
     {
-        mX = x;
-        mY = y;
+        mPosX = x;
+        mPosY = y;
     }
     int getWidth()
     {
@@ -100,22 +96,22 @@ protected:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_ELEMENT_SUM];
-    int mX, mY, mMaxX, mMaxY;
-    int mWidth, mHeight, mSrcWidth, mSrcHeight;
-    int mFontNr;
-    int mHasAlpha;
-    int mState;
-    String mStrType, mStrName, mStrImageName;
+    int mIndex;                /**< Unique number. **/
+    int mPosX, mPosY;          /**< Position of this element. **/
+    int mMaxX, mMaxY;          /**< Texture size of the parent window. **/
+    int mSrcWidth, mSrcHeight; /**< Dimension of the graphics source. **/
+    int mWidth, mHeight;       /**< Dimension of this element. **/
+    int mState;                /**< Actual state of this element. **/
+    int mFillType;             /**< The way the background is drawn. **/
+    int mHasAlpha;             /**< Graphics is using alpha values. **/
+    int mFontNr, mLabelFontNr;
+    int mLabelPosX, mLabelPosY;
+    String mStrLabel, mStrTooltip;
     uint32 mFillColor;
-    uint32 *BG_Backup;    /**< Backup buffer for alpha blit. **/
-    int id;
-    int mIndex;
-    String mStrLabel, mStrBgLabel, mStrTooltip;
+    uint32 *BG_Backup;         /**< Backup buffer for alpha blit. **/
+    void *mParent;             /**< Pointer to the parent window. **/
     unsigned char mLabelColor[3];
-    int mLabelFont;
-    int mLabelXPos, mLabelYPos;
-    void *mParent; /**< Pointer to the parent window. **/
+    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_ELEMENT_SUM];
 };
 
 #endif

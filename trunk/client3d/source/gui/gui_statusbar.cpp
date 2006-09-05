@@ -68,10 +68,9 @@ void GuiStatusbar::draw()
     // ////////////////////////////////////////////////////////////////////
     if (!mGfxBuffer)
     {
-        if (mWidth < BAR_WIDTH) mWidth = BAR_WIDTH;
         mGfxBuffer = new uint32[mWidth * mHeight];
         texture->getBuffer()->blitToMemory(
-            Box(mX, mY, mX + mWidth, mY + mHeight),
+            Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight),
             PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, mGfxBuffer));
     }
     // ////////////////////////////////////////////////////////////////////
@@ -82,7 +81,7 @@ void GuiStatusbar::draw()
     // ////////////////////////////////////////////////////////////////////
     // Draw the bar into a temp buffer.
     // ////////////////////////////////////////////////////////////////////
-    if (mStrType == "GFX_FILL")
+    if (mFillType == GuiElement::FILL_GFX)
     {
         // ////////////////////////////////////////////////////////////////////
         // Background part.
@@ -104,9 +103,9 @@ void GuiStatusbar::draw()
         // The dynamic part.
         // ////////////////////////////////////////////////////////////////////
         uint32 barColor=  0xff000000+ (mLabelColor[2] << 16) + (mLabelColor[1] << 8) +mLabelColor[0];
-        for (int y = mLabelYPos + mValue; y < mHeight-mLabelYPos; ++y)
+        for (int y = mLabelPosY + mValue; y < mHeight-mLabelPosY; ++y)
         {
-            for (int x= mLabelXPos; x < mWidth-mLabelXPos; ++x)
+            for (int x= mLabelPosX; x < mWidth-mLabelPosX; ++x)
             {
                 color = src[(y+gfxSrcPos[0].y) * pb->getWidth() + x+gfxSrcPos[0].x];
                 if (color & 0xff000000)
@@ -160,7 +159,7 @@ void GuiStatusbar::draw()
     // ////////////////////////////////////////////////////////////////////
     texture->getBuffer()->blitFromMemory(
         PixelBox(mWidth, mHeight, 1, PF_A8B8G8R8, mGfxBuffer),
-        Box(mX, mY, mX + mWidth, mY + mHeight));
+        Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
 }
 
 //================================================================================================
@@ -168,7 +167,9 @@ void GuiStatusbar::draw()
 //================================================================================================
 void GuiStatusbar::setValue(Real value)
 {
-    mValue = (int) ((mHeight-2*mLabelYPos) * (1-value));
+    mValue = (int) ((mHeight-2*mLabelPosY) * (1-value));
     if (mValue > mHeight) mValue = mHeight;
     if (mValue < 0) mValue = 0;
 }
+
+
