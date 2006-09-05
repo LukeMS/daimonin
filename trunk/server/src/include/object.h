@@ -65,28 +65,28 @@ typedef struct obj
     /* These variables are not changed by copy_object(): */
     struct obj     *active_next;    /* Next & previous object in the 'active' */
     struct obj     *active_prev;    /* List.  This is used in process_events
-                                         * so that the entire object list does not
-                                         * need to be gone through.
-                                         */
+                                     * so that the entire object list does not
+                                     * need to be gone through.
+                                     */
     struct obj     *below;          /* Pointer to the object stacked below this one */
     struct obj     *above;          /* Pointer to the object stacked above this one
-                                             * Note: stacked in the *same* environment
-                                             */
+                                     * Note: stacked in the *same* environment
+                                     */
     struct obj     *inv;            /* Pointer to the first object in the inventory */
     struct obj     *env;            /* Pointer to the object which is the environment.
-                                             * This is typically the container that the object is in.
-                                             * if env == NULL then the object is on a map or in the nirvana.
-                                             */
+                                     * This is typically the container that the object is in.
+                                     * if env == NULL then the object is on a map or in the nirvana.
+                                     */
     struct obj     *more;           /* Pointer to the rest of a large body of objects */
     struct obj     *head;           /* Points to the main object of a large body */
     struct mapdef  *map;            /* Pointer to the map in which this object is present */
 
     tag_t           count_debug;
-    tag_t           count;              /* Which nr. of object created this is. */
+    tag_t           count;          /* Which nr. of object created this is. */
     /* hmmm... unchanged? this count should be new
-                         * set every time a freed object is used again
-                         * this count refers the logical object. MT.
-                         */
+     * set every time a freed object is used again
+     * this count refers the logical object. MT.
+     */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If
@@ -94,19 +94,18 @@ typedef struct obj
      * copy_object to do so.  Everything below here also gets cleared
      * by clear_object()
     */
-    const char     *name;                   /* The name of the object, obviously... */
-    const char     *title;              /* Of foo, etc */
-    const char     *race;                   /* human, goblin, dragon, etc */
-    const char     *slaying;                /* Which race to do double damage to
-                                                 * If this is an exit, this is the filename
-                                                 */
-    const char     *msg;                    /* If this is a book/sign/magic mouth/etc */
+    const char     *name;           /* The name of the object, obviously... */
+    const char     *title;          /* Of foo, etc */
+    const char     *race;           /* human, goblin, dragon, etc */
+    const char     *slaying;        /* Which race to do double damage to
+                                     * If this is an exit, this is the filename */
+    const char     *msg;            /* If this is a book/sign/magic mouth/etc */
 
     /* here starts copy_object() releated data */
 
     /* these are some internals */
-    struct archt   *arch;                       /* Pointer to archetype */
-    struct oblnk   *randomitems; /* thats now a linked list of treasurelist */
+    struct archt   *arch;           /* Pointer to archetype */
+    struct oblnk   *randomitems;    /* thats now a linked list of treasurelist */
 
     /* we can remove chosen_skill & exp_obj by drop here a uint8 with a list of skill
      * numbers. Mobs has no skill and player can grap it from player struct. For exp,
@@ -116,44 +115,44 @@ typedef struct obj
     struct obj     *exp_obj;        /* the exp. obj (category) assoc. w/ this object */
 
     /* now "real" object releated data */
-    struct archt   *other_arch; /* Pointer used for various things */
-    New_Face       *face;               /* struct ptr to the 'face' - the picture(s) */
-    New_Face       *inv_face;           /* struct ptr to the inventory 'face' - the picture(s) */
+    struct archt   *other_arch;     /* Pointer used for various things */
+    New_Face       *face;           /* struct ptr to the 'face' - the picture(s) */
+    New_Face       *inv_face;       /* struct ptr to the inventory 'face' - the picture(s) */
 
-    sint64          value;              /* How much money it is worth (or contains) */
+    sint64          value;          /* How much money it is worth (or contains) */
     uint32          event_flags;    /* flags matching events of event objects inside object ->inv */
-    sint32          weight;             /* Attributes of the object - the weight */
-    sint32          weight_limit;       /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
-    sint32          carrying;           /* How much weight this object contains (of objects in inv) */
-    uint32          nrof;               /* How many of the objects */
+    sint32          weight;         /* Attributes of the object - the weight */
+    sint32          weight_limit;   /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
+    sint32          carrying;       /* How much weight this object contains (of objects in inv) */
+    uint32          nrof;           /* How many of the objects */
     uint32          damage_round_tag;   /* needed for the damage info for client in map2 */
-    uint32          update_tag;         /* this is used from map2 update! */
+    uint32          update_tag;     /* this is used from map2 update! */
     uint32          flags[NUM_FLAGS_32]; /* various flags */
 
-    tag_t           enemy_count;        /* What count the enemy has */
-    struct obj     *enemy;              /* Monster/player to follow even if not closest */
+    tag_t           enemy_count;    /* What count the enemy has */
+    struct obj     *enemy;          /* Monster/player to follow even if not closest */
     /* (only used by containers now =) */
     tag_t           attacked_by_count;  /* the tag of attacker, so we can be sure */
-    struct obj     *attacked_by;        /* This object start to attack us! only player & monster */
-    tag_t           owner_count;        /* What count the owner had (in case owner has been freed) */
-    struct obj     *owner;              /* Pointer to the object which controls this one
-                                         * Owner should not be referred to directly
-                                         * - get_owner() should be used instead.
-                                         */
+    struct obj     *attacked_by;    /* This object start to attack us! only player & monster */
+    tag_t           owner_count;    /* What count the owner had (in case owner has been freed) */
+    struct obj     *owner;          /* Pointer to the object which controls this one
+                                     * Owner should not be referred to directly
+                                     * - get_owner() should be used instead.
+                                     */
     /* *map is part of "object head" but this not? hmm */
-    sint16          x;                  /* X-Position in the map for this object */
-    sint16          y;                  /* Y-Position in the map for this object */
+    sint16          x;              /* X-Position in the map for this object */
+    sint16          y;              /* Y-Position in the map for this object */
 
-    uint16          path_attuned;       /* Paths the object is attuned to */
-    uint16          path_repelled;      /* Paths the object is repelled from */
-    uint16          path_denied;        /* Paths the object is denied access to */
+    uint16          path_attuned;   /* Paths the object is attuned to */
+    uint16          path_repelled;  /* Paths the object is repelled from */
+    uint16          path_denied;    /* Paths the object is denied access to */
 
-    uint16          last_damage;        /* thats the damage send with map2 */
+    uint16          last_damage;    /* thats the damage send with map2 */
 
-    uint16          terrain_type;       /* type flags for different enviroment (tile is under water, firewalk,...)
-                                         * A object which can be applied GIVES this terrain flags to his owner
-                                         */
-    uint16          terrain_flag;       /* The object can move over/is unaffected from this terrain type */
+    uint16          terrain_type;   /* type flags for different enviroment (tile is under water, firewalk,...)
+                                     * A object which can be applied GIVES this terrain flags to his owner
+                                     */
+    uint16          terrain_flag;   /* The object can move over/is unaffected from this terrain type */
 
 
     uint16          material;           /* What materials this object consist of */
