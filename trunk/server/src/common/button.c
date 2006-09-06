@@ -35,9 +35,12 @@ void signal_connection(object *op, oblinkpt *olp)
     object     *tmp;
     objectlink *ol;
 
+    /* tmp->weight_limit == state of trigger */
+
     if(! ignore_trigger_events)
         trigger_object_plugin_event(EVENT_TRIGGER,
                 op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
     {
@@ -75,13 +78,18 @@ void signal_connection(object *op, oblinkpt *olp)
               tmp->speed = 0.5;
               update_ob_speed(tmp);
               break;
+
             case CF_HANDLE:
               SET_ANIMATION(tmp,
                             ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction)
                           + (tmp->weight_limit = tmp->stats.maxsp ? !op->weight_limit : op->weight_limit));
               update_object(tmp, UP_OBJ_FACE);
               break;
+
             case SIGN:
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
               if (!tmp->stats.food || tmp->last_eat < tmp->stats.food)
               {
                   new_info_map(NDI_UNIQUE | NDI_NAVY, tmp->map, tmp->x, tmp->y, MAP_INFO_NORMAL, tmp->msg);
@@ -89,20 +97,27 @@ void signal_connection(object *op, oblinkpt *olp)
                       tmp->last_eat++;
               }
               break;
+
             case ALTAR:
               tmp->weight_limit = 1;
               SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
               update_object(tmp, UP_OBJ_FACE);
               break;
+
             case BUTTON:
             case PEDESTAL:
               tmp->weight_limit = op->weight_limit;
               SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
               update_object(tmp, UP_OBJ_FACE);
               break;
+
             case MOOD_FLOOR:
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
               do_mood_floor(tmp, op);
               break;
+
             case TIMED_GATE:
               /* Ignore map loading triggers */
               if(ignore_trigger_events)
@@ -113,7 +128,11 @@ void signal_connection(object *op, oblinkpt *olp)
               tmp->stats.sp = 1;
               tmp->stats.hp = tmp->stats.maxhp;
               break;
+
             case FIREWALL:
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
               if (op->last_eat) /* connection flag1 = on/off */
                   tmp->last_eat != 0 ? (tmp->last_eat = 0) : (tmp->last_eat = 1);
               /* (*move_firewall_func)(tmp); <- invoke the firewall (removed here)*/
@@ -128,7 +147,11 @@ void signal_connection(object *op, oblinkpt *olp)
                   }
               }
               break;
+
             case DIRECTOR:
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
               if (tmp->stats.maxsp) /* next direction */
               {
                   if ((tmp->direction += tmp->stats.maxsp) > 8)
@@ -136,17 +159,26 @@ void signal_connection(object *op, oblinkpt *olp)
                   animate_turning(tmp);
               }
               break;
+
             case TELEPORTER:
               move_teleporter(tmp);
               break;
+
             case CREATOR:
+              /* Ignore map loading triggers */
+              if(ignore_trigger_events)
+                  break;
+              /* Ignore "off" signals */
+              if(! op->weight_limit)
+                  break;
               move_creator(tmp);
               break;
+
             case TYPE_TIMER:
-              /* a signal to a stopped timer means for it to start */
+              /* any signal to a stopped timer means for it to start */
               if(tmp->speed == 0)
               {
-                tmp->speed = 0.125; /* once per second */
+                tmp->speed = MAX_TIME/1000000.0f; /* once per second */
                 tmp->stats.hp = tmp->stats.maxhp;
                 update_ob_speed(tmp);
               }
@@ -268,36 +300,44 @@ void update_buttons(mapstruct *m)
                     ol->objlink.ob ? ol->objlink.ob->x : -1, ol->objlink.ob ? ol->objlink.ob->y : -1, ol->id, obp->value);
                 continue;
             }
-            if (ol->objlink.ob->type == BUTTON || ol->objlink.ob->type == PEDESTAL)
-                update_button(ol->objlink.ob);
-            else if (ol->objlink.ob->type == CHECK_INV)
+            switch(ol->objlink.ob->type)
             {
-                tmp = ol->objlink.ob;
-                fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
-                move = QUERY_FLAG(tmp, FLAG_WALK_ON);
+                case BUTTON:
+                case PEDESTAL:
+                    update_button(ol->objlink.ob);
+                    break;
 
-                for (ab = GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y, 2); ab != NULL; ab = ab->above)
-                {
-                    if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
-                        check_inv(ab, tmp);
-                }
-            }
-            else if (ol->objlink.ob->type == TRIGGER_BUTTON
-                  || ol->objlink.ob->type == TRIGGER_PEDESTAL
-                  || ol->objlink.ob->type == TRIGGER_ALTAR)
-            {
-                     /* check_trigger will itself sort out the numbers of
-                      * items above the trigger
-                      */
-                     check_trigger(ol->objlink.ob, ol->objlink.ob);
-            }
-            else if (ol->objlink.ob->type == TYPE_CONN_SENSOR)
-            {
-                move_conn_sensor(ol->objlink.ob);
-            }
-            else if (ol->objlink.ob->type == CF_HANDLE || ol->objlink.ob->type == TRIGGER)
-            {
-                push_button(ol->objlink.ob);
+                case CHECK_INV:
+                    tmp = ol->objlink.ob;
+                    fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
+                    move = QUERY_FLAG(tmp, FLAG_WALK_ON);
+
+                    for (ab = GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y, 2); ab != NULL; ab = ab->above)
+                    {
+                        if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
+                            check_inv(ab, tmp);
+                    }
+                    break;
+
+                case TRIGGER_BUTTON:
+                case TRIGGER_PEDESTAL:
+                case TRIGGER_ALTAR:
+                    /* check_trigger will itself sort out the numbers of
+                     * items above the trigger */
+                    check_trigger(ol->objlink.ob, ol->objlink.ob);
+                    break;
+
+                case TYPE_CONN_SENSOR:
+                    move_conn_sensor(ol->objlink.ob);
+                    break;
+
+                case CF_HANDLE:
+                case TRIGGER:
+                    push_button(ol->objlink.ob);
+                    break;
+
+                default:
+                    break;
             }
         }
     }
