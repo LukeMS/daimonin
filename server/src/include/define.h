@@ -155,7 +155,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define KEY                     24
 #define MMISSILE                25
 #define TIMED_GATE              26
-#define TRIGGER                 27 /* Only triggered when applied, resets after interval */
+#define TRIGGER                 27 /* triggered when applied, resets after interval */
 #define TYPE_FLOORMASK			28
 #define MAGIC_EAR               29
 #define TRIGGER_BUTTON          30
@@ -172,9 +172,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TELEPORTER              41
 #define CREATOR                 42
 #define SKILL                   43  /* Skills are similar to abilites, but
-                                          * not related to spells.  by njw@cs.city.ac.u */
+                                     * not related to spells.  by njw@cs.city.ac.u */
 #define EXPERIENCE              44  /* An experience 'object'. Needed for multi-exp/skills
-                                      * hack. -b.t. thomas@astro.psu.edu */
+                                     * hack. -b.t. thomas@astro.psu.edu */
 #define EARTHWALL               45
 #define GOLEM                   46
 #define BOMB                    47
@@ -269,8 +269,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define GLOVES                  100
 #define TYPE_BASE_INFO          101 /* This object holds the real base stats of mobs or other active objects */
 #define TYPE_RANDOM_DROP        102 /* only true for spawn points atm: if found, there is a random check against
-                                         * carrying. If greater as carrying - all ->inv is droped.
-                                         */
+                                     * carrying. If greater as carrying - all ->inv is droped.
+                                     */
 #define CONVERTER               103
 #define BRACERS                 104
 #define POISONING               105 /* thats the poison force... if á player applies for example
@@ -299,18 +299,18 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define WEAPON_IMPROVER         124
 
 #define TYPE_WEALTH             125     /* this is a "raw" (abstract) wealth object. When generated
-                                                 * its tranformed in real money depending on the enviroment
-                                                 * where its generated. (most times by treasure list and
-                                                 * tranformed to money by using level of mob or map to generating
-                                                 * a fitting amount of money basing on the base setting).
-                                                 */
+                                         * its tranformed in real money depending on the enviroment
+                                         * where its generated. (most times by treasure list and
+                                         * tranformed to money by using level of mob or map to generating
+                                         * a fitting amount of money basing on the base setting).
+                                         */
 #define TYPE_AI                 126     /* MOB AI definition object */
-#define TYPE_AGGRO_HISTORY        127        /* aggro history - core base object for aggro handling. */
+#define TYPE_AGGRO_HISTORY      127        /* aggro history - core base object for aggro handling. */
 #define TYPE_DAMAGE_INFO        128        /* info object for aggro, group damage, exp sharing and DOT handling */
 
-#define TYPE_QUEST_TRIGGER        129        /* a quest trigger describes & interact with quests & other quest things */
+#define TYPE_QUEST_TRIGGER      129        /* a quest trigger describes & interact with quests & other quest things */
 #define SKILLSCROLL             130        /* can add a skill to player's inventory -bt.*/
-#define TYPE_QUEST_OBJECT        131        /* a quest object - it will be set to what we need. Its better & cleaner to
+#define TYPE_QUEST_OBJECT       131        /* a quest object - it will be set to what we need. Its better & cleaner to
                                          * use a own type for it instead of marking "real" object with fancy flags
                                          */
 #define TYPE_TIMER              132     /* Trigger a connection after a time period */
@@ -662,11 +662,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_WALK_ON        9 /* Applied when it's walked upon */
 #define FLAG_NO_PASS        10 /* Nothing can pass (wall() is true) */
 #define FLAG_ANIMATE        11 /* The object looks at archetype for faces */
-/* flag 12 is free (was FLAG_SLOW_MOVE) */
+#define FLAG_INITIALIZED    12 /* Used by some types to keep track of initialiization after map load (never saved) */
 
 #define FLAG_FLYING         13 /* Not affected by WALK_ON or SLOW_MOVE) */
 #define FLAG_MONSTER        14 /* A object with this flag is used like a object with
-                                      * type == MONSTER. SO, we can use type GOLEMS objects
+                                * type == MONSTER. SO, we can use type GOLEMS objects
                                 * for example in attack functions like MONSTER without
                                 * checking all possible different type defines.
                                 */
@@ -791,9 +791,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_QUEST_ITEM         102 /* this is a special quest object */
 
 #define FLAG_IS_TRAPED          103 /* object is traped - most common a container with
-                                         * a known trap inside. This info so useful for client
-                                         * below and inventory look.
-                                         */
+                                     * a known trap inside. This info so useful for client
+                                     * below and inventory look.
+                                     */
 #define FLAG_PROOF_PHYSICAL     104
 #define FLAG_PROOF_ELEMENTAL    105 
 #define FLAG_PROOF_MAGICAL      106 
@@ -812,35 +812,35 @@ error - Your ANSI C compiler should be defining __STDC__;
                                      * Named object don't have a race or material tag
                                      */
 #define FLAG_SPAWN_MOB          118 /* monster with this flag are created by spawn point
-                                         * and have a spawn info object inside inventory
-                                         */
+                                     * and have a spawn info object inside inventory
+                                     */
 #define FLAG_NO_TELEPORT        119 /* objects with this flags will not be teleported
-                                         * from teleporters. Except, they are in a inventory
-                                         * of a teleporter object.
-                                         */
+                                     * from teleporters. Except, they are in a inventory
+                                     * of a teleporter object.
+                                     */
 #define FLAG_CORPSE             120 /* if set, this object (usally mob) will drop corpse using race name->
-                                              * all item of the mob will put in the corpse and/or if slaying of corpse
-                                              * is set only the player which killed the mob can access the corpse until
-                                              * it decayed - then items drop on ground and all can grap it */
+                                     * all item of the mob will put in the corpse and/or if slaying of corpse
+                                     * is set only the player which killed the mob can access the corpse until
+                                     * it decayed - then items drop on ground and all can grap it */
 #define FLAG_CORPSE_FORCED      121 /* normally, corpses will only be placed when the mob has some items to drop.
                                      * this flag will drop a corpse even the corpse is empty */
 #define FLAG_PLAYER_ONLY        122 /* if a item with this flag is placed in a tile, this tile can't be entered
-                                         * from anything ecept a player
-                                         */
+                                     * from anything ecept a player
+                                     */
 #define FLAG_NO_CLERIC          123
 #define FLAG_ONE_DROP           124 /* if this flag is set, the item marked with it will flaged
-                                         * start equipment when a player gets it (item is inserted
-                                         * in player inventory and/or touched by a player)
-                                         */
+                                     * start equipment when a player gets it (item is inserted
+                                     * in player inventory and/or touched by a player)
+                                     */
 #define FLAG_PERM_CURSED        125  /* object will set to cursed when monster or player applies it.
-                                          * remove curse will remove cursed 1 but not this flag.
-                                          */
+                                      * remove curse will remove cursed 1 but not this flag.
+                                      */
 #define FLAG_PERM_DAMNED        126   /* same as perm_cursed but for damned */
 
 #define FLAG_DOOR_CLOSED        127   /* this object works like a closed door. Main function
-                                         * is to trigger the right map flags, so a moving objects
-                                         * know that spot is blocked by a door and he must open it first->
-                                         */
+                                       * is to trigger the right map flags, so a moving objects
+                                       * know that spot is blocked by a door and he must open it first->
+                                       */
 #define FLAG_WAS_REFLECTED      128   /* object was reflected (arrow, throw object...) */
 #define FLAG_IS_MISSILE         129   /* object is used as missile (arrow, potion, magic bullet, ...) */
 #define FLAG_CAN_REFL_MISSILE   130     /* Arrows WILL reflect from object (most times) */
