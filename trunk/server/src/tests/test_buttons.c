@@ -130,11 +130,11 @@ START_TEST (buttons_check_mapload)
     object *fire5b = locate_beacon(find_string("fire5b"))->env;
 
     /* 1. Make sure nothing is created at mapload */
-    fail_if(creator1->above || creator1->below, "creator1 created somthing");
-    fail_if(creator2->above || creator2->below, "creator2 created somthing");
-    fail_if(creator3->above || creator3->below, "creator3 created somthing");
-    fail_if(creator4->above || creator4->below, "creator4 created somthing");
-    fail_if(creator5->above || creator5->below, "creator5 created somthing");
+    fail_if(creator1->above || creator1->below, "creator1 created something");
+    fail_if(creator2->above || creator2->below, "creator2 created something");
+    fail_if(creator3->above || creator3->below, "creator3 created something");
+    fail_if(creator4->above || creator4->below, "creator4 created something");
+    fail_if(creator5->above || creator5->below, "creator5 created something");
 
     /* 2. Ensure that the correct lights are burning */
     fail_if(fire1a->glow_radius, "light1a glows");
@@ -153,7 +153,7 @@ START_TEST (buttons_check_mapload)
     
     fail_unless(creator1->above || creator1->below, "creator1 created nothing");
     fail_unless(creator2->above || creator2->below, "creator2 created nothing");
-    fail_unless(creator3->above || creator3->below, "creator3 created nothing");
+    fail_if(creator3->above || creator3->below, "creator3 created something");
     fail_unless(creator4->above || creator4->below, "creator4 created nothing");
     fail_unless(creator5->above || creator5->below, "creator5 created nothing");
 
