@@ -105,6 +105,71 @@ START_TEST (buttons_check_inv_recursive)
 }
 END_TEST
 
+/* Test mapload initialization */
+START_TEST (buttons_check_mapload)
+{
+    mapstruct *map = ready_map_name(add_string("/dev/unit_tests/test_connections"), 0, NULL);
+
+    object *lever = locate_beacon(find_string("lever"))->env;
+    
+    object *creator1 = locate_beacon(find_string("creator1"))->env;
+    object *creator2 = locate_beacon(find_string("creator2"))->env;
+    object *creator3 = locate_beacon(find_string("creator3"))->env;
+    object *creator4 = locate_beacon(find_string("creator4"))->env;
+    object *creator5 = locate_beacon(find_string("creator5"))->env;
+    
+    object *fire1a = locate_beacon(find_string("fire1a"))->env;
+    object *fire1b = locate_beacon(find_string("fire1b"))->env;
+    object *fire2a = locate_beacon(find_string("fire2a"))->env;
+    object *fire2b = locate_beacon(find_string("fire2b"))->env;
+    object *fire3a = locate_beacon(find_string("fire3a"))->env;
+    object *fire3b = locate_beacon(find_string("fire3b"))->env;
+    object *fire4a = locate_beacon(find_string("fire4a"))->env;
+    object *fire4b = locate_beacon(find_string("fire4b"))->env;
+    object *fire5a = locate_beacon(find_string("fire5a"))->env;
+    object *fire5b = locate_beacon(find_string("fire5b"))->env;
+
+    /* 1. Make sure nothing is created at mapload */
+    fail_if(creator1->above || creator1->below, "creator1 created somthing");
+    fail_if(creator2->above || creator2->below, "creator2 created somthing");
+    fail_if(creator3->above || creator3->below, "creator3 created somthing");
+    fail_if(creator4->above || creator4->below, "creator4 created somthing");
+    fail_if(creator5->above || creator5->below, "creator5 created somthing");
+
+    /* 2. Ensure that the correct lights are burning */
+    fail_if(fire1a->glow_radius, "light1a glows");
+    fail_if(fire1b->glow_radius, "light1b glows");
+    fail_if(fire2a->glow_radius, "light2a glows");
+    fail_if(fire2b->glow_radius, "light2b glows");
+    fail_if(!fire3a->glow_radius, "light3a doesn't glow");
+    fail_if(!fire3b->glow_radius, "light3b doesn't glow");
+    fail_if(fire4a->glow_radius, "light4a glows");
+    fail_if(fire4b->glow_radius, "light4b glows");
+    fail_if(fire5a->glow_radius, "light5a glows");
+    fail_if(fire5b->glow_radius, "light5b glows");
+
+    /* Switch the lever and make sure the inverse is true */
+    manual_apply(lever, lever, 0);
+    
+    fail_unless(creator1->above || creator1->below, "creator1 created nothing");
+    fail_unless(creator2->above || creator2->below, "creator2 created nothing");
+    fail_unless(creator3->above || creator3->below, "creator3 created nothing");
+    fail_unless(creator4->above || creator4->below, "creator4 created nothing");
+    fail_unless(creator5->above || creator5->below, "creator5 created nothing");
+
+    fail_unless(fire1a->glow_radius, "light1a doesn't glow");
+    fail_unless(fire1b->glow_radius, "light1b doesn't glow");
+    fail_unless(fire2a->glow_radius, "light2a doesn't glow");
+    fail_unless(fire2b->glow_radius, "light2b doesn't glow");
+    fail_unless(!fire3a->glow_radius, "light3a glows");
+    fail_unless(!fire3b->glow_radius, "light3b glows");
+    fail_unless(fire4a->glow_radius, "light4a doesn't glow");
+    fail_unless(fire4b->glow_radius, "light4b doesn't glow");
+    fail_unless(fire5a->glow_radius, "light5a doesn't glow");
+    fail_unless(fire5b->glow_radius, "light5b doesn't glow");
+}
+END_TEST
+
 Suite *buttons_suite(void)
 {
   Suite *s = suite_create("Buttons");
@@ -114,6 +179,7 @@ Suite *buttons_suite(void)
   
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, buttons_check_inv_recursive);
+  tcase_add_test(tc_core, buttons_check_mapload);
 
   return s;
 }
