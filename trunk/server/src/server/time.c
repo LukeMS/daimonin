@@ -1627,6 +1627,7 @@ void move_environment_sensor(object *op)
 /*
  * last_grace = output connection
  * subtype = logical function
+ * anim_enemy_dir = has been updated since load (not saved)
  */
 /* TODO: I want to add forwarding of connections to other maps to this
  * type too. */
@@ -1661,6 +1662,28 @@ void move_conn_sensor(object *op)
                 myinput = 1;
             else
             {
+                /* Don't count receivers towards number of inputs */
+                switch(ol->objlink.ob->type)
+                {
+                    case TYPE_CONN_SENSOR:
+                        /* Only count the output connection on conn_sensors */
+                        if(ol->objlink.ob->last_grace == obp->value)
+                            break;
+                    case LIGHT_SOURCE:    
+                    case GATE:    
+                    case TIMED_GATE:    
+                    case PIT:    
+                    case SIGN:    
+                    case MOOD_FLOOR:    
+                    case TYPE_LIGHT_APPLY:
+                    case FIREWALL:    
+                    case DIRECTOR:    
+                    case TELEPORTER:    
+                    case CREATOR:    
+                    case SPAWN_POINT:    
+                        continue;
+                }
+
                 if(ol->objlink.ob->weight_limit > 0)
                     numones++;
                 else
@@ -1695,11 +1718,12 @@ void move_conn_sensor(object *op)
             break;
     }
 
-//    LOG(llevDebug, "move_conn_sensor: type=%d, numactive=%d, numinputs=%d, value=%d -> %d\n", op->sub_type1, numactive, numinputs, op->value, newvalue);
+    /* LOG(llevDebug, "move_conn_sensor: count %d, type=%d, numactive=%d, numinputs=%d, value=%d -> %d, inited=%d\n", op->count, op->sub_type1, numactive, numinputs, op->weight_limit, newvalue, QUERY_FLAG(op, FLAG_INITIALIZED)); */
 
-    /* Trigger only on state change */
-    if(op->weight_limit != newvalue)
+    /* Trigger only on state change (or at first init) */
+    if(op->weight_limit != newvalue || !QUERY_FLAG(op, FLAG_INITIALIZED))
     {
+        SET_FLAG(op, FLAG_INITIALIZED);
         op->weight_limit = newvalue;
         push_button(op);
     }
