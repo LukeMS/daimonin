@@ -98,7 +98,6 @@ private:
     SceneManager *mSceneManager;
     EventProcessor *mEventProcessor;
     InputReader* mInputDevice;
-    Vector3 mTranslateVector;
     RenderWindow* mWindow;
     Camera* mCamera;
     Light *mLight[2];

@@ -203,7 +203,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             pb.getSubVolume(Box(xPos, 0, xPos + x2-x1, fnt->height)));
     }
     // ////////////////////////////////////////////////////////////////////
-    ///.Create Text Cursor (for text input).
+    // Create Text Cursor (for text input).
     // ////////////////////////////////////////////////////////////////////
     fnt->charWidth[CHARS_IN_FONT-1] = fnt->charWidth[0];
     for (int x = 0; x < fnt->charWidth[0]; ++x)
@@ -262,13 +262,12 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         rawFilename += ".png";
         img.save(rawFilename);
     }
-
     // ////////////////////////////////////////////////////////////////////
-    ///.Free Memory.
+    // Free Memory.
     // ////////////////////////////////////////////////////////////////////
-    MaterialManager::getSingleton().remove((ResourcePtr&)pMaterial);
-    TextureManager ::getSingleton().remove((ResourcePtr&)pTexture);
-    FontManager    ::getSingleton().remove((ResourcePtr&)pFont);
+    TextureManager ::getSingleton().remove(pTexture->getName());
+    MaterialManager::getSingleton().remove(pMaterial->getName());
+    FontManager    ::getSingleton().remove(pFont->getName());
     createBuffer(MAX_TEXTLINE_LEN); // Set standard buffer size.
 }
 

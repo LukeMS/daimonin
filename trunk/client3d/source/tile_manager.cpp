@@ -703,13 +703,13 @@ inline void TileManager::addToGroupTexture(uchar* TextureGroup_data, uchar *Filt
         {
             TextureGroup_data[index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
             TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
-	    ++index1;
+            ++index1;
             TextureGroup_data[index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
             TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
-	    ++index1;
+            ++index1;
             TextureGroup_data[index1]                    = TextureGroup_data[index1+RGBA*8*pix*(pix)];
             TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = TextureGroup_data[index1+RGBA*8*pix];
-	    ++index1;
+            ++index1;
             TextureGroup_data[index1]                    = 255;
             TextureGroup_data[index1+RGBA*8*pix*(pix+1)] = 255;
             ++index1;

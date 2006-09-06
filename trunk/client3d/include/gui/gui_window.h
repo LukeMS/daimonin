@@ -98,10 +98,6 @@ public:
     {
         return mHeight;
     }
-    const char *getName()
-    {
-        return mStrName.c_str();
-    }
     const char *Message(int message, int element, void *value);
     bool mouseEvent(int MouseAction, int mouseX, int mouseY);
     const char *getTooltip()
@@ -121,23 +117,18 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    bool isInit;
     static int msInstanceNr, mMouseDragging;
     static String mStrTooltip;
     int mWindowNr;
     int mMousePressed, mMouseOver;
-    bool mGadgetDrag;
-    Image mTileImage;
     int mPosX, mPosY, mPosZ, mWidth, mHeight;
     int mHeadPosX, mHeadPosY;
     int mDragPosX1, mDragPosX2, mDragPosY1, mDragPosY2, mDragOldMousePosX, mDragOldMousePosY;
     int mMinimized, mDefaultHeight;
+    bool mGadgetDrag;
+    bool isInit;
     bool mSizeRelative;
-    PixelBox mSrcPixelBox;
-    SceneManager *mSceneMgr;
     SceneNode *mSceneNode;
-    String mStrName;
-    String mStrImageSetGfxFile,  mStrFont, mStrXMLFile;
     std::vector<class GuiGraphic*>mvGraphic;
     std::vector<class GuiListbox*>mvListbox;
     std::vector<class GuiStatusbar*>mvStatusbar;
@@ -148,6 +139,7 @@ private:
     Overlay *mOverlay, *mNPC_HeadOverlay;
     OverlayElement *mElement;
     AnimationState *mSpeakAnimState, *mManualAnimState;
+    PixelBox mSrcPixelBox;
     MaterialPtr mMaterial;
     TexturePtr mTexture;
     // ////////////////////////////////////////////////////////////////////

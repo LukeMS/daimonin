@@ -38,7 +38,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_path.h"
 
 const Real WALK_PRECISON = 1.0;
-const int TURN_SPEED   = 200;
+const int TURN_SPEED   = 400;
 
 //================================================================================================
 // Init all static Elemnts.
@@ -144,7 +144,6 @@ void ObjectNPC::update(const FrameEvent& event)
 
     if (mAutoTurning != TURN_NONE)
     {
-		mAnim->pause(true);
         Real delta = event.timeSinceLastFrame * TURN_SPEED;
         if (mAutoTurning == TURN_RIGHT)
         {
@@ -174,20 +173,19 @@ void ObjectNPC::update(const FrameEvent& event)
 
         if (mAutoTurning == TURN_NONE)
 		{
-			mAnim->pause(false);
 			// After the turning is complete, we can attack.
 			if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
 
 		}
     }
-    else if (mAutoMoving)
+    if (mAutoMoving)
     {
-		mAnim->pause(false);
-        // We are very close to destination.
+        static float squaredLengthPrev = 1000.0;
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
-        // We have reached a waypoint.
         Vector3 dist = mDestWalkVec - mNode->getPosition();
-        if (dist.squaredLength() < WALK_PRECISON)
+        float squaredLength = dist.squaredLength();
+        // We have reached a waypoint.
+        if (squaredLength < WALK_PRECISON || squaredLengthPrev < squaredLength)
         {
             int dx = mActPos.x - mDestStepPos.x;
             int dz = mActPos.z - mDestStepPos.z;
@@ -203,12 +201,18 @@ void ObjectNPC::update(const FrameEvent& event)
                 mOffZ += dz;
             }
             moveToNeighbourTile(0);
+            squaredLengthPrev = 1000.0; // Somthing big.
             if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
         }
         else
         {
             // We have to move on.
-            mNode->translate(event.timeSinceLastFrame * mWalkSpeed);
+            Logger::log().error() << event.timeSinceLastFrame;
+            if (event.timeSinceLastFrame  > 0.04)
+               mNode->setPosition(mDestWalkVec);
+            else
+                mNode->translate(event.timeSinceLastFrame * mWalkSpeed);
+            squaredLengthPrev = squaredLengthPrev;
         }
         return;
     }

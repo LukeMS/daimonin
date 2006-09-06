@@ -464,6 +464,7 @@ void CEvent::mousePressed (MouseEvent *e)
             TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
             posV = TileManager::getSingleton().getTileInterface()->getSelectedPos();
             ParticleManager::getSingleton().addFreeObject(posV, "Particle/SelectionDust", 0.8);
+            //ParticleManager::getSingleton().addFreeObject(posV, "Particle/GreenyNimbus", -1);
             // Move the player.
             SubPos2D pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             pos.x += pos.z << 8;
