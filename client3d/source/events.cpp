@@ -61,7 +61,6 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
     mEventProcessor->startProcessingEvents();
     mInputDevice =  mEventProcessor->getInputReader();
     mTimeUntilNextToggle = 0;
-    mTranslateVector = Vector3(0,0,0);
     mIdleTime =0;
     mDayTime = 15;
     mCameraZoom = MAX_CAMERA_ZOOM;
@@ -84,15 +83,13 @@ CEvent::~CEvent()
 }
 
 //================================================================================================
-// Player has moved, update the world position.
+// Player has moved over a tile border. Update the world positions.
 //================================================================================================
 void CEvent::setWorldPos(int deltaX, int deltaZ)
 {
-    //ParticleManager::getSingleton().pauseAll(true);
-    //ParticleManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
     TileManager::getSingleton().scrollMap(deltaX, deltaZ); // server has to do this!
-    ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
-    //ParticleManager::getSingleton().pauseAll(false);
+    Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
+    ParticleManager::getSingleton().synchToWorldPos(deltaPos);
 }
 
 //================================================================================================

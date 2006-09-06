@@ -413,6 +413,7 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
     {
         mPSystem[bone] = ParticleManager::getSingleton().addNodeObject(0, particleName[particleID], -1);
         if (mPSystem[bone]) mParentEntity->attachObjectToBone(boneName[bone], mPSystem[bone]);
+        //mPSystem[bone] = ParticleManager::getSingleton().addBoneObject(mParentEntity, boneName[bone].c_str(), particleName[particleID], -1);
     }
 
     // Add a entity.

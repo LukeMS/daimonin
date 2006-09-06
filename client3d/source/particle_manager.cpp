@@ -184,7 +184,7 @@ void ParticleManager::pauseAll(bool pause)
 //================================================================================================
 // Workaround for a ogre bug (Attached particles wont get updeted after a position change).
 //================================================================================================
-void ParticleManager::synchToWorldPos(const Vector3 &pos)
+void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
 {
     Particle* p;
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
@@ -192,10 +192,14 @@ void ParticleManager::synchToWorldPos(const Vector3 &pos)
         if (!(*i)->pSystem->isAttached()) continue;
         if (!(*i)->pSystem->getKeepParticlesInLocalSpace())
         {
+            for (size_t sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
+            {
+                (*i)->pSystem->getEmitter(sum)->setPosition((*i)->pSystem->getEmitter(sum)->getPosition() - deltaPos);
+            }
             for (size_t sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
             {
                 p = (*i)->pSystem->getParticle(sum);
-                p->position+= pos;
+                p->position-= deltaPos;
             }
 
         }
@@ -204,7 +208,7 @@ void ParticleManager::synchToWorldPos(const Vector3 &pos)
 }
 
 //================================================================================================
-///
+//
 //================================================================================================
 void ParticleManager::moveNodeObject(const FrameEvent& event)
 {

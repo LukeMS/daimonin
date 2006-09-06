@@ -253,17 +253,21 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 //================================================================================================
 // Update all object positions after a map scroll.
 //================================================================================================
-void ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
+const Vector3 &ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 {
+    static Vector3 pos;
     for (unsigned int i = 0; i < mvObject_static.size(); ++i)
     {
         mvObject_static[i]->movePosition(deltaX, deltaZ);
     }
+    pos = mvObject_npc[0]->getPos();
     for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
     {
         // Sync the actual position.
         mvObject_npc[i]->movePosition(deltaX, deltaZ);
     }
+    pos-= mvObject_npc[0]->getPos();
+    return pos;
 }
 
 //================================================================================================

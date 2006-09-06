@@ -47,7 +47,7 @@ public:
     ParticleSystem *addNodeObject(SceneNode *node, const char* particleScript, Real lifeTime);
     void delNodeObject(int nr);
     void delObject(ParticleSystem *pSystem);
-    void synchToWorldPos(const Vector3 &pos);
+    void synchToWorldPos(Vector3 &deltaPos);
     void moveNodeObject(const FrameEvent& event);
     void update(Real time);
     void pauseAll(bool pause);
