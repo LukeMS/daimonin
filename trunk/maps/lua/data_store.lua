@@ -4,63 +4,56 @@ function _data_store._object(objtype, id)
     return { ['type'] = objtype, ['type_id'] = id }
 end
 
-function _data_store._serialize(key, value, depth, tables, path)
-    local prefix
-    if tables == nil then
-        tables = {}
-        path = "t"
-    else
-        path = path .. '[' .. string.format("%q", key) .. ']'
-    end
+function _data_store._serialize(value)
+    local tables = {}
 
-    if depth == nil then
-        depth = ''
-        prefix = 'local t = '
-    else
-        if type(key)=="string" then
-            prefix = depth .. '[' .. string.format("%q", key) .. '] = '
-        else
-            prefix = depth .. '[' .. tostring(key) .. '] = '
-        end
-    end
+    local function serialize(path, value, depth)
+        local t = type(value)
 
-    local t = type(value)
-    if t == 'string' then
-        return prefix .. string.format("%q", value)
-    elseif t == 'function' then
-        return prefix .. 'loadstring('.. string.format("%q", string.dump(value)) ..')'
-    elseif t == 'number' or t == 'boolean' then
-        return prefix .. tostring(value)
-    elseif t == 'table' then
-        if value.type == game.TYPE_PLAYER and value.type_id then
-            return prefix .. '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
-        else
-            if tables[value] ~= nil then
-                -- We have seen this table referenced before
-                table.insert(tables[value]["refs"], path)
-                return prefix .. "{}"
+        if t == 'string' then
+            return string.format("%q", value)
+        elseif t == 'function' then
+            return 'loadstring('.. string.format("%q", string.dump(value)) ..')'
+        elseif t == 'number' or t == 'boolean' then
+            return tostring(value)
+        elseif t == 'table' then
+            if value.type == game.TYPE_PLAYER and value.type_id then
+                return '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
             else
-                local ret = ""
-                tables[value] = {["path"] = path, ["refs"] = {}}
-                for k,v in value do
-                    ret = ret .. _data_store._serialize(k, v, depth .. '  ', tables, path) .. ",\n"
-                end
-                ret = prefix .. "{\n" ..
-                    ret ..
-                    depth .. '}'
-                if depth == '' then
-                    -- If at the end, write out all references
-                    for _,info in pairs(tables) do
-                        for _,ref in info["refs"] do
-                            ret = ret .. "\n" .. ref .. " = " .. info["path"]
+                if tables[value] ~= nil then
+                    -- We have seen this table referenced before
+                    table.insert(tables[value]["refs"], path)
+                    return "{}"
+                else
+                    local ret = ""
+                    local indent = depth .. "  "
+                    local key 
+
+                    tables[value] = {["path"] = path, ["refs"] = {}}
+                    for k,v in value do
+                        if type(k)=="string" then
+                            key = '[' .. string.format("%q", k) .. ']'
+                        else
+                            key = '[' .. tostring(k) .. ']'
                         end
+
+                        ret = ret .. indent .. key .. ' = ' .. serialize(path .. key, v, indent) .. ",\n"
                     end
-                    ret = ret .. "\nreturn t\n"
-                end                
-                return ret
+                    return "{\n" ..  ret ..  depth .. '}'
+                end
             end
         end
     end
+
+    local ret = "local t = " .. serialize('t', value, '') .. '\n'
+
+    -- write out all references at the end
+    for _,info in pairs(tables) do
+        for _,ref in info["refs"] do
+            ret = ret .. ref .. " = " .. info["path"] .. "\n"
+        end
+    end
+    return ret .. "return t\n"
 end
 
 function _data_store._load(id, player)
@@ -119,7 +112,7 @@ function _data_store._save(time, player, b_force)
                 local filename = "data/" .. dir .. "/" .. k .. ".dsl"
                 local f = io.open(filename, "wb")
                 assert(f, "Couldn't open " .. filename)
-                f:write(_data_store._serialize(k, v))
+                f:write(_data_store._serialize(v))
                 f:close()
             end
         end
@@ -137,6 +130,12 @@ function _data_store.save(b_force)
 end
 
 DataStore = {}
+
+-- Static function to dump a serialization string
+-- (Only a wrapper around the private _data_store function)
+function DataStore.Serialize(value)
+    return _data_store._serialize(value)
+end
 
 function DataStore:Get(key)
     local value = rawget(self, key)
@@ -159,6 +158,7 @@ end
 
 function DataStore:Set(key, value)
     assert(key ~= "_changed", "You can't change '_changed'")
+    assert(type(key) == 'string', "datastore keys must be strings")
     if type(value) == "userdata" and value.count then
         local ref = {id = value.count, object = value}
         local t = value.type
