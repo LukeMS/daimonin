@@ -4,11 +4,18 @@ function _data_store._object(objtype, id)
     return { ['type'] = objtype, ['type_id'] = id }
 end
 
-function _data_store._serialize(key, value, depth)
+function _data_store._serialize(key, value, depth, tables, path)
     local prefix
+    if tables == nil then
+        tables = {}
+        path = "t"
+    else
+        path = path .. '[' .. string.format("%q", key) .. ']'
+    end
+
     if depth == nil then
         depth = ''
-        prefix = 'return '
+        prefix = 'local t = '
     else
         if type(key)=="string" then
             prefix = depth .. '[' .. string.format("%q", key) .. '] = '
@@ -28,13 +35,30 @@ function _data_store._serialize(key, value, depth)
         if value.type == game.TYPE_PLAYER and value.type_id then
             return prefix .. '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
         else
-            local ret = ""
-            for k,v in value do
-                ret = ret .. _data_store._serialize(k, v, depth .. '  ') .. ",\n"
+            if tables[value] ~= nil then
+                -- We have seen this table referenced before
+                table.insert(tables[value]["refs"], path)
+                return prefix .. "{}"
+            else
+                local ret = ""
+                tables[value] = {["path"] = path, ["refs"] = {}}
+                for k,v in value do
+                    ret = ret .. _data_store._serialize(k, v, depth .. '  ', tables, path) .. ",\n"
+                end
+                ret = prefix .. "{\n" ..
+                    ret ..
+                    depth .. '}'
+                if depth == '' then
+                    -- If at the end, write out all references
+                    for _,info in pairs(tables) do
+                        for _,ref in info["refs"] do
+                            ret = ret .. "\n" .. ref .. " = " .. info["path"]
+                        end
+                    end
+                    ret = ret .. "\nreturn t\n"
+                end                
+                return ret
             end
-            return prefix .. "{\n" ..
-                ret ..
-                depth .. '}'
         end
     end
 end
