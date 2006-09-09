@@ -140,7 +140,7 @@ end
 function DataStore:Get(key)
     local value = rawget(self, key)
     local t = type(value)
-    if t == "userdata" and not game:IsValid(value) then
+    if t == "GameObject" and not game:IsValid(value) then
         value = nil
     elseif t == "table" and value.type == game.TYPE_PLAYER and value.type_id then
         local object = value.object
@@ -159,7 +159,7 @@ end
 function DataStore:Set(key, value)
     assert(key ~= "_changed", "You can't change '_changed'")
     assert(type(key) == 'string', "datastore keys must be strings")
-    if type(value) == "userdata" and value.count then
+    if type(value) == "GameObject" and value.count then
         local ref = {id = value.count, object = value}
         local t = value.type
         if t == game.TYPE_PLAYER then
@@ -183,7 +183,7 @@ function DataStore:New(id, player)
     if player == nil then
         t = _data_store._global
     else
-        if type(player) == "userdata" then
+        if type(player) == "GameObject" then
             player = player.name
         end
         player = string.capitalize(player)

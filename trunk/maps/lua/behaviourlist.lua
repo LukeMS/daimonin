@@ -102,28 +102,25 @@ end
 --
 --[[
   ai = {
-    ["processes"] = {
-      [1] = {
-        ["name"] = "look_for_other_mobs",
-        ["parameters"] = {},
+    processes = {
+      {
+        name = "look_for_other_mobs",
+        parameters = {},
       },
-      [2] = {
-        ["name"] = "friendship",
-        ["parameters"] = {
-          ["arch"] = { },
-          ["same_alignment"] = { 100, },
-          ["opposite_alignment"] = { -100, },
-          <snip>
+      {
+        name = "friendship",
+        parameters = {
+          arch = { },
+          same_alignment = { 100 },
+          opposite_alignment = { -100 },
         },
       },
-      ["look_for_other_mobs"] = ai["processes"][1],
-      ["friendship"] = ai["processes"][2],
+      look_for_other_mobs = ai["processes"][1],
+      friendship = ai["processes"][2],
     },
-    ["moves"] = {
-        <snip>
+    moves = {
     }
-    ["actions"] = {
-        <snip>
-    },
+    actions = {
+    }
   }
 --]]

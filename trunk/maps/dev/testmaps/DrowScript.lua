@@ -17,7 +17,7 @@ end
 
 -- Tests the storage of data for a player
 function topicData2(player, msg)
-    if player == nil or message == nil then
+    if player == nil or msg == nil then
         event.me:SayTo(event.activator, "Say '^data2^ <player> <message>'")
         return
     end

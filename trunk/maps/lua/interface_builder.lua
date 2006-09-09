@@ -8,7 +8,7 @@ InterfaceBuilder = {}
 
 -- Set window header
 function InterfaceBuilder:SetHeader(face, title)
-    if type(face) == 'userdata' then
+    if type(face) == 'GameObject' then
         face = face:GetFace()
     end
     self.header = { face = face, title = title }
@@ -41,7 +41,7 @@ end
 
 -- Add a (reward) icon
 function InterfaceBuilder:AddIcon(title, face, body)
-    if type(face) == 'userdata' then
+    if type(face) == 'GameObject' then
         face = face:GetFace()
     end
     table.insert(self.tags, { type = 'icon', title = title, face = face, body = body})
@@ -49,7 +49,7 @@ end
 
 -- Add a (reward) selectable icon
 function InterfaceBuilder:AddSelect(title, face, body)
-    if type(face) == 'userdata' then
+    if type(face) == 'GameObject' then
         face = face:GetFace()
     end
     table.insert(self.tags, { type = 'select', title = title, face = face, body = body})

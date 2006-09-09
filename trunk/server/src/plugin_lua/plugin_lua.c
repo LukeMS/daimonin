@@ -313,6 +313,21 @@ static int luaRequire(lua_State *L)
     return 0;
 }
 
+/* Our replacement "type" function that supports our object model */
+static int luaType(lua_State *L)
+{
+    luaL_checkany(L, 1);
+    if(lua_isuserdata(L, 1))
+    {
+        lua_object *obj = lua_touserdata(L, 1);
+        lua_pushstring(L, obj->class->name);
+    } else
+    {
+        lua_pushstring(L, lua_typename(L, lua_type(L, 1)));
+    }
+    return 1;
+}
+
 /*****************************************************************************/
 /* Detached scripts handling                                                 */
 /*****************************************************************************/
@@ -1005,6 +1020,11 @@ MODULEAPI void init_Daimonin_Lua()
     /* Set up the global Game object  */
     lua_pushliteral(global_state, "game");
     push_object(global_state, &Game, "Daimonin");
+    lua_rawset(global_state, LUA_GLOBALSINDEX);
+    
+    /* Add our own 'type' function */
+    lua_pushstring(global_state, "type");
+    lua_pushcclosure(global_state, luaType, 0);
     lua_rawset(global_state, LUA_GLOBALSINDEX);
 
     /* Set up module search path; prefer compiled files */
