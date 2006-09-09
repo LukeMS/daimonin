@@ -192,7 +192,7 @@ void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
         if (!(*i)->pSystem->isAttached()) continue;
         if (!(*i)->pSystem->getKeepParticlesInLocalSpace())
         {
-            for (size_t sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
+            for (unsigned short sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
             {
                 (*i)->pSystem->getEmitter(sum)->setPosition((*i)->pSystem->getEmitter(sum)->getPosition() - deltaPos);
             }
@@ -208,16 +208,26 @@ void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
 }
 
 //================================================================================================
-//
+// .
 //================================================================================================
-void ParticleManager::moveNodeObject(const FrameEvent& event)
+void ParticleManager::setColorRange(ParticleSystem *pSystem, ColourValue start, ColourValue stop)
 {
-    /*
-        for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
-        {
-            if (!mvObject_Node[i]->speed)
-                continue;
-            mvObject_Node[i]->node->translate(mvObject_Node[i]->direction * mvObject_Node[i]->speed * event.timeSinceLastFrame);
-        }
-    */
+    for (int i=0; i < pSystem->getNumEmitters(); ++i)
+    {
+        pSystem->getEmitter(i)->setColourRangeStart(start);
+        pSystem->getEmitter(i)->setColourRangeEnd  (stop);
+    }
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void ParticleManager::setEmitterSize(ParticleSystem *pSystem, float sizeZ, float sizeX, bool adjustRate)
+{
+    for (int i=0; i < pSystem->getNumEmitters(); ++i)
+    {
+        pSystem->getEmitter(i)->setParameter("height", StringConverter::toString(sizeZ));
+        pSystem->getEmitter(i)->setParameter("width" , StringConverter::toString(sizeX));
+        if (adjustRate) pSystem->getEmitter(i)->setEmissionRate(sizeX *sizeZ * 3.0);
+    }
 }

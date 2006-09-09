@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #define OBJECT_VISUALS_H
 
 #include "Ogre.h"
+#include "object_npc.h"
 
 using namespace Ogre;
 
@@ -61,7 +62,9 @@ public:
     }
     void Init();
     void freeRecources();
-    void selectNPC(MovableObject *mob, int friendly, bool drawLifebar = true);
+	/** health < 0 disables the lifebar. */
+    void selectNPC(ObjectNPC *npc, bool showLifebar = true); 
+    void unselect();
     void setPosLifebar(Vector3 pos);
     void setLifebar(Real percent, int barWidth = 128);
     void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);

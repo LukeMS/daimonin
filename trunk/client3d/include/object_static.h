@@ -63,14 +63,14 @@ public:
     ObjectStatic(sObject &obj);
     virtual ~ObjectStatic();
     virtual void freeRecources();
-    virtual void update(const FrameEvent& event);
-
+    virtual bool update(const FrameEvent& event);
+    void movePosition(int dx, int dz);
     void move(Vector3 &pos);
     const Vector3 &getPos()
     {
         return mNode->getPosition();
     }
-    const SceneNode *getNode()
+    SceneNode *getSceneNode()
     {
         return mNode;
     }
@@ -86,18 +86,24 @@ public:
     {
         return mNickName;
     }
-    const int getFriendly()
+    int getFriendly()
     {
         return mFriendly;
     }
+	Entity *getEntity()
+	{
+		return mEntity;
+	}
     SubPos2D getTilePos()
     {
         return mActPos;
     }
     SubPos2D getTileScrollPos();
     void setPosition(SubPos2D pos);
-    void movePosition(int dx, int dz);
-
+	unsigned int getIndex()
+	{
+		return mIndex;
+	}
 protected:
     static SceneManager *mSceneMgr;
     Vector3 mBoundingBox;

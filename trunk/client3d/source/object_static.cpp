@@ -48,6 +48,7 @@ void ObjectStatic::freeRecources()
 ObjectStatic::~ObjectStatic()
 {
     delete mAnim;
+    mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
 }
 
 //================================================================================================
@@ -66,7 +67,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mFloor    = obj.level;
     mFacing   = Degree(obj.facing);
     Logger::log().info()  << "Adding object: " << obj.meshName << ".";
-    mEntity =mSceneMgr->createEntity("Obj_"+StringConverter::toString(obj.type, 2, '0')+"_" + StringConverter::toString(mIndex, 5, '0'), obj.meshName);
+    mEntity =mSceneMgr->createEntity("Obj_"+StringConverter::toString(obj.type, 2, '0')+"_" + StringConverter::toString(mIndex, 8, '0'), obj.meshName);
     mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
 
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
@@ -122,9 +123,10 @@ void ObjectStatic::setPosition(SubPos2D pos)
 //================================================================================================
 // Update object.
 //================================================================================================
-void ObjectStatic::update(const FrameEvent& event)
+bool ObjectStatic::update(const FrameEvent& event)
 {
     mAnim->update(event);
+	return true;
 }
 
 //================================================================================================

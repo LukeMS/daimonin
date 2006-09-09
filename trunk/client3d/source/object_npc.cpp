@@ -37,8 +37,10 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_manager.h"
 #include "tile_path.h"
 
-const Real WALK_PRECISON = 1.0;
-const int TURN_SPEED   = 400;
+const int   TURN_SPEED   = 400;
+const Real  WALK_PRECISON= 1.0f;
+const float BIG_LAGGING  = 0.04f;
+const float TIME_BEFORE_CORPSE_VANISHES = 2.0f;
 
 //================================================================================================
 // Init all static Elemnts.
@@ -101,7 +103,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
         // (Players Bounding box is increased by that and cant be used for collision detection anymore)
         SceneNode *cNode = mNode->createChildSceneNode();
         cNode->attachObject(Event->getCamera());
-        cNode->setInheritOrientation(false);
+        cNode->setInheritOrientation(false); // Camera needs no turning.
     }
     mCursorTurning =0;
     mAutoTurning = TURN_NONE;
@@ -122,14 +124,38 @@ void ObjectNPC::attackObjectOnTile(SubPos2D pos)
 
 //================================================================================================
 // Update ObjectNPC.
+// Returns false if the object needs to be deleted.
 //================================================================================================
-void ObjectNPC::update(const FrameEvent& event)
+bool ObjectNPC::update(const FrameEvent& event)
 {
     mAnim->update(event);
-    if (mActHP <0) return;
     //  Finish the current (non movement) anim first.
     //  if (!mAnim->isMovement()) return;
 
+    // ////////////////////////////////////////////////////////////////////
+    // Corpse vanishing.
+    // ////////////////////////////////////////////////////////////////////
+    if (mActHP <=0)
+    {
+        if (mIndex) // Our Hero (mIndex ==0) will never vanish.
+        {
+            // mDeltaDegree is not used any longer. So we can misuse it here ;)
+            mDeltaDegree += event.timeSinceLastFrame;
+            if (mDeltaDegree > TIME_BEFORE_CORPSE_VANISHES)
+            {
+                mNode->translate(Vector3(0, -event.timeSinceLastFrame, 0));
+                mSpawnSize += event.timeSinceLastFrame;
+                if (mSpawnSize > TIME_BEFORE_CORPSE_VANISHES*2)
+                {
+                    return false; // Delete this object.
+                }
+            }
+        }
+        return true;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Spawn effects.
+    // ////////////////////////////////////////////////////////////////////
     if (mSpawnSize != 1.0)
     {
         if (mSpawnSize == 0.0)
@@ -141,14 +167,17 @@ void ObjectNPC::update(const FrameEvent& event)
         if (mSpawnSize > 1.0) mSpawnSize =1.0;
         mNode->setScale(mSpawnSize,mSpawnSize,mSpawnSize);
     }
-
+    // ////////////////////////////////////////////////////////////////////
+    // Auto turning.
+    // ////////////////////////////////////////////////////////////////////
+    bool waitForTurning= false;
     if (mAutoTurning != TURN_NONE)
     {
         Real delta = event.timeSinceLastFrame * TURN_SPEED;
         if (mAutoTurning == TURN_RIGHT)
         {
             mDeltaDegree -= delta;
-			if (mDeltaDegree <=0)
+            if (mDeltaDegree <=0)
             {
                 delta = mDeltaDegree*-1;
                 mAutoTurning = TURN_NONE;
@@ -170,27 +199,42 @@ void ObjectNPC::update(const FrameEvent& event)
             if (mFacing.valueDegrees() <= 360) mFacing += Degree(360);
             mNode->yaw(Degree(delta));
         }
-
-        if (mAutoTurning == TURN_NONE)
-		{
-			// After the turning is complete, we can attack.
-			if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
-
-		}
+        // First turn and then start to walk (on big delta facing).
+        if (Math::Abs(mDeltaDegree > 90))
+        {
+            waitForTurning = true;
+            //mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
+        }
     }
-    if (mAutoMoving)
+    // ////////////////////////////////////////////////////////////////////
+    // Turning by cursor keys.
+    // ////////////////////////////////////////////////////////////////////
+    if (mAnim->isIdle() && mCursorTurning)
     {
-        static float squaredLengthPrev = 1000.0;
+        mEnemyObject = 0; // We are no longer looking at the enemy.
+        mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning));
+        mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning);
+        if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
+        if (mFacing.valueDegrees() <    0) mFacing += Degree(360);
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Auto movement.
+    // ////////////////////////////////////////////////////////////////////
+    if (mAutoMoving && !waitForTurning)
+    {
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
+        // On slow systems it will happen that distance goes negative.
+        // So we look if the squared length is bigger than the previous squared length.
         Vector3 dist = mDestWalkVec - mNode->getPosition();
+        static float squaredLengthPrev = 1000.0; // Somthing big.
         float squaredLength = dist.squaredLength();
-        // We have reached a waypoint.
-        if (squaredLength < WALK_PRECISON || squaredLengthPrev < squaredLength)
+        // We have reached a waypoint || we went too far.
+        if (squaredLength < WALK_PRECISON || squaredLength > squaredLengthPrev)
         {
             int dx = mActPos.x - mDestStepPos.x;
             int dz = mActPos.z - mDestStepPos.z;
             mActPos = mDestStepPos;
-            // If the player has moved over the tile border, we have to sync the world.
+            // If the player has moved over a tile border, we have to sync the world.
             if (!mIndex && (dx || dz))
             {
                 Event->setWorldPos(dx, dz);
@@ -202,24 +246,31 @@ void ObjectNPC::update(const FrameEvent& event)
             }
             moveToNeighbourTile(0);
             squaredLengthPrev = 1000.0; // Somthing big.
-            if (mAttacking == ATTACK_APPROACH) mAttacking = ATTACK_ANIM_START;
         }
+        // We have to move on.
         else
         {
-            // We have to move on.
-            Logger::log().error() << event.timeSinceLastFrame;
-            if (event.timeSinceLastFrame  > 0.04)
-               mNode->setPosition(mDestWalkVec);
+            // On slow system (or big lag) we move instantly to the destination.
+            if (event.timeSinceLastFrame  >= BIG_LAGGING)
+                mNode->setPosition(mDestWalkVec);
+            // No lagging, move smoothly.
             else
                 mNode->translate(event.timeSinceLastFrame * mWalkSpeed);
             squaredLengthPrev = squaredLengthPrev;
         }
-        return;
+        return true;
     }
-    else if (mAttacking != ATTACK_NONE)
+    // ////////////////////////////////////////////////////////////////////
+    // Attacking.
+    // ////////////////////////////////////////////////////////////////////
+    if (mAttacking != ATTACK_NONE)
     {
         switch (mAttacking)
         {
+            case ATTACK_APPROACH:
+                if (mAutoTurning == TURN_NONE && !mAutoMoving)
+                    mAttacking = ATTACK_ANIM_START;
+                break;
             case ATTACK_ANIM_START:
                 mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 0);
                 mAttacking = ATTACK_ANIM_RUNNUNG;
@@ -228,12 +279,13 @@ void ObjectNPC::update(const FrameEvent& event)
             case ATTACK_ANIM_RUNNUNG:
                 if (mAnim->getTimeLeft() < 0.5 || mAnim->isIdle())
                 {
-                    // Just a test...
+                    // Just a quick hack to get some action on the screen...
                     if (mAnim->isAttack())
                     {
+                        // Player is getting hurt.
                         if (mIndex)
                         {
-                            ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(0);
+                            ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(HERO);
                             static int oo =0;
                             if (++oo <= 3)
                             {
@@ -243,14 +295,15 @@ void ObjectNPC::update(const FrameEvent& event)
                             }
                             if (++oo > 5) oo =0;
                         }
+                        // Monster is getting hurt.
                         else
                         {
-                            ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(1);
+                            ObjectNPC *mob = ObjectManager::getSingleton().getSelectedNPC();
+                            if (!mob || mob->getHealth() <= 0) break;
                             mob->setDamage(10);
-                            if (mob->getHealth() <= 0) break;
                             //mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
                             Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
-                            ParticleManager::getSingleton().addFreeObject(mob->getNode()->getPosition(), "Particle/Hit", 0.8);
+                            ParticleManager::getSingleton().addFreeObject(mob->getSceneNode()->getPosition(), "Particle/Hit", 0.8);
                         }
                     }
                     mAttacking = ATTACK_NONE;
@@ -262,15 +315,18 @@ void ObjectNPC::update(const FrameEvent& event)
                 break;
         }
     }
-    // Turning by cursor keys.
-    if (mAnim->isIdle() && mCursorTurning)
-    {
-        mEnemyObject = 0; // We are no longer looking at the enemy.
-        mNode->yaw(Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning));
-        mFacing += Degree(event.timeSinceLastFrame * TURN_SPEED * mCursorTurning);
-        if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
-        if (mFacing.valueDegrees() <    0) mFacing += Degree(360);
-    }
+	return true;
+}
+
+//================================================================================================
+// Move to a new tile pos.
+//================================================================================================
+void ObjectNPC::movePosition(int deltaX, int deltaZ)
+{
+    mActPos.x += deltaX;
+    mActPos.z += deltaZ;
+    setPosition(mActPos);
+    if (mActHP <=0) mNode->translate(Vector3(0, -mSpawnSize, 0));
 }
 
 //================================================================================================
@@ -278,10 +334,10 @@ void ObjectNPC::update(const FrameEvent& event)
 //================================================================================================
 void ObjectNPC::setDamage(int damage)
 {
-    if (mActHP <0) return;
+    if (mActHP <=0) return;
 
     mActHP-= damage;
-    Real health = (Real)(mActHP) / Real(mMaxHP);
+    Real health = getHealthPercentage();
     if (!mIndex)
     {
         GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERCONSOLE, GUI_MSG_BAR_CHANGED,
@@ -291,14 +347,16 @@ void ObjectNPC::setDamage(int damage)
     {
         ObjectVisuals::getSingleton().setLifebar(health);
     }
-    if (mActHP < 0)
+    if (mActHP <= 0)
     {
         mAttacking = ATTACK_NONE;
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_DEATH, 0);
+        // mDeltaDegree is not used any longer. So we can misuse it here ;)
+        mDeltaDegree = 0.0;
+        mSpawnSize = 0.0;
         Sound::getSingleton().playStream(Sound::MALE_BOUNTY_01);
     }
 }
-
 
 //================================================================================================
 // Cast a spell.
@@ -365,13 +423,11 @@ void ObjectNPC::faceToTile(SubPos2D pos)
             mAutoTurning = TURN_RIGHT;
         else
             mAutoTurning = TURN_LEFT;
-       // mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
     }
 }
 
 //================================================================================================
-// Move the Object to a neighbour tile.
-// TODO: If we walk from subtile to subtile we get a more acurate walk (mainly y-pos).
+// Move the Object to a neighbour subtile.
 //================================================================================================
 void ObjectNPC::moveToNeighbourTile(int precision)
 {
@@ -391,7 +447,7 @@ void ObjectNPC::moveToNeighbourTile(int precision)
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
         mAutoMoving = false;
         step = 0;
-        // For attack we dont move on the destination tile, but some subtiles before.
+        // For attack we dont move onto the destination tile, but some subtiles before.
         // So we have to do another faceToTile().
         if (mActPos != mDestWalkPos) faceToTile(mDestWalkPos);
         return;
@@ -420,19 +476,8 @@ void ObjectNPC::moveToNeighbourTile(int precision)
 void ObjectNPC::moveToDistantTile(SubPos2D pos, int precision)
 {
     if (mActPos == pos || mAutoTurning || mAutoMoving) return;
-    if (mEnemyObject)
-    {
-        /*
-                mDestWalkVec.x = mBoundingBox.x + mActPos.x * TILE_SIZE_X;
-                mDestWalkVec.z = mBoundingBox.z + mActPos.z * TILE_SIZE_Z;
-                mDestWalkVec.y = TileManager::getSingleton().getAvgMapHeight(mDestStepPos.x, mDestStepPos.z) - mBoundingBox.y;
-                mNode->setPosition(mDestWalkVec);
-        */
-//        Vector3 posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
-//        mNode->setPosition(posV);
-        mEnemyObject = 0;
-    }
-    mDestWalkPos = pos;
+    mEnemyObject= 0; // After this move, we have to check again if enemy is in attack range.
+    mDestWalkPos= pos;
     mAutoMoving = true;
     moveToNeighbourTile(precision);
 }
@@ -442,7 +487,8 @@ void ObjectNPC::moveToDistantTile(SubPos2D pos, int precision)
 //================================================================================================
 void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 {
-    if (mAnim->isAttack()) return; // Finish the attack before starting a new one.
+    if (!mAnim->isIdle() || !EnemyObject) return;
+    if (this == EnemyObject) return; // No Harakiri!
     // Move in front of the enemy.
     if (mEnemyObject != EnemyObject)
     {
@@ -450,6 +496,7 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
         moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
         mAttacking = ATTACK_APPROACH;
     }
+    // Enemy is in attack range.
     else
     {
         mAttacking = ATTACK_ANIM_START;

@@ -79,7 +79,7 @@ public:
     void freeRecources();
     bool init();
     void addMobileObject(sObject &obj);
-    void delObject(int number);
+    void delObjectNPC(int number);
     void update(int type, const FrameEvent& evt);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
@@ -92,24 +92,26 @@ public:
     {
         return mvObject_npc[npc]->getPos();
     }
-    const SceneNode *getNpcNode(int npc)
-    {
-        return mvObject_npc[npc]->getNode();
-    }
     const Vector3 &synchToWorldPos(int deltaX, int deltaZ);
     void selectNPC(MovableObject *mob);
 
     Vector3 getTargetedWorldPos()
     {
-        return mvObject_npc[mSelectedObject]->getNode()->getPosition();
+        return mvObject_npc[mSelectedObject]->getSceneNode()->getPosition();
     }
-    ObjectNPC *getObjectNPC(int index)
+    ObjectNPC *getObjectNPC(unsigned int index)
     {
-        return mvObject_npc[index];
+		if (index < mvObject_npc.size())
+			return mvObject_npc[index];
+		else
+			return 0;
     }
     ObjectNPC *getSelectedNPC()
     {
-        return mvObject_npc[mSelectedObject];
+        if (mSelectedObject >= 0)
+            return mvObject_npc[mSelectedObject];
+        else
+            return 0;
     }
     const SubPos2D getTargetedPos()
     {

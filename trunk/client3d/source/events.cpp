@@ -87,9 +87,11 @@ CEvent::~CEvent()
 //================================================================================================
 void CEvent::setWorldPos(int deltaX, int deltaZ)
 {
+    //ParticleManager::getSingleton().pauseAll(true);
     TileManager::getSingleton().scrollMap(deltaX, deltaZ); // server has to do this!
     Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
     ParticleManager::getSingleton().synchToWorldPos(deltaPos);
+    //ParticleManager::getSingleton().pauseAll(false);
 }
 
 //================================================================================================
@@ -388,7 +390,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         {
             static bool once = false;
             ObjectManager::getSingleton().update(ObjectManager::OBJECT_NPC, evt);
-            ParticleManager::getSingleton().moveNodeObject(evt);
             mIdleTime += evt.timeSinceLastFrame;
             if (mIdleTime > 1.0)
             {
@@ -416,6 +417,25 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     obj.facing    = -90;
                     obj.particleNr=-1;
                     ObjectManager::getSingleton().addMobileObject(obj);
+
+                    obj.nickName  = "mysteria";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = -1;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = 8;
+                    obj.pos.z     = 13;
+                    obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
+                    obj.level     = 0;
+                    obj.facing    = -60;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+
                     /*
                                         obj.meshName  = "Ogre_Big.mesh";
                                         obj.nickName  = "son of michtoen";

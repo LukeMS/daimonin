@@ -124,6 +124,8 @@ void ObjectVisuals::Init()
     TexturePtr pTexture = TextureManager::getSingleton().loadImage(TEXTURE_NAME, "General", image, TEX_TYPE_2D);
     tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(TEXTURE_NAME);
     mHardwarePB = pTexture->getBuffer();
+    mNode[NPC_SELECTION] = 0;
+    mNode[NPC_LIFEBAR] = 0;
     /*
         mImage.load("NPC_Visuals.png", "General");
         mSrcPixelBox = mImage.getPixelBox();
@@ -176,7 +178,11 @@ void ObjectVisuals::setPosLifebar(Vector3 pos)
 //===================================================
 void ObjectVisuals::setLifebar(Real percent, int barWidth)
 {
-    if (percent <0.0) percent =0.0;
+    if (percent <=0.0)
+    {
+        unselect();
+        return;
+    }
     if (barWidth > TEXTURE_SIZE) barWidth = TEXTURE_SIZE;
     uint32 color, dColor;
     if (percent > 0.5)
@@ -219,53 +225,57 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 //===================================================
 // Select a NPC.
 //===================================================
-void ObjectVisuals::selectNPC(MovableObject *mob, int friendly, bool drawLifebar)
+void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
 {
-    const AxisAlignedBox &AABB = mob->getBoundingBox();
-    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.3;
-    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.3;
-    Vector3 pos;
-    String strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_SELECTION, 3, '0');
-    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(strNode);
-    mNode[NPC_SELECTION] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
+	mNode[NPC_SELECTION] = npc->getSceneNode()->createChildSceneNode();
     mNode[NPC_SELECTION]->attachObject(mPSystem);
     int index;
-    if      (friendly >0) index = PARTICLE_COLOR_FRIEND_STRT;
-    else if (friendly <0) index = PARTICLE_COLOR_ENEMY_STRT;
+    if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
+    else if (npc->getFriendly() <0) index = PARTICLE_COLOR_ENEMY_STRT;
     else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
 
+    mPSystem->setVisible(true);
     mPSystem->clear();
-    for (int i=0; i < mPSystem->getNumEmitters(); ++i)
-    {
-        mPSystem->getEmitter(i)->setColourRangeStart(particleColor[index]);
-        mPSystem->getEmitter(i)->setColourRangeEnd  (particleColor[index+1]);
-        mPSystem->getEmitter(i)->setEmissionRate(sizeX *sizeZ * 3.0);
-        mPSystem->getEmitter(i)->setParameter("height", StringConverter::toString(sizeZ));
-        mPSystem->getEmitter(i)->setParameter("width" , StringConverter::toString(sizeX));
-    }
-    if (!drawLifebar) return;
+    ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
+	const AxisAlignedBox &AABB = npc->getEntity()->getBoundingBox();
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.3;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.3;
+	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeZ, sizeX, true);
 
     // Lifebar.
-    strNode = "NodeObjVisuals"+ StringConverter::toString(NPC_LIFEBAR, 3, '0');
-    if (mNode[NPC_LIFEBAR]) mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(strNode);
-    mNode[NPC_LIFEBAR] = mob->getParentSceneNode()->createChildSceneNode(strNode);
+    if (!showLifebar) return;
+    if (mNode[NPC_LIFEBAR]) mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_LIFEBAR]->getName());
+    mNode[NPC_LIFEBAR] = mNode[NPC_SELECTION]->getParentSceneNode()->createChildSceneNode();
     mNode[NPC_LIFEBAR]->attachObject(mEntity[NPC_LIFEBAR]);
-    pos = mNode[NPC_LIFEBAR]->getPosition();
+    Vector3 pos = mNode[NPC_LIFEBAR]->getPosition();
     mNode[NPC_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
     mNode[NPC_LIFEBAR]->setInheritOrientation(false);
 
-    const int fontNr = 3;
-    const char *name = ObjectManager::getSingleton().getSelectedNPC()->getNickName().c_str();
-    int len = GuiTextout::getSingleton().CalcTextWidth(name, fontNr);
+    const int FONT_NR = 3;
+    const char *name = npc->getNickName().c_str();
+    int len = GuiTextout::getSingleton().CalcTextWidth(name, FONT_NR);
     if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
-    PixelBox pb = mHardwarePB->lock (Box(0, 0, TEXTURE_SIZE-1, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
+    PixelBox pb = mHardwarePB->lock (Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
     // Clear the whole texture.
     uint32 *dest_data = (uint32*)pb.data;
     for (int i=0; i < TEXTURE_SIZE*TEXTURE_SIZE; ++i) *dest_data++ = 0;
     // Print NPC name.
     dest_data = (uint32*)pb.data + (TEXTURE_SIZE-1-28) * TEXTURE_SIZE + len;
-    //  GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, fontNr,  0x00000000);
+    //GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, FONT_NR,  0x00000000);
     mHardwarePB->unlock();
-    setLifebar(1.0);
+    setLifebar(npc->getHealthPercentage());
+}
+
+//===================================================
+// Unselect.
+//===================================================
+void ObjectVisuals::unselect()
+{
+    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
+    if (mNode[NPC_LIFEBAR])   mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_LIFEBAR]->getName());
+    if (mPSystem)             mPSystem->setVisible(false);
+    mNode[NPC_SELECTION] = 0;
+    mNode[NPC_LIFEBAR] = 0;
 }
