@@ -20,9 +20,7 @@ Behaviourlist = {}
 -- ai:GetBehaviourlist() (see end of file for example). It can of course
 -- also be constructed from scratch if one is careful about the table
 -- layout.
---
--- TODO: also accept ai objects, mobs and AIObjects (requires extending 
--- "type" to handle our special types, if that is advicable)
+-- source can also be a GameObject (a monster) or an AI object
 function Behaviourlist:New(source)
     local obj = {}
     
@@ -39,8 +37,16 @@ function Behaviourlist:New(source)
         }
     )
 
-    assert(type(source) == "table", "Behaviourlist:New() currently needs a table created with ai:GetBehaviourlist()")
-    obj["behaviourtable"] = source
+    local t = type(source)
+    if t == "table" then
+        obj["behaviourtable"] = source
+    elseif t == "AI" then
+        obj["behaviourtable"] = source:GetBehaviourlist()
+    elseif t == "GameObject" and source.type == game.TYPE_MONSTER then
+        obj["behaviourtable"] = source:GetAI():GetBehaviourlist()
+    else
+        error("Behaviourlist:New() currently needs a table created with ai:GetBehaviourlist(), a monster object or an ai object as input.")
+    end
 
     return obj
 end
