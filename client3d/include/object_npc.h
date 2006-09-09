@@ -45,7 +45,7 @@ public:
     sPicture;
     enum
     {
-        ME /**< ME (mIndex == 0) is our Hero. **/
+        HERO /**< ME (mIndex == 0) is our Hero. **/
     };
     enum
     {
@@ -65,7 +65,8 @@ public:
     ObjectNPC(sObject &obj, bool spawn);
     virtual ~ObjectNPC();
     virtual void freeRecources();
-    virtual void update(const FrameEvent& event);
+    virtual bool update(const FrameEvent& event);
+    void movePosition(int dx, int dz);
     void moveToDistantTile(SubPos2D pos, int precision =0);
     void faceToTile(SubPos2D pos);
     void turning(Real turn, bool cursorTurn);
@@ -76,10 +77,15 @@ public:
     {
         return mBoundingRadius;
     }
-    int  getHealth()
+    int getHealth()
     {
         return mActHP;
     }
+	Real getHealthPercentage()
+    {
+        return Real(mActHP) / Real(mMaxHP);
+    }
+
     bool isMoving()
     {
         return mAutoMoving;

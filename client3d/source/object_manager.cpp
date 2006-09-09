@@ -221,7 +221,7 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
     }
     for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
     {
-        mvObject_npc[i]->update(evt);
+        if (!mvObject_npc[i]->update(evt)) delObjectNPC(i);
     }
 
     /*
@@ -293,7 +293,7 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
                 pos.z = val1 >> 8;
                 pos.subX = val2 & 0xff;
                 pos.subZ = val2 >> 8;
-                mvObject_npc[ObjectNPC::ME]->moveToDistantTile(pos);
+                mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
             }
             if (action == OBJ_TEXTURE    ) mvObject_npc[id]->Equip->setTexture(val1, val2);
             if (action == OBJ_HIT        ) mvObject_npc[id]->setDamage(val1);
@@ -310,13 +310,28 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 }
 
 //================================================================================================
-///
+// Delete a NPC-Object.
 //================================================================================================
-void ObjectManager::delObject(int )
-{}
+void ObjectManager::delObjectNPC(int index)
+{
+    if (mSelectedObject == index)
+        mSelectedObject =-1;
+	else if (mSelectedObject > index)
+		--mSelectedObject;
+ 
+	// nachdem ein object gelöscht wurde stimmt mSelectednicht mehr.
+	// mSelected-- wenn es größer war als index????
+	
+	mvObject_npc[index]->freeRecources();
+    delete mvObject_npc[index];
+    std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin();
+    while (index--) ++i;
+    mvObject_npc.erase(i);
+	
+}
 
 //================================================================================================
-///
+//
 //================================================================================================
 void ObjectManager::freeRecources()
 {
@@ -340,21 +355,27 @@ void ObjectManager::freeRecources()
 //================================================================================================
 void ObjectManager::selectNPC(MovableObject *mob)
 {
-    if (mvObject_npc[ObjectNPC::ME]->isMoving()) return;
-    if (!mob)
-    {   // No npc was selected.
-        if  (mSelectedFriendly < 0)
+    if (mvObject_npc[ObjectNPC::HERO]->isMoving()) return;
+    if (mvObject_npc[ObjectNPC::HERO]->getHealth() <= 0) return;
+
+	// If we are already attacking a mob - every mouseclick attacks again.
+	if (!mob)
+    {   
+		if  (mSelectedObject > 0 && mSelectedFriendly < 0)
         {
-            mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
-            mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[mSelectedObject]);
-        }
-        return;
+/*
+			// This will crash after an NPC-Object has deleted, because the vector array is not smaller.
+		mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
+            mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
+*/
+			}
+		return;
     }
 
     // Cut the "Obj_" substring from the entity name.
     String strObject = mob->getName();
     strObject.replace(0, strObject.find("_")+1,"");
-    int selectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
+    unsigned int selectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
     int selectedType   = StringConverter::parseInt(strObject.substr(0,strObject.find("_")));
     switch (selectedType)
     {
@@ -366,13 +387,20 @@ void ObjectManager::selectNPC(MovableObject *mob)
 
         case OBJECT_NPC:
         {
+			unsigned int index =0;
+		    for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
+			{
+				if ((*i)->getIndex() == selectedObject) break;
+				++index;
+			}
+			selectedObject = index;
             // Was already selected before (= do some action on the selected NPC).
             if (selectedObject == mSelectedObject)
             {
                 if (mSelectedFriendly < 0)
                 {
                     mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
-                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]);
+                    mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);
                 }
             }
             // A new NPC was selected.
@@ -383,30 +411,38 @@ void ObjectManager::selectNPC(MovableObject *mob)
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(buffer));
                 mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
                 mSelectedObject = selectedObject; // must be set before ::selectNPC
-                ObjectVisuals::getSingleton().selectNPC(mob, mSelectedFriendly);
+                ObjectVisuals::getSingleton().selectNPC(mvObject_npc[selectedObject]);
                 if (mSelectedFriendly < 0)
                 {
-                    // mvObject_npc[ObjectNPC::ME]->raiseWeapon(true);
-                    mvObject_npc[ObjectNPC::ME]->attackShortRange(mvObject_npc[selectedObject]);
+                    // mvObject_npc[ObjectNPC::HERO]->raiseWeapon(true);
+                    mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);
                 }
                 else
                 {
-                    // mvObject_npc[ObjectNPC::ME]->raiseWeapon(false);
+                    // mvObject_npc[ObjectNPC::HERO]->raiseWeapon(false);
                 }
             }
-            //mvObject_player[ObjectPlayer::ME]->stopMovement();
+            //mvObject_player[ObjectPlayer::HERO]->stopMovement();
             break;
         }
 
         case OBJECT_PLAYER:
         {
+			unsigned int index =0;
+		    for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
+			{
+				if ((*i)->getIndex() == selectedObject) break;
+				++index;
+			}
+			selectedObject = index;
             if (selectedType != mSelectedType)
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(mvObject_npc[selectedObject]->getNickName()).c_str());
-                if (selectedObject == ObjectNPC::ME)
-                    ObjectVisuals::getSingleton().selectNPC(mob, mvObject_npc[ObjectNPC::ME]->getFriendly(), false);
+                if (selectedObject == ObjectNPC::HERO)
+                    ObjectVisuals::getSingleton().selectNPC(mvObject_npc[ObjectNPC::HERO], false);
                 else
-                    ObjectVisuals::getSingleton().selectNPC(mob, mvObject_npc[selectedObject]->getFriendly());
+                    ObjectVisuals::getSingleton().selectNPC(mvObject_npc[selectedObject]);
+
             }
             break;
         }
@@ -423,9 +459,9 @@ void ObjectManager::selectNPC(MovableObject *mob)
 //================================================================================================
 void ObjectManager::targetObjectFacingPlayer()
 {
-//    SubPos2D pos = mvObject_player[ObjectPlayer::ME]->getTileScrollPos();
+//    SubPos2D pos = mvObject_player[ObjectPlayer::HERO]->getTileScrollPos();
 //    mvObject_npc[mSelectedObject]->faceToTile(pos.x, pos.z);
-    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::ME]->getFacing() -180, false);
+    mvObject_npc[mSelectedObject]->turning(mvObject_npc[ObjectNPC::HERO]->getFacing() -180, false);
 }
 
 //================================================================================================
@@ -433,8 +469,9 @@ void ObjectManager::targetObjectFacingPlayer()
 //================================================================================================
 void ObjectManager::targetObjectAttackPlayer()
 {
-    //mvObject_npc[mSelectedObject]->attackShortRange(mvObject_player[ObjectPlayer::ME]->getNode());
-    mvObject_npc[mSelectedObject]->attack();
+    //mvObject_npc[mSelectedObject]->attackShortRange(mvObject_player[ObjectPlayer::HERO]->getNode());
+	if (mSelectedObject <0) return;
+	mvObject_npc[mSelectedObject]->attack();
     targetObjectFacingPlayer();
 }
 

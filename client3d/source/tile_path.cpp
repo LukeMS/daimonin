@@ -96,26 +96,15 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
     // Under the some circumstances no path needs to be generated.
     if (posStart == posDest)
     {
-//        if      (pathLocation > 0) pathStatus = true;
-//        else if (pathLocation== 0) pathStatus = false;
-//        return pathStatus;
         return false;
     }
 
     // Is target subtile unwalkable?
-    /*
-        if (!TileManager::getSingleton().getWalkablePos(targetX, targetY))
-        {
-            xPath = posStart.subX;
-            yPath = posStart.subZ;
-            pathStatus = false;
-            return false;
-        }
-    */
+    if (!TileManager::getSingleton().getWalkablePos(posDest.subX, posDest.subZ)) return false;
+
     memset(whichList, 0, sizeof(whichList));
-    onClosedList = 12;
-    onOpenList  = onClosedList-1;
-    pathLength  = 0;
+    onClosedList= 1;
+    onOpenList  = 2;
     pathLocation= 0;
     Gcost[posStart.subX][posStart.subZ] = 0; //reset starting square's G value to 0
 
@@ -142,7 +131,7 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
         // Open List = Binary Heap: Delete this item from the open list, which
         //  is maintained as a binary heap. For more information on binary heaps, see:
         // http://www.policyalmanac.org/games/binaryHeaps.htm
-        numberOfOpenListItems = numberOfOpenListItems - 1;//reduce number of open list items by 1
+        --numberOfOpenListItems;
 
         // Delete the top item in binary heap and reorder the heap, with the lowest F cost item rising to the top.
         openList[1] = openList[numberOfOpenListItems+1];//move the last item in the heap up to slot #1
@@ -274,7 +263,7 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
                         else
                             break;
                     }
-                    numberOfOpenListItems = numberOfOpenListItems+1;//add one to the number of items in the heap
+                    ++numberOfOpenListItems;
 
                     //Change whichList to show that the new item is on the open list.
                     whichList[a][b] = onOpenList;
@@ -334,7 +323,7 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
         }//for (b = parentYval-1; b <= parentYval+1; b++){
 
         //If target is added to open list then path has been found.
-        if (whichList[posDest.subX + precision][posDest.subZ + precision] == onOpenList)
+        if (whichList[posDest.subX][posDest.subZ] == onOpenList)
         {
             pathStatus = true;
             break;
@@ -346,9 +335,10 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
         pathStatus = false;
         return pathStatus;
     }
+
     //10.Save the path if it exists.
-    if (pathStatus == true)
-    {
+	pathLength  = 0;
+    if (!pathStatus) return false;
         //a.Working backwards from the target to the starting location by checking
         // each cell's parent, figure out the length of the path.
         pathX = posDest.subX;
@@ -364,10 +354,9 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
             ++pathLength;
         }
         while (pathX != posStart.subX || pathY != posStart.subZ);
-        //b.Resize the data bank to the right size in bytes
+		//b.Resize the data bank to the right size in bytes
         delete[] pathBank;
         pathBank = new int[pathLength*8];
-
         //c. Now copy the path information over to the databank. Since we are
         // working backwards from the target to the start location, we copy
         // the information to the data bank in reverse order. The result is
@@ -389,7 +378,6 @@ bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
         while (pathX != posStart.subX || pathY != posStart.subZ);
         //11.Read the first path step into xPath/yPath arrays
         ReadPath();
-    }
     return pathStatus;
 }
 
