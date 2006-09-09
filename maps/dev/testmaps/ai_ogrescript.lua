@@ -18,8 +18,16 @@ function compliment_func()
     modify_friendship(event.me, event.activator, 200)
 end
 
+function dump_func()
+    ai = event.me:GetAI():GetBehaviourlist()
+    ds=DataStore('example_store')
+    ds:Set('ai', ai)
+    _data_store.save()
+end
+
 tl = TopicList()
 tl:AddTopics("insult", insult_func)
 tl:AddTopics("compliment", compliment_func)
+tl:AddTopics("dump", dump_func)
 tl:SetDefault("You can ^insult^ or ^compliment^ me to change my attitude towards you")
 tl:CheckMessage(event)
