@@ -69,6 +69,20 @@ void cleanup_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht)
     }
 }
 
+/** Completely clear list of known mobs or objects */
+void clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht)
+{
+    struct mob_known_obj   *tmp;
+    /* TODO: can be optimized (clear hashtable, return all chunks, set list
+     * pointers to NULL) */
+    for (tmp = *first; tmp; tmp = tmp->next)
+    {
+        /* Don't forget about our owner */
+        if(op->owner != tmp->obj || op->owner_count != tmp->obj->count)
+            remove_mob_known(tmp, first, ht);
+    }
+}
+
 /** Update known_obj fields to indicate new knowledge about an object or mob. 
  * @param known the already known object we have new info about
  * @param delta_friendship friendship change towards other (for example if other is helping or attacking npc)

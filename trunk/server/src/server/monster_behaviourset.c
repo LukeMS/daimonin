@@ -41,9 +41,22 @@ static struct mob_behaviourset *generated_behavioursets = NULL;
 /* List of behavioursets parsed by parse_behaviourconfig() */
 static struct mob_behaviourset *parsed_behavioursets    = NULL;
 
+static int check_behaviour_parameters(struct mob_behaviour *behaviour);
+
 /*
  * Memory management functions
  */
+
+/** Dereference and free a behaviourset */
+static void free_behaviourset(struct mob_behaviourset *set)
+{
+    if(set)
+    {
+        set->refcount--;
+        if (set->refcount == 0)
+            return_poolchunk(set, pool_mob_behaviourset);
+    }
+}
 
 /* Destructors for the mm system */
 void cleanup_mob_known_obj(struct mob_known_obj *data)
@@ -113,7 +126,6 @@ void cleanup_behaviourset(struct mob_behaviourset *set)
 void cleanup_mob_data(struct mobdata *data)
 {
     struct mob_known_obj       *tmp;
-    struct mob_behaviourset    *set;
 
     if (data->pathfinding.path)
         free_path(data->pathfinding.path);
@@ -127,10 +139,7 @@ void cleanup_mob_data(struct mobdata *data)
     if(data->known_objs_ht)
         hashtable_delete(data->known_objs_ht);
 
-    set = data->behaviours;
-    set->refcount--;
-    if (set->refcount == 0)
-        return_poolchunk(set, pool_mob_behaviourset);
+    free_behaviourset(data->behaviours);
 }
 
 /* Initializator for the mm system */
@@ -278,9 +287,11 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     set->definition = NULL;
     set->bghash = hash;
     set->next = set->prev = NULL;
-    set->attitudes = NULL;
+    set->attitudes = NULL; /* By keeping this NULL we can fake default
+                              values in ai_attitudes() and save us some
+                              time for the vast majority of objects */
     set->groups = NULL;
-    set->attractions = NULL;
+    set->attractions = NULL; 
 
     /* Insert in list */
     set->next = generated_behavioursets;
@@ -289,29 +300,42 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     generated_behavioursets = set;
 
     /* Processes */
-    last = set->behaviours[BEHAVIOURCLASS_PROCESSES] = init_behaviour(BEHAVIOURCLASS_PROCESSES,
-                                                                      AIBEHAVIOUR_LOOK_FOR_OTHER_MOBS);
-    last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_FRIENDSHIP);
+    last = set->behaviours[BEHAVIOURCLASS_PROCESSES] = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_LOOK_FOR_OTHER_MOBS);
+    /* We initialize this for completeness, even though we use default values */
+    last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_FRIENDSHIP);    
+    last->parameters[AIPARAM_FRIENDSHIP_SAME_ALIGNMENT].intvalue = (long)behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_FRIENDSHIP].params[AIPARAM_FRIENDSHIP_SAME_ALIGNMENT].defaultvalue;
+    last->parameters[AIPARAM_FRIENDSHIP_SAME_ALIGNMENT].flags |= AI_PARAM_PRESENT;
+    last->parameters[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].intvalue = (long)behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_FRIENDSHIP].params[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].defaultvalue;
+    last->parameters[AIPARAM_FRIENDSHIP_OPPOSITE_ALIGNMENT].flags |= AI_PARAM_PRESENT;
+    check_behaviour_parameters(last);
+
     last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_ATTRACTION);
+    check_behaviour_parameters(last);
     if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
     {
         last = last->next = init_behaviour(BEHAVIOURCLASS_PROCESSES, AIBEHAVIOUR_CHOOSE_ENEMY);
         last->parameters[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].intvalue = (long)
             behaviourclasses[BEHAVIOURCLASS_PROCESSES].behaviours[AIBEHAVIOUR_CHOOSE_ENEMY].params[AIPARAM_CHOOSE_ENEMY_ANTILURE_DISTANCE].defaultvalue;
+        check_behaviour_parameters(last);
     }
 
     /* Moves */
     if (QUERY_FLAG(op, FLAG_STAND_STILL))
+    {
         last = set->behaviours[BEHAVIOURCLASS_MOVES] = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_STAND_STILL);
+        check_behaviour_parameters(last);
+    }
     else
     {
         last = set->behaviours[BEHAVIOURCLASS_MOVES] = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SLEEP);
+        check_behaviour_parameters(last);
 
         if (op->run_away)
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_RUN_AWAY_FROM_ENEMY);
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].intvalue = op->run_away;
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].flags |= AI_PARAM_PRESENT;
+            check_behaviour_parameters(last);
         }
 
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
@@ -325,15 +349,17 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                     behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (long)
                     behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
+                check_behaviour_parameters(last);
 
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);
-
+                check_behaviour_parameters(last);
             }
             
             /* Behaviours for melee-only fighters */
             if(!QUERY_FLAG(op, FLAG_READY_SPELL) && !QUERY_FLAG(op, FLAG_READY_BOW))
             {
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_AVOID_LINE_OF_FIRE);
+                check_behaviour_parameters(last);
             }
                 
             /* TODO: any behaviours for melee figheters
@@ -343,11 +369,17 @@ struct mob_behaviourset * generate_behaviourset(object *op)
             */
 
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY);
+            check_behaviour_parameters(last);
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY_LAST_KNOWN_POS);
+            check_behaviour_parameters(last);
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SEARCH_FOR_LOST_ENEMY);
+            check_behaviour_parameters(last);
         }
         if(find_waypoint(op, NULL))
+        {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_WAYPOINT);
+            check_behaviour_parameters(last);
+        }
         if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_RANDOMLY);
@@ -361,8 +393,13 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue = op->item_level;
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags |= AI_PARAM_PRESENT;
             }
-        } else
+            check_behaviour_parameters(last);
+        }
+        else
+        {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_HOME);
+            check_behaviour_parameters(last);
+        }
     }
 
     /* Actions */
@@ -394,6 +431,47 @@ static int parse_stringint_parameter(struct mob_behaviour_param *param, const ch
         return 0;
     } else
         return -1;
+}
+
+/** Ensures all mandatory parameters were supplied, and
+ * fills in default values for non-present optional parameters */
+static int check_behaviour_parameters(struct mob_behaviour *behaviour)
+{
+    int i;
+
+    for (i = 0; i < behaviour->declaration->nrof_params; i++)
+    {
+        if (!behaviour->parameters[i].flags & AI_PARAM_PRESENT)
+        {
+            if (behaviour->declaration->params[i].attribs & AI_MANDATORY_PARAM)
+            {
+                LOG(llevBug, "BUG: mandatory parameter %s not given for behaviour %s\n",
+                    behaviour->declaration->params[i].name, behaviour->declaration->name);
+                cleanup_behaviour_parameters(behaviour);
+                behaviour->parameters = NULL;
+                return -1;
+            }
+            else
+            {
+                switch (behaviour->declaration->params[i].type)
+                {
+                    case AI_INTEGER_TYPE:
+                      behaviour->parameters[i].intvalue = (long) behaviour->declaration->params[i].defaultvalue;
+                      break;
+                    case AI_STRING_TYPE:
+                      behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
+                      break;
+                    case AI_STRINGINT_TYPE:
+//                      LOG(llevBug, "Loading default STRINGINT parameter for %s:%s\n", behaviour->declaration->name, behaviour->declaration->params[i].name);
+                      if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
+                          LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n", behaviour->declaration->params[i].defaultvalue, behaviour->declaration->name, behaviour->declaration->params[i].name);
+                      break;
+                }
+            }
+        }
+    }
+
+    return 0;
 }
 
 /* Parse a single parameter=value pair into a
@@ -501,41 +579,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
         }
     }
 
-    /* Finally, make sure all mandatory parameters were supplied, and
-     * fill in default values for non-present optional parameters */
-    for (i = 0; i < behaviour->declaration->nrof_params; i++)
-    {
-        if (!behaviour->parameters[i].flags & AI_PARAM_PRESENT)
-        {
-            if (behaviour->declaration->params[i].attribs & AI_MANDATORY_PARAM)
-            {
-                LOG(llevBug, "BUG: mandatory parameter %s not given for behaviour %s\n",
-                    behaviour->declaration->params[i].name, behaviour->declaration->name);
-                cleanup_behaviour_parameters(behaviour);
-                behaviour->parameters = NULL;
-                return -1;
-            }
-            else
-            {
-                switch (behaviour->declaration->params[i].type)
-                {
-                    case AI_INTEGER_TYPE:
-                      behaviour->parameters[i].intvalue = (long) behaviour->declaration->params[i].defaultvalue;
-                      break;
-                    case AI_STRING_TYPE:
-                      behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
-                      break;
-                    case AI_STRINGINT_TYPE:
-//                      LOG(llevBug, "Loading default STRINGINT parameter for %s:%s\n", behaviour->declaration->name, behaviour->declaration->params[i].name);
-                      if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
-                          LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n", valuebuf, behaviour->declaration->name, behaviour->declaration->params[i].name);
-                      break;
-                }
-            }
-        }
-    }
-
-    return 0;
+    return check_behaviour_parameters(behaviour);
 }
 
 static struct mob_behaviour *setup_plugin_behaviour(
@@ -855,4 +899,17 @@ struct mob_behaviourset * setup_behaviours(object *op)
     }
 
     return generate_behaviourset(op);
+}
+
+/** Free the mob's current behaviourset and generate a new one */
+void reload_behaviours(object *op)
+{    
+    if(MOB_DATA(op) == NULL)
+    {
+        LOG(llevBug, "BUG: reload_behaviours(op='%s') called and MOB_DATA(op) == NULL\n", STRING_OBJ_NAME(op));
+        return;
+    }
+
+    free_behaviourset(MOB_DATA(op)->behaviours);
+    MOB_DATA(op)->behaviours = setup_behaviours(op);
 }
