@@ -78,10 +78,15 @@ struct plugin_hooklist  hooklist    =
 	new_save_map,
 	ready_map_name,
 	create_unique_path,
+    reload_behaviours,
+    clear_mob_knowns,
+    hashtable_new, hashtable_delete, hashtable_clear, 
+    hashtable_find, hashtable_insert, hashtable_erase, 
+    hashtable_iterator, hashtable_iterator_next,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
-    &shstr_cons
+    &shstr_cons, behaviourclasses
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];

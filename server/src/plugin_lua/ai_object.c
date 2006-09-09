@@ -28,6 +28,10 @@
 #include <ai_object.h>
 
 /* Global data */
+static int AI_ForgetKnownMobs(lua_State *L);
+static int AI_ForgetKnownObjects(lua_State *L);
+static int AI_ReloadBehaviourlist(lua_State *L);
+static int AI_GetBehaviourlist(lua_State *L);
 
 /* Available python methods for the GameObject object */
 static struct method_decl   AI_methods[]            =
@@ -49,6 +53,12 @@ static struct method_decl   AI_methods[]            =
     {"LastSeen",               (lua_CFunction) AI_LastSeen},
     {"GetKnownMobs",           (lua_CFunction) AI_GetKnownMobs},
     {"GetKnownObjects",        (lua_CFunction) AI_GetKnownObjects},
+    {"ForgetKnownMobs",        (lua_CFunction) AI_ForgetKnownMobs},
+    {"ForgetKnownObjects",     (lua_CFunction) AI_ForgetKnownObjects},
+
+    /* Functions for manipulating the behaviourlist */
+    {"GetBehaviourlist",       (lua_CFunction) AI_GetBehaviourlist},
+    {"ReloadBehaviourlist",    (lua_CFunction) AI_ReloadBehaviourlist},
 
     {NULL, NULL}
 };
@@ -72,6 +82,9 @@ static struct mob_known_obj *find_known_obj(object *source, object *target)
     for (tmp = MOB_DATA(source)->known_mobs; tmp; tmp = tmp->next)
         if (tmp->obj == target && tmp->obj_count == target->count)
             return tmp;
+
+    if(MOB_DATA(source)->known_objs_ht)
+        return hooks->hashtable_find(MOB_DATA(source)->known_objs_ht, target);
 
     return NULL;
 }
@@ -458,6 +471,214 @@ static int AI_GetKnownObjects(lua_State *L)
     return 1;
 }
 
+/*****************************************************************************/
+/* Name   : AI_ForgetKnownMobs                                               */
+/* Lua    : ai:ForgetKnownMobs()                                             */
+/* Info   : Clears the AIs memory of any registered mobs, npcs or players)   */
+/* Version: Introduced in beta 4 pre3                                        */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int AI_ForgetKnownMobs(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "A", &self);
+
+    hooks->clear_mob_knowns(self->data.object, &MOB_DATA(self->data.object)->known_mobs, NULL);
+
+    return 0;
+}
+
+/*****************************************************************************/
+/* Name   : AI_ForgetKnownObjects                                            */
+/* Lua    : ai:ForgetKnownObjects()                                          */
+/* Info   : Clears the AIs memory of any registered objects                  */
+/*          (not mobs/npcs or players)                                          */
+/* Version: Introduced in beta 4 pre3                                        */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int AI_ForgetKnownObjects(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "A", &self);
+
+    hooks->clear_mob_knowns(self->data.object, &MOB_DATA(self->data.object)->known_objs, MOB_DATA(self->data.object)->known_objs_ht);
+
+    return 0;
+}
+
+/*****************************************************************************/
+/* Name   : AI_GetBehaviourlist                                              */
+/* Lua    : ai:GetBehaviourlist()                                            */
+/* Info   : Returns a table representation of the behaviourlist (all         */
+/*          behaviours and their parameters)                                 */
+/*          To visualize the layout of the table you can try something like  */
+/*          print(DataStore.Serialize(ai:GetBehaviourlist()))                */
+/* Version: Introduced in beta 4 pre3                                        */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int AI_GetBehaviourlist(lua_State *L)
+{
+    lua_object *self;
+    int class;
+    int super_tbl_idx, class_tbl_idx, behaviour_tbl_idx, parameter_tbl_idx;
+    int string_lower_idx;
+
+    get_lua_args(L, "A", &self);
+
+    /* Get hold of string.lower */
+    lua_pushliteral(L, "string");
+    lua_gettable(L, LUA_GLOBALSINDEX);
+    lua_pushliteral(L, "lower");
+    lua_gettable(L, -2);
+    string_lower_idx = lua_gettop(L);
+
+    /* Create the supertable that encapsulates all info */
+    lua_newtable(L);
+    super_tbl_idx = lua_gettop(L);
+
+    for(class = 0; class < NROF_BEHAVIOURCLASSES; class++)
+    {
+        struct mob_behaviour *behaviour;
+        int behaviour_idx = 1;
+    
+        /* Create the table for this class */
+        lua_pushvalue(L, string_lower_idx);
+        lua_pushstring(L, hooks->behaviourclasses[class].name); /* Key */
+        lua_call(L, 1, 1);
+        lua_newtable(L);
+        class_tbl_idx = lua_gettop(L);
+
+        for(behaviour = MOB_DATA(self->data.object)->behaviours->behaviours[class]; behaviour; behaviour = behaviour->next)
+        {
+            int param;
+            
+            /* Create the table for this behaviour (key is both idx and name) */
+            lua_pushvalue(L, string_lower_idx);
+            lua_pushstring(L, behaviour->declaration->name);
+            lua_call(L, 1, 1);
+            lua_newtable(L);
+            behaviour_tbl_idx = lua_gettop(L);
+
+            /* Insert the behaviour name */
+            lua_pushliteral(L, "name");
+            lua_pushvalue(L, -3); /* behaviour name, again */
+            lua_rawset(L, behaviour_tbl_idx);
+
+            /* Insert the parameter table */
+            lua_pushliteral(L, "parameters");
+            lua_newtable(L);
+            parameter_tbl_idx = lua_gettop(L);
+
+            for(param = 0; param < behaviour->declaration->nrof_params; param++)
+            {
+                struct mob_behaviour_param *value;
+                int parameter_idx = 1;
+
+                /* Parameter name and values */
+                lua_pushvalue(L, string_lower_idx);
+                lua_pushstring(L, behaviour->declaration->params[param].name);
+                lua_call(L, 1, 1);
+                lua_newtable(L);
+
+                for(value = &behaviour->parameters[param]; value; value = value->next)
+                {
+                    /* Skip optional multi parameters that wasn't given. Those are usually considered 
+                     * empty, not default */
+                    if((behaviour->declaration->params[param].attribs & AI_MANDATORY_PARAM) == 0 &&
+                            (behaviour->declaration->params[param].attribs & AI_MULTI_PARAM) &&
+                            (value->flags & AI_PARAM_PRESENT) == 0)
+                        continue;
+
+                    if(behaviour->declaration->params[param].type == AI_INTEGER_TYPE)
+                        lua_pushnumber(L, value->intvalue);
+                    else if(behaviour->declaration->params[param].type == AI_STRING_TYPE)
+                        lua_pushstring(L, value->stringvalue);
+                    else if(behaviour->declaration->params[param].type == AI_STRINGINT_TYPE)
+                    {
+                        char buf[HUGE_BUF];
+                        sprintf(buf, "%s:%ld", value->stringvalue, value->intvalue);
+                        lua_pushstring(L, buf);
+                    } else 
+                        lua_pushnil(L); /* Just to avoid stack crashes */
+                    lua_rawseti(L, -2, parameter_idx++);
+                }
+
+                /* Add this parameter to the behaviour parameter table */
+                lua_rawset(L, parameter_tbl_idx);
+            }
+
+            /* Insert parameter table in behaviour table */
+            lua_rawset(L, behaviour_tbl_idx);
+
+            /* key = index, value = behaviour table */
+            lua_pushvalue(L, -1); /* Duplicate behaviour table */
+            lua_rawseti(L, class_tbl_idx, behaviour_idx++);
+            
+            /* key = name, value = behaviour table */
+            lua_rawset(L, class_tbl_idx);
+        }
+
+        /* Add class table to supertable */
+        lua_rawset(L, super_tbl_idx);
+    }
+
+    /* Drop string.lower */
+    lua_remove(L, string_lower_idx);
+
+/* Example output (shortened, and dumped as lua table constructor):
+  ai = {
+    ["processes"] = {
+      [1] = {
+        ["name"] = "look_for_other_mobs",
+        ["parameters"] = {},
+      },
+      [2] = {
+        ["name"] = "friendship",
+        ["parameters"] = {
+          ["arch"] = { },
+          ["same_alignment"] = { [1] = 100, },
+          ["player"] = { [1] = 0, },
+          ["opposite_alignment"] = { [1] = -100, },
+          ["name"] = { },
+          <snip>
+        },
+      },
+      ["look_for_other_mobs"] = ai["processes"][1],
+      ["friendship"] = ai["processes"][2],
+    },
+    ["moves"] = {
+        <snip>
+    }
+    ["actions"] = {
+        <snip>
+    },
+  }
+ */
+
+    return 1; /* One return value on the stack */
+}
+
+/*****************************************************************************/
+/* Name   : AI_ReloadBehaviourlist                                           */
+/* Lua    : ai:ReloadBehaviourlist()                                         */
+/* Info   : Recreates the AI from a new AI object in its mobs inventory      */
+/*          (if there's no such AI object, defaults are used as usual)       */
+/* Version: Introduced in beta 4 pre3                                        */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int AI_ReloadBehaviourlist(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "A", &self);
+
+    hooks->reload_behaviours(self->data.object);
+
+    return 0;
+}
+
 /* FUNCTIONEND */
 
 /****************************************************************************/
@@ -482,7 +703,6 @@ static int AI_isValid(lua_State *L, lua_object *obj)
 {
     return obj->data.object->count == obj->tag;
 }
-
 
 lua_class   AI  =
 {

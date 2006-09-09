@@ -401,6 +401,7 @@ void						dump_abilities(void);
 void						print_monsters(void);
 /* monster_memory.c */
 void                        cleanup_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
+void                        clear_mob_knowns(object *op, struct mob_known_obj **first, hashtable *ht);
 struct mob_known_obj       *update_npc_knowledge(object *npc, object *other, int delta_friendship, int delta_attraction);
 void                        update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int delta_attraction);
 struct                      mob_known_obj *register_npc_known_obj(object *npc, object *other, int friendship, int attraction);
@@ -415,6 +416,7 @@ void                        cleanup_behaviourset(struct mob_behaviourset *data);
 void                        cleanup_mob_known_obj(struct mob_known_obj *data);
 int                         can_hit(object *ob1, object *ob2, rv_vector *rv);
 void                        cleanup_all_behavioursets();
+void                        reload_behaviours(object *op);
 /* monster_behaviours.c */
 int                         get_friendship(object *op, object *obj);
 int                         get_attitude(object *op, object *obj);

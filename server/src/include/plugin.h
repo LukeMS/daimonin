@@ -332,6 +332,17 @@ struct plugin_hooklist
 	int (*new_save_map)(mapstruct *m, int flag);
 	mapstruct* (*ready_map_name)(const char *name_path, int flags, object *op);
 	char* (*create_unique_path)(const char *name, const object *op);
+    void  (*reload_behaviours)(object *op);
+    void  (*clear_mob_knowns)(object *op, struct mob_known_obj **first, hashtable *ht);
+    
+    hashtable *(*hashtable_new)(hashtable_size_t (*hash_func)(const hashtable_const_key_t), int (*equals_func)(const hashtable_const_key_t, const hashtable_const_key_t), hashtable_const_key_t deleted_key, hashtable_const_key_t empty_key, hashtable_size_t num_buckets);
+    void (*hashtable_delete)(hashtable *ht);
+    void (*hashtable_clear)(hashtable *ht);
+    hashtable_value_t (*hashtable_find)(const hashtable *const ht, const hashtable_const_key_t key);
+    int (*hashtable_insert)(hashtable *const ht, const hashtable_const_key_t key, const hashtable_value_t obj);
+    int (*hashtable_erase)(hashtable *const ht, const hashtable_const_key_t key);
+    hashtable_iterator_t (*hashtable_iterator)(const hashtable *const ht);
+    hashtable_iterator_t (*hashtable_iterator_next)(const hashtable *const ht, hashtable_iterator_t i);
 
     /* Global variables */
     Animations **animations;
@@ -339,6 +350,7 @@ struct plugin_hooklist
     int *global_darkness_table;
     archetype **coins_arch;
     struct shstr_constants *shstr_cons;
+    struct behaviourclass_decl *behaviourclasses;
 };
 
 /*****************************************************************************/
