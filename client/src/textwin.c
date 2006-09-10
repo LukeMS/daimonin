@@ -188,12 +188,12 @@ void draw_info(char *str, int flags)
 {
     static int  key_start   = 0;
     static int  key_count   = 0;
-    int         i, len, a, media = 0, color, mode;
-    Boolean     gflag;
+    int         i, len, a, color, mode;
     int         winlen      = 239;
     char        buf[4096];
     char       *text;
     int         actWin, z;
+    char       *tag;
 
     /* Create a modifiable version of str */
     char *buf2 = malloc(strlen(str)+1);
@@ -212,33 +212,39 @@ void draw_info(char *str, int flags)
         if (buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
             buf2[i] = 32;
     }
+    
+    /* We will mask out text between § and end-of-line */
+    while((tag = strchr(buf2, '§')))
+    {        
+        char *tagend = strchr(tag, 0x0a);
+
+        if(tagend == NULL)
+            tagend = tag + strlen(tag);
+
+        if(tagend > tag+1)
+        {
+            char savetagend;
+            savetagend = *tagend;
+            *tagend = '\0';
+            
+            init_media_tag(tag);
+            *tagend = savetagend;
+            *tag = '\0';
+        }
+
+        /* Shift the string */
+        memmove(tag, tagend, strlen(tag+1));
+    }
+
     /*
      * ok, here we must cut a string to make it fit in window
      * for it we must add the char length
      * we assume this standard font in the windows...
      */
     len = 0;
-    gflag = FALSE;
     for (a = i = 0; ; i++)
     {
-        if (buf2[i] == '§' || gflag)
-        {
-            if (buf2[i] == '§')
-            {
-                media = i;
-                gflag = TRUE;
-            }
-            else
-            {
-                if (buf2[i] == 0x0a)
-                {
-                    buf2[i] = 0;
-                    init_media_tag(&buf2[media]);
-                    gflag = FALSE;
-                }
-            }
-            continue;
-        }
+
         if (buf2[i] != '^')
             len += SystemFont.c[(int) (buf2[i])].w + SystemFont.char_offset;
 
