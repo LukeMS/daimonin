@@ -713,7 +713,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                                 * don't confuse it with FLAG_SCARED
                                 */
 #define FLAG_PASS_THRU      46 /* Objects with can_pass_thru can pass
-                                   * thru this object as if it wasn't there
+                                * thru this object as if it wasn't there
                                 */
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
@@ -766,10 +766,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */
 
 #define FLAG_IS_HILLY       88 /* Item is hilly/mountain terrain */
-#define FLAG_LEVITATE        89    /* levitating... similiar to flying */
+#define FLAG_LEVITATE       89 /* levitating... similiar to flying */
 #define FLAG_READY_WEAPON   90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT 91 /* If set, item cannot be identified w/ a skill */
-#define FLAG_USE_DMG_INFO    92 /* used for asynchron dmg of AoE spells */
+#define FLAG_USE_DMG_INFO   92 /* used for asynchron dmg of AoE spells */
 #define FLAG_SEE_IN_DARK    93 /* if set ob not effected by darkness */
 #define FLAG_IS_CAULDRON    94 /* container can make alchemical stuff */
 #define FLAG_DUST           95 /* item is a 'powder', effects throwing */
@@ -777,8 +777,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* Start of values in flags[3] */
 #define FLAG_NO_STEAL           96 /* Item can't be stolen */
 #define FLAG_ONE_HIT            97 /* Monster can only hit once before going
-                                        * away (replaces ghosthit)
-                                        */
+                                    * away (replaces ghosthit)
+                                    */
 #define FLAG_CLIENT_SENT        98 /* THIS IS A DEBUG FLAG ONLY.  We use it to
                                     * detect cases were the server is trying
                                     * to send an upditem when we have not
