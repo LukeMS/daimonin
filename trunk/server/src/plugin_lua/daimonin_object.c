@@ -2441,7 +2441,7 @@ static int GameObject_Destruct(lua_State *L)
 /*          Returns true if the object was destroyed in the move             */
 /* Version: map parameter added in beta 4 pre3 (original 2-parameter version */
 /*          still supported).                                                */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 /* FIXME: if the object moved was triggered by SAY event and it is moved to a tile
  * within the listening radius, it will be triggered again, and again... */
