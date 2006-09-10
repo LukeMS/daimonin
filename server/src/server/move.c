@@ -195,9 +195,14 @@ int transfer_ob(object *op, int x, int y, mapstruct *map, int randomly, object *
 
     if (op->head != NULL)
         op = op->head;
-    remove_ob(op);
-    if (check_walk_off(op, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-        return 1;
+    
+    if(! QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        remove_ob(op);
+        if (check_walk_off(op, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+            return 1;
+    }
+
     for (tmp = op; tmp != NULL; tmp = tmp->more)
     {
         tmp->x = x + freearr_x[i] + (tmp->arch == NULL ? 0 : tmp->arch->clone.x);
