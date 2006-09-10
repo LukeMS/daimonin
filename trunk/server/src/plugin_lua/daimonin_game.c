@@ -350,7 +350,7 @@ static int Game_ReadyMap(lua_State *L)
 
     get_lua_args(L, "Gsi|O", &self, &mapname, &flags, &obptr);
 
-    return push_object(L, &Map, hooks->ready_map_name(mapname, flags, obptr->data.object));
+    return push_object(L, &Map, hooks->ready_map_name(mapname, flags, obptr ? obptr->data.object : NULL));
 }
 
 /*****************************************************************************/
