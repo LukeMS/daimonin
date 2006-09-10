@@ -1504,7 +1504,7 @@ void kill_player(object *op)
         }
 
         /* teleport defeated player to new destination*/
-        transfer_ob(op, x, y, 0, NULL, NULL);
+        transfer_ob(op, x, y, op->map, 0, NULL, NULL);
         return;
     }
 

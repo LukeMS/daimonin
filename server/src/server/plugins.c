@@ -41,6 +41,7 @@ struct plugin_hooklist  hooklist    =
     fix_player, esrv_send_item, esrv_send_inventory,
     lookup_skill_by_name, look_up_spell_name,
     insert_ob_in_ob, insert_ob_in_map, move_ob,
+    transfer_ob,
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
     arch_to_object, find_archetype,
@@ -82,7 +83,7 @@ struct plugin_hooklist  hooklist    =
     clear_mob_knowns,
     hashtable_new, hashtable_delete, hashtable_clear, 
     hashtable_find, hashtable_insert, hashtable_erase, 
-    hashtable_iterator, hashtable_iterator_next,
+    hashtable_iterator, hashtable_iterator_next,    
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
@@ -764,8 +765,11 @@ CFParm * CFWTransferObject(CFParm *PParm)
     CFParm     *CFP;
     static int  val;
     CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = transfer_ob((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]), *(int *) (PParm->Value[2]),
-                      *(int *) (PParm->Value[3]), (object *) (PParm->Value[4]), (object *) (PParm->Value[5]));
+    val = transfer_ob(
+            (object *) (PParm->Value[0]), 
+            *(int *) (PParm->Value[1]), *(int *) (PParm->Value[2]), 
+            ((object *) (PParm->Value[0]))->map,
+            *(int *) (PParm->Value[3]), (object *) (PParm->Value[4]), (object *) (PParm->Value[5]));
     CFP->Value[0] = &val;
     return CFP;
 }

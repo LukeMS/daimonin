@@ -42,12 +42,18 @@ static struct method_decl   GameObject_methods[]            =
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
     {"DecreaseNrOf",  (lua_CFunction) GameObject_DecreaseNrOf},
     {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
-    {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
-    {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, {"GetGod",  (lua_CFunction) GameObject_GetGod},
-    {"SetGod",  (lua_CFunction) GameObject_SetGod}, {"TeleportTo",  (lua_CFunction) GameObject_TeleportTo},
-    {"Apply",  (lua_CFunction) GameObject_Apply}, {"PickUp",  (lua_CFunction) GameObject_PickUp},
-    {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
-    {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
+    {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, 
+    {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
+    {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, 
+    {"GetGod",  (lua_CFunction) GameObject_GetGod},
+    {"SetGod",  (lua_CFunction) GameObject_SetGod}, 
+    {"TeleportTo",  (lua_CFunction) GameObject_TeleportTo},
+    {"Apply",  (lua_CFunction) GameObject_Apply}, 
+    {"PickUp",  (lua_CFunction) GameObject_PickUp},
+    {"Drop",  (lua_CFunction) GameObject_Drop}, 
+    {"Take",  (lua_CFunction) GameObject_Take},
+    {"Fix", (lua_CFunction) GameObject_Fix}, 
+    {"Kill", (lua_CFunction) GameObject_Kill},
     {"CastSpell", (lua_CFunction) GameObject_CastSpell},
     {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
     {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
@@ -72,28 +78,38 @@ static struct method_decl   GameObject_methods[]            =
     {"CreateInvisibleObjectInside", (lua_CFunction) GameObject_CreateInvisibleInside},
 	{"CreateObjectInside", (lua_CFunction) GameObject_CreateObjectInside},
 	{"CreateObjectInsideEx", (lua_CFunction) GameObject_CreateObjectInsideEx},
-    {"CheckInventory", (lua_CFunction) GameObject_CheckInventory}, {"Remove", (lua_CFunction) GameObject_Remove},
-    {"Destruct", (lua_CFunction) GameObject_Destruct}, {"SetPosition", (lua_CFunction) GameObject_SetPosition},
+    {"CheckInventory", (lua_CFunction) GameObject_CheckInventory}, 
+    {"Remove", (lua_CFunction) GameObject_Remove},
+    {"Destruct", (lua_CFunction) GameObject_Destruct}, 
+    {"SetPosition", (lua_CFunction) GameObject_SetPosition},
     {"IdentifyItem", (lua_CFunction) GameObject_IdentifyItem},
-    {"Deposit",  (lua_CFunction) GameObject_Deposit}, {"Withdraw",  (lua_CFunction) GameObject_Withdraw},
-    {"Communicate",  (lua_CFunction) GameObject_Communicate}, {"Say",  (lua_CFunction) GameObject_Say},
-    {"SayTo",  (lua_CFunction) GameObject_SayTo}, {"Write", (lua_CFunction) GameObject_Write},
-    {"SetGender",  (lua_CFunction) GameObject_SetGender}, {"SetRank",  (lua_CFunction) GameObject_SetRank},
+    {"Deposit",  (lua_CFunction) GameObject_Deposit}, 
+    {"Withdraw",  (lua_CFunction) GameObject_Withdraw},
+    {"Communicate",  (lua_CFunction) GameObject_Communicate}, 
+    {"Say",  (lua_CFunction) GameObject_Say},
+    {"SayTo",  (lua_CFunction) GameObject_SayTo}, 
+    {"Write", (lua_CFunction) GameObject_Write},
+    {"SetGender",  (lua_CFunction) GameObject_SetGender}, 
+    {"SetRank",  (lua_CFunction) GameObject_SetRank},
     {"SetAlignment",  (lua_CFunction) GameObject_SetAlignment},
     {"GetAlignmentForce",  (lua_CFunction) GameObject_GetAlignmentForce},
 	{"GetGuild",  (lua_CFunction) GameObject_GetGuild},
 	{"CheckGuild",  (lua_CFunction) GameObject_CheckGuild},
 	{"JoinGuild",  (lua_CFunction) GameObject_JoinGuild},
 	{"LeaveGuild",  (lua_CFunction) GameObject_LeaveGuild},
-    {"Save", (lua_CFunction) GameObject_Save}, {"GetIP", (lua_CFunction) GameObject_GetIP},
-    {"GetArchName", (lua_CFunction) GameObject_GetArchName}, {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
+    {"Save", (lua_CFunction) GameObject_Save}, 
+    {"GetIP", (lua_CFunction) GameObject_GetIP},
+    {"GetArchName", (lua_CFunction) GameObject_GetArchName}, 
+    {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
     {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
 	{"AddMoney",  (lua_CFunction) GameObject_AddMoney},
 	{"AddMoneyEx",  (lua_CFunction) GameObject_AddMoneyEx},
     {"GetMoney",  (lua_CFunction) GameObject_GetMoney},
-    {"PayForItem", (lua_CFunction) GameObject_PayForItem}, {"PayAmount", (lua_CFunction) GameObject_PayAmount},
+    {"PayForItem", (lua_CFunction) GameObject_PayForItem}, 
+    {"PayAmount", (lua_CFunction) GameObject_PayAmount},
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
-    {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, {"Clone", (lua_CFunction) GameObject_Clone},
+    {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, 
+    {"Clone", (lua_CFunction) GameObject_Clone},
     {"Move", (lua_CFunction) GameObject_Move},
     {"GetAI", (lua_CFunction) GameObject_GetAI},
     {"GetVector", (lua_CFunction) GameObject_GetVector},
@@ -2416,37 +2432,40 @@ static int GameObject_Destruct(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetPosition                                           */
-/* Lua    : object:SetPosition(x, y)                                         */
-/* Info   : Cannot be used to move objects out of containers. (Use Drop() or */
-/*          TeleportTo() for that)                                           */
-/* Status : Tested                                                           */
+/* Lua    : object:SetPosition(map, x, y)                                    */
+/* Info   : Moves the object to the new position (or near it if blocked). Can*/
+/*          be used for moving objects out of containers or from limbo.      */
+/*          The old variant object:SetPosition(x,y) is still supported, but  */
+/*          with the original limitation that the object must be on a map to */
+/*          start from.                                                      */
+/*          Returns true if the object was destroyed in the move             */
+/* Version: map parameter added in beta 4 pre3 (original 2-parameter version */
+/*          still supported).                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
-
-/* TODO: Useful for setting X/Y in non-active objects too? */
-
 /* FIXME: if the object moved was triggered by SAY event and it is moved to a tile
  * within the listening radius, it will be triggered again, and again... */
-
 static int GameObject_SetPosition(lua_State *L)
 {
     lua_object *self;
+    mapstruct  *map;
     int         x, y, k;
-    CFParm     *CFR;
     k = 0;
 
-    get_lua_args(L, "Oii", &self, &x, &y);
+    if(lua_isuserdata(L, 2))
+    {
+        lua_object *map_obj;
+        get_lua_args(L, "OMii", &self, &map_obj, &x, &y);
+        map = map_obj->data.map;
+    } 
+    else
+    {
+        get_lua_args(L, "Oii", &self, &x, &y);
+        map = WHO->map;
+    }
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&x);
-    GCFP.Value[2] = (void *) (&y);
-    GCFP.Value[3] = (void *) (&k);
-    GCFP.Value[4] = (void *) (NULL);
-    GCFP.Value[5] = (void *) (NULL);
-
-    CFR = (PlugHooks[HOOK_TRANSFEROBJECT]) (&GCFP);
-    free(CFR);
-
-    return 0;
+    lua_pushboolean(L, hooks->transfer_ob(WHO, x, y, map, 0, NULL, NULL));
+    return 1;
 }
 
 /*****************************************************************************/

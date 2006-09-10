@@ -92,12 +92,12 @@ int move_ob(object *op, int dir, object *originator)
     {
         /* insert new blocked_link() here which can hit ALL earthwalls */
         /* but as long monster don't destroy walls and no mult arch player
-             * are ingame - we can stay with this
-             */
+         * are ingame - we can stay with this
+         */
         /* look in single tile move to see how we handle doors.
-             * This needs to be done before we allow multi tile mobs to do
-             * more fancy things.
-             */
+         * This needs to be done before we allow multi tile mobs to do
+         * more fancy things.
+         */
         if (blocked_link(op, freearr_x[dir], freearr_y[dir]))
             return 0;
 
@@ -119,11 +119,11 @@ int move_ob(object *op, int dir, object *originator)
         if ((flags = blocked(op, m, xt, yt, op->terrain_flag)))
         {
             /* blocked!... BUT perhaps we have a door here to open.
-                     * If P_DOOR_CLOSED returned by blocked() then we have a door here.
-                     * If there is a door but not touchable from op, then blocked()
-                     * will hide the flag! So, if the flag is set, we can try our
-                     * luck - but only if op can open doors!
-                     */
+             * If P_DOOR_CLOSED returned by blocked() then we have a door here.
+             * If there is a door but not touchable from op, then blocked()
+             * will hide the flag! So, if the flag is set, we can try our
+             * luck - but only if op can open doors!
+             */
             if ((flags & P_DOOR_CLOSED) && QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR)) /* a (closed) door which we can open? */
             {
                 if (open_door(op, m, xt, yt, 1)) /* yes, we can open this door */
@@ -131,8 +131,8 @@ int move_ob(object *op, int dir, object *originator)
             }
 
             /* in any case we don't move - door or not. This will avoid we open the door
-                     * and do the move in one turn.
-                     */
+             * and do the move in one turn.
+             */
             return 0;
         }
     }
@@ -150,19 +150,21 @@ int move_ob(object *op, int dir, object *originator)
 }
 
 
-/*
- * transfer_ob(): Move an object (even linked objects) to another spot
- * on the same map.
- *
+/**
+ * Move an object (even linked objects) to another spot.
  * Does nothing if there is no free spot.
  *
- * randomly: If true, use find_free_spot() to find the destination, otherwise
+ * @param op object to move.
+ * @param x new x position (unused if trap is set)
+ * @param y new y position (unused if trap is set)
+ * @param map target map (unused if trap is set and has an exit map)
+ * @param randomly If true, use find_free_spot() to find the destination, otherwise
  * use find_first_free_spot().
- *
- * Return value: 1 if object was destroyed, 0 otherwise.
+ * @param originatior whatever object caused the move
+ * @param trap optional pointer to an exit-like object that is the cause (trap, trapdoor, pit etc). If trap != NULL, x,y and map are irrelevant (map is still used if the trap doesn't have an exit map).
+ * @return 1 if object was destroyed, 0 otherwise.
  */
-
-int transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap)
+int transfer_ob(object *op, int x, int y, mapstruct *map, int randomly, object *originator, object *trap)
 {
     int     i, ret;
     object *tmp;
@@ -177,10 +179,17 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator, obje
         enter_exit(op, trap);
         return 1;
     }
-    else if (randomly)
-        i = find_free_spot(op->arch, op->map, x, y, 0, SIZEOFFREE);
+    
+    if(map == NULL)
+    {
+        LOG(llevBug, "BUG: transfer_ob(op='%s',x=%d,y=%d,...) without target map", STRING_OBJ_NAME(op), x, y);
+        return 0;
+    }
+
+    if (randomly)
+        i = find_free_spot(op->arch, map, x, y, 0, SIZEOFFREE);
     else
-        i = find_first_free_spot(op->arch, op->map, x, y);
+        i = find_first_free_spot(op->arch, map, x, y);
     if (i == -1)
         return 0;   /* No free spot */
 
@@ -195,7 +204,7 @@ int transfer_ob(object *op, int x, int y, int randomly, object *originator, obje
         tmp->y = y + freearr_y[i] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
     }
 
-    ret = (insert_ob_in_map(op, op->map, originator, 0) == NULL);
+    ret = (insert_ob_in_map(op, map, originator, 0) == NULL);
     return ret;
 }
 

@@ -438,7 +438,7 @@ void                        remove_linked_spawn_list(mapstruct *map);
 void                        send_link_spawn_signal(object *spawn, object *target, int signal);
 /* move.c */
 int                         move_ob(object *op, int dir, object *originator);
-int                         transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap);
+int                         transfer_ob(object *op, int x, int y, mapstruct *map, int randomly, object *originator, object *trap);
 int                         teleport(object *teleporter, uint8 tele_type, object *user);
 void                        recursive_roll(object *op, int dir, object *pusher);
 int                         try_fit(object *op, int x, int y);

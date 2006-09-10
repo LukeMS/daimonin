@@ -1370,7 +1370,7 @@ void move_teleporter(object *op)
             if(trigger_object_plugin_event(EVENT_TRIGGER,
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
-            transfer_ob(tmp, EXIT_X(op), EXIT_Y(op), 0, op, NULL);
+            transfer_ob(tmp, EXIT_X(op), EXIT_Y(op), tmp->map, 0, op, NULL);
         }
         else
         {

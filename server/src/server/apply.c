@@ -1123,7 +1123,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
             int i   = find_free_spot(op->arch, op->map, op->x, op->y, 1, 9);
             if (i != -1)
             {
-                rv = transfer_ob(op, op->x + freearr_x[i], op->y + freearr_y[i], 0, shop_mat, NULL);
+                rv = transfer_ob(op, op->x + freearr_x[i], op->y + freearr_y[i], op->map, 0, shop_mat, NULL);
             }
         }
         /* Removed code that checked for multipart objects - it appears that
@@ -1428,7 +1428,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
                   }
                   if (ab->type == PLAYER)
                       new_draw_info(NDI_UNIQUE, 0, ab, "You fall into a trapdoor!");
-                  transfer_ob(ab, (int) EXIT_X(trap), (int) EXIT_Y(trap), trap->last_sp, ab, trap);
+                  transfer_ob(ab, (int) EXIT_X(trap), (int) EXIT_Y(trap), ab->map, trap->last_sp, ab, trap);
               }
               goto leave;
           }
@@ -1441,7 +1441,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           play_sound_map(victim->map, victim->x, victim->y, SOUND_FALL_HOLE, SOUND_NORMAL);
           if (victim->type == PLAYER)
               new_draw_info(NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
-          transfer_ob(victim->head ? victim->head : victim, EXIT_X(trap), EXIT_Y(trap), trap->last_sp, victim, trap);
+          transfer_ob(victim->head ? victim->head : victim, EXIT_X(trap), EXIT_Y(trap), victim->map, trap->last_sp, victim, trap);
           goto leave;
 
         case EXIT:
