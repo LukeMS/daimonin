@@ -32,6 +32,26 @@ case "$target" in
 esac
 AC_SUBST([LUA_NUMBER])
 
+SERVER_SYSTEM_SRCS="daemon.c"
+COMMON_SYSTEM_SRCS=""
+PLUGIN_SYSTEM_SRCS=""
+INSTALL_SYSTEM_PARAMS=""
+case "$target" in
+    *-mingw32 | *-cygwin )
+        echo "Win32 build detected"
+        CFLAGS="$CFLAGS -DMIN_GW"
+        LIBS="$LIBS -lwsock32"
+        COMMON_SYSTEM_SRCS="win32.c"
+        PLUGIN_SYSTEM_SRCS="../common/win32.c"
+        SERVER_SYSTEM_SRCS=""
+        INSTALL_SYSTEM_PARAMS="daimonin_server.exe plugin_lua.dll"
+        ;;
+esac
+AC_SUBST(SERVER_SYSTEM_SRCS)
+AC_SUBST(COMMON_SYSTEM_SRCS)
+AC_SUBST(PLUGIN_SYSTEM_SRCS)
+AC_SUBST(INSTALL_SYSTEM_PARAMS)
+
 AC_PROG_CPP
 AC_PROG_AWK
 AC_PROG_INSTALL

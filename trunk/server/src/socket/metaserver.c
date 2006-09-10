@@ -46,7 +46,7 @@ void metaserver_init()
 {
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
     struct hostent *hostbn;
-    int             temp    = 1;
+    u_long             temp    = 1;
 #endif
 
     if (!settings.meta_on)

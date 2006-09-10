@@ -64,7 +64,7 @@ void InitConnection(NewSocket *ns, char *ip)
     unsigned int buflen  = sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-    int temp = 1;
+    u_long temp = 1;
 
     if (ioctlsocket(ns->fd, FIONBIO, &temp) == -1)
         LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
@@ -135,8 +135,8 @@ void setsockopts(int fd)
 	int tmp = 1;
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-
-	if (ioctlsocket(fd, FIONBIO, &tmp) == -1)
+    u_long tmp2 = 1;
+	if (ioctlsocket(fd, FIONBIO, &tmp2) == -1)
 		LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
 #else
 	LOG(llevDebug, "setsockets():  fcntl %x.\n", fcntl(fd, F_GETFL));

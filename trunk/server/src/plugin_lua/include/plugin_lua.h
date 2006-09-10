@@ -45,11 +45,7 @@
 
 #undef MODULEAPI
 #ifdef WIN32
-#ifdef LUA_PLUGIN_EXPORTS
 #define MODULEAPI __declspec(dllexport)
-#else
-#define MODULEAPI __declspec(dllimport)
-#endif /* ifdef LUA_PLUGIN_EXPORTS */
 #else
 #define MODULEAPI
 #endif /* ifdef WIN32 */

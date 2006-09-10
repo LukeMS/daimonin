@@ -46,7 +46,6 @@
  * Author:  Keith Packard, MIT X Consortium
  */
 
-
 #include <global.h>
 #ifndef __CEXTRACT__
 #include <sproto.h>

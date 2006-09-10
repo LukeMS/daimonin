@@ -18,14 +18,18 @@ EXTRA_CFLAGS =
 RM        = @RM@
 CC        = @CC@
 
-SRCS =  plugin_lua.c lua_support.c \
-		daimonin_object.c daimonin_map.c daimonin_game.c \
+SRCS =  @PLUGIN_SYSTEM_SRCS@ \
+		plugin_lua.c \
+		lua_support.c \
+		daimonin_object.c \
+		daimonin_map.c \
+		daimonin_game.c \
 		ai_object.c
 
 OBJECTS   = $(SRCS:.c=.o)
 INCLUDE   = -I./include -I../include -I$(INCLUDEROOT)
 
-CFLAGS    = -g -O2 -fPIC $(EXTRA_CFLAGS)
+CFLAGS    = @CFLAGS@ -fPIC $(EXTRA_CFLAGS)
 DEPEND = @DEPEND@
 
 LDFLAGS=	-export-dynamic -rdynamic -Xlinker -Bsymbolic
