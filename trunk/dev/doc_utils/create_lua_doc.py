@@ -99,7 +99,7 @@ def extract_class_attributes(classes, doc, code):
 				elif spec == 'FIELDFLAG_PLAYER_READONLY':
 					special = 'readonly if object is a player'
 				elif spec == 'FIELDFLAG_PLAYER_FIX':
-					special = 'fix the player or mob after change'
+					special = 'fix():es the player or mob after change'
 				elif spec != '0':
 					print "unknown attribute " + spec
 					
