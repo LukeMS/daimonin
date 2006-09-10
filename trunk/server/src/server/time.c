@@ -414,7 +414,6 @@ void move_gate(object *op)
 {
     int     update  = UP_OBJ_FACE; /* default update is only face */
     int     reached_end = 0;
-    int     blocked = 0;
 
     if (op->stats.wc < 0 || (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)))
     {
@@ -1484,34 +1483,86 @@ void move_player_mover(object *op)
     }
 }
 
+/** Search a single map square for duplicates of op.
+ * A duplicate is anything with the same type, name and arch
+ */
+static int check_for_duplicate_ob(object *op, mapstruct *map, int x, int y)
+{
+    object *tmp;
+    for(tmp = get_map_ob(map, x, y); tmp != NULL; tmp = tmp->above)
+    {
+        if(tmp->name == op->name &&
+                tmp->type == op->type &&
+                tmp->arch == op->arch &&
+                tmp != op)
+            return 1;
+    }
+    return 0;
+}
 
 /*  move_creator (by peterm)
-  it has the creator object create it's other_arch right on top of it.
+  Let the creator object create it's other_arch right on top of itself.
   connected:  what will trigger it
-  hp:  how many times it may create before stopping
-  lifesave:  if set, it'll never disappear but will go on creating
+  stats.hp:  how many times it may create before stopping
+  FLAG_LIFESAVE:  if set, it'll never disappear but will go on creating
     everytime it's triggered
-  other_arch:  the object to create
+  FLAG_ONE_DROP:  if set, it'll check before creating to avoid duplicates
+  other_arch: (optional) the archetype to create
+  inv: objects to clone (if other_arch == NULL)
 */
 /* not multi arch fixed, i think MT */
 void move_creator(object *op)
 {
-    object *tmp;
-    if (!op->other_arch)
+    if (op->stats.hp <= 0 && !QUERY_FLAG(op, FLAG_LIFESAVE))
         return;
-    op->stats.hp--;
-    if (op->stats.hp < 0 && !QUERY_FLAG(op, FLAG_LIFESAVE))
+    
+    if(op->other_arch)
     {
-        op->stats.hp = -1;return;
+        /* Create from other_arch */
+        object *tmp = arch_to_object(op->other_arch);
+        if (op->slaying)
+        {
+            FREE_AND_ADD_REF_HASH(tmp->name, op->slaying);
+            FREE_AND_ADD_REF_HASH(tmp->title, op->slaying);
+        }
+        tmp->x = op->x;
+        tmp->y = op->y;
+        tmp->level = op->level;
+
+        if(QUERY_FLAG(op, FLAG_ONE_DROP) && 
+                check_for_duplicate_ob(tmp, op->map, op->x, op->y))
+            return;
+
+        op->stats.hp--;
+        insert_ob_in_map(tmp, op->map, op, 0);
     }
-    tmp = arch_to_object(op->other_arch);
-    if (op->slaying)
+    else 
     {
-        FREE_AND_ADD_REF_HASH(tmp->name, op->slaying);
-        FREE_AND_ADD_REF_HASH(tmp->title, op->slaying);
+        /* Clone from inventory */
+        object *source, *tmp;
+        int didit = 0;
+        for(source = op->inv; source != NULL; source = source->below)
+        {
+            /* Don't clone sys objects */
+            if(QUERY_FLAG(source, FLAG_SYS_OBJECT))
+                continue;
+
+            tmp = ObjectCreateClone(source);
+            tmp->x = op->x;
+            tmp->y = op->y;
+        
+            if(QUERY_FLAG(op, FLAG_ONE_DROP) && 
+                    check_for_duplicate_ob(tmp, op->map, op->x, op->y))
+                continue;
+
+            insert_ob_in_map(tmp, op->map, op, 0);
+            didit = 1;
+        }
+
+        /* Reduce count if we cloned any object from inventory */
+        if(didit)
+            op->stats.hp--;
     }
-    tmp->x = op->x;tmp->y = op->y;tmp->map = op->map;tmp->level = op->level;
-    insert_ob_in_map(tmp, op->map, op, 0);
 }
 
 /* hp = time left
