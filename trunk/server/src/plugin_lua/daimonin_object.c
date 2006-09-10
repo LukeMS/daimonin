@@ -2797,8 +2797,8 @@ static int GameObject_SendCustomCommand(lua_State *L)
 /* Lua    : object:Clone(mode)                                               */
 /* Info   : mode = game.CLONE_WITH_INVENTORY (default) or                    */
 /*          game.CLONE_WITHOUT_INVENTORY                                     */
-/*          You should do something with the clone. TeleportTo() or          */
-/*          InsertInside() are useful functions for this.                    */
+/*          You should do something with the clone. TeleportTo(),            */
+/*          SetPosition() and InsertInside() are useful functions for this.  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Clone(lua_State *L)
