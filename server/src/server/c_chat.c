@@ -34,7 +34,7 @@
  */
 static char * cleanup_chat_string(char *ustring)
 {
-    int i;
+    char *ptr;
 
     if (!ustring)
         return NULL;
@@ -48,11 +48,21 @@ static char * cleanup_chat_string(char *ustring)
         return NULL;
 
     /* now clear all control chars */
-    for (i = 0; *(ustring + i) != '\0'; i++)
+    ptr = ustring;
+    for (ptr = ustring; *ptr != '\0'; ptr++)
     {
-        if (*(ustring + i) == '°' || *(ustring + i) == '~' || *(ustring + i) == '^' || *(ustring + i) == '§')
-            *(ustring + i) = ' ';
-    }
+        switch(*ptr)
+        {
+            case '°':
+            case '~':
+            case '^':
+            case '§':
+                *ptr = ' ';
+                break;
+            default:
+                break;
+        }
+    }   
     return ustring;
 }
 
