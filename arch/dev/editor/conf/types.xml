@@ -1698,7 +1698,10 @@
   <description><![CDATA[
     A creator is an object which creates another object when it
     is triggered. The child object can be anything. Creators are
-    VERY useful for all kinds of map-mechanisms. ]]>
+    VERY useful for all kinds of map-mechanisms.
+    Creators can either create the archetype mentioned in the "create arch" 
+    field, or objects from its inventory (if you leave "create arch" empty).
+    ]]>
   </description>
   <use><![CDATA[
     Don't hesitate to hide your creators under the floor.
@@ -1708,14 +1711,21 @@
   <attribute arch="other_arch" editor="create arch" type="string">
     This string defines the object that will be created.
     You can choose any of the existing arches.
+
+    If you leave this empty, the creator will clone any non-system objects
+    from its inventory instead (sortof like the spawn point).
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     Whenever the connection value is activated,
-    the creator gets triggered.  
+    the creator gets triggered.
   </attribute>
   <attribute arch="lifesave" editor="infinit uses" type="bool">
     If &lt;infinit uses&gt; is set, the creator will work
     infinitly, regardless of the value in &lt;number of uses&gt;.
+  </attribute>
+  <attribute arch="one_drop" editor="check before creation" type="bool">
+    Makes the creator check for already existing objects on top of it before
+    creating. Avoids creating lots of duplicates if noone picks the items up.
   </attribute>
   <attribute arch="hp" editor="number of uses" type="int">
     The creator can be triggered &lt;number of uses&gt; times, thus
@@ -1725,10 +1735,14 @@
   <attribute arch="slaying" editor="name of creation" type="string">
     The created object will bear the name specified in &lt;name creation&gt;.
     If nothing is set, the standard name of the archetype is used. 
+
+    (Only used if "create arch" is set)
   </attribute>
   <attribute arch="level" editor="level of creation" type="int">
     The created object will be of that level. If zero/unset,
     the standard level of the archetype is used.
+    
+    (Only used if "create arch" is set)
   </attribute>
 </type>
 

@@ -565,10 +565,10 @@ y 4
 end
 arch creator
 layer 4
-sys_object 0
-other_arch food
+other_arch food_generic
 connected 200
 lifesave 1
+sys_object 0
 x 5
 y 4
 end
@@ -667,7 +667,29 @@ arch floor_ostone1
 x 6
 y 3
 end
+arch sign
+name CREATOR objects
+msg
+A CREATOR creates objects every time
+it is triggered. This CREATOR creates
+food, but only if there isn't one on it already.
+CREATORs are very useful objects. Look
+at the different object features.
+endmsg
+x 6
+y 3
+end
 arch floor_ostone1
+x 6
+y 4
+end
+arch creator
+layer 4
+other_arch food_generic
+connected 200
+lifesave 1
+sys_object 0
+one_drop 1
 x 6
 y 4
 end
@@ -752,9 +774,50 @@ arch floor_ostone1
 x 7
 y 3
 end
+arch sign
+name CREATOR objects
+msg
+A CREATOR creates objects every time
+it is triggered. This CREATOR creates
+magic items from its inventory.
+CREATORs are very useful objects. Look
+at the different object features.
+endmsg
+x 7
+y 3
+end
 arch floor_ostone1
 x 7
 y 4
+end
+arch creator
+connected 200
+lifesave 1
+layer 4
+sys_object 0
+layer 4
+sys_object 0
+x 7
+y 4
+arch hat_blue
+name blue colored hat
+wis 4
+luck 10
+identified 1
+known_magical 1
+is_magical 1
+end
+arch gloves
+title of glue
+identified 1
+known_magical 1
+known_cursed 1
+is_magical 1
+cursed 1
+cursed_perm 1
+damned 1
+damned_perm 1
+end
 end
 arch floor_ostone1
 x 7
@@ -833,9 +896,32 @@ arch floor_ostone1
 x 8
 y 3
 end
+arch sign
+name CREATOR objects
+msg
+A CREATOR creates objects every time
+it is triggered. This CREATOR creates
+items from its inventory, but only if there aren't any on it already.
+CREATORs are very useful objects. Look
+at the different object features.
+endmsg
+x 8
+y 3
+end
 arch floor_ostone1
 x 8
 y 4
+end
+arch creator
+connected 200
+lifesave 1
+layer 4
+sys_object 0
+one_drop 1
+x 8
+y 4
+arch girdle
+end
 end
 arch floor_ostone1
 x 8
