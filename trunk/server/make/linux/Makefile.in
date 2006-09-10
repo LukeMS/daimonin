@@ -68,7 +68,7 @@ NO_X = @no_x@
 # Changed.
 #
 
-EXTRA_CFLAGS = @EXTRA_CFLAGS@
+EXTRA_CFLAGS = -W
 
 VERSION = daimonin-beta04-0.970p2
 
