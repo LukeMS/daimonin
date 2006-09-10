@@ -74,6 +74,7 @@ CC = @CC@
 RM = @RM@
 FLEX = @FLEX@
 AR = @AR@
+RANLIB = @RANLIB@
 
 ARFLAGS = cq
 
