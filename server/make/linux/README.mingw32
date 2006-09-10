@@ -1,0 +1,20 @@
+How to cross-compile for win32 (on Debian)
+------------------------------------------
+1. Get the debian mingw32 packages:
+   apt-get install mingw32 mingw32-binutils mingw32-runtime
+
+2. Set up the environment so that make and configure will find the tools
+   export CC=i586-mingw32msvc-gcc
+   export RC=i586-mingw32msvc-windres
+   export RANLIB=i586-mingw32msvc-ranlib
+   export DLLTOOL=i586-mingw32msvc-dlltool
+   export AR=i586-mingw32msvc-ar
+
+3. Configure for cross-compilation:
+   sh configure --host=i386-pc-mingw32
+
+4. Build (ignore warnings ;-)
+   make
+
+5. Install
+   make install

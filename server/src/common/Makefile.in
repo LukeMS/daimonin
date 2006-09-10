@@ -25,6 +25,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	@COMMON_SYSTEM_SRCS@ \
 	aggro.c \
 	anim.c \
 	arch.c\

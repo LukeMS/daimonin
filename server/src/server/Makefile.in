@@ -27,6 +27,7 @@ srcdir = @srcdir@
 LOCAL_LIBRARIES = ../tests/libtest.a ../common/libcross.a ../random_maps/random_map.a ../socket/socket.a
 
 SRCS = \
+	@SERVER_SYSTEM_SRCS@ \
 	aiconfig.c\
 	alchemy.c\
 	apply.c\
@@ -42,7 +43,6 @@ SRCS = \
 	c_wiz.c\
 	commands.c\
 	container.c\
-	daemon.c\
 	disease.c\
 	egoitem.c \
 	hiscore.c\

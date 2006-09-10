@@ -6,6 +6,11 @@
 prgname="daimonin_server"
 luaplug="plugin_lua.so.0.1"
 
+prgname_dst=$prgname
+luaplug_dst=$luaplug
+test ! -z "$1" && prgname_dst=$1
+test ! -z "$2" && luaplug_dst=$2
+
 basedir="./../.."
 datadir="/data"
 
@@ -30,8 +35,8 @@ mmkdir() {
 }
 
 echo "Copy binaries"
-instbin ./../../src/server/$prgname ./../../$prgname 
-instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug 
+instbin ./../../src/server/$prgname ./../../$prgname_dst
+instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug_dst
 instbin $basedir/src/utils/dmonloop $basedir 
 
 echo "Create data folders"

@@ -115,7 +115,7 @@ distclean:: clean
 	$(RM) -f  ../../lib/*
 
 install:: all
-	sh ../../install/linux/install.sh
+	sh ../../install/linux/install.sh @INSTALL_SYSTEM_PARAMS@
 
 proto:
 	@for dir in $(SUBDIRS); \

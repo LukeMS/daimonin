@@ -75,6 +75,8 @@ RM = @RM@
 FLEX = @FLEX@
 AR = @AR@
 
+ARFLAGS = cq
+
 random_map: $(OBJS)
 	$(RM) -f $@
 	$(CC) $(CFLAGS) $(INCLUDES) -c standalone.c
@@ -82,7 +84,8 @@ random_map: $(OBJS)
 
 random_map.a: $(OBJS)
 	$(RM) -f $@
-	$(AR) clq $@ $(OBJS)
+	$(AR) $(ARFLAGS) $@ $(OBJS)
+	$(RANLIB) $@
 
 
 depend:
