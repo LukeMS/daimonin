@@ -114,9 +114,9 @@ local function topFinishQ1()
 		topicDefault()
 		return
 	end
+    Q_Remove(q_obj_1) -- Remove the kill items from player
 	q_obj_1:SetQuestStatus(-1)
 	q_stat_1 = game.QSTAT_DONE
-    Q_Remove(q_obj_1) -- Remove the kill items from player
 	pl:Sound(0, 0, 2, 0)
 	pl:CreateObjectInsideEx("shield", 1,1)
 	pl:AddMoneyEx(1,2,0,0)
