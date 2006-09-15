@@ -552,7 +552,7 @@ static int AI_GetBehaviourlist(lua_State *L)
 
         for(behaviour = MOB_DATA(self->data.object)->behaviours->behaviours[class]; behaviour; behaviour = behaviour->next)
         {
-            int param;
+            unsigned int param;
             
             /* Create the table for this behaviour (key is both idx and name) */
             lua_pushvalue(L, string_lower_idx);

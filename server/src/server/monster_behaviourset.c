@@ -437,7 +437,7 @@ static int parse_stringint_parameter(struct mob_behaviour_param *param, const ch
  * fills in default values for non-present optional parameters */
 static int check_behaviour_parameters(struct mob_behaviour *behaviour)
 {
-    int i;
+    unsigned int i;
 
     for (i = 0; i < behaviour->declaration->nrof_params; i++)
     {
