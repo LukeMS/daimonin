@@ -50,7 +50,6 @@ client3d_SOURCES = \
 	../../source/events.cpp \
 	../../source/events_user.cpp \
 	../../source/light_manager.cpp \
-	../../source/dialog_manager.cpp \
 	../../source/logger.cpp \
 	../../source/main.cpp \
 	../../source/network.cpp \
