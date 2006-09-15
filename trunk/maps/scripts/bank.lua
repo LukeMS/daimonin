@@ -28,11 +28,11 @@ ib:AddMsg(bmsg)
 if onhand > 0 then
 ib:AddMsg("You have on hand " .. pl:ShowCost(onhand) .. ".\n\n")
 else
-ib:AddMsg("You has no money to deposit.\n\n")
+ib:AddMsg("You have no money to deposit.\n\n")
 end
 ib:AddMsg("Would you like to ")
 if balance > 0 then ib:AddLink("make a withdrawal?", "withdrawal") end
-if onhand > 0 then ib:AddLink("make a deposition?", "deposition") end
+if onhand > 0 then ib:AddLink("make a deposit?", "deposit") end
 pl:Interface(1, ib:Build())
 end
 
@@ -51,7 +51,7 @@ or simply °deposit all° to deposit all you money.
 ib:AddLink("deposit all", "deposit all")
 ib:SetTextfield("deposit ")
 else
-ib:AddMsg("You has no money to deposit.\n\n")
+ib:AddMsg("You have no money to deposit.\n\n")
 end
 ib:SetButton("Back", "hi")
 pl:Interface(1, ib:Build())
@@ -73,7 +73,7 @@ ib:SetButton("Ok", "hi")
 else
 ib:SetMsg( "You try to " .. what .. ".\n\n" )
 ib:AddMsg("But you don't have that much money!\n\n")
-ib:SetButton("Back", "depositation")
+ib:SetButton("Back", "deposit")
 end
 ib:AddMsg("You have on hand " .. pl:ShowCost(onhand) .. ".\n")
 pl:Interface(1, ib:Build())
@@ -130,7 +130,7 @@ end
 tl = TopicList()
 tl:AddGreeting(nil, topicDefault)
 tl:SetDefault(topicDefault)
-tl:AddTopics("deposition", topicDepositDialog)
+tl:AddTopics("deposit", topicDepositDialog)
 tl:AddTopics("withdrawal", topicWithdrawDialog)
 tl:AddTopics("(deposit .*)", topicDeposit)
 tl:AddTopics("(withdraw .*)", topicWithdraw)
