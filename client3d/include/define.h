@@ -118,51 +118,51 @@ typedef struct
 Pos2D;
 
 
-typedef class SubPos2D
+typedef class TilePos
 {
 public:
-    SubPos2D()
+    TilePos()
     {}
-    SubPos2D(const int fX, const int fZ, const int fsubX, const int fsubZ)
+    TilePos(const int fX, const int fZ, const int fsubX, const int fsubZ)
             : x(fX), z(fZ), subX(fsubX), subZ(fsubZ)
     {}
 
-    ~SubPos2D()
+    ~TilePos()
     {}
-    bool operator == (const SubPos2D& tst) const
+    bool operator == (const TilePos& tst) const
     {
         return (x == tst.x && z == tst.z && subX == tst.subX && subZ == tst.subZ);
     }
 
-    bool operator != (const SubPos2D& tst) const
+    bool operator != (const TilePos& tst) const
     {
         return (x != tst.x || z != tst.z || subX != tst.subX || subZ != tst.subZ);
     }
-    void operator += (const SubPos2D& add)
+    void operator += (const TilePos& add)
     {
         x += add.x;
         z += add.z;
         subX += add.subX;
         subZ += add.subZ;
     }
-    void operator -= (const SubPos2D& sub)
+    void operator -= (const TilePos& sub)
     {
         x -= sub.x;
         z -= sub.z;
         subX -= sub.subX;
         subZ -= sub.subZ;
     }
-    SubPos2D operator + (const SubPos2D& add)
+    TilePos operator + (const TilePos& add)
     {
-        return SubPos2D(
+        return TilePos(
                    x + add.x,
                    z + add.z,
                    subX + add.subX,
                    subZ + add.subZ);
     }
-    SubPos2D operator - (const SubPos2D& sub)
+    TilePos operator - (const TilePos& sub)
     {
-        return SubPos2D(
+        return TilePos(
                    x - sub.x,
                    z - sub.z,
                    subX - sub.subX,
@@ -172,6 +172,6 @@ public:
     int x, z;       /**< Position of the tile. **/
     int subX, subZ; /**< Position within the tile. **/
 }
-SubPos2D;
+TilePos;
 
 #endif

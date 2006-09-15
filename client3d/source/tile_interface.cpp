@@ -28,8 +28,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "tile_manager.h"
 #include "logger.h"
 #include "events.h"
-#include "gui_manager.h"
-#include "particle_manager.h"
 
 const unsigned char TileInterface::mSubPosTable[2][32]=
     {
@@ -61,7 +59,7 @@ const unsigned char TileInterface::mWorldPosTable[4][8]=
 //================================================================================================
 // Returns the selected position of a tile (Including the subposition within the tile).
 //================================================================================================
-const SubPos2D TileInterface::getSelectedTile()
+const TilePos TileInterface::getSelectedTile()
 {
     return mPos;
 }
@@ -107,10 +105,11 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     {
         Logger::log().error() << "BUG in TileInterface.cpp: RaySceneQuery returned more than 1 result.";
         Logger::log().error() << "(You created Entities without setting a setQueryFlags(...) on them)";
+        return;
     }
 
     // ////////////////////////////////////////////////////////////////////
-    // Find the tile that was selected.
+    // Find the selected tile.
     // We start with our 4 tringles (each tile = 4 triangles).
     // Then we divide each triangle several times to increase the accuracy.
     // ////////////////////////////////////////////////////////////////////
@@ -182,7 +181,7 @@ bool TileInterface::getPickPos(Ray *mouseRay, int quadrant)
 //================================================================================================
 // Converts a tile pos into the world pos.
 //================================================================================================
-Vector3 TileInterface::tileToWorldPos(SubPos2D tile)
+Vector3 TileInterface::tileToWorldPos(TilePos tile)
 {
     int upper;
     if (tile.subZ <=3)
@@ -218,9 +217,18 @@ Vector3 TileInterface::tileToWorldPos(SubPos2D tile)
 }
 
 //================================================================================================
-// .
+// Fill the (original) tris positions of the given tile in the given quadrant.
+// (see TileChunk class for more infos)
+// +------+
+// |\  2 /|
+// | \  / |   1 = QUADRANT_LEFT
+// |  \/  |   2 = QUADRANT_TOP
+// |1 /\ 3|   3 = QUADRANT_RIGHT
+// | /  \ |   4 = QUADRANT_BOTTOM
+// |/  4 \|
+// +------+
 //================================================================================================
-void TileInterface::fillVectors(SubPos2D &tile, int quad)
+void TileInterface::fillVectors(TilePos &tile, int quad)
 {
     if (quad == QUADRANT_LEFT)
     {
@@ -249,7 +257,7 @@ void TileInterface::fillVectors(SubPos2D &tile, int quad)
         mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z);
         mTris[1].z = (tile.z+0.0)*TILE_SIZE_Z;
     }
-    else
+    else // QUADRANT_BOTTOM
     {
         mTris[0].x = (tile.x+0.0)*TILE_SIZE_X;
         mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z+1);
@@ -264,9 +272,9 @@ void TileInterface::fillVectors(SubPos2D &tile, int quad)
 }
 
 //================================================================================================
-// Returns the distance of 2 subtile positions..
+// Returns the distance between 2 subtile positions.
 //================================================================================================
-int TileInterface::calcTileDistance(const SubPos2D &pos1, const SubPos2D &pos2)
+int TileInterface::calcTileDistance(const TilePos &pos1, const TilePos &pos2)
 {
     int deltaZ = Math::IAbs((pos1.z * SUM_SUBTILES + pos1.subZ) - (pos2.z * SUM_SUBTILES + pos2.subZ));
     int deltaX = Math::IAbs((pos1.x * SUM_SUBTILES + pos1.subX) - (pos2.x * SUM_SUBTILES + pos2.subX));

@@ -316,7 +316,7 @@ void TileManager::scrollMap(int dx, int dz)
 //================================================================================================
 // Set the walkable status for a COMPLETE row of subtiles.
 //================================================================================================
-void TileManager::setWalkablePos(const SubPos2D &pos, int row, unsigned char walkables)
+void TileManager::setWalkablePos(const TilePos &pos, int row, unsigned char walkables)
 {
     mMap[pos.x][pos.z].walkable[row] |= walkables;
 }

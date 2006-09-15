@@ -440,12 +440,12 @@ void CEvent::mousePressed (MouseEvent *e)
                 //Logger::log().info() << result.size();
                 // Todo: choose a behaviour for more than 1 results.
                 RaySceneQueryResult::iterator itr = result.begin();
-                ObjectManager::getSingleton().selectNPC(itr->movable);
+                ObjectManager::getSingleton().selectObject(itr->movable);
             }
             else
             {
                 // nothing selected, but if we are in attack mode -> attack selected enemy.
-                ObjectManager::getSingleton().selectNPC(0);
+                ObjectManager::getSingleton().selectObject(0);
             }
             mSceneManager->destroyQuery(mRaySceneQuery);
             mIdleTime =0;
@@ -466,7 +466,7 @@ void CEvent::mousePressed (MouseEvent *e)
             ParticleManager::getSingleton().addFreeObject(posV, "Particle/SelectionDust", 0.8);
             //ParticleManager::getSingleton().addFreeObject(posV, "Particle/GreenyNimbus", -1);
             // Move the player.
-            SubPos2D pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
+            TilePos pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             pos.x += pos.z << 8;
             pos.subX += pos.subZ << 8;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) pos.x, (int) pos.subX);

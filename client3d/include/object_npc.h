@@ -67,10 +67,10 @@ public:
     virtual void freeRecources();
     virtual bool update(const FrameEvent& event);
     void movePosition(int dx, int dz);
-    void moveToDistantTile(SubPos2D pos, int precision =0);
-    void faceToTile(SubPos2D pos);
+    void moveToDistantTile(TilePos pos, int precision =0);
+    void faceToTile(TilePos pos);
     void turning(Real turn, bool cursorTurn);
-    void attackObjectOnTile(SubPos2D pos);
+    void attackObjectOnTile(TilePos pos);
     void addToMap();
     void setEnemy();
     const unsigned char getBoundingRadius() const
@@ -94,14 +94,14 @@ public:
     void attackShortRange(ObjectNPC *mEnemyObject);
     void castSpell(int spell);
     void stopMovement();
-    void raiseWeapon(bool raise);
+    void readyWeapon(bool ready);
     void talkToNpc();
 
     void attack()
     {
         mAttacking = ATTACK_APPROACH;
     }
-    const SubPos2D &getDestMapPos() const
+    const TilePos &getDestMapPos() const
     {
         return mDestStepPos;
     }
@@ -144,8 +144,8 @@ private:
     int mMaxHP,    mActHP;
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
-    SubPos2D mDestStepPos;  /**< The next tile pos of a multi tile walk. **/
-    SubPos2D mDestWalkPos;  /**< The destination pos (as tile).   **/
+    TilePos mDestStepPos;  /**< The next tile pos of a multi tile walk. **/
+    TilePos mDestWalkPos;  /**< The destination pos (as tile).   **/
     Vector3  mDestWalkVec;  /**< The destination pos (as vector). **/
     Vector3  mWalkSpeed;
     int mOffX, mOffZ;

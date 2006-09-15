@@ -28,33 +28,52 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+/**
+ ** This class provides an interface for 3d tile picking.
+ *****************************************************************************/
 class TileInterface
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     TileInterface(SceneManager* sceneManager);
     ~TileInterface();
+    /** Returns the worldPosition of the selected tile. **/
     const Vector3 getSelectedPos();
-    const SubPos2D getSelectedTile();
-    Vector3 tileToWorldPos(SubPos2D tile);
-    int calcTileDistance(const SubPos2D &pos1, const SubPos2D &pos2);
+    /** Returns the tilePosition of the selected tile. **/
+    const TilePos getSelectedTile();
+    /** Converts a tilePosition into the worldPosition. **/
+    Vector3 tileToWorldPos(TilePos tile);
+    /** Returns the distance between 2 subtile positions. **/
+    int calcTileDistance(const TilePos &pos1, const TilePos &pos2);
+    /** Get the tile below the mouse cursor. **/
     void pickTile(float mMouseX, float mMouseY);
 
 private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables.
+    // ////////////////////////////////////////////////////////////////////
     enum
     {
-        QUADRANT_LEFT,  QUADRANT_TOP,
-        QUADRANT_RIGHT, QUADRANT_BOTTOM,
+        QUADRANT_LEFT,    /**< Left   tris of a tile. **/
+        QUADRANT_TOP,     /**< Top    tris of a tile. **/
+        QUADRANT_RIGHT,   /**< Right  tris of a tile. **/
+        QUADRANT_BOTTOM,  /**< Bottom tris of a tile. **/
     }
     quadrant;
     static const unsigned char mSubPosTable[][32];
     static const unsigned char mWorldPosTable[4][8];
     RaySceneQuery* mRaySceneQuery;
-    SubPos2D mPos;
-    Vector3 mPosVector;
-    Vector3 mTris[4];
+    TilePos mPos;       /**< The tilePosition  of the selected tile. **/
+    Vector3 mPosVector;  /**< The worldPosition of the selected tile. **/
+    Vector3 mTris[4];    /**< Every tile is build out of 4 tris. **/
 
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     bool getPickPos(Ray *mouseRay, int quadrant);
-    void fillVectors(SubPos2D &tile, int quadrant);
+    void fillVectors(TilePos &tile, int quadrant);
 };
 
 #endif

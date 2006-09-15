@@ -176,7 +176,7 @@ public:
     void setMaterialLOD(int pix);
     void toggleGrid();
     void addToGroupTexture(uchar* TextureGroup_data, uchar *Filter_data, Image* Texture, short pixel, short x, short y);
-    void setWalkablePos(const SubPos2D &pos, int row, unsigned char walkables);
+    void setWalkablePos(const TilePos &pos, int row, unsigned char walkables);
     bool getWalkablePos(int x, int y);
 
 private:
