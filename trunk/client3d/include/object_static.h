@@ -40,7 +40,7 @@ typedef struct
     String meshName;              /**< Name of the ogre3d mesh. **/
     int particleNr;               /**< Number of the particle effect. **/
     unsigned int index;           /**< Unique number for this object. **/
-    SubPos2D pos;                 /**< Tile-pos. **/
+    TilePos pos;                 /**< Tile-pos. **/
     unsigned char boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
     int level;                    /**< Floor-level. **/
     char walkable[8];             /**< 8x8 bit for the walkable status of a tile. **/
@@ -94,12 +94,12 @@ public:
 	{
 		return mEntity;
 	}
-    SubPos2D getTilePos()
+    TilePos getTilePos()
     {
         return mActPos;
     }
-    SubPos2D getTileScrollPos();
-    void setPosition(SubPos2D pos);
+    TilePos getTileScrollPos();
+    void setPosition(TilePos pos);
 	unsigned int getIndex()
 	{
 		return mIndex;
@@ -113,7 +113,7 @@ protected:
     unsigned int mIndex;
     SceneNode *mNode;
     Entity *mEntity;
-    SubPos2D mActPos;   /**< the actual pos in the map. **/
+    TilePos mActPos;   /**< the actual pos in the map. **/
     String mNickName;
     int mFloor;
 

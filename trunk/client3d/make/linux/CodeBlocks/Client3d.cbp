@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="4" />
+	<FileVersion major="1" minor="5" />
 	<Project>
 		<Option title="Client3d" />
 		<Option pch_mode="0" />
+		<Option default_target="" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="32bit">
@@ -11,7 +12,6 @@
 				<Option working_dir="../../../" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
 					<Add option="-march=pentium2" />
@@ -26,17 +26,21 @@
 				<Option working_dir="../../../" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Linker>
 					<Add library="fmodex64" />
 				</Linker>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="32bit;64bit;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add option="-w" />
 			<Add directory="/usr/include/OGRE" />
 			<Add directory="/usr/local/include/OGRE" />
+			<Add directory="/usr/include/SDL" />
+			<Add directory="/usr/local/include/SDL" />
 			<Add directory="../../../source" />
 			<Add directory="../../../source/gui" />
 			<Add directory="../../../include" />
@@ -48,7 +52,10 @@
 		<Linker>
 			<Add option="-s" />
 			<Add library="OgreMain" />
+			<Add library="SDL" />
 			<Add directory="../../linux" />
+			<Add directory="/usr/lib" />
+			<Add directory="/usr/local/lib" />
 		</Linker>
 		<ExtraCommands>
 			<Add after="cp plugins.cfg ../../../plugins.cfg" />
@@ -228,13 +235,6 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../include/define.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
-		<Unit filename="../../../include/dialog_manager.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -486,6 +486,13 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../include/tile_path.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../CodingStyle.txt">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -497,11 +504,6 @@
 			<Option compilerVar="" />
 			<Option compile="0" />
 			<Option link="0" />
-			<Option target="32bit" />
-			<Option target="64bit" />
-		</Unit>
-		<Unit filename="../../../source/dialog_manager.cpp">
-			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
@@ -698,6 +700,11 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/tile_manager.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/tile_path.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />

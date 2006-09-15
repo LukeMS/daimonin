@@ -38,7 +38,7 @@ public:
     TilePath();
     ~TilePath();
     /**< Find a path (A* is used for this). **/
-    bool FindPath (SubPos2D posStart, SubPos2D posDest, int precision =0);
+    bool FindPath (TilePos posStart, TilePos posDest, int precision =0);
     /**< Read a step from the path. **/
     bool ReadPath();
 

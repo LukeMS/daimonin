@@ -119,7 +119,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 //================================================================================================
 // Move to the currently selected object.
 //================================================================================================
-void ObjectNPC::attackObjectOnTile(SubPos2D pos)
+void ObjectNPC::attackObjectOnTile(TilePos pos)
 {}
 
 //================================================================================================
@@ -307,7 +307,7 @@ bool ObjectNPC::update(const FrameEvent& event)
                         }
                     }
                     mAttacking = ATTACK_NONE;
-                    if (!mIndex) ObjectManager::getSingleton().targetObjectAttackPlayer();
+                    if (!mIndex) ObjectManager::getSingleton().targetObjectAttackNPC(HERO);
                 }
                 break;
 
@@ -392,7 +392,7 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
 //================================================================================================
 // Turn the Object until it faces the given tile.
 //================================================================================================
-void ObjectNPC::faceToTile(SubPos2D pos)
+void ObjectNPC::faceToTile(TilePos pos)
 {
     float deltaZ = (pos.z - mActPos.z) * SUM_SUBTILES  +  (pos.subZ - mActPos.subZ);
     float deltaX = (pos.x - mActPos.x) * SUM_SUBTILES  +  (pos.subX - mActPos.subX);
@@ -473,7 +473,7 @@ void ObjectNPC::moveToNeighbourTile(int precision)
 //================================================================================================
 // Move the Object to the given tile.
 //================================================================================================
-void ObjectNPC::moveToDistantTile(SubPos2D pos, int precision)
+void ObjectNPC::moveToDistantTile(TilePos pos, int precision)
 {
     if (mActPos == pos || mAutoTurning || mAutoMoving) return;
     mEnemyObject= 0; // After this move, we have to check again if enemy is in attack range.
@@ -488,7 +488,7 @@ void ObjectNPC::moveToDistantTile(SubPos2D pos, int precision)
 void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 {
     if (!mAnim->isIdle() || !EnemyObject) return;
-    if (this == EnemyObject) return; // No Harakiri!
+    if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
     // Move in front of the enemy.
     if (mEnemyObject != EnemyObject)
     {
@@ -496,7 +496,7 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
         moveToDistantTile(mEnemyObject->getTilePos(), mEnemyObject->getBoundingRadius());
         mAttacking = ATTACK_APPROACH;
     }
-    // Enemy is in attack range.
+    // Enemy is already in attack range.
     else
     {
         mAttacking = ATTACK_ANIM_START;
@@ -509,4 +509,12 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 //================================================================================================
 void ObjectNPC::addToMap()
 {}
+
+
+//================================================================================================
+// .
+//================================================================================================
+void ObjectNPC::readyWeapon(bool ready)
+{
+}
 

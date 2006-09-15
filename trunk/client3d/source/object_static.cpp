@@ -67,7 +67,11 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mFloor    = obj.level;
     mFacing   = Degree(obj.facing);
     Logger::log().info()  << "Adding object: " << obj.meshName << ".";
-    mEntity =mSceneMgr->createEntity("Obj_"+StringConverter::toString(obj.type, 2, '0')+"_" + StringConverter::toString(mIndex, 8, '0'), obj.meshName);
+
+    string strObj = ObjectManager::ObjectID[obj.type];
+    strObj+= "#Obj_";
+    strObj+= StringConverter::toString(mIndex, 8, '0');
+    mEntity =mSceneMgr->createEntity(strObj, obj.meshName);
     mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
 
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
@@ -110,7 +114,7 @@ void ObjectStatic::movePosition(int deltaX, int deltaZ)
 //================================================================================================
 // Put the object onto a new position.
 //================================================================================================
-void ObjectStatic::setPosition(SubPos2D pos)
+void ObjectStatic::setPosition(TilePos pos)
 {
     Vector3 posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
     if (mFloor)
@@ -140,9 +144,9 @@ void ObjectStatic::move(Vector3 &pos)
 //================================================================================================
 // Move the object to the given position.
 //================================================================================================
-SubPos2D ObjectStatic::getTileScrollPos()
+TilePos ObjectStatic::getTileScrollPos()
 {
-    static SubPos2D pos;
+    static TilePos pos;
     TileManager::getSingleton().getMapScroll(pos.x, pos.z);
     pos.x+= mActPos.x;
     pos.z+= mActPos.z;

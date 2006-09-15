@@ -80,7 +80,7 @@ TilePath::~TilePath()
 //================================================================================================
 // Find a path (using A*).
 //================================================================================================
-bool TilePath::FindPath(SubPos2D posStart, SubPos2D posDest, int precision)
+bool TilePath::FindPath(TilePos posStart, TilePos posDest, int precision)
 {
     mPrecision = precision;
     posStart.subX+= posStart.x* SUM_SUBTILES;

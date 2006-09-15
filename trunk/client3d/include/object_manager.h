@@ -53,14 +53,6 @@ enum
 class ObjectManager
 {
 public:
-    // Independant objects
-    enum
-    {
-        OBJECT_PLAYER,
-        OBJECT_NPC,
-        OBJECT_STATIC,
-        OBJECT_SUM,
-    };
     // Attached objects
     enum
     {
@@ -68,7 +60,15 @@ public:
         ATTACHED_OBJECT_ARMOR,
         ATTACHED_OBJECT_SUM,
     };
-
+    // Independant objects
+    enum
+    {
+        OBJECT_STATIC,
+        OBJECT_PLAYER,
+        OBJECT_NPC,
+        OBJECT_SUM,
+    };
+    static char *ObjectID[OBJECT_SUM];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -80,6 +80,7 @@ public:
     bool init();
     void addMobileObject(sObject &obj);
     void delObjectNPC(int number);
+    void delObjectStatic(int number);
     void update(int type, const FrameEvent& evt);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
@@ -93,7 +94,7 @@ public:
         return mvObject_npc[npc]->getPos();
     }
     const Vector3 &synchToWorldPos(int deltaX, int deltaZ);
-    void selectNPC(MovableObject *mob);
+    void selectObject(MovableObject *mob);
 
     Vector3 getTargetedWorldPos()
     {
@@ -113,12 +114,12 @@ public:
         else
             return 0;
     }
-    const SubPos2D getTargetedPos()
+    const TilePos getTargetedPos()
     {
         return mSelectedPos;
     }
-    void targetObjectFacingPlayer(); // just a hack. Server will handle all movement stuff.
-    void targetObjectAttackPlayer(); // just a hack.
+    void targetObjectFacingNPC(int npcIndex); // just a hack. Server will handle this.
+    void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -127,9 +128,8 @@ private:
     std::string mDescFile;
     std::vector<ObjectStatic*> mvObject_static;
     std::vector<ObjectNPC*   > mvObject_npc;
-    int mSelectedType, mSelectedObject;
-    int mSelectedFriendly;
-    SubPos2D mSelectedPos;
+    int mSelectedType, mSelectedObject, mSelectedFriendly;
+    TilePos mSelectedPos;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
