@@ -1344,10 +1344,17 @@ void free_object_data(object *ob, int free_static_data)
               break;
 
             case TYPE_BEACON:
-              /* the original object name is stored in custom_attrset */
-              LOG(llevDebug, "beacon (%s) removed\n", ob->custom_attrset);
-              hashtable_erase(beacon_table, ob->custom_attrset);
-              FREE_ONLY_HASH(ob->custom_attrset);
+              {
+                  object *registered = hashtable_find(beacon_table, ob->custom_attrset);
+                  /* the original object name is stored in custom_attrset */
+                  LOG(llevDebug, "Removing beacon (%s)\n", ob->custom_attrset);
+
+                  if(registered != ob)
+                      LOG(llevDebug, "  Another beacon has replaced it. Not deregistering\n");
+                  else
+                      hashtable_erase(beacon_table, ob->custom_attrset);
+                  FREE_ONLY_HASH(ob->custom_attrset);
+              }
               break;
 
             default:
@@ -2957,7 +2964,7 @@ object *locate_beacon(shstr *id)
  */
 static void beacon_initializer(object *op)
 {
-    LOG(llevDebug, "beacon (%s) initialized\n", STRING_OBJ_NAME(op));
+    LOG(llevDebug, "Initializing beacon (%s)\n", STRING_OBJ_NAME(op));
     
     if(op->custom_attrset) {
         LOG(llevBug, "BUG: beacon (%s) initialized twice\n", STRING_OBJ_NAME(op));
@@ -2970,9 +2977,15 @@ static void beacon_initializer(object *op)
         
     /* Store original name in the attrset, so that a name change
      * doesn't mess things up */
-    add_refcount(op->name);
     op->custom_attrset = (void *)op->name;
-    hashtable_insert(beacon_table, op->name, op);
+    add_refcount(op->name);
+    if(! hashtable_insert(beacon_table, op->custom_attrset, op))
+    {
+        /* Replace existing entry TODO: speed up with hashtable_replace() or something similar */
+        LOG(llevDebug, "  Replacing already registered beacon.\n");
+        hashtable_erase(beacon_table, op->custom_attrset);
+        hashtable_insert(beacon_table, op->custom_attrset, op);
+    }
 }
 
 /** Initialize the table of object initializers. */
