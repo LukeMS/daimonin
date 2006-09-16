@@ -1345,6 +1345,7 @@ void free_object_data(object *ob, int free_static_data)
 
             case TYPE_BEACON:
               /* the original object name is stored in custom_attrset */
+              LOG(llevDebug, "beacon (%s) removed\n", ob->custom_attrset);
               hashtable_erase(beacon_table, ob->custom_attrset);
               FREE_ONLY_HASH(ob->custom_attrset);
               break;
