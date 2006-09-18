@@ -56,14 +56,19 @@ function _data_store._serialize(value)
     return ret .. "return t\n"
 end
 
+-- Build a path to a player directory
+function _data_store._player_path(player)
+    return "players/" .. string.lower(string.sub(player,1,1) .. "/" .. string.sub(player, 1, 2)) .. "/" .. player
+end
+
 function _data_store._load(id, player)
     local path, t
     if player then
-        path = "players/" .. player
+        path = _data_store._player_path(player)
         t = _data_store._players[player]
         if not t then
-            _data_store[player] = {n = 0}
-            t = _data_store[player]
+            t = {n = 0}
+            _data_store._players[player] = t
         end
     else
         path = "global"
@@ -105,7 +110,7 @@ function _data_store._save(time, player, b_force)
             if b_save then
                 local dir
                 if player then
-                    dir = "players/" .. player
+                    dir = _data_store._player_path(player)
                 else
                     dir = "global"
                 end
