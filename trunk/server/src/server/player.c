@@ -126,10 +126,18 @@ int playername_ok(char *cp)
  * we create a new one.  Otherwise, we recycle
  * the one that is passed.
  */
-static player * get_player(player *p)
+player *get_player(player *p)
 {
-    object *op  = arch_to_object(get_player_archetype(NULL));
+    static archetype *p_arch = NULL;
+    object *op  = NULL;
     int     i;
+
+    /* we need this to assign a "standard player object" - at this 
+     * moment a player is login in we have not loaded the player file
+     * and no idea about the true object
+     */
+    if(!p_arch)
+        p_arch = find_archetype("human_male");
 
     if (!p)
     {
@@ -181,6 +189,8 @@ static player * get_player(player *p)
     p->mute_msg_count=0;
 
     p->firemode_type = p->firemode_tag1 = p->firemode_tag2 = -1;
+
+    op  = arch_to_object(p_arch);
     op->custom_attrset = p; /* this is where we set up initial CONTR(op) */
     p->ob = op;
     op->speed_left = 0.5;
@@ -284,7 +294,9 @@ void free_player(player *pl)
         last_player = pl->prev;
     player_active--;
     
-    free_newsocket(&pl->socket);
+    if(pl->socket.status != ST_SOCKET_NO)
+        free_newsocket(&pl->socket);
+
     if (pl->ob)
     {
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
@@ -327,29 +339,6 @@ player *add_player(NewSocket *ns)
     return p;
 }
 
-/*
- * get_player_archetype() return next player archetype from archetype
- * list. Not very efficient routine, but used only creating new players.
- * Note: there MUST be at least one player archetype!
- */
-archetype * get_player_archetype(archetype *at)
-{
-    archetype  *start   = at;
-    for (; ;)
-    {
-        if (at == NULL || at->next == NULL)
-            at = first_archetype;
-        else
-            at = at->next;
-        if (at->clone.type == PLAYER)
-            return at;
-        if (at == start)
-        {
-            LOG(llevError, "ERROR: No Player achetypes\n");
-            exit(-1);
-        }
-    }
-}
 
 void give_initial_items(object *pl, struct oblnk *items)
 {

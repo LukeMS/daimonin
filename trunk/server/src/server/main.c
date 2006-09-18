@@ -1292,10 +1292,6 @@ void dequeue_path_requests()
  * doing the various things.
  */
 
-/* Hm, i really must check this in the feature... here are some ugly
- * hacks and workarounds hidden - MT2003
- */
-
 void do_specials()
 {
     if (!(ROUND_TAG % 2))
@@ -1392,6 +1388,121 @@ void shutdown_agent(int timer, int ret, char *reason)
     }
 }
 
+/* we traverse through the *all* saved player files in /data
+* and collect statistic data from them.
+* DEBUG & DEVELOPLEMT only. 
+* We use this as player transformation for vision change but
+* his is also useful for things like "min/max hp" and stuff.
+* Why is it here and not in a extern script?
+* Simple reason: fix_player() and the loader will
+* alter the saved base data of a player alot and rebuilding
+* that external to get the real ingame stats is really a task.
+*/
+#ifdef DEBUG_TRAVERSE_PLAYER_DIR
+static void traverse_player_stats(char* start_dir)
+{
+    DIR* dir;						/* pointer to the scanned directory. */
+    struct dirent* entry=NULL;		/* pointer to one directory entry.   */
+    char *fptr, cwd[HUGE_BUF+1];	/* current working directory.        */
+    static char base_cwd[HUGE_BUF+1];	/* base (start) directory        */
+    struct stat dir_stat;			/* used by stat().                   */
+
+    /* first, save path of current working directory */
+    if (!getcwd(cwd, HUGE_BUF+1)) {
+        perror("getcwd:");
+        return;
+    }
+
+    /* open the directory for reading */
+    if(start_dir)
+    {
+        strcpy(base_cwd, cwd);
+        dir = opendir(start_dir);
+        chdir(start_dir);
+    }
+    else
+        dir = opendir(".");
+
+    if (!dir) {
+        fprintf(stderr, "Cannot read directory '%s': ", cwd);
+        perror("");
+        return;
+    }
+
+    /* scan the directory, traversing each sub-directory, and */
+    /* matching the pattern for each file name.               */
+    while ((entry = readdir(dir))) 
+    {
+        /* check if the given entry is a directory. */
+        /* skip all ".*" entries, to avoid loops and forbidden directories. */
+        if (entry->d_name[0] == '.')
+            continue;
+
+        if (stat(entry->d_name, &dir_stat) == -1) 
+        {
+            perror("stat:");
+            continue;
+        }
+
+        /* is this a directory? */
+        if (S_ISDIR(dir_stat.st_mode))
+        {
+            /* Change into the new directory */
+            if (chdir(entry->d_name) == -1) 
+            {
+                fprintf(stderr, "Cannot chdir into '%s': ", entry->d_name);
+                perror("");
+                continue;
+            }
+            /* check this directory */
+            traverse_player_stats(NULL);
+
+            /* finally, restore the original working directory. */
+            if (chdir("..") == -1) 
+            {
+                fprintf(stderr, "Cannot chdir back to '%s': ", cwd);
+                perror("");
+            }
+        }
+        else
+        {
+            /* lets check its a valid, local artifacts file */
+            if(entry->d_name[0] != '.' && (fptr = strrchr(entry->d_name, '.')) && !strcmp(fptr, ".pl") )
+            {
+                player *pl = NULL;
+
+                LOG(llevDebug, "found player %s...\n", entry->d_name);
+
+                if(!(pl = get_player(NULL)))
+                    LOG(llevDebug, "Error: loading player %s...\n", entry->d_name);
+                else
+                {
+                    pl->socket.status = ST_SOCKET_NO;
+                    entry->d_name[fptr-entry->d_name] = 0;
+                    FREE_AND_COPY_HASH(pl->ob->name, entry->d_name);
+                    entry->d_name[fptr-entry->d_name] = '.';
+                    chdir(base_cwd);
+                    check_login(pl->ob, FALSE);
+                    /* player is now loaded, do something with it - after it, release player & object */
+
+                    /* ........... */                    
+
+                    /* lets remove the player and its objects and enviroment */
+                    free_player(pl);
+                    chdir(cwd);
+                }
+            }
+        }
+    }
+
+    closedir(dir);
+
+    if(start_dir) /* clean restore */
+        chdir(cwd);
+}
+#endif
+
+
 #define AUTO_MSG_COUNTER (8*60*30) /* all 30 minutes */
 int main(int argc, char **argv)
 {
@@ -1415,11 +1526,16 @@ int main(int argc, char **argv)
     atexit(removePlugins);
 #endif
     compile_info();       /* its not a bad idea to show at start whats up */
+
     memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
     STATS_EVENT(STATS_EVENT_STARTUP);
-    LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
-
     reset_sleep(); /* init our last_time = start time - and lets go! */
+
+#ifdef DEBUG_TRAVERSE_PLAYER_DIR
+    traverse_player_stats("./data/players");
+#endif
+
+    LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
     for (; ;)
     {
         nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
@@ -1438,6 +1554,7 @@ int main(int argc, char **argv)
                 "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
         }
 #endif
+
 #ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
         check_use_object_list();
 #endif
@@ -1471,3 +1588,4 @@ int main(int argc, char **argv)
     }
     return 0;
 }
+
