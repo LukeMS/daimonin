@@ -4,7 +4,7 @@
 
 --
 -- The Behaviourlist object will behave as a proxy for the 
--- behaviurtable it is created with. That means you can access
+-- behaviourtable it is created with. That means you can access
 -- table entries directly through the Behaviourlist:
 --
 -- list = Behaviourlist(obj:GetAI():GetBehaviourlist())
