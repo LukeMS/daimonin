@@ -49,6 +49,23 @@ function topicData3()
     end
 end
 
+-- Tests the storage of special values
+function topicData4()
+    local ds = DataStore("data_store_test")
+
+    ds:Set("special1", event.me)
+    ds:Set("special2", event.me.map)
+    
+    local s1 = ds:Get("special1")
+    local s2 = ds:Get("special2")
+--    if s1 == event.me and s2 == event.me.map then
+    if s1 == event.me and s2 == event.me.map then
+        event.me:SayTo(event.activator, "Specials stored. Talk to lost soul to get them back")
+    else
+        event.me:SayTo(event.activator, "Error: Specials weren't saved! s1="..tostring(s1)..", s2="..tostring(s2))
+    end
+end
+
 function topicInfo()
     local msg = "\nContents of data_store:\nGlobal:"
     for k1, v1 in pairs(_data_store._global) do
@@ -140,6 +157,7 @@ Available tests/topics:
 ^data^ <message>
 ^data2^ <player> <message>
 ^data3^
+^data4^
 ^info^
 ^save^
 
@@ -147,12 +165,14 @@ Available tests/topics:
 ^data^ tests the storage of global data.
 ^data2^ tests the storage of data for a player.
 ^data3^ tests the storage of functions.
+^data4^ tests the storage of objects and other special types.
 ^info^ dumps the contents of '_data_store'.
 ^save^ saves '_data_store'.]])
 
 tl:AddTopics("recursive", topicRecursive)
 tl:AddTopics("recursive2", topicRecursive2)
 tl:AddTopics("recursive3", topicRecursive3)
+tl:AddTopics("data4", topicData4)
 tl:AddTopics("data3", topicData3)
 tl:AddTopics("data2 ([^ ]*) (.*)", topicData2)
 tl:AddTopics("data (.*)", topicData)

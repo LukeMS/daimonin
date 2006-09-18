@@ -21,6 +21,17 @@ if func and type(func) == 'function' then
     event.me:SayTo(event.activator, "Done calling the function...")
 end
 
+s1 = ds:Get("special1")
+s2 = ds:Get("special2")
+if s1 and type(s1) == 'GameObject' then
+    b_msg = true
+    event.me:SayTo(event.activator, "Got back a stored object: " .. s1.name)
+end
+if s2 and type(s2) == 'Map' then
+    b_msg = true
+    event.me:SayTo(event.activator, "Got back a stored map: " .. s2.path)
+end
+
 ds = DataStore("data_store_test", event.activator)
 msg = ds:Get("message")
 
