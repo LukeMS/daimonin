@@ -915,6 +915,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /*
  * Use of the state-variable in player objects:
  */
+#define ST_SOCKET_NO            (-1)
 #define ST_GET_NAME             0
 #define ST_GET_PASSWORD         1
 #define ST_CONFIRM_PASSWORD     2

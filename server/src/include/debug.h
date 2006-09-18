@@ -50,6 +50,9 @@
 /*#define DEBUG_FIX_PLAYER_SKIPPED */
 #define DEBUG_FIX_MONSTER
 
+/* force traverse loading and process of all player files inside /server/data/players */
+/*#define  DEBUG_TRAVERSE_PLAYER_DIR*/
+
 /* Aggro & EXP sharing debugging: aggro.c */
 #define DEBUG_AGGRO /* Warning: ALOT debug log lines with this option - disable it for played server */
 
