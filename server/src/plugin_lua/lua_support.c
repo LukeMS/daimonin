@@ -41,19 +41,23 @@ static int  set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *
 /* Internally used pseudo-classes, not accessible from scripts */
 static lua_class    Attribute   =
 {
-    LUATYPE_ATTRIBUTE, "Attribute", 0, NULL
+    LUATYPE_ATTRIBUTE, "Attribute", 0, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 static lua_class    Method      =
 {
-    LUATYPE_METHOD, "Method", 0, NULL
+    LUATYPE_METHOD, "Method", 0, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 static lua_class    Constant    =
 {
-    LUATYPE_CONSTANT, "Constant", 0, NULL
+    LUATYPE_CONSTANT, "Constant", 0, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 static lua_class    Flag        =
 {
-    LUATYPE_FLAG, "Flag", 0, NULL
+    LUATYPE_FLAG, "Flag", 0, NULL,
+    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
 };
 
 /*
@@ -92,6 +96,21 @@ static int toString_generic(struct lua_State *L)
         lua_pushstring(L, "(error)");
     }
 
+    return 1;
+}
+
+/* Generic "eq" metamethod for our object model,
+ * can be overridden by classes
+ */
+static int eq_generic(struct lua_State *L)
+{
+    lua_object *obj1 = lua_touserdata(L, 1);
+    lua_object *obj2 = lua_touserdata(L, 2);    
+    
+    if (!obj1 || !obj2)
+        luaL_error(L, "eq: Not an object");
+
+    lua_pushboolean(L, memcmp(obj1, obj2, sizeof(lua_object)) == 0);
     return 1;
 }
 
@@ -566,6 +585,7 @@ int push_object(lua_State *L, lua_class *class, void *data)
             obj->tag = obj->data.context->tag;
             break;
         default:
+            obj->tag = 0;
             break;
     }
 
@@ -636,6 +656,10 @@ int init_class(struct lua_State *L, lua_class *class)
 
     lua_pushstring(L, "__newindex");
     lua_pushcclosure(L, setObjectMember, 0);
+    lua_rawset(L, -3);     /* stack: metatable */
+    
+    lua_pushstring(L, "__eq");
+    lua_pushcclosure(L, eq_generic, 0);
     lua_rawset(L, -3);     /* stack: metatable */
 
     lua_pushstring(L, "__tostring");
