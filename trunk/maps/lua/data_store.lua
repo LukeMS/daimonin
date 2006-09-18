@@ -1,7 +1,9 @@
-_data_store = { _global = {}, _players = {}}
+_data_store = { _global = {}, _players = {}, _special = {}}
 
 function _data_store._object(objtype, id)
-    return { ['type'] = objtype, ['type_id'] = id }
+    container = { ['type'] = objtype, ['type_id'] = id }
+    setmetatable(container, _data_store._special)
+    return container
 end
 
 function _data_store._serialize(value)
@@ -17,31 +19,36 @@ function _data_store._serialize(value)
         elseif t == 'number' or t == 'boolean' then
             return tostring(value)
         elseif t == 'table' then
-            if value.type == game.TYPE_PLAYER and value.type_id then
-                return '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
-            else
-                if tables[value] ~= nil then
-                    -- We have seen this table referenced before
-                    table.insert(tables[value]["refs"], path)
-                    return "{}"
+            if tables[value] ~= nil then
+                -- We have seen this table referenced before
+                table.insert(tables[value]["refs"], path)
+                return "{}"
+            elseif getmetatable(value) == _data_store._special then
+                -- Probably a player or normal object
+                if value.type == game.TYPE_PLAYER and value.type_id then
+                    return '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
                 else
-                    local ret = ""
-                    local indent = depth .. "  "
-                    local key 
-
-                    tables[value] = {["path"] = path, ["refs"] = {}}
-                    for k,v in value do
-                        if type(k)=="string" then
-                            key = '[' .. string.format("%q", k) .. ']'
-                        else
-                            key = '[' .. tostring(k) .. ']'
-                        end
-
-                        ret = ret .. indent .. key .. ' = ' .. serialize(path .. key, v, indent) .. ",\n"
-                    end
-                    return "{\n" ..  ret ..  depth .. '}'
+                    return 'nil' -- We don't try to save anything else
                 end
+            else
+                local ret = ""
+                local indent = depth .. "  "
+                local key 
+
+                tables[value] = {["path"] = path, ["refs"] = {}}
+                for k,v in value do
+                    if type(k)=="string" then
+                        key = '[' .. string.format("%q", k) .. ']'
+                    else
+                        key = '[' .. tostring(k) .. ']'
+                    end
+
+                    ret = ret .. indent .. key .. ' = ' .. serialize(path .. key, v, indent) .. ",\n"
+                end
+                return "{\n" ..  ret ..  depth .. '}'
             end
+        else
+            return 'nil' -- Something we can't handle (yet)
         end
     end
 
@@ -147,11 +154,11 @@ function DataStore:Get(key)
     local t = type(value)
     if t == "GameObject" and not game:IsValid(value) then
         value = nil
-    elseif t == "table" and value.type == game.TYPE_PLAYER and value.type_id then
+    elseif t == "table" and getmetatable(value) == _data_store._special then
         local object = value.object
         if game:IsValid(object) then
             value = object
-        else
+        elseif value.type == game.TYPE_PLAYER and value.type_id then
             value = game:FindPlayer(value.type_id)
             if value then
                 self:Set(key, value)
@@ -171,6 +178,7 @@ function DataStore:Set(key, value)
             ref.type = t
             ref.type_id = value.name
         end
+        setmetatable(ref, _data_store._special)
         value = ref
     end
     rawset(self, key, value)
