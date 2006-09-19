@@ -14,12 +14,15 @@ rem ====================================
 ..\..\_Tools_\tar xvf ogre_dll.tar
 ..\..\_Tools_\gunzip -c ogre_inc.tgz >ogre_inc.tar
 ..\..\_Tools_\tar xvf ogre_inc.tar
-..\..\_Tools_\gunzip -c stlport.tgz >stlport.tar
-..\..\_Tools_\tar xvf stlport.tar
+..\..\_Tools_\gunzip -c sdl_dll.tgz >sdl_dll.tar
+..\..\_Tools_\tar xvf sdl_dll.tar
 
 rem ====================================
 rem Copy the dll's to main folder.
 rem ====================================
+mkdir ..\..\..\debug
+copy sdl_dll\*.* ..\..\..\debug
+move sdl_dll\*.* ..\..\..\
 move ogre_dll\debug\*.* ..\..\..\debug
 copy fmod_dll\*.* ..\..\..\debug
 move ogre_dll\*.* ..\..\..\
@@ -27,6 +30,7 @@ move fmod_dll\*.* ..\..\..\
 rmdir ogre_dll\debug
 rmdir ogre_dll
 rmdir fmod_dll
+rmdir sdl_dll
 
 rem ====================================
 rem Clean up.

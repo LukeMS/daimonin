@@ -2,8 +2,9 @@
 /// Client3d as Code::Blocks project HOWTO
 ///===================================================
 
-Install a Code::Blocks Version > 1.0rc2 (with MinGW compiler)
-(Search the Ogre3d forum for help on this step)
+Install the latest nightly build of Code::Blocks.
+Install MinGW C++ Toolbox (Read the wiki pages on Ogre3d).
+
 ----
 1) Start the Setup.bat
 2) Dblclk on the Code::Blocks project file

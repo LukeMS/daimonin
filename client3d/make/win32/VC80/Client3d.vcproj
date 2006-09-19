@@ -625,14 +625,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\gui\gui_gadget_scrollbar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\gui\gui_window_dialog.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\include\light_manager.h"
 				>
 			</File>
@@ -740,6 +732,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\include\gui\gui_gadget_scrollbar.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\include\gui\gui_graphic.h"
 					>
 				</File>
@@ -769,6 +765,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\gui\gui_window.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_window_dialog.h"
 					>
 				</File>
 			</Filter>

@@ -217,7 +217,6 @@
       <Range width= "9" height= "9" />
     </Graphic>
 
-
     <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
       <Pos x= "0" y= "9" />
       <Range width= "9" height= "9" />
@@ -267,12 +266,11 @@
     </Listbox>
   </Window>
 
-
   <!--#############################################-->
-  <!--WINDOW: Login Window                         -->
+  <!--WINDOW: Login                                -->
   <!--#############################################-->
   <Window name= "Login">
-    <Size     width= "300" height= "400" />
+    <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" zOrder = "250" />
     <DragArea x= "0" y= "0" width= "200" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
@@ -282,11 +280,11 @@
     <!--=============================================-->
     <Graphic type= "GFX_FILL"  image_name = "Red_Background">
       <Pos x= "0" y= "0" />
-      <Range width= "300" height= "400" />
+      <Range width= "512" height= "512" />
     </Graphic>
 
     <!--=============================================-->
-    <!-- Window Title                                -->
+    <!-- Layer 0                                     -->
     <!--=============================================-->
     <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
       <Pos x= "0" y= "0" />
@@ -295,132 +293,58 @@
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "10" y= "0" />
-      <Range width= "290" height= "5" />
+      <Range width= "494" height= "5" />
     </Graphic>
 
     <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
-      <Pos x= "291" y= "0" />
+      <Pos x= "503" y= "0" />
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Label x=  "125" y= "8" font="04" text= "Login" />
+    <Label x=  "225" y= "8" font="04" text= "Login" />
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
       <Pos x= "5" y= "30" />
-      <Range width= "295" height= "5" />
+      <Range width= "502" height= "5" />
     </Graphic>
 
-    <!--=============================================-->
-    <!-- Layer 0                                     -->
-    <!--=============================================-->
     <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
-      <Pos x= "0" y= "391" />
+      <Pos x= "0" y= "503" />
       <Range width= "9" height= "9" />
     </Graphic>
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "10" y= "395" />
-      <Range width= "290" height= "5" />
+      <Pos x= "10" y= "507" />
+      <Range width= "492" height= "5" />
     </Graphic>
 
     <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
-      <Pos x= "291" y= "391" />
+      <Pos x= "503" y= "503" />
       <Range width= "9" height= "9" />
     </Graphic>
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
       <Pos x= "0" y= "10" />
-      <Range width= "5" height= "422" />
+      <Range width= "5" height= "492" />
     </Graphic>
 
     <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "295" y= "10" />
-      <Range width= "5" height= "422" />
+      <Pos x= "507" y= "10" />
+      <Range width= "5" height= "492" />
     </Graphic>
 
-    <Gadget type= "BUTTON"  name = "But_OK" image_name = "Button_01_Std">
-      <Pos x= "30" y= "40" />
-      <Label xPos= "20" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "OK"/>
-      <Tooltip  text= "Press here to ACCEPT." />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "But_Cancel" image_name = "Button_01_Std">
-      <Pos x= "130" y= "40" />
-      <Label xPos= "6" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "Cancel"/>
-      <Tooltip  text= "Press here to CANCEL." />
-    </Gadget>
-
-    <Gadget type= "COMBOBOX"  name = "ComboBoxTest" image_name = "Blue_Background">
-      <Pos x= "40" y= "300" />
-      <Range width= "148" height= "17" />
-      <Label xPos= "40" yPos= "4" font="02" red= "32" green= "64" blue= "128" text= "CBox"/>
-      <Tooltip  text= "I am suposed to be a combobox." />
-      <Button image_name="Button_01_Down" />
-      <Option text="Monkey With a Long tail"/>
-      <Option text="PigMMMMMMMMMMMMMMMMMMMMMMMMM"/>
-      <Option text="1"/>
-      <Option text="2"/>
-      <Option text="3"/>
-      <Scroll>
-        <Down image_name="ScrollButton_01_Down" />
-        <Up image_name="ScrollButton_01_Up" />
-      </Scroll>
-     </Gadget>
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
-      <Pos x= "30" y= "50" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "41" y= "50" />
-      <Range width= "221" height= "5" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
-      <Pos x= "260" y= "50" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
-      <Pos x= "30" y= "356" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
-      <Pos x= "40" y= "360" />
-      <Range width= "221" height= "5" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
-      <Pos x= "260" y= "356" />
-      <Range width= "9" height= "9" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "30" y= "59" />
-      <Range width= "5" height= "297" />
-    </Graphic>
-
-    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
-      <Pos x= "264" y= "59" />
-      <Range width= "5" height= "297" />
-    </Graphic>
-    <!--=============================================-->
-    <!-- Layer 2                                     -->
-    <!--=============================================-->
-    <Label   x= "100" y=  "65" font="02" red= "32" green= "64" blue= "128" text= "Enter your Name:" />
-    <TextBox x= "100" y=  "85" font="02" text= "" width = "100" name= "Input_Login_Name" />
-
-    <Label   x=  "65" y=  "165" font="03" text= "Text@00 using system font" />
-    <TextBox x= "100" y=  "185" font="02" text= "" width = "100" name= "Input_Login_Passwd" />
-
-    <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Verify" />
-
-    <TextBox x= "100" y= "105" font="02" text= "" width = "100" name= "Input_Login_Very" />
-
+    <Table type= "COLOR_FILL" name= "Table_Server" font="03">
+      <Pos x= "100" y= "100" />
+      <Range width= "300" height= "300" />
+      <Color type= "BACK_1" red=  "56" green=  "60" blue= "49" alpha = "255" />
+	  <Color type= "BACK_2" red=  "89" green=  "95" blue= "87" alpha = "255" />
+	  <Color type= "SELECT" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+      <Column width = "200" label ="Server:" />
+      <Column width = "100" label ="Players:" />
+    </Table>
 
   </Window>
 

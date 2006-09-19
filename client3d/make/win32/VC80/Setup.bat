@@ -18,9 +18,16 @@ rem ====================================
 ..\..\_Tools_\gunzip -c fmod_dll.tgz >fmod_dll.tar
 ..\..\_Tools_\tar xvf fmod_dll.tar
 
+..\..\_Tools_\gunzip -c sdl_lib.tgz >sdl_lib.tar
+..\..\_Tools_\tar xvf sdl_lib.tar
+..\..\_Tools_\gunzip -c sdl_dll.tgz >sdl_dll.tar
+..\..\_Tools_\tar xvf sdl_dll.tar
+
 rem ====================================
 rem Copy the dll's to main folder.
 rem ====================================
+copy sdl_dll\*.* ..\..\..\debug
+move sdl_dll\*.* ..\..\..\
 move ogre_dll\debug\*.* ..\..\..\debug
 copy fmod_dll\*.* ..\..\..\debug
 move ogre_dll\*.* ..\..\..\
@@ -28,11 +35,7 @@ move fmod_dll\*.* ..\..\..\
 rmdir ogre_dll\debug
 rmdir ogre_dll
 rmdir fmod_dll
-
-rem ====================================
-rem We need the Code::Blocks plugins.
-rem ====================================
-copy plugins.cfg ..\..\..\
+rmdir sdl_dll
 
 rem ====================================
 rem Clean up.

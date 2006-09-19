@@ -23,7 +23,6 @@
 				</Compiler>
 				<Linker>
 					<Add library="OgreMain_d" />
-					<Add library="stlportstlg.5.0" />
 					<Add directory="..\..\..\debug\" />
 				</Linker>
 				<ExtraCommands>
@@ -46,8 +45,6 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="OgreMain" />
-					<Add library="stlport.5.0" />
-					<Add library="SDL" />
 					<Add directory="..\..\..\" />
 				</Linker>
 				<ExtraCommands>
@@ -70,7 +67,6 @@
 			<Add option="-DMINGW" />
 			<Add option="-DWIN32" />
 			<Add directory="ogre_inc" />
-			<Add directory="stlport\stlport" />
 			<Add directory="..\..\..\source" />
 			<Add directory="..\..\..\source\gui" />
 			<Add directory="..\..\..\include" />

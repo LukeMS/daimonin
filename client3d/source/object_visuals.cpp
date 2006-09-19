@@ -234,7 +234,6 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
     else if (npc->getFriendly() <0) index = PARTICLE_COLOR_ENEMY_STRT;
     else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
-
     mPSystem->setVisible(true);
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
@@ -242,7 +241,6 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.3;
     float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.3;
 	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeZ, sizeX, true);
-
     // Lifebar.
     if (!showLifebar) return;
     if (mNode[NPC_LIFEBAR]) mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_LIFEBAR]->getName());
@@ -251,7 +249,6 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     Vector3 pos = mNode[NPC_LIFEBAR]->getPosition();
     mNode[NPC_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
     mNode[NPC_LIFEBAR]->setInheritOrientation(false);
-
     const int FONT_NR = 3;
     const char *name = npc->getNickName().c_str();
     int len = GuiTextout::getSingleton().CalcTextWidth(name, FONT_NR);

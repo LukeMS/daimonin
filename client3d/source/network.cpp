@@ -40,6 +40,7 @@ http://www.gnu.org/licenses/licenses.html
 #define DEFAULT_METASERVER_PORT 13326
 #define DEFAULT_METASERVER "damn.informatik.uni-bremen.de"
 #define PACKAGE_NAME "Daimonin SDL Client"
+
 int SoundStatus=1;
 
 enum
@@ -84,7 +85,7 @@ enum
 bool Network::GameStatusVersionOKFlag = false;
 bool Network::GameStatusVersionFlag = false;
 bool Network::mInitDone = false;
-int Network::mRequest_file_chain =0;
+int  Network::mRequest_file_chain =0;
 
 typedef void (*CmdProc)(unsigned char *, int len);
 
@@ -155,57 +156,6 @@ Network::_command_buffer_read *Network::read_cmd_start=NULL;
 
 //sockaddr_in mInsock;
 
-// This is really, really a bad implementation.
-//This is still weird test code and need a real code solution.
-void parse_metaserver_data(string strMetaData)
-{
-    /// ////////////////////////////////////////////////////////////////////
-    /// Parse the metadata.
-    /// ////////////////////////////////////////////////////////////////////
-    Logger::log().info() << "GET: " << strMetaData;
-    unsigned int startPos=0, endPos;
-    string strIP, str1, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
-    // Server IP.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strIP = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // unknown 1.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    str1 = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Server name.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strName = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Number of players online.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strPlayer = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Server version.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strVersion = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Description1
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strDesc1 = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Description2.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strDesc2 = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Description3.
-    endPos = (int)strMetaData.find( '|',  startPos);
-    strDesc3 = strMetaData.substr(startPos, endPos-startPos);
-    startPos = endPos+1;
-    // Description4.
-    strDesc4 = strMetaData.substr(startPos, strMetaData.size()-startPos);
-
-//    add_metaserver_data(strName.c_str(), mOpenPort, atoi(strPlayer.c_str()), strVersion.c_str(), strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
-
-}
-
-
-
 
 #ifndef WIN32
 inline static char *strerror_local(int errnum)
@@ -222,7 +172,11 @@ Network::Network()
 {}
 
 Network::~Network()
-{}
+{
+    for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
+        delete (*i);
+    mvServer.clear();
+}
 
 
 void Network::update()
@@ -669,14 +623,14 @@ bool Network::SOCKET_DeinitSocket()
     return(true);
 }
 
-bool Network::SOCKET_OpenClientSocket(char *host, int port)
+bool Network::SOCKET_OpenClientSocket(const char *host, int port)
 {
     int tmp = 1;
 
     // No more socket for the IO thread
     SDL_LockMutex(socket_lock);
 
-    if (! SOCKET_OpenSocket(host, port))
+    if (!SOCKET_OpenSocket(host, port))
         return false;
 
     csocket.inbuf.buf = new unsigned char[MAXSOCKBUF];
@@ -702,55 +656,8 @@ bool Network::SOCKET_OpenClientSocket(char *host, int port)
     return true;
 }
 
-// we used our core connect routine to connect to metaserver, this is the special read one.
-void Network::read_metaserver_data(SOCKET fd)
-{
-    int     stat, temp;
-    char *ptr = new char[MAX_METASTRING_BUFFER];
-    char *buf = new char[MAX_METASTRING_BUFFER];
-    temp = 0;
-    for (; ;)
-    {
 #ifdef WIN32
-        stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
-        if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-        {
-            Logger::log().error() << "Error reading metaserver data!: "<< WSAGetLastError();
-            break;
-        }
-        else
-#else
-        do
-        {
-            stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
-        }
-        while (stat == -1);
-#endif
-            if (stat > 0)
-            {
-                if (temp + stat >= MAX_METASTRING_BUFFER)
-                {
-                    memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
-                    temp += stat;
-                    break;
-                }
-                memcpy(buf + temp, ptr, stat);
-                temp += stat;
-            }
-            else if (stat == 0)
-            {
-                // connect closed by meta
-                break;
-            }
-    }
-    buf[temp] = 0;
-    parse_metaserver_data(buf);
-    delete[] ptr;
-    delete[] buf;
-}
-
-#ifdef WIN32
-bool Network::SOCKET_OpenSocket(char *host, int port)
+bool Network::SOCKET_OpenSocket(const char *host, int port)
 {
     int             error;
     long            temp;
@@ -844,7 +751,7 @@ bool Network::SOCKET_OpenSocket(char *host, int port)
 }
 
 #else
-bool Network::SOCKET_OpenSocket(char *host, int port)
+bool Network::SOCKET_OpenSocket(const char *host, int port)
 {
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
     struct linger       linger_opt;
@@ -963,10 +870,76 @@ if (csocket.fd == SOCKET_NO)
     }
     return true;
 }
-
 #endif
 
+void Network::SendVersion()
+{
+    char buf[MAX_BUF];
+    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
+    Logger::log().error() << "Send version command: " << buf;
+    cs_write_string(buf, (int)strlen(buf));
+}
 
+int Network::cs_write_string(char *buf, int len)
+{
+    SockList sl;
+    sl.len = len;
+    sl.buf = (unsigned char *) buf;
+    return send_socklist(sl);
+}
+
+//================================================================================================
+// We used our core connect routine to connect to metaserver, this is the special read one.
+//================================================================================================
+void Network::read_metaserver_data(SOCKET fd)
+{
+    int  stat, temp;
+    char *ptr = new char[MAX_METASTRING_BUFFER];
+    char *buf = new char[MAX_METASTRING_BUFFER];
+    temp = 0;
+    while (1)
+    {
+#ifdef WIN32
+        stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
+        {
+            Logger::log().error() << "Error reading metaserver data!: "<< WSAGetLastError();
+            break;
+        }
+        else
+#else
+        do
+        {
+            stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        }
+        while (stat == -1);
+#endif
+            if (stat > 0)
+            {
+                if (temp + stat >= MAX_METASTRING_BUFFER)
+                {
+                    memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
+                    temp += stat;
+                    break;
+                }
+                memcpy(buf + temp, ptr, stat);
+                temp += stat;
+            }
+            else if (stat == 0)
+            {
+                // connect closed by meta
+                break;
+            }
+    }
+    buf[temp] = 0;
+    parse_metaserver_data(buf);
+    delete[] ptr;
+    delete[] buf;
+}
+
+//================================================================================================
+// Connect to meta and get server data.
+//================================================================================================
 void Network::contactMetaserver()
 {
     csocket.fd = SOCKET_NO;
@@ -983,24 +956,89 @@ void Network::contactMetaserver()
     else
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"metaserver failed! using default list.");
 
-//    add_metaserver_data("127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
-//    count_meta_server();
+    add_metaserver_data("127.0.0.1", "127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"select a server.");
-
 }
 
-void Network::SendVersion()
+//================================================================================================
+// Parse the metadata.
+//================================================================================================
+void Network::parse_metaserver_data(string strMetaData)
 {
-    char buf[MAX_BUF];
-    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
-    Logger::log().error() << "Send version command: " << buf;
-    cs_write_string(buf, (int)strlen(buf));
+    unsigned int startPos;
+    string::size_type endPos =0;
+    string strIP, strPort, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
+    while (1)
+    {
+        // Server IP.
+        startPos = endPos+0;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strIP = strMetaData.substr(startPos, endPos-startPos);
+        // unknown 1.
+        startPos = endPos+1;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strPort = strMetaData.substr(startPos, endPos-startPos);
+        // Server name.
+        startPos = endPos+1;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strName = strMetaData.substr(startPos, endPos-startPos);
+        // Number of players online.
+        startPos = endPos+1;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strPlayer = strMetaData.substr(startPos, endPos-startPos);
+        // Server version.
+        startPos = endPos+1;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strVersion = strMetaData.substr(startPos, endPos-startPos);
+        // Description1
+        startPos = endPos+1;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strDesc1 = strMetaData.substr(startPos, endPos-startPos);
+        // Description2.
+        startPos = endPos+1;
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strDesc2 = strMetaData.substr(startPos, endPos-startPos);
+        startPos = endPos+1;
+        // Description3.
+        endPos = strMetaData.find( '|',  startPos);
+        if (endPos == std::string::npos) break;
+        strDesc3 = strMetaData.substr(startPos, endPos-startPos);
+        // Description4.
+        startPos = endPos+1;
+        endPos = strMetaData.find( '\n',  startPos);
+        if (endPos == std::string::npos) endPos = strMetaData.size();
+        strDesc4 = strMetaData.substr(startPos, endPos -startPos);
+        if (endPos < strMetaData.size()) ++endPos;
+        // Add the server to the linked list.
+        add_metaserver_data(strIP.c_str(), strName.c_str(), atoi(strPort.c_str()), atoi(strPlayer.c_str()), strVersion.c_str(),
+                            strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
+    }
 }
 
-int Network::cs_write_string(char *buf, int len)
+//================================================================================================
+// Add server data to a linked list.
+//================================================================================================
+void Network::add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
+                                  const char *desc1, const char *desc2, const char *desc3, const char *desc4)
 {
-    SockList sl;
-    sl.len = len;
-    sl.buf = (unsigned char *) buf;
-    return send_socklist(sl);
+    Server *node = new Server;
+    node->player = player;
+    if (port > 1023) port = 1023;
+    node->port   = port;
+    node->name   = server;
+    node->ip     = ip;
+    node->version= ver;
+    node->desc1  = desc1;
+    node->desc2  = desc2;
+    node->desc3  = desc3;
+    node->desc4  = desc4;
+    mvServer.push_back(node);
+    Logger::log().info() << "Added server:  " << server << "  port:  " << port << "  players:  " << player;
 }

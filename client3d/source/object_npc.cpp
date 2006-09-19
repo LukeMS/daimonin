@@ -501,7 +501,6 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
     {
         mAttacking = ATTACK_ANIM_START;
     }
-    mEnemyObject = EnemyObject;
 }
 
 //================================================================================================
