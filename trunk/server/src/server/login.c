@@ -896,7 +896,6 @@ void check_login(object *op, int mode)
 		pl->bed_x = op->x = 17;
 		pl->bed_y = op->y = 11;
 
-		pl->p_ver = PLAYER_FILE_VERSION_BETA4;
 	}
 
     /* at this moment, the inventory is reverse loaded.
@@ -1087,19 +1086,23 @@ void check_login(object *op, int mode)
     pl->state = ST_PLAYING;
 
     // QUICKHACK: to avoid problems after conversion, we have to force a save here 
-    save_player(pl->ob, 1); /* remove for 1.0 */
-
-    if(old_ap_ptr)
+    if(pl->p_ver != PLAYER_FILE_VERSION_BETA4)
     {
-        unlink(old_ap_ptr->path);
-        free_map(old_ap_ptr, 1);
-        delete_map(old_ap_ptr);
-    }
+        pl->p_ver = PLAYER_FILE_VERSION_BETA4;
+        save_player(pl->ob, 1);
+        if(old_ap_ptr)
+        {
+            unlink(old_ap_ptr->path);
+            free_map(old_ap_ptr, 1);
+            delete_map(old_ap_ptr);
+        }
+    } // end QUICKHACK
+
     /* NOW we are ready with loading and setup... now we kick the player in the world */
     if(!mode)
-        return; /* we only want load the player - not make him alive */
+        return; /* if in traverse mode, we only want load the player - not make him alive */
 
-    /* *ONLY* place we set this both status */
+    /* *ONLY* place we set this status */
     pl->socket.status = Ns_Playing;
 
     new_draw_info(NDI_UNIQUE, 0, op, "Welcome Back!");
@@ -1154,6 +1157,7 @@ void check_login(object *op, int mode)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your character was dead last your played.");
         kill_player(op);
+
         if (pl->state != ST_PLAYING)
             return;
     }
