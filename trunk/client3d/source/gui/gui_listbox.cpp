@@ -32,9 +32,8 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "gui_window.h"
 
-const clock_t SCROLL_SPEED = 12;
-static const Real CLOSING_SPEED  =  10.0f;  // default: 10.0f
-static const int  MAX_TEXT_LINES =  20;
+static const unsigned long SCROLL_SPEED = 12;
+static const Real CLOSING_SPEED  = 10.0f;  // default: 10.0f
 
 //================================================================================================
 // Constructor.
@@ -112,6 +111,7 @@ void GuiListbox::addTextline(const char *text)
     // Todo: Here we must split a string to fit into the window.
     //       OR we cut it (done by textout) and show the line in the tooltip when
     //       mouse is over this line.
+    //       OR we use horizontal scrollbar.
 
     //Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
@@ -119,7 +119,7 @@ void GuiListbox::addTextline(const char *text)
     ++mRowsToScroll;
 }
 
-///=============================================================================================
+//================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
 bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
@@ -194,11 +194,11 @@ void GuiListbox::draw()
     // ////////////////////////////////////////////////////////////////////
     // Scroll the text.
     // ////////////////////////////////////////////////////////////////////
-    Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    static clock_t time = clock();
     if (!mRowsToScroll || mDragging) return;
-    if (clock() - time < SCROLL_SPEED) return;
-    time = clock();
+    Texture *texture = ((GuiWindow*) mParent)->getTexture();
+    static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
+    if (Root::getSingleton().getTimer()->getMilliseconds() - time < SCROLL_SPEED) return;
+    time = Root::getSingleton().getTimer()->getMilliseconds();
     // New Line to scroll in.
     if (!mScroll)
     {

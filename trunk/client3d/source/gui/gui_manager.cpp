@@ -39,7 +39,7 @@ using namespace Ogre;
 
 static const int TOOLTIP_SIZE_X = 256;
 static const int TOOLTIP_SIZE_Y = 128;
-static const clock_t TOOLTIP_DELAY = 2; // Wait x secs before showing the tooltip.
+static const unsigned long TOOLTIP_DELAY = 2000; // Wait x ms before showing the tooltip.
 
 GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
     {
@@ -50,6 +50,7 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         { "Login",         GUI_WIN_LOGIN         },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
     };
+class GuiWindow GuiManager::guiWindow[GUI_WIN_SUM];
 
 //================================================================================================
 // .
@@ -96,7 +97,6 @@ void GuiManager::parseWindows(const char *XML_windows_file)
     // ////////////////////////////////////////////////////////////////////
     // Parse the windows datas.
     // ////////////////////////////////////////////////////////////////////
-    guiWindow = new GuiWindow[GUI_WIN_SUM];
     if (!parseWindowsData( XML_windows_file)) return;
 }
 
@@ -205,11 +205,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
 //================================================================================================
 void GuiManager::freeRecources()
 {
-    if (guiWindow)
-    {
-        for (int i=0; i < GUI_WIN_SUM; ++i) guiWindow[i].freeRecources();
-        delete[] guiWindow;
-    }
+    for (int i=0; i < GUI_WIN_SUM; ++i) guiWindow[i].freeRecources();
     GuiCursor::getSingleton().freeRecources();
     mMaterial.setNull();
     mTexture.setNull();
@@ -228,6 +224,12 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
         mProcessingTextInput = false;
         return true;
     }
+    if (key == KC_TAB)
+    {
+        if (++mActiveWindow >= (int)mvActiveWindow.size()) mActiveWindow = mvActiveWindow[0];
+        return true;
+    }
+
     GuiTextinput::getSingleton().keyEvent(keyChar, key);
     if (GuiTextinput::getSingleton().wasFinished())
     {
@@ -264,7 +266,7 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 const char *GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
 {
     value2 = 0; // no need for value2 atm.
-    return guiWindow[window].Message(message, element, (void*)value1);
+    return guiWindow[window].Message(message, element, value1);
 }
 
 //================================================================================================
@@ -326,7 +328,19 @@ const char *GuiManager::getTextInput()
 //================================================================================================
 void GuiManager::showWindow(int window, bool visible)
 {
-    guiWindow[window].setVisible(visible);
+    if (visible)
+    {
+        guiWindow[window].setVisible(true);
+        mvActiveWindow.push_back(window);
+        mActiveWindow = window;
+    }
+    else
+    {
+        guiWindow[window].setVisible(false);
+        remove(mvActiveWindow.begin(), mvActiveWindow.end(), mvActiveWindow[window]);
+        // Active window is now the last window in list.
+        mActiveWindow = mvActiveWindow[mvActiveWindow.size()-1];
+    }
 }
 
 //================================================================================================
@@ -347,7 +361,7 @@ void GuiManager::update(Real timeSinceLastFrame)
     // ////////////////////////////////////////////////////////////////////
     if (mTooltipRefresh)
     {
-        if (clock()/ CLOCKS_PER_SEC > mTooltipDelay)
+        if (Root::getSingleton().getTimer()->getMilliseconds() > mTooltipDelay)
         {
             // TODO: Make the background fit to the text. make a black border, ...
             TextLine label;
@@ -410,7 +424,7 @@ void GuiManager::setTooltip(const char *text)
     {
         mTooltipRefresh = true;
         mStrTooltip = text;
-        mTooltipDelay = clock()/ CLOCKS_PER_SEC + 2;
+        mTooltipDelay = Root::getSingleton().getTimer()->getMilliseconds() + TOOLTIP_DELAY;
     }
 }
 

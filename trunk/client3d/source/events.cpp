@@ -258,7 +258,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
             GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
-            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
 
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
             /*
@@ -297,34 +296,32 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         }
 
         case GAME_STATUS_START:
-        {
-            Network::getSingleton().SOCKET_CloseClientSocket();
-            Option::getSingleton().setGameStatus(GAME_STATUS_WAITLOOP);
-            break;
-        }
-
         case GAME_STATUS_WAITLOOP:
         {
-            // Wait for user to select a server.
-
-            // User has select a server.
+            Network::getSingleton().SOCKET_CloseClientSocket();
+            GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
             Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
             break;
         }
 
         case GAME_STATUS_STARTCONNECT:
         {
+            // Wait for user to select a server.
+            //Network::getSingleton().setActiveServer(0);
+            Network::getSingleton().setActiveServer(1);
             Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
             break;
         }
 
         case GAME_STATUS_CONNECT:
         {
+            GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
             Network::GameStatusVersionFlag = false;
-            if (!Network::getSingleton().SOCKET_OpenClientSocket("127.0.0.1", 13327))
+            if (!Network::getSingleton().OpenActiveServerSocket())
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connection failed!");
-                Option::getSingleton().setGameStatus(GAME_STATUS_START);
+                Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+                break;
             }
             Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connected. exchange version.");
@@ -463,7 +460,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 }
             }
 
-            GuiManager::getSingleton().update(evt.timeSinceLastFrame);
+
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 80.0)
             {
@@ -491,9 +488,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 //================================================================================================
 // Frame End event.
 //================================================================================================
-bool CEvent::frameEnded(const FrameEvent&)
+bool CEvent::frameEnded(const FrameEvent& evt)
 {
     if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET) return true;
+    GuiManager::getSingleton().update(evt.timeSinceLastFrame);
     Network::getSingleton().update();
     const RenderTarget::FrameStats& stats = mWindow->getStatistics();
     static int skipFrames = 0;

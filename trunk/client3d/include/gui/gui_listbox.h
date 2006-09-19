@@ -57,8 +57,11 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    enum { SIZE_STRING_BUFFER = 128 }
-    ; // MUST be 2^X.
+    enum
+    {
+        MAX_TEXT_LINES     = 20,
+        SIZE_STRING_BUFFER = 1 << 7  // MUST be 1 << X.
+    };
     struct
     {
         String str;
@@ -74,8 +77,7 @@ private:
     bool mVisible;
     bool mDragging;
     int  mScroll;
-    int mButScrollWidth, mButScrollHeight;
-    uint32 *mGfxBuffer;
+    int  mButScrollWidth, mButScrollHeight;
     int  mRowsToScroll, mRowsToPrint;
     int  mSumRows;
     int  mPrintPos;
@@ -83,6 +85,7 @@ private:
     int  mFontHeight;
     int  mActLines;
     int  mScrollbarOffsetV, mScrollbarOffsetH; // Lines scrolled by the Scrollbar.
+    uint32 *mGfxBuffer;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

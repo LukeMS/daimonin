@@ -27,7 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include <list>
+#include <vector>
 #include <SDL.h>
 #include <SDL_thread.h>
 #include <SDL_mutex.h>
@@ -90,9 +90,6 @@ typedef struct mStructServer
 }
 mStructServer;
 
-
-
-
 // ClientSocket could probably hold more of the global values - it could
 // probably hold most all socket/communication related values instead
 // of globals.
@@ -135,6 +132,7 @@ public:
         Uint8 *data;
     }
     _command_buffer_read;
+
     bool Init();
     static _command_buffer_read *read_cmd_start, *read_cmd_end;
 
@@ -145,10 +143,18 @@ public:
     void clear_read_cmd_queue(void);
     void socket_thread_start(void);
     void socket_thread_stop(void);
+    void setActiveServer(int nr)
+    {
+        mActServerNr = nr;
+    }
     bool SOCKET_InitSocket(void);
     bool SOCKET_DeinitSocket(void);
-    bool SOCKET_OpenSocket(char *host, int port);
-    bool SOCKET_OpenClientSocket(char *host, int port);
+    bool SOCKET_OpenSocket(const char *host, int port);
+    bool SOCKET_OpenClientSocket(const char *host, int port);
+    bool OpenActiveServerSocket()
+    {
+        return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
+    }
     static bool SOCKET_CloseSocket();
     int  SOCKET_GetError(void);  // returns socket error
     void read_metaserver_data(SOCKET fd);
@@ -160,8 +166,8 @@ public:
     static int read_socket_buffer(int fd, SockList *sl);
     static int cs_write_string(char *buf, int len);
     void SendVersion();
-
-
+    void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
+                             const char *desc1, const char *desc2, const char *desc3, const char *desc4);
     static bool GameStatusVersionOKFlag;
     static bool GameStatusVersionFlag;
 
@@ -207,6 +213,20 @@ public:
     static void PreParseInfoStat(char *cmd);
 
 private:
+    typedef struct
+    {
+        std::string name;
+        std::string ip;
+        std::string version;
+        std::string desc1;
+        std::string desc2;
+        std::string desc3;
+        std::string desc4;
+        int player;
+        int port;
+    }Server;
+    std::vector<Server*>mvServer;
+
     static bool thread_flag;
     static SDL_Thread *socket_thread;
     static SDL_mutex  *read_lock;
@@ -216,9 +236,13 @@ private:
     static ClientSocket csocket;
     static int mRequest_file_chain;
     int SocketStatusErrorNr;
+    int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
 
     static bool mInitDone;
+
+
+    void parse_metaserver_data(string strMetaData);
 
     Network();
     ~Network();

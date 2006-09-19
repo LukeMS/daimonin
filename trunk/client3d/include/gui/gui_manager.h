@@ -115,6 +115,7 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
+    static class GuiWindow guiWindow[GUI_WIN_SUM];
     int mDragSrcWin, mDragDestWin;
     int mDragSrcContainer, mDragDestContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
@@ -123,21 +124,20 @@ private:
     bool mTooltipRefresh;
     bool mIsDragging;
     bool mProcessingTextInput;
-    String  mStrTooltip, mBackupTextInputString;
-    class GuiWindow *guiWindow;
     unsigned int mScreenWidth, mScreenHeight;
-    clock_t mTooltipDelay;
+    unsigned long mTooltipDelay;
     Overlay *mOverlay;
     OverlayElement *mElement;
     MaterialPtr mMaterial;
     TexturePtr mTexture;
+    std::vector<int>mvActiveWindow;
+    String  mStrTooltip, mBackupTextInputString;
     String mStrTextInput;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiManager()
     {
-        guiWindow = 0;
     }
     ~GuiManager()
     {}

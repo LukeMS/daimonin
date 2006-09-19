@@ -285,8 +285,8 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
         }
 
         default:
-        Logger::log().error() << "The requested objectType does not exist.";
-        break;
+            Logger::log().error() << "The requested objectType does not exist.";
+            break;
     }
 }
 
@@ -413,7 +413,7 @@ void ObjectManager::selectObject(MovableObject *mob)
                 sprintf(buffer, "Enemy: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
                 ObjectVisuals::getSingleton().selectNPC(mvObject_npc[selectedObject]);
             }
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)(buffer));
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)(buffer));
             mSelectedObject = selectedObject; // must be set before ::selectNPC
             mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
             if (mSelectedFriendly < 0)

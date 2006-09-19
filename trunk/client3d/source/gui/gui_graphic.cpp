@@ -109,7 +109,7 @@ void GuiGraphic::draw()
                 if (y2 > mHeight)
                 {
                     y2 = mHeight;
-                    if (y1 > mHeight) y1 = mHeight-1;
+                    if (y1 >= mHeight) y1 = mHeight-1;
                     dirty = true;
                 }
                 x1 = 0; x2 = mSrcWidth;
