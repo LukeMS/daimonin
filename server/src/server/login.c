@@ -464,7 +464,7 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
 			}
 			else /* donation */
 			{
-				FREE_AND_COPY_HASH(tmp->title, "/nonpub/donation/ap_dona1");
+				FREE_AND_COPY_HASH(tmp->title, "/nonpub/donation/don_ap1");
 				old_map = "/nonpub/donation/ap_dona1";
 				tmp->item_level = 2;
 				tmp->item_quality = 1;
