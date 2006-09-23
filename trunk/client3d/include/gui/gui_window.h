@@ -33,6 +33,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_gadget_button.h"
 #include "gui_gadget_combobox.h"
 #include "gui_gadget_scrollbar.h"
+#include "gui_table.h"
 #include "gui_graphic.h"
 #include "gui_listbox.h"
 #include "gui_statusbar.h"
@@ -98,6 +99,8 @@ public:
     {
         return mHeight;
     }
+    int getTableSelection(int element);
+    void clearTable(int element);
     const char *Message(int message, int element, void *value);
     bool mouseEvent(int MouseAction, int mouseX, int mouseY);
     const char *getTooltip()
@@ -129,6 +132,7 @@ private:
     bool isInit;
     bool mSizeRelative;
     SceneNode *mSceneNode;
+    std::vector<class GuiTable*>mvTable;
     std::vector<class GuiGraphic*>mvGraphic;
     std::vector<class GuiListbox*>mvListbox;
     std::vector<class GuiStatusbar*>mvStatusbar;

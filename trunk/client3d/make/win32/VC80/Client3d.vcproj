@@ -563,6 +563,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\source\gui\gui_table.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\source\gui\gui_textout.cpp"
 					>
 					<FileConfiguration
@@ -753,6 +757,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\include\gui\gui_statusbar.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\include\gui\gui_table.h"
 					>
 				</File>
 				<File

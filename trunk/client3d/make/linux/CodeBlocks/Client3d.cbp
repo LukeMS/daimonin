@@ -339,6 +339,13 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../include/gui/gui_table.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../include/gui/gui_textinput.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -585,6 +592,11 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/gui/gui_statusbar.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/gui/gui_table.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />

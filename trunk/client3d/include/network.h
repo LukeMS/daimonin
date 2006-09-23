@@ -134,6 +134,7 @@ public:
     _command_buffer_read;
 
     bool Init();
+    void clearMetaServerData();
     static _command_buffer_read *read_cmd_start, *read_cmd_end;
 
     _command_buffer_read *get_read_cmd(void);
@@ -151,10 +152,7 @@ public:
     bool SOCKET_DeinitSocket(void);
     bool SOCKET_OpenSocket(const char *host, int port);
     bool SOCKET_OpenClientSocket(const char *host, int port);
-    bool OpenActiveServerSocket()
-    {
-        return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
-    }
+    bool OpenActiveServerSocket();
     static bool SOCKET_CloseSocket();
     int  SOCKET_GetError(void);  // returns socket error
     void read_metaserver_data(SOCKET fd);

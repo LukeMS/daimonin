@@ -69,6 +69,8 @@ enum {
     GUI_TEXTINPUT_LOGIN_NAME,
     GUI_TEXTINPUT_LOGIN_PASSWD,
     GUI_TEXTINPUT_LOGIN_VERIFY,
+    // Table
+    GUI_TABLE,
     // Combobox
     GUI_COMBOBOX_TEST,
     // Sum of all entries.

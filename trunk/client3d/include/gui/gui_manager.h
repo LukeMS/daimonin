@@ -53,6 +53,7 @@ enum
     GUI_MSG_TXT_CHANGED,
     GUI_MSG_BAR_CHANGED,
     GUI_MSG_ADD_TEXTLINE,
+    GUI_MSG_ADD_TABLEROW,
     GUI_MSG_BUT_PRESSED,
     GUI_MSG_SUM
 };
@@ -101,6 +102,14 @@ public:
     void cancelTextInput();
     const char *getTextInput();
     void showWindow(int window, bool visible);
+    int getTableSelection(int window, int element)
+    {
+        return guiWindow[window].getTableSelection(element);
+    }
+    void clearTable(int window, int element)
+    {
+        guiWindow[window].clearTable(element);
+    }
     int getScreenWidth()
     {
         return mScreenWidth;

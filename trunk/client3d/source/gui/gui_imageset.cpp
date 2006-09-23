@@ -69,6 +69,8 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
         { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
         { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
+        // Table
+        { "Table_Server",       GUI_TABLE },
         // Combobox.
         { "ComboBoxTest"      , GUI_COMBOBOX_TEST  },
     };
