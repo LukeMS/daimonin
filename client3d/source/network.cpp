@@ -169,15 +169,22 @@ inline static char *strerror_local(int errnum)
 #endif
 
 Network::Network()
-{}
+{
+}
 
 Network::~Network()
 {
-    for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
-        delete (*i);
-    mvServer.clear();
+    clearMetaServerData();
 }
 
+void Network::clearMetaServerData()
+{
+    for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
+    {
+        delete (*i);
+    }
+    mvServer.clear();
+}
 
 void Network::update()
 {
@@ -623,9 +630,22 @@ bool Network::SOCKET_DeinitSocket()
     return(true);
 }
 
+bool Network::OpenActiveServerSocket()
+{
+    Logger::log().error() << "1 openClientSocket:  " << mvServer[mActServerNr]->ip.c_str() << "   " << mvServer[mActServerNr]->port;
+    return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
+}
+
+
 bool Network::SOCKET_OpenClientSocket(const char *host, int port)
 {
     int tmp = 1;
+
+
+
+Logger::log().error() << "2 openClientSocket:  " << host << "   " << port;
+
+
 
     // No more socket for the IO thread
     SDL_LockMutex(socket_lock);
@@ -942,6 +962,7 @@ void Network::read_metaserver_data(SOCKET fd)
 //================================================================================================
 void Network::contactMetaserver()
 {
+    clearMetaServerData();
     csocket.fd = SOCKET_NO;
     char buf[256];
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"query metaserver...");
@@ -965,7 +986,7 @@ void Network::contactMetaserver()
 //================================================================================================
 void Network::parse_metaserver_data(string strMetaData)
 {
-    unsigned int startPos;
+    string::size_type startPos;
     string::size_type endPos =0;
     string strIP, strPort, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
     while (1)
@@ -1017,6 +1038,7 @@ void Network::parse_metaserver_data(string strMetaData)
         strDesc4 = strMetaData.substr(startPos, endPos -startPos);
         if (endPos < strMetaData.size()) ++endPos;
         // Add the server to the linked list.
+
         add_metaserver_data(strIP.c_str(), strName.c_str(), atoi(strPort.c_str()), atoi(strPlayer.c_str()), strVersion.c_str(),
                             strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
     }
@@ -1030,8 +1052,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
 {
     Server *node = new Server;
     node->player = player;
-    if (port > 1023) port = 1023;
-    node->port   = port;
+    node->port   = DEFAULT_SERVER_PORT;//port;
     node->name   = server;
     node->ip     = ip;
     node->version= ver;
@@ -1040,5 +1061,8 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     node->desc3  = desc3;
     node->desc4  = desc4;
     mvServer.push_back(node);
-    Logger::log().info() << "Added server:  " << server << "  port:  " << port << "  players:  " << player;
+    string strRow = server;
+    if (player <0) strRow+=",-";
+    else           strRow+=","+StringConverter::toString(player);
+    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_ADD_TABLEROW, GUI_TABLE, (void*) strRow.c_str());
 }

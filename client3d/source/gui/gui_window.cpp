@@ -98,6 +98,11 @@ void GuiWindow::freeRecources()
         delete (*i);
     mvStatusbar.clear();
 
+    // Delete the tables.
+    for (vector<GuiTable*>::iterator i = mvTable.begin(); i < mvTable.end(); ++i)
+        delete (*i);
+    mvTable.clear();
+
     // Set all shared pointer to null.
     mMaterial.setNull();
     mTexture.setNull();
@@ -158,12 +163,12 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     {
         if ((strTmp = xmlElem->Attribute("x")))
         {
-                 if (!stricmp(strTmp, "center")) aX = 0;
+            if (!stricmp(strTmp, "center")) aX = 0;
             else if (!stricmp(strTmp, "right"))  aX =-1;
         }
         if ((strTmp = xmlElem->Attribute("y")))
         {
-                 if (!stricmp(strTmp, "center")) aY = 0;
+            if (!stricmp(strTmp, "center")) aY = 0;
             else if (!stricmp(strTmp, "bottom")) aY =-1;
         }
     }
@@ -175,13 +180,13 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     {
         if ((strTmp = xmlElem->Attribute("x")))
         {
-                 if (aX <0) mPosX = screenW+1 - atoi(strTmp);
+            if (aX <0) mPosX = screenW+1 - atoi(strTmp);
             else if (aX==0) mPosX =(screenW- mWidth) /2 + atoi(strTmp);
             else mPosX = atoi(strTmp);
         }
         if ((strTmp = xmlElem->Attribute("y")))
         {
-                 if (aY <0) mPosY = screenH+1 - atoi(strTmp);
+            if (aY <0) mPosY = screenH+1 - atoi(strTmp);
             else if (aY==0) mPosY =(screenH- mHeight) /2 + atoi(strTmp);
             else mPosY = atoi(strTmp);
         }
@@ -288,6 +293,14 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     {
         if (!(strTmp = xmlElem->Attribute("name"))) continue;
         mvListbox.push_back(new GuiListbox(xmlElem, this));
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the tables.
+    // ////////////////////////////////////////////////////////////////////
+    for (xmlElem = xmlRoot->FirstChildElement("Table"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Table"))
+    {
+        if (!(strTmp = xmlElem->Attribute("name"))) continue;
+        mvTable.push_back(new GuiTable(xmlElem, this));
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Statusbars.
@@ -447,6 +460,11 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
         if (mvListbox[i]->mouseEvent(MouseAction, x, y))
             return true;
     }
+    for (unsigned int i = 0; i < mvTable.size(); ++i)
+    {
+        if (mvTable[i]->mouseEvent(MouseAction, x, y))
+            return true;
+    }
 
     switch (MouseAction)
     {
@@ -499,6 +517,32 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     return false;
 }
 
+
+//================================================================================================
+// .
+//================================================================================================
+int GuiWindow::getTableSelection(int element)
+{
+    for (unsigned int i = 0; i < mvTable.size() ; ++i)
+    {
+        if (mvTable[i]->getIndex() == element)
+        return mvTable[i]->getSelectedRow();
+    }
+    return -1;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::clearTable(int element)
+{
+    for (unsigned int i = 0; i < mvTable.size() ; ++i)
+    {
+        if (mvTable[i]->getIndex() == element)
+        mvTable[i]->clearBackground();
+    }
+}
+
 //================================================================================================
 // Parse a message.
 //================================================================================================
@@ -506,6 +550,17 @@ const char *GuiWindow::Message(int message, int element, void *value)
 {
     switch (message)
     {
+
+        case GUI_MSG_ADD_TABLEROW:
+            for (unsigned int i = 0; i < mvTable.size() ; ++i)
+            {
+                if (mvTable[i]->getIndex() != element)
+                    continue;
+                mvTable[i]->addRow((const char *)value);
+                break;
+            }
+            break;
+
         case GUI_MSG_ADD_TEXTLINE:
             for (unsigned int i = 0; i < mvListbox.size() ; ++i)
             {

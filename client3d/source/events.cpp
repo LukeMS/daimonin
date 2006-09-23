@@ -307,15 +307,20 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_STARTCONNECT:
         {
             // Wait for user to select a server.
-            //Network::getSingleton().setActiveServer(0);
-            Network::getSingleton().setActiveServer(1);
-            Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
+            int select = GuiManager::getSingleton().getTableSelection(GUI_WIN_LOGIN, GUI_TABLE);
+            if (select >=0)
+            {
+                GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
+                GuiManager::getSingleton().clearTable(GUI_WIN_LOGIN, GUI_TABLE);
+                Network::getSingleton().setActiveServer(select);
+                Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
+            }
             break;
         }
 
         case GAME_STATUS_CONNECT:
         {
-            GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
+            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
             Network::GameStatusVersionFlag = false;
             if (!Network::getSingleton().OpenActiveServerSocket())
             {
@@ -510,4 +515,3 @@ bool CEvent::frameEnded(const FrameEvent& evt)
     }
     return true;
 }
-

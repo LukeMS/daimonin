@@ -356,6 +356,13 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\include\gui\gui_table.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\..\include\gui\gui_textinput.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -618,6 +625,11 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\gui\gui_statusbar.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\gui\gui_table.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />

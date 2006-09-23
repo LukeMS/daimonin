@@ -337,13 +337,13 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <Table type= "COLOR_FILL" name= "Table_Server" font="03">
-      <Pos x= "100" y= "100" />
-      <Range width= "300" height= "300" />
-      <Color type= "BACK_1" red=  "56" green=  "60" blue= "49" alpha = "255" />
-	  <Color type= "BACK_2" red=  "89" green=  "95" blue= "87" alpha = "255" />
+      <Pos x= "56" y= "100" />
+      <Range width= "400" height= "300"/>
+      <Color type= "BACK_1" red=  "45" green=  "37" blue= "16" alpha = "255" />
+	  <Color type= "BACK_2" red=  "62" green=  "49" blue= "32" alpha = "255" />
 	  <Color type= "SELECT" red=   "0" green=   "0" blue=  "0" alpha = "255" />
-      <Column width = "200" label ="Server:" />
-      <Column width = "100" label ="Players:" />
+      <Column width = "300" label ="Server:" />
+      <Column width = "100" label ="Players: " />
     </Table>
 
   </Window>
