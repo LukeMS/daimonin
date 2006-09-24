@@ -96,7 +96,7 @@ print = function(...)
             text = text .. "\t" .. tostring(arg[i])
         end
     end
-    game:Log(game.LOG_INFO, text .. "\n")
+    game:Log(game.LOG_INFO, text)
 end
 
 -- Finished with the initialization
