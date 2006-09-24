@@ -44,6 +44,7 @@ static struct method_decl       Game_methods[]      =
     {"IsValid", Game_IsValid},
     {"GetTime", Game_GetTime},
     {"LocateBeacon", Game_LocateBeacon},
+    {"Log", Game_Log},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
 };
@@ -246,12 +247,20 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_QUEST_INFO"              ,TYPE_QUEST_INFO},
     {"TYPE_BEACON"                  ,TYPE_BEACON},
     {"TYPE_GUILD_FORCE"             ,TYPE_GUILD_FORCE},
+
+    {"LOG_ERROR"                    ,llevError},
+    {"LOG_BUG"                      ,llevBug},
+    {"LOG_INFO"                     ,llevInfo},
+    {"LOG_DEBUG"                    ,llevDebug},
+    {"LOG_MONSTER"                  ,llevMonster},
+
     {NULL, 0}
 };
 
 lua_class Game =
 {
-    LUATYPE_GAME, "Game", 0, NULL, NULL, Game_methods, Game_constants
+    LUATYPE_GAME, "Game", 0, NULL, NULL, Game_methods, Game_constants,
+    NULL, NULL, NULL, NULL, NULL, 0
 };
 
 /****************************************************************************/
@@ -569,6 +578,38 @@ static int Game_GetTime(lua_State *L)
     lua_rawset(L, -3);
 
     return 1;
+}
+
+/*****************************************************************************/
+/* Name   : Game_Log                                                         */
+/* Lua    : game:Log(level, text)                                            */
+/* Info   : Write text to the game log                                       */
+/*          level should be one of                                           */
+/*          game.LOG_INFO for informational messages. These are logged also  */
+/*          in production servers.                                           */
+/*          game.LOG_DEBUG for debug messages. These are normally not logged */
+/*          in production servers.                                           */
+/*          game.LOG_MONSTER for detailed monster info. Normally never logged*/
+/*          (LOG_MONSTER might be useful for lua behaviours?)                */
+/*          When logged, text is always prefixed with "LUA:"                 */
+/*          The log levels ERROR and BUG are not available from lua for      */
+/*          security reasons (both might terminate the server).              */
+/*          The lua "print()" function is redirected to LOG_INFO             */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int Game_Log(lua_State *L)
+{
+    lua_object *self;
+    int level;
+    const char *text;
+
+    get_lua_args(L, "Gis", &self, &level, &text);
+
+    if(level == llevBug || level == llevError)
+        luaL_error(L, "Illegal log level: %d\n", level);
+    LOG(level, "LUA:%s", text);
+
+    return 0;
 }
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */
