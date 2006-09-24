@@ -87,5 +87,17 @@ function _shutdown()
     _data_store.save(true)
 end
 
+-- Redirect print() to game:Log()
+print = function(...)
+    local text = ""
+    if arg.n >= 1 then
+        text = tostring(arg[1])
+        for i=2,arg.n do
+            text = text .. "\t" .. tostring(arg[i])
+        end
+    end
+    game:Log(game.LOG_INFO, text .. "\n")
+end
+
 -- Finished with the initialization
 print "    plugin_init.lua loaded successfully"
