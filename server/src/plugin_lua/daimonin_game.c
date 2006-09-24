@@ -595,6 +595,7 @@ static int Game_GetTime(lua_State *L)
 /*          The log levels ERROR and BUG are not available from lua for      */
 /*          security reasons (both might terminate the server).              */
 /*          The lua "print()" function is redirected to LOG_INFO             */
+/* Version: Introduced in beta 4 pre3                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int Game_Log(lua_State *L)
@@ -607,7 +608,7 @@ static int Game_Log(lua_State *L)
 
     if(level == llevBug || level == llevError)
         luaL_error(L, "Illegal log level: %d\n", level);
-    LOG(level, "LUA:%s", text);
+    LOG(level, "LUA:%s\n", text);
 
     return 0;
 }
