@@ -551,6 +551,11 @@ title waypoint4
 hp 7
 sp 9
 grace 3
+arch event_obj
+name Lua
+race /dev/testmaps/waypoint.lua
+sub_type 10
+end
 end
 arch waypoint
 name waypoint4
@@ -558,6 +563,11 @@ title waypoint1
 hp 2
 sp 9
 wc 5
+arch event_obj
+name Lua
+race /dev/testmaps/waypoint.lua
+sub_type 10
+end
 end
 arch waypoint
 name waypoint1
