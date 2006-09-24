@@ -3,9 +3,9 @@
 <!ENTITY % Match "(And|Or|Attrib|TypeNrs)">
 <!ENTITY % Matches "%Match;+">
 
-<!ELEMENT ArchObjectMatchers (ArchObjectMatcher+)>
-<!ELEMENT ArchObjectMatcher (title+,%Match;)>
-<!ATTLIST ArchObjectMatcher
+<!ELEMENT GameObjectMatchers (GameObjectMatcher+)>
+<!ELEMENT GameObjectMatcher (title+,%Match;)>
+<!ATTLIST GameObjectMatcher
     id CDATA #IMPLIED
 >
 
@@ -19,7 +19,7 @@
 
 <!ELEMENT Attrib EMPTY>
 <!ATTLIST Attrib
-    useDefArch (true|false) 'true'
+    useArchetype (true|false) 'true'
     name NMTOKEN #REQUIRED
     value CDATA '1'
     op (eq|ne|ge|gt|le|lt) 'eq'
