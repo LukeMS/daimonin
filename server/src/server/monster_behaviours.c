@@ -1258,6 +1258,12 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                 /* Are we close enough to accept the wp? */
                 if (rv.distance <= (unsigned int) wp->stats.grace)
                 {
+                    /* Trigger plugin event as soon as we reach the waypoint */
+                    if(MOB_PATHDATA(op)->goal_delay_counter == 0)
+                        trigger_object_plugin_event(EVENT_TRIGGER,
+                                wp, op, NULL,
+                                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+
                     /* Should we wait a little while? */
                     if (MOB_PATHDATA(op)->goal_delay_counter < WP_DELAYTIME(wp))
                     {
@@ -1269,11 +1275,6 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                         LOG(llevDebug, "ai_move_towards_waypoint(): '%s' reached destination '%s'\n",
                             STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
-
-                        trigger_object_plugin_event(EVENT_TRIGGER,
-                                wp, op, NULL,
-                                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
-
                         MOB_PATHDATA(op)->goal_delay_counter = 0;
                         MOB_PATHDATA(op)->best_distance = -1;
                         MOB_PATHDATA(op)->last_best_distance = -1;
