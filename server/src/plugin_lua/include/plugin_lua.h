@@ -153,10 +153,10 @@ struct lua_context
     /* Script event data, accessible in lua through the event variable */
     object             *self, *activator, *other; /* Involved objects */
     tag_t               self_tag, activator_tag, other_tag;
-    const char         *text;             /* Text for SAY events */
+    shstr              *text;             /* Text for SAY events */
 
-    const char         *options;          /* Options from event object */
-    const char         *file;             /* Script file (not normalized) */
+    shstr              *options;          /* Options from event object */
+    shstr              *file;             /* Script file (normalized) */
     int                 parm1, parm2, parm3, parm4;  /* Parameters from event */
     int                 returnvalue;              /* Return value from script */
     move_response      *move_response;    /* For AI move behaviours */
