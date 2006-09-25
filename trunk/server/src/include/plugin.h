@@ -345,6 +345,8 @@ struct plugin_hooklist
     hashtable_iterator_t (*hashtable_iterator)(const hashtable *const ht);
     hashtable_iterator_t (*hashtable_iterator_next)(const hashtable *const ht, hashtable_iterator_t i);
 
+    char *(*normalize_path)(const char *src, const char *dst, char *path);
+
     /* Global variables */
     Animations **animations;
     New_Face **new_faces;

@@ -388,6 +388,10 @@ void terminate_lua_context(struct lua_context *context)
     luaL_unref(global_state, LUA_REGISTRYINDEX, context->threadidx);
     context->tag = 0;
 
+    FREE_ONLY_HASH(context->text);
+    FREE_ONLY_HASH(context->file);
+    FREE_ONLY_HASH(context->options);
+
     return_poolchunk(context, pool_luacontext);
 }
 
@@ -704,6 +708,12 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0);
 #endif
 
+    if(PParm->Value[9] == NULL)
+    {
+        LOG(llevBug, "LUA - event triggered without script path");
+        return 0;
+    }
+
     context = get_poolchunk(pool_luacontext);
 
     context->tag = ++lua_context_tag_counter;
@@ -719,14 +729,39 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->self_tag = context->self ? context->self->count : 0;
     context->other = (object *) (PParm->Value[3]);
     context->other_tag = context->other ? context->other->count : 0;
-    context->text = (const char *) (PParm->Value[4]);
+    context->text = PParm->Value[4] ? hooks->add_string((const char *) (PParm->Value[4])) : NULL;
     context->parm1 = PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0;
     context->parm2 = PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0;
     context->parm3 = PParm->Value[7] ? *(int *) (PParm->Value[7]) : 0;
     context->parm4 = PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0;
-    context->file = (const char *) (PParm->Value[9]);
-    context->options = (const char *) (PParm->Value[10]);
+    context->options = PParm->Value[10] ? hooks->add_string((const char *) (PParm->Value[10])) : NULL;
     context->returnvalue = 0;
+
+    /* Try to normalize file name if needed */
+    if(((const char *)PParm->Value[9])[0] == '/')
+        context->file = hooks->add_string((const char *) (PParm->Value[9]));
+    else
+    {
+        /* We need a base path. */
+        char buf[HUGE_BUF];
+        object *outermost = context->self;
+        while(outermost && outermost->env)
+            outermost = outermost->env;
+        if(outermost == NULL || outermost->map == NULL || outermost->map->path == NULL)
+        {
+            LOG(llevBug, "LUA: script path %s of %s in container %s is relative but no map is available for path reference\n", (const char *) (PParm->Value[9]), STRING_OBJ_NAME(context->self), STRING_OBJ_NAME(outermost));
+            context->file = NULL;
+            terminate_lua_context(context);
+            return 0;
+        }
+        hooks->normalize_path(outermost->map->path, (const char *) (PParm->Value[9]), buf);
+        context->file = hooks->add_string(buf);
+#ifdef LUA_DEBUG
+        LOG(llevDebug, "LUA: normalized script path: %s\n", context->file);
+#endif
+    }
+
+
     if(*(int *)PParm->Value[0] == EVENT_AI_BEHAVIOUR)
         context->move_response = PParm->Value[11];
     else

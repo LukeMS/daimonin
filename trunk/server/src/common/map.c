@@ -354,21 +354,32 @@ int check_path(const char *name, int prepend_dir)
     return(access(buf, 0));
 }
 
-/* Moved from main.c */
+/** Make path absolute and remove ".." entries.
+ * path will become a normalized (absolute) version of the path in dst. 
+ * If dst was not already absolute, the directory part of src will be used
+ * as the base path and dst will be added to it.
+ * Any "parent directory" ("..") references are removed from the resulting path
+ * @param src template file name for finding absolute path
+ * @param dst path to normalize
+ * @param path storage for normalized path
+ * @return pointer to path
+ */
 char * normalize_path(const char *src, const char *dst, char *path)
 {
     char   *p, *q;
     char    buf[HUGE_BUF];
-    /*    static char path[HUGE_BUF]; */
 
     /*LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst);*/
 
+    /* First, make the dst path absolute */
     if (*dst == '/')
     {
+        /* Already absolute path */
         strcpy(buf, dst);
     }
     else
     {
+        /* Combine directory part of src with dst to create absolute path */
         strcpy(buf, src);
         if ((p = strrchr(buf, '/')))
             p[1] = '\0';
@@ -377,20 +388,22 @@ char * normalize_path(const char *src, const char *dst, char *path)
         strcat(buf, dst);
     }
 
+    /* Hmm.. This looks buggy. Meant to remove initial double slashes? 
+     * There will be problems if there are double slashes anywhere else in the
+     * path. Gecko 2006-09-24. */
     q = p = buf;
     while ((q = strstr(q, "//")))
         p = ++q;
 
     *path = '\0';
-    q = path;
     p = strtok(p, "/");
     while (p)
     {
         if (!strcmp(p, ".."))
         {
-            q = strrchr(path, '/');
-            if (q)
-                *q = '\0';
+            char *separator = strrchr(path, '/');
+            if (separator)
+                *separator = '\0';
             else
             {
                 *path = '\0';

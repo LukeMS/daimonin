@@ -84,6 +84,7 @@ struct plugin_hooklist  hooklist    =
     hashtable_new, hashtable_delete, hashtable_clear, 
     hashtable_find, hashtable_insert, hashtable_erase, 
     hashtable_iterator, hashtable_iterator_next,    
+    normalize_path,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
