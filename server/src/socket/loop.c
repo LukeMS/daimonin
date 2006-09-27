@@ -110,8 +110,8 @@ PlCmdMapping        plcommands[]    =
     { "lock",           LockItem},
     { "mark",           MarkItem},
 	{ "tx",             command_talk_ex},
-    {"/fire",           command_fire},
-    {"nc",              command_new_char},
+    { "/fire",          command_fire},
+    { "nc",             command_new_char},
     { NULL, NULL}   /* terminator */
 };
 
@@ -125,7 +125,7 @@ NsCmdMapping        nscommands[]    =
     { "setup",          SetUp},
     { "version",        VersionCmd },
     { "rf",             RequestFileCmd },
-    {"fr",              command_face_request},
+    { "fr",             command_face_request},
     { NULL, NULL}   /* terminator */
 };
 
@@ -549,6 +549,7 @@ int fill_command_buffer(NewSocket *ns, int len)
 {
     char * data;
     int i, data_len;
+    int found_command = 1;
 
 	if(socket_prepare_commands(ns))
 		return FALSE;
@@ -556,7 +557,7 @@ int fill_command_buffer(NewSocket *ns, int len)
 	if(ns->status >= Ns_Login)
 		return TRUE;
 
-	while (ns->cmd_start)
+	while (ns->cmd_start && found_command)
     {
         /* now we need to check what our write buffer does.
          * We have not many choices, if its to full.
@@ -586,10 +587,12 @@ int fill_command_buffer(NewSocket *ns, int len)
             /* check its a system command.
              * If so, process it. If not, store it.
              */
+            found_command = 0;
             for (i = 0; nscommands[i].cmdname != NULL; i++)
             {
-                if ((int) strlen(nscommands[i].cmdname) <= ns->cmd_start->len && 
-							!strncmp(ns->cmd_start->buf, nscommands[i].cmdname, strlen(nscommands[i].cmdname)))
+                int cmdlen = (int)strlen(nscommands[i].cmdname); /* TODO: this can be precomputed to save a few us */
+                if (cmdlen <= ns->cmd_start->len && 
+							!strncmp(ns->cmd_start->buf, nscommands[i].cmdname, cmdlen))
                 {
                     /* pre process the command */
 
@@ -621,10 +624,18 @@ int fill_command_buffer(NewSocket *ns, int len)
 					if (ns->status == Ns_Dead)
                         return FALSE;
 
+                    found_command = 1;
 					break;
                 }
             }
     };
+
+    if(! found_command)
+    {
+        LOG(llevDebug, "HACKBUG: Bad command from client (%s)\n", STRING_SAFE(ns->cmd_start->buf));
+        ns->status = Ns_Dead;
+        return FALSE;
+    }
 
     return TRUE;
 }
