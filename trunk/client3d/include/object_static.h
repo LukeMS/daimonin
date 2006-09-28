@@ -86,6 +86,10 @@ public:
     {
         return mNickName;
     }
+    void setNickName(String name)
+    {
+        mNickName = name;
+    }
     int getFriendly()
     {
         return mFriendly;

@@ -61,10 +61,6 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "Engine_BestFPS",     GUI_TEXTVALUE_STAT_BEST_FPS  },
         { "Engine_WorstFPS",    GUI_TEXTVALUE_STAT_WORST_FPS },
         { "Engine_SumTris",     GUI_TEXTVALUE_STAT_SUM_TRIS  },
-        { "TB_LoginServer1",    GUI_TEXTVALUE_LOGIN_SERVER1  },
-        { "TB_LoginServer2",    GUI_TEXTVALUE_LOGIN_SERVER2  },
-        { "TB_LoginPlayer1",    GUI_TEXTVALUE_LOGIN_PLAYER1  },
-        { "TB_LoginPlayer2",    GUI_TEXTVALUE_LOGIN_PLAYER2  },
         // TextInput.
         { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
         { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },

@@ -84,8 +84,6 @@ void Network::CompleteCmd(unsigned char *data, int len)
 void Network::VersionCmd(char *data, int len)
 {
     char    buf[1024];
-
-    Logger::log().info() << "Server ID: " << data;
     GameStatusVersionOKFlag = false;
     GameStatusVersionFlag = true;
     csocket.cs_version = atoi(data);
@@ -537,6 +535,7 @@ void Network::SoundCmd(unsigned char *data, int len)
     */
 }
 
+//================================================================================================
 //================================================================================================
 // .
 //================================================================================================
@@ -1287,7 +1286,7 @@ void Network::GolemCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::AddMeSuccess(char *data, int len)
 {
-    Logger::log().info() << "addme_success received.";
+    //Logger::log().info() << "addme_success received.";
 }
 
 //================================================================================================
@@ -1486,14 +1485,12 @@ void Network::SetupCmd(char *data, int len)
 //================================================================================================
 void Network::handle_query(char *data, int len)
 {
-    /*
-        //uint8 flags = atoi(data);  // ATM unused parameter
-        char *buf = strchr(data, ' ');
-        if (buf) ++buf;
-     // one query string
-        Logger::log().info() << "Received query string: " <<  buf;
-        PreParseInfoStat(buf);
-    */
+    //uint8 flags = atoi(data);  // ATM unused parameter
+    char *buf = strchr(data, ' ');
+    if (buf) ++buf;
+    // one query string
+    Logger::log().info() << "Received query string: " <<  buf;
+    PreParseInfoStat(buf);
 }
 
 //================================================================================================
@@ -1555,10 +1552,8 @@ void Network::DataCmd(char *data, int len)
 //================================================================================================
 void Network::NewCharCmd(char *data, int len)
 {
-    /*
-        dialog_new_char_warn = 0;
-        Option::getSingleton().setGameStatus(GAME_STATUS_NEW_CHAR);
-    */
+    //dialog_new_char_warn = 0;
+    Option::getSingleton().setGameStatus(GAME_STATUS_NEW_CHAR);
 }
 
 //================================================================================================
@@ -1734,63 +1729,59 @@ void Network::DeleteInventory(unsigned char *data, int len)
 //================================================================================================
 void Network::PreParseInfoStat(char *cmd)
 {
-    /*
-        // Find input name
-        if (!strncmp(cmd, "QN",2))
+    // Find input name
+    if (!strncmp(cmd, "QN",2))
+    {
+        int status = cmd[2] -'0';
+        Logger::log().info() << "Login: Enter name - status " << status;
+        //playerName[0] = 0;
+        //playerPassword[0] = 0;
+        Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NONE);
+        switch (status)
         {
-      int status = cmd[2]-'0';
-
-            Logger::log().info() << "Login: Enter name - status " << status;
-            playerName[0] = 0;
-            playerPassword[0] = 0;
-      dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-      switch(status)
-      {
-       case 1:
-        if(GameStatusLogin)
-            dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_NO;
-       break;
-       case 2:
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BLOCKED;
-       break;
-       case 3:
-        if(!GameStatusLogin)
-         dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_PLAYING;
-       break;
-       case 4:
-        if(!GameStatusLogin)
-         dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_TAKEN;
-       break;
-       case 5:
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BANNED;
-       break;
-       case 6:
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-       break;
-       case 7:
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
-       break;
-
-       default: // is also status 0
-        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-       break;
-      }
-            Option::getSingleton().setGameStatus(GAME_STATUS_NAME_INIT);
+            case 1:
+                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
+                    Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_NO);
+                break;
+            case 2:
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_BLOCKED);
+                break;
+            case 3:
+                if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
+                    Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_PLAYING);
+                break;
+            case 4:
+                if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
+                    Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_TAKEN);
+                break;
+            case 5:
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_BANNED);
+                break;
+            case 6:
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_WRONG);
+                break;
+            case 7:
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_PWD_WRONG);
+                break;
+            default: // is also status 0
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NONE);
+                break;
         }
-        else if (!strncmp(cmd, "QP",2))
-        {
-      int status = cmd[2]-'0';
-         Logger::log().info() << "Login: Enter password";
-      if(status)
-       dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
-            Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_INIT);
-        }
-        else if (!strncmp(cmd, "QV",2))
-        {
-            Logger::log().info() << "Login: Enter verify password\n";
-            Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_INIT);
-        }
-    */
+        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_USER);
+    }
+    else if (!strncmp(cmd, "QP",2))
+    {
+        int status = cmd[2]-'0';
+        Logger::log().info() << "Login: Enter password";
+        if (status)
+            Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_PWD_WRONG);
+        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_USER);
+    }
+    else if (!strncmp(cmd, "QV",2))
+    {
+        Logger::log().info() << "Login: Enter verify password";
+        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_USER);
+    }
 }
 
 //================================================================================================

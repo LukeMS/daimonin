@@ -60,14 +60,11 @@ typedef enum _game_status
     GAME_STATUS_REQUEST_FILES,      // after we get response from setup, we request files if needed.
     GAME_STATUS_ADDME,              // all setup is done, now try to enter game!
     GAME_STATUS_LOGIN,              // now we wait for LOGIN request of the server.
-    GAME_STATUS_NAME_INIT,          // Init the GuiInput mode.
-    GAME_STATUS_NAME_LOOP,          // Wait for user input.
+    GAME_STATUS_NAME_USER,          // Wait for user input.
     GAME_STATUS_NAME_WAIT,          // Wait for server.
-    GAME_STATUS_PSWD_INIT,          // Init the GuiInput mode.
-    GAME_STATUS_PSWD_LOOP,          // Wait for user input.
+    GAME_STATUS_PSWD_USER,          // Wait for user input.
     GAME_STATUS_PSWD_WAIT,          // Wait for server.
-    GAME_STATUS_VRFY_INIT,          //
-    GAME_STATUS_VRFY_LOOP,
+    GAME_STATUS_VRFY_USER,
     GAME_STATUS_VRFY_WAIT,          // Wait for server.
     GAME_STATUS_NEW_CHAR,           // show new char creation screen and send /nc command when finished
     GAME_STATUS_WAITFORPLAY,        // we simply wait for game start means, this is not a serial stepping here
@@ -85,7 +82,7 @@ public:
         // Dialog window options.
         VOL_SOUND, VOL_MUSIC, VOL_VOICE,
         META_SERVER_NAME, META_SERVER_PORT,
-        ///
+        //
         SEPARATOR,
         // Non-Dialog options.
         SEL_META_SEVER,
@@ -103,6 +100,25 @@ public:
         CMDLINE_SHOW_BOUNDING_BOX,
         SUM_OPTIONS
     };
+    enum enumLoginWarning
+    {
+        DIALOG_LOGIN_WARNING_NONE,
+        DIALOG_LOGIN_WARNING_NAME_NO,
+        DIALOG_LOGIN_WARNING_NAME_BLOCKED,
+        DIALOG_LOGIN_WARNING_NAME_PLAYING,
+        DIALOG_LOGIN_WARNING_NAME_TAKEN,
+        DIALOG_LOGIN_WARNING_NAME_BANNED,
+        DIALOG_LOGIN_WARNING_NAME_WRONG,
+        DIALOG_LOGIN_WARNING_PWD_WRONG,
+        DIALOG_LOGIN_WARNING_PWD_SHORT,
+        DIALOG_LOGIN_WARNING_PWD_NAME,
+        DIALOG_LOGIN_WARNING_SUM
+    };
+    enum enumLoginType
+    {
+        LOGIN_NEW_PLAYER,
+        LOGIN_EXISTING_PLAYER
+    };
     enum selType
     {
         SEL_BUTTON,
@@ -115,9 +131,9 @@ public:
     typedef struct optionStruct
     {
         selType type;
-        char *name;     /**< Name of the Option**/
-        char *info1;    /**< Info text row 1 **/
-        char *info2;    /**< Info text row 2 **/
+        char *name;     /**< Name of the Option **/
+        char *info1;    /**< Info text row 1    **/
+        char *info2;    /**< Info text row 2    **/
         char *val_text; /**< Text-replacement (values are separated by '#') **/
         std::string txtValue;
         int  intValue;
@@ -140,6 +156,24 @@ public:
     static Option &getSingleton()
     {
         static Option Singleton; return Singleton;
+    }
+
+    void setDialogWarningLevel(enum enumLoginWarning warn)
+    {
+        mLoginWarning = warn;
+    }
+    int getDialogWarningLevel()
+    {
+        return mLoginWarning;
+    }
+
+    void setLoginType(enum enumLoginType type)
+    {
+        mLoginType = type;
+    }
+    int getLoginType()
+    {
+        return mLoginType;
     }
 
     int getIntValue(enumOption option)
@@ -209,6 +243,8 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mGameStatus;
+    enum enumLoginWarning mLoginWarning;
+    enum enumLoginType mLoginType;
     ifstream *mDescFile;
     string mDescBuffer;
     string mFilename;

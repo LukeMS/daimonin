@@ -286,6 +286,9 @@ void CEvent::keyPressed(KeyEvent *e)
         }
 
         case KC_L:
+            static bool once = false;
+            if (once) break;
+            once = true;
             Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
             break;

@@ -89,6 +89,14 @@ public:
     {
         mvObject_npc[npc]->castSpell(spell);
     }
+    const String &getNameNPC(int npc)
+    {
+        return mvObject_npc[npc]->getNickName();
+    }
+    void setNameNPC(int npc, const char *name)
+    {
+        mvObject_npc[npc]->setNickName(name);
+    }
     const Vector3& getPos(int npc)
     {
         return mvObject_npc[npc]->getPos();

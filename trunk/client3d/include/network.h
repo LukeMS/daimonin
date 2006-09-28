@@ -152,7 +152,10 @@ public:
     bool SOCKET_DeinitSocket(void);
     bool SOCKET_OpenSocket(const char *host, int port);
     bool SOCKET_OpenClientSocket(const char *host, int port);
-    bool OpenActiveServerSocket();
+    bool OpenActiveServerSocket()
+    {
+        return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
+    }
     static bool SOCKET_CloseSocket();
     int  SOCKET_GetError(void);  // returns socket error
     void read_metaserver_data(SOCKET fd);
@@ -162,6 +165,7 @@ public:
     static int socket_thread_loop(void *);
     static void write_socket_buffer(int fd, SockList *sl);
     static int read_socket_buffer(int fd, SockList *sl);
+    static void send_reply(char *text);
     static int cs_write_string(char *buf, int len);
     void SendVersion();
     void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
