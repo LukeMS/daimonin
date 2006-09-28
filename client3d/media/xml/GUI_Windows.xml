@@ -267,9 +267,9 @@
   </Window>
 
   <!--#############################################-->
-  <!--WINDOW: Login                                -->
+  <!--WINDOW: Server Select                        -->
   <!--#############################################-->
-  <Window name= "Login">
+  <Window name= "ServerSelect">
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" zOrder = "250" />
     <DragArea x= "0" y= "0" width= "200" height= "29" />
@@ -341,10 +341,92 @@
       <Range width= "400" height= "300"/>
       <Color type= "BACK_1" red=  "45" green=  "37" blue= "16" alpha = "255" />
 	  <Color type= "BACK_2" red=  "62" green=  "49" blue= "32" alpha = "255" />
-	  <Color type= "SELECT" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+	  <Color type= "SELECT" red=   "0" green=   "0" blue= "99" alpha = "255" />
       <Column width = "300" label ="Server:" />
       <Column width = "100" label ="Players: " />
     </Table>
+
+  </Window>
+
+  <!--#############################################-->
+  <!--WINDOW: Login                                -->
+  <!--#############################################-->
+  <Window name= "Login">
+    <Size     width= "512" height= "512" />
+    <Pos      x= "200" y= "200" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "200" height= "29" />
+    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
+
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
+      <Pos x= "0" y= "0" />
+      <Range width= "512" height= "512" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "0" />
+      <Range width= "494" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
+      <Pos x= "503" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Label x=  "225" y= "8" font="04" text= "Login" />
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "5" y= "30" />
+      <Range width= "502" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
+      <Pos x= "0" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "507" />
+      <Range width= "492" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
+      <Pos x= "503" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "0" y= "10" />
+      <Range width= "5" height= "492" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "507" y= "10" />
+      <Range width= "5" height= "492" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <Label   x=  "80" y=  "65" font="03" text= "Player Name: " />
+    <TextBox x= "200" y=  "65" font="02" text= "+"  width = "100" name= "Input_Login_Name" />
+
+    <Label   x=  "80" y=  "85" font="03" text= "Password: " />
+    <TextBox x= "200" y=  "85" font="02" text= "+"  width = "100" name= "Input_Login_Passwd" />
+
+    <Label   x=  "80" y= "105" font="03" text= "Retype Pswd: " />
+    <TextBox x= "200" y= "105" font="02" text= "+" width = "100" name= "Input_Login_Verify" />
+
 
   </Window>
 

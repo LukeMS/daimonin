@@ -434,6 +434,19 @@ inline void GuiWindow::createWindow()
 }
 
 //================================================================================================
+// Key event.
+//================================================================================================
+bool GuiWindow::keyEvent(const char keyChar, const unsigned char key)
+{
+    for (unsigned int i = 0; i < mvTable.size(); ++i)
+    {
+        if (mvTable[i]->keyEvent(keyChar, key))
+            return true;
+    }
+    return false;
+}
+
+//================================================================================================
 // Mouse Event.
 //================================================================================================
 bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
@@ -526,7 +539,7 @@ int GuiWindow::getTableSelection(int element)
     for (unsigned int i = 0; i < mvTable.size() ; ++i)
     {
         if (mvTable[i]->getIndex() == element)
-        return mvTable[i]->getSelectedRow();
+            return mvTable[i]->getSelectedRow();
     }
     return -1;
 }
@@ -539,7 +552,7 @@ void GuiWindow::clearTable(int element)
     for (unsigned int i = 0; i < mvTable.size() ; ++i)
     {
         if (mvTable[i]->getIndex() == element)
-        mvTable[i]->clearBackground();
+            mvTable[i]->clearRows();
     }
 }
 

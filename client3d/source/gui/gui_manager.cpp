@@ -47,6 +47,7 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
         { "PlayerConsole", GUI_WIN_PLAYERCONSOLE },
         { "TextWindow",    GUI_WIN_TEXTWINDOW    },
+        { "ServerSelect",  GUI_WIN_SERVERSELECT  },
         { "Login",         GUI_WIN_LOGIN         },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
     };
@@ -213,32 +214,37 @@ void GuiManager::freeRecources()
 
 //================================================================================================
 // KeyEvent was reported.
+// The decision if a keypress belongs to gui is made in events.cpp.
 //================================================================================================
 bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 {
-    if (!mProcessingTextInput) return false;
-    if (key == KC_ESCAPE)
+    // We have an active Textinput.
+    if (mProcessingTextInput)
     {
-        sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
-        GuiTextinput::getSingleton().canceled();
-        mProcessingTextInput = false;
-        return true;
+        if (key == KC_ESCAPE)
+        {
+            sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mBackupTextInputString.c_str());
+            GuiTextinput::getSingleton().canceled();
+            mProcessingTextInput = false;
+            return true;
+        }
+        GuiTextinput::getSingleton().keyEvent(keyChar, key);
+        if (GuiTextinput::getSingleton().wasFinished())
+        {
+            mStrTextInput = GuiTextinput::getSingleton().getText();
+            sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mStrTextInput.c_str());
+            GuiTextinput::getSingleton().stop();
+            mProcessingTextInput = false;
+        }
     }
+    // Activate the next window.
     if (key == KC_TAB)
     {
         if (++mActiveWindow >= (int)mvActiveWindow.size()) mActiveWindow = mvActiveWindow[0];
         return true;
     }
-
-    GuiTextinput::getSingleton().keyEvent(keyChar, key);
-    if (GuiTextinput::getSingleton().wasFinished())
-    {
-        mStrTextInput = GuiTextinput::getSingleton().getText();
-        sendMessage(mActiveWindow, GUI_MSG_TXT_CHANGED, mActiveElement, (void*)mStrTextInput.c_str());
-        GuiTextinput::getSingleton().stop();
-        mProcessingTextInput = false;
-    }
-    return true;
+    // Key event in active window.
+    return guiWindow[mActiveWindow].keyEvent(keyChar, key);
 }
 
 //================================================================================================

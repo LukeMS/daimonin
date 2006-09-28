@@ -144,8 +144,8 @@ private:
     int mMaxHP,    mActHP;
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
-    TilePos mDestStepPos;  /**< The next tile pos of a multi tile walk. **/
-    TilePos mDestWalkPos;  /**< The destination pos (as tile).   **/
+    TilePos mDestStepPos;   /**< The next tile pos of a multi tile walk. **/
+    TilePos mDestWalkPos;   /**< The destination pos (as tile).   **/
     Vector3  mDestWalkVec;  /**< The destination pos (as vector). **/
     Vector3  mWalkSpeed;
     int mOffX, mOffZ;

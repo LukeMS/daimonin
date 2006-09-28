@@ -169,20 +169,17 @@ inline static char *strerror_local(int errnum)
 #endif
 
 Network::Network()
-{
-}
+{}
 
 Network::~Network()
 {
-    clearMetaServerData();
+clearMetaServerData();
 }
 
 void Network::clearMetaServerData()
 {
     for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
-    {
         delete (*i);
-    }
     mvServer.clear();
 }
 
@@ -201,7 +198,7 @@ void Network::update()
             Logger::log().error() << "Bad command from server " << cmd->data[0];
         else
         {
-            Logger::log().error() << "command #" << commands[cmd->data[0]-1].cmdname << " >" << cmd->data+1 << "<";
+            Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] " << cmd->data+1;
             commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
         }
         free_read_cmd(cmd);
@@ -314,7 +311,7 @@ inline void Network::write_socket_buffer(int fd, SockList *sl)
     amt = send(fd, (const char*)sl->buf + sl->pos, sl->len, MSG_DONTWAIT);
 
     // following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
-    // send() with MSG_DONTWAIT under linux can return 0 which means the data
+    // () with MSG_DONTWAIT under linux can return 0 which means the data
     // is "queued for transmission". I was not able to find that in the send() man pages...
     // In my testings it never happend, so i put it here in to have it perhaps triggered in
     // some server runs (but we should trust perhaps ibm developer infos...).
@@ -350,7 +347,7 @@ inline void Network::write_socket_buffer(int fd, SockList *sl)
 // read stuff from socket
 inline int Network::read_socket_buffer(int fd, SockList *sl)
 {
-    int         stat_ret, read_bytes, tmp;
+    int stat_ret, read_bytes, tmp;
 
     // calculate how many bytes can be read in one row in our round robin buffer
     tmp = sl->pos+sl->len;
@@ -504,7 +501,7 @@ int Network::socket_thread_loop(void *)
 
 void Network::socket_thread_start()
 {
-    Logger::log().info() << "START THREAD";
+    Logger::log().info() << "Starting thread";
     thread_flag = true;
 
     socket_cond = SDL_CreateCond();
@@ -585,6 +582,7 @@ bool Network::SOCKET_CloseClientSocket()
 bool Network::Init()
 {
     if (mInitDone) return true;
+    Logger::log().headline("Starting Network");
 #ifdef WIN32
     WSADATA w;
     WORD wVersionRequested = MAKEWORD( 2, 2 );
@@ -630,49 +628,28 @@ bool Network::SOCKET_DeinitSocket()
     return(true);
 }
 
-bool Network::OpenActiveServerSocket()
-{
-    Logger::log().error() << "1 openClientSocket:  " << mvServer[mActServerNr]->ip.c_str() << "   " << mvServer[mActServerNr]->port;
-    return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
-}
-
-
 bool Network::SOCKET_OpenClientSocket(const char *host, int port)
 {
-    int tmp = 1;
-
-
-
-Logger::log().error() << "2 openClientSocket:  " << host << "   " << port;
-
-
-
     // No more socket for the IO thread
     SDL_LockMutex(socket_lock);
-
-    if (!SOCKET_OpenSocket(host, port))
-        return false;
-
+    if (!SOCKET_OpenSocket(host, port)) return false;
     csocket.inbuf.buf = new unsigned char[MAXSOCKBUF];
     csocket.inbuf.len = 0;
     csocket.inbuf.pos = 0;
     csocket.outbuf.buf = new unsigned char[MAXSOCKBUF];
     csocket.outbuf.len = 0;
     csocket.outbuf.pos = 0;
-
     csocket.command_sent = 0;
     csocket.command_received = 0;
     csocket.command_time = 0;
-
+    int tmp = 1;
     if (setsockopt(csocket.fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
     {
         Logger::log().error() << "setsockopt(TCP_NODELAY) failed";
     }
-
     // socket available for socket thread
     SDL_CondSignal(socket_cond);
     SDL_UnlockMutex(socket_lock);
-
     return true;
 }
 
@@ -896,8 +873,15 @@ void Network::SendVersion()
 {
     char buf[MAX_BUF];
     sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
-    Logger::log().error() << "Send version command: " << buf;
+    Logger::log().info() << "Send version command: " << buf;
     cs_write_string(buf, (int)strlen(buf));
+}
+
+void Network::send_reply(char *text)
+{
+    char buf[MAXSOCKBUF];
+    sprintf(buf, "reply %s", text);
+    cs_write_string(buf, strlen(buf));
 }
 
 int Network::cs_write_string(char *buf, int len)
@@ -1038,7 +1022,6 @@ void Network::parse_metaserver_data(string strMetaData)
         strDesc4 = strMetaData.substr(startPos, endPos -startPos);
         if (endPos < strMetaData.size()) ++endPos;
         // Add the server to the linked list.
-
         add_metaserver_data(strIP.c_str(), strName.c_str(), atoi(strPort.c_str()), atoi(strPlayer.c_str()), strVersion.c_str(),
                             strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
     }
@@ -1064,5 +1047,5 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     string strRow = server;
     if (player <0) strRow+=",-";
     else           strRow+=","+StringConverter::toString(player);
-    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_ADD_TABLEROW, GUI_TABLE, (void*) strRow.c_str());
+    GuiManager::getSingleton().sendMessage(GUI_WIN_SERVERSELECT, GUI_MSG_ADD_TABLEROW, GUI_TABLE, (void*) strRow.c_str());
 }

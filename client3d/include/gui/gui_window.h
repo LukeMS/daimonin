@@ -42,6 +42,8 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
+const unsigned long TIME_DOUBLECLICK = 200;
+
 /**
  ** This class provides a graphical window.
  *****************************************************************************/
@@ -84,7 +86,7 @@ public:
         else          mOverlay->show();
     }
     void Init(TiXmlElement *xmlElem);
-    void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+    bool keyEvent(const char keyChar, const unsigned char key);
     void update(Real timeSinceLastFrame);
     void getTexturseSize(int &w, int &h)
     {

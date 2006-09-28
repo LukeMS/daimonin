@@ -45,11 +45,13 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiTable(TiXmlElement *xmlElement, void *parent);
     ~GuiTable();
-    void clearBackground();
+    void clearRows();
+    void drawSelection(int newSelection);
     void draw();
     bool mouseEvent(int MouseAction, int x, int y);
     void addRow(String textline);
     int  getSelectedRow();
+    bool keyEvent(const char keyChar, const unsigned char key);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -64,6 +66,7 @@ private:
     std::vector<String>mvRow;
     Real mMinHeight, mMaxHeight;
     bool mVisible;
+    bool mRowActivated;
     int  mSumRows;
     int  mSelectedRow;
     int  mFontHeight;
@@ -72,6 +75,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    void drawSelection();
+    void drawRow(int row, uint32 color);
 };
 
 #endif

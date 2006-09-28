@@ -33,6 +33,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "network.h"
 #include "tile_manager.h"
 #include "gui_manager.h"
+#include "gui_textinput.h"
 #include "object_manager.h"
 #include "object_visuals.h"
 #include "particle_manager.h"
@@ -74,7 +75,8 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
 //================================================================================================
 CEvent::~CEvent()
 {
-    if (mEventProcessor)  delete mEventProcessor;
+    if (mEventProcessor)
+        delete mEventProcessor;
     TileManager  ::getSingleton().freeRecources();
     ObjectManager::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
@@ -100,6 +102,7 @@ void CEvent::setWorldPos(int deltaX, int deltaZ)
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
     static Overlay *mOverlay;
+    static String strPlayerPswd;
     if (mWindow->isClosed() || mQuitGame)
         return false;
 
@@ -299,7 +302,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_WAITLOOP:
         {
             Network::getSingleton().SOCKET_CloseClientSocket();
-            GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
+            GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, true);
             Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
             break;
         }
@@ -307,11 +310,11 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_STARTCONNECT:
         {
             // Wait for user to select a server.
-            int select = GuiManager::getSingleton().getTableSelection(GUI_WIN_LOGIN, GUI_TABLE);
+            int select = GuiManager::getSingleton().getTableSelection(GUI_WIN_SERVERSELECT, GUI_TABLE);
             if (select >=0)
             {
-                GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
-                GuiManager::getSingleton().clearTable(GUI_WIN_LOGIN, GUI_TABLE);
+                GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, false);
+                GuiManager::getSingleton().clearTable(GUI_WIN_SERVERSELECT, GUI_TABLE);
                 Network::getSingleton().setActiveServer(select);
                 Option::getSingleton().setGameStatus(GAME_STATUS_CONNECT);
             }
@@ -320,7 +323,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_CONNECT:
         {
-            //GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
+            //GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, false);
             Network::GameStatusVersionFlag = false;
             if (!Network::getSingleton().OpenActiveServerSocket())
             {
@@ -385,8 +388,151 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             //mRequest_file_chain = 0;
             //mRequest_file_flags = 0;
             Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
+
+            Option::getSingleton().setGameStatus(GAME_STATUS_ADDME); // only for testing....
+
             break;
         }
+
+        case GAME_STATUS_ADDME:
+        {
+            //map_transfer_flag = 0;
+            //cpl.mark_count = -1;
+            //cpl.name[0] = 0;
+            //cpl.password[0] = 0;
+            Network::getSingleton().cs_write_string("addme", 5);
+            GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
+            GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_NAME, 30, true, true);
+            // now wait for login request of the server.
+            Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
+            break;
+        }
+
+        case GAME_STATUS_LOGIN:
+        {
+            //map_transfer_flag = 0;
+            if (GuiManager::getSingleton().brokenTextInput())
+            {
+                Logger::log().info() << "Break Login.";
+                Option::getSingleton().setGameStatus(GAME_STATUS_START);
+                GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
+                GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
+                //GameStatusLogin = FALSE;
+            }
+            //reset_input_mode();
+            break;
+        }
+
+        case GAME_STATUS_NAME_USER:
+        {
+            //map_transfer_flag = 0;
+            if (GuiManager::getSingleton().brokenTextInput())
+            {
+                Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
+                break;
+            }
+            if (!GuiManager::getSingleton().finishedTextInput())
+                break;
+            //if (is_username_valid(InputString))
+            {
+                // Set the name of our hero.
+                ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, GuiManager::getSingleton().getTextInput());
+                String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
+                strServer += ObjectManager::getSingleton().getNameNPC(ObjectNPC::HERO);
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NONE);
+                Logger::log().info() << "Login: send name " << strServer;
+                Network::getSingleton().send_reply((char*)strServer.c_str());
+                // now wait again for next server question
+                Option::getSingleton().setGameStatus(GAME_STATUS_NAME_WAIT);
+                GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_PASSWD, 30, true, true);
+            }
+            // else
+            {
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_WRONG);
+                //InputStringFlag=TRUE;
+                //InputStringEndFlag=FALSE;
+            }
+            break;
+        }
+        case GAME_STATUS_NAME_WAIT:
+        {   // Wait for action of the server.
+            break;
+        }
+
+        case GAME_STATUS_PSWD_USER:
+        {
+            // map_transfer_flag = 0;
+            if (GuiManager::getSingleton().brokenTextInput())
+            {
+                Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
+                break;
+            }
+            if (!GuiManager::getSingleton().finishedTextInput())
+                break;
+            strPlayerPswd = GuiManager::getSingleton().getTextInput();
+            if (strPlayerPswd.size() < 6 || strPlayerPswd.size() > 17)
+            {
+                Logger::log().info() << "Wrong passsword length.";
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_PWD_SHORT);
+                break;
+            }
+            if (strPlayerPswd == ObjectManager::getSingleton().getNameNPC(ObjectNPC::HERO))
+            {
+                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_PWD_NAME);
+                break;
+            }
+            Logger::log().info() << "Login: send password <*****>";
+            Network::getSingleton().send_reply((char*)strPlayerPswd.c_str());
+            Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_WAIT);
+            GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_VERIFY, 30, true, true);
+            break;
+        }
+        case GAME_STATUS_PSWD_WAIT:
+        {   // Wait for action of the server.
+            break;
+        }
+
+        case GAME_STATUS_VRFY_USER:
+        {
+            //map_transfer_flag = 0;
+            if (GuiManager::getSingleton().brokenTextInput())
+            {
+                Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
+                break;
+            }
+            if (!GuiManager::getSingleton().finishedTextInput())
+                break;
+            Logger::log().info() << "Login: send verify password <*****>";
+            Network::getSingleton().send_reply((char*)GuiManager::getSingleton().getTextInput());
+            Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_WAIT);
+            break;
+        }
+        case GAME_STATUS_VRFY_WAIT:
+        {   // Wait for action of the server.
+            break;
+        }
+
+
+
+
+
+
+
+        // Send the new created character to server.
+        case GAME_STATUS_NEW_CHAR:
+        {
+            char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
+            Network::getSingleton().cs_write_string(buf, strlen(buf));
+            /*
+            Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
+            char buf[MAX_BUF];
+            sprintf(buf, "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
+            nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
+            Network::getSingleton().cs_write_string(buf, strlen(buf));
+            */
+            break;
+        }
+
 
         default:
         {
@@ -488,30 +634,32 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         }
     }
     return true;
-}
+       }
 
-//================================================================================================
-// Frame End event.
-//================================================================================================
-bool CEvent::frameEnded(const FrameEvent& evt)
-{
-    if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET) return true;
-    GuiManager::getSingleton().update(evt.timeSinceLastFrame);
-    Network::getSingleton().update();
-    const RenderTarget::FrameStats& stats = mWindow->getStatistics();
-    static int skipFrames = 0;
-    if (--skipFrames <= 0)
-    {
-        static char buffer[16];
-        skipFrames = 10;
-        sprintf(buffer, "%.1f", stats.lastFPS);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)buffer);
-        sprintf(buffer, "%.1f", stats.bestFPS);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)buffer);
-        sprintf(buffer, "%.1f", stats.worstFPS);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
-        sprintf(buffer, "%d", stats.triangleCount);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
-    }
-    return true;
-}
+       //================================================================================================
+       // Frame End event.
+       //================================================================================================
+       bool CEvent::frameEnded(const FrameEvent& evt)
+       {
+           if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET)
+               return true;
+           GuiManager::getSingleton().update(evt.timeSinceLastFrame);
+           Network::getSingleton().update();
+           const RenderTarget::FrameStats& stats = mWindow->getStatistics();
+           static int skipFrames = 0;
+           if (--skipFrames <= 0)
+           {
+               static char buffer[16];
+               skipFrames = 10;
+               sprintf(buffer, "%.1f", stats.lastFPS);
+               GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)buffer);
+               sprintf(buffer, "%.1f", stats.bestFPS);
+               GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)buffer);
+               sprintf(buffer, "%.1f", stats.worstFPS);
+               GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
+               sprintf(buffer, "%d", stats.triangleCount);
+               GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
+           }
+           return true;
+       }
+
