@@ -8,6 +8,7 @@
 -- Also note that this script is _only_ loaded at server startup
 --]]
 
+if game == nil then require "plugin_emulate.lua" end
 require("security")
 require("data_store")
 
@@ -51,12 +52,12 @@ end
 
 function obj_inventory(obj)
     local iterator = function(_, last) return last.below end
-    return iterator, nil, obj.inventory
+    return iterator, nil, { below=obj.inventory }
 end
 
 function map_objects(map, x, y)
     local iterator = function(_, last) return last.above end
-    return iterator, nil, map.GetFirstObjectOnSquare(x,y)
+    return iterator, nil, { above = map:GetFirstObjectOnSquare(x,y) }
 end
 
 -- Magic errorhandler, sends script errors to involved DM:s
@@ -67,7 +68,7 @@ function _error(msg)
 
     local function msg_wiz_obj(obj)
         if obj and game:IsValid(obj) and obj.f_wiz then
-            obj.Write(obj, "LUA: "..tostring(msg))
+            obj:Write("LUA: "..tostring(msg))
             return true
         end
         return false
@@ -88,7 +89,7 @@ function _shutdown()
 end
 
 -- Redirect print() to game:Log()
-print = function(...)
+function print(...)
     local text = ""
     if arg.n >= 1 then
         text = tostring(arg[1])
