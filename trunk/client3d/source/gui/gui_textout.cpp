@@ -292,14 +292,17 @@ void GuiTextout::Print(TextLine *line, Texture *texture)
     }
     else
     { // Static text.
+        if (!line->text.size()) return;
         texture->getBuffer()->blitToMemory(
             Box(line->x1, line->y1, line->x2, line->y2),
             PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer)
         );
     }
     // draw the text into buffer.
-    if (!line->text.size()) line->text = " ";
-    drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, line->text.c_str(), line->font);
+    if (line->text.size())
+    {
+        drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, line->text.c_str(), line->hideText, line->font);
+    }
     // Blit it into the window.
     texture->getBuffer()->blitFromMemory(
         PixelBox(line->x2 - line->x1, line->y2 - line->y1, 1, PF_A8R8G8B8, mTextGfxBuffer),
@@ -317,13 +320,13 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
     // Clear the textline.
     for (int i =0; i < width * h; ++i) dest_data[i] = bgColor;
     if (!text || text[0] == 0) return;
-    drawText(width, h, dest_data, text, fontNr);
+    drawText(width, h, dest_data, text, false, fontNr);
 }
 
 //================================================================================================
 // .
 //================================================================================================
-void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr)
+void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr)
 {
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
     uint32 pixFont, pixColor;
@@ -379,6 +382,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 
             default:
                 chr = (*text - 32);
+                if (hideText && chr != CHARS_IN_FONT-1) chr = '*'-32;
                 if (chr > CHARS_IN_FONT) chr = 0;
                 fontPosY = chr * mvFont[fontNr]->width;
                 dstY = 0;

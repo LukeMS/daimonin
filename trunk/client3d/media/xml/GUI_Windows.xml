@@ -337,7 +337,7 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <Table type= "COLOR_FILL" name= "Table_Server" font="03">
-      <Pos x= "56" y= "100" />
+      <Pos x= "56" y= "60" />
       <Range width= "400" height= "300"/>
       <Color type= "BACK_1" red=  "45" green=  "37" blue= "16" alpha = "255" />
 	  <Color type= "BACK_2" red=  "62" green=  "49" blue= "32" alpha = "255" />
@@ -345,6 +345,10 @@
       <Column width = "300" label ="Server:" />
       <Column width = "100" label ="Players: " />
     </Table>
+
+    <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_ServerInfo1" />
+    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_ServerInfo2" />
+    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_ServerInfo3" />
 
   </Window>
 
@@ -419,13 +423,21 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <Label   x=  "80" y=  "65" font="03" text= "Player Name: " />
-    <TextBox x= "200" y=  "65" font="02" text= "+"  width = "100" name= "Input_Login_Name" />
+    <TextBox x= "200" y=  "65" font="02" text= "" width = "100" name= "Input_Login_Name" />
 
     <Label   x=  "80" y=  "85" font="03" text= "Password: " />
-    <TextBox x= "200" y=  "85" font="02" text= "+"  width = "100" name= "Input_Login_Passwd" />
+    <TextBox x= "200" y=  "85" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
 
     <Label   x=  "80" y= "105" font="03" text= "Retype Pswd: " />
-    <TextBox x= "200" y= "105" font="02" text= "+" width = "100" name= "Input_Login_Verify" />
+    <TextBox x= "200" y= "105" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
+
+
+    <TextBox x= "60" y= "350" font="02" text= "" width = "392" name= "Login_LoginWarn" />
+
+    <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
+    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_InputInfo2" />
+    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_InputInfo3" />
+
 
 
   </Window>

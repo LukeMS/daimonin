@@ -236,6 +236,7 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
             GuiTextinput::getSingleton().stop();
             mProcessingTextInput = false;
         }
+        return true;
     }
     // Activate the next window.
     if (key == KC_TAB)
@@ -278,7 +279,7 @@ const char *GuiManager::sendMessage(int window, int message, int element, void *
 //================================================================================================
 // .
 //================================================================================================
-void GuiManager::startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces)
+void GuiManager::startTextInput(int window, int winElement, int maxChars, bool blockNumbers, bool blockWhitespaces)
 {
     if (mProcessingTextInput || !guiWindow[window].isVisible()) return;
     mProcessingTextInput = true;
@@ -290,9 +291,8 @@ void GuiManager::startTextInput(int window, int winElement, int maxChars, bool u
     else
         mBackupTextInputString = "";
     GuiTextinput::getSingleton().setString(mBackupTextInputString);
-    GuiTextinput::getSingleton().startTextInput(maxChars, useNumbers, useWhitespaces);
+    GuiTextinput::getSingleton().startTextInput(maxChars, blockNumbers, blockWhitespaces);
 }
-
 
 //================================================================================================
 // .
@@ -302,7 +302,6 @@ void GuiManager::cancelTextInput()
     GuiTextinput::getSingleton().canceled();
 }
 
-
 //================================================================================================
 // .
 //================================================================================================
@@ -311,7 +310,6 @@ bool GuiManager::brokenTextInput()
     return GuiTextinput::getSingleton().wasCanceled();
 }
 
-
 //================================================================================================
 // .
 //================================================================================================
@@ -319,7 +317,6 @@ bool GuiManager::finishedTextInput()
 {
     return GuiTextinput::getSingleton().wasFinished();
 }
-
 
 //================================================================================================
 // .
@@ -371,6 +368,7 @@ void GuiManager::update(Real timeSinceLastFrame)
         {
             // TODO: Make the background fit to the text. make a black border, ...
             TextLine label;
+            label.hideText= false;
             label.index= -1;
             label.font = 2;
             label.x1 = label.y1 = 2;
@@ -401,6 +399,7 @@ void GuiManager::displaySystemMessage(const char *text)
     int fontH = GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
     TextLine label;
     label.index= -1;
+    label.hideText= false;
     label.font = FONT_SYSTEM;
     //label.clipped = false;
     label.x1 = 0;

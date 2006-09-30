@@ -48,6 +48,7 @@ typedef struct TextLine
     unsigned int width;          /**< Width of the parent window. **/
     int font;
     int index;                   /**< Unique number. **/
+    bool hideText;               /**< Hide the text e.g. for password input. **/
     String text;
     uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
 }
@@ -112,7 +113,7 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
-    void drawText(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr = 0);
+    void drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr = 0);
 };
 
 #endif

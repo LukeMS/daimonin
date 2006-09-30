@@ -259,12 +259,13 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         TextLine *textline = new TextLine;
         textline->index = index;
+        textline->hideText= false;
         if ((strTmp = xmlElem->Attribute("font")))   textline->font = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("x")))      textline->x1   = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("y")))      textline->y1   = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("width")))  textline->width= atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("text")))   textline->text = strTmp;
-
+        if ((strTmp = xmlElem->Attribute("hide")))   textline->hideText= (atoi(strTmp)==1);
         // Calculate the needed gfx-buffer size for the text.
         if (GuiTextout::getSingleton().getClippingPos(*textline, mWidth, mHeight) == false)
         {
@@ -392,6 +393,7 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     const char *strTmp;
     TextLine textline;
     textline.index = -1;
+    textline.hideText= false;
     textline.BG_Backup = 0;
     if ((strTmp = xmlElem->Attribute("x")))    textline.x1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("y")))    textline.y1   = atoi(strTmp);
@@ -530,6 +532,19 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     return false;
 }
 
+
+//================================================================================================
+// .
+//================================================================================================
+int GuiWindow::getTableActivated(int element)
+{
+    for (unsigned int i = 0; i < mvTable.size() ; ++i)
+    {
+        if (mvTable[i]->getIndex() == element)
+            return mvTable[i]->getActivatedRow();
+    }
+    return -1;
+}
 
 //================================================================================================
 // .

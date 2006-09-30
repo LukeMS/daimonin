@@ -29,7 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <string>
 #include "sound.h"
-#include "gui_textout.h"
 
 using namespace std;
 
@@ -108,11 +107,14 @@ public:
      ** Returns the input text.
      ** @param showTextCursor Shows the cursor within the text.
      *****************************************************************************/
-    const char *getText(bool showTextCursor = true)
+    const char *getText(bool hideText = false, bool showTextCursor = true)
     {
-        static clock_t time = clock();
+        static clock_t time = Root::getSingleton().getTimer()->getMilliseconds();
         static bool cursorOn = true;
-        if (!showTextCursor || mFinished || mCanceled) return mStrTextInput.c_str();
+        if (!showTextCursor || mFinished || mCanceled)
+        {
+            return mStrTextInput.c_str();
+        }
         mStrTextInputWithCursor = mStrTextInput;
         if (clock()-time > 500)
         {
@@ -132,7 +134,7 @@ public:
      ** @param blockNumbers Input of numbers will be blocked.
      ** @param blockWhitespaces Input of whitespaces will be blocked.
      *****************************************************************************/
-    void startTextInput(int maxChars, bool blockNumbers = false, bool blockWhitespaces = false)
+    void startTextInput(int maxChars, bool blockNumbers, bool blockWhitespaces)
     {
         // we start only over, if the last operation was ended.
         if (mInProgress == true) return;
@@ -211,9 +213,8 @@ public:
                 return;
             }
             if ((!keyChar || mStrTextInput.size() >= mMaxChars)
-                    || (keyChar == '_' ) // used for TextCursor.
-                    || (!mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
-                    || (!mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
+                    || (mBlockNumbers  && (keyChar >= '0' && keyChar <= '9'))
+                    || (mBlockWhiteSpace && (keyChar <'A' || keyChar > 'z' || (keyChar >'Z' && keyChar < 'a'))))
             {
                 Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
                 return;

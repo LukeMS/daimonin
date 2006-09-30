@@ -118,6 +118,7 @@ private:
     void mouseExited  (MouseEvent *e);
     void mousePressed (MouseEvent *e);
     void mouseReleased(MouseEvent *e);
+    bool checkUsername(const char *name);
     void mouseDragEntered(MouseEvent* )
     {}
     void mouseDragExited(MouseEvent* )

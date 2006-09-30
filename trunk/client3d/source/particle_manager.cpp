@@ -69,9 +69,8 @@ ParticleSystem *ParticleManager::addNodeObject(SceneNode *node, const char* pScr
     obj->sceneNode = node;
     obj->delNodeOnCleanup = false;
     if (node)
-    {
         node->attachObject(obj->pSystem);
-    }
+    obj->isFreeObject = false;
     return obj->pSystem;
 }
 
@@ -90,6 +89,7 @@ ParticleSystem *ParticleManager::addBoneObject(Entity *ent, const char* strBone,
     obj->entity = ent;
     //obj->entity->setQueryFlags(QUERY_NPC_SELECT_MASK);
     obj->entity->attachObjectToBone(strBone, obj->pSystem);
+    obj->isFreeObject = false;
     return obj->pSystem;
 }
 
@@ -108,6 +108,7 @@ ParticleSystem *ParticleManager::addFreeObject(Vector3 pos, const char *pScript,
     obj->sceneNode= Event->GetSceneManager()->getRootSceneNode()->createChildSceneNode();
     obj->sceneNode->attachObject(obj->pSystem);
     obj->sceneNode->setPosition(pos);
+    obj->isFreeObject = true;
     return obj->pSystem;
 }
 
@@ -190,7 +191,8 @@ void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
     for (std::vector<sParticles*>::iterator i = mvParticle.begin(); i < mvParticle.end(); ++i)
     {
         if (!(*i)->pSystem->isAttached()) continue;
-        if (!(*i)->pSystem->getKeepParticlesInLocalSpace())
+        //if (!(*i)->pSystem->getKeepParticlesInLocalSpace())
+        if ((*i)->isFreeObject)
         {
             for (unsigned short sum = 0; sum < (*i)->pSystem->getNumEmitters(); ++sum)
             {
@@ -201,7 +203,6 @@ void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
                 p = (*i)->pSystem->getParticle(sum);
                 p->position-= deltaPos;
             }
-
         }
         (*i)->pSystem->_update(0);
     }

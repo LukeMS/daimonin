@@ -65,6 +65,7 @@ private:
         Real lifeTime;   // -1: Infinity lifetime.
         SceneNode *sceneNode;
         bool delNodeOnCleanup;
+        bool isFreeObject;
         ParticleSystem *pSystem;
         Entity *entity;
     };

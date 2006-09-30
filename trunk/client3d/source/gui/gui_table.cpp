@@ -67,6 +67,7 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement
     --mSumRows; // Reserve space for the headlines.
     mSelectedRow = -1;
     mRowActivated = false;
+    mRowChanged = true;
     draw();
 }
 
@@ -92,12 +93,14 @@ bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
     {
         if (mSelectedRow <= 0)  return true;
         drawSelection(mSelectedRow-1);
+        mRowChanged = true;
         return true;
     }
     if (key == KC_DOWN)
     {
         if (mSelectedRow+1 >= (int)mvRow.size())  return true;
         drawSelection(mSelectedRow+1);
+        mRowChanged = true;
         return true;
     }
     if (key == KC_RETURN)
@@ -160,7 +163,7 @@ void GuiTable::clearRows()
 // After a row was activated (by dblclick or return key) the row is returned once.
 // return value of -1 means no user action was reported.
 //================================================================================================
-int GuiTable::getSelectedRow()
+int GuiTable::getActivatedRow()
 {
     if (mRowActivated)
     {
@@ -171,6 +174,22 @@ int GuiTable::getSelectedRow()
 }
 
 //================================================================================================
+// After a row selection changed, the row is returned once.
+// return value of -1 means no user action was reported.
+//================================================================================================
+int GuiTable::getSelectedRow()
+{
+    if (mRowChanged)
+    {
+        mRowChanged = false;
+        return mSelectedRow;
+    }
+    return -1;
+}
+
+
+
+//================================================================================================
 // Draws the Headlines and Background of the table.
 //================================================================================================
 void GuiTable::draw()
@@ -179,6 +198,7 @@ void GuiTable::draw()
     // Draw the column headlines.
     TextLine textline;
     textline.index = -1;
+    textline.hideText= false;
     textline.BG_Backup = 0;
     textline.font = mFontNr;
     textline.x1 = mPosX;
@@ -236,6 +256,7 @@ void GuiTable::drawRow(int row, uint32 color)
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     TextLine textline;
     textline.index = -1;
+    textline.hideText= false;
     textline.BG_Backup = 0;
     textline.font = mFontNr;
     textline.x1 = mPosX +3;
