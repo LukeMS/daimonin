@@ -51,6 +51,7 @@ public:
     bool mouseEvent(int MouseAction, int x, int y);
     void addRow(String textline);
     int  getSelectedRow();
+    int  getActivatedRow();
     bool keyEvent(const char keyChar, const unsigned char key);
 
 private:
@@ -67,6 +68,7 @@ private:
     Real mMinHeight, mMaxHeight;
     bool mVisible;
     bool mRowActivated;
+    bool mRowChanged;
     int  mSumRows;
     int  mSelectedRow;
     int  mFontHeight;

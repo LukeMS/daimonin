@@ -599,7 +599,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
     // sort out the message text body to single lines
     if (gui_int->used_flag & GUI_INTERFACE_MESSAGE)
     {
-        int i, len, c=0;
+        int i, c=0;
 
         gui_int->message.line_count=0;
         for (i=0;;i++)
@@ -619,7 +619,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
             {
                 // lets do automatic line breaks
                 gui_int->message.lines[gui_int->message.line_count][c]=gui_int->message.body_text[i];
-
+                int len =0;
 //    if(StringWidthOffset(&MediumFont, gui_int->message.lines[gui_int->message.line_count], &len, 270))
                 {
                     char tmp_line[INTERFACE_MAX_CHAR];
@@ -659,7 +659,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
 
     if (gui_int->used_flag&GUI_INTERFACE_REWARD)
     {
-        int i, len, c=0;
+        int i, c=0;
 
         gui_int->reward.line_count=0;
         for (i=0;;i++)
@@ -678,7 +678,7 @@ void GuiDialog::format_gui_interface(_gui_interface_struct *gui_int)
             {
                 // lets do automatic line breaks
                 gui_int->reward.lines[gui_int->reward.line_count][c]=gui_int->reward.body_text[i];
-
+                int len=0;
 //    if(StringWidthOffset(&MediumFont, gui_int->reward.lines[gui_int->reward.line_count], &len, 270))
                 {
                     char tmp_line[INTERFACE_MAX_CHAR];

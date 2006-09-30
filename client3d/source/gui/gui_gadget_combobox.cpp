@@ -139,6 +139,7 @@ void GuiGadgetCombobox::draw()
     // ////////////////////////////////////////////////////////////////////
     TextLine label;
     label.index= -1;
+    label.hideText= false;
     label.font = mLabelFontNr;
     label.x1 = mPosX + mLabelPosX;
     if ( srcButton )

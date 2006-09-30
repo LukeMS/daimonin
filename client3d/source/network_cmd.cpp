@@ -48,7 +48,7 @@ char playerPassword[80];
 int scrolldx, scrolldy;
 
 //================================================================================================
-// Ascii to short int (32bit).
+// Ascii to int (32bit).
 //================================================================================================
 int GetInt_String(unsigned char *data)
 {
@@ -81,12 +81,12 @@ void Network::CompleteCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::VersionCmd(char *data, int len)
+void Network::VersionCmd(unsigned char *data, int len)
 {
     char    buf[1024];
     GameStatusVersionOKFlag = false;
     GameStatusVersionFlag = true;
-    csocket.cs_version = atoi(data);
+    csocket.cs_version = atoi((char*)data);
 
     // The first version is the client to server version the server wants
     // ATM, we just do for "must match".
@@ -111,7 +111,7 @@ void Network::VersionCmd(char *data, int len)
         SDL_Delay(3250);
         return;
     }
-    char *cp = (char *) (strchr(data, ' '));
+    char *cp = (char *) (strchr((char *)data, ' '));
     if (!cp)
     {
         sprintf(buf, "Invalid version string: %s", data);
@@ -155,12 +155,12 @@ void Network::VersionCmd(char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::DrawInfoCmd(char *data, int len)
+void Network::DrawInfoCmd(unsigned char *data, int len)
 {
 //    int color   = atoi(data);
     // Todo: Convert indexed color into rgb and add it to the text.
 
-    char *buf = strchr(data, ' ');
+    char *buf = strchr((char *)data, ' ');
     if (!buf)
     {
         Logger::log().error() << "DrawInfoCmd - got no data";
@@ -175,7 +175,7 @@ void Network::DrawInfoCmd(char *data, int len)
 // Handles when the server says we can't be added.  In reality, we need to close the connection
 // and quit out, because the client is going to close us down anyways.
 //================================================================================================
-void Network::AddMeFail(char *data, int len)
+void Network::AddMeFail(unsigned char *data, int len)
 {
     Logger::log().error() << "addme_failed received.\n";
     SOCKET_CloseSocket();
@@ -447,46 +447,43 @@ void Network::Map2Cmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::DrawInfoCmd2(char *data, int len)
+void Network::DrawInfoCmd2(unsigned char *data, int len)
 {
-    /*
-        char *tmp= 0, buf[2048];
-        int flags = (int) GetShort_String(data);
-        data += 2;
-        len -= 2;
-        if (len >= 0)
-        {
-            if (len > 2000)
-                len = 2000;
-            strncpy(buf, data, len);
-            buf[len] = 0;
-        }
-        else
-            buf[0] = 0;
+    char *tmp= 0, buf[2048];
+//    int flags = GetShort_String(data);
+    data += 2;
+    len -= 2;
+    if (len >= 0)
+    {
+        if (len > 2000) len = 2000;
+        strncpy(buf, (char*)data, len);
+        buf[len] = 0;
+    }
+    else
+        buf[0] = 0;
+    if (buf[0])
+    {
+        tmp = strchr((char*)data, ' ');
+        if (tmp) *tmp = 0;
+    }
+    // we have communication input
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf); // TESTING!!!
+/*
+    if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
+    {
+        if ( !(flags & NDI_GM) && ignore_check(data))
+            return;
 
-     if(buf[0])
-     {
+        // save last incomming tell player for client sided /reply
+        if (flags & NDI_TELL)
+            strcpy(cpl.player_reply, data);
 
-      tmp = strchr(data, ' ');
-      if(tmp)
-       *tmp = 0;
-     }
-     // we have communication input
-     if(tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
-     {
-      if( !(flags & NDI_GM) && ignore_check(data))
-       return;
-
-      // save last incomming tell player for client sided /reply
-      if(flags & NDI_TELL)
-       strcpy(cpl.player_reply, data);
-
-      //Logger::log().info() << "IGNORE?: player >" << data << "<";
-      if(flags & NDI_EMOTE)
-       flags &= ~NDI_PLAYER;
-     }
-        draw_info(buf, flags);
-    */
+        //Logger::log().info() << "IGNORE?: player >" << data << "<";
+        if (flags & NDI_EMOTE)
+            flags &= ~NDI_PLAYER;
+    }
+    draw_info(buf, flags);
+*/
 }
 
 //================================================================================================
@@ -1048,7 +1045,7 @@ void Network::AnimCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SkillRdyCmd(char *data, int len)
+void Network::SkillRdyCmd(unsigned char *data, int len)
 {
     /*
         strcpy(cpl.skill_name, data);
@@ -1079,37 +1076,36 @@ void Network::SkillRdyCmd(char *data, int len)
 //================================================================================================
 void Network::PlayerCmd(unsigned char *data, int len)
 {
+    Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
     /*
-        char    name[MAX_BUF];
-        int     tag, weight, face, i = 0, nlen;
+    char    name[MAX_BUF];
+    int     tag, weight, face, i = 0, nlen;
 
-        Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
-        InputStringEndFlag = false;
-        tag = GetInt_String(data);
-        i += 4;
-        weight = GetInt_String(data + i);
-        i += 4;
-        face = GetInt_String(data + i);
-        request_face(face, 0);
-        i += 4;
-        nlen = data[i++];
-        memcpy(name, (const char *) data + i, nlen);
+    InputStringEndFlag = false;
+    tag = GetInt_String(data);
+    i += 4;
+    weight = GetInt_String(data + i);
+    i += 4;
+    face = GetInt_String(data + i);
+    request_face(face, 0);
+    i += 4;
+    nlen = data[i++];
+    memcpy(name, (const char *) data + i, nlen);
 
-        name[nlen] = '\0';
-        i += nlen;
+    name[nlen] = '\0';
+    i += nlen;
 
-        if (i != len)
-        {
-            Logger::log().error() << "PlayerCmd: lengths do not match (" << len << " != " << i << ")";
-        }
-        new_player(tag, name, weight, (short) face);
-        map_draw_map_clear();
-        map_transfer_flag = 1;
-        map_udate_flag = 2;
-
-        Logger::log().info() << "Loading quickslot settings for server";
-        load_quickslots_entrys();
+    if (i != len)
+    {
+        Logger::log().error() << "PlayerCmd: lengths do not match (" << len << " != " << i << ")";
+    }
+    new_player(tag, name, weight, (short) face);
+    map_draw_map_clear();
+    map_transfer_flag = 1;
+    map_udate_flag = 2;
     */
+    Logger::log().info() << "Loading quickslot settings for server";
+    //load_quickslots_entrys();
 }
 
 //================================================================================================
@@ -1284,7 +1280,7 @@ void Network::GolemCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::AddMeSuccess(char *data, int len)
+void Network::AddMeSuccess(unsigned char *data, int len)
 {
     //Logger::log().info() << "addme_success received.";
 }
@@ -1294,7 +1290,7 @@ void Network::AddMeSuccess(char *data, int len)
 // but certainly it should be possible to reconnect to the server or a different server without
 // having to rerurn the client.
 //================================================================================================
-void Network::GoodbyeCmd(char *data, int len)
+void Network::GoodbyeCmd(unsigned char *data, int len)
 {
     // Damn, this should not be here - if the version not matches, the server
     // drops the connnect - so we get a client shutdown here?
@@ -1304,7 +1300,7 @@ void Network::GoodbyeCmd(char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SetupCmd(char *data, int len)
+void Network::SetupCmd(unsigned char *data, int len)
 {
     /*
         int     s;
@@ -1483,10 +1479,10 @@ void Network::SetupCmd(char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::handle_query(char *data, int len)
+void Network::handle_query(unsigned char *data, int len)
 {
     //uint8 flags = atoi(data);  // ATM unused parameter
-    char *buf = strchr(data, ' ');
+    char *buf = strchr((char *)data, ' ');
     if (buf) ++buf;
     // one query string
     Logger::log().info() << "Received query string: " <<  buf;
@@ -1496,7 +1492,7 @@ void Network::handle_query(char *data, int len)
 //================================================================================================
 // Server has send us a file: uncompress and save it.
 //================================================================================================
-void Network::DataCmd(char *data, int len)
+void Network::DataCmd(unsigned char *data, int len)
 {
     // ////////////////////////////////////////////////////////////////////
     // check for valid command:
@@ -1524,7 +1520,7 @@ void Network::DataCmd(char *data, int len)
         unsigned long dest_len = 512 * 1024;
         dest = new char[dest_len];
         uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-        data = dest;
+        data = (unsigned char*)dest;
         len  = dest_len;
     }
     ++mRequest_file_chain;
@@ -1537,7 +1533,7 @@ void Network::DataCmd(char *data, int len)
         Logger::log().error()  << "save data cmd file : write() of "
         << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
     else
-        out.write(data, len);
+        out.write((char*)data, len);
     delete[] dest;
 
     // ////////////////////////////////////////////////////////////////////
@@ -1550,7 +1546,7 @@ void Network::DataCmd(char *data, int len)
 //================================================================================================
 // server tells us to go to the new char creation.
 //================================================================================================
-void Network::NewCharCmd(char *data, int len)
+void Network::NewCharCmd(unsigned char *data, int len)
 {
     //dialog_new_char_warn = 0;
     Option::getSingleton().setGameStatus(GAME_STATUS_NEW_CHAR);
@@ -1729,58 +1725,62 @@ void Network::DeleteInventory(unsigned char *data, int len)
 //================================================================================================
 void Network::PreParseInfoStat(char *cmd)
 {
-    // Find input name
+    int status = cmd[2] -'0';
     if (!strncmp(cmd, "QN",2))
     {
-        int status = cmd[2] -'0';
-        Logger::log().info() << "Login: Enter name - status " << status;
-        //playerName[0] = 0;
-        //playerPassword[0] = 0;
-        Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NONE);
         switch (status)
         {
+            case 0:
+                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED, GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+                break;
             case 1:
                 if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_NO);
+                    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                           GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
                 break;
             case 2:
-                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_BLOCKED);
+                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                       GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
                 break;
             case 3:
                 if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_PLAYING);
+                    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                           GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
                 break;
             case 4:
                 if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
-                    Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_TAKEN);
+                    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                           GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
                 break;
             case 5:
-                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_BANNED);
+                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                       GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
                 break;
             case 6:
-                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NAME_WRONG);
+                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                       GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
                 break;
             case 7:
-                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_PWD_WRONG);
+                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                       GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
                 break;
-            default: // is also status 0
-                Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_NONE);
+            default:
+                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                       GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
                 break;
         }
-        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_USER);
+        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_INIT);
     }
     else if (!strncmp(cmd, "QP",2))
     {
-        int status = cmd[2]-'0';
-        Logger::log().info() << "Login: Enter password";
         if (status)
-            Option::getSingleton().setDialogWarningLevel(Option::DIALOG_LOGIN_WARNING_PWD_WRONG);
-        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_USER);
+            GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                                                   GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
+        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_INIT);
     }
     else if (!strncmp(cmd, "QV",2))
     {
-        Logger::log().info() << "Login: Enter verify password";
-        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_USER);
+        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_INIT);
     }
 }
 
@@ -1802,7 +1802,7 @@ void Network::CreatePlayerAccount()
 {
     char    buf[MAX_BUF];
     //   sprintf(buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
-    sprintf(buf, "%s", "nc human_male 14 14 13 12 12 12 12");
+    sprintf(buf, "%s", "nc human_male 14 14 13 12 12 12 12 0");
     cs_write_string(buf, (int)strlen(buf));
 }
 

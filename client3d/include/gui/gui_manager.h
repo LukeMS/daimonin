@@ -97,7 +97,7 @@ public:
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char*text);
     void displaySystemMessage(const char*text);
-    void startTextInput(int window, int winElement, int maxChars, bool useNumbers, bool useWhitespaces);
+    void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
     bool brokenTextInput();
     bool finishedTextInput();
     void cancelTextInput();
@@ -106,6 +106,10 @@ public:
     int getTableSelection(int window, int element)
     {
         return guiWindow[window].getTableSelection(element);
+    }
+    int getTableActivated(int window, int element)
+    {
+        return guiWindow[window].getTableActivated(element);
     }
     void clearTable(int window, int element)
     {

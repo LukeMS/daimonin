@@ -37,39 +37,42 @@ using namespace std;
 typedef enum _game_status
 {
     GAME_STATUS_CHECK_HARDWARE,
-    GAME_STATUS_INIT_VIEWPORT,      // Init all basic ogre stuff.
-    GAME_STATUS_INIT_SOUND,         // Init the sound-system.
-    GAME_STATUS_INIT_LIGHT,         // Init the light-system.
-    GAME_STATUS_INIT_SPELL,         // Init the spells.
-    GAME_STATUS_INIT_PARTICLE,      // Init the particles.
-    GAME_STATUS_INIT_OBJECT,        // Init the objects.
-    GAME_STATUS_INIT_GUI_IMAGESET,  // Parse the IMageSet.
-    GAME_STATUS_INIT_GUI_WINDOWS,   // Parse the Windows.
-    GAME_STATUS_INIT_TILE,          // Init the tile-engine.
-    GAME_STATUS_INIT_NET,           // init the network.
-    //  GAME_STATUS_INIT_DONE,         // DUMMY - delete me!
-    GAME_STATUS_META,               // connect to meta server.
-    GAME_STATUS_START,              // start all up (without full reset or meta calling).
-    GAME_STATUS_WAITLOOP,           // we are NOT connected to anything.
-    GAME_STATUS_STARTCONNECT,       // we have a server+port, init and start.
-    GAME_STATUS_CONNECT,            // if this is set, we start connecting.
-    GAME_STATUS_VERSION,            // now the steps: Connect, we send version.
-    GAME_STATUS_WAITVERSION,        // wait for response... add up in version cmd.
-    GAME_STATUS_SETUP,              // we ready to send setup commands.
-    GAME_STATUS_WAITSETUP,          // we wait for server response.
-    GAME_STATUS_REQUEST_FILES,      // after we get response from setup, we request files if needed.
-    GAME_STATUS_ADDME,              // all setup is done, now try to enter game!
-    GAME_STATUS_LOGIN,              // now we wait for LOGIN request of the server.
-    GAME_STATUS_NAME_USER,          // Wait for user input.
-    GAME_STATUS_NAME_WAIT,          // Wait for server.
-    GAME_STATUS_PSWD_USER,          // Wait for user input.
-    GAME_STATUS_PSWD_WAIT,          // Wait for server.
-    GAME_STATUS_VRFY_USER,
-    GAME_STATUS_VRFY_WAIT,          // Wait for server.
-    GAME_STATUS_NEW_CHAR,           // show new char creation screen and send /nc command when finished
-    GAME_STATUS_WAITFORPLAY,        // we simply wait for game start means, this is not a serial stepping here
-    GAME_STATUS_QUIT,               // we are in quit menu
-    GAME_STATUS_PLAY,               // we play now!!
+    GAME_STATUS_INIT_VIEWPORT,      /**< Init all basic ogre stuff. **/
+    GAME_STATUS_INIT_SOUND,         /**< Init the sound-system. **/
+    GAME_STATUS_INIT_LIGHT,         /**< Init the light-system. **/
+    GAME_STATUS_INIT_SPELL,         /**< Init the spells. **/
+    GAME_STATUS_INIT_PARTICLE,      /**< Init the particles. **/
+    GAME_STATUS_INIT_OBJECT,        /**< Init the objects. **/
+    GAME_STATUS_INIT_GUI_IMAGESET,  /**< Parse the IMageSet. **/
+    GAME_STATUS_INIT_GUI_WINDOWS,   /**< Parse the Windows. **/
+    GAME_STATUS_INIT_TILE,          /**< Init the tile-engine. **/
+    GAME_STATUS_INIT_NET,           /**< init the network. **/
+
+    GAME_STATUS_META,               /**< connect to meta server. **/
+    GAME_STATUS_START,              /**< start all up (without full reset or meta calling). **/
+    GAME_STATUS_WAITLOOP,           /**< we are NOT connected to anything. **/
+    GAME_STATUS_STARTCONNECT,       /**< we have a server+port, init and start. **/
+    GAME_STATUS_CONNECT,            /**< if this is set, we start connecting. **/
+    GAME_STATUS_VERSION,            /**< now the steps: Connect, we send version. **/
+    GAME_STATUS_WAITVERSION,        /**< wait for response... add up in version cmd. **/
+    GAME_STATUS_SETUP,              /**< we ready to send setup commands. **/
+    GAME_STATUS_WAITSETUP,          /**< we wait for server response. **/
+    GAME_STATUS_REQUEST_FILES,      /**< after we get response from setup, we request files if needed. **/
+    GAME_STATUS_ADDME,              /**< all setup is done, now try to enter game! **/
+    GAME_STATUS_LOGIN,              /**< now we wait for LOGIN request of the server. **/
+
+    GAME_STATUS_LOGIN_WAIT,         /**< Wait for server after typing name or passwd. **/
+    GAME_STATUS_NAME_INIT,          /**< Prepare user input. **/
+    GAME_STATUS_NAME_USER,          /**< Wait for user input.**/
+    GAME_STATUS_PSWD_INIT,          /**< Prepare user input. **/
+    GAME_STATUS_PSWD_USER,          /**< Wait for user input.**/
+    GAME_STATUS_VRFY_INIT,          /**< Prepare user input. **/
+    GAME_STATUS_VRFY_USER,          /**< Wait for user input.**/
+
+    GAME_STATUS_NEW_CHAR,           /**< show new char creation screen and send /nc command when finished **/
+    GAME_STATUS_WAITFORPLAY,        /**< we simply wait for game start means, this is not a serial stepping here **/
+    GAME_STATUS_QUIT,               /**< we are in quit menu **/
+    GAME_STATUS_PLAY,               /**< we play now!! **/
     GAME_STATUS_SUM
 };
 
@@ -99,20 +102,6 @@ public:
         CMDLINE_OFF_SOUND,
         CMDLINE_SHOW_BOUNDING_BOX,
         SUM_OPTIONS
-    };
-    enum enumLoginWarning
-    {
-        DIALOG_LOGIN_WARNING_NONE,
-        DIALOG_LOGIN_WARNING_NAME_NO,
-        DIALOG_LOGIN_WARNING_NAME_BLOCKED,
-        DIALOG_LOGIN_WARNING_NAME_PLAYING,
-        DIALOG_LOGIN_WARNING_NAME_TAKEN,
-        DIALOG_LOGIN_WARNING_NAME_BANNED,
-        DIALOG_LOGIN_WARNING_NAME_WRONG,
-        DIALOG_LOGIN_WARNING_PWD_WRONG,
-        DIALOG_LOGIN_WARNING_PWD_SHORT,
-        DIALOG_LOGIN_WARNING_PWD_NAME,
-        DIALOG_LOGIN_WARNING_SUM
     };
     enum enumLoginType
     {
@@ -156,15 +145,6 @@ public:
     static Option &getSingleton()
     {
         static Option Singleton; return Singleton;
-    }
-
-    void setDialogWarningLevel(enum enumLoginWarning warn)
-    {
-        mLoginWarning = warn;
-    }
-    int getDialogWarningLevel()
-    {
-        return mLoginWarning;
     }
 
     void setLoginType(enum enumLoginType type)
@@ -243,7 +223,6 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mGameStatus;
-    enum enumLoginWarning mLoginWarning;
     enum enumLoginType mLoginType;
     ifstream *mDescFile;
     string mDescBuffer;

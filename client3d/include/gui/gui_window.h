@@ -102,6 +102,7 @@ public:
         return mHeight;
     }
     int getTableSelection(int element);
+    int getTableActivated(int element);
     void clearTable(int element);
     const char *Message(int message, int element, void *value);
     bool mouseEvent(int MouseAction, int mouseX, int mouseY);

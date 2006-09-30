@@ -141,6 +141,7 @@ void GuiGadgetButton::draw()
     {
         std::string strBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
         TextLine label;
+        label.hideText= false;
         label.index= -1;
         label.font = mLabelFontNr;
         label.x1 = mPosX+ mLabelPosX;
