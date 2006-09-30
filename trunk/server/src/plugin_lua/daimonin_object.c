@@ -2316,7 +2316,7 @@ static int GameObject_DecreaseNrOf(lua_State *L)
 
     /* -1 means "delete all" */
     if(nrof==-1)
-        nrof = MIN(self->data.object->nrof, 1);
+        nrof = MAX(self->data.object->nrof, 1);
 
     hooks->decrease_ob_nr(self->data.object, nrof);
 
