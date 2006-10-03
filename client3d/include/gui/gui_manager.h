@@ -99,6 +99,7 @@ public:
     void displaySystemMessage(const char*text);
     void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
     bool brokenTextInput();
+    void resetTextInput();
     bool finishedTextInput();
     void cancelTextInput();
     const char *getTextInput();

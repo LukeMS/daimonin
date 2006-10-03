@@ -93,6 +93,11 @@ public:
     {
         return (int) mStrTextInput.size();
     };
+    void reset()
+    {
+        stop();
+        mCanceled = false;
+    }
     /**
      ** Important: stop() must be called when text input is done.
      *****************************************************************************/

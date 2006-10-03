@@ -47,6 +47,9 @@ char playerName[80];
 char playerPassword[80];
 int scrolldx, scrolldy;
 
+enum {MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED};
+
+
 //================================================================================================
 // Ascii to int (32bit).
 //================================================================================================
@@ -188,260 +191,257 @@ void Network::AddMeFail(unsigned char *data, int len)
 //================================================================================================
 void Network::Map2Cmd(unsigned char *data, int len)
 {
-    /*
-        static int     map_w=0, map_h=0,mx=0,my=0;
-        int     mask, x, y, pos = 0, ext_flag, xdata;
-        int     mapstat, ext1, ext2, ext3, probe;
-        int     map_new_flag    = FALSE;
-        int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
-        char    pname1[64], pname2[64], pname3[64], pname4[64];
-     char mapname[256];
-        uint16  face;
+    static int map_w=0, map_h=0,mx=0,my=0;
+    int     mask, x, y, pos = 0, ext_flag, xdata;
+    int     mapstat, ext1, ext2, ext3, probe;
+    bool    map_new_flag = false;
+    int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
+    char    pname1[64], pname2[64], pname3[64], pname4[64];
+    char mapname[256];
+    uint16  face;
 
-        mapstat = (uint8) (data[pos++]);
-        map_transfer_flag = 0;
-     if(mapstat != MAP_UPDATE_CMD_SAME)
-     {
-      strcpy(mapname, data + pos);
-      pos += strlen(mapname)+1;
-      if(mapstat == MAP_UPDATE_CMD_NEW)
-      {
-              //map_new_flag = TRUE;
-       map_w = (uint8) (data[pos++]);
-       map_h = (uint8) (data[pos++]);
-       xpos = (uint8) (data[pos++]);
-          ypos = (uint8) (data[pos++]);
-       mx = xpos;
-       my = ypos;
-       remove_item_inventory(locate_item(0)); // implicit clear below
-       InitMapData(mapname, map_w, map_h, xpos, ypos);
-      }
-      else
-      {
-       int xoff, yoff;
-          mapstat = (sint8) (data[pos++]);
-       xoff = (sint8) (data[pos++]);
-          yoff = (sint8) (data[pos++]);
-       xpos = (uint8) (data[pos++]);
-          ypos = (uint8) (data[pos++]);
-       mx = xpos;
-       my = ypos;
-       remove_item_inventory(locate_item(0)); // implicit clear below
-             display_mapscroll(xoff, yoff);
-      }
-     }
-     else
-     {
-      xpos = (uint8) (data[pos++]);
-         ypos = (uint8) (data[pos++]);
-
-      // we have moved
-      if((xpos - mx || ypos - my))
-      {
-       remove_item_inventory(locate_item(0)); // implicit clear below
-       if(cpl.menustatus != MENU_NO)
-        reset_menu_status();
-      }
-            display_mapscroll(xpos - mx, ypos - my);
-
-      mx = xpos;
-      my = ypos;
-     }
-
-        if (map_new_flag)
+    mapstat = (data[pos++]);
+    // map_transfer_flag = 0;
+    if (mapstat != MAP_UPDATE_CMD_SAME)
+    {
+        strcpy(mapname, (char*)data + pos);
+        pos += strlen(mapname)+1;
+        if (mapstat == MAP_UPDATE_CMD_NEW)
         {
-            adjust_map_cache(xpos, ypos);
+            //map_new_flag = TRUE;
+            map_w = (uint8) (data[pos++]);
+            map_h = (uint8) (data[pos++]);
+            xpos =  (uint8) (data[pos++]);
+            ypos =  (uint8) (data[pos++]);
+            mx = xpos;
+            my = ypos;
+//            remove_item_inventory(locate_item(0)); // implicit clear below
+//            InitMapData(mapname, map_w, map_h, xpos, ypos);
+        }
+        else
+        {
+            int xoff, yoff;
+            mapstat = (char) (data[pos++]);
+            xoff = (char) (data[pos++]);
+            yoff = (char) (data[pos++]);
+            xpos = (uint8)(data[pos++]);
+            ypos = (uint8)(data[pos++]);
+            mx = xpos;
+            my = ypos;
+//            remove_item_inventory(locate_item(0)); // implicit clear below
+//            display_mapscroll(xoff, yoff);
+        }
+    }
+    else
+    {
+        xpos = (uint8) (data[pos++]);
+        ypos = (uint8) (data[pos++]);
+
+        // we have moved
+        if ((xpos - mx || ypos - my))
+        {
+//            remove_item_inventory(locate_item(0)); // implicit clear below
+//            if (cpl.menustatus != MENU_NO) reset_menu_status();
+        }
+//        display_mapscroll(xpos - mx, ypos - my);
+
+        mx = xpos;
+        my = ypos;
+    }
+
+    if (map_new_flag)
+    {
+//       adjust_map_cache(xpos, ypos);
+    }
+
+//    MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
+//    MapData.posy = ypos;
+    Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
+    while (pos < len)
+    {
+        ext_flag = 0;
+        ext1 = ext2 = ext3 = 0;
+        // first, we get the mask flag - it decribes what we now get
+        mask = GetShort_String(data + pos); pos += 2;
+        x = (mask >> 11) & 0x1f;
+        y = (mask >> 6) & 0x1f;
+
+        // These are the "damage tags" - shows damage an object got from somewhere.
+        // ff_flag hold the layer info and how much we got here.
+        // 0x08 means a damage comes from unknown or vanished source.
+        // this means the object is destroyed.
+        // the other flags are assigned to map layer.
+        if ((mask & 0x3f) == 0)
+        {
+//            display_map_clearcell(x, y);
         }
 
-        MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
-        MapData.posy = ypos;
-        Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
-        while (pos < len)
+        ext3 = ext2 = ext1 = -1;
+        pname1[0] = 0;pname2[0] = 0;pname3[0] = 0;pname4[0] = 0;
+        // the ext flag defines special layer object assigned infos.
+        // Like the Zzz for sleep, paralyze msg, etc.
+        if (mask & 0x20) // catch the ext. flag...
         {
-            ext_flag = 0;
-            ext1 = ext2 = ext3 = 0;
-            // first, we get the mask flag - it decribes what we now get
-            mask = GetShort_String(data + pos); pos += 2;
-            x = (mask >> 11) & 0x1f;
-            y = (mask >> 6) & 0x1f;
+            ext_flag = (uint8) (data[pos++]);
 
-            // These are the "damage tags" - shows damage an object got from somewhere.
-            // ff_flag hold the layer info and how much we got here.
-            // 0x08 means a damage comes from unknown or vanished source.
-            // this means the object is destroyed.
-            // the other flags are assigned to map layer.
-            if ((mask & 0x3f) == 0)
+            if (ext_flag & 0x80) // we have player names....
             {
-                display_map_clearcell(x, y);
-            }
+                char    c;
+                int     i, pname_flag = (uint8) (data[pos++]);
 
-            ext3 = ext2 = ext1 = -1;
-            pname1[0] = 0;pname2[0] = 0;pname3[0] = 0;pname4[0] = 0;
-            // the ext flag defines special layer object assigned infos.
-            // Like the Zzz for sleep, paralyze msg, etc.
-            if (mask & 0x20) // catch the ext. flag...
-            {
-                ext_flag = (uint8) (data[pos++]);
 
-                if (ext_flag & 0x80) // we have player names....
+                if (pname_flag & 0x08) // floor ....
                 {
-                    char    c;
-                    int     i, pname_flag = (uint8) (data[pos++]);
-
-
-                    if (pname_flag & 0x08) // floor ....
+                    i = 0;
+                    while ((c = (char) (data[pos++])))
                     {
-                        i = 0;
-                        while ((c = (char) (data[pos++])))
-                        {
-                            pname1[i++] = c;
-                        };
-                        pname1[i] = 0;
-                    }
-                    if (pname_flag & 0x04) // fm....
-                    {
-                        i = 0;
-                        while ((c = (char) (data[pos++])))
-                        {
-                            pname2[i++] = c;
-                        };
-                        pname2[i] = 0;
-                    }
-                    if (pname_flag & 0x02) // l1 ....
-                    {
-                        i = 0;
-                        while ((c = (char) (data[pos++])))
-                        {
-                            pname3[i++] = c;
-                        };
-                        pname3[i] = 0;
-                    }
-                    if (pname_flag & 0x01) // l2 ....
-                    {
-                        i = 0;
-                        while ((c = (char) (data[pos++])))
-                        {
-                            pname4[i++] = c;
-                        };
-                        pname4[i] = 0;
-                    }
+                        pname1[i++] = c;
+                    };
+                    pname1[i] = 0;
                 }
-                if (ext_flag & 0x40) // damage add on the map
+                if (pname_flag & 0x04) // fm....
                 {
-                    ff0 = ff1 = ff2 = ff3 = -1;
-                    ff_flag = (uint8) (data[pos++]);
-                    if (ff_flag & 0x8)
+                    i = 0;
+                    while ((c = (char) (data[pos++])))
                     {
-                        ff0 = GetShort_String(data + pos); pos += 2;
-                        add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
-                    }
-                    if (ff_flag & 0x4)
-                    {
-                        ff1 = GetShort_String(data + pos); pos += 2;
-                        add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
-                    }
-                    if (ff_flag & 0x2)
-                    {
-                        ff2 = GetShort_String(data + pos); pos += 2;
-                        add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
-                    }
-                    if (ff_flag & 0x1)
-                    {
-                        ff3 = GetShort_String(data + pos); pos += 2;
-                        add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
-                    }
+                        pname2[i++] = c;
+                    };
+                    pname2[i] = 0;
                 }
-                if (ext_flag & 0x08)
+                if (pname_flag & 0x02) // l1 ....
                 {
-                    probe = 0;
-                    ext3 = (int) (data[pos++]);
-                    if (ext3 & FFLAG_PROBE)
+                    i = 0;
+                    while ((c = (char) (data[pos++])))
                     {
-                        probe = (int) (data[pos++]);
-                    }
-
-                    set_map_ext(x, y, 3, ext3, probe);
+                        pname3[i++] = c;
+                    };
+                    pname3[i] = 0;
                 }
-                if (ext_flag & 0x10)
+                if (pname_flag & 0x01) // l2 ....
                 {
-                    probe = 0;
-                    ext2 = (int) (data[pos++]);
-                    if (ext2 & FFLAG_PROBE)
+                    i = 0;
+                    while ((c = (char) (data[pos++])))
                     {
-                        probe = (int) (data[pos++]);
-                    }
-                    set_map_ext(x, y, 2, ext2, probe);
-                }
-                if (ext_flag & 0x20)
-                {
-                    probe = 0;
-                    ext1 = (int) (data[pos++]);
-                    if (ext1 & FFLAG_PROBE)
-                    {
-                        probe = (int) (data[pos++]);
-                    }
-                    set_map_ext(x, y, 1, ext1, probe);
+                        pname4[i++] = c;
+                    };
+                    pname4[i] = 0;
                 }
             }
-
-            if (mask & 0x10)
+            if (ext_flag & 0x40) // damage add on the map
             {
-                set_map_darkness(x, y, (uint8) (data[pos]));
+                ff0 = ff1 = ff2 = ff3 = -1;
+                ff_flag = (uint8) (data[pos++]);
+                if (ff_flag & 0x8)
+                {
+                    ff0 = GetShort_String(data + pos); pos += 2;
+//                    add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
+                }
+                if (ff_flag & 0x4)
+                {
+                    ff1 = GetShort_String(data + pos); pos += 2;
+//                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
+                }
+                if (ff_flag & 0x2)
+                {
+                    ff2 = GetShort_String(data + pos); pos += 2;
+//                   add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
+                }
+                if (ff_flag & 0x1)
+                {
+                    ff3 = GetShort_String(data + pos); pos += 2;
+//                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
+                }
+            }
+            if (ext_flag & 0x08)
+            {
+                probe = 0;
+                ext3 = (int) (data[pos++]);
+//                if (ext3 & FFLAG_PROBE)
+                {
+                    probe = (int) (data[pos++]);
+                }
+
+//                set_map_ext(x, y, 3, ext3, probe);
+            }
+            if (ext_flag & 0x10)
+            {
+                probe = 0;
+                ext2 = (int) (data[pos++]);
+//                if (ext2 & FFLAG_PROBE)
+                {
+                    probe = (int) (data[pos++]);
+                }
+//                set_map_ext(x, y, 2, ext2, probe);
+            }
+            if (ext_flag & 0x20)
+            {
+                probe = 0;
+                ext1 = (int) (data[pos++]);
+//                if (ext1 & FFLAG_PROBE)
+                {
+                    probe = (int) (data[pos++]);
+                }
+//                set_map_ext(x, y, 1, ext1, probe);
+            }
+        }
+
+        if (mask & 0x10)
+        {
+//            set_map_darkness(x, y, (uint8) (data[pos]));
+            ++pos;
+        }
+
+        // at last, we get the layer faces.
+        // a set ext_flag here marks this entry as face from a multi tile arch.
+        // we got another byte then which all information we need to display
+        // this face in the right way (position and shift offsets)
+        if (mask & 0x8)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+            request_face(face, 0);
+            xdata = 0;
+//            set_map_face(x, y, 0, face, xdata, -1, pname1);
+        }
+        if (mask & 0x4)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+            request_face(face, 0);
+            xdata = 0;
+            if (ext_flag & 0x04) // we have here a multi arch, fetch head offset
+            {
+                xdata = (uint8) (data[pos]);
                 pos++;
             }
-
-            // at last, we get the layer faces.
-            // a set ext_flag here marks this entry as face from a multi tile arch.
-            // we got another byte then which all information we need to display
-            // this face in the right way (position and shift offsets)
-            if (mask & 0x8)
+//            set_map_face(x, y, 1, face, xdata, ext1, pname2);
+        }
+        if (mask & 0x2)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+            request_face(face, 0);
+//            Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
+            xdata = 0;
+            if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
             {
-                face = GetShort_String(data + pos); pos += 2;
-                request_face(face, 0);
-                xdata = 0;
-                set_map_face(x, y, 0, face, xdata, -1, pname1);
+                xdata = (uint8) (data[pos]);
+                pos++;
             }
-            if (mask & 0x4)
+//            set_map_face(x, y, 2, face, xdata, ext2, pname3);
+        }
+        if (mask & 0x1)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+            request_face(face, 0);
+//            Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
+            xdata = 0;
+            if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
             {
-                face = GetShort_String(data + pos); pos += 2;
-                request_face(face, 0);
-                xdata = 0;
-                if (ext_flag & 0x04) // we have here a multi arch, fetch head offset
-                {
-                    xdata = (uint8) (data[pos]);
-                    pos++;
-                }
-                set_map_face(x, y, 1, face, xdata, ext1, pname2);
+                xdata = (uint8) (data[pos]);
+                pos++;
             }
-            if (mask & 0x2)
-            {
-                face = GetShort_String(data + pos); pos += 2;
-                request_face(face, 0);
-                Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
-                xdata = 0;
-                if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
-                {
-                    xdata = (uint8) (data[pos]);
-                    pos++;
-                }
-                set_map_face(x, y, 2, face, xdata, ext2, pname3);
-            }
-            if (mask & 0x1)
-            {
-                face = GetShort_String(data + pos); pos += 2;
-                request_face(face, 0);
-                Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
-                xdata = 0;
-                if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
-                {
-                    xdata = (uint8) (data[pos]);
-                    pos++;
-                }
-                set_map_face(x, y, 3, face, xdata, ext3, pname4);
-            }
-        } // more tiles
-        map_udate_flag = 2;
-    */
+//            set_map_face(x, y, 3, face, xdata, ext3, pname4);
+        }
+    } // more tiles
+//    map_udate_flag = 2;
 }
 
 //================================================================================================
@@ -468,22 +468,22 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
     }
     // we have communication input
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf); // TESTING!!!
-/*
-    if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
-    {
-        if ( !(flags & NDI_GM) && ignore_check(data))
-            return;
+    /*
+        if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
+        {
+            if ( !(flags & NDI_GM) && ignore_check(data))
+                return;
 
-        // save last incomming tell player for client sided /reply
-        if (flags & NDI_TELL)
-            strcpy(cpl.player_reply, data);
+            // save last incomming tell player for client sided /reply
+            if (flags & NDI_TELL)
+                strcpy(cpl.player_reply, data);
 
-        //Logger::log().info() << "IGNORE?: player >" << data << "<";
-        if (flags & NDI_EMOTE)
-            flags &= ~NDI_PLAYER;
-    }
-    draw_info(buf, flags);
-*/
+            //Logger::log().info() << "IGNORE?: player >" << data << "<";
+            if (flags & NDI_EMOTE)
+                flags &= ~NDI_PLAYER;
+        }
+        draw_info(buf, flags);
+    */
 }
 
 //================================================================================================
@@ -497,39 +497,162 @@ void Network::ItemXCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
+
+#define SOUND_NORMAL    0
+#define SOUND_SPELL     1
+
+/* music mode - controls how the music is played and started */
+#define MUSIC_MODE_NORMAL 1
+#define MUSIC_MODE_DIRECT 2
+#define MUSIC_MODE_FORCED 4 /* thats needed for some map event sounds */
+
+// sound ids. //
+typedef enum _sound_id
+{
+    SOUND_EVENT01,
+    SOUND_BOW01,
+    SOUND_LEARNSPELL,
+    SOUND_FAILSPELL,
+    SOUND_FAILROD,
+    SOUND_DOOR,
+    SOUND_PUSHPLAYER,
+    SOUND_HIT_IMPACT,
+    // 8
+    SOUND_HIT_CLEAVE,
+    SOUND_HIT_SLASH,
+    SOUND_HIT_PIERCE,
+    SOUND_HIT_BLOCK,
+    SOUND_HIT_HAND,
+    SOUND_MISS_MOB1,
+    SOUND_MISS_MOB2,
+    SOUND_PETDEAD,
+    // 16
+    SOUND_PLAYERDEAD,
+    SOUND_EXPLOSION00,
+    SOUND_EXPLOSION01,
+    SOUND_KILL,
+    SOUND_PULLLEVER,
+    SOUND_FALLHOLE,
+    SOUND_POISON,
+    SOUND_DROP,
+    // 24
+    SOUND_LOSE_SOME,
+    SOUND_THROW,
+    SOUND_GATE_OPEN,
+    SOUND_GATE_CLOSE,
+    SOUND_OPEN_CONTAINER,
+    SOUND_GROWL,
+    SOUND_ARROW_HIT,
+    SOUND_DOOR_CLOSE,
+    SOUND_TELEPORT,
+    SOUND_SCROLL,
+    // here we have client side sounds - add server sounds BEFORE this.
+    SOUND_STEP1,
+    SOUND_STEP2,
+    SOUND_PRAY,
+    SOUND_CONSOLE,
+    SOUND_CLICKFAIL,
+    SOUND_CHANGE1,
+    SOUND_WARN_FOOD,
+    SOUND_WARN_DRAIN,
+    SOUND_WARN_STATUP,
+    SOUND_WARN_STATDOWN,
+    SOUND_WARN_HP,
+    SOUND_WARN_HP2,
+    SOUND_WEAPON_ATTACK,
+    SOUND_WEAPON_HOLD,
+    SOUND_GET,
+    SOUND_BOOK,
+    SOUND_PAGE,
+    SOUND_MAX
+};
+
+// to call a spell sound here, do
+// SOUND_MAX + SOUND_MAGIC_xxx
+
+// this enum should be same as in server //
+typedef enum _spell_sound_id
+{
+    SOUND_MAGIC_DEFAULT,
+    SOUND_MAGIC_ACID,
+    SOUND_MAGIC_ANIMATE,
+    SOUND_MAGIC_AVATAR,
+    SOUND_MAGIC_BOMB,
+    SOUND_MAGIC_BULLET1,
+    SOUND_MAGIC_BULLET2,
+    SOUND_MAGIC_CANCEL,
+    SOUND_MAGIC_COMET,
+    SOUND_MAGIC_CONFUSION,
+    SOUND_MAGIC_CREATE,
+    SOUND_MAGIC_DARK,
+    SOUND_MAGIC_DEATH,
+    SOUND_MAGIC_DESTRUCTION,
+    SOUND_MAGIC_ELEC,
+    SOUND_MAGIC_FEAR,
+    SOUND_MAGIC_FIRE,
+    SOUND_MAGIC_FIREBALL1,
+    SOUND_MAGIC_FIREBALL2,
+    SOUND_MAGIC_HWORD,
+    SOUND_MAGIC_ICE,
+    SOUND_MAGIC_INVISIBLE,
+    SOUND_MAGIC_INVOKE,
+    SOUND_MAGIC_INVOKE2,
+    SOUND_MAGIC_MAGIC,
+    SOUND_MAGIC_MANABALL,
+    SOUND_MAGIC_MISSILE,
+    SOUND_MAGIC_MMAP,
+    SOUND_MAGIC_ORB,
+    SOUND_MAGIC_PARALYZE,
+    SOUND_MAGIC_POISON,
+    SOUND_MAGIC_PROTECTION,
+    SOUND_MAGIC_RSTRIKE,
+    SOUND_MAGIC_RUNE,
+    SOUND_MAGIC_SBALL,
+    SOUND_MAGIC_SLOW,
+    SOUND_MAGIC_SNOWSTORM,
+    SOUND_MAGIC_STAT,
+    SOUND_MAGIC_STEAMBOLT,
+    SOUND_MAGIC_SUMMON1,
+    SOUND_MAGIC_SUMMON2,
+    SOUND_MAGIC_SUMMON3,
+    SOUND_MAGIC_TELEPORT,
+    SOUND_MAGIC_TURN,
+    SOUND_MAGIC_WALL,
+    SOUND_MAGIC_WALL2,
+    SOUND_MAGIC_WOUND,
+    SPELL_SOUND_MAX
+};
+
 void Network::SoundCmd(unsigned char *data, int len)
 {
-    /*
-        int x, y, num, type;
-
-        if (len != 5)
+    if (len != 5)
+    {
+        Logger::log().error() << "Got invalid length on sound command: " << len;
+        return;
+    }
+    int x = (char) data[0];
+    int y = (char) data[1];
+    int num = GetShort_String(data + 2);
+    int type = data[4];
+    if (type == SOUND_SPELL)
+    {
+        if (num < 0 || num >= SPELL_SOUND_MAX)
         {
-            Logger::log().error() << "Got invalid length on sound command: " << len;
+            Logger::log().error() << "Got invalid spell sound id: " <<  num;
             return;
         }
-        x = (signed char) data[0];
-        y = (signed char) data[1];
-        num = GetShort_String(data + 2);
-        type = data[4];
-        if (type == SOUND_SPELL)
+        num += SOUND_MAX; // this maps us to the spell sound table part
+    }
+    else
+    {
+        if (num < 0 || num >= SOUND_MAX)
         {
-            if (num < 0 || num >= SPELL_SOUND_MAX)
-            {
-                Logger::log().error() << "Got invalid spell sound id: " <<  num;
-                return;
-            }
-            num += SOUND_MAX; // this maps us to the spell sound table part
+            Logger::log().error() << "Got invalid sound id: " << num;
+            return;
         }
-        else
-        {
-            if (num < 0 || num >= SOUND_MAX)
-            {
-                Logger::log().error() << "Got invalid sound id: " << num;
-                return;
-            }
-        }
-        calculate_map_sound(num, x, y, 0);
-    */
+    }
+//    calculate_map_sound(num, x, y, 0);
+    Logger::log().warning() << "Play sound: " << num << " posX: " << x << " posY: " << y;
 }
 
 //================================================================================================

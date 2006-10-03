@@ -92,7 +92,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     if (mType == ObjectManager::OBJECT_PLAYER)
     {
         Equip = new ObjectEquipment(mEntity);
-        Equip->equipItem(0, 0, 0, -1);  // Just for test
+        Equip->equipItem(0, 0, 0, 0);  // Just for test
     }
     // ////////////////////////////////////////////////////////////////////
     // The first Object is our Hero.
