@@ -519,8 +519,6 @@ Boolean game_status_chain(void)
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
-        if (csocket.fd != SOCKET_NO)
-            SOCKET_CloseClientSocket(&csocket);
         clear_map();
         clear_player();
         reset_keys();
@@ -549,9 +547,13 @@ Boolean game_status_chain(void)
             draw_info(buf, COLOR_RED);
             GameStatus = GAME_STATUS_START;
         }
-        GameStatus = GAME_STATUS_VERSION;
-        sprintf(buf, "connected. exchange version.");
-        draw_info(buf, COLOR_GREEN);
+        else
+        {
+            socket_thread_start();
+            GameStatus = GAME_STATUS_VERSION;
+            sprintf(buf, "connected. exchange version.");
+            draw_info(buf, COLOR_GREEN);
+        }
     }
     else if (GameStatus == GAME_STATUS_VERSION)
     {
@@ -1124,7 +1126,6 @@ int main(int argc, char *argv[])
     Uint32          videoflags;
     int             i, done = 0, FrameCount = 0;
     //fd_set          tmp_read, tmp_write, tmp_exceptions;
-    int             maxfd;
     //struct timeval  timeout;
 	// pollret;
 
@@ -1274,10 +1275,8 @@ int main(int argc, char *argv[])
     if (!SOCKET_InitSocket()) /* log in function*/
         exit(1);
 
-    maxfd = csocket.fd + 1;
     LastTick = tmpGameTick = anim_tick = SDL_GetTicks();
     GameTicksSec = 0;       /* ticks since this second frame in ms */
-	socket_thread_start();
 
     /* the one and only main loop */
     /* TODO: frame update can be optimized. It uses some cpu time because it
@@ -1319,7 +1318,7 @@ int main(int argc, char *argv[])
 
         if (GameStatus > GAME_STATUS_CONNECT)
         {
-            if (csocket.fd == SOCKET_NO)
+            if (handle_socket_shutdown())
             {
                 /* connection closed, so we go back to INIT here*/
                 if (GameStatus == GAME_STATUS_PLAY)
@@ -1331,21 +1330,6 @@ int main(int argc, char *argv[])
             }
             else
             {
-				/*
-                FD_ZERO(&tmp_read);
-                FD_ZERO(&tmp_write);
-                FD_ZERO(&tmp_exceptions);
-
-                FD_SET((unsigned int) csocket.fd, &tmp_exceptions);
-                FD_SET((unsigned int) csocket.fd, &tmp_read);
-                FD_SET((unsigned int) csocket.fd, &tmp_write);
-
-                timeout.tv_sec = 0;
-                timeout.tv_usec = 0;
-                if ((pollret = select(maxfd, &tmp_read, &tmp_write, &tmp_exceptions, &timeout)) == -1)
-                    LOG(LOG_MSG, "Got errno %d on selectcall.\n", SOCKET_GetError());
-                else if (FD_ISSET(csocket.fd, &tmp_read))
-*/
 				DoClient(&csocket);
                 request_face(0, 1); /* flush face request buffer */
             }

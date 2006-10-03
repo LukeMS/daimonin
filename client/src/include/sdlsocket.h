@@ -25,22 +25,26 @@
 
 #define SOCKET_NO -1
 
-typedef struct command_buffer_read
+typedef struct _command_buffer
 {
-	struct command_buffer_read *next;
+	struct _command_buffer *next; /* Next in queue */
+    struct _command_buffer *prev; /* Previous in queue */
 	int len;
-	uint8 *data;
-} _command_buffer_read;
+	uint8 data[0];
+} command_buffer;
 
-extern _command_buffer_read *read_cmd_start;
+extern void command_buffer_free(command_buffer *buf);
 
-extern void	send_command_binary(int cmd, const char *body, int len);
+/* extern _command_buffer_read *read_cmd_start; */
+
+extern int send_command_binary(uint8 cmd, uint8 *body, unsigned int len);
 extern int send_socklist(int fd, SockList msg);
-extern _command_buffer_read *get_read_cmd(void);
-extern void free_read_cmd(_command_buffer_read *cmd);
-extern void clear_read_cmd_queue(void);
+
+extern command_buffer *get_next_input_command(void);
+extern void clear_input_command_queue(void);
 extern void socket_thread_start(void);
 extern void socket_thread_stop(void);
+extern int handle_socket_shutdown();
 
 extern Boolean  SOCKET_InitSocket(void);
 extern Boolean  SOCKET_DeinitSocket(void);
