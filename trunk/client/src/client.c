@@ -36,13 +36,9 @@
  * they don't require going through RPCgen, and it's easy to get variable
  * length lists.  They are just lists of longs, strings, characters, and
  * byte arrays that can be converted to a machine independent format
-*/
-
-
+ */
 #include <include.h>
 #include <stdio.h>
-
-#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
 Client_Player   cpl;
 ClientSocket    csocket;
@@ -98,22 +94,43 @@ struct CmdMapping   commands[]  =
     /* Order of this table doesn't make a difference.  I tried to sort
     * of cluster the related stuff together.
     */
-	{ "comc", CompleteCmd}, { "version", (CmdProc) VersionCmd }, { "drawinfo", (CmdProc) DrawInfoCmd },
-	{ "addme_failed", (CmdProc) AddMeFail }, { "map2", Map2Cmd }, 
-    { "drawinfo2", (CmdProc) DrawInfoCmd2 }, { "itemx", ItemXCmd },
-    { "sound", SoundCmd}, { "to", TargetObject }, { "upditem", UpdateItemCmd }, { "delitem", DeleteItem },
-    { "stats", StatsCmd }, { "image", ImageCmd }, { "face1", Face1Cmd}, { "anim", AnimCmd},
-    { "skill_rdy", (CmdProc) SkillRdyCmd }, { "player", PlayerCmd },
-    { "splist", SpelllistCmd }, { "sklist", SkilllistCmd }, { "gc", GolemCmd },
-    { "addme_success", (CmdProc) AddMeSuccess },  { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},
-    { "query", (CmdProc) handle_query}, { "data", (CmdProc) DataCmd}, { "new_char", (CmdProc) NewCharCmd},
-    { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd },
+    { "comc", CompleteCmd}, 
+    { "version", (CmdProc) VersionCmd }, 
+    { "drawinfo", (CmdProc) DrawInfoCmd },
+    { "addme_failed", (CmdProc) AddMeFail }, 
+    { "map2", Map2Cmd }, 
+    { "drawinfo2", (CmdProc) DrawInfoCmd2 }, 
+    { "itemx", ItemXCmd },
+    { "sound", SoundCmd}, 
+    { "to", TargetObject }, 
+    { "upditem", UpdateItemCmd }, 
+    { "delitem", DeleteItem },
+    { "stats", StatsCmd }, 
+    { "image", ImageCmd }, 
+    { "face1", Face1Cmd}, 
+    { "anim", AnimCmd},
+    { "skill_rdy", (CmdProc) SkillRdyCmd }, 
+    { "player", PlayerCmd },
+    { "splist", SpelllistCmd }, 
+    { "sklist", SkilllistCmd }, 
+    { "gc", GolemCmd },
+    { "addme_success", (CmdProc) AddMeSuccess },  
+    { "goodbye", (CmdProc) GoodbyeCmd }, 
+    { "setup", (CmdProc) SetupCmd},
+    { "query", (CmdProc) handle_query}, 
+    { "data", (CmdProc) DataCmd}, 
+    { "new_char", (CmdProc) NewCharCmd},
+    { "itemy", ItemYCmd }, 
+    { "group", GroupCmd },
+    { "group_invite", GroupInviteCmd },
     { "group_update", GroupUpdateCmd },
     { "interface", InterfaceCmd },
-    { "book", BookCmd },{ "mark", MarkCmd },
+    { "book", BookCmd },
+    { "mark", MarkCmd },
 
     /* unused! */
-    { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory }
+    { "magicmap", MagicMapCmd}, 
+    { "delinv", DeleteInventory }
 };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
@@ -122,27 +139,24 @@ static void face_flag_extension(int pnum, char *buf);
 
 void DoClient(ClientSocket *csocket)
 {
-	_command_buffer_read *cmd;
+    command_buffer *cmd;
 
-    while (1)
+    /* Check for socket disconnect */
+    if(handle_socket_shutdown())
+        return;
+
+    /* Handle all enqueued commands */
+    while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {
-		if(!read_cmd_start) /* we have a filled command? */
-			break;
-
-		cmd = get_read_cmd(); /* function has mutex included */
-
-		if(!cmd)
-			break;
-
         /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd->data[0], LastTick, cmd->len);*/
         if (!cmd->data[0] || cmd->data[0] >= BINAR_CMD)
             LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
         else
         {
-			/*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd->data[0]-1].cmdname, cmd->data+1);*/
+            /*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd->data[0]-1].cmdname, cmd->data+1);*/
             commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
         }
-		free_read_cmd(cmd);
+        command_buffer_free(cmd);
     }
 }
 
