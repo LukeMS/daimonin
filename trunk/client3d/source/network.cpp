@@ -33,6 +33,7 @@ http://www.gnu.org/licenses/licenses.html
 #define DEFAULT_METASERVER_PORT 13326
 #define DEFAULT_METASERVER "damn.informatik.uni-bremen.de"
 #define PACKAGE_NAME "Daimonin SDL Client"
+
 int SoundStatus=1;
 enum
 {
@@ -124,21 +125,25 @@ struct CmdMapping commands[]  =
     };
 
 #define SOCKET_NO -1
-bool Network::thread_flag = false;
-//int  Network::mSocket = SOCKET_NO;
-ClientSocket Network::csocket;
-SDL_Thread *Network::socket_thread =0;
-SDL_mutex *Network::read_lock =0;
-SDL_mutex *Network::write_lock =0;
-SDL_mutex *Network::socket_lock =0;
-SDL_cond *Network::socket_cond =0;
-Network::_command_buffer_read *Network::read_cmd_end=NULL;
-Network::_command_buffer_read *Network::read_cmd_start=NULL;
-//SockList Network::mInbuf;
-//SockList Network::mOutbuf;
-//sockaddr_in mInsock;
 
-#ifndef WIN32
+ClientSocket Network::csocket;
+bool Network::abort_thread = false;
+SDL_Thread *Network::input_thread=0;
+SDL_mutex  *Network::input_buffer_mutex =0;
+SDL_cond   *Network::input_buffer_cond =0;
+SDL_Thread *Network::output_thread=0;
+SDL_mutex  *Network::output_buffer_mutex =0;
+SDL_cond   *Network::output_buffer_cond =0;
+SDL_mutex  *Network::socket_mutex =0;
+
+// start is the first waiting item in queue, end is the most recent enqueued
+Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_end = 0;
+Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
+
+
+//================================================================================================
+//
+//================================================================================================
 inline static char *strerror_local(int errnum)
 {
 #if defined(HAVE_STRERROR)
@@ -147,314 +152,10 @@ inline static char *strerror_local(int errnum)
     return("strerror not implemented");
 #endif
 }
-#endif
-Network::Network()
-{}
-Network::~Network()
-{
-    clearMetaServerData();
-}
-void Network::clearMetaServerData()
-{
-    for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
-        delete (*i);
-    mvServer.clear();
-}
-void Network::update()
-{
-    if (!mInitDone) return;
-    _command_buffer_read *cmd;
-    while (1)
-    {
-        if (!read_cmd_start) // we have a filled command?
-            break;
-        cmd = get_read_cmd(); // function has mutex included
-        if (!cmd) break;
-        if (!cmd->data[0] || cmd->data[0] >= BINARY_CMD_SUM)
-            Logger::log().error() << "Bad command from server " << cmd->data[0];
-        else
-        {
-            Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] " << cmd->data+1;
-            commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
-        }
-        free_read_cmd(cmd);
-    }
-}
 
-void Network::send_command_binary(int cmd, const char *body, int len)
-{
-    SDL_LockMutex(write_lock);
-    if (csocket.fd == SOCKET_NO || csocket.outbuf.len + 3 > MAXSOCKBUF)
-    {
-        if (csocket.fd != SOCKET_NO)
-            SOCKET_CloseClientSocket();
-        SDL_UnlockMutex(write_lock);
-        return;
-    }
-    // adjust the buffer
-    if (csocket.outbuf.pos)
-        memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
-    csocket.outbuf.pos=0;
-    if (!body)
-    {
-        len = 0x8001;
-        csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (len) >> 8) & 0xFF;
-        csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (len)) & 0xFF;
-        csocket.outbuf.buf[csocket.outbuf.len++] = (unsigned char) cmd;
-    }
-    SDL_UnlockMutex(write_lock);
-}
-// move a command/buffer to the out buffer so it can be written to the socket
-int Network::send_socklist(SockList msg)
-{
-    SDL_LockMutex(write_lock);
-    if (csocket.fd == SOCKET_NO || csocket.outbuf.len + msg.len > MAXSOCKBUF)
-    {
-        if (csocket.fd != SOCKET_NO)
-            SOCKET_CloseClientSocket();
-        SDL_UnlockMutex(write_lock);
-        return -1;
-    }
-    // adjust the buffer
-    if (csocket.outbuf.pos && csocket.outbuf.len)
-        memcpy(csocket.outbuf.buf, csocket.outbuf.buf+csocket.outbuf.pos, csocket.outbuf.len);
-    csocket.outbuf.pos=0;
-    csocket.outbuf.buf[csocket.outbuf.len++] = (uint8) ((msg.len >> 8) & 0xFF);
-    csocket.outbuf.buf[csocket.outbuf.len++] = ((uint32) (msg.len)) & 0xFF;
-    memcpy(csocket.outbuf.buf+csocket.outbuf.len, msg.buf, msg.len);
-    csocket.outbuf.len += msg.len;
-    SDL_UnlockMutex(write_lock);
-    return 0;
-}
-
-// get a read command from the queue.
-// remove it from queue and return a pointer to it.
-// return NULL if there is no command
-Network::_command_buffer_read *Network::get_read_cmd(void)
-{
-    _command_buffer_read *tmp;
-    SDL_LockMutex(read_lock);
-    if (!read_cmd_start)
-    {
-        SDL_UnlockMutex(read_lock);
-        return NULL;
-    }
-    tmp = read_cmd_start;
-    read_cmd_start = tmp->next;
-    if (read_cmd_end == tmp)
-        read_cmd_end = NULL;
-    SDL_UnlockMutex(read_lock);
-    return tmp;
-}
-// free a read cmd buffer struct and its data tail
-void Network::free_read_cmd(_command_buffer_read *cmd)
-{
-    delete[] cmd->data;
-    delete cmd;
-}
-// clear & free the whole read cmd queue
-void Network::clear_read_cmd_queue(void)
-{
-    SDL_LockMutex(read_lock);
-    while (read_cmd_start)
-        free_read_cmd(get_read_cmd());
-    SDL_UnlockMutex(read_lock);
-}
-// write stuff to the socket
-inline void Network::write_socket_buffer(int fd, SockList *sl)
-{
-    if (sl->len == 0)
-        return;
-    int amt;
-    SDL_LockMutex(write_lock);
-    amt = send(fd, (const char*)sl->buf + sl->pos, sl->len, MSG_DONTWAIT);
-    // following this link: http://www-128.ibm.com/developerworks/linux/library/l-sockpit/#N1019D
-    // () with MSG_DONTWAIT under linux can return 0 which means the data
-    // is "queued for transmission". I was not able to find that in the send() man pages...
-    // In my testings it never happend, so i put it here in to have it perhaps triggered in
-    // some server runs (but we should trust perhaps ibm developer infos...).
-    if (!amt)
-        amt = sl->len; // as i understand, the data is now internal buffered? So remove it from our write buffer
-    if (amt > 0)
-    {
-        sl->pos += amt;
-        sl->len -= amt;
-    }
-    SDL_UnlockMutex(write_lock);
-    if (amt < 0) // error
-    {
-#ifdef WIN32 // ***win32 write_socket_buffer: change error handling
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-            return;
-        Logger::log().error() << "New socket write failed (wsb) " << WSAGetLastError();
-        SOCKET_CloseClientSocket();
-#else
-        if (errno == EWOULDBLOCK || errno == EINTR)
-            return;
-        Logger::log().error() << "New socket write failed (wsb " << EAGAIN << ") (" << errno << ": " << strerror_local(errno) << ")";
-        SOCKET_CloseClientSocket();
-#endif
-        return;
-    }
-}
-// read stuff from socket
-inline int Network::read_socket_buffer(int fd, SockList *sl)
-{
-    int stat_ret, read_bytes, tmp;
-    // calculate how many bytes can be read in one row in our round robin buffer
-    tmp = sl->pos+sl->len;
-    // we have still some bytes until we hit our buffer border ?
-    if (tmp >= MAXSOCKBUF)
-    {
-        tmp = tmp-MAXSOCKBUF; // thats our start offset
-        read_bytes = sl->pos - tmp; // thats our free buffer until ->pos
-    }
-    else
-        read_bytes = MAXSOCKBUF-tmp; // tmp is our offset and there is still a bit to read in
-    stat_ret = recv(fd, (char*)sl->buf + tmp, read_bytes, MSG_DONTWAIT);
-    if (stat_ret > 0)
-        sl->len += stat_ret;
-    else if (stat_ret < 0) // lets check its a real problem
-    {
-#ifdef WIN32
-        if (WSAGetLastError() == WSAEWOULDBLOCK)
-            return 1;
-        if (WSAGetLastError() == WSAECONNRESET)
-            Logger::log().error() << "Connection closed by server\n";
-        else
-            Logger::log().error() << "ReadPacket got error " << WSAGetLastError() << " returning 0";
-#else
-        if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
-            return 1;
-        Logger::log().error() << "ReadPacket got error " << errno << ": " << strerror_local(errno) << "returning 0";
-#endif
-        SOCKET_CloseClientSocket();
-    }
-    else
-        SOCKET_CloseClientSocket();
-    return stat_ret;
-}
-int Network::socket_thread_loop(void *)
-{
-    while (thread_flag)
-    {
-        // Want a valid socket for the IO loop
-        SDL_LockMutex(socket_lock);
-        if (csocket.fd == SOCKET_NO)
-        {
-            SDL_CondWait(socket_cond, socket_lock);
-            if (!thread_flag)
-            {
-                SDL_UnlockMutex(socket_lock);
-                break;
-            }
-        }
-        if (csocket.fd == SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
-        {
-            SDL_Delay(150);
-            SDL_UnlockMutex(socket_lock);
-            continue;
-        }
-        if (csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
-            read_socket_buffer(csocket.fd, &csocket.inbuf);
-        // lets check we have a valid command
-        while (csocket.inbuf.len >= 2)
-        {
-            _command_buffer_read *tmp;
-            int head_off=2, toread = -1, pos = csocket.inbuf.pos;
-            if (csocket.inbuf.buf[pos] & 0x80) // 3 byte length heasder?
-            {
-                if (csocket.inbuf.len > 2)
-                {
-                    head_off = 3;
-                    toread = ((csocket.inbuf.buf[pos]&0x7f) << 16);
-                    if (++pos >= MAXSOCKBUF)
-                        pos -= MAXSOCKBUF;
-                    toread += (csocket.inbuf.buf[pos] << 8);
-                    if (++pos >= MAXSOCKBUF)
-                        pos -= MAXSOCKBUF;
-                    toread += csocket.inbuf.buf[pos];
-                }
-            }
-            else // 2 size length header
-            {
-                toread = (csocket.inbuf.buf[pos] << 8);
-                if (++pos >= MAXSOCKBUF)
-                    pos -= MAXSOCKBUF;
-                toread += csocket.inbuf.buf[pos];
-            }
-            // adjust pos to data start
-            if (++pos >= MAXSOCKBUF)
-                pos -= MAXSOCKBUF;
-            // leave collecting commands when we hit an incomplete one
-            if (toread == -1 || csocket.inbuf.len < toread+head_off)
-            {
-                SDL_UnlockMutex(socket_lock);
-                break;
-            }
-            tmp = new _command_buffer_read;
-            tmp->data = new uint8[toread + 1];
-            tmp->len = toread;
-            tmp->next = NULL;
-            if (pos + toread > MAXSOCKBUF) // splitted data tail?
-            {
-                int tmp_read, read_part;
-                read_part = (pos + toread) - MAXSOCKBUF;
-                tmp_read = toread - read_part;
-                memcpy(tmp->data, csocket.inbuf.buf+pos, tmp_read);
-                memcpy(tmp->data+tmp_read, csocket.inbuf.buf, read_part);
-                csocket.inbuf.pos = read_part;
-            }
-            else
-            {
-                memcpy(tmp->data, csocket.inbuf.buf+pos, toread);
-                csocket.inbuf.pos = pos + toread;
-            }
-            tmp->data[tmp->len] = 0; // ensure we have a zero at the end - simple buffer overflow proection
-            csocket.inbuf.len -= toread + head_off;
-            SDL_LockMutex(read_lock);
-            // put tmp to the end of our read cmd queue
-            if (!read_cmd_start)
-                read_cmd_start = tmp;
-            else
-                read_cmd_end->next = tmp;
-            read_cmd_end = tmp;
-            SDL_UnlockMutex(read_lock);
-        }
-        if (csocket.fd != SOCKET_NO && Option::getSingleton().getGameStatus() >= GAME_STATUS_STARTCONNECT)
-            write_socket_buffer(csocket.fd, &csocket.outbuf);
-        SDL_UnlockMutex(socket_lock);
-    }
-    return 0;
-}
-void Network::socket_thread_start()
-{
-    Logger::log().info() << "Starting thread";
-    thread_flag = true;
-    socket_cond = SDL_CreateCond();
-    socket_lock = SDL_CreateMutex();
-    read_lock = SDL_CreateMutex();
-    write_lock = SDL_CreateMutex();
-    socket_thread = SDL_CreateThread(socket_thread_loop, NULL);
-    if ( socket_thread == NULL )
-        Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
-}
-
-void Network::socket_thread_stop(void)
-{
-    Logger::log().info() << "STOP THREAD";
-    if (thread_flag)
-    {
-        thread_flag = false;
-        SDL_CondSignal(socket_cond);
-        SDL_WaitThread(socket_thread, NULL);
-        SDL_DestroyCond(socket_cond);
-        SDL_DestroyMutex(socket_lock);
-        SDL_DestroyMutex(read_lock);
-        SDL_DestroyMutex(write_lock);
-    }
-}
-
+//================================================================================================
+//
+//================================================================================================
 int Network::SOCKET_GetError()
 {
 #ifdef WIN32
@@ -463,24 +164,457 @@ int Network::SOCKET_GetError()
     return errno;
 #endif
 }
+
+//================================================================================================
+// .
+//================================================================================================
+Network::Network()
+{}
+
+//================================================================================================
+// .
+//================================================================================================
+Network::~Network()
+{
+    clearMetaServerData();
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::clearMetaServerData()
+{
+    for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
+        delete (*i);
+    mvServer.clear();
+}
+
+//================================================================================================
+//
+//================================================================================================
+bool Network::Init()
+{
+    if (mInitDone) return true;
+    csocket.fd = SOCKET_NO;
+    csocket.cs_version = 0;
+    SocketStatusErrorNr= 0;
+
+    Logger::log().headline("Starting Network");
+#ifdef WIN32
+    WSADATA w;
+    WORD wVersionRequested = MAKEWORD(2, 2);
+    if (WSAStartup(wVersionRequested, &w))
+    {
+        wVersionRequested = MAKEWORD(2, 0);
+        if (WSAStartup(wVersionRequested, &w))
+        {
+            wVersionRequested = MAKEWORD(1, 1);
+            int error = WSAStartup(wVersionRequested, &w);
+            if (error)
+            {
+                Logger::log().error() << "Error init starting Winsock: "<< error;
+                return false;
+            }
+        }
+    }
+    Logger::log().info() <<  "Using socket version " << w.wVersion;
+#endif
+    mInitDone = true;
+//    socket_thread_start();
+    return true;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void Network::socket_thread_start()
+{
+    if (!input_buffer_cond)
+    {
+        input_buffer_cond  = SDL_CreateCond();
+        input_buffer_mutex = SDL_CreateMutex();
+        output_buffer_cond = SDL_CreateCond();
+        output_buffer_mutex= SDL_CreateMutex();
+        socket_mutex = SDL_CreateMutex();
+    }
+    abort_thread = false;
+    input_thread = SDL_CreateThread(reader_thread_loop, NULL);
+    if (!input_thread)
+        Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
+
+    output_thread = SDL_CreateThread(writer_thread_loop, NULL);
+    if (!output_thread)
+        Logger::log().error() <<  "Unable to start socket thread: " << SDL_GetError();
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::update()
+{
+    if (!mInitDone) return;
+    command_buffer *cmd;
+    while (1)
+    {
+        if (handle_socket_shutdown())
+        {
+            // TODO: handle by going back to server selection state.
+            break;
+        }
+        cmd = get_next_input_command(); // function has mutex included.
+        if (!cmd) break;
+        if (!cmd->data[0] || cmd->data[0] >= BINARY_CMD_SUM)
+            Logger::log().error() << "Bad command from server " << cmd->data[0];
+        else
+        {
+            if (cmd->data[0]-1 != 5)
+                Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] " << cmd->data+1;
+            commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
+        }
+        command_buffer_free(cmd);
+    }
+}
+
+
+//================================================================================================
+// The main thread should poll this function which detects connection shutdowns and
+// removes the threads if it happens.
+//================================================================================================
+bool Network::handle_socket_shutdown()
+{
+    if (abort_thread)
+    {
+        socket_thread_stop();
+        abort_thread = false;
+        // Empty all queues.
+        while (input_queue_start)
+            command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
+        while (output_queue_start)
+            command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
+        Logger::log().info() << "Connection lost";
+        return true;
+    }
+    return false;
+}
+
+
+// Buffer queue management
+
+
+//================================================================================================
+// .
+//================================================================================================
+Network::command_buffer *Network::command_buffer_new(unsigned int len, unsigned char *data)
+{
+    command_buffer *buf = (command_buffer *) new char[sizeof(command_buffer)+len+1];
+    buf->next = buf->prev = NULL;
+    buf->len = len;
+
+    if (data) memcpy(buf->data, data, len);
+    buf->data[len] = 0; // Buffer overflow sentinel.
+    return buf;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end)
+{
+    buf->next = NULL;
+    buf->prev = *queue_end;
+    if (*queue_start == NULL)
+        *queue_start = buf;
+    if (buf->prev)
+        buf->prev->next = buf;
+    *queue_end = buf;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+Network::command_buffer *Network::command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end)
+{
+    command_buffer *buf = *queue_start;
+    if (buf)
+    {
+        *queue_start = buf->next;
+        if (buf->next)
+            buf->next->prev = NULL;
+        else
+            *queue_end = NULL;
+    }
+    return buf;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::command_buffer_free(command_buffer *buf)
+{
+    delete[] buf;
+}
+
+
+/* High-level external interface */
+
+//================================================================================================
+// Add a binary command to the output buffer.
+// If body is NULL, a single-byte command is created from cmd.
+// Otherwise body should include the length and cmd header
+//================================================================================================
+int Network::send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len)
+{
+    command_buffer *buf;
+
+    if (body)
+        buf = command_buffer_new(len, body);
+    else
+    {
+        unsigned char tmp[3];
+        len = 0x8001;
+        // Packet order is obviously big-endian for length data.
+        tmp[0] = (len >> 8) & 0xFF;
+        tmp[1] = len & 0xFF;
+        tmp[2] = cmd;
+        buf = command_buffer_new(len, tmp);
+    }
+    SDL_LockMutex(output_buffer_mutex);
+    command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
+    SDL_CondSignal(output_buffer_cond);
+    SDL_UnlockMutex(output_buffer_mutex);
+    return 0;
+}
+
+//================================================================================================
+// move a command/buffer to the out buffer so it can be written to the socket.
+//================================================================================================
+int Network::send_socklist(SockList msg)
+{
+    command_buffer *buf = command_buffer_new(msg.len + 2, NULL);
+    memcpy(buf->data + 2, msg.buf, msg.len);
+    buf->data[0] = (unsigned char) ((msg.len >> 8) & 0xFF);
+    buf->data[1] = ((uint32) (msg.len)) & 0xFF;
+    SDL_LockMutex(output_buffer_mutex);
+    command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
+    SDL_CondSignal(output_buffer_cond);
+    SDL_UnlockMutex(output_buffer_mutex);
+    return 0;
+}
+
+//================================================================================================
+// get a read command from the queue. remove it from queue and return a pointer to it.
+// return NULL if there is no command
+//================================================================================================
+Network::command_buffer *Network::get_next_input_command()
+{
+    SDL_LockMutex(input_buffer_mutex);
+    command_buffer *buf = command_buffer_dequeue(&input_queue_start, &input_queue_end);
+    SDL_UnlockMutex(input_buffer_mutex);
+    return buf;
+}
+
+//================================================================================================
+// clear & free the whole read cmd queue
+//================================================================================================
+void Network::clear_input_command_queue()
+{
+    SDL_LockMutex(input_buffer_mutex);
+    while (input_queue_start)
+        command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
+    SDL_UnlockMutex(input_buffer_mutex);
+}
+
+
+
+/*
+ * Lowlevel socket IO
+ */
+
+
+//================================================================================================
+//
+//================================================================================================
+int Network::reader_thread_loop(void *)
+{
+    unsigned char readbuf[MAXSOCKBUF+1];
+    int readbuf_len = 0;
+    int header_len = 0;
+    int cmd_len = -1;
+    int ret;
+    int toread;
+    Logger::log().info() << "Reader thread started  " << csocket.fd;
+
+    while (!abort_thread)
+    {
+        // First, try to read a command length sequence.
+        if (readbuf_len < 2)
+        {
+            if (readbuf_len > 0 && (readbuf[0] & 0x80)) // three-byte length?
+                toread = 3 - readbuf_len;
+            else
+                toread = 2 - readbuf_len;
+        }
+        else if (readbuf_len == 2 && (readbuf[0] & 0x80))
+            toread = 1;
+        else
+        {
+            // If we have a finished header, get the packet size from it.
+            if (readbuf_len <= 3)
+            {
+                unsigned char *p = readbuf;
+                header_len = (*p & 0x80) ? 3 : 2;
+                cmd_len = 0;
+                if (header_len == 3)
+                    cmd_len += ((int)(*p++) & 0x7f) << 16;
+                cmd_len += ((int)(*p++)) << 8;
+                cmd_len += ((int)(*p++));
+            }
+            toread = cmd_len + header_len - readbuf_len;
+        }
+        ret = recv(csocket.fd, (char*)readbuf + readbuf_len, toread, 0);
+        if (ret == 0)
+        {
+            // End of file.
+            Logger::log().error() << "Reader thread got EOF trying to read "<< toread << "bytes";
+            goto out;
+        }
+        else if (ret == -1)
+        {
+            // IO error.
+#ifdef WIN32
+            Logger::log().error() << "Reader thread got error " << WSAGetLastError();
+#else
+            Logger::log().error() << "Reader thread got error " << errno << " : " << strerror_local(errno);
+#endif
+            goto out;
+        }
+        else
+        {
+            readbuf_len += ret;
+            //   LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len);
+        }
+
+        // Finished with a command ?
+        if (readbuf_len == cmd_len + header_len)
+        {
+            // LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len);
+            command_buffer *buf = command_buffer_new(readbuf_len - header_len, readbuf + header_len);
+            SDL_LockMutex(input_buffer_mutex);
+            command_buffer_enqueue(buf, &input_queue_start, &input_queue_end);
+            SDL_CondSignal(input_buffer_cond);
+            SDL_UnlockMutex(input_buffer_mutex);
+            cmd_len = -1;
+            header_len = 0;
+            readbuf_len = 0;
+        }
+    }
+out:
+    SOCKET_CloseClientSocket();
+    Logger::log().error() << "Reader thread stopped";
+    return -1;
+}
+
+//================================================================================================
+//
+//================================================================================================
+int Network::writer_thread_loop(void *nix)
+{
+    Logger::log().info() << "Writer thread started";
+    int written, ret;
+    while (!abort_thread)
+    {
+        SDL_Delay(100);
+        written = 0;
+        command_buffer *buf;
+        SDL_LockMutex(output_buffer_mutex);
+
+        while (output_queue_start == NULL && !abort_thread)
+            SDL_CondWait(output_buffer_cond, output_buffer_mutex);
+        buf = command_buffer_dequeue(&output_queue_start, &output_queue_end);
+
+        SDL_UnlockMutex(output_buffer_mutex);
+        if (abort_thread)
+            goto out;
+
+        while (written < buf->len && !abort_thread)
+        {
+            ret = send(csocket.fd, (char*)buf->data + written, buf->len - written, 0);
+            if (ret == 0)
+            {
+                Logger::log().error() << "Writer got EOF";
+                goto out;
+            }
+            else if (ret == -1)
+            {
+                // IO error.
+#ifdef WIN32
+                Logger::log().error() << "Writer thread got error " << WSAGetLastError();
+#else
+                Logger::log().error() << "Writer thread got error " << errno << " : " << strerror_local(errno);
+#endif
+                goto out;
+            }
+            else
+                written += ret;
+        }
+        //      Logger::log().error() <<"Writer wrote a command (%d bytes)\n", written); */
+    }
+out:
+    SOCKET_CloseClientSocket();
+    Logger::log().info() << "Writer thread stopped";
+    return 0;
+}
+
+//================================================================================================
+//
+//================================================================================================
+void Network::socket_thread_stop(void)
+{
+    Logger::log().info() << "Stopping thread.";
+    SDL_WaitThread(input_thread, NULL);
+    SDL_WaitThread(output_thread, NULL);
+    /*
+        SDL_DestroyCond(input_buffer_cond);
+        SDL_DestroyMutex(input_buffer_mutex);
+        SDL_DestroyCond(output_buffer_cond);
+        SDL_DestroyMutex(output_buffer_mutex);
+        SDL_DestroyMutex(socket_mutex);
+    */
+}
+
+
+//================================================================================================
+//
+//================================================================================================
 bool Network::SOCKET_CloseSocket()
 {
     if (csocket.fd == SOCKET_NO)
-        return(true);
+        return true;
 #ifdef WIN32
     closesocket(csocket.fd);
 #else
     close(csocket.fd);
 #endif
-    return(true);
+    return true;
 }
+
+
+//================================================================================================
+//
+//================================================================================================
 bool Network::SOCKET_CloseClientSocket()
 {
+    SDL_LockMutex(socket_mutex);
+
     if (csocket.fd == SOCKET_NO)
+    {
+        SDL_UnlockMutex(socket_mutex);
         return true;
+    }
     Logger::log().info() << "CloseClientSocket()";
-    // No more socket for the IO thread
-    SDL_LockMutex(socket_lock);
+
+    SOCKET_CloseSocket();
+
     delete[] csocket.inbuf.buf;
     delete[] csocket.outbuf.buf;
     csocket.inbuf.buf = csocket.outbuf.buf = NULL;
@@ -489,45 +623,20 @@ bool Network::SOCKET_CloseClientSocket()
     csocket.inbuf.pos = 0;
     csocket.outbuf.pos = 0;
     csocket.fd = SOCKET_NO;
-    SDL_CondSignal(socket_cond);
-    SDL_UnlockMutex(socket_lock);
-    return(true);
-}
+    abort_thread = true;
 
-bool Network::Init()
-{
-    if (mInitDone) return true;
-    Logger::log().headline("Starting Network");
-#ifdef WIN32
-    WSADATA w;
-    WORD wVersionRequested = MAKEWORD( 2, 2 );
-    int     error;
-    csocket.fd = SOCKET_NO;
-    csocket.cs_version = 0;
-    SocketStatusErrorNr = 0;
-    error = WSAStartup(wVersionRequested, &w);
-    if (error)
-    {
-        wVersionRequested = MAKEWORD( 2, 0 );
-        error = WSAStartup(wVersionRequested, &w);
-        if (error)
-        {
-            wVersionRequested = MAKEWORD( 1, 1 );
-            error = WSAStartup(wVersionRequested, &w);
-            if (error)
-            {
-                Logger::log().error() << "Error init starting Winsock: "<< error;
-                return(false);
-            }
-        }
-    }
-    Logger::log().info() <<  "Using socket version " << w.wVersion;
-#endif
-    mInitDone = true;
-    socket_thread_start();
+    SDL_CondSignal(input_buffer_cond);
+    SDL_CondSignal(output_buffer_cond);
+    SDL_UnlockMutex(socket_mutex);
     return true;
 }
 
+
+
+
+//================================================================================================
+//
+//================================================================================================
 bool Network::SOCKET_DeinitSocket()
 {
     if (csocket.fd != SOCKET_NO)
@@ -535,12 +644,15 @@ bool Network::SOCKET_DeinitSocket()
 #ifdef WIN32
     WSACleanup();
 #endif
-    return(true);
+    return true;
 }
+
+
+//================================================================================================
+//
+//================================================================================================
 bool Network::SOCKET_OpenClientSocket(const char *host, int port)
 {
-    // No more socket for the IO thread
-    SDL_LockMutex(socket_lock);
     if (!SOCKET_OpenSocket(host, port)) return false;
     csocket.inbuf.buf = new unsigned char[MAXSOCKBUF];
     csocket.inbuf.len = 0;
@@ -556,12 +668,15 @@ bool Network::SOCKET_OpenClientSocket(const char *host, int port)
     {
         Logger::log().error() << "setsockopt(TCP_NODELAY) failed";
     }
-    // socket available for socket thread
-    SDL_CondSignal(socket_cond);
-    SDL_UnlockMutex(socket_lock);
     return true;
 }
+
+
+
 #ifdef WIN32
+//================================================================================================
+//
+//================================================================================================
 bool Network::SOCKET_OpenSocket(const char *host, int port)
 {
     int             error;
@@ -592,7 +707,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     temp = 1;   // non-block
     if (ioctlsocket(csocket.fd, FIONBIO, (u_long*)&temp) == -1)
     {
-        Logger::log().error() << "ioctlsocket(*socket_temp, FIONBIO , &temp)";
+        Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp)";
         csocket.fd = SOCKET_NO;
         return(false);
     }
@@ -626,6 +741,16 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         return(false);
     }
     // we got a connect here!
+
+    // Clear nonblock flag
+    temp = 0;
+    if (ioctlsocket(csocket.fd, FIONBIO, (u_long*)&temp) == -1)
+    {
+        Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp == 0)";
+        csocket.fd = SOCKET_NO;
+        return(FALSE);
+    }
+
     if (getsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
         oldbufsize = 0;
     if (oldbufsize < newbufsize)
@@ -638,11 +763,15 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
     return(true);
 }
+
 #else
+//================================================================================================
+//
+//================================================================================================
 bool Network::SOCKET_OpenSocket(const char *host, int port)
 {
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
-    struct linger       linger_opt;
+    struct linger linger_opt;
     // Use new (getaddrinfo()) or old (gethostbyname()) socket API
 #if 1 // small hack until we make it configurable to fix mantis 0000425
     //#ifndef HAVE_GETADDRINFO
@@ -683,7 +812,8 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     }
 #else
 struct addrinfo hints;
-struct addrinfo *res = NULL, *ai;
+struct addrinfo *res=0;
+struct addrinfo *ai;
 char port_str[6], hostaddr[40];
 Logger::log().info() << "Opening to "<< host << " " << port;
 snprintf(port_str, sizeof(port_str), "%d", port);
@@ -707,7 +837,7 @@ for (ai = res; ai != NULL; ai = ai->ai_next)
     }
     if (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
     {
-        close(*socket_temp);
+        close(csocket.fd);
         csocket.fd = SOCKET_NO;
         continue;
     }
@@ -720,12 +850,17 @@ if (csocket.fd == SOCKET_NO)
     return false;
 }
 #endif
+#if 0
+    //Logger::log().info() << "socket: fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(csocket.fd, F_GETFL));
     if (fcntl(csocket.fd, F_SETFL, fcntl(csocket.fd, F_GETFL) | O_NONBLOCK ) == -1)
     {
-        Logger::log().error() << "socket:  Error on fcntl " << fcntl(csocket.fd, F_GETFL);
+        Logger::log().error() <<  "socket:  Error on fcntl "<< fcntl(csocket.fd, F_GETFL);
         csocket.fd = SOCKET_NO;
-        return(false);
+        return false;
     }
+    //LOG(LOG_DEBUG, "socket:  fcntl %x.\n", fcntl(csocket.fd, F_GETFL));
+#endif
+
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
     if (setsockopt(csocket.fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
@@ -743,6 +878,10 @@ if (csocket.fd == SOCKET_NO)
     return true;
 }
 #endif
+
+//================================================================================================
+//
+//================================================================================================
 void Network::SendVersion()
 {
     char buf[MAX_BUF];
@@ -751,6 +890,9 @@ void Network::SendVersion()
     cs_write_string(buf, (int)strlen(buf));
 }
 
+//================================================================================================
+//
+//================================================================================================
 void Network::send_reply(char *text)
 {
     char buf[MAXSOCKBUF];
@@ -758,6 +900,9 @@ void Network::send_reply(char *text)
     cs_write_string(buf, strlen(buf));
 }
 
+//================================================================================================
+//
+//================================================================================================
 int Network::cs_write_string(char *buf, int len)
 {
     SockList sl;
@@ -765,10 +910,11 @@ int Network::cs_write_string(char *buf, int len)
     sl.buf = (unsigned char *) buf;
     return send_socklist(sl);
 }
+
 //================================================================================================
 // We used our core connect routine to connect to metaserver, this is the special read one.
 //================================================================================================
-void Network::read_metaserver_data(SOCKET fd)
+void Network::read_metaserver_data()
 {
     int  stat, temp;
     char *ptr = new char[MAX_METASTRING_BUFFER];
@@ -777,7 +923,7 @@ void Network::read_metaserver_data(SOCKET fd)
     while (1)
     {
 #ifdef WIN32
-        stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+        stat = recv(csocket.fd, ptr, MAX_METASTRING_BUFFER, 0);
         if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
         {
             Logger::log().error() << "Error reading metaserver data!: "<< WSAGetLastError();
@@ -787,7 +933,7 @@ void Network::read_metaserver_data(SOCKET fd)
 #else
         do
         {
-            stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
+            stat = recv(csocket.fd, ptr, MAX_METASTRING_BUFFER, 0);
         }
         while (stat == -1);
 #endif
@@ -813,6 +959,7 @@ void Network::read_metaserver_data(SOCKET fd)
     delete[] ptr;
     delete[] buf;
 }
+
 //================================================================================================
 // Connect to meta and get server data.
 //================================================================================================
@@ -826,7 +973,7 @@ void Network::contactMetaserver()
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
     if (SOCKET_OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
     {
-        read_metaserver_data(csocket.fd);
+        read_metaserver_data();
         SOCKET_CloseSocket();
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"done.");
     }
@@ -835,6 +982,7 @@ void Network::contactMetaserver()
     add_metaserver_data("127.0.0.1", "127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost.", "Start server before you try to connect.", "", "");
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"select a server.");
 }
+
 //================================================================================================
 // Parse the metadata.
 //================================================================================================

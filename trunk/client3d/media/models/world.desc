@@ -30,7 +30,7 @@ PosSubY  : "1"
 Level    : "0"
 Centred  : "1"                            # 1 = Drawn in tile-middle.
 Facing   : "0" # [degrees]
-Particles: "-1" 
+Particles: "0" 
 
 #####################################################################################
 # Environment:

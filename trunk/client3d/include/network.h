@@ -125,31 +125,39 @@ public:
         static Network Singleton; return Singleton;
     }
 
-    typedef struct command_buffer_read
+    typedef struct command_buffer
     {
-        struct command_buffer_read *next;
+        struct command_buffer *next; // Next in queue.
+        struct command_buffer *prev; // Previous in queue.
         int len;
-        Uint8 *data;
-    }
-    _command_buffer_read;
+        unsigned char data[0];
+    };
 
     bool Init();
     void clearMetaServerData();
-    static _command_buffer_read *read_cmd_start, *read_cmd_end;
 
-    _command_buffer_read *get_read_cmd(void);
-    void send_command_binary(int cmd, const char *body, int len);
-    static int  send_socklist(SockList msg);
-    void free_read_cmd(_command_buffer_read *cmd);
-    void clear_read_cmd_queue(void);
-    void socket_thread_start(void);
-    void socket_thread_stop(void);
+    static command_buffer *input_queue_start,  *input_queue_end;
+    static command_buffer *output_queue_start, *output_queue_end;
+    static command_buffer *get_next_input_command(void);
+    static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
+    static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
+    static void command_buffer_free(command_buffer *buf);
+    static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
+
+
+    static int reader_thread_loop(void *);
+    static int writer_thread_loop(void *);
+
+    int send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len);
+    static int send_socklist(SockList msg);
+    void socket_thread_start();
+    void socket_thread_stop();
     void setActiveServer(int nr)
     {
         mActServerNr = nr;
     }
-    bool SOCKET_InitSocket(void);
-    bool SOCKET_DeinitSocket(void);
+    bool SOCKET_InitSocket();
+    bool SOCKET_DeinitSocket();
     bool SOCKET_OpenSocket(const char *host, int port);
     bool SOCKET_OpenClientSocket(const char *host, int port);
     bool OpenActiveServerSocket()
@@ -157,16 +165,15 @@ public:
         return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
     }
     static bool SOCKET_CloseSocket();
-    int  SOCKET_GetError(void);  // returns socket error
-    void read_metaserver_data(SOCKET fd);
-    void update();
-    void contactMetaserver();
     static bool SOCKET_CloseClientSocket();
-    static int socket_thread_loop(void *);
-    static void write_socket_buffer(int fd, SockList *sl);
-    static int read_socket_buffer(int fd, SockList *sl);
     static void send_reply(char *text);
     static int cs_write_string(char *buf, int len);
+    int  SOCKET_GetError();  // returns socket error
+    void read_metaserver_data();
+    void clear_input_command_queue(void);
+    bool handle_socket_shutdown();
+    void update();
+    void contactMetaserver();
     void SendVersion();
     void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
                              const char *desc1, const char *desc2, const char *desc3, const char *desc4);
@@ -224,15 +231,18 @@ private:
         std::string desc[4];
         int player;
         int port;
-    }Server;
+    }
+    Server;
     std::vector<Server*>mvServer;
 
-    static bool thread_flag;
-    static SDL_Thread *socket_thread;
-    static SDL_mutex  *read_lock;
-    static SDL_mutex  *write_lock;
-    static SDL_mutex  *socket_lock;
-    static SDL_cond   *socket_cond;
+    static bool abort_thread;
+    static SDL_Thread *input_thread;
+    static SDL_mutex  *input_buffer_mutex;
+    static SDL_cond   *input_buffer_cond;
+    static SDL_Thread *output_thread;
+    static SDL_mutex  *output_buffer_mutex;
+    static SDL_cond   *output_buffer_cond;
+    static SDL_mutex  *socket_mutex;
     static ClientSocket csocket;
     static int mRequest_file_chain;
     int SocketStatusErrorNr;
@@ -240,10 +250,7 @@ private:
     struct sockaddr_in  insock;       // Server's attributes
 
     static bool mInitDone;
-
-
     void parse_metaserver_data(string strMetaData);
-
     Network();
     ~Network();
     Network(const Network&); // disable copy-constructor.

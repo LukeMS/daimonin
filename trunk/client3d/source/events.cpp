@@ -305,7 +305,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_START:
         {
-            Network::getSingleton().SOCKET_CloseClientSocket();
+            GuiManager::getSingleton().resetTextInput();
             GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
             GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, true);
             Option::getSingleton().setGameStatus(GAME_STATUS_STARTCONNECT);
@@ -314,8 +314,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_STARTCONNECT:
         {
-            int select;
             // Print server infos.
+            int select;
             select = GuiManager::getSingleton().getTableSelection(GUI_WIN_SERVERSELECT, GUI_TABLE);
             if (select >=0)
             {
@@ -346,6 +346,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
                 break;
             }
+            Network::getSingleton().socket_thread_start();
             Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connected. exchange version.");
             break;
@@ -353,6 +354,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_VERSION:
         {
+            Logger::log().info() << "Send version.";
             Network::getSingleton().SendVersion();
             Option::getSingleton().setGameStatus(GAME_STATUS_WAITVERSION);
             break;
@@ -544,7 +546,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             break;
         }
 
-
         default:
         {
             static bool once = false;
@@ -596,23 +597,23 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     ObjectManager::getSingleton().addMobileObject(obj);
 
                     /*
-                                        obj.meshName  = "Ogre_Big.mesh";
-                                        obj.nickName  = "son of michtoen";
-                                        obj.type      = ObjectManager::OBJECT_NPC;
-                                        obj.friendly  = -1;
-                                        obj.attack    = 50;
-                                        obj.defend    = 50;
-                                        obj.maxHP     = 50;
-                                        obj.maxMana   = 50;
-                                        obj.maxGrace  = 50;
-                                        obj.pos.x     = 9;
-                                        obj.pos.z     = 12;
-                                        obj.pos.subX  = 4;
-                                        obj.pos.subZ  = 4;
-                                        obj.level     = 0;
-                                        obj.facing    = 0;
-                                        obj.particleNr=-1;
-                                        ObjectManager::getSingleton().addMobileObject(obj);
+                    obj.meshName  = "Ogre_Big.mesh";
+                    obj.nickName  = "son of michtoen";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.friendly  = -1;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = 9;
+                    obj.pos.z     = 12;
+                    obj.pos.subX  = 4;
+                    obj.pos.subZ  = 4;
+                    obj.level     = 0;
+                    obj.facing    = 0;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
                     */
                     once = true;
                 }
@@ -622,14 +623,12 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 }
             }
 
-
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 80.0)
             {
                 //TileManager::getSingleton().ChangeChunks();
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
-
 
             /*
                     static Real time = evt.timeSinceLastFrame+1.0;
@@ -639,7 +638,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                        time = evt.timeSinceLastFrame+1.0;
                     }
             */
-
             ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
             break;
         }
@@ -655,7 +653,9 @@ bool CEvent::frameEnded(const FrameEvent& evt)
     if (Option::getSingleton().getGameStatus() <= GAME_STATUS_INIT_NET)
         return true;
     GuiManager::getSingleton().update(evt.timeSinceLastFrame);
-    Network::getSingleton().update();
+    if (Option::getSingleton().getGameStatus() > GAME_STATUS_CONNECT)
+        Network::getSingleton().update();
+
     const RenderTarget::FrameStats& stats = mWindow->getStatistics();
     static int skipFrames = 0;
     if (--skipFrames <= 0)

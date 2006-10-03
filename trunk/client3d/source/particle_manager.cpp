@@ -198,13 +198,13 @@ void ParticleManager::synchToWorldPos(Vector3 &deltaPos)
             {
                 (*i)->pSystem->getEmitter(sum)->setPosition((*i)->pSystem->getEmitter(sum)->getPosition() - deltaPos);
             }
-            for (size_t sum = 0; sum < (*i)->pSystem->getNumParticles(); ++sum)
-            {
-                p = (*i)->pSystem->getParticle(sum);
-                p->position-= deltaPos;
-            }
         }
-        (*i)->pSystem->_update(0);
+        for (size_t sum = (*i)->pSystem->getNumParticles(); sum;)
+        {
+            p = (*i)->pSystem->getParticle(--sum);
+            p->position-= deltaPos;
+        }
+        //(*i)->pSystem->_update(0);
     }
 }
 
