@@ -232,35 +232,21 @@
       <Range width= "9" height= "9" />
     </Graphic>
 
-    <Listbox type= "COLOR_FILL" name= "List_Msg" font="03">
+    <Listbox type= "COLOR_FILL" name= "List_Msg" font="02">
       <Pos x= "1" y= "18" />
-      <Range width= "262" height= "232" />
+      <Range width= "262" height= "248" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
 
       <Gadget type= "SCROLLER" name = "List_Msg_VScroll">
          <Pos x= "263" y= "18" />
          <Range width= "16" height= "248" />
-	 <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
-	 <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
-	 <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
-	 <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
-	 <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-
-	 <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
+	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+	     <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+	     <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+	     <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+	     <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+	     <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
          <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
-      </Gadget>
-
-      <Gadget type= "SCROLLER" name = "List_Msg_HScroll">
-         <Pos x= "1" y= "250" />
-         <Range width= "262" height= "16" />
-	 <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
-	 <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
-	 <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
-	 <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
-	 <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-
-	 <Gadget type= "BUTTON" name = "But_ScrollUp"  image_name = "ScrollButton_02_Left" />
-         <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Right"/>
       </Gadget>
 
     </Listbox>

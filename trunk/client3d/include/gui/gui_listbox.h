@@ -57,11 +57,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    enum
-    {
-        MAX_TEXT_LINES     = 20,
-        SIZE_STRING_BUFFER = 1 << 7  // MUST be 1 << X.
-    };
+    enum {SIZE_STRING_BUFFER = 1 << 7};  /**< MUST be power of 2. **/
     struct
     {
         String str;
@@ -69,28 +65,28 @@ private:
         //    ColourValue colorBottom;
     }
     row[SIZE_STRING_BUFFER];
-    Real mClose;                 // Only Headline visible.
-    Real mLastHeight;            // The height before window was closed.
+    Real mClose;                 /**< If closed, only the headline is visible. **/
+    Real mLastHeight;            /**< The height before window was closed. **/
     Real mMinHeight, mMaxHeight;
     Real mFirstYPos;
-    bool mIsClosing, mIsOpening; // User pressed open/close button.
+    bool mIsClosing, mIsOpening; /**< User pressed open/close button. **/
     bool mVisible;
     bool mDragging;
     int  mScroll;
-    int  mButScrollWidth, mButScrollHeight;
-    int  mRowsToScroll, mRowsToPrint;
-    int  mSumRows;
+    int  mRowsToScroll;          /**< Rows left to scroll. **/
+    int  mMaxVisibleRows;        /**< Number of rows fitting into the window. **/
     int  mPrintPos;
     int  mBufferPos;
     int  mFontHeight;
     int  mActLines;
-    int  mScrollbarOffsetV, mScrollbarOffsetH; // Lines scrolled by the Scrollbar.
     uint32 *mGfxBuffer;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    static void scrollbarAction(GuiListbox *me, int index, float scroll);
+    static void scrollbarAction(GuiListbox *me, int index, int scroll);
+    void scrollTextVertical(int offset);
+    void scrollTextHorizontal(int offset);
     void drawScrollbar();
 };
 

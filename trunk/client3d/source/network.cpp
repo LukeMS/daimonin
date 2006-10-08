@@ -430,7 +430,6 @@ void Network::clear_input_command_queue()
  * Lowlevel socket IO
  */
 
-
 //================================================================================================
 //
 //================================================================================================
@@ -582,7 +581,6 @@ void Network::socket_thread_stop(void)
     */
 }
 
-
 //================================================================================================
 //
 //================================================================================================
@@ -597,7 +595,6 @@ bool Network::SOCKET_CloseSocket()
 #endif
     return true;
 }
-
 
 //================================================================================================
 //
@@ -631,9 +628,6 @@ bool Network::SOCKET_CloseClientSocket()
     return true;
 }
 
-
-
-
 //================================================================================================
 //
 //================================================================================================
@@ -646,7 +640,6 @@ bool Network::SOCKET_DeinitSocket()
 #endif
     return true;
 }
-
 
 //================================================================================================
 //
@@ -670,8 +663,6 @@ bool Network::SOCKET_OpenClientSocket(const char *host, int port)
     }
     return true;
 }
-
-
 
 #ifdef WIN32
 //================================================================================================
@@ -968,6 +959,7 @@ void Network::contactMetaserver()
     clearMetaServerData();
     csocket.fd = SOCKET_NO;
     char buf[256];
+    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"");
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"query metaserver...");
     sprintf(buf, "trying %s:%d", DEFAULT_METASERVER, DEFAULT_METASERVER_PORT);
     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
@@ -1044,6 +1036,7 @@ void Network::parse_metaserver_data(string strMetaData)
                             strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
     }
 }
+
 //================================================================================================
 // Add server data to a linked list.
 //================================================================================================

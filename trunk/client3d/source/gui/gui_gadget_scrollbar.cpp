@@ -37,6 +37,13 @@ http://www.gnu.org/licenses/licenses.html
 const int MIN_SLIDER_SIZE = 6;
 const int SLIDER_INNER_OFFSET = 3;
 
+
+// TODO:
+// Disable slider if it doesnt fit into the window.
+// Print a warning (logfile) if the up/down buttons dont fit into the window.
+// Keep slider-pos when lines were added.
+
+
 //================================================================================================
 // Constructor.
 //================================================================================================
@@ -46,10 +53,8 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
     mButScrollDown= 0;
     mParent = parent;
     mParentElement= parentElement;
-
     if (mWidth > mHeight) mHorizontal = true;
     else                  mHorizontal = false;
-
     uint32 *color = 0;
     const char *tmp;
     TiXmlElement *xmlOpt;
@@ -65,7 +70,6 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
         if ((tmp = xmlOpt->Attribute("blue" ))) *color+= atoi(tmp) << 16;
         if ((tmp = xmlOpt->Attribute("alpha"))) *color+= atoi(tmp) << 24;
     }
-
     for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
     {
         if (!strcmp(xmlOpt->Attribute("type"), "BUTTON"))
@@ -76,10 +80,11 @@ GuiGadgetScrollbar::GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, v
                 mButScrollDown = new GuiGadgetButton(xmlOpt, parent, false);
         }
     }
+    mDragging = false;
     mMouseOver = false;
     mMouseButDown = false;
     mGfxBuffer = 0; // Buffer to hold the pixel information.
-    mSliderPos = SLIDER_INNER_OFFSET +1;
+    mSliderPos = 0;
     resize(mWidth, mHeight);
 }
 
@@ -98,19 +103,30 @@ GuiGadgetScrollbar::~GuiGadgetScrollbar()
 //================================================================================================
 bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
 {
-    if (mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y))
+    // Test the right/up button.
+    if (!mDragging && mButScrollUp && mButScrollUp->mouseEvent(MouseAction, x, y))
     {
         if (MouseAction == GuiWindow::BUTTON_RELEASED)
         {
-            updateSliderPos(-1);
-            activated(mHorizontal?BUTTON_H_ADD:BUTTON_V_ADD, -1.0);
+            updateSliderPos(mHorizontal?BUTTON_H_ADD:BUTTON_V_ADD, -1);
+        }
+        return true;
+    }
+    // Test the left/down button.
+    if (!mDragging && mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y))
+    {
+        if (MouseAction == GuiWindow::BUTTON_RELEASED)
+        {
+            updateSliderPos(mHorizontal?BUTTON_H_SUB:BUTTON_V_SUB, +1);
         }
         return true;
     }
     // Test the slider.
-    if (x > mStartX + SLIDER_INNER_OFFSET && x < mStopX - 2* SLIDER_INNER_OFFSET &&
-            y > mStartY+SLIDER_INNER_OFFSET && y < mStopY- 2* SLIDER_INNER_OFFSET )
+    if (mDragging ||
+            x > mStartX + SLIDER_INNER_OFFSET && x < mStopX - 2* SLIDER_INNER_OFFSET &&
+            y > mStartY + SLIDER_INNER_OFFSET && y < mStopY - 2* SLIDER_INNER_OFFSET )
     {
+        static int dragSliderPos = 0;
         if (!mMouseOver)
         {
             mMouseOver = true;
@@ -119,14 +135,20 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
         }
         if (MouseAction == GuiWindow::BUTTON_PRESSED && !mMouseButDown)
         {
+            mDragging = true;
+            dragSliderPos = y - mSliderPos;
             mMouseButDown = true;
             setState(GuiImageset::STATE_ELEMENT_PUSHED);
         }
         if (MouseAction == GuiWindow::BUTTON_RELEASED && mMouseButDown)
         {
+            mDragging = false;
             mMouseButDown = false;
             setState(GuiImageset::STATE_ELEMENT_DEFAULT);
-            //activated();
+        }
+        if (MouseAction == GuiWindow::MOUSE_MOVEMENT && mDragging)
+        {
+            updateSliderPos(mHorizontal?SLIDER_H:SLIDER_V, y-dragSliderPos);
         }
         return true; // No need to check other gadgets.
     }
@@ -141,15 +163,8 @@ bool GuiGadgetScrollbar::mouseEvent(int MouseAction, int x, int y)
             return true; // No need to check other gadgets.
         }
     }
-    if (mButScrollDown && mButScrollDown->mouseEvent(MouseAction, x, y))
-    {
-        if (MouseAction == GuiWindow::BUTTON_RELEASED)
-        {
-            updateSliderPos(+1);
-            activated(mHorizontal?BUTTON_H_SUB:BUTTON_V_SUB, +1.0);
-        }
-        return true;
-    }
+    // If dragging is active, the parent window stays active if the mouse moves outside the window.
+    if (mDragging) return true;
     return false; // No action here, check the other gadgets.
 }
 
@@ -160,7 +175,7 @@ void GuiGadgetScrollbar::draw()
 {
     int x1, x2, y1, y2, w;
     w = mStopX-mStartX;
-
+    int sliderSize = mSliderSize<MIN_SLIDER_SIZE?MIN_SLIDER_SIZE:mSliderSize;
     uint32 color;
     switch (mState)
     {
@@ -179,13 +194,12 @@ void GuiGadgetScrollbar::draw()
         default:
             color = mColorBorderline;
             break;
-
     }
 
     if (mHorizontal)
     {
-        x1 = mSliderPos;
-        x2 = mSliderPos + mSliderSize;
+        x1 = mSliderPos + SLIDER_INNER_OFFSET;
+        x2 = x1 + sliderSize;
         y1 = SLIDER_INNER_OFFSET + 1;
         y2 = mStopY-mStartY - SLIDER_INNER_OFFSET-1;
         for (int y = y1; y < y2; ++y)
@@ -203,8 +217,8 @@ void GuiGadgetScrollbar::draw()
     {
         x1 = SLIDER_INNER_OFFSET +1;
         x2 = w - SLIDER_INNER_OFFSET -1;
-        y1 = mSliderPos;
-        y2 = mSliderPos + mSliderSize;
+        y1 = mSliderPos + SLIDER_INNER_OFFSET;
+        y2 = y1 + sliderSize;
         for (int y = SLIDER_INNER_OFFSET; y < mMaxSliderSize;  ++y)
         {
             for (int x = x1; x < x2; ++x)
@@ -248,29 +262,52 @@ void GuiGadgetScrollbar::draw()
 //================================================================================================
 // Update the slider size.
 //================================================================================================
-void GuiGadgetScrollbar::updateSliderSize(float size)
+void GuiGadgetScrollbar::updateSliderSize(int maxVisPos, int actPos, int maxPos)
 {
-    if (size > 1.0f) size = 1.0f;
-    mSliderSize = (int) (mMaxSliderSize * size);
-    if (mSliderSize < MIN_SLIDER_SIZE) mSliderSize = MIN_SLIDER_SIZE;
+    if (maxPos >0 && actPos > maxPos) actPos = maxPos;
+    if (actPos < maxVisPos)
+        mSliderSize = mMaxSliderSize;
+    else
+        mSliderSize = (mMaxSliderSize * maxVisPos) / actPos;
+    // Set the new slider position.
+    mMaxSliderPos = mMaxSliderSize - mSliderSize;
+
+
+    mSliderPos = (mMaxSliderSize * actPos) / maxVisPos;
+    if (mSliderPos > mMaxSliderPos) mSliderPos = mMaxSliderPos;
+    // Draw the slider.
+    if (actPos > maxVisPos) mSingleLineSize = (float)mSliderPos/ (float)(actPos-maxVisPos);
+    else mSingleLineSize =0;
     draw();
 }
 
 //================================================================================================
 // Update the slider position.
 //================================================================================================
-void GuiGadgetScrollbar::updateSliderPos(int offset)
+void GuiGadgetScrollbar::updateSliderPos(int type, int offset)
 {
-    if (offset < -mSliderPos)
-        offset = -mSliderPos;
-    else if (offset > mMaxSliderPos- mSliderPos)
-        offset = mMaxSliderPos- mSliderPos;
-    if (offset)
+    if (type == SLIDER_H || type == SLIDER_V)
     {
-        mSliderPos+= offset;
-        draw();
-        // activated(mHorizontal?SLIDER_H:SLIDER_V, offset/mMaxSliderPos);
+        if (offset < 0) offset =0;
+        else if (offset > mMaxSliderPos) offset = mMaxSliderPos;
+        if (mSliderPos == offset) return;
+        mSliderPos = offset;
     }
+    else if (mSliderPos >0 && offset <0)
+    {
+        mSliderPos-= (int)mSingleLineSize;
+        if (mSliderPos < 0) mSliderPos =0;
+    }
+    else if (mSliderPos < mMaxSliderPos && offset >0)
+    {
+        mSliderPos+= (int)mSingleLineSize;
+        if (mSliderPos >= mMaxSliderPos) mSliderPos = mMaxSliderPos;
+    }
+    else return;
+    draw();
+    int pos = (int) (mSliderPos / mSingleLineSize);
+    if (--pos <0) pos =0;
+    activated(type, pos);
 }
 
 //================================================================================================
@@ -279,17 +316,16 @@ void GuiGadgetScrollbar::updateSliderPos(int offset)
 void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
 {
     if (newWidth == mWidth && newHeight == mHeight && mGfxBuffer) return;
-    float newSliderSize = 1.0;
     if (mHorizontal)
     {
         mStartX = mPosX + mButScrollDown->getWidth();
         mStartY = mPosY;
         mStopX  = mPosX + mWidth - mButScrollDown->getWidth();
         mStopY  = mPosY + mHeight;
-        mButScrollDown->setPosition(mStopX, mPosY);
-        mButScrollUp->setPosition(mPosX, mPosY);
-        newSliderSize = (float)newWidth / (float)mWidth;
+        mButScrollUp->setPosition(mStopX, mPosY);
+        mButScrollDown->setPosition(mPosX, mPosY);
         mMaxSliderSize = (mStopX -mStartX - SLIDER_INNER_OFFSET-1);
+        mSliderSize = (mSliderSize*newWidth) /mWidth;
     }
     else
     {
@@ -299,10 +335,9 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
         mStopY  = mPosY + mHeight - mButScrollDown->getHeight();
         mButScrollDown->setPosition(mStartX, mStopY);
         mButScrollUp->setPosition(mPosX, mPosY);
-        newSliderSize = (float)newHeight / (float)mHeight;
         mMaxSliderSize = (mStopY -mStartY - SLIDER_INNER_OFFSET-1);
+        mSliderSize = (mSliderSize*newHeight) /mHeight;
     }
-
     int w = mStopX-mStartX;
     int h = mStopY-mStartY;
     delete[] mGfxBuffer; // delete a NULL-Pointer is save in c++.
@@ -324,5 +359,5 @@ void GuiGadgetScrollbar::resize(int newWidth, int newHeight)
     }
     if (mButScrollUp)   mButScrollUp->draw();
     if (mButScrollDown) mButScrollDown->draw();
-    updateSliderSize(newSliderSize);
+    updateSliderSize(1, 1, -1);
 }
