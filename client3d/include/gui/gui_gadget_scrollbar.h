@@ -42,12 +42,14 @@ using namespace Ogre;
 class GuiGadgetScrollbar : public GuiElement
 {
 public:
-    typedef void (Callback) (class GuiListbox *parentElement, int index, float value);
+    typedef void (Callback) (class GuiListbox *parentElement, int index, int value);
     enum
     {
+        // Horizontal Elements.
         BUTTON_H_ADD,
         BUTTON_H_SUB,
         SLIDER_H,
+        // Vertical Elements.
         BUTTON_V_ADD,
         BUTTON_V_SUB,
         SLIDER_V
@@ -57,33 +59,38 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiGadgetScrollbar(TiXmlElement *xmlElement, void *parent, void *parentElement);
     ~GuiGadgetScrollbar();
-    void draw();
-    bool mouseEvent(int MouseAction, int x, int y);
     void resize(int newWidth, int newHeight);
-    void updateSliderSize(float size);
-    void updateSliderPos(int pos);
+    void updateSliderSize(int maxPos, int maxVisPos, int actPos);
     void setFunction(Callback *c)
     {
         mCallFunc = c;
     }
-    void activated(int index, float value)
-    {
-        if (mCallFunc) mCallFunc((GuiListbox *)mParentElement, index, value);
-    }
-
+    bool mouseEvent(int MouseAction, int x, int y);
+    void draw();
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    int  mSliderPos, mSliderSize, mMaxSliderSize, mMaxSliderPos;
-    bool mHorizontal;
-    bool mMouseOver, mMouseButDown;
+    int mSliderPos,  mMaxSliderPos;
+    int mSliderSize, mMaxSliderSize;
     int mStartX, mStopX, mStartY, mStopY;
+    bool mHorizontal, mDragging;
+    bool mMouseOver, mMouseButDown;
     uint32 *mGfxBuffer;
     uint32 mColorBackground, mColorBorderline, mColorBarPassive, mColorBarM_Over, mColorBarActive;
+    float mSingleLineSize;
     class GuiGadgetButton *mButScrollUp, *mButScrollDown;
     void *mParent, *mParentElement;
     Callback *mCallFunc;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    void updateSliderPos(int type, int offset);
+    void activated(int index, int value)
+    {
+        if (mCallFunc) mCallFunc((GuiListbox *)mParentElement, index, value);
+    }
 };
 
 #endif
