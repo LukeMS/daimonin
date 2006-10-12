@@ -4584,6 +4584,27 @@ female2.152
 female2.151
 female2.152
 mina
+anim fence_gate_01
+facings 9
+dummy.111
+dummy.111
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+fence_01_gate.112
+fence_01_gate_closed.112
+mina
 anim figpud
 figpud.101
 figpud.102
@@ -8278,6 +8299,30 @@ anim lamp
 lamp_lit1.101
 lamp_lit1.102
 mina
+anim lamp_pole
+facings 9
+dummy.111
+lamp_pole.101
+lamp_pole.101
+lamp_pole.101
+lamp_pole.101
+lamp_pole.101
+lamp_pole.101
+lamp_pole.101
+lamp_pole.101
+mina
+anim lamp_pole_unlit
+facings 9
+dummy.111
+lamp_pole.111
+lamp_pole.111
+lamp_pole.111
+lamp_pole.111
+lamp_pole.111
+lamp_pole.111
+lamp_pole.111
+lamp_pole.111
+mina
 anim lamp_post
 facings 9
 dummy.111
@@ -10345,6 +10390,30 @@ ped_white_hw1.131
 ped_white_hw1.131
 ped_white_hw1.111
 mina
+anim ped_white_hw2
+facings 9
+dummy.111
+ped_white_hw2.111
+ped_white_hw2.111
+ped_white_hw2.111
+ped_white_hw2.131
+ped_white_hw2.131
+ped_white_hw2.131
+ped_white_hw2.131
+ped_white_hw2.111
+mina
+anim ped_white_hw3
+facings 9
+dummy.111
+ped_white_hw3.111
+ped_white_hw3.111
+ped_white_hw3.111
+ped_white_hw3.131
+ped_white_hw3.131
+ped_white_hw3.131
+ped_white_hw3.131
+ped_white_hw3.111
+mina
 anim ped_white_hws1
 facings 9
 dummy.111
@@ -10356,6 +10425,30 @@ ped_white_hws1.131
 ped_white_hws1.131
 ped_white_hws1.131
 ped_white_hws1.111
+mina
+anim ped_white_ww1
+facings 9
+dummy.111
+ped_white_ww1.111
+ped_white_ww1.111
+ped_white_ww1.111
+ped_white_ww1.131
+ped_white_ww1.131
+ped_white_ww1.131
+ped_white_ww1.131
+ped_white_ww1.111
+mina
+anim ped_white_ww2
+facings 9
+dummy.111
+ped_white_ww2.111
+ped_white_ww2.111
+ped_white_ww2.111
+ped_white_ww2.131
+ped_white_ww2.131
+ped_white_ww2.131
+ped_white_ww2.131
+ped_white_ww2.111
 mina
 anim pedestal
 facings 9
@@ -11659,6 +11752,30 @@ ropeladder_down2.151
 ropeladder_down2.151
 ropeladder_down2.151
 ropeladder_down2.151
+mina
+anim rowboat_a
+facings 9
+dummy.111
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+row_boat_a.101
+mina
+anim rowboat_b
+facings 9
+dummy.111
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
+row_boat_b.101
 mina
 anim rune_fire
 rune_fire.101
@@ -13233,6 +13350,15 @@ anim teleporter
 exit.101
 exit.102
 mina
+anim teleporter_instance
+portal_yellow.101
+portal_yellow.102
+portal_yellow.103
+portal_yellow.104
+portal_yellow.105
+portal_yellow.106
+portal_yellow.107
+mina
 anim temp_fog
 fog.111
 fog.112
@@ -13624,6 +13750,18 @@ wagon_big.151
 wagon_big.151
 wagon_big.131
 mina
+anim wagon_flat
+facings 9
+dummy.111
+flat_wagon.101
+flat_wagon.101
+flat_wagon.101
+flat_wagon.101
+flat_wagon.101
+flat_wagon.101
+flat_wagon.101
+flat_wagon.101
+mina
 anim wagon_small.111
 facings 9
 dummy.111
@@ -13910,6 +14048,18 @@ wmask_ruin1b.131
 wmask_ruin1b.131
 wmask_ruin1b.131
 wmask_ruin1b.111
+mina
+anim wmask_shipwheel
+facings 9
+dummy.111
+wmask_shipwheel.151
+wmask_shipwheel.151
+wmask_shipwheel.151
+wmask_shipwheel.131
+wmask_shipwheel.131
+wmask_shipwheel.131
+wmask_shipwheel.131
+wmask_shipwheel.151
 mina
 anim wmask_wanted
 facings 9

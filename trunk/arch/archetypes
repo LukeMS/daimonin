@@ -463,6 +463,37 @@ editor_folder ai
 face ai.101
 sys_object 1
 end
+Object ai_horse
+name Horse AI
+type 126
+msg
+# This is an AI for horses, with a twist (or two)
+processes:
+look_for_other_mobs
+look_for_objects
+friendship
+choose_enemy
+attraction arch=apple01.101:100 arch=carrot01.101:100
+# Food is type 6
+
+moves: 
+sleep
+move_towards_enemy
+move_towards_enemy_last_known_pos
+avoid_repulsive_items
+search_for_lost_enemy
+move_towards_waypoint
+investigate_attraction
+move_towards_home
+
+actions:
+melee_attack_enemy
+endmsg
+editor_folder ai
+race horse
+face ai.101
+sys_object 1
+end
 Object alignment_force
 name ALIGNMENT_FORCE
 type 114
@@ -1828,6 +1859,21 @@ material 32
 material_real -1
 value 10
 weight 400
+end
+Object beer
+name beer
+type 6
+editor_folder items/organic/drinkable
+face beer.101
+food 175
+item_quality 100
+item_condition 100
+nrof 1
+layer 3
+speed_left 0.002
+material 32
+value 8
+weight 300
 end
 Object beer_barrel.101
 name beer barrel
@@ -8742,6 +8788,25 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object fence_gate_01
+name gate
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder walls/fence
+layer 5
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+face fence_01_gate_closed.112
+animation fence_gate_01
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
 Object fencing_boots
 name fencing boots
 type 99
@@ -9282,6 +9347,193 @@ name floor
 type 71
 editor_folder floors/cave
 face floor_cave6.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1a.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1a.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1b.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1b.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1c.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1c.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1d.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1d.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1e.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1e.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1f.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1f.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1g.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1g.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1h.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1h.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1i
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1i.101
+layer 1
+no_teleport 1
+terrain_type 2
+no_pick 1
+end
+Object floor_cave_dropoff1j
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1j.101
+layer 1
+no_teleport 1
+terrain_type 2
+no_pick 1
+end
+Object floor_cave_dropoff1k
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1k.101
+layer 1
+no_teleport 1
+terrain_type 2
+no_pick 1
+end
+Object floor_cave_dropoff1l.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1l.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1m.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1m.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1n.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1n.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1o.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1o.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1p.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1p.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1q.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1q.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1r.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1r.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+end
+Object floor_cave_dropoff1s.101
+name floor
+type 71
+editor_folder floors/cave
+face floor_cave_dropoff1s.101
 no_teleport 1
 layer 1
 terrain_type 1
@@ -17402,6 +17654,47 @@ speed 0.15
 last_eat 1
 last_sp 5
 end
+Object lamp_pole
+name pole lamp
+type 74
+editor_folder items/light
+layer 5
+face lamp_pole.101
+other_arch lamp_pole_unlit
+glow_radius 5
+is_animated 1
+animation lamp_pole
+speed -0.02
+is_turnable 1
+anim_speed 100
+direction 1
+no_teleport 1
+no_pick 1
+last_sp 5
+weight 1250
+material 144
+food 1
+end
+Object lamp_pole_unlit
+name pole lamp
+type 74
+editor_folder intern/items/light
+layer 5
+sub_type 1
+face lamp_pole.111
+animation lamp_pole_unlit
+speed -0.02
+is_animated 1
+is_turnable 1
+anim_speed 4
+direction 1
+no_teleport 1
+no_pick 1
+last_sp 5
+weight 1250
+material 144
+food 1
+end
 Object lamp_post
 name lamp post
 type 74
@@ -18591,6 +18884,14 @@ name big sign ('a'pply to read)
 type 98
 editor_folder outdoor/sign_big
 face marker4.101
+layer 4
+no_pick 1
+end
+Object marker_atrillia
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face marker_atrillia.131
 layer 4
 no_pick 1
 end
@@ -20257,6 +20558,34 @@ direction 1
 no_pass 1
 no_pick 1
 end
+Object ped_white_hw2
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_hw2.111
+animation ped_white_hw2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_hw3
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_hw3.111
+animation ped_white_hw3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
 Object ped_white_hws1
 name pedestal
 type 79
@@ -20264,6 +20593,34 @@ editor_folder structures/pillars
 layer 5
 face ped_white_hws1.111
 animation ped_white_hws1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_ww1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_ww1.111
+animation ped_white_ww1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_ww2
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_ww2.111
+animation ped_white_ww2
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -23908,10 +24265,38 @@ blocksview 1
 x 2
 y 1
 end
+Object rock_step1
+name rocks
+type 79
+editor_folder landscape/rocks
+layer 5
+face rock_step1.101
+no_pass 1
+no_pick 1
+end
+Object rock_step2
+name rocks
+type 79
+editor_folder landscape/rocks
+layer 5
+face rock_step2.101
+no_pass 1
+no_pick 1
+end
+Object rock_step3
+name rocks
+type 79
+editor_folder landscape/rocks
+layer 5
+face rock_step3.101
+no_pass 1
+no_pick 1
+end
 Object rock_wall1
 name rocks
 type 79
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall1.101
 no_pass 1
@@ -23922,6 +24307,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall2.101
 no_pass 1
@@ -23933,6 +24319,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 1
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -23944,6 +24331,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 2
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -23955,6 +24343,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 3
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -23966,6 +24355,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall3.101
 no_pass 1
@@ -23977,6 +24367,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 1
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -23988,6 +24379,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 2
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -23999,8 +24391,97 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 3
+blocksview 1
 layer 5
 no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall3a_exit
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+blocksview 1
+face rock_wall3_exit.131
+no_pick 1
+end
+More
+Object rock_wall3a_exit_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+blocksview 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall3a_exit_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+blocksview 1
+layer 5
+no_pick 1
+y 1
+end
+More
+Object rock_wall3a_exit_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+blocksview 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall3b_exit
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+blocksview 1
+face rock_wall3_exit.151
+no_pick 1
+end
+More
+Object rock_wall3b_exit_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+blocksview 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall3b_exit_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+blocksview 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall3b_exit_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+blocksview 1
 no_pick 1
 x 1
 y 1
@@ -24010,6 +24491,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall4.101
 no_pass 1
@@ -24021,6 +24503,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 1
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24032,6 +24515,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 2
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24043,6 +24527,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 3
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24054,6 +24539,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall5.101
 no_pass 1
@@ -24065,6 +24551,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 1
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24076,6 +24563,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 2
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24087,6 +24575,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 3
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24098,6 +24587,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall6.101
 no_pass 1
@@ -24109,6 +24599,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 1
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24120,6 +24611,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 2
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24131,6 +24623,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 3
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24142,6 +24635,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face rock_wall7.101
 no_pass 1
@@ -24154,6 +24648,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -24165,6 +24660,7 @@ type 79
 mpart_id 3
 mpart_nr 2
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 y 1
@@ -24176,6 +24672,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -24187,6 +24684,7 @@ type 79
 mpart_id 3
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 face rock_wall8.101
 no_pass 1
 no_pick 1
@@ -24198,6 +24696,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -24208,6 +24707,7 @@ name rocks
 type 79
 mpart_id 3
 mpart_nr 2
+blocksview 1
 layer 5
 no_pass 1
 no_pick 1
@@ -24220,6 +24720,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -24293,6 +24794,32 @@ sp -1
 layer 5
 no_pick 1
 end
+Object rowboat_a
+name row boat
+type 77
+editor_folder walls
+face row_boat_a.101
+animation rowboat_a
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object rowboat_b
+name row boat
+type 77
+editor_folder walls
+face row_boat_b.101
+animation rowboat_b
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
 Object rows
 name rows
 type 79
@@ -24363,6 +24890,32 @@ value 15
 weight 250
 container 75000
 weapon_speed 1.0
+end
+Object saddle
+name saddle
+type 122
+editor_folder items/container
+other_arch saddle_close
+face saddle.101
+layer 3
+level 1
+material 8
+material_real 193
+value 9000
+weight 6100
+container 85000
+weapon_speed 1.0
+speed -0.02
+end
+Object saddle_close
+name close the saddle
+type 121
+editor_folder intern/items/container
+face saddle_close.101
+layer 3
+no_drop 1
+no_pick 1
+identified 1
 end
 Object sadpriest
 name Sad Priest
@@ -25645,6 +26198,78 @@ material_real 65
 material 2
 weight 1550
 value 100
+end
+Object ship_rail_1
+name ship rail 1
+type 79
+editor_folder walls
+face ship_rail.111
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_2
+name ship rail 2
+type 79
+editor_folder walls
+face ship_rail.112
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_3
+name ship rail 3
+type 79
+editor_folder walls
+face ship_rail.113
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_4
+name ship rail 4
+type 79
+editor_folder walls
+face ship_rail.114
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_5
+name ship rail 5
+type 79
+editor_folder walls
+face ship_rail.115
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_6
+name ship rail 6
+type 79
+editor_folder walls
+face ship_rail.116
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_7
+name ship rail 7
+type 79
+editor_folder walls
+face ship_rail.117
+no_pick 1
+no_pass 1
+layer 3
+end
+Object ship_rail_8
+name ship rail 8
+type 79
+editor_folder walls
+face ship_rail.118
+no_pick 1
+no_pass 1
+layer 3
 end
 Object shootingstar
 name shootingstar
@@ -27954,6 +28579,7 @@ name rocks
 type 79
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 face snowy_rock_big1.101
 no_pass 1
 no_pick 1
@@ -27963,6 +28589,7 @@ name rocks
 type 79
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 face snowy_rock_big2.101
 no_pass 1
 no_pick 1
@@ -27972,6 +28599,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face snowy_rock_wall2.101
 no_pass 1
@@ -27984,6 +28612,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -27995,6 +28624,7 @@ type 79
 mpart_id 3
 mpart_nr 2
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 y 1
@@ -28006,6 +28636,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28017,6 +28648,7 @@ type 79
 mpart_id 3
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 face snowy_rock_wall3.101
 no_pass 1
 no_pick 1
@@ -28028,6 +28660,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28039,6 +28672,7 @@ type 79
 mpart_id 3
 mpart_nr 2
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 y 1
@@ -28050,6 +28684,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28061,6 +28696,7 @@ type 79
 mpart_id 3
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 face snowy_rock_wall4.101
 no_pass 1
 no_pick 1
@@ -28072,6 +28708,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28083,6 +28720,7 @@ type 79
 mpart_id 3
 mpart_nr 2
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 y 1
@@ -28094,6 +28732,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28107,6 +28746,7 @@ editor_folder landscape/rocks
 layer 5
 face snowy_rock_wall5.101
 no_pass 1
+blocksview 1
 no_pick 1
 end
 More
@@ -28117,6 +28757,7 @@ mpart_id 3
 mpart_nr 1
 layer 5
 no_pass 1
+blocksview 1
 no_pick 1
 x 1
 end
@@ -28129,6 +28770,7 @@ mpart_nr 2
 layer 5
 no_pass 1
 no_pick 1
+blocksview 1
 y 1
 end
 More
@@ -28138,6 +28780,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28152,6 +28795,7 @@ layer 5
 face snowy_rock_wall6.101
 no_pass 1
 no_pick 1
+blocksview 1
 end
 More
 Object snowy_rock_wall6_a
@@ -28160,6 +28804,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28171,6 +28816,7 @@ type 79
 mpart_id 3
 mpart_nr 2
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 y 1
@@ -28182,6 +28828,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28192,6 +28839,7 @@ name rocks
 type 79
 mpart_id 3
 editor_folder landscape/rocks
+blocksview 1
 layer 5
 face snowy_rock_wall8.101
 no_pass 1
@@ -28204,6 +28852,7 @@ type 79
 mpart_id 3
 mpart_nr 1
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -28215,6 +28864,7 @@ type 79
 mpart_id 3
 mpart_nr 2
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 y 1
@@ -28226,6 +28876,7 @@ type 79
 mpart_id 3
 mpart_nr 3
 layer 5
+blocksview 1
 no_pass 1
 no_pick 1
 x 1
@@ -29632,6 +30283,28 @@ no_pick 1
 no_pass 1
 layer 4
 end
+Object table_large
+name table
+type 79
+mpart_id 1
+editor_folder indoor/tables
+face table_large.101
+material 64
+layer 4
+no_pass 1
+no_pick 1
+end
+More
+Object table_largeb
+name table
+type 79
+mpart_id 1
+mpart_nr 1
+layer 4
+no_pass 1
+no_pick 1
+y 1
+end
 Object table_menorah
 name menorah
 type 71
@@ -29862,6 +30535,22 @@ no_pick 1
 animation teleporter
 is_animated 1
 anim_speed 3
+end
+Object teleporter_instance
+type 142
+editor_folder connect/exists
+face portal_yellow.101
+player_only 1
+layer 5
+hp -1
+sp -1
+no_teleport 1
+no_pick 1
+animation teleporter_instance
+is_animated 1
+anim_speed 3
+walk_on 1
+fly_on 1
 end
 Object temp_fog
 name fog
@@ -31496,6 +32185,25 @@ no_pass 1
 no_pick 1
 x 1
 y 1
+end
+Object wagon_flat
+name flat wagon
+type 122
+editor_folder items/container/wagon
+face flat_wagon.101
+animation wagon_flat
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
 end
 Object wagon_small.111
 name small wagon
@@ -36568,6 +37276,19 @@ type 77
 editor_folder structures/ruin
 face wmask_ruin1b.111
 animation wmask_ruin1b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wmask_shipwheel
+name ship wheel
+type 77
+editor_folder indoor/masks_wall
+face wmask_shipwheel.151
+animation wmask_shipwheel
 is_animated 0
 anim_speed 0
 is_turnable 1
