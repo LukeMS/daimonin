@@ -1,5 +1,6 @@
 Object rock_wall1
 name rocks
+blocksview 1
 layer 5
 type 79
 face rock_wall1.101
@@ -8,6 +9,7 @@ no_pick 1
 end
 Object rock_wall2
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -18,6 +20,7 @@ end
 More
 Object rock_wall2_a
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -29,6 +32,7 @@ end
 More
 Object rock_wall2_b
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -40,6 +44,7 @@ end
 More
 Object rock_wall2_c
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -51,6 +56,7 @@ no_pick 1
 end
 Object rock_wall3
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -61,6 +67,7 @@ end
 More
 Object rock_wall3_a
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -72,6 +79,7 @@ end
 More
 Object rock_wall3_b
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -83,6 +91,7 @@ end
 More
 Object rock_wall3_c
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -93,6 +102,7 @@ no_pass 1
 no_pick 1
 end
 Object rock_wall4
+blocksview 1
 name rocks
 layer 5
 type 79
@@ -104,6 +114,7 @@ end
 More
 Object rock_wall4_a
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -115,6 +126,7 @@ end
 More
 Object rock_wall4_b
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -126,6 +138,7 @@ end
 More
 Object rock_wall4_c
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -137,6 +150,7 @@ no_pick 1
 end
 Object rock_wall5
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -146,6 +160,7 @@ no_pick 1
 end
 More
 Object rock_wall5_a
+blocksview 1
 name rocks
 layer 5
 type 79
@@ -158,6 +173,7 @@ end
 More
 Object rock_wall5_b
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -169,6 +185,7 @@ end
 More
 Object rock_wall5_c
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -179,6 +196,7 @@ no_pass 1
 no_pick 1
 end
 Object rock_wall6
+blocksview 1
 name rocks
 layer 5
 type 79
@@ -190,6 +208,7 @@ end
 More
 Object rock_wall6_a
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -201,6 +220,7 @@ end
 More
 Object rock_wall6_b
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -212,6 +232,7 @@ end
 More
 Object rock_wall6_c
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -223,6 +244,7 @@ no_pick 1
 end
 Object rock_wall7
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -234,6 +256,7 @@ More
 Object rock_wall7_a
 name rocks
 layer 5
+blocksview 1
 type 79
 mpart_id 3
 mpart_nr 1
@@ -246,6 +269,7 @@ Object rock_wall7_b
 name rocks
 layer 5
 type 79
+blocksview 1
 mpart_id 3
 mpart_nr 2
 y 1
@@ -256,6 +280,7 @@ More
 Object rock_wall7_c
 name rocks
 layer 5
+blocksview 1
 type 79
 mpart_id 3
 mpart_nr 3
@@ -268,6 +293,7 @@ Object rock_wall8
 name rocks
 layer 5
 type 79
+blocksview 1
 mpart_id 3
 face rock_wall8.101
 no_pass 1
@@ -279,6 +305,7 @@ name rocks
 layer 5
 type 79
 mpart_id 3
+blocksview 1
 mpart_nr 1
 x 1
 no_pass 1
@@ -287,6 +314,7 @@ end
 More
 Object rock_wall8_b
 name rocks
+blocksview 1
 layer 5
 type 79
 mpart_id 3
@@ -299,6 +327,7 @@ More
 Object rock_wall8_c
 name rocks
 layer 5
+blocksview 1
 type 79
 mpart_id 3
 mpart_nr 3
