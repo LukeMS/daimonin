@@ -348,13 +348,13 @@ void remove_linked_spawn_list(mapstruct *map)
 {
     objectlink        *ol, *tmp;
 
+#ifdef DEBUG_LINK_SPAWN
+    LOG( llevDebug, "LINK_SPAWN::remove linked spawns for map %s\n", STRING_SAFE(map->path ));
+#endif
+
     for(ol = map->linked_spawn_list;ol;ol = tmp)
     {
         tmp = ol->next;
-#ifdef DEBUG_LINK_SPAWN
-        LOG( llevDebug, "LINK_SPAWN::remove: map %s (%d,%d)\n",
-             STRING_SAFE(ol->objlink.ob->map->path), ol->objlink.ob->x, ol->objlink.ob->y);
-#endif
         free_objectlink_simple(ol);
     }
 }
