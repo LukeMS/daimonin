@@ -10,7 +10,15 @@ QuestManager = {}
 -- level: require that the player is at least this level in the given skill
 -- skill: require the given _lev in this skill to start the quest.
 function QuestManager:New(player, quest, level, skill)
-    local obj = {player = player, quest_trigger = nil, required = {}, status = nil, name = nil}
+    local obj = {
+        player = player, 
+        quest_trigger = nil, 
+        required = {}, 
+        status = nil,
+        name = nil,
+        step = nil,
+        end_step = nil
+    }
    
     assert(player == nil or (type(player) == "GameObject" and player.type == game.TYPE_PLAYER), "player parameter must be nil or a player")
     
@@ -28,8 +36,8 @@ function QuestManager:New(player, quest, level, skill)
     end
     obj.quest_trigger = quest
    
-    -- Currently disabled functionality
     obj.step = 0
+    obj.end_step = 0
 
     -- Optional parameters
     if level == nil or skill == nil then
@@ -165,6 +173,12 @@ function QuestManager:AddItemList(_ib)
     end
 end
 
+-- Set the finish "step" for QUEST_NORMAL
+function QuestManager:SetFinalStep(step)
+    assert(not self:IsRegistered(), "The final step must be set up before registering")
+    self.end_step = step
+end
+
 -- Add a quest that must be completed before this
 function QuestManager:AddRequiredQuest(name)
     self.required[name] = true
@@ -179,8 +193,7 @@ function QuestManager:RegisterQuest(mode, ib)
     assert(self.quest_trigger == nil, "This quest was already registered?")
     assert(self.name ~= nil, "The quest doesn't have a name.")
 
-    -- FIXME some way to accept step, start and stop as parameters?
-    self.quest_trigger = self.player:AddQuest(self.name, mode, self.step, self.step, self.level, self.skill, ib:Build())
+    self.quest_trigger = self.player:AddQuest(self.name, mode, self.step, self.end_step, self.level, self.skill, ib:Build())
     self.status = nil -- clear cache
 
     return self.quest_trigger ~= nil
@@ -209,9 +222,18 @@ end
 
 -- Wrapper for object:AddQuestTarget()
 -- You need to register the quest before calling this
--- Returns a quest target object which you _must_ call AddQuestItem() on
+-- Use this for QUEST_KILL or QUEST_KILLITEM quests
+-- Returns a quest target object which you _must_ call AddQuestItem() on for KILLITEM quests
 function QuestManager:AddQuestTarget(...)
     assert(self.quest_trigger ~= nil, "The quest isn't registered")
     self.status = nil -- clear cache
     return self.quest_trigger:AddQuestTarget(unpack(arg))
+end
+
+-- Wrapper for object:AddQuestItem()
+-- You need to register the quest before calling this
+function QuestManager:AddQuestItem(...)
+    assert(self.quest_trigger ~= nil, "The quest isn't registered")
+    self.status = nil -- clear cache
+    return self.quest_trigger:AddQuestItem(unpack(arg))
 end
