@@ -85,6 +85,11 @@ function InterfaceBuilder:SetTextfield(contents)
     self.textfield = { contents = contents }
 end
 
+-- Add Item/Kill list from a Quest Manager
+function InterfaceBuilder:AddQuestChecklist(questmanager)
+    questmanager:AddItemList(self)
+end
+
 -- Generate the NPC GUI string from internal state
 function InterfaceBuilder:Build()
     local iface = ""
