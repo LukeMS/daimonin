@@ -701,7 +701,7 @@ Boolean game_status_chain(void)
         {
             sprintf(buf, "Break Login.");
             draw_info(buf, COLOR_RED);
-            GameStatus = GAME_STATUS_START;
+            SOCKET_CloseClientSocket(&csocket);
 			GameStatusLogin = FALSE;
         }
         reset_input_mode();
@@ -1285,6 +1285,15 @@ int main(int argc, char *argv[])
     while (!done)
     {
         done = Event_PollInputDevice();
+        
+        /* Have we been shutdown? */
+        if (handle_socket_shutdown())
+        {
+            /* connection closed, so we go back to INIT here*/
+            GameStatus = GAME_STATUS_INIT;
+            continue;
+        }
+
 
 #ifdef INSTALL_SOUND
         if (music_global_fade)
@@ -1318,21 +1327,8 @@ int main(int argc, char *argv[])
 
         if (GameStatus > GAME_STATUS_CONNECT)
         {
-            if (handle_socket_shutdown())
-            {
-                /* connection closed, so we go back to INIT here*/
-                if (GameStatus == GAME_STATUS_PLAY)
-                {
-                    GameStatus = GAME_STATUS_INIT;
-                }
-                else
-                    GameStatus = GAME_STATUS_START;
-            }
-            else
-            {
-				DoClient(&csocket);
-                request_face(0, 1); /* flush face request buffer */
-            }
+            DoClient(&csocket);
+            request_face(0, 1); /* flush face request buffer */
         }
 
         /* show help system or game screen */

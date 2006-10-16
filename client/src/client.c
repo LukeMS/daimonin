@@ -141,10 +141,6 @@ void DoClient(ClientSocket *csocket)
 {
     command_buffer *cmd;
 
-    /* Check for socket disconnect */
-    if(handle_socket_shutdown())
-        return;
-
     /* Handle all enqueued commands */
     while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {

@@ -270,7 +270,7 @@ static int reader_thread_loop(void *nix)
         }
 
         /* Finished with a command ? */
-        if(readbuf_len == cmd_len + header_len)
+        if(readbuf_len == cmd_len + header_len && !abort_thread)
         {
 /*            LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len); */
 
@@ -307,17 +307,14 @@ static int writer_thread_loop(void *nix)
     {
         int written = 0;
         command_buffer *buf;
-        SDL_LockMutex(output_buffer_mutex);
 
+        SDL_LockMutex(output_buffer_mutex);
         while(output_queue_start == NULL && !abort_thread)
             SDL_CondWait(output_buffer_cond, output_buffer_mutex);
         buf = command_buffer_dequeue(&output_queue_start, &output_queue_end);
-
         SDL_UnlockMutex(output_buffer_mutex);
-        if(abort_thread)
-            goto out;
 
-        while(written < buf->len && !abort_thread)
+        while(buf && written < buf->len && !abort_thread)
         {
             int ret = send(csocket.fd, buf->data + written, buf->len - written, 0);
 
@@ -354,7 +351,7 @@ out:
  */
 void socket_thread_start(void)
 {
-    LOG(-1,"START THREAD\n"); 
+    LOG(-1,"START THREADS\n"); 
 
     if(input_buffer_cond == NULL)
     {
@@ -380,20 +377,14 @@ void socket_thread_start(void)
  * Closes the socket first, if it hasn't already been done. */
 void socket_thread_stop(void)
 {
-    LOG(-1,"STOP THREAD\n"); 
+    LOG(-1,"STOP THREADS\n"); 
     
     SOCKET_CloseClientSocket(&csocket);
 
-    SDL_WaitThread(input_thread, NULL);
     SDL_WaitThread(output_thread, NULL);
+    SDL_WaitThread(input_thread, NULL);
 
-/*    
-    SDL_DestroyCond(input_buffer_cond);
-    SDL_DestroyMutex(input_buffer_mutex);
-    SDL_DestroyCond(output_buffer_cond);
-    SDL_DestroyMutex(output_buffer_mutex);
-    SDL_DestroyMutex(socket_mutex);
-*/    
+    input_thread = output_thread = NULL;
 }
 
 /** Detect and handle socket system shutdowns. Also reset the socket system
@@ -439,8 +430,12 @@ Boolean SOCKET_CloseSocket(SOCKET fd)
         return(TRUE);
 
 #ifdef __LINUX
-    close(fd);
+    if(shutdown(fd, SHUT_RDWR))
+        perror("shutdown");
+    if(close(fd))
+        perror("close");
 #else
+    shutdown(fd, 2);
     closesocket(fd);
 #endif
     return(TRUE);
