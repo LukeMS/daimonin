@@ -120,6 +120,8 @@ const int SOCKET_TIMEOUT_SEC = 8;
 class Network
 {
 public:
+
+    enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
     static Network &getSingleton()
     {
         static Network Singleton; return Singleton;
@@ -130,7 +132,7 @@ public:
         struct command_buffer *next; // Next in queue.
         struct command_buffer *prev; // Previous in queue.
         int len;
-        unsigned char data[0];
+        unsigned char *data;
     };
 
     bool Init();
@@ -145,13 +147,21 @@ public:
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
 
 
+    static void SockList_AddShort(SockList *sl, Uint16 data);
+    static void SockList_AddInt  (SockList *sl, Uint32 data);
+
     static int reader_thread_loop(void *);
     static int writer_thread_loop(void *);
 
+    static int send_command(const char *command, int repeat, int force);
     int send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len);
     static int send_socklist(SockList msg);
     void socket_thread_start();
     void socket_thread_stop();
+    bool isInit()
+    {
+        return mInitDone;
+    }
     void setActiveServer(int nr)
     {
         mActServerNr = nr;
@@ -170,7 +180,7 @@ public:
     static int cs_write_string(char *buf, int len);
     int  SOCKET_GetError();  // returns socket error
     void read_metaserver_data();
-    void clear_input_command_queue(void);
+    static void clear_input_command_queue(void);
     bool handle_socket_shutdown();
     void update();
     void contactMetaserver();

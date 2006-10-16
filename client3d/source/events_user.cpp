@@ -101,8 +101,14 @@ void CEvent::keyPressed(KeyEvent *e)
         }
 
         case KC_C:
+		{
+            static int animNr= 0;
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
+            if (++animNr >= 16) animNr= 0;
+
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
-            break;
+			break;
+		}
 
         case KC_S:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_SLUMP1);
@@ -114,6 +120,11 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_H:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
+            break;
+
+        case KC_T:
+            if (Network::getSingleton().isInit())
+                Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
             break;
 
         case KC_1:
@@ -247,7 +258,7 @@ void CEvent::keyPressed(KeyEvent *e)
             }
             break;
 
-        case KC_T:
+        case KC_X:
         {
             static int pixel =128;
             //change pixel size of terrain textures
@@ -286,12 +297,14 @@ void CEvent::keyPressed(KeyEvent *e)
         }
 
         case KC_L:
+		{
             static bool once = false;
             if (once) break;
             once = true;
             Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
             break;
+		}
 
         case KC_W:
             if (mDayTime)

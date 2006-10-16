@@ -6,9 +6,10 @@
 		<Option pch_mode="0" />
 		<Option default_target="" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="" />
 		<Build>
 			<Target title="32bit">
-				<Option output="../../../client3d" />
+				<Option output="../../../client3d" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../../../" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -22,7 +23,7 @@
 				</Linker>
 			</Target>
 			<Target title="64bit">
-				<Option output="../../../client3d" />
+				<Option output="../../../client3d" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../../../" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -367,6 +368,13 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../include/gui/gui_window_dialog.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../include/light_manager.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -607,6 +615,11 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/gui/gui_window.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/gui/gui_window_dialog.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />

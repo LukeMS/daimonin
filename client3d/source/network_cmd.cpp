@@ -35,6 +35,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_manager.h"
 #include "network_serverfile.h"
 #include "tile_manager.h"
+#include "gui_window_dialog.h"
 
 using namespace std;
 
@@ -205,7 +206,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
     if (mapstat != MAP_UPDATE_CMD_SAME)
     {
         strcpy(mapname, (char*)data + pos);
-        pos += strlen(mapname)+1;
+        pos += (int)strlen(mapname)+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
             //map_new_flag = TRUE;
@@ -441,7 +442,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
 //            set_map_face(x, y, 3, face, xdata, ext3, pname4);
         }
     } // more tiles
-//    map_udate_flag = 2;
+    TileManager::getSingleton().map_udate_flag = 2;
 }
 
 //================================================================================================
@@ -670,7 +671,7 @@ void Network::TargetObject(unsigned char *data, int len)
         cpl.target_color = *data++;
         cpl.target_code = *data++;
         strcpy(cpl.target_name, data);
-        map_udate_flag = 2;
+        TileManager::getSingleton().map_udate_flag = 2;
 
         sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
@@ -689,7 +690,7 @@ void Network::UpdateItemCmd(unsigned char *data, int len)
         item   *ip, *env = NULL;
         uint8   animspeed;
 
-        map_udate_flag = 2;
+        TileManager::getSingleton().map_udate_flag = 2;
         sendflags = GetShort_String(data);
         pos += 2;
         tag = GetInt_String(data + pos);
@@ -770,7 +771,7 @@ void Network::UpdateItemCmd(unsigned char *data, int len)
      }
         update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
                     false);
-        map_udate_flag = 2;
+        TileManager::getSingleton().map_udate_flag = 2;
     */
 }
 
@@ -788,7 +789,7 @@ void Network::DeleteItem(unsigned char *data, int len)
         }
         if (pos > len)
             Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
-        map_udate_flag = 2;
+        TileManager::getSingleton().map_udate_flag = 2;
     */
 }
 
@@ -1107,7 +1108,7 @@ void Network::ImageCmd(unsigned char *data, int len)
             fclose(stream);
         }
         FaceList[pnum].sprite = sprite_tryload_file(buf, 0, NULL);
-        map_udate_flag = 2;
+        TileManager::getSingleton().map_udate_flag = 2;
     */
 }
 
@@ -1225,7 +1226,7 @@ void Network::PlayerCmd(unsigned char *data, int len)
     new_player(tag, name, weight, (short) face);
     map_draw_map_clear();
     map_transfer_flag = 1;
-    map_udate_flag = 2;
+    TileManager::getSingleton().map_udate_flag = 2;
     */
     Logger::log().info() << "Loading quickslot settings for server";
     //load_quickslots_entrys();
@@ -1752,49 +1753,47 @@ void Network::GroupUpdateCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::InterfaceCmd(unsigned char *data, int len)
 {
+    TileManager::getSingleton().map_udate_flag = 2;
     /*
-        map_udate_flag = 2;
-        if((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
-             ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
+        if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
+                ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
         {
-            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+            //sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         }
-     reset_keys();
-     cpl.input_mode = INPUT_MODE_NO;
-        reset_gui_interface();
-        if(len)
+    */
+    GuiDialog::getSingleton().reset_gui_interface();
+    if (len)
+    {
+        int mode = *data;
+        int pos =1;
+        Logger::log().error() << "Interface command: " << (char*)(data+pos);
+        if (!GuiDialog::getSingleton().load_gui_interface(mode, (char*)data, len, pos))
         {
-            int mode, pos = 0;
+            Logger::log().warning() << "INVALID GUI CMD";
+            return;
+        }
 
-            mode = *data;
-            pos ++;
 
-      Logger::log().error() <<  "Interface command: " << (char*)(data+pos));
-            gui_interface_npc = load_gui_interface(mode, (char*)data, len, pos);
-            if(!gui_interface_npc)
-                draw_info("INVALID GUI CMD", COLOR_RED);
-            else
-            {
+        GuiDialog::getSingleton().show_interface_npc(0);
+
+
+        /*
                 gui_interface_npc->win_length = precalc_interface_npc();
                 interface_mode = mode;
                 cpl.menustatus = MENU_NPC;
                 gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
                 gui_interface_npc->starty = 50;
-                mb_clicked=0;
-                 // Prefilled (and focused) textfield
-                   if(gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
-                   {
-                       gui_interface_npc->input_flag = TRUE;
-
-                       reset_keys();
-                       open_input_mode(240);
-                       textwin_putstring(gui_interface_npc->textfield.text);
-                       cpl.input_mode = INPUT_MODE_NPCDIALOG;
-                       HistoryPos = 0;
-                   }
-            }
-        }
-    */
+                // Prefilled (and focused) textfield
+                if (gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
+                {
+                    gui_interface_npc->input_flag = TRUE;
+                    open_input_mode(240);
+                    textwin_putstring(gui_interface_npc->textfield.text);
+                    cpl.input_mode = INPUT_MODE_NPCDIALOG;
+                    HistoryPos = 0;
+                }
+        */
+    }
 }
 
 //================================================================================================
@@ -1839,7 +1838,7 @@ void Network::DeleteInventory(unsigned char *data, int len)
             return;
         }
         remove_item_inventory(locate_item(tag));
-        map_udate_flag = 2;
+        TileManager::getSingleton().map_udate_flag = 2;
     */
 }
 
@@ -1928,4 +1927,3 @@ void Network::CreatePlayerAccount()
     sprintf(buf, "%s", "nc human_male 14 14 13 12 12 12 12 0");
     cs_write_string(buf, (int)strlen(buf));
 }
-

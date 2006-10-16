@@ -83,6 +83,7 @@ CEvent::~CEvent()
 {
     if (mEventProcessor)
         delete mEventProcessor;
+	Network::getSingleton().SOCKET_DeinitSocket(); 
     TileManager  ::getSingleton().freeRecources();
     ObjectManager::getSingleton().freeRecources();
     GuiManager   ::getSingleton().freeRecources();
@@ -147,8 +148,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 mOverlay->getChild("OverlayElement/Screen2")->hide();
             GuiManager::getSingleton().displaySystemMessage("* Welcome to Daimonin *");
             GuiManager::getSingleton().displaySystemMessage("Starting the sound-system...");
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_SOUND:
         {
@@ -157,8 +158,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_LIGHT);
             GuiManager::getSingleton().displaySystemMessage("Starting lights...");
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_LIGHT:
         {
@@ -193,8 +194,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_SPELL);
             GuiManager::getSingleton().displaySystemMessage("Starting the spells...");
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_SPELL:
         {
@@ -250,10 +251,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_OBJECT);
             GuiManager::getSingleton().displaySystemMessage("Starting the objects...");
-            //Vector3 pos = Vector3::ZERO;
-            //setWorldPos(pos);
+            break;
         }
-        break;
 
         case GAME_STATUS_INIT_OBJECT:
         {
@@ -270,25 +269,27 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)".");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~t~ for texture quality. ");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~a~ to change Idle animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~b~ to change Attack animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~l~ to connect to server.");
-            //GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~X~ for texture quality. ");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~A~ to change Idle animation.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~B~ to change Attack animation.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#0000ffffInteracting with server:~");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~L~ to connect to server.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor.");
+            //GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
 
-/*
-            char buffer[200];
-            for (int i=0; i < 100; ++i)
-            {
-                sprintf(buffer, "testing %d", i);
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buffer);
+            /*
+                        char buffer[200];
+                        for (int i=0; i < 100; ++i)
+                        {
+                            sprintf(buffer, "testing %d", i);
+                            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buffer);
 
-            }
-*/
+                        }
+            */
 
 
             mWindow->resetStatistics();
@@ -554,7 +555,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
             */
             char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
-            Network::getSingleton().cs_write_string(buf, strlen(buf));
+            Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
             GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
             Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
             break;
@@ -635,6 +636,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 {
                     //  Sound::getSingleton().playStream(Sound::PLAYER_IDLE);
                 }
+                break;
             }
 
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
@@ -693,7 +695,7 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 //================================================================================================
 bool CEvent::checkUsername(const char *name)
 {
-    unsigned int len = strlen(name);
+    unsigned int len = (unsigned int)strlen(name);
     if (len < MIN_LEN_LOGIN_NAME || len > MAX_LEN_LOGIN_NAME)
     {
         String strMsg = "~#ffff0000Name length must be between " + StringConverter::toString(MIN_LEN_LOGIN_NAME)+

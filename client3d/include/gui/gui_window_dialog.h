@@ -120,35 +120,6 @@ typedef struct
 _gui_interface_button;
 
 
-typedef struct
-{
-    int mode;
-    int status;
-    uint32 used_flag;
-    int icon_count;
-    int link_count;
-    int win_length;
-    int input_flag;
-    int yoff;
-    int startx;
-    int starty;
-    int icon_select;
-    int selected;
-    int link_selected;
-    _gui_interface_head head;
-    _gui_interface_link link[MAX_INTERFACE_LINKS];
-    _gui_interface_message message;
-    _gui_interface_xtended xtended;
-    _gui_interface_reward reward;
-    _gui_interface_who who;
-    _gui_interface_icon icon[MAX_INTERFACE_ICON];
-    _gui_interface_button ok;
-    _gui_interface_button accept;
-    _gui_interface_button decline;
-    _gui_interface_textfield textfield;
-}
-_gui_interface_struct;
-
 
 /**
  ** This class provides a graphical dialog window.
@@ -193,13 +164,16 @@ public:
     }
 
     void reset_gui_interface();
-    void load_gui_interface(int mode, char *data, int len, int pos);
+    bool load_gui_interface(int mode, char *data, int len, int pos);
     void gui_interface_send_command(int mode, char *cmd);
     int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mouseX, int mouseY);
     int precalc_interface_npc(void);
     void show_interface_npc(int mark);
     void gui_interface_mouse(int mouseAction, int mouseX, int mouseY);
     char *get_parameter_string(char *data, int *pos);
+
+    bool mouseEvent(int MouseAction, int x, int y);
+    bool keyEvent(const char keyChar, const unsigned char key);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -221,7 +195,30 @@ private:
         INTERFACE_CMD_XTENDED  = 1 <<11,
     };
 
-    int mInterfaceMode;
+    bool mVisible;
+    int mMode;
+    int mStatus;
+    uint32 mUsed_flag;
+    int mIcon_count;
+    int mLink_count;
+    int mWin_length;
+    int mInput_flag;
+    int mYoff;
+    int mStartx, mStarty;
+    int mSelected;
+    bool mIcon_select;
+    int mLink_selected;
+    _gui_interface_head head;
+    _gui_interface_link link[MAX_INTERFACE_LINKS];
+    _gui_interface_message message;
+    _gui_interface_xtended xtended;
+    _gui_interface_reward reward;
+    _gui_interface_who who;
+    _gui_interface_icon icon[MAX_INTERFACE_ICON];
+    _gui_interface_button ok;
+    _gui_interface_button accept;
+    _gui_interface_button decline;
+    _gui_interface_textfield textfield;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -231,14 +228,14 @@ private:
     GuiDialog(const GuiDialog&); // disable copy-constructor.
     int interface_cmd_head  (_gui_interface_head   *head, char *data, int *pos);
     int interface_cmd_link  (_gui_interface_link   *head, char *data, int *pos);
-    int interface_cmd_who   (_gui_interface_who     *head, char *data, int *pos);
-    int interface_cmd_reward(_gui_interface_reward  *head, char *data, int *pos);
+    int interface_cmd_who   (_gui_interface_who    *head, char *data, int *pos);
+    int interface_cmd_reward(_gui_interface_reward *head, char *data, int *pos);
+    int interface_cmd_icon  (_gui_interface_icon   *head, char *data, int *pos);
+    int interface_cmd_button(_gui_interface_button *head, char *data, int *pos);
     int interface_cmd_message(_gui_interface_message *msg, char *data, int *pos);
     int interface_cmd_xtended(_gui_interface_xtended *msg, char *data, int *pos);
-    int interface_cmd_icon(_gui_interface_icon *head, char *data, int *pos);
-    int interface_cmd_button(_gui_interface_button *head, char *data, int *pos);
     int interface_cmd_textfield(_gui_interface_textfield *textfield, char *data, int *pos);
-    void format_gui_interface(_gui_interface_struct *gui_int);
+    void format_gui_interface();
 };
 
 
