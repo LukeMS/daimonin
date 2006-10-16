@@ -53,6 +53,7 @@ class TileManager
 {
 
 public:
+    int map_udate_flag;
     enum
     {
         TRIANGLE_LEFT  = 1 << 0,

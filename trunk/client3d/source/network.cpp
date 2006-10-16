@@ -141,6 +141,20 @@ Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_e
 Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
 
 
+void Network::SockList_AddShort(SockList *sl, uint16 data)
+{
+    sl->buf[sl->len++] = (data >> 8) & 0xff;
+    sl->buf[sl->len++] = (data     ) & 0xff;
+}
+
+void Network::SockList_AddInt(SockList *sl, uint32 data)
+{
+    sl->buf[sl->len++] = (data >> 24) & 0xff;
+    sl->buf[sl->len++] = (data >> 16) & 0xff;
+    sl->buf[sl->len++] = (data >>  8) & 0xff;
+    sl->buf[sl->len++] = (data      ) & 0xff;
+}
+
 //================================================================================================
 //
 //================================================================================================
@@ -284,6 +298,10 @@ bool Network::handle_socket_shutdown()
 {
     if (abort_thread)
     {
+
+ Logger::log().error() << "hier";
+
+
         socket_thread_stop();
         abort_thread = false;
         // Empty all queues.
@@ -306,12 +324,12 @@ bool Network::handle_socket_shutdown()
 //================================================================================================
 Network::command_buffer *Network::command_buffer_new(unsigned int len, unsigned char *data)
 {
-    command_buffer *buf = (command_buffer *) new char[sizeof(command_buffer)+len+1];
+    command_buffer *buf = new command_buffer;
     buf->next = buf->prev = NULL;
     buf->len = len;
-
+    buf->data = new unsigned char[len+1];
     if (data) memcpy(buf->data, data, len);
-    buf->data[len] = 0; // Buffer overflow sentinel.
+	buf->data[len] = 0; // Buffer overflow sentinel.
     return buf;
 }
 
@@ -351,11 +369,63 @@ Network::command_buffer *Network::command_buffer_dequeue(command_buffer **queue_
 //================================================================================================
 void Network::command_buffer_free(command_buffer *buf)
 {
-    delete[] buf;
+	delete[] buf->data;
+    delete buf;
 }
 
 
 /* High-level external interface */
+
+//================================================================================================
+// This should be used for all 'command' processing.  Other functions should call this so that
+// proper windowing will be done.
+// command is the text command, repeat is a count value, or -1 if none is desired and we don't
+// want to reset the current count.
+// force means we must send this command no matter what (ie, it is an administrative type
+// of command like fire_stop, and failure to send it will cause definate problems.
+// return 1 if command was sent, 0 if not sent.
+//================================================================================================
+int Network::send_command(const char *command, int repeat, int force)
+{
+    char        buf[MAX_BUF];
+    static char last_command[MAX_BUF] = "";
+    SockList    sl;
+
+    // Does the server understand 'ncom'? If so, special code.
+    if (csocket.cs_version >= 1021)
+    {
+        int commdiff = csocket.command_sent - csocket.command_received;
+        if (commdiff < 0)
+            commdiff += 256;
+
+        // Don't want to copy in administrative commands.
+        if (!force)
+            strcpy(last_command, command);
+        csocket.command_sent++;
+        csocket.command_sent &= 0xff;   // max out at 255.
+
+        sl.buf = (unsigned char *) buf;
+        strcpy((char *) sl.buf, "ncom ");
+        sl.len = 5;
+        SockList_AddShort(&sl, (Uint16) csocket.command_sent);
+        SockList_AddInt(&sl, repeat);
+        strncpy((char *) sl.buf + sl.len, command, MAX_BUF - sl.len);
+        sl.buf[MAX_BUF - 1] = 0;
+        sl.len += (int)strlen(command);
+        send_socklist(sl);
+    }
+    else
+    {
+        sprintf(buf, "cm %d %s", repeat, command);
+        cs_write_string(buf, (int)strlen(buf));
+    }
+/*
+    if (repeat != -1)
+        cpl.count = 0;
+*/
+    return 1;
+}
+
 
 //================================================================================================
 // Add a binary command to the output buffer.
@@ -441,7 +511,7 @@ int Network::reader_thread_loop(void *)
     int cmd_len = -1;
     int ret;
     int toread;
-    Logger::log().info() << "Reader thread started  " << csocket.fd;
+    Logger::log().info() << "Reader thread started  ";
 
     while (!abort_thread)
     {
@@ -508,8 +578,8 @@ int Network::reader_thread_loop(void *)
         }
     }
 out:
-    SOCKET_CloseClientSocket();
     Logger::log().error() << "Reader thread stopped";
+	SOCKET_CloseClientSocket();
     return -1;
 }
 
@@ -522,7 +592,6 @@ int Network::writer_thread_loop(void *nix)
     int written, ret;
     while (!abort_thread)
     {
-        SDL_Delay(100);
         written = 0;
         command_buffer *buf;
         SDL_LockMutex(output_buffer_mutex);
@@ -559,15 +628,15 @@ int Network::writer_thread_loop(void *nix)
         //      Logger::log().error() <<"Writer wrote a command (%d bytes)\n", written); */
     }
 out:
-    SOCKET_CloseClientSocket();
     Logger::log().info() << "Writer thread stopped";
+	SOCKET_CloseClientSocket();
     return 0;
 }
 
 //================================================================================================
 //
 //================================================================================================
-void Network::socket_thread_stop(void)
+void Network::socket_thread_stop()
 {
     Logger::log().info() << "Stopping thread.";
     SDL_WaitThread(input_thread, NULL);
@@ -602,7 +671,6 @@ bool Network::SOCKET_CloseSocket()
 bool Network::SOCKET_CloseClientSocket()
 {
     SDL_LockMutex(socket_mutex);
-
     if (csocket.fd == SOCKET_NO)
     {
         SDL_UnlockMutex(socket_mutex);
@@ -611,7 +679,6 @@ bool Network::SOCKET_CloseClientSocket()
     Logger::log().info() << "CloseClientSocket()";
 
     SOCKET_CloseSocket();
-
     delete[] csocket.inbuf.buf;
     delete[] csocket.outbuf.buf;
     csocket.inbuf.buf = csocket.outbuf.buf = NULL;
@@ -633,8 +700,8 @@ bool Network::SOCKET_CloseClientSocket()
 //================================================================================================
 bool Network::SOCKET_DeinitSocket()
 {
-    if (csocket.fd != SOCKET_NO)
-        SOCKET_CloseClientSocket();
+    //SOCKET_CloseClientSocket();
+	abort_thread = true;
 #ifdef WIN32
     WSACleanup();
 #endif
@@ -888,7 +955,7 @@ void Network::send_reply(char *text)
 {
     char buf[MAXSOCKBUF];
     sprintf(buf, "reply %s", text);
-    cs_write_string(buf, strlen(buf));
+    cs_write_string(buf, (int)strlen(buf));
 }
 
 //================================================================================================

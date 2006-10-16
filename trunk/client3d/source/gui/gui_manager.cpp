@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "define.h"
 #include "gui_manager.h"
+#include "gui_window_dialog.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
 #include "gui_textinput.h"
@@ -50,6 +51,7 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         { "ServerSelect",  GUI_WIN_SERVERSELECT  },
         { "Login",         GUI_WIN_LOGIN         },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
+        { "DialogNPC",     GUI_WIN_NPCDIALOG     },
     };
 class GuiWindow GuiManager::guiWindow[GUI_WIN_SUM];
 
@@ -218,6 +220,8 @@ void GuiManager::freeRecources()
 //================================================================================================
 bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 {
+    // Key event in npc-dialog window.
+    if (GuiDialog::getSingleton().keyEvent(keyChar, key)) return true;
     // We have an active Textinput.
     if (mProcessingTextInput)
     {
@@ -264,6 +268,8 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
             return true;
         }
     }
+    // Mouse event in npc-dialog window.
+    if (GuiDialog::getSingleton().mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY)) return true;
     return false;
 }
 
@@ -348,7 +354,7 @@ void GuiManager::showWindow(int window, bool visible)
     else
     {
         guiWindow[window].setVisible(false);
-        remove(mvActiveWindow.begin(), mvActiveWindow.end(), mvActiveWindow[window]);
+        remove(mvActiveWindow.begin(), mvActiveWindow.end(), window);
         // Active window is now the last window in list.
         mActiveWindow = mvActiveWindow[mvActiveWindow.size()-1];
     }

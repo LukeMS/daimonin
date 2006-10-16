@@ -59,13 +59,19 @@ private:
     // ////////////////////////////////////////////////////////////////////
     unsigned int mCounter;
 
+    enum
+    {
+        SYNC_EMITTERS   = 1<< 0,
+        SYNC_PARTICLES  = 1<< 1
+    };
+
     struct sParticles
     {
         Real speed;      //  0: Object has a static position.
         Real lifeTime;   // -1: Infinity lifetime.
         SceneNode *sceneNode;
         bool delNodeOnCleanup;
-        bool isFreeObject;
+        char neededSync;
         ParticleSystem *pSystem;
         Entity *entity;
     };

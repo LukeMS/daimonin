@@ -236,7 +236,6 @@
       <Pos x= "1" y= "18" />
       <Range width= "262" height= "248" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
-
       <Gadget type= "SCROLLER" name = "List_Msg_VScroll">
          <Pos x= "263" y= "18" />
          <Range width= "16" height= "248" />
@@ -248,8 +247,8 @@
 	     <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
          <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
       </Gadget>
-
     </Listbox>
+
   </Window>
 
   <!--#############################################-->
@@ -344,7 +343,7 @@
   <Window name= "Login">
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "200" height= "29" />
+    <DragArea x= "0" y= "0" width= "512" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <!--=============================================-->
@@ -417,15 +416,103 @@
     <Label   x=  "80" y= "105" font="03" text= "Retype Pswd: " />
     <TextBox x= "200" y= "105" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Verify" />
 
-
     <TextBox x= "60" y= "350" font="02" text= "" width = "392" name= "Login_LoginWarn" />
 
     <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
     <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_InputInfo2" />
     <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_InputInfo3" />
+  </Window>
 
 
+
+  <!--#############################################-->
+  <!--WINDOW: NPC Dialog                           -->
+  <!--#############################################-->
+  <Window name= "DialogNPC">
+    <Size     width= "512" height= "512" />
+    <Pos      x= "200" y= "200" zOrder = "250" />
+    <DragArea x= "0" y= "0" width= "512" height= "29" />
+    <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
+
+    <!--=============================================-->
+    <!-- Seamless Background                         -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
+      <Pos x= "0" y= "0" />
+      <Range width= "512" height= "512" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 0                                     -->
+    <!--=============================================-->
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "0" />
+      <Range width= "494" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
+      <Pos x= "503" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "5" y= "30" />
+      <Range width= "502" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
+      <Pos x= "0" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "507" />
+      <Range width= "492" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
+      <Pos x= "503" y= "503" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "0" y= "10" />
+      <Range width= "5" height= "492" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_V">
+      <Pos x= "507" y= "10" />
+      <Range width= "5" height= "492" />
+    </Graphic>
+
+    <!--=============================================-->
+    <!-- Layer 1                                     -->
+    <!--=============================================-->
+    <TextBox x= "125" y= "8" font="04" text= "Dialog Window" width = "392" name= "NPC_Headline" />
+
+    <Listbox type= "COLOR_FILL" name= "List_NPC" font="02">
+      <Pos x= "10" y= "60" />
+      <Range width= "262" height= "248" />
+      <Color red= "60" green= "56" blue= "31" alpha = "200" />
+      <Gadget type= "SCROLLER" name = "List_NPC_VScroll">
+         <Pos x= "263" y= "18" />
+         <Range width= "16" height= "248" />
+	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+	     <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+	     <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+	     <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+	     <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+	     <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
+         <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
+      </Gadget>
+    </Listbox>
 
   </Window>
+
 
 </XML>

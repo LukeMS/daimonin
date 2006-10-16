@@ -146,7 +146,7 @@ bool GuiTable::mouseEvent(int MouseAction, int x, int y)
 void GuiTable::addRow(String textline)
 {
     mvRow.push_back(textline+","); // Add the end of col sign (the comma) to the end of the text.
-    drawSelection(mvRow.size()-1);
+    drawSelection((int)mvRow.size()-1);
 }
 
 //================================================================================================
