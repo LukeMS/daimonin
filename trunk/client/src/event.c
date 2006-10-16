@@ -296,6 +296,7 @@ static void mouse_moveHero()
 #undef MY_POS
 }
 
+
 static int key_login_select_menu(SDL_KeyboardEvent *key)
 {
     if (key->type == SDL_KEYDOWN)
@@ -306,10 +307,12 @@ static int key_login_select_menu(SDL_KeyboardEvent *key)
 				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
 				GameStatusLogin?(GameStatusLogin=FALSE):(GameStatusLogin=TRUE);
               break;
+
             case SDLK_DOWN:
 				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
 				GameStatusLogin?(GameStatusLogin=FALSE):(GameStatusLogin=TRUE);
               break;
+
             case SDLK_RETURN:
 				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
 		        open_input_mode(12);
@@ -318,8 +321,9 @@ static int key_login_select_menu(SDL_KeyboardEvent *key)
 
             case SDLK_ESCAPE:
 	            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
-				GameStatus = GAME_STATUS_START;
-            return(0);
+                SOCKET_CloseClientSocket(&csocket);
+                GameStatus = GAME_STATUS_INIT;
+                return(0);
 
             default:
               break;
@@ -887,8 +891,9 @@ void key_connection_event(SDL_KeyboardEvent *key)
         {
             case SDLK_ESCAPE:
               sprintf(buf, "connection closed. select new server.");
+              SOCKET_CloseClientSocket(&csocket);
               draw_info(buf, COLOR_RED);
-              GameStatus = GAME_STATUS_START;
+              GameStatus = GAME_STATUS_INIT;
               break;
 
             default:
@@ -1417,7 +1422,7 @@ int key_event(SDL_KeyboardEvent *key)
                             else if (esc_menu_index == ESC_MENU_LOGOUT)
                             {
                                 save_quickslots_entrys();
-                                SOCKET_CloseSocket(csocket.fd);
+                                SOCKET_CloseClientSocket(&csocket);
                                 GameStatus = GAME_STATUS_INIT;
                             }
                             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
@@ -2472,7 +2477,7 @@ void check_menu_keys(int menu, int key)
 
         if (cpl.menustatus == MENU_CREATE)
         {
-            SOCKET_CloseSocket(csocket.fd);
+            SOCKET_CloseClientSocket(&csocket);
             GameStatus = GAME_STATUS_INIT;
         }
         cpl.menustatus = MENU_NO;
