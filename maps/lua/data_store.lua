@@ -88,9 +88,10 @@ function _data_store._load(id, player)
         if f == nil then
             return false
         end
-        t[id] = f()
-        assert(t[id], "Empty datastore file: "..path)
-        setmetatable(t[id], _DataStore_mt)
+        t[id] = {_changed = 0, _persist = true, _data = f()}
+        assert(t[id]._data, "Empty datastore file: "..path)
+        setmetatable(t[id]._data, _DataStore_mt)
+        setmetatable(t[id], { __index = t[id]._data, __newindex = t[id]._data })
     end
 
     return t[id]
@@ -114,6 +115,12 @@ function _data_store._save(time, player, b_force)
             else
                 b_save = true
             end
+
+            -- don't save non-persistant datastores
+            if rawget(v, "_persist") == false then
+                b_save = false
+            end
+
             if b_save then
                 local dir
                 if player then
@@ -124,7 +131,7 @@ function _data_store._save(time, player, b_force)
                 local filename = "data/" .. dir .. "/" .. k .. ".dsl"
                 local f = io.open(filename, "wb")
                 assert(f, "Couldn't open " .. filename)
-                f:write(_data_store._serialize(v))
+                f:write(_data_store._serialize(v._data))
                 f:close()
             end
         end
@@ -133,7 +140,7 @@ end
 
 function _data_store.save(b_force)
     local players, time = _data_store._players, os.time()
-    _data_store._save(time)
+    _data_store._save(time, nil, b_force)
     for player in players do
         if player ~= 'n' then
             _data_store._save(time, player, b_force)
@@ -150,7 +157,7 @@ function DataStore.Serialize(value)
 end
 
 function DataStore:Get(key)
-    local value = rawget(self, key)
+    local value = rawget(self._data, key)
     local t = type(value)
     if t == "GameObject" and not game:IsValid(value) then
         value = nil
@@ -169,7 +176,6 @@ function DataStore:Get(key)
 end
 
 function DataStore:Set(key, value)
-    assert(key ~= "_changed", "You can't change '_changed'")
     assert(type(key) == 'string', "datastore keys must be strings")
     if type(value) == "GameObject" and value.count then
         local ref = {id = value.count, object = value}
@@ -181,12 +187,20 @@ function DataStore:Set(key, value)
         setmetatable(ref, _data_store._special)
         value = ref
     end
-    rawset(self, key, value)
+    rawset(self._data, key, value)
     rawset(self, "_changed", os.time())
 end
 
 function DataStore:WasChanged()
     rawset(self, "_changed", os.time())
+end
+
+function DataStore:SetPersistance(persist)
+    rawset(self, "_persist", persist)
+end
+
+function DataStore:GetPersistance()
+    return rawget(self, "_persist")
 end
 
 _DataStore_mt = {__index = DataStore, __newindex = function() error("Use Set() to add/change values") end}
@@ -210,8 +224,9 @@ function DataStore:New(id, player)
     local obj = t[id]
     if obj == nil then
         if not _data_store._load(id, player) then
-            obj = {_changed = 0}
-            setmetatable(obj, _DataStore_mt)
+            obj = {_changed = 0, _persist = true, _data = {}}
+            setmetatable(obj._data, _DataStore_mt)
+            setmetatable(obj, { __index = obj._data, __newindex = obj._data })
             t[id] = obj
             t.n = table.getn(_data_store) + 1
         else
