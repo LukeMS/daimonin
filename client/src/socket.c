@@ -128,7 +128,7 @@ int send_command_binary(uint8 cmd, uint8 *body, unsigned int len)
         tmp[0] = (len >> 8) & 0xFF;
         tmp[1] = len & 0xFF;
         tmp[2] = cmd;
-        buf = command_buffer_new(len, tmp);
+        buf = command_buffer_new(3, tmp);
     }
 
     if(buf == NULL)
