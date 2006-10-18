@@ -322,7 +322,6 @@ static int key_login_select_menu(SDL_KeyboardEvent *key)
             case SDLK_ESCAPE:
 	            sound_play_effect(SOUND_SCROLL, 0, 0, 100);
                 SOCKET_CloseClientSocket(&csocket);
-                GameStatus = GAME_STATUS_INIT;
                 return(0);
 
             default:
@@ -893,7 +892,6 @@ void key_connection_event(SDL_KeyboardEvent *key)
               sprintf(buf, "connection closed. select new server.");
               SOCKET_CloseClientSocket(&csocket);
               draw_info(buf, COLOR_RED);
-              GameStatus = GAME_STATUS_INIT;
               break;
 
             default:
@@ -1423,7 +1421,6 @@ int key_event(SDL_KeyboardEvent *key)
                             {
                                 save_quickslots_entrys();
                                 SOCKET_CloseClientSocket(&csocket);
-                                GameStatus = GAME_STATUS_INIT;
                             }
                             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
                             esc_menu_flag = FALSE;
@@ -2478,7 +2475,6 @@ void check_menu_keys(int menu, int key)
         if (cpl.menustatus == MENU_CREATE)
         {
             SOCKET_CloseClientSocket(&csocket);
-            GameStatus = GAME_STATUS_INIT;
         }
         cpl.menustatus = MENU_NO;
         map_udate_flag = 2;

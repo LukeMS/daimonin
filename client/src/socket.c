@@ -333,7 +333,7 @@ static int writer_thread_loop(void *nix)
 /*        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written); */
     }
 
-out: 
+out:
     if(buf)
         command_buffer_free(buf);
     SOCKET_CloseClientSocket(&csocket);
