@@ -167,7 +167,6 @@ public:
         mActServerNr = nr;
     }
     bool SOCKET_InitSocket();
-    bool SOCKET_DeinitSocket();
     bool SOCKET_OpenSocket(const char *host, int port);
     bool SOCKET_OpenClientSocket(const char *host, int port);
     bool OpenActiveServerSocket()
@@ -180,7 +179,6 @@ public:
     static int cs_write_string(char *buf, int len);
     int  SOCKET_GetError();  // returns socket error
     void read_metaserver_data();
-    static void clear_input_command_queue(void);
     bool handle_socket_shutdown();
     void update();
     void contactMetaserver();

@@ -183,14 +183,20 @@ int Network::SOCKET_GetError()
 // .
 //================================================================================================
 Network::Network()
-{}
+{
+}
 
 //================================================================================================
 // .
 //================================================================================================
 Network::~Network()
 {
-    clearMetaServerData();
+    SOCKET_CloseClientSocket();
+#ifdef WIN32
+    WSACleanup();
+#endif
+    handle_socket_shutdown();
+	clearMetaServerData();
 }
 
 //================================================================================================
@@ -268,15 +274,9 @@ void Network::update()
 {
     if (!mInitDone) return;
     command_buffer *cmd;
-    while (1)
+    // Handle all enqueued commands.
+    while ((cmd = get_next_input_command()))
     {
-        if (handle_socket_shutdown())
-        {
-            // TODO: handle by going back to server selection state.
-            break;
-        }
-        cmd = get_next_input_command(); // function has mutex included.
-        if (!cmd) break;
         if (!cmd->data[0] || cmd->data[0] >= BINARY_CMD_SUM)
             Logger::log().error() << "Bad command from server " << cmd->data[0];
         else
@@ -289,21 +289,13 @@ void Network::update()
     }
 }
 
-
 //================================================================================================
 // The main thread should poll this function which detects connection shutdowns and
 // removes the threads if it happens.
 //================================================================================================
 bool Network::handle_socket_shutdown()
 {
-    if (abort_thread)
-    {
-
- Logger::log().error() << "hier";
-
-
         socket_thread_stop();
-        abort_thread = false;
         // Empty all queues.
         while (input_queue_start)
             command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
@@ -311,13 +303,7 @@ bool Network::handle_socket_shutdown()
             command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
         Logger::log().info() << "Connection lost";
         return true;
-    }
-    return false;
 }
-
-
-// Buffer queue management
-
 
 //================================================================================================
 // .
@@ -329,7 +315,7 @@ Network::command_buffer *Network::command_buffer_new(unsigned int len, unsigned 
     buf->len = len;
     buf->data = new unsigned char[len+1];
     if (data) memcpy(buf->data, data, len);
-	buf->data[len] = 0; // Buffer overflow sentinel.
+    buf->data[len] = 0; // Buffer overflow sentinel.
     return buf;
 }
 
@@ -369,8 +355,8 @@ Network::command_buffer *Network::command_buffer_dequeue(command_buffer **queue_
 //================================================================================================
 void Network::command_buffer_free(command_buffer *buf)
 {
-	delete[] buf->data;
-    delete buf;
+		delete[] buf->data;
+		delete buf;
 }
 
 
@@ -419,10 +405,10 @@ int Network::send_command(const char *command, int repeat, int force)
         sprintf(buf, "cm %d %s", repeat, command);
         cs_write_string(buf, (int)strlen(buf));
     }
-/*
-    if (repeat != -1)
-        cpl.count = 0;
-*/
+    /*
+        if (repeat != -1)
+            cpl.count = 0;
+    */
     return 1;
 }
 
@@ -482,18 +468,6 @@ Network::command_buffer *Network::get_next_input_command()
     SDL_UnlockMutex(input_buffer_mutex);
     return buf;
 }
-
-//================================================================================================
-// clear & free the whole read cmd queue
-//================================================================================================
-void Network::clear_input_command_queue()
-{
-    SDL_LockMutex(input_buffer_mutex);
-    while (input_queue_start)
-        command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
-    SDL_UnlockMutex(input_buffer_mutex);
-}
-
 
 
 /*
@@ -579,7 +553,7 @@ int Network::reader_thread_loop(void *)
     }
 out:
     Logger::log().error() << "Reader thread stopped";
-	SOCKET_CloseClientSocket();
+    SOCKET_CloseClientSocket();
     return -1;
 }
 
@@ -590,21 +564,20 @@ int Network::writer_thread_loop(void *nix)
 {
     Logger::log().info() << "Writer thread started";
     int written, ret;
-    while (!abort_thread)
+	command_buffer *buf;
+	while (!abort_thread)
     {
         written = 0;
-        command_buffer *buf;
-        SDL_LockMutex(output_buffer_mutex);
 
-        while (output_queue_start == NULL && !abort_thread)
+		SDL_LockMutex(output_buffer_mutex);
+        while (!output_queue_start && !abort_thread)
             SDL_CondWait(output_buffer_cond, output_buffer_mutex);
         buf = command_buffer_dequeue(&output_queue_start, &output_queue_end);
-
         SDL_UnlockMutex(output_buffer_mutex);
-        if (abort_thread)
-            goto out;
 
-        while (written < buf->len && !abort_thread)
+		if (abort_thread) break;
+
+		while (written < buf->len && !abort_thread)
         {
             ret = send(csocket.fd, (char*)buf->data + written, buf->len - written, 0);
             if (ret == 0)
@@ -625,11 +598,12 @@ int Network::writer_thread_loop(void *nix)
             else
                 written += ret;
         }
+		command_buffer_free(buf);
         //      Logger::log().error() <<"Writer wrote a command (%d bytes)\n", written); */
     }
 out:
     Logger::log().info() << "Writer thread stopped";
-	SOCKET_CloseClientSocket();
+    SOCKET_CloseClientSocket();
     return 0;
 }
 
@@ -671,13 +645,9 @@ bool Network::SOCKET_CloseSocket()
 bool Network::SOCKET_CloseClientSocket()
 {
     SDL_LockMutex(socket_mutex);
-    if (csocket.fd == SOCKET_NO)
+    if (csocket.fd != SOCKET_NO)
     {
-        SDL_UnlockMutex(socket_mutex);
-        return true;
-    }
     Logger::log().info() << "CloseClientSocket()";
-
     SOCKET_CloseSocket();
     delete[] csocket.inbuf.buf;
     delete[] csocket.outbuf.buf;
@@ -688,24 +658,11 @@ bool Network::SOCKET_CloseClientSocket()
     csocket.outbuf.pos = 0;
     csocket.fd = SOCKET_NO;
     abort_thread = true;
-
     SDL_CondSignal(input_buffer_cond);
     SDL_CondSignal(output_buffer_cond);
+    }
     SDL_UnlockMutex(socket_mutex);
-    return true;
-}
-
-//================================================================================================
-//
-//================================================================================================
-bool Network::SOCKET_DeinitSocket()
-{
-    //SOCKET_CloseClientSocket();
-	abort_thread = true;
-#ifdef WIN32
-    WSACleanup();
-#endif
-    return true;
+	return true;
 }
 
 //================================================================================================

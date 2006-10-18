@@ -50,7 +50,8 @@ const char *meshName[][ObjectEquipment::ITEM_SUM]=
     {
         {   // ITEM_WEAPON
             "Sword_Short_01.mesh",
-            "Mace_Small_01.mesh"
+            "Mace_Small_01.mesh",
+            "Short_Bow.mesh",
         },
         {   // ITEM_ARMOR_SHIELD
             "Shield_Round_01.mesh",

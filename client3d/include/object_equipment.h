@@ -63,7 +63,11 @@ public:
     };
     enum
     {
-        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY, BONE_SUM
+        BONE_WEAPON_HAND,
+        BONE_SHIELD_HAND,
+        BONE_HEAD,
+        BONE_BODY,
+        BONE_SUM
     };
     enum
     {
