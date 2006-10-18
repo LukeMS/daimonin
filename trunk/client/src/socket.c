@@ -291,11 +291,11 @@ out:
  */
 static int writer_thread_loop(void *nix)
 {
+    command_buffer *buf = NULL;    
     LOG(LOG_DEBUG, "Writer thread started\n");
     while(! abort_thread)
     {
         int written = 0;
-        command_buffer *buf;
 
         SDL_LockMutex(output_buffer_mutex);
         while(output_queue_start == NULL && !abort_thread)
@@ -310,7 +310,6 @@ static int writer_thread_loop(void *nix)
             if(ret == 0)
             {
                 LOG(LOG_DEBUG, "Writer got EOF\n");
-                command_buffer_free(buf);
                 goto out;
             }
             else if (ret == -1)
@@ -326,11 +325,17 @@ static int writer_thread_loop(void *nix)
             else
                 written += ret;
         }
-	command_buffer_free(buf);
+        if(buf)
+        {
+            command_buffer_free(buf);
+            buf = NULL;
+        }
 /*        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written); */
     }
 
-out:    
+out: 
+    if(buf)
+        command_buffer_free(buf);
     SOCKET_CloseClientSocket(&csocket);
     LOG(LOG_DEBUG, "Writer thread stopped\n");
     return 0;
