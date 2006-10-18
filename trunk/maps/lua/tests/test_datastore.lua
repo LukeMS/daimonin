@@ -1,5 +1,5 @@
 --
--- Test data store persistance and functionality
+-- Test data store persistence and functionality
 --
 require "../data_store.lua"
 
@@ -22,7 +22,7 @@ function test_1()
     print "test_1 passed"
 end
 
--- Tests persistance to file
+-- Tests persistence to file
 function test_2()
     clear_memorystore()
     os.execute("rm -f data/global/test.dsl")
@@ -43,7 +43,7 @@ function test_2()
     print "test_2 passed"
 end
 
--- Tests forced non-persistance
+-- Tests forced non-persistence
 function test_3()
     clear_memorystore()
     os.execute("rm -f data/global/test.dsl")
@@ -53,9 +53,9 @@ function test_3()
     local ds = DataStore:New("test")
     assert(ds.testvalue == nil, "ds.testvalue != nil")
     ds:Set("testvalue", 42)
-    assert(ds:GetPersistance() == true, "Default persistance not true")
-    ds:SetPersistance(false)
-    assert(ds:GetPersistance() == false, "Persistance status not changed")
+    assert(ds:GetPersistence() == true, "Default persistence not true")
+    ds:SetPersistence(false)
+    assert(ds:GetPersistence() == false, "Persistence status not changed")
     assert(ds.testvalue == 42, "ds.testvalue != 42")
     _data_store.save(true)
     assert(ds.testvalue == 42, "ds.testvalue != 42")
@@ -65,7 +65,7 @@ function test_3()
     local ds2 = DataStore:New("test")
     ds2:Set("testvalue2", 42)
     assert(ds2.testvalue2 == 42, "ds2.testvalue2 != 42")
-    assert(ds2.testvalue ~= 42, "ds2.testvalue == 42. Persistance skipping failed")
+    assert(ds2.testvalue ~= 42, "ds2.testvalue == 42. Persistence skipping failed")
 
     print "test_3 passed"
 end

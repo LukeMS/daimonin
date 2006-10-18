@@ -48,10 +48,11 @@ function QuestManager:New(player, quest, level, skill)
         obj.skill = skill
     end
 
-    setmetatable(obj, { __index = QuestManager })
+    setmetatable(obj, QuestManager._metatable)
     return obj
 end
 
+QuestManager._metatable = { __index = QuestManager }
 setmetatable(QuestManager, { __call = QuestManager.New })
 
 -- Get the status of the quest.
@@ -180,8 +181,15 @@ function QuestManager:SetFinalStep(step)
 end
 
 -- Add a quest that must be completed before this
-function QuestManager:AddRequiredQuest(name)
-    self.required[name] = true
+-- Either give a name string, or another questmanager as parameter
+function QuestManager:AddRequiredQuest(name_or_manager)
+    if type(name_or_manager) == "string" then
+        self.required[name_or_manager] = true
+    else
+        assert(getmetatable(name_or_manager) == QuestManager._metatable, "Must have a name string or QuestManager object as input")
+        self.required[name_or_manager.name] = true
+    end
+
     self.status = nil -- clear cache
 end
 
