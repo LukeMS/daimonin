@@ -184,17 +184,6 @@ command_buffer *get_next_input_command()
     return buf;
 }
 
-/** clear & free the whole input queue */
-void clear_input_command_queue(void)
-{
-    SDL_LockMutex(input_buffer_mutex);
-
-    while(input_queue_start)
-        command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
-
-    SDL_UnlockMutex(input_buffer_mutex);
-}
-
 /*
  * Lowlevel socket IO
  */
@@ -321,6 +310,7 @@ static int writer_thread_loop(void *nix)
             if(ret == 0)
             {
                 LOG(LOG_DEBUG, "Writer got EOF\n");
+                command_buffer_free(buf);
                 goto out;
             }
             else if (ret == -1)
@@ -336,13 +326,13 @@ static int writer_thread_loop(void *nix)
             else
                 written += ret;
         }
+	command_buffer_free(buf);
 /*        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written); */
     }
 
 out:    
     SOCKET_CloseClientSocket(&csocket);
     LOG(LOG_DEBUG, "Writer thread stopped\n");
-
     return 0;
 }
 

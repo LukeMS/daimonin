@@ -111,6 +111,7 @@ void CEvent::keyPressed(KeyEvent *e)
 		}
 
         case KC_S:
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_SLUMP1);
             break;
 

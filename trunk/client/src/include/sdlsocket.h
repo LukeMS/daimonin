@@ -41,7 +41,6 @@ extern int send_command_binary(uint8 cmd, uint8 *body, unsigned int len);
 extern int send_socklist(int fd, SockList msg);
 
 extern command_buffer *get_next_input_command(void);
-extern void clear_input_command_queue(void);
 extern void socket_thread_start(void);
 extern void socket_thread_stop(void);
 extern int handle_socket_shutdown();
