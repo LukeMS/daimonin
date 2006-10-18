@@ -116,7 +116,7 @@ function _data_store._save(time, player, b_force)
                 b_save = true
             end
 
-            -- don't save non-persistant datastores
+            -- don't save non-persistent datastores
             if rawget(v, "_persist") == false then
                 b_save = false
             end
@@ -195,11 +195,11 @@ function DataStore:WasChanged()
     rawset(self, "_changed", os.time())
 end
 
-function DataStore:SetPersistance(persist)
+function DataStore:SetPersistence(persist)
     rawset(self, "_persist", persist)
 end
 
-function DataStore:GetPersistance()
+function DataStore:GetPersistence()
     return rawget(self, "_persist")
 end
 
