@@ -432,7 +432,7 @@ int Network::send_command_binary(unsigned char cmd, unsigned char *body, unsigne
         tmp[0] = (len >> 8) & 0xFF;
         tmp[1] = len & 0xFF;
         tmp[2] = cmd;
-        buf = command_buffer_new(len, tmp);
+        buf = command_buffer_new(3, tmp);
     }
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
