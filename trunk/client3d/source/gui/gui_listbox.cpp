@@ -49,6 +49,7 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     int size = mWidth * mHeight + mWidth * (mFontHeight+1);
     mGfxBuffer = new uint32[size];
     for (int i =0; i < size; ++i) mGfxBuffer[i] = mFillColor;
+
     // ////////////////////////////////////////////////////////////////////
     // Set defaults.
     // ////////////////////////////////////////////////////////////////////
@@ -64,8 +65,8 @@ GuiListbox::GuiListbox(TiXmlElement *xmlElement, void *parent):GuiElement(xmlEle
     mScrollBarV   = 0;
     mScrollBarH   = 0;
     mActLines     = 0;
-
     TiXmlElement *xmlOpt;
+
     for (xmlOpt = xmlElement->FirstChildElement("Gadget"); xmlOpt; xmlOpt = xmlOpt->NextSiblingElement("Gadget"))
     {
         if (!strcmp(xmlOpt->Attribute("type"), "SCROLLER"))
@@ -111,6 +112,7 @@ void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
 void GuiListbox::scrollTextVertical(int offset)
 {
     // Pay attention to the ring buffer.
+
     if (mPrintPos> SIZE_STRING_BUFFER)
         offset+= mPrintPos & (SIZE_STRING_BUFFER-1);
     uint32 *gfxBuf = mGfxBuffer;
@@ -129,21 +131,129 @@ void GuiListbox::scrollTextVertical(int offset)
 // .
 //================================================================================================
 void GuiListbox::scrollTextHorizontal(int offset)
-{
-}
+{}
 
 //================================================================================================
-// Add a line of text to the ring-buffer.
+// Add a line of text to the ring-buffer (perform auto-clipping).
 //================================================================================================
-void GuiListbox::addTextline(const char *text)
+void GuiListbox::addTextline(const char *srcText)
 {
-    // Todo: Here we must split a string to fit into the window.
-    //       OR we cut it (done by textout) and show the line in the tooltip when
-    //       mouse is over this line.
+    static int  key_start = 0;
+    static int  key_count = 0;
+
     //Logger::log().error() << GuiTextout::getSingleton().CalcTextWidth(text, mFontNr) << " " << text;
-    row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = text;
-    ++mBufferPos;
-    ++mRowsToScroll;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Copy the text to a temp buffer, skipping all whitespaces.
+    // ////////////////////////////////////////////////////////////////////
+    char *buf2 = new char [strlen(srcText)+1];
+    char *text = buf2;
+    for (int i= 0; srcText[i]; ++i)
+    {
+        if (srcText[i] >= 32 || srcText[i] == 0x0a ||
+                srcText[i] == TXT_CMD_SOUND)
+            *text++ = srcText[i];
+    }
+    *text =0;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Mask out the sound command.
+    // ////////////////////////////////////////////////////////////////////
+    char *tag, *tagend, savetagend;
+    while ((tag = strchr(buf2, TXT_CMD_SOUND)))
+    {
+        tagend = strchr(tag, 0x0a);
+        if (!tagend)
+            tagend = tag + strlen(tag);
+        if (tagend > tag+1)
+        {
+            savetagend = *tagend;
+            *tagend = '\0';
+            // init_media_tag(tag);
+            *tagend = savetagend;
+            *tag = '\0';
+        }
+        // Remove sound command from the string.
+        memmove(tag, tagend, strlen(tag+1));
+    }
+
+    // ////////////////////////////////////////////////////////////////////
+    // Cut the string to make it fit into the window.
+    // ////////////////////////////////////////////////////////////////////
+    int w = 0, dstPos = 0, srcPos =0;
+    int ii, ix, it, tx;
+    char buf[4096];
+    while (1)
+    {
+        if (buf2[srcPos] == TXT_CMD_HIGHLIGHT || buf2[srcPos] == TXT_CMD_LINK)
+        {
+            buf[dstPos++] = buf2[srcPos++];
+            if (buf2[srcPos] == TXT_SUB_CMD_COLOR)
+                for (int skip = 9; skip; --skip) buf[dstPos++] = buf2[srcPos++];
+        }
+        w += GuiTextout::getSingleton().getCharWidth(mFontNr, buf2[srcPos]);
+
+        // Here comes a linebreak.
+        if (w >= mWidth || buf2[srcPos] <= 0x0a)
+        {
+            // now the special part - lets look for a good point to cut
+            if (w >= mWidth && dstPos > 10)
+            {
+                ii = ix = dstPos;
+                it = tx = srcPos;
+                while (ii >= dstPos / 2)
+                {
+                    if (buf2[it] == ' '
+                            || buf2[it] == ':'
+                            || buf2[it] == '.'
+                            || buf2[it] == ','
+                            || buf2[it] == '('
+                            || buf2[it] == ';'
+                            || buf2[it] == '-'
+                            || buf2[it] == '+'
+                            || buf2[it] == '*'
+                            || buf2[it] == '?'
+                            || buf2[it] == '/'
+                            || buf2[it] == '='
+                            || buf2[it] == '.'
+                            || buf2[it] == 0x0a
+                            || buf2[it] == 0)
+                    {
+                        tx = it;
+                        ix = ii;
+                        break;
+                    }
+                    --it;
+                    --ii;
+                }
+                srcPos = tx;
+                dstPos = ix;
+            }
+            buf[dstPos] =0;
+            row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = buf;
+            row[mBufferPos & (SIZE_STRING_BUFFER-1)].key_clipped = key_start;
+            ++mBufferPos;
+            ++mRowsToScroll;
+            dstPos = w = 0;
+            if (buf2[srcPos] == ' ') ++srcPos;
+
+            // hack: because of autoclip we must scan every line again.
+            for (text = buf; *text; ++text)
+                if (*text == TXT_CMD_LINK)
+                    key_count = (key_count + 1) & 1;
+            if (key_count)
+                key_start = 0x1000;
+            else
+                key_start = 0;
+
+            if (!buf2[srcPos])
+                break;
+        }
+        if (buf2[srcPos] != 0x0a)
+            buf[dstPos++] = buf2[srcPos];
+        ++srcPos;
+    }
+    delete[] buf2;
 }
 
 //================================================================================================
@@ -221,11 +331,13 @@ void GuiListbox::draw()
     // ////////////////////////////////////////////////////////////////////
     // Scroll the text.
     // ////////////////////////////////////////////////////////////////////
+
     if (!mRowsToScroll || mDragging) return;
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
     if (Root::getSingleton().getTimer()->getMilliseconds() - time < SCROLL_SPEED) return;
     time = Root::getSingleton().getTimer()->getMilliseconds();
+
     // New Line to scroll in.
     if (!mScroll)
     {
@@ -237,6 +349,7 @@ void GuiListbox::draw()
         PixelBox(mWidth, mHeight, 1, PF_A8R8G8B8 , mGfxBuffer + mWidth * mScroll),
         Box(mPosX, mPosY, mPosX + mWidth, mPosY + mHeight));
     // The complete row was scrolled.
+
     if (++mScroll >= mFontHeight)
     {
         --mRowsToScroll;

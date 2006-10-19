@@ -61,6 +61,7 @@ private:
     struct
     {
         String str;
+        int key_clipped;
         //    ColourValue colorTop;
         //    ColourValue colorBottom;
     }

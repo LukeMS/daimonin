@@ -92,8 +92,8 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     if (mType == ObjectManager::OBJECT_PLAYER)
     {
         Equip = new ObjectEquipment(mEntity);
-        //Equip->equipItem(1, 0, 2, -1);  // Just for test (Bow)
-        Equip->equipItem(0, 0, 0, 0);  // Just for test (Fire Sword)
+        Equip->equipItem(1, 0, 2, -1);  // Just for test (Bow)
+        //Equip->equipItem(0, 0, 0, 0);  // Just for test (Fire Sword)
         //Equip->equipItem(0, 0, 0, -1);  // Just for test (Sword)
     }
     // ////////////////////////////////////////////////////////////////////

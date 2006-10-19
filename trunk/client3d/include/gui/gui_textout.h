@@ -40,6 +40,15 @@ const uint32 COLOR_PINK  = 0xffff00ff;
 const uint32 COLOR_YELLOW= 0xffffff00;
 const uint32 COLOR_WHITE = 0xffffffff;
 
+const char TXT_CMD_HIGHLIGHT   = '~';
+const char TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
+const char TXT_CMD_LINK        = '^';
+const char TXT_CMD_SOUND       = '§';
+const char TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
+const char TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
+
+
+
 const int MAX_TEXTLINE_LEN = 1024;
 
 typedef struct TextLine
@@ -89,6 +98,10 @@ public:
     int getMaxFontHeight()
     {
         return maxFontHeight;
+    }
+    int getCharWidth(int fontNr, int Char)
+    {
+        return mvFont[fontNr]->charWidth[Char-32]+1;
     }
 private:
     // ////////////////////////////////////////////////////////////////////
