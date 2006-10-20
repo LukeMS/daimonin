@@ -78,7 +78,7 @@ struct shared_string {
 /* Our hashtable of shared strings */
 static hashtable *shared_strings;
 
-/* Initial number of buckets in the hashtable. 
+/* Initial number of buckets in the hashtable.
  * (Not very relevant, since it can grow) */
 #define SHSTR_INITIAL_TABLE_SIZE 8192
 
@@ -112,7 +112,7 @@ void init_hash_table()
 }
 
 /*
- * Allocates and initialises a new shared_string structure, 
+ * Allocates and initialises a new shared_string structure,
  * containing the string str.
  */
 
@@ -128,7 +128,7 @@ static struct shared_string *new_shared_string(const char *str, const int n)
     ss->refcount = 1;
     /*LOG(llevDebug,"SS: >%s< #%d - new\n",str,ss->refcount);*/
     memcpy((char *)ss->string, str, n);
-    ((char *)ss->string)[n] = '\0'; /* We aren't guaranteed to be given a 
+    ((char *)ss->string)[n] = '\0'; /* We aren't guaranteed to be given a
                              0-terminated string */
 
     return ss;
@@ -144,14 +144,14 @@ static int lstring_key_equals(const hashtable_const_key_t key1, const hashtable_
 
     GATHER(ladd_stats.strcmps);
     // Try to find a quick answer (see guarantee given about equals() use in hashtable.c)
-    if(key2 == HASH_EMPTY_KEY) 
-        return key1 == HASH_EMPTY_KEY;   
-    else if(key2 == HASH_DELETED_KEY) 
-        return key1 == HASH_DELETED_KEY;   
+    if(key2 == HASH_EMPTY_KEY)
+        return key1 == HASH_EMPTY_KEY;
+    else if(key2 == HASH_DELETED_KEY)
+        return key1 == HASH_DELETED_KEY;
 
     // Fast implementation adapted from Linux kernel source (sys/lib/string.c)
     // Copyright (C) 1991, 1992  Linus Torvalds
-   
+
     while (l) {
         if (!(__res = (*k1 == *k2++)) || !*k1++)
             break;
@@ -163,7 +163,7 @@ static int lstring_key_equals(const hashtable_const_key_t key1, const hashtable_
 static hashtable_size_t lstring_hash(const hashtable_const_key_t key)
 {
     GATHER(ladd_stats.hashed);
-    return generic_hash(key, key == s_newstring ? s_newstringlength : strlen(key));
+    return generic_hash(key, key == s_newstring ? s_newstringlength : (int)strlen(key));
 }
 
 /*
@@ -194,13 +194,13 @@ shstr *add_lstring(const char *str, int n)
     }
 
     /* TODO: this got very ugly and probably not efficient... */
-    
+
     /* hack the hashtable functions for strings of known length */
     shared_strings->hash = lstring_hash;
     shared_strings->equals = lstring_key_equals;
     s_newstringlength = n;
     s_newstring = str;
-    
+
     /* Unfortunately, this means two probes in the case of
      * strings that weren't in the hashtable already. */
     GATHER(ladd_stats.search);
@@ -210,9 +210,9 @@ shstr *add_lstring(const char *str, int n)
     } else {
         GATHER(ladd_stats.search);
         ss = new_shared_string(str, n);
-        hashtable_insert(shared_strings, ss->string, ss);        
+        hashtable_insert(shared_strings, ss->string, ss);
     }
-    
+
     /* Restore hashing functions */
 #ifdef SS_STATISTICS
     shared_strings->hash = stats_string_hash;
@@ -220,8 +220,8 @@ shstr *add_lstring(const char *str, int n)
 #else
     shared_strings->hash = string_hash;
     shared_strings->equals = string_key_equals;
-#endif    
-        
+#endif
+
     return ss->string;
 }
 
@@ -252,9 +252,9 @@ shstr *add_string(const char *str)
 #ifdef SS_STATISTICS
     s_stats = &add_stats;
 #endif
-    
+
     GATHER(add_stats.search);
-    
+
     /* Unfortunately, this means two probes in the case of
      * strings that weren't in the hashtable already. */
     if((ss = hashtable_find(shared_strings, str)))
@@ -263,9 +263,9 @@ shstr *add_string(const char *str)
     } else {
         GATHER(add_stats.search);
         ss = new_shared_string(str, strlen(str));
-        hashtable_insert(shared_strings, ss->string, ss);        
+        hashtable_insert(shared_strings, ss->string, ss);
     }
-        
+
     return ss->string;
 }
 
@@ -419,14 +419,14 @@ static void ss_find_totals(int *entries, int *refs, int *links, int what)
 
     *refs = 0;
     *links = 0;
-    
-    for (i = hashtable_iterator(shared_strings); 
-            i != hashtable_iterator_end(shared_strings); 
+
+    for (i = hashtable_iterator(shared_strings);
+            i != hashtable_iterator_end(shared_strings);
             i = hashtable_iterator_next(shared_strings, i))
     {
         struct shared_string *ss = hashtable_iterator_value(shared_strings, i);
         int probes = hashtable_num_probes_needed(shared_strings, ss->string);
-        
+
         *refs += ss->refcount;
         *links += probes;
         if(what & SS_DUMP_TOTALS)
@@ -434,8 +434,8 @@ static void ss_find_totals(int *entries, int *refs, int *links, int what)
     }
 }
 
-/** Returns the number of unique string entries, 
- * the total number of references used and the total number 
+/** Returns the number of unique string entries,
+ * the total number of references used and the total number
  * of links in the hash table.
  *
  * A large "refs" number indicates either that the memory savings
@@ -462,7 +462,7 @@ char * ss_dump_table(int what)
     int         entries = 0, refs = 0, links = 0;
 
     ss_find_totals(&entries, &refs, &links, what);
-    
+
     sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
 
     return totals;

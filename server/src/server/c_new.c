@@ -69,7 +69,7 @@ static int  map_pos_array[][2]  =
     { - 8, -7}, { - 8, -8}, { - 7, -8}, { - 6, -8}, { - 5, -8}, { - 4, -8}, { - 3, -8}, { - 2, -8}, { - 1, -8}
 };
 
-#define NROF_MAP_NODE (sizeof(map_pos_array) /(sizeof(int)*2))
+#define NROF_MAP_NODE ((int)(sizeof(map_pos_array) /(sizeof(int)*2)))
 
 
 static int compare_A(const void *a, const void *b)
@@ -248,7 +248,7 @@ int command_questlist(object *op, char *params)
 {
 	if (!op || op->type != PLAYER || !CONTR(op))
 		return 1;
-	
+
 	send_quest_list(op);
 
 	return 1;
@@ -297,10 +297,10 @@ static int valid_new_target(object *op, object *candidate)
  */
 /* this function needs a rework... its a bit bulky after adding all this exceptions MT-2004 */
 /*
- * Currently, "target friend" targets mobs with friendship >= FRIENDSHIP_HELP, 
+ * Currently, "target friend" targets mobs with friendship >= FRIENDSHIP_HELP,
  * which is basically anyone of the same alignment or players on non-pvp maps.
- * "target enemy" targets anything with friendship < FRIENDSHIP_HELP which 
- * includes neutral NPCs and PvP players. This ensures that "target enemy" 
+ * "target enemy" targets anything with friendship < FRIENDSHIP_HELP which
+ * includes neutral NPCs and PvP players. This ensures that "target enemy"
  * includes all potential targets but gives a big risk for unintentional attacks
  * on neutral targets. Gecko 2006-05-01
  */
@@ -380,7 +380,7 @@ int command_target(object *op, char *params)
                 && get_friendship(op, CONTR(op)->target_object) < FRIENDSHIP_HELP)
             n = CONTR(op)->target_map_pos;
         else
-            CONTR(op)->target_object = NULL;        
+            CONTR(op)->target_object = NULL;
 
         for (; n < NROF_MAP_NODE && n != nt; n++)
         {
@@ -486,7 +486,7 @@ int command_target(object *op, char *params)
                 {
                     /* this is a possible target */
                     tmp->head != NULL ? (head = tmp->head) : (head = tmp); /* ensure we have head */
-                    if(valid_new_target(op, head) 
+                    if(valid_new_target(op, head)
                             && get_friendship(op, head) >= FRIENDSHIP_HELP)
                     {
                         CONTR(op)->target_object = head;
@@ -709,13 +709,13 @@ void command_new_char(char *params, int len, player *pl)
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
     }
-	
+
 	if(stats[7] < 0 || stats[7] > 3) /* selected weapon skill */
 	{
         LOG(llevDebug, "SHACK:: %s: tried to hack NewChar! (weapon skill %d)\n", query_name(pl->ob), stats[6]);
         pl->socket.status = Ns_Dead; /* killl socket */
         return;
-	} 
+	}
 
     /* all is ok - now lets create this sucker */
     /* the stats of a player a saved in pl struct and copied to the object */
@@ -801,7 +801,7 @@ void command_new_char(char *params, int len, player *pl)
     SET_FLAG(objtmp, FLAG_IDENTIFIED);
     SET_FLAG(objtmp, FLAG_KNOWN_MAGICAL);
     SET_FLAG(objtmp, FLAG_KNOWN_CURSED);
-	manual_apply(op, objtmp, 0); 
+	manual_apply(op, objtmp, 0);
 	objtmp->value = 1;
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

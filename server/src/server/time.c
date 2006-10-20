@@ -422,20 +422,20 @@ void move_gate(object *op)
             (NUM_ANIMATIONS(op) / NUM_FACINGS(op)), errmsg);
         op->stats.wc = 0;
     }
-    
+
     /* Check for crushing when closing the gate */
     if(op->weight_limit == 0 && (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2)
     {
         object *tmp = op;
         for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
-        {            
+        {
             if (IS_LIVE(tmp))
             {
-                damage_ob(tmp, 4, op, ENV_ATTACK_CHECK); 
+                damage_ob(tmp, 4, op, ENV_ATTACK_CHECK);
                 if (tmp->type == PLAYER)
                     new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
             }
-            
+
             /* If the object is alive, or the object either can
              * be picked up or the object rolls, move the object
              * off the gate. */
@@ -456,7 +456,7 @@ void move_gate(object *op)
                 break; /* Only remove one object for now... */
             }
         }
-        
+
         /* Still anything blocking? */
         for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
         {
@@ -467,7 +467,7 @@ void move_gate(object *op)
             }
         }
     }
- 
+
     /* Do the actual moving */
     if (op->stats.food)
     {
@@ -485,7 +485,7 @@ void move_gate(object *op)
             op->stats.wc = 0;
             reached_end = 1;
         }
-    } 
+    }
     else
     {
         if ((int)++op->stats.wc >= ((NUM_ANIMATIONS(op) / NUM_FACINGS(op))))
@@ -521,7 +521,7 @@ void move_gate(object *op)
             update = UP_OBJ_FLAGFACE;
             SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
         }
-        if (!op->stats.ac) 
+        if (!op->stats.ac)
         {
             if (!QUERY_FLAG(op, FLAG_BLOCKSVIEW))
             {
@@ -544,8 +544,8 @@ void move_gate(object *op)
     op->state = (uint8) op->stats.wc;
     SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
     update_object(op, update);
-    
-#if 0    
+
+#if 0
     /* First, lets see if we are already at the top */
     if ((unsigned char) op->stats.wc == ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) - 1))
     {
@@ -681,7 +681,7 @@ void move_gate(object *op)
  */
 void move_timed_gate(object *op)
 {
-    uint32 v   = op->weight_limit;
+    sint32 v = op->weight_limit;
 
     if (op->stats.sp)
     {
@@ -1472,11 +1472,11 @@ void move_player_mover(object *op)
                 move_object(victim, dir);
 
             /* flag to paralyze the player */
-            /* ATM disabled when i removed attacktype - when needed move to better attribute 
+            /* ATM disabled when i removed attacktype - when needed move to better attribute
                MT 09-2005
             if (!op->stats.maxsp && op->attacktype)
                 op->stats.maxsp = 2;
-            if (op->attacktype)  
+            if (op->attacktype)
                 victim->speed_left = -FABS(op->stats.maxsp * victim->speed / op->speed);
              */
         }
@@ -1515,7 +1515,7 @@ void move_creator(object *op)
 {
     if (op->stats.hp <= 0 && !QUERY_FLAG(op, FLAG_LIFESAVE))
         return;
-    
+
     if(op->other_arch)
     {
         /* Create from other_arch */
@@ -1529,14 +1529,14 @@ void move_creator(object *op)
         tmp->y = op->y;
         tmp->level = op->level;
 
-        if(QUERY_FLAG(op, FLAG_ONE_DROP) && 
+        if(QUERY_FLAG(op, FLAG_ONE_DROP) &&
                 check_for_duplicate_ob(tmp, op->map, op->x, op->y))
             return;
 
         op->stats.hp--;
         insert_ob_in_map(tmp, op->map, op, 0);
     }
-    else 
+    else
     {
         /* Clone from inventory */
         object *source, *tmp;
@@ -1550,8 +1550,8 @@ void move_creator(object *op)
             tmp = ObjectCreateClone(source);
             tmp->x = op->x;
             tmp->y = op->y;
-        
-            if(QUERY_FLAG(op, FLAG_ONE_DROP) && 
+
+            if(QUERY_FLAG(op, FLAG_ONE_DROP) &&
                     check_for_duplicate_ob(tmp, op->map, op->x, op->y))
                 continue;
 
@@ -1684,7 +1684,7 @@ void move_environment_sensor(object *op)
  * type too. */
 void move_conn_sensor(object *op)
 {
-    uint32 newvalue = 0;
+    sint32 newvalue = 0;
     int numinputs = 0, numactive = 0;
 
     oblinkpt   *obp;
@@ -1720,18 +1720,18 @@ void move_conn_sensor(object *op)
                         /* Only count the output connection on conn_sensors */
                         if(ol->objlink.ob->last_grace == obp->value)
                             break;
-                    case LIGHT_SOURCE:    
-                    case GATE:    
-                    case TIMED_GATE:    
-                    case PIT:    
-                    case SIGN:    
-                    case MOOD_FLOOR:    
+                    case LIGHT_SOURCE:
+                    case GATE:
+                    case TIMED_GATE:
+                    case PIT:
+                    case SIGN:
+                    case MOOD_FLOOR:
                     case TYPE_LIGHT_APPLY:
-                    case FIREWALL:    
-                    case DIRECTOR:    
-                    case TELEPORTER:    
-                    case CREATOR:    
-                    case SPAWN_POINT:    
+                    case FIREWALL:
+                    case DIRECTOR:
+                    case TELEPORTER:
+                    case CREATOR:
+                    case SPAWN_POINT:
                         continue;
                 }
 
@@ -1874,55 +1874,55 @@ int process_object(object *op)
             {
                 if(op->sub_type1 == ST1_FORCE_SNARE)
                 {
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                         MAP_INFO_NORMAL, op->env, op->env, "%s suddenly walks faster.", query_name(op->env));
                     if(op->env->type == PLAYER)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly walk faster!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_BLIND)
                 {
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                         MAP_INFO_NORMAL, op->env, op->env, "%s suddenly can see again.", query_name(op->env));
                     if(op->env->type == PLAYER)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly can see again!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_CONFUSED)
                 {
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                         MAP_INFO_NORMAL, op->env, op->env, "%s suddenly regain his senses.", query_name(op->env));
                     if(op->env->type == PLAYER)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly regain your senses!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_PARALYZE)
                 {
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                         MAP_INFO_NORMAL, op->env, op->env, "%s suddenly moves again.", query_name(op->env));
                     if(op->env->type == PLAYER)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly can move again!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_FEAR)
                 {
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                         MAP_INFO_NORMAL, op->env, op->env, "%s suddenly looks braver.", query_name(op->env));
                     if(op->env->type == PLAYER)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "You suddenly feel braver!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_SLOWED)
                 {
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                     MAP_INFO_NORMAL, op->env, op->env, "%s suddenly moves faster.", query_name(op->env));
                     if(op->env->type == PLAYER)
                         new_draw_info(NDI_UNIQUE, 0, op->env, "The world suddenly moves slower!");
                 }
                 else if(op->sub_type1 == ST1_FORCE_DEPLETE) /* depletion */
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                                 MAP_INFO_NORMAL, op->env, op->env, "%s recovers depleted stats.", query_name(op->env));
                 else if(op->sub_type1 == ST1_FORCE_DRAIN)
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                                 MAP_INFO_NORMAL, op->env, op->env, "%s recovers drained levels.", query_name(op->env));
                 /*
                 else
-                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y, 
+                    new_info_map_except_format(NDI_UNIQUE|NDI_GREY, op->env->map, op->env->x, op->env->y,
                                 MAP_INFO_NORMAL, op->env, op->env, "%s lose some effects.", query_name(op->env));
                 */
 
