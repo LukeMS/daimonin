@@ -45,7 +45,7 @@ static int find_spell_byname(object *op, char *params, int options)
     int numknown; /* number of spells known by op */
     int spnum;  /* number of spell that is being cast */
     int match = -1, i;
-    int paramlen    = 0;
+    unsigned int paramlen = 0;
 
     if (QUERY_FLAG(op, FLAG_WIZ))
         numknown = NROFREALSPELLS;

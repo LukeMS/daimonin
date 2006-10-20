@@ -171,7 +171,7 @@ static void init_globals()
     nrofartifacts = 0;
     nrofallowedstr = 0;
 
-	/* thats used in socket/loop.c right after we have a connect */	
+	/* thats used in socket/loop.c right after we have a connect */
 	sprintf(global_version_msg, "X%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
 	global_version_msg[0] = BINARY_CMD_VERSION;
 	global_version_sl.buf = (unsigned char *)global_version_msg;
@@ -999,19 +999,19 @@ struct Command_Line_Options options[]   =
     */
     {"-h", 0, 1, help},
     /* Honor -help also, since it is somewhat common */
-    {"-help", 0, 1, help}, 
-    {"-v", 0, 1, call_version}, 
-    {"-d", 0, 1, set_debug}, 
+    {"-help", 0, 1, help},
+    {"-v", 0, 1, call_version},
+    {"-d", 0, 1, set_debug},
     {"+d", 0, 1, unset_debug},
     {"-mon", 0, 1, set_mondebug},
 #ifndef SECURE
-    {"-data",1,1, set_datadir}, 
+    {"-data",1,1, set_datadir},
     {"-local",1,1, set_localdir},
     {"-maps", 1, 1, set_mapdir},
-    {"-arch", 1, 1, set_archetypes}, 
-    {"-playerdir", 1, 1, set_playerdir}, 
+    {"-arch", 1, 1, set_archetypes},
+    {"-playerdir", 1, 1, set_playerdir},
     {"-treasures", 1, 1, set_treasures},
-    {"-uniquedir", 1, 1, set_uniquedir}, 
+    {"-uniquedir", 1, 1, set_uniquedir},
     {"-tmpdir", 1, 1, set_tmpdir},
 #endif
     {"-log", 1, 1, set_logfile},
@@ -1019,7 +1019,7 @@ struct Command_Line_Options options[]   =
     /* Pass 2 functions.  Most of these could probably be in pass 1,
     * as they don't require much of anything to bet set up.
     */
-    {"-csport", 1, 2, set_csport}, 
+    {"-csport", 1, 2, set_csport},
     {"-detach", 0, 2, set_daemon},
 
     /* Start of pass 3 information. In theory, by pass 3, all data paths
@@ -1031,10 +1031,10 @@ struct Command_Line_Options options[]   =
     {"-m5", 0, 3, set_dumpmon5}, {"-m6", 0, 3, set_dumpmon6}, {"-m7", 0, 3, set_dumpmon7}, {"-m8", 0, 3, set_dumpmon8},
     {"-m9", 0, 3, set_dumpmon9}, {"-mA", 0, 3, set_dumpmonA}, {"-mt", 1, 3, set_dumpmont},
 #endif
-    {"-s", 0, 3, showscores}, 
-    {"-score", 1, 3, showscoresparm}, 
+    {"-s", 0, 3, showscores},
+    {"-score", 1, 3, showscoresparm},
     {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
-    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false}, 
+    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
     {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
     {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
     {"-test", 0, 4, run_unit_tests},
@@ -1050,7 +1050,7 @@ static void parse_args(int argc, char *argv[], int pass)
 
     while (on_arg < argc)
     {
-        for (i = 0; i < sizeof(options) / sizeof(struct Command_Line_Options); i++)
+        for (i = 0; i < (int) (sizeof(options) / sizeof(struct Command_Line_Options)); i++)
         {
             if (!strcmp(options[i].cmd_option, argv[on_arg]))
             {
@@ -1232,7 +1232,7 @@ void init_library()
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
     init_dynamic();
-    init_clocks();    
+    init_clocks();
 
     init_lists_and_tables(); /* Initializes some global lists and tables */
 }
