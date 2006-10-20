@@ -215,7 +215,6 @@ void signal_connection(object *op, oblinkpt *olp)
  * to make sure that all gates and other buttons connected to the
  * button reacts to the (eventual) change of state.
  */
-
 void update_button(object *op)
 {
     object     *ab, *tmp, *head;
