@@ -203,7 +203,7 @@ void signal_connection(object *op, oblinkpt *olp)
               if(ignore_trigger_events)
                   break;
               if(op->weight_limit) /* Only trigger on positive edge */
-                  spawn_point(tmp);             
+                  spawn_point(tmp);
               break;
         }
     }
@@ -219,8 +219,9 @@ void signal_connection(object *op, oblinkpt *olp)
 void update_button(object *op)
 {
     object     *ab, *tmp, *head;
-    int         move, fly, tot, any_down = 0;
-    uint32        old_value = op->weight_limit;
+    unsigned int fly, move;
+    int         tot, any_down = 0;
+    sint32        old_value = op->weight_limit;
     objectlink *ol;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
@@ -284,7 +285,7 @@ void update_buttons(mapstruct *m)
     objectlink *ol;
     oblinkpt   *obp;
     object     *ab, *tmp;
-    int         fly, move;
+    unsigned int fly, move;
 
     /* Don't trigger plugin events from this function */
     ignore_trigger_events = 1;
@@ -767,12 +768,12 @@ int get_button_value(object *button)
  * by b.t. thomas@nomad.astro.psu.edu
  */
 
-/* TODO: this needs to be updated for the new AI system if it is going to 
+/* TODO: this needs to be updated for the new AI system if it is going to
  * be used at all. Gecko 2005-04-30 */
 void do_mood_floor(object *op, object *op2)
 {
     LOG(llevBug, "BUG: mood floor used (not implemented yet)\n");
-#if 0    
+#if 0
     object *tmp;
     object *tmp2;
 
@@ -844,7 +845,7 @@ void do_mood_floor(object *op, object *op2)
         default:
           break;
     }
-#endif    
+#endif
 }
 
 /* this function returns the object it matches, or NULL if non.
@@ -866,17 +867,17 @@ object * check_inv_recursive(object *op, object *trig)
         int match_type = 0;
         int match_slaying = 0;
         int match_arch = 0;
-        
+
         if (tmp->inv)
             if((ret = check_inv_recursive(tmp, trig)))
                 return ret;
-        
+
         /* compare type */
         if (trig->stats.hp && tmp->type == trig->stats.hp)
             match_type = 1;
 
         /* compare slaying with name or slaying */
-        if (trig->slaying && 
+        if (trig->slaying &&
             trig->slaying == (trig->stats.sp ? tmp->slaying : tmp->name))
                 match_slaying = 1;
 

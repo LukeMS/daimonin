@@ -154,19 +154,19 @@ void object_gc()
 {
     struct mempool_chunk   *current, *next;
     object                 *ob;
-    
-#if defined DEBUG_GC    
+
+#if defined DEBUG_GC
     if(removed_objects != &end_marker)
         LOG(llevDebug, "object_gc():\n");
-#endif    
+#endif
 
     while ((next = removed_objects) != &end_marker)
     {
         removed_objects = &end_marker; /* destroy_object() may free some more objects (inventory items) */
-#if defined DEBUG_GC    
+#if defined DEBUG_GC
         LOG(llevDebug, " sweep\n");
-#endif        
-        
+#endif
+
         while (next != &end_marker)
         {
             current = next;
@@ -176,9 +176,9 @@ void object_gc()
             ob = (object *) MEM_USERDATA(current);
             if (QUERY_FLAG(ob, FLAG_REMOVED))
             {
-#if defined DEBUG_GC    
+#if defined DEBUG_GC
                 LOG(llevDebug, "  collect obj %s (%d)\n", STRING_OBJ_NAME(ob), ob->count);
-#endif                
+#endif
                 if (OBJECT_FREE(ob))
                     LOG(llevBug, "BUG: Freed object in remove list: %s\n", STRING_OBJ_NAME(ob));
                 else
@@ -316,7 +316,7 @@ int CAN_MERGE(object *ob1, object *ob2)
     /* We should avoid merging empty containers too. Gecko 2005-10-09 */
     if (ob1->type == CONTAINER)
         return 0;
-    
+
     /* some stuff we should not need to test:
      * carrying: because container merge isa big nono - and we tested ->inv before. better no double use here.
      * weight_limit: same reason like carrying - add when we double use for stacking items
@@ -396,7 +396,7 @@ sint32 sum_weight(object *op)
 /*
  * add_weight(object, nrof) adds the specified weight for op * nrof to the ->env of op,
  * and also updates how much the environment(s) is/are carrying.
- * don't call add_weight() for SYS_OBJECTs 
+ * don't call add_weight() for SYS_OBJECTs
  */
 static inline void add_weight(const object *item, const uint32 nrof)
 {
@@ -432,11 +432,11 @@ static inline void add_weight(const object *item, const uint32 nrof)
         }
         else
             op->carrying += weight;
-        
+
         /* we have to update the view for clients. If this object is in a player inventory or
         * an player viewed open container which is INSIDE a player then update the view.
         */
-        if(op->env && (op->env->type == PLAYER || 
+        if(op->env && (op->env->type == PLAYER ||
             (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
             esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
     }
@@ -479,7 +479,7 @@ static inline void sub_weight(object *item, sint32 nrof)
         else
             op->carrying -= weight;
 
-        if(op->env && (op->env->type == PLAYER || 
+        if(op->env && (op->env->type == PLAYER ||
             (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
             esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
     }
@@ -845,8 +845,8 @@ void copy_object_data(object *op2, object *op)
     {
         SET_FLAG(op, FLAG_KNOWN_MAGICAL);
         SET_FLAG(op, FLAG_KNOWN_CURSED);
-    }    
-    
+    }
+
     /* perhaps we have a custom treasurelist. Then we need to
      * increase the refcount here.
      */
@@ -1004,7 +1004,7 @@ void update_object(object *op, int action)
                 else if (op->type == MAGIC_EAR)
                     newflags |= P_MAGIC_EAR;
 
-                if (QUERY_FLAG(op, FLAG_ALIVE)) 
+                if (QUERY_FLAG(op, FLAG_ALIVE))
                 {
                     newflags |= P_IS_ALIVE;
                     if(op->type==MONSTER && OBJECT_VALID(op->owner, op->owner_count)
@@ -1296,7 +1296,7 @@ void drop_ob_inv(object *ob)
 }
 
 /** Frees all data belonging to an object, but doesn't
- * care about the object itself. This can be used for 
+ * care about the object itself. This can be used for
  * non-GC objects like archetype clone objects */
 void free_object_data(object *ob, int free_static_data)
 {
@@ -1376,17 +1376,17 @@ static void destroy_ob_inv(object *op)
 {
     object *tmp, *tmp2;
 
-#if defined DEBUG_GC    
+#if defined DEBUG_GC
     if(op->inv)
         LOG(llevDebug, "  destroy_ob_inv(%s (%d))\n", STRING_OBJ_NAME(op), op->count);
-#endif    
-    
+#endif
+
     for (tmp = op->inv; tmp; tmp = tmp2)
     {
         tmp2 = tmp->below;
-#if defined DEBUG_GC    
+#if defined DEBUG_GC
         LOG(llevDebug, "    removing %s (%d)\n", STRING_OBJ_NAME(tmp), tmp->count);
-#endif    
+#endif
         if (tmp->inv)
             destroy_ob_inv(tmp);
 
@@ -1396,7 +1396,7 @@ static void destroy_ob_inv(object *op)
 
 /** frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
- * free objects. 
+ * free objects.
  *
  * This function is called automatically to free unused objects
  * (it is called from return_poolchunk() during garbage collection in object_gc() ).
@@ -1417,13 +1417,13 @@ void destroy_object(object *ob)
         dump_object(ob);
         LOG(llevBug, "BUG: Destroy object called with non removed object\n:%s\n", errmsg);
     }
-    
-#if defined DEBUG_GC    
+
+#if defined DEBUG_GC
     LOG(llevDebug, "  destroy_object(%s)\n", STRING_OBJ_NAME(ob));
-#endif    
+#endif
 
     /* Make sure to get rid of the inventory, too. */
-    destroy_ob_inv(ob); 
+    destroy_ob_inv(ob);
 
     free_object_data(ob, 0);
 
@@ -1487,12 +1487,12 @@ void remove_ob(object *op)
 {
     MapSpace   *msp;
     object     *otmp;
-    
+
     if (QUERY_FLAG(op, FLAG_REMOVED))
     {
         /*dump_object(op)*/;
         LOG(llevBug, "BUG: Trying to remove removed object.:<%s> (<%d> %d %x) map:%s (%d,%d)\n", query_name(op),
-                op->arch?STRING_SAFE(op->arch->name):"NOARCH", op->type, op->count, 
+                op->arch?STRING_SAFE(op->arch->name):"NOARCH", op->type, op->count,
                 op->map ? (op->map->path ? op->map->path : "op->map->path == NULL") : "op->map==NULL", op->x, op->y);
         return;
     }
@@ -2281,8 +2281,8 @@ object * insert_ob_in_ob(object *op, object *where)
             }
         }
     }
-    
-    CLEAR_FLAG(op, FLAG_REMOVED);    
+
+    CLEAR_FLAG(op, FLAG_REMOVED);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
     op->map = NULL;
     op->env = where;
@@ -2299,7 +2299,7 @@ object * insert_ob_in_ob(object *op, object *where)
     {
         // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
         activelist_remove_inline(op);
-    } 
+    }
 
     /* Client has no idea of ordering so lets not bother ordering it here.
      * It sure simplifies this function...
@@ -2946,12 +2946,12 @@ int auto_apply(object *op)
     return tmp ? 1 : 0;
 }
 
-/** Tries to locate a beacon. 
- * @return the named beacon object if it was in memory, 
+/** Tries to locate a beacon.
+ * @return the named beacon object if it was in memory,
  *         or NULL otherwise */
 object *locate_beacon(shstr *id)
 {
-    if(id == NULL) 
+    if(id == NULL)
     {
         LOG(llevBug, "locate_beacon(NULL)\n");
         return NULL;
@@ -2965,7 +2965,7 @@ object *locate_beacon(shstr *id)
 static void beacon_initializer(object *op)
 {
     LOG(llevDebug, "Initializing beacon (%s)\n", STRING_OBJ_NAME(op));
-    
+
     if(op->custom_attrset) {
         LOG(llevBug, "BUG: beacon (%s) initialized twice\n", STRING_OBJ_NAME(op));
         return;
@@ -2974,7 +2974,7 @@ static void beacon_initializer(object *op)
         LOG(llevBug, "BUG: beacon with NULL name\n");
         return;
     }
-        
+
     /* Store original name in the attrset, so that a name change
      * doesn't mess things up */
     op->custom_attrset = (void *)op->name;
@@ -2991,5 +2991,5 @@ static void beacon_initializer(object *op)
 /** Initialize the table of object initializers. */
 void init_object_initializers()
 {
-    object_initializers[TYPE_BEACON] = beacon_initializer;    
+    object_initializers[TYPE_BEACON] = beacon_initializer;
 }
