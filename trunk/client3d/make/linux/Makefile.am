@@ -44,6 +44,7 @@ client3d_SOURCES = \
 	../../source/gui/gui_statusbar.cpp \
 	../../source/gui/gui_textout.cpp \
 	../../source/gui/gui_window.cpp \
+	../../source/gui/gui_window_dialog.cpp \
 	../../source/tile_chunk.cpp \
 	../../source/tile_interface.cpp \
 	../../source/tile_manager.cpp \
