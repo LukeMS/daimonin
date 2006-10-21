@@ -202,14 +202,14 @@ void Network::Map2Cmd(unsigned char *data, int len)
     uint16  face;
 
     mapstat = (data[pos++]);
-    // map_transfer_flag = 0;
+    TileManager::getSingleton().map_transfer_flag = 0;
     if (mapstat != MAP_UPDATE_CMD_SAME)
     {
         strcpy(mapname, (char*)data + pos);
         pos += (int)strlen(mapname)+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
-            //map_new_flag = TRUE;
+            TileManager::getSingleton().map_new_flag = true;
             map_w = (uint8) (data[pos++]);
             map_h = (uint8) (data[pos++]);
             xpos =  (uint8) (data[pos++]);
@@ -361,7 +361,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 {
                     probe = (int) (data[pos++]);
                 }
-
 //                set_map_ext(x, y, 3, ext3, probe);
             }
             if (ext_flag & 0x10)
@@ -656,7 +655,6 @@ void Network::SoundCmd(unsigned char *data, int len)
     Logger::log().warning() << "Play sound: " << num << " posX: " << x << " posY: " << y;
 }
 
-//================================================================================================
 //================================================================================================
 // .
 //================================================================================================
@@ -1772,8 +1770,6 @@ void Network::InterfaceCmd(unsigned char *data, int len)
             Logger::log().warning() << "INVALID GUI CMD";
             return;
         }
-
-
         GuiDialog::getSingleton().show_interface_npc(0);
 
 

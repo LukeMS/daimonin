@@ -32,12 +32,22 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 
-String boneName[ObjectNPC::BONE_SUM]=
+String boneName[ObjectEquipment::BONE_SUM]=
     {
-        "RFingers",
-        "LFingers",
+        "Pelvis",
+        "Center",
         "Head",
-        "Spline1"
+        "Neck",
+        "Spine",     "Spine1",
+        "LClavicle", "R_Clavicle",
+        "LUpperArm", "RUpperArm",
+        "LForeArm",  "RForeArm",
+        "LHand",     "RHand",
+        "RFingers",  "LFingers",
+        "LThigh",    "RThigh",
+        "LCalf",     "RCalf",
+        "LFoot",     "RFoot",
+        "LToes",     "RToes"
     };
 
 const char *particleName[ObjectEquipment::PARTICLE_FX_SUM]=
@@ -448,22 +458,4 @@ void ObjectEquipment::dropItem(int bone)
         ParticleManager::getSingleton().delObject(mPSystem[bone]);
         mPSystem[bone] =0;
     }
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void ObjectEquipment::raiseWeapon(bool raise)
-{
-    /*
-        if (!raise)
-        {
-            toggleMesh(BONE_WEAPON_HAND, -1);
-            return;
-        }
-        if (!mEntityEquip[BONE_WEAPON_HAND])
-        {
-            toggleMesh(BONE_WEAPON_HAND, 0);
-        }
-    */
 }

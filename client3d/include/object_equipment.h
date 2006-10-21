@@ -63,10 +63,20 @@ public:
     };
     enum
     {
-        BONE_WEAPON_HAND,
-        BONE_SHIELD_HAND,
+        BONE_PELVIS,
+        BONE_CENTER,
         BONE_HEAD,
-        BONE_BODY,
+        BONE_NECK,
+        BONE_SPINE,       BONE_SPINE1,
+        BONE_LCLAVICLE,   BONE_RCLAVICLE,
+        BONE_LUPPER_ARM,  BONE_RUPPER_ARM,
+        BONE_LFORE_ARM,   BONE_RFORE_ARM,
+        BONE_L_HAND,      BONE_R_HAND,
+        BONE_WEAPON_HAND, BONE_SHIELD_HAND,
+        BONE_LTHIGH,      BONE_RTHIGH,
+        BONE_LCALF,       BONE_RCALF,
+        BONE_LFOOT,       BONE_RFOOT,
+        BONE_LTOES,       BONE_RTOES,
         BONE_SUM
     };
     enum
@@ -86,7 +96,6 @@ public:
     void drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber);
     void equipItem(int bone, int type, int itemID, int particleID =-1);
     void dropItem(int bone);
-    void raiseWeapon(bool raise);
 
 private:
     // ////////////////////////////////////////////////////////////////////

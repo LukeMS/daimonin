@@ -272,7 +272,7 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
                 mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
             }
             if (action == OBJ_TEXTURE    )
-                mvObject_npc[id]->Equip->setTexture(val1, val2);
+                mvObject_npc[id]->mEquip->setTexture(val1, val2);
             if (action == OBJ_HIT        )
                 mvObject_npc[id]->setDamage(val1);
             if (action == OBJ_TURN       )
@@ -418,12 +418,11 @@ void ObjectManager::selectObject(MovableObject *mob)
             mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
             if (mSelectedFriendly < 0)
             {
-                mvObject_npc[ObjectNPC::HERO]->readyWeapon(true);
                 mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);
             }
             else
             {
-                mvObject_npc[ObjectNPC::HERO]->readyWeapon(false);
+                mvObject_npc[ObjectNPC::HERO]->readyPrimaryWeapon(false);
             }
         }
     }
@@ -452,8 +451,8 @@ void ObjectManager::targetObjectAttackNPC(int npcIndex)
 //================================================================================================
 void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
 {
-    if (mvObject_npc[npcID]->Equip)
-        mvObject_npc[npcID]->Equip->equipItem(bone, type, itemID);
+    if (mvObject_npc[npcID]->mEquip)
+        mvObject_npc[npcID]->mEquip->equipItem(bone, type, itemID);
 }
 
 //================================================================================================

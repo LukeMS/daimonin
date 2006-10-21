@@ -22,6 +22,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "logger.h"
 #include "object_animate.h"
+
 /** IMPORTANT: Every animated model MUST have at least the Idle1 animation. **/
 //=================================================================================================
 // Init all static Elemnts.

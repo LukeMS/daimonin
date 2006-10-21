@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "gui_window_dialog.h"
 #include "gui_manager.h"
+#include "network.h"
 
 //================================================================================================
 //
@@ -249,7 +250,6 @@ int GuiDialog::interface_cmd_reward(_gui_interface_reward *head, char *data, int
 
         switch (c)
         {
-
             case 't': // title of the reward
                 if (!(buf = get_parameter_string(data, pos)))
                     return -1;
@@ -468,7 +468,6 @@ int GuiDialog::interface_cmd_button(_gui_interface_button *head, char *data, int
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
-
         switch (c)
         {
             case 't': // button title
@@ -521,7 +520,6 @@ int GuiDialog::interface_cmd_textfield(_gui_interface_textfield *textfield, char
 
         // c is part of the head command inside the '<' - lets handle it
         // It must be a command. If it is unknown, return NULL
-
         switch (c)
         {
             case 'b': // Textfield text
@@ -538,29 +536,6 @@ int GuiDialog::interface_cmd_textfield(_gui_interface_textfield *textfield, char
 }
 
 //================================================================================================
-// clear & reset the gui interface
-//================================================================================================
-void GuiDialog::reset_gui_interface(void)
-{
-    /*
-      TileManager::getSingleton().map_udate_flag = 2;
-      mInterfaceMode= INTERFACE_MODE_NO;
-      if(gui_interface_npc)
-      {
-        int s;
-        for(s=0;s<gui_interface_npc->mIcon_count;s++)
-          free(gui_interface_npc->icon[s].picture);
-        free(gui_interface_npc);
-      }
-     reset_keys();
-     cpl.input_mode = INPUT_MODE_NO;
-      gui_interface_npc = NULL;
-      if (cpl.menustatus == MENU_NPC)
-        cpl.menustatus = MENU_NO;
-    */
-}
-
-//================================================================================================
 //
 //================================================================================================
 void GuiDialog::format_gui_interface()
@@ -568,8 +543,7 @@ void GuiDialog::format_gui_interface()
     mMode= INTERFACE_MODE_NPC;
     if (mUsed_flag & GUI_INTERFACE_WHO)
     {
-        if (*who.body == 'Q')
-            mMode= INTERFACE_MODE_QLIST;
+        if (*who.body == 'Q') mMode= INTERFACE_MODE_QLIST;
     }
 
     if (mUsed_flag & GUI_INTERFACE_ICON)
@@ -578,8 +552,7 @@ void GuiDialog::format_gui_interface()
         for (int s=0; s< mIcon_count; ++s)
         {
             icon[s].second_line = NULL;
-            tmp = strchr(icon[s].body_text, '\n');
-            if (tmp)
+            if ((tmp = strchr(icon[s].body_text, '\n')))
             {
                 icon[s].second_line = tmp+1;
                 *tmp = 0;
@@ -702,7 +675,7 @@ void GuiDialog::format_gui_interface()
 
                     strcpy(tmp_line, reward.lines[reward.line_count]); // safe the line
                     reward.lines[reward.line_count][len]=0;
-                    for (ii=len;ii>=0;ii--)
+                    for (ii=len; ii>=0; --ii)
                     {
                         if (reward.lines[reward.line_count][ii] == ' ')
                         {
@@ -715,7 +688,6 @@ void GuiDialog::format_gui_interface()
 
                     // we don't eliminate leading whitespaces because we can't know its a format issue or not
                     // better to live with this little glitch as to destroy perhaps the text format.
-
                     strcpy(reward.lines[++reward.line_count], &tmp_line[ii+1]);
                     c = (int) strlen(reward.lines[reward.line_count]);
                 }
@@ -827,6 +799,29 @@ void GuiDialog::format_gui_interface()
 }
 
 //================================================================================================
+// clear & reset the gui interface
+//================================================================================================
+void GuiDialog::reset_gui_interface(void)
+{
+    /*
+      TileManager::getSingleton().map_udate_flag = 2;
+      mInterfaceMode= INTERFACE_MODE_NO;
+      if(gui_interface_npc)
+      {
+        int s;
+        for(s=0;s<gui_interface_npc->mIcon_count;s++)
+          free(gui_interface_npc->icon[s].picture);
+        free(gui_interface_npc);
+      }
+     reset_keys();
+     cpl.input_mode = INPUT_MODE_NO;
+      gui_interface_npc = NULL;
+      if (cpl.menustatus == MENU_NPC)
+        cpl.menustatus = MENU_NO;
+    */
+}
+
+//================================================================================================
 // called from commands.c after we got a interface command
 //================================================================================================
 bool GuiDialog::load_gui_interface(int mode, char *data, int len, int pos)
@@ -841,11 +836,11 @@ bool GuiDialog::load_gui_interface(int mode, char *data, int len, int pos)
     _gui_interface_button  button_tmp;
     _gui_interface_textfield textfield_tmp;
 
-    int cmd      = INTERFACE_CMD_NO;      // we have a open '<' and a command is active the string is related to this cmd.
+    int cmd      = INTERFACE_CMD_NO; // we have a open '<' and a command is active the string is related to this cmd.
     int cmd_mode = INTERFACE_CMD_NO; // when we collect outside a cmd tag strings,
     int flag_start=0, flag_end=0;
     char c;
-    for (;len>pos;pos++)
+    for (; len > pos; pos++)
     {
         c = *(data+pos);
         if (c == '<')
@@ -1000,6 +995,12 @@ normal_char:
     return true;
 }
 
+
+void client_send_tell_extended(char *body, char *tail)
+{
+}
+
+
 //================================================================================================
 // send a command from the gui to server.
 // if mode is 1, its a real command.
@@ -1008,42 +1009,39 @@ normal_char:
 //================================================================================================
 void GuiDialog::gui_interface_send_command(int mode, char *cmd)
 {
-    /*
-      char msg[1024];
+    char msg[1024];
 
-     if(gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
-      return;
+    if (mStatus == GUI_INTERFACE_STATUS_WAIT)
+        return;
 
-     if(gui_interface_npc->used_flag & GUI_INTERFACE_WHO)
-     {
-      if(!strncmp(cmd,"/talk ",6))
-       cmd +=6;
-      client_send_tell_extended(gui_interface_npc->who.body, cmd);
-     }
-     else
-     {
-       if(mode == 1)
-      {
-       send_command(cmd, -1, SC_NORMAL);
-       // if(strncmp(cmd, "/talk ", 6) == 0)
-      textwin_addhistory(cmd);
-      }
-      else
-      {
-       char buf[1024];
-       sprintf(buf,"/talk %s", cmd);
-       send_command(buf, -1, SC_NORMAL);
-       sprintf(msg,"Talking about: %s", cmd);
-       draw_info(msg,COLOR_WHITE);
-       if(mode == 2)
-      textwin_addhistory(buf);
-      }
-     }
-      reset_keys();
-     reset_input_mode();
-      cpl.input_mode = INPUT_MODE_NO;
-      gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
-    */
+    if (mUsed_flag& GUI_INTERFACE_WHO)
+    {
+        if (!strncmp(cmd,"/talk ",6))
+            cmd +=6;
+        char    buf[MAX_BUF];
+        sprintf(buf, "tx %s %s", who.body, cmd);
+        Network::getSingleton().cs_write_string(buf, strlen(buf));
+    }
+    else
+    {
+        if (mode == 1)
+        {
+            Network::getSingleton().send_command(cmd, -1, Network::SC_NORMAL);
+            // if(strncmp(cmd, "/talk ", 6) == 0)
+           // textwin_addhistory(cmd);
+        }
+        else
+        {
+            char buf[1024];
+            sprintf(buf,"/talk %s", cmd);
+            Network::getSingleton().send_command(buf, -1, Network::SC_NORMAL);
+            sprintf(msg,"Talking about: %s", cmd);
+            //draw_info(msg,COLOR_WHITE);
+            if (mode == 2)
+             ;//   textwin_addhistory(buf);
+        }
+    }
+    mStatus = GUI_INTERFACE_STATUS_WAIT;
 }
 
 //================================================================================================
@@ -1205,82 +1203,74 @@ int GuiDialog::get_interface_line(int *element, int *index, char **keyword, int 
 }
 
 //================================================================================================
-///
+//
 //================================================================================================
 int GuiDialog::precalc_interface_npc(void)
 {
     int yoff = 5;
-    /*
-       if(gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
-       {
-         yoff+=26;
+    if (mUsed_flag & GUI_INTERFACE_MESSAGE)
+    {
+        yoff+=26;
+        for (int i=0; i< message.line_count; ++i)
+            yoff+=15;
+    }
 
-         for(int i=0;i<gui_interface_npc->message.line_count;i++)
-           yoff+=15;
-       }
+    if (mLink_count)
+    {
+        for (int i=0; i<= mLink_count; ++i)
+            yoff+=15;
+    }
 
-       if(gui_interface_npc->link_count)
-       {
-         yoff+=15;
-         for(int i=0;i<gui_interface_npc->link_count;i++)
-           yoff+=15;
-       }
+    // reward is also used as "objective"
+    if (mUsed_flag & GUI_INTERFACE_REWARD)
+    {
+        yoff +=51;
+        for (int i=0; i<reward.line_count;++i,yoff+=15)
+            ;
+        yoff+=15;
 
-       // reward is also used as "objective"
-       if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
-       {
-         yoff +=51;
+        if (reward.copper || reward.gold || reward.silver || reward.mithril || mIcon_count)
+        {
+            if (reward.line_count)
+                yoff+=15;
+            yoff+=15;
+        }
+    }
 
-         for(int i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=15)
-           ;
+    yoff+=5;
+    if (mIcon_count)
+    {
+        bool flag_s = false;
+        yoff+=25;
+        for (int i=0; i<mIcon_count; ++i)
+        {
+            if (icon[i].mode == 's' )
+                flag_s = true;
+            else if (icon[i].mode == 'G' )
+                yoff+=44;
+        }
 
-         yoff+=15;
+        if (flag_s)
+        {
+            yoff+=20;
+            for (int i=0;i<mIcon_count;i++)
+            {
+                if (icon[i].mode == 's' )
+                    yoff+=44;
+            }
+        }
+    }
 
-         if(gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
-             gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
-             gui_interface_npc->mIcon_count)
-         {
-           if(gui_interface_npc->reward.line_count)
-             yoff+=15;
-           yoff+=15;
-         }
-       }
+    if (mIcon_select)
+    {
+        yoff+=20;
+        for (int i=0;i<mIcon_count;i++)
+        {
 
-       yoff+=5;
-       if(gui_interface_npc->mIcon_count)
-       {
-         int flag_s=FALSE;
-         yoff+=25;
-         for(int i=0;i<gui_interface_npc->mIcon_count;i++)
-         {
-           if(gui_interface_npc->icon[i].mode == 's' )
-             flag_s=TRUE;
-           else if(gui_interface_npc->icon[i].mode == 'G' )
-             yoff+=44;
-         }
-
-         if(flag_s)
-         {
-           yoff+=20;
-           for(int i=0;i<gui_interface_npc->mIcon_count;i++)
-           {
-             if(gui_interface_npc->icon[i].mode == 's' )
-               yoff+=44;
-           }
-         }
-       }
-
-       if(gui_interface_npc->mIcon_select)
-       {
-         yoff+=20;
-         for(int i=0;i<gui_interface_npc->mIcon_count;i++)
-         {
-
-           if(gui_interface_npc->icon[i].mode == 'S' )
-             yoff+=44;
-         }
-       }
-     */
+            if (icon[i].mode == 'S' )
+                yoff+=44;
+        }
+    }
     return yoff;
 }
 
@@ -1291,10 +1281,9 @@ void GuiDialog::show_interface_npc(int mark)
 {
     GuiManager::getSingleton().showWindow(GUI_WIN_NPCDIALOG, true);
     mVisible = true;
-    //int x=gui_interface_npc->startx, y=gui_interface_npc->starty, numButton=0,yoff, i;
+//    int x= mStartx, y= mStarty, numButton=0, yoff, i;
     GuiManager::getSingleton().sendMessage(GUI_WIN_NPCDIALOG, GUI_MSG_TXT_CHANGED, GUI_TEXTBOX_NPC_HEADLINE, (void*)head.body_text);
     GuiManager::getSingleton().sendMessage(GUI_WIN_NPCDIALOG, GUI_MSG_ADD_TEXTLINE, GUI_LIST_NPC  , (void*) message.body_text );
-//
 
     /*
       add_close_button(x-113, y+4, MENU_NPC);
