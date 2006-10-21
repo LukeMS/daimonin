@@ -234,11 +234,11 @@
 
     <Listbox type= "COLOR_FILL" name= "List_Msg" font="02">
       <Pos x= "1" y= "18" />
-      <Range width= "262" height= "248" />
+      <Range width= "262" height= "251" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
       <Gadget type= "SCROLLER" name = "List_Msg_VScroll">
          <Pos x= "263" y= "18" />
-         <Range width= "16" height= "248" />
+         <Range width= "16" height= "251" />
 	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
 	     <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
 	     <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
@@ -257,7 +257,7 @@
   <Window name= "ServerSelect">
     <Size     width= "512" height= "512" />
     <Pos      x= "200" y= "200" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "200" height= "29" />
+    <DragArea x= "0" y= "0" width= "512" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <!--=============================================-->
@@ -495,10 +495,9 @@
     <!--=============================================-->
     <TextBox x= "125" y= "8" font="04" text= "Dialog Window" width = "392" name= "NPC_Headline" />
 
-    <Listbox type= "COLOR_FILL" name= "List_NPC" font="02">
+    <Listbox type= "GFX_FILL" name= "List_NPC" font="02">
       <Pos x= "10" y= "60" />
       <Range width= "262" height= "248" />
-      <Color red= "60" green= "56" blue= "31" alpha = "200" />
       <Gadget type= "SCROLLER" name = "List_NPC_VScroll">
          <Pos x= "263" y= "18" />
          <Range width= "16" height= "248" />

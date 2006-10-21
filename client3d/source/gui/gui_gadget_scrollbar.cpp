@@ -264,6 +264,7 @@ void GuiGadgetScrollbar::draw()
 //================================================================================================
 void GuiGadgetScrollbar::updateSliderSize(int maxVisPos, int actPos, int maxPos)
 {
+    ++maxVisPos;
     if (maxPos >0 && actPos > maxPos) actPos = maxPos;
     if (actPos < maxVisPos)
         mSliderSize = mMaxSliderSize;
@@ -286,27 +287,33 @@ void GuiGadgetScrollbar::updateSliderSize(int maxVisPos, int actPos, int maxPos)
 //================================================================================================
 void GuiGadgetScrollbar::updateSliderPos(int type, int offset)
 {
+    // Slider was moved.
     if (type == SLIDER_H || type == SLIDER_V)
     {
-        if (offset < 0) offset =0;
+        if (offset <= 0) offset =1;
         else if (offset > mMaxSliderPos) offset = mMaxSliderPos;
         if (mSliderPos == offset) return;
         mSliderPos = offset;
     }
+    // Scroll backward button was pressed.
     else if (mSliderPos >0 && offset <0)
     {
+        if (mSliderPos <= 0) return;
         mSliderPos-= (int)mSingleLineSize;
-        if (mSliderPos < 0) mSliderPos =0;
+        if (mSliderPos <= 0) mSliderPos =1;
     }
+    // Scroll forward button was pressed.
     else if (mSliderPos < mMaxSliderPos && offset >0)
     {
-        mSliderPos+= (int)mSingleLineSize;
-        if (mSliderPos >= mMaxSliderPos) mSliderPos = mMaxSliderPos;
+        if (mSliderPos >= mMaxSliderPos) return;
+        mSliderPos+= (int)(mSingleLineSize);
+        if (mSliderPos > mMaxSliderPos) mSliderPos = mMaxSliderPos;
     }
+    // Unknown action.
     else return;
+
     draw();
     int pos = (int) (mSliderPos / mSingleLineSize);
-    if (--pos <0) pos =0;
     activated(type, pos);
 }
 
