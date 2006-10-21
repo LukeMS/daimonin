@@ -49,16 +49,12 @@ public:
     };
     enum
     {
-        BONE_WEAPON_HAND, BONE_SHIELD_HAND, BONE_HEAD, BONE_BODY, BONE_SUM
-    };
-    enum
-    {
         TEXTURE_POS_SKIN, TEXTURE_POS_FACE, TEXTURE_POS_HAIR,
         TEXTURE_POS_LEGS, TEXTURE_POS_BODY,
         TEXTURE_POS_BELT, TEXTURE_POS_SHOES, TEXTURE_POS_HANDS
     };
 
-    class ObjectEquipment *Equip;
+    class ObjectEquipment *mEquip;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -81,7 +77,7 @@ public:
     {
         return mActHP;
     }
-	Real getHealthPercentage()
+    Real getHealthPercentage()
     {
         return Real(mActHP) / Real(mMaxHP);
     }
@@ -96,6 +92,12 @@ public:
     void stopMovement();
     void readyWeapon(bool ready);
     void talkToNpc();
+    void setPrimaryWeapon(int weapon);
+    void readyPrimaryWeapon(bool ready);
+    bool isPrimaryWeaponReady()
+    {
+        return (mReadyWeaponStatus & READY_WEAPON_PRIMARY_READY);
+    }
 
     void attack()
     {
@@ -132,12 +134,23 @@ private:
         TURN_RIGHT,
         TURN_LEFT
     }mAutoTurning;
+    enum
+    {
+        READY_WEAPON_PRIMARY_READY  = 1 << 0, /**< Primary weapom IS in hand. **/
+        READY_WEAPON_SECONDARY_READY= 1 << 1, /**< Secondary weapom IS in hand. **/
+        READY_WEAPON_IN_PROGRESS    = 1 << 2, /**< Dummy. **/
+        READY_WEAPON_PRIMARY_TAKE   = 1 << 3, /**< Prepare to ready the primary weapon. **/
+        READY_WEAPON_PRIMARY_DROP   = 1 << 4, /**< Prepare to unready the primary weapon. **/
+        READY_WEAPON_SECONDARY_TAKE = 1 << 5, /**< Prepare to ready the secondary weapon. **/
+        READY_WEAPON_SECONDARY_DROP = 1 << 6, /**< Prepare to unready the secondare weapon. **/
+    };
 
     unsigned char mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
     Real mCursorTurning;
     bool mAutoMoving;
     bool mTalking;
     Real mSpawnSize;
+    int mReadyWeaponStatus;
     int mType;
     int mAttack;
     int mDefend;

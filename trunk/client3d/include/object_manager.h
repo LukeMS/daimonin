@@ -85,6 +85,14 @@ public:
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
 
+    void readyPrimaryWeapon(int npc, bool ready)
+    {
+        mvObject_npc[npc]->readyPrimaryWeapon(ready);
+    }
+    bool isPrimaryWeaponReady(int npc)
+    {
+        return mvObject_npc[npc]->isPrimaryWeaponReady();
+    }
     void castSpell(int npc, int spell)
     {
         mvObject_npc[npc]->castSpell(spell);

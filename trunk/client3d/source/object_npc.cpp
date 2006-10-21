@@ -59,8 +59,8 @@ void ObjectNPC::freeRecources()
 {
     if (mType == ObjectManager::OBJECT_PLAYER)
     {
-        Equip->freeRecources();
-        delete Equip;
+        mEquip->freeRecources();
+        delete mEquip;
     }
 }
 
@@ -69,6 +69,7 @@ void ObjectNPC::freeRecources()
 //================================================================================================
 ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 {
+    mReadyWeaponStatus = 0;
     mType    = obj.type;
     mFriendly= obj.friendly;
     mAttack  = obj.attack;
@@ -91,10 +92,11 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     // ////////////////////////////////////////////////////////////////////
     if (mType == ObjectManager::OBJECT_PLAYER)
     {
-        Equip = new ObjectEquipment(mEntity);
-        Equip->equipItem(1, 0, 2, -1);  // Just for test (Bow)
-        //Equip->equipItem(0, 0, 0, 0);  // Just for test (Fire Sword)
-        //Equip->equipItem(0, 0, 0, -1);  // Just for test (Sword)
+        mEquip = new ObjectEquipment(mEntity);
+        //mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, 0, 0, -1);  // Just for test (Sword)
+        //mEquip->equipItem(1, 0, 2, -1);  // Just for test (Bow)
+        //mEquip->equipItem(0, 0, 0, 0);  // Just for test (Fire Sword)
+        //mEquip->equipItem(0, 0, 0, -1);  // Just for test (Sword)
     }
     // ////////////////////////////////////////////////////////////////////
     // The first Object is our Hero.
@@ -119,6 +121,24 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
 }
 
 //================================================================================================
+// .
+//================================================================================================
+void ObjectNPC::setPrimaryWeapon(int weapon)
+{}
+
+//================================================================================================
+// Ready / Unready the primary weapon.
+//================================================================================================
+void ObjectNPC::readyPrimaryWeapon(bool ready)
+{
+    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 2, false, true, false);
+    if (ready)
+        mReadyWeaponStatus |= READY_WEAPON_PRIMARY_TAKE;
+    else
+        mReadyWeaponStatus |= READY_WEAPON_PRIMARY_DROP;
+}
+
+//================================================================================================
 // Move to the currently selected object.
 //================================================================================================
 void ObjectNPC::attackObjectOnTile(TilePos pos)
@@ -133,6 +153,32 @@ bool ObjectNPC::update(const FrameEvent& event)
     mAnim->update(event);
     //  Finish the current (non movement) anim first.
     //  if (!mAnim->isMovement()) return;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Ready / unready weapon.
+    // ////////////////////////////////////////////////////////////////////
+    if (mReadyWeaponStatus > READY_WEAPON_IN_PROGRESS)
+    {
+        if (mAnim->getTimeLeft() < 1.0)
+        {
+            if (mReadyWeaponStatus & READY_WEAPON_PRIMARY_TAKE)
+            {
+                Logger::log().error() << "mTake :" << mReadyWeaponStatus;
+                mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, 0, 0, -1);
+                mReadyWeaponStatus &= ~READY_WEAPON_PRIMARY_TAKE;
+                mReadyWeaponStatus |=  READY_WEAPON_PRIMARY_READY;
+                Logger::log().error() << "mTake :" << mReadyWeaponStatus;
+            }
+            else
+            {
+                Logger::log().error() << "mDrop :" << mReadyWeaponStatus;
+                mEquip->dropItem(ObjectEquipment::BONE_WEAPON_HAND);
+                mReadyWeaponStatus &= ~READY_WEAPON_PRIMARY_DROP;
+                mReadyWeaponStatus &= ~READY_WEAPON_PRIMARY_READY;
+                Logger::log().error() << "mDrop :" << mReadyWeaponStatus;
+            }
+        }
+    }
 
     // ////////////////////////////////////////////////////////////////////
     // Corpse vanishing.
@@ -317,7 +363,7 @@ bool ObjectNPC::update(const FrameEvent& event)
                 break;
         }
     }
-	return true;
+    return true;
 }
 
 //================================================================================================
@@ -492,6 +538,11 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
     if (!mAnim->isIdle() || !EnemyObject) return;
     if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
     // Move in front of the enemy.
+    if (!isPrimaryWeaponReady())
+    {
+        readyPrimaryWeapon(true);
+        return;
+    }
     if (mEnemyObject != EnemyObject)
     {
         mEnemyObject = EnemyObject;
@@ -516,6 +567,5 @@ void ObjectNPC::addToMap()
 // .
 //================================================================================================
 void ObjectNPC::readyWeapon(bool ready)
-{
-}
+{}
 

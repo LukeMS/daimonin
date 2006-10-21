@@ -54,36 +54,6 @@ void CEvent::keyPressed(KeyEvent *e)
     // InGame keyEvent.
     switch (e->getKey())
     {
-            // ////////////////////////////////////////////////////////////////////
-            // Player Movemment.
-            // ////////////////////////////////////////////////////////////////////
-        case KC_UP:
-            //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0, 1);
-            //mCamera->  moveRelative (Vector3(0,100,0));
-            break;
-
-        case KC_DOWN:
-            //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, 9, OBJ_WALK,0, -1);
-            //mCamera->  moveRelative (Vector3(0,-100,0));
-            break;
-
-        case KC_RIGHT:
-            //mCamera->  moveRelative (Vector3(100,0,0));
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0, -1);
-            break;
-
-        case KC_LEFT:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0,  1);
-            //mCamera->  moveRelative (Vector3(-100,0,0));
-            break;
-
-        case KC_F1:
-            break;
-
-        case KC_F2:
-            break;
-
-
         case KC_A:
         {
             static int animNr= 0;
@@ -110,22 +80,156 @@ void CEvent::keyPressed(KeyEvent *e)
 			break;
 		}
 
-        case KC_S:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
-            //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_SLUMP1);
-            break;
-
         case KC_D:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_DEATH1);
+            break;
+
+        case KC_F:
+        {
+            static TextureFilterOptions mFiltering = TFO_BILINEAR;
+            static int mAniso = 1;
+            switch (mFiltering)
+            {
+                case TFO_BILINEAR:
+                    mFiltering = TFO_TRILINEAR;
+                    mAniso = 1;
+                    break;
+                case TFO_TRILINEAR:
+                    mFiltering = TFO_ANISOTROPIC;
+                    mAniso = 8;
+                    break;
+                case TFO_ANISOTROPIC:
+                    mFiltering = TFO_BILINEAR;
+                    mAniso = 1;
+                    break;
+                default:
+                    break;
+            }
+            MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
+            MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
+            break;
+        }
+
+        case KC_G:
+            TileManager::getSingleton().toggleGrid();
             break;
 
         case KC_H:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_HIT1);
             break;
 
-        case KC_T:
+        case KC_I:
+            // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
+            break;
+
+        case KC_J:
+            // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
+            //mCamera->yaw(Degree(10));
+        {
+            /*
+                        Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
+                        sObject obj;
+                        obj.meshName = "tree1.mesh";
+                        obj.nickName = "tree";
+                        obj.type = ObjectManager::OBJECT_STATIC;
+                        obj.posX = (int)pos.x;
+                        obj.posY = (int)pos.z;
+                        obj.facing = 0;
+                        ObjectManager::getSingleton().addMobileObject(obj);
+            */
+        }
+        break;
+
+        case KC_K:
+        {
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_HIT,0, 5);
+            break;
+        }
+
+        case KC_L:
+		{
+            static bool once = false;
+            if (once) break;
+            once = true;
+            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
+            Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
+            break;
+		}
+
+        case KC_O:
+            // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
+            break;
+
+        case KC_P:
+        {
+            static int weaponNr = 0;
+            ObjectManager::getSingleton().setEquipment(0, ObjectEquipment::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, weaponNr++);
+            if (weaponNr == 2) weaponNr =0;
+            break;
+        }
+
+        case KC_Q:
+//            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+            break;
+
+        case KC_R:
+		{
+		    bool ready = ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO);
+            ObjectManager::getSingleton().readyPrimaryWeapon(ObjectNPC::HERO, !ready);
+			break;
+		}
+
+        case KC_S:
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
+            //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_SLUMP1);
+            break;
+
+         case KC_T:
             if (Network::getSingleton().isInit())
                 Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
+            break;
+
+        case KC_W:
+            if (mDayTime)
+            {
+                mDayTime =0;
+                // mLight[LIGHT_VOL ]->setVisible(false);
+                // mLight[LIGHT_SPOT]->setVisible(true);
+            }
+            else
+            {
+                mDayTime =15;
+                //mLight[LIGHT_VOL ]->setVisible(true);
+                //mLight[LIGHT_SPOT]->setVisible(false);
+            }
+            break;
+
+        case KC_X:
+        {
+            static int pixel =128;
+            //change pixel size of terrain textures
+            pixel /= 2; // shrink pixel value
+            if (pixel < MIN_TEXTURE_PIXEL)
+                pixel = 128; // if value is too low resize to maximum
+            TileManager::getSingleton().setMaterialLOD(pixel);
+            mTimeUntilNextToggle = .5;
+            break;
+        }
+
+        case KC_Y:
+            mSceneDetailIndex = (mSceneDetailIndex+1)%3;
+            switch (mSceneDetailIndex)
+            {
+                case 0 :
+                    mCamera->setPolygonMode(PM_SOLID);
+                    break ;
+                case 1 :
+                    mCamera->setPolygonMode(PM_WIREFRAME);
+                    break ;
+                case 2 :
+                    mCamera->setPolygonMode(PM_POINTS);
+                    break ;
+            }
             break;
 
         case KC_1:
@@ -192,134 +296,33 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
             break;
 
-        case KC_J:
-            // ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
-            //mCamera->yaw(Degree(10));
-        {
-            /*
-                        Vector3 pos = TileManager::getSingleton().getTileInterface()->get_Selection();
-                        sObject obj;
-                        obj.meshName = "tree1.mesh";
-                        obj.nickName = "tree";
-                        obj.type = ObjectManager::OBJECT_STATIC;
-                        obj.posX = (int)pos.x;
-                        obj.posY = (int)pos.z;
-                        obj.facing = 0;
-                        ObjectManager::getSingleton().addMobileObject(obj);
-            */
-        }
-        break;
-
-        case KC_K:
-        {
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_HIT,0, 5);
-            break;
-        }
-
-        case KC_G:
-            TileManager::getSingleton().toggleGrid();
+        // ////////////////////////////////////////////////////////////////////
+        // Player Movemment.
+        // ////////////////////////////////////////////////////////////////////
+        case KC_UP:
+            //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0, 1);
+            //mCamera->  moveRelative (Vector3(0,100,0));
             break;
 
-        case KC_I:
-            // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_HEAD, 1);
+        case KC_DOWN:
+            //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, 9, OBJ_WALK,0, -1);
+            //mCamera->  moveRelative (Vector3(0,-100,0));
             break;
 
-        case KC_O:
-            // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
+        case KC_RIGHT:
+            //mCamera->  moveRelative (Vector3(100,0,0));
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0, -1);
             break;
 
-        case KC_P:
-        {
-            static int weaponNr = 0;
-            ObjectManager::getSingleton().setEquipment(0, ObjectNPC::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, weaponNr++);
-            if (weaponNr == 2) weaponNr =0;
-            break;
-        }
-
-        case KC_Q:
-//            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+        case KC_LEFT:
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0,  1);
+            //mCamera->  moveRelative (Vector3(-100,0,0));
             break;
 
-            // ////////////////////////////////////////////////////////////////////
-            // Engine settings.
-            // ////////////////////////////////////////////////////////////////////
-        case KC_Y:
-            mSceneDetailIndex = (mSceneDetailIndex+1)%3;
-            switch (mSceneDetailIndex)
-            {
-                case 0 :
-                    mCamera->setPolygonMode(PM_SOLID);
-                    break ;
-                case 1 :
-                    mCamera->setPolygonMode(PM_WIREFRAME);
-                    break ;
-                case 2 :
-                    mCamera->setPolygonMode(PM_POINTS);
-                    break ;
-            }
+        case KC_F1:
             break;
 
-        case KC_X:
-        {
-            static int pixel =128;
-            //change pixel size of terrain textures
-            pixel /= 2; // shrink pixel value
-            if (pixel < MIN_TEXTURE_PIXEL)
-                pixel = 128; // if value is too low resize to maximum
-            TileManager::getSingleton().setMaterialLOD(pixel);
-            mTimeUntilNextToggle = .5;
-            break;
-        }
-
-        case KC_F:
-        {
-            static TextureFilterOptions mFiltering = TFO_BILINEAR;
-            static int mAniso = 1;
-            switch (mFiltering)
-            {
-                case TFO_BILINEAR:
-                    mFiltering = TFO_TRILINEAR;
-                    mAniso = 1;
-                    break;
-                case TFO_TRILINEAR:
-                    mFiltering = TFO_ANISOTROPIC;
-                    mAniso = 8;
-                    break;
-                case TFO_ANISOTROPIC:
-                    mFiltering = TFO_BILINEAR;
-                    mAniso = 1;
-                    break;
-                default:
-                    break;
-            }
-            MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
-            MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
-            break;
-        }
-
-        case KC_L:
-		{
-            static bool once = false;
-            if (once) break;
-            once = true;
-            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
-            Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-            break;
-		}
-
-        case KC_W:
-            if (mDayTime)
-            {
-                mDayTime =0;
-                // mLight[LIGHT_VOL ]->setVisible(false);
-                // mLight[LIGHT_SPOT]->setVisible(true);
-            }
-            else
-            {
-                mDayTime =15;
-                //mLight[LIGHT_VOL ]->setVisible(true);
-                //mLight[LIGHT_SPOT]->setVisible(false);
-            }
+        case KC_F2:
             break;
 
         case KC_PGUP:
