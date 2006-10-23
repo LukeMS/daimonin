@@ -13350,15 +13350,6 @@ anim teleporter
 exit.101
 exit.102
 mina
-anim teleporter_instance
-portal_yellow.101
-portal_yellow.102
-portal_yellow.103
-portal_yellow.104
-portal_yellow.105
-portal_yellow.106
-portal_yellow.107
-mina
 anim temp_fog
 fog.111
 fog.112
