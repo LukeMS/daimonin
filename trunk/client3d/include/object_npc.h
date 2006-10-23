@@ -81,7 +81,6 @@ public:
     {
         return Real(mActHP) / Real(mMaxHP);
     }
-
     bool isMoving()
     {
         return mAutoMoving;
@@ -90,15 +89,18 @@ public:
     void attackShortRange(ObjectNPC *mEnemyObject);
     void castSpell(int spell);
     void stopMovement();
-    void readyWeapon(bool ready);
     void talkToNpc();
     void setPrimaryWeapon(int weapon);
     void readyPrimaryWeapon(bool ready);
+    void readySecondaryWeapon(bool ready);
     bool isPrimaryWeaponReady()
     {
-        return (mReadyWeaponStatus & READY_WEAPON_PRIMARY_READY);
+        return (mReadyWeaponStatus & READY_WEAPON_PRIMARY_READY) >0;
     }
-
+    bool isSecondaryWeaponReady()
+    {
+        return (mReadyWeaponStatus & READY_WEAPON_SECONDARY_READY) >0;
+    }
     void attack()
     {
         mAttacking = ATTACK_APPROACH;

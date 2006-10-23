@@ -68,6 +68,7 @@ GuiTable::GuiTable(TiXmlElement *xmlElement, void *parent):GuiElement(xmlElement
     mSelectedRow = -1;
     mRowActivated = false;
     mRowChanged = true;
+    mUserBreak = false;
     draw();
 }
 
@@ -106,6 +107,11 @@ bool GuiTable::keyEvent(const char keyChar, const unsigned char key)
     if (key == KC_RETURN)
     {
         mRowActivated = true;
+        return true;
+    }
+    if (key == KC_ESCAPE)
+    {
+        mUserBreak = true;
         return true;
     }
     return false;
@@ -165,12 +171,21 @@ void GuiTable::clearRows()
 //================================================================================================
 int GuiTable::getActivatedRow()
 {
-    if (mRowActivated)
-    {
-        mRowActivated = false;
-        return mSelectedRow;
-    }
-    return -1;
+    if (!mRowActivated)
+        return -1;
+    mRowActivated = false;
+    return mSelectedRow;
+}
+
+//================================================================================================
+// Was a user break detected?
+//================================================================================================
+bool GuiTable::getUserBreak()
+{
+    if (!mUserBreak)
+        return false;
+    mUserBreak = false;
+    return true;
 }
 
 //================================================================================================
@@ -179,15 +194,11 @@ int GuiTable::getActivatedRow()
 //================================================================================================
 int GuiTable::getSelectedRow()
 {
-    if (mRowChanged)
-    {
-        mRowChanged = false;
-        return mSelectedRow;
-    }
-    return -1;
+    if (!mRowChanged)
+        return -1;
+    mRowChanged = false;
+    return mSelectedRow;
 }
-
-
 
 //================================================================================================
 // Draws the Headlines and Background of the table.

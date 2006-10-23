@@ -562,6 +562,19 @@ int GuiWindow::getTableSelection(int element)
 //================================================================================================
 // .
 //================================================================================================
+bool GuiWindow::getTableUserBreak(int element)
+{
+    for (unsigned int i = 0; i < mvTable.size() ; ++i)
+    {
+        if (mvTable[i]->getIndex() == element)
+            return mvTable[i]->getUserBreak();
+    }
+    return -1;
+}
+
+//================================================================================================
+// .
+//================================================================================================
 void GuiWindow::clearTable(int element)
 {
     for (unsigned int i = 0; i < mvTable.size() ; ++i)

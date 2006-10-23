@@ -101,9 +101,6 @@ public:
     {
         return mHeight;
     }
-    int getTableSelection(int element);
-    int getTableActivated(int element);
-    void clearTable(int element);
     const char *Message(int message, int element, void *value);
     bool mouseEvent(int MouseAction, int mouseX, int mouseY);
     const char *getTooltip()
@@ -118,6 +115,13 @@ public:
     {
         return &mSrcPixelBox;
     }
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Table stuff.
+    // ////////////////////////////////////////////////////////////////////
+    int  getTableSelection(int element);
+    int  getTableActivated(int element);
+    bool getTableUserBreak(int element);
+    void clearTable(int element);
 
 private:
     // ////////////////////////////////////////////////////////////////////

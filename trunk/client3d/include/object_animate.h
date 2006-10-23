@@ -35,6 +35,11 @@ using namespace Ogre;
 // Defines.
 // ////////////////////////////////////////////////////////////////////
 
+
+// This will be rewritten for separted Upper/lower Body animation.
+// So it will be possible to walk and shoot arrows at same time without generating
+// Mixed Mode animations.
+
 //================================================================================================
 // Class.
 //================================================================================================
@@ -70,15 +75,19 @@ public:
     {
         return mTimeLeft;
     }
+    Real getTimeLeft2()
+    {
+        return mTimeLeft2;
+    }
     int getSumAnimsInGroup(int animGroup)
     {
         return mAnimGroupEntries[animGroup];
     }
     void update(const FrameEvent& event);
     void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
+    void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
     Real getAnimSpeed()
     {
-    
 		return mAnimSpeed;
     }
 	void pause(bool p)
@@ -111,11 +120,12 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     int mAnimGroup, mAnimNr;
+    int mAnimGroup2, mAnimNr2;
     bool mPause;
     bool mIsAnimated;
     Real mAnimSpeed;
-	Real mTimeLeft;
-    AnimationState *mActState;
+	Real mTimeLeft, mTimeLeft2;
+    AnimationState *mActState, *mActState2;
     std::vector<AnimationState*>mAnimState;
     unsigned char mAnimGroupEntries[ANIM_GROUP_SUM];
     static const char *StateNames[ANIM_GROUP_SUM];

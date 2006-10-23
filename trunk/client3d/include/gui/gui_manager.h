@@ -105,6 +105,22 @@ public:
     void cancelTextInput();
     const char *getTextInput();
     void showWindow(int window, bool visible);
+    int getScreenWidth()
+    {
+        return mScreenWidth;
+    }
+    int getScreenHeight()
+    {
+        return mScreenHeight;
+    }
+
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Table stuff.
+    // ////////////////////////////////////////////////////////////////////
+    int getTableUserBreak(int window, int element)
+    {
+        return guiWindow[window].getTableUserBreak(element);
+    }
     int getTableSelection(int window, int element)
     {
         return guiWindow[window].getTableSelection(element);
@@ -116,14 +132,6 @@ public:
     void clearTable(int window, int element)
     {
         guiWindow[window].clearTable(element);
-    }
-    int getScreenWidth()
-    {
-        return mScreenWidth;
-    }
-    int getScreenHeight()
-    {
-        return mScreenHeight;
     }
 
 private:

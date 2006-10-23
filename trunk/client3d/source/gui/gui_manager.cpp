@@ -354,9 +354,9 @@ void GuiManager::showWindow(int window, bool visible)
     else
     {
         guiWindow[window].setVisible(false);
+        // Active window is now the that was opened before the current one.
+        mActiveWindow = window-1;
         remove(mvActiveWindow.begin(), mvActiveWindow.end(), window);
-        // Active window is now the last window in list.
-        mActiveWindow = mvActiveWindow[mvActiveWindow.size()-1];
     }
 }
 
