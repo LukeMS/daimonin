@@ -111,8 +111,14 @@ private:
         SIDE_FRONT
     };
     TexturePtr mTexture;
-    Entity *mParentEntity, *mEntity[BONE_SUM];
-    ParticleSystem *mPSystem[BONE_SUM];
+    struct
+    {
+        Entity *entity;
+        ParticleSystem *particle;
+    }
+    mItem[BONE_SUM];
+    Entity *mParentEntity;
     static unsigned long mIndex;
+
 };
 #endif

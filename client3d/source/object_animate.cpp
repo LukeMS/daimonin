@@ -41,6 +41,7 @@ const char *ObjectAnimate::StateNames[ANIM_GROUP_SUM]=
         "Spawn",
         "Cast", "Cast_Fun",
     };
+
 //=================================================================================================
 // Constructor.
 //=================================================================================================
@@ -98,6 +99,9 @@ ObjectAnimate::ObjectAnimate(Entity *entity)
     // Set the init-anim to Idle1.
     mActState= mAnimState[ANIM_GROUP_IDLE + 0];
     toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
+
+    mActState2= mAnimState[ANIM_GROUP_IDLE + 0];
+    toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
 }
 //=================================================================================================
 // Constructor.
@@ -112,6 +116,7 @@ ObjectAnimate::~ObjectAnimate()
 void ObjectAnimate::update(const FrameEvent& event)
 {
     if (!mIsAnimated) return;
+
     mActState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     mTimeLeft = mActState->getLength() - mActState->getTimePosition();
     // if an animation ends -> force the idle animation.
@@ -120,7 +125,18 @@ void ObjectAnimate::update(const FrameEvent& event)
         if (mAnimGroup != ANIM_GROUP_DEATH)
             toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
+/*
+    mActState2->addTime(event.timeSinceLastFrame * mAnimSpeed);
+    mTimeLeft2 = mActState->getLength() - mActState->getTimePosition();
+    // if an animation ends -> force the idle animation.
+    if (mActState2->getTimePosition() >= mActState2->getLength() && !mActState2->getLoop())
+    {
+        if (mAnimGroup2 != ANIM_GROUP_DEATH)
+            toggleAnimation2(ANIM_GROUP_IDLE, 0, true, true, true);
+    }
+*/
 }
+
 //=================================================================================================
 // Toggle the animation.
 //=================================================================================================
@@ -163,6 +179,54 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
         mActState->setTimePosition(Math::RangeRandom(0.0, mActState->getLength()));
     else
 		mActState->setTimePosition(0.0);
+
     mActState->setEnabled(true);
     mActState->setLoop(loop);
+}
+
+//=================================================================================================
+// Toggle the animation.
+//=================================================================================================
+void ObjectAnimate::toggleAnimation2(int animGroup, int animNr, bool loop, bool force, bool random)
+{
+    if (!mIsAnimated)
+        return;
+    // Is the selected animation already running?
+    if (animGroup == mAnimGroup && animNr == mAnimNr)
+        return;
+    // Dont change a running (none-movement) anim without the force-switch.
+    if (!force && !isMovement())
+        return;
+    // On invalid animGroup choose Idle.
+    if (animGroup >= ANIM_GROUP_SUM || !mAnimGroupEntries[animGroup])
+    {
+        animGroup = ANIM_GROUP_IDLE;
+        loop = true;
+    }
+    // On invalid animNr choose 0.
+    if (animNr >= mAnimGroupEntries[animGroup])
+        animNr = 0;
+    mAnimNr2 = animNr;
+    // If the previous anim was spawn, we cant use random offsets (because of seamless animations).
+
+	if (animGroup == ANIM_GROUP_SPAWN) random = false;
+	mAnimGroup2 = animGroup;
+    // Find the anim pos in the anim-vector.
+    animGroup =0;
+    for (int i=0; i< mAnimGroup2; ++i)
+    {
+        animGroup+= mAnimGroupEntries[i];
+    }
+    // Set the Animation.
+    mActState2->setEnabled(false);
+    mActState2= mAnimState[animGroup+ animNr];
+
+    // Set a random offest for the animation start (prevent synchronous "dancing").
+    if (random)
+        mActState2->setTimePosition(Math::RangeRandom(0.0, mActState2->getLength()));
+    else
+		mActState2->setTimePosition(0.0);
+
+    mActState2->setEnabled(true);
+    mActState2->setLoop(loop);
 }

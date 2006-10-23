@@ -32,7 +32,7 @@ http://www.gnu.org/licenses/licenses.html
 #define DEFAULT_SERVER_PORT 13327
 #define DEFAULT_METASERVER_PORT 13326
 #define DEFAULT_METASERVER "damn.informatik.uni-bremen.de"
-#define PACKAGE_NAME "Daimonin SDL Client"
+#define CLIENT_PACKAGE_NAME "Daimonin SDL Client"
 
 int SoundStatus=1;
 enum
@@ -900,7 +900,7 @@ if (csocket.fd == SOCKET_NO)
 void Network::SendVersion()
 {
     char buf[MAX_BUF];
-    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
+    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, CLIENT_PACKAGE_NAME);
     Logger::log().info() << "Send version command: " << buf;
     cs_write_string(buf, (int)strlen(buf));
 }

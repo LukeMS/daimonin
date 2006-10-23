@@ -245,8 +245,8 @@ ObjectEquipment::ObjectEquipment(Entity *parentEntity)
     mParentEntity = parentEntity;
     for (int bone=0; bone < BONE_SUM; ++bone)
     {
-        mEntity[bone] = 0;
-        mPSystem[bone]= 0;
+        mItem[bone].entity  = 0;
+        mItem[bone].particle= 0;
     }
 
     // ////////////////////////////////////////////////////////////////////
@@ -418,26 +418,26 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
     // Add a particle system.
     if (particleID < 0 || particleID >= PARTICLE_FX_SUM)
     {
-        mPSystem[bone] = 0;
+        mItem[bone].particle= 0;
     }
     else
     {
-        mPSystem[bone] = ParticleManager::getSingleton().addBoneObject(mParentEntity, boneName[bone].c_str(), particleName[particleID], -1);
+        mItem[bone].particle = ParticleManager::getSingleton().addBoneObject(mParentEntity, boneName[bone].c_str(), particleName[particleID], -1);
     }
 
     // Add a entity.
     if (itemID < 0 || itemID >= ITEM_SUM)
     {
-        mEntity[bone] = 0;
+        mItem[bone].entity = 0;
     }
     else
     {
         static unsigned long itemIndex =0;
         //Logger::log().error() << meshName[type][itemID];
         String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
-        mEntity[bone]= Event->GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
-        mEntity[bone]->setQueryFlags(QUERY_EQUIPMENT_MASK);
-        mParentEntity->attachObjectToBone(boneName[bone], mEntity[bone]);
+        mItem[bone].entity= Event->GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
+        mItem[bone].entity->setQueryFlags(QUERY_EQUIPMENT_MASK);
+        mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
     }
 }
 
@@ -446,16 +446,16 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
 //================================================================================================
 void ObjectEquipment::dropItem(int bone)
 {
-    if (mEntity[bone])
+    if (mItem[bone].entity)
     {
-        mParentEntity->detachObjectFromBone(mEntity[bone]);
-        Event->GetSceneManager()->destroyEntity(mEntity[bone]);
-        mEntity[bone] =0;
+        mParentEntity->detachObjectFromBone(mItem[bone].entity);
+        Event->GetSceneManager()->destroyEntity(mItem[bone].entity);
+        mItem[bone].entity =0;
     }
-    if (mPSystem[bone])
+    if (mItem[bone].particle)
     {
-        mParentEntity->detachObjectFromBone(mPSystem[bone]);
-        ParticleManager::getSingleton().delObject(mPSystem[bone]);
-        mPSystem[bone] =0;
+        mParentEntity->detachObjectFromBone(mItem[bone].particle);
+        ParticleManager::getSingleton().delObject(mItem[bone].particle);
+        mItem[bone].particle =0;
     }
 }

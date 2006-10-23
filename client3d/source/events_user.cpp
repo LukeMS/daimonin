@@ -148,9 +148,6 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_L:
 		{
-            static bool once = false;
-            if (once) break;
-            once = true;
             Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
             break;
@@ -161,28 +158,27 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
 
         case KC_P:
-        {
-            static int weaponNr = 0;
-            ObjectManager::getSingleton().setEquipment(0, ObjectEquipment::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, weaponNr++);
-            if (weaponNr == 2) weaponNr =0;
-            break;
-        }
-
-        case KC_Q:
-//            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_NPC, OBJ_TEXTURE, 0, 1);
-            break;
-
-        case KC_R:
 		{
 		    bool ready = ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO);
             ObjectManager::getSingleton().readyPrimaryWeapon(ObjectNPC::HERO, !ready);
 			break;
 		}
 
+        case KC_Q:
+		{
+		    if (ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO))
+               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+		    else if (ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO))
+               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
+			break;
+		}
+
         case KC_S:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
-            //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_SLUMP1);
-            break;
+        {
+		    bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
+            ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
+			break;
+        }
 
          case KC_T:
             if (Network::getSingleton().isInit())

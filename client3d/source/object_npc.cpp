@@ -93,10 +93,10 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     if (mType == ObjectManager::OBJECT_PLAYER)
     {
         mEquip = new ObjectEquipment(mEntity);
-        //mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, 0, 0, -1);  // Just for test (Sword)
-        //mEquip->equipItem(1, 0, 2, -1);  // Just for test (Bow)
-        //mEquip->equipItem(0, 0, 0, 0);  // Just for test (Fire Sword)
-        //mEquip->equipItem(0, 0, 0, -1);  // Just for test (Sword)
+        //mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, 0, -1);  // Just for test (Sword)
+        //mEquip->equipItem(ObjectEquipment::BONE_SHIELD_HAND, ObjectEquipment::ITEM_WEAPON, 2, -1);  // Just for test (Bow)
+        //mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, 0, 0);  // Just for test (Fire Sword)
+        //mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, ObjectEquipment::ITEM_WEAPON, 0, -1);  // Just for test (Sword)
     }
     // ////////////////////////////////////////////////////////////////////
     // The first Object is our Hero.
@@ -131,11 +131,56 @@ void ObjectNPC::setPrimaryWeapon(int weapon)
 //================================================================================================
 void ObjectNPC::readyPrimaryWeapon(bool ready)
 {
-    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 2, false, true, false);
-    if (ready)
-        mReadyWeaponStatus |= READY_WEAPON_PRIMARY_TAKE;
+    if (isSecondaryWeaponReady())
+    {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 4, false, true, false);
+        if (ready)
+        {
+            mReadyWeaponStatus |= READY_WEAPON_PRIMARY_TAKE;
+            mReadyWeaponStatus |= READY_WEAPON_SECONDARY_DROP;
+        }
+        else
+        {
+            mReadyWeaponStatus |= READY_WEAPON_PRIMARY_DROP;
+        }
+    }
     else
-        mReadyWeaponStatus |= READY_WEAPON_PRIMARY_DROP;
+    {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 2, false, true, false);
+        if (ready)
+            mReadyWeaponStatus |= READY_WEAPON_PRIMARY_TAKE;
+        else
+            mReadyWeaponStatus |= READY_WEAPON_PRIMARY_DROP;
+    }
+}
+
+//================================================================================================
+// Ready / Unready the secondary weapon.
+//================================================================================================
+void ObjectNPC::readySecondaryWeapon(bool ready)
+{
+    if (isPrimaryWeaponReady())
+    {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 4, false, true, false);
+        if (ready)
+        {
+            mReadyWeaponStatus |= READY_WEAPON_SECONDARY_TAKE;
+            mReadyWeaponStatus |= READY_WEAPON_PRIMARY_DROP;
+        }
+        else
+        {
+            mReadyWeaponStatus |= READY_WEAPON_SECONDARY_DROP;
+        }
+    }
+    else
+    {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 3, false, true, false);
+        //mAnim->toggleAnimation2(ObjectAnimate::ANIM_GROUP_ABILITY, 3, false, true, false);
+        if (ready)
+            mReadyWeaponStatus |= READY_WEAPON_SECONDARY_TAKE;
+        else
+            mReadyWeaponStatus |= READY_WEAPON_SECONDARY_DROP;
+    }
 }
 
 //================================================================================================
@@ -163,20 +208,29 @@ bool ObjectNPC::update(const FrameEvent& event)
         {
             if (mReadyWeaponStatus & READY_WEAPON_PRIMARY_TAKE)
             {
-                Logger::log().error() << "mTake :" << mReadyWeaponStatus;
                 mEquip->equipItem(ObjectEquipment::BONE_WEAPON_HAND, 0, 0, -1);
                 mReadyWeaponStatus &= ~READY_WEAPON_PRIMARY_TAKE;
                 mReadyWeaponStatus |=  READY_WEAPON_PRIMARY_READY;
-                Logger::log().error() << "mTake :" << mReadyWeaponStatus;
             }
-            else
+            else if (mReadyWeaponStatus & READY_WEAPON_PRIMARY_DROP)
             {
-                Logger::log().error() << "mDrop :" << mReadyWeaponStatus;
                 mEquip->dropItem(ObjectEquipment::BONE_WEAPON_HAND);
                 mReadyWeaponStatus &= ~READY_WEAPON_PRIMARY_DROP;
                 mReadyWeaponStatus &= ~READY_WEAPON_PRIMARY_READY;
-                Logger::log().error() << "mDrop :" << mReadyWeaponStatus;
             }
+            else if (mReadyWeaponStatus & READY_WEAPON_SECONDARY_TAKE)
+            {
+                mEquip->equipItem(ObjectEquipment::BONE_SHIELD_HAND, 0, 2, -1);
+                mReadyWeaponStatus &= ~READY_WEAPON_SECONDARY_TAKE;
+                mReadyWeaponStatus |=  READY_WEAPON_SECONDARY_READY;
+            }
+            else if (mReadyWeaponStatus & READY_WEAPON_SECONDARY_DROP)
+            {
+                mEquip->dropItem(ObjectEquipment::BONE_SHIELD_HAND);
+                mReadyWeaponStatus &= ~READY_WEAPON_SECONDARY_DROP;
+                mReadyWeaponStatus &= ~READY_WEAPON_SECONDARY_READY;
+            }
+
         }
     }
 
@@ -560,12 +614,5 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 // Add a new npc to the map.
 //================================================================================================
 void ObjectNPC::addToMap()
-{}
-
-
-//================================================================================================
-// .
-//================================================================================================
-void ObjectNPC::readyWeapon(bool ready)
 {}
 

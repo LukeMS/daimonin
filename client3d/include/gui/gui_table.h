@@ -36,6 +36,7 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 /**
+ **
  *****************************************************************************/
 class GuiTable : public GuiElement
 {
@@ -45,14 +46,15 @@ public:
     // ////////////////////////////////////////////////////////////////////
     GuiTable(TiXmlElement *xmlElement, void *parent);
     ~GuiTable();
+    void draw();
     void clearRows();
     void drawSelection(int newSelection);
-    void draw();
-    bool mouseEvent(int MouseAction, int x, int y);
     void addRow(String textline);
+    bool getUserBreak();
+    bool mouseEvent(int MouseAction, int x, int y);
+    bool keyEvent(const char keyChar, const unsigned char key);
     int  getSelectedRow();
     int  getActivatedRow();
-    bool keyEvent(const char keyChar, const unsigned char key);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -62,13 +64,15 @@ private:
     {
         int width;
         String label;
-    }TableEntry;
+    }
+    TableEntry;
     std::vector<TableEntry*>mvColumn;
     std::vector<String>mvRow;
     Real mMinHeight, mMaxHeight;
     bool mVisible;
     bool mRowActivated;
     bool mRowChanged;
+    bool mUserBreak;
     int  mSumRows;
     int  mSelectedRow;
     int  mFontHeight;

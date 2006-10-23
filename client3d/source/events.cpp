@@ -274,13 +274,14 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~A~ to change Idle animation.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~B~ to change Attack animation.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~C~ to change Agility animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~R~ to ready/unready weapon.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~S~ to shoot an arrow.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~P~ to ready/unready primary weapon.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~S~ to ready/unready secondary weapon.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~Q~ to start attack animation.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#0000ffffInteracting with server:~");
             GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~L~ to connect to server.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor. (needs login)");
             //GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
 
             /*
@@ -331,6 +332,11 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_STARTCONNECT:
         {
+            if (GuiManager::getSingleton().getTableUserBreak(GUI_WIN_SERVERSELECT, GUI_TABLE))
+            {
+                GuiManager::getSingleton().showWindow(GUI_WIN_SERVERSELECT, false);
+                Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+            }
             // Print server infos.
             int select;
             select = GuiManager::getSingleton().getTableSelection(GUI_WIN_SERVERSELECT, GUI_TABLE);
