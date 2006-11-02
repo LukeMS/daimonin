@@ -23,10 +23,10 @@
 * Constants are upper case only. Underscore will be used for separating words.
   Example: MAX_LIGHTS
 
-* Use one whitespace after , and ;
+* Use one space after , and ;
   Example: Vector3(1, 2, 3)
 
-* Use one whitespace before and after operator.
+* Use one space before and after operator.
   Example: if ((a * 3) >0)
 
 * Use brackets to improve readability.
