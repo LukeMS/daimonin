@@ -154,15 +154,13 @@ private:
     OverlayElement *mElement;
     MaterialPtr mMaterial;
     TexturePtr mTexture;
-    std::vector<int>mvActiveWindow;
     String  mStrTooltip, mBackupTextInputString;
     String mStrTextInput;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     GuiManager()
-    {
-    }
+    {}
     ~GuiManager()
     {}
     GuiManager(const GuiManager&); // disable copy-constructor.

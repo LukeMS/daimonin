@@ -211,6 +211,7 @@ void GuiTable::draw()
     textline.index = -1;
     textline.hideText= false;
     textline.BG_Backup = 0;
+    textline.color =0;
     textline.font = mFontNr;
     textline.x1 = mPosX;
     textline.y1 = mPosY;
