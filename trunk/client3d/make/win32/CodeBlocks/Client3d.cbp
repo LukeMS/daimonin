@@ -8,7 +8,7 @@
 		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\..\..\debug\client3d.exe" />
+				<Option output="..\..\..\debug\client3d.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\debug" />
 				<Option object_output=".\obj\Debug" />
 				<Option type="0" />
@@ -31,7 +31,7 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Release">
-				<Option output="..\..\..\client3d.exe" />
+				<Option output="..\..\..\client3d.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\client3d" />
 				<Option object_output=".\obj\Release" />
 				<Option type="0" />
@@ -405,6 +405,13 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\include\tile_map.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\..\include\network.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -660,6 +667,11 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\main.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\tile_map.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />

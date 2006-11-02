@@ -288,6 +288,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\tile_map.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\tile_path.cpp"
 				>
 			</File>
@@ -698,6 +702,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\tile_manager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\tile_map.h"
 				>
 			</File>
 			<File

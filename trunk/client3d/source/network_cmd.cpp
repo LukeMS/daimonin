@@ -25,31 +25,28 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <fstream>
-#include "network.h"
-#include "logger.h"
-#include "stdio.h"
-#include "option.h"
+#include <stdio.h>
 #include "zlib.h"
+#include "logger.h"
 #include "define.h"
+#include "network.h"
 #include "option.h"
-#include "gui_manager.h"
-#include "network_serverfile.h"
+#include "tile_map.h"
 #include "tile_manager.h"
+#include "gui_manager.h"
 #include "gui_window_dialog.h"
+#include "network_serverfile.h"
 
 using namespace std;
 
 const int  REQUEST_FACE_MAX = 250;
 const char MAX_LEN_LOGIN_NAME = 15;
 
-std::string strTemp;
-
 char playerName[80];
 char playerPassword[80];
 int scrolldx, scrolldy;
 
 enum {MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED};
-
 
 //================================================================================================
 // Ascii to int (32bit).
@@ -66,7 +63,6 @@ short GetShort_String(unsigned char *data)
 {
     return ((data[0] << 8) + data[1]);
 }
-
 
 //================================================================================================
 // .
@@ -161,9 +157,8 @@ void Network::VersionCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::DrawInfoCmd(unsigned char *data, int len)
 {
-//    int color   = atoi(data);
+    // int color   = atoi(data);
     // Todo: Convert indexed color into rgb and add it to the text.
-
     char *buf = strchr((char *)data, ' ');
     if (!buf)
     {
@@ -198,7 +193,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
     bool    map_new_flag = false;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
     char    pname1[64], pname2[64], pname3[64], pname4[64];
-    char mapname[256];
+    char    mapname[256];
     uint16  face;
 
     mapstat = (data[pos++]);
@@ -217,7 +212,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
-//            InitMapData(mapname, map_w, map_h, xpos, ypos);
+            TileMap::getSingleton().InitMapData(mapname, map_w, map_h, xpos, ypos);
         }
         else
         {
@@ -230,7 +225,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
-//            display_mapscroll(xoff, yoff);
+            TileMap::getSingleton().display_mapscroll(xoff, yoff);
         }
     }
     else
@@ -244,19 +239,18 @@ void Network::Map2Cmd(unsigned char *data, int len)
 //            remove_item_inventory(locate_item(0)); // implicit clear below
 //            if (cpl.menustatus != MENU_NO) reset_menu_status();
         }
-//        display_mapscroll(xpos - mx, ypos - my);
-
+        TileMap::getSingleton().display_mapscroll(xpos - mx, ypos - my);
         mx = xpos;
         my = ypos;
     }
 
     if (map_new_flag)
     {
-//       adjust_map_cache(xpos, ypos);
+        TileMap::getSingleton().adjust_map_cache(xpos, ypos);
     }
 
-//    MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
-//    MapData.posy = ypos;
+    TileMap::getSingleton().MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
+    TileMap::getSingleton().MapData.posy = ypos;
     Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
     while (pos < len)
     {
@@ -265,7 +259,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
         // first, we get the mask flag - it decribes what we now get
         mask = GetShort_String(data + pos); pos += 2;
         x = (mask >> 11) & 0x1f;
-        y = (mask >> 6) & 0x1f;
+        y = (mask >>  6) & 0x1f;
 
         // These are the "damage tags" - shows damage an object got from somewhere.
         // ff_flag hold the layer info and how much we got here.
@@ -274,11 +268,11 @@ void Network::Map2Cmd(unsigned char *data, int len)
         // the other flags are assigned to map layer.
         if ((mask & 0x3f) == 0)
         {
-//            display_map_clearcell(x, y);
+            TileMap::getSingleton().display_map_clearcell(x, y);
         }
 
         ext3 = ext2 = ext1 = -1;
-        pname1[0] = 0;pname2[0] = 0;pname3[0] = 0;pname4[0] = 0;
+        pname1[0] = 0; pname2[0] = 0; pname3[0] = 0; pname4[0] = 0;
         // the ext flag defines special layer object assigned infos.
         // Like the Zzz for sleep, paralyze msg, etc.
         if (mask & 0x20) // catch the ext. flag...
@@ -287,9 +281,8 @@ void Network::Map2Cmd(unsigned char *data, int len)
 
             if (ext_flag & 0x80) // we have player names....
             {
-                char    c;
-                int     i, pname_flag = (uint8) (data[pos++]);
-
+                char c;
+                int  i, pname_flag = (uint8) (data[pos++]);
 
                 if (pname_flag & 0x08) // floor ....
                 {
@@ -297,7 +290,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                     while ((c = (char) (data[pos++])))
                     {
                         pname1[i++] = c;
-                    };
+                    }
                     pname1[i] = 0;
                 }
                 if (pname_flag & 0x04) // fm....
@@ -306,7 +299,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                     while ((c = (char) (data[pos++])))
                     {
                         pname2[i++] = c;
-                    };
+                    }
                     pname2[i] = 0;
                 }
                 if (pname_flag & 0x02) // l1 ....
@@ -315,7 +308,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                     while ((c = (char) (data[pos++])))
                     {
                         pname3[i++] = c;
-                    };
+                    }
                     pname3[i] = 0;
                 }
                 if (pname_flag & 0x01) // l2 ....
@@ -324,7 +317,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                     while ((c = (char) (data[pos++])))
                     {
                         pname4[i++] = c;
-                    };
+                    }
                     pname4[i] = 0;
                 }
             }
@@ -357,37 +350,37 @@ void Network::Map2Cmd(unsigned char *data, int len)
             {
                 probe = 0;
                 ext3 = (int) (data[pos++]);
-//                if (ext3 & FFLAG_PROBE)
+                if (ext3 & FFLAG_PROBE)
                 {
                     probe = (int) (data[pos++]);
                 }
-//                set_map_ext(x, y, 3, ext3, probe);
+                TileMap::getSingleton().set_map_ext(x, y, 3, ext3, probe);
             }
             if (ext_flag & 0x10)
             {
                 probe = 0;
                 ext2 = (int) (data[pos++]);
-//                if (ext2 & FFLAG_PROBE)
+                if (ext2 & FFLAG_PROBE)
                 {
                     probe = (int) (data[pos++]);
                 }
-//                set_map_ext(x, y, 2, ext2, probe);
+                TileMap::getSingleton().set_map_ext(x, y, 2, ext2, probe);
             }
             if (ext_flag & 0x20)
             {
                 probe = 0;
                 ext1 = (int) (data[pos++]);
-//                if (ext1 & FFLAG_PROBE)
+                if (ext1 & FFLAG_PROBE)
                 {
                     probe = (int) (data[pos++]);
                 }
-//                set_map_ext(x, y, 1, ext1, probe);
+                TileMap::getSingleton().set_map_ext(x, y, 1, ext1, probe);
             }
         }
 
         if (mask & 0x10)
         {
-//            set_map_darkness(x, y, (uint8) (data[pos]));
+            TileMap::getSingleton().set_map_darkness(x, y, (uint8) (data[pos]));
             ++pos;
         }
 
@@ -400,7 +393,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
             xdata = 0;
-//            set_map_face(x, y, 0, face, xdata, -1, pname1);
+            TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
         }
         if (mask & 0x4)
         {
@@ -412,7 +405,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-//            set_map_face(x, y, 1, face, xdata, ext1, pname2);
+            TileMap::getSingleton().set_map_face(x, y, 1, face, xdata, ext1, pname2);
         }
         if (mask & 0x2)
         {
@@ -425,20 +418,21 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-//            set_map_face(x, y, 2, face, xdata, ext2, pname3);
+            TileMap::getSingleton().set_map_face(x, y, 2, face, xdata, ext2, pname3);
         }
         if (mask & 0x1)
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
-//            Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
+            //Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
             xdata = 0;
             if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
             {
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-//            set_map_face(x, y, 3, face, xdata, ext3, pname4);
+            Logger::log().info() << "set_map_face: " << x << " " << y << " " << (face & ~0x8000);
+            TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
         }
     } // more tiles
     TileManager::getSingleton().map_udate_flag = 2;
@@ -778,17 +772,15 @@ void Network::UpdateItemCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::DeleteItem(unsigned char *data, int len)
 {
-    /*
-        int pos = 0, tag;
-        while (pos < len)
-        {
-            tag = GetInt_String(data); pos += 4;
-            delete_item(tag);
-        }
-        if (pos > len)
-            Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
-        TileManager::getSingleton().map_udate_flag = 2;
-    */
+    int pos = 0, tag;
+    while (pos < len)
+    {
+        tag = GetInt_String(data); pos += 4;
+        // delete_item(tag);
+    }
+    if (pos > len)
+        Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
+    TileManager::getSingleton().map_udate_flag = 2;
 }
 
 //================================================================================================
@@ -1116,11 +1108,11 @@ void Network::ImageCmd(unsigned char *data, int len)
 void Network::Face1Cmd(unsigned char *data, int len)
 {
     /*
-        int pnum = GetShort_String(data);
-        uint32 checksum = GetInt_String(data + 2);
-        char *face = (char *) data + 6;
-        data[len] = '\0';
-        finish_face_cmd(pnum, checksum, face);
+    int pnum = GetShort_String(data);
+    uint32 checksum = GetInt_String(data + 2);
+    char *face = (char *) data + 6;
+    data[len] = '\0';
+    finish_face_cmd(pnum, checksum, face);
     */
 }
 
@@ -1422,179 +1414,168 @@ void Network::GoodbyeCmd(unsigned char *data, int len)
 //================================================================================================
 // .
 //================================================================================================
-void Network::SetupCmd(unsigned char *data, int len)
+void Network::SetupCmd(unsigned char *buf, int len)
 {
     /*
-        int     s;
-        char   *cmd, *param;
+    unsigned char *cmd, *param;
+    scrolldy = scrolldx = 0;
+    Logger::log().info() << "Get SetupCmd: " << buf;
+    for (int s = 0; ;)
+    {
+        while (buf[s] == ' ')
+            ++s;
+        if (s >= len)
+            break;
+        cmd = &buf[s];
+        while (buf[s] && buf[s] != ' ')
+            ++s;
+        buf[s++] = 0;
+        while (buf[s] == ' ')
+            ++s;
+        if (s >= len)
+            break;
+        param = &buf[s];
+        while (buf[s] && buf[s] != ' ')
+            ++s;
+        buf[s++] = 0;
+        while (buf[s] == ' ')
+            s++;
 
-        scrolldy = scrolldx = 0;
-        Logger::log().info() << "Get SetupCmd: " << buf;
-        for (s = 0; ;)
+        if (!strcmp((const char*)cmd, "sound"))
         {
-            while (buf[s] == ' ')
-                s++;
-            if (s >= len)
-                break;
-            cmd = &buf[s];
-            for (; buf[s] && buf[s] != ' '; s++)
+            if (!strcmp((const char*)param, "FALSE"))
+            {
                 ;
-            buf[s++] = 0;
-            while (buf[s] == ' ')
-                s++;
-            if (s >= len)
-                break;
-            param = &buf[s];
-            for (; buf[s] && buf[s] != ' '; s++)
-                ;
-            buf[s++] = 0;
-            while (buf[s] == ' ')
-                s++;
-
-            if (!strcmp(cmd, "sound"))
-            {
-                if (!strcmp(param, "FALSE"))
-                {
-                }
-            }
-            else if (!strcmp(cmd, "skf"))
-            {
-                if (!strcmp(param, "FALSE"))
-                {
-                    Logger::log().info() << "Get skf:: " << param;
-                }
-                else if (strcmp(param, "OK"))
-                {
-                    char   *cp;
-
-                    srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_UPDATE;
-                    for (cp = param; *cp != 0; cp++)
-                    {
-                        if (*cp == '|')
-                        {
-                            *cp = 0;
-                            srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
-                            srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp + 1, NULL, 16);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!strcmp(cmd, "spf"))
-            {
-                if (!strcmp(param, "FALSE"))
-                {
-                    Logger::log().info() << "Get spf:: " << param;
-                }
-                else if (strcmp(param, "OK"))
-                {
-                    char   *cp;
-
-                    srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_UPDATE;
-                    for (cp = param; *cp != 0; cp++)
-                    {
-                        if (*cp == '|')
-                        {
-                            *cp = 0;
-                            srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
-                            srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp + 1, NULL, 16);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!strcmp(cmd, "stf"))
-            {
-                if (!strcmp(param, "FALSE"))
-                {
-                    Logger::log().info() << "Get stf:: " << param;
-                }
-                else if (strcmp(param, "OK"))
-                {
-                    char   *cp;
-
-                    srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_UPDATE;
-                    for (cp = param; *cp != 0; cp++)
-                    {
-                        if (*cp == '|')
-                        {
-                            *cp = 0;
-                            srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
-                            srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp + 1, NULL, 16);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!strcmp(cmd, "bpf"))
-            {
-                if (!strcmp(param, "FALSE"))
-                {
-                    Logger::log().info() << "Get bpf:: " << param;
-                }
-                else if (strcmp(param, "OK"))
-                {
-                    char   *cp;
-
-                    srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
-                    for (cp = param; *cp != 0; cp++)
-                    {
-                        if (*cp == '|')
-                        {
-                            *cp = 0;
-                            srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
-                            srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp + 1, NULL, 16);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!strcmp(cmd, "amf"))
-            {
-                if (!strcmp(param, "FALSE"))
-                {
-                    Logger::log().info() << "Get amf:: " << param;
-                }
-                else if (strcmp(param, "OK"))
-                {
-                    char   *cp;
-
-                    srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_UPDATE;
-                    for (cp = param; *cp != 0; cp++)
-                    {
-                        if (*cp == '|')
-                        {
-                            *cp = 0;
-                            srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
-                            srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp + 1, NULL, 16);
-                            break;
-                        }
-                    }
-                }
-            }
-            else if (!strcmp(cmd, "mapsize"))
-            {
-            }
-            else if (!strcmp(cmd, "map2cmd"))
-            {
-            }
-            else if (!strcmp(cmd, "darkness"))
-            {
-            }
-            else if (!strcmp(cmd, "facecache"))
-            {
-            }
-            else
-            {
-                Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
-                sprintf(buf, "The server is outdated!\nSelect a different one!");
-             draw_info(buf, COLOR_RED);
-       SOCKET_CloseSocket();
-       Option::getSingleton().setGameStatus(GAME_STATUS_START);
-       return;
             }
         }
-        Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
+        else if (!strcmp((const char*)cmd, "skf"))
+        {
+            if (!strcmp((const char*)param, "FALSE"))
+            {
+                Logger::log().info() << "Get skf:: " << param;
+            }
+            else if (strcmp((const char*)param, "OK"))
+            {
+                unsigned char *cp;
+                //srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_UPDATE;
+                for (cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;
+                        //srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
+                        //srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp + 1, NULL, 16);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (!strcmp((const char*)cmd, "spf"))
+        {
+            if (!strcmp((const char*)param, "FALSE"))
+            {
+                Logger::log().info() << "Get spf:: " << param;
+            }
+            else if (strcmp((const char*)param, "OK"))
+            {
+                unsigned char *cp;
+                //srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_UPDATE;
+                for (cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;
+                        //srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
+                        //srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp + 1, NULL, 16);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (!strcmp((const char*)cmd, "stf"))
+        {
+            if (!strcmp((const char*)param, "FALSE"))
+            {
+                Logger::log().info() << "Get stf:: " << param;
+            }
+            else if (strcmp((const char*)param, "OK"))
+            {
+                unsigned char *cp;
+                //srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_UPDATE;
+                for (cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;
+                        //srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
+                        //srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp + 1, NULL, 16);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (!strcmp((const char*)cmd, "bpf"))
+        {
+            if (!strcmp((const char*)param, "FALSE"))
+            {
+                Logger::log().info() << "Get bpf:: " << param;
+            }
+            else if (strcmp((const char*)param, "OK"))
+            {
+                unsigned char *cp;
+                //srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
+                for (cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;
+                        //srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
+                        //srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp + 1, NULL, 16);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (!strcmp((const char*)cmd, "amf"))
+        {
+            if (!strcmp((const char*)param, "FALSE"))
+            {
+                Logger::log().info() << "Get amf:: " << param;
+            }
+            else if (strcmp((const char*)param, "OK"))
+            {
+                unsigned char *cp;
+                //srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_UPDATE;
+                for (cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;
+                        //srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
+                        //srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp + 1, NULL, 16);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (!strcmp((const char*)cmd, "mapsize"))
+        {}
+        else if (!strcmp((const char*)cmd, "map2cmd"))
+        {}
+        else if (!strcmp((const char*)cmd, "darkness"))
+        {}
+        else if (!strcmp((const char*)cmd, "facecache"))
+        {}
+        else
+        {
+            Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~The server is outdated!\nSelect a different one!~");
+            SOCKET_CloseSocket();
+            Option::getSingleton().setGameStatus(GAME_STATUS_START);
+            return;
+        }
+    }
+    Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
     */
 }
 
@@ -1826,16 +1807,14 @@ void Network::MagicMapCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::DeleteInventory(unsigned char *data, int len)
 {
-    /*
-        int tag = atoi((const char *) data);
-        if (tag < 0)
-        {
-            Logger::log().error() << "DeleteInventory: Invalid tag: " << tag;
-            return;
-        }
-        remove_item_inventory(locate_item(tag));
-        TileManager::getSingleton().map_udate_flag = 2;
-    */
+    int tag = atoi((const char *) data);
+    if (tag < 0)
+    {
+        Logger::log().error() << "DeleteInventory: Invalid tag: " << tag;
+        return;
+    }
+    //remove_item_inventory(locate_item(tag));
+    TileManager::getSingleton().map_udate_flag = 2;
 }
 
 //================================================================================================
