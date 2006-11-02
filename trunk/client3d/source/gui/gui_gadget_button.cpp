@@ -144,6 +144,7 @@ void GuiGadgetButton::draw()
         label.hideText= false;
         label.index= -1;
         label.font = mLabelFontNr;
+        label.color =0;
         label.x1 = mPosX+ mLabelPosX;
         label.y1 = mPosY+ mLabelPosY;
         label.x2 = label.x1 + mWidth;

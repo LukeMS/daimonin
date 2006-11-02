@@ -295,7 +295,7 @@ void GuiTextout::Print(TextLine *line, Texture *texture)
     // draw the text into buffer.
     if (line->text.size())
     {
-        drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, line->text.c_str(), line->hideText, line->font);
+        drawText(line->x2 - line->x1, line->y2 - line->y1, mTextGfxBuffer, line->text.c_str(), line->hideText, line->font, line->color);
     }
     // Blit it into the window.
     texture->getBuffer()->blitFromMemory(
@@ -320,11 +320,11 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
 //================================================================================================
 // .
 //================================================================================================
-void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr)
+void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr, uint32 color)
 {
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
     uint32 pixFont, pixColor;
-    uint32 color = TXT_COLOR_DEFAULT;
+    if (!color) color = TXT_COLOR_DEFAULT;
 
     //  uint32 *strtX = dest_data;
     uint32 *stopX = dest_data + width;

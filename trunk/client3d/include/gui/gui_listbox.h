@@ -51,7 +51,7 @@ public:
     void draw();
     bool mouseEvent(int MouseAction, int x, int y);
     const char *extractFirstLineOfText(const char &text);
-    void addTextline(const char *text);
+    void addTextline(const char *text, uint32 default_color);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -61,9 +61,8 @@ private:
     struct
     {
         String str;
-        int key_clipped;
-        //    ColourValue colorTop;
-        //    ColourValue colorBottom;
+        uint32 color;
+        int keyword_clipped;
     }
     row[SIZE_STRING_BUFFER];
     Real mClose;                 /**< If closed, only the headline is visible. **/

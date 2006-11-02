@@ -260,6 +260,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         TextLine *textline = new TextLine;
         textline->index = index;
         textline->hideText= false;
+        textline->color =0;
         if ((strTmp = xmlElem->Attribute("font")))   textline->font = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("x")))      textline->x1   = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("y")))      textline->y1   = atoi(strTmp);
@@ -395,6 +396,7 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     textline.index = -1;
     textline.hideText= false;
     textline.BG_Backup = 0;
+    textline.color = 0;
     if ((strTmp = xmlElem->Attribute("x")))    textline.x1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("y")))    textline.y1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("font"))) textline.font = atoi(strTmp);
@@ -587,7 +589,7 @@ void GuiWindow::clearTable(int element)
 //================================================================================================
 // Parse a message.
 //================================================================================================
-const char *GuiWindow::Message(int message, int element, void *value)
+const char *GuiWindow::Message(int message, int element, void *value, void *value2)
 {
     switch (message)
     {
@@ -607,7 +609,7 @@ const char *GuiWindow::Message(int message, int element, void *value)
             {
                 if (mvListbox[i]->getIndex() != element)
                     continue;
-                mvListbox[i]->addTextline((const char *)value);
+                mvListbox[i]->addTextline((const char *)value, (uint32)value2);
                 break;
             }
             break;

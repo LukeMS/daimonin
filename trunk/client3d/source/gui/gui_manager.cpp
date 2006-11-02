@@ -245,8 +245,6 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
     // Activate the next window.
     if (key == KC_TAB)
     {
-        if (++mActiveWindow >= (int)mvActiveWindow.size()) mActiveWindow = mvActiveWindow[0];
-        return true;
     }
     // Key event in active window.
     return guiWindow[mActiveWindow].keyEvent(keyChar, key);
@@ -278,8 +276,7 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 //================================================================================================
 const char *GuiManager::sendMessage(int window, int message, int element, void *value1, void *value2)
 {
-    value2 = 0; // no need for value2 atm.
-    return guiWindow[window].Message(message, element, value1);
+    return guiWindow[window].Message(message, element, value1, value2);
 }
 
 //================================================================================================
@@ -306,6 +303,7 @@ void GuiManager::startTextInput(int window, int winElement, int maxChars, bool b
 void GuiManager::cancelTextInput()
 {
     GuiTextinput::getSingleton().canceled();
+    mActiveWindow = GUI_WIN_STATISTICS;
 }
 
 //================================================================================================
@@ -345,19 +343,11 @@ const char *GuiManager::getTextInput()
 //================================================================================================
 void GuiManager::showWindow(int window, bool visible)
 {
+    guiWindow[window].setVisible(visible);
     if (visible)
-    {
-        guiWindow[window].setVisible(true);
-        mvActiveWindow.push_back(window);
         mActiveWindow = window;
-    }
     else
-    {
-        guiWindow[window].setVisible(false);
-        // Active window is now the that was opened before the current one.
-        mActiveWindow = window-1;
-        remove(mvActiveWindow.begin(), mvActiveWindow.end(), window);
-    }
+        mActiveWindow = GUI_WIN_STATISTICS;
 }
 
 //================================================================================================
@@ -385,6 +375,7 @@ void GuiManager::update(Real timeSinceLastFrame)
             label.hideText= false;
             label.index= -1;
             label.font = 2;
+            label.color =0;
             label.x1 = label.y1 = 2;
             label.x2 = TOOLTIP_SIZE_X;
             label.y2 = GuiTextout::getSingleton().getFontHeight(label.font);
@@ -418,6 +409,7 @@ void GuiManager::displaySystemMessage(const char *text)
     //label.clipped = false;
     label.x1 = 0;
     label.y1 = fontH * row;
+    label.color =0;
     label.x2 = mTexture->getWidth()-1;
     label.y2 = fontH * row + GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
     label.text = text;

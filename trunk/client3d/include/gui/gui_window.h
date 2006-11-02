@@ -101,7 +101,7 @@ public:
     {
         return mHeight;
     }
-    const char *Message(int message, int element, void *value);
+    const char *Message(int message, int element, void *value1, void *value2);
     bool mouseEvent(int MouseAction, int mouseX, int mouseY);
     const char *getTooltip()
     {

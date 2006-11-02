@@ -152,6 +152,7 @@ void GuiListbox::scrollTextVertical(int offset)
             label.y2 = label.y1 + mFontHeight;
             if ((int) label.y2 > mHeight+mPosY) label.y2 = mHeight+mPosY;
             label.text = row[(mPrintPos + offset+ (i)-4-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].str.c_str();
+            label.color= row[(mPrintPos + offset+ (i)-4-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].color;
             GuiTextout::getSingleton().Print(&label, texture);
         }
     }
@@ -186,7 +187,7 @@ void GuiListbox::scrollTextHorizontal(int offset)
 //================================================================================================
 // Add a line of text to the ring-buffer (perform auto-clipping).
 //================================================================================================
-void GuiListbox::addTextline(const char *srcText)
+void GuiListbox::addTextline(const char *srcText, uint32 default_color)
 {
     static int  key_start = 0;
     static int  key_count = 0;
@@ -278,8 +279,9 @@ void GuiListbox::addTextline(const char *srcText)
                 dstPos = ix;
             }
             buf[dstPos] =0;
+            row[mBufferPos & (SIZE_STRING_BUFFER-1)].color= default_color;
             row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = buf;
-            row[mBufferPos & (SIZE_STRING_BUFFER-1)].key_clipped = key_start;
+            row[mBufferPos & (SIZE_STRING_BUFFER-1)].keyword_clipped = key_start;
             ++mBufferPos;
             ++mRowsToScroll;
             dstPos = w = 0;
@@ -357,6 +359,7 @@ void GuiListbox::draw()
             label.y2 = label.y1 + mFontHeight;
             if ((int) label.y2 > mHeight+mPosY) label.y2 = mHeight+mPosY;
             label.text = row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].str.c_str();
+            label.color= row[(mPrintPos+ (i)-mMaxVisibleRows)& (SIZE_STRING_BUFFER-1)].color;
             GuiTextout::getSingleton().Print(&label, texture);
         }
         // The complete row was scrolled.
