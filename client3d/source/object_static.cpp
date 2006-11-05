@@ -140,17 +140,3 @@ void ObjectStatic::move(Vector3 &pos)
 {
     mNode->setPosition(mNode->getPosition() + pos);
 }
-
-//================================================================================================
-// Move the object to the given position.
-//================================================================================================
-TilePos ObjectStatic::getTileScrollPos()
-{
-    static TilePos pos;
-    TileManager::getSingleton().getMapScroll(pos.x, pos.z);
-    pos.x+= mActPos.x;
-    pos.z+= mActPos.z;
-    pos.subX = mActPos.subX;
-    pos.subZ = mActPos.subZ;
-    return pos;
-}

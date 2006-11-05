@@ -190,6 +190,76 @@ void ObjectNPC::attackObjectOnTile(TilePos pos)
 {}
 
 //================================================================================================
+// Move the Object to the given tile.
+//================================================================================================
+void ObjectNPC::moveToDistantTile(TilePos pos, int precision)
+{
+    if (mActPos == pos || mAutoTurning || mAutoMoving) return;
+    mEnemyObject= 0; // After this move, we have to check again if enemy is in attack range.
+    mDestWalkPos= pos;
+    mAutoMoving = true;
+    moveToNeighbourTile(precision);
+}
+
+//================================================================================================
+// Move the Object to a neighbour subtile.
+//================================================================================================
+void ObjectNPC::moveToNeighbourTile(int precision)
+{
+    static TilePath tp;
+    static int step = 0;
+
+    if (!step++)
+    {
+        mOffX = 0;
+        mOffZ = 0;
+        tp.FindPath(mActPos, mDestWalkPos, precision);
+    }
+    // We reached the destination pos.
+    if (!tp.ReadPath())
+    {
+        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
+        mAutoMoving = false;
+        step = 0;
+        // For attack we dont move onto the destination tile, but some subtiles before.
+        // So we have to do another faceToTile().
+        if (mActPos != mDestWalkPos) faceToTile(mDestWalkPos);
+        return;
+    }
+    mDestStepPos.x = tp.xPath;
+    mDestStepPos.z = tp.yPath;
+    mDestStepPos.subX = mDestStepPos.x &7;
+    mDestStepPos.subZ = mDestStepPos.z &7;
+    mDestStepPos.x /=8;
+    mDestStepPos.z /=8;
+    mDestStepPos.x += mOffX;
+    mDestStepPos.z += mOffZ;
+
+    // ////////////////////////////////////////////////////////////////////
+    // If the player has moved over a tile border, we have to sync the world.
+    // ////////////////////////////////////////////////////////////////////
+    int dx = mActPos.x - mDestStepPos.x;
+    int dz = mActPos.z - mDestStepPos.z;
+    if (!mIndex && (dx|| dz))
+    {
+        Event->setWorldPos(dx, -dz);
+        mOffX+=dx;
+        mOffZ+=dz;
+        mDestStepPos.x += dx;
+        mDestStepPos.z += dz;
+        TileManager::getSingleton().scrollMap(-dx, -dz);
+        Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(dx, dz);
+        ParticleManager::getSingleton().synchToWorldPos(deltaPos);
+    }
+
+    // Turn the head into the moving direction.
+    faceToTile(mDestStepPos);
+    // Walk 1 subtile.
+    mDestWalkVec = TileManager::getSingleton().getTileInterface()->tileToWorldPos(mDestStepPos);
+    mWalkSpeed = (mDestWalkVec - mNode->getPosition()) / mDistance;
+}
+
+//================================================================================================
 // Update ObjectNPC.
 // Returns false if the object needs to be deleted.
 //================================================================================================
@@ -319,6 +389,7 @@ bool ObjectNPC::update(const FrameEvent& event)
         if (mFacing.valueDegrees() >= 360) mFacing -= Degree(360);
         if (mFacing.valueDegrees() <    0) mFacing += Degree(360);
     }
+
     // ////////////////////////////////////////////////////////////////////
     // Auto movement.
     // ////////////////////////////////////////////////////////////////////
@@ -327,27 +398,16 @@ bool ObjectNPC::update(const FrameEvent& event)
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_WALK, 0, true, true);
         // On slow systems it will happen that distance goes negative.
         // So we look if the squared length is bigger than the previous squared length.
-        Vector3 dist = mDestWalkVec - mNode->getPosition();
         static float squaredLengthPrev = 1000.0; // Somthing big.
+        Vector3 dist = mDestWalkVec - mNode->getPosition();
         float squaredLength = dist.squaredLength();
         // We have reached a waypoint || we went too far.
         if (squaredLength < WALK_PRECISON || squaredLength > squaredLengthPrev)
         {
-            int dx = mActPos.x - mDestStepPos.x;
-            int dz = mActPos.z - mDestStepPos.z;
             mActPos = mDestStepPos;
-            // If the player has moved over a tile border, we have to sync the world.
-            if (!mIndex && (dx || dz))
-            {
-                Event->setWorldPos(dx, dz);
-                // Sync the destination of the walk.
-                mDestWalkPos.x += dx;
-                mDestWalkPos.z += dz;
-                mOffX += dx;
-                mOffZ += dz;
-            }
-            moveToNeighbourTile(0);
-            squaredLengthPrev = 1000.0; // Somthing big.
+            mNode->setPosition(mDestWalkVec); // Set the exact position.
+            squaredLengthPrev = 1000.0;       // Somthing big.
+            moveToNeighbourTile(0);           // Move to next waypoint.
         }
         // We have to move on.
         else
@@ -362,6 +422,7 @@ bool ObjectNPC::update(const FrameEvent& event)
         }
         return true;
     }
+
     // ////////////////////////////////////////////////////////////////////
     // Attacking.
     // ////////////////////////////////////////////////////////////////////
@@ -529,62 +590,6 @@ void ObjectNPC::faceToTile(TilePos pos)
 }
 
 //================================================================================================
-// Move the Object to a neighbour subtile.
-//================================================================================================
-void ObjectNPC::moveToNeighbourTile(int precision)
-{
-    static TilePath tp;
-    static int step = 0;
-
-    if (!step++)
-    {
-        mOffX = 0;
-        mOffZ = 0;
-        tp.FindPath(mActPos, mDestWalkPos, precision);
-    }
-
-    // We reached the destination pos.
-    if (!tp.ReadPath())
-    {
-        mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_IDLE, 0, true);
-        mAutoMoving = false;
-        step = 0;
-        // For attack we dont move onto the destination tile, but some subtiles before.
-        // So we have to do another faceToTile().
-        if (mActPos != mDestWalkPos) faceToTile(mDestWalkPos);
-        return;
-    }
-
-    mDestStepPos.x = tp.xPath;
-    mDestStepPos.z = tp.yPath;
-    mDestStepPos.subX = mDestStepPos.x &7;
-    mDestStepPos.subZ = mDestStepPos.z &7;
-    mDestStepPos.x /=8;
-    mDestStepPos.z /=8;
-
-    mDestStepPos.x += mOffX;
-    mDestStepPos.z += mOffZ;
-
-    // Turn the head into the moving direction.
-    faceToTile(mDestStepPos);
-    // Walk 1 tile.
-    mDestWalkVec = TileManager::getSingleton().getTileInterface()->tileToWorldPos(mDestStepPos);
-    mWalkSpeed = (mDestWalkVec - mNode->getPosition()) / mDistance;
-}
-
-//================================================================================================
-// Move the Object to the given tile.
-//================================================================================================
-void ObjectNPC::moveToDistantTile(TilePos pos, int precision)
-{
-    if (mActPos == pos || mAutoTurning || mAutoMoving) return;
-    mEnemyObject= 0; // After this move, we have to check again if enemy is in attack range.
-    mDestWalkPos= pos;
-    mAutoMoving = true;
-    moveToNeighbourTile(precision);
-}
-
-//================================================================================================
 // Attack an enemy.
 //================================================================================================
 void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
@@ -615,4 +620,3 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 //================================================================================================
 void ObjectNPC::addToMap()
 {}
-

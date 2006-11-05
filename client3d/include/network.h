@@ -68,6 +68,12 @@ const int  VERSION_CS = 991022;
 const int  VERSION_SC = 991022;
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
+// Values for send_command option.
+
+const int  SC_NORMAL  = 0;
+const int  SC_FIRERUN = 1;
+const int  SC_ALWAYS  = 2;
+
 // Contains the base information we use to make up a packet we want to send.
 typedef struct SockList
 {

@@ -102,7 +102,6 @@ public:
     {
         return mActPos;
     }
-    TilePos getTileScrollPos();
     void setPosition(TilePos pos);
 	unsigned int getIndex()
 	{

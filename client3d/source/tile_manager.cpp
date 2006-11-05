@@ -48,8 +48,7 @@ const int TEXTURES_PER_ROW = 7;
 TileManager::TileManager()
 {
     mInterface = 0;
-    mMapScrollX = 0;
-    mMapScrollZ = 0;
+    map_udate_flag = 0;
 }
 
 //================================================================================================
@@ -78,8 +77,6 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
     mGrid = false;
     mInterface = new TileInterface(SceneMgr);
 
-    Logger::log().info() << "Creating map";
-    loadMap(FILE_HEIGHT_MAP);
     // ////////////////////////////////////////////////////////////////////
     // Create all TextureGroups.
     // ////////////////////////////////////////////////////////////////////
@@ -104,213 +101,43 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
 }
 
 //================================================================================================
-// Create the worldmap.
-//================================================================================================
-void TileManager::loadMap(const std::string &png_filename)
-{
-    Image image;
-    if (!loadImage(image, png_filename))
-    {
-        Logger::log().error() << "Heightmap '" << png_filename << "' was not found.";
-        return;
-    }
-    uchar* heightdata_temp = image.getData();
-    size_t dimx = image.getWidth();
-    size_t dimy = image.getHeight();
-    unsigned int posX = 0, posY;
-    short Map[CHUNK_SIZE_X+3][CHUNK_SIZE_Z+3];
-    // ////////////////////////////////////////////////////////////////////
-    // Fill the heightdata buffer with the image-color.
-    // ////////////////////////////////////////////////////////////////////
-    for (int x = 0; x < CHUNK_SIZE_X+3; ++x)
-    {
-        posY =0;
-        for (int y = 0; y < CHUNK_SIZE_Z+3; ++y)
-        {
-            Map[x][y] = heightdata_temp[posY * dimx + posX];
-            if (++posY >= dimy)
-                posY =0; // if necessary, repeat the image.
-        }
-        if (++posX >= dimx)
-            posX =0; // if necessary, repeat the image.
-    }
-
-    for (int x = 0; x < CHUNK_SIZE_X+1; ++x)
-    {
-        for (int y = 0; y < CHUNK_SIZE_Z+1; ++y)
-        {
-            mMap[x][y].height = (Map[x+1][y+1] + Map[x+1][y+2] + Map[x+2][y+1] + Map[x+2][y+2]) / 4;
-            mMap[x][y].indoorTris =0;
-            for (int i =0; i< SUM_SUBTILES; ++i) mMap[x][y].walkable[i] =0;
-            /*
-            // Building ground.
-            if (x>3 && x < 9 && y>1 && y<11)
-            {
-                mMap[x][y].height = 60;
-                mMap[x][y].indoor = true;
-            }
-            */
-            //   mMap[x][y].height=60;
-        }
-    }
-
-    /*
-         if (WallType = INNER_TOP_LEFT)  WallType = TRIANGLE_LEFT + TRIANGLE_TOP;
-    else if (WallType = INNER_BOT_LEFT)  WallType = TRIANGLE_LEFT + TRIANGLE_BOTTOM;
-    else if (WallType = INNER_TOP_RIGHT) WallType = TRIANGLE_RIGHT+ TRIANGLE_TOP;
-    else if (WallType = INNER_BOT_RIGHT) WallType = TRIANGLE_RIGHT+ TRIANGLE_BOTTOM;
-    else if (WallType = INNER_ALL)       WallType = TRIANGLE_RIGHT+ TRIANGLE_LEFT + TRIANGLE_TOP + TRIANGLE_BOTTOM;
-    else logger << "Wrong wall type!"
-    */
-
-    // Building ground 2x2.
-    //   x  z
-    mMap[4][5].height = 60;
-    mMap[4][5].indoor_col = 2;
-    mMap[4][5].indoor_row = 4;
-    mMap[4][5].indoorTris = TRIANGLE_RIGHT + TRIANGLE_BOTTOM;
-
-    mMap[4][6].height = 60;
-    mMap[4][6].indoor_col = 2;
-    mMap[4][6].indoor_row = 4;
-    mMap[4][6].indoorTris = TRIANGLE_RIGHT + TRIANGLE_TOP;
-    //-----------------------//
-    mMap[5][4].height = 60;
-    mMap[5][4].indoor_col = 2;
-    mMap[5][4].indoor_row = 4;
-    mMap[5][4].indoorTris = TRIANGLE_RIGHT + TRIANGLE_BOTTOM;
-
-    mMap[5][5].height = 60;
-    mMap[5][5].indoor_col = 2;
-    mMap[5][5].indoor_row = 4;
-    mMap[5][5].indoorTris = TRIANGLE_LEFT + TRIANGLE_RIGHT + TRIANGLE_TOP + TRIANGLE_BOTTOM;
-
-    mMap[5][6].height = 60;
-    mMap[5][6].indoor_col = 2;
-    mMap[5][6].indoor_row = 4;
-    mMap[5][6].indoorTris = TRIANGLE_LEFT + TRIANGLE_TOP;
-
-    //-----------------------//
-    mMap[6][4].height = 60;
-    mMap[6][4].indoor_col = 2;
-    mMap[6][4].indoor_row = 4;
-    mMap[6][4].indoorTris = TRIANGLE_LEFT + TRIANGLE_BOTTOM;
-
-    mMap[6][5].height = 60;
-    mMap[6][5].indoor_col = 2;
-    mMap[6][5].indoor_row = 4;
-    mMap[6][5].indoorTris = TRIANGLE_LEFT + TRIANGLE_RIGHT + TRIANGLE_TOP + TRIANGLE_BOTTOM;
-
-    mMap[6][6].height = 60;
-    mMap[6][6].indoor_col = 2;
-    mMap[6][6].indoor_row = 4;
-    mMap[6][6].indoorTris = TRIANGLE_RIGHT + TRIANGLE_TOP;
-
-    //-----------------------//
-    mMap[7][5].height = 60;
-    mMap[7][5].indoor_col = 2;
-    mMap[7][5].indoor_row = 4;
-    mMap[7][5].indoorTris = TRIANGLE_LEFT + TRIANGLE_BOTTOM;
-
-    mMap[7][6].height = 60;
-    mMap[7][6].indoor_col = 2;
-    mMap[7][6].indoor_row = 4;
-    mMap[7][6].indoorTris = TRIANGLE_LEFT + TRIANGLE_TOP;
-
-    setMapTextures();
-}
-
-//================================================================================================
-// Saves the map.
+// Scroll the map.
 //================================================================================================
 void TileManager::scrollMap(int dx, int dz)
 {
-    // Quick hack. server will send us the map later.
     if (dx)
     {
-        struct WorldMap bufferH[CHUNK_SIZE_Z];
-        if (dx <0)
+        mMapScrollX += dx;
+        if (dx >0)
         {
-            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-            {
-                bufferH[y] = mMap[0][y];
-            }
-            for (int x = 0; x < CHUNK_SIZE_X-1; ++x)
-            {
-                for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-                {
+            for (int x = 0; x < CHUNK_SIZE_X; ++x)
+                for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
                     mMap[x][y] = mMap[x+1][y];
-                }
-            }
-            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-            {
-                mMap[CHUNK_SIZE_X-1][y] = bufferH[y] ;
-            }
         }
-        else
+        else if (dx <0)
         {
-            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-            {
-                bufferH[y] = mMap[CHUNK_SIZE_X-1][y];
-            }
-            for (int x = CHUNK_SIZE_X-1; x >0; --x)
-            {
-                for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-                {
+            for (int x = CHUNK_SIZE_X; x >0; --x)
+                for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
                     mMap[x][y] = mMap[x-1][y];
-                }
-            }
-            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-            {
-                mMap[0][y] = bufferH[y];
-            }
         }
     }
     if (dz)
     {
-        struct WorldMap bufferH[CHUNK_SIZE_Z];
-        if (dz <0)
+        mMapScrollZ += dz;
+        if (dz >0)
         {
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            {
-                bufferH[x] = mMap[x][0] ;
-            }
-
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            {
-                for (int y = 0; y < CHUNK_SIZE_Z-1; ++y)
-                {
+            for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+                for (int y = 0; y < CHUNK_SIZE_Z; ++y)
                     mMap[x][y] = mMap[x][y+1];
-                }
-            }
-
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            {
-                mMap[x][CHUNK_SIZE_Z-1] = bufferH[x] ;
-            }
         }
-        else
+        else if (dz <0)
         {
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            {
-                bufferH[x] = mMap[x][CHUNK_SIZE_Z-1] ;
-            }
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            {
-                for (int y = CHUNK_SIZE_Z-1; y > 0; --y)
-                {
+            for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+                for (int y = CHUNK_SIZE_Z; y > 0; --y)
                     mMap[x][y] = mMap[x][y-1];
-                }
-            }
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-            {
-                mMap[x][0]  = bufferH[x] ;
-            }
         }
     }
-    mMapScrollX+= dx;
-    mMapScrollZ+= dz;
-    changeChunks();
+    mMapchunk.change();
 }
 
 //================================================================================================
@@ -327,16 +154,6 @@ void TileManager::setWalkablePos(const TilePos &pos, int row, unsigned char walk
 bool TileManager::getWalkablePos(int x, int y)
 {
     return (mMap[x >> 3][y >> 3].walkable[y&7] & (1 << (x&7))) ==0;
-}
-
-
-//================================================================================================
-// .
-//================================================================================================
-void TileManager::getMapScroll(int &x, int &z)
-{
-    x = mMapScrollX;
-    z = mMapScrollZ;
 }
 
 //================================================================================================
@@ -421,9 +238,7 @@ void TileManager::createChunks()
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-    TileChunk::mBounds = new AxisAlignedBox(
-                             0, 0, 0,
-                             TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
+    TileChunk::mBounds = new AxisAlignedBox(0, 0, 0, TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
     mMapchunk.create(mTileTextureSize);
     delete TileChunk::mBounds;
 #ifdef LOG_TIMING
@@ -440,30 +255,10 @@ void TileManager::changeChunks()
 #ifdef LOG_TIMING
     unsigned long time = Root::getSingleton().getTimer()->getMicroseconds();
 #endif
-    /*
-        TileChunk::mBounds = new AxisAlignedBox(
-                                 0, 0, 0,
-                                 TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
-    */
-    /*
-        // Test start
-        unsigned char value;
-        for (int a = 0 ; a < TILES_SUmX; ++a)
-        {
-            for (int b = 0; b < TILES_SUmZ; ++b)
-            {
-                value = Get_Map_Height(a, b)+ 1;
-                if (value > 220)
-                    value = 0;
-                Set_Map_Height(a, b, value);
-            }
-        }
-        // Test stop
-    */
-    setMapTextures();
+    //TileChunk::mBounds = new AxisAlignedBox(0, 0, 0, TILE_SIZE_X * CHUNK_SIZE_X, 100, TILE_SIZE_Z * CHUNK_SIZE_Z);
+    //setMapTextures();
     mMapchunk.change();
-    //    delete TileChunk::mBounds;
-
+    //delete TileChunk::mBounds;
 #ifdef LOG_TIMING
     Logger::log().info() << "Time to change Chunks: "
     << (double)(Root::getSingleton().getTimer()->getMicroseconds() - time)/1000 << " ms";
@@ -858,7 +653,6 @@ void TileManager::setMaterialLOD(int pixel)
 {
     if (pixel != 128 && pixel !=64 && pixel != 32 && pixel != 16)
         return;
-
     String matWater, matLand;
     mTileTextureSize = pixel;
     matLand = "LandTiles" + StringConverter::toString(mTileTextureSize, 3, '0');

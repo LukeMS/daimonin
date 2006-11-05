@@ -348,39 +348,36 @@ void Network::Map2Cmd(unsigned char *data, int len)
             }
             if (ext_flag & 0x08)
             {
-                probe = 0;
                 ext3 = (int) (data[pos++]);
-                if (ext3 & FFLAG_PROBE)
-                {
+                if (ext3 & TileMap::FFLAG_PROBE)
                     probe = (int) (data[pos++]);
-                }
+                else
+                    probe = 0;
                 TileMap::getSingleton().set_map_ext(x, y, 3, ext3, probe);
             }
             if (ext_flag & 0x10)
             {
-                probe = 0;
                 ext2 = (int) (data[pos++]);
-                if (ext2 & FFLAG_PROBE)
-                {
+                if (ext2 & TileMap::FFLAG_PROBE)
                     probe = (int) (data[pos++]);
-                }
+                else
+                    probe = 0;
                 TileMap::getSingleton().set_map_ext(x, y, 2, ext2, probe);
             }
             if (ext_flag & 0x20)
             {
-                probe = 0;
                 ext1 = (int) (data[pos++]);
-                if (ext1 & FFLAG_PROBE)
-                {
+                if (ext1 & TileMap::FFLAG_PROBE)
                     probe = (int) (data[pos++]);
-                }
+                else
+                    probe = 0;
                 TileMap::getSingleton().set_map_ext(x, y, 1, ext1, probe);
             }
         }
 
         if (mask & 0x10)
         {
-            TileMap::getSingleton().set_map_darkness(x, y, (uint8) (data[pos]));
+            //TileMap::getSingleton().set_map_darkness(x, y, (uint8) (data[pos]));
             ++pos;
         }
 
@@ -388,14 +385,14 @@ void Network::Map2Cmd(unsigned char *data, int len)
         // a set ext_flag here marks this entry as face from a multi tile arch.
         // we got another byte then which all information we need to display
         // this face in the right way (position and shift offsets)
-        if (mask & 0x8)
+        if (mask & 0x8) // Layer 0 (Ground tiles).
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
             xdata = 0;
             TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
         }
-        if (mask & 0x4)
+        if (mask & 0x4) // Layer 1 (gras, bridge, ...).
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
@@ -407,11 +404,10 @@ void Network::Map2Cmd(unsigned char *data, int len)
             }
             TileMap::getSingleton().set_map_face(x, y, 1, face, xdata, ext1, pname2);
         }
-        if (mask & 0x2)
+        if (mask & 0x2) // Layer 2 (wall, ...).
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
-//            Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
             xdata = 0;
             if (ext_flag & 0x02) // we have here a multi arch, fetch head offset
             {
@@ -420,7 +416,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             }
             TileMap::getSingleton().set_map_face(x, y, 2, face, xdata, ext2, pname3);
         }
-        if (mask & 0x1)
+        if (mask & 0x1) // Layer 3 (plant, npc, chair, ...).
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
@@ -431,7 +427,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
                 xdata = (uint8) (data[pos]);
                 pos++;
             }
-            Logger::log().info() << "set_map_face: " << x << " " << y << " " << (face & ~0x8000);
             TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
         }
     } // more tiles
@@ -776,11 +771,11 @@ void Network::DeleteItem(unsigned char *data, int len)
     while (pos < len)
     {
         tag = GetInt_String(data); pos += 4;
-        // delete_item(tag);
+        //delete_item(tag);
     }
     if (pos > len)
         Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
-    TileManager::getSingleton().map_udate_flag = 2;
+    //TileManager::getSingleton().map_udate_flag = 2;
 }
 
 //================================================================================================
@@ -1732,7 +1727,7 @@ void Network::GroupUpdateCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::InterfaceCmd(unsigned char *data, int len)
 {
-    TileManager::getSingleton().map_udate_flag = 2;
+    //TileManager::getSingleton().map_udate_flag = 2;
     /*
         if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
                 ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
@@ -1814,7 +1809,7 @@ void Network::DeleteInventory(unsigned char *data, int len)
         return;
     }
     //remove_item_inventory(locate_item(tag));
-    TileManager::getSingleton().map_udate_flag = 2;
+    //TileManager::getSingleton().map_udate_flag = 2;
 }
 
 //================================================================================================
