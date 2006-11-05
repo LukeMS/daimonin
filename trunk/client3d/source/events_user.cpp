@@ -146,13 +146,6 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
         }
 
-        case KC_L:
-		{
-            Option::getSingleton().setIntValue(Option::UPDATE_NETWORK, true);
-            Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-            break;
-		}
-
         case KC_O:
             // ObjectManager::getSingleton().setPlayerEquipment(ObjectManager::OBJECT_PLAYER, ObjectNPC::BONE_SHIELD_HAND, 1);
             break;
@@ -180,6 +173,63 @@ void CEvent::keyPressed(KeyEvent *e)
 			break;
         }
 
+        case KC_NUMPAD2:
+		{
+            Event->setWorldPos(0, 1);
+			break;
+		}
+
+        case KC_NUMPAD8:
+		{
+            Event->setWorldPos(0,-1);
+			break;
+        }
+
+        case KC_NUMPAD4:
+		{
+            Event->setWorldPos(1, 0);
+			break;
+		}
+
+        case KC_NUMPAD6:
+		{
+            Event->setWorldPos(-1,0);
+			break;
+        }
+
+        case KC_NUMPAD7:
+		{
+            Event->setWorldPos(1,-1);
+			break;
+        }
+
+        case KC_NUMPAD3:
+		{
+            Event->setWorldPos(-1,1);
+			break;
+        }
+
+        case KC_NUMPAD9:
+		{
+            Event->setWorldPos(-1,-1);
+			break;
+        }
+
+        case KC_NUMPAD1:
+		{
+            Event->setWorldPos(1,1);
+			break;
+        }
+
+
+/*
+        case KC_S:
+        {
+		    bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
+            ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
+			break;
+        }
+*/
          case KC_T:
             if (Network::getSingleton().isInit())
                 Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
@@ -445,7 +495,7 @@ void CEvent::mousePressed (MouseEvent *e)
         { // Button was pressed in a gui_window.
 
         }
-        else
+        else if (Option::getSingleton().getGameStatus() >= GAME_STATUS_PLAY)
         {
             RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
             mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));

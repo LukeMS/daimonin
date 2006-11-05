@@ -26,38 +26,10 @@ http://www.gnu.org/licenses/licenses.html
 
 #ifndef TILE_MAP_H
 #define TILE_MAP_H
-#define MAP_START_XOFF 376
 
-#define MAP_START_YOFF 143
-#define MAP_TILE_POS_YOFF 23
-#define MAP_TILE_POS_YOFF2 12
-#define MAP_TILE_POS_XOFF 48
-#define MAP_TILE_POS_XOFF2 24
+#include "tile_manager.h"
 
-#define MAP_TILE_XOFF 12
-#define MAP_TILE_YOFF 24
-#define MAXFACES 4
-#define MAP_MAX_SIZE  17
-
-// table of pre definded multi arch objects.
-// mpart_id and mpart_nr in the arches are commited from server
-// to analyze the exaclty tile position inside a mpart object.
-
-// The way of determinate the starting and shift points is explained
-// in the dev/multi_arch folder of the arches, where the multi arch templates & masks are.
-
-
-enum
-{
-    FFLAG_SLEEP     =1 << 0, // object sleeps.
-    FFLAG_CONFUSED  =1 << 1, // object is confused.
-    FFLAG_PARALYZED =1 << 2, // object is paralyzed.
-    FFLAG_SCARED    =1 << 3, // object is scared.
-    FFLAG_BLINDED   =1 << 4, // object is blinded.
-    FFLAG_INVISIBLE =1 << 5, // object is invisible (but when send, player can see it).
-    FFLAG_ETHEREAL  =1 << 6, // object is etheral   (but when send, object can be seen).
-    FFLAG_PROBE     =1 << 7, // object s target of player.
-};
+const int MAXFACES = 4;
 
 class TileMap
 {
@@ -65,6 +37,18 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        FFLAG_SLEEP     =1 << 0, // object sleeps.
+        FFLAG_CONFUSED  =1 << 1, // object is confused.
+        FFLAG_PARALYZED =1 << 2, // object is paralyzed.
+        FFLAG_SCARED    =1 << 3, // object is scared.
+        FFLAG_BLINDED   =1 << 4, // object is blinded.
+        FFLAG_INVISIBLE =1 << 5, // object is invisible (but when send, player can see it).
+        FFLAG_ETHEREAL  =1 << 6, // object is etheral   (but when send, object can be seen).
+        FFLAG_PROBE     =1 << 7, // object s target of player.
+    };
+
     typedef struct
     {
         int xoff;       // X-offset.
@@ -108,21 +92,10 @@ public:
 
     typedef struct
     {
-        MapCell cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
+        MapCell cells[CHUNK_SIZE_X][CHUNK_SIZE_Z];
     }
     Map;
     Map the_map;
-
-    typedef struct
-    {
-        int x;
-        int y;
-    }
-    MapPos;
-
-
-
-
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -133,26 +106,22 @@ public:
     }
     void clear_map(void);
     void display_map_clearcell(long x, long y);
-    void set_map_darkness(int x, int y, unsigned char darkness);
     void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
     void map_draw_map(void);
     void display_mapscroll(int dx, int dy);
     void InitMapData(char *name, int xl, int yl, int px, int py);
     void set_map_ext(int x, int y, int layer, int ext, int probe);
     void map_draw_map_clear(void);
-    void load_mapdef_dat(void);
     void adjust_map_cache(int x, int y);
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-// we need this to parse the map and sort the multi tile monsters
     typedef struct _map_object_parse
-    {
-        int                         face;
-        int                         x;
-        int                         y;
+    {   // we need this to parse the map and sort the multi tile monsters
+        int face;
+        int x,y;
         struct _map_object_parse   *next;
     }
     _map_object_parse;

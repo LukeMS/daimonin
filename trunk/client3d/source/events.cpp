@@ -27,11 +27,11 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreKeyEvent.h>
 #include "events.h"
 #include "sound.h"
-#include "object_manager.h"
 #include "option.h"
 #include "logger.h"
 #include "network.h"
 #include "tile_manager.h"
+#include "tile_map.h"
 #include "gui_manager.h"
 #include "gui_textinput.h"
 #include "object_manager.h"
@@ -46,6 +46,31 @@ const unsigned int MIN_LEN_LOGIN_NAME =  2;
 const unsigned int MAX_LEN_LOGIN_NAME = 30;
 const unsigned int MIN_LEN_LOGIN_PSWD =  6;
 const unsigned int MAX_LEN_LOGIN_PSWD = 17;
+
+//#define AUTO_FILL_PASWD // Delete me!!!
+
+// cmds for fire/move/run - used from move_keys()
+/*
+static char    *directions[10] =
+{
+    "null", "/sw", "/s", "/se", "/w", "/stay", "/e", "/nw", "/n", "/ne"
+};
+
+static char    *directions_name[10] =
+{
+    "null", "southwest", "south", "southeast", "west", "stay", "east", "northwest", "north", "northeast"
+};
+static char    *directionsrun[10] =
+{
+    "/run 0", "/run 6", "/run 5", "/run 4", "/run 7",\
+    "/run 5", "/run 3", "/run 8", "/run 1", "/run 2"
+};
+static char    *directionsfire[10] =
+{
+    "fire 0", "fire 6", "fire 5", "fire 4", "fire 7",\
+    "fire 0", "fire 3", "fire 8", "fire 1", "fire 2"
+};
+*/
 
 
 //================================================================================================
@@ -96,9 +121,19 @@ CEvent::~CEvent()
 void CEvent::setWorldPos(int deltaX, int deltaZ)
 {
     //ParticleManager::getSingleton().pauseAll(true);
-    TileManager::getSingleton().scrollMap(deltaX, deltaZ); // server has to do this!
-    Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
-    ParticleManager::getSingleton().synchToWorldPos(deltaPos);
+    //TileManager::getSingleton().scrollMap(deltaX, deltaZ);
+    if (deltaX >0 && deltaZ >0) Network::getSingleton().send_command("/sw", -1, SC_FIRERUN);
+    else if (deltaX <0 && deltaZ >0) Network::getSingleton().send_command("/se", -1, SC_FIRERUN);
+    else if (deltaX >0 && deltaZ <0) Network::getSingleton().send_command("/nw", -1, SC_FIRERUN);
+    else if (deltaX <0 && deltaZ <0) Network::getSingleton().send_command("/ne", -1, SC_FIRERUN);
+    else if (deltaX==0 && deltaZ <0) Network::getSingleton().send_command("/n" , -1, SC_FIRERUN);
+    else if (deltaX==0 && deltaZ >0) Network::getSingleton().send_command("/s" , -1, SC_FIRERUN);
+    else if (deltaX >0 && deltaZ==0) Network::getSingleton().send_command("/w" , -1, SC_FIRERUN);
+    else if (deltaX <0 && deltaZ==0) Network::getSingleton().send_command("/e" , -1, SC_FIRERUN);
+
+    //TileManager::getSingleton().changeChunks();
+    //Vector3 deltaPos = ObjectManager::getSingleton().synchToWorldPos(deltaX, deltaZ);
+    //ParticleManager::getSingleton().synchToWorldPos(deltaPos);
     //ParticleManager::getSingleton().pauseAll(false);
 }
 
@@ -108,7 +143,7 @@ void CEvent::setWorldPos(int deltaX, int deltaZ)
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
     static Overlay *mOverlay;
-    static String strPlayerPswd;
+    static String strPlayerName, strPlayerPswd;
     if (mWindow->isClosed() || mQuitGame)
         return false;
 
@@ -125,7 +160,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             mCamera->setAspectRatio(Real(VP->getActualWidth()) / Real(VP->getActualHeight()));
             mCamera->setProjectionType(PT_ORTHOGRAPHIC);
             mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
-            mCamera->setPosition(Vector3(0, 450, 900));
+            mCamera->setPosition(Vector3(0, 0, 0));
             mCamera->pitch(Degree(-25));
             // ////////////////////////////////////////////////////////////////////
             // Create the world.
@@ -248,73 +283,29 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             else
                 TileManager::getSingleton().Init(mSceneManager, 16);
             // Set next state.
-            Option::getSingleton().setGameStatus(GAME_STATUS_INIT_OBJECT);
-            GuiManager::getSingleton().displaySystemMessage("Starting the objects...");
-            break;
-        }
-
-        case GAME_STATUS_INIT_OBJECT:
-        {
-            ObjectManager::getSingleton().init();
-            // Set next state.
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
-            ObjectVisuals::getSingleton().Init();
-            GuiManager::getSingleton().displaySystemMessage("");
-            OverlayManager::getSingleton().destroy(mOverlay);
-            GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
-            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
-            GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
-            GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
+            GuiManager::getSingleton().displaySystemMessage("Starting the network...");
 
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~X~ for texture quality. ");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~A~ to change Idle animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~B~ to change Attack animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~C~ to change Agility animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~P~ to ready/unready primary weapon.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~S~ to ready/unready secondary weapon.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~Q~ to start attack animation.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~LMB~ for selection.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~#0000ffffInteracting with server:~");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~L~ to connect to server.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor. (needs login)");
-            //GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~i, o, p~ to change utils.");
-
-            /*
-                        char buffer[200];
-                        for (int i=0; i < 100; ++i)
-                        {
-                            sprintf(buffer, "testing %d", i);
-                            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buffer);
-
-                        }
-            */
-
-
-            mWindow->resetStatistics();
-            Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
             break;
         }
 
         case GAME_STATUS_INIT_NET:
         {
-            if (Option::getSingleton().getIntValue(Option::UPDATE_NETWORK))
-            {
-                Network::getSingleton().Init();
-                Option::getSingleton().setGameStatus(GAME_STATUS_META);
-                break;
-            }
-            //clear_metaserver_data();
-            Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+            Network::getSingleton().Init();
+            GuiManager::getSingleton().displaySystemMessage("");
+            OverlayManager::getSingleton().destroy(mOverlay);
+            mWindow->resetStatistics();
+            GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"You need a running server to start the game. Asking metaserver for active server now.");
+            Option::getSingleton().setGameStatus(GAME_STATUS_META);
             break;
         }
 
         case GAME_STATUS_META:
         {
+            Network::getSingleton().clearMetaServerData();
             GuiManager::getSingleton().clearTable(GUI_WIN_SERVERSELECT, GUI_TABLE);
             Network::getSingleton().contactMetaserver();
             Option::getSingleton().setGameStatus(GAME_STATUS_START);
@@ -411,7 +402,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
                     " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
                     //   SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
-                    1, 17,17,
+                    1, CHUNK_SIZE_X, CHUNK_SIZE_Z,
                     ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
                     ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
                     ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),
@@ -428,10 +419,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             //mRequest_file_chain = 0;
             //mRequest_file_flags = 0;
 
-
             Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
+            // Now we wait for user to login/create character.
+            //
             Option::getSingleton().setGameStatus(GAME_STATUS_ADDME); // only for testing....
-
             break;
         }
 
@@ -476,7 +467,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             const char *strName = GuiManager::getSingleton().getTextInput();
             if (checkUsername(strName))
             {
-                ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strName);
+                strPlayerName = strName;
                 // C -> Create new hero , L -> Login.
                 String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
                 strServer += strName;
@@ -491,8 +482,14 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_PSWD_INIT:
         {
             GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
+#ifndef AUTO_FILL_PASWD
             GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
+#endif
             Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_USER);
+#ifdef AUTO_FILL_PASWD
+            Network::getSingleton().send_reply("NIX_PASWD");
+            Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN_WAIT);
+#endif
             break;
         }
 
@@ -514,7 +511,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
                 break;
             }
-            if (strPlayerPswd == ObjectManager::getSingleton().getNameNPC(ObjectNPC::HERO))
+            if (strPlayerPswd == strPlayerName)
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED, GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password can't be same as character name!~");
                 GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_PASSWD, MAX_LEN_LOGIN_PSWD, false, false);
@@ -531,14 +528,20 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         case GAME_STATUS_VRFY_INIT:
         {
             GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, true);
+#ifndef AUTO_FILL_PASWD
             GuiManager::getSingleton().startTextInput(GUI_WIN_LOGIN, GUI_TEXTINPUT_LOGIN_VERIFY, MAX_LEN_LOGIN_PSWD, false, false);
+#endif
             Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_USER);
+#ifdef AUTO_FILL_PASWD
+            Network::getSingleton().send_reply("NIX_PASWD");
+            Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN_WAIT);
+#endif
             break;
         }
 
         case GAME_STATUS_VRFY_USER:
         {
-            //map_transfer_flag = 0;
+            TileManager::getSingleton().map_transfer_flag = 0;
             if (GuiManager::getSingleton().brokenTextInput())
             {
                 Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
@@ -555,7 +558,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         // Send the new created character to server.
         case GAME_STATUS_NEW_CHAR:
         {
-
             Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
             /*
             char buf[MAX_BUF];
@@ -569,6 +571,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             break;
         }
 
+        /*
+                case GAME_STATUS_PLAY:
+                {
+                    Logger::log().error() << "Game Status Play";
+                    break;
+                }
+        */
         default:
         {
             static bool once = false;
@@ -579,7 +588,31 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 mIdleTime = 0;
                 if (!once)
                 {
-                    Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
+
+                    ObjectManager::getSingleton().init();
+                    ObjectVisuals::getSingleton().Init();
+                    ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
+                    mCamera->setPosition(Vector3(0, 450, 900));
+                    GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
+                    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
+                    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
+
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Client3d commands:");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~left~ MB for selection.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~X~ for texture quality. ");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~A~ to change Idle animation.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~B~ to change Attack animation.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~C~ to change Agility animation.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~P~ to ready/unready primary weapon.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~S~ to ready/unready secondary weapon.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~Q~ to start attack animation.");
+            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor.");
+
+                    //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
                     sObject obj;
                     obj.meshName  = "Tentacle_N_Small.mesh";
                     //obj.meshName  = "Ogre_Big.mesh";
@@ -663,6 +696,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     }
             */
             ParticleManager::getSingleton().update(evt.timeSinceLastFrame);
+
+
+
+            if (TileManager::getSingleton().map_udate_flag)
+            {
+                TileMap::getSingleton().map_draw_map();
+            }
             break;
         }
     }

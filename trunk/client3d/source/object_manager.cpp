@@ -353,7 +353,7 @@ void ObjectManager::selectObject(MovableObject *mob)
     {
         if  (mSelectedObject > 0 && mSelectedFriendly < 0)
         {
-            mSelectedPos = mvObject_npc[mSelectedObject]->getTileScrollPos();
+            mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
             mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
         }
         return;
@@ -395,7 +395,7 @@ void ObjectManager::selectObject(MovableObject *mob)
         {
             if (mSelectedFriendly < 0)
             {
-                mSelectedPos = mvObject_npc[selectedObject]->getTileScrollPos();
+                mSelectedPos = mvObject_npc[selectedObject]->getTilePos();
                 mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);
             }
         }

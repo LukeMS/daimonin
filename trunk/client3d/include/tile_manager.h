@@ -39,8 +39,8 @@ using namespace Ogre;
  *****************************************************************************/
 
 
-const int CHUNK_SIZE_X  = 11; /**< Number of tiles in the worldmap (on x-axis). */
-const int CHUNK_SIZE_Z  = 23; /**< Number of tiles in the worldmap (on z-axis). */
+const int CHUNK_SIZE_X = 17; //11; /**< Number of tiles in the worldmap (on x-axis). */
+const int CHUNK_SIZE_Z = 17; //23; /**< Number of tiles in the worldmap (on z-axis). */
 
 const int MIN_TEXTURE_PIXEL = 16; /**< Minimal size of tile in the terrain texture. */
 
@@ -130,7 +130,6 @@ public:
         else if (z <0) z =0;
         return mMap[x][z].indoor_col;
     }
-
     char getIndoorTris(short x, short z)
     {
         if (x > CHUNK_SIZE_X) x = CHUNK_SIZE_X;
@@ -139,12 +138,15 @@ public:
         else if (z <0) z =0;
         return mMap[x][z].indoorTris;
     }
-
     TileInterface* getTileInterface()
     {
         return mInterface;
     }
-
+    void getMapScroll(int &x, int &z)
+    {
+        x = mMapScrollX;
+        z = mMapScrollZ;
+    }
     void setMapHeight(short x, short y, short value)
     {
         mMap[x][y].height = value;
@@ -157,6 +159,12 @@ public:
     {
         mMap[x][y].terrain_col = value;
     }
+    void setMap(int x, int y, int height, int row, int col)
+    {
+        mMap[x][y].height      = (unsigned char)height;
+        mMap[x][y].terrain_row = (unsigned char)row;
+        mMap[x][y].terrain_col = (unsigned char)col;
+    }
     void setMapTextures();
     bool loadImage(Image &image, const std::string &filename);
 
@@ -165,7 +173,6 @@ public:
 
     void createChunks();
     void changeChunks();
-    void getMapScroll(int &x, int &z);
 
     void createTexture();
     void changeTexture();
@@ -174,8 +181,6 @@ public:
     void createTextureGroupBorders(uchar* TextureGroup_data, short pix);
     void shrinkFilter();
     void shrinkTexture(const std::string &terrain_type);
-    /** Import a 8bit png file as heightmap **/
-    void loadMap(const std::string &png_filename);
     void scrollMap(int x, int z);
     void setMaterialLOD(int pix);
     void toggleGrid();
@@ -194,17 +199,14 @@ private:
         char indoor_col;                      /**< Column of the tile-texture in the terrain-texture. **/
         char indoor_row;                      /**< Row    of the tile-texture in the terrain-texture. **/
         char indoorTris;                      /**< Which triangles of the tile do have indoor gfx.    **/
-
     }
     mMap[CHUNK_SIZE_X+1][CHUNK_SIZE_Z+1];
     SceneManager *mSceneManager;
     TileChunk mMapchunk;
     TileInterface *mInterface;
-
-    MaterialPtr mKartentextur;
     int mTileTextureSize;
+    int mMapScrollX, mMapScrollZ;
     bool mGrid;
-    unsigned int mMapScrollX, mMapScrollZ;
 
     TileManager();
     ~TileManager();
