@@ -36,11 +36,11 @@ f_plugin    HookList[NR_OF_HOOKS]   =
     CFWGetMapObject, CFWCommunicate,
 
     CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWFindMarkedObject,
-    CFWTransferObject, CFWKillObject, CFWDoLearnSpell,
+    CFWKillObject, CFWDoLearnSpell,
     CFWIdentifyObject, CFWCheckSpellKnown,
     CFWDestructObject, CFWObjectCreateClone, CFWLoadObject,
 	CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation,
-    CFWTeleportObject, CFWDoLearnSkill,
+    CFWDoLearnSkill,
     CFWDumpObject, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
     UnregisterGlobalEvent 
 };

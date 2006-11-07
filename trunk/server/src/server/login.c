@@ -146,7 +146,7 @@ int create_savedir_if_needed(char *savedir)
 int save_player(object *op, int flag)
 {
     FILE   *fp;
-    char    filename[MAX_BUF], *tmpfilename, backupfile[MAX_BUF];
+    char    filename[MAX_BUF], tmpfilename[MAXPATHLEN], backupfile[MAX_BUF];
     player *pl  = CONTR(op);
     int     i, wiz = QUERY_FLAG(op, FLAG_WIZ);
 #ifdef BACKUP_SAVE_AT_HOME
@@ -173,13 +173,12 @@ int save_player(object *op, int flag)
 
     sprintf(filename, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
     make_path_to_file(filename);
-    tmpfilename = tempnam_local(settings.tmpdir, NULL);
+    tempnam_local_ext(settings.tmpdir, NULL, tmpfilename);
     fp = fopen(tmpfilename, "w");
     if (!fp)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Can't open file for save.");
         LOG(llevDebug, "Can't open file for save (%s).\n", tmpfilename);
-        free(tmpfilename);
         return 0;
     }
 
@@ -198,44 +197,42 @@ int save_player(object *op, int flag)
     }
     if(pl->mute_counter > pticks)
         fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
-    fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
-    fprintf(fp, "silent_login %d\n", pl->silent_login);
-    fprintf(fp, "p_ver %d\n", pl->p_ver);
-    fprintf(fp, "gen_hp %d\n", pl->gen_hp);
-    fprintf(fp, "gen_sp %d\n", pl->gen_sp);
-    fprintf(fp, "gen_grace %d\n", pl->gen_grace);
-    fprintf(fp, "listening %d\n", pl->listening);
-    fprintf(fp, "spell %d\n", pl->chosen_spell);
-    fprintf(fp, "shoottype %d\n", pl->shoottype);
-    fprintf(fp, "digestion %d\n", pl->digestion);
-    fprintf(fp, "pickup %d\n", pl->mode);
-    fprintf(fp, "skill_group %d %d %d\n", pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
+
+    fprintf(fp, "dm_stealth %d\nsilent_login %d\np_ver %d\ngen_hp %d\ngen_sp %d\ngen_grace %d\nlistening %d\nspell %d\nshoottype %d\ndigestion %d\npickup %d\nskill_group %d %d %d\n",
+                 pl->dm_stealth, pl->silent_login, pl->p_ver, pl->gen_hp, pl->gen_sp, pl->gen_grace,
+                 pl->listening, pl->chosen_spell, pl->shoottype, pl->digestion, pl->mode,
+                 pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
 
     /* Match the enumerations but in string form */
     fprintf(fp, "usekeys %s\n",
             pl->usekeys == key_inventory ? "key_inventory" : (pl->usekeys == keyrings ? "keyrings" : "containers"));
 
 #ifdef BACKUP_SAVE_AT_HOME
-        if (op->map != NULL && flag == 0)
+    if (op->map != NULL && flag == 0)
 #else
-        if (op->map != NULL)
+    if (op->map != NULL)
 #endif
-            fprintf(fp, "map %s\n", op->map->path);
-        else
-        {
-            fprintf(fp, "map %s\n", pl->savebed_map);
-            op->x = pl->bed_x, op->y = pl->bed_y;
-        }
+        set_mappath_by_map(op);
+
+    fprintf(fp, "map %s\n", pl->maplevel);
+    if(pl->maplevel != pl->orig_map)
+        fprintf(fp, "o_map %s\n", pl->orig_map);
 
     fprintf(fp, "savebed_map %s\n", pl->savebed_map);
-    fprintf(fp, "bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
-    fprintf(fp, "Str %d\n", pl->orig_stats.Str);
-    fprintf(fp, "Dex %d\n", pl->orig_stats.Dex);
-    fprintf(fp, "Con %d\n", pl->orig_stats.Con);
-    fprintf(fp, "Int %d\n", pl->orig_stats.Int);
-    fprintf(fp, "Pow %d\n", pl->orig_stats.Pow);
-    fprintf(fp, "Wis %d\n", pl->orig_stats.Wis);
-    fprintf(fp, "Cha %d\n", pl->orig_stats.Cha);
+    if(pl->savebed_map != pl->orig_savebed_map)
+        fprintf(fp, "o_bed %s\n", pl->orig_savebed_map);
+
+    fprintf(fp, "map_s %d\nbed_s %d\nmap_x %d\nmap_y %d\nbed_x %d\nbed_y %d\n", 
+                MAP_STATUS_TYPE(pl->map_status), MAP_STATUS_TYPE(pl->bed_status), pl->map_x, pl->map_y, pl->bed_x, pl->bed_y);
+
+    if(pl->instance_name)
+    {
+        fprintf(fp, "iname %s\ninum %d\niid %d\niflags %d\n", pl->instance_name, pl->instance_num, pl->instance_id,pl->instance_flags);
+    }
+
+    fprintf(fp, "Str %d\nDex %d\nCon %d\nInt %d\nPow %d\nWis %d\nCha %d\n", 
+                pl->orig_stats.Str, pl->orig_stats.Dex, pl->orig_stats.Con, pl->orig_stats.Int,
+                pl->orig_stats.Pow, pl->orig_stats.Wis, pl->orig_stats.Cha);
 
     /* save hp table */
     fprintf(fp, "lev_hp %d\n", op->level);
@@ -285,7 +282,6 @@ int save_player(object *op, int flag)
         /* make sure the write succeeded */
         new_draw_info(NDI_UNIQUE, 0, op, "Can't save character.");
         unlink(tmpfilename);
-        free(tmpfilename);
         CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
         return 0;
     }
@@ -296,13 +292,11 @@ int save_player(object *op, int flag)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Can't open file for save.");
         unlink(tmpfilename);
-        free(tmpfilename);
         CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
         return 0;
     }
     copy_file(tmpfilename, fp);
     unlink(tmpfilename);
-    free(tmpfilename);
     if (fclose(fp) == EOF)
     {
         /* got write error */
@@ -432,7 +426,8 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
         if(shstr_cons.player_info == tmp->arch->name && !strcmp(tmp->name,"SGLOW_APP_INFO"))
 		{
 			mapstruct *new_ptr;
-			char *old_map = NULL;
+            char *old_map = NULL;
+            const char *old_path, *new_path;
 
 			if(!strcmp(tmp->slaying, "cheap"))
 			{
@@ -476,23 +471,27 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
 			tmp->last_grace = 1;
 			FREE_AND_COPY_HASH(tmp->name, "APARTMENT_INFO"); /* new player info tag */
 
-			/* update the apartments and transfer the items */
-			old_ptr = ready_map_name(old_map, MAP_STATUS_LOAD_UNIQUE, pl);
-			new_ptr = ready_map_name(tmp->title, MAP_STATUS_ORIGINAL, pl);
+            old_path = create_unique_path_sh(pl, old_map);
+            new_path = create_unique_path_sh(pl, tmp->title);
 
-            if(!old_ptr || !new_ptr) /* problem with player files or missing apartments in /maps */
+			/* ensure that we really load only the old apartment in ./players */
+			old_ptr = ready_map_name(old_path, NULL, MAP_STATUS_UNIQUE);
+            new_ptr = ready_map_name(new_path, tmp->title, MAP_STATUS_UNIQUE);
+
+            if(!new_ptr) /* problem with player files or missing apartments in /maps */
                 LOG(llevError, "FATAL: Apartment upgrade player %s! old: %s new: %s\n",
                     query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
 
-			map_transfer_apartment_items(old_ptr, new_ptr, tmp->item_level, tmp->item_quality);
+            if(!old_ptr)
+                LOG(llevDebug, "BUG: player %s - missing old apartment file! old: %s new: %s\n",
+                    query_name(op), STRING_MAP_NAME(old_ptr), STRING_MAP_NAME(new_ptr) );
+            else
+    			map_transfer_apartment_items(old_ptr, new_ptr, tmp->item_level, tmp->item_quality);
 
-			/* now we remove the old apartment from memory and player folder
-             * NOTE: the UNLINK is done AFTER we save the player to avoid
-             * problems the server is crashing before we update the pathes
-             * in the player file
-              */
-			FREE_AND_COPY_HASH(new_ptr->path, create_unique_path(tmp->title, pl));
-			new_ptr->map_flags |= MAP_FLAG_UNIQUE;
+            FREE_ONLY_HASH(old_path);
+            FREE_ONLY_HASH(new_path);
+
+            /* save new and remove from memory - old will be deleted later */
 			new_save_map(new_ptr, 1);
             free_map(new_ptr, 1);
             delete_map(new_ptr);
@@ -713,16 +712,22 @@ void check_login(object *op, int mode)
     pl->orig_stats.Cha = 0;
 	pl->p_ver = PLAYER_FILE_VERSION_DEFAULT;
 
-    strcpy(pl->savebed_map,EXIT_PATH(&map_archeytpe->clone) );
-    pl->bed_x = map_archeytpe->clone.stats.hp;
-    pl->bed_y = map_archeytpe->clone.stats.sp;
-
-
     /* Loop through the file, loading the rest of the values */
+    /* we have here the classic problem with fgets():
+     * fgets() reads in a string and puts the \0 after the 0x0a.
+     * The problem is, that when we have saved the file, we have added
+     * the 0x0a to the original string as end marker - thats the way how
+     * you save a text file. fgets is WRONG here - what we would need
+     * is gets(), wich does it right by exchanging 0x0a through \0.
+     * but gets() only works on stdin... Thats the reason we use sscanf() to
+     * get a string parameter. What we need is a self coded fgets() which works
+     * like gets(). MT-10/2006
+     */
+
     lev_array_flag = FALSE;
     while (fgets(bufall, MAX_BUF, fp) != NULL)
     {
-        if (!strcmp(bufall, "skill_group "))
+        if (!strncmp(bufall, "skill_group ",12))
         {
             sscanf(bufall, "%s %d %d %d\n", buf, &pl->base_skill_group[0], &pl->base_skill_group[1], &pl->base_skill_group[2]);
             continue;
@@ -760,10 +765,45 @@ void check_login(object *op, int mode)
             pl->digestion = value;
         else if (!strcmp(buf, "pickup"))
             pl->mode = value;
+        else if (!strcmp(buf, "iflags"))
+            pl->instance_flags = value;
+        else if (!strcmp(buf, "iid"))
+            pl->instance_id = value;
+        else if (!strcmp(buf, "inum"))
+            pl->instance_num = value;
+        else if (!strcmp(buf, "iname"))
+        {
+            sscanf(bufall, "iname %s", buf );
+            FREE_AND_COPY_HASH(pl->instance_name, buf);
+        }
         else if (!strcmp(buf, "map"))
-            sscanf(bufall, "map %s", pl->maplevel);
+        {
+            sscanf(bufall, "map %s", buf );
+            FREE_AND_COPY_HASH(pl->maplevel, buf);
+        }
+        else if (!strcmp(buf, "o_map"))
+        {
+            sscanf(bufall, "o_map %s", buf );
+            FREE_AND_COPY_HASH(pl->orig_map, buf);
+        }
         else if (!strcmp(buf, "savebed_map"))
-            sscanf(bufall, "savebed_map %s", pl->savebed_map);
+        {
+            sscanf(bufall, "savebed_map %s", buf );
+            FREE_AND_COPY_HASH(pl->savebed_map, buf);
+        }
+        else if (!strcmp(buf, "o_bed"))
+        {
+            sscanf(bufall, "o_bed %s", buf );
+            FREE_AND_COPY_HASH(pl->orig_savebed_map, buf);
+        }
+        else if (!strcmp(buf, "map_s"))
+            pl->map_status = value;
+        else if (!strcmp(buf, "bed_s"))
+            pl->bed_status = value;
+        else if (!strcmp(buf, "map_x"))
+            pl->map_x = value;
+        else if (!strcmp(buf, "map_y"))
+            pl->map_y = value;
         else if (!strcmp(buf, "bed_x"))
             pl->bed_x = value;
         else if (!strcmp(buf, "bed_y"))
@@ -853,8 +893,29 @@ void check_login(object *op, int mode)
             if (i == NROFREALSPELLS)
                 LOG(llevDebug, "Error: unknown spell (%s) for player %s\n", cp, query_name(op));
         }
-        /* Remove confkeys, pushkey support - very old */
+        else
+            LOG(llevDebug, "Debug: load_player(%s) unknown line in player file: %s\n", query_name(op), bufall);
     } /* End of loop loading the character file */
+
+    /* do some sanity checks... if we have no valid start points, all is lost */
+    if(!pl->orig_map || !pl->maplevel)
+    {
+        if(!pl->maplevel) /* bad bug! */
+        {
+            pl->socket.status = Ns_Dead;
+            return;
+        }
+        pl->orig_map = add_refcount(pl->maplevel);
+    }
+    if(!pl->orig_savebed_map || !pl->savebed_map)
+    {
+        if(!pl->savebed_map)
+        {
+            pl->socket.status = Ns_Dead;
+            return;
+        }
+        pl->orig_savebed_map = add_refcount(pl->savebed_map);
+    }
 
     if (!QUERY_FLAG(op, FLAG_REMOVED)) /* Take the player ob out from the void */
         remove_ob(op);
@@ -875,6 +936,7 @@ void check_login(object *op, int mode)
 	/* QUICKHACKS - remove for 1.0 and clean player files */
 	/* These parts will transform player files from one version
      * to another. Mainly adjusting or removing object settings.
+     * If we delete the QUICKHACKS - be sure to delete the HOTFIX too.
      */
 	if(pl->p_ver == PLAYER_FILE_VERSION_DEFAULT)
 	{
@@ -891,11 +953,11 @@ void check_login(object *op, int mode)
 		old_ap_ptr = traverse_b3_player_inv(op, op, NULL);
 
 		/* force guildhall as beta 4 start login for all players */
-		strcpy(pl->maplevel, EXIT_PATH(&map_archeytpe->clone));
-		strcpy(pl->savebed_map, EXIT_PATH(&map_archeytpe->clone));
-		pl->bed_x = op->x = 17;
-		pl->bed_y = op->y = 11;
+        set_mappath_by_name(pl, NULL, shstr_cons.start_mappath, MAP_STATUS_MULTI, 17, 11);
 
+        /* as bind point we set old beta 3 players to castle church */
+        FREE_AND_COPY_HASH(pl->orig_savebed_map, "/relic/castle/castle_0002");
+        set_bindpath_by_name(pl, NULL, pl->orig_savebed_map, MAP_STATUS_MULTI, 12, 7);
 	}
 
     /* at this moment, the inventory is reverse loaded.
@@ -928,7 +990,6 @@ void check_login(object *op, int mode)
     op->custom_attrset = pl;
     pl->ob = op;
 
-    strncpy(pl->title, op->arch->clone.name, MAX_NAME);
     pl->name_changed = 1;
 
     /* this is a funny thing: what happens when the autosave function saves a player
@@ -1056,21 +1117,6 @@ void check_login(object *op, int mode)
             }
         }
         set_dragon_name(op, abil, skin);
-    }
-
-    /* If the map where the person was last saved does not exist,
-    * restart them on their home-savebed. This is good for when
-    * maps change between versions
-    * First, we check for partial path, then check to see if the full
-    * path (for unique player maps)
-    */
-    if (check_path(pl->maplevel, 1) == -1)
-    {
-        if (check_path(pl->maplevel, 0) == -1)
-        {
-            strcpy(pl->maplevel, pl->savebed_map);
-            op->x = pl->bed_x, op->y = pl->bed_y;
-        }
     }
 
     pl->player_loaded = 1; /* important: there is a player file */
@@ -1202,7 +1248,7 @@ void check_login(object *op, int mode)
      * Lets put the player on the map and send all player lists to the client.
      * The player is active now.
      */
-    enter_exit(op, NULL); /* kick player on map - load map if needed */
+    enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
 
     pl->socket.update_tile = 0;
     pl->socket.look_position = 0;

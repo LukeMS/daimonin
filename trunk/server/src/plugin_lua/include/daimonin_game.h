@@ -36,7 +36,6 @@ static int  Game_ReadyMap(lua_State *L);
 static int  Game_FindPlayer(lua_State *L);
 static int  Game_GetSpellNr(lua_State *L);
 static int  Game_GetSkillNr(lua_State *L);
-static int  Game_CheckMap(lua_State *L);
 // static int Game_RegisterCommand(lua_State *L);
 static int  Game_LoadObject(lua_State *L);
 static int  Game_IsValid(lua_State *L);

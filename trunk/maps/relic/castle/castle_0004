@@ -2203,6 +2203,17 @@ arch floor_fs_grey1a
 x 14
 y 2
 end
+arch stairs_red_down
+msg
+You walk down the steps to the passage.
+endmsg
+slaying /relic/castle/castleb_0004
+hp 14
+sp 2
+direction 1
+x 14
+y 2
+end
 arch floor_fs_grey1a
 x 14
 y 3
@@ -2417,7 +2428,7 @@ x 15
 y 9
 end
 arch stairs_stone_down
-slaying tests/warrior/warrior_test_0000
+slaying /nonpub/uni/castle/tests/warrior/warrior_test_0000
 hp 1
 sp 21
 x 15
@@ -3035,7 +3046,7 @@ x 19
 y 9
 end
 arch stairs_stone_down
-slaying wizard/wizard_test_0000
+slaying /nonpub/uni/castle/tests/wizard/wizard_test_0000
 hp 1
 sp 18
 direction 1
@@ -3712,7 +3723,7 @@ x 23
 y 9
 end
 arch stairs_stone_down
-slaying priest/priest_test_0000
+slaying /nonpub/uni/castle/tests/priest/priest_test_0000
 hp 20
 sp 20
 x 23

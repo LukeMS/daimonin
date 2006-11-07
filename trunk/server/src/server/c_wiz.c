@@ -188,8 +188,6 @@ int command_kick(object *ob, char *params)
             if (params)
                 new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob, "%s is kicked out of the game.", op->name);
             LOG(llevInfo, "%s is kicked out of the game.\n", op->name);
-            CONTR(op)->killer[0] = '\0';
-            check_score(op); /* Always check score */
             container_unlink(CONTR(op), NULL);
             CONTR(op)->socket.status = Ns_Dead;
         }
@@ -217,8 +215,8 @@ int command_shutdown(object *op, char *params)
 int command_goto(object *op, char *params)
 {
     int x=0, y=0;
-    char   name[HUGE_BUF];
-    object *dummy;
+    const char *hash_name;
+    char name[MAXPATHLEN] = {"\0"};
 
     if (!op)
         return 0;
@@ -230,15 +228,15 @@ int command_goto(object *op, char *params)
     }
 
     sscanf(params, "%s %d %d", name, &x, &y);
-    dummy = get_object();
-    dummy->map = op->map;
-    dummy->stats.hp = x;
-    dummy->stats.sp = y;
-    FREE_AND_COPY_HASH(EXIT_PATH(dummy), name);
-    FREE_AND_COPY_HASH(dummy->name, name);
+    if(name[0] != '\0')
+    {
+        hash_name = add_string(name);
 
-    enter_exit(op, dummy);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "Difficulty: %d.", op->map->difficulty);
+        if(enter_map_by_name(op, name, name, x, y, 0))
+            new_draw_info_format(NDI_UNIQUE, 0, op, "Difficulty: %d.", op->map->difficulty);
+
+        FREE_ONLY_HASH(hash_name);
+    }
     return 1;
 }
 
@@ -270,7 +268,6 @@ int command_generate(object *op, char *params)
 int command_summon(object *op, char *params)
 {
     int     i;
-    object *dummy;
     player *pl;
 
     /* allowed for GM and DM only */
@@ -305,17 +302,14 @@ int command_summon(object *op, char *params)
     }
     i = find_free_spot(op->arch, op->map, op->x, op->y, 1, 8);
     if (i == -1)
+        i = 0;
+    
+    if(enter_map_by_name( pl->ob, op->map->path, op->map->orig_path, 
+                       op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_TYPE(op->map->map_status)))
     {
-        new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to place summoned player.");
-        return 1;
+        new_draw_info(NDI_UNIQUE, 0, pl->ob, "You are summoned.");
+        new_draw_info(NDI_UNIQUE, 0, op, "OK.");
     }
-    dummy = get_object();
-    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
-    EXIT_X(dummy) = op->x + freearr_x[i];
-    EXIT_Y(dummy) = op->y + freearr_y[i];
-    enter_exit(pl->ob, dummy);
-    new_draw_info(NDI_UNIQUE, 0, pl->ob, "You are summoned.");
-    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
     return 1;
 }
 
@@ -324,7 +318,6 @@ int command_summon(object *op, char *params)
 int command_teleport(object *op, char *params)
 {
     int     i;
-    object *dummy;
     player *pl;
 
     /* allowed for GM and DM only */
@@ -359,17 +352,12 @@ int command_teleport(object *op, char *params)
     }
     i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 8);
     if (i == -1)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");
-        return 1;
-    }
-    dummy = get_object();
-    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), pl->ob->map->path);
-    EXIT_X(dummy) = pl->ob->x + freearr_x[i];
-    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
-    enter_exit(op, dummy);
-    /*new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");*/
-    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
+        i = 0;
+
+    if(enter_map_by_name(op, pl->ob->map->path, pl->ob->map->orig_path, 
+              pl->ob->x + freearr_x[i], pl->ob->y + freearr_y[i], MAP_STATUS_TYPE(pl->ob->map->map_status) ))
+        new_draw_info(NDI_UNIQUE, 0, op, "OK.");
+
     return 1;
 }
 
@@ -1025,7 +1013,6 @@ int command_reset(object *op, char *params)
     int             count;
     mapstruct      *m;
     player         *pl;
-    object*dummy =  NULL;
 
     if (params == NULL)
         m = has_been_loaded_sh(op->map->path);
@@ -1041,10 +1028,6 @@ int command_reset(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "No such map.");
         return 1;
     }
-
-    dummy = get_object();
-    dummy->map = NULL;
-    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), m->path);
 
     if (m->in_memory != MAP_SWAPPED)
     {
@@ -1085,20 +1068,18 @@ int command_reset(object *op, char *params)
     {
         LOG(llevDebug, "Resetting map %s.\n", m->path);
         clean_tmp_map(m);
-        if (m->tmpname)
-            free(m->tmpname);
-        m->tmpname = NULL;
+        FREE_AND_NULL_PTR(m->tmpname);
         /* setting this effectively causes an immediate reload */
         m->reset_time = 1;
         new_draw_info(NDI_UNIQUE, 0, op, "Swap successful. Inserting players.");
+
+        m = ready_map_name(m->path, m->orig_path, MAP_STATUS_TYPE(m->map_status));
 
         for (pl = first_player; pl != NULL; pl = pl->next)
         {
             if (pl->dm_removed_from_map)
             {
-                EXIT_X(dummy) = pl->ob->x;
-                EXIT_Y(dummy) = pl->ob->y;
-                enter_exit(pl->ob, dummy);
+                insert_ob_in_map(pl->ob, m, NULL, INS_NO_MERGE);
                 activelist_insert(pl->ob); /* See activelist comment above */
                 if (pl->ob != op)
                 {

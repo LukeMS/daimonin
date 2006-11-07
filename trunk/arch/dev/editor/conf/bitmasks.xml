@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE bitmasks PUBLIC "-//Daimonin//DTD Types 1.0//EN" "types.dtd">
 <bitmasks>
+
 <bitmask name="material">
 <bmentry bit="0"  name="Paper" />
 <bmentry bit="1"  name="Hard Metal" />

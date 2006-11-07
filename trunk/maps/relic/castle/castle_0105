@@ -1654,7 +1654,7 @@ end
 arch marker1
 name To The Royal Gardens
 msg
-"To The Royal Gardens" is engraved in the signpost with well written gold letters.
+"To The Royal Gardens And Counsel Buildings" is engraved in the signpost with well written gold letters.
 endmsg
 x 11
 end
@@ -1738,11 +1738,18 @@ arch carpet2.151
 x 11
 y 14
 end
-arch floor_fs_grey1a
+arch carpet2g
 x 11
 y 15
 end
-arch carpet2g
+arch stairs_red_down
+msg
+You head down the secret staircase.
+endmsg
+slaying /relic/castle/castleb_0105
+hp 11
+sp 15
+direction 1
 x 11
 y 15
 end

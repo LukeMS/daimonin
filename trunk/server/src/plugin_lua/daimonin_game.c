@@ -36,7 +36,6 @@ static struct method_decl       Game_methods[]      =
     {"UpgradeApartment", Game_UpgradeApartment},
     {"LoadObject", Game_LoadObject},
     {"ReadyMap", Game_ReadyMap},
-    {"CheckMap", Game_CheckMap},
     {"MatchString", Game_MatchString},
     {"FindPlayer", Game_FindPlayer},
     {"GetSpellNr", Game_GetSpellNr},
@@ -100,9 +99,17 @@ static struct constant_decl     Game_constants[]    =
 	{"SKILLGROUP_MAGIC", 4},
 	{"SKILLGROUP_WISDOM", 5},
 
-	{"MAP_STATUS_ORIGINAL", MAP_STATUS_ORIGINAL},
-	{"MAP_STATUS_UNIQUE", MAP_STATUS_UNIQUE},
-	{"MAP_STATUS_LOAD_UNIQUE", MAP_STATUS_LOAD_UNIQUE},
+    {"MAP_CHECK", PLUGIN_MAP_CHECK},
+    {"MAP_NEW", PLUGIN_MAP_NEW},
+
+    {"INSTANCE_NO_REENTER", INSTANCE_FLAG_NO_REENTER},
+
+    {"MFLAG_FIXED_POS", MAP_STATUS_FIXED_POS},
+    {"MFLAG_RANDOM_POS", MAP_STATUS_RANDOM_POS},
+    {"MFLAG_FREE_POS_ONLY", MAP_STATUS_FREE_POS_ONLY},
+    {"MFLAG_NO_FALLBACK",MAP_STATUS_NO_FALLBACK },
+    {"MFLAG_LOAD_ONLY", MAP_STATUS_LOAD_ONLY},
+    {"MFLAG_FIXED_LOGIN", MAP_STATUS_FIXED_LOGIN},
 
 	/* quest type */
 	{"QUEST_NORMAL", ST1_QUEST_TRIGGER_NORMAL},
@@ -292,11 +299,6 @@ static int Game_UpgradeApartment(lua_State *L)
 	/* transfer the items */
 	hooks->map_transfer_apartment_items(map_old->data.map, map_new->data.map, x, y);
 
-	/* now we remove the old apartment from memory and player folder */
-	unlink(map_old->data.map->path);
-	hooks->free_map(map_old->data.map, 1);
-	hooks->delete_map(map_old->data.map);
-
     return 0;
 }
 
@@ -346,61 +348,75 @@ static int Game_MatchString(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_ReadyMap                                                    */
-/* Lua    : game:ReadyMap(name, flags, player)                               */
-/* Info   : Make sure the named map is loaded into memory. unique _must_ be  */
-/*        :                                                                  */
+/* Lua    : game:ReadyMap(name)                                              */
+/* Info   : Make sure that mapname is loaded into memory                     */
+/*        : ReadyMap will ONLY create multi maps!                            */
+/*        : default: (no flags) will do a normal ready_map_name() call       */
+/*        : This function only loads _MULTI maps - use                       */
+/*        : Check also ReadyUniqueMap() and ReadyInstanceMap()               */
+/*        : flags: if MAP_CHECK is given, we only check the map is in        */
+/*        : memory. If not, we return NULL                                   */
+/*        : MAP_NEW delete a map in memory and force a reset                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static int Game_ReadyMap(lua_State *L)
 {
     char       *mapname;
-    lua_object *obptr   = NULL;
-    int         flags   = 0;
+    int flags = 0;
+    const char *path_sh;
+    mapstruct  *map=NULL;
     lua_object *self;
 
-    get_lua_args(L, "Gsi|O", &self, &mapname, &flags, &obptr);
+    get_lua_args(L, "Gs|i", &self, &mapname, &flags);
 
-    return push_object(L, &Map, hooks->ready_map_name(mapname, flags, obptr ? obptr->data.object : NULL));
+    if(mapname)
+    {
+        path_sh = hooks->create_safe_mapname_sh(mapname);
+
+        if(path_sh) /* we MUST have now a path - we assume first it is the DESTINATION path */ 
+        {
+            /* NOTE: this call will do this:
+             * - checking loaded maps for path (type independent)
+             * - if non MULTI map try to load from ./player or ./instance
+             * - return then and DON'T create the map from /maps or other sources
+             * The creation is only done when src is != NULL in one of the 2 other
+             * ready_map_name() calls down there
+            */
+            map = hooks->ready_map_name(path_sh, NULL, 0); /* try load only */
+
+            if(*path_sh != '.') 
+            {
+                if(map && flags & PLUGIN_MAP_NEW) /* reset the maps - when it loaded */
+                {
+                    int num = 0;
+
+                    if(map->player_first)
+                        num = hooks->map_to_player_unlink(map); /* remove player from map */
+
+                    hooks->clean_tmp_map(map); /* remove map from memory */
+                    hooks->delete_map(map);
+
+                    /* reload map forced from original /maps */
+                    map = hooks->ready_map_name(NULL, path_sh, MAP_STATUS_MULTI);
+
+                    if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
+                        hooks->map_to_player_link(map, -1, -1, FALSE);
+                }
+                else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
+                    map = hooks->ready_map_name(path_sh, path_sh, MAP_STATUS_MULTI);
+            }
+        }
+        FREE_ONLY_HASH(path_sh);
+    }
+
+    return push_object(L, &Map, map);
 }
-
-/*****************************************************************************/
-/* Name   : Game_CheckMap                                                    */
-/* Lua    : game:CheckMap(arch, map_path, x, y)                              */
-/* Info   :                                                                  */
-/* Status : Unfinished. DO NOT USE!                                          */
-/*****************************************************************************/
-
-static int Game_CheckMap(lua_State *L)
-{
-    char   *what;
-    char   *mapstr;
-    int     x, y;
-    lua_object *self;
-    /*    object* foundob; */
-
-    /* Gecko: replaced coordinate tuple with separate x and y coordinates */
-    get_lua_args(L, "Gssii", &self, &what, &mapstr, &x, &y);
-
-    luaL_error(L, "CheckMap() is not finished!");
-
-    /*    foundob = present_arch(
-            find_archetype(what),
-            has_been_loaded(mapstr),
-            x,y
-        );
-        return wrap_object(foundob);*/
-
-    return 0;
-}
-
 
 /*****************************************************************************/
 /* Name   : Game_FindPlayer                                                  */
 /* Lua    : game:FindPlayer(name)                                            */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-
 static int Game_FindPlayer(lua_State *L)
 {
     player *foundpl;

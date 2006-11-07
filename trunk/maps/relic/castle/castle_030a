@@ -148,6 +148,13 @@ arch floor_sblack2
 x 1
 y 3
 end
+arch exit
+slaying /unofficial/lobby
+hp 8
+sp 19
+x 1
+y 3
+end
 arch floor_sblack2
 x 1
 y 4
@@ -314,11 +321,6 @@ arch floor_sblack2
 x 2
 y 5
 end
-arch gate1_locked
-slaying stoneglow_jail_key
-x 2
-y 5
-end
 arch floor_sblack2
 x 2
 y 6
@@ -387,9 +389,31 @@ arch plant9
 x 2
 y 16
 end
-arch grassd_2
+arch grassd_5
 x 2
 y 17
+end
+arch spawn_point
+last_heal 1
+x 2
+y 17
+arch golem
+name Dummy
+type 83
+face scarecrow.131
+is_animated 0
+glow_radius 1
+no_pass 1
+level 50
+speed 100.0
+no_attack 1
+dam 0
+maxhp 10000
+Con 99
+reg_f 1
+unaggressive 1
+stand_still 1
+end
 end
 arch grassd_6
 x 2
@@ -1107,7 +1131,7 @@ end
 arch water_still
 x 7
 end
-arch grassd_m3
+arch earth_m17
 x 7
 end
 arch grassd_8
@@ -1249,14 +1273,14 @@ end
 arch water_still
 x 8
 end
-arch grassd_m14
+arch earth_m6
 x 8
 end
 arch water_still
 x 8
 y 1
 end
-arch grassd_m3
+arch earth_m17
 x 8
 y 1
 end
@@ -1447,7 +1471,7 @@ arch water_still
 x 9
 y 1
 end
-arch grassd_m14
+arch earth_m6
 x 9
 y 1
 end
@@ -1455,7 +1479,7 @@ arch water_still
 x 9
 y 2
 end
-arch grassd_m3
+arch earth_m17
 x 9
 y 2
 end
@@ -1620,11 +1644,15 @@ arch water_still
 x 10
 y 1
 end
+arch earth_m5
+x 10
+y 1
+end
 arch water_still
 x 10
 y 2
 end
-arch grassd_m7
+arch earth_m20
 x 10
 y 2
 end
@@ -1778,6 +1806,10 @@ arch water_still
 x 11
 end
 arch water_still
+x 11
+y 1
+end
+arch earth_m15
 x 11
 y 1
 end
@@ -1958,6 +1990,10 @@ arch water_still
 x 12
 y 1
 end
+arch earth_m11
+x 12
+y 1
+end
 arch grassd_3
 x 12
 y 2
@@ -1965,10 +2001,6 @@ end
 arch wall_ruin_c1a
 x 12
 y 2
-end
-arch floor_ruin1
-x 12
-y 3
 end
 arch floor_ruin1
 x 12
@@ -2130,6 +2162,10 @@ arch water_still
 x 13
 y 1
 end
+arch earth_m15
+x 13
+y 1
+end
 arch grassd_3
 x 13
 y 2
@@ -2281,7 +2317,7 @@ arch water_still
 x 14
 y 1
 end
-arch grassd_m11
+arch earth_m11
 x 14
 y 1
 end
@@ -2467,14 +2503,14 @@ end
 arch water_still
 x 15
 end
-arch grassd_m11
+arch earth_m5
 x 15
 end
 arch water_still
 x 15
 y 1
 end
-arch grassd_m5
+arch earth_m20
 x 15
 y 1
 end
@@ -2650,7 +2686,7 @@ end
 arch water_still
 x 16
 end
-arch grassd_m7
+arch earth_m11
 x 16
 end
 arch grassd_1
@@ -2826,9 +2862,6 @@ x 16
 y 23
 end
 arch water_still
-x 17
-end
-arch grassd_m7
 x 17
 end
 arch grassd_3
@@ -3156,14 +3189,65 @@ arch grassd_m2
 x 18
 y 17
 end
-arch target.111
-direction 5
-x 18
-y 17
-end
 arch light3
 x 18
 y 17
+end
+arch spawn_point
+last_grace 0
+last_heal 1
+x 18
+y 17
+arch golem
+name shooting_range_target
+type 83
+face target.131
+is_animated 0
+no_pass 1
+level 100
+race target
+exp 1
+speed 1.0
+no_attack 1
+dam 0
+maxhp 1000
+Con 99
+reg_f 1
+Wis 0
+unaggressive 1
+friendly 1
+stand_still 1
+attack_impact 0
+resist_impact 250
+resist_slash 250
+resist_cleave 250
+resist_pierce 250
+resist_cold 250
+resist_fire 250
+resist_electricity 250
+resist_acid 250
+resist_poison 250
+resist_sonic 250
+resist_magic 250
+resist_light 250
+resist_shadow 250
+resist_psionic 250
+resist_lifesteal 250
+resist_death 250
+resist_chaos 250
+resist_nether 250
+resist_aether 250
+resist_weaponmagic 250
+resist_godpower 250
+resist_drain 250
+resist_depletion 250
+resist_corruption 250
+resist_confusion 250
+resist_fear 250
+resist_slow 250
+resist_paralyze 250
+resist_snare 250
+end
 end
 arch floor_sand_d2
 x 18
@@ -3225,7 +3309,7 @@ arch water_still
 x 19
 y 3
 end
-arch grassd_m3
+arch earth_m17
 x 19
 y 3
 end
@@ -3372,7 +3456,7 @@ arch tree_big3
 x 19
 y 23
 end
-arch water_still
+arch water_still_deep
 x 20
 end
 arch bridge_wood_EW.101
@@ -3395,7 +3479,7 @@ arch water_still
 x 20
 y 3
 end
-arch grassd_m7
+arch earth_m11
 x 20
 y 3
 end
@@ -3546,7 +3630,7 @@ arch tree_big2
 x 20
 y 23
 end
-arch water_still
+arch water_still_deep
 x 21
 end
 arch bridge_wood_EW.101
@@ -3561,7 +3645,7 @@ arch water_still
 x 21
 y 3
 end
-arch grassd_m7
+arch earth_m15
 x 21
 y 3
 end
@@ -3652,6 +3736,8 @@ arch archer
 type 83
 glow_radius 7
 level 25
+arch ai_generic
+end
 end
 end
 arch grassd_8
@@ -3725,10 +3811,10 @@ arch tree_big3
 x 21
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 22
 end
-arch water_still
+arch water_still_deep
 x 22
 y 1
 end
@@ -3736,7 +3822,7 @@ arch water_still
 x 22
 y 2
 end
-arch grassd_m11
+arch earth_m5
 x 22
 y 2
 end
@@ -3744,7 +3830,7 @@ arch water_still
 x 22
 y 3
 end
-arch grassd_m5
+arch earth_m20
 x 22
 y 3
 end
@@ -3861,6 +3947,33 @@ arch ranger
 type 83
 glow_radius 7
 level 20
+reg_f 1
+arch ai_caster
+msg
+# This is a generic Spellcaster AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship name=shooting_range_target:-200 opposite_alignment=-300
+choose_enemy
+
+moves:
+stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+# move_towards_enemy
+keep_distance_to_enemy
+optimize_line_of_fire
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+endmsg
+end
 end
 end
 arch grassd_4
@@ -3903,10 +4016,10 @@ arch tree_big
 x 22
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 23
 end
-arch water_still
+arch water_still_deep
 x 23
 y 1
 end
@@ -3914,7 +4027,7 @@ arch water_still
 x 23
 y 2
 end
-arch grassd_m7
+arch earth_m11
 x 23
 y 2
 end

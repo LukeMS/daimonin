@@ -172,7 +172,7 @@ x 2
 y 4
 end
 arch ladder_down3
-slaying castle_0100
+slaying /relic/castle/castle_0100
 hp 2
 sp 4
 x 2
@@ -301,7 +301,7 @@ x 4
 y 4
 end
 arch ladder_up
-slaying castle3_0100
+slaying /relic/castle/castle3_0100
 hp 4
 sp 4
 x 4
@@ -909,7 +909,7 @@ x 18
 y 4
 end
 arch ladder_up
-slaying castle3_0100
+slaying /relic/castle/castle3_0100
 hp 18
 sp 4
 x 18
@@ -1039,7 +1039,7 @@ x 20
 y 4
 end
 arch ladder_down3
-slaying castle_0100
+slaying /relic/castle/castle_0100
 hp 20
 sp 4
 x 20

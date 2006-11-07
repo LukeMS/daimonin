@@ -35,7 +35,7 @@ struct Settings settings    =
     GLOBAL_LOG_LEVEL, 0, NULL, 0,       /* dumpvalues, dumparg, daemonmode */
     0,                                  /* argc */
     NULL,                               /* argv */
-    DATADIR, LOCALDIR, PLAYERDIR, MAPDIR, ARCHETYPES, TREASURES, UNIQUE_DIR, TMPDIR, STATS_DIR, STATS_ARCHIVE_DIR, STAT_LOSS_ON_DEATH,
+    DATADIR, LOCALDIR, PLAYERDIR, INSTANCEDIR, MAPDIR, ARCHETYPES, TREASURES, UNIQUE_DIR, TMPDIR, STATS_DIR, STATS_ARCHIVE_DIR, STAT_LOSS_ON_DEATH,
     BALANCED_STAT_LOSS, RESET_LOCATION_TIME, 0,
     /* This and the next 3 values are metaserver values */
     "", "", 0, "", 0, 0, 0, 0, 0, 0, 0  /* worldmap settings*/
@@ -108,6 +108,16 @@ static void init_strings()
 
     shstr_cons.Eldath = add_string("Eldath"); /* old and incorrect god */
     shstr_cons.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
+
+    /* mostly used by CONTR(op)->killer */
+    shstr_cons.poisonous_food = add_string("poisonous food");
+    shstr_cons.starvation = add_string("starvation");
+    shstr_cons.drowning = add_string("drowning in a swamp");
+
+    shstr_cons.emergency_mappath = add_string(EMERGENCY_MAPPATH);
+    shstr_cons.start_mappath = add_string(START_MAP_MAPPATH);
+    shstr_cons.bind_mappath = add_string(BIND_MAP_MAPPATH);
+
 }
 
 void free_strings()
@@ -171,7 +181,7 @@ static void init_globals()
     nrofartifacts = 0;
     nrofallowedstr = 0;
 
-	/* thats used in socket/loop.c right after we have a connect */
+	/* thats used in socket/loop.c right after we have a connect */	
 	sprintf(global_version_msg, "X%d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
 	global_version_msg[0] = BINARY_CMD_VERSION;
 	global_version_sl.buf = (unsigned char *)global_version_msg;
@@ -195,51 +205,35 @@ static void init_environ()
     char   *cp;
 
 #ifndef SECURE
-    cp = getenv("CROSSFIRE_LIBDIR");
+    cp = getenv("DAIMONIN_LIBDIR");
     if (cp)
         settings.datadir = cp;
-    cp = getenv("CROSSFIRE_LOCALDIR");
+    cp = getenv("DAIMONIN_LOCALDIR");
     if (cp)
         settings.localdir = cp;
-    cp = getenv("CROSSFIRE_PLAYERDIR");
+    cp = getenv("DAIMONIN_PLAYERDIR");
     if (cp)
         settings.playerdir = cp;
-    cp = getenv("CROSSFIRE_MAPDIR");
+    cp = getenv("DAIMONIN_INSTANCEDIR");
+    if (cp)
+        settings.instancedir = cp;
+    cp = getenv("DAIMONIN_MAPDIR");
     if (cp)
         settings.mapdir = cp;
-    cp = getenv("CROSSFIRE_ARCHETYPES");
+    cp = getenv("DAIMONIN_ARCHETYPES");
     if (cp)
         settings.archetypes = cp;
-    cp = getenv("CROSSFIRE_TREASURES");
+    cp = getenv("DAIMONIN_TREASURES");
     if (cp)
         settings.treasures = cp;
-    cp = getenv("CROSSFIRE_UNIQUEDIR");
+    cp = getenv("DAIMONIN_UNIQUEDIR");
     if (cp)
         settings.uniquedir = cp;
-    cp = getenv("CROSSFIRE_TMPDIR");
+    cp = getenv("_TMPDIR");
     if (cp)
         settings.tmpdir = cp;
 #endif
 }
-
-
-static void init_dynamic()
-{
-    archetype  *at  = first_archetype;
-
-    map_archeytpe = NULL;
-    while (at)
-    {
-        if (at->clone.type == MAP && EXIT_PATH(&at->clone))
-        {
-            map_archeytpe = at;
-            return;
-        }
-        at = at->next;
-    }
-    LOG(llevError, "init_dynamic (): You Need a archetype called 'map' and it have to contain start map\n");
-}
-
 
 /* This loads the settings file.  There could be debate whether this should
  * be here or in the common directory - but since only the server needs this
@@ -447,10 +441,6 @@ static void call_version()
 {
     version(NULL); exit(0);
 }
-static void showscores()
-{
-    display_high_score(NULL, 9999, NULL); exit(0);
-}
 
 static void set_debug()
 {
@@ -540,14 +530,13 @@ static void set_playerdir(char *path)
 {
     settings.playerdir = path;
 }
+static void set_instancedir(char *path)
+{
+    settings.instancedir = path;
+}
 static void set_tmpdir(char *path)
 {
     settings.tmpdir = path;
-}
-static void showscoresparm(char *data)
-{
-    /*    display_high_score(NULL,9999,data); */
-    exit(0);
 }
 
 static void set_csport(char *val)
@@ -596,8 +585,6 @@ static void help()
     LOG(llevInfo, "             Only has meaning if -detach is specified.\n");
     LOG(llevInfo, " -mon        Turns on monster debugging.\n");
     LOG(llevInfo, " -o          Prints out info on what was defined at compile time.\n");
-    LOG(llevInfo, " -s          Display the high-score list.\n");
-    LOG(llevInfo, " -score <name or class> Displays all high scores with matching name/class.\n");
     LOG(llevInfo, " -stat_loss_on_death - if set, player loses stat when they die\n");
     LOG(llevInfo, " +stat_loss_on_death - if set, player does not lose a stat when they die\n");
     LOG(llevInfo, " -balanced_stat_loss - if set, death stat depletion is balanced by level etc\n");
@@ -609,10 +596,11 @@ static void help()
 #ifndef SECURE
     LOG(llevInfo, "\nThe following options are only available if a secure server was not compiled.\n");
     LOG(llevInfo, " -data       Sets the lib dir (archetypes, treasures, etc.)\n");
-    LOG(llevInfo, " -local      Read/write local data (hiscore, unique items, etc.)\n");
+    LOG(llevInfo, " -local      Read/write local data (unique items, etc.)\n");
     LOG(llevInfo, " -maps       Sets the directory for maps.\n");
     LOG(llevInfo, " -arch       Sets the archetype file to use.\n");
     LOG(llevInfo, " -playerdir  Sets the directory for the player files.\n");
+    LOG(llevInfo, " -instancedir Sets the directory for the instance map files.\n");
     LOG(llevInfo, " -treasures     Sets the treasures file to use.\n");
     LOG(llevInfo, " -uniquedir  Sets the unique items/maps directory.\n");
     LOG(llevInfo, " -tmpdir     Sets the directory for temporary files (mostly maps.)\n");
@@ -933,6 +921,7 @@ void compile_info()
     LOG(llevInfo, "Save player:\t<true>\n");
     LOG(llevInfo, "Save mode:\t%4.4o\n", SAVE_MODE);
     LOG(llevInfo, "Playerdir:\t%s/%s\n", settings.localdir, settings.playerdir);
+    LOG(llevInfo, "Instancedir:\t%s/%s\n", settings.localdir, settings.instancedir);
     LOG(llevInfo, "Itemsdir:\t%s/%s\n", settings.localdir, settings.uniquedir);
     LOG(llevInfo, "Tmpdir:\t\t%s\n", settings.tmpdir);
     LOG(llevInfo, "Map timeout:\t%d\n", MAP_MAXTIMEOUT);
@@ -999,19 +988,20 @@ struct Command_Line_Options options[]   =
     */
     {"-h", 0, 1, help},
     /* Honor -help also, since it is somewhat common */
-    {"-help", 0, 1, help},
-    {"-v", 0, 1, call_version},
-    {"-d", 0, 1, set_debug},
+    {"-help", 0, 1, help}, 
+    {"-v", 0, 1, call_version}, 
+    {"-d", 0, 1, set_debug}, 
     {"+d", 0, 1, unset_debug},
     {"-mon", 0, 1, set_mondebug},
 #ifndef SECURE
-    {"-data",1,1, set_datadir},
+    {"-data",1,1, set_datadir}, 
     {"-local",1,1, set_localdir},
     {"-maps", 1, 1, set_mapdir},
-    {"-arch", 1, 1, set_archetypes},
-    {"-playerdir", 1, 1, set_playerdir},
+    {"-arch", 1, 1, set_archetypes}, 
+    {"-playerdir", 1, 1, set_playerdir}, 
+    {"-instancedir", 1, 1, set_instancedir}, 
     {"-treasures", 1, 1, set_treasures},
-    {"-uniquedir", 1, 1, set_uniquedir},
+    {"-uniquedir", 1, 1, set_uniquedir}, 
     {"-tmpdir", 1, 1, set_tmpdir},
 #endif
     {"-log", 1, 1, set_logfile},
@@ -1019,7 +1009,7 @@ struct Command_Line_Options options[]   =
     /* Pass 2 functions.  Most of these could probably be in pass 1,
     * as they don't require much of anything to bet set up.
     */
-    {"-csport", 1, 2, set_csport},
+    {"-csport", 1, 2, set_csport}, 
     {"-detach", 0, 2, set_daemon},
 
     /* Start of pass 3 information. In theory, by pass 3, all data paths
@@ -1031,10 +1021,8 @@ struct Command_Line_Options options[]   =
     {"-m5", 0, 3, set_dumpmon5}, {"-m6", 0, 3, set_dumpmon6}, {"-m7", 0, 3, set_dumpmon7}, {"-m8", 0, 3, set_dumpmon8},
     {"-m9", 0, 3, set_dumpmon9}, {"-mA", 0, 3, set_dumpmonA}, {"-mt", 1, 3, set_dumpmont},
 #endif
-    {"-s", 0, 3, showscores},
-    {"-score", 1, 3, showscoresparm},
     {"-stat_loss_on_death", 0, 3, stat_loss_on_death_true},
-    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false},
+    {"+stat_loss_on_death", 0, 3, stat_loss_on_death_false}, 
     {"-balanced_stat_loss", 0, 3, balanced_stat_loss_true},
     {"+balanced_stat_loss", 0, 3, balanced_stat_loss_false},
     {"-test", 0, 4, run_unit_tests},
@@ -1050,7 +1038,7 @@ static void parse_args(int argc, char *argv[], int pass)
 
     while (on_arg < argc)
     {
-        for (i = 0; i < (int) (sizeof(options) / sizeof(struct Command_Line_Options)); i++)
+        for (i = 0; i < sizeof(options) / sizeof(struct Command_Line_Options); i++)
         {
             if (!strcmp(options[i].cmd_option, argv[on_arg]))
             {
@@ -1149,6 +1137,33 @@ static void init_beforeplay()
 #endif
 }
 
+/* Init of the instance system.
+ * Instances are in /instance folder saved like unique maps.
+ * But they have 2 unique identifiers beside the map name:
+ * id: is transformed to a unique directory name to identify different server instances
+ * num: is also used as directory name inside the id directory to identify instance instances
+ * format: /instance/<id>/<num/10000>/num/<unique-mapname>
+ * The id is important because its saved as instance info in the player files.
+ * If we reseting num, id will avoid an old player file enters a invalid instance
+ * To allow reenter of an instance between server shutdown we have to save id & num
+ * and reload it.
+ */
+static void init_instance_system(void)
+{
+    struct timeval now;
+
+    GETTIMEOFDAY(&now);
+
+    global_instance_id = now.tv_sec; /* well, we assume not 2 server starts in the same second AND
+                                      * a player is starting an instance between that starts...
+                                      * its impossible in reality
+                                      */
+
+    global_instance_num = 0; /* every instance has an unique tag/number */
+
+    LOG(llevInfo,"Init instance system:  set ID:%d num:%d\n", global_instance_id, global_instance_num); 
+}
+
 /*
  * init() is called only once, when starting the program.
  */
@@ -1189,6 +1204,7 @@ void init(int argc, char **argv)
     init_arch_default_behaviours();
     load_ban_file();
     load_gmaster_file();
+    init_instance_system();
     init_done = 1;
     parse_args(argc, argv, 4);
 }
@@ -1231,8 +1247,7 @@ void init_library()
     ReadBmapNames();
     init_anim();        /* Must be after we read in the bitmaps */
     init_archetypes();  /* Reads all archetypes from file */
-    init_dynamic();
-    init_clocks();
+    init_clocks();    
 
     init_lists_and_tables(); /* Initializes some global lists and tables */
 }

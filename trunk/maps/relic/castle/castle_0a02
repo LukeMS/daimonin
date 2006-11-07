@@ -13,7 +13,7 @@ tile_path_3 castle_0a01
 tile_path_4 castle_0b02
 tile_path_5 castle_0003
 tile_path_6 castle_0001
-tile_path_7 ../mountain_0204
+tile_path_7 /relic/mountain_0204
 tile_path_8 colosseum/colosseum_0a03
 tileset_id 4
 tileset_x -48
@@ -77,10 +77,10 @@ end
 arch grassd_m6
 y 14
 end
-arch water_still
+arch water_still_deep
 y 15
 end
-arch water_still
+arch water_still_deep
 y 16
 end
 arch water_still
@@ -240,11 +240,11 @@ arch grassd_m6
 x 1
 y 15
 end
-arch water_still
+arch water_still_deep
 x 1
 y 16
 end
-arch water_still
+arch water_still_deep
 x 1
 y 17
 end
@@ -418,31 +418,31 @@ arch grassd_m6
 x 2
 y 16
 end
-arch water_still
+arch water_still_deep
 x 2
 y 17
 end
-arch water_still
+arch water_still_deep
 x 2
 y 18
 end
-arch water_still
+arch water_still_deep
 x 2
 y 19
 end
-arch water_still
+arch water_still_deep
 x 2
 y 20
 end
-arch water_still
+arch water_still_deep
 x 2
 y 21
 end
-arch water_still
+arch water_still_deep
 x 2
 y 22
 end
-arch water_still
+arch water_still_deep
 x 2
 y 23
 end

@@ -30,7 +30,12 @@
 #include <plugin_lua.h>
 
 /* GameObject methods  */
-static int GameObject_CreateArtifact(lua_State *L);
+static int GameObject_Teleport(lua_State *L);
+static int  GameObject_ReadyUniqueMap(lua_State *L);
+static int  GameObject_ReadyInstance(lua_State *L);
+static int  GameObject_CheckInstance(lua_State *L);
+static int  GameObject_DeleteInstance(lua_State *L);
+static int  GameObject_CreateArtifact(lua_State *L);
 static int	GameObject_GetName(lua_State *L);
 static int	GameObject_GetEquipment(lua_State *L);
 static int	GameObject_GetRepairCost(lua_State *L);
@@ -45,7 +50,6 @@ static int  GameObject_GetSkill(lua_State *L);
 static int  GameObject_ActivateRune(lua_State *L);
 static int  GameObject_GetGod(lua_State *L);
 static int  GameObject_SetGod(lua_State *L);
-static int  GameObject_TeleportTo(lua_State *L);
 static int  GameObject_InsertInside(lua_State *L);
 static int  GameObject_Apply(lua_State *L);
 static int  GameObject_PickUp(lua_State *L);
@@ -93,7 +97,6 @@ static int  GameObject_CreateObjectInsideEx(lua_State *L);
 static int  GameObject_CheckInventory(lua_State *L);
 static int  GameObject_Remove(lua_State *L);
 static int  GameObject_Destruct(lua_State *L);
-static int  GameObject_SetPosition(lua_State *L);
 static int  GameObject_Move(lua_State *L);
 static int  GameObject_IdentifyItem(lua_State *L);
 static int  GameObject_Write(lua_State *L);

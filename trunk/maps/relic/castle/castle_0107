@@ -7,9 +7,13 @@ endmsg
 width 24
 height 24
 outdoor 1
+tile_path_1 /unofficial/unislash/jc_0100
 tile_path_3 castle_0106
+tile_path_4 marsh/marsh_0305
+tile_path_5 /unofficial/unislash/jc_0200
 tile_path_6 castle_0206
 tile_path_7 castle_0006
+tile_path_8 /unofficial/unislash/jc_0000
 tileset_id 4
 tileset_x 0
 tileset_y -240
@@ -726,6 +730,9 @@ end
 arch grass_thick1
 x 5
 end
+arch flagwall_short_brick1.131
+x 5
+end
 arch grass_thick1
 x 5
 y 1
@@ -734,7 +741,15 @@ arch plant2
 x 5
 y 1
 end
+arch flagwall_short_brick1.131
+x 5
+y 1
+end
 arch grass_thick1
+x 5
+y 2
+end
+arch flagwall_short_brick1.131
 x 5
 y 2
 end
@@ -894,21 +909,14 @@ arch plant4
 x 5
 y 23
 end
-arch grass_thick1
+arch grass_flowers1
 x 6
 end
-arch plant_flower4
-x 6
-end
-arch grass_thick1
+arch grass_flowers3
 x 6
 y 1
 end
-arch plant4
-x 6
-y 1
-end
-arch grass_thick1
+arch grassd_1
 x 6
 y 2
 end
@@ -1073,14 +1081,14 @@ arch grass_thick2
 x 6
 y 23
 end
-arch grass_thick1
+arch grassd_4
 x 7
 end
-arch grass_thick1
+arch grass_flowers1
 x 7
 y 1
 end
-arch grass_thick1
+arch grass_flowers1
 x 7
 y 2
 end
@@ -1089,6 +1097,16 @@ x 7
 y 3
 end
 arch fence_01.111
+layer 4
+x 7
+y 3
+end
+arch candlelight4.101
+layer 5
+x 7
+y 3
+end
+arch light4
 x 7
 y 3
 end
@@ -1246,26 +1264,27 @@ arch plant2
 x 7
 y 23
 end
-arch grass_thick1
+arch grassd_6
 x 8
 end
-arch grass_thick1
-x 8
-y 1
-end
-arch plant8
+arch grassd_8
 x 8
 y 1
 end
-arch grass_thick1
+arch grassd_8
 x 8
 y 2
 end
-arch floor_grit3c
+arch floor_grit3b
 x 8
 y 3
 end
 arch fence_01.111
+x 8
+y 3
+end
+arch bench2.111
+layer 6
 x 8
 y 3
 end
@@ -1409,7 +1428,11 @@ arch plant_flower8
 x 8
 y 21
 end
-arch grass_thick2
+arch floor_grit3a
+x 8
+y 22
+end
+arch grass_thickm1
 x 8
 y 22
 end
@@ -1421,17 +1444,14 @@ arch plant7
 x 8
 y 23
 end
-arch grass_thick1
+arch grassd_7
 x 9
 end
-arch plant14
-x 9
-end
-arch grass_thick1
+arch grass_flowers2
 x 9
 y 1
 end
-arch grass_thick1
+arch grassd_6
 x 9
 y 2
 end
@@ -1439,7 +1459,7 @@ arch floor_grit3a
 x 9
 y 3
 end
-arch fence_01.111
+arch fence_01.112
 x 9
 y 3
 end
@@ -1587,26 +1607,31 @@ arch plant_flower3
 x 9
 y 22
 end
-arch grass_thick2
+arch floor_grit3a
 x 9
 y 23
 end
-arch grass_thick1
+arch grass_thickm2
+x 9
+y 23
+end
+arch grassd_4
 x 10
 end
-arch grass_thick1
+arch grassd_5
 x 10
 y 1
 end
-arch plant8
+arch marker0
+name Directions
+msg
+North: Counsel Buildings
+South: Stonehaven Castle
+endmsg
 x 10
 y 1
 end
-arch grass_thick1
-x 10
-y 2
-end
-arch plant2
+arch grassd_7
 x 10
 y 2
 end
@@ -1614,7 +1639,7 @@ arch floor_grit3c
 x 10
 y 3
 end
-arch fence_01.111
+arch grassd_m10
 x 10
 y 3
 end
@@ -1740,9 +1765,19 @@ arch grass_thick2
 x 10
 y 21
 end
-arch grass_thick2
+arch grass_thick1
 x 10
 y 22
+end
+arch spawn_point
+x 10
+y 22
+arch guard
+name Door Guard
+type 83
+level 50
+Wis 1
+end
 end
 arch grass_thick2
 x 10
@@ -1752,25 +1787,25 @@ arch plant2
 x 10
 y 23
 end
-arch grass_thick1
+arch floor_grit4d
 x 11
 end
-arch plant14
+arch grassd_m1
 x 11
 end
-arch grass_thick1
-x 11
-y 1
-end
-arch plant11
+arch floor_grit3b
 x 11
 y 1
 end
-arch grass_thick1
+arch grassd_m6
+x 11
+y 1
+end
+arch floor_grit4c
 x 11
 y 2
 end
-arch plant_flower3
+arch grassd_m2
 x 11
 y 2
 end
@@ -1778,17 +1813,7 @@ arch floor_grit3b
 x 11
 y 3
 end
-arch fence_01.111
-layer 4
-x 11
-y 3
-end
-arch candlelight4.101
-layer 5
-x 11
-y 3
-end
-arch light4
+arch grassd_m13
 x 11
 y 3
 end
@@ -1944,11 +1969,11 @@ arch fence_01.171
 x 11
 y 21
 end
-arch floor_grit3a
+arch floor_grit3c
 x 11
 y 22
 end
-arch fence_01.171
+arch fence_01.172
 x 11
 y 22
 end
@@ -1956,38 +1981,37 @@ arch floor_grit3b
 x 11
 y 23
 end
-arch fence_01.171
-x 11
-y 23
-end
-arch grass_thick1
+arch floor_grit3c
 x 12
 end
-arch plant2
+arch grassd_m2
 x 12
 end
-arch grass_thick1
+arch floor_grit3c
 x 12
 y 1
 end
-arch grass_thick1
+arch grassd_m1
+x 12
+y 1
+end
+arch floor_grit4c
 x 12
 y 2
 end
-arch floor_grit3b
+arch grassd_m4
 x 12
-y 3
-end
-arch fence_01.111
-x 12
-y 3
-end
-arch bench2.111
-layer 6
-x 12
-y 3
+y 2
 end
 arch floor_grit3c
+x 12
+y 3
+end
+arch grassd_m12
+x 12
+y 3
+end
+arch floor_grit4d
 x 12
 y 4
 end
@@ -2143,31 +2167,22 @@ arch floor_grit3a
 x 12
 y 23
 end
-arch grass_thick1
+arch grassd_8
 x 13
 end
-arch grass_thick1
-x 13
-y 1
-end
-arch plant2
+arch grassd_6
 x 13
 y 1
 end
-arch grass_thick1
+arch grassd_5
 x 13
 y 2
 end
-arch floor_grit3b
+arch floor_grit3a
 x 13
 y 3
 end
-arch fence_01.111
-x 13
-y 3
-end
-arch bench2.111
-layer 6
+arch grassd_m10
 x 13
 y 3
 end
@@ -2331,21 +2346,14 @@ arch floor_grit3a
 x 13
 y 23
 end
-arch grass_thick1
+arch grass_flowers2
 x 14
 end
-arch plant_flower8
-x 14
-end
-arch grass_thick1
+arch grassd_7
 x 14
 y 1
 end
-arch plant8
-x 14
-y 1
-end
-arch grass_thick1
+arch grassd_2
 x 14
 y 2
 end
@@ -2353,17 +2361,7 @@ arch floor_grit3b
 x 14
 y 3
 end
-arch fence_01.111
-layer 4
-x 14
-y 3
-end
-arch candlelight4.101
-layer 5
-x 14
-y 3
-end
-arch light4
+arch fence_01.113
 x 14
 y 3
 end
@@ -2523,7 +2521,7 @@ arch floor_grit3c
 x 14
 y 22
 end
-arch fence_01.131
+arch fence_01.132
 x 14
 y 22
 end
@@ -2531,25 +2529,14 @@ arch floor_grit3a
 x 14
 y 23
 end
-arch fence_01.131
-x 14
-y 23
-end
-arch grass_thick1
+arch grassd_3
 x 15
 end
-arch plant8
-x 15
-end
-arch grass_thick1
+arch grass_flowers1
 x 15
 y 1
 end
-arch plant14
-x 15
-y 1
-end
-arch grass_thick1
+arch grass_flowers2
 x 15
 y 2
 end
@@ -2558,6 +2545,11 @@ x 15
 y 3
 end
 arch fence_01.111
+x 15
+y 3
+end
+arch bench2.111
+layer 6
 x 15
 y 3
 end
@@ -2689,37 +2681,50 @@ arch grass_thick1
 x 15
 y 22
 end
-arch plant8
+arch spawn_point
 x 15
 y 22
+arch guard
+name Door Guard
+type 83
+level 50
+Wis 1
 end
-arch grass_thick1
+end
+arch floor_grit3a
 x 15
 y 23
 end
-arch plant8
+arch grass_thickm2
 x 15
 y 23
 end
-arch grass_thick1
+arch grass_flowers2
 x 16
 end
-arch plant2
-x 16
-end
-arch grass_thick1
+arch grass_flowers2
 x 16
 y 1
 end
-arch grass_thick1
+arch grassd_2
 x 16
 y 2
 end
-arch floor_grit3c
+arch floor_grit3b
 x 16
 y 3
 end
 arch fence_01.111
+layer 4
+x 16
+y 3
+end
+arch candlelight4.101
+layer 5
+x 16
+y 3
+end
+arch light4
 x 16
 y 3
 end
@@ -2863,37 +2868,37 @@ arch plant2
 x 16
 y 22
 end
-arch grass_thick1
+arch floor_grit3a
 x 16
 y 23
 end
-arch tree_burned3
+arch grass_thickm1
 x 16
 y 23
 end
-arch grass_thick2
+arch grass_flowers2
 x 17
 end
-arch plant_flower3
+arch flagwall_short_brick1.131
 x 17
 end
-arch grass_thick2
-x 17
-y 1
-end
-arch plant4
+arch grassd_8
 x 17
 y 1
 end
-arch grass_thick2
+arch flagwall_short_brick1.131
+x 17
+y 1
+end
+arch grassd_5
 x 17
 y 2
 end
-arch plant_flower8
+arch flagwall_short_brick1.131
 x 17
 y 2
 end
-arch floor_grit3b
+arch floor_grit3a
 x 17
 y 3
 end
@@ -3038,6 +3043,10 @@ x 17
 y 20
 end
 arch grass_thick1
+x 17
+y 21
+end
+arch tree_burned3
 x 17
 y 21
 end
@@ -3229,7 +3238,11 @@ arch plant8
 x 18
 y 21
 end
-arch grass_thick1
+arch floor_grit3a
+x 18
+y 22
+end
+arch grass_thickm3
 x 18
 y 22
 end

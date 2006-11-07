@@ -1,15 +1,13 @@
 arch map
-name Emergency Map - This is a bug! Call DM!
+name Emergency Map
 msg
 Creator: Daimonin Map Editor
 Date:    10/27/2003
 endmsg
-darkness -1
 width 1
 height 1
-tileset_id 58
-tileset_x 0
-tileset_y 0
+difficulty 1
+fixed_login 1
 end
 arch floor_ostone1
 end

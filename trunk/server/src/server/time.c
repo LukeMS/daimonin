@@ -351,20 +351,24 @@ void remove_force(object *op)
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
 }
 
+/* TODO: implement and fix word of recall for instance map patch */
 void execute_wor(object *op)
 {
+/*
     object *wor = op;
     while (op != NULL && op->type != PLAYER)
         op = op->env;
     if (op != NULL)
     {
+
         if (blocks_magic(op->map, op->x, op->y))
             new_draw_info(NDI_UNIQUE, 0, op, "You feel something fizzle inside you.");
         else
-            enter_exit(op, wor);
+            enter_map_by_exit(op, wor);
     }
     remove_ob(wor);
     check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+*/
 }
 
 void poison_more(object *op)
@@ -1322,8 +1326,7 @@ void change_object(object *op)
 }
 
 
-/* i do some heavy changes to telporters.
- * First, with tiled maps it is a big problem, that teleporters
+/* First, with tiled maps it is a big problem, that teleporters
  * can only move player over maps. Second, i added a "no_teleport"
  * flag to the engine.
  * The teleporter will now teleport ANY object on the tile node - also
@@ -1352,7 +1355,7 @@ void move_teleporter(object *op)
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
 
-            enter_exit(tmp, op);
+            enter_map_by_exit(tmp, op);
         }
         else if (EXIT_X(op) != -1 && EXIT_Y(op) != -1) /* teleport inside this map */
         {
@@ -1369,7 +1372,7 @@ void move_teleporter(object *op)
             if(trigger_object_plugin_event(EVENT_TRIGGER,
                         op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                     continue;
-            transfer_ob(tmp, EXIT_X(op), EXIT_Y(op), tmp->map, 0, op, NULL);
+            enter_map(tmp, op, tmp->map, EXIT_X(op), EXIT_Y(op), 0);
         }
         else
         {

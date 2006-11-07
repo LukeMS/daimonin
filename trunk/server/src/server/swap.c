@@ -156,7 +156,7 @@ void swap_map(mapstruct *map, int force_flag)
     {
         mapstruct  *oldmap  = map;
 
-        LOG(llevDebug, "Resetting map %s.\n", map->path);
+        LOG(llevDebug, "Resetting1 map %s.\n", map->path);
 
         /* GROS : Here we handle the MAPRESET global event */
         /* I really dislike the idea to call for critical engine part
@@ -314,9 +314,9 @@ void flush_old_maps()
          * the functions calling it may not expect the map list to change
          * underneath them.
          */
-        if (MAP_UNIQUE(m) && m->in_memory == MAP_SWAPPED)
+        if ((MAP_UNIQUE(m) || MAP_INSTANCE(m)) && m->in_memory == MAP_SWAPPED)
         {
-            LOG(llevDebug, "Resetting map %s.\n", m->path);
+            LOG(llevDebug, "Resetting2 map %s.\n", m->path);
             oldmap = m;
             m = m->next;
             delete_map(oldmap);
@@ -328,7 +328,7 @@ void flush_old_maps()
         }
         else
         {
-            LOG(llevDebug, "Resetting map %s.\n", m->path);
+            LOG(llevDebug, "Resetting3 map %s.\n", m->path);
 
             /* GROS : Here we handle the MAPRESET global event */
             /*
@@ -346,4 +346,41 @@ void flush_old_maps()
         }
 #endif
     }
+}
+
+void set_map_timeout(mapstruct *oldmap)
+{
+#if MAP_MAXTIMEOUT
+    oldmap->timeout = MAP_TIMEOUT(oldmap);
+    /* Do MINTIMEOUT first, so that MAXTIMEOUT is used if that is
+    * lower than the min value.
+    */
+#if MAP_MINTIMEOUT
+    if (oldmap->timeout < MAP_MINTIMEOUT)
+    {
+        oldmap->timeout = MAP_MINTIMEOUT;
+    }
+#endif
+    if (oldmap->timeout > MAP_MAXTIMEOUT)
+    {
+        oldmap->timeout = MAP_MAXTIMEOUT;
+    }
+#else
+    /* save out the map */
+    swap_map(oldmap, 0);
+#endif /* MAP_MAXTIMEOUT */
+}
+
+void set_map_reset_time(mapstruct *map)
+{
+#ifdef MAP_RESET
+#ifdef MAP_MAXRESET
+    if (MAP_RESET_TIMEOUT(map) > MAP_MAXRESET)
+        MAP_WHEN_RESET(map) = seconds() + MAP_MAXRESET;
+    else
+#endif /* MAP_MAXRESET */
+        MAP_WHEN_RESET(map) = seconds() + MAP_RESET_TIMEOUT(map);
+#else
+    MAP_WHEN_RESET(map) = (-1); /* Will never be reset */
+#endif
 }

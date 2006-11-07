@@ -2320,13 +2320,6 @@ arch floor_wood2_d2
 x 14
 y 4
 end
-arch spawn_point
-x 14
-y 4
-arch archer
-type 83
-end
-end
 arch floor_wood2_d2
 x 14
 y 5
@@ -2458,9 +2451,14 @@ arch floor_wood2_d2
 x 15
 y 4
 end
-arch basin1_full.101
+arch chest_sm_1
+name booze ches
 x 15
 y 4
+arch quest_trigger
+name Lost Booze
+sub_type 3
+end
 end
 arch floor_wood2_d2
 x 15

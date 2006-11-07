@@ -172,7 +172,7 @@ mapstruct * load_style_map(char *style_name)
         if (!strcmp(style_name, style_map->path))
             return style_map;
     }
-    style_map = load_original_map(style_name, MAP_STATUS_STYLE);
+    style_map = load_map(NULL, style_name, MAP_STATUS_STYLE);
     /* Remove it from gloabl list, put it on our local list */
     if (style_map)
     {

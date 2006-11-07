@@ -60,12 +60,19 @@ void map_info(object *op)
                 m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', players_on_map(m), m->in_memory,
                 m->timeout, m->difficulty);
 #else
-        LOG(llevSystem, "%s pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n", m->path, players_on_map(m),
+        LOG(llevSystem, "%s (%s) pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n", 
+            m->path, m->orig_path, players_on_map(m),
             m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
             (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
-        sprintf(buf, "%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d", map_path, players_on_map(m),
-                m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
-                (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
+/*        sprintf(buf, "%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d", map_path, players_on_map(m),*/
+            if(!strcmp(m->path, m->orig_path))
+                sprintf(buf, "%s %2d   %c %4d %2d  %02d:%02d:%02d", m->path, players_on_map(m),
+                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
+                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
+            else
+                sprintf(buf, "%s (%s) %2d   %c %4d %2d  %02d:%02d:%02d", m->path, m->orig_path, players_on_map(m),
+                    m->in_memory ? (m->in_memory == MAP_IN_MEMORY ? 'm' : 's') : 'X', m->timeout, m->difficulty,
+                    (MAP_WHEN_RESET(m) % 86400) / 3600, (MAP_WHEN_RESET(m) % 3600) / 60, MAP_WHEN_RESET(m) % 60);
 #endif
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
@@ -389,12 +396,6 @@ int command_time(object *op, char *params)
 int command_archs(object *op, char *params)
 {
     arch_info(op);
-    return 1;
-}
-
-int command_hiscore(object *op, char *params)
-{
-    /*display_high_score(op,op==NULL?9999:50, params);*/
     return 1;
 }
 

@@ -72,6 +72,21 @@ extern CFParm          *PlugProps;
 extern f_plugin         PlugHooks[1024];
 extern int              cache_ref;
 
+/* macros for ReadyMap, ReadyUnique and ReadyInstance */ 
+#define PLUGIN_MAP_CHECK 1
+#define PLUGIN_MAP_NEW 2
+
+/* marker to decide a pointer argument is initilized from a script or not.
+ * We can not use NULL because we don't know the script has given
+ * it on purpose or its the default init.
+ * See GameObject_Teleport() for use.
+ * This SHOULD work on all today computer systems - if not we can
+ * use another trick: using a *void pointer variable which has its
+ * own memory position as "not legal pointer" inside.
+ * MT-2006
+ */
+#define NOT_LEGAL_POINTER ((void *)(0x01))
+
 /* Hooks-based hashed string macros */
 #undef FREE_AND_COPY_HASH
 #undef FREE_AND_ADD_REF_HASH

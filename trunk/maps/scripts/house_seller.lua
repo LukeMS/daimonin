@@ -44,15 +44,15 @@ function updateAp(ap_old, ap_new, pid, x, y)
 ib:SetTitle("Upgrading finished")
 ib:AddMsg("You pay the money.\n", 0)
 ib:AddMsg("~Darlin is casting some strange magic.~\n")
-map_old = game:ReadyMap(ap_old, game.MAP_STATUS_LOAD_UNIQUE, pl)
-map_new = game:ReadyMap(ap_new, game.MAP_STATUS_ORIGINAL, pl)
+map_old = pl:ReadyUniqueMap(ap_old)
+map_new = pl:ReadyUniqueMap(ap_new)
 if map_old == nil or map_new == nil then
 ib:AddMsg("Something is wrong... Call a DM!\n");
 else
 game:UpgradeApartment(map_old, map_new, x, y)
-map_new:SetUniqueMap(0, pl)
 map_new:Save()
 create_info(pid, ap_new, x, y)
+map_old:Delete(1)
 ib:AddMsg("\nDone! Your new apartment is ready.\n")
 end
 pl:Interface(1, ib:Build())

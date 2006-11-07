@@ -29,13 +29,17 @@
 
 static struct method_decl       Map_methods[]       =
 {
-	{"SetUniqueMap", Map_SetUniqueMap},
-    {"Save", Map_Save}, {"Delete", Map_Delete},
+    {"Load", Map_Load},
+    {"Save", Map_Save},
+    {"Delete", Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare", Map_GetBrightnessOnSquare},
     {"IsWallOnSquare", Map_IsWallOnSquare},
-    {"PlaySound", Map_PlaySound}, {"Message", Map_Message}, {"MapTileAt",  Map_MapTileAt},
-    {"CreateObject", Map_CreateObject}, {NULL, NULL}
+    {"PlaySound", Map_PlaySound}, 
+    {"Message", Map_Message}, 
+    {"MapTileAt",  Map_MapTileAt},
+    {"CreateObject", Map_CreateObject}, 
+    {NULL, NULL}
 };
 
 static struct attribute_decl    Map_attributes[]    =
@@ -49,12 +53,14 @@ static struct attribute_decl    Map_attributes[]    =
     { "darkness", FIELDTYPE_SINT32, offsetof(mapstruct, darkness), FIELDFLAG_READONLY },
     { "light_value", FIELDTYPE_SINT32, offsetof(mapstruct, light_value), FIELDFLAG_READONLY },
     { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY },
+    { "orig_path", FIELDTYPE_SHSTR, offsetof(mapstruct, orig_path), FIELDFLAG_READONLY },
+    { "map_status", FIELDTYPE_UINT32, offsetof(mapstruct, map_status), FIELDFLAG_READONLY },
     {NULL}
 };
 
 static const char              *Map_flags[]         =
 {
-    "?f_outdoor", "?f_unique", "?f_fixed_rtime", "f_nomagic", "f_nopriest", "f_noharm", "f_nosummon", "?f_fixed_login",
+    "?f_outdoor", "?f_no_save", "?f_fixed_rtime", "f_nomagic", "f_nopriest", "f_noharm", "f_nosummon", "?f_fixed_login",
     "?f_permdeath", "?f_ultradeath", "?f_ultimatedeath", "?f_pvp", FLAGLIST_END_MARKER
 };
 
@@ -63,36 +69,117 @@ static const char              *Map_flags[]         =
 /****************************************************************************/
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
-
 /*****************************************************************************/
-/* Name   : Map_SetUniqueMap                                                 */
-/* Lua    : map:SetUniqueMap(0, object)                                      */
+/* Name   : Map_Load                                                         */
+/* Lua    : map:Load(mapname)                                                */
+/* Info   : Loads a map using the inheritanced type and base path of map     */
 /* Status : Stable                                                           */
-/* Info   : Make a map unique - This is used to transfer apartments between  */
-/*        : players or change normal loaded maps                             */ 
 /*****************************************************************************/
-static int Map_SetUniqueMap(lua_State *L)
+static int Map_Load(lua_State *L)
 {
-	const char *tmp_string;
-	int         flags;
-	lua_object *obptr   = NULL;
-	lua_object *map;
+    char       *mapname;
+    const char *orig_path_sh, *path_sh = NULL;
+    lua_object *omap;
+    mapstruct *map, *new_map = NULL;
 
-	get_lua_args(L, "MiO", &map, &flags, &obptr);
+    get_lua_args(L, "Ms", &omap, &mapname);
 
-	if (!map->data.map || map->data.map->in_memory != MAP_IN_MEMORY)
-		return 0;
+    /* we need a valid map status to know how to handle the map file */
+    if((map = omap->data.map) && MAP_STATUS_TYPE(map->map_status))
+    {
+        orig_path_sh = hooks->create_safe_mapname_sh(mapname);
 
-	/* we ignore flags ATM - 0 is default and means player apartment */
-	if(!obptr || !obptr->data.object)
-		return 0;
+        /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
+        if(map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
+        {
+            char tmp_path[MAXPATHLEN];
 
-	tmp_string = hooks->create_unique_path(map->data.map->path, obptr->data.object);
-	FREE_AND_COPY_HASH(map->data.map->path, tmp_string);
-	map->data.map->map_flags |= MAP_FLAG_UNIQUE;
+            path_sh = hooks->add_string( hooks->normalize_path_direct(map->path, 
+                                         hooks->path_to_name(orig_path_sh), tmp_path));
+        }
 
-	return 0;
+        new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(map->map_status));
+        
+        FREE_ONLY_HASH(orig_path_sh);
+        if(path_sh)
+            FREE_ONLY_HASH(path_sh);
+    }
+
+    return push_object(L, &Map, new_map);
 }
+
+
+
+
+/*****************************************************************************/
+/* Name   : Map_Delete                                                       */
+/* Lua    : map:Delete(flags)                                                */
+/* Status : Stable                                                           */
+/* Info   : Remove the map from memory and map list. Release all objects.    */
+/*        : if flag is TRUE the map is physically deleted too! For multi     */
+/*        : the effect is the same as for FALSE but unique or instance maps  */
+/*        : are physically deleted.                                          */
+/*****************************************************************************/
+static int Map_Delete(lua_State *L)
+{
+    char const *path_sh;
+    int         map_player = FALSE, flags = 0;
+    lua_object *mapobj;
+    mapstruct *map;
+
+    get_lua_args(L, "M|i", &mapobj, &flags);
+
+    map = mapobj->data.map;
+
+    /* sanity checks... we don't test "in_memory" because
+     * we want remove perhaps swapped out maps too
+     */
+    if (!map || !MAP_STATUS_TYPE(map->map_status))
+        return 0;
+
+    if(flags) /* caller wants physical remove of the file too */
+    {
+        /* it only makes sense for unique or instance maps */
+        if(!(map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE)) )
+            flags = FALSE; /* no remove for wrong map types */
+        else
+        {
+            if(!map->path || !(*map->path == '.')) /* last sanity test */
+            {
+                LOG(llevDebug, "Map_Delete(): non MULTI map without '.' path = %s\n", STRING_SAFE(map->path));
+                flags = FALSE;
+            }
+            else
+                path_sh = hooks->add_refcount(map->path);
+        }
+    }
+
+    if(map->player_first) /* we have players on the map? */
+    {
+        hooks->map_to_player_unlink(map); /* remove player from map */
+        map_player = TRUE;
+    }
+
+    /* remove map from /tmp and from memory */
+    hooks->clean_tmp_map(map);
+    hooks->delete_map(map);
+
+    /* transfer players to the emergency map - why emergency?
+     * because our bind point CAN be the same map we killed above!
+     */
+    if(map_player)
+        hooks->map_to_player_link(NULL, -1, -1, TRUE);
+
+    /* handle the file delete */
+    if(flags && path_sh)
+    {
+        unlink(path_sh);
+        FREE_ONLY_HASH(path_sh);
+    }
+
+    return 0;
+}
+
 
 /*****************************************************************************/
 /* Name   : Map_GetFirstObjectOnSquare                                       */
@@ -221,33 +308,6 @@ static int Map_Save(lua_State *L)
 
 	if (flags)
 		map->data.map->in_memory = MAP_IN_MEMORY;
-
-    return 0;
-}
-
-/*****************************************************************************/
-/* Name   : Map_Delete                                                       */
-/* Lua    : map:Delete(flags)                                                */
-/* Status : Stable                                                           */
-/* Info   : Remove the map from memory and map list. Release all objects.    */
-/*****************************************************************************/
-static int Map_Delete(lua_State *L)
-{
-    int         flags = 0;
-    lua_object *map;
-
-    get_lua_args(L, "M|i", &map, &flags);
-
-	if (!map->data.map || !map->data.map->in_memory)
-		return 0;
-
-	if (flags) /* really delete the map */
-	{
-		hooks->free_map(map->data.map, 1);
-		hooks->delete_map(map->data.map);
-	}
-	else /* just swap it out */
-		hooks->free_map(map->data.map, 1);
 
     return 0;
 }

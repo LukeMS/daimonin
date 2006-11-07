@@ -400,7 +400,7 @@ When someone tells you to go into the sparkly light, do you do it? It will chang
 *******IMPORTANT*******
 DO NOT EVER DROP ITEMS IN THIS MAP!! YOU WILL RUN THE HIGH RISK OF LOSING THEM --FOREVER--.
 endmsg
-slaying traps/traps_test_0000
+slaying /nonpub/uni/castle/tests/traps/traps_test_0000
 hp 12
 sp 10
 x 2

@@ -17,18 +17,18 @@ tileset_id 4
 tileset_x 72
 tileset_y -168
 end
-arch water_still
+arch water_still_deepest
 end
-arch water_still
+arch water_still_deepest
 y 1
 end
-arch water_still
+arch water_still_deep
 y 2
 end
-arch water_still
+arch water_still_deep
 y 3
 end
-arch water_still
+arch water_still_deep
 y 4
 end
 arch water_still
@@ -46,16 +46,19 @@ end
 arch water_still
 y 8
 end
-arch grassd_m11
+arch earth_m5
 y 8
 end
 arch water_still
 y 9
 end
-arch grassd_m8
+arch earth_m13
 y 9
 end
 arch water_still
+y 10
+end
+arch earth_m8
 y 10
 end
 arch water_still
@@ -85,35 +88,35 @@ end
 arch water_still
 y 18
 end
-arch water_still
+arch water_still_deep
 y 19
 end
 arch water_lily
 y 19
 end
-arch water_still
+arch water_still_deep
 y 20
 end
 arch water_lily2
 y 20
 end
-arch water_still
+arch water_still_deep
 y 21
 end
-arch water_still
+arch water_still_deep
 y 22
 end
 arch water_still
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 1
 end
-arch water_still
+arch water_still_deepest
 x 1
 y 1
 end
-arch water_still
+arch water_still_deepest
 x 1
 y 2
 end
@@ -133,7 +136,7 @@ arch water_still
 x 1
 y 6
 end
-arch grassd_m11
+arch earth_m5
 x 1
 y 6
 end
@@ -141,7 +144,7 @@ arch water_still
 x 1
 y 7
 end
-arch grassd_m8
+arch earth_m9
 x 1
 y 7
 end
@@ -153,7 +156,7 @@ arch water_still
 x 1
 y 8
 end
-arch grassd_m7
+arch earth_m20
 x 1
 y 8
 end
@@ -173,7 +176,7 @@ arch water_still
 x 1
 y 10
 end
-arch grassd_m6
+arch earth_m19
 x 1
 y 10
 end
@@ -181,7 +184,7 @@ arch water_still
 x 1
 y 11
 end
-arch grassd_m8
+arch earth_m9
 x 1
 y 11
 end
@@ -189,7 +192,7 @@ arch water_still
 x 1
 y 12
 end
-arch grassd_m8
+arch earth_m9
 x 1
 y 12
 end
@@ -197,7 +200,7 @@ arch water_still
 x 1
 y 13
 end
-arch grassd_m8
+arch earth_m13
 x 1
 y 13
 end
@@ -205,7 +208,7 @@ arch water_still
 x 1
 y 14
 end
-arch grassd_m12
+arch earth_m8
 x 1
 y 14
 end
@@ -213,7 +216,7 @@ arch water_still
 x 1
 y 15
 end
-arch grassd_m11
+arch earth_m5
 x 1
 y 15
 end
@@ -221,7 +224,7 @@ arch water_still
 x 1
 y 16
 end
-arch grassd_m8
+arch earth_m9
 x 1
 y 16
 end
@@ -229,11 +232,11 @@ arch water_still
 x 1
 y 17
 end
-arch water_plant2
+arch earth_m8
 x 1
 y 17
 end
-arch grassd_m12
+arch water_plant2
 x 1
 y 17
 end
@@ -245,11 +248,11 @@ arch water_plant4
 x 1
 y 18
 end
-arch water_still
+arch water_still_deep
 x 1
 y 19
 end
-arch water_still
+arch water_still_deep
 x 1
 y 20
 end
@@ -257,7 +260,7 @@ arch water_lily2
 x 1
 y 20
 end
-arch water_still
+arch water_still_deep
 x 1
 y 21
 end
@@ -265,7 +268,7 @@ arch water_lily
 x 1
 y 21
 end
-arch water_still
+arch water_still_deep
 x 1
 y 22
 end
@@ -273,14 +276,14 @@ arch water_still
 x 1
 y 23
 end
-arch water_still
+arch water_still_deep
 x 2
 end
-arch water_still
+arch water_still_deepest
 x 2
 y 1
 end
-arch water_still
+arch water_still_deep
 x 2
 y 2
 end
@@ -288,7 +291,7 @@ arch water_still
 x 2
 y 3
 end
-arch water_still
+arch water_still_deep
 x 2
 y 4
 end
@@ -300,7 +303,7 @@ arch water_still
 x 2
 y 6
 end
-arch grassd_m7
+arch earth_m11
 x 2
 y 6
 end
@@ -316,7 +319,14 @@ arch water_still
 x 2
 y 8
 end
-arch grassd_m7
+arch earth_m3
+x 2
+y 8
+end
+arch plant_flower6
+name earth
+face earth_m4.101
+no_teleport 1
 x 2
 y 8
 end
@@ -364,7 +374,7 @@ arch water_still
 x 2
 y 14
 end
-arch grassd_m10
+arch earth_m10
 x 2
 y 14
 end
@@ -372,7 +382,7 @@ arch water_still
 x 2
 y 15
 end
-arch grassd_m7
+arch earth_m11
 x 2
 y 15
 end
@@ -388,7 +398,7 @@ arch water_still
 x 2
 y 17
 end
-arch grassd_m10
+arch earth_m10
 x 2
 y 17
 end
@@ -400,7 +410,7 @@ arch water_plant3
 x 2
 y 18
 end
-arch water_still
+arch water_still_deep
 x 2
 y 19
 end
@@ -416,7 +426,7 @@ arch water_still
 x 2
 y 21
 end
-arch water_still
+arch water_still_deep
 x 2
 y 22
 end
@@ -428,10 +438,10 @@ arch water_still
 x 2
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 3
 end
-arch water_still
+arch water_still_deepest
 x 3
 y 1
 end
@@ -459,7 +469,7 @@ arch water_still
 x 3
 y 6
 end
-arch grassd_m7
+arch earth_m11
 x 3
 y 6
 end
@@ -471,7 +481,14 @@ arch water_still
 x 3
 y 8
 end
-arch grassd_m6
+arch earth_m1
+x 3
+y 8
+end
+arch plant_flower6
+name earth
+face earth_m4.101
+no_teleport 1
 x 3
 y 8
 end
@@ -479,7 +496,18 @@ arch water_still
 x 3
 y 9
 end
-arch grassd_m8
+arch earth_m3
+x 3
+y 9
+end
+arch plant_flower6
+name earth
+face earth_m4.101
+no_teleport 1
+x 3
+y 9
+end
+arch water_plant4
 x 3
 y 9
 end
@@ -487,7 +515,7 @@ arch water_still
 x 3
 y 10
 end
-arch grassd_m9
+arch earth_m12
 x 3
 y 10
 end
@@ -495,7 +523,7 @@ arch water_still
 x 3
 y 11
 end
-arch grassd_m9
+arch earth_m16
 x 3
 y 11
 end
@@ -503,7 +531,7 @@ arch water_still
 x 3
 y 12
 end
-arch grassd_m3
+arch earth_m17
 x 3
 y 12
 end
@@ -519,7 +547,7 @@ arch water_still
 x 3
 y 14
 end
-arch grassd_m10
+arch earth_m10
 x 3
 y 14
 end
@@ -527,7 +555,7 @@ arch water_still
 x 3
 y 15
 end
-arch grassd_m7
+arch earth_m11
 x 3
 y 15
 end
@@ -543,7 +571,7 @@ arch water_still
 x 3
 y 17
 end
-arch grassd_m6
+arch earth_m19
 x 3
 y 17
 end
@@ -552,6 +580,14 @@ x 3
 y 18
 end
 arch water_lily2
+name earth
+face earth_m8.101
+x 3
+y 18
+end
+arch earth_m8
+name water lily
+face water_lily2.101
 x 3
 y 18
 end
@@ -563,11 +599,11 @@ arch water_lily2
 x 3
 y 19
 end
-arch water_still
+arch water_still_deep
 x 3
 y 20
 end
-arch water_still
+arch water_still_deep
 x 3
 y 21
 end
@@ -575,7 +611,7 @@ arch water_lily3
 x 3
 y 21
 end
-arch water_still
+arch water_still_deepest
 x 3
 y 22
 end
@@ -587,10 +623,10 @@ arch water_lily2
 x 3
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 4
 end
-arch water_still
+arch water_still_deep
 x 4
 y 1
 end
@@ -602,7 +638,7 @@ arch water_still
 x 4
 y 3
 end
-arch water_still
+arch water_still_deepest
 x 4
 y 4
 end
@@ -614,7 +650,7 @@ arch water_still
 x 4
 y 6
 end
-arch grassd_m7
+arch earth_m15
 x 4
 y 6
 end
@@ -642,7 +678,7 @@ arch water_still
 x 4
 y 10
 end
-arch grassd_m6
+arch earth_m19
 x 4
 y 10
 end
@@ -654,7 +690,7 @@ arch water_still
 x 4
 y 11
 end
-arch grassd_m8
+arch earth_m13
 x 4
 y 11
 end
@@ -666,7 +702,7 @@ arch water_still
 x 4
 y 12
 end
-arch grassd_m8
+arch earth_m9
 x 4
 y 12
 end
@@ -674,7 +710,18 @@ arch water_still
 x 4
 y 13
 end
-arch grassd_m8
+arch earth_m3
+x 4
+y 13
+end
+arch plant_flower6
+name earth
+face earth_m4.101
+no_teleport 1
+x 4
+y 13
+end
+arch water_plant4
 x 4
 y 13
 end
@@ -682,7 +729,7 @@ arch water_still
 x 4
 y 14
 end
-arch grassd_m8
+arch earth_m1
 x 4
 y 14
 end
@@ -690,7 +737,7 @@ arch water_still
 x 4
 y 15
 end
-arch grassd_m7
+arch earth_m11
 x 4
 y 15
 end
@@ -714,7 +761,7 @@ arch water_still
 x 4
 y 18
 end
-arch grassd_m10
+arch earth_m14
 x 4
 y 18
 end
@@ -726,7 +773,7 @@ arch water_lily2
 x 4
 y 19
 end
-arch water_still
+arch water_still_deep
 x 4
 y 20
 end
@@ -734,11 +781,11 @@ arch water_lily2
 x 4
 y 20
 end
-arch water_still
+arch water_still_deepest
 x 4
 y 21
 end
-arch water_still
+arch water_still_deepest
 x 4
 y 22
 end
@@ -754,14 +801,14 @@ arch water_lily
 x 4
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 5
 end
-arch water_still
+arch water_still_deep
 x 5
 y 1
 end
-arch water_still
+arch water_still_deep
 x 5
 y 2
 end
@@ -769,7 +816,7 @@ arch water_still
 x 5
 y 3
 end
-arch water_still
+arch water_still_deepest
 x 5
 y 4
 end
@@ -781,6 +828,10 @@ arch water_still
 x 5
 y 6
 end
+arch earth_m6
+x 5
+y 6
+end
 arch water_plant1
 x 5
 y 6
@@ -789,7 +840,7 @@ arch water_still
 x 5
 y 7
 end
-arch grassd_m3
+arch earth_m17
 x 5
 y 7
 end
@@ -841,7 +892,14 @@ arch water_still
 x 5
 y 15
 end
-arch grassd_m6
+arch earth_m3
+x 5
+y 15
+end
+arch plant_flower6
+name earth
+face earth_m4.101
+no_teleport 1
 x 5
 y 15
 end
@@ -853,7 +911,7 @@ arch water_still
 x 5
 y 16
 end
-arch grassd_m3
+arch earth_m2
 x 5
 y 16
 end
@@ -869,7 +927,7 @@ arch water_still
 x 5
 y 18
 end
-arch grassd_m10
+arch earth_m10
 x 5
 y 18
 end
@@ -881,11 +939,23 @@ arch water_lily
 x 5
 y 19
 end
+arch water_still_deep
+x 5
+y 20
+end
 arch water_still
 x 5
 y 20
 end
 arch water_still
+x 5
+y 20
+end
+arch water_still
+x 5
+y 20
+end
+arch water_still_deep
 x 5
 y 21
 end
@@ -893,7 +963,7 @@ arch water_lily
 x 5
 y 21
 end
-arch water_still
+arch water_still_deepest
 x 5
 y 22
 end
@@ -905,10 +975,10 @@ arch water_lily2
 x 5
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 6
 end
-arch water_still
+arch water_still_deep
 x 6
 y 1
 end
@@ -948,7 +1018,7 @@ arch water_still
 x 6
 y 8
 end
-arch grassd_m3
+arch earth_m17
 x 6
 y 8
 end
@@ -965,10 +1035,6 @@ x 6
 y 10
 end
 arch grassd_2
-x 6
-y 11
-end
-arch tree_big2
 x 6
 y 11
 end
@@ -996,7 +1062,14 @@ arch water_still
 x 6
 y 16
 end
-arch grassd_m7
+arch earth_m3
+x 6
+y 16
+end
+arch plant_flower6
+name earth
+face earth_m4.101
+no_teleport 1
 x 6
 y 16
 end
@@ -1016,7 +1089,7 @@ arch water_still
 x 6
 y 18
 end
-arch grassd_m10
+arch earth_m14
 x 6
 y 18
 end
@@ -1028,7 +1101,7 @@ arch water_lily2
 x 6
 y 19
 end
-arch water_still
+arch water_still_deep
 x 6
 y 20
 end
@@ -1036,7 +1109,7 @@ arch water_lily2
 x 6
 y 20
 end
-arch water_still
+arch water_still_deep
 x 6
 y 21
 end
@@ -1044,7 +1117,7 @@ arch water_lily2
 x 6
 y 21
 end
-arch water_still
+arch water_still_deepest
 x 6
 y 22
 end
@@ -1052,10 +1125,10 @@ arch water_still
 x 6
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 7
 end
-arch water_still
+arch water_still_deepest
 x 7
 y 1
 end
@@ -1063,15 +1136,19 @@ arch water_still
 x 7
 y 2
 end
+arch water_still_deep
+x 7
+y 2
+end
 arch water_still
 x 7
 y 3
 end
-arch water_still
+arch water_still_deep
 x 7
 y 4
 end
-arch water_still
+arch water_still_deep
 x 7
 y 5
 end
@@ -1083,7 +1160,7 @@ arch water_still
 x 7
 y 7
 end
-arch grassd_m11
+arch earth_m5
 x 7
 y 7
 end
@@ -1091,7 +1168,7 @@ arch water_still
 x 7
 y 8
 end
-arch grassd_m5
+arch earth_m20
 x 7
 y 8
 end
@@ -1143,7 +1220,7 @@ arch water_still
 x 7
 y 16
 end
-arch grassd_m10
+arch earth_m4
 x 7
 y 16
 end
@@ -1155,7 +1232,7 @@ arch water_still
 x 7
 y 17
 end
-arch grassd_m9
+arch earth_m12
 x 7
 y 17
 end
@@ -1167,7 +1244,7 @@ arch water_still
 x 7
 y 18
 end
-arch grassd_m13
+arch earth_m7
 x 7
 y 18
 end
@@ -1175,15 +1252,15 @@ arch water_still
 x 7
 y 19
 end
-arch water_still
+arch water_still_deepest
 x 7
 y 20
 end
-arch water_still
+arch water_still_deepest
 x 7
 y 21
 end
-arch water_still
+arch water_still_deepest
 x 7
 y 22
 end
@@ -1191,26 +1268,26 @@ arch water_still
 x 7
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 8
 end
-arch water_still
+arch water_still_deepest
 x 8
 y 1
 end
-arch water_still
+arch water_still_deepest
 x 8
 y 2
 end
-arch water_still
+arch water_still_deep
 x 8
 y 3
 end
-arch water_still
+arch water_still_deep
 x 8
 y 4
 end
-arch water_still
+arch water_still_deep
 x 8
 y 5
 end
@@ -1222,7 +1299,7 @@ arch water_still
 x 8
 y 7
 end
-arch grassd_m7
+arch earth_m15
 x 8
 y 7
 end
@@ -1282,7 +1359,7 @@ arch water_still
 x 8
 y 16
 end
-arch grassd_m6
+arch earth_m19
 x 8
 y 16
 end
@@ -1290,7 +1367,7 @@ arch water_still
 x 8
 y 17
 end
-arch grassd_m8
+arch earth_m13
 x 8
 y 17
 end
@@ -1302,7 +1379,7 @@ arch water_still
 x 8
 y 18
 end
-arch grassd_m12
+arch earth_m8
 x 8
 y 18
 end
@@ -1310,15 +1387,15 @@ arch water_still
 x 8
 y 19
 end
-arch water_still
+arch water_still_deep
 x 8
 y 20
 end
-arch water_still
+arch water_still_deepest
 x 8
 y 21
 end
-arch water_still
+arch water_still_deep
 x 8
 y 22
 end
@@ -1326,22 +1403,22 @@ arch water_still
 x 8
 y 23
 end
-arch water_still
+arch water_still_deepest
 x 9
 end
-arch water_still
+arch water_still_deepest
 x 9
 y 1
 end
-arch water_still
+arch water_still_deepest
 x 9
 y 2
 end
-arch water_still
+arch water_still_deepest
 x 9
 y 3
 end
-arch water_still
+arch water_still_deepest
 x 9
 y 4
 end
@@ -1349,7 +1426,7 @@ arch water_lily2
 x 9
 y 4
 end
-arch water_still
+arch water_still_deep
 x 9
 y 5
 end
@@ -1361,7 +1438,7 @@ arch water_still
 x 9
 y 7
 end
-arch grassd_m7
+arch earth_m11
 x 9
 y 7
 end
@@ -1377,7 +1454,7 @@ arch water_still
 x 9
 y 9
 end
-arch grassd_m4
+arch earth_m18
 x 9
 y 9
 end
@@ -1385,7 +1462,7 @@ arch water_still
 x 9
 y 10
 end
-arch grassd_m3
+arch earth_m17
 x 9
 y 10
 end
@@ -1441,7 +1518,7 @@ arch water_still
 x 9
 y 18
 end
-arch grassd_m10
+arch earth_m10
 x 9
 y 18
 end
@@ -1465,18 +1542,18 @@ arch water_still
 x 9
 y 23
 end
-arch water_still
+arch water_still_deep
 x 10
 end
-arch water_still
+arch water_still_deep
 x 10
 y 1
 end
-arch water_still
+arch water_still_deep
 x 10
 y 2
 end
-arch water_still
+arch water_still_deepest
 x 10
 y 3
 end
@@ -1484,7 +1561,7 @@ arch water_lily2
 x 10
 y 3
 end
-arch water_still
+arch water_still_deepest
 x 10
 y 4
 end
@@ -1492,7 +1569,7 @@ arch water_lily
 x 10
 y 4
 end
-arch water_still
+arch water_still_deep
 x 10
 y 5
 end
@@ -1508,7 +1585,7 @@ arch water_still
 x 10
 y 7
 end
-arch grassd_m7
+arch earth_m15
 x 10
 y 7
 end
@@ -1516,11 +1593,14 @@ arch grassd_7
 x 10
 y 8
 end
-arch water_still
+arch tele_stone
+slaying /relic/castle/castleb_0203
+hp 3
+sp 17
 x 10
-y 9
+y 8
 end
-arch grassd_m10
+arch water_still
 x 10
 y 9
 end
@@ -1528,15 +1608,19 @@ arch water_plant4
 x 10
 y 9
 end
+arch earth_m14
+x 10
+y 9
+end
 arch water_still
 x 10
 y 10
 end
-arch grassd_m7
+arch water_plant1
 x 10
 y 10
 end
-arch water_plant1
+arch earth_m11
 x 10
 y 10
 end
@@ -1549,7 +1633,7 @@ x 10
 y 12
 end
 arch hole
-slaying grey_cave/castleb_0404
+slaying /nonpub/base/grey_cave/castleb_0404
 hp 10
 sp 11
 walk_on 1
@@ -1561,7 +1645,7 @@ arch water_still
 x 10
 y 13
 end
-arch grassd_m4
+arch earth_m18
 x 10
 y 13
 end
@@ -1569,7 +1653,7 @@ arch water_still
 x 10
 y 14
 end
-arch grassd_m9
+arch earth_m16
 x 10
 y 14
 end
@@ -1577,7 +1661,7 @@ arch water_still
 x 10
 y 15
 end
-arch grassd_m9
+arch earth_m12
 x 10
 y 15
 end
@@ -1585,7 +1669,7 @@ arch water_still
 x 10
 y 16
 end
-arch grassd_m9
+arch earth_m12
 x 10
 y 16
 end
@@ -1593,7 +1677,7 @@ arch water_still
 x 10
 y 17
 end
-arch grassd_m9
+arch earth_m16
 x 10
 y 17
 end
@@ -1601,7 +1685,7 @@ arch water_still
 x 10
 y 18
 end
-arch grassd_m13
+arch earth_m7
 x 10
 y 18
 end
@@ -1617,11 +1701,11 @@ arch water_still
 x 10
 y 21
 end
-arch water_still
+arch water_still_deep
 x 10
 y 22
 end
-arch water_still
+arch water_still_deep
 x 10
 y 23
 end
@@ -1632,7 +1716,7 @@ arch water_still
 x 11
 y 1
 end
-arch water_still
+arch water_still_deep
 x 11
 y 2
 end
@@ -1640,15 +1724,15 @@ arch water_lily
 x 11
 y 2
 end
-arch water_still
+arch water_still_deep
 x 11
 y 3
 end
-arch water_still
+arch water_still_deep
 x 11
 y 4
 end
-arch water_still
+arch water_still_deep
 x 11
 y 5
 end
@@ -1664,7 +1748,7 @@ arch water_still
 x 11
 y 7
 end
-arch grassd_m14
+arch earth_m6
 x 11
 y 7
 end
@@ -1672,7 +1756,7 @@ arch water_still
 x 11
 y 8
 end
-arch grassd_m9
+arch earth_m12
 x 11
 y 8
 end
@@ -1680,7 +1764,7 @@ arch water_still
 x 11
 y 9
 end
-arch grassd_m13
+arch earth_m7
 x 11
 y 9
 end
@@ -1688,7 +1772,7 @@ arch water_still
 x 11
 y 10
 end
-arch grassd_m14
+arch earth_m6
 x 11
 y 10
 end
@@ -1700,7 +1784,7 @@ arch water_still
 x 11
 y 11
 end
-arch grassd_m9
+arch earth_m16
 x 11
 y 11
 end
@@ -1708,7 +1792,7 @@ arch water_still
 x 11
 y 12
 end
-arch grassd_m9
+arch earth_m16
 x 11
 y 12
 end
@@ -1716,7 +1800,7 @@ arch water_still
 x 11
 y 13
 end
-arch grassd_m13
+arch earth_m7
 x 11
 y 13
 end
@@ -1744,30 +1828,33 @@ arch water_still
 x 11
 y 19
 end
-arch water_still
+arch water_still_deep
 x 11
 y 20
 end
-arch water_still
+arch water_still_deep
 x 11
 y 21
 end
-arch water_still
+arch water_still_deep
 x 11
 y 22
 end
-arch water_still
+arch water_still_deep
 x 11
 y 23
 end
 arch water_still
 x 12
 end
+arch earth_m8
+x 12
+end
 arch water_still
 x 12
 y 1
 end
-arch water_still
+arch water_still_deep
 x 12
 y 2
 end
@@ -1775,7 +1862,7 @@ arch water_lily2
 x 12
 y 2
 end
-arch water_still
+arch water_still_deep
 x 12
 y 3
 end
@@ -1783,11 +1870,11 @@ arch water_lily
 x 12
 y 3
 end
-arch water_still
+arch water_still_deep
 x 12
 y 4
 end
-arch water_still
+arch water_still_deep
 x 12
 y 5
 end
@@ -1831,7 +1918,15 @@ arch water_still
 x 12
 y 13
 end
+arch earth_m5
+x 12
+y 13
+end
 arch water_still
+x 12
+y 14
+end
+arch earth_m13
 x 12
 y 14
 end
@@ -1839,7 +1934,15 @@ arch water_still
 x 12
 y 15
 end
+arch earth_m9
+x 12
+y 15
+end
 arch water_still
+x 12
+y 16
+end
+arch earth_m8
 x 12
 y 16
 end
@@ -1855,23 +1958,26 @@ arch water_still
 x 12
 y 19
 end
-arch water_still
+arch water_still_deep
 x 12
 y 20
 end
-arch water_still
+arch water_still_deep
 x 12
 y 21
 end
-arch water_still
+arch water_still_deep
 x 12
 y 22
 end
-arch water_still
+arch water_still_deep
 x 12
 y 23
 end
 arch water_still
+x 13
+end
+arch earth_m10
 x 13
 end
 arch water_plant4
@@ -1889,7 +1995,7 @@ arch water_still
 x 13
 y 2
 end
-arch water_still
+arch water_still_deep
 x 13
 y 3
 end
@@ -1897,7 +2003,7 @@ arch water_plant3
 x 13
 y 3
 end
-arch water_still
+arch water_still_deep
 x 13
 y 4
 end
@@ -1909,7 +2015,7 @@ arch water_lily
 x 13
 y 5
 end
-arch water_still
+arch water_still_deep
 x 13
 y 6
 end
@@ -1917,7 +2023,7 @@ arch water_lily2
 x 13
 y 6
 end
-arch water_still
+arch water_still_deep
 x 13
 y 7
 end
@@ -1925,15 +2031,15 @@ arch water_lily2
 x 13
 y 7
 end
-arch water_still
+arch water_still_deep
 x 13
 y 8
 end
-arch water_still
+arch water_still_deep
 x 13
 y 9
 end
-arch water_still
+arch water_still_deep
 x 13
 y 10
 end
@@ -1945,15 +2051,23 @@ arch water_still
 x 13
 y 12
 end
+arch earth_m5
+x 13
+y 12
+end
 arch water_still
 x 13
 y 13
 end
-arch water_still
+arch earth_m20
+x 13
+y 13
+end
+arch grassd_1
 x 13
 y 14
 end
-arch water_still
+arch grassd_6
 x 13
 y 15
 end
@@ -1961,11 +2075,23 @@ arch water_still
 x 13
 y 16
 end
+arch earth_m19
+x 13
+y 16
+end
 arch water_still
 x 13
 y 17
 end
+arch earth_m13
+x 13
+y 17
+end
 arch water_still
+x 13
+y 18
+end
+arch earth_m8
 x 13
 y 18
 end
@@ -1981,7 +2107,7 @@ arch water_still
 x 13
 y 20
 end
-arch water_still
+arch water_still_deep
 x 13
 y 21
 end
@@ -1996,7 +2122,14 @@ end
 arch water_still
 x 14
 end
+arch earth_m19
+x 14
+end
 arch water_still
+x 14
+y 1
+end
+arch earth_m8
 x 14
 y 1
 end
@@ -2080,31 +2213,31 @@ arch water_still
 x 14
 y 12
 end
+arch earth_m15
+x 14
+y 12
+end
 arch water_plant4
 x 14
 y 12
 end
-arch water_still
+arch grassd_7
 x 14
 y 13
 end
-arch water_still
+arch grassd_3
 x 14
 y 14
 end
-arch water_plant3
-x 14
-y 14
-end
-arch water_still
+arch grassd_7
 x 14
 y 15
 end
-arch water_still
+arch grassd_6
 x 14
 y 16
 end
-arch water_still
+arch grassd_1
 x 14
 y 17
 end
@@ -2112,7 +2245,15 @@ arch water_still
 x 14
 y 18
 end
+arch earth_m19
+x 14
+y 18
+end
 arch water_still
+x 14
+y 19
+end
+arch earth_m8
 x 14
 y 19
 end
@@ -2140,17 +2281,18 @@ arch water_still
 x 14
 y 23
 end
-arch water_still
-x 15
+arch earth_m5
+x 14
+y 23
 end
-arch grassd_m8
+arch grassd_6
 x 15
 end
 arch water_still
 x 15
 y 1
 end
-arch grassd_m8
+arch earth_m19
 x 15
 y 1
 end
@@ -2158,7 +2300,7 @@ arch water_still
 x 15
 y 2
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 2
 end
@@ -2170,7 +2312,7 @@ arch water_still
 x 15
 y 3
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 3
 end
@@ -2182,7 +2324,7 @@ arch water_still
 x 15
 y 4
 end
-arch grassd_m8
+arch earth_m9
 x 15
 y 4
 end
@@ -2194,7 +2336,7 @@ arch water_still
 x 15
 y 5
 end
-arch grassd_m8
+arch earth_m9
 x 15
 y 5
 end
@@ -2202,7 +2344,7 @@ arch water_still
 x 15
 y 6
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 6
 end
@@ -2210,7 +2352,7 @@ arch water_still
 x 15
 y 7
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 7
 end
@@ -2218,7 +2360,7 @@ arch water_still
 x 15
 y 8
 end
-arch grassd_m8
+arch earth_m9
 x 15
 y 8
 end
@@ -2230,7 +2372,7 @@ arch water_still
 x 15
 y 9
 end
-arch grassd_m8
+arch earth_m9
 x 15
 y 9
 end
@@ -2242,7 +2384,7 @@ arch water_still
 x 15
 y 10
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 10
 end
@@ -2254,7 +2396,7 @@ arch water_still
 x 15
 y 11
 end
-arch grassd_m8
+arch earth_m9
 x 15
 y 11
 end
@@ -2262,63 +2404,31 @@ arch water_still
 x 15
 y 12
 end
-arch grassd_m8
+arch earth_m20
 x 15
 y 12
 end
-arch water_still
+arch grassd_6
 x 15
 y 13
 end
-arch grassd_m8
-x 15
-y 13
-end
-arch water_plant1
-x 15
-y 13
-end
-arch water_still
+arch grassd_5
 x 15
 y 14
 end
-arch grassd_m8
-x 15
-y 14
-end
-arch water_plant4
-x 15
-y 14
-end
-arch water_still
+arch grassd_7
 x 15
 y 15
 end
-arch grassd_m8
-x 15
-y 15
-end
-arch water_still
+arch grassd_1
 x 15
 y 16
 end
-arch grassd_m8
-x 15
-y 16
-end
-arch water_still
+arch grassd_8
 x 15
 y 17
 end
-arch grassd_m8
-x 15
-y 17
-end
-arch water_still
-x 15
-y 18
-end
-arch grassd_m8
+arch grassd_6
 x 15
 y 18
 end
@@ -2326,7 +2436,7 @@ arch water_still
 x 15
 y 19
 end
-arch grassd_m8
+arch earth_m19
 x 15
 y 19
 end
@@ -2334,7 +2444,7 @@ arch water_still
 x 15
 y 20
 end
-arch grassd_m8
+arch earth_m9
 x 15
 y 20
 end
@@ -2346,7 +2456,7 @@ arch water_still
 x 15
 y 21
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 21
 end
@@ -2358,7 +2468,7 @@ arch water_still
 x 15
 y 22
 end
-arch grassd_m8
+arch earth_m13
 x 15
 y 22
 end
@@ -2366,7 +2476,7 @@ arch water_still
 x 15
 y 23
 end
-arch grassd_m8
+arch earth_m20
 x 15
 y 23
 end
@@ -2461,15 +2571,11 @@ arch tree_big3
 x 16
 y 15
 end
-arch grassd_3
+arch grassd_1
 x 16
 y 16
 end
 arch grassd_8
-x 16
-y 17
-end
-arch plant_flower2
 x 16
 y 17
 end

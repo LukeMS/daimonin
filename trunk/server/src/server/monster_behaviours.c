@@ -691,7 +691,8 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
     if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
             || (params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT))
     {
-        if((basemap = ready_map_name(base->slaying, MAP_STATUS_NAME_SHARED, NULL)))
+        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
+        if((basemap = ready_map_name(base->slaying, base->slaying, 0)))
             if(!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE))
                 basemap = NULL;
     }
@@ -809,7 +810,8 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
         /* If mob isn't already home */
         if (op->x != base->x || op->y != base->y || op->map->path != base->slaying)
         {
-            mapstruct  *map = ready_map_name(base->slaying, MAP_STATUS_NAME_SHARED, NULL);
+            /* TODO/FIX: rework ready_map_name() for the instance patch */ 
+            mapstruct  *map = ready_map_name(base->slaying, base->slaying, 0);
 
             response->type = MOVE_RESPONSE_COORD;
             response->data.coord.x = base->x;
@@ -1150,7 +1152,8 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
     {
         rv_vector               rv;
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
-        mapstruct              *map     = ready_map_name(enemy->last_map, MAP_STATUS_NAME_SHARED, NULL);
+        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
+        mapstruct              *map     = ready_map_name(enemy->last_map, enemy->last_map, 0);
 
         if (get_rangevector_full(op, op->map, op->x, op->y,
                     enemy->obj, map, enemy->last_x, enemy->last_y,

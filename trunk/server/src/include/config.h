@@ -58,7 +58,7 @@
 #define MAPDIR  "../maps"
 #endif
 
-/* Location of changeable single system data (temp maps, hiscore, etc) */
+/* Location of changeable single system data (temp maps, etc) */
 #ifndef LOCALDIR
 #define LOCALDIR "./data"
 #endif
@@ -92,6 +92,10 @@
 
 #ifndef PLAYERDIR
 #define PLAYERDIR "players"
+#endif
+
+#ifndef INSTANCEDIR
+#define INSTANCEDIR "instance"
 #endif
 
 #ifndef HELPDIR
@@ -561,25 +565,30 @@
  * major changes to the map.
  */
 
-#    define EMERGENCY_MAPPATH "/emergency"
-#    define EMERGENCY_X 0
-#    define EMERGENCY_Y 0
+#define EMERGENCY_MAPPATH "/emergency"
+/* emergency is always MULTI and will be called with fixed login */
 
+#define START_MAP_MAPPATH   "/relic/castle/castle_030a"
+#define START_MAP_STATUS    (MAP_STATUS_MULTI)
+#define START_MAP_X         (18)
+#define START_MAP_Y         (1)
+
+#define BIND_MAP_MAPPATH   "/relic/castle/castle_040a"
+#define BIND_MAP_STATUS    (MAP_STATUS_MULTI)
+#define BIND_MAP_X         (8)
+#define BIND_MAP_Y         (7)
 
 /*
  * These defines tells where,
- * archetypes highscore and treaures files and directories can be found.
+ * archetypes, treaures files and directories can be found.
  */
 
 #define ARCHETYPES  "archetypes"
-#define HIGHSCORE   "highscore"
 #define TREASURES   "treasures"
 #define SETTINGS    "settings"
 
 #define MAX_ERRORS  25  /* Bail out if more are received during tick */
 #define OBJECT_EXPAND      2500     /* How big steps to use when expanding array */
-
-#define HIGHSCORE_LENGTH 10 /* How many entries there are room for */
 
 /* this value must be a prime number! */
 #define MAXSTRING 20

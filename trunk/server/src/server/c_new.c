@@ -529,30 +529,6 @@ int command_target(object *op, char *params)
     return 1;
 }
 
-/* This loads the first map an puts the player on it. */
-static void set_first_map(object *op)
-{
-    object *current;
-
-    strcpy(CONTR(op)->maplevel, EXIT_PATH(&map_archeytpe->clone));
-    op->x = map_archeytpe->clone.stats.hp;
-    op->y = map_archeytpe->clone.stats.sp;
-
-    if (!strcmp(EXIT_PATH(&map_archeytpe->clone), "/tutorial"))
-    {
-        current = get_object();
-        FREE_AND_COPY_HASH(EXIT_PATH(current), EXIT_PATH(&map_archeytpe->clone));
-        EXIT_X(current) = map_archeytpe->clone.stats.hp;
-        EXIT_Y(current) = map_archeytpe->clone.stats.sp;
-        current->last_eat = MAP_STATUS_UNIQUE; /* we have a unique map */
-        enter_exit(op, current);
-    }
-    else
-    {
-        enter_exit(op, NULL);
-    }
-}
-
 
 /* we *SHOULD* grap this info from server/client setting file
  * but i have no time and code it hard here!
@@ -724,7 +700,7 @@ void command_new_char(char *params, int len, player *pl)
     copy_object(&p_arch->clone, op);
     op->custom_attrset = pl;
     pl->ob = op;
-    CONTR(op)->last_value = -1;
+    pl->last_value = -1;
     FREE_AND_CLEAR_HASH2(op->name);
     op->name = name_tmp;
     op->x = x;
@@ -741,7 +717,7 @@ void command_new_char(char *params, int len, player *pl)
 
     SET_FLAG(op, FLAG_NO_FIX_PLAYER);
     /* this must before then initial items are given */
-    esrv_new_player(CONTR(op), op->weight + op->carrying);
+    esrv_new_player(pl, op->weight + op->carrying);
 #ifdef PLUGINS
     /* GROS : Here we handle the BORN global event */
     evtid = EVENT_BORN;
@@ -752,27 +728,27 @@ void command_new_char(char *params, int len, player *pl)
     /* GROS : We then generate a LOGIN event */
     evtid = EVENT_LOGIN;
     CFP.Value[0] = (void *) (&evtid);
-    CFP.Value[1] = (void *) (CONTR(op));
-    CFP.Value[2] = (void *) (CONTR(op)->socket.ip_host);
+    CFP.Value[1] = (void *) (pl);
+    CFP.Value[2] = (void *) (pl->socket.ip_host);
     GlobalEvent(&CFP);
 #endif
 
 	pl->p_ver = PLAYER_FILE_VERSION_BETA4;
-    CONTR(op)->state = ST_PLAYING;
+    pl->state = ST_PLAYING;
     FREE_AND_CLEAR_HASH2(op->msg);
 
-    /* We create this now because some of the unique maps will need it
-     * to save here.
+    /* We create the player dir. Needed to avoid folder testing every map saving.
+     * It will do no harm if the player file is not written.
      */
-    sprintf(buf, "%s/%s/%s/%s", settings.localdir, settings.playerdir, get_subdir(op->name), op->name);
+    sprintf(buf, "%s/%s/%s/%s/%s.pl", settings.localdir, settings.playerdir, get_subdir(op->name), op->name, op->name);
     make_path_to_file(buf);
 
 #ifdef AUTOSAVE
-    CONTR(op)->last_save_tick = ROUND_TAG;
+    pl->last_save_tick = ROUND_TAG;
 #endif
 
     display_motd(op);
-    if (!CONTR(op)->dm_stealth)
+    if (!pl->dm_stealth)
     {
         new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op, "%s entered the game.", op->name);
 
@@ -805,23 +781,25 @@ void command_new_char(char *params, int len, player *pl)
 	objtmp->value = 1;
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-    CONTR(op)->last_stats.exp = 1;          /* force send of skill exp data to client */
-    strcpy(CONTR(op)->title, op->race);     /* no title - just what we born */
+    pl->last_stats.exp = 1;          /* force send of skill exp data to client */
 	op->carrying = sum_weight(op);			/* sanity calc to ensure right inventory weight for new player */
 	FIX_PLAYER(op ,"command new char - first fix"); /* THATS our first fix_player() when we create a new char
                                                      * add this time, hp and sp will be set */
     esrv_update_item(UPD_FACE, op, op);
     esrv_send_inventory(op, op);
 
-    /* NOW we set our new char in the right map - we have a 100% right init player */
-    set_first_map(op);
     SET_FLAG(op, FLAG_FRIENDLY);
 
-    CONTR(op)->socket.update_tile = 0;
-    CONTR(op)->socket.look_position = 0;
-    CONTR(op)->socket.look_position_container = 0;
-    CONTR(op)->socket.ext_title_flag = 1;
-    esrv_new_player(CONTR(op), op->weight + op->carrying);
+    /* Ready to go! setup the default bind position and start map and kick player on map! */
+    set_mappath_by_default(pl);
+    set_bindpath_by_default(pl);
+    enter_map_by_name(op, pl->maplevel, pl->orig_map, pl->map_x, pl->map_y, pl->map_status);
+
+    pl->socket.update_tile = 0;
+    pl->socket.look_position = 0;
+    pl->socket.look_position_container = 0;
+    pl->socket.ext_title_flag = 1;
+    esrv_new_player(pl, op->weight + op->carrying);
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
 }

@@ -37,7 +37,7 @@
  **********************************************************************/
 
 /* add a 0 terminated string */
-void SockList_AddString(SockList *sl, char *data)
+void SockList_AddString(SockList *sl, const char *data)
 {
     char    c;
 
@@ -45,7 +45,7 @@ void SockList_AddString(SockList *sl, char *data)
     {
         sl->buf[sl->len] = c;
         sl->len++;
-    };
+    }
     sl->buf[sl->len] = c;
     sl->len++;
 }

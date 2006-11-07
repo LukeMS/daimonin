@@ -1667,7 +1667,7 @@ void remove_ob_inv(object *op)
  * explicit when we want make a "move/step" for a object which can trigger it.
  */
 
-object * insert_ob_in_map(object *const op, mapstruct *m, object *const originator, const int flag)
+object *insert_ob_in_map(object *const op, mapstruct *m, object *const originator, const int flag)
 {
     object*tmp =    NULL, *top;
     MapSpace       *mc;

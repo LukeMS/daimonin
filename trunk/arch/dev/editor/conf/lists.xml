@@ -1,5 +1,13 @@
 <!DOCTYPE lists PUBLIC "-//Daimonin//DTD Types 1.0//EN" "types.dtd">
 <lists>
+
+<list name="maptype">
+<listentry value="0" name="*inheritance type* (default)" />
+<listentry value="1" name="multiplayer map (normal map)" />
+<listentry value="2" name="unique (apartment like map)" />
+<listentry value="4" name="instance (instanced map)" />
+</list>
+
 <list name="language">
 <listentry value="0"  name="common" />
 <listentry value="1"  name="dwarvish" />
