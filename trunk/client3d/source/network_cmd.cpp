@@ -36,6 +36,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_manager.h"
 #include "gui_window_dialog.h"
 #include "network_serverfile.h"
+#include "object_manager.h"
 
 using namespace std;
 
@@ -251,7 +252,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
 
     TileMap::getSingleton().MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
     TileMap::getSingleton().MapData.posy = ypos;
-    Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
+    //Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
     while (pos < len)
     {
         ext_flag = 0;
@@ -420,7 +421,6 @@ void Network::Map2Cmd(unsigned char *data, int len)
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
-            //Logger::log().info() << "we got face: " << face << " (" << face&~0x8000 << ") -> " << FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)";
             xdata = 0;
             if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
             {
@@ -1213,6 +1213,30 @@ void Network::PlayerCmd(unsigned char *data, int len)
     map_transfer_flag = 1;
     TileManager::getSingleton().map_udate_flag = 2;
     */
+    static bool once = true;
+    if (once)
+    {
+        once = false;
+        sObject obj;
+        obj.nickName  = "Polyveg";
+        obj.meshName  = "Human_M_Fighter.mesh";
+        obj.type      = ObjectManager::OBJECT_PLAYER;
+        obj.boundingRadius = 2;
+        obj.friendly  = 100;
+        obj.attack    = 100;
+        obj.defend    = 100;
+        obj.maxHP     = 150;
+        obj.maxMana   = 150;
+        obj.maxGrace  = 150;
+        obj.pos.x     = 1;
+        obj.pos.z     = 1;
+        obj.pos.subX  = 2;
+        obj.pos.subZ  = 5;
+        obj.level     = 0;
+        obj.facing    = -60;
+        obj.particleNr=-1;
+        ObjectManager::getSingleton().addMobileObject(obj);
+    }
     Logger::log().info() << "Loading quickslot settings for server";
     //load_quickslots_entrys();
 }

@@ -116,6 +116,7 @@ void ObjectStatic::movePosition(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectStatic::setPosition(TilePos pos)
 {
+    mActPos = pos;
     Vector3 posV = TileManager::getSingleton().getTileInterface()->tileToWorldPos(pos);
     if (mFloor)
     {
@@ -140,3 +141,4 @@ void ObjectStatic::move(Vector3 &pos)
 {
     mNode->setPosition(mNode->getPosition() + pos);
 }
+

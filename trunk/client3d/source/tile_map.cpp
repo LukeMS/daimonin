@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <string>
 #include "logger.h"
+#include "sound.h"
 #include "tile_map.h"
 #include "tile_manager.h"
 #include "object_manager.h"
@@ -68,23 +69,23 @@ void TileMap::adjust_map_cache(int xpos, int ypos)
 //================================================================================================
 void TileMap::map_draw_map_clear(void)
 {
-/*
-#define MAP_TILE_XOFF 12
-#define MAP_TILE_YOFF 24
-#define MAP_START_XOFF 376
-#define MAP_START_YOFF 143
+    /*
+    #define MAP_TILE_XOFF 12
+    #define MAP_TILE_YOFF 24
+    #define MAP_START_XOFF 376
+    #define MAP_START_YOFF 143
 
-    register int ypos, xpos;
-    for (register int y = 0; y < CHUNK_SIZE_Z; y++)
-    {
-        for (register int x = 0; x < CHUNK_SIZE_X; x++)
+        register int ypos, xpos;
+        for (register int y = 0; y < CHUNK_SIZE_Z; y++)
         {
-            xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
-            ypos = MAP_START_YOFF + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
-            //sprite_blt(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
+            for (register int x = 0; x < CHUNK_SIZE_X; x++)
+            {
+                xpos = MAP_START_XOFF + x * MAP_TILE_YOFF - y * MAP_TILE_YOFF;
+                ypos = MAP_START_YOFF + x * MAP_TILE_XOFF + y * MAP_TILE_XOFF;
+                //sprite_blt(Bitmaps[BITMAP_BLACKTILE], xpos, ypos, NULL, NULL);
+            }
         }
-    }
-*/
+    */
 }
 
 //================================================================================================
@@ -92,16 +93,34 @@ void TileMap::map_draw_map_clear(void)
 //================================================================================================
 void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
 {
-    char *tmp;
+    char *tag;
     int  music_fade  = 0;
 
-    // Sound stuff.
-    if ((tmp = strchr(name, '§')))
+    // Tag stuff.
+    if ((tag = strchr(name, '§')))
     {
-        strcpy(MapData.music, tmp);
-        //if (init_media_tag(tmp)) music_fade = 1;
-        //media_show_update--; // perhaps we have a png - simulate a step = map_scroll.
-        *tmp = 0;
+        strcpy(MapData.music, tag);
+        if (tag)
+        {
+            char *p1 = strchr(tag, '|');
+            char *p2 = strrchr(tag, '|');
+            if (!p1 || !p2)
+            {
+                //LOG(LOG_MSG, "MediaTagError: Parameter == NULL (%x %x)\n", p1, p2);
+            }
+            *p1++ = 0;
+            *p2++ = 0;
+            if (strstr(tag + 1, ".ogg"))
+            {
+                Sound::getSingleton().playStream(tag + 1, true);
+                //sound_play_music(tag + 1, options.music_volume, 2000, atoi(p2), atoi(p1), MUSIC_MODE_NORMAL);
+                music_fade = 1;
+            }
+            else if (strstr(tag + 1, ".png"))
+            {}
+            //media_show_update--; // perhaps we have a png - simulate a step = map_scroll.
+            *tag = 0;
+        }
     }
     if (!music_fade) // there was no music tag or playon tag in this map - fade out.
     {
@@ -158,62 +177,156 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 //================================================================================================
 void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
-    int height, texture_col, texture_row;
-
-    if (layer != 0)  return;
-    switch (face)
+    switch (layer)
     {
-            // Water
-        case 0xb63:
-            height = 0;
-            texture_col =3;
-            texture_row =3;
+        case 0:
+            int height, texture_col, texture_row;
+            switch (face)
+            {
+                    // Water
+                case 0xb63:
+                    height = 0;
+                    texture_col =3;
+                    texture_row =3;
+                    break;
+
+                    // Bridge:
+                case 0x207:
+                case 0x208:
+                    height = 30;
+                    texture_col =0;
+                    texture_row =3;
+                    break;
+
+                    // Sand
+                case 0x73d:
+                    height = 30;
+                    texture_col =3;
+                    texture_row =3;
+                    break;
+
+                    // Grass
+                case 0x88b:
+                case 0x88c:
+                case 0x88d:
+                case 0x88e:
+                case 0x88f:
+                case 0x890:
+                case 0x891:
+                    height = 30;
+                    texture_col =1;
+                    texture_row =2;
+                    break;
+
+                    // Stone
+                case 0x6a7:
+                    height = 30;
+                    texture_col =0;
+                    texture_row =0;
+                    break;
+
+                default:
+                    //Logger::log().error() << "Unknown Tile gfx: " << face;
+                    height = 30;
+                    texture_col =6;
+                    texture_row =6;
+                    break;
+            }
+            TileManager::getSingleton().setMap(x, y, height, texture_row, texture_col);
             break;
 
-            // Bridge:
-        case 0x207:
-        case 0x208:
-            height = 30;
-            texture_col =0;
-            texture_row =3;
-            break;
+        case 1:
+    {}
+        case 2:
+    {}
+        case 3:
+        {
+            switch (face & ~0x8000)
+            {
+                case 4099: // Smith.
+                {
+                    static bool once = true;
+                    if (!once) break;
+                    once = false;
+                    sObject obj;
+                    obj.meshName  = "Tentacle_N_Small.mesh";
+                    //obj.meshName  = "Ogre_Big.mesh";
+                    obj.nickName  = "Smith";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = -1;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = x;
+                    obj.pos.z     = y;
+                    obj.pos.subX  = 4;
+                    obj.pos.subZ  = 4;
+                    obj.level     = 0;
+                    obj.facing    = -90;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+                    break;
+                }
 
-            // Sand
-        case 0x73d:
-            height = 30;
-            texture_col =3;
-            texture_row =3;
-            break;
+                case 3217: // Monk.
+                {
+                    static bool once = true;
+                    if (!once) break;
+                    once = false;
+                    sObject obj;
+                    obj.meshName  = "Tentacle_N_Small.mesh";
+                    obj.nickName  = "Monk";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = -1;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = x;
+                    obj.pos.z     = y;
+                    obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
+                    obj.level     = 0;
+                    obj.facing    = -60;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+                    break;
+                }
 
-            // Grass
-        case 0x88b:
-        case 0x88c:
-        case 0x88d:
-        case 0x88e:
-        case 0x88f:
-        case 0x890:
-        case 0x891:
-            height = 30;
-            texture_col =1;
-            texture_row =2;
-            break;
+                case 2600: // Hero.
+                {
+                    static bool once = true;
+                    if (!once) break;
+                    once = false;
 
-            // Stone
-        case 0x6a7:
-            height = 30;
-            texture_col =0;
-            texture_row =0;
-            break;
+                    TilePos pos;
+                    pos.x = x;
+                    pos.z = y;
+                    pos.subX  =3;
+                    pos.subZ  =3;
+                    Logger::log().error() << "set Position: " << pos.x << " " << pos.z;
+                    ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
+                    //Logger::log().error() << "we got the Hero face: " << face;
+                    break;
+                }
 
-        default:
-            //Logger::log().error() << "Unknown Tile gfx: " << face;
-            height = 30;
-            texture_col =6;
-            texture_row =6;
-            break;
+                case 3859: // Sack.
+                    break;
+
+                case 500:  // Box2.
+                    break;
+
+                case 4227: // Stairs down.
+                    break;
+            }
+        }
+
     }
-    TileManager::getSingleton().setMap(x, y, height, texture_row, texture_col);
-
 
     the_map.cells[x][y].faces[layer] = face;
     if (!face)
