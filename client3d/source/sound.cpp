@@ -205,6 +205,48 @@ void Sound::playStream(int id)
     //set3DPos(id, );
 }
 
+void Sound::playStream(char *file, bool loop)
+{
+    std::string filename = PATH_SAMPLES;
+    filename+= file;
+    int options = FMOD_HARDWARE | FMOD_2D;
+    if (loop)
+        options |= FMOD_LOOP_NORMAL;
+    else
+        options |= FMOD_LOOP_OFF;
+    result = FMOD_System_CreateStream(
+                 soundSystem,
+                 filename.c_str(),
+                 options,
+                 0,
+                 &mSoundFiles[DUMMY].sound);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "Error on creating Soundstream "
+        << filename << " : "  << FMOD_ErrorString(result);
+    }
+
+
+
+    if (!mInit) return;
+    stopStream(DUMMY);
+    result = FMOD_System_PlaySound(
+                 soundSystem,
+                 FMOD_CHANNEL_FREE,
+                 mSoundFiles[DUMMY].sound,
+                 0,
+                 &mSoundFiles[DUMMY].channel);
+    if (result != FMOD_OK)
+    {
+        Logger::log().error() << "Error on play Soundstream "
+        << filename << " : "
+        << FMOD_ErrorString(result);
+        return;
+    }
+    setVolume(DUMMY);
+    //set3DPos(id, );
+}
+
 //================================================================================================
 // Stops the stream.
 //================================================================================================

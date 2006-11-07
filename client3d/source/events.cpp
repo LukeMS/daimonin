@@ -160,7 +160,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             mCamera->setProjectionType(PT_ORTHOGRAPHIC);
             mCamera->setFOVy(Degree(MAX_CAMERA_ZOOM));
             mCamera->setPosition(Vector3(0, 0, 0));
-            mCamera->pitch(Degree(-26));
+            mCamera->pitch(Degree(-25));
             mWorld = mSceneManager->getRootSceneNode()->createChildSceneNode();
             // ////////////////////////////////////////////////////////////////////
             // Create a minimal gui for some loading infos..
@@ -186,7 +186,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             // ////////////////////////////////////////////////////////////////////
             GuiManager::getSingleton().displaySystemMessage("Starting the sound-manager...");
             Sound::getSingleton().Init();
-            //Sound::getSingleton().playStream(Sound::BG_MUSIC);
             Option::getSingleton().setGameStatus(GAME_STATUS_INIT_LIGHT);
             break;
         }
@@ -602,64 +601,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor.");
 
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
-                    sObject obj;
-                    obj.meshName  = "Tentacle_N_Small.mesh";
-                    //obj.meshName  = "Ogre_Big.mesh";
-                    obj.nickName  = "michtoen";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = -1;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = 7;
-                    obj.pos.z     = 12;
-                    obj.pos.subX  = 2;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = -90;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-
-                    obj.nickName  = "mysteria";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = -1;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = 8;
-                    obj.pos.z     = 13;
-                    obj.pos.subX  = 2;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = -60;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-
-                    /*
-                    obj.meshName  = "Ogre_Big.mesh";
-                    obj.nickName  = "son of michtoen";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.friendly  = -1;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = 9;
-                    obj.pos.z     = 12;
-                    obj.pos.subX  = 4;
-                    obj.pos.subZ  = 4;
-                    obj.level     = 0;
-                    obj.facing    = 0;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-                    */
                     once = true;
                 }
                 else

@@ -112,6 +112,10 @@ public:
     {
         mvObject_npc[npc]->setNickName(name);
     }
+    void setPosition(int npc, TilePos pos)
+    {
+        mvObject_npc[npc]->setPosition(pos);
+    }
     const Vector3& getPos(int npc)
     {
         return mvObject_npc[npc]->getPos();

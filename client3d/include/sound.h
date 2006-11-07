@@ -27,6 +27,8 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef SOUND_H
 #define SOUND_H
 
+#include "fmod.h"
+
 class Sound
 {
 public:
@@ -66,6 +68,7 @@ public:
     void createDummy();
     void createStream(int id);
     void playStream(int id);
+    void playStream(char *filename, bool loop =false);
     void stopStream(int id);
     void set3DPos( unsigned int channel,  float &posX, float &posY, float &posZ );
     void setVolume( unsigned int channel, float volume =-1);
