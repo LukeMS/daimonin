@@ -149,14 +149,10 @@ int item_matched_string(object *pl, object *op, const char *name)
         else
         {
             if (pl->type == PLAYER)
-            {
                 count = CONTR(pl)->count;
-            }
             else
-            {
                 count = 0;
-            };
-        };
+        }
         if (!cp || cp[0] == '\0' || count < 0)
             return 0;
         /* base name matched - not bad */
@@ -196,9 +192,7 @@ int item_matched_string(object *pl, object *op, const char *name)
         if (retval)
         {
             if (pl->type == PLAYER)
-            {
                 CONTR(pl)->count = count;
-            };
             return retval;
         }
     }

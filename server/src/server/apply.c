@@ -1037,8 +1037,10 @@ char * gravestone_text(object *op)
     time_t      now = time(NULL);
 
     strcpy(buf2, "                 R.I.P.\n\n");
-    if (op->type == PLAYER)
-        sprintf(buf, "%s the %s\n", op->name, CONTR(op)->title);
+    if (op->title)
+        sprintf(buf, "%s the %s\n", op->name, op->title);
+    else if(op->race)
+        sprintf(buf, "%s the %s\n", op->name, op->race);
     else
         sprintf(buf, "%s\n", op->name);
     strncat(buf2, "                    ", 20 - strlen(buf) / 2);
@@ -1051,7 +1053,7 @@ char * gravestone_text(object *op)
     strcat(buf2, buf);
     if (op->type == PLAYER)
     {
-        sprintf(buf, "by %s.\n\n", CONTR(op)->killer);
+        sprintf(buf, "by %s.\n\n", CONTR(op)->killer?CONTR(op)->killer:"bad luck");
         strncat(buf2, "                    ", 21 - strlen(buf) / 2);
         strcat(buf2, buf);
     }
@@ -1123,7 +1125,7 @@ static int apply_shop_mat(object *shop_mat, object *op)
             int i   = find_free_spot(op->arch, op->map, op->x, op->y, 1, 9);
             if (i != -1)
             {
-                rv = transfer_ob(op, op->x + freearr_x[i], op->y + freearr_y[i], op->map, 0, shop_mat, NULL);
+                rv = enter_map(op, shop_mat, op->map,op->x + freearr_x[i], op->y + freearr_y[i], MAP_STATUS_FIXED_POS);
             }
         }
         /* Removed code that checked for multipart objects - it appears that
@@ -1428,7 +1430,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
                   }
                   if (ab->type == PLAYER)
                       new_draw_info(NDI_UNIQUE, 0, ab, "You fall into a trapdoor!");
-                  transfer_ob(ab, (int) EXIT_X(trap), (int) EXIT_Y(trap), ab->map, trap->last_sp, ab, trap);
+                  enter_map_by_exit(ab, trap);
               }
               goto leave;
           }
@@ -1441,17 +1443,14 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           play_sound_map(victim->map, victim->x, victim->y, SOUND_FALL_HOLE, SOUND_NORMAL);
           if (victim->type == PLAYER)
               new_draw_info(NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
-          transfer_ob(victim->head ? victim->head : victim, EXIT_X(trap), EXIT_Y(trap), victim->map, trap->last_sp, victim, trap);
+
+          enter_map_by_exit(victim, trap);
           goto leave;
 
         case EXIT:
           if (!(flags & MOVE_APPLY_VANISHED) && victim->type == PLAYER && EXIT_PATH(trap))
           {
-              /* Basically, don't show exits leading to random maps the players output.
-                 */
-              if (trap->msg && strncmp(EXIT_PATH(trap), "/!", 2) && strncmp(EXIT_PATH(trap), "/random/", 8))
-                  new_draw_info(NDI_NAVY, 0, victim, trap->msg);
-              enter_exit(victim, trap);
+              enter_map_by_exit(victim, trap);
           }
           goto leave;
 
@@ -1963,7 +1962,7 @@ void apply_poison(object *op, object *tmp)
     {
         play_sound_player_only(CONTR(op), SOUND_DRINK_POISON, SOUND_NORMAL, 0, 0);
         new_draw_info(NDI_UNIQUE, 0, op, "Yech!  That tasted poisonous!");
-        strcpy(CONTR(op)->killer, "poisonous food");
+        FREE_AND_ADD_REF_HASH(CONTR(op)->killer, shstr_cons.poisonous_food);
     }
     if (tmp->stats.dam)
     {
@@ -2208,7 +2207,7 @@ void eat_special_food(object *who, object *food)
 
             if (tmp > 0)
                 tmp = -tmp;
-            strcpy(CONTR(who)->killer, food->name);
+            FREE_AND_ADD_REF_HASH(CONTR(who)->killer, food->name);
             if (QUERY_FLAG(food, FLAG_CURSED))
                 who->stats.hp += tmp * 2;
             else
@@ -2410,20 +2409,13 @@ int dragon_eat_flesh(object *op, object *meal)
 
 static void apply_savebed(object *pl, object *bed)
 {
-    if (!CONTR(pl)->name_changed || !pl->stats.exp)
+    player *p_ptr =CONTR(pl);
+ 
+    if (!p_ptr || !p_ptr->name_changed || !pl->stats.exp)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
         return;
     }
-    /* removed some trash here... MT*/
-    /*
-       leave_map(pl);
-       pl->direction=0;
-    */
-    /*
-       new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, pl,
-    "%s leaves the game.",pl->name);
-       */
 
     if(trigger_object_plugin_event(
                 EVENT_APPLY, bed, pl, NULL,
@@ -2431,15 +2423,10 @@ static void apply_savebed(object *pl, object *bed)
         return;
 
     /* update respawn position */
-    strcpy(CONTR(pl)->savebed_map, pl->map->path);
-    CONTR(pl)->bed_x = pl->x;
-    CONTR(pl)->bed_y = pl->y;
-
-    strcpy(CONTR(pl)->killer, "left");
-    check_score(pl); /* Always check score */
+    set_bindpath_by_default(p_ptr);
 
     new_draw_info(NDI_UNIQUE, 0, pl, "You save and quit the game. Bye!\nleaving...");
-    CONTR(pl)->socket.status = Ns_Dead;
+    p_ptr->socket.status = Ns_Dead;
 }
 
 
@@ -2480,78 +2467,6 @@ static void apply_armour_improver(object *op, object *tmp)
 }
 
 
-
-/* is_legal_2ways_exit (object* op, object *exit)
- * this fonction return true if the exit
- * is not a 2 ways one or it is 2 ways, valid exit.
- * A valid 2 way exit means:
- *   -You can come back (there is another exit at the other side)
- *   -You are
- *         ° the owner of the exit
- *         ° or in the same party as the owner
- *
- * Note: a owner in a 2 way exit is saved as the owner's name
- * in the field exit->name cause the field exit->owner doesn't
- * survive in the swapping (in fact the whole exit doesn't survive).
- */
-int is_legal_2ways_exit(object *op, object *exit)
-{
-    object     *tmp;
-    object     *exit_owner;
-    player     *pp;
-    mapstruct  *exitmap;
-    if (exit->stats.exp != 1)
-        return 1; /*This is not a 2 way, so it is legal*/
-    /* To know if an exit has a correspondant, we look at
-     * all the exits in destination and try to find one with same path as
-     * the current exit's position */
-    if (!strncmp(EXIT_PATH(exit), settings.localdir, strlen(settings.localdir)))
-        exitmap = ready_map_name(EXIT_PATH(exit), MAP_STATUS_NAME_SHARED | MAP_STATUS_UNIQUE, NULL);
-    else
-        exitmap = ready_map_name(EXIT_PATH(exit), MAP_STATUS_NAME_SHARED, NULL);
-    if (exitmap)
-    {
-        tmp = get_map_ob(exitmap, EXIT_X(exit), EXIT_Y(exit));
-        if (!tmp)
-            return 0;
-        for ((tmp = get_map_ob(exitmap, EXIT_X(exit), EXIT_Y(exit))); tmp; tmp = tmp->above)
-        {
-            if (tmp->type != EXIT)
-                continue;  /*Not an exit*/
-            if (!EXIT_PATH(tmp))
-                continue; /*Not a valid exit*/
-            if ((EXIT_X(tmp) != exit->x) || (EXIT_Y(tmp) != exit->y))
-                continue; /*Not in the same place*/
-            if (exit->map->path == EXIT_PATH(tmp))
-                continue; /*Not in the same map*/
-
-            /* From here we have found the exit is valid. However we do
-             * here the check of the exit owner. It is important for the
-             * town portals to prevent strangers from visiting your appartments
-             */
-            if (!exit->race)
-                return 1;  /*No owner, free for all!*/
-            exit_owner = NULL;
-            for (pp = first_player; pp; pp = pp->next)
-            {
-                if (!pp->ob)
-                    continue;
-                if (pp->ob->name != exit->race)
-                    continue;
-                exit_owner = pp->ob; /*We found a player which correspond to the player name*/
-                break;
-            }
-            if (!exit_owner)
-                return 0;    /* No more owner*/
-            if (CONTR(exit_owner) == CONTR(op))
-                return 1;  /*It is your exit*/
-            if (exit_owner && (CONTR(op)))
-                return 0;
-            return 1;
-        }
-    }
-    return 0;
-}
 
 /* Return value:
  *   0: player or monster can't apply objects of that type
@@ -2672,7 +2587,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case EXIT:
           if (op->type != PLAYER)
               return 0;
-          if (!EXIT_PATH(tmp) || !is_legal_2ways_exit(op, tmp))
+          if (!EXIT_PATH(tmp))
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(tmp));
           }
@@ -2682,10 +2597,7 @@ int manual_apply(object *op, object *tmp, int aflag)
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 4; /* 1 = do not write an error message to the player */
-              /* Don't display messages for random maps. */
-              if (tmp->msg && strncmp(EXIT_PATH(tmp), "/!", 2) && strncmp(EXIT_PATH(tmp), "/random/", 8))
-                  new_draw_info(NDI_NAVY, 0, op, tmp->msg);
-              enter_exit(op, tmp);
+              enter_map_by_exit(op, tmp);
           }
           return 4;
 

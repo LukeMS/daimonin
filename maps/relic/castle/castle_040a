@@ -84,7 +84,7 @@ end
 arch grassd_2
 y 16
 end
-arch wall_stone_3
+arch wall_stone4_w.131
 y 16
 end
 arch grassd_6
@@ -96,7 +96,7 @@ end
 arch grassd_5
 y 18
 end
-arch wall_stone_3
+arch wall_stone4_w.131
 y 18
 end
 arch grassd_7
@@ -221,27 +221,27 @@ arch grassd_2
 x 1
 y 14
 end
-arch wall_stone_1
+arch wall_stone4_w.111
 x 1
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 1
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 1
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 1
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 1
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 1
 y 19
 end
@@ -360,23 +360,23 @@ arch wall_stone_1
 x 2
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 2
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 2
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 2
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 2
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 2
 y 19
 end
@@ -535,27 +535,27 @@ arch grassd_3
 x 3
 y 14
 end
-arch wall_stone_1
+arch wall_stone4_w.111
 x 3
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 3
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 3
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 3
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 3
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 3
 y 19
 end
@@ -712,23 +712,23 @@ arch wall_stone_1
 x 4
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 4
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 4
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 4
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 4
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 4
 y 19
 end
@@ -871,27 +871,27 @@ arch grassd_8
 x 5
 y 14
 end
-arch wall_stone_1
+arch wall_stone4_w.111
 x 5
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 5
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 5
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 5
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 5
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 5
 y 19
 end
@@ -1052,23 +1052,23 @@ arch wall_stone_1
 x 6
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 6
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 6
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 6
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 6
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 6
 y 19
 end
@@ -1218,43 +1218,23 @@ arch wall_stone_1
 x 7
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 7
 y 15
 end
-arch grate1_3
-x 7
-y 15
-end
-arch shop_floor_normal
+arch floor_ostone10
 x 7
 y 16
 end
-arch grate1_3
-x 7
-y 16
-end
-arch shop_floor_normal
+arch floor_ostone10
 x 7
 y 17
 end
-arch grate1_3
-x 7
-y 17
-end
-arch shop_floor_normal
+arch floor_ostone10
 x 7
 y 18
 end
-arch grate1_3
-x 7
-y 18
-end
-arch shop_floor_normal
-x 7
-y 19
-end
-arch grate1_3
+arch floor_ostone10
 x 7
 y 19
 end
@@ -1410,27 +1390,27 @@ arch grassd_3
 x 8
 y 14
 end
-arch wall_stone_1
+arch wall_stone4_w.111
 x 8
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 8
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 8
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 8
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 8
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 8
 y 19
 end
@@ -1586,23 +1566,23 @@ arch wall_stone_1
 x 9
 y 14
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 9
 y 15
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 9
 y 16
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 9
 y 17
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 9
 y 18
 end
-arch shop_floor_normal
+arch floor_ostone10
 x 9
 y 19
 end

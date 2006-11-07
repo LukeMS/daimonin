@@ -142,7 +142,8 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         return target_rv.direction;
     }
 
-    path_map = ready_map_name(pf->path->map, MAP_STATUS_NAME_SHARED, NULL);
+    /* TODO/FIX: rework ready_map_name() for the instance patch */ 
+    path_map = ready_map_name(pf->path->map, pf->path->map, 0);
     /* Walk towards next precomputed coordinate */
     if(! get_rangevector_full(
             op, op->map, op->x, op->y,
@@ -232,7 +233,8 @@ static int calc_direction_towards_object(object *op, object *target)
       || target->y != MOB_PATHDATA(op)->goal_y))
     {
         rv_vector   rv_goal, rv_target;
-        mapstruct  *goal_map    = ready_map_name(MOB_PATHDATA(op)->goal_map, MAP_STATUS_NAME_SHARED, NULL);
+        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
+        mapstruct  *goal_map    = ready_map_name(MOB_PATHDATA(op)->goal_map, MOB_PATHDATA(op)->goal_map, 0);
 
         if (!goal_map)
         {

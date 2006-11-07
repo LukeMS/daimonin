@@ -348,7 +348,7 @@ elseif (msg == 'rank2') then
 elseif (msg == 'clone') then
     me:SayTo(activator, 'Meet your evil twin')
     clone = activator:Clone(game.CLONE_WITHOUT_INVENTORY)
-    clone:TeleportTo(me.map.path, 10,10)
+    clone:Teleport(10, 10, me.map.path)
     clone.f_friendly = false
     clone.f_monster = true
     clone.max_hitpoints = 1
@@ -406,23 +406,23 @@ elseif (msg == 'invisible') then
 -- Test some crash-prone object functions
 elseif (msg == 'setposition1') then
     me:SayTo(activator, "Trying to move one step west")
-    me:SetPosition(me.x-1, me.y)
+    me:Teleport(me.x-1, me.y)
 elseif (msg == 'setposition2') then
     me:SayTo(activator, "Dropping a note one step to the west")
     obj = me:CreateObjectInside("note", 0, 1)
     me:Drop("note")
-    obj:SetPosition(me.x - 1 ,me.y)
+    obj:Teleport(me.x - 1 ,me.y)
 elseif (msg == 'setposition3') then
     me:SayTo(activator, "Putting a note from my inventory one step to the west (probably won't work...)")
     obj = me:CreateObjectInside("note", 0, 1)
-    obj:SetPosition(me.x-1, me.y)
+    obj:Teleport(me.x-1, me.y)
 elseif (msg == 'setposition4') then
     me:SayTo(activator, "Putting a note from my inventory one step to the west (using the new API)")
     obj = me:CreateObjectInside("note", 0, 1)
-    obj:SetPosition(me.map, me.x-1, me.y)
+    obj:Teleport(me.x-1, me.y, me.map)
 elseif (msg == 'setposition5') then
     me:SayTo(activator, "Moving you out of here")
-    activator:SetPosition(game:ReadyMap("/dev/testmaps/testmap_main", 0), 10, 10)
+    activator:Teleport(10, 10, game:ReadyMap("/dev/testmaps/testmap_main"))
 
 -- Pickup and drop objects
 elseif (msg == 'drop1') then

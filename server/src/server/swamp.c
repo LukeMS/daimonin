@@ -65,7 +65,7 @@ void move_deep_swamp(object *op)
                   {
                       new_draw_info(NDI_UNIQUE, 0, above, "You are down to your NECK in the dangerous swamp.");
                       op->stats.food = 3;
-                      strcpy(CONTR(above)->killer, "drowning in a swamp");
+                      FREE_AND_ADD_REF_HASH(CONTR(above)->killer, shstr_cons.drowning);
                       above->stats.hp--;
                       above->speed_left -= (float) (SLOW_PENALTY(op));
                   }
@@ -79,7 +79,7 @@ void move_deep_swamp(object *op)
                           op->stats.food = 0;
                           new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a swamp.",
                                                above->name);
-                          strcpy(CONTR(above)->killer, "drowning in a swamp");
+                          FREE_AND_ADD_REF_HASH(CONTR(above)->killer, shstr_cons.drowning);
 
                           above->stats.hp = -1;
                           kill_player(above); /* player dies in the swamp */

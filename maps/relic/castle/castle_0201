@@ -161,6 +161,14 @@ arch floor_wood2_l2
 x 1
 y 6
 end
+arch exit
+x 1
+y 6
+arch event_obj
+race /relic/castle/scripts/app_teleport.lua
+sub_type 10
+end
+end
 arch floor_wood2_l2
 x 1
 y 7
@@ -168,6 +176,20 @@ end
 arch floor_wood2_l2
 x 1
 y 8
+end
+arch spawn_point
+x 1
+y 8
+arch monk
+name Warsches, the apartment keeper
+type 83
+level 35
+arch event_obj
+name Lua
+race /scripts/house_seller.lua
+sub_type 13
+end
+end
 end
 arch floor_wood2_l2
 x 1

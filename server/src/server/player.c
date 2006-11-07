@@ -66,10 +66,14 @@ player * find_player(char *plname)
 player * find_player_hash(const char *plname)
 {
     player *pl;
-    for (pl = first_player; pl != NULL; pl = pl->next)
+
+    if(plname)
     {
-        if (pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && pl->ob->name == plname)
-            return pl;
+        for (pl = first_player; pl != NULL; pl = pl->next)
+        {
+            if (pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && pl->ob->name == plname)
+                return pl;
+        }
     }
     return NULL;
 }
@@ -176,11 +180,6 @@ player *get_player(player *p)
     p->last_save_tick = 9999999;
 #endif
 
-    /* thats our default start map + position from the arches */
-    strcpy(p->savebed_map, EXIT_PATH(&map_archeytpe->clone));  /* Init. respawn position */
-    p->bed_x = map_archeytpe->clone.stats.hp;
-    p->bed_y = map_archeytpe->clone.stats.sp;
-
     p->gmaster_mode = GMASTER_MODE_NO;
     p->gmaster_node = NULL;
     p->mute_freq_shout=0;
@@ -211,7 +210,6 @@ player *get_player(player *p)
     p->last_speed = 0;
     p->update_los = 1;
 
-    strncpy(p->title, op->arch->clone.name, MAX_NAME);
     FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
 
     /* Would be better of '0' was not a defined spell */
@@ -293,6 +291,15 @@ void free_player(player *pl)
     else
         last_player = pl->prev;
     player_active--;
+
+    /* clear all hash strings */
+    FREE_AND_CLEAR_HASH(pl->instance_name);
+    FREE_AND_CLEAR_HASH(pl->group_invite_name);
+    FREE_AND_CLEAR_HASH(pl->killer);
+    FREE_AND_CLEAR_HASH(pl->savebed_map );
+    FREE_AND_CLEAR_HASH(pl->orig_savebed_map);
+    FREE_AND_CLEAR_HASH(pl->maplevel );
+    FREE_AND_CLEAR_HASH(pl->orig_map);
     
     if(pl->socket.status != ST_SOCKET_NO)
         free_newsocket(&pl->socket);
@@ -1237,12 +1244,10 @@ int save_life(object *op)
                 op->stats.hp = op->stats.maxhp;
             if (op->stats.food < 0)
                 op->stats.food = 999;
-            /*enter_player_savebed(op);*/ /* bring him home. */
             return 1;
         }
     LOG(llevBug, "BUG: LIFESAVE set without applied object.\n");
     CLEAR_FLAG(op, FLAG_LIFESAVE);
-    enter_player_savebed(op); /* bring him home. */
     return 0;
 }
 
@@ -1446,6 +1451,7 @@ void do_some_living(object *op)
  */
 void kill_player(object *op)
 {
+    player      *pl=CONTR(op);
     char        buf[MAX_BUF];
     int         x, y, i;
     mapstruct  *map;  /*  this is for resurrection */
@@ -1485,7 +1491,7 @@ void kill_player(object *op)
             FREE_AND_COPY_HASH(tmp->name, buf);
             sprintf(buf, "  This finger has been cut off %s\n"
                          "  the %s, when he was defeated at\n  level %d by %s.\n",
-                    op->name, CONTR(op)->title, (int) (op->level), CONTR(op)->killer);
+                    op->name, op->title?op->title:op->race, (int) (op->level), pl->killer?pl->killer:"bad luck");
             FREE_AND_COPY_HASH(tmp->msg, buf);
             tmp->value = 0, tmp->material = 0, tmp->type = 0;
             tmp->x = op->x, tmp->y = op->y;
@@ -1493,7 +1499,7 @@ void kill_player(object *op)
         }
 
         /* teleport defeated player to new destination*/
-        transfer_ob(op, x, y, op->map, 0, NULL, NULL);
+        enter_map(op, NULL, op->map, x, y, 0);
         return;
     }
 
@@ -1515,12 +1521,12 @@ void kill_player(object *op)
     if (op->stats.food < 0)
     {
         sprintf(buf, "%s starved to death.", op->name);
-        strcpy(CONTR(op)->killer, "starvation");
+        FREE_AND_ADD_REF_HASH(pl->killer, shstr_cons.starvation);
     }
     else
         sprintf(buf, "%s died.", op->name);
 
-    play_sound_player_only(CONTR(op), SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
+    play_sound_player_only(pl, SOUND_PLAYER_DIES, SOUND_NORMAL, 0, 0);
 
     /*  save the map location for corpse, gravestone*/
     x = op->x;y = op->y;map = op->map;
@@ -1570,8 +1576,8 @@ void kill_player(object *op)
             i = RANDOM() % 7;
             change_attr_value(&(op->stats), i, -1);
             check_stat_bounds(&(op->stats));
-            change_attr_value(&(CONTR(op)->orig_stats), i, -1);
-            check_stat_bounds(&(CONTR(op)->orig_stats));
+            change_attr_value(&(pl->orig_stats), i, -1);
+            check_stat_bounds(&(pl->orig_stats));
             new_draw_info(NDI_UNIQUE, 0, op, lose_msg[i]);
             lost_a_stat = 1;
         }
@@ -1660,8 +1666,8 @@ void kill_player(object *op)
     FREE_AND_COPY_HASH(tmp->name, buf);
     sprintf(buf, "RIP\nHere rests the hero %s the %s,\n"
                  "who was killed\n"
-                 "by %s.\n", op->name, CONTR(op)->title,
-            CONTR(op)->killer);
+                 "by %s.\n", op->name, op->title?op->title:op->race,
+            pl->killer?pl->killer:"bad luck");
     FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x = op->x,tmp->y = op->y;
     insert_ob_in_map(tmp, op->map, NULL, 0);
@@ -1707,7 +1713,7 @@ void kill_player(object *op)
     /*                                      */
     /****************************************/
 
-    enter_player_savebed(op);
+    enter_map_by_name(op, pl->savebed_map, pl->orig_savebed_map, pl->bed_x, pl->bed_y, pl->map_status);
 
     /**************************************/
     /*                                    */
@@ -1731,12 +1737,11 @@ void kill_player(object *op)
      */
 
     new_draw_info(NDI_UNIQUE | NDI_ALL, 0, NULL, buf);
-    check_score(op);
-    if (CONTR(op)->golem != NULL)
+    if (pl->golem != NULL)
     {
-        send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        destruct_ob(CONTR(op)->golem);
-        CONTR(op)->golem = NULL;
+        send_golem_control(pl->golem, GOLEM_CTR_RELEASE);
+        destruct_ob(pl->golem);
+        pl->golem = NULL;
     }
     loot_object(op); /* Remove some of the items for good */
     remove_ob(op);
@@ -1755,13 +1760,7 @@ void kill_player(object *op)
         op->stats.food = 999;
 
         /*  set the location of where the person will reappear when  */
-        /* maybe resurrection code should fix map also */
-        strcpy(CONTR(op)->maplevel, EMERGENCY_MAPPATH);
-        if (op->map != NULL)
-            op->map = NULL;
-        op->x = EMERGENCY_X;
-        op->y = EMERGENCY_Y;
-        container_unlink(CONTR(op), NULL);
+        container_unlink(pl, NULL);
         save_player(op, 1);
         op->map = map;
         /* please see resurrection.c: peterm */
@@ -1770,13 +1769,13 @@ void kill_player(object *op)
 #endif
     }
     /*play_again(op);*/
-    CONTR(op)->socket.status = Ns_Dead;
+    pl->socket.status = Ns_Dead;
 #ifdef NOT_PERMADEATH
     tmp = arch_to_object(find_archetype("gravestone"));
     sprintf(buf, "%s's gravestone", op->name);
     FREE_AND_COPY_HASH(tmp->name, buf);
-    sprintf(buf, "RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n", op->name, CONTR(op)->title,
-            CONTR(op)->killer);
+    sprintf(buf, "RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n", op->name, op->title?op->title:op->race,
+            pl->killer?pl->killer:"bad luck");
     FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x = x,tmp->y = y;
     insert_ob_in_map(tmp, map, NULL, 0);
@@ -2347,3 +2346,13 @@ int is_dragon_pl(object *op)
     return 0;
 }
 
+/* we reset the instance information of the player */
+void reset_instance_data(player *pl)
+{
+    if(pl)
+    {
+        pl->instance_flags = 0;
+        pl->instance_num = MAP_INSTANCE_NUM_INVALID;
+        FREE_ONLY_HASH(pl->instance_name);
+    }
+}

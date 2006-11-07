@@ -69,32 +69,37 @@ static unsigned int curtmp = 0;
  * at some unix variants.
  */
 
-char *tempnam_local(char *dir, char *pfx)
+char *tempnam_local_ext(char *dir, char *pfx, char *name)
 {
-    char *f, *name;
+    char *f;
     pid_t pid=getpid();
 
-    if (!(name = (char *) malloc(MAXPATHLEN)))
-    return(NULL);
+    if (!name)
+        return(NULL);
+
+    name[0]='\0';
 
     if (!pfx)
-    pfx = "cftmp.";
+        pfx = "cftmp.";
 
     /* This is a pretty simple method - put the pid as a hex digit and
      * just keep incrementing the last digit.  Check to see if the file
      * already exists - if so, we'll just keep looking - eventually we should
      * find one that is free.
      */
-    if ((f = (char *)dir)!=NULL) {
-    do {
+    if ((f = (char *)dir)!=NULL)
+    {
+        do 
+        {
 #ifdef HAVE_SNPRINTF
-        (void)snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", f, pfx, pid, curtmp);
+            snprintf(name, MAXPATHLEN, "%s/%s%hx.%d", f, pfx, pid, curtmp);
 #else
-        (void)sprintf(name,"%s/%s%hx%d", f, pfx, pid, curtmp);
+            sprintf(name,"%s/%s%hx%d", f, pfx, pid, curtmp);
 #endif
-        curtmp++;
-    } while (access(name, F_OK)!=-1);
-    return(name);
+            curtmp++;
+        } while (access(name, F_OK)!=-1);
+
+        return(name);
     }
   return(NULL);
 }
@@ -425,28 +430,17 @@ void make_path_to_file (char *filename)
     if (!filename || !*filename)
     return;
     strcpy (buf, filename);
-    LOG(llevDebug, "make_path_tofile %s...", filename);
+    /*LOG(llevDebug, "make_path_tofile %s...\n", filename);*/
     while ((cp = strchr (cp + 1, (int) '/'))) {
     *cp = '\0';
-#if 0
-    LOG(llevDebug, "\n Checking %s...", buf);
-#endif
     if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
-        LOG(llevDebug, "Was not dir...");
         if (mkdir (buf, 0777))
         {
             LOG(llevBug,"Bug: Can't make path to file %s.\n",filename);
             return;
         }
-#if 0
-        LOG(llevDebug, "Made dir.");
-    } else
-        LOG(llevDebug, "Was dir");
-#else
     }
-#endif
     *cp = '/';
     }
-    LOG(llevDebug,"\n");
 }
 

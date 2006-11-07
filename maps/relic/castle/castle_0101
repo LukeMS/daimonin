@@ -2895,14 +2895,6 @@ arch floor_wood2_l2
 x 14
 y 3
 end
-arch exit
-x 14
-y 3
-arch event_obj
-race /relic/castle/scripts/app_teleport.lua
-sub_type 10
-end
-end
 arch floor_wood2_l2
 x 14
 y 4
@@ -4444,6 +4436,11 @@ x 22
 y 16
 arch peasant
 type 83
+arch event_obj
+name Lua
+race /relic/castle/scripts/lost_booze.lua
+sub_type 13
+end
 end
 end
 arch floor_wood2_l2

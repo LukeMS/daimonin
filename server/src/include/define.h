@@ -89,7 +89,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define MAX_NAME 16
 #define BIG_NAME 32
-#define MAX_EXT_TITLE 98
+#define MAX_EXT_TITLE 128
 
 /* modes for cast_identify() */
 #define IDENTIFY_MODE_NORMAL 0
@@ -801,7 +801,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_INVENTORY       108 /* special flag to avoid load/save of the inventory of an object */
 /* flag 109 is free */
 #define FLAG_SYS_OBJECT         110 /* thats old invisible - now sys_object (which are invisible) */
-#define FLAG_USE_FIX_POS        111 /* when putting a object on map - do it exactly on position */
+/* flag 111 is free */
 
 #define FLAG_UNPAID             112 /* Object hasn't been paid for yet */
 #define FLAG_IS_AGED            113 /* if set, object falls under heavy ageing effects */
@@ -856,8 +856,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_EGOCLAN         138		/* item is bound to clan (if not set, always to player (not implemented) */
 #define FLAG_IS_EGOLOCK			139		/* the bound is permanent - can't be remove (not implemented) */
 
-/* FREE flag: 59 */
-/* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
+/* FREE flag: 59, 109, 11*/
 
 #define NUM_FLAGS       139 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32    5   /* the number of uint32 we need to store all flags */
@@ -886,10 +885,15 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define MAX_INV_SIZE        40  /* For initializing arrays */
 #define MAX_LOOK_SIZE       40  /* ditto for the look-window */
 
-#define EXIT_PATH(xyz)      (xyz)->slaying
-#define EXIT_LEVEL(xyz)     (xyz)->stats.food
-#define EXIT_X(xyz)     (xyz)->stats.hp
-#define EXIT_Y(xyz)     (xyz)->stats.sp
+#define EXIT_PATH(_xyz)         (_xyz)->slaying
+#define EXIT_DST_PATH(_xyz)     (_xyz)->race
+#define EXIT_POS_FIX(_xyz)      (_xyz)->last_heal
+#define EXIT_POS_RANDOM(_xyz)   (_xyz)->last_sp
+#define EXIT_POS_FREE(_xyz)     (_xyz)->last_grace
+#define EXIT_STATUS(_xyz)   (_xyz)->last_eat
+#define EXIT_LEVEL(_xyz)    (_xyz)->stats.food
+#define EXIT_X(_xyz)        (_xyz)->stats.hp
+#define EXIT_Y(_xyz)        (_xyz)->stats.sp
 
 #define F_BUY 0
 #define F_SELL 1

@@ -114,7 +114,7 @@ int command_party_invite ( object *pl, char *params)
 					if(activator->group_status & GROUP_STATUS_INVITE)
 					    command_party_deny (pl, NULL); /* automatic /deny */
 					activator->group_mode = GROUP_MODE_INVITE;
-					strcpy(activator->group_invite_name, params);
+                    FREE_AND_ADD_REF_HASH(activator->group_invite_name, target->ob->name);
 					new_draw_info_format(NDI_UNIQUE, 0,pl, "Group: /invite enabled for player %s.", STRING_SAFE(params));
 				}
             }
@@ -164,7 +164,7 @@ int command_party_invite ( object *pl, char *params)
 
     /* target allows /invite to him? */
     if(target->group_mode == GROUP_MODE_DENY ||
-        (target->group_mode == GROUP_MODE_INVITE && strcmp(pl->name, target->group_invite_name)))
+        (target->group_mode == GROUP_MODE_INVITE && pl->name != target->group_invite_name))
     {
         new_draw_info_format(NDI_UNIQUE, 0,pl, "/invite: %s don't allow invite.", query_name(target->ob));
         return 0;
@@ -174,7 +174,7 @@ int command_party_invite ( object *pl, char *params)
     /* remember who has given the invite request so player can give a simple /join or /deny */
     target->group_status = GROUP_STATUS_INVITE;
     if(target->group_mode != GROUP_MODE_INVITE)
-        strcpy(target->group_invite_name, pl->name); /* tricky copy... */
+        FREE_AND_ADD_REF_HASH(target->group_invite_name, pl->name);
     target->group_leader = pl;
     target->group_leader_count = pl->count;
 
@@ -208,9 +208,9 @@ int command_party_join ( object *pl, char *params)
     /* easy way to find source player for /invite */
     if(activator->group_leader && activator->group_leader->count == activator->group_leader_count)
         target = CONTR(activator->group_leader);
-    else if(!(target = find_player(activator->group_invite_name))) /* hard way */
+    else if(!(target = find_player_hash(activator->group_invite_name)))
     {
-        new_draw_info_format(NDI_UNIQUE, 0,pl, "/join: %s is offline.", activator->group_invite_name);
+        new_draw_info_format(NDI_UNIQUE, 0,pl, "/join: %s is offline.", STRING_SAFE(activator->group_invite_name));
         return 0;
     }
 

@@ -34,14 +34,13 @@ void (*registerHooksFunc)(struct plugin_hooklist *hooks);
 
 struct plugin_hooklist  hooklist    =
 {
-    LOG, create_pathname, re_cmp,
+    LOG, create_mapdir_pathname, re_cmp,
     new_draw_info, new_draw_info_format,
     new_info_map, new_info_map_except, map_brightness, wall,
     free_string_shared, add_string, add_refcount,
     fix_player, esrv_send_item, esrv_send_inventory,
     lookup_skill_by_name, look_up_spell_name,
     insert_ob_in_ob, insert_ob_in_map, move_ob,
-    transfer_ob,
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
     arch_to_object, find_archetype,
@@ -78,17 +77,29 @@ struct plugin_hooklist  hooklist    =
 	map_transfer_apartment_items,
 	new_save_map,
 	ready_map_name,
-	create_unique_path,
+	create_unique_path_sh,
     reload_behaviours,
     clear_mob_knowns,
     hashtable_new, hashtable_delete, hashtable_clear, 
     hashtable_find, hashtable_insert, hashtable_erase, 
     hashtable_iterator, hashtable_iterator_next,    
     normalize_path,
+    enter_map_by_name,
+    enter_map_by_exit,
+    enter_map,
+    create_instance_path_sh,
+    clean_tmp_map,
+    map_to_player_unlink,
+    map_to_player_link,
+    create_safe_mapname_sh,
+    normalize_path_direct,
+    path_to_name,
+    reset_instance_data,
 
     /* global variables */
     &animations, &new_faces, global_darkness_table, coins_arch,
-    &shstr_cons, behaviourclasses
+    &shstr_cons, behaviourclasses, &global_instance_id,
+
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];
@@ -753,29 +764,6 @@ CFParm * CFWCmdTake(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* transfer_ob wrapper.                                                      */
-/*****************************************************************************/
-/* 0 - object to transfer;                                                   */
-/* 1 - x position;                                                           */
-/* 2 - y position;                                                           */
-/* 3 - random param;                                                         */
-/* 4 - originator object;                                                    */
-/*****************************************************************************/
-CFParm * CFWTransferObject(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = transfer_ob(
-            (object *) (PParm->Value[0]), 
-            *(int *) (PParm->Value[1]), *(int *) (PParm->Value[2]), 
-            ((object *) (PParm->Value[0]))->map,
-            *(int *) (PParm->Value[3]), (object *) (PParm->Value[4]), (object *) (PParm->Value[5]));
-    CFP->Value[0] = &val;
-    return CFP;
-}
-
-/*****************************************************************************/
 /* kill_object wrapper.                                                      */
 /*****************************************************************************/
 /* 0 - killed object;                                                        */
@@ -1088,38 +1076,6 @@ CFParm * CFWObjectCreateClone(CFParm *PParm)
         CFP->Value[0] = tmp;
     }
     return CFP;
-}
-
-/*****************************************************************************/
-/* teleport an object to another map                                         */
-/*****************************************************************************/
-/* 0 - object                                                                */
-/* 1 - mapname we use for destination                                        */
-/* 2 - mapx                                                                  */
-/* 3 - mapy                                                                  */
-/* 4 - unique?                                                               */
-/* 5 - msg (used for random maps entering. May be NULL)                      */
-/*****************************************************************************/
-CFParm * CFWTeleportObject(CFParm *PParm)
-{
-    object *current;
-    /*    char * mapname; not used
-        int mapx;
-        int mapy;
-        int unique; not used */
-    current = get_object();
-    FREE_AND_COPY_HASH(EXIT_PATH(current), (char *) PParm->Value[1]);
-    EXIT_X(current) = *(int *) PParm->Value[2];
-    EXIT_Y(current) = *(int *) PParm->Value[3];
-    if (*(int *) PParm->Value[4])
-        current->last_eat = MAP_STATUS_UNIQUE; /* unique map */
-    if (PParm->Value[5])
-        FREE_AND_COPY_HASH(current->msg, (char *) PParm->Value[5]);
-    enter_exit((object *) PParm->Value[0], current);
-    if (((object *) PParm->Value[0])->map)
-        play_sound_map(((object *) PParm->Value[0])->map, ((object *) PParm->Value[0])->x,
-                       ((object *) PParm->Value[0])->y, SOUND_TELEPORT, SOUND_NORMAL);
-    return NULL;
 }
 
 /*****************************************************************************/

@@ -260,7 +260,7 @@ static int luaFindFile(lua_State *L, const char *filename, const char **path)
 /* Load 'file' */
 static int luaLoadFile(lua_State *L, const char *file)
 {
-    const char *path = hooks->create_pathname(file);
+    const char *path = hooks->create_mapdir_pathname(file);
     int         res = 0;
 
     if ((res = luaFindFile(L, file, &path)) == 0)
@@ -1026,8 +1026,8 @@ MODULEAPI void init_Daimonin_Lua()
     char    lua_path[MAX_BUF];
     char   *map_path;
 
-    strcpy(lua_path, hooks->create_pathname(LUA_PATH));
-    map_path = hooks->create_pathname("");
+    strcpy(lua_path, hooks->create_mapdir_pathname(LUA_PATH));
+    map_path = hooks->create_mapdir_pathname("");
 
     pool_luacontext = hooks->create_mempool("lua contexts", 5, sizeof(struct lua_context), 0, NULL, NULL, NULL, NULL);
 
@@ -1067,7 +1067,7 @@ MODULEAPI void init_Daimonin_Lua()
     init_file_cache(global_state);
 
     /* Call the initialization script */
-    res = luaL_loadfile(global_state, hooks->create_pathname(LUA_INITSCRIPT));
+    res = luaL_loadfile(global_state, hooks->create_mapdir_pathname(LUA_INITSCRIPT));
     if (res == 0)
     {
         /* Loadfile puts the loaded chunk on top of the stack as a function,

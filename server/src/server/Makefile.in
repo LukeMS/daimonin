@@ -45,7 +45,6 @@ SRCS = \
 	container.c\
 	disease.c\
 	egoitem.c \
-	hiscore.c\
 	gmaster.c\
 	gods.c\
 	init.c\

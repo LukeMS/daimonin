@@ -32,7 +32,6 @@ void                        apply_poison(object *op, object *tmp);
 void                        create_food_force(object *who, object *food, object *force);
 void                        eat_special_food(object *who, object *food);
 int                         dragon_eat_flesh(object *op, object *meal);
-int                         is_legal_2ways_exit(object *op, object *exit);
 int                         manual_apply(object *op, object *tmp, int aflag);
 int                         player_apply(object *pl, object *op, int aflag, int quiet);
 void                        player_apply_below(object *pl);
@@ -145,7 +144,6 @@ int                         command_maps(object *op, char *params);
 int                         command_sstable(object *op, char *params);
 int                         command_time(object *op, char *params);
 int                         command_archs(object *op, char *params);
-int                         command_hiscore(object *op, char *params);
 int                         command_debug(object *op, char *params);
 int                         command_dumpbelowfull(object *op, char *params);
 int                         command_dumpbelow(object *op, char *params);
@@ -332,10 +330,6 @@ void                        remove_gmaster_mode(player *pl);
 void                        write_gmaster_file(void);
 void                        update_gmaster_file(void);
 void                        free_gmaster_list(void);
-/* hiscore.c */
-char                       *spool(char *bp, char *error);
-void                        check_score(object *op);
-void                        display_high_score(object *op, int max, char *match);
 /* gods.c */
 int                         lookup_god_by_name(const char *name);
 object                     *find_god(const char *name);
@@ -372,12 +366,7 @@ void                        check_login(object *op, int mode);
 void                        version(object *op);
 void                        start_info(object *op);
 char                       *crypt_string(char *str, char *salt);
-void                        enter_player_savebed(object *op);
-void                        leave_map(object *op);
-void                        set_map_timeout(mapstruct *oldmap);
-char                       *clean_path(const char *file);
-char                       *unclean_path(const char *src);
-void                        enter_exit(object *op, object *exit_ob);
+int                         get_new_instance_num(void);
 void                        process_players1(mapstruct *map);
 void                        process_players2(mapstruct *map);
 void                        clean_tmp_files(void);
@@ -437,13 +426,15 @@ void                        remove_linked_spawn_list(mapstruct *map);
 void                        send_link_spawn_signal(object *spawn, object *target, int signal);
 /* move.c */
 int                         move_ob(object *op, int dir, object *originator);
-int                         transfer_ob(object *op, int x, int y, mapstruct *map, int randomly, object *originator, object *trap);
 int                         teleport(object *teleporter, uint8 tele_type, object *user);
 void                        recursive_roll(object *op, int dir, object *pusher);
-int                         try_fit(object *op, int x, int y);
 int                         roll_ob(object *op, int dir, object *pusher);
 int                         push_ob(object *who, int dir, object *pusher);
 int                         missile_reflection_adjust(object *op, int flag);
+void                        leave_map(object *op);
+mapstruct                  *enter_map_by_name(object *op, const char *path, const char *src_path, int x, int y, int flags);
+int                         enter_map_by_exit(object *op, object *exit_ob);
+int                        enter_map(object *op, object *originator, mapstruct *newmap, int x, int y, int flags);
 /* pets.c */
 void                        update_pets_combat_mode(object *owner);
 int                         add_pet(object *owner, object *pet, int mode);
@@ -491,6 +482,7 @@ int                         op_on_battleground(object *op, int *x, int *y);
 void                        dragon_ability_gain(object *who, int atnr, int level);
 int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object *op);
+void                        reset_instance_data(player *pl);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
 int							trigger_object_plugin_event(int event_type,
@@ -752,6 +744,8 @@ mapstruct                  *map_least_timeout(const char *except_level);
 void                        swap_below_max(const char *except_level);
 int                         players_on_map(mapstruct *m);
 void                        flush_old_maps(void);
+void                        set_map_timeout(mapstruct *oldmap);
+void                        set_map_reset_time(mapstruct *map);
 /* time.c */
 object                     *find_key(object *op, object *door);
 int                         open_door(object *op, mapstruct *m, int x, int y, int mode);

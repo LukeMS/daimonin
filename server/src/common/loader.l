@@ -39,7 +39,7 @@ static artifact *amask_art;
 static void *cur_buffer; /* thats needed to track the used buffers for recursive calling */
 static int object_load_flag;
 static int lex_error, msg_flag;
-static char msgbuf[HUGE_BUF];
+static char msgbuf[HUGE_BUF*5];
 
 /* SET_RESIST is really only really needed for transition code.  We normally
  * don't care about multiple values overwriting each other, but this is
@@ -228,14 +228,11 @@ WS	[ \t]*{NL}?
 
 ^msg{WS}	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
 <MESSAGE>^endmsg{WS} {	BEGIN( INITIAL );
-			FREE_AND_COPY_HASH(op->msg, msgbuf);
-			/* Just print a warning so we can be reasonably safe
-			 * about not overflowing the buffer.
-			 */
-			if (strlen(op->msg) > 4000 )
-			    LOG(llevDebug, "\n\tDebug: Warning message length > %d (max allowed=%d): %d\n>%.40s<\n",
-				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
-		    }
+    			if (strlen(msgbuf) > HUGE_BUF-16 )
+	    		    LOG(llevDebug, "\n\tBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n", query_name(op), strlen(msgbuf),HUGE_BUF-16);
+                else
+    		    	FREE_AND_COPY_HASH(op->msg, msgbuf);
+                }
 			/*<MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }*/
 <MESSAGE>.*{WS}	strcat(msgbuf, yytext);
 
@@ -442,7 +439,6 @@ op->oy= op->y;
 ^anim_speed{S}	    op->anim_speed = IVAL;
 ^container{S}	    op->weight_limit = IVAL;
 ^no_drop{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL);
-^use_fix_pos{S}			SET_OR_CLEAR_FLAG(op, FLAG_USE_FIX_POS, IVAL);
 ^is_ethereal{S}			SET_OR_CLEAR_FLAG(op, FLAG_IS_ETHEREAL, IVAL);
 ^can_open_door{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CAN_OPEN_DOOR, IVAL);
 ^has_ready_bow{S}		SET_OR_CLEAR_FLAG(op, FLAG_READY_BOW, IVAL);
@@ -946,7 +942,7 @@ NULL /*free*/, NULL /*free*/, "is_male",
 "is_dust", "no_steal", "one_hit", NULL /*client_sent*/, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "proof_phy",  "proof_ele", /* 105 */
 "proof_mag", "proof_sph", "no_inv", NULL /*free*/, "sys_object", /* 110 */
-"use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
+NULL /*free*/,"unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
 "was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",

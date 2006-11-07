@@ -38,7 +38,7 @@ extern _level_color level_color[201];
 enum
 {
     /* fire modes submited from client */
-    FIRE_MODE_NONE                              = -1,
+    FIRE_MODE_NONE = -1,
     FIRE_MODE_BOW,
     FIRE_MODE_SPELL,
     FIRE_MODE_WAND,
@@ -134,15 +134,37 @@ enum
 typedef struct pl_player
 {
     /* this is not cleared with memset - seek for offsetof((....,maplevel) */
+
     struct pl_player   *prev;               /* Pointer to the prev player. if NULL, this is the first one */
     struct pl_player   *next;               /* Pointer to next player, NULL if this is last */
-    /* first and last player in player list can direct
-                                 * accessed by first_player/last_player global ptr */
+    
     NewSocket           socket;             /* Socket information for this player */
 
     /* all this is set to 0 with memset */
-    char                maplevel[MAX_BUF];      /* Name of the map the player is on */
-	int					map_update_cmd;			/* for server->client protocol */
+
+    /* WARNING!: maplevel MUST be the first struct member after socket! we use it in player.c, line 171 as
+     * marker for memset()!
+     */
+    /* start of hash strings ptr... */
+    const char          *maplevel;              /* Name of the map the player is on */
+
+    const char          *instance_name;         /* Name of the map the player is on */
+    const char          *group_invite_name;     /* GROUP_MODE_INVITE: This player name can invite you */
+    const char          *killer;                /* Who killed this player. */
+    const char          *savebed_map;           /* map where player will respawn after death */
+    const char          *orig_savebed_map;      /* map where player will respawn after death (original map) */
+    const char          *orig_map;              /* Name of the map the player is on (original map) */
+    /* hash strings end*/
+
+    char                firemode_name[BIG_NAME*2];
+    char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
+    char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
+
+    long                instance_id;            /* instance system: runtime id and instance num */
+    int                 instance_num;
+    uint32              instance_flags;         /* status info of the instance */
+
+    int					map_update_cmd;			/* for server->client protocol */
 	int					map_update_tile;			/* for server->client protocol */
     struct mapdef      *last_update;			/* when moving on tiled maps, player can change
                                                  * map without triggering mapevents and new_map_cmd.
@@ -191,6 +213,8 @@ typedef struct pl_player
     int                 set_skill_archery;      /* same for archery */
     int                 bed_x;                      /* x,y - coordinates of respawn (savebed) */
     int                 bed_y;
+    int                 map_x;                      /* x,y - coordinates of login/start map */
+    int                 map_y;
     uint32              golem_count;                /* Which golem is controlled - the id count */
 
     int                 firemode_type;        /* firemode_xxx are set from command_fire() */
@@ -280,6 +304,7 @@ typedef struct pl_player
     int                 reg_grace_num;
 	int					damage_timer;				/* hp recovery timer for last hp */
 
+    sint16              map_status;                     /* type of map we have saved */
     sint16              base_hp_reg;                /* our real tick counter for hp regenerations */
     sint16              base_sp_reg;                /* our real tick counter for sp regenerations */
     sint16              base_grace_reg;         /* our real tick counter for grace regenerations */
@@ -292,25 +317,19 @@ typedef struct pl_player
     uint16              last_gen_sp;
     uint16              last_gen_grace;
 
-    uint8                group_mode;                    /* group mode use GROUP_MODE_XX */
+    uint8               bed_status;
+    uint8               group_mode;                    /* group mode use GROUP_MODE_XX */
     uint8               group_nrof;                    /* number of players in group */
     uint8               group_nr;                    /* player is #group_nr in his group - used for fast update */
 
 
-    char                group_invite_name[MAX_PLAYER_NAME+1]; /* GROUP_MODE_INVITE: This player name can invite you
-                                                               * we need string name here to handle for example a logout
-                                                               * of this player.
-                                                               */
-
     int					last_weapon_sp;
 	int					p_ver;
 
-    char                firemode_name[BIG_NAME*2];
-    char                quick_name[BIG_NAME*3]; /* thats rank + name +" the xxxx" */
-    char                savebed_map[MAX_BUF];  /* map where player will respawn after death */
+
     /* for smaller map sizes, only the the first elements are used (ie, upper left) */
     int                 blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /* in fact we only need char size, but use int for faster access */
-    char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
+
     char                levhp[MAXLEVEL + 1];            /* What the player gained on that level */
     char                levsp[MAXLEVEL + 1];
     char                levgrace[MAXLEVEL + 1];
@@ -346,8 +365,8 @@ typedef struct pl_player
     usekeytype          usekeys;          /* Method for finding keys for doors */
     sint16              chosen_spell;       /* Type of readied spell */
     sint16              chosen_item_spell;  /* Type of spell that the item fires */
-    uint16              last_flags;     /* fire/run on flags for last tick */
-    uint32              count;       /* Any numbers typed before a command */
+    uint16              last_flags;         /* fire/run on flags for last tick */
+    uint32              count;              /* Any numbers typed before a command */
 
     unsigned char       state;
     unsigned char       listening; /* Which priority will be used in info_all */
@@ -361,11 +380,8 @@ typedef struct pl_player
     long                last_weight;
 
 
-    char                title[BIG_NAME]; /* we use ext. title now - we should remove this now! */
-
     unsigned char       last_level;
 
-    char                killer[BIG_NAME];  /* Who killed this player. */
     char                last_cmd;
 
     char                password[MAX_PLAYER_PASSWORD]; /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */

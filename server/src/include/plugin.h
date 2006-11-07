@@ -170,29 +170,28 @@
 #define HOOK_CMDTAKE            13
 
 #define HOOK_FINDMARKEDOBJECT   14
-#define HOOK_TRANSFEROBJECT     15
-#define HOOK_KILLOBJECT         16
-#define HOOK_LEARNSPELL         17
+#define HOOK_KILLOBJECT         15
+#define HOOK_LEARNSPELL         16
 
-#define HOOK_IDENTIFYOBJECT     18
-#define HOOK_CHECKFORSPELL      19
-#define HOOK_DESTRUCTOBJECT     20
-#define HOOK_CLONEOBJECT        21
-#define HOOK_LOADOBJECT         22
-#define HOOK_UPDATESPEED        23
-#define HOOK_UPDATEOBJECT       24
-#define HOOK_FINDANIMATION      25
-#define HOOK_TELEPORTOBJECT      26
-#define HOOK_LEARNSKILL          27
+#define HOOK_IDENTIFYOBJECT     17
+#define HOOK_CHECKFORSPELL      18
+#define HOOK_DESTRUCTOBJECT     19
+#define HOOK_CLONEOBJECT        20
+#define HOOK_LOADOBJECT         21
+#define HOOK_UPDATESPEED        22
+#define HOOK_UPDATEOBJECT       23
+#define HOOK_FINDANIMATION      24
 
-#define HOOK_DUMPOBJECT         28
-#define HOOK_ADDEXP             29
-#define HOOK_DETERMINEGOD       30
-#define HOOK_FINDGOD            31
-#define HOOK_REGISTEREVENT      32
-#define HOOK_UNREGISTEREVENT    33
+#define HOOK_LEARNSKILL         25
 
-#define NR_OF_HOOKS              34
+#define HOOK_DUMPOBJECT         26
+#define HOOK_ADDEXP             27
+#define HOOK_DETERMINEGOD       28
+#define HOOK_FINDGOD            29
+#define HOOK_REGISTEREVENT      30
+#define HOOK_UNREGISTEREVENT    31
+
+#define NR_OF_HOOKS              32
 
 
 /*****************************************************************************/
@@ -248,7 +247,7 @@ typedef struct _CFPlugin
 struct plugin_hooklist
 {
     void (*LOG)(LogLevel, char *, ...);
-    char*(*create_pathname)(const char *);
+    char*(*create_mapdir_pathname)(const char *);
     char*(*re_cmp)(char *, char *);
     void (*new_draw_info)(const int, const int, const object *const , const char *const);
     void (*new_draw_info_format)(const int, const int, const object *const, const char *const, ...);
@@ -272,7 +271,6 @@ struct plugin_hooklist
     object*(*insert_ob_in_ob)(object *, object *);
     object*(*insert_ob_in_map)(object * const, mapstruct *, object *const, const int);
     int (*move_ob)(object *, int, object *);
-    int (*transfer_ob)(object *op, int x, int y, mapstruct *map, int randomly, object *originator, object *trap);    
     void (*free_mempool)(struct mempool *);
 	struct mempool * (*create_mempool)(const char *description, uint32 expand, uint32 size,
 		uint32 flags, chunk_initialisator initialisator, chunk_deinitialisator deinitialisator,
@@ -331,8 +329,8 @@ struct plugin_hooklist
 	void (*delete_map)(mapstruct *m);
 	void (*map_transfer_apartment_items)(mapstruct *map_old, mapstruct * map_new, int x, int y);
 	int (*new_save_map)(mapstruct *m, int flag);
-	mapstruct* (*ready_map_name)(const char *name_path, int flags, object *op);
-	char* (*create_unique_path)(const char *name, const object *op);
+	mapstruct* (*ready_map_name)(const char *name_path,const char *src_path, int flags);
+	const char* (*create_unique_path_sh)(const object *op, const char *name);
     void  (*reload_behaviours)(object *op);
     void  (*clear_mob_knowns)(object *op, struct mob_known_obj **first, hashtable *ht);
     
@@ -345,7 +343,18 @@ struct plugin_hooklist
     hashtable_iterator_t (*hashtable_iterator)(const hashtable *const ht);
     hashtable_iterator_t (*hashtable_iterator_next)(const hashtable *const ht, hashtable_iterator_t i);
 
-    char *(*normalize_path)(const char *src, const char *dst, char *path);
+    const char *(*normalize_path)(const char *src, const char *dst, char *path);
+    mapstruct *(*enter_map_by_name)(object *op, const char *path, const char *src_path, int x, int y, int flags);
+    int (*enter_map_by_exit)(object *op, object *exit_ob);
+    int (*enter_map)(object *op, object *originator, mapstruct *newmap, int x, int y, int flags);
+    const char *(*create_instance_path_sh)(player * const pl, const char * const name, int flags);
+    void (*clean_tmp_map)(mapstruct *m);
+    int (*map_to_player_unlink)(mapstruct *m);
+    void (*map_to_player_link)(mapstruct *m, int x, int y, int flag);
+    const char* (*create_safe_mapname_sh)(char const *mapname);
+    const char* (*normalize_path_direct)(const char *src, const char *dst, char *path);
+    const char* (*path_to_name)(const char *file);
+    void (*reset_instance_data)(player *pl);
 
     /* Global variables */
     Animations **animations;
@@ -354,6 +363,7 @@ struct plugin_hooklist
     archetype **coins_arch;
     struct shstr_constants *shstr_cons;
     struct behaviourclass_decl *behaviourclasses;
+    long *global_instance_id;
 };
 
 /*****************************************************************************/

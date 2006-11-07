@@ -13,7 +13,7 @@ tile_path_3 castle_020a
 tile_path_4 castle_0100
 tile_path_5 castle_0301
 tile_path_6 castle_030a
-tile_path_7 ../mountain_0502
+tile_path_7 /relic/mountain_0502
 tile_path_8 castle_0101
 tileset_id 4
 tileset_x 24
@@ -93,25 +93,25 @@ end
 arch rock_big3
 y 16
 end
-arch earth_brown1
+arch earth_brown4
 y 17
 end
 arch water_still
 y 18
 end
-arch earth_m14
+arch earth_m10
 y 18
 end
-arch water_still
+arch water_still_deep
 y 19
 end
-arch water_still
+arch water_still_deep
 y 20
 end
 arch water_still
 y 21
 end
-arch grassd_m7
+arch earth_m15
 y 21
 end
 arch grassd_1
@@ -218,7 +218,7 @@ arch rock_big3
 x 1
 y 16
 end
-arch earth_brown1
+arch earth_brown3
 x 1
 y 17
 end
@@ -230,11 +230,11 @@ arch earth_m14
 x 1
 y 18
 end
-arch water_still
+arch water_still_deep
 x 1
 y 19
 end
-arch water_still
+arch water_still_deep
 x 1
 y 20
 end
@@ -242,7 +242,7 @@ arch water_still
 x 1
 y 21
 end
-arch grassd_m7
+arch earth_m11
 x 1
 y 21
 end
@@ -354,7 +354,7 @@ arch rock_big3
 x 2
 y 16
 end
-arch earth_brown1
+arch earth_brown4
 x 2
 y 17
 end
@@ -362,15 +362,15 @@ arch water_still
 x 2
 y 18
 end
-arch earth_m14
+arch earth_m10
 x 2
 y 18
 end
-arch water_still
+arch water_still_deep
 x 2
 y 19
 end
-arch water_still
+arch water_still_deep
 x 2
 y 20
 end
@@ -378,7 +378,7 @@ arch water_still
 x 2
 y 21
 end
-arch grassd_m7
+arch earth_m11
 x 2
 y 21
 end
@@ -498,15 +498,15 @@ arch water_still
 x 3
 y 18
 end
-arch earth_m14
+arch earth_m10
 x 3
 y 18
 end
-arch water_still
+arch water_still_deep
 x 3
 y 19
 end
-arch water_still
+arch water_still_deep
 x 3
 y 20
 end
@@ -514,7 +514,7 @@ arch water_still
 x 3
 y 21
 end
-arch grassd_m7
+arch earth_m15
 x 3
 y 21
 end
@@ -621,7 +621,7 @@ arch rock_big3
 x 4
 y 16
 end
-arch earth_brown1
+arch earth_brown4
 x 4
 y 17
 end
@@ -633,11 +633,11 @@ arch earth_m14
 x 4
 y 18
 end
-arch water_still
+arch water_still_deep
 x 4
 y 19
 end
-arch water_still
+arch water_still_deep
 x 4
 y 20
 end
@@ -645,7 +645,7 @@ arch water_still
 x 4
 y 21
 end
-arch grassd_m7
+arch earth_m15
 x 4
 y 21
 end
@@ -767,7 +767,7 @@ arch rock_big3
 x 5
 y 16
 end
-arch earth_brown1
+arch earth_brown2
 x 5
 y 17
 end
@@ -787,15 +787,15 @@ arch earth_m8
 x 5
 y 19
 end
-arch water_still
+arch water_still_deep
 x 5
 y 20
 end
-arch water_still
+arch water_still_deep
 x 5
 y 21
 end
-arch grassd_m14
+arch earth_m6
 x 5
 y 21
 end
@@ -803,7 +803,7 @@ arch water_still
 x 5
 y 22
 end
-arch grassd_m3
+arch earth_m17
 x 5
 y 22
 end
@@ -924,7 +924,7 @@ arch rock_big3
 x 6
 y 17
 end
-arch earth_brown1
+arch earth_brown4
 x 6
 y 18
 end
@@ -944,15 +944,15 @@ arch earth_m8
 x 6
 y 20
 end
-arch water_still
+arch water_still_deep
 x 6
 y 21
 end
-arch water_still
+arch water_still_deep
 x 6
 y 22
 end
-arch grassd_m14
+arch earth_m6
 x 6
 y 22
 end
@@ -960,7 +960,7 @@ arch water_still
 x 6
 y 23
 end
-arch grassd_m3
+arch earth_m17
 x 6
 y 23
 end
@@ -1069,7 +1069,7 @@ arch rock_big3
 x 7
 y 18
 end
-arch earth_brown1
+arch earth_brown4
 x 7
 y 19
 end
@@ -1089,15 +1089,15 @@ arch earth_m8
 x 7
 y 21
 end
-arch water_still
+arch water_still_deep
 x 7
 y 22
 end
-arch water_still
+arch water_still_deep
 x 7
 y 23
 end
-arch grassd_m14
+arch earth_m6
 x 7
 y 23
 end
@@ -1214,7 +1214,7 @@ arch rock_big3
 x 8
 y 19
 end
-arch earth_brown1
+arch earth_brown4
 x 8
 y 20
 end
@@ -1234,7 +1234,7 @@ arch earth_m8
 x 8
 y 22
 end
-arch water_still
+arch water_still_deep
 x 8
 y 23
 end
@@ -1363,7 +1363,7 @@ arch earth_m14
 x 9
 y 22
 end
-arch water_still
+arch water_still_deep
 x 9
 y 23
 end
@@ -1483,7 +1483,7 @@ arch earth_m14
 x 10
 y 22
 end
-arch water_still
+arch water_still_deep
 x 10
 y 23
 end
@@ -1612,7 +1612,7 @@ arch rock_big3
 x 11
 y 20
 end
-arch earth_brown1
+arch earth_brown3
 x 11
 y 21
 end
@@ -1620,11 +1620,11 @@ arch water_still
 x 11
 y 22
 end
-arch earth_m14
+arch earth_m10
 x 11
 y 22
 end
-arch water_still
+arch water_still_deep
 x 11
 y 23
 end
@@ -1742,7 +1742,7 @@ arch rock_big3
 x 12
 y 20
 end
-arch earth_brown1
+arch earth_brown4
 x 12
 y 21
 end
@@ -1750,11 +1750,11 @@ arch water_still
 x 12
 y 22
 end
-arch earth_m14
+arch earth_m10
 x 12
 y 22
 end
-arch water_still
+arch water_still_deep
 x 12
 y 23
 end
@@ -1882,7 +1882,7 @@ arch rock_big3
 x 13
 y 20
 end
-arch earth_brown1
+arch earth_brown3
 x 13
 y 21
 end
@@ -1894,7 +1894,7 @@ arch earth_m14
 x 13
 y 22
 end
-arch water_still
+arch water_still_deep
 x 13
 y 23
 end
@@ -2019,7 +2019,7 @@ arch rock_big3
 x 14
 y 20
 end
-arch earth_brown1
+arch earth_brown4
 x 14
 y 21
 end
@@ -2031,7 +2031,7 @@ arch earth_m14
 x 14
 y 22
 end
-arch water_still
+arch water_still_deep
 x 14
 y 23
 end
@@ -2168,7 +2168,7 @@ arch rock_big3
 x 15
 y 20
 end
-arch earth_brown1
+arch earth_brown3
 x 15
 y 21
 end
@@ -2176,11 +2176,11 @@ arch water_still
 x 15
 y 22
 end
-arch earth_m14
+arch earth_m10
 x 15
 y 22
 end
-arch water_still
+arch water_still_deep
 x 15
 y 23
 end
@@ -2321,7 +2321,7 @@ arch rock_big3
 x 16
 y 20
 end
-arch earth_brown1
+arch earth_brown2
 x 16
 y 21
 end
@@ -2333,7 +2333,7 @@ arch earth_m14
 x 16
 y 22
 end
-arch water_still
+arch water_still_deep
 x 16
 y 23
 end
@@ -2466,11 +2466,11 @@ arch rock_big3
 x 17
 y 18
 end
-arch earth_brown1
+arch earth_brown4
 x 17
 y 19
 end
-arch earth_brown1
+arch earth_brown2
 x 17
 y 20
 end
@@ -2490,7 +2490,7 @@ arch earth_m7
 x 17
 y 22
 end
-arch water_still
+arch water_still_deep
 x 17
 y 23
 end
@@ -2624,15 +2624,15 @@ arch earth_m7
 x 18
 y 21
 end
-arch water_still
+arch water_still_deep
 x 18
 y 22
 end
-arch water_still
+arch water_still_deep
 x 18
 y 23
 end
-arch grassd_m11
+arch earth_m5
 x 18
 y 23
 end
@@ -2750,7 +2750,7 @@ arch rock_big3
 x 19
 y 16
 end
-arch earth_brown1
+arch earth_brown2
 x 19
 y 17
 end
@@ -2770,11 +2770,11 @@ arch earth_m7
 x 19
 y 19
 end
-arch water_still
+arch water_still_deep
 x 19
 y 20
 end
-arch water_still
+arch water_still_deep
 x 19
 y 21
 end
@@ -2782,7 +2782,7 @@ arch water_still
 x 19
 y 22
 end
-arch grassd_m11
+arch earth_m5
 x 19
 y 22
 end
@@ -2790,7 +2790,7 @@ arch water_still
 x 19
 y 23
 end
-arch grassd_m5
+arch earth_m20
 x 19
 y 23
 end
@@ -2888,7 +2888,7 @@ arch rock_big3
 x 20
 y 15
 end
-arch earth_brown1
+arch earth_brown4
 x 20
 y 16
 end
@@ -2908,11 +2908,11 @@ arch earth_m7
 x 20
 y 18
 end
-arch water_still
+arch water_still_deep
 x 20
 y 19
 end
-arch water_still
+arch water_still_deep
 x 20
 y 20
 end
@@ -2920,7 +2920,7 @@ arch water_still
 x 20
 y 21
 end
-arch grassd_m11
+arch earth_m5
 x 20
 y 21
 end
@@ -2928,7 +2928,7 @@ arch water_still
 x 20
 y 22
 end
-arch grassd_m5
+arch earth_m20
 x 20
 y 22
 end
@@ -3045,7 +3045,7 @@ arch rock_big3
 x 21
 y 14
 end
-arch earth_brown1
+arch earth_brown3
 x 21
 y 15
 end
@@ -3065,11 +3065,11 @@ arch earth_m7
 x 21
 y 17
 end
-arch water_still
+arch water_still_deep
 x 21
 y 18
 end
-arch water_still
+arch water_still_deep
 x 21
 y 19
 end
@@ -3077,7 +3077,7 @@ arch water_still
 x 21
 y 20
 end
-arch grassd_m11
+arch earth_m5
 x 21
 y 20
 end
@@ -3085,7 +3085,7 @@ arch water_still
 x 21
 y 21
 end
-arch grassd_m5
+arch earth_m20
 x 21
 y 21
 end
@@ -3162,23 +3162,23 @@ arch rock_big3
 x 22
 y 9
 end
-arch earth_brown1
+arch earth_brown3
 x 22
 y 10
 end
-arch earth_brown1
+arch earth_brown3
 x 22
 y 11
 end
-arch earth_brown1
+arch earth_brown3
 x 22
 y 12
 end
-arch earth_brown1
+arch earth_brown4
 x 22
 y 13
 end
-arch earth_brown1
+arch earth_brown4
 x 22
 y 14
 end
@@ -3198,11 +3198,11 @@ arch earth_m7
 x 22
 y 16
 end
-arch water_still
+arch water_still_deep
 x 22
 y 17
 end
-arch water_still
+arch water_still_deep
 x 22
 y 18
 end
@@ -3210,7 +3210,7 @@ arch water_still
 x 22
 y 19
 end
-arch grassd_m11
+arch earth_m5
 x 22
 y 19
 end
@@ -3218,7 +3218,7 @@ arch water_still
 x 22
 y 20
 end
-arch grassd_m5
+arch earth_m20
 x 22
 y 20
 end
@@ -3316,7 +3316,7 @@ arch water_still
 x 23
 y 12
 end
-arch earth_m16
+arch earth_m12
 x 23
 y 12
 end
@@ -3324,7 +3324,7 @@ arch water_still
 x 23
 y 13
 end
-arch earth_m16
+arch earth_m12
 x 23
 y 13
 end
@@ -3344,15 +3344,15 @@ arch earth_m7
 x 23
 y 15
 end
-arch water_still
+arch water_still_deep
 x 23
 y 16
 end
-arch water_still
+arch water_still_deep
 x 23
 y 17
 end
-arch water_still
+arch water_still_deep
 x 23
 y 18
 end
@@ -3360,7 +3360,7 @@ arch water_still
 x 23
 y 19
 end
-arch grassd_m7
+arch earth_m11
 x 23
 y 19
 end

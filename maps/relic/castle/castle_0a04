@@ -14,6 +14,7 @@ tile_path_4 colosseum/colosseum_0a04
 tile_path_5 castle_0005
 tile_path_6 castle_0003
 tile_path_7 colosseum/colosseum_0a03
+tile_path_8 marsh/marsh_0103
 tileset_id 4
 tileset_x -48
 tileset_y -168
@@ -478,9 +479,16 @@ arch grass_thick1
 x 3
 y 4
 end
-arch plant8
+arch spawn_point
 x 3
 y 4
+arch guard
+name Door Guard
+type 83
+glow_radius 2
+level 50
+Wis 1
+end
 end
 arch plant2
 x 3
@@ -491,11 +499,11 @@ no_pass 1
 x 3
 y 5
 end
-arch floor_grit2
+arch wall_flagstone1.111
 x 3
-y 6
+y 5
 end
-arch fwall_fstone2b
+arch floor_grit2
 x 3
 y 6
 end
@@ -626,11 +634,11 @@ arch plant14
 x 4
 y 2
 end
-arch grass_thick1
+arch floor_grit2
 x 4
 y 3
 end
-arch plant2
+arch grass_thickm5
 x 4
 y 3
 end
@@ -642,24 +650,15 @@ arch grass_thick1
 x 4
 y 5
 end
-arch plant2
+arch door1_locked
 x 4
 y 5
 end
-arch floor_fstone2a
-x 4
-y 6
-end
-arch fwall_fstone2
+arch floor_grit2
 x 4
 y 6
 end
 arch floor_grit2
-x 4
-y 7
-end
-arch torch_wall_1
-last_sp 2
 x 4
 y 7
 end
@@ -834,11 +833,11 @@ no_pass 1
 x 5
 y 5
 end
-arch floor_grit2
+arch wall_flagstone1.111
 x 5
-y 6
+y 5
 end
-arch fwall_fstone2d
+arch floor_grit2
 x 5
 y 6
 end

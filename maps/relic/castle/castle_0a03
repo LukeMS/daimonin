@@ -519,7 +519,7 @@ arch floor_grit2
 x 3
 y 11
 end
-arch fwall_fstone2c
+arch wall_flagstone1.111
 x 3
 y 11
 end
@@ -527,9 +527,16 @@ arch grass_thick1
 x 3
 y 12
 end
-arch plant2
+arch spawn_point
 x 3
 y 12
+arch guard
+name Door Guard
+type 83
+glow_radius 2
+level 50
+Wis 1
+end
 end
 arch grass_thick1
 x 3
@@ -686,11 +693,11 @@ arch floor_grit2
 x 4
 y 10
 end
-arch floor_fstone2a
+arch floor_grit2
 x 4
 y 11
 end
-arch fwall_fstone2
+arch door1_locked
 x 4
 y 11
 end
@@ -698,11 +705,11 @@ arch grass_thick1
 x 4
 y 12
 end
-arch grass_thick1
+arch floor_grit2
 x 4
 y 13
 end
-arch plant8
+arch grass_thickm1
 x 4
 y 13
 end
@@ -840,7 +847,7 @@ arch floor_grit2
 x 5
 y 11
 end
-arch fwall_fstone2a
+arch wall_flagstone1.111
 x 5
 y 11
 end

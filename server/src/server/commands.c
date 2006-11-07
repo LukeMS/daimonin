@@ -119,7 +119,6 @@ CommArray_s Commands[]                  =
     {"listen", command_listen,    0.0}, our channel system should work different
     {"drop", command_drop,    1.0},
     {"get", command_take,     1.0},
-    {"hiscore", command_hiscore,  0.0}, i have to think about hiscores
     {"examine", command_examine,  0.5}, should work in direction
     {"statistics", command_statistics,    0.0}, will be send to client later in status
     */

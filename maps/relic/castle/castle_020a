@@ -9,9 +9,9 @@ height 24
 outdoor 1
 tile_path_1 castle_0200
 tile_path_2 castle_030a
-tile_path_4 ../mountain_0502
+tile_path_4 /relic/mountain_0502
 tile_path_5 castle_0300
-tile_path_7 ../forest_0702
+tile_path_7 /relic/forest_0702
 tile_path_8 castle_0100
 tileset_id 4
 tileset_x 24
@@ -897,7 +897,7 @@ end
 arch water_still
 x 7
 end
-arch grassd_m3
+arch earth_m17
 x 7
 end
 arch grassd_8
@@ -1027,14 +1027,14 @@ end
 arch water_still
 x 8
 end
-arch grassd_m14
+arch earth_m6
 x 8
 end
 arch water_still
 x 8
 y 1
 end
-arch grassd_m3
+arch earth_m17
 x 8
 y 1
 end
@@ -1149,7 +1149,7 @@ arch water_still
 x 9
 y 1
 end
-arch grassd_m7
+arch earth_m15
 x 9
 y 1
 end
@@ -1271,7 +1271,7 @@ arch water_still
 x 10
 y 1
 end
-arch grassd_m7
+arch earth_m11
 x 10
 y 1
 end
@@ -1394,11 +1394,11 @@ arch water_still
 x 11
 y 1
 end
-arch water_plant1
+arch earth_m11
 x 11
 y 1
 end
-arch grassd_m7
+arch water_plant1
 x 11
 y 1
 end
@@ -1513,7 +1513,7 @@ arch water_still
 x 12
 y 1
 end
-arch grassd_m7
+arch earth_m15
 x 12
 y 1
 end
@@ -1624,7 +1624,7 @@ arch water_still
 x 13
 y 1
 end
-arch grassd_m7
+arch earth_m15
 x 13
 y 1
 end
@@ -1751,11 +1751,11 @@ arch water_still
 x 14
 y 1
 end
-arch water_plant3
+arch earth_m11
 x 14
 y 1
 end
-arch grassd_m7
+arch water_plant3
 x 14
 y 1
 end
@@ -1926,7 +1926,7 @@ arch water_still
 x 15
 y 1
 end
-arch grassd_m7
+arch earth_m15
 x 15
 y 1
 end
@@ -2081,7 +2081,7 @@ arch water_still
 x 16
 y 1
 end
-arch grassd_m7
+arch earth_m11
 x 16
 y 1
 end
@@ -2208,14 +2208,14 @@ end
 arch water_still
 x 17
 end
-arch grassd_m11
+arch earth_m5
 x 17
 end
 arch water_still
 x 17
 y 1
 end
-arch grassd_m5
+arch earth_m20
 x 17
 y 1
 end
@@ -2352,7 +2352,7 @@ end
 arch water_still
 x 18
 end
-arch grassd_m5
+arch earth_m20
 x 18
 end
 arch grassd_4
@@ -3185,6 +3185,29 @@ grace 1
 cursed 1
 end
 arch ai_generic
+msg
+# This is a generic AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship name=Dummy:+200
+choose_enemy
+
+moves:
+# stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+move_towards_enemy
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
 end
 end
 end

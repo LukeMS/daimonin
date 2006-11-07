@@ -418,6 +418,7 @@ typedef struct Settings
     char                           *datadir;        /* read only data files */
     char                           *localdir;       /* read/write data files */
     char                           *playerdir;      /* Where the player files are */
+    char                           *instancedir;      /* Where the instance map files are */
     char                           *mapdir;     /* Where the map files are */
     char                           *archetypes;    /* name of the archetypes file - libdir is prepended */
     char                           *treasures;      /* location of the treasures file. */
@@ -496,7 +497,9 @@ EXTERN void (*object_initializers[256])(object *);
 EXTERN _srv_client_files        SrvClientFiles[SRV_CLIENT_FILES];
 EXTERN Socket_Info              socket_info;
 
-EXTERN uint32                   global_group_tag; /* every group gets a unique group tag identifier */
+EXTERN long                     global_instance_id; /* every instance has a base ID at server runtime */
+EXTERN int                      global_instance_num; /* every instance has an unique tag/number */
+EXTERN uint32                   global_group_tag; /* every group gets an unique group tag identifier */
 EXTERN uint32                   global_map_tag; /* our global map_tag value for the server (map.c)*/
 EXTERN New_Face                *new_faces;
 EXTERN archetype               *coins_arch[NUM_COINS+1];
@@ -590,6 +593,12 @@ EXTERN struct shstr_constants
     const char *enchant_weapon;
     const char *Eldath;
     const char *the_Tabernacle;
+    const char *poisonous_food;
+    const char *starvation;
+    const char *drowning;
+    const char *emergency_mappath;
+    const char *start_mappath;
+    const char *bind_mappath;
 } shstr_cons;
 
 EXTERN Animations              *animations;
@@ -618,7 +627,6 @@ EXTERN int                      world_darkness; /* daylight value. 0= totally da
 EXTERN archetype               *wp_archetype;   /* Nice to have fast access to it */
 EXTERN archetype               *empty_archetype;    /* Nice to have fast access to it */
 EXTERN archetype               *base_info_archetype;    /* Nice to have fast access to it */
-EXTERN archetype               *map_archeytpe;
 EXTERN archetype               *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
 /* hashtable of beacons */

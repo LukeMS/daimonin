@@ -1733,6 +1733,13 @@ arch floor_wood3d
 x 12
 y 20
 end
+arch spawn_point
+x 12
+y 20
+arch archer
+type 83
+end
+end
 arch floor_wood3d
 x 12
 y 21
