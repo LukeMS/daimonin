@@ -49,6 +49,8 @@ TileManager::TileManager()
 {
     mInterface = 0;
     map_udate_flag = 0;
+    mMapScrollX =0;
+    mMapScrollZ =0;
 }
 
 //================================================================================================
@@ -105,38 +107,35 @@ void TileManager::Init(SceneManager* SceneMgr, int tileTextureSize)
 //================================================================================================
 void TileManager::scrollMap(int dx, int dz)
 {
-    if (dx)
+    if (dx >0)
     {
-        mMapScrollX += dx;
-        if (dx >0)
-        {
-            for (int x = 0; x < CHUNK_SIZE_X; ++x)
-                for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
-                    mMap[x][y] = mMap[x+1][y];
-        }
-        else if (dx <0)
-        {
-            for (int x = CHUNK_SIZE_X; x >0; --x)
-                for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
-                    mMap[x][y] = mMap[x-1][y];
-        }
+        --mMapScrollX;
+        for (int x = 0; x < CHUNK_SIZE_X; ++x)
+            for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
+                mMap[x][y] = mMap[x+1][y];
     }
-    if (dz)
+    else if (dx <0)
     {
-        mMapScrollZ += dz;
-        if (dz >0)
-        {
-            for (int x = 0; x <= CHUNK_SIZE_X; ++x)
-                for (int y = 0; y < CHUNK_SIZE_Z; ++y)
-                    mMap[x][y] = mMap[x][y+1];
-        }
-        else if (dz <0)
-        {
-            for (int x = 0; x <= CHUNK_SIZE_X; ++x)
-                for (int y = CHUNK_SIZE_Z; y > 0; --y)
-                    mMap[x][y] = mMap[x][y-1];
-        }
+        ++mMapScrollX;
+        for (int x = CHUNK_SIZE_X; x >0; --x)
+            for (int y = 0; y <= CHUNK_SIZE_Z; ++y)
+                mMap[x][y] = mMap[x-1][y];
     }
+    if (dz >0)
+    {
+        --mMapScrollZ;
+        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+            for (int y = 0; y < CHUNK_SIZE_Z; ++y)
+                mMap[x][y] = mMap[x][y+1];
+    }
+    else if (dz <0)
+    {
+        ++mMapScrollZ;
+        for (int x = 0; x <= CHUNK_SIZE_X; ++x)
+            for (int y = CHUNK_SIZE_Z; y > 0; --y)
+                mMap[x][y] = mMap[x][y-1];
+    }
+
     mMapchunk.change();
 }
 

@@ -45,6 +45,7 @@ typedef enum _game_status
     GAME_STATUS_INIT_OBJECT,        /**< Init the objects. **/
     GAME_STATUS_INIT_GUI_IMAGESET,  /**< Parse the IMageSet. **/
     GAME_STATUS_INIT_GUI_WINDOWS,   /**< Parse the Windows. **/
+    GAME_STATUS_INIT_EVENT_LISTENER,/**< Init the key/mouse listener. **/
     GAME_STATUS_INIT_TILE,          /**< Init the tile-engine. **/
     GAME_STATUS_INIT_NET,           /**< init the network. **/
 

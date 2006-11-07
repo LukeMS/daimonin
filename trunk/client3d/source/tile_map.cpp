@@ -173,14 +173,14 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             // Bridge:
         case 0x207:
         case 0x208:
-            height = 15;
+            height = 30;
             texture_col =0;
             texture_row =3;
             break;
 
             // Sand
         case 0x73d:
-            height = 15;
+            height = 30;
             texture_col =3;
             texture_row =3;
             break;
@@ -193,21 +193,21 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         case 0x88f:
         case 0x890:
         case 0x891:
-            height = 15;
+            height = 30;
             texture_col =1;
             texture_row =2;
             break;
 
             // Stone
         case 0x6a7:
-            height = 15;
+            height = 30;
             texture_col =0;
             texture_row =0;
             break;
 
         default:
             //Logger::log().error() << "Unknown Tile gfx: " << face;
-            height = 15;
+            height = 30;
             texture_col =6;
             texture_row =6;
             break;
