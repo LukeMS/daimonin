@@ -588,7 +588,7 @@ sp 3
 end
 arch event_obj
 name Lua
-race /dev/testmaps/waypoint_activate.lua
+race waypoint_activate.lua
 sub_type 6
 end
 end
