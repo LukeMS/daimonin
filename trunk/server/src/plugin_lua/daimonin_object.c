@@ -2371,7 +2371,7 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CreateInvisibleInside                                 */
-/* Lua    : object:CreateInvisibleInside(id)                                 */
+/* Lua    : object:CreateInvisibleObjectInside(id)                           */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_CreateInvisibleInside(lua_State *L)
@@ -2615,6 +2615,7 @@ static int GameObject_DecreaseNrOf(lua_State *L)
 /*          If you just want to remove a part of a stack, have a look at     */
 /*          object:DecreaseNrOf(). If you actually want to represent the     */
 /*          destruction of an object, use object:Destruct()                  */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_Remove(lua_State *L)
 {
