@@ -1247,8 +1247,8 @@ static void apply_sign(object *op, object *sign)
  * I added the flags parameter to give the single events more information
  * about whats going on:
  * Most important is the "MOVE_APPLY_VANISHED" flag.
- * If set, a object has leaved a tile but "vanished" and not moved (perhaps
- * its exploded or whatever). This means that some events are not triggered
+ * If set, a object has left a tile but "vanished" and not moved (perhaps
+ * it exploded or whatever). This means that some events are not triggered
  * like trapdoors or teleporter traps for example which have a "FLY/MOVE_OFF"
  * set. This will avoid that they touch invalid objects.
  */
