@@ -292,15 +292,28 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 /*****************************************************************************/
 /* Name   : GameObject_Teleport                                              */
-/* Lua    : object:Teleport(x, y, |map, |flags, |mapname)                    */
+/* Lua    : object:Teleport(x, y, oldmap, flags, mapname)                    */
 /* Info   : Teleports op to x,y of object.map or map (when given).           */
-/*        : Teleports to mapname when its given                              */
-/*        : mapname is loaded using the inheritanced type and path of map    */
-/*        : WARNING: a script developer must have in mind that enter_map()   */
-/*        : can destroy the object which should it transfer                  */
-/*        : Depending on the script return values are important to check     */
+/*          Teleports to mapname if it is given, otherwise teleports to      */
+/*          object.map                                                       */
+/*          instance data is inherited from oldmap if given, otherwise       */
+/*          object.map is used for inheritance.                              */
+/*          WARNING: a script developer must have in mind that Teleoprt()    */
+/*          can destroy the object which should it transfer. Therefore the   */
+/*          return values are important to check                             */
+/*          flags can be some combinations of:                               */
+/*            game.MFLAG_FIXED_POS - insert on x,y even IF the spot not free */
+/*            game.MFLAG_RANDOM_POS - insert on a free random spot near x,y  */
+/*            game.MFLAG_FREE_POS_ONLY - only insert on a free position,     */
+/*            return with fail when there is no free spot                    */
+/*          Examples:                                                        */
+/*          obj:Teleport(x, y) - same as obj:Teleport(x,y,obj.map)           */
+/*          obj:Teleport(x, y, game:ReadyMap("/mappath")) - MULTI type map   */
+/*          obj:Teleport(x, y, obj:ReadyInstance("/mappath")) - instance map */
+/*          obj:Teleport(x, y, obj.map, 0, "/mappath") - type from obj.map   */
+/*            (same as obj:Teleport(x, y, obj.map:Load("mappath"))           */
 /* Return : 0: all ok, 1: object was destroyed, 2: teleport failed (map or   */
-/*        : position error, ...) 3: mapname not found                        */
+/*          position error, ...) 3: mapname not found                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_Teleport(lua_State *L)
@@ -367,11 +380,11 @@ static int GameObject_Teleport(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_ReadyUniqueMap                                        */
-/* Lua    : object:ReadyUniqueMap(mapname,|flag)                             */
+/* Lua    : object:ReadyUniqueMap(mapname,flag)                              */
 /* Info   : Check, load and/or create an unique map                          */
 /*        : default (no flags): load unique map, create if needed            */
-/*        : MAP_CHECK = checks the unique map already exists and load        */
-/*        : MAP_NEW = resets/reloads map                                     */
+/*        : game.MAP_CHECK - checks the unique map already exists and load   */
+/*        : game.MAP_NEW - resets/reloads map                                */
 /* Return : map pointer to unique map or NULL                                */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -429,13 +442,13 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_ReadyInstance                                         */
-/* Lua    : object:ReadyInstance(mapname,|flag)                              */
-/* Info   : REload or creates instance for a player                          */
+/* Lua    : object:ReadyInstance(mapname,flag)                               */
+/* Info   : Reload or creates instance for a player                          */
 /*        : default (no flags): load instance, create if needed              */
-/*        : MAP_CHECK = check PLAYER for valid instance IDs                  */
+/*        : game.MAP_CHECK - check PLAYER for valid instance IDs             */
 /*        : reload (or create) the instance - but use all old files          */
 /*        : if the instance is invalid return NULL                           */
-/*        : MAP_NEW = delete old IDs, create a NEW instance, no reenter      */
+/*        : game.MAP_NEW - delete old IDs, create a NEW instance, no reenter */
 /*        : NOTE: a instance reset DON'T resets the maps - it creates a new  */
 /*        : instance of that name/type.                                      */
 /* Return : map pointer to instance starting map or NULL                     */
@@ -550,7 +563,7 @@ static int GameObject_CheckInstance(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_DeleteInstance                                        */
 /* Lua    : object:DeleteInstance(name)                                      */
-/* Info   : Delete the instance                                              */
+/* Info   : Delete the instance for a player                                 */
 /*        : NOTE: this function don't touches the instance directory or      */
 /*        : deletes a map - it only removes the ID tags from the player      */
 /*        : WHEN mapname is the same as the player saved instance            */
