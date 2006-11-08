@@ -434,7 +434,7 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
 /*        : default (no flags): load instance, create if needed              */
 /*        : MAP_CHECK = check PLAYER for valid instance IDs                  */
 /*        : reload (or create) the instance - but use all old files          */
-/*        : if the instance is invalid return NULL
+/*        : if the instance is invalid return NULL                           */
 /*        : MAP_NEW = delete old IDs, create a NEW instance, no reenter      */
 /*        : NOTE: a instance reset DON'T resets the maps - it creates a new  */
 /*        : instance of that name/type.                                      */

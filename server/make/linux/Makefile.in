@@ -68,9 +68,9 @@ NO_X = @no_x@
 # Changed.
 #
 
-EXTRA_CFLAGS = -W
+EXTRA_CFLAGS =
 
-VERSION = daimonin-beta04-0.970p2
+VERSION = daimonin-beta04-0.970p3
 
 ARCHIVE = /tmp/$(VERSION)
 
