@@ -2229,3 +2229,4 @@ const char* create_safe_mapname_sh(char const *mapname)
 
    return p;
 }
+

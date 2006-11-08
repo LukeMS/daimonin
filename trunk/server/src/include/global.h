@@ -106,6 +106,10 @@ typedef signed long long         sint64;
 # define CFREE(x)   free(x)
 #endif
 
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 256
+#endif
+
 /* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
  * rather than have complex #ifdefs throughout the file, lets just figure
  * it out once, here at the top.

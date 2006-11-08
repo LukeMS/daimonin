@@ -348,7 +348,7 @@ static int Game_MatchString(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_ReadyMap                                                    */
-/* Lua    : game:ReadyMap(name)                                              */
+/* Lua    : game:ReadyMap(name, |flags)                                      */
 /* Info   : Make sure that mapname is loaded into memory                     */
 /*        : ReadyMap will ONLY create multi maps!                            */
 /*        : default: (no flags) will do a normal ready_map_name() call       */
