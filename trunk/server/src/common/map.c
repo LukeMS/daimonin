@@ -1001,7 +1001,10 @@ void free_map(mapstruct *m, int flag)
      * in free_objectlinkpt() we don't trigger it inside destroy_object()
      */
     if (m->buttons)
+    {
         free_objectlinkpt(m->buttons);
+        m->buttons = NULL;
+    }
 
     if (flag && m->spaces)
         free_all_objects(m);
@@ -1032,9 +1035,6 @@ void free_map(mapstruct *m, int flag)
 
     FREE_AND_NULL_PTR(m->spaces);
     FREE_AND_NULL_PTR(m->bitmap);
-
-    m->buttons = NULL;
-    m->first_light = NULL;
     
     for (i = 0; i < TILED_MAPS; i++)
     {
