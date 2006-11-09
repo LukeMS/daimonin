@@ -346,12 +346,13 @@ objectlink *add_linked_spawn(object *spawn)
  */
 void remove_linked_spawn_list(mapstruct *map)
 {
-    objectlink        *ol, *tmp;
+    objectlink *ol, *tmp;
 
-    ol = map->linked_spawn_list;
+    if(!(ol = map->linked_spawn_list))
+        return;
+
 #ifdef DEBUG_LINK_SPAWN
-    if(ol)
-        LOG( llevDebug, "LINK_SPAWN::remove linked spawns for map %s\n", STRING_SAFE(map->path ));
+    LOG( llevDebug, "LINK_SPAWN::remove linked spawns for map %s\n", STRING_SAFE(map->path ));
 #endif
 
     for(;ol;ol = tmp)
@@ -359,6 +360,8 @@ void remove_linked_spawn_list(mapstruct *map)
         tmp = ol->next;
         free_objectlink_simple(ol);
     }
+
+    map->linked_spawn_list = NULL;
 }
 
 /* send a signal through the linked mobs
