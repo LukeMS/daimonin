@@ -164,7 +164,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     mob->end();
     mob->convertToMesh(meshName);
     mEntity[index]=Event->GetSceneManager()->createEntity(entityName, meshName);
-    mEntity[index]->setQueryFlags(QUERY_NPC_SELECT_MASK);
+    mEntity[index]->setQueryFlags(ObjectManager::QUERY_NPC_SELECT_MASK);
 }
 
 //===================================================
@@ -227,21 +227,26 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 //===================================================
 void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
 {
+    // ////////////////////////////////////////////////////////////////////
+    // Selection ring.
+    // ////////////////////////////////////////////////////////////////////
     if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
-	mNode[NPC_SELECTION] = npc->getSceneNode()->createChildSceneNode();
+	mNode[NPC_SELECTION] =npc->getSceneNode()->createChildSceneNode();
     mNode[NPC_SELECTION]->attachObject(mPSystem);
     int index;
     if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
     else if (npc->getFriendly() <0) index = PARTICLE_COLOR_ENEMY_STRT;
-    else                  index = PARTICLE_COLOR_NEUTRAL_STRT;
+    else                            index = PARTICLE_COLOR_NEUTRAL_STRT;
     mPSystem->setVisible(true);
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
 	const AxisAlignedBox &AABB = npc->getEntity()->getBoundingBox();
-    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.3;
-    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.3;
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.5;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.5;
 	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeZ, sizeX, true);
+    // ////////////////////////////////////////////////////////////////////
     // Lifebar.
+    // ////////////////////////////////////////////////////////////////////
     if (!showLifebar) return;
     if (mNode[NPC_LIFEBAR]) mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_LIFEBAR]->getName());
     mNode[NPC_LIFEBAR] = mNode[NPC_SELECTION]->getParentSceneNode()->createChildSceneNode();
@@ -263,6 +268,27 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     //GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, FONT_NR,  0x00000000);
     mHardwarePB->unlock();
     setLifebar(npc->getHealthPercentage());
+}
+
+//===================================================
+// Select an object.
+//===================================================
+void ObjectVisuals::selectStatic(ObjectStatic *obj, bool showLifebar)
+{
+    // ////////////////////////////////////////////////////////////////////
+    // Selection ring.
+    // ////////////////////////////////////////////////////////////////////
+    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
+	mNode[NPC_SELECTION] =obj->getSceneNode()->createChildSceneNode();
+    mNode[NPC_SELECTION]->attachObject(mPSystem);
+    int index = PARTICLE_COLOR_NEUTRAL_STRT;
+    mPSystem->setVisible(true);
+    mPSystem->clear();
+    ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
+	const AxisAlignedBox &AABB = obj->getEntity()->getBoundingBox();
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.5;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.5;
+	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeZ, sizeX, true);
 }
 
 //===================================================

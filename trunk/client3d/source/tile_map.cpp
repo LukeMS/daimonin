@@ -228,8 +228,8 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                 default:
                     //Logger::log().error() << "Unknown Tile gfx: " << face;
                     height = 30;
-                    texture_col =6;
-                    texture_row =6;
+                    texture_col =0;
+                    texture_row =2;
                     break;
             }
             TileManager::getSingleton().setMap(x, y, height, texture_row, texture_col);
@@ -249,12 +249,12 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     if (!once) break;
                     once = false;
                     sObject obj;
-                    obj.meshName  = "Tentacle_N_Small.mesh";
+                    obj.meshName  = "Smitty.mesh";
                     //obj.meshName  = "Ogre_Big.mesh";
                     obj.nickName  = "Smith";
                     obj.type      = ObjectManager::OBJECT_NPC;
                     obj.boundingRadius = 2;
-                    obj.friendly  = -1;
+                    obj.friendly  = 20;
                     obj.attack    = 50;
                     obj.defend    = 50;
                     obj.maxHP     = 50;
@@ -265,7 +265,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     obj.pos.subX  = 4;
                     obj.pos.subZ  = 4;
                     obj.level     = 0;
-                    obj.facing    = -90;
+                    obj.facing    = 30;
                     obj.particleNr=-1;
                     ObjectManager::getSingleton().addMobileObject(obj);
                     break;
@@ -303,23 +303,69 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     static bool once = true;
                     if (!once) break;
                     once = false;
-
                     TilePos pos;
                     pos.x = x;
                     pos.z = y;
                     pos.subX  =3;
                     pos.subZ  =3;
-                    Logger::log().error() << "set Position: " << pos.x << " " << pos.z;
                     ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
                     //Logger::log().error() << "we got the Hero face: " << face;
                     break;
                 }
 
                 case 3859: // Sack.
+                {
+                    static bool once = true;
+                    if (!once) break;
+                    once = false;
+                    sObject obj;
+                    obj.meshName  = "Sack_N.mesh";
+                    obj.nickName  = "Monk";
+                    obj.type      = ObjectManager::OBJECT_CONTAINER;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = 0;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = x;
+                    obj.pos.z     = y;
+                    obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
+                    obj.level     = 0;
+                    obj.facing    = -60;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
                     break;
+                }
 
                 case 500:  // Box2.
+                {
+                    static bool once = true;
+                    if (!once) break;
+                    once = false;
+                    sObject obj;
+                    obj.meshName  = "Box_D.mesh";
+                    obj.nickName  = "Monk";
+                    obj.type      = ObjectManager::OBJECT_CONTAINER;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = 0;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = x;
+                    obj.pos.z     = y;
+                    obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
+                    obj.level     = 0;
+                    obj.facing    = -60;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
                     break;
+                }
 
                 case 4227: // Stairs down.
                     break;

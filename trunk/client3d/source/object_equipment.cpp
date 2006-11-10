@@ -24,8 +24,8 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "object_equipment.h"
 #include "object_manager.h"
+#include "object_equipment.h"
 #include "particle_manager.h"
 #include "sound.h"
 #include "events.h"
@@ -436,7 +436,7 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
         //Logger::log().error() << meshName[type][itemID];
         String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
         mItem[bone].entity= Event->GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
-        mItem[bone].entity->setQueryFlags(QUERY_EQUIPMENT_MASK);
+        mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_EQUIPMENT_MASK);
         mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
     }
 }

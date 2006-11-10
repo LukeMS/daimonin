@@ -1,0 +1,14 @@
+material Material_#0
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture arrow.jpg 
+            }
+        }
+    }
+}
+

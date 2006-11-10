@@ -72,7 +72,20 @@ ObjectStatic::ObjectStatic(sObject &obj)
     strObj+= "#Obj_";
     strObj+= StringConverter::toString(mIndex, 8, '0');
     mEntity =mSceneMgr->createEntity(strObj, obj.meshName);
-    mEntity->setQueryFlags(QUERY_ENVIRONMENT_MASK);
+    switch (obj.type)
+    {
+        case ObjectManager::OBJECT_CONTAINER:
+            mEntity->setQueryFlags(ObjectManager::QUERY_CONTAINER);
+            break;
+
+        case ObjectManager::OBJECT_NPC:
+        case ObjectManager::OBJECT_PLAYER:
+            mEntity->setQueryFlags(ObjectManager::QUERY_NPC_MASK);
+            break;
+
+        default:
+            mEntity->setQueryFlags(ObjectManager::QUERY_ENVIRONMENT_MASK);
+    }
 
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
     mBoundingBox.x = (AABB.getMaximum().x + AABB.getMinimum().x)/2;
@@ -92,7 +105,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mAnim = new ObjectAnimate(mEntity);
 
     // Set the walkable bits for the tile on which this object is placed.
-    if (obj.type == ObjectManager::OBJECT_STATIC)
+    if (obj.type < ObjectManager::OBJECT_NPC)
     {
         for (int row =0; row< 8; ++row)
         {

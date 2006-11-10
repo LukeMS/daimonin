@@ -1,0 +1,14 @@
+material Sack
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Sack.jpg 
+            }
+        }
+    }
+}
+
