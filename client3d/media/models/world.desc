@@ -6,29 +6,3 @@
 #####################################################################################
 # Creatures:
 #####################################################################################
-Type     : "player"                       # First "player" is our Hero
-MeshName : "Human_M_Fighter.mesh"
-NickName : "Polyveg"
-WalkableRow0: "255"
-WalkableRow1: "5"
-WalkableRow2: "21"
-WalkableRow3: "21"
-WalkableRow4: "21"
-WalkableRow5: "21"
-WalkableRow6: "17"
-WalkableRow7: "255"
-Friendly : "100"
-Attack   : "10"
-Defend   : "10"   
-MaxHP    : "100"
-MaxMana  : "100"   
-MaxGrace : "100"
-PosX     : "8"
-PosY     : "8"
-PosSubX  : "1"
-PosSubY  : "1"
-Level    : "0"
-Centred  : "1"                            # 1 = Drawn in tile-middle.
-Facing   : "0" # [degrees]
-Particles: "0" 
-

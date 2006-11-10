@@ -81,7 +81,6 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
     mMaxGrace=obj.maxGrace;
     mActGrace=obj.maxGrace;
     mBoundingRadius = obj.boundingRadius;
-    mEntity->setQueryFlags(QUERY_NPC_MASK);
     if (spawn)
         mSpawnSize = 0.0;
     else

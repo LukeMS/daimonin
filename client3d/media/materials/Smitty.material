@@ -1,0 +1,14 @@
+material Material_#27
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Smitty.png 
+            }
+        }
+    }
+}
+

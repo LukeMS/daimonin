@@ -30,7 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_manager.h"
 #include "network.h"
 #include "object_manager.h"
-#include "object_visuals.h"
 #include "particle_manager.h"
 #include "option.h"
 
@@ -57,7 +56,7 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_A:
         {
             static int animNr= 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_IDLE, animNr);
             if (++animNr >= 16) animNr= 0;
             break;
         }
@@ -65,7 +64,7 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_B:
         {
             static int animNr= 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, animNr);
             if (++animNr >= 16) animNr= 0;
             break;
         }
@@ -73,7 +72,7 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_C:
 		{
             static int animNr= 0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
             if (++animNr >= 16) animNr= 0;
 
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
@@ -142,7 +141,7 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_K:
         {
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_HIT,0, 5);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_HIT,0, 5);
             break;
         }
 
@@ -160,9 +159,9 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_Q:
 		{
 		    if (ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO))
-               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
 		    else if (ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO))
-               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
+               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
 			break;
 		}
 
@@ -282,7 +281,7 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0, ObjectNPC::TEXTURE_POS_SKIN, color++);
             break;
         }
 
@@ -290,7 +289,7 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_FACE, color++);
             break;
         }
 
@@ -298,42 +297,42 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HAIR, color++);
             break;
         }
 
         case KC_4:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BODY, color++);
             break;
         }
 
         case KC_5:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_LEGS, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_LEGS, color++);
             break;
         }
 
         case KC_6:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BELT, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_BELT, color++);
             break;
         }
 
         case KC_7:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_SHOES, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE,0, ObjectNPC::TEXTURE_POS_SHOES, color++);
             break;
         }
 
         case KC_8:
         {
             static int color =0;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HANDS, color++);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_TEXTURE, 0,ObjectNPC::TEXTURE_POS_HANDS, color++);
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
             break;
         }
@@ -357,11 +356,11 @@ void CEvent::keyPressed(KeyEvent *e)
 
         case KC_RIGHT:
             //mCamera->  moveRelative (Vector3(100,0,0));
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0, -1);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_TURN, 0, -1);
             break;
 
         case KC_LEFT:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0,  1);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_TURN, 0,  1);
             //mCamera->  moveRelative (Vector3(-100,0,0));
             break;
 
@@ -445,12 +444,12 @@ void CEvent::keyReleased(KeyEvent* e)
             // ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_WALK, 0);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_WALK, 0);
             break;
 
         case KC_RIGHT:
         case KC_LEFT:
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_CURSOR_TURN, 0);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_CURSOR_TURN, 0);
             break;
 
         case KC_J:
@@ -499,7 +498,7 @@ void CEvent::mousePressed (MouseEvent *e)
         {
             RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
             mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
-            mRaySceneQuery->setQueryMask(QUERY_NPC_MASK);
+            mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
             RaySceneQueryResult &result = mRaySceneQuery->execute();
             if (!result.empty())
             {
@@ -535,7 +534,7 @@ void CEvent::mousePressed (MouseEvent *e)
             TilePos pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
             pos.x += pos.z << 8;
             pos.subX += pos.subZ << 8;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, OBJ_GOTO, 0, (int) pos.x, (int) pos.subX);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_GOTO, 0, (int) pos.x, (int) pos.subX);
             mIdleTime =0;
         }
     }

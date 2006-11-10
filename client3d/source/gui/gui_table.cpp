@@ -271,6 +271,7 @@ void GuiTable::drawRow(int row, uint32 color)
     textline.hideText= false;
     textline.BG_Backup = 0;
     textline.font = mFontNr;
+    textline.color =0;
     textline.x1 = mPosX +3;
     std::string::size_type startPos, endPos;
     int offset = (row+1) * mFontHeight;

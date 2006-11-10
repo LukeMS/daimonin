@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "tile_interface.h"
 #include "tile_manager.h"
+#include "object_manager.h"
 #include "logger.h"
 #include "events.h"
 
@@ -97,7 +98,7 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     mPos.z = 0, mPos.subZ =0;
     Ray mouseRay = TileManager::getSingleton().getSceneManager()->getCamera("PlayerCam")->getCameraToViewportRay(mouseX, mouseY);
     mRaySceneQuery->setRay(mouseRay);
-    mRaySceneQuery->setQueryMask(QUERY_TILES_LAND_MASK);
+    mRaySceneQuery->setQueryMask(ObjectManager::QUERY_TILES_LAND_MASK);
 
     // Perform the scene query.
     RaySceneQueryResult &result = mRaySceneQuery->execute();

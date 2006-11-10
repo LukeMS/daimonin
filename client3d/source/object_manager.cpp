@@ -164,7 +164,7 @@ bool ObjectManager::init()
         }
         else if (strType == "static")
         {
-            obj.type = OBJECT_STATIC;
+            obj.type = OBJECT_CONTAINER;
             addMobileObject(obj);
         }
     }
@@ -176,35 +176,21 @@ bool ObjectManager::init()
 //================================================================================================
 void ObjectManager::addMobileObject(sObject &obj)
 {
-    switch (obj.type)
+    if (obj.type < OBJECT_NPC)
     {
-        case OBJECT_STATIC:  // todo: branch this out.
-        {
-            static unsigned int index=0;
-            obj.index = index++;
-            ObjectStatic *obj_static = new ObjectStatic(obj);
-            if (!obj_static)
-                return;
-            mvObject_static.push_back(obj_static);
-            break;
-        }
-        case OBJECT_PLAYER:
-        case OBJECT_NPC:
-        {
-            static unsigned int index=0;
-            obj.index = index++;
-            ObjectNPC *obj_npc = new ObjectNPC(obj, true);
-            if (!obj_npc)
-                return;
-            mvObject_npc.push_back(obj_npc);
-            break;
-        }
-
-        default:
-        {
-            Logger::log().error() << "Unknow mobile object-type in mesh " << obj.meshName;
-            return;
-        }
+        static unsigned int index=0;
+        obj.index = index++;
+        ObjectStatic *obj_static = new ObjectStatic(obj);
+        if (!obj_static) return;
+        mvObject_static.push_back(obj_static);
+    }
+    else
+    {
+        static unsigned int index=0;
+        obj.index = index++;
+        ObjectNPC *obj_npc = new ObjectNPC(obj, true);
+        if (!obj_npc) return;
+        mvObject_npc.push_back(obj_npc);
     }
 }
 
@@ -250,43 +236,33 @@ const Vector3 &ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 //================================================================================================
 void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
 {
-    switch (obj_type)
+    if (obj_type < OBJECT_NPC)
     {
-        case OBJECT_STATIC:
+        ;
+    }
+    else
+    {
+        if (id >= (int) mvObject_npc.size()) return;
+        // if (action == OBJ_WALK) mvObject_npc[id]->walking(val1);
+        if (action == OBJ_GOTO)
         {
-            break;
+            TilePos pos;
+            pos.x = val1 & 0xff;
+            pos.z = val1 >> 8;
+            pos.subX = val2 & 0xff;
+            pos.subZ = val2 >> 8;
+            mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
         }
-        case OBJECT_PLAYER:
-        case OBJECT_NPC:
-        {
-            if (id >= (int) mvObject_npc.size())
-                break;
-            //          if (action == OBJ_WALK     ) mvObject_npc[id]->walking(val1);
-            if (action == OBJ_GOTO)
-            {
-                TilePos pos;
-                pos.x = val1 & 0xff;
-                pos.z = val1 >> 8;
-                pos.subX = val2 & 0xff;
-                pos.subZ = val2 >> 8;
-                mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
-            }
-            if (action == OBJ_TEXTURE    )
-                mvObject_npc[id]->mEquip->setTexture(val1, val2);
-            if (action == OBJ_HIT        )
-                mvObject_npc[id]->setDamage(val1);
-            if (action == OBJ_TURN       )
-                mvObject_npc[id]->turning(val1, false);
-            if (action == OBJ_CURSOR_TURN)
-                mvObject_npc[id]->turning(val1, true);
-            if (action == OBJ_ANIMATION  )
-                mvObject_npc[id]->toggleAnimation(val1, val2);
-            break;
-        }
-
-        default:
-            Logger::log().error() << "The requested objectType does not exist.";
-            break;
+        if (action == OBJ_TEXTURE    )
+            mvObject_npc[id]->mEquip->setTexture(val1, val2);
+        if (action == OBJ_HIT        )
+            mvObject_npc[id]->setDamage(val1);
+        if (action == OBJ_TURN       )
+            mvObject_npc[id]->turning(val1, false);
+        if (action == OBJ_CURSOR_TURN)
+            mvObject_npc[id]->turning(val1, true);
+        if (action == OBJ_ANIMATION  )
+            mvObject_npc[id]->toggleAnimation(val1, val2);
     }
 }
 
@@ -378,10 +354,16 @@ void ObjectManager::selectObject(MovableObject *mob)
     // ////////////////////////////////////////////////////////////////////
     // Select the object.
     // ////////////////////////////////////////////////////////////////////
-    if  (mSelectedType == OBJECT_STATIC)
+    if  (mSelectedType < OBJECT_NPC)
     {
-        // Todo.
-        //mSelectedObject = selectedObject;
+        for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
+        {
+            if ((int)(*i)->getIndex() == index) break;
+            ++selectedObject;
+        }
+        mSelectedObject = -1;
+        mSelectedPos = mvObject_npc[selectedObject]->getTilePos();
+        ObjectVisuals::getSingleton().selectStatic(mvObject_static[selectedObject], false);
     }
     else
     {

@@ -351,7 +351,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             if (!Network::getSingleton().OpenActiveServerSocket())
             {
                 GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connection failed!");
-                Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+                Option::getSingleton().setGameStatus(GAME_STATUS_START);
                 break;
             }
             Network::getSingleton().socket_thread_start();

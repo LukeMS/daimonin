@@ -35,6 +35,7 @@ using namespace Ogre;
 
 class ObjectVisuals
 {
+
 public:
     enum
     {
@@ -52,24 +53,26 @@ public:
         PARTICLE_COLOR_NEUTRAL_STOP,
         PARTICLE_COLOR_SUM
     };
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static ObjectVisuals &getSingleton()
     {
+
         static ObjectVisuals Singleton; return Singleton;
     }
     void Init();
     void freeRecources();
-	/** health < 0 disables the lifebar. */
-    void selectNPC(ObjectNPC *npc, bool showLifebar = true); 
+    /** health < 0 disables the lifebar. */
+    void selectNPC(ObjectNPC *obj, bool showLifebar = true);
+    void selectStatic(ObjectStatic *obj, bool showLifebar = true);
     void unselect();
     void setPosLifebar(Vector3 pos);
     void setLifebar(Real percent, int barWidth = 128);
     void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);
     const AxisAlignedBox &getBoundingBox()
     {
+
         return mAABB;
     }
 private:
@@ -93,6 +96,7 @@ private:
     ~ObjectVisuals();
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
     void buildEntity(int index, const char *meshName, const char *entityName);
-};
+}
+;
 
 #endif

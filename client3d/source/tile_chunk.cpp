@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "define.h"
 #include "option.h"
 #include "logger.h"
+#include "object_manager.h"
 #include "tile_interface.h"
 #include "tile_manager.h"
 
@@ -112,7 +113,7 @@ void TileChunk::createWater()
     mMeshWater->_setBounds(*mBounds); // Rendering is only done when Camera looks into this quad.
     mMeshWater->load();
     mEntityWater = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Water", "Mesh_Water");
-    mEntityWater->setQueryFlags(QUERY_TILES_WATER_MASK);
+    mEntityWater->setQueryFlags(ObjectManager::QUERY_TILES_WATER_MASK);
 }
 
 //================================================================================================
@@ -339,7 +340,7 @@ void TileChunk::createLand(int tileTextureSize)
     mMeshLand->_setBounds(*mBounds); // Rendering is only done when Camera looks into this quad.
     mMeshLand->load();
     mEntityLand = TileManager::getSingleton().getSceneManager()->createEntity("Entity_Land", "Mesh_Land");
-    mEntityLand->setQueryFlags(QUERY_TILES_LAND_MASK);
+    mEntityLand->setQueryFlags(ObjectManager::QUERY_TILES_LAND_MASK);
 }
 
 //================================================================================================

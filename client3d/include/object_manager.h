@@ -40,19 +40,29 @@ using namespace Ogre;
 // monster: ai controlled.
 // ////////////////////////////////////////////////////////////////////
 
-enum
-{
-    OBJ_WALK, OBJ_TURN, OBJ_CURSOR_TURN,
-    OBJ_TEXTURE,
-    OBJ_ANIMATION,
-    OBJ_GOTO,
-    OBJ_HIT,
-    OBJ_SUM
-};
-
 class ObjectManager
 {
 public:
+    enum
+    {
+        OBJ_WALK, OBJ_TURN, OBJ_CURSOR_TURN,
+        OBJ_TEXTURE,
+        OBJ_ANIMATION,
+        OBJ_GOTO,
+        OBJ_HIT,
+        OBJ_SUM
+    };
+    enum
+    {
+        QUERY_PARTICLE_MASK   =1 << 0,
+        QUERY_TILES_WATER_MASK=1 << 1,
+        QUERY_TILES_LAND_MASK =1 << 2,
+        QUERY_ENVIRONMENT_MASK=1 << 3,
+        QUERY_NPC_MASK        =1 << 4,
+        QUERY_CONTAINER       =1 << 5,  /**< Stuff that can be opened (chest, sack,... **/
+        QUERY_EQUIPMENT_MASK  =1 << 6,  /**< Stuff that can be equipped (clothes, weapons,... **/
+        QUERY_NPC_SELECT_MASK =1 << 7,
+    };
     // Attached objects
     enum
     {
@@ -63,9 +73,11 @@ public:
     // Independant objects
     enum
     {
-        OBJECT_STATIC,
-        OBJECT_PLAYER,
-        OBJECT_NPC,
+        // Static objects.
+        OBJECT_CONTAINER,  /**< Chest, Sack, ... **/
+        // Dynamic objects.
+        OBJECT_NPC,        /**< Server contolled character. **/
+        OBJECT_PLAYER,     /**< Human controlled character. **/
         OBJECT_SUM,
     };
     static char *ObjectID[OBJECT_SUM];
@@ -129,10 +141,10 @@ public:
     }
     ObjectNPC *getObjectNPC(unsigned int index)
     {
-		if (index < mvObject_npc.size())
-			return mvObject_npc[index];
-		else
-			return 0;
+        if (index < mvObject_npc.size())
+            return mvObject_npc[index];
+        else
+            return 0;
     }
     ObjectNPC *getSelectedNPC()
     {

@@ -100,18 +100,6 @@ const char PATH_SAMPLES[]               = "../media/sound/";
 //================================================================================================
 //
 //================================================================================================
-enum
-{
-    QUERY_PARTICLE_MASK   =1 << 0,
-    QUERY_TILES_WATER_MASK=1 << 1,
-    QUERY_TILES_LAND_MASK =1 << 2,
-    QUERY_ENVIRONMENT_MASK=1 << 3,
-    QUERY_NPC_MASK        =1 << 4,
-    QUERY_EQUIPMENT_MASK  =1 << 5,
-    QUERY_NPC_SELECT_MASK =1 << 6,
-};
-
-
 typedef struct
 {
     int x, z;
