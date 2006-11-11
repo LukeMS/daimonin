@@ -462,6 +462,8 @@ char  *query_name_full(const object *op, const object *caller)
               safe_strcat(buf[use_buf], " (wielded)", &len, HUGE_BUF);
               break;
             case ARMOUR:
+            case SHOULDER:
+            case LEGS:
             case HELMET:
             case SHIELD:
             case RING:
@@ -868,6 +870,8 @@ char * describe_item(const object *const op)
               /* Armor type objects */
             case ARMOUR:
             case HELMET:
+            case SHOULDER:
+            case LEGS:
             case SHIELD:
             case BOOTS:
             case GLOVES:
@@ -925,7 +929,8 @@ char * describe_item(const object *const op)
                   {                      /* all what a player can apply has dam*10 value */
                       if(op->type == WEAPON || op->type == ARROW || op->type == AMULET || op->type == RING ||
                             op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
-                            op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES)
+                            op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES ||
+                            op->type == SHOULDER || op->type == LEGS)
                           sprintf(buf, "(dam%+.1f)", ((float)op->stats.dam)/10.0f);
                       else
                           sprintf(buf, "(dam%+d)", op->stats.dam);
@@ -1179,6 +1184,8 @@ int need_identify(const object *const op)
         case ARMOUR:
         case SHIELD:
         case HELMET:
+        case SHOULDER:
+        case LEGS:
         case AMULET:
         case BOOTS:
         case GLOVES:

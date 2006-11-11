@@ -1185,6 +1185,12 @@ more
 list armour_helm
 chance 20
 more
+list armour_shoulder
+chance 15
+more
+list armour_legs
+chance 15
+more
 list armour_shield
 chance 15
 more
@@ -1209,6 +1215,12 @@ chance 20
 more
 list armour_helm
 chance 20
+more
+list armour_shoulder
+chance 15
+more
+list armour_legs
+chance 15
 more
 list armour_shield_start
 chance 15
@@ -1619,6 +1631,34 @@ chance 15
 more
 arch belt
 difficulty 9
+chance 15
+end
+treasureone armour_legs
+arch legs_leather
+chance 15
+more
+arch legs_chain
+difficulty 9
+chance 15
+more
+arch legs_plate
+difficulty 15
+chance 15
+end
+treasureone armour_shoulder
+arch shoulder_leather
+chance 15
+more
+arch shoulder_chain
+difficulty 9
+chance 15
+more
+arch shoulder_scale
+difficulty 12
+chance 15
+more
+arch shoulder_plate
+difficulty 15
 chance 15
 end
 treasureone armour_helm
@@ -2374,6 +2414,9 @@ arch hat_feather
 chance 2
 more
 arch dress
+chance 2
+more
+arch pants
 chance 2
 more
 list magic_useup

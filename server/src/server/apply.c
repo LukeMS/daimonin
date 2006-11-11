@@ -2451,6 +2451,8 @@ static void apply_armour_improver(object *op, object *tmp)
      && armor->type != GLOVES
      && armor->type != BRACERS
      && armor->type != SHIELD
+     && armor->type != SHOULDER
+     && armor->type != LEGS
      && armor->type != HELMET)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your marked item is not armour!\n");
@@ -2689,6 +2691,8 @@ int manual_apply(object *op, object *tmp, int aflag)
         case BRACERS:
         case SHIELD:
         case HELMET:
+        case SHOULDER:
+        case LEGS:
         case RING:
         case CLOAK:
         case WAND:
@@ -2983,6 +2987,8 @@ int apply_special(object *who, object *op, int aflags)
 
             case ARMOUR:
             case HELMET:
+            case SHOULDER:
+            case LEGS:
             case SHIELD:
             case RING:
             case BOOTS:
@@ -3146,6 +3152,8 @@ int apply_special(object *who, object *op, int aflags)
 
         case ARMOUR:
         case HELMET:
+        case SHOULDER:
+        case LEGS:
         case BOOTS:
         case GLOVES:
         case GIRDLE:
@@ -3199,6 +3207,8 @@ int apply_special(object *who, object *op, int aflags)
         case SHIELD:
         case ARMOUR:
         case HELMET:
+        case SHOULDER:
+        case LEGS:
         case BOOTS:
         case GLOVES:
         case GIRDLE:

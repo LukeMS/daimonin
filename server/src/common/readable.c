@@ -154,6 +154,7 @@ static char        *path_author[]               =
  */
 static arttypename  art_name_array[]            =
 {
+    {"Shoulders", SHOULDER},{"Legs", LEGS},
     {"Helmets", HELMET}, {"Amulets", AMULET}, {"Shields", SHIELD}, {"Bracers", BRACERS}, {"Boots", BOOTS},
     {"Cloaks", CLOAK}, {"Gloves", GLOVES}, {"Girdles", GIRDLE}, {"Missile Weapons", BOW},
     {"Missiles", ARROW}, {"Weapons", WEAPON}, {"Containers", CONTAINER}, {"Lights", TYPE_LIGHT_APPLY},

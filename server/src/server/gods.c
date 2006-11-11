@@ -350,6 +350,8 @@ void become_follower(object *op, object *new_god)
     {
         stop_using_item(op, ARMOUR, 1);
         stop_using_item(op, HELMET, 1);
+        stop_using_item(op, LEGS, 1);
+        stop_using_item(op, SHOULDER, 1);
         stop_using_item(op, BOOTS, 1);
         stop_using_item(op, GLOVES, 1);
         stop_using_item(op, SHIELD, 1);

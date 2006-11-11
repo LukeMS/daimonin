@@ -1290,6 +1290,12 @@ void fix_player(object *op)
                 case HELMET:
                   pl->equipment[PLAYER_EQUIP_HELM] = tmp;
                   goto fix_player_jump1;
+                case SHOULDER:
+                    pl->equipment[PLAYER_EQUIP_SHOULDER] = tmp;
+                    goto fix_player_jump1;
+                case LEGS:
+                    pl->equipment[PLAYER_EQUIP_LEGS] = tmp;
+                    goto fix_player_jump1;
                 case BOOTS:
                   pl->equipment[PLAYER_EQUIP_BOOTS] = tmp;
                   goto fix_player_jump1;

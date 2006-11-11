@@ -231,6 +231,9 @@ typedef struct item_struct
 #define TYPE_DEEP_SWAMP             138
 #define TYPE_IDENTIFY_ALTAR         139
 #define TYPE_CANCELLATION           141
+#define TYPE_SHOULDER               142
+#define TYPE_LEGS                   143
+
 #define TYPE_MENU                   150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 #define TYPE_BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
 #define TYPE_SWARM_SPELL             153

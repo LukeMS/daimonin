@@ -1,5 +1,5 @@
 Object gauntlets_leather
-name leather gauntlets
+name gauntlets
 layer 3
 face gauntlets_leather.101
 type 100

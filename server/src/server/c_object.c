@@ -557,6 +557,8 @@ char * long_desc(object *tmp, object *caller)
         case ARMOUR:
         case BRACERS:
         case HELMET:
+        case SHOULDER:
+        case LEGS:
         case SHIELD:
         case BOOTS:
         case GLOVES:

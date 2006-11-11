@@ -1894,6 +1894,152 @@ value 9500
 end
 #
 #
+# Shoulders
+#
+Allowed all
+chance 20
+t_style 1
+artifact shoulder_less_fire
+def_arch shoulder_leather
+editor 2:items/armour/shoulders
+Object
+title of lesser fire protection
+type 142
+resist_fire 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 2
+artifact shoulder_less_cold
+def_arch shoulder_leather
+editor 2:items/armour/shoulders
+Object
+title of lesser cold protection
+type 142
+resist_cold 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 3
+artifact shoulder_less_elec
+def_arch shoulder_leather
+editor 2:items/armour/shoulders
+Object
+title of lesser electricity protection
+type 142
+resist_electricity 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 4
+artifact shoulder_less_poison
+def_arch shoulder_leather
+editor 2:items/armour/shoulders
+Object
+title of lesser poison protection
+type 142
+resist_poison 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 5
+artifact shoulder_less_acid
+def_arch shoulder_leather
+editor 2:items/armour/shoulders
+Object
+title of lesser acid protection
+type 142
+resist_acid 15
+is_magical 1
+value 3500
+end
+#
+#
+# LEGS
+#
+Allowed all
+chance 20
+t_style 1
+artifact legs_less_fire
+def_arch legs_leather
+editor 2:items/armour/legs
+Object
+title of lesser fire protection
+type 143
+resist_fire 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 2
+artifact legs_less_cold
+def_arch legs_leather
+editor 2:items/armour/legs
+Object
+title of lesser cold protection
+type 143
+resist_cold 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 3
+artifact legs_less_elec
+def_arch legs_leather
+editor 2:items/armour/legs
+Object
+title of lesser electricity protection
+type 143
+resist_electricity 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 4
+artifact legs_less_poison
+def_arch legs_leather
+editor 2:items/armour/legs
+Object
+title of lesser poison protection
+type 143
+resist_poison 15
+is_magical 1
+value 3500
+end
+#
+Allowed all
+chance 20
+t_style 5
+artifact legs_less_acid
+def_arch legs_leather
+editor 2:items/armour/legs
+Object
+title of lesser acid protection
+type 143
+resist_acid 15
+is_magical 1
+value 3500
+end
+#
+#
 # Shields
 #
 Allowed all
