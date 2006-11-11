@@ -84,6 +84,8 @@ unsigned int query_flags(object *op)
             case SKILL:
             case ARMOUR:
             case HELMET:
+            case SHOULDER:
+            case LEGS:
             case SHIELD:
             case RING:
             case BOOTS:

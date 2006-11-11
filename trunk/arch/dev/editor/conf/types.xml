@@ -2571,6 +2571,78 @@
 </type>
 
 <!--####################################################################-->
+<type number="142" name="Shoulder">
+  <import_type name="Amulet" />
+  <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
+  </ignore>
+  <description><![CDATA[
+    Wearing a shoulder, the object's stats will directly be inherited to
+    the player. Normal shoulders usually increase defense, while other
+    add more special bonuses like stats/resistances paired.
+    ]]>
+  </description>
+  <use><![CDATA[
+    Feel free to create your own special artifacts. However, it is very
+    important that you keep your artifact in balance with existing maps. ]]>
+  </use>
+  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
+    This poses a penalty to spell regeneration speed, for wearing the shoulder.
+    The bigger the spellpoint penalty, the worse.
+  </attribute>
+  <attribute arch="last_sp" editor="slowdown" type="int">
+    Slowdown penalty reduces the player's walking speed when wearing the
+    shoulder. Bigger values are worse - zero is best.
+  </attribute>
+  <attribute arch="magic" editor="magic bonus" type="int">
+    &lt;magic bonus&gt; works just like ac, except that it can be improved by
+    "scrolls of Enchant Armour" or reduced by acid. It is less useful
+    than direct armour-class bonus on the shoulder.
+
+    Important: &lt;magic bonus&gt; on shoulders has no effect if there is no
+    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+  </attribute>
+</type>
+
+
+<!--####################################################################-->
+<type number="143" name="Legs">
+  <import_type name="Amulet" />
+  <ignore>
+    <attribute arch="material" />
+    <attribute arch="material_real" />
+  </ignore>
+  <description><![CDATA[
+    Wearing legs, the object's stats will directly be inherited to
+    the player. Normal legs usually increase defense, while other
+    add more special bonuses like stats/resistances paired.
+    ]]>
+  </description>
+  <use><![CDATA[
+    Feel free to create your own special artifacts. However, it is very
+    important that you keep your artifact in balance with existing maps. ]]>
+  </use>
+  <attribute arch="last_heal" editor="spellpoint penalty" type="int">
+    This poses a penalty to spell regeneration speed, for wearing the legs.
+    The bigger the spellpoint penalty, the worse.
+  </attribute>
+  <attribute arch="last_sp" editor="slowdown" type="int">
+    Slowdown penalty reduces the player's walking speed when wearing the
+    legs. Bigger values are worse - zero is best.
+  </attribute>
+  <attribute arch="magic" editor="magic bonus" type="int">
+    &lt;magic bonus&gt; works just like ac, except that it can be improved by
+    "scrolls of Enchant Armour" or reduced by acid. It is less useful
+    than direct armour-class bonus on the legs.
+
+    Important: &lt;magic bonus&gt; on legs has no effect if there is no
+    &lt;armour class&gt; set. It only works in combination with &lt;armour class&gt;.
+  </attribute>
+</type>
+
+
+<!--####################################################################-->
 <type number="56" name="Holy Altar">
   <import_type name="default_flags" />
   <ignore>

@@ -3078,6 +3078,9 @@
 /items/armour/boots/leggings_chain.101
 /items/armour/boots/leggings_leather.101
 /items/armour/boots/leggings_plate.101
+/items/armour/legs/legs_chain.101
+/items/armour/legs/legs_leather.101
+/items/armour/legs/legs_plate.101
 /items/organic/fruits/lemon01.101
 /items/readable/letter.101
 /connect/lever.111
@@ -3405,6 +3408,7 @@
 /structures/pair_human.131
 /structures/pair_human.151
 /items/weapon/hand_1h/pierce/pallasch.101
+/items/armour/legs/pants.101
 /items/weapon/hand_2h/slash/panzerstecher.101
 /items/weapon/hand_pole/pierce/partisan.101
 /items/armour/mail/pdragon_mail.101
@@ -4010,6 +4014,10 @@
 /floors/shop/shop_def.111
 /floors/shop/shop_empty.111
 /items/weapon/hand_1h/slash/shortsword.101
+/items/armour/shoulders/shoulder_chain.101
+/items/armour/shoulders/shoulder_leather.101
+/items/armour/shoulders/shoulder_plate.101
+/items/armour/shoulders/shoulder_scale.101
 /items/tools/shovel.101
 /outdoor/floors/shovel_dirt.101
 /gods/shrine1.111

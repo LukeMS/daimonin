@@ -1052,7 +1052,7 @@ void free_map(mapstruct *m, int flag)
 
     m->in_memory = MAP_SWAPPED;
 
-    /* Note: m->path and m->tmppath are freed in delete_map */
+    /* Note: m->path, m->orig_path and m->tmppath are freed in delete_map */
 }
 
 /*

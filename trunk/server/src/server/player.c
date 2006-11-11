@@ -369,7 +369,9 @@ void give_initial_items(object *pl, struct oblnk *items)
 				&& (op->type == ARMOUR
 				|| op->type == BOOTS
 				|| op->type == CLOAK
-				|| op->type == HELMET
+                || op->type == HELMET
+                || op->type == SHOULDER
+                || op->type == LEGS
 				|| op->type == SHIELD
 				|| op->type == GLOVES
 				|| op->type == BRACERS
@@ -388,7 +390,8 @@ void give_initial_items(object *pl, struct oblnk *items)
 		/* now we apply the stuff on default - *very* useful for real new players! */
 		else  if(op->type == WEAPON || op->type == AMULET || op->type == RING ||
 				op->type == BOOTS || op->type == HELMET || op->type == BRACERS || op->type == GIRDLE ||
-				op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES)
+				op->type == CLOAK || op->type == ARMOUR || op->type == SHIELD || op->type == GLOVES || 
+                op->type == SHIELD || op->type == GLOVES)
 		{
 			if (need_identify(op))
 			{

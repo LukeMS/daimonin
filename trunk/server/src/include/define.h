@@ -318,12 +318,15 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
 #define TYPE_PEARL              135        /* gem/jewel type pearl */
 #define TYPE_QUEST_INFO			136
-#define TYPE_BEACON             137    /* Beacons are used mostly to locate objects by scripts */
+#define TYPE_BEACON             137     /* Beacons are used mostly to locate objects by scripts */
 
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
 #define TYPE_GUILD_FORCE		140
 #define CANCELLATION            141
+#define SHOULDER                142     /* armour... */
+#define LEGS                    143     /* armour... */
+
 /* More free type values here =) */
 #define MENU                    150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
@@ -630,7 +633,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define IS_ARMOR(op) \
     (op->type == ARMOUR || op->type == SHIELD || op->type == HELMET || \
      op->type == CLOAK || op->type == BOOTS || op->type == GLOVES || \
-     op->type == BRACERS || op->type == GIRDLE)
+     op->type == BRACERS || op->type == GIRDLE || \
+     op->type == SHOULDER || op->type == LEGS)
 
 #define IS_LIVE(__op__) ( (__op__)->type == PLAYER || QUERY_FLAG((__op__),FLAG_MONSTER) || \
                          (QUERY_FLAG((__op__), FLAG_ALIVE) && !QUERY_FLAG((__op__), FLAG_GENERATOR)))

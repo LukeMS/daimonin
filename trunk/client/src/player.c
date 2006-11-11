@@ -51,19 +51,20 @@ typedef enum _player_doll_enum
 {
     PDOLL_ARMOUR,
     PDOLL_HELM,
-    PDOLL_GIRDLE,
+    PDOLL_LEGS,
     PDOLL_BOOT,
     PDOLL_RHAND,
     PDOLL_LHAND,
     PDOLL_RRING,
     PDOLL_LRING,
-    PDOLL_BRACER,
-    PDOLL_AMULET,
-    PDOLL_SKILL,
-    PDOLL_WAND,
-    PDOLL_BOW,
-    PDOLL_GAUNTLET,
+    PDOLL_SHOULDER,
     PDOLL_ROBE,
+    PDOLL_AMULET,
+    PDOLL_BOW,
+    PDOLL_WAND,
+    PDOLL_GIRDLE,
+    PDOLL_GAUNTLET,
+    PDOLL_BRACER,
     PDOLL_LIGHT,
     PDOLL_INIT /* must be last element */
 }   _player_doll_enum;
@@ -76,7 +77,7 @@ typedef struct _player_doll_pos
 
 _player_doll_pos    player_doll[PDOLL_INIT] =
 {
-    {93,91}, {93,44}, {93,136}, {93,194}, {135,131}, {50,131}, {50,170}, {135,170}, {54,87}, {141,46}, {5,200}, {5,238},
+    {93,91}, {93,44}, {93,136}, {93,194}, {135,131}, {50,131}, {50,170}, {135,170}, {54,87}, {141,46}, {180,46}, {5,200}, {5,238},
     {5,144}, {180,144}, {43,46}, {4,46}
 };
 
@@ -722,8 +723,10 @@ void show_player_doll(int x, int y)
                 index = PDOLL_BRACER;
             else if (tmp->itype == TYPE_AMULET)
                 index = PDOLL_AMULET;
-            else if (tmp->itype == TYPE_SKILL)
-                index = PDOLL_SKILL;
+            else if (tmp->itype == TYPE_SHOULDER)
+                index = PDOLL_SHOULDER;
+            else if (tmp->itype == TYPE_LEGS)
+                index = PDOLL_LEGS;
             else if (tmp->itype == TYPE_BOW)
                 index = PDOLL_BOW;
             else if (tmp->itype == TYPE_GLOVES)

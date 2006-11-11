@@ -593,6 +593,10 @@ int skill_ident(object *pl)
                    + do_skill_ident(pl,
                                     HELMET)
                    + do_skill_ident(pl,
+                                    SHOULDER)
+                   + do_skill_ident(pl,
+                                    LEGS)
+                   + do_skill_ident(pl,
                                     GLOVES);
           break;
         case SK_BOWYER:
@@ -974,6 +978,8 @@ void meditate(object *pl)
             if (((tmp->type == ARMOUR && lvl < 12)
               || (tmp->type == HELMET && lvl < 10)
               || (tmp->type == SHIELD && lvl < 6)
+              || (tmp->type == SHOULDER && lvl < 6)
+              || (tmp->type == LEGS && lvl < 6)
               || (tmp->type == BOOTS && lvl < 4)
               || (tmp->type == GLOVES && lvl < 2))
              && QUERY_FLAG(tmp,
