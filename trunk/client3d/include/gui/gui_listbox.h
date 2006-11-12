@@ -49,20 +49,25 @@ public:
     GuiListbox(TiXmlElement *xmlElement, void *parent);
     ~GuiListbox();
     void draw();
+    void clear();
     bool mouseEvent(int MouseAction, int x, int y);
+    int  getSelectedLine();            /**< Returns the selected line number. **/
+    int  addTextline(const char *text, uint32 color);
     const char *extractFirstLineOfText(const char &text);
-    void addTextline(const char *text, uint32 default_color);
+    const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    enum {SIZE_STRING_BUFFER = 1 << 7};  /**< MUST be power of 2. **/
+    enum {SIZE_STRING_BUFFER = 1 << 7}
+    ;  /**< MUST be power of 2. **/
     struct
     {
         String str;
         uint32 color;
         int keyword_clipped;
+        unsigned char startLine; /**< Offset to the start line of the mulitline text. **/
     }
     row[SIZE_STRING_BUFFER];
     Real mClose;                 /**< If closed, only the headline is visible. **/
@@ -72,14 +77,20 @@ private:
     bool mIsClosing, mIsOpening; /**< User pressed open/close button. **/
     bool mVisible;
     bool mDragging;
-    int  mScroll;
+    int  mVScrollOffset;         /**< At which amount the scrollbar was scrolled. **/
+    int  mPixelScroll;           /**< Number of pixel already scrolled. **/
     int  mRowsToScroll;          /**< Rows left to scroll. **/
     int  mMaxVisibleRows;        /**< Number of rows fitting into the window. **/
     int  mPrintPos;
     int  mBufferPos;
     int  mFontHeight;
     int  mActLines;
+    int  mSelectedLine;
+    int  mGfxBufferSize;
+    int  mKeyStart, mKeyCount;
+
     uint32 *mGfxBuffer;
+    unsigned long mTime;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
     // ////////////////////////////////////////////////////////////////////
     // Functions.

@@ -166,10 +166,8 @@ public:
     void reset_gui_interface();
     bool load_gui_interface(int mode, char *data, int len, int pos);
     void gui_interface_send_command(int mode, char *cmd);
-    int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mouseX, int mouseY);
-    int precalc_interface_npc(void);
+    bool get_interface_line(int line, int *element, int *index, char **keyword);
     void show_interface_npc(int mark);
-    void gui_interface_mouse(int mouseAction, int mouseX, int mouseY);
     char *get_parameter_string(char *data, int *pos);
 
     bool mouseEvent(int MouseAction, int x, int y);

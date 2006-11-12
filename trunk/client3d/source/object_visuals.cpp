@@ -243,7 +243,8 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
 	const AxisAlignedBox &AABB = npc->getEntity()->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.5;
     float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.5;
-	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeZ, sizeX, true);
+    if (sizeZ > sizeX) sizeX = sizeZ;
+	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
     // ////////////////////////////////////////////////////////////////////
     // Lifebar.
     // ////////////////////////////////////////////////////////////////////
@@ -286,9 +287,10 @@ void ObjectVisuals::selectStatic(ObjectStatic *obj, bool showLifebar)
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
 	const AxisAlignedBox &AABB = obj->getEntity()->getBoundingBox();
-    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.5;
-    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.5;
-	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeZ, sizeX, true);
+    float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 2.0;
+    float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 2.0;
+    if (sizeZ > sizeX) sizeX = sizeZ;
+	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
 }
 
 //===================================================

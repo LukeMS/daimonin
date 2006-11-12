@@ -290,9 +290,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             OverlayManager::getSingleton().destroy(mOverlay);
             mWindow->resetStatistics();
             GuiManager::getSingleton().showWindow(GUI_WIN_TEXTWINDOW, true);
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Welcome to ~Daimonin 3D~.");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"You need a running server to start the game. Asking metaserver for active server now.");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "You need a running server to start the game. Asking metaserver for active server now.");
             Option::getSingleton().setGameStatus(GAME_STATUS_META);
             break;
         }
@@ -350,13 +350,13 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             Network::GameStatusVersionFlag = false;
             if (!Network::getSingleton().OpenActiveServerSocket())
             {
-                GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connection failed!");
+                GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "connection failed!");
                 Option::getSingleton().setGameStatus(GAME_STATUS_START);
                 break;
             }
             Network::getSingleton().socket_thread_start();
             Option::getSingleton().setGameStatus(GAME_STATUS_VERSION);
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"connected. exchange version.");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "connected. exchange version.");
             break;
         }
 
@@ -380,7 +380,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 }
                 else
                 {
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)"version confirmed.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "version confirmed.");
                     Option::getSingleton().setGameStatus(GAME_STATUS_SETUP);
                 }
             }
@@ -579,26 +579,28 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 {
                     ObjectManager::getSingleton().init();
                     ObjectVisuals::getSingleton().Init();
-                    ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
                     mCamera->setPosition(Vector3(0, 450, 900));
                     GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
                     GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
                     GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
 
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Client3d commands:");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~right~ MB on ground to move.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~left~ MB for selection.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~1 ... 8~ to change cloth.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~X~ for texture quality. ");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~A~ to change Idle animation.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~B~ to change Attack animation.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~C~ to change Agility animation.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~P~ to ready/unready primary weapon.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~S~ to ready/unready secondary weapon.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~Q~ to start attack animation.");
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Press ~T~ to talk to advisor.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Client3d commands:");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~right~ MB on ground to move.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~left~ MB for selection.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~X~ for texture quality. ");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~A~ to change Idle animation.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~B~ to change Attack animation.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~C~ to change Agility animation.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~P~ to ready/unready primary weapon.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~S~ to ready/unready secondary weapon.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~Q~ to start attack animation.");
+                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~T~ to talk to advisor.");
+
+					// Can crash the client...
+					//ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
 
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
                     once = true;

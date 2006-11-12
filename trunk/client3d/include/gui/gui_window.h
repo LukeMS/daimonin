@@ -123,6 +123,13 @@ public:
     bool getTableUserBreak(int element);
     void clearTable(int element);
 
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Listbox stuff.
+    // ////////////////////////////////////////////////////////////////////
+    void clearListbox(int element);
+    int  getSelectedListboxLine(int element);
+    int  addTextline(int element, const char *text, uint32 color);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.

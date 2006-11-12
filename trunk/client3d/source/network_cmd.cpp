@@ -97,14 +97,14 @@ void Network::VersionCmd(unsigned char *data, int len)
         Logger::log().error() << "Invalid CS version (" <<  VERSION_CS << " " << csocket.cs_version << ")";
         if (VERSION_CS > csocket.cs_version)
         {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"The server is outdated!");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Select a different one!");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "The server is outdated!");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Select a different one!");
             Logger::log().error() << "The selected server is outdated.";
         }
         else
         {
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Your client is outdated!");
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"Update your client!");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Your client is outdated!");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Update your client!");
             Logger::log().error() << "The client is outdated.";
         }
         SOCKET_CloseSocket();
@@ -116,7 +116,7 @@ void Network::VersionCmd(unsigned char *data, int len)
     if (!cp)
     {
         sprintf(buf, "Invalid version string: %s", data);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)data);
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, (const char*)data);
         Logger::log().error() << data;
         SOCKET_CloseSocket();
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
@@ -127,12 +127,12 @@ void Network::VersionCmd(unsigned char *data, int len)
     if (csocket.sc_version != VERSION_SC)
     {
         sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, csocket.sc_version);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN,buf);
         if (VERSION_SC > csocket.sc_version)
             sprintf(buf, "The server is outdated!\nSelect a different one!");
         else
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
         Logger::log().error() << buf;
         SOCKET_CloseSocket();
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
@@ -143,7 +143,7 @@ void Network::VersionCmd(unsigned char *data, int len)
     if (!cp || strncmp(cp + 1, "Daimonin Server", 15))
     {
         sprintf(buf, "Invalid server name: %s", cp);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
         Logger::log().error() << buf;
         SOCKET_CloseSocket();
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
@@ -168,7 +168,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
     }
     else
         ++buf;
-    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
+    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
 }
 
 //================================================================================================
@@ -456,7 +456,7 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
         if (tmp) *tmp = 0;
     }
     // we have communication input
-    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)buf); // TESTING!!!
+    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf); // TESTING!!!
     /*
         if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
         {
@@ -1185,7 +1185,7 @@ void Network::SkillRdyCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::PlayerCmd(unsigned char *data, int len)
 {
-    Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+    //Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
     /*
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;

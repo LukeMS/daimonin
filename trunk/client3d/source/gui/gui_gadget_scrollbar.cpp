@@ -313,8 +313,7 @@ void GuiGadgetScrollbar::updateSliderPos(int type, int offset)
     else return;
 
     draw();
-    int pos = (int) (mSliderPos / mSingleLineSize);
-    activated(type, pos);
+    activated(type, (int) (mSliderPos / mSingleLineSize));
 }
 
 //================================================================================================
