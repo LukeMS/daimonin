@@ -193,7 +193,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
         if (!(valString = xmlElem->Attribute("name"))) continue;
         for (int i = 0; i < GUI_WIN_SUM; ++i)
         {
-            if (!stricmp(mGuiWindowNames[i].name,valString))
+            if (!stricmp(mGuiWindowNames[i].name, valString))
             {
                 guiWindow[i].Init(xmlElem);
                 break;
@@ -201,6 +201,14 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
         }
     }
     return true;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+int GuiManager::addTextline(int window, int element, const char *text, uint32 color)
+{
+    return guiWindow[window].addTextline(element, text, color);
 }
 
 //================================================================================================
@@ -244,8 +252,7 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
     }
     // Activate the next window.
     if (key == KC_TAB)
-    {
-    }
+    {}
     // Key event in active window.
     return guiWindow[mActiveWindow].keyEvent(keyChar, key);
 }
@@ -409,7 +416,7 @@ void GuiManager::displaySystemMessage(const char *text)
     //label.clipped = false;
     label.x1 = 0;
     label.y1 = fontH * row;
-    label.color =0;
+    label.color = 0x00ffffff;
     label.x2 = mTexture->getWidth()-1;
     label.y2 = fontH * row + GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
     label.text = text;

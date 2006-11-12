@@ -54,9 +54,9 @@ enum
     GUI_MSG_TXT_GET,
     GUI_MSG_TXT_CHANGED,
     GUI_MSG_BAR_CHANGED,
-    GUI_MSG_ADD_TEXTLINE,
     GUI_MSG_ADD_TABLEROW,
     GUI_MSG_BUT_PRESSED,
+    GUI_MSG_GET_SEL_KEY,  /**< Returns the selected keyword **/
     GUI_MSG_SUM
 };
 
@@ -133,6 +133,19 @@ public:
     {
         guiWindow[window].clearTable(element);
     }
+
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Lisbox stuff.
+    // ////////////////////////////////////////////////////////////////////
+    void clearListbox(int window, int element)
+    {
+       guiWindow[window].clearListbox(element);
+    }
+    int getSelectedListboxLine(int window, int element)
+    {
+        return guiWindow[window].getSelectedListboxLine(element);
+    }
+    int addTextline(int window, int element, const char *text, uint32 color = 0x00ffffff);
 
 private:
     // ////////////////////////////////////////////////////////////////////

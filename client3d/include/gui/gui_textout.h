@@ -102,6 +102,7 @@ public:
     }
     int getCharWidth(int fontNr, int Char)
     {
+        if (Char < 32) return 0;
         return mvFont[fontNr]->charWidth[Char-32]+1;
     }
 private:
@@ -127,7 +128,7 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
-    void drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr = 0, uint32 color =0);
+    void drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr = 0, uint32 color = 0x00ffffff);
 };
 
 #endif

@@ -236,7 +236,7 @@
       <Pos x= "1" y= "18" />
       <Range width= "262" height= "251" />
       <Color red= "60" green= "56" blue= "31" alpha = "200" />
-      <Gadget type= "SCROLLER" name = "List_Msg_VScroll">
+      <Gadget type= "SCROLLER" name = "VScrollbar">
          <Pos x= "263" y= "18" />
          <Range width= "16" height= "251" />
 	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
@@ -419,8 +419,8 @@
     <TextBox x= "60" y= "350" font="02" text= "" width = "392" name= "Login_LoginWarn" />
 
     <TextBox x= "60" y= "400" font="02" text= "" width = "392" name= "Login_LoginInfo1" />
-    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_InputInfo2" />
-    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_InputInfo3" />
+    <TextBox x= "60" y= "415" font="02" text= "" width = "392" name= "Login_LoginInfo2" />
+    <TextBox x= "60" y= "430" font="02" text= "" width = "392" name= "Login_LoginInfo3" />
   </Window>
 
 
@@ -497,9 +497,9 @@
 
     <Listbox type= "GFX_FILL" name= "List_NPC" font="02">
       <Pos x= "10" y= "60" />
-      <Range width= "262" height= "248" />
-      <Gadget type= "SCROLLER" name = "List_NPC_VScroll">
-         <Pos x= "263" y= "18" />
+      <Range width= "270" height= "248" />
+      <Gadget type= "SCROLLER" name = "VScrollbar">
+         <Pos x= "284" y= "60" />
          <Range width= "16" height= "248" />
 	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
 	     <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />

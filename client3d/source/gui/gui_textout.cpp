@@ -41,7 +41,9 @@ const uint32 TXT_COLOR_DEFAULT   = 0x00ffffff;
 const uint32 TXT_COLOR_RED       = 0x00ff0000;
 const uint32 TXT_COLOR_GREEN     = 0x0000ff00;
 const uint32 TXT_COLOR_BLUE      = 0x000000ff;
-const uint32 TXT_COLOR_HIGHLIGHT = 0x0000ff00;
+const uint32 TXT_COLOR_YELLOW    = 0x00ffff00;
+const uint32 TXT_COLOR_HIGHLIGHT = TXT_COLOR_GREEN;
+const uint32 TXT_COLOR_LOWLIGHT  = TXT_COLOR_YELLOW;
 
 enum
 {
@@ -174,15 +176,18 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     if (maxFontHeight < fnt->height)  maxFontHeight = fnt->height;
     fnt->charWidth[0] = fnt->width/2; // ascii(32).
     fnt->textureWidth = fnt->width * CHARS_IN_FONT;
+    // blit the whole texture to memory.
+    uint32 *ttfData = new uint32[texture->getHeight() * texture->getWidth()];
+    PixelBox pb(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, ttfData);
+    texture->getBuffer()->blitToMemory(Box(1, 1, texture->getWidth(), texture->getHeight()),pb);
 
     // Build the RAW datas.
     fnt->data = new uint32[fnt->textureWidth * fnt->height];
     for (unsigned int i=0; i < fnt->textureWidth * fnt->height -1; ++i)
         fnt->data[i] = 0x00ffffff;
-    PixelBox pb(fnt->textureWidth, fnt->height, 1, PF_A8R8G8B8 , fnt->data);
 
     // Copy all needed chars of the font.
-    int xPos = 0;
+    int yPos, xPos = 0;
     for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
     {
         xPos+= fnt->width;
@@ -192,10 +197,19 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         x2 = (int)(u2 * texW); if (x2 > texW-1) x2 = texW-1;
         y1 = (int)(v1 * texH); if (y1 > texH-2) y1 = texH-1;
         y2 = (int)(v2 * texH); if (y2 > texH-1) y2 = texH-1;
-        texture->getBuffer()->blitToMemory(
-            Box(x1, y1, x2, y1 + fnt->height),
-            pb.getSubVolume(Box(xPos, 0, xPos + x2-x1, fnt->height)));
+        for (int x = 0; x < x2-x1; ++x)
+        {
+            yPos=0;
+            for (unsigned int y = y1; y < y1 + fnt->height; ++y)
+            {
+                fnt->data[xPos+x+yPos] = ttfData[x+x1 + y*texture->getWidth()];
+                yPos +=fnt->textureWidth;
+            }
+        }
     }
+    delete[] ttfData;
+
+
     // ////////////////////////////////////////////////////////////////////
     // Create Text Cursor (for text input).
     // ////////////////////////////////////////////////////////////////////
@@ -211,8 +225,10 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         if (fnt->data[i] != 0x00ffffff)
         {
             int alpha = (fnt->data[i] >> 24) & 0xff;
-            if (alpha < 0x20) fnt->data[i] = 0x00ffffff;
-            else              fnt->data[i] = 0xff000000 + (alpha << 16) + (alpha <<8) + alpha;
+            alpha+=0x40;
+            if (alpha > 0xff) alpha = 0xff;
+            if (alpha < 0x70) fnt->data[i] = 0x00ffffff;
+            else              fnt->data[i] = 0xff000000 + (alpha<<16) + (alpha <<8) + alpha;
         }
     }
 
@@ -306,15 +322,13 @@ void GuiTextout::Print(TextLine *line, Texture *texture)
 //================================================================================================
 // Print to a buffer.
 //================================================================================================
-void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int fontNr, uint32 bgColor)
+void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const char *text, unsigned int fontNr, uint32 color)
 {
     if (fontNr > mvFont.size()) fontNr = 0;
     int h = mvFont[fontNr]->height;
     if (h > height) h = height;
-    // Clear the textline.
-    for (int i =0; i < width * h; ++i) dest_data[i] = bgColor;
     if (!text || text[0] == 0) return;
-    drawText(width, h, dest_data, text, false, fontNr);
+    drawText(width, h, dest_data, text, false, fontNr, color);
 }
 
 //================================================================================================
@@ -324,7 +338,6 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 {
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = (unsigned int)mvFont.size()-1;
     uint32 pixFont, pixColor;
-    if (!color) color = TXT_COLOR_DEFAULT;
 
     //  uint32 *strtX = dest_data;
     uint32 *stopX = dest_data + width;
@@ -335,15 +348,15 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
         // Parse format commands.
         switch (*text)
         {
-                /*
-                  // atm we draw only 1 line of text in this function!
-                      case '\n':
-                        strtX += mvFont[fontNr]->height * width;
-                        dest_data = strtX;
-                        stopX = strtX + width;
-                        ++text;
-                      break;
-                */
+            case TXT_CMD_LOWLIGHT:
+                if (!*(++text)) return;
+                if (color == TXT_COLOR_DEFAULT)
+                {
+                    color = TXT_COLOR_LOWLIGHT;
+                }
+                else color = TXT_COLOR_DEFAULT;
+                break;
+
             case TXT_CMD_HIGHLIGHT:
                 if (!*(++text)) return;
                 if (color == TXT_COLOR_DEFAULT)

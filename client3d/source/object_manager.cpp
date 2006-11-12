@@ -395,7 +395,7 @@ void ObjectManager::selectObject(MovableObject *mob)
                 sprintf(buffer, "Enemy: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
                 ObjectVisuals::getSingleton().selectNPC(mvObject_npc[selectedObject]);
             }
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)(buffer));
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
             mSelectedObject = selectedObject; // must be set before ::selectNPC
             mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
             if (mSelectedFriendly < 0)

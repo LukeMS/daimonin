@@ -132,7 +132,6 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     const char *strTmp;
     int screenH = GuiManager::getSingleton().getScreenHeight();
     int screenW = GuiManager::getSingleton().getScreenWidth();
-
     if ((strTmp = xmlRoot->Attribute("name")))
         Logger::log().info () << "Parsing window: " << strTmp;
     // ////////////////////////////////////////////////////////////////////
@@ -260,7 +259,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         TextLine *textline = new TextLine;
         textline->index = index;
         textline->hideText= false;
-        textline->color =0;
+        textline->color = 0x00ffffff;
         if ((strTmp = xmlElem->Attribute("font")))   textline->font = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("x")))      textline->x1   = atoi(strTmp);
         if ((strTmp = xmlElem->Attribute("y")))      textline->y1   = atoi(strTmp);
@@ -396,7 +395,7 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     textline.index = -1;
     textline.hideText= false;
     textline.BG_Backup = 0;
-    textline.color = 0;
+    textline.color = 0x00ffffff;
     if ((strTmp = xmlElem->Attribute("x")))    textline.x1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("y")))    textline.y1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("font"))) textline.font = atoi(strTmp);
@@ -455,9 +454,9 @@ bool GuiWindow::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 {
-    if (!mOverlay->isVisible()) return 0;
+    if (!mOverlay->isVisible()) return false;
     // No gadget dragging && not within this window. No need for further checks.
-    if (!mGadgetDrag && (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)) return 0;
+    if (!mGadgetDrag && (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)) return false;
 
     int x = rx - mPosX;
     int y = ry - mPosY;
@@ -586,6 +585,48 @@ void GuiWindow::clearTable(int element)
     }
 }
 
+
+//================================================================================================
+// .
+//================================================================================================
+int GuiWindow::getSelectedListboxLine(int element)
+{
+    for (unsigned int i = 0; i < mvListbox.size(); ++i)
+    {
+        if (mvListbox[i]->getIndex() == element)
+            return mvListbox[i]->getSelectedLine();
+    }
+    return -1;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+int GuiWindow::addTextline(int element, const char *text, uint32 color)
+{
+    for (unsigned int i = 0; i < mvListbox.size() ; ++i)
+    {
+        if (mvListbox[i]->getIndex() == element)
+            return mvListbox[i]->addTextline(text, color);
+    }
+    return 0;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::clearListbox(int element)
+{
+    for (unsigned int i = 0; i < mvListbox.size() ; ++i)
+    {
+        if (mvListbox[i]->getIndex() == element)
+        {
+            mvListbox[i]->clear();
+            return ;
+        }
+    }
+}
+
 //================================================================================================
 // Parse a message.
 //================================================================================================
@@ -600,16 +641,6 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
                 if (mvTable[i]->getIndex() != element)
                     continue;
                 mvTable[i]->addRow((const char *)value);
-                break;
-            }
-            break;
-
-        case GUI_MSG_ADD_TEXTLINE:
-            for (unsigned int i = 0; i < mvListbox.size() ; ++i)
-            {
-                if (mvListbox[i]->getIndex() != element)
-                    continue;
-                mvListbox[i]->addTextline((const char *)value, (uint32)value2);
                 break;
             }
             break;
@@ -658,7 +689,6 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
                 return mvGadgetCombobox[i]->getText();
             }
             break;
-
         default:
             break;
     }
@@ -683,6 +713,7 @@ void GuiWindow::setHeight(int newHeight)
 //================================================================================================
 void GuiWindow::update(Real timeSinceLastFrame)
 {
+    if (!mOverlay->isVisible()) return;
     // Update drag animation (move back on wrong drag).
     ;
     // Speak Animation.
@@ -704,5 +735,5 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
     if (index == GUI_BUTTON_CLOSE)
         me->setVisible(false);
-    GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"button event... ");
+    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "button event... ");
 }
