@@ -298,7 +298,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
           field_ptr2 = (void *) ((char *) obj->data.anything + attrib->extra_data);
           tmp = *(object * *) field_ptr;
           tag = *(tag_t *) field_ptr2;
-          return push_object(L, &GameObject, OBJECT_VALID(tmp, tag) ? tmp : NULL);
+          return push_object(L, &GameObject, OBJECT_VALID_OR_REMOVED(tmp, tag) ? tmp : NULL);
 
         default:
           luaL_error(L, "BUG: unknown attribute type %d", attrib->type);
