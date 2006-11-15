@@ -435,7 +435,11 @@ uint32 get_nrof_quest_item(const struct obj *target, const char *aname, const ch
 static inline int check_quest_complete(struct obj *target, struct obj *quest)
 {
 	object *tmp;
-
+    
+    /* FIXME: Is this test really correct? The following seems more correct:
+     * if(!quest || quest->magic < quest->state || quest->last_eat == -1)  
+     * (state stores the "finish" step for "normal" quests, quest->magic is the counter)
+     * Gecko 2006-11-15 */
 	if(!quest || quest->magic < quest->last_heal || quest->last_eat == -1)
 		return FALSE;
 
