@@ -167,7 +167,7 @@ typedef struct pl_player
     uint32              instance_flags;         /* status info of the instance */
 
     int					map_update_cmd;			/* for server->client protocol */
-	int					map_update_tile;			/* for server->client protocol */
+    int					map_update_tile;		/* for server->client protocol */
     struct mapdef      *last_update;			/* when moving on tiled maps, player can change
                                                  * map without triggering mapevents and new_map_cmd.
                                                  * This will break client cache and script events.

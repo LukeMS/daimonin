@@ -140,6 +140,7 @@
 #define GET_MAP_OB_LAST(M,X,Y)              ( (M)->spaces[(X) + (M)->width * (Y)].last )
 #define GET_MAP_OB_LAYER(_M_,_X_,_Y_,_Z_)   ( (_M_)->spaces[(_X_) + (_M_)->width * (_Y_)].layer[_Z_] )
 #define get_map_ob  GET_MAP_OB
+#define GET_BOTTOM_MAP_OB(O)             ( (O)->map ? GET_MAP_OB((O)->map, (O)->x, (O)->y) : NULL)
 
 #define SET_MAP_OB(M,X,Y,tmp)                   ( (M)->spaces[(X) + (M)->width * (Y)].first = (tmp) )
 #define SET_MAP_OB_LAST(M,X,Y,tmp)              ( (M)->spaces[(X) + (M)->width * (Y)].last = (tmp) )

@@ -55,6 +55,12 @@ static int apply_id_altar(object *money, object *altar, object *pl)
      */
     if (!check_altar_sacrifice(altar, money) || money->type != MONEY)
         return 0;
+    
+    /* Event trigger and quick exit */
+    if(trigger_object_plugin_event(EVENT_TRIGGER,
+                altar, pl, money,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+        return FALSE;
 
     marked = find_marked_object(pl);
     /* if the player has a marked item, identify that if it needs to be
@@ -823,7 +829,7 @@ int improve_armour(object *op, object *improver, object *armour)
 #define CONV_NR(xyz)    ((unsigned long) xyz->stats.sp)      /* receive number */
 #define CONV_NEED(xyz)  ((unsigned long) xyz->stats.food)    /* cost number */
 
-int convert_item(object *item, object *converter)
+int convert_item(object *item, object *converter, object *originator)
 {
     int     nr  = 0;
     object *tmp;
@@ -838,6 +844,12 @@ int convert_item(object *item, object *converter)
         nr = (int) (((sint64)item->nrof * item->value) / (sint64)CONV_NEED(converter));
         if (!nr)
             return 0;
+
+        if(trigger_object_plugin_event(EVENT_TRIGGER,
+                converter, item, originator,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            return 0;
+
         cost = nr * CONV_NEED(converter) / item->value;
         /* take into account rounding errors */
         if (nr * CONV_NEED(converter) % item->value)
@@ -854,6 +866,12 @@ int convert_item(object *item, object *converter)
          || CONV_FROM(converter) != item->arch->name
          || (CONV_NEED(converter) && CONV_NEED(converter) > item->nrof))
             return 0;
+        
+        if(trigger_object_plugin_event(EVENT_TRIGGER,
+                converter, item, originator,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            return 0;
+
         if (CONV_NEED(converter))
         {
             nr = item->nrof / CONV_NEED(converter);
@@ -1087,12 +1105,12 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
             /* If it is connected, push the button.  Fixes some problems with
              * old maps.
              */
-            push_button(altar);
+            push_button(altar, originator);
         }
         else
         {
             altar->weight_limit = 1;  /* works only once */
-            push_button(altar);
+            push_button(altar, originator);
         }
         return sacrifice == NULL;
     }
@@ -1114,6 +1132,12 @@ static int apply_shop_mat(object *shop_mat, object *op)
 {
     int     rv  = 0;
     object *tmp;
+    
+    /* Event trigger and quick exit */
+    if(trigger_object_plugin_event(EVENT_TRIGGER,
+                shop_mat, op, NULL,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+        return FALSE;
 
     SET_FLAG(op, FLAG_NO_APPLY);   /* prevent loops */
 
@@ -1274,12 +1298,6 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
     }
     recursion_depth++;
 
-    /* TODO: handle return value */
-    /* TODO: move to better position */
-    trigger_object_plugin_event(EVENT_TRIGGER,
-            trap, victim, originator,
-            NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
-
     switch (trap->type)
     {
           /* these objects can trigger other objects connected to them.
@@ -1288,13 +1306,13 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
            */
         case BUTTON:
         case PEDESTAL:
-          update_button(trap);
+          update_button(trap, originator);
           goto leave;
 
         case TRIGGER_BUTTON:
         case TRIGGER_PEDESTAL:
         case TRIGGER_ALTAR:
-          check_trigger(trap, victim);
+          check_trigger(trap, victim, originator);
           goto leave;
 
         case CHECK_INV:
@@ -1311,7 +1329,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
 
         case CONVERTER:
           if (!(flags & MOVE_APPLY_VANISHED))
-              convert_item(victim, trap);
+              convert_item(victim, trap, originator);
           goto leave;
 
         case PLAYERMOVER:
@@ -1328,6 +1346,11 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           /* should be walk_on/fly_on only */
           if (victim->direction)
           {
+              if(trigger_object_plugin_event(EVENT_TRIGGER,
+                          trap, victim, originator,
+                          NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                  goto leave;
+
               if ((victim->direction = victim->direction + trap->direction) > 8)
                   victim->direction = (victim->direction % 8) + 1;
               update_turn_face(victim);
@@ -1337,6 +1360,11 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
         case DIRECTOR:
           if (victim->direction)
           {
+              if(trigger_object_plugin_event(EVENT_TRIGGER,
+                          trap, victim, originator,
+                          NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                  goto leave;
+
               if (QUERY_FLAG(victim, FLAG_IS_MISSILE))
               {
                   SET_FLAG(victim, FLAG_WAS_REFLECTED);
@@ -1350,6 +1378,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           goto leave;
 
 
+        /* The following missile types do not cause TRIGGER events */
         case MMISSILE:
           /* no need to hit anything */
           if (IS_LIVE(victim) && !(flags & MOVE_APPLY_VANISHED))
@@ -1398,6 +1427,10 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               check_fired_arch(trap);
           goto leave;
 
+          /* FIXME: this doesn't look correct. 
+           * This function will be called once for every object on the square (I think), 
+           * but the code below also goes through the first 100 objects on the square) 
+           * Gecko 2006-11-14. */
         case TRAPDOOR:
           {
               int       max, sound_was_played;
@@ -1441,17 +1474,16 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
           if ((flags & MOVE_APPLY_VANISHED) || trap->stats.wc > 0)
               goto leave;
           play_sound_map(victim->map, victim->x, victim->y, SOUND_FALL_HOLE, SOUND_NORMAL);
-          if (victim->type == PLAYER)
-              new_draw_info(NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
 
-          enter_map_by_exit(victim, trap);
+          if(enter_map_by_exit(victim, trap))
+              if (victim->type == PLAYER)
+                  new_draw_info(NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
+
           goto leave;
 
         case EXIT:
-          if (!(flags & MOVE_APPLY_VANISHED) && victim->type == PLAYER && EXIT_PATH(trap))
-          {
+          if (!(flags & MOVE_APPLY_VANISHED) && victim->type == PLAYER)
               enter_map_by_exit(victim, trap);
-          }
           goto leave;
 
         case SHOP_MAT:
@@ -1470,9 +1502,14 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
               apply_sign(victim, trap);
           goto leave;
 
+          /* FIXME: Huh? can containers be WALK_ON??? Gecko 2006-11-14 */
         case CONTAINER:
           if (victim->type == PLAYER)
-              (void) esrv_apply_container(victim, trap);
+          {
+              if(!trigger_object_plugin_event(EVENT_TRIGGER, trap, victim, NULL,
+                          NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                  esrv_apply_container(victim, trap);
+          }
           goto leave;
 
         case RUNE:
@@ -2567,16 +2604,16 @@ int manual_apply(object *op, object *tmp, int aflag)
           tmp->weight_limit = tmp->weight_limit ? 0 : 1;
           SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
           update_object(tmp, UP_OBJ_FACE);
-          push_button(tmp);
+          push_button(tmp, op);
           return 4;
 
         case TRIGGER:
-          if (check_trigger(tmp, op))
+          if(trigger_object_plugin_event(
+                      EVENT_APPLY, tmp, op, NULL,
+                      NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+              return 1; /* 1 = do not write an error message to the player */
+          if (check_trigger(tmp, op, op))
           {
-              if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL,
-                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                  return 1; /* 1 = do not write an error message to the player */
               new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
               play_sound_map(tmp->map, tmp->x, tmp->y, SOUND_TURN_HANDLE, SOUND_NORMAL);
           }
@@ -2589,18 +2626,11 @@ int manual_apply(object *op, object *tmp, int aflag)
         case EXIT:
           if (op->type != PLAYER)
               return 0;
-          if (!EXIT_PATH(tmp))
-          {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(tmp));
-          }
-          else
-          {
-              if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL,
-                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
-                  return 4; /* 1 = do not write an error message to the player */
+          if(trigger_object_plugin_event(
+                      EVENT_APPLY, tmp, op, NULL,
+                      NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+              return 4; /* 1 = do not write an error message to the player */
               enter_map_by_exit(op, tmp);
-          }
           return 4;
 
         case SIGN:
