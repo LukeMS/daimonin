@@ -475,8 +475,9 @@ endmsg
 x 2
 y 17
 arch event_obj
-sub_type 1
+name Lua
 race /dev/testmaps/Trigger_Connection.lua
+sub_type 1
 end
 end
 arch floor_ostone1
@@ -609,6 +610,19 @@ arch floor_ostone1
 x 3
 y 20
 end
+arch door_wood1
+x 3
+y 20
+end
+arch pedestal
+connected 42
+x 3
+y 20
+arch event_obj
+sub_type 10
+race PedestalScript.lua
+end
+end
 arch floor_ostone1
 x 3
 y 21
@@ -708,6 +722,13 @@ x 4
 y 19
 end
 arch floor_ostone1
+x 4
+y 20
+end
+arch sign
+msg
+Left: scripted pedestal + door, right: invisible scripted pedestal
+endmsg
 x 4
 y 20
 end
@@ -842,6 +863,17 @@ arch floor_ostone1
 x 5
 y 20
 end
+arch pedestal_trigger
+layer 0
+sys_object 1
+x 5
+y 20
+arch event_obj
+name Lua
+race PedestalScript.lua
+sub_type 10
+end
+end
 arch floor_ostone1
 x 5
 y 21
@@ -1042,9 +1074,29 @@ arch floor_ostone1
 x 7
 y 19
 end
+arch sign
+msg
+(scripted) walk_on exit that doesn't work if you have a weapon applied
+endmsg
+x 7
+y 19
+end
 arch floor_ostone1
 x 7
 y 20
+end
+arch exit
+name metal detector
+slaying testmap_plugin
+hp 2
+sp 2
+x 7
+y 20
+arch event_obj
+name Lua
+race ExitScript.lua
+sub_type 10
+end
 end
 arch floor_ostone1
 x 7
