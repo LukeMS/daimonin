@@ -576,6 +576,18 @@ int enter_map_by_exit(object *op, object *exit_ob)
         LOG(llevBug, "BUG: enter_map_by_exit(): called with object %s but without exit ob!\n", query_name(op));
         return FALSE;
     }
+    
+    /* Event trigger and quick exit */
+    if(trigger_object_plugin_event(EVENT_TRIGGER,
+                exit_ob, op, NULL,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+        return FALSE;
+
+    if(! EXIT_PATH(exit_ob))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
+        return FALSE;
+    }
 
     /* our target map is in ->slaying in non normalized format, in last_eat the type.
     * Non normalized means, it can be something like "../test/../test/....."

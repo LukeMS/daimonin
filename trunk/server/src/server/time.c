@@ -750,12 +750,12 @@ void move_detector(object *op)
         if (detected && last == 0)
         {
             op->weight_limit = 1;
-            push_button(op);
+            push_button(op, tmp);
         }
         if (!detected && last == 1)
         {
             op->weight_limit = 0;
-            push_button(op);
+            push_button(op, NULL);
         }
     }
     else
@@ -764,12 +764,12 @@ void move_detector(object *op)
         if (detected && last == 1)
         {
             op->weight_limit = 0;
-            push_button(op);
+            push_button(op, tmp);
         }
         if (!detected && last == 0)
         {
             op->weight_limit = 1;
-            push_button(op);
+            push_button(op, NULL);
         }
     }
 }
@@ -780,7 +780,7 @@ void animate_trigger(object *op)
     if ((unsigned char)++op->stats.wc >= NUM_ANIMATIONS(op) / NUM_FACINGS(op))
     {
         op->stats.wc = 0;
-        check_trigger(op, NULL);
+        check_trigger(op, NULL, NULL);
     }
     else
     {
@@ -1580,7 +1580,7 @@ void move_timer(object *op)
         op->stats.hp--;
         if(op->stats.hp < 0)
         {
-            use_trigger(op);
+            use_trigger(op, NULL);
 
             if(QUERY_FLAG(op, FLAG_CURSED))
                 op->stats.hp = op->stats.maxhp;
@@ -1674,7 +1674,7 @@ void move_environment_sensor(object *op)
 
         op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
 
-        push_button(op);
+        push_button(op, NULL);
     }
 }
 
@@ -1779,7 +1779,7 @@ void move_conn_sensor(object *op)
     {
         SET_FLAG(op, FLAG_INITIALIZED);
         op->weight_limit = newvalue;
-        push_button(op);
+        push_button(op, NULL);
     }
 }
 

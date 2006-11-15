@@ -30,7 +30,7 @@
 static int ignore_trigger_events = 0;
 
 /* Send signal from op to connection ol */
-void signal_connection(object *op, oblinkpt *olp)
+void signal_connection(object *op, oblinkpt *olp, object *originator)
 {
     object     *tmp;
     objectlink *ol;
@@ -38,8 +38,9 @@ void signal_connection(object *op, oblinkpt *olp)
     /* tmp->weight_limit == state of trigger */
 
     if(! ignore_trigger_events)
-        trigger_object_plugin_event(EVENT_TRIGGER,
-                op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+        if(trigger_object_plugin_event(EVENT_TRIGGER,
+                op, originator, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            return;
 
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
@@ -66,9 +67,10 @@ void signal_connection(object *op, oblinkpt *olp)
             return;
         }
 
-        if(! ignore_trigger_events)
-            trigger_object_plugin_event(EVENT_TRIGGER,
-                    tmp, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+        if(! ignore_trigger_events && tmp != op)
+            if(trigger_object_plugin_event(EVENT_TRIGGER,
+                    tmp, originator, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                continue;
 
         switch (tmp->type)
         {
@@ -215,7 +217,7 @@ void signal_connection(object *op, oblinkpt *olp)
  * to make sure that all gates and other buttons connected to the
  * button reacts to the (eventual) change of state.
  */
-void update_button(object *op)
+void update_button(object *op, object *activator)
 {
     object     *ab, *tmp, *head;
     unsigned int fly, move;
@@ -270,7 +272,7 @@ void update_button(object *op)
     {
         SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->weight_limit);
         update_object(op, UP_OBJ_FACE);
-        push_button(op); /* Make all other buttons the same */
+        push_button(op, activator); /* Make all other buttons the same */
     }
 }
 
@@ -304,7 +306,7 @@ void update_buttons(mapstruct *m)
             {
                 case BUTTON:
                 case PEDESTAL:
-                    update_button(ol->objlink.ob);
+                    update_button(ol->objlink.ob, NULL);
                     break;
 
                 case CHECK_INV:
@@ -324,7 +326,7 @@ void update_buttons(mapstruct *m)
                 case TRIGGER_ALTAR:
                     /* check_trigger will itself sort out the numbers of
                      * items above the trigger */
-                    check_trigger(ol->objlink.ob, ol->objlink.ob);
+                    check_trigger(ol->objlink.ob, ol->objlink.ob, NULL);
                     break;
 
                 case TYPE_CONN_SENSOR:
@@ -333,7 +335,7 @@ void update_buttons(mapstruct *m)
 
                 case CF_HANDLE:
                 case TRIGGER:
-                    push_button(ol->objlink.ob);
+                    push_button(ol->objlink.ob, NULL);
                     break;
 
                 default:
@@ -349,16 +351,16 @@ void update_buttons(mapstruct *m)
  * Push the specified object.  This can affect other buttons/gates/handles
  * altars/pedestals/holes in the whole map.
  */
-void push_button(object *op)
+void push_button(object *op, object *pusher)
 {
-    signal_connection(op, get_button_links(op));
+    signal_connection(op, get_button_links(op), pusher);
 }
 
-void use_trigger(object *op)
+void use_trigger(object *op, object *user)
 {
     /* Toggle value */
     op->weight_limit = !op->weight_limit;
-    push_button(op);
+    push_button(op, user);
 }
 
 /* We changed this function to fit in the anim system. This is used from
@@ -463,19 +465,19 @@ int operate_altar(object *altar, object **sacrifice)
     return 1;
 }
 
-void trigger_move(object *op, int state) /* 1 down and 0 up */
+void trigger_move(object *op, int state, object *originator) /* 1 down and 0 up */
 {
     op->stats.wc = state;
     if (state)
     {
-        use_trigger(op);
+        use_trigger(op, originator);
         op->speed = 1.0f / (float) op->arch->clone.stats.exp;
         update_ob_speed(op);
         op->speed_left = -1;
     }
     else
     {
-        use_trigger(op);
+        use_trigger(op, originator);
         op->speed = 0;
         update_ob_speed(op);
     }
@@ -494,7 +496,7 @@ void trigger_move(object *op, int state) /* 1 down and 0 up */
  *
  * TRIGGER_BUTTON, TRIGGER_PEDESTAL: Returns 0.
  */
-int check_trigger(object *op, object *cause)
+int check_trigger(object *op, object *cause, object *originator)
 {
     object *tmp;
     int     push = 0, tot = 0;
@@ -520,18 +522,20 @@ int check_trigger(object *op, object *cause)
                   if (in_movement || !push)
                       return 0;
               }
-              trigger_move(op, push);
+              trigger_move(op, push, originator);
           }
           return 0;
 
         case TRIGGER_PEDESTAL:
           if (cause)
           {
+//              for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
               for (tmp = op->above; tmp; tmp = tmp->above)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
                   if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
-                   && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER)))
+                   && (head->race == op->slaying || (op->slaying == shstr_cons.player && head->type == PLAYER)) 
+                   && tmp != op)
                   {
                       push = 1;
                       break;
@@ -545,7 +549,7 @@ int check_trigger(object *op, object *cause)
               if (in_movement || !push)
                   return 0;
           }
-          trigger_move(op, push);
+          trigger_move(op, push, originator);
           return 0;
 
         case TRIGGER_ALTAR:
@@ -560,7 +564,7 @@ int check_trigger(object *op, object *cause)
 
                   if (op->last_sp >= 0)
                   {
-                      trigger_move(op, 1);
+                      trigger_move(op, 1, originator);
                       if (op->last_sp > 0)
                           op->last_sp = -op->last_sp;
                   }
@@ -569,7 +573,7 @@ int check_trigger(object *op, object *cause)
                       /* for trigger altar with last_sp, the ON/OFF
                        status (-> +/- value) is "simulated": */
                       op->weight_limit = !op->weight_limit;
-                      trigger_move(op, 1);
+                      trigger_move(op, 1, originator);
                       op->last_sp = -op->last_sp;
                       op->weight_limit = !op->weight_limit;
                   }
@@ -590,7 +594,7 @@ int check_trigger(object *op, object *cause)
                  Otherwise (default), the connected value will be
                  pushed twice: First by sacrifice, second by reset! -AV */
               if (!op->last_sp)
-                  trigger_move(op, 0);
+                  trigger_move(op, 0, originator);
               else
               {
                   op->stats.wc = 0;
@@ -610,7 +614,7 @@ int check_trigger(object *op, object *cause)
           }
           SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + push);
           update_object(op, UP_OBJ_FACE);
-          trigger_move(op, push);
+          trigger_move(op, push, originator);
           return 1;
 
         default:
@@ -918,10 +922,10 @@ void check_inv(object *op, object *trig)
     {
         if (trig->last_heal)
             decrease_ob(match);
-        use_trigger(trig);
+        use_trigger(trig, op);
     }
     else if (!match && !trig->last_sp)
-        use_trigger(trig);
+        use_trigger(trig, op);
 }
 
 
