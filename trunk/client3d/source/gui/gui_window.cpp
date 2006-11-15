@@ -199,9 +199,13 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     if ((xmlElem = xmlRoot->FirstChildElement("DragArea")))
     {
         if ((strTmp = xmlElem->Attribute("x")))      mDragPosX1 = atoi(strTmp);
+        if (mDragPosX1 > mWidth) mDragPosX1 = mWidth-1;
         if ((strTmp = xmlElem->Attribute("y")))      mDragPosY1 = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("width")))  mDragPosX2 = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("height"))) mDragPosY2 = atoi(strTmp);
+        if (mDragPosY1 > mHeight) mDragPosY1 = mHeight-1;
+        if ((strTmp = xmlElem->Attribute("width")))  mDragPosX2 = mDragPosX1 + atoi(strTmp);
+        if (mDragPosX2 > mWidth) mDragPosX2 = mWidth;
+        if ((strTmp = xmlElem->Attribute("height"))) mDragPosY2 = mDragPosY1 + atoi(strTmp);
+        if (mDragPosY2 > mHeight) mDragPosY2 = mHeight;
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the Tooltip entries.
@@ -241,6 +245,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             printParsedTextline(xmlElem);
             continue;
         }
+        String strName = strTmp;
         int index = -1;
         for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
         {
@@ -260,23 +265,20 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         textline->index = index;
         textline->hideText= false;
         textline->color = 0x00ffffff;
-        if ((strTmp = xmlElem->Attribute("font")))   textline->font = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("x")))      textline->x1   = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("y")))      textline->y1   = atoi(strTmp);
-        if ((strTmp = xmlElem->Attribute("width")))  textline->width= atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("font")))  textline->font = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("x")))     textline->x1   = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("y")))     textline->y1   = atoi(strTmp);
+        if ((strTmp = xmlElem->Attribute("width"))) textline->x2   = atoi(strTmp) + textline->x1;
+        textline->y2 = textline->y1 + GuiTextout::getSingleton().getFontHeight(textline->font);
+        if (textline->x1 > (unsigned int) mWidth)   textline->x1 = 0; // If pos is out of window set it to leftmost pos.
+        if (textline->x2 > (unsigned int) mWidth)   textline->x2 = mWidth-1;
+        if (textline->y1 > (unsigned int) mHeight)  textline->y1 = 0; // If pos is out of window set it to topmost pos.
+        if (textline->y2 > (unsigned int) mHeight)  textline->y1 = mHeight-1;
         if ((strTmp = xmlElem->Attribute("text")))   textline->text = strTmp;
         if ((strTmp = xmlElem->Attribute("hide")))   textline->hideText= (atoi(strTmp)==1);
-        // Calculate the needed gfx-buffer size for the text.
-        if (GuiTextout::getSingleton().getClippingPos(*textline, mWidth, mHeight) == false)
-        {
-            delete textline;
-            continue;
-        }
 
         // Fill the BG_Backup buffer with Window background, before printing.
         mvTextline.push_back(textline);
-        textline->x2 = textline->x1 + textline->width;
-        if (textline->x2 >= (unsigned int) mWidth) textline->x2 = mWidth-1;
         textline->BG_Backup = new uint32[(textline->x2- textline->x1) * (textline->y2- textline->y1)];
         mTexture.getPointer()->getBuffer()->blitToMemory(Box(
                     textline->x1, textline->y1,
@@ -400,10 +402,11 @@ inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
     if ((strTmp = xmlElem->Attribute("y")))    textline.y1   = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("font"))) textline.font = atoi(strTmp);
     if ((strTmp = xmlElem->Attribute("text"))) textline.text = strTmp;
-    if (GuiTextout::getSingleton().getClippingPos(textline, mWidth, mHeight))
-    {
-        GuiTextout::getSingleton().Print(&textline, mTexture.getPointer());
-    }
+    if (textline.x1 > (unsigned int) mWidth)  textline.x1 = 0; // If pos is out of window set it to leftmost pos.
+    if (textline.y1 > (unsigned int) mHeight) textline.y1 = 0; // If pos is out of window set it to topmost pos.
+    textline.x2 = mWidth - textline.x1;
+    textline.y2 = textline.y1 + GuiTextout::getSingleton().getFontHeight(textline.font);
+    GuiTextout::getSingleton().Print(&textline, mTexture.getPointer());
 }
 
 //================================================================================================
@@ -659,11 +662,12 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
         case GUI_MSG_TXT_CHANGED:
             for (unsigned int i = 0; i < mvTextline.size() ; ++i)
             {
-                if (mvTextline[i]->index != element)
-                    continue;
-                mvTextline[i]->text = (const char*)value;
-                GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer());
-                return 0;
+                if (mvTextline[i]->index == element)
+                {
+                    mvTextline[i]->text = (const char*)value;
+                    GuiTextout::getSingleton().Print(mvTextline[i], mTexture.getPointer());
+                    return 0;
+                }
             }
             for (unsigned int i = 0; i < mvGadgetCombobox.size() ; ++i)
             {

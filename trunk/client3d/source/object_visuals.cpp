@@ -69,7 +69,7 @@ ObjectVisuals::ObjectVisuals()
 void ObjectVisuals::Init()
 {
     Logger::log().headline("Creating Object Visuals");
-    for (int i=0; i < NPC_SUM; ++i) mNode[i] = 0;
+    for (int i=0; i < VISUAL_SUM; ++i) mNode[i] = 0;
     // ////////////////////////////////////////////////////////////////////
     // Check for a working description file.
     // ////////////////////////////////////////////////////////////////////
@@ -105,8 +105,8 @@ void ObjectVisuals::Init()
         }
     }
 
-    buildEntity(NPC_LIFEBAR, "MeshLifebar",  "EntityLifebar");
-    if (!mPSystem) buildEntity(NPC_SELECTION, "MeshSelection", "EntitySelection");
+    buildEntity(VISUAL_LIFEBAR, "MeshLifebar",  "EntityLifebar");
+    if (!mPSystem) buildEntity(VISUAL_SELECTION, "MeshSelection", "EntitySelection");
 
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName(MATERIAL_NAME);
     /*
@@ -124,10 +124,10 @@ void ObjectVisuals::Init()
     TexturePtr pTexture = TextureManager::getSingleton().loadImage(TEXTURE_NAME, "General", image, TEX_TYPE_2D);
     tmpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(TEXTURE_NAME);
     mHardwarePB = pTexture->getBuffer();
-    mNode[NPC_SELECTION] = 0;
-    mNode[NPC_LIFEBAR] = 0;
+    mNode[VISUAL_SELECTION] = 0;
+    mNode[VISUAL_LIFEBAR] = 0;
     /*
-        mImage.load("NPC_Visuals.png", "General");
+        mImage.load("VISUAL_Visuals.png", "General");
         mSrcPixelBox = mImage.getPixelBox();
     */
 }
@@ -230,9 +230,9 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
-    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
-	mNode[NPC_SELECTION] =npc->getSceneNode()->createChildSceneNode();
-    mNode[NPC_SELECTION]->attachObject(mPSystem);
+    if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
+	mNode[VISUAL_SELECTION] =npc->getSceneNode()->createChildSceneNode();
+    mNode[VISUAL_SELECTION]->attachObject(mPSystem);
     int index;
     if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
     else if (npc->getFriendly() <0) index = PARTICLE_COLOR_ENEMY_STRT;
@@ -249,12 +249,12 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     // Lifebar.
     // ////////////////////////////////////////////////////////////////////
     if (!showLifebar) return;
-    if (mNode[NPC_LIFEBAR]) mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_LIFEBAR]->getName());
-    mNode[NPC_LIFEBAR] = mNode[NPC_SELECTION]->getParentSceneNode()->createChildSceneNode();
-    mNode[NPC_LIFEBAR]->attachObject(mEntity[NPC_LIFEBAR]);
-    Vector3 pos = mNode[NPC_LIFEBAR]->getPosition();
-    mNode[NPC_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
-    mNode[NPC_LIFEBAR]->setInheritOrientation(false);
+    if (mNode[VISUAL_LIFEBAR]) mNode[VISUAL_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_LIFEBAR]->getName());
+    mNode[VISUAL_LIFEBAR] = mNode[VISUAL_SELECTION]->getParentSceneNode()->createChildSceneNode();
+    mNode[VISUAL_LIFEBAR]->attachObject(mEntity[VISUAL_LIFEBAR]);
+    Vector3 pos = mNode[VISUAL_LIFEBAR]->getPosition();
+    mNode[VISUAL_LIFEBAR]->setPosition((AABB.getMinimum().x-AABB.getMinimum().x)/2, AABB.getMaximum().y +20, pos.z);
+    mNode[VISUAL_LIFEBAR]->setInheritOrientation(false);
     const int FONT_NR = 3;
     const char *name = npc->getNickName().c_str();
     int len = GuiTextout::getSingleton().CalcTextWidth(name, FONT_NR);
@@ -279,9 +279,9 @@ void ObjectVisuals::selectStatic(ObjectStatic *obj, bool showLifebar)
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
-    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
-	mNode[NPC_SELECTION] =obj->getSceneNode()->createChildSceneNode();
-    mNode[NPC_SELECTION]->attachObject(mPSystem);
+    if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
+	mNode[VISUAL_SELECTION] =obj->getSceneNode()->createChildSceneNode();
+    mNode[VISUAL_SELECTION]->attachObject(mPSystem);
     int index = PARTICLE_COLOR_NEUTRAL_STRT;
     mPSystem->setVisible(true);
     mPSystem->clear();
@@ -298,9 +298,9 @@ void ObjectVisuals::selectStatic(ObjectStatic *obj, bool showLifebar)
 //===================================================
 void ObjectVisuals::unselect()
 {
-    if (mNode[NPC_SELECTION]) mNode[NPC_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_SELECTION]->getName());
-    if (mNode[NPC_LIFEBAR])   mNode[NPC_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[NPC_LIFEBAR]->getName());
+    if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
+    if (mNode[VISUAL_LIFEBAR])   mNode[VISUAL_LIFEBAR]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_LIFEBAR]->getName());
     if (mPSystem)             mPSystem->setVisible(false);
-    mNode[NPC_SELECTION] = 0;
-    mNode[NPC_LIFEBAR] = 0;
+    mNode[VISUAL_SELECTION] = 0;
+    mNode[VISUAL_LIFEBAR] = 0;
 }

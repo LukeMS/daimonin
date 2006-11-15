@@ -59,16 +59,16 @@
     </Graphic>
 
     <Label   x=  "05" y= "25" font="02" text= "Current FPS:" />
-    <TextBox x= "100" y= "25" font="02" text= "---.-" width = "40" name= "Engine_CurrentFPS" />
+    <TextBox x= "100" y= "25" font="02" text= "000.0" width = "45" name= "Engine_CurrentFPS" />
 
     <Label   x=  "05" y= "40" font="02" text= "Best FPS:" />
-    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "40" name= "Engine_BestFPS" />
+    <TextBox x= "100" y= "40" font="02" text= "000.0" width = "45" name= "Engine_BestFPS" />
 
     <Label   x=  "05" y= "55" font="00" text= "Worst FPS:" />
-    <TextBox x= "100" y= "55" font="00" text= "000.0" width = "40" name= "Engine_WorstFPS" />
+    <TextBox x= "100" y= "55" font="00" text= "000.0" width = "45" name= "Engine_WorstFPS" />
 
     <Label   x=  "05" y= "70" font="02" text= "Triangles:" />
-    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "40" name= "Engine_SumTris" />
+    <TextBox x= "100" y= "70" font="02" text= "0000"  width = "45" name= "Engine_SumTris" />
   </Window>
 
   <!--#############################################-->
@@ -408,7 +408,7 @@
     <!-- Layer 1                                     -->
     <!--=============================================-->
     <Label   x=  "80" y=  "65" font="03" text= "Player Name: " />
-    <TextBox x= "200" y=  "65" font="02" text= "" width = "100" name= "Input_Login_Name" />
+    <TextBox x= "200" y=  "65" font="02" text= "" width = "110" name= "Input_Login_Name" />
 
     <Label   x=  "80" y=  "85" font="03" text= "Password: " />
     <TextBox x= "200" y=  "85" font="02" hide ="1" text= "" width = "100" name= "Input_Login_Passwd" />
@@ -429,9 +429,9 @@
   <!--WINDOW: NPC Dialog                           -->
   <!--#############################################-->
   <Window name= "DialogNPC">
-    <Size     width= "512" height= "512" />
+    <Size     width= "303" height= "350" />
     <Pos      x= "200" y= "200" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "512" height= "29" />
+    <DragArea x= "0" y= "0" width= "200" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <!--=============================================-->
@@ -439,7 +439,7 @@
     <!--=============================================-->
     <Graphic type= "GFX_FILL"  image_name = "Red_Background">
       <Pos x= "0" y= "0" />
-      <Range width= "512" height= "512" />
+      <Range width= "303" height= "350" />
     </Graphic>
 
     <!--=============================================-->
@@ -476,7 +476,7 @@
     </Graphic>
 
     <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
-      <Pos x= "503" y= "503" />
+      <Pos x= "503" y= "342" />
       <Range width= "9" height= "9" />
     </Graphic>
 
@@ -493,7 +493,7 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <TextBox x= "125" y= "8" font="04" text= "Dialog Window" width = "392" name= "NPC_Headline" />
+    <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "392" name= "NPC_Headline" />
 
     <Listbox type= "GFX_FILL" name= "List_NPC" font="02">
       <Pos x= "10" y= "60" />
@@ -511,7 +511,14 @@
       </Gadget>
     </Listbox>
 
-  </Window>
+    <Gadget type= "BUTTON"  name = "Buton_info" image_name = "Button_01_Std">
+      <Pos x= "10" y= "320" />
+    </Gadget>
 
+    <Gadget type= "BUTTON"  name = "Buton_info" image_name = "Button_01_Std">
+      <Pos x= "238" y= 320" />
+    </Gadget>
+
+  </Window>
 
 </XML>

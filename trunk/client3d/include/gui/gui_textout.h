@@ -47,15 +47,12 @@ const char TXT_CMD_SOUND       = '§';
 const char TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
 
-
-
 const int MAX_TEXTLINE_LEN = 1024;
 
 typedef struct TextLine
 {
     unsigned int x1, y1, x2, y2; /**< Area for printing the text. **/
-    unsigned int width;          /**< Width of the parent window. **/
-    int font;
+    int font;                    /**< Font number. **/
     int index;                   /**< Unique number. **/
     bool hideText;               /**< Hide the text e.g. for password input. **/
     String text;
@@ -88,23 +85,19 @@ public:
     void loadRawFont(const char *filename);
     void loadTTFont (const char *filename, const char *size, const char *resolution);
     void createBuffer(int width = MAX_TEXTLINE_LEN);
-    bool getClippingPos(TextLine &textline, int maxWidth, int maxHeight);
     void Print(TextLine *line, Texture *texture);
     void PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
-    int CalcTextWidth(const char *text, unsigned int fontNr = 1);
+    int CalcTextWidth(const char *text, unsigned int fontNr = 0);
     int getFontHeight(int fontNr)
     {
         return mvFont[fontNr]->height;
     }
     int getMaxFontHeight()
     {
-        return maxFontHeight;
+        return mMaxFontHeight;
     }
-    int getCharWidth(int fontNr, int Char)
-    {
-        if (Char < 32) return 0;
-        return mvFont[fontNr]->charWidth[Char-32]+1;
-    }
+    int getCharWidth(int fontNr, int Char);
+
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
@@ -112,16 +105,16 @@ private:
     struct mFont
     {
         uint32 *data;
-        unsigned int textureWidth;
-        unsigned int width;
-        unsigned int height;
-        unsigned int baseline;
-        char charWidth[CHARS_IN_FONT];
+        unsigned short textureWidth;
+        unsigned short height;
+        unsigned short baseline;
+        unsigned short charStart[CHARS_IN_FONT];
+        unsigned char  charWidth[CHARS_IN_FONT];
     };
     std::vector<mFont*>mvFont;
-    uint32 *mTextGfxBuffer;
     PixelBox *mPb;
-    unsigned int maxFontHeight;
+    uint32 *mTextGfxBuffer;
+    unsigned int mMaxFontHeight;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
