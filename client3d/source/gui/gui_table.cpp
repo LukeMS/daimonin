@@ -214,16 +214,15 @@ void GuiTable::draw()
     textline.color =0x00ffffff;
     textline.font = mFontNr;
     textline.x1 = mPosX;
+    textline.x2 = textline.x1 + mWidth;
     textline.y1 = mPosY;
+    textline.y2 = textline.y1 + mFontHeight;
     for (std::vector<TableEntry*>::iterator i = mvColumn.begin(); i < mvColumn.end(); ++i)
     {
         if ((*i)->label!="")
         {
             textline.text = (*i)->label;
-            if (GuiTextout::getSingleton().getClippingPos(textline, mPosX + mWidth, mHeight))
-            {
-                GuiTextout::getSingleton().Print(&textline, texture);
-            }
+            GuiTextout::getSingleton().Print(&textline, texture);
         }
         textline.x1 += (*i)->width;
     }
@@ -273,9 +272,11 @@ void GuiTable::drawRow(int row, uint32 color)
     textline.font = mFontNr;
     textline.color =0x00ffffff;
     textline.x1 = mPosX +3;
+    textline.x2 = textline.x1 + mWidth;
+
     std::string::size_type startPos, endPos;
     int offset = (row+1) * mFontHeight;
-    // Draw the rbackground.
+    // Draw the background.
     PixelBox pb = texture->getBuffer()->lock (Box(mPosX, mPosY+offset, mPosX+mWidth, mPosY+offset+mFontHeight), HardwareBuffer::HBL_DISCARD);
     uint32 *dest_data = (uint32*)pb.data;
     for (int line =0; line < mFontHeight; ++line)
@@ -285,9 +286,10 @@ void GuiTable::drawRow(int row, uint32 color)
         dest_data+=texture->getWidth();
     }
     texture->getBuffer()->unlock();
-    // Print the text..
+    // Print the text.
     if (mvRow[row] =="") return;
     textline.y1 = mPosY+mFontHeight+2 + row * mFontHeight;
+    textline.y2 = textline.y1 + mFontHeight;
     endPos = 0;
     for (std::vector<TableEntry*>::iterator i = mvColumn.begin(); i < mvColumn.end(); ++i)
     {
@@ -296,8 +298,7 @@ void GuiTable::drawRow(int row, uint32 color)
         if (endPos == std::string::npos) break;
         {
             textline.text = mvRow[row].substr(startPos, endPos-startPos);
-            if (GuiTextout::getSingleton().getClippingPos(textline, mPosX + mWidth, mHeight))
-                GuiTextout::getSingleton().Print(&textline, texture);
+            GuiTextout::getSingleton().Print(&textline, texture);
         }
         ++endPos;
         textline.x1 += (*i)->width;

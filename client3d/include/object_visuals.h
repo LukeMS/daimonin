@@ -39,9 +39,9 @@ class ObjectVisuals
 public:
     enum
     {
-        NPC_LIFEBAR,
-        NPC_SELECTION,
-        NPC_SUM
+        VISUAL_LIFEBAR,
+        VISUAL_SELECTION,
+        VISUAL_SUM
     };
     enum
     {
@@ -72,7 +72,6 @@ public:
     void blit(const HardwarePixelBufferSharedPtr &src, const Image::Box &srcBox, const Image::Box &dstBox);
     const AxisAlignedBox &getBoundingBox()
     {
-
         return mAABB;
     }
 private:
@@ -80,8 +79,8 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
-    Entity *mEntity[NPC_SUM];
-    SceneNode *mNode[NPC_SUM];
+    Entity *mEntity[VISUAL_SUM];
+    SceneNode *mNode[VISUAL_SUM];
     ColourValue particleColor[PARTICLE_COLOR_SUM];
     HardwarePixelBufferSharedPtr mHardwarePB;
     Image mImage;
