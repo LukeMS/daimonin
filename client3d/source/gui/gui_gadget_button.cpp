@@ -139,12 +139,11 @@ void GuiGadgetButton::draw()
     // ////////////////////////////////////////////////////////////////////
     if (mStrLabel != "")
     {
-        std::string strBgLabel = "~#ff000000"+mStrLabel+"~"; // Black Background for the label.
         TextLine label;
         label.hideText= false;
         label.index= -1;
         label.font = mLabelFontNr;
-        label.color =0;
+        label.color= 0x00ffffff;
         label.x1 = mPosX+ mLabelPosX;
         label.y1 = mPosY+ mLabelPosY;
         label.x2 = label.x1 + mWidth;
@@ -154,11 +153,15 @@ void GuiGadgetButton::draw()
             ++label.x1;
             ++label.y1;
         }
-        label.text = strBgLabel;
+        label.text = "";
+        for (unsigned int i=0; i < mStrLabel.size(); ++i)
+            if (mStrLabel[i] != '~') label.text+=mStrLabel[i];
+        label.color= 0;
         GuiTextout::getSingleton().Print(&label, texture);
         --label.x1;
         --label.y1;
         label.text = mStrLabel;
+        label.color= 0x00ffffff;
         GuiTextout::getSingleton().Print(&label, texture);
     }
 }

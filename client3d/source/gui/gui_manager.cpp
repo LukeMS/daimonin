@@ -95,6 +95,14 @@ void GuiManager::Init(int w, int h)
 //================================================================================================
 // .
 //================================================================================================
+void GuiManager::centerWindowOnMouse(int window)
+{
+    guiWindow[window].centerWindowOnMouse(mMouseX, mMouseY);
+}
+
+//================================================================================================
+// .
+//================================================================================================
 void GuiManager::parseWindows(const char *XML_windows_file)
 {
     // ////////////////////////////////////////////////////////////////////
@@ -171,8 +179,7 @@ bool GuiManager::parseWindowsData(const char *fileWindows)
                 if ((valString = xmlElem->Attribute("x"))) mHotSpotX = atoi(valString);
                 if ((valString = xmlElem->Attribute("y"))) mHotSpotY = atoi(valString);
             }
-            int scale = 8;
-            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight, scale);
+            GuiCursor::getSingleton().Init(srcEntry->width, srcEntry->height, mScreenWidth, mScreenHeight);
             GuiCursor::getSingleton().setStateImagePos(srcEntry->state);
             GuiCursor::getSingleton().draw();
         }
@@ -262,9 +269,9 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
 {
-    GuiCursor::getSingleton().setPos(rx, ry);
     mMouseX = (int) (rx * mScreenWidth);
     mMouseY = (int) (ry * mScreenHeight);
+    GuiCursor::getSingleton().setPos(mMouseX, mMouseY);
     for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
     {
         if (guiWindow[i].mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY))
@@ -273,8 +280,6 @@ bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
             return true;
         }
     }
-    // Mouse event in npc-dialog window.
-    if (GuiDialog::getSingleton().mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY)) return true;
     return false;
 }
 

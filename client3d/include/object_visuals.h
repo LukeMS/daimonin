@@ -64,8 +64,11 @@ public:
     void Init();
     void freeRecources();
     /** health < 0 disables the lifebar. */
-    void selectNPC(ObjectNPC *obj, bool showLifebar = true);
-    void selectStatic(ObjectStatic *obj, bool showLifebar = true);
+    void select(ObjectNPC *obj, bool showLifebar = true);
+    void select(ObjectStatic *obj, bool showLifebar = true);
+    void highlight(ObjectNPC    *obj);
+    void highlight(ObjectStatic *obj);
+    void highlightOff();                  /**< Switch off highlighting **/
     void unselect();
     void setPosLifebar(Vector3 pos);
     void setLifebar(Real percent, int barWidth = 128);
@@ -87,6 +90,9 @@ private:
     PixelBox mSrcPixelBox;
     uchar *mTexBuffer;
     AxisAlignedBox mAABB;
+    ObjectStatic *mObjStatic;
+    ObjectNPC *mObjectNPC;
+    String strMaterialNameBackup;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

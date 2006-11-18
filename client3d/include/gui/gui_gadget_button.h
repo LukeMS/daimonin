@@ -55,6 +55,11 @@ public:
     {
         if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex);
     }
+    void setLabel(const char*newText)
+    {
+        mStrLabel = newText;
+        draw();
+    }
     void draw();
 
 private:

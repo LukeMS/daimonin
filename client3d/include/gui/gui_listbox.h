@@ -43,6 +43,7 @@ using namespace Ogre;
 class GuiListbox : public GuiElement
 {
 public:
+    typedef void (Callback) (class GuiWindow *parent, int index, int line);
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -51,10 +52,13 @@ public:
     void draw();
     void clear();
     bool mouseEvent(int MouseAction, int x, int y);
-    int  getSelectedLine();            /**< Returns the selected line number. **/
     int  addTextline(const char *text, uint32 color);
     const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
+    void setFunction(Callback *c)
+    {
+        mCallFunc = c;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -92,9 +96,15 @@ private:
     uint32 *mGfxBuffer;
     unsigned long mTime;
     class GuiGadgetScrollbar *mScrollBarH, *mScrollBarV;
+    Callback *mCallFunc;
+    int mLine;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    void activated(int line)
+    {
+        if (mCallFunc) mCallFunc((GuiWindow *)mParent, mIndex, line);
+    }
     static void scrollbarAction(GuiListbox *me, int index, int scroll);
     void scrollTextVertical(int offset);
     void scrollTextHorizontal(int offset);

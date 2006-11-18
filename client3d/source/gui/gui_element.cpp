@@ -123,8 +123,8 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     // ////////////////////////////////////////////////////////////////////
     if ((xmlGadget = xmlElem->FirstChildElement("Label")))
     {
-        if ((tmp = xmlGadget->Attribute("xPos")))  mLabelPosX  = atoi(tmp);
-        if ((tmp = xmlGadget->Attribute("yPos")))  mLabelPosY  = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("x")))  mLabelPosX  = atoi(tmp);
+        if ((tmp = xmlGadget->Attribute("y")))  mLabelPosY  = atoi(tmp);
         if ((tmp = xmlGadget->Attribute("font")))  mLabelFontNr= atoi(tmp);
         if ((tmp = xmlGadget->Attribute("red")))   mLabelColor[0]= (unsigned char) atoi(tmp);
         if ((tmp = xmlGadget->Attribute("green"))) mLabelColor[1]= (unsigned char) atoi(tmp);

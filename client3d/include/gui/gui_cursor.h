@@ -40,10 +40,10 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    void setPos(Real x, Real y);
+    void setPos(int x, int y);
     void setState(unsigned int state);
     void draw();
-    void Init(int w, int h, int screenHeight, int screenWidth, int scale);
+    void Init(int w, int h, int screenHeight, int screenWidth);
     void freeRecources();
     static GuiCursor &getSingleton()
     {
@@ -63,7 +63,6 @@ private:
     OverlayElement *mElement;
     TexturePtr mTexture;
     MaterialPtr mMaterial;
-    int mScale;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

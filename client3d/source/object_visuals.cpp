@@ -33,6 +33,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "particle_manager.h"
 #include "object_manager.h"
 #include "gui_textout.h"
+#include "gui_manager.h"
 
 //===================================================
 // Init all static Elemnts.
@@ -61,7 +62,10 @@ ObjectVisuals::~ObjectVisuals()
 // .
 //===================================================
 ObjectVisuals::ObjectVisuals()
-{}
+{
+    mObjStatic = 0;
+    mObjectNPC = 0;
+}
 
 //===================================================
 // .
@@ -225,13 +229,15 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 //===================================================
 // Select a NPC.
 //===================================================
-void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
+void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar)
 {
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
     if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
-	mNode[VISUAL_SELECTION] =npc->getSceneNode()->createChildSceneNode();
+    mNode[VISUAL_SELECTION] =npc->getSceneNode()->createChildSceneNode();
+    mObjectNPC = npc;
+
     mNode[VISUAL_SELECTION]->attachObject(mPSystem);
     int index;
     if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
@@ -240,11 +246,11 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     mPSystem->setVisible(true);
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
-	const AxisAlignedBox &AABB = npc->getEntity()->getBoundingBox();
+    const AxisAlignedBox &AABB = npc->getEntity()->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 1.5;
     float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 1.5;
     if (sizeZ > sizeX) sizeX = sizeZ;
-	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
+    ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
     // ////////////////////////////////////////////////////////////////////
     // Lifebar.
     // ////////////////////////////////////////////////////////////////////
@@ -269,28 +275,34 @@ void ObjectVisuals::selectNPC(ObjectNPC *npc, bool showLifebar)
     //GuiTextout::getSingleton().PrintToBuffer(TEXTURE_SIZE, 16, dest_data, name, FONT_NR,  0x00000000);
     mHardwarePB->unlock();
     setLifebar(npc->getHealthPercentage());
+    // ////////////////////////////////////////////////////////////////////
+    // Menu.
+    // ////////////////////////////////////////////////////////////////////
+    GuiManager::getSingleton().centerWindowOnMouse(GUI_WIN_PLAYERCONSOLE);
+    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
 }
 
 //===================================================
-// Select an object.
+// Select an static object.
 //===================================================
-void ObjectVisuals::selectStatic(ObjectStatic *obj, bool showLifebar)
+void ObjectVisuals::select(ObjectStatic *obj, bool showLifebar)
 {
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
+    mObjStatic = obj;
     if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
-	mNode[VISUAL_SELECTION] =obj->getSceneNode()->createChildSceneNode();
+    mNode[VISUAL_SELECTION] =obj->getSceneNode()->createChildSceneNode();
     mNode[VISUAL_SELECTION]->attachObject(mPSystem);
     int index = PARTICLE_COLOR_NEUTRAL_STRT;
     mPSystem->setVisible(true);
     mPSystem->clear();
     ParticleManager::getSingleton().setColorRange(mPSystem, particleColor[index], particleColor[index+1]);
-	const AxisAlignedBox &AABB = obj->getEntity()->getBoundingBox();
+    const AxisAlignedBox &AABB = obj->getEntity()->getBoundingBox();
     float sizeX = (AABB.getMaximum().x -AABB.getMinimum().x) * 2.0;
     float sizeZ = (AABB.getMaximum().z -AABB.getMinimum().z) * 2.0;
     if (sizeZ > sizeX) sizeX = sizeZ;
-	ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
+    ParticleManager::getSingleton().setEmitterSize(mPSystem, sizeX, sizeX, true);
 }
 
 //===================================================
@@ -303,4 +315,52 @@ void ObjectVisuals::unselect()
     if (mPSystem)             mPSystem->setVisible(false);
     mNode[VISUAL_SELECTION] = 0;
     mNode[VISUAL_LIFEBAR] = 0;
+    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, false);
+}
+
+//===================================================
+// .
+//===================================================
+void ObjectVisuals::highlight(ObjectNPC *obj)
+{
+    if (mObjectNPC == obj) return;
+    mObjectNPC = obj;
+    // Backup the name of the original material.
+    strMaterialNameBackup = obj->getEntity()->getSubEntity(0)->getMaterialName();
+    // Take the texture of the model for our highlighted material.
+    MaterialPtr orgMaterial = MaterialManager::getSingleton().getByName(obj->getEntity()->getSubEntity(0)->getMaterialName());
+    String strTexture = orgMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureName();
+    MaterialPtr highlightMaterial = MaterialManager::getSingleton().getByName("Object_Highlight");
+    highlightMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTexture);
+    // Set the highlighted material for the model.
+    for (unsigned int i =0; i<mObjectNPC->getEntity()->getNumSubEntities(); ++i)
+        mObjectNPC->getEntity()->getSubEntity(i)->setMaterialName("Object_Highlight");
+
+    GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_TALK);
+}
+
+//===================================================
+// .
+//===================================================
+void ObjectVisuals::highlight(ObjectStatic *obj)
+{}
+
+//===================================================
+// Switch off highlighting.
+//===================================================
+void ObjectVisuals::highlightOff()
+{
+    if (mObjectNPC)
+    {
+        for (unsigned int i =0; i<mObjectNPC->getEntity()->getNumSubEntities(); ++i)
+            mObjectNPC->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
+        mObjectNPC =0;
+    }
+    if (mObjStatic)
+    {
+        for (unsigned int i =0; i<mObjStatic->getEntity()->getNumSubEntities(); ++i)
+            mObjStatic->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
+        mObjStatic = 0;
+    }
+        GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_ATTACK);
 }

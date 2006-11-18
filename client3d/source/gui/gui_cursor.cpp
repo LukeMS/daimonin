@@ -31,7 +31,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_imageset.h"
 #include "logger.h"
 
-const int MAX_CURSOR_SIZE = 128;
+const int MAX_CURSOR_SIZE = 64;
 
 //================================================================================================
 // .
@@ -48,14 +48,13 @@ GuiCursor::~GuiCursor()
 //================================================================================================
 // .
 //================================================================================================
-void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight, int scale)
+void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight)
 {
     mState = GuiImageset::STATE_MOUSE_DEFAULT;
     mWidth = w;
     mHeight= h;
-    mScale = scale;
-    if (mWidth <   4) mWidth =   4;
-    if (mHeight<   4) mHeight=   4;
+    if (mWidth < 4) mWidth = 4;
+    if (mHeight< 4) mHeight= 4;
     if (mWidth > MAX_CURSOR_SIZE) mWidth = MAX_CURSOR_SIZE;
     if (mHeight> MAX_CURSOR_SIZE) mHeight= MAX_CURSOR_SIZE;
     // ////////////////////////////////////////////////////////////////////
@@ -69,11 +68,9 @@ void GuiCursor::Init(int w, int h, int screenWidth, int screenHeight, int scale)
     mOverlay = OverlayManager::getSingleton().create("GUI_MouseCursor");
     mOverlay->setZOrder(550);
     mElement = OverlayManager::getSingleton().createOverlayElement(OVERLAY_TYPE_NAME, "GUI_Cursor");
-    //  mElement->setMetricsMode(GMM_PIXELS);
-    mElement->setHeight((Real)mHeight / (Real)screenHeight);
-    mElement->setWidth ((Real)mWidth  / (Real)screenWidth );
-    mElement->setTop (0.5);
-    mElement->setLeft(0.5);
+    mElement->setMetricsMode(GMM_PIXELS);
+    mElement->setPosition(screenWidth/2, screenHeight/2);
+    mElement->setDimensions (mTexture->getWidth(), mTexture->getHeight());
     MaterialPtr tmpMaterial = MaterialManager::getSingleton().getByName("GUI/Window");
     mMaterial = tmpMaterial->clone("GUI_Cursor_Material");
     mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName("GUI_Cursor_Texture");
@@ -95,14 +92,14 @@ void GuiCursor::freeRecources()
 //================================================================================================
 // .
 //================================================================================================
-void GuiCursor::setPos(Real x, Real y)
+void GuiCursor::setPos(int x, int y)
 {
     mElement->setTop (y);
     mElement->setLeft(x);
 }
 
 //================================================================================================
-// .
+// Set the state of the mouse pointer.
 //================================================================================================
 void GuiCursor::setState(unsigned int state)
 {
@@ -121,25 +118,26 @@ void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
     memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
 }
 
+
+
+#include "gui_manager.h"
+
+
+
 //================================================================================================
 // .
 //================================================================================================
 void GuiCursor::draw()
 {
-    // Scaling, done by blitFromMemory, seems to fail under OpenGL sometimes. (Ogre3D 1.2.2)
-    // So we need to do it by hand.
+    char buffer[400];
+    sprintf(buffer, "mm: %d  %d %d", mState, gfxSrcPos[mState].x , gfxSrcPos[mState].y );
+GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
+
     PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(
                        gfxSrcPos[mState].x,
                        gfxSrcPos[mState].y,
                        gfxSrcPos[mState].x + mWidth,
                        gfxSrcPos[mState].y + mHeight));
-    uint32 buffer[MAX_CURSOR_SIZE * MAX_CURSOR_SIZE];
-    int w = mWidth* mScale;
-    int h = mHeight* mScale;
-    if (w > MAX_CURSOR_SIZE) w = MAX_CURSOR_SIZE;
-    if (h > MAX_CURSOR_SIZE) h = MAX_CURSOR_SIZE;
-    PixelBox scaled = PixelBox(w, h, src.getDepth(), src.format, buffer);
-    Image::scale(src, scaled);
-    mTexture->getBuffer()->blitFromMemory(scaled, Box(0, 0, w, h));
+    mTexture->getBuffer()->blitFromMemory(src, Box(0, 0, mWidth, mHeight));
 }
 

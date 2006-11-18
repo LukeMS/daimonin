@@ -27,6 +27,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <Ogre.h>
 #include <tinyxml.h>
 #include "define.h"
+#include "logger.h"
 #include "gui_window.h"
 #include "gui_cursor.h"
 #include "gui_textout.h"
@@ -37,7 +38,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "sound.h"
 #include "events.h"
-#include "logger.h"
+#include "gui_window_dialog.h"
 
 using namespace Ogre;
 
@@ -58,6 +59,7 @@ GuiWindow::GuiWindow()
 {
     isInit = false;
     mGadgetDrag = false;
+    mElement = 0;
 }
 
 //================================================================================================
@@ -295,7 +297,9 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
     for (xmlElem = xmlRoot->FirstChildElement("Listbox"); xmlElem; xmlElem = xmlElem->NextSiblingElement("Listbox"))
     {
         if (!(strTmp = xmlElem->Attribute("name"))) continue;
-        mvListbox.push_back(new GuiListbox(xmlElem, this));
+        GuiListbox *listbox = new GuiListbox(xmlElem, this);
+        listbox->setFunction(this->listboxPressed);
+        mvListbox.push_back(listbox);
     }
     // ////////////////////////////////////////////////////////////////////
     // Parse the tables.
@@ -439,6 +443,15 @@ inline void GuiWindow::createWindow()
     mTexture->getBuffer()->unlock();
 }
 
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::centerWindowOnMouse(int x, int y)
+{
+    mElement->setPosition(x-mTexture->getWidth()/2, y-mTexture->getHeight()/2 - 50);
+}
+
 //================================================================================================
 // Key event.
 //================================================================================================
@@ -553,6 +566,19 @@ int GuiWindow::getTableActivated(int element)
 //================================================================================================
 // .
 //================================================================================================
+class GuiGadgetButton *GuiWindow::getButtonHandle(int element)
+{
+    for (unsigned int i = 0; i < mvGadgetButton.size() ; ++i)
+    {
+        if (mvGadgetButton[i]->getIndex() == element)
+            return mvGadgetButton[i];
+    }
+    return 0;
+}
+
+//================================================================================================
+// .
+//================================================================================================
 int GuiWindow::getTableSelection(int element)
 {
     for (unsigned int i = 0; i < mvTable.size() ; ++i)
@@ -588,19 +614,6 @@ void GuiWindow::clearTable(int element)
     }
 }
 
-
-//================================================================================================
-// .
-//================================================================================================
-int GuiWindow::getSelectedListboxLine(int element)
-{
-    for (unsigned int i = 0; i < mvListbox.size(); ++i)
-    {
-        if (mvListbox[i]->getIndex() == element)
-            return mvListbox[i]->getSelectedLine();
-    }
-    return -1;
-}
 
 //================================================================================================
 // .
@@ -734,10 +747,36 @@ void GuiWindow::update(Real timeSinceLastFrame)
 //================================================================================================
 // Button was pressed.
 //================================================================================================
+void GuiWindow::listboxPressed(GuiWindow *me, int index, int line)
+{
+    Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
+    switch (index)
+    {
+        case GUI_LIST_NPC:
+            GuiDialog::getSingleton().mouseEvent(line);
+            return;
+    }
+}
+
+//================================================================================================
+// Button was pressed.
+//================================================================================================
 void GuiWindow::buttonPressed(GuiWindow *me, int index)
 {
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
-    if (index == GUI_BUTTON_CLOSE)
-        me->setVisible(false);
+    switch (index)
+    {
+            // Standard buttons.
+        case GUI_BUTTON_CLOSE:
+            me->setVisible(false);
+            return;
+            // Unique buttons.
+        case GUI_BUTTON_NPC_ACCEPT:
+            GuiDialog::getSingleton().buttonEvent(0);
+            return;
+        case GUI_BUTTON_NPC_DECLINE:
+            GuiDialog::getSingleton().buttonEvent(1);
+            return;
+    }
     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "button event... ");
 }

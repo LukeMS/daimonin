@@ -29,6 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "events.h"
 #include "sound.h"
+#include "network.h"
 #include "spell_manager.h"
 #include "object_manager.h"
 #include "particle_manager.h"
@@ -46,7 +47,7 @@ http://www.gnu.org/licenses/licenses.html
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","P","N" };
+char *ObjectManager::ObjectID[OBJECT_SUM] = { "S","S","P","N" };
 
 //================================================================================================
 // Init the model from the description file.
@@ -181,16 +182,16 @@ void ObjectManager::addMobileObject(sObject &obj)
         static unsigned int index=0;
         obj.index = index++;
         ObjectStatic *obj_static = new ObjectStatic(obj);
-        if (!obj_static) return;
-        mvObject_static.push_back(obj_static);
+        if (obj_static)
+            mvObject_static.push_back(obj_static);
     }
     else
     {
         static unsigned int index=0;
         obj.index = index++;
         ObjectNPC *obj_npc = new ObjectNPC(obj, true);
-        if (!obj_npc) return;
-        mvObject_npc.push_back(obj_npc);
+        if (obj_npc)
+            mvObject_npc.push_back(obj_npc);
     }
 }
 
@@ -315,6 +316,43 @@ void ObjectManager::freeRecources()
 }
 
 //================================================================================================
+// Highlight the object.
+//================================================================================================
+void ObjectManager::highlightObject(MovableObject *mob)
+{
+    if (!mob) return;
+    // ////////////////////////////////////////////////////////////////////
+    // Extract ObjectType and ObjectNr out of the entity name.
+    // ////////////////////////////////////////////////////////////////////
+    int sel=0;
+    String strObject = mob->getName();
+    for (; sel < OBJECT_SUM; ++sel)
+    {
+        if (strObject[0] == *ObjectID[sel]) break;
+    }
+    if (sel == OBJECT_SUM)
+    {
+        Logger::log().error() << "Unknown Object type in entity name: " << strObject;
+        return;
+    }
+    int index = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
+
+    if  (sel < OBJECT_NPC)
+    {
+        sel =0;
+        for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i, ++sel)
+            if ((int)(*i)->getIndex() == index) ObjectVisuals::getSingleton().highlight(mvObject_static[sel]);
+    }
+    else
+    {
+        sel =0;
+        for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i, ++sel)
+            if ((int)(*i)->getIndex() == index) ObjectVisuals::getSingleton().highlight(mvObject_npc[sel]);
+    }
+}
+
+
+//================================================================================================
 // Select the (mouse clicked) object.
 //================================================================================================
 void ObjectManager::selectObject(MovableObject *mob)
@@ -363,7 +401,9 @@ void ObjectManager::selectObject(MovableObject *mob)
         }
         mSelectedObject = -1;
         mSelectedPos = mvObject_npc[selectedObject]->getTilePos();
-        ObjectVisuals::getSingleton().selectStatic(mvObject_static[selectedObject], false);
+        ObjectVisuals::getSingleton().select(mvObject_static[selectedObject], false);
+        String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
+        Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
     }
     else
     {
@@ -388,16 +428,19 @@ void ObjectManager::selectObject(MovableObject *mob)
             if (selectedObject == ObjectNPC::HERO)
             {
                 sprintf(buffer, "Selected: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
-                ObjectVisuals::getSingleton().selectNPC(mvObject_npc[ObjectNPC::HERO], false);
+                ObjectVisuals::getSingleton().select(mvObject_npc[ObjectNPC::HERO], false);
             }
             else
             {
                 sprintf(buffer, "Enemy: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
-                ObjectVisuals::getSingleton().selectNPC(mvObject_npc[selectedObject]);
+                ObjectVisuals::getSingleton().select(mvObject_npc[selectedObject]);
             }
             GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
             mSelectedObject = selectedObject; // must be set before ::selectNPC
             mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
+            TilePos pos = mvObject_npc[selectedObject]->getTilePos();
+            String strSelect = "/target !"+ StringConverter::toString(pos.x-9) + " " + StringConverter::toString(pos.z-9);
+            Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
             if (mSelectedFriendly < 0)
             {
                 mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);

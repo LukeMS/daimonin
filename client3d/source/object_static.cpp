@@ -74,7 +74,9 @@ ObjectStatic::ObjectStatic(sObject &obj)
     mEntity =mSceneMgr->createEntity(strObj, obj.meshName);
     switch (obj.type)
     {
+
         case ObjectManager::OBJECT_CONTAINER:
+        case ObjectManager::OBJECT_ENVIRONMENT:
             mEntity->setQueryFlags(ObjectManager::QUERY_CONTAINER);
             break;
 

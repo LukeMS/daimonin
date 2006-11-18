@@ -70,14 +70,16 @@ public:
         ATTACHED_OBJECT_ARMOR,
         ATTACHED_OBJECT_SUM,
     };
-    // Independant objects
+
+    /** Independant Object types. **/
     enum
     {
         // Static objects.
-        OBJECT_CONTAINER,  /**< Chest, Sack, ... **/
+        OBJECT_ENVIRONMENT,
+        OBJECT_CONTAINER,   /**< Chest, Sack, ... **/
         // Dynamic objects.
-        OBJECT_NPC,        /**< Server contolled character. **/
-        OBJECT_PLAYER,     /**< Human controlled character. **/
+        OBJECT_NPC,         /**< Server contolled character. **/
+        OBJECT_PLAYER,      /**< Human controlled character. **/
         OBJECT_SUM,
     };
     static char *ObjectID[OBJECT_SUM];
@@ -96,6 +98,7 @@ public:
     void update(int type, const FrameEvent& evt);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
+    void highlightObject(MovableObject *mob);
     void readyPrimaryWeapon(int npc, bool ready)
     {
         mvObject_npc[npc]->readyPrimaryWeapon(ready);

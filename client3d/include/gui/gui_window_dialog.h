@@ -2,124 +2,31 @@
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 Copyright (c) 2005 The Daimonin Team
 Also see acknowledgements in Readme.html
-
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later
 version.
-
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
 In addition, as a special exception, the copyright holders of client3d give
 you permission to combine the client3d program with lgpl libraries of your
 choice and/or with the fmod libraries.
 You may copy and distribute such a system following the terms of the GNU GPL
 for client3d and the licenses of the other code concerned.
-
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
-
 #ifndef DIALOG_INTERFACE_H
 #define DIALOG_INTERFACE_H
 
 #include <Ogre.h>
 #include "define.h"
+#include "gui_gadget_button.h"
 
 using namespace Ogre;
-
-const int INTERFACE_WINLEN_NPC = 353;
-const int INTERFACE_MAX_LINE = 100;
-const int INTERFACE_MAX_CHAR = 256;
-const int INTERFACE_MAX_REWARD_LINE = 15;
-const int MAX_INTERFACE_ICON = 15;
-const int MAX_INTERFACE_LINKS = 25;
-
-
-typedef struct
-{
-    int face;
-    char name[128];          // face (picture name)
-    //    _Sprite *picture;      // the real picture
-    char body_text[128]; // head title
-}
-_gui_interface_head;
-
-typedef struct
-{
-    char link[128];
-    char cmd[128];
-}
-_gui_interface_link;
-
-typedef struct
-{
-    char body[128];
-}
-_gui_interface_who;
-
-typedef struct
-{
-    char text[128];
-}
-_gui_interface_textfield;
-
-typedef struct
-{
-    char title[128];
-    char body_text[4096];
-    int line_count;
-    char lines[INTERFACE_MAX_LINE][INTERFACE_MAX_CHAR];
-}
-_gui_interface_message;
-
-typedef struct
-{
-    char title[128];
-    char body_text[4096];
-    int line_count;
-}
-_gui_interface_xtended;
-
-typedef struct
-{
-    int copper;
-    int silver;
-    int gold;
-    int mithril;
-    int line_count;
-    char title[128];
-    char body_text[4096];
-    char lines[INTERFACE_MAX_REWARD_LINE][INTERFACE_MAX_CHAR];
-}
-_gui_interface_reward;
-
-typedef struct
-{
-    char mode;
-    int num;                // real bmap number of the incon
-    char title[128];
-    char name[128];          // face (picture name)
-    //    item element;
-    //    _Sprite *picture;      // the real picture
-    char *second_line;
-    char body_text[128]; // head title
-}
-_gui_interface_icon;
-
-typedef struct
-{
-    char title[64];
-    char title2[64];
-    char command[128];
-}
-_gui_interface_button;
-
-
 
 /**
  ** This class provides a graphical dialog window.
@@ -127,10 +34,19 @@ _gui_interface_button;
 class GuiDialog
 {
 public:
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
-    // which area of the interface used
+
+    enum
+    {
+        MAX_TEXTAREA_CHAR = 4096,
+        MAX_TEXTLINE_CHAR = 128,
+        MAX_LABEL_CHAR = 64,
+        MAX_LINE_CHAR = 256,
+        MAX_MSG_LINE = 100,
+        MAX_ELEMENT = 15,
+        MAX_LINKS = 25,
+    };
+
+    /** Which area of the interface is used. **/
     enum
     {
         GUI_INTERFACE_HEAD     = 1 << 0,
@@ -146,32 +62,34 @@ public:
         GUI_INTERFACE_ICON     = 1 << 9,
         GUI_INTERFACE_LINK     = 1 <<10,
     };
+
     enum
     {
         INTERFACE_MODE_NO,
         INTERFACE_MODE_NPC,
         INTERFACE_MODE_QLIST
     };
+
     enum
     {
         GUI_INTERFACE_STATUS_NORMAL,
         GUI_INTERFACE_STATUS_WAIT
     };
 
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     static GuiDialog &getSingleton()
     {
-        static GuiDialog Singleton; return Singleton;
+        static GuiDialog Singleton;
+        return Singleton;
     }
-
-    void reset_gui_interface();
-    bool load_gui_interface(int mode, char *data, int len, int pos);
-    void gui_interface_send_command(int mode, char *cmd);
-    bool get_interface_line(int line, int *element, int *index, char **keyword);
-    void show_interface_npc(int mark);
-    char *get_parameter_string(char *data, int *pos);
-
-    bool mouseEvent(int MouseAction, int x, int y);
+    void show();
+    void reset();
+    void buttonEvent(int index);
+    bool mouseEvent(int index);
     bool keyEvent(const char keyChar, const unsigned char key);
+    bool load(int mode, char *data, int len, int pos);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -191,32 +109,106 @@ private:
         INTERFACE_CMD_BUTTON   = 1 << 9,
         INTERFACE_CMD_WHO      = 1 <<10,
         INTERFACE_CMD_XTENDED  = 1 <<11,
-    };
+    }
+    ;
+
+    typedef struct
+    {
+        char label[MAX_LABEL_CHAR];      /**< Text displayed on the button. **/
+        char command[MAX_TEXTLINE_CHAR]; /**< After button was pressed, this command will be send to server. **/
+    }
+    Button;
+    Button butAccept, butDecline;
+
+    typedef struct
+    {
+        int face;                          /**< ID of the picture.       **/
+        char name[MAX_TEXTLINE_CHAR];      /**< Name of the picture.     **/
+        //_Sprite *picture;                /**< Pointer to the gfx data. **/
+        char body_text[MAX_TEXTLINE_CHAR]; /**< Title-text of the head.  **/
+    }
+    Head;
+    Head head;
+
+    typedef struct
+    {
+        char link[MAX_TEXTLINE_CHAR];
+        char cmd[MAX_TEXTLINE_CHAR];
+    }
+    Link;
+    Link link[MAX_LINKS];
+
+    typedef struct
+    {
+        char body[MAX_TEXTLINE_CHAR];
+    }
+    Who;
+    Who who;
+
+    typedef struct
+    {
+        char text[MAX_TEXTLINE_CHAR];
+    }
+    TextInput;
+    TextInput textfield;
+
+    typedef struct
+    {
+        char title[MAX_TEXTLINE_CHAR];
+        char body_text[MAX_TEXTAREA_CHAR];
+        int line_count;
+        char lines[MAX_MSG_LINE][MAX_LINE_CHAR];
+    }
+    Message;
+    Message message;
+
+    typedef struct
+    {
+        char title[MAX_TEXTLINE_CHAR];
+        char body_text[MAX_TEXTAREA_CHAR];
+        int line_count;
+    }
+    Extended;
+    Extended xtended;
+
+    typedef struct
+    {
+        int copper;
+        int silver;
+        int gold;
+        int mithril;
+        int line_count;
+        char title[MAX_TEXTLINE_CHAR];
+        char body_text[MAX_TEXTAREA_CHAR];
+        char lines[MAX_ELEMENT][MAX_LINE_CHAR];
+    }
+    Reward;
+    Reward reward;
+
+    typedef struct
+    {
+        char mode;
+        int num;                           /**< ID of the icon. **/
+        char title[MAX_TEXTLINE_CHAR];
+        char name [MAX_TEXTLINE_CHAR];     /**< Picture name. **/
+        //item element;
+        //_Sprite *picture;                /**< Pointer to the gfx data. **/
+        char *second_line;
+        char body_text[MAX_TEXTLINE_CHAR]; /**< Head title. **/
+    }
+    Icon;
+    Icon icon[MAX_ELEMENT];
 
     bool mVisible;
+    bool mIcon_select;
+    bool mLink_selected;
     int mMode;
     int mStatus;
-    uint32 mUsed_flag;
     int mIcon_count;
     int mLink_count;
-    int mWin_length;
     int mInput_flag;
-    int mYoff;
-    int mStartx, mStarty;
     int mSelected;
-    bool mIcon_select;
-    int mLink_selected;
-    _gui_interface_head head;
-    _gui_interface_link link[MAX_INTERFACE_LINKS];
-    _gui_interface_message message;
-    _gui_interface_xtended xtended;
-    _gui_interface_reward reward;
-    _gui_interface_who who;
-    _gui_interface_icon icon[MAX_INTERFACE_ICON];
-    _gui_interface_button ok;
-    _gui_interface_button accept;
-    _gui_interface_button decline;
-    _gui_interface_textfield textfield;
+    uint32 mUsed_flag;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -224,17 +216,19 @@ private:
     GuiDialog();
     ~GuiDialog();
     GuiDialog(const GuiDialog&); // disable copy-constructor.
-    int interface_cmd_head  (_gui_interface_head   *head, char *data, int *pos);
-    int interface_cmd_link  (_gui_interface_link   *head, char *data, int *pos);
-    int interface_cmd_who   (_gui_interface_who    *head, char *data, int *pos);
-    int interface_cmd_reward(_gui_interface_reward *head, char *data, int *pos);
-    int interface_cmd_icon  (_gui_interface_icon   *head, char *data, int *pos);
-    int interface_cmd_button(_gui_interface_button *head, char *data, int *pos);
-    int interface_cmd_message(_gui_interface_message *msg, char *data, int *pos);
-    int interface_cmd_xtended(_gui_interface_xtended *msg, char *data, int *pos);
-    int interface_cmd_textfield(_gui_interface_textfield *textfield, char *data, int *pos);
+    bool cmd_head     (Head     *head, char *data, int *pos);
+    bool cmd_link     (Link     *head, char *data, int *pos);
+    bool cmd_who      (Who      *head, char *data, int *pos);
+    bool cmd_reward   (Reward   *head, char *data, int *pos);
+    bool cmd_icon     (Icon     *head, char *data, int *pos);
+    bool cmd_message  (Message   *msg, char *data, int *pos);
+    bool cmd_xtended  (Extended  *msg, char *data, int *pos);
+    bool cmd_textfield(TextInput *inp, char *data, int *pos);
+    bool cmd_button   (Button *button, char *data, int *pos);
+    bool getElement(int line, int *element, int *index, char **keyword);
+    char *get_parameter_string(char *data, int *pos);
     void format_gui_interface();
+    void sendCommand(int mode, char *cmd);
 };
-
 
 #endif

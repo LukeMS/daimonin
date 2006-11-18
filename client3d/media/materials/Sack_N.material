@@ -6,7 +6,7 @@ material Sack
         {
             texture_unit
             {
-                texture Sack.jpg 
+                texture sack.png 
             }
         }
     }

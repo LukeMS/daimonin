@@ -1,4 +1,4 @@
-material Material_#27
+material orig_02_-_Default
 {
     technique
     {
@@ -6,8 +6,9 @@ material Material_#27
         {
             texture_unit
             {
-                texture Smitty.png 
+                texture Object_Anvil.png 
             }
         }
     }
 }
+

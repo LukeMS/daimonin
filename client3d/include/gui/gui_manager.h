@@ -104,6 +104,7 @@ public:
     bool finishedTextInput();
     void cancelTextInput();
     const char *getTextInput();
+    void centerWindowOnMouse(int window);
     void showWindow(int window, bool visible);
     int getScreenWidth()
     {
@@ -141,11 +142,16 @@ public:
     {
        guiWindow[window].clearListbox(element);
     }
-    int getSelectedListboxLine(int window, int element)
-    {
-        return guiWindow[window].getSelectedListboxLine(element);
-    }
     int addTextline(int window, int element, const char *text, uint32 color = 0x00ffffff);
+
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Button stuff.
+    // ////////////////////////////////////////////////////////////////////
+    class GuiGadgetButton *getButtonHandle(int window, int element)
+    {
+        return guiWindow[window].getButtonHandle(element);
+    }
+
 
 private:
     // ////////////////////////////////////////////////////////////////////

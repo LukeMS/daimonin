@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////
 // NPC
 /////////////////////////////////////////////////
+
 material dummy
 {
   technique
@@ -48,3 +49,24 @@ material NPC_Visuals
   }
 }
 
+// This is used for highlighting the object below mousepointer
+material Object_Highlight
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 0.8 0.8
+      texture_unit
+      {
+      }
+      
+      texture_unit 
+			{
+                texture shadows.png
+                scroll_anim 0.0 -1.0
+              
+            }
+    }
+  }
+}

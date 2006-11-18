@@ -105,86 +105,24 @@
   <!--WINDOW: Player Console                       -->
   <!--#############################################-->
   <Window name= "PlayerConsole">
-    <Size     width= "1024" height= "146" />
-    <Alignment x= "center" y= "bottom"/>
-    <Pos       x= "0" y= "146" zOrder = "250" />
+    <Size     width= "128" height= "128" />
+    <Alignment x= "center" y= "top"/>
+    <Pos       x= "50" y= "80" zOrder = "250" />
     <DragArea  x= "0" y= "0" width= "0" height= "0" />
     <Tooltip  text= "Player console" />
 
-    <!--=============================================-->
-    <!-- Layer 0                                     -->
-    <!--=============================================-->
-    <Graphic type= "GFX_FILL"  image_name = "Lines_Botom_Left">
-      <Pos x= "0" y= "0" />
-      <Range width= "435" height= "146" />
-    </Graphic>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerHealth" image_name = "Pilar">
-      <Pos x= "419" y= "7" />
-      <Range width= "44" height= "139" />
-      <!-- Label xPos/yPos is the offset for the colorfill.                     -->
-      <Label xPos= "0" yPos= "22" red= "255" green= "0" blue= "0" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerMana" image_name = "Pilar">
-      <Pos x= "470" y= "7" />
-      <Range width= "44" height= "139" />
-      <!-- Label xPos/yPos is the offset for the colorfill.                       -->
-      <Label xPos= "0" yPos= "22" red= "30" green= "30" blue= "255" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerGrace" image_name = "Pilar">
-      <Pos x= "521" y= "7" />
-      <Range width= "44" height= "139" />
-      <!-- Label xPos/yPos is the offset for the colorfill.                     -->
-      <Label xPos= "0" yPos= "22" red= "0" green= "255" blue= "0" alpha = "255" />
-    </Statusbar>
-
-    <Statusbar type="GFX_FILL" name="Bar_PlayerFood" image_name = "Pilar">
-      <Pos x= "573" y= "7" />
-      <Range width= "44" height= "139" />
-      <!-- Label xPos/yPos is the offset for the colorfill.                       -->
-      <Label xPos= "0" yPos= "22" red= "255" green= "150" blue= "0" alpha = "255" />
-    </Statusbar>
-
-    <Graphic type= "GFX_FILL"  image_name = "Lines_Botom_Right">
-      <Pos x= "603" y= "0" />
-      <Range width= "435" height= "146" />
-    </Graphic>
-    <!--=============================================-->
-    <!-- Buttons                                     -->
-    <!--=============================================-->
-    <Gadget type= "BUTTON"  name = "Lines_Button_07" image_name = "Lines_Button_07">
-      <Pos x= "51" y= "49" />
+    <Gadget type= "BUTTON"  name = "ButInteractTalk" image_name = "Intract_Menu_Talk">
+      <Pos x= "48" y= "0" />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Lines_Button_05" image_name = "Lines_Button_05">
-      <Pos x= "134" y= "37" />
+    <Gadget type= "BUTTON"  name = "ButInteractAttack" image_name = "Intract_Menu_Attack">
+      <Pos x= "17" y= "16" />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Lines_Button_03" image_name = "Lines_Button_03">
-      <Pos x= "191" y= "31" />
+    <Gadget type= "BUTTON"  name = "ButInteractOpen" image_name = "Intract_Menu_Open">
+      <Pos x= "78" y= "16" />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Lines_Button_01" image_name = "Lines_Button_01">
-      <Pos x= "271" y= "11" />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "Lines_Button_02" image_name = "Lines_Button_02">
-      <Pos x= "701" y= "11" />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "Lines_Button_04" image_name = "Lines_Button_04">
-      <Pos x= "772" y= "31" />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "Lines_Button_06" image_name = "Lines_Button_06">
-      <Pos x= "852 " y= "37" />
-    </Gadget>
-
-    <Gadget type= "BUTTON"  name = "Lines_Button_08" image_name = "Lines_Button_08">
-      <Pos x= "945" y= "49" />
-    </Gadget>
   </Window>
 
   <!--#############################################-->
@@ -493,7 +431,11 @@
     <!--=============================================-->
     <!-- Layer 1                                     -->
     <!--=============================================-->
-    <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "392" name= "NPC_Headline" />
+    <TextBox x= "55" y= "8" font="04" text= "Dialog Window" width = "230" name= "NPC_Headline" />
+
+    <Gadget type= "BUTTON"  name = "But_Close" image_name = "Button_01_Close">
+      <Pos x= "285" y= "1" />
+    </Gadget>
 
     <Listbox type= "GFX_FILL" name= "List_NPC" font="02">
       <Pos x= "10" y= "60" />
@@ -511,11 +453,15 @@
       </Gadget>
     </Listbox>
 
-    <Gadget type= "BUTTON"  name = "Buton_info" image_name = "Button_01_Std">
-      <Pos x= "10" y= "320" />
+    <Gadget type= "BUTTON"  name = "But_NPC_Accept" image_name = "Button_01_Std">
+      <Pos   x= "10" y= "320" />
+      <Label x= "5" y= "5" font="02" text= "" />
     </Gadget>
 
-    <Gadget type= "BUTTON"  name = "Buton_info" image_name = "Button_01_Std">
+    <TextBox x= "70" y= "325" font="02" hide ="0" text= "Enter your text here..." width = "222" name= "Input_NPC_Dialog" />
+
+    <Gadget type= "BUTTON"  name = "But_NPC_Decline" image_name = "Button_01_Std">
+      <Label x= "5" y= "5" font="02" text= "" />
       <Pos x= "238" y= 320" />
     </Gadget>
 

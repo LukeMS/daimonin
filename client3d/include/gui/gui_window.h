@@ -115,6 +115,8 @@ public:
     {
         return &mSrcPixelBox;
     }
+    void centerWindowOnMouse(int x, int y);
+
     // ////////////////////////////////////////////////////////////////////
     // GUI_Table stuff.
     // ////////////////////////////////////////////////////////////////////
@@ -127,8 +129,12 @@ public:
     // GUI_Listbox stuff.
     // ////////////////////////////////////////////////////////////////////
     void clearListbox(int element);
-    int  getSelectedListboxLine(int element);
     int  addTextline(int element, const char *text, uint32 color);
+
+    // ////////////////////////////////////////////////////////////////////
+    // GUI_Button stuff.
+    // ////////////////////////////////////////////////////////////////////
+    class GuiGadgetButton *getButtonHandle(int element);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -164,6 +170,7 @@ private:
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static void buttonPressed(GuiWindow *me, int index);
+    static void listboxPressed(GuiWindow *me, int index, int line);
     void createWindow();
     void setHeight(int h);
     void delGadget(int number);
