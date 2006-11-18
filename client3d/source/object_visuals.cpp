@@ -362,5 +362,5 @@ void ObjectVisuals::highlightOff()
             mObjStatic->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
         mObjStatic = 0;
     }
-        GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_ATTACK);
+        GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_DEFAULT);
 }

@@ -113,10 +113,8 @@ public:
         STATE_MOUSE_DRAGGING, /**< Dragging in action. **/
         STATE_MOUSE_RESIZING, /**< Resizing a window. **/
         STATE_MOUSE_PICKUP,
-
         STATE_MOUSE_SUM
     };
-
     static GuiElementNames mMouseState[STATE_MOUSE_SUM];
 
     /** Actual state of an GuiElement: **/
@@ -188,7 +186,7 @@ private:
     GuiImageset();
     ~GuiImageset();
     GuiImageset(const GuiImageset&); // disable copy-constructor
-    bool parseStates(TiXmlElement *xmlElem, gfxPos *Entry, int sum_state);
+    bool parseStates(TiXmlElement *xmlElem, gfxPos *Entry, int sum_state, bool mouseStates);
 };
 
 #endif
