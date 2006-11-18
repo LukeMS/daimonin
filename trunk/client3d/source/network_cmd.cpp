@@ -649,6 +649,10 @@ void Network::SoundCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::TargetObject(unsigned char *data, int len)
 {
+    //Logger::log().error() << "Selected: " << data+3;
+    char buf[200];
+    sprintf(buf, "[%s] selected", data+3);
+    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -1759,18 +1763,21 @@ void Network::InterfaceCmd(unsigned char *data, int len)
             //sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         }
     */
-    GuiDialog::getSingleton().reset_gui_interface();
+
+
+//GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, (const char*)(data+1));
+
+    GuiDialog::getSingleton().reset();
     if (len)
     {
         int mode = *data;
         int pos =1;
-        Logger::log().error() << "Interface command: " << (char*)(data+pos);
-        if (!GuiDialog::getSingleton().load_gui_interface(mode, (char*)data, len, pos))
+        if (!GuiDialog::getSingleton().load(mode, (char*)data, len, pos))
         {
-            Logger::log().warning() << "INVALID GUI CMD";
+            Logger::log().error() << "INVALID GUI CMD";
             return;
         }
-        GuiDialog::getSingleton().show_interface_npc(0);
+        GuiDialog::getSingleton().show();
 
 
         /*

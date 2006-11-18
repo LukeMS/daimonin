@@ -251,7 +251,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     sObject obj;
                     obj.meshName  = "Smitty.mesh";
                     //obj.meshName  = "Ogre_Big.mesh";
-                    obj.nickName  = "Smith";
+                    obj.nickName  = "Nick_Smith";
                     obj.type      = ObjectManager::OBJECT_NPC;
                     obj.boundingRadius = 2;
                     obj.friendly  = 20;
@@ -277,11 +277,11 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     if (!once) break;
                     once = false;
                     sObject obj;
-                    obj.meshName  = "Tentacle_N_Small.mesh";
-                    obj.nickName  = "Monk";
+                    obj.meshName  = "Smitty.mesh";
+                    obj.nickName  = "Nick_Monk";
                     obj.type      = ObjectManager::OBJECT_NPC;
                     obj.boundingRadius = 2;
-                    obj.friendly  = -1;
+                    obj.friendly  = 20;
                     obj.attack    = 50;
                     obj.defend    = 50;
                     obj.maxHP     = 50;
@@ -320,7 +320,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     once = false;
                     sObject obj;
                     obj.meshName  = "Sack_N.mesh";
-                    obj.nickName  = "Monk";
+                    obj.nickName  = "Nick_Sack";
                     obj.type      = ObjectManager::OBJECT_CONTAINER;
                     obj.boundingRadius = 2;
                     obj.friendly  = 0;
@@ -347,7 +347,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     once = false;
                     sObject obj;
                     obj.meshName  = "Box_D.mesh";
-                    obj.nickName  = "Monk";
+                    obj.nickName  = "Nick_Box2";
                     obj.type      = ObjectManager::OBJECT_CONTAINER;
                     obj.boundingRadius = 2;
                     obj.friendly  = 0;
@@ -365,6 +365,37 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     obj.particleNr=-1;
                     ObjectManager::getSingleton().addMobileObject(obj);
                     break;
+                }
+
+                case 0x006a:  // Anvil.
+                {
+                    static bool once = true;
+                    if (!once) break;
+                    once = false;
+                    sObject obj;
+                    obj.meshName  = "Object_Anvil.mesh";
+                    obj.nickName  = "Nick_Anvil";
+                    obj.type      = ObjectManager::OBJECT_CONTAINER;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = 0;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = x;
+                    obj.pos.z     = y;
+                    obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
+                    obj.level     = 0;
+                    obj.facing    = 35;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+                    break;
+                }
+
+                case 0x01f1:  // bowl.
+                {
                 }
 
                 case 4227: // Stairs down.

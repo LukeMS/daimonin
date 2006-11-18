@@ -34,13 +34,16 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 enum {
-    // Button.
+    // Standard Buttons (Handled inside of gui_windows).
     GUI_BUTTON_CLOSE,
     GUI_BUTTON_OK,
     GUI_BUTTON_CANCEL,
     GUI_BUTTON_MINIMIZE,
     GUI_BUTTON_MAXIMIZE,
     GUI_BUTTON_RESIZE,
+    // Unique Buttons (Handled outside of gui_windows).
+    GUI_BUTTON_NPC_ACCEPT,
+    GUI_BUTTON_NPC_DECLINE,
     // Listboxes.
     GUI_LIST_MSGWIN,
     GUI_LIST_CHATWIN,
@@ -74,6 +77,7 @@ enum {
     GUI_TEXTINPUT_LOGIN_NAME,
     GUI_TEXTINPUT_LOGIN_PASSWD,
     GUI_TEXTINPUT_LOGIN_VERIFY,
+    GUI_TEXTINPUT_NPC_DIALOG,
     // Table
     GUI_TABLE,
     // Combobox
@@ -102,14 +106,17 @@ public:
     {
         STATE_MOUSE_DEFAULT,  /**< Default. **/
         STATE_MOUSE_PUSHED,   /**< Any button down. **/
+        STATE_MOUSE_TALK,
+        STATE_MOUSE_ATTACK,
+        STATE_MOUSE_OPEN,
+        STATE_MOUSE_CAST,
         STATE_MOUSE_DRAGGING, /**< Dragging in action. **/
         STATE_MOUSE_RESIZING, /**< Resizing a window. **/
         STATE_MOUSE_PICKUP,
-        STATE_MOUSE_TALK,
-        STATE_MOUSE_ATTACK,
-        STATE_MOUSE_CAST,
+
         STATE_MOUSE_SUM
     };
+
     static GuiElementNames mMouseState[STATE_MOUSE_SUM];
 
     /** Actual state of an GuiElement: **/

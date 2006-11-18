@@ -582,7 +582,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     mCamera->setPosition(Vector3(0, 450, 900));
                     GuiManager::getSingleton().showWindow(GUI_WIN_STATISTICS, true);
                     GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERINFO, true);
-                    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
 
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Client3d commands:");

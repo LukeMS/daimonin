@@ -280,8 +280,18 @@ bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
         mSelectedLine = (mVScrollOffset + (y - mPosY)/ mFontHeight) & (SIZE_STRING_BUFFER-1);
     }
     else
+    {
+        // Find out which line was pressed.
         mSelectedLine = (mPrintPos-(mMaxVisibleRows-(y - mPosY)/ mFontHeight)-1) & (SIZE_STRING_BUFFER-1);
-    if (mSelectedLine > mActLines) mSelectedLine = -1;
+        if (mSelectedLine <= mActLines)
+        {
+            // On a mulitline text, give back the first line.
+            mSelectedLine -=row[mSelectedLine & (SIZE_STRING_BUFFER-1)].startLine;
+            activated(mSelectedLine);
+        }
+        else
+            mSelectedLine = -1;
+    }
     return true;
 }
 
@@ -296,20 +306,6 @@ const char *GuiListbox::getSelectedKeyword()
 
     mSelectedLine = -1;
     return textline;
-}
-
-//================================================================================================
-// After a row selection changed, the row is returned once.
-// return value of -1 means no user action was reported.
-//================================================================================================
-int GuiListbox::getSelectedLine()
-{
-    if (mSelectedLine <0) return -1;
-    int pos = mSelectedLine;
-    // On a mulitline text, give back the first line.
-    pos -=row[pos & (SIZE_STRING_BUFFER-1)].startLine;
-    mSelectedLine = -1;
-    return pos;
 }
 
 //================================================================================================

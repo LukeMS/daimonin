@@ -40,12 +40,16 @@ using namespace Ogre;
 
 GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
     {
+        // Standard Buttons (Handled inside of gui_windows).
         { "But_Close",          GUI_BUTTON_CLOSE    },
         { "But_OK",             GUI_BUTTON_OK       },
         { "But_Cancel",         GUI_BUTTON_CANCEL   },
         { "But_Min",            GUI_BUTTON_MINIMIZE },
         { "But_Max",            GUI_BUTTON_MAXIMIZE },
         { "But_Resize",         GUI_BUTTON_RESIZE   },
+        // Unique Buttons (Handled outside of gui_windows).
+        { "But_NPC_Accept",     GUI_BUTTON_NPC_ACCEPT },
+        { "But_NPC_Decline",    GUI_BUTTON_NPC_DECLINE},
         // Listboxes.
         { "List_Msg",           GUI_LIST_MSGWIN    },
         { "List_Chat",          GUI_LIST_CHATWIN   },
@@ -74,6 +78,7 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
         { "Input_Login_Name",   GUI_TEXTINPUT_LOGIN_NAME   },
         { "Input_Login_Passwd", GUI_TEXTINPUT_LOGIN_PASSWD },
         { "Input_Login_Verify", GUI_TEXTINPUT_LOGIN_VERIFY },
+        { "Input_NPC_Dialog",   GUI_TEXTINPUT_NPC_DIALOG   },
         // Table
         { "Table_Server",       GUI_TABLE },
         // Combobox.
@@ -85,12 +90,13 @@ GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
     {
         { "Default",  STATE_MOUSE_DEFAULT  },
         { "Pushed",   STATE_MOUSE_PUSHED   },
+        { "Talk",     STATE_MOUSE_TALK     },
+        { "Attack",   STATE_MOUSE_ATTACK   },
+        { "Open",     STATE_MOUSE_OPEN     },
+        { "Cast",     STATE_MOUSE_CAST     },
         { "Dragging", STATE_MOUSE_DRAGGING },
         { "Resizing", STATE_MOUSE_RESIZING },
         { "PickUp",   STATE_MOUSE_PICKUP   },
-        { "Talk",     STATE_MOUSE_TALK     },
-        { "Attack",   STATE_MOUSE_ATTACK   },
-        { "Cast",     STATE_MOUSE_CAST     },
     };
 
 // GuiElement states.
@@ -159,6 +165,9 @@ void GuiImageset::parseXML(const char *fileImageSet)
                 Logger::log().error() << "MouseCursor has no default state and will be ignored.";
                 delete Entry;
             }
+//            for (int i= 0; i < 4; ++i)
+//                Logger::log().info() << "pa. " << mSrcEntryMouse[i].x << "  " << mSrcEntryMouse[i].y;
+
         }
         else // A gui Element.
         {

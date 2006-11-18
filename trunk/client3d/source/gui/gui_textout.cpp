@@ -337,6 +337,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
 {
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     uint32 pixFont, pixColor;
+    uint32 colorBack = color;
     int srcRow, dstRow, stopX, clipX=0;
     unsigned char chr;
     while (*text)
@@ -346,14 +347,14 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
         {
             case TXT_CMD_LOWLIGHT:
                 if (!*(++text)) return;
-                if (color== TXT_COLOR_DEFAULT)
+                if (color!= TXT_COLOR_LOWLIGHT)
                     color = TXT_COLOR_LOWLIGHT;
                 else
-                    color = TXT_COLOR_DEFAULT;
+                    color = colorBack;
                 break;
             case TXT_CMD_HIGHLIGHT:
                 if (!*(++text)) return;
-                if (color == TXT_COLOR_DEFAULT)
+                if (color != TXT_COLOR_HIGHLIGHT)
                 {
                     // Parse the highlight color (8 byte hex string to uint32).
                     if (*text == TXT_SUB_CMD_COLOR)
@@ -368,7 +369,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*t
                     // Use standard highlight color.
                     else color = TXT_COLOR_HIGHLIGHT;
                 }
-                else color = TXT_COLOR_DEFAULT;
+                else color = colorBack;
                 break;
             case TXT_CMD_CHANGE_FONT:
                 if (!*(++text)) return;

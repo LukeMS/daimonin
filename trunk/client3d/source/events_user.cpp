@@ -30,6 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_manager.h"
 #include "network.h"
 #include "object_manager.h"
+#include "object_visuals.h"
 #include "particle_manager.h"
 #include "option.h"
 
@@ -40,17 +41,22 @@ using namespace Ogre;
 //================================================================================================
 void CEvent::keyPressed(KeyEvent *e)
 {
-    mIdleTime =0;
     static Real g_pitch = 0.2;
+    mIdleTime =0;
 
-    // Is this keyEvent related to gui?
+    // ////////////////////////////////////////////////////////////////////
+    // GUI keyEvents.
+    // ////////////////////////////////////////////////////////////////////
     if (GuiManager::getSingleton().keyEvent(e->getKeyChar(), e->getKey()))
     {
         e->consume();
         return;
     }
 
+    // ////////////////////////////////////////////////////////////////////
     // InGame keyEvent.
+    // ////////////////////////////////////////////////////////////////////
+    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return;
     switch (e->getKey())
     {
         case KC_A:
@@ -70,14 +76,14 @@ void CEvent::keyPressed(KeyEvent *e)
         }
 
         case KC_C:
-		{
+        {
             static int animNr= 0;
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ABILITY, animNr);
             if (++animNr >= 16) animNr= 0;
 
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_CAST1);
-			break;
-		}
+            break;
+        }
 
         case KC_D:
             //ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_ANIMATION, 0,ObjectAnimate::STATE_DEATH1);
@@ -150,88 +156,56 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
 
         case KC_P:
-		{
-		    bool ready = ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO);
+        {
+            bool ready = ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO);
             ObjectManager::getSingleton().readyPrimaryWeapon(ObjectNPC::HERO, !ready);
-			break;
-		}
+            break;
+        }
 
         case KC_Q:
-		{
-		    if (ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO))
-               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
-		    else if (ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO))
-               ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
-			break;
-		}
+        {
+            if (ObjectManager::getSingleton().isPrimaryWeaponReady(ObjectNPC::HERO))
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 1);
+            else if (ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO))
+                ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_ANIMATION, 0, ObjectAnimate::ANIM_GROUP_ATTACK, 6);
+            break;
+        }
 
         case KC_S:
         {
-		    bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
+            bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
             ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
-			break;
+            break;
         }
 
-        case KC_NUMPAD2:
-		{
-            Event->setWorldPos(0, 1);
-			break;
-		}
+        /*
+                case KC_S:
+                {
+              bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
+                    ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
+           break;
+                }
+        */
+        case KC_T:
+            /*
+                   case KEYFUNC_TARGET_ENEMY:
+                     send_command("/target 0", -1, SC_NORMAL);
+                     break;
+                   case KEYFUNC_TARGET_FRIEND:
+                     send_command("/target 1", -1, SC_NORMAL);
+                     break;
+                   case KEYFUNC_TARGET_SELF:
+                     send_command("/target 2", -1, SC_NORMAL);
+                     break;
+                   case KEYFUNC_COMBAT:
+                     send_command("/combat", -1, SC_NORMAL);
+                     break;
+            */
 
-        case KC_NUMPAD8:
-		{
-            Event->setWorldPos(0,-1);
-			break;
-        }
-
-        case KC_NUMPAD4:
-		{
-            Event->setWorldPos(1, 0);
-			break;
-		}
-
-        case KC_NUMPAD6:
-		{
-            Event->setWorldPos(-1,0);
-			break;
-        }
-
-        case KC_NUMPAD7:
-		{
-            Event->setWorldPos(1,-1);
-			break;
-        }
-
-        case KC_NUMPAD3:
-		{
-            Event->setWorldPos(-1,1);
-			break;
-        }
-
-        case KC_NUMPAD9:
-		{
-            Event->setWorldPos(-1,-1);
-			break;
-        }
-
-        case KC_NUMPAD1:
-		{
-            Event->setWorldPos(1,1);
-			break;
-        }
-
-
-/*
-        case KC_S:
-        {
-		    bool ready = ObjectManager::getSingleton().isSecondaryWeaponReady(ObjectNPC::HERO);
-            ObjectManager::getSingleton().readySecondaryWeapon(ObjectNPC::HERO, !ready);
-			break;
-        }
-*/
-         case KC_T:
             if (Network::getSingleton().isInit())
+            {
                 Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
+            }
             break;
 
         case KC_W:
@@ -341,9 +315,9 @@ void CEvent::keyPressed(KeyEvent *e)
             //ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
             break;
 
-        // ////////////////////////////////////////////////////////////////////
-        // Player Movemment.
-        // ////////////////////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////////////////////
+            // Player Movemment.
+            // ////////////////////////////////////////////////////////////////////
         case KC_UP:
             //      ObjectManager::getSingleton().Event(OBJECT_PLAYER, OBJ_WALK, 0, 1);
             //mCamera->  moveRelative (Vector3(0,100,0));
@@ -429,7 +403,7 @@ void CEvent::keyPressed(KeyEvent *e)
         default:
             break;
     }
-    // e->consume();
+    e->consume();
 }
 
 void CEvent::keyClicked(KeyEvent* )
@@ -477,13 +451,36 @@ void CEvent::mouseMoved (MouseEvent *e)
         mMouseX = 0.995;
     if (mMouseY > 0.990)
         mMouseY = 0.990;
-    GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouseX, mMouseY);
+    if (GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouseX, mMouseY))
+        return;
+
+    if (Option::getSingleton().getGameStatus() >= GAME_STATUS_PLAY)
+    {
+        RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
+        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
+        mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
+        RaySceneQueryResult &result = mRaySceneQuery->execute();
+        if (!result.empty())
+        {
+            // Mouse is over an object.
+            RaySceneQueryResult::iterator itr = result.begin();
+            ObjectManager::getSingleton().highlightObject(itr->movable);
+        }
+        else
+        {
+            // Mouse is (no longer) over an object.
+            ObjectVisuals::getSingleton().highlightOff();
+        }
+        mSceneManager->destroyQuery(mRaySceneQuery);
+        mIdleTime =0;
+    }
+
 }
 
 void CEvent::mousePressed (MouseEvent *e)
 {
     // Ignoe button while init.
-    if (Option::getSingleton().getGameStatus() < GAME_STATUS_INIT_NET) return;
+    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return;
     mMouseX = e->getX();
     mMouseY = e->getY();
 
@@ -503,6 +500,7 @@ void CEvent::mousePressed (MouseEvent *e)
             if (!result.empty())
             {
                 //Logger::log().info() << result.size();
+
                 // Todo: choose a behaviour for more than 1 results.
                 RaySceneQueryResult::iterator itr = result.begin();
                 ObjectManager::getSingleton().selectObject(itr->movable);

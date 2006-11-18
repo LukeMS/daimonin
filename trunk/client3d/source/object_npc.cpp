@@ -239,7 +239,7 @@ void ObjectNPC::moveToNeighbourTile(int precision)
     // ////////////////////////////////////////////////////////////////////
     int dx = mActPos.x - mDestStepPos.x;
     int dz = mActPos.z - mDestStepPos.z;
-    if (!mIndex && (dx|| dz))
+    if (!mIndex && (dx || dz))
     {
         Event->setWorldPos(dx, -dz);
         mOffX+=dx;
