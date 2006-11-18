@@ -157,7 +157,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
             GuiSrcEntryMouse *Entry = new GuiSrcEntryMouse;
             if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
             if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
-            if (parseStates(xmlElem, Entry->state, STATE_MOUSE_SUM))
+            if (parseStates(xmlElem, Entry->state, STATE_MOUSE_SUM, true))
                 mSrcEntryMouse = Entry;
             else
             {
@@ -165,9 +165,6 @@ void GuiImageset::parseXML(const char *fileImageSet)
                 Logger::log().error() << "MouseCursor has no default state and will be ignored.";
                 delete Entry;
             }
-//            for (int i= 0; i < 4; ++i)
-//                Logger::log().info() << "pa. " << mSrcEntryMouse[i].x << "  " << mSrcEntryMouse[i].y;
-
         }
         else // A gui Element.
         {
@@ -177,7 +174,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
             if ((strTemp = xmlElem->Attribute("alpha" ))) if (atoi(strTemp)) Entry->alpha =true;
             if ((strTemp = xmlElem->Attribute("width" ))) Entry->width  = atoi(strTemp);
             if ((strTemp = xmlElem->Attribute("height"))) Entry->height = atoi(strTemp);
-            if (parseStates(xmlElem, Entry->state, STATE_ELEMENT_SUM))
+            if (parseStates(xmlElem, Entry->state, STATE_ELEMENT_SUM, false))
                 mvSrcEntry.push_back(Entry);
             else
             {
@@ -203,7 +200,7 @@ void GuiImageset::parseXML(const char *fileImageSet)
 //================================================================================================
 // Parse the Position entries.
 //================================================================================================
-bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_state)
+bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_state, bool mouseStates)
 {
     // By setting the xpos to -1 we declare this state to empty.
     for (int i=0; i < sum_state; ++i) stateNr[i].x = -1;
@@ -217,7 +214,7 @@ bool GuiImageset::parseStates(TiXmlElement *xmlElem, gfxPos *stateNr, int sum_st
         state = -1;
         for (int i=0; i < sum_state; ++i)
         {
-            if (!stricmp(strTemp, mElementState[i].name))
+            if (!stricmp(strTemp, mouseStates?mMouseState[i].name:mElementState[i].name))
             {
                 state = i;
                 break;

@@ -118,21 +118,11 @@ void GuiCursor::setStateImagePos(GuiImageset::gfxPos *Entry)
     memcpy(gfxSrcPos, Entry, sizeof(gfxSrcPos));
 }
 
-
-
-#include "gui_manager.h"
-
-
-
 //================================================================================================
 // .
 //================================================================================================
 void GuiCursor::draw()
 {
-    char buffer[400];
-    sprintf(buffer, "mm: %d  %d %d", mState, gfxSrcPos[mState].x , gfxSrcPos[mState].y );
-GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
-
     PixelBox src = GuiImageset::getSingleton().getPixelBox().getSubVolume(Box(
                        gfxSrcPos[mState].x,
                        gfxSrcPos[mState].y,
