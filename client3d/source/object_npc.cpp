@@ -143,7 +143,7 @@ void ObjectNPC::readyPrimaryWeapon(bool ready)
             mReadyWeaponStatus |= READY_WEAPON_PRIMARY_DROP;
         }
     }
-    else
+    else if (isPrimaryWeaponReady() != ready)
     {
         mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 2, false, true, false);
         if (ready)

@@ -321,137 +321,125 @@ void ObjectManager::freeRecources()
 void ObjectManager::highlightObject(MovableObject *mob)
 {
     if (!mob) return;
-    // ////////////////////////////////////////////////////////////////////
-    // Extract ObjectType and ObjectNr out of the entity name.
-    // ////////////////////////////////////////////////////////////////////
-    int sel=0;
-    String strObject = mob->getName();
-    for (; sel < OBJECT_SUM; ++sel)
-    {
-        if (strObject[0] == *ObjectID[sel]) break;
-    }
-    if (sel == OBJECT_SUM)
-    {
-        Logger::log().error() << "Unknown Object type in entity name: " << strObject;
-        return;
-    }
-    int index = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
-
-    if  (sel < OBJECT_NPC)
-    {
-        sel =0;
-        for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i, ++sel)
-            if ((int)(*i)->getIndex() == index) ObjectVisuals::getSingleton().highlight(mvObject_static[sel]);
-    }
+    extractObject(mob);
+    if  (mSelectedType >= OBJECT_NPC)
+        ObjectVisuals::getSingleton().highlight(mvObject_npc[mSelectedObject], mSelectedObject != ObjectNPC::HERO);
     else
-    {
-        sel =0;
-        for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i, ++sel)
-            if ((int)(*i)->getIndex() == index) ObjectVisuals::getSingleton().highlight(mvObject_npc[sel]);
-    }
+        ObjectVisuals::getSingleton().highlight(mvObject_static[mSelectedObject], true);
 }
-
 
 //================================================================================================
 // Select the (mouse clicked) object.
 //================================================================================================
 void ObjectManager::selectObject(MovableObject *mob)
 {
-    if (mvObject_npc[ObjectNPC::HERO]->isMoving())
-        return;
-    if (mvObject_npc[ObjectNPC::HERO]->getHealth() <= 0)
-        return;
+    if (mvObject_npc[ObjectNPC::HERO]->isMoving()) return;
+    if (mvObject_npc[ObjectNPC::HERO]->getHealth() <= 0) return;
 
-    // If we are already attacking a mob - every mouseclick attacks again.
-    if (!mob)
+    extractObject(mob);
+    if  (mSelectedType >= OBJECT_NPC)
     {
-        if  (mSelectedObject > 0 && mSelectedFriendly < 0)
-        {
-            mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
-            mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
-        }
-        return;
-    }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Extract ObjectType and ObjectNr out of the entity name.
-    // ////////////////////////////////////////////////////////////////////
-    String strObject = mob->getName();
-    for (mSelectedType=0; mSelectedType < OBJECT_SUM; ++mSelectedType)
-    {
-        if (strObject[0] == *ObjectID[mSelectedType]) break;
-    }
-    if (mSelectedType == OBJECT_SUM)
-    {
-        Logger::log().error() << "Unknown Object type in entity name: " << strObject;
-        return;
-    }
-    int selectedObject = 0;
-    int index = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
-
-    // ////////////////////////////////////////////////////////////////////
-    // Select the object.
-    // ////////////////////////////////////////////////////////////////////
-    if  (mSelectedType < OBJECT_NPC)
-    {
-        for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
-        {
-            if ((int)(*i)->getIndex() == index) break;
-            ++selectedObject;
-        }
-        mSelectedObject = -1;
-        mSelectedPos = mvObject_npc[selectedObject]->getTilePos();
-        ObjectVisuals::getSingleton().select(mvObject_static[selectedObject], false);
-        String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
-        Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
+        bool notHero = mSelectedObject != ObjectNPC::HERO;
+        ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], notHero, notHero);
+        mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
+        mSelectedFriendly = mvObject_npc[mSelectedObject]->getFriendly();
     }
     else
     {
-        for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
+        ObjectVisuals::getSingleton().select(mvObject_static[mSelectedObject], false);
+        mSelectedPos = mvObject_static[mSelectedObject]->getTilePos();
+    }
+    String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
+    Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
+}
+
+//================================================================================================
+// Mouse button was pressed - lets do the right thing.
+//================================================================================================
+void ObjectManager::mousePressed(MovableObject *mob, TilePos pos)
+{
+    // ////////////////////////////////////////////////////////////////////
+    // Only a tile was pressed - move toward it.
+    // ////////////////////////////////////////////////////////////////////
+    if (!mob)
+    {
+        mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
+        return;
+    }
+
+    // ////////////////////////////////////////////////////////////////////
+    // An object was pressed.
+    // ////////////////////////////////////////////////////////////////////
+    extractObject(mob);
+    if (mSelectedType == OBJECT_NPC)
+    {
+        if (mvObject_npc[mSelectedObject]->getFriendly() <0)
         {
-            if ((int)(*i)->getIndex() == index) break;
-            ++selectedObject;
+            mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
+            ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], true, false);
+            mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
         }
-        // Was already selected before (=> do some action on the selected NPC).
-        if (selectedObject == mSelectedObject)
-        {
-            if (mSelectedFriendly < 0)
-            {
-                mSelectedPos = mvObject_npc[selectedObject]->getTilePos();
-                mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);
-            }
-        }
-        // A new NPC was selected.
         else
         {
-            char buffer[100];
-            if (selectedObject == ObjectNPC::HERO)
+            mvObject_npc[ObjectNPC::HERO]->readyPrimaryWeapon(false);
+            ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], false, false);
+            Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
+        }
+    }
+    else if (mSelectedType < OBJECT_NPC)
+    {
+        mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
+        //mvObject_static[mSelectedObject]->openContainer(...);
+    }
+}
+
+
+//================================================================================================
+// Extract ObjectType and ObjectNr out of the entity name.
+//================================================================================================
+void ObjectManager::extractObject(MovableObject *mob)
+{
+    String strObject = mob->getName();
+    for (mSelectedType=0; mSelectedType < OBJECT_SUM; ++mSelectedType)
+    {
+        if (strObject[0] == *ObjectID[mSelectedType])
+        {
+            mSelectedObject = StringConverter::parseInt(strObject.substr(strObject.find("_")+1, strObject.size()));
+            // ////////////////////////////////////////////////////////////////////
+            // NPC or playe object.
+            // ////////////////////////////////////////////////////////////////////
+            if  (mSelectedType >= OBJECT_NPC)
             {
-                sprintf(buffer, "Selected: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
-                ObjectVisuals::getSingleton().select(mvObject_npc[ObjectNPC::HERO], false);
+                int sel =0;
+                for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i, ++sel)
+                {
+                    if ((int)(*i)->getIndex() == mSelectedObject)
+                    {
+                        mSelectedObject = sel;
+                        return;
+                    }
+                }
             }
+            // ////////////////////////////////////////////////////////////////////
+            // Static object.
+            // ////////////////////////////////////////////////////////////////////
             else
             {
-                sprintf(buffer, "Enemy: %s", (mvObject_npc[selectedObject]->getNickName()).c_str());
-                ObjectVisuals::getSingleton().select(mvObject_npc[selectedObject]);
-            }
-            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
-            mSelectedObject = selectedObject; // must be set before ::selectNPC
-            mSelectedFriendly = mvObject_npc[selectedObject]->getFriendly();
-            TilePos pos = mvObject_npc[selectedObject]->getTilePos();
-            String strSelect = "/target !"+ StringConverter::toString(pos.x-9) + " " + StringConverter::toString(pos.z-9);
-            Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
-            if (mSelectedFriendly < 0)
-            {
-                mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[selectedObject]);
-            }
-            else
-            {
-                mvObject_npc[ObjectNPC::HERO]->readyPrimaryWeapon(false);
+                int sel =0;
+                for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i, ++sel)
+                {
+                    if ((int)(*i)->getIndex() == mSelectedObject)
+                    {
+                        mSelectedObject = sel;
+                        return;
+                    }
+                }
             }
         }
     }
+    Logger::log().error() << "Bug in ObjectManager::extractObject(...) : Could not extract object!";
 }
+
 
 //================================================================================================
 //

@@ -177,6 +177,9 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 //================================================================================================
 void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
+    char buffer[400];
+    sprintf(buffer, "Layer: %d   face: %x   pos: %d, %d", layer, face, x,y);
+    Logger::log().error() << buffer;
     switch (layer)
     {
         case 0:
@@ -290,6 +293,25 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
                     obj.pos.x     = x;
                     obj.pos.z     = y;
                     obj.pos.subX  = 2;
+                    obj.pos.subZ  = 5;
+                    obj.level     = 0;
+                    obj.facing    = -60;
+                    obj.particleNr=-1;
+                    ObjectManager::getSingleton().addMobileObject(obj);
+
+                    obj.meshName  = "Tentacle_N_Small.mesh";
+                    obj.nickName  = "Nick_Tentacle";
+                    obj.type      = ObjectManager::OBJECT_NPC;
+                    obj.boundingRadius = 2;
+                    obj.friendly  = -20;
+                    obj.attack    = 50;
+                    obj.defend    = 50;
+                    obj.maxHP     = 50;
+                    obj.maxMana   = 50;
+                    obj.maxGrace  = 50;
+                    obj.pos.x     = x;
+                    obj.pos.z     = y+4;
+                    obj.pos.subX  = 3;
                     obj.pos.subZ  = 5;
                     obj.level     = 0;
                     obj.facing    = -60;

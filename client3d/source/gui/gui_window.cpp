@@ -449,7 +449,9 @@ inline void GuiWindow::createWindow()
 //================================================================================================
 void GuiWindow::centerWindowOnMouse(int x, int y)
 {
-    mElement->setPosition(x-mTexture->getWidth()/2, y-mTexture->getHeight()/2 - 50);
+    mPosX = x-mTexture->getWidth()/2;
+    mPosY = y-mTexture->getHeight()/2 - 50;
+    mElement->setPosition(mPosX, mPosY);
 }
 
 //================================================================================================
@@ -477,11 +479,14 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     int x = rx - mPosX;
     int y = ry - mPosY;
 
+    int sumPressed = 0;
     for (unsigned int i = 0; i < mvGadgetButton.size(); ++i)
-    {
-        if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y))
-            return true;
+    {   // We dont return on a true return value - to avoid 2 buttons selected at same time..
+        // This will still happen when their gfx is overlapping.
+        if (mvGadgetButton[i]->mouseEvent(MouseAction, x, y)) ++sumPressed;
     }
+    if (sumPressed) return true;
+
     for (unsigned int i = 0; i < mvGadgetCombobox.size(); ++i)
     {
 //        if (mvGadgetCombobox[i]->mouseEvent(MouseAction, x, y))
@@ -502,7 +507,7 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     {
         case BUTTON_PRESSED:
         {
-            GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_PUSHED);
+            //GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_PUSHED);
             // Mouse over this window?
             if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
             {
@@ -537,7 +542,7 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
 
         case BUTTON_RELEASED:
         {
-            GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_DEFAULT);
+            //GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_DEFAULT);
             mMousePressed = -1;
             mMouseDragging= -1;
             break;

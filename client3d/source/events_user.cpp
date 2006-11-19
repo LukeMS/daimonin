@@ -201,11 +201,6 @@ void CEvent::keyPressed(KeyEvent *e)
                      send_command("/combat", -1, SC_NORMAL);
                      break;
             */
-
-            if (Network::getSingleton().isInit())
-            {
-                Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
-            }
             break;
 
         case KC_W:
@@ -456,85 +451,72 @@ void CEvent::mouseMoved (MouseEvent *e)
 
     if (Option::getSingleton().getGameStatus() >= GAME_STATUS_PLAY)
     {
+    }
+}
+
+void CEvent::mousePressed (MouseEvent *e)
+{
+    // ////////////////////////////////////////////////////////////////////
+    // Right button for selection and menu.
+    // ////////////////////////////////////////////////////////////////////
+    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return; // TODO: ServerSelection by mouse.
+    mMouseX = e->getX();
+    mMouseY = e->getY();
+    if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouseX, mMouseY)) return;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Right button for selection and menu.
+    // ////////////////////////////////////////////////////////////////////
+    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return;
+    int button = e->getButtonID();
+#ifdef WIN32
+    if (button & MouseEvent::BUTTON1_MASK )
+#else
+    if (button & MouseEvent::BUTTON2_MASK )
+#endif
+    {
         RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
         mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
         mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
         RaySceneQueryResult &result = mRaySceneQuery->execute();
         if (!result.empty())
         {
-            // Mouse is over an object.
+            //Logger::log().info() << result.size();
             RaySceneQueryResult::iterator itr = result.begin();
-            ObjectManager::getSingleton().highlightObject(itr->movable);
+            ObjectManager::getSingleton().selectObject(itr->movable);
         }
         else
         {
-            // Mouse is (no longer) over an object.
-            ObjectVisuals::getSingleton().highlightOff();
+            // nothing selected, but if we are in attack mode -> attack selected enemy.
+            //ObjectManager::getSingleton().selectObject(0);
         }
         mSceneManager->destroyQuery(mRaySceneQuery);
         mIdleTime =0;
     }
 
-}
-
-void CEvent::mousePressed (MouseEvent *e)
-{
-    // Ignoe button while init.
-    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return;
-    mMouseX = e->getX();
-    mMouseY = e->getY();
-
-    int button = e->getButtonID();
-    if (button & MouseEvent::BUTTON0_MASK ) // LeftButton.
+    // ////////////////////////////////////////////////////////////////////
+    // Left button for movement & standard action.
+    // ////////////////////////////////////////////////////////////////////
+    else if (button & MouseEvent::BUTTON0_MASK ) // LeftButton.
     {
-        if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouseX, mMouseY))
-        { // Button was pressed in a gui_window.
+        TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
+        ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->getSelectedPos(), "Particle/SelectionDust", 0.8);
 
-        }
-        else if (Option::getSingleton().getGameStatus() >= GAME_STATUS_PLAY)
+        RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
+        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
+        mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
+        RaySceneQueryResult &result = mRaySceneQuery->execute();
+        if (!result.empty())
         {
-            RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-            mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
-            mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
-            RaySceneQueryResult &result = mRaySceneQuery->execute();
-            if (!result.empty())
-            {
-                //Logger::log().info() << result.size();
-
-                // Todo: choose a behaviour for more than 1 results.
-                RaySceneQueryResult::iterator itr = result.begin();
-                ObjectManager::getSingleton().selectObject(itr->movable);
-            }
-            else
-            {
-                // nothing selected, but if we are in attack mode -> attack selected enemy.
-                ObjectManager::getSingleton().selectObject(0);
-            }
-            mSceneManager->destroyQuery(mRaySceneQuery);
-            mIdleTime =0;
+            RaySceneQueryResult::iterator itr = result.begin();
+            ObjectManager::getSingleton().mousePressed(itr->movable, TileManager::getSingleton().getTileInterface()->getSelectedTile());
         }
-    }
-#ifdef WIN32
-    else if (button & MouseEvent::BUTTON1_MASK )
-#else
-    else if (button & MouseEvent::BUTTON2_MASK )
-#endif
-    {
-        if (!Option::getSingleton().getIntValue(Option::CMDLINE_FALLBACK))
+        else
         {
-            Vector3 posV;
-            // activate mouse picking of tiles
-            TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
-            posV = TileManager::getSingleton().getTileInterface()->getSelectedPos();
-            ParticleManager::getSingleton().addFreeObject(posV, "Particle/SelectionDust", 0.8);
-            //ParticleManager::getSingleton().addFreeObject(posV, "Particle/GreenyNimbus", -1);
-            // Move the player.
-            TilePos pos = TileManager::getSingleton().getTileInterface()->getSelectedTile();
-            pos.x += pos.z << 8;
-            pos.subX += pos.subZ << 8;
-            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_GOTO, 0, (int) pos.x, (int) pos.subX);
-            mIdleTime =0;
+            ObjectManager::getSingleton().mousePressed(0, TileManager::getSingleton().getTileInterface()->getSelectedTile());
         }
+        mSceneManager->destroyQuery(mRaySceneQuery);
+        mIdleTime =0;
     }
     e->consume();
 }

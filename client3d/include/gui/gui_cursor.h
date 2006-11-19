@@ -42,6 +42,10 @@ public:
     // ////////////////////////////////////////////////////////////////////
     void setPos(int x, int y);
     void setState(unsigned int state);
+    int  getState()
+    {
+        return mState;
+    }
     void draw();
     void Init(int w, int h, int screenHeight, int screenWidth);
     void freeRecources();
@@ -56,8 +60,8 @@ private:
     // Variables.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mScreenWidth, mScreenHeight;
-    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_MOUSE_SUM];
     unsigned int mState;
+    GuiImageset::gfxPos gfxSrcPos[GuiImageset::STATE_MOUSE_SUM];
     int mWidth, mHeight;
     Overlay *mOverlay;
     OverlayElement *mElement;
