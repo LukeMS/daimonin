@@ -229,15 +229,13 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
 //===================================================
 // Select a NPC.
 //===================================================
-void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar)
+void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMenu)
 {
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
     if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
     mNode[VISUAL_SELECTION] =npc->getSceneNode()->createChildSceneNode();
-    mObjectNPC = npc;
-
     mNode[VISUAL_SELECTION]->attachObject(mPSystem);
     int index;
     if      (npc->getFriendly() >0) index = PARTICLE_COLOR_FRIEND_STRT;
@@ -278,19 +276,21 @@ void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar)
     // ////////////////////////////////////////////////////////////////////
     // Menu.
     // ////////////////////////////////////////////////////////////////////
-    GuiManager::getSingleton().centerWindowOnMouse(GUI_WIN_PLAYERCONSOLE);
-    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
+    if (showInteractMenu)
+    {
+        GuiManager::getSingleton().centerWindowOnMouse(GUI_WIN_PLAYERCONSOLE);
+        GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
+    }
 }
 
 //===================================================
 // Select an static object.
 //===================================================
-void ObjectVisuals::select(ObjectStatic *obj, bool showLifebar)
+void ObjectVisuals::select(ObjectStatic *obj, bool showLifebar, bool showInteractMenu)
 {
     // ////////////////////////////////////////////////////////////////////
     // Selection ring.
     // ////////////////////////////////////////////////////////////////////
-    mObjStatic = obj;
     if (mNode[VISUAL_SELECTION]) mNode[VISUAL_SELECTION]->getParentSceneNode()->removeAndDestroyChild(mNode[VISUAL_SELECTION]->getName());
     mNode[VISUAL_SELECTION] =obj->getSceneNode()->createChildSceneNode();
     mNode[VISUAL_SELECTION]->attachObject(mPSystem);
@@ -318,12 +318,23 @@ void ObjectVisuals::unselect()
     GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, false);
 }
 
+
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::highlight(ObjectNPC *obj)
+void ObjectVisuals::setDefaultAction(int action)
 {
-    if (mObjectNPC == obj) return;
+    mDefaultAction = action;
+    GuiCursor::getSingleton().setState(action);
+}
+
+//===================================================
+// .
+//===================================================
+void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction)
+{
+    if (!obj || mObjectNPC == obj) return;
+    highlightOff();
     mObjectNPC = obj;
     // Backup the name of the original material.
     strMaterialNameBackup = obj->getEntity()->getSubEntity(0)->getMaterialName();
@@ -335,15 +346,21 @@ void ObjectVisuals::highlight(ObjectNPC *obj)
     // Set the highlighted material for the model.
     for (unsigned int i =0; i<mObjectNPC->getEntity()->getNumSubEntities(); ++i)
         mObjectNPC->getEntity()->getSubEntity(i)->setMaterialName("Object_Highlight");
-
-    GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_TALK);
+    if (showDefaultAction)
+    {
+        if      (obj->getFriendly() >0) setDefaultAction(GuiImageset::STATE_MOUSE_TALK);
+        else if (obj->getFriendly() <0) setDefaultAction(GuiImageset::STATE_MOUSE_ATTACK);
+    }
 }
 
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::highlight(ObjectStatic *obj)
-{}
+void ObjectVisuals::highlight(ObjectStatic *obj, bool showDefaultAction)
+{
+    // if container setDefaultAction(GuiImageset::STATE_MOUSE_OPEN);
+    // weight < xyz setDefaultAction(GuiImageset::STATE_MOUSE_PICKUP);
+}
 
 //===================================================
 // Switch off highlighting.
@@ -358,9 +375,10 @@ void ObjectVisuals::highlightOff()
     }
     if (mObjStatic)
     {
+        return;
         for (unsigned int i =0; i<mObjStatic->getEntity()->getNumSubEntities(); ++i)
             mObjStatic->getEntity()->getSubEntity(i)->setMaterialName(strMaterialNameBackup);
         mObjStatic = 0;
     }
-        GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_DEFAULT);
+    setDefaultAction(GuiImageset::STATE_MOUSE_DEFAULT);
 }

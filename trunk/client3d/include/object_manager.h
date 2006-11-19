@@ -96,6 +96,7 @@ public:
     void delObjectNPC(int number);
     void delObjectStatic(int number);
     void update(int type, const FrameEvent& evt);
+    void mousePressed(MovableObject *mob, TilePos pos);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
     void highlightObject(MovableObject *mob);
@@ -137,7 +138,6 @@ public:
     }
     const Vector3 &synchToWorldPos(int deltaX, int deltaZ);
     void selectObject(MovableObject *mob);
-
     Vector3 getTargetedWorldPos()
     {
         return mvObject_npc[mSelectedObject]->getSceneNode()->getPosition();
@@ -179,6 +179,7 @@ private:
     {}
     ~ObjectManager();
     ObjectManager(const ObjectManager&); // disable copy-constructor.
+    void extractObject(MovableObject *mob);
 };
 
 #endif

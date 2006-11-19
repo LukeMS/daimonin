@@ -586,8 +586,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Client3d commands:");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
-                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~right~ MB on ground to move.");
-                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~left~ MB for selection.");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~1 ... 8~ to change cloth.");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~X~ for texture quality. ");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~A~ to change Idle animation.");
@@ -596,10 +594,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~P~ to ready/unready primary weapon.");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~S~ to ready/unready secondary weapon.");
                     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~Q~ to start attack animation.");
-                    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Press ~T~ to talk to advisor.");
 
-					// Can crash the client...
-					//ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
+                    // Can crash the client...
+                    //ObjectManager::getSingleton().setNameNPC(ObjectNPC::HERO, strPlayerName.c_str());
 
                     //Sound::getSingleton().playStream(Sound::GREETS_VISITOR);
                     once = true;
@@ -612,9 +609,24 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             }
 
             static unsigned long time = Root::getSingleton().getTimer()->getMilliseconds();
-            if (Root::getSingleton().getTimer()->getMilliseconds() - time > 80.0)
+            if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
             {
-                //TileManager::getSingleton().ChangeChunks();
+                RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
+                mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
+                mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
+                RaySceneQueryResult &result = mRaySceneQuery->execute();
+                if (!result.empty())
+                {
+                    // Mouse is over an object.
+                    RaySceneQueryResult::iterator itr = result.begin();
+                    ObjectManager::getSingleton().highlightObject(itr->movable);
+                }
+                else
+                {
+                    // Mouse is (no longer) over an object.
+                    ObjectVisuals::getSingleton().highlightOff();
+                }
+                mSceneManager->destroyQuery(mRaySceneQuery);
                 time = Root::getSingleton().getTimer()->getMilliseconds();
             }
 
@@ -632,7 +644,8 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             {
                 TileMap::getSingleton().map_draw_map();
             }
-            break;
+
+             break;
         }
 
         default:

@@ -53,22 +53,22 @@ public:
         PARTICLE_COLOR_NEUTRAL_STOP,
         PARTICLE_COLOR_SUM
     };
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static ObjectVisuals &getSingleton()
     {
-
         static ObjectVisuals Singleton; return Singleton;
     }
     void Init();
     void freeRecources();
     /** health < 0 disables the lifebar. */
-    void select(ObjectNPC *obj, bool showLifebar = true);
-    void select(ObjectStatic *obj, bool showLifebar = true);
-    void highlight(ObjectNPC    *obj);
-    void highlight(ObjectStatic *obj);
-    void highlightOff();                  /**< Switch off highlighting **/
+    void select(ObjectNPC    *obj, bool showLifebar = true, bool showInteractMenu = false);
+    void select(ObjectStatic *obj, bool showLifebar = true, bool showInteractMenu = false);
+    void highlight(ObjectNPC    *obj, bool showDefaultAction);
+    void highlight(ObjectStatic *obj, bool showDefaultAction);
+    void highlightOff();                /**< Switch off highlighting **/
     void unselect();
     void setPosLifebar(Vector3 pos);
     void setLifebar(Real percent, int barWidth = 128);
@@ -93,6 +93,7 @@ private:
     ObjectStatic *mObjStatic;
     ObjectNPC *mObjectNPC;
     String strMaterialNameBackup;
+    int mDefaultAction;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -101,6 +102,7 @@ private:
     ~ObjectVisuals();
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
     void buildEntity(int index, const char *meshName, const char *entityName);
+    void setDefaultAction(int action);
 }
 ;
 
