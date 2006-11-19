@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="4" />
+	<FileVersion major="1" minor="5" />
 	<Project>
 		<Option title="daimonin_server" />
 		<Option pch_mode="0" />
+		<Option default_target="" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="" />
 		<Build>
 			<Target title="Release">
-				<Option output="..\..\..\daimonin_server.exe" />
+				<Option output="..\..\..\daimonin_server.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\server" />
 				<Option object_output=".\Release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
 					<Add option="-W" />
@@ -33,12 +34,11 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Debug">
-				<Option output="..\..\..\daimonin_server.exe" />
+				<Option output="..\..\..\daimonin_server.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\..\..\..\server" />
 				<Option object_output=".\Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option includeInTargetAll="1" />
 				<Option projectResourceIncludeDirsRelation="1" />
 				<Compiler>
 					<Add option="-W" />
@@ -60,6 +60,9 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Release;Debug;" />
+		</VirtualTargets>
 		<Compiler>
 			<Add directory="..\..\..\src\include" />
 			<Add directory="..\..\..\src\random_maps" />
@@ -157,6 +160,11 @@
 			<Option target="Debug" />
 		</Unit>
 		<Unit filename="..\..\..\src\common\map.c">
+			<Option compilerVar="CC" />
+			<Option target="Release" />
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="..\..\..\src\common\map_tile.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
 			<Option target="Debug" />
@@ -822,11 +830,6 @@
 			<Option target="Release" />
 			<Option target="Debug" />
 		</Unit>
-		<Unit filename="..\..\..\src\server\hiscore.c">
-			<Option compilerVar="CC" />
-			<Option target="Release" />
-			<Option target="Debug" />
-		</Unit>
 		<Unit filename="..\..\..\src\server\init.c">
 			<Option compilerVar="CC" />
 			<Option target="Release" />
@@ -1094,5 +1097,6 @@
 			<Option target="Release" />
 			<Option target="Debug" />
 		</Unit>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
