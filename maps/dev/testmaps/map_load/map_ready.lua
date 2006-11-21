@@ -5,7 +5,7 @@ local pl        = event.activator
 local me        = event.me
 local msg       = string.lower(event.message)
 
-instance_name   = "/dev/testmaps/map_load/testmap_mt_tile_1"
+instance_path   = "/dev/testmaps/map_load/testmap_mt_tile_1"
 
 local ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)
@@ -13,7 +13,7 @@ ib:SetHeader(me, me.name)
 local function topicDefault()
 	ib:AddMsg("We test here to init, load & jump to an instance by script.")
 
-	if pl:CheckInstance(instance_name) then
+	if pl:CheckInstance(instance_path) then
 		ib:AddMsg("\n\nThis instance is ACTIVE for you!\n")
 		ib:AddLink("Neutralize (delete) your instance", "remInstance")			
 	end
@@ -22,12 +22,12 @@ local function topicDefault()
 end
 
 local function jmpInstance()
-	pl:Teleport(1, 1, pl:ReadyInstance(instance_name))
+	pl:SetPosition(pl:StartNewInstance(instance_path), 1, 1)
 	pl:Interface(-1, "")
 end
 
 local function remInstance()
-	pl:DeleteInstance(instance_name)
+	pl:DeleteInstance(instance_path)
 	topicDefault()
 end
 
