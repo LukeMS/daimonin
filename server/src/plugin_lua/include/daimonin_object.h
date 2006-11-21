@@ -30,9 +30,9 @@
 #include <plugin_lua.h>
 
 /* GameObject methods  */
-static int GameObject_Teleport(lua_State *L);
+static int  GameObject_SetPosition(lua_State *L);
 static int  GameObject_ReadyUniqueMap(lua_State *L);
-static int  GameObject_ReadyInstance(lua_State *L);
+static int  GameObject_StartNewInstance(lua_State *L);
 static int  GameObject_CheckInstance(lua_State *L);
 static int  GameObject_DeleteInstance(lua_State *L);
 static int  GameObject_CreateArtifact(lua_State *L);

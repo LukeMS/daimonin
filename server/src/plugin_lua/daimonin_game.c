@@ -351,15 +351,19 @@ static int Game_MatchString(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_ReadyMap                                                    */
-/* Lua    : game:ReadyMap(name, flags)                                       */
-/* Info   : Make sure that mapname is loaded into memory                     */
-/*        : ReadyMap will ONLY create multi maps!                            */
-/*        : default: (no flags) will do a normal ready_map_name() call       */
-/*        : This function only loads _MULTI maps - use                       */
-/*        : Check also ReadyUniqueMap() and ReadyInstanceMap()               */
-/*        : flags: if MAP_CHECK is given, we only check the map is in        */
-/*        : memory. If not, we return NULL                                   */
-/*        : MAP_NEW delete a map in memory and force a reset                 */
+/* Lua    : game:ReadyMap(map_path, flags)                                   */
+/* Info   : Loads the map from map_path into memory, unless already loaded.  */
+/*          Will normally ONLY create multiplayer maps, not instances.       */
+/*          See also object:ReadyUniqueMap(), object:StartNewInstance() and  */
+/*          map:ReadyInheritedMap()                                          */
+/*          flags:                                                           */
+/*            game:MAP_CHECK - don't load the map if it isn't in memory,     */
+/*                             returns nil if the map wasn't in memory.      */
+/*            game:MAP_NEW - delete the map from memory and force a reset    */
+/*                           (if it existed in memory or swap)               */
+/*          If map_path is taken from the path attribute of a unique or      */
+/*          instance map, this function will actually load the unique map or */
+/*          the instance. This is how e.g. paths to apartment maps are stored*/
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int Game_ReadyMap(lua_State *L)
@@ -389,7 +393,7 @@ static int Game_ReadyMap(lua_State *L)
 
             if(*path_sh != '.') 
             {
-                if(map && flags & PLUGIN_MAP_NEW) /* reset the maps - when it loaded */
+                if(map && (flags & PLUGIN_MAP_NEW)) /* reset the maps - if it loaded */
                 {
                     int num = 0;
 

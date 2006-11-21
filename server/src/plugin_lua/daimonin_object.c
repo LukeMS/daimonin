@@ -32,9 +32,9 @@
 /* Available python methods for the GameObject object */
 static struct method_decl   GameObject_methods[]            =
 {
-    {"Teleport", (lua_CFunction) GameObject_Teleport},
+    {"SetPosition", (lua_CFunction) GameObject_SetPosition},
     {"ReadyUniqueMap", (lua_CFunction) GameObject_ReadyUniqueMap},
-    {"ReadyInstance", (lua_CFunction) GameObject_ReadyInstance},
+    {"StartNewInstance", (lua_CFunction) GameObject_StartNewInstance},
     {"CheckInstance", (lua_CFunction) GameObject_CheckInstance},
     {"DeleteInstance", (lua_CFunction) GameObject_DeleteInstance},
 	{"CreateArtifact", (lua_CFunction) GameObject_CreateArtifact},
@@ -291,88 +291,48 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 /*****************************************************************************/
-/* Name   : GameObject_Teleport                                              */
-/* Lua    : object:Teleport(x, y, oldmap, flags, mapname)                    */
+/* Name   : GameObject_SetPosition                                           */
+/* Lua    : object:SetPosition(map, x, y, flags)                             */
 /* Info   : Teleports op to x,y of object.map or map (when given).           */
-/*          Teleports to mapname if it is given, otherwise teleports to      */
-/*          object.map                                                       */
-/*          instance data is inherited from oldmap if given, otherwise       */
-/*          object.map is used for inheritance.                              */
-/*          WARNING: a script developer must have in mind that Teleoprt()    */
-/*          can destroy the object which should it transfer. Therefore the   */
-/*          return values are important to check                             */
+/*          WARNING: a script developer must have in mind that SetPosition() */
+/*          can result in the destruction of the transferred object. The     */
+/*          return value is important to check!                              */
 /*          flags can be some combinations of:                               */
-/*            game.MFLAG_FIXED_POS - insert on x,y even IF the spot not free */
+/*            game.MFLAG_FIXED_POS - insert on x,y EVEN if the spot not free */
 /*            game.MFLAG_RANDOM_POS - insert on a free random spot near x,y  */
 /*            game.MFLAG_FREE_POS_ONLY - only insert on a free position,     */
 /*            return with fail when there is no free spot                    */
 /*          Examples:                                                        */
-/*          obj:Teleport(x, y) - same as obj:Teleport(x,y,obj.map)           */
-/*          obj:Teleport(x, y, game:ReadyMap("/mappath")) - MULTI type map   */
-/*          obj:Teleport(x, y, obj:ReadyInstance("/mappath")) - instance map */
-/*          obj:Teleport(x, y, obj.map, 0, "/mappath") - type from obj.map   */
-/*            (same as obj:Teleport(x, y, obj.map:Load("mappath"))           */
-/* Return : 0: all ok, 1: object was destroyed, 2: teleport failed (map or   */
-/*          position error, ...) 3: mapname not found                        */
+/*          obj:SetPosition(x, y) - same as obj:SetPosition(obj.map, x,y)    */
+/*          obj:SetPosition(game:ReadyMap("/a_map"), x, y) - multiplayer map */
+/*          obj:SetPosition(obj:StartNewInstance("/another_map"), x, y)      */
+/*          obj:SetPosition(obj.map:ReadyInheritedMap("/map_2"), x, y)       */
+/* Return : 0: all ok, 1: object was destroyed, 2: insertion failed (map or  */
+/*          position error, ...)                                             */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-static int GameObject_Teleport(lua_State *L)
+static int GameObject_SetPosition(lua_State *L)
 {
     int         x, y, flags, ret=0;
-    char       *mapname = NULL;
-    lua_object *omap=NOT_LEGAL_POINTER, *self;
-    const char *orig_path_sh, *path_sh = NULL;
-    mapstruct *map = NULL, *new_map = NULL;
+    lua_object *self, *where;
+    mapstruct *new_map = NULL;
 
-    get_lua_args(L, "Oii|?Mis", &self, &x, &y, &omap, &flags, &mapname);
-
-    /* important: when omap is NOT given from the script (NULL can be given, so 
-     * we can't use it as default init) we overrule it with the map from the
-     * object. This will allow to use obj:Teleport(1,1) and obj:Teleport (1,1,map)
-     * and to catch map=NULL with is ALWAYS a bug. Usually a ReadyMap(name) for
-     * map failed then. In this way we can catch it very elegant and hold the scripts
-     * smaller and clearer by moving the checks to this function.
-     */
-    if (omap == NOT_LEGAL_POINTER)
-        map = WHO->map;
-    else
-        map = omap->data.map;
-
-    if(!map)
+    /* Small hack to allow optional first map parameter */
+    if(lua_isuserdata(L, 2))
     {
-        LOG(llevBug, "Script called obj:Teleport() with map = NULL. self:%&s\n", hooks->query_short_name(WHO, NULL)); 
-        ret = 2;
+        get_lua_args(L, "OMii|i", &self, &where, &x, &y, &flags);
+        new_map = where->data.map;
     }
     else
     {
-        /* we need a valid map status to know how to handle the map file */
-        if(MAP_STATUS_TYPE(map->map_status) && mapname)
-        {
-            orig_path_sh = hooks->create_safe_mapname_sh(mapname);
-
-            /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
-            if(map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
-            {
-                char tmp_path[MAXPATHLEN];
-
-                path_sh = hooks->add_string( hooks->normalize_path_direct(map->path, hooks->path_to_name(orig_path_sh), tmp_path));
-            }
-
-            new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(map->map_status));
-
-            FREE_ONLY_HASH(orig_path_sh);
-            if(path_sh)
-                FREE_ONLY_HASH(path_sh);
-        }
-        else
-            new_map = map; /* for the return value */
-
-        if(new_map)
-            ret = hooks->enter_map(WHO, NULL, new_map, x, y, flags);
-        else
-            ret = 3;
-
+        get_lua_args(L, "Oii|i", &self, &x, &y, &flags);
+        new_map = WHO->map;
+        if(new_map == NULL)
+            luaL_error(L, "Short-form of SetPosition() used, but the object didn't have a map");
     }
+
+    ret = hooks->enter_map(WHO, NULL, new_map, x, y, flags);
+
     lua_pushnumber(L, ret);
     return 1;
 }
@@ -380,12 +340,19 @@ static int GameObject_Teleport(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_ReadyUniqueMap                                        */
-/* Lua    : object:ReadyUniqueMap(mapname,flag)                              */
-/* Info   : Check, load and/or create an unique map                          */
-/*        : default (no flags): load unique map, create if needed            */
-/*        : game.MAP_CHECK - checks the unique map already exists and load   */
-/*        : game.MAP_NEW - resets/reloads map                                */
-/* Return : map pointer to unique map or NULL                                */
+/* Lua    : object:ReadyUniqueMap(map_path,flags)                            */
+/* Info   : Loads the unique map from map_path into memory for object, unless*/
+/*          already loaded.                                                  */
+/*          Also, creates a new persistant unique map if needed.             */
+/*          Only players can have unique maps associated to them.            */
+/*          See also map:ReadyInheritedMap(), object:StartNewInstance() and  */
+/*          game:ReadyMap()                                                  */
+/*          flags:                                                           */
+/*            game.MAP_CHECK - don't load the map if it isn't in memory,     */
+/*                             returns nil if the map wasn't in memory.      */
+/*            game.MAP_NEW - delete the map from memory and force a reset    */
+/*                           (if it existed in memory or swap)               */
+/* Return : map pointer to unique map, or nil                                */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_ReadyUniqueMap(lua_State *L)
@@ -398,63 +365,71 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
 
     get_lua_args(L, "Os|i", &self, &mapname, &flags);
 
-    /* we only allow the creation and handling of unique maps in context with players */
-    if(mapname && WHO->type == PLAYER && CONTR(WHO))
+    if(WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "ReadyUniqueMap() must be called on a legal player object.");
+
+    /* mapname must point to original map in /path - we will generate our
+     * unique map name itself
+     */
+    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+
+    if(orig_path_sh)
     {
-        /* mapname must point to original map in /path - we will generate our
-         * unique map name itself
-         */
-        orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+        path_sh = hooks->create_unique_path_sh(WHO, orig_path_sh);
+        map = hooks->ready_map_name(path_sh, NULL, 0);
 
-        if(orig_path_sh)
+        if(map && flags & PLUGIN_MAP_NEW) /* reset the maps - when it loaded */
         {
-            path_sh = hooks->create_unique_path_sh(WHO, orig_path_sh);
-            map = hooks->ready_map_name(path_sh, NULL, 0);
+            int num = 0;
 
-            if(map && flags & PLUGIN_MAP_NEW) /* reset the maps - when it loaded */
-            {
-                int num = 0;
+            if(map->player_first)
+                num = hooks->map_to_player_unlink(map); /* remove player from map */
 
-                if(map->player_first)
-                    num = hooks->map_to_player_unlink(map); /* remove player from map */
+            hooks->clean_tmp_map(map); /* remove map from memory */
+            hooks->delete_map(map);
 
-                hooks->clean_tmp_map(map); /* remove map from memory */
-                hooks->delete_map(map);
+            /* reload map forced from original /maps */
+            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE);
 
-                /* reload map forced from original /maps */
-                map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE);
-
-                if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
-                    hooks->map_to_player_link(map, -1, -1, FALSE);
-            }
-            else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
-                map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE);
-
-            FREE_ONLY_HASH(path_sh);
+            if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
+                hooks->map_to_player_link(map, -1, -1, FALSE);
         }
-        
-        FREE_ONLY_HASH(orig_path_sh);
+        else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
+            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE);
+
+        FREE_ONLY_HASH(path_sh);
     }
+    
+    FREE_ONLY_HASH(orig_path_sh);
 
     return push_object(L, &Map, map);
 }
 
-
 /*****************************************************************************/
-/* Name   : GameObject_ReadyInstance                                         */
-/* Lua    : object:ReadyInstance(mapname,flag)                               */
-/* Info   : Reload or creates instance for a player                          */
-/*        : default (no flags): load instance, create if needed              */
-/*        : game.MAP_CHECK - check PLAYER for valid instance IDs             */
-/*        : reload (or create) the instance - but use all old files          */
-/*        : if the instance is invalid return NULL                           */
-/*        : game.MAP_NEW - delete old IDs, create a NEW instance, no reenter */
-/*        : NOTE: a instance reset DON'T resets the maps - it creates a new  */
-/*        : instance of that name/type.                                      */
-/* Return : map pointer to instance starting map or NULL                     */
+/* Name   : GameObject_StartNewInstance                                      */
+/* Lua    : object:StartNewInstance(entrance_path,flag)                      */
+/* Info   : Reload or creates an instance for a player                       */
+/* Info   : Reloads or creates an instance for a player based on the map     */
+/*          loaded from entrance_path.                                       */
+/*          See also object:ReadyUniqueMap(), object:StartNewInstance() and  */
+/*          game:ReadyMap()                                                  */
+/*          flags:                                                           */
+/*            game.MAP_CHECK - don't load or create the instance if it isn't */
+/*                             active. Returns nil if instance is invalid.   */
+/*            game.MAP_NEW - always create a new instance and delete any     */
+/*                           instance the player had active.                 */
+/*          NOTE 1: resetting an instance does not simply reset the maps, it */
+/*                  creates a wholly new instance for the player.            */
+/*          NOTE 2: a player can only have a single active instance. If a    */
+/*                  second instance is loaded, the first one will be reset.  */
+/*          NOTE 3: an instance is identified by the player and entrance map.*/
+/*                  To simulate multiple entrance maps for a single instance,*/
+/*                  always first load the entrance map, then load a secondary*/
+/*                  entrance with ReadyInheritedMap()                        */
+/* Return : map pointer to the entrance map of the instance, or nil          */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-static int GameObject_ReadyInstance(lua_State *L)
+static int GameObject_StartNewInstance(lua_State *L)
 {
     lua_object *self;
     char const * path_sh=NULL, *orig_path_sh = NULL;
@@ -466,65 +441,64 @@ static int GameObject_ReadyInstance(lua_State *L)
     get_lua_args(L, "Os|ii", &self, &mapname, &iflag, &flags);
 
     /* we only allow the creation of instance maps in context with players */
-    if(mapname && WHO->type == PLAYER && (pl = CONTR(WHO)))
+    if(WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "StartNewInstance(): Only players can have instances.");
+
+    /* this is a bit critical. Be SURE you call it with a valid, normalized instance
+     * name because this is put also as instance ID in the player struct.
+     */
+    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+
+    /* ensure only valid flags */
+    iflag &= INSTANCE_FLAG_NO_REENTER;
+
+    if(orig_path_sh)
     {
-        /* this is a bit critical. Be SURE you call it with a valid, normalized instance
-         * name because this is put also as instance ID in the player struct.
-         */
-        orig_path_sh = hooks->create_safe_mapname_sh(mapname);
-
-        /* ensure only valid flags */
-        iflag &= INSTANCE_FLAG_NO_REENTER;
-
-        if(orig_path_sh)
+        /* lets check we have a instance we can reenter */
+        if(!(flags & PLUGIN_MAP_NEW))
         {
-            /* lets check we have a instance we can reenter */
-            if(!(flags & PLUGIN_MAP_NEW))
+            /* the instance data are inside the player struct */
+            if( pl->instance_name == orig_path_sh && 
+                pl->instance_id == *hooks->global_instance_id &&
+                pl->instance_num != MAP_INSTANCE_NUM_INVALID &&
+                !(pl->instance_flags & INSTANCE_FLAG_NO_REENTER))
             {
-                /* the instance data are inside the player struct */
-                if( pl->instance_name == orig_path_sh && 
-                    pl->instance_id == *hooks->global_instance_id &&
-                    pl->instance_num != MAP_INSTANCE_NUM_INVALID &&
-                    !(pl->instance_flags & INSTANCE_FLAG_NO_REENTER))
-                {
-                    path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
-                }
-            }            
-
-            /* no path? force a new instance... note that create_instance_path_sh() will setup the
-            * player struct data automatically when creating the path data 
-            */
-            if(!path_sh && !(flags & PLUGIN_MAP_CHECK))
-            {
-                pl->instance_num = MAP_INSTANCE_NUM_INVALID; /* will force a new instance */
                 path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
             }
+        }            
 
-            /* we have now declared and initilized the new instance - now lets see we can load it! */
-            if(path_sh)
-            {
-                map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_INSTANCE);
-                /* we don't mark the instance invalid when ready_map_name() fails to create
-                * a physical map - we let do it the calling script which will know it
-                * by checking the return value = NULL
-                */
-                FREE_ONLY_HASH(path_sh);
-            }
-
-            FREE_ONLY_HASH(orig_path_sh);
+        /* no path? force a new instance... note that create_instance_path_sh() will setup the
+        * player struct data automatically when creating the path data 
+        */
+        if(!path_sh && !(flags & PLUGIN_MAP_CHECK))
+        {
+            pl->instance_num = MAP_INSTANCE_NUM_INVALID; /* will force a new instance */
+            path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
         }
+
+        /* we have now declared and initilized the new instance - now lets see we can load it! */
+        if(path_sh)
+        {
+            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_INSTANCE);
+            /* we don't mark the instance invalid when ready_map_name() fails to create
+            * a physical map - we let do it the calling script which will know it
+            * by checking the return value = NULL
+            */
+            FREE_ONLY_HASH(path_sh);
+        }
+
+        FREE_ONLY_HASH(orig_path_sh);
     }
 
     return push_object(L, &Map, map);
 }
 
-
 /*****************************************************************************/
 /* Name   : GameObject_CheckInstance                                         */
-/* Lua    : object:CheckInstance(name)                                       */
+/* Lua    : object:CheckInstance(entrance_path)                              */
 /* Info   : Check player has this instance active                            */
-/*        : Only checks the player instance data match - NO map loading      */
-/* Return : returns true when player had the instance active                 */
+/*          Only checks the player instance data match - NO map loading      */
+/* Return : returns true if player had the instance active                   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_CheckInstance(lua_State *L)
@@ -534,40 +508,39 @@ static int GameObject_CheckInstance(lua_State *L)
     char       *mapname;
     int         ret = 0;
 
-
     get_lua_args(L, "Os", &self, &mapname);
 
-    if(mapname && WHO->type == PLAYER && CONTR(WHO))
-    {
-        orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+    /* we only allow the creation of instance maps in context with players */
+    if(WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "CheckInstance(): Only players can have instances.");
+    
+    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
 
-        if(orig_path_sh)
-        {
-            /* the instance data are inside the player struct */
-            if( CONTR(WHO)->instance_name == orig_path_sh && 
+    if(orig_path_sh)
+    {
+        /* the instance data are inside the player struct */
+        if( CONTR(WHO)->instance_name == orig_path_sh && 
                 CONTR(WHO)->instance_id == *hooks->global_instance_id &&
                 CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
-            {
-                ret = 1;
-            }
+        {
+            ret = 1;
         }
-
-        FREE_ONLY_HASH(orig_path_sh);
     }
+
+    FREE_ONLY_HASH(orig_path_sh);
 
     lua_pushboolean(L, ret);
     return 1;
 }
 
-
 /*****************************************************************************/
 /* Name   : GameObject_DeleteInstance                                        */
-/* Lua    : object:DeleteInstance(name)                                      */
+/* Lua    : object:DeleteInstance(entrance_path)                             */
 /* Info   : Delete the instance for a player                                 */
-/*        : NOTE: this function don't touches the instance directory or      */
-/*        : deletes a map - it only removes the ID tags from the player      */
-/*        : WHEN mapname is the same as the player saved instance            */
-/* Return : returns true when player had the instance active we have deleted */
+/*          NOTE: this function don't touches the instance directory or      */
+/*          deletes a map - it only removes the ID tags from the player      */
+/*          IF mapname is the same as the player saved instance              */
+/* Return : returns true if player had the instance active we have deleted   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_DeleteInstance(lua_State *L)
@@ -579,33 +552,33 @@ static int GameObject_DeleteInstance(lua_State *L)
 
 
     get_lua_args(L, "Os", &self, &mapname);
+    
+    /* we only allow the creation of instance maps in context with players */
+    if(WHO->type != PLAYER || CONTR(WHO) == NULL)
+        luaL_error(L, "DeleteInstance(): Only players can have instances.");
 
-    if(mapname && WHO->type == PLAYER && CONTR(WHO))
+    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+
+    if(orig_path_sh)
     {
-        orig_path_sh = hooks->create_safe_mapname_sh(mapname);
-
-        if(orig_path_sh)
+        /* the instance data are inside the player struct */
+        if( CONTR(WHO)->instance_name == orig_path_sh && 
+            CONTR(WHO)->instance_id == *hooks->global_instance_id &&
+            CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
         {
-            /* the instance data are inside the player struct */
-            if( CONTR(WHO)->instance_name == orig_path_sh && 
-                CONTR(WHO)->instance_id == *hooks->global_instance_id &&
-                CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
-            {
-                /* lets do it right: instance_num to MAP_INSTANCE_NUM_INVALID
-                 * and releasing the instance_name
-                 */
-                hooks->reset_instance_data(CONTR(WHO));
-                ret = 1;
-            }
+            /* lets do it right: instance_num to MAP_INSTANCE_NUM_INVALID
+             * and releasing the instance_name
+             */
+            hooks->reset_instance_data(CONTR(WHO));
+            ret = 1;
         }
-
-        FREE_ONLY_HASH(orig_path_sh);
     }
+
+    FREE_ONLY_HASH(orig_path_sh);
 
     lua_pushboolean(L, ret);
     return 1;
 }
-
 
 /*****************************************************************************/
 /* Name   : GameObject_CreateArtifact                                        */
