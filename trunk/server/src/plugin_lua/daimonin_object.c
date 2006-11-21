@@ -443,52 +443,52 @@ static int GameObject_StartNewInstance(lua_State *L)
     /* we only allow the creation of instance maps in context with players */
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "StartNewInstance(): Only players can have instances.");
-
+    
     /* this is a bit critical. Be SURE you call it with a valid, normalized instance
      * name because this is put also as instance ID in the player struct.
      */
-    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+    if(! (orig_path_sh = hooks->create_safe_mapname_sh(mapname)))
+        luaL_error(L, "Illegal map path: %s", mapname);
 
     /* ensure only valid flags */
     iflag &= INSTANCE_FLAG_NO_REENTER;
+    
+    pl = CONTR(WHO);
 
-    if(orig_path_sh)
+    /* lets check we have a instance we can reenter */
+    if(!(flags & PLUGIN_MAP_NEW))
     {
-        /* lets check we have a instance we can reenter */
-        if(!(flags & PLUGIN_MAP_NEW))
+        /* the instance data are inside the player struct */
+        if( pl->instance_name == orig_path_sh && 
+            pl->instance_id == *hooks->global_instance_id &&
+            pl->instance_num != MAP_INSTANCE_NUM_INVALID &&
+            !(pl->instance_flags & INSTANCE_FLAG_NO_REENTER))
         {
-            /* the instance data are inside the player struct */
-            if( pl->instance_name == orig_path_sh && 
-                pl->instance_id == *hooks->global_instance_id &&
-                pl->instance_num != MAP_INSTANCE_NUM_INVALID &&
-                !(pl->instance_flags & INSTANCE_FLAG_NO_REENTER))
-            {
-                path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
-            }
-        }            
-
-        /* no path? force a new instance... note that create_instance_path_sh() will setup the
-        * player struct data automatically when creating the path data 
-        */
-        if(!path_sh && !(flags & PLUGIN_MAP_CHECK))
-        {
-            pl->instance_num = MAP_INSTANCE_NUM_INVALID; /* will force a new instance */
             path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
         }
+    }            
 
-        /* we have now declared and initilized the new instance - now lets see we can load it! */
-        if(path_sh)
-        {
-            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_INSTANCE);
-            /* we don't mark the instance invalid when ready_map_name() fails to create
-            * a physical map - we let do it the calling script which will know it
-            * by checking the return value = NULL
-            */
-            FREE_ONLY_HASH(path_sh);
-        }
-
-        FREE_ONLY_HASH(orig_path_sh);
+    /* no path? force a new instance... note that create_instance_path_sh() will setup the
+    * player struct data automatically when creating the path data 
+    */
+    if(!path_sh && !(flags & PLUGIN_MAP_CHECK))
+    {
+        pl->instance_num = MAP_INSTANCE_NUM_INVALID; /* will force a new instance */
+        path_sh = hooks->create_instance_path_sh(pl, orig_path_sh, iflag);
     }
+
+    /* we have now declared and initilized the new instance - now lets see we can load it! */
+    if(path_sh)
+    {
+        map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_INSTANCE);
+        /* we don't mark the instance invalid when ready_map_name() fails to create
+        * a physical map - we let do it the calling script which will know it
+        * by checking the return value = NULL
+        */
+        FREE_ONLY_HASH(path_sh);
+    }
+
+    FREE_ONLY_HASH(orig_path_sh);
 
     return push_object(L, &Map, map);
 }
@@ -514,17 +514,19 @@ static int GameObject_CheckInstance(lua_State *L)
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "CheckInstance(): Only players can have instances.");
     
-    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+    if(! (orig_path_sh = hooks->create_safe_mapname_sh(mapname)))
+        luaL_error(L, "Illegal map path: %s", mapname);
 
-    if(orig_path_sh)
+    LOG(llevDebug, "pl->instance_name: %s, orig_path_sh: %s\n", CONTR(WHO)->instance_name, orig_path_sh);
+    LOG(llevDebug, "pl->instance_id: %ld, global_instance_id: %ld\n", CONTR(WHO)->instance_id, *hooks->global_instance_id);
+    LOG(llevDebug, "pl->instance_num: %ld\n", CONTR(WHO)->instance_num);
+
+    /* the instance data are inside the player struct */
+    if( CONTR(WHO)->instance_name == orig_path_sh && 
+            CONTR(WHO)->instance_id == *hooks->global_instance_id &&
+            CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
     {
-        /* the instance data are inside the player struct */
-        if( CONTR(WHO)->instance_name == orig_path_sh && 
-                CONTR(WHO)->instance_id == *hooks->global_instance_id &&
-                CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
-        {
-            ret = 1;
-        }
+        ret = 1;
     }
 
     FREE_ONLY_HASH(orig_path_sh);
@@ -550,28 +552,25 @@ static int GameObject_DeleteInstance(lua_State *L)
     char       *mapname;
     int         ret = 0;
 
-
     get_lua_args(L, "Os", &self, &mapname);
     
     /* we only allow the creation of instance maps in context with players */
     if(WHO->type != PLAYER || CONTR(WHO) == NULL)
         luaL_error(L, "DeleteInstance(): Only players can have instances.");
 
-    orig_path_sh = hooks->create_safe_mapname_sh(mapname);
+    if(! (orig_path_sh = hooks->create_safe_mapname_sh(mapname)))
+        luaL_error(L, "Illegal map path: %s", mapname);
 
-    if(orig_path_sh)
-    {
-        /* the instance data are inside the player struct */
-        if( CONTR(WHO)->instance_name == orig_path_sh && 
+    /* the instance data are inside the player struct */
+    if( CONTR(WHO)->instance_name == orig_path_sh && 
             CONTR(WHO)->instance_id == *hooks->global_instance_id &&
             CONTR(WHO)->instance_num != MAP_INSTANCE_NUM_INVALID)
-        {
-            /* lets do it right: instance_num to MAP_INSTANCE_NUM_INVALID
-             * and releasing the instance_name
-             */
-            hooks->reset_instance_data(CONTR(WHO));
-            ret = 1;
-        }
+    {
+        /* lets do it right: instance_num to MAP_INSTANCE_NUM_INVALID
+         * and releasing the instance_name
+         */
+        hooks->reset_instance_data(CONTR(WHO));
+        ret = 1;
     }
 
     FREE_ONLY_HASH(orig_path_sh);
