@@ -29,7 +29,7 @@
 
 static struct method_decl       Map_methods[]       =
 {
-    {"Load", Map_Load},
+    {"ReadyInheritedMap", Map_ReadyInheritedMap},
     {"Save", Map_Save},
     {"Delete", Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
@@ -70,19 +70,32 @@ static const char              *Map_flags[]         =
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 /*****************************************************************************/
-/* Name   : Map_Load                                                         */
-/* Lua    : map:Load(mapname)                                                */
-/* Info   : Loads a map using the inheritanced type and base path of map     */
-/* Status : Stable                                                           */
+/* Name   : Map_ReadyInheritedMap                                            */
+/* Lua    : map:ReadyInheritedMap(map_path, flags)                           */
+/* Info   : Loads the map from map_path into memory, unless already loaded.  */
+/*          Will load the new map as the same type (multi,unique or instance)*/
+/*          as the old map.                                                  */
+/*          See also object:ReadyUniqueMap(), object:StartNewInstance() and  */
+/*          game:ReadyMap()                                                  */
+/*          flags:                                                           */
+/*            game.MAP_CHECK - don't load the map if it isn't in memory,     */
+/*                             returns nil if the map wasn't in memory.      */
+/*            game.MAP_NEW - delete the map from memory and force a reset    */
+/*                           (if it existed in memory or swap)               */
+/* Return : map pointer to map, or nil                                       */
+/* Status : Unfinished (flags not handled yet)                               */
 /*****************************************************************************/
-static int Map_Load(lua_State *L)
+static int Map_ReadyInheritedMap(lua_State *L)
 {
     char       *mapname;
     const char *orig_path_sh, *path_sh = NULL;
+    int flags = 0;
     lua_object *omap;
     mapstruct *map, *new_map = NULL;
 
-    get_lua_args(L, "Ms", &omap, &mapname);
+    get_lua_args(L, "Ms|i", &omap, &mapname, &flags);
+
+    /* TODO: handle flags like game:ReadyMap() */
 
     /* we need a valid map status to know how to handle the map file */
     if((map = omap->data.map) && MAP_STATUS_TYPE(map->map_status))
@@ -108,17 +121,14 @@ static int Map_Load(lua_State *L)
     return push_object(L, &Map, new_map);
 }
 
-
-
-
 /*****************************************************************************/
 /* Name   : Map_Delete                                                       */
 /* Lua    : map:Delete(flags)                                                */
 /* Status : Stable                                                           */
 /* Info   : Remove the map from memory and map list. Release all objects.    */
-/*        : if flag is TRUE the map is physically deleted too! For multi     */
-/*        : the effect is the same as for FALSE but unique or instance maps  */
-/*        : are physically deleted.                                          */
+/*          if flag is non-zero the map is physically deleted too! For multi */
+/*          the effect is the same as for false but unique or instance maps  */
+/*          are physically deleted.                                          */
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {

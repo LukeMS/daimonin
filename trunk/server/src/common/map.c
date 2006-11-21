@@ -1253,6 +1253,11 @@ static mapstruct * load_temporary_map(mapstruct *m)
  * If the map was not loaded before, the map will be loaded now.
  * src_path is ALWAYS a path to /maps = the original map path.
  * name_path can be different and pointing to /instance or /players
+ *
+ * If src_path is NULL we will not load a map from disk, but return NULL
+ * if the map wasn't in memory already.
+ * If name_path is NULL we will force a reload of the map even if it already
+ * was in memory. (caller has to reset the map!)
  */
 mapstruct * ready_map_name(const char *name_path, const char *src_path, int flags)
 {
@@ -2229,4 +2234,3 @@ const char* create_safe_mapname_sh(char const *mapname)
 
    return p;
 }
-

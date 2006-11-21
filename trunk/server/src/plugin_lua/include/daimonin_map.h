@@ -29,7 +29,7 @@
 #include <plugin_lua.h>
 
 /* Map object methods */
-static int  Map_Load(lua_State *L);
+static int  Map_ReadyInheritedMap(lua_State *L);
 static int  Map_Save(lua_State *L);
 static int  Map_Delete(lua_State *L);
 static int  Map_IsWallOnSquare(lua_State *L);
