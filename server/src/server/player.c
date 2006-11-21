@@ -2356,6 +2356,6 @@ void reset_instance_data(player *pl)
     {
         pl->instance_flags = 0;
         pl->instance_num = MAP_INSTANCE_NUM_INVALID;
-        FREE_ONLY_HASH(pl->instance_name);
+        FREE_AND_CLEAR_HASH(pl->instance_name);
     }
 }
