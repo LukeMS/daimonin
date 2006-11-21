@@ -419,7 +419,7 @@ elseif (msg == 'setposition3') then
 elseif (msg == 'setposition4') then
     me:SayTo(activator, "Putting a note from my inventory one step to the west (using the new API)")
     obj = me:CreateObjectInside("note", 0, 1)
-    obj:SetPosition(me.x-1, me.y, me.map)
+    obj:SetPosition(me.map, me.x-1, me.y)
 elseif (msg == 'setposition5') then
     me:SayTo(activator, "Moving you out of here")
     activator:SetPosition(game:ReadyMap("/dev/testmaps/testmap_main"), 10, 10)
