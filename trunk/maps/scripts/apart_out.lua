@@ -4,7 +4,7 @@ local me = event.me
 local pinfo = ac:GetPlayerInfo("APARTMENT_INFO")
 
 if pinfo == nil then
-	ac:Teleport(-1,-1, game:ReadyMap("/emergency"))
+	ac:SetPosition(game:ReadyMap("/emergency"), -1, -1)
 else
-	ac:Teleport(pinfo.last_sp, pinfo.last_grace, game:ReadyMap(pinfo.race))
+	ac:SetPosition(game:ReadyMap(pinfo.race), pinfo.last_sp, pinfo.last_grace)
 end
