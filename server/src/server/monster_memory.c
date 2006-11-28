@@ -98,8 +98,8 @@ void update_npc_known_obj(struct mob_known_obj *known, int delta_friendship, int
 
     if(known->obj->map)
     {
-        if(known->last_map != known->obj->map->path)
-            FREE_AND_ADD_REF_HASH(known->last_map, known->obj->map->path);
+        if(known->last_map != known->obj->map->orig_path)
+            FREE_AND_ADD_REF_HASH(known->last_map, known->obj->map->orig_path);
         known->last_x = known->obj->x;
         known->last_y = known->obj->y;
     } 
@@ -350,6 +350,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
         /* TODO: I can't remember why this was disabled. Gecko 2006-05-07 */
+        /* Well, at least now it uses an outdated map API. Gecko 2006-11-28 */
         /*
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
             mapstruct *map = ready_map_name(known_obj->last_map, known_obj->last_map, MAP_NAME_SHARED);
@@ -381,8 +382,8 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
     if (!known_obj->rv.part)
     {
         LOG(-1, "CRASHBUG: rv->part == NULL for %s on map %s with enemy %s and map %s\n", query_name(op),
-            op->map ? STRING_SAFE(op->map->path) : "NULL", query_name(known_obj->obj),
-            known_obj->obj ? STRING_SAFE(known_obj->obj->map ? STRING_SAFE(known_obj->obj->map->path) : "NULL") : "NULL");
+            op->map ? STRING_SAFE(op->map->orig_path) : "NULL", query_name(known_obj->obj),
+            known_obj->obj ? STRING_SAFE(known_obj->obj->map ? STRING_SAFE(known_obj->obj->map->orig_path) : "NULL") : "NULL");
         return NULL;
     }
     return &known_obj->rv;

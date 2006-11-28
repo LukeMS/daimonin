@@ -475,8 +475,8 @@ static  mapstruct *traverse_b3_player_inv(object *pl, object *op, mapstruct *old
             new_path = create_unique_path_sh(pl, tmp->title);
 
 			/* ensure that we really load only the old apartment in ./players */
-			old_ptr = ready_map_name(old_path, NULL, MAP_STATUS_UNIQUE);
-            new_ptr = ready_map_name(new_path, tmp->title, MAP_STATUS_UNIQUE);
+			old_ptr = ready_map_name(old_path, NULL, MAP_STATUS_UNIQUE, pl->name);
+            new_ptr = ready_map_name(new_path, tmp->title, MAP_STATUS_UNIQUE, pl->name);
 
             if(!new_ptr) /* problem with player files or missing apartments in /maps */
                 LOG(llevError, "FATAL: Apartment upgrade player %s! old: %s new: %s\n",

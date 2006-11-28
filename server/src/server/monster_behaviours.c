@@ -215,7 +215,7 @@ static void update_home_position_for_wp_move(object *op, int last_movement_dir)
         object *base = find_base_info_object(op);
         base->x = op->x;
         base->y = op->y;
-        FREE_AND_ADD_REF_HASH(base->slaying, op->map->path);
+        FREE_AND_ADD_REF_HASH(base->slaying, op->map->orig_path);
 //        LOG(llevDebug, "Updating home for '%s'\n", STRING_OBJ_NAME(op));
     }
 }
@@ -691,8 +691,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
     if ((params[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags & AI_PARAM_PRESENT)
             || (params[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags & AI_PARAM_PRESENT))
     {
-        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
-        if((basemap = ready_map_name(base->slaying, base->slaying, 0)))
+        if((basemap = ready_inherited_map(op->map, base->slaying, 0)))
             if(!get_rangevector_full(NULL, basemap, base->x, base->y, op, op->map, op->x, op->y, &rv, RV_NO_DISTANCE))
                 basemap = NULL;
     }
@@ -791,7 +790,7 @@ void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_
     /* Update the pet's home position to the owner's current position */
     base->x = op->owner->x;
     base->y = op->owner->y;
-    FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->path); 
+    FREE_AND_ADD_REF_HASH(base->slaying, op->owner->map->orig_path); 
 }
 
 void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
@@ -808,10 +807,9 @@ void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_r
     if ((base = insert_base_info_object(op)) && base->slaying)
     {
         /* If mob isn't already home */
-        if (op->x != base->x || op->y != base->y || op->map->path != base->slaying)
+        if (op->x != base->x || op->y != base->y || op->map->orig_path != base->slaying)
         {
-            /* TODO/FIX: rework ready_map_name() for the instance patch */ 
-            mapstruct  *map = ready_map_name(base->slaying, base->slaying, 0);
+            mapstruct  *map = ready_inherited_map(op->map, base->slaying, 0);
 
             response->type = MOVE_RESPONSE_COORD;
             response->data.coord.x = base->x;
@@ -1152,10 +1150,9 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
     {
         rv_vector               rv;
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
-        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
-        mapstruct              *map     = ready_map_name(enemy->last_map, enemy->last_map, 0);
+        mapstruct              *map     = ready_inherited_map(op->map, enemy->last_map, 1);
 
-        if (get_rangevector_full(op, op->map, op->x, op->y,
+        if (map && get_rangevector_full(op, op->map, op->x, op->y,
                     enemy->obj, map, enemy->last_x, enemy->last_y,
                     &rv, RV_EUCLIDIAN_DISTANCE))
         {
@@ -1229,7 +1226,14 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         {
             wp_x = WP_X(wp);
             wp_y = WP_Y(wp);
-            destmap = normalize_and_ready_map(op->map, &WP_MAP(wp));
+            if(WP_MAP(wp) && *WP_MAP(wp) != '\0') 
+            {
+                destmap = ready_inherited_map(op->map, WP_MAP(wp), 0);
+                if(destmap && destmap->orig_path != WP_MAP(wp))
+                    FREE_AND_ADD_REF_HASH(WP_MAP(wp), destmap->orig_path);
+            }
+            else
+                destmap = op->map;
         }
         
 #ifdef DEBUG_AI_WAYPOINT

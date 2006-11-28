@@ -639,7 +639,8 @@ static inline mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_
     int dest_tile   = map_tiled_reverse[tile_num];
 
     orig_map->tile_map[tile_num] = ready_map_name( orig_map->tile_path[tile_num],
-           orig_map->orig_tile_path[tile_num], MAP_STATUS_TYPE(orig_map->map_status));
+           orig_map->orig_tile_path[tile_num], MAP_STATUS_TYPE(orig_map->map_status), 
+           orig_map->reference);
 
     /* we do now an implicit validation of the link - we don't do it anymore when the map is loaded */
     if(!orig_map->tile_map[tile_num])
@@ -689,7 +690,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     if (map1->tileset_id > 0 && map2->tileset_id > 0)
     {
         //        LOG(llevDebug, "relative_tile_position(): Could use tileset data for %s -> %s\n", map1->path, map2->path);
-        if(map1->tileset_id == map2->tileset_id)
+        if(map1->tileset_id == map2->tileset_id && in_same_instance(map1, map2))
         {
             *x += map2->tileset_x - map1->tileset_x;
             *y += map2->tileset_y - map1->tileset_y;
@@ -1191,7 +1192,7 @@ int get_rangevector_full(
     }
     else if (map1->tileset_id > 0 && map2->tileset_id > 0)
     {
-        if(map1->tileset_id == map2->tileset_id)
+        if(map1->tileset_id == map2->tileset_id && in_same_instance(map1, map2))
         {
             retval->distance_x = x2 - x1 + map2->tileset_x - map1->tileset_x;
             retval->distance_y = y2 - y1 + map2->tileset_y - map1->tileset_y;
@@ -1324,14 +1325,15 @@ int get_rangevector_full(
 int on_same_tileset(object *op1, object *op2)
 {
     if (!op1->map || !op2->map)
-        return FALSE;
+        return FALSE;   
 
     /* This is the fallback in case the tileset data is
     * unavailable */
     if (op1->map->tileset_id == 0 || op2->map->tileset_id == 0)
         return on_same_map(op1, op2);
 
-    return op1->map->tileset_id == op2->map->tileset_id;
+    return op1->map->tileset_id == op2->map->tileset_id
+        && in_same_instance(op1->map, op2->map);
 }
 
 /* Returns true of op1 and op2 are effectively on the same map
@@ -1356,6 +1358,39 @@ int on_same_map(object *op1, object *op2)
         || op1->map->tile_map[7] == op2->map)
         return TRUE;
 
+    return FALSE;
+}
+
+/** Returns true if the two maps are in the same instance */
+int in_same_instance(mapstruct *m1, mapstruct *m2)
+{
+    /* Common case: both maps are on the singleton MULTI "instance" */
+    if(MAP_MULTI(m1) && MAP_MULTI(m2))
+        return TRUE;
+
+    /* Instance maps? */
+    if(MAP_INSTANCE(m1) && MAP_INSTANCE(m2))
+    {
+        /* A player can only have a single active instance, so we
+         * assume that if we have two valid map pointers to instance maps,
+         * that belong to the same player they are on the same instance */
+        if(m1->reference == m2->reference)
+            return TRUE;
+        else
+            return FALSE;
+    }
+    
+    /* Unique maps? */
+    if(MAP_UNIQUE(m1) && MAP_UNIQUE(m2))
+    {
+        /* A unique map is always referenced by a single player */
+        if(m1->reference == m2->reference)
+            return TRUE;
+        else
+            return FALSE;
+    }
+    
+    /* Different types */
     return FALSE;
 }
 

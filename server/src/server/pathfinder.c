@@ -277,7 +277,7 @@ struct path_segment * encode_path(path_node *path, struct path_segment **last_se
         curr->next = NULL;
         curr->x = tmp->x;
         curr->y = tmp->y;
-        curr->map = add_refcount(tmp->map->path);
+        curr->map = add_refcount(tmp->map->orig_path);
 
         if (first == NULL)
             first = last = curr;

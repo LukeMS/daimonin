@@ -224,7 +224,7 @@ const char *normalize_path(const char *src, const char *dst, char *path)
 /* same as above but here we know that src & dst was normalized before - so
  * we can just merge them without checking for ".." again.
  */
-const char *normalize_path_direct(const char *src, const char *dst, char *path)
+char *normalize_path_direct(const char *src, const char *dst, char *path)
 {
     /*LOG(llevDebug,"path before normalization >%s< >%s<\n", src, dst?dst:"<no dst>");*/
 
@@ -260,32 +260,6 @@ const char *normalize_path_direct(const char *src, const char *dst, char *path)
         }
     }
     return path;
-}
-
-/** Normalize a given map path and make sure it is valid and
- * that the map is loaded. Can return NULL in case of failure.
- * Moved from monster_behaviours.c - Gecko 2005-04-05. */
-/* TODO/FIX: rework ready_map_name() for the instance patch */ 
-mapstruct *normalize_and_ready_map(mapstruct *defmap, const char **path)
-{
-    /* Default map is current map */
-    if (path == NULL || *path == NULL || **path == '\0')
-        return defmap;
-
-    /* If path not normalized: normalize it */
-    if (**path != '/')
-    {
-        char    temp_path[HUGE_BUF];
-        normalize_path(defmap->path, *path, temp_path);
-        FREE_AND_COPY_HASH(*path, temp_path);
-    }
-
-    /* check if we are already on the map */
-    if (*path == defmap->path)
-        return defmap;
-    else
-        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
-        return ready_map_name(*path, *path, defmap->map_status);
 }
 
 /*
@@ -646,6 +620,12 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
             if (atoi(value))
                 m->map_status |= MAP_STATUS_INSTANCE;
         }
+        else if (!strcmp(key, "reference"))
+        {
+            *end = 0;
+            FREE_AND_COPY_HASH(m->reference, value);
+            LOG(llevDebug, "Map has reference to player '%s'\n", value);
+        }
         else if (!strcmp(key, "fixed_resettime"))
         {
             if (atoi(value))
@@ -878,7 +858,13 @@ int new_save_map(mapstruct *m, int flag)
         fputs("multi 1\n", fp);
     if (MAP_INSTANCE(m))
         fputs("instance 1\n", fp);
-
+    if (MAP_UNIQUE(m) || MAP_INSTANCE(m))
+    {
+        if(m->reference)
+            fprintf(fp, "reference %s\n", m->reference);
+        else
+            LOG(llevBug, "save_map(): instance/unique map with NULL reference!\n");
+    }
     if (MAP_OUTDOORS(m))
         fputs("outdoor 1\n", fp);
     if (MAP_NOSAVE(m))
@@ -1049,6 +1035,7 @@ void free_map(mapstruct *m, int flag)
     FREE_AND_CLEAR_HASH(m->name);
     FREE_AND_CLEAR_HASH(m->msg);
     FREE_AND_CLEAR_HASH(m->cached_dist_map);
+    FREE_AND_CLEAR_HASH(m->reference);
 
     m->in_memory = MAP_SWAPPED;
 
@@ -1157,7 +1144,7 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
             instance_num = MAP_INSTANCE_NUM_INVALID;
         else
         {
-            sprintf(path, "%s/%s/%d/%d/%d/%s", settings.localdir, settings.instancedir, pl->instance_id, 
+            sprintf(path, "%s/%s/%ld/%d/%d/%s", settings.localdir, settings.instancedir, pl->instance_id, 
                 instance_num/10000, instance_num, mapname);
         }
     }
@@ -1166,7 +1153,7 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
     {
         instance_num = get_new_instance_num();
         /* create new instance directory for this instance */
-        sprintf(path, "%s/%s/%d/%d/%d/%s", settings.localdir, settings.instancedir, global_instance_id,
+        sprintf(path, "%s/%s/%ld/%d/%d/%s", settings.localdir, settings.instancedir, global_instance_id,
             instance_num/10000, instance_num, mapname);
 
         /* store the instance information for the player */
@@ -1190,7 +1177,7 @@ const char *create_instance_path_sh(player * const pl, const char * const name, 
 * Loads a map, which has been loaded earlier, from file.
 * Return the map object we load into (this can change from the passed
 * option if we can't find the original map)
-* note: load_map() is called with (NULL, <src_name>, MAP_STATUS_MULTI) when
+* note: load_map() is called with (NULL, <src_name>, MAP_STATUS_MULTI, NULL) when
 * tmp map loading fails because a tmp map is ALWAYS a MULTI map and when fails its
 * reloaded from /maps as new original map. 
 */
@@ -1204,7 +1191,7 @@ static mapstruct * load_temporary_map(mapstruct *m)
         LOG(llevBug, "BUG: No temporary filename for map %s! fallback to original!\n", m->path);
         strcpy(buf, m->path);
         delete_map(m);
-        m = load_map(NULL, buf, MAP_STATUS_MULTI);
+        m = load_map(NULL, buf, MAP_STATUS_MULTI, NULL);
         if (m == NULL)
             return NULL;
         return m;
@@ -1217,7 +1204,7 @@ static mapstruct * load_temporary_map(mapstruct *m)
         /*perror("Can't read map file");*/
         strcpy(buf, m->path);
         delete_map(m);
-        m = load_map(NULL, buf, MAP_STATUS_MULTI);
+        m = load_map(NULL, buf, MAP_STATUS_MULTI, NULL);
         if (m == NULL)
             return NULL;
         return m;
@@ -1231,7 +1218,7 @@ static mapstruct * load_temporary_map(mapstruct *m)
         fclose(fp);
         strcpy(buf, m->path);
         delete_map(m);
-        m = load_map(NULL, buf, MAP_STATUS_MULTI);
+        m = load_map(NULL, buf, MAP_STATUS_MULTI, NULL);
         if (m == NULL)
             return NULL;
         return m;
@@ -1249,17 +1236,80 @@ static mapstruct * load_temporary_map(mapstruct *m)
     return m;
 }
 
+/** Ready a map of the same type as another map, even for the
+ * same instance if applicable.
+ *
+ * @param orig_map map to inherit type and instance from
+ * @param new_map_path the path to the map to ready. This can be both an absolute path, 
+ *                     or a path relative to orig_map->path
+ * @param flags        1 to never load unloaded or swapped map, i.e. only return maps
+ *                     already in memory.
+ * @return pointer to loaded map, or NULL
+ */
+mapstruct *ready_inherited_map(mapstruct *orig_map, shstr *new_map_path, int flags)
+{
+    mapstruct *new_map = NULL;
+    shstr *new_path = NULL;
+    shstr *normalized_path = NULL;
+    char tmp_path[MAXPATHLEN];
+    
+    /* Try some quick exits first */
+    if(orig_map == NULL || new_map_path == NULL || *new_map_path == '\0')
+        return NULL;
+    if(new_map_path == orig_map->path && (orig_map->in_memory == MAP_LOADING || orig_map->in_memory == MAP_IN_MEMORY))
+        return orig_map;
+
+    if(! MAP_STATUS_TYPE(orig_map->map_status))
+    {
+        LOG(llevBug, "ready_inherited_map(): map %s without status type\n", STRING_MAP_ORIG_PATH(orig_map));
+        return NULL;
+    }
+
+    /* Guesstimate whether the path was already normalized or not (for speed) */
+    if(*new_map_path == '/')
+        normalized_path = add_refcount(new_map_path);
+    else
+        normalized_path = add_string(normalize_path(orig_map->path, new_map_path, tmp_path));
+
+    /* create the path prefix (./players/.. or ./instance/.. ) for non multi maps */
+    if(orig_map->map_status & (MAP_STATUS_UNIQUE|MAP_STATUS_INSTANCE))
+    {
+        new_path = add_string(normalize_path_direct(orig_map->path, 
+                    path_to_name(normalized_path), tmp_path));
+    }
+   
+    if(flags & 1)
+    {
+        /* Just check if it has in memory */
+        new_map = has_been_loaded_sh( new_path ? new_path : normalized_path );
+        if (new_map && (new_map->in_memory != MAP_LOADING && new_map->in_memory != MAP_IN_MEMORY))
+            new_map = NULL;
+    } else
+    {
+        /* Load map if necesseary */
+        new_map = ready_map_name(new_path?new_path:normalized_path, normalized_path, 
+                MAP_STATUS_TYPE(orig_map->map_status), orig_map->reference);
+    }
+
+    FREE_ONLY_HASH(normalized_path);
+    if(new_path)
+        FREE_ONLY_HASH(new_path);
+
+    return new_map;
+}
+
 /* ready_map_name() will return a map pointer to the map name_path/src_path.
  * If the map was not loaded before, the map will be loaded now.
  * src_path is ALWAYS a path to /maps = the original map path.
  * name_path can be different and pointing to /instance or /players
+ * reference needs to be a player name for UNIQUE or MULTI maps
  *
  * If src_path is NULL we will not load a map from disk, but return NULL
  * if the map wasn't in memory already.
  * If name_path is NULL we will force a reload of the map even if it already
  * was in memory. (caller has to reset the map!)
  */
-mapstruct * ready_map_name(const char *name_path, const char *src_path, int flags)
+mapstruct * ready_map_name(const char *name_path, const char *src_path, int flags, shstr *reference)
 {
 	mapstruct  *m;
 		
@@ -1291,7 +1341,7 @@ mapstruct * ready_map_name(const char *name_path, const char *src_path, int flag
 		}
         
         /* we are loading now a src map from /maps or an instance/unique from /instance or /players */
-        if(!(m = load_map(name_path, src_path, MAP_STATUS_TYPE(flags))))
+        if(!(m = load_map(name_path, src_path, MAP_STATUS_TYPE(flags), reference)))
             return NULL;
   	}
 	else
@@ -1333,8 +1383,9 @@ mapstruct * ready_map_name(const char *name_path, const char *src_path, int flag
 * MAP_STYLE: style map - don't add active objects, don't add to server
 * managed map list. The function knows it loads a "real" original map from /maps
 * or and unique/instance by comparing filename and src_name.
+* reference needs to be a player name for UNIQUE or MULTI maps
 */
-mapstruct * load_map(const char *filename, const char *src_name, int flags)
+mapstruct * load_map(const char *filename, const char *src_name, int flags, shstr *reference)
 {
 	FILE       *fp;
 	mapstruct  *m;
@@ -1381,7 +1432,7 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags)
 	{
         /* this was usually a try to load a unique or instance map
          * This is RIGHT because we use fopen() here as an implicit access()
-         * check. When it fails, we know we have to load the map from /maps!
+         * check. If it fails, we know we have to load the map from /maps!
          */
         if(src_name && filename != src_name && *src_name == '/')
         {
@@ -1428,6 +1479,18 @@ mapstruct * load_map(const char *filename, const char *src_name, int flags)
 		fclose(fp);
 		return NULL;
 	}
+
+    /* Set up the reference string from function call if not stored with map */
+    if((MAP_UNIQUE(m) || MAP_INSTANCE(m)) && m->reference == NULL)
+    {
+        if(reference)
+        {
+            FREE_AND_ADD_REF_HASH(m->reference, reference);
+        } else
+        {
+            LOG(llevBug, "BUG: load_map() unique/instance map with NULL reference parameter\n");
+        }
+    }
 
 	LOG(llevDebug, "alloc. ");
 	allocate_map(m);
@@ -2228,7 +2291,7 @@ const char* create_safe_mapname_sh(char const *mapname)
     }
  
     if(*mapname == '.') /* direct unique or instance string - don't normalize (because previous handled) */
-       p = add_string(mapname);
+        p = add_string(mapname);
     else
         p = add_string(normalize_path(mapname, NULL, path));
 

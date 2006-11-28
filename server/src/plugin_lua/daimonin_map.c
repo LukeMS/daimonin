@@ -111,7 +111,7 @@ static int Map_ReadyInheritedMap(lua_State *L)
                                          hooks->path_to_name(orig_path_sh), tmp_path));
         }
 
-        new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(map->map_status));
+        new_map = hooks->ready_map_name(path_sh?path_sh:orig_path_sh, orig_path_sh, MAP_STATUS_TYPE(map->map_status), map->reference);
         
         FREE_ONLY_HASH(orig_path_sh);
         if(path_sh)
