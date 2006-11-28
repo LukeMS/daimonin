@@ -389,7 +389,7 @@ static int Game_ReadyMap(lua_State *L)
              * The creation is only done when src is != NULL in one of the 2 other
              * ready_map_name() calls down there
             */
-            map = hooks->ready_map_name(path_sh, NULL, 0); /* try load only */
+            map = hooks->ready_map_name(path_sh, NULL, 0, NULL); /* try load only */
 
             if(*path_sh != '.') 
             {
@@ -404,13 +404,13 @@ static int Game_ReadyMap(lua_State *L)
                     hooks->delete_map(map);
 
                     /* reload map forced from original /maps */
-                    map = hooks->ready_map_name(NULL, path_sh, MAP_STATUS_MULTI);
+                    map = hooks->ready_map_name(NULL, path_sh, MAP_STATUS_MULTI, NULL);
 
                     if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
                         hooks->map_to_player_link(map, -1, -1, FALSE);
                 }
                 else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
-                    map = hooks->ready_map_name(path_sh, path_sh, MAP_STATUS_MULTI);
+                    map = hooks->ready_map_name(path_sh, path_sh, MAP_STATUS_MULTI, NULL);
             }
         }
         FREE_ONLY_HASH(path_sh);

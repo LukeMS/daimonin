@@ -161,6 +161,7 @@ typedef signed long long         sint64;
 #define STRING_OBJ_MSG(__ob__) PTR_STRING_SAFE((__ob__), msg)
 
 #define STRING_MAP_PATH(__map__) PTR_STRING_SAFE((__map__), path)
+#define STRING_MAP_ORIG_PATH(__map__) PTR_STRING_SAFE((__map__), orig_path)
 #define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)?PTR_STRING_SAFE((__map__), tile_path[(__id__)]):">NULL MAP<")
 #define STRING_MAP_NAME(__map__) PTR_STRING_SAFE((__map__), name)
 #define STRING_MAP_TMPNAME(__map__) PTR_STRING_SAFE((__map__), tmpname)

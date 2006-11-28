@@ -38,7 +38,6 @@ static object  *find_arrow_ext(object *op, const char *type, int tag);
  */
 player * find_player(char *plname)
 {
-    player     *pl;
     char name[MAX_PLAYER_NAME > (16 - 1) ? MAX_PLAYER_NAME + 1 : 16];
     const char *name_hash;
 
@@ -51,13 +50,7 @@ player * find_player(char *plname)
     if (!(name_hash = find_string(name)))
         return NULL;
 
-    for (pl = first_player; pl != NULL; pl = pl->next)
-    {
-        if (pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && pl->ob->name == name_hash)
-            return pl;
-    }
-
-    return NULL;
+    return find_player_hash(name_hash);
 }
 
 /* nearly the same as above except we

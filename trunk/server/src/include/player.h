@@ -162,8 +162,9 @@ typedef struct pl_player
     char                quick_name[BIG_NAME*3];     /* thats rank + name +" the xxxx" */
     char                ext_title[MAX_EXT_TITLE];   /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
 
-    long                instance_id;            /* instance system: runtime id and instance num */
-    int                 instance_num;
+    /* Instance system */
+    long                instance_id;            /* instance_id is unique per server restart */
+    int                 instance_num;           /* instance_num is unique per instance */
     uint32              instance_flags;         /* status info of the instance */
 
     int					map_update_cmd;			/* for server->client protocol */

@@ -1073,7 +1073,7 @@ int command_reset(object *op, char *params)
         m->reset_time = 1;
         new_draw_info(NDI_UNIQUE, 0, op, "Swap successful. Inserting players.");
 
-        m = ready_map_name(m->path, m->orig_path, MAP_STATUS_TYPE(m->map_status));
+        m = ready_map_name(m->path, m->orig_path, MAP_STATUS_TYPE(m->map_status), m->reference);
 
         for (pl = first_player; pl != NULL; pl = pl->next)
         {

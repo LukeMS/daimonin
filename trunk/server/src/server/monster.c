@@ -126,7 +126,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
             }
             else
             {
-                FREE_AND_ADD_REF_HASH(pf->target_map, map->path);
+                FREE_AND_ADD_REF_HASH(pf->target_map, map->orig_path);
                 pf->target_x = x;
                 pf->target_y = y;
             }
@@ -142,18 +142,18 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         return target_rv.direction;
     }
 
-    /* TODO/FIX: rework ready_map_name() for the instance patch */ 
-    path_map = ready_map_name(pf->path->map, pf->path->map, 0);
+    path_map = ready_inherited_map(op->map, pf->path->map, 1);
+
     /* Walk towards next precomputed coordinate */
-    if(! get_rangevector_full(
+    if(path_map == NULL || ! get_rangevector_full(
             op, op->map, op->x, op->y,
             NULL, path_map, pf->path->x, pf->path->y,
             &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
-        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s:%d:%d)\n",
+        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s (%s):%d:%d)\n",
                 STRING_OBJ_NAME(op),
-                STRING_MAP_NAME(op->map), op->x, op->y,
-                STRING_MAP_NAME(path_map), pf->path->x, pf->path->y);
+                STRING_MAP_PATH(op->map), op->x, op->y,
+                STRING_MAP_PATH(path_map), STRING_SAFE(pf->path->map), pf->path->x, pf->path->y);
 
         /* Discard invalid path. This will force a new path request later */
         free_path(pf->path);
@@ -189,7 +189,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
         }
         else
         {
-            FREE_AND_ADD_REF_HASH(pf->target_map, map->path);
+            FREE_AND_ADD_REF_HASH(pf->target_map, map->orig_path);
             pf->target_x = x;
             pf->target_y = y;
         }
@@ -228,26 +228,30 @@ static int calc_direction_towards_object(object *op, object *target)
     /* Request new path if target has moved too much */
     if (MOB_PATHDATA(op)->path
      && MOB_PATHDATA(op)->goal_map
-     && (target->map->path != MOB_PATHDATA(op)->goal_map
+     && (target->map->orig_path != MOB_PATHDATA(op)->goal_map
       || target->x != MOB_PATHDATA(op)->goal_x
       || target->y != MOB_PATHDATA(op)->goal_y))
     {
         rv_vector   rv_goal, rv_target;
-        /* TODO/FIX: rework ready_map_name() for the instance patch */ 
-        mapstruct  *goal_map    = ready_map_name(MOB_PATHDATA(op)->goal_map, MOB_PATHDATA(op)->goal_map, 0);
-
-        if (!goal_map)
-        {
-            LOG(llevDebug, "BUGBUG: calc_direction_towards_object(): goal_map == NULL (%s <->%s)\n",
-                STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
-            return 0;
-        }
-
+        mapstruct  *goal_map    = ready_inherited_map(op->map, MOB_PATHDATA(op)->goal_map, 1);
+        
         /* TODO if we can't see the object, goto its last known position
          * (also have to separate between well-known objects that we can find
          * without seeing, and other objects that we have to search or track */
         /* TODO make sure maps are loaded (here and everywhere else) */
-        if (get_rangevector_full(
+
+        if (!goal_map)
+        {
+            /* This can happen if target moves into another instance. We take it there has been a lot of movement */
+            LOG(llevDebug, "calc_direction_towards_object(): goal_map == NULL (%s <->%s, op->map: %s, target map: %s)\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(target),
+                STRING_MAP_PATH(op->map), STRING_SAFE(MOB_PATHDATA(op)->goal_map));
+
+            /* Request new path */
+            free_path(MOB_PATHDATA(op)->path);
+            MOB_PATHDATA(op)->path = NULL;
+        }
+        else if (get_rangevector_full(
                     target, target->map, target->x, target->y,
                     NULL, goal_map, MOB_PATHDATA(op)->goal_x, MOB_PATHDATA(op)->goal_y,
                     &rv_goal, RV_DIAGONAL_DISTANCE)
@@ -290,7 +294,16 @@ static int calc_direction_towards_waypoint(object *op, object *wp)
             return 0; /* TODO: what to do? */
     } else
     {    
-        return calc_direction_towards(op, wp, normalize_and_ready_map(op->map, &WP_MAP(wp)), WP_X(wp), WP_Y(wp));
+        mapstruct *map;
+
+        if(WP_MAP(wp) && *WP_MAP(wp) != '\0')
+        {
+            map = ready_inherited_map(op->map, WP_MAP(wp), 0);
+            if(map && map->orig_path != WP_MAP(wp))
+                FREE_AND_ADD_REF_HASH(WP_MAP(wp), map->orig_path);
+        } else
+            map = op->map;
+        return calc_direction_towards(op, wp, map, WP_X(wp), WP_Y(wp));
     }
 }
 
@@ -670,10 +683,10 @@ void object_accept_path(object *op)
      * coords? Or is our target a coordinate in the target_* values? */
     if (target == NULL)
     {
-        /* Move towards a spcific coordinate */
+        /* Move towards a specific coordinate */
         goal_x = MOB_PATHDATA(op)->target_x;
         goal_y = MOB_PATHDATA(op)->target_y;
-        goal_map = normalize_and_ready_map(op->map, &MOB_PATHDATA(op)->target_map);
+        goal_map = ready_inherited_map(op->map, MOB_PATHDATA(op)->target_map, 0);
     }
     else if (target->type == TYPE_WAYPOINT_OBJECT)
     {
@@ -684,7 +697,14 @@ void object_accept_path(object *op)
             /* Default map is current map */
             goal_x = WP_X(target);
             goal_y = WP_Y(target);
-            goal_map = normalize_and_ready_map(op->map, &WP_MAP(target));
+            if(WP_MAP(target) && *WP_MAP(target) != '\0')
+            {
+                goal_map = ready_inherited_map(op->map, WP_MAP(target), 0);
+                if(goal_map && goal_map->orig_path != WP_MAP(target))
+                    FREE_AND_ADD_REF_HASH(WP_MAP(target), goal_map->orig_path);
+            }
+            else
+                goal_map = op->map;
 
             FREE_AND_CLEAR_HASH(MOB_PATHDATA(op)->goal_map);
         }
@@ -698,7 +718,7 @@ void object_accept_path(object *op)
     {
         if (goal_object->type == TYPE_BASE_INFO)
         {
-            goal_map = normalize_and_ready_map(op->map, &goal_object->slaying);
+            goal_map = ready_inherited_map(op->map, goal_object->slaying, 0);
 /*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n",
                     STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), op->map,
                     STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_map), goal_map);*/
@@ -715,7 +735,7 @@ void object_accept_path(object *op)
         if(goal_map)
         {
             /* Keep track of targets that may move */
-            FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_map->path);
+            FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_map->orig_path);
             MOB_PATHDATA(op)->goal_x = goal_x;
             MOB_PATHDATA(op)->goal_y = goal_y;
         }

@@ -376,7 +376,7 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
     if(orig_path_sh)
     {
         path_sh = hooks->create_unique_path_sh(WHO, orig_path_sh);
-        map = hooks->ready_map_name(path_sh, NULL, 0);
+        map = hooks->ready_map_name(path_sh, NULL, 0, WHO->name);
 
         if(map && flags & PLUGIN_MAP_NEW) /* reset the maps - when it loaded */
         {
@@ -389,13 +389,13 @@ static int GameObject_ReadyUniqueMap(lua_State *L)
             hooks->delete_map(map);
 
             /* reload map forced from original /maps */
-            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE);
+            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE, WHO->name);
 
             if(num) /* and kick player back to map - note: if map is NULL its bind point redirect */
                 hooks->map_to_player_link(map, -1, -1, FALSE);
         }
         else if (!(flags & PLUGIN_MAP_CHECK))/* normal ready_map_name() with checking loaded & original maps */
-            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE);
+            map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_UNIQUE, WHO->name);
 
         FREE_ONLY_HASH(path_sh);
     }
@@ -480,7 +480,7 @@ static int GameObject_StartNewInstance(lua_State *L)
     /* we have now declared and initilized the new instance - now lets see we can load it! */
     if(path_sh)
     {
-        map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_INSTANCE);
+        map = hooks->ready_map_name(path_sh, orig_path_sh, MAP_STATUS_INSTANCE, WHO->name);
         /* we don't mark the instance invalid when ready_map_name() fails to create
         * a physical map - we let do it the calling script which will know it
         * by checking the return value = NULL

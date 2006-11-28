@@ -349,7 +349,6 @@ typedef struct mapdef
     struct mapdef  *last;                   /* map before, if NULL we are first_map */
     struct mapdef  *next;                   /* Next map, linked list */
 
-    /* The following two are used by the pathfinder algorithm in pathfinder.c */
     MapSpace       *spaces;                 /* Array of spaces on this map */
     MapSpace       *first_light;            /* list of tiles spaces with light sources in */
     oblinkpt       *buttons;                /* Linked list of linked lists of buttons */
@@ -369,6 +368,7 @@ typedef struct mapdef
     const char     *tile_path[TILED_MAPS];  /* path to adjoining maps (shared strings) */
     const char     *orig_tile_path[TILED_MAPS];  /* sic! */
     const char     *cached_dist_map;         /* With which other map was relative_tile_position() last used? */
+    shstr          *reference;              /* Reference for unique or instance maps (a player name) */
     /* hash strings end */
 
     struct mapdef  *tile_map[TILED_MAPS];   /* Next map, linked list */
@@ -376,7 +376,7 @@ typedef struct mapdef
     object         *player_first;           /* chained list of player on this map */
     object         *active_objects;         /* linked list of active objects */
 
-    uint32          pathfinding_id;         /* For which traversal is the above valid */
+    uint32          pathfinding_id;         /* For which traversal bitmap is valid */
     sint32          darkness;               /* indicates the base light value in this map.
                                              * This value is only used when the map is not
                                              * marked as outdoor.

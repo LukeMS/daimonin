@@ -329,7 +329,7 @@ struct plugin_hooklist
 	void (*delete_map)(mapstruct *m);
 	void (*map_transfer_apartment_items)(mapstruct *map_old, mapstruct * map_new, int x, int y);
 	int (*new_save_map)(mapstruct *m, int flag);
-	mapstruct* (*ready_map_name)(const char *name_path,const char *src_path, int flags);
+	mapstruct* (*ready_map_name)(const char *name_path,const char *src_path, int flags, shstr *reference);
 	const char* (*create_unique_path_sh)(const object *op, const char *name);
     void  (*reload_behaviours)(object *op);
     void  (*clear_mob_knowns)(object *op, struct mob_known_obj **first, hashtable *ht);
