@@ -994,7 +994,7 @@ int get_god(object *priest)
 
 int tailor_god_spell(object *spellop, object *caster)
 {
-    object *god             = find_god(determine_god(caster));
+/*    object *god             = find_god(determine_god(caster)); */
     int     caster_is_spell = 0;
 
     if (caster->type == FBULLET || caster->type == CONE || caster->type == FBALL || caster->type == SWARM_SPELL)

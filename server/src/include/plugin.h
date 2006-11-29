@@ -352,7 +352,7 @@ struct plugin_hooklist
     int (*map_to_player_unlink)(mapstruct *m);
     void (*map_to_player_link)(mapstruct *m, int x, int y, int flag);
     const char* (*create_safe_mapname_sh)(char const *mapname);
-    const char* (*normalize_path_direct)(const char *src, const char *dst, char *path);
+    char* (*normalize_path_direct)(const char *src, const char *dst, char *path);
     const char* (*path_to_name)(const char *file);
     void (*reset_instance_data)(player *pl);
 

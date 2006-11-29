@@ -32,7 +32,6 @@
 char *get_ego_item_name(object *ob)
 {
 	char *cptr;
-	static char sc[] = "'";
 	static char name_buf[MAX_BUF];
 
 	if(!ob || !ob->name || !(cptr = strchr(ob->name, '\'')))
