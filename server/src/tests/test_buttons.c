@@ -42,7 +42,8 @@ static void teardown()
 
 START_TEST (buttons_check_inv_recursive)
 {
-    mapstruct *map = ready_map_name(add_string("/dev/unit_tests/test_check_inv"), 0, NULL);
+    shstr *path = add_string("/dev/unit_tests/test_check_inv");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
     object *check1 = locate_beacon(find_string("check1"))->env;
     object *check2 = locate_beacon(find_string("check2"))->env;
@@ -108,7 +109,8 @@ END_TEST
 /* Test mapload initialization */
 START_TEST (buttons_check_mapload)
 {
-    mapstruct *map = ready_map_name(add_string("/dev/unit_tests/test_connections"), 0, NULL);
+    shstr *path = add_string("/dev/unit_tests/test_connections");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
 
     object *lever = locate_beacon(find_string("lever"))->env;
     
