@@ -2322,7 +2322,6 @@ static int GameObject_GetPlayerInfo(lua_State *L)
     return 0; /* there was non */
 }
 
-
 /*****************************************************************************/
 /* Name   : GameObject_GetNextPlayerInfo                                     */
 /* Lua    : object:GetNextPlayerInfo(player_info)                            */
@@ -2352,7 +2351,6 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
 
     return 0; /* there was non left */
 }
-
 
 /*****************************************************************************/
 /* Name   : GameObject_CreateInvisibleInside                                 */
@@ -2613,15 +2611,6 @@ static int GameObject_Remove(lua_State *L)
     myob = WHO;
     obenv = myob->env;
 
-    /* TODO: maybe this is no longer necessary? */
-    /* Gecko: Don't allow removing any of the involved objects. Messes things up... */
-    /*    if (StackActivator[StackPosition] == myob ||
-                StackWho[StackPosition] == myob ||
-                StackOther[StackPosition] == myob)
-        {
-            luaL_error(L, "You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
-        }*/
-
     GCFP.Value[0] = (void *) (myob);
     (PlugHooks[HOOK_REMOVEOBJECT]) (&GCFP);
 
@@ -2633,15 +2622,6 @@ static int GameObject_Remove(lua_State *L)
         if (tmp->type == PLAYER)
             hooks->esrv_send_inventory(tmp, tmp);
 
-    /* TODO: maybe this is no longer necessary? */
-    /* Gecko: Handle removing any of the active objects (e.g. the activator) */
-    /*    if (StackActivator[StackPosition] == myob)
-            StackActivator[StackPosition] = NULL;
-        if (StackWho[StackPosition] == myob)
-            StackWho[StackPosition] = NULL;
-        if (StackOther[StackPosition] == myob)
-            StackOther[StackPosition] = NULL;*/
-
     return 0;
 }
 
@@ -2650,7 +2630,7 @@ static int GameObject_Remove(lua_State *L)
 /* Lua    : object:Destruct()                                                */
 /* Info   : Removes the object from the game and drops all items in object's */
 /*          inventory on the floor or in a corpse                            */
-/* Status : Recently reimplemented. Untested                                 */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Destruct(lua_State *L)
 {
@@ -2661,44 +2641,10 @@ static int GameObject_Destruct(lua_State *L)
     if(WHO->inv)
         hooks->drop_ob_inv(WHO);
 
-    hooks->decrease_ob_nr(WHO, MIN(WHO->nrof, 1));
+    hooks->decrease_ob_nr(WHO, MAX(WHO->nrof, 1));
 
     return 0;
-
-    /* Old implementation */
-#if 0
-    myob = WHO;
-    obenv = myob->env;
-
-    /* TODO: maybe this is no longer necessary? */
-    /* Gecko: Don't allow removing any of the involved objects. Messes things up... */
-    /*    if (StackActivator[StackPosition] == myob ||
-                StackWho[StackPosition] == myob ||
-                StackOther[StackPosition] == myob)
-        {
-            luaL_error(L, "You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
-        }*/
-
-    GCFP.Value[0] = (void *) (myob);
-    (PlugHooks[HOOK_DESTRUCTOBJECT]) (&GCFP);
-
-    /* Update player's inventory if object was removed from player
-     * TODO: see how well this works with things in containers */
-    for (tmp = obenv; tmp != NULL; tmp = tmp->env)
-        if (tmp->type == PLAYER)
-            hooks->esrv_send_inventory(tmp, tmp);
-
-    /* TODO: maybe this is no longer necessary? */
-    /* Gecko: Handle removing any of the active objects (e.g. the activator) */
-    /*    if (StackActivator[StackPosition] == myob)
-            StackActivator[StackPosition] = NULL;
-        if (StackWho[StackPosition] == myob)
-            StackWho[StackPosition] = NULL;
-        if (StackOther[StackPosition] == myob)
-            StackOther[StackPosition] = NULL;*/
-#endif
 }
-
 
 /*****************************************************************************/
 /* Name   : GameObject_Move                                                  */
@@ -2829,7 +2775,6 @@ static int GameObject_GetArchName(lua_State *L)
     lua_pushstring(L, WHO->arch->name);
     return 1;
 }
-
 
 /*****************************************************************************/
 /* Name   : GameObject_ShowCost                                              */
