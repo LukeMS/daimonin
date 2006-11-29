@@ -127,7 +127,7 @@ START_TEST (object_type_beacon)
     fail_if(locate_beacon(b1_name) != NULL, "Inv beacon available before test");
     fail_if(locate_beacon(b2_name) != NULL, "Map beacon available before test");
     
-    map = ready_map_name(path, 0, NULL);
+    map = ready_map_name(NULL, path, MAP_STATUS_MULTI, NULL);
     fail_unless(map != NULL, "Couldn't load %s", path);
     
     /* Locate the two beacons by hardcoded coordinates */
@@ -151,7 +151,7 @@ END_TEST
 
 START_TEST (object_type_check_inv)
 {
-    mapstruct *map = ready_map_name(add_string("/dev/unit_tests/test_check_inv"), 0, NULL);
+    mapstruct *map = ready_map_name(NULL, add_string("/dev/unit_tests/test_check_inv"), MAP_STATUS_MULTI, NULL);
 
     object *check1 = locate_beacon(find_string("check1"))->env;
     object *check2 = locate_beacon(find_string("check2"))->env;
