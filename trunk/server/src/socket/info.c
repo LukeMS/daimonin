@@ -69,15 +69,12 @@ void new_draw_info(const int flags, const int pri, const object *const pl, const
 		}
         return;
     }
-
-
-    /* here handle some security stuff... a bit overhead for max secure */
+    
+    /* Silently refuse messages not to players. 
+     * This lets us skip all ob->type == PLAYER checks all over the code */
     if (!pl || pl->type != PLAYER)
-    {
-        LOG(llevBug, "BUG:: new_draw_info: called for object != PLAYER! %s (%x - %d) msg: %s\n", query_name(pl), flags,
-            pri, buf);
         return;
-    }
+
     if (!CONTR(pl) || CONTR(pl)->state != ST_PLAYING)
         return;
 
@@ -109,7 +106,8 @@ void new_draw_info_format(const int flags, const int pri, const object *const pl
     va_list ap;
     va_start(ap, format);
 
-    vsprintf(buf, format, ap);
+    vsnprintf(buf, HUGE_BUF, format, ap);
+    buf[HUGE_BUF-1] = '\0';
 
     va_end(ap);
 
@@ -355,7 +353,8 @@ void new_info_map_format(const int color, const mapstruct *const map, const int 
 
     va_start(ap, format);
 
-    vsprintf(buf, format, ap);
+    vsnprintf(buf, HUGE_BUF, format, ap);
+    buf[HUGE_BUF-1] = '\0';
 
     va_end(ap);
 
@@ -370,7 +369,8 @@ void new_info_map_except_format(const int color, const mapstruct *const map, con
 
     va_start(ap, format);
 
-    vsprintf(buf, format, ap);
+    vsnprintf(buf, HUGE_BUF, format, ap);
+    buf[HUGE_BUF-1] = '\0';
 
     va_end(ap);
 
