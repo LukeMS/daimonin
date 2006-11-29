@@ -1597,7 +1597,7 @@ void move_environment_sensor(object *op)
     int trig_tod = 0, trig_dow = 0, trig_bright = 0;
     timeofday_t tod;
 
-    if(op->slaying || op->last_grace)
+    if(op->slaying || op->last_eat)
         get_tod(&tod);
 
     /* Time of day triggered? */
@@ -1608,14 +1608,16 @@ void move_environment_sensor(object *op)
         int hh1,mm1,hh2,mm2;
         if(sscanf(op->slaying, "%2d:%2d-%2d:%2d", &hh1, &mm1, &hh2, &mm2) == 4)
         {
-            hh1 = CLAMP(hh1, 0, 23);
-            mm1 = CLAMP(mm1, 0, 59);
-            hh2 = CLAMP(hh2, 0, 23);
-            mm2 = CLAMP(mm2, 0, 59);
+            /* Simplify time comparisons */
+            int t1 = CLAMP(hh1, 0, 23) * 60 + CLAMP(mm1, 0, 59);
+            int t2 = CLAMP(hh2, 0, 23) * 60 + CLAMP(mm2, 0, 59);
+            int tnow = tod.hour*60 + tod.minute;
 
-            if(tod.hour >= hh1 && tod.minute >= mm1 &&
-                    tod.hour <= hh2 && tod.minute <= mm2)
-                trig_tod = 1;
+            /* Two cases: interval either spans midnight or not */
+            if( (t1 > t2 && (tnow >= t1 || tnow <= t2)) ||
+                    (t1 <= t2 && (tnow >= t1 && tnow <= t2)))
+                    trig_tod = 1;
+
 //            LOG(llevDebug, "tod: %02d:%02d, trig (%s): %d\n", tod.hour, tod.minute, op->slaying, trig_tod);
         } else
         {
@@ -1625,11 +1627,11 @@ void move_environment_sensor(object *op)
     }
 
     /* Day of Week triggered? */
-    if(op->last_grace == 0)
+    if(op->last_eat == 0)
         trig_dow = 1;
     else
     {
-        if(op->last_grace & (1 << tod.dayofweek))
+        if(op->last_eat & (1 << tod.dayofweek))
             trig_dow = 1;
 
         // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->last_grace, trig_dow);
