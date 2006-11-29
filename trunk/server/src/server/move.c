@@ -369,10 +369,7 @@ int push_ob(object *who, int dir, object *pusher)
                  dir,
                  pusher))
     {
-        if (who ->type == PLAYER)
-        {
-            new_draw_info_format(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
-        }
+        new_draw_info_format(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
         return 0;
     }
 
@@ -381,14 +378,8 @@ int push_ob(object *who, int dir, object *pusher)
      * to be in an else block - the message is going to a different
      * player
      */
-    if (who->type == PLAYER)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
-    }
-    else if (QUERY_FLAG(who, FLAG_MONSTER))
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
-    }
+    new_draw_info_format(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
+    new_draw_info_format(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
 
     return 1;
 }
@@ -689,8 +680,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 
     if (!newmap)
     {
-        if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
+        new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
         return FALSE;
     }
 
@@ -705,6 +695,10 @@ int enter_map_by_exit(object *op, object *exit_ob)
     /* lets play a sound where we have left the map */
     if (exit_ob->sub_type1 == ST1_EXIT_SOUND && exit_ob->map)
         play_sound_map(exit_ob->map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
+
+    /* Send any exit message to exiter */
+    if (exit_ob->msg)
+        new_draw_info(NDI_NAVY, 0, op, exit_ob->msg);
 
     /* collect the flag settings from our exit_ob */
     flags = EXIT_STATUS(exit_ob);
