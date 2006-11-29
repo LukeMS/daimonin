@@ -267,6 +267,19 @@ arch floor_ostone1
 x 1
 y 15
 end
+arch cube_gel
+unaggressive 1
+stand_still 1
+x 1
+y 15
+arch santahat
+name Cube's Loot
+end
+arch event_obj
+sub_type 6
+race GelantinousCubeScript.lua
+end
+end
 arch floor_ostone1
 x 1
 y 16
@@ -416,6 +429,14 @@ x 2
 y 14
 end
 arch floor_ostone1
+x 2
+y 15
+end
+arch sign
+msg
+0000491: obj:Destruct() does not destroy monster
+Say "destruct" to call obj:Destruct() on the cube.
+endmsg
 x 2
 y 15
 end
@@ -569,7 +590,15 @@ arch floor_ostone1
 x 3
 y 14
 end
+arch carpet2b
+x 3
+y 14
+end
 arch floor_ostone1
+x 3
+y 15
+end
+arch carpet2b
 x 3
 y 15
 end
