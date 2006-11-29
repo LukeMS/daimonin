@@ -1929,7 +1929,6 @@ void confuse_player(object *op, object *hitter, int ticks)
 {
     static archetype  *at  = NULL;
     object     *tmp;
-    int        max_slow = FALSE;
 
     if (!at)
     {
@@ -1999,7 +1998,6 @@ void blind_player(object *op, object *hitter, int dam)
 {
     static archetype  *at  = NULL;
     object     *tmp;
-    int        max_slow = FALSE;
 
     if (!at)
     {

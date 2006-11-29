@@ -227,7 +227,7 @@ int save_player(object *op, int flag)
 
     if(pl->instance_name)
     {
-        fprintf(fp, "iname %s\ninum %d\niid %d\niflags %d\n", pl->instance_name, pl->instance_num, pl->instance_id,pl->instance_flags);
+        fprintf(fp, "iname %s\ninum %d\niid %ld\niflags %d\n", pl->instance_name, pl->instance_num, pl->instance_id,pl->instance_flags);
     }
 
     fprintf(fp, "Str %d\nDex %d\nCon %d\nInt %d\nPow %d\nWis %d\nCha %d\n", 

@@ -1847,7 +1847,6 @@ void save_objects(mapstruct *m, FILE *fp, int flag)
     int		yl=MAP_HEIGHT(m), xl=MAP_WIDTH(m);
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
-    char   *bptr=NULL;
 
     /* ensure we have our "template" objects for saving floors & masks */ 
     if(!floor_g)
