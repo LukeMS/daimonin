@@ -715,7 +715,7 @@ static int GameObject_Sound(lua_State *L)
 /* Name   : GameObject_Interface                                             */
 /* Lua    : object:Interface(mode, message)                                  */
 /* Info   : This function opens a NPC gui interface on the client            */
-/*        : A mode of -1 means to close explicit a open interface at client  */
+/*          A mode of -1 means to close explicit a open interface at client  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 
@@ -1933,7 +1933,7 @@ static int GameObject_CheckQuestLevel(lua_State *L)
 /* Name   : GameObject_AddQuestTarget                                        */
 /* Lua    : object:AddQuestTarget(chance, nrof, k_arch, k_name, k_title)     */
 /* Info   : define a kill mob. Careful: if all are "" then ALL mobs are part */
-/*        : of this quest. If only arch set, all mobs using that base arch   */
+/*          of this quest. If only arch set, all mobs using that base arch   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_AddQuestTarget(lua_State *L)
@@ -2008,7 +2008,7 @@ static int GameObject_AddQuestTarget(lua_State *L)
 /* Name   : GameObject_AddQuestItem                                          */
 /* Lua    : object:AddQuestItem(nrof, arch, face, name, title)               */
 /* Info   : Add a quest item to a quest or base object                       */
-/*        : (see GameObject_AddQuestTarget)                                  */
+/*          (see GameObject_AddQuestTarget)                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_AddQuestItem(lua_State *L)
@@ -2078,7 +2078,7 @@ static int GameObject_AddQuestItem(lua_State *L)
 /* Name   : GameObject_NrofQuestItem                                         */
 /* Lua    : object:NrofQuestItem()                                           */
 /* Info   : counts quest items inside the inventory of the player            */
-/*        : where target_obj is inside                                       */
+/*          where target_obj is inside                                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_NrofQuestItem(lua_State *L)
@@ -2146,9 +2146,9 @@ static int remove_quest_items(const object *inv, const object *myob, int nrof)
 /* Name   : GameObject_RemoveQuestItem                                       */
 /* Lua    : object:RemoveQuestItem(nrof)                                     */
 /* Info   : removes the items from the players inventory.                    */
-/*        : Get the template info from the kill target obj inventory         */
-/*        : NOTE: the function tries to remove given objects even when there,*/
-/*        : are not enough! count them before calling this function.         */
+/*          Get the template info from the kill target obj inventory         */
+/*          NOTE: the function tries to remove given objects even when there,*/
+/*          are not enough! count them before calling this function.         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_RemoveQuestItem(lua_State *L)
@@ -2180,8 +2180,8 @@ static int GameObject_RemoveQuestItem(lua_State *L)
 /* Name   : GameObject_SetQuestStatus                                        */
 /* Lua    : object:SetQuestStatus(status, step_id)                           */
 /* Info   : We need this function because quest_trigger must be moved        */
-/*        : q_status: -1 = done, q_type: can change type (kill, normal..)    */
-/*        : Common call is SetQuestStatus(-1) to "finish"/neutralize a quest */
+/*          q_status: -1 = done, q_type: can change type (kill, normal..)    */
+/*          Common call is SetQuestStatus(-1) to "finish"/neutralize a quest */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_SetQuestStatus(lua_State *L)
@@ -2242,8 +2242,8 @@ static int GameObject_CheckOneDropQuest(lua_State *L)
 /* Name   : GameObject_AddOneDropQuest                                       */
 /* Lua    : object:AddOneDropQuest(archetype, name, title)                   */
 /* Status : Stable                                                           */
-/* Info   : add a one drop item to the player                                */
-/*        : create the quest container if needed                             */
+/* Info   : Adds a one drop item to the player.                              */
+/*          (Creates the quest container if needed.)                         */
 /*****************************************************************************/
 static int GameObject_AddOneDropQuest(lua_State *L)
 {
@@ -2270,8 +2270,8 @@ static int GameObject_AddOneDropQuest(lua_State *L)
 /* Lua    : object:CreatePlayerInfo(name)                                    */
 /* Status : Stable                                                           */
 /* Info   : Creates a player_info object of specified name in object's       */
-/*          inventory                                                        */
-/*          The Values of a player_info object will NOT effect the player.   */
+/*          inventory.                                                       */
+/*          The values of a player_info object will NOT effect the player.   */
 /*          Returns the created object                                       */
 /*****************************************************************************/
 static int GameObject_CreatePlayerInfo(lua_State *L)
@@ -2764,7 +2764,7 @@ static int GameObject_GetIP(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_GetArchName                                           */
 /* Lua    : object:GetArchName()                                             */
-/* Info   :                                                                  */
+/* Info   : Returns the name of object's arhetype.                           */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_GetArchName(lua_State *L)
@@ -2780,8 +2780,8 @@ static int GameObject_GetArchName(lua_State *L)
 /* Name   : GameObject_ShowCost                                              */
 /* Lua    : object:ShowCost(value)                                           */
 /* Info   : Returns a string describing value as x gold, x silver, x copper  */
-/*        : cost string comes from shop.c and is temporary STATIC            */
-/*        : note: whoptr is not used - perhaps we use this in future with it */
+/*          cost string comes from shop.c and is temporary STATIC            */
+/*          note: whoptr is not used - perhaps we use this in future with it */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_ShowCost(lua_State *L)
