@@ -434,8 +434,8 @@ static inline void add_weight(const object *item, const uint32 nrof)
             op->carrying += weight;
 
         /* we have to update the view for clients. If this object is in a player inventory or
-        * an player viewed open container which is INSIDE a player then update the view.
-        */
+         * an player viewed open container which is INSIDE a player then update the view.
+         */
         if(op->env && (op->env->type == PLAYER ||
             (op->env->type == CONTAINER && op->env->attacked_by && op->env->env && op->env->env->type == PLAYER)))
             esrv_update_item(UPD_WEIGHT, op->env->type == PLAYER?op->env:op->env->env, op);
@@ -802,8 +802,8 @@ void copy_object(object *op2, object *op)
 
     /* We set the custom_attrset pointer to NULL to avoid
      * really bad problems. TODO. this needs to be handled better
-    * but it works until its only the player struct.
-    */
+     * but it works until its only the player struct.
+     */
     op->custom_attrset = NULL;
 
     /* Only alter speed_left when we sure we have not done it before */
@@ -1212,7 +1212,7 @@ void drop_ob_inv(object *ob)
                 /* don't drop traps from a container to the floor.
                  * removing the container where a trap is applied will
                  * neutralize the trap too
-                * Also not drop it in env - be safe here
+                 * Also not drop it in env - be safe here
                  */
                 if (tmp_op->type != RUNE)
                 {
@@ -1799,10 +1799,10 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
             }
 
             /* now, if top != NULL, thats the object BEFORE we want chain. This can be
-                     * the base layer, the inv base layer or a object from a upper layer.
-                     * If it NULL, we are the only object in this tile OR
-                     * ->last holds the object BEFORE ours.
-                     */
+             * the base layer, the inv base layer or a object from a upper layer.
+             * If it NULL, we are the only object in this tile OR
+             * ->last holds the object BEFORE ours.
+             */
             SET_MAP_SPACE_LAYER(mc, layer, op); /* we always go in front */
             if (top) /* easy - we chain our object before this one */
             {
@@ -1837,9 +1837,9 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
             else if ((top = GET_MAP_SPACE_LAYER(mc, layer)) != NULL)
             {
                 /* in this case, we have 1 or more normal objects in this layer,
-                         * so we must skip all of them. easiest way is to get a upper layer
-                         * valid object.
-                         */
+                 * so we must skip all of them. easiest way is to get a upper layer
+                 * valid object.
+                 */
                 for (lt = op->layer;
                      lt < MAX_ARCH_LAYERS
                   && (tmp = GET_MAP_SPACE_LAYER(mc, lt)) == NULL
@@ -1864,16 +1864,16 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
             if (top) /* easy - we chain our object before this one - well perhaps */
             {
                 /* ok, now the tricky part.
-                         * if top is set, this can be...
-                         * - the inv layer of same layer id (and tmp_flag will be 1)
-                         * - the normal layer of same layer id (tmp_flag == 2)
-                         * - the inv OR normal layer of a upper layer (tmp_flag == 3)
-                         * if tmp_flag = 1, its easy - just we get in front of top and use
-                         * the same links.
-                         * if tmp_flag = 2 AND tmp is set, tmp is the object we chain before.
-                         * is tmp is NULL, we get ->last and chain after it.
-                         * if tmp_flag = 3, we chain all times to top (before).
-                         */
+                 * if top is set, this can be...
+                 * - the inv layer of same layer id (and tmp_flag will be 1)
+                 * - the normal layer of same layer id (tmp_flag == 2)
+                 * - the inv OR normal layer of a upper layer (tmp_flag == 3)
+                 * if tmp_flag = 1, its easy - just we get in front of top and use
+                 * the same links.
+                 * if tmp_flag = 2 AND tmp is set, tmp is the object we chain before.
+                 * is tmp is NULL, we get ->last and chain after it.
+                 * if tmp_flag = 3, we chain all times to top (before).
+                 */
 
                 if (tmp_flag == 2)
                 {
@@ -1990,7 +1990,7 @@ object *insert_ob_in_map(object *const op, mapstruct *m, object *const originato
      * part for traps. This ensures we don't must do nasty hacks with half inserted/removed
      * objects - for example when we hit a teleporter trap.
      * Check only for single tiles || or head but ALWAYS for heads.
-    */
+     */
     if (!(flag & INS_NO_WALK_ON) && (mc->flags & (P_WALK_ON | P_FLY_ON) || op->more) && !op->head)
     {
         int event;
@@ -2159,8 +2159,8 @@ object * decrease_ob_nr(object *op, uint32 i)
         if (!(tmp = is_player_inv(op->env)))
         {
             /* No... But perhaps tmp is in a container viewed by a player?
-                     * Lets check the container is linked to a player.
-                     */
+             * Lets check the container is linked to a player.
+             */
             if (op->env->type == CONTAINER
              && op->env->attacked_by
              && CONTR(op->env->attacked_by)
@@ -2399,8 +2399,8 @@ int check_walk_on(object *const op, object *const originator, int flags)
         if (fly ? QUERY_FLAG(tmp, FLAG_FLY_ON) : QUERY_FLAG(tmp, FLAG_WALK_ON))
         {
             move_apply(tmp, op, originator, flags); /* apply_func must handle multi arch parts....
-                                                                  * NOTE: move_apply() can be heavy recursive and recall
-                                                                  * this function too.*/
+                                                     * NOTE: move_apply() can be heavy recursive and recall
+                                                     * this function too.*/
 
             if (was_destroyed(op, tag)) /* this means we got killed, removed or whatever! */
             {
@@ -2463,10 +2463,10 @@ int check_walk_off(object *op, object *originator, int flags)
             continue;
 
         /* This flags ensures we notice when a moving event has appeared!
-             * Because the functions who set/clear the flag can be called recursive
-             * from this function and walk_off() we need a static, global semaphor
-             * like flag to ensure we don't clear the flag except in the mother call.
-             */
+         * Because the functions who set/clear the flag can be called recursive
+         * from this function and walk_off() we need a static, global semaphor
+         * like flag to ensure we don't clear the flag except in the mother call.
+         */
         if (!static_walk_semaphore)
         {
             local_walk_semaphore = TRUE;
