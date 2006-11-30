@@ -2780,8 +2780,8 @@ static int GameObject_GetArchName(lua_State *L)
 /* Name   : GameObject_ShowCost                                              */
 /* Lua    : object:ShowCost(value)                                           */
 /* Info   : Returns a string describing value as x gold, x silver, x copper  */
-/*          cost string comes from shop.c and is temporary STATIC            */
-/*          note: whoptr is not used - perhaps we use this in future with it */
+/*          mode 0: "4 gold coins, 3 silver coins, ..." (default)            */
+/*          mode 1: "4g, 3s, ..."                                            */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_ShowCost(lua_State *L)
@@ -2789,16 +2789,11 @@ static int GameObject_ShowCost(lua_State *L)
     lua_object *self;
     sint64      value;
 	int			mode = 0;
-    char       *cost_string;
 
     get_lua_args(L, "OI|i", &self, &value, &mode);
 
-	/* mode 0: string is like "4 gold coins, 3 silver coins"...
-     * mode 1: string is like "4g, 3s"
-	 */
-    cost_string = hooks->cost_string_from_value(value, mode);
+    lua_pushstring(L, hooks->cost_string_from_value(value, mode));
 
-    lua_pushstring(L, cost_string);
     return 1;
 }
 
