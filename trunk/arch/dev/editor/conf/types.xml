@@ -1701,6 +1701,8 @@
     VERY useful for all kinds of map-mechanisms.
     Creators can either create the archetype mentioned in the "create arch" 
     field, or objects from its inventory (if you leave "create arch" empty).
+    
+    Creators can't create mobs, use spawn points for that.
     ]]>
   </description>
   <use><![CDATA[
@@ -1714,6 +1716,14 @@
 
     If you leave this empty, the creator will clone any non-system objects
     from its inventory instead (sortof like the spawn point).
+
+    Creators can't create mobs, use spawn points for that.
+  </attribute>
+  <attribute arch="splitting" editor="random clone" type="bool">
+    Setting this will make the creator clone a single, randomly picked, 
+    non-system object from its inventory instead of all of them.
+    
+    (Only used if "create arch" is unset)
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     Whenever the connection value is activated,

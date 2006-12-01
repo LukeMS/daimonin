@@ -1003,9 +1003,37 @@ arch floor_ostone1
 x 9
 y 3
 end
+arch sign
+name CREATOR objects
+msg
+A CREATOR creates objects every time
+it is triggered. This CREATOR creates a single random item from its inventory.
+CREATORs are very useful objects. Look
+at the different object features.
+endmsg
+x 9
+y 3
+end
 arch floor_ostone1
 x 9
 y 4
+end
+arch creator
+layer 4
+splitting 1
+connected 200
+lifesave 1
+sys_object 0
+x 9
+y 4
+arch girdle
+end
+arch helm_leather
+end
+arch gauntlets
+end
+arch leggings_leather
+end
 end
 arch floor_ostone1
 x 9
