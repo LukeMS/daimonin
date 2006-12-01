@@ -215,8 +215,15 @@ end
 -- remove kill/collect quest items from the player's inventory
 function QuestManager:RemoveQuestItems()
     assert(self.quest_trigger ~= nil, "The quest isn't registered")
-    for obj in obj_inventory(self.quest_trigger) do
-        obj:RemoveQuestItem()
+    local mode = self.quest_trigger.sub_type_1
+    if mode == game.QUEST_ITEM then
+        self.quest_trigger:RemoveQuestItem()
+    elseif mode == game.QUEST_KILLITEM then
+        for obj in obj_inventory(self.quest_trigger) do
+            obj:RemoveQuestItem()
+        end
+    else
+        print("QuestManager: Sorry, don't know what to do about quest items from quest " .. self.quest_trigger.name)     
     end
 end
 
