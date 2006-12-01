@@ -1597,7 +1597,7 @@ void move_environment_sensor(object *op)
     int trig_tod = 0, trig_dow = 0, trig_bright = 0;
     timeofday_t tod;
 
-    if(op->slaying || op->last_eat)
+    if(op->slaying || op->last_heal)
         get_tod(&tod);
 
     /* Time of day triggered? */
@@ -1627,11 +1627,11 @@ void move_environment_sensor(object *op)
     }
 
     /* Day of Week triggered? */
-    if(op->last_eat == 0)
+    if(op->last_heal == 0)
         trig_dow = 1;
     else
     {
-        if(op->last_eat & (1 << tod.dayofweek))
+        if(op->last_heal & (1 << tod.dayofweek))
             trig_dow = 1;
 
         // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->last_grace, trig_dow);
