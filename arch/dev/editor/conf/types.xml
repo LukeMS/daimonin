@@ -6003,7 +6003,7 @@ that food.]]>
     The time interval this sensors should trigger. This should be in the form "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
     An empty (or malformed) value means don't care about time of day.
   </attribute>  
-  <attribute arch="last_eat" editor="trigger weekday" type="bitmask_day_of_week">
+  <attribute arch="last_heal" editor="trigger weekday" type="bitmask_day_of_week">
     Which days to trigger the connection.
     No selected days means don't care about weekdays.
   </attribute>
