@@ -1544,10 +1544,29 @@ void move_creator(object *op)
         /* Clone from inventory */
         object *source, *tmp;
         int didit = 0;
-        for(source = op->inv; source != NULL; source = source->below)
+        int cloneindex = 0;
+
+        /* Create single random item from inventory? */
+        if(QUERY_FLAG(op, FLAG_SPLITTING))
+        {
+            int numobs = 0;
+            /* Count applicable items */
+            for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
+                if(! QUERY_FLAG(source, FLAG_SYS_OBJECT))
+                    numobs++;
+            if(numobs == 0)
+                return; /* Avoid div by zero */
+            cloneindex = RANDOM()%numobs;
+        }
+
+        for(source = op->inv; source != NULL && cloneindex >= 0; source = source->below)
         {
             /* Don't clone sys objects */
             if(QUERY_FLAG(source, FLAG_SYS_OBJECT))
+                continue;
+
+            /* Count down to target if creating a single random item */
+            if(QUERY_FLAG(op, FLAG_SPLITTING) && --cloneindex >= 0)
                 continue;
 
             tmp = ObjectCreateClone(source);
