@@ -2496,7 +2496,7 @@ y 2
 end
 arch environment_sensor
 name Monday sensor
-last_grace 1
+last_eat 1
 connected 203
 x 21
 y 2
