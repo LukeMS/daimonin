@@ -1552,7 +1552,7 @@ void move_creator(object *op)
             int numobs = 0;
             /* Count applicable items */
             for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
-                if(! QUERY_FLAG(source, FLAG_SYS_OBJECT))
+                if(! QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
                     numobs++;
             if(numobs == 0)
                 return; /* Avoid div by zero */
