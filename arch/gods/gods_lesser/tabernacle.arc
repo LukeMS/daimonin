@@ -38,12 +38,12 @@ trans.101
 mina
 is_animated 1
 anim_speed 3
-Str 30
-Con 30
-Dex 30
-Int 30
-Wis 30
-Pow 30
+str 30
+con 30
+dex 30
+int 30
+wis 30
+pow 30
 is_female 1
 is_neutral 1
 terrain_flag 39

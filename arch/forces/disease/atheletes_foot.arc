@@ -9,7 +9,7 @@ wc 1
 thac0 18
 thacm 1
 magic 1
-Dex -3
+dex -3
 identified 1
 maxhp 1
 speed 0.005

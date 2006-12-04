@@ -13,6 +13,6 @@ face exp.101
 no_drop 1
 level 1
 exp 0
-Con 1
-Str 1
+con 1
+str 1
 end

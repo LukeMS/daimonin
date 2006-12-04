@@ -3,7 +3,7 @@ name crown
 face crown.101
 type 34
 layer 3
-Cha 1
+cha 1
 resist_impact 3
 resist_slash 3
 resist_cleave 3

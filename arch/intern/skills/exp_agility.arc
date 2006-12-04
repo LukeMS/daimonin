@@ -13,5 +13,5 @@ known_cursed 1
 face exp.101
 level 1
 exp 0
-Dex 1
+dex 1
 end

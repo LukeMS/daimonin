@@ -3,10 +3,10 @@ name booze
 title of poison
 layer 3
 dam 3
-Str -5
-Con -5
-Int -5
-Cha -6
+str -5
+con -5
+int -5
+cha -6
 level 1
 last_heal 6
 speed_left 0.015
