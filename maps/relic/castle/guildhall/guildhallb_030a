@@ -776,7 +776,7 @@ arch hobgoblin
 name Mahch
 type 83
 level 5
-Wis 3
+wis 3
 end
 end
 arch earth_brown3
@@ -1237,7 +1237,7 @@ y 21
 arch goblin
 type 83
 level 3
-Wis 2
+wis 2
 end
 end
 arch earth_brown2
@@ -1389,7 +1389,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch light5
@@ -1477,7 +1477,7 @@ arch gnoll
 name red-marked gnoll
 type 83
 level 7
-Wis 3
+wis 3
 end
 end
 arch earth_brown3
@@ -1617,7 +1617,7 @@ y 20
 arch goblin
 type 83
 level 3
-Wis 2
+wis 2
 end
 end
 arch earth_brown2
@@ -2108,7 +2108,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown2
@@ -2150,7 +2150,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown3
@@ -2318,7 +2318,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown3
@@ -3144,7 +3144,7 @@ y 13
 arch goblin
 type 83
 level 3
-Wis 2
+wis 2
 end
 end
 arch earth_brown2
@@ -3171,7 +3171,7 @@ name shivering black pudding
 type 83
 level 6
 unaggressive 1
-Wis 1
+wis 1
 end
 end
 arch earth_brown3
@@ -3387,7 +3387,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown1
@@ -3439,7 +3439,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown1
@@ -3565,7 +3565,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown3
@@ -3621,7 +3621,7 @@ arch slug_giant
 type 83
 level 2
 unaggressive 1
-Wis 3
+wis 3
 end
 end
 arch earth_brown3

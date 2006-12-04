@@ -2548,7 +2548,7 @@ arch dog_brown
 name Rabid dog
 type 83
 maxhp 1
-Wis 5
+wis 5
 friendly 0
 end
 end

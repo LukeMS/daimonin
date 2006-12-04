@@ -409,7 +409,7 @@ speed 100.0
 no_attack 1
 dam 0
 maxhp 10000
-Con 99
+con 99
 reg_f 1
 unaggressive 1
 stand_still 1
@@ -3211,9 +3211,9 @@ speed 1.0
 no_attack 1
 dam 0
 maxhp 1000
-Con 99
+con 99
 reg_f 1
-Wis 0
+wis 0
 unaggressive 1
 friendly 1
 stand_still 1

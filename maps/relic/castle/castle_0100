@@ -163,7 +163,7 @@ name Castle Guard
 type 83
 level 50
 can_open_door 0
-Wis 1
+wis 1
 end
 end
 arch floor_grey3
@@ -470,7 +470,7 @@ name Castle Guard
 type 83
 level 50
 can_open_door 0
-Wis 1
+wis 1
 end
 end
 arch floor_fstone2a
@@ -748,7 +748,7 @@ name Castle Guard
 type 83
 level 50
 can_open_door 0
-Wis 1
+wis 1
 end
 end
 arch floor_grey3
@@ -2540,7 +2540,7 @@ name Castle Guard
 type 83
 level 50
 can_open_door 0
-Wis 1
+wis 1
 end
 end
 arch floor_grey3
@@ -2845,7 +2845,7 @@ name Castle Guard
 type 83
 level 50
 can_open_door 0
-Wis 1
+wis 1
 end
 end
 arch floor_fstone2a
@@ -3121,7 +3121,7 @@ name Castle Guard
 type 83
 level 50
 can_open_door 0
-Wis 1
+wis 1
 end
 end
 arch floor_grey3

@@ -168,7 +168,7 @@ y 3
 arch ant_red
 name ant scout leader
 type 83
-Wis 3
+wis 3
 unaggressive 0
 random_move 0
 dam 40
@@ -233,7 +233,7 @@ y 9
 arch cube_gel
 name small gelantinous cube
 type 83
-Wis 2
+wis 2
 dam 30
 exp 75
 end
@@ -486,7 +486,7 @@ y 14
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75
@@ -666,7 +666,7 @@ y 11
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75
@@ -802,7 +802,7 @@ y 14
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75
@@ -926,7 +926,7 @@ y 2
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75
@@ -1419,7 +1419,7 @@ y 2
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75
@@ -1484,7 +1484,7 @@ y 10
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75
@@ -1516,7 +1516,7 @@ y 14
 arch ant_red
 name minor ant scout
 type 83
-Wis 3
+wis 3
 dam 30
 maxhp 40
 exp 75

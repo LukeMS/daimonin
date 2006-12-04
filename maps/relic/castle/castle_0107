@@ -1776,7 +1776,7 @@ arch guard
 name Door Guard
 type 83
 level 50
-Wis 1
+wis 1
 end
 end
 arch grass_thick2
@@ -2688,7 +2688,7 @@ arch guard
 name Door Guard
 type 83
 level 50
-Wis 1
+wis 1
 end
 end
 arch floor_grit3a
