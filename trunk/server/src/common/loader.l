@@ -1043,17 +1043,17 @@ char *get_ob_diff(const object *op, const object *op2) {
   }
 
   if(op->stats.Dex!=op2->stats.Dex)
-    save_long(buf, "Dex", op->stats.Dex);
+    save_long(buf, "dex", op->stats.Dex);
   if(op->stats.Con!=op2->stats.Con)
-    save_long(buf, "Con", op->stats.Con);
+    save_long(buf, "con", op->stats.Con);
   if(op->stats.Wis!=op2->stats.Wis)
-    save_long(buf, "Wis", op->stats.Wis);
+    save_long(buf, "wis", op->stats.Wis);
   if(op->stats.Pow!=op2->stats.Pow)
-    save_long(buf, "Pow", op->stats.Pow);
+    save_long(buf, "pow", op->stats.Pow);
   if(op->stats.Cha!=op2->stats.Cha)
-    save_long(buf, "Cha", op->stats.Cha);
+    save_long(buf, "cha", op->stats.Cha);
   if(op->stats.Int!=op2->stats.Int)
-    save_long(buf, "Int", op->stats.Int);
+    save_long(buf, "int", op->stats.Int);
   if(op->stats.hp!=op2->stats.hp)
     save_long(buf, "hp", op->stats.hp);
   if(op->stats.maxhp!=op2->stats.maxhp)
