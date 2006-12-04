@@ -1469,7 +1469,7 @@ name The Queen
 type 83
 title of Stonehaven
 level 50
-Wis 3
+wis 3
 arch waypoint
 name waypoint_1
 title waypoint_2
@@ -1766,7 +1766,7 @@ name The King
 type 83
 title of Stonehaven
 level 80
-Wis 3
+wis 3
 end
 end
 arch floor_fs_grey1a
@@ -1946,7 +1946,7 @@ name The Prince
 type 83
 title of Stonehaven
 level 40
-Wis 3
+wis 3
 arch waypoint
 name waypoint_2
 title waypoint_3

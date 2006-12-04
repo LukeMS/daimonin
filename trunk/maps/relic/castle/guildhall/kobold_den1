@@ -178,7 +178,7 @@ y 2
 arch kobold_guard
 name kobold fighter leader
 type 83
-Wis 2
+wis 2
 level 3
 end
 end
@@ -216,7 +216,7 @@ y 7
 arch kobold
 name kobold scout
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -401,8 +401,8 @@ y 1
 arch kobold_shaman
 type 83
 level 2
-Wis 2
-Dex 2
+wis 2
+dex 2
 magic 1
 maxsp 10
 arch ability_cause_lig_wound
@@ -599,7 +599,7 @@ x 3
 y 7
 arch kobold_fighter
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -710,7 +710,7 @@ x 4
 y 2
 arch kobold_fighter
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -1315,7 +1315,7 @@ y 14
 arch kobold
 name kobold sneaker
 type 83
-Wis 2
+wis 2
 unaggressive 1
 end
 end
@@ -1479,7 +1479,7 @@ y 19
 arch kobold
 name kobold sneaker
 type 83
-Wis 2
+wis 2
 unaggressive 1
 end
 end
@@ -1661,7 +1661,7 @@ x 11
 y 4
 arch kobold_fighter
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -1913,7 +1913,7 @@ y 4
 arch kobold_fighter
 name kobold clan fighter
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -2131,7 +2131,7 @@ y 12
 arch kobold
 name kobold mushroom collector
 type 83
-Wis 2
+wis 2
 unaggressive 1
 end
 end
@@ -2287,7 +2287,7 @@ y 10
 arch kobold
 name kobold mushroom collector
 type 83
-Wis 2
+wis 2
 unaggressive 1
 end
 end
@@ -2549,7 +2549,7 @@ y 5
 arch kobold_guard
 name kobold clan guard
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -2572,7 +2572,7 @@ y 7
 arch kobold_guard
 name kobold clan guard
 type 83
-Wis 2
+wis 2
 level 2
 end
 end
@@ -2654,7 +2654,7 @@ y 19
 arch kobold
 name kobold hunter
 type 83
-Wis 2
+wis 2
 unaggressive 1
 end
 end
@@ -2729,7 +2729,7 @@ y 6
 arch kobold_big
 name kobold clan chief
 type 83
-Wis 2
+wis 2
 level 3
 end
 end
@@ -2937,7 +2937,7 @@ x 19
 y 19
 arch kobold
 type 83
-Wis 2
+wis 2
 unaggressive 1
 end
 end
@@ -3033,7 +3033,7 @@ y 11
 arch kobold
 name kobold mushroom keeper
 type 83
-Wis 2
+wis 2
 end
 end
 arch floor_sand_d2
@@ -3132,7 +3132,7 @@ y 7
 arch kobold_guard
 name kobold guard leader
 type 83
-Wis 2
+wis 2
 level 3
 end
 end

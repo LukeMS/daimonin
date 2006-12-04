@@ -647,7 +647,7 @@ name Bank Guard
 type 83
 level 40
 stand_still 1
-Wis 1
+wis 1
 direction 3
 end
 end

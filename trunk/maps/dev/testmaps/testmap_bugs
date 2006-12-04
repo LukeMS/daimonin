@@ -248,7 +248,7 @@ x 1
 y 13
 end
 arch jelly_red
-Con 1
+con 1
 stand_still 1
 level 50
 maxhp 1

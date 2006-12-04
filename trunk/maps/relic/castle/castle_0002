@@ -1394,7 +1394,7 @@ arch female1
 type 83
 level 7
 stand_still 1
-Wis 4
+wis 4
 direction 1
 end
 end
@@ -1695,7 +1695,7 @@ arch peasant
 type 83
 level 8
 stand_still 1
-Wis 4
+wis 4
 direction 1
 end
 end

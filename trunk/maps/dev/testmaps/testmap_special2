@@ -1145,8 +1145,8 @@ x 12
 y 2
 end
 arch ogre
-Dex 2
-Wis 4
+dex 2
+wis 4
 stand_still 1
 x 12
 y 2
@@ -1210,7 +1210,7 @@ y 14
 end
 arch skel_mage
 maxsp 30
-Pow 10
+pow 10
 magic 0
 stand_still 1
 x 12
@@ -1326,9 +1326,9 @@ y 2
 end
 arch ogre
 can_reflect_missile 1
-Dex 2
+dex 2
 stand_still 1
-Wis 4
+wis 4
 x 14
 y 2
 arch ability_stone_throw
@@ -1396,7 +1396,7 @@ end
 arch skel_mage
 can_reflect_spell 1
 maxsp 30
-Pow 10
+pow 10
 magic 0
 stand_still 1
 x 14

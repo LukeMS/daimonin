@@ -388,7 +388,7 @@ y 21
 arch blob_acid
 type 83
 dam 0
-Wis 2
+wis 2
 resist_impact 0
 resist_pierce 0
 resist_paralyze 20

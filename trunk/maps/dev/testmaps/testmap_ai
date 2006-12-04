@@ -1195,7 +1195,7 @@ arch priest_church
 unaggressive 1
 direction 3
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-Con 1
+con 1
 x 9
 y 6
 arch ai_generic
@@ -1238,7 +1238,7 @@ name mob priest
 unaggressive 1
 direction 3
 randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-Con 1
+con 1
 friendly 0
 face orc_priest.131
 animation orc_priest
@@ -2659,8 +2659,8 @@ y 1
 arch hobgoblin
 type 83
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-Wis 3
-Con 1
+wis 3
+con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -2706,8 +2706,8 @@ x 20
 y 4
 arch kobold_fighter
 type 83
-Con 1
-Wis 3
+con 1
+wis 3
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -2866,8 +2866,8 @@ y 1
 arch hobgoblin
 type 83
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-Wis 3
-Con 1
+wis 3
+con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -2913,8 +2913,8 @@ x 21
 y 4
 arch kobold_fighter
 type 83
-Con 1
-Wis 3
+con 1
+wis 3
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -3073,8 +3073,8 @@ y 1
 arch hobgoblin
 type 83
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
-Wis 3
-Con 1
+wis 3
+con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -3120,8 +3120,8 @@ x 22
 y 4
 arch kobold_fighter
 type 83
-Wis 3
-Con 1
+wis 3
+con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs

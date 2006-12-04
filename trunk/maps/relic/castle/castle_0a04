@@ -487,7 +487,7 @@ name Door Guard
 type 83
 glow_radius 2
 level 50
-Wis 1
+wis 1
 end
 end
 arch plant2
@@ -1088,7 +1088,7 @@ arch guard_pole
 name Colosseum Guard
 type 83
 level 100
-Wis 2
+wis 2
 end
 end
 arch floor_grit2
@@ -1124,7 +1124,7 @@ arch guard_pole
 name Colosseum Guard
 type 83
 level 100
-Wis 2
+wis 2
 end
 end
 arch grass_thick1
@@ -1193,7 +1193,7 @@ arch guard_pole
 name Colosseum Guard
 type 83
 level 100
-Wis 1
+wis 1
 end
 end
 arch floor_grit2
