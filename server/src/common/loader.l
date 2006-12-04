@@ -1042,6 +1042,8 @@ char *get_ob_diff(const object *op, const object *op2) {
 
   }
 
+  if(op->stats.Str!=op2->stats.Str)
+    save_long(buf, "str", op->stats.Str);
   if(op->stats.Dex!=op2->stats.Dex)
     save_long(buf, "dex", op->stats.Dex);
   if(op->stats.Con!=op2->stats.Con)
