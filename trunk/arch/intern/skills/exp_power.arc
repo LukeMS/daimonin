@@ -13,5 +13,5 @@ sys_object 1
 no_drop 1
 level 1
 exp 0
-Pow 1
+pow 1
 end

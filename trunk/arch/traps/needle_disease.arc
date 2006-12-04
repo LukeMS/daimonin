@@ -16,5 +16,5 @@ sys_object 1
 layer 0
 no_pick 1
 walk_on 1
-Cha 20
+cha 20
 end

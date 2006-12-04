@@ -19,5 +19,5 @@ no_pick 1
 walk_on 1
 attack_slash 100
 dam 8
-Cha 20
+cha 20
 end

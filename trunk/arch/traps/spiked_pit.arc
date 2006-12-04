@@ -20,5 +20,5 @@ no_pick 1
 walk_on 1
 attack_impact 100
 dam 9
-Cha 15
+cha 15
 end

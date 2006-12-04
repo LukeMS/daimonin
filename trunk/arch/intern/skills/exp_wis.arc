@@ -13,5 +13,5 @@ face exp.101
 no_drop 1
 level 1
 exp 0
-Wis 1
+wis 1
 end
