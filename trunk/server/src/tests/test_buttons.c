@@ -172,6 +172,52 @@ START_TEST (buttons_check_mapload)
 }
 END_TEST
 
+/* Test environment sensors */
+START_TEST (buttons_check_env_sensor)
+{
+    shstr *path = add_string("/dev/unit_tests/test_env_sensor");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+    int i;
+
+    object *lever = locate_beacon(find_string("lever_beacon"))->env; // Lever controlling light3
+    object *sensor = locate_beacon(find_string("sensor_beacon"))->env; // Sensor activated by light3
+    object *light1 = locate_beacon(find_string("gravelight_beacon"))->env; // applyable light connected to sensor
+    object *light2 = locate_beacon(find_string("light_beacon"))->env; // light source connected to sensor
+    object *light3 = locate_beacon(find_string("light_beacon_2"))->env;
+    
+    /* Give the env sensor a chance to sense */
+    process_events();
+    process_events();
+
+    /* At map load time, no lights should shine */
+    fail_if(light1->glow_radius, "applyable light glows");
+    fail_if(light2->glow_radius, "light source 1 glows");
+    fail_if(light3->glow_radius, "light source 2 glows");
+    fail_if(sensor->weight_limit, "env sensor senses");
+
+    /* Switch the lever and make sure the inverse is true */
+    manual_apply(lever, lever, 0);
+    fail_if(!light3->glow_radius, "light source 2 doesn't glow");
+    
+    /* The new light should activate the env sensor, let it sense... */
+    process_events();
+    process_events();
+
+    fail_if(!light1->glow_radius, "applyable light doesn't glow");
+    fail_if(!light2->glow_radius, "light source 1 doesn't glow");
+    fail_if(!sensor->weight_limit, "env sensor doesn't sense");
+    
+    /* Switch the lever and make sure the inverse is true */
+    manual_apply(lever, lever, 0);
+    process_events();
+    process_events();
+    fail_if(sensor->weight_limit, "env sensor senses though light being off");
+    fail_if(light1->glow_radius, "applyable light glows though being turned off");
+    fail_if(light2->glow_radius, "light source 1 glows though being turned off");
+    fail_if(light3->glow_radius, "light source 2 glows though being turned off");
+}
+END_TEST
+
 Suite *buttons_suite(void)
 {
   Suite *s = suite_create("Buttons");
@@ -182,6 +228,7 @@ Suite *buttons_suite(void)
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, buttons_check_inv_recursive);
   tcase_add_test(tc_core, buttons_check_mapload);
+  tcase_add_test(tc_core, buttons_check_env_sensor);
 
   return s;
 }
