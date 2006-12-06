@@ -103,6 +103,7 @@ public:
         return mActPos;
     }
     void setPosition(TilePos pos);
+    void activate(bool waitForHero = true);
 	unsigned int getIndex()
 	{
 		return mIndex;
@@ -119,11 +120,15 @@ protected:
     TilePos mActPos;   /**< the actual pos in the map. **/
     String mNickName;
     int mFloor;
+    bool mWaitForHero;
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { ACTION_NONE, ACTION_OPEN, ACTION_CLOSE };
+    bool mOpen;
+    int  mAction;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

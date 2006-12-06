@@ -51,7 +51,7 @@ using namespace std;
 /// Maximum size of any packet we expect.  Using this makes it so we don't need to
 /// allocated and deallocated the same buffer over and over again and the price
 /// of using a bit of extra memory. IT also makes the code simpler.
-const int  MAXSOCKBUF            =  64*1024;
+const int  MAXSOCKBUF            = 128*1024;
 const int  MAX_METASTRING_BUFFER = 128*2013;
 
 const int  MAX_BUF =  256;
@@ -151,7 +151,7 @@ public:
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
     static void command_buffer_free(command_buffer *buf);
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
-
+    static void checkFileStatus(const char *cmd, char *param, int fileNr);
 
     static void SockList_AddShort(SockList *sl, Uint16 data);
     static void SockList_AddInt  (SockList *sl, Uint32 data);
@@ -258,7 +258,6 @@ private:
     static SDL_cond   *output_buffer_cond;
     static SDL_mutex  *socket_mutex;
     static ClientSocket csocket;
-    static int mRequest_file_chain;
     int SocketStatusErrorNr;
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes

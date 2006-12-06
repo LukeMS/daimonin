@@ -97,7 +97,7 @@ void GuiManager::Init(int w, int h)
 //================================================================================================
 void GuiManager::centerWindowOnMouse(int window)
 {
-    guiWindow[window].centerWindowOnMouse(mMouseX, mMouseY);
+    guiWindow[window].centerWindowOnMouse((int)mMouse.x, (int)mMouse.y);
 }
 
 //================================================================================================
@@ -267,14 +267,17 @@ bool GuiManager::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 // .
 //================================================================================================
-bool GuiManager::mouseEvent(int mouseAction, Real rx, Real ry)
+bool GuiManager::mouseEvent(int mouseAction, Vector3 &mouse)
 {
-    mMouseX = (int) (rx * mScreenWidth);
-    mMouseY = (int) (ry * mScreenHeight);
-    GuiCursor::getSingleton().setPos(mMouseX, mMouseY);
+    mMouse.x = (int) (mouse.x * mScreenWidth);
+    mMouse.y = (int) (mouse.y * mScreenHeight);
+    GuiCursor::getSingleton().setPos((int)mMouse.x,(int)mMouse.y);
+    mMouse.x+= mHotSpotX;
+    mMouse.y+= mHotSpotY;
+    mMouse.z = mouse.z;
     for (unsigned int i=0; i < GUI_WIN_SUM; ++i)
     {
-        if (guiWindow[i].mouseEvent(mouseAction, mMouseX + mHotSpotX, mMouseY + mHotSpotY))
+        if (guiWindow[i].mouseEvent(mouseAction, mMouse))
         {
             mActiveWindow = i;
             return true;
@@ -394,7 +397,7 @@ void GuiManager::update(Real timeSinceLastFrame)
             label.text = mStrTooltip;
             clearTooltip();
             GuiTextout::getSingleton().Print(&label, mTexture.getPointer());
-            mElement->setPosition(mMouseX+33, mMouseY+38); // TODO:
+            mElement->setPosition((int)mMouse.x+33, (int)mMouse.y+38); // TODO:
             mOverlay->show();
             mTooltipRefresh = false;
         }

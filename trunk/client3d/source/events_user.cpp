@@ -204,6 +204,8 @@ void CEvent::keyPressed(KeyEvent *e)
             break;
 
         case KC_W:
+            //Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
+            //GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "apply");
             if (mDayTime)
             {
                 mDayTime =0;
@@ -440,18 +442,18 @@ void CEvent::keyReleased(KeyEvent* e)
 //================================================================================================
 void CEvent::mouseMoved (MouseEvent *e)
 {
-    mMouseX = e->getX();
-    mMouseY = e->getY();
-    if (mMouseX > 0.995)
-        mMouseX = 0.995;
-    if (mMouseY > 0.990)
-        mMouseY = 0.990;
-    if (GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouseX, mMouseY))
+    mMouse.x = e->getX();
+    if (mMouse.x > 0.998)
+        mMouse.x = 0.998;
+    mMouse.y = e->getY();
+    if (mMouse.y > 0.995)
+        mMouse.y = 0.995;
+    mMouse.z = e->getRelZ();
+    if (GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse))
         return;
 
     if (Option::getSingleton().getGameStatus() >= GAME_STATUS_PLAY)
-    {
-    }
+    {}
 }
 
 void CEvent::mousePressed (MouseEvent *e)
@@ -460,9 +462,9 @@ void CEvent::mousePressed (MouseEvent *e)
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
     if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return; // TODO: ServerSelection by mouse.
-    mMouseX = e->getX();
-    mMouseY = e->getY();
-    if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouseX, mMouseY)) return;
+    mMouse.x = e->getX();
+    mMouse.y = e->getY();
+    if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return;
 
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
@@ -476,7 +478,7 @@ void CEvent::mousePressed (MouseEvent *e)
 #endif
     {
         RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
+        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
         mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
         RaySceneQueryResult &result = mRaySceneQuery->execute();
         if (!result.empty())
@@ -499,11 +501,9 @@ void CEvent::mousePressed (MouseEvent *e)
     // ////////////////////////////////////////////////////////////////////
     else if (button & MouseEvent::BUTTON0_MASK ) // LeftButton.
     {
-        TileManager::getSingleton().getTileInterface()->pickTile(mMouseX, mMouseY);
-        ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->getSelectedPos(), "Particle/SelectionDust", 0.8);
-
+        TileManager::getSingleton().getTileInterface()->pickTile(mMouse.x, mMouse.y);
         RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
+        mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
         mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
         RaySceneQueryResult &result = mRaySceneQuery->execute();
         if (!result.empty())
@@ -513,6 +513,7 @@ void CEvent::mousePressed (MouseEvent *e)
         }
         else
         {
+            ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->getSelectedPos(), "Particle/SelectionDust", 0.8);
             ObjectManager::getSingleton().mousePressed(0, TileManager::getSingleton().getTileInterface()->getSelectedTile());
         }
         mSceneManager->destroyQuery(mRaySceneQuery);
@@ -547,7 +548,6 @@ void CEvent::mouseExited  (MouseEvent *e)
 
 void CEvent::mouseReleased(MouseEvent *e)
 {
-    GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_RELEASED, mMouseX, mMouseY);
-    //  mouseMoved(e);
+    GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_RELEASED, mMouse);
     e->consume();
 }

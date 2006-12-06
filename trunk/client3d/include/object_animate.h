@@ -84,7 +84,7 @@ public:
         return mAnimGroupEntries[animGroup];
     }
     void update(const FrameEvent& event);
-    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
+    void toggleAnimation(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false, bool freezeLastFrame = false);
     void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
     Real getAnimSpeed()
     {
@@ -123,6 +123,7 @@ private:
     int mAnimGroup2, mAnimNr2;
     bool mPause;
     bool mIsAnimated;
+    bool mFreezeLastFrame; /**< false: after current anim is done play idle0, true: last frame of current anim will be freezed. */
     Real mAnimSpeed;
 	Real mTimeLeft, mTimeLeft2;
     AnimationState *mActState, *mActState2;

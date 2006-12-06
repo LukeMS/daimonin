@@ -51,7 +51,7 @@ public:
     ~GuiListbox();
     void draw();
     void clear();
-    bool mouseEvent(int MouseAction, int x, int y);
+    bool mouseEvent(int MouseAction, int x, int y, int z);
     int  addTextline(const char *text, uint32 color);
     const char *extractFirstLineOfText(const char &text);
     const char *getSelectedKeyword(); /**< Returns the keyword found in the selected line. **/
@@ -64,8 +64,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables.
     // ////////////////////////////////////////////////////////////////////
-    enum {SIZE_STRING_BUFFER = 1 << 7}
-    ;  /**< MUST be power of 2. **/
+    enum {SIZE_STRING_BUFFER = 1 << 7};  /**< MUST be power of 2. **/
     struct
     {
         String str;
@@ -108,7 +107,6 @@ private:
     static void scrollbarAction(GuiListbox *me, int index, int scroll);
     void scrollTextVertical(int offset);
     void scrollTextHorizontal(int offset);
-    void drawScrollbar();
 };
 
 #endif

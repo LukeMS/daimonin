@@ -91,7 +91,7 @@ private:
     int mSceneDetailIndex;
     Real mIdleTime;
     Real mCameraZoom;
-    Real mMouseX, mMouseY;
+    Vector3 mMouse;
     Real mCamCornerX, mCamCornerY;
     Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
     SceneNode *mWorld;

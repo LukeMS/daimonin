@@ -323,7 +323,10 @@ void ObjectManager::highlightObject(MovableObject *mob)
     if (!mob) return;
     extractObject(mob);
     if  (mSelectedType >= OBJECT_NPC)
-        ObjectVisuals::getSingleton().highlight(mvObject_npc[mSelectedObject], mSelectedObject != ObjectNPC::HERO);
+    {
+        if (mSelectedObject != ObjectNPC::HERO)
+            ObjectVisuals::getSingleton().highlight(mvObject_npc[mSelectedObject], mSelectedObject != ObjectNPC::HERO);
+    }
     else
         ObjectVisuals::getSingleton().highlight(mvObject_static[mSelectedObject], true);
 }
@@ -343,14 +346,14 @@ void ObjectManager::selectObject(MovableObject *mob)
         ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], notHero, notHero);
         mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
         mSelectedFriendly = mvObject_npc[mSelectedObject]->getFriendly();
+        String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
+        Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
     }
     else
     {
         ObjectVisuals::getSingleton().select(mvObject_static[mSelectedObject], false);
         mSelectedPos = mvObject_static[mSelectedObject]->getTilePos();
     }
-    String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
-    Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
 }
 
 //================================================================================================
@@ -364,9 +367,9 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos)
     if (!mob)
     {
         mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
+        ObjectVisuals::getSingleton().unselect();
         return;
     }
-
     // ////////////////////////////////////////////////////////////////////
     // An object was pressed.
     // ////////////////////////////////////////////////////////////////////
@@ -383,13 +386,16 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos)
         {
             mvObject_npc[ObjectNPC::HERO]->readyPrimaryWeapon(false);
             ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], false, false);
+            String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
+            Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
             Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
         }
     }
     else if (mSelectedType < OBJECT_NPC)
     {
-        mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
-        //mvObject_static[mSelectedObject]->openContainer(...);
+        mSelectedPos = mvObject_static[mSelectedObject]->getTilePos();
+        mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(mSelectedPos, 2);
+        mvObject_static[mSelectedObject]->activate();
     }
 }
 

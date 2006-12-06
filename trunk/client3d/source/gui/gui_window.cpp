@@ -470,12 +470,13 @@ bool GuiWindow::keyEvent(const char keyChar, const unsigned char key)
 //================================================================================================
 // Mouse Event.
 //================================================================================================
-bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
+bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
 {
     if (!mOverlay->isVisible()) return false;
+    int rx = (int) mouse.x;
+    int ry = (int) mouse.y;
     // No gadget dragging && not within this window. No need for further checks.
     if (!mGadgetDrag && (rx < mPosX && rx > mPosX + mWidth && ry < mPosY && ry > mPosY + mHeight)) return false;
-
     int x = rx - mPosX;
     int y = ry - mPosY;
 
@@ -494,7 +495,7 @@ bool GuiWindow::mouseEvent(int MouseAction, int rx, int ry)
     }
     for (unsigned int i = 0; i < mvListbox.size(); ++i)
     {
-        if (mvListbox[i]->mouseEvent(MouseAction, x, y))
+        if (mvListbox[i]->mouseEvent(MouseAction, x, y, (int) mouse.z))
             return true;
     }
     for (unsigned int i = 0; i < mvTable.size(); ++i)

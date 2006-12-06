@@ -116,11 +116,11 @@
     </Gadget>
 
     <Gadget type= "BUTTON"  name = "ButInteractAttack" image_name = "Intract_Menu_Attack">
-      <Pos x= "17" y= "16" />
+      <Pos x= "14" y= "16" />
     </Gadget>
 
     <Gadget type= "BUTTON"  name = "ButInteractOpen" image_name = "Intract_Menu_Open">
-      <Pos x= "78" y= "16" />
+      <Pos x= "81" y= "16" />
     </Gadget>
 
   </Window>
