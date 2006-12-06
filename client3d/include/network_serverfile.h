@@ -30,52 +30,29 @@ http://www.gnu.org/licenses/licenses.html
 #include <string>
 #include "define.h"
 
-enum
-{
-    SERVER_FILE_SKILLS,
-    SERVER_FILE_SPELLS,
-    SERVER_FILE_SETTINGS,
-    SERVER_FILE_ANIMS,
-    SERVER_FILE_BMAPS,
-    SERVER_FILE_SUM
-};
-
-enum
-{
-    SERVER_FILE_STATUS_OK,
-    SERVER_FILE_STATUS_UPDATE,
-};
-
 class ServerFile
 {
+
 public:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    int          getStatus   (int file_enum)
+    enum
     {
-        return srv_file[file_enum].status;
-    }
-    int          getLength   (int file_enum)
+        FILE_SKILLS,
+        FILE_SPELLS,
+        FILE_SETTINGS,
+        FILE_ANIMS,
+        FILE_BMAPS,
+        FILE_SUM
+    };
+
+    enum
     {
-        return srv_file[file_enum].length;
-    }
-    int          getSrvLength(int file_enum)
-    {
-        return srv_file[file_enum].server_len;
-    }
-    unsigned int getSrvCRC   (int file_enum)
-    {
-        return srv_file[file_enum].server_crc;
-    }
-    unsigned int getCRC      (int file_enum)
-    {
-        return srv_file[file_enum].crc;
-    }
-    const char*  getFilename (int file_enum)
-    {
-        return srv_file[file_enum].filename;
-    }
+        STATUS_OK,
+        STATUS_OUTDATED,
+        STATUS_UPDATING
+    };
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -84,70 +61,65 @@ public:
     {
         static ServerFile Singleton; return Singleton;
     }
-    bool Init();
     void checkFiles();
-    void  setStatus   (int file_enum, int value)
+
+    int getStatus(int file_enum)
     {
-        srv_file[file_enum].status     = value;
+        return srv_file[file_enum].status;
     }
-    void  setLength   (int file_enum, int value)
+    int getLength(int file_enum)
     {
-        srv_file[file_enum].length     = value;
+        return srv_file[file_enum].length;
     }
-    void  setSrvLength(int file_enum, int value)
+    unsigned int getCRC(int file_enum)
     {
-        srv_file[file_enum].server_len = value;
+        return srv_file[file_enum].crc;
     }
-    void  setSrvCRC   (int file_enum, unsigned int value)
+    const char *getFilename(int file_enum)
     {
-        srv_file[file_enum].server_crc = value;
-    }
-    void  setCRC      (int file_enum, unsigned int value)
-    {
-        srv_file[file_enum].crc        = value;
-    }
-    bool checkID(int file_enum, const char* id)
-    {
-        return (srv_file[file_enum].strID == id);
+        return srv_file[file_enum].filename;
     }
 
+    void setStatus(int file_enum, int value)
+    {
+        srv_file[file_enum].status = value;
+    }
+    void setLength(int file_enum, int value)
+    {
+        srv_file[file_enum].length = value;
+    }
+    void setCRC(int file_enum, unsigned int value)
+    {
+        srv_file[file_enum].crc = value;
+    }
+    bool requestFiles();
+
+    void updateDone()
+    {
+        srv_file[mRequestFileChain].status = STATUS_OK;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     struct _srv_file
     {
         int          status;
         int          length;
         unsigned int crc;
-        int          server_len;
-        unsigned int server_crc;
         const char  *filename;
-        std::string strID;
     }
-    srv_file[SERVER_FILE_SUM];
+    srv_file[FILE_SUM];
+    int mRequestFileChain;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ServerFile()
-    {
-        srv_file[SERVER_FILE_SKILLS  ].filename = FILE_CLIENT_SKILLS;
-        srv_file[SERVER_FILE_SKILLS  ].strID    = "skf";
-        srv_file[SERVER_FILE_SPELLS  ].filename = FILE_CLIENT_SPELLS;
-        srv_file[SERVER_FILE_SPELLS  ].strID    = "spf";
-        srv_file[SERVER_FILE_SETTINGS].filename = FILE_CLIENT_SETTINGS;
-        srv_file[SERVER_FILE_SETTINGS].strID    = "stf";
-        srv_file[SERVER_FILE_ANIMS   ].filename = FILE_CLIENT_ANIMS;
-        srv_file[SERVER_FILE_ANIMS   ].strID    = "amf";
-        srv_file[SERVER_FILE_BMAPS   ].filename = FILE_CLIENT_BMAPS;
-        srv_file[SERVER_FILE_BMAPS   ].strID    = "bpf";
-    }
+    ServerFile();
     ~ServerFile()
     {}
     ServerFile(const ServerFile&); // disable copy-constructor.
-
     void getFileAttibutes(int file_enum);
 };
 

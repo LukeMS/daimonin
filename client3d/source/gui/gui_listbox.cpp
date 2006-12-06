@@ -208,17 +208,16 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
                 {
                     if (buf2[it] == ' '
                             || buf2[it] == ':'
+                            || buf2[it] == ';'
                             || buf2[it] == '.'
                             || buf2[it] == ','
                             || buf2[it] == '('
-                            || buf2[it] == ';'
                             || buf2[it] == '-'
                             || buf2[it] == '+'
                             || buf2[it] == '*'
-                            || buf2[it] == '?'
                             || buf2[it] == '/'
+                            || buf2[it] == '?'
                             || buf2[it] == '='
-                            || buf2[it] == '.'
                             || buf2[it] == 0x0a
                             || buf2[it] == 0)
                     {
@@ -267,8 +266,9 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
 //================================================================================================
 // Returns true if the mouse event was on this gadget (so no need to check the other gadgets).
 //================================================================================================
-bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
+bool GuiListbox::mouseEvent(int MouseAction, int x, int y, int z)
 {
+    // z is the mousewheel +/0/-
     // Scrollbar action?
     if (mScrollBarV && mScrollBarV->mouseEvent(MouseAction, x, y)) return true;
     if (mScrollBarH && mScrollBarH->mouseEvent(MouseAction, x, y)) return true;
@@ -296,7 +296,7 @@ bool GuiListbox::mouseEvent(int MouseAction, int x, int y)
 }
 
 //================================================================================================
-//
+// TODO...
 //================================================================================================
 const char *GuiListbox::getSelectedKeyword()
 {
@@ -306,15 +306,6 @@ const char *GuiListbox::getSelectedKeyword()
 
     mSelectedLine = -1;
     return textline;
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void GuiListbox::drawScrollbar()
-{
-    if (mScrollBarV) mScrollBarV->draw();
-    if (mScrollBarH) mScrollBarH->draw();
 }
 
 //================================================================================================

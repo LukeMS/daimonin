@@ -542,12 +542,21 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
     {
         mDeltaDegree = mFacing.valueDegrees() - facing;
         // We want a range from 0...359°.
-        if      (mDeltaDegree <   0) mDeltaDegree += 360;
-        else if (mDeltaDegree >=360) mDeltaDegree -= 360;
-        if (mDeltaDegree < 180)
-            mAutoTurning = TURN_RIGHT;
+        while (mDeltaDegree <   0) mDeltaDegree += 360;
+        while (mDeltaDegree >=360) mDeltaDegree -= 360;
+
+        // Do we need to turn ?
+        if (mDeltaDegree >= 1 && mDeltaDegree <= 358)
+        {
+            if (mDeltaDegree < 180)
+                mAutoTurning = TURN_RIGHT;
+            else
+                mAutoTurning = TURN_LEFT;
+        }
         else
-            mAutoTurning = TURN_LEFT;
+        {
+            mAutoTurning = TURN_NONE;
+        }
     }
 }
 
@@ -579,12 +588,16 @@ void ObjectNPC::faceToTile(TilePos pos)
     while (mDeltaDegree >=360) mDeltaDegree -= 360;
 
     // Do we need to turn ?
-    if (mDeltaDegree >= 1 && mDeltaDegree <= 359)
+    if (mDeltaDegree >= 1 && mDeltaDegree <= 358)
     {
         if (mDeltaDegree < 180)
             mAutoTurning = TURN_RIGHT;
         else
             mAutoTurning = TURN_LEFT;
+    }
+    else
+    {
+        mAutoTurning = TURN_NONE;
     }
 }
 

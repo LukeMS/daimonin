@@ -652,7 +652,9 @@ void Network::TargetObject(unsigned char *data, int len)
     //Logger::log().error() << "Selected: " << data+3;
     char buf[200];
     sprintf(buf, "[%s] selected", data+3);
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
+//    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
+
+
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -1439,10 +1441,8 @@ void Network::GoodbyeCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::SetupCmd(unsigned char *buf, int len)
 {
-    /*
     unsigned char *cmd, *param;
     scrolldy = scrolldx = 0;
-    Logger::log().info() << "Get SetupCmd: " << buf;
     for (int s = 0; ;)
     {
         while (buf[s] == ' ')
@@ -1462,7 +1462,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
             ++s;
         buf[s++] = 0;
         while (buf[s] == ' ')
-            s++;
+            ++s;
 
         if (!strcmp((const char*)cmd, "sound"))
         {
@@ -1471,116 +1471,28 @@ void Network::SetupCmd(unsigned char *buf, int len)
                 ;
             }
         }
+
         else if (!strcmp((const char*)cmd, "skf"))
         {
-            if (!strcmp((const char*)param, "FALSE"))
-            {
-                Logger::log().info() << "Get skf:: " << param;
-            }
-            else if (strcmp((const char*)param, "OK"))
-            {
-                unsigned char *cp;
-                //srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;
-                        //srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
-                        //srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
+            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SKILLS);
         }
         else if (!strcmp((const char*)cmd, "spf"))
         {
-            if (!strcmp((const char*)param, "FALSE"))
-            {
-                Logger::log().info() << "Get spf:: " << param;
-            }
-            else if (strcmp((const char*)param, "OK"))
-            {
-                unsigned char *cp;
-                //srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;
-                        //srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
-                        //srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
+            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SPELLS);
         }
         else if (!strcmp((const char*)cmd, "stf"))
         {
-            if (!strcmp((const char*)param, "FALSE"))
-            {
-                Logger::log().info() << "Get stf:: " << param;
-            }
-            else if (strcmp((const char*)param, "OK"))
-            {
-                unsigned char *cp;
-                //srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;
-                        //srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
-                        //srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
+            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_SETTINGS);
         }
         else if (!strcmp((const char*)cmd, "bpf"))
         {
-            if (!strcmp((const char*)param, "FALSE"))
-            {
-                Logger::log().info() << "Get bpf:: " << param;
-            }
-            else if (strcmp((const char*)param, "OK"))
-            {
-                unsigned char *cp;
-                //srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;
-                        //srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
-                        //srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
+            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_BMAPS);
         }
         else if (!strcmp((const char*)cmd, "amf"))
         {
-            if (!strcmp((const char*)param, "FALSE"))
-            {
-                Logger::log().info() << "Get amf:: " << param;
-            }
-            else if (strcmp((const char*)param, "OK"))
-            {
-                unsigned char *cp;
-                //srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;
-                        //srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
-                        //srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
+            checkFileStatus((const char*)cmd, (char*)param, ServerFile::FILE_ANIMS);
         }
+
         else if (!strcmp((const char*)cmd, "mapsize"))
         {}
         else if (!strcmp((const char*)cmd, "map2cmd"))
@@ -1589,17 +1501,43 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {}
         else if (!strcmp((const char*)cmd, "facecache"))
         {}
+
         else
         {
             Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
-            GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN  , (void*)"~The server is outdated!\nSelect a different one!~");
+            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
             SOCKET_CloseSocket();
             Option::getSingleton().setGameStatus(GAME_STATUS_START);
             return;
         }
     }
     Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
-    */
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::checkFileStatus(const char *cmd, char *param, int fileNr)
+{
+    if (!strcmp((const char*)param, "FALSE"))
+    {
+        Logger::log().info() << "Get " << cmd << ": " << param;
+        return;
+    }
+    if (strcmp((const char*)param, "OK"))
+    {
+        ServerFile::getSingleton().setStatus(fileNr, ServerFile::STATUS_OUTDATED);
+        for (; *param != 0; ++param)
+        {
+            if (*param == '|')
+            {
+                *param = 0;
+                ServerFile::getSingleton().setLength(fileNr, atoi(param));
+                ServerFile::getSingleton().setCRC   (fileNr, strtoul(param + 1, 0, 16));
+                return;
+            }
+        }
+    }
 }
 
 //================================================================================================
@@ -1626,7 +1564,7 @@ void Network::DataCmd(unsigned char *data, int len)
     // ////////////////////////////////////////////////////////////////////
     unsigned char data_type = data[0];
     unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1;
-    if (data_cmd > SERVER_FILE_SUM)
+    if (data_cmd >= ServerFile::FILE_SUM)
     {
         Logger::log().error()  << "data cmd: unknown type " << data_type << " (len:" << len << ")";
         return;
@@ -1649,19 +1587,19 @@ void Network::DataCmd(unsigned char *data, int len)
         data = (unsigned char*)dest;
         len  = dest_len;
     }
-    ++mRequest_file_chain;
 
     // ////////////////////////////////////////////////////////////////////
     // Save the file.
     // ////////////////////////////////////////////////////////////////////
     ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
     if (!out)
-        Logger::log().error()  << "save data cmd file : write() of "
+        Logger::log().error()  << "save data cmd file : writing of file "
         << ServerFile::getSingleton().getFilename(data_cmd) << " failed.";
     else
         out.write((char*)data, len);
     delete[] dest;
 
+    ServerFile::getSingleton().updateDone();
     // ////////////////////////////////////////////////////////////////////
     // Reload the new file.
     // ////////////////////////////////////////////////////////////////////

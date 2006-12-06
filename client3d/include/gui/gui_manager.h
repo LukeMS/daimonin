@@ -93,7 +93,7 @@ public:
     void parseImageset(const char *XML_imageset_file);
     void parseWindows (const char *XML_windows_file);
     void update(Real);
-    bool mouseEvent(int MouseAction, Real rx, Real ry);
+    bool mouseEvent(int MouseAction, Vector3 &mouse);
     bool keyEvent(const char keyChar, const unsigned char key);
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
     void setTooltip(const char*text);
@@ -163,7 +163,8 @@ private:
     int mDragSrcContainer, mDragDestContainer;
     int mDragSrcItemPosx, mDragSrcItemPosy; // Set on dragStart for moving back on false drag&drop.
     int mActiveWindow, mActiveElement;
-    int mMouseX, mMouseY, mHotSpotX, mHotSpotY;
+    int mHotSpotX, mHotSpotY;
+    Vector3 mMouse;
     bool mTooltipRefresh;
     bool mIsDragging;
     bool mProcessingTextInput;

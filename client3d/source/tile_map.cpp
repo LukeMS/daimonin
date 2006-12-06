@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "logger.h"
 #include "sound.h"
 #include "tile_map.h"
+#include "tile_map_wrapper.h"
 #include "tile_manager.h"
 #include "object_manager.h"
 #include "particle_manager.h"
@@ -38,6 +39,8 @@ http://www.gnu.org/licenses/licenses.html
 TileMap::TileMap()
 {
     TheMapCache = 0;
+    ObjectWrapper::getSingleton().add3dNames(); // MUST be called after each change of the converter file.
+    ObjectWrapper::getSingleton().readObjects();
 }
 
 //================================================================================================
@@ -177,254 +180,223 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 //================================================================================================
 void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
-    char buffer[400];
-    sprintf(buffer, "Layer: %d   face: %x   pos: %d, %d", layer, face, x,y);
-    Logger::log().error() << buffer;
-    switch (layer)
+    enum {LAYER_TILES, LAYER_TODO1, LAYER_TODO2, LAYER_OBJECTS};
+
+    if (layer == LAYER_TILES)
     {
-        case 0:
-            int height, texture_col, texture_row;
-            switch (face)
-            {
-                    // Water
-                case 0xb63:
-                    height = 0;
-                    texture_col =3;
-                    texture_row =3;
-                    break;
-
-                    // Bridge:
-                case 0x207:
-                case 0x208:
-                    height = 30;
-                    texture_col =0;
-                    texture_row =3;
-                    break;
-
-                    // Sand
-                case 0x73d:
-                    height = 30;
-                    texture_col =3;
-                    texture_row =3;
-                    break;
-
-                    // Grass
-                case 0x88b:
-                case 0x88c:
-                case 0x88d:
-                case 0x88e:
-                case 0x88f:
-                case 0x890:
-                case 0x891:
-                    height = 30;
-                    texture_col =1;
-                    texture_row =2;
-                    break;
-
-                    // Stone
-                case 0x6a7:
-                    height = 30;
-                    texture_col =0;
-                    texture_row =0;
-                    break;
-
-                default:
-                    //Logger::log().error() << "Unknown Tile gfx: " << face;
-                    height = 30;
-                    texture_col =0;
-                    texture_row =2;
-                    break;
-            }
-            TileManager::getSingleton().setMap(x, y, height, texture_row, texture_col);
-            break;
-
-        case 1:
-    {}
-        case 2:
-    {}
-        case 3:
+        const char *strTile = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
+        if (!strTile || !strTile[0])
         {
-            switch (face & ~0x8000)
-            {
-                case 4099: // Smith.
-                {
-                    static bool once = true;
-                    if (!once) break;
-                    once = false;
-                    sObject obj;
-                    obj.meshName  = "Smitty.mesh";
-                    //obj.meshName  = "Ogre_Big.mesh";
-                    obj.nickName  = "Nick_Smith";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = 20;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = x;
-                    obj.pos.z     = y;
-                    obj.pos.subX  = 4;
-                    obj.pos.subZ  = 4;
-                    obj.level     = 0;
-                    obj.facing    = 30;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-                    break;
-                }
+            //Logger::log().error() << "Tile face: " << face << " pos: " << x << ", " << y;
+            TileManager::getSingleton().setMap(x, y, 30, 3, 0);
+            return;
+        }
+        // "TilePos_x,y,h"
+        int texture_col = strTile[ 8]-'0';
+        int texture_row = strTile[10]-'0';
+        int height      =(strTile[12]-'0') *10;
+        TileManager::getSingleton().setMap(x, y, height, texture_row, texture_col);
+        return;
+    }
 
-                case 3217: // Monk.
-                {
-                    static bool once = true;
-                    if (!once) break;
-                    once = false;
-                    sObject obj;
-                    obj.meshName  = "Smitty.mesh";
-                    obj.nickName  = "Nick_Monk";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = 20;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = x;
-                    obj.pos.z     = y;
-                    obj.pos.subX  = 2;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = -60;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
 
-                    obj.meshName  = "Tentacle_N_Small.mesh";
-                    obj.nickName  = "Nick_Tentacle";
-                    obj.type      = ObjectManager::OBJECT_NPC;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = -20;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = x;
-                    obj.pos.z     = y+4;
-                    obj.pos.subX  = 3;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = -60;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-                    break;
-                }
-
-                case 2600: // Hero.
-                {
-                    static bool once = true;
-                    if (!once) break;
-                    once = false;
-                    TilePos pos;
-                    pos.x = x;
-                    pos.z = y;
-                    pos.subX  =3;
-                    pos.subZ  =3;
-                    ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
-                    //Logger::log().error() << "we got the Hero face: " << face;
-                    break;
-                }
-
-                case 3859: // Sack.
-                {
-                    static bool once = true;
-                    if (!once) break;
-                    once = false;
-                    sObject obj;
-                    obj.meshName  = "Sack_N.mesh";
-                    obj.nickName  = "Nick_Sack";
-                    obj.type      = ObjectManager::OBJECT_CONTAINER;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = 0;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = x;
-                    obj.pos.z     = y;
-                    obj.pos.subX  = 2;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = -60;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-                    break;
-                }
-
-                case 500:  // Box2.
-                {
-                    static bool once = true;
-                    if (!once) break;
-                    once = false;
-                    sObject obj;
-                    obj.meshName  = "Box_D.mesh";
-                    obj.nickName  = "Nick_Box2";
-                    obj.type      = ObjectManager::OBJECT_CONTAINER;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = 0;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = x;
-                    obj.pos.z     = y;
-                    obj.pos.subX  = 2;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = -60;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-                    break;
-                }
-
-                case 0x006a:  // Anvil.
-                {
-                    static bool once = true;
-                    if (!once) break;
-                    once = false;
-                    sObject obj;
-                    obj.meshName  = "Object_Anvil.mesh";
-                    obj.nickName  = "Nick_Anvil";
-                    obj.type      = ObjectManager::OBJECT_CONTAINER;
-                    obj.boundingRadius = 2;
-                    obj.friendly  = 0;
-                    obj.attack    = 50;
-                    obj.defend    = 50;
-                    obj.maxHP     = 50;
-                    obj.maxMana   = 50;
-                    obj.maxGrace  = 50;
-                    obj.pos.x     = x;
-                    obj.pos.z     = y;
-                    obj.pos.subX  = 2;
-                    obj.pos.subZ  = 5;
-                    obj.level     = 0;
-                    obj.facing    = 35;
-                    obj.particleNr=-1;
-                    ObjectManager::getSingleton().addMobileObject(obj);
-                    break;
-                }
-
-                case 0x01f1:  // bowl.
-                {
-                }
-
-                case 4227: // Stairs down.
-                    break;
-            }
+    if (layer == LAYER_OBJECTS)
+    {
+        //  Logger::log().error() << "object: " << ObjectWrapper::getSingleton().getMeshName(face & ~0x8000) << "  " << (int) (face & ~0x8000);
+        String meshName = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
+        if (!meshName.size())
+        {
+            Logger::log().error() << "Object face: " << face << " pos: " << x << ", " << y;
+            return;
         }
 
+        if (meshName == "Smitty.mesh")
+        {
+            static bool once = true;
+            if (once)
+            {
+                once = false;
+                sObject obj;
+                obj.meshName  = "Smitty.mesh";
+                //obj.meshName  = "Ogre_Big.mesh";
+                obj.nickName  = "Nick_Smith";
+                obj.type      = ObjectManager::OBJECT_NPC;
+                obj.boundingRadius = 2;
+                obj.friendly  = 20;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = 30;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+            }
+        }
+        else if (meshName == "Monk.mesh")
+        {
+            static bool once = true;
+            if (once)
+            {
+                once = false;
+                sObject obj;
+                obj.meshName  = "Smitty.mesh";
+                obj.nickName  = "Nick_Monk";
+                obj.type      = ObjectManager::OBJECT_NPC;
+                obj.boundingRadius = 2;
+                obj.friendly  = 20;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = -60;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+
+                obj.meshName  = "Tentacle_N_Small.mesh";
+                obj.nickName  = "Nick_Tentacle";
+                obj.type      = ObjectManager::OBJECT_NPC;
+                obj.boundingRadius = 2;
+                obj.friendly  = -20;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y+4;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = -60;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+
+                obj.meshName  = "Box_D.mesh";
+                obj.nickName  = "Nick_Box2";
+                obj.type      = ObjectManager::OBJECT_CONTAINER;
+                obj.boundingRadius = 2;
+                obj.friendly  = 0;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y+5;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = 120;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+            }
+        }
+        else if (meshName == "Hero.mesh")
+        {
+            static bool once = true;
+            if (once)
+            {
+                once = false;
+                TilePos pos;
+                pos.x = x;
+                pos.z = y;
+                pos.subX  =3;
+                pos.subZ  =3;
+                ObjectManager::getSingleton().setPosition(ObjectNPC::HERO, pos);
+                //Logger::log().error() << "we got the Hero face: " << face;
+            }
+        }
+        else if (meshName == "wall_horizontal_botom.mesh")
+        {
+/*
+                sObject obj;
+                obj.meshName  = "wall_horizontal_botom.mesh";
+                obj.nickName  = "Nick_wall";
+                obj.type      = ObjectManager::OBJECT_CONTAINER;
+                obj.boundingRadius = 2;
+                obj.friendly  = 0;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = -60;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+*/
+        }
+
+        else if (meshName == "Sack_N.mesh")
+        {
+            static bool once = true;
+            if (once)
+            {
+                once = false;
+                sObject obj;
+                obj.meshName  = "Sack_N.mesh";
+                obj.nickName  = "Nick_Sack";
+                obj.type      = ObjectManager::OBJECT_CONTAINER;
+                obj.boundingRadius = 2;
+                obj.friendly  = 0;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = -60;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+            }
+        }
+        else if (meshName == "Object_Anvil.mesh")
+        {
+            static bool once = true;
+            if (once)
+            {
+                once = false;
+                sObject obj;
+                obj.meshName  = "Object_Anvil.mesh";
+                obj.nickName  = "Nick_Anvil";
+                obj.type      = ObjectManager::OBJECT_CONTAINER;
+                obj.boundingRadius = 2;
+                obj.friendly  = 0;
+                obj.attack    = 50;
+                obj.defend    = 50;
+                obj.maxHP     = 50;
+                obj.maxMana   = 50;
+                obj.maxGrace  = 50;
+                obj.pos.x     = x;
+                obj.pos.z     = y;
+                obj.pos.subX  = 3;
+                obj.pos.subZ  = 3;
+                obj.level     = 0;
+                obj.facing    = 35;
+                obj.particleNr=-1;
+                ObjectManager::getSingleton().addMobileObject(obj);
+            }
+        }
     }
 
     the_map.cells[x][y].faces[layer] = face;

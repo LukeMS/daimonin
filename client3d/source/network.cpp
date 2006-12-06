@@ -76,7 +76,6 @@ enum
 bool Network::GameStatusVersionOKFlag = false;
 bool Network::GameStatusVersionFlag = false;
 bool Network::mInitDone = false;
-int  Network::mRequest_file_chain =0;
 struct CmdMapping
 {
     char  *cmdname;
@@ -281,8 +280,13 @@ void Network::update()
             Logger::log().error() << "Bad command from server " << cmd->data[0];
         else
         {
-            if (cmd->data[0]-1 != 5)
-                Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] " << cmd->data+1;
+            if (cmd->data[0] != BINARY_CMD_DRAWINFO2)
+            {
+                if (cmd->data[0] == BINARY_CMD_DATA)
+                    Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] (...)";
+                else
+                    Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] " << cmd->data+1;
+            }
             commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
         }
         command_buffer_free(cmd);
@@ -534,7 +538,7 @@ int Network::reader_thread_loop(void *)
         else
         {
             readbuf_len += ret;
-            //   LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len);
+            //Logger::log().error() << "Reader got some data ("<< readbuf_len<< " bytes total)";
         }
 
         // Finished with a command ?

@@ -358,8 +358,10 @@ void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction)
 //===================================================
 void ObjectVisuals::highlight(ObjectStatic *obj, bool showDefaultAction)
 {
-    // if container setDefaultAction(GuiImageset::STATE_MOUSE_OPEN);
-    // weight < xyz setDefaultAction(GuiImageset::STATE_MOUSE_PICKUP);
+    if (showDefaultAction)
+    {
+        setDefaultAction(GuiImageset::STATE_MOUSE_OPEN);
+    }
 }
 
 //===================================================

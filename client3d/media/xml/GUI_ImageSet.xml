@@ -201,14 +201,20 @@
 
       <Image name= "Intract_Menu_Talk"  width= "32" height= "32" alpha= "1">
           <State name= "Default" posX= "541" posY= "587" />
+          <State name= "Pushed"  posX= "638" posY= "587" />
+          <State name= "M_Over"  posX= "638" posY= "587" />
       </Image>
 
       <Image name= "Intract_Menu_Attack"  width= "32" height= "32" alpha= "1">
           <State name= "Default" posX= "573" posY= "587" />
+          <State name= "Pushed"  posX= "638" posY= "587" />
+          <State name= "M_Over"  posX= "638" posY= "587" />
       </Image>
 
       <Image name= "Intract_Menu_Open"  width= "32" height= "32" alpha= "1">
           <State name= "Default" posX= "605" posY= "619" />
+          <State name= "Pushed"  posX= "638" posY= "587" />
+          <State name= "M_Over"  posX= "638" posY= "587" />
       </Image>
 
 </ImageSet>

@@ -96,7 +96,7 @@ CEvent::CEvent(RenderWindow* win, SceneManager *SceneMgr)
     mIdleTime =0;
     mDayTime = 15;
     mCameraZoom = MAX_CAMERA_ZOOM;
-    mMouseX = mMouseY =0;
+    mMouse = Vector3::ZERO;
     mQuitGame = false;
     Option::getSingleton().setGameStatus(GAME_STATUS_INIT_VIEWPORT);
 }
@@ -395,27 +395,38 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                     " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
                     1, //   SoundStatus
                     CHUNK_SIZE_X, CHUNK_SIZE_Z,
-                    ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SPELLS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_BMAPS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_BMAPS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_SETTINGS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_SETTINGS),
-                    ServerFile::getSingleton().getLength(SERVER_FILE_ANIMS),
-                    ServerFile::getSingleton().getCRC   (SERVER_FILE_ANIMS));
+                    ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS),
+                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_SKILLS),
+                    ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS),
+                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_SPELLS),
+                    ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS),
+                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_BMAPS),
+                    ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS),
+                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_SETTINGS),
+                    ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS),
+                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_ANIMS));
             Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
             buf[strlen(buf)] =0;
             Logger::log().info() << "Send: setup " << buf;
-            //mRequest_file_chain = 0;
-            //mRequest_file_flags = 0;
             Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
+            break;
+        }
+
+        case GAME_STATUS_REQUEST_FILES:
+        {
+            if (!ServerFile::getSingleton().requestFiles())
+                break;
+
+            //ServerFile::getSingleton().requestFiles();
+
             // Now we wait for user to select login or create character.
             //
             Option::getSingleton().setGameStatus(GAME_STATUS_ADDME); // only for testing....
             break;
         }
+
+
+
 
         case GAME_STATUS_ADDME:
         {
@@ -612,7 +623,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             if (Root::getSingleton().getTimer()->getMilliseconds() - time > 180.0)
             {
                 RaySceneQuery *mRaySceneQuery = mSceneManager->createRayQuery(Ray());
-                mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouseX, mMouseY));
+                mRaySceneQuery->setRay(mCamera->getCameraToViewportRay(mMouse.x, mMouse.y));
                 mRaySceneQuery->setQueryMask(ObjectManager::QUERY_NPC_MASK | ObjectManager::QUERY_CONTAINER);
                 RaySceneQueryResult &result = mRaySceneQuery->execute();
                 if (!result.empty())

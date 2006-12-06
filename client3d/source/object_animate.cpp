@@ -122,7 +122,7 @@ void ObjectAnimate::update(const FrameEvent& event)
     // if an animation ends -> force the idle animation.
     if (mActState->getTimePosition() >= mActState->getLength() && !mActState->getLoop())
     {
-        if (mAnimGroup != ANIM_GROUP_DEATH)
+        if (mAnimGroup != ANIM_GROUP_DEATH && mFreezeLastFrame == false)
             toggleAnimation(ANIM_GROUP_IDLE, 0, true, true, true);
     }
 /*
@@ -140,7 +140,7 @@ void ObjectAnimate::update(const FrameEvent& event)
 //=================================================================================================
 // Toggle the animation.
 //=================================================================================================
-void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random)
+void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool force, bool random, bool freezeLastFrame)
 {
     if (!mIsAnimated)
         return;
@@ -150,6 +150,7 @@ void ObjectAnimate::toggleAnimation(int animGroup, int animNr, bool loop, bool f
     // Dont change a running (none-movement) anim without the force-switch.
     if (!force && !isMovement())
         return;
+    mFreezeLastFrame = freezeLastFrame;
     // On invalid animGroup choose Idle.
     if (animGroup >= ANIM_GROUP_SUM || !mAnimGroupEntries[animGroup])
     {

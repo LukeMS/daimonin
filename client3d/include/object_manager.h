@@ -104,6 +104,10 @@ public:
     {
         mvObject_npc[npc]->readyPrimaryWeapon(ready);
     }
+    bool isMoving(int npc)
+    {
+        return mvObject_npc[npc]->isMoving();
+    }
     bool isPrimaryWeaponReady(int npc)
     {
         return mvObject_npc[npc]->isPrimaryWeaponReady();

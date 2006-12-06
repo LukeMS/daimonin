@@ -30,6 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "sound.h"
 #include "events.h"
 #include "logger.h"
+#include "network.h"
 
 //================================================================================================
 // Init all static Elemnts.
@@ -114,6 +115,9 @@ ObjectStatic::ObjectStatic(sObject &obj)
             TileManager::getSingleton().setWalkablePos(mActPos, row, obj.walkable[row]);
         }
     }
+    mAction = ACTION_NONE;
+    mOpen = false;
+    mWaitForHero = false;
 }
 
 //================================================================================================
@@ -146,7 +150,31 @@ void ObjectStatic::setPosition(TilePos pos)
 bool ObjectStatic::update(const FrameEvent& event)
 {
     mAnim->update(event);
-	return true;
+    if (mAction == ACTION_NONE)
+        return true;
+    // First wait for our hero to come to the objects position.
+    if (mWaitForHero)
+    {
+        if (!ObjectManager::getSingleton().isMoving(ObjectNPC::HERO))
+            mWaitForHero = false;
+    }
+    else
+    {
+        if (mAction == ACTION_OPEN)
+        {
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 0, false, true, false, true);
+            mOpen = true;
+            Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
+        }
+        else if (mAction == ACTION_CLOSE)
+        {
+            mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 1, false, true, false, true);
+            mOpen = false;
+            Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
+        }
+        mAction = ACTION_NONE;
+    }
+    return true;
 }
 
 //================================================================================================
@@ -157,3 +185,14 @@ void ObjectStatic::move(Vector3 &pos)
     mNode->setPosition(mNode->getPosition() + pos);
 }
 
+//================================================================================================
+// Activate an object.
+//================================================================================================
+void ObjectStatic::activate(bool waitForHero)
+{
+    mWaitForHero = waitForHero;
+    if (mOpen)
+        mAction = ACTION_CLOSE;
+    else
+        mAction = ACTION_OPEN;
+}

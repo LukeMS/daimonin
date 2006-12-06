@@ -29,6 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <iterator>
 #include <iomanip>
 #include "network_serverfile.h"
+#include "network.h"
 #include "logger.h"
 #include "define.h"
 #include "zlib.h"
@@ -36,19 +37,32 @@ http://www.gnu.org/licenses/licenses.html
 using namespace std;
 
 //================================================================================================
+// Constructor.
+//================================================================================================
+ServerFile::ServerFile()
+{
+    mRequestFileChain = FILE_SKILLS;
+    srv_file[FILE_SKILLS  ].filename = FILE_CLIENT_SKILLS;
+    srv_file[FILE_SPELLS  ].filename = FILE_CLIENT_SPELLS;
+    srv_file[FILE_SETTINGS].filename = FILE_CLIENT_SETTINGS;
+    srv_file[FILE_ANIMS   ].filename = FILE_CLIENT_ANIMS;
+    srv_file[FILE_BMAPS   ].filename = FILE_CLIENT_BMAPS;
+}
+
+//================================================================================================
 // Get length and checksum from (server sended) files.
 //================================================================================================
 void ServerFile::getFileAttibutes(int file_enum)
 {
-    setStatus(file_enum, SERVER_FILE_STATUS_OK);
-    setLength(file_enum, SERVER_FILE_STATUS_OK);
-    setCRC   (file_enum, SERVER_FILE_STATUS_OK);
+    setStatus(file_enum, STATUS_OK);
+    setLength(file_enum, STATUS_OK);
+    setCRC   (file_enum, STATUS_OK);
     ifstream in(srv_file[file_enum].filename, ios::in | ios::binary);
     Logger::log().info()  << "- Reading Attributes from " << srv_file[file_enum].filename << "...";
     if (!in.is_open())
     {
         Logger::log().success(false);
-        Logger::log().error()  << "Can't open file '" << srv_file[file_enum].filename << "'.";
+        //Logger::log().error()  << "Can't open file '" << srv_file[file_enum].filename << "'.";
         return;
     }
     Logger::log().success(true);
@@ -66,5 +80,28 @@ void ServerFile::getFileAttibutes(int file_enum)
 void ServerFile::checkFiles()
 {
     Logger::log().info() << "Checking all files coming from server:";
-    for (int i=0; i< SERVER_FILE_SUM; i++) getFileAttibutes(i);
+    for (int i=0; i< FILE_SUM; ++i) getFileAttibutes(i);
 }
+
+//================================================================================================
+// Request all files that have changed since last login.
+//================================================================================================
+bool ServerFile::requestFiles()
+{
+    // File is upToDate.
+    while (srv_file[mRequestFileChain].status == STATUS_OK)
+    {
+        if (++mRequestFileChain >= FILE_SUM) return true;
+    }
+    // File is outdated, ask server for the latest version.
+    if (srv_file[mRequestFileChain].status == STATUS_OUTDATED)
+    {
+        char buf[32];
+        sprintf(buf, "rf %d", mRequestFileChain);
+        Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
+        srv_file[mRequestFileChain].status = STATUS_UPDATING;
+    }
+    return false;
+}
+
+
