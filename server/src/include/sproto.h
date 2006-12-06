@@ -761,6 +761,7 @@ void                        move_gate(object *op);
 void                        move_timed_gate(object *op);
 void                        move_detector(object *op);
 void                        move_conn_sensor(object *op);
+void                        move_environment_sensor(object *op);
 void                        animate_trigger(object *op);
 void                        move_pit(object *op);
 object                     *stop_item(object *op);

@@ -332,6 +332,10 @@ void update_buttons(mapstruct *m)
                 case TYPE_CONN_SENSOR:
                     move_conn_sensor(ol->objlink.ob);
                     break;
+                
+                case TYPE_ENV_SENSOR:
+                    move_environment_sensor(ol->objlink.ob);
+                    break;
 
                 case CF_HANDLE:
                 case TRIGGER:

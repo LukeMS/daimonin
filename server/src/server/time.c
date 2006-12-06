@@ -1686,11 +1686,13 @@ void move_environment_sensor(object *op)
         }
     }
 
-    /* Trigger if sensor status changes */
+    /* Trigger if sensor status changes (or when not initialized) */
     if(
             ( (trig_tod && trig_dow && trig_bright) && op->weight_limit == 0) ||
-            (!(trig_tod && trig_dow && trig_bright) && op->weight_limit == 1))
+            (!(trig_tod && trig_dow && trig_bright) && op->weight_limit == 1) || 
+            !QUERY_FLAG(op, FLAG_INITIALIZED))
     {
+        SET_FLAG(op, FLAG_INITIALIZED);
 //        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
 
         op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
