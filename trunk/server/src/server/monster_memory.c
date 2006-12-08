@@ -349,33 +349,14 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
 
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
-        /* TODO: I can't remember why this was disabled. Gecko 2006-05-07 */
-        /* Well, at least now it uses an outdated map API. Gecko 2006-11-28 */
-        /*
-        if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
-            mapstruct *map = ready_map_name(known_obj->last_map, known_obj->last_map, MAP_NAME_SHARED);
-            if(get_rangevector_full(op, op->map, op->x, op->y,
-                        known_obj->obj, map, known_obj->last_x, known_obj->last_y,
-                        &known_obj->rv, RV_EUCLIDIAN_DISTANCE))
-            {
-                known_obj->rv_time = global_round_tag;
-            } else
-            {
-                known_obj->rv_time = 0;
-                return NULL;
-            }
-        }
-        */
-
-        if (get_rangevector(op, known_obj->obj, &known_obj->rv, 0))
-        {
-            known_obj->rv_time = ROUND_TAG;
-        }
-        else
+        /* Recalculating the rv might very well fail */
+        if (! get_rangevector(op, known_obj->obj, &known_obj->rv, 0))
         {
             known_obj->rv_time = 0;
             return NULL;
         }
+
+        known_obj->rv_time = ROUND_TAG;
     }
 
     /* hotfix for this bug. part should here NOT be NULL */
