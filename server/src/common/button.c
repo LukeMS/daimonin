@@ -30,7 +30,7 @@
 static int ignore_trigger_events = 0;
 
 /* Send signal from op to connection ol */
-void signal_connection(object *op, oblinkpt *olp, object *originator)
+static void signal_connection(object *op, oblinkpt *olp, object *activator, object *originator)
 {
     object     *tmp;
     objectlink *ol;
@@ -39,7 +39,7 @@ void signal_connection(object *op, oblinkpt *olp, object *originator)
 
     if(! ignore_trigger_events)
         if(trigger_object_plugin_event(EVENT_TRIGGER,
-                op, originator, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                op, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
             return;
 
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
@@ -69,7 +69,7 @@ void signal_connection(object *op, oblinkpt *olp, object *originator)
 
         if(! ignore_trigger_events && tmp != op)
             if(trigger_object_plugin_event(EVENT_TRIGGER,
-                    tmp, originator, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                    tmp, activator, originator, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
                 continue;
 
         switch (tmp->type)
@@ -217,7 +217,7 @@ void signal_connection(object *op, oblinkpt *olp, object *originator)
  * to make sure that all gates and other buttons connected to the
  * button reacts to the (eventual) change of state.
  */
-void update_button(object *op, object *activator)
+void update_button(object *op, object *activator, object *originator)
 {
     object     *ab, *tmp, *head;
     unsigned int fly, move;
@@ -272,7 +272,7 @@ void update_button(object *op, object *activator)
     {
         SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->weight_limit);
         update_object(op, UP_OBJ_FACE);
-        push_button(op, activator); /* Make all other buttons the same */
+        push_button(op, activator, originator); /* Make all other buttons the same */
     }
 }
 
@@ -306,7 +306,7 @@ void update_buttons(mapstruct *m)
             {
                 case BUTTON:
                 case PEDESTAL:
-                    update_button(ol->objlink.ob, NULL);
+                    update_button(ol->objlink.ob, NULL, NULL);
                     break;
 
                 case CHECK_INV:
@@ -339,7 +339,7 @@ void update_buttons(mapstruct *m)
 
                 case CF_HANDLE:
                 case TRIGGER:
-                    push_button(ol->objlink.ob, NULL);
+                    push_button(ol->objlink.ob, NULL, NULL);
                     break;
 
                 default:
@@ -355,16 +355,16 @@ void update_buttons(mapstruct *m)
  * Push the specified object.  This can affect other buttons/gates/handles
  * altars/pedestals/holes in the whole map.
  */
-void push_button(object *op, object *pusher)
+void push_button(object *op, object *pusher, object *originator)
 {
-    signal_connection(op, get_button_links(op), pusher);
+    signal_connection(op, get_button_links(op), pusher, originator);
 }
 
 void use_trigger(object *op, object *user)
 {
     /* Toggle value */
     op->weight_limit = !op->weight_limit;
-    push_button(op, user);
+    push_button(op, user, user);
 }
 
 /* We changed this function to fit in the anim system. This is used from

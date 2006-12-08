@@ -750,12 +750,12 @@ void move_detector(object *op)
         if (detected && last == 0)
         {
             op->weight_limit = 1;
-            push_button(op, tmp);
+            push_button(op, tmp, NULL);
         }
         if (!detected && last == 1)
         {
             op->weight_limit = 0;
-            push_button(op, NULL);
+            push_button(op, NULL, NULL);
         }
     }
     else
@@ -764,12 +764,12 @@ void move_detector(object *op)
         if (detected && last == 1)
         {
             op->weight_limit = 0;
-            push_button(op, tmp);
+            push_button(op, tmp, NULL);
         }
         if (!detected && last == 0)
         {
             op->weight_limit = 1;
-            push_button(op, NULL);
+            push_button(op, NULL, NULL);
         }
     }
 }
@@ -1697,7 +1697,7 @@ void move_environment_sensor(object *op)
 
         op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
 
-        push_button(op, NULL);
+        push_button(op, NULL, NULL);
     }
 }
 
@@ -1802,7 +1802,7 @@ void move_conn_sensor(object *op)
     {
         SET_FLAG(op, FLAG_INITIALIZED);
         op->weight_limit = newvalue;
-        push_button(op, NULL);
+        push_button(op, NULL, NULL);
     }
 }
 
