@@ -245,6 +245,35 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             {
                 once = false;
                 sObject obj;
+/*
+                obj.pos.x     = x+2;
+                obj.pos.z     = y;
+                obj.pos.subX  = 0;
+                obj.pos.subZ  = 0;
+                for (int i = 0 ; i <8; ++i)
+                {
+                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
+                }
+
+                obj.pos.x     = x+2;
+                obj.pos.z     = y-1;
+                obj.pos.subX  = 0;
+                obj.pos.subZ  = 0;
+                for (int i = 0 ; i <8; ++i)
+                {
+                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
+                }
+
+
+                obj.pos.x     = x+2;
+                obj.pos.z     = y-2;
+                obj.pos.subX  = 0;
+                obj.pos.subZ  = 0;
+                for (int i = 0 ; i <8; ++i)
+                {
+                    TileManager::getSingleton().setWalkablePos(obj.pos, i, 0xff);
+                }
+*/
                 obj.meshName  = "Smitty.mesh";
                 obj.nickName  = "Nick_Monk";
                 obj.type      = ObjectManager::OBJECT_NPC;
