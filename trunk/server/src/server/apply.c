@@ -1105,12 +1105,12 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
             /* If it is connected, push the button.  Fixes some problems with
              * old maps.
              */
-            push_button(altar, originator);
+            push_button(altar, sacrifice, originator);
         }
         else
         {
             altar->weight_limit = 1;  /* works only once */
-            push_button(altar, originator);
+            push_button(altar, sacrifice, originator);
         }
         return sacrifice == NULL;
     }
@@ -1312,7 +1312,7 @@ void move_apply(object *const trap_obj, object *const victim, object *const orig
            */
         case BUTTON:
         case PEDESTAL:
-          update_button(trap, originator);
+          update_button(trap, victim, originator);
           goto leave;
 
         case TRIGGER_BUTTON:
@@ -2610,7 +2610,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           tmp->weight_limit = tmp->weight_limit ? 0 : 1;
           SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
           update_object(tmp, UP_OBJ_FACE);
-          push_button(tmp, op);
+          push_button(tmp, op, op);
           return 4;
 
         case TRIGGER:
