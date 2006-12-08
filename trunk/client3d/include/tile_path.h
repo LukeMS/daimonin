@@ -34,6 +34,7 @@ const int mapHeight = CHUNK_SIZE_Z*8;
 
 class TilePath
 {
+
 public:
     TilePath();
     ~TilePath();
@@ -42,10 +43,16 @@ public:
     /**< Read a step from the path. **/
     bool ReadPath();
 
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     int xPath;
     int yPath;
 
 private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     int openList[mapWidth*mapHeight+2]; //1d array holding ID# of open list items
     int openX   [mapWidth*mapHeight+2]; //1d array stores the x location of an item on the open list
     int openY   [mapWidth*mapHeight+2]; //1d array stores the y location of an item on the open list

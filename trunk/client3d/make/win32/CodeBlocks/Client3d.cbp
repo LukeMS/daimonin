@@ -17,9 +17,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
-					<Add option="-DDEBUG" />
 					<Add option="-D_DEBUG" />
-					<Add option="-D_STLP_DEBUG" />
 				</Compiler>
 				<Linker>
 					<Add library="OgreMain_d" />
@@ -38,7 +36,6 @@
 				<Option compiler="gcc" />
 				<Option projectResourceIncludeDirsRelation="0" />
 				<Compiler>
-					<Add option="-O3" />
 					<Add option="-Wall" />
 					<Add option="-DNDEBUG" />
 				</Compiler>
@@ -61,10 +58,7 @@
 			<Add option="-fmessage-length=0" />
 			<Add option="-fexceptions" />
 			<Add option="-fident" />
-			<Add option="-D_STLP_NO_CUSTOM_IO" />
-			<Add option="-D_STLP_USE_DYNAMIC_LIB" />
-			<Add option="-D_WINDOWS" />
-			<Add option="-DMINGW" />
+			<Add option="-pipe" />
 			<Add option="-DWIN32" />
 			<Add directory="ogre_inc" />
 			<Add directory="..\..\..\source" />
@@ -405,13 +399,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\include\tile_map.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\include\network.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -518,6 +505,13 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\include\tile_manager.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\include\tile_map.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -671,11 +665,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\..\..\source\tile_map.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\..\..\source\network.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
@@ -766,11 +755,18 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\source\tile_map.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\..\source\tile_path.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Extensions />
+		<Extensions>
+			<code_completion />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

@@ -68,7 +68,7 @@ class GuiManager
 {
 public:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum
     {
@@ -76,7 +76,7 @@ public:
     };
     typedef struct
     {
-        char *name;
+        const char *name;
         unsigned int index;
     }
     GuiWinNam;
@@ -96,7 +96,7 @@ public:
     bool mouseEvent(int MouseAction, Vector3 &mouse);
     bool keyEvent(const char keyChar, const unsigned char key);
     const char *sendMessage(int window, int message, int element, void *value1 = 0, void *value2 = 0);
-    void setTooltip(const char*text);
+    void setTooltip(const char *text);
     void displaySystemMessage(const char*text);
     void startTextInput(int window, int winElement, int maxChars, bool blockNumbers=false, bool blockWhitespaces=false);
     bool brokenTextInput();
@@ -140,7 +140,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     void clearListbox(int window, int element)
     {
-       guiWindow[window].clearListbox(element);
+        guiWindow[window].clearListbox(element);
     }
     int addTextline(int window, int element, const char *text, uint32 color = 0x00ffffff);
 
@@ -152,10 +152,9 @@ public:
         return guiWindow[window].getButtonHandle(element);
     }
 
-
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static GuiWinNam mGuiWindowNames[GUI_WIN_SUM];
     static class GuiWindow guiWindow[GUI_WIN_SUM];
@@ -174,7 +173,7 @@ private:
     OverlayElement *mElement;
     MaterialPtr mMaterial;
     TexturePtr mTexture;
-    String  mStrTooltip, mBackupTextInputString;
+    String mStrTooltip, mBackupTextInputString;
     String mStrTextInput;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -185,7 +184,6 @@ private:
     {}
     GuiManager(const GuiManager&); // disable copy-constructor.
     //GuiManager& operator=(GuiManager const&);
-
     bool parseWindowsData (const char *file);
     void clearTooltip();
 };

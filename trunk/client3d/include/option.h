@@ -81,6 +81,9 @@ typedef enum _game_status
 class Option
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     enum enumOption
     {
         // Dialog window options.
@@ -118,7 +121,7 @@ public:
         SEL_TXT_RANGE = SEPARATOR,
         SEL_TEXT
     };
-    typedef struct optionStruct
+    typedef struct
     {
         selType type;
         char *name;     /**< Name of the Option **/
@@ -129,10 +132,9 @@ public:
         int  intValue;
         int  minRange, maxRange, deltaRange;
         bool pageFeed;
-    };
-    // ////////////////////////////////////////////////////////////////////
-    // Variables.
-    // ////////////////////////////////////////////////////////////////////
+    }
+    optionStruct;
+
     static optionStruct optStruct[SEPARATOR];
     static std::string  optValue[SUM_OPTIONS - SEPARATOR-1];
 
@@ -221,7 +223,7 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mGameStatus;
     enum enumLoginType mLoginType;

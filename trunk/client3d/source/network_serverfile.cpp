@@ -96,9 +96,9 @@ bool ServerFile::requestFiles()
     // File is outdated, ask server for the latest version.
     if (srv_file[mRequestFileChain].status == STATUS_OUTDATED)
     {
-        char buf[32];
-        sprintf(buf, "rf %d", mRequestFileChain);
-        Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
+        std::stringstream strCmd;
+        strCmd << "rf " << mRequestFileChain;
+        Network::getSingleton().cs_write_string(strCmd.str().c_str());
         srv_file[mRequestFileChain].status = STATUS_UPDATING;
     }
     return false;

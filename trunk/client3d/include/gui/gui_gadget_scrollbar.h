@@ -41,6 +41,7 @@ using namespace Ogre;
  *****************************************************************************/
 class GuiGadgetScrollbar : public GuiElement
 {
+
 public:
     typedef void (Callback) (class GuiListbox *parentElement, int index, int value);
     enum
@@ -69,7 +70,7 @@ public:
     void draw();
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     int mSliderPos,  mMaxSliderPos;
     int mSliderSize, mMaxSliderSize;

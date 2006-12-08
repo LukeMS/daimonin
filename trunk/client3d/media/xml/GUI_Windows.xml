@@ -369,7 +369,7 @@
   <Window name= "DialogNPC">
     <Size     width= "303" height= "350" />
     <Pos      x= "200" y= "200" zOrder = "250" />
-    <DragArea x= "0" y= "0" width= "200" height= "29" />
+    <DragArea x= "0" y= "0" width= "303" height= "29" />
     <Tooltip  text= "Tjghjghjghjghjghjghj Window." />
 
     <!--=============================================-->

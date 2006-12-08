@@ -1217,9 +1217,9 @@ ladder_round_down_02
 ladder_round_down_03
 ladder_round_down_04
 ladder_up
-lake                      TilePos_0,0,1
-lake_deep                 TilePos_0,0,1
-lake_deepest              TilePos_0,0,0
+lake                      TilePos_3,3,1
+lake_deep                 TilePos_5,3,1
+lake_deepest              TilePos_4,3,0
 lamellar_mail
 lamp_lit1
 lamp_post

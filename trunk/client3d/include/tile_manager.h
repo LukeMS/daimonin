@@ -51,8 +51,10 @@ const int SUM_SUBTILES =  8;
 
 class TileManager
 {
-
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     int map_udate_flag;
     int map_transfer_flag;
     bool map_new_flag;
@@ -74,6 +76,9 @@ public:
         INNER_ALL
     };
 
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     void freeRecources();
     static TileManager &getSingleton()
     {
@@ -189,8 +194,11 @@ public:
     bool getWalkablePos(int x, int y);
 
 private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     /**  TileEngine struct which holds the worldmap. **/
-    struct WorldMap
+    struct _mMap
     {
         unsigned char height;                 /**< Average height. **/
         unsigned char walkable[SUM_SUBTILES]; /**< Walkable status for each subtile (8 bit * 8 rows)  **/

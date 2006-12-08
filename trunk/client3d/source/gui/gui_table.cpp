@@ -130,7 +130,7 @@ bool GuiTable::mouseEvent(int MouseAction, int x, int y)
         {
             if (mSelectedRow == row)
             {
-                if (Root::getSingleton().getTimer()->getMilliseconds()- time < TIME_DOUBLECLICK)
+                if (Root::getSingleton().getTimer()->getMilliseconds()- time < GuiWindow::TIME_DOUBLECLICK)
                     mRowActivated = true;
                 else
                     time = Root::getSingleton().getTimer()->getMilliseconds();

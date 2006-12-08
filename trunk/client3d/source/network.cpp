@@ -140,18 +140,18 @@ Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_e
 Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
 
 
-void Network::SockList_AddShort(SockList *sl, uint16 data)
+//================================================================================================
+//
+//================================================================================================
+void Network::AddIntToString(std::string &sl, int data, bool shortInt)
 {
-    sl->buf[sl->len++] = (data >> 8) & 0xff;
-    sl->buf[sl->len++] = (data     ) & 0xff;
-}
-
-void Network::SockList_AddInt(SockList *sl, uint32 data)
-{
-    sl->buf[sl->len++] = (data >> 24) & 0xff;
-    sl->buf[sl->len++] = (data >> 16) & 0xff;
-    sl->buf[sl->len++] = (data >>  8) & 0xff;
-    sl->buf[sl->len++] = (data      ) & 0xff;
+    if (!shortInt)
+    {
+        sl += (data >> 24) & 0xff;
+        sl += (data >> 16) & 0xff;
+    }
+    sl += (data >>  8) & 0xff;
+    sl += (data      ) & 0xff;
 }
 
 //================================================================================================
@@ -182,8 +182,7 @@ int Network::SOCKET_GetError()
 // .
 //================================================================================================
 Network::Network()
-{
-}
+{}
 
 //================================================================================================
 // .
@@ -195,7 +194,7 @@ Network::~Network()
     WSACleanup();
 #endif
     handle_socket_shutdown();
-	clearMetaServerData();
+    clearMetaServerData();
 }
 
 //================================================================================================
@@ -299,14 +298,14 @@ void Network::update()
 //================================================================================================
 bool Network::handle_socket_shutdown()
 {
-        socket_thread_stop();
-        // Empty all queues.
-        while (input_queue_start)
-            command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
-        while (output_queue_start)
-            command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
-        Logger::log().info() << "Connection lost";
-        return true;
+    socket_thread_stop();
+    // Empty all queues.
+    while (input_queue_start)
+        command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
+    while (output_queue_start)
+        command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
+    Logger::log().info() << "Connection lost";
+    return true;
 }
 
 //================================================================================================
@@ -328,7 +327,7 @@ Network::command_buffer *Network::command_buffer_new(unsigned int len, unsigned 
 //================================================================================================
 void Network::command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end)
 {
-    buf->next = NULL;
+    buf->next = 0;
     buf->prev = *queue_end;
     if (*queue_start == NULL)
         *queue_start = buf;
@@ -359,8 +358,8 @@ Network::command_buffer *Network::command_buffer_dequeue(command_buffer **queue_
 //================================================================================================
 void Network::command_buffer_free(command_buffer *buf)
 {
-		delete[] buf->data;
-		delete buf;
+    delete[] buf->data;
+    delete buf;
 }
 
 
@@ -377,45 +376,18 @@ void Network::command_buffer_free(command_buffer *buf)
 //================================================================================================
 int Network::send_command(const char *command, int repeat, int force)
 {
-    char        buf[MAX_BUF];
-    static char last_command[MAX_BUF] = "";
-    SockList    sl;
+    int commdiff = csocket.command_sent - csocket.command_received;
+    if (commdiff < 0)
+        commdiff += 256;
+    ++csocket.command_sent &= 0xff; // max out at 255.
 
-    // Does the server understand 'ncom'? If so, special code.
-    if (csocket.cs_version >= 1021)
-    {
-        int commdiff = csocket.command_sent - csocket.command_received;
-        if (commdiff < 0)
-            commdiff += 256;
-
-        // Don't want to copy in administrative commands.
-        if (!force)
-            strcpy(last_command, command);
-        csocket.command_sent++;
-        csocket.command_sent &= 0xff;   // max out at 255.
-
-        sl.buf = (unsigned char *) buf;
-        strcpy((char *) sl.buf, "ncom ");
-        sl.len = 5;
-        SockList_AddShort(&sl, (Uint16) csocket.command_sent);
-        SockList_AddInt(&sl, repeat);
-        strncpy((char *) sl.buf + sl.len, command, MAX_BUF - sl.len);
-        sl.buf[MAX_BUF - 1] = 0;
-        sl.len += (int)strlen(command);
-        send_socklist(sl);
-    }
-    else
-    {
-        sprintf(buf, "cm %d %s", repeat, command);
-        cs_write_string(buf, (int)strlen(buf));
-    }
-    /*
-        if (repeat != -1)
-            cpl.count = 0;
-    */
+    std::string sl = "ncom ";
+    AddIntToString(sl, csocket.command_sent, true);
+    AddIntToString(sl, repeat, false);
+    sl += command;
+    send_socklist(sl);
     return 1;
 }
-
 
 //================================================================================================
 // Add a binary command to the output buffer.
@@ -427,7 +399,7 @@ int Network::send_command_binary(unsigned char cmd, unsigned char *body, unsigne
     command_buffer *buf;
 
     if (body)
-        buf = command_buffer_new(len, body);
+        buf = command_buffer_new(len, (unsigned char*)body);
     else
     {
         unsigned char tmp[3];
@@ -448,12 +420,12 @@ int Network::send_command_binary(unsigned char cmd, unsigned char *body, unsigne
 //================================================================================================
 // move a command/buffer to the out buffer so it can be written to the socket.
 //================================================================================================
-int Network::send_socklist(SockList msg)
+int Network::send_socklist(std::string msg)
 {
-    command_buffer *buf = command_buffer_new(msg.len + 2, NULL);
-    memcpy(buf->data + 2, msg.buf, msg.len);
-    buf->data[0] = (unsigned char) ((msg.len >> 8) & 0xFF);
-    buf->data[1] = ((uint32) (msg.len)) & 0xFF;
+    command_buffer *buf = command_buffer_new((int)msg.size() + 2, 0);
+    memcpy(buf->data + 2, msg.c_str(), msg.size());
+    buf->data[0] = (unsigned char) ((msg.size() >> 8) & 0xFF);
+    buf->data[1] = ((uint32) (msg.size())) & 0xFF;
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
     SDL_CondSignal(output_buffer_cond);
@@ -568,20 +540,20 @@ int Network::writer_thread_loop(void *nix)
 {
     Logger::log().info() << "Writer thread started";
     int written, ret;
-	command_buffer *buf;
-	while (!abort_thread)
+    command_buffer *buf;
+    while (!abort_thread)
     {
         written = 0;
 
-		SDL_LockMutex(output_buffer_mutex);
+        SDL_LockMutex(output_buffer_mutex);
         while (!output_queue_start && !abort_thread)
             SDL_CondWait(output_buffer_cond, output_buffer_mutex);
         buf = command_buffer_dequeue(&output_queue_start, &output_queue_end);
         SDL_UnlockMutex(output_buffer_mutex);
 
-		if (abort_thread) break;
+        if (abort_thread) break;
 
-		while (written < buf->len && !abort_thread)
+        while (written < buf->len && !abort_thread)
         {
             ret = send(csocket.fd, (char*)buf->data + written, buf->len - written, 0);
             if (ret == 0)
@@ -602,7 +574,7 @@ int Network::writer_thread_loop(void *nix)
             else
                 written += ret;
         }
-		command_buffer_free(buf);
+        command_buffer_free(buf);
         //      Logger::log().error() <<"Writer wrote a command (%d bytes)\n", written); */
     }
 out:
@@ -651,22 +623,17 @@ bool Network::SOCKET_CloseClientSocket()
     SDL_LockMutex(socket_mutex);
     if (csocket.fd != SOCKET_NO)
     {
-    Logger::log().info() << "CloseClientSocket()";
-    SOCKET_CloseSocket();
-    delete[] csocket.inbuf.buf;
-    delete[] csocket.outbuf.buf;
-    csocket.inbuf.buf = csocket.outbuf.buf = NULL;
-    csocket.inbuf.len = 0;
-    csocket.outbuf.len = 0;
-    csocket.inbuf.pos = 0;
-    csocket.outbuf.pos = 0;
-    csocket.fd = SOCKET_NO;
-    abort_thread = true;
-    SDL_CondSignal(input_buffer_cond);
-    SDL_CondSignal(output_buffer_cond);
+        Logger::log().info() << "CloseClientSocket()";
+        SOCKET_CloseSocket();
+        csocket.inbuf = "";
+        csocket.outbuf = "";
+        csocket.fd = SOCKET_NO;
+        abort_thread = true;
+        SDL_CondSignal(input_buffer_cond);
+        SDL_CondSignal(output_buffer_cond);
     }
     SDL_UnlockMutex(socket_mutex);
-	return true;
+    return true;
 }
 
 //================================================================================================
@@ -675,12 +642,6 @@ bool Network::SOCKET_CloseClientSocket()
 bool Network::SOCKET_OpenClientSocket(const char *host, int port)
 {
     if (!SOCKET_OpenSocket(host, port)) return false;
-    csocket.inbuf.buf = new unsigned char[MAXSOCKBUF];
-    csocket.inbuf.len = 0;
-    csocket.inbuf.pos = 0;
-    csocket.outbuf.buf = new unsigned char[MAXSOCKBUF];
-    csocket.outbuf.len = 0;
-    csocket.outbuf.pos = 0;
     csocket.command_sent = 0;
     csocket.command_received = 0;
     csocket.command_time = 0;
@@ -782,8 +743,9 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     Logger::log().info() <<  "Connected to "<< host << "  " <<  port;
     return(true);
 }
+#endif
 
-#else
+#ifndef WIN32
 //================================================================================================
 //
 //================================================================================================
@@ -830,44 +792,43 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         return false;
     }
 #else
-struct addrinfo hints;
-struct addrinfo *res=0;
-struct addrinfo *ai;
-char port_str[6], hostaddr[40];
-Logger::log().info() << "Opening to "<< host << " " << port;
-snprintf(port_str, sizeof(port_str), "%d", port);
-memset(&hints, 0, sizeof(hints));
-hints.ai_family = AF_UNSPEC;
-hints.ai_socktype = SOCK_STREAM;
-// Workaround for issue #425 on OSs with broken NIS+ like FC5.
-// This should disable any service lookup
-hints.ai_flags = AI_NUMERICSERV;
-if (getaddrinfo(host, port_str, &hints, &res) != 0)
-    return false;
-for (ai = res; ai != NULL; ai = ai->ai_next)
-{
-    getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
-    Logger::log().info() << "  trying " << hostaddr;
-    csocket.fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-    if (csocket.fd == -1)
+    struct addrinfo hints;
+    struct addrinfo *res=0;
+    struct addrinfo *ai;
+    char hostaddr[40];
+    Logger::log().info() << "Opening to "<< host << " " << port;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    // Workaround for issue #425 on OSs with broken NIS+ like FC5.
+    // This should disable any service lookup
+    hints.ai_flags = AI_NUMERICSERV;
+    if (getaddrinfo(host, StringConverter::toString(port).c_str(), &hints, &res) != 0)
+        return false;
+    for (ai = res; ai != NULL; ai = ai->ai_next)
     {
-        csocket.fd = SOCKET_NO;
-        continue;
+        getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
+        Logger::log().info() << "  trying " << hostaddr;
+        csocket.fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+        if (csocket.fd == -1)
+        {
+            csocket.fd = SOCKET_NO;
+            continue;
+        }
+        if (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
+        {
+            close(csocket.fd);
+            csocket.fd = SOCKET_NO;
+            continue;
+        }
+        break;
     }
-    if (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
+    freeaddrinfo(res);
+    if (csocket.fd == SOCKET_NO)
     {
-        close(csocket.fd);
-        csocket.fd = SOCKET_NO;
-        continue;
+        Logger::log().error() << "Can't connect to server";
+        return false;
     }
-    break;
-}
-freeaddrinfo(res);
-if (csocket.fd == SOCKET_NO)
-{
-    Logger::log().error() << "Can't connect to server";
-    return false;
-}
 #endif
 #if 0
     //Logger::log().info() << "socket: fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(csocket.fd, F_GETFL));
@@ -903,31 +864,29 @@ if (csocket.fd == SOCKET_NO)
 //================================================================================================
 void Network::SendVersion()
 {
-    char buf[MAX_BUF];
-    sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, CLIENT_PACKAGE_NAME);
-    Logger::log().info() << "Send version command: " << buf;
-    cs_write_string(buf, (int)strlen(buf));
+    std::stringstream strCmd;
+    strCmd << "version " << VERSION_CS << " " << VERSION_SC << " " << CLIENT_PACKAGE_NAME;
+    Logger::log().info() << "Send version command: " << strCmd.str();
+    cs_write_string(strCmd.str().c_str());
 }
 
 //================================================================================================
 //
 //================================================================================================
-void Network::send_reply(char *text)
+void Network::send_reply(const char *text)
 {
-    char buf[MAXSOCKBUF];
-    sprintf(buf, "reply %s", text);
-    cs_write_string(buf, (int)strlen(buf));
+    std::string strTxt = "reply ";
+    strTxt+= text;
+    cs_write_string(strTxt.c_str());
 }
 
 //================================================================================================
 //
 //================================================================================================
-int Network::cs_write_string(char *buf, int len)
+void Network::cs_write_string(const char *buf)
 {
-    SockList sl;
-    sl.len = len;
-    sl.buf = (unsigned char *) buf;
-    return send_socklist(sl);
+    std::string sl = buf;
+    send_socklist(sl);
 }
 
 //================================================================================================
@@ -986,11 +945,11 @@ void Network::contactMetaserver()
 {
     clearMetaServerData();
     csocket.fd = SOCKET_NO;
-    char buf[256];
     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
     GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "query metaserver...");
-    sprintf(buf, "trying %s:%d", DEFAULT_METASERVER, DEFAULT_METASERVER_PORT);
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
+    std::stringstream strBuf;
+    strBuf << "trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
+    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.str().c_str());
     if (SOCKET_OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
     {
         read_metaserver_data();

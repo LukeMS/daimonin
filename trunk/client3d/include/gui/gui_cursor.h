@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #ifndef GUI_CURSOR_H
 #define GUI_CURSOR_H
+
 #include <Ogre.h>
 #include "gui_imageset.h"
 
@@ -57,7 +58,7 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mScreenWidth, mScreenHeight;
     unsigned int mState;

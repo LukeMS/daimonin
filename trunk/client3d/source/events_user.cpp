@@ -383,9 +383,8 @@ void CEvent::keyPressed(KeyEvent *e)
         case KC_SYSRQ:
         {
             static int mNumScreenShots=0;
-            char tmp[20];
-            sprintf(tmp, "screenshot_%d.png", ++mNumScreenShots);
-            mWindow->writeContentsToFile(tmp);
+            String strTemp = "screenshot_" + StringConverter::toString(++mNumScreenShots,2,'0') + ".png";
+            mWindow->writeContentsToFile(strTemp.c_str());
             mTimeUntilNextToggle = 0.5;
             break;
         }

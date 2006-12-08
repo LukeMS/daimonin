@@ -42,14 +42,14 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-const unsigned long TIME_DOUBLECLICK = 200;
-
 /**
  ** This class provides a graphical window.
  *****************************************************************************/
 class GuiWindow
 {
 public:
+    enum { TIME_DOUBLECLICK = 200 };
+
     enum
     {
         GUI_ACTION_NONE,
@@ -80,11 +80,7 @@ public:
     {
         return mOverlay->isVisible();
     }
-    void setVisible(bool visible)
-    {
-        if (!visible) mOverlay->hide();
-        else          mOverlay->show();
-    }
+    void setVisible(bool visible);
     void Init(TiXmlElement *xmlElem);
     bool keyEvent(const char keyChar, const unsigned char key);
     void update(Real timeSinceLastFrame);
@@ -138,7 +134,7 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     static int msInstanceNr, mMouseDragging;
     static String mStrTooltip;
