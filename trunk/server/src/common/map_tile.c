@@ -1185,73 +1185,58 @@ int get_rangevector_full(
                          object *op2, mapstruct *map2, int x2, int y2,
                          rv_vector *retval, int flags)
 {
+    /* Common calculations for almost all cases */
+    retval->distance_x = x2 - x1;
+    retval->distance_y = y2 - y1;
+
     if (map1 == map2)
     {
-        retval->distance_x = x2 - x1;
-        retval->distance_y = y2 - y1;
+        /* Most common case. We are actually done */
     }
     else if (map1->tileset_id > 0 && map2->tileset_id > 0)
     {
         if(map1->tileset_id == map2->tileset_id && in_same_instance(map1, map2))
         {
-            retval->distance_x = x2 - x1 + map2->tileset_x - map1->tileset_x;
-            retval->distance_y = y2 - y1 + map2->tileset_y - map1->tileset_y;
+            retval->distance_x += map2->tileset_x - map1->tileset_x;
+            retval->distance_y += map2->tileset_y - map1->tileset_y;
         } else
             return FALSE;
     }
-    else if (map1->tile_map[0] == map2)
+    else if (map1->tile_map[0] == map2) /* North */
+        retval->distance_y -= MAP_HEIGHT(map2);
+    else if (map1->tile_map[1] == map2) /* East */
+        retval->distance_x += MAP_WIDTH(map1);
+    else if (map1->tile_map[2] == map2) /* South */
+        retval->distance_y += MAP_HEIGHT(map1);
+    else if (map1->tile_map[3] == map2) /* West */
+        retval->distance_x -= MAP_WIDTH(map2);
+    else if (map1->tile_map[4] == map2) /* Northeast */
     {
-        retval->distance_x = x2 - x1;
-        retval->distance_y = -(y1 + (MAP_HEIGHT(map2) - y2));
+        retval->distance_x += MAP_WIDTH(map1);
+        retval->distance_y -= MAP_HEIGHT(map2);
     }
-    else if (map1->tile_map[1] == map2)
+    else if (map1->tile_map[5] == map2) /* Southeast */
     {
-        retval->distance_y = y2 - y1;
-        retval->distance_x = (MAP_WIDTH(map1) - x1) + x2;
+        retval->distance_x += MAP_WIDTH(map1);
+        retval->distance_y += MAP_HEIGHT(map1);
     }
-    else if (map1->tile_map[2] == map2)
+    else if (map1->tile_map[6] == map2) /* Southwest */
     {
-        retval->distance_x = x2 - x1;
-        retval->distance_y = (MAP_HEIGHT(map1) - y1) + y2;
+        retval->distance_x -= MAP_WIDTH(map2);
+        retval->distance_y += MAP_HEIGHT(map1);
     }
-    else if (map1->tile_map[3] == map2)
+    else if (map1->tile_map[7] == map2) /* Northwest */
     {
-        retval->distance_y = y2 - y1;
-        retval->distance_x = -(x1 + (MAP_WIDTH(map2) - x2));
+        retval->distance_x -= MAP_WIDTH(map2);
+        retval->distance_y -= MAP_HEIGHT(map2);
     }
-    else if (map1->tile_map[4] == map2)
+    else if (flags & RV_RECURSIVE_SEARCH) /* Search */
     {
-        retval->distance_y = -(y1 + (MAP_HEIGHT(map2) - y2));
-        retval->distance_x = (MAP_WIDTH(map1) - x1) + x2;
-    }
-    else if (map1->tile_map[5] == map2)
-    {
-        retval->distance_x = (MAP_WIDTH(map1) - x1) + x2;
-        retval->distance_y = (MAP_HEIGHT(map1) - y1) + y2;
-    }
-    else if (map1->tile_map[6] == map2)
-    {
-        retval->distance_y = (MAP_HEIGHT(map1) - y1) + y2;
-        retval->distance_x = -(x1 + (MAP_WIDTH(map2) - x2));
-    }
-    else if (map1->tile_map[7] == map2)
-    {
-        retval->distance_x = -(x1 + (MAP_WIDTH(map2) - x2));
-        retval->distance_y = -(y1 + (MAP_HEIGHT(map2) - y2));
-    }
-    else if (flags & RV_RECURSIVE_SEARCH)
-    {
-        retval->distance_x = x2;
-        retval->distance_y = y2;
-
         if (!relative_tile_position(map1, map2, &(retval->distance_x), &(retval->distance_y)))
         {
             /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", map1->path, map2->path);*/
             return FALSE;
         }
-
-        retval->distance_x -= x1;
-        retval->distance_y -= y1;
     }
     else
     {
