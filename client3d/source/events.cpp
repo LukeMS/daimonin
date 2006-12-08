@@ -389,25 +389,21 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
         case GAME_STATUS_SETUP:
         {
-            static char buf[1024];
             ServerFile::getSingleton().checkFiles();
-            sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
-                    " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
-                    1, //   SoundStatus
-                    CHUNK_SIZE_X, CHUNK_SIZE_Z,
-                    ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS),
-                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_SKILLS),
-                    ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS),
-                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_SPELLS),
-                    ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS),
-                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_BMAPS),
-                    ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS),
-                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_SETTINGS),
-                    ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS),
-                    ServerFile::getSingleton().getCRC   (ServerFile::FILE_ANIMS));
-            Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
-            buf[strlen(buf)] =0;
-            Logger::log().info() << "Send: setup " << buf;
+            std::stringstream strCmd;
+            strCmd <<
+            "setup sound " << 1 <<
+            " map2cmd "    << 1 <<
+            " mapsize "    << CHUNK_SIZE_X << "x" << CHUNK_SIZE_Z <<
+            " darkness "   << 1 <<
+            " facecache "  << 1 <<
+            " skf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SKILLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SKILLS)     << std::dec <<
+            " spf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SPELLS)  << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SPELLS)     << std::dec <<
+            " bpf " << ServerFile::getSingleton().getLength(ServerFile::FILE_BMAPS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_BMAPS)      << std::dec <<
+            " stf " << ServerFile::getSingleton().getLength(ServerFile::FILE_SETTINGS)<< "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_SETTINGS)   << std::dec <<
+            " amf " << ServerFile::getSingleton().getLength(ServerFile::FILE_ANIMS)   << "|" << std::hex<< ServerFile::getSingleton().getCRC(ServerFile::FILE_ANIMS)      << std::dec;
+            Network::getSingleton().cs_write_string((char*)strCmd.str().c_str());
+            //Logger::log().info() << "Send: " << str;
             Option::getSingleton().setGameStatus(GAME_STATUS_WAITSETUP);
             break;
         }
@@ -425,12 +421,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
             break;
         }
 
-
-
-
         case GAME_STATUS_ADDME:
         {
-            Network::getSingleton().cs_write_string("addme", 5);
+            Network::getSingleton().cs_write_string("addme");
             // now wait for login request of the server.
             Option::getSingleton().setGameStatus(GAME_STATUS_LOGIN);
             break;
@@ -566,13 +559,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
         {
             // Send the new created character to server.
             Option::getSingleton().setLoginType(Option::LOGIN_NEW_PLAYER);
-            /*
-            char buf[MAX_BUF];
-            sprintf(buf, "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1],
-            nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
-            */
+            // "nc %s %d %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6], nc->skill_selected);
             char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
-            Network::getSingleton().cs_write_string(buf, (int)strlen(buf));
+            Network::getSingleton().cs_write_string(buf);
             GuiManager::getSingleton().showWindow(GUI_WIN_LOGIN, false);
             Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
             break;
@@ -656,7 +645,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
                 TileMap::getSingleton().map_draw_map();
             }
 
-             break;
+            break;
         }
 
         default:
@@ -682,16 +671,19 @@ bool CEvent::frameEnded(const FrameEvent& evt)
     static int skipFrames = 0;
     if (--skipFrames <= 0)
     {
-        static char buffer[16];
         skipFrames = 10;
-        sprintf(buffer, "%.1f", stats.lastFPS);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)buffer);
-        sprintf(buffer, "%.1f", stats.bestFPS);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)buffer);
-        sprintf(buffer, "%.1f", stats.worstFPS);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)buffer);
-        sprintf(buffer, "%d", stats.triangleCount);
-        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)buffer);
+        std::stringstream strBuf;
+        strBuf << fixed << setprecision(1) << stats.lastFPS;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_CUR_FPS  , (void*)strBuf.str().c_str());
+        strBuf.rdbuf()->str(""); // delete stringstream buffer.
+        strBuf << fixed << setprecision(1) << stats.bestFPS;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_BEST_FPS , (void*)strBuf.str().c_str());
+        strBuf.rdbuf()->str(""); // delete stringstream buffer.
+        strBuf << fixed << setprecision(1) << stats.worstFPS;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_WORST_FPS, (void*)strBuf.str().c_str());
+        strBuf.rdbuf()->str(""); // delete stringstream buffer.
+        strBuf << fixed << setprecision(1) << stats.triangleCount;
+        GuiManager::getSingleton().sendMessage(GUI_WIN_STATISTICS, GUI_MSG_TXT_CHANGED, GUI_TEXTVALUE_STAT_SUM_TRIS , (void*)strBuf.str().c_str());
     }
     return true;
 }

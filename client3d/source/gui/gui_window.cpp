@@ -43,6 +43,7 @@ http://www.gnu.org/licenses/licenses.html
 using namespace Ogre;
 
 const int MIN_GFX_SIZE = 4;
+
 //const char XML_BACKGROUND[] = "Background";
 
 //================================================================================================
@@ -123,6 +124,15 @@ void GuiWindow::Init(TiXmlElement *xmlElem)
     mSrcPixelBox = GuiImageset::getSingleton().getPixelBox();
     parseWindowData(xmlElem);
     isInit = true;
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void GuiWindow::setVisible(bool visible)
+{
+    if (!visible) mOverlay->hide();
+    else          mOverlay->show();
 }
 
 //================================================================================================
@@ -509,16 +519,17 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
         case BUTTON_PRESSED:
         {
             //GuiCursor::getSingleton().setState(GuiImageset::STATE_MOUSE_PUSHED);
-            // Mouse over this window?
-            if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
-            {
-                ;
-            }
             if (x > mDragPosX1 && x < mDragPosX2 && y > mDragPosY1 && y < mDragPosY2)
             {
                 mDragOldMousePosX = rx;
                 mDragOldMousePosY = ry;
                 mMouseDragging = mWindowNr;
+                return true;
+            }
+            // Mouse over this window?
+            if (rx >= mPosX && rx <= mPosX + mWidth && ry >= mPosY && ry <= mPosY + mHeight)
+            {
+                return true;
             }
         }
         case MOUSE_MOVEMENT:

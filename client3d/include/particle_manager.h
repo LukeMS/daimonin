@@ -34,6 +34,7 @@ using namespace Ogre;
 
 class ParticleManager
 {
+
 public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -55,7 +56,7 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     unsigned int mCounter;
 
@@ -65,7 +66,7 @@ private:
         SYNC_PARTICLES  = 1<< 1
     };
 
-    struct sParticles
+    typedef struct
     {
         Real speed;      //  0: Object has a static position.
         Real lifeTime;   // -1: Infinity lifetime.
@@ -74,7 +75,8 @@ private:
         char neededSync;
         ParticleSystem *pSystem;
         Entity *entity;
-    };
+    }
+    sParticles;
     std::vector<sParticles*>mvParticle;
 
     // ////////////////////////////////////////////////////////////////////

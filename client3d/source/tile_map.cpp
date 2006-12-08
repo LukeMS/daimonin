@@ -64,7 +64,7 @@ void TileMap::clear_map(void)
 //================================================================================================
 void TileMap::adjust_map_cache(int xpos, int ypos)
 {
-    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(MapCell));
+    memset(TheMapCache, 0, 9 * (mMapData.xlen * mMapData.ylen) * sizeof(MapCell));
 }
 
 //================================================================================================
@@ -94,15 +94,15 @@ void TileMap::map_draw_map_clear(void)
 //================================================================================================
 // .
 //================================================================================================
-void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
+void TileMap::InitMapData(const char *name, int xl, int yl, int px, int py)
 {
     char *tag;
     int  music_fade  = 0;
 
     // Tag stuff.
-    if ((tag = strchr(name, '§')))
+    if ((tag = strchr((char*)name, '§')))
     {
-        strcpy(MapData.music, tag);
+        mMapData.music = tag;
         if (tag)
         {
             char *p1 = strchr(tag, '|');
@@ -131,15 +131,15 @@ void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
     }
 
     if (name)
-        strcpy(MapData.name, name);
+        mMapData.name = name;
     if (xl != -1)
-        MapData.xlen = xl;
+        mMapData.xlen = xl;
     if (yl != -1)
-        MapData.ylen = yl;
+        mMapData.ylen = yl;
     if (px != -1)
-        MapData.posx = px;
+        mMapData.posx = px;
     if (py != -1)
-        MapData.posy = py;
+        mMapData.posy = py;
 
     if (xl > 0)
     {
@@ -206,7 +206,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         String meshName = ObjectWrapper::getSingleton().getMeshName(face & ~0x8000);
         if (!meshName.size())
         {
-            Logger::log().error() << "Object face: " << face << " pos: " << x << ", " << y;
+            //Logger::log().error() << "Object face: " << face << " pos: " << x << ", " << y;
             return;
         }
 

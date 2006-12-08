@@ -35,6 +35,9 @@ using namespace Ogre;
 class ObjectEquipment
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
         short w, h;             /**< width and height of the image. **/
@@ -99,10 +102,8 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Functions.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    ObjectEquipment(const ObjectEquipment&); // disable copy-constructor.
-
     static sPicture picHands[4], picArms[4], picShoes[2], picBody[2], picLegs[2], picFace, picHair, picBelt[2];
     static uchar *texImageBuf;
     enum
@@ -111,7 +112,7 @@ private:
         SIDE_FRONT
     };
     TexturePtr mTexture;
-    struct
+    struct _mItem
     {
         Entity *entity;
         ParticleSystem *particle;
@@ -119,6 +120,9 @@ private:
     mItem[BONE_SUM];
     Entity *mParentEntity;
     static unsigned long mIndex;
-
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    ObjectEquipment(const ObjectEquipment&); // disable copy-constructor.
 };
 #endif

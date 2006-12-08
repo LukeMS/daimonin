@@ -32,16 +32,13 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-
-enum {
-    LIGHT_SPOT, LIGHT_SUM };
-
 class LightManager
 {
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { LIGHT_SPOT, LIGHT_SUM };
     SceneManager *mSceneMgr;
     SceneNode  *mNode;
     std::string mDescFile;

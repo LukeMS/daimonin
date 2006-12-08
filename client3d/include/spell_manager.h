@@ -33,33 +33,39 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-enum
-{
-    SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM
-};
-enum
-{
-    SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM
-};
-enum
-{
-    SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM
-};
-
-struct _Spell
-{
-    SceneNode *node;
-    ParticleSystem* particleSys;
-};
-
 class SpellManager
 {
+
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM
+    };
+    enum
+    {
+        SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM
+    };
+    enum
+    {
+        SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM
+    };
+
+    struct _Spell
+    {
+        SceneNode *node;
+        ParticleSystem* particleSys;
+    }
+    Spell;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     static SpellManager &getSingleton()
     {
+
         static SpellManager Singleton; return Singleton;
     }
     bool init(SceneManager *SceneMgr);
@@ -71,7 +77,7 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     SceneManager *mSceneMgr;
     SceneNode  *mNode;

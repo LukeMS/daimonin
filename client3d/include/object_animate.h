@@ -47,6 +47,29 @@ class ObjectAnimate
 {
 public:
     // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    enum AnimGroup
+    {
+        // Movement.
+        ANIM_GROUP_IDLE,
+        ANIM_GROUP_IDLE_FUN,
+        ANIM_GROUP_WALK,
+        ANIM_GROUP_RUN,
+        // Non-movement.
+        ANIM_GROUP_ABILITY,
+        ANIM_GROUP_ATTACK,
+        ANIM_GROUP_ATTACK_FUN,
+        ANIM_GROUP_BLOCK,
+        ANIM_GROUP_HIT,
+        ANIM_GROUP_SLUMP,
+        ANIM_GROUP_DEATH,
+        ANIM_GROUP_SPAWN,
+        ANIM_GROUP_CAST,
+        ANIM_GROUP_CAST_FUN,
+        ANIM_GROUP_SUM
+    };
+    // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
     ObjectAnimate(Entity *entity);
@@ -88,36 +111,16 @@ public:
     void toggleAnimation2(int animGroup, int animNr, bool loop = false, bool force = false, bool random = false);
     Real getAnimSpeed()
     {
-		return mAnimSpeed;
+        return mAnimSpeed;
     }
-	void pause(bool p)
-	{
-		mActState->setEnabled(!p);
-	}
-    enum AnimGroup
+    void pause(bool p)
     {
-        // Movement.
-        ANIM_GROUP_IDLE,
-        ANIM_GROUP_IDLE_FUN,
-        ANIM_GROUP_WALK,
-        ANIM_GROUP_RUN,
-        // Non-movement.
-        ANIM_GROUP_ABILITY,
-        ANIM_GROUP_ATTACK,
-        ANIM_GROUP_ATTACK_FUN,
-        ANIM_GROUP_BLOCK,
-        ANIM_GROUP_HIT,
-        ANIM_GROUP_SLUMP,
-        ANIM_GROUP_DEATH,
-        ANIM_GROUP_SPAWN,
-        ANIM_GROUP_CAST,
-        ANIM_GROUP_CAST_FUN,
-        ANIM_GROUP_SUM
-    };
+        mActState->setEnabled(!p);
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     int mAnimGroup, mAnimNr;
     int mAnimGroup2, mAnimNr2;
@@ -125,7 +128,7 @@ private:
     bool mIsAnimated;
     bool mFreezeLastFrame; /**< false: after current anim is done play idle0, true: last frame of current anim will be freezed. */
     Real mAnimSpeed;
-	Real mTimeLeft, mTimeLeft2;
+    Real mTimeLeft, mTimeLeft2;
     AnimationState *mActState, *mActState2;
     std::vector<AnimationState*>mAnimState;
     unsigned char mAnimGroupEntries[ANIM_GROUP_SUM];

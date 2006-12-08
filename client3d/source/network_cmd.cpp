@@ -84,7 +84,6 @@ void Network::CompleteCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::VersionCmd(unsigned char *data, int len)
 {
-    char    buf[1024];
     GameStatusVersionOKFlag = false;
     GameStatusVersionFlag = true;
     csocket.cs_version = atoi((char*)data);
@@ -115,8 +114,9 @@ void Network::VersionCmd(unsigned char *data, int len)
     char *cp = (char *) (strchr((char *)data, ' '));
     if (!cp)
     {
-        sprintf(buf, "Invalid version string: %s", data);
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, (const char*)data);
+        std::stringstream strCmd;
+        strCmd << "Invalid version string: " << data;
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strCmd.str().c_str());
         Logger::log().error() << data;
         SOCKET_CloseSocket();
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
@@ -126,14 +126,16 @@ void Network::VersionCmd(unsigned char *data, int len)
     csocket.sc_version = atoi(cp);
     if (csocket.sc_version != VERSION_SC)
     {
-        sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, csocket.sc_version);
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN,buf);
+        std::stringstream strCmd;
+        strCmd << "Invalid SC version  (" << VERSION_SC << ", " << csocket.sc_version << ")";
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strCmd.str().c_str());
+        String strBuf;
         if (VERSION_SC > csocket.sc_version)
-            sprintf(buf, "The server is outdated!\nSelect a different one!");
+            strBuf = "The server is outdated!\nSelect a different one!";
         else
-            sprintf(buf, "Your client is outdated!\nUpdate your client!");
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
-        Logger::log().error() << buf;
+            strBuf = "Your client is outdated!\nUpdate your client!";
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.c_str());
+        Logger::log().error() << strBuf;
         SOCKET_CloseSocket();
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
         SDL_Delay(3250);
@@ -142,9 +144,10 @@ void Network::VersionCmd(unsigned char *data, int len)
     cp = (char *) (strchr(cp + 1, ' '));
     if (!cp || strncmp(cp + 1, "Daimonin Server", 15))
     {
-        sprintf(buf, "Invalid server name: %s", cp);
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
-        Logger::log().error() << buf;
+        String strBuf = "Invalid server name: ";
+        strBuf+= cp;
+        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.c_str());
+        Logger::log().error() << strBuf;
         SOCKET_CloseSocket();
         Option::getSingleton().setGameStatus(GAME_STATUS_START);
         SDL_Delay(3250);
@@ -194,15 +197,15 @@ void Network::Map2Cmd(unsigned char *data, int len)
     bool    map_new_flag = false;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
     char    pname1[64], pname2[64], pname3[64], pname4[64];
-    char    mapname[256];
+    String  mapname;
     uint16  face;
 
     mapstat = (data[pos++]);
     TileManager::getSingleton().map_transfer_flag = 0;
     if (mapstat != MAP_UPDATE_CMD_SAME)
     {
-        strcpy(mapname, (char*)data + pos);
-        pos += (int)strlen(mapname)+1;
+        mapname = (char*)data + pos;
+        pos += (int)mapname.size()+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
             TileManager::getSingleton().map_new_flag = true;
@@ -213,7 +216,7 @@ void Network::Map2Cmd(unsigned char *data, int len)
             mx = xpos;
             my = ypos;
 //            remove_item_inventory(locate_item(0)); // implicit clear below
-            TileMap::getSingleton().InitMapData(mapname, map_w, map_h, xpos, ypos);
+            TileMap::getSingleton().InitMapData(mapname.c_str(), map_w, map_h, xpos, ypos);
         }
         else
         {
@@ -250,8 +253,8 @@ void Network::Map2Cmd(unsigned char *data, int len)
         TileMap::getSingleton().adjust_map_cache(xpos, ypos);
     }
 
-    TileMap::getSingleton().MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
-    TileMap::getSingleton().MapData.posy = ypos;
+   TileMap::getSingleton().mMapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
+   TileMap::getSingleton().mMapData.posy = ypos;
     //Logger::log().info() << "MapPos x: " << xpos << " y: " << ypos << " (nflag: " << map_new_flag << ")";
     while (pos < len)
     {
@@ -649,12 +652,8 @@ void Network::SoundCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::TargetObject(unsigned char *data, int len)
 {
-    //Logger::log().error() << "Selected: " << data+3;
-    char buf[200];
-    sprintf(buf, "[%s] selected", data+3);
-//    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
-
-
+    String strTmp = "["; strTmp += (char*)data+3; strTmp += "] selected";
+    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strTmp.c_str());
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -666,7 +665,7 @@ void Network::TargetObject(unsigned char *data, int len)
         strcpy(cpl.target_name, data);
         TileManager::getSingleton().map_udate_flag = 2;
 
-        sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
+        (buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
     */
 }
@@ -1092,7 +1091,7 @@ void Network::ImageCmd(unsigned char *data, int len)
 
         // save picture to cache
         // and load it to FaceList
-        sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);
+        (buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);
         if ((stream = fopen_wrapper(buf, "wb+")) != NULL)
         {
             fwrite((char *) data + 8, 1, plen, stream);
@@ -1395,7 +1394,7 @@ void Network::GolemCmd(unsigned char *data, int len)
             face = atoi(tmp + 1);
             request_face(face, 0);
             tmp = strchr(tmp + 1, ' '); // find start of a name
-            sprintf(buf, "You lose control of %s.", tmp + 1);
+            (buf, "You lose control of %s.", tmp + 1);
             draw_info(buf, COLOR_WHITE);
 
             fire_mode_tab[FIRE_MODE_SUMMON].item = FIRE_ITEM_NO;
@@ -1407,7 +1406,7 @@ void Network::GolemCmd(unsigned char *data, int len)
             face = atoi(tmp + 1);
             request_face(face, 0);
             tmp = strchr(tmp + 1, ' '); // find start of a name
-            sprintf(buf, "You get control of %s.", tmp + 1);
+            (buf, "You get control of %s.", tmp + 1);
             draw_info(buf, COLOR_WHITE);
             fire_mode_tab[FIRE_MODE_SUMMON].item = face;
             strncpy(fire_mode_tab[FIRE_MODE_SUMMON].name, tmp + 1, 100);
@@ -1637,7 +1636,7 @@ void Network::GroupCmd(unsigned char *data, int len)
         clear_group();
         if (len)
         {
-            //sprintf(buf, "GROUP CMD: %s (%d)", data, len);
+            //(buf, "GROUP CMD: %s (%d)", data, len);
             //draw_info(buf, COLOR_GREEN);
 
             global_group_status = GROUP_MEMBER;
@@ -1861,8 +1860,6 @@ int Network::request_face(int, int)
 //================================================================================================
 void Network::CreatePlayerAccount()
 {
-    char    buf[MAX_BUF];
-    //   sprintf(buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
-    sprintf(buf, "%s", "nc human_male 14 14 13 12 12 12 12 0");
-    cs_write_string(buf, (int)strlen(buf));
+    //   (buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
+    cs_write_string("nc human_male 14 14 13 12 12 12 12 0");
 }

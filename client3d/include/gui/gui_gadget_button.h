@@ -23,8 +23,10 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
+
 #ifndef GUI_GADGET_BUTTON_H
 #define GUI_GADGET_BUTTON_H
+
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
@@ -38,7 +40,6 @@ using namespace Ogre;
  *****************************************************************************/
 class GuiGadgetButton: public GuiElement
 {
-
 public:
     typedef void (Callback) (class GuiWindow *parent, int index);
     // ////////////////////////////////////////////////////////////////////
@@ -64,7 +65,7 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     Callback *mCallFunc;
     bool mMouseOver, mMouseButDown;

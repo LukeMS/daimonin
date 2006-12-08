@@ -33,6 +33,7 @@ using namespace Ogre;
  *****************************************************************************/
 class TileInterface
 {
+
 public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -52,10 +53,11 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum
     {
+
         QUADRANT_LEFT,    /**< Left   tris of a tile. **/
         QUADRANT_TOP,     /**< Top    tris of a tile. **/
         QUADRANT_RIGHT,   /**< Right  tris of a tile. **/

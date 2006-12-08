@@ -32,11 +32,13 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-
 class ObjectVisuals
 {
 
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     enum
     {
         VISUAL_LIFEBAR,
@@ -79,7 +81,7 @@ public:
     }
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     ParticleSystem *mPSystem; /**< If <>0 Selection is a particleSystem else Selection is a gfx. **/
     Entity *mEntity[VISUAL_SUM];
@@ -103,7 +105,6 @@ private:
     ObjectVisuals(const ObjectVisuals&); // disable copy-constructor.
     void buildEntity(int index, const char *meshName, const char *entityName);
     void setDefaultAction(int action);
-}
-;
+};
 
 #endif

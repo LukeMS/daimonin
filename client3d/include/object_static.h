@@ -94,21 +94,24 @@ public:
     {
         return mFriendly;
     }
-	Entity *getEntity()
-	{
-		return mEntity;
-	}
+    Entity *getEntity()
+    {
+        return mEntity;
+    }
     TilePos getTilePos()
     {
         return mActPos;
     }
     void setPosition(TilePos pos);
     void activate(bool waitForHero = true);
-	unsigned int getIndex()
-	{
-		return mIndex;
-	}
+    unsigned int getIndex()
+    {
+        return mIndex;
+    }
 protected:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     static SceneManager *mSceneMgr;
     Vector3 mBoundingBox;
     ObjectAnimate *mAnim;

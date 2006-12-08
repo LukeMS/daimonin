@@ -49,7 +49,7 @@ const char TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
 
 const int MAX_TEXTLINE_LEN = 1024;
 
-typedef struct TextLine
+typedef struct
 {
     unsigned int x1, y1, x2, y2; /**< Area for printing the text. **/
     int font;                    /**< Font number. **/
@@ -100,9 +100,9 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    struct mFont
+    typedef struct
     {
         uint32 *data;
         unsigned short textureWidth;
@@ -110,7 +110,8 @@ private:
         unsigned short baseline;
         unsigned short charStart[CHARS_IN_FONT];
         unsigned char  charWidth[CHARS_IN_FONT];
-    };
+    }
+    mFont;
     std::vector<mFont*>mvFont;
     PixelBox *mPb;
     uint32 *mTextGfxBuffer;

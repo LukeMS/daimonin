@@ -53,7 +53,6 @@ using namespace std;
 /// of using a bit of extra memory. IT also makes the code simpler.
 const int  MAXSOCKBUF            = 128*1024;
 const int  MAX_METASTRING_BUFFER = 128*2013;
-
 const int  MAX_BUF =  256;
 const int  BIG_BUF = 1024;
 const int  STRINGCOMMAND = 0;
@@ -74,16 +73,7 @@ const int  SC_NORMAL  = 0;
 const int  SC_FIRERUN = 1;
 const int  SC_ALWAYS  = 2;
 
-// Contains the base information we use to make up a packet we want to send.
-typedef struct SockList
-{
-    int             len; /**< How much data in buf */
-    int             pos; /**< Start of data in buf */
-    unsigned char  *buf;
-}
-SockList;
-
-typedef struct mStructServer
+typedef struct
 {
     string nameip;
     string version;
@@ -99,17 +89,17 @@ mStructServer;
 // ClientSocket could probably hold more of the global values - it could
 // probably hold most all socket/communication related values instead
 // of globals.
-typedef struct ClientSocket
+typedef struct
 {
-    int fd;        // typedef your socket type to SOCKET
-    SockList  inbuf;
-    SockList  outbuf;
-    int       cs_version, sc_version; // Server versions of these
+    int fd;
+    std::string inbuf;
+    std::string outbuf;
+    int cs_version, sc_version; // Server versions of these
     // These are used for the newer 'windowing' method of commands -
     // number of last command sent, number of received confirmation
-    int       command_sent, command_received;
+    int command_sent, command_received;
     // Time (in ms) players commands currently take to execute
-    int       command_time;
+    int command_time;
 }
 ClientSocket;
 
@@ -139,7 +129,8 @@ public:
         struct command_buffer *prev; // Previous in queue.
         int len;
         unsigned char *data;
-    };
+    }
+    command_buffer;
 
     bool Init();
     void clearMetaServerData();
@@ -152,16 +143,14 @@ public:
     static void command_buffer_free(command_buffer *buf);
     static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_start, command_buffer **queue_end);
     static void checkFileStatus(const char *cmd, char *param, int fileNr);
-
-    static void SockList_AddShort(SockList *sl, Uint16 data);
-    static void SockList_AddInt  (SockList *sl, Uint32 data);
+    static void AddIntToString(std::string &sl, int data, bool shortInt);
 
     static int reader_thread_loop(void *);
     static int writer_thread_loop(void *);
 
     static int send_command(const char *command, int repeat, int force);
     int send_command_binary(unsigned char cmd, unsigned char *body, unsigned int len);
-    static int send_socklist(SockList msg);
+    static int send_socklist(std::string msg);
     void socket_thread_start();
     void socket_thread_stop();
     bool isInit()
@@ -181,8 +170,8 @@ public:
     }
     static bool SOCKET_CloseSocket();
     static bool SOCKET_CloseClientSocket();
-    static void send_reply(char *text);
-    static int cs_write_string(char *buf, int len);
+    static void send_reply(const char *text);
+    static void cs_write_string(const char *buf);
     int  SOCKET_GetError();  // returns socket error
     void read_metaserver_data();
     bool handle_socket_shutdown();

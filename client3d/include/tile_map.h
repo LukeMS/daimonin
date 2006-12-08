@@ -35,7 +35,7 @@ class TileMap
 {
 public:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum
     {
@@ -60,22 +60,21 @@ public:
     {
         int xlen;       // natural xlen of the whole multi arch.
         int ylen;       // same for ylen.
-        _multi_part_tile  part[16];
+        _multi_part_tile part[16];
     }
     _multi_part_obj;
     _multi_part_obj MultiArchs[16];
 
-    typedef struct
+    struct _mMapData
     {
-        char name[256];
-        char music[256];
-        int  xlen;
-        int  ylen;
-        int  posx;
-        int  posy;
+        String name;
+        String music;
+        int xlen;
+        int ylen;
+        int posx;
+        int posy;
     }
-    _mapdata;
-    _mapdata MapData;
+    mMapData;
 
     typedef struct
     {
@@ -109,20 +108,20 @@ public:
     void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
     void map_draw_map(void);
     void display_mapscroll(int dx, int dy);
-    void InitMapData(char *name, int xl, int yl, int px, int py);
+    void InitMapData(const char *name, int xl, int yl, int px, int py);
     void set_map_ext(int x, int y, int layer, int ext, int probe);
     void map_draw_map_clear(void);
     void adjust_map_cache(int x, int y);
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    typedef struct _map_object_parse
+    typedef struct
     {   // we need this to parse the map and sort the multi tile monsters
         int face;
         int x,y;
-        struct _map_object_parse   *next;
+        struct _map_object_parse *next;
     }
     _map_object_parse;
     _map_object_parse *start_map_object_parse;

@@ -19,10 +19,10 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
+
 #ifndef DIALOG_INTERFACE_H
 #define DIALOG_INTERFACE_H
 
-#include <Ogre.h>
 #include "define.h"
 #include "gui_gadget_button.h"
 
@@ -37,10 +37,6 @@ public:
 
     enum
     {
-        MAX_TEXTAREA_CHAR = 4096,
-        MAX_TEXTLINE_CHAR = 128,
-        MAX_LABEL_CHAR = 64,
-        MAX_LINE_CHAR = 256,
         MAX_MSG_LINE = 100,
         MAX_ELEMENT = 15,
         MAX_LINKS = 25,
@@ -87,13 +83,13 @@ public:
     void show();
     void reset();
     void buttonEvent(int index);
-    bool mouseEvent(int index);
+    void mouseEvent(int index);
     bool keyEvent(const char keyChar, const unsigned char key);
     bool load(int mode, char *data, int len, int pos);
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     enum
     {
@@ -109,95 +105,86 @@ private:
         INTERFACE_CMD_BUTTON   = 1 << 9,
         INTERFACE_CMD_WHO      = 1 <<10,
         INTERFACE_CMD_XTENDED  = 1 <<11,
-    }
-    ;
+    };
 
     typedef struct
     {
-        char label[MAX_LABEL_CHAR];      /**< Text displayed on the button. **/
-        char command[MAX_TEXTLINE_CHAR]; /**< After button was pressed, this command will be send to server. **/
+        String label;   /**< Text displayed on the button. **/
+        String command; /**< After button was pressed, this command will be send to server. **/
     }
     Button;
     Button butAccept, butDecline;
 
-    typedef struct
+    struct _mHead
     {
-        int face;                          /**< ID of the picture.       **/
-        char name[MAX_TEXTLINE_CHAR];      /**< Name of the picture.     **/
-        //_Sprite *picture;                /**< Pointer to the gfx data. **/
-        char body_text[MAX_TEXTLINE_CHAR]; /**< Title-text of the head.  **/
+        int face;           /**< ID of the picture.       **/
+        String name;        /**< Name of the picture.     **/
+        //_Sprite *picture; /**< Pointer to the gfx data. **/
+        String body_text;   /**< Title-text of the head.  **/
     }
-    Head;
-    Head head;
+    mHead;
 
-    typedef struct
+    struct _mLink
     {
-        char link[MAX_TEXTLINE_CHAR];
-        char cmd[MAX_TEXTLINE_CHAR];
+        String link;
+        String cmd;
     }
-    Link;
-    Link link[MAX_LINKS];
+    mLink[MAX_LINKS];
 
-    typedef struct
+    struct _mWho
     {
-        char body[MAX_TEXTLINE_CHAR];
+        String body;
     }
-    Who;
-    Who who;
+    mWho;
 
-    typedef struct
+    struct _mTextfield
     {
-        char text[MAX_TEXTLINE_CHAR];
+        String text;
     }
-    TextInput;
-    TextInput textfield;
+    mTextfield;
 
-    typedef struct
+    struct _mMessage
     {
-        char title[MAX_TEXTLINE_CHAR];
-        char body_text[MAX_TEXTAREA_CHAR];
-        int line_count;
-        char lines[MAX_MSG_LINE][MAX_LINE_CHAR];
-    }
-    Message;
-    Message message;
-
-    typedef struct
-    {
-        char title[MAX_TEXTLINE_CHAR];
-        char body_text[MAX_TEXTAREA_CHAR];
+        String title;
+        String body_text;
+        String lines[MAX_MSG_LINE];
         int line_count;
     }
-    Extended;
-    Extended xtended;
+    mMessage;
 
-    typedef struct
+    struct _mXtended
+    {
+        String title;
+        String body_text;
+        int line_count;
+    }
+    mXtended;
+
+    struct _mReward
     {
         int copper;
         int silver;
         int gold;
         int mithril;
         int line_count;
-        char title[MAX_TEXTLINE_CHAR];
-        char body_text[MAX_TEXTAREA_CHAR];
-        char lines[MAX_ELEMENT][MAX_LINE_CHAR];
+        String title;
+        String body_text;
+        String lines;
     }
-    Reward;
-    Reward reward;
+    mReward;
 
-    typedef struct
+    struct _mIcon
     {
         char mode;
-        int num;                           /**< ID of the icon. **/
-        char title[MAX_TEXTLINE_CHAR];
-        char name [MAX_TEXTLINE_CHAR];     /**< Picture name. **/
+        int num;           /**< ID of the icon. **/
+        String title;
+        String name;       /**< Picture name. **/
         //item element;
-        //_Sprite *picture;                /**< Pointer to the gfx data. **/
+        //_Sprite *picture;/**< Pointer to the gfx data. **/
         char *second_line;
-        char body_text[MAX_TEXTLINE_CHAR]; /**< Head title. **/
+        String body_text;  /**< Head title. **/
     }
-    Icon;
-    Icon icon[MAX_ELEMENT];
+    mIcon[MAX_ELEMENT];
 
     bool mVisible;
     bool mIcon_select;
@@ -208,7 +195,7 @@ private:
     int mLink_count;
     int mInput_flag;
     int mSelected;
-    uint32 mUsed_flag;
+    int mUsed_flag;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.
@@ -216,17 +203,18 @@ private:
     GuiDialog();
     ~GuiDialog();
     GuiDialog(const GuiDialog&); // disable copy-constructor.
-    bool cmd_head     (Head     *head, char *data, int *pos);
-    bool cmd_link     (Link     *head, char *data, int *pos);
-    bool cmd_who      (Who      *head, char *data, int *pos);
-    bool cmd_reward   (Reward   *head, char *data, int *pos);
-    bool cmd_icon     (Icon     *head, char *data, int *pos);
-    bool cmd_message  (Message   *msg, char *data, int *pos);
-    bool cmd_xtended  (Extended  *msg, char *data, int *pos);
-    bool cmd_textfield(TextInput *inp, char *data, int *pos);
-    bool cmd_button   (Button *button, char *data, int *pos);
-    bool getElement(int line, int *element, int *index, char **keyword);
-    char *get_parameter_string(char *data, int *pos);
+    bool cmd_head     (char *data, int &pos);
+    bool cmd_link     (char *data, int &pos);
+    bool cmd_who      (char *data, int &pos);
+    bool cmd_reward   (char *data, int &pos);
+    bool cmd_icon     (char *data, int &pos);
+    bool cmd_message  (char *data, int &pos);
+    bool cmd_xtended  (char *data, int &pos);
+    bool cmd_textfield(char *data, int &pos);
+    bool cmd_button   (Button &button, char *data, int &pos);
+    bool getElement(int line, int *element, int *index, String *keyword);
+    char parseParameter(char *data, int &pos);
+    char *get_parameter_string(char *data, int &pos);
     void format_gui_interface();
     void sendCommand(int mode, char *cmd);
 };

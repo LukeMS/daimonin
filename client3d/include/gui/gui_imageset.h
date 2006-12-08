@@ -94,6 +94,9 @@ enum {
 class GuiImageset
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
         const char *name;
@@ -171,9 +174,9 @@ public:
 
 private:
     // ////////////////////////////////////////////////////////////////////
-    // Variables.
+    // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-    GuiSrcEntryMouse *mSrcEntryMouse;
+   GuiSrcEntryMouse *mSrcEntryMouse;
     std::vector<GuiSrcEntry*>mvSrcEntry;
     String mStrImageSetGfxFile;
     Image mImageSetImg;
