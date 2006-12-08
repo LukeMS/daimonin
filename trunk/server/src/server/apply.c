@@ -1244,8 +1244,14 @@ static void apply_sign(object *op, object *sign)
         }
     }
 
+    /* Signs should trigger APPLY events, and magic mouths should trigger TRIGGER events,
+     * so we trigger both to be sure... */
     if(trigger_object_plugin_event(
                 EVENT_APPLY, sign, op, NULL,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
+    if(trigger_object_plugin_event(
+                EVENT_TRIGGER, sign, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
