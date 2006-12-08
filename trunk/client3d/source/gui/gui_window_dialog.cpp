@@ -87,13 +87,15 @@ char GuiDialog::parseParameter(char *data, int &pos)
 //================================================================================================
 char *GuiDialog::get_parameter_string(char *data, int &pos)
 {
-    String buf  = (data+pos);
-    int strtPos = (int)buf.find('"');
-    if (strtPos ==(int)std::string::npos) return ""; // error
-    int stopPos = (int)buf.find('"', ++strtPos);
-    if (stopPos ==(int)std::string::npos) return ""; // error
-    pos+= stopPos+1;
-    return (char*)buf.substr(strtPos, stopPos-strtPos).c_str();
+    static char buf[4024];
+    char *start_ptr = strchr(data+pos,'"');
+    if (!start_ptr) return ""; // error
+    char *end_ptr = strchr(++start_ptr,'"');
+    if (!end_ptr) return ""; // error
+    strncpy(buf, start_ptr, end_ptr-start_ptr);
+    buf[end_ptr-start_ptr]=0;
+    pos+= ++end_ptr-(data+pos);
+    return buf;
 }
 
 //================================================================================================
@@ -110,7 +112,10 @@ bool GuiDialog::cmd_head(char *data, int &pos)
         switch (c)
         {
             case 'f': // face for this head
-                mHead.name = get_parameter_string(data, pos);
+				Logger::log().error() <<  "vor:  " << data+pos;
+
+				mHead.name = get_parameter_string(data, pos);
+				Logger::log().error() <<  "nach: " << mHead.name;
                 break;
             case 'b': // test body
                 mHead.body_text = get_parameter_string(data, pos);
@@ -642,7 +647,6 @@ bool GuiDialog::load(int mode, char *data, int len, int pos)
                 cmd_mode = cmd;
                 cmd = INTERFACE_CMD_NO;
                 // close this command - perhaps we stay string collect mode for it
-                Logger::log().error() <<  "Interface close cmd";
             }
 normal_char:
             ; // we don't have "text" between the tags (<> <>) atm
@@ -944,11 +948,6 @@ void GuiDialog::buttonEvent(int index)
 void GuiDialog::mouseEvent(int line)
 {
     if (line <0) return;
-    /*
-        char buffer[300];
-        (buffer, "%d", line);
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
-    */
     int element, index;
     String keyword = "";
     if (getElement(line, &element, &index, &keyword))
@@ -1030,11 +1029,9 @@ bool GuiDialog::getElement(int line, int *element, int *index, String *keyword)
           */
         return false;
     }
-    line -= mMessage.line_count;
-    //    char buffer[300];
-    //    (buffer, "Link: %d  %d  %d", line, message.line_count, mLink_count);
-    //    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buffer);
-    if (mLink_count)
+    line-= mMessage.line_count;
+
+    if (mLink_count && line)
     {
         *element = GUI_INTERFACE_LINK;
         *index = --line;
