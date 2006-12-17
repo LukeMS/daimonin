@@ -70,12 +70,8 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
     if (op->type != PLAYER && !QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR))
         return 0;
 
-    /* Ok, this trick will save us *some* search time - because we
-     * assume that a door is always on layer 5. But *careful* -
-     * if we assign in a map a different layer to a door this will
-     * fail badly!
-     */
-    for (tmp = GET_MAP_OB_LAYER(m, x, y, 4); tmp != NULL && tmp->layer == 5; tmp = tmp->above)
+    /* Search for door across all layers. */
+    for (tmp = GET_MAP_OB(m, x, y); tmp != NULL; tmp = tmp->above)
     {
         if (tmp->type == LOCKED_DOOR)
         {
@@ -431,7 +427,7 @@ void move_gate(object *op)
     if(op->weight_limit == 0 && (int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2)
     {
         object *tmp = op;
-        for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+        for(tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
         {
             if (IS_LIVE(tmp))
             {
@@ -462,7 +458,7 @@ void move_gate(object *op)
         }
 
         /* Still anything blocking? */
-        for(tmp = GET_MAP_OB(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+        for(tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
         {
             if (IS_LIVE(tmp) || !QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL))
             {
@@ -548,134 +544,6 @@ void move_gate(object *op)
     op->state = (uint8) op->stats.wc;
     SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
     update_object(op, update);
-
-#if 0
-    /* First, lets see if we are already at the top */
-    if ((unsigned char) op->stats.wc == ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) - 1))
-    {
-        /* Check to make sure that only non pickable and non rollable
-         * objects are above the gate.  If so, we finish closing the gate,
-         * otherwise, we fall through to the code below which should lower
-         * the gate slightly.
-         */
-
-        for (tmp = op->above; tmp != NULL; tmp = tmp->above)
-        {
-            if (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL) || IS_LIVE(tmp))
-                break;
-        }
-
-        if (tmp == NULL)
-        {
-            if (op->arch->clone.speed)
-                op->weight_limit = 1;
-            else
-            {
-                op->speed = 0;
-                update_ob_speed(op); /* Reached top, let's stop */
-            }
-            return;
-        }
-    }
-
-    if (op->stats.food)
-    {
-        /* The gate is going temporarily down */
-        if (--op->stats.wc <= 0)
-        {
-            /* Gone all the way down? */
-            op->stats.food = 0;     /* Then let's try again */
-            op->stats.wc = 0;
-        }
-    }
-    else
-    {
-        /* The gate is still going up */
-        op->stats.wc++;
-
-        if ((int) op->stats.wc >= ((NUM_ANIMATIONS(op) / NUM_FACINGS(op))))
-            op->stats.wc = (signed char) (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) - 1;
-
-        /* If there is something on top of the gate, we try to roll it off.
-         * If a player/monster, we don't roll, we just hit them with damage
-         */
-        if ((int) op->stats.wc >= (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) / 2)
-        {
-            /* Halfway or further, check blocks */
-            /* First, get the top object on the square. */
-            for (tmp = op->above; tmp != NULL && tmp->above != NULL; tmp = tmp->above)
-                ;
-
-            if (tmp != NULL)
-            {
-                if (IS_LIVE(tmp))
-                {
-                    damage_ob(tmp, 4, op, ENV_ATTACK_CHECK);
-                    if (tmp->type == PLAYER)
-                        new_draw_info_format(NDI_UNIQUE, 0, tmp, "You are crushed by the %s!", op->name);
-                }
-                /* If the object is not alive, and the object either can
-                 * be picked up or the object rolls, move the object
-                 * off the gate.
-                 */
-                /* lets try to move living objects too */
-                if (IS_LIVE(tmp) || (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL)))
-                {
-                    /* If it has speed, it should move itself, otherwise: */
-                    int i   = find_free_spot(tmp->arch, op->map, op->x, op->y, 1, 9);
-
-                    /* If there is a free spot, move the object someplace */
-                    if (i != -1)
-                    {
-                        remove_ob(tmp);
-                        check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
-                        tmp->x += freearr_x[i],tmp->y += freearr_y[i];
-                        insert_ob_in_map(tmp, op->map, op, 0);
-                    }
-                }
-            }
-
-            /* See if there is still anything blocking the gate */
-            for (tmp = op->above; tmp != NULL; tmp = tmp->above)
-                if (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL) || IS_LIVE(tmp))
-                    break;
-
-            /* IF there is, start putting the gate down  */
-            if (tmp)
-            {
-                op->stats.food = 1;
-            }
-            else
-            {
-                if (op->last_heal) /* if != 0, we have a reversed timed gate, which starts open */
-                {
-                    if (QUERY_FLAG(op, FLAG_NO_PASS))
-                        update = UP_OBJ_FLAGFACE;
-                    CLEAR_FLAG(op, FLAG_NO_PASS);
-                    if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                        update = UP_OBJ_FLAGFACE;
-                    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-                }
-                else
-                {
-                    if (!QUERY_FLAG(op, FLAG_NO_PASS))
-                        update = UP_OBJ_FLAGFACE;
-                    SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
-                    if (!op->arch->clone.stats.ac)
-                    {
-                        if (!QUERY_FLAG(op, FLAG_BLOCKSVIEW))
-                            update = UP_OBJ_FLAGFACE;
-                        SET_FLAG(op, FLAG_BLOCKSVIEW);
-                    }
-                }
-            }
-        } /* gate is halfway up */
-
-        op->state = (uint8) op->stats.wc;
-        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
-        update_object(op, update); /* takes care about map tile and player los update! */
-    } /* gate is going up */
-#endif
 }
 
 /* Attributes are the same as for normal gates plus the following:
@@ -723,7 +591,7 @@ void move_detector(object *op)
     int     detected;
     detected = 0;
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL && !detected; tmp = tmp->above)
+    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL && !detected; tmp = tmp->above)
     {
         object *tmp2;
         if (op->stats.hp)
@@ -1160,8 +1028,8 @@ void move_arrow(object *op)
             else
             {
                 /* The below is just logic for figuring out what direction
-                     * the object should now take.
-                     */
+                 * the object should now take.
+                 */
 
                 int left = wall(op->map,op->x+freearr_x[absdir(op->direction-1)],              op->y+   freearr_y[absdir(op->direction - 1)]),
                 right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
@@ -1342,7 +1210,7 @@ void move_teleporter(object *op)
     object *tmp, *next;
 
     /* get first object of this map node */
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = next)
+    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = next)
     {
         next = tmp->above;
         if (QUERY_FLAG(tmp, FLAG_NO_TELEPORT))
@@ -1429,7 +1297,7 @@ void move_player_mover(object *op)
     /* Determine direction now for random movers so we do the right thing */
     if (!dir)
         dir = rndm(1, 8);
-    for (victim = get_map_ob(op->map, op->x, op->y); victim != NULL; victim = victim->above)
+    for (victim = GET_BOTTOM_MAP_OB(op); victim != NULL; victim = victim->above)
     {
         if (IS_LIVE(victim) && ((!QUERY_FLAG(victim, FLAG_FLYING)&&!QUERY_FLAG(victim, FLAG_LEVITATE)) || op->stats.maxhp))
         {
@@ -1444,7 +1312,7 @@ void move_player_mover(object *op)
             if (!(mt = out_of_map(op->map, &xt, &yt)))
                 return;
 
-            for (nextmover = get_map_ob(mt, xt, yt); nextmover != NULL; nextmover = nextmover->above)
+            for (nextmover = GET_MAP_OB(mt, xt, yt); nextmover != NULL; nextmover = nextmover->above)
             {
                 if (nextmover->type == PLAYERMOVER)
                     nextmover->speed_left = -0.99f;
@@ -1492,7 +1360,7 @@ void move_player_mover(object *op)
 static int check_for_duplicate_ob(object *op, mapstruct *map, int x, int y)
 {
     object *tmp;
-    for(tmp = get_map_ob(map, x, y); tmp != NULL; tmp = tmp->above)
+    for(tmp = GET_MAP_OB(map, x, y); tmp != NULL; tmp = tmp->above)
     {
         if(tmp->name == op->name &&
                 tmp->type == op->type &&
@@ -1819,7 +1687,7 @@ void move_marker(object *op)
 {
     object *tmp, *tmp2;
 
-    for (tmp = get_map_ob(op->map, op->x, op->y); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
     {
         if (tmp->type == PLAYER)
         {
