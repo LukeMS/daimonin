@@ -1292,6 +1292,10 @@ void move_player_mover(object *op)
     mapstruct  *mt;
     int         xt, yt, dir = op->direction;
 
+    /* e.g. mover is inside a creator */
+    if(op->map == NULL)
+        return;
+
     if (!(blocked(NULL, op->map, op->x, op->y, TERRAIN_NOTHING) & (P_IS_ALIVE | P_IS_PLAYER)))
         return;
     /* Determine direction now for random movers so we do the right thing */
@@ -1409,7 +1413,8 @@ void move_creator(object *op)
     }
     else
     {
-        /* Clone from inventory */
+        /* Clone from inventory
+         * sys objects won't be copied, with an exception for player movers */
         object *source, *tmp;
         int didit = 0;
         int cloneindex = 0;
@@ -1420,7 +1425,7 @@ void move_creator(object *op)
             int numobs = 0;
             /* Count applicable items */
             for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
-                if(! QUERY_FLAG(tmp, FLAG_SYS_OBJECT))
+                if(! QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || tmp->type == PLAYERMOVER)
                     numobs++;
             if(numobs == 0)
                 return; /* Avoid div by zero */
@@ -1430,7 +1435,7 @@ void move_creator(object *op)
         for(source = op->inv; source != NULL && cloneindex >= 0; source = source->below)
         {
             /* Don't clone sys objects */
-            if(QUERY_FLAG(source, FLAG_SYS_OBJECT))
+            if(QUERY_FLAG(source, FLAG_SYS_OBJECT) && source->type != PLAYERMOVER)
                 continue;
 
             /* Count down to target if creating a single random item */
