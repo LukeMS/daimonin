@@ -218,6 +218,42 @@ START_TEST (buttons_check_env_sensor)
 }
 END_TEST
 
+/* Test pedestals
+ * Related bugs: 
+ *   - 0000480: Invisible pedestal does not fire connection
+ */
+START_TEST (buttons_check_pedestal)
+{
+    shstr *path = add_string("/dev/unit_tests/test_pedestal");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+
+    object *lever = locate_beacon(find_string("lever"))->env; 
+    object *pedestal1 = locate_beacon(find_string("visible_pedestal"))->env;
+    object *pedestal2 = locate_beacon(find_string("invisible_pedestal"))->env; 
+    object *pedestal3 = locate_beacon(find_string("sys_invisible_pedestal"))->env;
+    object *pedestal4 = locate_beacon(find_string("visible_pedestal_2"))->env;
+    object *pedestal5 = locate_beacon(find_string("invisible_pedestal_2"))->env; 
+    object *pedestal6 = locate_beacon(find_string("sys_invisible_pedestal_2"))->env;
+ 
+    fail_if(pedestal1->weight_limit, "visible pedestal 1 is triggered");
+    fail_if(pedestal2->weight_limit, "invisible pedestal 1 is triggered");
+    fail_if(pedestal3->weight_limit, "sys. invisible pedestal 1 is triggered");
+    fail_if(pedestal4->weight_limit, "visible pedestal 2 is triggered");
+    fail_if(pedestal5->weight_limit, "invisible pedestal 2 is triggered");
+    fail_if(pedestal6->weight_limit, "sys. visible pedestal 2 is triggered");
+
+    /* Switch the lever and make sure the inverse is true */
+    manual_apply(lever, lever, 0);
+    
+    fail_unless(pedestal1->weight_limit, "visible pedestal 1 is not triggered");
+    fail_unless(pedestal2->weight_limit, "invisible pedestal 1 is not triggered"); /* Bug 0000480 */
+    fail_unless(pedestal3->weight_limit, "sys. invisible pedestal 1 is not triggered");
+    fail_unless(pedestal4->weight_limit, "visible pedestal 2 is not triggered");
+    fail_unless(pedestal5->weight_limit, "invisible pedestal 2 is not triggered");
+    fail_unless(pedestal6->weight_limit, "sys. visible pedestal 2 is not triggered");
+}
+END_TEST
+
 Suite *buttons_suite(void)
 {
   Suite *s = suite_create("Buttons");
@@ -229,6 +265,7 @@ Suite *buttons_suite(void)
   tcase_add_test(tc_core, buttons_check_inv_recursive);
   tcase_add_test(tc_core, buttons_check_mapload);
   tcase_add_test(tc_core, buttons_check_env_sensor);
+  tcase_add_test(tc_core, buttons_check_pedestal);
 
   return s;
 }
