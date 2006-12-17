@@ -177,7 +177,6 @@ START_TEST (buttons_check_env_sensor)
 {
     shstr *path = add_string("/dev/unit_tests/test_env_sensor");
     mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
-    int i;
 
     object *lever = locate_beacon(find_string("lever_beacon"))->env; // Lever controlling light3
     object *sensor = locate_beacon(find_string("sensor_beacon"))->env; // Sensor activated by light3
@@ -246,11 +245,38 @@ START_TEST (buttons_check_pedestal)
     manual_apply(lever, lever, 0);
     
     fail_unless(pedestal1->weight_limit, "visible pedestal 1 is not triggered");
-    fail_unless(pedestal2->weight_limit, "invisible pedestal 1 is not triggered"); /* Bug 0000480 */
+    fail_unless(pedestal2->weight_limit, "invisible pedestal 1 is not triggered"); /* Bug 0000480 fails here */
     fail_unless(pedestal3->weight_limit, "sys. invisible pedestal 1 is not triggered");
     fail_unless(pedestal4->weight_limit, "visible pedestal 2 is not triggered");
     fail_unless(pedestal5->weight_limit, "invisible pedestal 2 is not triggered");
     fail_unless(pedestal6->weight_limit, "sys. visible pedestal 2 is not triggered");
+}
+END_TEST
+
+/* Test creator with mover inside
+ * Related bugs: 
+ * 0000482: Creator with mover in inventory crashes server
+ */
+START_TEST (buttons_creator_with_mover)
+{
+    shstr *path = add_string("/dev/unit_tests/test_creator");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL); 
+
+    object *lever = locate_beacon(find_string("lever"))->env; 
+    object *beacon = locate_beacon(find_string("beacon_square"));
+ 
+
+    process_events();
+    process_events(); /* Bug 000482 crashes here */
+
+    manual_apply(lever, lever, 0);
+    
+    object *mover = NULL;
+    for(mover = GET_BOTTOM_MAP_OB(beacon); mover; mover = mover->above)
+        if(mover->type == PLAYERMOVER)
+            break;
+
+    fail_if(mover == NULL, "No mover created");
 }
 END_TEST
 
@@ -266,6 +292,7 @@ Suite *buttons_suite(void)
   tcase_add_test(tc_core, buttons_check_mapload);
   tcase_add_test(tc_core, buttons_check_env_sensor);
   tcase_add_test(tc_core, buttons_check_pedestal);
+  tcase_add_test(tc_core, buttons_creator_with_mover);
 
   return s;
 }
