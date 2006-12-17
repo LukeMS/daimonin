@@ -238,7 +238,8 @@ void update_button(object *op, object *activator, object *originator)
         {
             fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
             move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-            for (ab = GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y, 2),tot = 0; ab != NULL; ab = ab->above)
+            tot = 0;
+            for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
             {
                 if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
                     tot += ab->weight * (ab->nrof ? ab->nrof : 1) + ab->carrying;
@@ -252,7 +253,7 @@ void update_button(object *op, object *activator, object *originator)
             tmp->weight_limit = 0;
             fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
             move = QUERY_FLAG(tmp, FLAG_WALK_ON);
-            for (ab = GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y, 2); ab != NULL; ab = ab->above)
+            for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
             {
                 head = ab->head ? ab->head : ab;
                 if (ab != tmp
@@ -314,7 +315,7 @@ void update_buttons(mapstruct *m)
                     fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
                     move = QUERY_FLAG(tmp, FLAG_WALK_ON);
 
-                    for (ab = GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y, 2); ab != NULL; ab = ab->above)
+                    for (ab = GET_BOTTOM_MAP_OB(tmp); ab != NULL; ab = ab->above)
                     {
                         if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
                             check_inv(ab, tmp);
