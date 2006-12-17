@@ -514,7 +514,7 @@ int check_trigger(object *op, object *cause, object *originator)
           {
               if (cause)
               {
-                  for (tmp = op->above; tmp; tmp = tmp->above)
+                  for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
                       if ((!QUERY_FLAG(tmp, FLAG_FLYING)&&!QUERY_FLAG(tmp, FLAG_LEVITATE)))
                           tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1) + tmp->carrying;
                   if (tot >= op->weight)
@@ -534,8 +534,7 @@ int check_trigger(object *op, object *cause, object *originator)
         case TRIGGER_PEDESTAL:
           if (cause)
           {
-//              for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
-              for (tmp = op->above; tmp; tmp = tmp->above)
+              for (tmp = GET_BOTTOM_MAP_OB(op); tmp; tmp = tmp->above)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
                   if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
