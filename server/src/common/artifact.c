@@ -408,7 +408,7 @@ static void traverse_artifact_files(char* start_dir, int mode)
 				if ((fp = fopen(entry->d_name, "r")) == NULL)
 				{
 					LOG(llevError, "ERROR: Can't open %s.\n", entry->d_name);
-					exit(-1);
+					exit(global_exit_return);
 				}
 
 				if(mode == ARTIFACTS_FIRST_PASS)

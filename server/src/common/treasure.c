@@ -220,7 +220,7 @@ static void traverse_treasures_files(char* start_dir)
 				if ((fp = fopen(entry->d_name, "r")) == NULL)
 				{
 					LOG(llevError, "ERROR: Can't open %s.\n", entry->d_name);
-					exit(-1);
+					exit(global_exit_return);
 				}
 
 				init_treasures(fp);
