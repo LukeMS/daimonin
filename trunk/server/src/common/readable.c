@@ -142,7 +142,7 @@ static char        *path_book_name[]            =
 static char        *path_author[]               =
 {
     "aether", "astral byways", "connections", "the Grey Council", "deep pathways", "knowledge", "magic", "mystic ways",
-    "pathways", "power", "spells", "transforms", "the mystic veil", "unknown spells"
+    "pathways", "power", "spells", "transmutation", "the mystic veil", "unknown spells"
 };
 
 /*
@@ -179,7 +179,7 @@ static char        *art_author[]                =
 
 static char        *mon_book_name[]             =
 {
-    "beastiary", "catalog", "compilation", "collection", "encyclopedia", "guide", "handbook", "list", "manual", "notes",
+    "bestiary", "catalog", "compilation", "collection", "encyclopaedia", "guide", "handbook", "list", "manual", "notes",
     "record", "register", "volume"
 };
 
@@ -187,7 +187,7 @@ static char        *mon_book_name[]             =
 /* used by monster beastuary texts */
 static char        *mon_author[]                =
 {
-    "beasts", "creatures", "dezidens", "dwellers", "evil nature", "life", "monsters", "nature", "new life", "residents",
+    "beasts", "creatures", "denizens", "dwellers", "evil nature", "life", "monsters", "nature", "new life", "residents",
     "the spawn", "the living", "things"
 };
 
@@ -253,7 +253,7 @@ static char        *book_author[]               =
 
 static char        *book_descrpt[]              =
 {
-    "ancient", "cryptic", "cryptical", "dusty", "hiearchical", "grizzled", "gold-guilt", "great", "lost", "magnificent",
+    "ancient", "cryptic", "cryptical", "dusty", "heirarchical", "grizzled", "gilt", "great", "lost", "magnificent",
     "musty", "mythical", "mystical", "rustic", "stained", "silvered", "transcendental", "weathered", "interesting"
 };
 
@@ -1102,7 +1102,7 @@ char * mon_info_msg(int level, int booksize)
     int count=0, desc_num= (RANDOM()%5)+3;
 
     /*preamble */
-    sprintf(retbuf, "<t t=\"Beastiary\">\nHerein are detailed %d creatures\nfound in the world around.\n\n\n", desc_num);
+    sprintf(retbuf, "<t t=\"Bestiary\">\nHerein are detailed %d creatures\nfound in the world around.\n\n\n", desc_num);
 
     tmp = get_random_mon(1);
     do
@@ -1359,7 +1359,7 @@ void make_formula_book(object *book, int level)
 
     if (fl->total_chance == 0)
     {
-        FREE_AND_COPY_HASH(book->msg, " *indescipherable text*\n");
+        FREE_AND_COPY_HASH(book->msg, " *indecipherable text*\n");
         new_text_name(book, 4);
         add_author(book, 4);
         return;
@@ -1375,11 +1375,11 @@ void make_formula_book(object *book, int level)
     }
 
     /* preamble */
-    strcpy(retbuf, "Herein is described an alchemical proceedure: \n");
+    strcpy(retbuf, "Herein is described an alchemical procedure: \n");
 
     if (!formula)
     {
-        FREE_AND_COPY_HASH(book->msg, " *indescipherable text*\n");
+        FREE_AND_COPY_HASH(book->msg, " *indecipherable text*\n");
         new_text_name(book, 4);
         add_author(book, 4);
     }
@@ -1487,7 +1487,7 @@ char * msgfile_msg(int level, int booksize)
     if (msg && !book_overflow(retbuf, msg->name, booksize))
         strcpy(retbuf, msg->name);
     else
-        sprintf(retbuf, "\n *undecipherable text*");
+        sprintf(retbuf, "\n *indecipherable text*");
 
 #ifdef BOOK_MSG_DEBUG
     LOG(llevDebug, "\n info_list_msg() created strng: %d\n", strlen(retbuf));
@@ -1511,12 +1511,12 @@ char * god_info_msg(int level, int booksize)
     object     *god     = pntr_to_god_obj(get_rand_god());
 
     if (!god)
-        return "\n *undecipherable text*"; /* Problem. but avoid returning NULL */
+        return "\n *indecipherable text*"; /* Problem. but avoid returning NULL */
     name = god->name;
 
     /* preamble.. */
     sprintf(retbuf, "<t t=\"%s\">This document contains knowledge concerning\n", name);
-    sprintf(retbuf, "%sthe diety %s", retbuf, name);
+    sprintf(retbuf, "%sthe deity %s", retbuf, name);
 
     /* Always have as default information the god's descriptive terms. */
     if (nstrtok(god->msg, ",") > 0)
