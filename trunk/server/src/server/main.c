@@ -897,6 +897,8 @@ int main(int argc, char **argv)
     CFParm  CFP;
 #endif
 
+global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem in the startup */
+
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY ;
 #endif
@@ -917,6 +919,7 @@ int main(int argc, char **argv)
 #ifdef DEBUG_TRAVERSE_PLAYER_DIR
     traverse_player_stats("./data/players");
 #endif
+    global_exit_return = EXIT_NORMAL;
 
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
     for (; ;)

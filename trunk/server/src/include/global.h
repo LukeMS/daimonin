@@ -502,6 +502,7 @@ EXTERN void (*object_initializers[256])(object *);
 EXTERN _srv_client_files        SrvClientFiles[SRV_CLIENT_FILES];
 EXTERN Socket_Info              socket_info;
 
+EXTERN int                      global_exit_return; /* return value for exit() */
 EXTERN long                     global_instance_id; /* every instance has a base ID at server runtime */
 EXTERN int                      global_instance_num; /* every instance has an unique tag/number */
 EXTERN uint32                   global_group_tag; /* every group gets an unique group tag identifier */

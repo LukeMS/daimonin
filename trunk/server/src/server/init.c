@@ -645,7 +645,7 @@ static void rec_sighup(int i)
         emergency_save(0);
         cleanup(0);
     }
-    exit(0);
+    exit(global_exit_return);
 }
 
 static void rec_sigquit(int i)
@@ -971,7 +971,7 @@ void fatal_signal(int make_core, int close_sockets)
     }
     if (make_core)
         abort();
-    exit(0);
+    exit(global_exit_return);
 }
 
 
