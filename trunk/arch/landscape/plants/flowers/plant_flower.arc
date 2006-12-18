@@ -96,3 +96,24 @@ face plant_flower14.101
 no_pick 1
 type 79
 end
+Object red_flower
+name flower
+layer 4
+face red_flower.101
+no_pick 1
+type 79
+end
+Object spike_flower
+name flower
+layer 4
+face spike_flower.101
+no_pick 1
+type 79
+end
+Object red_flowers
+name flower
+layer 4
+face red_flowers.101
+no_pick 1
+type 79
+end
