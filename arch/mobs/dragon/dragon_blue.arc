@@ -46,7 +46,8 @@ resist_confusion 40
 resist_cold 100
 dam 82
 weapon_speed 3.5
-attack_pierce 100
+attack_cleave 50
+attack_electricity 50
 speed -0.061
 level 1
 weight 950000
