@@ -654,8 +654,8 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     struct linger       linger_opt;
 
     /* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
-#if 1 /* small hack until we make it configurable to fix mantis 0000425 */
-/*#ifndef HAVE_GETADDRINFO*/
+#ifndef HAVE_GETADDRINFO
+    /* This method is preferable unless IPv6 is required, due to buggy distros. See mantis 0000425 */
     struct protoent *protox;
     struct sockaddr_in  insock;
 
@@ -707,7 +707,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    /* Workaround for issue #425 on OSs with broken NIS+ like FC5. 
+    /* Try to work around for issue #425 on OSs with broken NIS+ like FC5. 
      * This should disable any service lookup */
     hints.ai_flags = AI_NUMERICSERV; 
 
