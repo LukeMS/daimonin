@@ -55,3 +55,9 @@ The client can't run without them!
 None of the developers have access to 64-bit or big-endian machines, so we
 can't test the client on those systems. Some problems have been reported.
 If you try this, please let us know how it works.
+
+IPv6
+----
+The client does optionally support IPv6. To enable IPv6 support, configure with
+"--enable-getaddrinfo". This is disabled by default because of buggy implementations
+on some distros. See Mantis issue #0000425 for more information.
