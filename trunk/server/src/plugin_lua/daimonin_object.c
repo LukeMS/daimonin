@@ -608,7 +608,7 @@ static int GameObject_CreateArtifact(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetName                                               */
-/* Lua    : object:GetName()                                                 */
+/* Lua    : object:GetName(owner)                                            */
 /* Info   : same as query_short_name()                                       */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -622,6 +622,8 @@ static int GameObject_GetName(lua_State *L)
 
 	if(owner)
 		obj = owner->data.object;
+    else
+        obj = self->data.object;
 
 	result = hooks->query_short_name(WHO, obj);
 

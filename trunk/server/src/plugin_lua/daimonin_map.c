@@ -132,7 +132,7 @@ static int Map_ReadyInheritedMap(lua_State *L)
 /*****************************************************************************/
 static int Map_Delete(lua_State *L)
 {
-    char const *path_sh;
+    char const *path_sh = NULL;
     int         map_player = FALSE, flags = 0;
     lua_object *mapobj;
     mapstruct *map;
