@@ -285,11 +285,12 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
         case FIELDTYPE_MAP:
           /* TODO: maps should also include the tag (or whatever)
            * to handle validation in long-running scripts */
-          if(field_ptr == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY )
+          if((*(mapstruct **)field_ptr) == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY )
           {
               lua_pushnil(L);
               return 1;
           }
+          LOG(llevDebug, "Get FIELDTYPE_MAP - not NULL!\n");
           return push_object(L, &Map, *(mapstruct * *) field_ptr);
         case FIELDTYPE_OBJECT:
           return push_object(L, &GameObject, *(object * *) field_ptr);
