@@ -60,6 +60,7 @@ extern Suite *treasurelists_suite(void);
 extern Suite *readable_suite(void);
 extern Suite *holy_suite(void);
 extern Suite *buttons_suite(void);
+extern Suite *lua_suite(void);
     
 void run_unit_tests(void)
 {
@@ -73,6 +74,7 @@ void run_unit_tests(void)
     srunner_add_suite(sr, readable_suite());
     srunner_add_suite(sr, holy_suite());
     srunner_add_suite(sr, buttons_suite());
+    srunner_add_suite(sr, lua_suite());
     
     fprintf(stderr, "Running Daimonin Test Suites\n");
     

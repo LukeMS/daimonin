@@ -34,6 +34,7 @@ SRCS = \
 	test_holy.c \
 	test_readable.c \
 	test_buttons.c \
+	test_lua.c \
 	benchmark_hashtable.c \
 	benchmark_shstr.c \
 	benchmark_main.c \
