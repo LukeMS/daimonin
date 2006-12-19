@@ -1,0 +1,31 @@
+arch map
+name Test Lua
+msg
+Creator: gecko
+Date:    2006-12-19
+endmsg
+width 24
+height 24
+difficulty 1
+end
+arch cube_gel
+x 2
+y 1
+arch waypoint
+hp 5
+sp 1
+cursed 1
+arch beacon
+name waypoint
+end
+arch event_obj
+name Lua
+race test_lua_waypoint.lua
+sub_type 10
+end
+end
+end
+arch sign
+x 5
+y 1
+end
