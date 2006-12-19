@@ -2364,7 +2364,7 @@ object * insert_ob_in_ob(object *op, object *where)
 
 int check_walk_on(object *const op, object *const originator, int flags)
 {
-    object     *tmp; /*, *head=op->head?op->head:op*/;
+    object     *tmp /*, *head=op->head?op->head:op*/;
     int         local_walk_semaphore    = FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
     tag_t       tag;
     int fly;
@@ -2391,7 +2391,7 @@ int check_walk_on(object *const op, object *const originator, int flags)
         CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
     }
 
-    for (tmp = GET_MAP_BOTTOM_OB(op); tmp != NULL; tmp = tmp->above)
+    for (tmp = GET_BOTTOM_MAP_OB(op); tmp != NULL; tmp = tmp->above)
     {
         if (tmp == op)
             continue;    /* Can't apply yourself */        
