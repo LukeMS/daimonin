@@ -510,11 +510,11 @@ void process_events()
 #endif /* TIME PROCESS EVENTS */
 }
 
-void clean_tmp_files()
+void clean_tmp_files(int flag)
 {
     mapstruct  *m, *next;
 
-    LOG(llevInfo, "Cleaning up...\n");
+    LOG(llevInfo, "Save maps and cleaning up...\n");
 
     /* We save the maps - it may not be intuitive why, but if there are unique
      * items, we need to save the map so they get saved off.  Perhaps we should
@@ -530,10 +530,14 @@ void clean_tmp_files()
          * the for loop but is in the #else bracket.  IF we are recycling the maps,
          * we certainly don't want the temp maps removed.
          */
+        if(flag)
+        {
+
 #ifdef RECYCLE_TMP_MAPS
-        swap_map(m, 0);
+            swap_map(m, 0);
 #else
-        new_save_map(m, 0); /* note we save here into a overlay map */
+            new_save_map(m, 0);
+        }
         clean_tmp_map(m);
 #endif
     }
@@ -542,7 +546,7 @@ void clean_tmp_files()
 void cleanup_without_exit()
 {
     LOG(llevDebug, "Cleanup called.  freeing data.\n");
-    clean_tmp_files();
+    clean_tmp_files(TRUE);
     write_book_archive();
     write_todclock();   /* lets just write the clock here */
     save_ban_file();

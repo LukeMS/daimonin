@@ -964,7 +964,7 @@ void fatal_signal(int make_core, int close_sockets)
         removePlugins();
 #endif
         emergency_save(0);
-        clean_tmp_files();
+        clean_tmp_files(FALSE);
         write_book_archive();
         write_todclock();   /* lets just write the clock here */
         save_ban_file();

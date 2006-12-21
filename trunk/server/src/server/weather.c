@@ -74,6 +74,8 @@ void write_todclock()
     char    filename[MAX_BUF];
     FILE   *fp;
 
+    LOG(llevInfo, "write todclock()...\n");
+
     sprintf(filename, "%s/clockdata", settings.localdir);
     if ((fp = fopen(filename, "w")) == NULL)
     {
