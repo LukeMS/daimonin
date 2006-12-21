@@ -24,9 +24,9 @@
 */
 
 #ifdef MAKE
-#define Version "BETA4-0.970pr3"
+#define Version "BETA4-0.970pr4"
 #else
-#define VERSION "BETA4-0.970pr3"
+#define VERSION "BETA4-0.970pr4"
 #endif
 
 #define VERSION_CS 991022

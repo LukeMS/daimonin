@@ -369,7 +369,7 @@ char                       *crypt_string(char *str, char *salt);
 int                         get_new_instance_num(void);
 void                        process_players1(mapstruct *map);
 void                        process_players2(mapstruct *map);
-void                        clean_tmp_files(void);
+void                        clean_tmp_files(int flag);
 void                        cleanup(int exit);
 void                        cleanup_without_exit();
 void                        leave(player *pl, int draw_exit);
