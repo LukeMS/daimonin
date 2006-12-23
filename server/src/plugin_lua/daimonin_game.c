@@ -315,14 +315,14 @@ static int Game_LoadObject(lua_State *L)
 {
     object *whoptr;
     char   *dumpob;
-    CFParm *CFR;
+    CFParm *CFR, CFP;
     lua_object *self;
 
     get_lua_args(L, "Gs", &self, &dumpob);
 
     /* First step: We create the object */
-    GCFP.Value[0] = (void *) (dumpob);
-    CFR = (PlugHooks[HOOK_LOADOBJECT]) (&GCFP);
+    CFP.Value[0] = (void *) (dumpob);
+    CFR = (PlugHooks[HOOK_LOADOBJECT]) (&CFP);
     whoptr = (object *) (CFR->Value[0]);
     free(CFR);
 
@@ -428,14 +428,14 @@ static int Game_FindPlayer(lua_State *L)
 {
     player *foundpl;
     object *foundob = NULL;
-    CFParm *CFR;
+    CFParm *CFR, CFP;
     char   *txt;
     lua_object *self;
 
     get_lua_args(L, "Gs", &self, &txt);
 
-    GCFP.Value[0] = (void *) (txt);
-    CFR = (PlugHooks[HOOK_FINDPLAYER]) (&GCFP);
+    CFP.Value[0] = (void *) (txt);
+    CFR = (PlugHooks[HOOK_FINDPLAYER]) (&CFP);
     foundpl = (player *) (CFR->Value[0]);
     free(CFR);
 

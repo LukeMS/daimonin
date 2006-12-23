@@ -201,15 +201,15 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 {
     int         x, y;
     object     *val;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     lua_object *map;
 
     get_lua_args(L, "Mii", &map, &x, &y);
 
-    GCFP.Value[0] = map->data.map;
-    GCFP.Value[1] = (void *) (&x);
-    GCFP.Value[2] = (void *) (&y);
-    CFR = (PlugHooks[HOOK_GETMAPOBJECT]) (&GCFP);
+    CFP.Value[0] = map->data.map;
+    CFP.Value[1] = (void *) (&x);
+    CFP.Value[2] = (void *) (&y);
+    CFR = (PlugHooks[HOOK_GETMAPOBJECT]) (&CFP);
     val = (object *) (CFR->Value[0]);
 
     return push_object(L, &GameObject, val);
@@ -282,16 +282,16 @@ static int Map_IsWallOnSquare(lua_State *L)
 static int Map_MapTileAt(lua_State *L)
 {
     int         x, y;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     mapstruct  *result;
     lua_object *map;
 
     get_lua_args(L, "Mii", &map, &x, &y);
 
-    GCFP.Value[0] = map->data.map;
-    GCFP.Value[1] = (void *) (&x);
-    GCFP.Value[2] = (void *) (&y);
-    CFR = (PlugHooks[HOOK_OUTOFMAP]) (&GCFP);
+    CFP.Value[0] = map->data.map;
+    CFP.Value[1] = (void *) (&x);
+    CFP.Value[2] = (void *) (&y);
+    CFR = (PlugHooks[HOOK_OUTOFMAP]) (&CFP);
     result = (mapstruct *) (CFR->Value[0]);
 
     return push_object(L, &Map, result);
@@ -378,18 +378,21 @@ static int Map_CreateObject(lua_State *L)
 {
     char       *txt;
     int         x, y;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     lua_object *map;
+    object     *new_ob;
 
     get_lua_args(L, "Msii", &map, &txt, &x, &y);
 
-    GCFP.Value[0] = (void *) (txt);
-    GCFP.Value[1] = (void *) (map->data.map);
-    GCFP.Value[2] = (void *) (&x);
-    GCFP.Value[3] = (void *) (&y);
-    CFR = (PlugHooks[HOOK_CREATEOBJECT]) (&GCFP);
+    CFP.Value[0] = (void *) (txt);
+    CFP.Value[1] = (void *) (map->data.map);
+    CFP.Value[2] = (void *) (&x);
+    CFP.Value[3] = (void *) (&y);
+    CFR = (PlugHooks[HOOK_CREATEOBJECT]) (&CFP);
+    new_ob =  (object *) (CFR->Value[0]);
+    free(CFR);
 
-    return push_object(L, &GameObject, (object *) (CFR->Value[0]));
+    return push_object(L, &GameObject, new_ob);
 }
 
 

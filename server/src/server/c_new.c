@@ -96,7 +96,7 @@ CommArray_s * find_command_element(char *cmd, CommArray_s *commarray, int commsi
  */
 int execute_newserver_command(object *pl, char *command)
 {
-    CommArray_s    *csp;
+    CommArray_s    *csp = NULL, plug_csp;
     char           *cp;
 
     /* remove the command from the parameters */
@@ -109,7 +109,8 @@ int execute_newserver_command(object *pl, char *command)
             cp = NULL;
     }
 
-    csp = find_plugin_command(command, pl);
+    if(find_plugin_command(command, pl, &plug_csp))
+        csp = &plug_csp;
 
     if (!csp)
         csp = find_command_element(command, Commands, CommandsSize);

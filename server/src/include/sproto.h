@@ -488,7 +488,7 @@ object                     *get_event_object(object *op, int event_nr);
 int							trigger_object_plugin_event(int event_type,
 								object *const me, object *const activator, object *const other,
 								const char *msg, int *parm1, int *parm2, int *parm3, int flags);
-CommArray_s                *find_plugin_command(const char *cmd, object *op);
+int                         find_plugin_command(const char *cmd, object *op, CommArray_s *ret);
 void                        displayPluginsList(object *op);
 int                         findPlugin(const char *id);
 void                        initPlugins(void);
