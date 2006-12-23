@@ -55,12 +55,6 @@ f_plugin                        PlugHooks[1024];
 /* New-styled hooks */
 struct plugin_hooklist         *hooks;
 
-/* This one is used to cleanly pass args to the CF core */
-CFParm                          GCFP;
-CFParm                          GCFP0;
-CFParm                          GCFP1;
-CFParm                          GCFP2;
-
 /* script context list */
 struct lua_context             *first_context;
 /* Tag counter for contexts */
@@ -358,10 +352,11 @@ void detach_lua_context(struct lua_context *context, int resume_time)
     if(first_context == NULL)
     {
         /* Register for global tick events */
+        CFParm CFP;
         int evt = EVENT_CLOCK;
-        GCFP.Value[0] = (void *)(&evt);
-        GCFP.Value[1] = (void *)PLUGIN_NAME;
-        (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+        CFP.Value[0] = (void *)(&evt);
+        CFP.Value[1] = (void *)PLUGIN_NAME;
+        (PlugHooks[HOOK_REGISTEREVENT])(&CFP);
     }
 
     lua_context_insert(context);
@@ -377,10 +372,11 @@ void terminate_lua_context(struct lua_context *context)
         if(first_context == NULL)
         {
             /* Unregister for global tick events */
+            CFParm CFP;
             int evt = EVENT_CLOCK;
-            GCFP.Value[0] = (void *)(&evt);
-            GCFP.Value[1] = (void *)PLUGIN_NAME;
-            (PlugHooks[HOOK_UNREGISTEREVENT])(&GCFP);
+            CFP.Value[0] = (void *)(&evt);
+            CFP.Value[1] = (void *)PLUGIN_NAME;
+            (PlugHooks[HOOK_UNREGISTEREVENT])(&CFP);
         }
     }
 
@@ -491,11 +487,10 @@ MODULEAPI void registerHooks(struct plugin_hooklist *hooklist)
 /* require more CPU time than Local Events, and are sometimes difficult to   */
 /* bind to any specific object.                                              */
 /*****************************************************************************/
-MODULEAPI CFParm * triggerEvent(CFParm *PParm)
+MODULEAPI int triggerEvent(CFParm *PParm)
 {
-    /*CFParm *CFP; */
-    int         eventcode;
-    static int  result;
+    int eventcode;
+    int result;
 
     eventcode = *(int *) (PParm->Value[0]);
     switch (eventcode)
@@ -536,9 +531,8 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
           result = HandleGlobalEvent(PParm);
           break;
     }
-    GCFP.Value[0] = (void *) (&result);
 
-    return &GCFP;
+    return result;
 }
 
 /*****************************************************************************/
@@ -830,15 +824,15 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 /* - The second returned value is the name "in clear" of the plugin, used for*/
 /*   information purposes.                                                   */
 /*****************************************************************************/
-MODULEAPI CFParm * initPlugin(CFParm *PParm)
+MODULEAPI int initPlugin(CFParm *PParm, const char **name, const char **version)
 {
     LOG(llevDebug, "    Daimonin Lua Plugin loading.....\n");
 
     init_Daimonin_Lua();
 
-    GCFP.Value[0] = (void *) PLUGIN_NAME;
-    GCFP.Value[1] = (void *) PLUGIN_VERSION;
-    return &GCFP;
+    *name = PLUGIN_NAME;
+    *version = PLUGIN_VERSION;
+    return 0;
 }
 
 /*****************************************************************************/
@@ -866,36 +860,34 @@ MODULEAPI CFParm * removePlugin(CFParm *PParm)
 /*****************************************************************************/
 /* This function is called to ask various informations to the plugin.        */
 /*****************************************************************************/
-MODULEAPI CFParm * getPluginProperty(CFParm *PParm)
+MODULEAPI int getPluginProperty(CFParm *PParm, CommArray_s *RTNCmd)
 {
-    double  dblval  = 0.0;
-    //    int i;
     if (PParm != NULL)
     {
         if (PParm->Value[0] && !strcmp((char *) (PParm->Value[0]), "command?"))
         {
             if (PParm->Value[1] && !strcmp((char *) (PParm->Value[1]), PLUGIN_NAME))
             {
-                GCFP.Value[0] = PParm->Value[1];
-                GCFP.Value[1] = &cmd_aboutLua;
-                GCFP.Value[2] = &dblval; /* FIXME: type mismatch float/double */
-                return &GCFP;
+                RTNCmd->name = PParm->Value[1];
+                RTNCmd->func = cmd_aboutLua;
+                RTNCmd->time = 0.0;
+                return 1;
             }
             else
             {
 #if 0
+                int i;
                 for (i=0;i<NR_CUSTOM_CMD;i++)
                 {
                     if (CustomCommand[i].name)
                     {
                         if (!strcmp(CustomCommand[i].name,(char *)(PParm->Value[1])))
                         {
-                            LOG(llevDebug, "LUA - Running command %s\n",CustomCommand[i].name);
-                            GCFP.Value[0] = PParm->Value[1];
-                            GCFP.Value[1] = cmd_customLua   ;
-                            GCFP.Value[2] = &(CustomCommand[i].speed); /* FIXME: tpye mismatch */
+                            RTNCmd->name = PParm->Value[1];
+                            RTNCmd->func = cmd_customLua;
+                            RTNCmd->time = CustomCommand[i].speed;
                             NextCustomCommand = i;
-                            return &GCFP;
+                            return 1;
                         }
                     }
                 }
@@ -907,7 +899,7 @@ MODULEAPI CFParm * getPluginProperty(CFParm *PParm)
             LOG(llevDebug, "LUA - Unknown property tag: %s\n", (char *) (PParm->Value[0]));
         }
     }
-    return NULL;
+    return 0;
 }
 
 #if 0

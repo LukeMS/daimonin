@@ -135,7 +135,6 @@ int trigger_object_plugin_event(
         int flags)
 {
     CFParm  CFP;
-    CFParm *CFR;
     object *event_obj;
     int plugin;
 
@@ -177,6 +176,7 @@ int trigger_object_plugin_event(
 
     if (event_obj->name && (plugin = findPlugin(event_obj->name)) >= 0)
     {
+        int returnvalue;
 #ifdef TIME_SCRIPTS
             int             count   = 0;
             struct timeval  start, stop;
@@ -184,7 +184,7 @@ int trigger_object_plugin_event(
             gettimeofday(&start, NULL);
 
             for (count = 0; count < 10000; count++)
-                CFR = ((PlugList[plugin].eventfunc) (&CFP));
+                returnvalue = PlugList[plugin].eventfunc(&CFP);
 
             gettimeofday(&stop, NULL);
             start_u = start.tv_sec * 1000000 + start.tv_usec;
@@ -192,11 +192,10 @@ int trigger_object_plugin_event(
 
             LOG(llevDebug, "running time: %2.4f s\n", (stop_u - start_u) / 1000000.0);
 #else
-        CFR = ((PlugList[plugin].eventfunc) (&CFP));
+        returnvalue = PlugList[plugin].eventfunc(&CFP);
 #endif
         /* TODO: we could really use a more efficient event interface */
-        if(CFR && CFR->Value[0])
-            return *(int *) (CFR->Value[0]);
+        return returnvalue;
     }
     else
     {
@@ -212,32 +211,25 @@ int trigger_object_plugin_event(
 /* Note that find_plugin_command is called *before* the internal commands are*/
 /* checked, meaning that you can "overwrite" them.                           */
 /*****************************************************************************/
-CommArray_s * find_plugin_command(const char *cmd, object *op)
+int find_plugin_command(const char *cmd, object *op, CommArray_s *RTNCmd)
 {
     CFParm              CmdParm;
-    CFParm             *RTNValue;
     int                 i;
-    char                cmdchar[10];
-    static CommArray_s  RTNCmd;
-
-    strcpy(cmdchar, "command?");
+    char               *cmdchar = "command?";
+    
     CmdParm.Value[0] = cmdchar;
     CmdParm.Value[1] = (char *) cmd;
     CmdParm.Value[2] = op;
 
     for (i = 0; i < PlugNR; i++)
     {
-        RTNValue = (PlugList[i].propfunc(&CmdParm));
-        if (RTNValue != NULL)
+        if(PlugList[i].propfunc(&CmdParm, RTNCmd))
         {
-            RTNCmd.name = (char *) (RTNValue->Value[0]);
-            RTNCmd.func = (CommFunc) (RTNValue->Value[1]);
-            RTNCmd.time = *(float *) (RTNValue->Value[2]);
-            LOG(llevInfo, "RTNCMD: name %s, time %f\n", RTNCmd.name, RTNCmd.time);
-            return &RTNCmd;
+            LOG(llevInfo, "RTNCMD: name %s, time %f\n", RTNCmd->name, RTNCmd->time);
+            return 1;
         }
     }
-    return NULL;
+    return 0;
 }
 
 /*****************************************************************************/
@@ -337,7 +329,7 @@ void initOnePlugin(const char *pluginfile)
         return;
     }
     PlugList[PlugNR].libptr = DLLInstance;
-    PlugList[PlugNR].initfunc = (f_plugin) (GetProcAddress(DLLInstance, "initPlugin"));
+    PlugList[PlugNR].initfunc = (f_plugin_init) (GetProcAddress(DLLInstance, "initPlugin"));
     if (PlugList[PlugNR].initfunc == NULL)
     {
         LOG(llevBug, "BUG: Plugin init error\n");
@@ -346,7 +338,7 @@ void initOnePlugin(const char *pluginfile)
     }
     else
     {
-        CFParm *InitParm;
+        const char *name = "(unknown)", *version = "(unknown)";
 
         /* We must send the hooks first of all, so the plugin can use the LOG function */
         if ((registerHooksFunc = (void *) GetProcAddress(DLLInstance, "registerHooks")))
@@ -354,16 +346,16 @@ void initOnePlugin(const char *pluginfile)
             registerHooksFunc(&hooklist);
         }
 
-        InitParm = PlugList[PlugNR].initfunc(NULL);
-        LOG(llevInfo, "Plugin name: %s, known as %s\n", (char *) (InitParm->Value[1]), (char *) (InitParm->Value[0]));
-        strcpy(PlugList[PlugNR].id, (char *) (InitParm->Value[0]));
-        strcpy(PlugList[PlugNR].fullname, (char *) (InitParm->Value[1]));
+        PlugList[PlugNR].initfunc(NULL, &name, &version);
+        LOG(llevInfo, "Plugin name: %s, known as %s\n", version, name);
+        PlugList[PlugNR].id = add_string(name);
+        PlugList[PlugNR].fullname = add_string(version);
     }
     PlugList[PlugNR].removefunc = (f_plugin) (GetProcAddress(DLLInstance, "removePlugin"));
     PlugList[PlugNR].hookfunc = (f_plugin) (GetProcAddress(DLLInstance, "registerHook"));
-    PlugList[PlugNR].eventfunc = (f_plugin) (GetProcAddress(DLLInstance, "triggerEvent"));
+    PlugList[PlugNR].eventfunc = (f_plugin_event) (GetProcAddress(DLLInstance, "triggerEvent"));
     PlugList[PlugNR].pinitfunc = (f_plugin) (GetProcAddress(DLLInstance, "postinitPlugin"));
-    PlugList[PlugNR].propfunc = (f_plugin) (GetProcAddress(DLLInstance, "getPluginProperty"));
+    PlugList[PlugNR].propfunc = (f_plugin_prop) (GetProcAddress(DLLInstance, "getPluginProperty"));
     if (PlugList[PlugNR].pinitfunc == NULL)
     {
         LOG(llevBug, "BUG: Plugin postinit error\n");
@@ -422,6 +414,10 @@ void removeOnePlugin(const char *id)
         return;
     if (PlugList[plid].removefunc != NULL)
         PlugList[plid].removefunc(NULL);
+    
+    FREE_ONLY_HASH(PlugList[plid].id);
+    FREE_ONLY_HASH(PlugList[plid].fullname);
+
     /* We unload the library... */
     FreeLibrary(PlugList[plid].libptr);
     /* Then we copy the rest on the list back one position */
@@ -468,8 +464,7 @@ void initPlugins(void)
                 /* don't load "." marker, CVS directory or all which has a .txt inside */
                 if (strcmp(namelist[n]->d_name, ".")
                  && !strstr(namelist[n]->d_name, ".txt")
-                 && strcmp(namelist[n]->d_name,
-                                                                                                       "CVS"))
+                 && strcmp(namelist[n]->d_name, "CVS"))
                 {
                     strcpy(buf2, buf);
                     strcat(buf2, namelist[n]->d_name);
@@ -494,6 +489,10 @@ void removeOnePlugin(const char *id)
         return;
     if (PlugList[plid].removefunc != NULL)
         PlugList[plid].removefunc(NULL);
+    
+    FREE_ONLY_HASH(PlugList[plid].id);
+    FREE_ONLY_HASH(PlugList[plid].fullname);
+
     /* We unload the library... */
     dlclose(PlugList[plid].libptr);
     /* Then we copy the rest on the list back one position */
@@ -527,14 +526,14 @@ void initOnePlugin(const char *pluginfile)
         return;
     }
     PlugList[PlugNR].libptr = ptr;
-    PlugList[PlugNR].initfunc = (f_plugin) (dlsym(ptr, "initPlugin"));
+    PlugList[PlugNR].initfunc = (f_plugin_init) (dlsym(ptr, "initPlugin"));
     if (PlugList[PlugNR].initfunc == NULL)
     {
         LOG(llevInfo, "Plugin init error: %s\n", dlerror());
     }
     else
     {
-        CFParm *InitParm;
+        const char *name = "(unknown)", *version = "(unknown)";
 
         /* We must send the hooks first of all, so the plugin can use the LOG function */
         if ((registerHooksFunc = dlsym(ptr, "registerHooks")))
@@ -542,17 +541,16 @@ void initOnePlugin(const char *pluginfile)
             registerHooksFunc(&hooklist);
         }
 
-        InitParm = PlugList[PlugNR].initfunc(NULL);
-        LOG(llevInfo, "    Plugin %s loaded under the name of %s\n", (char *) (InitParm->Value[1]),
-            (char *) (InitParm->Value[0]));
-        strcpy(PlugList[PlugNR].id, (char *) (InitParm->Value[0]));
-        strcpy(PlugList[PlugNR].fullname, (char *) (InitParm->Value[1]));
+        PlugList[PlugNR].initfunc(NULL, &name, &version);
+        LOG(llevInfo, "    Plugin %s loaded under the name of %s\n", version, name);
+        PlugList[PlugNR].id = add_string(name);
+        PlugList[PlugNR].fullname = add_string(version);
     }
     PlugList[PlugNR].removefunc = (f_plugin) (dlsym(ptr, "removePlugin"));
     PlugList[PlugNR].hookfunc = (f_plugin) (dlsym(ptr, "registerHook"));
-    PlugList[PlugNR].eventfunc = (f_plugin) (dlsym(ptr, "triggerEvent"));
+    PlugList[PlugNR].eventfunc = (f_plugin_event) (dlsym(ptr, "triggerEvent"));
     PlugList[PlugNR].pinitfunc = (f_plugin) (dlsym(ptr, "postinitPlugin"));
-    PlugList[PlugNR].propfunc = (f_plugin) (dlsym(ptr, "getPluginProperty"));
+    PlugList[PlugNR].propfunc = (f_plugin_prop) (dlsym(ptr, "getPluginProperty"));
     LOG(llevInfo, "Done\n");
     if (PlugList[PlugNR].pinitfunc == NULL)
     {
@@ -599,7 +597,7 @@ void removePlugins(void)
     if (PlugNR)
     {
         int i;
-        char* ids[32];
+        shstr *ids[32];
 
         LOG(llevInfo, "Unloading plugins:\n");
         for (i = 0; i != PlugNR; ++i)
@@ -818,8 +816,8 @@ CFParm * CFWDoLearnSpell(CFParm *PParm)
     {
         do_learn_spell((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]), 0);
         /* The 0 parameter is marker for special_prayer - godgiven spells,
-             * which will be deleted when player changes god.
-             */
+         * which will be deleted when player changes god.
+         */
     }
     return NULL;
 }
@@ -1142,20 +1140,22 @@ void GlobalEvent(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWCreateObject(CFParm *PParm)
 {
-    static CFParm   CFP;
+    CFParm         *CFP;
     archetype      *arch;
     object         *newobj;
 
-    CFP.Value[0] = NULL;
+    CFP = (CFParm *)malloc(sizeof(CFParm));
+
+    CFP->Value[0] = NULL;
 
     if (!(arch = find_archetype((char *) (PParm->Value[0]))))
-        return(&CFP);
+        return(CFP);
 
     if (arch->clone.type == PLAYER)
-        return(&CFP);
+        return(CFP);
 
     if (!(newobj = arch_to_object(arch)))
-        return(&CFP);
+        return(CFP);
 
     newobj->x = *(int *) (PParm->Value[2]);
     newobj->y = *(int *) (PParm->Value[3]);
@@ -1165,6 +1165,6 @@ CFParm * CFWCreateObject(CFParm *PParm)
     
     newobj = insert_ob_in_map(newobj, (mapstruct *) (PParm->Value[1]), NULL, 0);
 
-    CFP.Value[0] = newobj;
-    return (&CFP);
+    CFP->Value[0] = newobj;
+    return (CFP);
 }

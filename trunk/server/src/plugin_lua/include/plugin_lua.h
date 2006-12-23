@@ -122,19 +122,12 @@ extern int              cache_ref;
 
 /* The declarations for the plugin interface. Every plugin should have those.*/
 extern MODULEAPI CFParm    *registerHook(CFParm *PParm);
-extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
-extern MODULEAPI CFParm    *initPlugin(CFParm *PParm);
+extern MODULEAPI int        triggerEvent(CFParm *PParm);
+extern MODULEAPI int        initPlugin(CFParm *PParm, const char **name, const char **version);
 extern MODULEAPI CFParm    *postinitPlugin(CFParm *PParm);
 extern MODULEAPI CFParm    *removePlugin(CFParm *PParm);
-extern MODULEAPI CFParm    *getPluginProperty(CFParm *PParm);
+extern MODULEAPI int        getPluginProperty(CFParm *PParm, CommArray_s *RTNCmd);
 
-/* This one is used to cleanly pass args to the CF core */
-extern CFParm           GCFP;
-extern CFParm           GCFP0;
-extern CFParm           GCFP1;
-extern CFParm           GCFP2;
-
-/* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
 extern MODULEAPI int        HandleUseWeaponEvent(CFParm *CFP);
 extern MODULEAPI int        HandleEvent(CFParm *CFP);

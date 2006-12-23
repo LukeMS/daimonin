@@ -810,14 +810,15 @@ static int GameObject_SetSkill(lua_State *L)
             }
             else
             {
-                /* Gecko: Changed to use actuall skill experience */
+                /* Gecko: Changed to use actual skill experience */
+                CFParm CFP;
                 currentxp = tmp->stats.exp;
                 value = value - currentxp;
 
-                GCFP.Value[0] = (void *) (WHO);
-                GCFP.Value[1] = (void *) (&value);
-                GCFP.Value[2] = (void *) (&skill);
-                (PlugHooks[HOOK_ADDEXP]) (&GCFP);
+                CFP.Value[0] = (void *) (WHO);
+                CFP.Value[1] = (void *) (&value);
+                CFP.Value[2] = (void *) (&skill);
+                (PlugHooks[HOOK_ADDEXP]) (&CFP);
             }
             /*LOG(-1,"LEVEL2 %d (->%d) :: %s (exp %d)\n",tmp->level,level,STRING_OBJ_NAME(tmp), tmp->stats.exp);*/
             if (WHO->type == PLAYER && CONTR(WHO))
@@ -877,13 +878,13 @@ static int GameObject_CheckTrigger(lua_State *L)
 
 static int GameObject_GetGod(lua_State *L)
 {
-    CFParm         *CFR;
+    CFParm         *CFR, CFP;
     static char    *value;
     lua_object     *self;
-    get_lua_args(L, "O", &self);
+    get_lua_args(L, "O", &self);    
 
-    GCFP.Value[0] = (void *) (WHO);
-    CFR = (PlugHooks[HOOK_DETERMINEGOD]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFR = (PlugHooks[HOOK_DETERMINEGOD]) (&CFP);
     value = (char *) (CFR->Value[0]);
     free(CFR);
 
@@ -903,6 +904,7 @@ static int GameObject_SetGod(lua_State *L)
     object     *tmp;
     CFParm     *CFR0;
     CFParm     *CFR;
+    CFParm      CFP0, CFP1, CFP2;
     int         value;
     lua_object *self;
 
@@ -911,20 +913,20 @@ static int GameObject_SetGod(lua_State *L)
 	SET_FLAG(WHO, FLAG_FIX_PLAYER);
     FREE_AND_COPY_HASH(prayname, "praying");
 
-    GCFP1.Value[0] = (void *) (WHO);
-    GCFP1.Value[1] = (void *) (prayname);
+    CFP1.Value[0] = (void *) (WHO);
+    CFP1.Value[1] = (void *) (prayname);
 
-    GCFP2.Value[0] = (void *) (WHO);
-    GCFP0.Value[0] = (char *) (txt);
-    CFR0 = (PlugHooks[HOOK_FINDGOD]) (&GCFP0);
+    CFP2.Value[0] = (void *) (WHO);
+    CFP0.Value[0] = (char *) (txt);
+    CFR0 = (PlugHooks[HOOK_FINDGOD]) (&CFP0);
     tmp = (object *) (CFR0->Value[0]);
     free(CFR0);
-    GCFP2.Value[1] = (void *) (tmp);
+    CFP2.Value[1] = (void *) (tmp);
 
-    CFR = (PlugHooks[HOOK_CMDRSKILL]) (&GCFP1);
+    CFR = (PlugHooks[HOOK_CMDRSKILL]) (&CFP1);
     value = *(int *) (CFR->Value[0]);
     if (value)
-        (PlugHooks[HOOK_BECOMEFOLLOWER]) (&GCFP2);
+        (PlugHooks[HOOK_BECOMEFOLLOWER]) (&CFP2);
     free(CFR);
 
     FREE_ONLY_HASH(prayname);
@@ -952,8 +954,9 @@ static int GameObject_InsertInside(lua_State *L)
 
     if (!QUERY_FLAG(myob, FLAG_REMOVED))
     {
-        GCFP.Value[0] = (void *) (myob);
-        (PlugHooks[HOOK_REMOVEOBJECT]) (&GCFP);
+        CFParm CFP;
+        CFP.Value[0] = (void *) (myob);
+        (PlugHooks[HOOK_REMOVEOBJECT]) (&CFP);
     }
 
     myob = hooks->insert_ob_in_ob(myob, WHERE);
@@ -984,16 +987,16 @@ static int GameObject_Apply(lua_State *L)
 {
     lua_object *whatptr;
     int         flags;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     int         retval;
     lua_object *self;
 
     get_lua_args(L, "OOi", &self, &whatptr, &flags);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (WHAT);
-    GCFP.Value[2] = (void *) (&flags);
-    CFR = (PlugHooks[HOOK_MANUALAPPLY]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (WHAT);
+    CFP.Value[2] = (void *) (&flags);
+    CFR = (PlugHooks[HOOK_MANUALAPPLY]) (&CFP);
     retval = *(int *) (CFR->Value[0]);
     free(CFR);
 
@@ -1010,12 +1013,13 @@ static int GameObject_Apply(lua_State *L)
 static int GameObject_PickUp(lua_State *L)
 {
     lua_object *whatptr, *self;
+    CFParm CFP;
 
     get_lua_args(L, "OO", &self, &whatptr);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (WHAT);
-    (PlugHooks[HOOK_PICKUP]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (WHAT);
+    (PlugHooks[HOOK_PICKUP]) (&CFP);
 
     return 0;
 }
@@ -1033,14 +1037,14 @@ static int GameObject_PickUp(lua_State *L)
 static int GameObject_Drop(lua_State *L)
 {
     char       *name;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     lua_object *self;
 
     get_lua_args(L, "Os", &self, &name);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (name);
-    CFR = (PlugHooks[HOOK_CMDDROP]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (name);
+    CFR = (PlugHooks[HOOK_CMDDROP]) (&CFP);
     free(CFR);
 
     return 0;
@@ -1055,14 +1059,14 @@ static int GameObject_Drop(lua_State *L)
 static int GameObject_Take(lua_State *L)
 {
     char       *name;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     lua_object *self;
 
     get_lua_args(L, "Os", &self, &name);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (name);
-    CFR = (PlugHooks[HOOK_CMDTAKE]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (name);
+    CFR = (PlugHooks[HOOK_CMDTAKE]) (&CFP);
     free(CFR);
 
     return 0;
@@ -1224,13 +1228,14 @@ static int GameObject_Communicate(lua_State *L)
 {
     char       *message;
     lua_object *self;
+    CFParm CFP;
 
     get_lua_args(L, "Os", &self, &message);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (message);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (message);
 
-    (PlugHooks[HOOK_COMMUNICATE]) (&GCFP);
+    (PlugHooks[HOOK_COMMUNICATE]) (&CFP);
 
     return 0;
 }
@@ -1571,15 +1576,15 @@ static int GameObject_Kill(lua_State *L)
     lua_object *whatptr;
     int         ktype;
     int         k   = 1;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     lua_object *self;
 
     get_lua_args(L, "OOi", &self, &whatptr, &ktype);
 
     WHAT->speed = 0;
     WHAT->speed_left = 0.0;
-    GCFP.Value[0] = (void *) (WHAT);
-    (PlugHooks[HOOK_UPDATESPEED]) (&GCFP);
+    CFP.Value[0] = (void *) (WHAT);
+    (PlugHooks[HOOK_UPDATESPEED]) (&CFP);
     /* update_ob_speed(WHAT); */
 
     if (QUERY_FLAG(WHAT, FLAG_REMOVED))
@@ -1590,12 +1595,12 @@ static int GameObject_Kill(lua_State *L)
     else
     {
         WHAT->stats.hp = -1;
-        GCFP.Value[0] = (void *) (WHAT);
-        GCFP.Value[1] = (void *) (&k);
-        GCFP.Value[2] = (void *) (WHO);
-        GCFP.Value[3] = (void *) (&ktype);
+        CFP.Value[0] = (void *) (WHAT);
+        CFP.Value[1] = (void *) (&k);
+        CFP.Value[2] = (void *) (WHO);
+        CFP.Value[3] = (void *) (&ktype);
 
-        CFR = (PlugHooks[HOOK_KILLOBJECT]) (&GCFP);
+        CFR = (PlugHooks[HOOK_KILLOBJECT]) (&CFP);
         free(CFR);
     }
 
@@ -1662,15 +1667,15 @@ static int GameObject_CastSpell(lua_State *L)
 static int GameObject_DoKnowSpell(lua_State *L)
 {
     int         spell;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     int         value;
     lua_object *self;
 
     get_lua_args(L, "Oi", &self, &spell);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&spell);
-    CFR = (PlugHooks[HOOK_CHECKFORSPELL]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (&spell);
+    CFR = (PlugHooks[HOOK_CHECKFORSPELL]) (&CFP);
     value = *(int *) (CFR->Value[0]);
     free(CFR);
 
@@ -1690,13 +1695,14 @@ static int GameObject_AcquireSpell(lua_State *L)
     int         spell;
     int         mode;
     lua_object *self;
+    CFParm      CFP;
 
     get_lua_args(L, "Oii", &self, &spell, &mode);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&spell);
-    GCFP.Value[2] = (void *) (&mode);
-    (PlugHooks[HOOK_LEARNSPELL]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (&spell);
+    CFP.Value[2] = (void *) (&mode);
+    (PlugHooks[HOOK_LEARNSPELL]) (&CFP);
 
     return 0;
 }
@@ -1735,13 +1741,14 @@ static int GameObject_AcquireSkill(lua_State *L)
 {
     int         skill, mode;
     lua_object *self;
+    CFParm      CFP;
 
     get_lua_args(L, "Oii", &self, &skill, &mode);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&skill);
-    GCFP.Value[2] = (void *) (&mode);
-    (PlugHooks[HOOK_LEARNSKILL]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (&skill);
+    CFP.Value[2] = (void *) (&mode);
+    (PlugHooks[HOOK_LEARNSKILL]) (&CFP);
 
     return 0;
 }
@@ -1756,13 +1763,13 @@ static int GameObject_AcquireSkill(lua_State *L)
 static int GameObject_FindMarkedObject(lua_State *L)
 {
     object     *value;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     lua_object *self;
 
     get_lua_args(L, "O", &self);
 
-    GCFP.Value[0] = (void *) (WHO);
-    CFR = (PlugHooks[HOOK_FINDMARKEDOBJECT]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFR = (PlugHooks[HOOK_FINDMARKEDOBJECT]) (&CFP);
 
     value = (object *) (CFR->Value[0]);
     /*free(CFR); findmarkedobject use static parameters */
@@ -1821,11 +1828,12 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     /* For temporary forces */
     if (time > 0)
     {
+        CFParm CFP;
         SET_FLAG(myob, FLAG_IS_USED_UP);
         myob->stats.food = time;
         myob->speed = 0.02f;
-        GCFP.Value[0] = (void *) (myob);
-        (PlugHooks[HOOK_UPDATESPEED]) (&GCFP);
+        CFP.Value[0] = (void *) (myob);
+        (PlugHooks[HOOK_UPDATESPEED]) (&CFP);
     }
 
     /* setup the force and put it in activator */
@@ -2364,6 +2372,7 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     char       *txt;
     object     *myob;
     lua_object *whereptr;
+    CFParm      CFP;
 
     get_lua_args(L, "Os", &whereptr, &txt);
 
@@ -2375,8 +2384,8 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
         luaL_error(L, "Cant't find archtype 'force'");
     }
     myob->speed = 0.0;
-    GCFP.Value[0] = (void *) (myob);
-    (PlugHooks[HOOK_UPDATESPEED]) (&GCFP);
+    CFP.Value[0] = (void *) (myob);
+    (PlugHooks[HOOK_UPDATESPEED]) (&CFP);
 
     /*update_ob_speed(myob); */
     FREE_AND_COPY_HASH(myob->slaying, txt);
@@ -2607,14 +2616,15 @@ static int GameObject_Remove(lua_State *L)
     lua_object *self;
     object     *myob;
     object     *obenv, *tmp;
+    CFParm      CFP;
 
     get_lua_args(L, "O", &self);
 
     myob = WHO;
     obenv = myob->env;
 
-    GCFP.Value[0] = (void *) (myob);
-    (PlugHooks[HOOK_REMOVEOBJECT]) (&GCFP);
+    CFP.Value[0] = (void *) (myob);
+    (PlugHooks[HOOK_REMOVEOBJECT]) (&CFP);
 
     /* Update player's inventory if object was removed from player
      * TODO: see how well this works with things in containers */
@@ -2685,6 +2695,7 @@ static int GameObject_IdentifyItem(lua_State *L)
     lua_object *target;
     lua_object *ob      = NULL;
     object     *marked  = NULL;
+    CFParm      CFP;
     int         mode;
 
     get_lua_args(L, "OO?Oi", &self, &target, &ob, &mode);
@@ -2703,11 +2714,11 @@ static int GameObject_IdentifyItem(lua_State *L)
     else
         luaL_error(L, "Mode must be IDENTIFY_NORMAL, IDENTIFY_ALL or IDENTIFY_MARKED");
 
-    GCFP.Value[0] = (void *) WHO;
-    GCFP.Value[1] = (void *) target->data.object;
-    GCFP.Value[2] = (void *) marked; /* is used when we use mode == 2 */
-    GCFP.Value[3] = (void *) &mode;
-    (PlugHooks[HOOK_IDENTIFYOBJECT]) (&GCFP);
+    CFP.Value[0] = (void *) WHO;
+    CFP.Value[1] = (void *) target->data.object;
+    CFP.Value[2] = (void *) marked; /* is used when we use mode == 2 */
+    CFP.Value[3] = (void *) &mode;
+    (PlugHooks[HOOK_IDENTIFYOBJECT]) (&CFP);
 
     return 0;
 }
@@ -2721,12 +2732,12 @@ static int GameObject_Save(lua_State *L)
 {
     lua_object     *self;
     static char    *result;
-    CFParm         *CFR;
+    CFParm         *CFR, CFP;
 
     get_lua_args(L, "O", &self);
 
-    GCFP.Value[0] = (void *) (WHO);
-    CFR = (PlugHooks[HOOK_DUMPOBJECT]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFR = (PlugHooks[HOOK_DUMPOBJECT]) (&CFP);
     result = (char *) (CFR->Value[0]);
     free(CFR);
 
@@ -2956,12 +2967,13 @@ static int GameObject_SendCustomCommand(lua_State *L)
 {
     lua_object *self;
     char       *customcmd;
+    CFParm      CFP;
 
     get_lua_args(L, "Os", &self, &customcmd);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (customcmd);
-    (PlugHooks[HOOK_SENDCUSTOMCOMMAND]) (&GCFP);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (customcmd);
+    (PlugHooks[HOOK_SENDCUSTOMCOMMAND]) (&CFP);
 
     return 0;
 }
@@ -2978,16 +2990,16 @@ static int GameObject_SendCustomCommand(lua_State *L)
 static int GameObject_Clone(lua_State *L)
 {
     lua_object *self;
-    CFParm     *CFR;
+    CFParm     *CFR, CFP;
     int         mode    = 0;
     object     *clone;
 
     get_lua_args(L, "O|i", &self, &mode);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&mode);
+    CFP.Value[0] = (void *) (WHO);
+    CFP.Value[1] = (void *) (&mode);
 
-    CFR = (PlugHooks[HOOK_CLONEOBJECT]) (&GCFP);
+    CFR = (PlugHooks[HOOK_CLONEOBJECT]) (&CFP);
 
     clone = (object *) (CFR->Value[0]);
     free(CFR);

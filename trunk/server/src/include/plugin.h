@@ -210,7 +210,12 @@ typedef struct _CFParm
 /*****************************************************************************/
 /* Generic plugin function prototype. All hook functions follow this.        */
 /*****************************************************************************/
-typedef CFParm*(*f_plugin) (CFParm *PParm);
+typedef CFParm*(*f_plugin)    (CFParm *PParm);
+
+typedef int (*f_plugin_event) (CFParm *PParm);
+typedef int (*f_plugin_prop)  (CFParm *PParm, CommArray_s *RTNCmd);
+typedef int (*f_plugin_init)  (CFParm *PParm, const char **name, const char **version);
+
 
 /*****************************************************************************/
 /* CFPlugin contains all pertinent informations about one plugin. The server */
@@ -225,16 +230,16 @@ typedef CFParm*(*f_plugin) (CFParm *PParm);
 #endif
 typedef struct _CFPlugin
 {
-    f_plugin    eventfunc;          /* Event Handler function            */
-    f_plugin    initfunc;           /* Plugin Initialization function.   */
-    f_plugin    pinitfunc;          /* Plugin Post-Init. function.       */
-    f_plugin    removefunc;         /* Plugin Closing function.          */
-    f_plugin    hookfunc;           /* Plugin CF-funct. hooker function  */
-    f_plugin    propfunc;           /* Plugin getProperty function       */
-    LIBPTRTYPE  libptr;             /* Pointer to the plugin library     */
-    char        id[MAX_BUF];        /* Plugin identification string      */
-    char        fullname[MAX_BUF];  /* Plugin full name                  */
-    int         gevent[NR_EVENTS];  /* Global events registered          */
+    f_plugin_event    eventfunc;          /* Event Handler function            */
+    f_plugin_init     initfunc;           /* Plugin Initialization function.   */
+    f_plugin          pinitfunc;          /* Plugin Post-Init. function.       */
+    f_plugin          removefunc;         /* Plugin Closing function.          */
+    f_plugin          hookfunc;           /* Plugin CF-funct. hooker function  */
+    f_plugin_prop     propfunc;           /* Plugin getProperty function       */
+    LIBPTRTYPE        libptr;             /* Pointer to the plugin library     */
+    shstr             *id;                /* Plugin identification string      */
+    shstr             *fullname;          /* Plugin full name                  */
+    int               gevent[NR_EVENTS];  /* Global events registered          */
 } CFPlugin;
 
 /* Test of a new, more efficient hook system */
@@ -374,12 +379,13 @@ struct plugin_hooklist
 /* registerHook      is used to transmit hook pointers from server to plugin.*/
 /* triggerEvent      is called whenever an event occurs.                     */
 /*****************************************************************************/
+/*
 extern MODULEAPI CFParm    *initPlugin(CFParm *PParm);
 extern MODULEAPI CFParm    *removePlugin(CFParm *PParm);
 extern MODULEAPI CFParm    *getPluginProperty(CFParm *PParm);
 extern MODULEAPI CFParm    *registerHook(CFParm *PParm);
 extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
-
+*/
 
 /* Table of all loaded plugins */
 #define    PLUGINS_MAX_NROF 32
