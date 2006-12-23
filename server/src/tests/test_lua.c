@@ -56,7 +56,8 @@ START_TEST (lua_null_map)
             NULL, NULL, NULL, NULL, 0);
     
     fail_if(strcmp(cube->title, "after") == 0, "Script didn't abort");
-    fail_if(strcmp(cube->title, "before") != 0, "Script didn't run(?)");
+    fail_if(strcmp(cube->title, "before") == 0, "Script crashed early");
+    fail_if(strcmp(cube->title, "checkpoint") != 0, "Script didn't run(?)");
 }
 END_TEST
 
