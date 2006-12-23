@@ -558,7 +558,7 @@ int enter_map_by_exit(object *op, object *exit_ob)
 {
     int flags, mstatus;
     mapstruct  *newmap;
-    const char *file_path, *dyn_path = NULL;
+    const char *file_path = NULL, *dyn_path = NULL;
     shstr      *reference = NULL;
 
     if (op->head)

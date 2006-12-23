@@ -138,8 +138,8 @@ int command_kickcmd(object *ob, char *params)
 int command_kick(object *ob, char *params)
 {
     struct pl_player   *pl;
-    const char         *name_hash;
-    int                    ret=0;
+    const char         *name_hash = NULL;
+    int                 ret=0;
 
     if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
         return 0;

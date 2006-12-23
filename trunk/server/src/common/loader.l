@@ -94,7 +94,7 @@ WS	[ \t]*{NL}?
 			  */
 			if (op->arch) {
 				artifact *tmp_art;
-			    object *tmp, *tmp2;
+			    object *tmp = NULL, *tmp2 = NULL;
 				float old_sleft,old_speed;
 
 			    tmp=get_object();
@@ -751,7 +751,7 @@ void *create_loader_buffer(void *fp)
  * Note: load_object can be called with fp = FILE * and fp = char * - so we have here void used 
  */
 int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flags) {
-    int retval;
+    int retval = 0;
 	float old_speed, old_sleft;
     char inbuf[MAX_BUF];
 

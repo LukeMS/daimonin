@@ -135,7 +135,7 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
 struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
                               struct obj *hitter, struct obj *hitter_owner, int dmg, int flags)
 {
-    struct obj *history, *aggro, *tmp;
+    struct obj *history = NULL, *aggro = NULL, *tmp = NULL;
     int skill_nr = 0;
 
     /* no legal hitter, no need for aggro.

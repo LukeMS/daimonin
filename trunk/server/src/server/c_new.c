@@ -307,8 +307,8 @@ static int valid_new_target(object *op, object *candidate)
 int command_target(object *op, char *params)
 {
     mapstruct  *m;
-    object     *tmp, *head;
-    int         jump_in, jump_in_n, get_ob_flag;
+    object     *tmp = NULL, *head;
+    int         jump_in, jump_in_n = 0, get_ob_flag;
     int         n, nt, xt, yt, block;
 
     if (!op || !op->map || op->type != PLAYER || !CONTR(op) || !params || params[0] == 0)
