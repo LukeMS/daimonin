@@ -290,7 +290,6 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
               lua_pushnil(L);
               return 1;
           }
-          LOG(llevDebug, "Get FIELDTYPE_MAP - not NULL!\n");
           return push_object(L, &Map, *(mapstruct * *) field_ptr);
         case FIELDTYPE_OBJECT:
           return push_object(L, &GameObject, *(object * *) field_ptr);
