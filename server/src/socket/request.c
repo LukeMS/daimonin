@@ -1210,7 +1210,7 @@ void draw_client_map2(object *pl)
     New_Face       *face;
     mapstruct      *m;
 	player		   *pl_ptr = CONTR(pl);
-    object         *tmp, *tmph, *pname2, *pname3, *pname4;
+    object         *tmp = NULL, *tmph = NULL, *pname2 = NULL, *pname3 = NULL, *pname4 = NULL;
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
     int             x_start, dm_light = 0;
     int             dark, flag_tmp, special_vision;

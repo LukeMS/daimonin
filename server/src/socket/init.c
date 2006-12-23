@@ -250,7 +250,7 @@ int create_socket()
      * socket that handles IPv4 already has been create, so failures will have
      * to be ignored as long as at least one socket is created.     
      */
-    int fd;
+    int fd = -1;
     struct addrinfo hints, *res, *ai;
     char portstr[NI_MAXSERV];
 

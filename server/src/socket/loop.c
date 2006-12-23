@@ -340,7 +340,7 @@ static int socket_prepare_commands(NewSocket *ns)
 {
 	int toread, flag;
 	SockList *rb = &ns->readbuf;
-	command_struct *cmdptr;
+	command_struct *cmdptr = NULL;
 
 	while(rb->len >= 2)/* there is something in our in buffer amd its at last a valid length value */
 	{

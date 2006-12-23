@@ -2343,8 +2343,8 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 int cast_detection(object *op, object *target, int type)
 {
     int         nx, ny, suc = FALSE, sucmap = FALSE;
-    object     *tmp;
-    mapstruct  *m;
+    object     *tmp = NULL;
+    mapstruct  *m = NULL;
 
     switch (type)
     {

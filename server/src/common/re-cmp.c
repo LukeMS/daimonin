@@ -83,7 +83,7 @@ char * re_cmp(char *str, char *regexp)
 {
     char   *next_regexp;
     Boolean once    = False;
-    Boolean matched;
+    Boolean matched = False;
 
     if (re_init_done == False)
         re_init();
