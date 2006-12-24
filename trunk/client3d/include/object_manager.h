@@ -37,6 +37,7 @@ using namespace Ogre;
 // ////////////////////////////////////////////////////////////////////
 // Define:
 // player:  human controlled.
+// hero:    human controlled (the one in front of this keyboard).
 // monster: ai controlled.
 // ////////////////////////////////////////////////////////////////////
 
@@ -95,7 +96,7 @@ public:
     }
     void freeRecources();
     bool init();
-    void addMobileObject(sObject &obj);
+    void addMobileObject(ObjectStatic::sObject &obj);
     void delObjectNPC(int number);
     void delObjectStatic(int number);
     void update(int type, const FrameEvent& evt);
@@ -182,8 +183,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectManager()
-    {}
+    ObjectManager() {}
     ~ObjectManager();
     ObjectManager(const ObjectManager&); // disable copy-constructor.
     void extractObject(MovableObject *mob);

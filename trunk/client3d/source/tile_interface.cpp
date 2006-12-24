@@ -114,9 +114,9 @@ void TileInterface::pickTile(float mouseX, float mouseY)
     // We start with our 4 tringles (each tile = 4 triangles).
     // Then we divide each triangle several times to increase the accuracy.
     // ////////////////////////////////////////////////////////////////////
-    for (mPos.x = 0; mPos.x < CHUNK_SIZE_X; ++mPos.x)
+    for (mPos.x = 0; mPos.x < TileManager::CHUNK_SIZE_X; ++mPos.x)
     {
-        for (mPos.z = 0; mPos.z < CHUNK_SIZE_Z; ++mPos.z)
+        for (mPos.z = 0; mPos.z < TileManager::CHUNK_SIZE_Z; ++mPos.z)
         {
             if (getPickPos(&mouseRay, QUADRANT_LEFT  )) return; // Found the clicked pos.
             if (getPickPos(&mouseRay, QUADRANT_RIGHT )) return; // Found the clicked pos.
@@ -233,43 +233,43 @@ void TileInterface::fillVectors(TilePos &tile, int quad)
 {
     if (quad == QUADRANT_LEFT)
     {
-        mTris[0].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[0].x = (tile.x+0.0)*TileManager::TILE_SIZE_X;
         mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x,tile.z);
-        mTris[0].z = (tile.z+0.0)*TILE_SIZE_Z;
-        mTris[1].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[0].z = (tile.z+0.0)*TileManager::TILE_SIZE_Z;
+        mTris[1].x = (tile.x+0.0)*TileManager::TILE_SIZE_X;
         mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z+1);
-        mTris[1].z = (tile.z+1.0)*TILE_SIZE_Z;
+        mTris[1].z = (tile.z+1.0)*TileManager::TILE_SIZE_Z;
     }
     else if (quad == QUADRANT_RIGHT)
     {
-        mTris[0].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[0].x = (tile.x+1.0)*TileManager::TILE_SIZE_X;
         mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z+1);
-        mTris[0].z = (tile.z+1.0)*TILE_SIZE_Z;
-        mTris[1].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[0].z = (tile.z+1.0)*TileManager::TILE_SIZE_Z;
+        mTris[1].x = (tile.x+1.0)*TileManager::TILE_SIZE_X;
         mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z);
-        mTris[1].z = (tile.z+0.0)*TILE_SIZE_Z;
+        mTris[1].z = (tile.z+0.0)*TileManager::TILE_SIZE_Z;
     }
     else if (quad == QUADRANT_TOP)
     {
-        mTris[0].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[0].x = (tile.x+1.0)*TileManager::TILE_SIZE_X;
         mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z);
-        mTris[0].z = (tile.z+0.0)*TILE_SIZE_Z;
-        mTris[1].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[0].z = (tile.z+0.0)*TileManager::TILE_SIZE_Z;
+        mTris[1].x = (tile.x+0.0)*TileManager::TILE_SIZE_X;
         mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z);
-        mTris[1].z = (tile.z+0.0)*TILE_SIZE_Z;
+        mTris[1].z = (tile.z+0.0)*TileManager::TILE_SIZE_Z;
     }
     else // QUADRANT_BOTTOM
     {
-        mTris[0].x = (tile.x+0.0)*TILE_SIZE_X;
+        mTris[0].x = (tile.x+0.0)*TileManager::TILE_SIZE_X;
         mTris[0].y = TileManager::getSingleton().getMapHeight(tile.x, tile.z+1);
-        mTris[0].z = (tile.z+1.0)*TILE_SIZE_Z;
-        mTris[1].x = (tile.x+1.0)*TILE_SIZE_X;
+        mTris[0].z = (tile.z+1.0)*TileManager::TILE_SIZE_Z;
+        mTris[1].x = (tile.x+1.0)*TileManager::TILE_SIZE_X;
         mTris[1].y = TileManager::getSingleton().getMapHeight(tile.x+1, tile.z+1);
-        mTris[1].z = (tile.z+1.0)*TILE_SIZE_Z;
+        mTris[1].z = (tile.z+1.0)*TileManager::TILE_SIZE_Z;
     }
-    mTris[2].x = (tile.x+0.5)*TILE_SIZE_X;
+    mTris[2].x = (tile.x+0.5)*TileManager::TILE_SIZE_X;
     mTris[2].y = TileManager::getSingleton().getAvgMapHeight(tile.x, tile.z);
-    mTris[2].z = (tile.z+0.5)*TILE_SIZE_Z;
+    mTris[2].z = (tile.z+0.5)*TileManager::TILE_SIZE_Z;
 }
 
 //================================================================================================
@@ -277,7 +277,7 @@ void TileInterface::fillVectors(TilePos &tile, int quad)
 //================================================================================================
 int TileInterface::calcTileDistance(const TilePos &pos1, const TilePos &pos2)
 {
-    int deltaZ = Math::IAbs((pos1.z * SUM_SUBTILES + pos1.subZ) - (pos2.z * SUM_SUBTILES + pos2.subZ));
-    int deltaX = Math::IAbs((pos1.x * SUM_SUBTILES + pos1.subX) - (pos2.x * SUM_SUBTILES + pos2.subX));
+    int deltaZ = Math::IAbs((pos1.z * TileManager::SUM_SUBTILES + pos1.subZ) - (pos2.z * TileManager::SUM_SUBTILES + pos2.subZ));
+    int deltaX = Math::IAbs((pos1.x * TileManager::SUM_SUBTILES + pos1.subX) - (pos2.x * TileManager::SUM_SUBTILES + pos2.subX));
     return (deltaZ > deltaX)?deltaZ:deltaX;
 }

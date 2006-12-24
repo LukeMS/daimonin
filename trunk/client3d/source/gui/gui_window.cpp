@@ -668,7 +668,7 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
     switch (message)
     {
 
-        case GUI_MSG_ADD_TABLEROW:
+        case GuiManager::GUI_MSG_ADD_TABLEROW:
             for (unsigned int i = 0; i < mvTable.size() ; ++i)
             {
                 if (mvTable[i]->getIndex() != element)
@@ -678,7 +678,7 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
             }
             break;
 
-        case GUI_MSG_BAR_CHANGED:
+        case GuiManager::GUI_MSG_BAR_CHANGED:
             for (unsigned int i = 0; i < mvStatusbar.size() ; ++i)
             {
                 if (mvStatusbar[i]->getIndex() != element)
@@ -689,7 +689,7 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
             }
             break;
 
-        case GUI_MSG_TXT_CHANGED:
+        case GuiManager::GUI_MSG_TXT_CHANGED:
             for (unsigned int i = 0; i < mvTextline.size() ; ++i)
             {
                 if (mvTextline[i]->index == element)
@@ -709,7 +709,7 @@ const char *GuiWindow::Message(int message, int element, void *value, void *valu
             }
             break;
 
-        case GUI_MSG_TXT_GET:
+        case GuiManager::GUI_MSG_TXT_GET:
             for (unsigned int i = 0; i < mvTextline.size() ; ++i)
             {
                 if (mvTextline[i]->index != element)
@@ -795,5 +795,5 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
             GuiDialog::getSingleton().buttonEvent(1);
             return;
     }
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "button event... ");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "button event... ");
 }

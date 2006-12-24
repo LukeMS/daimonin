@@ -502,7 +502,7 @@ void ObjectNPC::setDamage(int damage)
     Real health = getHealthPercentage();
     if (!mIndex)
     {
-        GuiManager::getSingleton().sendMessage(GUI_WIN_PLAYERCONSOLE, GUI_MSG_BAR_CHANGED,
+        GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_PLAYERCONSOLE, GuiManager::GUI_MSG_BAR_CHANGED,
                                                GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
     }
     else
@@ -565,8 +565,8 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
 //================================================================================================
 void ObjectNPC::faceToTile(TilePos pos)
 {
-    float deltaZ = (pos.z - mActPos.z) * SUM_SUBTILES  +  (pos.subZ - mActPos.subZ);
-    float deltaX = (pos.x - mActPos.x) * SUM_SUBTILES  +  (pos.subX - mActPos.subX);
+    float deltaZ = (pos.z - mActPos.z) * TileManager::SUM_SUBTILES  +  (pos.subZ - mActPos.subZ);
+    float deltaX = (pos.x - mActPos.x) * TileManager::SUM_SUBTILES  +  (pos.subX - mActPos.subX);
 
     // We need the Distance (in sub-Tiles) for a constant walk speed.
     mDistance = Math::Abs(deltaZ) > Math::Abs(deltaX)?Math::Abs(deltaZ)/8:Math::Abs(deltaX)/8;

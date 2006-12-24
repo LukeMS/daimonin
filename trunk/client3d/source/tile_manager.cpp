@@ -656,6 +656,8 @@ void TileManager::setMaterialLOD(int pixel)
     mTileTextureSize = pixel;
     matLand = "LandTiles" + StringConverter::toString(mTileTextureSize, 3, '0');
     matWater= "WaterTiles";
+    //matWater= "Ocean2_Cg";
+    //matWater= "Fresnel";
     if (mGrid)
     {
         matLand +="_Grid";

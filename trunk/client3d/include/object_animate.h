@@ -31,11 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-// ////////////////////////////////////////////////////////////////////
-// Defines.
-// ////////////////////////////////////////////////////////////////////
-
-
 // This will be rewritten for separted Upper/lower Body animation.
 // So it will be possible to walk and shoot arrows at same time without generating
 // Mixed Mode animations.

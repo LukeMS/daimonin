@@ -36,30 +36,6 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-enum
-{
-    GUI_WIN_STATISTICS,
-    GUI_WIN_PLAYERINFO,
-    GUI_WIN_PLAYERCONSOLE,
-    GUI_WIN_TEXTWINDOW,
-    GUI_WIN_SERVERSELECT,
-    GUI_WIN_LOGIN,
-    //  GUI_WIN_CREATION,
-    GUI_WIN_NPCDIALOG,
-    GUI_WIN_SUM
-};
-
-enum
-{
-    GUI_MSG_TXT_GET,
-    GUI_MSG_TXT_CHANGED,
-    GUI_MSG_BAR_CHANGED,
-    GUI_MSG_ADD_TABLEROW,
-    GUI_MSG_BUT_PRESSED,
-    GUI_MSG_GET_SEL_KEY,  /**< Returns the selected keyword **/
-    GUI_MSG_SUM
-};
-
 /**
  ** This is the interface to the world outside.
  ** Alawys use this class to access the gui from outside.
@@ -70,6 +46,28 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        GUI_WIN_STATISTICS,
+        GUI_WIN_PLAYERINFO,
+        GUI_WIN_PLAYERCONSOLE,
+        GUI_WIN_TEXTWINDOW,
+        GUI_WIN_SERVERSELECT,
+        GUI_WIN_LOGIN,
+        //  GUI_WIN_CREATION,
+        GUI_WIN_NPCDIALOG,
+        GUI_WIN_SUM
+    };
+    enum
+    {
+        GUI_MSG_TXT_GET,
+        GUI_MSG_TXT_CHANGED,
+        GUI_MSG_BAR_CHANGED,
+        GUI_MSG_ADD_TABLEROW,
+        GUI_MSG_BUT_PRESSED,
+        GUI_MSG_GET_SEL_KEY,  /**< Returns the selected keyword **/
+        GUI_MSG_SUM
+    };
     enum
     {
         MSG_CHANGE_TEXT, MSG_BUTTON_PRESSED, MSG_SUM

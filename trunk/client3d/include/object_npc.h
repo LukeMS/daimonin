@@ -48,7 +48,7 @@ public:
     sPicture;
     enum
     {
-        HERO /**< ME (mIndex == 0) is our Hero. **/
+        HERO /**< HERO (mIndex == 0) is our Hero. **/
     };
     enum
     {
@@ -112,10 +112,6 @@ public:
     {
         return mDestStepPos;
     }
-
-    // ////////////////////////////////////////////////////////////////////
-    // Functions.
-    // ////////////////////////////////////////////////////////////////////
     void moveToNeighbourTile(int precision =0);
 
 private:

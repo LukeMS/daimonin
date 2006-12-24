@@ -57,7 +57,6 @@ private:
     // ////////////////////////////////////////////////////////////////////
     enum
     {
-
         QUADRANT_LEFT,    /**< Left   tris of a tile. **/
         QUADRANT_TOP,     /**< Top    tris of a tile. **/
         QUADRANT_RIGHT,   /**< Right  tris of a tile. **/

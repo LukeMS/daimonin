@@ -26,6 +26,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "object_static.h"
 #include "object_manager.h"
+#include "tile_manager.h"
 #include "option.h"
 #include "sound.h"
 #include "events.h"
@@ -164,13 +165,13 @@ bool ObjectStatic::update(const FrameEvent& event)
         {
             mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 0, false, true, false, true);
             mOpen = true;
-            Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
+            Network::getSingleton().send_command("/apply", -1, Network::SC_NORMAL);
         }
         else if (mAction == ACTION_CLOSE)
         {
             mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ABILITY, 1, false, true, false, true);
             mOpen = false;
-            Network::getSingleton().send_command("/apply", -1, SC_NORMAL);
+            Network::getSingleton().send_command("/apply", -1, Network::SC_NORMAL);
         }
         mAction = ACTION_NONE;
     }

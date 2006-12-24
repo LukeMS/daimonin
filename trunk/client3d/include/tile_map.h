@@ -29,14 +29,13 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "tile_manager.h"
 
-const int MAXFACES = 4;
-
 class TileMap
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum {MAXFACES = 4};
     enum
     {
         FFLAG_SLEEP     =1 << 0, // object sleeps.
@@ -91,7 +90,7 @@ public:
 
     typedef struct
     {
-        MapCell cells[CHUNK_SIZE_X][CHUNK_SIZE_Z];
+        MapCell cells[TileManager::CHUNK_SIZE_X][TileManager::CHUNK_SIZE_Z];
     }
     Map;
     Map the_map;

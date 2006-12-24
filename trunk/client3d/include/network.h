@@ -44,84 +44,17 @@ http://www.gnu.org/licenses/licenses.html
 #include <fcntl.h>
 #endif
 
-const int SOCKET_NO = -1;
-
 using namespace std;
 
-/// Maximum size of any packet we expect.  Using this makes it so we don't need to
-/// allocated and deallocated the same buffer over and over again and the price
-/// of using a bit of extra memory. IT also makes the code simpler.
-const int  MAXSOCKBUF            = 128*1024;
-const int  MAX_METASTRING_BUFFER = 128*2013;
-const int  MAX_BUF =  256;
-const int  BIG_BUF = 1024;
-const int  STRINGCOMMAND = 0;
-const int  DATA_PACKED_CMD = 0x80;
-const int  SRV_CLIENT_FLAG_BMAP    = 1;
-const int  SRV_CLIENT_FLAG_ANIM    = 2;
-const int  SRV_CLIENT_FLAG_SETTING = 4;
-const int  SRV_CLIENT_FLAG_SKILL   = 8;
-const int  SRV_CLIENT_FLAG_SPELL   =16;
-const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
-const int  VERSION_CS = 991022;
-const int  VERSION_SC = 991022;
-const char VERSION_NAME[] = "Daimonin SDL Client";
-
-// Values for send_command option.
-
-const int  SC_NORMAL  = 0;
-const int  SC_FIRERUN = 1;
-const int  SC_ALWAYS  = 2;
-
-typedef struct
-{
-    string nameip;
-    string version;
-    string desc1;
-    string desc2;
-    string desc3;
-    string desc4;
-    int player;
-    int port;
-}
-mStructServer;
-
-// ClientSocket could probably hold more of the global values - it could
-// probably hold most all socket/communication related values instead
-// of globals.
-typedef struct
-{
-    int fd;
-    std::string inbuf;
-    std::string outbuf;
-    int cs_version, sc_version; // Server versions of these
-    // These are used for the newer 'windowing' method of commands -
-    // number of last command sent, number of received confirmation
-    int command_sent, command_received;
-    // Time (in ms) players commands currently take to execute
-    int command_time;
-}
-ClientSocket;
-
-// Maximum size of any packet we expect.  Using this makes it so we don't need to
-// allocated and deallocated teh same buffer over and over again and the price
-// of using a bit of extra memory. It also makes the code simpler.
-
-#ifdef WIN32
-const int MSG_DONTWAIT = 0;
-#else
-typedef int SOCKET;
-#endif
-const int SOCKET_TIMEOUT_SEC = 8;
 class Network
 {
 public:
-
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
-    static Network &getSingleton()
-    {
-        static Network Singleton; return Singleton;
-    }
+    enum {VERSION_CS = 991022};
+    enum {VERSION_SC = 991022};
 
     typedef struct command_buffer
     {
@@ -131,13 +64,53 @@ public:
         unsigned char *data;
     }
     command_buffer;
+    static command_buffer *input_queue_start,  *input_queue_end;
+    static command_buffer *output_queue_start, *output_queue_end;
 
+    typedef struct
+    {
+        string nameip;
+        string version;
+        string desc1;
+        string desc2;
+        string desc3;
+        string desc4;
+        int player;
+        int port;
+    }
+    mStructServer;
+
+    // ClientSocket could probably hold more of the global values - it could
+    // probably hold most all socket/communication related values instead
+    // of globals.
+    typedef struct
+    {
+        int fd;
+        std::string inbuf;
+        std::string outbuf;
+        int cs_version, sc_version; // Server versions of these
+        // These are used for the newer 'windowing' method of commands -
+        // number of last command sent, number of received confirmation
+        int command_sent, command_received;
+        // Time (in ms) players commands currently take to execute
+        int command_time;
+    }
+    ClientSocket;
+
+    static bool GameStatusVersionOKFlag;
+    static bool GameStatusVersionFlag;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
+    static Network &getSingleton()
+    {
+        static Network Singleton; return Singleton;
+    }
     bool Init();
     void clearMetaServerData();
 
-    static command_buffer *input_queue_start,  *input_queue_end;
-    static command_buffer *output_queue_start, *output_queue_end;
-    static command_buffer *get_next_input_command(void);
+    static command_buffer *get_next_input_command();
     static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
     static void command_buffer_free(command_buffer *buf);
@@ -180,9 +153,6 @@ public:
     void SendVersion();
     void add_metaserver_data(const char *ip, const char *server, int port, int player, const char *ver,
                              const char *desc1, const char *desc2, const char *desc3, const char *desc4);
-    static bool GameStatusVersionOKFlag;
-    static bool GameStatusVersionFlag;
-
     // Commands
     static void CompleteCmd    (unsigned char *data, int len);
     static void VersionCmd     (unsigned char *data, int len);
@@ -226,6 +196,9 @@ public:
     const char *get_metaserver_info(int line, int infoLineNr);
 
 private:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     typedef struct
     {
         std::string name;
@@ -250,8 +223,11 @@ private:
     int SocketStatusErrorNr;
     int mActServerNr;
     struct sockaddr_in  insock;       // Server's attributes
-
     static bool mInitDone;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Functions.
+    // ////////////////////////////////////////////////////////////////////
     void parse_metaserver_data(string strMetaData);
     Network();
     ~Network();

@@ -37,24 +37,21 @@ using namespace Ogre;
 /**
  * TileEngine class which manages all tiles related stuff in the worldmap.
  *****************************************************************************/
-
-
-const int CHUNK_SIZE_X = 17; //11; /**< Number of tiles in the worldmap (on x-axis). */
-const int CHUNK_SIZE_Z = 17; //23; /**< Number of tiles in the worldmap (on z-axis). */
-
-const int MIN_TEXTURE_PIXEL = 16; /**< Minimal size of tile in the terrain texture. */
-
-/** Size of a tile. */
-const int TILE_SIZE_X  = 48;
-const int TILE_SIZE_Z  = 48;
-const int SUM_SUBTILES =  8;
-
 class TileManager
 {
 public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { CHUNK_SIZE_X = 17 }; //11; /**< Number of tiles in the worldmap (on x-axis). */
+    enum { CHUNK_SIZE_Z = 17 }; //23; /**< Number of tiles in the worldmap (on z-axis). */
+    enum { MIN_TEXTURE_PIXEL = 16 }; /**< Minimal size of tile in the terrain texture. */
+
+    /** Size of a tile. */
+    enum { TILE_SIZE_X  = 48 };
+    enum { TILE_SIZE_Z  = 48 };
+    enum { SUM_SUBTILES =  8 };
+
     int map_udate_flag;
     int map_transfer_flag;
     bool map_new_flag;

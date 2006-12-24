@@ -150,7 +150,7 @@ void LogException(Exception& e)
 int main(int argc, char **argv)
 {
     Logger::log().headline("Init Logfile");
-    Option::getSingleton().setGameStatus(GAME_STATUS_CHECK_HARDWARE);
+    Option::getSingleton().setGameStatus(Option::GAME_STATUS_CHECK_HARDWARE);
     Logger::log().headline("Parse CmdLine");
     while (--argc)
     {

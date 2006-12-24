@@ -33,30 +33,33 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-typedef struct
-{
-    int type;                     /**< Type: e.g. static, npc, ... **/
-    String nickName;              /**< Ingame-Name. **/
-    String meshName;              /**< Name of the ogre3d mesh. **/
-    int particleNr;               /**< Number of the particle effect. **/
-    unsigned int index;           /**< Unique number for this object. **/
-    TilePos pos;                 /**< Tile-pos. **/
-    unsigned char boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
-    int level;                    /**< Floor-level. **/
-    char walkable[8];             /**< 8x8 bit for the walkable status of a tile. **/
-    Real facing;
-    int friendly;
-    int attack;
-    int defend;
-    int maxHP;
-    int maxMana;
-    int maxGrace;
-}
-sObject;
-
 class ObjectStatic
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    typedef struct
+    {
+        int type;                     /**< Type: e.g. static, npc, ... **/
+        String nickName;              /**< Ingame-Name. **/
+        String meshName;              /**< Name of the ogre3d mesh. **/
+        int particleNr;               /**< Number of the particle effect. **/
+        unsigned int index;           /**< Unique number for this object. **/
+        TilePos pos;                 /**< Tile-pos. **/
+        unsigned char boundingRadius; /**< The radius of subtiles, the NPC stands on. **/
+        int level;                    /**< Floor-level. **/
+        char walkable[8];             /**< 8x8 bit for the walkable status of a tile. **/
+        Real facing;
+        int friendly;
+        int attack;
+        int defend;
+        int maxHP;
+        int maxMana;
+        int maxGrace;
+    }
+    sObject;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
