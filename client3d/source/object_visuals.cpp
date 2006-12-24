@@ -278,8 +278,8 @@ void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMe
     // ////////////////////////////////////////////////////////////////////
     if (showInteractMenu)
     {
-        GuiManager::getSingleton().centerWindowOnMouse(GUI_WIN_PLAYERCONSOLE);
-        GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, true);
+        GuiManager::getSingleton().centerWindowOnMouse(GuiManager::GUI_WIN_PLAYERCONSOLE);
+        GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERCONSOLE, true);
     }
 }
 
@@ -315,7 +315,7 @@ void ObjectVisuals::unselect()
     if (mPSystem)             mPSystem->setVisible(false);
     mNode[VISUAL_SELECTION] = 0;
     mNode[VISUAL_LIFEBAR] = 0;
-    GuiManager::getSingleton().showWindow(GUI_WIN_PLAYERCONSOLE, false);
+    GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERCONSOLE, false);
 }
 
 

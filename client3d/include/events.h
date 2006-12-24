@@ -29,12 +29,8 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <Ogre.h>
 #include <OgreEventListeners.h>
-#include "tile_manager.h"
 
 using namespace Ogre;
-
-const Real MIN_CAMERA_ZOOM =  20.0;
-const Real MAX_CAMERA_ZOOM =  110.0;
 
 //================================================================================================
 // Class.
@@ -42,11 +38,13 @@ const Real MAX_CAMERA_ZOOM =  110.0;
 class CEvent: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
     enum
     {
         LIGHT_VOL, LIGHT_SPOT
     };
-
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -86,6 +84,11 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        MIN_CAMERA_ZOOM =  20,
+        MAX_CAMERA_ZOOM = 110
+    };
     bool mQuitGame;
     int mDayTime;
     int mSceneDetailIndex;
@@ -108,9 +111,13 @@ private:
     // ////////////////////////////////////////////////////////////////////
     bool frameStarted(const FrameEvent& evt);
     bool frameEnded  (const FrameEvent& evt);
+    bool checkUsername(const char *name);
     void keyClicked (KeyEvent *e);
     void keyPressed (KeyEvent *e);
     void keyReleased(KeyEvent *e);
+    void mouseDragEntered(MouseEvent *) {}
+    void mouseDragExited (MouseEvent *) {}
+    void mouseDragDropped(MouseEvent *) {}
     void mouseMoved   (MouseEvent *e);
     void mouseDragged (MouseEvent *e);
     void mouseClicked (MouseEvent *e);
@@ -118,14 +125,7 @@ private:
     void mouseExited  (MouseEvent *e);
     void mousePressed (MouseEvent *e);
     void mouseReleased(MouseEvent *e);
-    bool checkUsername(const char *name);
-    void mouseDragEntered(MouseEvent* )
-    {}
-    void mouseDragExited(MouseEvent* )
-    {}
-    void mouseDragDropped(MouseEvent* )
-{}}
-;
+};
 
 extern  CEvent *Event;
 

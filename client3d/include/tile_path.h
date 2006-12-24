@@ -29,9 +29,6 @@ http://www.gnu.org/licenses/licenses.html
 
 #include "tile_manager.h"
 
-const int mapWidth  = CHUNK_SIZE_X*8;
-const int mapHeight = CHUNK_SIZE_Z*8;
-
 class TilePath
 {
 
@@ -46,6 +43,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum { mapWidth  = TileManager::CHUNK_SIZE_X*8 };
+    enum { mapHeight = TileManager::CHUNK_SIZE_Z*8 };
     int xPath;
     int yPath;
 

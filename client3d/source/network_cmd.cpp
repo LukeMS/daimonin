@@ -42,6 +42,7 @@ using namespace std;
 
 const int  REQUEST_FACE_MAX = 250;
 const char MAX_LEN_LOGIN_NAME = 15;
+const int  DATA_PACKED_CMD = 0x80;
 
 char playerName[80];
 char playerPassword[80];
@@ -93,21 +94,21 @@ void Network::VersionCmd(unsigned char *data, int len)
     // Later it will be smart to define range where the differences are ok
     if (VERSION_CS != csocket.cs_version)
     {
-        Logger::log().error() << "Invalid CS version (" <<  VERSION_CS << " " << csocket.cs_version << ")";
+        Logger::log().error() << "Invalid CS version (" <<  (int)VERSION_CS << " " << csocket.cs_version << ")";
         if (VERSION_CS > csocket.cs_version)
         {
-            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "The server is outdated!");
-            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Select a different one!");
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "The server is outdated!");
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Select a different one!");
             Logger::log().error() << "The selected server is outdated.";
         }
         else
         {
-            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Your client is outdated!");
-            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Update your client!");
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Your client is outdated!");
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "Update your client!");
             Logger::log().error() << "The client is outdated.";
         }
         SOCKET_CloseSocket();
-        Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
     }
@@ -116,10 +117,10 @@ void Network::VersionCmd(unsigned char *data, int len)
     {
         std::stringstream strCmd;
         strCmd << "Invalid version string: " << data;
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strCmd.str().c_str());
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strCmd.str().c_str());
         Logger::log().error() << data;
         SOCKET_CloseSocket();
-        Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
     }
@@ -128,16 +129,16 @@ void Network::VersionCmd(unsigned char *data, int len)
     {
         std::stringstream strCmd;
         strCmd << "Invalid SC version  (" << VERSION_SC << ", " << csocket.sc_version << ")";
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strCmd.str().c_str());
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strCmd.str().c_str());
         String strBuf;
         if (VERSION_SC > csocket.sc_version)
             strBuf = "The server is outdated!\nSelect a different one!";
         else
             strBuf = "Your client is outdated!\nUpdate your client!";
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.c_str());
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.c_str());
         Logger::log().error() << strBuf;
         SOCKET_CloseSocket();
-        Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
     }
@@ -146,10 +147,10 @@ void Network::VersionCmd(unsigned char *data, int len)
     {
         String strBuf = "Invalid server name: ";
         strBuf+= cp;
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.c_str());
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.c_str());
         Logger::log().error() << strBuf;
         SOCKET_CloseSocket();
-        Option::getSingleton().setGameStatus(GAME_STATUS_START);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
     }
@@ -171,7 +172,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
     }
     else
         ++buf;
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf);
 }
 
 //================================================================================================
@@ -183,7 +184,7 @@ void Network::AddMeFail(unsigned char *data, int len)
     Logger::log().error() << "addme_failed received.\n";
     SOCKET_CloseSocket();
     SDL_Delay(1250);
-    Option::getSingleton().setGameStatus(GAME_STATUS_INIT_NET);
+    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
 }
 
 //================================================================================================
@@ -459,7 +460,7 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
         if (tmp) *tmp = 0;
     }
     // we have communication input
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf); // TESTING!!!
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, buf); // TESTING!!!
     /*
         if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
         {
@@ -653,7 +654,7 @@ void Network::SoundCmd(unsigned char *data, int len)
 void Network::TargetObject(unsigned char *data, int len)
 {
     String strTmp = "["; strTmp += (char*)data+3; strTmp += "] selected";
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strTmp.c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strTmp.c_str());
     /*
         cpl.target_mode = *data++;
         if (cpl.target_mode)
@@ -1222,7 +1223,7 @@ void Network::PlayerCmd(unsigned char *data, int len)
     if (once)
     {
         once = false;
-        sObject obj;
+        ObjectStatic::sObject obj;
         obj.nickName  = "Polyveg";
         obj.meshName  = "Human_M_Fighter.mesh";
         obj.type      = ObjectManager::OBJECT_PLAYER;
@@ -1504,13 +1505,13 @@ void Network::SetupCmd(unsigned char *buf, int len)
         else
         {
             Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
-            GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
             SOCKET_CloseSocket();
-            Option::getSingleton().setGameStatus(GAME_STATUS_START);
+            Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             return;
         }
     }
-    Option::getSingleton().setGameStatus(GAME_STATUS_REQUEST_FILES);
+    Option::getSingleton().setGameStatus(Option::GAME_STATUS_REQUEST_FILES);
 }
 
 //================================================================================================
@@ -1612,7 +1613,7 @@ void Network::DataCmd(unsigned char *data, int len)
 void Network::NewCharCmd(unsigned char *data, int len)
 {
     //dialog_new_char_warn = 0;
-    Option::getSingleton().setGameStatus(GAME_STATUS_NEW_CHAR);
+    Option::getSingleton().setGameStatus(Option::GAME_STATUS_NEW_CHAR);
 }
 
 //================================================================================================
@@ -1791,56 +1792,56 @@ void Network::PreParseInfoStat(char *cmd)
         switch (status)
         {
             case 0:
-                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED, GUI_TEXTBOX_LOGIN_WARN, (void*)"");
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED, GUI_TEXTBOX_LOGIN_WARN, (void*)"");
                 break;
             case 1:
                 if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                            GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000There is no character with that name!~");
                 break;
             case 2:
-                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                        GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name or character is in creating process or blocked!~");
                 break;
             case 3:
                 if (Option::getSingleton().getLoginType() == Option::LOGIN_EXISTING_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                            GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
                 break;
             case 4:
                 if (Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER)
-                    GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                            GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is taken - choose a different one!~");
                 break;
             case 5:
-                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                        GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is banned - choose a different one!~");
                 break;
             case 6:
-                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                        GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
                 break;
             case 7:
-                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                        GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Name is illegal - ITS TO SHORT OR ILLEGAL SIGNS!~");
                 break;
             default:
-                GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+                GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                        GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
                 break;
         }
-        Option::getSingleton().setGameStatus(GAME_STATUS_NAME_INIT);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_NAME_INIT);
     }
     else if (!strncmp(cmd, "QP",2))
     {
         if (status)
-            GuiManager::getSingleton().sendMessage(GUI_WIN_LOGIN, GUI_MSG_TXT_CHANGED,
+            GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_LOGIN, GuiManager::GUI_MSG_TXT_CHANGED,
                                                    GUI_TEXTBOX_LOGIN_WARN, (void*)"~#ffff0000Password is illegal or does not match!~");
-        Option::getSingleton().setGameStatus(GAME_STATUS_PSWD_INIT);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_PSWD_INIT);
     }
     else if (!strncmp(cmd, "QV",2))
     {
-        Option::getSingleton().setGameStatus(GAME_STATUS_VRFY_INIT);
+        Option::getSingleton().setGameStatus(Option::GAME_STATUS_VRFY_INIT);
     }
 }
 

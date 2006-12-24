@@ -83,10 +83,10 @@ TilePath::~TilePath()
 bool TilePath::FindPath(TilePos posStart, TilePos posDest, int precision)
 {
     mPrecision = precision;
-    posStart.subX+= posStart.x* SUM_SUBTILES;
-    posStart.subZ+= posStart.z* SUM_SUBTILES;
-    posDest.subX += posDest.x * SUM_SUBTILES;
-    posDest.subZ += posDest.z * SUM_SUBTILES;
+    posStart.subX+= posStart.x* TileManager::SUM_SUBTILES;
+    posStart.subZ+= posStart.z* TileManager::SUM_SUBTILES;
+    posDest.subX += posDest.x * TileManager::SUM_SUBTILES;
+    posDest.subZ += posDest.z * TileManager::SUM_SUBTILES;
 
     int onOpenList=0, parentXval=0, parentYval=0;
     int a=0, b=0, m=0, u=0, v=0, temp=0, numberOfOpenListItems=0;

@@ -123,9 +123,7 @@ struct CmdMapping commands[]  =
         { "delinv",           Network::DeleteInventory }
     };
 
-#define SOCKET_NO -1
-
-ClientSocket Network::csocket;
+Network::ClientSocket Network::csocket;
 bool Network::abort_thread = false;
 SDL_Thread *Network::input_thread=0;
 SDL_mutex  *Network::input_buffer_mutex =0;
@@ -138,6 +136,36 @@ SDL_mutex  *Network::socket_mutex =0;
 // start is the first waiting item in queue, end is the most recent enqueued
 Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_end = 0;
 Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
+
+const int SOCKET_TIMEOUT_SEC = 8;
+const int SOCKET_NO = -1;
+
+// Maximum size of any packet we expect.  Using this makes it so we don't need to
+// allocated and deallocated the same buffer over and over again and the price
+// of using a bit of extra memory. IT also makes the code simpler.
+const int  MAXSOCKBUF            = 128*1024;
+const int  MAX_METASTRING_BUFFER = 128*2013;
+const int  MAX_BUF =  256;
+const int  BIG_BUF = 1024;
+const int  STRINGCOMMAND = 0;
+const int  SRV_CLIENT_FLAG_BMAP    = 1;
+const int  SRV_CLIENT_FLAG_ANIM    = 2;
+const int  SRV_CLIENT_FLAG_SETTING = 4;
+const int  SRV_CLIENT_FLAG_SKILL   = 8;
+const int  SRV_CLIENT_FLAG_SPELL   =16;
+const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
+const char VERSION_NAME[] = "Daimonin SDL Client";
+
+// Maximum size of any packet we expect.  Using this makes it so we don't need to
+// allocated and deallocated teh same buffer over and over again and the price
+// of using a bit of extra memory. It also makes the code simpler.
+
+#ifdef WIN32
+const int MSG_DONTWAIT = 0;
+#else
+typedef int SOCKET;
+#endif
+
 
 
 //================================================================================================
@@ -945,21 +973,21 @@ void Network::contactMetaserver()
 {
     clearMetaServerData();
     csocket.fd = SOCKET_NO;
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "query metaserver...");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "query metaserver...");
     std::stringstream strBuf;
     strBuf << "trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.str().c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.str().c_str());
     if (SOCKET_OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
     {
         read_metaserver_data();
         SOCKET_CloseSocket();
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "done.");
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "done.");
     }
     else
-        GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "metaserver failed! using default list.");
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "metaserver failed! using default list.");
     add_metaserver_data("127.0.0.1", "127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost.", "Start server before you try to connect.", "", "");
-    GuiManager::getSingleton().addTextline(GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "select a server.");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "select a server.");
 }
 
 //================================================================================================
@@ -1044,7 +1072,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     string strRow = server;
     if (player <0) strRow+=",-";
     else           strRow+=","+StringConverter::toString(player);
-    GuiManager::getSingleton().sendMessage(GUI_WIN_SERVERSELECT, GUI_MSG_ADD_TABLEROW, GUI_TABLE, (void*) strRow.c_str());
+    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT, GuiManager::GUI_MSG_ADD_TABLEROW, GUI_TABLE, (void*) strRow.c_str());
 }
 
 //================================================================================================

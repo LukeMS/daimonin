@@ -216,7 +216,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                sObject obj;
+                ObjectStatic::sObject obj;
                 obj.meshName  = "Smitty.mesh";
                 //obj.meshName  = "Ogre_Big.mesh";
                 obj.nickName  = "Nick_Smith";
@@ -244,7 +244,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                sObject obj;
+                ObjectStatic::sObject obj;
 /*
                 obj.pos.x     = x+2;
                 obj.pos.z     = y;
@@ -378,7 +378,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                sObject obj;
+                ObjectStatic::sObject obj;
                 obj.meshName  = "Sack_N.mesh";
                 obj.nickName  = "Nick_Sack";
                 obj.type      = ObjectManager::OBJECT_CONTAINER;
@@ -405,7 +405,7 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
             if (once)
             {
                 once = false;
-                sObject obj;
+                ObjectStatic::sObject obj;
                 obj.meshName  = "Object_Anvil.mesh";
                 obj.nickName  = "Nick_Anvil";
                 obj.type      = ObjectManager::OBJECT_CONTAINER;

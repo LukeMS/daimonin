@@ -62,10 +62,6 @@ public:
     };
     enum
     {
-        ME /**< ME (mIndex == 0) is our Hero. **/
-    };
-    enum
-    {
         BONE_PELVIS,
         BONE_CENTER,
         BONE_HEAD,

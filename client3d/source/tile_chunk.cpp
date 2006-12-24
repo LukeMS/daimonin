@@ -135,9 +135,9 @@ void TileChunk::createWater_Buffers()
     // Count the Vertices in this chunk.
     // ////////////////////////////////////////////////////////////////////
     unsigned int numVertices = 0;
-    for (int x = 0; x < CHUNK_SIZE_X; ++x)
+    for (int x = 0; x < TileManager::CHUNK_SIZE_X; ++x)
     {
-        for (int z = 0; z < CHUNK_SIZE_Z; ++z)
+        for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
         {
             if (TileManager::getSingleton().getMapHeight(x, z  ) <= LEVEL_WATER_TOP || TileManager::getSingleton().getMapHeight(x+1, z  ) <= LEVEL_WATER_TOP ||
                     TileManager::getSingleton().getMapHeight(x, z+1) <= LEVEL_WATER_TOP || TileManager::getSingleton().getMapHeight(x+1, z+1) <= LEVEL_WATER_TOP)
@@ -184,9 +184,9 @@ void TileChunk::createWater_Buffers()
 
     Real* pReal = static_cast<Real*>(vbuf0->lock (HardwareBuffer::HBL_DISCARD));
     Real q1, q2;
-    for (int x = 0; x < CHUNK_SIZE_X; ++x)
+    for (int x = 0; x < TileManager::CHUNK_SIZE_X; ++x)
     {
-        for (int z = 0; z < CHUNK_SIZE_Z; ++z)
+        for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
         {
             if (TileManager::getSingleton().getMapHeight(x, z  ) <= LEVEL_WATER_TOP ||TileManager::getSingleton().getMapHeight(x+1, z  ) <= LEVEL_WATER_TOP ||
                     TileManager::getSingleton().getMapHeight(x, z+1) <= LEVEL_WATER_TOP || TileManager::getSingleton().getMapHeight(x+1, z+1) <= LEVEL_WATER_TOP)
@@ -208,25 +208,25 @@ void TileChunk::createWater_Buffers()
                     q2 = LEVEL_WATER_CLP + WaveHigh;
                 }
                 // 1. Triangle
-                pReal[o   ] = TILE_SIZE_X * x;
+                pReal[o   ] = TileManager::TILE_SIZE_X * x;
                 pReal[o+ 1] = q1;
-                pReal[o+ 2] = TILE_SIZE_Z * z;
-                pReal[o+10] = TILE_SIZE_X * (x+1);
+                pReal[o+ 2] = TileManager::TILE_SIZE_Z * z;
+                pReal[o+10] = TileManager::TILE_SIZE_X * (x+1);
                 pReal[o+11] = q2;
-                pReal[o+12] = TILE_SIZE_Z * (z);
-                pReal[o+20] = TILE_SIZE_X * (x);
+                pReal[o+12] = TileManager::TILE_SIZE_Z * (z);
+                pReal[o+20] = TileManager::TILE_SIZE_X * (x);
                 pReal[o+21] = q2;
-                pReal[o+22] = TILE_SIZE_Z * (z+1);
+                pReal[o+22] = TileManager::TILE_SIZE_Z * (z+1);
                 // 2. Triangle
-                pReal[o+30] = TILE_SIZE_X * x;
+                pReal[o+30] = TileManager::TILE_SIZE_X * x;
                 pReal[o+31] = q2;
-                pReal[o+32] = TILE_SIZE_Z * (z+1);
-                pReal[o+40] = TILE_SIZE_X * (x+1);
+                pReal[o+32] = TileManager::TILE_SIZE_Z * (z+1);
+                pReal[o+40] = TileManager::TILE_SIZE_X * (x+1);
                 pReal[o+41] = q2;
-                pReal[o+42] = TILE_SIZE_Z * (z);
-                pReal[o+50] = TILE_SIZE_X * (x+1);
+                pReal[o+42] = TileManager::TILE_SIZE_Z * (z);
+                pReal[o+50] = TileManager::TILE_SIZE_X * (x+1);
                 pReal[o+51] = q1;
-                pReal[o+52] = TILE_SIZE_Z * (z+1);
+                pReal[o+52] = TileManager::TILE_SIZE_Z * (z+1);
 
                 // ////////////////////////////////////////////////////////////////////
                 // Normalvektoren
@@ -358,7 +358,7 @@ void TileChunk::changeLand()
 void TileChunk::createLand_Buffers()
 {
     int mapX, mapZ;
-    unsigned int numVertices = CHUNK_SIZE_X * CHUNK_SIZE_Z * 12;
+    unsigned int numVertices = TileManager::CHUNK_SIZE_X * TileManager::CHUNK_SIZE_Z * 12;
 
     // ////////////////////////////////////////////////////////////////////
     // Create VertexData.
@@ -398,9 +398,9 @@ void TileChunk::createLand_Buffers()
     // On odd z positions a subtile from lower half (even ->upper half) of the tile is drawn.
     const Real SUB_POS = (64.0 + 2 * MIPMAP_SPACE) / 1024.0;
 
-    for (int x= 0; x < CHUNK_SIZE_X; ++x)
+    for (int x= 0; x < TileManager::CHUNK_SIZE_X; ++x)
     {
-        for (int z = 0; z < CHUNK_SIZE_Z; ++z)
+        for (int z = 0; z < TileManager::CHUNK_SIZE_Z; ++z)
         {
             g = TileManager::getSingleton().getMapHeight(x  , z  );
             h = TileManager::getSingleton().getMapHeight(x+1, z  );
@@ -411,45 +411,45 @@ void TileChunk::createLand_Buffers()
             // Position.
             // ////////////////////////////////////////////////////////////////////
             // 1. Triangle
-            pReal1[o   ] = TILE_SIZE_X * x;
+            pReal1[o   ] = TileManager::TILE_SIZE_X * x;
             pReal1[o+ 1] = d;
-            pReal1[o+ 2] = TILE_SIZE_Z * (z+1);
-            pReal1[o+12] = TILE_SIZE_X * x;
+            pReal1[o+ 2] = TileManager::TILE_SIZE_Z * (z+1);
+            pReal1[o+12] = TileManager::TILE_SIZE_X * x;
             pReal1[o+13] = g;
-            pReal1[o+14] = TILE_SIZE_Z * z;
-            pReal1[o+24] = TILE_SIZE_X * (x+.5);
+            pReal1[o+14] = TileManager::TILE_SIZE_Z * z;
+            pReal1[o+24] = TileManager::TILE_SIZE_X * (x+.5);
             pReal1[o+25] = average;
-            pReal1[o+26] = TILE_SIZE_Z * (z+.5);
+            pReal1[o+26] = TileManager::TILE_SIZE_Z * (z+.5);
             // 2. Triangle
-            pReal1[o+36] = TILE_SIZE_X * x;
+            pReal1[o+36] = TileManager::TILE_SIZE_X * x;
             pReal1[o+37] = g;
-            pReal1[o+38] = TILE_SIZE_Z * z;
-            pReal1[o+48] = TILE_SIZE_X * (x+1);
+            pReal1[o+38] = TileManager::TILE_SIZE_Z * z;
+            pReal1[o+48] = TileManager::TILE_SIZE_X * (x+1);
             pReal1[o+49] = h;
-            pReal1[o+50] = TILE_SIZE_Z * z;
-            pReal1[o+60] = TILE_SIZE_X * (x +.5);
+            pReal1[o+50] = TileManager::TILE_SIZE_Z * z;
+            pReal1[o+60] = TileManager::TILE_SIZE_X * (x +.5);
             pReal1[o+61] = average;
-            pReal1[o+62] = TILE_SIZE_Z * (z +.5);
+            pReal1[o+62] = TileManager::TILE_SIZE_Z * (z +.5);
             // 3. Triangle
-            pReal1[o+72] = TILE_SIZE_X * (x+1);
+            pReal1[o+72] = TileManager::TILE_SIZE_X * (x+1);
             pReal1[o+73] = h;
-            pReal1[o+74] = TILE_SIZE_Z * z;
-            pReal1[o+84] = TILE_SIZE_X * (x +1);
+            pReal1[o+74] = TileManager::TILE_SIZE_Z * z;
+            pReal1[o+84] = TileManager::TILE_SIZE_X * (x +1);
             pReal1[o+85] = f;
-            pReal1[o+86] = TILE_SIZE_Z * (z +1);
-            pReal1[o+96] = TILE_SIZE_X * (x+.5);
+            pReal1[o+86] = TileManager::TILE_SIZE_Z * (z +1);
+            pReal1[o+96] = TileManager::TILE_SIZE_X * (x+.5);
             pReal1[o+97] = average;
-            pReal1[o+98] = TILE_SIZE_Z * (z+.5);
+            pReal1[o+98] = TileManager::TILE_SIZE_Z * (z+.5);
             // 4. Triangle
-            pReal1[o+108] = TILE_SIZE_X * (x +1);
+            pReal1[o+108] = TileManager::TILE_SIZE_X * (x +1);
             pReal1[o+109] = f;
-            pReal1[o+110] = TILE_SIZE_Z * (z +1);
-            pReal1[o+120] = TILE_SIZE_X * x;
+            pReal1[o+110] = TileManager::TILE_SIZE_Z * (z +1);
+            pReal1[o+120] = TileManager::TILE_SIZE_X * x;
             pReal1[o+121] = d;
-            pReal1[o+122] = TILE_SIZE_Z * (z +1);
-            pReal1[o+132] = TILE_SIZE_X * (x+.5);
+            pReal1[o+122] = TileManager::TILE_SIZE_Z * (z +1);
+            pReal1[o+132] = TileManager::TILE_SIZE_X * (x+.5);
             pReal1[o+133] = average;
-            pReal1[o+134] = TILE_SIZE_Z * (z+.5);
+            pReal1[o+134] = TileManager::TILE_SIZE_Z * (z+.5);
 
             // ////////////////////////////////////////////////////////////////////
             // Normalvektoren

@@ -25,14 +25,15 @@ http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
 #include <OgreKeyEvent.h>
-#include "events.h"
 #include "logger.h"
-#include "gui_manager.h"
+#include "option.h"
+#include "events.h"
 #include "network.h"
+#include "gui_manager.h"
 #include "object_manager.h"
 #include "object_visuals.h"
+#include "tile_manager.h"
 #include "particle_manager.h"
-#include "option.h"
 
 using namespace Ogre;
 
@@ -56,7 +57,7 @@ void CEvent::keyPressed(KeyEvent *e)
     // ////////////////////////////////////////////////////////////////////
     // InGame keyEvent.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return;
+    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return;
     switch (e->getKey())
     {
         case KC_A:
@@ -225,7 +226,7 @@ void CEvent::keyPressed(KeyEvent *e)
             static int pixel =128;
             //change pixel size of terrain textures
             pixel /= 2; // shrink pixel value
-            if (pixel < MIN_TEXTURE_PIXEL)
+            if (pixel < TileManager::MIN_TEXTURE_PIXEL)
                 pixel = 128; // if value is too low resize to maximum
             TileManager::getSingleton().setMaterialLOD(pixel);
             mTimeUntilNextToggle = .5;
@@ -451,7 +452,7 @@ void CEvent::mouseMoved (MouseEvent *e)
     if (GuiManager::getSingleton().mouseEvent(GuiWindow::MOUSE_MOVEMENT, mMouse))
         return;
 
-    if (Option::getSingleton().getGameStatus() >= GAME_STATUS_PLAY)
+    if (Option::getSingleton().getGameStatus() >= Option::GAME_STATUS_PLAY)
     {}
 }
 
@@ -460,7 +461,7 @@ void CEvent::mousePressed (MouseEvent *e)
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return; // TODO: ServerSelection by mouse.
+    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return; // TODO: ServerSelection by mouse.
     mMouse.x = e->getX();
     mMouse.y = e->getY();
     if (GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_PRESSED, mMouse)) return;
@@ -468,7 +469,7 @@ void CEvent::mousePressed (MouseEvent *e)
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getGameStatus() < GAME_STATUS_PLAY) return;
+    if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return;
     int button = e->getButtonID();
 #ifdef WIN32
     if (button & MouseEvent::BUTTON1_MASK )
