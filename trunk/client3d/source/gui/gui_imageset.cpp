@@ -88,15 +88,16 @@ GuiImageset::GuiElementNames GuiImageset::mGuiElementNames[GUI_ELEMENTS_SUM]=
 // Mouse states.
 GuiImageset::GuiElementNames GuiImageset::mMouseState[STATE_MOUSE_SUM]=
     {
-        { "Default",  STATE_MOUSE_DEFAULT  },
-        { "Pushed",   STATE_MOUSE_PUSHED   },
-        { "Talk",     STATE_MOUSE_TALK     },
-        { "Attack",   STATE_MOUSE_ATTACK   },
-        { "Open",     STATE_MOUSE_OPEN     },
-        { "Cast",     STATE_MOUSE_CAST     },
-        { "Dragging", STATE_MOUSE_DRAGGING },
-        { "Resizing", STATE_MOUSE_RESIZING },
-        { "PickUp",   STATE_MOUSE_PICKUP   },
+        { "Default",           STATE_MOUSE_DEFAULT            },
+        { "Pushed",            STATE_MOUSE_PUSHED             },
+        { "Talk",              STATE_MOUSE_TALK               },
+        { "Attack_ShortRange", STATE_MOUSE_SHORT_RANGE_ATTACK },
+        { "Attack_LongRange",  STATE_MOUSE_LONG_RANGE_ATTACK  },
+        { "Open",              STATE_MOUSE_OPEN               },
+        { "Cast",              STATE_MOUSE_CAST               },
+        { "Dragging",          STATE_MOUSE_DRAGGING           },
+        { "Resizing",          STATE_MOUSE_RESIZING           },
+        { "PickUp",            STATE_MOUSE_PICKUP             },
     };
 
 // GuiElement states.

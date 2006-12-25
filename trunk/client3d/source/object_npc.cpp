@@ -105,7 +105,7 @@ ObjectNPC::ObjectNPC(sObject &obj, bool spawn):ObjectStatic(obj)
         // Attach camera to players node.
         // (Players Bounding box is increased by that and cant be used for collision detection anymore)
         SceneNode *cNode = mNode->createChildSceneNode();
-        cNode->attachObject(Event->getCamera());
+        cNode->attachObject(Events::getSingleton().getCamera());
         cNode->setInheritOrientation(false); // Camera needs no turning.
     }
     mCursorTurning =0;
@@ -241,7 +241,7 @@ void ObjectNPC::moveToNeighbourTile(int precision)
     int dz = mActPos.z - mDestStepPos.z;
     if (!mIndex && (dx || dz))
     {
-        Event->setWorldPos(dx, -dz);
+        Events::getSingleton().setWorldPos(dx, -dz);
         mOffX+=dx;
         mOffZ+=dz;
         mDestStepPos.x += dx;
@@ -503,7 +503,7 @@ void ObjectNPC::setDamage(int damage)
     if (!mIndex)
     {
         GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_PLAYERCONSOLE, GuiManager::GUI_MSG_BAR_CHANGED,
-                                               GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
+                                               GuiImageset::GUI_STATUSBAR_PLAYER_HEALTH , (void*)&health);
     }
     else
     {
@@ -602,7 +602,7 @@ void ObjectNPC::faceToTile(TilePos pos)
 }
 
 //================================================================================================
-// Attack an enemy.
+// Attack an enemy with a short range weapon.
 //================================================================================================
 void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 {
@@ -625,6 +625,23 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
     {
         mAttacking = ATTACK_ANIM_START;
     }
+}
+
+//================================================================================================
+// Attack an enemy with a long range weapon.
+//================================================================================================
+void ObjectNPC::attackLongRange(ObjectNPC *EnemyObject)
+{
+    if (!mAnim->isIdle() || !EnemyObject) return;
+    if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
+    // Move in front of the enemy.
+    if (!isSecondaryWeaponReady())
+    {
+        readySecondaryWeapon(true);
+        return;
+    }
+
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Bow is broken!");
 }
 
 //================================================================================================

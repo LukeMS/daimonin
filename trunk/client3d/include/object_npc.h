@@ -90,6 +90,7 @@ public:
     }
     void setDamage(int hp);
     void attackShortRange(ObjectNPC *mEnemyObject);
+    void attackLongRange(ObjectNPC *mEnemyObject);
     void castSpell(int spell);
     void stopMovement();
     void talkToNpc();

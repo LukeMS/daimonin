@@ -246,16 +246,14 @@ int main(int argc, char **argv)
         // Must at least do initialiseAllResourceGroups();
         // ////////////////////////////////////////////////////////////////////
         ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-        Event= new CEvent(window, root->createSceneManager(ST_GENERIC, "RefAppSMInstance"));
-        root->addFrameListener(Event);
+        Events::getSingleton().Init(window, root->createSceneManager(ST_GENERIC, "RefAppSMInstance"));
+        root->addFrameListener(&Events::getSingleton());
         root->startRendering();
         // ////////////////////////////////////////////////////////////////////
         // End of mainloop -> Clean up.
         // ////////////////////////////////////////////////////////////////////
-        if (Event)
-            delete Event;
-        if (root)
-            delete root;
+        Events::getSingleton().freeRecources();
+        delete root;
     }
     catch (Exception& e)
     {

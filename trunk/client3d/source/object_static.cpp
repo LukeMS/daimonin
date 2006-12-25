@@ -60,7 +60,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
 {
     if (!mSceneMgr)
     {
-        mSceneMgr = Event->GetSceneManager();
+        mSceneMgr = Events::getSingleton().GetSceneManager();
         Logger::log().headline("Init Actor Models");
     }
     mIndex    = obj.index;

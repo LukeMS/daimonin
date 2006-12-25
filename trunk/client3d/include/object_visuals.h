@@ -68,8 +68,8 @@ public:
     /** health < 0 disables the lifebar. */
     void select(ObjectNPC    *obj, bool showLifebar = true, bool showInteractMenu = false);
     void select(ObjectStatic *obj, bool showLifebar = true, bool showInteractMenu = false);
-    void highlight(ObjectNPC    *obj, bool showDefaultAction);
-    void highlight(ObjectStatic *obj, bool showDefaultAction);
+    void highlight(ObjectNPC    *obj, bool showDefaultAction, bool keyShiftDown);
+    void highlight(ObjectStatic *obj, bool showDefaultAction, bool keyShiftDown);
     void highlightOff();                /**< Switch off highlighting **/
     void unselect();
     void setPosLifebar(Vector3 pos);

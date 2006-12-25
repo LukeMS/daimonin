@@ -143,7 +143,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
 {
     Real h = 20.0, w = 10.0;
     String strMob = "Mob"+ StringConverter::toString(index, 3, '0');
-    ManualObject* mob = static_cast<ManualObject*>(Event->GetSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
+    ManualObject* mob = static_cast<ManualObject*>(Events::getSingleton().GetSceneManager()->createMovableObject(strMob, ManualObjectFactory::FACTORY_TYPE_NAME));
 
     mob->begin(MATERIAL_NAME);
 
@@ -167,7 +167,7 @@ void ObjectVisuals::buildEntity(int index, const char *meshName, const char *ent
     mob->triangle(3, 2, 1);
     mob->end();
     mob->convertToMesh(meshName);
-    mEntity[index]=Event->GetSceneManager()->createEntity(entityName, meshName);
+    mEntity[index]=Events::getSingleton().GetSceneManager()->createEntity(entityName, meshName);
     mEntity[index]->setQueryFlags(ObjectManager::QUERY_NPC_SELECT_MASK);
 }
 
@@ -331,9 +331,11 @@ void ObjectVisuals::setDefaultAction(int action)
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction)
+void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction, bool keyShiftDown)
 {
-    if (!obj || mObjectNPC == obj) return;
+    static bool shiftDown = keyShiftDown;
+    if ((!obj || mObjectNPC == obj) && shiftDown == keyShiftDown) return;
+    shiftDown = keyShiftDown;
     highlightOff();
     mObjectNPC = obj;
     // Backup the name of the original material.
@@ -349,14 +351,20 @@ void ObjectVisuals::highlight(ObjectNPC *obj, bool showDefaultAction)
     if (showDefaultAction)
     {
         if      (obj->getFriendly() >0) setDefaultAction(GuiImageset::STATE_MOUSE_TALK);
-        else if (obj->getFriendly() <0) setDefaultAction(GuiImageset::STATE_MOUSE_ATTACK);
+        else if (obj->getFriendly() <0)
+        {
+            if (keyShiftDown)
+                setDefaultAction(GuiImageset::STATE_MOUSE_LONG_RANGE_ATTACK);
+            else
+                setDefaultAction(GuiImageset::STATE_MOUSE_SHORT_RANGE_ATTACK);
+        }
     }
 }
 
 //===================================================
 // .
 //===================================================
-void ObjectVisuals::highlight(ObjectStatic *obj, bool showDefaultAction)
+void ObjectVisuals::highlight(ObjectStatic *obj, bool showDefaultAction, bool keyShiftDown)
 {
     if (showDefaultAction)
     {

@@ -259,7 +259,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         }
         String strName = strTmp;
         int index = -1;
-        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+        for (int i = 0; i < GuiImageset::GUI_ELEMENTS_SUM; ++i)
         {
             if (!stricmp(GuiImageset::getSingleton().getElementName(i), strTmp))
             {
@@ -378,16 +378,16 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
         {
             manualKeyFrame->addPoseReference(poseIndexes[i], 0.0f);
         }
-        Entity* head = Event->GetSceneManager()->createEntity("Head", strTmp);
+        Entity* head = Events::getSingleton().GetSceneManager()->createEntity("Head", strTmp);
         //        mSceneNode = Event->GetSceneManager()->createSceneNode();
         mSceneNode = new SceneNode(0);
         mSceneNode->attachObject(head);
 
         Real px, py;
-        px = (Event->getCamCornerX()/ screenW )*2
-             *(mPosX+ mHeadPosX) - Event->getCamCornerX();
-        py = (Event->getCamCornerY()/ screenH)*2
-             *(mPosY+ mHeadPosY) - Event->getCamCornerY();
+        px = (Events::getSingleton().getCamCornerX()/ screenW )*2
+             *(mPosX+ mHeadPosX) - Events::getSingleton().getCamCornerX();
+        py = (Events::getSingleton().getCamCornerY()/ screenH)*2
+             *(mPosY+ mHeadPosY) - Events::getSingleton().getCamCornerY();
         mSceneNode->setPosition(px, py, -200);
         mSceneNode->scale(.5, .5, .5); // testing
         mSpeakAnimState = head->getAnimationState("Speak");
@@ -543,10 +543,10 @@ bool GuiWindow::mouseEvent(int MouseAction, Vector3 &mouse)
                 // Animated head.
                 if (mSceneNode)
                 {
-                    Real px = (Event->getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
-                              *(mPosX+ mHeadPosX) - Event->getCamCornerX();
-                    Real py = (Event->getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
-                              *(mPosY+ mHeadPosY) - Event->getCamCornerY();
+                    Real px = (Events::getSingleton().getCamCornerX()/ GuiManager::getSingleton().getScreenWidth() )*2
+                              *(mPosX+ mHeadPosX) - Events::getSingleton().getCamCornerX();
+                    Real py = (Events::getSingleton().getCamCornerY()/ GuiManager::getSingleton().getScreenHeight())*2
+                              *(mPosY+ mHeadPosY) - Events::getSingleton().getCamCornerY();
                     mSceneNode->setPosition(px, py, -200);
                 }
             }
@@ -769,7 +769,7 @@ void GuiWindow::listboxPressed(GuiWindow *me, int index, int line)
     Sound::getSingleton().playStream(Sound::BUTTON_CLICK);
     switch (index)
     {
-        case GUI_LIST_NPC:
+        case GuiImageset::GUI_LIST_NPC:
             GuiDialog::getSingleton().mouseEvent(line);
             return;
     }
@@ -784,16 +784,16 @@ void GuiWindow::buttonPressed(GuiWindow *me, int index)
     switch (index)
     {
             // Standard buttons.
-        case GUI_BUTTON_CLOSE:
+        case GuiImageset::GUI_BUTTON_CLOSE:
             me->setVisible(false);
             return;
             // Unique buttons.
-        case GUI_BUTTON_NPC_ACCEPT:
+        case GuiImageset::GUI_BUTTON_NPC_ACCEPT:
             GuiDialog::getSingleton().buttonEvent(0);
             return;
-        case GUI_BUTTON_NPC_DECLINE:
+        case GuiImageset::GUI_BUTTON_NPC_DECLINE:
             GuiDialog::getSingleton().buttonEvent(1);
             return;
     }
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "button event... ");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "button event... ");
 }

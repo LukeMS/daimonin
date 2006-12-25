@@ -35,7 +35,7 @@ using namespace Ogre;
 //================================================================================================
 // Class.
 //================================================================================================
-class CEvent: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
+class Events: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -48,8 +48,12 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    CEvent(RenderWindow* win, SceneManager *mSceneMgr);
-    ~CEvent();
+    static Events &getSingleton()
+    {
+        static Events Singleton; return Singleton;
+    }
+    void Init(RenderWindow* win, SceneManager *mSceneMgr);
+    void freeRecources();
     SceneManager *GetSceneManager()
     {
         return mSceneManager;
@@ -79,6 +83,10 @@ public:
     {
         return mCamCornerY;
     }
+    bool isShiftDown()
+    {
+        return mShiftDown;
+    }
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -90,6 +98,7 @@ private:
         MAX_CAMERA_ZOOM = 110
     };
     bool mQuitGame;
+    bool mShiftDown;
     int mDayTime;
     int mSceneDetailIndex;
     Real mIdleTime;
@@ -109,6 +118,8 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
+    Events() {};
+    ~Events(){};
     bool frameStarted(const FrameEvent& evt);
     bool frameEnded  (const FrameEvent& evt);
     bool checkUsername(const char *name);
@@ -126,7 +137,5 @@ private:
     void mousePressed (MouseEvent *e);
     void mouseReleased(MouseEvent *e);
 };
-
-extern  CEvent *Event;
 
 #endif
