@@ -435,7 +435,7 @@ void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
         static unsigned long itemIndex =0;
         //Logger::log().error() << meshName[type][itemID];
         String tmpName = "Item_" + StringConverter::toString(++itemIndex, 8, '0');
-        mItem[bone].entity= Event->GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
+        mItem[bone].entity= Events::getSingleton().GetSceneManager()->createEntity(tmpName, meshName[type][itemID]);
         mItem[bone].entity->setQueryFlags(ObjectManager::QUERY_EQUIPMENT_MASK);
         mParentEntity->attachObjectToBone(boneName[bone], mItem[bone].entity);
     }
@@ -449,7 +449,7 @@ void ObjectEquipment::dropItem(int bone)
     if (mItem[bone].entity)
     {
         mParentEntity->detachObjectFromBone(mItem[bone].entity);
-        Event->GetSceneManager()->destroyEntity(mItem[bone].entity);
+        Events::getSingleton().GetSceneManager()->destroyEntity(mItem[bone].entity);
         mItem[bone].entity =0;
     }
     if (mItem[bone].particle)

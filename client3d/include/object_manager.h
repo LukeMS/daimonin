@@ -100,7 +100,7 @@ public:
     void delObjectNPC(int number);
     void delObjectStatic(int number);
     void update(int type, const FrameEvent& evt);
-    void mousePressed(MovableObject *mob, TilePos pos);
+    void mousePressed(MovableObject *mob, TilePos pos, bool modifier);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
     void highlightObject(MovableObject *mob);

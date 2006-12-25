@@ -70,7 +70,7 @@ GuiElement::GuiElement(TiXmlElement *xmlElem, void *parent)
     }
     if ((tmp = xmlElem->Attribute("name")))
     {
-        for (int i = 0; i < GUI_ELEMENTS_SUM; ++i)
+        for (int i = 0; i < GuiImageset::GUI_ELEMENTS_SUM; ++i)
         {
             if (!stricmp(GuiImageset::getSingleton().getElementName(i), tmp))
             {

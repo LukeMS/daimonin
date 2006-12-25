@@ -33,59 +33,6 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-enum {
-    // Standard Buttons (Handled inside of gui_windows).
-    GUI_BUTTON_CLOSE,
-    GUI_BUTTON_OK,
-    GUI_BUTTON_CANCEL,
-    GUI_BUTTON_MINIMIZE,
-    GUI_BUTTON_MAXIMIZE,
-    GUI_BUTTON_RESIZE,
-    // Unique Buttons (Handled outside of gui_windows).
-    GUI_BUTTON_NPC_ACCEPT,
-    GUI_BUTTON_NPC_DECLINE,
-    // Listboxes.
-    GUI_LIST_MSGWIN,
-    GUI_LIST_CHATWIN,
-    GUI_LIST_NPC,
-    GUI_LIST_UP,
-    GUI_LIST_DOWN,
-    GUI_LIST_LEFT,
-    GUI_LIST_RIGHT,
-    // StatusBars.
-    GUI_STATUSBAR_NPC_HEALTH,
-    GUI_STATUSBAR_NPC_MANA,
-    GUI_STATUSBAR_NPC_GRACE,
-
-    GUI_STATUSBAR_PLAYER_MANA,
-    GUI_STATUSBAR_PLAYER_GRACE,
-    GUI_STATUSBAR_PLAYER_HEALTH,
-    // TextValues.
-    GUI_TEXTVALUE_STAT_CUR_FPS,
-    GUI_TEXTVALUE_STAT_BEST_FPS,
-    GUI_TEXTVALUE_STAT_WORST_FPS,
-    GUI_TEXTVALUE_STAT_SUM_TRIS,
-    GUI_TEXTBOX_SERVER_INFO1,
-    GUI_TEXTBOX_SERVER_INFO2,
-    GUI_TEXTBOX_SERVER_INFO3,
-    GUI_TEXTBOX_LOGIN_INFO1,
-    GUI_TEXTBOX_LOGIN_INFO2,
-    GUI_TEXTBOX_LOGIN_INFO3,
-    GUI_TEXTBOX_LOGIN_WARN,
-    GUI_TEXTBOX_NPC_HEADLINE,
-    // TextInput
-    GUI_TEXTINPUT_LOGIN_NAME,
-    GUI_TEXTINPUT_LOGIN_PASSWD,
-    GUI_TEXTINPUT_LOGIN_VERIFY,
-    GUI_TEXTINPUT_NPC_DIALOG,
-    // Table
-    GUI_TABLE,
-    // Combobox
-    GUI_COMBOBOX_TEST,
-    // Sum of all entries.
-    GUI_ELEMENTS_SUM
-};
-
 /**
  ** This singleton class stores the graphic positions of all gui elements.
  ** All graphics are stored in a single gfx-file.
@@ -97,6 +44,59 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum {
+        // Standard Buttons (Handled inside of gui_windows).
+        GUI_BUTTON_CLOSE,
+        GUI_BUTTON_OK,
+        GUI_BUTTON_CANCEL,
+        GUI_BUTTON_MINIMIZE,
+        GUI_BUTTON_MAXIMIZE,
+        GUI_BUTTON_RESIZE,
+        // Unique Buttons (Handled outside of gui_windows).
+        GUI_BUTTON_NPC_ACCEPT,
+        GUI_BUTTON_NPC_DECLINE,
+        // Listboxes.
+        GUI_LIST_MSGWIN,
+        GUI_LIST_CHATWIN,
+        GUI_LIST_NPC,
+        GUI_LIST_UP,
+        GUI_LIST_DOWN,
+        GUI_LIST_LEFT,
+        GUI_LIST_RIGHT,
+        // StatusBars.
+        GUI_STATUSBAR_NPC_HEALTH,
+        GUI_STATUSBAR_NPC_MANA,
+        GUI_STATUSBAR_NPC_GRACE,
+
+        GUI_STATUSBAR_PLAYER_MANA,
+        GUI_STATUSBAR_PLAYER_GRACE,
+        GUI_STATUSBAR_PLAYER_HEALTH,
+        // TextValues.
+        GUI_TEXTVALUE_STAT_CUR_FPS,
+        GUI_TEXTVALUE_STAT_BEST_FPS,
+        GUI_TEXTVALUE_STAT_WORST_FPS,
+        GUI_TEXTVALUE_STAT_SUM_TRIS,
+        GUI_TEXTBOX_SERVER_INFO1,
+        GUI_TEXTBOX_SERVER_INFO2,
+        GUI_TEXTBOX_SERVER_INFO3,
+        GUI_TEXTBOX_LOGIN_INFO1,
+        GUI_TEXTBOX_LOGIN_INFO2,
+        GUI_TEXTBOX_LOGIN_INFO3,
+        GUI_TEXTBOX_LOGIN_WARN,
+        GUI_TEXTBOX_NPC_HEADLINE,
+        // TextInput
+        GUI_TEXTINPUT_LOGIN_NAME,
+        GUI_TEXTINPUT_LOGIN_PASSWD,
+        GUI_TEXTINPUT_LOGIN_VERIFY,
+        GUI_TEXTINPUT_NPC_DIALOG,
+        // Table
+        GUI_TABLE,
+        // Combobox
+        GUI_COMBOBOX_TEST,
+        // Sum of all entries.
+        GUI_ELEMENTS_SUM
+    };
+
     typedef struct
     {
         const char *name;
@@ -107,14 +107,15 @@ public:
     /** Actual state of the mouse cursor: **/
     enum
     {
-        STATE_MOUSE_DEFAULT,  /**< Default. **/
-        STATE_MOUSE_PUSHED,   /**< Any button down. **/
+        STATE_MOUSE_DEFAULT,             /**< Default. **/
+        STATE_MOUSE_PUSHED,              /**< Any button down. **/
         STATE_MOUSE_TALK,
-        STATE_MOUSE_ATTACK,
+        STATE_MOUSE_SHORT_RANGE_ATTACK,
+        STATE_MOUSE_LONG_RANGE_ATTACK,
         STATE_MOUSE_OPEN,
         STATE_MOUSE_CAST,
-        STATE_MOUSE_DRAGGING, /**< Dragging in action. **/
-        STATE_MOUSE_RESIZING, /**< Resizing a window. **/
+        STATE_MOUSE_DRAGGING,            /**< Dragging in action. **/
+        STATE_MOUSE_RESIZING,            /**< Resizing a window. **/
         STATE_MOUSE_PICKUP,
         STATE_MOUSE_SUM
     };
@@ -176,7 +177,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
-   GuiSrcEntryMouse *mSrcEntryMouse;
+    GuiSrcEntryMouse *mSrcEntryMouse;
     std::vector<GuiSrcEntry*>mvSrcEntry;
     String mStrImageSetGfxFile;
     Image mImageSetImg;

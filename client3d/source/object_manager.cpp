@@ -325,10 +325,14 @@ void ObjectManager::highlightObject(MovableObject *mob)
     if  (mSelectedType >= OBJECT_NPC)
     {
         if (mSelectedObject != ObjectNPC::HERO)
-            ObjectVisuals::getSingleton().highlight(mvObject_npc[mSelectedObject], mSelectedObject != ObjectNPC::HERO);
+            ObjectVisuals::getSingleton().highlight(mvObject_npc[mSelectedObject],
+                                                    mSelectedObject != ObjectNPC::HERO,
+                                                    Events::getSingleton().isShiftDown());
     }
     else
-        ObjectVisuals::getSingleton().highlight(mvObject_static[mSelectedObject], true);
+        ObjectVisuals::getSingleton().highlight(mvObject_static[mSelectedObject],
+                                                true,
+                                                Events::getSingleton().isShiftDown());
 }
 
 //================================================================================================
@@ -359,7 +363,7 @@ void ObjectManager::selectObject(MovableObject *mob)
 //================================================================================================
 // Mouse button was pressed - lets do the right thing.
 //================================================================================================
-void ObjectManager::mousePressed(MovableObject *mob, TilePos pos)
+void ObjectManager::mousePressed(MovableObject *mob, TilePos pos, bool modifier)
 {
     // ////////////////////////////////////////////////////////////////////
     // Only a tile was pressed - move toward it.
@@ -380,7 +384,10 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos)
         {
             mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
             ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], true, false);
-            mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
+            if (modifier)
+                mvObject_npc[ObjectNPC::HERO]->attackLongRange(mvObject_npc[mSelectedObject]);
+            else
+                mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
         }
         else
         {

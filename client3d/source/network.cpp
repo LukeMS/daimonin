@@ -973,21 +973,21 @@ void Network::contactMetaserver()
 {
     clearMetaServerData();
     csocket.fd = SOCKET_NO;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "");
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "query metaserver...");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "query metaserver...");
     std::stringstream strBuf;
     strBuf << "trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, strBuf.str().c_str());
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.str().c_str());
     if (SOCKET_OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
     {
         read_metaserver_data();
         SOCKET_CloseSocket();
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "done.");
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "done.");
     }
     else
-        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "metaserver failed! using default list.");
+        GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "metaserver failed! using default list.");
     add_metaserver_data("127.0.0.1", "127.0.0.1", DEFAULT_SERVER_PORT, -1, "local", "localhost.", "Start server before you try to connect.", "", "");
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GUI_LIST_MSGWIN, "select a server.");
+    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "select a server.");
 }
 
 //================================================================================================
@@ -1072,7 +1072,7 @@ void Network::add_metaserver_data(const char *ip, const char *server, int port, 
     string strRow = server;
     if (player <0) strRow+=",-";
     else           strRow+=","+StringConverter::toString(player);
-    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT, GuiManager::GUI_MSG_ADD_TABLEROW, GUI_TABLE, (void*) strRow.c_str());
+    GuiManager::getSingleton().sendMessage(GuiManager::GUI_WIN_SERVERSELECT, GuiManager::GUI_MSG_ADD_TABLEROW, GuiImageset::GUI_TABLE, (void*) strRow.c_str());
 }
 
 //================================================================================================

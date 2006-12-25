@@ -40,7 +40,7 @@ using namespace Ogre;
 //================================================================================================
 // Buffered Key Events.
 //================================================================================================
-void CEvent::keyPressed(KeyEvent *e)
+void Events::keyPressed(KeyEvent *e)
 {
     static Real g_pitch = 0.2;
     mIdleTime =0;
@@ -58,6 +58,7 @@ void CEvent::keyPressed(KeyEvent *e)
     // InGame keyEvent.
     // ////////////////////////////////////////////////////////////////////
     if (Option::getSingleton().getGameStatus() < Option::GAME_STATUS_PLAY) return;
+    mShiftDown = e->isShiftDown();
     switch (e->getKey())
     {
         case KC_A:
@@ -403,16 +404,17 @@ void CEvent::keyPressed(KeyEvent *e)
     e->consume();
 }
 
-void CEvent::keyClicked(KeyEvent* )
+void Events::keyClicked(KeyEvent* )
 {}
 
-void CEvent::keyReleased(KeyEvent* e)
+void Events::keyReleased(KeyEvent* e)
 {
+    mShiftDown = e->isShiftDown();
     switch (e->getKey())
     {
-            // ////////////////////////////////////////////////////////////////////
-            // Player Movemment.
-            // ////////////////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////
+        // Player Movemment.
+        // ////////////////////////////////////////////////////////////////////
         case KC_UP:
         case KC_DOWN:
             ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_WALK, 0);
@@ -440,7 +442,7 @@ void CEvent::keyReleased(KeyEvent* e)
 //================================================================================================
 // Buffered Mouse Events.
 //================================================================================================
-void CEvent::mouseMoved (MouseEvent *e)
+void Events::mouseMoved (MouseEvent *e)
 {
     mMouse.x = e->getX();
     if (mMouse.x > 0.998)
@@ -453,10 +455,9 @@ void CEvent::mouseMoved (MouseEvent *e)
         return;
 
     if (Option::getSingleton().getGameStatus() >= Option::GAME_STATUS_PLAY)
-    {}
-}
+    {}}
 
-void CEvent::mousePressed (MouseEvent *e)
+void Events::mousePressed (MouseEvent *e)
 {
     // ////////////////////////////////////////////////////////////////////
     // Right button for selection and menu.
@@ -509,12 +510,12 @@ void CEvent::mousePressed (MouseEvent *e)
         if (!result.empty())
         {
             RaySceneQueryResult::iterator itr = result.begin();
-            ObjectManager::getSingleton().mousePressed(itr->movable, TileManager::getSingleton().getTileInterface()->getSelectedTile());
+            ObjectManager::getSingleton().mousePressed(itr->movable, TileManager::getSingleton().getTileInterface()->getSelectedTile(), mShiftDown);
         }
         else
         {
             ParticleManager::getSingleton().addFreeObject(TileManager::getSingleton().getTileInterface()->getSelectedPos(), "Particle/SelectionDust", 0.8);
-            ObjectManager::getSingleton().mousePressed(0, TileManager::getSingleton().getTileInterface()->getSelectedTile());
+            ObjectManager::getSingleton().mousePressed(0, TileManager::getSingleton().getTileInterface()->getSelectedTile(), mShiftDown);
         }
         mSceneManager->destroyQuery(mRaySceneQuery);
         mIdleTime =0;
@@ -522,31 +523,31 @@ void CEvent::mousePressed (MouseEvent *e)
     e->consume();
 }
 
-void CEvent::mouseDragged(MouseEvent *e)
+void Events::mouseDragged(MouseEvent *e)
 {
     mouseMoved(e);
     e->consume();
 }
 
-void CEvent::mouseClicked (MouseEvent *e)
+void Events::mouseClicked (MouseEvent *e)
 {
     mouseMoved(e);
     e->consume();
 }
 
-void CEvent::mouseEntered (MouseEvent *e)
+void Events::mouseEntered (MouseEvent *e)
 {
     mouseMoved(e);
     e->consume();
 }
 
-void CEvent::mouseExited  (MouseEvent *e)
+void Events::mouseExited  (MouseEvent *e)
 {
     mouseMoved(e);
     e->consume();
 }
 
-void CEvent::mouseReleased(MouseEvent *e)
+void Events::mouseReleased(MouseEvent *e)
 {
     GuiManager::getSingleton().mouseEvent(GuiWindow::BUTTON_RELEASED, mMouse);
     e->consume();
