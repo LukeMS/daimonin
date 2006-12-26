@@ -8,9 +8,11 @@ local me        = event.me
 local msg       = string.lower(event.message)
 -- quest names must be unique, the player will store the name forever
 -- level and skill are optional
-local level     = 1
-local skill     = game:GetSkillNr("punching")
-local q_mgr_1   = QuestManager(pl, "Dev Normal Test Quest", level, skill)
+local level = 1
+-- skill must be one of the 6 game constants or use game.ITEM_SKILL_NO for no skill
+local skill = game.ITEM_SKILL_PHYSICAL
+local q_mgr_1 = QuestManager(pl, "Dev Normal Test Quest", level, skill)
+
 
 local ib = InterfaceBuilder()
 ib:SetHeader(me, me.name)

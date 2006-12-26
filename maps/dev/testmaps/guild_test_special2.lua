@@ -1,6 +1,6 @@
 -- guid special command test script 2
 require("topic_list")
-require("quest_check")
+
 require("interface_builder")
 
 local pl = event.activator
