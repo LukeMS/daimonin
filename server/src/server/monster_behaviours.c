@@ -2235,7 +2235,7 @@ int ai_plugin_action(object *op, struct mob_behaviour_param *params)
 {
     int ret = 0;
 #ifdef PLUGINS
-    CFParm  CFP, * retCFP;
+    CFParm  CFP;
     int     k, l, m;
     k = EVENT_AI_BEHAVIOUR;
     l = 0; /* SCRIPT_FIX_ALL; */ /* Script fix none */
@@ -2252,8 +2252,7 @@ int ai_plugin_action(object *op, struct mob_behaviour_param *params)
     CFP.Value[9] = (char *) AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_BEHAVIOUR);   /* file */
     CFP.Value[10] = (char *) AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_OPTIONS);
     CFP.Value[11] = NULL;
-    retCFP = PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_PLUGIN))].eventfunc (&CFP);
-    ret = *(int *)retCFP->Value[0];
+    ret = PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_PLUGIN))].eventfunc (&CFP);
 #endif
 
     return ret;
