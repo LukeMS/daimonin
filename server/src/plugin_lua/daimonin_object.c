@@ -141,7 +141,6 @@ struct attribute_decl       GameObject_attributes[]         =
     {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0},
     {"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
     {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0},
-    /* TODO: need special handling (check for endmsg, limit to 4096 chars?) ?*/
     {"message", FIELDTYPE_SHSTR, offsetof(object, msg), 0},
     /* TODO: limited to >=0 */
     {"weight",       FIELDTYPE_SINT32, offsetof(object, weight), 0},

@@ -326,6 +326,10 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
           if (!lua_isstring(L, -1) && !lua_isnil(L, -1))
               luaL_error(L, "Illegal type %s for string field %s.%s", lua_typename(L, lua_type(L, -1)),
                          obj->class->name, attrib->name);
+
+          /* Check against max allowed Daimonin string length (see loader.l) */
+          if(lua_strlen(L, -1) > HUGE_BUF - 16)
+              luaL_error(L, "String too long: %d chars (max allowed=%d)\n", lua_strlen(L, -1),HUGE_BUF-16);
           break;
 
         case FIELDTYPE_UINT8:

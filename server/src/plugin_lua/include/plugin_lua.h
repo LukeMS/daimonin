@@ -237,12 +237,9 @@ typedef struct lua_class_s
 /* Types used in objects and maps structs */
 typedef enum
 {
-    FIELDTYPE_SHSTR,
-    /* Pointer to shared string */
-    FIELDTYPE_CSTR,
-    /* Pointer to C string */
-    FIELDTYPE_CARY,
-    /* C string (array directly in struct) */
+    FIELDTYPE_SHSTR,           /**< Pointer to shared string, newlines not allowed */
+    FIELDTYPE_CSTR,            /**< Pointer to C string */
+    FIELDTYPE_CARY,            /**< C string (array directly in struct) */
     FIELDTYPE_UINT8,
     FIELDTYPE_SINT8,
     FIELDTYPE_UINT16,
