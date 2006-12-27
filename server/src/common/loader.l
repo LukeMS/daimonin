@@ -967,6 +967,60 @@ void save_double(char *buf,char *name,double v)
 
 void init_vars() {
 }
+
+/* Append a single-line string like name, title, race or slaying.
+ * Makes sure no newlines makes it into the destination buffer.
+ * Returns the new end of the destination buffer */
+static inline char *append_line(char *buf, const char *str)
+{
+    char c;
+    while((c = *buf++ = *str++))
+        if(c == '\n')
+        {
+            LOG(llevDebug, "BUG: Detected (and replaced) '\\n' in basic object string while saving.\n");
+            buf[-1] = ' ';
+        }
+    return buf-1;
+}
+
+/* Append a multi-line string like message.
+ * Newlines are allowed, but not stand-alone "endmsg" strings.
+ * Returns the new end of the destination buffer */
+static inline char *append_multiline(char *buf, const char *str)
+{
+    char c;
+    char first = *str;
+
+    while((c = *buf++ = *str++))
+    {
+        if(c == '\n')
+        {
+            while(strncasecmp(str, "endmsg", 6) == 0)
+            {
+                LOG(llevDebug, "BUG: Detected 'endmsg' in msg string.\n");
+                str += 6; /* Just skip it... */
+            }
+        }
+    }
+    
+    /* Mantis bug #000050 */
+    /* Ensure there's a newline before endmsg */
+    if(first == '\0' || buf[-2] != '\n') {
+        buf[-1] = '\n'; /* Replace old null */
+        *buf++ = '\0';
+    }
+
+    return buf-1;
+}
+
+/* Append any null-terminated string and return the new end of buf */
+static inline char *append_simple(char *buf, const char *str)
+{
+    while((*buf++ = *str++))
+        ;
+    return buf-1;
+}
+
 /*
  * Returns a pointer to a static string which contains all variables
  * which are different in the two given objects.  op is the what object
@@ -982,36 +1036,22 @@ char *get_ob_diff(const object *op, const object *op2) {
      * /Gecko
      */
   static char buf2[HUGE_BUF];
-  static char buf[HUGE_BUF];
+  static char buf[HUGE_BUF * 6]; /* There can be up to 5 HUGE_BUF long strings AFAIK */
+  char *buf_end;
   int tmp;
 
   buf[0]='\0';
-  if(op->name && op->name!=op2->name) {
-    sprintf(buf2,"name %s\n",op->name);
-    strcat(buf,buf2);
-  }
-  if(op->title && op->title!=op2->title) {
-    sprintf(buf2,"title %s\n", op->title);
-    strcat(buf, buf2);
-  }
-  if(op->race && op->race!=op2->race) {
-    sprintf(buf2,"race %s\n",op->race);
-    strcat(buf,buf2);
-  }
-  if(op->slaying && op->slaying!=op2->slaying) {
-    sprintf(buf2,"slaying %s\n",op->slaying);
-    strcat(buf,buf2);
-  }
-  if(op->msg && op->msg!=op2->msg) {
-    strcat(buf,"msg\n");
-    strcat(buf,op->msg);
-    /* Mantis bug #000050 */
-    /* Ensure there's a newline before endmsg */
-    if(op->msg[0] == '\0' || op->msg[strlen(op->msg)-1] != '\n')
-        strcat(buf, "\n");
-    /*strcat(buf,"\n");*/ /* we skipped last \n when we read the map, to avoid clear line in client */
-    strcat(buf,"endmsg\n");
-  }
+  buf_end = buf;
+  if(op->name && op->name!=op2->name)
+    buf_end = append_simple(append_line(append_simple(buf_end, "name "), op->name), "\n");
+  if(op->title && op->name!=op2->title)
+    buf_end = append_simple(append_line(append_simple(buf_end, "title "), op->title), "\n");
+  if(op->race && op->race!=op2->race) 
+    buf_end = append_simple(append_line(append_simple(buf_end, "race "), op->race), "\n");
+  if(op->slaying && op->slaying!=op2->slaying) 
+    buf_end = append_simple(append_line(append_simple(buf_end, "slaying "), op->slaying), "\n");
+  if(op->msg && op->msg!=op2->msg) 
+    buf_end = append_simple(append_multiline(append_simple(buf_end,"msg\n"), op->msg), "endmsg\n");
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
      op->other_arch->name) {
     sprintf(buf2,"other_arch %s\n",op->other_arch->name);
