@@ -61,6 +61,55 @@ START_TEST (lua_null_map)
 }
 END_TEST
 
+/* Test some string issues */
+START_TEST (lua_strings_long)
+{
+    shstr *path = add_string("/dev/unit_tests/test_lua");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);    
+
+    object *sign = locate_beacon(find_string("strings"))->env;
+
+    /* This will simply crash if there's no overwflow check for long strings */
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL,
+            "long", NULL, NULL, NULL, 0); 
+
+    fail_unless(strcmp(sign->name,"init") == 0, "script didn't pass init point");
+    fail_unless(res == 0, "Script returned non-zero");
+}
+END_TEST
+    
+START_TEST (lua_strings_newline)
+{
+    shstr *path = add_string("/dev/unit_tests/test_lua");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+
+    object *sign = locate_beacon(find_string("strings"))->env;
+
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL, 
+            "newline", NULL, NULL, NULL, 0);
+    
+    fail_unless(strcmp(sign->name,"init") == 0, "script didn't pass init point");
+    fail_unless(res == 0, "Script returned non-zero");
+    fail_unless(strcmp(sign->slaying,"success") == 0, "script didn't work as expected");
+}
+END_TEST
+   
+START_TEST (lua_strings_endmsg)
+{
+    shstr *path = add_string("/dev/unit_tests/test_lua");
+    mapstruct *map = ready_map_name(path, path, MAP_STATUS_MULTI, NULL);
+
+    object *sign = locate_beacon(find_string("strings"))->env;
+
+    int res = trigger_object_plugin_event(EVENT_APPLY, sign, sign, NULL, 
+            "endmsg", NULL, NULL, NULL, 0);
+    
+    fail_unless(strcmp(sign->name,"init") == 0, "script didn't pass init point");
+    fail_unless(res == 0, "Script returned non-zero");
+    fail_unless(strcmp(sign->slaying,"success") == 0, "script didn't work as expected");
+}
+END_TEST
+
 Suite *lua_suite(void)
 {
   Suite *s = suite_create("Lua");
@@ -70,6 +119,9 @@ Suite *lua_suite(void)
   
   suite_add_tcase (s, tc_core);
   tcase_add_test(tc_core, lua_null_map);
+  tcase_add_test(tc_core, lua_strings_long);
+  tcase_add_test(tc_core, lua_strings_newline);
+  tcase_add_test(tc_core, lua_strings_endmsg);
 
   return s;
 }

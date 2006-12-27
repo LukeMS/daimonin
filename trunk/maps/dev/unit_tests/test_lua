@@ -29,3 +29,17 @@ arch sign
 x 5
 y 1
 end
+arch sign
+msg
+Test how long strings, strings containing newlines and message strings containing "end" are handled.
+endmsg
+x 8
+y 1
+arch event_obj
+sub_type 1
+race test_lua_strings.lua
+end
+arch beacon
+name strings
+end
+end
