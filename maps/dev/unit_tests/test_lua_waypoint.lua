@@ -3,5 +3,7 @@
 me = event.me
 activator = event.activator
 activator.title = "before"
--- activator.title = me.map.orig_path -- accessing (me.map = nil).orig_path. should abort script.
+local foo = me.map  -- accessing me.map, shouldn't crash server
+activator.title = "checkpoint" -- this should be the title after the script is run
+activator.title = foo.orig_path -- accessing nil.orig_path: should abort script.
 activator.title = "after"
