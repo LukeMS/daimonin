@@ -158,11 +158,13 @@ void map_draw_map_clear(void)
     }
 }
 
-void InitMapData(char *name, int xl, int yl, int px, int py)
+void UpdateMapName(char *name)
 {
     char   *tmp;
     int     music_fade  = 0;
-    void   *tmp_free;
+
+    if(name == NULL)
+        return;
 
     if ((tmp = strchr(name, '§')))
     {
@@ -177,17 +179,22 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
     if (!music_fade) /* there was no music tag or playon tag in this map - fade out */
     {
         /* now a interesting problem - when we have some seconds before a fadeout
-             * to a file (and not to "mute") and we want mute now - is it possible that
-             * the mixer callback is called in a different thread? and then this thread
-             * stuck BEHIND the music_new.flag = 1 check - then the fadeout of this mute
-             * will drop whatever - the callback will play the old file.
-             * that the classic thread/semphore problem.
-             */
+         * to a file (and not to "mute") and we want mute now - is it possible that
+         * the mixer callback is called in a different thread? and then this thread
+         * stuck BEHIND the music_new.flag = 1 check - then the fadeout of this mute
+         * will drop whatever - the callback will play the old file.
+         * that the classic thread/semphore problem.
+         */
         sound_fadeout_music(0);
     }
 
-    if (name)
-        strcpy(MapData.name, name);
+    strcpy(MapData.name, name);
+}
+
+void InitMapData(int xl, int yl, int px, int py)
+{
+    void   *tmp_free;
+
     if (xl != -1)
         MapData.xlen = xl;
     if (yl != -1)

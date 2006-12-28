@@ -271,7 +271,8 @@ void init_game_data(void)
         debug_layer[i] = TRUE;
 
     memset(&options, 0, sizeof(struct _options));
-    InitMapData("", 0, 0, 0, 0);
+    InitMapData(0, 0, 0, 0);
+    UpdateMapName("");
 
     for (i = 0; i < BITMAP_MAX; i++)
         Bitmaps[i] = NULL;
