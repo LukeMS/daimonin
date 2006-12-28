@@ -145,4 +145,3 @@ void gui_interface(object *who, int mode, const char *text, const char *tail)
 
 	Send_With_Handling(&CONTR(who)->socket, &global_sl);
 }
-
