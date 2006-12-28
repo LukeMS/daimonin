@@ -1128,11 +1128,12 @@ y 8
 end
 arch check_inv
 face pedestal.131
-direction 3
 slaying For the CHECK_INV
 race chain_mail
 connected 104
 last_grace 1
+last_heal 1
+direction 3
 x 9
 y 8
 end
@@ -1361,7 +1362,7 @@ on the right side and a DETECTOR and
 CHECK_INV on the other.
 This CHECK_INV will check the arch name
 of the chainmail and the name field of the
-boots - both works a triggers.
+boots - either works as trigger.
 PEDESTAL and TRIGGER_PEDESTAL check
 a moving living object over it - normal a mob
 or a player. If the key string is "player", it is
