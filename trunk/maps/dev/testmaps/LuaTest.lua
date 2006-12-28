@@ -79,6 +79,7 @@ elseif (msg == 'messaging') then
     me:SayTo(activator, 'This is SayTo just for you');
     me:SayTo(activator, 'This is SayTo again but in mode 1 (no xxx say)', 1);
     activator:Write('This is a non-verbal message just for you in red color.', game.COLOR_RED);
+    activator:Write('This is a non-verbal message just for you in default color.');
     activator.map:Message(me.x, me.y, 8, 'This is a map-wide Message() for everybody in a range of 8 tiles');
     me:Communicate('/kiss');
     me:Communicate('/hug ' .. activator.name);
@@ -386,7 +387,7 @@ elseif words[1] == 'face' then
     if words[2] == nil then
         me:SayTo(activator, "Say ^face <name>^ to make me switch face")
         me:SayTo(activator, "My current face is " .. tostring(me:GetFace()))
-        me:SayTo(activator, "My current inventory face is " .. tostring(me:GetFace(1)))
+        me:SayTo(activator, "My current inventory face is " .. tostring(me:GetInvFace()))
     else
         me:SayTo(activator, "Switching to face " .. words[2]);
         me:SetFace(words[2])
