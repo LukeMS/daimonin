@@ -560,6 +560,12 @@ void send_quest_list(struct obj *pl)
 	{
 		for (tmp = CONTR(pl)->quests_type_normal->inv; tmp; tmp = tmp->below)
 		{
+            if(tmp->item_skill > sizeof(skill_group_name) / sizeof(*skill_group_name))
+            {
+                LOG(llevBug, "BUG: quest item with invalid item_skill (%d): %s\n", tmp->item_skill, STRING_OBJ_NAME(tmp));
+                tmp->item_skill = 0;
+            }
+
 			sprintf(msg,"<lt=\"%s °(%s%d) %s°\" c=\"#%d\">",STRING_SAFE(tmp->name), 
 					skill_group_name[tmp->item_skill], tmp->item_level,
 				 check_quest_complete(pl, tmp)?"(complete)":"", ++count);
@@ -571,6 +577,12 @@ void send_quest_list(struct obj *pl)
 	{
 		for (tmp = CONTR(pl)->quests_type_kill->inv; tmp; tmp = tmp->below)
 		{
+            if(tmp->item_skill > sizeof(skill_group_name) / sizeof(*skill_group_name))
+            {
+                LOG(llevBug, "BUG: quest item with invalid item_skill (%d): %s\n", tmp->item_skill, STRING_OBJ_NAME(tmp));
+                tmp->item_skill = 0;
+            }
+
 			sprintf(msg,"<lt=\"%s °(%s%d) %s°\" c=\"#%d\">",STRING_SAFE(tmp->name),
 					skill_group_name[tmp->item_skill], tmp->item_level,
 					check_quest_complete(pl, tmp)?"(complete)":"", ++count);
