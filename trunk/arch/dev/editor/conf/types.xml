@@ -2972,30 +2972,20 @@
     <ignore_list name="system_object" />
     <ignore_list name="default_setting" />
   </ignore>
-  <description><![CDATA[
-    Magic_ears trigger a connected value
-    when the player speaks a specific keyword. ]]>
-  </description>
+  <description>Magic ears trigger a plugin event when the player speaks.</description>
   <use><![CDATA[
-    Whenever you put magic_ears on your maps, make sure there are
+    Whenever you put magic ears on your maps, make sure there are
     CLEAR and RELYABLE hints about the keywords somewhere. Don't make
     something like a gate that is opened by speaking "open" or
     "sesame", expecting the player to figure this out all by himself.
     <br><br>
-    Magic_ears are typically used for interaction with NPCs. You
-    can create the impression that the NPC actually *does* something
-    according to his conversation with a player. Mostly this means
-    opening a gate or handing out some item, but you could be quite
-    creative here. ]]>
+    Magic ears are typically used as receivers for spoken commands
+    wherever it doesn't make sense to have an NPC nearby. Magic ears are the <i>only</i>
+    non-living objects that can trigger SAY events (with the exception for marked objects
+    in the player's inventory.)
+    ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="connected" editor="connection" type="int">
-    The Magic_ear will trigger all objects with the
-    same connection value, every time it is activated.
-  </attribute>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="keyword-matching" type="text">
-	Some text
-  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -3567,8 +3557,6 @@
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 </section>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
-  </attribute>
 </type>
 
 <!--####################################################################-->
