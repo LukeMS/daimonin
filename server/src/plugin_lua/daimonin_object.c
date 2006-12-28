@@ -117,9 +117,13 @@ static struct method_decl   GameObject_methods[]            =
     {"GetAI", (lua_CFunction) GameObject_GetAI},
     {"GetVector", (lua_CFunction) GameObject_GetVector},
     {"GetFace", (lua_CFunction) GameObject_GetFace},
+    {"GetInvFace", (lua_CFunction) GameObject_GetInvFace},
     {"GetAnimation", (lua_CFunction) GameObject_GetAnimation},
+    {"GetInvAnimation", (lua_CFunction) GameObject_GetInvAnimation},
     {"SetFace", (lua_CFunction) GameObject_SetFace},
+    {"SetInvFace", (lua_CFunction) GameObject_SetInvFace},
     {"SetAnimation", (lua_CFunction) GameObject_SetAnimation},
+    {"SetInvAnimation", (lua_CFunction) GameObject_SetInvAnimation},
     {"MakePet", (lua_CFunction) GameObject_MakePet},
     {"GetPets", (lua_CFunction) GameObject_GetPets},
 
@@ -3068,41 +3072,67 @@ static int GameObject_GetVector(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetAnimation                                          */
-/* Lua    : object:GetAnimation(inv)                                         */
+/* Lua    : object:GetAnimation()                                            */
 /* Info   : Returns the name of object's animation, if any.                  */
-/*          If inv is true, it returns the name of the inventory animation   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_GetAnimation(lua_State *L)
 {
     lua_object *self;
-    int inv = 0;
+    get_lua_args(L, "O", &self);
+    lua_pushstring(L, (* hooks->animations)[WHO->animation_id].name);
+    return 1;
+}
 
-    get_lua_args(L, "O|i", &self, &inv);
-
-    lua_pushstring(L, (* hooks->animations)[inv ? WHO->inv_animation_id : WHO->animation_id].name);
+/*****************************************************************************/
+/* Name   : GameObject_GetInvAnimation                                       */
+/* Lua    : object:GetInvAnimation()                                         */
+/* Info   : Returns the name of object's inventory animation, if any.        */
+/* Status : Tested                                                           */
+/* Version: Introduced in beta 4 pre4                                        */
+/*****************************************************************************/
+static int GameObject_GetInvAnimation(lua_State *L)
+{
+    lua_object *self;
+    get_lua_args(L, "O", &self);
+    lua_pushstring(L, (* hooks->animations)[WHO->inv_animation_id].name);
     return 1;
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_GetFace                                               */
-/* Lua    : object:GetFace(inv)                                              */
+/* Lua    : object:GetFace()                                                 */
 /* Info   : Returns the name of object's face, if any.                       */
-/*          If inv is true, it returns the name of the inventory face        */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_GetFace(lua_State *L)
 {
     lua_object *self;
-    int inv = 0;
-    New_Face *face;
+    get_lua_args(L, "O", &self);
 
-    get_lua_args(L, "O|i", &self, &inv);
-
-    face = inv ? WHO->inv_face : WHO->face;
-    if(face)
+    if(WHO->face)
     {
-        lua_pushstring(L, face->name);
+        lua_pushstring(L, WHO->face->name);
+        return 1;
+    } else
+        return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetInvFace                                            */
+/* Lua    : object:GetInvFace()                                              */
+/* Info   : Returns the name of object's inventory face, if any.             */
+/* Status : Tested                                                           */
+/* Version: Introduced in beta 4 pre4                                        */
+/*****************************************************************************/
+static int GameObject_GetInvFace(lua_State *L)
+{
+    lua_object *self;
+    get_lua_args(L, "O", &self);
+
+    if(WHO->inv_face)
+    {
+        lua_pushstring(L, WHO->inv_face->name);
         return 1;
     } else
         return 0;
@@ -3110,9 +3140,8 @@ static int GameObject_GetFace(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetAnimation                                          */
-/* Lua    : object:SetAnimation(anim, inv)                                   */
+/* Lua    : object:SetAnimation(anim)                                        */
 /* Info   : Sets object's animation.                                         */
-/*          If inv is true, it sets the inventory animation                  */
 /*          Note that an object will only be animated if object.f_is_animated*/
 /*          is true                                                          */
 /* Status : Tested                                                           */
@@ -3120,29 +3149,50 @@ static int GameObject_GetFace(lua_State *L)
 static int GameObject_SetAnimation(lua_State *L)
 {
     lua_object *self;
-    int inv = 0;
     char *animation;
     int id;
 
-    get_lua_args(L, "Os|i", &self, &animation, &inv);
+    get_lua_args(L, "Os", &self, &animation);
 
     id = hooks->find_animation(animation);
     if(id == 0)
         luaL_error(L, "no such animation exists: %s", animation);
 
-    if(inv)
-        WHO->inv_animation_id = id;
-    else
-        WHO->animation_id = id;
+    WHO->animation_id = id;
+
+    return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetInvAnimation                                       */
+/* Lua    : object:SetInvAnimation(anim)                                     */
+/* Info   : Sets object's inventory animation.                               */
+/*          Note that an object will only be animated if object.f_is_animated*/
+/*          is true                                                          */
+/* Status : Tested                                                           */
+/* Version: Introduced in beta 4 pre4                                        */
+/*****************************************************************************/
+static int GameObject_SetInvAnimation(lua_State *L)
+{
+    lua_object *self;
+    char *animation;
+    int id;
+
+    get_lua_args(L, "Os", &self, &animation);
+
+    id = hooks->find_animation(animation);
+    if(id == 0)
+        luaL_error(L, "no such animation exists: %s", animation);
+
+    WHO->inv_animation_id = id;
 
     return 0;
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_SetFace                                               */
-/* Lua    : object:SetFace(face, inv)                                        */
+/* Lua    : object:SetFace(face)                                             */
 /* Info   : Sets object's face.                                              */
-/*          If inv is true, it sets the inventory face                       */
 /*          If the object is animated (object.f_is_animated == true), then   */
 /*          this value will likely be replaced at the next animation step    */
 /* Status : Tested                                                           */
@@ -3150,20 +3200,42 @@ static int GameObject_SetAnimation(lua_State *L)
 static int GameObject_SetFace(lua_State *L)
 {
     lua_object *self;
-    int inv = 0;
     char *face;
     int id;
 
-    get_lua_args(L, "Os|i", &self, &face, &inv);
+    get_lua_args(L, "Os", &self, &face);
 
     id = hooks->find_face(face, -1);
     if(id == -1)
         luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
 
-    if(inv)
-        WHO->inv_face = &(*hooks->new_faces)[id];
-    else
-        WHO->face = &(*hooks->new_faces)[id];
+    WHO->face = &(*hooks->new_faces)[id];
+
+    return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetInvFace                                            */
+/* Lua    : object:SetInvFace(face)                                          */
+/* Info   : Sets object's inventory face.                                    */
+/*          If the object is animated (object.f_is_animated == true), then   */
+/*          this value will likely be replaced at the next animation step    */
+/* Status : Tested                                                           */
+/* Version: Introduced in beta 4 pre4                                        */
+/*****************************************************************************/
+static int GameObject_SetInvFace(lua_State *L)
+{
+    lua_object *self;
+    char *face;
+    int id;
+
+    get_lua_args(L, "Os", &self, &face);
+
+    id = hooks->find_face(face, -1);
+    if(id == -1)
+        luaL_error(L, "no such face exists: %s", STRING_SAFE(face));
+
+    WHO->inv_face = &(*hooks->new_faces)[id];
 
     return 0;
 }

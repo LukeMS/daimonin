@@ -347,7 +347,7 @@ static int Map_PlaySound(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Message                                                      */
-/* Lua    : map:Message(x, y, distance, messagem,color)                      */
+/* Lua    : map:Message(x, y, distance, message, color)                      */
 /* Info   : Writes a message to all players on a map                         */
 /*          Starting point x,y for all players in distance                   */
 /*          color should be one of the game.COLOR_xxx constants.             */
