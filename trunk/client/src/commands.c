@@ -1279,7 +1279,7 @@ void Map2Cmd(unsigned char *data, int len)
 			mx = xpos;
 			my = ypos;
 			remove_item_inventory(locate_item(0)); /* implicit clear below */
-			InitMapData(mapname, map_w, map_h, xpos, ypos);
+			InitMapData(map_w, map_h, xpos, ypos);
 		}
 		else
 		{
@@ -1294,6 +1294,7 @@ void Map2Cmd(unsigned char *data, int len)
 			remove_item_inventory(locate_item(0)); /* implicit clear below */
 	        display_mapscroll(xoff, yoff);
 		}
+        UpdateMapName(mapname);
 	}
 	else
 	{
