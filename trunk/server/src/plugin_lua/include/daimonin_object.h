@@ -115,9 +115,13 @@ static int  GameObject_Clone(lua_State *L);
 static int  GameObject_GetAI(lua_State *L);
 static int  GameObject_GetVector(lua_State *L);
 static int  GameObject_GetAnimation(lua_State *L);
+static int  GameObject_GetInvAnimation(lua_State *L);
 static int  GameObject_GetFace(lua_State *L);
+static int  GameObject_GetInvFace(lua_State *L);
 static int  GameObject_SetAnimation(lua_State *L);
+static int  GameObject_SetInvAnimation(lua_State *L);
 static int  GameObject_SetFace(lua_State *L);
+static int  GameObject_SetInvFace(lua_State *L);
 static int  GameObject_MakePet(lua_State *L);
 static int  GameObject_GetPets(lua_State *L);
 

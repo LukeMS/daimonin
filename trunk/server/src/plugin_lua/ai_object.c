@@ -474,8 +474,7 @@ static int AI_GetKnownObjects(lua_State *L)
 /*****************************************************************************/
 /* Name   : AI_ForgetKnownMobs                                               */
 /* Lua    : ai:ForgetKnownMobs()                                             */
-/* Info   : Clears the AIs memory of any registered mobs, npcs or players)   */
-/* Version: Introduced in beta 4 pre3                                        */
+/* Info   : Clears the AIs memory of any registered mobs, npcs or players    */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int AI_ForgetKnownMobs(lua_State *L)
@@ -493,8 +492,7 @@ static int AI_ForgetKnownMobs(lua_State *L)
 /* Name   : AI_ForgetKnownObjects                                            */
 /* Lua    : ai:ForgetKnownObjects()                                          */
 /* Info   : Clears the AIs memory of any registered objects                  */
-/*          (not mobs/npcs or players)                                          */
-/* Version: Introduced in beta 4 pre3                                        */
+/*          (not mobs/npcs or players)                                       */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int AI_ForgetKnownObjects(lua_State *L)
@@ -515,7 +513,6 @@ static int AI_ForgetKnownObjects(lua_State *L)
 /*          behaviours and their parameters)                                 */
 /*          To visualize the layout of the table you can try something like  */
 /*          print(DataStore.Serialize(ai:GetBehaviourlist()))                */
-/* Version: Introduced in beta 4 pre3                                        */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int AI_GetBehaviourlist(lua_State *L)
