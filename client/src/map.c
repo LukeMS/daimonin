@@ -337,6 +337,16 @@ void set_map_darkness(int x, int y, uint8 darkness)
 */
 }
 
+/** Figure out if name is the same as rankandname.
+ * Note: I don't see the tricky part. rank is always appended to name both in the
+ * name parameter and in the rankandname parameter.
+ * Perhaps titles will be a problem in the future?
+ * /Gecko 2006-12-28
+ */
+static int namecmp(const char *name, const char *rankandname)
+{
+    return stricmp(name, rankandname);
+}
 
 void map_draw_map(void)
 {
@@ -521,10 +531,10 @@ void map_draw_map(void)
                                 sprite_blt(face_sprite, xl, yl, NULL, &bltfx);
 
                             /* here we handle high & low walls - for example when
-                                             * you enter a house or something. The wall will be drawn
-                                             * low and higher wall mask will be removed, when the wall
-                                             * is in front of you.
-                                             */
+                             * you enter a house or something. The wall will be drawn
+                             * low and higher wall mask will be removed, when the wall
+                             * is in front of you.
+                             */
                             if (FaceList[index].flags)
                             {
                                 if (FaceList[index].flags & FACE_FLAG_DOUBLE)
@@ -545,18 +555,9 @@ void map_draw_map(void)
                             /* have we a playername? then print it! */
                             if (options.player_names && map->pname[k][0])
                             {
-                                /* we must take care here later for rank! -
-                                                     * then we must trick a bit here! (use rank + name
-                                                     * and strncmp()
-                                                    */
-                                if (options.player_names
-                                 == 1
-                                ||  /* all names */
-                                    (options.player_names == 2 && strnicmp(map->pname[k], cpl.rankandname,
-                                                                           strlen(cpl.rankandname)))
-                                ||  /* names from other players only */
-                                    (options.player_names == 3 && !strnicmp(map->pname[k], cpl.rankandname,
-                                                                            strlen(cpl.rankandname)))) /* only you */
+                                if (options.player_names == 1 /* all names */
+                                        || (options.player_names == 2 && namecmp(map->pname[k], cpl.rankandname)) /* names from other players only */
+                                        || (options.player_names == 3 && !namecmp(map->pname[k], cpl.rankandname))) /* only you */
                                 {
                                     int s, col = COLOR_DEFAULT;
 

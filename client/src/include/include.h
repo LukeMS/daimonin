@@ -39,6 +39,9 @@
 #ifndef ABS
 #define ABS(x) ((x)<0?-(x):(x))
 #endif
+#ifndef MAX
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+#endif
 
 /* This is for the DevCpp IDE */
 #ifndef __WIN_32
