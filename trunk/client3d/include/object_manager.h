@@ -49,6 +49,11 @@ public:
     // ////////////////////////////////////////////////////////////////////
     enum
     {
+        MISSLE_ARROW,
+        MISSLE_SHURIKEN,
+    };
+    enum
+    {
         OBJ_WALK, OBJ_TURN, OBJ_CURSOR_TURN,
         OBJ_TEXTURE,
         OBJ_ANIMATION,
@@ -104,6 +109,7 @@ public:
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
     void setEquipment(int npcID, int bone, int type, int itemID);
     void highlightObject(MovableObject *mob);
+    void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
     void readyPrimaryWeapon(int npc, bool ready)
     {
         mvObject_npc[npc]->readyPrimaryWeapon(ready);
@@ -142,7 +148,7 @@ public:
     }
     const Vector3& getPos(int npc)
     {
-        return mvObject_npc[npc]->getPos();
+        return mvObject_npc[npc]->getPosition();
     }
     const Vector3 &synchToWorldPos(int deltaX, int deltaZ);
     void selectObject(MovableObject *mob);

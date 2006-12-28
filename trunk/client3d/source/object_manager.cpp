@@ -222,13 +222,13 @@ const Vector3 &ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
     {
         mvObject_static[i]->movePosition(deltaX, deltaZ);
     }
-    pos = mvObject_npc[0]->getPos();
+    pos = mvObject_npc[0]->getPosition();
     for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
     {
         // Sync the actual position.
         mvObject_npc[i]->movePosition(deltaX, deltaZ);
     }
-    pos-= mvObject_npc[0]->getPos();
+    pos-= mvObject_npc[0]->getPosition();
     return pos;
 }
 
@@ -453,6 +453,22 @@ void ObjectManager::extractObject(MovableObject *mob)
     Logger::log().error() << "Bug in ObjectManager::extractObject(...) : Could not extract object!";
 }
 
+//================================================================================================
+//
+//================================================================================================
+void ObjectManager::shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob)
+{
+    static SceneNode *mNode = 0;
+    if (mNode) return;
+    mNode = Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode();
+    Entity *mEntity = Events::getSingleton().GetSceneManager()->createEntity("Test", "Arrow.mesh");
+    mNode->attachObject(mEntity);
+
+    Vector3 pos = srcMob->getPosition();
+    pos.y +=srcMob->getHeight();
+    mNode->setPosition(pos);
+    mNode->setOrientation(srcMob->getSceneNode()->getOrientation());
+}
 
 //================================================================================================
 //

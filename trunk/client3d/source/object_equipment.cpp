@@ -410,9 +410,9 @@ void ObjectEquipment::setTexture(int pos, int textureColor, int textureNr)
 //================================================================================================
 // Create and attach an equipment item to bone.
 //================================================================================================
-void ObjectEquipment::equipItem(int bone, int type, int itemID, int particleID)
+void ObjectEquipment::equipItem(unsigned int bone, int type, int itemID, int particleID)
 {
-    if (bone < 0 || bone >= BONE_SUM) return;
+    if (bone >= BONE_SUM) return;
     dropItem(bone);
 
     // Add a particle system.

@@ -93,8 +93,8 @@ public:
     void freeRecources();
     void setTexture(int pos, int textureColor, int textureNr =0);
     void drawBopyPart(sPicture &picPart, Image &image, uint32 texColor, uint32 texNumber);
-    void equipItem(int bone, int type, int itemID, int particleID =-1);
     void dropItem(int bone);
+    void equipItem(unsigned int bone, int type, int itemID, int particleID =-1);
 
 private:
     // ////////////////////////////////////////////////////////////////////

@@ -7,9 +7,7 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32"/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -237,6 +235,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\object_manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\object_missle.cpp"
 				>
 			</File>
 			<File
@@ -658,6 +660,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\object_manager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\object_missle.h"
 				>
 			</File>
 			<File
