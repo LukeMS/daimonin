@@ -3400,6 +3400,10 @@
     Monsters with &lt;one hit only&gt; dissapear after one successful hit
     to a player.
   </attribute>
+  <attribute arch="str" editor="Strength" type="int">
+    Currently monsters don't use their strength very much:
+    - Higher strength allows the mob to pick up heavier objects.
+  </attribute>
 </section>
 
 <section name="spellcraft">
@@ -3874,6 +3878,10 @@
     Monsters with &lt;one hit only&gt; dissapear after one successful hit
     to a player.
   </attribute>
+  <attribute arch="str" editor="Strength" type="int">
+    Currently monsters don't use their strength very much:
+    - Higher strength allows the mob to pick up heavier objects.
+  </attribute>
 </section>
 <section name="spellcraft">
   <attribute arch="sp" editor="spellpoints" type="int">
@@ -4025,8 +4033,6 @@
     This setting only has effect if the monster doesn't have an AI object.
   </attribute>
 </section>
-  <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
-  </attribute>
 </type>
 
 <!--####################################################################-->
