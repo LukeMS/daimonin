@@ -582,16 +582,9 @@ int textwin_move_event(int actWin, SDL_Event event)
     }
 
     /* mouse out of window */
-    if (event.motion.y
-       <txtwin[actWin].y
-     || event.motion.x
-      > txtwin[actWin].x
-      + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
-     || event.motion.y
-      > txtwin[actWin].y
-      + txtwin[actWin].size * 10
-      + (actWin == TW_CHAT ? 4 : 13)
-      + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
+    if (event.motion.y <txtwin[actWin].y
+     || event.motion.x > txtwin[actWin].x + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
+     || event.motion.y > txtwin[actWin].y + txtwin[actWin].size * 10 + (actWin == TW_CHAT ? 4 : 13) + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
     {
         if (!(textwin_flags & TW_RESIZE))
             return 1;

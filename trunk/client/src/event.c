@@ -1229,7 +1229,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
                       if ((key->keysym.unicode & 0xFF80) == 0)
                           c = key->keysym.unicode & 0x7F;
                       c = key->keysym.unicode & 0xff;
-                      if (c >= 32)
+                      if (c >= 32 && c != '^' && c != '~' && c != '§' && c != '°')
                       {
                           if (key->keysym.mod & KMOD_SHIFT)
                               c = toupper(c);
