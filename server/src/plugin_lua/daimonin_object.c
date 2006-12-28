@@ -1308,7 +1308,7 @@ static int GameObject_SayTo(lua_State *L)
 /* Lua    : object:Write(message, color)                                     */
 /* Info   : Writes a message to a specific player.                           */
 /*          color should be one of the game.COLOR_xxx constants.             */
-/*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
+/*          default color is game.COLOR_ORANGE | game.COLOR_UNIQUE           */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_Write(lua_State *L)
