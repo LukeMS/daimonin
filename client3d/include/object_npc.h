@@ -92,6 +92,7 @@ public:
     void attackShortRange(ObjectNPC *mEnemyObject);
     void attackLongRange(ObjectNPC *mEnemyObject);
     void castSpell(int spell);
+    void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
     void stopMovement();
     void talkToNpc();
     void setPrimaryWeapon(int weapon);
@@ -124,8 +125,10 @@ private:
         ATTACK_NONE,
         ATTACK_APPROACH,
         ATTACK_ANIM_START,
-        ATTACK_ANIM_RUNNUNG,
+        ATTACK_ANIM_RUNNING,
+        ATTACK_ANIM_ENDS,
         ATTACK_ANIM_STOP,
+        ATTACK_WAIT_FOR_MISSLE,
         ATTACK_CALC_DAMAGE,
         ATTACK_SUM
     }
@@ -148,10 +151,11 @@ private:
     };
 
     unsigned char mBoundingRadius; /**< The radius of subtiles, the NPC stands on. Used for pathfinding. **/
-    Real mCursorTurning;
     bool mAutoMoving;
     bool mTalking;
     Real mSpawnSize;
+    Real mCursorTurning;
+    Real mDeltaDegree, mDistance;
     int mReadyWeaponStatus;
     int mType;
     int mAttack;
@@ -159,13 +163,12 @@ private:
     int mMaxHP,    mActHP;
     int mMaxMana,  mActMana;
     int mMaxGrace, mActGrace;
-    TilePos mDestStepPos;   /**< The next tile pos of a multi tile walk. **/
-    TilePos mDestWalkPos;   /**< The destination pos (as tile).   **/
-    Vector3  mDestWalkVec;  /**< The destination pos (as vector). **/
-    Vector3  mWalkSpeed;
     int mOffX, mOffZ;
+    TilePos mDestStepPos;     /**< The next tile pos of a multi tile walk. **/
+    TilePos mDestWalkPos;     /**< The destination pos (as tile).   **/
+    Vector3 mDestWalkVec;     /**< The destination pos (as vector). **/
+    Vector3 mWalkSpeed;
     ObjectNPC *mEnemyObject;
-    Real mDeltaDegree, mDistance;
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

@@ -299,7 +299,6 @@ bool ObjectNPC::update(const FrameEvent& event)
                 mReadyWeaponStatus &= ~READY_WEAPON_SECONDARY_DROP;
                 mReadyWeaponStatus &= ~READY_WEAPON_SECONDARY_READY;
             }
-
         }
     }
 
@@ -433,19 +432,45 @@ bool ObjectNPC::update(const FrameEvent& event)
                 if (mAutoTurning == TURN_NONE && !mAutoMoving)
                     mAttacking = ATTACK_ANIM_START;
                 break;
+
             case ATTACK_ANIM_START:
-                mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 0);
-                mAttacking = ATTACK_ANIM_RUNNUNG;
+                if (isSecondaryWeaponReady())
+                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 6);
+                else
+                    mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_ATTACK, 0);
+                mAttacking = ATTACK_ANIM_RUNNING;
                 break;
 
-            case ATTACK_ANIM_RUNNUNG:
+            case ATTACK_ANIM_RUNNING:
                 if (mAnim->getTimeLeft() < 0.5 || mAnim->isIdle())
+                    mAttacking = ATTACK_ANIM_ENDS;
+                break;
+
+            case ATTACK_ANIM_ENDS:
+                if (!isSecondaryWeaponReady())
                 {
-                    // Just a quick hack to get some action on the screen...
-                    if (mAnim->isAttack())
+                    mAttacking = ATTACK_CALC_DAMAGE;
+                    break;
+                }
+                ObjectManager::getSingleton().shoot(ObjectManager::MISSLE_ARROW,
+                                                    ObjectManager::getSingleton().getObjectNPC(HERO),
+                                                    ObjectManager::getSingleton().getSelectedNPC());
+                mAttacking = ATTACK_WAIT_FOR_MISSLE;
+                break;
+
+            case ATTACK_WAIT_FOR_MISSLE:
+                mAttacking = ATTACK_CALC_DAMAGE;
+                break;
+
+            case ATTACK_CALC_DAMAGE:
+                // Just a quick hack to get some action on the screen...
+                if (mAnim->isAttack())
+                {
+                    // Player is getting hurt.
+                    if (mIndex)
                     {
-                        // Player is getting hurt.
-                        if (mIndex)
+                        // Quick hack. Later we will check the distance to enmey here...
+                        if (!READY_WEAPON_SECONDARY_READY)
                         {
                             ObjectNPC *mob = ObjectManager::getSingleton().getObjectNPC(HERO);
                             static int oo =0;
@@ -457,20 +482,20 @@ bool ObjectNPC::update(const FrameEvent& event)
                             }
                             if (++oo > 5) oo =0;
                         }
-                        // Monster is getting hurt.
-                        else
-                        {
-                            ObjectNPC *mob = ObjectManager::getSingleton().getSelectedNPC();
-                            if (!mob || mob->getHealth() <= 0) break;
-                            mob->setDamage(10);
-                            //mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
-                            Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
-                            ParticleManager::getSingleton().addFreeObject(mob->getSceneNode()->getPosition(), "Particle/Hit", 0.8);
-                        }
                     }
-                    mAttacking = ATTACK_NONE;
-                    if (!mIndex) ObjectManager::getSingleton().targetObjectAttackNPC(HERO);
+                    // Monster is getting hurt.
+                    else
+                    {
+                        ObjectNPC *mob = ObjectManager::getSingleton().getSelectedNPC();
+                        if (!mob || mob->getHealth() <= 0) break;
+                        mob->setDamage(10);
+                        //mob->mAnim->toggleAnimation(ObjectAnimate::ANIM_GROUP_HIT, 0);
+                        Sound::getSingleton().playStream(Sound::TENTACLE_HIT);
+                        ParticleManager::getSingleton().addFreeObject(mob->getSceneNode()->getPosition(), "Particle/Hit", 0.8);
+                    }
                 }
+                mAttacking = ATTACK_NONE;
+                if (!mIndex) ObjectManager::getSingleton().targetObjectAttackNPC(HERO);
                 break;
 
             default:
@@ -608,12 +633,13 @@ void ObjectNPC::attackShortRange(ObjectNPC *EnemyObject)
 {
     if (!mAnim->isIdle() || !EnemyObject) return;
     if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
-    // Move in front of the enemy.
+    // Ready the weapon.
     if (!isPrimaryWeaponReady())
     {
         readyPrimaryWeapon(true);
         return;
     }
+    // Move in front of the enemy.
     if (mEnemyObject != EnemyObject)
     {
         mEnemyObject = EnemyObject;
@@ -634,14 +660,25 @@ void ObjectNPC::attackLongRange(ObjectNPC *EnemyObject)
 {
     if (!mAnim->isIdle() || !EnemyObject) return;
     if (this == EnemyObject) return; // No Harakiri! (this is not needed, if hero is ALWAYS friendly).
-    // Move in front of the enemy.
+    // Ready the weapon.
     if (!isSecondaryWeaponReady())
     {
         readySecondaryWeapon(true);
         return;
     }
-
-    GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Bow is broken!");
+    // Move in front of the enemy.
+    if (mEnemyObject != EnemyObject)
+    {
+        mEnemyObject = EnemyObject;
+        const int WEAPON_RANGE = 16; // subtiles range of the weapon
+        moveToDistantTile(mEnemyObject->getTilePos(), WEAPON_RANGE);
+        mAttacking = ATTACK_APPROACH;
+    }
+    // Enemy is already in attack range.
+    else
+    {
+        mAttacking = ATTACK_ANIM_START;
+    }
 }
 
 //================================================================================================

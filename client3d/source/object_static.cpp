@@ -92,8 +92,7 @@ ObjectStatic::ObjectStatic(sObject &obj)
     }
 
     const AxisAlignedBox &AABB = mEntity->getBoundingBox();
-    mBoundingBox.x = (AABB.getMaximum().x + AABB.getMinimum().x)/2;
-    mBoundingBox.z = (AABB.getMaximum().z + AABB.getMinimum().z)/2;
+    mBoundingBox = (AABB.getMaximum() + AABB.getMinimum())/2;
 
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mNode->attachObject(mEntity);

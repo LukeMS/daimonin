@@ -434,6 +434,13 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
+		<Unit filename="..\..\..\include\object_missle.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\..\..\include\object_npc.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -691,6 +698,11 @@
 			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\..\..\source\object_manager.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\..\..\source\object_missle.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="Debug" />
 			<Option target="Release" />
