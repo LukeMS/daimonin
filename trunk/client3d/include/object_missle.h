@@ -55,7 +55,7 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectMissle(sObject &obj);
+    ObjectMissle(int type, ObjectNPC *src, ObjectNPC *dst);
     virtual ~ObjectMissle();
     virtual void freeRecources();
     virtual bool update(const FrameEvent& event);
@@ -75,20 +75,21 @@ public:
     {
         return mIndex;
     }
-protected:
-    // ////////////////////////////////////////////////////////////////////
-    // Variables / Constants.
-    // ////////////////////////////////////////////////////////////////////
-    static SceneManager *mSceneMgr;
-    Degree mFacing;
-    unsigned int mIndex;
-    SceneNode *mNode;
-    Entity *mEntity;
 
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    static SceneManager *msSceneMgr;
+    static unsigned int msUnique;
+    Degree mFacing;
+    unsigned int mIndex;
+    SceneNode *mNode;
+    Entity *mEntity;
+    int mType;
+    int mParticle;
+    Vector3 mDestPosition;
+    Vector3 mSpeed;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

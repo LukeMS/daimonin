@@ -85,7 +85,7 @@ checkForKeyword:
         goto checkForKeyword;
     }
     //if (posNr) LogFile::getSingleton().Error("string: %s\n", strBuffer.c_str());
-    if (strBuffer.size() == 0)
+    if (strBuffer.empty())
     {
         return false;
     }

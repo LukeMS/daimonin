@@ -28,9 +28,9 @@ http://www.gnu.org/licenses/licenses.html
 #define OBJECT_MANAGER_H
 
 #include <vector>
-#include "Ogre.h"
 #include "object_npc.h"
 #include "object_static.h"
+#include "object_missle.h"
 
 using namespace Ogre;
 
@@ -102,8 +102,9 @@ public:
     void freeRecources();
     bool init();
     void addMobileObject(ObjectStatic::sObject &obj);
-    void delObjectNPC(int number);
-    void delObjectStatic(int number);
+    void deleteMissle(int number);
+    void deleteStatic(int number);
+    void deleteNPC   (int number);
     void update(int type, const FrameEvent& evt);
     void mousePressed(MovableObject *mob, TilePos pos, bool modifier);
     void Event(int obj_type, int action, int val1=0, int val2=0, int val3=0);
@@ -112,61 +113,61 @@ public:
     void shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob);
     void readyPrimaryWeapon(int npc, bool ready)
     {
-        mvObject_npc[npc]->readyPrimaryWeapon(ready);
+        mvNPC[npc]->readyPrimaryWeapon(ready);
     }
     bool isMoving(int npc)
     {
-        return mvObject_npc[npc]->isMoving();
+        return mvNPC[npc]->isMoving();
     }
     bool isPrimaryWeaponReady(int npc)
     {
-        return mvObject_npc[npc]->isPrimaryWeaponReady();
+        return mvNPC[npc]->isPrimaryWeaponReady();
     }
     void readySecondaryWeapon(int npc, bool ready)
     {
-        mvObject_npc[npc]->readySecondaryWeapon(ready);
+        mvNPC[npc]->readySecondaryWeapon(ready);
     }
     bool isSecondaryWeaponReady(int npc)
     {
-        return mvObject_npc[npc]->isSecondaryWeaponReady();
+        return mvNPC[npc]->isSecondaryWeaponReady();
     }
     void castSpell(int npc, int spell)
     {
-        mvObject_npc[npc]->castSpell(spell);
+        mvNPC[npc]->castSpell(spell);
     }
     const String &getNameNPC(int npc)
     {
-        return mvObject_npc[npc]->getNickName();
+        return mvNPC[npc]->getNickName();
     }
     void setNameNPC(int npc, const char *name)
     {
-        mvObject_npc[npc]->setNickName(name);
+        mvNPC[npc]->setNickName(name);
     }
     void setPosition(int npc, TilePos pos)
     {
-        mvObject_npc[npc]->setPosition(pos);
+        mvNPC[npc]->setPosition(pos);
     }
     const Vector3& getPos(int npc)
     {
-        return mvObject_npc[npc]->getPosition();
+        return mvNPC[npc]->getPosition();
     }
     const Vector3 &synchToWorldPos(int deltaX, int deltaZ);
     void selectObject(MovableObject *mob);
     Vector3 getTargetedWorldPos()
     {
-        return mvObject_npc[mSelectedObject]->getSceneNode()->getPosition();
+        return mvNPC[mSelectedObject]->getSceneNode()->getPosition();
     }
     ObjectNPC *getObjectNPC(unsigned int index)
     {
-        if (index < mvObject_npc.size())
-            return mvObject_npc[index];
+        if (index < mvNPC.size())
+            return mvNPC[index];
         else
             return 0;
     }
     ObjectNPC *getSelectedNPC()
     {
         if (mSelectedObject >= 0)
-            return mvObject_npc[mSelectedObject];
+            return mvNPC[mSelectedObject];
         else
             return 0;
     }
@@ -182,8 +183,9 @@ private:
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
     std::string mDescFile;
-    std::vector<ObjectStatic*> mvObject_static;
-    std::vector<ObjectNPC*   > mvObject_npc;
+    std::vector<ObjectStatic*> mvStatic;
+    std::vector<ObjectNPC*   > mvNPC;
+    std::vector<ObjectMissle*> mvMissle;
     int mSelectedType, mSelectedObject, mSelectedFriendly;
     TilePos mSelectedPos;
     // ////////////////////////////////////////////////////////////////////

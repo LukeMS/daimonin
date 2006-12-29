@@ -34,7 +34,8 @@ http://www.gnu.org/licenses/licenses.html
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-SceneManager *ObjectMissle::mSceneMgr =0;
+SceneManager *ObjectMissle::msSceneMgr =0;
+unsigned int ObjectMissle::msUnique =0;
 
 //================================================================================================
 // Free all recources.
@@ -46,14 +47,30 @@ void ObjectMissle::freeRecources()
 // Destructor.
 //================================================================================================
 ObjectMissle::~ObjectMissle()
-{
-}
+{}
 
 //================================================================================================
 // Init the object.
 //================================================================================================
-ObjectMissle::ObjectMissle(sObject &obj)
+ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
+    // Create a missle.
+    mType = type;
+    mNode = Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode();
+    Entity *mEntity = Events::getSingleton().GetSceneManager()->createEntity(
+                          "Mob"+ StringConverter::toString(++msUnique, 6, '0'),
+                          "Arrow.mesh");
+    mNode->attachObject(mEntity);
+    mNode->scale(1,2,1);
+    // Set the start position.
+    Vector3 pos = srcMob->getPosition();
+    pos.y +=srcMob->getHeight();
+    mNode->setPosition(pos);
+    mNode->setOrientation(srcMob->getSceneNode()->getOrientation());
+    // Set the destination.
+    mDestPosition = dstMob->getPosition();
+    mDestPosition.y += dstMob->getHeight()/2;
+    mSpeed = (mDestPosition-pos)*2;
 }
 
 //================================================================================================
@@ -61,6 +78,11 @@ ObjectMissle::ObjectMissle(sObject &obj)
 //================================================================================================
 bool ObjectMissle::update(const FrameEvent& event)
 {
+    // Missles with ballistic.
+    // ToDo.
+
+    // Missles without ballistic.
+    mNode->translate(event.timeSinceLastFrame * mSpeed);
     return true;
 }
 

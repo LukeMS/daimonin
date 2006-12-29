@@ -1,4 +1,4 @@
-material Material_#0
+material Ammo_Arrow
 {
     technique
     {
@@ -6,7 +6,7 @@ material Material_#0
         {
             texture_unit
             {
-                texture arrow.jpg 
+                texture Ammo_Arrow.png 
             }
         }
     }

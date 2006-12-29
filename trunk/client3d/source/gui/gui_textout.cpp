@@ -54,6 +54,7 @@ GuiTextout::GuiTextout()
 {
     mTextGfxBuffer= 0;
     mMaxFontHeight= 0;
+    mTextGfxBuffer= 0;
 }
 
 //================================================================================================
@@ -75,7 +76,7 @@ GuiTextout::~GuiTextout()
 //================================================================================================
 void GuiTextout::createBuffer(int width)
 {
-    if (mTextGfxBuffer) delete[] mTextGfxBuffer;
+    delete[] mTextGfxBuffer;
     if (width < MAX_TEXTLINE_LEN) width = MAX_TEXTLINE_LEN;
     mTextGfxBuffer = new uint32[mMaxFontHeight * width];
 }
@@ -121,15 +122,12 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // Load the font.
     if (!filename) return;
     Ogre::NameValuePairList pairList;
-    int iSize, iReso;
-    if (size) iSize = atoi(size);
-    else iSize = MIN_FONT_SIZE;
+    int iSize = size?atoi(size):MIN_FONT_SIZE;
     if (iSize < MIN_FONT_SIZE) iSize = MIN_FONT_SIZE;
-    if (iSize > MAX_FONT_SIZE) iSize = MAX_FONT_SIZE;
-    if (reso) iReso = atoi(reso);
-    else iReso = MAX_RESO_SIZE;
+    else if (iSize > MAX_FONT_SIZE) iSize = MAX_FONT_SIZE;
+    int iReso = reso?atoi(reso):MAX_RESO_SIZE;
     if (iReso < MIN_RESO_SIZE) iReso = MIN_RESO_SIZE;
-    if (iReso > MAX_RESO_SIZE) iReso = MAX_RESO_SIZE;
+    else if (iReso > MAX_RESO_SIZE) iReso = MAX_RESO_SIZE;
     pairList["type"]      = "truetype";
     pairList["source"]    = filename;
     pairList["size"]      = StringConverter::toString(iSize);
@@ -154,17 +152,17 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // Calculate Size for the RAW buffer.
     mFont *fnt = new mFont;
     mvFont.push_back(fnt);
-    Real u1,u2, v1, v2;
+    Real u1, u2, v1, v2;
     // Space char.
     pFont->getGlyphTexCoords(33, u1, v1, u2, v2);
     fnt->height =0;
-    fnt->charWidth[0] = (unsigned char)((u2-u1)*texW)+1;
+    fnt->charWidth[0] = (unsigned char)((u2-u1)*texW)+1; // 1 extra pixel for the endOfChar sign.
     fnt->charStart[0] = 0;
     // Now we look for the other chars.
     for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
     {
         pFont->getGlyphTexCoords(32+i, u1, v1, u2, v2);
-        fnt->charWidth[i]= (unsigned char) ((u2-u1)*texW)+1; // 1 pisxel for the endOfChar sign.
+        fnt->charWidth[i]= (unsigned char) ((u2-u1)*texW)+1; // 1 extra pixel for the endOfChar sign.
         fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
         if (fnt->height< (unsigned int) ((v2-v1)*texH))
             fnt->height= (unsigned int) ((v2-v1)*texH);
@@ -184,27 +182,20 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // Build the RAW datas.
     // ////////////////////////////////////////////////////////////////////
     // Clear the background.
-    fnt->data = new uint32[fnt->textureWidth * fnt->height];
-    for (int i=0; i < fnt->textureWidth * fnt->height; ++i)
+    fnt->data = new uint32[(fnt->textureWidth+1) * fnt->height];
+    for (register int i=0; i < (fnt->textureWidth+1) * fnt->height; ++i)
         fnt->data[i] = 0x00ffffff;
     // Copy all needed chars of the font.
-    int x1, x2, y1, y2, yPos;
+    int x1, y1, yPos;
     for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
     {
         pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
-        // getGlyphTexCoords gives back values > 1.0f sometimes !?
-        x1 = (int)(u1 * texW);
-        if (x1 > texW) x1 = texW;
-        x2 = (int)(u2 * texW);
-        if (x2 > texW) x2 = texW;
-        y1 = (int)(v1 * texH);
-        if (y1 > texH) y1 = texH;
-        y2 = (int)(v2 * texH);
-        if (y2 > texH) y2 = texH;
-        for (int x = 0; x < fnt->charWidth[i]; ++x)
+        x1 = (unsigned int)(u1 * texW)-1;
+        y1 = (unsigned int)(v1 * texH);
+        for (int x = 0; x <= fnt->charWidth[i]; ++x)
         {
             yPos=0;
-            for (int y = y1; y < y2; ++y)
+            for (int y = y1; y < y1+fnt->height; ++y)
             {
                 fnt->data[fnt->charStart[i]+x + yPos] = ttfData[x1+x + y*texture->getWidth()];
                 yPos+= fnt->textureWidth;
@@ -235,17 +226,18 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
     // ////////////////////////////////////////////////////////////////////
-    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
+    //if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
     {
         Image img;
         // ////////////////////////////////////////////////////////////////////
         // This is the Ogre fontdata.
         // ////////////////////////////////////////////////////////////////////
         /*
+        static int fontNr = -1;
         uint32 *sysFontBuf = new uint32[texture->getWidth()*texture->getHeight()];
         texture->getBuffer()->blitToMemory(PixelBox(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, sysFontBuf));
         img = img.loadDynamicImage((uchar*)sysFontBuf, texture->getWidth(), texture->getHeight(), PF_A8R8G8B8);
-        img.save("c:\\OgreFont.png");
+        img.save("./OgreFont"+StringConverter::toString(++fontNr,3,'0')+".png");
         */
         // ////////////////////////////////////////////////////////////////////
         // This is the Daimonin fontdata.
@@ -257,19 +249,19 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             for (unsigned int y = 0; y < fnt->height; ++y)
             {
                 fnt->data[x1] = 0xff00ff00;
-                x1 +=fnt->textureWidth;
+                x1+= fnt->textureWidth;
             }
         }
         // write font to disc.
-        // This is broken in the codeblocks sdk version of ogre1.2.3, use GNU/Linux or VC to get it done.
+        // This is broken in the codeblocks sdk version of ogre1.2.3 (width > 1024 will be clipped).
+        // Use GNU/Linux or VC to get it done.
         img = img.loadDynamicImage((uchar*)fnt->data, fnt->textureWidth, fnt->height, PF_A8R8G8B8);
-        std::string rawFilename = PATH_TEXTURES;
-        rawFilename += "NoLonger";
-        rawFilename += filename;
-        rawFilename.resize(rawFilename.size()-4);
-        rawFilename += '_'+ StringConverter::toString(iSize, 3, '0');
-        rawFilename += '_'+ StringConverter::toString(iReso, 3, '0');
-        rawFilename += ".png";
+        String rawFilename = "./NoLonger";
+        rawFilename+= filename;
+        rawFilename.resize(rawFilename.size()-4); // Cut extension.
+        rawFilename+= '_'+ StringConverter::toString(iSize, 3, '0');
+        rawFilename+= '_'+ StringConverter::toString(iReso, 3, '0');
+        rawFilename+= ".png";
         img.save(rawFilename);
     }
     // ////////////////////////////////////////////////////////////////////
