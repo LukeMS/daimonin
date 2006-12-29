@@ -719,6 +719,13 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                     /* LOG(llevDebug,"add t_map %s (%d). ", path_sh, tile-1); */
                     m->tile_map[tile - 1] = neighbour;
 
+                    if (neighbour->tile_path[dest_tile] == NULL || neighbour->tile_path[dest_tile] != m->path)
+                    {
+                        LOG(llevBug, "MAPBUG: tiled maps does not link correctly: %s[%d]->%s but %s[%d]->%s\n",
+                                STRING_SAFE(m->orig_path), tile, STRING_SAFE(m->orig_tile_path[tile-1]), 
+                                STRING_SAFE(neighbour->orig_path), dest_tile + 1, STRING_SAFE(neighbour->orig_tile_path[dest_tile])); 
+                    }
+
                     if (neighbour->tile_path[dest_tile] == NULL || neighbour->tile_path[dest_tile] == m->path)
                         neighbour->tile_map[dest_tile] = m;
                 }
