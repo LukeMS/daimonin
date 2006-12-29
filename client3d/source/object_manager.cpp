@@ -24,17 +24,14 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/licenses/licenses.html
 -----------------------------------------------------------------------------*/
 
-#include "define.h"
 #include "option.h"
 #include "logger.h"
 #include "events.h"
 #include "sound.h"
 #include "network.h"
-#include "spell_manager.h"
 #include "object_manager.h"
-#include "particle_manager.h"
 #include "object_visuals.h"
-#include "gui_manager.h"
+
 
 //================================================================================================
 // Defines:
@@ -42,6 +39,7 @@ http://www.gnu.org/licenses/licenses.html
 // * npc:    controlled by ai.
 // * player: controlled by a human player.
 //================================================================================================
+
 
 
 //================================================================================================
@@ -183,7 +181,7 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
         obj.index = index++;
         ObjectStatic *obj_static = new ObjectStatic(obj);
         if (obj_static)
-            mvObject_static.push_back(obj_static);
+            mvStatic.push_back(obj_static);
     }
     else
     {
@@ -191,7 +189,7 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
         obj.index = index++;
         ObjectNPC *obj_npc = new ObjectNPC(obj, true);
         if (obj_npc)
-            mvObject_npc.push_back(obj_npc);
+            mvNPC.push_back(obj_npc);
     }
 }
 
@@ -200,15 +198,20 @@ void ObjectManager::addMobileObject(ObjectStatic::sObject &obj)
 //================================================================================================
 void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
-    for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+    for (unsigned int i = 0; i < mvMissle.size(); ++i)
     {
-        if (!mvObject_static [i]->update(evt) )
-            delObjectNPC(i);
+        if (!mvMissle[i]->update(evt))
+            deleteMissle(i);
     }
-    for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
+    for (unsigned int i = 0; i < mvStatic.size(); ++i)
     {
-        if (!mvObject_npc[i]->update(evt))
-            delObjectNPC(i);
+        if (!mvStatic [i]->update(evt) )
+            deleteNPC(i);
+    }
+    for (unsigned int i = 0; i < mvNPC.size(); ++i)
+    {
+        if (!mvNPC[i]->update(evt))
+            deleteNPC(i);
     }
 }
 
@@ -218,17 +221,17 @@ void ObjectManager::update(int obj_type, const FrameEvent& evt)
 const Vector3 &ObjectManager::synchToWorldPos(int deltaX, int deltaZ)
 {
     static Vector3 pos;
-    for (unsigned int i = 0; i < mvObject_static.size(); ++i)
+    for (unsigned int i = 0; i < mvStatic.size(); ++i)
     {
-        mvObject_static[i]->movePosition(deltaX, deltaZ);
+        mvStatic[i]->movePosition(deltaX, deltaZ);
     }
-    pos = mvObject_npc[0]->getPosition();
-    for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
+    pos = mvNPC[0]->getPosition();
+    for (unsigned int i = 0; i < mvNPC.size(); ++i)
     {
         // Sync the actual position.
-        mvObject_npc[i]->movePosition(deltaX, deltaZ);
+        mvNPC[i]->movePosition(deltaX, deltaZ);
     }
-    pos-= mvObject_npc[0]->getPosition();
+    pos-= mvNPC[0]->getPosition();
     return pos;
 }
 
@@ -243,8 +246,8 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
     }
     else
     {
-        if (id >= (int) mvObject_npc.size()) return;
-        // if (action == OBJ_WALK) mvObject_npc[id]->walking(val1);
+        if (id >= (int) mvNPC.size()) return;
+        // if (action == OBJ_WALK) mvNPC[id]->walking(val1);
         if (action == OBJ_GOTO)
         {
             TilePos pos;
@@ -252,47 +255,57 @@ void ObjectManager::Event(int obj_type, int action, int id, int val1, int val2)
             pos.z = val1 >> 8;
             pos.subX = val2 & 0xff;
             pos.subZ = val2 >> 8;
-            mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
+            mvNPC[ObjectNPC::HERO]->moveToDistantTile(pos);
         }
         if (action == OBJ_TEXTURE    )
-            mvObject_npc[id]->mEquip->setTexture(val1, val2);
+            mvNPC[id]->mEquip->setTexture(val1, val2);
         if (action == OBJ_HIT        )
-            mvObject_npc[id]->setDamage(val1);
+            mvNPC[id]->setDamage(val1);
         if (action == OBJ_TURN       )
-            mvObject_npc[id]->turning(val1, false);
+            mvNPC[id]->turning(val1, false);
         if (action == OBJ_CURSOR_TURN)
-            mvObject_npc[id]->turning(val1, true);
+            mvNPC[id]->turning(val1, true);
         if (action == OBJ_ANIMATION  )
-            mvObject_npc[id]->toggleAnimation(val1, val2);
+            mvNPC[id]->toggleAnimation(val1, val2);
     }
 }
 
 //================================================================================================
 // Delete a NPC-Object.
 //================================================================================================
-void ObjectManager::delObjectNPC(int index)
+void ObjectManager::deleteNPC(int index)
 {
-    if (mSelectedObject == index)
-        mSelectedObject =-1;
-    else if (mSelectedObject > index)
-        --mSelectedObject;
-    mvObject_npc[index]->freeRecources();
-    delete mvObject_npc[index];
-    std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin();
+    if (mSelectedObject == index) mSelectedObject =-1;
+    else if (mSelectedObject > index) --mSelectedObject;
+    mvNPC[index]->freeRecources();
+    delete mvNPC[index];
+    std::vector<ObjectNPC*>::iterator i = mvNPC.begin();
     while (index--) ++i;
-    mvObject_npc.erase(i);
+    mvNPC.erase(i);
 }
 
 //================================================================================================
 // Delete a Static-Object.
 //================================================================================================
-void ObjectManager::delObjectStatic(int index)
+void ObjectManager::deleteStatic(int index)
 {
-    mvObject_static[index]->freeRecources();
-    delete mvObject_static[index];
-    std::vector<ObjectStatic*>::iterator i = mvObject_static.begin();
+    mvStatic[index]->freeRecources();
+    delete mvStatic[index];
+    std::vector<ObjectStatic*>::iterator i = mvStatic.begin();
     while (index--) ++i;
-    mvObject_static.erase(i);
+    mvStatic.erase(i);
+}
+
+//================================================================================================
+// Delete a Static-Object.
+//================================================================================================
+void ObjectManager::deleteMissle(int index)
+{
+    mvMissle[index]->freeRecources();
+    delete mvMissle[index];
+    std::vector<ObjectMissle*>::iterator i = mvMissle.begin();
+    while (index--) ++i;
+    mvMissle.erase(i);
 }
 
 //================================================================================================
@@ -300,19 +313,19 @@ void ObjectManager::delObjectStatic(int index)
 //================================================================================================
 void ObjectManager::freeRecources()
 {
-    for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i)
+    for (std::vector<ObjectNPC*>::iterator i = mvNPC.begin(); i < mvNPC.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);
     }
-    mvObject_npc.clear();
+    mvNPC.clear();
 
-    for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i)
+    for (std::vector<ObjectStatic*>::iterator i = mvStatic.begin(); i < mvStatic.end(); ++i)
     {
         (*i)->freeRecources();
         delete (*i);
     }
-    mvObject_static.clear();
+    mvStatic.clear();
 }
 
 //================================================================================================
@@ -325,12 +338,12 @@ void ObjectManager::highlightObject(MovableObject *mob)
     if  (mSelectedType >= OBJECT_NPC)
     {
         if (mSelectedObject != ObjectNPC::HERO)
-            ObjectVisuals::getSingleton().highlight(mvObject_npc[mSelectedObject],
+            ObjectVisuals::getSingleton().highlight(mvNPC[mSelectedObject],
                                                     mSelectedObject != ObjectNPC::HERO,
                                                     Events::getSingleton().isShiftDown());
     }
     else
-        ObjectVisuals::getSingleton().highlight(mvObject_static[mSelectedObject],
+        ObjectVisuals::getSingleton().highlight(mvStatic[mSelectedObject],
                                                 true,
                                                 Events::getSingleton().isShiftDown());
 }
@@ -340,23 +353,23 @@ void ObjectManager::highlightObject(MovableObject *mob)
 //================================================================================================
 void ObjectManager::selectObject(MovableObject *mob)
 {
-    if (mvObject_npc[ObjectNPC::HERO]->isMoving()) return;
-    if (mvObject_npc[ObjectNPC::HERO]->getHealth() <= 0) return;
+    if (mvNPC[ObjectNPC::HERO]->isMoving()) return;
+    if (mvNPC[ObjectNPC::HERO]->getHealth() <= 0) return;
 
     extractObject(mob);
     if  (mSelectedType >= OBJECT_NPC)
     {
         bool notHero = mSelectedObject != ObjectNPC::HERO;
-        ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], notHero, notHero);
-        mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
-        mSelectedFriendly = mvObject_npc[mSelectedObject]->getFriendly();
+        ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], notHero, notHero);
+        mSelectedPos = mvNPC[mSelectedObject]->getTilePos();
+        mSelectedFriendly = mvNPC[mSelectedObject]->getFriendly();
         String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
         Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
     }
     else
     {
-        ObjectVisuals::getSingleton().select(mvObject_static[mSelectedObject], false);
-        mSelectedPos = mvObject_static[mSelectedObject]->getTilePos();
+        ObjectVisuals::getSingleton().select(mvStatic[mSelectedObject], false);
+        mSelectedPos = mvStatic[mSelectedObject]->getTilePos();
     }
 }
 
@@ -370,7 +383,7 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos, bool modifier)
     // ////////////////////////////////////////////////////////////////////
     if (!mob)
     {
-        mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(pos);
+        mvNPC[ObjectNPC::HERO]->moveToDistantTile(pos);
         ObjectVisuals::getSingleton().unselect();
         return;
     }
@@ -380,19 +393,19 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos, bool modifier)
     extractObject(mob);
     if (mSelectedType == OBJECT_NPC)
     {
-        if (mvObject_npc[mSelectedObject]->getFriendly() <0)
+        if (mvNPC[mSelectedObject]->getFriendly() <0)
         {
-            mSelectedPos = mvObject_npc[mSelectedObject]->getTilePos();
-            ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], true, false);
+            mSelectedPos = mvNPC[mSelectedObject]->getTilePos();
+            ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], true, false);
             if (modifier)
-                mvObject_npc[ObjectNPC::HERO]->attackLongRange(mvObject_npc[mSelectedObject]);
+                mvNPC[ObjectNPC::HERO]->attackLongRange(mvNPC[mSelectedObject]);
             else
-                mvObject_npc[ObjectNPC::HERO]->attackShortRange(mvObject_npc[mSelectedObject]);
+                mvNPC[ObjectNPC::HERO]->attackShortRange(mvNPC[mSelectedObject]);
         }
         else
         {
-            mvObject_npc[ObjectNPC::HERO]->readyPrimaryWeapon(false);
-            ObjectVisuals::getSingleton().select(mvObject_npc[mSelectedObject], false, false);
+            mvNPC[ObjectNPC::HERO]->readyPrimaryWeapon(false);
+            ObjectVisuals::getSingleton().select(mvNPC[mSelectedObject], false, false);
             String strSelect = "/target !"+ StringConverter::toString(mSelectedPos.x-9) + " " + StringConverter::toString(mSelectedPos.z-9);
             Network::getSingleton().send_command(strSelect.c_str(), -1, Network::SC_NORMAL);
             Network::getSingleton().send_command("/talk hello", -1, Network::SC_NORMAL);
@@ -400,9 +413,9 @@ void ObjectManager::mousePressed(MovableObject *mob, TilePos pos, bool modifier)
     }
     else if (mSelectedType < OBJECT_NPC)
     {
-        mSelectedPos = mvObject_static[mSelectedObject]->getTilePos();
-        mvObject_npc[ObjectNPC::HERO]->moveToDistantTile(mSelectedPos, 2);
-        mvObject_static[mSelectedObject]->activate();
+        mSelectedPos = mvStatic[mSelectedObject]->getTilePos();
+        mvNPC[ObjectNPC::HERO]->moveToDistantTile(mSelectedPos, 2);
+        mvStatic[mSelectedObject]->activate();
     }
 }
 
@@ -424,7 +437,7 @@ void ObjectManager::extractObject(MovableObject *mob)
             if  (mSelectedType >= OBJECT_NPC)
             {
                 int sel =0;
-                for (std::vector<ObjectNPC*>::iterator i = mvObject_npc.begin(); i < mvObject_npc.end(); ++i, ++sel)
+                for (std::vector<ObjectNPC*>::iterator i = mvNPC.begin(); i < mvNPC.end(); ++i, ++sel)
                 {
                     if ((int)(*i)->getIndex() == mSelectedObject)
                     {
@@ -439,7 +452,7 @@ void ObjectManager::extractObject(MovableObject *mob)
             else
             {
                 int sel =0;
-                for (std::vector<ObjectStatic*>::iterator i = mvObject_static.begin(); i < mvObject_static.end(); ++i, ++sel)
+                for (std::vector<ObjectStatic*>::iterator i = mvStatic.begin(); i < mvStatic.end(); ++i, ++sel)
                 {
                     if ((int)(*i)->getIndex() == mSelectedObject)
                     {
@@ -456,18 +469,10 @@ void ObjectManager::extractObject(MovableObject *mob)
 //================================================================================================
 //
 //================================================================================================
-void ObjectManager::shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob)
+void ObjectManager::shoot(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
-    static SceneNode *mNode = 0;
-    if (mNode) return;
-    mNode = Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode();
-    Entity *mEntity = Events::getSingleton().GetSceneManager()->createEntity("Test", "Arrow.mesh");
-    mNode->attachObject(mEntity);
-
-    Vector3 pos = srcMob->getPosition();
-    pos.y +=srcMob->getHeight();
-    mNode->setPosition(pos);
-    mNode->setOrientation(srcMob->getSceneNode()->getOrientation());
+    ObjectMissle *obj_missle = new ObjectMissle(type, srcMob, dstMob);
+    if (obj_missle)  mvMissle.push_back(obj_missle);
 }
 
 //================================================================================================
@@ -475,7 +480,7 @@ void ObjectManager::shoot(int missle, ObjectNPC *srcMob, ObjectNPC *dstMob)
 //================================================================================================
 void ObjectManager::targetObjectFacingNPC(int npcIndex)
 {
-    mvObject_npc[mSelectedObject]->turning(mvObject_npc[npcIndex]->getFacing() -180, false);
+    mvNPC[mSelectedObject]->turning(mvNPC[npcIndex]->getFacing() -180, false);
 }
 
 //================================================================================================
@@ -485,7 +490,7 @@ void ObjectManager::targetObjectAttackNPC(int npcIndex)
 {
     if (mSelectedObject <0) return;
     targetObjectFacingNPC(npcIndex);
-    mvObject_npc[mSelectedObject]->attack();
+    mvNPC[mSelectedObject]->attack();
 }
 
 //================================================================================================
@@ -493,8 +498,8 @@ void ObjectManager::targetObjectAttackNPC(int npcIndex)
 //================================================================================================
 void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
 {
-    if (mvObject_npc[npcID]->mEquip)
-        mvObject_npc[npcID]->mEquip->equipItem(bone, type, itemID);
+    if (mvNPC[npcID]->mEquip)
+        mvNPC[npcID]->mEquip->equipItem(bone, type, itemID);
 }
 
 //================================================================================================
