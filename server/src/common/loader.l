@@ -229,7 +229,7 @@ WS	[ \t]*{NL}?
 ^msg{WS}	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
 <MESSAGE>^endmsg{WS} {	BEGIN( INITIAL );
     			if (strlen(msgbuf) > HUGE_BUF-16 )
-	    		    LOG(llevDebug, "\n\tBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n", query_name(op), strlen(msgbuf),HUGE_BUF-16);
+	    		    LOG(llevMapbug, "\n\tMAPBUG: SKIPPED msg/endmsg -> buffer overflow!! (obj: %s) %d (max allowed=%d)\n", query_name(op), strlen(msgbuf),HUGE_BUF-16);
                 else
     		    	FREE_AND_COPY_HASH(op->msg, msgbuf);
                 }
@@ -276,14 +276,14 @@ WS	[ \t]*{NL}?
 ^speed_left{S}		op->speed_left = FVAL;
 ^amask{S}		{
 					if(!(amask_art = find_artifact(yval())))
-					    LOG(llevBug,"BUG: amask->find_artifact(): unknown artifact %s.\n", STRING_SAFE(yval()));
+					    LOG(llevMapbug,"MAPBUG: amask->find_artifact(): unknown artifact %s.\n", STRING_SAFE(yval()));
 				}
 ^face{S}		{
 					register int _face_ = FindFace(yval(), 0);
 					op->face = &new_faces[_face_ ];
 
 					if(!_face_)
-					    LOG(llevBug,"BUG: Object %s - can't find face %s.\n",
+					    LOG(llevMapbug,"MAPBUG: Object %s - can't find face %s.\n",
 							op->arch?(op->arch->name?op->arch->name:"<no arch name>"):"<no ->arch>",yval());
 				}
 ^inv_face{S}	{
@@ -291,7 +291,7 @@ WS	[ \t]*{NL}?
 					op->inv_face = &new_faces[_face_ ];
 
 					if(!_face_)
-					    LOG(llevBug,"BUG: Object %s - can't find inv_face %s.\n",
+					    LOG(llevMapbug,"MAPBUG: Object %s - can't find inv_face %s.\n",
 							op->arch?(op->arch->name?op->arch->name:"<no arch name>"):"<no ->arch>",yval());
 				}
 
@@ -592,8 +592,8 @@ op->oy= op->y;
 ^has_ready_skill{S}			{};
 	/* end outdate */
 
-^attack_movement{S} LOG(llevBug, "BUG: loader(): deprecated attack_movement setting\n");
-^move_state{S}	    LOG(llevBug, "BUG: loader(): deprecated move_state setting\n");
+^attack_movement{S} LOG(llevMapbug, "MAPBUG: loader(): deprecated attack_movement setting\n");
+^move_state{S}	    LOG(llevMapbug, "MAPBUG: loader(): deprecated move_state setting\n");
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
 ^paralyzed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PARALYZED, IVAL);
 ^feared{S}			SET_OR_CLEAR_FLAG(op, FLAG_FEARED, IVAL);
@@ -608,7 +608,7 @@ op->oy= op->y;
 ^known_cursed{S}    SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_CURSED, IVAL);
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^title{S}	    {	char *y=yval();
-			if (*y=='\0') LOG(llevBug,"BUG: loader(): Title without value.\n");
+			if (*y=='\0') LOG(llevMapbug,"MAPBUG: loader(): Title without value.\n");
 			else FREE_AND_COPY_HASH(op->title, y);
 		    }
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);
@@ -666,13 +666,13 @@ op->oy= op->y;
 
 <<EOF>>			{/* If we got an error, return the error.  Otherwise, return that we got EOF */
 			    if (lex_error!=0) return lex_error; else return LL_EOF;}
-.*			{ yyerror( "BUG: loader(): Unrecognized string"); lex_error= -1; }
+.*			{ yyerror( "MAPBUG: loader(): Unrecognized string"); lex_error= -1; }
 %%
 
 
 int yyerror(char *s)
 {
-  LOG(llevBug, "%s: %s\n", s, yytext);
+  LOG(llevMapbug, "%s: %s\n", s, yytext);
   return -1;
 }
 
@@ -815,7 +815,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 				return retval;
 			}
 		}
-		LOG(llevDebug,"Got eof while scanning strings (%d)\n",retval);
+		LOG(llevMapbug,"MAPBUG: Got eof while scanning strings (%d)\n",retval);
 		if(cur_buffer) /* be sure we work on the right buffer */
 			yy_switch_to_buffer(cur_buffer);
 		return LL_EOF;
@@ -977,7 +977,7 @@ static inline char *append_line(char *buf, const char *str)
     while((c = *buf++ = *str++))
         if(c == '\n')
         {
-            LOG(llevDebug, "BUG: Detected (and replaced) '\\n' in basic object string while saving.\n");
+            LOG(llevBug, "BUG: Detected (and replaced) '\\n' in basic object string while saving.\n");
             buf[-1] = ' ';
         }
     return buf-1;
@@ -997,7 +997,7 @@ static inline char *append_multiline(char *buf, const char *str)
         {
             while(strncasecmp(str, "endmsg", 6) == 0)
             {
-                LOG(llevDebug, "BUG: Detected 'endmsg' in msg string.\n");
+                LOG(llevBug, "BUG: Detected 'endmsg' in msg string.\n");
                 str += 6; /* Just skip it... */
             }
         }
