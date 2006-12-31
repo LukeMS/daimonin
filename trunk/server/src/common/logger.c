@@ -67,7 +67,7 @@ void LOG(LogLevel logLevel, char *format, ...)
 #endif
         /* Mapbugs are broadcasted on the test server */
 
-#if _TESTSERVER
+#ifdef _TESTSERVER
         if(logLevel == llevMapbug)
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_RED, 5, NULL, log_buf);
 #endif        
