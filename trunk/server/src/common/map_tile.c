@@ -627,39 +627,29 @@ int arch_out_of_map(archetype *at, mapstruct *m, int x, int y)
     return 0;
 }
 
-/* this updates the orig_map->tile_map[tile_num] value after loading
-* the map.  It also takes care of linking back the freshly loaded
-* maps tile_map values if it tiles back to this one.  It returns
-* the value of orig_map->tile_map[tile_num].  It really only does this
-* so that it is easier for calling functions to verify success.
-*/
-
+/** Try loading the connected map tile with the given number.
+ * @param orig_map base map for tiling
+ * @param tile_num tile-number to connect to (not direction).
+ * @return If loading _or_ tiling fails NULL is returned,
+ * otherwise the loaded map neighbouring orig_map is returned.
+ */
 static inline mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
-    int dest_tile   = map_tiled_reverse[tile_num];
-
-    orig_map->tile_map[tile_num] = ready_map_name( orig_map->tile_path[tile_num],
+    /* Nowadays the loader keeps track of tiling. Gecko 2006-12-31 */
+    mapstruct *map = ready_map_name( orig_map->tile_path[tile_num],
            orig_map->orig_tile_path[tile_num], MAP_STATUS_TYPE(orig_map->map_status), 
            orig_map->reference);
-
-    /* we do now an implicit validation of the link - we don't do it anymore when the map is loaded */
-    if(!orig_map->tile_map[tile_num])
+    
+    /* If loading or linking failed */
+    if(map == NULL || map != orig_map->tile_map[tile_num])
     {
         /* ensure we don't get called again over and over */
-        orig_map->orig_tile_path[tile_num] = orig_map->tile_path[tile_num] = NULL;         
+        FREE_AND_CLEAR_HASH(orig_map->orig_tile_path[tile_num]);
+        FREE_AND_CLEAR_HASH(orig_map->tile_path[tile_num]);
         return NULL;
     }
-    else if (orig_map->tile_map[tile_num]->tile_path[dest_tile])
-    {
-        /* no need for strcmp as we now use shared strings */
-        if (orig_map->tile_map[tile_num]->tile_path[dest_tile] == orig_map->path)
-            orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
-    }
-    else
-        LOG(llevBug, "BUG: load_and_link_tiled_map(): map %s (%d) points to map %s but has no relink\n", orig_map->path,
-        tile_num, orig_map->tile_map[tile_num]->path);
 
-    return orig_map->tile_map[tile_num];
+    return map;
 }
 
 /* Find the distance between two map tiles on a tiled map.

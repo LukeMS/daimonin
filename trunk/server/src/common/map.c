@@ -712,23 +712,27 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                     path_sh = add_string(value);
 
                 /* If the neighbouring map tile has been loaded, set up the map pointers */
-                if ((neighbour = has_been_loaded_sh(path_sh)))
+                if ((neighbour = has_been_loaded_sh(path_sh)) && (neighbour->in_memory == MAP_IN_MEMORY))
                 {
                     int dest_tile = map_tiled_reverse[tile - 1];
 
                     /* LOG(llevDebug,"add t_map %s (%d). ", path_sh, tile-1); */
-                    m->tile_map[tile - 1] = neighbour;
-
-                    if (neighbour->tile_path[dest_tile] == NULL || neighbour->tile_path[dest_tile] != m->path)
+                    if (neighbour->orig_tile_path[dest_tile] != m->orig_path)
                     {
-                        LOG(llevBug, "MAPBUG: tiled maps does not link correctly: %s[%d]->%s but %s[%d]->%s\n",
-                                STRING_SAFE(m->orig_path), tile, STRING_SAFE(m->orig_tile_path[tile-1]), 
-                                STRING_SAFE(neighbour->orig_path), dest_tile + 1, STRING_SAFE(neighbour->orig_tile_path[dest_tile])); 
+                        /* Refuse tiling if anything looks suspicious, since that may leave dangling pointers and crash the server */
+                        LOG(llevMapbug, "MAPBUG: map tiles incorrecly connected: %s->%s but %s->%s. Refusing to connect them!\n",
+                                STRING_SAFE(m->orig_path), path_sh ? path_sh : "(no map)", 
+                                STRING_SAFE(neighbour->orig_path), neighbour->orig_tile_path[dest_tile] ? neighbour->orig_tile_path[dest_tile] : "(no map)" ); 
+                        /* Disable map linking */
+                        FREE_AND_CLEAR_HASH(path_sh); 
+                        FREE_AND_CLEAR_HASH(m->orig_tile_path[tile - 1]);
                     }
-
-                    if (neighbour->tile_path[dest_tile] == NULL || neighbour->tile_path[dest_tile] == m->path)
+                    else
+                    {
+                        m->tile_map[tile - 1] = neighbour;
                         neighbour->tile_map[dest_tile] = m;
-                }
+                    }
+                } 
 
                 m->tile_path[tile - 1] = path_sh;
             }
