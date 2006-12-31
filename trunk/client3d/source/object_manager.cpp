@@ -507,3 +507,77 @@ void ObjectManager::setEquipment(int npcID, int bone, int type, int itemID)
 //================================================================================================
 ObjectManager::~ObjectManager()
 {}
+
+//================================================================================================
+// Create a 2d Animation from a model.
+//================================================================================================
+bool ObjectManager::createFlipBook(String meshName, int sumRotations)
+{
+    Entity *entity;
+    try
+    {
+        entity  = Events::getSingleton().GetSceneManager()->createEntity("FlipBookEntity", meshName);
+    }
+    catch (...)
+    {
+        LogManager::getSingleton().setLogDetail(LL_LOW);
+        cout << "\n\n\n  Wrong commandline argument!\n  No mesh called '" << meshName << "' could be found.\n";
+        cout << "  Hint: Mesh-names are case sensitive." << endl;
+        return false;
+    }
+    const AxisAlignedBox &AABB = entity->getBoundingBox();
+    Real entityRadius = (AABB.getMaximum() - AABB.getCenter()).length();
+
+    SceneNode *node = Events::getSingleton().GetSceneManager()->getRootSceneNode()->createChildSceneNode("FlipBookNode");
+    node->attachObject(entity);
+    node->setPosition(-AABB.getCenter());
+
+    const int textureSize = 1024/sumRotations;
+    TexturePtr texture = TextureManager::getSingleton().createManual(
+                             "FlipBookTexture", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                             TEX_TYPE_2D, textureSize * sumRotations, textureSize, 0, PF_A8R8G8B8, TU_RENDERTARGET);
+    RenderTexture *renderTarget = texture->getBuffer()->getRenderTarget();
+    renderTarget->setAutoUpdated(false);
+
+    Camera *camera = Events::getSingleton().GetSceneManager()->createCamera("tmpCamera");
+    camera->setLodBias(1000.0f);
+    camera->setPosition(0, 0, entityRadius + 1.5f);
+    camera->setAspectRatio(1.0f);
+    //camera->setProjectionType(PT_ORTHOGRAPHIC);
+    //camera->setFOVy(Degree(200));
+    camera->setFOVy(Math::ATan(2.0f * entityRadius));
+    camera->setNearClipDistance(1.0f);
+    camera->setFarClipDistance(entityRadius*2);
+
+    Viewport *viewport = renderTarget->addViewport(camera);
+    viewport->setOverlaysEnabled(false);
+    viewport->setClearEveryFrame(true);
+    viewport->setBackgroundColour(ColourValue(1.0f, 1.0f, 1.0f, 0.0f));
+
+    // Render only the queues in the special case list.
+    Events::getSingleton().GetSceneManager()->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE);
+    Events::getSingleton().GetSceneManager()->addSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
+    entity->setRenderQueueGroup(RENDER_QUEUE_MAIN);
+    const float divFactor = 1.0f / sumRotations;
+    for (int i = 0; i < sumRotations; ++i)
+    {
+        viewport->setDimensions(divFactor*i, 0, divFactor, 1);
+        renderTarget->update();
+        node->yaw(Degree(180.0f/(sumRotations-1)));
+    }
+    renderTarget->writeContentsToFile("Animation2d_"+ meshName + ".png");
+    Events::getSingleton().GetSceneManager()->removeSpecialCaseRenderQueue(RENDER_QUEUE_MAIN);
+    //Render all except the queues in the special case list.
+    Events::getSingleton().GetSceneManager()->setSpecialCaseRenderQueueMode(SceneManager::SCRQM_EXCLUDE);
+    // ////////////////////////////////////////////////////////////////////
+    // Cleanup.
+    // ////////////////////////////////////////////////////////////////////
+    renderTarget->removeViewport(0);
+    node->detachAllObjects();
+    Events::getSingleton().GetSceneManager()->destroyCamera(camera);
+    Events::getSingleton().GetSceneManager()->destroyEntity(entity);
+    Events::getSingleton().GetSceneManager()->destroySceneNode("FlipBookNode");
+    TextureManager::getSingleton().remove("FlipBookTexture");
+    texture.setNull();
+    return true;
+}

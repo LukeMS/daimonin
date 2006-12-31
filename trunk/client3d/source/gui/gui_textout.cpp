@@ -226,7 +226,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
     // ////////////////////////////////////////////////////////////////////
-    //if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
+    if (Option::getSingleton().getIntValue(Option::CMDLINE_CREATE_RAW_FONTS))
     {
         Image img;
         // ////////////////////////////////////////////////////////////////////

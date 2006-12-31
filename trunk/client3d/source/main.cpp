@@ -39,6 +39,12 @@ bool parseCmdLine(const char *cmd, const char *value)
     int options =0;
     if (cmd[0] == '-')
     {
+        if (!stricmp(cmd, "--flipbook"))
+        {
+            Logger::log().info() << "You told me to convert the mesh " << value << " to a Flip-Book";
+            Option::getSingleton().setStrValue(Option::CMDLINE_CREATE_IMPOSTERS, value);
+            ++options;
+        }
         if ((cmd[1] == 'l' || !stricmp(cmd, "--list")) && !stricmp(value, "gui"))
         {
             Logger::log().info() << "You told me to list all interactive gui-elements.";
@@ -98,7 +104,8 @@ bool parseCmdLine(const char *cmd, const char *value)
         << "--port   <num>          -p  <num>\n"
         << "--fallback              -f  disable TileEngine\n"
         << "--sound off             -x  disable Sound\n"
-        << "--bbox                      show bounding-boxes\n";
+        << "--bbox                      show bounding-boxes\n"
+        << "--flipbook <meshName>       convert a mesh into Imposters\n" << endl;
         return false;
     }
     return true;
@@ -156,8 +163,9 @@ int main(int argc, char **argv)
     {
         if (argc > 1)
         {
-            if (!parseCmdLine(argv[--argc], argv[argc]))
+            if (!parseCmdLine(argv[argc-1], argv[argc]))
                 return 0;
+			--argc;
         }
         else
         {

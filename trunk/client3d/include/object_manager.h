@@ -177,7 +177,7 @@ public:
     }
     void targetObjectFacingNPC(int npcIndex); // just a hack. Server will handle this.
     void targetObjectAttackNPC(int npcIndex); // just a hack. Server will handle this.
-
+    bool createFlipBook(String meshName, int sumRotations = 8);
 private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
