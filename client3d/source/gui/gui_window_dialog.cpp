@@ -145,7 +145,7 @@ bool GuiDialog::cmd_link(char *data, int &pos)
                 break;
             case 'c': // link command
                 mLink[mLink_count].cmd = get_parameter_string(data, pos);
-                if (mLink[mLink_count].cmd.size() && mLink[mLink_count].cmd[0] != '/')
+                if (!mLink[mLink_count].cmd.empty() && mLink[mLink_count].cmd[0] != '/')
                     mLink[mLink_count].cmd = "/talk " + mLink[mLink_count].cmd;
                 break;
             default:
@@ -348,7 +348,7 @@ bool GuiDialog::cmd_button(Button &button, char *data, int &pos)
                 break;
             case 'c': // command.
                 button.command = get_parameter_string(data, pos);
-                if (button.command.size() && button.command[0] != '/')
+                if (!button.command.empty() && button.command[0] != '/')
                     button.command = "/talk " + button.command;
                 break;
             default:
@@ -416,7 +416,7 @@ void GuiDialog::format_gui_interface()
                    head.picture = sprite_load_file(line, 0);
         }
         */
-        if (mHead.body_text.size() && mHead.body_text[0]== '\0')
+        if (!mHead.body_text.empty() && mHead.body_text[0]== '\0')
         {
             // strcpy(head.body_text, cpl.target_name?cpl.target_name:"");
         }
@@ -456,7 +456,7 @@ void GuiDialog::format_gui_interface()
     // ////////////////////////////////////////////////////////////////////
     if (mUsed_flag & GUI_INTERFACE_DECLINE && !(mUsed_flag & GUI_INTERFACE_ACCEPT))
     {
-        if (!butDecline.label.size())
+        if (butDecline.label.empty())
             butDecline.label = "~D~ecline";
         mUsed_flag |= GUI_INTERFACE_ACCEPT;
         butAccept.command="";
@@ -467,11 +467,11 @@ void GuiDialog::format_gui_interface()
 
     else if (mUsed_flag & GUI_INTERFACE_ACCEPT)
     {
-        if (!butAccept.label.size())
+        if (butAccept.label.empty())
             butAccept.label = "~A~ccept";
         if (mUsed_flag & GUI_INTERFACE_DECLINE)
         {
-            if (!butDecline.label.size())
+            if (butDecline.label.empty())
                 butDecline.label = "~D~ecline";
         }
         else
@@ -488,7 +488,7 @@ void GuiDialog::format_gui_interface()
     {
         mUsed_flag |=GUI_INTERFACE_ACCEPT; // yes, thats right! we fake the accept button
         Logger::log().error() << butAccept.label;
-        if (!butAccept.label.size())
+        if (butAccept.label.empty())
         {
             butAccept.label= "";
             butAccept.command="";
@@ -912,7 +912,7 @@ void GuiDialog::buttonEvent(int index)
     // Accept button pressed.
     if (index)
     {
-        if (butDecline.command.size())
+        if (!butDecline.command.empty())
             sendCommand(1, (char*)butDecline.command.c_str());
     }
     // Decline button pressed.
@@ -924,10 +924,10 @@ void GuiDialog::buttonEvent(int index)
             Sound::getSingleton().playStream(Sound::BUTTON_CLICK); // SOUND_CLICKFAIL
             return;
         }
-        if (butAccept.label.size())
+        if (!butAccept.label.empty())
         {
             Sound::getSingleton().playStream(Sound::BUTTON_CLICK); // SOUND_SCROLL
-            if (butAccept.command.size())
+            if (!butAccept.command.empty())
             {
                 // if we have accepted, we must check selected for possible slot selection.
                 if (mIcon_select)

@@ -145,6 +145,13 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_INIT_VIEWPORT:
         {
             // ////////////////////////////////////////////////////////////////////
+            // Commandline argument to create Imposters.
+            // ////////////////////////////////////////////////////////////////////
+            const char *meshName = Option::getSingleton().getStrValue(Option::CMDLINE_CREATE_IMPOSTERS);
+            if (strlen(meshName) > 1)
+                if (!ObjectManager::getSingleton().createFlipBook(meshName, 16)) return false;
+
+            // ////////////////////////////////////////////////////////////////////
             // Create one viewport, entire window.
             // ////////////////////////////////////////////////////////////////////
             mCamera = mSceneManager->createCamera("PlayerCam");
