@@ -583,19 +583,19 @@ void cleanup(int ret)
 
 void leave(player *pl, int draw_exit)
 {
-#ifdef PLUGINS
-    int     evtid;
-    CFParm  CFP;
-#endif
     if (pl != NULL)
     {
         /* We do this so that the socket handling routine can do the final
          * cleanup.  We also leave that loop to actually handle the freeing
          * of the data.
          */
+
+#if 0
 #ifdef PLUGINS
         if (draw_exit == 0)
         {
+            int     evtid;
+            CFParm  CFP;
             /* GROS : Here we handle the LOGOUT global event */
             evtid = EVENT_LOGOUT;
             CFP.Value[0] = (void *) (&evtid);
@@ -604,6 +604,7 @@ void leave(player *pl, int draw_exit)
             GlobalEvent(&CFP);
         };
 #endif
+#endif        
 
         /* be sure we have closed container when we leave */
         container_unlink(pl, NULL);
