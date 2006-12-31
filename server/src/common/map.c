@@ -732,7 +732,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                         m->tile_map[tile - 1] = neighbour;
                         neighbour->tile_map[dest_tile] = m;
                     }
-                } 
+                }
 
                 m->tile_path[tile - 1] = path_sh;
             }
