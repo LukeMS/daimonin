@@ -370,6 +370,7 @@ int ZEXPORT deflateReset (strm)
     s = (deflate_state *)strm->state;
     s->pending = 0;
     s->pending_out = s->pending_buf;
+    s->data_type = Z_UNKNOWN;
 
     if (s->wrap < 0) {
         s->wrap = -s->wrap; /* was made negative by deflate(..., Z_FINISH); */
