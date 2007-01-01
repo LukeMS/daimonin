@@ -1037,7 +1037,14 @@ void free_map(mapstruct *m, int flag)
     {
         /* delete the backlinks in other tiled maps to our map */
         if(m->tile_map[i])
+        {
+            if(m->tile_map[i]->tile_map[map_tiled_reverse[i]] && m->tile_map[i]->tile_map[map_tiled_reverse[i]] != m )
+            {
+                LOG(llevBug, "BUG: Freeing map %s linked to %s which links back to another map.\n",
+                        STRING_SAFE(m->orig_path), STRING_SAFE(m->tile_map[i]->orig_path));
+            }
             m->tile_map[i]->tile_map[map_tiled_reverse[i]] = NULL;
+        }
 
         FREE_AND_CLEAR_HASH(m->tile_path[i]);
         FREE_AND_CLEAR_HASH(m->orig_tile_path[i]);
