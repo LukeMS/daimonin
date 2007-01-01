@@ -90,6 +90,8 @@ private:
     int mParticle;
     Vector3 mDestPosition;
     Vector3 mSpeed;
+    bool mHasBallistic;
+    bool mShow;
 
     // ////////////////////////////////////////////////////////////////////
     // Functions.

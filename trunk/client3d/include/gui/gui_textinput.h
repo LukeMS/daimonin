@@ -32,18 +32,7 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace std;
 
-enum
-{
-    INPUT_MODE_TEXT,             /**< Input modus: text. **/
-    INPUT_MODE_CURSOR_SELECTION, /**< Input modus: move cursor in a selection field. **/
-    INPUT_MODE_SUM               /**< Sum of input modes **/
-};
-
-const int CURSOR_FREQUENCY = 500;
-const char CURSOR[] =
-    {
-        CHARS_IN_FONT+31, 0
-    };
+const char CURSOR[] = { GuiTextout::STANDARD_CHARS_IN_FONT+31, 0 };
 
 /**
  ** TextInput class which manages the keyboard input for the Dialog class.
@@ -51,6 +40,18 @@ const char CURSOR[] =
 class GuiTextinput
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        INPUT_MODE_TEXT,             /**< Input modus: text. **/
+        INPUT_MODE_CURSOR_SELECTION, /**< Input modus: move cursor in a selection field. **/
+        INPUT_MODE_SUM               /**< Sum of input modes **/
+    };
+
+    enum { CURSOR_FREQUENCY = 500 };
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

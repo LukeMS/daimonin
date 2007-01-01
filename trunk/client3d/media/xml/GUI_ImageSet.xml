@@ -1,6 +1,15 @@
 <?xml version= "1.0" encoding= "us-ascii"?>
 <ImageSet file= "Imageset.png" >
     <!--#############################################-->
+    <!-- Font extensions (Handled in gui_textout.cpp)-->
+    <!--#############################################-->
+    <ImageFntExt name= "FontExtensions">
+        <State name= ":)"  posX=  "0" posY= "414" width= "10" height= "10" />
+        <State name= ":("  posX= "11" posY= "414" width= "10" height= "10" />
+        <State name= ":D"  posX= "22" posY= "414" width= "10" height= "10" />
+    </ImageFntExt>
+
+    <!--#############################################-->
     <!-- Mouse                                       -->
     <!--#############################################-->
     <Image name= "MouseCursor" width= "51" height= "54">

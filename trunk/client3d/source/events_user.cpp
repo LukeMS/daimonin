@@ -149,9 +149,7 @@ void Events::keyPressed(KeyEvent *e)
 
         case KC_K:
         {
-            //ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_HIT,0, 5);
-            ObjectManager::getSingleton().createFlipBook("Smitty.mesh", 12);
-            ObjectManager::getSingleton().createFlipBook("Box_D.mesh", 8);
+            ObjectManager::getSingleton().Event(ObjectManager::OBJECT_PLAYER, ObjectManager::OBJ_HIT,0, 5);
             break;
         }
 

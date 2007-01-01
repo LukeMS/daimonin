@@ -40,40 +40,46 @@ const uint32 COLOR_PINK  = 0xffff00ff;
 const uint32 COLOR_YELLOW= 0xffffff00;
 const uint32 COLOR_WHITE = 0xffffffff;
 
-const char TXT_CMD_HIGHLIGHT   = '~';
-const char TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
-const char TXT_CMD_LINK        = '^';
-const char TXT_CMD_SOUND       = '§';
-const char TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
-const char TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
-
-const int MAX_TEXTLINE_LEN = 1024;
-
-typedef struct
-{
-    unsigned int x1, y1, x2, y2; /**< Area for printing the text. **/
-    int font;                    /**< Font number. **/
-    int index;                   /**< Unique number. **/
-    bool hideText;               /**< Hide the text e.g. for password input. **/
-    String text;
-    uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
-    uint32 color;
-}
-TextLine;
-
-enum
-{
-    FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
-};
-
-const unsigned int CHARS_IN_FONT =96;
-
 /**
  ** This class provides a text printing on gui elements.
  *****************************************************************************/
 class GuiTextout
 {
 public:
+    // ////////////////////////////////////////////////////////////////////
+    // Variables / Constants.
+    // ////////////////////////////////////////////////////////////////////
+    typedef struct
+    {
+        unsigned int x1, y1, x2, y2; /**< Area for printing the text. **/
+        int font;                    /**< Font number. **/
+        int index;                   /**< Unique number. **/
+        bool hideText;               /**< Hide the text e.g. for password input. **/
+        String text;
+        uint32 *BG_Backup;           /**< Backup buffer for dynamic text. **/
+        uint32 color;
+    }
+    TextLine;
+
+    enum { MAX_TEXTLINE_LEN = 1024 };
+
+    enum
+    {
+        FONT_SYSTEM, FONT_SMALL, FONT_NORMAL, FONT_BIG, FONT_SUM
+    };
+
+    enum
+    {
+        STANDARD_CHARS_IN_FONT = 96,
+        SPECIAL_CHARS_IN_FONT  = 10,
+        CHARS_IN_FONT          = STANDARD_CHARS_IN_FONT+SPECIAL_CHARS_IN_FONT,
+    };
+    static const char TXT_CMD_HIGHLIGHT;
+    static const char TXT_CMD_LOWLIGHT;
+    static const char TXT_CMD_LINK;
+    static const char TXT_CMD_SOUND;
+    static const char TXT_SUB_CMD_COLOR; // followed by 8 chars (atoi -> uint32).
+    static const char TXT_CMD_CHANGE_FONT; // followed by 2 chars (atoi -> char).
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
@@ -102,6 +108,19 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Variables / Constants.
     // ////////////////////////////////////////////////////////////////////
+    enum
+    {
+        TXT_STATE_HIGHLIGHT =1,
+        TXT_STATE_LOWLIGHT,
+        TXT_STATE_LINK,
+        TXT_STATE_SUM
+    };
+    enum
+    {
+        MIN_FONT_SIZE =  4, MAX_FONT_SIZE = 80,
+        MIN_RESO_SIZE = 55, MAX_RESO_SIZE = 96
+    };
+
     typedef struct
     {
         uint32 *data;
@@ -112,10 +131,22 @@ private:
         unsigned char  charWidth[CHARS_IN_FONT];
     }
     mFont;
+    typedef struct
+    {
+        int x, y, w, h;
+        String keyword;
+    }
+    mSpecialChar;
+
     std::vector<mFont*>mvFont;
+    std::vector<mSpecialChar*>mvSpecialChar;
     PixelBox *mPb;
     uint32 *mTextGfxBuffer;
     unsigned int mMaxFontHeight;
+    static const uint32 TXT_COLOR_DEFAULT;
+    static const uint32 TXT_COLOR_LOWLIGHT;
+    static const uint32 TXT_COLOR_HIGHLIGHT;
+
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

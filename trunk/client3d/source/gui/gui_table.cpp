@@ -207,7 +207,7 @@ void GuiTable::draw()
 {
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
     // Draw the column headlines.
-    TextLine textline;
+    GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;
     textline.BG_Backup = 0;
@@ -265,7 +265,7 @@ void GuiTable::drawRow(int row, uint32 color)
 {
     if (row < 0) return;
     Texture *texture = ((GuiWindow*) mParent)->getTexture();
-    TextLine textline;
+    GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;
     textline.BG_Backup = 0;

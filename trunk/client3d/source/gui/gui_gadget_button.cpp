@@ -139,7 +139,7 @@ void GuiGadgetButton::draw()
     // ////////////////////////////////////////////////////////////////////
     if (mStrLabel != "")
     {
-        TextLine label;
+        GuiTextout::TextLine label;
         label.hideText= false;
         label.index= -1;
         label.font = mLabelFontNr;
