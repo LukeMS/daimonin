@@ -459,10 +459,10 @@ static void init_msgfile(void)
         linked_char    *tmp = NULL;
         while (fgets(buf, MAX_BUF, fp) != NULL)
         {
-            if (*buf == '#')
+            if (*buf == '#' || *buf == '\0')
                 continue;
             cp = buf + (strlen(buf) - 1);
-            while(isspace(*cp))
+            while(cp > buf && isspace(*cp))
                 --cp;
             cp[1] = '\0';
             cp = buf;

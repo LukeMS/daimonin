@@ -1044,6 +1044,7 @@ void free_map(mapstruct *m, int flag)
                         STRING_SAFE(m->orig_path), STRING_SAFE(m->tile_map[i]->orig_path));
             }
             m->tile_map[i]->tile_map[map_tiled_reverse[i]] = NULL;
+            m->tile_map[i] = NULL;
         }
 
         FREE_AND_CLEAR_HASH(m->tile_path[i]);
