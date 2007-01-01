@@ -712,7 +712,7 @@ static int load_map_header(FILE *fp, mapstruct *m, int flags)
                     path_sh = add_string(value);
 
                 /* If the neighbouring map tile has been loaded, set up the map pointers */
-                if ((neighbour = has_been_loaded_sh(path_sh)) && (neighbour->in_memory == MAP_IN_MEMORY))
+                if ((neighbour = has_been_loaded_sh(path_sh)) && (neighbour->in_memory == MAP_IN_MEMORY || neighbour->in_memory == MAP_LOADING))
                 {
                     int dest_tile = map_tiled_reverse[tile - 1];
 
