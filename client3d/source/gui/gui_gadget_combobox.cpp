@@ -137,7 +137,7 @@ void GuiGadgetCombobox::draw()
     // ////////////////////////////////////////////////////////////////////
     // Draw the current line of text
     // ////////////////////////////////////////////////////////////////////
-    TextLine label;
+    GuiTextout::TextLine label;
     label.index= -1;
     label.hideText= false;
     label.font = mLabelFontNr;

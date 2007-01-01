@@ -47,7 +47,10 @@ void ObjectMissle::freeRecources()
 // Destructor.
 //================================================================================================
 ObjectMissle::~ObjectMissle()
-{}
+{
+    //delete particles;
+    mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
+}
 
 //================================================================================================
 // Init the object.
@@ -61,7 +64,7 @@ ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
                           "Mob"+ StringConverter::toString(++msUnique, 6, '0'),
                           "Arrow.mesh");
     mNode->attachObject(mEntity);
-    mNode->scale(1,2,1);
+    mNode->scale(1,4,1);
     // Set the start position.
     Vector3 pos = srcMob->getPosition();
     pos.y +=srcMob->getHeight();
@@ -70,7 +73,10 @@ ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
     // Set the destination.
     mDestPosition = dstMob->getPosition();
     mDestPosition.y += dstMob->getHeight()/2;
-    mSpeed = (mDestPosition-pos)*2;
+    mSpeed = (mDestPosition-pos)*3;
+
+    // If we use ballistic depends on the missle type.
+    mHasBallistic = false;
 }
 
 //================================================================================================
@@ -78,11 +84,18 @@ ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 //================================================================================================
 bool ObjectMissle::update(const FrameEvent& event)
 {
-    // Missles with ballistic.
-    // ToDo.
-
-    // Missles without ballistic.
-    mNode->translate(event.timeSinceLastFrame * mSpeed);
+    if (mHasBallistic)
+    {
+    }
+    else
+    {
+        mNode->translate(event.timeSinceLastFrame * mSpeed);
+    }
+    // Missle has reached the destination.
+    if ((mDestPosition - mNode->getPosition()).squaredLength() < 1.0f)
+    {
+        return false;
+    }
     return true;
 }
 

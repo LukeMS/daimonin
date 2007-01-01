@@ -156,7 +156,9 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
     char *text = buf2;
     for (int i= 0; srcText[i]; ++i)
     {
-        if (srcText[i] >= 32 || srcText[i] == 0x0a || srcText[i] == TXT_CMD_SOUND ||  srcText[i] == TXT_CMD_LOWLIGHT)
+        if (srcText[i] >= 32 || srcText[i] == 0x0a
+                || srcText[i] == GuiTextout::TXT_CMD_SOUND
+                || srcText[i] == GuiTextout::TXT_CMD_LOWLIGHT)
             *text++ = srcText[i];
     }
     *text =0;
@@ -164,7 +166,7 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
     // Mask out the sound command.
     // ////////////////////////////////////////////////////////////////////
     char *tag, *tagend, savetagend;
-    while ((tag = strchr(buf2, TXT_CMD_SOUND)))
+    while ((tag = strchr(buf2, GuiTextout::TXT_CMD_SOUND)))
     {
         tagend = strchr(tag, 0x0a);
         if (!tagend)
@@ -189,10 +191,12 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
     int startLine =0;
     while (1)
     {
-        if (buf2[srcPos] == TXT_CMD_HIGHLIGHT || buf2[srcPos] == TXT_CMD_LINK || buf2[srcPos] == TXT_CMD_LOWLIGHT)
+        if (buf2[srcPos] == GuiTextout::TXT_CMD_HIGHLIGHT
+                || buf2[srcPos] == GuiTextout::TXT_CMD_LINK
+                || buf2[srcPos] == GuiTextout::TXT_CMD_LOWLIGHT)
         {
             buf[dstPos++] = buf2[srcPos++];
-            if (buf2[srcPos] == TXT_SUB_CMD_COLOR)
+            if (buf2[srcPos] == GuiTextout::TXT_SUB_CMD_COLOR)
                 for (int skip = 9; skip; --skip) buf[dstPos++] = buf2[srcPos++];
         }
         w += GuiTextout::getSingleton().getCharWidth(mFontNr, buf2[srcPos]);
@@ -245,7 +249,7 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
 
             // hack: because of autoclip we must scan every line again.
             for (text = buf; *text; ++text)
-                if (*text == TXT_CMD_LINK)
+                if (*text == GuiTextout::TXT_CMD_LINK)
                     mKeyCount = (mKeyCount + 1) & 1;
             if (mKeyCount)
                 mKeyStart = 0x1000;

@@ -155,7 +155,7 @@ private:
     std::vector<class GuiGadgetButton *>mvGadgetButton;
     std::vector<class GuiGadgetCombobox*>mvGadgetCombobox;
     std::vector<class GuiGadgetScrollbar*>mvGadgetScrollbar;
-    std::vector<TextLine*>mvTextline;
+    std::vector<GuiTextout::TextLine*>mvTextline;
     Overlay *mOverlay, *mNPC_HeadOverlay;
     OverlayElement *mElement;
     AnimationState *mSpeakAnimState, *mManualAnimState;

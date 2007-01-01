@@ -569,7 +569,7 @@ void ObjectNPC::turning(Real facing, bool cursorTurn)
         // We want a range from 0...359°.
         while (mDeltaDegree <   0) mDeltaDegree += 360;
         while (mDeltaDegree >=360) mDeltaDegree -= 360;
-
+        //Logger::log().error() << "mDeltaDegree: " << mDeltaDegree;
         // Do we need to turn ?
         if (mDeltaDegree >= 1 && mDeltaDegree <= 358)
         {

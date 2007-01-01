@@ -89,7 +89,7 @@ void GuiWindow::freeRecources()
     mvGraphic.clear();
 
     // Delete the textlines.
-    for (vector<TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
+    for (vector<GuiTextout::TextLine*>::iterator i = mvTextline.begin(); i < mvTextline.end(); ++i)
     {
         if ((*i)->index >= 0) delete[] (*i)->BG_Backup;
         delete (*i);
@@ -273,7 +273,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
             printParsedTextline(xmlElem);
             continue;
         }
-        TextLine *textline = new TextLine;
+        GuiTextout::TextLine *textline = new GuiTextout::TextLine;
         textline->index = index;
         textline->hideText= false;
         textline->color = 0x00ffffff;
@@ -407,7 +407,7 @@ void GuiWindow::parseWindowData(TiXmlElement *xmlRoot)
 inline void GuiWindow::printParsedTextline(TiXmlElement *xmlElem)
 {
     const char *strTmp;
-    TextLine textline;
+    GuiTextout::TextLine textline;
     textline.index = -1;
     textline.hideText= false;
     textline.BG_Backup = 0;

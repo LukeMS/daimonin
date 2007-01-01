@@ -23,29 +23,23 @@ http://www.gnu.org/licenses/licenses.html
 #include <OgreHardwareBuffer.h>
 #include <OgreHardwarePixelBuffer.h>
 #include <OgreFontManager.h>
+#include <tinyxml.h>
 #include "define.h"
 #include "option.h"
 #include "gui_textout.h"
+#include "gui_imageset.h"
 #include "logger.h"
 
-const int MIN_FONT_SIZE =  4;
-const int MAX_FONT_SIZE = 80;
-const int MIN_RESO_SIZE = 55;
-const int MAX_RESO_SIZE = 96;
-const uint32 TXT_COLOR_DEFAULT   = 0x00ffffff;
-const uint32 TXT_COLOR_RED       = 0x00ff0000;
-const uint32 TXT_COLOR_GREEN     = 0x0000ff00;
-const uint32 TXT_COLOR_BLUE      = 0x000000ff;
-const uint32 TXT_COLOR_YELLOW    = 0x00ffff00;
-const uint32 TXT_COLOR_HIGHLIGHT = TXT_COLOR_GREEN;
-const uint32 TXT_COLOR_LOWLIGHT  = TXT_COLOR_YELLOW;
-enum
-{
-    TXT_STATE_HIGHLIGHT =1,
-    TXT_STATE_LOWLIGHT,
-    TXT_STATE_LINK,
-    TXT_STATE_SUM
-};
+const char GuiTextout::TXT_CMD_HIGHLIGHT   = '~';
+const char GuiTextout::TXT_CMD_LOWLIGHT    = -80; // prevent anjuta and codeblocks problems with the degree character.
+const char GuiTextout::TXT_CMD_LINK        = '^';
+const char GuiTextout::TXT_CMD_SOUND       = '§';
+const char GuiTextout::TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
+const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
+
+const uint32 GuiTextout::TXT_COLOR_DEFAULT   = COLOR_WHITE;
+const uint32 GuiTextout::TXT_COLOR_HIGHLIGHT = COLOR_GREEN;
+const uint32 GuiTextout::TXT_COLOR_LOWLIGHT  = COLOR_WHITE;
 
 //================================================================================================
 // Constructor.
@@ -55,6 +49,43 @@ GuiTextout::GuiTextout()
     mTextGfxBuffer= 0;
     mMaxFontHeight= 0;
     mTextGfxBuffer= 0;
+    TiXmlElement *xmlRoot, *xmlElem;
+
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the font extensions.
+    // ////////////////////////////////////////////////////////////////////
+    TiXmlDocument doc(FILE_GUI_IMAGESET);
+    const char *strTemp;
+    if (!doc.LoadFile() || !(xmlRoot = doc.RootElement()) || !(strTemp = xmlRoot->Attribute("file")))
+    {
+        Logger::log().error() << "XML-File '" << FILE_GUI_IMAGESET << "' is broken or missing.";
+        return;
+    }
+    // ////////////////////////////////////////////////////////////////////
+    // Parse the gfx coordinates.
+    // ////////////////////////////////////////////////////////////////////
+    for (xmlElem = xmlRoot->FirstChildElement("ImageFntExt"); xmlElem; xmlElem = xmlElem->NextSiblingElement("ImageFntExt"))
+    {
+        if (!(strTemp = xmlElem->Attribute("name")) || stricmp(strTemp, "FontExtensions")) continue;
+        for (TiXmlElement *xmlState = xmlElem->FirstChildElement("State"); xmlState; xmlState = xmlState->NextSiblingElement("State"))
+        {
+            if (!(xmlState->Attribute("name"))) continue;
+            mSpecialChar *Entry = new mSpecialChar;
+            mvSpecialChar.push_back(Entry);
+            if ((strTemp = xmlState->Attribute("posX"  ))) Entry->x = atoi(strTemp);
+            if ((strTemp = xmlState->Attribute("posY"  ))) Entry->y = atoi(strTemp);
+            if ((strTemp = xmlState->Attribute("width" ))) Entry->w = atoi(strTemp);
+            if ((strTemp = xmlState->Attribute("height"))) Entry->h = atoi(strTemp);
+            if ((strTemp = xmlState->Attribute("name"  ))) Entry->keyword = strTemp;
+            if (mvSpecialChar.size() == SPECIAL_CHARS_IN_FONT-1)
+            {
+                Logger::log().error() << "Per default only " << (int)SPECIAL_CHARS_IN_FONT << " Font Extensions are allowed.";
+                Logger::log().error() << "Edit SPECIAL_CHARS_IN_FONT (gui_textout.h) to fit your needs.";
+                break;
+            }
+        }
+        break;
+    }
 }
 
 //================================================================================================
@@ -158,8 +189,8 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     fnt->height =0;
     fnt->charWidth[0] = (unsigned char)((u2-u1)*texW)+1; // 1 extra pixel for the endOfChar sign.
     fnt->charStart[0] = 0;
-    // Now we look for the other chars.
-    for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
+    // Standard chars.
+    for (unsigned int i=1; i < STANDARD_CHARS_IN_FONT-1; ++i)
     {
         pFont->getGlyphTexCoords(32+i, u1, v1, u2, v2);
         fnt->charWidth[i]= (unsigned char) ((u2-u1)*texW)+1; // 1 extra pixel for the endOfChar sign.
@@ -168,12 +199,26 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             fnt->height= (unsigned int) ((v2-v1)*texH);
     }
     // TextCursour char.
-    fnt->charWidth[CHARS_IN_FONT-1] = fnt->charWidth[0];
-    fnt->charStart[CHARS_IN_FONT-1] = fnt->charStart[CHARS_IN_FONT-2] + fnt->charWidth[CHARS_IN_FONT-2];
+    fnt->charWidth[STANDARD_CHARS_IN_FONT-1] = fnt->charWidth[0];
+    fnt->charStart[STANDARD_CHARS_IN_FONT-1] = fnt->charStart[STANDARD_CHARS_IN_FONT-2] + fnt->charWidth[STANDARD_CHARS_IN_FONT-2];
     if (mMaxFontHeight < fnt->height)  mMaxFontHeight = fnt->height;
-    fnt->textureWidth = fnt->charStart[CHARS_IN_FONT-1] + fnt->charWidth[CHARS_IN_FONT-1];
+    // Special chars.
+    unsigned int i, j =0;
+    for (i = STANDARD_CHARS_IN_FONT; i < STANDARD_CHARS_IN_FONT + mvSpecialChar.size(); ++i)
+    {
+        fnt->charWidth[i] = mvSpecialChar[j]->w+1;
+        fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
+        //if (mvSpecialChar[j]->h > fnt->height) fnt->height = mvSpecialChar[j]->h;
+        ++j;
+    }
+    for (;i < CHARS_IN_FONT; ++i)
+    {
+        fnt->charStart[i] = fnt->charStart[i-1] + fnt->charWidth[i-1];
+        fnt->charWidth[i] = 2;
+    }
+
     // ////////////////////////////////////////////////////////////////////
-    // blit the whole texture to memory.
+    // blit the whole font texture to memory.
     // ////////////////////////////////////////////////////////////////////
     uint32 *ttfData = new uint32[texture->getHeight() * texture->getWidth()];
     PixelBox pb(texture->getWidth(), texture->getHeight(), 1, PF_A8R8G8B8, ttfData);
@@ -182,12 +227,13 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
     // Build the RAW datas.
     // ////////////////////////////////////////////////////////////////////
     // Clear the background.
+    fnt->textureWidth = fnt->charStart[CHARS_IN_FONT-1] + fnt->charWidth[CHARS_IN_FONT-1];
     fnt->data = new uint32[(fnt->textureWidth+1) * fnt->height];
     for (register int i=0; i < (fnt->textureWidth+1) * fnt->height; ++i)
         fnt->data[i] = 0x00ffffff;
     // Copy all needed chars of the font.
     int x1, y1, yPos;
-    for (unsigned int i=1; i < CHARS_IN_FONT-1; ++i)
+    for (unsigned int i=1; i < STANDARD_CHARS_IN_FONT-1; ++i)
     {
         pFont->getGlyphTexCoords(i+32, u1, v1, u2, v2);
         x1 = (unsigned int)(u1 * texW)-1;
@@ -203,6 +249,7 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
         }
     }
     delete[] ttfData;
+
     // ////////////////////////////////////////////////////////////////////
     // Transparent to color.
     // ////////////////////////////////////////////////////////////////////
@@ -214,14 +261,44 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             alpha+=0x40;
             if (alpha > 0xff) alpha = 0xff;
             if (alpha < 0x70) fnt->data[i] = 0x00ffffff;
-            else              fnt->data[i] = 0xff000000 + (alpha<<16) + (alpha <<8) + alpha;
+            else              fnt->data[i] = 0xff000000 + ((alpha<<16)&0xff0000) + ((alpha <<8)&0xff00) + alpha;
         }
     }
+
+    // Copy all special chars.
+    PixelBox srcPixelBox = GuiImageset::getSingleton().getPixelBox();
+    PixelBox src;
+    int k = 0;
+    for (std::vector<mSpecialChar*>::iterator i = mvSpecialChar.begin(); i < mvSpecialChar.end(); ++i)
+    {
+        src = srcPixelBox.getSubVolume(Box(mvSpecialChar[k]->x,
+                                           mvSpecialChar[k]->y,
+                                           mvSpecialChar[k]->x + mvSpecialChar[k]->w,
+                                           mvSpecialChar[k]->y + mvSpecialChar[k]->h));
+        uint32 *srcData = static_cast<uint32*>(src.data);
+        int rowSkip = (int) srcPixelBox.getWidth();
+        int dSrcY = 0, dDstY =0;
+
+        for (int y =0; y < mvSpecialChar[k]->h; ++y)
+        {
+            for (int x =0; x < mvSpecialChar[k]->w; ++x)
+            {
+                fnt->data[fnt->charStart[STANDARD_CHARS_IN_FONT+k]+x + dDstY]
+                =  (srcData[dSrcY + x] & 0xff00ff00)
+                + ((srcData[dSrcY + x] <<16) & 0xff0000)
+                + ((srcData[dSrcY + x] >>16) & 0x0000ff);
+            }
+            dSrcY+= rowSkip;
+            dDstY+= fnt->textureWidth;
+        }
+        ++k;
+    }
+
     // ////////////////////////////////////////////////////////////////////
     // Create Text Cursor (for text input).
     // ////////////////////////////////////////////////////////////////////
-    for (unsigned int x = 0; x < fnt->charWidth[CHARS_IN_FONT-1]; ++x)
-        fnt->data[x + fnt->charStart[CHARS_IN_FONT-1] + (fnt->height-2)*fnt->textureWidth] = 0xffffffff;
+    for (unsigned int x = 0; x < fnt->charWidth[STANDARD_CHARS_IN_FONT-1]; ++x)
+        fnt->data[x + fnt->charStart[STANDARD_CHARS_IN_FONT-1] + (fnt->height-2)*fnt->textureWidth] = 0xffffffff;
     fnt->baseline = iSize;
     // ////////////////////////////////////////////////////////////////////
     // Create a raw font.
@@ -325,13 +402,25 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
 //================================================================================================
 // Print text into a given background. All stuff beyond width/height will be clipped.
 //================================================================================================
-void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr, uint32 color)
+void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *txt, bool hideText, unsigned int fontNr, uint32 color)
 {
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     uint32 pixFont, pixColor;
     uint32 colorBack = color;
     int srcRow, dstRow, stopX, clipX=0;
     unsigned char chr;
+
+
+    String Text1 = txt;
+    size_t found;
+    for (unsigned int i=0; i < mvSpecialChar.size();++i)
+    {
+        const char replacement[] = {STANDARD_CHARS_IN_FONT+32+i,0};
+        while ((found = Text1.find(mvSpecialChar[i]->keyword))!= string::npos)
+            Text1.replace(found, 3, replacement);
+    }
+    const char *text =  Text1.c_str();
+
     while (*text)
     {
         // Parse format commands.

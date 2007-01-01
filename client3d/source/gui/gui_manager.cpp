@@ -386,7 +386,7 @@ void GuiManager::update(Real timeSinceLastFrame)
         if (Root::getSingleton().getTimer()->getMilliseconds() > mTooltipDelay)
         {
             // TODO: Make the background fit to the text. make a black border, ...
-            TextLine label;
+            GuiTextout::TextLine label;
             label.hideText= false;
             label.index= -1;
             label.font = 2;
@@ -416,18 +416,18 @@ void GuiManager::displaySystemMessage(const char *text)
         mOverlay->hide();
         return;
     }
-    int fontH = GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
-    TextLine label;
+    int fontH = GuiTextout::getSingleton().getFontHeight(GuiTextout::FONT_SYSTEM);
+    GuiTextout::TextLine label;
     label.index= -1;
     label.hideText= false;
-    label.font = FONT_SYSTEM;
+    label.font = GuiTextout::FONT_SYSTEM;
     //label.clipped = false;
-    label.x1 = 0;
     label.y1 = fontH * row;
-    label.color = 0x00ffffff;
+    label.y2 = label.y1 + fontH;
+    label.x1 = 0;
     label.x2 = mTexture->getWidth()-1;
-    label.y2 = fontH * row + GuiTextout::getSingleton().getFontHeight(FONT_SYSTEM);
     label.text = text;
+    label.color= 0x00ffffff;
     //  clearTooltip();
     GuiTextout::getSingleton().Print(&label, mTexture.getPointer());
     mTooltipRefresh = false;
