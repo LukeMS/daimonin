@@ -592,8 +592,8 @@ op->oy= op->y;
 ^has_ready_skill{S}			{};
 	/* end outdate */
 
-^attack_movement{S} LOG(llevMapbug, "MAPBUG: loader(): deprecated attack_movement setting\n");
-^move_state{S}	    LOG(llevMapbug, "MAPBUG: loader(): deprecated move_state setting\n");
+^attack_movement{S} LOG(llevMapbug, "MAPBUG: loader(): deprecated attack_movement setting. op=%s\n", STRING_OBJ_NAME(op));
+^move_state{S}	    LOG(llevMapbug, "MAPBUG: loader(): deprecated move_state setting. op=%s\n", STRING_OBJ_NAME(op));
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
 ^paralyzed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PARALYZED, IVAL);
 ^feared{S}			SET_OR_CLEAR_FLAG(op, FLAG_FEARED, IVAL);
@@ -608,7 +608,7 @@ op->oy= op->y;
 ^known_cursed{S}    SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_CURSED, IVAL);
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^title{S}	    {	char *y=yval();
-			if (*y=='\0') LOG(llevMapbug,"MAPBUG: loader(): Title without value.\n");
+			if (*y=='\0') LOG(llevMapbug,"MAPBUG: loader(): Title without value. op=%s\n", STRING_OBJ_NAME(op));
 			else FREE_AND_COPY_HASH(op->title, y);
 		    }
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);

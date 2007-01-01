@@ -644,7 +644,7 @@ static inline mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_
     if(map == NULL || map != orig_map->tile_map[tile_num])
     {
         /* ensure we don't get called again over and over */
-        LOG(llevMapbug, "MAPBUG: failed to tile map %s for tile no %d\n", STRING_SAFE(orig_map->orig_path), tile_num);
+        LOG(llevMapbug, "MAPBUG: failed to connect map %s with tile no %d (%s).\n", STRING_SAFE(orig_map->orig_path), tile_num, STRING_SAFE(orig_map->orig_tile_path[tile_num]));
         FREE_AND_CLEAR_HASH(orig_map->orig_tile_path[tile_num]);
         FREE_AND_CLEAR_HASH(orig_map->tile_path[tile_num]);
         return NULL;
