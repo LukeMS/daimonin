@@ -214,7 +214,7 @@ int command_shutdown(object *op, char *params)
 
 int command_goto(object *op, char *params)
 {
-    int x=0, y=0;
+    int x=-1, y=-1;
     char name[MAXPATHLEN] = {"\0"};
 
     if (!op)
