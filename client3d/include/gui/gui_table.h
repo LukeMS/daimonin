@@ -31,7 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include <Ogre.h>
 #include "gui_element.h"
-#include "gui_textout.h"
 
 using namespace Ogre;
 

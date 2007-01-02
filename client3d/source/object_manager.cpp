@@ -303,7 +303,7 @@ void ObjectManager::deleteMissle(int index)
 {
     mvMissle[index]->freeRecources();
     delete mvMissle[index];
-    std::vector<ObjectMissle*>::iterator i = mvMissle.begin();
+    std::vector<ObjectMissile*>::iterator i = mvMissle.begin();
     while (index--) ++i;
     mvMissle.erase(i);
 }
@@ -326,6 +326,13 @@ void ObjectManager::freeRecources()
         delete (*i);
     }
     mvStatic.clear();
+
+	for (std::vector<ObjectMissile*>::iterator i = mvMissle.begin(); i < mvMissle.end(); ++i)
+    {
+        (*i)->freeRecources();
+        delete (*i);
+    }
+    mvMissle.clear();
 }
 
 //================================================================================================
@@ -471,7 +478,7 @@ void ObjectManager::extractObject(MovableObject *mob)
 //================================================================================================
 void ObjectManager::shoot(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
-    ObjectMissle *obj_missle = new ObjectMissle(type, srcMob, dstMob);
+    ObjectMissile *obj_missle = new ObjectMissile(type, srcMob, dstMob);
     if (obj_missle)  mvMissle.push_back(obj_missle);
 }
 

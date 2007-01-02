@@ -35,22 +35,23 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-enum
-{
-    GUI_GADGET_COMBOBOX_NONE,
-    GUI_GADGET_COMBOBOX_DDBUTTON,
-    GUI_GADGET_COMBOBOX_SCROLL_UP,
-    GUI_GADGET_COMBOBOX_SCROLL_DOWN,
-    GUI_GADGET_COMBOBOX_SCROLL_BAR,
-    GUI_GADGET_COMBOBOX_SUM
-};
-
 /**
  ** This class provides an interactive combobox.
  *****************************************************************************/
 class GuiGadgetCombobox : public GuiElement
 {
+
 public:
+    enum
+    {
+        GUI_GADGET_COMBOBOX_NONE,
+        GUI_GADGET_COMBOBOX_DDBUTTON,
+        GUI_GADGET_COMBOBOX_SCROLL_UP,
+        GUI_GADGET_COMBOBOX_SCROLL_DOWN,
+        GUI_GADGET_COMBOBOX_SCROLL_BAR,
+        GUI_GADGET_COMBOBOX_SUM
+    };
+
     GuiGadgetCombobox(TiXmlElement *xmlElement, void *parent);
     ~GuiGadgetCombobox();
 
@@ -83,6 +84,7 @@ private:
     bool mDDButton;
     std::vector<String> mvOption;
     std::vector<int> mvValue;
-};
+}
+;
 
 #endif // GUI_COMBOBOX_H

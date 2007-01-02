@@ -32,7 +32,7 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-class ObjectMissle
+class ObjectMissile
 {
 public:
     // ////////////////////////////////////////////////////////////////////
@@ -55,8 +55,8 @@ public:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectMissle(int type, ObjectNPC *src, ObjectNPC *dst);
-    virtual ~ObjectMissle();
+    ObjectMissile(int type, ObjectNPC *src, ObjectNPC *dst);
+    virtual ~ObjectMissile();
     virtual void freeRecources();
     virtual bool update(const FrameEvent& event);
     const Vector3 &getPosition()
@@ -96,7 +96,7 @@ private:
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////
-    ObjectMissle(const ObjectMissle&); // disable copy-constructor.
+    ObjectMissile(const ObjectMissile&); // disable copy-constructor.
 };
 
 #endif

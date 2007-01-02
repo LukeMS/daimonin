@@ -206,8 +206,8 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
     }
 
     int x1 = (TEXTURE_SIZE - barWidth)/2;
-    int xfill = barWidth - (int)(percent * barWidth);
-    PixelBox pb = mHardwarePB->lock (Box(x1, TEXTURE_SIZE-11, x1 + barWidth, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
+    int xfill =  (int)(percent * barWidth);
+    PixelBox pb = mHardwarePB->lock (Box(x1, TEXTURE_SIZE-12, x1 + barWidth, TEXTURE_SIZE-1), HardwareBuffer::HBL_DISCARD);
     uint32 * dest_data = (uint32*)pb.data;
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
     dest_data+= TEXTURE_SIZE;
@@ -215,11 +215,9 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
     {
         for (int x = 0; x < barWidth; ++x)
         {
-            if (x <= xfill) dest_data[x] = 0xff000000;
-            else            dest_data[x] = color;
+            dest_data[x] = (x > xfill)?0xff000000:color;
         }
-        if (y < 4) color+= dColor;
-        else       color-= dColor;
+        color+= (y < 4)?dColor:-dColor;
         dest_data+= TEXTURE_SIZE;
     }
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;

@@ -37,6 +37,14 @@ const char GuiTextout::TXT_CMD_SOUND       = '§';
 const char GuiTextout::TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
 
+const uint32 GuiTextout::COLOR_BLACK = 0xff000000;
+const uint32 GuiTextout::COLOR_BLUE  = 0xff0000ff;
+const uint32 GuiTextout::COLOR_GREEN = 0xff00ff00;
+const uint32 GuiTextout::COLOR_LBLUE = 0xff00ffff;
+const uint32 GuiTextout::COLOR_RED   = 0xffff0000;
+const uint32 GuiTextout::COLOR_PINK  = 0xffff00ff;
+const uint32 GuiTextout::COLOR_YELLOW= 0xffffff00;
+const uint32 GuiTextout::COLOR_WHITE = 0xffffffff;
 const uint32 GuiTextout::TXT_COLOR_DEFAULT   = COLOR_WHITE;
 const uint32 GuiTextout::TXT_COLOR_HIGHLIGHT = COLOR_GREEN;
 const uint32 GuiTextout::TXT_COLOR_LOWLIGHT  = COLOR_WHITE;
@@ -76,11 +84,11 @@ GuiTextout::GuiTextout()
             if ((strTemp = xmlState->Attribute("posY"  ))) Entry->y = atoi(strTemp);
             if ((strTemp = xmlState->Attribute("width" ))) Entry->w = atoi(strTemp);
             if ((strTemp = xmlState->Attribute("height"))) Entry->h = atoi(strTemp);
-            if ((strTemp = xmlState->Attribute("name"  ))) Entry->keyword = strTemp;
+            if ((strTemp = xmlState->Attribute("name"  ))) Entry->strGfxCode = strTemp;
             if (mvSpecialChar.size() == SPECIAL_CHARS_IN_FONT-1)
             {
-                Logger::log().error() << "Per default only " << (int)SPECIAL_CHARS_IN_FONT << " Font Extensions are allowed.";
-                Logger::log().error() << "Edit SPECIAL_CHARS_IN_FONT (gui_textout.h) to fit your needs.";
+                Logger::log().warning() << "Maximum of user defined chars was reached.";
+                Logger::log().warning() << "You can't define more than " << (int)SPECIAL_CHARS_IN_FONT << " chars.";
                 break;
             }
         }
@@ -99,6 +107,9 @@ GuiTextout::~GuiTextout()
         delete (*i);
     }
     mvFont.clear();
+	for (std::vector<mSpecialChar*>::iterator i = mvSpecialChar.begin(); i < mvSpecialChar.end(); ++i)
+        delete (*i);
+    mvSpecialChar.clear();
     if (mTextGfxBuffer) delete[] mTextGfxBuffer;
 }
 
@@ -285,8 +296,8 @@ void GuiTextout::loadTTFont(const char *filename, const char *size, const char *
             {
                 fnt->data[fnt->charStart[STANDARD_CHARS_IN_FONT+k]+x + dDstY]
                 =  (srcData[dSrcY + x] & 0xff00ff00)
-                + ((srcData[dSrcY + x] <<16) & 0xff0000)
-                + ((srcData[dSrcY + x] >>16) & 0x0000ff);
+                   + ((srcData[dSrcY + x] <<16) & 0xff0000)
+                   + ((srcData[dSrcY + x] >>16) & 0x0000ff);
             }
             dSrcY+= rowSkip;
             dDstY+= fnt->textureWidth;
@@ -402,7 +413,7 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
 //================================================================================================
 // Print text into a given background. All stuff beyond width/height will be clipped.
 //================================================================================================
-void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *txt, bool hideText, unsigned int fontNr, uint32 color)
+void GuiTextout::drawText(int width, int height, uint32 *dest_data, String txt, bool hideText, unsigned int fontNr, uint32 color)
 {
     if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
     uint32 pixFont, pixColor;
@@ -410,16 +421,16 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *
     int srcRow, dstRow, stopX, clipX=0;
     unsigned char chr;
 
-
-    String Text1 = txt;
+    // Look for userdifined chars in the text.
     size_t found;
+    char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
     for (unsigned int i=0; i < mvSpecialChar.size();++i)
     {
-        const char replacement[] = {STANDARD_CHARS_IN_FONT+32+i,0};
-        while ((found = Text1.find(mvSpecialChar[i]->keyword))!= string::npos)
-            Text1.replace(found, 3, replacement);
+        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= string::npos)
+            txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
+        ++replacement[0];
     }
-    const char *text =  Text1.c_str();
+    const char *text = txt.c_str();
 
     while (*text)
     {

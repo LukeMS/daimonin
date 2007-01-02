@@ -31,15 +31,6 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace Ogre;
 
-const uint32 COLOR_BLACK = 0xff000000;
-const uint32 COLOR_BLUE  = 0xff0000ff;
-const uint32 COLOR_GREEN = 0xff00ff00;
-const uint32 COLOR_LBLUE = 0xff00ffff;
-const uint32 COLOR_RED   = 0xffff0000;
-const uint32 COLOR_PINK  = 0xffff00ff;
-const uint32 COLOR_YELLOW= 0xffffff00;
-const uint32 COLOR_WHITE = 0xffffffff;
-
 /**
  ** This class provides a text printing on gui elements.
  *****************************************************************************/
@@ -71,9 +62,17 @@ public:
     enum
     {
         STANDARD_CHARS_IN_FONT = 96,
-        SPECIAL_CHARS_IN_FONT  = 10,
+        SPECIAL_CHARS_IN_FONT  = 127,
         CHARS_IN_FONT          = STANDARD_CHARS_IN_FONT+SPECIAL_CHARS_IN_FONT,
     };
+    static const uint32 COLOR_BLACK;
+    static const uint32 COLOR_BLUE;
+    static const uint32 COLOR_GREEN;
+    static const uint32 COLOR_LBLUE;
+    static const uint32 COLOR_RED;
+    static const uint32 COLOR_PINK;
+    static const uint32 COLOR_YELLOW;
+    static const uint32 COLOR_WHITE;
     static const char TXT_CMD_HIGHLIGHT;
     static const char TXT_CMD_LOWLIGHT;
     static const char TXT_CMD_LINK;
@@ -134,7 +133,7 @@ private:
     typedef struct
     {
         int x, y, w, h;
-        String keyword;
+        String strGfxCode;
     }
     mSpecialChar;
 
@@ -153,7 +152,7 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
-    void drawText(int width, int height, uint32 *dest_data, const char*text, bool hideText, unsigned int fontNr = 0, uint32 color = 0x00ffffff);
+    void drawText(int width, int height, uint32 *dest_data, String text, bool hideText, unsigned int fontNr = 0, uint32 color = 0x00ffffff);
 };
 
 #endif

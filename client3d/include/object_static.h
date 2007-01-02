@@ -29,6 +29,7 @@ http://www.gnu.org/licenses/licenses.html
 
 #include <Ogre.h>
 #include "define.h"
+#include "tile_pos.h"
 #include "object_animate.h"
 
 using namespace Ogre;
