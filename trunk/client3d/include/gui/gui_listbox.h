@@ -30,7 +30,6 @@ http://www.gnu.org/licenses/licenses.html
 #include <tinyxml.h>
 #include <Ogre.h>
 #include "gui_element.h"
-#include "gui_textout.h"
 #include "gui_gadget_scrollbar.h"
 
 using namespace Ogre;

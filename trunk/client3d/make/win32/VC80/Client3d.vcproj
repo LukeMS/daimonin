@@ -7,7 +7,9 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform Name="Win32"/>
+		<Platform
+			Name="Win32"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -238,7 +240,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\object_missle.cpp"
+				RelativePath="..\..\..\source\object_missile.cpp"
 				>
 			</File>
 			<File
@@ -663,7 +665,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\object_missle.h"
+				RelativePath="..\..\..\include\object_missile.h"
 				>
 			</File>
 			<File
@@ -715,7 +717,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\tile_map_wrapper.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\tile_path.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\tile_pos.h"
 				>
 			</File>
 			<Filter

@@ -739,7 +739,7 @@ void GuiDialog::show()
     }
     if (mUsed_flag & GUI_INTERFACE_MESSAGE)
     {
-        mMessage.line_count = GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mMessage.title.c_str(), COLOR_YELLOW);
+        mMessage.line_count = GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mMessage.title.c_str(), GuiTextout::COLOR_YELLOW);
         mMessage.line_count+= GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, "");
         mMessage.line_count+= GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mMessage.body_text.c_str());
     }
@@ -747,13 +747,13 @@ void GuiDialog::show()
     {
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, "");
         for (int i=0; i< mLink_count; ++i)
-            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mLink[i].link.c_str(), COLOR_GREEN);
+            GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mLink[i].link.c_str(), GuiTextout::COLOR_GREEN);
     }
     // reward is also used as "objective"
     if (mUsed_flag & GUI_INTERFACE_REWARD)
     {
         mReward.line_count = GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, "");
-        mReward.line_count+= GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mReward.title.c_str(), COLOR_YELLOW);
+        mReward.line_count+= GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mReward.title.c_str(), GuiTextout::COLOR_YELLOW);
         mReward.line_count+= GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, "");
         mReward.line_count+= GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_NPCDIALOG, GuiImageset::GUI_LIST_NPC, mReward.body_text.c_str());
         // only print the "Your rewards:" message when there is one

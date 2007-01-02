@@ -23,8 +23,9 @@ http://www.gnu.org/licenses/licenses.html
 #ifndef TILE_INTERFACE_H
 #define TILE_INTERFACE_H
 
+#include <Ogre.h>
 #include "define.h"
-#include "Ogre.h"
+#include "tile_pos.h"
 
 using namespace Ogre;
 

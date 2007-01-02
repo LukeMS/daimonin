@@ -30,7 +30,7 @@ http://www.gnu.org/licenses/licenses.html
 #include <vector>
 #include "object_npc.h"
 #include "object_static.h"
-#include "object_missle.h"
+#include "object_missile.h"
 
 using namespace Ogre;
 
@@ -185,7 +185,7 @@ private:
     std::string mDescFile;
     std::vector<ObjectStatic*> mvStatic;
     std::vector<ObjectNPC*   > mvNPC;
-    std::vector<ObjectMissle*> mvMissle;
+    std::vector<ObjectMissile*> mvMissle;
     int mSelectedType, mSelectedObject, mSelectedFriendly;
     TilePos mSelectedPos;
     // ////////////////////////////////////////////////////////////////////

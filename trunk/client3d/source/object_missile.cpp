@@ -28,25 +28,25 @@ http://www.gnu.org/licenses/licenses.html
 #include "option.h"
 #include "events.h"
 #include "object_manager.h"
-#include "object_missle.h"
+#include "object_missile.h"
 #include "sound.h"
 
 //================================================================================================
 // Init all static Elemnts.
 //================================================================================================
-SceneManager *ObjectMissle::msSceneMgr =0;
-unsigned int ObjectMissle::msUnique =0;
+SceneManager *ObjectMissile::msSceneMgr =0;
+unsigned int ObjectMissile::msUnique =0;
 
 //================================================================================================
 // Free all recources.
 //================================================================================================
-void ObjectMissle::freeRecources()
+void ObjectMissile::freeRecources()
 {}
 
 //================================================================================================
 // Destructor.
 //================================================================================================
-ObjectMissle::~ObjectMissle()
+ObjectMissile::~ObjectMissile()
 {
     //delete particles;
     mNode->getParentSceneNode()->removeAndDestroyChild(mNode->getName());
@@ -55,7 +55,7 @@ ObjectMissle::~ObjectMissle()
 //================================================================================================
 // Init the object.
 //================================================================================================
-ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
+ObjectMissile::ObjectMissile(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 {
     // Create a missle.
     mType = type;
@@ -64,7 +64,7 @@ ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
                           "Mob"+ StringConverter::toString(++msUnique, 6, '0'),
                           "Arrow.mesh");
     mNode->attachObject(mEntity);
-    mNode->scale(1,4,1);
+    //mNode->scale(1,4,1);
     // Set the start position.
     Vector3 pos = srcMob->getPosition();
     pos.y +=srcMob->getHeight();
@@ -82,7 +82,7 @@ ObjectMissle::ObjectMissle(int type, ObjectNPC *srcMob, ObjectNPC *dstMob)
 //================================================================================================
 // Update object.
 //================================================================================================
-bool ObjectMissle::update(const FrameEvent& event)
+bool ObjectMissile::update(const FrameEvent& event)
 {
     if (mHasBallistic)
     {
