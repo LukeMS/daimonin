@@ -105,7 +105,7 @@ static void init_artifacts(FILE *fp)
 		if (*buf == '#')
 			continue;
 		cp = buf + (strlen(buf) - 1);
-		while(isspace(*cp))
+		while(cp > buf && isspace(*cp))
 			--cp;
 		cp[1] = '\0';
 		cp = buf;
