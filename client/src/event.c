@@ -379,7 +379,7 @@ int Event_PollInputDevice(void)
 				{
 					/* no button - we can do a lazy check */
 					if( global_buttons.mx_up >= global_book_data.x &&
-						global_buttons.my_up >= global_book_data.y && 
+						global_buttons.my_up >= global_book_data.y &&
 						global_buttons.mx_up <= global_book_data.x+global_book_data.xlen &&
 						global_buttons.my_up <= global_book_data.y+global_book_data.ylen)
 					{
@@ -1031,9 +1031,9 @@ static void key_string_event(SDL_KeyboardEvent *key)
                && HistoryPos < MAX_HISTORY_LINES
                && InputHistory[HistoryPos + 1][0])
               {
-                  /* First history line is special, it records what we 
+                  /* First history line is special, it records what we
                    * were writing before scrolling back the history; so,
-                   * by returning back to zero, we can continue our 
+                   * by returning back to zero, we can continue our
                    * editing where we left it
                    */
                   if (HistoryPos == 0)
@@ -1041,8 +1041,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                   HistoryPos++;
                   textwin_putstring(InputHistory[HistoryPos]);
               }
-              
-              /* If we are in INTERFACE mode, let player scroll back the 
+
+              /* If we are in INTERFACE mode, let player scroll back the
                * lines in history, but only those that start with "/talk"
                */
               if (cpl.input_mode == INPUT_MODE_NPCDIALOG
@@ -1050,7 +1050,7 @@ static void key_string_event(SDL_KeyboardEvent *key)
               {
                   int nextpos;
                   SDL_Rect    box;
-                  if (HistoryPos == 0) 
+                  if (HistoryPos == 0)
                   {
                       strcpy(InputHistory[0], "/talk ");
                       strncpy(InputHistory[0]+6, InputString, InputCount);
@@ -1064,16 +1064,16 @@ static void key_string_event(SDL_KeyboardEvent *key)
                           break;
                       }
                   }
-                  
+
                   strcpy(InputString, InputHistory[HistoryPos] + 6);
                   InputCount =CurrentCursorPos = strlen(InputString);
                   InputStringFlag = TRUE;
-                  
+
                   box.x = gui_interface_npc->startx + 95;
                   box.y = gui_interface_npc->starty + 449;
                   box.h = 12;
                   box.w = 180;
-                  
+
                   SDL_FillRect(ScreenSurface, &box, 0);
                   StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
               }
@@ -1087,8 +1087,8 @@ static void key_string_event(SDL_KeyboardEvent *key)
                   textwin_putstring(InputHistory[HistoryPos]);
               }
 
-              /* If we are in INTERFACE mode, let player scroll forward the 
-               * lines in history, but only those that start with "/talk" 
+              /* If we are in INTERFACE mode, let player scroll forward the
+               * lines in history, but only those that start with "/talk"
                */
               if (cpl.input_mode == INPUT_MODE_NPCDIALOG
                       && HistoryPos > 0)
@@ -1724,8 +1724,10 @@ Boolean process_macro_keys(int id, int value)
           break;
 
         /* Alter fire mode selection */
-        case KEYFUNC_RANGE: case KEYFUNC_RANGE_BACK:
+        case KEYFUNC_RANGE:
+        case KEYFUNC_RANGE_BACK:
         case KEYFUNC_RANGE_SELECT:
+          if (SDL_GetModState() & KMOD_ALT) break;
           switch (id)
           {
               case KEYFUNC_RANGE:
@@ -2465,7 +2467,7 @@ void check_menu_keys(int menu, int key)
 
     if (cpl.menustatus == MENU_NO)
         return;
-                
+
     /* close menue */
     if (key == SDLK_ESCAPE)
     {
@@ -2540,7 +2542,7 @@ void check_menu_keys(int menu, int key)
 					reset_input_mode();
 	                break;
 				}
-				
+
 				/* disable quest tag (ugly code...) */
 				if(gui_interface_npc->who.body[0] == 'Q')
 					break;
@@ -2729,7 +2731,7 @@ void check_menu_keys(int menu, int key)
 					int i = gui_interface_npc->selected;
 					do {
 						if(++i >gui_interface_npc->icon_count)
-							i = 1; 
+							i = 1;
 						if(gui_interface_npc->icon[i].mode == 'S' )
 						{
 							gui_interface_npc->selected = i;
@@ -2746,7 +2748,7 @@ void check_menu_keys(int menu, int key)
 					int i = gui_interface_npc->selected;
 					do {
 						if(--i < 1)
-							i = gui_interface_npc->icon_count; 
+							i = gui_interface_npc->icon_count;
 						if(gui_interface_npc->icon[i].mode == 'S' )
 						{
 							gui_interface_npc->selected = i;
@@ -2813,7 +2815,7 @@ void check_menu_keys(int menu, int key)
 				if(gui_interface_npc->accept.command[0]!='\0')
 				{
                     char cmd[1024];
-					
+
 					/* if we have accept, we must check selected for possible slot selection */
                     if(gui_interface_npc->icon_select)
                         sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
