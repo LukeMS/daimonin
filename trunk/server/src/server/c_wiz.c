@@ -215,7 +215,6 @@ int command_shutdown(object *op, char *params)
 int command_goto(object *op, char *params)
 {
     int x=0, y=0;
-    const char *hash_name;
     char name[MAXPATHLEN] = {"\0"};
 
     if (!op)
@@ -230,9 +229,9 @@ int command_goto(object *op, char *params)
     sscanf(params, "%s %d %d", name, &x, &y);
     if(name[0] != '\0')
     {
-        hash_name = add_string(name);
+        shstr *hash_name = add_string(name);
 
-        if(enter_map_by_name(op, name, name, x, y, 0))
+        if(enter_map_by_name(op, hash_name, hash_name, x, y, 0))
             new_draw_info_format(NDI_UNIQUE, 0, op, "Difficulty: %d.", op->map->difficulty);
 
         FREE_ONLY_HASH(hash_name);
