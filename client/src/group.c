@@ -27,9 +27,10 @@ struct _group           group[GROUP_MAX_MEMBER];
 char                    group_invite[32]; /* name of player who has send the invite */
 
 static int              group_pos[GROUP_MAX_MEMBER][2]      =
-{
-    {34,1}, {34,25}, {34,49}, {143,1}, {143,25}, {143,49}
-};
+    {
+        {34,1}
+        , {34,25}, {34,49}, {143,1}, {143,25}, {143,49}
+    };
 
 /*  show_group()
  *  generate the group window.
@@ -51,15 +52,15 @@ void show_group(int x, int y)
     sprite_blt(Bitmaps[BITMAP_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, NULL, NULL);
     */
 
-    if(global_group_status < GROUP_INVITE)
-	{
-		StringBlt(ScreenSurface, &Font6x3Out, "type '/help group' for info", 40, 585, COLOR_WHITE, NULL, NULL);
-		return;
-	}
+    if (global_group_status < GROUP_INVITE)
+    {
+        StringBlt(ScreenSurface, &Font6x3Out, "type '/help group' for info", 40, 585, COLOR_WHITE, NULL, NULL);
+        return;
+    }
 
 
     mb = SDL_GetMouseState(&mx, &my);
-    if(global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
+    if (global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,COLOR_GREEN, NULL, NULL);
@@ -67,14 +68,14 @@ void show_group(int x, int y)
         StringBlt(ScreenSurface, &SystemFont, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,COLOR_DEFAULT, NULL, NULL);
 
-        if(global_group_status == GROUP_INVITE)
+        if (global_group_status == GROUP_INVITE)
         {
-            if(add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
+            if (add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 101, BITMAP_BUTTON_BLACK_UP, "join", "join"))
             {
                 global_group_status = GROUP_WAIT;
                 send_command("/join", -1, SC_NORMAL);
             }
-            if(add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
+            if (add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 102, BITMAP_BUTTON_BLACK_UP, "deny", "deny"))
             {
                 global_group_status = GROUP_NO;
                 send_command("/deny", -1, SC_NORMAL);
@@ -83,9 +84,9 @@ void show_group(int x, int y)
     }
     else /* status: GROUP_MEMBER */
     {
-        if(add_button(x, y + 56, 103, BITMAP_SMALL_UP, "leave", "leave"))
+        if (add_button(x, y + 56, 103, BITMAP_SMALL_UP, "leave", "leave"))
         {
-            if(global_group_status != GROUP_LEAVE)
+            if (global_group_status != GROUP_LEAVE)
             {
                 global_group_status = GROUP_LEAVE;
                 send_command("/leave", -1, SC_NORMAL);

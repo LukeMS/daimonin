@@ -94,9 +94,7 @@ void SetupCmd(char *buf, int len)
         if (!strcmp(cmd, "sound"))
         {
             if (!strcmp(param, "FALSE"))
-            {
-            }
-        }
+            {}}
         else if (!strcmp(cmd, "skf"))
         {
             if (!strcmp(param, "FALSE"))
@@ -213,26 +211,22 @@ void SetupCmd(char *buf, int len)
             }
         }
         else if (!strcmp(cmd, "mapsize"))
-        {
-        }
+        {}
         else if (!strcmp(cmd, "map2cmd"))
-        {
-        }
+        {}
         else if (!strcmp(cmd, "darkness"))
-        {
-        }
+        {}
         else if (!strcmp(cmd, "facecache"))
-        {
-        }
+        {}
         else
         {
             LOG(LOG_ERROR, "Got setup for a command we don't understand: %s %s\n", cmd, param);
             sprintf(buf, "The server is outdated!\nSelect a different one!");
-	        draw_info(buf, COLOR_RED);
-			LOG(LOG_ERROR, "%s\n", buf);
-			SOCKET_CloseSocket(csocket.fd);
-			GameStatus = GAME_STATUS_START;
-			return;
+            draw_info(buf, COLOR_RED);
+            LOG(LOG_ERROR, "%s\n", buf);
+            SOCKET_CloseSocket(csocket.fd);
+            GameStatus = GAME_STATUS_START;
+            return;
         }
     }
     GameStatus = GAME_STATUS_REQUEST_FILES;
@@ -266,7 +260,7 @@ void AddMeFail(char *data, int len)
 {
     LOG(LOG_MSG, "addme_failed received.\n");
     SOCKET_CloseSocket(csocket.fd);
-	SDL_Delay(1250);
+    SDL_Delay(1250);
     GameStatus = GAME_STATUS_INIT;
     /*GameStatus = GAME_STATUS_START;*/
     /* add here error handling */
@@ -423,27 +417,27 @@ void DrawInfoCmd2(char *data, int len)
     else
         buf[0] = 0;
 
-	if(buf[0])
-	{
+    if (buf[0])
+    {
 
-		tmp = strchr(data, ' ');
-		if(tmp)
-			*tmp = 0;
-	}
-	/* we have communication input */
-	if(tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
-	{
-		if( !(flags & NDI_GM) && ignore_check(data))
-			return;
+        tmp = strchr(data, ' ');
+        if (tmp)
+            *tmp = 0;
+    }
+    /* we have communication input */
+    if (tmp && flags & (NDI_PLAYER|NDI_SAY|NDI_SHOUT|NDI_TELL|NDI_GSAY|NDI_EMOTE))
+    {
+        if ( !(flags & NDI_GM) && ignore_check(data))
+            return;
 
-		/* save last incomming tell player for client sided /reply */
-		if(flags & NDI_TELL)
-			strcpy(cpl.player_reply, data);
+        /* save last incomming tell player for client sided /reply */
+        if (flags & NDI_TELL)
+            strcpy(cpl.player_reply, data);
 
-		/*LOG(-1,"IGNORE?: player >%s<\n", data);*/
-		if(flags & NDI_EMOTE)
-			flags &= ~NDI_PLAYER;
-	}
+        /*LOG(-1,"IGNORE?: player >%s<\n", data);*/
+        if (flags & NDI_EMOTE)
+            flags &= ~NDI_PLAYER;
+    }
     draw_info(buf, flags);
 }
 
@@ -484,266 +478,266 @@ void StatsCmd(unsigned char *data, int len)
             switch (c)
             {
                 case CS_STAT_TARGET_HP:
-                  cpl.target_hp = (int) * (data + i++);
-                  break;
+                    cpl.target_hp = (int) * (data + i++);
+                    break;
                 case CS_STAT_REG_HP:
-                  cpl.gen_hp = ((float) GetShort_String(data + i)) / 10.0f;
-                  i += 2;
-                  break;
+                    cpl.gen_hp = ((float) GetShort_String(data + i)) / 10.0f;
+                    i += 2;
+                    break;
                 case CS_STAT_REG_MANA:
-                  cpl.gen_sp = ((float) GetShort_String(data + i)) / 10.0f;
-                  i += 2;
-                  break;
+                    cpl.gen_sp = ((float) GetShort_String(data + i)) / 10.0f;
+                    i += 2;
+                    break;
                 case CS_STAT_REG_GRACE:
-                  cpl.gen_grace = ((float) GetShort_String(data + i)) / 10.0f;
-                  i += 2;
-                  break;
+                    cpl.gen_grace = ((float) GetShort_String(data + i)) / 10.0f;
+                    i += 2;
+                    break;
 
                 case CS_STAT_HP:
-                  temp = GetInt_String(data + i);
-                  if (temp < cpl.stats.hp && cpl.stats.food)
-                  {
-                      cpl.warn_hp = 1;
-                      if (cpl.stats.maxhp / 12 <= cpl.stats.hp - temp)
-                          cpl.warn_hp = 2;
-                  }
-                  cpl.stats.hp = temp;
-                  i += 4;
-                  break;
+                    temp = GetInt_String(data + i);
+                    if (temp < cpl.stats.hp && cpl.stats.food)
+                    {
+                        cpl.warn_hp = 1;
+                        if (cpl.stats.maxhp / 12 <= cpl.stats.hp - temp)
+                            cpl.warn_hp = 2;
+                    }
+                    cpl.stats.hp = temp;
+                    i += 4;
+                    break;
                 case CS_STAT_MAXHP:
-                  cpl.stats.maxhp = GetInt_String(data + i);
-                  i += 4;
-                  break;
+                    cpl.stats.maxhp = GetInt_String(data + i);
+                    i += 4;
+                    break;
                 case CS_STAT_SP:
-                  cpl.stats.sp = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.sp = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_MAXSP:
-                  cpl.stats.maxsp = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.maxsp = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_GRACE:
-                  cpl.stats.grace = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.grace = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_MAXGRACE:
-                  cpl.stats.maxgrace = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.maxgrace = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_STR:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Str)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Str)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Str = temp;
-                  break;
+                    cpl.stats.Str = temp;
+                    break;
                 case CS_STAT_INT:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Int)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Int)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Int = temp;
-                  break;
+                    cpl.stats.Int = temp;
+                    break;
                 case CS_STAT_POW:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Pow)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Pow)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Pow = temp;
+                    cpl.stats.Pow = temp;
 
-                  break;
+                    break;
                 case CS_STAT_WIS:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Wis)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Wis)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Wis = temp;
+                    cpl.stats.Wis = temp;
 
-                  break;
+                    break;
                 case CS_STAT_DEX:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Dex)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Dex)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Dex = temp;
-                  break;
+                    cpl.stats.Dex = temp;
+                    break;
                 case CS_STAT_CON:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Con)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Con)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Con = temp;
-                  break;
+                    cpl.stats.Con = temp;
+                    break;
                 case CS_STAT_CHA:
-                  temp = (int) * (data + i++);
-                  if (temp >= cpl.stats.Cha)
-                      cpl.warn_statup = TRUE;
-                  else
-                      cpl.warn_statdown = TRUE;
+                    temp = (int) * (data + i++);
+                    if (temp >= cpl.stats.Cha)
+                        cpl.warn_statup = TRUE;
+                    else
+                        cpl.warn_statdown = TRUE;
 
-                  cpl.stats.Cha = temp;
-                  break;
+                    cpl.stats.Cha = temp;
+                    break;
                 case CS_STAT_EXP:
-                  temp = GetInt_String(data + i);
-                  if (temp < cpl.stats.exp)
-                      cpl.warn_drain = TRUE;
-                  cpl.stats.exp = temp;
-                  /* get the real level depending on the exp */
-                  for(x=0;x<=110;x++)
-                  {
-                      if(server_level.exp[x]>(uint32)temp)
-                      {
-                          cpl.stats.exp_level = x-1;
-                          break;
-                      }
-                  }
-                  i += 4;
-                  break;
+                    temp = GetInt_String(data + i);
+                    if (temp < cpl.stats.exp)
+                        cpl.warn_drain = TRUE;
+                    cpl.stats.exp = temp;
+                    /* get the real level depending on the exp */
+                    for (x=0;x<=110;x++)
+                    {
+                        if (server_level.exp[x]>(uint32)temp)
+                        {
+                            cpl.stats.exp_level = x-1;
+                            break;
+                        }
+                    }
+                    i += 4;
+                    break;
                 case CS_STAT_LEVEL:
-                  cpl.stats.level = (char) * (data + i++);
-                  if (cpl.stats.level != cpl.stats.exp_level)
-                  {
-                      cpl.warn_drain = TRUE;
-                  }
-                  break;
+                    cpl.stats.level = (char) * (data + i++);
+                    if (cpl.stats.level != cpl.stats.exp_level)
+                    {
+                        cpl.warn_drain = TRUE;
+                    }
+                    break;
                 case CS_STAT_WC:
-                  cpl.stats.wc = (char) GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.wc = (char) GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_AC:
-                  cpl.stats.ac = (char) GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.ac = (char) GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_DAM:
-                  cpl.stats.dam = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.dam = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_SPEED:
-                  cpl.stats.speed = GetInt_String(data + i);
-                  i += 4;
-                  break;
+                    cpl.stats.speed = GetInt_String(data + i);
+                    i += 4;
+                    break;
                 case CS_STAT_FOOD:
-                  cpl.stats.food = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.food = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_WEAP_SP:
                     cpl.stats.weapon_sp = ((float)GetInt_String(data + i))/1000.0f;
                     i += 4;
-                  break;
+                    break;
                 case CS_STAT_FLAGS:
-                  cpl.stats.flags = GetShort_String(data + i);
-                  i += 2;
-                  break;
+                    cpl.stats.flags = GetShort_String(data + i);
+                    i += 2;
+                    break;
                 case CS_STAT_WEIGHT_LIM:
-                  set_weight_limit(GetInt_String(data + i));
-                  i += 4;
-                  break;
+                    set_weight_limit(GetInt_String(data + i));
+                    i += 4;
+                    break;
                 case CS_STAT_SKILLEXP_AGILITY:
                 case CS_STAT_SKILLEXP_PERSONAL:
                 case CS_STAT_SKILLEXP_MENTAL:
                 case CS_STAT_SKILLEXP_PHYSIQUE:
                 case CS_STAT_SKILLEXP_MAGIC:
                 case CS_STAT_SKILLEXP_WISDOM:
-                  cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetInt_String(data + i);
-                  i += 4;
-                  break;
+                    cpl.stats.skill_exp[(c - CS_STAT_SKILLEXP_START) / 2] = GetInt_String(data + i);
+                    i += 4;
+                    break;
                 case CS_STAT_SKILLEXP_AGLEVEL:
                 case CS_STAT_SKILLEXP_PELEVEL:
                 case CS_STAT_SKILLEXP_MELEVEL:
                 case CS_STAT_SKILLEXP_PHLEVEL:
                 case CS_STAT_SKILLEXP_MALEVEL:
                 case CS_STAT_SKILLEXP_WILEVEL:
-                  cpl.stats.skill_level[(c - CS_STAT_SKILLEXP_START - 1) / 2] = (sint16) * (data + i++);
-                  break;
+                    cpl.stats.skill_level[(c - CS_STAT_SKILLEXP_START - 1) / 2] = (sint16) * (data + i++);
+                    break;
                 case CS_STAT_RANGE:
-                  {
-                      int   rlen    = data[i++];
-                      strncpy(cpl.range, (const char *) data + i, rlen);
-                      cpl.range[rlen] = '\0';
-                      i += rlen;
-                      break;
-                  }
+                {
+                    int   rlen    = data[i++];
+                    strncpy(cpl.range, (const char *) data + i, rlen);
+                    cpl.range[rlen] = '\0';
+                    i += rlen;
+                    break;
+                }
 
                 case CS_STAT_EXT_TITLE:
-                  {
-                      int   rlen    = data[i++];
+                {
+                    int   rlen    = data[i++];
 
-                      tmp = strchr(data + i, '\n');
-                      *tmp = 0;
-                      strcpy(cpl.rank, data + i);
-                      tmp2 = strchr(tmp + 1, '\n');
-                      *tmp2 = 0;
-                      strcpy(cpl.pname, tmp + 1);
-                      tmp = strchr(tmp2 + 1, '\n');
-                      *tmp = 0;
-                      strcpy(cpl.race, tmp2 + 1);
-                      tmp2 = strchr(tmp + 1, '\n');
-                      *tmp2 = 0;
-                      strcpy(cpl.title, tmp + 1); /* profession title */
-                      tmp = strchr(tmp2 + 1, '\n');
-                      *tmp = 0;
-                      strcpy(cpl.alignment, tmp2 + 1);
-                      tmp2 = strchr(tmp + 1, '\n');
-                      *tmp2 = 0;
-                      strcpy(cpl.godname, tmp + 1);
+                    tmp = strchr(data + i, '\n');
+                    *tmp = 0;
+                    strcpy(cpl.rank, data + i);
+                    tmp2 = strchr(tmp + 1, '\n');
+                    *tmp2 = 0;
+                    strcpy(cpl.pname, tmp + 1);
+                    tmp = strchr(tmp2 + 1, '\n');
+                    *tmp = 0;
+                    strcpy(cpl.race, tmp2 + 1);
+                    tmp2 = strchr(tmp + 1, '\n');
+                    *tmp2 = 0;
+                    strcpy(cpl.title, tmp + 1); /* profession title */
+                    tmp = strchr(tmp2 + 1, '\n');
+                    *tmp = 0;
+                    strcpy(cpl.alignment, tmp2 + 1);
+                    tmp2 = strchr(tmp + 1, '\n');
+                    *tmp2 = 0;
+                    strcpy(cpl.godname, tmp + 1);
 
-                      strcpy(cpl.gender, tmp2 + 1);
-                      if (cpl.gender[0] == 'm')
-                          strcpy(cpl.gender, "male");
-                      else if (cpl.gender[0] == 'f')
-                          strcpy(cpl.gender, "female");
-                      else if (cpl.gender[0] == 'h')
-                          strcpy(cpl.gender, "hermaphrodite");
-                      else
-                          strcpy(cpl.gender, "neuter");
-                      i += rlen;
+                    strcpy(cpl.gender, tmp2 + 1);
+                    if (cpl.gender[0] == 'm')
+                        strcpy(cpl.gender, "male");
+                    else if (cpl.gender[0] == 'f')
+                        strcpy(cpl.gender, "female");
+                    else if (cpl.gender[0] == 'h')
+                        strcpy(cpl.gender, "hermaphrodite");
+                    else
+                        strcpy(cpl.gender, "neuter");
+                    i += rlen;
 
-                      /* prepare rank + name for fast access
-                                                 * the pname is <name> <title>.
-                                                 * is there no title, there is still
-                                                 * always a ' ' at the end - we skip this
-                                                 * here!
-                                                 */
-                      strcpy(cpl.rankandname, cpl.rank);
-                      strcat(cpl.rankandname, cpl.pname);
-                      if (strlen(cpl.rankandname) > 0)
-                          cpl.rankandname[strlen(cpl.rankandname) - 1] = 0;
-                      adjust_string(cpl.rank);
-                      adjust_string(cpl.rankandname);
-                      adjust_string(cpl.pname);
-                      adjust_string(cpl.race);
-                      adjust_string(cpl.title);
-                      adjust_string(cpl.alignment);
-                      adjust_string(cpl.gender);
-                      adjust_string(cpl.godname);
-                  }
-                  break;
+                    /* prepare rank + name for fast access
+                                               * the pname is <name> <title>.
+                                               * is there no title, there is still
+                                               * always a ' ' at the end - we skip this
+                                               * here!
+                                               */
+                    strcpy(cpl.rankandname, cpl.rank);
+                    strcat(cpl.rankandname, cpl.pname);
+                    if (strlen(cpl.rankandname) > 0)
+                        cpl.rankandname[strlen(cpl.rankandname) - 1] = 0;
+                    adjust_string(cpl.rank);
+                    adjust_string(cpl.rankandname);
+                    adjust_string(cpl.pname);
+                    adjust_string(cpl.race);
+                    adjust_string(cpl.title);
+                    adjust_string(cpl.alignment);
+                    adjust_string(cpl.gender);
+                    adjust_string(cpl.godname);
+                }
+                break;
                 case CS_STAT_TITLE:
-                  {
-                      LOG(LOG_MSG, "Command get stats: CS_STAT_TITLE is outdated\n");
-                      /*
-                                                    int rlen=data[i++];
-                                                    strncpy(cpl.title2,
-                                                    (const char*)data+i,rlen);
-                                                    cpl.title2[rlen]='\0';
-                                                    i += rlen;
-                                                */
-                  }
-                  break;
+                {
+                    LOG(LOG_MSG, "Command get stats: CS_STAT_TITLE is outdated\n");
+                    /*
+                                                  int rlen=data[i++];
+                                                  strncpy(cpl.title2,
+                                                  (const char*)data+i,rlen);
+                                                  cpl.title2[rlen]='\0';
+                                                  i += rlen;
+                                              */
+                }
+                break;
                 default:
-                  fprintf(stderr, "Unknown stat number %d\n", c);
+                    fprintf(stderr, "Unknown stat number %d\n", c);
             }
         }
     }
@@ -758,66 +752,66 @@ void PreParseInfoStat(char *cmd)
     /* Find input name*/
     if (!strncmp(cmd, "QN",2))
     {
-		int status = cmd[2]-'0';
+        int status = cmd[2]-'0';
 
         LOG(LOG_MSG, "Login: Enter name - status %d\n", status);
         cpl.name[0] = 0;
         cpl.password[0] = 0;
-		
-		switch(status)
-		{
-			case 1:
-				if(!GameStatusLogin)
-					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-				else
-					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_NO;
-			break;
-			case 2:
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BLOCKED;
-			break;
-			case 3:
-				if(GameStatusLogin)
-					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-				else
-					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_PLAYING;
-			break;
-			case 4:
-				if(GameStatusLogin)
-					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-				else
-					dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_TAKEN;
-			break;
-			case 5:
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BANNED;
-			break;
-			case 6:
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
-			break;
-			case 7:
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
-			break;
-			
-			default: /* is also status 0 */
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-			break;
-		}
- 
-		GameStatus = GAME_STATUS_NAME;
+
+        switch (status)
+        {
+            case 1:
+                if (!GameStatusLogin)
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                else
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_NO;
+                break;
+            case 2:
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BLOCKED;
+                break;
+            case 3:
+                if (GameStatusLogin)
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                else
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_PLAYING;
+                break;
+            case 4:
+                if (GameStatusLogin)
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                else
+                    dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_TAKEN;
+                break;
+            case 5:
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_BANNED;
+                break;
+            case 6:
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NAME_WRONG;
+                break;
+            case 7:
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
+                break;
+
+            default: /* is also status 0 */
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                break;
+        }
+
+        GameStatus = GAME_STATUS_NAME;
     }
     else if (!strncmp(cmd, "QP",2))
     {
-		int status = cmd[2]-'0';
+        int status = cmd[2]-'0';
 
-		dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
         LOG(LOG_MSG, "Login: Enter password\n");
-		if(status != 0)
-			dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
+        if (status != 0)
+            dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_WRONG;
         GameStatus = GAME_STATUS_PSWD;
     }
     else if (!strncmp(cmd, "QV",2))
     {
         LOG(LOG_MSG, "Login: Enter verify password\n");
-		dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+        dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
         GameStatus = GAME_STATUS_VERIFYPSWD;
     }
     if (GameStatus == GAME_STATUS_NAME)
@@ -836,7 +830,7 @@ void handle_query(char *data, int len)
     if (buf)
         buf++;
 
-	/* one query string */
+    /* one query string */
     LOG(LOG_MSG, "Received query string: %s\n", buf);
     PreParseInfoStat(buf);
 }
@@ -943,7 +937,7 @@ void ItemXYCmd(unsigned char *data, int len, int bflag)
 
     if (pos == len && loc != -1)
     {
-		/* server sends no clean command to clear below window */
+        /* server sends no clean command to clear below window */
         /*LOG(LOG_ERROR, "ItemCmd: Got location with no other data\n");*/
     }
     else
@@ -1026,7 +1020,7 @@ void GroupCmd(unsigned char *data, int len)
  */
 void GroupInviteCmd(unsigned char *data, int len)
 {
-    if(global_group_status != GROUP_NO) /* bug */
+    if (global_group_status != GROUP_NO) /* bug */
         LOG(LOG_ERROR, "ERROR: Got group invite when g_status != GROUP_NO (%s).\n", data);
     else
     {
@@ -1039,9 +1033,9 @@ void GroupInviteCmd(unsigned char *data, int len)
  */
 void MarkCmd(unsigned char *data, int len)
 {
-	
+
     cpl.mark_count = GetInt_String(data);
-/*	draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
+    /* draw_info_format(COLOR_WHITE, "MARK: %d",cpl.mark_count); */
 }
 
 
@@ -1087,24 +1081,24 @@ void InterfaceCmd(unsigned char *data, int len)
 {
 
     map_udate_flag = 2;
-    if((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
-         ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
+    if ((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
+            ((!len && cpl.menustatus == MENU_NPC) || (len && cpl.menustatus != MENU_NPC)))
     {
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
     }
-	reset_keys();
-	cpl.input_mode = INPUT_MODE_NO;
+    reset_keys();
+    cpl.input_mode = INPUT_MODE_NO;
     reset_gui_interface();
-    if(len)
+    if (len)
     {
         int mode, pos = 0;
 
         mode = *data;
         pos ++;
 
-		LOG(LOG_DEBUG, "Interface command: %s\n", (char*)(data+pos));
+        LOG(LOG_DEBUG, "Interface command: %s\n", (char*)(data+pos));
         gui_interface_npc = load_gui_interface(mode, (char*)data, len, pos);
-        if(!gui_interface_npc)
+        if (!gui_interface_npc)
             draw_info("INVALID GUI CMD", COLOR_RED);
         else
         {
@@ -1114,17 +1108,17 @@ void InterfaceCmd(unsigned char *data, int len)
             gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
             gui_interface_npc->starty = 50;
             mb_clicked=0;
-             /* Prefilled (and focused) textfield */ 
-               if(gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD) 
-               { 
-                   gui_interface_npc->input_flag = TRUE; 
-    
-                   reset_keys(); 
-                   open_input_mode(240); 
-                   textwin_putstring(gui_interface_npc->textfield.text); 
-                   cpl.input_mode = INPUT_MODE_NPCDIALOG; 
-                   HistoryPos = 0; 
-               } 
+            /* Prefilled (and focused) textfield */
+            if (gui_interface_npc->used_flag&GUI_INTERFACE_TEXTFIELD)
+            {
+                gui_interface_npc->input_flag = TRUE;
+
+                reset_keys();
+                open_input_mode(240);
+                textwin_putstring(gui_interface_npc->textfield.text);
+                cpl.input_mode = INPUT_MODE_NPCDIALOG;
+                HistoryPos = 0;
+            }
         }
     }
 }
@@ -1213,10 +1207,10 @@ void UpdateItemCmd(unsigned char *data, int len)
         pos += 4;
     }
     if (sendflags & UPD_QUALITY)
-	{
+    {
         quality = (int)(data[pos++]);
         condition = (int)(data[pos++]);
-	}
+    }
     update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
                 FALSE);
     map_udate_flag = 2;
@@ -1258,61 +1252,61 @@ void Map2Cmd(unsigned char *data, int len)
     int     map_new_flag    = FALSE;
     int     ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
     char    pname1[64], pname2[64], pname3[64], pname4[64];
-	char mapname[256];
+    char mapname[256];
     uint16  face;
 
     mapstat = (uint8) (data[pos++]);
     map_transfer_flag = 0;
-	if(mapstat != MAP_UPDATE_CMD_SAME)
-	{
-		strcpy(mapname, data + pos);
-		pos += strlen(mapname)+1;
-		if(mapstat == MAP_UPDATE_CMD_NEW)
-		{
-/*
-        map_new_flag = TRUE;
-*/
-			map_w = (uint8) (data[pos++]);
-			map_h = (uint8) (data[pos++]);
-			xpos = (uint8) (data[pos++]);
-		    ypos = (uint8) (data[pos++]);
-			mx = xpos;
-			my = ypos;
-			remove_item_inventory(locate_item(0)); /* implicit clear below */
-			InitMapData(map_w, map_h, xpos, ypos);
-		}
-		else
-		{
-			int xoff, yoff;
-		    mapstat = (sint8) (data[pos++]);
-			xoff = (sint8) (data[pos++]);
-		    yoff = (sint8) (data[pos++]);
-			xpos = (uint8) (data[pos++]);
-		    ypos = (uint8) (data[pos++]);
-			mx = xpos;
-			my = ypos;
-			remove_item_inventory(locate_item(0)); /* implicit clear below */
-	        display_mapscroll(xoff, yoff);
-		}
+    if (mapstat != MAP_UPDATE_CMD_SAME)
+    {
+        strcpy(mapname, data + pos);
+        pos += strlen(mapname)+1;
+        if (mapstat == MAP_UPDATE_CMD_NEW)
+        {
+            /*
+                    map_new_flag = TRUE;
+            */
+            map_w = (uint8) (data[pos++]);
+            map_h = (uint8) (data[pos++]);
+            xpos = (uint8) (data[pos++]);
+            ypos = (uint8) (data[pos++]);
+            mx = xpos;
+            my = ypos;
+            remove_item_inventory(locate_item(0)); /* implicit clear below */
+            InitMapData(map_w, map_h, xpos, ypos);
+        }
+        else
+        {
+            int xoff, yoff;
+            mapstat = (sint8) (data[pos++]);
+            xoff = (sint8) (data[pos++]);
+            yoff = (sint8) (data[pos++]);
+            xpos = (uint8) (data[pos++]);
+            ypos = (uint8) (data[pos++]);
+            mx = xpos;
+            my = ypos;
+            remove_item_inventory(locate_item(0)); /* implicit clear below */
+            display_mapscroll(xoff, yoff);
+        }
         UpdateMapName(mapname);
-	}
-	else
-	{
-		xpos = (uint8) (data[pos++]);
-	    ypos = (uint8) (data[pos++]);
+    }
+    else
+    {
+        xpos = (uint8) (data[pos++]);
+        ypos = (uint8) (data[pos++]);
 
-		/* we have moved */
-		if((xpos - mx || ypos - my))
-		{
-			remove_item_inventory(locate_item(0)); /* implicit clear below */
-			if(cpl.menustatus != MENU_NO)
-				reset_menu_status();
-		}
+        /* we have moved */
+        if ((xpos - mx || ypos - my))
+        {
+            remove_item_inventory(locate_item(0)); /* implicit clear below */
+            if (cpl.menustatus != MENU_NO)
+                reset_menu_status();
+        }
         display_mapscroll(xpos - mx, ypos - my);
 
-		mx = xpos;
-		my = ypos;
-	}
+        mx = xpos;
+        my = ypos;
+    }
 
     if (map_new_flag)
     {
@@ -1486,7 +1480,7 @@ void Map2Cmd(unsigned char *data, int len)
         {
             face = GetShort_String(data + pos); pos += 2;
             request_face(face, 0);
-           /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
+            /* LOG(0,"we got face: %x (%x) ->%s\n", face, face&~0x8000, FaceList[face&~0x8000].name?FaceList[face&~0x8000].name:"(null)" );*/
             xdata = 0;
             if (ext_flag & 0x02) /* we have here a multi arch, fetch head offset */
             {
@@ -1514,8 +1508,7 @@ void Map2Cmd(unsigned char *data, int len)
 
 
 void MagicMapCmd(unsigned char *data, int len)
-{
-}
+{}
 
 void VersionCmd(char *data, int len)
 {
@@ -1541,9 +1534,9 @@ void VersionCmd(char *data, int len)
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
         draw_info(buf, COLOR_RED);
         SOCKET_CloseSocket(csocket.fd);
-		GameStatus = GAME_STATUS_START;
+        GameStatus = GAME_STATUS_START;
         LOG(LOG_ERROR, "%s\n", buf);
-		SDL_Delay(3250);
+        SDL_Delay(3250);
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -1553,8 +1546,8 @@ void VersionCmd(char *data, int len)
         draw_info(buf, COLOR_RED);
         LOG(LOG_ERROR, "%s\n", buf);
         SOCKET_CloseSocket(csocket.fd);
-		GameStatus = GAME_STATUS_START;
-		SDL_Delay(3250);
+        GameStatus = GAME_STATUS_START;
+        SDL_Delay(3250);
         return;
     }
     csocket.sc_version = atoi(cp);
@@ -1569,8 +1562,8 @@ void VersionCmd(char *data, int len)
         draw_info(buf, COLOR_RED);
         LOG(LOG_ERROR, "%s\n", buf);
         SOCKET_CloseSocket(csocket.fd);
-		GameStatus = GAME_STATUS_START;
-		SDL_Delay(3250);
+        GameStatus = GAME_STATUS_START;
+        SDL_Delay(3250);
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -1580,8 +1573,8 @@ void VersionCmd(char *data, int len)
         draw_info(buf, COLOR_RED);
         LOG(LOG_ERROR, "%s\n", buf);
         SOCKET_CloseSocket(csocket.fd);
-		GameStatus = GAME_STATUS_START;
-		SDL_Delay(3250);
+        GameStatus = GAME_STATUS_START;
+        SDL_Delay(3250);
         return;
     }
     GameStatusVersionOKFlag = TRUE;
@@ -1592,7 +1585,7 @@ void SendVersion(ClientSocket csock)
     char    buf[MAX_BUF];
 
     sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
-	LOG(LOG_DEBUG,"Send version command: %s\n", buf);
+    LOG(LOG_DEBUG,"Send version command: %s\n", buf);
     cs_write_string(csock.fd, buf, strlen(buf));
 }
 
@@ -1739,7 +1732,7 @@ void SpelllistCmd(unsigned char *data, int len)
                 }
             }
         }
-        next_name:;
+next_name:;
     }
 }
 
@@ -1822,73 +1815,73 @@ void DataCmd(unsigned char *data, int len)
     switch (data_type & ~DATA_PACKED_CMD)
     {
         case DATA_CMD_SKILL_LIST:
-          /* this is a server send skill list */
-          /* uncompress when needed and save it */
-          if (data_comp)
-          {
-              LOG(LOG_DEBUG, "data cmd: compressed skill list(len:%d)\n", len);
-              uncompress(dest, &dest_len, data, len);
-              data = dest;
-              len = dest_len;
-          }
-          request_file_chain++;
-          save_data_cmd_file(FILE_CLIENT_SKILLS, data, len);
-          read_skills();
-          break;
+            /* this is a server send skill list */
+            /* uncompress when needed and save it */
+            if (data_comp)
+            {
+                LOG(LOG_DEBUG, "data cmd: compressed skill list(len:%d)\n", len);
+                uncompress(dest, &dest_len, data, len);
+                data = dest;
+                len = dest_len;
+            }
+            request_file_chain++;
+            save_data_cmd_file(FILE_CLIENT_SKILLS, data, len);
+            read_skills();
+            break;
         case DATA_CMD_SPELL_LIST:
-          if (data_comp)
-          {
-              LOG(LOG_DEBUG, "data cmd: compressed spell list(len:%d)\n", len);
-              uncompress(dest, &dest_len, data, len);
-              data = dest;
-              len = dest_len;
-          }
-          request_file_chain++;
-          save_data_cmd_file(FILE_CLIENT_SPELLS, data, len);
-          read_spells();
-          break;
+            if (data_comp)
+            {
+                LOG(LOG_DEBUG, "data cmd: compressed spell list(len:%d)\n", len);
+                uncompress(dest, &dest_len, data, len);
+                data = dest;
+                len = dest_len;
+            }
+            request_file_chain++;
+            save_data_cmd_file(FILE_CLIENT_SPELLS, data, len);
+            read_spells();
+            break;
         case DATA_CMD_SETTINGS_LIST:
-          if (data_comp)
-          {
-              LOG(LOG_DEBUG, "data cmd: compressed settings file(len:%d)\n", len);
-              uncompress(dest, &dest_len, data, len);
-              data = dest;
-              len = dest_len;
-          }
-          request_file_chain++;
-          save_data_cmd_file(FILE_CLIENT_SETTINGS, data, len);
-          /*read_settings();*/
-          break;
+            if (data_comp)
+            {
+                LOG(LOG_DEBUG, "data cmd: compressed settings file(len:%d)\n", len);
+                uncompress(dest, &dest_len, data, len);
+                data = dest;
+                len = dest_len;
+            }
+            request_file_chain++;
+            save_data_cmd_file(FILE_CLIENT_SETTINGS, data, len);
+            /*read_settings();*/
+            break;
 
         case DATA_CMD_BMAP_LIST:
-          if (data_comp)
-          {
-              LOG(LOG_DEBUG, "data cmd: compressed bmaps file(len:%d)\n", len);
-              uncompress(dest, &dest_len, data, len);
-              data = dest;
-              len = dest_len;
-          }
-          request_file_chain++;
-          save_data_cmd_file(FILE_CLIENT_BMAPS, data, len);
-          request_file_flags |= SRV_CLIENT_FLAG_BMAP;
-          break;
+            if (data_comp)
+            {
+                LOG(LOG_DEBUG, "data cmd: compressed bmaps file(len:%d)\n", len);
+                uncompress(dest, &dest_len, data, len);
+                data = dest;
+                len = dest_len;
+            }
+            request_file_chain++;
+            save_data_cmd_file(FILE_CLIENT_BMAPS, data, len);
+            request_file_flags |= SRV_CLIENT_FLAG_BMAP;
+            break;
 
         case DATA_CMD_ANIM_LIST:
-          if (data_comp)
-          {
-              uncompress(dest, &dest_len, data, len);
-              LOG(LOG_DEBUG, "data cmd: compressed anims file(len:%d) -> %d\n", len, dest_len);
-              data = dest;
-              len = dest_len;
-          }
-          request_file_chain++;
-          save_data_cmd_file(FILE_CLIENT_ANIMS, data, len);
-          request_file_flags |= SRV_CLIENT_FLAG_ANIM;
-          break;
+            if (data_comp)
+            {
+                uncompress(dest, &dest_len, data, len);
+                LOG(LOG_DEBUG, "data cmd: compressed anims file(len:%d) -> %d\n", len, dest_len);
+                data = dest;
+                len = dest_len;
+            }
+            request_file_chain++;
+            save_data_cmd_file(FILE_CLIENT_ANIMS, data, len);
+            request_file_flags |= SRV_CLIENT_FLAG_ANIM;
+            break;
 
         default:
-          LOG(LOG_ERROR, "data cmd: unknown type %d (len:%d)\n", data_type, len);
-          break;
+            LOG(LOG_ERROR, "data cmd: unknown type %d (len:%d)\n", data_type, len);
+            break;
     }
     free(dest);
 }

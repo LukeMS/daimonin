@@ -43,7 +43,7 @@ int                 music_global_fade   = FALSE;
 int                 show_help_screen;
 int                 show_help_screen_new;
 int                 mb_clicked          = 0;
-int				    InputFirstKeyPress;
+int        InputFirstKeyPress;
 
 int                    interface_mode;
 
@@ -97,7 +97,7 @@ Boolean             InputStringEndFlag; /* if true, we had entered some in text 
 Boolean             InputStringEscFlag;
 
 _game_status        GameStatus; /* the global status identifier */
-int					GameStatusLogin;
+int     GameStatusLogin;
 
 _anim_table         anim_table[MAXANIM]; /* the stored "anim commands" we created out of anims.tmp */
 Animations          animations[MAXANIM]; /* get this from commands.c to this place*/
@@ -124,71 +124,73 @@ typedef struct _bitmap_name
 {
     char               *name;
     _pic_type           type;
-}_bitmap_name ;
+}
+_bitmap_name ;
 
 /* for loading, use BITMAP_xx in the other modules*/
 static _bitmap_name bitmap_name[BITMAP_INIT]    =
-{
-    {"palette.png", PIC_TYPE_PALETTE}, {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
-    {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
-	 {"intro.png", PIC_TYPE_DEFAULT},
-    {"player_doll1.png", PIC_TYPE_TRANS}, {"black_tile.png", PIC_TYPE_DEFAULT}, {"textwin.png", PIC_TYPE_DEFAULT},
-    {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS}, {"testtubes.png", PIC_TYPE_TRANS},
-    {"hp.png", PIC_TYPE_TRANS}, {"sp.png", PIC_TYPE_TRANS}, {"grace.png", PIC_TYPE_TRANS}, {"food.png", PIC_TYPE_TRANS},
-    {"hp_back.png", PIC_TYPE_DEFAULT}, {"sp_back.png", PIC_TYPE_DEFAULT}, {"grace_back.png", PIC_TYPE_DEFAULT},
-    {"food_back.png", PIC_TYPE_DEFAULT}, {"hp_back2.png", PIC_TYPE_TRANS}, {"sp_back2.png", PIC_TYPE_TRANS},
-    {"grace_back2.png", PIC_TYPE_TRANS}, {"food_back2.png", PIC_TYPE_TRANS}, {"apply.png", PIC_TYPE_DEFAULT},
-    {"unpaid.png", PIC_TYPE_DEFAULT}, {"cursed.png", PIC_TYPE_DEFAULT}, {"damned.png", PIC_TYPE_DEFAULT},
-    {"lock.png", PIC_TYPE_DEFAULT}, {"magic.png", PIC_TYPE_DEFAULT}, {"range.png", PIC_TYPE_TRANS},
-    {"range_marker.png", PIC_TYPE_TRANS}, {"range_ctrl.png", PIC_TYPE_TRANS}, {"range_ctrl_no.png", PIC_TYPE_TRANS},
-    {"range_skill.png", PIC_TYPE_TRANS}, {"range_skill_no.png", PIC_TYPE_TRANS}, {"range_throw.png", PIC_TYPE_TRANS},
-    {"range_throw_no.png", PIC_TYPE_TRANS}, {"range_tool.png", PIC_TYPE_TRANS}, {"range_tool_no.png", PIC_TYPE_TRANS},
-    {"range_wizard.png", PIC_TYPE_TRANS}, {"range_wizard_no.png", PIC_TYPE_TRANS}, {"range_priest.png", PIC_TYPE_TRANS},
-    {"range_priest_no.png", PIC_TYPE_TRANS}, {"cmark_start.png", PIC_TYPE_TRANS}, {"cmark_end.png", PIC_TYPE_TRANS},
-    {"cmark_middle.png", PIC_TYPE_TRANS}, {"textwin_scroll.png", PIC_TYPE_DEFAULT},
-    {"inv_scroll.png", PIC_TYPE_DEFAULT}, {"below_scroll.png", PIC_TYPE_DEFAULT}, {"number.png", PIC_TYPE_DEFAULT},
-    {"invslot_u.png", PIC_TYPE_TRANS}, {"death.png", PIC_TYPE_TRANS}, {"sleep.png", PIC_TYPE_TRANS},
-    {"confused.png", PIC_TYPE_TRANS}, {"paralyzed.png", PIC_TYPE_TRANS}, {"scared.png", PIC_TYPE_TRANS},
-    {"blind.png", PIC_TYPE_TRANS}, {"enemy1.png", PIC_TYPE_TRANS}, {"enemy2.png", PIC_TYPE_TRANS},
-    {"probe.png", PIC_TYPE_TRANS}, {"quickslots.png", PIC_TYPE_DEFAULT}, {"inventory.png", PIC_TYPE_DEFAULT},
-    {"group.png", PIC_TYPE_DEFAULT}, {"exp_border.png", PIC_TYPE_DEFAULT}, {"exp_line.png", PIC_TYPE_DEFAULT},
-    {"exp_bubble.png", PIC_TYPE_TRANS}, {"exp_bubble2.png", PIC_TYPE_TRANS}, {"stats.png", PIC_TYPE_DEFAULT},
-    {"buff_spot.png", PIC_TYPE_DEFAULT}, {"text_spot.png", PIC_TYPE_DEFAULT}, {"player_doll2.png", PIC_TYPE_TRANS},
-    {"player_doll2.png", PIC_TYPE_DEFAULT}, {"clear_spot.png", PIC_TYPE_DEFAULT}, {"border1.png", PIC_TYPE_TRANS},
-    {"border2.png", PIC_TYPE_TRANS}, {"border3.png", PIC_TYPE_TRANS}, {"border4.png", PIC_TYPE_TRANS},
-    {"border5.png", PIC_TYPE_TRANS}, {"border6.png", PIC_TYPE_TRANS}, {"panel_p1.png", PIC_TYPE_DEFAULT},
-    {"group_spot.png", PIC_TYPE_DEFAULT}, {"target_spot.png", PIC_TYPE_DEFAULT}, {"below.png", PIC_TYPE_DEFAULT},
-    {"frame_line.png", PIC_TYPE_DEFAULT}, {"help_start.png", PIC_TYPE_DEFAULT}, {"target_attack.png", PIC_TYPE_TRANS},
-    {"target_talk.png", PIC_TYPE_TRANS}, {"target_normal.png", PIC_TYPE_TRANS}, {"loading.png", PIC_TYPE_TRANS},
-    {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT},
-    {"logo270.png", PIC_TYPE_DEFAULT}, {"dialog_bg.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_options.png", PIC_TYPE_DEFAULT}, {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_skill.png", PIC_TYPE_DEFAULT}, {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
-    {"dialog_title_creation.png", PIC_TYPE_DEFAULT}, {"dialog_title_login.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_up.png", PIC_TYPE_DEFAULT}, {"dialog_button_down.png", PIC_TYPE_DEFAULT},
-    {"dialog_tab_start.png", PIC_TYPE_DEFAULT}, {"dialog_tab.png", PIC_TYPE_DEFAULT},
-    {"dialog_tab_stop.png", PIC_TYPE_DEFAULT}, {"dialog_tab_sel.png", PIC_TYPE_DEFAULT},
-    {"dialog_checker.png", PIC_TYPE_DEFAULT}, {"dialog_range_off.png", PIC_TYPE_DEFAULT},
-    {"dialog_range_l.png", PIC_TYPE_DEFAULT}, {"dialog_range_r.png", PIC_TYPE_DEFAULT},
-    {"target_hp.png", PIC_TYPE_DEFAULT}, {"target_hp_b.png", PIC_TYPE_DEFAULT}, {"textwin_mask.png", PIC_TYPE_DEFAULT},
-    {"textwin_blank.png", PIC_TYPE_DEFAULT}, {"slider_up.png", PIC_TYPE_TRANS}, {"slider_down.png", PIC_TYPE_TRANS},
-    {"slider.png", PIC_TYPE_TRANS}, {"group_clear.png", PIC_TYPE_DEFAULT}, {"exp_skill_border.png", PIC_TYPE_DEFAULT},
-    {"exp_skill_line.png", PIC_TYPE_DEFAULT}, {"exp_skill_bubble.png", PIC_TYPE_TRANS},
-    {"options_head.png", PIC_TYPE_TRANS}, {"options_keys.png", PIC_TYPE_TRANS},
-    {"options_settings.png", PIC_TYPE_TRANS}, {"options_logout.png", PIC_TYPE_TRANS},
-    {"options_back.png", PIC_TYPE_TRANS}, {"options_mark_left.png", PIC_TYPE_TRANS},
-    {"options_mark_right.png", PIC_TYPE_TRANS}, {"options_alpha.png", PIC_TYPE_DEFAULT},
-    {"pentagram.png", PIC_TYPE_DEFAULT}, {"quad_button_up.png", PIC_TYPE_DEFAULT},
-    {"quad_button_down.png", PIC_TYPE_DEFAULT}, {"nchar_marker.png", PIC_TYPE_TRANS}, {"traped.png", PIC_TYPE_TRANS},
-    {"pray.png", PIC_TYPE_TRANS}, {"wand.png", PIC_TYPE_TRANS}, {"invite.png", PIC_TYPE_DEFAULT},
-    {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},{"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
-    {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
-    {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
-    {"group_hp.png", PIC_TYPE_DEFAULT}, {"npc_interface.png", PIC_TYPE_TRANS},{"coin_copper.png", PIC_TYPE_TRANS},
-    {"coin_silver.png", PIC_TYPE_TRANS},{"coin_gold.png", PIC_TYPE_TRANS},
-    {"coin_mithril.png", PIC_TYPE_TRANS},{"npc_int_slider.png", PIC_TYPE_DEFAULT},
-    {"journal.png", PIC_TYPE_TRANS}, {"invslot_marked.png", PIC_TYPE_TRANS}
-};
+    {
+        {"palette.png", PIC_TYPE_PALETTE}
+        , {"font7x4.png", PIC_TYPE_PALETTE}, {"font6x3out.png", PIC_TYPE_PALETTE},
+        {"font_big.png", PIC_TYPE_PALETTE}, {"font7x4out.png", PIC_TYPE_PALETTE}, {"font11x15.png", PIC_TYPE_PALETTE},
+        {"intro.png", PIC_TYPE_DEFAULT},
+        {"player_doll1.png", PIC_TYPE_TRANS}, {"black_tile.png", PIC_TYPE_DEFAULT}, {"textwin.png", PIC_TYPE_DEFAULT},
+        {"login_inp.png", PIC_TYPE_DEFAULT}, {"invslot.png", PIC_TYPE_TRANS}, {"testtubes.png", PIC_TYPE_TRANS},
+        {"hp.png", PIC_TYPE_TRANS}, {"sp.png", PIC_TYPE_TRANS}, {"grace.png", PIC_TYPE_TRANS}, {"food.png", PIC_TYPE_TRANS},
+        {"hp_back.png", PIC_TYPE_DEFAULT}, {"sp_back.png", PIC_TYPE_DEFAULT}, {"grace_back.png", PIC_TYPE_DEFAULT},
+        {"food_back.png", PIC_TYPE_DEFAULT}, {"hp_back2.png", PIC_TYPE_TRANS}, {"sp_back2.png", PIC_TYPE_TRANS},
+        {"grace_back2.png", PIC_TYPE_TRANS}, {"food_back2.png", PIC_TYPE_TRANS}, {"apply.png", PIC_TYPE_DEFAULT},
+        {"unpaid.png", PIC_TYPE_DEFAULT}, {"cursed.png", PIC_TYPE_DEFAULT}, {"damned.png", PIC_TYPE_DEFAULT},
+        {"lock.png", PIC_TYPE_DEFAULT}, {"magic.png", PIC_TYPE_DEFAULT}, {"range.png", PIC_TYPE_TRANS},
+        {"range_marker.png", PIC_TYPE_TRANS}, {"range_ctrl.png", PIC_TYPE_TRANS}, {"range_ctrl_no.png", PIC_TYPE_TRANS},
+        {"range_skill.png", PIC_TYPE_TRANS}, {"range_skill_no.png", PIC_TYPE_TRANS}, {"range_throw.png", PIC_TYPE_TRANS},
+        {"range_throw_no.png", PIC_TYPE_TRANS}, {"range_tool.png", PIC_TYPE_TRANS}, {"range_tool_no.png", PIC_TYPE_TRANS},
+        {"range_wizard.png", PIC_TYPE_TRANS}, {"range_wizard_no.png", PIC_TYPE_TRANS}, {"range_priest.png", PIC_TYPE_TRANS},
+        {"range_priest_no.png", PIC_TYPE_TRANS}, {"cmark_start.png", PIC_TYPE_TRANS}, {"cmark_end.png", PIC_TYPE_TRANS},
+        {"cmark_middle.png", PIC_TYPE_TRANS}, {"textwin_scroll.png", PIC_TYPE_DEFAULT},
+        {"inv_scroll.png", PIC_TYPE_DEFAULT}, {"below_scroll.png", PIC_TYPE_DEFAULT}, {"number.png", PIC_TYPE_DEFAULT},
+        {"invslot_u.png", PIC_TYPE_TRANS}, {"death.png", PIC_TYPE_TRANS}, {"sleep.png", PIC_TYPE_TRANS},
+        {"confused.png", PIC_TYPE_TRANS}, {"paralyzed.png", PIC_TYPE_TRANS}, {"scared.png", PIC_TYPE_TRANS},
+        {"blind.png", PIC_TYPE_TRANS}, {"enemy1.png", PIC_TYPE_TRANS}, {"enemy2.png", PIC_TYPE_TRANS},
+        {"probe.png", PIC_TYPE_TRANS}, {"quickslots.png", PIC_TYPE_DEFAULT}, {"inventory.png", PIC_TYPE_DEFAULT},
+        {"group.png", PIC_TYPE_DEFAULT}, {"exp_border.png", PIC_TYPE_DEFAULT}, {"exp_line.png", PIC_TYPE_DEFAULT},
+        {"exp_bubble.png", PIC_TYPE_TRANS}, {"exp_bubble2.png", PIC_TYPE_TRANS}, {"stats.png", PIC_TYPE_DEFAULT},
+        {"buff_spot.png", PIC_TYPE_DEFAULT}, {"text_spot.png", PIC_TYPE_DEFAULT}, {"player_doll2.png", PIC_TYPE_TRANS},
+        {"player_doll2.png", PIC_TYPE_DEFAULT}, {"clear_spot.png", PIC_TYPE_DEFAULT}, {"border1.png", PIC_TYPE_TRANS},
+        {"border2.png", PIC_TYPE_TRANS}, {"border3.png", PIC_TYPE_TRANS}, {"border4.png", PIC_TYPE_TRANS},
+        {"border5.png", PIC_TYPE_TRANS}, {"border6.png", PIC_TYPE_TRANS}, {"panel_p1.png", PIC_TYPE_DEFAULT},
+        {"group_spot.png", PIC_TYPE_DEFAULT}, {"target_spot.png", PIC_TYPE_DEFAULT}, {"below.png", PIC_TYPE_DEFAULT},
+        {"frame_line.png", PIC_TYPE_DEFAULT}, {"help_start.png", PIC_TYPE_DEFAULT}, {"target_attack.png", PIC_TYPE_TRANS},
+        {"target_talk.png", PIC_TYPE_TRANS}, {"target_normal.png", PIC_TYPE_TRANS}, {"loading.png", PIC_TYPE_TRANS},
+        {"warn_hp.png", PIC_TYPE_DEFAULT}, {"warn_food.png", PIC_TYPE_DEFAULT},
+        {"logo270.png", PIC_TYPE_DEFAULT}, {"dialog_bg.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_options.png", PIC_TYPE_DEFAULT}, {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_skill.png", PIC_TYPE_DEFAULT}, {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_creation.png", PIC_TYPE_DEFAULT}, {"dialog_title_login.png", PIC_TYPE_DEFAULT},
+        {"dialog_button_up.png", PIC_TYPE_DEFAULT}, {"dialog_button_down.png", PIC_TYPE_DEFAULT},
+        {"dialog_tab_start.png", PIC_TYPE_DEFAULT}, {"dialog_tab.png", PIC_TYPE_DEFAULT},
+        {"dialog_tab_stop.png", PIC_TYPE_DEFAULT}, {"dialog_tab_sel.png", PIC_TYPE_DEFAULT},
+        {"dialog_checker.png", PIC_TYPE_DEFAULT}, {"dialog_range_off.png", PIC_TYPE_DEFAULT},
+        {"dialog_range_l.png", PIC_TYPE_DEFAULT}, {"dialog_range_r.png", PIC_TYPE_DEFAULT},
+        {"target_hp.png", PIC_TYPE_DEFAULT}, {"target_hp_b.png", PIC_TYPE_DEFAULT}, {"textwin_mask.png", PIC_TYPE_DEFAULT},
+        {"textwin_blank.png", PIC_TYPE_DEFAULT}, {"slider_up.png", PIC_TYPE_TRANS}, {"slider_down.png", PIC_TYPE_TRANS},
+        {"slider.png", PIC_TYPE_TRANS}, {"group_clear.png", PIC_TYPE_DEFAULT}, {"exp_skill_border.png", PIC_TYPE_DEFAULT},
+        {"exp_skill_line.png", PIC_TYPE_DEFAULT}, {"exp_skill_bubble.png", PIC_TYPE_TRANS},
+        {"options_head.png", PIC_TYPE_TRANS}, {"options_keys.png", PIC_TYPE_TRANS},
+        {"options_settings.png", PIC_TYPE_TRANS}, {"options_logout.png", PIC_TYPE_TRANS},
+        {"options_back.png", PIC_TYPE_TRANS}, {"options_mark_left.png", PIC_TYPE_TRANS},
+        {"options_mark_right.png", PIC_TYPE_TRANS}, {"options_alpha.png", PIC_TYPE_DEFAULT},
+        {"pentagram.png", PIC_TYPE_DEFAULT}, {"quad_button_up.png", PIC_TYPE_DEFAULT},
+        {"quad_button_down.png", PIC_TYPE_DEFAULT}, {"nchar_marker.png", PIC_TYPE_TRANS}, {"traped.png", PIC_TYPE_TRANS},
+        {"pray.png", PIC_TYPE_TRANS}, {"wand.png", PIC_TYPE_TRANS}, {"invite.png", PIC_TYPE_DEFAULT},
+        {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},{"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
+        {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
+        {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
+        {"group_hp.png", PIC_TYPE_DEFAULT}, {"npc_interface.png", PIC_TYPE_TRANS},{"coin_copper.png", PIC_TYPE_TRANS},
+        {"coin_silver.png", PIC_TYPE_TRANS},{"coin_gold.png", PIC_TYPE_TRANS},
+        {"coin_mithril.png", PIC_TYPE_TRANS},{"npc_int_slider.png", PIC_TYPE_DEFAULT},
+        {"journal.png", PIC_TYPE_TRANS}, {"invslot_marked.png", PIC_TYPE_TRANS}
+    };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
 _Sprite            *Bitmaps[BITMAP_MAX];
@@ -203,7 +205,7 @@ static int is_username_valid(const char *name)
 {
     int i;
 
-    for(i=0; i< (int)strlen(name); i++)
+    for (i=0; i< (int)strlen(name); i++)
     {
         if (name[i]!= '_' && !(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
             return 0;
@@ -251,7 +253,7 @@ void init_game_data(void)
 {
     int i;
 
-	memset(&global_buttons,-1, sizeof(button_status));
+    memset(&global_buttons,-1, sizeof(button_status));
 
     textwin_init();
     textwin_flags = 0;
@@ -284,8 +286,8 @@ void init_game_data(void)
     init_player_data();
     clear_metaserver_data();
     reset_input_mode();
-	show_help_screen = 0;
-	show_help_screen_new = FALSE;
+    show_help_screen = 0;
+    show_help_screen_new = FALSE;
 
     start_anim = NULL; /* anim queue of current active map */
 
@@ -349,14 +351,14 @@ void save_options_dat(void)
             {
                 case VAL_BOOL:
                 case VAL_INT:
-                  sprintf(txtBuffer, " %d", *((int *) opt[j].value));
-                  break;
+                    sprintf(txtBuffer, " %d", *((int *) opt[j].value));
+                    break;
                 case VAL_U32:
-                  sprintf(txtBuffer, " %d", *((uint32 *) opt[j].value));
-                  break;
+                    sprintf(txtBuffer, " %d", *((uint32 *) opt[j].value));
+                    break;
                 case VAL_CHAR:
-                  sprintf(txtBuffer, " %d", *((uint8 *) opt[j].value));
-                  break;
+                    sprintf(txtBuffer, " %d", *((uint8 *) opt[j].value));
+                    break;
             }
             fputs(txtBuffer, stream);
             fputs("\n", stream);
@@ -383,17 +385,17 @@ void load_options_dat(void)
         {
             case VAL_BOOL:
             case VAL_INT:
-              *((int *) opt[i].value) = opt[i].default_val;
-              break;
+                *((int *) opt[i].value) = opt[i].default_val;
+                break;
             case VAL_U32:
-              *((uint32 *) opt[i].value) = opt[i].default_val;
-              break;
+                *((uint32 *) opt[i].value) = opt[i].default_val;
+                break;
             case VAL_CHAR:
-              *((uint8 *) opt[i].value) = (uint8) opt[i].default_val;
-              break;
-              /* case VAL_STR
-              ...  = opt[j].info2;
-              */
+                *((uint8 *) opt[i].value) = (uint8) opt[i].default_val;
+                break;
+                /* case VAL_STR
+                ...  = opt[j].info2;
+                */
         }
     }
 
@@ -424,14 +426,14 @@ void load_options_dat(void)
                 {
                     case VAL_BOOL:
                     case VAL_INT:
-                      *((int *) opt[pos].value) = i;
-                      break;
+                        *((int *) opt[pos].value) = i;
+                        break;
                     case VAL_U32:
-                      *((uint32 *) opt[pos].value) = i;
-                      break;
+                        *((uint32 *) opt[pos].value) = i;
+                        break;
                     case VAL_CHAR:
-                      *((uint8 *) opt[pos].value) = (uint8) i;
-                      break;
+                        *((uint8 *) opt[pos].value) = (uint8) i;
+                        break;
                 }
             }
         }
@@ -463,8 +465,8 @@ Boolean game_status_chain(void)
     /* autoinit or reset prg data */
     if (GameStatus == GAME_STATUS_INIT)
     {
-		cpl.mark_count = -1;
-	    GameStatusLogin = FALSE;
+        cpl.mark_count = -1;
+        GameStatusLogin = FALSE;
         interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
@@ -495,7 +497,7 @@ Boolean game_status_chain(void)
         else
         {
             SOCKET fd = SOCKET_NO;
-            
+
             draw_info("query metaserver...", COLOR_GREEN);
             sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port);
             draw_info(buf, COLOR_GREEN);
@@ -570,7 +572,7 @@ Boolean game_status_chain(void)
         * as the client send it to server
         */
         if (GameStatusVersionFlag)
-                        /* wait for version answer when needed*/
+            /* wait for version answer when needed*/
         {
             /* false version! */
             if (!GameStatusVersionOKFlag)
@@ -587,13 +589,13 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_SETUP)
     {
-             clear_group();
-             map_transfer_flag = 0;
-             srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
-             srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
-             srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
-             srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
-             srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
+        clear_group();
+        map_transfer_flag = 0;
+        srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
+        srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
+        srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
+        srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
+        srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
 
         sprintf(buf,
                 "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1 skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
@@ -603,11 +605,11 @@ Boolean game_status_chain(void)
                 srv_client_files[SRV_CLIENT_BMAPS].crc, srv_client_files[SRV_CLIENT_SETTINGS].len,
                 srv_client_files[SRV_CLIENT_SETTINGS].crc, srv_client_files[SRV_CLIENT_ANIMS].len,
                 srv_client_files[SRV_CLIENT_ANIMS].crc);
-             cs_write_string(csocket.fd, buf, strlen(buf));
-             request_file_chain = 0;
-             request_file_flags = 0;
+        cs_write_string(csocket.fd, buf, strlen(buf));
+        request_file_chain = 0;
+        request_file_flags = 0;
 
-             GameStatus = GAME_STATUS_WAITSETUP;
+        GameStatus = GAME_STATUS_WAITSETUP;
     }
     else if (GameStatus == GAME_STATUS_REQUEST_FILES)
     {
@@ -687,7 +689,7 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_ADDME)
     {
-		cpl.mark_count = -1;
+        cpl.mark_count = -1;
         map_transfer_flag = 0;
         SendAddMe(csocket);
         cpl.name[0] = 0;
@@ -703,7 +705,7 @@ Boolean game_status_chain(void)
             sprintf(buf, "Break Login.");
             draw_info(buf, COLOR_RED);
             SOCKET_CloseClientSocket(&csocket);
-			GameStatusLogin = FALSE;
+            GameStatusLogin = FALSE;
         }
         reset_input_mode();
     }
@@ -719,12 +721,12 @@ Boolean game_status_chain(void)
             check = is_username_valid(InputString);
             if (check)
             {
-				char name_tmp[256];
+                char name_tmp[256];
 
                 strcpy(cpl.name, InputString);
                 dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
                 LOG(LOG_MSG,"Login: send name %s\n", InputString);
-				sprintf(name_tmp,"%c%s", GameStatusLogin?'L':'C', InputString);
+                sprintf(name_tmp,"%c%s", GameStatusLogin?'L':'C', InputString);
                 send_reply(name_tmp);
                 GameStatus = GAME_STATUS_NAME_WAIT;
                 /* now wait again for next server question*/
@@ -737,10 +739,10 @@ Boolean game_status_chain(void)
             }
         }
     }
-    else if (GameStatus == GAME_STATUS_NAME_WAIT) 
+    else if (GameStatus == GAME_STATUS_NAME_WAIT)
     {
-			/* simply wait for action of the server after we send name */
-	}
+        /* simply wait for action of the server after we send name */
+    }
     else if (GameStatus == GAME_STATUS_PSWD)
     {
         map_transfer_flag = 0;
@@ -750,34 +752,34 @@ Boolean game_status_chain(void)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
         {
-			int pwd_len = strlen(InputString);
+            int pwd_len = strlen(InputString);
             strncpy(cpl.password, InputString, 39);
-			if (!GameStatusLogin && (pwd_len < 6 || pwd_len > 17))
-			{
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
-	            cpl.password[0] = 0;   /* insanity 0 */
-		        open_input_mode(12);
-			}
-			else if(!GameStatusLogin && !strcmp(cpl.name, cpl.password))
-			{
-				dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
-	            cpl.password[0] = 0;   /* insanity 0 */
-		        open_input_mode(12);
-			}
-			else
-			{
-	            cpl.password[39] = 0;   /* insanity 0 */
-		        LOG(LOG_MSG, "Login: send password <*****>\n");
-			    send_reply(cpl.password);
-				GameStatus = GAME_STATUS_PSWD_WAIT;
-			}
+            if (!GameStatusLogin && (pwd_len < 6 || pwd_len > 17))
+            {
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_SHORT;
+                cpl.password[0] = 0;   /* insanity 0 */
+                open_input_mode(12);
+            }
+            else if (!GameStatusLogin && !strcmp(cpl.name, cpl.password))
+            {
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_PWD_NAME;
+                cpl.password[0] = 0;   /* insanity 0 */
+                open_input_mode(12);
+            }
+            else
+            {
+                cpl.password[39] = 0;   /* insanity 0 */
+                LOG(LOG_MSG, "Login: send password <*****>\n");
+                send_reply(cpl.password);
+                GameStatus = GAME_STATUS_PSWD_WAIT;
+            }
             /* now wait again for next server question*/
         }
     }
     else if (GameStatus == GAME_STATUS_PSWD_WAIT)
     {
-			/* simply wait for action of the server after we send the password */
-	}
+        /* simply wait for action of the server after we send the password */
+    }
     else if (GameStatus == GAME_STATUS_VERIFYPSWD)
     {
         map_transfer_flag = 0;
@@ -786,15 +788,14 @@ Boolean game_status_chain(void)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
         {
-		    LOG(LOG_MSG, "Login: send verify password <*****>\n");
+            LOG(LOG_MSG, "Login: send verify password <*****>\n");
             send_reply(InputString);
             GameStatus = GAME_STATUS_VERIFYPSWD_WAIT;
             /* now wait again for next server question*/
         }
     }
     else if (GameStatus == GAME_STATUS_VERIFYPSWD_WAIT)
-    {
-	}
+    {}
     else if (GameStatus == GAME_STATUS_WAITFORPLAY)
     {
         clear_map();
@@ -805,7 +806,7 @@ Boolean game_status_chain(void)
     else if (GameStatus == GAME_STATUS_NEW_CHAR)
     {
         map_transfer_flag = 0;
-		show_help_screen_new = TRUE;
+        show_help_screen_new = TRUE;
     }
     else if (GameStatus == GAME_STATUS_QUIT)
     {
@@ -823,10 +824,10 @@ void load_bitmaps(void)
     for (i = 0; i <= BITMAP_INTRO; i++) /* add later better error handling here*/
         load_bitmap(i);
     CreateNewFont(Bitmaps[BITMAP_FONT1], &SystemFont, 16, 16, 1);
-	CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
+    CreateNewFont(Bitmaps[BITMAP_FONTMEDIUM], &MediumFont, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT1OUT], &SystemFontOut, 16, 16, 1);
     CreateNewFont(Bitmaps[BITMAP_FONT6x3OUT], &Font6x3Out, 16, 16, -1);
-	CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 3);
+    CreateNewFont(Bitmaps[BITMAP_BIGFONT], &BigFont, 11, 16, 3);
 }
 
 Boolean load_bitmap(int index)
@@ -989,7 +990,7 @@ void open_input_mode(int maxchar)
 {
     reset_input_mode();
     InputMax = maxchar;
-	InputFirstKeyPress = TRUE;
+    InputFirstKeyPress = TRUE;
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     if (cpl.input_mode != INPUT_MODE_NUMBER)
         cpl.inventory_win = IWIN_BELOW;
@@ -1037,7 +1038,7 @@ static void list_vid_modes(int videomodes)
 
     LOG(LOG_MSG, "List Video Modes\n");
     /* Get available fullscreen/hardware modes */
-	modes = SDL_ListModes(NULL, videomodes);
+    modes = SDL_ListModes(NULL, videomodes);
 
     /* Check is there are any modes available */
     if (modes == (SDL_Rect * *) 0)
@@ -1061,7 +1062,7 @@ static void list_vid_modes(int videomodes)
 
 
     vinfo = SDL_GetVideoInfo();
-    if(!vinfo)
+    if (!vinfo)
         return;
     LOG(LOG_MSG, "VideoInfo: hardware surfaces? %s\n", vinfo->hw_available ? "yes" : "no");
     LOG(LOG_MSG, "VideoInfo: windows manager? %s\n", vinfo->wm_available ? "yes" : "no");
@@ -1128,7 +1129,7 @@ int main(int argc, char *argv[])
     int             i, done = 0, FrameCount = 0;
     //fd_set          tmp_read, tmp_write, tmp_exceptions;
     //struct timeval  timeout;
-	// pollret;
+    // pollret;
 
     init_game_data();
     while (argc > 1)
@@ -1139,11 +1140,11 @@ int main(int argc, char *argv[])
             argServerPort = atoi(argv[argc]);
             --argc;
         }
-/*        else if (strcmp(argv[argc - 1], "-server") == 0)
-        {
-            strcpy(argServerName, argv[argc]);
-            --argc;
-        }*/
+        /*        else if (strcmp(argv[argc - 1], "-server") == 0)
+                {
+                    strcpy(argServerName, argv[argc]);
+                    --argc;
+                }*/
         else if (strcmp(argv[argc], "-nometa") == 0)
         {
             options.no_meta = 1;
@@ -1188,14 +1189,14 @@ int main(int argc, char *argv[])
     SYSTEM_Start(); /* start the system AFTER start SDL */
 
     videoflags = get_video_flags();
-	list_vid_modes(videoflags);
+    list_vid_modes(videoflags);
     options.used_video_bpp = 16;//2^(options.video_bpp+3);
-	if (options.auto_bpp_flag)
-	{
-		const SDL_VideoInfo    *info    = NULL;
-		info = SDL_GetVideoInfo();
-		options.used_video_bpp = info->vfmt->BitsPerPixel;
-	}
+    if (options.auto_bpp_flag)
+    {
+        const SDL_VideoInfo    *info    = NULL;
+        info = SDL_GetVideoInfo();
+        options.used_video_bpp = info->vfmt->BitsPerPixel;
+    }
     if ((ScreenSurface = SDL_SetVideoMode(SCREEN_XLEN, SCREEN_YLEN, options.used_video_bpp, videoflags)) == NULL)
     {
         LOG(LOG_ERROR, "Couldn't set 800x600x%d video mode: %s\n", options.used_video_bpp, SDL_GetError());
@@ -1243,8 +1244,8 @@ int main(int argc, char *argv[])
     read_anims();
     show_intro("load bmaps");
     read_bmaps();
-	show_intro("load ignore list");
-	ignore_list_load();
+    show_intro("load ignore list");
+    ignore_list_load();
     show_intro(NULL);
     sound_play_music("orchestral.ogg", options.music_volume, 0, -1, 0, MUSIC_MODE_DIRECT);
 
@@ -1268,7 +1269,8 @@ int main(int argc, char *argv[])
         }
 
         SDL_Delay(25);      /* force the thread to sleep */
-    }; /* wait for keypress */
+    }
+    ; /* wait for keypress */
 
     sprintf(buf, "Welcome to Daimonin v%s", PACKAGE_VERSION);
     draw_info(buf, COLOR_HGOLD);
@@ -1286,7 +1288,7 @@ int main(int argc, char *argv[])
     while (!done)
     {
         done = Event_PollInputDevice();
-        
+
         /* Have we been shutdown? */
         if (handle_socket_shutdown())
         {
@@ -1333,17 +1335,17 @@ int main(int argc, char *argv[])
         }
 
         /* show help system or game screen */
-/*
-        if (show_help_screen)
-        {
-            SDL_FillRect(ScreenSurface, NULL, 0);
-            if (show_help_screen == 1)
-                sprite_blt(Bitmaps[BITMAP_HELP1], 0, 0, NULL, NULL);
-            else if (show_help_screen == 2)
-                sprite_blt(Bitmaps[BITMAP_HELP2], 0, 0, NULL, NULL);
-        }
-        else
-*/
+        /*
+                if (show_help_screen)
+                {
+                    SDL_FillRect(ScreenSurface, NULL, 0);
+                    if (show_help_screen == 1)
+                        sprite_blt(Bitmaps[BITMAP_HELP1], 0, 0, NULL, NULL);
+                    else if (show_help_screen == 2)
+                        sprite_blt(Bitmaps[BITMAP_HELP2], 0, 0, NULL, NULL);
+                }
+                else
+        */
 
         {
             if (GameStatus == GAME_STATUS_PLAY)
@@ -1375,7 +1377,7 @@ int main(int argc, char *argv[])
                     if ((gfx_toggle++ & 63) < 25)
                     {
                         if (options.warning_hp
-                         && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
+                                && ((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100 <= options.warning_hp)
                             sprite_blt(Bitmaps[BITMAP_WARN_HP], 393, 298, NULL, NULL);
                     }
                     else
@@ -1424,7 +1426,7 @@ int main(int argc, char *argv[])
                 sprite_blt(Bitmaps[BITMAP_PRAY], 92, 412, NULL, NULL);
 
                 if (esc_menu_flag == TRUE
-                 || (options.use_TextwinAlpha && (txtwin[TW_MSG].size + txtwin[TW_CHAT].size) > 9))
+                        || (options.use_TextwinAlpha && (txtwin[TW_MSG].size + txtwin[TW_CHAT].size) > 9))
                     map_udate_flag = 1;
                 else if (!options.force_redraw)
                 {
@@ -1494,12 +1496,12 @@ int main(int argc, char *argv[])
             else if (drag == DRAG_PDOLL)
                 Item = locate_item(cpl.win_pdoll_tag);
             /*  else Item = locate_item(cpl.win_quick_tag); */
-            if(Item)
+            if (Item)
             {
                 SDL_GetMouseState(&x, &y);
                 if (drag == DRAG_QUICKSLOT_SPELL)
                     sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].spell.groupNr].entry[quick_slots[cpl.win_quick_tag].spell.classNr][quick_slots[cpl.win_quick_tag].spell.spellNr].icon,
-                            x, y, NULL, NULL);
+                               x, y, NULL, NULL);
                 else
                     blt_inv_item_centered(Item, x, y);
             }
@@ -1525,10 +1527,10 @@ int main(int argc, char *argv[])
         else if (GameStatus == GAME_STATUS_NEW_CHAR)
             cpl.menustatus = MENU_CREATE;
 
-		if (show_help_screen_new && GameStatus == GAME_STATUS_PLAY)
-		{
-			sprite_blt(Bitmaps[BITMAP_HELP_START] , 799-Bitmaps[BITMAP_HELP_START]->bitmap->w , 0, NULL, NULL);
-		}
+        if (show_help_screen_new && GameStatus == GAME_STATUS_PLAY)
+        {
+            sprite_blt(Bitmaps[BITMAP_HELP_START] , 799-Bitmaps[BITMAP_HELP_START]->bitmap->w , 0, NULL, NULL);
+        }
         /* show all kind of the big dialog windows */
         show_menu();
         /* show all kind of the small dialog windows */
@@ -1538,21 +1540,21 @@ int main(int argc, char *argv[])
         FrameCount++;
         LastTick = SDL_GetTicks();
         /* print frame rate*/
-/*
-        {
-            SDL_Rect    rec;
-            sprintf(buf, " valid:%d mxy: %d,%d down:%d (%d,%d) up:%d (%d,%d)",global_buttons.valid,
-				global_buttons.mx,global_buttons.my,
-				global_buttons.down,global_buttons.mx_down, global_buttons.my_down, 
-				global_buttons.click, global_buttons.mx_up, global_buttons.my_up);
-	
-                rec.x = 228;
-                rec.y = 122;
-                rec.h = 14;
-                rec.w = 225;
-                StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
-		}
-*/
+        /*
+                {
+                    SDL_Rect    rec;
+                    sprintf(buf, " valid:%d mxy: %d,%d down:%d (%d,%d) up:%d (%d,%d)",global_buttons.valid,
+            global_buttons.mx,global_buttons.my,
+            global_buttons.down,global_buttons.mx_down, global_buttons.my_down,
+            global_buttons.click, global_buttons.mx_up, global_buttons.my_up);
+
+                        rec.x = 228;
+                        rec.y = 122;
+                        rec.h = 14;
+                        rec.w = 225;
+                        StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
+          }
+        */
         if (options.show_frame && cpl.menustatus == MENU_NO)
         {
             SDL_Rect    rec;

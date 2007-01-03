@@ -34,29 +34,33 @@ static char *file_path(const char *fname, const char *mode)
 #else
 
 /**
- * Create the directory @p path.  If it already exists as a directory
- * we succeed.
- * Recursive mkdir is from the Gal project's e_mkdir_hier() function.
- **/
+* Create the directory @p path.  If it already exists as a directory
+* we succeed.
+* Recursive mkdir is from the Gal project's e_mkdir_hier() function.
+**/
 
 static int mkdir_recurse(const char *path)
 {
-       char *copy, *p;
+    char *copy, *p;
 
-       p = copy = strdup(path);
-       do {
-               p = strchr (p + 1, '/');
-               if (p)
-                       *p = '\0';
-               if (access (copy, F_OK) == -1) {
-                       if (mkdir (copy, 0755) == -1) {
-                               return -1;
-                       }
-               }
-               if (p)
-                       *p = '/';
-       } while (p);
-       return 0;
+    p = copy = strdup(path);
+    do
+    {
+        p = strchr (p + 1, '/');
+        if (p)
+            *p = '\0';
+        if (access (copy, F_OK) == -1)
+        {
+            if (mkdir (copy, 0755) == -1)
+            {
+                return -1;
+            }
+        }
+        if (p)
+            *p = '/';
+    }
+    while (p);
+    return 0;
 }
 
 static char *file_path(const char *fname, const char *mode)
@@ -67,9 +71,9 @@ static char *file_path(const char *fname, const char *mode)
 
     sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
 
-    if(strchr(mode, 'w'))
+    if (strchr(mode, 'w'))
     { // overwrite (always use file in home dir)
-        if((stmp=strrchr(tmp, '/')))
+        if ((stmp=strrchr(tmp, '/')))
         {
             ctmp = stmp[0];
             stmp[0] = 0;
@@ -77,15 +81,15 @@ static char *file_path(const char *fname, const char *mode)
             stmp[0] = ctmp;
         }
     }
-    else if(strchr(mode, '+') || strchr(mode, 'a'))
+    else if (strchr(mode, '+') || strchr(mode, 'a'))
     { // modify (copy base file to home dir if not exists)
-        if(access(tmp, W_OK))
+        if (access(tmp, W_OK))
         {
             char otmp[256];
             char shtmp[517];
 
             sprintf(otmp, "%s%s", SYSPATH, fname);
-            if((stmp=strrchr(tmp, '/')))
+            if ((stmp=strrchr(tmp, '/')))
             {
                 ctmp = stmp[0];
                 stmp[0] = 0;
@@ -101,11 +105,11 @@ static char *file_path(const char *fname, const char *mode)
     }
     else
     { // just read (check home dir first, then system dir)
-        if(access(tmp, R_OK))
+        if (access(tmp, R_OK))
             sprintf(tmp, "%s%s", SYSPATH, fname);
     }
 
-//    printf("file_path: %s (%s) => %s\n", fname, mode, tmp);
+    //    printf("file_path: %s (%s) => %s\n", fname, mode, tmp);
 
     return tmp;
 }
@@ -128,5 +132,5 @@ Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname)
 
 Mix_Music *Mix_LoadMUS_wrapper(const char *file)
 {
-	return Mix_LoadMUS(file_path(file, "r"));
+    return Mix_LoadMUS(file_path(file, "r"));
 }

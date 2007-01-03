@@ -59,17 +59,17 @@ typedef struct item_struct
     uint16              anim_speed;     /* how often to animate */
     uint16              anim_state;     /* last face in sequence drawn */
     uint16              last_anim;      /* how many ticks have passed since we last animated */
-    unsigned int        magical     : 1;        /* item is magical */
-    unsigned int        cursed      : 1;        /* item is cursed */
-    unsigned int        damned      : 1;        /* item is damned */
-    unsigned int        unpaid      : 1;        /* item is unpaid */
-    unsigned int        locked      : 1;        /* item is locked */
-    unsigned int        traped      : 1;        /* item is traped */
-    unsigned int        applied     : 1;        /* item is applied */
-    unsigned int        open        : 1;        /* container is open */
-    unsigned int        inv_updated : 1;    /* item's inventory is updated, this is set
-                                            when item's inventory is modified, draw
-                                            routines can use this to redraw things */
+unsigned int        magical     : 1;        /* item is magical */
+unsigned int        cursed      : 1;        /* item is cursed */
+unsigned int        damned      : 1;        /* item is damned */
+unsigned int        unpaid      : 1;        /* item is unpaid */
+unsigned int        locked      : 1;        /* item is locked */
+unsigned int        traped      : 1;        /* item is traped */
+unsigned int        applied     : 1;        /* item is applied */
+unsigned int        open        : 1;        /* container is open */
+unsigned int        inv_updated : 1;    /* item's inventory is updated, this is set
+                                                    when item's inventory is modified, draw
+                                                    routines can use this to redraw things */
     uint8               apply_type;     /* how item is applied (worn/wield/etc) */
     uint32              flagsval;       /* unmodified flags value as sent from the server*/
     uint8               type;       /* Item type for ordering */
@@ -80,7 +80,8 @@ typedef struct item_struct
     uint8               item_skill;
     uint8               item_level;
     uint8               direction;
-} item;
+}
+item;
 
 
 #define TYPE_PLAYER                 1
@@ -126,9 +127,9 @@ typedef struct item_struct
 #define TYPE_TELEPORTER             41
 #define TYPE_CREATOR                    42
 #define TYPE_SKILL                  43  /* Skills are similar to abilites, but
-                                         * not related to spells.  by njw@cs.city.ac.u */
+* not related to spells.  by njw@cs.city.ac.u */
 #define TYPE_EXPERIENCE             44  /* An experience 'object'. Needed for multi-exp/skills
-                                        * hack. -b.t. thomas@astro.psu.edu */
+* hack. -b.t. thomas@astro.psu.edu */
 #define TYPE_EARTHWALL              45
 #define TYPE_GOLEM                  46
 #define TYPE_BOMB                   47
@@ -143,25 +144,25 @@ typedef struct item_struct
 #define TYPE_DEAD_OBJECT                53
 #define TYPE_DRINK                  54
 #define TYPE_MARKER                  55 /* inserts an invisible, weightless
-                                        force into a player with a specified string. */
+force into a player with a specified string. */
 #define TYPE_HOLY_ALTAR             56
 #define TYPE_PLAYER_CHANGER          57
 #define TYPE_BATTLEGROUND            58      /* battleground, by Andreas Vogl */
 
 #define TYPE_PEACEMAKER              59  /* Object owned by a player which can convert
-                                         a monster into a peaceful being incapable of attack.  */
+a monster into a peaceful being incapable of attack.  */
 #define TYPE_GEM                        60
 #define TYPE_FIRECHEST              61
 #define TYPE_FIREWALL               62
 #define TYPE_ANVIL                   63
 #define TYPE_CHECK_INV              64  /* by b.t. thomas@nomad.astro.psu.edu */
 #define TYPE_MOOD_FLOOR             65  /* by b.t. thomas@nomad.astro.psu.edu
-                                        * values of last_sp set how to change:
-                                        * 0 = furious,  all monsters become aggressive
-                                        * 1 = angry, all but friendly become aggressive
-                                        * 2 = calm, all aggressive monsters calm down
-                                        * 3 = sleep, all monsters fall asleep
-                                        * 4 = charm, monsters become pets */
+* values of last_sp set how to change:
+    * 0 = furious,  all monsters become aggressive
+          * 1 = angry, all but friendly become aggressive
+                * 2 = calm, all aggressive monsters calm down
+                      * 3 = sleep, all monsters fall asleep
+                            * 4 = charm, monsters become pets */
 #define TYPE_EXIT                   66
 #define TYPE_ENCOUNTER              67
 #define TYPE_SHOP_FLOOR             68
@@ -181,10 +182,10 @@ typedef struct item_struct
 #define TYPE_WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 #define TYPE_LIGHT_SOURCE            78 /* torches, lamps, etc. *outdated* */
 #define TYPE_MISC_OBJECT             79 /* misc. objects are for objects without a function
-                                        in the engine. Like statues, clocks, chairs,...
-                                        If perhaps we create a function where we can sit
-                                        on chairs, we create a new type and remove all
-                                        chairs from here. */
+                                  in the engine. Like statues, clocks, chairs,...
+                                  If perhaps we create a function where we can sit
+                                  on chairs, we create a new type and remove all
+                                      chairs from here. */
 #define TYPE_MONSTER                 80 /* yes, thats a real, living creature */
 #define TYPE_SPAWN_GENERATOR         81 /* a spawn point or monster generator object */
 
@@ -224,9 +225,9 @@ typedef struct item_struct
 #define TYPE_ARMOUR_IMPROVER         123
 #define TYPE_WEAPON_IMPROVER         124
 
-/* unused: 125 - 129
- * type 125 was MONEY_CHANGER
- */
+                                      /* unused: 125 - 129
+                                       * type 125 was MONEY_CHANGER
+                                       */
 #define TYPE_SKILLSCROLL                130 /* can add a skill to player's inventory -bt.*/
 #define TYPE_DEEP_SWAMP             138
 #define TYPE_IDENTIFY_ALTAR         139
@@ -244,19 +245,19 @@ typedef struct item_struct
 
 #define TYPE_DISEASE                 158
 #define TYPE_SYMPTOM                 159
-/* END TYPE DEFINE */
+                                      /* END TYPE DEFINE */
 
 #define F_ETHEREAL      0x0080
 #define F_INVISIBLE     0x0100
 
-/*
- *  A few macros to make clear interface
- *  These will change (especially update_item and add_new_item)
- */
+                                      /*
+                                       *  A few macros to make clear interface
+                                       *  These will change (especially update_item and add_new_item)
+                                       */
 #define delete_item(tag) remove_item(locate_item(tag))
 #define delete_item_inventory(tag) remove_item_inventory(locate_item(tag))
 
-extern void         init_item_types(void);
+                                      extern void         init_item_types(void);
 extern int          locate_item_nr_from_tag(item *op, int tag);
 extern int          locate_item_tag_from_nr(item *op, int nr);
 extern item        *locate_item_from_inv(item *op, sint32 tag);
@@ -271,15 +272,15 @@ extern void         remove_item_inventory(item *op);
 extern item        *create_new_item(item *env, sint32 tag, int bflag);
 
 extern void         set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags, uint16 anim,
-                                    uint16 animspeed, sint32 nrof, uint8 itype, uint8 stype, uint8 q, uint8 c, uint8 s,
-                                    uint8 l, uint8 dir);
+                                        uint16 animspeed, sint32 nrof, uint8 itype, uint8 stype, uint8 q, uint8 c, uint8 s,
+                                        uint8 l, uint8 dir);
 extern void         toggle_locked(item *op);
 extern void         send_mark_obj(item *op);
 extern item        *player_item(void);
 extern item        *map_item(void);
 extern void         update_item(int tag, int loc, char *name, int weight, int face, int flags, int anim, int animspeed,
-                                int nrof, uint8 type, uint8 subtype, uint8 quality, uint8 codition, uint8 skill,
-                                uint8 level, uint8 direction, int bflag);
+                                    int nrof, uint8 type, uint8 subtype, uint8 quality, uint8 codition, uint8 skill,
+                                    uint8 level, uint8 direction, int bflag);
 extern void         print_inventory(item *op);
 extern void         animate_objects(void);
 

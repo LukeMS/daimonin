@@ -48,7 +48,8 @@ typedef struct
     unsigned char   op;           /* operation, extra bits, table bits */
     unsigned char   bits;         /* bits in this part of the code */
     unsigned short  val;         /* offset in table or code value */
-} code;
+}
+code;
 
 /* op values as set by inflate_table():
     00000000 - literal
@@ -75,5 +76,5 @@ typedef enum
 }    codetype;
 
 extern int inflate_table    OF((codetype type, unsigned short FAR *lens,
-unsigned codes, code FAR *FAR *table,
-unsigned FAR *bits, unsigned short FAR *work));
+                                    unsigned codes, code FAR *FAR *table,
+                                    unsigned FAR *bits, unsigned short FAR *work));

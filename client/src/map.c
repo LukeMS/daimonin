@@ -38,7 +38,8 @@ typedef struct _map_object_parse
     int                         x;
     int                         y;
     struct _map_object_parse   *next;
-}_map_object_parse;
+}
+_map_object_parse;
 
 struct _map_object_parse   *start_map_object_parse  = NULL;
 
@@ -62,20 +63,20 @@ void adjust_map_cache(int xpos, int ypos)
             if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || xreal >= MapData.ylen * 3)
                 continue;
 
-/*
-            map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+            /*
+                        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-            map->fog_of_war = FALSE;
-            map->darkness = the_map.cells[x][y].darkness;
+                        map->fog_of_war = FALSE;
+                        map->darkness = the_map.cells[x][y].darkness;
 
-            for (i = 0; i < MAXFACES; i++)
-            {
-                map->faces[i] = the_map.cells[x][y].faces[i];
-                map->ext[i] = the_map.cells[x][y].ext[i];
-                map->pos[i] = the_map.cells[x][y].pos[i];
-                map->probe[i] = the_map.cells[x][y].probe[i];
-            }
-*/
+                        for (i = 0; i < MAXFACES; i++)
+                        {
+                            map->faces[i] = the_map.cells[x][y].faces[i];
+                            map->ext[i] = the_map.cells[x][y].ext[i];
+                            map->pos[i] = the_map.cells[x][y].pos[i];
+                            map->probe[i] = the_map.cells[x][y].probe[i];
+                        }
+            */
         }
     }
 }
@@ -163,7 +164,7 @@ void UpdateMapName(char *name)
     char   *tmp;
     int     music_fade  = 0;
 
-    if(name == NULL)
+    if (name == NULL)
         return;
 
     if ((tmp = strchr(name, '§')))
@@ -236,18 +237,18 @@ void set_map_ext(int x, int y, int layer, int ext, int probe)
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
-/*
-    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-    map->ext[layer] = ext;
-    if (probe != -1)
-        map->probe[layer] = probe;
-*/
+        map->ext[layer] = ext;
+        if (probe != -1)
+            map->probe[layer] = probe;
+    */
 }
 
 void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
- //   register struct MapCell                    *map;
+//   register struct MapCell                    *map;
     int             xreal, yreal/*, i*/;
 
     the_map.cells[x][y].faces[layer] = face;
@@ -263,21 +264,21 @@ void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *nam
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
-/*
-    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-    map->fog_of_war = FALSE;
-    map->darkness = the_map.cells[x][y].darkness;
+        map->fog_of_war = FALSE;
+        map->darkness = the_map.cells[x][y].darkness;
 
-    for (i = 0; i < MAXFACES; i++)
-    {
-        map->faces[i] = the_map.cells[x][y].faces[i];
-        map->ext[i] = the_map.cells[x][y].ext[i];
-        map->pos[i] = the_map.cells[x][y].pos[i];
-        map->probe[i] = the_map.cells[x][y].probe[i];
-        strcpy(map->pname[i], the_map.cells[x][y].pname[i]);
-    }
-*/
+        for (i = 0; i < MAXFACES; i++)
+        {
+            map->faces[i] = the_map.cells[x][y].faces[i];
+            map->ext[i] = the_map.cells[x][y].ext[i];
+            map->pos[i] = the_map.cells[x][y].pos[i];
+            map->probe[i] = the_map.cells[x][y].probe[i];
+            strcpy(map->pname[i], the_map.cells[x][y].pname[i]);
+        }
+    */
 }
 
 void display_map_clearcell(long x, long y)
@@ -300,26 +301,26 @@ void display_map_clearcell(long x, long y)
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
-/*
-    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-    map->fog_of_war = TRUE;
-    map->darkness = 0;
-    for (i = 0; i < MAXFACES; i++)
-    {
-        if (map->faces[i] & 0x8000)
-            map->faces[i] = 0;
-        map->ext[i] = 0;
-        map->pname[i][0] = 0;
-        map->probe[i] = 0;
-    }
-*/
+        map->fog_of_war = TRUE;
+        map->darkness = 0;
+        for (i = 0; i < MAXFACES; i++)
+        {
+            if (map->faces[i] & 0x8000)
+                map->faces[i] = 0;
+            map->ext[i] = 0;
+            map->pname[i][0] = 0;
+            map->probe[i] = 0;
+        }
+    */
 }
 
 
 void set_map_darkness(int x, int y, uint8 darkness)
 {
-  //  register struct MapCell                    *map;
+    //  register struct MapCell                    *map;
     int             xreal, yreal;
 
     if (darkness != the_map.cells[x][y].darkness)
@@ -329,12 +330,12 @@ void set_map_darkness(int x, int y, uint8 darkness)
     yreal = MapData.posy + (y - (MAP_MAX_SIZE - 1) / 2) + MapData.ylen;
     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
         return;
-/*
-    map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
+    /*
+        map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
 
-    if (darkness != map->darkness)
-        map->darkness = darkness;
-*/
+        if (darkness != map->darkness)
+            map->darkness = darkness;
+    */
 }
 
 /** Figure out if name is the same as rankandname.
@@ -441,9 +442,9 @@ void map_draw_map(void)
                                 mnr &= 0x0f;
                                 xml = MultiArchs[mid].xlen;
                                 yl = ypos
-                                   - MultiArchs[mid].part[mnr].yoff
-                                   + MultiArchs[mid].ylen
-                                   - face_sprite->bitmap->h;
+                                     - MultiArchs[mid].part[mnr].yoff
+                                     + MultiArchs[mid].ylen
+                                     - face_sprite->bitmap->h;
                                 /* we allow overlapping x borders - we simply center then
                                  */
                                 xl = 0;
@@ -563,25 +564,25 @@ void map_draw_map(void)
 
                                     for (s = 0; s < GROUP_MAX_MEMBER; s++)
                                     {
-										char *name_tmp = strchr(map->pname[k], ' ');
-										int len = 0;
+                                        char *name_tmp = strchr(map->pname[k], ' ');
+                                        int len = 0;
 
-										if(name_tmp)
-										{
-											len = name_tmp - map->pname[k];
-											if(len != strlen(&group[s].name[0]))
-												len = 0;
-										}
+                                        if (name_tmp)
+                                        {
+                                            len = name_tmp - map->pname[k];
+                                            if (len != strlen(&group[s].name[0]))
+                                                len = 0;
+                                        }
 
                                         if (group[s].name[0] != '\0' && (!strcmp(&group[s].name[0], map->pname[k])||
-											(len && !strncmp(&group[s].name[0], map->pname[k], len)) ))
+                                                                         (len && !strncmp(&group[s].name[0], map->pname[k], len)) ))
                                         {
                                             col = COLOR_GREEN;
                                             break;
                                         }
                                     }
                                     StringBlt(ScreenSurface, &Font6x3Out, map->pname[k],
-                                        xpos - (strlen(map->pname[k]) * 2) + 22, ypos - 48, col, NULL, NULL);
+                                              xpos - (strlen(map->pname[k]) * 2) + 22, ypos - 48, col, NULL, NULL);
                                 }
                             }
 

@@ -41,7 +41,7 @@ static command_buffer *input_queue_start = NULL, *input_queue_end = NULL;
 static command_buffer *output_queue_start = NULL, *output_queue_end = NULL;
 
 /*
- * Buffer queue management 
+ * Buffer queue management
  */
 
 /** Create a new command buffer of the given size, copying the data buffer if not NULL.
@@ -53,8 +53,8 @@ static command_buffer *output_queue_start = NULL, *output_queue_end = NULL;
 static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
 {
     command_buffer *buf;
-    
-    if(len > MAXSOCKBUF)
+
+    if (len > MAXSOCKBUF)
     {
         LOG(LOG_DEBUG, "Tried to allocate huge command buffer (%d bytes)\n", len);
         return NULL;
@@ -64,7 +64,7 @@ static command_buffer *command_buffer_new(unsigned int len, uint8 *data)
     buf->next = buf->prev = NULL;
     buf->len = len;
 
-    if(data)
+    if (data)
         memcpy(buf->data, data, len);
     buf->data[len] = 0; /* Buffer overflow sentinel */
 
@@ -82,9 +82,9 @@ static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_s
 {
     buf->next = NULL;
     buf->prev = *queue_end;
-    if(*queue_start == NULL)
+    if (*queue_start == NULL)
         *queue_start = buf;
-    if(buf->prev)
+    if (buf->prev)
         buf->prev->next = buf;
     *queue_end = buf;
 }
@@ -93,11 +93,11 @@ static void command_buffer_enqueue(command_buffer *buf, command_buffer **queue_s
 static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end)
 {
     command_buffer *buf = *queue_start;
-    
-    if(buf)
+
+    if (buf)
     {
         *queue_start = buf->next;
-        if(buf->next)
+        if (buf->next)
             buf->next->prev = NULL;
         else
             *queue_end = NULL;
@@ -107,18 +107,18 @@ static command_buffer *command_buffer_dequeue(command_buffer **queue_start, comm
 }
 
 /*
- * High-level external command buffer queue interface 
+ * High-level external command buffer queue interface
  */
 
-/** Add a binary command to the output buffer. 
+/** Add a binary command to the output buffer.
  * If body is NULL, a single-byte command is created from cmd.
- * Otherwise body should include the length and cmd header 
+ * Otherwise body should include the length and cmd header
  */
 int send_command_binary(uint8 cmd, uint8 *body, unsigned int len)
 {
     command_buffer *buf;
 
-    if(body)
+    if (body)
         buf = command_buffer_new(len, body);
     else
     {
@@ -131,7 +131,7 @@ int send_command_binary(uint8 cmd, uint8 *body, unsigned int len)
         buf = command_buffer_new(3, tmp);
     }
 
-    if(buf == NULL)
+    if (buf == NULL)
     {
         SOCKET_CloseClientSocket(&csocket);
         return -1;
@@ -151,7 +151,7 @@ int send_socklist(int fd, SockList  msg)
     command_buffer *buf;
 
     buf = command_buffer_new(msg.len + 2, NULL);
-    if(buf == NULL)
+    if (buf == NULL)
     {
         SOCKET_CloseClientSocket(&csocket);
         return -1;
@@ -161,7 +161,7 @@ int send_socklist(int fd, SockList  msg)
 
     buf->data[0] = (uint8) ((msg.len >> 8) & 0xFF);
     buf->data[1] = ((uint32) (msg.len)) & 0xFF;
-    
+
     SDL_LockMutex(output_buffer_mutex);
     command_buffer_enqueue(buf, &output_queue_start, &output_queue_end);
     SDL_CondSignal(output_buffer_cond);
@@ -190,7 +190,7 @@ command_buffer *get_next_input_command()
 
 /** Worker for the reader thread. It continuously reads data
  * from the socket, splits it into commands and enqueues them
- * on the socket queue. 
+ * on the socket queue.
  * If any error is detected, the socket is closed and the thread exits. It is
  * up to them main thread to detect this and join() the worker threads
  */
@@ -199,19 +199,19 @@ static int reader_thread_loop(void *nix)
     uint8 readbuf[MAXSOCKBUF+1];
     int readbuf_len = 0;
     int header_len = 0;
-    int cmd_len = -1;    
+    int cmd_len = -1;
 
     LOG(LOG_DEBUG, "Reader thread started\n");
 
-    while(! abort_thread)
+    while (! abort_thread)
     {
         int ret;
         int toread;
 
         /* First, try to read a command length sequence */
-        if(readbuf_len < 2)
+        if (readbuf_len < 2)
         {
-            if(readbuf_len > 0 && (readbuf[0] & 0x80)) /* three-byte length? */
+            if (readbuf_len > 0 && (readbuf[0] & 0x80)) /* three-byte length? */
                 toread = 3 - readbuf_len;
             else
                 toread = 2 - readbuf_len;
@@ -219,14 +219,14 @@ static int reader_thread_loop(void *nix)
         else if (readbuf_len == 2 && (readbuf[0] & 0x80))
             toread = 1;
         else
-        {    
+        {
             /* If we have a finished header, get the packet size from it */
-            if(readbuf_len <= 3)
+            if (readbuf_len <= 3)
             {
                 uint8 *p = readbuf;
                 header_len = (*p & 0x80) ? 3 : 2;
                 cmd_len = 0;
-                if(header_len == 3)
+                if (header_len == 3)
                     cmd_len += ((int)(*p++) & 0x7f) << 16;
                 cmd_len += ((int)(*p++)) << 8;
                 cmd_len += ((int)(*p++));
@@ -234,37 +234,38 @@ static int reader_thread_loop(void *nix)
 
             toread = cmd_len + header_len - readbuf_len;
         }
-        
+
         ret = recv(csocket.fd, readbuf + readbuf_len, toread, 0);
 
-        if(ret == 0)
+        if (ret == 0)
         {
             /* End of file */
             LOG(LOG_DEBUG, "Reader got EOF trying to read %d bytes\n", toread);
             goto out;
-        } else if (ret == -1)
+        }
+        else if (ret == -1)
         {
             /* IO error */
 #ifdef WIN32
             LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
 #else
             LOG(LOG_DEBUG, "Reader got error %d (%s)\n", errno, strerror(errno));
-#endif            
+#endif
             goto out;
         }
         else
         {
             readbuf_len += ret;
-/*            LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
+            /*            LOG(LOG_DEBUG, "Reader got some data (%d bytes total)\n", readbuf_len); */
         }
 
         /* Finished with a command ? */
-        if(readbuf_len == cmd_len + header_len && !abort_thread)
+        if (readbuf_len == cmd_len + header_len && !abort_thread)
         {
-/*            LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len); */
+            /*            LOG(LOG_DEBUG, "Reader got a full command\n", readbuf_len); */
 
             command_buffer *buf = command_buffer_new(readbuf_len - header_len, readbuf + header_len);
-            if(buf == NULL)
+            if (buf == NULL)
                 goto out;
 
             SDL_LockMutex(input_buffer_mutex);
@@ -276,12 +277,12 @@ static int reader_thread_loop(void *nix)
             header_len = 0;
             readbuf_len = 0;
         }
-    }    
+    }
 
 out:
     SOCKET_CloseClientSocket(&csocket);
     LOG(LOG_DEBUG, "Reader thread stopped\n");
-    return -1;            
+    return -1;
 }
 
 /** Worker for the writer thread. It waits for enqueued outgoing packets
@@ -291,23 +292,23 @@ out:
  */
 static int writer_thread_loop(void *nix)
 {
-    command_buffer *buf = NULL;    
+    command_buffer *buf = NULL;
     LOG(LOG_DEBUG, "Writer thread started\n");
-    while(! abort_thread)
+    while (! abort_thread)
     {
         int written = 0;
 
         SDL_LockMutex(output_buffer_mutex);
-        while(output_queue_start == NULL && !abort_thread)
+        while (output_queue_start == NULL && !abort_thread)
             SDL_CondWait(output_buffer_cond, output_buffer_mutex);
         buf = command_buffer_dequeue(&output_queue_start, &output_queue_end);
         SDL_UnlockMutex(output_buffer_mutex);
 
-        while(buf && written < buf->len && !abort_thread)
+        while (buf && written < buf->len && !abort_thread)
         {
             int ret = send(csocket.fd, buf->data + written, buf->len - written, 0);
 
-            if(ret == 0)
+            if (ret == 0)
             {
                 LOG(LOG_DEBUG, "Writer got EOF\n");
                 goto out;
@@ -319,22 +320,22 @@ static int writer_thread_loop(void *nix)
                 LOG(LOG_DEBUG, "Reader got error %d\n", WSAGetLastError());
 #else
                 LOG(LOG_DEBUG, "Writer got error %d (%s)\n", errno, strerror(errno));
-#endif                
+#endif
                 goto out;
             }
             else
                 written += ret;
         }
-        if(buf)
+        if (buf)
         {
             command_buffer_free(buf);
             buf = NULL;
         }
-/*        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written); */
+        /*        LOG(LOG_DEBUG, "Writer wrote a command (%d bytes)\n", written); */
     }
 
 out:
-    if(buf)
+    if (buf)
         command_buffer_free(buf);
     SOCKET_CloseClientSocket(&csocket);
     LOG(LOG_DEBUG, "Writer thread stopped\n");
@@ -346,9 +347,9 @@ out:
  */
 void socket_thread_start(void)
 {
-    LOG(-1,"START THREADS\n"); 
+    LOG(-1,"START THREADS\n");
 
-    if(input_buffer_cond == NULL)
+    if (input_buffer_cond == NULL)
     {
         input_buffer_cond = SDL_CreateCond();
         input_buffer_mutex = SDL_CreateMutex();
@@ -360,20 +361,20 @@ void socket_thread_start(void)
     abort_thread = FALSE;
 
     input_thread = SDL_CreateThread(reader_thread_loop, NULL);
-    if ( input_thread == NULL ) 
+    if ( input_thread == NULL )
         LOG(LOG_ERROR, "Unable to start socket thread: %s\n", SDL_GetError());
 
     output_thread = SDL_CreateThread(writer_thread_loop, NULL);
-    if ( output_thread == NULL ) 
+    if ( output_thread == NULL )
         LOG(LOG_ERROR, "Unable to start socket thread: %s\n", SDL_GetError());
 }
 
-/** Wait for the socket threads to finish. 
+/** Wait for the socket threads to finish.
  * Closes the socket first, if it hasn't already been done. */
 void socket_thread_stop(void)
 {
-    LOG(-1,"STOP THREADS\n"); 
-    
+    LOG(-1,"STOP THREADS\n");
+
     SOCKET_CloseClientSocket(&csocket);
 
     SDL_WaitThread(output_thread, NULL);
@@ -383,21 +384,21 @@ void socket_thread_stop(void)
 }
 
 /** Detect and handle socket system shutdowns. Also reset the socket system
- * for a restart. 
+ * for a restart.
  * The main thread should poll this function which
  * detects connection shutdowns and removes the
  * threads if it happens */
 int handle_socket_shutdown()
 {
-    if(abort_thread)
+    if (abort_thread)
     {
-        socket_thread_stop();        
+        socket_thread_stop();
         abort_thread = FALSE;
 
         /* Empty all queues */
-        while(input_queue_start)
+        while (input_queue_start)
             command_buffer_free(command_buffer_dequeue(&input_queue_start, &input_queue_end));
-        while(output_queue_start)
+        while (output_queue_start)
             command_buffer_free(command_buffer_dequeue(&output_queue_start, &output_queue_end));
 
         LOG(LOG_DEBUG, "Connection lost\n");
@@ -425,9 +426,9 @@ Boolean SOCKET_CloseSocket(SOCKET fd)
         return(TRUE);
 
 #ifdef __LINUX
-    if(shutdown(fd, SHUT_RDWR))
+    if (shutdown(fd, SHUT_RDWR))
         perror("shutdown");
-    if(close(fd))
+    if (close(fd))
         perror("close");
 #else
     shutdown(fd, 2);
@@ -460,11 +461,11 @@ Boolean SOCKET_CloseClientSocket(struct ClientSocket *csock)
     csock->fd = SOCKET_NO;
 
     abort_thread = TRUE;
-    
+
     /* Poke anyone waiting at a cond */
     SDL_CondSignal(input_buffer_cond);
     SDL_CondSignal(output_buffer_cond);
-    
+
     SDL_UnlockMutex(socket_mutex);
 
     return(TRUE);
@@ -507,7 +508,7 @@ Boolean SOCKET_InitSocket(void)
 
 Boolean SOCKET_DeinitSocket(void)
 {
-    if(csocket.fd != SOCKET_NO)
+    if (csocket.fd != SOCKET_NO)
         SOCKET_CloseClientSocket(&csocket);
 
 #ifdef WIN32
@@ -520,10 +521,10 @@ Boolean SOCKET_DeinitSocket(void)
 Boolean SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port)
 {
     int tmp = 1;
-    
-    if(! SOCKET_OpenSocket(&csock->fd, host, port))
-       return FALSE;
-    
+
+    if (! SOCKET_OpenSocket(&csock->fd, host, port))
+        return FALSE;
+
     csock->inbuf.buf = (unsigned char *) malloc(MAXSOCKBUF);
     csock->inbuf.len = 0;
     csock->inbuf.pos = 0;
@@ -535,18 +536,18 @@ Boolean SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, int port
     csock->command_received = 0;
     csock->command_time = 0;
 
-    if(setsockopt(csock->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
+    if (setsockopt(csock->fd, IPPROTO_TCP, TCP_NODELAY, (char *) &tmp, sizeof(tmp)))
     {
         LOG(LOG_ERROR, "ERROR: setsockopt(TCP_NODELAY) failed\n");
     }
-    
+
     return TRUE;
 }
 
 #ifdef __WIN_32
 Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
-    int             error, tmp=1;
+    int             error;
     long            temp;
     struct hostent *hostbn;
     int             oldbufsize;
@@ -610,8 +611,8 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
             break;
 
         if (SocketStatusErrorNr == WSAEWOULDBLOCK
-         || SocketStatusErrorNr == WSAEALREADY
-         || (SocketStatusErrorNr == WSAEINVAL && error)) /* loop until we finished */
+                || SocketStatusErrorNr == WSAEALREADY
+                || (SocketStatusErrorNr == WSAEINVAL && error)) /* loop until we finished */
         {
             error = 1;
             continue;
@@ -622,7 +623,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         return(FALSE);
     }
     /* we got a connect here! */
-    
+
     /* Clear nonblock flag */
     temp = 0;
     if (ioctlsocket(*socket_temp, FIONBIO, &temp) == -1)
@@ -696,52 +697,56 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         return FALSE;
     }
 #else
-    struct addrinfo hints;
-    struct addrinfo *res = NULL, *ai;
-    char port_str[6], hostaddr[40];
+struct addrinfo hints;
+struct addrinfo *res = NULL, *ai;
+char port_str[6], hostaddr[40];
 
-    printf("Opening to %s %i\n", host, port);
+printf("Opening to %s %i\n", host, port);
 
-    snprintf(port_str, sizeof(port_str), "%d", port);
+snprintf(port_str, sizeof(port_str), "%d", port);
 
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    /* Try to work around for issue #425 on OSs with broken NIS+ like FC5. 
-     * This should disable any service lookup */
-    hints.ai_flags = AI_NUMERICSERV; 
+memset(&hints, 0, sizeof(hints));
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+/* Try to work around for issue #425 on OSs with broken NIS+ like FC5.
+* This should disable any service lookup */
+hints.ai_flags = AI_NUMERICSERV;
 
-    if (getaddrinfo(host, port_str, &hints, &res) != 0)
-        return FALSE;
+if (getaddrinfo(host, port_str, &hints, &res) != 0)
+    return FALSE;
 
-    for (ai = res; ai != NULL; ai = ai->ai_next) {
-        getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
-        printf("  trying %s\n", hostaddr);
+for (ai = res; ai != NULL; ai = ai->ai_next)
+{
+    getnameinfo(ai->ai_addr, ai->ai_addrlen, hostaddr, sizeof(hostaddr), NULL, 0, NI_NUMERICHOST);
+    printf("  trying %s\n", hostaddr);
 
-        *socket_temp = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-        if (*socket_temp == -1) {
-            *socket_temp = SOCKET_NO;
-            continue;
-        }
-
-        if (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0) {
-            close(*socket_temp);
-            *socket_temp = SOCKET_NO;
-            continue;
-        }
-
-        break;
+    *socket_temp = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+    if (*socket_temp == -1)
+    {
+        *socket_temp = SOCKET_NO;
+        continue;
     }
 
-    freeaddrinfo(res);
-    if (*socket_temp == SOCKET_NO) {
-        perror("Can't connect to server");
-        return FALSE;
+    if (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0)
+    {
+        close(*socket_temp);
+        *socket_temp = SOCKET_NO;
+        continue;
     }
+
+    break;
+}
+
+freeaddrinfo(res);
+if (*socket_temp == SOCKET_NO)
+{
+    perror("Can't connect to server");
+    return FALSE;
+}
 #endif
 
     /* With the new thread socket system we want blocking IO */
-#if 0    
+#if 0
     LOG(LOG_DEBUG, "socket: fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(*socket_temp, F_GETFL));
     if (fcntl(*socket_temp, F_SETFL, fcntl(*socket_temp, F_GETFL) | O_NONBLOCK ) == -1)
     {
@@ -844,7 +849,7 @@ void read_metaserver_data(SOCKET fd)
             /* FIXME: should select on fd instead of this never-ending (in case of error) busy-loop */
             stat = recv(fd, ptr, MAX_METASTRING_BUFFER, 0);
         }
-        while (stat == -1); 
+        while (stat == -1);
 
         if (stat == -1)
         {

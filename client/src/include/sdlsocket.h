@@ -27,24 +27,21 @@
 
 typedef struct _command_buffer
 {
-	struct _command_buffer *next; /* Next in queue */
+    struct _command_buffer *next; /* Next in queue */
     struct _command_buffer *prev; /* Previous in queue */
-	int len;
-	uint8 data[0];
-} command_buffer;
+    int len;
+    uint8 data[0];
+}
+command_buffer;
 
 extern void command_buffer_free(command_buffer *buf);
-
 /* extern _command_buffer_read *read_cmd_start; */
-
 extern int send_command_binary(uint8 cmd, uint8 *body, unsigned int len);
 extern int send_socklist(int fd, SockList msg);
-
 extern command_buffer *get_next_input_command(void);
 extern void socket_thread_start(void);
 extern void socket_thread_stop(void);
 extern int handle_socket_shutdown();
-
 extern Boolean  SOCKET_InitSocket(void);
 extern Boolean  SOCKET_DeinitSocket(void);
 extern Boolean  SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port);
@@ -52,7 +49,6 @@ extern Boolean  SOCKET_OpenClientSocket(struct ClientSocket *csock, char *host, 
 extern Boolean  SOCKET_CloseSocket(SOCKET socket);
 extern Boolean  SOCKET_CloseClientSocket(struct ClientSocket *csock);
 extern int      SOCKET_GetError(void);  /* returns socket error */
-
 void            read_metaserver_data(SOCKET fd);
 
 #endif

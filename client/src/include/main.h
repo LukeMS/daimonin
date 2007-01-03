@@ -35,14 +35,15 @@ typedef struct _server_char
     int                     bar_add[3];
     int                     gender[4]; /* male, female, neutrum, herm. */
     int                     gender_selected;
-	int                     skill_selected;
+    int                     skill_selected;
     char                   *char_arch[4]; /* 4 description strings */
     int                     face_id[4];
     int                     stat_points; /* points which can be added to char stats */
     int                     stats[7];
     int                     stats_min[7];
     int                     stats_max[7];
-}_server_char;
+}
+_server_char;
 
 extern _server_char    *first_server_char;
 extern _server_char     new_character; /* if we login as new char, thats the values of it we set */
@@ -70,7 +71,8 @@ typedef struct _bmaptype
     int                 len;
     int                 pos;
     unsigned int        crc;
-}_bmaptype;
+}
+_bmaptype;
 
 extern _bmaptype   *bmap_table[BMAPTABLE];
 
@@ -82,7 +84,8 @@ typedef struct _keymap
     int     repeatflag;/*if true, key will be repeated when pressed*/
     int     mode;/*the send mode OR the menu id*/
     int     menu_mode;
-}_keymap;
+}
+_keymap;
 
 typedef struct _server
 {
@@ -95,7 +98,8 @@ typedef struct _server
     char           *desc4;
     int             player;
     int             port;
-} _server;
+}
+_server;
 
 typedef struct  _bmaptype_table
 {
@@ -103,7 +107,8 @@ typedef struct  _bmaptype_table
     int             pos;
     int             len;
     unsigned int    crc;
-}_bmaptype_table;
+}
+_bmaptype_table;
 
 _bmaptype_table bmaptype_table[BMAPTABLE];
 
@@ -152,7 +157,8 @@ typedef struct _srv_client_files
     uint32                      crc;
     int                         server_len;
     uint32                      server_crc;
-}_srv_client_files;
+}
+_srv_client_files;
 
 extern _srv_client_files    srv_client_files[SRV_CLIENT_FILES];
 extern  Uint32              sdl_dgreen, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
@@ -234,7 +240,8 @@ typedef struct _options
     Uint8                   real_video_bpp;
     uint32                  videoflags_full;
     uint32                  videoflags_win;
-}_options;
+}
+_options;
 
 extern struct _options  options;
 
@@ -251,7 +258,8 @@ typedef struct _face_struct
     char           *name;               /* our face name. if != null, face is requested*/
     uint32          checksum;       /* checksum of face */
     int             flags;
-}_face_struct;
+}
+_face_struct;
 
 #define GOLEM_CTR_RELEASE  0
 #define GOLEM_CTR_ADD      1
@@ -276,12 +284,14 @@ typedef struct _skill_list_entry
     char            desc[4][96];               /* description (in 4 rows) */
     int             exp_level;              /* -1: skill has no level or exp */
     int             exp;                    /* exp of this skill */
-}_skill_list_entry;
+}
+_skill_list_entry;
 
 typedef struct _skill_list
 {
     _skill_list_entry   entry[DIALOG_LIST_ENTRY];
-}_skill_list;
+}
+_skill_list;
 
 /* bind key list defines */
 #define BINDKEY_LIST_MAX 10        /* groups of keys */
@@ -291,7 +301,8 @@ typedef struct _bindkey_list
     _keymap entry[DIALOG_LIST_ENTRY];
     char    name[OPTWIN_MAX_TABLEN];
     int     size;
-}_bindkey_list;
+}
+_bindkey_list;
 
 typedef struct _dialog_list_set
 {
@@ -299,7 +310,8 @@ typedef struct _dialog_list_set
     int entry_nr;
     int class_nr;   /* for spell-list => spell, prayer, ... */
     int key_change;
-}_dialog_list_set;
+}
+_dialog_list_set;
 
 /* spell list defines */
 #define SPELL_LIST_MAX 16        /* groups of spells */
@@ -312,12 +324,14 @@ typedef struct _spell_list_entry
     char            icon_name[64];
     struct _Sprite *icon;
     char            desc[4][96];               /* description (in 4 rows) */
-}_spell_list_entry;
+}
+_spell_list_entry;
 
 typedef struct _spell_list
 {
     _spell_list_entry   entry[SPELL_LIST_CLASS][DIALOG_LIST_ENTRY];
-}_spell_list;
+}
+_spell_list;
 
 
 typedef struct _fire_mode
@@ -327,7 +341,8 @@ typedef struct _fire_mode
     _spell_list_entry  *spell;
     _skill_list_entry  *skill;
     char                name[128];
-}_fire_mode;
+}
+_fire_mode;
 
 typedef enum _fire_mode_id
 {
@@ -397,7 +412,7 @@ extern int          debug_layer[MAXFACES];
 extern int          music_global_fade; /* global flag for polling music fade out */
 
 extern _game_status GameStatus;     /* THE game status 2*/
-extern int			GameStatusLogin;
+extern int   GameStatusLogin;
 extern int          MapStatusX;             /* map x,y len */
 extern int          MapStatusY;
 
@@ -408,7 +423,7 @@ extern int          ServerPort;         /* port addr */
 
 extern int          show_help_screen;
 extern int          show_help_screen_new;
-extern int		    InputFirstKeyPress;
+extern int      InputFirstKeyPress;
 
 extern int          map_udate_flag, map_transfer_flag;
 extern uint32       GameTicksSec;       /* ticks since this second frame in ms */
@@ -443,8 +458,8 @@ typedef enum _bitmap_index
     BITMAP_FONT1,
     BITMAP_FONT6x3OUT,
     BITMAP_BIGFONT,
-	BITMAP_FONT1OUT,
-	BITMAP_FONTMEDIUM,
+    BITMAP_FONT1OUT,
+    BITMAP_FONTMEDIUM,
     BITMAP_INTRO,
     BITMAP_DOLL,
     BITMAP_BLACKTILE,
@@ -595,7 +610,8 @@ typedef enum _bitmap_index
     BITMAP_JOURNAL,
     BITMAP_INVSLOT_MARKED,
     BITMAP_INIT
-}                           _bitmap_index;
+}
+_bitmap_index;
 
 
 extern char                 InputString[MAX_INPUT_STRING];          /* our text char string*/
@@ -633,7 +649,7 @@ extern int                  SocketStatusErrorNr; /* if an socket error, this is 
 extern int  main(int argc, char *argv[]);
 extern void open_input_mode(int maxchar);
 extern void add_metaserver_data(char *server, int port, int player, char *ver, char *desc1, char *desc2, char *desc3,
-                                char *desc4);
+                                    char *desc4);
 extern void clear_metaserver_data(void);
 extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);

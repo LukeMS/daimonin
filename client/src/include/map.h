@@ -48,14 +48,16 @@ typedef struct _multi_part_tile
 {
     int xoff;       /* X-offset */
     int yoff;       /* Y-offset */
-}_multi_part_tile;
+}
+_multi_part_tile;
 
 typedef struct _multi_part_obj
 {
     int                 xlen;                   /* natural xlen of the whole multi arch */
     int                 ylen;                   /* same for ylen */
     _multi_part_tile    part[16];
-}_multi_part_obj;
+}
+_multi_part_obj;
 
 typedef struct _mapdata
 {
@@ -65,7 +67,8 @@ typedef struct _mapdata
     int     ylen;
     int     posx;
     int     posy;
-}_mapdata;
+}
+_mapdata;
 
 struct MapCell
 {
@@ -76,18 +79,21 @@ struct MapCell
     char    pname[MAXFACES][32];
     uint8   probe[MAXFACES];
     uint8   darkness;
-}MapCell;
+}
+MapCell;
 
 struct Map
 {
     struct MapCell  cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
-}Map;
+}
+Map;
 
 typedef struct
 {
     int                     x;
     int                     y;
-} MapPos;
+}
+MapPos;
 
 extern _mapdata         MapData;
 extern _multi_part_obj  MultiArchs[16];

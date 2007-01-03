@@ -23,9 +23,9 @@
 #include "include.h"
 
 char   *skill_level_name[]  =
-{
-    "", "Ag", "Pe", "Me", "Ph", "Ma", "Wi"
-};
+    {
+        "", "Ag", "Pe", "Me", "Ph", "Ma", "Wi"
+    };
 
 /* this function returns number of items and adjust the inventory windows data */
 int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, int wxlen, int wylen)
@@ -54,7 +54,7 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
     {
         (*count)++;
 
-		cpl.window_weight += tmp->weight;
+        cpl.window_weight += tmp->weight;
         if (tmp->tag == cpl.container_tag)
             cpl.container = tmp;
         if (cpl.container && cpl.container->tag == tmp->tag)
@@ -108,7 +108,7 @@ static void show_inventory_item_stats(item *tmp, int x, int y)
         sprintf(buf, "%s", tmp->s_name);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y - 26, COLOR_HGOLD, &tmp_rect, NULL);
 
-	sprintf(buf, "weight: %4.3f", (float)tmp->weight/1000.0f);
+    sprintf(buf, "weight: %4.3f", (float)tmp->weight/1000.0f);
     StringBlt(ScreenSurface, &SystemFont, buf, x + 160, y - 14, COLOR_HGOLD, NULL, NULL);
 
 
@@ -127,7 +127,7 @@ static void show_inventory_item_stats(item *tmp, int x, int y)
         {
             sprintf(buf, "allowed: lvl %d %s", tmp->item_level, skill_level_name[tmp->item_skill]);
             if ((!tmp->item_skill && tmp->item_level <= cpl.stats.level)
-             || (tmp->item_skill && tmp->item_level <= cpl.stats.skill_level[tmp->item_skill - 1]))
+                    || (tmp->item_skill && tmp->item_level <= cpl.stats.skill_level[tmp->item_skill - 1]))
                 StringBlt(ScreenSurface, &SystemFont, buf, x + 82, y - 14, COLOR_HGOLD, NULL, NULL);
             else
                 StringBlt(ScreenSurface, &SystemFont, buf, x + 82, y - 14, COLOR_RED, NULL, NULL);
@@ -183,9 +183,9 @@ void show_inventory_window(int x, int y)
 
     for (; tmp && i < invxlen*invylen; tmp = tmp->next)
     {
-		if(tmp->tag == cpl.mark_count)
+        if (tmp->tag == cpl.mark_count)
             sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
-			
+
         blt_inv_item(tmp, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
 
         if (cpl.inventory_win != IWIN_BELOW && i + cpl.win_inv_start == cpl.win_inv_slot)
@@ -201,11 +201,11 @@ void show_inventory_window(int x, int y)
             sprite_blt(Bitmaps[BITMAP_CMARK_START], x + ((i - 1) % invxlen) * 32 + 1, y + ((i - 1) / invxlen) * 32 + 1,
                        NULL, NULL);
             tmpc = cpl.sack->inv;
-            jump_in_container1:
+jump_in_container1:
             for (; tmpc && i < invxlen*invylen; tmpc = tmpc->next)
             {
-				if(tmpc->tag == cpl.mark_count)
-				    sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
+                if (tmpc->tag == cpl.mark_count)
+                    sprite_blt(Bitmaps[BITMAP_INVSLOT_MARKED], x + (i % invxlen) * 32, y + (i / invxlen) * 32, NULL, NULL);
                 blt_inv_item(tmpc, x + (i % invxlen) * 32 + 1, y + (i / invxlen) * 32 + 1);
                 if (cpl.inventory_win != IWIN_BELOW && i + cpl.win_inv_start == cpl.win_inv_slot)
                 {
@@ -288,7 +288,7 @@ void show_below_window(item *op, int x, int y)
             sprite_blt(Bitmaps[BITMAP_CMARK_START], x + ((i - 1) % INVITEMBELOWXLEN) * 32 + 1,
                        y + ((i - 1) / INVITEMBELOWXLEN) * 32 + 1, NULL, NULL);
             tmpc = cpl.sack->inv;
-            jump_in_container2:
+jump_in_container2:
             for (; tmpc && i < INVITEMBELOWXLEN*INVITEMBELOWYLEN; tmpc = tmpc->next)
             {
                 blt_inv_item(tmpc, x + (i % INVITEMBELOWXLEN) * 32 + 1, y + (i / INVITEMBELOWXLEN) * 32 + 1);
@@ -540,42 +540,42 @@ void examine_range_marks(int tag)
                                 draw_info(buf,COLOR_WHITE);
              */           if ((tmp->itype == TYPE_ARROW && !(tmp->stype & 128)) || tmp->itype == TYPE_CONTAINER)
             {
-                              /*sprintf(buf,"GO1 ready %s.", tmp->s_name);
-                                                  draw_info(buf,COLOR_WHITE);
-                              */                if (fire_mode_tab[FIRE_MODE_BOW].amun == tmp->tag)
-                              {
-                                                    sprintf(buf, "Unready %s.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);
-                                                    fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
-                              }
-                              else if (fire_mode_tab[FIRE_MODE_BOW].item != FIRE_ITEM_NO)
-                                                {
-                                                    sprintf(buf, "Ready %s as ammunition.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);
-                                                    fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
-                                                }
-                              return;
+                /*sprintf(buf,"GO1 ready %s.", tmp->s_name);
+                                    draw_info(buf,COLOR_WHITE);
+                */                if (fire_mode_tab[FIRE_MODE_BOW].amun == tmp->tag)
+                {
+                    sprintf(buf, "Unready %s.", tmp->s_name);
+                    draw_info(buf, COLOR_WHITE);
+                    fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
+                }
+                else if (fire_mode_tab[FIRE_MODE_BOW].item != FIRE_ITEM_NO)
+                {
+                    sprintf(buf, "Ready %s as ammunition.", tmp->s_name);
+                    draw_info(buf, COLOR_WHITE);
+                    fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
+                }
+                return;
             }
             else if ((tmp->itype == TYPE_POTION && tmp->stype & 128)
-                  || (tmp->stype & 128 && tmp->itype != TYPE_WEAPON)
-                  || (tmp->itype == TYPE_WEAPON && tmp->applied))
-                          {
-                              /* sprintf(buf,"GO2 ready %s. (%d)", tmp->s_name,tmp->stype&128);
-                                draw_info(buf,COLOR_WHITE);
-                              */                if (fire_mode_tab[FIRE_MODE_THROW].item == tmp->tag)
-                              {
-                                                    sprintf(buf, "Unready %s.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);
-                                                    fire_mode_tab[FIRE_MODE_THROW].item = FIRE_ITEM_NO;
-                              }
-                              else
-                              {
-                                                    sprintf(buf, "Ready %s for throwing.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);
-                                                    fire_mode_tab[FIRE_MODE_THROW].item = tmp->tag;
-                              }
-                              return;
-                          }
+                     || (tmp->stype & 128 && tmp->itype != TYPE_WEAPON)
+                     || (tmp->itype == TYPE_WEAPON && tmp->applied))
+            {
+                /* sprintf(buf,"GO2 ready %s. (%d)", tmp->s_name,tmp->stype&128);
+                  draw_info(buf,COLOR_WHITE);
+                */                if (fire_mode_tab[FIRE_MODE_THROW].item == tmp->tag)
+                {
+                    sprintf(buf, "Unready %s.", tmp->s_name);
+                    draw_info(buf, COLOR_WHITE);
+                    fire_mode_tab[FIRE_MODE_THROW].item = FIRE_ITEM_NO;
+                }
+                else
+                {
+                    sprintf(buf, "Ready %s for throwing.", tmp->s_name);
+                    draw_info(buf, COLOR_WHITE);
+                    fire_mode_tab[FIRE_MODE_THROW].item = tmp->tag;
+                }
+                return;
+            }
             if (tmp->itype == TYPE_WEAPON && !(tmp->applied))
                 sprintf(buf, "Can't ready unapplied weapon %s", tmp->s_name);
             else

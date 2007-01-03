@@ -29,7 +29,7 @@ struct itimerval
     struct timeval  it_interval;    /* next value */
     struct timeval  it_value;   /* current value */
 };
- 
+
 
 #define ITIMER_REAL    0        /*generates sigalrm */
 #define ITIMER_VIRTUAL 1        /*generates sigvtalrm */
@@ -165,14 +165,14 @@ void rewinddir(DIR *dir_Info)
     free(filespec);
 }
 
-int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait) 
+int execute_process(char *p_path, char *exe_name, char *parms, char *output, int seconds_to_wait)
 {
     int ret = 0;
-    
+
     STARTUPINFO siStartupInfo;
     PROCESS_INFORMATION piProcessInfo;
-    HANDLE hChildStdoutRd, hChildStdoutWr; 
-    SECURITY_ATTRIBUTES saAttr; 
+    HANDLE hChildStdoutRd, hChildStdoutWr;
+    SECURITY_ATTRIBUTES saAttr;
 
     DWORD dwExitCode;
     char cmd[4096];
@@ -181,20 +181,20 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
     memset(&piProcessInfo, 0, sizeof(piProcessInfo));
     siStartupInfo.cb = sizeof(siStartupInfo);
 
-    if(output)
+    if (output)
     {
         *output='\0';
-        saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
-        saAttr.bInheritHandle =TRUE; 
-        saAttr.lpSecurityDescriptor = NULL; 
+        saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+        saAttr.bInheritHandle =TRUE;
+        saAttr.lpSecurityDescriptor = NULL;
 
         if (! CreatePipe(&hChildStdoutRd, &hChildStdoutWr, &saAttr, 0))
         {
             output = NULL;
-            printf("Stdout pipe creation failed\n"); 
+            printf("Stdout pipe creation failed\n");
         }
 
-        if(output)
+        if (output)
         {
             siStartupInfo.hStdError = GetStdHandle(STD_OUTPUT_HANDLE);
             siStartupInfo.hStdOutput = hChildStdoutWr;
@@ -206,18 +206,18 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
     sprintf(cmd,"\"%s\" %s", exe_name, parms);
     //printf("CMD.... %s (%s)\n", cmd, prg_path);
 
- 
+
     if (CreateProcess(p_path, cmd, 0, 0, TRUE,
-        CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo,
-        &piProcessInfo) != FALSE)
+                      CREATE_DEFAULT_ERROR_MODE, 0, 0, &siStartupInfo,
+                      &piProcessInfo) != FALSE)
     {
-        if(!seconds_to_wait)
+        if (!seconds_to_wait)
         {
             CloseHandle(piProcessInfo.hProcess);
             CloseHandle(piProcessInfo.hThread);
-            if(output)
+            if (output)
             {
-                DWORD dwRead; 
+                DWORD dwRead;
 
                 CloseHandle(hChildStdoutWr);
                 ReadFile(hChildStdoutRd, output, 4000, &dwRead, NULL);
@@ -241,9 +241,9 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
     CloseHandle(piProcessInfo.hProcess);
     CloseHandle(piProcessInfo.hThread);
 
-    if(output)
+    if (output)
     {
-        DWORD dwRead; 
+        DWORD dwRead;
 
         CloseHandle(hChildStdoutWr);
         ReadFile(hChildStdoutRd, output, 4000, &dwRead, NULL);
@@ -251,5 +251,5 @@ int execute_process(char *p_path, char *exe_name, char *parms, char *output, int
         CloseHandle(hChildStdoutRd);
     }
 
-	return ret;
+    return ret;
 }

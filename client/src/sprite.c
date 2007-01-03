@@ -23,21 +23,21 @@
 #include <include.h>
 
 static double   dark_value[DARK_LEVELS] =
-{
-    1.0, 0.828, 0.685, 0.542, 0.399, 0.256, 0.113
-    /* thats the "normal values if we add
-    * 1.0 / 7 =~0.143
-    * but we want it a bit darker - so we
-    * sub 3
-    *
-    0.858,
-    0.715,
-    0.572,
-    0.429,
-    0.286,
-    0.143
-    */
-};
+    {
+        1.0, 0.828, 0.685, 0.542, 0.399, 0.256, 0.113
+        /* thats the "normal values if we add
+        * 1.0 / 7 =~0.143
+        * but we want it a bit darker - so we
+        * sub 3
+        *
+        0.858,
+        0.715,
+        0.572,
+        0.429,
+        0.286,
+        0.143
+        */
+    };
 
 struct _anim   *start_anim; /* anim queue of current active map */
 
@@ -310,7 +310,7 @@ void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
 int StringWidth(_Font *font, char *text)
 {
     int w = 0, i;
-    
+
     for (i = 0; text[i] != '\0'; i++)
     {
         switch (text[i])
@@ -332,7 +332,7 @@ int StringWidth(_Font *font, char *text)
 int StringWidthOffset(_Font *font, char *text, int *line, int len)
 {
     int w = 0, i, c, flag = FALSE;
-    
+
     for (c = i = 0; text[i] != '\0'; i++)
     {
         switch (text[i])
@@ -344,20 +344,20 @@ int StringWidthOffset(_Font *font, char *text, int *line, int len)
 
             default:
                 w += font->c[(int) (text[i])].w + font->char_offset;
-				if(w>=len && !flag)
-				{
-					flag = TRUE;
-					*line = c;
-				}
+                if (w>=len && !flag)
+                {
+                    flag = TRUE;
+                    *line = c;
+                }
                 break;
         }
-		c++;
+        c++;
     }
 
-	if(!flag) /* line is in limit */
-		*line = c;
+    if (!flag) /* line is in limit */
+        *line = c;
 
-    return flag; 
+    return flag;
 }
 
 void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area, _BLTFX *bltfx)
@@ -388,8 +388,8 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     gflag = FALSE;
     for (i = 0; text[i] != '\0'; i++)
     {
-		dst.x=dst_tmp.x;
-		dst.y=dst_tmp.y;
+        dst.x=dst_tmp.x;
+        dst.y=dst_tmp.y;
         if (text[i] == '°' || text[i] == '~') /* change text color */
         {
             if (col == COLOR_BLACK)
@@ -497,7 +497,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
     /* we only need check this one time here - if we are here, the sprite is blank */
     return FALSE;
 
-    right_border:
+right_border:
     /* right side border */
     for (x = Surface->w - 1; x >= 0; x--)
     {
@@ -511,7 +511,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
         }
     }
 
-    up_border:
+up_border:
     /* up side border */
     for (y = 0; y < Surface->h; y++)
     {
@@ -525,7 +525,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
         }
     }
 
-    down_border:
+down_border:
     /* up side border */
     for (y = Surface->h - 1; y >= 0; y--)
     {
@@ -554,24 +554,24 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
     switch (Bpp)
     {
         case 1:
-          return *((Uint8 *) Surface->pixels + Y * Surface->pitch + X);
-          break;
+            return *((Uint8 *) Surface->pixels + Y * Surface->pitch + X);
+            break;
         case 2:
-          return *((Uint16 *) Surface->pixels + Y * Surface->pitch / 2 + X);
-          break;
+            return *((Uint16 *) Surface->pixels + Y * Surface->pitch / 2 + X);
+            break;
         case 3:
-          {
-              /* Format/endian independent*/
-              Uint8     r, g, b;
-              r = *((bits) + Surface->format->Rshift / 8);
-              g = *((bits) + Surface->format->Gshift / 8);
-              b = *((bits) + Surface->format->Bshift / 8);
-              return SDL_MapRGB(Surface->format, r, g, b);
-          }
-          break;
+        {
+            /* Format/endian independent*/
+            Uint8     r, g, b;
+            r = *((bits) + Surface->format->Rshift / 8);
+            g = *((bits) + Surface->format->Gshift / 8);
+            b = *((bits) + Surface->format->Bshift / 8);
+            return SDL_MapRGB(Surface->format, r, g, b);
+        }
+        break;
         case 4:
-          return *((Uint32 *) Surface->pixels + Y * Surface->pitch / 4 + X);
-          break;
+            return *((Uint32 *) Surface->pixels + Y * Surface->pitch / 4 + X);
+            break;
     }
     return -1;
 }
@@ -676,15 +676,15 @@ struct _anim * add_anim(int type, int x, int y, int mapx, int mapy, int value)
     switch (type)
     {
         case ANIM_DAMAGE:
-          num_ticks = 850;  /* how many ticks to display */
-          anim->last_tick = anim->start_tick + num_ticks;
-          anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
-          break;
+            num_ticks = 850;  /* how many ticks to display */
+            anim->last_tick = anim->start_tick + num_ticks;
+            anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
+            break;
         case ANIM_KILL:
-          num_ticks = 850;  /* how many ticks to display */
-          anim->last_tick = anim->start_tick + num_ticks;
-          anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
-          break;
+            num_ticks = 850;  /* how many ticks to display */
+            anim->last_tick = anim->start_tick + num_ticks;
+            anim->yoff = (25.0f / 850.0f); /* 850 ticks 25 pixel move up */
+            break;
     }
 
 
@@ -750,68 +750,68 @@ void play_anims(int mx, int my)
             switch (anim->type)
             {
                 case ANIM_DAMAGE:
-                  tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
+                    tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
 
-                  if (anim->mapx >= MapData.posx
-                   && anim->mapx < MapData.posx + MapStatusX
-                   && anim->mapy >= MapData.posy
-                   && anim->mapy < MapData.posy + MapStatusY)
-                  {
-                      xpos = MAP_START_XOFF
-                           + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
-                           - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
-                           - 4;
-                      ypos = MAP_START_YOFF
-                           + (anim->mapx - MapData.posx) * MAP_TILE_XOFF
-                           + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
-                           - 34;
-                      sprintf(buf, "%d", anim->value);
-                      if (xpos == 396 && ypos == 289)
-                          StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_RED, NULL,
-                                    NULL);
-                      else
-                          StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE,
-                                    NULL, NULL);
-                  }
-                  break;
+                    if (anim->mapx >= MapData.posx
+                            && anim->mapx < MapData.posx + MapStatusX
+                            && anim->mapy >= MapData.posy
+                            && anim->mapy < MapData.posy + MapStatusY)
+                    {
+                        xpos = MAP_START_XOFF
+                               + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
+                               - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
+                               - 4;
+                        ypos = MAP_START_YOFF
+                               + (anim->mapx - MapData.posx) * MAP_TILE_XOFF
+                               + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
+                               - 34;
+                        sprintf(buf, "%d", anim->value);
+                        if (xpos == 396 && ypos == 289)
+                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_RED, NULL,
+                                      NULL);
+                        else
+                            StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x, ypos + tmp_y, COLOR_ORANGE,
+                                      NULL, NULL);
+                    }
+                    break;
                 case ANIM_KILL:
-                  tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
+                    tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
 
-                  if (anim->mapx >= MapData.posx
-                   && anim->mapx < MapData.posx + MapStatusX
-                   && anim->mapy >= MapData.posy
-                   && anim->mapy < MapData.posy + MapStatusY)
-                  {
-                      xpos = MAP_START_XOFF
-                           + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
-                           - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
-                           - 4;
-                      ypos = MAP_START_YOFF
-                           + (anim->mapx - MapData.posx) * MAP_TILE_XOFF
-                           + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
-                           - 26;
-                      sprite_blt(Bitmaps[BITMAP_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
-                      sprintf(buf, "%d", anim->value);
-                      tmp_off = 0;
+                    if (anim->mapx >= MapData.posx
+                            && anim->mapx < MapData.posx + MapStatusX
+                            && anim->mapy >= MapData.posy
+                            && anim->mapy < MapData.posy + MapStatusY)
+                    {
+                        xpos = MAP_START_XOFF
+                               + (anim->mapx - MapData.posx) * MAP_TILE_YOFF
+                               - (anim->mapy - MapData.posy - 1) * MAP_TILE_YOFF
+                               - 4;
+                        ypos = MAP_START_YOFF
+                               + (anim->mapx - MapData.posx) * MAP_TILE_XOFF
+                               + (anim->mapy - MapData.posy - 1) * MAP_TILE_XOFF
+                               - 26;
+                        sprite_blt(Bitmaps[BITMAP_DEATH], xpos + anim->x - 5, ypos + tmp_y - 4, NULL, NULL);
+                        sprintf(buf, "%d", anim->value);
+                        tmp_off = 0;
 
-                      /* Lets check the size of the value */
-                      if (anim->value < 10)
-                          tmp_off = 6;
-                      else if (anim->value < 100)
-                          tmp_off = 0;
-                      else if (anim->value < 1000)
-                          tmp_off = -6;
-                      else if (anim->value < 10000)
-                          tmp_off = -12;
+                        /* Lets check the size of the value */
+                        if (anim->value < 10)
+                            tmp_off = 6;
+                        else if (anim->value < 100)
+                            tmp_off = 0;
+                        else if (anim->value < 1000)
+                            tmp_off = -6;
+                        else if (anim->value < 10000)
+                            tmp_off = -12;
 
-                      StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
-                                COLOR_ORANGE, NULL, NULL);
-                  }
-                  break;
+                        StringBlt(ScreenSurface, &SystemFontOut, buf, xpos + anim->x + tmp_off, ypos + tmp_y,
+                                  COLOR_ORANGE, NULL, NULL);
+                    }
+                    break;
 
                 default:
-                  LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
-                  break;
+                    LOG(LOG_ERROR, "WARNING: Unknown animation type\n");
+                    break;
             }
         }
     }

@@ -90,48 +90,48 @@ enum
 };
 
 struct CmdMapping   commands[]  =
-{
-    /* Order of this table doesn't make a difference.  I tried to sort
-    * of cluster the related stuff together.
-    */
-    { "comc", CompleteCmd}, 
-    { "version", (CmdProc) VersionCmd }, 
-    { "drawinfo", (CmdProc) DrawInfoCmd },
-    { "addme_failed", (CmdProc) AddMeFail }, 
-    { "map2", Map2Cmd }, 
-    { "drawinfo2", (CmdProc) DrawInfoCmd2 }, 
-    { "itemx", ItemXCmd },
-    { "sound", SoundCmd}, 
-    { "to", TargetObject }, 
-    { "upditem", UpdateItemCmd }, 
-    { "delitem", DeleteItem },
-    { "stats", StatsCmd }, 
-    { "image", ImageCmd }, 
-    { "face1", Face1Cmd}, 
-    { "anim", AnimCmd},
-    { "skill_rdy", (CmdProc) SkillRdyCmd }, 
-    { "player", PlayerCmd },
-    { "splist", SpelllistCmd }, 
-    { "sklist", SkilllistCmd }, 
-    { "gc", GolemCmd },
-    { "addme_success", (CmdProc) AddMeSuccess },  
-    { "goodbye", (CmdProc) GoodbyeCmd }, 
-    { "setup", (CmdProc) SetupCmd},
-    { "query", (CmdProc) handle_query}, 
-    { "data", (CmdProc) DataCmd}, 
-    { "new_char", (CmdProc) NewCharCmd},
-    { "itemy", ItemYCmd }, 
-    { "group", GroupCmd },
-    { "group_invite", GroupInviteCmd },
-    { "group_update", GroupUpdateCmd },
-    { "interface", InterfaceCmd },
-    { "book", BookCmd },
-    { "mark", MarkCmd },
+    {
+        /* Order of this table doesn't make a difference.  I tried to sort
+        * of cluster the related stuff together.
+        */
+        { "comc", CompleteCmd},
+        { "version", (CmdProc) VersionCmd },
+        { "drawinfo", (CmdProc) DrawInfoCmd },
+        { "addme_failed", (CmdProc) AddMeFail },
+        { "map2", Map2Cmd },
+        { "drawinfo2", (CmdProc) DrawInfoCmd2 },
+        { "itemx", ItemXCmd },
+        { "sound", SoundCmd},
+        { "to", TargetObject },
+        { "upditem", UpdateItemCmd },
+        { "delitem", DeleteItem },
+        { "stats", StatsCmd },
+        { "image", ImageCmd },
+        { "face1", Face1Cmd},
+        { "anim", AnimCmd},
+        { "skill_rdy", (CmdProc) SkillRdyCmd },
+        { "player", PlayerCmd },
+        { "splist", SpelllistCmd },
+        { "sklist", SkilllistCmd },
+        { "gc", GolemCmd },
+        { "addme_success", (CmdProc) AddMeSuccess },
+        { "goodbye", (CmdProc) GoodbyeCmd },
+        { "setup", (CmdProc) SetupCmd},
+        { "query", (CmdProc) handle_query},
+        { "data", (CmdProc) DataCmd},
+        { "new_char", (CmdProc) NewCharCmd},
+        { "itemy", ItemYCmd },
+        { "group", GroupCmd },
+        { "group_invite", GroupInviteCmd },
+        { "group_update", GroupUpdateCmd },
+        { "interface", InterfaceCmd },
+        { "book", BookCmd },
+        { "mark", MarkCmd },
 
-    /* unused! */
-    { "magicmap", MagicMapCmd}, 
-    { "delinv", DeleteInventory }
-};
+        /* unused! */
+        { "magicmap", MagicMapCmd},
+        { "delinv", DeleteInventory }
+    };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
@@ -257,8 +257,8 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
         fclose(stream);
         newsum = 0;
         if (len <= 0) /* something is wrong... now unlink the file and
-                                  * let it reload then possible and needed
-                                  */
+                                                                                  * let it reload then possible and needed
+                                                                                  */
         {
             unlink(buf);
             checksum = 1; /* now we are 100% different to newsum */
@@ -312,7 +312,7 @@ static void face_flag_extension(int pnum, char *buf)
         else if (*(stemp + tc) == '4' || *(stemp + tc) == '8' || *(stemp + tc) == '0')
             FaceList[pnum].flags |= (FACE_FLAG_D3 | FACE_FLAG_D1);
     }
-    finish_face_cmd_j1: /* error jump from for() */
+finish_face_cmd_j1: /* error jump from for() */
     return;
 }
 

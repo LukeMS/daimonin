@@ -54,7 +54,8 @@ typedef struct _BLTFX
     SDL_Surface    *surface;    /* if != null, overrule default screen */
     int             dark_level;         /* use dark_level[i] surface */
     uint8           alpha;
-}_BLTFX;
+}
+_BLTFX;
 
 /* the structure */
 typedef struct _Sprite
@@ -76,15 +77,17 @@ typedef struct _Sprite
     SDL_Surface    *grey;                       /* grey (xray) */
     SDL_Surface    *fog_of_war;             /* thats the fog of war palette */
     SDL_Surface    *dark_level[DARK_LEVELS];    /* dark levels.
-                                                   * Note: 0= default sprite - its only mapped */
-} _Sprite;
+                                                           * Note: 0= default sprite - its only mapped */
+}
+_Sprite;
 
 typedef struct _Font
 {
     _Sprite    *sprite; /* don't free this, we link here a Bitmaps[x] ptr*/
     int         char_offset;    /* space in pixel between 2 chars in a word */
     SDL_Rect    c[256];
-}_Font;
+}
+_Font;
 
 #define ANIM_DAMAGE 1
 #define ANIM_KILL   2
@@ -103,7 +106,8 @@ typedef struct _anim
     float                   yoff;                   /* movement in y per tick */
     int                     mapx;                   /* map position X */
     int                     mapy;                   /* map position Y */
-}_anim;
+}
+_anim;
 
 #define ASCII_UP 28
 #define ASCII_DOWN 29
@@ -128,10 +132,10 @@ extern void             sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box,
 
 extern Uint32           GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern void             CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);
-extern int				StringWidth(_Font *font, char *text);
-extern int				StringWidthOffset(_Font *font, char *text, int *line, int len);
+extern int    StringWidth(_Font *font, char *text);
+extern int    StringWidthOffset(_Font *font, char *text, int *line, int len);
 extern void             StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col, SDL_Rect *area,
-                                  _BLTFX *bltfx);
+                                      _BLTFX *bltfx);
 extern int              sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2);
 
 #endif

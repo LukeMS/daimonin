@@ -68,9 +68,9 @@ typedef unsigned short  u4;
 #  define REV(w) (((w)>>24)+(((w)>>8)&0xff00)+ \
                 (((w)&0xff00)<<8)+(((w)&0xff)<<24))
 local unsigned long crc32_little    OF((unsigned long,
-const unsigned char FAR *, unsigned));
+                                        const unsigned char FAR *, unsigned));
 local unsigned long crc32_big       OF((unsigned long,
-const unsigned char FAR *, unsigned));
+                                        const unsigned char FAR *, unsigned));
 #  define TBLS 8
 #else
 #  define TBLS 1
@@ -118,9 +118,9 @@ local void make_crc_table()
     unsigned long poly;            /* polynomial exclusive-or pattern */
     /* terms of polynomial defining this crc (except x^32): */
     static const unsigned char  p[] =
-    {
-        0, 1, 2, 4, 5, 7, 8, 10, 11, 12, 16, 22, 23, 26
-    };
+        {
+            0, 1, 2, 4, 5, 7, 8, 10, 11, 12, 16, 22, 23, 26
+        };
 
     /* make exclusive-or pattern from polynomial (0xedb88320UL) */
     poly = 0UL;
@@ -196,8 +196,8 @@ const unsigned long FAR    *table;
 
 #else /* !DYNAMIC_CRC_TABLE */
 /* ========================================================================
- * Tables of CRC-32s of all single-byte values, made by make_crc_table().
- */
+* Tables of CRC-32s of all single-byte values, made by make_crc_table().
+*/
 #include "crc32.h"
 #endif /* DYNAMIC_CRC_TABLE */
 
