@@ -137,7 +137,7 @@ SDL_mutex  *Network::socket_mutex =0;
 Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_end = 0;
 Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
 
-const int SOCKET_TIMEOUT_SEC = 8;
+const int SOCKET_TIMEOUT_MS = 4000;
 const int SOCKET_NO = -1;
 
 // Maximum size of any packet we expect.  Using this makes it so we don't need to
@@ -708,7 +708,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         {
             Logger::log().warning() <<  "Unknown host: "<< host;
             csocket.fd = SOCKET_NO;
-            return(false);
+            return false;
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
@@ -717,7 +717,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     {
         Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp)";
         csocket.fd = SOCKET_NO;
-        return(false);
+        return false;
     }
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
@@ -727,12 +727,12 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     start_timer = SDL_GetTicks();
     while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
-        SDL_Delay(3);
+        SDL_Delay(30);
         // timeout.... without connect will REALLY hang a long time
-        if (start_timer + SOCKET_TIMEOUT_SEC * 1000 < SDL_GetTicks())
+        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
         {
             csocket.fd = SOCKET_NO;
-            return(false);
+            return false;
         }
         SocketStatusErrorNr = WSAGetLastError();
         if (SocketStatusErrorNr == WSAEISCONN)  // we have a connect!
@@ -746,7 +746,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         }
         Logger::log().warning() <<  "Connect Error: " << SocketStatusErrorNr;
         csocket.fd = SOCKET_NO;
-        return(false);
+        return false;
     }
     // we got a connect here!
 
@@ -756,7 +756,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     {
         Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp == 0)";
         csocket.fd = SOCKET_NO;
-        return(FALSE);
+        return false;
     }
 
     if (getsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
@@ -781,9 +781,11 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
 {
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
     struct linger linger_opt;
-    // Use new (getaddrinfo()) or old (gethostbyname()) socket API
-#if 1 // small hack until we make it configurable to fix mantis 0000425
-    //#ifndef HAVE_GETADDRINFO
+    int flags;
+    uint32 start_timer;
+    /* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
+#ifndef HAVE_GETADDRINFO
+    /* This method is preferable unless IPv6 is required, due to buggy distros. See mantis 0000425 */
     struct protoent *protox;
     struct sockaddr_in  insock;
     Logger::log().info() << "Opening to " << host << " " << port;
@@ -814,9 +816,32 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
-    if (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == (-1))
+    // Set non-blocking.
+    flags = fcntl(csocket.fd, F_GETFL);
+    if (fcntl(csocket.fd, F_SETFL, flags | O_NONBLOCK) == -1)
     {
-        perror("Can't connect to server");
+        Logger::log().error() <<  "Socket switching to non-blocking. fcntl" << fcntl(csocket.fd, F_GETFL);
+        csocket.fd = SOCKET_NO;
+        return false;
+    }
+    // Try to connect.
+    start_timer = SDL_GetTicks();
+    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == -1)
+    {
+        SDL_Delay(3);
+        /* timeout.... without connect will REALLY hang a long time */
+        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+        {
+            perror("Can't connect to server");
+            csocket.fd = SOCKET_NO;
+            return false;
+        }
+    }
+    // Set back to blocking.
+    if (fcntl(csocket.fd, F_SETFL, flags) == -1)
+    {
+        Logger::log().error() <<  "Socket switching to non-blocking. fcntl" << fcntl(csocket.fd, F_GETFL);
+        csocket.fd = SOCKET_NO;
         return false;
     }
 #else
@@ -843,13 +868,37 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
             csocket.fd = SOCKET_NO;
             continue;
         }
-        if (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
+        // Set non-blocking.
+        flags = fcntl(csocket.fd, F_GETFL);
+        if (fcntl(csocket.fd, F_SETFL, flags | O_NONBLOCK) == -1)
         {
-            close(csocket.fd);
+            LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(csocket.fd, F_GETFL));
             csocket.fd = SOCKET_NO;
-            continue;
+            return false;
+        }
+        // Try to connect.
+        start_timer = SDL_GetTicks();
+        while (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
+        {
+            SDL_Delay(3);
+            /* timeout.... without connect will REALLY hang a long time */
+            if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+            {
+                close(csocket.fd);
+                csocket.fd = SOCKET_NO;
+                goto next_try;
+            }
+        }
+        // Set back to blocking.
+        if (fcntl(csocket.fd, F_SETFL, flags) == -1)
+        {
+            LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(csocket.fd, F_GETFL));
+            csocket.fd = SOCKET_NO;
+            return false;
         }
         break;
+next_try:
+        ;
     }
     freeaddrinfo(res);
     if (csocket.fd == SOCKET_NO)
@@ -858,17 +907,6 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         return false;
     }
 #endif
-#if 0
-    //Logger::log().info() << "socket: fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(csocket.fd, F_GETFL));
-    if (fcntl(csocket.fd, F_SETFL, fcntl(csocket.fd, F_GETFL) | O_NONBLOCK ) == -1)
-    {
-        Logger::log().error() <<  "socket:  Error on fcntl "<< fcntl(csocket.fd, F_GETFL);
-        csocket.fd = SOCKET_NO;
-        return false;
-    }
-    //LOG(LOG_DEBUG, "socket:  fcntl %x.\n", fcntl(csocket.fd, F_GETFL));
-#endif
-
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
     if (setsockopt(csocket.fd, SOL_SOCKET, SO_LINGER, (char *) &linger_opt, sizeof(struct linger)))
@@ -922,10 +960,9 @@ void Network::cs_write_string(const char *buf)
 //================================================================================================
 void Network::read_metaserver_data()
 {
-    int  stat, temp;
+    int  stat, temp =0;
     char *ptr = new char[MAX_METASTRING_BUFFER];
     char *buf = new char[MAX_METASTRING_BUFFER];
-    temp = 0;
     while (1)
     {
 #ifdef WIN32
