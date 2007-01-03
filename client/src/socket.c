@@ -21,6 +21,7 @@
 */
 
 #include <include.h>
+#define SOCKET_TIMEOUT_MS 4000
 
 static SDL_Thread *input_thread;
 static SDL_mutex *input_buffer_mutex;
@@ -553,7 +554,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     int             oldbufsize;
     int             newbufsize = 65535, buflen = sizeof(int);
     uint32          start_timer;
-    struct linger       linger_opt;
+    struct linger   linger_opt;
 
     LOG(LOG_DEBUG, "OpenSocket: %s\n", host);
     /* The way to make the sockets work on XP Home - The 'unix' style socket
@@ -598,9 +599,8 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     while (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
         SDL_Delay(3);
-
         /* timeout.... without connect will REALLY hang a long time */
-        if (start_timer + SOCKET_TIMEOUT_SEC * 1000 < SDL_GetTicks())
+        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
         {
             *socket_temp = SOCKET_NO;
             return(FALSE);
@@ -652,7 +652,9 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
 {
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
-    struct linger       linger_opt;
+    struct linger linger_opt;
+    int flags;
+    uint32 start_timer;
 
     /* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
 #ifndef HAVE_GETADDRINFO
@@ -678,6 +680,7 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
     }
     insock.sin_family = AF_INET;
     insock.sin_port = htons((unsigned short) port);
+
     if (isdigit(*host))
         insock.sin_addr.s_addr = inet_addr(host);
     else
@@ -691,10 +694,33 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, char *host, int port)
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
 
-    if (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == (-1))
+    // Set non-blocking.
+    flags = fcntl(*socket_temp, F_GETFL);
+    if (fcntl(*socket_temp, F_SETFL, flags | O_NONBLOCK) == -1)
     {
-        perror("Can't connect to server");
-        return FALSE;
+        LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+        *socket_temp = SOCKET_NO;
+        return(FALSE);
+    }
+    // Try to connect.
+    start_timer = SDL_GetTicks();
+    while (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == -1)
+    {
+        SDL_Delay(3);
+        /* timeout.... without connect will REALLY hang a long time */
+        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+        {
+            perror("Can't connect to server");
+            *socket_temp = SOCKET_NO;
+            return(FALSE);
+        }
+    }
+    // Set back to blocking.
+    if (fcntl(*socket_temp, F_SETFL, flags) == -1)
+    {
+        LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+        *socket_temp = SOCKET_NO;
+        return(FALSE);
     }
 #else
 struct addrinfo hints;
@@ -726,15 +752,37 @@ for (ai = res; ai != NULL; ai = ai->ai_next)
         *socket_temp = SOCKET_NO;
         continue;
     }
-
-    if (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0)
+    // Set non-blocking.
+    flags = fcntl(*socket_temp, F_GETFL);
+    if (fcntl(*socket_temp, F_SETFL, flags | O_NONBLOCK) == -1)
     {
-        close(*socket_temp);
+        LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
         *socket_temp = SOCKET_NO;
-        continue;
+        return(FALSE);
     }
-
+    // Try to connect.
+    start_timer = SDL_GetTicks();
+    while (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0)
+    {
+        SDL_Delay(3);
+        /* timeout.... without connect will REALLY hang a long time */
+        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+        {
+            close(*socket_temp);
+            *socket_temp = SOCKET_NO;
+            goto next_try;
+        }
+    }
+    // Set back to blocking.
+    if (fcntl(*socket_temp, F_SETFL, flags) == -1)
+    {
+        LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+        *socket_temp = SOCKET_NO;
+        return(FALSE);
+    }
     break;
+next_try:
+    ;
 }
 
 freeaddrinfo(res);
@@ -743,18 +791,6 @@ if (*socket_temp == SOCKET_NO)
     perror("Can't connect to server");
     return FALSE;
 }
-#endif
-
-    /* With the new thread socket system we want blocking IO */
-#if 0
-    LOG(LOG_DEBUG, "socket: fcntl(%x %x) %x.\n", O_NDELAY, O_NONBLOCK, fcntl(*socket_temp, F_GETFL));
-    if (fcntl(*socket_temp, F_SETFL, fcntl(*socket_temp, F_GETFL) | O_NONBLOCK ) == -1)
-    {
-        LOG(LOG_ERROR, "socket:  Error on fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
-        *socket_temp = SOCKET_NO;
-        return(FALSE);
-    }
-    LOG(LOG_DEBUG, "socket:  fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
 #endif
 
     linger_opt.l_onoff = 1;
