@@ -78,6 +78,5 @@
 #endif
 
 #define SOCKET int
-#define SOCKET_TIMEOUT_SEC 8
 
 #endif
