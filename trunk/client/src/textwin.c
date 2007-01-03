@@ -57,7 +57,7 @@ static char * get_keyword_start(int actWin, int mouseX, int *row)
         goto row2; /* check only for 2. half of keyword */
     /* check if keyword starts in the row before */
     if (txtwin[actWin].scroll + 1 != txtwin[actWin].act_bufsize - txtwin[actWin].size /* dont check in first row */
-     && txtwin[actWin].text[pos].key_clipped)
+            && txtwin[actWin].text[pos].key_clipped)
     {
         /* was a clipped keyword clicked? */
         int index   = -1;
@@ -76,7 +76,7 @@ static char * get_keyword_start(int actWin, int mouseX, int *row)
         }
     }
 
-    row2 : text = txtwin[actWin].text[pos].buf;
+row2 : text = txtwin[actWin].text[pos].buf;
     /* find the first char of the keyword */
     if (txtwin[actWin].text[pos].key_clipped)
         key_start = 0;
@@ -107,13 +107,13 @@ static char * get_keyword_start(int actWin, int mouseX, int *row)
 void say_clickedKeyword(int actWin, int mouseX, int mouseY)
 {
     char    cmdBuf[MAX_KEYWORD_LEN + 1]     =
-    {
-        "/say "
-    };
+        {
+            "/say "
+        };
     char    cmdBuf2[MAX_KEYWORD_LEN + 1]    =
-    {
-        ""
-    };
+        {
+            ""
+        };
     char   *text;
     int     clicked_row, pos = 5;
 
@@ -178,7 +178,7 @@ void draw_info_format(int flags,char *format,...)
 
     va_end(ap);
 
-	draw_info(buf, flags);
+    draw_info(buf, flags);
 }
 
 /******************************************************************
@@ -199,7 +199,7 @@ void draw_info(char *str, int flags)
     char *buf2 = malloc(strlen(str)+1);
     strcpy(buf2, str);
 
-	LOG(LOG_MSG,"DRAW_INFO: >%s<\n", buf2);
+    LOG(LOG_MSG,"DRAW_INFO: >%s<\n", buf2);
     color = flags & 0xff;
     mode = flags;
     /*
@@ -212,21 +212,21 @@ void draw_info(char *str, int flags)
         if (buf2[i] < 32 && buf2[i] != 0x0a && buf2[i] != '§')
             buf2[i] = 32;
     }
-    
+
     /* We will mask out text between § and end-of-line */
-    while((tag = strchr(buf2, '§')))
-    {        
+    while ((tag = strchr(buf2, '§')))
+    {
         char *tagend = strchr(tag, 0x0a);
 
-        if(tagend == NULL)
+        if (tagend == NULL)
             tagend = tag + strlen(tag);
 
-        if(tagend > tag+1)
+        if (tagend > tag+1)
         {
             char savetagend;
             savetagend = *tagend;
             *tagend = '\0';
-            
+
             init_media_tag(tag);
             *tagend = savetagend;
             *tag = '\0';
@@ -263,20 +263,20 @@ void draw_info(char *str, int flags)
                 while (ii >= a / 2)
                 {
                     if (buf2[it] == ' '
-                     || buf2[it] == ':'
-                     || buf2[it] == '.'
-                     || buf2[it] == ','
-                     || buf2[it] == '('
-                     || buf2[it] == ';'
-                     || buf2[it] == '-'
-                     || buf2[it] == '+'
-                     || buf2[it] == '*'
-                     || buf2[it] == '?'
-                     || buf2[it] == '/'
-                     || buf2[it] == '='
-                     || buf2[it] == '.'
-                     || buf2[it] == 0
-                     || buf2[it] == 0x0a)
+                            || buf2[it] == ':'
+                            || buf2[it] == '.'
+                            || buf2[it] == ','
+                            || buf2[it] == '('
+                            || buf2[it] == ';'
+                            || buf2[it] == '-'
+                            || buf2[it] == '+'
+                            || buf2[it] == '*'
+                            || buf2[it] == '?'
+                            || buf2[it] == '/'
+                            || buf2[it] == '='
+                            || buf2[it] == '.'
+                            || buf2[it] == 0
+                            || buf2[it] == 0x0a)
                     {
                         tx = it;
                         ix = ii;
@@ -380,7 +380,7 @@ static void show_window(int actWin, int x, int y)
         box.w -= 2;
 
         txtwin[actWin].slider_y = ((txtwin[actWin].act_bufsize - (txtwin[actWin].size + 1) - txtwin[actWin].scroll) * box.h)
-                                / txtwin[actWin].act_bufsize;
+                                  / txtwin[actWin].act_bufsize;
         txtwin[actWin].slider_h = (box.h * (txtwin[actWin].size + 1)) / txtwin[actWin].act_bufsize; /* between 0.0 <-> 1.0 */
         if (txtwin[actWin].slider_h < 1)
             txtwin[actWin].slider_h = 1;
@@ -501,8 +501,8 @@ void textwin_show(int x, int y)
         box.h = 1;
         box.y = y + tmp + 1;
         if ((SDL_GetModState() == KMOD_RALT || SDL_GetModState() == KMOD_LALT)
-         && my > txtwin[TW_CHAT].y
-         && mx > txtwin[TW_CHAT].x)
+                && my > txtwin[TW_CHAT].y
+                && mx > txtwin[TW_CHAT].x)
             color = 40;
         SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
         box.y = y - 1;
@@ -552,10 +552,10 @@ void textwin_button_event(int actWin, SDL_Event event)
         else if (txtwin[actWin].highlight == TW_HL_DOWN) /* clicked scroller-button down */
             txtwin[actWin].scroll--;
         else if (event.motion.x<785
-              && event.motion.y>txtwin[actWin].y + 2
-              && event.motion.y < txtwin[actWin].y + 7
-              && cursor_type == 1)
-                 textwin_flags |= (actWin | TW_RESIZE);      /* size-change */
+                 && event.motion.y>txtwin[actWin].y + 2
+                 && event.motion.y < txtwin[actWin].y + 7
+                 && cursor_type == 1)
+            textwin_flags |= (actWin | TW_RESIZE);      /* size-change */
         else if (event.motion.x < txtwin[actWin].x + 250)
             say_clickedKeyword(actWin, event.motion.x, event.motion.y);
     }
@@ -570,7 +570,7 @@ int textwin_move_event(int actWin, SDL_Event event)
 
     /* show resize-cursor */
     if ((event.motion.y > txtwin[actWin].y + 2 && event.motion.y < txtwin[actWin].y + 7 && event.motion.x < 785)
-     || (event.button.button == SDL_BUTTON_LEFT && (textwin_flags & (TW_SCROLL | TW_RESIZE))))
+            || (event.button.button == SDL_BUTTON_LEFT && (textwin_flags & (TW_SCROLL | TW_RESIZE))))
     {
         if (!(textwin_flags & TW_SCROLL) && event.motion.x > txtwin[actWin].x)
             cursor_type = 1;
@@ -583,8 +583,8 @@ int textwin_move_event(int actWin, SDL_Event event)
 
     /* mouse out of window */
     if (event.motion.y <txtwin[actWin].y
-     || event.motion.x > txtwin[actWin].x + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
-     || event.motion.y > txtwin[actWin].y + txtwin[actWin].size * 10 + (actWin == TW_CHAT ? 4 : 13) + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
+            || event.motion.x > txtwin[actWin].x + Bitmaps[BITMAP_TEXTWIN]->bitmap->w
+            || event.motion.y > txtwin[actWin].y + txtwin[actWin].size * 10 + (actWin == TW_CHAT ? 4 : 13) + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
     {
         if (!(textwin_flags & TW_RESIZE))
             return 1;
@@ -592,8 +592,8 @@ int textwin_move_event(int actWin, SDL_Event event)
 
     /* highlighting */
     if (event.motion.x > txtwin[actWin].x + 250
-     && event.motion.y > txtwin[actWin].y
-     && event.button.button != SDL_BUTTON_LEFT)
+            && event.motion.y > txtwin[actWin].y
+            && event.button.button != SDL_BUTTON_LEFT)
     {
 #define OFFSET (txtwin[actWin].y + Bitmaps[BITMAP_SLIDER_UP]->bitmap->h)
         if (event.motion.y < OFFSET)
@@ -616,9 +616,9 @@ int textwin_move_event(int actWin, SDL_Event event)
         actWin = textwin_flags & TW_ACTWIN;
         txtwin[actWin].slider_y = event.motion.y - old_slider_pos;
         txtwin[actWin].scroll = txtwin[actWin].act_bufsize
-                              - (txtwin[actWin].size + 1)
-                              - (txtwin[actWin].act_bufsize * txtwin[actWin].slider_y)
-                              / (txtwin[actWin].size * 10 - 1);
+                                - (txtwin[actWin].size + 1)
+                                - (txtwin[actWin].act_bufsize * txtwin[actWin].slider_y)
+                                / (txtwin[actWin].size * 10 - 1);
         return 0;
     }
 

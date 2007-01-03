@@ -39,33 +39,36 @@ typedef struct _option
     int             default_val;
     void           *value;
     int             value_type;
-}_option;
+}
+_option;
 extern _option  opt[];
 
 extern enum
-{
-    VAL_BOOL,
-    VAL_TEXT,
-    VAL_CHAR,
-    VAL_INT,
-    VAL_U32
-}               value_type;
+    {
+        VAL_BOOL,
+        VAL_TEXT,
+        VAL_CHAR,
+        VAL_INT,
+        VAL_U32
+    }
+    value_type;
 extern char    *opt_tab[];
 extern int      dialog_new_char_warn;
 extern int dialog_login_warning_level;
 extern char        *spell_tab[];
 
-enum {
-	DIALOG_LOGIN_WARNING_NONE,
-	DIALOG_LOGIN_WARNING_NAME_NO,
-	DIALOG_LOGIN_WARNING_NAME_BLOCKED,
-	DIALOG_LOGIN_WARNING_NAME_PLAYING,
-	DIALOG_LOGIN_WARNING_NAME_TAKEN,
-	DIALOG_LOGIN_WARNING_NAME_BANNED,
-	DIALOG_LOGIN_WARNING_NAME_WRONG,
-	DIALOG_LOGIN_WARNING_PWD_WRONG,
-	DIALOG_LOGIN_WARNING_PWD_SHORT,
-	DIALOG_LOGIN_WARNING_PWD_NAME
+enum
+{
+    DIALOG_LOGIN_WARNING_NONE,
+    DIALOG_LOGIN_WARNING_NAME_NO,
+    DIALOG_LOGIN_WARNING_NAME_BLOCKED,
+    DIALOG_LOGIN_WARNING_NAME_PLAYING,
+    DIALOG_LOGIN_WARNING_NAME_TAKEN,
+    DIALOG_LOGIN_WARNING_NAME_BANNED,
+    DIALOG_LOGIN_WARNING_NAME_WRONG,
+    DIALOG_LOGIN_WARNING_PWD_WRONG,
+    DIALOG_LOGIN_WARNING_PWD_SHORT,
+    DIALOG_LOGIN_WARNING_PWD_NAME
 };
 
 void add_close_button(int x, int y, int menu);

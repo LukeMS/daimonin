@@ -143,7 +143,7 @@ unsigned    start;         /* inflate()'s starting value for strm->avail_out */
             bits += 8;
         }
         this = lcode[hold & lmask];
-        dolen : op = (unsigned) (this.bits);
+dolen : op = (unsigned) (this.bits);
         hold >>= op;
         bits -= op;
         op = (unsigned) (this.op);
@@ -152,7 +152,7 @@ unsigned    start;         /* inflate()'s starting value for strm->avail_out */
             /* literal */
             Tracevv((stderr,
                      this.val >= 0x20
-                  && this.val < 0x7f ? "inflate:         literal '%c'\n" : "inflate:         literal 0x%02x\n",
+                     && this.val < 0x7f ? "inflate:         literal '%c'\n" : "inflate:         literal 0x%02x\n",
                      this.val));
             PUP(out) = (unsigned char) (this.val);
         }
@@ -181,7 +181,7 @@ unsigned    start;         /* inflate()'s starting value for strm->avail_out */
                 bits += 8;
             }
             this = dcode[hold & dmask];
-            dodist:
+dodist:
             op = (unsigned) (this.bits);
             hold >>= op;
             bits -= op;

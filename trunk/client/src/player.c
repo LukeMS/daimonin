@@ -73,13 +73,14 @@ typedef struct _player_doll_pos
 {
     int                 xpos;
     int                 ypos;
-}_player_doll_pos;
+}
+_player_doll_pos;
 
 _player_doll_pos    player_doll[PDOLL_INIT] =
-{
-    {93,91}, {93,44}, {93,136}, {93,194}, {135,131}, {50,131}, {50,170}, {135,170}, {54,87}, {141,46}, {180,46}, {5,200}, {5,238},
-    {5,144}, {180,144}, {43,46}, {4,46}
-};
+    {
+        {93,91}, {93,44}, {93,136}, {93,194}, {135,131}, {50,131}, {50,170}, {135,170}, {54,87}, {141,46}, {180,46}, {5,200}, {5,238},
+        {5,144}, {180,144}, {43,46}, {4,46}
+    };
 
 void clear_player(void)
 {
@@ -144,10 +145,10 @@ void client_send_move(int loc, int tag, int nrof)
 
 void client_send_tell_extended(char *body, char *tail)
 {
-	char    buf[MAX_BUF];
+    char    buf[MAX_BUF];
 
-	sprintf(buf, "tx %s %s", body, tail);
-	cs_write_string(csocket.fd, buf, strlen(buf));
+    sprintf(buf, "tx %s %s", body, tail);
+    cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
 /* This should be used for all 'command' processing.  Other functions should
@@ -211,8 +212,7 @@ void CompleteCmd(unsigned char *data, int len)
 
 /* Show a basic help message */
 void show_help()
-{
-}
+{}
 
 /* This is an extended command (ie, 'who, 'whatever, etc).  In general,
  * we just send the command to the server, but there are a few that
@@ -224,8 +224,7 @@ void show_help()
  */
 
 void extended_command(const char *ocommand)
-{
-}
+{}
 
 void set_weight_limit(uint32 wlim)
 {
@@ -582,12 +581,12 @@ void show_player_stats(int x, int y)
         if (skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
         {
             level_exp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp
-                      - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
+                        - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
             multi = modf(((double)
                           level_exp
-                        / (double)
+                          / (double)
                           (server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level + 1]
-                         - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level]) * 10.0),
+                           - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level]) * 10.0),
                          &line);
         }
     }
@@ -626,7 +625,7 @@ void show_player_stats(int x, int y)
 
     StringBlt(ScreenSurface, &Font6x3Out, "Level / Exp", x + 177, y + 40, COLOR_HGOLD, NULL, NULL);
     sprintf(buf, "%d", cpl.stats.level);
-    if(cpl.stats.exp_level != cpl.stats.level)
+    if (cpl.stats.exp_level != cpl.stats.level)
         StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_RED, NULL, NULL);
     else
         StringBlt(ScreenSurface, &BigFont, buf, x + 264 - get_string_pixel_length(buf, &BigFont), y + 43, COLOR_WHITE, NULL, NULL);
@@ -636,7 +635,7 @@ void show_player_stats(int x, int y)
     /* calc the exp bubbles */
     level_exp = cpl.stats.exp - server_level.exp[cpl.stats.exp_level];
     multi = modf(((double) level_exp
-                / (double) (server_level.exp[cpl.stats.exp_level + 1] - server_level.exp[cpl.stats.exp_level]) * 10.0),
+                  / (double) (server_level.exp[cpl.stats.exp_level + 1] - server_level.exp[cpl.stats.exp_level]) * 10.0),
                  &line);
 
     sprite_blt(Bitmaps[BITMAP_EXP_BORDER], x + 182, y + 88, NULL, NULL);
@@ -747,9 +746,9 @@ void show_player_doll(int x, int y)
                 mb = SDL_GetMouseState(&mx, &my);
                 /* prepare item_name tooltip */
                 if (mx >= player_doll[index].xpos
-                 && mx < player_doll[index].xpos + 33
-                 && my >= player_doll[index].ypos
-                 && my < player_doll[index].ypos + 33)
+                        && mx < player_doll[index].xpos + 33
+                        && my >= player_doll[index].ypos
+                        && my < player_doll[index].ypos + 33)
                 {
                     tooltip_index = index;
                     tooltip_text = tmp->s_name;

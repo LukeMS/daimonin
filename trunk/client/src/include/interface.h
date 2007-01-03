@@ -37,23 +37,27 @@ typedef struct gui_interface_head
     char name[128];          /* face (picture name) */
     _Sprite *picture;      /* the real picture */
     char body_text[128]; /* head title */
-}_gui_interface_head;
+}
+_gui_interface_head;
 
 typedef struct gui_interface_link
 {
     char link[128];
     char cmd[128];
-}_gui_interface_link;
+}
+_gui_interface_link;
 
 typedef struct gui_interface_who
 {
-	char body[128];
-}_gui_interface_who;
+    char body[128];
+}
+_gui_interface_who;
 
 typedef struct gui_interface_textfield
 {
     char text[128];
-} _gui_interface_textfield;
+}
+_gui_interface_textfield;
 
 typedef struct gui_interface_message
 {
@@ -61,14 +65,16 @@ typedef struct gui_interface_message
     char body_text[4096];
     int line_count;
     char lines[INTERFACE_MAX_LINE][INTERFACE_MAX_CHAR];
-}_gui_interface_message;
+}
+_gui_interface_message;
 
 typedef struct gui_interface_xtended
 {
-	char title[128];
-	char body_text[4096];
-	int line_count;
-}_gui_interface_xtended;
+    char title[128];
+    char body_text[4096];
+    int line_count;
+}
+_gui_interface_xtended;
 
 typedef struct gui_interface_reward
 {
@@ -80,7 +86,8 @@ typedef struct gui_interface_reward
     char title[128];
     char body_text[4096];
     char lines[INTERFACE_MAX_REWARD_LINE][INTERFACE_MAX_CHAR];
-}_gui_interface_reward;
+}
+_gui_interface_reward;
 
 typedef struct gui_interface_icon
 {
@@ -90,16 +97,18 @@ typedef struct gui_interface_icon
     char name[128];          /* face (picture name) */
     item element;
     _Sprite *picture;      /* the real picture */
-	char *second_line;
+    char *second_line;
     char body_text[128]; /* head title */
-}_gui_interface_icon;
+}
+_gui_interface_icon;
 
 typedef struct gui_interface_button
 {
     char title[64];
     char title2[64];
     char command[128];
-}_gui_interface_button;
+}
+_gui_interface_button;
 
 #define MAX_INTERFACE_ICON 15
 #define MAX_INTERFACE_LINKS 25
@@ -123,7 +132,8 @@ typedef struct gui_interface_button
 #define GUI_INTERFACE_STATUS_NORMAL 0
 #define GUI_INTERFACE_STATUS_WAIT 1
 
-typedef struct gui_interface_struct {
+typedef struct gui_interface_struct
+{
     int mode;
     int status;
     uint32 used_flag;
@@ -139,23 +149,24 @@ typedef struct gui_interface_struct {
     int link_selected;
     _gui_interface_head head;
     _gui_interface_link link[MAX_INTERFACE_LINKS];
-	_gui_interface_message message;
-	_gui_interface_xtended xtended;
-	_gui_interface_reward reward;
-	_gui_interface_who who;
+    _gui_interface_message message;
+    _gui_interface_xtended xtended;
+    _gui_interface_reward reward;
+    _gui_interface_who who;
     _gui_interface_icon icon[MAX_INTERFACE_ICON];
     _gui_interface_button ok;
     _gui_interface_button accept;
     _gui_interface_button decline;
     _gui_interface_textfield textfield;
-} _gui_interface_struct;
+}
+_gui_interface_struct;
 
 extern void reset_gui_interface(void);
 extern _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos);
 extern void gui_interface_send_command(int mode, char *cmd);
-extern int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my); 
-extern int precalc_interface_npc(void); 
-extern void show_interface_npc(int mark); 
-extern void gui_interface_mouse(SDL_Event *e); 
+extern int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my);
+extern int precalc_interface_npc(void);
+extern void show_interface_npc(int mark);
+extern void gui_interface_mouse(SDL_Event *e);
 
 #endif

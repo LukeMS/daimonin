@@ -40,22 +40,23 @@
 
 typedef struct _group
 {
-    char                    name[32];
-    int                     level;
-    int                     hp;
-    int                     maxhp;
-    int                     sp;
-    int                     maxsp;
-    int                     grace;
-    int                     maxgrace;
-}_groups;
+    char name[32];
+    int  level;
+    int  hp;
+    int  maxhp;
+    int  sp;
+    int  maxsp;
+    int  grace;
+    int  maxgrace;
+}
+_groups;
 
-extern int                  global_group_status;
-extern struct _group        group[GROUP_MAX_MEMBER];
-extern char                 group_invite[32]; /* name of player who has send the invite */
+extern int           global_group_status;
+extern struct _group group[GROUP_MAX_MEMBER];
+extern char          group_invite[32]; /* name of player who has send the invite */
 
-extern void     show_group(int x, int y);
-extern void     clear_group(void);
-extern void     set_group(int slot, char *name, int level, int hp, int maxhp, int sp, int maxsp, int grace, int maxgrace);
+extern void show_group(int x, int y);
+extern void clear_group(void);
+extern void set_group(int slot, char *name, int level, int hp, int maxhp, int sp, int maxsp, int grace, int maxgrace);
 
 #endif

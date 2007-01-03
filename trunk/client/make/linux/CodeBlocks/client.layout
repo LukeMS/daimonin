@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="../../../src/book.c" open="0" top="0" tabpos="1">
+		<Cursor position="881" topLine="0" />
+	</File>
+	<File name="../../../src/client.c" open="0" top="0" tabpos="6">
+		<Cursor position="1766" topLine="42" />
+	</File>
+	<File name="../../../src/commands.c" open="0" top="0" tabpos="7">
+		<Cursor position="11065" topLine="345" />
+	</File>
+	<File name="../../../src/event.c" open="1" top="1" tabpos="2">
+		<Cursor position="63546" topLine="1717" />
+	</File>
+	<File name="../../../src/include/cflinux.h" open="0" top="0" tabpos="4">
+		<Cursor position="1050" topLine="28" />
+	</File>
+	<File name="../../../src/include/filewrap.h" open="0" top="0" tabpos="5">
+		<Cursor position="1048" topLine="0" />
+	</File>
+	<File name="../../../src/include/include.h" open="0" top="0" tabpos="2">
+		<Cursor position="958" topLine="19" />
+	</File>
+	<File name="../../../src/include/wrapper.h" open="0" top="0" tabpos="3">
+		<Cursor position="880" topLine="0" />
+	</File>
+	<File name="../../../src/socket.c" open="1" top="0" tabpos="1">
+		<Cursor position="18754" topLine="652" />
+	</File>
+</CodeBlocks_layout_file>

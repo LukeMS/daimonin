@@ -51,32 +51,32 @@ static int          special_sounds[SPECIAL_SOUND_INIT];
 _wave               Sounds[SOUND_MAX + SPELL_SOUND_MAX];
 
 static char        *sound_files[SOUND_MAX]              =
-{
-    "event01.wav", "bow1.wav", "learnspell.wav", "missspell.wav", "rod.wav", "door.wav", "push.wav",
-    "hit_impact.wav" /* 8 */, "hit_cleave.wav", "hit_slash.wav", "hit_pierce.wav", "hit_block.wav", "hit_hand.wav",
-    "miss_mob1.wav", "miss_player1.wav", "petdead.wav" /* 16 */, "playerdead.wav", "explosion.wav", "explosion.wav",
-    "kill.wav", "pull.wav", "fallhole.wav", "poison.wav", "drop.wav" /* 24 */, "lose_some.wav", "throw.wav",
-    "gate_open.wav", "gate_close.wav", "open_container.wav", "growl.wav", "arrow_hit.wav", "door_close.wav",
-    "teleport.wav", "scroll.wav", "step1.wav" /* here starts client side sounds */, "step2.wav", "pray.wav",
-    "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
-    "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
-	"book.wav", "page.wav"
+    {
+        "event01.wav", "bow1.wav", "learnspell.wav", "missspell.wav", "rod.wav", "door.wav", "push.wav",
+        "hit_impact.wav" /* 8 */, "hit_cleave.wav", "hit_slash.wav", "hit_pierce.wav", "hit_block.wav", "hit_hand.wav",
+        "miss_mob1.wav", "miss_player1.wav", "petdead.wav" /* 16 */, "playerdead.wav", "explosion.wav", "explosion.wav",
+        "kill.wav", "pull.wav", "fallhole.wav", "poison.wav", "drop.wav" /* 24 */, "lose_some.wav", "throw.wav",
+        "gate_open.wav", "gate_close.wav", "open_container.wav", "growl.wav", "arrow_hit.wav", "door_close.wav",
+        "teleport.wav", "scroll.wav", "step1.wav" /* here starts client side sounds */, "step2.wav", "pray.wav",
+        "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
+        "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
+        "book.wav", "page.wav"
 
-};
+    };
 
 static char        *spell_sound_files[SPELL_SOUND_MAX]  =
-{
-    "magic_default.wav", "magic_acid.wav", "magic_animate.wav", "magic_avatar.wav", "magic_bomb.wav",
-    "magic_bullet1.wav", "magic_bullet2.wav", "magic_cancel.wav", "magic_comet.wav", "magic_confusion.wav",
-    "magic_create.wav", "magic_dark.wav", "magic_death.wav", "magic_destruction.wav", "magic_elec.wav",
-    "magic_fear.wav", "magic_fire.wav", "magic_fireball1.wav", "magic_fireball2.wav", "magic_hword.wav",
-    "magic_ice.wav", "magic_invisible.wav", "magic_invoke.wav", "magic_invoke2.wav", "magic_magic.wav",
-    "magic_manaball.wav", "magic_missile.wav", "magic_mmap.wav", "magic_orb.wav", "magic_paralyze.wav",
-    "magic_poison.wav", "magic_protection.wav", "magic_rstrike.wav", "magic_rune.wav", "magic_sball.wav",
-    "magic_slow.wav", "magic_snowstorm.wav", "magic_stat.wav", "magic_steambolt.wav", "magic_summon1.wav",
-    "magic_summon2.wav", "magic_summon3.wav", "magic_teleport.wav", "magic_turn.wav", "magic_wall.wav",
-    "magic_walls.wav", "magic_wound.wav"
-};
+    {
+        "magic_default.wav", "magic_acid.wav", "magic_animate.wav", "magic_avatar.wav", "magic_bomb.wav",
+        "magic_bullet1.wav", "magic_bullet2.wav", "magic_cancel.wav", "magic_comet.wav", "magic_confusion.wav",
+        "magic_create.wav", "magic_dark.wav", "magic_death.wav", "magic_destruction.wav", "magic_elec.wav",
+        "magic_fear.wav", "magic_fire.wav", "magic_fireball1.wav", "magic_fireball2.wav", "magic_hword.wav",
+        "magic_ice.wav", "magic_invisible.wav", "magic_invoke.wav", "magic_invoke2.wav", "magic_magic.wav",
+        "magic_manaball.wav", "magic_missile.wav", "magic_mmap.wav", "magic_orb.wav", "magic_paralyze.wav",
+        "magic_poison.wav", "magic_protection.wav", "magic_rstrike.wav", "magic_rune.wav", "magic_sball.wav",
+        "magic_slow.wav", "magic_snowstorm.wav", "magic_stat.wav", "magic_steambolt.wav", "magic_summon1.wav",
+        "magic_summon2.wav", "magic_summon3.wav", "magic_teleport.wav", "magic_turn.wav", "magic_wall.wav",
+        "magic_walls.wav", "magic_wound.wav"
+    };
 
 #endif
 
@@ -105,7 +105,7 @@ void sound_init(void)
 
     SoundSystem = SOUND_SYSTEM_OFF;
 
-    for(i=0;i < SPECIAL_SOUND_INIT;i++)
+    for (i=0;i < SPECIAL_SOUND_INIT;i++)
         special_sounds[i] = -1;
 
     /* Open the audio device */
@@ -227,7 +227,7 @@ int sound_play_effect(int soundid, uint32 flag, int pan, int vol)
         Mix_Volume(tmp,
                    (int)
                    (((double) options.sound_volume / (double) 100) * ((double)
-                                                                      vol * ((double) MIX_MAX_VOLUME / (double) 100))));
+                           vol * ((double) MIX_MAX_VOLUME / (double) 100))));
         if (pan < 0)
         {
             l = 255;
@@ -303,18 +303,18 @@ void sound_play_music(char *fname, int vol, int fade, int loop, int flags, int m
     else if (mode & MUSIC_MODE_FORCED)
         vol2 = 100;
 
-	/* same sound? */
-	if(!strcmp(fname,music.name))
-	{
-		music.fade = fade;
-		music.loop = loop;
-		if(vol != music.vol)
-		{
-			music.vol = vol;
-			Mix_VolumeMusic(vol);
-		}
-		return;
-	}
+    /* same sound? */
+    if (!strcmp(fname,music.name))
+    {
+        music.fade = fade;
+        music.loop = loop;
+        if (vol != music.vol)
+        {
+            music.vol = vol;
+            Mix_VolumeMusic(vol);
+        }
+        return;
+    }
 
     if (music.flag && !(mode & MUSIC_MODE_DIRECT)) /* only when set, we still play something */
     {
@@ -358,8 +358,8 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
     music.data = Mix_LoadMUS_wrapper(buf);
     if (!music.data)
     {
-		char msg[1024];
-	    sprintf(msg, "mix_loadmus() failed (%s).", buf);
+        char msg[1024];
+        sprintf(msg, "mix_loadmus() failed (%s).", buf);
         draw_info(msg, 4);
         return;
     }

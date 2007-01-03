@@ -64,7 +64,8 @@ typedef struct _text_buf
     int     flags;           /* some flags */
     int     color;           /* color of text */
     int     key_clipped; /* 1= key begin in row before 2= no key end */
-}_text_buf;
+}
+_text_buf;
 
 typedef struct _textwin_set
 {
@@ -78,14 +79,15 @@ typedef struct _textwin_set
     int                 slider_y;       /* start pos of the scrollbar-slider */
     int                 highlight;      /* which part to highlight */
     _text_buf           text[TEXT_WIN_MAX];
-}_textwin_set;
+}
+_textwin_set;
 
 extern _textwin_set txtwin[TW_SUM];
 extern int          textwin_flags;
 extern void         textwin_event(int e, SDL_Event *event);
 extern void         textwin_show(int x, int y);
 extern void         textwin_init();
-extern void			draw_info_format(int flags,char *format,...);
+extern void   draw_info_format(int flags,char *format,...);
 extern void         draw_info(char *str, int color);
 extern void         textwin_addhistory(char *text);
 extern void         textwin_clearhistory();

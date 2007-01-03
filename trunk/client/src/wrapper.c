@@ -45,8 +45,8 @@ void LOG(int logLevel, char *format, ...)
     if (!logstream)     /* secure: we have no open stream*/
     {
         logstream = fopen_wrapper(LOG_FILE, "w");
-        if (!logstream) 	
-    	    flag = FALSE;
+        if (!logstream)
+            flag = FALSE;
     }
     if (flag)
     {
@@ -367,7 +367,7 @@ uint32 get_video_flags(void)
     }
 }
 
-/* Parse server host into address and port 
+/* Parse server host into address and port
  * Allows URL style syntax with address in brackets
  * for addresses which include colons
  */
@@ -377,20 +377,24 @@ int parse_serverhost(char *tmp, char *server, int *port)
 
     servstr = tmp;
     portstr = servstr;
-    if(servstr[0] == '[') {
+    if (servstr[0] == '[')
+    {
         char *tmp;
 
         tmp = strchr(++servstr, ']');
         if (tmp == NULL)
-           return -1;
+            return -1;
         *tmp = '\0';
         portstr = tmp+1;
     }
     portstr = strchr(portstr, ':');
-    if (portstr != NULL) {
+    if (portstr != NULL)
+    {
         *port = atoi(portstr + 1);
         *portstr = '\0';
-    } else {
+    }
+    else
+    {
         *port = DEFAULT_SERVER_PORT;
     }
     strcpy(server, servstr);
@@ -421,7 +425,7 @@ void parse_metaserver_data(char *info)
         if (s >= 1023)
             s = 1023;
         tmp[s] = 0;
-        if(parse_serverhost(tmp, server, &port) == -1)
+        if (parse_serverhost(tmp, server, &port) == -1)
             break;
         /* player */
         if ((s = read_substr_char(info, tmp, &count, '|')) == -1)

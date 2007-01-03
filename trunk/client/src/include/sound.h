@@ -104,7 +104,8 @@ typedef enum _sound_id
     SOUND_BOOK,
     SOUND_PAGE,
     SOUND_MAX
-}   _sound_id1;
+}
+_sound_id1;
 
 /* to call a spell sound here, do
  * SOUND_MAX + SOUND_MAGIC_xxx
@@ -169,7 +170,8 @@ typedef struct _wave
     Mix_Chunk  *sound;
     Uint32      soundlen;       /* Length of wave data */
     int         soundpos;       /* Current play position */
-} _wave;
+}
+_wave;
 
 typedef struct music_data
 {
@@ -179,7 +181,8 @@ typedef struct music_data
     int                 loop;               /* loop data for init music_play() */
     int                 fade;
     int                 vol;
-}music_data;
+}
+music_data;
 
 extern _wave        Sounds[];
 

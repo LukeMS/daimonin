@@ -29,53 +29,53 @@
 /* imported from server - attack.h file */
 typedef enum _attacks
 {
-	/* We start with the double used attacks - for resist & protection too */
-	/* damage type: physical */
-	ATNR_PHYSICAL, /* = impact */
-	ATNR_SLASH,
-	ATNR_CLEAVE,
-	ATNR_PIERCE,
+    /* We start with the double used attacks - for resist & protection too */
+    /* damage type: physical */
+    ATNR_PHYSICAL, /* = impact */
+    ATNR_SLASH,
+    ATNR_CLEAVE,
+    ATNR_PIERCE,
 
-	/* damage type: elemental */
-	ATNR_FIRE,
-	ATNR_COLD,
-	ATNR_ELECTRICITY,
-	ATNR_POISON,
-	ATNR_ACID,
-	ATNR_SONIC,
+    /* damage type: elemental */
+    ATNR_FIRE,
+    ATNR_COLD,
+    ATNR_ELECTRICITY,
+    ATNR_POISON,
+    ATNR_ACID,
+    ATNR_SONIC,
 
-	/* damage type: magical */
-	ATNR_FORCE,
-	ATNR_PSIONIC,
-	ATNR_LIGHT,
-	ATNR_SHADOW,
-	ATNR_LIFESTEAL,
+    /* damage type: magical */
+    ATNR_FORCE,
+    ATNR_PSIONIC,
+    ATNR_LIGHT,
+    ATNR_SHADOW,
+    ATNR_LIFESTEAL,
 
-	/* damage type: sphere */
-	ATNR_AETHER,
-	ATNR_NETHER,
-	ATNR_CHAOS,
-	ATNR_DEATH,
+    /* damage type: sphere */
+    ATNR_AETHER,
+    ATNR_NETHER,
+    ATNR_CHAOS,
+    ATNR_DEATH,
 
-	/* damage: type only effect by invulnerable */
-	ATNR_WEAPONMAGIC,
-	ATNR_GODPOWER,
+    /* damage: type only effect by invulnerable */
+    ATNR_WEAPONMAGIC,
+    ATNR_GODPOWER,
 
-	/* at this point attack effects starts - only resist maps to it */
-	ATNR_DRAIN,
-	ATNR_DEPLETION,
-	ATNR_CORRUPTION,
-	ATNR_COUNTERMAGIC,
-	ATNR_CANCELLATION,
-	ATNR_CONFUSION,
-	ATNR_FEAR,    
-	ATNR_SLOW,
-	ATNR_PARALYZE,
-	ATNR_SNARE,
+    /* at this point attack effects starts - only resist maps to it */
+    ATNR_DRAIN,
+    ATNR_DEPLETION,
+    ATNR_CORRUPTION,
+    ATNR_COUNTERMAGIC,
+    ATNR_CANCELLATION,
+    ATNR_CONFUSION,
+    ATNR_FEAR,
+    ATNR_SLOW,
+    ATNR_PARALYZE,
+    ATNR_SNARE,
 
-	/* and the real special one here */
-	ATNR_INTERNAL,
-	NROFATTACKS /* index (= 32 ATM) */
+    /* and the real special one here */
+    ATNR_INTERNAL,
+    NROFATTACKS /* index (= 32 ATM) */
 }_attacks;
 
 #define STRINGCOMMAND 0
@@ -119,16 +119,18 @@ typedef struct Animations
     uint16 *faces;
     uint8   facings;        /* number of frames */
     uint8   num_animations; /* number of animations.  Value of 2 means
-                            * only faces[0],[1] have meaningfull values.
-                            */
+                                    * only faces[0],[1] have meaningfull values.
+                                    */
     uint8   flags;
-} Animations;
+}
+Animations;
 
 typedef struct _anim_table
 {
     int                 len;            /* len of anim_cmd data */
     char               *anim_cmd;       /* faked animation command */
-}_anim_table;
+}
+_anim_table;
 
 extern _anim_table  anim_table[MAXANIM]; /* the stored "anim commands" we created out of anims.tmp */
 extern Animations   animations[MAXANIM];
@@ -136,10 +138,11 @@ extern Animations   animations[MAXANIM];
 /* Contains the base information we use to make up a packet we want to send. */
 typedef struct SockList
 {
-	int             len; /**< How much data in buf */
-	int             pos; /**< Start of data in buf */
+    int             len; /**< How much data in buf */
+    int             pos; /**< Start of data in buf */
     unsigned char  *buf;
-} SockList;
+}
+SockList;
 
 /* ClientSocket could probably hold more of the global values - it could
  * probably hold most all socket/communication related values instead
@@ -149,7 +152,7 @@ typedef struct ClientSocket
 {
     SOCKET              fd;                     /* typedef your socket type to SOCKET */
     SockList            inbuf;
-	SockList			outbuf;
+    SockList   outbuf;
     int                 cs_version, sc_version; /* Server versions of these */
     /* These are used for the newer 'windowing' method of commands -
      * number of last command sent, number of received confirmation
@@ -157,7 +160,8 @@ typedef struct ClientSocket
     int                 command_sent, command_received;
     /* Time (in ms) players commands currently take to execute */
     int                 command_time;
-} ClientSocket;
+}
+ClientSocket;
 
 extern ClientSocket csocket;
 
@@ -176,7 +180,8 @@ typedef enum Input_State
     Configure_Keys,
     Command_Mode,
     Metaserver_Select
-}    Input_State;
+}
+Input_State;
 
 typedef enum rangetype
 {
@@ -211,10 +216,11 @@ typedef struct Stat_struct
     float     weapon_sp;      /* Gets converted to a float for display */
     uint16  flags;      /* contains fire on/run on flags */
     sint16  protection[NROFATTACKS];     /* Resistant values */
-    uint32  protection_change   : 1; /* Resistant value has changed */
+uint32  protection_change   : 1; /* Resistant value has changed */
     sint16  skill_level[MAX_SKILL];  /* Level and experience totals for */
     sint32  skill_exp[MAX_SKILL];    /* skills */
-} Stats;
+}
+Stats;
 
 typedef enum _inventory_win
 {
@@ -241,7 +247,7 @@ typedef struct Player_Struct
     int                     target_color;
     int                     inventory_win;  /* inventory windows */
     int                     menustatus;
-	int						mark_count;
+    int      mark_count;
     int                     loc;
     int                     tag;
     int                     nrof;
@@ -271,14 +277,14 @@ typedef struct Player_Struct
     float                   gen_sp;
     float                   gen_grace;
 
-    uint32                  no_echo             : 1;    /* If TRUE, don't echo keystrokes */
-    uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
-    uint32                  run_on              : 1;    /* True if run key is on = action key (ALT;CTRL)*/
-    uint32                  resize_twin         : 1;
-    uint32                  resize_twin_marker  : 1;
-    uint32                  firekey_on          : 1;    /* True if fire key is pressed = permanent mode*/
-    uint32                  runkey_on           : 1;    /* sic! */
-    uint32                  echo_bindings       : 1;/* If true, echo the command that the key */
+uint32                  no_echo             : 1;    /* If TRUE, don't echo keystrokes */
+uint32                  fire_on             : 1;    /* True if fire key is pressed = action key (ALT;CTRL)*/
+uint32                  run_on              : 1;    /* True if run key is on = action key (ALT;CTRL)*/
+uint32                  resize_twin         : 1;
+uint32                  resize_twin_marker  : 1;
+uint32                  firekey_on          : 1;    /* True if fire key is pressed = permanent mode*/
+uint32                  runkey_on           : 1;    /* sic! */
+uint32                  echo_bindings       : 1;/* If true, echo the command that the key */
 
     sint32                   window_weight;
     sint32                   real_weight;
@@ -298,8 +304,8 @@ typedef struct Player_Struct
 
     uint8                  *magicmap;   /* Magic map data */
     uint8                   showmagic;  /* If 0, show normal map, otherwise, show
-                                        * magic map.
-                                        */
+                                                * magic map.
+                                                */
     uint8                   command_window; /* How many outstanding commands to allow */
     uint8                   ready_spell;    /* Index to spell that is readied */
     /* player knows */
@@ -324,8 +330,9 @@ typedef struct Player_Struct
     char                    alignment[MAX_BUF]; /* alignment */
     char                    gender[MAX_BUF];    /* Gender */
     char                    range[MAX_BUF]; /* Range attack chosen */
-	char					player_reply[64];
-} Client_Player;
+    char     player_reply[64];
+}
+Client_Player;
 
 extern Client_Player    cpl;        /* Player object. */
 extern char            *skill_names[MAX_SKILL];
@@ -453,7 +460,7 @@ extern char        *resists_name[NUM_RESISTS];
 #define NDI_TELL    0x0400
 #define NDI_GSAY    0x0800
 #define NDI_EMOTE   0x01000
-#define NDI_GM		0x02000 /* Its from a staff member */
+#define NDI_GM  0x02000 /* Its from a staff member */
 #define NDI_PLAYER  0x04000 /* this comes from a player */
 #define NDI_SYSTEM  0x08000 /* if this is set, its a "system" message */
 
@@ -494,8 +501,8 @@ enum
  */
 #define FACE_FLOOR  0x80
 #define FACE_WALL   0x40    /* Or'd into the color value by the server
-                            * right before sending.
-                            */
+* right before sending.
+*/
 #define FACE_COLOR_MASK 0xf
 
 #define UPD_LOCATION    0x01

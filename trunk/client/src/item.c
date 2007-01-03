@@ -32,8 +32,7 @@ static item    *player;
 
 /* This should be modified to read the definition from a file */
 void init_item_types()
-{
-}
+{}
 
 /* This uses the item_types table above.  We try to figure out if
  * name has a match above.  Matching is done pretty loosely - however
@@ -126,10 +125,10 @@ void update_item_sort(item *it)
 char * get_number(int i)
 {
     static char numbers[21][20] =
-    {
-        "no", "a", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
-        "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"
-    };
+        {
+            "no", "a", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+            "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"
+        };
 
     if (i <= 20)
         return numbers[i];
@@ -426,9 +425,9 @@ item * create_new_item(item *env, sint32 tag, int bflag)
  *  Hardcoded now, server could send these at initiation phase.
  */
 static char    *apply_string[]  =
-{
-    "", " (readied)", " (wielded)", " (worn)", " (active)", " (applied)"
-};
+    {
+        "", " (readied)", " (wielded)", " (worn)", " (active)", " (applied)"
+    };
 
 static void set_flag_string(item *op)
 {
@@ -477,14 +476,14 @@ static void get_flags(item *op, int flags)
 static sint32 get_nrof(char *name)
 {
     static char    *numbers[21]     =
-    {
-        "no ", "a ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine ", "ten ", "eleven ",
-        "twelve ", "thirteen ", "fourteen ", "fifteen ", "sixteen ", "seventeen ", "eighteen ", "nineteen ", "twenty "
-    };
+        {
+            "no ", "a ", "two ", "three ", "four ", "five ", "six ", "seven ", "eight ", "nine ", "ten ", "eleven ",
+            "twelve ", "thirteen ", "fourteen ", "fifteen ", "sixteen ", "seventeen ", "eighteen ", "nineteen ", "twenty "
+        };
     static char    *numbers_10[10]  =
-    {
-        "zero ", "ten ", "twenty ", "thirty ", "fourty ", "fifty ", "sixty ", "seventy ", "eighty ", "ninety "
-    };
+        {
+            "zero ", "ten ", "twenty ", "thirty ", "fourty ", "fifty ", "sixty ", "seventy ", "eighty ", "ninety "
+        };
     sint32          nrof            = 0;
     int             i;
 

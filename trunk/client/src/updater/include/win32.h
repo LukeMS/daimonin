@@ -133,7 +133,7 @@
 #define int64 __int64
 #endif
 #ifndef atoll
-#define atoll	_atoi64
+#define atoll _atoi64
 #endif
 
 /* struct dirent - same as Unix */
@@ -143,7 +143,8 @@ typedef struct dirent
     off_t           d_off;              /* offset to this dirent */
     unsigned short  d_reclen;   /* length of d_name */
     char            d_name[_MAX_FNAME + 1]; /* filename (null terminated) */
-}dirent;
+}
+dirent;
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
 
@@ -156,7 +157,8 @@ typedef struct
     struct _finddata_t      fileinfo;   /* from _findfirst/_findnext */
     char                   *dir;                    /* the dir we are reading */
     struct dirent           dent;           /* the dirent to return */
-} DIR;
+}
+DIR;
 
 struct timezone
 {

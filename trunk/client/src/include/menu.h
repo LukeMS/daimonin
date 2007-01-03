@@ -33,7 +33,7 @@
 /* in future, we need a different system - with up to 2 open
  * interfaces... menus like keybind & stuff should be a layer above that. MT-2005
  */
-#define MENU_NPC	 0x80
+#define MENU_NPC  0x80
 #define MENU_BOOK    0x100
 #define MENU_QUEST   0x200
 
@@ -61,14 +61,16 @@ typedef union _quickslot
     {
         Boolean         is_spell; /* do we have an item or a spell in quickslot */
         int             tag;
-    }                   shared;
+    }
+    shared;
     struct
     {
         Boolean         is_spell;
         int             tag;     /* what item/spellNr in quickslot */
         int             invSlot;
         int             nr;
-    }                   item;
+    }
+    item;
     struct
     {
         Boolean         is_spell;
@@ -76,14 +78,17 @@ typedef union _quickslot
         int             spellNr;     /* */
         int             groupNr; /* spellgroup */
         int             classNr; /* spellclass */
-    }                   spell;
+    }
+    spell;
     struct
     {
         Boolean         is_spell;
         int             tag;
         char           *name;
-    }                   name;
-}_quickslot;
+    }
+    name;
+}
+_quickslot;
 extern _quickslot   quick_slots[MAX_QUICK_SLOTS];
 
 typedef struct _media_file
@@ -93,7 +98,8 @@ typedef struct _media_file
     int     type;           /* what is this? (what loaded in buffer) */
     int     p1;             /* parameter 1 */
     int     p2;
-}_media_file;
+}
+_media_file;
 
 
 typedef enum _media_type
@@ -128,7 +134,7 @@ extern int      init_media_tag(char *tag);
 extern void     blt_inventory_face_from_tag(int tag, int x, int y);
 extern int      blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void     do_keybind_input(void);
-extern void		do_npcdialog_input(void);
+extern void  do_npcdialog_input(void);
 
 extern int      read_anim_tmp(void);
 extern int      read_bmap_tmp(void);

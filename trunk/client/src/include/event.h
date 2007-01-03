@@ -28,13 +28,14 @@
 
 typedef struct _button_status
 {
-	int mx,my;			/* current mouse postion */
-	int mx_down,my_down; /* position as button was pressed. -1,-1 means button is not pressed */
-	int mx_up,my_up;	/* if NOT -1,-1, we have a button up */
-	int down;			/* if != -1, we have a button down event */
-	int click;			/* if != -1, we have a down/up button event */
-	int valid;			/* if != -1 = if this is 0, no event manager has used this data for a click, >0 means used */
-} button_status;
+    int mx,my;   /* current mouse postion */
+    int mx_down,my_down; /* position as button was pressed. -1,-1 means button is not pressed */
+    int mx_up,my_up; /* if NOT -1,-1, we have a button up */
+    int down;   /* if != -1, we have a button down event */
+    int click;   /* if != -1, we have a down/up button event */
+    int valid;   /* if != -1 = if this is 0, no event manager has used this data for a click, >0 means used */
+}
+button_status;
 
 typedef struct _key_macro
 {
@@ -44,7 +45,8 @@ typedef struct _key_macro
     int     value;/* a default value for cmds*/
     int     mode;/* the default send mode*/
     int     menu_mode;
-} _key_macro;
+}
+_key_macro;
 
 enum
 {
@@ -97,7 +99,8 @@ typedef struct _keybind_key
     int     entry;                  /* -1: new macro - 0-xx edit entry */
     int     key;
     int     repeat_flag;
-}_keybind_key;
+}
+_keybind_key;
 
 enum
 {
