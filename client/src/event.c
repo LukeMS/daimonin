@@ -2728,7 +2728,7 @@ void check_menu_keys(int menu, int key)
             break;
             /* select prize */
         case SDLK_DOWN:
-            if (gui_interface_npc->icon_count)
+            if (gui_interface_npc->icon_count > 1)
             {
                 int i = gui_interface_npc->selected;
                 do
@@ -2747,7 +2747,7 @@ void check_menu_keys(int menu, int key)
             break;
 
         case SDLK_UP:
-            if (gui_interface_npc->icon_count)
+            if (gui_interface_npc->icon_count > 1)
             {
                 int i = gui_interface_npc->selected;
                 do
