@@ -321,7 +321,7 @@ int StringWidth(_Font *font, char *text)
                 break;
 
             default:
-                w += font->c[(int) (text[i])].w + font->char_offset;
+                w += font->c[(unsigned char) (text[i])].w + font->char_offset;
                 break;
         }
     }
@@ -343,7 +343,7 @@ int StringWidthOffset(_Font *font, char *text, int *line, int len)
                 break;
 
             default:
-                w += font->c[(int) (text[i])].w + font->char_offset;
+                w += font->c[(unsigned char) (text[i])].w + font->char_offset;
                 if (w>=len && !flag)
                 {
                     flag = TRUE;
@@ -429,7 +429,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             continue;
         }
 
-        tmp = font->c[(int) (text[i])].w + font->char_offset;
+        tmp = font->c[(unsigned char) (text[i])].w + font->char_offset;
 
         /* if set, we have a clipping line */
         if (line_clip >= 0)
@@ -440,10 +440,10 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
 
         if (text[i] != 32)
         {
-            src.x = font->c[(int) (text[i])].x;
-            src.y = font->c[(int) (text[i])].y;
-            src.w = font->c[(int) (text[i])].w;
-            src.h = font->c[(int) (text[i])].h;
+            src.x = font->c[(unsigned char) (text[i])].x;
+            src.y = font->c[(unsigned char) (text[i])].y;
+            src.w = font->c[(unsigned char) (text[i])].w;
+            src.h = font->c[(unsigned char) (text[i])].h;
             SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
         }
 
