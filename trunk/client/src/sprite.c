@@ -367,14 +367,13 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     int         colorToggle = 0;
     SDL_Rect    src, dst, dst_tmp;
     SDL_Color   color, color_g;
+    unsigned char actChar =0;
 
     if (area)
         line_clip = area->w;
 
     dst_tmp.x = x; /* .w/h are not used from BlitSurface to draw*/
     dst_tmp.y = y;
-
-
 
     color_g.r = 96;
     color_g.g = 160;
@@ -388,9 +387,10 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     gflag = FALSE;
     for (i = 0; text[i] != '\0'; i++)
     {
+        actChar = text[i];
         dst.x=dst_tmp.x;
         dst.y=dst_tmp.y;
-        if (text[i] == '°' || text[i] == '~') /* change text color */
+        if (actChar == (unsigned char)'°' || actChar == (unsigned char)'~') /* change text color */
         {
             if (col == COLOR_BLACK)
                 continue; /* no highlighting in blak text */
@@ -405,7 +405,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             {
                 color.g = 0xff;
                 color.b = 0x00;
-                if (text[i] == '°')
+                if (actChar == (unsigned char)'°')
                     color.r = 0xff;
                 else
                     color.r = 0x00;
@@ -414,7 +414,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             colorToggle = (colorToggle + 1) & 1;
             continue;
         }
-        if (text[i] == '^')
+        if (actChar == '^')
         {
             if (gflag)
             {
@@ -429,7 +429,20 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             continue;
         }
 
-        tmp = font->c[(unsigned char) (text[i])].w + font->char_offset;
+        /* lets look for smilies in the text. */
+        if (actChar == ':')
+        {
+            if (text[i+1] == '\0') break;
+            else if (text[i+1] == ')') actChar = 128;
+            else if (text[i+1] == '(') actChar = 129;
+            else if (text[i+1] == 'D') actChar = 130;
+            else if (text[i+1] == '|') actChar = 131;
+            else if (text[i+1] == 'o') actChar = 132;
+            else if (text[i+1] == 'p') actChar = 133;
+            if (actChar > 127) ++i;
+        }
+
+        tmp = font->c[actChar].w + font->char_offset;
 
         /* if set, we have a clipping line */
         if (line_clip >= 0)
@@ -438,12 +451,12 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
                 return;
         }
 
-        if (text[i] != 32)
+        if (actChar != 32)
         {
-            src.x = font->c[(unsigned char) (text[i])].x;
-            src.y = font->c[(unsigned char) (text[i])].y;
-            src.w = font->c[(unsigned char) (text[i])].w;
-            src.h = font->c[(unsigned char) (text[i])].h;
+            src.x = font->c[actChar].x;
+            src.y = font->c[actChar].y;
+            src.w = font->c[actChar].w;
+            src.h = font->c[actChar].h;
             SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
         }
 
