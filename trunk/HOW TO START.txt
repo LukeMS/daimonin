@@ -1,6 +1,6 @@
 Welcome to Daimonin BETA 2
 
-Read first FOLDER.txt - it will give you a overview about this package.
+Read first README - it will give you a overview about this package.
 
 In every main folder is usually a README.txt file - read it!
 It will guide you through the specific folders and their content.
