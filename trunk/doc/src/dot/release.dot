@@ -1,0 +1,29 @@
+digraph G {
+    compound=true;
+    subgraph cluster1 {
+        label="branches/";
+        "branches/x.y";
+    }
+    subgraph cluster2 {
+        label="streams/";
+        "streams/*";
+    }
+    subgraph cluster3 {
+        label="tags/";
+        "tags/x.y-preN";
+        "tags/x.y.z-rcN";
+        "tags/x.y.z";
+    }
+    subgraph cluster4 {
+        "trunk";
+    }
+    "trunk" -> "streams/*" [color=red];
+    "trunk" -> "streams/*" [style=dashed color=blue];
+    "trunk" -> "streams/*" [style=dashed color=blue dir=back];
+    "trunk" -> "tags/x.y-preN" [color=red];
+    "trunk" -> "branches/x.y" [color=red];
+    "trunk" -> "branches/x.y" [style=dashed color=blue];
+    "trunk" -> "branches/x.y" [style=dashed color=blue dir=back];
+    "branches/x.y" -> "tags/x.y.z-rcN" [color=red];
+    "branches/x.y" -> "tags/x.y.z" [color=red];
+}
