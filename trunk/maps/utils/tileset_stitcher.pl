@@ -8,15 +8,17 @@
 #   all directories you want to create maps for.
 #
 # - Then, run the script: 
-#   ./tileset_stitcher.pl ../ /relic/castle/castle_0006 test.png
+#   ./tileset_stitcher.pl ../ /relic/castle/castle_0006 test.png small
 
 use GD;
 
-die "Usage: $0 <path-to-map-directory> <one-tile-in-the-set> <output-file.png>\n" unless scalar(@ARGV) == 3;
+die "Usage: $0 <path-to-map-directory> <one-tile-in-the-set> <output-file.png> [big | small]\n" unless scalar(@ARGV) >= 3;
 
 my $mapdir = $ARGV[0];
 my $basemap_path = $ARGV[1];
 my $outfile = $ARGV[2];
+my $hires = 1;
+$hires = 0 if defined $ARGV[3] && $ARGV[3] eq 'small';
 
 my %maps = ();
 my %tilesets = ();
@@ -48,8 +50,7 @@ my $setheight = $ymax - $ymin + 1;
 print "Tileset is $setwidth x $setheight maps\n";
 
 # ISO map size:
-# my ($iso_xlen, $iso_ylen) = (48,23); # tile size
-my ($iso_xlen, $iso_ylen) = (144, 72); # preview size
+my ($iso_xlen, $iso_ylen) = $hires ? (144, 72) : (48,23);
 
 # Origin pixel (pixel position of map @0,0 (in northwest corner))
 my $origin_x = $setheight * int($iso_xlen / 2);
@@ -79,7 +80,7 @@ $image->alphaBlending(1);
 # Insert map thumbnails
 foreach my $map (@$tileset)
 {
-    my $thumb_file = thumbnail_file($map);
+    my $thumb_file = thumbnail_file($map, $hires);
     if(! -f $thumb_file)
     {
         print STDERR "Missing thumbnail: ($thumb_file)\n";
@@ -92,7 +93,7 @@ foreach my $map (@$tileset)
 }
 
 open OUT, ">$outfile" or die "Couldn't open $outfile: $!\n";
-print OUT $image->png;
+print OUT $image->jpeg;
 close OUT;
 
 sub tile_position
@@ -105,10 +106,9 @@ sub tile_position
 
 sub thumbnail_file
 {
-    my ($map) = @_;
+    my ($map, $hires) = @_;
     $map->{fullpath} =~ /^(.*)\/([^\/]*)$/;
-#    return "$1/.dedit/$2.tile";
-    return "$1/.dedit/$2.preview";
+    return $hires ? "$1/.dedit/$2.preview" : "$1/.dedit/$2.tile";
 }
 
 #
