@@ -359,7 +359,7 @@ void SkillRdyCmd(unsigned char *data, int len)
 {
     int i, ii;
 
-    strcpy(cpl.skill_name, data);
+    strcpy(cpl.skill_name, (const char *)data);
 
     /* lets find the skill... and setup the shortcuts to the exp values*/
     for (ii = 0; ii < SKILL_LIST_MAX; ii++)
@@ -403,7 +403,7 @@ void DrawInfoCmd2(char *data, int len)
     int     flags;
     char    *tmp=NULL, buf[2048];
 
-    flags = (int) GetShort_String(data);
+    flags = (int) GetShort_String((unsigned char*)data);
     data += 2;
 
     len -= 2;
@@ -450,7 +450,7 @@ void TargetObject(unsigned char *data, int len)
         sound_play_effect(SOUND_WEAPON_HOLD, 0, 0, 100);
     cpl.target_color = *data++;
     cpl.target_code = *data++;
-    strcpy(cpl.target_name, data);
+    strcpy(cpl.target_name, (const char *)data);
     map_udate_flag = 2;
 
     /*    sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
@@ -674,9 +674,9 @@ void StatsCmd(unsigned char *data, int len)
                 {
                     int   rlen    = data[i++];
 
-                    tmp = strchr(data + i, '\n');
+                    tmp = strchr((char *)data + i, '\n');
                     *tmp = 0;
-                    strcpy(cpl.rank, data + i);
+                    strcpy(cpl.rank, (const char *)data + i);
                     tmp2 = strchr(tmp + 1, '\n');
                     *tmp2 = 0;
                     strcpy(cpl.pname, tmp + 1);
@@ -1002,7 +1002,7 @@ void GroupCmd(unsigned char *data, int len)
         draw_info(buf, COLOR_GREEN);*/
 
         global_group_status = GROUP_MEMBER;
-        tmp = strchr(data, '|');
+        tmp = strchr((char *)data, '|');
         while (tmp)
         {
             tmp++;
@@ -1025,7 +1025,7 @@ void GroupInviteCmd(unsigned char *data, int len)
     else
     {
         global_group_status = GROUP_INVITE;
-        strncpy(group_invite, data, 30);
+        strncpy(group_invite, (const char *)data, 30);
     }
 }
 
@@ -1047,7 +1047,7 @@ void GroupUpdateCmd(unsigned char *data, int len)
     if (!len)
         return;
 
-    tmp = strchr(data, '|');
+    tmp = strchr((char *)data, '|');
     while (tmp)
     {
         tmp++;
@@ -1073,7 +1073,7 @@ void BookCmd(unsigned char *data, int len)
     draw_info(data,COLOR_YELLOW);*/
 
     //gui_book_interface =
-    gui_interface_book = load_book_interface(mode, data, len-4);
+    gui_interface_book = load_book_interface(mode, (char *)data, len-4);
 
 }
 
@@ -1259,7 +1259,7 @@ void Map2Cmd(unsigned char *data, int len)
     map_transfer_flag = 0;
     if (mapstat != MAP_UPDATE_CMD_SAME)
     {
-        strcpy(mapname, data + pos);
+        strcpy(mapname, (const char *)(data + pos));
         pos += strlen(mapname)+1;
         if (mapstat == MAP_UPDATE_CMD_NEW)
         {
@@ -1619,33 +1619,33 @@ void SkilllistCmd(unsigned char *data, int len)
     /*LOG(-1,"sklist: %s\n", data);*/
 
     /* we grap our mode */
-    mode = atoi(data);
+    mode = atoi((const char *)data);
 
     /* now look for the members fo the list we have */
     for (; ;)
     {
-        tmp = strchr(data, '/'); /* find start of a name */
+        tmp = (unsigned char *)strchr((char *)data, '/'); /* find start of a name */
         if (!tmp)
             return;
         data = tmp + 1;
 
-        tmp2 = strchr(data, '/');
+        tmp2 = (unsigned char *)strchr((char*)data, '/');
         if (tmp2)
         {
-            strncpy(name, data, tmp2 - data);
+            strncpy(name, (const char *)data, tmp2 - data);
             name[tmp2 - data] = 0;
             data = tmp2;
         }
         else
-            strcpy(name, data);
+            strcpy(name, (const char *)data);
 
         /*LOG(-1,"sname (%d): >%s<\n", mode, name);*/
-        tmp3 = strchr(name, '|');
+        tmp3 = (unsigned char *)strchr(name, '|');
         *tmp3 = 0;
-        tmp4 = strchr(tmp3 + 1, '|');
+        tmp4 = (unsigned char *)strchr((char *)tmp3 + 1, '|');
 
-        l = atoi(tmp3 + 1);
-        e = atoi(tmp4 + 1);
+        l = atoi((const char *)tmp3 + 1);
+        e = atoi((const char *)tmp4 + 1);
 
         /* we have a name, the level and exp - now setup the list */
         for (ii = 0; ii < SKILL_LIST_MAX; ii++)
@@ -1682,24 +1682,24 @@ void SpelllistCmd(unsigned char *data, int len)
 
     /*LOG(LOG_DEBUG,"slist: <%s>\n", data);*/
     /* we grap our mode */
-    mode = atoi(data);
+    mode = atoi((const char *)data);
 
     for (; ;)
     {
-        tmp = strchr(data, '/'); /* find start of a name */
+        tmp = (unsigned char *)strchr((char *)data, '/'); /* find start of a name */
         if (!tmp)
             return;
         data = tmp + 1;
 
-        tmp2 = strchr(data, '/');
+        tmp2 = (unsigned char *)strchr((char *)data, '/');
         if (tmp2)
         {
-            strncpy(name, data, tmp2 - data);
+            strncpy(name, (const char *)data, tmp2 - data);
             name[tmp2 - data] = 0;
             data = tmp2;
         }
         else
-            strcpy(name, data);
+            strcpy(name, (const char *)data);
 
         /* we have a name - now check the spelllist file and set the entry
            to _KNOWN */
@@ -1743,10 +1743,10 @@ void GolemCmd(unsigned char *data, int len)
 
     /*LOG(LOG_DEBUG,"golem: <%s>\n", data);*/
     /* we grap our mode */
-    mode = atoi(data);
+    mode = atoi((const char *)data);
     if (mode == GOLEM_CTR_RELEASE)
     {
-        tmp = strchr(data, ' '); /* find start of a name */
+        tmp = strchr((char *)data, ' '); /* find start of a name */
         face = atoi(tmp + 1);
         request_face(face, 0);
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
@@ -1758,7 +1758,7 @@ void GolemCmd(unsigned char *data, int len)
     }
     else
     {
-        tmp = strchr(data, ' '); /* find start of a name */
+        tmp = strchr((char *)data, ' '); /* find start of a name */
         face = atoi(tmp + 1);
         request_face(face, 0);
         tmp = strchr(tmp + 1, ' '); /* find start of a name */
