@@ -1,0 +1,284 @@
+Release Example
+
+This is a textual explanation of the release example figure given in release-example.dot resp. release-example.png.
+
+The revision numbers are a time line.  A revision number P that's lower than a revision number Q always denotes a revision that's older, so P was created before Q.  Within a stream, this is visible in the graph, but accross streams this might not always be clearly visible.
+
+Note: The document describes fictive work.  To avoid confusion, I've used fictive developer names: Alice, Bob, Charly and Denise.
+
+1600
+    This is the state where we start.
+
+1601
+    Alice has added a new feature that allows players to create their own chat channels.
+    This feature shall go into version 0.4.
+    She changed server.c and added channel.c and channel.h.
+    She executes the following commands:
+    > cd server
+    > svn add channel.c channel.h
+    > svn propset svn:eol-style native channel.c channel.h
+    > svn propset svn:mime-type text/plain channel.c channel.h
+    > svn commit -m "Implemented Mantis #0000600: Allow chat channels."
+    A      channel.c
+    A      channel.h
+    M      server.c
+    Transmitted Revision 1601.
+
+1602
+    Alice publishes a new prerelease for 0.4.
+    (There obviously already have been three pre-releases prior to what we see in this example.)
+    First, she verifies that everything on trunk/ works fine.
+    Once she verified that, she creates a tag (aka label) for the current trunk called 0.4-pre4.
+    > svn cp https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk https://daimonin.svn.sourceforge.net/svnroot/daimonin/tags/0.4-pre4
+    A      tags/0.4-pre4
+    Transmitted Revision 1602.
+
+1603
+    Bob fixes a bug in some arches which had typos in their names.
+    > cd arch
+    > svn commit -m "Fixed Mantis #0000713: Wrong arch names."
+    M      items/item1.arc
+    M      items/item2.arc
+    M      items/item3.arc
+    M      items/item4.arc
+    M      weapons/weapon1.arc
+    M      weapons/weapon2.arc
+    Transmitted Revision 1603.
+
+1604
+    Charly adds a feature for chat channels that are specific to clans.
+    He executes the following commands:
+    > cd server
+    > svn commit -m "Implemented Mantis #0000815: Support chat channels for clans."
+    M      channel.c
+    M      chat.c
+    M      clans.c
+    M      server.c
+    Transmitted Revision 1604.
+
+1605
+    Denise decides to start a project to reorganize all arches and their images.
+    This is quite a huge project of its own.
+    She wants her own revisions, wants it to be sharable with others but doesn't want to disturb normal work on trunk/.
+    Therefore she decides to create a new stream for that.
+    She detected that Charly's last commit is causing problems for her.
+    Because of that, she wants the stream to be based on the version prior to Charly's commit, 1603, instead of the latest, 1604.
+    > svn cp -r 1603 https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk https://daimonin.svn.sourceforge.net/svnroot/daimonin/streams/raiProject
+    A      streams/raiProject
+    Transmitted Revision 1605.
+
+1606
+    Denise did some first changes. She merges marble1.arc, marble2.arc and marble3.arc into marble.arc.
+    > svn mv marble1.arc marble.arc
+    > svn rm marble2.arc
+    > svn rm marble3.arc
+    > svn commit -m "Fixed marble walls."
+    M      maps/guilds/wizards/marble_0000
+    M      maps/guilds/wizards/marble_0001
+    A      walls/marble/marble.arc
+    D      walls/marble/marble1.arc
+    D      walls/marble/marble2.arc
+    Transmitted Revision 1606.
+
+1607
+    Denise did some more work which we won't detail here.
+
+1608
+    Charly fixed the bug he did in the chat channels for clans.
+    > cd server
+    > svn commit -m "Fixed bug with new chat channels for clans feature."
+    M      channel.c
+    M      chat.c
+    Transmitted Revision 1608.
+
+1609
+    Denise now wants the features that Charly implemented to be merged into her stream.
+    So she performs a rebase.
+    > svn merge -r 1603:1608 trunk streams/raiProject
+    M      channel.c
+    M      chat.c
+    (Checks that everything is okay on streams/raiProject)
+    > svn commit -m "Rebased raiProject to trunk 1608."
+    M      channel.c
+    M      chat.c
+    Transmitted Revision 1609.
+
+1610
+    Denise did some more work which we won't detail here.
+
+1611
+    Denise's changes have brought her raiProject stream into a state that's stable enough to be merged back to trunk/.
+    So she performs a delivery.
+    > svn merge -r 1605:1610 streams/RaiProject trunk
+    (long list with M, A, D and similar)
+    (Checks that everything is okay on trunk)
+    > svn commit -m "Delivered raiProject 1610 to trunk ."
+    (long list with M, A, D and similar)
+    Transmitted Revision 1611.
+
+1612
+    Bob finds Denise's delivery interesting and large enough for another pre-release of 0.4.
+    He checks that trunk/ is in a good state for the release and then creates the release tag.
+    > svn cp https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk https://daimonin.svn.sourceforge.net/svnroot/daimonin/tags/0.4-pre5
+    A      tags/0.4-pre5
+    Transmitted Revision 1612.
+
+1613
+    Alice finds a bug. She fixes it.
+    > cd server
+    > svn commit -m "Fixed bug with time iterating through the first month twice."
+    M      server.c
+    Transmitted Revision 1613.
+
+1614
+    Alice, Bob, Charly and Denise decided that now is the time for a feature freeze for version 0.4.
+    Therefore they create a (release-)branch.
+    > svn cp https://daimonin.svn.sourceforge.net/svnroot/daimonin/trunk https://daimonin.svn.sourceforge.net/svnroot/daimonin/branches/0.4
+    A      branches/0.4
+    Transmitted Revision 1614.
+
+1615
+    Alice fixes a bug that must be fixed for 0.4.
+    So she fixes it on branches/0.4.
+    (Further details are of no interest)
+
+1616
+    Bob implements a new feature.
+    So he implements it on trunk.
+    (Further details are of no interest)
+
+1617
+    Charly fixes a bug that must be fixed for 0.4.
+    So he fixes it on branches/0.4.
+    (Further details are of no interest)
+
+1618
+    Alice, Bob, Charly and Denise decided that now it's a good idea to publish the first release candidate.
+    They find something that needs to be changed for that release candidate, so they do the change.
+    Denise fixes it on branches/0.4.
+    (Further details are of no interest)
+
+1619
+    Alice, Bob, Charly and Denise decided that now it's a good idea to publish the first release candidate (they couldn't last time they wanted because something needed to be changed first).
+    They give it another try.
+    This time after verification of branches/0.4 they couldn't find anything that needs to be changed prior to publishing the release candidate.
+    So they publish it.
+    > svn cp https://daimonin.svn.sourceforge.net/svnroot/daimonin/branches/0.4 https://daimonin.svn.sourceforge.net/svnroot/daimonin/tags/0.4.0-rc1
+    A      tags/0.4.0-rc1
+    Transmitted Revision 1619.
+
+1620
+    Alice implements a new feature.
+
+1621
+    Charly implements a new feature.
+
+1622
+    Denise fixes a bug that must be fixed for 0.4.
+
+1623
+    Bob fixes a bug that must be fixed for 0.4.
+
+1624
+    Another release candidate.
+
+1625
+    Alice continues work on the raiProject stream.
+
+1626
+    Bob implements a new feature.
+
+1627
+    Alice implements a new feature.
+
+1628
+    Denise fixes a bug that must be fixed for 0.4.
+
+1629
+    The bugfixes that were done on 0.4 are now merged back to trunk/.
+
+1630
+    Alice rebases the raiProject stream to include the bugfixes from 0.4 and the new features from trunk.
+
+1631
+    The state of 0.4 is stable enough to be released.
+    Bob creates tags/0.4.0
+
+1632
+    Alice continues work on the raiProject stream.
+
+1633
+    Bob implements a new feature.
+
+1634
+    Alice implements a new feature.
+
+1635
+    Denise continues work on the raiProject stream.
+
+1636
+    Charly wants the new features that were developed on trunk/ to be available on the raiProject stream, so he rebases it.
+
+1637
+    Alice wants the current state of raiProject to be delivered and made available to trunk/ so the dev team can start publishing the first prerelease
+    of 0.5 which should contain the results of raiProject.
+
+1638
+    The first prerelease of 0.5-pre1 is published.
+
+1639
+    A bug in new code (not relevant for 0.4) is fixed.
+
+1640
+    A bug in new code (not relevant for 0.4) is fixed.
+
+1641
+    A new feature is implemented.
+
+1642
+    Feature freeze for 0.5.
+
+1643
+    A bug in new code (not relevant for 0.4 but relevant for 0.5) is fixed.
+
+1644
+    A bug in new code (not relevant for 0.4 but relevant for 0.5) is fixed.
+
+1645
+    A new feature is implemented.
+
+1646
+    A new feature is implemented.
+
+1647
+    A bug (let's call him Xirat) is fixed. This bug is relevant for 0.4. This is the bugfix for 0.5.
+
+1648
+    The Xirat bugfix is delivered to trunk/.
+
+1650
+    A new feature is implemented.
+
+1651
+    Work on raiProject/ that probably shouldn't go into 0.5.
+
+1652
+    Work on raiProject/ that probably shouldn't go into 0.5.
+
+1653
+    Bug fix for 0.5.
+
+1654
+    Bug fix for 0.5
+
+1655
+    The Xirat bugfix now is tested enough to be delivered to 0.4.
+
+1656
+    A release candidate for 0.4 with bugfix is created - 0.4.1-rc1.
+
+1657
+    The release candidate was good enough.
+    A release for 0.4 with bugfix is created - 0.4.1.
+
+
