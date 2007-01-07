@@ -1,0 +1,138 @@
+DAIMONIN README
+---------------
+
+This file contains some important information about DAIMONIN.  You should read
+it first.
+
+
+TABLE OF CONTENTS
+* project description
+* project website
+* system requirements
+* file structure
+* build / installation (see file INSTALL)
+* maintainers / credits (see file CREDITS)
+* project news (see file NEWS)
+* mailing lists
+* license information (see file LICENSE)
+
+
+PROJECT DESCRIPTION
+
+DAIMONIN is a graphical 2d tile-based MMORPG with true color and mp3 sound.
+
+
+PROJECT WEBSITE
+
+Project homepage: http://www.daimonin.net/
+Project website:  http://sourceforge.net/projects/daimonin/
+
+
+SYSTEM REQUIREMENTS
+
+TODO
+
+
+FILE STRUCTURE
+
+Note: a more detailed file structure can be found in the file FOLDERS.txt.
+
+NOTES.txt
+README
+server
+
+arch/
+    Contains the archetypes, which are object prototypes with animations and
+    graphics, plus all information related to archetypes, like treasurelists.
+    This is needed for running a Daimonin server or creating Daimonin content
+    like maps or new archetypes for game objects.
+
+Artistic Credits
+    Lists authors and creators of art files used by Daimonin.
+
+Artistic License
+    License conditions for art files, especially graphics.
+
+bin/
+    Contains some batch files for Windows.
+    TODO: Improve this description.
+    TODO: Is bin/ really a good place for them? I guess no. (Cher)
+
+CHANGES.txt
+    Tracks a history of important changes done to the project.
+
+client/
+    Contains the classical 2d SDL-based client for Daimonin.
+    This is needed for playing daimonin.
+
+client3d/
+    Contains the new 3d client client for Daimonin.
+
+COPYING
+    DAIMONIN license conditions.  Note: applies to DAIMONIN program source only,
+    not third party libraries or art files.
+
+CREDITS
+    List of project contributors.
+
+dev/
+    Contains some binaries for Windows that are needed for the build process
+    plus some useful scripts.
+
+doc/
+    Contains some documentation, for users as well as for developers.
+
+HOW TO START.txt
+    Instructions for newcomers.
+
+INSTALL
+    Installation instructions.
+    structure of some subdirectories.
+
+LICENSE
+    File with license information.
+
+maps/
+    The maps.
+    This is needed for running a Daimonin server or creating Daimonin content
+    like maps or new archetypes for game objects.
+
+NOTES.txt
+    Some useful information for developers.
+
+README
+    This file
+
+server/
+    The game server.
+    This is needed for running your own Daimonin server.
+
+
+BUILD / INSTALLATION
+
+See the file INSTALL.
+
+
+MAINTAINERS / CREDITS
+
+See the file CREDITS
+
+
+PROJECT NEWS
+
+See the file NEWS (no news yet if the file doesn't exist)
+
+
+MAILING LISTS
+
+DAIMONIN mailing lists are the usual sourceforge hosted sourceforge project
+mailing lists.  The current mailing lists are:
+* daimonin-devel@lists.sourceforge.net
+    DAIMONIN developer talk list
+* daimonin-cvs@lists.sourceforge.net
+    svn commit digest list
+
+
+LICENSE INFORMATION
+
+See the file LICENSE

@@ -1,0 +1,18 @@
+BUILDING / INSTALLING DAIMONIN
+------------------------------
+
+
+DAIMONIN consists of components that are installed and run independent of each
+other.  These components are:
+
+client/
+    Contains the classical SDL-based 2D client.
+
+client3d/
+    Contains the new 3D client.
+
+server/
+    Contains the server.
+
+For installation instructions, please refer to the documentation of the
+individual modules.
