@@ -43,94 +43,48 @@
 Client_Player   cpl;
 ClientSocket    csocket;
 
-typedef void (*CmdProc)(unsigned char *, int len);
-
+typedef void (*CmdProc) (unsigned char*, int);
 struct CmdMapping
 {
-    char   *cmdname;
     void (*cmdproc)(unsigned char *, int);
 };
 
-enum
-{
-    BINARY_CMD_COMC = 1,
-    BINARY_CMD_VERSION,
-    BINARY_CMD_DRAWINFO,
-    BINARY_CMD_ADDME_FAIL,
-    BINARY_CMD_MAP2,
-    BINARY_CMD_DRAWINFO2,
-    BINARY_CMD_ITEMX,
-    BINARY_CMD_SOUND,
-    BINARY_CMD_TARGET,
-    BINARY_CMD_UPITEM,
-    BINARY_CMD_DELITEM,
-    BINARY_CMD_STATS,
-    BINARY_CMD_IMAGE,
-    BINARY_CMD_FACE1,
-    BINARY_CMD_ANIM,
-    BINARY_CMD_SKILLRDY,
-    BINARY_CMD_PLAYER,
-    BINARY_CMD_SPELL_LIST,
-    BINARY_CMD_SKILL_LIST,
-    BINARY_CMD_GOLEMCMD,
-    BINARY_CMD_ADDME_SUC,
-    BINARY_CMD_BYE,
-    BINARY_CMD_SETUP,
-    BINARY_CMD_QUERY,
-    BINARY_CMD_DATA,
-    BINARY_CMD_NEW_CHAR,
-    BINARY_CMD_ITEMY,
-    BINARY_CMD_GROUP,
-    BINARY_CMD_INVITE,
-    BINARY_CMD_GROUP_UPDATE,
-    BINARY_CMD_INTERFACE,
-    BINARY_CMD_BOOK,
-    BINARY_CMD_MARK,
-    BINAR_CMD /* last entry */
-};
-
-struct CmdMapping   commands[]  =
+struct CmdMapping commands[]  =
     {
-        /* Order of this table doesn't make a difference.  I tried to sort
-        * of cluster the related stuff together.
-        */
-        { "comc", CompleteCmd},
-        { "version", (CmdProc) VersionCmd },
-        { "drawinfo", (CmdProc) DrawInfoCmd },
-        { "addme_failed", (CmdProc) AddMeFail },
-        { "map2", Map2Cmd },
-        { "drawinfo2", (CmdProc) DrawInfoCmd2 },
-        { "itemx", ItemXCmd },
-        { "sound", SoundCmd},
-        { "to", TargetObject },
-        { "upditem", UpdateItemCmd },
-        { "delitem", DeleteItem },
-        { "stats", StatsCmd },
-        { "image", ImageCmd },
-        { "face1", Face1Cmd},
-        { "anim", AnimCmd},
-        { "skill_rdy", (CmdProc) SkillRdyCmd },
-        { "player", PlayerCmd },
-        { "splist", SpelllistCmd },
-        { "sklist", SkilllistCmd },
-        { "gc", GolemCmd },
-        { "addme_success", (CmdProc) AddMeSuccess },
-        { "goodbye", (CmdProc) GoodbyeCmd },
-        { "setup", (CmdProc) SetupCmd},
-        { "query", (CmdProc) handle_query},
-        { "data", (CmdProc) DataCmd},
-        { "new_char", (CmdProc) NewCharCmd},
-        { "itemy", ItemYCmd },
-        { "group", GroupCmd },
-        { "group_invite", GroupInviteCmd },
-        { "group_update", GroupUpdateCmd },
-        { "interface", InterfaceCmd },
-        { "book", BookCmd },
-        { "mark", MarkCmd },
-
-        /* unused! */
-        { "magicmap", MagicMapCmd},
-        { "delinv", DeleteInventory }
+        /* Don't change this sorting! Its hardcoded in the server. */
+        { CompleteCmd},
+        { (CmdProc) VersionCmd },
+        { (CmdProc) DrawInfoCmd },
+        { (CmdProc) AddMeFail },
+        { Map2Cmd },
+        { (CmdProc) DrawInfoCmd2 },
+        { ItemXCmd },
+        { SoundCmd},
+        { TargetObject },
+        { UpdateItemCmd },
+        { DeleteItem },
+        { StatsCmd },
+        { ImageCmd },
+        { Face1Cmd},
+        { AnimCmd},
+        { SkillRdyCmd },
+        { PlayerCmd },
+        { SpelllistCmd },
+        { SkilllistCmd },
+        { GolemCmd },
+        { (CmdProc) AddMeSuccess },
+        { (CmdProc) GoodbyeCmd },
+        { (CmdProc) SetupCmd},
+        { (CmdProc) handle_query},
+        { DataCmd},
+        { (CmdProc) NewCharCmd},
+        { ItemYCmd },
+        { GroupCmd },
+        { GroupInviteCmd },
+        { GroupUpdateCmd },
+        { InterfaceCmd },
+        { BookCmd },
+        { MarkCmd },
     };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
@@ -145,7 +99,7 @@ void DoClient(ClientSocket *csocket)
     while ( (cmd = get_next_input_command()) ) /* function has mutex included */
     {
         /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd->data[0], LastTick, cmd->len);*/
-        if (!cmd->data[0] || cmd->data[0] >= BINAR_CMD)
+        if (!cmd->data[0] || cmd->data[0] >= NCOMMANDS)
             LOG(LOG_ERROR, "Bad command from server (%d)\n", cmd->data[0]);
         else
         {
