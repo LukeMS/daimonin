@@ -27,7 +27,7 @@
   Example: Vector3(1, 2, 3)
 
 * Use one space before and after operator.
-  Example: if ((a * 3) >0)
+  Example: if ((a * 3) > 0)
 
 * Use brackets to improve readability.
 
@@ -57,10 +57,11 @@
 * For STL containers, use empty() instead of checking size() against zero.
 
 * ++var should be preferred over var++.
+  object++ will be declared in the private section.
 
 * If a base class has virtual functions, derived classes should have the "virtual" keyword repeated for those functions.
 
-* C++ style headers should be preferred over C style.
+* C++ style headers will be preferred over C style.
   Example: #inclue <cstring>
 
 * Prefer standard C++ library and STL functions over C stdlib functions.
@@ -81,3 +82,8 @@
   But inside of a code block its forbidden.
 
 * Use pass-by-reference over pass-by-value when the type passed is larger than one int.
+
+* Don't use exceptions, it will increase the binary size too much.
+
+* Make all single argument constructors (except copy constructor) explicit
+  e.g. explicit test(const object& obj) {...}
