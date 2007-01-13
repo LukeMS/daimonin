@@ -204,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\item.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\light_manager.cpp"
 				>
 			</File>
@@ -233,6 +237,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\object_equipment.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\object_hero.cpp"
 				>
 			</File>
 			<File
@@ -637,6 +645,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\item.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\light_manager.h"
 				>
 			</File>
@@ -658,6 +670,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\object_equipment.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\object_hero.h"
 				>
 			</File>
 			<File

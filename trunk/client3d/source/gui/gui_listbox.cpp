@@ -137,7 +137,10 @@ void GuiListbox::clear()
 void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
 {
     if (index >= GuiGadgetScrollbar::BUTTON_V_ADD)
-        me->scrollTextVertical(scroll);
+    {
+        if (me->mActLines > me->mMaxVisibleRows)
+            me->scrollTextVertical(scroll);
+    }
     else
         me->scrollTextHorizontal(scroll);
 }
@@ -148,25 +151,12 @@ void GuiListbox::scrollbarAction(GuiListbox *me, int index, int scroll)
 //================================================================================================
 int GuiListbox::addTextline(const char *srcText, uint32 default_color)
 {
-    // ////////////////////////////////////////////////////////////////////
-    // Copy the text to a temp buffer, skipping all whitespaces.
-    // ////////////////////////////////////////////////////////////////////
-    int linecount =0;
-    char *buf2 = new char [strlen(srcText)+1];
-    char *text = buf2;
-    for (int i= 0; srcText[i]; ++i)
-    {
-        if (srcText[i] >= 32 || srcText[i] == 0x0a
-                || srcText[i] == GuiTextout::TXT_CMD_SOUND
-                || srcText[i] == GuiTextout::TXT_CMD_LOWLIGHT)
-            *text++ = srcText[i];
-    }
-    *text =0;
+    unsigned char *buf2 = (unsigned char*)GuiTextout::getSingleton().showUserDefinedChars(srcText);
     // ////////////////////////////////////////////////////////////////////
     // Mask out the sound command.
     // ////////////////////////////////////////////////////////////////////
     char *tag, *tagend, savetagend;
-    while ((tag = strchr(buf2, GuiTextout::TXT_CMD_SOUND)))
+    while ((tag = strchr((char*)buf2, GuiTextout::TXT_CMD_SOUND)))
     {
         tagend = strchr(tag, 0x0a);
         if (!tagend)
@@ -185,9 +175,10 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
     // ////////////////////////////////////////////////////////////////////
     // Cut the string to make it fit into the window.
     // ////////////////////////////////////////////////////////////////////
+    int linecount =0;
     int w = 0, dstPos = 0, srcPos =0;
     int ii, ix, it, tx;
-    char buf[4096];
+    unsigned char buf[4096];
     int startLine =0;
     while (1)
     {
@@ -237,7 +228,7 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
             }
             buf[dstPos] =0;
             row[mBufferPos & (SIZE_STRING_BUFFER-1)].color= default_color;
-            row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = buf;
+            row[mBufferPos & (SIZE_STRING_BUFFER-1)].str = (char*)buf;
             row[mBufferPos & (SIZE_STRING_BUFFER-1)].keyword_clipped = mKeyStart;
             row[mBufferPos & (SIZE_STRING_BUFFER-1)].startLine = startLine++;
             ++mBufferPos;
@@ -248,7 +239,7 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
             if (buf2[srcPos] == ' ') ++srcPos;
 
             // hack: because of autoclip we must scan every line again.
-            for (text = buf; *text; ++text)
+            for (unsigned char *text = buf; *text; ++text)
                 if (*text == GuiTextout::TXT_CMD_LINK)
                     mKeyCount = (mKeyCount + 1) & 1;
             if (mKeyCount)
@@ -263,7 +254,6 @@ int GuiListbox::addTextline(const char *srcText, uint32 default_color)
             buf[dstPos++] = buf2[srcPos];
         ++srcPos;
     }
-    delete[] buf2;
     return linecount;
 }
 

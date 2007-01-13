@@ -217,7 +217,7 @@ void ObjectVisuals::setLifebar(Real percent, int barWidth)
         {
             dest_data[x] = (x > xfill)?0xff000000:color;
         }
-        color+= (y < 4)?dColor:-dColor;
+        color+= (y < 4)?dColor:dColor*-1;
         dest_data+= TEXTURE_SIZE;
     }
     for (int x = 0; x < barWidth; ++x) dest_data[x] = 0xff000000;
@@ -259,7 +259,7 @@ void ObjectVisuals::select(ObjectNPC *npc, bool showLifebar, bool showInteractMe
     mNode[VISUAL_LIFEBAR]->setInheritOrientation(false);
     const int FONT_NR = 3;
     const char *name = npc->getNickName().c_str();
-    int len = GuiTextout::getSingleton().CalcTextWidth(name, FONT_NR);
+    int len = GuiTextout::getSingleton().CalcTextWidth((unsigned char*)name, FONT_NR);
     if (len >TEXTURE_SIZE) len = TEXTURE_SIZE;
     len = (TEXTURE_SIZE - len) /2;
     PixelBox pb = mHardwarePB->lock (Box(0, 0, TEXTURE_SIZE, TEXTURE_SIZE), HardwareBuffer::HBL_DISCARD);
@@ -315,7 +315,6 @@ void ObjectVisuals::unselect()
     mNode[VISUAL_LIFEBAR] = 0;
     GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_PLAYERCONSOLE, false);
 }
-
 
 //===================================================
 // .

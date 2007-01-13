@@ -35,93 +35,52 @@ http://www.gnu.org/licenses/licenses.html
 #define CLIENT_PACKAGE_NAME "Daimonin SDL Client"
 
 int SoundStatus=1;
-enum
-{
-    BINARY_CMD_COMC = 1,
-    BINARY_CMD_VERSION,
-    BINARY_CMD_DRAWINFO,
-    BINARY_CMD_ADDME_FAIL,
-    BINARY_CMD_MAP2,
-    BINARY_CMD_DRAWINFO2,
-    BINARY_CMD_ITEMX,
-    BINARY_CMD_SOUND,
-    BINARY_CMD_TARGET,
-    BINARY_CMD_UPITEM,
-    BINARY_CMD_DELITEM,
-    BINARY_CMD_STATS,
-    BINARY_CMD_IMAGE,
-    BINARY_CMD_FACE1,
-    BINARY_CMD_ANIM,
-    BINARY_CMD_SKILLRDY,
-    BINARY_CMD_PLAYER,
-    BINARY_CMD_SPELL_LIST,
-    BINARY_CMD_SKILL_LIST,
-    BINARY_CMD_GOLEMCMD,
-    BINARY_CMD_ADDME_SUC,
-    BINARY_CMD_BYE,
-    BINARY_CMD_SETUP,
-    BINARY_CMD_QUERY,
-    BINARY_CMD_DATA,
-    BINARY_CMD_NEW_CHAR,
-    BINARY_CMD_ITEMY,
-    BINARY_CMD_GROUP,
-    BINARY_CMD_INVITE,
-    BINARY_CMD_GROUP_UPDATE,
-    BINARY_CMD_INTERFACE,
-    BINARY_CMD_BOOK,
-    BINARY_CMD_MARK,
-    BINARY_CMD_SUM
-};
 
 bool Network::GameStatusVersionOKFlag = false;
 bool Network::GameStatusVersionFlag = false;
 bool Network::mInitDone = false;
+
 struct CmdMapping
 {
-    char  *cmdname;
-    void (*cmdproc)(unsigned char *, int len);
+    void (*serverCmd)(unsigned char *, int len);
 };
-struct CmdMapping commands[]  =
-    {
-        // Order of this table doesn't make a difference.
-        // I tried to sort of cluster the related stuff together.
-        { "comc",             Network::CompleteCmd},
-        { "version",          Network::VersionCmd },
-        { "drawinfo",         Network::DrawInfoCmd },
-        { "addme_failed",     Network::AddMeFail },
-        { "map2",             Network::Map2Cmd },
-        { "drawinfo2",        Network::DrawInfoCmd2 },
-        { "itemx",            Network::ItemXCmd },
-        { "sound",            Network::SoundCmd},
-        { "to",               Network::TargetObject },
-        { "upditem",          Network::UpdateItemCmd },
-        { "delitem",          Network::DeleteItem },
-        { "stats",            Network::StatsCmd },
-        { "image",            Network::ImageCmd },
-        { "face1",            Network::Face1Cmd},
-        { "anim",             Network::AnimCmd},
-        { "skill_rdy",        Network::SkillRdyCmd },
-        { "player",           Network::PlayerCmd },
-        { "splist",           Network::SpelllistCmd },
-        { "sklist",           Network::SkilllistCmd },
-        { "gc",               Network::GolemCmd },
-        { "addme_success",    Network::AddMeSuccess },
-        { "goodbye",          Network::GoodbyeCmd },
-        { "setup",            Network::SetupCmd},
-        { "query",            Network::handle_query},
-        { "data",             Network::DataCmd},
-        { "new_char",         Network::NewCharCmd},
-        { "itemy",            Network::ItemYCmd },
-        { "group",            Network::GroupCmd },
-        { "group_invite",     Network::GroupInviteCmd },
-        { "group_update",     Network::GroupUpdateCmd },
-        { "interface",        Network::InterfaceCmd },
-        { "book",             Network::BookCmd },
-        { "mark",             Network::MarkCmd },
-        // unused!
-        { "magicmap",         Network::MagicMapCmd},
-        { "delinv",           Network::DeleteInventory }
+struct CmdMapping  commands[]  =
+    {    // Don't change this sorting! Its hardcoded in the server.
+        { Network::CompleteCmd},
+        { Network::VersionCmd },
+        { Network::DrawInfoCmd },
+        { Network::AddMeFail },
+        { Network::Map2Cmd },
+        { Network::DrawInfoCmd2 },
+        { Network::ItemXCmd },
+        { Network::SoundCmd},
+        { Network::TargetObject },
+        { Network::ItemUpdateCmd },
+        { Network::ItemDeleteCmd },
+        { Network::StatsCmd },
+        { Network::ImageCmd },
+        { Network::Face1Cmd},
+        { Network::AnimCmd},
+        { Network::SkillRdyCmd },
+        { Network::PlayerCmd },
+        { Network::SpelllistCmd },
+        { Network::SkilllistCmd },
+        { Network::GolemCmd },
+        { Network::AddMeSuccess },
+        { Network::GoodbyeCmd },
+        { Network::SetupCmd},
+        { Network::handle_query},
+        { Network::DataCmd},
+        { Network::NewCharCmd},
+        { Network::ItemYCmd },
+        { Network::GroupCmd },
+        { Network::GroupInviteCmd },
+        { Network::GroupUpdateCmd },
+        { Network::InterfaceCmd },
+        { Network::BookCmd },
+        { Network::MarkCmd },
     };
+const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
 Network::ClientSocket Network::csocket;
 bool Network::abort_thread = false;
@@ -137,8 +96,8 @@ SDL_mutex  *Network::socket_mutex =0;
 Network::command_buffer *Network::input_queue_start = 0, *Network::input_queue_end = 0;
 Network::command_buffer *Network::output_queue_start= 0, *Network::output_queue_end= 0;
 
-const int SOCKET_TIMEOUT_MS = 4000;
-const int SOCKET_NO = -1;
+const int TIMEOUT_MS = 4000;
+const int NO = -1;
 
 // Maximum size of any packet we expect.  Using this makes it so we don't need to
 // allocated and deallocated the same buffer over and over again and the price
@@ -148,12 +107,12 @@ const int  MAX_METASTRING_BUFFER = 128*2013;
 const int  MAX_BUF =  256;
 const int  BIG_BUF = 1024;
 const int  STRINGCOMMAND = 0;
-const int  SRV_CLIENT_FLAG_BMAP    = 1;
-const int  SRV_CLIENT_FLAG_ANIM    = 2;
-const int  SRV_CLIENT_FLAG_SETTING = 4;
-const int  SRV_CLIENT_FLAG_SKILL   = 8;
-const int  SRV_CLIENT_FLAG_SPELL   =16;
-const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
+const int  SRV_CLIENT_FLAG_BMAP    = 1 << 0;
+const int  SRV_CLIENT_FLAG_ANIM    = 1 << 1;
+const int  SRV_CLIENT_FLAG_SETTING = 1 << 2;
+const int  SRV_CLIENT_FLAG_SKILL   = 1 << 4;
+const int  SRV_CLIENT_FLAG_SPELL   = 1 << 5;
+const int  MAXMETAWINDOW  = 14; // max. shown server in meta window.
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
 // Maximum size of any packet we expect.  Using this makes it so we don't need to
@@ -197,7 +156,7 @@ inline static char *strerror_local(int errnum)
 //================================================================================================
 //
 //================================================================================================
-int Network::SOCKET_GetError()
+int Network::GetError()
 {
 #ifdef WIN32
     return(WSAGetLastError());
@@ -217,7 +176,7 @@ Network::Network()
 //================================================================================================
 Network::~Network()
 {
-    SOCKET_CloseClientSocket();
+    CloseClientSocket();
 #ifdef WIN32
     WSACleanup();
 #endif
@@ -241,7 +200,7 @@ void Network::clearMetaServerData()
 bool Network::Init()
 {
     if (mInitDone) return true;
-    csocket.fd = SOCKET_NO;
+    csocket.fd = NO;
     csocket.cs_version = 0;
     SocketStatusErrorNr= 0;
 
@@ -266,7 +225,6 @@ bool Network::Init()
     Logger::log().info() <<  "Using socket version " << w.wVersion;
 #endif
     mInitDone = true;
-//    socket_thread_start();
     return true;
 }
 
@@ -303,19 +261,12 @@ void Network::update()
     // Handle all enqueued commands.
     while ((cmd = get_next_input_command()))
     {
-        if (!cmd->data[0] || cmd->data[0] >= BINARY_CMD_SUM)
+        Logger::log().error() << "network cmd: " << cmd->data[0] - 1 << "  " << cmd->data[0];
+
+        if (!cmd->data[0] || cmd->data[0] >= SUM_SERVER_COMMANDS)
             Logger::log().error() << "Bad command from server " << cmd->data[0];
         else
-        {
-            if (cmd->data[0] != BINARY_CMD_DRAWINFO2)
-            {
-                if (cmd->data[0] == BINARY_CMD_DATA)
-                    Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] (...)";
-                else
-                    Logger::log().info() << "Received command [" << commands[cmd->data[0]-1].cmdname << "] " << cmd->data+1;
-            }
-            commands[cmd->data[0] - 1].cmdproc(cmd->data+1, cmd->len-1);
-        }
+            commands[cmd->data[0] - 1].serverCmd(cmd->data+1, cmd->len-1);
         command_buffer_free(cmd);
     }
 }
@@ -557,7 +508,7 @@ int Network::reader_thread_loop(void *)
     }
 out:
     Logger::log().error() << "Reader thread stopped";
-    SOCKET_CloseClientSocket();
+    CloseClientSocket();
     return -1;
 }
 
@@ -607,7 +558,7 @@ int Network::writer_thread_loop(void *nix)
     }
 out:
     Logger::log().info() << "Writer thread stopped";
-    SOCKET_CloseClientSocket();
+    CloseClientSocket();
     return 0;
 }
 
@@ -631,9 +582,9 @@ void Network::socket_thread_stop()
 //================================================================================================
 //
 //================================================================================================
-bool Network::SOCKET_CloseSocket()
+bool Network::CloseSocket()
 {
-    if (csocket.fd == SOCKET_NO)
+    if (csocket.fd == NO)
         return true;
 #ifdef WIN32
     closesocket(csocket.fd);
@@ -646,16 +597,16 @@ bool Network::SOCKET_CloseSocket()
 //================================================================================================
 //
 //================================================================================================
-bool Network::SOCKET_CloseClientSocket()
+bool Network::CloseClientSocket()
 {
     SDL_LockMutex(socket_mutex);
-    if (csocket.fd != SOCKET_NO)
+    if (csocket.fd != NO)
     {
         Logger::log().info() << "CloseClientSocket()";
-        SOCKET_CloseSocket();
+        CloseSocket();
         csocket.inbuf = "";
         csocket.outbuf = "";
-        csocket.fd = SOCKET_NO;
+        csocket.fd = NO;
         abort_thread = true;
         SDL_CondSignal(input_buffer_cond);
         SDL_CondSignal(output_buffer_cond);
@@ -667,9 +618,9 @@ bool Network::SOCKET_CloseClientSocket()
 //================================================================================================
 //
 //================================================================================================
-bool Network::SOCKET_OpenClientSocket(const char *host, int port)
+bool Network::OpenClientSocket(const char *host, int port)
 {
-    if (!SOCKET_OpenSocket(host, port)) return false;
+    if (!OpenSocket(host, port)) return false;
     csocket.command_sent = 0;
     csocket.command_received = 0;
     csocket.command_time = 0;
@@ -685,7 +636,7 @@ bool Network::SOCKET_OpenClientSocket(const char *host, int port)
 //================================================================================================
 //
 //================================================================================================
-bool Network::SOCKET_OpenSocket(const char *host, int port)
+bool Network::OpenSocket(const char *host, int port)
 {
     int             error;
     long            temp;
@@ -707,8 +658,8 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         if (hostbn == (struct hostent *) NULL)
         {
             Logger::log().warning() <<  "Unknown host: "<< host;
-            csocket.fd = SOCKET_NO;
-            return false;
+            csocket.fd = NO;
+            return(false);
         }
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
@@ -716,8 +667,8 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     if (ioctlsocket(csocket.fd, FIONBIO, (u_long*)&temp) == -1)
     {
         Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp)";
-        csocket.fd = SOCKET_NO;
-        return false;
+        csocket.fd = NO;
+        return(false);
     }
     linger_opt.l_onoff = 1;
     linger_opt.l_linger = 5;
@@ -725,14 +676,14 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         Logger::log().error() << "BUG: Error on setsockopt LINGER";
     error = 0;
     start_timer = SDL_GetTicks();
-    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
+    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == ERROR)
     {
         SDL_Delay(30);
         // timeout.... without connect will REALLY hang a long time
-        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+        if (start_timer + TIMEOUT_MS < SDL_GetTicks())
         {
-            csocket.fd = SOCKET_NO;
-            return false;
+            csocket.fd = NO;
+            return(false);
         }
         SocketStatusErrorNr = WSAGetLastError();
         if (SocketStatusErrorNr == WSAEISCONN)  // we have a connect!
@@ -745,8 +696,8 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
             continue;
         }
         Logger::log().warning() <<  "Connect Error: " << SocketStatusErrorNr;
-        csocket.fd = SOCKET_NO;
-        return false;
+        csocket.fd = NO;
+        return(false);
     }
     // we got a connect here!
 
@@ -755,8 +706,8 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     if (ioctlsocket(csocket.fd, FIONBIO, (u_long*)&temp) == -1)
     {
         Logger::log().error() << "ioctlsocket(csocket.fd, FIONBIO , &temp == 0)";
-        csocket.fd = SOCKET_NO;
-        return false;
+        csocket.fd = NO;
+        return(FALSE);
     }
 
     if (getsockopt(csocket.fd, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
@@ -777,7 +728,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
 //================================================================================================
 //
 //================================================================================================
-bool Network::SOCKET_OpenSocket(const char *host, int port)
+bool Network::OpenSocket(const char *host, int port)
 {
     unsigned int  oldbufsize, newbufsize = 65535, buflen = sizeof(int);
     struct linger linger_opt;
@@ -799,7 +750,7 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
     if (csocket.fd == -1)
     {
         Logger::log().error() << "init_connection:  Error on socket command.";
-        csocket.fd = SOCKET_NO;
+        csocket.fd = NO;
         return false;
     }
     insock.sin_family = AF_INET;
@@ -817,32 +768,32 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         memcpy(&insock.sin_addr, hostbn->h_addr, hostbn->h_length);
     }
     // Set non-blocking.
-    flags = fcntl(csocket.fd, F_GETFL);
-    if (fcntl(csocket.fd, F_SETFL, flags | O_NONBLOCK) == -1)
+    flags = fcntl(*socket_temp, F_GETFL);
+    if (fcntl(*socket_temp, F_SETFL, flags | O_NONBLOCK) == -1)
     {
-        Logger::log().error() <<  "Socket switching to non-blocking. fcntl" << fcntl(csocket.fd, F_GETFL);
-        csocket.fd = SOCKET_NO;
-        return false;
+        LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+        *socket_temp = NO;
+        return(FALSE);
     }
     // Try to connect.
     start_timer = SDL_GetTicks();
-    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == -1)
+    while (connect(*socket_temp, (struct sockaddr *) &insock, sizeof(insock)) == -1)
     {
         SDL_Delay(3);
         /* timeout.... without connect will REALLY hang a long time */
-        if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+        if (start_timer + TIMEOUT_MS < SDL_GetTicks())
         {
             perror("Can't connect to server");
-            csocket.fd = SOCKET_NO;
-            return false;
+            *socket_temp = NO;
+            return(FALSE);
         }
     }
     // Set back to blocking.
-    if (fcntl(csocket.fd, F_SETFL, flags) == -1)
+    if (fcntl(*socket_temp, F_SETFL, flags) == -1)
     {
-        Logger::log().error() <<  "Socket switching to non-blocking. fcntl" << fcntl(csocket.fd, F_GETFL);
-        csocket.fd = SOCKET_NO;
-        return false;
+        LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+        *socket_temp = NO;
+        return(FALSE);
     }
 #else
     struct addrinfo hints;
@@ -865,43 +816,43 @@ bool Network::SOCKET_OpenSocket(const char *host, int port)
         csocket.fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
         if (csocket.fd == -1)
         {
-            csocket.fd = SOCKET_NO;
+            csocket.fd = NO;
             continue;
         }
         // Set non-blocking.
-        flags = fcntl(csocket.fd, F_GETFL);
-        if (fcntl(csocket.fd, F_SETFL, flags | O_NONBLOCK) == -1)
+        flags = fcntl(*socket_temp, F_GETFL);
+        if (fcntl(*socket_temp, F_SETFL, flags | O_NONBLOCK) == -1)
         {
-            LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(csocket.fd, F_GETFL));
-            csocket.fd = SOCKET_NO;
-            return false;
+            LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+            *socket_temp = NO;
+            return(FALSE);
         }
         // Try to connect.
         start_timer = SDL_GetTicks();
-        while (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
+        while (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0)
         {
             SDL_Delay(3);
             /* timeout.... without connect will REALLY hang a long time */
-            if (start_timer + SOCKET_TIMEOUT_MS < SDL_GetTicks())
+            if (start_timer + TIMEOUT_MS < SDL_GetTicks())
             {
-                close(csocket.fd);
-                csocket.fd = SOCKET_NO;
+                close(*socket_temp);
+                *socket_temp = NO;
                 goto next_try;
             }
         }
         // Set back to blocking.
-        if (fcntl(csocket.fd, F_SETFL, flags) == -1)
+        if (fcntl(*socket_temp, F_SETFL, flags) == -1)
         {
-            LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(csocket.fd, F_GETFL));
-            csocket.fd = SOCKET_NO;
-            return false;
+            LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
+            *socket_temp = NO;
+            return(FALSE);
         }
         break;
 next_try:
         ;
     }
     freeaddrinfo(res);
-    if (csocket.fd == SOCKET_NO)
+    if (csocket.fd == NO)
     {
         Logger::log().error() << "Can't connect to server";
         return false;
@@ -1009,16 +960,16 @@ void Network::read_metaserver_data()
 void Network::contactMetaserver()
 {
     clearMetaServerData();
-    csocket.fd = SOCKET_NO;
+    csocket.fd = NO;
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "query metaserver...");
     std::stringstream strBuf;
     strBuf << "trying " << DEFAULT_METASERVER << " " << DEFAULT_METASERVER_PORT;
     GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.str().c_str());
-    if (SOCKET_OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
+    if (OpenSocket(DEFAULT_METASERVER, DEFAULT_METASERVER_PORT))
     {
         read_metaserver_data();
-        SOCKET_CloseSocket();
+        CloseSocket();
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "done.");
     }
     else

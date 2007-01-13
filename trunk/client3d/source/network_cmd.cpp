@@ -37,6 +37,7 @@ http://www.gnu.org/licenses/licenses.html
 #include "gui_window_dialog.h"
 #include "network_serverfile.h"
 #include "object_manager.h"
+#include "item.h"
 
 using namespace std;
 
@@ -53,7 +54,7 @@ enum {MAP_UPDATE_CMD_SAME, MAP_UPDATE_CMD_NEW, MAP_UPDATE_CMD_CONNECTED};
 //================================================================================================
 // Ascii to int (32bit).
 //================================================================================================
-int GetInt_String(unsigned char *data)
+int Network::GetInt_String(unsigned char *data)
 {
     return ((data[0] << 24) + (data[1] << 16) + (data[2] << 8) + data[3]);
 }
@@ -61,7 +62,7 @@ int GetInt_String(unsigned char *data)
 //================================================================================================
 // Ascii to short (16bit).
 //================================================================================================
-short GetShort_String(unsigned char *data)
+short Network::GetShort_String(unsigned char *data)
 {
     return ((data[0] << 8) + data[1]);
 }
@@ -107,7 +108,7 @@ void Network::VersionCmd(unsigned char *data, int len)
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Update your client!");
             Logger::log().error() << "The client is outdated.";
         }
-        SOCKET_CloseSocket();
+        CloseSocket();
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
@@ -119,7 +120,7 @@ void Network::VersionCmd(unsigned char *data, int len)
         strCmd << "Invalid version string: " << data;
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strCmd.str().c_str());
         Logger::log().error() << data;
-        SOCKET_CloseSocket();
+        CloseSocket();
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
@@ -137,7 +138,7 @@ void Network::VersionCmd(unsigned char *data, int len)
             strBuf = "Your client is outdated!\nUpdate your client!";
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.c_str());
         Logger::log().error() << strBuf;
-        SOCKET_CloseSocket();
+        CloseSocket();
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
@@ -149,7 +150,7 @@ void Network::VersionCmd(unsigned char *data, int len)
         strBuf+= cp;
         GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, strBuf.c_str());
         Logger::log().error() << strBuf;
-        SOCKET_CloseSocket();
+        CloseSocket();
         Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
         SDL_Delay(3250);
         return;
@@ -182,7 +183,7 @@ void Network::DrawInfoCmd(unsigned char *data, int len)
 void Network::AddMeFail(unsigned char *data, int len)
 {
     Logger::log().error() << "addme_failed received.\n";
-    SOCKET_CloseSocket();
+    CloseSocket();
     SDL_Delay(1250);
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
 }
@@ -480,14 +481,6 @@ void Network::DrawInfoCmd2(unsigned char *data, int len)
 }
 
 //================================================================================================
-// ItemXCmd is ItemCmd with sort order normal (add to end.
-//================================================================================================
-void Network::ItemXCmd(unsigned char *data, int len)
-{
-    // ItemXYCmd(data, len, false);
-}
-
-//================================================================================================
 // .
 //================================================================================================
 
@@ -669,119 +662,6 @@ void Network::TargetObject(unsigned char *data, int len)
         (buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
         GuiManager::getSingleton().sendMessage(GUI_WIN_TEXTWINDOW, GUI_MSG_ADD_TEXTLINE, GUI_LIST_MSGWIN, (void*)buf);
     */
-}
-
-//================================================================================================
-// UpdateItemCmd updates some attributes of an item.
-//================================================================================================
-void Network::UpdateItemCmd(unsigned char *data, int len)
-{
-    /*
-        int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
-        uint8   direction;
-        char    name[MAX_BUF];
-        item   *ip, *env = NULL;
-        uint8   animspeed;
-
-        TileManager::getSingleton().map_udate_flag = 2;
-        sendflags = GetShort_String(data);
-        pos += 2;
-        tag = GetInt_String(data + pos);
-        pos += 4;
-        ip = locate_item(tag);
-        if (!ip)
-        {
-            return;
-        }
-        *name = '\0';
-        loc = ip->env ? ip->env->tag : 0;
-        // Logger::log().error() <<  "UPDATE: loc: "<< loc << " tag: "<<  tag;
-        weight = ip->weight;
-        face = ip->face;
-        request_face(face, 0);
-        flags = ip->flagsval;
-        anim = ip->animation_id;
-        animspeed = (uint8) ip->anim_speed;
-        nrof = ip->nrof;
-        direction = ip->direction;
-
-        if (sendflags & UPD_LOCATION)
-        {
-            loc = GetInt_String(data + pos);
-            env = locate_item(loc);
-            if (!env)
-                Logger::log().error() << "UpdateItemCmd: unknown object tag "<<loc << " for new location";
-            pos += 4;
-        }
-        if (sendflags & UPD_FLAGS)
-        {
-            flags = GetInt_String(data + pos);
-            pos += 4;
-        }
-        if (sendflags & UPD_WEIGHT)
-        {
-            weight = GetInt_String(data + pos);
-            pos += 4;
-        }
-        if (sendflags & UPD_FACE)
-        {
-            face = GetInt_String(data + pos);
-            request_face(face, 0);
-            pos += 4;
-        }
-        if (sendflags & UPD_DIRECTION)
-            direction = data[pos++];
-        if (sendflags & UPD_NAME)
-        {
-            nlen = data[pos++];
-            memcpy(name, (char *) data + pos, nlen);
-            pos += nlen;
-            name[nlen] = '\0';
-        }
-        if (pos > len)
-        {
-            Logger::log().error() << "UpdateItemCmd: Overread buffer: " << pos << " > " << len;
-            return;
-        }
-        if (sendflags & UPD_ANIM)
-        {
-            anim = GetShort_String(data + pos);
-            pos += 2;
-        }
-        if (sendflags & UPD_ANIMSPEED)
-        {
-            animspeed = data[pos++];
-        }
-        if (sendflags & UPD_NROF)
-        {
-            nrof = GetInt_String(data + pos);
-            pos += 4;
-        }
-        if (sendflags & UPD_QUALITY)
-     {
-            quality = (int)(data[pos++]);
-            condition = (int)(data[pos++]);
-     }
-        update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
-                    false);
-        TileManager::getSingleton().map_udate_flag = 2;
-    */
-}
-
-//================================================================================================
-// .
-//================================================================================================
-void Network::DeleteItem(unsigned char *data, int len)
-{
-    int pos = 0, tag;
-    while (pos < len)
-    {
-        tag = GetInt_String(data); pos += 4;
-        //delete_item(tag);
-    }
-    if (pos > len)
-        Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
-    //TileManager::getSingleton().map_udate_flag = 2;
 }
 
 //================================================================================================
@@ -1506,7 +1386,7 @@ void Network::SetupCmd(unsigned char *buf, int len)
         {
             Logger::log().error() << "Got setup for a command we don't understand: " << cmd << " " << param;
             GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "~The server is outdated!\nSelect a different one!~");
-            SOCKET_CloseSocket();
+            CloseSocket();
             Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
             return;
         }
@@ -1614,14 +1494,6 @@ void Network::NewCharCmd(unsigned char *data, int len)
 {
     //dialog_new_char_warn = 0;
     Option::getSingleton().setGameStatus(Option::GAME_STATUS_NEW_CHAR);
-}
-
-//================================================================================================
-// ItemYCmd is ItemCmd with sort order reversed (add to front).
-//================================================================================================
-void Network::ItemYCmd(unsigned char *data, int len)
-{
-    // ItemXYCmd(data, len, true);
 }
 
 //================================================================================================
@@ -1761,27 +1633,6 @@ void Network::MarkCmd(unsigned char *data, int len)
 }
 
 //================================================================================================
-// .
-//================================================================================================
-void Network::MagicMapCmd(unsigned char *data, int len)
-{}
-
-//================================================================================================
-// .
-//================================================================================================
-void Network::DeleteInventory(unsigned char *data, int len)
-{
-    int tag = atoi((const char *) data);
-    if (tag < 0)
-    {
-        Logger::log().error() << "DeleteInventory: Invalid tag: " << tag;
-        return;
-    }
-    //remove_item_inventory(locate_item(tag));
-    //TileManager::getSingleton().map_udate_flag = 2;
-}
-
-//================================================================================================
 //
 //================================================================================================
 void Network::PreParseInfoStat(char *cmd)
@@ -1863,4 +1714,133 @@ void Network::CreatePlayerAccount()
 {
     //   (buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
     cs_write_string("nc human_male 14 14 13 12 12 12 12 0");
+}
+
+//================================================================================================
+// UpdateItemCmd updates some attributes of an item.
+//================================================================================================
+void Network::ItemUpdateCmd(unsigned char *data, int len)
+{
+    /*
+        int     weight, loc, tag, face, sendflags, flags, pos = 0, nlen, anim, nrof, quality=254, condition=254;
+        uint8   direction;
+        char    name[MAX_BUF];
+        item   *ip, *env = NULL;
+        uint8   animspeed;
+
+        TileManager::getSingleton().map_udate_flag = 2;
+        sendflags = GetShort_String(data);
+        pos += 2;
+        tag = GetInt_String(data + pos);
+        pos += 4;
+        ip = locate_item(tag);
+        if (!ip)
+        {
+            return;
+        }
+        *name = '\0';
+        loc = ip->env ? ip->env->tag : 0;
+        // Logger::log().error() <<  "UPDATE: loc: "<< loc << " tag: "<<  tag;
+        weight = ip->weight;
+        face = ip->face;
+        request_face(face, 0);
+        flags = ip->flagsval;
+        anim = ip->animation_id;
+        animspeed = (uint8) ip->anim_speed;
+        nrof = ip->nrof;
+        direction = ip->direction;
+
+        if (sendflags & UPD_LOCATION)
+        {
+            loc = GetInt_String(data + pos);
+            env = locate_item(loc);
+            if (!env)
+                Logger::log().error() << "UpdateItemCmd: unknown object tag "<<loc << " for new location";
+            pos += 4;
+        }
+        if (sendflags & UPD_FLAGS)
+        {
+            flags = GetInt_String(data + pos);
+            pos += 4;
+        }
+        if (sendflags & UPD_WEIGHT)
+        {
+            weight = GetInt_String(data + pos);
+            pos += 4;
+        }
+        if (sendflags & UPD_FACE)
+        {
+            face = GetInt_String(data + pos);
+            request_face(face, 0);
+            pos += 4;
+        }
+        if (sendflags & UPD_DIRECTION)
+            direction = data[pos++];
+        if (sendflags & UPD_NAME)
+        {
+            nlen = data[pos++];
+            memcpy(name, (char *) data + pos, nlen);
+            pos += nlen;
+            name[nlen] = '\0';
+        }
+        if (pos > len)
+        {
+            Logger::log().error() << "UpdateItemCmd: Overread buffer: " << pos << " > " << len;
+            return;
+        }
+        if (sendflags & UPD_ANIM)
+        {
+            anim = GetShort_String(data + pos);
+            pos += 2;
+        }
+        if (sendflags & UPD_ANIMSPEED)
+        {
+            animspeed = data[pos++];
+        }
+        if (sendflags & UPD_NROF)
+        {
+            nrof = GetInt_String(data + pos);
+            pos += 4;
+        }
+        if (sendflags & UPD_QUALITY)
+     {
+            quality = (int)(data[pos++]);
+            condition = (int)(data[pos++]);
+     }
+        update_item(tag, loc, name, weight, face, flags, anim, animspeed, nrof, 254, 254, quality, condition, 254, 254, direction,
+                    false);
+        TileManager::getSingleton().map_udate_flag = 2;
+    */
+}
+
+//================================================================================================
+// .
+//================================================================================================
+void Network::ItemDeleteCmd(unsigned char *data, int len)
+{
+    int pos = 0, tag;
+    while (pos < len)
+    {
+        tag = GetInt_String(data); pos += 4;
+        //delete_item(tag);
+    }
+    if (pos > len)
+        Logger::log().error() <<  "DeleteCmd: Overread buffer: " << pos << " > " << len;
+    //TileManager::getSingleton().map_udate_flag = 2;
+}
+
+//================================================================================================
+// ItemCmd with sort order normal (add to end.
+//================================================================================================
+void Network::ItemXCmd(unsigned char *data, int len)
+{
+    Item::getSingleton().ItemXYCmd(data, len, false);
+}
+
+//================================================================================================
+// ItemCmd with sort order reversed (add to front).
+//================================================================================================
+void Network::ItemYCmd(unsigned char *data, int len)
+{
+    Item::getSingleton().ItemXYCmd(data, len, true);
 }

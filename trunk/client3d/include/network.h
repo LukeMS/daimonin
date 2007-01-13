@@ -55,7 +55,6 @@ public:
     enum {SC_NORMAL, SC_FIRERUN, SC_ALWAYS};
     enum {VERSION_CS = 991022};
     enum {VERSION_SC = 991022};
-
     typedef struct command_buffer
     {
         struct command_buffer *next; // Next in queue.
@@ -110,6 +109,8 @@ public:
     bool Init();
     void clearMetaServerData();
 
+    static int   GetInt_String(unsigned char *data);
+    static short GetShort_String(unsigned char *data);
     static command_buffer *get_next_input_command();
     static command_buffer *command_buffer_new(unsigned int len, unsigned char *data);
     static command_buffer *command_buffer_dequeue(command_buffer **queue_start, command_buffer **queue_end);
@@ -134,18 +135,18 @@ public:
     {
         mActServerNr = nr;
     }
-    bool SOCKET_InitSocket();
-    bool SOCKET_OpenSocket(const char *host, int port);
-    bool SOCKET_OpenClientSocket(const char *host, int port);
+    bool InitSocket();
+    bool OpenSocket(const char *host, int port);
+    bool OpenClientSocket(const char *host, int port);
     bool OpenActiveServerSocket()
     {
-        return SOCKET_OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
+        return OpenClientSocket(mvServer[mActServerNr]->ip.c_str(), mvServer[mActServerNr]->port);
     }
-    static bool SOCKET_CloseSocket();
-    static bool SOCKET_CloseClientSocket();
+    static bool CloseSocket();
+    static bool CloseClientSocket();
     static void send_reply(const char *text);
     static void cs_write_string(const char *buf);
-    int  SOCKET_GetError();  // returns socket error
+    int  GetError();  // returns socket error
     void read_metaserver_data();
     bool handle_socket_shutdown();
     void update();
@@ -157,14 +158,11 @@ public:
     static void CompleteCmd    (unsigned char *data, int len);
     static void VersionCmd     (unsigned char *data, int len);
     static void DrawInfoCmd    (unsigned char *data, int len);
+    static void DrawInfoCmd2   (unsigned char *data, int len);
     static void AddMeFail      (unsigned char *data, int len);
     static void Map2Cmd        (unsigned char *data, int len);
-    static void DrawInfoCmd2   (unsigned char *data, int len);
-    static void ItemXCmd       (unsigned char *data, int len);
     static void SoundCmd       (unsigned char *data, int len);
     static void TargetObject   (unsigned char *data, int len);
-    static void UpdateItemCmd  (unsigned char *data, int len);
-    static void DeleteItem     (unsigned char *data, int len);
     static void StatsCmd       (unsigned char *data, int len);
     static void ImageCmd       (unsigned char *data, int len);
     static void Face1Cmd       (unsigned char *data, int len);
@@ -180,15 +178,19 @@ public:
     static void handle_query   (unsigned char *data, int len);
     static void DataCmd        (unsigned char *data, int len);
     static void NewCharCmd     (unsigned char *data, int len);
-    static void ItemYCmd       (unsigned char *data, int len);
-    static void GroupCmd       (unsigned char *data, int len);
-    static void GroupInviteCmd (unsigned char *data, int len);
-    static void GroupUpdateCmd (unsigned char *data, int len);
     static void InterfaceCmd   (unsigned char *data, int len);
     static void BookCmd        (unsigned char *data, int len);
     static void MarkCmd        (unsigned char *data, int len);
-    static void MagicMapCmd    (unsigned char *data, int len);
-    static void DeleteInventory(unsigned char *data, int len);
+
+    static void GroupCmd       (unsigned char *data, int len);
+    static void GroupInviteCmd (unsigned char *data, int len);
+    static void GroupUpdateCmd (unsigned char *data, int len);
+
+    static void ItemXCmd       (unsigned char *data, int len);
+    static void ItemYCmd       (unsigned char *data, int len);
+    static void ItemUpdateCmd  (unsigned char *data, int len);
+    static void ItemDeleteCmd  (unsigned char *data, int len);
+
     // Commands helper.
     static int  request_face(int, int);
     static void CreatePlayerAccount();
