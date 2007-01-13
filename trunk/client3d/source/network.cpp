@@ -110,8 +110,8 @@ const int  STRINGCOMMAND = 0;
 const int  SRV_CLIENT_FLAG_BMAP    = 1 << 0;
 const int  SRV_CLIENT_FLAG_ANIM    = 1 << 1;
 const int  SRV_CLIENT_FLAG_SETTING = 1 << 2;
-const int  SRV_CLIENT_FLAG_SKILL   = 1 << 4;
-const int  SRV_CLIENT_FLAG_SPELL   = 1 << 5;
+const int  SRV_CLIENT_FLAG_SKILL   = 1 << 3;
+const int  SRV_CLIENT_FLAG_SPELL   = 1 << 4;
 const int  MAXMETAWINDOW  = 14; // max. shown server in meta window.
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
@@ -676,7 +676,7 @@ bool Network::OpenSocket(const char *host, int port)
         Logger::log().error() << "BUG: Error on setsockopt LINGER";
     error = 0;
     start_timer = SDL_GetTicks();
-    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == ERROR)
+    while (connect(csocket.fd, (struct sockaddr *) &insock, sizeof(insock)) == SOCKET_ERROR)
     {
         SDL_Delay(30);
         // timeout.... without connect will REALLY hang a long time
@@ -735,7 +735,8 @@ bool Network::OpenSocket(const char *host, int port)
     int flags;
     uint32 start_timer;
     /* Use new (getaddrinfo()) or old (gethostbyname()) socket API */
-#ifndef HAVE_GETADDRINFO
+#if 0
+//#ifndef HAVE_GETADDRINFO
     /* This method is preferable unless IPv6 is required, due to buggy distros. See mantis 0000425 */
     struct protoent *protox;
     struct sockaddr_in  insock;
@@ -820,32 +821,32 @@ bool Network::OpenSocket(const char *host, int port)
             continue;
         }
         // Set non-blocking.
-        flags = fcntl(*socket_temp, F_GETFL);
-        if (fcntl(*socket_temp, F_SETFL, flags | O_NONBLOCK) == -1)
+        flags = fcntl(csocket.fd, F_GETFL);
+        if (fcntl(csocket.fd, F_SETFL, flags | O_NONBLOCK) == -1)
         {
-            LOG(LOG_ERROR, "socket: Error on switching to non-blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
-            *socket_temp = NO_SOCKET;
-            return(FALSE);
+            Logger::log().error() << "socket: Error on switching to non-blocking.";
+            csocket.fd = NO_SOCKET;
+            return false;
         }
         // Try to connect.
         start_timer = SDL_GetTicks();
-        while (connect(*socket_temp, ai->ai_addr, ai->ai_addrlen) != 0)
+        while (connect(csocket.fd, ai->ai_addr, ai->ai_addrlen) != 0)
         {
             SDL_Delay(3);
             /* timeout.... without connect will REALLY hang a long time */
             if (start_timer + TIMEOUT_MS < SDL_GetTicks())
             {
-                close(*socket_temp);
-                *socket_temp = NO_SOCKET;
+                close(csocket.fd);
+                csocket.fd = NO_SOCKET;
                 goto next_try;
             }
         }
         // Set back to blocking.
-        if (fcntl(*socket_temp, F_SETFL, flags) == -1)
+        if (fcntl(csocket.fd, F_SETFL, flags) == -1)
         {
-            LOG(LOG_ERROR, "socket: Error on switching to blocking.fcntl %x.\n", fcntl(*socket_temp, F_GETFL));
-            *socket_temp = NO_SOCKET;
-            return(FALSE);
+            Logger::log().error() << "socket: Error on switching to blocking.";
+            csocket.fd = NO_SOCKET;
+            return false;
         }
         break;
 next_try:
