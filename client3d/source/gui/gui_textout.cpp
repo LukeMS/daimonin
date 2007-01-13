@@ -107,7 +107,7 @@ GuiTextout::~GuiTextout()
         delete (*i);
     }
     mvFont.clear();
-	for (std::vector<mSpecialChar*>::iterator i = mvSpecialChar.begin(); i < mvSpecialChar.end(); ++i)
+    for (std::vector<mSpecialChar*>::iterator i = mvSpecialChar.begin(); i < mvSpecialChar.end(); ++i)
         delete (*i);
     mvSpecialChar.clear();
     if (mTextGfxBuffer) delete[] mTextGfxBuffer;
@@ -413,27 +413,21 @@ void GuiTextout::PrintToBuffer(int width, int height, uint32 *dest_data, const c
 //================================================================================================
 // Print text into a given background. All stuff beyond width/height will be clipped.
 //================================================================================================
-void GuiTextout::drawText(int width, int height, uint32 *dest_data, String txt, bool hideText, unsigned int fontNr, uint32 color)
+void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr, uint32 color)
 {
-    if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
+    if (fontNr >= mvFont.size()) fontNr = 0;
     uint32 pixFont, pixColor;
     uint32 colorBack = color;
     int srcRow, dstRow, stopX, clipX=0;
     unsigned char chr;
 
-    // Look for userdifined chars in the text.
-    size_t found;
-    char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
-    for (unsigned int i=0; i < mvSpecialChar.size();++i)
-    {
-        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= string::npos)
-            txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
-        ++replacement[0];
-    }
-    const char *text = txt.c_str();
-
     while (*text)
     {
+        if ((unsigned char) *text < 32)
+        {
+            ++text;
+            continue;
+        }
         // Parse format commands.
         switch (*text)
         {
@@ -509,10 +503,11 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, String txt, 
 //================================================================================================
 // Calculate the gfx-width for the given text.
 //================================================================================================
-int GuiTextout::CalcTextWidth(const char *text, unsigned int fontNr)
+int GuiTextout::CalcTextWidth(unsigned char *text, unsigned int fontNr)
 {
     int x =0;
-    if (fontNr >= (unsigned int)mvFont.size()) fontNr = 0;
+    if (fontNr >= mvFont.size()) fontNr = 0;
+
     while (*text)
     {
         switch (*text)
@@ -543,9 +538,28 @@ int GuiTextout::CalcTextWidth(const char *text, unsigned int fontNr)
 //================================================================================================
 // Calculate the gfx-width for the given text.
 //================================================================================================
-int GuiTextout::getCharWidth(int fontNr, int Char)
+int GuiTextout::getCharWidth(int fontNr, char Char)
 {
-    if (Char < 32) return 0;
+    if ((unsigned char) Char < 32) return 0;
     if (fontNr >= (int)mvFont.size()) fontNr = 0;
-    return mvFont[fontNr]->charWidth[Char-32];
+    return mvFont[fontNr]->charWidth[(unsigned char)(Char-32)]-1;
+}
+
+//================================================================================================
+// Calculate the gfx-width for the given text.
+//================================================================================================
+const char *GuiTextout::showUserDefinedChars(const char *XmlUserChars)
+{
+    static String txt;
+    txt = XmlUserChars;
+    // Look for userdefined chars in the text.
+    size_t found;
+    char replacement[] = {(char)(STANDARD_CHARS_IN_FONT+32),0};
+    for (unsigned int i=0; i < mvSpecialChar.size();++i)
+    {
+        while ((found = txt.find(mvSpecialChar[i]->strGfxCode))!= string::npos)
+            txt.replace(found, mvSpecialChar[i]->strGfxCode.size(), replacement);
+        ++replacement[0];
+    }
+    return txt.c_str();
 }

@@ -92,7 +92,7 @@ public:
     void createBuffer(int width = MAX_TEXTLINE_LEN);
     void Print(TextLine *line, Texture *texture);
     void PrintToBuffer(int width, int height, uint32 *dest_data, const char*text, unsigned int font, uint32 color = COLOR_WHITE);
-    int CalcTextWidth(const char *text, unsigned int fontNr = 0);
+    int CalcTextWidth(unsigned char *text, unsigned int fontNr = 0);
     int getFontHeight(int fontNr)
     {
         return mvFont[fontNr]->height;
@@ -101,7 +101,8 @@ public:
     {
         return mMaxFontHeight;
     }
-    int getCharWidth(int fontNr, int Char);
+    int getCharWidth(int fontNr, char Char);
+    const char *showUserDefinedChars(const char *XmlUserChars);
 
 private:
     // ////////////////////////////////////////////////////////////////////
@@ -152,7 +153,7 @@ private:
     GuiTextout();
     ~GuiTextout();
     GuiTextout(const GuiTextout&); // disable copy-constructor.
-    void drawText(int width, int height, uint32 *dest_data, String text, bool hideText, unsigned int fontNr = 0, uint32 color = 0x00ffffff);
+    void drawText(int width, int height, uint32 *dest_data, const char *text, bool hideText, unsigned int fontNr = 0, uint32 color = 0x00ffffff);
 };
 
 #endif

@@ -375,6 +375,13 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../include/item.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../include/light_manager.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
@@ -411,6 +418,13 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../include/object_equipment.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../include/object_hero.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -509,6 +523,13 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../include/tile_map.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../include/tile_map_wrapper.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -652,6 +673,11 @@
 			<Option target="32bit" />
 			<Option target="64bit" />
 		</Unit>
+		<Unit filename="../../../source/item.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
 		<Unit filename="../../../source/light_manager.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
@@ -688,6 +714,11 @@
 			<Option target="64bit" />
 		</Unit>
 		<Unit filename="../../../source/object_equipment.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="32bit" />
+			<Option target="64bit" />
+		</Unit>
+		<Unit filename="../../../source/object_hero.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="32bit" />
 			<Option target="64bit" />

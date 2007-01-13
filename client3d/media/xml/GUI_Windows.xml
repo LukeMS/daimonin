@@ -126,12 +126,75 @@
   </Window>
 
   <!--#############################################-->
+  <!--WINDOW: Chat Window                          -->
+  <!--#############################################-->
+  <Window name= "ChatWindow">
+    <Size     width= "280" height= "269" />
+    <Alignment x="right" />
+    <Pos       x= "280"  y= "0" zOrder = "401" />
+    <DragArea  x= "0"    y= "0" width= "280" height= "18" />
+    <Tooltip  text= "Chat Window." />
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Background">
+      <Pos x= "0" y= "0" />
+      <Range width= "280" height= "18" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_TL_Edge">
+      <Pos x= "0" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "0" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_TR_Edge">
+      <Pos x= "271" y= "0" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BL_Edge">
+      <Pos x= "0" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_Line_H">
+      <Pos x= "10" y= "13" />
+      <Range width= "260" height= "5" />
+    </Graphic>
+
+    <Graphic type= "GFX_FILL"  image_name = "Red_BR_Edge">
+      <Pos x= "271" y= "9" />
+      <Range width= "9" height= "9" />
+    </Graphic>
+
+    <Listbox type= "COLOR_FILL" name= "List_Msg" font="02">
+      <Pos x= "1" y= "18" />
+      <Range width= "262" height= "251" />
+      <Color red= "60" green= "56" blue= "31" alpha = "200" />
+      <Gadget type= "SCROLLER" name = "VScrollbar">
+         <Pos x= "263" y= "18" />
+         <Range width= "16" height= "251" />
+         <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+         <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+         <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+         <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+         <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+         <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
+         <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
+      </Gadget>
+    </Listbox>
+  </Window>
+
+  <!--#############################################-->
   <!--WINDOW: Message Window                       -->
   <!--#############################################-->
   <Window name= "TextWindow">
     <Size     width= "280" height= "269" />
     <Alignment x="right" />
-    <Pos       x= "280"  y= "0" zOrder = "400" />
+    <Pos       x= "280"  y= "269" zOrder = "400" />
     <DragArea  x= "0"    y= "0" width= "280" height= "18" />
     <Tooltip  text= "Message Window." />
 
@@ -177,16 +240,15 @@
       <Gadget type= "SCROLLER" name = "VScrollbar">
          <Pos x= "263" y= "18" />
          <Range width= "16" height= "251" />
-	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
-	     <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
-	     <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
-	     <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
-	     <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-	     <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
+         <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+         <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+         <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+         <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+         <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+         <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
          <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
       </Gadget>
     </Listbox>
-
   </Window>
 
   <!--#############################################-->
@@ -263,8 +325,8 @@
       <Pos x= "56" y= "60" />
       <Range width= "400" height= "300"/>
       <Color type= "BACK_1" red=  "45" green=  "37" blue= "16" alpha = "255" />
-	  <Color type= "BACK_2" red=  "62" green=  "49" blue= "32" alpha = "255" />
-	  <Color type= "SELECT" red=   "0" green=   "0" blue= "99" alpha = "255" />
+      <Color type= "BACK_2" red=  "62" green=  "49" blue= "32" alpha = "255" />
+      <Color type= "SELECT" red=   "0" green=   "0" blue= "99" alpha = "255" />
       <Column width = "300" label ="Server:" />
       <Column width = "100" label ="Players: " />
     </Table>
@@ -443,12 +505,12 @@
       <Gadget type= "SCROLLER" name = "VScrollbar">
          <Pos x= "284" y= "60" />
          <Range width= "16" height= "248" />
-	     <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
-	     <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
-	     <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
-	     <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
-	     <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
-	     <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
+         <Color type= "BACKGROUND"  red=  "56" green=  "60" blue= "49" alpha = "255" />
+         <Color type= "BORDERLINE"  red=  "89" green=  "95" blue= "87" alpha = "255" />
+         <Color type= "BAR_PASSIVE" red=   "0" green=   "0" blue=  "0" alpha = "255" />
+         <Color type= "BAR_M_OVER"  red= "188" green= "158" blue= "81" alpha = "255" />
+         <Color type= "BAR_ACTIVE"  red=  "80" green= "100" blue= "60" alpha = "255" />
+         <Gadget type= "BUTTON" name = "But_ScrollUp"   image_name = "ScrollButton_02_Up" />
          <Gadget type= "BUTTON" name = "But_ScrollDown" image_name = "ScrollButton_02_Down"/>
       </Gadget>
     </Listbox>

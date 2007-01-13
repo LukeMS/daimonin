@@ -48,6 +48,7 @@ GuiManager::GuiWinNam GuiManager::mGuiWindowNames[GUI_WIN_SUM]=
         { "PlayerInfo",    GUI_WIN_PLAYERINFO    },
         { "PlayerConsole", GUI_WIN_PLAYERCONSOLE },
         { "TextWindow",    GUI_WIN_TEXTWINDOW    },
+        { "ChatWindow",    GUI_WIN_CHATWINDOW    },
         { "ServerSelect",  GUI_WIN_SERVERSELECT  },
         { "Login",         GUI_WIN_LOGIN         },
         //    { "Creation"  ,  GUI_WIN_CREATION   },
