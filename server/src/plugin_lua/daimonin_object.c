@@ -1465,7 +1465,7 @@ static int GameObject_GetAlignmentForce(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetGuild                                              */
-/* Lua    : object:GetGuild()                                                */
+/* Lua    : object:GetGuild(name)                                            */
 /* Info   :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -1497,9 +1497,9 @@ static int GameObject_CheckGuild(lua_State *L)
 	char *name;
 	lua_object *self;
 
-	get_lua_args(L, "O", &self, &name);
+	get_lua_args(L, "Os", &self, &name);
 
-	if(name && !strcmp(WHO->slaying, name))
+	if(WHO->slaying && !strcmp(WHO->slaying, name))
 		vret = 1;
 
 	lua_pushboolean(L, vret);
