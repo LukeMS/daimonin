@@ -24,7 +24,7 @@ my %maps = ();
 my %tilesets = ();
 
 # Scan all subdirs except utils
-scan_maps($mapdir, $mapdir, \%maps, ["^/utils/*"]);
+scan_maps($mapdir, $mapdir, \%maps, ["^/utils/*", "^/rendered_overviews/*", "^/unofficial/*"]);
 validate_linking(\%maps);
 
 # Find the base map
@@ -76,6 +76,7 @@ my $isoheight = $isoymax - $isoymin + $iso_ylen;
 # create a new image buffer
 my $image = new GD::Image($isowidth, $isoheight, 1);
 $image->alphaBlending(1);
+my $white = $image->colorAllocate(255,255,255);
 
 # Insert map thumbnails
 foreach my $map (@$tileset)
@@ -90,6 +91,13 @@ foreach my $map (@$tileset)
 
     $image->copy($thumb, $map->{isox} - $isoxmin, $map->{isoy} - $isoymin,
             0,0,$thumb->width, $thumb->height);
+    if($hires)
+    {
+        $image->string(gdTinyFont, 
+                $map->{isox} - $isoxmin + $iso_xlen/2 - gdTinyFont->width * length($map->{filename}) / 2,  
+                $map->{isoy} - $isoymin + $iso_ylen/2 - gdTinyFont->height / 2, 
+                $map->{filename}, $white);
+    }
 }
 
 open OUT, ">$outfile" or die "Couldn't open $outfile: $!\n";
@@ -256,7 +264,7 @@ sub scan_maps
                         'fullpath' => $fullpath,
                         'path' => $path,
                         'directory' => substr($path, 0, rindex($path, "/")),
-                        'filename' => substr($path, rindex($path, "/"))
+                        'filename' => substr($path, rindex($path, "/") + 1)
                     };
                 }
 
