@@ -1470,6 +1470,8 @@ object * hit_with_arrow(object *op, object *victim)
     {
         container = op;
         hitter = op->inv;
+        hitter->x = op->x;
+        hitter->y = op->y;
         remove_ob(hitter);
         insert_ob_in_map(hitter, container->map, hitter, INS_NO_MERGE | INS_NO_WALK_ON);
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that

@@ -844,6 +844,14 @@ void stop_arrow(object *op)
         trigger_object_plugin_event(EVENT_STOP,
                 payload, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 
+        /* Insert the payload in the map (only if the script didn't put it somewhere else) */
+        if (!payload->env && !OBJECT_FREE(payload))
+        {
+            payload->x = op->x;
+            payload->y = op->y;
+            insert_ob_in_map(payload, op->map, payload, 0);
+        }
+
         /* we have a thrown potion here.
          * This potion has NOT hit a target.
          * it has hitten a wall or just dropped to the ground.
@@ -854,13 +862,11 @@ void stop_arrow(object *op)
         {
             if (payload->stats.sp != SP_NO_SPELL && spells[payload->stats.sp].flags & SPELL_DESC_DIRECTION)
                 cast_spell(payload, payload, payload->direction, payload->stats.sp, 1, spellPotion, NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
+            remove_ob(payload);
         }
         else
         {
             clear_owner(payload);
-            /* Gecko: if the script didn't put the payload somewhere else */
-            if (!payload->env && !OBJECT_FREE(payload))
-                insert_ob_in_map(payload, op->map, payload, 0);
         }
         remove_ob(op);
         check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
