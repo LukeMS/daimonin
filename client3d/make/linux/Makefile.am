@@ -70,7 +70,8 @@ client3d_SOURCES = \
 	../../source/particle_manager.cpp \
 	../../source/sound.cpp \
 	../../source/spell_manager.cpp \
-	../../source/spell_range.cpp
+	../../source/spell_range.cpp \
+	../../source/item.cpp 
 
 client3d_LDFLAGS = \
 	-L. \
