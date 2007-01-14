@@ -115,7 +115,7 @@ void Events::setWorldPos(int deltaX, int deltaZ)
 {
     //ParticleManager::getSingleton().pauseAll(true);
     //TileManager::getSingleton().scrollMap(deltaX, deltaZ);
-    if (deltaX >0 && deltaZ >0) Network::getSingleton().send_command("/sw", -1, Network::SC_FIRERUN);
+    if      (deltaX >0 && deltaZ >0) Network::getSingleton().send_command("/sw", -1, Network::SC_FIRERUN);
     else if (deltaX <0 && deltaZ >0) Network::getSingleton().send_command("/se", -1, Network::SC_FIRERUN);
     else if (deltaX >0 && deltaZ <0) Network::getSingleton().send_command("/nw", -1, Network::SC_FIRERUN);
     else if (deltaX <0 && deltaZ <0) Network::getSingleton().send_command("/ne", -1, Network::SC_FIRERUN);
@@ -150,7 +150,6 @@ bool Events::frameStarted(const FrameEvent& evt)
                 const char *meshName = Option::getSingleton().getStrValue(Option::CMDLINE_CREATE_IMPOSTERS);
                 if (strlen(meshName) > 1)
                     if (!ObjectManager::getSingleton().createFlipBook(meshName, 16)) return false;
-
                 // ////////////////////////////////////////////////////////////////////
                 // Create one viewport, entire window.
                 // ////////////////////////////////////////////////////////////////////
@@ -278,30 +277,26 @@ bool Events::frameStarted(const FrameEvent& evt)
                 else
                     TileManager::getSingleton().Init(mSceneManager, 16);
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
+                // Close the loading screen.
+                GuiManager::getSingleton().displaySystemMessage("");
+                OverlayManager::getSingleton().destroy(mOverlay);
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
+                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game!");
                 break;
             }
 
         case Option::GAME_STATUS_INIT_NET:
             {
-                GuiManager::getSingleton().displaySystemMessage("Starting the network...");
-                GuiManager::getSingleton().displaySystemMessage("");
                 Network::getSingleton().Init();
-                // Close the loading screen.
-                OverlayManager::getSingleton().destroy(mOverlay);
                 mWindow->resetStatistics();
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_CHATWINDOW, true);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_TEXTWINDOW, true);
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "Welcome to ~Daimonin 3D~.");
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "");
-                GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_CHATWINDOW, GuiImageset::GUI_LIST_MSGWIN, "You need a running server to start the game");
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_META);
                 break;
             }
 
         case Option::GAME_STATUS_META:
             {
-                GuiManager::getSingleton().clearTable(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
-                Network::getSingleton().clearMetaServerData();
                 Network::getSingleton().contactMetaserver();
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
                 break;
@@ -358,8 +353,8 @@ bool Events::frameStarted(const FrameEvent& evt)
                     break;
                 }
                 Network::getSingleton().socket_thread_start();
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_VERSION);
                 GuiManager::getSingleton().addTextline(GuiManager::GUI_WIN_TEXTWINDOW, GuiImageset::GUI_LIST_MSGWIN, "connected. exchange version.");
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_VERSION);
                 break;
             }
 
@@ -414,12 +409,11 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_REQUEST_FILES:
             {
                 if (!ServerFile::getSingleton().requestFiles())
+                {
+                    // Wait until all files are upToDate.
                     break;
-
-                //ServerFile::getSingleton().requestFiles();
-
+                }
                 // Now we wait for user to select login or create character.
-                //
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_ADDME); // only for testing....
                 break;
             }
@@ -427,17 +421,18 @@ bool Events::frameStarted(const FrameEvent& evt)
         case Option::GAME_STATUS_ADDME:
             {
                 Network::getSingleton().cs_write_string("addme");
-                // now wait for login request of the server.
                 Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
                 break;
             }
 
         case Option::GAME_STATUS_LOGIN:
             {
+                // now wait for login request of the server.
                 if (GuiManager::getSingleton().brokenTextInput())
                 {
                     Logger::log().info() << "Break Login.";
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_START);
+                    Network::getSingleton().CloseSocket();
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                     GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_SERVERSELECT, false);
                     GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
                     //GameStatusLogin = FALSE;
@@ -457,7 +452,9 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 if (GuiManager::getSingleton().brokenTextInput())
                 {
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
+                    Logger::log().error() <<  "GAME_STATUS_NAME_USER broken";
+                    Network::getSingleton().CloseSocket();
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                     break;
                 }
                 // Wait for user to finish the textinput.
@@ -472,7 +469,9 @@ bool Events::frameStarted(const FrameEvent& evt)
                     GuiManager::getSingleton().startTextInput(GuiManager::GUI_WIN_LOGIN, GuiImageset::GUI_TEXTINPUT_LOGIN_NAME, MAX_LEN_LOGIN_NAME, true, true);
                     break;
                 }
-//Option::getSingleton().setLoginType(Option::LOGIN_EXISTING_PLAYER);
+#ifndef AUTO_FILL_PASWD
+                Option::getSingleton().setLoginType(Option::LOGIN_EXISTING_PLAYER);
+#endif
                 // C -> Create new hero , L -> Login.
                 String strServer = Option::getSingleton().getLoginType() == Option::LOGIN_NEW_PLAYER?"C":"L";
                 strServer += strPlayerName;
@@ -500,7 +499,8 @@ bool Events::frameStarted(const FrameEvent& evt)
             {
                 if (GuiManager::getSingleton().brokenTextInput())
                 {
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
+                    Network::getSingleton().CloseSocket();
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                     break;
                 }
                 if (!GuiManager::getSingleton().finishedTextInput())
@@ -546,7 +546,8 @@ bool Events::frameStarted(const FrameEvent& evt)
                 TileManager::getSingleton().map_transfer_flag = 0;
                 if (GuiManager::getSingleton().brokenTextInput())
                 {
-                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN);
+                    Network::getSingleton().CloseSocket();
+                    Option::getSingleton().setGameStatus(Option::GAME_STATUS_INIT_NET);
                     break;
                 }
                 if (!GuiManager::getSingleton().finishedTextInput())
@@ -565,9 +566,11 @@ bool Events::frameStarted(const FrameEvent& evt)
                 char buf[] = "nc human_male 14 14 13 12 12 12 12 0";
                 Network::getSingleton().cs_write_string(buf);
                 GuiManager::getSingleton().showWindow(GuiManager::GUI_WIN_LOGIN, false);
-                Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
+                Option::getSingleton().setGameStatus(Option::GAME_STATUS_LOGIN_WAIT);
                 break;
             }
+
+
 
         case Option::GAME_STATUS_PLAY:
             {

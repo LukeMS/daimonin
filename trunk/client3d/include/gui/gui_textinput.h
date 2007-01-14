@@ -32,8 +32,6 @@ http://www.gnu.org/licenses/licenses.html
 
 using namespace std;
 
-const char CURSOR[] = { GuiTextout::STANDARD_CHARS_IN_FONT+31, 0 };
-
 /**
  ** TextInput class which manages the keyboard input for the Dialog class.
  *****************************************************************************/
@@ -122,13 +120,13 @@ public:
             return mStrTextInput.c_str();
         }
         mStrTextInputWithCursor = mStrTextInput;
-        if (clock()-time > 500)
+        if (Root::getSingleton().getTimer()->getMilliseconds() - time > CURSOR_FREQUENCY)
         {
-            time = clock();
+            time = Root::getSingleton().getTimer()->getMilliseconds();
             cursorOn = !cursorOn;
         }
         if (cursorOn)
-            mStrTextInputWithCursor.insert(mCursorPos, CURSOR);
+            mStrTextInputWithCursor.insert(mCursorPos, GuiTextout::CURSOR);
         else
             mStrTextInputWithCursor.insert(mCursorPos, " ");
         return mStrTextInputWithCursor.c_str();

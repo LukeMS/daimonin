@@ -46,39 +46,39 @@ struct CmdMapping
 };
 struct CmdMapping  commands[]  =
     {    // Don't change this sorting! Its hardcoded in the server.
-        { Network::CompleteCmd},
-        { Network::VersionCmd },
-        { Network::DrawInfoCmd },
-        { Network::AddMeFail },
-        { Network::Map2Cmd },
-        { Network::DrawInfoCmd2 },
-        { Network::ItemXCmd },
-        { Network::SoundCmd},
-        { Network::TargetObject },
-        { Network::ItemUpdateCmd },
-        { Network::ItemDeleteCmd },
-        { Network::StatsCmd },
-        { Network::ImageCmd },
-        { Network::Face1Cmd},
-        { Network::AnimCmd},
-        { Network::SkillRdyCmd },
-        { Network::PlayerCmd },
-        { Network::SpelllistCmd },
-        { Network::SkilllistCmd },
-        { Network::GolemCmd },
-        { Network::AddMeSuccess },
-        { Network::GoodbyeCmd },
-        { Network::SetupCmd},
-        { Network::handle_query},
-        { Network::DataCmd},
-        { Network::NewCharCmd},
-        { Network::ItemYCmd },
-        { Network::GroupCmd },
-        { Network::GroupInviteCmd },
-        { Network::GroupUpdateCmd },
-        { Network::InterfaceCmd },
-        { Network::BookCmd },
-        { Network::MarkCmd },
+        { Network::CompleteCmd},     //  0
+        { Network::VersionCmd },     //  1
+        { Network::DrawInfoCmd },    //  2
+        { Network::AddMeFail },      //  3
+        { Network::Map2Cmd },        //  4
+        { Network::DrawInfoCmd2 },   //  5
+        { Network::ItemXCmd },       //  6
+        { Network::SoundCmd},        //  7
+        { Network::TargetObject },   //  8
+        { Network::ItemUpdateCmd },  //  9
+        { Network::ItemDeleteCmd },  // 10
+        { Network::StatsCmd },       // 11
+        { Network::ImageCmd },       // 12
+        { Network::Face1Cmd},        // 13
+        { Network::AnimCmd},         // 14
+        { Network::SkillRdyCmd },    // 15
+        { Network::PlayerCmd },      // 16
+        { Network::SpelllistCmd },   // 17
+        { Network::SkilllistCmd },   // 18
+        { Network::GolemCmd },       // 19
+        { Network::AddMeSuccess },   // 20
+        { Network::GoodbyeCmd },     // 21
+        { Network::SetupCmd},        // 22
+        { Network::handle_query},    // 23
+        { Network::DataCmd},         // 24
+        { Network::NewCharCmd},      // 25
+        { Network::ItemYCmd },       // 26
+        { Network::GroupCmd },       // 27
+        { Network::GroupInviteCmd }, // 28
+        { Network::GroupUpdateCmd }, // 29
+        { Network::InterfaceCmd },   // 30
+        { Network::BookCmd },        // 31
+        { Network::MarkCmd },        // 32
     };
 const int SUM_SERVER_COMMANDS = sizeof(commands) / sizeof(CmdMapping);
 
@@ -189,6 +189,7 @@ Network::~Network()
 //================================================================================================
 void Network::clearMetaServerData()
 {
+    GuiManager::getSingleton().clearTable(GuiManager::GUI_WIN_SERVERSELECT, GuiImageset::GUI_TABLE);
     for (vector<Server*>::iterator i = mvServer.begin(); i != mvServer.end(); ++i)
         delete (*i);
     mvServer.clear();
