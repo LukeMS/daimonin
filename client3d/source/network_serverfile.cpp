@@ -91,7 +91,11 @@ bool ServerFile::requestFiles()
     // File is upToDate.
     while (srv_file[mRequestFileChain].status == STATUS_OK)
     {
-        if (++mRequestFileChain >= FILE_SUM) return true;
+        if (++mRequestFileChain >= FILE_SUM)
+        {
+            mRequestFileChain = FILE_SKILLS;
+            return true;
+        }
     }
     // File is outdated, ask server for the latest version.
     if (srv_file[mRequestFileChain].status == STATUS_OUTDATED)

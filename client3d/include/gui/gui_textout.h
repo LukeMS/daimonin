@@ -79,6 +79,7 @@ public:
     static const char TXT_CMD_SOUND;
     static const char TXT_SUB_CMD_COLOR; // followed by 8 chars (atoi -> uint32).
     static const char TXT_CMD_CHANGE_FONT; // followed by 2 chars (atoi -> char).
+    static const char CURSOR[];
     // ////////////////////////////////////////////////////////////////////
     // Functions.
     // ////////////////////////////////////////////////////////////////////

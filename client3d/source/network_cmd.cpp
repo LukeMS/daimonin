@@ -1071,7 +1071,7 @@ void Network::SkillRdyCmd(unsigned char *data, int len)
 //================================================================================================
 void Network::PlayerCmd(unsigned char *data, int len)
 {
-    //Option::getSingleton().setGameStatus(GAME_STATUS_PLAY);
+    Option::getSingleton().setGameStatus(Option::GAME_STATUS_PLAY);
     /*
     char    name[MAX_BUF];
     int     tag, weight, face, i = 0, nlen;

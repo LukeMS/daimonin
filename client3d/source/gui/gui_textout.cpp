@@ -36,6 +36,7 @@ const char GuiTextout::TXT_CMD_LINK        = '^';
 const char GuiTextout::TXT_CMD_SOUND       = '§';
 const char GuiTextout::TXT_SUB_CMD_COLOR   = '#'; // followed by 8 chars (atoi -> uint32).
 const char GuiTextout::TXT_CMD_CHANGE_FONT = '@'; // followed by 2 chars (atoi -> char).
+const char GuiTextout::CURSOR[] = { GuiTextout::STANDARD_CHARS_IN_FONT+31, 0 };
 
 const uint32 GuiTextout::COLOR_BLACK = 0xff000000;
 const uint32 GuiTextout::COLOR_BLUE  = 0xff0000ff;
@@ -470,7 +471,7 @@ void GuiTextout::drawText(int width, int height, uint32 *dest_data, const char *
             default:
                 chr = (*text - 32);
                 if (chr > CHARS_IN_FONT) chr = 0; // Unknown chars will be displayed as space.
-                if (hideText && chr != CHARS_IN_FONT-1) chr = '*'-32;
+                if (hideText && chr != STANDARD_CHARS_IN_FONT-1) chr = '*'-32;
                 dstRow = 0;
                 srcRow = mvFont[fontNr]->charStart[chr];
                 stopX  = mvFont[fontNr]->charWidth[chr]-1;
