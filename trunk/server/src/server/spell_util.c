@@ -397,7 +397,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     if (item == spellNormal
      && op->type == PLAYER
      && s->flags & SPELL_DESC_WIS
-     && random_roll(0, 99, op, PREFER_HIGH) < s->level / (float)
+     && random_roll(0, 99) < s->level / (float)
         MAX(1, op->chosen_skill->level) * cleric_chance[op->stats.Wis])
     {
         play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL, SOUND_NORMAL, 0, 0);
@@ -405,12 +405,12 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
 
         if (s->sp == 0) /* Shouldn't happen... */
             return 0;
-        return(random_roll(1, SP_level_spellpoint_cost(op, caster, type), op, PREFER_LOW));
+        return(random_roll(1, SP_level_spellpoint_cost(op, caster, type)));
     }
 
     if (item == spellNormal && op->type == PLAYER && (!s->flags & SPELL_DESC_WIS))
     {
-        int failure = random_roll(0, 199, op, PREFER_LOW)
+        int failure = random_roll(0, 199)
                     - CONTR(op)->encumbrance
                     + op->chosen_skill->level
                     - s->level
@@ -419,7 +419,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         if (failure < 0)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You bungle the spell because you have too much heavy equipment in use.");
-            return(random_roll(0, SP_level_spellpoint_cost(op, caster, type), op, PREFER_LOW));
+            return(random_roll(0, SP_level_spellpoint_cost(op, caster, type)));
         }
     }
 
@@ -730,28 +730,28 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             case SP_METEOR_SWARM: {
               success = 1;
               fire_swarm(op, caster, dir, spellarch[type], SP_METEOR,
-            die_roll(3, 3, op, PREFER_HIGH) +
+            random_roll_roll(3, 3) +
                 SP_level_strength_adjust(op,caster, type), 0);
               break;
             }
             case SP_BULLET_SWARM: {
               success = 1;
               fire_swarm(op, caster, dir, spellarch[type], SP_BULLET,
-            die_roll(3, 3, op, PREFER_HIGH) +
+            random_roll_roll(3, 3) +
                 SP_level_strength_adjust(op,caster, type), 0);
               break;
             }
             case SP_BULLET_STORM: {
               success = 1;
               fire_swarm(op, caster, dir, spellarch[type], SP_LARGE_BULLET,
-            die_roll(3, 3, op, PREFER_HIGH) +
+            random_roll_roll(3, 3) +
                 SP_level_strength_adjust(op,caster, type), 0);
               break;
             }
             case SP_CAUSE_MANY: {
               success = 1;
               fire_swarm(op, caster, dir, spellarch[type], SP_CAUSE_HEAVY,
-            die_roll(3, 3, op, PREFER_HIGH) +
+            random_roll_roll(3, 3) +
                 SP_level_strength_adjust(op,caster, type), 0);
               break;
             }
@@ -909,7 +909,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
             case SP_MISSILE_SWARM: {
               success = 1;
               fire_swarm(op, caster, dir, spellarch[type], SP_M_MISSILE,
-            die_roll(3, 3, op, PREFER_HIGH) +
+            random_roll_roll(3, 3) +
                 SP_level_strength_adjust(op,caster, type), 0);
               break;
             }
@@ -1313,7 +1313,7 @@ void check_cone_push(object *op)
         for (tmp2 = tmp; tmp2 != NULL; tmp2 = tmp2->more)
             num_sections++;
 
-        if (rndm(0, weight_move - 1) > tmp->weight / num_sections)
+        if (random_roll(0, weight_move - 1) > tmp->weight / num_sections)
         {
             /* move it. */
             /* move_object is really for monsters, but looking at
@@ -1346,7 +1346,7 @@ void check_cone_push(object *op)
     /* count the object's sections */
     for(tmp2 = tmp; tmp2!=NULL;tmp2=tmp2->more) num_sections++;
 
-    if(rndm(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
+    if(random_roll(0, weight_move-1) > tmp->weight/num_sections) {  /* move it. */
         remove_ob(tmp);
         tmp->x = nx;
         tmp->y = ny;
@@ -1562,7 +1562,7 @@ void forklightning(object *op, object *tmp)
               Should start out at 50, down to 25 for one already going left
              down to 0 for one going 90 degrees left off original path*/
 
-    if (rndm(0, 99) < tmp->stats.Con)  /* fork left */
+    if (random_roll(0, 99) < tmp->stats.Con)  /* fork left */
         new_dir = -1;
 
     /* check the new dir for a wall and in the map*/
@@ -1624,7 +1624,7 @@ int reflwall(mapstruct *m, int x, int y, object *sp_op)
         return 0;
 
     /* we get resisted - except a small fail chance */
-    if ((rndm(0, 99)) < 90 - sp_op->level / 10)
+    if ((random_roll(0, 99)) < 90 - sp_op->level / 10)
     {
         SET_FLAG(sp_op, FLAG_WAS_REFLECTED);
         return 1;
@@ -1695,7 +1695,7 @@ void move_bolt(object *op)
             /* New forking code.  Possibly create forks of this object
                     going off in other directions. */
 
-            if (rndm(0, 99) < tmp->stats.Dex)
+            if (random_roll(0, 99) < tmp->stats.Dex)
             {
                 /* stats.Dex % of forking */
                 forklightning(op, tmp);
@@ -2311,8 +2311,8 @@ void move_ball_lightning(object *op)
         get at it's victim.  */
     dir = 0;
 
-    if (!(rndm(0, 3)))
-        j = rndm(0, 1);
+    if (!(random_roll(0, 3)))
+        j = random_roll(0, 1);
     else
         j = 0;  /* ? j wasn't being assigned to anything before */
     for (i = 1; i < 9; i++)
@@ -2388,7 +2388,7 @@ void move_ball_lightning(object *op)
         /* pick another direction if the preferred dir is blocked. */
         if (wall(op->map, nx + freearr_x[i], ny + freearr_y[i]))
         {
-            i += rndm(0, 2) - 1;  /* -1, 0, +1 */
+            i += random_roll(0, 2) - 1;  /* -1, 0, +1 */
             if (i == 0)
                 i = 8;
             if (i == 9)
@@ -2516,7 +2516,7 @@ int spell_find_dir(mapstruct *m, int x, int y, object *exclude)
     if (exclude && exclude->type)
         owner_type = exclude->type;
 
-    for (i = rndm(1, 8); i < max; i++)
+    for (i = random_roll(1, 8); i < max; i++)
     {
         nx = x + freearr_x[i];
         ny = y + freearr_y[i];
@@ -2673,7 +2673,7 @@ void move_swarm_spell(object *op)
     if (basedir == 0)
     {
         /* spray in all directions! 8) */
-        basedir = rndm(1, 8);
+        basedir = random_roll(1, 8);
     }
 
     /* new offset calculation to make swarm element distribution
@@ -2682,11 +2682,11 @@ void move_swarm_spell(object *op)
     {
         if (basedir & 1)
         {
-            adjustdir = cardinal_adjust[rndm(0, 8)];
+            adjustdir = cardinal_adjust[random_roll(0, 8)];
         }
         else
         {
-            adjustdir = diagonal_adjust[rndm(0, 9)];
+            adjustdir = diagonal_adjust[random_roll(0, 9)];
         }
     }
     else

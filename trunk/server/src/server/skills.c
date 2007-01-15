@@ -90,7 +90,7 @@ int attempt_steal(object *op, object *who)
         /* Okay, try stealing this item. Dependent on dexterity of thief,
          * skill level, see the adj_stealroll fctn for more detail. */
 
-        roll = die_roll(2, 100, who, PREFER_LOW) / 2; /* weighted 1-100 */
+        roll = random_roll(2, 100) / 2; /* weighted 1-100 */
 
         if ((chance = adj_stealchance(who, op, (stats_value + thief_lvl - victim_lvl))) == -1)
             return 0;
@@ -116,7 +116,7 @@ int attempt_steal(object *op, object *who)
 
     if ((roll >= SK_level(who))
      || !chance
-     || (tmp && tmp->weight > (250 * (random_roll(0, stats_value + thief_lvl - 1, who, PREFER_LOW)))))
+     || (tmp && tmp->weight > (250 * (random_roll(0, stats_value + thief_lvl - 1)))))
     {
         /* victim figures out where the thief is! */
         if (who->hide)
@@ -142,7 +142,7 @@ int attempt_steal(object *op, object *who)
             /* stealing from another player */
             char    buf[MAX_BUF];
             /* Notify the other player */
-            if (success && who->stats.Int > random_roll(0, 19, op, PREFER_LOW))
+            if (success && who->stats.Int > random_roll(0, 19))
             {
                 sprintf(buf, "Your %s is missing!", query_name(success));
             }
@@ -349,7 +349,7 @@ int attempt_pick_lock(object *door, object *pl)
      * the map level difficulty.
      */
 
-    number = (die_roll(2, 40, pl, PREFER_LOW) - 2) / 2;
+    number = (random_roll(2, 40) - 2) / 2;
     if (number < ((dex + bonus) - difficulty))
     {
         remove_door(door);
@@ -430,7 +430,7 @@ int attempt_hide(object *op)
      *  dexterity, map difficulty and terrain.
      */
 
-    number = (die_roll(2, 25, op, PREFER_LOW) - 2) / 2;
+    number = (random_roll(2, 25) - 2) / 2;
     if (!stand_near_hostile(op) && number && (number < (dexterity + level + terrain - difficulty)))
     {
         success = 1;
@@ -705,7 +705,7 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
      && !IS_SYS_INVISIBLE(tmp)
      && tmp->type == obj_class)
     {
-        chance = die_roll(3, 10, pl, PREFER_LOW) - 3 + rndm(0, (tmp->magic ? tmp->magic * 5 : 1) - 1);
+        chance = random_roll(3, 10) - 3 + random_roll(0, (tmp->magic ? tmp->magic * 5 : 1) - 1);
         if (skill_value >= chance)
         {
             identify(tmp);
@@ -824,7 +824,7 @@ int use_oratory(object *pl, int dir)
         chance = SK_level(pl) * 2 + (stat1 - 2 * tmp->stats.Int) / 2;
 
         /* Ok, got a 'sucker' lets try to make them a follower */
-        if (chance > 0 && tmp->level < (random_roll(0, chance - 1, pl, PREFER_HIGH) - 1))
+        if (chance > 0 && tmp->level < (random_roll(0, chance - 1) - 1))
         {
             new_draw_info_format(NDI_UNIQUE, 0, pl, "You convince the %s to become your follower.\n", query_name(tmp));
 
@@ -836,7 +836,7 @@ int use_oratory(object *pl, int dir)
             return calc_skill_exp(pl, tmp, 1.0f, -1, NULL);
         }
         /* Charm failed.  Creature may be angry now */
-        else if ((SK_level(pl) + ((stat1 - 10) / 2)) < random_roll(1, 2 * tmp->level, pl, PREFER_LOW))
+        else if ((SK_level(pl) + ((stat1 - 10) / 2)) < random_roll(1, 2 * tmp->level))
         {
             new_draw_info_format(NDI_UNIQUE, 0, pl, "Your speech angers the %s!\n", query_name(tmp));
             /* TODO: should probaly call set_npc_enemy() here instead/also */
@@ -920,7 +920,7 @@ int singing(object *pl, int dir)
                * over and over again and getting exp for it.
                */
             chance = SK_level(pl) * 2 + (stat1 - 5 - tmp->stats.Int) / 2;
-            if (chance && tmp->level * 2 < random_roll(0, chance - 1, pl, PREFER_HIGH))
+            if (chance && tmp->level * 2 < random_roll(0, chance - 1))
             {
                 SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
                 new_draw_info_format(NDI_UNIQUE, 0, pl, "You calm down the %s\n", query_name(tmp));
@@ -1202,7 +1202,7 @@ int write_scroll(object *pl, object *scroll)
      * accidently read it while trying to write the new one.  give player
      * a 50% chance to overwrite spell at their own level
      */
-    if (scroll->stats.sp && random_roll(0, scroll->level * 2, pl, PREFER_LOW) > SK_level(pl))
+    if (scroll->stats.sp && random_roll(0, scroll->level * 2) > SK_level(pl))
     {
         new_draw_info_format(NDI_UNIQUE, 0, pl, "Oops! You accidently read it while trying to write on it.");
         manual_apply(pl, scroll, 0);
@@ -1221,7 +1221,7 @@ int write_scroll(object *pl, object *scroll)
     else
         pl->stats.sp -= spells[chosen_spell].sp;
 
-    if (random_roll(0, spells[chosen_spell].level * 4 - 1, pl, PREFER_LOW) < SK_level(pl))
+    if (random_roll(0, spells[chosen_spell].level * 4 - 1) < SK_level(pl))
     {
         newScroll = get_object();
         copy_object(scroll, newScroll);
@@ -1237,7 +1237,7 @@ int write_scroll(object *pl, object *scroll)
             /* a  confused scribe gets a random spell */
             do
             {
-                chosen_spell = rndm(0, NROFREALSPELLS - 1);
+                chosen_spell = random_roll(0, NROFREALSPELLS - 1);
                 /* skip all non active spells */
                 while (!spells[chosen_spell].is_active)
                 {
@@ -1251,7 +1251,7 @@ int write_scroll(object *pl, object *scroll)
             newScroll->level = SK_level(pl)
                              > spells[chosen_spell].level
                              ? spells[chosen_spell].level
-                             : (random_roll(1, SK_level(pl), pl, PREFER_HIGH));
+                             : (random_roll(1, SK_level(pl)));
         }
 
         if (newScroll->stats.sp == chosen_spell)
@@ -1278,7 +1278,7 @@ int write_scroll(object *pl, object *scroll)
         {
             /*backfire!*/
             new_draw_info(NDI_UNIQUE, 0, pl, "Ouch! Your attempt to write a new scroll strains your mind!");
-            if (random_roll(0, 1, pl, PREFER_LOW) == 1)
+            if (random_roll(0, 1) == 1)
                 drain_specific_stat(pl, 4);
             else
             {
@@ -1287,7 +1287,7 @@ int write_scroll(object *pl, object *scroll)
                 return (-30 * spells[chosen_spell].level);
             }
         }
-        else if (random_roll(0, stat1 - 1, pl, PREFER_HIGH) < 15)
+        else if (random_roll(0, stat1 - 1) < 15)
         {
             new_draw_info(NDI_UNIQUE, 0, pl, "Your attempt to write a new scroll rattles your mind!");
             confuse_player(pl, pl, 160);

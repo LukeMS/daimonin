@@ -282,7 +282,7 @@ void generate_monster(object *gen)
     object     *op, *head = NULL, *prev = NULL;
     archetype  *at  = gen->other_arch;
 
-    if (GENERATE_SPEED(gen) && rndm(0, GENERATE_SPEED(gen) - 1))
+    if (GENERATE_SPEED(gen) && random_roll(0, GENERATE_SPEED(gen) - 1))
         return;
     if (gen->other_arch == NULL)
     {
@@ -299,7 +299,7 @@ void generate_monster(object *gen)
         op->y = gen->y + freearr_y[i] + at->clone.y;
         if (head != NULL)
             op->head = head,prev->more = op;
-        if (rndm(0, 9))
+        if (random_roll(0, 9))
             generate_artifact(op, gen->map->difficulty, 0, 99);
         if (!insert_ob_in_map(op, gen->map, gen, 0))
             return;
@@ -778,7 +778,7 @@ object * fix_stopped_arrow(object *op)
         return op;
     /* Small chance of breaking */
     /*
-       if(rndm(0, 99) < op->stats.food) {
+       if(random_roll(0, 99) < op->stats.food) {
            remove_ob (op);
     return NULL;
        }*/
@@ -983,7 +983,7 @@ void move_arrow(object *op)
                 continue;
             }
 
-            if ((!QUERY_FLAG(tmp, FLAG_CAN_REFL_MISSILE) || (rndm(0, 99)) < 90 - op->level / 10))
+            if ((!QUERY_FLAG(tmp, FLAG_CAN_REFL_MISSILE) || (random_roll(0, 99)) < 90 - op->level / 10))
             {
                 /* Attack the object. */
                 op = hit_with_arrow(op, tmp);
@@ -1018,7 +1018,7 @@ void move_arrow(object *op)
     if (!was_reflected && wall(m, new_x, new_y))
     {
         /* if the object doesn't reflect, stop the arrow from moving */
-        if (!QUERY_FLAG(op, FLAG_REFLECTING) || !(rndm(0, 19)))
+        if (!QUERY_FLAG(op, FLAG_REFLECTING) || !(random_roll(0, 19)))
         {
             stop_arrow(op);
             return;
@@ -1278,7 +1278,7 @@ void move_firechest(object *op)
 {
     if (!op->map)
         return;   /* dm has created a firechest in his inventory */
-    fire_a_ball(op, rndm(1, 8), 7);
+    fire_a_ball(op, random_roll(1, 8), 7);
 }
 
 
@@ -1306,7 +1306,7 @@ void move_player_mover(object *op)
         return;
     /* Determine direction now for random movers so we do the right thing */
     if (!dir)
-        dir = rndm(1, 8);
+        dir = random_roll(1, 8);
     for (victim = GET_BOTTOM_MAP_OB(op); victim != NULL; victim = victim->above)
     {
         if (IS_LIVE(victim) && ((!QUERY_FLAG(victim, FLAG_FLYING)&&!QUERY_FLAG(victim, FLAG_LEVITATE)) || op->stats.maxhp))

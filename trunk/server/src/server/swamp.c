@@ -53,7 +53,7 @@ void move_deep_swamp(object *op)
             switch (op->stats.food)
             {
                 case 1:
-                  if (rndm(0, 2) == 0)
+                  if (random_roll(0, 2) == 0)
                   {
                       new_draw_info(NDI_UNIQUE, 0, above, "You are down to your waist in the wet swamp.");
                       op->stats.food = 2;
@@ -61,7 +61,7 @@ void move_deep_swamp(object *op)
                   }
                   break;
                 case 2:
-                  if (rndm(0, 2) == 0)
+                  if (random_roll(0, 2) == 0)
                   {
                       new_draw_info(NDI_UNIQUE, 0, above, "You are down to your NECK in the dangerous swamp.");
                       op->stats.food = 3;
@@ -71,10 +71,10 @@ void move_deep_swamp(object *op)
                   }
                   break;
                 case 3:
-                  if (rndm(0, 4) == 0)
+                  if (random_roll(0, 4) == 0)
                   {
                       /* player is ready to drown - only woodsman skill can save him */
-                      if (rndm(0, 4) == 0 || !change_skill(above, SK_WOODSMAN))
+                      if (random_roll(0, 4) == 0 || !change_skill(above, SK_WOODSMAN))
                       {
                           op->stats.food = 0;
                           new_draw_info_format(NDI_UNIQUE | NDI_ALL, 1, NULL, "%s disappeared into a swamp.",
@@ -96,7 +96,7 @@ void move_deep_swamp(object *op)
         }
         else if (!IS_LIVE(above))
         {
-            if (rndm(0, 2) == 0)
+            if (random_roll(0, 2) == 0)
                 decrease_ob(above);
         }
         above = nabove;

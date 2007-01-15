@@ -936,13 +936,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define NEXT_ITEM_FACE_NAME "next_item.101"
 #define PREVIOUS_ITEM_FACE_NAME "prev_item.101"
 
-/*
- * Defines for the luck/random functions to make things more readable
- */
-
-#define PREFER_HIGH 1
-#define PREFER_LOW  0
-
 /* socket defines */
 #define SockList_AddChar(_sl_,_c_)      (_sl_)->buf[(_sl_)->len++]=(_c_)
 #define SockList_AddShort(_sl_, _data_) (_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \

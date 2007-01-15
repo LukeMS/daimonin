@@ -463,7 +463,7 @@ void flee_player(object *op)
         CLEAR_FLAG(op, FLAG_SCARED);
         return;
     }
-    if (!(random_roll(0, 4, op, PREFER_LOW)) && random_roll(1, 20, op, PREFER_HIGH) >= savethrow[op->level])
+    if (!(random_roll(0, 4)) && random_roll(1, 20) >= savethrow[op->level])
     {
         op->enemy = NULL;
         CLEAR_FLAG(op, FLAG_SCARED);
@@ -1300,7 +1300,7 @@ void do_some_living(object *op)
 					op->stats.food--;
 					if (CONTR(op)->digestion < 0)
 						op->stats.food += CONTR(op)->digestion;
-					else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion, op, PREFER_HIGH))
+					else if (CONTR(op)->digestion > 0 && random_roll(0, CONTR(op)->digestion))
 					    op->stats.food = last_food;
 				}
 			}
@@ -1612,7 +1612,7 @@ void kill_player(object *op)
                     }
                     else
                     {
-                        if (random_roll(0, loss_chance + keep_chance - 1, op, PREFER_LOW) < keep_chance)
+                        if (random_roll(0, loss_chance + keep_chance - 1) < keep_chance)
                             lose_this_stat = 0;
                         /* LOG(llevDebug, "Determining stat loss. Stat: %d Keep: %d Lose: %d Result: %s.\n",
                              this_stat, keep_chance, loss_chance,
@@ -1923,7 +1923,7 @@ int hideability(object *ob)
 
 void do_hidden_move(object *op)
 {
-    int hide = 0, num = random_roll(0, 19, op, PREFER_LOW);
+    int hide = 0, num = random_roll(0, 19);
 
     if (!op || !op->map)
         return;

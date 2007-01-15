@@ -242,7 +242,6 @@ struct attribute_decl       GameObject_attributes[]         =
     {"charisma",     FIELDTYPE_SINT8, offsetof(object, stats.Cha), FIELDFLAG_PLAYER_FIX},
     {"intelligence",     FIELDTYPE_SINT8, offsetof(object, stats.Int), FIELDFLAG_PLAYER_FIX},
     {"power",     FIELDTYPE_SINT8, offsetof(object, stats.Pow), FIELDFLAG_PLAYER_FIX},
-    {"luck",    FIELDTYPE_SINT8, offsetof(object, stats.luck), FIELDFLAG_PLAYER_READONLY},
 	{"thac0",     FIELDTYPE_SINT8, offsetof(object, stats.thac0), FIELDFLAG_PLAYER_READONLY},
 	{"thacm",     FIELDTYPE_SINT8, offsetof(object, stats.thacm), FIELDFLAG_PLAYER_READONLY},
     {NULL}

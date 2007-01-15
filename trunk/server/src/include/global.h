@@ -170,7 +170,6 @@ typedef signed long long         sint64;
 /* Rotate right from bsd sum. This is used in various places for checksumming */
 #define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
-
 #define SET_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]
 #define GET_ANIMATION(ob,anim) (animations[ob->animation_id].faces[anim])
 #define GET_ANIM_ID(ob) (ob->animation_id)

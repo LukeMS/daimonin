@@ -367,7 +367,7 @@ int trap_see(object *op, object *trap, int level)
     char    buf[MAX_BUF];
     int     chance;
 
-    chance = random_roll(0, 99, op, PREFER_HIGH);
+    chance = random_roll(0, 99);
 
     /*  decide if we see the rune or not */
     if ((trap->level <= level && RANDOM() % 10)
@@ -447,8 +447,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
               / disarmer_level;
 
     if ((trap->level <= disarmer_level && (RANDOM() % 10))
-     || !(random_roll(0, (MAX(2, MIN(20, trap->level - disarmer_level + 5 - disarmer->stats.Dex / 2)) - 1), disarmer,
-                      PREFER_LOW)))
+     || !(random_roll(0, (MAX(2, MIN(20, trap->level - disarmer_level + 5 - disarmer->stats.Dex / 2)) - 1))))
     {
         new_draw_info_format(NDI_UNIQUE, 0, disarmer, "You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
         remove_ob(trap);
@@ -467,8 +466,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
         new_draw_info_format(NDI_UNIQUE, 0, disarmer, "You fail to remove the %s (lvl %d).", trap->name, trap->level);
         if ((trap->level > disarmer_level * 1.4f || (RANDOM() % 3)))
         {
-            if (!(random_roll(0, (MAX(2, disarmer_level - trap->level + disarmer->stats.Dex / 2 - 6)) - 1, disarmer,
-                              PREFER_LOW))
+            if (!(random_roll(0, (MAX(2, disarmer_level - trap->level + disarmer->stats.Dex / 2 - 6)) - 1))
              && risk)
             {
                 new_draw_info(NDI_UNIQUE, 0, disarmer, "In fact, you set it off!");
@@ -492,12 +490,12 @@ void trap_adjust(object *trap, int difficulty)
 
     off = (int) ((float) difficulty * 0.2f);
 
-    trap->level = rndm(difficulty - off, difficulty + off);
+    trap->level = random_roll(difficulty - off, difficulty + off);
     if (trap->level < 1)
         trap->level = 1;
 
     /* set the hiddenness of the trap, similar formula to above */
-    trap->stats.Cha = rndm(0, 19) + rndm(difficulty - off, difficulty + off);
+    trap->stats.Cha = random_roll(0, 19) + random_roll(difficulty - off, difficulty + off);
     if (trap->stats.Cha < 1)
         trap->stats.Cha = 1;
 }

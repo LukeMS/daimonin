@@ -252,7 +252,7 @@ int roll_ob(object *op, int dir, object *pusher)
         op = op->head;
 
     if (!QUERY_FLAG(op, FLAG_CAN_ROLL)
-     || (op->weight && random_roll(0, op->weight / 50000 - 1, pusher, PREFER_LOW) > pusher->stats.Str))
+     || (op->weight && random_roll(0, op->weight / 50000 - 1) > pusher->stats.Str))
         return 0;
 
     x = op->x + freearr_x[dir];
@@ -363,8 +363,8 @@ int push_ob(object *who, int dir, object *pusher)
     str1 = (who->stats.Str > 0 ? who->stats.Str : who->level);
     str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : pusher->level);
     if (QUERY_FLAG(who, FLAG_WIZ)
-     || random_roll(str1, str1 / 2 + str1 * 2, who, PREFER_HIGH)
-     >= random_roll(str2,str2/ 2 + str2 * 2,pusher, PREFER_HIGH)
+     || random_roll(str1, str1 / 2 + str1 * 2)
+     >= random_roll(str2,str2/ 2 + str2 * 2)
      || !move_ob(who,
                  dir,
                  pusher))

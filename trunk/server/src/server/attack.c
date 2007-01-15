@@ -138,7 +138,7 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
     op_tag = target->count;
     hitter_tag = hitter->count;
 
-    roll = random_roll(0, 20, hitter, PREFER_HIGH);
+    roll = random_roll(0, 100);
 
     /* Adjust roll for various situations. */
     if (env_attack == ENV_ATTACK_NO)
@@ -226,14 +226,14 @@ int attack_ob(object *target, object *hitter, object *hit_obj)
         /* Handle monsters that hit back */
         if (env_attack  == ENV_ATTACK_NO && QUERY_FLAG(target, FLAG_HITBACK) && IS_LIVE(hitter))
         {
-            damage_ob(hitter, random_roll(0, (target->stats.dam), hitter, PREFER_LOW), target, env_attack);
+            damage_ob(hitter, random_roll(0, target->stats.dam), target, env_attack);
 
             if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag)
                 || abort_attack(target, hitter, env_attack))
                 goto leave;
         }
 
-        dam = damage_ob(target, random_roll(hitdam / 2 + 1, hitdam, hitter, PREFER_HIGH), hitter, env_attack);
+        dam = damage_ob(target, random_roll(hitdam / 2 + 1, hitdam), hitter, env_attack);
         if (was_destroyed(target, op_tag) || was_destroyed(hitter, hitter_tag) || abort_attack(target, hitter, env_attack))
             goto leave;
     }    
@@ -856,8 +856,8 @@ static int hit_player_attacktype(object *op, object *hitter, int *flags, int dam
                 dam = 1.0;
             send_attack_msg(op, hitter, attacknum, (int) dam, damage);
             /*
-            if(rndm(0, (int)dam+4) >
-            random_roll(0, 39, op, PREFER_HIGH)+2*tmp->magic) {
+            if(random_roll(0, (int)dam+4) >
+            random_roll(0, 39)+2*tmp->magic) {
             if(op->type == PLAYER)
             new_draw_info_format(NDI_UNIQUE|NDI_RED,0, op,
             "The %s's acid corrodes your %s!",
