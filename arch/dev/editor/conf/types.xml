@@ -1108,14 +1108,6 @@
 </section>
 
 <section name="misc">
-  <attribute arch="luck" editor="luck bonus" type="int">
-    With positive luck bonus, the player is more likely to
-    succeed in all sorts of things (spellcasting, praying,...).
-    Unless the &lt;luck bonus&gt; is very high, the effect will be
-    barely visible in-game. Luck bonus on one piece of equipment
-    should never exceed 3, and such bonus should not be too
-    frequently available.
-  </attribute>
   <attribute arch="thac0" editor="thac0 boni" type="int">
     A attack roll is done with a w20. Every value bigger
     as thac0 is a hit even the target ac is higher.
@@ -5013,14 +5005,6 @@
   </attribute>
 </section>
 <section name="bonus">
-  <attribute arch="luck" editor="luck bonus" type="int">
-    With positive luck bonus, the player is more likely to
-    succeed in all sorts of things (spellcasting, praying,...).
-    Unless the &lt;luck bonus&gt; is very high, the effect will be
-    barely visible in-game. Luck bonus on one piece of equipment
-    should never exceed 3, and such bonus should not be too
-    frequently available.
-  </attribute>
   <attribute arch="magic" editor="magic bonus" type="int">
     &lt;Magic bonus&gt; improves the quality of the shooting weapon.
     I'm not sure what exactly is increased - maybe weaponclass?
