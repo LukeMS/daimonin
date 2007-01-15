@@ -1481,7 +1481,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -1573,7 +1572,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -1691,7 +1689,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -3900,7 +3897,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -3925,7 +3921,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -3950,7 +3945,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -3975,7 +3969,6 @@ Wis -1
 Int -1
 Pow -1
 Cha -1
-luck -1
 value 50
 end
 #
@@ -4003,7 +3996,6 @@ maxhp -10
 is_magical 1
 level 1
 value 50
-luck -2
 Int -2
 damned_perm 1
 damned 1
