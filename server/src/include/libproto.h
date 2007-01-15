@@ -112,7 +112,6 @@ extern void             corrupt_stat(object *op);
 extern void             drain_stat(object *op);
 extern void             drain_specific_stat(object *op, int deplete_stats);
 extern void             drain_level(object *op, int level, int mode, int ticks);
-extern void             change_luck(object *op, int value);
 #ifdef DEBUG_FIX_PLAYER
 extern void             fix_player(object *op, char *msg);
 #else
@@ -374,9 +373,7 @@ extern void             free_all_treasures(void);
 extern void             dump_monster_treasure(const char *name);
 extern int              get_enviroment_level(object *op);
 /* utils.c */
-extern int              random_roll(int min, int max, object *op, int goodbad);
-extern int              die_roll(int num, int size, object *op, int goodbad);
-extern int              rndm(int min, int max);
+extern int              random_roll(int min, int max);
 extern int              look_up_spell_name(const char *spname);
 extern racelink        *find_racelink(const char *name);
 extern char            *cleanup_string(char *ustring);

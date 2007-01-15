@@ -177,7 +177,7 @@ int recharge(object *op)
             break;
     if (wand == NULL)
         return 0;
-    if (!(random_roll(0, 3, op, PREFER_LOW)))
+    if (!(random_roll(0, 3)))
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "The %s vibrates violently, then explodes!", query_name(wand));
         play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
@@ -186,7 +186,7 @@ int recharge(object *op)
     }
     new_draw_info_format(NDI_UNIQUE, 0, op, "The %s glows with power.", query_name(wand));
 
-    wand->stats.food += rndm(1, spells[wand->stats.sp].charges);
+    wand->stats.food += random_roll(1, spells[wand->stats.sp].charges);
     if (wand->arch && QUERY_FLAG(&wand->arch->clone, FLAG_ANIMATE))
     {
         SET_FLAG(wand, FLAG_ANIMATE);
@@ -433,11 +433,11 @@ int cast_wow(object *op, int dir, int ability, SpellTypeFrom item)
 {
     /*
       int sp;
-      if(!rndm(0, 3))
+      if(!random_roll(0, 3))
         return cast_cone(op,op,0,10,SP_WOW,spellarch[SP_WOW],0);
       do
       {
-        sp=rndm(0, NROFREALSPELLS-1);
+        sp=random_roll(0, NROFREALSPELLS-1);
                    while(!spells[sp].active)
                    {
                        sp++;
@@ -769,7 +769,7 @@ int dimension_door(object *op, int dir)
          */
         if (blocked(op, op->map, op->x + freearr_x[dir] * dist, op->y + freearr_y[dir] * dist, op->terrain_flag))
         {
-            int x = rndm(0, MAP_WIDTH(op->  map) - 1),y = rndm(0, MAP_HEIGHT(op->map) - 1);
+            int x = random_roll(0, MAP_WIDTH(op->  map) - 1),y = random_roll(0, MAP_HEIGHT(op->map) - 1);
 
             if (blocked(op, op->map, x, y, op->terrain_flag) || blocks_magic(op->map, x, y))
             {
@@ -955,7 +955,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
 
         case SP_MINOR_HEAL:
           success = 1;
-          heal = random_roll(2, 5 + level, op, PREFER_HIGH) + 6;
+          heal = random_roll(2, 5 + level) + 6;
           if (op->type == PLAYER)
           {
               if (heal > 0)
@@ -976,12 +976,12 @@ int cast_heal(object *op, int level, object *target, int spell_type)
           break;
           /*
             case SP_MED_HEAL:
-              heal=die_roll(3, 6, op, PREFER_HIGH)+4;
+              heal=random_roll_roll(3, 6)+4;
               new_draw_info(NDI_UNIQUE, 0,tmp, "Your wounds start to fade.");
               break;
             case SP_MAJOR_HEAL:
               new_draw_info(NDI_UNIQUE, 0,tmp, "Your skin looks as good as new!");
-              heal=die_roll(4, 8, op, PREFER_HIGH)+8;
+              heal=random_roll_roll(4, 8)+8;
               break;
             case SP_HEAL:
               heal=tmp->stats.maxhp;
@@ -1150,7 +1150,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_DEXTERITY:
           if (tmp->type != PLAYER)
               break;
-          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Dex))) - 1, op, PREFER_LOW)))
+          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Dex))) - 1)))
           {
               for (i = 20,force->stats.Dex = 1; i > tmp->stats.Dex; i -= 2)
                   force->stats.Dex++;
@@ -1164,7 +1164,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_CONSTITUTION:
           if (tmp->type != PLAYER)
               break;
-          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Con))) - 1, op, PREFER_LOW)))
+          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Con))) - 1)))
           {
               for (i = 20,force->stats.Con = 1; i > tmp->stats.Con; i -= 2)
                   force->stats.Con++;
@@ -1178,7 +1178,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_CHARISMA:
           if (tmp->type != PLAYER)
               break;
-          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Cha))) - 1, op, PREFER_LOW)))
+          if (!(random_roll(0, (MAX(1, (10 - MAX_STAT + tmp->stats.Cha))) - 1)))
           {
               for (i = 20,force->stats.Cha = 1; i > tmp->stats.Cha; i -= 2)
                   force->stats.Cha++;
@@ -1511,7 +1511,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
     level = ((op->head ? op->head->level : SK_level(op)) / 4);
     if (level >= MAX_PET_MONSTERS)
         level = MAX_PET_MONSTERS - 1;
-    switch (rndm(0, 2))
+    switch (random_roll(0, 2))
     {
         case 0:
           number = priest_num_called[level];
@@ -1726,7 +1726,7 @@ void cancellation(object *op)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
                 cancellation(tmp);
     }
-    else/* Nullify this object. */ if (FABS(op->magic) <= (rndm(0, 5)))
+    else/* Nullify this object. */ if (FABS(op->magic) <= (random_roll(0, 5)))
     {
         op->magic = 0;
         CLEAR_FLAG(op, FLAG_DAMNED);
@@ -1858,13 +1858,13 @@ static void alchemy_object(object *obj, int *small_nuggets,
     else
     value = (int)((double)value * 0.9);
 
-    if ((obj->value>0) && rndm(0, 29)) {
+    if ((obj->value>0) && random_roll(0, 29)) {
 #ifdef LOSSY_ALCHEMY
     int tmp = (value % large->value) / small->value;
 
     *large_nuggets += value/ large->value;
     if (tmp)
-        *small_nuggets += rndm(1, tmp);
+        *small_nuggets += random_roll(1, tmp);
 #else
     static int value_store;
     int count;
@@ -2258,7 +2258,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 {
     object *tmp;
     int     success = 0, success2 = 0, random_val = 0;
-    int     chance  = 8 + op->stats.luck + op->stats.Wis;
+    int     chance  = 8 + op->stats.Wis;
 
     if (chance < 1)
         chance = 1;
@@ -2297,7 +2297,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
                 }
 
                 if (IDENTIFY_MODE_NORMAL
-                 && ((random_val = random_roll(0, chance - 1, op, PREFER_LOW)) > (chance - ++success - 2)))
+                 && ((random_val = random_roll(0, chance - 1)) > (chance - ++success - 2)))
                     break;
             }
         }
@@ -2638,7 +2638,7 @@ int cast_pacify(object *op, object *weap, archetype *arch, int spellnum)
                     if (tmp->race != weap->slaying && tmp->name != weap->slaying)
                         continue;
                 /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */
-                if (SK_level(op) < random_roll(0, 2 * tmp->level, op, PREFER_LOW) - (op->stats.Cha - 10) / 2)
+                if (SK_level(op) < random_roll(0, 2 * tmp->level) - (op->stats.Cha - 10) / 2)
                     continue;
             }
 
@@ -2969,7 +2969,7 @@ void counterspell(object *op, int dir)
               }
             case 2:
               {
-                  if (rndm(0, 149) == 0)
+                  if (random_roll(0, 149) == 0)
                   {
                       tmp->stats.hp--;  /* weaken the rune */
                       if (!tmp->stats.hp)
@@ -3037,7 +3037,7 @@ int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
         if (tmp->more || tmp->head)
             continue;  /* multiple square monsters NOT */
         /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */
-        if (SK_level(op) < random_roll(0, 2 * tmp->level, op, PREFER_LOW) - (op->stats.Cha - 10) / 2)
+        if (SK_level(op) < random_roll(0, 2 * tmp->level) - (op->stats.Cha - 10) / 2)
             continue;
 
         if ((effect = get_archetype("detect_magic")))
@@ -3096,7 +3096,7 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
             continue;
         if (tmp->more || tmp->head)
             continue;  /* multiple square monsters NOT */
-        if (SK_level(op) + bonus < random_roll(0, 2 * tmp->level, op, PREFER_LOW) - (op->stats.Wis - 10) / 2)
+        if (SK_level(op) + bonus < random_roll(0, 2 * tmp->level) - (op->stats.Wis - 10) / 2)
             continue;
 
         if ((effect = get_archetype("detect_magic")))
@@ -3142,7 +3142,7 @@ object * choose_cult_monster(object *pl, object *god, int summon_level)
     /* next, randomly select a race from the aligned_races string */
     if (racenr > 1)
     {
-        racenr = rndm(0, racenr - 1);
+        racenr = random_roll(0, racenr - 1);
         strcpy(buf, god->race);
         race = strtok(buf, ",");
         for (i = 0; i < racenr; i++)
@@ -3182,7 +3182,7 @@ object * choose_cult_monster(object *pl, object *god, int summon_level)
      */
     if (!mon_nr)
         return NULL;
-    mon_nr = rndm(0, mon_nr - 1);
+    mon_nr = random_roll(0, mon_nr - 1);
     for (tobl = list->member; tobl; tobl = tobl->next)
     {
         otmp = tobl->objlink.ob;
@@ -3223,7 +3223,7 @@ int summon_cult_monsters(object *op, int old_dir)
     i = SK_level(op) + op->stats.Wis / 10;
     if (i == 0)
         i = 1;
-    summon_level = random_roll(0, i - 1, op, PREFER_HIGH);
+    summon_level = random_roll(0, i - 1);
     if (op->path_attuned & PATH_CONJURATION)
         summon_level += 5;
     if (op->path_repelled & PATH_CONJURATION)
@@ -3272,9 +3272,9 @@ int summon_cult_monsters(object *op, int old_dir)
      */
 
     if (mon->level > (summon_level / 2))
-        number = random_roll(1, 2, op, PREFER_HIGH);
+        number = random_roll(1, 2);
     else
-        number = die_roll(2, 2, op, PREFER_HIGH);
+        number = random_roll(2, 2);
 
     for (i = 1; i < number + 1; i++)
     {
@@ -3293,7 +3293,7 @@ int summon_cult_monsters(object *op, int old_dir)
 
             for (ii = summon_level - (head->level) - 5; ii > 0; ii--)
             {
-                switch (rndm(1, 3))
+                switch (random_roll(1, 3))
                 {
                     case 1:
                       head->stats.wc--;
@@ -3599,7 +3599,7 @@ int finger_of_death(object *op, object *caster, int dir)
     if (QUERY_FLAG(target, FLAG_UNDEAD))
     {
         success = 0;
-        if (random_roll(0, 2, op, PREFER_LOW))
+        if (random_roll(0, 2))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Idiot! Your spell boomerangs!");
             hitter->x = op->x;
@@ -4179,7 +4179,7 @@ void move_peacemaker(object *op)
             continue;
         def_lev = MAX(1, victim->level);
         atk_lev = MAX(1, op->level);
-        if (rndm(0, atk_lev - 1) > def_lev)
+        if (random_roll(0, atk_lev - 1) > def_lev)
         {
             /* make this sucker peaceful. */
             victim->stats.dam = 0;
@@ -4236,7 +4236,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
 
             /* OK, now set the monster on other monsters */
             level = MAX(1, SK_level(caster) / 2);
-            if (random_roll(0, level - 1, op, PREFER_HIGH) > tmp->level)
+            if (random_roll(0, level - 1) > tmp->level)
             {
                 /* successfully induced conflict */
                 char    buf[MAX_BUF];

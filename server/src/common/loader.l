@@ -431,7 +431,6 @@ op->oy= op->y;
 		    }
 ^no_fix_player{S}   SET_OR_CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER, IVAL);
 ^tear_down{S}	    SET_OR_CLEAR_FLAG(op, FLAG_TEAR_DOWN, IVAL);
-^luck{S}  	    op->stats.luck = IVAL;
 ^run_away{S}	    op->run_away = IVAL;
 ^pass_thru{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_THRU, IVAL);
 ^pass_ethereal{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_ETHEREAL, IVAL);
@@ -1114,8 +1113,6 @@ char *get_ob_diff(const object *op, const object *op2) {
     save_long(buf, "food", op->stats.food);
   if(op->stats.dam!=op2->stats.dam)
     save_long(buf, "dam", op->stats.dam);
-  if(op->stats.luck!=op2->stats.luck)
-    save_long(buf, "luck", op->stats.luck);
   if(op->stats.wc!=op2->stats.wc)
     save_long(buf, "wc", op->stats.wc);
   if(op->stats.ac!=op2->stats.ac)

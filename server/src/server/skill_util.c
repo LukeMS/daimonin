@@ -690,7 +690,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     if (scroll_flag) /* only check when a scroll - add here god given check later */
                         /* god given scrolls should never fail to learn */
     {
-        if (random_roll(0, 99, pl, PREFER_LOW) > learn_spell[pl->stats.Int])
+        if (random_roll(0, 99) > learn_spell[pl->stats.Int])
             return 2; /* failure :< */
     }
     /* Everything is cool. Give'em the skill */

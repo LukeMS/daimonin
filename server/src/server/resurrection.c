@@ -170,7 +170,7 @@ int resurrection_fails(int levelcaster, int leveldead)
     chance += levelcaster - leveldead;
     if (chance < 4)
         chance = 4;
-    if (chance > rndm(0, 19))
+    if (chance > random_roll(0, 19))
         return 0;  /* resurrection succeeds */
     return 1;
 }
@@ -266,7 +266,7 @@ int resurrect_player(object *op, char *playername, int rspell)
         {
             if (!(strcmp(buf2, "race")))
             {
-                sprintf(buf, "race %s\n", races[rndm(1, 12)]);
+                sprintf(buf, "race %s\n", races[random_roll(1, 12)]);
             }
         }
         fputs(buf, liveplayer);

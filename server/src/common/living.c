@@ -726,18 +726,6 @@ int change_abil(object *op, object *tmp)
             }
         }
     }
-    if (tmp->stats.luck)
-    {
-        success = 1;
-        if (flag > 0)
-        {
-            new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You feel less lucky.");
-        }
-        else
-        {
-            new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel more lucky.");
-        }
-    }
     return success;
 }
 
@@ -856,54 +844,6 @@ void drain_level(object *op, int level, int mode, int ticks)
         new_draw_info(NDI_UNIQUE, 0, op, "You lose a level!");
 }
 
-/*
- * A value of 0 indicates timeout, otherwise change the luck of the object.
- * via an applied bad_luck object.
- */
-
-void change_luck(object *op, int value)
-{
-    object     *tmp;
-    archetype  *at;
-    at = find_archetype("luck");
-    if (!at)
-        LOG(llevBug, "BUG: Couldn't find archetype luck.\n");
-    else
-    {
-        tmp = present_arch_in_ob(at, op);
-        if (!tmp)
-        {
-            if (!value)
-                return;
-            tmp = arch_to_object(at);
-            tmp = insert_ob_in_ob(tmp, op);
-            SET_FLAG(tmp, FLAG_APPLIED);
-        }
-        if (value)
-        {
-            op->stats.luck += value;
-            tmp->stats.luck += value;
-        }
-        else
-        {
-            if (!tmp->stats.luck)
-            {
-                LOG(llevDebug, "Internal error in change_luck().\n");
-                return;
-            }
-            /* Randomly change the players luck.  Basically, we move it
-             * back neutral (if greater>0, subtract, otherwise add)
-             * I believe this is supposed to be > and not >= - this means
-             * if your luck is -1/1, it won't get adjusted - only when your
-             * luck is worse can you hope for improvment.
-             * note that if we adjusted it with it is -1/1, that check above
-             * for 0 luck will happen, resulting in error.
-             */
-            if (RANDOM() % (FABS(tmp->stats.luck)) > RANDOM() % 30)
-                tmp->stats.luck += tmp->stats.luck > 0 ? -1 : 1;
-        }
-    }
-}
 
 /*
  * Updates all abilities given by applied objects in the inventory
@@ -1025,7 +965,6 @@ void fix_player(object *op)
     op->stats.thac0 = op->arch->clone.stats.thac0;
     op->stats.thacm = op->arch->clone.stats.thacm;
 
-    op->stats.luck = op->arch->clone.stats.luck;
     op->speed = op->arch->clone.speed;
     op->weapon_speed = op->arch->clone.weapon_speed;
     op->path_attuned = op->arch->clone.path_attuned;
@@ -1525,7 +1464,6 @@ void fix_player(object *op)
             op->path_attuned |= tmp->path_attuned;
             op->path_repelled |= tmp->path_repelled;
             op->path_denied |= tmp->path_denied;
-            op->stats.luck += tmp->stats.luck;
             if (QUERY_FLAG(tmp, FLAG_LIFESAVE))
                 SET_FLAG(op, FLAG_LIFESAVE);
             if (QUERY_FLAG(tmp, FLAG_REFL_SPELL))

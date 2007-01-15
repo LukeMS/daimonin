@@ -83,7 +83,6 @@ typedef struct liv
 	sint8           thac0;		/* Every roll >= thac0 is a hit, despite of target ac */
 	sint8           thacm;      /* Every roll < thacm is a miss, despite of target ac */
     sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
-    sint8           luck;       /* Affects thaco and ac from time to time */
 } living;
 
 extern float    lev_damage[MAXLEVEL + 1];
