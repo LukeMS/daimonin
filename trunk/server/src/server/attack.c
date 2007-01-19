@@ -1473,7 +1473,8 @@ object * hit_with_arrow(object *op, object *victim)
         hitter->x = op->x;
         hitter->y = op->y;
         remove_ob(hitter);
-        insert_ob_in_map(hitter, container->map, hitter, INS_NO_MERGE | INS_NO_WALK_ON);
+        insert_ob_in_map(hitter, container->map, OBJECT_VALID(hitter->owner, hitter->owner_count) ? hitter->owner : hitter, 
+                INS_NO_MERGE | INS_NO_WALK_ON);
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that
          * might be called until this THROWN_OBJ is either reassembled or
          * removed at the end of this function must be able to deal with empty
