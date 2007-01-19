@@ -8,3 +8,5 @@ if pinfo == nil then
 else
 	ac:SetPosition(game:ReadyMap(pinfo.race), pinfo.last_sp, pinfo.last_grace)
 end
+
+event.returnvalue = 1
