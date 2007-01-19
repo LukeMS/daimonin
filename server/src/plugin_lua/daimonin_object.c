@@ -1910,31 +1910,40 @@ static int GameObject_GetQuest(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CheckQuestLevel                                       */
-/* Lua    : object:CheckQuestLevel(level, skill_level)                       */
+/* Lua    : object:CheckQuestLevel(level, skill_group)                       */
 /* Status : Stable                                                           */
-/* Info   : We check a quest is possible to start                            */
+/* Info   : Check if a quest is possible to start based on a minimum required*/
+/*          level in a specified skill group.                                */
+/*          the skill_group parameter _must_ be one of the                   */
+/*          game.ITEM_SKILL_XXX constants. game.ITEM_SKILL_NO checks against */
+/*          the player's main level.                                         */
+/*          This function is only valid for objects of TYPE_PLAYER.          */
+/*          Normally, the QuestManager wrapper is used instead of calling    */
+/*          this function directly. Please see the lua scripting docs for    */
+/*          QuestManager details.                                            */
 /*****************************************************************************/
 static int GameObject_CheckQuestLevel(lua_State *L)
 {
-	int level, skill_level, tmp_lev, ret=1;
+	int level, item_skill_group, tmp_lev, ret=1;
 	lua_object *self;
-	object *who;
 	player *pl;
 
-	get_lua_args(L, "Oii", &self, &level, &skill_level);
+	get_lua_args(L, "Oii", &self, &level, &item_skill_group);
 
-	who = WHO;
 	/* some sanity checks */
-	if(who->type != PLAYER || !(pl=CONTR(who)) || skill_level < 0 || skill_level > NROFSKILLGROUPS)
-		return 0;
+	if(WHO->type != PLAYER || !(pl=CONTR(WHO)))
+        luaL_error(L, "Not a player object");
+    if(item_skill_group < 0 || item_skill_group > NROFSKILLGROUPS)
+        luaL_error(L, "Invalid skill_group parameter. Use one of the game.ITEM_SKILL_XXX constants");
 
+    /* Note: the ITEM_SKILL_XXX lua constants corresponds to SKILLGROUP_XXX + 1 */
 	/* player is high enough for this quest? */
-	if (skill_level)
-		tmp_lev = pl->exp_obj_ptr[skill_level-1]->level; /* use player struct shortcut ptrs */
+	if (item_skill_group)
+		tmp_lev = pl->exp_obj_ptr[item_skill_group-1]->level; /* use player struct shortcut ptrs */
 	else
-		tmp_lev = who->level;
+		tmp_lev = WHO->level;
 
-	if (level > tmp_lev) /* to low */
+	if (level > tmp_lev) /* too low */
 		ret = 0;
 
     lua_pushboolean(L, ret);
