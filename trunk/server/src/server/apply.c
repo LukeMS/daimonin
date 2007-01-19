@@ -3468,9 +3468,9 @@ void turn_on_light(object *op)
         copy_object(op, one);
         op->nrof -= 1;
         one->nrof = 1;
-        if (op->env && (op->env->type == PLAYER || op->env->type == CONTAINER))
+        if (op->env)
             esrv_update_item(UPD_NROF, op->env, op);
-        else if (!op->env)
+        else
             update_object(op, UP_OBJ_FACE);
 
         tricky_flag = TRUE;
@@ -3492,7 +3492,10 @@ void turn_on_light(object *op)
 			SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
 		}
         if (tricky_flag)
+        {
             op = insert_ob_in_ob(op, op_old->env);
+            esrv_send_item(op->env, op);
+        }
         op->glow_radius = (sint8) op->last_sp;
     }
     else /* we are not in a player inventory - so simple turn it on */
@@ -3516,7 +3519,10 @@ void turn_on_light(object *op)
                 /* the item WAS before this on this spot - we only turn it on but we don't moved it */
                 insert_ob_in_map(op, op_old->map, op_old, INS_NO_WALK_ON);
             else
+            {
                 op = insert_ob_in_ob(op, op_old->env);
+                esrv_send_item(op->env, op);
+            }
         }
 
         op->glow_radius = (sint8) op->last_sp;
