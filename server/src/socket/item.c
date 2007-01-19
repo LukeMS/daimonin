@@ -880,7 +880,11 @@ void esrv_update_item(int flags, object *pl, object *op)
         return;
     }
 
-    esrv_update_item_send(flags, pl, op);
+    /* Integrating the is_player_inv() test here saves us many tests in the code.
+     * TODO: remove the "pl" parameter for this function call 
+     * Gecko 2007-01-19 */
+    if((tmp = is_player_inv(op)))
+        esrv_update_item_send(flags, tmp, op);
 }
 
 
@@ -1023,7 +1027,13 @@ void esrv_send_item(object *pl, object *op)
             esrv_send_item_send(tmp, op);
         return;
     }
-
+    
+    /* Integrating the is_player_inv() test here saves us many tests in the code.
+     * TODO: remove the "pl" parameter for this function call 
+     * Gecko 2007-01-19 */
+    if((tmp = is_player_inv(op)))
+        esrv_send_item_send(tmp, op);
+    /*
     if (pl->type != PLAYER)
     {
         LOG(llevBug, "esrv_send_item(): called for non PLAYER/CONTAINER object! (%s) (%s)\n", query_name(pl),
@@ -1032,6 +1042,7 @@ void esrv_send_item(object *pl, object *op)
     }
 
     esrv_send_item_send(pl, op);
+    */
 }
 
 

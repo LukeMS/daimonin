@@ -690,7 +690,7 @@ static int GameObject_Repair(lua_State *L)
     if((tmp = hooks->is_player_inv(WHO)))
     {
         SET_FLAG(tmp, FLAG_FIX_PLAYER);
-        hooks->esrv_send_inventory(tmp, tmp);
+        hooks->esrv_update_item(UPD_QUALITY, tmp, WHO);
     }
 
     return 0;

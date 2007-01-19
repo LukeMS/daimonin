@@ -271,6 +271,7 @@ struct plugin_hooklist
 #endif
     void (*esrv_send_item)(object *, object *);
     void (*esrv_send_inventory)(object *, object *);
+    void (*esrv_update_item)(int flags, object *, object *);
     int (*lookup_skill_by_name)(char *);
     int (*look_up_spell_name)(const char *);
     object*(*insert_ob_in_ob)(object *, object *);
