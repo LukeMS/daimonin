@@ -679,13 +679,19 @@ static int GameObject_GetRepairCost(lua_State *L)
 /*****************************************************************************/
 static int GameObject_Repair(lua_State *L)
 {
-	int skill = 100;
+    int skill = 100;
     lua_object *self;
+    object *tmp;
 
     get_lua_args(L, "O|i", &self, &skill);
 
-	hooks->material_repair_item(WHO, skill);
-	SET_FLAG(WHO, FLAG_FIX_PLAYER);
+    hooks->material_repair_item(WHO, skill);
+
+    if((tmp = hooks->is_player_inv(WHO)))
+    {
+        SET_FLAG(tmp, FLAG_FIX_PLAYER);
+        hooks->esrv_send_inventory(tmp, tmp);
+    }
 
     return 0;
 }
