@@ -89,7 +89,7 @@ function QuestManager:_GetStatus(_qstep, _lev, _skill, required)
                 end
             end
         end
-        if _who:CheckQuestLevel(_lev, _skill) == 0 then
+        if _who:CheckQuestLevel(_lev, _skill) == false then
             return game.QSTAT_DISALLOW
         end
         return game.QSTAT_NO
