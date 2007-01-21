@@ -889,20 +889,62 @@ static void traverse_player_stats(char* start_dir)
 }
 #endif
 
-
-#define AUTO_MSG_COUNTER (8*60*30) /* all 30 minutes */
-int main(int argc, char **argv)
+void iterate_main_loop()
 {
     struct timeval timeout;
-#ifdef AUTO_MSG
-    int auto_msg_count = 8*60*3; /* kick the first message 3 minutes after server start */
-#endif
+
 #ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
 #endif
 
-global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem in the startup */
+    nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
+    pticks++;                       /* ROUND_TAG ! this is THE global tick counter . Use ROUND_TAG in the code */
+
+    shutdown_agent(-1, EXIT_NORMAL, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
+
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
+    check_use_object_list();
+#endif
+
+    process_events(); /* "do" something with objects with speed - process user cmds */
+
+    /* this is the tricky thing...  This full read/write access to the
+     * socket ensure at last *ONE* read/write access to the socket in one round WITH player update.
+     * It seems odd to do the read after process_events() but sleep_delta() will poll on the socket.
+     * In that way, we will collect & process the commands as fast as possible.
+     * NOTE: sleep_delta() *can* loop some doeric_server() - but don't MUST.
+     * Perhaps we have alot players connected and process_events() and this doeric_server()
+     * has eaten up all tick time!!
+     */
+    timeout.tv_sec=0;
+    timeout.tv_usec=0;
+    doeric_server(SOCKET_UPDATE_PLAYER|SOCKET_UPDATE_CLIENT, &timeout);
+
+#ifdef PLUGINS
+    /* This is where detached lua scripts get reactivated */
+    /* GROS : Here we handle the CLOCK global event */
+    evtid = EVENT_CLOCK;
+    CFP.Value[0] = (void *) (&evtid);
+    GlobalEvent(&CFP);
+#endif
+
+    check_active_maps();        /* Removes unused maps after a certain timeout */
+    do_specials();              /* Routines called from time to time. */
+
+    /*doeric_server_write();*/
+    object_gc();                /* Clean up the object pool */
+    sleep_delta();              /* Sleep proper amount of time before next tick but poll the socket */
+}
+
+#define AUTO_MSG_COUNTER (8*60*30) /* all 30 minutes */
+int main(int argc, char **argv)
+{
+#ifdef AUTO_MSG
+    int auto_msg_count = 8*60*3; /* kick the first message 3 minutes after server start */
+#endif
+
+    global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem in the startup */
 
 #ifdef WIN32 /* ---win32 this sets the win32 from 0d0a to 0a handling */
     _fmode = _O_BINARY ;
@@ -917,7 +959,7 @@ global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem
 #endif
     compile_info();       /* its not a bad idea to show at start whats up */
 
-    memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
+    memset(&marker, 0, sizeof(struct obj)); /* used from process_events() */
     STATS_EVENT(STATS_EVENT_STARTUP);
     reset_sleep(); /* init our last_time = start time - and lets go! */
 
@@ -929,11 +971,7 @@ global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
     for (; ;)
     {
-        nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
-        pticks++;                       /* ROUND_TAG ! this is THE global tick counter . Use ROUND_TAG in the code */
-
-        shutdown_agent(-1, EXIT_NORMAL, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
-
+        /* TODO: move into iterate_main_loop() */
 #ifdef AUTO_MSG
         if(!(auto_msg_count--))            /* trigger the auto message system */
         {
@@ -942,41 +980,13 @@ global_exit_return = EXIT_ERROR; /* return -1 will signal that we have a problem
              */
             auto_msg_count = AUTO_MSG_COUNTER;
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
-                "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
+                    "[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
         }
 #endif
 
-#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
-        check_use_object_list();
-#endif
-
-        process_events(); /* "do" something with objects with speed - process user cmds */
-
-        /* this is the tricky thing...  This full read/write access to the
-         * socket ensure at last *ONE* read/write access to the socket in one round WITH player update.
-         * It seems odd to do the read after process_events() but sleep_delta() will poll on the socket.
-         * In that way, we will collect & process the commands as fast as possible.
-         * NOTE: sleep_delta() *can* loop some doeric_server() - but don't MUST.
-         * Perhaps we have alot players connected and process_events() and this doeric_server()
-         * has eaten up all tick time!!
-         */
-        timeout.tv_sec=0;timeout.tv_usec=0;
-        doeric_server(SOCKET_UPDATE_PLAYER|SOCKET_UPDATE_CLIENT, &timeout);
-
-#ifdef PLUGINS
-        /* GROS : Here we handle the CLOCK global event */
-        evtid = EVENT_CLOCK;
-        CFP.Value[0] = (void *) (&evtid);
-        GlobalEvent(&CFP);
-#endif
-
-        check_active_maps();        /* Removes unused maps after a certain timeout */
-        do_specials();              /* Routines called from time to time. */
-
-        /*doeric_server_write();*/
-        object_gc();                /* Clean up the object pool */
-        sleep_delta();              /* Slepp proper amount of time before next tick but poll the socket */
+        iterate_main_loop();
     }
+
     return 0;
 }
 
