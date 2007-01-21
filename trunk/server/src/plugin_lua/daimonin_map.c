@@ -450,9 +450,9 @@ static int Map_toString(lua_State *L)
 
 /* Tests if a Map object is valid */
 static int Map_isValid(lua_State *L, lua_object *obj)
-{
-    /* TODO: also check map tag */
-    return obj->data.map->in_memory == MAP_IN_MEMORY;
+{    
+    /* TODO: convert maps to use real weak reference tags and mempools */
+    return (obj->tag == ROUND_TAG && obj->data.map->in_memory == MAP_IN_MEMORY);
 }
 
 /* Declare the map class */

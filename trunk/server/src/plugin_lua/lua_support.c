@@ -283,8 +283,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
           lua_pushnumber(L, *(float *) field_ptr);
           return 1;
         case FIELDTYPE_MAP:
-          /* TODO: maps should also include the tag (or whatever)
-           * to handle validation in long-running scripts */
+          /* Can return nil */
           if((*(mapstruct **)field_ptr) == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY )
           {
               lua_pushnil(L);
@@ -580,7 +579,12 @@ int push_object(lua_State *L, lua_class *class, void *data)
     obj->class = class;
     obj->data.anything = data;
 
+    /* Setup tag to make invalidation of weak references possible */
     switch(class->type) {
+        /* TODO: maps should be converted to mempools and use normal weak reference tags */
+        case LUATYPE_MAP:
+            obj->tag = ROUND_TAG;
+            break;
         case LUATYPE_OBJECT:
         case LUATYPE_AI:
             obj->tag = obj->data.object->count;
@@ -720,7 +724,7 @@ int init_class(struct lua_State *L, lua_class *class)
         }
     }
 
-    class-> meta    = luaL_ref(L, LUA_REGISTRYINDEX); /* store class metatable in registry */
+    class->meta = luaL_ref(L, LUA_REGISTRYINDEX); /* store class metatable in registry */
 
     if(class->isValid == NULL)
         class->isValid = default_object_validator;
