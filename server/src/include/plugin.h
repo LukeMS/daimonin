@@ -370,6 +370,7 @@ struct plugin_hooklist
     struct shstr_constants *shstr_cons;
     struct behaviourclass_decl *behaviourclasses;
     long *global_instance_id;
+    unsigned long *pticks;
 };
 
 /*****************************************************************************/

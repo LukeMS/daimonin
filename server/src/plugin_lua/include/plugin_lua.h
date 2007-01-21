@@ -141,6 +141,9 @@ struct plugin_hooklist *hooks;
 /* And a macro to hookify LOG: */
 #undef LOG
 #define LOG hooks->LOG
+/* A macro for ROUND_TAG */
+#undef ROUND_TAG
+#define ROUND_TAG hooks->pticks
 
 extern tag_t lua_context_tag_counter;
 
